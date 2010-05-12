@@ -1,0 +1,56 @@
+<% form_for(@school, :url => path, :html => { :method => method })  do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :displayName %><br />
+    <%= f.text_field :displayName %>
+  </p>
+  <p>
+    <%= f.label :puavoSchoolHomePageURL %><br />
+    <%= f.text_field :puavoSchoolHomePageURL %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </p>
+  <p>
+    <%= f.label :cn %><br />
+    <%= f.text_field :cn %>
+  </p>
+
+  <p>
+    <%= f.label :telephoneNumber %><br />
+    <%= f.text_field :telephoneNumber %>
+  </p>
+  <p>
+    <%= f.label :facsimileTelephoneNumber %><br />
+    <%= f.text_field :facsimileTelephoneNumber %>
+  </p>
+  <p>
+    <%= f.label :l %><br />
+    <%= f.text_field :l %>
+  </p>
+  <p>
+    <%= f.label :street %><br />
+    <%= f.text_field :street %>
+  </p>
+  <p>
+    <%= f.label :postOfficeBox %><br />
+    <%= f.text_field :postOfficeBox %>
+  </p>
+  <p>
+    <%= f.label :postalAddress %><br />
+    <%= f.text_field :postalAddress %>
+  </p>
+  <p>
+    <%= f.label :postalCode %><br />
+    <%= f.text_field :postalCode %>
+  </p>
+  <p>
+    <%= f.label :st %><br />
+    <%= f.text_field :st %>
+  </p>
+  <p>
+    <%= f.submit submit_text %>
+  </p>
+
+<% end %>

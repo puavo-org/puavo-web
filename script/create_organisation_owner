@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+require File.expand_path('../../config/boot',  __FILE__)
+require RAILS_ROOT + '/config/environment'
+
+key = ARGV[0]
+if key.nil?
+  puts "Using default organisation configuration"
+  key = "default"
+end
+
+unless organisation = Organisation.find(key)
+  puts "Can't find organisation configuration."
+  exit
+end
+
+puts "Create organisation owner..."
+puts "Organisation: " + organisation.name.to_s
+
+print "Bind DN: "
+dn = STDIN.gets.chomp
+print "Password: "
+password = STDIN.gets.chomp
+
+default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+# Setting up ldap configuration
+LdapBase.ldap_setup_connection( organisation.ldap_host,
+                                organisation.ldap_base,
+                                dn,
+                                password )
+# School
+school = School.first
+puts "\nCreate new school"
+print "School name: "
+school_name = STDIN.gets.chomp
+school = School.create!( :displayName => school_name,
+                        :cn => school_name.downcase.gsub(/[^a-z0-9]/, "") )
+
+# Role
+puts "Create new role"
+print "Role name: "
+role = Role.create!( :displayName => STDIN.gets.chomp,
+                    :puavoSchool => school.dn )
+
+# Group
+puts "Create new group"
+print "Group name: "
+group_name = STDIN.gets.chomp
+group = Group.create!( :displayName => group_name,
+                      :cn => group_name.downcase.gsub(/[^a-z0-9]/, ""),
+                      :puavoSchool => school.dn )
+
+# User
+puts "Create new user:"
+
+print "Given name: "
+given_name = STDIN.gets.chomp
+
+print "Surname: "
+surname = STDIN.gets.chomp
+print "Username: "
+username = STDIN.gets.chomp
+print "Password: "
+password = STDIN.gets.chomp
+print "Password confirmation: "
+password_confirmation = STDIN.gets.chomp
+
+user = User.new
+
+user.givenName = given_name
+user.sn = surname
+user.uid = username
+user.new_password = password
+user.new_password_confirmation = password_confirmation
+user.gidNumber = group.id
+user.role_name = role.displayName
+user.puavoSchool = school.dn
+user.eduPersonAffiliation = "staff"
+user.save!
+
+puts "Sets the user (#{user.uid}) as the owner of the organisation"
+ldap_organisation = LdapOrganisation.first
+ldap_organisation.owner = Array(ldap_organisation.owner).push user.dn
+ldap_organisation.save
+

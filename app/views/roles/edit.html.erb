@@ -1,0 +1,12 @@
+<h1><%= t('.title') %></h1>
+
+<%= render :partial => 'form',
+ :locals => {
+  :path => role_path(@school, @role),
+  :submit_text => t('link.update'),
+  :method => :put
+}
+%>
+
+<%= link_to t('link.show'), role_path(@school, @role) %> |
+<%= link_to t('link.back'), roles_path %>

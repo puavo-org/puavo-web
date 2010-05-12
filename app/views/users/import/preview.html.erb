@@ -1,0 +1,28 @@
+<h2>User mass import preview</h2>
+<p>Check information of the users and select "Create users"</p>
+
+ <table cellspacing="0" id="validate_users_list">
+  <% @columns.each do |column| %>
+  <th>
+    <%= User.human_attribute_name(column) %>
+  </th>
+  <% end %>
+  <th>
+    Valid status:
+  </th>
+  <% @valid_users.each do |user| %>
+  <tr>
+    <% @columns.each do |column| %>
+    <td>
+      <%=h user.human_readable_format(column) %>
+    </td>
+    <% end %>
+    <td>
+      <%=h user.valid? ? "OK" : user.errors.full_messages.join(", ") %>
+    </td>
+  </tr>
+  <% end %>
+</table>
+<% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
+<%= f.submit 'Create users' %>
+<% end %>

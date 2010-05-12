@@ -1,0 +1,55 @@
+<h1><%=h @user.displayName %></h1>
+
+<table>
+  <tr>
+    <td><b><%= t('activeldap.attributes.user.uid') %>:</b></td>
+    <td><%=h @user.uid %></td>
+  </tr>
+
+  <tr>
+  <td><b><%= t('activeldap.attributes.user.mail') %>:</b></td>
+  <td><%= Array(@user.mail).map{ |mail| mail_to mail }.join(", ") %></td>
+  </tr>
+
+  <tr>
+    <td><b><%= t('activeldap.attributes.user.telephoneNumber') %>:</b></td>
+    <% Array(@user.telephoneNumber).each do |telephoneNumber| %>
+    <td><%=h telephoneNumber %></td>
+    <% end %>
+  </tr>
+</table>
+
+<p>
+  <%= t('.user_type_and_role', :user_type => @user.eduPersonAffiliation.nil? ? "" : t('eduPersonAffiliation_' + @user.eduPersonAffiliation.to_s), :roles => @user.roles.map{ |r| r.displayName }.join(", ") ) %>
+</p>
+
+<h3><%= t('.system_information') %></h3>
+<table>
+  <tr>
+    <td><b><%= t('activeldap.attributes.user.homeDirectory') %>:</b></td>
+    <td><%=h @user.homeDirectory %></td>
+  </tr>
+
+  <tr>
+    <td><b><%= t('activeldap.attributes.user.uidNumber') %>:</b></td>
+    <td><%=h @user.uidNumber %></tr>
+  </tr>
+
+  <tr>
+    <td><b><%= t('.group_by_roles') %>:</b></td>
+    <td>
+      <span id="groups_by_roles">
+      <% @user.groups.each do |p| %>
+      <%=h p.displayName %><br />
+      <% end %>
+      </span>
+    </td>
+  </tr>
+</table>
+
+
+<%= link_to t('link.edit'), edit_user_path(@school, @user) %> |
+<%= link_to t('link.back'), users_path %>
+<br />
+<br />
+<%= link_to t('link.destroy'), user_path(@school, @user), :confirm => t('general_confirmation'), :method => :delete %>

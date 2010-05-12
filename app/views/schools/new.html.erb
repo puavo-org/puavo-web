@@ -1,0 +1,15 @@
+<h1><%= t('.title') %></h1>
+
+<% form_for(@school) do |f| %>
+<%= f.error_messages %>
+
+<%= render :partial => 'form',
+ :locals => {
+  :path => schools_path,
+  :submit_text => t('link.create'),
+  :method => :post
+}
+%>
+<% end %>
+
+<%= link_to t('link.back'), schools_path %>

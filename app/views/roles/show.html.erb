@@ -1,0 +1,39 @@
+<p>
+  <b><%= t('activeldap.attributes.role.displayName') %>:</b>
+  <%=h @role.displayName %>
+</p>
+
+<p>
+  <b><%= t('activeldap.attributes.role.members') %>:</b><br />
+  <span id="members">
+    <% @role.members.each do |m| %>
+    <%= m.displayName %><br />
+    <% end %>
+  </span>
+</p>
+
+<p>
+  <b><%= t('activeldap.attributes.role.groups') %>:</b><br />
+  <span id="member_groups">
+    <% @member_groups.each do |g| %>
+    <%= g.displayName %>
+    <%= link_to t('link.remove'), remove_group_role_path(@school, @role, g), :method => :put, :id => "remove_group_#{g.id}" %>
+    <br />
+    <% end %>
+  </span>
+</p>
+
+<p>
+  <b><%= t('.other_groups') %>:</b><br />
+  <span id="other_groups">
+    <% @other_groups.each do |g| %>
+    <%= g.displayName %>
+    <%= link_to t('link.add'), add_group_role_path(@school, @role, g), :method => :put, :id => "add_group_#{g.id}" %>
+    <br />
+    <% end %>
+  </span>
+</p>
+
+
+<%= link_to t('link.edit'), edit_role_path(@school, @role) %> |
+<%= link_to t('link.back'), roles_path %>

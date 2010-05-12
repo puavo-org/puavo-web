@@ -1,0 +1,187 @@
+en:
+  default_select_value: Select
+  general_confirm: Are you sure?
+  layouts:
+    application:
+      schools: Schools
+      school: School
+      logout: Logout
+      users: Users
+      tools: Tools
+      logged_in_as: Logged in as
+  link:
+    edit: Edit
+    back: Back
+    destroy: Destroy
+    new_group: New group
+    update: Update
+    create: Create
+    show: Show
+    users: Users
+    groups: Groups
+    roles: Roles
+    add: Add
+    remove: Remove
+    new_role: New role
+    new_user: New user
+    user_mass_import:
+      new: Users mass import
+      handle_user_data: Handle the user data
+      download_pdf: download pdf-file.
+      revalidate: Revalidate
+      validate: Validates users
+    continue: Continue
+    login: Login
+    change_password: Change password
+    new_school: New school
+  flash:
+    added: "{{item}} was successfully created."
+    updated: "{{item}} was successfully updated."
+    destroyed: "{{item}} was successfully destroyed."
+    group:
+      role_added: "Role was added to group."
+      role_added_failed: Failed to add.
+      role_removed: Role was removed from the group.
+      role_removed_failed: Failed to delete.
+    role:
+      group_added: Group was added to role.
+      group_added_failed: Failed to add
+      group_removed: Group was removed from the role.
+      group_remove_failed: Failed to delete.
+    user:
+      save_failed: User cannot be saved!
+      import:
+        dupplicate_column_name_error: Duplicate column name
+        require_error: Given name and surname are required fields
+    password_set_failed: Failed to change password! Try again!
+    session:
+      login_successful: Login successful!
+      failed: Login failed!
+      logout_successful: Logout successful!
+    password:
+      successful: Password change succesfully!
+      failed: Failed to change password!
+      invalid_login: Invalid old password or username
+      
+  roles:
+    index:
+      actions: Actions
+    show:
+      other_groups: Other groups
+    new:
+      title: New role
+    edit:
+      title: Editing role
+  users:
+    index:
+      actions: Actions
+    show:
+      user_type_and_role: "User's type is <b>{{user_type}}</b> and has following roles: <b>{{roles}}</b>"
+      system_information: System information
+      group_by_roles: Groups by roles
+    new:
+      title: New user
+    edit:
+      title: Editing user
+    form:
+      add_email: Add another email
+      add_telephone_number: Add another telephone number
+    import:
+      new:
+        title: User mass import
+        help: "You can paste the following text box users data which you like adding"
+        example_title: Example
+        example: "Ben	Mabey\nPavel	Taylor"
+      show:
+        title: "Users ({{count}}) was successfully created."
+        pdf_info: You can print users list to paper
+      role:
+        title: User mass import validation
+        help: Following field value must be select when create new users
+      refine:
+        title: User mass import
+        info: The following new users of the data are not valid. Please repair the information and select revalidate button.
+        title_of_status: Valid status
+        status_ok: OK
+        column_info: Select field for each column
+  groups:
+    index:
+      actions: Actions
+    show:
+      roles_and_members: Roles and members
+      other_roles: Other roles
+    new:
+      title: New group
+    edit:
+      title: Editing group
+  schools:
+    index:
+      actions: Actions
+      title: Listing schools
+    edit:
+      title: Editing school
+    new:
+      title: New school
+    menu:
+      dashboard: Dashboard
+  password:
+    edit:
+      title: User password change
+      password: Old password
+  activeldap:
+    models:
+      group: Group
+      role: Role
+      user: User
+    attributes:
+      role:
+        displayName: "Role name"
+        members: Members
+        groups: Members groups
+      school:
+        cn: "Group name"
+        displayName: "School name"
+        puavoSchoolHomePageURL: "School's home page"
+        description: "Description"
+        puavoSchoolNameAbbreviation: "Abbreviation"
+        telephoneNumber: "Phone number"
+        facsimileTelephoneNumber: "Fax number"
+        l: "Locality"
+        street: "Street"
+        postOfficeBox: "Post Office Box"
+        postalAddress: "Postal address"
+        postalCode: "Postal code"
+        st: "State"
+        gidNumber: "Gid number"
+      user:
+        displayName: "Name"
+        sn: "Surname"
+        givenName: "Given name"
+        uid: "Username"
+        primary_group: "Primary group"
+        homeDirectory: "Home directory"
+        uidNumber: "Uid number"
+        gidNumber: "Group"
+        password: "Password"
+        mail: "Email"
+        telephoneNumber: "Telephone number"
+        eduPersonAffiliation: "User type"
+        role_ids: Role
+        role_name: Role
+        password: Password
+        new_password: New password
+        new_password_confirmation: New password confirmation
+      group:
+        displayName: "Group name"
+        cn: "Abbreviation"
+        gidNumber: Gid number
+        primary_members: Primary members
+        members: Members
+  eduPersonAffiliation_faculty: Faculty
+  eduPersonAffiliation_student: Student
+  eduPersonAffiliation_staff: Staff
+  eduPersonAffiliation_alum: Alumn
+  eduPersonAffiliation_member: Member
+  eduPersonAffiliation_affiliate: affiliate
+  eduPersonAffiliation_employee: employee
+  eduPersonAffiliation_library-walk-in: Library walk in

@@ -1,0 +1,25 @@
+<table class="list">
+  <tr>
+    <th><%= t('activeldap.attributes.group.displayName') %></th>
+    <th><%= t('activeldap.attributes.group.cn') %></th>
+    <th colspan="2"><%= t('.actions') %></th>
+  </tr>
+
+<% @groups.each do |group| %>
+  <tr>
+    <td>
+      <%= link_to group.displayName, group_path(@school, group) %>
+      <%= " (" + (group.members.count + group.primary_members.count).to_s  + ")" %>
+    </td>
+    <td>
+      <%= group.cn %>
+    </td>
+    <td><%= link_to t('link.edit'), edit_group_path(@school, group) %></td>
+    <td><%= link_to t('link.destroy'), group_path(@school, group), :confirm => t('general_confirm'), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to t('link.new_group'), new_group_path(@school) %>

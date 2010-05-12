@@ -1,0 +1,68 @@
+<h2><%= t('.title') %></h2>
+
+<% unless @invalid_users.empty? %>
+<p><%= t('.info') %></p>
+<% form_for(:user, :url => validate_users_import_path(@school)) do |f| %>
+<table cellspacing="0" id="validate_users_list">
+  <% @columns.each do |column| %>
+  <th>
+    <%=h User.human_attribute_name(column) %>
+  </th>
+  <% end %>
+  <th>
+    <%= t('.title_of_status') %>:
+  </th>
+  <% @invalid_users.each_index do |user_index| %>
+  <% user = @invalid_users[user_index] %>
+  <tr>
+    <% @columns.each_index do |column_index| %>
+    <td>
+      <%= text_field_tag "users_import_invalid_list[#{column_index}][]", user.human_readable_format(@columns[column_index]) %>
+    </td>
+    <% end %>
+    <td>
+      <%=h user.valid? ? t('.status_ok') : user.errors.full_messages.join(", ") %>
+    </td>
+  </tr>
+  <% end %>
+</table>
+
+<%= f.hidden_field :revalidate %>
+<%= f.submit t('link.user_mass_import.revalidate') %>
+
+<% end %>
+<% end %>
+
+<% if !@raw_users.nil? && !@raw_users.empty? %>
+<% number_of_columns = @raw_users.max {|a,b| a.length <=> b.length}.length %>
+
+<% form_for(:user, :url => validate_users_import_path(@school)) do |f| %>
+<%= f.error_messages %>
+
+<p><%= t('.column_info') %></p>
+<table id="users_list">
+  <tr>
+    <% 0.upto(number_of_columns-1) do |index| %>
+    <td>
+      <%= select_tag "users_import_columns[#{index}]", options_for_select(User.import_columns.collect{ |c| [ User.human_attribute_name(c), c]},  @columns.nil? ? "" : @columns[index] ) %>
+    </td>
+    <% end %>
+  </tr>
+  <% user_index = 0 %>
+  <% @raw_users.each do |user| %>
+  <tr>
+    <% index = 0 %>
+    <% 0.upto(number_of_columns-1) do |index| %>
+    <td>
+      <%= text_field_tag "users_import_raw_list[#{index}][]", user[index].to_s.strip, {:id => "users_import_raw_list_#{index}_#{user_index}"} %>
+    </td>
+    <% end %>
+  </tr>
+  <% user_index += 1 %>
+  <% end %>
+</table>
+<p>
+  <%= f.submit t('link.user_mass_import.validate') %>
+</p>
+<% end %>
+<% end %>

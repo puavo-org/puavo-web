@@ -1,0 +1,63 @@
+<p>
+  <b><%= t('activeldap.attributes.group.displayName') %>:</b>
+  <%=h @group.displayName %>
+</p>
+
+<p>
+  <b><%= t('activeldap.attributes.group.cn') %>:</b>
+  <%=h @group.cn %>
+</p>
+
+<p>
+  <b><%= t('activeldap.attributes.group.gidNumber') %>:</b>
+  <%=h @group.gidNumber %>
+</p>
+
+<p>
+  <b><%= t('activeldap.attributes.group.primary_members') %>:</b><br />
+  <span id="primary_members">
+  <% @primary_members.each do |user| %>
+  <%= link_to user.displayName, user_path(@school, user) %>
+  <br />
+  <% end %>
+  </span>
+</p>
+
+<p>
+  <b><%= t('activeldap.attributes.group.members') %>:</b><br />
+  <span id="members">
+  <% @members.each do |user| %>
+  <%= link_to user.displayName, user_path(@school, user) %><br />
+  <% end %>
+  </span>
+</p>
+
+<p>
+  <b><%= t('.roles_and_members') %>:</b><br />
+  <span id="roles_and_members">
+    <% @roles.each do |p| %>
+    <%= p.displayName %>
+    <%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), :method => :put, :id => "remove_role_#{p.id}" %>
+    <ul>
+      <% p.members.each do |m| %>
+      <li><%= m.displayName %></li>
+      <% end %>
+    </ul>
+    <% end %>
+  </span>
+</p>
+
+<p>
+  <b><%= t('.other_roles') %>:</b><br />
+  <span id="other_roles">
+  <% @other_roles.each do |p| %>
+  <%= p.displayName %>
+  <%= link_to t('link.add'), add_role_group_path(@school, @group, p), :method => :put, :id => "add_role_#{p.id}" %>
+  <br />
+  <% end %>
+  </span>
+</p>
+
+
+<%= link_to t('link.edit'), edit_group_path(@school, @group) %> |
+<%= link_to t('link.back'), groups_path %>

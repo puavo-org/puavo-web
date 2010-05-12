@@ -1,0 +1,24 @@
+development:
+  allow_anonymous: false
+  host: localhost
+  base: o=Puavo
+  bind_dn: uid=puavo,o=puavo
+  password: admin
+
+test:
+  host: localhost
+  base: dc=edu,dc=example,dc=org
+  bind_dn: uid=puavo,o=puavo
+  password: admin
+
+cucumber:
+  host: localhost
+  base: o=Puavo
+  bind_dn: uid=puavo,o=puavo
+  password: admin
+
+production:
+  host: localhost
+  base: o=Puavo
+  bind_dn: uid=puavo,o=puavo
+  password: admin

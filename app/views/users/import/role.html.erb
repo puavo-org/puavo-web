@@ -1,0 +1,25 @@
+<h2><%= t('.title') %></h2>
+<% form_for(:user, :url => role_users_import_path(@school), :html => { :method => :put }) do |f| %>
+
+<p><%= t('.help') %>:</p>
+
+<% unless @columns.include?('eduPersonAffiliation') %>
+<p>
+  <%= f.label :eduPersonAffiliation %>:<br />
+  <%= f.select :eduPersonAffiliation,
+[[t('default_select_value'), ""]] +
+  User.eduPersonAffiliation_list.map {|a| [ t('eduPersonAffiliation_' + a), a ] } %>
+</p>
+<% end %>
+
+<% unless @columns.include?('role_name') %>
+<p>
+  <%= f.label :roles %><br />
+  <%= f.select :role_ids,
+  options_for_select([[t('default_select_value'), ""]] + Role.all.collect{ |g| [g.displayName, g.puavoId] })%>
+</p>
+<% end %>
+
+<%= f.submit t('link.continue') %>
+
+<% end %>

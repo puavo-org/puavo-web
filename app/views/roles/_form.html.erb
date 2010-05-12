@@ -1,0 +1,11 @@
+<% form_for(@role, :url => path, :html => { :method => method })  do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :displayName %><br />
+    <%= f.text_field :displayName %>
+  </p>
+  <p>
+    <%= f.submit submit_text %>
+  </p>
+<% end %>

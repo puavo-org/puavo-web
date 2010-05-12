@@ -1,0 +1,89 @@
+#!/usr/bin/env ruby
+require File.expand_path('../../config/boot',  __FILE__)
+require RAILS_ROOT + '/config/environment'
+
+key = ARGV[0]
+if key.nil?
+  puts "Using default organisation configuration"
+  key = "default"
+end
+
+unless organisation = Organisation.find(key)
+  puts "Can't find organisation configuration."
+  exit
+end
+
+print "Organisation owner DN: "
+dn = STDIN.gets.chomp
+print "Password: "
+password = STDIN.gets.chomp
+
+
+default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+# Setting up ldap configuration
+LdapBase.ldap_setup_connection( organisation.ldap_host,
+                                organisation.ldap_base,
+                                dn,
+                                password )
+
+begin
+User.all.each do |u|
+  u.destroy
+end
+Group.all.each do |g|
+  g.destroy
+end
+  School.all.each do |s|
+  s.destroy
+end
+Role.all.each do |p|
+  p.destroy
+end
+
+puts "Create new school:"
+school = School.create!( :cn => 'testschool1',
+                         :displayName => 'Test school 1',
+                         :puavoSchoolAdmin => 'cn=admin,o=puavo')
+
+puts "Create new group:"
+groups = Group.create!( [ { :displayName => 'Test 1', :cn => 'testgroup1', :puavoSchool => school.dn },
+                          { :displayName => 'Test 2', :cn => 'testgroup2', :puavoSchool => school.dn },
+                          { :displayName => 'Test 3', :cn => 'testgroup3', :puavoSchool => school.dn } ] )
+
+puts "Create new roles:"
+roles = Role.create!( [ { :displayName => 'Test role 1', :puavoSchool => school.dn } ] )
+
+puts "Create new users:"
+# FIXME, set password?
+users = User.create!( [ { :givenName => 'Test',
+                          :sn => 'User 1',
+                          :uid => 'testuser1',
+                          :role_name => 'Test role 1',
+                          :eduPersonAffiliation => 'Student',
+                          :new_password => "test",
+                          :new_password_confirmation => "test",
+                          :puavoSchool => school.dn },
+
+                        { :givenName => 'Test',
+                          :sn => 'User 2',
+                          :uid => 'testuser2',
+                          :role_name => 'Test role 1',
+                          :eduPersonAffiliation => 'Student',
+                          :puavoSchool => school.dn },
+
+                        { :givenName => 'Test',
+                          :sn => 'User 3',
+                          :uid => 'testuser3',
+                          :role_name => 'Test role 1',
+                          :eduPersonAffiliation => 'Student',
+                          :puavoSchool => school.dn },
+                      ])
+
+school.puavoSchoolAdmin = Array(school.puavoSchoolAdmin).push users.first.dn
+school.save
+
+rescue ActiveLdap::AuthenticationError
+  puts "Authentication failed!"
+rescue ActiveLdap::ConnectionError
+  puts "Conection error. Check your organisation owner DN value!"
+end

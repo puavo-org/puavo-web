@@ -1,0 +1,188 @@
+fi:
+  default_select_value: Valitse
+  general_confirm: Oletko varma?
+  layouts:
+    application:
+      schools: Koulut
+      school: Koulu
+      logout: Kirjaudu ulos
+      users: Käyttäjät
+      tools: Työkalut
+      logged_in_as: Kirjauduttu sisään käyttäjänä
+  link:
+    edit: Muokkaa
+    back: Takaisin
+    destroy: Poista
+    new_group: Luo uusi ryhmä
+    update: Päivitä
+    create: Luo
+    show: Näytä
+    users: Käyttäjät
+    groups: Ryhmät
+    roles: Roolit
+    add: Lisää
+    remove: Poista
+    new_role: Luo uusi rooli
+    new_user: Lisää uusi käyttäjä
+    user_mass_import:
+      new: Lisää käyttäjiä massa-ajona
+      handle_user_data: Käsittele käyttäjätieto
+      download_pdf: lataa pdf-tiedosto.
+      revalidate: Validoi uudelleen
+      validate: Tarkasta syötetyt tiedot
+    continue: Jatka
+    login: Kirjaudu
+    change_password: Vaihda salasana
+    new_school: Uusi koulu
+  flash:
+    added: "{{item}} luotiin onnistuneesti."
+    updated: "{{item}} päivitettiin onnistuneesti."
+    destroyed: "{{item}} poistettiin onnistuneesti."
+    group:
+      role_added: "Rooli lisättiin ryhmään."
+      role_added_failed: Lisäys epäonnistui.
+      role_removed: Rooli poistettiin ryhmästä.
+      role_removed_failed: Poistaminen epäonnistui.
+    role:
+      group_added: Ryhmä lisättiin rooliin.
+      group_added_failed: Lisäys epäonnistui
+      group_removed: Ryhmä poistettiin roolista.
+      group_remove_failed: Poistaminen epäonnistui.
+    user:
+      save_failed: Käyttäjää ei voitu tallentaa!
+      import:
+        dupplicate_column_name_error: Kahdelle sarakkeelle on valittu sama kenttätieto
+        require_error: Käyttäjälle on syötettävä etu- ja sukunimi
+    password_set_failed: Salasanan vaihto epäonnistui. Yritä uudelleen.
+    session:
+      login_successful: Kirjautuminen onnistui
+      failed: Kirjautuminen epäonnistui!
+      logout_successful: Uloskirjautuminen onnistui!
+    password:
+      successful: Salanananvaihto onnistui!
+      failed: Salasanan vaihto epäonnistui!
+      invalid_login: Vanha tunnus tai salasana eivät täsmää
+      
+  roles:
+    index:
+      actions: Toiminnot
+    show:
+      other_groups: Muut ryhmät
+    new:
+      title: Uusi rooli
+    edit:
+      title: Muokataan roolia
+  users:
+    index:
+      actions: Toiminnot
+    show:
+      user_type_and_role: "Käyttäjän tyyppi on <b>{{user_type}}</b> ja häneen liittyvät seuraavat roolit: 
+<b>{{roles}}</b>"
+      system_information: Järjestelmätietoja
+      group_by_roles: Roolien mukana tulevat ryhmät
+    new:
+      title: Lisää uusi käyttäjä
+    edit:
+      title: Muokataan käyttäjää
+    form:
+      add_email: Lisää sähköpostiosoitteita
+      add_telephone_number: Lisää puhelinnumeroita
+    import:
+      new:
+        title: Lisää käyttäjiä massa-ajona
+        help: "Syötä käyttäjätieto alla olevaan tekstikenttään"
+        example_title: Esimerkki
+        example: "Pekka	Pingviini\nLiisa	Liinus"
+      show:
+        title: "({{count}}) käyttäjää lisättiin onnistuneesti."
+        pdf_info: Voit tulostaa käyttäjälistat paperille
+      role:
+        title: Käyttäjien massalisäys tiedon tarkistus
+        help: Seuraaville kentille tulee määrittää tiedot uusia tunnuksia lisättäessä
+      refine:
+        title: Käyttäjien massalisäys
+        info: Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta "Tarkista uudelleen" -painiketta.
+        title_of_status: Tietojen tarkastuksen tila
+        status_ok: OK
+        column_info: Valitse jokaiselle sarakkeelle sopiva kenttä
+  groups:
+    index:
+      actions: Toiminnot
+    show:
+      roles_and_members: Roolit ja jäsenet
+      other_roles: Muut roolit
+    new:
+      title: Luo uusi ryhmä
+    edit:
+      title: Muokataan ryhmää
+  schools:
+    index:
+      actions: Toiminnot
+      title: Listataan koulut
+    edit:
+      title: Muokataan koulua
+    new:
+      title: Lisää uusi koulu
+    menu:
+      dashboard: Kojetaulu
+  password:
+    edit:
+      title: Käyttäjän salasanan vaihtaminen
+      password: Vanha salasana
+  activeldap:
+    models:
+      group: Ryhmä
+      role: Rooli
+      user: Käyttäjä
+    attributes:
+      role:
+        displayName: "Roolin nimi"
+        members: Jäsenet
+        groups: Jäsenen ryhmät
+      school:
+        cn: "Ryhmän nimi"
+        displayName: "Koulun nimi"
+        puavoSchoolHomePageURL: "Koulun kotisivu"
+        description: "Kuvaus"
+        puavoSchoolNameAbbreviation: "Ryhmän lyhenne"
+        telephoneNumber: "Puhelinnumero"
+        facsimileTelephoneNumber: "Faxin numero"
+        l: "Locality"
+        street: "Katu"
+        postOfficeBox: "Postilokero"
+        postalAddress: "Postiosoite"
+        postalCode: "Postinumero"
+        st: "Maakunta"
+        gidNumber: "Gid-numero"
+      user:
+        displayName: "Nimi"
+        sn: "Sukunimi"
+        givenName: "Etunimi"
+        uid: "Käyttäjätunnus"
+        primary_group: "Ensisijainen ryhmä"
+        homeDirectory: "Kotikansio"
+        uidNumber: "Uid-numero"
+        gidNumber: "Ryhmä"
+        password: "Salasana"
+        mail: "Sähköpostiosoite"
+        telephoneNumber: "Puhelinnumero"
+        eduPersonAffiliation: "Käyttäjätyyppi"
+        role_ids: Rooli
+        role_name: Rooli
+        password: Salasana
+        new_password: Uusi salasana
+        new_password_confirmation: Vahvista uusi salasana
+      group:
+        displayName: "Ryhmän nimi"
+        cn: "Lyhenne"
+        gidNumber: Gid-numero
+        primary_members: Ensisijaiset jäsenet
+        members: Jäsenet
+  eduPersonAffiliation_faculty: Laitos
+  eduPersonAffiliation_student: Opiskelija
+  eduPersonAffiliation_staff: Henkilökunta
+  eduPersonAffiliation_alum: Valmistunut
+  eduPersonAffiliation_member: Jäsen
+  eduPersonAffiliation_affiliate: affiliate
+  eduPersonAffiliation_employee: Työntekijä
+  eduPersonAffiliation_library-walk-in: Vieras

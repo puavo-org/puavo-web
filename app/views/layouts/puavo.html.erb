@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>
+    <% if not @school.nil? %>
+    <%= @school.displayName %>
+    <% elsif session.has_key?(:organisation) %>
+    <%= session[:organisation].name %>
+    <% else %>
+      Oiva
+    <% end %>
+  </title>
+  <%= stylesheet_link_tag 'blueprint/screen.css', :media => 'screen, projection' %>
+  <%= stylesheet_link_tag 'blueprint/print.css', :media => 'print' %>
+  <%= stylesheet_link_tag 'kilohaili-protofish.css' %>
+  <%= stylesheet_link_tag 'navmenu.css' %>
+  <%= stylesheet_link_tag 'kilohaili.css' %>
+   <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="span-16">
+    <ul id="top-menu" class="menu">
+        <% if current_user %>
+            <li><%= link_to "Schools",  schools_path, :class => "sub" %>
+              <ul>
+                <% session[:organisation].schools.each do |school| %>
+                  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
+                <% end %>
+              </ul>
+            </li>
+
+        <% end %>
+      </ul>
+    </div>
+    <div class="span-8 last">
+      <ul id="top-menu" class="menu">                                                                                    
+      <% if current_user %>
+        <li><a href="#"><%= current_user.displayName %></li>
+      <% end %>
+	<li><%= link_to 'LOGOUT', logout_path, :method => :delete %></li>
+      </ul>
+    </div>
+
+    <hr class="space" />
+    <div class="span-24">
+      <% if session[:organisation] %>
+        <% if @school && !@school.id.nil? && controller_name != 'password' %>
+	  <h1><%= @school.displayName %></h1>
+
+	  <div id="navbar">
+            <div id="nav1">
+
+              <ul>
+		<li class="<%= controller_name.match(/schools|groups|roles/) \
+                           ? "page_item current_page_item" \
+                           : "page_item" %>">
+		  <% link_to school_path(@school) do %>
+                  <span>School</span>
+		  <% end %>
+		</li>
+		<li class="<%= controller_name == "users" ? "page_item current_page_item" : "page_item" %>">
+		  <% link_to users_path(@school) do %>
+                  <span>Users</span>
+		  <% end %>
+		</li>
+		<% if @oauth_applications %>
+		<% @oauth_applications.each do |app| %>
+		<li class="page_item"><a href="<%= app.url %>" title="<%= app.name %>"><span><%= app.name %></span></a></li>
+		<% end %>
+		<% end %>
+              </ul>
+            </div>
+	  </div>
+    </div>
+
+    <div class="span-24">
+      <div id="navbar2">&nbsp;
+           <%= render :partial => "#{controller_name}/menu.html.erb" %>
+      </div>
+    </div>
+
+        <% end %>
+      <% end %>
+
+    <hr class="space" />
+
+    <div class="maincontent">
+    <div class="span-17 colborder">
+      <% if flash.has_key?(:notice) %>
+        <% if flash.has_key?(:notice_css_class) %>
+          <p class='<%= flash[:notice_css_class] %>'>
+  	<% else %>
+          <p class="notice">
+	<% end %>
+	<%= flash[:notice] %>
+        </p>
+      <% end %>
+      <%= yield %>
+    </div>
+    
+    <div class="span-6 last">
+
+
+      <%= yield :right %>
+    </div>
+    </div>
+<!--    </div>-->
+
+  </div> <!-- page -->
+
+  <script type="text/javascript" src="/javascripts/prototype.js"></script>
+  <script type="text/javascript" src="/javascripts/protofish.js"></script>
+  <script type="text/javascript">
+		document.observe("dom:loaded", function() {
+			new ProtoFish("top-menu", "200", "hover", false, true, true);
+		});
+  </script>
+
+</body>
+</html>

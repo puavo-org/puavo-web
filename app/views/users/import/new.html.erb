@@ -1,0 +1,20 @@
+<h2><%= t('.title') %></h2>
+
+<% form_for(:users_import, :url => validate_users_import_path(@school), :html => { :multipart => true, :method => :post } ) do %>
+<p>
+  <%= t('.help') %>
+  <p>
+    <p>
+      <%= t('.example_title')%>:
+      <pre>
+<%= t('.example') %>
+      </pre>
+    </p>
+    <%= text_area_tag "users_csv_list", nil, :rows => 20, :cols => 100 %>
+  </p>
+
+  <p>
+    <%= submit_tag t('link.user_mass_import.handle_user_data') %>
+  </p>
+
+  <% end %>

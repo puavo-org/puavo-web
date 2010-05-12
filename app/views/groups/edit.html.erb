@@ -1,0 +1,10 @@
+<h1><%= t('.title') %></h1>
+
+<%= render :partial => 'form',
+ :locals => { :path => group_path(@school, @group),
+  :method => :put,
+  :submit_text => t('link.update')
+} %>
+
+<%= link_to t('link.show'), group_path(@school, @group) %> |
+<%= link_to t('link.back'), groups_path %>

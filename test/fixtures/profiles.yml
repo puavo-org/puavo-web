@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  cn: MyString
+  gidNumber: 1
+
+two:
+  cn: MyString
+  gidNumber: 1

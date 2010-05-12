@@ -1,0 +1,18 @@
+<table class="list">
+  <tr>
+    <th><%= t('activeldap.attributes.role.displayName') %></th>
+    <th colspan="2"><%= t('.actions') %></th>
+  </tr>
+
+<% @roles.each do |role| %>
+  <tr>
+    <td><%= link_to role.displayName, role_path(@school, role) %></td>
+    <td><%= link_to t('link.edit'), edit_role_path(@school, role) %></td>
+    <td><%= link_to t('link.destroy'), role_path(@school, role), :confirm => t('general_confirm'), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to t('link.new_role'), new_role_path %>

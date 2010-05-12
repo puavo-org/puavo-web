@@ -1,0 +1,23 @@
+<table class="list">
+  <tr>
+    <th><%= t('activeldap.attributes.user.displayName') %></th>
+    <th><%= t('activeldap.attributes.user.uid') %></th>
+    <th><%= t('activeldap.attributes.user.eduPersonAffiliation') %></th>
+    <th colspan="2"><%= t('.actions') %></th>
+  </tr>
+
+<% @users.each do |user| %>
+  <tr>
+    <td><%= link_to user.displayName, user_path(@school, user) %></td>
+    <td><%=h user.uid %></td>
+    <td><%=h user.eduPersonAffiliation %></td>
+    <td><%= link_to t('link.edit'), edit_user_path(@school, user) %></td>
+    <td><%= link_to t('link.destroy'), user_path(@school, user), :confirm => t('general_confirm'), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<% content_for :right do %>
+<%= link_to t('link.new_user'), new_user_path %><br />
+<%= link_to t('link.user_mass_import.new'), new_users_import_path %><br />
+<% end %>

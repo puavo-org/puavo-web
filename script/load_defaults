@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require File.expand_path('../../config/boot',  __FILE__)
+require RAILS_ROOT + '/config/environment'
+require 'declarative_authorization/maintenance.rb'
+Authorization::Maintenance.without_access_control do
+  puts "Create default organisation"
+  organisation = Organisation.create(:name => "default", :host => "*")
+  
+  puts "Create default user:"
+  puts "\tlogin: admin"
+  puts "\tpassword: admin123"
+  User.create(:login => "admin",
+              :password => "admin123",
+              :password_confirmation => "admin123",
+              :given_names => "Admin",
+              :lastname => "Admin",
+              :organisation_id => organisation.id )
+end
+
