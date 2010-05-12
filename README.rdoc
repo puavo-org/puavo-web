@@ -1,0 +1,13 @@
+== Puavo Users
+
+Puavo Users - the easiest user management tool for educational sector and linux environment.
+
+== License
+
+== Installation
+
+Puavo User is a Ruby On Rails application...
+
+--
+Opinsys Oy
+http://www.puavo.org
