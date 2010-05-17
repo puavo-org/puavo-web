@@ -1,4 +1,8 @@
 fi:
+  create_organisation_owner:
+    school_name: Hallinto
+    role_name: Ylläpito
+    group_name: Ylläpito
   default_select_value: Valitse
   general_confirm: Oletko varma?
   layouts:

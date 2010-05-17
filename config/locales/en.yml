@@ -1,4 +1,8 @@
 en:
+  create_organisation_owner:
+    school_name: Administration
+    role_name: Maintenance
+    group_name: Maintenance
   default_select_value: Select
   general_confirm: Are you sure?
   layouts:

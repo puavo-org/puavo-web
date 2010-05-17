@@ -13,13 +13,17 @@ unless organisation = Organisation.find(key)
   exit
 end
 
-puts "Create organisation owner..."
+I18n.locale = organisation.value_by_key('locale')
+
+puts "Create a new owner of the organisation"
 puts "Organisation: " + organisation.name.to_s
 
 print "Bind DN: "
 dn = STDIN.gets.chomp
 print "Password: "
+system('stty','-echo');
 password = STDIN.gets.chomp
+system('stty','echo');
 
 default_ldap_configuration = ActiveLdap::Base.ensure_configuration
 # Setting up ldap configuration
@@ -30,21 +34,22 @@ LdapBase.ldap_setup_connection( organisation.ldap_host,
 # School
 school = School.first
 puts "\nCreate new school"
-print "School name: "
-school_name = STDIN.gets.chomp
+school_name = I18n.t('create_organisation_owner.school_name')
+puts "School name: #{school_name}" 
 school = School.create!( :displayName => school_name,
-                        :cn => school_name.downcase.gsub(/[^a-z0-9]/, "") )
+                         :cn => school_name.downcase.gsub(/[^a-z0-9]/, "") )
 
 # Role
 puts "Create new role"
-print "Role name: "
-role = Role.create!( :displayName => STDIN.gets.chomp,
+role_name = I18n.t('create_organisation_owner.role_name')
+puts "Role name: #{role_name}"
+role = Role.create!( :displayName => role_name,
                     :puavoSchool => school.dn )
 
 # Group
 puts "Create new group"
-print "Group name: "
-group_name = STDIN.gets.chomp
+group_name = I18n.t('create_organisation_owner.group_name')
+puts "Group name: #{group_name}"
 group = Group.create!( :displayName => group_name,
                       :cn => group_name.downcase.gsub(/[^a-z0-9]/, ""),
                       :puavoSchool => school.dn )
@@ -59,10 +64,12 @@ print "Surname: "
 surname = STDIN.gets.chomp
 print "Username: "
 username = STDIN.gets.chomp
+system('stty','-echo');
 print "Password: "
 password = STDIN.gets.chomp
-print "Password confirmation: "
+print "\nPassword confirmation: "
 password_confirmation = STDIN.gets.chomp
+system('stty','echo');
 
 user = User.new
 
@@ -77,7 +84,7 @@ user.puavoSchool = school.dn
 user.eduPersonAffiliation = "staff"
 user.save!
 
-puts "Sets the user (#{user.uid}) as the owner of the organisation"
+puts "\nSets the user (#{user.uid}) as the owner of the organisation"
 ldap_organisation = LdapOrganisation.first
 ldap_organisation.owner = Array(ldap_organisation.owner).push user.dn
 ldap_organisation.save
