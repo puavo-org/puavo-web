@@ -38,11 +38,11 @@ MIT kerberos support is provided by smbkrb5pwd overlay that is not part OpenLDAP
 
 To get started easily, these steps are needed:
 
-# Install Ubuntu 10.04 server (preferably 64-bit version)
-# Get the sources for puavo-users using git
-# {Setup the database}[https://github.com/opinsys/puavo-users/wikis/database-setup]
-# {Configure Puavo server}[https://github.com/opinsys/puavo-users/wikis/installation-instructions]
-# Run the server
+1. Install Ubuntu 10.04 server (preferably 64-bit version)
+2. Get the sources for puavo-users using git
+3. {Setup the database}[https://github.com/opinsys/puavo-users/wikis/database-setup]
+4. {Configure Puavo server}[https://github.com/opinsys/puavo-users/wikis/installation-instructions]
+5. Run the server
 
 == Future
 
@@ -58,4 +58,4 @@ What needs to be done:
 
 == License
 
-Puavo-users has been developed by {Opinsys Oy}[http://www.opinsys.fi/] and is distributed under GPLv2 or newer. Some of the used libraries and components use different licenses:
+Puavo-users has been developed by {Opinsys Oy}[http://www.opinsys.fi/] and is distributed under GPLv2 or newer
