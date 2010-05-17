@@ -1,13 +1,61 @@
-== Puavo Users
+== Overview
 
-Puavo Users - the easiest user management tool for educational sector and linux environment.
+Puavo-users is a user management tool for schools using linux based computer systems. The goals are ease of use, integration with existing applications used in schools and security.
+
+== Features
+
+The main features of Puavo user management tool are:
+
+* Easy to use - users need no knowledge of LDAP
+* LDAP, samba and kerberos password syncing with [[smbkrb5pwd]] - passwords can be changed from any application
+* Support for multiple organisations and ldap databases using single installation
+* LDAP connections using user accounts - no root password in web server configuration
+* Covered by tests - making sure that nothing breaks when doing changes
+
+== Data model
+
+Puavo's group model is non-traditional as one cannot add users directly in system groups, but in roles instead. Roles act as a layer between system groups and users. Roles can have multiple groups and when roles are added to user, user becomes a member of all the groups that belong to the added roles. When user roles are set correctly, one can add easily new system groups in roles making system administrators life a breeze. Admins in schools need no knowledge of system groups needed e.g. for file system or printing.
+
+The data model in Puavo is structured like this:
+
+* Organisations
+* Schools
+* Roles
+* Groups
+* Users
+
+Organisations have owners that have rights to add and modify all schools. Every school has administrator users who have rights to modify users within the school.
+
+Puavo-users supports multiple organisations in multiple ldap databases. The correct domain is determined from the domain name of the http request. Also multiple https domains are supported.
+
+== Components
+
+Puavo-users is built using Ruby on Rails and is designed to be used with {OpenLDAP}[http://www.openldap.org/] and {MIT kerberos}[http://web.mit.edu/Kerberos/]. Using Heimdal kerberos implementation should also be possible with little work. Development has been done on Ubuntu 10.04 and installation instructions are written for it. There should be no reason why it wouldn't work in other environments, though.
+
+MIT kerberos support is provided by smbkrb5pwd overlay that is not part OpenLDAP package, but is available from this repository. smbkrb5pwd intercepts LDAP password change requests and changes ldap, samba and kerberos passwords with a single request. Working MIT kerberos setup with kadmind is required for this to work as the password is changed by contacting kadmind. There are pre-compiled binaries available for Ubuntu 10.04 in {Opinsys's PPA in Launchpad}[https://launchpad.net/~opinsys/+archive/ppa]. See installation instructions for [[smbkrb5pwd]] for more information.
+
+== Get started
+
+To get started easily, these steps are needed:
+
+# Install Ubuntu 10.04 server (preferably 64-bit version)
+# Get the sources for puavo-users using git
+# [[Database setup|Setup the database]]
+# [[Installation instructions|Configure Puavo server]]
+# Run the server
+
+== Future
+
+What needs to be done:
+
+* authentication support for web applications (Moodle, Mediawiki, Wordpress, Google Apps, etc..)
+* finish samba support
+* command line tools
+* device support
+* password quality checks
+* fix error messages and improve user interface
+* tools to move users between schools
 
 == License
 
-== Installation
-
-Puavo User is a Ruby On Rails application...
-
---
-Opinsys Oy
-http://www.puavo.org
+Puavo-users has been developed by {Opinsys Oy}[http://www.opinsys.fi/] and is distributed under GPLv2 or newer. Some of the used libraries and components use different licenses:
