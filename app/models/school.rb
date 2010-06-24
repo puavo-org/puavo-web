@@ -1,14 +1,14 @@
 class School < ActiveLdap::Base
-  ldap_mapping( :dn_attribute => Iivari.configurations['school']['dn_attribute'],
-                :prefix => Iivari.configurations['school']['prefix'],
-                :classes => Iivari.configurations['school']['classes'] )
+  ldap_mapping( :dn_attribute => Puavo.configurations['school']['dn_attribute'],
+                :prefix => Puavo.configurations['school']['prefix'],
+                :classes => Puavo.configurations['school']['classes'] )
 
   def method_missing(*args)
     begin
       super
     rescue
-      if Iivari.configurations['school']['attributes'][args.first.to_s]
-        self.send(Iivari.configurations['school']['attributes'][args.first.to_s])
+      if Puavo.configurations['school']['attributes'][args.first.to_s]
+        self.send(Puavo.configurations['school']['attributes'][args.first.to_s])
       else
         super
       end
