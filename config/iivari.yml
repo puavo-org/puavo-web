@@ -1,0 +1,10 @@
+school:
+  prefix: ou=Groups
+  classes:
+  - top
+  - posixGroup
+  - puavoSchool
+  - sambaGroupMapping
+  dn_attribute: "puavoId"
+  attributes:
+    name: displayName
