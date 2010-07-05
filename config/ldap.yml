@@ -1,6 +1,6 @@
 development:
-  host: 10.246.131.55
-  base: dc=edu,dc=kunta2,dc=fi
+  host: 10.246.114.41
+  base: dc=edu,dc=kunta1,dc=fi
   bind_dn: uid=admin,o=puavo
   password: npq5Drx2c9dAt9Dw
 
