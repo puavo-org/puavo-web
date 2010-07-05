@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :automounts
+
   map.resources :workstations
 
   map.resources :serves
