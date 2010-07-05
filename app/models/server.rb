@@ -3,6 +3,10 @@ class Server < ActiveLdap::Base
                 :prefix => "ou=Hosts",
                 :classes => ['top', 'device', 'ipHost', 'puppetClient', 'puavoServer'] )
 
+  has_many( :automounts, :class_name => 'Automount',
+            :primary_key => 'dn',
+            :foreign_key => 'puavoServer' )
+  
   before_validation :set_puavo_id
 
   def id

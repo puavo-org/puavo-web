@@ -1,4 +1,7 @@
 class AutomountsController < ApplicationController
+
+  before_filter :find_server
+
   # GET /automounts
   # GET /automounts.xml
   def index
@@ -25,6 +28,8 @@ class AutomountsController < ApplicationController
   # GET /automounts/new.xml
   def new
     @automount = Automount.new
+    # @automount = Automount.new(:puavoServer => @server.dn)
+    # @automount = @server.automounts.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -41,11 +46,12 @@ class AutomountsController < ApplicationController
   # POST /automounts.xml
   def create
     @automount = Automount.new(params[:automount])
+    @automount.puavoServer = @server.dn
 
     respond_to do |format|
       if @automount.save
         flash[:notice] = 'Automount was successfully created.'
-        format.html { redirect_to(@automount) }
+        format.html { redirect_to([@server, @automount]) }
         format.xml  { render :xml => @automount, :status => :created, :location => @automount }
       else
         format.html { render :action => "new" }
@@ -78,8 +84,14 @@ class AutomountsController < ApplicationController
     @automount.destroy
 
     respond_to do |format|
-      format.html { redirect_to(automounts_url) }
+      format.html { redirect_to(server_automounts_url(@server)) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def find_server
+    @server = Server.find(params[:server_id])
   end
 end

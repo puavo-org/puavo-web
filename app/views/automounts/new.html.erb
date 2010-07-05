@@ -1,6 +1,6 @@
 <h1>New automount</h1>
 
-<% form_for(@automount) do |f| %>
+<% form_for([@server, @automount]) do |f| %>
   <%= f.error_messages %>
 
   <p>
@@ -12,4 +12,4 @@
   </p>
 <% end %>
 
-<%= link_to 'Back', automounts_path %>
+<%= link_to 'Back', server_automounts_path %>

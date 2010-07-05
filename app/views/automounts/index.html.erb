@@ -8,13 +8,14 @@
 <% @automounts.each do |automount| %>
   <tr>
     <td><%=h automount.cn %></td>
-    <td><%= link_to 'Show', automount %></td>
-    <td><%= link_to 'Edit', edit_automount_path(automount) %></td>
-    <td><%= link_to 'Destroy', automount, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Show', server_automount_path(@server, automount) %></td>
+    <td><%= link_to 'Edit', edit_server_automount_path(@server, automount) %></td>
+    <td><%= link_to 'Destroy', server_automount_path(@server, automount), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New automount', new_automount_path %>
+<%= link_to 'Back', @server %> |
+<%= link_to 'New automount', new_server_automount_path(@server) %>

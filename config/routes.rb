@@ -1,11 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :automounts
-
   map.resources :workstations
 
-  map.resources :serves
-
-  map.resources :servers
+  map.resources :servers, :has_many => :automounts
 
   # The priority is based upon order of creation: first created -> highest priority.
 

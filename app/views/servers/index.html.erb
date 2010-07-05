@@ -10,6 +10,7 @@
   <tr>
     <td><%=h server.cn %></td>
     <td><%=h server.ipHostNumber %></td>
+    <td><%= link_to 'Automounts', server_automounts_path(server) %></td>
     <td><%= link_to 'Show', server %></td>
     <td><%= link_to 'Edit', edit_server_path(server) %></td>
     <td><%= link_to 'Destroy', server, :confirm => 'Are you sure?', :method => :delete %></td>
