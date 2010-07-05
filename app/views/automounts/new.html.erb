@@ -1,0 +1,15 @@
+<h1>New automount</h1>
+
+<% form_for(@automount) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :cn %><br />
+    <%= f.text_field :cn %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', automounts_path %>
