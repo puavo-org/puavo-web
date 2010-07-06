@@ -18,7 +18,6 @@ class Automount < ActiveLdap::Base
 
   def set_special_ldap_value
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
-    self.automountInformation = "-fstype=nfs4,rw,sec=krb5 #{self.server.ipHostNumber}:/home/#{self.cn}"
+    self.automountInformation = "-fstype=nfs4,rw,sec=krb5 #{self.server.full_hostname}:#{self.cn}"
   end
-
 end

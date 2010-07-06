@@ -68,7 +68,7 @@ class AutomountsController < ApplicationController
     respond_to do |format|
       if @automount.update_attributes(params[:automount])
         flash[:notice] = 'Automount was successfully updated.'
-        format.html { redirect_to(@automount) }
+        format.html { redirect_to([@server, @automount]) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

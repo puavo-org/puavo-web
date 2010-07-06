@@ -13,6 +13,10 @@ class Server < ActiveLdap::Base
     self.puavoId.to_s unless self.puavoId.nil?
   end
 
+  def full_hostname
+    "#{self.cn}.#{LdapBase.first.puavoDomain}"
+  end
+
   private
 
   def set_puavo_id
