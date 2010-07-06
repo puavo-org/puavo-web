@@ -1,0 +1,20 @@
+<h1>Editing terminal</h1>
+
+<% form_for(@terminal) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :cn %><br />
+    <%= f.text_field :cn %>
+  </p>
+  <p>
+    <%= f.label :ipHostNumber %><br />
+    <%= f.text_field :ipHostNumber %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @terminal %> |
+<%= link_to 'Back', terminals_path %>
