@@ -1,6 +1,6 @@
 class Automount < ActiveLdap::Base
   ldap_mapping( :dn_attribute => "puavoId",
-                :prefix => "ou=auto.master,ou=Automount",
+                :prefix => "ou=auto.direct,ou=Automount",
                 :classes => ['top', 'automount', 'puavoShare'] )
 
   belongs_to( :server, :class_name => 'Server',
