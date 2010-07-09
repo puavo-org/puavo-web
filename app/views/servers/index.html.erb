@@ -2,14 +2,12 @@
 
 <table>
   <tr>
-    <th>Cn</th>
-    <th>Iphostnumber</th>
+    <th>puavoHostname</th>
   </tr>
 
 <% @servers.each do |server| %>
   <tr>
-    <td><%=h server.cn %></td>
-    <td><%=h server.ipHostNumber %></td>
+    <td><%=h server.puavoHostname %></td>
     <td><%= link_to 'Automounts', server_automounts_path(server) %></td>
     <td><%= link_to 'Show', server %></td>
     <td><%= link_to 'Edit', edit_server_path(server) %></td>

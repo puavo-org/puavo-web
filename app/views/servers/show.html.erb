@@ -1,13 +1,67 @@
 <p>
-  <b>Cn:</b>
-  <%=h @server.cn %>
+  <b>Puavohostname:</b>
+  <%=h @server.puavoHostname %>
 </p>
 
 <p>
-  <b>Iphostnumber:</b>
-  <%=h @server.ipHostNumber %>
+  <b>Macaddress:</b>
+  <%=h @server.macAddress %>
 </p>
 
+<p>
+  <b>Serialnumber:</b>
+  <%=h @server.serialNumber %>
+</p>
+
+<p>
+  <b>Puavodevicemanufacturer:</b>
+  <%=h @server.puavoDeviceManufacturer %>
+</p>
+
+<p>
+  <b>Puavodevicemodel:</b>
+  <%=h @server.puavoDeviceModel %>
+</p>
+
+<p>
+  <b>Puavodeviceprimaryuser:</b>
+  <%=h @server.puavoDevicePrimaryUser %>
+</p>
+
+<p>
+  <b>Jpegphoto:</b>
+  <%=h @server.jpegPhoto %>
+</p>
+
+<p>
+  <b>Puavolatitude:</b>
+  <%=h @server.puavoLatitude %>
+</p>
+
+<p>
+  <b>Puavolongitude:</b>
+  <%=h @server.puavoLongitude %>
+</p>
+
+<p>
+  <b>Puavolocationname:</b>
+  <%=h @server.puavoLocationName %>
+</p>
+
+<p>
+  <b>Puavorole:</b>
+  < %=h @server.puavoRole % >
+</p>
+
+<p>
+  <b>Puavodevicestatus:</b>
+  <%=h @server.puavoDeviceStatus %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @server.description %>
+</p>
 
 <%= link_to 'Automounts', server_automounts_path(@server) %> |
 <%= link_to 'Edit', edit_server_path(@server) %> |

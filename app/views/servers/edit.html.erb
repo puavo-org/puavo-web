@@ -1,20 +1,6 @@
 <h1>Editing server</h1>
 
-<% form_for(@server) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :cn %><br />
-    <%= f.text_field :cn %>
-  </p>
-  <p>
-    <%= f.label :ipHostNumber %><br />
-    <%= f.text_field :ipHostNumber %>
-  </p>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
-<% end %>
+<%= render :partial => 'form' %>
 
 <%= link_to 'Show', @server %> |
 <%= link_to 'Back', servers_path %>

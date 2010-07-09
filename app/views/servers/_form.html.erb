@@ -1,0 +1,60 @@
+<% form_for(@server) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :puavoHostname %><br />
+    <%= f.text_field :puavoHostname %>
+  </p>
+  <p>
+    <%= f.label :macAddress %><br />
+    <%= f.text_field :macAddress %>
+  </p>
+  <p>
+    <%= f.label :serialNumber %><br />
+    <%= f.text_field :serialNumber %>
+  </p>
+  <p>
+    <%= f.label :puavoDeviceManufacturer %><br />
+    <%= f.text_field :puavoDeviceManufacturer %>
+  </p>
+  <p>
+    <%= f.label :puavoDeviceModel %><br />
+    <%= f.text_field :puavoDeviceModel %>
+  </p>
+  <p>
+    <%= f.label :puavoDevicePrimaryUser %><br />
+    <%= f.text_field :puavoDevicePrimaryUser %>
+  </p>
+  <p>
+    <%= f.label :jpegPhoto %><br />
+    <%= f.text_field :jpegPhoto %>
+  </p>
+  <p>
+    <%= f.label :puavoLatitude %><br />
+    <%= f.text_field :puavoLatitude %>
+  </p>
+  <p>
+    <%= f.label :puavoLongitude %><br />
+    <%= f.text_field :puavoLongitude %>
+  </p>
+  <p>
+    <%= f.label :puavoLocationName %><br />
+    <%= f.text_field :puavoLocationName %>
+  </p>
+  <p>
+    < %= f.label :puavoRole % ><br />
+    < %= f.text_field :puavoRole % >
+  </p>
+  <p>
+    <%= f.label :puavoDeviceStatus %><br />
+    <%= f.text_field :puavoDeviceStatus %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </p>
+
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
