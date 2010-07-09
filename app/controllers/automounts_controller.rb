@@ -5,7 +5,7 @@ class AutomountsController < ApplicationController
   # GET /automounts
   # GET /automounts.xml
   def index
-    @automounts = Automount.all
+    @automounts = @server.automounts
 
     respond_to do |format|
       format.html # index.html.erb
@@ -28,8 +28,6 @@ class AutomountsController < ApplicationController
   # GET /automounts/new.xml
   def new
     @automount = Automount.new
-    # @automount = Automount.new(:puavoServer => @server.dn)
-    # @automount = @server.automounts.build
 
     respond_to do |format|
       format.html # new.html.erb
