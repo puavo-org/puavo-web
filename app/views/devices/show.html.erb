@@ -1,0 +1,67 @@
+<p>
+  <b>Puavohostname:</b>
+  <%=h @device.puavoHostname %>
+</p>
+
+<p>
+  <b>Macaddress:</b>
+  <%=h @device.macAddress %>
+</p>
+
+<p>
+  <b>Serialnumber:</b>
+  <%=h @device.serialNumber %>
+</p>
+
+<p>
+  <b>Puavodevicemanufacturer:</b>
+  <%=h @device.puavoDeviceManufacturer %>
+</p>
+
+<p>
+  <b>Puavodevicemodel:</b>
+  <%=h @device.puavoDeviceModel %>
+</p>
+
+<p>
+  <b>Puavodeviceprimaryuser:</b>
+  <%=h @device.puavoDevicePrimaryUser %>
+</p>
+
+<p>
+  <b>Jpegphoto:</b>
+  <%=h @device.jpegPhoto %>
+</p>
+
+<p>
+  <b>Puavolatitude:</b>
+  <%=h @device.puavoLatitude %>
+</p>
+
+<p>
+  <b>Puavolongitude:</b>
+  <%=h @device.puavoLongitude %>
+</p>
+
+<p>
+  <b>Puavolocationname:</b>
+  <%=h @device.puavoLocationName %>
+</p>
+
+<p>
+  <b>Puavorole:</b>
+  < %=h @device.puavoRole % >
+</p>
+
+<p>
+  <b>Puavodevicestatus:</b>
+  <%=h @device.puavoDeviceStatus %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @device.description %>
+</p>
+
+<%= link_to 'Edit', edit_device_path(@device) %> |
+<%= link_to 'Back', devices_path %>
