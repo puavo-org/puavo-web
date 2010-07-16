@@ -29,6 +29,7 @@ class ServersController < ApplicationController
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @server }
+      format.json
     end
   end
 
@@ -47,9 +48,11 @@ class ServersController < ApplicationController
         flash[:notice] = 'Server was successfully created.'
         format.html { redirect_to(@server) }
         format.xml  { render :xml => @server, :status => :created, :location => @server }
+        format.json  { render :json => @server, :status => :created, :location => @server }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @server.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @server.errors, :status => :unprocessable_entity }
       end
     end
   end

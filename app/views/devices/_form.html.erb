@@ -2,6 +2,11 @@
   <%= f.error_messages %>
 
   <p>
+    <%= f.label :classes %><br />
+    <%= classes(@device) %>
+  </p>
+
+  <p>
     <%= f.label :puavoHostname %><br />
     <%= f.text_field :puavoHostname %>
   </p>

@@ -2,13 +2,8 @@
   <%= f.error_messages %>
 
   <p>
-    <div>Select device roles</div>
-    <% @roles.each do |r| %>
-    <div>
-      <label><input<%= @device.classes.include?(r) ? ' checked="checked"' : "" %> id="role_<%= r %>" name="device[role][]" type="checkbox" value="<%= r %>" /><%=h r %></label>
-  </div>
-    <% end %>
-
+    <%= f.label :classes %><br />
+    <%= classes(@device) %>
   </p>
 
   <p>

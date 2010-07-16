@@ -6,8 +6,17 @@ class Device < ActiveLdap::Base
 
   before_validation :set_puavo_id
 
+  def self.roles
+    ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter']
+  end
+
   def id
     self.puavoId.to_s if attribute_names.include?("puavoId") && !self.puavoId.nil?
+  end
+
+  def classes=(*args)
+    args += ['top', 'device']
+    super(args)
   end
 
   private

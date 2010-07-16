@@ -12,29 +12,32 @@ class DevicesController < ApplicationController
 
   # GET /devices/1
   # GET /devices/1.xml
+  # GET /devices/1.json
   def show
     @device = Device.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }
+      format.json  { render :json => @device }
     end
   end
 
   # GET /devices/new
   # GET /devices/new.xml
+  # GET /devices/new.json
   def new
-    @roles = ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter']
     @device = Device.new
 
     respond_to do |format|
       unless params[:device]
         format.html {  render :partial => 'device_role' }
+        format.json {  render :partial => 'device_role' }
       else
-        device_roles = @roles.inject([]) { |result,r| params[:device][:role].include?(r) ? (result.push r) : result }
-        @device.add_class(device_roles) unless device_roles.empty?
+        @device.add_class(params[:device][:classes])
         format.html # new.html.erb
         format.xml  { render :xml => @device }
+        format.json
       end
     end
   end
@@ -46,6 +49,7 @@ class DevicesController < ApplicationController
 
   # POST /devices
   # POST /devices.xml
+  # POST /devices.json
   def create
     @device = Device.new( { :objectClass => 'puavoNetbootDevice' }.merge( params[:device] ))
     @device.puavoSchool = "puavoId=1,ou=Groups,dc=edu,dc=kunta1,dc=fi" # School.first.dn
@@ -54,9 +58,11 @@ class DevicesController < ApplicationController
       if @device.save
         format.html { redirect_to(@device, :notice => 'Device was successfully created.') }
         format.xml  { render :xml => @device, :status => :created, :location => @device }
+        format.json  { render :json => @device, :status => :created, :location => @device }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @device.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @device.errors, :status => :unprocessable_entity }
       end
     end
   end

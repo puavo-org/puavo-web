@@ -3,3 +3,26 @@
 
 en:
   hello: "Hello world"
+  activeldap:
+    attributes:
+      server:
+        cn: Server name
+        ipHostNumber: IP address
+      device:
+        puavoHostname: Hostname
+        macAddress: Mac address
+        serialNumber: Serial number
+        puavoDeviceManufacturer: Device manufacture
+        puavoDeviceModel: Device model
+        puavoDevicePrimaryUser: Device primary user
+        puavoLatitude: Latitude
+        puavoLongitude: Longitude
+        puavoLocationName: Location name
+        puavoDeviceStatus: Status
+        description: Description
+    values:
+      device:
+        roles:
+          puavoNetbootDevice: Netboot
+          puavoLocalbootDevice: Localboot
+          puavoPrinter: Printer

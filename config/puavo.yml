@@ -5,6 +5,6 @@ school:
   - posixGroup
   - puavoSchool
   - sambaGroupMapping
-  dn_attribute: "puavoId"
+  dn_attribute: puavoId
   attributes:
     name: displayName
