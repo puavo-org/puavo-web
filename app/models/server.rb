@@ -9,6 +9,12 @@ class Server < ActiveLdap::Base
 
   before_validation :set_puavo_id
 
+  def validate
+    unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
+      errors.add "server[puavoHostname]", "Hostname must be unique"
+    end
+  end
+
   def full_hostname
     "#{self.puavoHostname}.#{LdapBase.first.puavoDomain}"
   end

@@ -6,6 +6,12 @@ class Device < ActiveLdap::Base
 
   before_validation :set_puavo_id
 
+  def validate
+    unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
+      errors.add "device[puavoHostname]", "Hostname must be unique"
+    end
+  end
+
   def self.roles
     ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter']
   end
