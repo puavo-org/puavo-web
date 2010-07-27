@@ -2,11 +2,11 @@
 
 # Your secret key for verifying cookie session data integrity.
 # If you change this key, all old sessions will become invalid!
-# Make sure the secret is at least 30 characters and all random, 
+# Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
 ActionController::Base.session = {
-  :key         => '_puavo-devices_session',
-  :secret      => '1309e8fd59bc737aa4afc564da7582842dd122f33aa9336be6a63aa043ade55e87a05bf83aa987154d2752dfb6b13beda06eac19715da429fbbb23db09b765b9'
+  :key         => '_puavo_session',
+  :secret      => '57fd0fc97fd03b46e42cc7de38ff572a79ca946b08eb4a2606d1b21496bb5d016eeaf4b18691c40312a3cda13c1c9e1f940c00a0e8adc0cafde79f428ebbdf54'
 }
 
 # Use the database for sessions instead of the cookie-based default,
