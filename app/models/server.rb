@@ -17,7 +17,7 @@ class Server < LdapBase
   end
 
   def full_hostname
-    "#{self.puavoHostname}.#{LdapBase.first.puavoDomain}"
+    "#{self.puavoHostname}.#{LdapOrganisation.first.puavoDomain}"
   end
 
   def id
