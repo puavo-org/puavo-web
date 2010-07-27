@@ -1,4 +1,4 @@
-class Device < ActiveLdap::Base
+class Device < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Devices,ou=Hosts",
                 :classes => ['top', 'device'] )

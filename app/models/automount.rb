@@ -1,4 +1,4 @@
-class Automount < ActiveLdap::Base
+class Automount < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=auto.direct,ou=Automount",
                 :classes => ['top', 'automount', 'puavoShare'] )

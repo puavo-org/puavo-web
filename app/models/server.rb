@@ -1,4 +1,4 @@
-class Server < ActiveLdap::Base
+class Server < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Servers,ou=Hosts",
                 :classes => ['top', 'device', 'puppetClient', 'puavoServer'] )
@@ -11,6 +11,7 @@ class Server < ActiveLdap::Base
 
   def validate
     unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
+      # FIXME: localziation
       errors.add "server[puavoHostname]", "Hostname must be unique"
     end
   end
