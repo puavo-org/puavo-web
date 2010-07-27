@@ -6,8 +6,9 @@ class Device < ActiveLdap::Base
 
   before_validation :set_puavo_id
 
-  def validate
+  def validate_on_create
     unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
+      # FIXME: localziation
       errors.add "device[puavoHostname]", "Hostname must be unique"
     end
   end
