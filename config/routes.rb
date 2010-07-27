@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :sessions
+
   map.resources :hosts, :only => [:index]
 
   map.resources :devices, :path_prefix => ':school_id'
@@ -8,6 +10,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :workstations
 
   map.resources :servers, :has_many => :automounts
+
+  map.login '/login', :controller => 'sessions', :action => 'new'
+  map.logout '/logout', :controller => 'sessions', :action => 'destroy'
 
   # The priority is based upon order of creation: first created -> highest priority.
 
