@@ -56,7 +56,7 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if @device.save
-        format.html { redirect_to(@device, :notice => 'Device was successfully created.') }
+        format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully created.') }
         format.xml  { render :xml => @device, :status => :created, :location => @device }
         format.json  { render :json => @device, :status => :created, :location => @device }
       else
@@ -74,7 +74,7 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if @device.update_attributes(params[:device])
-        format.html { redirect_to(@device, :notice => 'Device was successfully updated.') }
+        format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

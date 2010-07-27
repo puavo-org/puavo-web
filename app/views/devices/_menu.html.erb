@@ -1,0 +1,4 @@
+<ul>
+  <li <%= controller_name == "devices" ? "class='current'" : "" %>><%= link_to t('link.devices'), devices_path(@school) %></li>
+  <li <%= controller_name == "servers" ? "class='current'" : "" %>><%= link_to t('link.servers'), servers_path %></li>
+</ul>

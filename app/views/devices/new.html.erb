@@ -1,5 +1,11 @@
 <h1>New device</h1>
 
-<%= render :partial => 'form' %>
+<%= render :partial => 'form',
+ :locals => {
+  :path => devices_path(@school),
+  :submit_text => t('link.create'),
+  :method => :post
+}
+%>
 
 <%= link_to 'Back', devices_path %>

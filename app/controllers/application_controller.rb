@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
 
+  before_filter :find_school
+
   def find_school
     if params.has_key?(:school_id)
       school_id = params[:school_id]
