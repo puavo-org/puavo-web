@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+  layout 'sessions'
   before_filter :login_required, :only => [:destroy, :show]
 
   def new
@@ -9,7 +10,6 @@ class SessionsController < ApplicationController
       flash[:notice] = t('flash.session.login_successful')
       session[:dn] = user.dn
       session[:password_plaintext] = params[:user][:password]
-      session[:user_id] = user.puavoId
 
       #redirect_back_or_default schools_url
       redirect_back_or_default root_path
@@ -30,7 +30,6 @@ class SessionsController < ApplicationController
     # Remove dn and plaintext password values from session
     session.delete :password_plaintext
     session.delete :dn
-    session.delete :user_id
     flash[:notice] = t('flash.session.logout_successful')
     redirect_to login_path
   end

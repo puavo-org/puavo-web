@@ -2,19 +2,18 @@ module PuavoAuthentication
   module Controllers
     module Helpers
       def current_user
-        unless session[:user_id].nil?
+        unless session[:dn].nil?
           unless @current_user.nil?
             return @current_user
           else
             begin
-              return @current_user = User.find(session[:user_id]) # REST/OAuth?
+              return @current_user = User.find(session[:dn]) # REST/OAuth?
             rescue
               logger.info "Session's user not found! User is removed from ldap server."
-              logger.info "session[:user_id]: #{session[:user_id]}"
+              logger.info "session[:dn]: #{session[:dn]}"
               # Delete ldap connection informations from session.
               session.delete :password_plaintext
               session.delete :dn
-              session.delete :user_id
             end
           end
         end
@@ -24,14 +23,17 @@ module PuavoAuthentication
       def login_required
         case request.format
         when !current_user && Mime::JSON
+          logger.debug "Using HTTP basic authentication"
           password = ""
+
           user = authenticate_with_http_basic do |login, password|
             User.authenticate(login, password)
           end
+          logger.debug "Basic Auth User: " + user.inspect
           if user
             session[:dn] = user.dn
             session[:password_plaintext] = password
-            session[:user_id] = user.puavoId
+            logger.debug "Logged in with http basic authentication"
           else
             request_http_basic_authentication
           end
@@ -62,7 +64,7 @@ module PuavoAuthentication
           host = session[:organisation].ldap_host
           base = session[:organisation].ldap_base
         end
-        if session[:user_id]
+        if session[:dn]
           dn = session[:dn]
           password = session[:password_plaintext]
         else

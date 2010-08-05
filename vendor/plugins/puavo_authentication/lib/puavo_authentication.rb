@@ -17,4 +17,3 @@ module PuavoAuthentication
 end
 
 ActionController::Base.send :include, PuavoAuthentication::Controllers::Helpers
-ActionController::Base.before_filter :ldap_setup_connection, :login_required

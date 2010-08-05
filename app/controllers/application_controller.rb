@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
 
+  before_filter :set_organisation_to_session, :set_locale
+  if defined?(Puavo::Authentication)
+    before_filter :ldap_setup_connection, :login_required
+  end
   before_filter :find_school
 
   def find_school
