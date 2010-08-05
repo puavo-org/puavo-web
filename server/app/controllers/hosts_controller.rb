@@ -8,7 +8,7 @@ class HostsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @hosts }
-      format.json  { render :json => @hosts.map{ |h| h.attributes }.to_json }
+      format.json  { render :json => @hosts }
     end
   end
 

@@ -22,7 +22,7 @@ class SessionsController < ApplicationController
   def show
     @user = User.find(session[:dn])
     respond_to do |format|
-      format.json  { render :json => user_to_json(@user) }
+      format.json  { render :json => @user.to_json(:methods => :managed_schools) }
     end
   end
 
@@ -32,11 +32,5 @@ class SessionsController < ApplicationController
     session.delete :dn
     flash[:notice] = t('flash.session.logout_successful')
     redirect_to login_path
-  end
-
-  private
-
-  def user_to_json(user)
-    user.attributes.merge( { :managed_schools => user.managed_schools.map { |s| s.attributes } } ).to_json
   end
 end
