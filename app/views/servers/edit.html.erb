@@ -1,6 +1,8 @@
 <h1>Editing server</h1>
 
-<%= render :partial => 'form' %>
+<%= render :partial => 'form',
+    :locals => {
+      :submit_text => t('link.update') } %>
 
 <%= link_to 'Show', @server %> |
 <%= link_to 'Back', servers_path %>
