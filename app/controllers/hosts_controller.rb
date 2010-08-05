@@ -11,4 +11,12 @@ class HostsController < ApplicationController
       format.json  { render :json => @hosts.map{ |h| h.attributes }.to_json }
     end
   end
+
+  def types
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json # index.json.erb
+    end
+  end
+
 end

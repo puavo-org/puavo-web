@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :sessions
 
-  map.resources :hosts, :only => [:index]
+  map.resources :hosts, :only => [:index], :collection => { :types => :get }
 
   map.resources :devices, :path_prefix => ':school_id'
 
