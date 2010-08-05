@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  before_filter :login_required, :only => :destroy
+  before_filter :login_required, :only => [:destroy, :show]
 
   def new
   end
@@ -19,6 +19,13 @@ class SessionsController < ApplicationController
     end
   end
 
+  def show
+    @user = User.find(session[:dn])
+    respond_to do |format|
+      format.json  { render :json => user_to_json(@user) }
+    end
+  end
+
   def destroy
     # Remove dn and plaintext password values from session
     session.delete :password_plaintext
@@ -26,5 +33,11 @@ class SessionsController < ApplicationController
     session.delete :user_id
     flash[:notice] = t('flash.session.logout_successful')
     redirect_to login_path
+  end
+
+  private
+
+  def user_to_json(user)
+    user.attributes.merge( { :managed_schools => user.managed_schools.map { |s| s.attributes } } ).to_json
   end
 end

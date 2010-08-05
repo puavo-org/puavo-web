@@ -4,5 +4,9 @@ class User < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
+
+  def managed_schools
+    School.all
+  end
 end
 
