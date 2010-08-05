@@ -1,0 +1,16 @@
+# Don't remove this. This is used to the Cucumber test.
+example:
+  name: Example Organisation
+  host: www.example.com
+  ldap_host: 10.246.114.41
+  ldap_base: dc=edu,dc=kunta1,dc=fi
+  owner: kunta1.admin
+  owner_pw: admin1
+
+# Default organisation configurations.
+# This is used to if browser request host not matched with other settings.
+default:
+  name: Default organisation
+  host: *
+  ldap_host: 10.246.114.41
+  ldap_base: dc=edu,dc=kunta1,dc=fi

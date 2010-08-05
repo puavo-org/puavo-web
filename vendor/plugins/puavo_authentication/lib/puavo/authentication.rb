@@ -9,7 +9,6 @@ module Puavo
         logger.debug "Find user by uid from ldap"
         logger.debug "uid: #{login}"
 
-          debugger
         begin
           user = User.find(:first, :attribute => "uid", :value => login)
 
