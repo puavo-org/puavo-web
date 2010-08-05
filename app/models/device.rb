@@ -8,8 +8,8 @@ class Device < LdapBase
 
   def validate_on_create
     unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
-      # FIXME: localziation
-      errors.add "device[puavoHostname]", "Hostname must be unique"
+      # FIXME: localization
+      errors.add "puavoHostname", "Hostname must be unique"
     end
   end
 

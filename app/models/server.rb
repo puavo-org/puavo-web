@@ -11,8 +11,8 @@ class Server < LdapBase
 
   def validate
     unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
-      # FIXME: localziation
-      errors.add "server[puavoHostname]", "Hostname must be unique"
+      # FIXME: localization
+      errors.add "puavoHostname", "Hostname must be unique"
     end
   end
 
