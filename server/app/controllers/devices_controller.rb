@@ -1,8 +1,11 @@
 class DevicesController < ApplicationController
+  before_filter :find_school
+
   # GET /devices
   # GET /devices.xml
   def index
-    @devices = Device.all
+    @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
+    # @devices = Device.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -51,8 +54,11 @@ class DevicesController < ApplicationController
   # POST /devices.xml
   # POST /devices.json
   def create
-    @device = Device.new( { :objectClass => 'puavoNetbootDevice' }.merge( params[:device] ))
-    @device.puavoSchool = "puavoId=1,ou=Groups,dc=edu,dc=kunta1,dc=fi" # School.first.dn
+    device_objectClass = params[:device][:classes]
+    params[:device].delete(:classes)
+    @device = Device.new( { :objectClass => device_objectClass }.merge( params[:device] ))
+
+    @device.puavoSchool = @school.dn
 
     respond_to do |format|
       if @device.save
@@ -93,5 +99,11 @@ class DevicesController < ApplicationController
       format.html { redirect_to(devices_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def find_school
+    @school = School.find(params[:school_id])
   end
 end
