@@ -22,49 +22,28 @@ require 'resolv'
 require 'socket'
 require 'uri'
 
-# XXX must die!
-FIELD_ORDER = %w(
-  school
-  devicetype
-  puavoHostname
-  serialNumber
-  puavoDeviceManufacturer
-  puavoDeviceModel
-  macAddress
-  puavoDevicePrimaryUser
-  tags
-)
-
 def errmsg(msg)
   HighLine.say(HighLine.new.color("*** ERROR: #{ msg }", HighLine::RED))
 end
 
 class CmdLine
   def self.params()
-    params =
-      FIELD_ORDER.map { |f| [ "--#{ f }", GetoptLong::OPTIONAL_ARGUMENT ] } \
-      + [
-	  [ '--batch',       GetoptLong::NO_ARGUMENT       ],
-	  [ '--certdir',     GetoptLong::REQUIRED_ARGUMENT ],
-	  [ '--puavoserver', GetoptLong::OPTIONAL_ARGUMENT ],
-	  [ '--username',    GetoptLong::OPTIONAL_ARGUMENT ],
-	  [ '--password',    GetoptLong::OPTIONAL_ARGUMENT ],
-	]
-
-    opts = GetoptLong.new(*params)
-    host_params, other_params = {}, {}
-    opts.each do |opt, arg|
-      stripped_opt = opt.match(/^--(.*)$/)[1]
-      if FIELD_ORDER.include?(stripped_opt)
-	host_params[stripped_opt] = arg
-      else
-	other_params[stripped_opt] = arg
+    params = {}
+    new_arg = nil
+    ARGV.each do |i|
+      case i
+	when '--batch'
+	  params[i] = true
+	else
+	  if new_arg.nil?
+	    new_arg = i
+	  else
+	    params[ new_arg.match(/^--(.*)$/)[1] ] = i
+            new_arg = nil
+          end
       end
     end
-    {
-      'host'  => host_params,
-      'other' => other_params,
-    }
+    params
   end
 end
 
@@ -152,7 +131,7 @@ class PuavoDevicesClient
 
   def ask_school()
     @host['school'] \
-      = @schools.size == 1 ? @schools[0]['id'] \
+      = @schools.size == 1 ? @schools.keys[0] \
       : choicelist(@schools,
 		   'school',
      		   'School selection',
@@ -194,7 +173,7 @@ class PuavoDevicesClient
     userinfo = get('/devices/sessions/show.json')
     @schools = {}
     userinfo['managed_schools'].each do |school|
-      @schools[ school['puavoId'] ] = {
+      @schools[ school['puavoId'].to_s ] = {
         'label' => school['displayName'],
         'order' => school['puavoId'],
       }
@@ -260,10 +239,14 @@ class PuavoDevicesClient
   end
 
   def lookup_default_puavoserver
-    Resolv::DNS.open do |dns|
-      r = dns.getresources('_puavo._tcp.opinsys.fi',
-			   Resolv::DNS::Resource::IN::SRV)
-      r[0].target.to_s
+    begin
+      Resolv::DNS.open do |dns|
+	r = dns.getresources('_puavo._tcp.opinsys.fi',
+			     Resolv::DNS::Resource::IN::SRV)
+	r[0].target.to_s
+      end
+    rescue
+      errmsg('Could not lookup default puavoserver')
     end
   end
 
@@ -310,21 +293,21 @@ class PuavoDevicesClient
     end
   end
 
-  def register_to_server(cmdline_defaults)
+  def register_to_server(cmdline_params)
     if (@puavoserver and @username and @password)
       connect_to_puavo(@puavoserver)
     else
       connect_to_puavo_with_questions()
     end
 
-    @host['devicetype'] = cmdline_defaults['devicetype'] || ask_devicetype()
+    @host['devicetype'] = cmdline_params['devicetype'] || ask_devicetype()
     unless @devicetypes.has_key?(@host['devicetype'])
       errmsg("Device type ID is set to '#{ @host['devicetype'] }'" +
 	     ' but user cannot add such a device type')
       ask_devicetype()
     end
 
-    @host['school'] = cmdline_defaults['school'] || ask_school()
+    @host['school'] = cmdline_params['school'] || ask_school()
     unless @schools.has_key?(@host['school'])
       errmsg("School ID is set to '#{ @host['school'] }'" +
 	     ' but user cannot manage such a school')
@@ -339,8 +322,8 @@ class PuavoDevicesClient
 	@host[ attr['id'] ] = attr['default']
       end
       # add default values from cmdline (override ones from server & facter)
-      if cmdline_defaults[ attr['id'] ]
-	@host[ attr['id'] ] = cmdline_defaults[ attr['id'] ]
+      if cmdline_params[ attr['id'] ]
+	@host[ attr['id'] ] = cmdline_params[ attr['id'] ]
       end
     end
 
@@ -380,9 +363,9 @@ end
 HighLine.say "\n\t-=< Puavo Devices Client >=-\n\n"
 
 cmdline_params = CmdLine.params()
-puavoclient    = PuavoDevicesClient.new(cmdline_params['other'])
 
-register_info  = puavoclient.register_to_server(cmdline_params['host'])
+puavoclient   = PuavoDevicesClient.new(cmdline_params)
+register_info = puavoclient.register_to_server(cmdline_params)
 
 # HostCertificate.new(cmdline_params['other']['certdir'])
 
