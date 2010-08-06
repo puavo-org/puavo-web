@@ -17,7 +17,9 @@ require 'getoptlong'
 require 'highline/import'
 require 'json'
 require 'net/http'
+require 'openssl'
 require 'resolv'
+require 'socket'
 require 'uri'
 
 # XXX should be obtained from server?
@@ -32,6 +34,69 @@ FIELD_ORDER = %w(
   puavoDevicePrimaryUser
   tags
 )
+
+def errmsg(msg)
+  HighLine.say(HighLine.new.color("*** ERROR: #{ msg }", HighLine::RED))
+end
+
+class CmdLine
+  def self.params()
+    params =
+      FIELD_ORDER.map { |f| [ "--#{ f }", GetoptLong::OPTIONAL_ARGUMENT ] } \
+      + [
+	  [ '--batch',       GetoptLong::NO_ARGUMENT       ],
+	  [ '--certdir',     GetoptLong::REQUIRED_ARGUMENT ],
+	  [ '--puavoserver', GetoptLong::OPTIONAL_ARGUMENT ],
+	  [ '--username',    GetoptLong::OPTIONAL_ARGUMENT ],
+	  [ '--password',    GetoptLong::OPTIONAL_ARGUMENT ],
+	]
+
+    opts = GetoptLong.new(*params)
+    host_params, other_params = {}, {}
+    opts.each do |opt, arg|
+      stripped_opt = opt.match(/^--(.*)$/)[1]
+      if FIELD_ORDER.include?(stripped_opt)
+	host_params[stripped_opt] = arg
+      else
+	other_params[stripped_opt] = arg
+      end
+    end
+    {
+      'host'  => host_params,
+      'other' => other_params,
+    }
+  end
+end
+
+class HttpAuthError < Exception; end
+
+class HostCertificate
+  def initialize(certdir)
+    unless certdir
+      errmsg('--certdir must be set')
+      exit 1
+    end
+    hostname = Socket.gethostname
+
+    @key = OpenSSL::PKey::RSA.new(1024)
+    @csr = OpenSSL::X509::Request.new
+    @csr.version = 0
+    @csr.subject = OpenSSL::X509::Name.new([[ 'CN', hostname ]])
+    @csr.public_key = @key.public_key
+
+    Dir.mkdir(certdir, 0700)
+
+    File.open("#{ certdir }/host.key", 'w', 0400) do |f|
+      f.print @key.to_pem
+    end
+    File.open("#{ certdir }/host.pub", 'w', 0400) do |f|
+      f.print @key.public_key
+    end
+    File.open("#{ certdir }/host.csr", 'w', 0400) do |f|
+      f.print @csr.to_pem
+    end
+  end
+end
 
 class PuavoDevicesClient
   # XXX should be obtained from server?
@@ -172,10 +237,6 @@ class PuavoDevicesClient
     end
   end
 
-  def errmsg(msg)
-    HighLine.say(HighLine.new.color("*** ERROR: #{ msg }", HighLine::RED))
-  end
-
   def find_label_for_id(id, items)
     itemhash = Hash[ items.map { |i| [ i['id'], i['label'] ] } ]
     itemhash[id]
@@ -183,7 +244,6 @@ class PuavoDevicesClient
 
   def get(url, params = {})
     @http.start do |http|
-      http_header = @cookie ? { "Cookie" => @cookie } : nil
       unless params.empty?
         url += '?'
         params.each do |key, value|
@@ -196,15 +256,27 @@ class PuavoDevicesClient
         end
       end
 
-      request = Net::HTTP::Get.new(url, http_header)
+      request = Net::HTTP::Get.new(url)
       request.basic_auth(@username, @password)
       response = http.request(request)
       if response.class == Net::HTTPUnauthorized
 	raise HttpAuthError
       end
-      @cookie = response['Set-Cookie']
       JSON.parse(response.body)
     end
+  end
+
+  def host_to_json
+    sendobj = Hash[
+      @host.map do |key, value|
+	[
+	  key,
+	  (key == 'macAddress' ? value.split(' ') : value)
+	]
+      end
+    ]
+    # XXX why 'device'?  where does that come from?  could be 'server'?
+    { 'device' => sendobj }.to_json
   end
 
   def lookup_default_puavoserver
@@ -238,26 +310,21 @@ class PuavoDevicesClient
     print "\n"
   end
 
-  def post(url, object_form)
-    http_header = @cookie ? { "Cookie" => @cookie } : nil
-    request = Net::HTTP::Post.new(url, http_header)
-
-    params = object_form['attributes'].merge('authenticity_token' => object_form['authenticity_token'])
-    request.set_form_data(params)
-    response = @http.request(request)
-    @cookie = response['Set-Cookie']
-    response_code = response.code
-    case response_code
+  def post(url)
+    request = Net::HTTP::Post.new(url,
+				  { 'Content-Type' => 'application/json' })
+    request.basic_auth(@username, @password)
+    # XXX objectClass is required!
+    response = @http.request(request, host_to_json())
+    case response.code
       when /^2/
 	# successful request
         Hash[ 'errors' => {}, 'info' => JSON.parse(response.body), ]
       when /^5/
-        # FIXME: Error handling when response is HTTPServerError
-        {}
+	errmsg("Server response is #{ response.code }: #{ response.message }")
+	Hash[ 'errors' => {} ]
       else
-	Hash[
-	  'errors' => Hash[ JSON.parse(response.body) ]
-	]
+	Hash[ 'errors' => Hash[ JSON.parse(response.body) ] ]
     end
   end
 
@@ -289,57 +356,15 @@ class PuavoDevicesClient
 	print_machine_info()
       end
 
-      # puavoLocalbootDevice should not be hardcoded
-      device_form = get("/devices/#{ @host['school' ]}/devices/new.json",
-			'device[classes]' => %w(puavoLocalbootDevice))
-      set_form_attribute_values(device_form)
       HighLine.say 'Sending machine information to puavo server...'
-      register_info = post("/devices/#{ @host['school'] }/devices.json",
-			   device_form)
-      if register_info['errors'].empty?
-        return register_info
+      register_info = post("/devices/#{ @host['school'] }/devices.json")
+      if register_info['info']
+        return register_info['info']
       else
 	ask_machine_info(register_info['errors'], false)
       end
     end
   end
-
-  def set_form_attribute_values(object_form)
-    object_form['attributes'].each do |field, value|
-      attribute = field.match(/\[(.*)\]$/)[1]
-      if @host.has_key?(attribute)
-        object_form['attributes'][field] = @host[attribute]
-      end
-    end
-  end
-end
-
-class HttpAuthError < Exception; end
-
-def cmdline_params()
-  params =
-    FIELD_ORDER.map { |f| [ "--#{ f }", GetoptLong::OPTIONAL_ARGUMENT ] } \
-    + [
-        [ '--batch',       GetoptLong::NO_ARGUMENT       ],
-        [ '--puavoserver', GetoptLong::OPTIONAL_ARGUMENT ],
-        [ '--username',    GetoptLong::OPTIONAL_ARGUMENT ],
-        [ '--password',    GetoptLong::OPTIONAL_ARGUMENT ],
-      ]
-
-  opts = GetoptLong.new(*params)
-  host_params, other_params = {}, {}
-  opts.each do |opt, arg|
-    stripped_opt = opt.match(/^--(.*)$/)[1]
-    if FIELD_ORDER.include?(stripped_opt)
-      host_params[stripped_opt] = arg
-    else
-      other_params[stripped_opt] = arg
-    end
-  end
-  {
-    'host'  => host_params,
-    'other' => other_params,
-  }
 end
 
 #
@@ -348,9 +373,12 @@ end
 
 HighLine.say "\n\t-=< Puavo Devices Client >=-\n\n"
 
-cmdline_params = cmdline_params()
+cmdline_params = CmdLine.params()
 puavoclient    = PuavoDevicesClient.new(cmdline_params['other'],
 					cmdline_params['host'])
-register_info  = puavoclient.register_to_server()
+
+# HostCertificate.new(cmdline_params['other']['certdir'])
+
+# register_info  = puavoclient.register_to_server()
 
 HighLine.say 'This machine has been successfully registered.'
