@@ -22,7 +22,7 @@ require 'resolv'
 require 'socket'
 require 'uri'
 
-# XXX should be obtained from server?
+# XXX must die!
 FIELD_ORDER = %w(
   school
   devicetype
@@ -99,30 +99,14 @@ class HostCertificate
 end
 
 class PuavoDevicesClient
-  # XXX should be obtained from server?
-  FIELD_TRANSLATIONS = {
-    'en' => {
-       'devicetype'              => 'Devicetype',
-       'macAddress'              => 'MAC address(es)',
-       'puavoDeviceManufacturer' => 'Manufacturer',
-       'puavoDeviceModel'        => 'Model name',
-       'puavoDevicePrimaryUser'  => 'Primary user',
-       'puavoHostname'           => 'Hostname',
-       'school'                  => 'School',
-       'serialNumber'            => 'Serial number',
-       'tags'                    => 'Tags',
-    }
-  }
-
-  def initialize(params, host_defaults)
-    facts = Facter.to_hash
-
+  def initialize(params)
     @batch_mode  = params['batch']
     @puavoserver = params['puavoserver'] || lookup_default_puavoserver()
     @username    = params['username']
     @password    = params['password']
 
-    # defaults (mostly) from facter
+    # defaults from facter
+    facts = Facter.to_hash
     @host = {
       'macAddress'              => lookup_macaddresses(facts),
       'puavoDeviceManufacturer' => facts['manufacturer'],
@@ -130,9 +114,6 @@ class PuavoDevicesClient
       'puavoHostname'           => facts['hostname'],
       'serialNumber'            => facts['serialnumber'],
     }
-
-    # let host defaults (from command line) override host values
-    @host.merge!(host_defaults)
   end
 
   def ask_devicetype()
@@ -144,8 +125,11 @@ class PuavoDevicesClient
 
   def ask_machine_info(errors={}, ask_all=true)
     unhandled = errors.clone
-    FIELD_ORDER.each do |field|
+    @attributes.each do |attr|
+      field = attr['id']
       next unless ask_all or unhandled[field]
+      next if attr['label'].empty?
+
       if unhandled[field] and not ask_all
 	errmsg(unhandled[field])
 	unhandled.delete(field)
@@ -157,7 +141,7 @@ class PuavoDevicesClient
 	when 'school'
 	  ask_school()
 	else
-	  question = FIELD_TRANSLATIONS['en'][field] + ':'
+	  question = attr['label'] + ':'
           @host[field] = ask_with_default(question, @host[field])
       end
     end
@@ -184,36 +168,37 @@ class PuavoDevicesClient
 	 : answer.strip
   end
 
-  def choicelist(items, hostfield, header, prompt)
+  def choicelist(items, field, header, prompt)
     selected = nil
+    itemkeys = items.keys.sort { |i,j| items[i]['order'] <=> items[j]['order'] }
     choose do |menu|
-      items.each do |item|
-	menu.choice(item['label']) { selected = item['id'] }
-        menu.layout = :list
+      itemkeys.each do |id|
+	menu.choice(items[id]['label']) { selected = id }
       end
-      if @host.has_key?(hostfield)
-        menu.prompt =
-	  prompt + "[#{ find_label_for_id(@host[hostfield], items) }] "
-	menu.hidden('') { selected = @host[hostfield] }
+      if @host.has_key?(field)
+        menu.prompt = prompt + "[#{ items[ @host[field] ]['label'] }] "
+	menu.hidden('') { selected = @host[field] }
       else
 	menu.prompt = prompt
       end
       menu.header = header
     end
-    HighLine.say "===> selected [#{ find_label_for_id(selected, items) }]"
+    HighLine.say "===> selected [#{ items[selected]['label'] }]"
     selected
   end
 
   def connect_to_puavo(server)
     @http = Net::HTTP.new(server, '80')
     @devicetypes = get('/devices/hosts/types.json')
-    userinfo     = get('/devices/sessions/show.json')
-    @schools     = userinfo['managed_schools'].map do |school|
-		     {
-		       'id'    => school['puavoId'].to_s,
-		       'label' => school['displayName'],
-		     }
-		   end
+
+    userinfo = get('/devices/sessions/show.json')
+    @schools = {}
+    userinfo['managed_schools'].each do |school|
+      @schools[ school['puavoId'] ] = {
+        'label' => school['displayName'],
+        'order' => school['puavoId'],
+      }
+    end
   end
 
   def connect_to_puavo_with_questions()
@@ -224,8 +209,8 @@ class PuavoDevicesClient
 	  connect_to_puavo(@puavoserver)
 	rescue HttpAuthError
 	end
-	@username    = ask_with_default('Username:', @username)
-	@password    = HighLine.ask('Password: ') { |q| q.echo = '*' }
+	@username = ask_with_default('Username:', @username)
+	@password = HighLine.ask('Password: ') { |q| q.echo = '*' }
 	connect_to_puavo(@puavoserver)
       rescue HttpAuthError
 	errmsg('Wrong username and/or password')
@@ -235,11 +220,6 @@ class PuavoDevicesClient
 	@http = nil
       end
     end
-  end
-
-  def find_label_for_id(id, items)
-    itemhash = Hash[ items.map { |i| [ i['id'], i['label'] ] } ]
-    itemhash[id]
   end
 
   def get(url, params = {})
@@ -295,17 +275,19 @@ class PuavoDevicesClient
 
   def print_machine_info
     HighLine.say "\nHOST INFORMATION:"
-    FIELD_ORDER.each do |field|
+    @attributes.each do |attr|
+      next if attr['label'].empty?
+      field = attr['id']
       value =
 	case field
 	  when 'devicetype'
-	    find_label_for_id(@host[field], @devicetypes)
+	    @devicetypes[ @host[field] ]['label']
 	  when 'school'
-	    find_label_for_id(@host[field], @schools)
+	    @schools[ @host[field] ]['label']
 	  else
 	    @host[field]
 	end
-      printf("%-20s%s\n", FIELD_TRANSLATIONS['en'][field] + ': ', value)
+      printf("%-24s%s\n", attr['label'] + ': ', value)
     end
     print "\n"
   end
@@ -328,25 +310,38 @@ class PuavoDevicesClient
     end
   end
 
-  def register_to_server()
+  def register_to_server(cmdline_defaults)
     if (@puavoserver and @username and @password)
       connect_to_puavo(@puavoserver)
     else
       connect_to_puavo_with_questions()
     end
 
-    ask_school() unless @host['school']
-    unless @schools.map { |s| s['id'] }.include?(@host['school'])
+    @host['devicetype'] = cmdline_defaults['devicetype'] || ask_devicetype()
+    unless @devicetypes.has_key?(@host['devicetype'])
+      errmsg("Device type ID is set to '#{ @host['devicetype'] }'" +
+	     ' but user cannot add such a device type')
+      ask_devicetype()
+    end
+
+    @host['school'] = cmdline_defaults['school'] || ask_school()
+    unless @schools.has_key?(@host['school'])
       errmsg("School ID is set to '#{ @host['school'] }'" +
 	     ' but user cannot manage such a school')
       ask_school()
     end
 
-    ask_devicetype() unless @host['devicetype']
-    unless @devicetypes.map { |d| d['id'] }.include?(@host['devicetype'])
-      errmsg("Device type ID is set to '#{ @host['devicetype'] }'" +
-	     ' but user cannot add such a device type')
-      ask_devicetype()
+    request_required_attributes()
+
+    @attributes.each do |attr|
+      if attr['default']
+	# add default values from server (override ones by facter)
+	@host[ attr['id'] ] = attr['default']
+      end
+      # add default values from cmdline (override ones from server & facter)
+      if cmdline_defaults[ attr['id'] ]
+	@host[ attr['id'] ] = cmdline_defaults[ attr['id'] ]
+      end
     end
 
     loop do
@@ -357,13 +352,24 @@ class PuavoDevicesClient
       end
 
       HighLine.say 'Sending machine information to puavo server...'
-      register_info = post("/devices/#{ @host['school'] }/devices.json")
+      register_info = post(@post_url)
       if register_info['info']
         return register_info['info']
       else
 	ask_machine_info(register_info['errors'], false)
       end
     end
+  end
+
+  def request_required_attributes()
+    # put school id into url if %s exists in url string
+    question_url = @devicetypes[ @host['devicetype'] ]['url'] % @host['school']
+    form = get(question_url)
+    @attributes = [
+      { 'id' => 'school',     'default' => false, 'label' => 'School',      },
+      { 'id' => 'devicetype', 'default' => false, 'label' => 'Device type', },
+    ] + form['attributes'] 
+    @post_url = form['url'] % @host['school']
   end
 end
 
@@ -374,11 +380,10 @@ end
 HighLine.say "\n\t-=< Puavo Devices Client >=-\n\n"
 
 cmdline_params = CmdLine.params()
-puavoclient    = PuavoDevicesClient.new(cmdline_params['other'],
-					cmdline_params['host'])
+puavoclient    = PuavoDevicesClient.new(cmdline_params['other'])
+
+register_info  = puavoclient.register_to_server(cmdline_params['host'])
 
 # HostCertificate.new(cmdline_params['other']['certdir'])
-
-# register_info  = puavoclient.register_to_server()
 
 HighLine.say 'This machine has been successfully registered.'
