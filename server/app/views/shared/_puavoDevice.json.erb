@@ -1,3 +1,6 @@
+   <% unless object.classes.include?("puavoNetbootDevice") %>
+   { "id": "host_certificate_request", "label": "", "default": "" },
+   <% end %>
    { "id": "puavoHostname", "label": "<%= t("activeldap.attributes.device.puavoHostname") %>", "default": "jokuhostivain" },
    { "id": "macAddress", "label": "<%= t("activeldap.attributes.device.macAddress") %>", "default": false },
    { "id": "serialNumber", "label": "<%= t("activeldap.attributes.device.serialNumber") %>", "default": false },
