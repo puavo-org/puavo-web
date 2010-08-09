@@ -64,9 +64,9 @@ en:
         ipHostNumber: IP address
       device:
         puavoHostname: Hostname
-        macAddress: Mac address
+        macAddress: MAC address(es)
         serialNumber: Serial number
-        puavoDeviceManufacturer: Device manufacture
+        puavoDeviceManufacturer: Device manufacturer
         puavoDeviceModel: Device model
         puavoDevicePrimaryUser: Device primary user
         puavoLatitude: Latitude

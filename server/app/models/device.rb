@@ -13,8 +13,12 @@ class Device < LdapBase
     end
   end
 
-  def self.roles
+  def self.allowed_classes
     ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter']
+  end
+
+  def objectClass_by_device_type=(device_type)
+    self.add_class( Host.objectClass_by_device_type(device_type) )
   end
 
   def id

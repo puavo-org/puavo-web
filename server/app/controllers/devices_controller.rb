@@ -32,12 +32,12 @@ class DevicesController < ApplicationController
   def new
     @device = Device.new
 
+    @device.objectClass_by_device_type = params[:device_type]
+
     respond_to do |format|
-      unless params[:device]
+      unless params[:device_type]
         format.html {  render :partial => 'device_role' }
-        format.json {  render :partial => 'device_role' }
       else
-        @device.add_class(params[:device][:classes])
         format.html # new.html.erb
         format.xml  { render :xml => @device }
         format.json
