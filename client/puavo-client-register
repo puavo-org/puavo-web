@@ -43,6 +43,10 @@ class CmdLine
           end
       end
     end
+    unless params['certdir']
+      errmsg('--certdir must be set')
+      exit 1
+    end
     params
   end
 end
@@ -50,9 +54,7 @@ end
 class HttpAuthError < Exception; end
 
 class HostCertificate
-  def initialize
-    hostname = Socket.gethostname
-
+  def initialize(hostname)
     @key = OpenSSL::PKey::RSA.new(1024)
     @csr = OpenSSL::X509::Request.new
     @csr.version = 0
@@ -61,8 +63,11 @@ class HostCertificate
   end
 
   def accept_signed_certificate(register_info)
-    # XXX untested
     @crt = register_info['crt']
+    unless @crt
+      errmsg('Server did not send a signed certificate')
+      exit 1
+    end
   end
 
   def request
@@ -70,12 +75,10 @@ class HostCertificate
   end
 
   def write_to_filesystem(certdir)
-    unless certdir
-      errmsg('--certdir must be set')
-      exit 1
+    begin
+      Dir.mkdir(certdir, 0700)
+      rescue Errno::EEXIST
     end
-
-    Dir.mkdir(certdir, 0700)
 
     File.open("#{ certdir }/host.key", 'w', 0400) do |f|
       f.print @key.to_pem
@@ -86,7 +89,6 @@ class HostCertificate
     File.open("#{ certdir }/host.csr", 'w', 0400) do |f|
       f.print @csr.to_pem
     end
-    # XXX untested
     File.open("#{ certdir }/host.crt", 'w', 0400) do |f|
       f.print @crt
     end
@@ -113,7 +115,7 @@ class PuavoDevicesClient
 
   def after_register_actions(register_info, cmdline_params)
     if @cert
-      @cert.include_signed_certificate(register_info)
+      @cert.accept_signed_certificate(register_info)
       @cert.write_to_filesystem(cmdline_params['certdir'])
     end
   end
@@ -362,8 +364,7 @@ class PuavoDevicesClient
       @attributes.each do |attr|
 	case attr['id']
 	  when 'host_certificate_request'
-	    puts 'Creating certificate!'	# XXX
-	    @cert = HostCertificate.new(cmdline_params['certdir'])
+	    @cert = HostCertificate.new(@host['puavoHostName'])
 	    @host[ attr['id'] ] = @cert.request
 	end
       end
