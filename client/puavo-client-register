@@ -50,11 +50,7 @@ end
 class HttpAuthError < Exception; end
 
 class HostCertificate
-  def initialize(certdir)
-    unless certdir
-      errmsg('--certdir must be set')
-      exit 1
-    end
+  def initialize
     hostname = Socket.gethostname
 
     @key = OpenSSL::PKey::RSA.new(1024)
@@ -62,6 +58,22 @@ class HostCertificate
     @csr.version = 0
     @csr.subject = OpenSSL::X509::Name.new([[ 'CN', hostname ]])
     @csr.public_key = @key.public_key
+  end
+
+  def accept_signed_certificate(register_info)
+    # XXX untested
+    @crt = register_info['crt']
+  end
+
+  def request
+    @csr.to_pem
+  end
+
+  def write_to_filesystem(certdir)
+    unless certdir
+      errmsg('--certdir must be set')
+      exit 1
+    end
 
     Dir.mkdir(certdir, 0700)
 
@@ -73,6 +85,10 @@ class HostCertificate
     end
     File.open("#{ certdir }/host.csr", 'w', 0400) do |f|
       f.print @csr.to_pem
+    end
+    # XXX untested
+    File.open("#{ certdir }/host.crt", 'w', 0400) do |f|
+      f.print @crt
     end
   end
 end
@@ -93,6 +109,13 @@ class PuavoDevicesClient
       'puavoHostname'           => facts['hostname'],
       'serialNumber'            => facts['serialnumber'],
     }
+  end
+
+  def after_register_actions(register_info, cmdline_params)
+    if @cert
+      @cert.include_signed_certificate(register_info)
+      @cert.write_to_filesystem(cmdline_params['certdir'])
+    end
   end
 
   def ask_devicetype()
@@ -130,12 +153,13 @@ class PuavoDevicesClient
   end
 
   def ask_school()
+    return if @host['devicetype'] == 'server'
     @host['school'] \
       = @schools.size == 1 ? @schools.keys[0] \
       : choicelist(@schools,
 		   'school',
-     		   'School selection',
-     		   'Select school: ')
+		   'School selection',
+		   'Select school: ')
   end
 
   def ask_with_default(question, default)
@@ -234,8 +258,7 @@ class PuavoDevicesClient
 	]
       end
     ]
-    # XXX why 'device'?  where does that come from?  could be 'server'?
-    { 'device' => sendobj }.to_json
+    { @post_address['object_key'] => sendobj }.to_json
   end
 
   def lookup_default_puavoserver
@@ -266,6 +289,7 @@ class PuavoDevicesClient
 	  when 'devicetype'
 	    @devicetypes[ @host[field] ]['label']
 	  when 'school'
+	    next if @host['devicetype'] == 'server'
 	    @schools[ @host[field] ]['label']
 	  else
 	    @host[field]
@@ -279,7 +303,6 @@ class PuavoDevicesClient
     request = Net::HTTP::Post.new(url,
 				  { 'Content-Type' => 'application/json' })
     request.basic_auth(@username, @password)
-    # XXX objectClass is required!
     response = @http.request(request, host_to_json())
     case response.code
       when /^2/
@@ -308,10 +331,11 @@ class PuavoDevicesClient
     end
 
     @host['school'] = cmdline_params['school'] || ask_school()
-    unless @schools.has_key?(@host['school'])
-      errmsg("School ID is set to '#{ @host['school'] }'" +
-	     ' but user cannot manage such a school')
-      ask_school()
+    if @host['devicetype'] != 'server' and
+      not @schools.has_key?(@host['school'])
+	errmsg("School ID is set to '#{ @host['school'] }'" +
+	       ' but user cannot manage such a school')
+	ask_school()
     end
 
     request_required_attributes()
@@ -334,9 +358,20 @@ class PuavoDevicesClient
 	print_machine_info()
       end
 
-      HighLine.say 'Sending machine information to puavo server...'
-      register_info = post(@post_url)
+      @cert = nil
+      @attributes.each do |attr|
+	case attr['id']
+	  when 'host_certificate_request'
+	    puts 'Creating certificate!'	# XXX
+	    @cert = HostCertificate.new(cmdline_params['certdir'])
+	    @host[ attr['id'] ] = @cert.request
+	end
+      end
+
+      HighLine.say 'Sending host information to puavo server...'
+      register_info = post(@post_address['url'])
       if register_info['info']
+	HighLine.say 'This machine has been successfully registered.'
         return register_info['info']
       else
 	ask_machine_info(register_info['errors'], false)
@@ -352,7 +387,10 @@ class PuavoDevicesClient
       { 'id' => 'school',     'default' => false, 'label' => 'School',      },
       { 'id' => 'devicetype', 'default' => false, 'label' => 'Device type', },
     ] + form['attributes'] 
-    @post_url = form['url'] % @host['school']
+    @post_address = {
+      'object_key' => form['object_key'],
+      'url'        => form['url'] % @host['school'],
+    }
   end
 end
 
@@ -367,6 +405,4 @@ cmdline_params = CmdLine.params()
 puavoclient   = PuavoDevicesClient.new(cmdline_params)
 register_info = puavoclient.register_to_server(cmdline_params)
 
-# HostCertificate.new(cmdline_params['other']['certdir'])
-
-HighLine.say 'This machine has been successfully registered.'
+puavoclient.after_register_actions(register_info, cmdline_params)
