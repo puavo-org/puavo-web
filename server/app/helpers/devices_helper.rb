@@ -1,9 +1,9 @@
 module DevicesHelper
 
   def classes(device)
-    roles = Device.roles
+    classes = Device.allowd_classes
 
-    roles.map do |r|
+    classes.map do |r|
       "<div>" +
         "<label>" +
         "<input " +

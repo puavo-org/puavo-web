@@ -1,7 +1,7 @@
-[ { "id": "thinclient", "label": "<%= t(".thinclient") %>" },
-  { "id": "fatclient", "label": "<%= t(".fatclient") %>" },
-  { "id": "laptop", "label": "<%= t(".laptop") %>" },
-  { "id": "workstation", "label": "<%= t(".workstation") %>" },
-  { "id": "server", "label": "<%= t(".server") %>" },
-  { "id": "netstand", "label": "<%= t(".netstand") %>" },
-  { "id": "infotv", "label": "<%= t(".infotv") %>" } ]
+{ "thinclient": { "label": "<%= t(".thinclient") %>", "classes": ["puavoNetbootDevice"], "url": "/devices/%s/devices/new.json?device_type=thinclient", "order": "1" },
+  "fatclient": { "label": "<%= t(".fatclient") %>", "classes": ["puavoNetbootDevice"], "url": "/devices/%s/devices/new.json?device_type=fatclient", "order": "2" },
+  "laptop": { "label": "<%= t(".laptop") %>", "classes": ["puavoLocalbootDevice"], "url": "/devices/%s/devices/new.json?device_type=laptop", "order": "3" },
+  "workstation": { "label": "<%= t(".workstation") %>", "classes": ["puavoLocalbootDevice"], "url": "/devices/%s/devices/new.json?device_type=workstation", "order": "4" },
+  "server": { "label": "<%= t(".server") %>", "classes": ["puavoLocalbootDevice"], "url": "/devices/servers/new.json?device_type=server", "order": "5" },
+  "netstand": { "label": "<%= t(".netstand") %>", "classes": ["puavoLocalbootDevice"], "url": "/devices/%s/devices/new.json?device_type=netstand", "order": "6" },
+  "infotv": { "label": "<%= t(".infotv") %>", "classes": ["puavoLocalbootDevice"], "url": "/devices/%s/devices/new.json?device_type=infotv" , "order": "7" } }

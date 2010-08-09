@@ -1,23 +1,4 @@
-{ "attributes":
-  { "server[puavoHostname]": "",
-    "server[macAddress]": "",
-    "server[serialNumber]": "",
-    "server[puavoDeviceManufacturer]": "",
-    "server[puavoDeviceModel]": "",
-    "server[puavoLatitude]": "",
-    "server[puavoLongitude]": "",
-    "server[puavoLocationName]": "",
-    "server[puavoDeviceStatus]": "",
-    "server[description]": "" },
-  "label":
-  { "server[puavoHostname]": "<%= t("activeldap.attributes.device.puavoHostname") %>",
-    "server[macAddress]": "<%= t("activeldap.attributes.device.macAddress") %>",
-    "server[serialNumber]": "<%= t("activeldap.attributes.device.serialNumber") %>",
-    "server[puavoDeviceManufacturer]": "<%= t("activeldap.attributes.device.puavoDeviceManufacturer") %>",
-    "server[puavoDeviceModel]": "<%= t("activeldap.attributes.device.puavoDeviceModel") %>",
-    "server[puavoLatitude]": "<%= t("activeldap.attributes.device.puavoLatitude") %>",
-    "server[puavoLongitude]": "<%= t("activeldap.attributes.device.puavoLongitude") %>",
-    "server[puavoLocationName]": "<%= t("activeldap.attributes.device.puavoLocationName") %>",
-    "server[puavoDeviceStatus]": "<%= t("activeldap.attributes.device.puavoDeviceStatus") %>",
-    "server[description]": "<%= t("activeldap.attributes.device.description") %>" },
-  "authenticity_token": "<%= form_authenticity_token %>" }
+{ "attributes": [
+<%= render :partial => 'shared/puavoDevice' %> ],
+  "url": "/devices/servers.json",
+  "object_key": "server" }
