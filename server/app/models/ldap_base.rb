@@ -18,4 +18,45 @@ class LdapBase < ActiveLdap::Base
     method_values.empty? ? self.attributes.to_json(options) :
       self.attributes.merge( method_values ).to_json(options)
   end
+
+  def validate_on_create
+    unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
+      # FIXME: localization
+      errors.add "puavoHostname", "Hostname must be unique"
+    end
+
+    unless self.host_certificate_request.nil?
+      sign_certificate
+    end
+  end
+
+  def sign_certificate
+    begin
+      http = Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
+      request = Net::HTTP::Post.new('/certificates.json',
+                                    { 'Content-Type' => 'application/json' })
+      # request.basic_auth(@username, @password)
+      response = http.request(request,
+                              {
+                                'certificate' => {
+                                  'fqdn'                     => LdapOrganisation.first.organizationName,
+                                  'host_certificate_request' => self.host_certificate_request,
+                                }
+                              }.to_json)
+
+      case response.code
+      when /^2/
+        # successful request
+        self.userCertificate = JSON.parse(response.body)["certificate"]["certificate"]
+        logger.debug "Certificate:\n" + self.userCertificate.inspect
+      else
+        raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
+      end
+    rescue Exception => e
+      logger.info "ERROR: Unable to sign certificate"
+      logger.info "Execption: #{e}"
+      # FIXME: Localization
+      errors.add "userCertificate", "Unable to sign certificate"
+    end
+  end
 end

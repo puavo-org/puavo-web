@@ -1,17 +1,12 @@
 class Device < LdapBase
+  attr_accessor :host_certificate_request, :userCertificate
+
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Devices,ou=Hosts",
                 :classes => ['top', 'device'] )
 
 
   before_validation :set_puavo_id
-
-  def validate_on_create
-    unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
-      # FIXME: localization
-      errors.add "puavoHostname", "Hostname must be unique"
-    end
-  end
 
   def self.allowed_classes
     ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter']
