@@ -1,7 +1,7 @@
 module DevicesHelper
 
   def classes(device)
-    classes = Device.allowd_classes
+    classes = Device.allowed_classes
 
     classes.map do |r|
       "<div>" +
