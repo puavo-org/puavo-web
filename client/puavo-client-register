@@ -13,7 +13,6 @@
 #   script -qc ./puavo-client-register /root/register.log
 
 require 'facter'
-require 'getoptlong'
 require 'highline/import'
 require 'json'
 require 'net/http'
@@ -63,7 +62,7 @@ class HostCertificate
   end
 
   def accept_signed_certificate(register_info)
-    @crt = register_info['crt']
+    @crt = register_info['userCertificate']
     unless @crt
       errmsg('Server did not send a signed certificate')
       exit 1
@@ -85,9 +84,6 @@ class HostCertificate
     end
     File.open("#{ certdir }/host.pub", 'w', 0400) do |f|
       f.print @key.public_key
-    end
-    File.open("#{ certdir }/host.csr", 'w', 0400) do |f|
-      f.print @csr.to_pem
     end
     File.open("#{ certdir }/host.crt", 'w', 0400) do |f|
       f.print @crt
@@ -364,7 +360,7 @@ class PuavoDevicesClient
       @attributes.each do |attr|
 	case attr['id']
 	  when 'host_certificate_request'
-	    @cert = HostCertificate.new(@host['puavoHostName'])
+	    @cert = HostCertificate.new(@host['puavoHostname'])
 	    @host[ attr['id'] ] = @cert.request
 	end
       end
@@ -404,6 +400,6 @@ HighLine.say "\n\t-=< Puavo Devices Client >=-\n\n"
 cmdline_params = CmdLine.params()
 
 puavoclient   = PuavoDevicesClient.new(cmdline_params)
-register_info = puavoclient.register_to_server(cmdline_params)
 
+register_info = puavoclient.register_to_server(cmdline_params)
 puavoclient.after_register_actions(register_info, cmdline_params)
