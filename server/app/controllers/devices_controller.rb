@@ -64,7 +64,7 @@ class DevicesController < ApplicationController
       if @device.save
         format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully created.') }
         format.xml  { render :xml => @device, :status => :created, :location => device_path(@school, @device) }
-        format.json  { render :json => @device, :status => :created, :location => device_path(@school, @device) }
+        format.json  { render :json => @device.to_json(:methods => [:host_certificate_request, :userCertificate]), :status => :created, :location => device_path(@school, @device) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @device.errors, :status => :unprocessable_entity }

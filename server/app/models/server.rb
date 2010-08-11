@@ -9,13 +9,6 @@ class Server < LdapBase
 
   before_validation :set_puavo_id
 
-  def validate
-    unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
-      # FIXME: localization
-      errors.add "puavoHostname", "Hostname must be unique"
-    end
-  end
-
   def full_hostname
     "#{self.puavoHostname}.#{LdapOrganisation.first.puavoDomain}"
   end
