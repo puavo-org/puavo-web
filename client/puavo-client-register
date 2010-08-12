@@ -31,8 +31,8 @@ class CmdLine
     new_arg = nil
     ARGV.each do |i|
       case i
-	when '--batch'
-	  params[i] = true
+	when '--noconfirm'
+	  params['noconfirm'] = true
 	else
 	  if new_arg.nil?
 	    new_arg = i
@@ -93,7 +93,7 @@ end
 
 class PuavoDevicesClient
   def initialize(params)
-    @batch_mode  = params['batch']
+    @mode        = { 'noconfirm' => params['noconfirm'] }
     @puavoserver = params['puavoserver'] || lookup_default_puavoserver()
     @username    = params['username']
     @password    = params['password']
@@ -223,20 +223,8 @@ class PuavoDevicesClient
     end
   end
 
-  def get(url, params = {})
+  def get(url)
     @http.start do |http|
-      unless params.empty?
-        url += '?'
-        params.each do |key, value|
-          case value.class.to_s
-	    when 'Array'
-	      url += value.map { |v| "#{ key }[]=#{ v }" }.join('&')
-	    else
-	      url += "#{ key }=#{ value }"
-	    end
-        end
-      end
-
       request = Net::HTTP::Get.new(url)
       request.basic_auth(@username, @password)
       response = http.request(request)
@@ -351,7 +339,7 @@ class PuavoDevicesClient
 
     loop do
       print_machine_info()
-      until @batch_mode or agree('Is this information correct? (y/n) ')
+      until @mode['noconfirm'] or agree('Is this information correct? (y/n) ')
 	ask_machine_info()
 	print_machine_info()
       end
