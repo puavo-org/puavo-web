@@ -1,6 +1,12 @@
 class LdapBase < ActiveLdap::Base
   include Puavo::Connection if defined?(Puavo::Connection)
 
+  attr_accessor :host_certificate_request_send
+
+  def host_certificate_request_send?
+    host_certificate_request_send ? true : false
+  end
+
   # Activeldap object's to_json method return Array by default.
   # E.g. @server.to_json -> [["puavoHostname", "puavoHostname 1"],["macAddress", "00-00-00-00-00-00-00-00"]]
   # When we use @server.attributes.to_json method we get Hash value. This is better and
@@ -25,21 +31,25 @@ class LdapBase < ActiveLdap::Base
       errors.add "puavoHostname", "Hostname must be unique"
     end
 
-    unless self.host_certificate_request.nil?
-      sign_certificate
+    if host_certificate_request_send?
+      if self.userCertificate.nil?
+        # FIXME: Localization
+        errors.add "userCertificate", "Unable to sign certificate"
+      end
     end
   end
 
-  def sign_certificate
+  def sign_certificate(organisation_key, dn, password)
     begin
+      self.host_certificate_request_send = true
       http = Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
-      request = Net::HTTP::Post.new('/certificates.json',
+      request = Net::HTTP::Post.new("/certificates.json?org=#{organisation_key}",
                                     { 'Content-Type' => 'application/json' })
-      # request.basic_auth(@username, @password)
+      request.basic_auth(dn, password)
       response = http.request(request,
                               {
                                 'certificate' => {
-                                  'fqdn'                     => LdapOrganisation.first.organizationName,
+                                  'fqdn'                     => self.puavoHostname + "." + LdapOrganisation.first.organizationName,
                                   'host_certificate_request' => self.host_certificate_request,
                                 }
                               }.to_json)
@@ -55,8 +65,6 @@ class LdapBase < ActiveLdap::Base
     rescue Exception => e
       logger.info "ERROR: Unable to sign certificate"
       logger.info "Execption: #{e}"
-      # FIXME: Localization
-      errors.add "userCertificate", "Unable to sign certificate"
     end
   end
 end

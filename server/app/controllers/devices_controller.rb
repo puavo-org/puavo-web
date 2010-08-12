@@ -60,6 +60,12 @@ class DevicesController < ApplicationController
 
     @device.puavoSchool = @school.dn
 
+    if @device.valid?
+      unless @device.host_certificate_request.nil?
+        @device.sign_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+      end
+    end
+
     respond_to do |format|
       if @device.save
         format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully created.') }
