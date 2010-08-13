@@ -67,4 +67,22 @@ class LdapBase < ActiveLdap::Base
       logger.info "Execption: #{e}"
     end
   end
+
+  def revoke_certificate(organisation_key, dn, password)
+    begin
+      http = Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
+      request = Net::HTTP::Delete.new("/certificates/revoke.json?fqdn=#{self.puavoHostname + "." + LdapOrganisation.first.organizationName}")
+      request.basic_auth(dn, password)
+      response = http.request(request)
+      case response.code
+      when /^2/
+        # successful request
+      else
+        raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
+      end
+    rescue Exception => e
+      logger.info "Unable to revoke certificate"
+      logger.info "Execption: #{e}"
+    end
+  end
 end

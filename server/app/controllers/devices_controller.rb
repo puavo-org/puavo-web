@@ -99,6 +99,8 @@ class DevicesController < ApplicationController
   # DELETE /devices/1.xml
   def destroy
     @device = Device.find(params[:id])
+    # FIXME, revoke certificate only if device's include certificate
+    @device.revoke_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
     @device.destroy
 
     respond_to do |format|
