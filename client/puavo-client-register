@@ -53,20 +53,15 @@ end
 class HttpAuthError < Exception; end
 
 class HostCertificate
-  def initialize(hostname)
+  def initialize
     @key = OpenSSL::PKey::RSA.new(1024)
     @csr = OpenSSL::X509::Request.new
     @csr.version = 0
-    @csr.subject = OpenSSL::X509::Name.new([[ 'CN', hostname ]])
     @csr.public_key = @key.public_key
   end
 
-  def accept_signed_certificate(register_info)
-    @crt = register_info['userCertificate']
-    unless @crt
-      errmsg('Server did not send a signed certificate')
-      exit 1
-    end
+  def accept_signed_certificate(certificate)
+    @crt = certificate
   end
 
   def request
@@ -92,7 +87,7 @@ class HostCertificate
 end
 
 class RegisterUserInterface
-  def initialize(cmdline_params)
+  def initialize(cmdline_params, cert)
     @responses       = {}
     @cmdline_params  = cmdline_params
 
@@ -103,6 +98,7 @@ class RegisterUserInterface
 
     facts = Facter.to_hash
     @system_defaults = {
+      'host_certificate_request' => cert.request,
       'macAddress'               => lookup_macaddresses(facts),
       'puavoDeviceManufacturer'  => facts['manufacturer'],
       'puavoDeviceModel'         => facts['productname'],
@@ -110,8 +106,7 @@ class RegisterUserInterface
       'serialNumber'             => facts['serialnumber'],
     }
 
-    @attributes = [ { 'id' => 'puavoHostname', } ]	# for certificate
-    register_to_server()
+    @host = {}
   end
 
   def ask_devicetype()
@@ -120,29 +115,30 @@ class RegisterUserInterface
 		 'devicetype',
 		 @connection.devicetypes['title'],
 		 @connection.devicetypes['question'])
+    @attributes = request_attributes()
   end
 
   def ask_machine_info(errors={}, ask_all=true)
     unhandled = errors.clone
+    if ask_all
+      # XXX there is no error handling for these... which is not that bad
+      ask_devicetype()
+      ask_school()
+    end
     @attributes.each do |attr|
       field = attr['id']
+
       next unless ask_all or unhandled[field]
       next if attr['label'].empty?
+      next if %(devicetype school).include?(field)
 
       if unhandled[field] and not ask_all
 	errmsg(unhandled[field])
 	unhandled.delete(field)
       end
 
-      case field
-	when 'devicetype'
-	  ask_devicetype()
-	when 'school'
-	  ask_school()
-	else
-	  question = attr['label'] + ':'
-          @responses[field] = ask_with_default(question, @host[field])
-      end
+      question = attr['label'] + ':'
+      @responses[field] = ask_with_default(question, @host[field])
     end
     unhandled.each do |field, errmsg|
       errmsg("Server reported unhandled error for #{ field }: #{ errmsg }")
@@ -158,6 +154,7 @@ class RegisterUserInterface
 		   'school',
 		   @connection.schools['title'],
 		   @connection.schools['question'])
+    @attributes = request_attributes()
   end
 
   def ask_with_default(question, default)
@@ -215,6 +212,7 @@ class RegisterUserInterface
 	end
       end
     end
+    @attributes = request_attributes()
   end
 
   def default_puavoserver
@@ -235,12 +233,8 @@ class RegisterUserInterface
 			sort.uniq.join(' ')
   end
 
-  def make_certificate(hostname)
-    @cert = HostCertificate.new(hostname)
-  end
-
   def print_machine_info
-    request_and_set_host_attributes()
+    set_host_attributes()
     HighLine.say "\nHOST INFORMATION:"
     @attributes.each do |attr|
       next if attr['label'].empty?
@@ -271,22 +265,23 @@ class RegisterUserInterface
       end
 
       HighLine.say 'Sending host information to puavo server...'
-      register_info = @connection.post_host(@host)
-      if register_info['info']
-	HighLine.say 'This machine has been successfully registered.'
-        return register_info['info']
+      response_data = @connection.post_host(@host)
+      if response_data['register_info']
+	if @host['host_certificate_request'] \
+	  and not response_data['register_info']['userCertificate']
+	    errmsg('Server did not send a signed certificate')
+        else
+	  HighLine.say 'This machine has been successfully registered.'
+	  return response_data['register_info']
+	end
       else
-	ask_machine_info(register_info['errors'], false)
+	ask_machine_info(response_data['errors'], false)
       end
     end
   end
 
-  def request_and_set_host_attributes
-    set_host_attributes()
-    @system_defaults['host_certificate_request'] =
-      make_certificate(@host['puavoHostname'])
-    @attributes = @connection.ask_queries(@host['devicetype'], @host['school'])
-    set_host_attributes()
+  def request_attributes
+    @connection.request_object_info(@host['devicetype'], @host['school'])
   end
 
   def set_host_attributes
@@ -327,9 +322,9 @@ class PuavoDevicesConnection
     ]
   end
 
-  def ask_queries(devicetype, school)
-    devicetype ||= @devicetypes['default']
-    school     ||= @schools['default']
+  def request_object_info(devicetype, school)
+    devicetype = devicetype || @devicetypes['default'].to_s
+    school     = school     || @schools['default'].to_s
     # put school id into url if %s exists in url string
     question_url = @devicetypes['list'][ devicetype ]['url'] % school
 
@@ -340,12 +335,12 @@ class PuavoDevicesConnection
     }
     [
       {
-        'default' => @devicetypes['default'],
-        'id'      => 'devicetype',
-        'label'   => @devicetypes['label'],
+	'default' => @devicetypes['default'].to_s,
+	'id'      => 'devicetype',
+	'label'   => @devicetypes['label'],
       },
       {
-	'default' => @schools['default'],
+	'default' => @schools['default'].to_s,
 	'id'      => 'school',
 	'label'   => @schools['label'] },
     ] + form['attributes'] 
@@ -384,7 +379,7 @@ class PuavoDevicesConnection
     case response.code
       when /^2/
 	# successful request
-        Hash[ 'errors' => {}, 'info' => JSON.parse(response.body), ]
+        Hash[ 'errors' => {}, 'register_info' => JSON.parse(response.body), ]
       when /^5/
 	errmsg("Server response is #{ response.code }: #{ response.message }")
 	Hash[ 'errors' => {} ]
@@ -396,10 +391,9 @@ end
 
 class PostRegisterConfiguration
   def self.do(cert, register_info, cmdline_params)
-    # XXX this stuff should actually belong to a different class
-    if puavoclient.cert
-      @cert.accept_signed_certificate(register_info)
-      @cert.write_to_filesystem(cmdline_params['certdir'])
+    if register_info['userCertificate']
+      cert.accept_signed_certificate(register_info['userCertificate'])
+      cert.write_to_filesystem(cmdline_params['certdir'])
       unless system('apt-get --assume-yes install openvpn')
         errmsg('could not install openvpn')
         exit 1
@@ -415,7 +409,9 @@ end
 HighLine.say "\n\t-=< Puavo Devices Client >=-\n\n"
 
 cmdline_params = CmdLine.params()
+cert = HostCertificate.new
 
-register_info = RegisterUserInterface.new(cmdline_params)
+rui = RegisterUserInterface.new(cmdline_params, cert)
+register_info = rui.register_to_server()
 
-# PostRegisterConfiguration.do(register_info, cmdline_params)
+PostRegisterConfiguration.do(cert, register_info, cmdline_params)
