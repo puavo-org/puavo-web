@@ -115,7 +115,7 @@ class RegisterUserInterface
 		 'devicetype',
 		 @connection.devicetypes['title'],
 		 @connection.devicetypes['question'])
-    @attributes = request_attributes()
+    @attributes = request_attributes(@responses['devicetype'])
   end
 
   def ask_machine_info(errors={}, ask_all=true)
@@ -154,7 +154,8 @@ class RegisterUserInterface
 		   'school',
 		   @connection.schools['title'],
 		   @connection.schools['question'])
-    @attributes = request_attributes()
+    @attributes = request_attributes(@responses['devicetype'],
+				     @responses['school'])
   end
 
   def ask_with_default(question, default)
@@ -280,8 +281,10 @@ class RegisterUserInterface
     end
   end
 
-  def request_attributes
-    @connection.request_object_info(@host['devicetype'], @host['school'])
+  def request_attributes(devicetype=nil, school=nil)
+    devicetype ||= @host['devicetype']
+    school     ||= @host['school']
+    @connection.request_object_info(devicetype, school)
   end
 
   def set_host_attributes
