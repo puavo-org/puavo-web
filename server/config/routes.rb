@@ -11,6 +11,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :workstations
 
   map.resources :servers, :has_many => :automounts
+  map.revoke_certificate_server '/servers/:id/revoke_certificate', :controller => 'servers', :action => 'revoke_certificate', :conditions => { :method => :delete }
 
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'

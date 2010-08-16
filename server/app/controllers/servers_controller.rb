@@ -14,6 +14,7 @@ class ServersController < ApplicationController
   # GET /servers/1.xml
   def show
     @server = Server.find(params[:id])
+    @server.get_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -43,12 +44,18 @@ class ServersController < ApplicationController
   def create
     @server = Server.new(params[:server])
 
+    if @server.valid?
+      unless @server.host_certificate_request.nil?
+        @server.sign_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+      end
+    end
+
     respond_to do |format|
       if @server.save
         flash[:notice] = 'Server was successfully created.'
         format.html { redirect_to(@server) }
         format.xml  { render :xml => @server, :status => :created, :location => @server }
-        format.json  { render :json => @server, :status => :created, :location => @server }
+        format.json  { render :json => @server.to_json(:methods => [:host_certificate_request, :userCertificate]), :status => :created, :location => @server }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @server.errors, :status => :unprocessable_entity }
@@ -78,11 +85,24 @@ class ServersController < ApplicationController
   # DELETE /servers/1.xml
   def destroy
     @server = Server.find(params[:id])
+    # FIXME, revoke certificate only if device's include certificate
+    @server.revoke_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
     @server.destroy
 
     respond_to do |format|
       format.html { redirect_to(servers_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  # DELETE /servers/1
+  def revoke_certificate
+    @server = Server.find(params[:id])
+    # FIXME, revoke certificate only if server's include certificate
+    @server.revoke_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+
+    respond_to do |format|
+      format.html { redirect_to(server_path(@server), :notice => 'Server was successfully set to install mode.') }
     end
   end
 end
