@@ -213,7 +213,6 @@ class RegisterUserInterface
 	end
       end
     end
-    @attributes = request_attributes()
   end
 
   def default_puavoserver
@@ -258,6 +257,8 @@ class RegisterUserInterface
   def register_to_server
     connect_to_puavo()
 
+    @attributes = request_attributes(@cmdline_params['devicetype'],
+				     @cmdline_params['school'])
     loop do
       print_machine_info()
       until @mode['noconfirm'] or agree('Is this information correct? (y/n) ')
@@ -397,10 +398,36 @@ class PostRegisterConfiguration
     if register_info['userCertificate']
       cert.accept_signed_certificate(register_info['userCertificate'])
       cert.write_to_filesystem(cmdline_params['certdir'])
-      unless system('apt-get --assume-yes install openvpn')
-        errmsg('could not install openvpn')
-        exit 1
-      end
+      setup_openvpn()
+    end
+  end
+
+  def self.apt_get_install(package)
+    unless system("apt-get --assume-yes install #{ package }")
+      errmsg("could not install #{ package }")
+      exit 1
+    end
+  end
+
+  def self.setup_openvpn
+    apt_get_install('openvpn')
+    File.open('/etc/openvpn/puavodeviceclient.conf', 'w', 0600) do |f|
+      # XXX nicer indentation please...
+      f.print <<-'EOF'
+client
+dev tun
+proto tcp-client
+remote 217.112.254.13 443
+ca keys/ca.crt
+cert keys/opinsys.crt
+key keys/opinsys.key
+ns-cert-type server
+verb 3
+comp-lzo
+keepalive 10 60
+persist-tun
+persist-key
+EOF
     end
   end
 end
