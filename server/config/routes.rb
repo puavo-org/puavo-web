@@ -4,6 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :hosts, :only => [:index], :collection => { :types => :get }
 
   map.resources :devices, :path_prefix => ':school_id'
+  map.revoke_certificate_device '/devices/:id/revoke_certificate', :controller => 'devices', :action => 'revoke_certificate', :conditions => { :method => :delete }, :path_prefix => ':school_id'
 
   map.resources :terminals
 

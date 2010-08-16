@@ -19,6 +19,8 @@ class DevicesController < ApplicationController
   def show
     @device = Device.find(params[:id])
 
+    @device.get_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }
@@ -106,6 +108,17 @@ class DevicesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(devices_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  # DELETE /devices/1
+  def revoke_certificate
+    @device = Device.find(params[:id])
+    # FIXME, revoke certificate only if device's include certificate
+    @device.revoke_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+
+    respond_to do |format|
+      format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully set to install mode.') }
     end
   end
 
