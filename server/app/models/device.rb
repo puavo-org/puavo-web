@@ -1,6 +1,4 @@
 class Device < LdapBase
-  attr_accessor :host_certificate_request, :userCertificate
-
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Devices,ou=Hosts",
                 :classes => ['top', 'device'] )
