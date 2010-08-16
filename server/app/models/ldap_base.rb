@@ -2,6 +2,7 @@ class LdapBase < ActiveLdap::Base
   include Puavo::Connection if defined?(Puavo::Connection)
 
   attr_accessor :host_certificate_request_send
+  attr_accessor :host_certificate_request, :userCertificate
 
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
