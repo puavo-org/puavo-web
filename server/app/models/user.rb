@@ -6,7 +6,7 @@ class User < LdapBase
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
 
   def managed_schools
-    School.all
+    { 'label' => 'School', 'default' => School.first.puavoId, 'title' => 'School selection', 'question' => 'Select school: ', 'list' => School.all, }
   end
 end
 

@@ -4,6 +4,15 @@
 </p>
 
 <p>
+  <b>Certificate:</b>
+  <% if @device.userCertificate %>
+    Yes
+  <% else %>
+    No
+  <% end %>
+</p>
+
+<p>
   <b>Macaddress:</b>
   <%=h @device.macAddress %>
 </p>
@@ -65,3 +74,10 @@
 
 <%= link_to 'Edit', edit_device_path(@school, @device) %> |
 <%= link_to 'Back', devices_path(@school) %>
+
+<% content_for :right do %>
+<div><%= link_to 'Edit', edit_device_path(@school, @device) %></div>
+<% if @device.userCertificate %>
+  <div><%= link_to 'Set install mode', revoke_certificate_device_path(@school, @device), :method => :delete %></div>
+<% end %>
+<% end %>
