@@ -25,6 +25,10 @@ def errmsg(msg)
   HighLine.say(HighLine.new.color("*** ERROR: #{ msg }", HighLine::RED))
 end
 
+def goodmsg(msg)
+  HighLine.say(HighLine.new.color("*** OK: #{ msg }", HighLine::GREEN))
+end
+
 class CmdLine
   def self.params()
     params = {}
@@ -42,10 +46,6 @@ class CmdLine
           end
       end
     end
-    unless params['certdir']
-      errmsg('--certdir must be set')
-      exit 1
-    end
     params
   end
 end
@@ -61,28 +61,20 @@ class HostCertificate
   end
 
   def accept_signed_certificate(certificate)
-    @crt = certificate
+    @crt = OpenSSL::X509::Certificate.new(certificate)
+  end
+
+  def fqdn
+    ((/^.*CN=(.*?)(\/|$)/.match(@crt.subject.to_s))[1])
   end
 
   def request
     @csr.to_pem
   end
 
-  def write_to_filesystem(certdir)
-    begin
-      Dir.mkdir(certdir, 0700)
-      rescue Errno::EEXIST
-    end
-
-    File.open("#{ certdir }/host.key", 'w', 0400) do |f|
-      f.print @key.to_pem
-    end
-    File.open("#{ certdir }/host.pub", 'w', 0400) do |f|
-      f.print @key.public_key
-    end
-    File.open("#{ certdir }/host.crt", 'w', 0400) do |f|
-      f.print @crt
-    end
+  def write_to_filesystem(certpath, keypath)
+    File.open(certpath, 'w', 0400) { |f| f.print @crt.to_pem }
+    File.open(keypath, 'w', 0400)  { |f| f.print @key.to_pem }
   end
 end
 
@@ -230,7 +222,7 @@ class RegisterUserInterface
   def lookup_macaddresses(facts)
     facts['interfaces'].split(',').
 			map { |intf| facts["macaddress_#{intf}"] }.
-			sort.uniq.join(' ')
+			compact.sort.uniq.join(' ')
   end
 
   def print_machine_info
@@ -273,7 +265,7 @@ class RegisterUserInterface
 	  and not response_data['register_info']['userCertificate']
 	    errmsg('Server did not send a signed certificate')
         else
-	  HighLine.say 'This machine has been successfully registered.'
+	  goodmsg('This machine has been successfully registered.')
 	  return response_data['register_info']
 	end
       else
@@ -394,40 +386,107 @@ class PuavoDevicesConnection
 end
 
 class PostRegisterConfiguration
-  def self.do(cert, register_info, cmdline_params)
-    if register_info['userCertificate']
-      cert.accept_signed_certificate(register_info['userCertificate'])
-      cert.write_to_filesystem(cmdline_params['certdir'])
-      setup_openvpn()
-    end
+  def initialize(cert, register_info)
+    @cert = cert
+    @register_info = register_info
   end
 
-  def self.apt_get_install(package)
-    unless system("apt-get --assume-yes install #{ package }")
+  def apt_get_install(package)
+    unless system("apt-get --assume-yes -qq install #{ package }")
       errmsg("could not install #{ package }")
       exit 1
     end
+    goodmsg("Package #{ package } has been installed.")
   end
 
-  def self.setup_openvpn
+  def mkdir(path, mode=0700)
+    begin
+      Dir.mkdir(path, mode)
+      rescue Errno::EEXIST
+    end
+  end
+
+  def setup_all
+    if @register_info['userCertificate']
+      @cert.accept_signed_certificate(@register_info['userCertificate'])
+      setup_hostname()
+      setup_openvpn()
+      if @register_info['puppet_server']
+	setup_puppet(@register_info['puppet_server'])
+      end
+    end
+  end
+
+  def setup_hostname
+    hostname = @cert.fqdn.split('.')[0]
+    File.open('/etc/hostname', 'w', 0600) do |f|
+      f.print "#{ hostname }\n"
+    end
+    goodmsg("System hostname is now set to #{ hostname }")
+  end
+
+  def setup_openvpn
     apt_get_install('openvpn')
-    File.open('/etc/openvpn/puavodeviceclient.conf', 'w', 0600) do |f|
-      # XXX nicer indentation please...
-      f.print <<-'EOF'
-client
-dev tun
-proto tcp-client
-remote 217.112.254.13 443
-ca keys/ca.crt
-cert keys/opinsys.crt
-key keys/opinsys.key
-ns-cert-type server
-verb 3
-comp-lzo
-keepalive 10 60
-persist-tun
-persist-key
-EOF
+    mkdir('/etc/openvpn/keys')
+    # XXX /etc/openvpn/keys/organisation-ca-bundle.pem
+    # XXX should be gotten somewhere and also written here
+    @cert.write_to_filesystem('/etc/openvpn/keys/host.crt',
+			      '/etc/openvpn/keys/host.key')
+    File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
+      f.print <<-'EOF'.gsub(/^\s+/, '')
+	client
+	dev tun
+	proto tcp-client
+	remote 217.112.254.13 443
+	ca /etc/openvpn/keys/organisation-ca-bundle.pem
+	cert /etc/openvpn/keys/host.crt
+	key /etc/openvpn/keys/host.key
+	ns-cert-type server
+	verb 3
+	comp-lzo
+	keepalive 10 60
+	persist-tun
+	persist-key
+	ipchange /etc/openvpn/runme
+	EOF
+    end
+    unless system('service openvpn restart')
+      errmsg('problem restarting openvpn')
+      exit 1
+    end
+    goodmsg('OpenVPN setup is done.')
+  end
+
+  def setup_puppet(server)
+    mkdir('/etc/puppet/keys')
+    # XXX /etc/puppet/keys/organisation-ca-bundle.pem
+    # XXX should be gotten somewhere and also written here
+    @cert.write_to_filesystem('/etc/puppet/keys/host.crt',
+			      '/etc/puppet/keys/host.key')
+    File.open('/etc/puppet/puppet.conf', 'w', 0644) do |f|
+      f.print <<-EOF.gsub(/^\s+/, '')
+	[main]
+	logdir=/var/log/puppet
+	vardir=/var/lib/puppet
+	ssldir=/var/lib/puppet/ssl
+	rundir=/var/run/puppet
+	factpath=$vardir/lib/facter
+	pluginsync=true
+	templatedir=$confdir/templates
+	prerun_command=/etc/puppet/etckeeper-commit-pre
+	postrun_command=/etc/puppet/etckeeper-commit-post
+	server=#{ server }
+	EOF
+    end
+    goodmsg('Puppet setup is done, running puppet once...')
+    unless system('puppetd --no-daemonize --onetime --logdest console' \
+                  + ' --logdest /var/log/puppet/install.log')
+      errmsg('problem running puppet')
+      exit 1
+    end
+    unless system('service puppet restart')
+      errmsg('problem restarting puppet')
+      exit 1
     end
   end
 end
@@ -443,5 +502,6 @@ cert = HostCertificate.new
 
 rui = RegisterUserInterface.new(cmdline_params, cert)
 register_info = rui.register_to_server()
+register_info['puppet_server'] = 'kunta1.puppet.opinsys.fi'	# XXX
 
-PostRegisterConfiguration.do(cert, register_info, cmdline_params)
+PostRegisterConfiguration.new(cert, register_info).setup_all
