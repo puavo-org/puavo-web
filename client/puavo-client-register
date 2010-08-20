@@ -12,7 +12,9 @@
 # suggestion: run this as:
 #   script -qc ./puavo-client-register /root/register.log
 
+require 'etc'
 require 'facter'
+require 'fileutils'
 require 'highline/import'
 require 'json'
 require 'net/http'
@@ -74,7 +76,7 @@ class HostCertificate
 
   def write_to_filesystem(certpath, keypath)
     File.open(certpath, 'w', 0400) { |f| f.print @crt.to_pem }
-    File.open(keypath, 'w', 0400)  { |f| f.print @key.to_pem }
+    File.open(keypath,  'w', 0400) { |f| f.print @key.to_pem }
   end
 end
 
@@ -113,7 +115,6 @@ class RegisterUserInterface
   def ask_machine_info(errors={}, ask_all=true)
     unhandled = errors.clone
     if ask_all
-      # XXX there is no error handling for these... which is not that bad
       ask_devicetype()
       ask_school()
     end
@@ -138,7 +139,7 @@ class RegisterUserInterface
   end
 
   def ask_school()
-    return if @host['devicetype'] == 'server'	 # XXX
+    return if @host['devicetype'] == 'server'	 # XXX how to figure this out?
     list = @connection.schools['list']
     @responses['school'] \
       = list.size == 1 ? list.keys[0] \
@@ -393,16 +394,18 @@ class PostRegisterConfiguration
 
   def apt_get_install(package)
     unless system("apt-get --assume-yes -qq install #{ package }")
-      errmsg("could not install #{ package }")
-      exit 1
+      raise "could not install #{ package }"
     end
     goodmsg("Package #{ package } has been installed.")
   end
 
-  def mkdir(path, mode=0700)
+  def mkdir(path, mode=0755, owner=nil, group=nil)
     begin
       Dir.mkdir(path, mode)
       rescue Errno::EEXIST
+    end
+    if owner and group
+      File.chown(Etc.getpwnam(owner).uid, Etc.getgrnam(group).gid, path)
     end
   end
 
@@ -419,73 +422,102 @@ class PostRegisterConfiguration
 
   def setup_hostname
     hostname = @cert.fqdn.split('.')[0]
-    File.open('/etc/hostname', 'w', 0600) do |f|
-      f.print "#{ hostname }\n"
+    begin
+      File.open('/etc/hostname', 'w', 0600) do |f|
+	f.print "#{ hostname }\n"
+      end
+      unless system('hostname --file /etc/hostname')
+	raise 'could not set hostname'
+      end
+    rescue => msg
+      errmsg(msg)
+      exit 1
     end
     goodmsg("System hostname is now set to #{ hostname }")
   end
 
   def setup_openvpn
-    apt_get_install('openvpn')
-    mkdir('/etc/openvpn/keys')
-    # XXX /etc/openvpn/keys/organisation-ca-bundle.pem
-    # XXX should be gotten somewhere and also written here
-    @cert.write_to_filesystem('/etc/openvpn/keys/host.crt',
-			      '/etc/openvpn/keys/host.key')
-    File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
-      f.print <<-'EOF'.gsub(/^\s+/, '')
-	client
-	dev tun
-	proto tcp-client
-	remote 217.112.254.13 443
-	ca /etc/openvpn/keys/organisation-ca-bundle.pem
-	cert /etc/openvpn/keys/host.crt
-	key /etc/openvpn/keys/host.key
-	ns-cert-type server
-	verb 3
-	comp-lzo
-	keepalive 10 60
-	persist-tun
-	persist-key
-	ipchange /etc/openvpn/runme
-	EOF
-    end
-    unless system('service openvpn restart')
-      errmsg('problem restarting openvpn')
+    begin
+      apt_get_install('openvpn')
+      mkdir('/etc/openvpn/keys')
+      # XXX /etc/openvpn/keys/organisation-ca-bundle.pem
+      # XXX should be gotten somewhere and also written here
+      @cert.write_to_filesystem('/etc/openvpn/keys/host.crt',
+				'/etc/openvpn/keys/host.key')
+      File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
+	f.print <<-'EOF'.gsub(/^\s+/, '')
+	  client
+	  dev tun
+	  proto tcp-client
+	  remote 217.112.254.13 443
+	  ca /etc/openvpn/keys/organisation-ca-bundle.pem
+	  cert /etc/openvpn/keys/host.crt
+	  key /etc/openvpn/keys/host.key
+	  ns-cert-type server
+	  verb 3
+	  comp-lzo
+	  keepalive 10 60
+	  persist-tun
+	  persist-key
+	  ipchange /etc/openvpn/runme
+	  EOF
+      end
+      unless system('service openvpn restart')
+	raise 'problem restarting openvpn'
+      end
+    rescue => msg
+      errmsg(msg)
       exit 1
     end
     goodmsg('OpenVPN setup is done.')
   end
 
   def setup_puppet(server)
-    mkdir('/etc/puppet/keys')
-    # XXX /etc/puppet/keys/organisation-ca-bundle.pem
-    # XXX should be gotten somewhere and also written here
-    @cert.write_to_filesystem('/etc/puppet/keys/host.crt',
-			      '/etc/puppet/keys/host.key')
-    File.open('/etc/puppet/puppet.conf', 'w', 0644) do |f|
-      f.print <<-EOF.gsub(/^\s+/, '')
-	[main]
-	logdir=/var/log/puppet
-	vardir=/var/lib/puppet
-	ssldir=/var/lib/puppet/ssl
-	rundir=/var/run/puppet
-	factpath=$vardir/lib/facter
-	pluginsync=true
-	templatedir=$confdir/templates
-	prerun_command=/etc/puppet/etckeeper-commit-pre
-	postrun_command=/etc/puppet/etckeeper-commit-post
-	server=#{ server }
-	EOF
-    end
-    goodmsg('Puppet setup is done, running puppet once...')
-    unless system('puppetd --no-daemonize --onetime --logdest console' \
-                  + ' --logdest /var/log/puppet/install.log')
-      errmsg('problem running puppet')
-      exit 1
-    end
-    unless system('service puppet restart')
-      errmsg('problem restarting puppet')
+    begin
+      apt_get_install('puppet')
+      FileUtils.rmtree('/etc/puppet/ssl')
+      mkdir('/etc/puppet/ssl',              0771, 'puppet', 'root')
+      mkdir('/etc/puppet/ssl/certs',        0755, 'puppet', 'root')
+      mkdir('/etc/puppet/ssl/private_keys', 0750, 'puppet', 'root')
+      fqdn = @cert.fqdn
+
+      # XXX /etc/puppet/ssl/certs/ca.pem (organisation-ca-bundle.pem)
+      # XXX should be gotten somewhere and also written here
+      @cert.write_to_filesystem("/etc/puppet/ssl/certs/#{ fqdn }.pem",
+				"/etc/puppet/ssl/private_keys/#{ fqdn }.pem")
+      File.open('/etc/default/puppet', 'w') do |f|
+	f.print <<-EOF.gsub(/^\s+/, '')
+	  START=yes
+	  DAEMON_OPTS=""
+	  EOF
+      end
+      File.open('/etc/puppet/puppet.conf', 'w') do |f|
+	f.print <<-EOF.gsub(/^\s+/, '')
+	  [main]
+	  certname=#{ @cert.fqdn }
+	  factpath=/var/lib/puppet/lib/facter
+	  logdir=/var/log/puppet
+	  pluginsync=true
+	  postrun_command=/etc/puppet/etckeeper-commit-post
+	  prerun_command=/etc/puppet/etckeeper-commit-pre
+	  rundir=/var/run/puppet
+	  server=#{ server }
+	  templatedir=$confdir/templates
+	  vardir=/var/lib/puppet
+	  EOF
+      end
+      goodmsg('Puppet setup is done, running puppet once...')
+      unless system('puppetd --no-daemonize --onetime --logdest console' \
+		    + ' --logdest /var/log/puppet/install.log')
+	raise 'problem running puppetd'
+      end
+      goodmsg('Puppet run is done.')
+      unless system('service puppet restart')
+	raise 'problem restarting puppet'
+      end
+      goodmsg('Puppet daemon is started.')
+    rescue => msg
+      errmsg(msg)
       exit 1
     end
   end
@@ -502,6 +534,7 @@ cert = HostCertificate.new
 
 rui = RegisterUserInterface.new(cmdline_params, cert)
 register_info = rui.register_to_server()
-register_info['puppet_server'] = 'kunta1.puppet.opinsys.fi'	# XXX
+register_info['puppet_server']       = 'kunta1.puppet.opinsys.fi'
+register_info['organisation_ca_url'] = '/fetch_me'
 
 PostRegisterConfiguration.new(cert, register_info).setup_all
