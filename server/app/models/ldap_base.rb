@@ -2,7 +2,7 @@ class LdapBase < ActiveLdap::Base
   include Puavo::Connection if defined?(Puavo::Connection)
 
   attr_accessor :host_certificate_request_send
-  attr_accessor :host_certificate_request, :userCertificate, :cacerts
+  attr_accessor :host_certificate_request, :userCertificate, :cacerts, :new_password
 
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
@@ -15,7 +15,7 @@ class LdapBase < ActiveLdap::Base
   def to_json(options = {})
     unless options.has_key?(:methods)
       # Set default methods list
-      options[:methods] = [:host_certificate_request, :userCertificate, :cacerts]
+      options[:methods] = [:host_certificate_request, :userCertificate, :cacerts, :new_password]
     end
     method_values = { }
     # Create Hash by :methods name if :methods options is set.
