@@ -15,6 +15,7 @@ class ServersController < ApplicationController
   def show
     @server = Server.find(params[:id])
     @server.get_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+    @server.get_ca_certificate(session[:organisation].organisation_key)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -47,6 +48,7 @@ class ServersController < ApplicationController
     if @server.valid?
       unless @server.host_certificate_request.nil?
         @server.sign_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+        @server.get_ca_certificate(session[:organisation].organisation_key)
       end
     end
 
@@ -55,7 +57,7 @@ class ServersController < ApplicationController
         flash[:notice] = 'Server was successfully created.'
         format.html { redirect_to(@server) }
         format.xml  { render :xml => @server, :status => :created, :location => @server }
-        format.json  { render :json => @server.to_json(:methods => [:host_certificate_request, :userCertificate]), :status => :created, :location => @server }
+        format.json  { render :json => @server, :status => :created, :location => @server }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @server.errors, :status => :unprocessable_entity }
