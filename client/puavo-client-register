@@ -62,8 +62,9 @@ class HostCertificate
     @csr.public_key = @key.public_key
   end
 
-  def accept_signed_certificate(certificate)
-    @crt = OpenSSL::X509::Certificate.new(certificate)
+  def accept_signed_certificate(certificate, cacerts)
+    @crt         = OpenSSL::X509::Certificate.new(certificate)
+    @cacerts_txt = cacerts
   end
 
   def fqdn
@@ -74,9 +75,10 @@ class HostCertificate
     @csr.to_pem
   end
 
-  def write_to_filesystem(certpath, keypath)
-    File.open(certpath, 'w', 0400) { |f| f.print @crt.to_pem }
-    File.open(keypath,  'w', 0400) { |f| f.print @key.to_pem }
+  def write_to_filesystem(certpath, keypath, cacertspath)
+    File.open(certpath,    'w', 0444) { |f| f.print @crt.to_pem  }
+    File.open(keypath,     'w', 0400) { |f| f.print @key.to_pem  }
+    File.open(cacertspath, 'w', 0444) { |f| f.print @cacerts_txt }
   end
 end
 
@@ -412,12 +414,14 @@ class PostRegisterConfiguration
   def setup_all
     setup_ldap() if @register_info['new_password']
 
-    if @register_info['userCertificate']
-      @cert.accept_signed_certificate(@register_info['userCertificate'])
+    # XXX cacerts should possibly be fetched from somewhere
+    if @register_info['userCertificate'] and @register_info['cacerts']
+      @cert.accept_signed_certificate(@register_info['userCertificate'],
+				      @register_info['cacerts'])
       setup_hostname()
       setup_openvpn()
       if @register_info['puppet_server']
-	setup_puppet(@register_info['puppet_server'])
+	setup_puppet()
       end
     end
   end
@@ -450,10 +454,9 @@ class PostRegisterConfiguration
     begin
       apt_get_install('openvpn')
       mkdir('/etc/openvpn/keys')
-      # XXX /etc/openvpn/keys/organisation-ca-bundle.pem
-      # XXX should be gotten somewhere and also written here
       @cert.write_to_filesystem('/etc/openvpn/keys/host.crt',
-				'/etc/openvpn/keys/host.key')
+				'/etc/openvpn/keys/host.key',
+				'/etc/openvpn/keys/organisation-ca-bundle.pem')
       File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
 	f.print <<-'EOF'.gsub(/^\s+/, '')
 	  client
@@ -482,7 +485,7 @@ class PostRegisterConfiguration
     goodmsg('OpenVPN setup is done.')
   end
 
-  def setup_puppet(server)
+  def setup_puppet
     begin
       apt_get_install('puppet')
       FileUtils.rmtree('/etc/puppet/ssl')
@@ -491,10 +494,9 @@ class PostRegisterConfiguration
       mkdir('/etc/puppet/ssl/private_keys', 0750, 'puppet', 'root')
       fqdn = @cert.fqdn
 
-      # XXX /etc/puppet/ssl/certs/ca.pem (organisation-ca-bundle.pem)
-      # XXX should be gotten somewhere and also written here
       @cert.write_to_filesystem("/etc/puppet/ssl/certs/#{ fqdn }.pem",
-				"/etc/puppet/ssl/private_keys/#{ fqdn }.pem")
+				"/etc/puppet/ssl/private_keys/#{ fqdn }.pem",
+				'/etc/puppet/ssl/certs/ca.pem')
       File.open('/etc/default/puppet', 'w') do |f|
 	f.print <<-EOF.gsub(/^\s+/, '')
 	  START=yes
@@ -511,7 +513,7 @@ class PostRegisterConfiguration
 	  postrun_command=/etc/puppet/etckeeper-commit-post
 	  prerun_command=/etc/puppet/etckeeper-commit-pre
 	  rundir=/var/run/puppet
-	  server=#{ server }
+	  server=#{ @register_info['puppet_server'] }
 	  templatedir=$confdir/templates
 	  vardir=/var/lib/puppet
 	  EOF
@@ -544,8 +546,6 @@ cert = HostCertificate.new
 
 rui = RegisterUserInterface.new(cmdline_params, cert)
 register_info = rui.register_to_server()
-register_info['puppet_server'] = 'kunta1.puppet.opinsys.fi'
-
-# register_info['organisation_ca_url'] = '/fetch_me'
+register_info['puppet_server'] = 'kunta1.puppet.opinsys.fi'	# XXX
 
 PostRegisterConfiguration.new(cert, register_info).setup_all
