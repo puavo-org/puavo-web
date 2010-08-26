@@ -410,6 +410,8 @@ class PostRegisterConfiguration
   end
 
   def setup_all
+    setup_ldap() if @register_info['new_password']
+
     if @register_info['userCertificate']
       @cert.accept_signed_certificate(@register_info['userCertificate'])
       setup_hostname()
@@ -434,6 +436,14 @@ class PostRegisterConfiguration
       exit 1
     end
     goodmsg("System hostname is now set to #{ hostname }")
+  end
+
+  def setup_ldap
+    mkdir('/etc/opinsys/ldap')
+    File.open('/etc/opinsys/ldap/password', 'w', 0600) do |f|
+      f.print "#{ @register_info['new_password'] }\n"
+    end
+    goodmsg('LDAP password is now set.')
   end
 
   def setup_openvpn
@@ -534,7 +544,8 @@ cert = HostCertificate.new
 
 rui = RegisterUserInterface.new(cmdline_params, cert)
 register_info = rui.register_to_server()
-register_info['puppet_server']       = 'kunta1.puppet.opinsys.fi'
-register_info['organisation_ca_url'] = '/fetch_me'
+register_info['puppet_server'] = 'kunta1.puppet.opinsys.fi'
+
+# register_info['organisation_ca_url'] = '/fetch_me'
 
 PostRegisterConfiguration.new(cert, register_info).setup_all
