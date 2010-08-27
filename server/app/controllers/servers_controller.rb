@@ -103,6 +103,9 @@ class ServersController < ApplicationController
     # FIXME, revoke certificate only if server's include certificate
     @server.revoke_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
 
+    # If certificate revoked we have to also disabled device's userPassword
+    @server.userPassword = nil
+
     respond_to do |format|
       format.html { redirect_to(server_path(@server), :notice => 'Server was successfully set to install mode.') }
     end
