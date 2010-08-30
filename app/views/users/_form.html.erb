@@ -53,11 +53,11 @@
 </td>
 </tr>
     <tr>
-      <td><%= f.label :eduPersonAffiliation %></td>
+      <td><%= f.label :puavoEduPersonAffiliation %></td>
       <td>
-        <%= f.select :eduPersonAffiliation,
+        <%= f.select :puavoEduPersonAffiliation,
            [[t('default_select_value'), ""]] +
-             User.eduPersonAffiliation_list.map {|a| [ t('eduPersonAffiliation_' + a), a ] } %>
+             User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
       </td>
     </tr>
     <tr>

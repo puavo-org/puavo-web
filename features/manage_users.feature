@@ -10,8 +10,8 @@ Feature: Manage users
     | displayName |
     | Staff       |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | eduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                |
+      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
     And I am logged in as "pavel" with password "secret"
   
   Scenario: Create new user
@@ -34,7 +34,7 @@ Feature: Manage users
 #   | puavoEduPersonEntryYear    |       |
 #   | puavoEduPersonEmailEnabled |       |
     # And set photo?
-    And I select "Student" from "user[eduPersonAffiliation]"
+    And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I check "Class 4" from roles
     And I press "Create"
     Then I should see the following:
@@ -58,9 +58,9 @@ Feature: Manage users
 
   Scenario: Edit user
     Given the following users:
-      | givenName | surname | uid    | password | eduPersonAffiliation | role_name |
-      | Ben       | Mabey   | ben    | secret   | alumn                | Class 4   |
-      | Joseph    | Wilk    | joseph | secret   | alumn                | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
+      | Ben       | Mabey   | ben    | secret   | visitor                   | Class 4   |
+      | Joseph    | Wilk    | joseph | secret   | visitor                   | Class 4   |
     And the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
@@ -78,7 +78,7 @@ Feature: Manage users
 #   | Password                   |           |
 #   | Password confirmation      |           |
     # And set photo?
-    And I select "Alumn" from "user[eduPersonAffiliation]"
+    And I select "Visitor" from "user[puavoEduPersonAffiliation]"
     And I check "Staff" from roles
     And I press "Update"
     Then I should see the following:
@@ -87,7 +87,7 @@ Feature: Manage users
     | BenEDIT   |
     | benEDIT   |
     | Staff     |
-    | Alumn     |
+    | Visitor |
     And I should see "Class 4" on the "Groups by roles"
     And the memberUid should include "benEDIT" on the "Class 4" group
     And the memberUid should not include "ben" on the "Class 4" group
@@ -107,9 +107,9 @@ Feature: Manage users
 
   Scenario: Delete user
     Given the following users:
-      | givenName | surname | uid    | password | role_name | eduPersonAffiliation |
-      | Ben       | Mabey   | ben    | secret   | Class 4   | Student              |
-      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student              |
+      | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben    | secret   | Class 4   | Student                   |
+      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   |
     And I am on the show user page with "ben"
     When I follow "Destroy"
     Then I should see "User was successfully destroyed."
@@ -122,16 +122,16 @@ Feature: Manage users
 
   Scenario: Get user information in JSON
     Given the following users:
-      | givenName | surname | uid    | password | role_name | eduPersonAffiliation |
-      | Ben       | Mabey   | ben    | secret   | Class 4   | Student              |
-      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student              |
+      | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben    | secret   | Class 4   | Student                   |
+      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   |
     When I get on the show user JSON page with "ben"
     Then I should see JSON "user: {givenName: Ben, sn: Mabey, uid: ben}"
 
   Scenario: Check new user special ldap attributes
     Given the following users:
-      | givenName | surname | uid | password | role_name | eduPersonAffiliation |
-      | Ben       | Mabey   | ben | secret   | Class 4   | Student              |
+      | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben | secret   | Class 4   | Student                   |
     Then I should see the following special ldap attributes on the "User" object with "ben":
     | sambaSID             | "^S-[-0-9+]"                   |
     | sambaAcctFlags       | "\[U\]"                        |
@@ -140,8 +140,8 @@ Feature: Manage users
 
   Scenario: Role selection does not lost when edit user and get error
     Given the following users:
-      | givenName | surname | uid    | password | eduPersonAffiliation | role_name |
-      | Ben       | Mabey   | ben    | secret   | alumn                | Class 4   |
+      | givenName | surname | uid | password | puavoEduPersonAffiliation | role_name |
+      | Ben       | Mabey   | ben | secret   | visitor                   | Class 4   |
     And I am on the edit user page with "ben"
     When I fill in "New password" with "some text"
     And I check "Staff" from roles

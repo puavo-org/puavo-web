@@ -20,7 +20,7 @@
 </table>
 
 <p>
-  <%= t('.user_type_and_role', :user_type => @user.eduPersonAffiliation.nil? ? "" : t('eduPersonAffiliation_' + @user.eduPersonAffiliation.to_s), :roles => @user.roles.map{ |r| r.displayName }.join(", ") ) %>
+  <%= t('.user_type_and_role', :user_type => @user.puavoEduPersonAffiliation.nil? ? "" : t('puavoEduPersonAffiliation_' + @user.puavoEduPersonAffiliation.to_s), :roles => @user.roles.map{ |r| r.displayName }.join(", ") ) %>
 </p>
 
 <h3><%= t('.system_information') %></h3>

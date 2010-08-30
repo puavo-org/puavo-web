@@ -169,7 +169,7 @@ en:
         password: "Password"
         mail: "Email"
         telephoneNumber: "Telephone number"
-        eduPersonAffiliation: "User type"
+        puavoEduPersonAffiliation: "User type"
         role_ids: Role
         role_name: Role
         password: Password
@@ -181,11 +181,9 @@ en:
         gidNumber: Gid number
         primary_members: Primary members
         members: Members
-  eduPersonAffiliation_faculty: Faculty
-  eduPersonAffiliation_student: Student
-  eduPersonAffiliation_staff: Staff
-  eduPersonAffiliation_alum: Alumn
-  eduPersonAffiliation_member: Member
-  eduPersonAffiliation_affiliate: affiliate
-  eduPersonAffiliation_employee: employee
-  eduPersonAffiliation_library-walk-in: Library walk in
+  puavoEduPersonAffiliation_teacher: Teacher
+  puavoEduPersonAffiliation_staff: Staff
+  puavoEduPersonAffiliation_student: Student
+  puavoEduPersonAffiliation_visitor: Visitor
+  puavoEduPersonAffiliation_parent: Parent
+  puavoEduPersonAffiliation_admin: Admin
