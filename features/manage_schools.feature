@@ -9,14 +9,15 @@ Feature: Manage schools
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
     And I am logged in as "example" organisation owner
-  
+
   Scenario: Add new school to organisation
     Given I am on the new school page
+    Then I should see "New school"
     When I fill in the following:
     | School name        | Bourne School                                                                  |
     | School's home page | www.bourneschool.com                                                           |
     | Description        | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
-    | Abbreviation       | bourne                                                                         |
+    | Group name         | bourne                                                                         |
     | Phone number       | 0123456789                                                                     |
     | Fax number         | 9876543210                                                                     |
     | Locality           | England                                                                        |
@@ -57,12 +58,12 @@ Feature: Manage schools
     | Class 4     | class4 |
     And I am on the new school page
     When I fill in "School name" with "Greenwich Steiner School"
-    And I fill in "Abbreviation" with "greenwich"
+    And I fill in "Group name" with "greenwich"
     And I press "Create"
     Then I should not see "School was successfully created"
     Then I should see "Name has already been taken"
     When I fill in "School name" with "Greenwich Steiner School"
-    And I fill in "Abbreviation" with "class4"
+    And I fill in "Group name" with "class4"
     And I press "Create"
     Then I should not see "School was successfully created"
     Then I should see "Name has already been taken"
@@ -76,6 +77,4 @@ Feature: Manage schools
     Then I should see the following special ldap attributes on the "School" object with "Example school 1":
     | sambaSID                 | "^S[-0-9+]"                                                                                                                   |
     | sambaGroupType           | "2"                                                                                                                           |
-    | puavoSchoolMemberUidsURI | "ldap:\/\/\/ou=People,[a-z,=]+\?uid\?one\?\(&\(objectClass=puavoEduPerson\)\(puavoSchool=puavoId=[0-9]+,ou=Groups,[a-z,=]+\)\)" |
-    | puavoSchoolMembersURI    | "ldap:\/\/\/ou=People,[a-z,=]+\?\?one\?\(&\(objectClass=puavoEduPerson\)\(puavoSchool=puavoId=[0-9]+,ou=Groups,[a-z,=]+\)\)"  |
 
