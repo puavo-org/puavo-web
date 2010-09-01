@@ -1,10 +1,11 @@
 class Device < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Devices,ou=Hosts",
-                :classes => ['top', 'device'] )
+                :classes => ['top', 'device', 'puppetClient'] )
 
 
   before_validation :set_puavo_id
+  before_save :set_parentNode
 
   def self.allowed_classes
     ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter']
@@ -28,5 +29,8 @@ class Device < LdapBase
   def set_puavo_id
     self.puavoId = IdPool.next_puavo_id if attribute_names.include?("puavoId") && self.puavoId.nil?
     self.cn = self.puavoHostname
+  end
+  def set_parentNode
+    self.parentNode = LdapOrganisation.current.puavoDomain
   end
 end

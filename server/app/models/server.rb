@@ -11,6 +11,7 @@ class Server < LdapBase
             :foreign_key => 'puavoServer' )
 
   before_validation :set_puavo_id, :set_password
+  before_save :set_parentNode
 
   def self.ssha_hash(password)
     salt = ActiveSupport::SecureRandom.base64(16)
@@ -38,5 +39,9 @@ class Server < LdapBase
   def set_puavo_id
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
     self.cn = self.puavoHostname
+  end
+
+  def set_parentNode
+    self.parentNode = LdapOrganisation.current.puavoDomain
   end
 end
