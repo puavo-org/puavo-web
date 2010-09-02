@@ -13,6 +13,7 @@ en:
       users: Users
       tools: Tools
       logged_in_as: Logged in as
+      devices: Devices
   link:
     edit: Edit
     back: Back
@@ -66,7 +67,10 @@ en:
       successful: Password change succesfully!
       failed: Failed to change password!
       invalid_login: Invalid old password or username
-      
+    school:
+      school_admin_added: "{{displayName}} ({{school_name}}) was added to admin users"
+      school_admin_removed:  "{{displayName}} ({{school_name}}) is no longer admin user on this school"
+
   roles:
     index:
       actions: Actions
@@ -95,7 +99,7 @@ en:
         title: User mass import
         help: "You can paste the following text box users data which you like adding"
         example_title: Example
-        example: "Ben	Mabey\nPavel	Taylor"
+        example: "Ben   Mabey\nPavel    Taylor"
       show:
         title: "Users ({{count}}) was successfully created."
         pdf_info: You can print users list to paper
@@ -128,6 +132,10 @@ en:
       title: New school
     menu:
       dashboard: Dashboard
+      admins: Admins
+    admins:
+      this_school_admin_users: "{{school_name}} admin users"
+      other_admin_users: School management access rights can be added to the following users
   password:
     edit:
       title: User password change

@@ -82,4 +82,63 @@ class SchoolsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  # GET /schools/1/admins
+  def admins
+    @school = School.find(params[:id])
+    @school_admins = @school.user_school_admins
+    @allowed_school_admins = User.find(:all,
+                                       :attribute => 'puavoEduPersonAffiliation',
+                                       :value => 'admin').delete_if do |u|
+      @school_admins.include?(u)
+    end
+
+    respond_to do |format|
+      format.html # admins.html.erb
+    end
+  end
+
+  # PUT /schools/1/add_school_admin/1
+  def add_school_admin
+    @school = School.find(params[:id])
+    @user = User.find(params[:user_id])
+
+    @school.puavoSchoolAdmin = Array(@school.puavoSchoolAdmin).push @user.dn
+
+    respond_to do |format|
+      if @school.save
+        flash[:notice] = t('flash.school.school_admin_added',
+                           :displayName => @user.displayName,
+                           :school_name => @school.displayName )
+        format.html { redirect_to( admins_school_path(@school) ) }
+      else
+        # FIXME NOTICE!
+        #flash[:notice] = t('flash.role.group_added_failed')
+        format.html { redirect_to( admins_school_path(@school) ) }
+      end
+    end
+  end
+
+  # PUT /schools/1/remove_school_admin/1
+  def remove_school_admin
+    @school = School.find(params[:id])
+    @user = User.find(params[:user_id])
+
+    @school.puavoSchoolAdmin = Array(@school.puavoSchoolAdmin).delete_if do |admin_dn|
+      admin_dn ==  @user.dn
+    end
+
+    respond_to do |format|
+      if @school.save
+        flash[:notice] = t('flash.school.school_admin_removed',
+                           :displayName => @user.displayName,
+                           :school_name => @school.displayName )
+        format.html { redirect_to( admins_school_path(@school) ) }
+      else
+        # FIXME NOTICE!
+        #flash[:notice] = t('flash.role.group_added_failed')
+        format.html { redirect_to( admins_school_path(@school) ) }
+      end
+    end
+  end
 end

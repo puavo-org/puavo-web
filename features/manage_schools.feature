@@ -73,6 +73,34 @@ Feature: Manage schools
     Then I should see "Greenwich Steiner School"
     And I should see "Example school 1"
 
+  Scenario: Add school management access rights to the user
+    Given the following users:
+    | givenName | sn     | uid   | password | role_name   | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | Maintenance | admin                     | Greenwich Steiner School |
+    And I am on the school page with "Greenwich Steiner School"
+    When I follow "Admins"
+    Then I should see "Greenwich Steiner School admin users"
+    And  I should see "School management access rights can be added to the following users"
+    And I should not see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
+    And I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    When I follow "Add" on the "Pavel Taylor" user
+    Then I should see "Pavel Taylor (Greenwich Steiner School) is now admin users"
+    And I should see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
+    And I should not be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+
+  Scenario: Remove school management access rights from the user
+    Given the following users:
+    | givenName | sn     | uid   | password | role_name   | puavoEduPersonAffiliation | school                   | school_admin |
+    | Pavel     | Taylor | pavel | secret   | Maintenance | admin                     | Greenwich Steiner School | true         |
+    And I am on the school page with "Greenwich Steiner School"
+    When I follow "Admins"
+    Then I should see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
+    And I should not be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    When I follow "Remove" on the "Pavel Taylor" user
+    Then I should see "Pavel Taylor (Greenwich Steiner School) is no longer admin user on this school"
+    And I should not see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
+    And I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+
   Scenario: Check school special ldap attributes
     Then I should see the following special ldap attributes on the "School" object with "Example school 1":
     | sambaSID                 | "^S[-0-9+]"                                                                                                                   |

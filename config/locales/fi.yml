@@ -13,6 +13,7 @@ fi:
       users: Käyttäjät
       tools: Työkalut
       logged_in_as: Kirjauduttu sisään käyttäjänä
+      devices: Laitteet
   link:
     edit: Muokkaa
     back: Takaisin
@@ -66,6 +67,9 @@ fi:
       successful: Salanananvaihto onnistui!
       failed: Salasanan vaihto epäonnistui!
       invalid_login: Vanha tunnus tai salasana eivät täsmää
+    school:
+      school_admin_added: "{{displayName}} ({{school_name}}) on lisätty ylläpitäjä käyttäjäksi"
+      school_admin_removed:  "{{displayName}} ({{school_name}}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
       
   roles:
     index:
@@ -129,6 +133,10 @@ fi:
       title: Lisää uusi koulu
     menu:
       dashboard: Kojetaulu
+      admins: Ylläpitäjät
+    admins:
+      this_school_admin_users: "{{school_name}}: ylläpitäjät"
+      other_admin_users: Seuraaville käyttäjille voidaan lisätä ylläpitäjän oikeudet
   password:
     edit:
       title: Käyttäjän salasanan vaihtaminen

@@ -12,6 +12,18 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :roles, :path_prefix => ':school_id'
 
+  map.admins_school( 'schools/:id/admins.:format',
+                     :controller => 'schools',
+                     :action => 'admins',
+                     :conditions => { :method => :get } )
+  map.add_school_admin_school('schools/:id/add_school_admin/:user_id.:format',
+                              :controller => 'schools',
+                              :action => 'add_school_admin',
+                              :conditions => { :method => :put } )
+  map.remove_school_admin_school('schools/:id/remove_school_admin/:user_id.:format',
+                              :controller => 'schools',
+                              :action => 'remove_school_admin',
+                              :conditions => { :method => :put } )
   map.resources :schools
 
   map.add_role_group( 'groups/:id/add_role/:role_id',
@@ -77,4 +89,6 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'themes' do |theme|
     theme.set_theme "themes/:theme", :action => "set_theme"
   end
+
+  map.resources :admins
 end

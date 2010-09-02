@@ -7,6 +7,7 @@ class School < BaseGroup
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
   has_many :user_members, :class_name => "User", :wrap => "member", :primary_key => "dn"
+  has_many :user_school_admins, :class_name => "User", :wrap => "puavoSchoolAdmin", :primary_key => "dn"
   has_many :user_member_uids, :class_name => "User", :wrap => "memberUid", :primary_key => "uid"
 
   has_many( :groups, :class_name => 'Group',
