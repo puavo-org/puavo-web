@@ -90,3 +90,33 @@ def school_member_include?(attribute, school_name, uid)
   user = User.find( :first, :attribute => "uid", :value => uid )
   return school.send(attribute).include?(user)
 end
+
+Then /^I should not see "([^"]*)" on the school admin list$/ do |user|
+  steps %Q{
+    Then I should not see "#{user}" within "#this_school_admin_users"
+  }
+end
+
+Then /^I should be added school management access to the "([^"]*)"$/ do |user|
+  steps %Q{
+    Then I should see "#{user}" within "#other_admin_users"
+  }
+end
+
+Then /^I should see "([^"]*)" on the school admin list$/ do |user|
+  steps %Q{
+    Then I should see "#{user}" within "#this_school_admin_users"
+  }
+end
+
+Then /^I should not be added school management access to the "([^"]*)"$/ do |user|
+  steps %Q{
+    Then I should not see "#{user}" within "#other_admin_users"
+  }
+end
+
+When /^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/ do |username, school_name|
+  school = School.find( :first, :attribute => "displayName", :value => school_name )
+  user = User.find( :first, :attribute => "displayName", :value => username )
+  visit( add_school_admin_school_path(school, user.id), :put )
+end

@@ -106,14 +106,18 @@ class SchoolsController < ApplicationController
     @school.puavoSchoolAdmin = Array(@school.puavoSchoolAdmin).push @user.dn
 
     respond_to do |format|
-      if @school.save
+      if not Array(@user.puavoEduPersonAffiliation).include?('admin')
+        # FIXME: change notice type (ERROR)
+        flash[:notice] = t('flash.school.wrong_user_type')
+        format.html { redirect_to( admins_school_path(@school) ) }
+      elsif @school.save
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
         format.html { redirect_to( admins_school_path(@school) ) }
       else
-        # FIXME NOTICE!
-        #flash[:notice] = t('flash.role.group_added_failed')
+        # FIXME: change notice type (ERROR)
+        flash[:notice] = t('flash.school.save_failed')
         format.html { redirect_to( admins_school_path(@school) ) }
       end
     end
@@ -135,8 +139,8 @@ class SchoolsController < ApplicationController
                            :school_name => @school.displayName )
         format.html { redirect_to( admins_school_path(@school) ) }
       else
-        # FIXME NOTICE!
-        #flash[:notice] = t('flash.role.group_added_failed')
+        # FIXME: change notice type (ERROR)
+        flash[:notice] = t('flash.school.save_failed')
         format.html { redirect_to( admins_school_path(@school) ) }
       end
     end

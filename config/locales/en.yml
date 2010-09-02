@@ -68,8 +68,10 @@ en:
       failed: Failed to change password!
       invalid_login: Invalid old password or username
     school:
-      school_admin_added: "{{displayName}} ({{school_name}}) was added to admin users"
+      school_admin_added: "{{displayName}} ({{school_name}}) is now admin users"
       school_admin_removed:  "{{displayName}} ({{school_name}}) is no longer admin user on this school"
+      wrong_user_type: School management access rights can be added only if type of user is admin
+      save_failed: Failed to save access rights
 
   roles:
     index:

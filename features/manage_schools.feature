@@ -101,6 +101,20 @@ Feature: Manage schools
     And I should not see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
     And I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
 
+  Scenario: School management access can be added only if user type is admin
+    Given the following users:
+    | givenName | sn     | uid   | password | role_name   | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | Maintenance | admin                     | Greenwich Steiner School |
+    | Ben       | Mabey  | ben   | secret   | Maintenance | staff                     | Greenwich Steiner School |
+    And I am on the school page with "Greenwich Steiner School"
+    When I follow "Admins"
+    Then I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    And I should not be added school management access to the "Ben Mabey (Greenwich Steiner School)"
+    When I try to add "Ben Mabey" to admin user on the "Greenwich Steiner School" school
+    Then I should not see "Ben Mabey (Greenwich Steiner School) is now admin users"
+    And I should not see "Ben Mabey (Greenwich Steiner School)" on the school admin list
+    And I should see "School management access rights can be added only if type of user is admin"
+
   Scenario: Check school special ldap attributes
     Then I should see the following special ldap attributes on the "School" object with "Example school 1":
     | sambaSID                 | "^S[-0-9+]"                                                                                                                   |
