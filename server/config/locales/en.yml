@@ -4,6 +4,9 @@
 en:
   host:
     types:
+      register_label: Device type
+      register_title: Device type selection
+      register_question: "Select device type: "
       thinclient: Thin Client
       fatclient: Fat Client
       laptop: Laptop

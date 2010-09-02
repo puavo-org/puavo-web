@@ -11,3 +11,49 @@ school:
 puavo_ca:
   host: 10.246.131.154
   port: 3000
+default_host_type: laptop
+host_types:
+  thinclient:
+    label:
+      en: Thinclient
+    classes:
+    - puavoNetbootDevice
+    - puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=thinclient	
+    order: 1
+  fatclient:
+    label:
+      en: Fatclient
+    classes: puavoNetbootDevice
+    url: /devices/%s/devices/new.json?device_type=fatclient
+    order: 2
+  laptop:
+    label:
+      en: Laptop
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=laptop
+    order: 3
+  workstation:
+    label:
+      en: Workstation
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=workstation
+    order: 4
+  server:
+    label:
+      en: Server
+    classes: puavoLocalbootDevice
+    url: /devices/servers/new.json?device_type=server
+    order: 5
+  netstand:
+    label:
+      en: Netstand
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=netstand
+    order: 6
+  infotv:
+    label:
+      en: School screen
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=infotv
+    order: 7

@@ -3,13 +3,13 @@ class Host < LdapBase
                 :prefix => "ou=Hosts",
                 :classes => ['top', 'device'] )
 
-  @@objectClass_by_device_type = { "thinclient" => ["puavoNetbootDevice"],
-    "fatclient" => ["puavoNetbootDevice"],
-    "laptop" => ["puavoLocalbootDevice"],
-    "workstation" => ["puavoLocalbootDevice"],
-    "server" => ["puavoLocalbootDevice"],
-    "netstand" => ["puavoLocalbootDevice"],
-    "infotv" => ["puavoLocalbootDevice"] }
+  # Generate new Hash by configuration. Host type is key and value is list of the object classes
+  # Example:
+  # { "thinclient" => "puavoNetbootDevice" }
+  @@objectClass_by_device_type = PUAVO_CONFIG['host_types'].inject({}) do |result, type|
+    result[type.first] = type.last["classes"]
+    result
+  end
 
   def id
     self.puavoId.to_s unless self.puavoId.nil?
@@ -29,46 +29,18 @@ class Host < LdapBase
   end
 
   def self.types
-    { "default" => "laptop",
-      "label" => "Device type",
-      "title" => "Device type selection",
-      "question" => "Select device type: ",
-      "list" =>
-      { "thinclient" =>
-        { "label" => I18n.t("host.types.thinclient"),
-          "classes" => ["puavoNetbootDevice"],
-          "url" => "/devices/%s/devices/new.json?device_type=thinclient",
-          "order" => "1" },
-        "fatclient" =>
-        { "label" => I18n.t("host.types.fatclient"),
-          "classes" => ["puavoNetbootDevice"],
-          "url" => "/devices/%s/devices/new.json?device_type=fatclient",
-          "order" => "2" },
-        "laptop" =>
-        { "label" => I18n.t("host.types.laptop"),
-          "classes" => ["puavoLocalbootDevice"],
-          "url" => "/devices/%s/devices/new.json?device_type=laptop",
-          "order" => "3" },
-        "workstation" =>
-        { "label" => I18n.t("host.types.workstation"),
-          "classes" => ["puavoLocalbootDevice"],
-          "url" => "/devices/%s/devices/new.json?device_type=workstation",
-          "order" => "4" },
-        "server" =>
-        { "label" => I18n.t("host.types.server"),
-          "classes" => ["puavoLocalbootDevice"],
-          "url" => "/devices/servers/new.json?device_type=server",
-          "order" => "5" },
-        "netstand" =>
-        { "label" => I18n.t("host.types.netstand"),
-          "classes" => ["puavoLocalbootDevice"],
-          "url" => "/devices/%s/devices/new.json?device_type=netstand",
-          "order" => "6" },
-        "infotv" =>
-        { "label" => I18n.t("host.types.infotv"),
-          "classes" => ["puavoLocalbootDevice"],
-          "url" => "/devices/%s/devices/new.json?device_type=infotv" ,
-          "order" => "7" } } }
+    type_list = PUAVO_CONFIG['host_types']
+
+    # Set host's label by user's locale. Localization values must be set on the puavo.yml
+    type_list.each_key do |type|
+      type_list[type]["label"] = type_list[type]["label"][I18n.locale.to_s]
+    end
+
+    { "default" => PUAVO_CONFIG['default_host_type'],
+      "label" => I18n.t("host.types.register_label"),
+      "title" => I18n.t("host.types.register_title"),
+      "question" => I18n.t("host.types.register_question"),
+      "list" => type_list }
 
   end
 end
