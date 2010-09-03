@@ -10,8 +10,8 @@ Feature: Manage passwords
     | displayName |
     | Staff       |
     And the following users:
-    | givenName | sn     | uid   | password | school_admin | role_name | eduPersonAffiliation |
-    | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                |
+    | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
+    | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
     And I am on the password change page
     When I fill in "Username" with "pavel"
     And I fill in "Old password" with "secret"

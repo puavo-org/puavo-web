@@ -7,8 +7,8 @@ Feature: User mass import
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
     And a new role with name "Class 4" and which is joined to the "Class 4" group
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | eduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Class 4   | Staff                |
+      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | Class 4   | Staff                     |
     And I am logged in as "pavel" with password "secret"
  
   Scenario: Typical user mass import
@@ -63,7 +63,7 @@ Feature: User mass import
     And I press "Validates users"
     Then I should see "Following field value must be select when create new users:"
     And I should not see "Role"
-    And I select "Student" from "user[eduPersonAffiliation]"
+    And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I press "Continue"
     Then I should see the following users:
       | Ben | Mabey | ben.mabey | Class 4 | Student | OK |

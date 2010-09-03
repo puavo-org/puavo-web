@@ -3,12 +3,12 @@
 
 <p><%= t('.help') %>:</p>
 
-<% unless @columns.include?('eduPersonAffiliation') %>
+<% unless @columns.include?('puavoEduPersonAffiliation') %>
 <p>
-  <%= f.label :eduPersonAffiliation %>:<br />
-  <%= f.select :eduPersonAffiliation,
+  <%= f.label :puavoEduPersonAffiliation %>:<br />
+  <%= f.select :puavoEduPersonAffiliation,
 [[t('default_select_value'), ""]] +
-  User.eduPersonAffiliation_list.map {|a| [ t('eduPersonAffiliation_' + a), a ] } %>
+  User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
 </p>
 <% end %>
 

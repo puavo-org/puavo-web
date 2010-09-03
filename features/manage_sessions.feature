@@ -9,8 +9,8 @@ Feature: Manage sessions
     | displayName |
     | Staff       |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | eduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                |
+      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
 
   Scenario: Login
     Given I am on the login page

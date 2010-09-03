@@ -9,8 +9,8 @@ Feature: Manage roles
     | displayName |
     | Staff       |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | eduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                |
+      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
     And I am logged in as "pavel" with password "secret"
   
   Scenario: Register new role

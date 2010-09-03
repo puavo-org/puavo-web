@@ -2,7 +2,7 @@
   <tr>
     <th><%= t('activeldap.attributes.user.displayName') %></th>
     <th><%= t('activeldap.attributes.user.uid') %></th>
-    <th><%= t('activeldap.attributes.user.eduPersonAffiliation') %></th>
+    <th><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></th>
     <th colspan="2"><%= t('.actions') %></th>
   </tr>
 
@@ -10,7 +10,7 @@
   <tr>
     <td><%= link_to user.displayName, user_path(@school, user) %></td>
     <td><%=h user.uid %></td>
-    <td><%=h user.eduPersonAffiliation %></td>
+    <td><%=h user.puavoEduPersonAffiliation %></td>
     <td><%= link_to t('link.edit'), edit_user_path(@school, user) %></td>
     <td><%= link_to t('link.destroy'), user_path(@school, user), :confirm => t('general_confirm'), :method => :delete %></td>
   </tr>

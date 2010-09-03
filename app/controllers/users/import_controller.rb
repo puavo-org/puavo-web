@@ -89,7 +89,7 @@ class Users::ImportController < ApplicationController
     respond_to do |format|
       format.html do
         if ( !@columns.include?('role_name') && !@columns.include?('role_ids') ) ||
-            ( !@columns.include?('eduPersonAffiliation') )
+            ( !@columns.include?('puavoEduPersonAffiliation') )
           redirect_to role_users_import_path(@school) 
         elsif session[:users_import_instance_list][:invalid].empty?
           redirect_to preview_users_import_path(@school)
@@ -112,16 +112,16 @@ class Users::ImportController < ApplicationController
     @columns = session[:users_import_columns]
 
     if params.has_key?(:user)
-      if params[:user].has_key?(:eduPersonAffiliation)
-        @columns.push "eduPersonAffiliation"
+      if params[:user].has_key?(:puavoEduPersonAffiliation)
+        @columns.push "puavoEduPersonAffiliation"
       end
       if params[:user].has_key?(:role_ids)
         @columns.push "role_ids"
       end
       session[:users_import_instance_list].each_value do |users|
         users.each do |user|
-          if params[:user].has_key?(:eduPersonAffiliation)
-            user.eduPersonAffiliation = params[:user][:eduPersonAffiliation]
+          if params[:user].has_key?(:puavoEduPersonAffiliation)
+            user.puavoEduPersonAffiliation = params[:user][:puavoEduPersonAffiliation]
           end
           if params[:user].has_key?(:role_ids)
             user.role_ids = Array(params[:user][:role_ids])
