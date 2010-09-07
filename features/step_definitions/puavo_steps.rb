@@ -2,59 +2,49 @@ require 'sha1'
 require 'base64'
 
 Before do |scenario|
-  test_organisation = Organisation.find('example')
+  test_organisation = Puavo::Organisation.find('example')
   default_ldap_configuration = ActiveLdap::Base.ensure_configuration
   # Setting up ldap configuration
   LdapBase.ldap_setup_connection( test_organisation.ldap_host,
                                   test_organisation.ldap_base,
                                   default_ldap_configuration["bind_dn"],
                                   default_ldap_configuration["password"] )
-
   # Clean Up LDAP server: destroy all schools, groups and users
   User.all.each do |u|
-    u.destroy
+    unless u.uid == "cucumber"
+      u.destroy
+    end
   end
   Group.all.each do |g|
-    g.destroy
+    unless g.displayName == "Maintenance"
+      g.destroy
+    end
   end
   School.all.each do |s|
-    s.destroy
+    unless s.displayName == "Administration"
+      s.destroy
+    end
   end
   Role.all.each do |p|
-    p.destroy
+    unless p.displayName == "Maintenance"
+      p.destroy
+    end
   end
 end
 
 Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
-  organisation = Organisation.find(organisation_name)
-  # Create owner user
-  # FIXME, owner must be create before (initalization ldap server)
-  password = "test"
-  salt = "test"
-  u = User.new
-  u.homeDirectory = "/home/test"
-  u.sn = "test"
-  u.givenName = "test"
-  u.uid = "test"
-  u.gidNumber = "10006"
-  u.userPassword = "{SSHA}" + Base64.encode64(Digest::SHA1.digest(password + salt) + salt).chomp!
-  u.puavoSchool = organisation.schools.first.dn
-  u.save
+  organisation = Puavo::Organisation.find(organisation_name)
 
-  organisation.schools.each do |s|
-    s.puavoSchoolAdmin = [u.dn]
-    s.save
-  end
-
-  visit new_user_session_path
-  fill_in("login", :with => u.uid)
-  fill_in("password", :with => password)
+  visit login_path
+  fill_in("login", :with => organisation.owner)
+  fill_in("password", :with => organisation.owner_pw)
   click_button("Login")
+  response.should contain("Login successful!")
 end
 
 Given /^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/ \
 do |names_of_the_models, values, organisation|
-  Organisation.find(organisation)
+  Puavo::Organisation.find(organisation)
   models = names_of_the_models.split(' and ')
   values = values.split(', ').map { |value| value.tr('"', '') }
   models_value = Hash.new
