@@ -12,7 +12,6 @@ class PasswordController < ApplicationController
       # Using user's dn and password for ldap conenction when change ldap password
       session[:dn] = @user.dn
       session[:password_plaintext] = params[:login][:password]
-      session[:user_id] = @user.puavoId
       ldap_setup_connection
     else
       raise "Couldn't find user"
@@ -28,7 +27,6 @@ class PasswordController < ApplicationController
       end
       session.delete :password_plaintext
       session.delete :dn
-      session.delete :user_id
       format.html { render :action => "edit" }
     end
   rescue User::PasswordChangeFailed => e

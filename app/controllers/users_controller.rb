@@ -21,7 +21,7 @@ class UsersController < ApplicationController
 
     # Convert array to hash
     # Example: {"cn" => "Pavel Taylor","givenName" => "Pavel","gidNumber":=> "10567"
-    json_user = @user.inject({}) do |result, array| 
+    json_user = @user.inject({}) do |result, array|
       result[array[0]] = array[1].to_s
       result
     end
@@ -99,7 +99,7 @@ class UsersController < ApplicationController
           raise t('flash.user.save_failed')
         end
         # Save new password to session otherwise next request does not work
-        if session[:user_id] == @user.puavo_id
+        if session[:dn] == @user.dn
           unless params[:user][:new_password].nil? || params[:user][:new_password].empty?
             session[:password_plaintext] = params[:user][:new_password]
           end

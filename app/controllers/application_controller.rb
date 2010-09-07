@@ -2,51 +2,16 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  before_filter :set_organisation_to_session, :set_locale
   before_filter :ldap_setup_connection
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user, :ldap_setup_connection, :theme
-  
+  helper_method :current_user, :ldap_setup_connection
+
   before_filter :find_school
   before_filter :login_required
 
   private
 
-  def set_organisation_to_session
-    if session[:organisation].nil?
-      # Find organisation by request.host.
-      # If you don't need multiple organisations you have to only set organisation with:
-      # config/organisations.yml
-      # default
-      #   name: Default organisation
-      #   host: *
-      session[:organisation] = Organisation.find_by_host(request.host)
-      # Find default organisation (host == "*") if request host not found from configurations.
-      session[:organisation] = Organisation.find_by_host("*") unless session[:organisation]
-      unless session[:organisation]
-        # FATAL error
-        # FIXME, redirect to login page?
-        render :text => "Can't find organisation."
-        return false
-      end
-    else
-      # Compare session host to client host. This is important security check.
-      unless session[:organisation].host == request.host || session[:organisation].host == "*"
-        # This is a serious problem. Some one trying to hack this system.
-        # FIXME, redirect to login page?
-        logger.info "Default organisation not found!"
-        render :text => "Session error"
-        return false
-      end
-    end
-  end
-
-  def set_locale
-    I18n.locale = session[:organisation].value_by_key('locale') ?
-    session[:organisation].value_by_key('locale') : :en
-  end
-  
   def find_school
     if params.has_key?(:school_id)
       school_id = params[:school_id]
@@ -66,19 +31,18 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    unless session[:user_id].nil?
+    unless session[:dn].nil?
       unless @current_user.nil?
         return @current_user
       else
         begin
-          return @current_user = User.find(session[:user_id])
+          return @current_user = User.find(session[:dn])
         rescue
           logger.info "Session's user not found! User is removed from ldap server."
-          logger.info "session[:user_id]: #{session[:user_id]}"
-          # Delete ldap connection iformations from session.
+          logger.info "session[:dn]: #{session[:dn]}"
+          # Delete ldap connection informations from session.
           session.delete :password_plaintext
           session.delete :dn
-          session.delete :user_id
         end
       end
     end
@@ -87,7 +51,7 @@ class ApplicationController < ActionController::Base
 
   def login_required
     case request.format
-    when !current_user && Mime::JSON 
+    when !current_user && Mime::JSON
       password = ""
       user = authenticate_with_http_basic do |login, password|
         User.authenticate(login, password)
@@ -95,7 +59,6 @@ class ApplicationController < ActionController::Base
       if user
         session[:dn] = user.dn
         session[:password_plaintext] = password
-        session[:user_id] = user.puavoId
       else
         request_http_basic_authentication
       end
@@ -112,7 +75,7 @@ class ApplicationController < ActionController::Base
   def store_location
     session[:return_to] = request.request_uri
   end
-  
+
   def redirect_back_or_default(default)
     redirect_to(session[:return_to] || default)
     session[:return_to] = nil
@@ -126,13 +89,13 @@ class ApplicationController < ActionController::Base
       host = session[:organisation].ldap_host
       base = session[:organisation].ldap_base
     end
-    if session[:user_id]
+    if session[:dn]
       dn = session[:dn]
       password = session[:password_plaintext]
     else
       dn =  default_ldap_configuration["bind_dn"]
       password = default_ldap_configuration["password"]
-    end      
+    end
     logger.debug "Set host, bind_dn, base and password by user:"
     logger.debug "host: #{host}"
     logger.debug "base: #{base}"
