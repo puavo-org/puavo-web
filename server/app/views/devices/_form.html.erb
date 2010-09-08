@@ -58,6 +58,9 @@
     <%= f.label :description %><br />
     <%= f.text_field :description %>
   </p>
+
+    <%= render :partial => @device.puavoDeviceType, :locals => { :f => f } rescue nil %>
+
   <p>
     <%= f.submit submit_text%>
   </p>
