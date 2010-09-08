@@ -4,6 +4,8 @@ class LdapBase < ActiveLdap::Base
   attr_accessor :host_certificate_request_send
   attr_accessor :host_certificate_request, :userCertificate, :cacerts, :new_password
 
+  before_save :set_puppetclass
+
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
   end
@@ -132,5 +134,9 @@ class LdapBase < ActiveLdap::Base
 
   def http_puavo_ca
     Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
+  end
+
+  def set_puppetclass
+    self.puppetclass = PUAVO_CONFIG['host_types'][self.puavoDeviceType]['puppetclass']
   end
 end
