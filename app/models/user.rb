@@ -100,7 +100,7 @@ class User < LdapBase
 
         # Allow authetication only if user is School Admin in the some School or organisation owner.
         if School.find( :first, :attribute => "puavoSchoolAdmin", :value => user.dn ) ||
-            LdapOrganisation.first.owner.include?(user.dn)
+            LdapOrganisation.current.owner.include?(user.dn)
           return user
         end
       end
@@ -307,6 +307,7 @@ class User < LdapBase
     end
     self.gecos = self.displayName + ',,,'
     self.loginShell = '/bin/bash'
+    self.eduPersonPrincipalName = "#{self.uid}@#{LdapOrganisation.current.puavoKerberosRealm}"
   end
 
   def set_uid_number
