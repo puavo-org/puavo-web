@@ -59,7 +59,28 @@
     <%= f.text_field :description %>
   </p>
 
-    <%= render :partial => @device.puavoDeviceType, :locals => { :f => f } rescue nil %>
+  <p>
+    <%= f.label :puavoDeviceKernelVersion %><br />
+    <%= f.text_field :puavoDeviceKernelVersion %>
+  </p>
+  <p>
+    <%= f.label :puavoDeviceKernelArguments %><br />
+    <%= f.text_field :puavoDeviceKernelArguments %>
+  </p>
+  <p>
+    <%= f.label :puavoDeviceXserver %><br />
+    <%= f.text_field :puavoDeviceXserver %>
+  </p>
+
+  <p>
+    <%= f.label :puavoDeviceXrandr %><br />
+    <%= f.text_field :puavoDeviceXrandr %>
+  </p>
+
+  <p>
+    <%= f.label :puavoDeviceXrandrDisable %><br />
+    <%= f.boolean :puavoDeviceXrandrDisable %>
+  </p>
 
   <p>
     <%= f.submit submit_text%>
