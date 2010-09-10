@@ -20,7 +20,7 @@ class Device < LdapBase
   end
 
   def classes=(*args)
-    args += ['top', 'device']
+    args += ['top', 'device', 'puppetClient']
     super(args)
   end
 
