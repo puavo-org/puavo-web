@@ -1,6 +1,11 @@
 module PuavoAuthentication
   module Controllers
     module Helpers
+      def self.included(controller)
+        controller.class_eval do  
+          before_filter :ldap_setup_connection, :login_required
+        end
+      end
       def current_user
         unless session[:dn].nil?
           unless @current_user.nil?
