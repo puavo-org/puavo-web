@@ -1,2 +1,1 @@
-# Include hook code here
-require 'puavo_authentication'
+require File.dirname(__FILE__) + "/rails/init.rb"
