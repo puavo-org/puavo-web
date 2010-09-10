@@ -2,22 +2,21 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
-desc 'Default: run unit tests.'
-task :default => :test
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |s|
+    root_files = FileList["README.rdoc", "COPYING", "init.rb"]
+    s.name = "puavo_authentication"
+    s.summary = "Authentication solution for Puavo applications"
+    s.email = "puavo@opinsys.fi"
+    s.homepage = "http://github.com/opinsys/puavo_authentication"
+    s.description = "Authentication solution for Puavo applications"
+    s.authors = "Jouni Korhonen"
+    s.files =  root_files + FileList["{app,rails,lib}/**/*"]
+    s.extra_rdoc_files = root_files
+  end
 
-desc 'Test the puavo_ldap_auth plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
-end
-
-desc 'Generate documentation for the puavo_ldap_auth plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'PuavoLdapAuth'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler, or one of its dependencies, is not available. Install it with: gem install jeweler"
 end
