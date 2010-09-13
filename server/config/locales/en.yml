@@ -65,6 +65,7 @@ en:
         serialNumber: Serial number
         cn: Server name
         ipHostNumber: IP address
+        puavoDeviceType: Device type
       device:
         puavoHostname: Hostname
         macAddress: MAC address(es)
