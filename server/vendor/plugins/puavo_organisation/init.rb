@@ -1,1 +1,0 @@
-require 'puavo_organisation'
