@@ -14,6 +14,10 @@
     <%= f.text_field :serialNumber %>
   </p>
   <p>
+    <%= f.label :puavoDeviceType %>
+    <%= f.select :puavoDeviceType, [[PUAVO_CONFIG['host_types']['server']['label'][I18n.locale.to_s], 'server']] %>
+  </p>
+  <p>
     <%= f.label :puavoDeviceManufacturer %><br />
     <%= f.text_field :puavoDeviceManufacturer %>
   </p>
