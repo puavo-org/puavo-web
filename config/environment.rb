@@ -41,6 +41,7 @@ Rails::Initializer.run do |config|
   config.gem "prawn" 
   config.gem 'activeldap', :lib => 'active_ldap'
   config.gem 'puavo_organisation', :lib => 'puavo_organisation'
+  config.gem 'puavo_authentication', :lib => 'puavo_authentication'
 
   config.action_controller.session_store = :active_record_store
 end

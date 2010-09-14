@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 class User < LdapBase
+  include Puavo::Authentication
+
   # Raised by change_ldap_password method when password cannot be changed.
   # Example this happens when kerberos servers is down.
   class PasswordChangeFailed < UserError
@@ -84,30 +86,6 @@ class User < LdapBase
         errors.add "User type"
       end
     end
-  end
-
-  def self.authenticate(login, password)
-    logger.debug "Find user by uid from ldap"
-    logger.debug "uid: #{login}"
-
-    begin
-      user = User.find(:first, :attribute => "uid", :value => login)
-
-      if user.bind(password)
-        host = LdapBase.configuration[:host]
-        base = LdapBase.base.to_s
-        LdapBase.ldap_setup_connection(host, base, user.dn, password)
-
-        # Allow authetication only if user is School Admin in the some School or organisation owner.
-        if School.find( :first, :attribute => "puavoSchoolAdmin", :value => user.dn ) ||
-            LdapOrganisation.current.owner.include?(user.dn)
-          return user
-        end
-      end
-    rescue
-      logger.info "Login failed: login: #{login}"
-      return false
-    end     
   end
 
   def change_ldap_password
