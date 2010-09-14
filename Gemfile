@@ -1,0 +1,10 @@
+source 'http://rubygems.org'  
+gem 'rails', '2.3.8'
+
+gem 'sqlite3-ruby', :require => 'sqlite3'
+
+gem "prawn"
+gem 'activeldap', :require => 'active_ldap'
+gem 'net-ldap'
+gem 'puavo_organisation', :require => 'puavo_organisation'
+gem 'puavo_authentication', :require => 'puavo_authentication'
