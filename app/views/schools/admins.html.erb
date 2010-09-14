@@ -1,0 +1,23 @@
+<h1>School Admins</h1>
+
+<p>
+  <b><%= t('.this_school_admin_users', :school_name => @school.displayName) %>:</b><br />
+  <span id="this_school_admin_users">
+    <% Array(@school_admins).each do |u| %>
+    <%= u.displayName %> (<%= u.school.displayName %>)
+    <%= link_to t('link.remove'), remove_school_admin_school_path(@school, u), :method => :put, :id => "remove_user_#{u.id}" %>
+    <br />
+    <% end %>
+  </span>
+</p>
+
+<p>
+  <b><%= t('.other_admin_users') %>:</b><br />
+  <span id="other_admin_users">
+    <% Array(@allowed_school_admins).each do |u| %>
+    <%= u.displayName %> (<%= u.school.displayName %>)
+    <%= link_to t('link.add'), add_school_admin_school_path(@school, u), :method => :put, :id => "add_user_#{u.id}" %>
+    <br />
+    <% end %>
+  </span>
+</p>
