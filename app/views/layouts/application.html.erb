@@ -26,15 +26,15 @@
     <ul id="top-menu" class="menu">
       <% if current_user %>
       <li><%= link_to t('.schools'),  schools_path, :class => "sub" %>
-	<ul>
-	  <% session[:organisation].schools.each do |school| %>
-	  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
-	  <% end %>
-	</ul>
+        <ul>
+          <% session[:organisation].schools.each do |school| %>
+          <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
+          <% end %>
+        </ul>
       </li>
 
       <div id="top-menu-right">
-	<li><span><%= t('.logged_in_as') %></span></li>
+        <li><span><%= t('.logged_in_as') %></span></li>
       <li><a href="#"><%= current_user.displayName %></li>
       <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
       </div>
@@ -49,25 +49,28 @@
 
     <div id="navbar_first_level">
       <div id="nav1">
-	<ul>
-	  <li class="<%= controller_name.match(/schools/) \
-		     ? "page_item current_page_item" \
-						    : "page_item" %>">
-	    <% link_to school_path(@school) do %>
-	    <span><%= t('.school') %></span>
-	    <% end %>
-	  </li>
-	  <li class="<%= controller_name.match(/users|groups|roles/) ? "page_item current_page_item" : "page_item" %>">
-	    <% link_to users_path(@school) do %>
-	    <span><%= t('.users') %></span>
-	    <% end %>
-	  </li>
-	  <% if @oauth_applications %>
-	  <% @oauth_applications.each do |app| %>
-	  <li class="page_item"><a href="<%= app.url %>" title="<%= app.name %>"><span><%= app.name %></span></a></li>
-	  <% end %>
-	  <% end %>
-	</ul>
+        <ul>
+          <li class="<%= controller_name.match(/schools/) \
+                     ? "page_item current_page_item" \
+                                                    : "page_item" %>">
+            <% link_to school_path(@school) do %>
+            <span><%= t('.school') %></span>
+            <% end %>
+          </li>
+          <li class="<%= controller_name.match(/users|groups|roles/) ? "page_item current_page_item" : "page_item" %>">
+            <% link_to users_path(@school) do %>
+            <span><%= t('.users') %></span>
+            <% end %>
+          </li>
+          <li class="<%= controller_name.match(/devices/) ? "page_item current_page_item" : "page_item" %>">
+            <a href="/devices/<%= @school.id%>/devices"><span><%= t('.devices') %></span></a>
+          </li>
+          <% if @oauth_applications %>
+          <% @oauth_applications.each do |app| %>
+          <li class="page_item"><a href="<%= app.url %>" title="<%= app.name %>"><span><%= app.name %></span></a></li>
+          <% end %>
+          <% end %>
+        </ul>
       </div><!-- nav1 -->
     </div><!-- navbar_first_level -->
 
@@ -84,10 +87,10 @@
       <% if flash.has_key?(:notice) %>
       <% if flash.has_key?(:notice_css_class) %>
       <p class='<%= flash[:notice_css_class] %>'>
-	<% else %>
+        <% else %>
       <p class="notice">
-	<% end %>
-	<%= flash[:notice] %>
+        <% end %>
+        <%= flash[:notice] %>
       </p>
       <% end %>
       <%= yield %>
@@ -99,7 +102,7 @@
       <%= yield :right %>
     </div>
     <% end %>
-      
+
   </div> <!-- container -->
 
   <script type="text/javascript" src="/javascripts/prototype.js"></script>
@@ -109,6 +112,6 @@
     new ProtoFish("top-menu", "200", "hover", false, true, true);
     });
   </script>
-    
+
 </body>
 </html>
