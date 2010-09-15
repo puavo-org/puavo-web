@@ -9,7 +9,7 @@ school:
   attributes:
     name: displayName
 puavo_ca:
-  host: 10.246.131.154
+  host: localhost
   port: 3000
 default_host_type: laptop
 host_types:
@@ -48,17 +48,3 @@ host_types:
     url: /devices/servers/new.json?device_type=server
     order: 5
     puppetclass: host::ltsp::server
-  netstand:
-    label:
-      en: Netstand
-    classes: puavoLocalbootDevice
-    url: /devices/%s/devices/new.json?device_type=netstand
-    order: 6
-    puppetclass: host::netstand
-  infotv:
-    label:
-      en: School screen
-    classes: puavoLocalbootDevice
-    url: /devices/%s/devices/new.json?device_type=infotv
-    order: 7
-    puppetclass: host::infotv
