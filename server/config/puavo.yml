@@ -16,44 +16,49 @@ host_types:
   thinclient:
     label:
       en: Thinclient
-    classes:
-    - puavoNetbootDevice
-    - puavoLocalbootDevice
+    classes: puavoNetbootDevice
     url: /devices/%s/devices/new.json?device_type=thinclient	
     order: 1
+    puppetclass: netboot::thinclient
   fatclient:
     label:
       en: Fatclient
     classes: puavoNetbootDevice
     url: /devices/%s/devices/new.json?device_type=fatclient
     order: 2
+    puppetclass: netboot::fatclient
   laptop:
     label:
       en: Laptop
     classes: puavoLocalbootDevice
     url: /devices/%s/devices/new.json?device_type=laptop
     order: 3
+    puppetclass: host::laptop
   workstation:
     label:
       en: Workstation
     classes: puavoLocalbootDevice
     url: /devices/%s/devices/new.json?device_type=workstation
     order: 4
+    puppetclass: host::workstation
   server:
     label:
       en: Server
     classes: puavoLocalbootDevice
     url: /devices/servers/new.json?device_type=server
     order: 5
+    puppetclass: host::ltsp::server
   netstand:
     label:
       en: Netstand
     classes: puavoLocalbootDevice
     url: /devices/%s/devices/new.json?device_type=netstand
     order: 6
+    puppetclass: host::netstand
   infotv:
     label:
       en: School screen
     classes: puavoLocalbootDevice
     url: /devices/%s/devices/new.json?device_type=infotv
     order: 7
+    puppetclass: host::infotv
