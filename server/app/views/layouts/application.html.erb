@@ -27,7 +27,7 @@
       <li><a href="/users/schools" class="sub"><%= t('.schools')%></a>
         <ul>
           <% session[:organisation].schools.each do |school| %>
-          <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><a href="/users/schools/<%= school.id %>"><%= school.displayName %></a></li>
+          <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><a href="/devices/<%= school.id %>/devices/"><%= school.displayName %></a></li>
           <% end %>
         </ul>
       </li>
