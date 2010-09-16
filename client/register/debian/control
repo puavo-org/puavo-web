@@ -1,4 +1,4 @@
-Source: puavodevices-client
+Source: puavodevices-client-register
 Section: admin
 Priority: extra
 Maintainer: Juha Erkkilä <Juha.Erkkila@opinsys.fi>
@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 7)
 Standards-Version: 3.8.3
 Homepage: https://launchpad.net/~opinsys
 
-Package: puavodevices-client
+Package: puavodevices-client-register
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, facter, libhighline-ruby1.8, libjson-ruby1.8, libopenssl-ruby1.8
 Description: Machine administration tool
