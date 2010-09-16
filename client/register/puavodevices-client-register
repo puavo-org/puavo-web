@@ -306,6 +306,9 @@ class PuavoDevicesConnection
 
     @http = Net::HTTP.new(server, '443')
     @http.use_ssl = true
+    @http.ca_path = '/etc/ssl/certs'
+    @http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    @http.verify_depth = 5
     @devicetypes = get('/devices/hosts/types.json')
 
     userinfo = get('/devices/sessions/show.json')
