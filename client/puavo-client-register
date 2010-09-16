@@ -17,7 +17,7 @@ require 'facter'
 require 'fileutils'
 require 'highline/import'
 require 'json'
-require 'net/http'
+require 'net/https'
 require 'openssl'
 require 'resolv'
 require 'socket'
@@ -303,7 +303,8 @@ class PuavoDevicesConnection
     @username = username
     @password = password
 
-    @http = Net::HTTP.new(server, '80')
+    @http = Net::HTTP.new(server, '443')
+    @http.use_ssl = true
     @devicetypes = get('/devices/hosts/types.json')
 
     userinfo = get('/devices/sessions/show.json')
