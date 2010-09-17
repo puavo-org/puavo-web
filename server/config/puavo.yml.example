@@ -10,7 +10,8 @@ school:
     name: displayName
 puavo_ca:
   host: localhost
-  port: 3000
+  port: 443
+  ca_file: /etc/ssl/certs/puavo-ca.crt
 default_host_type: laptop
 host_types:
   thinclient:

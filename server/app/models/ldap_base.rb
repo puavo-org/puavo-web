@@ -134,6 +134,12 @@ class LdapBase < ActiveLdap::Base
 
   def http_puavo_ca
     Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
+    http = Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
+    http.use_ssl = true
+    http.ca_file = PUAVO_CONFIG['puavo_ca']['ca_file']
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    http.verify_depth = 5
+    return http
   end
 
   def set_puppetclass
