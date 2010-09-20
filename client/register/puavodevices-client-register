@@ -417,6 +417,12 @@ class PostRegisterConfiguration
   end
 
   def setup_all
+    mkdir('/etc/puavo')
+
+    @register_info['initial_packages'].each do |package|
+      apt_get_install(package)
+    end
+
     setup_ldap() if @register_info['new_password']
 
     # XXX cacerts should possibly be fetched from somewhere
@@ -552,8 +558,9 @@ class PostRegisterConfiguration
 	  EOF
       end
       goodmsg('Puppet setup is done, running puppet once...')
-      unless system('puppetd --no-daemonize --onetime --logdest console' \
-		    + ' --logdest /var/log/puppet/install.log')
+      unless system('puppetd --no-daemonize --onetime --logdest console' +
+		    ' --logdest /var/log/puppet/install.log')
+	# XXX this will not be triggered even if there would be a reason to
 	raise 'problem running puppetd'
       end
       goodmsg('Puppet run is done.')
@@ -580,7 +587,8 @@ cert = HostCertificate.new
 rui = RegisterUserInterface.new(cmdline_params, cert)
 register_info = rui.register_to_server()
 
-register_info['puppet_server'] = 'kunta1.puppet.opinsys.fi'	# XXX
+register_info['initial_packages'] = %w(libfilesystem-ruby1.8)
+register_info['puppet_server']    = 'hopohopo.puppet.opinsys.fi'	# XXX
 
 # XXX
 #register_info['kerberos_principals'] = %w(
