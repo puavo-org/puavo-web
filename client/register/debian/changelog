@@ -1,3 +1,9 @@
+puavodevices-client-register (0.1.1) lucid; urgency=low
+
+  * Further development.
+
+ -- Juha Erkkilä <Juha.Erkkila@opinsys.fi>  Mon, 20 Sep 2010 11:47:20 +0300
+
 puavodevices-client-register (0.1) unstable; urgency=low
 
   * Initial Release.
