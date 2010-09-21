@@ -21,9 +21,10 @@ GEM
     gettext_activerecord (2.1.0)
       activerecord (>= 2.3.2)
       gettext (>= 2.1.0)
+    json (1.4.6)
     locale (2.0.5)
     net-ldap (0.1.1)
-    puavo_authentication (0.0.3)
+    puavo_authentication (0.0.4)
     puavo_organisation (0.0.2)
     rack (1.1.0)
     rails (2.3.8)
@@ -41,6 +42,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeldap
+  json
   net-ldap
   puavo_authentication
   puavo_organisation
