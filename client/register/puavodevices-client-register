@@ -61,9 +61,9 @@ class HostCertificate
     @csr.public_key = @key.public_key
   end
 
-  def accept_signed_certificate(certificate, rootcacert)
-    @crt        = OpenSSL::X509::Certificate.new(certificate)
-    @rootcacert = rootcacert
+  def accept_signed_certificate(certificate, rootca)
+    @crt    = OpenSSL::X509::Certificate.new(certificate)
+    @rootca = rootca
   end
 
   def fqdn
@@ -74,10 +74,10 @@ class HostCertificate
     @csr.to_pem
   end
 
-  def write_to_filesystem(certpath, keypath, rootcacertpath)
-    File.open(certpath,       'w', 0444) { |f| f.print @crt.to_pem }
-    File.open(keypath,        'w', 0400) { |f| f.print @key.to_pem }
-    File.open(rootcacertpath, 'w', 0444) { |f| f.print @rootcacert }
+  def write_to_filesystem(certpath, keypath, rootcapath)
+    File.open(certpath,   'w', 0444) { |f| f.print @crt.to_pem }
+    File.open(keypath,    'w', 0400) { |f| f.print @key.to_pem }
+    File.open(rootcapath, 'w', 0444) { |f| f.print @rootca     }
     goodmsg('Certificates have been written to filesystem.')
   end
 end
@@ -115,6 +115,7 @@ class RegisterUserInterface
 		 @connection.devicetypes['title'],
 		 @connection.devicetypes['question'])
     @attributes = request_attributes(@responses['devicetype'])
+    set_host_attributes()
   end
 
   def ask_machine_info(errors={}, ask_all=true)
@@ -137,6 +138,7 @@ class RegisterUserInterface
 
       question = attr['label'] + ':'
       @responses[field] = ask_with_default(question, @host[field])
+      set_host_attributes()
     end
     unhandled.each do |field, errmsg|
       errmsg("Server reported unhandled error for #{ field }: #{ errmsg }")
@@ -153,6 +155,7 @@ class RegisterUserInterface
 		   @connection.schools['question'])
     @attributes = request_attributes(@responses['devicetype'],
 				     @responses['school'])
+    set_host_attributes()
   end
 
   def ask_with_default(question, default)
@@ -185,23 +188,18 @@ class RegisterUserInterface
 
   def connect_to_puavo()
     if (@puavoserver and @username and @password)
-      @connection = PuavoDevicesConnection.new(@puavoserver,
-					       @username,
-					       @password,
-					       @mode['boottype'])
+      @connection = puavo_connection_request()
     else
       until (@connection)
 	begin
 	  begin
 	    @puavoserver = ask_with_default('Puavo server name:', @puavoserver)
-	    @connection  = PuavoDevicesConnection.new(@puavoserver, '', '')
+	    @connection  = PuavoDevicesConnection.new(@puavoserver, '', '', '')
 	  rescue HttpAuthError
 	  end
 	  @username   = ask_with_default('Username:', @username)
 	  @password   = HighLine.ask('Password: ') { |q| q.echo = '*' }
-	  @connection = PuavoDevicesConnection.new(@puavoserver,
-						   @username,
-						   @password)
+	  @connection = puavo_connection_request()
 	rescue HttpAuthError
 	  errmsg('Wrong username and/or password.')
 	  @http = nil
@@ -223,23 +221,6 @@ class RegisterUserInterface
     rescue
       errmsg('Could not lookup default puavoserver.')
     end
-  end
-
-  # XXX not used, going away
-  def devicelist
-    accept = [
-      @mode['localboot'] ? 'puavoLocalbootDevice' : nil,
-      @mode['netboot']   ? 'puavoNetbootDevice'   : nil,
-    ].compact
-
-    devlist = {}
-    @connection.devicetypes['list'].each do |type, devinfo|
-      t = accept + Array(devinfo['classes']).uniq
-      if t.uniq.size < t.size	# if true, classes contain something in accept
-	devlist[type] = devinfo
-      end
-    end
-    devlist
   end
 
   def lookup_macaddresses(facts)
@@ -267,6 +248,13 @@ class RegisterUserInterface
       printf("%-24s%s\n", attr['label'] + ': ', value)
     end
     print "\n"
+  end
+
+  def puavo_connection_request()
+    PuavoDevicesConnection.new(@puavoserver,
+			       @username,
+			       @password,
+			       @mode['boottype'])
   end
 
   def register_to_server
@@ -356,6 +344,7 @@ class PuavoDevicesConnection
     # put school id into url if %s exists in url string
     question_url = @devicetypes['list'][ devicetype ]['url'] % school
 
+    form = get(question_url)
     @post_info = {
       'object_key' => form['object_key'],
       'url'        => form['url'] % school,
@@ -439,11 +428,12 @@ class PostRegisterConfiguration
   def setup
     mkdir('/etc/puavo')
 
-    if @register_info['userCertificate'] and @register_info['rootcacert']
-      if not @register_info['rootcacert'] then raise 'Root CA missing' end
+    p @register_info
+    if @register_info['userCertificate']
+      if not @register_info['rootca'] then raise 'Root CA missing' end
 
       @cert.accept_signed_certificate(@register_info['userCertificate'],
-				      @register_info['rootcacert'])
+				      @register_info['rootca'])
       mkdir('/etc/puavo/certs')
       @cert.write_to_filesystem('/etc/puavo/certs/host.crt',
 				'/etc/puavo/certs/host.key',
@@ -502,7 +492,9 @@ register_info = rui.register_to_server()
 
 # XXX these should come from server
 register_info['host_configuration'] = {
-  'puppet_server' => 'hopohopo.puppet.opinsys.fi',
+  'devicetype'     => 'ltspserver',
+  'kerberos_realm' => 'HOPOHOPO.OPINSYS.FI',
+  'puppet_server'  => 'hopohopo.puppet.opinsys.fi',
 }
 
 PostRegisterConfiguration.new(cert, register_info).setup

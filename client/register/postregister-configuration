@@ -179,11 +179,3 @@ end
 setup_openvpn()
 setup_kerberos(kerberos_principals) if kerberos_principals
 setup_puppet(conf['puppet_server'], fqdn) if conf['puppet_server']
-
-# needed:
-# devicetype
-# kerberos_realm
-# puppet_server
-
-# ldap_password
-# rootcacert
