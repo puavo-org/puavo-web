@@ -2,7 +2,7 @@ class LdapBase < ActiveLdap::Base
   include Puavo::Connection if defined?(Puavo::Connection)
 
   attr_accessor :host_certificate_request_send
-  attr_accessor :host_certificate_request, :userCertificate, :cacerts, :ldap_password
+  attr_accessor :host_certificate_request, :userCertificate, :rootca, :ldap_password
 
   before_save :set_puppetclass
 
@@ -17,7 +17,7 @@ class LdapBase < ActiveLdap::Base
   def to_json(options = {})
     unless options.has_key?(:methods)
       # Set default methods list
-      options[:methods] = [:host_certificate_request, :userCertificate, :cacerts, :ldap_password]
+      options[:methods] = [:host_certificate_request, :userCertificate, :rootca, :ldap_password]
     end
     method_values = { }
     # Create Hash by :methods name if :methods options is set.
@@ -120,7 +120,7 @@ class LdapBase < ActiveLdap::Base
       case response.code
       when /^2/
         # successful request
-        self.cacerts = response.body
+        self.rootca = response.body
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
