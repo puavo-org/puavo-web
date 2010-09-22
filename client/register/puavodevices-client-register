@@ -34,6 +34,8 @@ class CmdLine
     new_arg = nil
     ARGV.each do |i|
       case i
+	when '--netboot'
+	  params['netboot'] = true
 	when '--noconfirm'
 	  params['noconfirm'] = true
 	else
@@ -85,7 +87,10 @@ class RegisterUserInterface
     @responses       = {}
     @cmdline_params  = cmdline_params
 
-    @mode            = { 'noconfirm' => @cmdline_params['noconfirm'] }
+    @mode = {
+      'boottype'  => @cmdline_params['netboot'] ? 'net' : 'local',
+      'noconfirm' => @cmdline_params['noconfirm']
+    }
     @puavoserver     = @cmdline_params['puavoserver'] || default_puavoserver()
     @username        = @cmdline_params['username']
     @password        = @cmdline_params['password']
@@ -116,7 +121,7 @@ class RegisterUserInterface
     unhandled = errors.clone
     if ask_all
       ask_devicetype()
-      ask_school()
+      ask_school() if school_required?
     end
     @attributes.each do |attr|
       field = attr['id']
@@ -139,7 +144,6 @@ class RegisterUserInterface
   end
 
   def ask_school()
-    return if @host['devicetype'] == 'server'	 # XXX how to figure this out?
     list = @connection.schools['list']
     @responses['school'] \
       = list.size == 1 ? list.keys[0] \
@@ -183,7 +187,8 @@ class RegisterUserInterface
     if (@puavoserver and @username and @password)
       @connection = PuavoDevicesConnection.new(@puavoserver,
 					       @username,
-					       @password)
+					       @password,
+					       @mode['boottype'])
     else
       until (@connection)
 	begin
@@ -220,6 +225,23 @@ class RegisterUserInterface
     end
   end
 
+  # XXX not used, going away
+  def devicelist
+    accept = [
+      @mode['localboot'] ? 'puavoLocalbootDevice' : nil,
+      @mode['netboot']   ? 'puavoNetbootDevice'   : nil,
+    ].compact
+
+    devlist = {}
+    @connection.devicetypes['list'].each do |type, devinfo|
+      t = accept + Array(devinfo['classes']).uniq
+      if t.uniq.size < t.size	# if true, classes contain something in accept
+	devlist[type] = devinfo
+      end
+    end
+    devlist
+  end
+
   def lookup_macaddresses(facts)
     facts['interfaces'].split(',').
 			map { |intf| facts["macaddress_#{intf}"] }.
@@ -237,7 +259,7 @@ class RegisterUserInterface
 	  when 'devicetype'
 	    @connection.devicetypes['list'][ @host[field] ]['label']
 	  when 'school'
-	    next if @host['devicetype'] == 'server'
+	    next unless school_required?
 	    @connection.schools['list'][ @host[field] ]['label']
 	  else
 	    @host[field]
@@ -281,9 +303,14 @@ class RegisterUserInterface
     @connection.request_object_info(devicetype, school)
   end
 
+  def school_required?
+    @connection.devicetypes['list'][ @host['devicetype'] ]['school_required']
+  end
+
   def set_host_attributes
     @host = {}
     @attributes.each do |attr|
+      next if attr['id'] == 'school' and not school_required?
       @host[ attr['id'] ] = @responses[       attr['id'] ] ||
 			    @cmdline_params[  attr['id'] ] ||
 			    attr['default']                ||
@@ -296,7 +323,7 @@ end
 class PuavoDevicesConnection
   attr_accessor :devicetypes, :schools
 
-  def initialize(server, username, password)
+  def initialize(server, username, password, boottype)
     @server   = server
     @username = username
     @password = password
@@ -306,7 +333,7 @@ class PuavoDevicesConnection
     @http.ca_path = '/etc/ssl/certs'
     @http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     @http.verify_depth = 5
-    @devicetypes = get('/devices/hosts/types.json')
+    @devicetypes = get("/devices/hosts/types.json?boottype=#{ boottype }")
 
     userinfo = get('/devices/sessions/show.json')
     @schools = userinfo['managed_schools'].clone
@@ -329,7 +356,6 @@ class PuavoDevicesConnection
     # put school id into url if %s exists in url string
     question_url = @devicetypes['list'][ devicetype ]['url'] % school
 
-    form = get(question_url)
     @post_info = {
       'object_key' => form['object_key'],
       'url'        => form['url'] % school,
@@ -427,10 +453,6 @@ class PostRegisterConfiguration
 
     set_ldap_password() if @register_info['ldap_password']
     write_host_configuration() if @register_info['host_configuration']
-
-    @register_info['initial_packages'].each do |package|
-      apt_get_install(package)
-    end
   end
 
   # XXX is this really needed?
@@ -482,6 +504,5 @@ register_info = rui.register_to_server()
 register_info['host_configuration'] = {
   'puppet_server' => 'hopohopo.puppet.opinsys.fi',
 }
-register_info['initial_packages'] = %w(libfilesystem-ruby1.8)
 
 PostRegisterConfiguration.new(cert, register_info).setup

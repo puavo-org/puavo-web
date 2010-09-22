@@ -13,11 +13,11 @@ end
 def errmsg(msg) ; colormsg(msg, 'ERROR', HighLine::RED)  ; end
 def goodmsg(msg); colormsg(msg, 'OK',    HighLine::GREEN); end
 
-def mkdir(path, mode=0755)
-  begin
-    FileUtils.mkdir(path, :mode => mode)
-    rescue Errno::EEXIST
+def apt_get_install(package)
+  unless system("apt-get --assume-yes -qq install #{ package }")
+    raise "could not install #{ package }"
   end
+  goodmsg("Package #{ package } is now installed.")
 end
 
 def copy_certs_to(certpath, keypath, rootcacertpath)
@@ -31,7 +31,16 @@ def fqdn
   ((/^.*CN=(.*?)(\/|$)/.match(cert.subject.to_s))[1])
 end
 
+def mkdir(path, mode=0755)
+  begin
+    FileUtils.mkdir(path, :mode => mode)
+    rescue Errno::EEXIST
+  end
+end
+
 def setup_kerberos(principals)
+  p principals
+  return
   begin
     error = false
     principal = HighLine.ask("\nKerberos principal: ")
@@ -94,9 +103,10 @@ def setup_openvpn
 end
 
 # XXX puppet package should be installed before this
-def setup_puppet(puppet_server)
+def setup_puppet(puppet_server, fqdn)
   begin
-    fqdn = fqdn()
+    # needed by some facter rules
+    apt_get_install('libfilesystem-ruby1.8')
 
     FileUtils.rmtree('/etc/puppet/ssl')
     mkdir('/etc/puppet/ssl',              0771)
@@ -150,13 +160,30 @@ def setup_puppet(puppet_server)
   end
 end
 
-conf = YAML.load_file('/etc/puavo/host_configuration')
+#
+# main
+#
 
-setup_kerberos('host/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
-	       'ldap/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
-	       'cifs/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
-	       'IPP/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
-	       'nfs/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI') if false	# XXX
+conf = YAML.load_file('/etc/puavo/host_configuration')
+fqdn = fqdn()
+
+case conf['devicetype']
+  when 'ltspserver'
+    kerberos_principals = %w(host ldap cifs IPP nfs).map do |p| 
+			    "#{ p }/#{ fqdn }@#{ conf['kerberos_realm'] }"
+			  end
+  else
+    kerberos_principals = false
+end
 
 setup_openvpn()
-setup_puppet(conf['puppet_server'])
+setup_kerberos(kerberos_principals) if kerberos_principals
+setup_puppet(conf['puppet_server'], fqdn) if conf['puppet_server']
+
+# needed:
+# devicetype
+# kerberos_realm
+# puppet_server
+
+# ldap_password
+# rootcacert
