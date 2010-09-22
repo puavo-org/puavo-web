@@ -29,8 +29,8 @@ class Server < LdapBase
   def set_password
     if self.userPassword.nil? || self.userPassword.empty?
       characters = ("a".."z").to_a + ("0".."9").to_a
-      self.new_password = Array.new(40) { characters[rand(characters.size)] }.join
-      self.userPassword = Server.ssha_hash(self.new_password)
+      self.ldap_password = Array.new(40) { characters[rand(characters.size)] }.join
+      self.userPassword = Server.ssha_hash(self.ldap_password)
     end
   end
 
