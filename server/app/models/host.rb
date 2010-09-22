@@ -6,7 +6,7 @@ class Host < LdapBase
   # Generate new Hash by configuration. Key: Host type, value: list of the object classes
   # Example:
   # { "thinclient" => "puavoNetbootDevice" }
-  @@objectClass_by_device_type = PUAVO_CONFIG['host_types'].inject({}) do |result, type|
+  @@objectClass_by_device_type = PUAVO_CONFIG['device_types'].inject({}) do |result, type|
     result[type.first] = type.last["classes"]
     result
   end
@@ -29,15 +29,15 @@ class Host < LdapBase
   end
 
   def self.types
-    # Create deep copy of any host_types configuration.
-    type_list = Marshal.load( Marshal.dump(PUAVO_CONFIG['host_types']) )
+    # Create deep copy of any device_types configuration.
+    type_list = Marshal.load( Marshal.dump(PUAVO_CONFIG['device_types']) )
 
     # Set host's label by user's locale. Localization values must be set on the puavo.yml
     type_list.each_key do |type|
       type_list[type]["label"] = type_list[type]["label"][I18n.locale.to_s]
     end
 
-    { "default" => PUAVO_CONFIG['default_host_type'],
+    { "default" => PUAVO_CONFIG['default_device_type'],
       "label" => I18n.t("host.types.register_label"),
       "title" => I18n.t("host.types.register_title"),
       "question" => I18n.t("host.types.register_question"),

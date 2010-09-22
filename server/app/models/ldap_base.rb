@@ -143,6 +143,6 @@ class LdapBase < ActiveLdap::Base
   end
 
   def set_puppetclass
-    self.puppetclass = PUAVO_CONFIG['host_types'][self.puavoDeviceType]['puppetclass']
+    self.puppetclass = PUAVO_CONFIG['device_types'][self.puavoDeviceType]['puppetclass']
   end
 end

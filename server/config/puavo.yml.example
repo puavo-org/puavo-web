@@ -12,8 +12,8 @@ puavo_ca:
   host: localhost
   port: 443
   ca_file: /etc/ssl/certs/puavo-ca.crt
-default_host_type: laptop
-host_types:
+default_device_type: laptop
+device_types:
   thinclient:
     label:
       en: Thinclient
@@ -21,6 +21,7 @@ host_types:
     url: /devices/%s/devices/new.json?device_type=thinclient	
     order: 1
     puppetclass: netboot::thinclient
+    school_required: true
   fatclient:
     label:
       en: Fatclient
@@ -28,6 +29,7 @@ host_types:
     url: /devices/%s/devices/new.json?device_type=fatclient
     order: 2
     puppetclass: netboot::fatclient
+    school_required: true
   laptop:
     label:
       en: Laptop
@@ -35,6 +37,7 @@ host_types:
     url: /devices/%s/devices/new.json?device_type=laptop
     order: 3
     puppetclass: host::laptop
+    school_required: true
   workstation:
     label:
       en: Workstation
@@ -42,10 +45,12 @@ host_types:
     url: /devices/%s/devices/new.json?device_type=workstation
     order: 4
     puppetclass: host::workstation
-  server:
+    school_required: true
+  ltspserver:
     label:
-      en: Server
+      en: LTSP-Server
     classes: puavoLocalbootDevice
-    url: /devices/servers/new.json?device_type=server
+    url: /devices/servers/new.json?device_type=ltspserver
     order: 5
     puppetclass: host::ltsp::server
+    school_required: false
