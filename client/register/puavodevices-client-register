@@ -12,25 +12,21 @@
 # suggestion: run this as:
 #   script -qc ./puavo-client-register /root/register.log
 
-require 'etc'
 require 'facter'
-require 'fileutils'
 require 'highline/import'
 require 'json'
 require 'net/https'
-require 'open3'
 require 'openssl'
 require 'resolv'
 require 'socket'
-require 'uri'
+require 'yaml'
 
-def errmsg(msg)
-  HighLine.say(HighLine.new.color("*** ERROR: #{ msg }", HighLine::RED))
+def colormsg(msg, tag, color)
+  HighLine.say(HighLine.new.color("*** #{ tag }: #{ msg }", color))
 end
 
-def goodmsg(msg)
-  HighLine.say(HighLine.new.color("*** OK: #{ msg }", HighLine::GREEN))
-end
+def errmsg(msg) ; colormsg(msg, 'ERROR', HighLine::RED)  ; end
+def goodmsg(msg); colormsg(msg, 'OK',    HighLine::GREEN); end
 
 class CmdLine
   def self.params()
@@ -63,9 +59,9 @@ class HostCertificate
     @csr.public_key = @key.public_key
   end
 
-  def accept_signed_certificate(certificate, cacerts)
-    @crt         = OpenSSL::X509::Certificate.new(certificate)
-    @cacerts_txt = cacerts
+  def accept_signed_certificate(certificate, rootcacert)
+    @crt        = OpenSSL::X509::Certificate.new(certificate)
+    @rootcacert = rootcacert
   end
 
   def fqdn
@@ -76,10 +72,11 @@ class HostCertificate
     @csr.to_pem
   end
 
-  def write_to_filesystem(certpath, keypath, cacertspath)
-    File.open(certpath,    'w', 0444) { |f| f.print @crt.to_pem  }
-    File.open(keypath,     'w', 0400) { |f| f.print @key.to_pem  }
-    File.open(cacertspath, 'w', 0444) { |f| f.print @cacerts_txt }
+  def write_to_filesystem(certpath, keypath, rootcacertpath)
+    File.open(certpath,       'w', 0444) { |f| f.print @crt.to_pem }
+    File.open(keypath,        'w', 0400) { |f| f.print @key.to_pem }
+    File.open(rootcacertpath, 'w', 0444) { |f| f.print @rootcacert }
+    goodmsg('Certificates have been written to filesystem.')
   end
 end
 
@@ -201,7 +198,7 @@ class RegisterUserInterface
 						   @username,
 						   @password)
 	rescue HttpAuthError
-	  errmsg('Wrong username and/or password')
+	  errmsg('Wrong username and/or password.')
 	  @http = nil
 	rescue SocketError => e
 	  errmsg(e)
@@ -219,7 +216,7 @@ class RegisterUserInterface
 	r[0].target.to_s
       end
     rescue
-      errmsg('Could not lookup default puavoserver')
+      errmsg('Could not lookup default puavoserver.')
     end
   end
 
@@ -267,9 +264,9 @@ class RegisterUserInterface
       if response_data['register_info']
 	if @host['host_certificate_request'] \
 	  and not response_data['register_info']['userCertificate']
-	    errmsg('Server did not send a signed certificate')
+	    errmsg('Server did not send a signed certificate.')
         else
-	  goodmsg('This machine has been successfully registered.')
+	  goodmsg('This machine is now successfully registered.')
 	  return response_data['register_info']
 	end
       else
@@ -403,44 +400,41 @@ class PostRegisterConfiguration
     unless system("apt-get --assume-yes -qq install #{ package }")
       raise "could not install #{ package }"
     end
-    goodmsg("Package #{ package } has been installed.")
+    goodmsg("Package #{ package } is now installed.")
   end
 
-  def mkdir(path, mode=0755, owner=nil, group=nil)
+  def mkdir(path, mode=0755)
     begin
       Dir.mkdir(path, mode)
       rescue Errno::EEXIST
     end
-    if owner and group
-      File.chown(Etc.getpwnam(owner).uid, Etc.getgrnam(group).gid, path)
-    end
   end
 
-  def setup_all
+  def setup
     mkdir('/etc/puavo')
+
+    if @register_info['userCertificate'] and @register_info['rootcacert']
+      if not @register_info['rootcacert'] then raise 'Root CA missing' end
+
+      @cert.accept_signed_certificate(@register_info['userCertificate'],
+				      @register_info['rootcacert'])
+      mkdir('/etc/puavo/certs')
+      @cert.write_to_filesystem('/etc/puavo/certs/host.crt',
+				'/etc/puavo/certs/host.key',
+				'/etc/puavo/certs/rootca.pem')
+      set_hostname()
+    end
+
+    set_ldap_password() if @register_info['ldap_password']
+    write_host_configuration() if @register_info['host_configuration']
 
     @register_info['initial_packages'].each do |package|
       apt_get_install(package)
     end
-
-    setup_ldap() if @register_info['new_password']
-
-    # XXX cacerts should possibly be fetched from somewhere
-    if @register_info['userCertificate'] and @register_info['cacerts']
-      @cert.accept_signed_certificate(@register_info['userCertificate'],
-				      @register_info['cacerts'])
-      setup_hostname()
-      setup_openvpn()
-      if @register_info['kerberos_principals']
-        setup_kerberos()
-      end
-      if @register_info['puppet_server']
-	setup_puppet()
-      end
-    end
   end
 
-  def setup_hostname
+  # XXX is this really needed?
+  def set_hostname
     hostname = @cert.fqdn.split('.')[0]
     begin
       File.open('/etc/hostname', 'w') do |f|
@@ -453,125 +447,22 @@ class PostRegisterConfiguration
       errmsg(msg)
       exit 1
     end
-    goodmsg("System hostname is now set to #{ hostname }")
+    goodmsg("System hostname is now set to #{ hostname }.")
   end
 
-  def setup_kerberos
-    begin
-      error = false
-      principal = HighLine.ask("\nKerberos principal: ")
-      password  = HighLine.ask('Password: ') { |q| q.echo = '*' }
-
-      @register_info['kerberos_principals'].each do |princ|
-	goodmsg, errmsg = [], []
-	Open3.popen3('kadmin', '-p', principal, '-w', password, '-q',
-		     "add_principal #{ princ }") do |stdin, stdout, stderr|
-	  goodmsg = stdout.readlines
-	  errmsg = stderr.readlines
-	end
-	# XXX use some criteria to figure out if operation was ok
-	status = $?.exitstatus
-	errmsg("exit status is #{ status }")
-	goodmsg.each { |l| goodmsg(l.chomp) }
-	errmsg .each { |l| errmsg(l.chomp)  } 
-	error = true
-	break
-       end
-    end while error
-    goodmsg('Kerberos principal setup done')
-  end
-
-  def setup_ldap
+  def set_ldap_password
     mkdir('/etc/puavo/ldap')
     File.open('/etc/puavo/ldap/password', 'w', 0600) do |f|
-      f.print "#{ @register_info['new_password'] }\n"
+      f.print "#{ @register_info['ldap_password'] }\n"
     end
     goodmsg('LDAP password is now set.')
   end
 
-  def setup_openvpn
-    begin
-      apt_get_install('openvpn')
-      mkdir('/etc/openvpn/keys')
-      @cert.write_to_filesystem('/etc/openvpn/keys/host.crt',
-				'/etc/openvpn/keys/host.key',
-				'/etc/openvpn/keys/organisation-ca-bundle.pem')
-      File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
-	f.print <<-'EOF'.gsub(/^\s+/, '')
-	  client
-	  dev tun
-	  proto tcp-client
-	  remote 217.112.254.13 443
-	  ca /etc/openvpn/keys/organisation-ca-bundle.pem
-	  cert /etc/openvpn/keys/host.crt
-	  key /etc/openvpn/keys/host.key
-	  ns-cert-type server
-	  verb 3
-	  comp-lzo
-	  keepalive 10 60
-	  persist-tun
-	  persist-key
-	  ipchange /etc/openvpn/runme
-	  EOF
-      end
-      unless system('service openvpn restart')
-	raise 'problem restarting openvpn'
-      end
-    rescue => msg
-      errmsg(msg)
-      exit 1
+  def write_host_configuration
+    File.open('/etc/puavo/host_configuration', 'w') do |f|
+      f.print @register_info['host_configuration'].to_yaml
     end
-    goodmsg('OpenVPN setup is done.')
-  end
-
-  def setup_puppet
-    begin
-      apt_get_install('puppet')
-      FileUtils.rmtree('/etc/puppet/ssl')
-      mkdir('/etc/puppet/ssl',              0771, 'puppet', 'root')
-      mkdir('/etc/puppet/ssl/certs',        0755, 'puppet', 'root')
-      mkdir('/etc/puppet/ssl/private_keys', 0750, 'puppet', 'root')
-      fqdn = @cert.fqdn
-
-      @cert.write_to_filesystem("/etc/puppet/ssl/certs/#{ fqdn }.pem",
-				"/etc/puppet/ssl/private_keys/#{ fqdn }.pem",
-				'/etc/puppet/ssl/certs/ca.pem')
-      File.open('/etc/default/puppet', 'w') do |f|
-	f.print <<-EOF.gsub(/^\s+/, '')
-	  START=yes
-	  DAEMON_OPTS=""
-	  EOF
-      end
-      File.open('/etc/puppet/puppet.conf', 'w') do |f|
-	f.print <<-EOF.gsub(/^\s+/, '')
-	  [main]
-	  certname=#{ @cert.fqdn }
-	  factpath=/var/lib/puppet/lib/facter
-	  logdir=/var/log/puppet
-	  pluginsync=true
-	  postrun_command=/etc/puppet/etckeeper-commit-post
-	  prerun_command=/etc/puppet/etckeeper-commit-pre
-	  rundir=/var/run/puppet
-	  server=#{ @register_info['puppet_server'] }
-	  templatedir=$confdir/templates
-	  vardir=/var/lib/puppet
-	  EOF
-      end
-      goodmsg('Puppet setup is done, running puppet once...')
-      unless system('puppetd --no-daemonize --onetime --logdest console' +
-		    ' --logdest /var/log/puppet/install.log')
-	# XXX this will not be triggered even if there would be a reason to
-	raise 'problem running puppetd'
-      end
-      goodmsg('Puppet run is done.')
-      unless system('service puppet restart')
-	raise 'problem restarting puppet'
-      end
-      goodmsg('Puppet daemon is started.')
-    rescue => msg
-      errmsg(msg)
-      exit 1
-    end
+    goodmsg('Host configuration file is written.')
   end
 end
 
@@ -587,16 +478,10 @@ cert = HostCertificate.new
 rui = RegisterUserInterface.new(cmdline_params, cert)
 register_info = rui.register_to_server()
 
+# XXX these should come from server
+register_info['host_configuration'] = {
+  'puppet_server' => 'hopohopo.puppet.opinsys.fi',
+}
 register_info['initial_packages'] = %w(libfilesystem-ruby1.8)
-register_info['puppet_server']    = 'hopohopo.puppet.opinsys.fi'	# XXX
 
-# XXX
-#register_info['kerberos_principals'] = %w(
-#  host/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI
-#  ldap/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI
-#  cifs/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI
-#  IPP/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI
-#  nfs/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI
-#)
-
-PostRegisterConfiguration.new(cert, register_info).setup_all
+PostRegisterConfiguration.new(cert, register_info).setup

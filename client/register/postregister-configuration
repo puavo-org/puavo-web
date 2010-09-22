@@ -1,0 +1,162 @@
+#!/usr/bin/ruby
+
+require 'fileutils'
+require 'highline/import'
+require 'openssl'
+require 'yaml'
+
+# XXX repetition elsewhere
+def colormsg(msg, tag, color)
+  HighLine.say(HighLine.new.color("*** #{ tag }: #{ msg }", color))
+end
+
+def errmsg(msg) ; colormsg(msg, 'ERROR', HighLine::RED)  ; end
+def goodmsg(msg); colormsg(msg, 'OK',    HighLine::GREEN); end
+
+def mkdir(path, mode=0755)
+  begin
+    FileUtils.mkdir(path, :mode => mode)
+    rescue Errno::EEXIST
+  end
+end
+
+def copy_certs_to(certpath, keypath, rootcacertpath)
+  FileUtils.cp('/etc/puavo/certs/host.crt',   certpath)
+  FileUtils.cp('/etc/puavo/certs/host.key',   keypath)
+  FileUtils.cp('/etc/puavo/certs/rootca.pem', rootcacertpath)
+end
+
+def fqdn
+  cert = OpenSSL::X509::Certificate.new(IO.read('/etc/puavo/certs/host.crt'))
+  ((/^.*CN=(.*?)(\/|$)/.match(cert.subject.to_s))[1])
+end
+
+def setup_kerberos(principals)
+  begin
+    error = false
+    principal = HighLine.ask("\nKerberos principal: ")
+    password  = HighLine.ask('Password: ') { |q| q.echo = '*' }
+
+    principals.each do |princ|
+      goodmsg, errmsg = [], []
+      Open3.popen3('kadmin', '-p', principal, '-w', password, '-q',
+		   "add_principal #{ princ }") do |stdin, stdout, stderr|
+	goodmsg = stdout.readlines
+	errmsg  = stderr.readlines
+      end
+      # XXX use some criteria to figure out if operation was ok
+      status = $?.exitstatus
+      errmsg("exit status is #{ status }")
+      goodmsg.each { |l| goodmsg(l.chomp) }
+      errmsg .each { |l| errmsg(l.chomp)  }
+      error = true
+      break
+    end
+  end while error
+end
+
+# XXX openvpn package should be installed before this
+def setup_openvpn
+  begin
+    mkdir('/etc/openvpn/keys')
+
+    # XXX why do copies?
+    copy_certs_to('/etc/openvpn/keys/host.crt',
+		  '/etc/openvpn/keys/host.key',
+		  '/etc/openvpn/keys/rootca.pem')
+
+    File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
+      f.print <<-'EOF'.gsub(/^\s+/, '')
+	client
+	dev tun
+	proto tcp-client
+	remote 217.112.254.13 443
+	ca /etc/openvpn/keys/rootca.pem
+	cert /etc/openvpn/keys/host.crt
+	key /etc/openvpn/keys/host.key
+	ns-cert-type server
+	verb 3
+	comp-lzo
+	keepalive 10 60
+	persist-tun
+	persist-key
+	ipchange /etc/openvpn/runme
+	EOF
+    end
+    unless system('service openvpn restart')
+      raise 'problem restarting openvpn'
+    end
+  rescue => msg
+    errmsg(msg)
+    exit 1
+  end
+  goodmsg('OpenVPN setup is done.')
+end
+
+# XXX puppet package should be installed before this
+def setup_puppet(puppet_server)
+  begin
+    fqdn = fqdn()
+
+    FileUtils.rmtree('/etc/puppet/ssl')
+    mkdir('/etc/puppet/ssl',              0771)
+    mkdir('/etc/puppet/ssl/certs')
+    mkdir('/etc/puppet/ssl/private_keys', 0750)
+    FileUtils.chown('puppet', 'root', [ '/etc/puppet/ssl',
+					'/etc/puppet/ssl/certs',
+					'/etc/puppet/ssl/private_keys', ])
+
+    copy_certs_to("/etc/puppet/ssl/certs/#{ fqdn }.pem",
+		  "/etc/puppet/ssl/private_keys/#{ fqdn }.pem",
+		  '/etc/puppet/ssl/certs/ca.pem')
+
+    File.open('/etc/default/puppet', 'w') do |f|
+      f.print <<-EOF.gsub(/^\s+/, '')
+	START=yes
+	DAEMON_OPTS=""
+	EOF
+    end
+
+    File.open('/etc/puppet/puppet.conf', 'w') do |f|
+      f.print <<-EOF.gsub(/^\s+/, '')
+	[main]
+	certname=#{ fqdn }
+	factpath=/var/lib/puppet/lib/facter
+	logdir=/var/log/puppet
+	pluginsync=true
+	postrun_command=/etc/puppet/etckeeper-commit-post
+	prerun_command=/etc/puppet/etckeeper-commit-pre
+	rundir=/var/run/puppet
+	server=#{ puppet_server }
+	templatedir=$confdir/templates
+	vardir=/var/lib/puppet
+	EOF
+    end
+
+    goodmsg('Puppet setup is done, running puppet once...')
+    unless system('puppetd --no-daemonize --onetime --logdest console' +
+		  ' --logdest /var/log/puppet/install.log')
+      # XXX this will not be triggered even if there would be a reason to
+      raise 'problem running puppetd'
+    end
+    goodmsg('Puppet run is done.')
+    unless system('service puppet restart')
+      raise 'problem restarting puppet'
+    end
+    goodmsg('Puppet daemon is started.')
+  rescue => msg
+    errmsg(msg)
+    exit 1
+  end
+end
+
+conf = YAML.load_file('/etc/puavo/host_configuration')
+
+setup_kerberos('host/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
+	       'ldap/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
+	       'cifs/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
+	       'IPP/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI',
+	       'nfs/godzilla.edu.kunta1.fi@EDU.KUNTA1.FI') if false	# XXX
+
+setup_openvpn()
+setup_puppet(conf['puppet_server'])
