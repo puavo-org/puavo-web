@@ -61,9 +61,10 @@ class HostCertificate
     @csr.public_key = @key.public_key
   end
 
-  def accept_signed_certificate(certificate, rootca)
-    @crt    = OpenSSL::X509::Certificate.new(certificate)
-    @rootca = rootca
+  def accept_signed_certificate(certificate, rootca, orgcabundle)
+    @crt         = OpenSSL::X509::Certificate.new(certificate)
+    @rootca      = rootca
+    @orgcabundle = orgcabundle
   end
 
   def fqdn
@@ -74,10 +75,11 @@ class HostCertificate
     @csr.to_pem
   end
 
-  def write_to_filesystem(certpath, keypath, rootcapath)
-    File.open(certpath,   'w', 0444) { |f| f.print @crt.to_pem }
-    File.open(keypath,    'w', 0400) { |f| f.print @key.to_pem }
-    File.open(rootcapath, 'w', 0444) { |f| f.print @rootca     }
+  def write_to_filesystem(certpath, keypath, rootcapath, orgcabundlepath)
+    File.open(certpath,        'w', 0444) { |f| f.print @crt.to_pem  }
+    File.open(keypath,         'w', 0400) { |f| f.print @key.to_pem  }
+    File.open(rootcapath,      'w', 0444) { |f| f.print @rootca      }
+    File.open(orgcabundlepath, 'w', 0444) { |f| f.print @orgcabundle }
     goodmsg('Certificates have been written to filesystem.')
   end
 end
@@ -428,16 +430,20 @@ class PostRegisterConfiguration
   def setup
     mkdir('/etc/puavo')
 
-    p @register_info
     if @register_info['userCertificate']
-      if not @register_info['rootca'] then raise 'Root CA missing' end
+      unless @register_info['rootca']   then raise 'Root CA missing' end
+      unless @register_info['orgcabundle'] then
+        raise 'Organisation CA bundle missing'
+      end
 
       @cert.accept_signed_certificate(@register_info['userCertificate'],
-				      @register_info['rootca'])
+				      @register_info['rootca'],
+				      @register_info['orgcabundle'])
       mkdir('/etc/puavo/certs')
       @cert.write_to_filesystem('/etc/puavo/certs/host.crt',
 				'/etc/puavo/certs/host.key',
-				'/etc/puavo/certs/rootca.pem')
+				'/etc/puavo/certs/rootca.pem',
+				'/etc/puavo/certs/orgcabundle.pem')
       set_hostname()
     end
 
@@ -481,6 +487,8 @@ end
 #
 # MAIN
 #
+
+raise 'run me as root' unless Process.uid == 0
 
 HighLine.say "\n\t-=< Puavo Devices Client >=-\n\n"
 

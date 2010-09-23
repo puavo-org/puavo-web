@@ -5,6 +5,10 @@ require 'highline/import'
 require 'openssl'
 require 'yaml'
 
+HostCrtPath = '/etc/puavo/certs/host.crt'
+HostKeyPath = '/etc/puavo/certs/host.key'
+RootCAPath  = '/etc/puavo/certs/rootca.pem',
+
 # XXX repetition elsewhere
 def colormsg(msg, tag, color)
   HighLine.say(HighLine.new.color("*** #{ tag }: #{ msg }", color))
@@ -20,12 +24,6 @@ def apt_get_install(package)
   goodmsg("Package #{ package } is now installed.")
 end
 
-def copy_certs_to(certpath, keypath, rootcacertpath)
-  FileUtils.cp('/etc/puavo/certs/host.crt',   certpath)
-  FileUtils.cp('/etc/puavo/certs/host.key',   keypath)
-  FileUtils.cp('/etc/puavo/certs/rootca.pem', rootcacertpath)
-end
-
 def fqdn
   cert = OpenSSL::X509::Certificate.new(IO.read('/etc/puavo/certs/host.crt'))
   ((/^.*CN=(.*?)(\/|$)/.match(cert.subject.to_s))[1])
@@ -39,6 +37,7 @@ def mkdir(path, mode=0755)
 end
 
 def setup_kerberos(principals)
+  # XXX
   p principals
   return
   begin
@@ -69,10 +68,9 @@ def setup_openvpn
   begin
     mkdir('/etc/openvpn/keys')
 
-    # XXX why do copies?
-    copy_certs_to('/etc/openvpn/keys/host.crt',
-		  '/etc/openvpn/keys/host.key',
-		  '/etc/openvpn/keys/rootca.pem')
+    FileUtils.cp(HostCrtPath, '/etc/openvpn/keys/host.crt')
+    FileUtils.cp(HostKeyPath, '/etc/openvpn/keys/host.key')
+    FileUtils.cp(RootCAPath,  '/etc/openvpn/keys/rootca.pem')
 
     File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
       f.print <<-'EOF'.gsub(/^\s+/, '')
@@ -116,9 +114,9 @@ def setup_puppet(puppet_server, fqdn)
 					'/etc/puppet/ssl/certs',
 					'/etc/puppet/ssl/private_keys', ])
 
-    copy_certs_to("/etc/puppet/ssl/certs/#{ fqdn }.pem",
-		  "/etc/puppet/ssl/private_keys/#{ fqdn }.pem",
-		  '/etc/puppet/ssl/certs/ca.pem')
+    FileUtils.cp(HostCrtPath, "/etc/puppet/ssl/certs/#{ fqdn }.pem")
+    FileUtils.cp(HostKeyPath, "/etc/puppet/ssl/private_keys/#{ fqdn }.pem")
+    FileUtils.cp(RootCAPath,  '/etc/puavo/certs/rootca.pem')
 
     File.open('/etc/default/puppet', 'w') do |f|
       f.print <<-EOF.gsub(/^\s+/, '')
@@ -164,7 +162,16 @@ end
 # main
 #
 
-conf = YAML.load_file('/etc/puavo/host_configuration')
+raise 'run me as root' unless Process.uid == 0
+
+begin
+  conf = YAML.load_file('/etc/puavo/host_configuration')
+rescue Errno::ENOENT
+  system('/usr/sbin/register-puavodevice') \
+    or raise 'failure in running register-puavodevice'
+  conf = YAML.load_file('/etc/puavo/host_configuration')
+end
+
 fqdn = fqdn()
 
 case conf['devicetype']
