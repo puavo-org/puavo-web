@@ -155,6 +155,7 @@ en:
       school:
         cn: "Group name"
         displayName: "School name"
+        puavoNamePrefix: "Name prefix"
         puavoSchoolHomePageURL: "School's home page"
         description: "Description"
         puavoSchoolNameAbbreviation: "Abbreviation"

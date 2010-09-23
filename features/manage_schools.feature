@@ -15,6 +15,7 @@ Feature: Manage schools
     Then I should see "New school"
     When I fill in the following:
     | School name        | Bourne School                                                                  |
+    | Name prefix        | bourne                                                                         |
     | School's home page | www.bourneschool.com                                                           |
     | Description        | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
     | Group name         | bourne                                                                         |
@@ -33,6 +34,7 @@ Feature: Manage schools
     And I should see the following:
     |                                                                                |
     | Bourne School                                                                  |
+    | bourne                                                                         |
     | www.bourneschool.com                                                           |
     | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
     | bourne                                                                         |

@@ -154,6 +154,7 @@ fi:
       school:
         cn: "Ryhmän nimi"
         displayName: "Koulun nimi"
+        puavoNamePrefix: "Etuliite"
         puavoSchoolHomePageURL: "Koulun kotisivu"
         description: "Kuvaus"
         puavoSchoolNameAbbreviation: "Ryhmän lyhenne"
