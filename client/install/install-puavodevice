@@ -7,7 +7,7 @@ require 'yaml'
 
 HostCrtPath = '/etc/puavo/certs/host.crt'
 HostKeyPath = '/etc/puavo/certs/host.key'
-RootCAPath  = '/etc/puavo/certs/rootca.pem',
+RootCAPath  = '/etc/puavo/certs/rootca.pem'
 
 # XXX repetition elsewhere
 def colormsg(msg, tag, color)
@@ -16,13 +16,6 @@ end
 
 def errmsg(msg) ; colormsg(msg, 'ERROR', HighLine::RED)  ; end
 def goodmsg(msg); colormsg(msg, 'OK',    HighLine::GREEN); end
-
-def apt_get_install(package)
-  unless system("apt-get --assume-yes -qq install #{ package }")
-    raise "could not install #{ package }"
-  end
-  goodmsg("Package #{ package } is now installed.")
-end
 
 def fqdn
   cert = OpenSSL::X509::Certificate.new(IO.read('/etc/puavo/certs/host.crt'))
@@ -63,24 +56,27 @@ def setup_kerberos(principals)
   end while error
 end
 
-# XXX openvpn package should be installed before this
 def setup_openvpn
   begin
     mkdir('/etc/openvpn/keys')
 
-    FileUtils.cp(HostCrtPath, '/etc/openvpn/keys/host.crt')
-    FileUtils.cp(HostKeyPath, '/etc/openvpn/keys/host.key')
-    FileUtils.cp(RootCAPath,  '/etc/openvpn/keys/rootca.pem')
+    ovpn_crt    = '/etc/openvpn/keys/host.crt'
+    ovpn_key    = '/etc/openvpn/keys/host.key'
+    ovpn_rootca = '/etc/openvpn/keys/rootca.pem'
+
+    FileUtils.cp(HostCrtPath, ovpn_crt)
+    FileUtils.cp(HostKeyPath, ovpn_key)
+    FileUtils.cp(RootCAPath,  ovpn_rootca)
 
     File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
-      f.print <<-'EOF'.gsub(/^\s+/, '')
+      f.print <<-EOF.gsub(/^\s+/, '')
 	client
 	dev tun
 	proto tcp-client
 	remote 217.112.254.13 443
-	ca /etc/openvpn/keys/rootca.pem
-	cert /etc/openvpn/keys/host.crt
-	key /etc/openvpn/keys/host.key
+	ca #{ ovpn_rootca }
+	cert #{ ovpn_crt }
+	key #{ ovpn_key }
 	ns-cert-type server
 	verb 3
 	comp-lzo
@@ -100,12 +96,9 @@ def setup_openvpn
   goodmsg('OpenVPN setup is done.')
 end
 
-# XXX puppet package should be installed before this
 def setup_puppet(puppet_server, fqdn)
   begin
     # needed by some facter rules
-    apt_get_install('libfilesystem-ruby1.8')
-
     FileUtils.rmtree('/etc/puppet/ssl')
     mkdir('/etc/puppet/ssl',              0771)
     mkdir('/etc/puppet/ssl/certs')
@@ -116,7 +109,7 @@ def setup_puppet(puppet_server, fqdn)
 
     FileUtils.cp(HostCrtPath, "/etc/puppet/ssl/certs/#{ fqdn }.pem")
     FileUtils.cp(HostKeyPath, "/etc/puppet/ssl/private_keys/#{ fqdn }.pem")
-    FileUtils.cp(RootCAPath,  '/etc/puavo/certs/rootca.pem')
+    FileUtils.cp(RootCAPath,  '/etc/puppet/ssl/certs/ca.pem')
 
     File.open('/etc/default/puppet', 'w') do |f|
       f.print <<-EOF.gsub(/^\s+/, '')
@@ -167,7 +160,7 @@ raise 'run me as root' unless Process.uid == 0
 begin
   conf = YAML.load_file('/etc/puavo/host_configuration')
 rescue Errno::ENOENT
-  system('/usr/sbin/register-puavodevice') \
+  system('/usr/sbin/register-puavodevice', *ARGV) \
     or raise 'failure in running register-puavodevice'
   conf = YAML.load_file('/etc/puavo/host_configuration')
 end
