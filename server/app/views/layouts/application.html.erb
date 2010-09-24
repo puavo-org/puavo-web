@@ -5,13 +5,8 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>
-    <% if not @school.nil? %>
-    <%= @school.displayName %>
-    <% elsif session.has_key?(:organisation) %>
-    <%= session[:organisation].name %>
-    <% else %>
-      Puavo Users
-    <% end %>
+    <%= session[:organisation].name if session.has_key?(:organisation) %>
+    <%= " - " + @school.displayName if not @school.nil? %>
   </title>
   <%= stylesheet_link_tag "#{theme}/screen.css", :media => 'screen, projection' %>
   <%= stylesheet_link_tag "#{theme}/print.css", :media => 'print' %>
@@ -31,6 +26,7 @@
           <% end %>
         </ul>
       </li>
+      <li><%= link_to t('link.servers'), servers_path, :class => 'sub' %></li>
 
       <% if logged_in? %>
       <div id="top-menu-right">
