@@ -48,7 +48,7 @@ device_types:
     school_required: true
   ltspserver:
     label:
-      en: LTSP-Server
+      en: LTSP server
     classes: puavoLocalbootDevice
     url: /devices/servers/new.json?device_type=ltspserver
     order: 5
