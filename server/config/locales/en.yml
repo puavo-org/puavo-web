@@ -3,6 +3,8 @@
 
 en:
   actions: Actions
+  cancel: Cancel
+  or: or
   devices:
     index:
       add_new_printer: Add new printer
@@ -13,11 +15,17 @@ en:
       title: Device information
       terminal_title: Terminal information
       printer_title: Printer information
+    edit:
+      title: Device settings
+      terminal_title: Terminal settings
+      printer_title: Printer settings
   servers:
     show:
       title: Server information
     index:
       title: List of servers
+    edit:
+      title: Server settings
   host:
     types:
       register_label: Device type

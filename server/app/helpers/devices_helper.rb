@@ -15,13 +15,26 @@ module DevicesHelper
   end
 
   def title
-    case @device.puavoDeviceType
-    when 'thinclient' || 'fatclient'
+    case true
+    when @device.classes.include?('puavoNetbootDevice')
       t('.terminal_title')
-    when 'printer'
+    when @device.classes.include?('puavoPrinter')
       t('.printer_title')
     else
       t('.title')
     end 
+  end
+
+  def device_type(form)
+    device_types = PUAVO_CONFIG['allow_change_device_types']
+    if device_types.include?(@device.puavoDeviceType)
+      form.label(:puavoDeviceType) +
+        tag('br') + 
+        form.select( :puavoDeviceType,
+                     device_types.map{ |d| [PUAVO_CONFIG['device_types'][d]['label'][I18n.locale.to_s], d] } )
+    else
+      form.label(:puavoDeviceType) + " " +
+        PUAVO_CONFIG['device_types'][@device.puavoDeviceType]['label'][I18n.locale.to_s]
+    end
   end
 end

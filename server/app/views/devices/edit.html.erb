@@ -1,4 +1,4 @@
-<h1>Editing device</h1>
+<h1><%= title %></h1>
 
 <%= render :partial => 'form',
  :locals => {
@@ -7,6 +7,3 @@
   :method => :put
 }
 %>
-
-<%= link_to 'Show', device_path(@device, @school) %> |
-<%= link_to 'Back', devices_path %>
