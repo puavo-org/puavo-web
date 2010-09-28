@@ -25,6 +25,7 @@
   <div class="container">
     <ul id="top-menu" class="menu">
       <% if current_user %>
+      <li><span class="sub"><%= session[:organisation].name %></span></li>
       <li><%= link_to t('.schools'),  schools_path, :class => "sub" %>
         <ul>
           <% session[:organisation].schools.each do |school| %>
