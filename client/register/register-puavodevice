@@ -216,8 +216,7 @@ class RegisterUserInterface
   def default_puavoserver
     begin
       Resolv::DNS.open do |dns|
-	r = dns.getresources('_puavo._tcp.opinsys.fi',		# XXX opinsys
-			     Resolv::DNS::Resource::IN::SRV)
+	r = dns.getresources('_puavo._tcp', Resolv::DNS::Resource::IN::SRV)
 	r[0].target.to_s
       end
     rescue
@@ -497,12 +496,5 @@ cert = HostCertificate.new
 
 rui = RegisterUserInterface.new(cmdline_params, cert)
 register_info = rui.register_to_server()
-
-# XXX these should come from server
-register_info['host_configuration'] = {
-  'devicetype'     => 'ltspserver',
-  'kerberos_realm' => 'HOPOHOPO.OPINSYS.FI',
-  'puppet_server'  => 'hopohopo.puppet.opinsys.fi',
-}
 
 PostRegisterConfiguration.new(cert, register_info).setup

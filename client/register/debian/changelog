@@ -1,3 +1,24 @@
+puavodevices-client-register (0.1.4) lucid; urgency=low
+
+  * Move install-puavodevice into a separate package.
+
+ -- Juha Erkkilä <Juha.Erkkila@opinsys.fi>  Thu, 23 Sep 2010 14:33:19 +0300
+
+puavodevices-client-register (0.1.3) lucid; urgency=low
+
+  * Add support for fetching organisation bundle.  Rename scripts to
+    install-puavodevice and register-puavodevice.  install-puavodevice
+    will run register-puavodevice if host configuration is missing.
+    Allow running these only as root.
+
+ -- Juha Erkkilä <Juha.Erkkila@opinsys.fi>  Thu, 23 Sep 2010 12:45:48 +0300
+
+puavodevices-client-register (0.1.2) lucid; urgency=low
+
+  * Separate postregister-configuration from puavodevices-client-register.
+
+ -- Juha Erkkilä <Juha.Erkkila@opinsys.fi>  Wed, 22 Sep 2010 15:22:34 +0300
+
 puavodevices-client-register (0.1.1) lucid; urgency=low
 
   * Further development.
