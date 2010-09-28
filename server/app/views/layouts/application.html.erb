@@ -19,6 +19,7 @@
 <body>
   <div class="container">
     <ul id="top-menu" class="menu">
+      <li><span class="sub"><%= session[:organisation].name %></span></li>
       <li><a href="/users/schools" class="sub"><%= t('.schools')%></a>
         <ul>
           <% session[:organisation].schools.each do |school| %>
