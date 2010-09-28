@@ -56,8 +56,10 @@ ul.menu li a.sub {
 }
 
 ul.menu li span.sub {
-        padding-right: 15px;
+        padding-right: 10px;
         text-transform:uppercase;
+        font-weight: bolder;
+	color: gray;
 }
 
 ul.menu li:hover,
