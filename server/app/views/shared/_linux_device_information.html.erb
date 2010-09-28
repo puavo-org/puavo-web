@@ -1,0 +1,63 @@
+<p>
+  <%= label device.class.to_s.downcase, "userCertificate" %>
+  <% if device.userCertificate %>
+    Yes
+  <% else %>
+    No
+  <% end %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "serialNumber" %>
+  <%=h device.serialNumber %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoDeviceManufacturer" %>
+  <%=h device.puavoDeviceManufacturer %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoDeviceModel" %>
+  <%=h device.puavoDeviceModel %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %>
+  <%=h device.puavoDevicePrimaryUser %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "jpegPhoto" %>
+  <%=h device.jpegPhoto %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoLatitude" %>
+  <%=h device.puavoLatitude %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoLongitude" %>
+  <%=h device.puavoLongitude %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoLocationName" %>
+  <%=h device.puavoLocationName %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoRole" %>
+  < %=h device.puavoRole % >
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "puavoDeviceStatus" %>
+  <%=h device.puavoDeviceStatus %>
+</p>
+
+<p>
+  <%= label device.class.to_s.downcase, "description" %>
+  <%=h device.description %>
+</p>
