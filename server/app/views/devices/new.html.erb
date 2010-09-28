@@ -1,6 +1,6 @@
-<h1>New device</h1>
+<h1><%= t('.new_printer') %></h1>
 
-<%= render :partial => 'form',
+<%= render :partial => 'form_puavoPrinter',
  :locals => {
   :path => devices_path(@school),
   :submit_text => t('link.create'),

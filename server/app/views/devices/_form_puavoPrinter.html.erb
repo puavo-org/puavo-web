@@ -1,0 +1,22 @@
+<% form_for(@device, :url => path, :html => { :method => method }) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :puavoDeviceType %>: <%= PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["label"][I18n.locale.to_s] %>
+    <%= f.hidden_field :puavoDeviceType %>
+    <%= f.hidden_field :classes, :value => PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["classes"] %>
+  </p>
+
+  <p>
+    <%= f.label :puavoHostname %><br />
+    <%= f.text_field :puavoHostname %>
+  </p>
+  <p>
+    <%= f.label :macAddress %><br />
+    <%= f.text_field :macAddress %>
+  </p>
+
+  <p>
+    <%= f.submit submit_text %>
+  </p>
+<% end %>

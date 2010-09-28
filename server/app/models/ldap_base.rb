@@ -2,7 +2,7 @@ class LdapBase < ActiveLdap::Base
   include Puavo::Connection if defined?(Puavo::Connection)
 
   attr_accessor :host_certificate_request_send
-  attr_accessor :host_certificate_request, :userCertificate, :rootca, :ldap_password
+  attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
 
   before_save :set_puppetclass
 
@@ -17,7 +17,7 @@ class LdapBase < ActiveLdap::Base
   def to_json(options = {})
     unless options.has_key?(:methods)
       # Set default methods list
-      options[:methods] = [:host_certificate_request, :userCertificate, :rootca, :ldap_password]
+      options[:methods] = [:host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password]
     end
     method_values = { }
     # Create Hash by :methods name if :methods options is set.
@@ -56,7 +56,7 @@ class LdapBase < ActiveLdap::Base
       response = http.request(request,
                               {
                                 'certificate' => {
-                                  'fqdn'                     => self.puavoHostname + "." + LdapOrganisation.first.organizationName,
+                                  'fqdn'                     => self.puavoHostname + "." + LdapOrganisation.current.puavoDomain,
                                   'host_certificate_request' => self.host_certificate_request,
                                 }
                               }.to_json)
@@ -115,12 +115,23 @@ class LdapBase < ActiveLdap::Base
   def get_ca_certificate(organisation_key)
     begin
       http = http_puavo_ca
-      request = Net::HTTP::Get.new("/certificates/ca.text?org=#{organisation_key}")
+
+      request = Net::HTTP::Get.new("/certificates/rootca.text?org=#{organisation_key}")
       response = http.request(request)
       case response.code
       when /^2/
         # successful request
         self.rootca = response.body
+      else
+        raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
+      end
+
+      request = Net::HTTP::Get.new("/certificates/orgcabundle.text?org=#{organisation_key}")
+      response = http.request(request)
+      case response.code
+      when /^2/
+        # successful request
+        self.orgcabundle = response.body
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
@@ -133,7 +144,6 @@ class LdapBase < ActiveLdap::Base
   private
 
   def http_puavo_ca
-    Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
     http = Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
     http.use_ssl = true
     http.ca_file = PUAVO_CONFIG['puavo_ca']['ca_file']

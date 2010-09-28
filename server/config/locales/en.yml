@@ -2,6 +2,11 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
+  devices:
+    index:
+      add_new_printer: Add new printer
+    new:
+      new_printer: New printer
   host:
     types:
       register_label: Device type
@@ -78,6 +83,7 @@ en:
         puavoLocationName: Location name
         puavoDeviceStatus: Status
         description: Description
+        puavoDeviceType: Device type
     values:
       device:
         roles:

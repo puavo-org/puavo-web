@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the home\s?page/
       '/'
+    when /the new device page/
+      new_device_path(@school)
+
     when /the new server page/
       new_server_path
 
