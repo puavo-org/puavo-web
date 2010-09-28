@@ -1,21 +1,17 @@
-<h1>Listing servers</h1>
+<h1><%= t('.title') %></h1>
 
-<table>
+<table class='list'>
   <tr>
     <th><%= t("activeldap.attributes.server.puavoHostname") %></th>
+    <th colspan="3"><%= t("actions") %></th>
   </tr>
 
 <% @servers.each do |server| %>
   <tr>
-    <td><%=h server.puavoHostname %></td>
+    <td><%= link_to server.puavoHostname, server %></td>
     <td><%= link_to 'Automounts', server_automounts_path(server) %></td>
-    <td><%= link_to 'Show', server %></td>
     <td><%= link_to 'Edit', edit_server_path(server) %></td>
     <td><%= link_to 'Destroy', server, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New server', new_server_path %>

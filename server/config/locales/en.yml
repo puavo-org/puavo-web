@@ -2,11 +2,22 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
+  actions: Actions
   devices:
     index:
       add_new_printer: Add new printer
+      title: List of devices
     new:
       new_printer: New printer
+    show:
+      title: Device information
+      terminal_title: Terminal information
+      printer_title: Printer information
+  servers:
+    show:
+      title: Server information
+    index:
+      title: List of servers
   host:
     types:
       register_label: Device type
@@ -65,25 +76,37 @@ en:
   activeldap:
     attributes:
       server:
-        puavoHostname: Hostname
-        macAddress: Mac address
-        serialNumber: Serial number
-        cn: Server name
-        ipHostNumber: IP address
         puavoDeviceType: Device type
-      device:
         puavoHostname: Hostname
         macAddress: MAC address(es)
+        userCertificate: Certificate
         serialNumber: Serial number
         puavoDeviceManufacturer: Device manufacturer
         puavoDeviceModel: Device model
         puavoDevicePrimaryUser: Device primary user
+        jpegPhoto: Photo
         puavoLatitude: Latitude
         puavoLongitude: Longitude
         puavoLocationName: Location name
+        puavoRole: Role
         puavoDeviceStatus: Status
         description: Description
+      device:
         puavoDeviceType: Device type
+        puavoHostname: Hostname
+        macAddress: MAC address(es)
+        userCertificate: Certificate
+        serialNumber: Serial number
+        puavoDeviceManufacturer: Device manufacturer
+        puavoDeviceModel: Device model
+        puavoDevicePrimaryUser: Device primary user
+        jpegPhoto: Photo
+        puavoLatitude: Latitude
+        puavoLongitude: Longitude
+        puavoLocationName: Location name
+        puavoRole: Role
+        puavoDeviceStatus: Status
+        description: Description
     values:
       device:
         roles:

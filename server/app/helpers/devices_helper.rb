@@ -13,4 +13,15 @@ module DevicesHelper
         "</div>\n"
     end
   end
+
+  def title
+    case @device.puavoDeviceType
+    when 'thinclient' || 'fatclient'
+      t('.terminal_title')
+    when 'printer'
+      t('.printer_title')
+    else
+      t('.title')
+    end 
+  end
 end

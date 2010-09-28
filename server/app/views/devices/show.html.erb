@@ -1,79 +1,15 @@
+<h1>
+<%= title %>
+</h1>
 <p>
-  <b>Puavohostname:</b>
-  <%=h @device.puavoHostname %>
+<%= label @device.class.to_s.downcase, "puavoDeviceType" %> <%= PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["label"][I18n.locale.to_s] %>
 </p>
 
-<p>
-  <b>Certificate:</b>
-  <% if @device.userCertificate %>
-    Yes
-  <% else %>
-    No
-  <% end %>
-</p>
+<%= render :partial => 'shared/dhcp_information', :locals => { :device => @device} %>
 
-<p>
-  <b>Macaddress:</b>
-  <%=h @device.macAddress %>
-</p>
-
-<p>
-  <b>Serialnumber:</b>
-  <%=h @device.serialNumber %>
-</p>
-
-<p>
-  <b>Puavodevicemanufacturer:</b>
-  <%=h @device.puavoDeviceManufacturer %>
-</p>
-
-<p>
-  <b>Puavodevicemodel:</b>
-  <%=h @device.puavoDeviceModel %>
-</p>
-
-<p>
-  <b>Puavodeviceprimaryuser:</b>
-  <%=h @device.puavoDevicePrimaryUser %>
-</p>
-
-<p>
-  <b>Jpegphoto:</b>
-  <%=h @device.jpegPhoto %>
-</p>
-
-<p>
-  <b>Puavolatitude:</b>
-  <%=h @device.puavoLatitude %>
-</p>
-
-<p>
-  <b>Puavolongitude:</b>
-  <%=h @device.puavoLongitude %>
-</p>
-
-<p>
-  <b>Puavolocationname:</b>
-  <%=h @device.puavoLocationName %>
-</p>
-
-<p>
-  <b>Puavorole:</b>
-  < %=h @device.puavoRole % >
-</p>
-
-<p>
-  <b>Puavodevicestatus:</b>
-  <%=h @device.puavoDeviceStatus %>
-</p>
-
-<p>
-  <b>Description:</b>
-  <%=h @device.description %>
-</p>
-
-<%= link_to 'Edit', edit_device_path(@school, @device) %> |
-<%= link_to 'Back', devices_path(@school) %>
+<% if @device.classes.include?('puavoNetbootDevice' || 'puavoLocalbootDevice') %>
+<%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>
+<%  end %>
 
 <% content_for :right do %>
 <div><%= link_to 'Edit', edit_device_path(@school, @device) %></div>

@@ -1,14 +1,16 @@
-<h1>Listing devices</h1>
+<h1><%= t('.title') %></h1>
 
-<table>
+<table class='list'>
   <tr>
-    <th>Puavohostname</th>
+    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
+    <th colspan="2"><%= t('actions') %></th>
   </tr>
 
 <% @devices.each do |device| %>
   <tr>
-    <td><%=h device.puavoHostname %></td>
-    <td><%= link_to 'Show', device_path(@school, device) %></td>
+    <td><%= link_to device.puavoHostname, device_path(@school, device) %></td>
+    <td><%=h PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
     <td><%= link_to 'Edit', edit_device_path(@school, device) %></td>
     <td><%= link_to 'Destroy', device_path(@school, device), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
