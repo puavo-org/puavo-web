@@ -1,13 +1,18 @@
 <h1><%= t('.title') %></h1>
 
-<p>
-<%= label @server.class.to_s.downcase, "puavoDeviceType" %>
-<%= PUAVO_CONFIG["device_types"][@server.puavoDeviceType]["label"][I18n.locale.to_s] %>
-</p>
-
-<%= render :partial => 'shared/dhcp_information', :locals => { :device => @server} %>
+<table>
+<%= render :partial => 'shared/main_information', :locals => { :device => @server} %>
+</table>
+<p>&nbsp;</p>
+<table>
+<tr>
+  <td class="label_td"><%= label @server.class.to_s.downcase, "macAddress" %></td>
+  <td><%=h @server.macAddress %></td>
+</tr>
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
+
+</table>
 
 <% content_for :right do %>
 <div><%= link_to 'Automounts', server_automounts_path(@server) %></div>

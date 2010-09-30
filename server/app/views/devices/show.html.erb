@@ -1,15 +1,22 @@
 <h1>
 <%= title %>
 </h1>
-<p>
-<%= label @device.class.to_s.downcase, "puavoDeviceType" %> <%= PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["label"][I18n.locale.to_s] %>
-</p>
 
-<%= render :partial => 'shared/dhcp_information', :locals => { :device => @device} %>
+<table>
+<%= render :partial => 'shared/main_information', :locals => { :device => @device} %>
+</table>
+<p>&nbsp;</p>
+<table>
+<tr>
+  <td class="label_td"><%= label @device.class.to_s.downcase, "macAddress" %></td>
+  <td><%=h @device.macAddress %></td>
+</tr>
 
 <% if @device.classes.include?('puavoNetbootDevice' || 'puavoLocalbootDevice') %>
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>
 <%  end %>
+
+</table>
 
 <% content_for :right do %>
 <div><%= link_to 'Edit', edit_device_path(@school, @device) %></div>
