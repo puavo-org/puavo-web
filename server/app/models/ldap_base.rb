@@ -78,7 +78,7 @@ class LdapBase < ActiveLdap::Base
   def revoke_certificate(organisation_key, dn, password)
     begin
       http = http_puavo_ca
-      request = Net::HTTP::Delete.new("/certificates/revoke.json?fqdn=#{self.puavoHostname + "." + LdapOrganisation.first.organizationName}")
+      request = Net::HTTP::Delete.new("/certificates/revoke.json?fqdn=#{self.puavoHostname + "." + LdapOrganisation.current.puavoDomain}")
       request.basic_auth(dn, password)
       response = http.request(request)
       case response.code
@@ -96,7 +96,7 @@ class LdapBase < ActiveLdap::Base
   def get_certificate(organisation_key, dn, password)
     begin
       http = http_puavo_ca
-      request = Net::HTTP::Get.new("/certificates/show_by_fqdn.json?fqdn=#{self.puavoHostname + "." + LdapOrganisation.first.organizationName}")
+      request = Net::HTTP::Get.new("/certificates/show_by_fqdn.json?fqdn=#{self.puavoHostname + "." + LdapOrganisation.current.puavoDomain}")
       request.basic_auth(dn, password)
       response = http.request(request)
       case response.code

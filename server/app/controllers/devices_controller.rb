@@ -48,6 +48,7 @@ class DevicesController < ApplicationController
   # GET /devices/1/edit
   def edit
     @device = Device.find(params[:id])
+    @device.get_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
   end
 
   # POST /devices

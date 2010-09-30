@@ -38,6 +38,7 @@ class ServersController < ApplicationController
   # GET /servers/1/edit
   def edit
     @server = Server.find(params[:id])
+    @server.get_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
   end
 
   # POST /servers
