@@ -133,6 +133,10 @@ label {
 
 }
 
+.label_td {
+    text-align: right;
+}
+
 .list td {
     border-bottom: 1px solid #94aa29;;
 }

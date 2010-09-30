@@ -1,11 +1,20 @@
 <% form_for(@server) do |f| %>
   <%= f.error_messages %>
 
-  <%= render :partial => 'shared/form_dhcp_information', :locals => { :f => f } %>
+  <table>
+  <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
+  </table>
+  <p>&nbsp;</p>
+  <table>
+    <tr>
+    <td class="label_td"><%= f.label :macAddress %></td>
+    <td><%= f.text_field :macAddress %></td>
+    </tr>
+    <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
+    
+    <tr><td>
 
-  <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
-
-  <p>
     <%= f.submit submit_text %> <%= t('or') %> <%= link_to t('cancel'), @server %>
-  </p>
+    </tr></td>
+  </table>
 <% end %>

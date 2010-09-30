@@ -1,0 +1,19 @@
+<tr>
+  <td>
+    <div><%= link_to( image_tag("computer.png") ) %></div>
+  </td>
+  <td>
+    <p>
+      <%= f.label :puavoHostname %><br />
+      <% if f.object.userCertificate %>
+      <%= f.object.puavoHostname %>
+      <% else %>
+      <%= f.text_field :puavoHostname %>
+      <%= f.object.userCertificate.to_s %>
+      <% end %>
+    </p>
+    <p>
+      <%= device_type(f) %>
+    </p>
+  </td>
+</tr>
