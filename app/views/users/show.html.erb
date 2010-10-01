@@ -1,43 +1,59 @@
-<h1><%=h @user.displayName %></h1>
-
 <table>
   <tr>
-    <td><b><%= t('activeldap.attributes.user.uid') %>:</b></td>
-    <td><%=h @user.uid %></td>
+    <td>
+      <%= link_to( image_tag("anonymous.png") ) %>
+    </td>
+    <td>
+      <p>
+      <h1><%=h @user.displayName %></h1>
+      </p>
+
+      <p>
+	<%= label "user", 'uid' %><br />
+	<%=h @user.uid %>
+      </p>
+      <p>
+      <%= label "user", 'puavoEduPersonAffiliation' %><br />
+      <%=h @user.puavoEduPersonAffiliation %>
+      </p>
+      <p>
+      <%= label "user", 'roles' %><br />
+      <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
+      </p>
+    </td>
+  </tr>
+</table>
+
+<h2><%= t('.contact_information') %></h2>
+<table>
+  <tr>
+  <td class="label_td view"><%= label "user", "mail" %></td>
+  <td class="value_td"><%= Array(@user.mail).map{ |mail| mail_to mail }.join(", ") %></td>
   </tr>
 
   <tr>
-  <td><b><%= t('activeldap.attributes.user.mail') %>:</b></td>
-  <td><%= Array(@user.mail).map{ |mail| mail_to mail }.join(", ") %></td>
-  </tr>
-
-  <tr>
-    <td><b><%= t('activeldap.attributes.user.telephoneNumber') %>:</b></td>
+    <td class="label_td view"><%= label "user", "telephoneNumber" %></td>
     <% Array(@user.telephoneNumber).each do |telephoneNumber| %>
-    <td><%=h telephoneNumber %></td>
+    <td class="value_td"><%=h telephoneNumber %></td>
     <% end %>
   </tr>
 </table>
 
-<p>
-  <%= t('.user_type_and_role', :user_type => @user.puavoEduPersonAffiliation.nil? ? "" : t('puavoEduPersonAffiliation_' + @user.puavoEduPersonAffiliation.to_s), :roles => @user.roles.map{ |r| r.displayName }.join(", ") ) %>
-</p>
-
-<h3><%= t('.system_information') %></h3>
+<h2><%= t('.system_information') %></h2>
 <table>
   <tr>
-    <td><b><%= t('activeldap.attributes.user.homeDirectory') %>:</b></td>
-    <td><%=h @user.homeDirectory %></td>
+    <td class="label_td view"><%= label "user", "homeDirectory" %></td>
+    <td class="value_td"><%=h @user.homeDirectory %></td>
   </tr>
 
   <tr>
-    <td><b><%= t('activeldap.attributes.user.uidNumber') %>:</b></td>
-    <td><%=h @user.uidNumber %></tr>
+    <td class="label_td view"><%= label "user", "uidNumber" %></td>
+    <td class="value_td"><%=h @user.uidNumber %></tr>
   </tr>
 
   <tr>
-    <td><b><%= t('.group_by_roles') %>:</b></td>
-    <td>
+    <td class="label_td view"><%= label "user", "groups" %></td>
+    <td class="value_td">
       <span id="groups_by_roles">
       <% @user.groups.each do |p| %>
       <%=h p.displayName %><br />
@@ -47,9 +63,7 @@
   </tr>
 </table>
 
-
-<%= link_to t('link.edit'), edit_user_path(@school, @user) %> |
-<%= link_to t('link.back'), users_path %>
-<br />
-<br />
-<%= link_to t('link.destroy'), user_path(@school, @user), :confirm => t('general_confirmation'), :method => :delete %>
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_user_path(@school, @user) %></div>
+<div><%= link_to t('link.destroy'), user_path(@school, @user), :confirm => t('general_confirmation'), :method => :delete %></div>
+<% end %>

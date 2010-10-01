@@ -88,6 +88,7 @@ en:
     show:
       user_type_and_role: "User's type is <b>{{user_type}}</b> and has following roles: <b>{{roles}}</b>"
       system_information: System information
+      contact_information: Contact information
       group_by_roles: Groups by roles
     new:
       title: New user
