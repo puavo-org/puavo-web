@@ -146,6 +146,10 @@ label {
     border-bottom: 1px dashed gray;
 }
 
+.list {
+    border-spacing:0;
+}
+
 .list td {
     border-bottom: 1px solid #94aa29;;
 }
