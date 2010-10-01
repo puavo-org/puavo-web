@@ -137,6 +137,15 @@ label {
     text-align: right;
 }
 
+.label_td.view {
+    border-right: 1px dashed gray;
+    border-bottom: 1px dashed gray;
+}
+
+.value_td {
+    border-bottom: 1px dashed gray;
+}
+
 .list td {
     border-bottom: 1px solid #94aa29;;
 }

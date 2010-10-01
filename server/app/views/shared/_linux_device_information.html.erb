@@ -1,6 +1,94 @@
+<h2><%= title(device) %></h2>
+<table>
 <tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "userCertificate" %></td>
-  <td>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceManufacturer" %></td>
+  <td class="value_td"><%=h device.puavoDeviceManufacturer %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceModel" %></td>
+  <td class="value_td"><%=h device.puavoDeviceModel %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "serialNumber" %></td>
+  <td class="value_td"><%=h device.serialNumber %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "macAddress" %></td>
+  <td class="value_td"><%=h device.macAddress %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %></td>
+  <td class="value_td"><%=h device.puavoDevicePrimaryUser %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "description" %></td>
+  <td class="value_td"><%=h device.description %></td>
+</tr>
+</table>
+
+<h2><%= t('shared.location') %></h2>
+
+<table>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLocationName" %></td>
+  <td class="value_td"><%=h device.puavoLocationName %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLatitude" %></td>
+  <td class="value_td"><%=h device.puavoLatitude %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLongitude" %></td>
+  <td class="value_td"><%=h device.puavoLongitude %></td>
+</tr>
+</table>
+
+<% if (device.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (device.classes.count + 3) %>
+
+<h2><%= t('shared.display_settings') %></h2>
+
+<table>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXserver" %></td>
+  <td class="value_td"><%=h device.puavoDeviceXserver %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandr" %></td>
+  <td class="value_td"><%=h device.puavoDeviceXrandr %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandrDisable" %></td>
+  <td class="value_td"><%=h device.puavoDeviceXrandrDisable %></td>
+</tr>
+</table>
+
+<h2><%= t('shared.kernel_settings') %></h2>
+
+<table>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
+  <td class="value_td"><%=h device.puavoDeviceKernelVersion %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelArguments" %></td>
+  <td class="value_td"><%=h device.puavoDeviceKernelArguments %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoRole" %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "userCertificate" %></td>
+  <td class="value_td">
   <% if device.userCertificate %>
     Yes
   <% else %>
@@ -8,77 +96,5 @@
   <% end %>
   </td>
 </tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "serialNumber" %></td>
-  <td><%=h device.serialNumber %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceManufacturer" %></td>
-  <td><%=h device.puavoDeviceManufacturer %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceModel" %></td>
-  <td><%=h device.puavoDeviceModel %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %></td>
-  <td><%=h device.puavoDevicePrimaryUser %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoLatitude" %></td>
-  <td><%=h device.puavoLatitude %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoLongitude" %></td>
-  <td><%=h device.puavoLongitude %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoLocationName" %></td>
-  <td><%=h device.puavoLocationName %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoRole" %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceStatus" %></td>
-  <td><%=h device.puavoDeviceStatus %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "description" %></td>
-  <td><%=h device.description %></td>
-</tr>
-
-
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
-  <td><%=h device.puavoDeviceKernelVersion %></td>
-</tr>
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceKernelArguments" %></td>
-  <td><%=h device.puavoDeviceKernelArguments %></td>
-</tr>
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceXserver" %></td>
-  <td><%=h device.puavoDeviceXserver %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceXrandr" %></td>
-  <td><%=h device.puavoDeviceXrandr %></td>
-</tr>
-
-<tr>
-  <td class="label_td"><%= label device.class.to_s.downcase, "puavoDeviceXrandrDisable" %></td>
-  <td><%=h device.puavoDeviceXrandrDisable %></td>
-</tr>
+</table>
+<% end %>

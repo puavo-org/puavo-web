@@ -5,23 +5,26 @@ en:
   actions: Actions
   cancel: Cancel
   or: or
+  shared:
+    terminal_title: Terminal information
+    location: Location
+    display_settings: Display settings
+    kernel_settings: Kernel settings
+    terminal_title: Terminal information
+    title: Device information
+    printer_title: Printer information
+    server_title: Server information
   devices:
     index:
       add_new_printer: Add new printer
       title: List of devices
     new:
       new_printer: New printer
-    show:
-      title: Device information
-      terminal_title: Terminal information
-      printer_title: Printer information
     edit:
       title: Device settings
       terminal_title: Terminal settings
       printer_title: Printer settings
   servers:
-    show:
-      title: Server information
     index:
       title: List of servers
     edit:

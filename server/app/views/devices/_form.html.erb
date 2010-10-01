@@ -1,21 +1,12 @@
 <% form_for(@device, :url => path, :html => { :method => method }) do |f| %>
   <%= f.error_messages %>
 
-  <table>
-
     <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
 
-  </table>
   <p>&nbsp;</p>
   <table>
-    <tr>
-    <td class="label_td"><%= f.label :macAddress %></td>
-    <td><%= f.text_field :macAddress %></td>
-    </tr>
 
-  <% if @device.classes.include?('puavoNetbootDevice' || 'puavoLocalbootDevice') %>
   <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
-  <% end %>
 
   <tr><td>
   <%= f.submit submit_text %> <%= t('or') %> <%= link_to t('cancel'), device_path(@school, @device) %>

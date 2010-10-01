@@ -1,17 +1,26 @@
-<tr>
-  <td>
-    <div><%= link_to( image_tag("computer.png") ) %></div>
-  </td>
-  <td>
-    <p>
-      <%= label device.class.to_s.downcase, "puavoHostname" %><br />
-      <%=h device.puavoHostname %>
-    </p>
-    <% if controller_name == "devices" %>
-    <p>
-      <%= label device.class.to_s.downcase, "puavoDeviceType" %><br />
-      <%= PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %>
-    </p>
-    <% end %>
-  </td>
-</tr>
+<table>
+  <tr>
+    <td>
+      <div><%= link_to( image_tag("computer.png") ) %></div>
+    </td>
+    <td>
+      <h1><%=h device.puavoHostname %></h1>
+      <!--
+	  <p>
+	  <%= label device.class.to_s.downcase, "puavoHostname" %><br />
+	  <%=h device.puavoHostname %>
+	  </p>
+      -->
+      <% if controller_name == "devices" %>
+      <p>
+	<%= label device.class.to_s.downcase, "puavoDeviceType" %><br />
+	<%= PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %>
+      </p>
+      <% end %>
+      <p>
+	<%= label device.class.to_s.downcase, "puavoDeviceStatus" %><br />
+	<%=h device.puavoDeviceStatus %>
+      </p>
+    </td>
+  </tr>
+</table>

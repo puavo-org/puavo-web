@@ -1,7 +1,4 @@
-<tr>
-  <td class="label_td"><%= f.label :serialNumber %></td>
-  <td><%= f.text_field :serialNumber %></td>
-</tr>
+<h2><%= title(f.object) %></h2>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceManufacturer %></td>
   <td><%= f.text_field :puavoDeviceManufacturer %></td>
@@ -11,8 +8,29 @@
   <td><%= f.text_field :puavoDeviceModel %></td>
 </tr>
 <tr>
+  <td class="label_td"><%= f.label :serialNumber %></td>
+  <td><%= f.text_field :serialNumber %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :macAddress %></td>
+  <td><%= f.text_field :macAddress %></td>
+</tr>
+<tr>
   <td class="label_td"><%= f.label :puavoDevicePrimaryUser %></td>
   <td><%= f.text_field :puavoDevicePrimaryUser %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :description %></td>
+  <td><%= f.text_field :description %></td>
+</tr>
+</table>
+
+<h2><%= t('shared.location') %></h2>
+
+<table>
+<tr>
+  <td class="label_td"><%= f.label :puavoLocationName %></td>
+  <td><%= f.text_field :puavoLocationName %></td>
 </tr>
 <tr>
   <td class="label_td"><%= f.label :puavoLatitude %></td>
@@ -22,30 +40,12 @@
   <td class="label_td"><%= f.label :puavoLongitude %></td>
   <td><%= f.text_field :puavoLongitude %></td>
 </tr>
-<tr>
-  <td class="label_td"><%= f.label :puavoLocationName %></td>
-  <td><%= f.text_field :puavoLocationName %></td>
-</tr>
-<tr>
-  <td class="label_td"><%= f.label :puavoRole %></td>
-</tr>
-<tr>
-  <td class="label_td"><%= f.label :puavoDeviceStatus %></td>
-  <td><%= f.text_field :puavoDeviceStatus %></td>
-</tr>
-<tr>
-  <td class="label_td"><%= f.label :description %></td>
-  <td><%= f.text_field :description %></td>
-</tr>
 
-<tr>
-  <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
-  <td><%= f.text_field :puavoDeviceKernelVersion %></td>
-</tr>
-<tr>
-  <td class="label_td"><%= f.label :puavoDeviceKernelArguments %></td>
-  <td><%= f.text_field :puavoDeviceKernelArguments %></td>
-</tr>
+<% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
+</table>
+
+<h2><%= t('shared.display_settings') %></h2>
+<table>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceXserver %></td>
   <td><%= f.text_field :puavoDeviceXserver %></td>
@@ -60,3 +60,19 @@
   <td class="label_td"><%= f.label :puavoDeviceXrandrDisable %></td>
   <td><%= f.check_box :puavoDeviceXrandrDisable %></td>
 </tr>
+</table>
+
+<h2><%= t('shared.kernel_settings') %></h2>
+<table>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
+  <td><%= f.text_field :puavoDeviceKernelVersion %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceKernelArguments %></td>
+  <td><%= f.text_field :puavoDeviceKernelArguments %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoRole %></td>
+</tr>
+<% end %>

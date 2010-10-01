@@ -14,14 +14,16 @@ module DevicesHelper
     end
   end
 
-  def title
+  def title(device)
     case true
-    when @device.classes.include?('puavoNetbootDevice')
-      t('.terminal_title')
-    when @device.classes.include?('puavoPrinter')
-      t('.printer_title')
+    when device.classes.include?('puavoNetbootDevice')
+      t('shared.terminal_title')
+    when device.classes.include?('puavoPrinter')
+      t('shared.printer_title')
+    when device.classes.include?('puavoServer')
+      t('shared.server_title')
     else
-      t('.title')
+      t('shared.title')
     end 
   end
 
