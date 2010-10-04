@@ -17,7 +17,12 @@ class LdapBase < ActiveLdap::Base
   def to_json(options = {})
     unless options.has_key?(:methods)
       # Set default methods list
-      options[:methods] = [:host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password]
+      options[:methods] = [ :host_certificate_request,
+                            :userCertificate,
+                            :rootca,
+                            :orgcabundle,
+                            :ldap_password,
+                            :host_configuration ]
     end
     method_values = { }
     # Create Hash by :methods name if :methods options is set.
@@ -154,5 +159,16 @@ class LdapBase < ActiveLdap::Base
 
   def set_puppetclass
     self.puppetclass = PUAVO_CONFIG['device_types'][self.puavoDeviceType]['puppetclass']
+  end
+
+  def host_configuration
+    hostname, *domain_a = LdapOrganisation.current.puavoDomain.split('.')
+    domain = domain_a.join('.')
+    if self.class == Device || self.class == Server
+      return {
+        'devicetype' => self.puavoDeviceType,
+        'kerberos_realm' => LdapOrganisation.current.puavoKerberosRealm,
+        'puppet_server' => "#{hostname}.puppet.#{domain}" }
+    end
   end
 end
