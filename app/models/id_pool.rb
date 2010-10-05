@@ -3,7 +3,12 @@ class IdPool < ActiveLdap::Base
                 :prefix => "",
                 :classes => ['top', 'puavoIdPool'] )
 
-  setup_connection( ensure_configuration )
+  def self.find(*args)
+    unless connected?
+      self.setup_connection( ensure_configuration.merge("base" => "o=puavo") )
+    end
+    super
+  end
 
   def self.next_uid_number
     new_uid_number = next_id("puavoNextUidNumber")
