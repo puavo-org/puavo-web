@@ -186,7 +186,7 @@ class Users::ImportController < ApplicationController
 
     pdf.repeat :all do
       # FIXME, add organisation name to page header?
-      pdf.text "#{@school.displayName}", :size => 12, :at => pdf.bounds.top_left
+      pdf.draw_text "#{@school.displayName}", :size => 18, :at => pdf.bounds.top_left
     end
 
     users_by_role = User.list_by_role(users)
@@ -211,7 +211,7 @@ class Users::ImportController < ApplicationController
         pdf.group do
           pdf.text "#{t('activeldap.attributes.user.givenName')}: #{user.sn} #{user.givenName}"
           pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
-          pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n"
+          pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
         end
       end
     end
