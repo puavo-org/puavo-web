@@ -176,6 +176,9 @@ class LdapBase < ActiveLdap::Base
 
   def set_password
     if PUAVO_CONFIG['device_types'][self.puavoDeviceType]['ldap_password']
+      unless self.classes.include?('simpleSecurityObject')
+        self.add_class('simpleSecurityObject')
+      end
       if self.userPassword.nil? || self.userPassword.empty?
         characters = ("a".."z").to_a + ("0".."9").to_a
         self.ldap_password = Array.new(40) { characters[rand(characters.size)] }.join
