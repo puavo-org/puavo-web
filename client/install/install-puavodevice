@@ -5,9 +5,10 @@ require 'highline/import'
 require 'openssl'
 require 'yaml'
 
-HostCrtPath = '/etc/puavo/certs/host.crt'
-HostKeyPath = '/etc/puavo/certs/host.key'
-RootCAPath  = '/etc/puavo/certs/rootca.pem'
+HostCrtPath     = '/etc/puavo/certs/host.crt'
+HostKeyPath     = '/etc/puavo/certs/host.key'
+OrgCABundlePath = '/etc/puavo/certs/orgcabundle.pem'
+RootCAPath      = '/etc/puavo/certs/rootca.pem'
 
 # XXX repetition elsewhere
 def colormsg(msg, tag, color)
@@ -26,6 +27,14 @@ def mkdir(path, mode=0755)
   begin
     FileUtils.mkdir(path, :mode => mode)
     rescue Errno::EEXIST
+  end
+end
+
+def run_puppet(opts='')
+  unless system('puppetd --test --logdest console' +
+		" --logdest /var/log/puppet/install.log #{ opts }")
+    # XXX this will not be triggered even if there is a reason to
+    raise 'problem running puppetd'
   end
 end
 
@@ -60,13 +69,13 @@ def setup_openvpn
   begin
     mkdir('/etc/openvpn/keys')
 
-    ovpn_crt    = '/etc/openvpn/keys/host.crt'
-    ovpn_key    = '/etc/openvpn/keys/host.key'
-    ovpn_rootca = '/etc/openvpn/keys/rootca.pem'
+    ovpn_crt         = '/etc/openvpn/keys/host.crt'
+    ovpn_key         = '/etc/openvpn/keys/host.key'
+    ovpn_orgcabundle = '/etc/openvpn/keys/orgcabundle.pem'
 
-    FileUtils.cp(HostCrtPath, ovpn_crt)
-    FileUtils.cp(HostKeyPath, ovpn_key)
-    FileUtils.cp(RootCAPath,  ovpn_rootca)
+    FileUtils.cp(HostCrtPath,     ovpn_crt)
+    FileUtils.cp(HostKeyPath,     ovpn_key)
+    FileUtils.cp(OrgCABundlePath, ovpn_orgcabundle)
 
     File.open('/etc/openvpn/puavoclient.conf', 'w', 0600) do |f|
       f.print <<-EOF.gsub(/^\s+/, '')
@@ -74,7 +83,7 @@ def setup_openvpn
 	dev tun
 	proto tcp-client
 	remote 217.112.254.13 443
-	ca #{ ovpn_rootca }
+	ca #{ ovpn_orgcabundle }
 	cert #{ ovpn_crt }
 	key #{ ovpn_key }
 	ns-cert-type server
@@ -135,11 +144,8 @@ def setup_puppet(puppet_server, fqdn)
     end
 
     goodmsg('Puppet setup is done, running puppet once...')
-    unless system('puppetd --no-daemonize --onetime --logdest console' +
-		  ' --logdest /var/log/puppet/install.log')
-      # XXX this will not be triggered even if there would be a reason to
-      raise 'problem running puppetd'
-    end
+    run_puppet('--tags service::apt::client')
+    run_puppet()
     goodmsg('Puppet run is done.')
     unless system('service puppet restart')
       raise 'problem restarting puppet'
