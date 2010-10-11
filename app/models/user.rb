@@ -283,7 +283,6 @@ class User < LdapBase
     unless self.gidNumber.nil? || self.puavoSchool.nil?
       self.sambaPrimaryGroupSID = "#{SambaDomain.first.sambaSID}-#{self.school.puavoId}"
     end
-    self.gecos = self.displayName + ',,,'
     self.loginShell = '/bin/bash'
     self.eduPersonPrincipalName = "#{self.uid}@#{LdapOrganisation.current.puavoKerberosRealm}"
   end
@@ -339,6 +338,7 @@ class User < LdapBase
         group.memberUids << self
       end
     end
+    self.school.reload
     self.school.user_member_uids << self
     self.school.user_members << self
   end
