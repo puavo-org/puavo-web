@@ -20,7 +20,7 @@ device_types:
     classes: puavoNetbootDevice
     url: /devices/%s/devices/new.json?device_type=thinclient	
     order: 1
-    puppetclass: netboot::thinclient
+    puppetclass: netboot
     school_required: true
   fatclient:
     label:
@@ -28,7 +28,7 @@ device_types:
     classes: puavoNetbootDevice
     url: /devices/%s/devices/new.json?device_type=fatclient
     order: 2
-    puppetclass: netboot::fatclient
+    puppetclass: netboot
     school_required: true
   laptop:
     label:
@@ -36,15 +36,16 @@ device_types:
     classes: puavoLocalbootDevice
     url: /devices/%s/devices/new.json?device_type=laptop
     order: 3
-    puppetclass: host::laptop
+    puppetclass: host
     school_required: true
+    ldap_password: true
   workstation:
     label:
       en: Workstation
     classes: puavoLocalbootDevice
     url: /devices/%s/devices/new.json?device_type=workstation
     order: 4
-    puppetclass: host::workstation
+    puppetclass: host
     school_required: true
   ltspserver:
     label:
@@ -52,5 +53,6 @@ device_types:
     classes: puavoLocalbootDevice
     url: /devices/servers/new.json?device_type=ltspserver
     order: 5
-    puppetclass: host::ltsp::server
+    puppetclass: host
     school_required: false
+    ldap_password: true

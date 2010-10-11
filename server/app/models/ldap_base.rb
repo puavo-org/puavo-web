@@ -4,7 +4,9 @@ class LdapBase < ActiveLdap::Base
   attr_accessor :host_certificate_request_send
   attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
 
-  before_save :set_puppetclass
+  before_validation :set_puavo_id, :set_password
+  before_save :set_puppetclass, :set_parentNode
+
 
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
@@ -170,5 +172,24 @@ class LdapBase < ActiveLdap::Base
         'kerberos_realm' => LdapOrganisation.current.puavoKerberosRealm,
         'puppet_server' => "#{hostname}.puppet.#{domain}" }
     end
+  end
+
+  def set_password
+    if PUAVO_CONFIG['device_types'][self.puavoDeviceType]['ldap_password']
+      if self.userPassword.nil? || self.userPassword.empty?
+        characters = ("a".."z").to_a + ("0".."9").to_a
+        self.ldap_password = Array.new(40) { characters[rand(characters.size)] }.join
+        self.userPassword = Server.ssha_hash(self.ldap_password)
+      end
+    end
+  end
+
+  def set_puavo_id
+    self.puavoId = IdPool.next_puavo_id if attribute_names.include?("puavoId") && self.puavoId.nil?
+    self.cn = self.puavoHostname
+  end
+
+  def set_parentNode
+    self.parentNode = LdapOrganisation.current.puavoDomain
   end
 end
