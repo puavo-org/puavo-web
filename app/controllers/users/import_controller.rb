@@ -181,38 +181,40 @@ class Users::ImportController < ApplicationController
   private
 
   def create_pdf(users)
-    role_name = String.new
-    pdf = Prawn::Document.new(:skip_page_creation => true)
-
-    pdf.repeat :all do
-      # FIXME, add organisation name to page header?
-      pdf.draw_text "#{@school.displayName}", :size => 18, :at => pdf.bounds.top_left
-    end
+    pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
 
     users_by_role = User.list_by_role(users)
     users_by_role.each do |users|
-      pdf.start_new_page
-      pdf.font "Times-Roman"
       role_to_pdf(users, pdf)
     end
-
     pdf.render
   end
 
   def role_to_pdf(users, pdf)
+    pdf.start_new_page
+    pdf.font "Times-Roman"
+    pdf.font_size = 12
+    start_page_number = pdf.page_number
+
     # Sort users by sn + givenName
     users = users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
-    pdf.font_size = 18
-    pdf.indent(350) do
-      pdf.text "#{t('activeldap.models.role')}: #{users.first.roles.first.displayName}"
-      pdf.font_size = 12
-      pdf.text "\n"
-      users.each do |user|
-        pdf.group do
-          pdf.text "#{t('activeldap.attributes.user.givenName')}: #{user.sn} #{user.givenName}"
-          pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
-          pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
+
+    pdf.text "\n"
+
+    users_of_page_count = 0
+    users.each do |user|
+      pdf.indent(300) do
+        pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
+        pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
+        pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
+        users_of_page_count += 1
+        if users_of_page_count > 10 && user != users.last
+          users_of_page_count = 0
+          pdf.start_new_page
         end
+      end
+      pdf.repeat start_page_number..pdf.page_number do
+        pdf.draw_text "#{session[:organisation].name}, #{@school.displayName}, #{users.first.roles.first.displayName}", :at => pdf.bounds.top_left
       end
     end
   end
