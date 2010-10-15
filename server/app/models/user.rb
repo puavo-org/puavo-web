@@ -10,9 +10,7 @@ class User < LdapBase
       'default' => School.first.puavoId,
       'title' => 'School selection',
       'question' => 'Select school: ',
-      'list' => School.find(:all,
-                            :attribute => 'puavoSchoolAdmin',
-                            :value => self.dn ) }
+      'list' => School.all }
   end
 end
 
