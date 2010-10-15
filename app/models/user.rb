@@ -25,17 +25,20 @@ class User < LdapBase
 
   before_validation :set_special_ldap_value
 
-  after_save :set_school_admin
-
   before_save :is_uid_changed
+
+  before_update :change_ldap_password
+
+  after_save :set_school_admin
   after_save :add_member_uid_to_models
   after_save :update_roles
+
   before_destroy :delete_all_associations
-  before_update :change_ldap_password
+
   after_create :change_ldap_password
 
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
-  attr_accessor :password, :new_password, :school_admin, :uid_has_changed, :role_ids, :role_name
+  attr_accessor :password, :new_password, :school_admin, :uid_has_changed, :role_ids, :role_name, :mass_import
 
   validates_confirmation_of :new_password
 
@@ -178,23 +181,25 @@ class User < LdapBase
 
   # Update user's role list by role_ids
   def update_roles
-    unless self.role_ids.nil?
-      add_roles = self.role_ids
-      delete_roles = ( Role.all.map{ |p| p.id.to_s } - add_roles )
-      user_role_ids = self.roles.map{ |p| p.id.to_s }
-      
-      # Add roles
-      ( add_roles - user_role_ids ).each do |role_id|
-        Role.find(role_id).add_member(self)
+    unless self.mass_import
+      unless self.role_ids.nil?
+        add_roles = self.role_ids
+        delete_roles = ( Role.all.map{ |p| p.id.to_s } - add_roles )
+        user_role_ids = self.roles.map{ |p| p.id.to_s }
+        
+        # Add roles
+        ( add_roles - user_role_ids ).each do |role_id|
+          Role.find(role_id).add_member(self)
+        end
+        
+        # Delete roles
+        ( user_role_ids & delete_roles ).each do |role_id|
+          Role.find(role_id).delete_member(self)
+        end
+        
+        self.reload
+        self.update_associations
       end
-      
-      # Delete roles
-      ( user_role_ids & delete_roles ).each do |role_id|
-        Role.find(role_id).delete_member(self)
-      end
-      
-      self.reload
-      self.update_associations
     end
   end
 
@@ -219,15 +224,21 @@ class User < LdapBase
     # add groups
     (new_group_list - self.groups).each do |group|
       logger.debug "Add group (#{self.cn.to_s}): " + group.cn.to_s
-      group.members << self
-      group.memberUids << self
+      unless Array(group.member).include?(self.dn)
+        group.member = Array(group.member).push self.dn
+      end
+      unless Array(group.memberUid).include?(self.uid)
+        group.memberUid = Array(group.memberUid).push self.uid
+      end
+      group.save
     end
 
     # delete groups
     (self.groups - new_group_list).each do |group|
       logger.debug "Delete group (#{self.cn.to_s}): " + group.cn.to_s
-      group.members.delete(self)
-      group.memberUids.delete(self)
+      group.member = Array(group.member) - Array(self.dn)
+      group.memberUid = Array(group.memberUid) - Array(self.uid)
+      group.save
     end
   end
 
@@ -320,7 +331,7 @@ class User < LdapBase
                        :value => old_user.uid ).each do |school|
             school.user_member_uids.delete(old_user)
           end
-
+          
         end
       rescue ActiveLdap::EntryNotFound
       end
@@ -338,22 +349,31 @@ class User < LdapBase
         group.memberUids << self
       end
     end
-    self.school.reload
-    self.school.user_member_uids << self
-    self.school.user_members << self
+    unless self.mass_import
+      unless Array(self.school.memberUid).include?(self.uid)
+        self.school.memberUid = Array(self.school.memberUid).push self.uid
+      end
+      unless Array(self.school.member).include?(self.dn)
+        self.school.member = Array(self.school.member).push self.dn
+      end
+      self.school.save
+    end
   end
 
   private
 
   def delete_all_associations
-    self.school.user_member_uids.delete(self)
-    self.school.user_members.delete(self)
+    self.school.memberUid = Array(self.school.memberUid) - Array(self.uid)
+    self.school.member = Array(self.school.member) - Array(self.dn)
+    self.school.save
+
     self.roles.each do |p|
       p.delete_member(self)
     end
     self.groups.each do |g|
-      g.members.delete(self)
-      g.memberUids.delete(self)
+      g.member = Array(g.member) - Array(self.dn)
+      g.memberUid = Array(g.memberUid) - Array(self.uid)
+      g.save
     end
   end
 

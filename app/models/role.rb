@@ -28,13 +28,19 @@ class Role < LdapBase
   end
 
   def add_member(member)
-    self.members << member
-    self.update_attribute( :memberUid, Array(self.memberUid).push(member.uid) )
+    unless Array(self.member).include?(member.dn)
+      self.member = Array(self.member).push member.dn
+    end
+    unless Array(self.memberUid).include?(member.uid)
+      self.memberUid = Array(self.memberUid).push member.uid
+    end
+    self.save
   end
 
   def delete_member(member)
-    self.members.delete(member)
-    self.memberUids.delete(member)
+    self.member = Array(self.member) - Array(member.dn)
+    self.memberUid = Array(self.memberUid) - Array(member.uid)
+    self.save
   end
 
   def update_associations

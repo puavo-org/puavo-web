@@ -150,11 +150,30 @@ class Users::ImportController < ApplicationController
   def create
     @users = session[:users_import_instance_list][:valid]
 
+    users_of_roles = Hash.new
+
     @users.each do |user|
       if user.new_password.nil? or user.new_password.empty?
         user.generate_password
       end
+      role_id = Array(user.role_ids).first.to_s
+      users_of_roles[role_id] = Array.new unless users_of_roles.has_key?(role_id)
+      users_of_roles[role_id].push user
+      user.mass_import = true      
       user.save
+    end
+
+    users_of_school = User.find(:all, :attribute => 'puavoSchool', :value => @school.dn )
+    @school.memberUid = users_of_school.map &:uid
+    @school.member = users_of_school.map &:dn
+    @school.save
+
+    users_of_roles.each do |role_id, values|
+      role = Role.find(role_id)
+      role.member = Array(role.member) + (values.map &:dn)
+      role.memberUid = Array(role.memberUid) + (values.map &:uid)
+      role.save
+      role.update_associations
     end
 
     respond_to do |format|
@@ -181,6 +200,7 @@ class Users::ImportController < ApplicationController
   private
 
   def create_pdf(users)
+    role_name = String.new
     pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
 
     users_by_role = User.list_by_role(users)

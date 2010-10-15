@@ -29,6 +29,15 @@ Feature: User mass import
     When I press "Create users"
     Then I should see "Users (2) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
+    And the memberUid should include "ben.mabey" on the "Class 4" role
+    And the memberUid should include "joseph.wilk" on the "Class 4" role
+    And the user_member_uids should include "ben.mabey" on the "School 1" school
+    And the user_members should include "ben.mabey" on the "School 1" school
+    And the user_member_uids should include "joseph.wilk" on the "School 1" school
+    And the user_members should include "joseph.wilk" on the "School 1" school
+    And the memberUid should include "ben.mabey" on the "Class 4" group
+    And the memberUid should include "joseph.wilk" on the "Class 4" group
+
 
   Scenario: User mass import when role is not defined
     Given I send to the following user mass import data
