@@ -10,7 +10,7 @@
   <tr>
     <td><%= link_to user.displayName, user_path(@school, user) %></td>
     <td><%=h user.uid %></td>
-    <td><%=h user.puavoEduPersonAffiliation %></td>
+    <td><%=h t('puavoEduPersonAffiliation_' + user.puavoEduPersonAffiliation) %></td>
     <td><%= link_to t('link.edit'), edit_user_path(@school, user) %></td>
     <td><%= link_to t('link.destroy'), user_path(@school, user), :confirm => t('general_confirm'), :method => :delete %></td>
   </tr>
