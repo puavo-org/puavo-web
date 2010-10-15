@@ -1,7 +1,7 @@
 require 'sha1'
 require 'base64'
 
-class Server < LdapBase
+class Server < DeviceBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Servers,ou=Hosts",
                 :classes => ['top', 'device', 'puppetClient', 'puavoServer', 'simpleSecurityObject'] )
