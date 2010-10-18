@@ -13,6 +13,9 @@ puavo_ca:
   port: 443
   ca_file: /etc/ssl/certs/puavo-ca.crt
 default_device_type: laptop
+allow_change_device_types:
+- thinclient
+- fatclient
 device_types:
   thinclient:
     label:
