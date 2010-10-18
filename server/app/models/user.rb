@@ -6,7 +6,15 @@ class User < LdapBase
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
 
   def managed_schools
-    { 'label' => 'School', 'default' => School.first.puavoId, 'title' => 'School selection', 'question' => 'Select school: ', 'list' => School.all, }
+    schools = School.find( :all,
+                           :attribute => 'puavoSchoolAdmin',
+                           :value => self.dn )
+
+    return ( { 'label' => 'School',
+               'default' => schools.first.puavoId,
+               'title' => 'School selection',
+               'question' => 'Select school: ',
+               'list' =>  schools } )
   end
 end
 

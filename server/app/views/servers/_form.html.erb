@@ -6,10 +6,7 @@
   </table>
   <p>&nbsp;</p>
   <table>
-    <tr>
-    <td class="label_td"><%= f.label :macAddress %></td>
-    <td><%= f.text_field :macAddress %></td>
-    </tr>
+
     <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
     
     <tr><td>
