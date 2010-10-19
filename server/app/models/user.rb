@@ -6,15 +6,19 @@ class User < LdapBase
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
 
   def managed_schools
-    schools = School.find( :all,
-                           :attribute => 'puavoSchoolAdmin',
-                           :value => self.dn )
+    if Array(LdapOrganisation.current.owner).include?(self.dn)
+      schools = School.all
+    else
+      schools = School.find( :all,
+                             :attribute => 'puavoSchoolAdmin',
+                             :value => self.dn )
+    end
 
     return ( { 'label' => 'School',
                'default' => schools.first.puavoId,
                'title' => 'School selection',
                'question' => 'Select school: ',
-               'list' =>  schools } )
+               'list' =>  schools } ) unless schools.empty?
   end
 end
 
