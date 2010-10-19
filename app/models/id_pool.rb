@@ -31,6 +31,14 @@ class IdPool < ActiveLdap::Base
     return new_puavo_id
   end
 
+  def self.next_puavo_id_range(range)
+    id_pool = self.find('IdPool')
+    first_new_id = id_pool.puavoNextId
+    id_pool.puavoNextId = first_new_id + range
+    id_pool.save
+    return (first_new_id..id_pool.puavoNextId-1).map{ |i| i.to_s }
+  end
+
   private
 
   def self.next_id(id_field)

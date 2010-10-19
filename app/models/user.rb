@@ -146,9 +146,17 @@ class User < LdapBase
   def self.validate_users(users)
     valid = []
     invalid = []
+
+    puavo_ids = IdPool.next_puavo_id_range(users.select{ |u| u.puavoId.nil? }.count)
+
+    id_index = 0
     users.each do |user|
       if  user.uid.nil? or user.uid.empty?
         user.generate_username
+      end
+      if user.puavoId.nil?
+        user.puavoId = puavo_ids[id_index]
+        id_index += 1
       end
       user.valid? ? (valid.push user) : (invalid.push user)
     end
