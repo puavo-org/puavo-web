@@ -88,6 +88,7 @@ fi:
       user_type_and_role: "Käyttäjän tyyppi on <b>{{user_type}}</b> ja häneen liittyvät seuraavat roolit: 
 <b>{{roles}}</b>"
       system_information: Järjestelmätietoja
+      contact_information: Yhteystiedot
       group_by_roles: Roolien mukana tulevat ryhmät
     new:
       title: Lisää uusi käyttäjä
