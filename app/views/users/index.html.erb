@@ -8,7 +8,7 @@
 
 <% @users.each do |user| %>
   <tr>
-    <td><%= link_to user.displayName, user_path(@school, user) %></td>
+    <td><%= link_to "#{user.sn} #{user.givenName}", user_path(@school, user) %></td>
     <td><%=h user.uid %></td>
     <td><%=h t('puavoEduPersonAffiliation_' + user.puavoEduPersonAffiliation) %></td>
     <td><%= link_to t('link.edit'), edit_user_path(@school, user) %></td>

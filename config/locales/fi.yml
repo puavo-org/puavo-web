@@ -55,6 +55,7 @@ fi:
       group_remove_failed: Poistaminen epäonnistui.
     user:
       save_failed: Käyttäjää ei voitu tallentaa!
+      create_failed: Käyttäjän lisääminen epäonnistui!
       import:
         dupplicate_column_name_error: Kahdelle sarakkeelle on valittu sama kenttätieto
         require_error: Käyttäjälle on syötettävä etu- ja sukunimi

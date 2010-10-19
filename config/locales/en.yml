@@ -55,6 +55,7 @@ en:
       group_remove_failed: Failed to delete.
     user:
       save_failed: User cannot be saved!
+      create_failed: Failed to create user!
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields

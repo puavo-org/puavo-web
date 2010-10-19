@@ -8,6 +8,8 @@ class UsersController < ApplicationController
       @users = User.all
     end
 
+    @users = @users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @users }
@@ -80,7 +82,7 @@ class UsersController < ApplicationController
       rescue Exception => e
         logger.info "Create user, Exception: " + e.to_s
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
-        error_message_and_render(format, 'new')
+        error_message_and_render(format, 'new', t('flash.user.create_failed'))
       end
     end
   end

@@ -13,6 +13,8 @@ class ApplicationController < ActionController::Base
   before_filter :find_school
   before_filter :login_required
 
+  filter_parameter_logging :password, :new_password, :new_password_confirmation
+
   private
 
   def find_school
