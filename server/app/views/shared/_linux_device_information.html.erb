@@ -61,7 +61,7 @@
 
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandr" %></td>
-  <td class="value_td"><%=h device.puavoDeviceXrandr %></td>
+  <td class="value_td"><%= Array(device.puavoDeviceXrandr).join("<br />") %></td>
 </tr>
 
 <tr>

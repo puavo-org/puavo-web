@@ -44,12 +44,28 @@
 <table>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceXserver %></td>
-  <td><%= f.text_field :puavoDeviceXserver %></td>
+  <td><%= f.text_field :puavoDeviceXserver, :size => 45 %></td>
 </tr>
 
 <tr>
-  <td class="label_td"><%= f.label :puavoDeviceXrandr %></td>
-  <td><%= f.text_field :puavoDeviceXrandr %></td>
+  <td class="label_for_input_text_list"><%= f.label :puavoDeviceXrandr %></td>
+  <td>
+    <span id="device_puavoDeviceXrandr">
+      <% if f.object.puavoDeviceXrandr.nil? %>
+      <input name='device[puavoDeviceXrandr][]' size='45' type='text' /><br />
+      <% else %>
+      <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
+      <input name='device[puavoDeviceXrandr][]' size='45' type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' /><br />
+      <% end %>
+      <% end %>
+    </span>
+
+    <%= link_to_function( t('shared.add_puavoDeviceXrandr'),
+      nil ) do |page|
+  page.insert_html( :bottom,
+                    "device_puavoDeviceXrandr",
+    "<input name='device[puavoDeviceXrandr][]' size='30' type='text' /><br />" ) end %>
+  </td>
 </tr>
 
 <tr>
