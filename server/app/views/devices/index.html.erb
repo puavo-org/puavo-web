@@ -4,6 +4,9 @@
   <tr>
     <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
     <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceManufacturer') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceModel') %></th>
+    <th><%= t('activeldap.attributes.device.serialNumber') %></th>
     <th colspan="2"><%= t('actions') %></th>
   </tr>
 
@@ -11,6 +14,9 @@
   <tr>
     <td><%= link_to device.puavoHostname, device_path(@school, device) %></td>
     <td><%=h PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
+    <td><%=h device.puavoDeviceManufacturer %></td>
+    <td><%=h device.puavoDeviceModel %></td>
+    <td><%=h device.serialNumber %></td>
     <td><%= link_to 'Edit', edit_device_path(@school, device) %></td>
     <td><%= link_to 'Destroy', device_path(@school, device), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
