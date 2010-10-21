@@ -19,7 +19,7 @@ module NavigationHelpers
 
 
     when /the password change page/
-      password_path(@school)
+      password_path
       
     when /the new organisation page/
       new_organisation_path

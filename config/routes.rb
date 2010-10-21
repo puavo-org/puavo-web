@@ -81,9 +81,9 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.with_options :controller => 'password' do |password|
-    password.password ":school_id/password", :action => 'edit', :conditions => {:method => :get}
-    password.edit_password ':school_id/password/edit', :action => 'edit', :conditions => {:method => :get}
-    password.connect ':school_id/password', :action => 'update', :conditions => {:method => :put}
+    password.password "password", :action => 'edit', :conditions => {:method => :get}
+    password.edit_password 'password/edit', :action => 'edit', :conditions => {:method => :get}
+    password.connect 'password', :action => 'update', :conditions => {:method => :put}
   end
 
   map.with_options :controller => 'themes' do |theme|

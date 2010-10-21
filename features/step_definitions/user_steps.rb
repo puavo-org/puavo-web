@@ -17,6 +17,7 @@ Given /^the following users:$/ do |users|
       roles = u["roles"].split(/,[ ]*/) 
       u.delete("roles")
     end
+    
     user = User.new(u)
     user.puavoSchool = @school.dn
     user.userPassword = "{SSHA}" + 
@@ -106,4 +107,14 @@ Given /^I am set the "([^\"]*)" role for "([^\"]*)"$/ do |role, uid|
     And I check "#{role}" from roles
     And I press "Update"
 }
+end
+
+Then /^I should login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
+  user = User.find(:first, :attribute => "uid", :value => uid)
+  lambda{ user.bind(password) }.should_not raise_error
+end
+
+Then /^I should not login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
+  user = User.find(:first, :attribute => "uid", :value => uid)
+  lambda{ user.bind(password) }.should raise_error
 end

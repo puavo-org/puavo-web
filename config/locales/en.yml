@@ -67,7 +67,9 @@ en:
     password:
       successful: Password change succesfully!
       failed: Failed to change password!
-      invalid_login: Invalid old password or username
+      invalid_login: "Invalid password or username ({{uid}})"
+      confirmation_failed: New password doesn't match confirmation
+      invalid_user: "User ({{uid}}) does not exist"
     school:
       school_admin_added: "{{displayName}} ({{school_name}}) is now admin users"
       school_admin_removed:  "{{displayName}} ({{school_name}}) is no longer admin user on this school"
@@ -142,8 +144,11 @@ en:
       other_admin_users: School management access rights can be added to the following users
   password:
     edit:
-      title: User password change
-      password: Old password
+      title: Change password for other user
+      head: To change the password of another user, fill in your own username and password and the username and the new password for the user whose password is being changed. You have to have sufficient privileges to change the passwords of other users.
+      changing_user: Changing user
+      changed_user: Changed user
+      password: Password
   activeldap:
     models:
       group: Group

@@ -67,7 +67,9 @@ fi:
     password:
       successful: Salanananvaihto onnistui!
       failed: Salasanan vaihto epäonnistui!
-      invalid_login: Vanha tunnus tai salasana eivät täsmää
+      invalid_login: "Salasana tai käyttäjätunnus ({{uid}}) on virheellinen"
+      confirmation_failed: Uusi salasana ei täsmää salasanan vahvistukseen
+      invalid_user: "Käyttäjätunnusta ({{uid}}) ei ole olemassa"
     school:
       school_admin_added: "{{displayName}} ({{school_name}}) on lisätty ylläpitäjä käyttäjäksi"
       school_admin_removed:  "{{displayName}} ({{school_name}}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
@@ -141,8 +143,11 @@ fi:
       other_admin_users: Seuraaville käyttäjille voidaan lisätä ylläpitäjän oikeudet
   password:
     edit:
-      title: Käyttäjän salasanan vaihtaminen
-      password: Vanha salasana
+      title: Vaihda toisen käyttäjän salasana
+      head: Vaihtaaksesi toisen käyttäjän salasanaa, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittu tunnuksellesi.
+      changing_user: Vaihtaja
+      changed_user: Vaihdettava tunnus
+      password: Salasana
   activeldap:
     models:
       group: Ryhmä
