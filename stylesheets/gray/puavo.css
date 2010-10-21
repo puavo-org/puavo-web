@@ -76,6 +76,16 @@ body {
 	width: 675px;
 }
 
+.password_container {
+	padding: 10px 10px 10px 10px;
+	margin: 0px auto;
+	width: 800px;
+	background: #e5e2de;
+        border-left: 2px solid #000000;
+        border-bottom: 2px solid #000000;
+        border-right: 2px solid #ffffff;
+}
+
 .login_container {
 	padding: 10px 10px 10px 10px;
 	margin: 100px auto;
