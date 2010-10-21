@@ -18,8 +18,8 @@
   <%= stylesheet_link_tag "#{theme}/topmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/navmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/puavo.css" %>
-   <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script>
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script>
+  <%= javascript_include_tag 'flot/jquery.js' %>
+  <%= javascript_include_tag 'flot/jquery.flot' %>
 </head>
 <body>
   <div class="container">
@@ -106,8 +106,8 @@
 
   </div> <!-- container -->
 
-  <script type="text/javascript" src="/javascripts/prototype.js"></script>
-  <script type="text/javascript" src="/javascripts/protofish.js"></script>
+  <%= javascript_include_tag 'prototype' %>
+  <%= javascript_include_tag 'protofish' %>
   <script type="text/javascript">
     document.observe("dom:loaded", function() {
     new ProtoFish("top-menu", "200", "hover", false, true, true);
