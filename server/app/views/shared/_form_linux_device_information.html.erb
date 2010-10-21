@@ -15,6 +15,16 @@
   <td class="label_td"><%= f.label :puavoDevicePrimaryUser %></td>
   <td><%= f.text_field :puavoDevicePrimaryUser %></td>
 </tr>
+
+<% unless f.object.classes.include?('puavoServer') %>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceBootMode %></td>
+  <td><%= f.select( :puavoDeviceBootMode,
+                    [ [t('shared.boot_mode_netboot'),"netboot"],
+                      [t('shared.boot_mode_dualboot'), "dualboot"] ] ) %></td>
+</tr>
+<% end %>
+
 <tr>
   <td class="label_td"><%= f.label :description %></td>
   <td><%= f.text_field :description %></td>

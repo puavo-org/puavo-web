@@ -25,6 +25,13 @@
   <td class="value_td"><%=h device.puavoDevicePrimaryUser %></td>
 </tr>
 
+<% unless device.classes.include?('puavoServer') %>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceBootMode" %></td>
+  <td class="value_td"><%=h t("shared.boot_mode_#{device.puavoDeviceBootMode}") %></td>
+</tr>
+<% end %>
+
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "description" %></td>
   <td class="value_td"><%=h device.description %></td>

@@ -15,6 +15,8 @@ en:
     printer_title: Printer information
     server_title: Server information
     add_puavoDeviceXrandr: Add a new line of xrandr
+    boot_mode_netboot: Term
+    boot_mode_dualboot: Dualboot
   devices:
     index:
       add_new_printer: Add new printer
@@ -118,6 +120,7 @@ en:
         puavoLocationName: Location name
         puavoRole: Role
         puavoDeviceStatus: Status
+        puavoDeviceBootMode: Boot mode
         description: Description
     values:
       device:
