@@ -15,8 +15,9 @@ en:
     printer_title: Printer information
     server_title: Server information
     add_puavoDeviceXrandr: Add a new line of xrandr
-    boot_mode_netboot: Term
+    boot_mode_netboot: Terminal
     boot_mode_dualboot: Dualboot
+    boot_mode_: Terminal
   devices:
     index:
       add_new_printer: Add new printer
