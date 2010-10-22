@@ -93,8 +93,10 @@ Feature: Manage users
     | Visitor |
     And I should see "Class 4" on the "Groups by roles"
     And the memberUid should include "benEDIT" on the "Class 4" group
+    And the member should include "benEDIT" on the "Class 4" group
     And the memberUid should not include "ben" on the "Class 4" group
     And the memberUid should include "benEDIT" on the "Class 4" role
+    And the member should include "benEDIT" on the "Class 4" role
     And the memberUid should not include "ben" on the "Class 4" role
     And the memberUid should include "benEDIT" on the "School 1" school
     And the memberUid should not include "ben" on the "School 1" school
