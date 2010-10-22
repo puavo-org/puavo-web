@@ -168,6 +168,8 @@ class Users::ImportController < ApplicationController
     @school.member = users_of_school.map &:dn
     @school.save
 
+    SambaGroup.add_uid_to_memberUid( 'Domain Users', (@users.map &:uid) )
+
     users_of_roles.each do |role_id, values|
       role = Role.find(role_id)
       role.member = Array(role.member) + (values.map &:dn)

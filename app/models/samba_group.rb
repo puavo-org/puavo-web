@@ -17,7 +17,7 @@ class SambaGroup < LdapBase
 
   def add_uid_to_memberUid(uid)
     unless Array(self.memberUid).include?(uid)
-      self.memberUid = Array(self.memberUid).push uid
+      self.memberUid = Array(self.memberUid) + Array(uid)
     end
   end
 

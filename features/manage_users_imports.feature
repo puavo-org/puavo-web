@@ -41,6 +41,8 @@ Feature: User mass import
     And the member should include "ben.mabey" on the "Class 4" group
     And the memberUid should include "joseph.wilk" on the "Class 4" group
     And the member should include "joseph.wilk" on the "Class 4" group
+    And the memberUid should include "ben.mabey" on the "Domain Users" samba group
+    And the memberUid should include "joseph.wilk" on the "Domain Users" samba group
 
 
   Scenario: User mass import when role is not defined
