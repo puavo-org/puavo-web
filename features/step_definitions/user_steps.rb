@@ -17,12 +17,17 @@ Given /^the following users:$/ do |users|
       roles = u["roles"].split(/,[ ]*/) 
       u.delete("roles")
     end
+    school = nil
+    if u["school"]
+      school = School.find(:first, :attribute => "displayName", :value => u["school"])
+      u.delete("school")
+    end
     
     user = User.new(u)
-    user.puavoSchool = @school.dn
+    user.puavoSchool = (school || @school).dn
     user.userPassword = "{SSHA}" + 
       Base64.encode64(Digest::SHA1.digest(u["password"] + salt) + salt).chomp!
-    user.save
+    user.save!
     if roles
       roles.each do |role_name|
         Role.find( :first,
