@@ -71,26 +71,6 @@ def default_form_value
     "billing_address[email]" => "london@test.uk" }
 end
 
-Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" school$/ do |attribute, uid, school_name|
-  school_member_include?(attribute, school_name, uid).should be_true
-end
-
-Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" school$/ do |attribute, uid, school_name|
-  school = School.find( :first, :attribute => "displayName", :value => school_name )
-  if attribute == "memberUid"
-    school.memberUid.include?(uid).should be_false
-  else
-    user = User.find( :first, :attribute => "uid", :value => uid )
-    school.send(attribute).include?(user).should be_false
-  end
-end
-
-def school_member_include?(attribute, school_name, uid)
-  school = School.find( :first, :attribute => "displayName", :value => school_name )
-  user = User.find( :first, :attribute => "uid", :value => uid )
-  return school.send(attribute).include?(user)
-end
-
 Then /^I should not see "([^"]*)" on the school admin list$/ do |user|
   steps %Q{
     Then I should not see "#{user}" within "#this_school_admin_users"

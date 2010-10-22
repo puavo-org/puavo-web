@@ -12,7 +12,7 @@ Feature: Manage users
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
       | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
-    And I am logged in as "pavel" with password "secret"
+    And I am logged in as "cucumber" with password "cucumber"
   
   Scenario: Create new user
     Given the following groups:
@@ -48,9 +48,12 @@ Feature: Manage users
     | Student               |
     And I should see "Class 4" on the "Groups by roles"
     And the memberUid should include "ben" on the "Class 4" group
+    And the member should include "ben" on the "Class 4" group
     And the memberUid should include "ben" on the "Class 4" role
-    And the user_member_uids should include "ben" on the "School 1" school
-    And the user_members should include "ben" on the "School 1" school
+    And the member should include "ben" on the "Class 4" role
+    And the memberUid should include "ben" on the "School 1" school
+    And the member should include "ben" on the "School 1" school
+    And the memberUid should include "ben" on the "Domain Users" samba group
     When I follow "Edit"
     Then I should be on the edit user page
     When I follow "Show"
@@ -93,10 +96,11 @@ Feature: Manage users
     And the memberUid should not include "ben" on the "Class 4" group
     And the memberUid should include "benEDIT" on the "Class 4" role
     And the memberUid should not include "ben" on the "Class 4" role
-    And the user_member_uids should include "benEDIT" on the "School 1" school
-    And the user_member_uids should not include "ben" on the "School 1" school
-    And the user_members should include "benEDIT" on the "School 1" school
-    And the user_members should not include "ben" on the "School 1" school
+    And the memberUid should include "benEDIT" on the "School 1" school
+    And the memberUid should not include "ben" on the "School 1" school
+    And the member should include "benEDIT" on the "School 1" school
+    And the memberUid should include "benEDIT" on the "Domain Users" samba group
+    And the memberUid should not include "ben" on the "Domain Users" samba group
     Given I am on the show user page with "joseph"
     And I should see "Joseph"
     And I should see "Wilk"
@@ -119,6 +123,7 @@ Feature: Manage users
     And the "Class 4" group not include incorret member values
     And the memberUid should not include "ben" on the "Class 4" role
     And the "Class 4" role not include incorret member values
+    And the memberUid should not include "ben" on the "Domain Users" samba group
 
   Scenario: Get user information in JSON
     Given the following users:

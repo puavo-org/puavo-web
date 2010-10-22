@@ -338,8 +338,10 @@ class User < LdapBase
                        :attribute => "memberUid",
                        :value => old_user.uid ).each do |school|
             school.user_member_uids.delete(old_user)
+            self.school.reload
           end
-          
+          # Remove uid from Domain Users group
+          SambaGroup.delete_uid_from_memberUid('Domain Users', old_user.uid)
         end
       rescue ActiveLdap::EntryNotFound
       end
@@ -365,6 +367,9 @@ class User < LdapBase
         self.school.member = Array(self.school.member).push self.dn
       end
       self.school.save
+
+      # Set uid to Domain Users group
+      SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
     end
   end
 
@@ -383,6 +388,9 @@ class User < LdapBase
       g.memberUid = Array(g.memberUid) - Array(self.uid)
       g.save
     end
+
+    # Remove uid from Domain Users group
+    SambaGroup.delete_uid_from_memberUid('Domain Users', self.uid)
   end
 
   def set_samba_settings 

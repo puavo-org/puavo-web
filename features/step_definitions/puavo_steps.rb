@@ -30,6 +30,10 @@ Before do |scenario|
       p.destroy
     end
   end
+
+  domain_users = SambaGroup.find('Domain Users')
+  domain_users.memberUid = []
+  domain_users.save
 end
 
 Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
@@ -182,4 +186,27 @@ end
 
 Then /^the id "([^\"]*)" checkbox should be checked$/ do |id|
   field_with_id(id).should be_checked
+end
+
+
+Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
+  memberUid_include?(model, object_name, method, uid).should == true
+end
+
+Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
+  memberUid_include?(model, object_name, method, uid).should == false
+end
+
+def memberUid_include?(model, object_name, method, uid)
+  # manipulate string to Class name, e.g. "school" -> "School", "samba group" -> "SambaGroup"
+  model = model.split(" ").map { |m| m.capitalize }.join("")
+  object = Class.class_eval(model).find( :first, :attribute => "displayName", :value => object_name )
+  
+  case method
+  when "member"
+    user = User.find( :first, :attribute => "uid", :value => uid )
+    return Array(object.send(method)).include?(user.dn)
+  when "memberUid"
+    return Array(object.send(method)).include?(uid)
+  end
 end

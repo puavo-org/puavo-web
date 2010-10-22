@@ -33,18 +33,3 @@ When /^I check "([^\"]*)" from roles$/ do |role_name|
     When I check field by id "role_#{role_name.to_s.downcase.gsub(/ /, '_')}"
   }
 end
-
-Then /^the memberUid should include "([^\"]*)" on the "([^\"]*)" role$/ do |uid, role_name|
-  role_memberUid_include?(role_name, uid).should == true
-end
-
-Then /^the memberUid should not include "([^\"]*)" on the "([^\"]*)" role$/ do |uid, role_name|
-  role_memberUid_include?(role_name, uid).should == false
-end
-
-private
-
-def role_memberUid_include?(role_name, uid)
-  role = Role.find( :first, :attribute => "displayName", :value => role_name )
-  return Array(role.memberUid).include?(uid)
-end
