@@ -89,6 +89,8 @@ Feature: Manage schools
     Then I should see "Pavel Taylor (Greenwich Steiner School) is now admin users"
     And I should see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
     And I should not be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    And the memberUid should include "pavel" on the "Domain Admins" samba group
+
 
   Scenario: Remove school management access rights from the user
     Given the following users:
@@ -102,6 +104,7 @@ Feature: Manage schools
     Then I should see "Pavel Taylor (Greenwich Steiner School) is no longer admin user on this school"
     And I should not see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
     And I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    And the memberUid should not include "pavel" on the "Domain Admins" samba group
 
   Scenario: School management access can be added only if user type is admin
     Given the following users:

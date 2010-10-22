@@ -110,7 +110,7 @@ class SchoolsController < ApplicationController
         # FIXME: change notice type (ERROR)
         flash[:notice] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
-      elsif @school.save
+      elsif @school.save && SambaGroup.add_uid_to_memberUid('Domain Admins', @user.uid)
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
@@ -133,7 +133,7 @@ class SchoolsController < ApplicationController
     end
 
     respond_to do |format|
-      if @school.save
+      if @school.save && SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
         flash[:notice] = t('flash.school.school_admin_removed',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
