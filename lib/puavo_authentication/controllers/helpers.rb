@@ -40,7 +40,7 @@ module PuavoAuthentication
         else
           unless current_user
             store_location
-            flash[:notice] = "You must be logged in"
+            flash[:notice] = t('must_be_logged_in')
             redirect_to login_path
             return false
           end

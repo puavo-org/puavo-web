@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate( params[:user][:login], params[:user][:password] ) # REST/OAuth?
+    if user = User.authenticate( params[:user][:uid], params[:user][:password] ) # REST/OAuth?
       flash[:notice] = t('flash.session.login_successful')
       session[:dn] = user.dn
       session[:password_plaintext] = params[:user][:password]
