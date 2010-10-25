@@ -66,3 +66,35 @@ Feature: Manage passwords
     And I should not login with "ben" and "bensecret"
     And I should login with "ben" and "newbensecret"
     
+  Scenario: User to change their own password
+    Given I am on the own password change page
+    When I fill in "Username" with "pavel"
+    And I fill in "Old password" with "pavelsecret"
+    And I fill in "New password" with "newpavelsecret"
+    And I fill in "New password confirmation" with "newpavelsecret"
+    And I press "Change password"
+    Then I should see "Password change succesfully!"
+    And I should not login with "pavel" and "pavelsecret"
+    And I should login with "pavel" and "newpavelsecret"
+
+  Scenario: User to change their own password with an incorrect password
+    Given I am on the own password change page
+    When I fill in "Username" with "pavel"
+    And I fill in "Old Password" with "wrong"
+    And I fill in "New password" with "newpavelsecret"
+    And I fill in "New password confirmation" with "newpavelsecret"
+    And I press "Change password"
+    Then I should not see "Password change succesfully!"
+    And I should see "Invalid password or username (pavel)"
+
+  Scenario: User to change their own password with an incorrect password confirmation
+    Given I am on the own password change page
+    When I fill in "Username" with "pavel"
+    And I fill in "Old Password" with "pavelsecret"
+    And I fill in "New password" with "newpavelsecret"
+    And I fill in "New password confirmation" with "confirmation test"
+    And I press "Change password"
+    Then I should not see "Password change succesfully!"
+    And I should see "New password doesn't match confirmation"
+    And I should not login with "pavel" and "newpavelsecret"
+    And I should login with "pavel" and "pavelsecret"

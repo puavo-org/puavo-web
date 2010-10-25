@@ -1,12 +1,17 @@
 class PasswordController < ApplicationController
   skip_before_filter :ldap_setup_connection, :find_school, :login_required
 
-  # GET /:school_id/password
+  # GET /password/edit
   def edit
     @user = User.new
   end
 
-  # PUT /:school_id/password
+  # GET /password/own
+  def own
+    @user = User.new
+  end
+
+  # PUT /password
   def update
 
     unless params[:user][:new_password] == params[:user][:new_password_confirmation]
@@ -19,7 +24,11 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       flash[:notice] = t('flash.password.successful')
-      format.html { render :action => "edit" }
+      unless params[:user][:uid]
+        format.html { render :action => "own" }
+      else
+        format.html { render :action => "edit" }
+      end
     end
   rescue User::PasswordChangeFailed => e
     logger.debug "Execption: " + e.to_s
@@ -33,7 +42,11 @@ class PasswordController < ApplicationController
 
   def error_message_and_redirect(message)
     flash[:notice] = message
-    redirect_to password_path
+    unless params[:user][:uid]
+      redirect_to own_password_path
+    else
+      redirect_to password_path
+    end
   end
 
   def change_user_password
@@ -46,20 +59,24 @@ class PasswordController < ApplicationController
 
     if @logged_in_user = User.find(:first, :attribute => "uid", :value => params[:login][:uid])
       if ( @logged_in_user.bind(params[:login][:password]) rescue nil )
-        if @user = User.find(:first, :attribute => "uid", :value => params[:user][:uid])
-          system( 'ldappasswd', '-x', '-Z',
-                  '-h', User.configuration[:host],
-                  '-D', @logged_in_user.dn.to_s,
-                  '-w', params[:login][:password],
-                  '-s', params[:user][:new_password],
-                  @user.dn.to_s )
-          if $?.exitstatus != 0
-            raise User::PasswordChangeFailed, I18n.t('flash.password.failed')
+        if params[:user][:uid]
+          unless @user = User.find(:first, :attribute => "uid", :value => params[:user][:uid])
+            raise I18n.t('flash.password.invalid_user', :uid => params[:user][:uid])
           end
-          return true 
         else
-          raise I18n.t('flash.password.invalid_user', :uid => params[:user][:uid])
+          @user = @logged_in_user
         end
+
+        system( 'ldappasswd', '-x', '-Z',
+                '-h', User.configuration[:host],
+                '-D', @logged_in_user.dn.to_s,
+                '-w', params[:login][:password],
+                '-s', params[:user][:new_password],
+                @user.dn.to_s )
+        if $?.exitstatus != 0
+          raise User::PasswordChangeFailed, I18n.t('flash.password.failed')
+        end
+        return true 
       end
     end
 

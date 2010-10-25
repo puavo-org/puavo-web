@@ -20,6 +20,8 @@ module NavigationHelpers
 
     when /the password change page/
       password_path
+    when /the own password change page/
+      own_password_path
       
     when /the new organisation page/
       new_organisation_path

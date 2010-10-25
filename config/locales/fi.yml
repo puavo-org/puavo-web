@@ -148,6 +148,9 @@ fi:
       changing_user: Vaihtaja
       changed_user: Vaihdettava tunnus
       password: Salasana
+    own:
+      title: Vaihda salasana
+      password: Vanha salasana
   activeldap:
     models:
       group: Ryhmä

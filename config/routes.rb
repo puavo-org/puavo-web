@@ -83,6 +83,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'password' do |password|
     password.password "password", :action => 'edit', :conditions => {:method => :get}
     password.edit_password 'password/edit', :action => 'edit', :conditions => {:method => :get}
+    password.own_password 'password/own', :action => 'own', :conditions => {:method => :get}
     password.connect 'password', :action => 'update', :conditions => {:method => :put}
   end
 

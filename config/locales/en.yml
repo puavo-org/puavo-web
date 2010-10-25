@@ -149,6 +149,9 @@ en:
       changing_user: Changing user
       changed_user: Changed user
       password: Password
+    own:
+      title: Change password
+      password: Old password
   activeldap:
     models:
       group: Group
