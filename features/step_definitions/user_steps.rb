@@ -1,7 +1,7 @@
 Given /^I am logged in as "([^\"]*)" with password "([^\"]*)"$/ do |login, password|
   visit login_path
-  fill_in("login", :with => login)
-  fill_in("password", :with => password)
+  fill_in("Username", :with => login)
+  fill_in("Password", :with => password)
   click_button("Login")
 end
 

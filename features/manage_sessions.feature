@@ -14,24 +14,24 @@ Feature: Manage sessions
 
   Scenario: Login
     Given I am on the login page
-    And I fill in "Login" with "pavel"
+    And I fill in "Username" with "pavel"
     And I fill in "Password" with "secret"
     And I press "Login"
     Then I should see "Login successful!"
 
   Scenario: Login with incorrect username
     Given I am on the login page
-    And I fill in "Login" with "something"
+    And I fill in "Username" with "something"
     And I fill in "Password" with "secret"
     And I press "Login"
     Then I should see "Login failed!"
 
   Scenario: Login with incorrect password
     Given I am on the login page
-    And I fill in "Login" with "pavel"
+    And I fill in "Username" with "pavel"
     And I fill in "Password" with "secrett"
     And I press "Login"
     Then I should see "Login failed!"
-    When I fill in "Login" with "pavel"
+    When I fill in "Username" with "pavel"
     And I fill in "Password" with ""
     Then I should see "Login failed!"

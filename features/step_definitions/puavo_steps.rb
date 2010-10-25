@@ -40,8 +40,8 @@ Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
   organisation = Puavo::Organisation.find(organisation_name)
 
   visit login_path
-  fill_in("login", :with => organisation.owner)
-  fill_in("password", :with => organisation.owner_pw)
+  fill_in("Username", :with => organisation.owner)
+  fill_in("Password", :with => organisation.owner_pw)
   click_button("Login")
   response.should contain("Login successful!")
 end

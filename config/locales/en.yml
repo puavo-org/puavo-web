@@ -1,4 +1,5 @@
 en:
+  must_be_logged_in: You must be logged in
   create_organisation_owner:
     school_name: Administration
     role_name: Maintenance

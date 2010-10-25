@@ -1,4 +1,5 @@
 fi:
+  must_be_logged_in: Sinun täytyy olla kirjautuneena
   create_organisation_owner:
     school_name: Hallinto
     role_name: Ylläpito
