@@ -1,0 +1,44 @@
+<h1><%= t('.title') %></h1>
+
+<% if flash.has_key?(:notice) %>
+<% if flash.has_key?(:notice_css_class) %>
+<p class='<%= flash[:notice_css_class] %>'>
+<% else %>
+<p class="notice">
+  <% end %>
+  <%= flash[:notice] %>
+</p>
+<% end %>
+
+<% form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
+<%= f.error_messages %>
+
+<table>
+<tr>
+  <td><%= label :login, :uid, t('activeldap.attributes.user.uid') %></td>
+  <td><%= text_field :login, :uid %></td>
+</tr>
+
+<tr>
+  <td><%= label :login, :password, t('.password') %></td>
+  <td><%= password_field :login, :password %></td>
+</tr>
+
+<tr>
+  <td><%= f.label :new_password, t('activeldap.attributes.user.new_password') %></td>
+  <td><%= password_field :user, :new_password, :value => "" %></td>
+</tr>
+
+<tr>
+  <td><%= f.label :new_password_confirmation, t('activeldap.attributes.user.new_password_confirmation') %></td>
+  <td><%= password_field :user, :new_password_confirmation, :value => "" %></td>
+</tr>
+
+<tr>
+  <td></td>
+  <td><%= f.submit t('link.change_password') %></td>
+</tr>
+
+</table>
+
+<% end %>
