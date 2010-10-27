@@ -18,5 +18,11 @@ class Group < BaseGroup
   def to_s
     self.displayName
   end
+  
+  def remove_user(user)
+    self.member = Array(self.member) - Array(user.dn)
+    self.memberUid = Array(self.memberUid) - Array(user.uid)
+    self.save
+  end
 end
 

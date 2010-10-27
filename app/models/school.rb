@@ -18,6 +18,15 @@ class School < BaseGroup
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
 
+  
+  def remove_user(user)
+    self.member = Array(self.member) - Array(user.dn)
+    self.memberUid = Array(self.memberUid) - Array(user.uid)
+    self.puavoSchoolAdmin = Array(self.puavoSchoolAdmin) - Array(user.dn)
+    puts ActiveLdap::Base.active_connections.keys
+    self.save
+  end
+
   # FIXME, Is it better to use human_attribute_name method on the application_helper.rb?
   #def self.human_attribute_name(*args)
   #  if I18n.t("activeldap.attributes").has_key?(:school) &&

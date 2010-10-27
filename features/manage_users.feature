@@ -113,9 +113,9 @@ Feature: Manage users
 
   Scenario: Delete user
     Given the following users:
-      | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben    | secret   | Class 4   | Student                   |
-      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   |
+      | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation | school_admin |
+      | Ben       | Mabey   | ben    | secret   | Class 4   | Admin                     | true         |
+      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   | false        |
     And I am on the show user page with "ben"
     When I follow "Destroy"
     Then I should see "User was successfully destroyed."
@@ -126,6 +126,7 @@ Feature: Manage users
     And the memberUid should not include "ben" on the "Class 4" role
     And the "Class 4" role not include incorret member values
     And the memberUid should not include "ben" on the "Domain Users" samba group
+    And the "School 1" school not include incorret puavoSchoolAdmin values
 
   Scenario: Get user information in JSON
     Given the following users:

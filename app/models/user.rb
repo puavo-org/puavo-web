@@ -376,21 +376,17 @@ class User < LdapBase
   private
 
   def delete_all_associations
-    self.school.memberUid = Array(self.school.memberUid) - Array(self.uid)
-    self.school.member = Array(self.school.member) - Array(self.dn)
-    self.school.save
+    # Remove uid from Domain Users group
+    SambaGroup.delete_uid_from_memberUid('Domain Users', self.uid)
 
     self.roles.each do |p|
       p.delete_member(self)
     end
     self.groups.each do |g|
-      g.member = Array(g.member) - Array(self.dn)
-      g.memberUid = Array(g.memberUid) - Array(self.uid)
-      g.save
+      g.remove_user(self)
     end
 
-    # Remove uid from Domain Users group
-    SambaGroup.delete_uid_from_memberUid('Domain Users', self.uid)
+    self.school.remove_user(self)
   end
 
   def set_samba_settings 

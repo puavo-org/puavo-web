@@ -62,7 +62,6 @@ do |names_of_the_models, values, organisation|
     @school = School.new( :displayName =>  models_value['school'],
                           :cn => models_value['school'].downcase.gsub(/[^a-z0-9]/, "")
                           )
-    @school.puavoSchoolAdmin = ["cn=admin,o=puavo"]
     @school.save
   end
   if models_value.has_key?('group')
@@ -166,11 +165,10 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field_id|
   field_with_id(field_id).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
-Then /^the "([^\"]*)" ([^ ]+) not include incorret member values$/ do |object_name, class_name|
+Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
-  members_method = class_name == "school" ? "user_members" : "members"
-  object.send(members_method).each do |m|
-    lambda{ User.find(m.puavoId) }.should_not raise_error
+  Array(object.send(method)).each do |dn|
+    lambda{ User.find(dn) }.should_not raise_error
   end
 end
 
