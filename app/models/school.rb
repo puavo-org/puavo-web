@@ -23,7 +23,6 @@ class School < BaseGroup
     self.member = Array(self.member) - Array(user.dn)
     self.memberUid = Array(self.memberUid) - Array(user.uid)
     self.puavoSchoolAdmin = Array(self.puavoSchoolAdmin) - Array(user.dn)
-    puts ActiveLdap::Base.active_connections.keys
     self.save
   end
 
