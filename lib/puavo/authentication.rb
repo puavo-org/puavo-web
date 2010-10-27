@@ -15,6 +15,7 @@ module Puavo
           if user.bind(password)
             host = LdapBase.configuration[:host]
             base = LdapBase.base.to_s
+            user.remove_connection
             LdapBase.ldap_setup_connection(host, base, user.dn, password)
 
             # Allow authetication only if user is School Admin in the some School or organisation owner.
