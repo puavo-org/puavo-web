@@ -58,7 +58,7 @@ class PasswordController < ApplicationController
     LdapBase.ldap_setup_connection(host, base, dn, password)
 
     if @logged_in_user = User.find(:first, :attribute => "uid", :value => params[:login][:uid])
-      if ( @logged_in_user.bind(params[:login][:password]) rescue nil )
+      if authenticate(@logged_in_user, params[:login][:password])
         if params[:user][:uid]
           unless @user = User.find(:first, :attribute => "uid", :value => params[:user][:uid])
             raise I18n.t('flash.password.invalid_user', :uid => params[:user][:uid])
@@ -66,7 +66,7 @@ class PasswordController < ApplicationController
         else
           @user = @logged_in_user
         end
-
+        
         system( 'ldappasswd', '-x', '-Z',
                 '-h', User.configuration[:host],
                 '-D', @logged_in_user.dn.to_s,
@@ -76,10 +76,17 @@ class PasswordController < ApplicationController
         if $?.exitstatus != 0
           raise User::PasswordChangeFailed, I18n.t('flash.password.failed')
         end
+
         return true 
       end
     end
 
     return false
+  end
+
+  def authenticate(user, password)
+    result = user.bind(password) rescue false
+    user.remove_connection
+    return result
   end
 end

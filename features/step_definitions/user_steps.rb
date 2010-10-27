@@ -117,9 +117,11 @@ end
 Then /^I should login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
   user = User.find(:first, :attribute => "uid", :value => uid)
   lambda{ user.bind(password) }.should_not raise_error
+  user.remove_connection
 end
 
 Then /^I should not login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
   user = User.find(:first, :attribute => "uid", :value => uid)
   lambda{ user.bind(password) }.should raise_error
+  user.remove_connection
 end
