@@ -78,6 +78,12 @@ module PuavoAuthentication
         #logger.debug "password: #{session[:password_plaintext]}"
         LdapBase.ldap_setup_connection(host, base, dn, password)
       end
+
+      def remove_ldap_connection
+        ActiveLdap::Base.active_connections.keys.each do |connection_name|
+          ActiveLdap::Base.remove_connection(connection_name)
+        end
+      end
     end
   end
 end
