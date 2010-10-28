@@ -390,7 +390,7 @@ class User < LdapBase
   end
 
   def set_samba_settings 
-    self.sambaSID = "#{SambaDomain.first.sambaSID}-#{self.puavoId}"
+    self.sambaSID = SambaDomain.next_samba_sid
     self.sambaAcctFlags = "[U]"
   end
 end

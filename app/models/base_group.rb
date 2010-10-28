@@ -21,7 +21,7 @@ class BaseGroup < LdapBase
 
   def set_samba_settings
     self.sambaGroupType = 2
-    self.sambaSID = "#{SambaDomain.first.sambaSID}-#{self.puavoId}"
+    self.sambaSID = SambaDomain.next_samba_sid
   end
 
   def validate_on_create
