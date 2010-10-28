@@ -13,9 +13,11 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
+  filter_parameter_logging :password, :new_password, :new_password_confirmation
 
   before_filter :find_school
+
+  after_filter :remove_ldap_connection
 
   def find_school
     if params.has_key?(:school_id)
