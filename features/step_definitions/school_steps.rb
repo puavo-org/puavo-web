@@ -1,4 +1,5 @@
 Given /^the following schools:$/ do |schools|
+  set_ldap_admin_connection
   schools = School.create!(schools.hashes)
 end
 
@@ -96,6 +97,7 @@ Then /^I should not be added school management access to the "([^"]*)"$/ do |use
 end
 
 When /^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/ do |username, school_name|
+  set_ldap_admin_connection
   school = School.find( :first, :attribute => "displayName", :value => school_name )
   user = User.find( :first, :attribute => "displayName", :value => username )
   visit( add_school_admin_school_path(school, user.id), :put )

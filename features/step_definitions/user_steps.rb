@@ -10,6 +10,7 @@ Given /^I am logged out$/ do
 end
 
 Given /^the following users:$/ do |users|
+  set_ldap_admin_connection
   salt = "testsalt"
   users.hashes.each do |u|
     roles = nil
@@ -92,6 +93,7 @@ When /^I should see same test data on the user page$/ do
 end
 Then /^I should see the following special ldap attributes on the "([^\"]*)" object with "([^\"]*)":$/  do
   |model, key, table|
+  set_ldap_admin_connection
   case model
   when "User"
     object = User.find( :first, :attribute => "uid", :value => key )
@@ -115,12 +117,14 @@ Given /^I am set the "([^\"]*)" role for "([^\"]*)"$/ do |role, uid|
 end
 
 Then /^I should login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
+  set_ldap_admin_connection
   user = User.find(:first, :attribute => "uid", :value => uid)
   lambda{ user.bind(password) }.should_not raise_error
   user.remove_connection
 end
 
 Then /^I should not login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
+  set_ldap_admin_connection
   user = User.find(:first, :attribute => "uid", :value => uid)
   lambda{ user.bind(password) }.should raise_error
   user.remove_connection

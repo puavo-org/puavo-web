@@ -1,5 +1,6 @@
 class PasswordController < ApplicationController
   skip_before_filter :ldap_setup_connection, :find_school, :login_required
+  before_filter :set_ldap_connection
 
   # GET /password/edit
   def edit
@@ -50,13 +51,6 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password
-    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-    host = session[:organisation].ldap_host
-    base = session[:organisation].ldap_base
-    dn =  default_ldap_configuration["bind_dn"]
-    password = default_ldap_configuration["password"]
-    LdapBase.ldap_setup_connection(host, base, dn, password)
-
     if @logged_in_user = User.find(:first, :attribute => "uid", :value => params[:login][:uid])
       if authenticate(@logged_in_user, params[:login][:password])
         if params[:user][:uid]
@@ -88,5 +82,14 @@ class PasswordController < ApplicationController
     result = user.bind(password) rescue false
     user.remove_connection
     return result
+  end
+
+  def set_ldap_connection
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    host = session[:organisation].ldap_host
+    base = session[:organisation].ldap_base
+    dn =  default_ldap_configuration["bind_dn"]
+    password = default_ldap_configuration["password"]
+    LdapBase.ldap_setup_connection(host, base, dn, password)
   end
 end

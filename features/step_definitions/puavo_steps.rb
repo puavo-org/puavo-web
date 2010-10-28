@@ -76,6 +76,7 @@ When /^I check field by id "([^\"]*)"$/ do |field_id|
 end
 
 Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
+  set_ldap_admin_connection
   case page_name
   when /user page$/
     user = User.find(:first, :attribute => "uid", :value => value)
@@ -173,6 +174,7 @@ Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_n
 end
 
 When /^I follow "([^\"]*)" on the "([^\"]*)" ([^ ]+)$/ do |link_name, name, model|
+  set_ldap_admin_connection
   link_id = link_name.downcase + "_#{model}_" + 
     eval(model.capitalize).send("find", :first,
                                 :attribute => "displayName",
@@ -196,6 +198,7 @@ Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |me
 end
 
 def memberUid_include?(model, object_name, method, uid)
+  set_ldap_admin_connection
   # manipulate string to Class name, e.g. "school" -> "School", "samba group" -> "SambaGroup"
   model = model.split(" ").map { |m| m.capitalize }.join("")
   object = Class.class_eval(model).find( :first, :attribute => "displayName", :value => object_name )
@@ -206,5 +209,17 @@ def memberUid_include?(model, object_name, method, uid)
     return Array(object.send(method)).include?(user.dn)
   when "memberUid"
     return Array(object.send(method)).include?(uid)
+  end
+end
+
+def set_ldap_admin_connection
+  unless LdapBase.connected?
+    test_organisation = Puavo::Organisation.find('example')
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    # Setting up ldap configuration
+    LdapBase.ldap_setup_connection( test_organisation.ldap_host,
+                                    test_organisation.ldap_base,
+                                    default_ldap_configuration["bind_dn"],
+                                    default_ldap_configuration["password"] )
   end
 end
