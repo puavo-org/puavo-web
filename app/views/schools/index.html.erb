@@ -12,7 +12,6 @@
     <td><%= link_to school.displayName, school_path(school) %></td>
     <td><%=h school.cn %></td>
     <td><%= link_to t('link.edit'), edit_school_path(school) %></td>
-    <td><%= link_to t('link.destroy'), school, :confirm => t('general_confirm'), :method => :delete %></td>
   </tr>
 <% end %>
 </table>

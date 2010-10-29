@@ -46,6 +46,7 @@ Feature: Manage schools
     | 12345                                                                          |
     | 54321                                                                          |
     | East Midlands                                                                  |
+    And I should see "School was successfully created."
 
   Scenario: Add new school to organisation without names
     Given I am on the new school page
@@ -70,6 +71,8 @@ Feature: Manage schools
     When I fill in "School name" with "St. Paul's"
     And I press "Update"
     Then I should see "St. Paul's"
+    And I should see "School was successfully updated."
+
 
   Scenario: Add duplicate school or group abbreviation
     Given the following groups:
@@ -91,6 +94,15 @@ Feature: Manage schools
     Given I am on the schools list page
     Then I should see "Greenwich Steiner School"
     And I should see "Example school 1"
+
+  Scenario: Delete school
+    Given the following schools:
+    | displayName   | cn          |
+    | Test School 1 | testschool1 |
+    And I am on the show school page with "Test School 1"
+    When I follow "Destroy"
+    Then I should see "School was successfully destroyed."
+
 
   Scenario: Add school management access rights to the user
     Given the following users:

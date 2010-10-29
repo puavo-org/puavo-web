@@ -44,7 +44,7 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if @school.save
-        flash[:notice] = 'School was successfully created.'
+        flash[:notice] = t('flash.added', :item => t('activeldap.models.school'))
         format.html { redirect_to( school_path(@school) ) }
         format.xml  { render :xml => @school, :status => :created, :location => @school }
       else
@@ -62,7 +62,7 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if @school.update_attributes(params[:school])
-        flash[:notice] = 'School was successfully updated.'
+        flash[:notice] = t('flash.updated', :item => t('activeldap.models.school'))
         format.html { redirect_to(@school) }
         format.xml  { head :ok }
       else
@@ -77,11 +77,16 @@ class SchoolsController < ApplicationController
   # DELETE /schools/1.xml
   def destroy
     @school = School.find(params[:id])
-    @school.destroy
 
     respond_to do |format|
-      format.html { redirect_to(schools_url) }
-      format.xml  { head :ok }
+      if @school.destroy
+        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.school'))
+        format.html { redirect_to(schools_url) }
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "show" }
+        format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
+      end
     end
   end
 

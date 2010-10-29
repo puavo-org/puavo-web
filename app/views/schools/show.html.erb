@@ -62,3 +62,4 @@
 
 <%= link_to t('link.edit'), edit_school_path(@school) %> |
 <%= link_to t('link.back'), schools_path %>
+<%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %>
