@@ -73,7 +73,7 @@ Feature: Manage users
     And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I check "Class 4" from roles
     And I press "Create"
-    Then I should see "Username is allready in use"
+    Then I should see "Username has already been taken"
     Then I should see "Failed to create user!"
 
   Scenario: Create user with empty values

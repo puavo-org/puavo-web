@@ -98,7 +98,8 @@ class User < LdapBase
     # uid validation
     if user = User.find(:first, :attribute => "uid", :value => self.uid)
       if user.puavoId != self.puavoId
-        errors.add :uid, I18n.t("activeldap.errors.messages.uid_is_already_in_use")
+        errors.add :uid, I18n.t("activeldap.errors.messages.taken",
+                                :attribute => I18n.t("activeldap.attributes.user.uid") )
       end
     end
   end
