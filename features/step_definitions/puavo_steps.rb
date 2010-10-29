@@ -103,6 +103,8 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
     case page_name
     when /show/
       visit role_path(@school, role)
+    when /edit/
+      visit edit_role_path(@school, role)
     end
   else
     raise "Unknow page: #{page_name}"

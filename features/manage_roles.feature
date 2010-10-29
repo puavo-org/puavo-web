@@ -19,6 +19,22 @@ Feature: Manage roles
     And I press "Create"
     Then I should see "Student"
 
+  Scenario: Register new role without name
+    Given I am on the new role page
+    And I press "Create"
+    Then I should see "Failed to create role!"
+    And I should see "Role name can't be blank"
+
+  Scenario: Edit role and set empty name
+    Given the following roles:
+    | displayName |
+    | Student     |
+    And I am on the edit role page with "Student"
+    When I fill in "Role name" with ""
+    And I press "Update"
+    Then I should see "Role cannot be saved!"
+
+
   Scenario: Listing roles
     Given the following roles:
     | displayName |

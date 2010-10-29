@@ -32,11 +32,18 @@ Feature: Manage groups
     When I fill in "Group name" with "Class 4A" 
     And I fill in "Abbreviation" with "class4a"
     And I press "Create" 
-    #Then I should see "Group Class 4A exists already." 
-    Then I should see "Name has already been taken"
+    #Then I should see "Group name has already been taken"
+    And I should see "Abbreviation has already been taken"
     When I fill in "Abbreviation" with "exampleschool1"
     And I press "Create" 
-    Then I should see "Name has already been taken"
+    Then I should see "Abbreviation has already been taken"
+
+  Scenario: Add group with empty Group name and Abbreviation
+    And I am on the new group page
+    When I press "Create" 
+    Then I should see "Group name can't be blank"
+    And I should see "Abbreviation can't be blank"
+    And I should see "Failed to create group!"
 
   Scenario: Edit group information
     Given the following groups:
@@ -50,6 +57,19 @@ Feature: Manage groups
     Then I should see "Class 5A"
     And I should see "class5a"
     And I should see "Example school 1"
+
+  Scenario: Edit group and set empty values
+    Given the following groups:
+    | displayName | cn      |
+    | Class 4A    | class4a |
+    | Class 6B    | class6b |
+    And I am on the edit group page with "Class 4A"
+    When I fill in "Group name" with ""
+    And I fill in "Abbreviation" with ""
+    And I press "Update"
+    Then I should see "Group name can't be blank"
+    And I should see "Abbreviation can't be blank"
+    And I should see "Group cannot be saved!"
 
   Scenario: Add role to the group
     Given the following groups:

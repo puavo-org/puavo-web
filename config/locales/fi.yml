@@ -44,6 +44,8 @@ fi:
     added: "{{item}} luotiin onnistuneesti."
     updated: "{{item}} päivitettiin onnistuneesti."
     destroyed: "{{item}} poistettiin onnistuneesti."
+    create_failed: "Lisääminen epäonnistui!"
+    save_failed: "Tallennus epäonnistui!"
     group:
       role_added: "Rooli lisättiin ryhmään."
       role_added_failed: Lisäys epäonnistui.
@@ -54,6 +56,8 @@ fi:
       group_added_failed: Lisäys epäonnistui
       group_removed: Ryhmä poistettiin roolista.
       group_remove_failed: Poistaminen epäonnistui.
+      create_failed: Roolin lisääminen epäonnistui!
+      save_failed: Roolia ei voitu tallentaa!
     user:
       save_failed: Käyttäjää ei voitu tallentaa!
       create_failed: Käyttäjän lisääminen epäonnistui!
@@ -155,9 +159,9 @@ fi:
   activeldap:
     errors:
       messages:
-        uid_is_already_in_use: Käyttäjätunnus on jo käytössä
-        blank: "{{attribute}} kenttä ei voi olla tyhjä"
-        invalid: "{{attribute}} kentän arvo on virheellinen"
+        taken: "{{attribute}} on jo käytössä"
+        blank: "{{attribute}} pitää olla asetettuna"
+        invalid: "{{attribute}} on virheellinen"
         confirmation: "{{attribute}} ei täsmää vahvistukseen"
     models:
       group: Ryhmä

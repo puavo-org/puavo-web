@@ -29,9 +29,8 @@ class BaseGroup < LdapBase
     # cn == group name (operating system)
     if Group.find(:first, :attribute => "cn", :value => self.cn) ||
         School.find(:first, :attribute => "cn", :value => self.cn)
-      # FIXME, localization!
-      errors.add "Abbreviation", 'Name has already been taken'
+      errors.add :cn, I18n.t("activeldap.errors.messages.taken",
+                             :attribute => I18n.t("activeldap.attributes.#{self.class.to_s.downcase}.cn") )
     end
   end
-
 end

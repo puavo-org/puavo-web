@@ -15,6 +15,10 @@ class Group < BaseGroup
               :many => "puavoMemberGroup",
               :primary_key => "dn" )
 
+  validates_presence_of( :displayName,
+                         :message => I18n.t("activeldap.errors.messages.blank",
+                                                :attribute => I18n.t("activeldap.attributes.group.displayName") ) )
+
   def to_s
     self.displayName
   end

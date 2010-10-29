@@ -56,6 +56,7 @@ class RolesController < ApplicationController
         format.html { redirect_to( role_path(@school, @role) ) }
         format.xml  { render :xml => @role, :status => :created, :location => @role }
       else
+        flash[:notice] = t('flash.role.create_failed')
         format.html { render :action => "new" }
         format.xml  { render :xml => @role.errors, :status => :unprocessable_entity }
       end
@@ -73,6 +74,7 @@ class RolesController < ApplicationController
         format.html { redirect_to( role_path(@school, @role) ) }
         format.xml  { head :ok }
       else
+        flash[:notice] = t('flash.role.save_failed')
         format.html { render :action => "edit" }
         format.xml  { render :xml => @role.errors, :status => :unprocessable_entity }
       end

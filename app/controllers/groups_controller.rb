@@ -60,6 +60,7 @@ class GroupsController < ApplicationController
         format.html { redirect_to( group_path(@school, @group) ) }
         format.xml  { render :xml => @group, :status => :created, :location => @group }
       else
+        flash[:notice] = t('flash.create_failed', :model => t('activeldap.models.group').downcase )
         format.html { render :action => "new" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
       end
@@ -77,6 +78,7 @@ class GroupsController < ApplicationController
         format.html { redirect_to( group_path(@school, @group) ) }
         format.xml  { head :ok }
       else
+        flash[:notice] = t('flash.save_failed', :model => t('activeldap.models.group') )
         format.html { render :action => "edit" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
       end
