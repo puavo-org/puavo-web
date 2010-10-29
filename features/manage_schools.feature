@@ -83,12 +83,12 @@ Feature: Manage schools
     And I fill in "Group name" with "greenwich"
     And I press "Create"
     Then I should not see "School was successfully created"
-    Then I should see "Name has already been taken"
+    Then I should see "Group name has already been taken"
     When I fill in "School name" with "Greenwich Steiner School"
     And I fill in "Group name" with "class4"
     And I press "Create"
     Then I should not see "School was successfully created"
-    Then I should see "Name has already been taken"
+    Then I should see "Group name has already been taken"
 
   Scenario: Listing schools
     Given I am on the schools list page
