@@ -40,7 +40,9 @@ class User < LdapBase
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
   attr_accessor :password, :new_password, :school_admin, :uid_has_changed, :role_ids, :role_name, :mass_import
 
-  validates_confirmation_of :new_password
+  validates_confirmation_of( :new_password,
+                             :message => I18n.t("activeldap.errors.messages.confirmation",
+                                                :attribute => I18n.t("activeldap.attributes.user.new_password") ) )
 
   OVERWRITE_CHARACTERS = {
     "Ä" => "a",
@@ -63,7 +65,8 @@ class User < LdapBase
     # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
     # If role_ids is not nil: user's roles value will change when save object. Then role_ids must not be empty!
     elsif (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && roles.empty? )
-      errors.add_on_blank "Roles"
+      errors.add_on_blank :roles, I18n.t("activeldap.errors.messages.blank",
+                                         :attribute => I18n.t("activeldap.attributes.user.roles") )
     else
       # Role must be found by id!
       unless role_ids.nil?
@@ -86,7 +89,16 @@ class User < LdapBase
         end
       end
       unless self.class.puavoEduPersonAffiliation_list.include?(puavoEduPersonAffiliation.to_s)
-        errors.add "User type"
+        errors.add( :puavoEduPersonAffiliation,
+                    I18n.t("activeldap.errors.messages.invalid",
+                           :attribute => I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation") ) )
+      end
+    end
+
+    # uid validation
+    if user = User.find(:first, :attribute => "uid", :value => self.uid)
+      if user.puavoId != self.puavoId
+        errors.add :uid, I18n.t("activeldap.errors.messages.uid_is_already_in_use")
       end
     end
   end

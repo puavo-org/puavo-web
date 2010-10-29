@@ -59,6 +59,49 @@ Feature: Manage users
     When I follow "Show"
     Then I should be on the user page
 
+  Scenario: Create duplicate user to organisation
+    Given the following users:
+      | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben | secret   | Class 4   | Student                   |
+    And I am on the new user page
+    When I fill in the following:
+    | Surname                   | Mabey                 |
+    | Given name                | Ben                   |
+    | Username                  | ben                   |
+    | New password              | secretpw              |
+    | New password confirmation | secretpw              |
+    And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And I check "Class 4" from roles
+    And I press "Create"
+    Then I should see "Username is allready in use"
+    Then I should see "Failed to create user!"
+
+  Scenario: Create user with empty values
+    Given the following users:
+      | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben | secret   | Class 4   | Student                   |
+    And I am on the new user page
+    And I press "Create"
+    Then I should see "Failed to create user!"
+    And I should see "Surname can't be blank"
+    And I should see "Username can't be blank"
+    And I should see "User type is invalid"
+    And I should see "Roles can't be blank"
+
+  Scenario: Create user with incorrect password confirmation
+    And I am on the new user page
+    When I fill in the following:
+    | Surname                   | Mabey             |
+    | Given name                | Ben               |
+    | Username                  | ben               |
+    | New password              | secretpw          |
+    | New password confirmation | test confirmation |
+    And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And I check "Class 4" from roles
+    And I press "Create"
+    Then I should see "Failed to create user!"
+    And I should see "New password doesn't match confirmation"
+
   Scenario: Edit user
     Given the following users:
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |

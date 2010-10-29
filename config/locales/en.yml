@@ -154,6 +154,12 @@ en:
       title: Change password
       password: Old password
   activeldap:
+    errors:
+      messages:
+        uid_is_already_in_use: Username is allready in use
+        blank: "{{attribute}} can't be blank"
+        invalid: "{{attribute}} is invalid"
+        confirmation: "{{attribute}} doesn't match confirmation"
     models:
       group: Group
       role: Role
@@ -194,6 +200,7 @@ en:
         puavoEduPersonAffiliation: "User type"
         role_ids: Role
         role_name: Role
+        roles: Roles
         password: Password
         new_password: New password
         new_password_confirmation: New password confirmation

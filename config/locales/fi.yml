@@ -153,6 +153,12 @@ fi:
       title: Vaihda salasana
       password: Vanha salasana
   activeldap:
+    errors:
+      messages:
+        uid_is_already_in_use: Käyttäjätunnus on jo käytössä
+        blank: "{{attribute}} kenttä ei voi olla tyhjä"
+        invalid: "{{attribute}} kentän arvo on virheellinen"
+        confirmation: "{{attribute}} ei täsmää vahvistukseen"
     models:
       group: Ryhmä
       role: Rooli
@@ -193,6 +199,7 @@ fi:
         puavoEduPersonAffiliation: "Käyttäjätyyppi"
         role_ids: Rooli
         role_name: Rooli
+        roles: Roolit
         password: Salasana
         new_password: Uusi salasana
         new_password_confirmation: Vahvista uusi salasana
