@@ -168,3 +168,11 @@ label {
     background: #94aa29;
     color: white;
 }
+
+.label_error {
+    color: red;
+}
+
+.field_error {
+    color: gray;
+}
