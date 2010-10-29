@@ -47,6 +47,23 @@ Feature: Manage schools
     | 54321                                                                          |
     | East Midlands                                                                  |
 
+  Scenario: Add new school to organisation without names
+    Given I am on the new school page
+    And I press "Create"
+    Then I should see "Failed to create school!"
+    # And I should see "School name can't be blank"
+    And I should see "Group name can't be blank"
+
+  Scenario: Edit school and set empty names
+    Given I am on the school page with "Greenwich Steiner School"
+    And I follow "Edit"
+    When I fill in "School name" with ""
+    And I fill in "Group name" with ""
+    And I press "Update"
+    Then I should see "School cannot be saved!"
+    # And I should see "School name can't be blank"
+    And I should see "Group name can't be blank"
+
   Scenario: Change school name
     Given I am on the school page with "Greenwich Steiner School"
     And I follow "Edit"

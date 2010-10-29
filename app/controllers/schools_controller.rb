@@ -48,6 +48,7 @@ class SchoolsController < ApplicationController
         format.html { redirect_to( school_path(@school) ) }
         format.xml  { render :xml => @school, :status => :created, :location => @school }
       else
+        flash[:notice] = t('flash.create_failed', :model => t('activeldap.models.school').downcase )
         format.html { render :action => "new" }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
       end
@@ -65,6 +66,7 @@ class SchoolsController < ApplicationController
         format.html { redirect_to(@school) }
         format.xml  { head :ok }
       else
+        flash[:notice] = t('flash.save_failed', :model => t('activeldap.models.school') )
         format.html { render :action => "edit" }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
       end

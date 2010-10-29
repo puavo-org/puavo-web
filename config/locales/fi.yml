@@ -167,6 +167,7 @@ fi:
       group: Ryhmä
       role: Rooli
       user: Käyttäjä
+      school: Koulu
     attributes:
       role:
         displayName: "Roolin nimi"

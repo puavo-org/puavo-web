@@ -168,6 +168,7 @@ en:
       group: Group
       role: Role
       user: User
+      school: School
     attributes:
       role:
         displayName: "Role name"
