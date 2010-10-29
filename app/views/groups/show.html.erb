@@ -58,6 +58,7 @@
   </span>
 </p>
 
-
-<%= link_to t('link.edit'), edit_group_path(@school, @group) %> |
-<%= link_to t('link.back'), groups_path %>
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_group_path(@school, @group) %></div>
+<div><%= link_to t('link.destroy'), group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete %></div>
+<% end %>

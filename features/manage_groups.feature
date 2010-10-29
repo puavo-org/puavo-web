@@ -121,6 +121,14 @@ Feature: Manage groups
     And I should see "Class 6B"
     And I should see "Class 1"
 
+  Scenario: Delete group
+    Given the following groups:
+    | displayName | cn      |
+    | Class 4A    | class4a |
+    And I am on the group page with "Class 4A"
+    When I follow "Destroy"
+    Then I should see "Group was successfully destroyed."
+
   Scenario: Check group special ldap attributes
     Given the following groups:
     | displayName | cn      |

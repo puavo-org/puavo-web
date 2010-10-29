@@ -89,11 +89,16 @@ class GroupsController < ApplicationController
   # DELETE /:school_id/groups/1.xml
   def destroy
     @group = Group.find(params[:id])
-    @group.destroy
 
     respond_to do |format|
-      format.html { redirect_to(groups_url) }
-      format.xml  { head :ok }
+      if @group.destroy
+        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.group'))
+        format.html { redirect_to(groups_url) }
+        format.xml  { head :ok }
+      else
+        format.html { redirect_to(groups_url) }
+        format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+      end
     end
   end
 
