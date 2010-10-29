@@ -186,7 +186,10 @@ class Users::ImportController < ApplicationController
   # GET /:school_id/users/import/show
   def show
     @users = session[:users_import_instance_list][:valid]
-    
+
+    # Reload roles association
+    @users.each do |u| u.roles.reload end
+
     respond_to do |format|
       format.html
       format.pdf do

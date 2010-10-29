@@ -199,6 +199,17 @@ Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |me
   memberUid_include?(model, object_name, method, uid).should == false
 end
 
+When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
+  click_link(link_name)
+  tmp_pdf = Tempfile.new('tmp_pdf')
+  tmp_pdf << response.body
+  tmp_pdf.close
+  tmp_txt = Tempfile.new('tmp_txt')
+  tmp_txt.close
+  `pdftotext -q #{tmp_pdf.path} #{tmp_txt.path}`
+  response.body = File.read tmp_txt.path
+end
+
 def memberUid_include?(model, object_name, method, uid)
   set_ldap_admin_connection
   # manipulate string to Class name, e.g. "school" -> "School", "samba group" -> "SambaGroup"

@@ -43,6 +43,12 @@ Feature: User mass import
     And the member should include "joseph.wilk" on the "Class 4" group
     And the memberUid should include "ben.mabey" on the "Domain Users" samba group
     And the memberUid should include "joseph.wilk" on the "Domain Users" samba group
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Ben Mabey"
+    And I should see "Username: ben.mabey"
+    And I should see "Name: Joseph Wilk"
+    And I should see "Username: joseph.wilk"
+    And I should see "Password"
 
 
   Scenario: User mass import when role is not defined
@@ -65,6 +71,10 @@ Feature: User mass import
     When I press "Create users"
     Then I should see "Users (1) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Ben Mabey"
+    And I should see "Username: ben.mabey"
+    And I should see "Password"
 
   Scenario: User mass import when user type is not defined
     Given I send to the following user mass import data
