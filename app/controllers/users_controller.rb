@@ -71,7 +71,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       begin
         unless @user.save
-          raise t('flash.user.save_failed')
+          raise
         end
         flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
@@ -98,7 +98,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       begin
         unless @user.update_attributes(params[:user])
-          raise t('flash.user.save_failed')
+          raise
         end
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
@@ -114,7 +114,7 @@ class UsersController < ApplicationController
       rescue Exception => e
         logger.info "Update user, Exception: " + e.to_s
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
-        error_message_and_render(format, 'edit')
+        error_message_and_render(format, 'edit', t('flash.user.save_failed'))
       end
     end
   end
