@@ -146,6 +146,18 @@ class DeviceBase < LdapBase
     end
   end
 
+  def puavoTag
+    Array(super).join(" ")
+  end
+
+  def puavoTag=(tag_string)
+    if tag_string.class == Array
+      super(tag_string)
+    elsif tag_string.class == String
+      super( tag_string.split(" ") )
+    end
+  end
+
   private
 
   def http_puavo_ca

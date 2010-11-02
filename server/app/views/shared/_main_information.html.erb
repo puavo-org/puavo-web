@@ -18,6 +18,10 @@
       </p>
       <% end %>
       <p>
+	<%= label device.class.to_s.downcase, "puavoTag" %><br />
+	<%=h device.puavoTag %>
+      </p>
+      <p>
 	<%= label device.class.to_s.downcase, "puavoDeviceStatus" %><br />
 	<%=h device.puavoDeviceStatus %>
       </p>

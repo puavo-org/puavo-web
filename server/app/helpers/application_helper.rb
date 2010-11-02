@@ -12,4 +12,15 @@ module ApplicationHelper
     end
     super(*args)
   end
+
+  def text_field(*args)
+    begin
+      if args[2][:object][args[1]].class == Array
+        args[2][:object][args[1]] = args[2][:object][args[1]].join(" ")
+      end
+    rescue
+      nil
+    end
+    super(*args)
+  end
 end

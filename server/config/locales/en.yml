@@ -106,6 +106,7 @@ en:
         puavoRole: Role
         puavoDeviceStatus: Status
         description: Description
+        puavoTag: Tags
       device:
         puavoDeviceType: Device type
         puavoHostname: Hostname
@@ -123,6 +124,7 @@ en:
         puavoDeviceStatus: Status
         puavoDeviceBootMode: Boot mode
         description: Description
+        puavoTag: Tags
     values:
       device:
         roles:
