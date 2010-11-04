@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 class User < LdapBase
+  # When using user mass import we have to store uids which are already been taken. See validate method.
+  @@taken_uids_by_puavoId = Hash.new
+
   include Puavo::Authentication
 
   # Raised by change_ldap_password method when password cannot be changed.
@@ -35,10 +38,14 @@ class User < LdapBase
 
   before_destroy :delete_all_associations
 
-  after_create :change_ldap_password
+  after_create :change_ldap_password, :remove_uid_from_taken_uids
+
+  after_validation :remove_uid_from_taken_uids_if_validation_fails
 
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
   attr_accessor :password, :new_password, :school_admin, :uid_has_changed, :role_ids, :role_name, :mass_import
+
+  cattr_accessor :taken_uids_by_puavoId
 
   validates_confirmation_of( :new_password,
                              :message => I18n.t("activeldap.errors.messages.confirmation",
@@ -102,6 +109,16 @@ class User < LdapBase
                                 :attribute => I18n.t("activeldap.attributes.user.uid") )
       end
     end
+
+    # mass import uid validation
+    if self.mass_import
+      if @@taken_uids_by_puavoId.keys.include?(self.uid) && @@taken_uids_by_puavoId[self.uid] != self.puavoId
+        errors.add :uid, I18n.t("activeldap.errors.messages.taken",
+                                :attribute => I18n.t("activeldap.attributes.user.uid") )
+      else
+        @@taken_uids_by_puavoId[self.uid] = self.puavoId
+      end
+    end
   end
 
   def change_ldap_password
@@ -150,6 +167,7 @@ class User < LdapBase
       end
       new_user = User.new(user)
       new_user.puavoSchool = school.dn
+      new_user.mass_import = true
       users.push new_user
     end
 
@@ -405,6 +423,18 @@ class User < LdapBase
   def set_samba_settings 
     self.sambaSID = SambaDomain.next_samba_sid
     self.sambaAcctFlags = "[U]"
+  end
+
+  def remove_uid_from_taken_uids
+    @@taken_uids_by_puavoId.delete(self.uid)
+  end
+
+  def remove_uid_from_taken_uids_if_validation_fails
+    unless self.errors.empty?
+      if @@taken_uids_by_puavoId.keys.include?(self.uid) && @@taken_uids_by_puavoId[self.uid] == self.puavoId
+        @@taken_uids_by_puavoId.delete(self.uid)
+      end
+    end
   end
 end
 

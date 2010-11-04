@@ -8,6 +8,7 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/new
   def new
+    session[:taken_uids_by_puavoId] = Hash.new
     respond_to do |format|
       format.html
     end
@@ -15,6 +16,7 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/refine
   def refine
+    User.taken_uids_by_puavoId = session[:taken_uids_by_puavoId]
     @invalid_users = []
     @columns =  session[:users_import_columns] if session.has_key?(:users_import_columns)
 
@@ -31,10 +33,12 @@ class Users::ImportController < ApplicationController
   # GET /:school_id/users/import/validate
   # POST /:school_id/users/import/validate
   def validate
+    User.taken_uids_by_puavoId = session[:taken_uids_by_puavoId]
     @columns = []
     
     if params.has_key?(:users_import_raw_list)
       session[:users_import_raw_list] = params[:users_import_raw_list].values.transpose
+      User.taken_uids_by_puavoId = Hash.new
     end
 
     if params.has_key?(:users_csv_list)
@@ -85,6 +89,8 @@ class Users::ImportController < ApplicationController
         User.validate_users( session[:users_import_instance_list][:valid] +
                                  session[:users_import_instance_list][:invalid] )
     end
+
+    session[:taken_uids_by_puavoId] = User.taken_uids_by_puavoId
     
     respond_to do |format|
       format.html do
@@ -159,7 +165,6 @@ class Users::ImportController < ApplicationController
       role_id = Array(user.role_ids).first.to_s
       users_of_roles[role_id] = Array.new unless users_of_roles.has_key?(role_id)
       users_of_roles[role_id].push user
-      user.mass_import = true      
       user.save
     end
 

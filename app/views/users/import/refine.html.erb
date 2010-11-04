@@ -21,7 +21,7 @@
     </td>
     <% end %>
     <td>
-      <%=h user.valid? ? t('.status_ok') : user.errors.full_messages.join(", ") %>
+      <%=h user.valid? ? t('.status_ok') : user.errors.map { |a, e| e }.join(", ") %>
     </td>
   </tr>
   <% end %>
