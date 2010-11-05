@@ -1,5 +1,5 @@
-<h2>User mass import preview</h2>
-<p>Check information of the users and select "Create users"</p>
+<h2><%= t('.title') %></h2>
+<p><%= t('.info') %></p>
 
  <table cellspacing="0" id="validate_users_list">
   <% @columns.each do |column| %>
@@ -8,7 +8,7 @@
   </th>
   <% end %>
   <th>
-    Valid status:
+    <%= t('.title_of_status') %>
   </th>
   <% @valid_users.each do |user| %>
   <tr>
@@ -18,11 +18,11 @@
     </td>
     <% end %>
     <td>
-      <%=h user.valid? ? "OK" : user.errors.full_messages.join(", ") %>
+      <%=h user.valid? ? t('.status_ok') : user.errors.full_messages.join(", ") %>
     </td>
   </tr>
   <% end %>
 </table>
 <% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
-<%= f.submit 'Create users' %>
+<%= f.submit t('link.user_mass_import.create') %>
 <% end %>

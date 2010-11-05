@@ -87,7 +87,6 @@ Feature: User mass import
     And I select "Role" from "users_import_columns[2]"
     And I press "Validates users"
     Then I should see "Following field value must be select when create new users:"
-    And I should not see "Role"
     And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I press "Continue"
     Then I should see the following users:

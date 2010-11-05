@@ -36,6 +36,7 @@ fi:
       download_pdf: lataa pdf-tiedosto.
       revalidate: Validoi uudelleen
       validate: Tarkasta syötetyt tiedot
+      create: Lisää käyttäjät
     continue: Jatka
     login: Kirjaudu
     change_password: Vaihda salasana
@@ -122,6 +123,11 @@ fi:
         title_of_status: Tietojen tarkastuksen tila
         status_ok: OK
         column_info: Valitse jokaiselle sarakkeelle sopiva kenttä
+      preview:
+        title: Käyttäjien massalisäys, esikatselu
+        info: Tarkista käyttäjien tiedot ja valitse sen jälkeen "Lisää käyttäjät"
+        title_of_status: Tietojen tarkastuksen tila
+        status_ok: OK
   groups:
     index:
       actions: Toiminnot

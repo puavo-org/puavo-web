@@ -36,6 +36,7 @@ en:
       download_pdf: download pdf-file.
       revalidate: Revalidate
       validate: Validates users
+      create: Create users
     continue: Continue
     login: Login
     change_password: Change password
@@ -123,6 +124,11 @@ en:
         title_of_status: Valid status
         status_ok: OK
         column_info: Select field for each column
+      preview:
+        title: User mass import preview
+        info: Check information of the users and select "Create users"
+        title_of_status: Valid status
+        status_ok: OK
   groups:
     index:
       actions: Actions
