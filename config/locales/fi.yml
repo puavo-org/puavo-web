@@ -65,6 +65,7 @@ fi:
       import:
         dupplicate_column_name_error: Kahdelle sarakkeelle on valittu sama kenttätieto
         require_error: Käyttäjälle on syötettävä etu- ja sukunimi
+        role_require_error: Rooli pitää olla valittuna
     password_set_failed: Salasanan vaihto epäonnistui. Yritä uudelleen.
     session:
       login_successful: Kirjautuminen onnistui

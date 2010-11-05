@@ -65,6 +65,7 @@ en:
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
+        role_require_error: You must be select Role
     password_set_failed: Failed to change password! Try again!
     session:
       login_successful: Login successful!

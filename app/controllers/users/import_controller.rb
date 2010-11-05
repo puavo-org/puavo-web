@@ -105,7 +105,7 @@ class Users::ImportController < ApplicationController
         if @columns.include?('role_ids') && 
             !session[:users_import_instance_list][:invalid].empty? &&
             session[:users_import_instance_list][:invalid].first.errors.on("role_ids")
-          flash[:notice] = "You must be select Role"
+          flash[:notice] = t('flash.user.import.role_require_error')
           redirect_to role_users_import_path(@school)
         elsif ( !@columns.include?('role_name') && !@columns.include?('role_ids') ) ||
             ( !@columns.include?('puavoEduPersonAffiliation') )
