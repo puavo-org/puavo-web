@@ -68,8 +68,10 @@ class User < LdapBase
     #
     # Set role_ids value by role_name. If get false role_name is invalid.
     if set_role_ids_by_role_name(role_name) == false
-      errors.add "Role name"
-    # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
+      errors.add( :role_name,
+                  I18n.t("activeldap.errors.messages.invalid",
+                         :attribute => I18n.t("activeldap.attributes.user.role_name") ) )
+   # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
     # If role_ids is not nil: user's roles value will change when save object. Then role_ids must not be empty!
     elsif (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && roles.empty? )
       errors.add_on_blank :roles, I18n.t("activeldap.errors.messages.blank",
