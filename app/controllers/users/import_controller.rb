@@ -102,7 +102,12 @@ class Users::ImportController < ApplicationController
     
     respond_to do |format|
       format.html do
-        if ( !@columns.include?('role_name') && !@columns.include?('role_ids') ) ||
+        if @columns.include?('role_ids') && 
+            !session[:users_import_instance_list][:invalid].empty? &&
+            session[:users_import_instance_list][:invalid].first.errors.on("role_ids")
+          flash[:notice] = "You must be select Role"
+          redirect_to role_users_import_path(@school)
+        elsif ( !@columns.include?('role_name') && !@columns.include?('role_ids') ) ||
             ( !@columns.include?('puavoEduPersonAffiliation') )
           redirect_to role_users_import_path(@school) 
         elsif session[:users_import_instance_list][:invalid].empty?
@@ -129,7 +134,7 @@ class Users::ImportController < ApplicationController
       if params[:user].has_key?(:puavoEduPersonAffiliation)
         @columns.push "puavoEduPersonAffiliation"
       end
-      if params[:user].has_key?(:role_ids)
+      if params[:user].has_key?(:role_ids) && !@columns.include?("role_ids")
         @columns.push "role_ids"
       end
       session[:users_import_instance_list].each_value do |users|

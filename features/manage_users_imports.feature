@@ -84,6 +84,44 @@ Feature: User mass import
     And I should see "Name: Ben Karl Mabey"
     And I should see "Username: benk.mabey"
 
+  Scenario: User mass import when role is not defined and select empty role value
+    Given I send to the following user mass import data
+    """
+    Ben	Mabey	Student
+    Ben	Mabey	Student
+    """
+    Then I should see "Select field for each column"
+    When I select "Given name" from "users_import_columns[0]"
+    And I select "Surname" from "users_import_columns[1]"
+    And I select "User type" from "users_import_columns[2]"
+    And I press "Validates users"
+    Then I should see "Following field value must be select when create new users:"
+    And I should not see "User type"
+    When I press "Continue"
+    Then I should see "You must be select Role"
+    When I press "Continue"
+    Then I should see "You must be select Role"
+    When I select "Class 4" from "user[role_ids]"
+    And I press "Continue"
+    And I press "Revalidate"
+    Then I should see "Username has already been taken"
+    And I should not see "Role Role"
+    When I fill in "users_import_invalid_list_0_0" with "Ben Karl"
+    And I fill in "users_import_invalid_list_4_0" with "benk.mabey"
+    And I press "Revalidate"
+    Then I should see the following users:
+      | Ben      | Mabey | Class 4 | Student | ben.mabey  |
+      | Ben Karl | Mabey | Class 4 | Student | benk.mabey |
+    When I press "Create users"
+    Then I should see "Users (2) was successfully created."
+    And I should see "You can print users list to paper, download pdf-file."
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Ben Mabey"
+    And I should see "Username: ben.mabey"
+    And I should see "Password"
+    And I should see "Name: Ben Karl Mabey"
+    And I should see "Username: benk.mabey"
+
   Scenario: User mass import when user type is not defined
     Given I send to the following user mass import data
     """

@@ -74,14 +74,15 @@ class User < LdapBase
    # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
     # If role_ids is not nil: user's roles value will change when save object. Then role_ids must not be empty!
     elsif (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && roles.empty? )
-      errors.add_on_blank :roles, I18n.t("activeldap.errors.messages.blank",
+      errors.add_on_blank :role_ids, I18n.t("activeldap.errors.messages.blank",
                                          :attribute => I18n.t("activeldap.attributes.user.roles") )
     else
       # Role must be found by id!
       unless role_ids.nil?
         role_ids.each do |id|
           if Role.find(:first, id).nil?
-            errors.add "Role id"
+            errors.add_on_blank :role_ids, I18n.t("activeldap.errors.messages.blank",
+                                                  :attribute => I18n.t("activeldap.attributes.user.role_ids") )
           end
         end
       end
