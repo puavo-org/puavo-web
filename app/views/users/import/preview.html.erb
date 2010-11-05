@@ -7,9 +7,6 @@
     <%= User.human_attribute_name(column) %>
   </th>
   <% end %>
-  <th>
-    <%= t('.title_of_status') %>
-  </th>
   <% @valid_users.each do |user| %>
   <tr>
     <% @columns.each do |column| %>
@@ -17,9 +14,6 @@
       <%=h user.human_readable_format(column) %>
     </td>
     <% end %>
-    <td>
-      <%=h user.valid? ? t('.status_ok') : user.errors.full_messages.join(", ") %>
-    </td>
   </tr>
   <% end %>
 </table>

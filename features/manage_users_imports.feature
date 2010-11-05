@@ -24,8 +24,8 @@ Feature: User mass import
     And I select "User type" from "users_import_columns[3]"
     And I press "Validates users"
     Then I should see the following users:
-      | Ben    | Mabey | ben.mabey   | Class 4 | Student | OK |
-      | Joseph | Wilk  | joseph.wilk | Class 4 | Student | OK |
+      | Ben    | Mabey | ben.mabey   | Class 4 | Student |
+      | Joseph | Wilk  | joseph.wilk | Class 4 | Student |
     When I press "Create users"
     Then I should see "Users (2) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
@@ -55,6 +55,7 @@ Feature: User mass import
     Given I send to the following user mass import data
     """
     Ben	Mabey	Student
+    Ben	Mabey	Student
     """
     Then I should see "Select field for each column"
     When I select "Given name" from "users_import_columns[0]"
@@ -66,15 +67,22 @@ Feature: User mass import
     And I should not see "User type"
     When I select "Class 4" from "user[role_ids]"
     And I press "Continue"
+    Then I should see "Username has already been taken"
+    When I fill in "users_import_invalid_list_0_0" with "Ben Karl"
+    And I fill in "users_import_invalid_list_4_0" with "benk.mabey"
+    And I press "Revalidate"
     Then I should see the following users:
-      | Ben | Mabey | ben.mabey | Class 4 | Student | OK |
+      | Ben      | Mabey | Class 4 | Student | ben.mabey  |
+      | Ben Karl | Mabey | Class 4 | Student | benk.mabey |
     When I press "Create users"
-    Then I should see "Users (1) was successfully created."
+    Then I should see "Users (2) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
     When I follow the PDF link "download pdf-file."
     Then I should see "Name: Ben Mabey"
     And I should see "Username: ben.mabey"
     And I should see "Password"
+    And I should see "Name: Ben Karl Mabey"
+    And I should see "Username: benk.mabey"
 
   Scenario: User mass import when user type is not defined
     Given I send to the following user mass import data
@@ -90,7 +98,7 @@ Feature: User mass import
     And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I press "Continue"
     Then I should see the following users:
-      | Ben | Mabey | ben.mabey | Class 4 | Student | OK |
+      | Ben | Mabey | ben.mabey | Class 4 | Student |
     When I press "Create users"
     Then I should see "Users (1) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
@@ -135,10 +143,10 @@ Feature: User mass import
     And I select "Role" from "users_import_columns[2]"
     And I select "User type" from "users_import_columns[3]"
     And I press "Validates users"
-    Then I should not see "Role name is invalid"
+    Then I should not see "Role is invalid"
     And I should not see "Roles can't be blank"
     And I should see the following users:
-      | Ben | Mabey | ben.mabey | cLaSs 4 | Student | OK |
+      | Ben | Mabey | ben.mabey | cLaSs 4 | Student |
 
  Scenario: User mass import with invalid information
     Given I send to the following user mass import data
@@ -152,15 +160,15 @@ Feature: User mass import
     And I select "User type" from "users_import_columns[3]"
     And I press "Validates users"
     Then I should see "The following new users of the data are not valid. Please repair the information and select revalidate button."
-    And I should see "Role name is invalid"
+    And I should see "Role is invalid"
     And I should not see "Roles can't be blank"
     And I should see "User type is invalid"
-    And id the "users_import_invalid_list_2_" field should not contain "#<ActiveLdap"
-    When I fill in "users_import_invalid_list_2_" with "Class 4"
-    And I fill in "users_import_invalid_list_3_" with "Student"
+    And id the "users_import_invalid_list_2_0" field should not contain "#<ActiveLdap"
+    When I fill in "users_import_invalid_list_2_0" with "Class 4"
+    And I fill in "users_import_invalid_list_3_0" with "Student"
     And I press "Revalidate"
     And I should see the following users:
-      | Ben | Mabey | ben.mabey | Class 4 | OK |
+      | Ben | Mabey | ben.mabey | Class 4 |
     And I should not see "Roles can't be blank"
     And I should not see "User type is invalid"
  
@@ -184,7 +192,7 @@ Feature: User mass import
     And I select "Role" from "users_import_columns[2]"
     And I press "Validates users"
     Then I should see the following users:
-      | Ben | Wilk | ben.wilk | Class 4 | Student | OK |
+      | Ben | Wilk | ben.wilk | Class 4 | Student |
 
   Scenario: Column selection does not lost with validation error case on user mass import
     Given I send to the following user mass import data
@@ -214,7 +222,6 @@ Feature: User mass import
     And I select "User type" from "users_import_columns[3]"
     And I press "Validates users"
     Then I should see "Username has already been taken"
-    And I should not see "Username Username"
 
   Scenario: User mass import with duplicate username
     Given I send to the following user mass import data
@@ -231,12 +238,12 @@ Feature: User mass import
     And I select "User type" from "users_import_columns[4]"
     And I press "Validates users"
     Then I should see "Username has already been taken"
-    When I fill in "users_import_invalid_list_2_" with "ken.jones"
+    When I fill in "users_import_invalid_list_2_0" with "ken.jones"
     And I press "Revalidate"
     Then I should see "Username has already been taken"
-    When I fill in "users_import_invalid_list_2_" with "benj.mabey"
+    When I fill in "users_import_invalid_list_2_0" with "benj.mabey"
     And I press "Revalidate"
     Then I should see the following users:
-     | Ken | Jones | ken.jones  | Class 4 | OK |
-     | Ben | Mabey | ben.mabey  | Class 4 | OK |
-     | Ben | Mabey | benj.mabey | Class 4 | OK |
+     | Ken | Jones | ken.jones  | Class 4 |
+     | Ben | Mabey | ben.mabey  | Class 4 |
+     | Ben | Mabey | benj.mabey | Class 4 |

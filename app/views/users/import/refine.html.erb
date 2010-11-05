@@ -9,20 +9,14 @@
     <%=h User.human_attribute_name(column) %>
   </th>
   <% end %>
-  <th>
-    <%= t('.title_of_status') %>:
-  </th>
   <% @invalid_users.each_index do |user_index| %>
   <% user = @invalid_users[user_index] %>
   <tr>
     <% @columns.each_index do |column_index| %>
     <td>
-      <%= text_field_tag "users_import_invalid_list[#{column_index}][]", user.human_readable_format(@columns[column_index]) %>
+      <%= invalid_user_field(user, user_index, @columns[column_index], column_index) %>
     </td>
     <% end %>
-    <td>
-      <%=h user.valid? ? t('.status_ok') : user.errors.map { |a, e| e }.join(", ") %>
-    </td>
   </tr>
   <% end %>
 </table>

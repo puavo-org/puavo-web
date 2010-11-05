@@ -120,14 +120,10 @@ fi:
       refine:
         title: Käyttäjien massalisäys
         info: Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta "Tarkista uudelleen" -painiketta.
-        title_of_status: Tietojen tarkastuksen tila
-        status_ok: OK
         column_info: Valitse jokaiselle sarakkeelle sopiva kenttä
       preview:
         title: Käyttäjien massalisäys, esikatselu
         info: Tarkista käyttäjien tiedot ja valitse sen jälkeen "Lisää käyttäjät"
-        title_of_status: Tietojen tarkastuksen tila
-        status_ok: OK
   groups:
     index:
       actions: Toiminnot
