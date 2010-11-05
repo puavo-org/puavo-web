@@ -25,6 +25,14 @@ class Users::ImportController < ApplicationController
     elsif session.has_key?(:users_import_raw_list)
       @raw_users = session[:users_import_raw_list]
     end
+
+    # Add attribute to list of displayed fields if attribute value is invalid
+    @invalid_users.each do |user|
+      user.errors.each do |column, message|
+        @columns.push column unless @columns.include?(column)
+      end
+    end
+
     respond_to do |format|
       format.html
     end
