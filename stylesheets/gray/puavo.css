@@ -176,3 +176,7 @@ label {
 .field_error {
     color: gray;
 }
+
+.field_value_error {
+    color: blue;
+}
