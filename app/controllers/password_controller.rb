@@ -32,10 +32,10 @@ class PasswordController < ApplicationController
       end
     end
   rescue User::PasswordChangeFailed => e
-    logger.debug "Execption: " + e.to_s
+    logger.info "Execption User::PasswordChangeFailed: " + e.to_s
     error_message_and_redirect(e)
   rescue Exception => e
-    logger.debug "Execption: " + e.to_s
+    logger.info "Execption: " + e.to_s
     error_message_and_redirect(e)
   end
 
