@@ -4,13 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <title>
-      <% if session.has_key?(:organisation) %>
-      <%= session[:organisation].name %>
-      <% else %>
-      Puavo Users
-      <% end %>
-    </title>
+    <title>Puavo</title>
     <%= stylesheet_link_tag "#{theme}/screen.css", :media => 'screen, projection' %>
     <%= stylesheet_link_tag "#{theme}/print.css", :media => 'print' %>
     <%= stylesheet_link_tag "#{theme}/puavo.css" %>
@@ -21,7 +15,7 @@
     <hr class="space" />
     <div class="login_container">
     <div class="login_content">
-      <h1>Puavo Users</h1>
+      <h1>Puavo</h1>
       <% if flash.has_key?(:notice) %>
       <% if flash.has_key?(:notice_css_class) %>
       <p class='<%= flash[:notice_css_class] %>'>
