@@ -169,15 +169,27 @@ class Users::ImportController < ApplicationController
     @users = session[:users_import_instance_list][:valid]
 
     users_of_roles = Hash.new
+    failed_users = Array.new
 
     @users.each do |user|
       if user.new_password.nil? or user.new_password.empty?
         user.generate_password
       end
-      role_id = Array(user.role_ids).first.to_s
-      users_of_roles[role_id] = Array.new unless users_of_roles.has_key?(role_id)
-      users_of_roles[role_id].push user
-      user.save
+      begin
+        user.save!
+      rescue Exception => e
+        logger.info "Import Controller, create user, Exception: #{e}"
+        failed_users.push user
+      else
+        role_id = Array(user.role_ids).first.to_s
+        users_of_roles[role_id] = Array.new unless users_of_roles.has_key?(role_id)
+        users_of_roles[role_id].push user
+      end
+    end
+
+    failed_users.each do |failed_user|
+      @users.delete(failed_user)
+      session[:users_import_instance_list][:invalid].push failed_user
     end
 
     users_of_school = User.find(:all, :attribute => 'puavoSchool', :value => @school.dn )
@@ -203,6 +215,7 @@ class Users::ImportController < ApplicationController
   # GET /:school_id/users/import/show
   def show
     @users = session[:users_import_instance_list][:valid]
+    @invalid_users = session[:users_import_instance_list][:invalid]
 
     # Reload roles association
     @users.each do |u| u.roles.reload end

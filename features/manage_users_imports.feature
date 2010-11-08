@@ -50,6 +50,35 @@ Feature: User mass import
     And I should see "Username: joseph.wilk"
     And I should see "Password"
 
+  Scenario: User mass import when create failed
+    When I send to the following user mass import data
+    """
+    Ben	Mabey	Class 4	Student
+    Joseph	Wilk	Class 4	Student
+    """
+    Then I should see "Select field for each column"
+    When I select "Given name" from "users_import_columns[0]"
+    And I select "Surname" from "users_import_columns[1]"
+    And I select "Role" from "users_import_columns[2]"
+    And I select "User type" from "users_import_columns[3]"
+    And I press "Validates users"
+    Then I should see the following users:
+      | Ben    | Mabey | ben.mabey   | Class 4 | Student |
+      | Joseph | Wilk  | joseph.wilk | Class 4 | Student |
+    When I cut nextPuavoId value by one
+    And the following users:
+     | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
+     | Jim       | Jones   | jim | secret   | Class 4   | Student                   |
+    And I press "Create users"
+    Then I should see "All users was not successfully created!"
+    And I should see "Successful: 1"
+    And I should see "Failed: 1"
+    And I should see "You can print users list to paper, download pdf-file."
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Ben Mabey"
+    And I should see "Username: ben.mabey"
+    And I should see "Password"
+
 
   Scenario: User mass import when role is not defined
     Given I send to the following user mass import data

@@ -210,6 +210,12 @@ When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
   response.body = File.read tmp_txt.path
 end
 
+When /^I cut nextPuavoId value by one$/ do
+  pool = IdPool.find('IdPool')
+  pool.puavoNextId -= 1
+  pool.save
+end
+
 def memberUid_include?(model, object_name, method, uid)
   set_ldap_admin_connection
   # manipulate string to Class name, e.g. "school" -> "School", "samba group" -> "SambaGroup"

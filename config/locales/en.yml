@@ -115,6 +115,9 @@ en:
         example: "Ben   Mabey\nPavel    Taylor"
       show:
         title: "Users ({{count}}) was successfully created."
+        title_with_error: "All users was not successfully created!"
+        successful: "Successful: {{count}}"
+        failed: "Failed: {{count}}"
         pdf_info: You can print users list to paper
       role:
         title: User mass import validation

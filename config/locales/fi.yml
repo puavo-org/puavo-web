@@ -114,6 +114,9 @@ fi:
         example: "Pekka	Pingviini\nLiisa	Liinus"
       show:
         title: "({{count}}) käyttäjää lisättiin onnistuneesti."
+        title_with_error: "Kaikkien käyttäjien lisäys ei onnistunut!"
+        successful: "Onnistui: {{count}}"
+        failed: "Epäonnistui: {{count}}"
         pdf_info: Voit tulostaa käyttäjälistat paperille
       role:
         title: Käyttäjien massalisäys tiedon tarkistus
