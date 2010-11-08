@@ -141,6 +141,40 @@ Feature: User mass import
     Then I should see "Users (1) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
 
+  Scenario: User mass import when user type is not defined and select empty value
+    Given I send to the following user mass import data
+    """
+    Ben	Mabey	Class 4
+    Ben	Mabey	Class 4
+    """
+    Then I should see "Select field for each column"
+    When I select "Given name" from "users_import_columns[0]"
+    And I select "Surname" from "users_import_columns[1]"
+    And I select "Role" from "users_import_columns[2]"
+    And I press "Validates users"
+    Then I should see "Following field value must be select when create new users:"
+    And I press "Continue"
+    Then I should see "User type is invalid"
+    When I fill in "users_import_invalid_list_3_0" with "Student"
+    And I fill in "users_import_invalid_list_3_1" with "Student"
+    And I press "Revalidate"
+    Then I should see "Username has already been taken"
+    When I fill in "users_import_invalid_list_0_0" with "Ben Karl"
+    And I fill in "users_import_invalid_list_4_0" with "benk.mabey"
+    And I press "Revalidate"
+    Then I should see the following users:
+      | Ben      | Mabey | Class 4 | Student | ben.mabey  |
+      | Ben Karl | Mabey | Class 4 | Student | benk.mabey |
+    When I press "Create users"
+    Then I should see "Users (2) was successfully created."
+    And I should see "You can print users list to paper, download pdf-file."
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Ben Mabey"
+    And I should see "Username: ben.mabey"
+    And I should see "Password"
+    And I should see "Name: Ben Karl Mabey"
+    And I should see "Username: benk.mabey"
+
   Scenario: User mass import without given name or surname
     Given I send to the following user mass import data
     """

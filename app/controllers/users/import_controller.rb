@@ -46,7 +46,6 @@ class Users::ImportController < ApplicationController
     
     if params.has_key?(:users_import_raw_list)
       session[:users_import_raw_list] = params[:users_import_raw_list].values.transpose
-      User.taken_uids_by_puavoId = Hash.new
     end
 
     if params.has_key?(:users_csv_list)
@@ -99,7 +98,7 @@ class Users::ImportController < ApplicationController
     end
 
     session[:taken_uids_by_puavoId] = User.taken_uids_by_puavoId
-    
+
     respond_to do |format|
       format.html do
         if @columns.include?('role_ids') && 
@@ -131,7 +130,7 @@ class Users::ImportController < ApplicationController
     @columns = session[:users_import_columns]
 
     if params.has_key?(:user)
-      if params[:user].has_key?(:puavoEduPersonAffiliation)
+      if params[:user].has_key?(:puavoEduPersonAffiliation) && !@columns.include?("puavoEduPersonAffiliation")
         @columns.push "puavoEduPersonAffiliation"
       end
       if params[:user].has_key?(:role_ids) && !@columns.include?("role_ids")
