@@ -315,7 +315,9 @@ class User < LdapBase
   # user.save
   def set_role_ids_by_role_name(name)
     unless role_name.nil?
-      role  = Role.find(:first, :attribute => "displayName", :value => name)
+      role = Role.find( :all,
+                        :attribute => "displayName",
+                        :value => name).delete_if{ |r| r.puavoSchool != self.puavoSchool }.first
       if role.nil?
         return false
       else
