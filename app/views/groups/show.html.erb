@@ -36,7 +36,7 @@
   <b><%= t('.roles_and_members') %>:</b><br />
   <span id="roles_and_members">
     <% @roles.each do |p| %>
-    <%= p.displayName %>
+    <%= "#{p.displayName} (#{p.school.displayName})" %>
     <%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), :method => :put, :id => "remove_role_#{p.id}" %>
     <ul>
       <% p.members.each do |m| %>
@@ -51,7 +51,7 @@
   <b><%= t('.other_roles') %>:</b><br />
   <span id="other_roles">
   <% @other_roles.each do |p| %>
-  <%= p.displayName %>
+  <%= "#{p.displayName} (#{p.school.displayName})" %>
   <%= link_to t('link.add'), add_role_group_path(@school, @group, p), :method => :put, :id => "add_role_#{p.id}" %>
   <br />
   <% end %>

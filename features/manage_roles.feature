@@ -57,9 +57,9 @@ Feature: Manage roles
     And I am on the show role page with "Student"
     When I follow "Add" on the "Class 4A" group
     Then I should see "Group was added to role."
-    And I should see "Class 4A" on the "Member groups"
+    And I should see "Class 4A (Example school 1)" on the "Member groups"
     And I should not see "Class 4A" on the "Other groups"
-    And I should see "Class 6B" on the "Other groups"
+    And I should see "Class 6B (Example school 1)" on the "Other groups"
     And I should see "Pavel Taylor" on the "Members"
     And the memberUid should include "pavel" on the "Class 4A" group
 
@@ -72,15 +72,15 @@ Feature: Manage roles
     And a new role with name "Teacher" and which is joined to the "Class 6B" group
     And I am set the "Student" role for "pavel"
     And I am on the show role page with "Student"
-    Then I should see "Class 4A" on the "Member groups"
+    Then I should see "Class 4A (Example school 1)" on the "Member groups"
     And I should not see "Class 4A" on the "Other groups"
-    And I should see "Class 6B" on the "Other groups"
+    And I should see "Class 6B (Example school 1)" on the "Other groups"
     And the memberUid should include "pavel" on the "Class 4A" group
     When I follow "Remove" on the "Class 4A" group
     Then I should see "Group was removed from the role."
     And I should not see "Class 4A" on the "Member groups"
-    And I should see "Class 4A" on the "Other groups"
-    And I should see "Class 6B" on the "Other groups"
+    And I should see "Class 4A (Example school 1)" on the "Other groups"
+    And I should see "Class 6B (Example school 1)" on the "Other groups"
     And I should see "Pavel Taylor" on the "Members"
     And the memberUid should not include "pavel" on the "Class 4A" group
 
