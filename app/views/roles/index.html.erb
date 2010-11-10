@@ -13,6 +13,6 @@
 <% end %>
 </table>
 
-<br />
-
-<%= link_to t('link.new_role'), new_role_path %>
+<% content_for :right do %>
+<div><%= link_to t('link.new_role'), new_role_path %></div>
+<% end %>

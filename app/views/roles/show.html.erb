@@ -34,6 +34,7 @@
   </span>
 </p>
 
-
-<%= link_to t('link.edit'), edit_role_path(@school, @role) %> |
-<%= link_to t('link.back'), roles_path %>
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_role_path(@school, @role) %></div>
+<div><%= link_to t('link.new_role'), new_role_path %></div>
+<% end %>

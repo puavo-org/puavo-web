@@ -8,5 +8,6 @@
 }
 %>
 
-<%= link_to t('link.show'), role_path(@school, @role) %> |
-<%= link_to t('link.back'), roles_path %>
+<% content_for :right do %>
+<div><%= link_to t('link.show'), role_path(@school, @role) %></div>
+<% end %>
