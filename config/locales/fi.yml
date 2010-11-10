@@ -224,5 +224,5 @@ fi:
   puavoEduPersonAffiliation_staff: Henkilökunta
   puavoEduPersonAffiliation_student: Opiskelija
   puavoEduPersonAffiliation_visitor: Vierailija
-  puavoEduPersonAffiliation_parent: Vanhempi
+  puavoEduPersonAffiliation_parent: Huoltaja
   puavoEduPersonAffiliation_admin: Ylläpitäjä
