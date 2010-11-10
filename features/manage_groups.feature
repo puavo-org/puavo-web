@@ -23,6 +23,8 @@ Feature: Manage groups
     And I should see "Class 4A"
     And I should see "Example school 1"
     And I should see "class4a"
+    When I follow "New group"
+    Then I should be on the new group page
 
   Scenario: Add duplicate group to school
     Given the following groups:
