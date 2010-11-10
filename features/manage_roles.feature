@@ -18,6 +18,8 @@ Feature: Manage roles
     When I fill in "Role name" with "Student"
     And I press "Create"
     Then I should see "Student"
+    When I follow "New role"
+    Then I should be on the new role page
 
   Scenario: Register new role without name
     Given I am on the new role page
