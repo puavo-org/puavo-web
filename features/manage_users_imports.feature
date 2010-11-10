@@ -4,11 +4,14 @@ Feature: User mass import
   wants [behaviour]
   
   Background:
-    Given a new school and group with names "School 1", "Class 4" on the "example" organisation
+    Given a new school and group with names "School 2", "Class 5" on the "example" organisation
+    And a new role with name "Class 5" and which is joined to the "Class 5" group
+    And a new school and group with names "School 1", "Class 4" on the "example" organisation
     And a new role with name "Class 4" and which is joined to the "Class 4" group
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
       | Pavel     | Taylor | pavel | secret   | true         | Class 4   | Staff                     |
+    And "pavel" is a school admin on the "School 2" school
     And I am logged in as "pavel" with password "secret"
  
   Scenario: Typical user mass import
@@ -94,9 +97,12 @@ Feature: User mass import
     #Then I should see "Select the role you want to add users or start again and add the role to the user list"
     Then I should see "Following field value must be select when create new users:"
     And I should not see "User type"
+    And I can not select "Class 5" from the "user_role_ids"
     When I select "Class 4" from "user[role_ids]"
     And I press "Continue"
     Then I should see "Username has already been taken"
+    And "Class 4" should be selected for "users_import_invalid_list_3_0"
+    And I can not select "Class 5" from the "users_import_invalid_list_3_0"
     When I fill in "users_import_invalid_list_0_0" with "Ben Karl"
     And I fill in "users_import_invalid_list_4_0" with "benk.mabey"
     And I press "Revalidate"

@@ -16,6 +16,7 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/refine
   def refine
+    @roles = Role.all.delete_if{ |r| r.puavoSchool != @school.dn }
     User.taken_uids_by_puavoId = session[:taken_uids_by_puavoId]
     @invalid_users = []
     @columns =  session[:users_import_columns] if session.has_key?(:users_import_columns)
@@ -127,6 +128,8 @@ class Users::ImportController < ApplicationController
   # GET /:school_id/users/import/role
   # PUT /:school_id/users/import/role
   def role
+    @roles = Role.all.delete_if{ |r| r.puavoSchool != @school.dn }
+
     @columns = session[:users_import_columns]
 
     if params.has_key?(:user)

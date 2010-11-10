@@ -14,9 +14,9 @@
 
 <% unless @columns.include?('role_name') %>
 <p>
-  <%= f.label :roles %><br />
+  <%= f.label :role_ids %><br />
   <%= f.select :role_ids,
-  options_for_select([[t('default_select_value'), ""]] + Role.all.collect{ |g| [g.displayName, g.puavoId] })%>
+  options_for_select([[t('default_select_value'), ""]] + @roles.collect{ |g| [g.displayName, g.puavoId] })%>
 </p>
 <% end %>
 

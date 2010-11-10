@@ -71,6 +71,13 @@ do |names_of_the_models, values, organisation|
   end
 end
 
+Given /^"([^\"]*)" is a school admin on the "([^\"]*)" school$/ do |uid, school_name|
+  school = School.find(:first, :attribute => "displayName", :value => school_name)
+  user = User.find(:first, :attribute => "uid", :value => uid)
+  school.puavoSchoolAdmin = Array(school.puavoSchoolAdmin) + Array(user.dn)
+  school.save
+end
+
 When /^I check field by id "([^\"]*)"$/ do |field_id|
   check( field_with_id(field_id) )
 end
@@ -166,6 +173,14 @@ end
 
 Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field_id|
   field_with_id(field_id).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+end
+
+Then /^I can select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
+  field_with_id(field_id).element.inner_html.should =~ /#{value}/
+end
+
+Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
+  field_with_id(field_id).element.inner_html.should_not =~ /#{value}/
 end
 
 Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
