@@ -50,6 +50,20 @@ class User < LdapBase
   validates_confirmation_of( :new_password,
                              :message => I18n.t("activeldap.errors.messages.confirmation",
                                                 :attribute => I18n.t("activeldap.attributes.user.new_password") ) )
+  validates_length_of( :uid,
+                       :in => 3..255,
+                       :too_short => I18n.t("activeldap.errors.messages.too_short",
+                                            :attribute => I18n.t("activeldap.attributes.user.uid") ),
+                       :too_long => I18n.t("activeldap.errors.messages.too_long",
+                                            :attribute => I18n.t("activeldap.attributes.user.uid") ) )
+  validates_format_of( :uid,
+                       :with => /^[a-z]/,
+                       :message => I18n.t("activeldap.errors.messages.user.must_begin_with" ) )
+
+  validates_format_of( :uid,
+                       :with => /^[a-z0-9.-]+$/,
+                       :message => I18n.t("activeldap.errors.messages.user.invalid_characters" ) )
+  
 
   OVERWRITE_CHARACTERS = {
     "Ä" => "a",

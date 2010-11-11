@@ -1,3 +1,4 @@
+
 Feature: Manage users
   In order to allow others to using all services
   As administrator
@@ -211,6 +212,42 @@ Feature: Manage users
     Then I should see "User type is invalid"
     And the id "role_class_4" checkbox should be checked
 
+  Scenario: Create new user with invalid username
+    Given the following groups:
+    | displayName | cn      |
+    | Class 6B    | class6b |
+    And I am on the new user page
+    When I fill in the following:
+    | Surname                   | Mabey                 |
+    | Given name                | Ben                   |
+    | user[mail][]              | ben.mabey@example.com |
+    | user[telephoneNumber][]   | +35814123123123       |
+    | New password              | secretpw              |
+    | New password confirmation | secretpw              |
+    And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And I check "Class 4" from roles
+    And I fill in "Username" with "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    And I press "Create"
+    Then I should see "Username is too long (maximum is 255 characters)"
+    When I fill in "Username" with "aa"
+    And I press "Create"
+    Then I should see "Username is too short (min is 3 characters)"
+    When I fill in "Username" with "-ab"
+    And I press "Create"
+    Then I should see "Username must begin with the small letter"
+    When I fill in "Username" with ".ab"
+    And I press "Create"
+    Then I should see "Username must begin with the small letter"
+    When I fill in "Username" with "abc%&/()}]"
+    And I press "Create"
+    Then I should see "Username include invalid characters (allowed characters is a-z0-9.-)"
+    When I fill in "Username" with "ben.Mabey"
+    And I press "Create"
+    Then I should see "Username include invalid characters (allowed characters is a-z0-9.-)"
+    When I fill in "Username" with "ben-james.mabey"
+    And I press "Create"
+    Then I should see "User was successfully created."
+    
 # FIXME
 #  @allow-rescue
 #  Scenario: Get user infromation in JSON from wrong school

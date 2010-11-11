@@ -169,6 +169,11 @@ fi:
         blank: "{{attribute}} pitää olla asetettuna"
         invalid: "{{attribute}} on virheellinen"
         confirmation: "{{attribute}} ei täsmää vahvistukseen"
+        too_long: "{{attribute}} on liian pitkä (suurin sallittu pituus on {{count}} merkkiä)"
+        too_short: "{{attribute}} on liian lyhyt (pienin sallittu pituus on {{count}} merkkiä)"
+        user:
+          must_begin_with: Käyttäjätunnus pitää alkaa pienellä kirjaimella
+          invalid_characters: Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)
     models:
       group: Ryhmä
       role: Rooli

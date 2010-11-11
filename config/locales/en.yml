@@ -170,6 +170,11 @@ en:
         blank: "{{attribute}} can't be blank"
         invalid: "{{attribute}} is invalid"
         confirmation: "{{attribute}} doesn't match confirmation"
+        too_long: "{{attribute}} is too long (maximum is {{count}} characters)"
+        too_short: "{{attribute}} is too short (min is {{count}} characters)"
+        user:
+          must_begin_with: Username must begin with the small letter
+          invalid_characters: Username include invalid characters (allowed characters is a-z0-9.-)
     models:
       group: Group
       role: Role
