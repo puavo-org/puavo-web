@@ -4,10 +4,11 @@ Feature: Manage schools
   I want to manage the schools
 
   Background:
-    Given a new school with names "Example school 1", "Class 1" on the "example" organisation
+    Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
+    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Greenwich Steiner School" school
     And I am logged in as "example" organisation owner
 
   Scenario: Add new school to organisation
@@ -106,8 +107,8 @@ Feature: Manage schools
 
   Scenario: Add school management access rights to the user
     Given the following users:
-    | givenName | sn     | uid   | password | role_name   | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Maintenance | admin                     | Greenwich Steiner School |
+    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Greenwich Steiner School |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     Then I should see "Greenwich Steiner School admin users"
@@ -123,8 +124,8 @@ Feature: Manage schools
 
   Scenario: Remove school management access rights from the user
     Given the following users:
-    | givenName | sn     | uid   | password | role_name   | puavoEduPersonAffiliation | school                   | school_admin |
-    | Pavel     | Taylor | pavel | secret   | Maintenance | admin                     | Greenwich Steiner School | true         |
+    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   | school_admin |
+    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Greenwich Steiner School | true         |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     Then I should see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
@@ -137,9 +138,9 @@ Feature: Manage schools
 
   Scenario: School management access can be added only if user type is admin
     Given the following users:
-    | givenName | sn     | uid   | password | role_name   | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Maintenance | admin                     | Greenwich Steiner School |
-    | Ben       | Mabey  | ben   | secret   | Maintenance | staff                     | Greenwich Steiner School |
+    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Greenwich Steiner School |
+    | Ben       | Mabey  | ben   | secret   | Class 1   | staff                     | Greenwich Steiner School |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     Then I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
