@@ -115,7 +115,7 @@ Feature: Manage users
     When I fill in the following:
     | Surname    | MabeyEDIT |
     | Given name | BenEDIT   |
-    | Username   | benEDIT   |
+    | Username   | ben-edit   |
 #   | Uid number                 |           |
 #   | Home directory             |           |
 #   | Email                      |           |
@@ -132,20 +132,20 @@ Feature: Manage users
     |           |
     | MabeyEDIT |
     | BenEDIT   |
-    | benEDIT   |
+    | ben-edit   |
     | Staff     |
     | Visitor |
     And I should see "Class 4" on the "Groups by roles"
-    And the memberUid should include "benEDIT" on the "Class 4" group
-    And the member should include "benEDIT" on the "Class 4" group
+    And the memberUid should include "ben-edit" on the "Class 4" group
+    And the member should include "ben-edit" on the "Class 4" group
     And the memberUid should not include "ben" on the "Class 4" group
-    And the memberUid should include "benEDIT" on the "Class 4" role
-    And the member should include "benEDIT" on the "Class 4" role
+    And the memberUid should include "ben-edit" on the "Class 4" role
+    And the member should include "ben-edit" on the "Class 4" role
     And the memberUid should not include "ben" on the "Class 4" role
-    And the memberUid should include "benEDIT" on the "School 1" school
+    And the memberUid should include "ben-edit" on the "School 1" school
     And the memberUid should not include "ben" on the "School 1" school
-    And the member should include "benEDIT" on the "School 1" school
-    And the memberUid should include "benEDIT" on the "Domain Users" samba group
+    And the member should include "ben-edit" on the "School 1" school
+    And the memberUid should include "ben-edit" on the "Domain Users" samba group
     And the memberUid should not include "ben" on the "Domain Users" samba group
     Given I am on the show user page with "joseph"
     And I should see "Joseph"
@@ -153,7 +153,7 @@ Feature: Manage users
     And I should see "joseph"
     And I should not see "BenEDIT"
     And I should not see "MabeyEDIT"
-    And I should not see "benEDIT"
+    And I should not see "ben-edit"
 
   Scenario: Delete user
     Given the following users:
