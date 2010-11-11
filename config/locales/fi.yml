@@ -120,7 +120,7 @@ fi:
         failed: "Epäonnistui: {{count}}"
         pdf_info: Voit tulostaa käyttäjälistat paperille
       role:
-        title: Käyttäjien massalisäys tiedon tarkistus
+        title: Käyttäjien massalisäystiedon tarkistus
         help: Seuraaville kentille tulee määrittää tiedot uusia tunnuksia lisättäessä
       refine:
         title: Käyttäjien massalisäys
