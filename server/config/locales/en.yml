@@ -52,6 +52,8 @@ en:
   flash:
     session:
       login_successful: Login successful!
+      failed: Login failed!
+      logout_successful: Logout successful!
   layouts:
     application:
       schools: Schools
@@ -125,6 +127,9 @@ en:
         puavoDeviceBootMode: Boot mode
         description: Description
         puavoTag: Tags
+      user:
+        uid: Username
+        password: Password
     values:
       device:
         roles:
