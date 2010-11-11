@@ -5,7 +5,7 @@ module Users::ImportHelper
 
     case column
     when "role_ids"
-      html = user.role_ids.first + select_tag( "users_import_invalid_list[#{column_index}][]", 
+      html = select_tag( "users_import_invalid_list[#{column_index}][]", 
                                                role_options_for_select( @roles, user.role_ids.first.to_s),
                                                :id => "users_import_invalid_list_#{column_index}_#{user_index}" )
     else
