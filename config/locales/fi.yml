@@ -6,6 +6,7 @@ fi:
     group_name: Ylläpito
   default_select_value: Valitse
   general_confirm: Oletko varma?
+  destroy_confirm: "Haluatko varmasti poistaa ({{object_name}})?"
   layouts:
     application:
       schools: Koulut
