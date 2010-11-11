@@ -29,6 +29,18 @@ Given /^a new role with name "([^\"]*)" and which is joined to the "([^\"]*)" gr
   role.groups << group
 end
 
+Given /^a new role with name "([^\"]*)" and which is joined to the "([^\"]*)" group to "([^\"]*)" school$/ do
+  |role_name, group_name, school_name|
+  group = Group.find( :first,
+                      :attribute => "displayName",
+                      :value => group_name )
+  role = Role.new
+  role.displayName = role_name
+  role.puavoSchool = School.find(:first, :attribute => "displayName", :value => school_name).dn
+  role.save
+  role.groups << group
+end
+
 When /^I check "([^\"]*)" from roles$/ do |role_name|
   steps %Q{
     When I check field by id "role_#{role_name.to_s.downcase.gsub(/ /, '_')}"
