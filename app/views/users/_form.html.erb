@@ -17,7 +17,7 @@
       <td class="label_for_input_text_list"><%= f.label :mail %></td>
       <td>
     <span id="user_mail_list">
-      <% if @user.mail.nil? %>
+      <% if Array(@user.mail).empty? %>
       <input name='user[mail][]' size='30' type='text' /><br />
       <% else %>
       <% Array(@user.mail).each_index do |index| %>
@@ -35,7 +35,7 @@
   <tr>
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
     <td><span id="user_telephoneNumber_list">
-      <% if @user.telephoneNumber.nil? %>
+      <% if Array(@user.telephoneNumber).empty? %>
       <input name='user[telephoneNumber][]' size='30' type='text' /><br />
       <% else %>
       <% Array(@user.telephoneNumber).each_index do |index| %>
@@ -60,14 +60,14 @@
       </td>
     </tr>
     <tr>
-      <td class="label_for_checkbox_list"><%= f.label :roles %></td>
+      <td class="label_for_checkbox_list"><%= f.label :role_ids %></td>
       <td>
     <% @roles.each do |p| %>
     <div>
       <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>" /><%=h p.displayName %></label>
   </div>
     <% end %>
-    <%= field_error_text(f.object, :roles) %>
+    <%= field_error_text(f.object, :role_ids) %>
   </td>
   </tr>
 </table>
