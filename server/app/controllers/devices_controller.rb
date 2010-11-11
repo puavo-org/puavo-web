@@ -5,7 +5,7 @@ class DevicesController < ApplicationController
   # GET /devices.xml
   def index
     @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
-    # @devices = Device.all
+    @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
 
     respond_to do |format|
       format.html # index.html.erb

@@ -3,6 +3,7 @@ class ServersController < ApplicationController
   # GET /servers.xml
   def index
     @servers = Server.all
+    @servers = @servers.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
 
     respond_to do |format|
       format.html # index.html.erb
