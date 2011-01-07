@@ -217,6 +217,7 @@ fi:
         role_ids: Rooli
         role_name: Rooli
         roles: Roolit
+        preferredLanguage: Kieli
         password: Salasana
         new_password: Uusi salasana
         new_password_confirmation: Vahvista uusi salasana
@@ -232,3 +233,7 @@ fi:
   puavoEduPersonAffiliation_visitor: Vierailija
   puavoEduPersonAffiliation_parent: Huoltaja
   puavoEduPersonAffiliation_admin: Ylläpitäjä
+  language_fi: Suomi
+  language_en: Englanti
+  language_sw: Ruotsi
+  language_default: Oletus

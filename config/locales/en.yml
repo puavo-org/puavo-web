@@ -218,6 +218,7 @@ en:
         role_ids: Role
         role_name: Role
         roles: Roles
+        preferredLanguage: Language
         password: Password
         new_password: New password
         new_password_confirmation: New password confirmation
@@ -233,3 +234,7 @@ en:
   puavoEduPersonAffiliation_visitor: Visitor
   puavoEduPersonAffiliation_parent: Parent
   puavoEduPersonAffiliation_admin: Admin
+  language_fi: Finnish
+  language_en: English
+  language_sw: Swedish
+  language_default: Default

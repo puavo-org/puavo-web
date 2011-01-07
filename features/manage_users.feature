@@ -15,7 +15,7 @@ Feature: Manage users
       | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
     And I am logged in as "cucumber" with password "cucumber"
   
-  Scenario: Create new user
+  Scenario: Create new userr
     Given the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
@@ -36,6 +36,10 @@ Feature: Manage users
 #   | puavoEduPersonEmailEnabled |       |
     # And set photo?
     And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And the "Language" select box should contain "Default"
+    And the "Language" select box should contain "Finnish"
+    And the "Language" select box should contain "Swedish"
+    And I select "English" from "user[preferredLanguage]"
     And I check "Class 4" from roles
     And I press "Create"
     Then I should see the following:
@@ -43,10 +47,12 @@ Feature: Manage users
     | Mabey                 |
     | Ben                   |
     | ben                   |
+
     | Class 4               |
     | ben.mabey@example.com |
     | +35814123123123       |
     | Student               |
+    | English               |
     And I should see "Class 4" on the "Groups by roles"
     And the memberUid should include "ben" on the "Class 4" group
     And the member should include "ben" on the "Class 4" group

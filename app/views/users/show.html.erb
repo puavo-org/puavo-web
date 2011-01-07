@@ -61,6 +61,12 @@
       </span>
     </td>
   </tr>
+
+  <tr>
+    <td class="label_td view"><%= label "user", "preferredLanguage" %></td>
+    <td class="value_td"><%=h @user.preferredLanguage ? t('language_' + @user.preferredLanguage) : "" %></tr>
+  </tr>
+
 </table>
 
 <% content_for :right do %>

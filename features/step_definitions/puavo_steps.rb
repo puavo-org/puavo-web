@@ -179,6 +179,10 @@ Then /^I can select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
   field_with_id(field_id).element.inner_html.should =~ /#{value}/
 end
 
+Then /^the "([^\"]*)" select box should contain "([^\"]*)"$/ do |field, value|
+  field_labeled(field).element.inner_html.should =~ /#{value}/
+end
+
 Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
   field_with_id(field_id).element.inner_html.should_not =~ /#{value}/
 end

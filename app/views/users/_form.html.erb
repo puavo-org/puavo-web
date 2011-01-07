@@ -70,6 +70,15 @@
     <%= field_error_text(f.object, :role_ids) %>
   </td>
   </tr>
+
+  <tr>
+    <td><%= f.label :preferredLanguage %></td>
+    <td>
+      <%= f.select :preferredLanguage,
+          [[t('language_default'), ""]] +
+            Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } %>
+    </td>
+  </tr>
 </table>
 
 <table>
