@@ -39,6 +39,8 @@
 </tr>
 </table>
 
+<%= render :partial => 'shared/form_purchase_information', :locals => { :f => f } %>
+
 <h2><%= t('shared.location') %></h2>
 
 <table>
@@ -105,4 +107,5 @@
 <tr>
   <td class="label_td"><%= f.label :puavoRole %></td>
 </tr>
+
 <% end %>

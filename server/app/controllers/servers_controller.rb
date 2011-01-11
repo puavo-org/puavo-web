@@ -45,6 +45,9 @@ class ServersController < ApplicationController
   # POST /servers
   # POST /servers.xml
   def create
+    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
+
     @server = Server.new(params[:server])
 
     if @server.valid?
@@ -72,6 +75,9 @@ class ServersController < ApplicationController
   # PUT /servers/1.xml
   def update
     @server = Server.find(params[:id])
+
+    handle_date_multiparameter_attribute(params[:server], :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(params[:server], :puavoWarrantyEndDate)
 
     respond_to do |format|
       if @server.update_attributes(params[:server])

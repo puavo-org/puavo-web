@@ -5,6 +5,8 @@ class Device < DeviceBase
 
   after_save :set_mac_addresses
   before_destroy :remove_mac_addresses
+  
+  validates_format_of :puavoPurchaseURL, :with => URI::regexp(%w(http https)), :allow_blank => true
 
   def self.allowed_classes
     ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter']

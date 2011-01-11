@@ -1,0 +1,24 @@
+<h2><%= t('shared.purchase_information') %></h2>
+
+<table>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPurchaseDate" %></td>
+  <td class="value_td"><%=h device.puavoPurchaseDate %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoWarrantyEndDate" %></td>
+  <td class="value_td"><%=h device.puavoWarrantyEndDate %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPurchaseLocation" %></td>
+  <td class="value_td"><%=h device.puavoPurchaseLocation %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPurchaseURL" %></td>
+  <td class="value_td"><%=h device.puavoPurchaseURL %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoSupportContract" %></td>
+  <td class="value_td"><%=h device.puavoSupportContract %></td>
+</tr>
+</table>

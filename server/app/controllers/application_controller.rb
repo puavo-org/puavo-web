@@ -50,4 +50,15 @@ class ApplicationController < ActionController::Base
       current_user != nil
     end
   end
+
+  def handle_date_multiparameter_attribute(object_params, attribute)
+    if !object_params[:"#{attribute}(1i)"].empty? &&
+       !object_params[:"#{attribute}(2i)"].empty? &&
+       !object_params[:"#{attribute}(3i)"].empty?
+
+      object_params[attribute] = Time.local( object_params[:"#{attribute}(1i)"].to_i, 
+                                             object_params[:"#{attribute}(2i)"].to_i,
+                                             object_params[:"#{attribute}(3i)"].to_i )
+    end
+  end
 end

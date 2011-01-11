@@ -1,0 +1,24 @@
+<h2><%= t('shared.purchase_information') %></h2>
+
+<table>
+<tr>
+  <td class="label_td"><%= f.label :puavoPurchaseDate %></td>
+  <td><%= f.date_select :puavoPurchaseDate, :include_blank => true %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoWarrantyEndDate %></td>
+  <td><%= f.date_select :puavoWarrantyEndDate, :include_blank => true %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoPurchaseLocation %></td>
+  <td><%= f.text_field :puavoPurchaseLocation %></td>
+</tr>
+ <tr>
+  <td class="label_td"><%= f.label :puavoPurchaseURL %></td>
+  <td><%= f.text_field :puavoPurchaseURL %></td>
+</tr>
+ <tr>
+  <td class="label_td"><%= f.label :puavoSupportContract %></td>
+  <td><%= f.text_field :puavoSupportContract %></td>
+</tr>
+</table>

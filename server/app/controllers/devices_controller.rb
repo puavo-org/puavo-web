@@ -57,6 +57,8 @@ class DevicesController < ApplicationController
   def create
     device_objectClass = params[:device][:classes]
     params[:device].delete(:classes)
+    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
     @device = Device.new( { :objectClass => device_objectClass }.merge( params[:device] ))
 
     @device.puavoSchool = @school.dn
@@ -85,6 +87,9 @@ class DevicesController < ApplicationController
   # PUT /devices/1.xml
   def update
     @device = Device.find(params[:id])
+
+    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
 
     respond_to do |format|
       if @device.update_attributes(params[:device])
