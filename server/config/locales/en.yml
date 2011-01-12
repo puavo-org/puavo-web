@@ -110,6 +110,7 @@ en:
         puavoDeviceStatus: Status
         description: Description
         puavoTag: Tags
+        puavoDefaultPrinter: Default printer
       device:
         puavoDeviceType: Device type
         puavoHostname: Hostname
@@ -133,6 +134,7 @@ en:
         puavoPurchaseLocation: Purchase location
         puavoPurchaseURL: Purchase URL
         puavoSupportContract: Support contract
+        puavoDefaultPrinter: Default printer
       user:
         uid: Username
         password: Password

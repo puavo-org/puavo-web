@@ -33,6 +33,13 @@
 </tr>
 <% end %>
 
+<% unless f.object.classes.include?('puavoPrinter') %>
+<tr>
+  <td class="label_td"><%= f.label :puavoDefaultPrinter %></td>
+  <td><%= f.text_field :puavoDefaultPrinter %></td>
+</tr>
+<% end %>
+
 <tr>
   <td class="label_td"><%= f.label :description %></td>
   <td><%= f.text_field :description %></td>
