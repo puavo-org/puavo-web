@@ -3,7 +3,7 @@ class Device < DeviceBase
                 :prefix => "ou=Devices,ou=Hosts",
                 :classes => ['top', 'device', 'puppetClient'] )
 
-  after_save :set_mac_addresses
+#  after_save :set_mac_addresses
   before_destroy :remove_mac_addresses
   
   validates_format_of :puavoPurchaseURL, :with => URI::regexp(%w(http https)), :allow_blank => true
