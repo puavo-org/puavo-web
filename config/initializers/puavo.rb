@@ -1,1 +1,1 @@
-Puavo.available_languages = ['fi', 'en', 'sw']
+Puavo.available_languages = ['fi', 'en', 'sv']

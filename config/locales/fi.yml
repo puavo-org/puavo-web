@@ -73,7 +73,7 @@ fi:
       failed: Kirjautuminen epäonnistui!
       logout_successful: Uloskirjautuminen onnistui!
     password:
-      successful: Salanananvaihto onnistui!
+      successful: Salasanan vaihto onnistui!
       failed: Salasanan vaihto epäonnistui!
       invalid_login: "Salasana tai käyttäjätunnus ({{uid}}) on virheellinen"
       confirmation_failed: Uusi salasana ei täsmää salasanan vahvistukseen
@@ -235,5 +235,5 @@ fi:
   puavoEduPersonAffiliation_admin: Ylläpitäjä
   language_fi: Suomi
   language_en: Englanti
-  language_sw: Ruotsi
+  language_sv: Ruotsi
   language_default: Oletus
