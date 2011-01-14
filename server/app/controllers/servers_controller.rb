@@ -45,8 +45,8 @@ class ServersController < ApplicationController
   # POST /servers
   # POST /servers.xml
   def create
-    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
-    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
+    handle_date_multiparameter_attribute(params[:server], :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(params[:server], :puavoWarrantyEndDate)
 
     @server = Server.new(params[:server])
 
