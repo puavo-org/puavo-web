@@ -8,7 +8,7 @@ class UsersController < ApplicationController
       @users = User.all
     end
 
-    @users = @users.sort{|a,b| a.sn.to_s + a.givenName.to_s <=> b.sn.to_s + a.givenName.to_s }
+    @users = @users.sort{|a,b| a.sn.to_s + a.givenName.to_s <=> b.sn.to_s + b.givenName.to_s }
 
     respond_to do |format|
       format.html # index.html.erb
