@@ -182,11 +182,11 @@ label {
 }
 
 .dashboard > * {
-    float: left;
     margin: 10px;
 }
 
 .dashboard_box {
+    float: left;
     border: double 5px #94AA29;
     padding: 0px;
     -moz-border-radius: 12px;
@@ -231,4 +231,12 @@ label {
     float: right;
     font-weight: bold;
     margin-left: 10px;
+}
+
+.dashboard_box.users {
+    clear: left;
+}
+
+.dashboard_box.school_image {
+    border: 0px;
 }
