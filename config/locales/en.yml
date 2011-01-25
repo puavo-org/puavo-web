@@ -154,6 +154,12 @@ en:
     admins:
       this_school_admin_users: "{{school_name}} admin users"
       other_admin_users: School management access rights can be added to the following users
+    show:
+      contacts: Contacts
+      devices: Devices
+      users: Users
+      statistics: Statistics
+      admin_users: Admin users
   password:
     edit:
       title: Change password for other user

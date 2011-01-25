@@ -15,6 +15,17 @@ class SchoolsController < ApplicationController
   def show
     @school = School.find(params[:id])
 
+    unless Puavo::DEVICE_CONFIG.nil?
+      @devices_by_type = Hash.new
+      Puavo::DEVICE_CONFIG["device_types"].each do |key, value|
+        if value["show_dashboard"] == true
+          @devices_by_type[value["label"][I18n.locale.to_s]] = Device.find(:all,
+                                                                           :attribute => "puavoDeviceType",
+                                                                           :value => key).count
+        end
+      end
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @school }

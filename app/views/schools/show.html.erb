@@ -1,65 +1,43 @@
-<p>
-  <b><%=h t('activeldap.attributes.school.displayName') %>:</b>
-  <%=h @school.displayName %>
-</p>
+<div class="dashboard">
 
-<p>
-  <b><%=h t('activeldap.attributes.school.puavoNamePrefix') %>:</b>
-  <%=h @school.puavoNamePrefix %>
-</p>
+<%= link_to( image_tag("school.png") ) %>
 
-<p>
-  <b><%=h t('activeldap.attributes.school.gidNumber') %>:</b>
-  <%=h @school.gidNumber %>
-</p>
-
-<p>
-  <b><%=h t('activeldap.attributes.school.puavoSchoolHomePageURL') %>:</b>
-  <%=h @school.puavoSchoolHomePageURL %>
-</p>
-
-<p>
-  <b><%=h t('activeldap.attributes.school.description') %>:</b>
-  <%=h @school.description %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.puavoSchoolNameAbbreviation') %>:</b>
-  <%=h @school.cn %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.telephoneNumber') %>:</b>
-  <%=h @school.telephoneNumber %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.facsimileTelephoneNumber') %>:</b>
-  <%=h @school.facsimileTelephoneNumber %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.l') %>:</b>
-  <%=h @school.l %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.street') %>:</b>
-  <%=h @school.street %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.postOfficeBox') %>:</b>
-  <%=h @school.postOfficeBox %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.postalAddress') %>:</b>
-  <%=h @school.postalAddress %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.postalCode') %>:</b>
-  <%=h @school.postalCode %>
-</p>
-<p>
-  <b><%=h t('activeldap.attributes.school.st') %>:</b>
-  <%=h @school.st %>
-</p>
+<div class="dashboard_box contacts">
+<h3><%= t('.contacts') %></h3>
+<h4><%=h @school.displayName %></h4>
+<div class="row"><%=h @school.street %></div>
+<div class="row"><%=h @school.postalCode %> <%=h @school.postalAddress %></div>
+<div class="row"><%=h @school.postOfficeBox %></div>
+<div class="row"><%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'), @school.puavoSchoolHomePageURL %></div>
+</div>
 
 
-<%= link_to t('link.edit'), edit_school_path(@school) %> |
-<%= link_to t('link.back'), schools_path %>
-<%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %>
+<div class="dashboard_box list">
+<h3><%= t('.users') %></h3>
+<h4><%= t('.statistics') %></h4>
+
+<% User.puavoEduPersonAffiliation_list.each do |type| %>
+<div class="row"><div class="column_1"><%= t('puavoEduPersonAffiliation_' + type) %>: </div> <div class="column_2"><%= @school.members.select{ |m| m.puavoEduPersonAffiliation == type}.count %></div></div>
+<% end %>
+<div class="row"></div>
+<h4><%= t('.admin_users') %></h4>
+<% @school.user_school_admins.each do |user| %>
+<div class="row"><%= [(link_to user.displayName, user_path(@school, user)), user.telephoneNumber, user.mail].delete_if{ |data| data.nil? }.join(", ") %></div>
+<% end %>
+</div>
+
+<% if @devices_by_type %>
+<div class="dashboard_box list">
+<h3><%= t('.devices') %></h3>
+<% @devices_by_type.each do |device_type, count| %>
+<div class="row"><div class="column_1"><%= device_type %>:</div> <div class="column_2"><%= count %></div></div>
+<% end %>
+<% end %>
+</div>
+
+</div>
+
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_school_path(@school) %></div>
+<div><%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %></div>
+<% end %>

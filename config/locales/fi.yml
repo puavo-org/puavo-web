@@ -153,6 +153,12 @@ fi:
     admins:
       this_school_admin_users: "{{school_name}}: ylläpitäjät"
       other_admin_users: Seuraaville käyttäjille voidaan lisätä ylläpitäjän oikeudet
+    show:
+      contacts: Yhteystiedot
+      devices: Laitteet
+      users: Käyttäjät
+      statistics: Tilastot
+      admin_users: Ylläpitäjät
   password:
     edit:
       title: Vaihda toisen käyttäjän salasana
