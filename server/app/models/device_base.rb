@@ -5,6 +5,7 @@ class DeviceBase < LdapBase
   before_validation :set_puavo_id, :set_password
   before_save :set_puppetclass, :set_parentNode
 
+  validates_format_of :puavoHostname, :with => /^[0-9a-z-]+$/
 
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
