@@ -2,9 +2,12 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
+  must_be_logged_in: You must be logged in
   actions: Actions
-  cancel: Cancel
-  or: or
+  general_confirm: Are you sure?
+  destroy_confirm: "Are you sure? ({{object_name}})?"
+  cancel: Kumoa
+  or: tai
   shared:
     terminal_title: Terminal information
     location: Location
@@ -19,6 +22,9 @@ en:
     boot_mode_dualboot: Dualboot
     boot_mode_: Terminal
     purchase_information: Purchase information
+    linux_device_information:
+      yes: Yes
+      no: No
   devices:
     index:
       add_new_printer: Add new printer
@@ -34,6 +40,13 @@ en:
       title: List of servers
     edit:
       title: Server settings
+  automounts:
+    index:
+      title: Automounts
+    new:
+      title: New automount
+    edit:
+      title: Editing automount
   host:
     types:
       register_label: Device type
@@ -64,6 +77,7 @@ en:
       tools: Tools
       logged_in_as: Logged in as
       devices: Devices
+      desktop: Desktop
   link:
     edit: Edit
     back: Back
@@ -91,6 +105,9 @@ en:
     login: Login
     change_password: Change password
     new_school: New school
+    set_install_mode: Revoke certificate
+    automounts: Automounts
+    new_automount: New automount
   activeldap:
     attributes:
       server:
@@ -135,9 +152,16 @@ en:
         puavoPurchaseURL: Purchase URL
         puavoSupportContract: Support contract
         puavoDefaultPrinter: Default printer
+        puavoDeviceXserver: Graphic adapter drivers
+        puavoDeviceXrandr: Xrandr settings
+        puavoDeviceXrandrDisable: Disable Xrandr
+        puavoDeviceKernelVersion: Kernel version
+        puavoDeviceKernelArguments: Kernel arguments
       user:
         uid: Username
         password: Password
+      automounts:
+        cn: Directory
     values:
       device:
         roles:

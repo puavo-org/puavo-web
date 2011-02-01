@@ -15,9 +15,9 @@
     <td><%=h server.puavoDeviceManufacturer %></td>
     <td><%=h server.puavoDeviceModel %></td>
     <td><%=h server.serialNumber %></td>
-    <td><%= link_to 'Automounts', server_automounts_path(server) %></td>
-    <td><%= link_to 'Edit', edit_server_path(server) %></td>
-    <td><%= link_to 'Destroy', server, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to t('link.automounts'), server_automounts_path(server) %></td>
+    <td><%= link_to t('link.edit'), edit_server_path(server) %></td>
+    <td><%= link_to t('link.destroy'), server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete %></td>
   </tr>
 <% end %>
 </table>

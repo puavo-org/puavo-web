@@ -1,16 +1,14 @@
-<h1>Editing automount</h1>
+<h1><%= t('.title') %></h1>
 
-<% form_for([@server, @automount]) do |f| %>
-  <%= f.error_messages %>
+<%= render :partial => 'form',
+ :locals => {
+  :path => server_automount_path(@server, @automount),
+  :submit_text => t('link.update'),
+  :method => :put
+}
+%>
 
-  <p>
-    <%= f.label :cn %><br />
-    <%= f.text_field :cn %>
-  </p>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
+<% content_for :right do %>
+<%= link_to t('link.show'), [@server, @automount] %><br />
+<%= link_to t('link.back'), server_automounts_path(@server) %>
 <% end %>
-
-<%= link_to 'Show', [@server, @automount] %> |
-<%= link_to 'Back', server_automounts_path(@server) %>

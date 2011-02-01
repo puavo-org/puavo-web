@@ -99,16 +99,12 @@
 </tr>
 
 <tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoRole" %></td>
-</tr>
-
-<tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "userCertificate" %></td>
   <td class="value_td">
   <% if device.userCertificate %>
-    Yes
+    <%= t(".certificate_status_true") %>
   <% else %>
-    No
+    <%= t(".certificate_status_false") %>
   <% end %>
   </td>
 </tr>

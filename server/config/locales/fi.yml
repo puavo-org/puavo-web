@@ -1,0 +1,179 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+fi:
+  must_be_logged_in: Sinun täytyy olla kirjautuneena
+  actions: Toiminnot
+  general_confirm: Oletko varma?
+  destroy_confirm: "Haluatko varmasti poistaa ({{object_name}})?"
+  cancel: Kumoa
+  or: tai
+  shared:
+    terminal_title: Päätteen tiedot
+    location: Sijainti
+    display_settings: Näytönasetukset
+    kernel_settings: Kernel-asetukset
+    title: Laitteen asetukset
+    printer_title: Tulostimen tiedot
+    server_title: Palvelimen tiedot
+    add_puavoDeviceXrandr: Lisää uusi xrandr-rivi
+    boot_mode_netboot: Pääte
+    boot_mode_dualboot: Kaksoiskäynnistys
+    boot_mode_: Pääte
+    purchase_information: Hankintatiedot
+    linux_device_information:
+      certificate_status_true: Kyllä
+      certificate_status_false: Ei
+  devices:
+    index:
+      add_new_printer: Lisää uusi tulostin
+      title: Laitteet
+    new:
+      new_printer: Uusi tulostin
+    edit:
+      title: Device settings
+      terminal_title: Pääteasetukset
+      printer_title: Tulostinasetukset
+  servers:
+    index:
+      title: Palvelimet
+    edit:
+      title: Palvelimen asetukset
+  automounts:
+    index:
+      title: Hakemistoliitokset
+    new:
+      title: Uusi hakemistoliitos
+    edit:
+      title: Hakemistoliitoksen muokkaus
+  host:
+    types:
+      register_label: Laitetyyppi
+      register_title: Laitetyypin valinta
+      register_question: "Valitse laitetyyppi: "
+      thinclient: Kevytpääte
+      fatclient: Tehopääte
+      laptop: Kannettava
+      workstation: Työasema
+      server: Palvelin
+      netstand: Nettikulma
+      infotv: Info-tv
+  helpers:
+    submit:
+      servers:
+        create: "Luo"
+  flash:
+    session:
+      login_successful: Kirjautuminen onnistui!
+      failed: Kirjautuminen epäonnistui!
+      logout_successful: Uloskirjautuminen onnistui!
+  layouts:
+    application:
+      schools: Koulut
+      school: Koulu
+      logout: Kirjaudu ulos
+      users: Käyttäjät
+      tools: Työkalut
+      logged_in_as: Kirjauduttu sisään tunnuksella
+      devices: Laitteet
+      desktop: Työpöytä
+  link:
+    edit: Muokkaa
+    back: Takaisin
+    destroy: Poista
+    new_group: Uusi ryhmä
+    update: Päivitä tiedot
+    create: Luo
+    show: Näytä
+    users: Käyttäjät
+    groups: Ryhmät
+    roles: Roolit
+    devices: Laitteet
+    servers: Palvelimet
+    add: Lisää
+    remove: Poista
+    new_role: Uusi rooli
+    new_user: Uusi käyttäjä
+    user_mass_import:
+      new: Users mass import
+      handle_user_data: Käsittele käyttäjätieto
+      download_pdf: lataa pdf-tiedosto.
+      revalidate: Revalidate
+      validate: Validates users
+    continue: Continue
+    login: Login
+    change_password: Change password
+    new_school: New school
+    set_install_mode: Peruuta sertifikaatti
+    automounts: Hakemistoliitokset
+    new_automount: Uusi hakemistoliitos
+  activeldap:
+    attributes:
+      server:
+        puavoDeviceType: Laitteen tyyppi
+        puavoHostname: Nimi
+        macAddress: MAC-osoite
+        userCertificate: Sertifikaatti
+        serialNumber: Sarjanumero
+        puavoDeviceManufacturer: Laitteen valmistaja
+        puavoDeviceModel: Laitteen malli
+        puavoDevicePrimaryUser: Laitteen ensisijainen käyttäjä
+        jpegPhoto: Valokuva
+        puavoLatitude: Leveysaste
+        puavoLongitude: Pituusaste
+        puavoLocationName: Sijainnin nimi
+        puavoRole: Rooli
+        puavoDeviceStatus: Tila
+        description: Kuvaus
+        puavoTag: Tagit
+        puavoPurchaseDate: "Hankinta pvm."
+        puavoWarrantyEndDate: "Takuun päättymis pvm."
+        puavoPurchaseLocation: Hankintapaikka
+        puavoPurchaseURL: Hankinta-URL
+        puavoSupportContract: Tukiyhteyshenkilö
+        puavoDefaultPrinter: Oletustulostin
+        puavoDeviceXserver: Näytöohjaimen ajuri
+        puavoDeviceXrandr: Xrandr asetukset
+        puavoDeviceXrandrDisable: Poista Xrandr käytöstä
+        puavoDeviceKernelVersion: Kernel-versio
+        puavoDeviceKernelArguments: Kernel parametrit
+      device:
+        puavoDeviceType: Laitteen tyyppi
+        puavoHostname: Nimi
+        macAddress: MAC-osoite
+        userCertificate: Sertifikaatti
+        serialNumber: Sarjanumero
+        puavoDeviceManufacturer: Laitteen valmistaja
+        puavoDeviceModel: Laitteen malli
+        puavoDevicePrimaryUser: Laitteen ensisijainen käyttäjä
+        jpegPhoto: Valokuva
+        puavoLatitude: Leveysaste
+        puavoLongitude: Pituusaste
+        puavoLocationName: Sijainnin nimi
+        puavoRole: Rooli
+        puavoDeviceStatus: Tila
+        puavoDeviceBootMode: Käynnistymistapa
+        description: Kuvaus
+        puavoTag: Tagit
+        puavoPurchaseDate: "Hankinta pvm."
+        puavoWarrantyEndDate: "Takuun päättymis pvm."
+        puavoPurchaseLocation: Hankintapaikka
+        puavoPurchaseURL: Hankinta-URL
+        puavoSupportContract: Tukiyhteyshenkilö
+        puavoDefaultPrinter: Oletustulostin
+        puavoDeviceXserver: Näytöohjaimen ajuri
+        puavoDeviceXrandr: Xrandr asetukset
+        puavoDeviceXrandrDisable: Poista Xrandr käytöstä
+        puavoDeviceKernelVersion: Kernel-versio
+        puavoDeviceKernelArguments: Kernel parametrit
+      user:
+        uid: Käyttäjätunnus
+        password: Salasana
+      automount:
+        cn: Hakemisto
+    values:
+      device:
+        roles:
+          puavoNetbootDevice: Verkkokäynnistys
+          puavoLocalbootDevice: Paikallinen käynnistys
+          puavoPrinter: Tulostin

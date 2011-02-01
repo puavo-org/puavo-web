@@ -6,8 +6,8 @@
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>
 
 <% content_for :right do %>
-<div><%= link_to 'Edit', edit_device_path(@school, @device) %></div>
+<div><%= link_to t('link.edit'), edit_device_path(@school, @device) %></div>
 <% if @device.userCertificate %>
-  <div><%= link_to 'Set install mode', revoke_certificate_device_path(@school, @device), :method => :delete %></div>
+  <div><%= link_to t('link.set_install_mode'), revoke_certificate_device_path(@school, @device), :method => :delete %></div>
 <% end %>
 <% end %>

@@ -9,7 +9,7 @@
   <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
 
   <tr><td>
-  <%= f.submit submit_text %> <%= t('or') %> <%= link_to t('cancel'), device_path(@school, @device) %>
+  <%= f.submit submit_text %> <%= t('or') %> <%= link_to t('cancel'), devices_path(@school) %>
   </td></tr>
   </table>
 <% end %>

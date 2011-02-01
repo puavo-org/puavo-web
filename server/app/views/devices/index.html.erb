@@ -17,8 +17,8 @@
     <td><%=h device.puavoDeviceManufacturer %></td>
     <td><%=h device.puavoDeviceModel %></td>
     <td><%=h device.serialNumber %></td>
-    <td><%= link_to 'Edit', edit_device_path(@school, device) %></td>
-    <td><%= link_to 'Destroy', device_path(@school, device), :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to t('link.edit'), edit_device_path(@school, device) %></td>
+    <td><%= link_to t('link.destroy'), device_path(@school, device), :confirm => t('destroy_confirm', :object_name => device.puavoHostname), :method => :delete %></td>
   </tr>
 <% end %>
 </table>
