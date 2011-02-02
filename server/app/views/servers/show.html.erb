@@ -3,10 +3,6 @@
 </table>
 <p>&nbsp;</p>
 <table>
-<tr>
-  <td class="label_td"><%= label @server.class.to_s.downcase, "macAddress" %></td>
-  <td><%=h @server.macAddress %></td>
-</tr>
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
 

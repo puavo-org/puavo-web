@@ -3,11 +3,11 @@
 <table>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPurchaseDate" %></td>
-  <td class="value_td"><%=h device.puavoPurchaseDate %></td>
+  <td class="value_td"><%=h I18n.l(device.puavoPurchaseDate) rescue nil %></td>
 </tr>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoWarrantyEndDate" %></td>
-  <td class="value_td"><%=h device.puavoWarrantyEndDate %></td>
+  <td class="value_td"><%=h I18n.l(device.puavoWarrantyEndDate) rescue nil %></td>
 </tr>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPurchaseLocation" %></td>

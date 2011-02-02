@@ -2,6 +2,30 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 fi:
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      # When no format has been given, it uses default.
+      # You can provide other formats here if you like!
+      default: "%d.%m.%Y"
+      short: "%b %d"
+      long: "%B %d, %Y"
+      
+    day_names: [Sunnuntai, Maanantai, Tiistai, Keskiviikko, Torstai, Perjantai, Lauantai]
+    abbr_day_names: [Su, Ma, Ti, Ke, To, Pe, La]
+      
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, Tammikuu, Helmikuu, Maaliskuu, Huhtikuu, Toukokuu, Kesäkuu, Heinäkuu, Elokuu, Syyskuu, Lokakuu, Marraskuu, Joulukuu]
+    abbr_month_names: [~, tammik., helmik., maalisk., huhtik., toukok., kesäk., heinäk., elokk., syysk., lokak., marrask., jouluk.]
+    # Used in date_select and datime_select.
+    order: [ :day, :month, :year ]
+
+  time:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+
   must_be_logged_in: Sinun täytyy olla kirjautuneena
   actions: Toiminnot
   general_confirm: Oletko varma?
@@ -22,8 +46,10 @@ fi:
     boot_mode_: Pääte
     purchase_information: Hankintatiedot
     linux_device_information:
-      certificate_status_true: Kyllä
-      certificate_status_false: Ei
+      certificate_status_true: Voimassa
+      certificate_status_false: Ei ole voimassa
+      xrandr_status_true: Kyllä
+      xrandr_status_false: Ei
   devices:
     index:
       add_new_printer: Lisää uusi tulostin
