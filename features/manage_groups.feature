@@ -85,13 +85,13 @@ Feature: Manage groups
     And I am on the group page with "Class 4A"
     Then I should see "Student (Example school 1)" on the "Other roles"
     And I should see "Teacher (Example school 1)" on the "Other roles"
-    And I should not see "Pavel Taylor" on the "Members"
+    And I should not see "Pavel Taylor" on the "Roles and members"
     And the memberUid should not include "pavel" on the "Class 4A" group
     When I follow "Add" on the "Teacher" role
     Then I should see "Teacher (Example school 1)" on the "Roles and members"
     And I should not see "Teacher" on the "Other roles"
     And I should see "Student (Example school 1)" on the "Other roles"
-    And I should see "Pavel Taylor" on the "Members"
+    And I should see "Pavel Taylor" on the "Roles and members"
     And the memberUid should include "pavel" on the "Class 4A" group
 
   Scenario: Remove role from the group
@@ -104,13 +104,13 @@ Feature: Manage groups
     And I am on the group page with "Class 6B"
     Then I should see "Student (Example school 1)" on the "Other roles"
     And I should see "Teacher (Example school 1)" on the "Roles and members"
-    And I should see "Pavel Taylor" on the "Members"
+    And I should see "Pavel Taylor" on the "Roles and members"
     And the memberUid should include "pavel" on the "Class 6B" group
     When I follow "Remove" on the "Teacher" role
     Then I should see "Teacher (Example school 1)" on the "Other roles"
     And I should not see "Teacher" on the "Roles and members"
     And I should see "Student (Example school 1)" on the "Other roles"
-    And I should not see "Pavel Taylor" on the "Members"
+    And I should not see "Pavel Taylor" on the "Roles and members"
     And the memberUid should not include "pavel" on the "Class 6B" group
 
   Scenario: Listing groups

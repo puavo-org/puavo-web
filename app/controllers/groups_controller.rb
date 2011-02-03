@@ -20,7 +20,6 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
 
     @members = @group.members
-    @primary_members = @group.primary_members
 
     @roles = @group.roles
     @other_roles = Role.all.delete_if do |p| @roles.include?(p) end

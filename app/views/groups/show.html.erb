@@ -14,25 +14,6 @@
 </p>
 
 <p>
-  <b><%= t('activeldap.attributes.group.primary_members') %>:</b><br />
-  <span id="primary_members">
-  <% @primary_members.each do |user| %>
-  <%= link_to user.displayName, user_path(@school, user) %>
-  <br />
-  <% end %>
-  </span>
-</p>
-
-<p>
-  <b><%= t('activeldap.attributes.group.members') %>:</b><br />
-  <span id="members">
-  <% @members.each do |user| %>
-  <%= link_to user.displayName, user_path(@school, user) %><br />
-  <% end %>
-  </span>
-</p>
-
-<p>
   <b><%= t('.roles_and_members') %>:</b><br />
   <span id="roles_and_members">
     <% @roles.each do |p| %>
@@ -40,7 +21,7 @@
     <%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), :method => :put, :id => "remove_role_#{p.id}" %>
     <ul>
       <% p.members.each do |m| %>
-      <li><%= m.displayName %></li>
+      <li><%= link_to m.displayName, user_path(@school, m) %></li>
       <% end %>
     </ul>
     <% end %>
