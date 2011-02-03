@@ -11,6 +11,7 @@ Feature: Manage roles
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
       | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
+      | Ben       | Mabey  | ben   | secret   | true         | Staff     | Staff                     |
     And I am logged in as "pavel" with password "secret"
   
   Scenario: Register new role
@@ -51,7 +52,7 @@ Feature: Manage roles
     | displayName |
     | Student     |
     | Teacher     |
-    And I am set the "Student" role for "pavel"
+    And I am set the "Student" role for "ben"
     And the following groups:
     | displayName | cn      |
     | Class 4A    | class4a |
@@ -62,8 +63,10 @@ Feature: Manage roles
     And I should see "Class 4A (Example school 1)" on the "Member groups"
     And I should not see "Class 4A" on the "Other groups"
     And I should see "Class 6B (Example school 1)" on the "Other groups"
-    And I should see "Pavel Taylor" on the "Members"
-    And the memberUid should include "pavel" on the "Class 4A" group
+    And I should see "Ben Mabey" on the "Members"
+    And the memberUid should include "ben" on the "Class 4A" group
+    When I follow "Ben Mabey"
+    Then I should be on the user page
 
   Scenario: Remove group from the role
     Given the following groups:

@@ -7,7 +7,7 @@
   <b><%= t('activeldap.attributes.role.members') %>:</b><br />
   <span id="members">
     <% @role.members.each do |m| %>
-    <%= "#{m.displayName} (#{m.uid})" %><br />
+    <%= link_to m.displayName, user_path(@school, m) %> (<%= m.uid %>)<br />
     <% end %>
   </span>
 </p>
