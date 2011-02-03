@@ -9,7 +9,7 @@
   <tr>
     <td>
       <%= link_to group.displayName, group_path(@school, group) %>
-      <%= " (#{group.members.count})" %>
+      <%= " (#{group.memberUid.to_a.count})" %>
     </td>
     <td>
       <%= group.cn %>
