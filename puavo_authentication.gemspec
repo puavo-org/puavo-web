@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{puavo_authentication}
-  s.version = "0.0.9"
+  s.version = "0.0.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jouni Korhonen"]
-  s.date = %q{2010-11-09}
+  s.date = %q{2011-02-04}
   s.description = %q{Authentication solution for Puavo applications}
   s.email = %q{puavo@opinsys.fi}
   s.extra_rdoc_files = [
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "app/views/sessions/new.html.erb",
      "init.rb",
      "lib/puavo/authentication.rb",
+     "lib/puavo/authorization.rb",
      "lib/puavo/connection.rb",
      "lib/puavo_authentication.rb",
      "lib/puavo_authentication/controllers/helpers.rb",
