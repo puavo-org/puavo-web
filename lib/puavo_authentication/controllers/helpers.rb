@@ -84,6 +84,14 @@ module PuavoAuthentication
           ActiveLdap::Base.remove_connection(connection_name)
         end
       end
+
+      def organisation_owner?
+        Puavo::Authorization.organisation_owner?
+      end
+
+      def set_authorization_user
+        Puavo::Authorization.current_user = current_user if current_user
+      end
     end
   end
 end
