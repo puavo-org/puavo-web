@@ -2,8 +2,10 @@
   <li <%= action_name == "show" ? "class='current'" : "" %>>
   <%= link_to t('.dashboard'), school_path(@school) %>
   </li>
+  <% if organisation_owner? %>
   <li <%= action_name == "admins" ? "class='current'" : "" %>>
   <%= link_to t('.admins'), admins_school_path(@school) %>
   </li>
+  <% end %>
 </ul>
   

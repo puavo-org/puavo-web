@@ -156,3 +156,11 @@ Feature: Manage schools
     Then I should see the following special ldap attributes on the "School" object with "Example school 1":
     | sambaSID                 | "^S[-0-9+]"                                                                                                                   |
     | sambaGroupType           | "2"                                                                                                                           |
+
+  Scenario: School dashboard page with admin user
+    Given the following users:
+      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |
+      | Pavel     | Taylor | pavel | secret   | true         | Class 1   | admin                     | Greenwich Steiner School |
+    And I am logged in as "pavel" with password "secret"
+    And I am on the school page with "Greenwich Steiner School"
+    Then I should not see "Admins"
