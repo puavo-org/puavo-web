@@ -35,18 +35,11 @@ Feature: Manage schools
     And I should see the following:
     |                                                                                |
     | Bourne School                                                                  |
-    | bourne                                                                         |
-    | www.bourneschool.com                                                           |
-    | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
-    | bourne                                                                         |
-    | 0123456789                                                                     |
-    | 9876543210                                                                     |
-    | England                                                                        |
+    | School's home page                                                             |
     | Raymond Mays Way                                                               |
     | 123                                                                            |
     | 12345                                                                          |
     | 54321                                                                          |
-    | East Midlands                                                                  |
     And I should see "School was successfully created."
 
   Scenario: Add new school to organisation without names
@@ -95,6 +88,15 @@ Feature: Manage schools
     Given I am on the schools list page
     Then I should see "Greenwich Steiner School"
     And I should see "Example school 1"
+
+  Scenario: Schools list page when we have only one school and user is not organisation owner
+    Given the following users:
+      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |
+      | Pavel     | Taylor | pavel | secret   | true         | Class 1   | admin                     | Greenwich Steiner School | 
+    And I follow "Logout"
+    And I am logged in as "pavel" with password "secret"
+    When I go to the schools list page
+    Then I should be on the "Greenwich Steiner School" school page
 
   Scenario: Delete school
     Given the following schools:
@@ -154,4 +156,3 @@ Feature: Manage schools
     Then I should see the following special ldap attributes on the "School" object with "Example school 1":
     | sambaSID                 | "^S[-0-9+]"                                                                                                                   |
     | sambaGroupType           | "2"                                                                                                                           |
-

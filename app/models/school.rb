@@ -18,12 +18,20 @@ class School < BaseGroup
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
 
-  
   def remove_user(user)
+    self.reload
     self.member = Array(self.member) - Array(user.dn)
     self.memberUid = Array(self.memberUid) - Array(user.uid)
     self.puavoSchoolAdmin = Array(self.puavoSchoolAdmin) - Array(user.dn)
     self.save
+  end
+
+  def self.all_with_permissions
+    if Puavo::Authorization.organisation_owner?
+      self.all
+    else
+      self.find(:all, :attribute => "puavoSchoolAdmin", :value => Puavo::Authorization.current_user.dn)
+    end
   end
 
   # FIXME, Is it better to use human_attribute_name method on the application_helper.rb?

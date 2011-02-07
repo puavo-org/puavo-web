@@ -42,6 +42,7 @@ class Role < LdapBase
   end
 
   def delete_member(member)
+    self.reload
     self.member = Array(self.member) - Array(member.dn)
     self.memberUid = Array(self.memberUid) - Array(member.uid)
     self.save

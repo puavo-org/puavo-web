@@ -2,10 +2,14 @@ class SchoolsController < ApplicationController
   # GET /schools
   # GET /schools.xml
   def index
-    @schools = School.all
+    @schools = School.all_with_permissions
 
     respond_to do |format|
-      format.html # index.html.erb
+      if @schools.count < 2
+        format.html { redirect_to( school_path(@schools.first) ) }
+      else
+        format.html # index.html.erb
+      end
       format.xml  { render :xml => @schools }
     end
   end

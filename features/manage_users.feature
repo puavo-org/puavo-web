@@ -15,7 +15,7 @@ Feature: Manage users
       | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
     And I am logged in as "cucumber" with password "cucumber"
   
-  Scenario: Create new userr
+  Scenario: Create new user
     Given the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
@@ -47,7 +47,6 @@ Feature: Manage users
     | Mabey                 |
     | Ben                   |
     | ben                   |
-
     | Class 4               |
     | ben.mabey@example.com |
     | +35814123123123       |

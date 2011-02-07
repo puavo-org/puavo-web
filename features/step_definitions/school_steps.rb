@@ -102,3 +102,9 @@ When /^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/ do |user
   user = User.find( :first, :attribute => "displayName", :value => username )
   visit( add_school_admin_school_path(school, user.id), :put )
 end
+
+Then /^I should be on the "([^\"]*)" school page$/ do |school_name|
+  set_ldap_admin_connection
+  @school = School.find(:first, :attribute => "displayName", :value => school_name)
+  URI.parse(current_url).path.should == path_to("the school page")
+end
