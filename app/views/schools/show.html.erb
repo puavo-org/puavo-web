@@ -25,7 +25,12 @@
 <div class="row"></div>
 <h4><%= t('.admin_users') %></h4>
 <% @school.user_school_admins.each do |user| %>
-<div class="row"><%= [(link_to user.displayName, user_path(@school, user)), user.telephoneNumber, user.mail].delete_if{ |data| data.nil? }.join(", ") %></div>
+<% if user.displayName %>
+<div class="row">
+<%= [(link_to user.displayName, user_path(@school, user)), user.telephoneNumber, user.mail].delete_if{ |data| data.nil? }.join(", ") %>
+
+</div>
+<% end %>
 <% end %>
 </div>
 

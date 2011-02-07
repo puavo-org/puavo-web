@@ -20,13 +20,12 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
 
     unless Puavo::DEVICE_CONFIG.nil?
-      @devices_by_type = Hash.new
-      Puavo::DEVICE_CONFIG["device_types"].each do |key, value|
-        if value["show_dashboard"] == true
-          @devices_by_type[value["label"][I18n.locale.to_s]] = Device.find(:all,
-                                                                           :attribute => "puavoDeviceType",
-                                                                           :value => key).count
-        end
+      @devices_by_type = Device.find(:all,
+                                     :attribute => "puavoSchool",
+                                     :value => @school.dn).inject({}) do |result, device|
+        device_type = Puavo::DEVICE_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] 
+        result[device_type] = result[device_type].to_i + 1
+        result
       end
     end
 
