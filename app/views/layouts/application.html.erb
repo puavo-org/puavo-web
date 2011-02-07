@@ -34,6 +34,10 @@
         </ul>
       </li>
 
+      <% if organisation_owner? && Puavo::DEVICE_CONFIG %>
+      <li><a href="/devices/servers" class='sub'><%= t('.servers') %></a></li>
+      <% end %>
+
       <div id="top-menu-right">
         <li><span><%= t('.logged_in_as') %></span></li>
       <li><a href="#"><%= current_user.displayName %></a></li>

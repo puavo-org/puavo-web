@@ -16,6 +16,7 @@ en:
       tools: Tools
       logged_in_as: Logged in as
       devices: Devices
+      servers: Servers
   link:
     edit: Edit
     back: Back

@@ -16,6 +16,7 @@ fi:
       tools: Työkalut
       logged_in_as: Kirjauduttu sisään käyttäjänä
       devices: Laitteet
+      servers: Palvelimet
   link:
     edit: Muokkaa
     back: Takaisin
