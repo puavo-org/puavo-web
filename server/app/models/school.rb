@@ -17,5 +17,12 @@ class School < LdapBase
   def id
     self.puavoId.to_s unless self.puavoId.nil?
   end
+  def self.all_with_permissions
+    if Puavo::Authorization.organisation_owner?
+      self.all
+    else
+      self.find(:all, :attribute => "puavoSchoolAdmin", :value => Puavo::Authorization.current_user.dn)
+    end
+  end
 end
 

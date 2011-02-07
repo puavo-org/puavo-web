@@ -6,8 +6,17 @@ class ServersController < ApplicationController
     @servers = @servers.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
 
     respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @servers }
+      if organisation_owner?
+        format.html # index.html.erb
+        format.xml  { render :xml => @servers }
+      else
+        @schools = School.all_with_permissions
+        if @schools.count > 1 && PUAVO_CONFIG["school"]
+          format.html { redirect_to( "/users/schools" ) }
+        else
+          format.html { redirect_to( devices_path(@schools.first) ) }
+        end
+      end
     end
   end
 
