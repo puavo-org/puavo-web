@@ -1,6 +1,11 @@
 <% form_for(@device, :url => path, :html => { :method => method }) do |f| %>
   <%= f.error_messages %>
 
+    <% if f.object.classes.include?('puavoPrinter') %>
+      <%= f.hidden_field :puavoDeviceType %>
+      <%= f.hidden_field :classes, :value => PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["classes"] %>
+    <% end %>
+
     <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
 
   <p>&nbsp;</p>
