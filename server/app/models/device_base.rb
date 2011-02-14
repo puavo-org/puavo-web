@@ -2,7 +2,7 @@ class DeviceBase < LdapBase
   attr_accessor :host_certificate_request_send
   attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
 
-  before_validation :set_puavo_id, :set_password
+  before_validation :set_puavo_id, :set_password, :downcase_mac_addresses
   before_save :set_puppetclass, :set_parentNode
 
   validates_format_of :puavoHostname, :with => /^[0-9a-z-]+$/
@@ -205,5 +205,9 @@ class DeviceBase < LdapBase
 
   def set_parentNode
     self.parentNode = LdapOrganisation.current.puavoDomain
+  end
+
+  def downcase_mac_addresses
+    self.macAddress = self.macAddress.to_a.map{ |mac| mac.to_s.downcase }
   end
 end
