@@ -50,6 +50,7 @@ fi:
       certificate_status_false: Ei ole voimassa
       xrandr_status_true: Kyllä
       xrandr_status_false: Ei
+      xrandr_status_: Ei
   devices:
     index:
       add_new_printer: Lisää uusi tulostin
@@ -163,6 +164,9 @@ fi:
         puavoDeviceXrandrDisable: Poista Xrandr käytöstä
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel parametrit
+        puavoDeviceResolution: Resoluutio
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
       device:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Nimi
@@ -192,6 +196,9 @@ fi:
         puavoDeviceXrandrDisable: Poista Xrandr käytöstä
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel parametrit
+        puavoDeviceResolution: Resoluutio
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
       user:
         uid: Käyttäjätunnus
         password: Salasana

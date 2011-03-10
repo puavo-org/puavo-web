@@ -84,6 +84,21 @@
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandrDisable" %></td>
   <td class="value_td"><%=h t(".xrandr_status_#{device.puavoDeviceXrandrDisable}") %></td>
 </tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceResolution" %></td>
+  <td class="value_td"><%=h device.puavoDeviceResolution %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceHorzSync" %></td>
+  <td class="value_td"><%=h device.puavoDeviceHorzSync %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceVertRefresh" %></td>
+  <td class="value_td"><%=h device.puavoDeviceVertRefresh %></td>
+</tr>
 </table>
 
 <h2><%= t('shared.kernel_settings') %></h2>

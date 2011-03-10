@@ -52,6 +52,7 @@ en:
       certificate_status_false: "Not valid"
       xrandr_status_true: "Yes"
       xrandr_status_false: "No"
+      xrandr_status_: "No"
   devices:
     index:
       add_new_printer: Add new printer
@@ -165,6 +166,9 @@ en:
         puavoDeviceXrandrDisable: Disable Xrandr
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments
+        puavoDeviceResolution: Resolution
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
       device:
         puavoDeviceType: Device type
         puavoHostname: Hostname
@@ -194,6 +198,9 @@ en:
         puavoDeviceXrandrDisable: Disable Xrandr
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments
+        puavoDeviceResolution: Resolution
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
       user:
         uid: Username
         password: Password
