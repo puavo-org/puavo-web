@@ -69,7 +69,12 @@
 
   <tr>
     <td class="label_td view"><%= label "user", "puavoAllowRemoteAccess" %></td>
-            <td class="value_td"><%=h t("activeldap.attributes.user.puavoAllowRemoteAccess_#{@user.puavoAllowRemoteAccess}") %></tr>
+    <td class="value_td"><%=h t("activeldap.attributes.user.puavoAllowRemoteAccess_#{@user.puavoAllowRemoteAccess}") %></tr>
+  </tr>
+
+  <tr>
+    <td class="label_td view"><%= label "user", "puavoEduPersonReverseDisplayName" %></td>
+    <td class="value_td"><%=h @user.puavoEduPersonReverseDisplayName %></tr>
   </tr>
 
 </table>

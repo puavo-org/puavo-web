@@ -235,6 +235,7 @@ en:
         puavoAllowRemoteAccess_true: "Yes"
         puavoAllowRemoteAccess_false: "No"
         puavoAllowRemoteAccess_: "No"
+        puavoEduPersonReverseDisplayName: Reverse name
       group:
         displayName: "Group name"
         cn: "Abbreviation"

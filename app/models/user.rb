@@ -362,6 +362,7 @@ class User < LdapBase
                                       false
                                     end
     end
+    self.puavoEduPersonReverseDisplayName = self.sn + " " + self.givenName
   end
 
   def set_uid_number
