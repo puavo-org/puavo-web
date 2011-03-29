@@ -205,6 +205,7 @@ fi:
         puavoDeviceResolution: Resoluutio
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
+        puavoPrinterCartridge: Tulostimen värikasetti
       user:
         uid: Käyttäjätunnus
         password: Salasana

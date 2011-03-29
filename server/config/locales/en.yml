@@ -207,6 +207,7 @@ en:
         puavoDeviceResolution: Resolution
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
+        puavoPrinterCartridge: Printer cartridge
       user:
         uid: Username
         password: Password
