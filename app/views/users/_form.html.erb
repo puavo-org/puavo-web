@@ -79,6 +79,22 @@
             Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } %>
     </td>
   </tr>
+
+  <tr>
+    <td><%= f.label :puavoAllowRemoteAccess %></td>
+    <td>
+      <%= f.radio_button :puavoAllowRemoteAccess, "true" %>
+      <%= label(:user,
+                :puavoAllowRemoteAccess_true,
+                :for => "user_puavoAllowRemoteAccess_true",
+                :value => "true") %>
+      <%= f.radio_button :puavoAllowRemoteAccess, "false" %>
+      <%= label(:user,
+                :puavoAllowRemoteAccess_false,
+                :for => "user_puavoAllowRemoteAccess_false",
+                :value => "false") %>
+    </td>
+  </tr>
 </table>
 
 <table>

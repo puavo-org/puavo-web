@@ -354,6 +354,14 @@ class User < LdapBase
     end
     self.loginShell = '/bin/bash'
     self.eduPersonPrincipalName = "#{self.uid}@#{LdapOrganisation.current.puavoKerberosRealm}"
+    if self.puavoAllowRemoteAccess.class == String
+      self.puavoAllowRemoteAccess = case self.puavoAllowRemoteAccess
+                                    when "true"
+                                      true
+                                    when "false"
+                                      false
+                                    end
+    end
   end
 
   def set_uid_number

@@ -41,6 +41,8 @@ Feature: Manage users
     And the "Language" select box should contain "Swedish"
     And I select "English" from "user[preferredLanguage]"
     And I check "Class 4" from roles
+    # FIXME
+    And I choose "user_puavoAllowRemoteAccess_true"
     And I press "Create"
     Then I should see the following:
     |                       |
@@ -52,6 +54,7 @@ Feature: Manage users
     | +35814123123123       |
     | Student               |
     | English               |
+    | Yes                   |
     And I should see "Class 4" on the "Groups by roles"
     And the memberUid should include "ben" on the "Class 4" group
     And the member should include "ben" on the "Class 4" group

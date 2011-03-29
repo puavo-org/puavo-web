@@ -67,6 +67,11 @@
     <td class="value_td"><%=h @user.preferredLanguage ? t('language_' + @user.preferredLanguage) : "" %></tr>
   </tr>
 
+  <tr>
+    <td class="label_td view"><%= label "user", "puavoAllowRemoteAccess" %></td>
+            <td class="value_td"><%=h t("activeldap.attributes.user.puavoAllowRemoteAccess_#{@user.puavoAllowRemoteAccess}") %></tr>
+  </tr>
+
 </table>
 
 <% content_for :right do %>

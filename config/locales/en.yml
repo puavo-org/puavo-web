@@ -231,6 +231,10 @@ en:
         password: Password
         new_password: New password
         new_password_confirmation: New password confirmation
+        puavoAllowRemoteAccess: Allow remote access
+        puavoAllowRemoteAccess_true: "Yes"
+        puavoAllowRemoteAccess_false: "No"
+        puavoAllowRemoteAccess_: "No"
       group:
         displayName: "Group name"
         cn: "Abbreviation"
