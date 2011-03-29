@@ -28,6 +28,7 @@ Feature: Manage users
     | user[telephoneNumber][]   | +35814123123123       |
     | New password              | secretpw              |
     | New password confirmation | secretpw              |
+    | Personel Number           | 556677                |
 # FIXME test mail and telephoneNumber for more values  
 #   | Group                      |       |
 #   | Password                   |       |
@@ -55,6 +56,8 @@ Feature: Manage users
     | Student               |
     | English               |
     | Yes                   |
+    | Mabey Ben             |
+    | 556677                |
     And I should see "Class 4" on the "Groups by roles"
     And the memberUid should include "ben" on the "Class 4" group
     And the member should include "ben" on the "Class 4" group

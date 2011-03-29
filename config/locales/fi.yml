@@ -235,6 +235,7 @@ fi:
         puavoAllowRemoteAccess_false: "Ei"
         puavoAllowRemoteAccess_: "Ei"
         puavoEduPersonReverseDisplayName: Nimi, sukunimi ensin
+        puavoEduPersonPersonnelNumber: Henkilönumero
       group:
         displayName: "Ryhmän nimi"
         cn: "Lyhenne"
