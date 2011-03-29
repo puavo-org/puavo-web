@@ -9,8 +9,38 @@
 
     <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
     
-    <tr><td>
+  </table>
+  <h2><%= t('.automounts') %></h2>
+  <table>
+    <tr>
+      <td class="label_for_input_text_list"><%= f.label :puavoExport %></td>
+      <td>
+	<span id="server_puavoExport_list">
+	  <% if Array(@server.puavoExport).empty? %>
+	  <input name='server[puavoExport][]' size='30' type='text' /><br />
+	  <% else %>
+	  <% Array(@server.puavoExport).each_index do |index| %>
+	  <input name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' /><br />
+	  <% end %>
+	  <% end %>
+	</span>
 
+	<%= link_to_function( t('.add_puavoExport'),
+          nil ) do |page|
+  page.insert_html( :bottom,
+                    "server_puavoExport_list",
+                    "<input name='server[puavoExport][]' size='30' type='text' /><br />" ) end %>
+  </td></tr>
+
+  <!--
+    <tr>
+      <td class="label_td"><%= f.label :puavoExport %></td>
+      <td><%= f.text_field :puavoExport %></td>
+    </tr>
+-->
+  </table>
+  <table>
+    <tr><td>
     <%= f.submit submit_text %> <%= t('or') %> <%= link_to t('cancel'), @server %>
     </tr></td>
   </table>

@@ -68,6 +68,11 @@ en:
       title: List of servers
     edit:
       title: Server settings
+    form:
+      automounts: Automounts
+      add_puavoExport: Add paths
+    show:
+      automounts: Automounts
   automounts:
     index:
       title: Automounts
@@ -169,6 +174,7 @@ en:
         puavoDeviceResolution: Resolution
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
+        puavoExport: Path
       device:
         puavoDeviceType: Device type
         puavoHostname: Hostname

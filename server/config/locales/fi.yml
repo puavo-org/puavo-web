@@ -66,6 +66,11 @@ fi:
       title: Palvelimet
     edit:
       title: Palvelimen asetukset
+    form:
+      automounts: Hakemistoliitokset
+      add_puavoExport: Lisää hakemistopolkuja
+    show:
+      automounts: Hakemistoliitokset
   automounts:
     index:
       title: Hakemistoliitokset
@@ -167,6 +172,7 @@ fi:
         puavoDeviceResolution: Resoluutio
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
+        puavoExport: Hakemistopolku
       device:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Nimi

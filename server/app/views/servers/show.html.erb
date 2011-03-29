@@ -8,6 +8,15 @@
 
 </table>
 
+<h2><%= t('.automounts') %></h2>
+
+<table>
+<tr>
+  <td class="label_td view"><%= label @server.class.to_s.downcase, "puavoExport" %></td>
+  <td class="value_td"><%= Array(@server.puavoExport).join("<br />")  %></td>
+</tr>
+</table>
+
 <% content_for :right do %>
 <div><%= link_to t('link.automounts'), server_automounts_path(@server) %></div>
 <div><%= link_to t('link.edit'), edit_server_path(@server) %></div>
