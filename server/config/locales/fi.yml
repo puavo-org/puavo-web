@@ -61,6 +61,10 @@ fi:
       title: Device settings
       terminal_title: Pääteasetukset
       printer_title: Tulostinasetukset
+    form_cups:
+      cups_settings: CUPS asetukset
+    cups:
+      cups_settings: CUPS asetukset
   servers:
     index:
       title: Palvelimet
@@ -206,6 +210,10 @@ fi:
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoPrinterCartridge: Tulostimen värikasetti
+        printerDescription: Kuvaus
+        printerURI: Laiteosoite
+        printerLocation: Sijainti
+        printerMakeAndModel: Merkki ja malli
       user:
         uid: Käyttäjätunnus
         password: Salasana

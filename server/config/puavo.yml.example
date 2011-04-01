@@ -59,3 +59,14 @@ device_types:
     puppetclass: host
     school_required: false
     ldap_password: true
+  printer:
+    label:
+      en: Printer
+      fi: Tulostin
+    classes:
+    - puavoPrinter
+    - cupsPrinter
+    url: /devices/%s/devices/new.json?device_type=printer
+    order: 8
+    puppetclass: host
+    school_required: true

@@ -5,6 +5,11 @@
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>
 
+<% if @device.classes.include?('puavoPrinter') %>
+<%= render :partial => 'cups', :locals => { :device => @device } %>
+<% end %>
+
+
 <% content_for :right do %>
 <div><%= link_to t('link.edit'), edit_device_path(@school, @device) %></div>
 <% if @device.userCertificate %>

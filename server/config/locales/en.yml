@@ -63,6 +63,10 @@ en:
       title: Device settings
       terminal_title: Terminal settings
       printer_title: Printer settings
+    form_cups:
+      cups_settings: CUPS settings
+    cups:
+      cups_settings: CUPS settings
   servers:
     index:
       title: List of servers
@@ -208,6 +212,10 @@ en:
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoPrinterCartridge: Printer cartridge
+        printerDescription: Description
+        printerURI: URI
+        printerLocation: Location
+        printerMakeAndModel: Make and model
       user:
         uid: Username
         password: Password

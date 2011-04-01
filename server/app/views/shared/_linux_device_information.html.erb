@@ -20,13 +20,6 @@
   <td class="value_td"><%=h device.macAddress %></td>
 </tr>
 
-<% if device.classes.include?('puavoPrinter') %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPrinterCartridge" %></td>
-  <td class="value_td"><%=h device.puavoPrinterCartridge %></td>
-</tr>
-<% end %>
-
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %></td>
   <td class="value_td"><%=h device.puavoDevicePrimaryUser %></td>
