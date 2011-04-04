@@ -230,7 +230,7 @@ fi:
         password: Salasana
         new_password: Uusi salasana
         new_password_confirmation: Vahvista uusi salasana
-        puavoAllowRemoteAccess: Saalitaan etäyhteys
+        puavoAllowRemoteAccess: Sallitaan etäyhteys
         puavoAllowRemoteAccess_true: "Kyllä"
         puavoAllowRemoteAccess_false: "Ei"
         puavoAllowRemoteAccess_: "Ei"
