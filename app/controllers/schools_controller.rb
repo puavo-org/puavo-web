@@ -125,13 +125,14 @@ class SchoolsController < ApplicationController
     @user = User.find(params[:user_id])
 
     @school.puavoSchoolAdmin = Array(@school.puavoSchoolAdmin).push @user.dn
+    @user.puavoAdminOfSchool = Array(@user.puavoAdminOfSchool).push @school.dn
 
     respond_to do |format|
       if not Array(@user.puavoEduPersonAffiliation).include?('admin')
         # FIXME: change notice type (ERROR)
         flash[:notice] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
-      elsif @school.save && SambaGroup.add_uid_to_memberUid('Domain Admins', @user.uid)
+      elsif @school.save && @user.save && SambaGroup.add_uid_to_memberUid('Domain Admins', @user.uid)
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
@@ -152,9 +153,12 @@ class SchoolsController < ApplicationController
     @school.puavoSchoolAdmin = Array(@school.puavoSchoolAdmin).delete_if do |admin_dn|
       admin_dn ==  @user.dn
     end
+    @user.puavoAdminOfSchool = Array(@user.puavoAdminOfSchool).delete_if do |school_dn|
+      school_dn ==  @school.dn
+    end
 
     respond_to do |format|
-      if @school.save && SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
+      if @school.save && @user.save && SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
         flash[:notice] = t('flash.school.school_admin_removed',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )

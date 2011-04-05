@@ -369,6 +369,7 @@ class User < LdapBase
     self.uidNumber = IdPool.next_uid_number
   end
 
+  # FIXME: This method is used only cucumber test. Move this methmod to test code.
   def set_school_admin
     if self.school_admin == "true"
       self.school.puavoSchoolAdmin = Array(self.school.puavoSchoolAdmin).push self.dn

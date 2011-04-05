@@ -23,9 +23,12 @@ Given /^the following users:$/ do |users|
       school = School.find(:first, :attribute => "displayName", :value => u["school"])
       u.delete("school")
     end
-    
+   
     user = User.new(u)
     user.puavoSchool = (school || @school).dn
+    if u["school_admin"]
+      user.puavoAdminOfSchool = user.puavoSchool
+    end
     user.userPassword = "{SSHA}" + 
       Base64.encode64(Digest::SHA1.digest(u["password"] + salt) + salt).chomp!
     user.save!
