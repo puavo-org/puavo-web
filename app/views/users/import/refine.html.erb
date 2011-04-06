@@ -9,14 +9,23 @@
     <%=h User.human_attribute_name(column) %>
   </th>
   <% end %>
+  <th><%= t('.delete') %></th>
   <% @invalid_users.each_index do |user_index| %>
   <% user = @invalid_users[user_index] %>
   <tr>
+    <% @column_index = nil %>
     <% @columns.each_index do |column_index| %>
     <td>
       <%= invalid_user_field(user, user_index, @columns[column_index], column_index) %>
+      <% @column_index = column_index %>
     </td>
     <% end %>
+    <td>
+      <%= check_box_tag("users_import_invalid_list[#{@column_index+1}][]",
+                        user_index,
+                        false,
+                        :id => "users_import_invalid_list_#{@column_index+1}_#{user_index}") %>
+    </td>
   </tr>
   <% end %>
 </table>

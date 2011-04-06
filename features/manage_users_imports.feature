@@ -354,3 +354,26 @@ Feature: User mass import
      | Ken | Jones | ken.jones  | Class 4 |
      | Ben | Mabey | ben.mabey  | Class 4 |
      | Ben | Mabey | benj.mabey | Class 4 |
+
+  Scenario: Skip duplicate username
+    Given I send to the following user mass import data
+    """
+    Ken	Jones	ken.jones	Class 4	Student
+    Ben	Mabey	ben.mabey	Class 4	Student
+    Ben	Mabey	ben.mabey	Class 4	Student
+    Ben	Mabey	ben.mabey	Class 4	Student
+    """
+    Then I should see "Select field for each column"
+    When I select "Given name" from "users_import_columns[0]"
+    And I select "Surname" from "users_import_columns[1]"
+    And I select "Username" from "users_import_columns[2]"
+    And I select "Role" from "users_import_columns[3]"
+    And I select "User type" from "users_import_columns[4]"
+    And I press "Validates users"
+    Then I should see "Username has already been taken"
+    When I check field by id "users_import_invalid_list_5_0"
+    When I check field by id "users_import_invalid_list_5_1"
+    And I press "Revalidate"
+    Then I should see the following users:
+    | Ken | Jones | ken.jones  | Class 4 |
+    | Ben | Mabey | ben.mabey  | Class 4 |

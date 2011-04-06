@@ -175,12 +175,15 @@ class User < LdapBase
   # 
   def self.hash_array_data_to_user(data, columns, school)
     users = []
-    max_data_column_number = data.keys.max { |a,b| a.to_i <=> b.to_i }
+    max_data_column_number = (columns.count - 1).to_s
     # Row contains one user data (row number == user_index)
     0.upto data["0"].length-1 do |user_index|
+      next if Array(data[ (max_data_column_number.to_i + 1).to_s ]).include?(user_index.to_s)
       user = Hash.new
       0.upto max_data_column_number.to_i do |column_index|
-        user[columns[column_index]] = data[column_index.to_s][user_index]
+        unless columns[column_index].nil?
+          user[columns[column_index]] = data[column_index.to_s][user_index]
+        end
       end
       new_user = User.new(user)
       new_user.puavoSchool = school.dn

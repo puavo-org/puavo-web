@@ -128,6 +128,7 @@ en:
         title: User mass import
         info: The following new users of the data are not valid. Please repair the information and select revalidate button.
         column_info: Select field for each column
+        delete: Delete
       preview:
         title: User mass import preview
         info: Check information of the users and select "Create users"

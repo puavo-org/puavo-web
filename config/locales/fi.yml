@@ -127,6 +127,7 @@ fi:
         title: Käyttäjien massalisäys
         info: Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta "Tarkista uudelleen" -painiketta.
         column_info: Valitse jokaiselle sarakkeelle sopiva kenttä
+        delete: Poista
       preview:
         title: Käyttäjien massalisäys, esikatselu
         info: Tarkista käyttäjien tiedot ja valitse sen jälkeen "Lisää käyttäjät"
