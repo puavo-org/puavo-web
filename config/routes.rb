@@ -92,4 +92,6 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resources :admins
+
+  map.resource :organisation
 end

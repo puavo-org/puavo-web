@@ -173,6 +173,9 @@ fi:
       title: Vaihda salasana
       password: Vanha salasana
       link_other_password: Vaihda toisen käyttäjä salasana
+  organisations:
+    show:
+      title: Organisaation tiedot
   activeldap:
     errors:
       messages:
@@ -243,6 +246,18 @@ fi:
         gidNumber: Gid-numero
         primary_members: Ensisijaiset jäsenet
         members: Jäsenet
+      organisation:
+        description: Kuvaus
+        telephoneNumber: Puhelinnumero
+        facsimileTelephoneNumber: Faxin numero
+        l: Sijainnin nimi
+        street: Katuosoite
+        postOfficeBox: Postilokero
+        postalAddress: Postiosoite
+        postalCode: Postinumero
+        st: Maakunta
+        preferredLanguage: Ensisijainen kieli
+        eduOrgHomePageURI: Kotisivu
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: Henkilökunta
   puavoEduPersonAffiliation_student: Opiskelija

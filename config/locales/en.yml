@@ -174,6 +174,9 @@ en:
       title: Change password
       password: Old password
       link_other_password: Change password for other user
+  organisations:
+    show:
+      title: Information of organisation
   activeldap:
     errors:
       messages:
@@ -244,6 +247,18 @@ en:
         gidNumber: Gid number
         primary_members: Primary members
         members: Members
+      organisation:
+        description: Description
+        telephoneNumber: Phone number
+        facsimileTelephoneNumber: Fax number
+        l: Locality
+        street: Street address
+        postOfficeBox: Post Office Box
+        postalAddress: Postal address
+        postalCode: Postal code
+        st: State
+        preferredLanguage: Preferred language
+        eduOrgHomePageURI: Home page
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
