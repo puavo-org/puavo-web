@@ -72,6 +72,11 @@ ul.menu li.hover /* protofish */ a {
         background: #94aa29;
 }
 
+li.left a {
+	-moz-border-radius-bottomleft: 12px;
+	-webkit-border-bottom-left-radius: 12px;
+}
+
 ul.menu li.active a {
         color: #b6e3ec;
 }
