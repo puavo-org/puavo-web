@@ -1,0 +1,51 @@
+<h2><%= t('.title') %></h2>
+<table>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "description" %></td>
+    <td class="value_td"><%=h @organisation.description %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "telephoneNumber" %></td>
+    <td class="value_td"><%=h @organisation.telephoneNumber %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "facsimileTelephoneNumber" %></td>
+    <td class="value_td"><%= @organisation.facsimileTelephoneNumber %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "l" %></td>
+    <td class="value_td"><%= @organisation.l %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "street" %></td>
+    <td class="value_td"><%= @organisation.street %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "postOfficeBox" %></td>
+    <td class="value_td"><%= @organisation.postOfficeBox %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "postalAddress" %></td>
+    <td class="value_td"><%= @organisation.postalAddress %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "postalCode" %></td>
+    <td class="value_td"><%= @organisation.postalCode %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "st" %></td>
+    <td class="value_td"><%= @organisation.st %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "preferredLanguage" %></td>
+    <td class="value_td"><%=h @organisation.preferredLanguage ? t('language_' + @organisation.preferredLanguage) : "" %></tr>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "eduOrgHomePageURI" %></td>
+    <td class="value_td"><%= @organisation.eduOrgHomePageURI %></td>
+  </tr>
+</table>
+
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_organisation_path %></div>
+<% end %>

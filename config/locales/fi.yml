@@ -176,6 +176,8 @@ fi:
   organisations:
     show:
       title: Organisaation tiedot
+    edit:
+      title: Organisaation tiedot
   activeldap:
     errors:
       messages:
@@ -246,7 +248,7 @@ fi:
         gidNumber: Gid-numero
         primary_members: Ensisijaiset jäsenet
         members: Jäsenet
-      organisation:
+      ldap_organisation:
         description: Kuvaus
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero

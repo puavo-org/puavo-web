@@ -1,0 +1,57 @@
+<h1><%= t('.title') %></h1>
+
+<% form_for(@organisation, :url => organisation_path)  do |f| %>
+<table>
+  <tr>
+    <td><%= f.label :description %></td>
+    <td><%= f.text_field :description %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :telephoneNumber %></td>
+    <td><%= f.text_field :telephoneNumber %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :facsimileTelephoneNumber %></td>
+    <td><%= f.text_field :facsimileTelephoneNumber %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :l %></td>
+    <td><%= f.text_field :l %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :street %></td>
+    <td><%= f.text_field :street %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :postOfficeBox %></td>
+    <td><%= f.text_field :postOfficeBox %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :postalAddress %></td>
+    <td><%= f.text_field :postalAddress %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :postalCode %></td>
+    <td><%= f.text_field :postalCode %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :st %></td>
+    <td><%= f.text_field :st %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :preferredLanguage %></td>
+    <td>
+      <%= f.select :preferredLanguage,
+          [[t('language_default'), ""]] +
+            Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } %>
+    </td>
+  </tr>
+  <tr>
+    <td><%= f.label :eduOrgHomePageURI %></td>
+    <td><%= f.text_field :eduOrgHomePageURI %></td>
+  </tr>
+  <tr>
+    <td><%= f.submit t('link.update') %></td>
+  </tr>
+</table>
+<% end %>

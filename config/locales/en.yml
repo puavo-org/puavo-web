@@ -177,6 +177,8 @@ en:
   organisations:
     show:
       title: Information of organisation
+    edit:
+      title: Information of organisation
   activeldap:
     errors:
       messages:
@@ -247,7 +249,7 @@ en:
         gidNumber: Gid number
         primary_members: Primary members
         members: Members
-      organisation:
+      ldap_organisation:
         description: Description
         telephoneNumber: Phone number
         facsimileTelephoneNumber: Fax number
