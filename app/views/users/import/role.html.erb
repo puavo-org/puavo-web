@@ -1,5 +1,5 @@
 <h2><%= t('.title') %></h2>
-<% form_for(:user, :url => role_users_import_path(@school), :html => { :method => :put }) do |f| %>
+<% form_for(:user, :url => validate_users_import_path(@school), :html => { :method => :post }) do |f| %>
 
 <p><%= t('.help') %>:</p>
 
@@ -14,10 +14,23 @@
 
 <% unless @columns.include?('role_name') %>
 <p>
-  <%= f.label :role_ids %><br />
-  <%= f.select :role_ids,
-  options_for_select([[t('default_select_value'), ""]] + @roles.collect{ |g| [g.displayName, g.puavoId] })%>
+  <%= f.label :role_name %><br />
+  <%= f.select :role_name,
+  options_for_select([[t('default_select_value'), ""]] + @roles.collect{ |g| [g.displayName, g.displayName] })%>
 </p>
+<% end %>
+
+<% user_index = 0 %>
+<% @raw_users.each do |user| %>
+  <% index = 0 %>
+  <% 0.upto(@number_of_columns-1) do |index| %>
+    <%= hidden_field_tag "users[#{index}][]", user[index].to_s.strip, {:id => "users_#{index}_#{user_index}"} %>
+  <% end %>
+<% user_index += 1 %>
+<% end %>
+
+<% @columns.each do |column| %>
+<%= hidden_field_tag "columns[]", column %>
 <% end %>
 
 <%= f.submit t('link.continue') %>

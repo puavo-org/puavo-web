@@ -1,6 +1,6 @@
 <h2><%= t('.title') %></h2>
 
-<% form_for(:users_import, :url => validate_users_import_path(@school), :html => { :multipart => true, :method => :post } ) do %>
+<% form_for(:users_import, :url => refine_users_import_path(@school), :html => { :method => :post } ) do %>
 <p>
   <%= t('.help') %>
   <p>
@@ -10,7 +10,7 @@
 <%= t('.example') %>
       </pre>
     </p>
-    <%= text_area_tag "users_csv_list", nil, :rows => 20, :cols => 100 %>
+    <%= text_area_tag "raw_users", nil, :rows => 20, :cols => 100 %>
   </p>
 
   <p>

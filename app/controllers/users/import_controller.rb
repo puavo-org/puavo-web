@@ -1,8 +1,8 @@
 class Users::ImportController < ApplicationController
   require 'prawn/layout'
 
-  class OnlyRawData < StandardError; end
   class ColumnError < StandardError; end
+  class RoleEduPersonAffiliationError < StandardError; end
 
   Mime::Type.register 'application/pdf', :pdf
 
@@ -14,171 +14,127 @@ class Users::ImportController < ApplicationController
     end
   end
 
-  # GET /:school_id/users/import/refine
+  # POST /:school_id/users/import/refine
   def refine
-    @roles = Role.all.delete_if{ |r| r.puavoSchool != @school.dn }
-    User.taken_uids_by_puavoId = session[:taken_uids_by_puavoId]
-    @invalid_users = []
-    @columns =  session[:users_import_columns] if session.has_key?(:users_import_columns)
-
-    if session.has_key?(:users_import_instance_list) && session[:users_import_instance_list].has_key?(:invalid)
-      @invalid_users = session[:users_import_instance_list][:invalid]
-    elsif session.has_key?(:users_import_raw_list)
-      @raw_users = session[:users_import_raw_list]
+    @raw_users = params[:raw_users].split(/[\n\r]+/).map do
+      |line| line.split("\t")
     end
 
-    # Add attribute to list of displayed fields if attribute value is invalid
-    @invalid_users.each do |user|
-      user.errors.each do |column, message|
-        @columns.push column unless @columns.include?(column)
-      end
-    end
+    @number_of_columns = @raw_users.max {|a,b| a.length <=> b.length}.length
 
     respond_to do |format|
-      format.html
+      format.html # refine.html.erb
     end
   end
   
-  # GET /:school_id/users/import/validate
   # POST /:school_id/users/import/validate
+  # Validate action use following template: refine, role and preview
   def validate
-    User.taken_uids_by_puavoId = session[:taken_uids_by_puavoId]
-    @columns = []
-    
-    if params.has_key?(:users_import_raw_list)
-      session[:users_import_raw_list] = params[:users_import_raw_list].values.transpose
-    end
+    @raw_users = params[:users]
 
-    if params.has_key?(:users_csv_list)
-      # Convert data to array.
-      session[:users_import_raw_list] = params[:users_csv_list].split(/[\n\r]+/).map do
-        |line| line.split("\t")
+    if params[:users_import_columns]
+      # Verify list of colums (refine.html.erb)
+
+      if params[:users_import_columns].length != params[:users_import_columns].invert.length
+        raise ColumnError, t('flash.user.import.dupplicate_column_name_error')
       end
-      # Clean older value
-      session[:users_import_columns] = nil
-      session[:users_import_instance_list] = nil
-      raise OnlyRawData
-    end
-    if params.has_key?(:users_import_columns)
-      # Set column name into @columns array order by column location on table
-      # params[:user][:column]: {"0" => "Surname", "1" => "Given name", "2" => "Role" }
-      # @columns: ["Surname", "Given name", "Role"]
-      @columns =  params[:users_import_columns].keys.sort do |a,b|
+
+      # Create sort list of columns by params
+      # params[:users_import_columns]: {"0" => "givenName", "1" => "sn"}
+      # @columns: ["givenName", "sn"]
+      @columns = params[:users_import_columns].keys.sort do |a,b|
         a.to_i <=> b.to_i 
       end.map do |key|
         params[:users_import_columns][key]
       end
-      session[:users_import_columns] = @columns
-      if params[:users_import_columns].length != params[:users_import_columns].invert.length
-        raise ColumnError, t('flash.user.import.dupplicate_column_name_error')
+     
+      # givenName and sn is required attributes
+      unless @columns.include?('givenName') && @columns.include?('sn')
+        raise ColumnError, t('flash.user.import.require_error')
       end
     else
-      @columns =  session[:users_import_columns] if session.has_key?(:users_import_columns)
-    end 
-
-    unless @columns.include?('givenName') && @columns.include?('sn')
-      raise ColumnError, t('flash.user.import.require_error')
+      @columns = params[:columns]
     end
 
-    if params.has_key?(:users_import_raw_list)
-      session[:users_import_instance_list] =
-        User.validate_users( User.hash_array_data_to_user( params[:users_import_raw_list],
-                                                                   @columns,
-                                                                   @school ) )
-    elsif params.has_key?(:users_import_invalid_list)
-      users_import_invalid_list =
-        User.validate_users( User.hash_array_data_to_user( params[:users_import_invalid_list],
-                                                                   @columns,
-                                                                   @school ) )
-      session[:users_import_instance_list][:valid] += users_import_invalid_list[:valid]
-      session[:users_import_instance_list][:invalid] = users_import_invalid_list[:invalid]
-    elsif session.has_key?(:users_import_instance_list)
-      session[:users_import_instance_list] =
-        User.validate_users( session[:users_import_instance_list][:valid] +
-                                 session[:users_import_instance_list][:invalid] )
-    end
+    # Create User object by form data
+    @users = User.hash_array_data_to_user( @raw_users,
+                                           @columns,
+                                           @school )
 
-    session[:taken_uids_by_puavoId] = User.taken_uids_by_puavoId
-
-    respond_to do |format|
-      format.html do
-        if @columns.include?('role_ids') && 
-            !session[:users_import_instance_list][:invalid].empty? &&
-            session[:users_import_instance_list][:invalid].first.errors.on("role_ids")
-          flash[:notice] = t('flash.user.import.role_require_error')
-          redirect_to role_users_import_path(@school)
-        elsif ( !@columns.include?('role_name') && !@columns.include?('role_ids') ) ||
-            ( !@columns.include?('puavoEduPersonAffiliation') )
-          redirect_to role_users_import_path(@school) 
-        elsif session[:users_import_instance_list][:invalid].empty?
-          redirect_to preview_users_import_path(@school)
-        else
-          redirect_to refine_users_import_path(@school)
-        end
-      end
-    end
-  rescue OnlyRawData => exception
-    redirect_to refine_users_import_path(@school)
-  rescue ColumnError => exception
-    flash[:notice] = exception.message
-    flash[:notice_css_class] = "notice_error"
-    redirect_to refine_users_import_path(@school)
-  end
-  
-  # GET /:school_id/users/import/role
-  # PUT /:school_id/users/import/role
-  def role
-    @roles = Role.all.delete_if{ |r| r.puavoSchool != @school.dn }
-
-    @columns = session[:users_import_columns]
-
+    # Set puavoEduPersonAffiliation and role to users by params
     if params.has_key?(:user)
-      if params[:user].has_key?(:puavoEduPersonAffiliation) && !@columns.include?("puavoEduPersonAffiliation")
+      if !@columns.include?("puavoEduPersonAffiliation") &&
+          params[:user].has_key?(:puavoEduPersonAffiliation) &&
+          !params[:user][:puavoEduPersonAffiliation].empty?
         @columns.push "puavoEduPersonAffiliation"
+        puavoEduPersonAffiliation = params[:user][:puavoEduPersonAffiliation]
       end
-      if params[:user].has_key?(:role_ids) && !@columns.include?("role_ids")
-        @columns.push "role_ids"
+      if !@columns.include?("role_name") &&
+          params[:user].has_key?(:role_name) &&
+          !params[:user][:role_name].empty?
+        @columns.push "role_name"
+        role_name = params[:user][:role_name]
       end
-      session[:users_import_instance_list].each_value do |users|
-        users.each do |user|
-          if params[:user].has_key?(:puavoEduPersonAffiliation)
-            user.puavoEduPersonAffiliation = params[:user][:puavoEduPersonAffiliation]
+      if !role_name.nil? || !puavoEduPersonAffiliation.nil?
+        @users.each do |user|
+          unless puavoEduPersonAffiliation.nil?
+            user.puavoEduPersonAffiliation = puavoEduPersonAffiliation
           end
-          if params[:user].has_key?(:role_ids)
-            user.role_ids = Array(params[:user][:role_ids])
+          unless role_name.nil?
+            user.role_name = Array(role_name)
           end
         end
       end
     end
     
+    # puavoEduPersonAffiliation and role is required attributes
+    if !@columns.include?('role_name') || !@columns.include?('puavoEduPersonAffiliation')
+      raise RoleEduPersonAffiliationError
+    end
+
+    # Validate users
+    (@valid_users, @invalid_users) = User.validate_users( @users )
+
     respond_to do |format|
       format.html do
-        if request.method == :put
-          redirect_to validate_users_import_path(@school)
-        end
+        @columns.push "uid" unless @columns.include?('uid')
+        render 'preview'
       end
     end
-  end
-
-  # GET /:school_id/users/import/preview
-  def preview
-    @valid_users = session[:users_import_instance_list][:valid]
-    @columns = session[:users_import_columns]
-    @columns.push "uid" unless @columns.include?('uid')
+  rescue ColumnError => exception
+    flash[:notice] = exception.message
+    flash[:notice_css_class] = "notice_error"
+    @number_of_columns = params[:users_import_columns].length
+    @raw_users = params[:users].values.transpose
+    render "refine"
+  rescue RoleEduPersonAffiliationError => exception
+    @number_of_columns = @columns.length
+    @raw_users = params[:users].values.transpose
+    @roles = Role.all.delete_if{ |r| r.puavoSchool != @school.dn }
+    render "role"
   end
 
   # POST /:school_id/users/import
   def create
-    @users = session[:users_import_instance_list][:valid]
-
+    @users = User.hash_array_data_to_user( params[:users],
+                                           params[:columns],
+                                           @school )
+    
     users_of_roles = Hash.new
     failed_users = Array.new
 
+    create_timestamp = Time.now.strftime("%Y%m%d%H%M%S%z")
+    
+    puavo_ids = IdPool.next_puavo_id_range(@users.select{ |u| u.puavoId.nil? }.count)
+    id_index = 0
+
     @users.each do |user|
-      if user.new_password.nil? or user.new_password.empty?
-        user.generate_password
-      end
       begin
+        if user.puavoId.nil?
+          user.puavoId = puavo_ids[id_index]
+          id_index += 1
+        end
+        user.puavoCreateTimestamp = create_timestamp
         user.save!
       rescue Exception => e
         logger.info "Import Controller, create user, Exception: #{e}"
@@ -192,7 +148,6 @@ class Users::ImportController < ApplicationController
 
     failed_users.each do |failed_user|
       @users.delete(failed_user)
-      session[:users_import_instance_list][:invalid].push failed_user
     end
 
     users_of_school = User.find(:all, :attribute => 'puavoSchool', :value => @school.dn )
@@ -211,14 +166,21 @@ class Users::ImportController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to users_import_path(@school) }
+      format.html { redirect_to users_import_path(@school, :create_timestamp => create_timestamp ) }
     end
   end
 
-  # GET /:school_id/users/import/show
+  # GET /:school_id/users/import/show?create_timestamp=20110402152432Z
   def show
-    @users = session[:users_import_instance_list][:valid]
-    @invalid_users = session[:users_import_instance_list][:invalid]
+    @invalid_users = []
+
+    @users = User.find( :all,
+                        :attribute => "puavoCreateTimestamp",
+                        :value => params[:create_timestamp] ) if params[:create_timestamp]
+    @users.each do |user|
+      user.generate_password
+      user.save!
+    end
 
     # Reload roles association
     @users.each do |u| u.roles.reload end

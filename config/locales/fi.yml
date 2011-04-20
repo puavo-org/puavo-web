@@ -126,8 +126,10 @@ fi:
       refine:
         title: Käyttäjien massalisäys
         info: Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta "Tarkista uudelleen" -painiketta.
-        column_info: Valitse jokaiselle sarakkeelle sopiva kenttä
+        column_info: Valitse sopivat nimet kentille esimerkki sisällön mukaan
         delete: Poista
+        name_of_column: Kentän nimi
+        example: Esimerkki
       preview:
         title: Käyttäjien massalisäys, esikatselu
         info: Tarkista käyttäjien tiedot ja valitse sen jälkeen "Lisää käyttäjät"

@@ -127,8 +127,10 @@ en:
       refine:
         title: User mass import
         info: The following new users of the data are not valid. Please repair the information and select revalidate button.
-        column_info: Select field for each column
+        column_info: Select correct name of column for each data
         delete: Delete
+        name_of_column: Name of column
+        example: Example data
       preview:
         title: User mass import preview
         info: Check information of the users and select "Create users"

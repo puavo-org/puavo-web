@@ -130,8 +130,8 @@ class User < LdapBase
     # mass import uid validation
     if self.mass_import
       if @@taken_uids_by_puavoId.keys.include?(self.uid) && @@taken_uids_by_puavoId[self.uid] != self.puavoId
-        errors.add :uid, I18n.t("activeldap.errors.messages.taken",
-                                :attribute => I18n.t("activeldap.attributes.user.uid") )
+        #errors.add :uid, I18n.t("activeldap.errors.messages.taken",
+        #                        :attribute => I18n.t("activeldap.attributes.user.uid") )
       else
         @@taken_uids_by_puavoId[self.uid] = self.puavoId
       end
@@ -198,20 +198,16 @@ class User < LdapBase
     valid = []
     invalid = []
 
-    puavo_ids = IdPool.next_puavo_id_range(users.select{ |u| u.puavoId.nil? }.count)
-
-    id_index = 0
     users.each do |user|
       if  user.uid.nil? or user.uid.empty?
         user.generate_username
       end
       if user.puavoId.nil?
-        user.puavoId = puavo_ids[id_index]
-        id_index += 1
+        user.puavoId = "0"
       end
       user.valid? ? (valid.push user) : (invalid.push user)
     end
-    return { :valid => valid, :invalid => invalid }
+    return valid, invalid
   end
 
   #

@@ -1,22 +1,32 @@
+
 <h2><%= t('.title') %></h2>
 <p><%= t('.info') %></p>
 
+<% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
  <table cellspacing="0" id="validate_users_list">
   <% @columns.each do |column| %>
   <th>
     <%= User.human_attribute_name(column) %>
+    <%= hidden_field_tag "columns[]", column %>
   </th>
   <% end %>
-  <% @valid_users.each do |user| %>
+
+  <% user_index = 0 %>
+  <% @users.each do |user| %>
   <tr>
+    <% column_index = 0 %>
     <% @columns.each do |column| %>
     <td>
       <%=h user.human_readable_format(column) %>
+      <%= hidden_field_tag "users[#{column_index}][]", user.human_readable_format(column), {:id => "users_#{column_index}_#{user_index}"} %>
     </td>
+    <% column_index += 1 %>
     <% end %>
   </tr>
+  <% user_index += 1 %>
   <% end %>
 </table>
-<% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
 <%= f.submit t('link.user_mass_import.create') %>
 <% end %>
+
+

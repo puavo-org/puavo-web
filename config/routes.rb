@@ -53,19 +53,11 @@ ActionController::Routing::Routes.draw do |map|
     import.refine_users_import(
                                ":school_id/users/import/refine",
                                :action => 'refine',
-                               :conditions => {:method => :get} )
+                               :conditions => {:method => :post} )
     import.validate_users_import(
                                  ":school_id/users/import/validate",
                                  :action => 'validate',
-                                 :conditions => {:method => [:post, :get]} )# validate FIXME put method?
-    import.role_users_import(
-                              ":school_id/users/import/role",
-                              :action => 'role',
-                              :conditions => {:method => [:get, :put]} )# role
-    import.preview_users_import(
-                                ":school_id/users/import/preview",
-                                :action => 'preview',
-                                :conditions => {:method => :get} )# preview
+                                 :conditions => {:method => [:post]} )# validate FIXME put method?
     import.users_import(
                         ":school_id/users/import/show",
                         :action => 'show',
