@@ -18,8 +18,11 @@
   <%= stylesheet_link_tag "#{theme}/topmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/navmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/puavo.css" %>
-  <%= javascript_include_tag 'flot/jquery.js' %>
-  <%= javascript_include_tag 'flot/jquery.flot' %>
+
+  <%= javascript_include_tag "jquery-1.4.2.min", "rails" %>
+
+  <meta name="csrf-token" content="<%= form_authenticity_token %>" />
+  <meta name="csrf-param" content="authenticity_token" />
 </head>
 <body>
   <div class="container">
@@ -115,14 +118,6 @@
     <% end %>
 
   </div> <!-- container -->
-
-  <%= javascript_include_tag 'prototype' %>
-  <%= javascript_include_tag 'protofish' %>
-  <script type="text/javascript">
-    document.observe("dom:loaded", function() {
-    new ProtoFish("top-menu", "200", "hover", false, true, true);
-    });
-  </script>
 
 </body>
 </html>
