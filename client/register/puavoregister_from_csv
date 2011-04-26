@@ -1,0 +1,45 @@
+#!/usr/bin/ruby
+
+require 'csv'
+
+filename, puavoserver, password, school = *ARGV
+
+terminals = CSV.readlines(filename).
+		select { |terminal| terminal[0] != 'description' }
+
+terminals[0..-1].each do |row|
+  next if row[0] == 'description'
+  z, z, hostname, z, location, macaddress, z, serial_number, z, model = *row
+
+  devicetype       = 'thinclient'
+  manufacturer     = ''
+  puavodevicemodel = ''
+
+  case model
+    when /etc-3800/i
+      manufacturer     = 'Epatec'
+      puavodevicemodel = 'ETC-3800'
+    when /verkko-pc/i
+      devicetype = 'fatclient'
+  end
+
+  cmd = [
+    'fakeroot',
+    '/usr/sbin/register-puavodevice',
+    '--noconfirm',
+    '--puavoserver',			puavoserver,
+    '--username',			'admin',
+    '--password',			password,
+    '--school',				school,
+    '--devicetype',			devicetype,
+    '--puavoHostname',			hostname,
+    '--puavoLocationName',		location,
+    '--macAddress',			macaddress.downcase,
+    '--serialNumber',			serial_number,
+    '--puavoDeviceManufacturer',	manufacturer,
+    '--puavoDeviceModel',		puavodevicemodel,
+  ]
+
+  puts "registering terminal with info: #{ row.inspect }"
+  system(*cmd)
+end
