@@ -53,7 +53,7 @@ Then /^I should get "([^\"]*)" with "([^\"]*)" from "([^\"]*)"$/ do |text, metho
 end
 
 Then /^I should see the following users:$/ do |users_table|
-  users_table.diff!(tableish('table#validate_users_list tr', 'td,th'))
+  users_table.diff!(tableish('table.validate_users_list tr', 'td,th'))
 end
 
 When /^I fill test data into user forms$/ do

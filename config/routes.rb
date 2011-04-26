@@ -70,6 +70,10 @@ ActionController::Routing::Routes.draw do |map|
                                ":school_id/users/import/",
                                :action => 'create',
                                :conditions => {:method => :post} )# preview
+    import.user_validate_users_import(
+                               ":school_id/users/import/user_validate.:format",
+                               :action => 'user_validate',
+                               :conditions => {:method => :post} )
   end
 
   map.with_options :controller => 'password' do |password|

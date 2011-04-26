@@ -19,8 +19,11 @@
   <%= stylesheet_link_tag "#{theme}/navmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/puavo.css" %>
 
-  <%= javascript_include_tag "jquery-1.4.2.min", "rails" %>
-
+  <%= javascript_include_tag( "jquery-1.4.2.min",
+                              "rails",
+                              "application",
+                              "jquery.jeditable.mini.js" ) %>
+  <%= yield :javascript %>
   <meta name="csrf-token" content="<%= form_authenticity_token %>" />
   <meta name="csrf-param" content="authenticity_token" />
 </head>

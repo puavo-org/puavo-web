@@ -8,7 +8,6 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/new
   def new
-    session[:taken_uids_by_puavoId] = Hash.new
     respond_to do |format|
       format.html
     end
@@ -128,6 +127,8 @@ class Users::ImportController < ApplicationController
     puavo_ids = IdPool.next_puavo_id_range(@users.select{ |u| u.puavoId.nil? }.count)
     id_index = 0
 
+    User.reserved_uids = []
+
     @users.each do |user|
       begin
         if user.puavoId.nil?
@@ -194,6 +195,43 @@ class Users::ImportController < ApplicationController
                   :type => 'application/pdf',
                   :disposition => 'inline' )
       end
+    end
+  end
+
+  def user_validate
+    @users = params[:users]
+    @columns = params[:columns]
+
+    @user = User.new
+    # Set old values by params
+    params[:users].each do |index, value|
+      @user.send(@columns[index.to_i] + "=", value)
+    end
+
+    # Set new value
+    @user.send( @columns[params[:id].to_i] + "=", params[:value] )
+    @user.puavoSchool = @school.dn
+    @user.mass_import = true
+
+    User.reserved_uids = params[:uids_list]
+    @user.valid?
+
+    @user_validation_status = @columns.inject([]) do |result, column|
+      status = "true"
+      error_message = Array( @user.errors.on(column) ).first
+      unless error_message.nil?
+        status = "false"        
+      end
+
+      index = @columns.index(column)
+      result.push( { "index" => index,
+        "value" => params[:id].to_i == index.to_i ? params[:value] : params[:users][index.to_s].first,
+        "status" => status,
+        "error" => error_message } )
+    end
+
+    respond_to do |format|
+      format.json{ render :json => @user_validation_status }
     end
   end
 

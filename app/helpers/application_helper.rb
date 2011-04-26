@@ -30,13 +30,17 @@ module ApplicationHelper
     super(*args) + after_html.to_s
   end
 
+  def field_error_text_span(object, method)
+    content_tag(:span, field_error_text(object, method), :class => 'field_error')
+  end
+
   def field_error_text(object, method)
     if object.errors.invalid?(method)
       error_message = Array(object.errors.on(method)).first
       if error_message.match(/is required attribute by objectClass/)
         error_message = translate_error(object, method)
       end
-      content_tag(:span, error_message, :class => 'field_error')
+      error_message
     end
   end
 

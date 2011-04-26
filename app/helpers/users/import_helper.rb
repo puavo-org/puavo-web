@@ -1,7 +1,23 @@
 module Users::ImportHelper
 
+  def user_list_editable_item(user, user_index, column, column_index)
+    error_message = field_error_text_span(user, column)
+    
+    css_classes = "edit"
+    css_classes += user.errors.invalid?(column) ? " invalid" : ""
+
+    html = content_tag :div, :class => css_classes, :id => column_index do
+      user.human_readable_format(column)
+    end
+    html += hidden_field_tag( "users[#{column_index}][]",
+                              user.human_readable_format(column),
+                              { :id => "users_#{column_index}_#{user_index}",
+                                :class => "#{column}"} )
+    return html + error_message.to_s
+  end
+
   def invalid_user_field(user, user_index, column, column_index)
-    error_message = field_error_text(user, column)
+    error_message = field_error_text_span(user, column)
 
     case column
     when "role_ids"
