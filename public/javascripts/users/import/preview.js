@@ -9,7 +9,9 @@ $(document).ready(function() {
 	    result = jQuery.parseJSON(value);
 
 	    parent_element.find('td').each(function(index, e) {
-		update_field_status(index, $(e), result);
+		if( ! $(e).hasClass('action') ) {
+		    update_field_status(index, $(e), result);
+		}
 	    });
 
 	    current_element.val( this.innerHTML = result[current_element.attr('id')]["value"] );
@@ -64,4 +66,19 @@ $(document).ready(function() {
 
 	return submitdata;
     }
+
+    $('.destroy').click(function() {
+	$(this).closest('tr').fadeOut('slow', function() {
+	    $(this).remove();
+	});
+    });
+
+    $('.user_row').mouseover(function() {
+	$(this).closest('table').find('.destroy').hide();
+	$(this).find('.destroy').show();
+    });
+
+    $('table.validate_users_list').mouseout(function() {
+	$(this).closest('table').find('.destroy').hide();
+    });
 });

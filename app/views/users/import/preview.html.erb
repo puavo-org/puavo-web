@@ -6,7 +6,7 @@
 <p><%= t('.info') %></p>
 
 <% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
- <table cellspacing="0" class="validate_users_list">
+ <table class="validate_users_list">
   <% @columns.each do |column| %>
   <th>
     <%= User.human_attribute_name(column) %>
@@ -16,7 +16,7 @@
 
   <% user_index = 0 %>
   <% @invalid_users.each do |user| %>
-  <tr>
+  <tr class="user_row">
     <% column_index = 0 %>
     <% @columns.each do |column| %>
     <td>
@@ -24,12 +24,13 @@
     </td>
     <% column_index += 1 %>
     <% end %>
+    <td class="action"><%= link_to t('link.destroy'), '#', :class => "destroy" %></td>
   </tr>
   <% user_index += 1 %>
   <% end %>
 
   <% @valid_users.each do |user| %>
-  <tr>
+  <tr class="user_row">
     <% column_index = 0 %>
     <% @columns.each do |column| %>
     <td>
@@ -37,6 +38,7 @@
     </td>
     <% column_index += 1 %>
     <% end %>
+    <td class="action"><%= link_to t('link.destroy'), '#', :class => "destroy" %></td>
   </tr>
   <% user_index += 1 %>
   <% end %>
