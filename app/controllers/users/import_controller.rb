@@ -202,18 +202,15 @@ class Users::ImportController < ApplicationController
     @users = params[:users]
     @columns = params[:columns]
 
-    @user = User.new
-    # Set old values by params
-    params[:users].each do |index, value|
-      @user.send(@columns[index.to_i] + "=", value)
-    end
+    @user = User.new( @users.inject({}) do |result, value|
+                        new_value = @columns[value.first.to_i] == params[:column] ? params[:value] : value.last
+                        result = result.merge(@columns[value.first.to_i] => new_value)
+                      end )
 
-    # Set new value
-    @user.send( @columns[params[:id].to_i] + "=", params[:value] )
     @user.puavoSchool = @school.dn
     @user.mass_import = true
 
-    User.reserved_uids = params[:uids_list]
+    User.reserved_uids = params[:uids_list] || []
     @user.valid?
 
     @user_validation_status = @columns.inject([]) do |result, column|
@@ -225,7 +222,7 @@ class Users::ImportController < ApplicationController
 
       index = @columns.index(column)
       result.push( { "index" => index,
-        "value" => params[:id].to_i == index.to_i ? params[:value] : params[:users][index.to_s].first,
+        "value" => params[:column] == column ? params[:value] : @users[index.to_s].first,
         "status" => status,
         "error" => error_message } )
     end
@@ -233,6 +230,23 @@ class Users::ImportController < ApplicationController
     respond_to do |format|
       format.json{ render :json => @user_validation_status }
     end
+  end
+
+  def options
+    case params[:column]
+    when "role_name"
+      @data = @school.roles.inject({}){ |result, role| result.merge( {role.displayName => role.displayName } ) }
+    when "puavoEduPersonAffiliation"
+      @data = User.puavoEduPersonAffiliation_list.inject({}) do |result, type|
+        type = I18n.t('puavoEduPersonAffiliation_' + type )
+        result.merge({ type => type })
+      end
+    end
+
+
+    respond_to do |format|
+      format.json { render :json => @data }
+    end        
   end
 
   private
