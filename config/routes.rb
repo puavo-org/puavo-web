@@ -78,6 +78,10 @@ ActionController::Routing::Routes.draw do |map|
                                ":school_id/users/import/options.:format",
                                :action => 'options',
                                :conditions => {:method => :get} )
+    import.download_users_import(
+                                 ":school_id/users/import/download.:format",
+                                 :action => 'download',
+                                 :conditions => {:method => :get} )
   end
 
   map.with_options :controller => 'password' do |password|

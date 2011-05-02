@@ -178,8 +178,27 @@ class Users::ImportController < ApplicationController
     @users = User.find( :all,
                         :attribute => "puavoTimestamp",
                         :value => params[:create_timestamp] ) if params[:create_timestamp]
+
+    # Reload roles association
+    @users.each do |u| u.roles.reload end
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # GET /:school_id/users/import/download?create_timestamp=create:20110402152432Z
+  def download
+    password_timestamp = "password:" + Time.now.strftime("%Y%m%d%H%M%S%z")
+
+    @users = User.find( :all,
+                        :attribute => "puavoTimestamp",
+                        :value => params[:create_timestamp] ) if params[:create_timestamp]
+
     @users.each do |user|
       user.generate_password
+      # Update puavoTimestamp
+      user.puavoTimestamp = password_timestamp
       user.save!
     end
 
@@ -187,7 +206,6 @@ class Users::ImportController < ApplicationController
     @users.each do |u| u.roles.reload end
 
     respond_to do |format|
-      format.html
       format.pdf do
         send_data(
                   create_pdf(@users),
@@ -195,7 +213,7 @@ class Users::ImportController < ApplicationController
                   :type => 'application/pdf',
                   :disposition => 'inline' )
       end
-    end
+    end    
   end
 
   def user_validate
