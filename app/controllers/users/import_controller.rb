@@ -122,7 +122,7 @@ class Users::ImportController < ApplicationController
     users_of_roles = Hash.new
     failed_users = Array.new
 
-    create_timestamp = Time.now.strftime("%Y%m%d%H%M%S%z")
+    create_timestamp = "create:" + Time.now.strftime("%Y%m%d%H%M%S%z")
     
     puavo_ids = IdPool.next_puavo_id_range(@users.select{ |u| u.puavoId.nil? }.count)
     id_index = 0
@@ -135,7 +135,7 @@ class Users::ImportController < ApplicationController
           user.puavoId = puavo_ids[id_index]
           id_index += 1
         end
-        user.puavoCreateTimestamp = create_timestamp
+        user.puavoTimestamp = create_timestamp
         user.save!
       rescue Exception => e
         logger.info "Import Controller, create user, Exception: #{e}"
@@ -171,12 +171,12 @@ class Users::ImportController < ApplicationController
     end
   end
 
-  # GET /:school_id/users/import/show?create_timestamp=20110402152432Z
+  # GET /:school_id/users/import/show?create_timestamp=create:20110402152432Z
   def show
     @invalid_users = []
 
     @users = User.find( :all,
-                        :attribute => "puavoCreateTimestamp",
+                        :attribute => "puavoTimestamp",
                         :value => params[:create_timestamp] ) if params[:create_timestamp]
     @users.each do |user|
       user.generate_password
@@ -219,12 +219,12 @@ class Users::ImportController < ApplicationController
       unless error_message.nil?
         status = "false"        
       end
-
+      
       index = @columns.index(column)
       result.push( { "index" => index,
-        "value" => params[:column] == column ? params[:value] : @users[index.to_s].first,
-        "status" => status,
-        "error" => error_message } )
+                     "value" => params[:column] == column ? params[:value] : @users[index.to_s].first,
+                     "status" => status,
+                     "error" => error_message } )
     end
 
     respond_to do |format|
