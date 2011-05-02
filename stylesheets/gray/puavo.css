@@ -260,3 +260,11 @@ td.action {
 .destroy {
     display: none;
 }
+
+#user_mail_list input {
+    display: block;
+}
+
+#user_telephoneNumber_list input {
+    display: block;
+}
