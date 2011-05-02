@@ -16,39 +16,30 @@
     <tr>
       <td class="label_for_input_text_list"><%= f.label :mail %></td>
       <td>
-    <span id="user_mail_list">
+    <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
-      <input name='user[mail][]' size='30' type='text' /><br />
+      <input name='user[mail][]' size='30' type='text' />
       <% else %>
       <% Array(@user.mail).each_index do |index| %>
-      <input name='user[mail][]' size='30' type='text' value='<%= Array(@user.mail)[index] %>' /><br />
+      <input name='user[mail][]' size='30' type='text' value='<%= Array(@user.mail)[index] %>' />
       <% end %>
       <% end %>
-    </span>
-
-    <%= link_to_function( t('.add_email'),
-      nil ) do |page|
-  page.insert_html( :bottom,
-                    "user_mail_list",
-                    "<input name='user[mail][]' size='30' type='text' /><br />" ) end %>
+    </div>
+    <%= link_to t('.add_email'), "#", :class => "clone_prev_input_element" %>
   </td></tr>
   <tr>
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
     <td><span id="user_telephoneNumber_list">
       <% if Array(@user.telephoneNumber).empty? %>
-      <input name='user[telephoneNumber][]' size='30' type='text' /><br />
+      <input name='user[telephoneNumber][]' size='30' type='text' />
       <% else %>
       <% Array(@user.telephoneNumber).each_index do |index| %>
-      <input name='user[telephoneNumber][]' size='30' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' /><br />
+      <input name='user[telephoneNumber][]' size='30' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' />
       <% end %>
       <% end %>
     </span>
 
-    <%= link_to_function( t('.add_telephone_number'),
-      nil ) do |page|
-  page.insert_html( :bottom,
-                    "user_telephoneNumber_list",
-                    "<input name='user[telephoneNumber][]' size='30' type='text' /><br />" ) end %>
+    <%= link_to t('.add_telephone_number'), "#", :class => "clone_prev_input_element" %>
 </td>
 </tr>
     <tr>

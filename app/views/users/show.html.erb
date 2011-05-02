@@ -33,9 +33,9 @@
 
   <tr>
     <td class="label_td view"><%= label "user", "telephoneNumber" %></td>
-    <% Array(@user.telephoneNumber).each do |telephoneNumber| %>
-    <td class="value_td"><%=h telephoneNumber %></td>
-    <% end %>
+    <td class="value_td">
+      <%=h Array(@user.telephoneNumber).map{ |telephoneNumber| telephoneNumber }.join(", ") %>
+    </td>
   </tr>
 </table>
 
