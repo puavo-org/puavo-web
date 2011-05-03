@@ -1,3 +1,8 @@
+<% content_for :javascript do %>
+  <%= javascript_include_tag "jquery.textarea" %>
+  <%= javascript_include_tag "users/import/new" %>
+<% end %>
+
 <h2><%= t('.title') %></h2>
 
 <% form_for(:users_import, :url => refine_users_import_path(@school), :html => { :method => :post } ) do %>
