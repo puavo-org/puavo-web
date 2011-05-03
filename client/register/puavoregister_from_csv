@@ -14,12 +14,13 @@ terminals[0..-1].each do |row|
   devicetype       = 'thinclient'
   manufacturer     = ''
   puavodevicemodel = ''
+  serial_number    ||= ''	# serial number may be missing from db dump
 
   case model
     when /etc-3800/i
       manufacturer     = 'Epatec'
       puavodevicemodel = 'ETC-3800'
-    when /verkko-pc/i
+    when /verkko-pc/i,/tykki/
       devicetype = 'fatclient'
   end
 
@@ -41,5 +42,6 @@ terminals[0..-1].each do |row|
   ]
 
   puts "registering terminal with info: #{ row.inspect }"
+  puts "the command is #{ cmd.join(' ') }"
   system(*cmd)
 end
