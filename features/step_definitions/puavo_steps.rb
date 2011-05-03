@@ -186,7 +186,6 @@ end
 Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
   field_with_id(field_id).element.inner_html.should_not =~ /#{value}/
 end
-
 Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
   Array(object.send(method)).each do |dn|
@@ -233,6 +232,12 @@ When /^I cut nextPuavoId value by one$/ do
   pool = IdPool.find('IdPool')
   pool.puavoNextId -= 1
   pool.save
+end
+
+Then /^I should see "([^\"]*)" titled "([^\"]*)"$/ do |text, title|
+  within("div[text()='#{text}']") do |content|
+    content.should have_selector('*', :title => title)
+  end
 end
 
 def memberUid_include?(model, object_name, method, uid)

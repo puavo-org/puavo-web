@@ -334,7 +334,7 @@ Feature: User mass import
     And I select "Role" from "users_import_columns[2]"
     And I select "User type" from "users_import_columns[3]"
     And I press "Validates users"
-    Then I should see "Username has already been taken"
+    Then I should see "ben.mabey" titled "Username has already been taken"
 
   Scenario: User mass import with duplicate username
     Given I send to the following user mass import data
@@ -350,7 +350,7 @@ Feature: User mass import
     And I select "Role" from "users_import_columns[3]"
     And I select "User type" from "users_import_columns[4]"
     And I press "Validates users"
-    Then I should see "Username has already been taken"
+    Then I should see "ben.mabey" titled "Username has already been taken"
     #When I fill in "users_import_invalid_list_2_0" with "ken.jones"
     #And I press "Revalidate"
     #Then I should see "Username has already been taken"
