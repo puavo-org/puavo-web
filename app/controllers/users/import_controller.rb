@@ -16,7 +16,7 @@ class Users::ImportController < ApplicationController
   # POST /:school_id/users/import/refine
   def refine
     @raw_users = params[:raw_users].split(/[\n\r]+/).map do
-      |line| line.split("\t")
+      |line| line.split(/[\t,]/)
     end
 
     @number_of_columns = @raw_users.max {|a,b| a.length <=> b.length}.length
