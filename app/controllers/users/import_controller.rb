@@ -122,7 +122,7 @@ class Users::ImportController < ApplicationController
     users_of_roles = Hash.new
     failed_users = Array.new
 
-    create_timestamp = "create:" + Time.now.strftime("%Y%m%d%H%M%S%z")
+    create_timestamp = "create:#{current_user.dn}:" + Time.now.strftime("%Y%m%d%H%M%S%z")
     
     puavo_ids = IdPool.next_puavo_id_range(@users.select{ |u| u.puavoId.nil? }.count)
     id_index = 0
@@ -189,7 +189,7 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/download?create_timestamp=create:20110402152432Z
   def download
-    password_timestamp = "password:" + Time.now.strftime("%Y%m%d%H%M%S%z")
+    password_timestamp = "password:#{current_user.dn}:" + Time.now.strftime("%Y%m%d%H%M%S%z")
 
     @users = User.find( :all,
                         :attribute => "puavoTimestamp",
@@ -198,7 +198,7 @@ class Users::ImportController < ApplicationController
     @users.each do |user|
       user.generate_password
       # Update puavoTimestamp
-      user.puavoTimestamp = password_timestamp
+      user.puavoTimestamp = Array(user.puavoTimestamp).push password_timestamp
       user.save!
     end
 
