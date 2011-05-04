@@ -113,26 +113,28 @@ fi:
         title: Lisää käyttäjiä massa-ajona
         help: "Syötä käyttäjätieto alla olevaan tekstikenttään"
         example_title: Esimerkki
-        example: "Pekka	Pingviini\nLiisa	Liinus"
+        example: "Matti, Meikäläinen\nMaija, Meikäläinen"
+        hint: Voit käyttää eroittimena myös sarkainta. Näin ollen voit liittää käyttäjien tiedot taulukkolaskentaohjelmasta leikepöydän kautta alla olevaan tekstikenttään.
       show:
-        title: "({{count}}) käyttäjää lisättiin onnistuneesti."
+        title: "Käyttäjät ({{count}}) lisättiin onnistuneesti."
         title_with_error: "Kaikkien käyttäjien lisäys ei onnistunut!"
         successful: "Onnistui: {{count}}"
         failed: "Epäonnistui: {{count}}"
         pdf_info: Voit tulostaa käyttäjälistat paperille
+        title_of_failed_users_list: Seuraavien käyttäjien luonti epäonnistui!
       role:
         title: Käyttäjien massalisäystiedon tarkistus
         help: Seuraaville kentille tulee määrittää tiedot uusia tunnuksia lisättäessä
       refine:
         title: Käyttäjien massalisäys
         info: Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta "Tarkista uudelleen" -painiketta.
-        column_info: Valitse sopivat nimet kentille esimerkki sisällön mukaan
+        column_info: Valitse sopivat kentät esimerkkien avulla
         delete: Poista
         name_of_column: Kentän nimi
         example: Esimerkki
       preview:
         title: Käyttäjien massalisäys, esikatselu
-        info: Tarkista käyttäjien tiedot ja valitse sen jälkeen "Lisää käyttäjät"
+        info: Tarkista käyttäjien tiedot. Punaisilla merkityt tiedot ovat virheellisiä ja kyseisiä käyttäjiä ei voida lisätä ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi "Lisää käyttäjät"
   groups:
     index:
       actions: Toiminnot
@@ -190,7 +192,7 @@ fi:
         too_long: "{{attribute}} on liian pitkä (suurin sallittu pituus on {{count}} merkkiä)"
         too_short: "{{attribute}} on liian lyhyt (pienin sallittu pituus on {{count}} merkkiä)"
         user:
-          must_begin_with: Käyttäjätunnus pitää alkaa pienellä kirjaimella
+          must_begin_with: Käyttäjätunnuksen pitää alkaa pienellä kirjaimella
           invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
     models:
       group: Ryhmä
