@@ -150,6 +150,8 @@ class Users::ImportController < ApplicationController
     failed_users.each do |failed_user|
       @users.delete(failed_user)
     end
+    session[:failed_users] = {}
+    session[:failed_users][create_timestamp] = failed_users
 
     users_of_school = User.find(:all, :attribute => 'puavoSchool', :value => @school.dn )
     @school.memberUid = users_of_school.map &:uid
@@ -173,7 +175,8 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/show?create_timestamp=create:20110402152432Z
   def show
-    @invalid_users = []
+    @columns = ["sn", "givenName", "uid", "puavoEduPersonAffiliation", "role_name"]
+    @invalid_users = session[:failed_users][params[:create_timestamp]]
 
     @users = User.find( :all,
                         :attribute => "puavoTimestamp",

@@ -73,18 +73,20 @@ Feature: User mass import
       | Ben    | Mabey | ben.mabey   | Class 4 | Student |
       | Joseph | Wilk  | joseph.wilk | Class 4 | Student |
     When I cut nextPuavoId value by one
-#    And the following users:
-#    | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
-#    | Jim       | Jones   | jim | secret   | Class 4   | Student                   |
     And I press "Create users"
-#    Then I should see "All users was not successfully created!"
-#    And I should see "Successful: 1"
-#    And I should see "Failed: 1"
-#    And I should see "You can print users list to paper, download pdf-file."
-#    When I follow the PDF link "download pdf-file."
-#    Then I should see "Name: Ben Mabey"
-#    And I should see "Username: ben.mabey"
-#    And I should see "Password"
+    Then I should see "All users was not successfully created!"
+    And I should see "Successful: 1"
+    And I should see "Failed: 1"
+    And I should see "Ben"
+    And I should see "Mabey"
+    And I should see "ben.mabey"
+    And I should see "Class 4"
+    And I should see "Student "
+    And I should see "You can print users list to paper, download pdf-file."
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Joseph Wilk"
+    And I should see "Username: joseph.wilk"
+    And I should see "Password"
 
 
   Scenario: User mass import when role is not defined

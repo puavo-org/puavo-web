@@ -9,9 +9,29 @@
 </p>
 <% end %>
 
+<% if @users.count > 0 %>
 <p>
 <%= t('.pdf_info') %>, <%= link_to t('link.user_mass_import.download_pdf'),
                                    download_users_import_path(@school,
                                                              :format => 'pdf',
                                                              :create_timestamp => params[:create_timestamp] )  %>
 </p>
+<% end %>
+
+<% unless @invalid_users.empty? %>
+<h3><%= t('.title_of_failed_users_list') %></h3>
+<table>
+  <% @columns.each do |column| %>
+  <th>
+    <%= User.human_attribute_name(column) %>
+  </th>
+  <% end %>
+<% @invalid_users.each do |user| %>
+<tr>
+  <% @columns.each do |column| %>
+  <td><%= user.human_readable_format(column) %></td>
+ <% end %>
+</tr>
+<% end %>
+</table>
+<% end %>
