@@ -31,6 +31,8 @@ Before do |scenario|
     end
   end
 
+  ExternalService.all.each do |e| e.destroy end
+
   domain_users = SambaGroup.find('Domain Users')
   domain_users.memberUid = []
   domain_users.save

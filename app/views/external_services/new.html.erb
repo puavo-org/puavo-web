@@ -1,0 +1,9 @@
+<h1><%= t('.title') %></h1>
+
+<%= render :partial => 'form',
+ :locals => {
+  :path => external_services_path(@school),
+  :submit_text => t('link.create'),
+  :method => :post
+}
+%>

@@ -1,0 +1,19 @@
+<% form_for(@external_service, :url => path, :html => { :method => method })  do |f| %>
+<table>
+  <tr>
+    <td><%= f.label :description %></td>
+    <td><%= f.text_field :description %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :uid %></td>
+    <td><%= f.text_field :uid %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :userPassword %></td>
+    <td><%= f.text_field :userPassword %></td>
+  </tr>
+  <tr>
+    <td><%= f.submit submit_text %></td>
+  </tr>
+</table>
+  <% end %>

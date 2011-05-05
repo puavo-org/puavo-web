@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :external_services
+
   map.add_group_role( 'roles/:id/add_group/:group_id',
                       :controller => 'roles',
                       :action => 'add_group',

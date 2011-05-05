@@ -1,0 +1,2 @@
+module ExternalServicesHelper
+end

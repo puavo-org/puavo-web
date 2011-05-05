@@ -49,6 +49,7 @@
       </li>
 
       <% if organisation_owner? && Puavo::DEVICE_CONFIG %>
+      <li><%= link_to t('.external_services'),  external_services_path, :class => "sub" %></li>
       <li><a href="/devices/servers" class='sub'><%= t('.servers') %></a></li>
       <% end %>
 

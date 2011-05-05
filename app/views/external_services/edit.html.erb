@@ -1,0 +1,13 @@
+<h1><%= t('.title') %></h1>
+
+<%= render :partial => 'form',
+ :locals => {
+  :path => external_service_path(@school, @external_service),
+  :submit_text => t('link.update'),
+  :method => :put
+}
+%>
+
+<% content_for :right do %>
+<div><%= link_to t('link.show'), external_service_path(@school, @external_service) %></div>
+<% end %>

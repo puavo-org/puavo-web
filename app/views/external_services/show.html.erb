@@ -1,0 +1,21 @@
+<table>
+  <tr>
+  <td class="label_td view"><%= label "external_service", "descritpion" %></td>
+  <td class="value_td"><%= @external_service.description %></td>
+  </tr>
+
+  <tr>
+  <td class="label_td view"><%= label "external_service", "uid" %></td>
+  <td class="value_td"><%= @external_service.uid %></td>
+  </tr>
+
+  <tr>
+  <td class="label_td view"><%= label "external_service", "userPassword" %></td>
+  <td class="value_td"><%= @external_service.userPassword %></td>
+  </tr>
+</table>
+
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_external_service_path(@external_service) %></div>
+<div><%= link_to t('link.destroy'), external_service_path(@external_service), :confirm => t('general_confirmation'), :method => :delete %></div>
+<% end %>

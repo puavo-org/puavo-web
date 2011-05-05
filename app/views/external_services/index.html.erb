@@ -1,0 +1,45 @@
+<table class="list">
+  <tr>
+    <th><%= t('activeldap.attributes.external_service.uid') %></th>
+    <th><%= t('activeldap.attributes.external_service.description') %></th>
+    <th colspan="2"><%= t('.actions') %></th>
+  </tr>
+
+<% @external_services.each do |external_service| %>
+  <tr>
+    <td><%= link_to external_service.uid, external_service_path(@school, external_service) %></td>
+    <td><%=h external_service.description %></td>
+    <td><%= link_to t('link.edit'), edit_external_service_path(@school, external_service) %></td>
+    <td><%= link_to t('link.destroy'), external_service_path(@school, external_service), :confirm => t('general_confirm'), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<% content_for :right do %>
+<div><%= link_to t('link.new_external_service'), new_external_service_path %></div>
+<% end %>
+
+<!--
+
+<h1>Listing external_services</h1>
+
+<table>
+  <tr>
+    <th>Uid</th>
+    <th>Description</th>
+    <th>Password</th>
+  </tr>
+
+<% @external_services.each do |external_service| %>
+  <tr>
+    <td><%=h external_service.uid %></td>
+    <td><%=h external_service.description %></td>
+    <td><%= link_to 'Show', external_service %></td>
+    <td><%= link_to 'Edit', edit_external_service_path(external_service) %></td>
+    <td><%= link_to 'Destroy', external_service, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= link_to 'New external_service', new_external_service_path %>
+-->

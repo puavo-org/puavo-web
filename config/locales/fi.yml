@@ -17,6 +17,7 @@ fi:
       logged_in_as: Kirjauduttu sisään käyttäjänä
       devices: Laitteet
       servers: Palvelimet
+      external_services: Ulkoiset palvelut
   link:
     edit: Muokkaa
     back: Takaisin
@@ -43,6 +44,7 @@ fi:
     login: Kirjaudu
     change_password: Vaihda salasana
     new_school: Uusi koulu
+    new_external_service: Uusi
   flash:
     added: "{{item}} luotiin onnistuneesti."
     updated: "{{item}} päivitettiin onnistuneesti."
@@ -182,6 +184,13 @@ fi:
       title: Organisaation tiedot
     edit:
       title: Organisaation tiedot
+  external_services:
+    index:
+      actions: Toiminnot
+    new:
+      title: Uuden ulkoisen palvelun tiedot
+    edit:
+      title: Ulkoisen palvelun tietojen muokkaus
   activeldap:
     errors:
       messages:
@@ -264,6 +273,10 @@ fi:
         st: Maakunta
         preferredLanguage: Ensisijainen kieli
         eduOrgHomePageURI: Kotisivu
+      external_service:
+        uid: Palvelun tunniste
+        description: Kuvaus
+        userPassword: Salasana
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: Henkilökunta
   puavoEduPersonAffiliation_student: Opiskelija

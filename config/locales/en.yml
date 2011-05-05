@@ -17,6 +17,7 @@ en:
       logged_in_as: Logged in as
       devices: Devices
       servers: Servers
+      external_services: External services
   link:
     edit: Edit
     back: Back
@@ -43,6 +44,7 @@ en:
     login: Login
     change_password: Change password
     new_school: New school
+    new_external_service: New
   flash:
     added: "{{item}} was successfully created."
     updated: "{{item}} was successfully updated."
@@ -183,6 +185,13 @@ en:
       title: Information of organisation
     edit:
       title: Information of organisation
+  external_services:
+    index:
+      actions: Actions
+    new:
+      title: New external service
+    edit:
+      title: Edit external service
   activeldap:
     errors:
       messages:
@@ -265,6 +274,10 @@ en:
         st: State
         preferredLanguage: Preferred language
         eduOrgHomePageURI: Home page
+      external_service:
+        uid: Service Identifier
+        description: Description
+        userPassword: Password
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
