@@ -4,10 +4,12 @@
     <td><%= f.label :description %></td>
     <td><%= f.text_field :description %></td>
   </tr>
+  <% if action_name == "new" %>
   <tr>
     <td><%= f.label :uid %></td>
-    <td><%= f.object.uid %></td>
+    <td><%= f.text_field :uid %></td>
   </tr>
+  <% end %>
   <tr>
     <td><%= f.label :userPassword %></td>
     <td><%= f.text_field :userPassword %></td>
