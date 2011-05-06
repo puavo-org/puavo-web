@@ -18,37 +18,62 @@ Feature: Manage external services
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "password 1"
+    And I check "Services that have only minimal information needed for ldap simple binds (dn, uid)"
+    And I check "Services that have access to all information needed for getent"
     And I press "Create"
     Then I should see "uid 1"
     And I should see "description 1"
     And I should see "password 1"
+    And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
+    And I should see "Services that have access to all information needed for getent"
 
   Scenario: Delete external service
     Given the following external services:
-      | uid   | description   | userPassword |
-      | uid 1 | description 1 | password 1   |
-      | uid 2 | description 2 | password 2   |
-      | uid 3 | description 3 | password 3   |
-      | uid 4 | description 4 | password 4   |
+      | uid   | description   | userPassword | groups |
+      | uid 1 | description 1 | password 1   | auth   |
+      | uid 2 | description 2 | password 2   | auth   |
+      | uid 3 | description 3 | password 3   | getent |
+      | uid 4 | description 4 | password 4   | getent |
     When I delete the 3rd external service
     Then I should see the following external services:
       | Service Identifier | Description   |
       | uid 1              | description 1 |
       | uid 2              | description 2 |
       | uid 4              | description 4 |
+    And "uid 3" is not member of "getent" system group
 
   Scenario: Edit external service
     Given the following external services:
-      | uid   | description   | userPassword |
-      | uid 1 | description 1 | password 1   |
-      | uid 2 | description 2 | password 2   |
-      | uid 3 | description 3 | password 3   |
-      | uid 4 | description 4 | password 4   |
+      | uid   | description   | userPassword | groups |
+      | uid 1 | description 1 | password 1   | auth   |
+      | uid 2 | description 2 | password 2   | auth   |
+      | uid 3 | description 3 | password 3   | auth   |
+      | uid 4 | description 4 | password 4   | auth   |
     And I follow "External service"
     And I follow "uid 1"
     And I follow "Edit"
     And I fill in "Description" with "test description one"
     And I fill in "Password" with "test password one"
+    And I check "Services that have access to all information needed for getent"
     And I press "Update"
     And I should see "test description one"
     And I should see "test password one"
+    And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
+    And I should see "Services that have access to all information needed for getent"
+
+
+  Scenario: Edit external service and unceck all system groups
+    Given I follow "External service"
+    And I follow "New"
+    When I fill in "Service Identifier" with "uid 1"
+    And I fill in "Description" with "description 1"
+    And I fill in "Password" with "password 1"
+    And I check "Services that have only minimal information needed for ldap simple binds (dn, uid)"
+    And I check "Services that have access to all information needed for getent"
+    And I press "Create"
+    And I follow "Edit"
+    And I uncheck "Services that have access to all information needed for getent"
+    And I uncheck "Services that have only minimal information needed for ldap simple binds (dn, uid)"
+    And I press "Update"
+    And I should not see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
+    And I should not see "Services that have access to all information needed for getent"

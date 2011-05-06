@@ -13,3 +13,9 @@ end
 Then /^I should see the following external services:$/ do |expected_external_services_table|
   expected_external_services_table.diff!( tableish('table tr', 'td,th').map{ |a| a[0..1] } )
 end
+
+Then /^"([^"]*)" is not member of "([^"]*)" system group$/ do |uid, group_cn|
+  set_ldap_admin_connection
+  group = SystemGroup.find(group_cn)
+  group.members.map{ |g| g.uid }.should_not include(uid)
+end

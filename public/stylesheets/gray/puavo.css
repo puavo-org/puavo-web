@@ -268,3 +268,9 @@ td.action {
 #user_telephoneNumber_list input {
     display: block;
 }
+
+
+label.checkbox {
+    font-size: 100%;
+    font-weight: normal;
+}

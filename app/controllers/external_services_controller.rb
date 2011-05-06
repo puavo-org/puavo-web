@@ -25,6 +25,8 @@ class ExternalServicesController < ApplicationController
   # GET /external_services/new.xml
   def new
     @external_service = ExternalService.new
+    
+    @system_groups = SystemGroup.all
 
     respond_to do |format|
       format.html # new.html.erb
@@ -35,6 +37,7 @@ class ExternalServicesController < ApplicationController
   # GET /external_services/1/edit
   def edit
     @external_service = ExternalService.find(params[:id])
+    @system_groups = SystemGroup.all
   end
 
   # POST /external_services
@@ -57,6 +60,10 @@ class ExternalServicesController < ApplicationController
   # PUT /external_services/1.xml
   def update
     @external_service = ExternalService.find(params[:id])
+    
+    unless params[:external_service].has_key?(:group)
+      @external_service.groups = []
+    end
 
     respond_to do |format|
       if @external_service.update_attributes(params[:external_service])

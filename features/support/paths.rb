@@ -10,6 +10,12 @@ module NavigationHelpers
     
     when /the homepage/
       '/'
+    when /the new external service page/
+      new_external_service_path
+
+    when /the new external servivice page/
+      new_external_servivice_path
+
     when /the new session page/
       new_session_path
 

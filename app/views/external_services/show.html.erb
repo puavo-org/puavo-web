@@ -1,17 +1,26 @@
 <table>
   <tr>
-  <td class="label_td view"><%= label "external_service", "descritpion" %></td>
-  <td class="value_td"><%= @external_service.description %></td>
-  </tr>
-
-  <tr>
   <td class="label_td view"><%= label "external_service", "uid" %></td>
   <td class="value_td"><%= @external_service.uid %></td>
   </tr>
 
   <tr>
+  <td class="label_td view"><%= label "external_service", "descritpion" %></td>
+  <td class="value_td"><%= @external_service.description %></td>
+  </tr>
+
+  <tr>
   <td class="label_td view"><%= label "external_service", "userPassword" %></td>
   <td class="value_td"><%= @external_service.userPassword %></td>
+  </tr>
+
+  <tr>
+  <td class="label_td view"><%= label "external_service", "groups" %></td>
+  <td class="value_td">
+    <% @external_service.groups.each do |group| %>
+    <div><%= group.description %></div>
+    <% end %>
+  </td>
   </tr>
 </table>
 
