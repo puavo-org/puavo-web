@@ -278,6 +278,7 @@ en:
         uid: Service Identifier
         description: Description
         userPassword: Password
+        groups: System Groups
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
