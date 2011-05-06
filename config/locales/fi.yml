@@ -208,6 +208,7 @@ fi:
       role: Rooli
       user: Käyttäjä
       school: Koulu
+      external_service: Ulkoinen palvelu
     attributes:
       role:
         displayName: "Roolin nimi"

@@ -47,7 +47,9 @@ class ExternalServicesController < ApplicationController
 
     respond_to do |format|
       if @external_service.save
-        format.html { redirect_to(@external_service, :notice => 'ExternalService was successfully created.') }
+        format.html { redirect_to( @external_service,
+                                   :notice => t('flash.added',
+                                                :item => t('activeldap.models.external_service') ) ) }
         format.xml  { render :xml => @external_service, :status => :created, :location => @external_service }
       else
         format.html { render :action => "new" }
@@ -67,7 +69,9 @@ class ExternalServicesController < ApplicationController
 
     respond_to do |format|
       if @external_service.update_attributes(params[:external_service])
-        format.html { redirect_to(@external_service, :notice => 'ExternalService was successfully updated.') }
+        format.html { redirect_to( @external_service,
+                                   :notice => t('flash.updated',
+                                                :item => t('activeldap.models.external_service' ) ) ) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

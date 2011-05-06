@@ -209,6 +209,7 @@ en:
       role: Role
       user: User
       school: School
+      external_service: External service
     attributes:
       role:
         displayName: "Role name"
