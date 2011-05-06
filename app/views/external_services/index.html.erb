@@ -10,7 +10,11 @@
     <td><%= link_to external_service.uid, external_service_path(@school, external_service) %></td>
     <td><%=h external_service.description %></td>
     <td><%= link_to t('link.edit'), edit_external_service_path(@school, external_service) %></td>
-    <td><%= link_to t('link.destroy'), external_service_path(@school, external_service), :confirm => t('general_confirm'), :method => :delete %></td>
+    <td><%= link_to( t('link.destroy'),
+                     external_service_path(@school, external_service),
+                     :confirm => t('destroy_confirm',
+                                   :object_name => external_service.uid),
+                     :method => :delete ) %></td>
   </tr>
 <% end %>
 </table>
