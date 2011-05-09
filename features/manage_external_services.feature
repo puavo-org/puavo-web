@@ -23,7 +23,7 @@ Feature: Manage external services
     And I press "Create"
     Then I should see "uid 1"
     And I should see "description 1"
-    And I should see "password 1"
+    And I should see "{SSHA}"
     And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I should see "Services that have access to all information needed for getent"
 
@@ -53,11 +53,11 @@ Feature: Manage external services
     And I follow "uid 1"
     And I follow "Edit"
     And I fill in "Description" with "test description one"
-    And I fill in "Password" with "test password one"
+    And I fill in "Password" with "{SSHA}HBjZNypqShJjkmDUWJpEZPACGVlscXNmNWM4aGI0amMyamk5"
     And I check "Services that have access to all information needed for getent"
     And I press "Update"
     And I should see "test description one"
-    And I should see "test password one"
+    And I should see "{SSHA}HBjZNypqShJjkmDUWJpEZPACGVlscXNmNWM4aGI0amMyamk5"
     And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I should see "Services that have access to all information needed for getent"
 
