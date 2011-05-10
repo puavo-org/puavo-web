@@ -18,6 +18,7 @@ fi:
       devices: Laitteet
       servers: Palvelimet
       external_services: Ulkoiset palvelut
+      printers: Tulostimet
   link:
     edit: Muokkaa
     back: Takaisin
