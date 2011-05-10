@@ -20,5 +20,19 @@ class User < LdapBase
                'question' => 'Select school: ',
                'list' =>  schools } ) unless schools.empty?
   end
+
+  def self.authenticate(login, password)
+    result = super(login, password)
+    if result == false && login.match(/#{Server.base.to_s}$/)
+      server = Server.find(login)
+      server.bind(password)
+      host = LdapBase.configuration[:host]
+      base = LdapBase.base.to_s
+      server.remove_connection
+      LdapBase.ldap_setup_connection(host, base, login, password)
+      result = server
+    end
+    return result
+  end
 end
 
