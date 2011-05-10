@@ -20,14 +20,18 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
 
     unless Puavo::DEVICE_CONFIG.nil?
-      @devices_by_type = Device.find(:all,
-                                     :attribute => "puavoSchool",
-                                     :value => @school.dn).inject({}) do |result, device|
-        device_type = Puavo::DEVICE_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] 
+      @devices_by_type = Device.search( :filter => "(puavoSchool=#{@school.dn})",
+                                        :scope => :one,
+                                        :attributes => ['puavoDeviceType'] ).inject({}) do |result, device|
+        device_type = Puavo::DEVICE_CONFIG["device_types"][device.last["puavoDeviceType"].to_s]["label"][I18n.locale.to_s] 
         result[device_type] = result[device_type].to_i + 1
         result
       end
     end
+
+    @members = User.search( :filter => "(puavoSchool=#{@school.dn})",
+                            :scope => :one,
+                            :attributes => ['puavoEduPersonAffiliation'] )
 
     respond_to do |format|
       format.html # show.html.erb

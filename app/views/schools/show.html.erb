@@ -20,7 +20,7 @@
 <h4><%= t('.statistics') %></h4>
 
 <% User.puavoEduPersonAffiliation_list.each do |type| %>
-<div class="row"><div class="column_1"><%= t('puavoEduPersonAffiliation_' + type) %>: </div> <div class="column_2"><%= @school.members.select{ |m| m.puavoEduPersonAffiliation == type}.count %></div></div>
+<div class="row"><div class="column_1"><%= t('puavoEduPersonAffiliation_' + type) %>: </div> <div class="column_2"><%= @members.select{ |m| m.last["puavoEduPersonAffiliation"] == [type]}.count %></div></div>
 <% end %>
 <div class="row"></div>
 <h4><%= t('.admin_users') %></h4>
