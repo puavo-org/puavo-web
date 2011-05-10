@@ -25,12 +25,19 @@ class User < LdapBase
     result = super(login, password)
     if result == false && login.match(/#{Server.base.to_s}$/)
       server = Server.new(login)
-      server.bind(password)
-      host = LdapBase.configuration[:host]
-      base = LdapBase.base.to_s
-      server.remove_connection
-      LdapBase.ldap_setup_connection(host, base, login, password)
-      result = server
+      if server.bind(password)
+        logger.info("Server login successful!")
+        logger.info("Server dn: #{login}")
+        host = LdapBase.configuration[:host]
+        base = LdapBase.base.to_s
+        server.remove_connection
+        LdapBase.ldap_setup_connection(host, base, login, password)
+        result = server
+      else
+        logger.info("Server login failed!")
+        logger.info("Server dn: #{login}")
+        result = false
+      end
     end
     return result
   end
