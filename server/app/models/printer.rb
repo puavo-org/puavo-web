@@ -9,4 +9,8 @@ class Printer < LdapBase
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
   end
 
+  def id
+    self.puavoId.to_s unless self.puavoId.nil?
+  end
+
 end

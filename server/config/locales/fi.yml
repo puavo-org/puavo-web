@@ -94,6 +94,9 @@ fi:
       server: Palvelin
       netstand: Nettikulma
       infotv: Info-tv
+  printers:
+    index:
+      server_title: "Palvelin: %{server}"
   helpers:
     submit:
       servers:
@@ -103,6 +106,8 @@ fi:
       login_successful: Kirjautuminen onnistui!
       failed: Kirjautuminen epäonnistui!
       logout_successful: Uloskirjautuminen onnistui!
+    printer:
+      updated: Tulostimen tietojen päivitys onnistui
   layouts:
     application:
       schools: Koulut
@@ -113,6 +118,9 @@ fi:
       logged_in_as: Kirjauduttu sisään tunnuksella
       devices: Laitteet
       desktop: Työpöytä
+      servers: Palvelimet
+      external_services: Ulkoiset palvelut
+      printers: Tulostimet
   link:
     edit: Muokkaa
     back: Takaisin
@@ -219,6 +227,14 @@ fi:
         password: Salasana
       automount:
         cn: Hakemisto
+      printer:
+        printerDescription: Nimi
+        printerMakeAndModel: Valmistaja ja malli
+        printerLocation: Sijainti
+        puavoRule: Käyttöoikeudet
+        printerType: Tyyppi
+        printerURI: Polku
+        puavoPrinterPPD: Ajuritiedosto (PPD)
     values:
       device:
         roles:

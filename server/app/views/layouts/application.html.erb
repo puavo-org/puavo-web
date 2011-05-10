@@ -19,7 +19,13 @@
 <body>
   <div class="container">
     <ul id="top-menu" class="menu">
+      <% if organisation_owner? %>
+      <li>
+	<%= link_to session[:organisation].name, "/users/organisation", :class => "sub" %>
+      </li>
+      <% else %>
       <li><span class="sub"><%= session[:organisation].name %></span></li>
+      <% end %>
       <li><a href="/users/schools" class="sub"><%= t('.schools')%></a>
         <ul>
           <% session[:organisation].schools.each do |school| %>
@@ -28,7 +34,9 @@
         </ul>
       </li>
       <% if organisation_owner? %>
-      <li><%= link_to t('link.servers'), servers_path, :class => 'sub' %></li>
+      <li><%= link_to t('.external_services'), "/users/external_services", :class => 'sub' %></li>
+      <li><%= link_to t('.printers'), printers_path, :class => 'sub' %></li>
+      <li><%= link_to t('.servers'), servers_path, :class => 'sub' %></li>
       <% end %>
 
       <% if logged_in? %>

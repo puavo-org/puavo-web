@@ -9,7 +9,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :servers, :has_many => :automounts
   map.revoke_certificate_server '/servers/:id/revoke_certificate', :controller => 'servers', :action => 'revoke_certificate', :conditions => { :method => :delete }
 
-  map.resource :printers, :only => [:create, :index]
+  map.resources :printers, :except => [:show, :new]
 
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'

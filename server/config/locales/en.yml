@@ -96,6 +96,9 @@ en:
       server: Server
       netstand: Netstand
       infotv: Info-tv
+  printers:
+    index:
+      server_title: "Server: %{server}"
   helpers:
     submit:
       servers:
@@ -105,6 +108,8 @@ en:
       login_successful: Login successful!
       failed: Login failed!
       logout_successful: Logout successful!
+    printer:
+      updated: Printer was successfully updated
   layouts:
     application:
       schools: Schools
@@ -115,6 +120,9 @@ en:
       logged_in_as: Logged in as
       devices: Devices
       desktop: Desktop
+      servers: Servers
+      external_services: External services
+      printers: Printers
   link:
     edit: Edit
     back: Back
@@ -221,6 +229,14 @@ en:
         password: Password
       automounts:
         cn: Directory
+      printer:
+        printerDescription: Name
+        printerMakeAndModel: Manufacturer and model
+        printerLocation: Location
+        puavoRule: Access
+        printerType: Type
+        printerURI: URI
+        puavoPrinterPPD: Driver file (PPD)
     values:
       device:
         roles:

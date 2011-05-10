@@ -1,0 +1,26 @@
+<% @servers_and_printers.each do |server_dn, value| %>
+<% unless value.has_key?(:printers) then next end %>
+
+<h3><%=h t('.server_title', :server => value[:server].puavoHostname) %></h3>
+
+<table class='list'>
+  <tr>
+    <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
+    <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
+    <th><%= t('activeldap.attributes.printer.printerLocation') %></th>
+    <th colspan="2"><%= t('actions') %></th>
+  </tr>
+
+<% value[:printers].each do |printer| %>
+  <tr>
+
+    <td><%=h printer.printerDescription %></td>
+    <td><%=h printer.printerMakeAndModel %></td>
+    <td><%=h printer.printerLocation %></td>
+
+    <td><%= link_to t('link.edit'), edit_printer_path(printer) %></td>
+    <td><%= link_to t('link.destroy'), printer_path(printer), :confirm => t('destroy_confirm', :object_name => printer.printerDescription), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+<% end %>
