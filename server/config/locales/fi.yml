@@ -152,6 +152,9 @@ fi:
     automounts: Hakemistoliitokset
     new_automount: Uusi hakemistoliitos
   activeldap:
+    errors:
+      messages:
+        uniqueness: "{{attribute}} on jo käytössä"
     attributes:
       server:
         puavoDeviceType: Laitteen tyyppi
@@ -228,7 +231,7 @@ fi:
       automount:
         cn: Hakemisto
       printer:
-        printerDescription: Nimi
+        printerDescription: Tulostimen nimi
         printerMakeAndModel: Valmistaja ja malli
         printerLocation: Sijainti
         puavoRule: Käyttöoikeudet

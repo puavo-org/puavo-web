@@ -154,6 +154,9 @@ en:
     automounts: Automounts
     new_automount: New automount
   activeldap:
+    errors:
+      messages:
+        uniqueness: "{{attribute}} is already in use"
     attributes:
       server:
         puavoDeviceType: Device type
@@ -230,7 +233,7 @@ en:
       automounts:
         cn: Directory
       printer:
-        printerDescription: Name
+        printerDescription: Printer name
         printerMakeAndModel: Manufacturer and model
         printerLocation: Location
         puavoRule: Access
