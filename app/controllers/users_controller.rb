@@ -3,12 +3,19 @@ class UsersController < ApplicationController
   # GET /:school_id/users.xml
   def index
     if @school
-      @users = @school.members
+      @users = User.search( :filter => "(puavoSchool=#{@school.dn})",
+                            :scope => :one,
+                            :attributes => ['sn', 'givenName', 'uid', 'puavoEduPersonAffiliation', 'puavoId'] )
     else
-      @users = User.all
+      @users = User.search( :scope => :one,
+                            :attributes => ['sn', 'givenName', 'uid', 'puavoEduPersonAffiliation', 'puavoId'] )
     end
 
-    @users = @users.sort{|a,b| a.sn.to_s + a.givenName.to_s <=> b.sn.to_s + b.givenName.to_s }
+    @users = @users.map do |user|
+      user.last
+    end.sort do |a,b|
+      a["sn"].to_s + a["givenName"].to_s <=> b["sn"].to_s + b["givenName"].to_s
+    end
 
     respond_to do |format|
       format.html # index.html.erb
