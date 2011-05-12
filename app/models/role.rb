@@ -42,10 +42,9 @@ class Role < LdapBase
   end
 
   def delete_member(member)
-    self.reload
-    self.member = Array(self.member) - Array(member.dn)
-    self.memberUid = Array(self.memberUid) - Array(member.uid)
-    self.save
+    attributes = [ {'member' => [member.dn.to_s]},
+                   {'memberUid' => [member.uid.to_s]} ]
+    self.ldap_modify_operation(:delete, attributes)
   end
 
   def update_associations

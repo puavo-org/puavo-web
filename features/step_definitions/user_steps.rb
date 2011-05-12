@@ -26,7 +26,7 @@ Given /^the following users:$/ do |users|
    
     user = User.new(u)
     user.puavoSchool = (school || @school).dn
-    if u["school_admin"]
+    if u["school_admin"] && u["school_admin"] == "true"
       user.puavoAdminOfSchool = user.puavoSchool
     end
     user.userPassword = "{SSHA}" + 

@@ -17,11 +17,11 @@ class SambaGroup < LdapBase
 
   def add_uid_to_memberUid(uid)
     unless Array(self.memberUid).include?(uid)
-      self.memberUid = Array(self.memberUid) + Array(uid)
+      self.ldap_modify_operation( :add, [{"memberUid" => [uid]}] )
     end
   end
 
   def delete_uid_from_memberUid(uid)
-    self.memberUid = Array(self.memberUid) - Array(uid)
+    self.ldap_modify_operation( :delete, [{"memberUid" => [uid]}] )
   end
 end

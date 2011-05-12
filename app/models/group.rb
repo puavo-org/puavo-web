@@ -24,10 +24,8 @@ class Group < BaseGroup
   end
   
   def remove_user(user)
-    self.reload
-    self.member = Array(self.member) - Array(user.dn)
-    self.memberUid = Array(self.memberUid) - Array(user.uid)
-    self.save
+    self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
+                                         { "member" => [user.dn.to_s] }])
   end
 end
 

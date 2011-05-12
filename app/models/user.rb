@@ -237,17 +237,24 @@ class User < LdapBase
     unless self.mass_import
       unless self.role_ids.nil?
         add_roles = self.role_ids
-        delete_roles = ( Role.all.map{ |p| p.id.to_s } - add_roles )
-        user_role_ids = self.roles.map{ |p| p.id.to_s }
-        
-        # Add roles
-        ( add_roles - user_role_ids ).each do |role_id|
-          Role.find(role_id).add_member(self)
+        Role.search( :filter => "(memberUid=#{self.uid})",
+                     :scope => :one,
+                     :attributes => ["puavoId"] ).each do |role_dn, values|
+
+          if add_roles.include?(values["puavoId"])
+            add_roles.delete(values["puavoId"])
+          else
+            # Delete roles
+            Role.ldap_modify_operation(role_dn, :delete, [{ "memberUid" => [self.uid] },
+                                                          { "member" => [self.dn.to_s] }])
+          end
         end
-        
-        # Delete roles
-        ( user_role_ids & delete_roles ).each do |role_id|
-          Role.find(role_id).delete_member(self)
+  
+        # Add roles
+        add_roles.each do |role_id|
+          Role.ldap_modify_operation("puavoId=#{role_id},#{Role.base.to_s}",
+                                     :add, [{ "memberUid" => [self.uid] }, 
+                                            { "member" => [self.dn.to_s] }])
         end
         
         self.reload
@@ -271,27 +278,24 @@ class User < LdapBase
   def update_associations
     new_group_list =
       self.roles.inject([]) do |result, role|
-      result + role.groups
+      result + role.groups.map{ |g| g.dn.to_s }
     end
 
-    # add groups
-    (new_group_list - self.groups).each do |group|
-      logger.debug "Add group (#{self.cn.to_s}): " + group.cn.to_s
-      unless Array(group.member).include?(self.dn)
-        group.member = Array(group.member).push self.dn
-      end
-      unless Array(group.memberUid).include?(self.uid)
-        group.memberUid = Array(group.memberUid).push self.uid
-      end
-      group.save
-    end
+    Group.search( :filter => "(memberUid=#{self.uid})",
+                  :scope => :one,
+                  :attributes => ["puavoId"] ).each do |group_dn, values|
 
-    # delete groups
-    (self.groups - new_group_list).each do |group|
-      logger.debug "Delete group (#{self.cn.to_s}): " + group.cn.to_s
-      group.member = Array(group.member) - Array(self.dn)
-      group.memberUid = Array(group.memberUid) - Array(self.uid)
-      group.save
+      if new_group_list.include?(group_dn)
+        new_group_list.delete(group_dn)
+      else
+        Group.ldap_modify_operation(group_dn, :delete, [{ "memberUid" => [self.uid]},
+                                                        { "member" => [self.dn.to_s] }])
+      end
+    end
+    
+    new_group_list.each do |group_dn|
+      Group.ldap_modify_operation(group_dn, :add, [{ "memberUid" => [self.uid]}, 
+                                                   { "member" => [self.dn.to_s] }])
     end
   end
 
@@ -381,21 +385,20 @@ class User < LdapBase
         if self.uid != old_user.uid
           self.uid_has_changed = true
           logger.debug "User uid has changed. Remove memberUid from roles and groups"
-          Role.find( :all,
-                        :attribute => "memberUid",
-                        :value => old_user.uid ).each do |role|
-            role.memberUids.delete(old_user)
+          Role.search( :filter => "(memberUid=#{old_user.uid})",
+                       :scope => :one,
+                       :attributes => ['dn'] ).each do |role_dn, values|
+            LdapBase.ldap_modify_operation(role_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
           end
-          Group.find( :all,
-                      :attribute => "memberUid",
-                      :value => old_user.uid ).each do |group|
-            group.memberUids.delete(old_user)
+          Group.search( :filter => "(memberUid=#{old_user.uid})",
+                        :scope => :one,
+                        :attributes => ['dn'] ).each do |group_dn, values|
+            LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
           end
-          School.find( :all,
-                       :attribute => "memberUid",
-                       :value => old_user.uid ).each do |school|
-            school.user_member_uids.delete(old_user)
-            self.school.reload
+          School.search( :filter => "(memberUid=#{old_user.uid})",
+                         :scope => :one,
+                         :attributes => ['dn'] ).each do |school_dn, values|
+            LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
           end
           # Remove uid from Domain Users group
           SambaGroup.delete_uid_from_memberUid('Domain Users', old_user.uid)
@@ -410,20 +413,20 @@ class User < LdapBase
       logger.debug "User uid has changed. Add new uid to roles and groups if it not exists"
       self.uid_has_changed = false
       self.roles.each do |role|
-        role.memberUids << self
+        role.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
       end
       self.groups.each do |group|
-        group.memberUids << self
+        group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )        
       end
     end
     unless self.mass_import
       unless Array(self.school.memberUid).include?(self.uid)
-        self.school.memberUid = Array(self.school.memberUid).push self.uid
+        self.school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
       end
       unless Array(self.school.member).include?(self.dn)
-        self.school.member = Array(self.school.member).push self.dn
+        # FIXME
+        self.school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
       end
-      self.school.save
 
       # Set uid to Domain Users group
       SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)

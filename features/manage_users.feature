@@ -70,6 +70,10 @@ Feature: Manage users
     Then I should be on the edit user page
     When I follow "Show"
     Then I should be on the user page
+    When I follow "Users"
+    Then I should see "Mabey Ben"
+    And I should see "ben"
+    And I should see "Student"
 
   Scenario: Create duplicate user to organisation
     Given the following users:
