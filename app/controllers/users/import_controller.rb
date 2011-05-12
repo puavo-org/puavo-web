@@ -140,10 +140,6 @@ class Users::ImportController < ApplicationController
       rescue Exception => e
         logger.info "Import Controller, create user, Exception: #{e}"
         failed_users.push user
-      else
-        role_id = Array(user.role_ids).first.to_s
-        users_of_roles[role_id] = Array.new unless users_of_roles.has_key?(role_id)
-        users_of_roles[role_id].push user
       end
     end
 
@@ -152,21 +148,6 @@ class Users::ImportController < ApplicationController
     end
     session[:failed_users] = {}
     session[:failed_users][create_timestamp] = failed_users
-
-    users_of_school = User.find(:all, :attribute => 'puavoSchool', :value => @school.dn )
-    @school.memberUid = users_of_school.map &:uid
-    @school.member = users_of_school.map &:dn
-    @school.save
-
-    users_of_roles.each do |role_id, values|
-      role = Role.find(role_id)
-      role.member = Array(role.member) + (values.map &:dn)
-      role.memberUid = Array(role.memberUid) + (values.map &:uid)
-      role.save
-      role.update_associations
-    end
-
-    SambaGroup.add_uid_to_memberUid( 'Domain Users', (@users.map &:uid) )
 
     respond_to do |format|
       format.html { redirect_to users_import_path(@school, :create_timestamp => create_timestamp ) }

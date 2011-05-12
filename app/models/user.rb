@@ -234,32 +234,30 @@ class User < LdapBase
 
   # Update user's role list by role_ids
   def update_roles
-    unless self.mass_import
-      unless self.role_ids.nil?
-        add_roles = self.role_ids
-        Role.search( :filter => "(memberUid=#{self.uid})",
-                     :scope => :one,
-                     :attributes => ["puavoId"] ).each do |role_dn, values|
+    unless self.role_ids.nil?
+      add_roles = self.role_ids
+      Role.search( :filter => "(memberUid=#{self.uid})",
+                   :scope => :one,
+                   :attributes => ["puavoId"] ).each do |role_dn, values|
 
-          if add_roles.include?(values["puavoId"])
-            add_roles.delete(values["puavoId"])
-          else
-            # Delete roles
-            Role.ldap_modify_operation(role_dn, :delete, [{ "memberUid" => [self.uid] },
-                                                          { "member" => [self.dn.to_s] }])
-          end
+        if add_roles.include?(values["puavoId"])
+          add_roles.delete(values["puavoId"])
+        else
+          # Delete roles
+          Role.ldap_modify_operation(role_dn, :delete, [{ "memberUid" => [self.uid] },
+                                                        { "member" => [self.dn.to_s] }])
         end
-  
-        # Add roles
-        add_roles.each do |role_id|
-          Role.ldap_modify_operation("puavoId=#{role_id},#{Role.base.to_s}",
-                                     :add, [{ "memberUid" => [self.uid] }, 
-                                            { "member" => [self.dn.to_s] }])
-        end
-        
-        self.reload
-        self.update_associations
       end
+      
+      # Add roles
+      add_roles.each do |role_id|
+        Role.ldap_modify_operation("puavoId=#{role_id},#{Role.base.to_s}",
+                                   :add, [{ "memberUid" => [self.uid] }, 
+                                          { "member" => [self.dn.to_s] }])
+      end
+      
+      self.reload
+      self.update_associations
     end
   end
 
@@ -419,18 +417,16 @@ class User < LdapBase
         group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )        
       end
     end
-    unless self.mass_import
-      unless Array(self.school.memberUid).include?(self.uid)
-        self.school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
-      end
-      unless Array(self.school.member).include?(self.dn)
-        # FIXME
-        self.school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
-      end
-
-      # Set uid to Domain Users group
-      SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
+    unless Array(self.school.memberUid).include?(self.uid)
+      self.school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
     end
+    unless Array(self.school.member).include?(self.dn)
+      # FIXME
+      self.school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
+    end
+
+    # Set uid to Domain Users group
+    SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
   end
 
   private
