@@ -115,7 +115,19 @@ Feature: Manage schools
     When I follow "Destroy"
     Then I should see "School was successfully destroyed."
 
-
+  Scenario: Delete school when it still contains the users, groups and roles
+    Given a new school and group with names "Test School 1", "Group 1" on the "example" organisation
+    And the following roles:
+    | displayName | cn    |
+    | Role 1      | role1 |
+    And the following users:
+    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school |
+    | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   | 
+    And I am on the show school page with "Test School 1"
+    When I follow "Destroy"
+    Then I should see "School was not successfully destroyed. Users, roles and groups must be removed before school"
+    And I should be on the school page
+  
   Scenario: Add school management access rights to the user
     Given the following users:
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |

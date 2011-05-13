@@ -87,7 +87,7 @@ en:
       school_admin_removed:  "{{displayName}} ({{school_name}}) is no longer admin user on this school"
       wrong_user_type: School management access rights can be added only if type of user is admin
       save_failed: Failed to save access rights
-
+      destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
   roles:
     index:
       actions: Actions

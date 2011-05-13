@@ -50,6 +50,7 @@ end
 
 Given /^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/ \
 do |names_of_the_models, values, organisation|
+  set_ldap_admin_connection
   Puavo::Organisation.find(organisation)
   models = names_of_the_models.split(' and ')
   values = values.split(', ').map { |value| value.tr('"', '') }
