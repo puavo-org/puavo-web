@@ -89,6 +89,15 @@ Feature: Manage schools
     Then I should see "Greenwich Steiner School"
     And I should see "Example school 1"
 
+  Scenario: Schools list page when we have only one school and user is organisation ower
+    Given I am on the show school page with "Greenwich Steiner School"
+    And I follow "Destroy"
+    And I am on the show school page with "Example school 1"
+    And I follow "Destroy"
+    When I go to the schools list page
+    Then I should see "Listing schools"
+    And I should see "New school"
+
   Scenario: Schools list page when we have only one school and user is not organisation owner
     Given the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |

@@ -5,7 +5,7 @@ class SchoolsController < ApplicationController
     @schools = School.all_with_permissions
 
     respond_to do |format|
-      if @schools.count < 2
+      if @schools.count < 2  && !organisation_owner?
         format.html { redirect_to( school_path(@schools.first) ) }
       else
         format.html # index.html.erb
