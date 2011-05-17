@@ -1,0 +1,16 @@
+<table class="list">
+  <tr>
+    <th><%= t('activeldap.attributes.user.displayName') %></th>
+    <th><%= t('activeldap.attributes.school.displayName') %></th>
+  </tr>
+  <% @objects.each do |o| %>
+  <tr>
+    <td>
+      <%= link_to o["name"], user_path(o["school_id"], o["id"]) %>
+    </td>
+    <td>
+      <%=h @schools[o["school_id"]] %>
+    </td>
+  </tr>
+  <% end %>
+</table>

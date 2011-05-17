@@ -19,6 +19,7 @@ en:
       servers: Servers
       external_services: External services
       printers: Printers
+      search_placeholder: Search users
   link:
     edit: Edit
     back: Back

@@ -100,4 +100,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :admins
 
   map.resource :organisation, :only => [:show, :edit, :update]
+
+  map.resources :search, :only => [:index]
 end

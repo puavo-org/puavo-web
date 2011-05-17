@@ -19,12 +19,14 @@
   <%= stylesheet_link_tag "#{theme}/navmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/puavo.css" %>
   <%= stylesheet_link_tag "#{theme}/jquery.tooltip" %>
+  <%= stylesheet_link_tag "jquery.liveSearch" %>
 
   <%= javascript_include_tag( "jquery-1.4.2.min",
                               "rails",
                               "application",
                               "jquery.jeditable.mini.js",
-                              "jquery.tooltip.min.js" ) %>
+                              "jquery.tooltip.min.js",
+                              "jquery.liveSearch" ) %>
   <%= yield :javascript %>
   <meta name="csrf-token" content="<%= form_authenticity_token %>" />
   <meta name="csrf-param" content="authenticity_token" />
@@ -92,6 +94,8 @@
           <% end %>
           <% end %>
         </ul>
+	<%= text_field_tag "search", nil, :id => "search", :size => 30, :placeholder => t('.search_placeholder') %>
+
       </div><!-- nav1 -->
     </div><!-- navbar_first_level -->
 

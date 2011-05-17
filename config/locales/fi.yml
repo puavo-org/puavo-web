@@ -19,6 +19,7 @@ fi:
       servers: Palvelimet
       external_services: Ulkoiset palvelut
       printers: Tulostimet
+      search_placeholder: Hae käyttäjiä
   link:
     edit: Muokkaa
     back: Takaisin

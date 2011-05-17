@@ -4,5 +4,7 @@ $(document).ready(function() {
 	clone_element.val('');
 	$(this).prev().append( clone_element );
     });
+
+    $('#search').liveSearch({url: '/users/search?words='});
 });
 
