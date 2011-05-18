@@ -86,7 +86,7 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 		    var inputDim	= {
 			left:		tmpOffset.left, 
 			top:		tmpOffset.top, 
-			width:		input.outerWidth(), 
+			width:		'auto',
 			height:		input.outerHeight()
 		    };
 

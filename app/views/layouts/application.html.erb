@@ -60,9 +60,16 @@
       </li>
 
       <div id="top-menu-right">
+	<li>
+	  <%= text_field_tag( "search",
+                              nil,
+                              :id => "search",
+                              :size => 30,
+                              :placeholder => t('.search_placeholder') ) %>
+	</li>
         <li><span><%= t('.logged_in_as') %></span></li>
-      <li><a href="#"><%= current_user.displayName %></a></li>
-      <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
+	<li><a href="#"><%= current_user.displayName %></a></li>
+	<li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
       </div>
       <% end %>
     </ul> <!-- top-menu -->
