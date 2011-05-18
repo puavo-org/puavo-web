@@ -3,7 +3,8 @@ class SearchController < ApplicationController
 
   # GET /users/search?words=Williams
   def index
-    words = params[:words].delete("()&|!=~<>*")
+    words = Net::LDAP::Filter.escape( params[:words] )
+    
     filter = words.split(" ").map do |w|
       "(|(givenName=#{w}*)(sn=#{w}*))"
     end.join()
