@@ -44,7 +44,7 @@
       <li><%= link_to t('.external_services'),  external_services_path %></li>
       <% if Puavo::DEVICE_CONFIG %>
       <li><%= link_to t('.printers'), "/devices/printers" %></li>
-      <li><%= link_to t('.servers') "/devices/servers" %></li>
+      <li><%= link_to t('.servers'), "/devices/servers" %></li>
       <% end %>
 	</ul>
       </li>
@@ -97,7 +97,6 @@
           <% end %>
           <% end %>
         </ul>
-	<%= text_field_tag "search", nil, :id => "search", :size => 30, :placeholder => t('.search_placeholder') %>
 
       </div><!-- nav1 -->
     </div><!-- navbar_first_level -->
