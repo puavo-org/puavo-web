@@ -15,21 +15,16 @@
     <tr>
       <td class="label_for_input_text_list"><%= f.label :puavoExport %></td>
       <td>
-	<span id="server_puavoExport_list">
+	<div id="server_puavoExport_list">
 	  <% if Array(@server.puavoExport).empty? %>
-	  <input name='server[puavoExport][]' size='30' type='text' /><br />
+	  <input name='server[puavoExport][]' size='30' type='text' />
 	  <% else %>
 	  <% Array(@server.puavoExport).each_index do |index| %>
-	  <input name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' /><br />
+	  <input name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
 	  <% end %>
 	  <% end %>
-	</span>
-
-	<%= link_to_function( t('.add_puavoExport'),
-          nil ) do |page|
-  page.insert_html( :bottom,
-                    "server_puavoExport_list",
-                    "<input name='server[puavoExport][]' size='30' type='text' /><br />" ) end %>
+	</div>
+	<%= link_to t('.add_puavoExport'), "#", :class => "clone_prev_input_element" %>
   </td></tr>
 
   <!--

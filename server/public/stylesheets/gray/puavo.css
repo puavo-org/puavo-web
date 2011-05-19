@@ -158,3 +158,11 @@ label {
     background: #94aa29;
     color: white;
 }
+
+#server_puavoExport_list {
+    display: block;
+}
+
+#device_puavoDeviceXrandr {
+    display: block;
+}
