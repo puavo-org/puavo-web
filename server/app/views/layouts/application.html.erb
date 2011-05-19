@@ -22,6 +22,11 @@
       <% if organisation_owner? %>
       <li>
 	<%= link_to session[:organisation].name, "/users/organisation", :class => "sub" %>
+	<ul>
+	  <li><%= link_to t('.external_services'), "/users/external_services" %></li>
+	  <li><%= link_to t('.printers'), printers_path %></li>
+	  <li><%= link_to t('.servers'), servers_path %></li>
+	</ul>
       </li>
       <% else %>
       <li><span class="sub"><%= session[:organisation].name %></span></li>
@@ -33,11 +38,6 @@
           <% end %>
         </ul>
       </li>
-      <% if organisation_owner? %>
-      <li><%= link_to t('.external_services'), "/users/external_services", :class => 'sub' %></li>
-      <li><%= link_to t('.printers'), printers_path, :class => 'sub' %></li>
-      <li><%= link_to t('.servers'), servers_path, :class => 'sub' %></li>
-      <% end %>
 
       <% if logged_in? %>
       <div id="top-menu-right">
