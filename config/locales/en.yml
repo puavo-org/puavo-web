@@ -194,6 +194,12 @@ en:
       title: New external service
     edit:
       title: Edit external service
+  search:
+    search_result:
+      title_user: Users
+      title_role: Roles
+      title_group: Groups
+      title_device: Devices
   activeldap:
     errors:
       messages:
@@ -282,6 +288,8 @@ en:
         description: Description
         userPassword: Password
         groups: System Groups
+      device:
+        puavoHostname: Name
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student

@@ -274,3 +274,12 @@ label.checkbox {
     font-size: 100%;
     font-weight: normal;
 }
+
+.search_result td {
+    border-bottom: 1px solid #94aa29;;
+}
+
+.search_result th {
+    background: #94aa29;
+    color: white;
+}

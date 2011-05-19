@@ -193,6 +193,12 @@ fi:
       title: Uuden ulkoisen palvelun tiedot
     edit:
       title: Ulkoisen palvelun tietojen muokkaus
+  search:
+    search_result:
+      title_user: Käyttäjät
+      title_role: Roolit
+      title_group: Ryhmät
+      title_device: Laitteet
   activeldap:
     errors:
       messages:
@@ -281,6 +287,8 @@ fi:
         description: Kuvaus
         userPassword: Salasana
         groups: Järjestelmäryhmät
+      device:
+        puavoHostname: Nimi
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: Henkilökunta
   puavoEduPersonAffiliation_student: Opiskelija
