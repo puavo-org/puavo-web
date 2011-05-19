@@ -5,6 +5,10 @@ $(document).ready(function() {
 	$(this).prev().append( clone_element );
     });
 
-    $('#search').liveSearch({url: '/users/search?words='});
+    $('#search').liveSearch({
+	minLength: 2,
+	url: '/users/search?words='
+    });
+
 });
 

@@ -52,7 +52,8 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 		typeDelay:		200,
 		loadingClass:	'loading', 
 		onSlideUp:		function () {}, 
-		uptadePosition:	false
+		uptadePosition:	false,
+                minLength:              0
 	    }, conf);
 
 	    var liveSearch	= jQuery('#' + config.id);
@@ -116,9 +117,12 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 		};
 
 		// Hides live-search for this input
-		var hideLiveSearch = function () {
+		var hideLiveSearch = function (remove_data) {
 		    liveSearch.slideUp(config.duration, function () {
 			config.onSlideUp();
+			if (remove_data) {
+			    liveSearch.html('');
+			}
 		    });
 		};
 
@@ -135,7 +139,9 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 			    // If there are search results show live search
 			    else {
 				// HACK: In case search field changes width onfocus
-				setTimeout(showLiveSearch, 1);
+				if (this.value.length > config.minLength) {
+				    setTimeout(showLiveSearch, 1);
+				}
 			    }
 			}
 		    })
@@ -153,7 +159,7 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 			    }
 			    // Star ajax-request only if the value is greater than two character
 			    // Modify by Opinsys
-			    if( q.length > 2 ) {
+			    if( q.length > config.minLength ) {
 				// Start a new ajax-request in X ms
 				this.timer = setTimeout(function () {
 				    jQuery.get(config.url + q, function (data) {
@@ -165,13 +171,13 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 					    showLiveSearch();
 					}
 					else {
-					    hideLiveSearch();
+					    hideLiveSearch(true);
 					}
 				    });
 				}, config.typeDelay);
 			    } 
 			    else {
-				hideLiveSearch();	
+				hideLiveSearch(false);	
 			    }
 
 			    this.lastValue = this.value;
