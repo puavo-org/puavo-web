@@ -2,8 +2,6 @@
 	background: #fff;
 
 	padding: 5px 10px;
-	max-height: 400px;
-	overflow: auto;
 
 	position: absolute;
 	z-index: 99;
@@ -19,4 +17,26 @@
 #search {
     margin: 4px;
     font-size: 10px;
+}
+
+.search_result table {
+    border-spacing:0;
+    margin: 0px;
+    padding: 0px;
+}
+
+.search_result th {
+    white-space:nowrap;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+}
+
+fieldset.search_result {
+    padding: 5px;
+}
+
+.search_result legend {
+    padding-left: 2px;
+    padding-right: 2px;
 }
