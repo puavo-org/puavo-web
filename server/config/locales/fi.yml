@@ -97,6 +97,9 @@ fi:
   printers:
     index:
       server_title: "Palvelin: %{server}"
+  search:
+    search_result:
+      title_device: Laitteet
   helpers:
     submit:
       servers:
@@ -121,6 +124,7 @@ fi:
       servers: Palvelimet
       external_services: Ulkoiset palvelut
       printers: Tulostimet
+      search_placeholder: Hae
   link:
     edit: Muokkaa
     back: Takaisin

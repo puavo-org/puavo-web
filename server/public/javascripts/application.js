@@ -4,4 +4,9 @@ $(document).ready(function() {
 	clone_element.val('');
 	$(this).prev().append( clone_element );
     });
+
+    $('#search').liveSearch({
+	minLength: 2,
+	url: '/users/search?words='
+    });
 });

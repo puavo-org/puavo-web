@@ -13,8 +13,9 @@
   <%= stylesheet_link_tag "#{theme}/topmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/navmenu.css" %>
   <%= stylesheet_link_tag "#{theme}/puavo.css" %>
+  <%= stylesheet_link_tag "jquery.liveSearch" %>
 
-  <%= javascript_include_tag "jquery-1.4.2.min", "rails", "application" %>
+  <%= javascript_include_tag "jquery-1.4.2.min", "rails", "application", "jquery.liveSearch" %>
 
   <meta name="csrf-token" content="<%= form_authenticity_token %>" />
   <meta name="csrf-param" content="authenticity_token" />
@@ -24,9 +25,15 @@
     <ul id="top-menu" class="menu">
       <% if organisation_owner? %>
       <li>
+	<% if puavo_users? %>
 	<%= link_to session[:organisation].name, "/users/organisation", :class => "sub" %>
+	<% else %>
+	<span class="sub"><%= session[:organisation].name %></span>
+	<% end %>
 	<ul>
+	  <% if puavo_users? %>
 	  <li><%= link_to t('.external_services'), "/users/external_services" %></li>
+	  <% end %>
 	  <li><%= link_to t('.printers'), printers_path %></li>
 	  <li><%= link_to t('.servers'), servers_path %></li>
 	</ul>
@@ -34,7 +41,12 @@
       <% else %>
       <li><span class="sub"><%= session[:organisation].name %></span></li>
       <% end %>
-      <li><a href="/users/schools" class="sub"><%= t('.schools')%></a>
+      <li>
+	<% if puavo_users? %>
+	<%= link_to t('.schools'), "/users/schools", :class => "sub" %>
+	<% else %>
+	<span class="sub"><%= t('.schools') %></span>
+	<% end %>
         <ul>
           <% session[:organisation].schools.each do |school| %>
           <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  devices_path(school) %></li>
@@ -44,9 +56,18 @@
 
       <% if logged_in? %>
       <div id="top-menu-right">
+	<% if puavo_users? %>
+	<li>
+	  <%= text_field_tag( "search",
+                              nil,
+                              :id => "search",
+                              :size => 30,
+                              :placeholder => t('.search_placeholder') ) %>
+	</li>
+	<% end %>
         <li><span><%= t('.logged_in_as') %></span></li>
-      <li><a href="#"><%= current_user_displayName %></a></li>
-      <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
+	<li><a href="#"><%= current_user_displayName %></a></li>
+	<li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
       </div>
       <% end %>
     </ul> <!-- top-menu -->
@@ -54,20 +75,24 @@
     <hr class="space" />
 
     <% if session[:organisation] %>
-    <% if @school && !@school.id.nil? && controller_name != 'password' %>
+    <% if @school && !@school.id.nil? %>
     <h1><%= @school.displayName %></h1>
 
     <div id="navbar_first_level">
       <div id="nav1">
         <ul>
-          <li class="<%= controller_name.match(/schools/) \
-                     ? "page_item current_page_item" \
-                                                    : "page_item" %>">
-            <a href="/users/schools/<%= @school.id %>"><span><%= t('.school') %></span></a>
+	  <% if puavo_users? %>
+          <li class="page_item">
+	    <% link_to "/users/schools/#{@school.id}" do %>
+	    <span><%= t('.school') %></span>
+	    <% end %>
           </li>
-          <li class="<%= controller_name.match(/users|groups|roles/) ? "page_item current_page_item" : "page_item" %>">
-            <a href="/users/<%= @school.id%>/users"><span><%= t('.users') %></span></a>
+          <li class="page_item">
+	    <% link_to "/users/#{@school.id}/users" do %>
+	    <span><%= t('.users') %></span>
+	    <% end %>
           </li>
+	  <% end %>
           <li class="<%= controller_name.match(/devices/) ? "page_item current_page_item" : "page_item" %>">
             <% link_to devices_path(@school) do %>
             <span><%= t('.devices') %></span>
