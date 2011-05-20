@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_authorization_user
 
   helper :all # include all helpers, all the time
-  helper_method :logged_in?, :current_user_displayName, :organisation_owner?
+  helper_method :logged_in?, :current_user_displayName, :organisation_owner?, :puavo_users?
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -62,5 +62,9 @@ class ApplicationController < ActionController::Base
                                              object_params[:"#{attribute}(2i)"].to_i,
                                              object_params[:"#{attribute}(3i)"].to_i )
     end
+  end
+
+  def puavo_users?
+    PUAVO_CONFIG["puavo_users"] == "enabled" ? true : false
   end
 end
