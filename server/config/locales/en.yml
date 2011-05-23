@@ -244,6 +244,8 @@ en:
         printerType: Type
         printerURI: URI
         puavoPrinterPPD: Driver file (PPD)
+      school:
+        displayName: School name
     values:
       device:
         roles:

@@ -46,7 +46,7 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 ***/
 	jQuery.fn.liveSearch = function (conf) {
 	    var config = jQuery.extend({
-		url:			'/search-results.php?q=', 
+		urls:                   {'search-result': 'search-results.php?q='},
 		id:				'jquery-live-search', 
 		duration:		400, 
 		typeDelay:		200,
@@ -56,6 +56,8 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
                 minLength:              0
 	    }, conf);
 
+	    var searchStatus = {}
+
 	    var liveSearch	= jQuery('#' + config.id);
 
 	    // Create live-search if it doesn't exist
@@ -64,6 +66,11 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 		    .appendTo(document.body)
 		    .hide()
 		    .slideUp(0);
+		
+		for (key in config.urls) {
+		    liveSearch.append('<div id="' + key + '"></div>');
+		    searchStatus[key] = false;
+		}
 
 		// Close live-search when clicking outside it
 		jQuery(document.body).click(function(event) {
@@ -112,20 +119,43 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 		    // so it resizes based on the correct input element
 		    $(window).unbind('resize', repositionLiveSearch);
 		    $(window).bind('resize', repositionLiveSearch);
-
-		    liveSearch.slideDown(config.duration);
+		    
+		    for (key in config.urls) {
+			if( searchStatus[key] == true ) {
+			    liveSearch.slideDown(config.duration)
+			    break;
+			}
+		    }
 		};
 
 		// Hides live-search for this input
-		var hideLiveSearch = function (remove_data) {
-		    liveSearch.slideUp(config.duration, function () {
-			config.onSlideUp();
-			if (remove_data) {
-			    liveSearch.html('');
+		var hideLiveSearch = function () {
+		    hideStatus = true;
+		    for (key in config.urls) {
+			if( searchStatus[key] == true ) {
+			    hideStatus = false;
+			    break;
 			}
-		    });
-		};
+		    }
+		    if (hideStatus == true) {
+			liveSearch.slideUp(config.duration, function () {
+			    config.onSlideUp();
+			    for (key in config.urls) {
+				if( searchStatus[key] == false ) {
+				    liveSearch.find('#' + key).html('');
+				}
+			    }
 
+			});
+		    } else {
+			for (key in config.urls) {
+			    if( searchStatus[key] == false ) {
+				liveSearch.find('#' + key).html('');
+			    }
+			}
+		    }
+		};
+		
 		input
 		// On focus, if the live-search is empty, perform an new search
 		// If not, just slide it down. Only do this if there's something in the input
@@ -140,7 +170,7 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 			    else {
 				// HACK: In case search field changes width onfocus
 				if (this.value.length > config.minLength) {
-				    setTimeout(showLiveSearch, 1);
+				    showLiveSearch();
 				}
 			    }
 			}
@@ -157,27 +187,33 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 			    if (this.timer) {
 				clearTimeout(this.timer);
 			    }
-			    // Star ajax-request only if the value is greater than two character
-			    // Modify by Opinsys
+			    // Star ajax-request only if the value length is greater than minLength
 			    if( q.length > config.minLength ) {
 				// Start a new ajax-request in X ms
 				this.timer = setTimeout(function () {
-				    jQuery.get(config.url + q, function (data) {
-					input.removeClass(config.loadingClass);
-
-					// Show live-search if results and search-term aren't empty
-					if (data.length && q.length) {
-					    liveSearch.html(data);
-					    showLiveSearch();
-					}
-					else {
-					    hideLiveSearch(true);
-					}
-				    });
+				    for (url_key in config.urls) {
+					jQuery.ajax({
+					    async: false,
+					    url: config.urls[url_key] + q,
+					    success: function(data){
+						if (data.length) {
+    						    searchStatus[url_key] = true;
+						    liveSearch.find('#' + url_key).html(data);
+						    setTimeout(showLiveSearch, 1);
+						} else {
+						    searchStatus[url_key] = false;
+						    hideLiveSearch();
+						}
+					    }
+					});
+				    }
 				}, config.typeDelay);
 			    } 
 			    else {
-				hideLiveSearch(false);	
+				for (url_key in config.urls) {
+				    searchStatus[url_key] = false;
+				}
+				hideLiveSearch();	
 			    }
 
 			    this.lastValue = this.value;

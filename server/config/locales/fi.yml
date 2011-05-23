@@ -242,6 +242,8 @@ fi:
         printerType: Tyyppi
         printerURI: Polku
         puavoPrinterPPD: Ajuritiedosto (PPD)
+      school:
+        displayName: Koulun nimi
     values:
       device:
         roles:

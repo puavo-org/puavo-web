@@ -17,6 +17,10 @@
 
   <%= javascript_include_tag "jquery-1.4.2.min", "rails", "application", "jquery.liveSearch" %>
 
+  <% search_urls = { "devices-search" => "/devices/search?words=" } %>
+  <% if PUAVO_CONFIG["puavo_users"] == "enabled" then search_urls["users-search"] = "/users/search?words=" end %>
+  <%= javascript_tag "var search_urls = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
+
   <meta name="csrf-token" content="<%= form_authenticity_token %>" />
   <meta name="csrf-param" content="authenticity_token" />
 </head>
@@ -56,7 +60,6 @@
 
       <% if logged_in? %>
       <div id="top-menu-right">
-	<% if puavo_users? %>
 	<li>
 	  <%= text_field_tag( "search",
                               nil,
@@ -64,7 +67,6 @@
                               :size => 30,
                               :placeholder => t('.search_placeholder') ) %>
 	</li>
-	<% end %>
         <li><span><%= t('.logged_in_as') %></span></li>
 	<li><a href="#"><%= current_user_displayName %></a></li>
 	<li><%= link_to t('.logout'), logout_path, :method => :delete %></li>

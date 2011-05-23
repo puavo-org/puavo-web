@@ -7,6 +7,8 @@ $(document).ready(function() {
 
     $('#search').liveSearch({
 	minLength: 2,
-	url: '/users/search?words='
+	urls: search_urls,
+	duration: 400,
+	typeDelay: 300
     });
 });
