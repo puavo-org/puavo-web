@@ -6,8 +6,11 @@ $(document).ready(function() {
     });
 
     $('#search').liveSearch({
-	minLength: 2,
-	url: '/users/search?words='
+		minLength: 2,
+		urls: search_urls,
+		duration: 400,
+		typeDelay: 200,
+		width: 'auto'
     });
 
 });
