@@ -19,7 +19,7 @@ en:
       servers: Servers
       external_services: External services
       printers: Printers
-      search_placeholder: Search users
+      search_placeholder: Search
   link:
     edit: Edit
     back: Back
@@ -199,7 +199,6 @@ en:
       title_user: Users
       title_role: Roles
       title_group: Groups
-      title_device: Devices
   activeldap:
     errors:
       messages:

@@ -4,15 +4,6 @@ class SearchController < ApplicationController
   # GET /users/search?words=Williams
   def index
     words = Net::LDAP::Filter.escape( params[:words] )
-
-    # Devices search
-    @devices = Puavo::DEVICE_CONFIG \
-    ? ldap_search( 'device',
-                   ['puavoHostname'],
-                   'puavoHostname',
-                   lambda { |w| "(cn=*#{w}*)" },
-                   words ) \
-    : []
     
     # Users search
     @users = ldap_search( 'user',
@@ -42,7 +33,7 @@ class SearchController < ApplicationController
     end
 
     respond_to do |format|
-      if @users.length == 0 && @roles.length == 0 && @groups.length == 0 && @devices.length == 0
+      if @users.length == 0 && @roles.length == 0 && @groups.length == 0
         format.html { render :inline => '' }
       else
         format.html # index.html.erb

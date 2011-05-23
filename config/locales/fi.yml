@@ -19,7 +19,7 @@ fi:
       servers: Palvelimet
       external_services: Ulkoiset palvelut
       printers: Tulostimet
-      search_placeholder: Hae käyttäjiä
+      search_placeholder: Hae
   link:
     edit: Muokkaa
     back: Takaisin
@@ -198,7 +198,6 @@ fi:
       title_user: Käyttäjät
       title_role: Roolit
       title_group: Ryhmät
-      title_device: Laitteet
   activeldap:
     errors:
       messages:

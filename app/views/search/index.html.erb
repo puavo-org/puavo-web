@@ -18,10 +18,3 @@
               :model => 'group',
               :path => lambda { |school_id, id| group_path(school_id, id) },
               :attributes => ["displayName", "cn"] } ) %>
-
-<%= render( :partial => "search_result",
-            :locals => {
-              :objects => @devices,
-              :model => 'device',
-              :path => lambda { |school_id, id| "/devices/#{school_id}/devices/#{id}" },
-              :attributes => ["puavoHostname"] } ) %>

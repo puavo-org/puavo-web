@@ -30,6 +30,11 @@
                               "jquery.showLoading",
                               "jquery.liveSearch" ) %>
   <%= yield :javascript %>
+
+  <% search_urls = { "users-search" => "/users/search?words=" } %>
+  <% if Puavo::DEVICE_CONFIG then search_urls[ "devices-search"] = "/devices/search?words=" end %>
+  <%= javascript_tag "var search_urls = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
+
   <meta name="csrf-token" content="<%= form_authenticity_token %>" />
   <meta name="csrf-param" content="authenticity_token" />
 </head>
