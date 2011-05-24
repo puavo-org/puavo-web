@@ -286,6 +286,7 @@ fi:
         description: Kuvaus
         userPassword: Salasana
         groups: Järjestelmäryhmät
+        dn: Bind DN
       device:
         puavoHostname: Nimi
   puavoEduPersonAffiliation_teacher: Opettaja

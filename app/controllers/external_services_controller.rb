@@ -62,9 +62,14 @@ class ExternalServicesController < ApplicationController
   # PUT /external_services/1.xml
   def update
     @external_service = ExternalService.find(params[:id])
-    
+    @system_groups = SystemGroup.all
+
     unless params[:external_service].has_key?(:group)
       @external_service.groups = []
+    end
+
+    if params[:external_service][:userPassword] && params[:external_service][:userPassword].empty?
+      params[:external_service].delete(:userPassword)
     end
 
     respond_to do |format|
