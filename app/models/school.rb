@@ -21,6 +21,9 @@ class School < BaseGroup
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
 
+  attr_accessor :image
+  before_validation :resize_image
+
   def remove_user(user)
     self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
                                          { "member" => [user.dn.to_s] }])
@@ -47,4 +50,13 @@ class School < BaseGroup
   #  end
   #  super(*args)
   #end
+
+  private
+
+  def resize_image
+    if self.image.class == Tempfile
+      image_orig = Magick::Image.read(self.image.path).first
+      self.jpegPhoto = image_orig.resize_to_fit(400,200).to_blob
+    end
+  end
 end

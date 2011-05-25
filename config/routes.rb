@@ -55,6 +55,10 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :sessions
 
+  map.image_school( 'schools/:id/image',
+                      :controller => 'schools',
+                      :action => 'image',
+                      :conditions => { :method => :get } )
   map.root :controller => "schools"
 
   map.with_options :controller => 'users/import' do |import|

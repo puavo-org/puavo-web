@@ -1,7 +1,8 @@
 <div class="dashboard">
 
 <div class="dashboard_box school_image">
-<%= link_to( image_tag("school.png") ) %>
+<%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
+               :class => "image" ) %>
 </div>
 
 <div class="dashboard_box contacts">

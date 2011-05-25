@@ -1,4 +1,4 @@
-<% form_for(@school, :url => path, :html => { :method => method })  do |f| %>
+<% form_for(@school, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
   <p>
     <%= f.label :displayName %><br />
     <%= f.text_field :displayName %>
@@ -51,6 +51,10 @@
   <p>
     <%= f.label :st %><br />
     <%= f.text_field :st %>
+  </p>
+  <p>
+    <%= f.label :image %><br />
+    <%= f.file_field :image %>
   </p>
   <p>
     <%= f.submit submit_text %>

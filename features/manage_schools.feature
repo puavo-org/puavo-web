@@ -28,6 +28,7 @@ Feature: Manage schools
     | Postal address     | 12345                                                                          |
     | Postal code        | 54321                                                                          |
     | State              | East Midlands                                                                  |
+    And I attach the file at "features/support/test.jpg" to "image"
     And I press "Create"
     Then I should not see "error"
     # Translation missing

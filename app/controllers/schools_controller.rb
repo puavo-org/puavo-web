@@ -39,6 +39,13 @@ class SchoolsController < ApplicationController
     end
   end
 
+  # GET /schools/:school_id/image
+  def image
+    @school = School.find(params[:id])
+
+    send_data @school.jpegPhoto, :disposition => 'inline'
+  end
+
   # GET /schools/new
   # GET /schools/new.xml
   def new
