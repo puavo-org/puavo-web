@@ -23,6 +23,13 @@ class UsersController < ApplicationController
     end
   end
 
+  # GET /:school_id/users/1/image
+  def image
+    @user = User.find(params[:id])
+
+    send_data @user.jpegPhoto, :disposition => 'inline'
+  end
+
   # GET /:school_id/users/1
   # GET /:school_id/users/1.xml
   def show

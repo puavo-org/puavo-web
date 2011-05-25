@@ -44,6 +44,7 @@ Feature: Manage users
     And I check "Class 4" from roles
     # FIXME
     And I choose "user_puavoAllowRemoteAccess_true"
+    And I attach the file at "features/support/test.jpg" to "image"
     And I press "Create"
     Then I should see the following:
     |                       |

@@ -26,7 +26,7 @@ class User < LdapBase
   belongs_to :roles, :class_name => 'Role', :many => 'member', :primary_key => "dn"
   belongs_to :uidRoles, :class_name => 'Role', :many => 'memberUid', :primary_key => "uid"
 
-  before_validation :set_special_ldap_value
+  before_validation :set_special_ldap_value, :resize_image
 
   before_save :is_uid_changed
 
@@ -41,7 +41,14 @@ class User < LdapBase
   after_create :change_ldap_password
 
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
-  attr_accessor :password, :new_password, :school_admin, :uid_has_changed, :role_ids, :role_name, :mass_import
+  attr_accessor( :password,
+                 :new_password,
+                 :school_admin,
+                 :uid_has_changed,
+                 :role_ids,
+                 :role_name,
+                 :mass_import,
+                 :image )
 
   cattr_accessor :reserved_uids
 
@@ -448,6 +455,13 @@ class User < LdapBase
   def set_samba_settings 
     self.sambaSID = SambaDomain.next_samba_sid
     self.sambaAcctFlags = "[U]"
+  end
+
+  def resize_image
+    if self.image.class == Tempfile
+      image_orig = Magick::Image.read(self.image.path).first
+      self.jpegPhoto = image_orig.resize_to_fit(120,160).to_blob
+    end
   end
 end
 

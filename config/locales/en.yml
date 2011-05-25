@@ -264,6 +264,7 @@ en:
         puavoAllowRemoteAccess_: "No"
         puavoEduPersonReverseDisplayName: Reverse name
         puavoEduPersonPersonnelNumber: Personel Number
+        image: Image
       group:
         displayName: "Group name"
         cn: "Abbreviation"

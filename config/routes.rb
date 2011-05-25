@@ -40,6 +40,12 @@ ActionController::Routing::Routes.draw do |map|
                          :conditions => { :method => :put } )
 
   map.resources :users, :path_prefix => ':school_id'
+
+  map.image_user( 'users/:id/image',
+                      :controller => 'users',
+                      :action => 'image',
+                      :path_prefix => ':school_id',
+                      :conditions => { :method => :get } )
   map.resources :users
 
   map.resources :groups, :path_prefix => ':school_id'

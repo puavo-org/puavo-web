@@ -1,7 +1,8 @@
 <table>
   <tr>
     <td>
-      <%= link_to( image_tag("anonymous.png") ) %>
+      <%= image_tag( @user.jpegPhoto.nil? ? "anonymous.png" : image_user_path(@school, @user),
+                     :class => "image" ) %>
     </td>
     <td>
       <p>
