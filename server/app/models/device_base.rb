@@ -1,8 +1,8 @@
 class DeviceBase < LdapBase
-  attr_accessor :host_certificate_request_send
+  attr_accessor :host_certificate_request_send, :image
   attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
 
-  before_validation :set_puavo_id, :set_password, :downcase_mac_addresses
+  before_validation :set_puavo_id, :set_password, :downcase_mac_addresses, :resize_image
   before_save :set_puppetclass, :set_parentNode
 
   validates_format_of :puavoHostname, :with => /^[0-9a-z-]+$/
@@ -209,5 +209,12 @@ class DeviceBase < LdapBase
 
   def downcase_mac_addresses
     self.macAddress = self.macAddress.to_a.map{ |mac| mac.to_s.downcase }
+  end
+
+  def resize_image
+    if self.image.class == Tempfile
+      image_orig = Magick::Image.read(self.image.path).first
+      self.jpegPhoto = image_orig.resize_to_fit(220,220).to_blob
+    end
   end
 end

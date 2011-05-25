@@ -192,6 +192,7 @@ fi:
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Hakemistopolku
+        image: Kuva
       device:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Nimi
@@ -229,6 +230,7 @@ fi:
         printerURI: Laiteosoite
         printerLocation: Sijainti
         printerMakeAndModel: Merkki ja malli
+        image: Kuva
       user:
         uid: Käyttäjätunnus
         password: Salasana

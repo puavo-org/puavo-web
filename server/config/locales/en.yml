@@ -194,6 +194,7 @@ en:
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Path
+        image: Image
       device:
         puavoDeviceType: Device type
         puavoHostname: Hostname
@@ -231,6 +232,7 @@ en:
         printerURI: URI
         printerLocation: Location
         printerMakeAndModel: Make and model
+        image: Image
       user:
         uid: Username
         password: Password

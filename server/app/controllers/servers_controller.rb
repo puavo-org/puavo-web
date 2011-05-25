@@ -33,6 +33,13 @@ class ServersController < ApplicationController
     end
   end
 
+  # GET /servers/1/image
+  def image
+    @server = Server.find(params[:id])
+
+    send_data @server.jpegPhoto, :disposition => 'inline'
+  end
+
   # GET /servers/new
   # GET /servers/new.xml
   def new
