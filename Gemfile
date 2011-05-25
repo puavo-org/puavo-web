@@ -5,7 +5,7 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 
 gem "prawn"
 gem 'activeldap', :require => 'active_ldap'
-gem 'net-ldap'
+gem 'net-ldap', '0.2.2'
 gem 'puavo_organisation', :require => 'puavo_organisation'
 gem 'puavo_authentication', :require => 'puavo_authentication'
 gem 'pg'
