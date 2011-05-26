@@ -43,7 +43,7 @@ class SchoolsController < ApplicationController
   def image
     @school = School.find(params[:id])
 
-    send_data @school.jpegPhoto, :disposition => 'inline'
+    send_data @school.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
   end
 
   # GET /schools/new

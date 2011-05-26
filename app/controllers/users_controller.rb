@@ -27,7 +27,7 @@ class UsersController < ApplicationController
   def image
     @user = User.find(params[:id])
 
-    send_data @user.jpegPhoto, :disposition => 'inline'
+    send_data @user.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
   end
 
   # GET /:school_id/users/1
