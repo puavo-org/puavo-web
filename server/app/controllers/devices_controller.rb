@@ -29,6 +29,13 @@ class DevicesController < ApplicationController
     end
   end
 
+  # GET /:school_id/devices/1/image
+  def image
+    @device = Device.find(params[:id])
+
+    send_data @device.jpegPhoto, :disposition => 'inline'
+  end
+
   # GET /devices/new
   # GET /devices/new.xml
   # GET /devices/new.json
@@ -60,7 +67,6 @@ class DevicesController < ApplicationController
     handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
     handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
     @device = Device.new( { :objectClass => device_objectClass }.merge( params[:device] ))
-
     @device.puavoSchool = @school.dn
 
     if @device.valid?

@@ -1,0 +1,15 @@
+<% form_for(@printer) do |f| %>
+  <%= f.error_messages %>
+
+  <h1><%=h f.object.printerDescription %></h1>
+  <table>
+    <tr>
+      <td class="label_td"><%= f.label :puavoRule %></td>
+      <td><%= f.text_field :puavoRule %></td>
+    </tr>
+    <tr>
+  <tr><td>
+  <%= f.submit t('link.update') %> <%= t('or') %> <%= link_to t('cancel'), printers_path %>
+  </td></tr>
+  </table>
+<% end %>

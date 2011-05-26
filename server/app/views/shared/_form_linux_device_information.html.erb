@@ -77,21 +77,16 @@
 <tr>
   <td class="label_td label_for_input_text_list"><%= f.label :puavoDeviceXrandr %></td>
   <td>
-    <span id="device_puavoDeviceXrandr">
+    <div id="device_puavoDeviceXrandr">
       <% if f.object.puavoDeviceXrandr.nil? %>
-      <input name='device[puavoDeviceXrandr][]' size='45' type='text' /><br />
+      <input name='device[puavoDeviceXrandr][]' size='45' type='text' />
       <% else %>
       <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
-      <input name='device[puavoDeviceXrandr][]' size='45' type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' /><br />
+      <input name='device[puavoDeviceXrandr][]' size='45' type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
       <% end %>
       <% end %>
-    </span>
-
-    <%= link_to_function( t('shared.add_puavoDeviceXrandr'),
-      nil ) do |page|
-  page.insert_html( :bottom,
-                    "device_puavoDeviceXrandr",
-    "<input name='device[puavoDeviceXrandr][]' size='45' type='text' /><br />" ) end %>
+    </div>
+    <%= link_to t('shared.add_puavoDeviceXrandr'), "#", :class => "clone_prev_input_element" %>
   </td>
 </tr>
 

@@ -1,7 +1,11 @@
 <table>
   <tr>
     <td>
-      <div><%= link_to( image_tag("computer.png") ) %></div>
+      <div>
+		<% path = device.class == Server ? image_server_path(device) : image_device_path(@school, device) %>
+		<%= image_tag( device.jpegPhoto.nil? ? "computer.png" : path,
+                       :class => "image" ) %>
+	  </div>
     </td>
     <td>
       <h1><%=h device.puavoHostname %></h1>

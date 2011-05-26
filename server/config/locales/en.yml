@@ -96,6 +96,12 @@ en:
       server: Server
       netstand: Netstand
       infotv: Info-tv
+  printers:
+    index:
+      server_title: "Server: %{server}"
+  search:
+    search_result:
+      title_device: Devices
   helpers:
     submit:
       servers:
@@ -105,6 +111,8 @@ en:
       login_successful: Login successful!
       failed: Login failed!
       logout_successful: Logout successful!
+    printer:
+      updated: Printer was successfully updated
   layouts:
     application:
       schools: Schools
@@ -115,6 +123,10 @@ en:
       logged_in_as: Logged in as
       devices: Devices
       desktop: Desktop
+      servers: Servers
+      external_services: External services
+      printers: Printers
+      search_placeholder: Search
   link:
     edit: Edit
     back: Back
@@ -146,6 +158,9 @@ en:
     automounts: Automounts
     new_automount: New automount
   activeldap:
+    errors:
+      messages:
+        uniqueness: "{{attribute}} is already in use"
     attributes:
       server:
         puavoDeviceType: Device type
@@ -179,6 +194,7 @@ en:
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Path
+        image: Image
       device:
         puavoDeviceType: Device type
         puavoHostname: Hostname
@@ -216,11 +232,22 @@ en:
         printerURI: URI
         printerLocation: Location
         printerMakeAndModel: Make and model
+        image: Image
       user:
         uid: Username
         password: Password
       automounts:
         cn: Directory
+      printer:
+        printerDescription: Printer name
+        printerMakeAndModel: Manufacturer and model
+        printerLocation: Location
+        puavoRule: Access
+        printerType: Type
+        printerURI: URI
+        puavoPrinterPPD: Driver file (PPD)
+      school:
+        displayName: School name
     values:
       device:
         roles:

@@ -1,4 +1,4 @@
-<% form_for(@device, :url => path, :html => { :method => method }) do |f| %>
+<% form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
   <%= f.error_messages %>
 
     <% if f.object.classes.include?('puavoPrinter') %>

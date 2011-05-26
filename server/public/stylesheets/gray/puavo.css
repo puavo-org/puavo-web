@@ -158,3 +158,26 @@ label {
     background: #94aa29;
     color: white;
 }
+
+#server_puavoExport_list {
+    display: block;
+}
+
+#device_puavoDeviceXrandr {
+    display: block;
+}
+
+.search_result td {
+    border-bottom: 1px solid #94aa29;;
+}
+
+.search_result th {
+    background: #94aa29;
+    color: white;
+}
+
+.image {
+	padding: 0px;
+	margin: 15px;
+	border: 5px ridge #738037;
+}

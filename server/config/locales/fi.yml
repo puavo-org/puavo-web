@@ -94,6 +94,12 @@ fi:
       server: Palvelin
       netstand: Nettikulma
       infotv: Info-tv
+  printers:
+    index:
+      server_title: "Palvelin: %{server}"
+  search:
+    search_result:
+      title_device: Laitteet
   helpers:
     submit:
       servers:
@@ -103,6 +109,8 @@ fi:
       login_successful: Kirjautuminen onnistui!
       failed: Kirjautuminen epäonnistui!
       logout_successful: Uloskirjautuminen onnistui!
+    printer:
+      updated: Tulostimen tietojen päivitys onnistui
   layouts:
     application:
       schools: Koulut
@@ -113,6 +121,10 @@ fi:
       logged_in_as: Kirjauduttu sisään tunnuksella
       devices: Laitteet
       desktop: Työpöytä
+      servers: Palvelimet
+      external_services: Ulkoiset palvelut
+      printers: Tulostimet
+      search_placeholder: Hae
   link:
     edit: Muokkaa
     back: Takaisin
@@ -144,6 +156,9 @@ fi:
     automounts: Hakemistoliitokset
     new_automount: Uusi hakemistoliitos
   activeldap:
+    errors:
+      messages:
+        uniqueness: "{{attribute}} on jo käytössä"
     attributes:
       server:
         puavoDeviceType: Laitteen tyyppi
@@ -177,6 +192,7 @@ fi:
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Hakemistopolku
+        image: Kuva
       device:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Nimi
@@ -214,11 +230,22 @@ fi:
         printerURI: Laiteosoite
         printerLocation: Sijainti
         printerMakeAndModel: Merkki ja malli
+        image: Kuva
       user:
         uid: Käyttäjätunnus
         password: Salasana
       automount:
         cn: Hakemisto
+      printer:
+        printerDescription: Tulostimen nimi
+        printerMakeAndModel: Valmistaja ja malli
+        printerLocation: Sijainti
+        puavoRule: Käyttöoikeudet
+        printerType: Tyyppi
+        printerURI: Polku
+        puavoPrinterPPD: Ajuritiedosto (PPD)
+      school:
+        displayName: Koulun nimi
     values:
       device:
         roles:

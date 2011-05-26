@@ -3,18 +3,27 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :hosts, :only => [:index], :collection => { :types => :get }
 
+  map.image_device( 'devices/:id/image',
+                      :controller => 'devices',
+                      :action => 'image',
+                      :path_prefix => ':school_id',
+                      :conditions => { :method => :get } )
   map.resources :devices, :path_prefix => ':school_id'
   map.revoke_certificate_device '/devices/:id/revoke_certificate', :controller => 'devices', :action => 'revoke_certificate', :conditions => { :method => :delete }, :path_prefix => ':school_id'
 
-  map.resources :terminals
-
-  map.resources :workstations
-
+  map.image_server( 'servers/:id/image',
+                      :controller => 'servers',
+                      :action => 'image',
+                      :conditions => { :method => :get } )
   map.resources :servers, :has_many => :automounts
   map.revoke_certificate_server '/servers/:id/revoke_certificate', :controller => 'servers', :action => 'revoke_certificate', :conditions => { :method => :delete }
 
+  map.resources :printers, :except => [:show, :new]
+
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
+
+  map.resources :search, :only => [:index]
 
   # The priority is based upon order of creation: first created -> highest priority.
 
