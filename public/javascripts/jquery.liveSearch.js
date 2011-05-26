@@ -125,6 +125,11 @@ jQuery.fn.liveSearch = function (conf) {
 				}
 
 				if (showStatus == true) {
+					for (key in config.urls) {
+						if( searchStatus[key] == false ) {
+							liveSearch.find('#' + key).html('');
+						}
+					}
 					showLiveSearch();
 				} else {
 					hideLiveSearch();
@@ -183,14 +188,14 @@ jQuery.fn.liveSearch = function (conf) {
 							for (url_key in config.urls) {
 								loadingRequestCounter += 1;
 								jQuery.ajax({
-									url_key: url_key,
+									key: url_key,
 									url: config.urls[url_key] + q,
 									success: function(data){
 										if (data.length) {
-    										searchStatus[url_key] = true;
-											liveSearch.find("#" + this.url_key).html(data);
+    										searchStatus[this.key] = true;
+											liveSearch.find("#" + this.key).html(data);
 										} else {
-											searchStatus[this.url_key] = false;
+											searchStatus[this.key] = false;
 										}
 										loadingRequestCounter -= 1;
 										showOrHideLiveSearch();
