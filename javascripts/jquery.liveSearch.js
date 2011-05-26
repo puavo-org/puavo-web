@@ -59,6 +59,7 @@ jQuery.fn.liveSearch = function (conf) {
 
 	var searchStatus = {};
 	var liveSearch	= jQuery('#' + config.id);
+	var loadingRequestCounter = 0;
 
 	// Create live-search if it doesn't exist
 	if (!liveSearch.length) {
@@ -114,18 +115,20 @@ jQuery.fn.liveSearch = function (conf) {
 		};
 
 		var showOrHideLiveSearch = function () {
-			showStatus = false;
-			for (key in config.urls) {
-				if( searchStatus[key] == true ) {
-					showStatus = true;
-					break;
+			if (loadingRequestCounter == 0) {
+				showStatus = false;
+				for (key in config.urls) {
+					if( searchStatus[key] == true ) {
+						showStatus = true;
+						break;
+					}
 				}
-			}
 
-			if (showStatus == true) {
-				showLiveSearch();
-			} else {
-				hideLiveSearch();
+				if (showStatus == true) {
+					showLiveSearch();
+				} else {
+					hideLiveSearch();
+				}
 			}
 		};
 
@@ -178,22 +181,22 @@ jQuery.fn.liveSearch = function (conf) {
 						// Start a new ajax-request in X ms
 						this.timer = setTimeout(function () {
 							for (url_key in config.urls) {
+								loadingRequestCounter += 1;
 								jQuery.ajax({
-									async: false,
+									elementId: "#" + url_key,
 									url: config.urls[url_key] + q,
 									success: function(data){
 										if (data.length) {
     										searchStatus[url_key] = true;
-											liveSearch.find('#' + url_key).html(data);
+											liveSearch.find(this.elementId).html(data);
 										} else {
 											searchStatus[url_key] = false;
 										}
+										loadingRequestCounter -= 1;
+										showOrHideLiveSearch();
 									}
 								});
 							}
-
-							showOrHideLiveSearch();
-
 						}, config.typeDelay);
 					}
 					else {
