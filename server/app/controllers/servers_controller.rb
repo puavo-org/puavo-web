@@ -37,7 +37,7 @@ class ServersController < ApplicationController
   def image
     @server = Server.find(params[:id])
 
-    send_data @server.jpegPhoto, :disposition => 'inline'
+    send_data @server.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
   end
 
   # GET /servers/new

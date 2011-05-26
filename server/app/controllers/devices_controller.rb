@@ -33,7 +33,7 @@ class DevicesController < ApplicationController
   def image
     @device = Device.find(params[:id])
 
-    send_data @device.jpegPhoto, :disposition => 'inline'
+    send_data @device.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
   end
 
   # GET /devices/new
