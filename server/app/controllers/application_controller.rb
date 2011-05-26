@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_authorization_user
 
   helper :all # include all helpers, all the time
-  helper_method :logged_in?, :current_user_displayName, :organisation_owner?, :puavo_users?
+  helper_method :logged_in?, :current_user_displayName, :organisation_owner?, :puavo_users?, :current_user
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
