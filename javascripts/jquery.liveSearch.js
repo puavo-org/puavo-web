@@ -183,14 +183,14 @@ jQuery.fn.liveSearch = function (conf) {
 							for (url_key in config.urls) {
 								loadingRequestCounter += 1;
 								jQuery.ajax({
-									elementId: "#" + url_key,
+									url_key: url_key,
 									url: config.urls[url_key] + q,
 									success: function(data){
 										if (data.length) {
     										searchStatus[url_key] = true;
-											liveSearch.find(this.elementId).html(data);
+											liveSearch.find("#" + this.url_key).html(data);
 										} else {
-											searchStatus[url_key] = false;
+											searchStatus[this.url_key] = false;
 										}
 										loadingRequestCounter -= 1;
 										showOrHideLiveSearch();
