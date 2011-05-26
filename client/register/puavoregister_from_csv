@@ -17,10 +17,10 @@ terminals[0..-1].each do |row|
   serial_number    ||= ''	# serial number may be missing from db dump
 
   case model
-    when /etc-3800/i
+    when /etc3800/i,/etc-3800/i
       manufacturer     = 'Epatec'
       puavodevicemodel = 'ETC-3800'
-    when /etc2500/i
+    when /etc2500/i,/etc-2500/i
       manufacturer     = 'Epatec'
       puavodevicemodel = 'ETC-2500'
     when /optiplaex GX520/i,/verkkopc/i,/verkko-pc/i,/tykki/
