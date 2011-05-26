@@ -54,7 +54,7 @@ class SearchController < ApplicationController
                                                                  "puavoSchool"] +
                                                                 attributes) ).map do |dn, v|
       { "id" => v["puavoId"],
-        "school_id" => v["puavoSchool"].to_s.match(/^puavoId=([^,]+)/)[1],
+        "school_id" => v["puavoSchool"].to_s.match(/^puavoId=([^,]+)/).to_a[1],
         "puavoSchool" => v["puavoSchool"].to_s,
         "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block]
       }.merge( attributes.inject({}) { |result, a|
