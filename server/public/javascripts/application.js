@@ -10,6 +10,6 @@ $(document).ready(function() {
 		minLength: 2,
 		urls: search_urls,
 		duration: 400,
-		typeDelay: 300
+		typeDelay: 400
     });
 });
