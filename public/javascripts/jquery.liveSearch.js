@@ -46,7 +46,7 @@ jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.ur
 ***/
 jQuery.fn.liveSearch = function (conf) {
 	var config = jQuery.extend({
-		urls:			{'search-result': 'search-results.php?q='},
+		url:			{'jquery-live-search-result': 'search-results.php?q='},
 		id:				'jquery-live-search', 
 		duration:		400, 
 		typeDelay:		200,
@@ -56,6 +56,18 @@ jQuery.fn.liveSearch = function (conf) {
 		minLength:		0,
 		width:			null
 	}, conf);
+
+	if (typeof(config.url) == "string") {
+		config.url = { 'jquery-live-search-result': config.url }
+	} else if (typeof(config.url) == "object") {
+		if (typeof(config.url.length) == "number") {
+			var urls = {}
+			for (var i = 0; i < config.url.length; i++) {
+				urls['jquery-live-search-result-' + i] = config.url[i];
+			}
+			config.url = urls;
+		}
+	}
 
 	var searchStatus = {};
 	var liveSearch	= jQuery('#' + config.id);
@@ -68,7 +80,7 @@ jQuery.fn.liveSearch = function (conf) {
 						.hide()
 						.slideUp(0);
 
-		for (key in config.urls) {
+		for (key in config.url) {
 			liveSearch.append('<div id="' + key + '"></div>');
 			searchStatus[key] = false;
 		}
@@ -117,7 +129,7 @@ jQuery.fn.liveSearch = function (conf) {
 		var showOrHideLiveSearch = function () {
 			if (loadingRequestCounter == 0) {
 				showStatus = false;
-				for (key in config.urls) {
+				for (key in config.url) {
 					if( searchStatus[key] == true ) {
 						showStatus = true;
 						break;
@@ -125,7 +137,7 @@ jQuery.fn.liveSearch = function (conf) {
 				}
 
 				if (showStatus == true) {
-					for (key in config.urls) {
+					for (key in config.url) {
 						if( searchStatus[key] == false ) {
 							liveSearch.find('#' + key).html('');
 						}
@@ -155,7 +167,7 @@ jQuery.fn.liveSearch = function (conf) {
 		var hideLiveSearch = function () {
 			liveSearch.slideUp(config.duration, function () {
 				config.onSlideUp();
-				for (key in config.urls) {
+				for (key in config.url) {
 					liveSearch.find('#' + key).html('');
 				}
 			});
@@ -185,11 +197,11 @@ jQuery.fn.liveSearch = function (conf) {
 					if( q.length > config.minLength ) {
 						// Start a new ajax-request in X ms
 						this.timer = setTimeout(function () {
-							for (url_key in config.urls) {
+							for (url_key in config.url) {
 								loadingRequestCounter += 1;
 								jQuery.ajax({
 									key: url_key,
-									url: config.urls[url_key] + q,
+									url: config.url[url_key] + q,
 									success: function(data){
 										if (data.length) {
     										searchStatus[this.key] = true;
@@ -205,7 +217,7 @@ jQuery.fn.liveSearch = function (conf) {
 						}, config.typeDelay);
 					}
 					else {
-						for (url_key in config.urls) {
+						for (url_key in config.url) {
 							searchStatus[url_key] = false;
 						}
 						hideLiveSearch();
