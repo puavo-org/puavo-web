@@ -19,3 +19,11 @@ Then /^"([^"]*)" is not member of "([^"]*)" system group$/ do |uid, group_cn|
   group = SystemGroup.find(group_cn)
   group.members.map{ |g| g.uid }.should_not include(uid)
 end
+
+Then /^I should bind "([^\"]*)" with "([^\"]*)" to ldap$/ do |dn, password|
+  host = ActiveLdap::Base.ensure_configuration["host"]
+  ldap = LDAP::Conn.new( host )
+  ldap.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
+  ldap.start_tls
+  ldap.bind(dn, password)
+end

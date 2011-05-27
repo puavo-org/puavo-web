@@ -17,9 +17,12 @@ Feature: Manage external services
     And I follow "New"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
-    And I fill in "Password" with "password 1"
+    And I fill in "Password" with "password"
     And I check "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I check "Services that have access to all information needed for getent"
+    And I press "Create"
+    Then I should see "Password is too short (min is 12 characters)"
+    When I fill in "Password" with "secretpassword"
     And I press "Create"
     Then I should see "uid 1"
     And I should see "description 1"
@@ -28,14 +31,15 @@ Feature: Manage external services
     And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi"
     And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I should see "Services that have access to all information needed for getent"
+    And I should bind "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi" with "secretpassword" to ldap
 
   Scenario: Delete external service
     Given the following external services:
-      | uid   | description   | userPassword | groups |
-      | uid 1 | description 1 | password 1   | auth   |
-      | uid 2 | description 2 | password 2   | auth   |
-      | uid 3 | description 3 | password 3   | getent |
-      | uid 4 | description 4 | password 4   | getent |
+      | uid   | description   | userPassword    | groups |
+      | uid 1 | description 1 | secretpassword1 | auth   |
+      | uid 2 | description 2 | secretpassword2 | auth   |
+      | uid 3 | description 3 | secretpassword3 | getent |
+      | uid 4 | description 4 | secretpassword4 | getent |
     When I delete the 3rd external service
     Then I should see the following external services:
       | Service Identifier | Description   |
@@ -46,11 +50,11 @@ Feature: Manage external services
 
   Scenario: Edit external service
     Given the following external services:
-      | uid   | description   | userPassword | groups |
-      | uid 1 | description 1 | password 1   | auth   |
-      | uid 2 | description 2 | password 2   | auth   |
-      | uid 3 | description 3 | password 3   | auth   |
-      | uid 4 | description 4 | password 4   | auth   |
+      | uid   | description   | userPassword     | groups |
+      | uid 1 | description 1 | sercretpassword1 | auth   |
+      | uid 2 | description 2 | sercretpassword2 | auth   |
+      | uid 3 | description 3 | sercretpassword3 | auth   |
+      | uid 4 | description 4 | sercretpassword4 | auth   |
     And I follow "External service"
     And I follow "uid 1"
     And I follow "Edit"
@@ -69,7 +73,7 @@ Feature: Manage external services
     And I follow "New"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
-    And I fill in "Password" with "password 1"
+    And I fill in "Password" with "secretpassword"
     And I check "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I check "Services that have access to all information needed for getent"
     And I press "Create"

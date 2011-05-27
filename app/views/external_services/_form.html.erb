@@ -1,6 +1,6 @@
 <% form_for(@external_service, :url => path, :html => { :method => method })  do |f| %>
 <table>
-  <% if action_name == "new" %>
+  <% if action_name == "new" || action_name == "create" %>
   <tr>
     <td><%= f.label :uid %></td>
     <td><%= f.text_field :uid %></td>
@@ -19,7 +19,7 @@
     <td>
     <% @system_groups.each do |g| %>
     <div>
-      <input<%= f.object.groups.include?(g) ? ' checked="checked"' : "" %> id="group_<%= g.cn %>" name="external_service[groups][]" type="checkbox" value="<%= g.id %>" />
+      <input<%= external_service_group_checked?(f.object, g) %> id="group_<%= g.cn %>" name="external_service[groups][]" type="checkbox" value="<%= g.id %>" />
       <label class="checkbox" for="group_<%= g.cn %>"><%=h g.description %></label>
     </div>
     <% end %>

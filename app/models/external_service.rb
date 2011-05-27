@@ -10,7 +10,13 @@ class ExternalService < LdapBase
   before_save :encrypt_userPassword
   after_save :update_groups
   before_destroy :remove_groups
-  validates_length_of :userPassword, :minimum => 12, :allow_blank => true
+  validates_length_of( :userPassword,
+                       :minimum => 12,
+                       :allow_blank => true,
+                       :message =>
+                       I18n.t("activeldap.errors.messages.too_short",
+                              :attribute => I18n.t("userPassword",
+                                                   :scope => "activeldap.attributes.external_service") ) )
 
   def update_groups
     new_groups = self.groups.map{ |g| g.class == String ? g : g.id }

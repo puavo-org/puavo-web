@@ -44,6 +44,7 @@ class ExternalServicesController < ApplicationController
   # POST /external_services.xml
   def create
     @external_service = ExternalService.new(params[:external_service])
+    @system_groups = SystemGroup.all
 
     respond_to do |format|
       if @external_service.save
