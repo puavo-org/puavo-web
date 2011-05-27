@@ -10,6 +10,7 @@ class ExternalService < LdapBase
   before_save :encrypt_userPassword
   after_save :update_groups
   before_destroy :remove_groups
+  validates_length_of :userPassword, :minimum => 12, :allow_blank => true
 
   def update_groups
     new_groups = self.groups.map{ |g| g.class == String ? g : g.id }
@@ -37,7 +38,7 @@ class ExternalService < LdapBase
       characters = (("a".."z").to_a + ("0".."9").to_a)
       salt = Array.new(16) { characters[rand(characters.size)] }.join
       self.userPassword = "{SSHA}" + 
-        Base64.encode64( Digest::SHA1.digest( self.userPassword.first +
+        Base64.encode64( Digest::SHA1.digest( self.userPassword +
                                               salt) +
                          salt).chomp!
     end
