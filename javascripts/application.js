@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     $('#search').liveSearch({
 		minLength: 2,
-		urls: search_urls,
+		url: search_urls,
 		duration: 400,
 		typeDelay: 400,
 		width: 'auto'
