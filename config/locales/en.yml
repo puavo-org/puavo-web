@@ -72,6 +72,7 @@ en:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
         role_require_error: You must be select Role
+      school_changed: "User(s) school has been changed!"
     password_set_failed: Failed to change password! Try again!
     session:
       login_successful: Login successful!
@@ -94,10 +95,20 @@ en:
       actions: Actions
     show:
       other_groups: Other groups
+      change_school: Move users to another school
     new:
       title: New role
     edit:
       title: Editing role
+    select_school:
+      title: Users transfer
+      select_new_school: Select new school
+      submit: Next
+    select_role:
+      title: Users transfer
+      new_school: New school
+      select_new_role: Select new role
+      submit: Move users
   users:
     index:
       actions: Actions

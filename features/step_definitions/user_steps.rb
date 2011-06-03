@@ -132,3 +132,20 @@ Then /^I should not login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
   lambda{ user.bind(password) }.should raise_error
   user.remove_connection
 end
+
+Then /^the ([^ ]*) attribute should contain "([^\"]*)" of "([^\"]*)"$/ do |attribute, school_name, uid|
+  set_ldap_admin_connection
+  school = School.find(:first, :attribute => "displayName", :value => school_name)
+  user = User.find(:first, :attribute => "uid", :value => uid)
+  
+  case attribute
+  when "puavoSchool"
+    user.puavoSchool.to_s.should == school.dn.to_s
+  when "gidNumber"
+    user.gidNumber.to_s.should == school.gidNumber.to_s
+  when "homeDirectory"
+    user.homeDirectory.to_s.should == "/home/" + school.cn + "/" + uid
+  when "sambaPrimaryGroupSID"
+    user.sambaPrimaryGroupSID.to_s.should == "#{SambaDomain.first.sambaSID}-#{school.puavoId}"
+  end
+end

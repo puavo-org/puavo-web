@@ -1,0 +1,28 @@
+<h2><%= t('.title') %></h2>
+<% form_for("role", :url => change_school_users_path(@school))  do |f| %>
+<%= hidden_field_tag :new_school, @new_school.id %>
+<% @users.each do |user| %>
+<%= hidden_field_tag "user_ids[]", user.id %>
+<% end %>
+<table>
+  <tr>
+	<td><label><%= t('.new_school') %></label></td>
+	<td><%= @new_school.displayName  %></td>
+  </tr>
+  <tr>
+	<td>
+	  <%= label_tag :new_role, t('.select_new_role') %>
+  	</td>
+	<td>
+	  <%= select_tag :new_role, options_from_collection_for_select(@roles, "puavoId", "displayName") %>
+	</td>
+  </tr>
+  <tr><td></td>
+  <td><%= f.submit t('.submit') %></td>
+  </tr>
+</table>
+<% end %>
+
+
+
+

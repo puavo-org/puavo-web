@@ -1,6 +1,16 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :external_services
 
+  map.select_school_role( 'roles/:id/select_school',
+                          :controller => 'roles',
+                          :action => 'select_school',
+                          :path_prefix => ':school_id',
+                          :conditions => { :method => :get } )
+  map.select_role_role( 'roles/:id/select_role',
+                        :controller => 'roles',
+                        :action => 'select_role',
+                        :path_prefix => ':school_id',
+                        :conditions => { :method => :post } )
   map.add_group_role( 'roles/:id/add_group/:group_id',
                       :controller => 'roles',
                       :action => 'add_group',
@@ -39,6 +49,11 @@ ActionController::Routing::Routes.draw do |map|
                          :path_prefix => ':school_id',
                          :conditions => { :method => :put } )
 
+  map.change_school_users( 'users/change_school',
+                           :controller => 'users',
+                           :action => 'change_school',
+                           :path_prefix => ':school_id',
+                           :conditions => { :method => :post } )
   map.resources :users, :path_prefix => ':school_id'
 
   map.image_user( 'users/:id/image',

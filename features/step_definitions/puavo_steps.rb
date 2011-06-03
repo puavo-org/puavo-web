@@ -75,8 +75,11 @@ do |names_of_the_models, values, organisation|
 end
 
 Given /^"([^\"]*)" is a school admin on the "([^\"]*)" school$/ do |uid, school_name|
+  set_ldap_admin_connection
   school = School.find(:first, :attribute => "displayName", :value => school_name)
   user = User.find(:first, :attribute => "uid", :value => uid)
+  user.puavoAdminOfSchool = Array(user.puavoAdminOfSchool).push school.dn
+  user.save
   school.puavoSchoolAdmin = Array(school.puavoSchoolAdmin) + Array(user.dn)
   school.save
 end

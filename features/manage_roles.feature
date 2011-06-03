@@ -89,3 +89,41 @@ Feature: Manage roles
     And I should see "Pavel Taylor" on the "Members"
     And the memberUid should not include "pavel" on the "Class 4A" group
 
+  Scenario: Move users to other school and role
+    Given the following groups:
+    | displayName | cn      |
+    | Class 6     | class6  |
+    And a new role with name "Class 6" and which is joined to the "Class 6" group
+    And the following users:
+    | givenName | sn     | uid  | password | role_name | puavoEduPersonAffiliation |
+    | Joe       | Bloggs | joe  | secret   | Class 6   | Student                   |
+    | Jane      | Doe    | jane | secret   | Class 6   | Student                   |
+    And a new school and group with names "Example school 2", "Class 7" on the "example" organisation
+    And a new role with name "Class 7" and which is joined to the "Class 7" group
+    And I am on the show role page with "Class 6"
+    And "pavel" is a school admin on the "Example school 2" school
+    Then I should see "Class 6"
+    When I follow "Move users to another school"
+    Then I should see "Select new school"
+    When I select "Example school 2" from "new_school"
+    And I press "Next"
+    Then I should see "Select new role"
+    When I select "Class 7" from "new_role"
+    And I press "Move users"
+    Then I should see "User(s) school has been changed!"
+    And the sambaPrimaryGroupSID attribute should contain "Example school 2" of "joe"
+    And the homeDirectory attribute should contain "Example school 2" of "joe"
+    And the gidNumber attribute should contain "Example school 2" of "joe"
+    And the puavoSchool attribute should contain "Example school 2" of "joe"
+    And the memberUid should include "joe" on the "Example school 2" school
+    And the member should include "joe" on the "Example school 2" school
+    And the memberUid should not include "joe" on the "Example school 1" school
+    And the member should not include "joe" on the "Example school 1" school
+    And the memberUid should include "joe" on the "Class 7" group
+    And the member should include "joe" on the "Class 7" group
+    And the memberUid should not include "joe" on the "Class 6" group
+    And the member should not include "joe" on the "Class 6" group
+    And the memberUid should include "joe" on the "Class 7" role
+    And the member should include "joe" on the "Class 7" role
+    And the memberUid should not include "joe" on the "Class 6" role
+    And the member should not include "joe" on the "Class 6" role

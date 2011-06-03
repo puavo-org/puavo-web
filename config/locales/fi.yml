@@ -72,6 +72,7 @@ fi:
         dupplicate_column_name_error: Kahdelle sarakkeelle on valittu sama kenttätieto
         require_error: Käyttäjälle on syötettävä etu- ja sukunimi
         role_require_error: Rooli pitää olla valittuna
+      school_changed: Käyttäjän/käyttäjien koulu on vaihdettu!
     password_set_failed: Salasanan vaihto epäonnistui. Yritä uudelleen.
     session:
       login_successful: Kirjautuminen onnistui
@@ -92,10 +93,20 @@ fi:
       actions: Toiminnot
     show:
       other_groups: Muut ryhmät
+      change_school: Siirrä käyttäjät toiseen kouluun
     new:
       title: Uusi rooli
     edit:
       title: Muokataan roolia
+    select_school:
+      title: Käyttäjien siirto
+      select_new_school: Valitse uusi koulu
+      submit: Seuraava
+    select_role:
+      title: Käyttäjien siirto
+      new_school: Uusi koulu
+      select_new_role: Valitse uusi rooli
+      submit: Siirrä käyttäjät
   users:
     index:
       actions: Toiminnot

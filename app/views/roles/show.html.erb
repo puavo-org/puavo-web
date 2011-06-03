@@ -37,4 +37,5 @@
 <% content_for :right do %>
 <div><%= link_to t('link.edit'), edit_role_path(@school, @role) %></div>
 <div><%= link_to t('link.new_role'), new_role_path %></div>
+<div><%= link_to t('.change_school'), select_school_role_path %></div>
 <% end %>

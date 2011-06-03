@@ -147,6 +147,29 @@ class UsersController < ApplicationController
     end
   end
 
+  # POST /:school_id/users/change_school
+  def change_school
+    @new_school = School.find(params[:new_school])
+    @new_role = Role.find(params[:new_role])
+
+    params[:user_ids].each do |user_id|
+      @user = User.find(user_id)
+      @user.change_school(@new_school.dn.to_s)
+      @user.role_ids = Array(@new_role.id)
+      @user.save
+    end
+
+    respond_to do |format|
+      if Array(params[:user_ids]).length > 1
+        format.html { redirect_to( role_path( @new_school,
+                                              @new_role ),
+                                   :notice => t("flash.user.school_changed") ) }
+      else
+        format.html { redirect_to user_path(@new_school, @user) }
+      end
+    end
+  end
+
   private
 
   def error_message_and_render(format, action, message = nil)

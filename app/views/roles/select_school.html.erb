@@ -1,0 +1,17 @@
+<h2><%= t('.title') %></h2>
+<% form_for("role", :url => select_role_role_path(@school))  do |f| %>
+<table>
+  <tr>
+	<td>
+	  <%= label_tag :new_school, t('.select_new_school') %>
+	</td>
+	<td>
+	  <%= select_tag :new_school, options_from_collection_for_select(@schools, "puavoId", "displayName") %>
+	</td>
+  </tr>
+  <tr><td></td>
+  <td><%= f.submit t('.submit') %></td>
+  </tr>
+</table>
+<% end %>
+

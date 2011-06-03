@@ -321,6 +321,14 @@ class User < LdapBase
     end
   end
 
+  def change_school(new_school_dn)
+    school_dn = self.puavoSchool
+    LdapBase.ldap_modify_operation( self.puavoSchool,
+                                    :delete, [{ "memberUid" => [self.uid.to_s],
+                                                "member" => [self.dn.to_s] }])
+    self.puavoSchool = new_school_dn
+  end
+
   private
 
   # Find role object by name (role_name) and set id to role_ids array.

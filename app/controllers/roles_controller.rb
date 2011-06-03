@@ -124,4 +124,26 @@ class RolesController < ApplicationController
       end
     end
   end
+
+  # GET /:school_id/roles/:id/select_school
+  def select_school
+    @role = Role.find(params[:id])
+    @schools = School.all_with_permissions
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # POST /:school_id/roles/:id/select_role
+  def select_role
+    @role = Role.find(params[:id])
+    @new_school = School.find(params[:new_school])
+    @roles = @new_school.roles
+    @users = @role.members
+
+    respond_to do |format|
+      format.html
+    end
+  end
 end
