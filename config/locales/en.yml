@@ -117,6 +117,7 @@ en:
       system_information: System information
       contact_information: Contact information
       group_by_roles: Groups by roles
+      change_school: Change school
     new:
       title: New user
     edit:
@@ -124,6 +125,15 @@ en:
     form:
       add_email: Add another email
       add_telephone_number: Add another telephone number
+    select_school:
+      title: School change
+      select_new_school: Select new school
+      submit: Next
+    select_role:
+      title: School change
+      new_school: New school
+      select_new_role: Select new role
+      submit: Change school
     import:
       new:
         title: User mass import

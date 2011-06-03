@@ -263,6 +263,39 @@ Feature: Manage users
     When I fill in "Username" with "ben-james.mabey"
     And I press "Create"
     Then I should see "User was successfully created."
+
+  Scenario: Move user to another school
+    Given the following users:
+    | givenName | sn     | uid  | password | role_name | puavoEduPersonAffiliation |
+    | Joe       | Bloggs | joe  | secret   | Class 4   | Student                   |
+    | Jane      | Doe    | jane | secret   | Class 4   | Student                   |
+    And a new school and group with names "Example school 2", "Class 5" on the "example" organisation
+    And a new role with name "Class 5" and which is joined to the "Class 5" group
+    And "pavel" is a school admin on the "Example school 2" school
+    And I am on the show user page with "jane"
+    When I follow "Change school"
+    And I select "Example school 2" from "new_school"
+    And I press "Next"
+    Then I should see "Select new role"
+    When I select "Class 5" from "new_role"
+    And I press "Change school"
+    Then I should see "User(s) school has been changed!"
+    And the sambaPrimaryGroupSID attribute should contain "Example school 2" of "jane"
+    And the homeDirectory attribute should contain "Example school 2" of "jane"
+    And the gidNumber attribute should contain "Example school 2" of "jane"
+    And the puavoSchool attribute should contain "Example school 2" of "jane"
+    And the memberUid should include "jane" on the "Example school 2" school
+    And the member should include "jane" on the "Example school 2" school
+    And the memberUid should not include "jane" on the "School 1" school
+    And the member should not include "jane" on the "School 1" school
+    And the memberUid should include "jane" on the "Class 5" group
+    And the member should include "jane" on the "Class 5" group
+    And the memberUid should not include "jane" on the "Class 4" group
+    And the member should not include "jane" on the "Class 4" group
+    And the memberUid should include "jane" on the "Class 5" role
+    And the member should include "jane" on the "Class 5" role
+    And the memberUid should not include "jane" on the "Class 4" role
+    And the member should not include "jane" on the "Class 4" role
     
 # FIXME
 #  @allow-rescue

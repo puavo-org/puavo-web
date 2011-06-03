@@ -49,6 +49,16 @@ ActionController::Routing::Routes.draw do |map|
                          :path_prefix => ':school_id',
                          :conditions => { :method => :put } )
 
+  map.select_school_user( 'users/:id/select_school',
+                          :controller => 'users',
+                          :action => 'select_school',
+                          :path_prefix => ':school_id',
+                          :conditions => { :method => :get } )
+  map.select_role_user( 'users/:id/select_role',
+                        :controller => 'users',
+                        :action => 'select_role',
+                        :path_prefix => ':school_id',
+                        :conditions => { :method => :post } )
   map.change_school_users( 'users/change_school',
                            :controller => 'users',
                            :action => 'change_school',

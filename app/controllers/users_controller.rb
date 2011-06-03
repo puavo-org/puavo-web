@@ -165,8 +165,30 @@ class UsersController < ApplicationController
                                               @new_role ),
                                    :notice => t("flash.user.school_changed") ) }
       else
-        format.html { redirect_to user_path(@new_school, @user) }
+        format.html { redirect_to( user_path(@new_school, @user),
+                                   :notice => t("flash.user.school_changed") ) }
       end
+    end
+  end
+
+  # GET /:school_id/users/:id/select_school
+  def select_school
+    @user = User.find(params[:id])
+    @schools = School.all_with_permissions
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # POST /:school_id/users/:id/select_role
+  def select_role
+    @user = User.find(params[:id])
+    @new_school = School.find(params[:new_school])
+    @roles = @new_school.roles
+
+    respond_to do |format|
+      format.html
     end
   end
 

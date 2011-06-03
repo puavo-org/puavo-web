@@ -116,6 +116,7 @@ fi:
       system_information: Järjestelmätietoja
       contact_information: Yhteystiedot
       group_by_roles: Roolien mukana tulevat ryhmät
+      change_school: Vaihda koulua
     new:
       title: Lisää uusi käyttäjä
     edit:
@@ -123,6 +124,15 @@ fi:
     form:
       add_email: Lisää sähköpostiosoitteita
       add_telephone_number: Lisää puhelinnumeroita
+    select_school:
+      title: Koulun vaihto
+      select_new_school: Valitse uusi koulu
+      submit: Seuraava
+    select_role:
+      title: Koulun vaihto
+      new_school: Uusi koulu
+      select_new_role: Valitse uusi rooli
+      submit: Vaihda koulu
     import:
       new:
         title: Lisää käyttäjiä massa-ajona
