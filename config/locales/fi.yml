@@ -317,6 +317,7 @@ fi:
   puavoEduPersonAffiliation_visitor: Vierailija
   puavoEduPersonAffiliation_parent: Huoltaja
   puavoEduPersonAffiliation_admin: Ylläpitäjä
+  puavoEduPersonAffiliation_testuser: Testitunnus
   language_fi: Suomi
   language_en: Englanti
   language_sv: Ruotsi
