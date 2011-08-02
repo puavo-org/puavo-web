@@ -45,7 +45,21 @@ class Host < DeviceBase
       type_list[type]["label"] = type_list[type]["label"][I18n.locale.to_s]
     end
 
-    { "default" => PUAVO_CONFIG['default_device_type'],
+    # Set default device type by last device
+    if device = Device.find( :all,
+                             :attributes => ["*", "+"],
+                             :attribute => 'creatorsName',
+                             :value => Puavo::Authorization.current_user.dn.to_s).max do |a,b|
+        a.puavoId.to_i <=> b.puavoId.to_i
+      end
+      default_device_type = device.puavoDeviceType
+    end
+    
+    unless type_list.keys.include?(default_device_type)
+      default_device_type = type_list.keys.first
+    end
+
+    { "default" => default_device_type,
       "label" => I18n.t("host.types.register_label"),
       "title" => I18n.t("host.types.register_title"),
       "question" => I18n.t("host.types.register_question"),

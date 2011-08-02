@@ -42,6 +42,23 @@ class DevicesController < ApplicationController
   def new
     @device = Device.new
 
+    # Try to set default value for hostname
+    device = Device.find( :all,
+                          :attributes => ["*", "+"],
+                          :attribute => 'creatorsName',
+                          :value => Puavo::Authorization.current_user.dn.to_s).max do |a,b|
+      a.puavoId.to_i <=> b.puavoId.to_i
+    end
+
+    if device && match_data = device.puavoHostname.to_s.match(/\d+$/)
+      number_length = match_data[0].length
+      number = match_data[0].to_i + 1
+      # Increase the number (end of hostname)
+      @default_puavo_hostname = device.puavoHostname.to_s.sub(/\d+$/, ("%0#{number_length}d" % number))
+    else
+      @default_puavo_hostname = ""
+    end
+
     @device.objectClass_by_device_type = params[:device_type]
     @device.puavoDeviceType = params[:device_type]
 
