@@ -28,9 +28,17 @@ class Host < DeviceBase
     @@objectClass_by_device_type[device_type]
   end
 
-  def self.types
+  def self.types(boottype)
     # Create deep copy of any device_types configuration.
     type_list = Marshal.load( Marshal.dump(PUAVO_CONFIG['device_types']) )
+
+    # Filter device_type by params[:boottype]
+    case boottype
+    when "net"
+      type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoNetbootDevice") }
+    when "local"
+      type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoLocalbootDevice") }
+    end
 
     # Set host's label by user's locale. Localization values must be set on the puavo.yml
     type_list.each_key do |type|
