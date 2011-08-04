@@ -318,6 +318,7 @@ en:
   puavoEduPersonAffiliation_visitor: Visitor
   puavoEduPersonAffiliation_parent: Parent
   puavoEduPersonAffiliation_admin: Admin
+  puavoEduPersonAffiliation_testuser: Test user
   language_fi: Finnish
   language_en: English
   language_sv: Swedish

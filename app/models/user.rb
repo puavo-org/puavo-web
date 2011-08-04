@@ -232,7 +232,7 @@ class User < LdapBase
   end
 
   def self.puavoEduPersonAffiliation_list
-    ["teacher", "staff", "student", "visitor", "parent", "admin"]
+    ["teacher", "staff", "student", "visitor", "parent", "admin", "testuser"]
   end
 
   def id
