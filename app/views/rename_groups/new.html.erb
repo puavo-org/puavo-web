@@ -1,0 +1,97 @@
+<h1>Vuosiluokkasiirrot</h1>
+<h4>Roolien ja ryhmien uudelleen nimeäminen</h4>
+<h4>
+Koulun luokka-asteet: <b><%= @first_class_number %> - <%= @last_class_number %></b><br/>
+Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyneet</b>" %>
+</h4>
+
+<h2>Roolit</h2>
+<% form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
+
+<table>
+<tr>
+<th>Vanha nimi</th>
+<th>Uusi nimi</th>
+</tr>
+<% @roles.each do |role| %>
+<tr>
+<td>
+<%= role.displayName %>
+</td>
+<td>
+<%= hidden_field_tag "role_puavo_id[]", role.puavoId %>
+<% if role.displayName.match(/\d+/)[0].to_i == @last_class_number %>
+<% new_name = Time.now.year.to_s + " poistuvat, " + role.displayName %>
+<% else %>
+<% new_name = increase_numeric_value_of_string(role.displayName) %>
+<% end %>
+
+<%= text_field_tag "role_display_name[]", new_name, :size => 40 %>
+
+<%=  %>
+</td>
+</tr>
+<% end %>
+</table>
+
+<h4>Luodaan seuraavat uudet roolit uudelleen nimeämisen jälkeen:</h4>
+<% @first_class_roles.each do |role| %>
+<%= text_field_tag "new_roles[]", role.displayName %><br/>
+<% end %>
+
+<br/>
+
+<h2>Ryhmät</h2>
+<h4>Ryhmien ja roolien luokka-asteet 
+<% if @first_class_number == @first_group_class_number && @last_class_number == @last_group_class_number %>
+täsmäävät
+<% else %>
+<b>eivät täsmää</b>
+<% end %>
+</h4>
+
+<table>
+<tr>
+<th>Vanha nimi</th>
+<th>Uusi nimi</th>
+</tr>
+<% @groups.each do |group| %>
+<tr>
+<td>
+<%= group.displayName %> (<%= group.cn %>)
+</td>
+<td>
+<%= hidden_field_tag "group_puavo_id[]", group.puavoId %>
+<% if group.displayName.match(/\d+/)[0].to_i == @last_class_number %>
+<% new_name = Time.now.year.to_s + " poistuvat, " + group.displayName %>
+<% else %>
+<% new_name = increase_numeric_value_of_string(group.displayName) %>
+<% end %>
+
+<%= text_field_tag "group_display_name[]", new_name, :size => 40 %>
+</td>
+</tr>
+<% end %>
+</table>
+
+<h4>Luodaan seuraavat uudet ryhmät uudelleen nimeämisen jälkeen:</h4>
+<table>
+<tr>
+<th>Ryhmän lyhenne</th>
+<th>Ryhmän nimi</th>
+</tr>
+<% @first_class_groups.each do |group| %>
+<tr>
+<td>
+<%= text_field_tag "new_groups_cn[]", increase_numeric_value_of_string(group.cn) %>
+</td>
+<td>
+<%= text_field_tag "new_groups_display_name[]", group.displayName %>
+</td>
+</tr>
+<% end %>
+</table>
+
+<%= f.submit "Toteuta muutokset" %>
+
+<% end %>

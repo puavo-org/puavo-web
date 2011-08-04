@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resource :rename_groups, :path_prefix => ':school_id'
+
   map.resources :external_services
 
   map.select_school_role( 'roles/:id/select_school',
