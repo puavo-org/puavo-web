@@ -20,6 +20,6 @@
 <% end %>
 </table>
 
-<br />
-
-<%= link_to t('link.new_group'), new_group_path(@school) %>
+<% content_for :right do %>
+<div><%= link_to t('link.new_group'), new_group_path(@school) %></div>
+<% end %>
