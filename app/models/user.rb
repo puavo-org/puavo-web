@@ -63,11 +63,11 @@ class User < LdapBase
                        :too_long => I18n.t("activeldap.errors.messages.too_long",
                                             :attribute => I18n.t("activeldap.attributes.user.uid") ) )
   validates_format_of( :uid,
-                       :with => /^[a-z]/,
+                       :with => /^[a-zA-Z]/,
                        :message => I18n.t("activeldap.errors.messages.user.must_begin_with" ) )
 
   validates_format_of( :uid,
-                       :with => /^[a-z0-9.-]+$/,
+                       :with => /^[a-zA-Z0-9.-]+$/,
                        :message => I18n.t("activeldap.errors.messages.user.invalid_characters" ) )
   
 
