@@ -161,6 +161,7 @@ en:
       preview:
         title: User mass import preview
         info: Check information of the users and select "Create users"
+        change_school: Change school
   groups:
     index:
       actions: Actions
@@ -220,6 +221,10 @@ en:
       title_user: Users
       title_role: Roles
       title_group: Groups
+  controllers:
+    import:
+      old_password: Old password
+      school_has_changed: "User's school has changed"
   activeldap:
     errors:
       messages:

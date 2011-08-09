@@ -160,6 +160,7 @@ fi:
       preview:
         title: Käyttäjien massalisäys, esikatselu
         info: Tarkista käyttäjien tiedot. Punaisilla merkityt tiedot ovat virheellisiä ja kyseisiä käyttäjiä ei voida lisätä ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi "Lisää käyttäjät"
+        change_school: Vaihda koulua
   groups:
     index:
       actions: Toiminnot
@@ -219,6 +220,10 @@ fi:
       title_user: Käyttäjät
       title_role: Roolit
       title_group: Ryhmät
+  controllers:
+    import:
+      old_password: Vanha salasana
+      school_has_changed: Käyttäjän koulu on vaihtunut
   activeldap:
     errors:
       messages:

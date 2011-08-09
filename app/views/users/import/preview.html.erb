@@ -24,6 +24,17 @@
     </td>
     <% column_index += 1 %>
     <% end %>
+	<% if organisation_owner? && user.earlier_user %>
+	<td>
+	  <%= label_tag "users[#{@columns.count}][#{user_index}]", t('.change_school'), :class => "checkbox" %>
+	  <%= check_box_tag( "users[#{@columns.count}][#{user_index}]", user.earlier_user.puavoId ) %>
+	  <br />
+	  <% content_tag :span do %>
+	  <%= user.earlier_user.school.displayName %>,
+	  <%= user.earlier_user.roles.map{ |role| role.displayName }.join(', ') %>
+	  <% end %>
+	</td>
+	<% end %>
     <td class="action"><%= link_to t('link.destroy'), '#', :class => "destroy" %></td>
   </tr>
   <% user_index += 1 %>

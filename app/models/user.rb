@@ -48,7 +48,8 @@ class User < LdapBase
                  :role_ids,
                  :role_name,
                  :mass_import,
-                 :image )
+                 :image,
+                 :earlier_user )
 
   cattr_accessor :reserved_uids
 
@@ -127,6 +128,7 @@ class User < LdapBase
     # uid validation
     if user = User.find(:first, :attribute => "uid", :value => self.uid)
       if user.puavoId != self.puavoId
+        self.earlier_user = user
         errors.add :uid, I18n.t("activeldap.errors.messages.taken",
                                 :attribute => I18n.t("activeldap.attributes.user.uid") )
       end
@@ -191,6 +193,9 @@ class User < LdapBase
       new_user = User.new(user)
       new_user.puavoSchool = school.dn
       new_user.mass_import = true
+      if data[(max_data_column_number.to_i + 1).to_s] && data[(max_data_column_number.to_i + 1).to_s][user_index.to_s]
+        new_user.earlier_user = User.find(data[(max_data_column_number.to_i + 1).to_s][user_index.to_s])
+      end
       users.push new_user
     end
 
