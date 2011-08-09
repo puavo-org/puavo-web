@@ -117,4 +117,15 @@ $(document).ready(function() {
     $('table.validate_users_list').mouseout(function() {
 		$(this).closest('table').find('.destroy').hide();
     });
+
+	$('#select_change_school_users').click(function() {
+		$('input[type=checkbox]').each(function() {
+			// Toggle
+			$(this).attr('checked', !$(this).attr('checked'));
+		});
+	});
+
+	if( $('input[type=checkbox]').length < 1 ) {
+		$('#select_change_school_users').parent().hide();
+	}
 });
