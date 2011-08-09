@@ -387,12 +387,13 @@ Feature: User mass import
 #    | Ben | Mabey | ben.mabey  | Class 4 |
 
   Scenario: Change school of exist users when use users mass import
+    Given I am logged in as "example" organisation owner
     And the following users:
     | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation |
     | Joe       | Bloggs | joe.bloggs | secret   | Class 4   | Student                   |
     | Jane      | Doe    | jane.doe   | secret   | Class 4   | Student                   |
-    Given I am on the school page with "School 2"
-    Given I send to the following user mass import data
+    When I am on the school page with "School 2"
+    And I send to the following user mass import data
     """
     Jane	Doe	Class 5	Student
     Joe	Bloggs	Class 5	Student
@@ -406,9 +407,9 @@ Feature: User mass import
     And I press "Validates users"
     Then I should see "joe.bloggs" titled "Username has already been taken"
     And I should see "jane.doe" titled "Username has already been taken"
-    And I check "users[5][0]"
+    When I check "users[5][0]"
     And I check "users[5][1]"
-    When I press "Create users"
+    And I press "Create users"
     Then I should see "Users (3) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
     When I follow the PDF link "download pdf-file."
