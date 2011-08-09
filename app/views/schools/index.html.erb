@@ -17,5 +17,6 @@
 </table>
 
 <br />
-
-<%= link_to t('link.new_school'), new_school_path %>
+<% content_for :right do %>
+<div><%= link_to t('link.new_school'), new_school_path %></div>
+<% end %>
