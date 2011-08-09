@@ -47,6 +47,7 @@ en:
     change_password: Change password
     new_school: New school
     new_external_service: New
+    rename_groups: Rename groups and roles
   flash:
     added: "{{item}} was successfully created."
     updated: "{{item}} was successfully updated."
