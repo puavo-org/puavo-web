@@ -81,11 +81,10 @@ background: url("../../images/iconset.png") no-repeat scroll 155px -180px transp
 .tools .videolink:hover {
 background: url("../../images/iconset.png") no-repeat scroll 155px -210px transparent;
 }
-/* This is show-link (it's always only link in tools when it's displayed)*/
-.tools a:only-of-type {
+.tools a.show {
     background: url("../../images/iconset.png") no-repeat scroll 155px -242px transparent;
 }
-.tools a:only-of-type:hover {
+.tools a.show:hover {
     background: url("../../images/iconset.png") no-repeat scroll 155px -275px transparent;
 }
 .tools div a[href$="new"] {
@@ -96,6 +95,7 @@ background: url("../../images/iconset.png") no-repeat scroll 155px -210px transp
 }
 .tools div a[href$="import/new"] {
     background: url("../../images/iconset.png") no-repeat scroll 155px -375px transparent;
+    line-height:1;
 }
 .tools div a[href$="import/new"]:hover {
     background: url("../../images/iconset.png") no-repeat scroll 155px -408px transparent;
