@@ -163,6 +163,7 @@ en:
         title: User mass import preview
         info: Check information of the users and select "Create users"
         change_school: Change school
+        select_all: Select all
   groups:
     index:
       actions: Actions

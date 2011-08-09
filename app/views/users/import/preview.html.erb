@@ -57,4 +57,22 @@
 <%= f.submit t('link.user_mass_import.create') %>
 <% end %>
 
+<% content_for :right do %>
+<div"><%= link_to t('.select_all'), '#', :id => 'select_change_school_users' %></div>
+<% end %>
 
+
+<% javascript_tag do %>
+$(document).ready(function() {
+	$('#select_change_school_users').click(function() {
+		$('input[type=checkbox]').each(function() {
+			// Toggle
+			$(this).attr('checked', !$(this).attr('checked'));
+		});
+	});
+
+	if( $('input[type=checkbox]').length < 1 ) {
+		$('#select_change_school_users').parent().hide();
+	}
+});
+<% end %>

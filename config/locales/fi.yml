@@ -162,6 +162,7 @@ fi:
         title: Käyttäjien massalisäys, esikatselu
         info: Tarkista käyttäjien tiedot. Punaisilla merkityt tiedot ovat virheellisiä ja kyseisiä käyttäjiä ei voida lisätä ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi "Lisää käyttäjät"
         change_school: Vaihda koulua
+        select_all: Valitse kaikki
   groups:
     index:
       actions: Toiminnot
