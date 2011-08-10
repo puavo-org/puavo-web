@@ -47,7 +47,7 @@ fi:
     change_password: Vaihda salasana
     new_school: Uusi koulu
     new_external_service: Uusi
-    rename_groups: Rymien ja roolien uudelleen nimeäminen
+    rename_groups: Vuosiluokkasiirto
   flash:
     added: "{{item}} luotiin onnistuneesti."
     updated: "{{item}} päivitettiin onnistuneesti."
