@@ -37,4 +37,8 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
+  def theme
+    session[:organisation].value_by_key('theme') or "gray"
+  end
 end
