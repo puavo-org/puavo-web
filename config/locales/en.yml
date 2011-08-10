@@ -225,8 +225,7 @@ en:
       title_group: Groups
   controllers:
     import:
-      old_password: Old password
-      school_has_changed: "User's school has changed"
+      school_has_changed: "User is transferred, old password is used"
   activeldap:
     errors:
       messages:

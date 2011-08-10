@@ -304,7 +304,6 @@ class Users::ImportController < ApplicationController
         pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
         pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
         if user.earlier_user
-          pdf.text "#{t('activeldap.attributes.user.password')}: (#{t('controllers.import.old_password')})"
           pdf.text t('controllers.import.school_has_changed') + "\n\n\n"
         else
           pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"

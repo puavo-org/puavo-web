@@ -224,8 +224,7 @@ fi:
       title_group: Ryhmät
   controllers:
     import:
-      old_password: Vanha salasana
-      school_has_changed: Käyttäjän koulu on vaihtunut
+      school_has_changed: Siirretty käyttäjä, käytössä vanha salasana
   activeldap:
     errors:
       messages:
