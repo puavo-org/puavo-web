@@ -62,13 +62,6 @@ class User < LdapBase
                                             :attribute => I18n.t("activeldap.attributes.user.uid") ),
                        :too_long => I18n.t("activeldap.errors.messages.too_long",
                                             :attribute => I18n.t("activeldap.attributes.user.uid") ) )
-  validates_format_of( :uid,
-                       :with => /^[a-zA-Z]/,
-                       :message => I18n.t("activeldap.errors.messages.user.must_begin_with" ) )
-
-  validates_format_of( :uid,
-                       :with => /^[a-zA-Z0-9.-]+$/,
-                       :message => I18n.t("activeldap.errors.messages.user.invalid_characters" ) )
   
 
   OVERWRITE_CHARACTERS = {
@@ -82,6 +75,22 @@ class User < LdapBase
   }
 
   def validate
+    # Uid validation
+    # Default configuration:
+    #   * allowed characters is a-z0-9.-
+    #   * uid must begin with the small letter
+    allow_upprecase_characters_uid = Puavo::Organisation.
+      find(LdapOrganisation.current.cn).
+      value_by_key("allow_uppercase_characters_uid").
+      to_s.chomp == "true" ? true : false rescue false
+
+    unless self.uid.to_s =~ ( allow_upprecase_characters_uid ? /^[a-zA-Z]/ : /^[a-z]/ )
+      errors.add( :uid, I18n.t("activeldap.errors.messages.user.must_begin_with") )
+    end
+    unless self.uid.to_s =~ ( allow_upprecase_characters_uid ? /^[a-zA-Z0-9.-]+$/ : /^[a-z0-9.-]+$/ )
+      errors.add( :uid, I18n.t("activeldap.errors.messages.user.invalid_characters") )
+    end
+
     # Role validation
     #
     # The user must have at least one role
