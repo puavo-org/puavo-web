@@ -50,55 +50,54 @@ color:#FF6666;
 font-size:12pt;
 }
 .tools div a{
-height: 27px;
-margin:6px 0 0;
-padding: 2px 40px 0 5px;
+line-height: 1;
+margin: 6px 0 0;
+padding: 7px 40px 7px 5px;
 width: 140px;
 }
 .tools div a[href$="edit"] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px 4px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px 0 transparent;
     margin:0;
 }
 .tools div a[href$="edit"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -26px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -40px transparent;
     margin:0;
 }
-.tools div a[href$="select_school"] {
-background: url("../../images/iconset.png") no-repeat scroll 155px -117px transparent;
-}
-.tools div a[href$="select_school"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -148px transparent;
-}
 .tools div a[onclick] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -56px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -80px transparent;
 }
 .tools div a[onclick]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -86px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -120px transparent;
+}
+.tools div a[href$="select_school"] {
+background: url("../../images/iconset.png") no-repeat scroll 155px -156px transparent;
+}
+.tools div a[href$="select_school"]:hover {
+    background: url("../../images/iconset.png") no-repeat scroll 155px -196px transparent;
 }
 .tools .videolink {
-background: url("../../images/iconset.png") no-repeat scroll 155px -180px transparent;
+background: url("../../images/iconset.png") no-repeat scroll 155px -240px transparent;
 }
 .tools .videolink:hover {
-background: url("../../images/iconset.png") no-repeat scroll 155px -210px transparent;
+background: url("../../images/iconset.png") no-repeat scroll 155px -280px transparent;
 }
 .tools a.show {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -242px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -320px transparent;
 }
 .tools a.show:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -275px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -360px transparent;
 }
 .tools div a[href$="new"] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -309px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -400px transparent;
 }
 .tools div a[href$="new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -342px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -440px transparent;
 }
 .tools div a[href$="import/new"] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -375px transparent;
-    line-height:1;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -475px transparent;
 }
 .tools div a[href$="import/new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -408px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll 155px -515px transparent;
 }
 .link_header {
     font-size: 12px;
@@ -246,14 +245,29 @@ select {
     font-weight: normal;
     padding: 5px;
 }
-p.required {
+.required_info{
+color:#FF6666;
+font-size:12pt;
+}
+.required::after {
     color: #FF6666;
-    font-size: 12pt;
+    content:"*";
+    font-size: 22pt;
+    margin:2px 0 0 10px;
+    position:absolute;
+}
+.required_role{
+color: #FF6666;
+font-size: 12pt;
+margin: -45px 0 0 100px;
+position: absolute;
 }
 label {
 color: #222222;
-    font-size: 16px;
-    font-weight: bold;
+font-size: 11pt;
+font-weight: bold;
+margin: 0 0 0 2px;
+text-shadow: 0 1px 3px #CCCCCD;
 }
 .label_for_checkbox_list {
     vertical-align: top;
@@ -309,11 +323,11 @@ border-bottom: 2px solid;
 }
 .dashboard_box h3 {
 background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #C3F7A6;
-    border-radius: 6px 6px 0 0;
-    margin: 0;
-    padding: 10px;
-    -moz-border-radius: 6px 6px 0 0;
-    -webkit-border-radius: 6px 6px 0 0;
+border-radius: 6px 6px 0 0;
+margin: 0;
+padding: 10px;
+-moz-border-radius: 6px 6px 0 0;
+-webkit-border-radius: 6px 6px 0 0;
 }
 .dashboard_box .row:not(:first-of-type) {
 border-top: 1px solid #94AA29;
@@ -361,9 +375,11 @@ td.action {
 }
 #user_mail_list input {
     display: block;
+    margin: 5px 0;
 }
 #user_telephoneNumber_list input {
     display: block;
+    margin: 5px 0;
 }
 label.checkbox {
     font-size: 100%;
