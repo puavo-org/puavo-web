@@ -474,3 +474,4 @@ Feature: User mass import
     And I should see "Name: Ben Mabey"
     And I should see "Username: ben.mabey"
     And I should login with "jane.doe" and "secret111"
+    And I should login with "ben.mabey" and "secret333"

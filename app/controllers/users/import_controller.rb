@@ -159,10 +159,14 @@ class Users::ImportController < ApplicationController
     session[:failed_users] = {}
     session[:failed_users][create_timestamp] = failed_users
 
+    # If data of users inlucde new password then not generate new password when create pdf-file.
+    reset_password = params[:columns].include?("new_password") ? false : true
+
     respond_to do |format|
       format.html { redirect_to users_import_path(@school,
                                                   :create_timestamp => create_timestamp,
-                                                  :change_school_timestamp => change_school_timestamp) }
+                                                  :change_school_timestamp => change_school_timestamp,
+                                                  :reset_password => reset_password) }
     end
   end
 
@@ -195,7 +199,7 @@ class Users::ImportController < ApplicationController
                         :value => params[:create_timestamp] ) if params[:create_timestamp]
 
     @users.each do |user|
-      user.generate_password
+      user.generate_password if params[:reset_password] == "true"
       # Update puavoTimestamp
       user.puavoTimestamp = Array(user.puavoTimestamp).push password_timestamp
       user.save!
