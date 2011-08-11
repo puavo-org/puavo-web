@@ -47,6 +47,7 @@ fi:
     change_password: Vaihda salasana
     new_school: Uusi koulu
     new_external_service: Uusi
+    rename_groups: Vuosiluokkasiirto
   flash:
     added: "{{item}} luotiin onnistuneesti."
     updated: "{{item}} päivitettiin onnistuneesti."
@@ -160,6 +161,8 @@ fi:
       preview:
         title: Käyttäjien massalisäys, esikatselu
         info: Tarkista käyttäjien tiedot. Punaisilla merkityt tiedot ovat virheellisiä ja kyseisiä käyttäjiä ei voida lisätä ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi "Lisää käyttäjät"
+        change_school: Vaihda koulua
+        select_all: Valitse kaikki
   groups:
     index:
       actions: Toiminnot
@@ -219,6 +222,9 @@ fi:
       title_user: Käyttäjät
       title_role: Roolit
       title_group: Ryhmät
+  controllers:
+    import:
+      school_has_changed: Siirretty käyttäjä, käytössä vanha salasana
   activeldap:
     errors:
       messages:

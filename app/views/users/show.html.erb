@@ -1,7 +1,13 @@
-<h1><%=h @user.displayName %></h1>
 <table>
   <tr>
     <td>
+      <%= image_tag( @user.jpegPhoto.nil? ? "anonymous.png" : image_user_path(@school, @user),
+                     :class => "image" ) %>
+    </td>
+    <td>
+      <p>
+      <h1><%=h @user.displayName %></h1>
+      </p>
 
       <p>
 	<%= label "user", 'uid' %><br />
@@ -15,10 +21,6 @@
       <%= label "user", 'roles' %><br />
       <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
       </p>
-    </td>
-    <td>
-      <%= image_tag( @user.jpegPhoto.nil? ? "anonymous.png" : image_user_path(@school, @user),
-                     :class => "image" ) %>
     </td>
   </tr>
 </table>
@@ -85,6 +87,9 @@
 
 <% content_for :right do %>
 <div><%= link_to t('link.edit'), edit_user_path(@school, @user) %></div>
-<div><%= link_to t('link.destroy'), user_path(@school, @user), :confirm => t('general_confirmation'), :method => :delete %></div>
+<div><%= link_to( t('link.destroy'),
+                  user_path(@school, @user),
+                  :confirm => t('destroy_confirm', :object_name => @user.displayName),
+                  :method => :delete ) %></div>
 <div><%= link_to t('.change_school'), select_school_user_path(@school, @user) %></div>
 <% end %>

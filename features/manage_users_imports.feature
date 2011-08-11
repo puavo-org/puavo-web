@@ -385,3 +385,93 @@ Feature: User mass import
 #    Then I should see the following users:
 #    | Ken | Jones | ken.jones  | Class 4 |
 #    | Ben | Mabey | ben.mabey  | Class 4 |
+
+  Scenario: Change school of exist users when use users mass import
+    Given I am logged in as "example" organisation owner
+    And the following users:
+    | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation |
+    | Joe       | Bloggs | joe.bloggs | secret   | Class 4   | Student                   |
+    | Jane      | Doe    | jane.doe   | secret   | Class 4   | Student                   |
+    When I am on the school page with "School 2"
+    And I send to the following user mass import data
+    """
+    Jane	Doe	Class 5	Student
+    Joe	Bloggs	Class 5	Student
+    Ben	Mabey	Class 5	Student
+    """
+    Then I should see "Select correct name of column for each data"
+    When I select "Given name" from "users_import_columns[0]"
+    And I select "Surname" from "users_import_columns[1]"
+    And I select "Role" from "users_import_columns[2]"
+    And I select "User type" from "users_import_columns[3]"
+    And I press "Validates users"
+    Then I should see "joe.bloggs" titled "Username has already been taken"
+    And I should see "jane.doe" titled "Username has already been taken"
+    When I check "users[5][0]"
+    And I check "users[5][1]"
+    And I press "Create users"
+    Then I should see "Users (3) was successfully created."
+    And I should see "You can print users list to paper, download pdf-file."
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Jane Doe"
+    And I should see "Username: jane.doe"
+    And I should see "Password"
+    And I should see "Name: Joe Bloggs"
+    And I should see "Username: joe.bloggs"
+    And I should see "Name: Ben Mabey"
+    And I should see "Username: ben.mabey"
+    And I should see "User is transferred, old password is used"
+    And the sambaPrimaryGroupSID attribute should contain "School 2" of "joe.bloggs"
+    And the homeDirectory attribute should contain "School 2" of "joe.bloggs"
+    And the gidNumber attribute should contain "School 2" of "joe.bloggs"
+    And the puavoSchool attribute should contain "School 2" of "joe.bloggs"
+    And the memberUid should include "joe.bloggs" on the "School 2" school
+    And the member should include "joe.bloggs" on the "School 2" school
+    And the memberUid should not include "joe.bloggs" on the "School 1" school
+    And the member should not include "joe.bloggs" on the "School 1" school
+    And the memberUid should include "joe.bloggs" on the "Class 5" group
+    And the member should include "joe.bloggs" on the "Class 5" group
+    And the memberUid should not include "joe.bloggs" on the "Class 4" group
+    And the member should not include "joe.bloggs" on the "Class 4" group
+    And the memberUid should include "joe.bloggs" on the "Class 5" role
+    And the member should include "joe.bloggs" on the "Class 5" role
+    And the memberUid should not include "joe.bloggs" on the "Class 4" role
+    And the member should not include "joe.bloggs" on the "Class 4" role
+
+  Scenario: Set password when change school for exist users
+    Given I am logged in as "example" organisation owner
+    And the following users:
+    | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation |
+    | Joe       | Bloggs | joe.bloggs | secret   | Class 4   | Student                   |
+    | Jane      | Doe    | jane.doe   | secret   | Class 4   | Student                   |
+    When I am on the school page with "School 2"
+    And I send to the following user mass import data
+    """
+    Jane	Doe	Class 5	Student	secret111
+    Joe	Bloggs	Class 5	Student	secret222
+    Ben	Mabey	Class 5	Student	secret333
+    """
+    Then I should see "Select correct name of column for each data"
+    When I select "Given name" from "users_import_columns[0]"
+    And I select "Surname" from "users_import_columns[1]"
+    And I select "Role" from "users_import_columns[2]"
+    And I select "User type" from "users_import_columns[3]"
+    And I select "New password" from "users_import_columns[4]"
+    And I press "Validates users"
+    Then I should see "joe.bloggs" titled "Username has already been taken"
+    And I should see "jane.doe" titled "Username has already been taken"
+    When I check "users[6][0]"
+    And I check "users[6][1]"
+    And I press "Create users"
+    Then I should see "Users (3) was successfully created."
+    And I should see "You can print users list to paper, download pdf-file."
+    When I follow the PDF link "download pdf-file."
+    Then I should see "Name: Jane Doe"
+    And I should see "Username: jane.doe"
+    And I should see "Password"
+    And I should see "Name: Joe Bloggs"
+    And I should see "Username: joe.bloggs"
+    And I should see "Name: Ben Mabey"
+    And I should see "Username: ben.mabey"
+    And I should login with "jane.doe" and "secret111"
+    And I should login with "ben.mabey" and "secret333"

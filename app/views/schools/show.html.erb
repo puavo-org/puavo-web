@@ -49,4 +49,7 @@
 <% content_for :right do %>
 <div><%= link_to t('link.edit'), edit_school_path(@school) %></div>
 <div><%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %></div>
+<% if organisation_owner? %>
+<div><%= link_to t('link.rename_groups'), new_rename_groups_path(@school) %></div>
+<% end %>
 <% end %>

@@ -47,6 +47,7 @@ en:
     change_password: Change password
     new_school: New school
     new_external_service: New
+    rename_groups: Rename groups and roles
   flash:
     added: "{{item}} was successfully created."
     updated: "{{item}} was successfully updated."
@@ -161,6 +162,8 @@ en:
       preview:
         title: User mass import preview
         info: Check information of the users and select "Create users"
+        change_school: Change school
+        select_all: Select all
   groups:
     index:
       actions: Actions
@@ -220,6 +223,9 @@ en:
       title_user: Users
       title_role: Roles
       title_group: Groups
+  controllers:
+    import:
+      school_has_changed: "User is transferred, old password is used"
   activeldap:
     errors:
       messages:

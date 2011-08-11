@@ -3,9 +3,9 @@ class RolesController < ApplicationController
   # GET /:school_id/roles.xml
   def index
     if @school
-      @roles = @school.roles
+      @roles = @school.roles.sort
     else
-      @roles = Role.all
+      @roles = Role.all.sort
     end
 
     respond_to do |format|
@@ -19,8 +19,8 @@ class RolesController < ApplicationController
   def show
     @role = Role.find(params[:id])
 
-    @member_groups = @role.groups
-    @other_groups = Group.all.delete_if do |g| @member_groups.include?(g) end
+    @member_groups = @role.groups.sort
+    @other_groups = Group.all.delete_if do |g| @member_groups.include?(g) end.sort
 
     respond_to do |format|
       format.html # show.html.erb
@@ -139,7 +139,7 @@ class RolesController < ApplicationController
   def select_role
     @role = Role.find(params[:id])
     @new_school = School.find(params[:new_school])
-    @roles = @new_school.roles
+    @roles = @new_school.roles.sort
     @users = @role.members
 
     respond_to do |format|

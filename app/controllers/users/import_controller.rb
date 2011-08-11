@@ -122,7 +122,9 @@ class Users::ImportController < ApplicationController
     users_of_roles = Hash.new
     failed_users = Array.new
 
-    create_timestamp = "create:#{current_user.dn}:" + Time.now.strftime("%Y%m%d%H%M%S%z")
+    timestamp = Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
+    create_timestamp = "create:#{current_user.dn}:" + timestamp
+    change_school_timestamp = "change_school:#{current_user.dn}:" + timestamp
     
     puavo_ids = IdPool.next_puavo_id_range(@users.select{ |u| u.puavoId.nil? }.count)
     id_index = 0
@@ -135,8 +137,16 @@ class Users::ImportController < ApplicationController
           user.puavoId = puavo_ids[id_index]
           id_index += 1
         end
-        user.puavoTimestamp = create_timestamp
-        user.save!
+        if user.earlier_user
+          user.earlier_user.change_school(user.puavoSchool.to_s)
+          user.earlier_user.role_name = user.role_name
+          user.earlier_user.puavoTimestamp = Array(user.earlier_user.puavoTimestamp).push change_school_timestamp
+          user.earlier_user.new_password = user.new_password
+          user.earlier_user.save!
+        else
+          user.puavoTimestamp = create_timestamp
+          user.save!
+        end
       rescue Exception => e
         logger.info "Import Controller, create user, Exception: #{e}"
         failed_users.push user
@@ -149,8 +159,14 @@ class Users::ImportController < ApplicationController
     session[:failed_users] = {}
     session[:failed_users][create_timestamp] = failed_users
 
+    # If data of users inlucde new password then not generate new password when create pdf-file.
+    reset_password = params[:columns].include?("new_password") ? false : true
+
     respond_to do |format|
-      format.html { redirect_to users_import_path(@school, :create_timestamp => create_timestamp ) }
+      format.html { redirect_to users_import_path(@school,
+                                                  :create_timestamp => create_timestamp,
+                                                  :change_school_timestamp => change_school_timestamp,
+                                                  :reset_password => reset_password) }
     end
   end
 
@@ -162,7 +178,10 @@ class Users::ImportController < ApplicationController
     @users = User.find( :all,
                         :attribute => "puavoTimestamp",
                         :value => params[:create_timestamp] ) if params[:create_timestamp]
-
+    @users += User.find( :all,
+                         :attribute => "puavoTimestamp",
+                         :value => params[:change_school_timestamp] ) if params[:change_school_timestamp]
+    
     # Reload roles association
     @users.each do |u| u.roles.reload end
 
@@ -173,27 +192,39 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/download?create_timestamp=create:20110402152432Z
   def download
-    password_timestamp = "password:#{current_user.dn}:" + Time.now.strftime("%Y%m%d%H%M%S%z")
+    password_timestamp = "password:#{current_user.dn}:" + Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
 
     @users = User.find( :all,
                         :attribute => "puavoTimestamp",
                         :value => params[:create_timestamp] ) if params[:create_timestamp]
 
     @users.each do |user|
-      user.generate_password
+      user.generate_password if params[:reset_password] == "true"
       # Update puavoTimestamp
       user.puavoTimestamp = Array(user.puavoTimestamp).push password_timestamp
       user.save!
     end
 
+    if params[:change_school_timestamp]
+      User.find( :all,
+                 :attribute => "puavoTimestamp",
+                 :value => params[:change_school_timestamp] ).each do |user|
+        user.earlier_user = true
+        @users.push user
+      end
+    end
+
     # Reload roles association
     @users.each do |u| u.roles.reload end
+
+    filename = session[:organisation].organisation_key + "_" +
+      @school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
 
     respond_to do |format|
       format.pdf do
         send_data(
                   create_pdf(@users),
-                  :filename => 'users_list.pdf',
+                  :filename => filename,
                   :type => 'application/pdf',
                   :disposition => 'inline' )
       end
@@ -280,7 +311,11 @@ class Users::ImportController < ApplicationController
       pdf.indent(300) do
         pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
         pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
-        pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
+        if user.earlier_user
+          pdf.text t('controllers.import.school_has_changed') + "\n\n\n"
+        else
+          pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
+        end
         users_of_page_count += 1
         if users_of_page_count > 10 && user != users.last
           users_of_page_count = 0

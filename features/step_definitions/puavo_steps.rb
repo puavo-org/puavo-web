@@ -100,8 +100,8 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
       visit user_path(@school, user)
     end
   when /school page$/
-    school = School.find( :first, :attribute => "displayName", :value => value )
-    visit school_path(school)
+    @school = School.find( :first, :attribute => "displayName", :value => value )
+    visit school_path(@school)
     #visit path_to(page_name) # FIXME
   when /group page/
     group = Group.find( :first, :attribute => "displayName", :value => value )

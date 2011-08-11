@@ -14,7 +14,9 @@
 <%= t('.pdf_info') %>, <%= link_to t('link.user_mass_import.download_pdf'),
                                    download_users_import_path(@school,
                                                              :format => 'pdf',
-                                                             :create_timestamp => params[:create_timestamp] )  %>
+                                                             :create_timestamp => params[:create_timestamp],
+                                                             :change_school_timestamp => params[:change_school_timestamp],
+                                                              :reset_password => params[:reset_password] )  %>
 </p>
 <% end %>
 
