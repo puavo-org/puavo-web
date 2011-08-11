@@ -238,6 +238,10 @@ en:
         user:
           must_begin_with: Username must begin with the small letter
           invalid_characters: Username include invalid characters (allowed characters is a-z0-9.-)
+        group: 
+          invalid_characters: Abbveriation include invalid characters (allowed characters is a-z0-9-)
+        school:
+          invalid_characters: "{{attribute}} include invalid characters (allowed characters is a-z0-9-)"
     models:
       group: Group
       role: Role

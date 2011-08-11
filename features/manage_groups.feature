@@ -138,3 +138,19 @@ Feature: Manage groups
     Then I should see the following special ldap attributes on the "Group" object with "Class 4A":
     | sambaSID       | "^S[-0-9+]" |
     | sambaGroupType | "2"         |
+
+  Scenario: Add new group with invalid abbreviation
+    Given I am on the new group page
+    When I fill in "Group name" with "Class 4A" 
+    And I fill in "Abbreviation" with "Class4a"
+    And I press "Create" 
+    Then I should see "Abbveriation include invalid characters (allowed characters is a-z0-9-)"
+    When I fill in "Abbreviation" with "class 4a"
+    And I press "Create" 
+    Then I should see "Abbveriation include invalid characters (allowed characters is a-z0-9-)"
+    When I fill in "Abbreviation" with "class-4a"
+    And I press "Create" 
+    Then I should see "Group was successfully created."
+    And I should see "Class 4A"
+    And I should see "Example school 1"
+    And I should see "class-4a"

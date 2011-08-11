@@ -23,6 +23,17 @@ class School < BaseGroup
 
   attr_accessor :image
   before_validation :resize_image
+  
+  validates_format_of( :cn,
+                       :with => /^[a-z0-9-]+$/,
+                       :message => I18n.t("activeldap.errors.messages.school.invalid_characters",
+                                          :attribute => I18n.t("activeldap.attributes.school.cn")) )
+
+  validates_format_of( :puavoNamePrefix,
+                       :allow_blank => true,
+                       :with => /^[a-z0-9-]+$/,
+                       :message => I18n.t("activeldap.errors.messages.school.invalid_characters",
+                                          :attribute => I18n.t("activeldap.attributes.school.puavoNamePrefix")) )
 
   def remove_user(user)
     self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},

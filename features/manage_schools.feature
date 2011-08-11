@@ -49,6 +49,14 @@ Feature: Manage schools
     Then I should see "Failed to create school!"
     # And I should see "School name can't be blank"
     And I should see "Group name can't be blank"
+    When I fill in "Group name" with "Example School"
+    And I press "Create"
+    Then I should see "Group name include invalid characters (allowed characters is a-z0-9-)"
+    When I fill in "Group name" with "example-school"
+    And I fill in "Name prefix" with "example prefix"
+    And I press "Create"
+    Then I should see "Name prefix include invalid characters (allowed characters is a-z0-9-)"
+    
 
   Scenario: Edit school and set empty names
     Given I am on the school page with "Greenwich Steiner School"
