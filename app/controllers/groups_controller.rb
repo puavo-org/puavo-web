@@ -3,9 +3,9 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups.xml
   def index
     if @school
-      @groups = @school.groups
+      @groups = @school.groups.sort
     else
-      @groups = Group.all
+      @groups = Group.all.sort
     end
 
     respond_to do |format|
@@ -21,7 +21,7 @@ class GroupsController < ApplicationController
 
     @members = @group.members
 
-    @roles = @group.roles
+    @roles = @group.roles.sort
     @other_roles = Role.all.delete_if do |p| @roles.include?(p) end
 
     respond_to do |format|

@@ -14,4 +14,8 @@ class LdapBase < ActiveLdap::Base
     end
     LdapBase.load(ldif.to_s)
   end
+
+  def <=>(other_object)
+    self.displayName.to_s <=> other_object.displayName.to_s
+  end
 end
