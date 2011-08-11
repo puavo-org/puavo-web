@@ -412,3 +412,7 @@ div:not(#navbar_second_level) .wrap:first-of-type {
     -moz-border-radius:0 0 0 10px;
     -webkit-border-radius:0 0 0 10px;
 }
+#jquery-live-search{
+position: fixed !important;
+top:35px !important;
+}
