@@ -9,7 +9,7 @@ class SearchController < ApplicationController
     @users = ldap_search( 'user',
                           ["sn", "givenName", "uid"],
                           lambda{ |v| "#{v['sn']} #{v['givenName']}" },
-                          lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*))" },
+                          lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
                           words )
 
     # Roles search
