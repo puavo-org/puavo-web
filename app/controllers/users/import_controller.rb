@@ -217,11 +217,13 @@ class Users::ImportController < ApplicationController
     # Reload roles association
     @users.each do |u| u.roles.reload end
 
+    filename = session[:organisation].organisation_key + "_" + @school.cn + "_" + Time.now.strftime("%Y%m%d")
+
     respond_to do |format|
       format.pdf do
         send_data(
                   create_pdf(@users),
-                  :filename => 'users_list.pdf',
+                  :filename => filename,
                   :type => 'application/pdf',
                   :disposition => 'inline' )
       end
