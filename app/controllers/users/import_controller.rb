@@ -217,7 +217,8 @@ class Users::ImportController < ApplicationController
     # Reload roles association
     @users.each do |u| u.roles.reload end
 
-    filename = session[:organisation].organisation_key + "_" + @school.cn + "_" + Time.now.strftime("%Y%m%d")
+    filename = session[:organisation].organisation_key + "_" +
+      @school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
 
     respond_to do |format|
       format.pdf do
