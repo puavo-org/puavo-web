@@ -73,12 +73,21 @@ background: url("../../images/bg-fabric-orange-metal.png") repeat scroll left 35
     display: block;
 }
 #top-menu li ul li, #nav1 ul li ul li {
-    border-top: 1px dotted #606060;
-    display: block;
-    font-size: 10px;
-    list-style-type: none;
-    margin: 5px 20px;
-    padding: 5px 0 0;
+border-top: 1px solid #606060;
+display: block;
+font-size: 9pt;
+list-style-type: none;
+margin: 5px 20px;
+padding: 8px 0 3px;
+width: 170px;
+}
+#top-menu li ul li a:hover {
+background:none repeat scroll 0 0 #FFFFFF;
+padding: 5px 10px;
+margin: -5px -10px;
+border-radius: 8px;
+-webkit-border-radius: 8px;
+-moz-border-radius: 8px;
 }
 #top-menu li ul li:first-child, #nav1 ul li ul li:first-child {
     border-top: medium none;
