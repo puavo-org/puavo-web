@@ -141,6 +141,7 @@ class Users::ImportController < ApplicationController
           user.earlier_user.change_school(user.puavoSchool.to_s)
           user.earlier_user.role_name = user.role_name
           user.earlier_user.puavoTimestamp = Array(user.earlier_user.puavoTimestamp).push change_school_timestamp
+          user.earlier_user.new_password = user.new_password
           user.earlier_user.save!
         else
           user.puavoTimestamp = create_timestamp
