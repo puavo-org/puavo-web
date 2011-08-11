@@ -1,7 +1,13 @@
-<h1><%=h @user.displayName %></h1>
 <table>
   <tr>
     <td>
+      <%= image_tag( @user.jpegPhoto.nil? ? "anonymous.png" : image_user_path(@school, @user),
+                     :class => "image" ) %>
+    </td>
+    <td>
+      <p>
+      <h1><%=h @user.displayName %></h1>
+      </p>
 
       <p>
 	<%= label "user", 'uid' %><br />
@@ -15,10 +21,6 @@
       <%= label "user", 'roles' %><br />
       <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
       </p>
-    </td>
-    <td>
-      <%= image_tag( @user.jpegPhoto.nil? ? "anonymous.png" : image_user_path(@school, @user),
-                     :class => "image" ) %>
     </td>
   </tr>
 </table>
