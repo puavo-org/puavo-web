@@ -7,6 +7,6 @@
   :method => :put
 }
 %>
-
-<%= link_to t('link.show'), user_path(@school, @user) %> |
-<%= link_to t('link.back'), users_path %>
+<% content_for :right do %>
+<div><%= link_to t('link.show'), user_path(@school, @user), :class => 'show' %></div>
+<% end %>

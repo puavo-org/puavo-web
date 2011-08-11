@@ -12,5 +12,15 @@ $(document).ready(function() {
 		typeDelay: 400,
 		width: 'auto'
     });
+	$('a[href^=http]').click( function() {
+	    window.open(this.href);
+		return false;
+	});
+	if($("p.notice")){
+		var notice = $("p.notice");
+		notice.delay(3000).slideUp(500).fadeOut(200, function() {
+			notice.remove();
+		});		
+	}
 });
 

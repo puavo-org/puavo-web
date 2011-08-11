@@ -19,8 +19,8 @@
   </tr>
 <% end %>
 </table>
-
+    
 <% content_for :right do %>
-<%= link_to t('link.new_user'), new_user_path %><br />
-<%= link_to t('link.user_mass_import.new'), new_users_import_path %><br />
+<div><%= link_to t('link.new_user'), new_user_path %></div>
+<div><%= link_to t('link.user_mass_import.new'), new_users_import_path %></div>
 <% end %>

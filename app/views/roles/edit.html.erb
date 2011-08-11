@@ -9,5 +9,5 @@
 %>
 
 <% content_for :right do %>
-<div><%= link_to t('link.show'), role_path(@school, @role) %></div>
+<div><%= link_to t('link.show'), role_path(@school, @role), :class => 'show' %></div>
 <% end %>
