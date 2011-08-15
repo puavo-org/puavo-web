@@ -36,6 +36,10 @@ Before do |scenario|
   domain_users = SambaGroup.find('Domain Users')
   domain_users.memberUid = []
   domain_users.save
+
+  domain_users = SambaGroup.find('Domain Admins')
+  domain_users.memberUid = []
+  domain_users.save
 end
 
 Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|

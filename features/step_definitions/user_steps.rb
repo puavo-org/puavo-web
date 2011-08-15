@@ -28,6 +28,7 @@ Given /^the following users:$/ do |users|
     user.puavoSchool = (school || @school).dn
     if u["school_admin"] && u["school_admin"] == "true"
       user.puavoAdminOfSchool = user.puavoSchool
+      SambaGroup.add_uid_to_memberUid('Domain Admins', user.uid)
     end
     user.userPassword = "{SSHA}" + 
       Base64.encode64(Digest::SHA1.digest(u["password"] + salt) + salt).chomp!
