@@ -5,6 +5,7 @@ Feature: Manage schools
 
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
+    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Example school 1" school
     And the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
@@ -156,17 +157,25 @@ Feature: Manage schools
 
   Scenario: Remove school management access rights from the user
     Given the following users:
-    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   | school_admin |
-    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Greenwich Steiner School | true         |
+    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school           | school_admin |
+    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Example school 1 | true         |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
-    Then I should see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
-    And I should not be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    And I follow "Add" on the "Pavel Taylor" user
+    Then I should see "Pavel Taylor (Greenwich Steiner School) is now admin users"
+    And I should see "Pavel Taylor (Example school 1)" on the school admin list
+    And I should not be added school management access to the "Pavel Taylor (Example school 1)"
     When I follow "Remove" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor (Greenwich Steiner School) is no longer admin user on this school"
-    And I should not see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
-    And I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
+    And I should not see "Pavel Taylor (Example school 1)" on the school admin list
+    And I should be added school management access to the "Pavel Taylor (Example school 1)"
+    And the memberUid should include "pavel" on the "Domain Admins" samba group
+    When I am on the school page with "Example school 1"
+    And I follow "Admins"
+    And I follow "Remove" on the "Pavel Taylor" user
+    Then I should see "Pavel Taylor (Example school 1) is no longer admin user on this school"
     And the memberUid should not include "pavel" on the "Domain Admins" samba group
+    
 
   Scenario: School management access can be added only if user type is admin
     Given the following users:

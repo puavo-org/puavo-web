@@ -463,6 +463,9 @@ class User < LdapBase
   def delete_all_associations
     # Remove uid from Domain Users group
     SambaGroup.delete_uid_from_memberUid('Domain Users', self.uid)
+    if Array(self.puavoAdminOfSchool).count > 0
+      SambaGroup.delete_uid_from_memberUid('Domain Admins', self.uid)
+    end
 
     self.roles.each do |p|
       p.delete_member(self)

@@ -139,15 +139,14 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
     @user = User.find(params[:user_id])
 
-    @school.puavoSchoolAdmin = Array(@school.puavoSchoolAdmin).push @user.dn
-    @user.puavoAdminOfSchool = Array(@user.puavoAdminOfSchool).push @school.dn
-
     respond_to do |format|
       if not Array(@user.puavoEduPersonAffiliation).include?('admin')
         # FIXME: change notice type (ERROR)
         flash[:notice] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
-      elsif @school.save && @user.save && SambaGroup.add_uid_to_memberUid('Domain Admins', @user.uid)
+      elsif @school.ldap_modify_operation( :add, [{"puavoSchoolAdmin" => [@user.dn.to_s]}] ) &&
+          @user.ldap_modify_operation( :add, [{"puavoAdminOfSchool" => [@school.dn.to_s]}] ) &&
+          SambaGroup.add_uid_to_memberUid('Domain Admins', @user.uid)
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
@@ -165,24 +164,19 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
     @user = User.find(params[:user_id])
 
-    @school.puavoSchoolAdmin = Array(@school.puavoSchoolAdmin).delete_if do |admin_dn|
-      admin_dn ==  @user.dn
-    end
-    @user.puavoAdminOfSchool = Array(@user.puavoAdminOfSchool).delete_if do |school_dn|
-      school_dn ==  @school.dn
+    # Delete user from the list of Domain Users if it is no in any school administrator
+    if Array(@user.puavoAdminOfSchool).count < 2
+      SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
     end
 
+    @school.ldap_modify_operation( :delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}] )
+    @user.ldap_modify_operation( :delete, [{"puavoAdminOfSchool" => [@school.dn.to_s]}] )
+
     respond_to do |format|
-      if @school.save && @user.save && SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
-        flash[:notice] = t('flash.school.school_admin_removed',
-                           :displayName => @user.displayName,
-                           :school_name => @school.displayName )
-        format.html { redirect_to( admins_school_path(@school) ) }
-      else
-        # FIXME: change notice type (ERROR)
-        flash[:notice] = t('flash.school.save_failed')
-        format.html { redirect_to( admins_school_path(@school) ) }
-      end
+      flash[:notice] = t('flash.school.school_admin_removed',
+                         :displayName => @user.displayName,
+                         :school_name => @school.displayName )
+      format.html { redirect_to( admins_school_path(@school) ) }
     end
   end
 end

@@ -187,6 +187,7 @@ Feature: Manage users
     And the "Class 4" role not include incorret member values
     And the memberUid should not include "ben" on the "Domain Users" samba group
     And the "School 1" school not include incorret puavoSchoolAdmin values
+    And the memberUid should not include "ben" on the "Domain Admins" samba group
 
   Scenario: Get user information in JSON
     Given the following users:
