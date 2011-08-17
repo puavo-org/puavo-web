@@ -59,6 +59,8 @@ padding: 0;
 position: absolute;
 top: 0;
 z-index: 999;
+-webkit-border-radius: 0 0 20px 20px;
+-moz-border-radius: 0 0 20px 20px;
 }
 #nav1 ul li ul {
     width: 130px;
