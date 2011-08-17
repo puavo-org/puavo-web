@@ -49,20 +49,10 @@ class User < LdapBase
                  :role_name,
                  :mass_import,
                  :image,
-                 :earlier_user )
+                 :earlier_user,
+                 :new_password_confirmation )
 
   cattr_accessor :reserved_uids
-
-  validates_confirmation_of( :new_password,
-                             :message => I18n.t("activeldap.errors.messages.confirmation",
-                                                :attribute => I18n.t("activeldap.attributes.user.new_password") ) )
-  validates_length_of( :uid,
-                       :in => 3..255,
-                       :too_short => I18n.t("activeldap.errors.messages.too_short",
-                                            :attribute => I18n.t("activeldap.attributes.user.uid") ),
-                       :too_long => I18n.t("activeldap.errors.messages.too_long",
-                                            :attribute => I18n.t("activeldap.attributes.user.uid") ) )
-  
 
   OVERWRITE_CHARACTERS = {
     "Ä" => "a",
@@ -76,7 +66,25 @@ class User < LdapBase
 
   def validate
     # Uid validation
-    # Default configuration:
+    #
+    # Password confirmation
+    if self.new_password != self.new_password_confirmation
+      errors.add( :new_password, I18n.t("activeldap.errors.messages.confirmation",
+                                        :attribute => I18n.t("activeldap.attributes.user.new_password")) )
+    end
+
+    # Validates length of uid
+    if self.uid.to_s.size < 3
+      errors.add( :uid,  I18n.t("activeldap.errors.messages.too_short",
+                                :attribute => I18n.t("activeldap.attributes.user.uid"),
+                                :count => 3) )
+    end
+    if self.uid.to_s.size > 255
+      errors.add( :uid, I18n.t("activeldap.errors.messages.too_long",
+                               :attribute => I18n.t("activeldap.attributes.user.uid"),
+                               :count => 255) )
+    end
+    # Format of uid, default configuration:
     #   * allowed characters is a-z0-9.-
     #   * uid must begin with the small letter
     allow_upprecase_characters_uid = Puavo::Organisation.

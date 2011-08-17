@@ -15,13 +15,15 @@ class Group < BaseGroup
               :many => "puavoMemberGroup",
               :primary_key => "dn" )
 
-  validates_presence_of( :displayName,
-                         :message => I18n.t("activeldap.errors.messages.blank",
-                                            :attribute => I18n.t("activeldap.attributes.group.displayName") ) )
-
-  validates_format_of( :cn,
-                       :with => /^[a-z0-9-]+$/,
-                       :message => I18n.t("activeldap.errors.messages.group.invalid_characters" ) )
+  def validate
+    unless self.cn.to_s =~ /^[a-z0-9-]+$/
+      errors.add( :cn, I18n.t("activeldap.errors.messages.group.invalid_characters") )
+    end
+    if self.displayName.to_s.empty?
+      errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",
+                                       :attribute => I18n.t("activeldap.attributes.group.displayName")) )
+    end
+  end
 
   def to_s
     self.displayName

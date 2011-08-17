@@ -18,9 +18,12 @@ class Role < LdapBase
 
   before_validation :set_special_ldap_value
 
-  validates_presence_of( :displayName,
-                         :message => I18n.t("activeldap.errors.messages.blank",
-                                                :attribute => I18n.t("activeldap.attributes.role.displayName") ) )
+  def validate
+    if self.displayName.to_s.empty?
+      errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",
+                                       :attribute => I18n.t("activeldap.attributes.role.displayName")) )
+    end
+  end
 
   def set_special_ldap_value
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
