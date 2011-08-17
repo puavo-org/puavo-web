@@ -69,10 +69,10 @@ width: 140px;
 .tools div a[onclick]:hover {
     background: url("../../images/iconset.png") no-repeat scroll 155px -120px transparent;
 }
-.tools div a[href$="select_school"] {
+.tools div a[href$="select_school"], .wrap .tools div a[href$="rename_groups/new"] {
 background: url("../../images/iconset.png") no-repeat scroll 155px -156px transparent;
 }
-.tools div a[href$="select_school"]:hover {
+.tools div a[href$="select_school"]:hover, .wrap .tools div a[href$="rename_groups/new"]:hover {
     background: url("../../images/iconset.png") no-repeat scroll 155px -196px transparent;
 }
 .tools .videolink {
@@ -87,10 +87,10 @@ background: url("../../images/iconset.png") no-repeat scroll 155px -280px transp
 .tools a.show:hover {
     background: url("../../images/iconset.png") no-repeat scroll 155px -360px transparent;
 }
-.tools div a[href$="new"] {
+.tools div a[href$="users/new"], .tools div a[href$="external_services/new"], .tools div a[href$="schools/new"], .tools div a[href$="roles/new"], .tools div a[href$="groups/new"] {
     background: url("../../images/iconset.png") no-repeat scroll 155px -400px transparent;
 }
-.tools div a[href$="new"]:hover {
+.tools div a[href$="users/new"]:hover, .tools div a[href$="external_services/new"]:hover, .tools div a[href$="schools/new"]:hover, .tools div a[href$="roles/new"]:hover, .tools div a[href$="groups/new"]:hover {
     background: url("../../images/iconset.png") no-repeat scroll 155px -440px transparent;
 }
 .tools div a[href$="import/new"] {
