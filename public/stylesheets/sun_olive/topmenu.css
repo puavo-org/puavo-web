@@ -49,25 +49,28 @@ height:51px;
 }
 #top-menu li ul, #nav1 ul li ul {
 background: url("../../images/bg-fabric-orange-metal.png") repeat scroll left 35px #F2CF93;
-    border-radius: 0 0 20px 20px;
-    color: #0395CC;
-    display: none;
-    left: 0;
-    line-height: 16px;
-    margin-top: 50px;
-    padding:0;
-    position: absolute;
-    top: 0;
-    z-index: 999;
-   -moz-border-radius: 0 0  20px 20px;
-   -webkit-border-radius: 0 0  20px 20px;
+border-radius: 0 0 20px 20px;
+color: #0395CC;
+display: none;
+left: 0;
+line-height: 16px;
+margin-top: 50px;
+padding: 0;
+position: absolute;
+top: 0;
+z-index: 999;
+-webkit-border-radius: 0 0 20px 20px;
+-moz-border-radius: 0 0 20px 20px;
 }
 #nav1 ul li ul {
     width: 130px;
 }
 #top-menu li ul {
-    left: -5px;
-    margin: 35px 0 0;
+left: -5px;
+margin: 35px 0 0;
+max-height: 500px;
+overflow: auto;
+padding: 0 10px 0 0;
 }
 #top-menu li:hover ul, #nav1 ul li:hover ul {
     display: block;
@@ -77,17 +80,17 @@ border-top: 1px solid #606060;
 display: block;
 font-size: 9pt;
 list-style-type: none;
-margin: 5px 20px;
-padding: 8px 0 3px;
+margin: 8px 20px;
+padding: 5px 15px 0 0;
 width: 170px;
 }
 #top-menu li ul li a:hover {
-background:none repeat scroll 0 0 #FFFFFF;
-padding: 5px 10px;
-margin: -5px -10px;
-border-radius: 8px;
--webkit-border-radius: 8px;
--moz-border-radius: 8px;
+background: none repeat scroll 0 0 #FFFFFF;
+border-radius: 0 8px 8px 0;
+margin: -8px -20px -5px;
+padding: 8px 20px 5px;
+-webkit-border-radius: 0 8px 8px 0;
+-moz-border-radius: 0 8px 8px 0;
 }
 #top-menu li ul li:first-child, #nav1 ul li ul li:first-child {
     border-top: medium none;
