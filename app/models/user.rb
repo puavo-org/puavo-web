@@ -68,7 +68,7 @@ class User < LdapBase
     # Uid validation
     #
     # Password confirmation
-    if self.new_password != self.new_password_confirmation
+    if !self.new_password_confirmation.nil? && self.new_password != self.new_password_confirmation
       errors.add( :new_password, I18n.t("activeldap.errors.messages.confirmation",
                                         :attribute => I18n.t("activeldap.attributes.user.new_password")) )
     end
