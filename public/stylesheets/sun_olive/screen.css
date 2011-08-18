@@ -80,11 +80,6 @@ caption {background:#eee;}
 label {font-weight:bold;}
 fieldset {padding:1.4em;margin:0 0 1.5em 0;border:1px solid #ccc;}
 legend {font-weight:bold;font-size:16pt;}
-/*input[type=text], input[type=password], input.text, input.title, textarea, select {background-color:#fff;border:1px solid #bbb;}
-input[type=text]:focus, input[type=password]:focus, input.text:focus, input.title:focus, textarea:focus, select:focus {border-color:#666;}
-input[type=text], input[type=password], input.text, input.title, textarea, select {margin: 0 0 0.7em;}
-input.text, input.title {width:300px;padding:5px;}
-input.title {font-size:1.5em;}*/
 form input[type="text"],input[type="password"], input.text {
 background: -moz-linear-gradient(center bottom , #EEEEED 0%, #EEEEEE 40%, #FFFFFF 100%) repeat scroll 0 0 transparent;
 background: -webkit-gradient(
@@ -106,21 +101,23 @@ border: 1px solid #CCCCCC;
 }
 input[type="submit"] {
 background: none repeat scroll 0 0 #EEEEED;
-    background: -moz-linear-gradient(center bottom , #EEEEED 0%, #EEEEEE 40%, #FFFFFF 100%) repeat scroll 0 0 transparent;
-    background: -webkit-gradient(
+background: -moz-linear-gradient(center bottom , #EEEEED 0%, #EEEEEE 40%, #FFFFFF 100%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
 linear, left bottom,left top,
 color-stop(0, rgb(238,238,237)),
 color-stop(0.40, rgb(238,238,238)),
 color-stop(1, rgb(255,255,255))
 );
-    border: 1px solid #222;
-    border-radius: 8px;
-    cursor: pointer;
+border: 1px solid #222222;
+border-radius: 8px 8px 8px 8px;
+cursor: pointer;
+font-size: 18pt;
 height: 70px;
-    padding: 5px 8px;
-    width: 460px;
-    margin: 20px 0 0 0;
-    font-size: 18pt;
+margin: 20px 0 0;
+padding: 5px 8px;
+width: 460px;
+-moz-border-radius: 8px 8px 8px 8px;
+-webkit-border-radius: 8px 8px 8px 8px;
 }
 input[type="submit"]:hover {
 background: none repeat scroll 0 0 #FFFFFF;
