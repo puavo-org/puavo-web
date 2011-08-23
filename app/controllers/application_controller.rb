@@ -10,8 +10,8 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user, :ldap_setup_connection, :organisation_owner?
 
-  before_filter :find_school
   before_filter :login_required
+  before_filter :find_school
   before_filter :set_authorization_user
 
   after_filter :remove_ldap_connection

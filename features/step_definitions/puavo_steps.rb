@@ -129,6 +129,7 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
 end
 
 When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value| 
+  basic_auth('cucumber', 'cucumber')
   case page_name
   when /user JSON page$/
     @json_user = User.find(:first, :attribute => "uid", :value => value)

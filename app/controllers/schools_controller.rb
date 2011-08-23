@@ -11,6 +11,7 @@ class SchoolsController < ApplicationController
         format.html # index.html.erb
       end
       format.xml  { render :xml => @schools }
+      format.json  { render :json => @schools }
     end
   end
 
