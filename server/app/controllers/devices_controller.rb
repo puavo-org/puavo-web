@@ -10,6 +10,7 @@ class DevicesController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @devices }
+      format.json  { render :json => @devices }
     end
   end
 
