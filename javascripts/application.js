@@ -16,8 +16,8 @@ $(document).ready(function() {
 	    window.open(this.href);
 		return false;
 	});
-	if($("p.notice")){
-		var notice = $("p.notice");
+	if($("p.message_success")){
+		var notice = $("p.message_success");
 		notice.delay(3000).slideUp(500).fadeOut(200, function() {
 			notice.remove();
 		});		

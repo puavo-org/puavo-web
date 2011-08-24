@@ -120,9 +120,9 @@ width: 460px;
 -webkit-border-radius: 8px 8px 8px 8px;
 }
 input[type="submit"]:hover {
-background: none repeat scroll 0 0 #FFFFFF;
-    background: -moz-linear-gradient(center bottom , #FFFFFF 0%, #EEEEEE 40%, #EEEEED 100%) repeat scroll 0 0 transparent;
-    background: -webkit-gradient(
+background: none repeat scroll 0 0 #EEEEEE;
+background: -moz-linear-gradient(center bottom , #FFFFFF 0%, #EEEEEE 40%, #EEEEED 100%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
 linear, left bottom,left top,
 color-stop(0, rgb(255,255,255)),
 color-stop(0.40, rgb(238,238,238)),
@@ -138,13 +138,15 @@ textarea {width:450px;height:250px;padding:5px;}
 input[type=checkbox], input[type=radio], input.checkbox, input.radio {margin: 0 5px;position:relative;top:0;}
 form.inline {line-height:3;}
 form.inline p {margin-bottom:0;}
-.error, .notice, .success {padding:.8em;margin-bottom:1em;border:2px solid #ddd;}
-.error {background:#FBE3E4;color:#8a1f11;border-color:#FBC2C4;}
+.message_error, .message_notice, .message_success, .notice {padding:.8em;margin-bottom:1em;border:2px solid #ddd;}
+.message_error {background:#FBE3E4;color:#8a1f11;border: 1px solid #FBC2C4;font-size: 14pt;text-align: center;}
+.message_notice {background:#FFF6BF;color:#514721;border: 1px solid #FFD324;font-size: 14pt;text-align: center;}
 .notice {background:#FFF6BF;color:#514721;border: 1px solid #FFD324;font-size: 14pt;text-align: center;}
-.success {background:#E6EFC2;color:#264409;border-color:#C6D880;}
-.error a {color:#8a1f11;}
+.message_success {background:#E6EFC2;color:#264409;border: 1px solid #C6D880;font-size: 14pt;text-align: center;}
+.message_error a {color:#8a1f11;}
+.message_notice a {color:#514721;}
 .notice a {color:#514721;}
-.success a {color:#264409;}
+.message_success a {color:#264409;}
 
 /* grid.css */
 .container {width:950px;margin:0 auto;}
