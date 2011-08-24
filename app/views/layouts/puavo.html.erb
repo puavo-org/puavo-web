@@ -91,14 +91,12 @@
 
     <div class="maincontent">
     <div class="span-17 colborder">
-      <% if flash.has_key?(:notice) %>
-        <% if flash.has_key?(:notice_css_class) %>
-          <p class='<%= flash[:notice_css_class] %>'>
-  	<% else %>
-          <p class="notice">
-	<% end %>
-	<%= flash[:notice] %>
-        </p>
+       <% if message_keys = flash.keys.select { |key| [:error, :notice, :success].include?(key) } %>
+        <% message_keys.each do |key| %>
+          <p class="notice_<%= key %>">
+	          <%= flash[key] %>
+          </p>
+        <% end %>
       <% end %>
       <%= yield %>
     </div>

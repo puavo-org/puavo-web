@@ -55,11 +55,11 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @group.save
-        flash[:notice] = t('flash.added', :item => t('activeldap.models.group'))
+        flash[:success] = t('flash.added', :item => t('activeldap.models.group'))
         format.html { redirect_to( group_path(@school, @group) ) }
         format.xml  { render :xml => @group, :status => :created, :location => @group }
       else
-        flash[:notice] = t('flash.create_failed', :model => t('activeldap.models.group').downcase )
+        flash[:error] = t('flash.create_failed', :model => t('activeldap.models.group').downcase )
         format.html { render :action => "new" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
       end
@@ -73,11 +73,11 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @group.update_attributes(params[:group])
-        flash[:notice] = t('flash.updated', :item => t('activeldap.models.group'))
+        flash[:success] = t('flash.updated', :item => t('activeldap.models.group'))
         format.html { redirect_to( group_path(@school, @group) ) }
         format.xml  { head :ok }
       else
-        flash[:notice] = t('flash.save_failed', :model => t('activeldap.models.group') )
+        flash[:error] = t('flash.save_failed', :model => t('activeldap.models.group') )
         format.html { render :action => "edit" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
       end
@@ -91,7 +91,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @group.destroy
-        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.group'))
+        flash[:success] = t('flash.destroyed', :item => t('activeldap.models.group'))
         format.html { redirect_to(groups_url) }
         format.xml  { head :ok }
       else
@@ -108,10 +108,10 @@ class GroupsController < ApplicationController
     respond_to do |format|
       if @role.groups << @group && @group.save
         @role.update_associations
-        flash[:notice] =  t('flash.group.role_added')
+        flash[:success] =  t('flash.group.role_added')
         format.html { redirect_to( group_path(@school, @group) ) }
       else
-        flash[:notice] = t('flash.group.role_added')
+        flash[:success] = t('flash.group.role_added')
         format.html { redirect_to( group_path(@school, @group) ) }
       end
     end
@@ -124,10 +124,10 @@ class GroupsController < ApplicationController
     respond_to do |format|
       if @role.groups.delete(@group) && @group.save
         @role.update_associations
-        flash[:notice] =  t('flash.group.role_removed')
+        flash[:success] =  t('flash.group.role_removed')
         format.html { redirect_to( group_path(@school, @group) ) }
       else
-        flash[:notice] =  t('flash.group.role_removed_failed')
+        flash[:error] =  t('flash.group.role_removed_failed')
         format.html { redirect_to( group_path(@school, @group) ) }
       end
     end

@@ -39,6 +39,7 @@
 <body>
 <% if "#{theme}"=="sun_olive" %>
 <div class="topNavContainer">
+  <div class="topNavContentContainer">
   <ul id="top-menu">
       <% if current_user %>
       <% if organisation_owner? %>
@@ -76,6 +77,7 @@
 	    <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
     </ul>
      <% end %>    
+   </div>
 </div><!-- topNavContainer -->
 <% end %> <!-- # if {#theme} == sun_olive -->
 <div class="container">
@@ -168,18 +170,15 @@
     <hr class="space" />
 <div class="wrap">
     <div class="maincontent">
-      <% if flash.has_key?(:notice) %>
-      <% if flash.has_key?(:notice_css_class) %>
-      <p class='<%= flash[:notice_css_class] %>'>
-        <% else %>
-      <p class="notice">
-        <% end %>
-        <%= flash[:notice] %>
+      <% if message_keys = flash.keys.select { |key| [:error, :notice, :success].include?(key) } %>
+      <% message_keys.each do |key| %>
+      <p class="message_<%= key %>">
+	<%= flash[key] %>
       </p>
+      <% end %>
       <% end %>
       <%= yield %>
     </div>
-
     <% if current_user %>
     <div class="tools">
       <h1><%= t('.tools') %></h1>

@@ -52,11 +52,11 @@ class RolesController < ApplicationController
     @role.puavoSchool = @school.dn
     respond_to do |format|
       if @role.save
-        flash[:notice] = t('flash.added', :item => t('activeldap.models.role'))
+        flash[:success] = t('flash.added', :item => t('activeldap.models.role'))
         format.html { redirect_to( role_path(@school, @role) ) }
         format.xml  { render :xml => @role, :status => :created, :location => @role }
       else
-        flash[:notice] = t('flash.role.create_failed')
+        flash[:error] = t('flash.role.create_failed')
         format.html { render :action => "new" }
         format.xml  { render :xml => @role.errors, :status => :unprocessable_entity }
       end
@@ -70,11 +70,11 @@ class RolesController < ApplicationController
 
     respond_to do |format|
       if @role.update_attributes(params[:role])
-        flash[:notice] = t('flash.updated', :item => t('activeldap.models.role'))
+        flash[:success] = t('flash.updated', :item => t('activeldap.models.role'))
         format.html { redirect_to( role_path(@school, @role) ) }
         format.xml  { head :ok }
       else
-        flash[:notice] = t('flash.role.save_failed')
+        flash[:error] = t('flash.role.save_failed')
         format.html { render :action => "edit" }
         format.xml  { render :xml => @role.errors, :status => :unprocessable_entity }
       end
@@ -100,10 +100,10 @@ class RolesController < ApplicationController
     respond_to do |format|
       if @role.groups << @group
         @role.update_associations
-        flash[:notice] = t('flash.role.group_added')
+        flash[:success] = t('flash.role.group_added')
         format.html { redirect_to( role_path(@school, @role) ) }
       else
-        flash[:notice] = t('flash.role.group_added_failed')
+        flash[:error] = t('flash.role.group_added_failed')
         format.html { redirect_to( role_path(@school, @role) ) }
       end
     end
@@ -116,10 +116,10 @@ class RolesController < ApplicationController
     respond_to do |format|
       if @role.groups.delete(@group)
         @role.update_associations
-        flash[:notice] = t('flash.role.group_removed')
+        flash[:success] = t('flash.role.group_removed')
         format.html { redirect_to( role_path(@school, @role) ) }
       else
-        flash[:notice] = t('flash.role.group_removed_failed')
+        flash[:error] = t('flash.role.group_removed_failed')
         format.html { redirect_to( role_path(@school, @role) ) }
       end
     end
