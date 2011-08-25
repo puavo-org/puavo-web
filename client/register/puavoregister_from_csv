@@ -23,13 +23,14 @@ terminals[0..-1].each do |row|
     when /etc2500/i,/etc-2500/i
       manufacturer     = 'Epatec'
       puavodevicemodel = 'ETC-2500'
-    when /optiplaex GX520/i,/verkkopc/i,/verkko-pc/i,/tykki/
+    when /optiplaex GX520/i,/verkkopc/i,/verkko-pc/i,/tykki/,/Toshiba-Satellite-Pro/
       devicetype = 'fatclient'
   end
 
   cmd = [
     'fakeroot',
     '/usr/sbin/register-puavodevice',
+    '--netboot',
     '--noconfirm',
     '--puavoserver',			puavoserver,
     '--username',			'admin',
