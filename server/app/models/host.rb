@@ -28,16 +28,38 @@ class Host < DeviceBase
     @@objectClass_by_device_type[device_type]
   end
 
-  def self.types
+  def self.types(boottype)
     # Create deep copy of any device_types configuration.
     type_list = Marshal.load( Marshal.dump(PUAVO_CONFIG['device_types']) )
+
+    # Filter device_type by params[:boottype]
+    case boottype
+    when "net"
+      type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoNetbootDevice") }
+    when "local"
+      type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoLocalbootDevice") }
+    end
 
     # Set host's label by user's locale. Localization values must be set on the puavo.yml
     type_list.each_key do |type|
       type_list[type]["label"] = type_list[type]["label"][I18n.locale.to_s]
     end
 
-    { "default" => PUAVO_CONFIG['default_device_type'],
+    # Set default device type by last device
+    if device = Device.find( :all,
+                             :attributes => ["*", "+"],
+                             :attribute => 'creatorsName',
+                             :value => Puavo::Authorization.current_user.dn.to_s).max do |a,b|
+        a.puavoId.to_i <=> b.puavoId.to_i
+      end
+      default_device_type = device.puavoDeviceType
+    end
+    
+    unless type_list.keys.include?(default_device_type)
+      default_device_type = type_list.keys.first
+    end
+
+    { "default" => default_device_type,
       "label" => I18n.t("host.types.register_label"),
       "title" => I18n.t("host.types.register_title"),
       "question" => I18n.t("host.types.register_question"),

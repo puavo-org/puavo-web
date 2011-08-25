@@ -3,7 +3,7 @@ class Printer < LdapBase
                 :prefix => "ou=Printers",
                 :classes => ['top', 'cupsPrinter', 'puavoPrinterQueue'] )
 
-  before_validation :set_puavo_id
+  before_validation :set_puavo_id, :set_empty_location
 
   def validate
     Printer.find( :all,
@@ -25,4 +25,9 @@ class Printer < LdapBase
     self.puavoId.to_s unless self.puavoId.nil?
   end
 
+  def set_empty_location
+    if self.printerLocation.empty? || self.printerLocation.nil?
+      self.printerLocation = "-"
+    end
+  end
 end

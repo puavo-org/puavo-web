@@ -16,6 +16,11 @@ class DeviceBase < LdapBase
   # When we use @server.attributes.to_json method we get Hash value. This is better and
   # following method make it automatically when we call to_json method.
   def to_json(options = {})
+    allowed_attributes = self.attributes
+    allowed_attributes.delete_if do |attribute, value|
+      !self.schema.attribute(attribute).syntax.human_readable?
+    end
+
     unless options.has_key?(:methods)
       # Set default methods list
       options[:methods] = [ :host_certificate_request,
@@ -34,8 +39,8 @@ class DeviceBase < LdapBase
       options.delete(:methods)
     end
     # Include method's values to the return value
-    method_values.empty? ? self.attributes.to_json(options) :
-      self.attributes.merge( method_values ).to_json(options)
+    method_values.empty? ? allowed_attributes.to_json(options) :
+      allowed_attributes.merge( method_values ).to_json(options)
   end
 
   def validate_on_create
