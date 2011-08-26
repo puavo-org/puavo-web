@@ -1,26 +1,23 @@
 #navbar_first_level{
-    clear: both;
-    float: left;
-    height: 60px;
-    margin: 10px 0 0;
-    width: 952px;
+clear: both;
+float: left;
+height: 60px;
+margin: 5px 0 0;
 }
 #navbar_first_level h1 {
-    float: left;
-    font-size: 2.5em;
-    margin: 10px 0 0 10px;
+float: left;
+font-size: 2.5em;
+margin: 10px 0 0 10px;
 }
-
-
 #top-area {
-        background: #f7efe7;
+background: #f7efe7;
 }
-
 
 /*=== Navigation ===*/
 
 #navbar_second_level {
 background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 27px #C3F7A6;
+border-bottom:1px solid #222222;
 border-left: 1px solid #222222;
 border-radius: 0 12px 0 0;
 border-right: 1px solid #222222;
@@ -30,7 +27,7 @@ color: #4A4D4A;
 float: left;
 font-size: 11px;
 font-weight: bold;
-height: 50px;
+height: 40px;
 margin: 0 0 -5px;
 padding: 0;
 text-transform: uppercase;
@@ -39,19 +36,21 @@ width: 100%;
 -webkit-border-radius: 0 12px 0 0;
 }
 #navbar_second_level ul:not(.submenu) {
-border-bottom: 1px solid #222222;
 display: block;
 height: 35px;
-list-style: none outside none;
-margin: -2px 0 0;
+margin: -12px 0 0;
 padding: 0;
-width: 686px;
 }
+#navbar_second_level ul{
+list-style: none outside none;
+}
+
 #navbar_second_level li {
-display: inline-block;
+/*display: inline-block;*/
+float:left;
 line-height: 1.5em;
 margin: 0 0 0 6px;
-padding: 11px 11px 10px 10px;
+padding: 11px 11px 0 10px;
 text-align: center;
 text-decoration: none;
 width: 95px;
@@ -66,9 +65,10 @@ border-left: 1px solid #222222;
 border-radius: 10px 10px 0 0;
 border-right: 1px solid #222222;
 border-top: 1px solid #222222;
-height: 15px;
+height: 16px;
 margin:0 0 0 5px;
 padding:10px;
+z-index: 9999;
 -moz-border-radius:10px 10px 0 0;
 -webkit-border-radius:10px 10px 0 0;
 }
