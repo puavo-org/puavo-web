@@ -23,6 +23,7 @@ fi:
   link:
     edit: Muokkaa
     back: Takaisin
+    cancel: Peruuta
     destroy: Poista
     new_group: Luo uusi ryhmä
     update: Päivitä

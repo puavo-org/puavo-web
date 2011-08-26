@@ -7,6 +7,4 @@
   :method => :put
 }
 %>
-<% content_for :right do %>
-<div><%= link_to t('link.show'), user_path(@school, @user), :class => 'show' %></div>
-<% end %>
+<div class="cancel"><div><%= link_to t('link.cancel'),  user_path(@school, @user), :class => 'cancel_button' %> </div></div>

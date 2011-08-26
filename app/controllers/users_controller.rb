@@ -88,10 +88,10 @@ class UsersController < ApplicationController
         unless @user.save
           raise
         end
-        flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
+        flash[:success] = t('flash.added', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue User::PasswordChangeFailed => e
-        flash[:notice] = t('flash.password_set_failed')
+        flash[:error] = t('flash.password_set_failed')
         format.html { redirect_to( user_path(@school,@user) ) }
       #rescue ActiveLdap::LdapError::ConstraintViolation
       rescue Exception => e
@@ -121,7 +121,7 @@ class UsersController < ApplicationController
             session[:password_plaintext] = params[:user][:new_password]
           end
         end
-        flash[:notice] = t('flash.updated', :item => t('activeldap.models.user'))
+        flash[:success] = t('flash.updated', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue User::PasswordChangeFailed => e
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
@@ -139,7 +139,7 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
     if @user.destroy
-      flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))
+      flash[:success] = t('flash.destroyed', :item => t('activeldap.models.user'))
     end
 
     respond_to do |format|
@@ -164,10 +164,10 @@ class UsersController < ApplicationController
       if Array(params[:user_ids]).length > 1
         format.html { redirect_to( role_path( @new_school,
                                               @new_role ),
-                                   :notice => t("flash.user.school_changed") ) }
+                                   :success => t("flash.user.school_changed") ) }
       else
         format.html { redirect_to( user_path(@new_school, @user),
-                                   :notice => t("flash.user.school_changed") ) }
+                                   :success => t("flash.user.school_changed") ) }
       end
     end
   end
@@ -196,7 +196,7 @@ class UsersController < ApplicationController
   private
 
   def error_message_and_render(format, action, message = nil)
-    flash[:notice] = message unless message.nil?
+    flash[:error] = message unless message.nil?
 
     format.html { render :action => action }
     format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }

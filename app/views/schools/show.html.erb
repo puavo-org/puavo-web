@@ -1,10 +1,8 @@
 <div class="dashboard">
-
 <div class="dashboard_box school_image">
 <%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
                :class => "image" ) %>
 </div>
-
 <div class="dashboard_box contacts">
 <h3><%= t('.contacts') %></h3>
 <h4><%=h @school.displayName %></h4>
@@ -13,7 +11,6 @@
 <div class="row"><%=h @school.postOfficeBox %></div>
 <div class="row"><%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'), @school.puavoSchoolHomePageURL %></div>
 </div>
-
 
 
 <div class="dashboard_box list users">
@@ -47,6 +44,7 @@
 </div>
 
 <% content_for :right do %>
+
 <div><%= link_to t('link.edit'), edit_school_path(@school) %></div>
 <div><%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %></div>
 <% if organisation_owner? %>

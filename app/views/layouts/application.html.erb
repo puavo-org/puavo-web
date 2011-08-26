@@ -20,13 +20,13 @@
   <%= stylesheet_link_tag "#{theme}/puavo.css" %>
   <%= stylesheet_link_tag "#{theme}/jquery.tooltip" %>
   <%= stylesheet_link_tag "jquery.liveSearch" %>
-
   <%= javascript_include_tag( "jquery-1.4.2.min",
                               "rails",
                               "application",
                               "jquery.jeditable.mini.js",
                               "jquery.tooltip.min.js",
                               "jquery.liveSearch" ) %>
+  <% if "#{theme}"=="sun_olive" %> <%= javascript_include_tag "sun_olive" %> <% end %>
   <%= yield :javascript %>
 
   <% search_urls = { "users-search" => "/users/search?words=" } %>
@@ -39,6 +39,7 @@
 <body>
 <% if "#{theme}"=="sun_olive" %>
 <div class="topNavContainer">
+  <div class="topNavContentContainer">
   <ul id="top-menu">
       <% if current_user %>
       <% if organisation_owner? %>
@@ -62,20 +63,21 @@
           <% end %>
         </ul>
       </li>
-    </ul> <!-- top-menu -->
-    <ul id="top-menu-right" class="menu">
-	    <li>
+      <li>
 	    <%= text_field_tag( "search",
                               nil,
                               :id => "search",
                               :size => 30,
                               :placeholder => t('.search_placeholder') ) %>
 	    </li>
+    </ul> <!-- top-menu -->
+    <ul id="top-menu-right" class="menu">
         <li><span><%= t('.logged_in_as') %></span></li>
 	    <li><a href="#"><%= current_user.displayName %></a></li>
 	    <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
     </ul>
      <% end %>    
+   </div>
 </div><!-- topNavContainer -->
 <% end %> <!-- # if {#theme} == sun_olive -->
 <div class="container">
@@ -99,7 +101,8 @@
       <li><%= link_to t('.schools'),  schools_path, :class => "sub" %>
         <ul>
           <% session[:organisation].schools.each do |school| %>
-          <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
+          <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+            <%= link_to school.displayName,  school_path(school) %></li>
           <% end %>
         </ul>
       </li>
@@ -166,25 +169,31 @@
     <% end %>
 
     <hr class="space" />
-<div class="wrap">
+  <div class="wrap">
+  <% if "#{theme}"=="sun_olive" %>
+    <% if current_user %>
+      <div class="tools">
+        <%= yield :right %>
+      </div>
+      <% end %>
+  <% end %>    
     <div class="maincontent">
-      <% if flash.has_key?(:notice) %>
-      <% if flash.has_key?(:notice_css_class) %>
-      <p class='<%= flash[:notice_css_class] %>'>
-        <% else %>
-      <p class="notice">
-        <% end %>
-        <%= flash[:notice] %>
+      <% if message_keys = flash.keys.select { |key| [:error, :notice, :success].include?(key) } %>
+      <% message_keys.each do |key| %>
+      <p class="message_<%= key %>">
+	<%= flash[key] %>
       </p>
+      <% end %>
       <% end %>
       <%= yield %>
     </div>
-
+    <% if "#{theme}"!="sun_olive" %>
     <% if current_user %>
-    <div class="tools">
+      <div class="tools">
       <h1><%= t('.tools') %></h1>
-      <%= yield :right %>
-    </div>
+        <%= yield :right %>
+      </div>
+      <% end %>
     <% end %>
     <hr class="space" />
     </div> <!-- wrap -->
