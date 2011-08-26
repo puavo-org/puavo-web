@@ -12,25 +12,39 @@ h1 {
 }
 .container {
 background: url("../../images/bg-fabric-01.png") repeat scroll 0 0 #FFFFF0;
-    border: 8px solid #FFFFF0;
-    border-radius: 10px 10px 0 0;
-    box-shadow: 0 15px 15px rgba(68, 68, 68, 0.8);
-    margin: 40px auto;
-    padding: 5px 10px 0;
-    width: 950px;
+border: 8px solid #FFFFF0;
+border-radius: 10px 10px 0 0;
+box-shadow: 0 15px 15px rgba(68, 68, 68, 0.8);
+margin: 25px auto;
+max-width: 950px;
+min-width: 500px;
+padding: 5px 10px 0;
+width: 90%;
 -moz-border-radius: 10px 10px 0 0;
 -webkit-border-radius: 10px 10px 0 0;
 -moz-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.80);
 -webkit-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.80);
 }
 .maincontent {
-    clear: both;
-    float: left;
-    padding: 25px 20px 10px;
-    width: 645px;
+float: left;
+margin: 1em 0 0;
+padding: 0 0 10px 20px;
+}
+.maincontent .dashboard{
+margin: 5px 0 0;
+}
+.dashboard_box.users {
+clear: both;
+}
+
+.dashboard_box.school_image {
+border: 0 none;
+float: left;
+margin: 5px 0 15px;
 }
 .container > h1 {
-font-size:30pt;
+font-size: 26pt;
+font-variant: small-caps;
 margin: 10px 10px 0;
 }
 .logo{
@@ -49,69 +63,129 @@ box-shadow: 0 2px 6px #222;
 color:#FF6666;
 font-size:12pt;
 }
+.tools div {
+border-bottom: 1px dashed #ECEADA;
+float: left;
+margin: 5px 0;
+padding: 0 0 0 5px;
+}
+.cancel div {
+border: 1px dashed #AD0000;
+border-radius: 6px 6px 6px 6px;
+margin: 5px 0;
+padding: 0 0 0 5px;
+-moz-border-radius: 6px 6px 6px 6px;
+-webkit-border-radius: 6px 6px 6px 6px;
+}
+.tools div:hover {
+background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #F2CF93;
+border-radius:6px;
+-moz-border-radius:6px;
+-webkit-border-radius:6px;
+}
 .tools div a{
+display: block;
+height: 24px;
+margin: 0;
+padding: 15px 10px 5px 35px;
+}
+.cancel div a {
+display: block;
+height: 24px;
+margin: 0;
+padding: 15px 10px 5px;
+text-align: center;
+}
+.cancel div a:hover {
+font-size: 12pt;
+font-weight: bold;
+}
+.tools h1 {
+background: url("../../images/tools40.png") no-repeat scroll left 5px transparent;
+border-bottom: 2px solid #444444;
+font-size: 30px;
+line-height: 2;
+margin: -8px 0 0.5em;
+min-width: 190px;
+padding: 0 0 0 1.5em;
+}
+.tools a, .cancel a {
+font-weight: normal;
 line-height: 1;
-margin: 6px 0 0;
-padding: 7px 40px 7px 5px;
-width: 140px;
+padding: 1px 0 1px 0;
+width: auto;
+}
+.tools {
+border-color: #222222;
+border-style: solid;
+float: right;
+font-size: 10pt;
+margin: 10px 10px 0 0;
+padding: 0;
+}
+.cancel {
+border-color: #222222;
+border-style: solid;
+font-size: 11pt;
+margin:0;
+padding: 0;
+width:460px;
 }
 .tools div a[href$="edit"] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px 0 transparent;
-    margin:0;
+    background: url("../../images/iconset.png") no-repeat scroll left 10px transparent;
 }
 .tools div a[href$="edit"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -40px transparent;
-    margin:0;
+    background: url("../../images/iconset.png") no-repeat scroll left -30px transparent;
 }
 .tools div a[onclick] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -80px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -70px transparent;
 }
 .tools div a[onclick]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -120px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -110px transparent;
 }
 .tools div a[href$="select_school"], .wrap .tools div a[href$="rename_groups/new"] {
-background: url("../../images/iconset.png") no-repeat scroll 155px -156px transparent;
+background: url("../../images/iconset.png") no-repeat scroll left -150px transparent;
 }
 .tools div a[href$="select_school"]:hover, .wrap .tools div a[href$="rename_groups/new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -196px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -190px transparent;
 }
 .tools .videolink {
-background: url("../../images/iconset.png") no-repeat scroll 155px -240px transparent;
+background: url("../../images/iconset.png") no-repeat scroll left -235px transparent;
 }
 .tools .videolink:hover {
-background: url("../../images/iconset.png") no-repeat scroll 155px -280px transparent;
+background: url("../../images/iconset.png") no-repeat scroll left -275px transparent;
 }
 .tools a.show {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -320px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -310px transparent;
 }
 .tools a.show:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -360px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -350px transparent;
 }
 .tools div a[href$="users/new"], .tools div a[href$="external_services/new"], .tools div a[href$="schools/new"], .tools div a[href$="roles/new"], .tools div a[href$="groups/new"] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -400px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -390px transparent;
 }
 .tools div a[href$="users/new"]:hover, .tools div a[href$="external_services/new"]:hover, .tools div a[href$="schools/new"]:hover, .tools div a[href$="roles/new"]:hover, .tools div a[href$="groups/new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -440px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -430px transparent;
 }
 .tools div a[href$="import/new"] {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -475px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -470px transparent;
 }
 .tools div a[href$="import/new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll 155px -515px transparent;
+    background: url("../../images/iconset.png") no-repeat scroll left -510px transparent;
 }
 .link_header {
     font-size: 12px;
     font-weight: bold;
 }
 .maincontent table tr td .image {
-    border: 2px solid #435266;
-    margin: 0 0 0 40px;
-    padding: 1px;
+border: 2px solid #435266;
+margin: 0;
+padding: 1px;
 }
 .image {
-    border: 2px solid #435266;
-    margin: 0 0 0 10px;
-    padding: 1px;
+border: 2px solid #435266;
+margin: 0 10px 0 0;
+padding: 1px;
 }
 
 .logout a {
@@ -120,14 +194,14 @@ background: url("../../images/iconset.png") no-repeat scroll 155px -280px transp
 }
 table.list td a[href$="edit"], table.list td a[onclick]{
 border-radius: 2px;
-    background: none repeat scroll 0 0 #E9EAE1;
-    border: 1px solid #C9CFB9;
-    float: left;
-    margin: 0;
-    padding: 2px 4px;
-    text-align: center;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
+background: none repeat scroll 0 0 #E9EAE1;
+border: 1px solid #C9CFB9;
+float: left;
+margin: 0;
+padding: 2px 4px;
+text-align: center;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
 }
 table.list td a[href$="edit"]:hover, table.list td a[onclick]:hover {
     background-color: #ee9999;
@@ -148,35 +222,7 @@ a:hover {
     color: #A43210;
     text-decoration: none;
 }
-.tools h1 {
-    background: url("../../images/tools40.png") no-repeat scroll right 5px transparent;
-    border-bottom: 2px solid #444444;
-    font-size: 30px;
-    line-height: 43px;
-    margin: 5px 0 0.5em;
-    padding: 5px 0 10px;
-    width: 190px;
-}
-.tools a {
-    border-color: #6E3409;
-    border-style: solid;
-    border-width: 0 0 0 2px;
-    display: block;
-    font-weight: bold;
-    line-height: 1.5em;
-    padding: 1px 0 1px 5px;
-    width: 175px;
-}
-.tools {
-background:url("../../images/bg-fabric-green-metal.png") repeat scroll left 35px #C3F7A6;
-    border-bottom: 1px solid #222222;
-    border-left: 1px solid #222222;
-    float: right;
-    font-size: 14px;
-    margin: 0 0 -1px;
-    padding: 25px 20px 30px 39px;
-    width: 205px;
-}
+
 #footer {
 background:url("../../images/bg-fabric-orange-metal.png") repeat scroll 0 0 #F2CF93;
 border-radius: 10px 10px 10px 10px;
@@ -222,8 +268,8 @@ width: 550px;
 -webkit-box-shadow: 0 4px 8px #222222;
 }
 .login_content {
-    background: none repeat scroll 0 0 #FFFFFF;
-    padding: 10px;
+background: none repeat scroll 0 0 #FFFFFF;
+padding: 10px;
 }
 .login_content h1 {
  color: #765C54;
@@ -233,7 +279,8 @@ font-size: 30pt;
     text-transform: uppercase;
 }
 .login_content table tr td {
-    background: none repeat scroll 0 0 #FFFFFF;
+background: none repeat scroll 0 0 #FFFFFF;
+display:block;
 }
 input {
     font-size: 18px;
@@ -306,12 +353,12 @@ background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #C3F
     color: red;
 }
 .dashboard > * {
-    margin: 10px;
+margin:10px 10px 10px 0;
 }
 .dashboard_box {
 float: left;
 font-size: 1.1em;
-margin-top: 20px;
+margin-top: 5px;
 min-width: 200px;
 padding: 0;
 }
@@ -350,14 +397,7 @@ margin: 0 0 0 10px;
     float:right;
     margin-left: 10px;
 }
-.dashboard_box.users {
-    clear: both;
-}
-.dashboard_box.school_image {
-border: 0 none;
-    float: right;
-    margin: 20px 0 15px 0;
-}
+
 .validate_users_list {
     border-collapse: collapse;
 }
@@ -386,31 +426,33 @@ label.checkbox {
     font-weight: normal;
 }
 .search_result td {
-    border-bottom: 1px solid #C3F7A6;
+border-bottom: 1px solid #C3F7A6;
 }
 .search_result th {
 background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #C3F7A6;
 }
 .maincontent h1 {
-    border-bottom: 2px solid #435266;
-    font-size: 3.5em;
-    line-height: 1.2em;
-    margin: 0 0 10px;
-    padding: 0;
+border-bottom: 2px solid #435266;
+font-size: 3.5em;
+line-height: 1.2em;
+margin: 0 0 10px;
+padding: 0;
 }
 div:not(#navbar_second_level) .wrap:first-of-type {
-    border-top: 1px solid #222;
+border-top: 1px solid #222;
+margin: 1em 0 0;
 }
 .wrap {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border-bottom: 1px solid #222222;
-    border-left: 1px solid #222222;
-    border-radius: 0 0 0 10px;
-    border-right: 1px solid #222222;
-    margin: 5px 0;
-    width: 950px;
-    -moz-border-radius:0 0 0 10px;
-    -webkit-border-radius:0 0 0 10px;
+background: none repeat scroll 0 0 #FFFFFF;
+border-bottom: 1px solid #222222;
+border-left: 1px solid #222222;
+border-radius: 0 0 0 10px;
+border-right: 1px solid #222222;
+margin: 5px 0;
+overflow: auto;
+width: 100%;
+-moz-border-radius:0 0 0 10px;
+-webkit-border-radius:0 0 0 10px;
 }
 #jquery-live-search{
 position: fixed !important;

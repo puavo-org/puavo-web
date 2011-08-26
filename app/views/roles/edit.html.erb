@@ -8,6 +8,4 @@
 }
 %>
 
-<% content_for :right do %>
-<div><%= link_to t('link.show'), role_path(@school, @role), :class => 'show' %></div>
-<% end %>
+<div class="cancel"><div><%= link_to t('link.cancel'), role_path(@school, @role), :class => 'cancel_button' %> </div></div>

@@ -23,6 +23,7 @@ en:
   link:
     edit: Edit
     back: Back
+    cancel: Cancel
     destroy: Destroy
     new_group: New group
     update: Update

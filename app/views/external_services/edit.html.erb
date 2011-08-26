@@ -7,7 +7,4 @@
   :method => :put
 }
 %>
-
-<% content_for :right do %>
-<div><%= link_to t('link.show'), external_service_path(@school, @external_service), :class => 'show' %></div>
-<% end %>
+<div class="cancel"><div><%= link_to t('link.cancel'), external_service_path(@school, @external_service), :class => 'cancel_button' %> </div></div>

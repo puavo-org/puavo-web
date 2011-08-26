@@ -6,7 +6,4 @@
   :submit_text => t('link.update')
 } %>
 
-
-<% content_for :right do %>
-<div><%= link_to t('link.show'), group_path(@school, @group), :class => 'show' %></div>
-<% end %>
+<div class="cancel"><div><%= link_to t('link.cancel'), group_path(@school, @group), :class => 'cancel_button' %> </div></div>
