@@ -163,10 +163,10 @@ class UsersController < ApplicationController
       if Array(params[:user_ids]).length > 1
         format.html { redirect_to( role_path( @new_school,
                                               @new_role ),
-                                   :success => t("flash.user.school_changed") ) }
+                                   :notice => t("flash.user.school_changed") ) }
       else
         format.html { redirect_to( user_path(@new_school, @user),
-                                   :success => t("flash.user.school_changed") ) }
+                                   :notice => t("flash.user.school_changed") ) }
       end
     end
   end
