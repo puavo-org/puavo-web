@@ -250,13 +250,14 @@ width: 100%;
 }
 
 .password_container {
-    background: none repeat scroll 0 0 #E5E2DE;
-    border-bottom: 2px solid #000000;
-    border-left: 2px solid #000000;
-    border-right: 2px solid #FFFFFF;
-    margin: 0 auto;
-    padding: 10px;
-    width: 800px;
+background: none repeat scroll 0 0 #E5E2DE;
+box-shadow: 0 4px 8px #222222;
+margin: 10px auto;
+padding: 10px;
+width: 550px;
+-moz-box-shadow: 0 4px 8px #222222;
+-webkit-box-shadow: 0 4px 8px #222222;
+width: 800px;
 }
 .login_container {
 background: none repeat scroll 0 0 #E5E2DE;
@@ -272,11 +273,15 @@ background: none repeat scroll 0 0 #FFFFFF;
 padding: 10px;
 }
 .login_content h1 {
- color: #765C54;
+color: #765C54;
 font-size: 30pt;
-    text-align: center;
-    text-shadow: 0 2px 2px #222222;
-    text-transform: uppercase;
+text-align: center;
+text-shadow: 0 2px 2px #222222;
+text-transform: uppercase;
+}
+.login_content a {
+font-size:12pt;
+font-weight: bold;
 }
 .login_content table tr td {
 background: none repeat scroll 0 0 #FFFFFF;

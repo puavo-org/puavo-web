@@ -91,7 +91,7 @@
 
     <div class="maincontent">
     <div class="span-17 colborder">
-       <% if message_keys = flash.keys.select { |key| [:error, :notice, :success].include?(key) } %>
+       <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
         <% message_keys.each do |key| %>
           <p class="notice_<%= key %>">
 	          <%= flash[key] %>

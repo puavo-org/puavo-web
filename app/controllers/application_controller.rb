@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
         @school = School.find(school_id)
       rescue
         logger.info "Incorrect school id! Redirected..."
-        flash[:error] = "Incorrect school id!"
+        flash[:alert] = "Incorrect school id!"
         redirect_to schools_path
       end
     end

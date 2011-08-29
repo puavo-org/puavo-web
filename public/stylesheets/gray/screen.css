@@ -88,13 +88,13 @@ textarea {width:390px;height:250px;padding:5px;}
 input[type=checkbox], input[type=radio], input.checkbox, input.radio {position:relative;top:.25em;}
 form.inline {line-height:3;}
 form.inline p {margin-bottom:0;}
-.error, .notice, .success {padding:.8em;margin-bottom:1em;border:2px solid #ddd;}
-.error {background:#FBE3E4;color:#8a1f11;border-color:#FBC2C4;}
-.notice {background:#FFF6BF;color:#514721;border-color:#FFD324;}
-.success {background:#E6EFC2;color:#264409;border-color:#C6D880;}
-.error a {color:#8a1f11;}
-.notice a {color:#514721;}
-.success a {color:#264409;}
+.message_error, .message_notice, .message_success, .notice, .error, .message_alert {padding:.8em;margin-bottom:1em;border:2px solid #ddd;}
+.message_error, .error, .message_alert {background:#FBE3E4;color:#8a1f11;border-color:#FBC2C4;}
+.message_notice, .notice {background:#FFF6BF;color:#514721;border-color:#FFD324;}
+.message_success, .success {background:#E6EFC2;color:#264409;border-color:#C6D880;}
+.message_error a, .error a, .message_alert a {color:#8a1f11;}
+.message_notice a, .notice a {color:#514721;}
+.message_success a, .success a {color:#264409;}
 
 /* grid.css */
 .container {width:950px;margin:0 auto;}

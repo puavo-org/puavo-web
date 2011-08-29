@@ -1,18 +1,10 @@
+<% content_for :title do %>
 <h1><%= t('.title') %></h1>
+<% end %>
 
 <p>
 <%= t('.head') %>
 </p>
-
-<% if flash.has_key?(:notice) %>
-<% if flash.has_key?(:notice_css_class) %>
-<p class='<%= flash[:notice_css_class] %>'>
-<% else %>
-<p class="notice">
-  <% end %>
-  <%= flash[:notice] %>
-</p>
-<% end %>
 
 <p><%= link_to t('.link_own_password'), own_password_path %></p>
 
