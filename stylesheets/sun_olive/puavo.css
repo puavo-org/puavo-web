@@ -293,9 +293,10 @@ input {
     padding: 5px;
 }
 select {
-    font-size: 18px;
-    font-weight: normal;
-    padding: 5px;
+font-size: 18px;
+font-weight: normal;
+padding: 5px;
+width: 100%;
 }
 .required_info{
 color:#FF6666;
