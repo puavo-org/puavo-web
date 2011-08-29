@@ -69,7 +69,7 @@ Feature: Manage users
     And the memberUid should include "ben" on the "Domain Users" samba group
     When I follow "Edit"
     Then I should be on the edit user page
-    When I follow "Show"
+    When I follow "Cancel"
     Then I should be on the user page
     When I follow "Users"
     Then I should see "Mabey Ben"
