@@ -24,7 +24,7 @@ class PasswordController < ApplicationController
     end
 
     respond_to do |format|
-      flash[:success] = t('flash.password.successful')
+      flash[:notice] = t('flash.password.successful')
       unless params[:user][:uid]
         format.html { render :action => "own" }
       else
@@ -42,7 +42,7 @@ class PasswordController < ApplicationController
   private
 
   def error_message_and_redirect(message)
-    flash[:error] = message
+    flash[:alert] = message
     unless params[:user][:uid]
       redirect_to own_password_path
     else

@@ -69,11 +69,11 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if @school.save
-        flash[:success] = t('flash.added', :item => t('activeldap.models.school'))
+        flash[:notice] = t('flash.added', :item => t('activeldap.models.school'))
         format.html { redirect_to( school_path(@school) ) }
         format.xml  { render :xml => @school, :status => :created, :location => @school }
       else
-        flash[:error] = t('flash.create_failed', :model => t('activeldap.models.school').downcase )
+        flash[:alert] = t('flash.create_failed', :model => t('activeldap.models.school').downcase )
         format.html { render :action => "new" }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
       end
@@ -87,11 +87,11 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if @school.update_attributes(params[:school])
-        flash[:success] = t('flash.updated', :item => t('activeldap.models.school'))
+        flash[:notice] = t('flash.updated', :item => t('activeldap.models.school'))
         format.html { redirect_to(@school) }
         format.xml  { head :ok }
       else
-        flash[:error] = t('flash.save_failed', :model => t('activeldap.models.school') )
+        flash[:alert] = t('flash.save_failed', :model => t('activeldap.models.school') )
         format.html { render :action => "edit" }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
       end
@@ -105,11 +105,11 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if @school.members.count > 0 || @school.roles.count > 0 || @school.groups.count > 0
-        flash[:error] = t('flash.school.destroyed_failed')
+        flash[:alert] = t('flash.school.destroyed_failed')
         format.html { redirect_to(school_path(@school)) }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
       elsif @school.destroy
-        flash[:success] = t('flash.destroyed', :item => t('activeldap.models.school'))
+        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.school'))
         format.html { redirect_to(schools_url) }
         format.xml  { head :ok }
       else
@@ -145,16 +145,16 @@ class SchoolsController < ApplicationController
     respond_to do |format|
       if not Array(@user.puavoEduPersonAffiliation).include?('admin')
         # FIXME: change notice type (ERROR)
-        flash[:error] = t('flash.school.wrong_user_type')
+        flash[:alert] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
       elsif @school.save && @user.save && SambaGroup.add_uid_to_memberUid('Domain Admins', @user.uid)
-        flash[:success] = t('flash.school.school_admin_added',
+        flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
         format.html { redirect_to( admins_school_path(@school) ) }
       else
         # FIXME: change notice type (ERROR)
-        flash[:error] = t('flash.school.save_failed')
+        flash[:alert] = t('flash.school.save_failed')
         format.html { redirect_to( admins_school_path(@school) ) }
       end
     end
@@ -174,13 +174,13 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if @school.save && @user.save && SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
-        flash[:success] = t('flash.school.school_admin_removed',
+        flash[:notice] = t('flash.school.school_admin_removed',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
         format.html { redirect_to( admins_school_path(@school) ) }
       else
         # FIXME: change notice type (ERROR)
-        flash[:error] = t('flash.school.save_failed')
+        flash[:alert] = t('flash.school.save_failed')
         format.html { redirect_to( admins_school_path(@school) ) }
       end
     end
