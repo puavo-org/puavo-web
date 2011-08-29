@@ -138,13 +138,13 @@ textarea {width:450px;height:250px;padding:5px;}
 input[type=checkbox], input[type=radio], input.checkbox, input.radio {margin: 0 5px;position:relative;top:0;}
 form.inline {line-height:3;}
 form.inline p {margin-bottom:0;}
-.message_error, .message_notice, .message_success, .notice {padding:.8em;margin-bottom:1em;border:2px solid #ddd;}
-.message_error {background:#FBE3E4;color:#8a1f11;border: 1px solid #FBC2C4;font-size: 14pt;text-align: center;}
+.message_error, .message_notice, .message_success, .notice, .message_alert {padding:.8em;margin-bottom:1em;border:2px solid #ddd;}
+.message_error, .message_alert {background:#FBE3E4;color:#8a1f11;border: 1px solid #FBC2C4;font-size: 14pt;text-align: center;}
 .message_notice {background:#FFF6BF;color:#514721;border: 1px solid #FFD324;font-size: 14pt;text-align: center;}
 .notice {background:#FFF6BF;color:#514721;border: 1px solid #FFD324;font-size: 14pt;text-align: center;}
 .message_success {background:#E6EFC2;color:#264409;border: 1px solid #C6D880;font-size: 14pt;text-align: center;}
 .message_error a {color:#8a1f11;}
-.message_notice a {color:#514721;}
+.message_notice a, .message_alert a {color:#514721;}
 .notice a {color:#514721;}
 .message_success a {color:#264409;}
 
