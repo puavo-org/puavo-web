@@ -36,17 +36,17 @@ width: 100%;
 -webkit-border-radius: 0 12px 0 0;
 }
 #navbar_second_level ul:not(.submenu) {
-display: block;
-height: 35px;
-margin: -12px 0 0;
+display: inline-block;
+margin: 3px 0 0;
 padding: 0;
 }
-#navbar_second_level ul{
-list-style: none outside none;
+#navbar_second_level > ul{
+display:inline-block;
+margin: 3px 0 0;
+padding: 0;
 }
-
 #navbar_second_level li {
-/*display: inline-block;*/
+display: inline;
 float:left;
 line-height: 1.5em;
 margin: 0 0 0 6px;
@@ -55,9 +55,11 @@ text-align: center;
 text-decoration: none;
 width: 95px;
 }
+
 #navbar_second_level li:first-child{
 margin: 0 0 10px 6px;
 }
+
 #navbar_second_level li:hover:not(.current){
 background: none repeat scroll 0 0 #FFFFFF;
 border-radius: 10px 10px 0 0;
@@ -65,7 +67,7 @@ border-left: 1px solid #222222;
 border-radius: 10px 10px 0 0;
 border-right: 1px solid #222222;
 border-top: 1px solid #222222;
-height: 16px;
+height: 17px;
 margin:0 0 0 5px;
 padding:10px;
 z-index: 9999;
@@ -87,8 +89,7 @@ border-left: 1px solid #222222;
 border-radius: 10px 10px 0 0;
 border-right: 1px solid #222222;
 border-top: 1px solid #222222;
-height: 20px;
-padding: 10px 10px 5px;
+padding: 10px 10px 0;
 -moz-border-radius: 10px 10px 0 0;
 -webkit-border-radius: 10px 10px 0 0;
 }
