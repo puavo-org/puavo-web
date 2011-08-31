@@ -173,10 +173,6 @@ background: url("../../images/iconset.png") no-repeat scroll left -275px transpa
 .tools div a[href$="import/new"]:hover {
     background: url("../../images/iconset.png") no-repeat scroll left -510px transparent;
 }
-.link_header {
-    font-size: 12px;
-    font-weight: bold;
-}
 .maincontent table tr td .image {
 border: 2px solid #435266;
 margin: 0;
@@ -235,20 +231,25 @@ width: 100%;
 -webkit-box-shadow: 0 1px 3px #222222;
 }
 #footer ul {
-    float: left;
-    margin: 10px 0 0 20px;
-    padding: 10px 10px 5px;
+float: left;
+margin: 10px 0 0 20px;
+padding: 10px 10px 5px;
+width: 150px;
 }
 #footer p {
-    clear: both;
-    padding: 10px 10px 5px;
-    text-align: right;
+clear: both;
+padding: 10px 10px 5px;
+text-align: right;
 }
 #footer li {
-    display: block;
-    font-size: 13px;
+display: block;
+font-size: 13px;
 }
-
+.link_header {
+border-bottom: 1px dashed #555555;
+font-weight: bold;
+margin: 0 0 0 -5px;
+}
 .password_container {
 background: none repeat scroll 0 0 #E5E2DE;
 box-shadow: 0 4px 8px #222222;
@@ -263,8 +264,8 @@ width: 800px;
 background: none repeat scroll 0 0 #E5E2DE;
 box-shadow: 0 4px 8px #222222;
 margin: 100px auto;
+width: 500px;
 padding: 10px;
-width: 550px;
 -moz-box-shadow: 0 4px 8px #222222;
 -webkit-box-shadow: 0 4px 8px #222222;
 }
@@ -279,18 +280,22 @@ text-align: center;
 text-shadow: 0 2px 2px #222222;
 text-transform: uppercase;
 }
+.login_content input{
+display:block;
+}
 .login_content a {
 font-size:12pt;
 font-weight: bold;
 }
 .login_content table tr td {
-background: none repeat scroll 0 0 #FFFFFF;
+float:left;
 display:block;
+margin: 0 0 0 5px;
 }
 input {
-    font-size: 18px;
-    font-weight: normal;
-    padding: 5px;
+font-size: 18px;
+font-weight: normal;
+padding: 5px;
 }
 select {
 font-size: 18px;

@@ -22,9 +22,13 @@ text-transform: uppercase;
 width: 100%;
 z-index: 99;
 }
-#nav1 ul:only-child > li {
+#nav1 ul > li {
+background:url("../../images/bg-fabric-orange-metal.png") repeat scroll 0 0 #F2CF93;
 border-radius: 20px 20px 0 0;
+float: left;
+margin: 0 5px 0 0;
 padding: 0;
+position: relative;
 width: 130px;
 -moz-border-radius:20px 20px 0 0;
 -webkit-border-radius:20px 20px 0 0;
@@ -32,7 +36,7 @@ width: 130px;
 #nav1 ul a{
 display:block;
 }
-#top-menu > li, #nav1 ul > li {
+#top-menu > li {
 background:url("../../images/bg-fabric-orange-metal.png") repeat scroll 0 0 #F2CF93;
 float: left;
 margin: 0 5px 0 0;
