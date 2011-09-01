@@ -1,4 +1,16 @@
 class GroupsController < ApplicationController
+
+  # GET /:school_id/groups/:id/members
+  def members
+    @group = Group.find(params[:id])
+
+    @members = @group.members
+
+    respond_to do |format|
+      format.json  { render :json => @members }
+    end
+  end
+
   # GET /:school_id/groups
   # GET /:school_id/groups.xml
   def index
@@ -6,6 +18,9 @@ class GroupsController < ApplicationController
       @groups = @school.groups.sort
     else
       @groups = Group.all.sort
+    end
+    if params[:memberUid]
+      @groups.delete_if{ |g| !Array(g.memberUid).include?(params[:memberUid]) }
     end
 
     respond_to do |format|

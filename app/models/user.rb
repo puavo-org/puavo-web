@@ -64,6 +64,75 @@ class User < LdapBase
     "é" => "e"
   }
 
+  def to_json(*args)
+    self.class.build_hash_for_to_json(self).to_json
+  end
+  
+  # Building hash for to_json method with better name of attributes
+  #  * data argument may be User or Hash
+  def self.build_hash_for_to_json(data)
+    new_user_hash = {}
+    # Note: value of attribute may be raw ldap value eg. { givenName => ["Joe"] }
+    user_attributes =
+      [ { :original_attribute_name => "givenName",
+          :new_attribute_name => "given_name",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "puavoAdminOfSchool",
+          :new_attribute_name => "admin_of_schools",
+          :value_block => lambda{ |value| value ? value.map{ |s| s.to_s.match(/puavoId=([^, ]+)/)[1].to_i } : [] } },
+        { :original_attribute_name => "puavoSchool",
+          :new_attribute_name => "school_id",
+          :value_block => lambda{ |value| value.to_s.match(/puavoId=([^, ]+)/)[1].to_i } },
+        { :original_attribute_name => "telephoneNumber",
+          :new_attribute_name => "telephone_number",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "displayName",
+          :new_attribute_name => "name",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "gidNumber",
+          :new_attribute_name => "gid",
+          :value_block => lambda{ |value| Array(value).first.to_i } },
+        { :original_attribute_name => "homeDirectory",
+          :new_attribute_name => "home_directory",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "puavoEduPersonAffiliation",
+          :new_attribute_name => "user_type",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "mail",
+          :new_attribute_name => "email",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "puavoEduPersonReverseDisplayName",
+          :new_attribute_name => "reverse_name",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "sn",
+          :new_attribute_name => "surname",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "uid",
+          :new_attribute_name => "uid",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "puavoId",
+          :new_attribute_name => "puavo_id",
+          :value_block => lambda{ |value| Array(value).first.to_i } },
+        { :original_attribute_name => "sambaSID",
+          :new_attribute_name => "samba_sid",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "uidNumber",
+          :new_attribute_name => "uid_number",
+          :value_block => lambda{ |value| Array(value).first.to_i } },
+        { :original_attribute_name => "loginShell",
+          :new_attribute_name => "login_shell",
+          :value_block => lambda{ |value| Array(value).first } },
+        { :original_attribute_name => "sambaPrimaryGroupSID",
+          :new_attribute_name => "samba_primary_group_SID",
+          :value_block => lambda{ |value| Array(value).first } } ]
+    
+    user_attributes.each do |attr|
+      attribute_value = data.class == Hash ? data[attr[:original_attribute_name]] : data.send(attr[:original_attribute_name])
+      new_user_hash[attr[:new_attribute_name]] = attr[:value_block].call(attribute_value)
+    end
+    return new_user_hash
+  end
+
   def validate
     # Uid validation
     #
@@ -496,6 +565,7 @@ class User < LdapBase
       self.jpegPhoto = image_orig.resize_to_fit(120,160).to_blob
     end
   end
+
 end
 
 # FIXME: this code have to move to better place.

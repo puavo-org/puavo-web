@@ -154,3 +154,15 @@ Feature: Manage groups
     And I should see "Class 4A"
     And I should see "Example school 1"
     And I should see "class-4a"
+
+  Scenario: Get members of group
+    Given the following groups:
+    | displayName | cn      |
+    | Class 4     | class4  |
+    And a new role with name "Class 4A" and which is joined to the "Class 4" group
+    And the following users:
+    | givenName | sn     | uid  | password | role_name | puavoEduPersonAffiliation |
+    | Joe       | Bloggs | joe  | secret   | Class 4A  | Student                   |
+    | Jane      | Doe    | jane | secret   | Class 4A  | Student                   |
+    When I get on the members group JSON page with "Class 4"
+    Then I should see JSON "[{'user_type':'student', 'name':'Joe Bloggs', 'uid':'joe', 'given_name':'Joe', 'surname':'Bloggs', 'reverse_name':'Bloggs Joe'},{'name':'Jane Doe', 'user_type':'student', 'uid':'jane', 'surname':'Doe', 'reverse_name':'Doe Jane', 'given_name':'Jane'}]"
