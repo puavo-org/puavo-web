@@ -3,18 +3,34 @@ class UsersController < ApplicationController
   # GET /:school_id/users.xml
   def index
     if @school
-      @users = User.search( :filter => "(puavoSchool=#{@school.dn})",
-                            :scope => :one,
-                            :attributes => ['sn', 'givenName', 'uid', 'puavoEduPersonAffiliation', 'puavoId'] )
-    else
-      @users = User.search( :scope => :one,
-                            :attributes => ['sn', 'givenName', 'uid', 'puavoEduPersonAffiliation', 'puavoId'] )
+      filter = "(puavoSchool=#{@school.dn})"
     end
+    attributes = ['sn', 'givenName', 'uid', 'puavoEduPersonAffiliation', 'puavoId',
+                  'puavoSchool',
+                  'telephoneNumber',
+                  'displayName',
+                  'gidNumber',
+                  'homeDirectory',
+                  'mail',
+                  'puavoEduPersonReverseDisplayName',
+                  'sambaSID',
+                  'uidNumber',
+                  'loginShell',
+                  'puavoAdminOfSchool',
+                  'sambaPrimaryGroupSID']
+
+    @users = User.search( :filter => filter,
+                          :scope => :one,
+                          :attributes => attributes )
 
     @users = @users.map do |user|
       user.last
     end.sort do |a,b|
       a["sn"].to_s + a["givenName"].to_s <=> b["sn"].to_s + b["givenName"].to_s
+    end
+
+    if request.format == 'application/json'
+      @users = @users.map{ |u| User.build_hash_for_to_json(u) }
     end
 
     respond_to do |format|
@@ -47,7 +63,7 @@ class UsersController < ApplicationController
       format.html # show.html.erb
       format.xml  { render :xml => @user }
       # FIXME, remove user key?
-      format.json  { render :json => {'user' => json_user}  }
+      format.json  { render :json => @user  }
     end
   end
 
