@@ -33,5 +33,15 @@ class Group < BaseGroup
     self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
                                          { "member" => [user.dn.to_s] }])
   end
+
+  def to_json(*args)
+    { "school_id" => self.school.puavoId,
+      "abbreviation" => self.cn.to_s,
+      "gid" => self.gidNumber,
+      "name" => self.displayName,
+      "puavo_id" => self.puavoId,
+      "samba_SID" => self.sambaSID,
+      "samba_group_type" => self.sambaGroupType }.to_json
+  end
 end
 

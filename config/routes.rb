@@ -40,6 +40,11 @@ ActionController::Routing::Routes.draw do |map|
                               :conditions => { :method => :put } )
   map.resources :schools
 
+  map.add_role_group( 'groups/:id/members.:format',
+                      :controller => 'groups',
+                      :action => 'members',
+                      :path_prefix => ':school_id',
+                      :conditions => { :method => :get } )
   map.add_role_group( 'groups/:id/add_role/:role_id',
                       :controller => 'groups',
                       :action => 'add_role',
