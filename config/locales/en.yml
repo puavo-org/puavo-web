@@ -20,6 +20,7 @@ en:
       external_services: External services
       printers: Printers
       search_placeholder: Search
+      links: Links
   link:
     edit: Edit
     back: Back

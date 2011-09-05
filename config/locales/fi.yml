@@ -20,6 +20,7 @@ fi:
       external_services: Ulkoiset palvelut
       printers: Tulostimet
       search_placeholder: Hae
+      links: Linkit
   link:
     edit: Muokkaa
     back: Takaisin

@@ -7,3 +7,28 @@
 } %>
 
 <div class="cancel"><div><%= link_to t('link.cancel'), group_path(@school, @group), :class => 'cancel_button' %> </div></div>
+
+<% content_for :footer do %>
+<ul>
+  <li class="link_header">
+    <% link_to school_path(@school) do %>
+    <span><%= t('layouts.application.schools') %></span>
+    <% end %>
+  </li>
+  <% session[:organisation].schools.each do |school| %>
+  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+    <%= link_to school.displayName,  school_path(school) %>
+  </li>
+  <% end %>
+</ul>
+<ul>
+<li class="link_header"><%= @school.displayName %></li>
+<li><% link_to users_path(@school) do %>
+  <span><%= t('layouts.application.users') %></span>
+<% end %>
+</li>
+  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
+  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
+  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
+</ul>
+<% end %>

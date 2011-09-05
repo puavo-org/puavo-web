@@ -56,3 +56,14 @@
 </table>
 <% end %>
   <div class="cancel"><div><%= link_to t('link.cancel'), organisation_path, :class => 'cancel_button' %> </div></div>
+<% content_for :footer do %>
+<ul>  
+  <li class="link_header">
+    <%= link_to t('layouts.application.schools'),  schools_path %> 
+  </li>
+  <% session[:organisation].schools.each do |school| %>
+  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+    <%= link_to school.displayName,  school_path(school) %></li>
+  <% end %>
+</ul>
+<% end %>

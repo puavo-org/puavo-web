@@ -24,3 +24,27 @@
 <div><%= link_to t('link.new_user'), new_user_path %></div>
 <div><%= link_to t('link.user_mass_import.new'), new_users_import_path %></div>
 <% end %>
+<% content_for :footer do %>
+<ul>
+  <li class="link_header">
+    <% link_to school_path(@school) do %>
+    <span><%= t('layouts.application.schools') %></span>
+    <% end %>
+  </li>
+  <% session[:organisation].schools.each do |school| %>
+  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+    <%= link_to school.displayName,  school_path(school) %>
+  </li>
+  <% end %>
+</ul>
+<ul>
+<li class="link_header"><%= @school.displayName %></li>
+<li><% link_to users_path(@school) do %>
+  <span><%= t('layouts.application.users') %></span>
+<% end %>
+</li>
+  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
+  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
+  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
+</ul>
+<% end %>
