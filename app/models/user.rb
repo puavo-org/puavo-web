@@ -79,7 +79,7 @@ class User < LdapBase
           :value_block => lambda{ |value| Array(value).first } },
         { :original_attribute_name => "puavoAdminOfSchool",
           :new_attribute_name => "admin_of_schools",
-          :value_block => lambda{ |value| value ? value.map{ |s| s.to_s.match(/puavoId=([^, ]+)/)[1].to_i } : [] } },
+          :value_block => lambda{ |value| value ? Array(value).map{ |s| s.to_s.match(/puavoId=([^, ]+)/)[1].to_i } : [] } },
         { :original_attribute_name => "puavoSchool",
           :new_attribute_name => "school_id",
           :value_block => lambda{ |value| value.to_s.match(/puavoId=([^, ]+)/)[1].to_i } },
