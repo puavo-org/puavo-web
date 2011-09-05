@@ -195,7 +195,9 @@ Feature: Manage users
       | Ben       | Mabey   | ben    | secret   | Class 4   | Student                   |
       | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   |
     When I get on the show user JSON page with "ben"
-    Then I should see JSON "user: {givenName: Ben, sn: Mabey, uid: ben}"
+    Then I should see JSON "{given_name: Ben, surname: Mabey, uid: ben}"
+    When I get on the users JSON page with "School 1"
+    Then I should see JSON "[{given_name: Ben, surname: Mabey, uid: ben},{given_name: Joseph, surname: Wilk, uid: joseph}, {given_name: Pavel, surname: Taylor, uid: pavel}]"
 
   Scenario: Check new user special ldap attributes
     Given the following users:

@@ -137,20 +137,36 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
     when /show/
       visit "/users/" + @json_user.id.to_s + ".json"
     end
+  when /users JSON page$/
+    # FIXME:
+    #school = School.find(:first, :attribute => "displayName", :value => value)
+    visit users_path(@school, :format => :json)
+  when /members group JSON page$/
+    json_group = Group.find(:first, :attribute => "displayName", :value => value)
+    visit "/#{@school.id}/groups/" + json_group.id.to_s + "/members.json"
   end
 end
 
 Then /^I should see JSON "([^\"]*)"$/ do |json_string|
-  response_hash = ActiveSupport::JSON.decode(response.body)
-  string_hash = ActiveSupport::JSON.decode(json_string)
-  model_key = string_hash.keys.first
-  string_hash[model_key].each do |key, value|
-    if key == "tags"
-      value = sort_tags(value)
-      response_hash[model_key][key] = sort_tags(response_hash[model_key][key])
-    end
-    value.should == response_hash[model_key][key]
+  response_data = ActiveSupport::JSON.decode(response.body)
+  compare_data = ActiveSupport::JSON.decode(json_string)
+
+  if compare_data.class == Hash
+    response_data = [response_data]
+    compare_data = [compare_data]
   end
+
+  keys = compare_data.first.keys
+  response_data.each do |r|
+    r.keys.each do |k|
+      unless keys.include?(k)
+        r.delete(k)
+      end
+    end
+  end
+  response_data = response_data.sort { |a,b| a.inspect <=> b.inspect }
+  compare_data = compare_data.sort { |a,b| a.inspect <=> b.inspect }
+  response_data.should == compare_data
 end
 
 private
