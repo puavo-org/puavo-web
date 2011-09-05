@@ -78,7 +78,7 @@ padding: 0 0 0 5px;
 -webkit-border-radius: 6px 6px 6px 6px;
 }
 .tools div:hover {
-background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #F2CF93;
+background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52bf55;
 border-radius:6px;
 -moz-border-radius:6px;
 -webkit-border-radius:6px;
@@ -200,7 +200,8 @@ text-align: center;
 -webkit-border-radius: 2px;
 }
 table.list td a[href$="edit"]:hover, table.list td a[onclick]:hover {
-    background-color: #ee9999;
+background-color: #52BF55;
+color: #222;
 }
 tbody a {
     font-weight: bold;
@@ -233,8 +234,9 @@ width: 100%;
 #footer ul {
 float: left;
 margin: 10px 0 0 20px;
+min-width: 150px;
 padding: 10px 10px 5px;
-width: 150px;
+width: auto !important;
 }
 #footer p {
 clear: both;
@@ -291,6 +293,7 @@ font-weight: bold;
 float:left;
 display:block;
 margin: 0 0 0 5px;
+width:100%;
 }
 input {
 font-size: 18px;
@@ -352,7 +355,7 @@ text-shadow: 0 1px 3px #CCCCCD;
     border-bottom: 1px solid #94AA29;
 }
 .list th {
-background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #C3F7A6;
+background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52BF55;
 }
 .label_error {
     color: red;
@@ -380,7 +383,7 @@ border-bottom: 2px solid;
     padding: 5px 0 5px 0;
 }
 .dashboard_box h3 {
-background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #C3F7A6;
+background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52bf55;
 border-radius: 6px 6px 0 0;
 margin: 0;
 padding: 10px;
@@ -440,7 +443,7 @@ label.checkbox {
 border-bottom: 1px solid #C3F7A6;
 }
 .search_result th {
-background: url("../../images/bg-fabric-green-metal.png") repeat scroll 0 0 #C3F7A6;
+background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52BF55;
 }
 .maincontent h1 {
 border-bottom: 2px solid #435266;
