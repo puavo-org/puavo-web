@@ -27,7 +27,11 @@ module PuavoAuthentication
           password = ""
 
           user = authenticate_with_http_basic do |login, password|
-            User.authenticate(login, password)
+            if login.match(/^service\//)
+              ExternalService.authenticate(login.match(/^service\/(.*)/)[1], password)
+            else
+              User.authenticate(login, password)
+            end
           end
           logger.debug "Basic Auth User: " + user.inspect
           if user
