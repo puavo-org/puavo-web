@@ -94,7 +94,7 @@ module PuavoAuthentication
       end
 
       def set_authorization_user
-        Puavo::Authorization.current_user = current_user if current_user
+        Puavo::Authorization.current_user = current_user ? current_user : nil
       end
     end
   end
