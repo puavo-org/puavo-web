@@ -20,7 +20,10 @@ en:
       external_services: External services
       printers: Printers
       search_placeholder: Search
+      links: Links
+      footer_info: Place here for example ©opyright info
   link:
+    more: More
     edit: Edit
     back: Back
     cancel: Cancel
@@ -137,6 +140,11 @@ en:
       select_new_role: Select new role
       submit: Change school
     import:
+      info:
+        phase_1: Insert user data
+        phase_2: Define user data
+        phase_3: Complete user data
+        phase_4: Preview data and add users
       new:
         title: User mass import
         help: "Enter your user data in the text box"
@@ -188,7 +196,8 @@ en:
       admins: Admins
     admins:
       this_school_admin_users: "{{school_name}} admin users"
-      other_admin_users: School management access rights can be added to the following users
+      other_admin_users: Add management access rights
+      school_admins: School admins
     show:
       contacts: Contacts
       devices: Devices
@@ -294,7 +303,7 @@ en:
         puavoAllowRemoteAccess_true: "Yes"
         puavoAllowRemoteAccess_false: "No"
         puavoAllowRemoteAccess_: "No"
-        puavoEduPersonReverseDisplayName: Reverse name
+        puavoEduPersonReverseDisplayName: Lastname Firstname
         puavoEduPersonPersonnelNumber: Personel Number
         image: Image
       group:

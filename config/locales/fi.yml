@@ -14,13 +14,16 @@ fi:
       logout: Kirjaudu ulos
       users: Käyttäjät
       tools: Työkalut
-      logged_in_as: Kirjauduttu sisään käyttäjänä
+      logged_in_as: Kirjauduttu käyttäjänä
       devices: Laitteet
       servers: Palvelimet
       external_services: Ulkoiset palvelut
       printers: Tulostimet
       search_placeholder: Hae
+      links: Linkit
+      footer_info: Kirjoita tänne esimerkiksi ©-info
   link:
+    more: Lisää
     edit: Muokkaa
     back: Takaisin
     cancel: Peruuta
@@ -136,6 +139,11 @@ fi:
       select_new_role: Valitse uusi rooli
       submit: Vaihda koulu
     import:
+      info:
+        phase_1: Syötä käyttäjätiedot
+        phase_2: Määrittele käyttäjätiedot
+        phase_3: Täydennä käyttäjätiedot
+        phase_4: Tarkista käyttäjätiedot ja lisää käyttäjät
       new:
         title: Lisää käyttäjiä massa-ajona
         help: "Syötä käyttäjätieto alla olevaan tekstikenttään"
@@ -187,7 +195,8 @@ fi:
       admins: Ylläpitäjät
     admins:
       this_school_admin_users: "{{school_name}}: ylläpitäjät"
-      other_admin_users: Seuraaville käyttäjille voidaan lisätä ylläpitäjän oikeudet
+      other_admin_users: Lisää ylläpitäjän oikeudet
+      school_admins: Ylläpitäjät
     show:
       contacts: Yhteystiedot
       devices: Laitteet
@@ -293,7 +302,7 @@ fi:
         puavoAllowRemoteAccess_true: "Kyllä"
         puavoAllowRemoteAccess_false: "Ei"
         puavoAllowRemoteAccess_: "Ei"
-        puavoEduPersonReverseDisplayName: Nimi, sukunimi ensin
+        puavoEduPersonReverseDisplayName: Sukunimi Etunimi
         puavoEduPersonPersonnelNumber: Henkilönumero
         image: Kuva
       group:

@@ -2,7 +2,7 @@
 clear: both;
 float: left;
 height: 60px;
-margin: 5px 0 0;
+margin: 0;
 }
 #navbar_first_level h1 {
 float: left;
@@ -16,16 +16,16 @@ background: #f7efe7;
 /*=== Navigation ===*/
 
 #navbar_second_level {
-background: none repeat scroll 0 0 #B4D474;
-background:-moz-linear-gradient(center bottom , #B4D474 35%, #BFE17B 70%) repeat scroll 0 0 transparent;
+background: none repeat scroll 0 0 #A36A2A;
+background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
 background: -webkit-gradient(
     linear,
     left bottom,
     left top,
-    color-stop(0.35, rgb(180,212,116)),
-    color-stop(0.7, rgb(191,225,123))
+    color-stop(0.35, rgb(153,106,42)),
+    color-stop(0.6, rgb(186,114,45))
 );
-background-image: -o-linear-gradient(top,rgb(180,212,116),rgb(191,225,123));
+background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
 border-bottom:1px solid #222222;
 border-left: 1px solid #222222;
 border-radius: 0 12px 0 0;
@@ -86,6 +86,7 @@ z-index: 9999;
 }
 #navbar_second_level li a {
 border-radius: 10px 10px 0 0;
+color: #E6E6D8;
 display: block;
 margin: -9px -10px 0;
 padding: 10px 0;
@@ -93,6 +94,7 @@ text-decoration: none;
 -moz-border-radius: 10px 10px 0 0;
 -webkit-border-radius: 10px 10px 0 0;
 }
+#navbar_second_level li a:hover {color:#222222;}
 #navbar_second_level li.current {
 background: none repeat scroll 0 0 #FFFFFF;
 border-left: 1px solid #222222;

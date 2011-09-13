@@ -1,5 +1,7 @@
 <h2><%= t('.title') %></h2>
-
+<% if theme !="gray" %>
+<p class="mass_import_info"><span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> <span class="current">2. <%= t('users.import.info.phase_2') %></span> &gt; 3. <%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
+<% end %>
 <% form_for(:user, :url => validate_users_import_path(@school)) do |f| %>
 
 <p><%= t('.column_info') %></p>
@@ -28,4 +30,28 @@
 <p>
   <%= f.submit t('link.user_mass_import.validate') %>
 </p>
+<% end %>
+<% content_for :footer do %>
+<ul>
+  <li class="link_header">
+    <% link_to school_path(@school) do %>
+    <span><%= t('layouts.application.schools') %></span>
+    <% end %>
+  </li>
+  <% session[:organisation].schools.each do |school| %>
+  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+    <%= link_to school.displayName,  school_path(school) %>
+  </li>
+  <% end %>
+</ul>
+<ul>
+<li class="link_header"><%= @school.displayName %></li>
+<li><% link_to users_path(@school) do %>
+  <span><%= t('layouts.application.users') %></span>
+<% end %>
+</li>
+  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
+  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
+  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
+</ul>
 <% end %>

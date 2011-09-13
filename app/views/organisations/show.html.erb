@@ -1,4 +1,5 @@
-<h2><%= t('.title') %></h2>
+<div class="dashboard_box">
+<h3><%= t('.title') %></h3>
 <table>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "description" %></td>
@@ -45,7 +46,19 @@
     <td class="value_td"><%= @organisation.eduOrgHomePageURI %></td>
   </tr>
 </table>
-
+</div>
 <% content_for :right do %>
 <div><%= link_to t('link.edit'), edit_organisation_path %></div>
+<% end %>
+
+<% content_for :footer do %>
+<ul>  
+  <li class="link_header">
+    <%= link_to t('layouts.application.schools'),  schools_path %> 
+  </li>
+  <% session[:organisation].schools.each do |school| %>
+  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+    <%= link_to school.displayName,  school_path(school) %></li>
+  <% end %>
+</ul>
 <% end %>

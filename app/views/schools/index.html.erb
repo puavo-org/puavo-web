@@ -20,3 +20,15 @@
 <% content_for :right do %>
 <div><%= link_to t('link.new_school'), new_school_path %></div>
 <% end %>
+<% content_for :footer do %>
+<ul>  
+  <li class="link_header">
+    <%= link_to t('layouts.application.schools'),  schools_path %>
+  </li>
+  <% session[:organisation].schools.each do |school| %>
+  <li>
+    <%= link_to school.displayName,  school_path(school) %>
+  </li>
+  <% end %>
+</ul>
+<% end %>

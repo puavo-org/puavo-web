@@ -1,20 +1,32 @@
 body {
-    background:url("../../images/bg-fabric-02.png") repeat scroll 0 0 #E4E0D2;
-    font-family: Arial,Helvetica,Sans-Serif;
-    font-size: 12px;
-    line-height: 1.5;
-    padding:0;
-    margin: 0;
+background: none repeat scroll 0 0 #E3E3D9;
+background:-moz-linear-gradient(center bottom , #F2F2F2 35%, #AAAAAA 60%) repeat-x scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.35, rgb(242,242,242)),
+    color-stop(0.6, rgb(170,170,170))
+);
+background-image: -o-linear-gradient(top,rgb(170,170,170),rgb(242,242,242));
+font-family: Arial,Helvetica,Sans-Serif;
+font-size: 0.8em;
+height: 100%;
+line-height: 1.5;
+margin: 0;
+padding: 0;
+position: absolute;
+width: 100%;
 }
 h1 {
     font-size: 3em;
     margin: 10px 0 0.5em;
 }
 .container {
-background: none repeat scroll 0 0 #F9F7E6;
-border: 8px solid #FFFFF0;
+background: none repeat scroll 0 0 #E4E4E4;
+border: 5px solid #3E3E2D;
 border-radius: 10px 10px 0 0;
-box-shadow: 0 15px 15px rgba(68, 68, 68, 0.8);
+box-shadow: 0 5px 10px rgba(68, 68, 68, 0.7);
 margin: 25px auto;
 max-width: 950px;
 min-width: 450px;
@@ -22,18 +34,18 @@ padding: 5px 10px 0;
 width: 90%;
 -moz-border-radius: 10px 10px 0 0;
 -webkit-border-radius: 10px 10px 0 0;
--moz-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.80);
--webkit-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.80);
+-moz-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.70);
+-webkit-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.70);
 }
 .maincontent {
 float: left;
-margin: 1em 0 0;
+margin: 1em 1em 0 0;
 padding: 0 0 10px 20px;
 }
 .container > h1 {
 font-size: 26pt;
 font-variant: small-caps;
-margin: 10px 10px 0;
+margin: 20px 10px 0;
 }
 .logo{
 float: right; 
@@ -71,7 +83,7 @@ margin: 0 0 0 -5px;
 background: none repeat scroll 0 0 #FFFFFF;
 }
 .tools .tool ul li:hover{
-background:none repeat scroll 0 0 #B4D474;
+background:none repeat scroll 0 0 #C0772F;
 }
 .cancel div {
 border: 1px dashed #AD0000;
@@ -82,7 +94,7 @@ padding: 0 0 0 5px;
 -webkit-border-radius: 6px 6px 6px 6px;
 }
 .tools > li:hover, .tools > div:hover {
-background:none repeat scroll 0 0 #B4D474;
+background:none repeat scroll 0 0 #C0772F;
 border-radius:6px 6px 0 0;
 -moz-border-radius:6px 6px 0 0;
 -webkit-border-radius:6px 6px 0 0;
@@ -185,19 +197,18 @@ margin: 0;
 padding: 1px;
 }
 .image {
-border: 2px solid #435266;
-margin: -2px;
+border: medium none;
+margin: 0;
 padding: 0;
 }
-
 .logout a {
-    color: #B50000;
-    padding: 0 0 0 10px;
+color: #B50000;
+padding: 0 0 0 10px;
 }
 table.list td a[href$="edit"], table.list td a[onclick] {
 border-radius: 2px;
-background: none repeat scroll 0 0 #E9EAE1;
-border: 1px solid #C9CFB9;
+background: none repeat scroll 0 0 #F3E2D0;
+border: 1px solid #AAAAAA;
 float: left;
 margin: 0;
 padding: 2px 4px;
@@ -206,7 +217,7 @@ text-align: center;
 -webkit-border-radius: 2px;
 }
 table.list td a[href$="edit"]:hover, table.list td a[onclick]:hover {
-background-color: #B4D474;
+background-color: #BD966A;
 }
 tbody a {
     font-weight: bold;
@@ -219,12 +230,12 @@ text-decoration: none;
 }
 
 a:hover {
-color: #222666;
+color: #352608;
 text-decoration: none;
 }
 
 #footer {
-background: none repeat scroll 0 0 #EEDBBC;
+background:none repeat scroll 0 0 #F4F4F4;
 border-radius: 10px 10px 10px 10px;
 box-shadow: 0 1px 3px #222222;
 margin: 10px 0 0;
@@ -264,6 +275,10 @@ width: 550px;
 -moz-box-shadow: 0 4px 8px #222222;
 -webkit-box-shadow: 0 4px 8px #222222;
 width: 800px;
+}
+.login_wrap {
+margin: 0 auto;
+padding: 5em 0 0;
 }
 .login_container {
 background: none repeat scroll 0 0 #E5E2DE;
@@ -344,7 +359,7 @@ text-shadow: 0 1px 3px #CCCCCD;
     text-align: left;
 }
 .user_box tr{
-border-bottom: 1px solid #80C762;
+border-bottom: 1px solid #AAAAAA;
 display: block;
 width: 400px;
 }
@@ -362,14 +377,25 @@ margin-right: 1em;
 .list tr:nth-child(even) {background:none repeat scroll 0 0 #FAFAFA;}
 .list tr:nth-child(odd) {background: none repeat scroll 0 0 #F1F1F1;}
 .list td {
-    border-bottom: 1px solid #94AA29;
+border-bottom: 1px solid #AAAAAA;
 }
 .list > tbody > tr th {
-background: none repeat scroll 0 0 #B4D474;
+background: none repeat scroll 0 0 #A36A2A;
+background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.35, rgb(153,106,42)),
+    color-stop(0.6, rgb(186,114,45))
+);
+background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
 border-bottom: 1px solid #222222;
+color: #E6E6D8;
 font-size: 12pt;
 padding-bottom: 10px;
 padding-top: 10px;
+text-shadow: 0 1px 0 #3D3828;
 }
 .label_error {
     color: #FF0000;
@@ -424,19 +450,30 @@ margin:5px 15px 15px 0;
 .dashboard_box h4 {
 border-bottom: 2px solid;
 clear: both;
-margin: 0 0 5px 5px;
-padding: 5px 0 5px 0;
+margin: 0 0 5px;
+padding: 5px 0 5px 5px;
 }
 .dashboard_box h3, .show_user h3 {
-background: none repeat scroll 0 0 #B4D474;
+background: none repeat scroll 0 0 #A36A2A;
+background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.35, rgb(153,106,42)),
+    color-stop(0.6, rgb(186,114,45))
+);
+background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
 border-radius: 6px 6px 0 0;
+color: #E6E6D8;
 margin: 0;
 padding: 10px;
+text-shadow: 0 1px 0 #3D3828;
 -moz-border-radius: 6px 6px 0 0;
 -webkit-border-radius: 6px 6px 0 0;
 }
 .dashboard_box .row:not(:first-of-type) {
-border-top: 1px solid #80C762;
+border-top:1px solid #AAAAAA;
 }
 .dashboard_box .row {
 margin: 0;
@@ -467,15 +504,14 @@ float:left;
 margin: 0 2px 0 0;
 }
 .dashboard .school_admins a, .dashboard .other_admins a{
-background: none repeat scroll 0 0 #E9EAE1;
-border: 1px solid #C9CFB9;
+background: none repeat scroll 0 0 #F3E2D0;
+border: 1px solid #AAAAAA;
 border-radius: 2px 2px 2px 2px;
 float: right;
 font-weight: bold;
 margin: -3px 0 0;
 padding: 2px 4px;
 text-align: center;
-width:10%;
 -moz-border-radius: 2px 2px 2px 2px;
 -webkit-border-radius: 2px 2px 2px 2px;
 }
@@ -484,7 +520,7 @@ float:none;
 width:85%;
 }
 .dashboard .school_admins a:hover, .dashboard .other_admins a:hover {
-background-color: #B4D474;
+background-color: #BD966A;
 }
 #admin_users_list{width:100%;}
 .list .column_1 {
@@ -524,10 +560,19 @@ label.checkbox {
     font-weight: normal;
 }
 .search_result td {
-border-bottom: 1px solid #C3F7A6;
+border-bottom: 1px solid #AAAAAA;
 }
 .search_result th {
-background: none repeat scroll 0 0 #B4D474;
+background: none repeat scroll 0 0 #A36A2A;
+background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.35, rgb(153,106,42)),
+    color-stop(0.6, rgb(186,114,45))
+);
+background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
 }
 .maincontent h1 {
 border-bottom: 2px solid #435266;
