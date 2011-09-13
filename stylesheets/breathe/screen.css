@@ -147,15 +147,19 @@ background: none repeat scroll 0 0 #FFF6BF;
 border: 1px solid #FFD324;
 color: #514721;
 font-size: 14pt;
-margin-left: 20%;
 padding: 3em 6em;
 position: absolute;
 text-align: center;
+top: 2em;
+left: 25%;
+right: 25%;
 }
 .login_content .notice, .login_content .message_notice {
+left:0;
 margin: 0;
 padding: 1em;
 position: relative;
+top:0;
 }
 .message_success {background:#E6EFC2;color:#264409;border: 1px solid #C6D880;font-size: 14pt;text-align: center;}
 .message_error a {color:#8a1f11;}
