@@ -16,7 +16,16 @@ background: #f7efe7;
 /*=== Navigation ===*/
 
 #navbar_second_level {
-background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52bf55;
+background: none repeat scroll 0 0 #B4D474;
+background:-moz-linear-gradient(center bottom , #B4D474 35%, #BFE17B 70%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.35, rgb(180,212,116)),
+    color-stop(0.7, rgb(191,225,123))
+);
+background-image: -o-linear-gradient(top,rgb(180,212,116),rgb(191,225,123));
 border-bottom:1px solid #222222;
 border-left: 1px solid #222222;
 border-radius: 0 12px 0 0;
@@ -25,13 +34,14 @@ border-top: 1px solid #222222;
 clear: both;
 color: #4A4D4A;
 float: left;
-font-size: 11px;
+font-size: 8pt;
 font-weight: bold;
 height: 40px;
 margin: 0 0 -5px;
 padding: 0;
 text-transform: uppercase;
 width: 100%;
+z-index: 9999;
 -moz-border-radius: 0 12px 0 0;
 -webkit-border-radius: 0 12px 0 0;
 }

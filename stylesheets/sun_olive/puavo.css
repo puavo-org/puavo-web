@@ -11,13 +11,13 @@ h1 {
     margin: 10px 0 0.5em;
 }
 .container {
-background: url("../../images/bg-fabric-01.png") repeat scroll 0 0 #FFFFF0;
+background: none repeat scroll 0 0 #F9F7E6;
 border: 8px solid #FFFFF0;
 border-radius: 10px 10px 0 0;
 box-shadow: 0 15px 15px rgba(68, 68, 68, 0.8);
 margin: 25px auto;
 max-width: 950px;
-min-width: 500px;
+min-width: 450px;
 padding: 5px 10px 0;
 width: 90%;
 -moz-border-radius: 10px 10px 0 0;
@@ -29,18 +29,6 @@ width: 90%;
 float: left;
 margin: 1em 0 0;
 padding: 0 0 10px 20px;
-}
-.maincontent .dashboard{
-margin: 5px 0 0;
-}
-.dashboard_box.users {
-clear: both;
-}
-
-.dashboard_box.school_image {
-border: 0 none;
-float: left;
-margin: 5px 0 15px;
 }
 .container > h1 {
 font-size: 26pt;
@@ -78,7 +66,7 @@ padding: 0 0 0 5px;
 -webkit-border-radius: 6px 6px 6px 6px;
 }
 .tools div:hover {
-background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52bf55;
+background:none repeat scroll 0 0 #B4D474;
 border-radius:6px;
 -moz-border-radius:6px;
 -webkit-border-radius:6px;
@@ -89,6 +77,7 @@ height: 24px;
 margin: 0;
 padding: 15px 10px 5px 35px;
 }
+.tools div a:hover{color:#222;}
 .cancel div a {
 display: block;
 height: 24px;
@@ -99,15 +88,6 @@ text-align: center;
 .cancel div a:hover {
 font-size: 12pt;
 font-weight: bold;
-}
-.tools h1 {
-background: url("../../images/tools40.png") no-repeat scroll left 5px transparent;
-border-bottom: 2px solid #444444;
-font-size: 30px;
-line-height: 2;
-margin: -8px 0 0.5em;
-min-width: 190px;
-padding: 0 0 0 1.5em;
 }
 .tools a, .cancel a {
 font-weight: normal;
@@ -131,6 +111,7 @@ margin:0;
 padding: 0;
 width:460px;
 }
+
 .tools div a[href$="edit"] {
     background: url("../../images/iconset.png") no-repeat scroll left 10px transparent;
 }
@@ -180,15 +161,15 @@ padding: 1px;
 }
 .image {
 border: 2px solid #435266;
-margin: 0 10px 0 0;
-padding: 1px;
+margin: -2px;
+padding: 0;
 }
 
 .logout a {
     color: #B50000;
     padding: 0 0 0 10px;
 }
-table.list td a[href$="edit"], table.list td a[onclick]{
+table.list td a[href$="edit"], table.list td a[onclick] {
 border-radius: 2px;
 background: none repeat scroll 0 0 #E9EAE1;
 border: 1px solid #C9CFB9;
@@ -200,28 +181,25 @@ text-align: center;
 -webkit-border-radius: 2px;
 }
 table.list td a[href$="edit"]:hover, table.list td a[onclick]:hover {
-background-color: #52BF55;
-color: #222;
+background-color: #B4D474;
 }
 tbody a {
     font-weight: bold;
     text-decoration: none;
 }
 tbody th {
-    font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
+font-size: 9pt;
+font-weight: bold;
+text-decoration: none;
 }
-tbody {
-    background: none repeat scroll 0 0 #FFFFFF;
-}
+
 a:hover {
-    color: #A43210;
-    text-decoration: none;
+color: #222666;
+text-decoration: none;
 }
 
 #footer {
-background:url("../../images/bg-fabric-orange-metal.png") repeat scroll 0 0 #F2CF93;
+background: none repeat scroll 0 0 #EEDBBC;
 border-radius: 10px 10px 10px 10px;
 box-shadow: 0 1px 3px #222222;
 margin: 10px 0 0;
@@ -245,7 +223,7 @@ text-align: right;
 }
 #footer li {
 display: block;
-font-size: 13px;
+font-size: 10pt;
 }
 .link_header {
 border-bottom: 1px dashed #555555;
@@ -311,11 +289,11 @@ color:#FF6666;
 font-size:12pt;
 }
 .required::after {
-    color: #FF6666;
-    content:"*";
-    font-size: 22pt;
-    margin:2px 0 0 10px;
-    position:absolute;
+color: #FF6666;
+content:"*";
+font-size: 22pt;
+margin:2px 0 0 10px;
+position:absolute;
 }
 .required_role{
 color: #FF6666;
@@ -340,50 +318,92 @@ text-shadow: 0 1px 3px #CCCCCD;
 .label_td {
     text-align: left;
 }
+.user_box tr{
+border-bottom: 1px solid #80C762;
+display: block;
+width: 400px;
+}
 .label_td.view {
-    border-bottom: 1px dashed gray;
-    border-right: 1px dashed gray;
-    width: 160px;
+width: 135px;
 }
-.value_td {
-    border-bottom: 1px dashed gray;
+.user_box .value_td{
+
 }
-.list {
-    border-spacing: 0;
+table.list {
+border-spacing: 0;
+margin-right: 1em;
 }
+.list tr:hover {background: #F9F7E6 !important;}
+.list tr:nth-child(even) {background:none repeat scroll 0 0 #FAFAFA;}
+.list tr:nth-child(odd) {background: none repeat scroll 0 0 #F1F1F1;}
 .list td {
     border-bottom: 1px solid #94AA29;
 }
-.list th {
-background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52BF55;
+.list > tbody > tr th {
+background: none repeat scroll 0 0 #B4D474;
+border-bottom: 1px solid #222222;
+font-size: 12pt;
+padding-bottom: 10px;
+padding-top: 10px;
 }
 .label_error {
-    color: red;
+    color: #FF0000;
 }
 .field_error {
-    color: gray;
+    color: #CCCCCC;
 }
 .field_value_error {
-    color: red;
+    color: #FF0000;
 }
-.dashboard > * {
-margin:10px 10px 10px 0;
+.dashboard > *, .show_user > * {
+margin:10px 15px 10px 0;
 }
-.dashboard_box {
+.dashboard_box, .user_box {
+background: none repeat scroll 0 0 #FBFBFB;
+background:-moz-linear-gradient(center bottom , #FBFBFB 20%, #FAFAFA 70%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.20, rgb(251,251,251)),
+    color-stop(0.7, rgb(250,250,250))
+);
+background-image: -o-linear-gradient(top,rgb(251,251,251),rgb(250,250,250));
+border-radius: 6px 6px 6px 6px;
 float: left;
 font-size: 1.1em;
 margin-top: 5px;
-min-width: 200px;
-padding: 0;
+overflow: hidden;
+padding: 0 0 5px;
+width: 400px;
+-moz-border-radius: 6px 6px 6px 6px;
+-webkit-border-radius: 6px 6px 6px 6px;
+}
+
+.maincontent .dashboard{
+margin: 5px 0 0;
+}
+.dashboard_box.users {
+clear: both
+}
+
+.dashboard_box.school_image {
+background: none repeat scroll 0 0 transparent;
+border: 0 none;
+border-radius: 0 0 0 0;
+float: left;
+margin:5px 15px 15px 0;
+-moz-border-radius: 0 0 0 0;
+-webkit-border-radius: 0 0 0 0;
 }
 .dashboard_box h4 {
 border-bottom: 2px solid;
-    clear: both;
-    margin: 0 0 5px 10px;
-    padding: 5px 0 5px 0;
+clear: both;
+margin: 0 0 5px 5px;
+padding: 5px 0 5px 0;
 }
-.dashboard_box h3 {
-background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52bf55;
+.dashboard_box h3, .show_user h3 {
+background: none repeat scroll 0 0 #B4D474;
 border-radius: 6px 6px 0 0;
 margin: 0;
 padding: 10px;
@@ -391,18 +411,57 @@ padding: 10px;
 -webkit-border-radius: 6px 6px 0 0;
 }
 .dashboard_box .row:not(:first-of-type) {
-border-top: 1px solid #94AA29;
+border-top: 1px solid #80C762;
 }
 .dashboard_box .row {
-margin: 0 0 0 10px;
-    padding: 5px 0 5px 0;
+margin: 0;
+padding: 5px 10px;
+}
+#this_school_admin_users .row, #other_admin_users .row{
+margin: 2px 0 2px 0;
+padding: 8px 10px 7px;
 }
 .dashboard_box.list .row {
-    clear: both;
+clear: both;
 }
-.row a {
-    font-weight: bold;
+.row > span{
+float:left;
+padding:5px 0 5px;
+word-wrap: break-word;
+width: 33.3%;
 }
+.admins_headers span{
+font-size: 10pt;
+font-weight: bold;
+}
+.row a, .row p {
+font-weight: bold;
+}
+.dashboard_box p{
+float:left;
+margin: 0 2px 0 0;
+}
+.dashboard .school_admins a, .dashboard .other_admins a{
+background: none repeat scroll 0 0 #E9EAE1;
+border: 1px solid #C9CFB9;
+border-radius: 2px 2px 2px 2px;
+float: right;
+font-weight: bold;
+margin: -3px 0 0;
+padding: 2px 4px;
+text-align: center;
+width:10%;
+-moz-border-radius: 2px 2px 2px 2px;
+-webkit-border-radius: 2px 2px 2px 2px;
+}
+.row .admin_display_name{
+float:none;
+width:85%;
+}
+.dashboard .school_admins a:hover, .dashboard .other_admins a:hover {
+background-color: #B4D474;
+}
+#admin_users_list{width:100%;}
 .list .column_1 {
     display: inline;
 }
@@ -443,7 +502,7 @@ label.checkbox {
 border-bottom: 1px solid #C3F7A6;
 }
 .search_result th {
-background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52BF55;
+background: none repeat scroll 0 0 #B4D474;
 }
 .maincontent h1 {
 border-bottom: 2px solid #435266;
