@@ -51,11 +51,27 @@ box-shadow: 0 2px 6px #222;
 color:#FF6666;
 font-size:12pt;
 }
-.tools div {
+.tools > li, .tools > div {
 border-bottom: 1px dashed #ECEADA;
 float: left;
 margin: 5px 0;
 padding: 0 0 0 5px;
+}
+.tools .tool ul{
+display: none;
+}
+.tools .tool:hover ul{
+border: 1px solid #AAAAAA;
+display: block;
+padding: 0;
+position: absolute;
+margin: 0 0 0 -5px;
+}
+.tools .tool ul li{
+background: none repeat scroll 0 0 #FFFFFF;
+}
+.tools .tool ul li:hover{
+background:none repeat scroll 0 0 #B4D474;
 }
 .cancel div {
 border: 1px dashed #AD0000;
@@ -65,19 +81,20 @@ padding: 0 0 0 5px;
 -moz-border-radius: 6px 6px 6px 6px;
 -webkit-border-radius: 6px 6px 6px 6px;
 }
-.tools div:hover {
+.tools > li:hover, .tools > div:hover {
 background:none repeat scroll 0 0 #B4D474;
-border-radius:6px;
--moz-border-radius:6px;
--webkit-border-radius:6px;
+border-radius:6px 6px 0 0;
+-moz-border-radius:6px 6px 0 0;
+-webkit-border-radius:6px 6px 0 0;
 }
-.tools div a{
+.tools li a, .tool span, .tools div a{
 display: block;
 height: 24px;
+line-height: 1;
 margin: 0;
 padding: 15px 10px 5px 35px;
 }
-.tools div a:hover{color:#222;}
+.tools a:hover{color:#222;}
 .cancel div a {
 display: block;
 height: 24px;
@@ -111,48 +128,56 @@ margin:0;
 padding: 0;
 width:460px;
 }
-
-.tools div a[href$="edit"] {
-    background: url("../../images/iconset.png") no-repeat scroll left 10px transparent;
+.tool span img{
+margin: 0 0 0 5px;
 }
-.tools div a[href$="edit"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll left -30px transparent;
+.tools a[href$="edit"]{
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left 10px transparent;
 }
-.tools div a[onclick] {
-    background: url("../../images/iconset.png") no-repeat scroll left -70px transparent;
+.tools a[href$="edit"]:hover {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -30px transparent;
 }
-.tools div a[onclick]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll left -110px transparent;
+.tools a[onclick] {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -70px transparent;
 }
-.tools div a[href$="select_school"], .wrap .tools div a[href$="rename_groups/new"] {
-background: url("../../images/iconset.png") no-repeat scroll left -150px transparent;
+.tools a[onclick]:hover {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -110px transparent;
 }
-.tools div a[href$="select_school"]:hover, .wrap .tools div a[href$="rename_groups/new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll left -190px transparent;
+.tools a[href$="select_school"], .wrap .tools a[href$="rename_groups/new"] {
+background: url("../../images/iconset-breathe.png") no-repeat scroll left -150px transparent;
+}
+.tools a[href$="select_school"]:hover, .wrap .tools a[href$="rename_groups/new"]:hover {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -190px transparent;
 }
 .tools .videolink {
-background: url("../../images/iconset.png") no-repeat scroll left -235px transparent;
+background: url("../../images/iconset-breathe.png") no-repeat scroll left -235px transparent;
 }
 .tools .videolink:hover {
-background: url("../../images/iconset.png") no-repeat scroll left -275px transparent;
+background: url("../../images/iconset-breathe.png") no-repeat scroll left -275px transparent;
 }
 .tools a.show {
-    background: url("../../images/iconset.png") no-repeat scroll left -310px transparent;
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -310px transparent;
 }
 .tools a.show:hover {
-    background: url("../../images/iconset.png") no-repeat scroll left -350px transparent;
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -350px transparent;
 }
-.tools div a[href$="users/new"], .tools div a[href$="external_services/new"], .tools div a[href$="schools/new"], .tools div a[href$="roles/new"], .tools div a[href$="groups/new"] {
-    background: url("../../images/iconset.png") no-repeat scroll left -390px transparent;
+.tools a[href$="users/new"], .tools a[href$="external_services/new"], .tools a[href$="schools/new"], .tools a[href$="roles/new"], .tools a[href$="groups/new"] {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -390px transparent;
 }
-.tools div a[href$="users/new"]:hover, .tools div a[href$="external_services/new"]:hover, .tools div a[href$="schools/new"]:hover, .tools div a[href$="roles/new"]:hover, .tools div a[href$="groups/new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll left -430px transparent;
+.tools a[href$="users/new"]:hover, .tools a[href$="external_services/new"]:hover, .tools a[href$="schools/new"]:hover, .tools a[href$="roles/new"]:hover, .tools a[href$="groups/new"]:hover {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -430px transparent;
 }
-.tools div a[href$="import/new"] {
-    background: url("../../images/iconset.png") no-repeat scroll left -470px transparent;
+.tools a[href$="import/new"] {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -470px transparent;
 }
-.tools div a[href$="import/new"]:hover {
-    background: url("../../images/iconset.png") no-repeat scroll left -510px transparent;
+.tools a[href$="import/new"]:hover {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -510px transparent;
+}
+.tool span {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -630px transparent;
+}
+.tool span:hover {
+    background: url("../../images/iconset-breathe.png") no-repeat scroll left -670px transparent;
 }
 .maincontent table tr td .image {
 border: 2px solid #435266;
@@ -526,6 +551,20 @@ overflow: auto;
 width: 100%;
 -moz-border-radius:0 0 0 10px;
 -webkit-border-radius:0 0 0 10px;
+}
+.mass_import_info{
+font-family:  'Helvetica Neue',Arial,Helvetica,sans-serif;
+font-size: 10pt;
+}
+.mass_import_info span.current{
+font-size: 12pt;
+font-weight: bold;
+}
+.mass_import_info span.done{
+color: #CCCCCC;
+}
+.mass_import_form{
+width:460px;
 }
 #jquery-live-search{
 position: fixed !important;
