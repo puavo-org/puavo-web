@@ -22,6 +22,7 @@ en:
       search_placeholder: Search
       links: Links
   link:
+    more: More
     edit: Edit
     back: Back
     cancel: Cancel
@@ -189,7 +190,8 @@ en:
       admins: Admins
     admins:
       this_school_admin_users: "{{school_name}} admin users"
-      other_admin_users: School management access rights can be added to the following users
+      other_admin_users: Add management access rights
+      school_admins: School admins
     show:
       contacts: Contacts
       devices: Devices
@@ -295,7 +297,7 @@ en:
         puavoAllowRemoteAccess_true: "Yes"
         puavoAllowRemoteAccess_false: "No"
         puavoAllowRemoteAccess_: "No"
-        puavoEduPersonReverseDisplayName: Reverse name
+        puavoEduPersonReverseDisplayName: Lastname Firstname
         puavoEduPersonPersonnelNumber: Personel Number
         image: Image
       group:
