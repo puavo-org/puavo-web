@@ -2,16 +2,20 @@ class SchoolsController < ApplicationController
   # GET /schools
   # GET /schools.xml
   def index
-    @schools = School.all_with_permissions
+    if request.format == 'application/json'
+      @schools = School.all.sort
+    else
+      @schools = School.all_with_permissions
+    end
 
     respond_to do |format|
       if @schools.count < 2  && !organisation_owner?
         format.html { redirect_to( school_path(@schools.first) ) }
+        format.json  { render :json => @schools }
       else
         format.html # index.html.erb
+        format.json  { render :json => @schools }
       end
-      format.xml  { render :xml => @schools }
-      format.json  { render :json => @schools }
     end
   end
 
