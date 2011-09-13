@@ -1,8 +1,8 @@
 #top-menu {
 float: left;
-font-size: 12px;
+font-size: 9pt;
 font-weight: bold;
-line-height: 35px;
+line-height: 3em;
 list-style: none outside none;
 margin: 0;
 padding: 0 5px 0 10px;
@@ -11,7 +11,7 @@ z-index: 1000;
 }
 #nav1 ul {
 display: inline-block;
-font-size: 16px;
+font-size: 12pt;
 font-weight: bold;
 line-height: 50px;
 list-style: none outside none;
@@ -20,15 +20,14 @@ padding: 0;
 text-align: center;
 text-transform: uppercase;
 width: 100%;
-z-index: 99;
 }
 #nav1 ul > li {
-background:url("../../images/bg-fabric-orange-metal.png") repeat scroll 0 0 #F2CF93;
+background:none repeat scroll 0 27px #94AE5F;
 border-radius: 20px 20px 0 0;
 float: left;
 margin: 0 5px 0 0;
 padding: 0;
-position: relative;
+
 width: 130px;
 -moz-border-radius:20px 20px 0 0;
 -webkit-border-radius:20px 20px 0 0;
@@ -37,7 +36,7 @@ width: 130px;
 display:block;
 }
 #top-menu > li {
-background:url("../../images/bg-fabric-orange-metal.png") repeat scroll 0 0 #F2CF93;
+background: none repeat scroll 0 0 #EEDBBC;
 float: left;
 margin: 0 5px 0 0;
 padding: 0 5px 0 15px;
@@ -59,11 +58,20 @@ border-bottom: 1px solid #222;
 margin: 0;
 }
 #nav1 ul > li:hover:not(.current_page_item){
-background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52bf55;
+background: none repeat scroll 0 0 #BFE17B;
+background:-moz-linear-gradient(center bottom , #BFE17B 35%, #B4D474 70%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.35, rgb(191,225,123)),
+    color-stop(0.7, rgb(180,212,116))
+);
+background-image: -o-linear-gradient(top,rgb(191,225,123),rgb(180,212,116));
 height:51px;
 }
 #top-menu li ul, #nav1 ul li ul {
-background: url("../../images/bg-fabric-orange-metal.png") repeat scroll left 35px #F2CF93;
+background: none repeat scroll 0 0 #EEDBBC;
 border-radius: 0 0 20px 20px;
 color: #0395CC;
 display: none;
@@ -82,7 +90,7 @@ width: 130px;
 }
 #top-menu li ul {
 left: -5px;
-margin: 35px 0 0;
+margin: 36px 0 0;
 max-height: 500px;
 overflow: auto;
 padding: 0 10px 0 0;
@@ -129,7 +137,7 @@ padding-bottom: 10px;
 }
 
 .topNavContainer {
-background: url("../../images/bg-fabric-orange-metal.png") repeat scroll 0 0 #F2CF93;
+background: none repeat scroll 0 0 #EEDBBC;
 box-shadow: 2px 4px 6px rgba(68, 68, 68, 0.80);
 height: auto;
 margin: 0;
@@ -146,9 +154,9 @@ background: url("../../images/magnifier.png") no-repeat scroll 95% 3px #FFFFFF;
 border: 1px solid #CCCAAA;
 border-radius: 14px 14px 14px 14px;
 float: left;
-margin: 5px 10px 0 20px !important;
+margin: 5px 10px 0 10px !important;
 padding: 5px 30px 5px 10px;
-width: 150px;
+width: 13em;
 -moz-border-radius: 14px 14px 14px 14px;
 -webkit-border-radius: 14px 14px 14px 14px;
 }
@@ -190,13 +198,26 @@ padding: 2px 10px;
 background: none repeat scroll 0 0 #DA0000;
 }
 #nav1 ul .current_page_item {
-background:url("../../images/bg-fabric-dark-green-metal.png") repeat scroll 0 0 #52bf55;
+background: none repeat scroll 0 0 #88D468;
+background:-moz-linear-gradient(center bottom , #BFE17B 35%, #B4D474 70%) repeat scroll 0 0 transparent;
+background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.35, rgb(191,225,123)),
+    color-stop(0.7, rgb(180,212,116))
+);
+background-image: -o-linear-gradient(top,rgb(191,225,123),rgb(180,212,116));
 border-left: 1px solid #222222;
 border-right: 1px solid #222222;
 border-top: 1px solid #222222;
 height: 50px;
+position: relative;
 }
-
+#nav1 ul .current_page_item a{
+color: #FFFFF0;
+text-shadow: 0 0 5px #99AAA6;
+}
 ul.menu {
 list-style: none outside none;
 margin: 0;
