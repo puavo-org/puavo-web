@@ -68,6 +68,7 @@ border-bottom: 1px dashed #ECEADA;
 float: left;
 margin: 5px 0;
 padding: 0 0 0 5px;
+position: relative;
 }
 .tools .tool ul{
 display: none;
@@ -78,9 +79,12 @@ display: block;
 padding: 0;
 position: absolute;
 margin: 0 0 0 -5px;
+right: 0;
 }
 .tools .tool ul li{
 background: none repeat scroll 0 0 #FFFFFF;
+min-width: 150px;
+width: auto !important;
 }
 .tools .tool ul li:hover{
 background:none repeat scroll 0 0 #C0772F;
@@ -105,6 +109,7 @@ height: 24px;
 line-height: 1;
 margin: 0;
 padding: 15px 10px 5px 35px;
+white-space: nowrap;
 }
 .tools a:hover{color:#222;}
 .cancel div a {
