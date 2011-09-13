@@ -203,6 +203,9 @@ fi:
       users: Käyttäjät
       statistics: Tilastot
       admin_users: Ylläpitäjät
+      name: Nimi
+      phone: Puhelinnumero
+      mail: Sähköpostiosoite
   password:
     edit:
       title: Vaihda toisen käyttäjän salasana

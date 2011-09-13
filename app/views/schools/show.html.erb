@@ -82,7 +82,7 @@
 <div id="admin_users_list" class="dashboard_box list users">
 <h3><%= t('.admin_users') %></h3>
 
-<div class="row admins_headers"><span>Nimi</span><span>Puhelinnumero</span><span>Sähköpostiosoite</span></div>
+<div class="row admins_headers"><span><%= t('.name') %></span><span><%= t('.phone') %></span><span><%= t('.mail') %></span></div>
 <% @school.user_school_admins.each do |user| %>
 <% if user.displayName %>
 <div class="row">

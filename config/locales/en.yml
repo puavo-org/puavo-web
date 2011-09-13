@@ -204,6 +204,9 @@ en:
       users: Users
       statistics: Statistics
       admin_users: Admin users
+      name: Name
+      phone: Phone number
+      mail: E-mail
   password:
     edit:
       title: Change password for other user
