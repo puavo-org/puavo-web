@@ -35,9 +35,29 @@
 </p>
 
 <% content_for :right do %>
+<% if theme=="gray" %>
 <div><%= link_to t('link.edit'), edit_role_path(@school, @role) %></div>
 <div><%= link_to t('link.new_role'), new_role_path %></div>
 <div><%= link_to t('.change_school'), select_school_role_path %></div>
+<% end %>
+<% if theme!="gray" %>
+<ul class="tools">
+<li>
+<%= link_to t('link.edit'), edit_role_path(@school, @role) %>
+</li>
+<li class="tool">
+<span><%= t('link.more') %><img src="/images/show-more.png"></span>
+<ul>
+<li>
+<%= link_to t('link.new_role'), new_role_path %>
+</li>
+<li>
+<%= link_to t('.change_school'), select_school_role_path %>
+</li>
+</ul>
+</li>
+</ul>
+<% end %> 
 <% end %>
 <% content_for :footer do %>
 <ul>

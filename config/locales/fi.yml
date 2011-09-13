@@ -21,6 +21,7 @@ fi:
       printers: Tulostimet
       search_placeholder: Hae
       links: Linkit
+      footer_info: Kirjoita tänne esimerkiksi ©-info
   link:
     more: Lisää
     edit: Muokkaa
@@ -138,6 +139,11 @@ fi:
       select_new_role: Valitse uusi rooli
       submit: Vaihda koulu
     import:
+      info:
+        phase_1: Syötä käyttäjätiedot
+        phase_2: Määrittele käyttäjätiedot
+        phase_3: Täydennä käyttäjätiedot
+        phase_4: Tarkista käyttäjätiedot ja lisää käyttäjät
       new:
         title: Lisää käyttäjiä massa-ajona
         help: "Syötä käyttäjätieto alla olevaan tekstikenttään"

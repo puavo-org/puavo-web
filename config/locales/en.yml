@@ -21,6 +21,7 @@ en:
       printers: Printers
       search_placeholder: Search
       links: Links
+      footer_info: Place here for example ©opyright info
   link:
     more: More
     edit: Edit
@@ -139,6 +140,11 @@ en:
       select_new_role: Select new role
       submit: Change school
     import:
+      info:
+        phase_1: Insert user data
+        phase_2: Define user data
+        phase_3: Complete user data
+        phase_4: Preview data and add users
       new:
         title: User mass import
         help: "Enter your user data in the text box"

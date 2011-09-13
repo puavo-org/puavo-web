@@ -72,14 +72,14 @@
 	    </li>
     </ul> <!-- top-menu -->
     <ul id="top-menu-right" class="menu">
-        <li><span><%= t('.logged_in_as') %></span></li>
+        <li><span><%= t('.logged_in_as') %>:</span></li>
 	    <li><a href="#"><%= current_user.displayName %></a></li>
 	    <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
     </ul>
      <% end %>    
    </div>
 </div><!-- topNavContainer -->
-<% end %> <!-- # if {#theme} == sun_olive -->
+<% end %>
 <div class="container">
 <% if theme=="gray"%>
   <ul id="top-menu" class="menu">
@@ -128,7 +128,7 @@
       <% end %>
     </ul> <!-- top-menu -->
     <hr class="space" />
-<% end %> <!-- # if {#theme} != sun_olive -->
+<% end %>
     <% if session[:organisation] %>
     <% if @school && !@school.id.nil? && controller_name != 'password' %>
     <h1><%= @school.displayName %></h1>
@@ -172,7 +172,7 @@
   <div class="wrap">
   <% if theme!="gray" %>
     <% if current_user %>
-      <div class="tools">
+    <div class="tools">
         <%= yield :right %>
       </div>
       <% end %>
@@ -198,7 +198,7 @@
     <hr class="space" />
     </div> <!-- wrap -->
     
-    <% if theme!="gray" %>
+   <% if theme!="gray" %>
     <div id="footer">
      <% if current_user %>
      <% if organisation_owner? %>
@@ -217,13 +217,17 @@
         <% end %>
         <% end %>
       <%= yield :footer %>
+      <% if Puavo::EXTERNAL_LINKS %>
       <ul>
 		    <li class="link_header"><%= t('.links')%>:</li>
-		    <li><a href="#" title="External links here">External links here</a></li>
+		    <% Puavo::EXTERNAL_LINKS["links"].each do |link_entry| %>
+		    <li><%= link_to link_entry["name"], link_entry["url"], :title => link_entry["name"] %></li>
+		    <% end %>
       </ul>
-     <p>Place here for example &copy;opyright info</p>
+      <% end %>
+     <p><%= t('.footer_info')%></p>
     </div><!-- footer -->
-    <% end %>
+   <% end %>
   </div> <!-- container -->
 
 </body>

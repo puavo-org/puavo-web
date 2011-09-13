@@ -40,9 +40,29 @@
 </p>
 
 <% content_for :right do %>
+<% if theme=="gray" %>
 <div><%= link_to t('link.edit'), edit_group_path(@school, @group) %></div>
 <div><%= link_to t('link.destroy'), group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete %></div>
 <div><%= link_to t('link.new_group'), new_group_path(@school) %></div>
+<% end %>
+<% if theme!="gray" %>
+<ul class="tools">
+<li>
+<%= link_to t('link.edit'), edit_group_path(@school, @group) %>
+</li>
+<li class="tool">
+<span><%= t('link.more') %><img src="/images/show-more.png"></span>
+<ul>
+<li>
+<%= link_to t('link.new_group'), new_group_path(@school) %>
+</li>
+<li>
+<%= link_to t('link.destroy'), group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete %>
+</li>
+</ul>
+</li>
+</ul>
+<% end %> 
 <% end %>
 
 <% content_for :footer do %>

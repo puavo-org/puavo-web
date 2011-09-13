@@ -1,3 +1,4 @@
+<% if theme=="gray" %>
 <h1>School Admins</h1>
 
 <p>
@@ -21,7 +22,36 @@
     <% end %>
   </span>
 </p>
+<% end %>
 
+<% else if theme!="gray" %>
+<h1><%= t('.school_admins') %></h1>
+<div class="dashboard">
+<div class="dashboard_box school_admins">
+  <h3><%= t('.this_school_admin_users', :school_name => @school.displayName) %></h3>
+
+  <span id="this_school_admin_users">
+    <% Array(@school_admins).each do |u| %>
+    <div class="row">
+    <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
+    <%= link_to t('link.remove'), remove_school_admin_school_path(@school, u), :method => :put, :id => "remove_user_#{u.id}" %>
+    </div>
+    <% end %>
+  </span>
+</div>
+<div class="dashboard_box other_admins">
+  <h3><%= t('.other_admin_users') %>:</h3>
+  <span id="other_admin_users">
+    <% Array(@allowed_school_admins).each do |u| %>
+    <div class="row">
+    <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
+    <%= link_to t('link.add'), add_school_admin_school_path(@school, u), :method => :put, :id => "add_user_#{u.id}" %>
+    </div>
+    <% end %>
+    </span>
+</div>
+</div>
+<% end %>
 <% content_for :footer do %>
 <ul>
   <li class="link_header">

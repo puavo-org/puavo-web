@@ -4,11 +4,11 @@
 <% end %>
 
 <h2><%= t('.title') %></h2>
-
+<% if theme !="gray" %>
+<p class="mass_import_info"><span class="current">1. <%= t('users.import.info.phase_1') %> </span> &gt; 2. <%= t('users.import.info.phase_2') %> &gt; 3.<%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
+<% end %>
 <% form_for(:users_import, :url => refine_users_import_path(@school), :html => { :method => :post } ) do %>
-<p>
-  <%= t('.help') %>
-  <p>
+
     <p>
       <%= t('.example_title')%>:
       <pre>
@@ -16,6 +16,9 @@
       </pre>
     </p>
     <p><%= t('.hint') %></p>
+    <p>
+  <%= t('.help') %>:
+  </p>
     <%= text_area_tag "raw_users", nil, :rows => 20, :cols => 100 %>
   </p>
 
