@@ -21,7 +21,6 @@ fi:
       printers: Tulostimet
       search_placeholder: Hae
       links: Linkit
-      footer_info: Kirjoita tänne esimerkiksi ©-info
   link:
     more: Lisää
     edit: Muokkaa
