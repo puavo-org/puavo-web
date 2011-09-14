@@ -145,7 +145,7 @@ Feature: Manage schools
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     Then I should see "Greenwich Steiner School admin users"
-    And  I should see "School management access rights can be added to the following users"
+    And  I should see "Add management access rights"
     And I should not see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
     And I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
     When I follow "Add" on the "Pavel Taylor" user
