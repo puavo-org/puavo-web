@@ -16,12 +16,6 @@ $(document).ready(function() {
     window.open(this.href);
 		return false;
 	});
-	if($("p.message_success").length > 0 || $("p.message_notice").length > 0){
-		var notice = $("p[class^='message_']");
-		notice.delay(2000).fadeOut(500, function() {
-			notice.remove();
-		});	
-	}
 
 });
 
