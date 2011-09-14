@@ -110,7 +110,7 @@
 <%= link_to t('link.edit'), edit_school_path(@school) %>
 </li>
 <li class="tool">
-<span><%= t('link.more') %><img src="/images/show-more.png"></span>
+<span><%= t('link.more') %><%= image_tag("show-more.png")%></span>
 <ul>
 <% if organisation_owner? %>
 <li>

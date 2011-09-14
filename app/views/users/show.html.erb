@@ -104,7 +104,7 @@
 <%= link_to t('link.edit'), edit_user_path(@school, @user) %>
 </li>
 <li class="tool">
-<span><%= t('link.more') %><img src="/images/show-more.png"></span>
+<span><%= t('link.more') %><%= image_tag("show-more.png")%></span>
 <ul>
 <li>
 <%= link_to t('.change_school'), select_school_user_path(@school, @user) %>
