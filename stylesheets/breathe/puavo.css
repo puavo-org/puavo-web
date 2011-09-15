@@ -9,6 +9,7 @@ background: -webkit-gradient(
     color-stop(0.6, rgb(170,170,170))
 );
 background-image: -o-linear-gradient(top,rgb(170,170,170),rgb(242,242,242));
+
 font-family: Arial,Helvetica,Sans-Serif;
 font-size: 0.8em;
 height: 100%;
@@ -134,7 +135,7 @@ border-color: #222222;
 border-style: solid;
 float: right;
 font-size: 10pt;
-margin: 10px 10px 0 0;
+margin: 10px 10px -0.8em 0;
 padding: 0;
 }
 .cancel {
@@ -299,7 +300,7 @@ background: none repeat scroll 0 0 #FFFFFF;
 padding: 10px;
 }
 .login_content h1 {
-color: #765C54;
+color: #A36A2A;
 font-size: 30pt;
 text-align: center;
 text-shadow: 0 2px 2px #222222;
@@ -395,6 +396,8 @@ background: -webkit-gradient(
     color-stop(0.6, rgb(186,114,45))
 );
 background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
+-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
 border-bottom: 1px solid #222222;
 color: #E6E6D8;
 font-size: 12pt;
@@ -403,7 +406,7 @@ padding-top: 10px;
 text-shadow: 0 1px 0 #3D3828;
 }
 .label_error {
-    color: #FF0000;
+    color: #AD0000;
 }
 .field_error {
     color: #CCCCCC;
@@ -425,6 +428,8 @@ background: -webkit-gradient(
     color-stop(0.7, rgb(250,250,250))
 );
 background-image: -o-linear-gradient(top,rgb(251,251,251),rgb(250,250,250));
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FBFBFB, endColorstr=#FAFAFA);
+-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FBFBFB, endColorstr=#FAFAFA)";
 border-radius: 6px 6px 6px 6px;
 float: left;
 font-size: 1.1em;
@@ -469,6 +474,8 @@ background: -webkit-gradient(
     color-stop(0.6, rgb(186,114,45))
 );
 background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
+-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
 border-radius: 6px 6px 0 0;
 color: #E6E6D8;
 margin: 0;
