@@ -26,6 +26,8 @@ background: -webkit-gradient(
     color-stop(0.6, rgb(186,114,45))
 );
 background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#A36A2A, endColorstr=#BA722D);
+-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#A36A2A, endColorstr=#BA722D)";
 border-bottom:1px solid #222222;
 border-left: 1px solid #222222;
 border-radius: 0 12px 0 0;
