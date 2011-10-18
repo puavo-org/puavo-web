@@ -1,4 +1,4 @@
-<h1><%= t('.title') %></h1>
+<h1><span><%= t('.title') %></span></h1>
 
 <% form_for(@school) do |f| %>
 
@@ -10,7 +10,7 @@
 }
 %>
 <% end %>
-<div class="cancel"><div><%= link_to t('link.cancel'), @school, :class => 'cancel_button' %> </div></div>
+
 
 <% content_for :footer do %>
 <ul>  

@@ -1,17 +1,18 @@
+<% if theme!="gray"%><p class='required_info'><%= t('layouts.forms.required_field')%></p><%end%>
 <% form_for(@user, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
 
   <table>
     <tr>
       <td><%= f.label :givenName %></td>
-      <td><%= f.text_field :givenName %></td>
+      <td class='required'><%= f.text_field :givenName %></td>
     </tr>
     <tr>
       <td><%= f.label :sn %></td>
-      <td><%= f.text_field :sn %></td>
+      <td class='required'><%= f.text_field :sn %></td>
     </tr>
     <tr>
       <td><%= f.label :uid %></td>
-      <td><%= f.text_field :uid %></td>
+      <td class='required'><%= f.text_field :uid %></td>
     </tr>
     <tr>
       <td class="label_for_input_text_list"><%= f.label :mail %></td>
@@ -44,14 +45,14 @@
 </tr>
     <tr>
       <td><%= f.label :puavoEduPersonAffiliation %></td>
-      <td>
+      <td class='required'>
         <%= f.select :puavoEduPersonAffiliation,
            [[t('default_select_value'), ""]] +
              User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
       </td>
     </tr>
     <tr>
-      <td class="label_for_checkbox_list"><%= f.label :role_ids %></td>
+      <td class="label_for_checkbox_list required_role required"><%= f.label :role_ids %></td>
       <td>
     <% @roles.each do |p| %>
     <div>
@@ -109,7 +110,9 @@
   </tr>
 
   <tr>
-    <td><%= f.submit submit_text %></td>
+    <td>
+      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %> 
+      </div></td>
   </tr>
 </table>
 <% end %>

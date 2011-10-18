@@ -1,5 +1,5 @@
 <ul>
-  <li <%= action_name == "show" ? "class='current'" : "" %>>
+  <li <%= action_name == "show" || action_name=="edit" ? "class='current'" : "" %>>
   <%= link_to t('.dashboard'), school_path(@school) %>
   </li>
   <% if organisation_owner? %>

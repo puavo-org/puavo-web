@@ -6,7 +6,7 @@ en:
     group_name: Maintenance
   default_select_value: Select
   general_confirm: Are you sure?
-  destroy_confirm: "Do you really want to destroy ({{object_name}})?"
+  destroy_confirm: "Do you really want to remove ({{object_name}})?"
   layouts:
     application:
       schools: Schools
@@ -21,17 +21,19 @@ en:
       printers: Printers
       search_placeholder: Search
       links: Links
+    forms:
+      required_field: "* = Required field"
   link:
     more: More
     edit: Edit
     back: Back
-    cancel: Cancel
-    destroy: Destroy
+    cancel: "- Cancel"
+    destroy: Remove
     new_group: New group
     update: Update
     create: Create
     show: Show
-    users: Users
+    users: User list
     groups: Groups
     roles: Roles
     add: Add
@@ -54,7 +56,7 @@ en:
   flash:
     added: "{{item}} was successfully created."
     updated: "{{item}} was successfully updated."
-    destroyed: "{{item}} was successfully destroyed."
+    destroyed: "{{item}} was successfully removed."
     create_failed: "Failed to create {{model}}!"
     save_failed: "{{model}} cannot be saved!"
     group:
@@ -226,6 +228,7 @@ en:
   external_services:
     index:
       actions: Actions
+      title: External services
     new:
       title: New external service
     edit:

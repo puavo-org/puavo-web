@@ -1,63 +1,125 @@
+<% if theme!="gray"%><p class='required_info'><%= t('layouts.forms.required_field')%></tr><%end%>
 <% form_for(@school, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
-  <p>
-    <%= f.label :displayName %><br />
-    <%= f.text_field :displayName %>
-  </p>
-  <p>
-    <%= f.label :puavoNamePrefix %><br />
-    <%= f.text_field :puavoNamePrefix %>
-  </p>
-  <p>
-    <%= f.label :puavoSchoolHomePageURL %><br />
-    <%= f.text_field :puavoSchoolHomePageURL %>
-  </p>
-  <p>
-    <%= f.label :description %><br />
-    <%= f.text_field :description %>
-  </p>
-  <p>
-    <%= f.label :cn %><br />
-    <%= f.text_field :cn %>
-  </p>
+<table>
+  <tr>
+    <td>
+      <%= f.label :displayName %>
+    </td>
+    <td class='required'>
+      <%= f.text_field :displayName %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :puavoNamePrefix %>
+    <td>
+     <%= f.text_field :puavoNamePrefix %>
+   </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :puavoSchoolHomePageURL %>
+    </td>
+    <td>
+      <%= f.text_field :puavoSchoolHomePageURL %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :description %>
+    </td>
+    <td>
+      <%= f.text_field :description %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :cn %>
+    </td>
+    <td class='required'>
+      <%= f.text_field :cn %>
+    </td>
+  </tr>
 
-  <p>
-    <%= f.label :telephoneNumber %><br />
+  <tr>
+    <td>
+      <%= f.label :telephoneNumber %>
+    </td>
+    <td>
     <%= f.text_field :telephoneNumber %>
-  </p>
-  <p>
-    <%= f.label :facsimileTelephoneNumber %><br />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :facsimileTelephoneNumber %>
+    </td>
+    <td>
     <%= f.text_field :facsimileTelephoneNumber %>
-  </p>
-  <p>
-    <%= f.label :l %><br />
-    <%= f.text_field :l %>
-  </p>
-  <p>
-    <%= f.label :street %><br />
-    <%= f.text_field :street %>
-  </p>
-  <p>
-    <%= f.label :postOfficeBox %><br />
-    <%= f.text_field :postOfficeBox %>
-  </p>
-  <p>
-    <%= f.label :postalAddress %><br />
-    <%= f.text_field :postalAddress %>
-  </p>
-  <p>
-    <%= f.label :postalCode %><br />
-    <%= f.text_field :postalCode %>
-  </p>
-  <p>
-    <%= f.label :st %><br />
-    <%= f.text_field :st %>
-  </p>
-  <p>
-    <%= f.label :image %><br />
-    <%= f.file_field :image %>
-  </p>
-  <p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+     <%= f.label :l %>
+     <td>
+    <td>
+      <%= f.text_field :l %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :street %>
+    </td>
+    <td>
+      <%= f.text_field :street %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :postOfficeBox %>
+    </td>
+    <td>
+      <%= f.text_field :postOfficeBox %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :postalAddress %>
+    </td>
+      <td>
+       <%= f.text_field :postalAddress %>
+     </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :postalCode %>
+    </td>
+    <td>
+      <%= f.text_field :postalCode %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :st %>
+    </td>
+    <td>
+      <%= f.text_field :st %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= f.label :image %>
+    </td>
+    <td>
+      <%= f.file_field :image %>
+    </td>
+  </tr>
+  <tr>
+  <td>
+  <span style="float:left">
     <%= f.submit submit_text %>
-  </p>
-
+    <div class="cancel"> <%=link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+  </span>
+  </td>
+  </tr>
+</table>
 <% end %>

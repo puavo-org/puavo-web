@@ -26,7 +26,9 @@
     </td>
   </tr>
   <tr>
-    <td><%= f.submit submit_text %></td>
+    <td><%= f.submit submit_text %>
+<div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+    </td>
   </tr>
 </table>
   <% end %>

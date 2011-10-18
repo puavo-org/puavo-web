@@ -1,4 +1,4 @@
-<h1><%= t('.title') %></h1>
+<h1><span><%= t('.title') %></span></h1>
 
 <%= render :partial => 'form',
  :locals => {
@@ -7,8 +7,6 @@
   :method => :post
 }
 %>
-<div class="cancel"><div><%= link_to t('link.cancel'), @external_service, :class => 'cancel_button' %> </div></div>
-
 <% content_for :footer do %>
 <ul>  
   <li class="link_header">

@@ -21,17 +21,19 @@ fi:
       printers: Tulostimet
       search_placeholder: Hae
       links: Linkit
+    forms:
+      required_field: "* = Pakollinen tieto"
   link:
     more: Lisää
     edit: Muokkaa
     back: Takaisin
-    cancel: Peruuta
+    cancel: "- Peruuta"
     destroy: Poista
     new_group: Luo uusi ryhmä
     update: Päivitä
     create: Luo
     show: Näytä
-    users: Käyttäjät
+    users: Käyttäjälista
     groups: Ryhmät
     roles: Roolit
     add: Lisää
@@ -42,14 +44,14 @@ fi:
       new: Lisää käyttäjiä massa-ajona
       handle_user_data: Käsittele käyttäjätieto
       download_pdf: lataa pdf-tiedosto.
-      revalidate: Validoi uudelleen
+      revalidate: Validoi uudelleen # revalidate term?
       validate: Tarkasta syötetyt tiedot
       create: Lisää käyttäjät
     continue: Jatka
     login: Kirjaudu
     change_password: Vaihda salasana
     new_school: Uusi koulu
-    new_external_service: Uusi
+    new_external_service: Uusi # revalidate term?
     rename_groups: Vuosiluokkasiirto
   flash:
     added: "{{item}} luotiin onnistuneesti."

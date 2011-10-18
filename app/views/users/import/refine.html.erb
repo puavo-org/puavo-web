@@ -1,11 +1,11 @@
-<h2><%= t('.title') %></h2>
+<h1><span><%= t('.title') %></span></h1>
 <% if theme !="gray" %>
 <p class="mass_import_info"><span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> <span class="current">2. <%= t('users.import.info.phase_2') %></span> &gt; 3. <%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
 <% end %>
 <% form_for(:user, :url => validate_users_import_path(@school)) do |f| %>
 
 <p><%= t('.column_info') %></p>
-<table id="users_list">
+<table id="users_list" class="import_define">
   <th><%= t('.name_of_column') %></th>
   <th><%= t('.example') %></th>
     <% 0.upto(@number_of_columns-1) do |index| %>

@@ -28,12 +28,12 @@ body {font-size:75%;color:#222;background:#fff;font-family:"Helvetica Neue", Ari
 h1, h2, h3, h4, h5, h6 {font-weight:normal;color:#2D2D2D;}
 h1 {font-size:3em;line-height:1;margin-bottom:0.5em;}
 h2 {font-size: 2em;margin-bottom: 0.75em;}
-h3 {font-size:1.5em;line-height:1;margin-bottom:1em;}
+h3 {font-size:1.3em;line-height:1;margin-bottom:1em;}
 h4 {font-size:14pt;line-height:1.25;margin-bottom:1.25em;}
 h5 {font-size:1em;font-weight:bold;margin-bottom:1.5em;}
 h6 {font-size:1em;font-weight:bold;}
 h1 img, h2 img, h3 img, h4 img, h5 img, h6 img {margin:0;}
-p {margin:0 0 1em;}
+p {margin:0 0 .5em;}
 p img.left {float:left;margin:1.5em 1.5em 1.5em 0;padding:0;}
 p img.right {float:right;margin:1.5em 0 1.5em 1.5em;}
 a:focus, a:hover {color:#000;}
@@ -57,7 +57,17 @@ dd {margin-left:1.5em;}
 table {margin-bottom:1.4em; table-layout:fixed;}
 th {font-weight:bold;}
 thead th {background:#c3d9ff;}
-form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption { display: block;padding: 5px 10px 0 0;}
+form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption { 
+display: block;
+padding: 0 10px 0 0;
+position:relative;
+width:100%;
+}
+.import_define th, .import_define td{
+float: left;
+min-width: 200px;
+width: auto !important;
+}
 th,td,caption{padding: 5px 10px;}
 tr.even td {background:#e5ecf9;}
 tfoot {font-style:italic;}
@@ -80,24 +90,26 @@ label {font-weight:bold;}
 fieldset {padding:1.4em;margin:0 0 1.5em 0;border:1px solid #ccc;}
 legend {font-weight:bold;font-size:16pt;}
 form input[type="text"],input[type="password"], input.text {
-background: -moz-linear-gradient(center bottom , #EEEEED 0%, #EEEEEE 40%, #FFFFFF 100%) repeat scroll 0 0 transparent;
-background: -webkit-gradient(
-linear, left bottom,left top,
-color-stop(0, rgb(238,238,237)),
-color-stop(0.40, rgb(238,238,238)),
-color-stop(1, rgb(255,255,255))
-);
-background-image: -o-linear-gradient(top,rgb(238,238,237),rgb(255,255,255));
+background: none repeat scroll 0 0 #F2F2F2;
 border: 1px solid #CCCCCC;
-    border-radius: 8px 8px 8px 8px;
-    font-size: 16pt;
-    height:30px
-    padding: 7px 8px;
-    text-shadow: 0 1px 0 #EEEEEE;
-   width: 450px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-
+border-radius: 8px 8px 8px 8px;
+font-size: 16pt;
+margin:0 0 5px;
+height:30px
+padding: 7px 8px;
+text-shadow: 0 1px 0 #EEEEEE;
+width: 450px;
+-moz-border-radius: 8px;
+-webkit-border-radius: 8px;
+}
+input[type="file"] {
+background: none repeat scroll 0 0 #F2F2F2;
+border: 1px solid #ccc;
+border-radius: 6px;
+font-size: 1.45em;
+width: 450px;
+-moz-border-radius: 6px;
+-webkit-border-radius: 6px;
 }
 input[type="submit"] {
 background: none repeat scroll 0 0 #EEEEED;
@@ -116,7 +128,7 @@ font-size: 18pt;
 height: 70px;
 margin: 20px 0 0;
 padding: 5px 8px;
-width: 460px;
+width: 320px;
 -moz-border-radius: 8px 8px 8px 8px;
 -webkit-border-radius: 8px 8px 8px 8px;
 }
@@ -140,30 +152,29 @@ textarea {width:450px;height:250px;padding:5px;}
 input[type=checkbox], input[type=radio], input.checkbox, input.radio {margin: 0 5px;position:relative;top:0;}
 form.inline {line-height:3;}
 form.inline p {margin-bottom:0;}
-.message_error, .message_notice, .message_success, .notice, .message_alert {padding:.8em;margin:15px 15px 1em 0;border:2px solid #ddd;}
+.message_error, .message_notice, .message_success, .notice, .message_alert {padding:0.5em;margin:15px 15px 1em 0;border:2px solid #ddd;}
 .message_error, .message_alert {
 background: none repeat scroll 0 0 #AD0000;
 border: 1px solid #AAAAAA;
-border-radius: 6px 6px 6px 6px;
+border-radius: 4px 4px 4px 4px;
 color: #F4F4F4;
 font-size: 14pt;
 text-align: center;
--moz-border-radius: 6px 6px 6px 6px;
--webkit-border-radius: 6px 6px 6px 6px;
+-moz-border-radius: 4px 4px 4px 4px;
+-webkit-border-radius: 4px 4px 4px 4px;
 }
 .message_notice, .notice {
-background: none repeat scroll 0 0 #60B96F;
+background: none repeat scroll 0 0 #86B410;
 border: 1px solid #56340E;
-border-radius: 6px 6px 6px 6px;
+border-radius: 4px 4px 4px 4px;
 font-size: 14pt;
 text-align: center;
--moz-border-radius: 6px 6px 6px 6px;
--webkit-border-radius: 6px 6px 6px 6px;
+-moz-border-radius: 4px 4px 4px 4px;
+-webkit-border-radius: 4px 4px 4px 4px;
 }
 .login_content .notice, .login_content .message_notice {
 left:0;
 margin: 0;
-padding: 1em;
 position: relative;
 top:0;
 }
@@ -339,7 +350,7 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 .clear {clear:both;}
 .edit_user tr {
     display: block;
-    margin: 0 0 15px;
+    margin: 0 0 10px;
 }
 .edit_user tr td{
     display: block;

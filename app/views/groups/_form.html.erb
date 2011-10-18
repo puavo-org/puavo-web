@@ -7,7 +7,8 @@
   <%= f.label :cn %><br />
   <%= f.text_field :cn %>
 </p>
-<p>
+  <span style="float:left">
   <%= f.submit submit_text %>
-</p>
+  <div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+</span>
 <% end %>

@@ -80,7 +80,8 @@
    </div>
 </div><!-- topNavContainer -->
 <% end %>
-<div class="container">
+<div id="container" class="container">
+<div class="container_wrap">
 <% if theme=="gray"%>
   <ul id="top-menu" class="menu">
       <% if current_user %>
@@ -170,14 +171,8 @@
 
     <hr class="space" />
   <div class="wrap">
-  <% if theme!="gray" %>
-    <% if current_user %>
-    <div class="tools">
-        <%= yield :right %>
-      </div>
-      <% end %>
-  <% end %>    
-    <div class="maincontent">
+  <div class="maincontent">
+  <% if theme!="gray" %>   
       <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
       <% message_keys.each do |key| %>
       <p class="message_<%= key %>">
@@ -185,8 +180,14 @@
       </p>
       <% end %>
       <% end %>
+          <% if current_user %>
+    <div class="tools">
+        <%= yield :right %>
+      </div>
+      <% end %>
+  <% end %> 
       <%= yield %>
-    </div>
+    </div>  
     <% if theme=="gray" %>
     <% if current_user %>
       <div class="tools">
@@ -197,38 +198,9 @@
     <% end %>
     <hr class="space" />
     </div> <!-- wrap -->
-    
-   <% if theme!="gray" %>
-    <div id="footer">
-     <% if current_user %>
-     <% if organisation_owner? %>
-      <ul>
-        <li class="link_header">
-	      <%= link_to session[:organisation].name, organisation_path, :title => session[:organisation].name %>
-        </li>
-          <% end %>
-          <% if organisation_owner? %>
-        <li><%= link_to t('.external_services'),  external_services_path, :title => t('.external_services') %></li>
-        <% if Puavo::DEVICE_CONFIG %>
-        <li><%= link_to t('.printers'), "/devices/printers", :title => t('.printers') %></li>
-        <li><%= link_to t('.servers'), "/devices/servers", :title => t('.servers') %></li>
-        </ul>
-        <% end %>
-        <% end %>
-        <% end %>
-      <%= yield :footer %>
-      <% if Puavo::EXTERNAL_LINKS %>
-      <ul>
-		    <li class="link_header"><%= t('.links')%>:</li>
-		    <% Puavo::EXTERNAL_LINKS["links"].each do |link_entry| %>
-		    <li><%= link_to link_entry["name"], link_entry["url"], :title => link_entry["name"] %></li>
-		    <% end %>
-      </ul>
-      <% end %>
-      <p><%= Puavo::EXTERNAL_LINKS["footer_info"] rescue nil %></p>
-    </div><!-- footer -->
-   <% end %>
-  </div> <!-- container -->
+  </div> <!-- container_wrap-->
+  </div> <!-- container --> 
+  
 
 </body>
 </html>

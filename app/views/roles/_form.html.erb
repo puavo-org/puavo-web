@@ -4,7 +4,8 @@
     <%= f.label :displayName %><br />
     <%= f.text_field :displayName %>
   </p>
-  <p>
+  <span style="float:left">
     <%= f.submit submit_text %>
-  </p>
+    <div class="cancel"><%= link_to t('link.cancel'),  path, :class => 'cancel_button' %> </div>
+  </span>
 <% end %>
