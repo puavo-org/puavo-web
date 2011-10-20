@@ -23,6 +23,7 @@ h1 {
 font-size: 3em;
 margin: 10px 0 0.5em;
 }
+
 #container{
 height: auto !important;
 height: 100%;
@@ -218,6 +219,10 @@ background: url("../../images/iconset-breathe.png") no-repeat scroll left -275px
 }
 .tool span:hover {
     background: url("../../images/iconset-breathe.png") no-repeat scroll left -670px transparent;
+}
+a[href*="import/download.pdf"] {
+color: #F44000;
+font-size: 1.5em;
 }
 .maincontent table tr td .image {
 border: 2px solid #435266;
