@@ -93,6 +93,7 @@ fi:
     school:
       school_admin_added: "{{displayName}} ({{school_name}}) on lisätty ylläpitäjäkäyttäjäksi"
       school_admin_removed:  "{{displayName}} ({{school_name}}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
+      wrong_user_type: Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille
       destroyed_failed: Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua
   roles:
     index:
@@ -227,6 +228,7 @@ fi:
   external_services:
     index:
       actions: Toiminnot
+      title: Ulkoiset palvelut
     new:
       title: Uuden ulkoisen palvelun tiedot
     edit:

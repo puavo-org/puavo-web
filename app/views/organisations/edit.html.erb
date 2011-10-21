@@ -51,11 +51,12 @@
     <td><%= f.text_field :eduOrgHomePageURI %></td>
   </tr>
   <tr>
-    <td><%= f.submit t('link.update') %></td>
+    <td><%= f.submit t('link.update') %>
+      <div class="cancel"><%= link_to t('link.cancel'), organisation_path, :class => 'cancel_button' %></div></td>
   </tr>
 </table>
 <% end %>
-  <div class="cancel"><div><%= link_to t('link.cancel'), organisation_path, :class => 'cancel_button' %> </div></div>
+
 <% content_for :footer do %>
 <ul>  
   <li class="link_header">

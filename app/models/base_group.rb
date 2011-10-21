@@ -27,7 +27,7 @@ class BaseGroup < LdapBase
   def validate_on_create
     # cn attribute must be unique on the group and school model.
     # cn == group name (operating system)
-    if Group.find(:first, :attribute => "cn", :value => self.cn) ||
+    if self.cn.empty? || Group.find(:first, :attribute => "cn", :value => self.cn) ||
         School.find(:first, :attribute => "cn", :value => self.cn)
       errors.add :cn, I18n.t("activeldap.errors.messages.taken",
                              :attribute => I18n.t("activeldap.attributes.#{self.class.to_s.downcase}.cn") )
