@@ -164,12 +164,13 @@
         <hr class="space" />
         <div class="wrap">
           <div class="maincontent">
-            <% if theme!="gray" %>   
+              
               <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
                 <% message_keys.each do |key| %>
                   <p class="message_<%= key %>"> <%= flash[key] %></p>
                 <% end %>
               <% end %>
+              <% if theme!="gray" %> 
               <% if current_user %>
                 <div class="tools">
                   <%= yield :right %>
@@ -179,15 +180,7 @@
             </div> <!-- maincontent -->
           <% end %> 
 
-          <% if theme=="gray" %>  
-            <% if flash.has_key?(:notice) %>
-              <% if flash.has_key?(:notice_css_class) %>
-                <p class='<%= flash[:notice_css_class] %>'>
-              <% else %>
-                <p class="notice">
-              <% end %> <!-- flash.has_key?(:notice_css_class) -->
-                <%= flash[:notice] %></p>
-            <% end %> <!-- flash.has_key?(:notice) -->
+           <% if theme=="gray" %>  
             <%= yield %>
           </div> <!-- maincontent -->
           <% if logged_in? %>
