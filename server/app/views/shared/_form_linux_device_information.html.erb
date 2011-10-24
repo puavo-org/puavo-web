@@ -1,4 +1,4 @@
-<h2><%= title(f.object) %></h2>
+<h2><span><span><%= title(f.object) %></span></h2>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceManufacturer %></td>
   <td><%= f.text_field :puavoDeviceManufacturer %></td>
@@ -15,7 +15,7 @@
 <% if f.object.classes.include?('puavoPrinter') %>
 <tr>
   <td class="label_td"><%= f.label :macAddress %></td>
-  <td><%= f.text_field :macAddress %></td>
+  <td class='required'><%= f.text_field :macAddress %></td>
 </tr>
 <% end %>
 
@@ -48,7 +48,7 @@
 
 <%= render :partial => 'shared/form_purchase_information', :locals => { :f => f } %>
 
-<h2><%= t('shared.location') %></h2>
+<h2><span><%= t('shared.location') %></span></h2>
 
 <table>
 <tr>
@@ -67,7 +67,7 @@
 <% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
 </table>
 
-<h2><%= t('shared.display_settings') %></h2>
+<h2><span><%= t('shared.display_settings') %></span></h2>
 <table>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceXserver %></td>
@@ -112,7 +112,7 @@
 
 </table>
 
-<h2><%= t('shared.kernel_settings') %></h2>
+<h2><span><%= t('shared.kernel_settings') %></span></h2>
 <table>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>

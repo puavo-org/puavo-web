@@ -30,7 +30,7 @@ fi:
   actions: Toiminnot
   general_confirm: Oletko varma?
   destroy_confirm: "Haluatko varmasti poistaa ({{object_name}})?"
-  cancel: Kumoa
+  cancel: "- Peruuta"
   or: tai
   shared:
     terminal_title: Päätteen tiedot
@@ -58,7 +58,8 @@ fi:
     new:
       new_printer: Uusi tulostin
     edit:
-      title: Device settings
+      edit: Muokkaa
+      title: Laiteasetukset
       terminal_title: Pääteasetukset
       printer_title: Tulostinasetukset
     form_cups:
@@ -118,13 +119,15 @@ fi:
       logout: Kirjaudu ulos
       users: Käyttäjät
       tools: Työkalut
-      logged_in_as: Kirjauduttu sisään tunnuksella
+      logged_in_as: "Kirjauduttu käyttäjänä:"
       devices: Laitteet
       desktop: Työpöytä
       servers: Palvelimet
       external_services: Ulkoiset palvelut
       printers: Tulostimet
       search_placeholder: Hae
+    forms:
+      required_field: "* = Pakollinen tieto"
   link:
     edit: Muokkaa
     back: Takaisin
@@ -136,7 +139,7 @@ fi:
     users: Käyttäjät
     groups: Ryhmät
     roles: Roolit
-    devices: Laitteet
+    devices: Laitelista
     servers: Palvelimet
     add: Lisää
     remove: Poista

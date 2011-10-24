@@ -1,6 +1,7 @@
-<h2><%= t('.cups_settings') %></h2>
+<div class="dashboard_box">
+<h3><%= t('.cups_settings') %></h3>
 
-<table>
+<table class="list widelist">
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "printerDescription" %></td>
   <td class="value_td"><%=h device.attributes.include?("printerDescription") ? device.printerDescription : "" %></td>
@@ -22,3 +23,4 @@
   <td class="value_td"><%=h device.puavoPrinterCartridge %></td>
 </tr>
 </table>
+</div>

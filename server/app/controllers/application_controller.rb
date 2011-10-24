@@ -67,4 +67,7 @@ class ApplicationController < ActionController::Base
   def puavo_users?
     PUAVO_CONFIG["puavo_users"] == "enabled" ? true : false
   end
+  def theme
+    session[:organisation].value_by_key('theme') or "gray"
+  end
 end

@@ -1,4 +1,4 @@
-<h1><%= t('.title') %></h1>
+<h1><span><%= t('.title') %></span></h1>
 
 <%= render :partial => 'form',
  :locals => {
@@ -7,8 +7,5 @@
   :method => :put
 }
 %>
-
 <% content_for :right do %>
-<%= link_to t('link.show'), [@server, @automount] %><br />
-<%= link_to t('link.back'), server_automounts_path(@server) %>
 <% end %>

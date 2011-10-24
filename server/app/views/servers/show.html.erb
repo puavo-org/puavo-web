@@ -1,14 +1,16 @@
 <table>
 <%= render :partial => 'shared/main_information', :locals => { :device => @server} %>
 </table>
-<p>&nbsp;</p>
+<div class="dashboard">
+<div class="dashboard_box">
 <table>
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
 
 </table>
 
-<h2><%= t('.automounts') %></h2>
+<div class="dashboard_box">
+<h3><%= t('.automounts') %></h3>
 
 <table>
 <tr>
@@ -16,11 +18,13 @@
   <td class="value_td"><%= Array(@server.puavoExport).join("<br />")  %></td>
 </tr>
 </table>
-
+</div>
+</div>
+</div>
 <% content_for :right do %>
-<div><%= link_to t('link.automounts'), server_automounts_path(@server) %></div>
-<div><%= link_to t('link.edit'), edit_server_path(@server) %></div>
-<% if @server.userCertificate %>
-  <div><%= link_to t('link.set_install_mode'), revoke_certificate_server_path(@server), :method => :delete %></div>
-<% end %>
+  <div><%= link_to t('link.automounts'), server_automounts_path(@server) %></div>
+  <div><%= link_to t('link.edit'), edit_server_path(@server) %></div>
+  <% if @server.userCertificate %>
+    <div><%= link_to t('link.set_install_mode'), revoke_certificate_server_path(@server), :method => :delete %></div>
+  <% end %>
 <% end %>
