@@ -23,7 +23,7 @@ terminals[0..-1].each do |row|
     when /etc2500/i,/etc-2500/i
       manufacturer     = 'Epatec'
       puavodevicemodel = 'ETC-2500'
-    when /optiplaex GX520/i,/verkkopc/i,/verkko-pc/i,/tykki/,/Toshiba-Satellite-Pro/
+    when /optiplaex GX520/i,/verkkopc/i,/verkko-pc/i,/tykki/,/Toshiba-Satellite-Pro/,/fujitsu siemens scenic/
       devicetype = 'fatclient'
   end
 
