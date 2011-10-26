@@ -22,7 +22,7 @@ tbody th {
 }
 
 tbody {
-	background: #ffffff;
+
 }
 
 a:hover {
@@ -134,7 +134,7 @@ label {
 }
 
 .label_td {
-    text-align: right;
+    text-align: left;
 }
 
 .label_td.view {
@@ -180,4 +180,11 @@ label {
 	padding: 0px;
 	margin: 15px;
 	border: 5px ridge #738037;
+}
+.cancel {
+    display: inline;
+    font-size: 11pt;
+    margin: 0;
+    padding: 0;
+    width: 100px;
 }

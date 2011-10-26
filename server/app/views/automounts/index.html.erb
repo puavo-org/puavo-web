@@ -1,4 +1,4 @@
-<h1><%= t('.title') %></h1>
+<h1><span><%= t('.title') %></span></h1>
 
 <table class='list'>
   <tr>
@@ -16,5 +16,5 @@
 </table>
 
 <% content_for :right do %>
-<%= link_to t('link.new_automount'), new_server_automount_path(@server) %><br />
+<div><%= link_to t('link.new_automount'), new_server_automount_path(@server) %></div>
 <% end %>

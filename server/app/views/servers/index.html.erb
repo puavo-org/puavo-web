@@ -1,4 +1,4 @@
-<h1><%= t('.title') %></h1>
+<h1><span><%= t('.title') %></span></h1>
 
 <table class='list'>
   <tr>
@@ -17,7 +17,8 @@
     <td><%=h server.serialNumber %></td>
     <td><%= link_to t('link.automounts'), server_automounts_path(server) %></td>
     <td><%= link_to t('link.edit'), edit_server_path(server) %></td>
-    <td><%= link_to t('link.destroy'), server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete %></td>
+    <td><%= link_to t('link.destroy'), server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete %>
+    </td>
   </tr>
 <% end %>
 </table>

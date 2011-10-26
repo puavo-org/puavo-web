@@ -1,14 +1,11 @@
-
 <%= render :partial => 'shared/main_information', :locals => { :device => @device} %>
-
-<p>&nbsp;</p>
-
+<div class="dashboard">
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>
 
 <% if @device.classes.include?('puavoPrinter') %>
 <%= render :partial => 'cups', :locals => { :device => @device } %>
 <% end %>
-
+</div>
 
 <% content_for :right do %>
 <div><%= link_to t('link.edit'), edit_device_path(@school, @device) %></div>

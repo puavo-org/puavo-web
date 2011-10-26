@@ -1,3 +1,4 @@
+<% if theme!="gray"%><p class='required_info'><%= t('layouts.forms.required_field')%></p><%end%>
 <% form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
   <%= f.error_messages %>
 
@@ -12,7 +13,6 @@
 
   <p>&nbsp;</p>
   <table>
-
   <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
 
   <% if f.object.classes.include?('puavoPrinter') %>
@@ -20,7 +20,8 @@
   <% end %>
 
   <tr><td>
-  <%= f.submit submit_text %> <%= t('or') %> <%= link_to t('cancel'), devices_path(@school) %>
+  <%= f.submit submit_text %> 
+  <div class="cancel"> <%=link_to t('cancel'), path, :class => 'cancel_button' %> </div>
   </td></tr>
   </table>
 <% end %>

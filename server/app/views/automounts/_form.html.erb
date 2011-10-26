@@ -9,7 +9,7 @@
 </tr>
 <tr>
   <td>
-    <%= f.submit submit_text %>
+    <%= f.submit submit_text %> <div class="cancel"> <%=link_to t('cancel'), server_automounts_path(@server), :class => 'cancel_button' %> </div>
   </td>
 </tr>
 </table>

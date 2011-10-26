@@ -1,4 +1,4 @@
-<h1><%= t('.title') %></h1>
+<h1><span><%= t('.title') %></span></h1>
 
 <table class='list'>
   <tr>
@@ -26,5 +26,5 @@
 <br />
 
 <% content_for :right do %>
-<%= link_to t('.add_new_printer'), new_device_path(@school, :device_type => 'printer') %><br />
+<div><%= link_to t('.add_new_printer'), new_device_path(@school, :device_type => 'printer') %></div>
 <% end %>

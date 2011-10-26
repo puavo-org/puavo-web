@@ -31,8 +31,8 @@ en:
   actions: Actions
   general_confirm: Are you sure?
   destroy_confirm: "Are you sure? ({{object_name}})?"
-  cancel: Kumoa
-  or: tai
+  cancel: "- Cancel"
+  or: or
   shared:
     terminal_title: Terminal information
     location: Location
@@ -60,6 +60,7 @@ en:
     new:
       new_printer: New printer
     edit:
+      edit: Edit
       title: Device settings
       terminal_title: Terminal settings
       printer_title: Printer settings
@@ -71,7 +72,7 @@ en:
     index:
       title: List of servers
     edit:
-      title: Server settings
+      title: Edit server settings
     form:
       automounts: Automounts
       add_puavoExport: Add paths
@@ -127,6 +128,8 @@ en:
       external_services: External services
       printers: Printers
       search_placeholder: Search
+    forms:
+      required_field: "* = Required field"
   link:
     edit: Edit
     back: Back
@@ -138,7 +141,7 @@ en:
     users: Users
     groups: Groups
     roles: Roles
-    devices: Devices
+    devices: Device list
     servers: Servers
     add: Add
     remove: Remove
@@ -236,7 +239,7 @@ en:
       user:
         uid: Username
         password: Password
-      automounts:
+      automount:
         cn: Directory
       printer:
         printerDescription: Printer name

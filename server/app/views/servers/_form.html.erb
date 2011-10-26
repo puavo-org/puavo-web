@@ -36,7 +36,8 @@
   </table>
   <table>
     <tr><td>
-    <%= f.submit submit_text %> <%= t('or') %> <%= link_to t('cancel'), @server %>
+    <%= f.submit submit_text %> 
+    <div class="cancel"> <%=link_to t('cancel'), @server, :class => 'cancel_button' %> </div>
     </tr></td>
   </table>
 <% end %>

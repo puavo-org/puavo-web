@@ -1,13 +1,13 @@
-<h2><%= t('shared.purchase_information') %></h2>
+<h2><span><%= t('shared.purchase_information') %></span></h2>
 
 <table>
 <tr>
   <td class="label_td"><%= f.label :puavoPurchaseDate %></td>
-  <td><%= f.date_select :puavoPurchaseDate, :include_blank => true %></td>
+  <td class="purchase_date"><%= f.date_select :puavoPurchaseDate, :include_blank => true %></td>
 </tr>
 <tr>
   <td class="label_td"><%= f.label :puavoWarrantyEndDate %></td>
-  <td><%= f.date_select :puavoWarrantyEndDate, :include_blank => true %></td>
+  <td class="purchase_date"><%= f.date_select :puavoWarrantyEndDate, :include_blank => true %></td>
 </tr>
 <tr>
   <td class="label_td"><%= f.label :puavoPurchaseLocation %></td>

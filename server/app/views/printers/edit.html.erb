@@ -1,7 +1,7 @@
 <% form_for(@printer) do |f| %>
   <%= f.error_messages %>
 
-  <h1><%=h f.object.printerDescription %></h1>
+  <h1><span><%=h f.object.printerDescription %></span></h1>
   <table>
     <tr>
       <td class="label_td"><%= f.label :puavoRule %></td>
@@ -9,7 +9,7 @@
     </tr>
     <tr>
   <tr><td>
-  <%= f.submit t('link.update') %> <%= t('or') %> <%= link_to t('cancel'), printers_path %>
+  <%= f.submit t('link.update') %><div class="cancel"><%=link_to t('cancel'), printers_path, :class => 'cancel_button' %> </div>
   </td></tr>
   </table>
 <% end %>

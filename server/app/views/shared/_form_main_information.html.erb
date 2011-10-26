@@ -1,5 +1,6 @@
 <table>
   <tr>
+  <%if theme=="gray" %>
     <td>
       <div>
 		<% path = f.object.class == Server ? image_server_path(f.object) : image_device_path(@school, f.object) %>
@@ -7,32 +8,47 @@
                        :class => "image" ) %>
 	  </div>
     </td>
-    <td>
-      <p>
-	<%= f.label :puavoHostname %><br />
+    </tr>
+    <%end%>
+    <tr>
+    <td class="label_td">
+	<%= f.label :puavoHostname %>
+	</td>
+	<td class='required'>
 	<% if f.object.userCertificate %>
 	<%= f.object.puavoHostname %>
 	<% else %>
 	<%= f.text_field :puavoHostname %>
 	<%= f.object.userCertificate.to_s %>
 	<% end %>
-      </p>
-      <p>
+      </td>
+  </tr>
+    <tr>
+      <td>
 	<%= device_type(f) %>
-      </p>
-      <p>
-	<%= f.label :puavoTag %><br />
+      </td>
+      </tr>
+      <tr>
+      <td>
+	<%= f.label :puavoTag %>
+	</td>
+	<td>
 	<%= f.text_field :puavoTag %>
-      </p>
-      <p>
-	<%= f.label :puavoDeviceStatus %><br />
+  </td>
+  </tr>
+  <td>
+	<%= f.label :puavoDeviceStatus %>
+	</td>
+	<td>
 	<%= f.text_field :puavoDeviceStatus %>
-      </p>
-      <p>
-		<%= f.label :image %><br />
+  </td>
+  </tr>
+  <tr>
+  <td>
+		<%= f.label :image %>
+		</td>
+	<td>
 		<%= f.file_field :image %>
-      </p>
-
-    </td>
+   </td>
   </tr>
 </table>

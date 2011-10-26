@@ -1,6 +1,6 @@
-<h2><%= t('shared.purchase_information') %></h2>
-
-<table>
+<div class="dashboard_box">
+<h3><%= t('shared.purchase_information') %></h3>
+<table class="list widelist">
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPurchaseDate" %></td>
   <td class="value_td"><%=h I18n.l(device.puavoPurchaseDate) rescue nil %></td>
@@ -22,3 +22,4 @@
   <td class="value_td"><%=h device.puavoSupportContract %></td>
 </tr>
 </table>
+</div>

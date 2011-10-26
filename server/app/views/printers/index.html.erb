@@ -1,7 +1,7 @@
 <% @servers_and_printers.each do |server_dn, value| %>
 <% unless value.has_key?(:printers) then next end %>
 
-<h3><%=h t('.server_title', :server => value[:server].puavoHostname) %></h3>
+<h1><span><%=h t('.server_title', :server => value[:server].puavoHostname) %></span></h1>
 
 <table class='list'>
   <tr>
