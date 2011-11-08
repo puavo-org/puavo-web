@@ -99,6 +99,7 @@ margin: 0;
 padding: 0 0 0 5px;
 position: relative;
 }
+.tools > li.tool{padding:0 1em;}
 .tools .tool ul{
 display: none;
 }
@@ -215,10 +216,13 @@ background: url("../../images/iconset-breathe.png") no-repeat scroll left -275px
     background: url("../../images/iconset-breathe.png") no-repeat scroll left -510px transparent;
 }
 .tool span {
-    background: url("../../images/iconset-breathe.png") no-repeat scroll left -630px transparent;
+    background: url("../../images/iconset-breathe.png") no-repeat scroll center -630px transparent;
+    font-size: 0;
+    text-indent: -9999px;
 }
 .tool span:hover {
-    background: url("../../images/iconset-breathe.png") no-repeat scroll left -670px transparent;
+    background: url("../../images/iconset-breathe.png") no-repeat scroll center -670px transparent;
+    cursor:pointer;
 }
 a[href*="import/download.pdf"] {
 color: #F44000;
@@ -446,7 +450,7 @@ background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
 -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
 border-bottom: 1px solid #222222;
-color: #E6E6D8;
+color: #E9E9A9;
 font-size: 10pt;
 padding-bottom: 10px;
 padding-top: 10px;
