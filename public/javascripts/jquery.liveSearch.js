@@ -68,7 +68,6 @@ jQuery.fn.liveSearch = function (conf) {
 			config.url = urls;
 		}
 	}
-
 	var searchStatus = {};
 	var liveSearch	= jQuery('#' + config.id);
 	var loadingRequestCounter = 0;
@@ -100,7 +99,7 @@ jQuery.fn.liveSearch = function (conf) {
 	return this.each(function () {
 		var input							= jQuery(this).attr('autocomplete', 'off');
 		var liveSearchPaddingBorderHoriz	= parseInt(liveSearch.css('paddingLeft'), 10) + parseInt(liveSearch.css('paddingRight'), 10) + parseInt(liveSearch.css('borderLeftWidth'), 10) + parseInt(liveSearch.css('borderRightWidth'), 10);
-
+    var doWeHaveAnyResults = false;
 		// Re calculates live search's position
 		var repositionLiveSearch = function () {
 			var tmpOffset	= input.offset();
@@ -117,7 +116,6 @@ jQuery.fn.liveSearch = function (conf) {
 
 			inputDim.topPos		= inputDim.top + inputDim.height;
 			inputDim.totalWidth	= inputDim.width - liveSearchPaddingBorderHoriz;
-
 			liveSearch.css({
 				position:	'absolute', 
 				left:		inputDim.left + 'px', 
@@ -125,8 +123,9 @@ jQuery.fn.liveSearch = function (conf) {
 				width:		inputDim.totalWidth + 'px'
 			});
 		};
-
 		var showOrHideLiveSearch = function () {
+		  if(doWeHaveAnyResults) input.css("color","#000000");
+		  else if(loadingRequestCounter==0 && !doWeHaveAnyResults) input.css("color","#FF0000");
 			if (loadingRequestCounter == 0) {
 				showStatus = false;
 				for (key in config.url) {
@@ -151,6 +150,7 @@ jQuery.fn.liveSearch = function (conf) {
 
 		// Shows live-search for this input
 		var showLiveSearch = function () {
+		  if(input.hasClass('loading')){input.removeClass('loading')};
 			// Always reposition the live-search every time it is shown
 			// in case user has resized browser-window or zoomed in or whatever
 			repositionLiveSearch();
@@ -159,12 +159,12 @@ jQuery.fn.liveSearch = function (conf) {
 			// so it resizes based on the correct input element
 			$(window).unbind('resize', repositionLiveSearch);
 			$(window).bind('resize', repositionLiveSearch);
-
 			liveSearch.slideDown(config.duration)
 		};
 
 		// Hides live-search for this input
 		var hideLiveSearch = function () {
+		  if(input.hasClass('loading')){input.removeClass('loading')};
 			liveSearch.slideUp(config.duration, function () {
 				config.onSlideUp();
 				for (key in config.url) {
@@ -181,6 +181,7 @@ jQuery.fn.liveSearch = function (conf) {
 					showOrHideLiveSearch();
 				}
 			})
+			.keypress(function () {if(this.value.length<=1) input.css("color","#000000");})
 			// Auto update live-search onkeyup
 			.keyup(function () {
 				// Don't update live-search if it's got the same value as last time
@@ -192,6 +193,7 @@ jQuery.fn.liveSearch = function (conf) {
 					// Stop previous ajax-request
 					if (this.timer) {
 						clearTimeout(this.timer);
+						doWeHaveAnyResults=false;
 					}
 
 					if( q.length > config.minLength ) {
@@ -204,6 +206,7 @@ jQuery.fn.liveSearch = function (conf) {
 									url: config.url[url_key] + q,
 									success: function(data){
 										if (data.length) {
+										  doWeHaveAnyResults=true;
     										searchStatus[this.key] = true;
 											liveSearch.find("#" + this.key).html(data);
 										} else {
