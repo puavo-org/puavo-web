@@ -24,7 +24,7 @@ fi:
     forms:
       required_field: "* = Pakollinen tieto"
   link:
-    more: Lisää
+    more: Muut toiminnot
     edit: Muokkaa
     back: Takaisin
     cancel: "- Peruuta"
