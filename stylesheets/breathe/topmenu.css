@@ -192,6 +192,9 @@ width: 13em;
 -moz-border-radius: 7px;
 -webkit-border-radius: 7px;
 }
+.topNavContainer input.loading {
+background: url("../../images/ajax-loader.gif") no-repeat scroll 95% 4px #FFFFFF !important;
+}
 .topNavContentContainer, .footer_wrap{
 margin: 0 auto;
 max-width: 980px;
