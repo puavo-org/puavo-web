@@ -47,6 +47,7 @@ en:
     boot_mode_dualboot: Dualboot
     boot_mode_: Terminal
     purchase_information: Purchase information
+    add_macAddress: Add a new line of MAC addresses
     linux_device_information:
       certificate_status_true: "Valid"
       certificate_status_false: "Not valid"

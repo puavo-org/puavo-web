@@ -15,7 +15,18 @@
 <% if f.object.classes.include?('puavoPrinter') %>
 <tr>
   <td class="label_td"><%= f.label :macAddress %></td>
-  <td class='required'><%= f.text_field :macAddress %></td>
+  <td class='required'>
+	<div id="device_macAddress">
+	  <% if f.object.macAddress.nil? %>
+        <input name='device[macAddress][]' type='text' />
+	  <% else %>
+	    <% Array(f.object.macAddress).each do |mac_address| %>
+          <input name='device[macAddress][]' type='text' value='<%= mac_address %>' />	
+	    <% end %>
+	  <% end %>
+	</div>
+	<%= link_to t('shared.add_macAddress'), "#", :class => "clone_prev_input_element" %>
+  </td>
 </tr>
 <% end %>
 

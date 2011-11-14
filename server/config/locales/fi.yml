@@ -45,6 +45,7 @@ fi:
     boot_mode_dualboot: Kaksoiskäynnistys
     boot_mode_: Pääte
     purchase_information: Hankintatiedot
+    add_macAddress: Lisää uusi MAC-osoite
     linux_device_information:
       certificate_status_true: Voimassa
       certificate_status_false: Ei ole voimassa
