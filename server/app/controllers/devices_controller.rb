@@ -154,6 +154,29 @@ class DevicesController < ApplicationController
     end
   end
 
+  # GET /:school_id/devices/:id/select_school
+  def select_school
+    @device = Device.find(params[:id])
+    @schools = School.all.select{ |s| s.id != @school.id }
+
+    respond_to do |format|
+      format.html { }
+    end
+  end
+
+  # POST /:school_id/devices/:id/change_school
+  def change_school
+    @device = Device.find(params[:id])
+    @school = School.find(params[:new_school])
+
+    @device.puavoSchool = @school.dn.to_s
+    @device.save!
+
+    respond_to do |format|
+      format.html{ redirect_to(device_path(@school, @device), :notice => t('flash.devices.school_changed') ) }
+    end
+  end
+
   private
 
   def find_school

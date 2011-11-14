@@ -12,4 +12,7 @@
 <% if @device.userCertificate %>
   <div><%= link_to t('link.set_install_mode'), revoke_certificate_device_path(@school, @device), :method => :delete %></div>
 <% end %>
+  <div>
+    <%= link_to t('.change_school'), select_school_device_path(@school, @device) %>
+  </div>
 <% end %>

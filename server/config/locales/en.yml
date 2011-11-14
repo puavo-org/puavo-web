@@ -69,6 +69,12 @@ en:
       cups_settings: CUPS settings
     cups:
       cups_settings: CUPS settings
+    show:
+      change_school: Change school
+    select_school:
+      title: "Device transfer (%{name})"
+      select_new_school: Select new school
+      submit: Move device
   servers:
     index:
       title: List of servers
@@ -115,6 +121,8 @@ en:
       logout_successful: Logout successful!
     printer:
       updated: Printer was successfully updated
+    devices:
+      school_changed: Device school has been changed!
   layouts:
     application:
       schools: Schools

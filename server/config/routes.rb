@@ -3,6 +3,16 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :hosts, :only => [:index], :collection => { :types => :get }
 
+  map.select_school_device( 'devices/:id/select_school',
+                            :controller => 'devices',
+                            :action => 'select_school',
+                            :path_prefix => ':school_id',
+                            :conditions => { :method => :get } )
+  map.change_school_device( 'devices/:id/change_school',
+                            :controller => 'devices',
+                            :action => 'change_school',
+                            :path_prefix => ':school_id',
+                            :conditions => { :method => :post } )
   map.image_device( 'devices/:id/image',
                       :controller => 'devices',
                       :action => 'image',

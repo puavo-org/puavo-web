@@ -67,6 +67,12 @@ fi:
       cups_settings: CUPS asetukset
     cups:
       cups_settings: CUPS asetukset
+    show:
+      change_school: Vaihda koulua
+    select_school:
+      title: "Laitteen (%{name}) siirtäminen toiseen kouluun"
+      select_new_school: Valitse uusi koulu
+      submit: Siirrä
   servers:
     index:
       title: Palvelimet
@@ -113,6 +119,8 @@ fi:
       logout_successful: Uloskirjautuminen onnistui!
     printer:
       updated: Tulostimen tietojen päivitys onnistui
+    devices:
+      school_changed: Laitteen koulu on nyt vaihdettu!
   layouts:
     application:
       schools: Koulut
