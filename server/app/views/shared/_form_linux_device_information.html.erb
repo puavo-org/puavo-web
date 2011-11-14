@@ -18,10 +18,10 @@
   <td class='required'>
 	<div id="device_macAddress">
 	  <% if f.object.macAddress.nil? %>
-        <input name='device[macAddress][]' type='text' />
+        <input name='device[macAddress][]' size='30' type='text' />
 	  <% else %>
 	    <% Array(f.object.macAddress).each do |mac_address| %>
-          <input name='device[macAddress][]' type='text' value='<%= mac_address %>' />	
+          <input name='device[macAddress][]' size='30' type='text' value='<%= mac_address %>' />	
 	    <% end %>
 	  <% end %>
 	</div>
