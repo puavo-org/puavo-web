@@ -252,8 +252,8 @@ en:
         puavoDeviceAutoPowerOffMode_default: Default
         puavoDeviceAutoPowerOffMode_off: "Off"
         puavoDeviceAutoPowerOffMode_custom: Custom
-        puavoDeviceOnHour: Start hour
-        puavoDeviceOffHour: End hour
+        puavoDeviceOnHour: Daytime start
+        puavoDeviceOffHour: Daytime end
       user:
         uid: Username
         password: Password

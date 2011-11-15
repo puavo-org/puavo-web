@@ -250,8 +250,8 @@ fi:
         puavoDeviceAutoPowerOffMode_default: Oletus
         puavoDeviceAutoPowerOffMode_off: Pois päältä
         puavoDeviceAutoPowerOffMode_custom: Mukautettu
-        puavoDeviceOnHour: Alkaa
-        puavoDeviceOffHour: Loppuu
+        puavoDeviceOnHour: Päivän aloitus
+        puavoDeviceOffHour: Päivän lopetus
       user:
         uid: Käyttäjätunnus
         password: Salasana
