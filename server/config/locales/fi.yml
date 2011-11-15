@@ -46,6 +46,7 @@ fi:
     boot_mode_: Pääte
     purchase_information: Hankintatiedot
     add_macAddress: Lisää uusi MAC-osoite
+    autopoweroff: Automaattisammutus
     linux_device_information:
       certificate_status_true: Voimassa
       certificate_status_false: Ei ole voimassa
@@ -243,6 +244,12 @@ fi:
         printerLocation: Sijainti
         printerMakeAndModel: Merkki ja malli
         image: Kuva
+        puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
+        puavoDeviceAutoPowerOffMode_default: Oletus
+        puavoDeviceAutoPowerOffMode_off: Pois päältä
+        puavoDeviceAutoPowerOffMode_custom: Mukautettu
+        puavoDeviceOnHour: Alkaa
+        puavoDeviceOffHour: Loppuu
       user:
         uid: Käyttäjätunnus
         password: Salasana

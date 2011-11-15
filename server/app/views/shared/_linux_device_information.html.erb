@@ -52,6 +52,33 @@
 </tr>
 </table>
 </div>
+
+<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') %>
+<div class="dashboard_box clear">
+  <h3><%= t('shared.autopoweroff') %></h3>
+  <table class="list widelist">
+	<tr>
+	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceAutoPowerOffMode" %></td>
+	  <td class="value_td">
+		<%=h t('activeldap.attributes.device.puavoDeviceAutoPowerOffMode_' + device.puavoDeviceAutoPowerOffMode) %>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceOnHour" %></td>
+	  <td class="value_td">
+		<%=h device.puavoDeviceOnHour %>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceOffHour" %></td>
+	  <td class="value_td">
+		<%=h device.puavoDeviceOffHour %>
+	  </td>
+	</tr>
+  </table>
+</div>
+<% end %>
+
 <%= render :partial => 'shared/purchase_information', :locals => { :device => device} %>
 
 <div class="dashboard_box clear">

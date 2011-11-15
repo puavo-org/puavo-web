@@ -48,6 +48,7 @@ en:
     boot_mode_: Terminal
     purchase_information: Purchase information
     add_macAddress: Add a new line of MAC addresses
+    autopoweroff: Automatic power off
     linux_device_information:
       certificate_status_true: "Valid"
       certificate_status_false: "Not valid"
@@ -245,6 +246,12 @@ en:
         printerLocation: Location
         printerMakeAndModel: Make and model
         image: Image
+        puavoDeviceAutoPowerOffMode: Auto power off mode
+        puavoDeviceAutoPowerOffMode_default: Default
+        puavoDeviceAutoPowerOffMode_off: "Off"
+        puavoDeviceAutoPowerOffMode_custom: Custom
+        puavoDeviceOnHour: Start hour
+        puavoDeviceOffHour: End hour
       user:
         uid: Username
         password: Password

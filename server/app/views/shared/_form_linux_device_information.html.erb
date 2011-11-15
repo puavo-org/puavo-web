@@ -57,6 +57,57 @@
 </tr>
 </table>
 
+<% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') %>
+<h2><span><%= t('shared.autopoweroff') %></span></h2>
+<table>
+  <tr>
+	<td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
+	<td>
+	  <table class="autopoweroff">
+	  <tr>
+		<td>
+		  <%= f.label :puavoDeviceAutoPowerOffMode_default %>
+		</td>
+		<td>
+		  <%= f.label :puavoDeviceAutoPowerOffMode_off %>
+		</td>
+		<td>
+		  <%= f.label :puavoDeviceAutoPowerOffMode_custom %>
+		</td>
+	  </tr>
+	  <tr>
+		<td>
+		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "default" %>
+		</td>
+		<td>
+		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "off" %>
+		</td>
+		<td>
+		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "custom" %>
+		</td>
+	  </tr>
+	  <tr>
+		<td><%= f.label :puavoDeviceOnHour %></td>
+		<td><%= f.label :puavoDeviceOffHour %></td>
+	  </tr>
+	  <tr>
+		<td>
+		  <%= f.select( :puavoDeviceOnHour,
+                    (1..24).each.map{ |h| [h.to_s, h.to_s] },
+                    :selected => (f.object.puavoDeviceOnHour or "17") ) %>
+		</td>
+		<td>
+		  <%= f.select( :puavoDeviceOffHour,
+                        (1..24).each.map{ |h| [h.to_s, h.to_s] },
+                        :selected => (f.object.puavoDeviceOffHour or "7" ) ) %>
+		</td>
+	  </tr>
+	  </table>
+	</td>
+  </tr>
+</table>
+<% end %>
+
 <%= render :partial => 'shared/form_purchase_information', :locals => { :f => f } %>
 
 <h2><span><%= t('shared.location') %></span></h2>
