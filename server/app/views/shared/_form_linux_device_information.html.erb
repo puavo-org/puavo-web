@@ -93,13 +93,13 @@
 	  <tr>
 		<td>
 		  <%= f.select( :puavoDeviceOnHour,
-                    (1..24).each.map{ |h| [h.to_s, h.to_s] },
-                    :selected => (f.object.puavoDeviceOnHour or "17") ) %>
+                    [[t('.select'), '']] + (1..24).each.map{ |h| [h.to_s, h.to_s] },
+                    :selected => (f.object.puavoDeviceOnHour or "") ) %>
 		</td>
 		<td>
 		  <%= f.select( :puavoDeviceOffHour,
-                        (1..24).each.map{ |h| [h.to_s, h.to_s] },
-                        :selected => (f.object.puavoDeviceOffHour or "7" ) ) %>
+                        [[t('.select'), '']] + ( (1..24).map{ |h| [h.to_s, h.to_s] } ),
+                        :selected => (f.object.puavoDeviceOffHour or "" ) ) %>
 		</td>
 	  </tr>
 	  </table>
@@ -185,4 +185,8 @@
   <td><%= f.text_field :puavoDeviceKernelArguments %></td>
 </tr>
 
+<% end %>
+
+<% content_for :javascript do %>
+  <%= javascript_include_tag "shared/form_linux_device_information" %>
 <% end %>

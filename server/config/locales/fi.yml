@@ -53,6 +53,8 @@ fi:
       xrandr_status_true: Kyllä
       xrandr_status_false: Ei
       xrandr_status_: Ei
+    form_linux_device_information:
+      select: Valitse
   devices:
     index:
       add_new_printer: Lisää uusi tulostin

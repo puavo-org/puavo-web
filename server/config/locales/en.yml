@@ -55,6 +55,8 @@ en:
       xrandr_status_true: "Yes"
       xrandr_status_false: "No"
       xrandr_status_: "No"
+    form_linux_device_information:
+      select: Select
   devices:
     index:
       add_new_printer: Add new printer
