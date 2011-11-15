@@ -6,7 +6,7 @@ end
 When /^I delete the (\d+)(?:st|nd|rd|th) external service$/ do |pos|
   visit external_services_path
   within("table tr:nth-child(#{pos.to_i+1})") do
-    click_link "Destroy"
+    click_link "Remove"
   end
 end
 

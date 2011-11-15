@@ -101,9 +101,9 @@ Feature: Manage schools
 
   Scenario: Schools list page when we have only one school and user is organisation ower
     Given I am on the show school page with "Greenwich Steiner School"
-    And I follow "Destroy"
+    And I follow "Remove"
     And I am on the show school page with "Example school 1"
-    And I follow "Destroy"
+    And I follow "Remove"
     When I go to the schools list page
     Then I should see "Listing schools"
     And I should see "New school"
@@ -122,8 +122,8 @@ Feature: Manage schools
     | displayName   | cn          |
     | Test School 1 | testschool1 |
     And I am on the show school page with "Test School 1"
-    When I follow "Destroy"
-    Then I should see "School was successfully destroyed."
+    When I follow "Remove"
+    Then I should see "School was successfully removed."
 
   Scenario: Delete school when it still contains the users, groups and roles
     Given a new school and group with names "Test School 1", "Group 1" on the "example" organisation
@@ -134,7 +134,7 @@ Feature: Manage schools
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school |
     | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   | 
     And I am on the show school page with "Test School 1"
-    When I follow "Destroy"
+    When I follow "Remove"
     Then I should see "School was not successfully destroyed. Users, roles and groups must be removed before school"
     And I should be on the school page
   

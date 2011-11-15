@@ -128,8 +128,8 @@ Feature: Manage groups
     | displayName | cn      |
     | Class 4A    | class4a |
     And I am on the group page with "Class 4A"
-    When I follow "Destroy"
-    Then I should see "Group was successfully destroyed."
+    When I follow "Remove"
+    Then I should see "Group was successfully removed."
 
   Scenario: Check group special ldap attributes
     Given the following groups:

@@ -83,3 +83,10 @@ Feature: Manage external services
     And I press "Update"
     And I should not see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I should not see "Services that have access to all information needed for getent"
+
+  Scenario: Get groups information with external service users
+    Given the following external services:
+      | uid   | description   | userPassword    | groups |
+      | uid 1 | description 1 | secretpassword1 | auth   |
+      | uid 2 | description 2 | secretpassword2 | auth   |
+      | uid 3 | description 3 | secretpassword3 | getent |
