@@ -60,7 +60,8 @@
 	<tr>
 	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceAutoPowerOffMode" %></td>
 	  <td class="value_td">
-		<%=h t('activeldap.attributes.device.puavoDeviceAutoPowerOffMode_' + device.puavoDeviceAutoPowerOffMode) %>
+		<%=h t('puavoDeviceAutoPowerOffMode_' + (device.puavoDeviceAutoPowerOffMode or 'default'),
+               :scope => 'activeldap.attributes.device') %>
 	  </td>
 	</tr>
 	<tr>
