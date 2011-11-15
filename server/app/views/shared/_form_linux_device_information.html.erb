@@ -59,19 +59,19 @@
 
 <% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') %>
 <h2><span><%= t('shared.autopoweroff') %></span></h2>
-<table>
+<table id="autopoweroff">
   <tr>
 	<td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
 	<td>
-	  <table class="autopoweroff">
+	  <table>
 	  <tr>
-		<td>
+		<td class="label_td">
 		  <%= f.label :puavoDeviceAutoPowerOffMode_default %>
 		</td>
-		<td>
+		<td class="label_td">
 		  <%= f.label :puavoDeviceAutoPowerOffMode_off %>
 		</td>
-		<td>
+		<td class="label_td">
 		  <%= f.label :puavoDeviceAutoPowerOffMode_custom %>
 		</td>
 	  </tr>
@@ -87,8 +87,8 @@
 		</td>
 	  </tr>
 	  <tr>
-		<td><%= f.label :puavoDeviceOnHour %></td>
-		<td><%= f.label :puavoDeviceOffHour %></td>
+		<td class="label_td"><%= f.label :puavoDeviceOnHour %></td>
+		<td class="label_td"><%= f.label :puavoDeviceOffHour %></td>
 	  </tr>
 	  <tr>
 		<td>
@@ -184,6 +184,8 @@
   <td class="label_td"><%= f.label :puavoDeviceKernelArguments %></td>
   <td><%= f.text_field :puavoDeviceKernelArguments %></td>
 </tr>
+</table>
+<table>
 
 <% end %>
 

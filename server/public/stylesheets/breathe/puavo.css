@@ -666,3 +666,20 @@ width:460px;
 position: fixed !important;
 top:35px !important;
 }
+
+#autopoweroff table {
+	margin-left: 20px;
+}
+
+table#autopoweroff td, #autopoweroff table td {
+	display: table-cell;
+	width: auto;
+}
+
+#autopoweroff table td.label_td {
+	padding-top: 20px;
+}
+
+#autopoweroff table td.label_td label {
+	font-weight: normal;
+}
