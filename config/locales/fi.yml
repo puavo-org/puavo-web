@@ -225,6 +225,7 @@ fi:
       title: Organisaation tiedot
     edit:
       title: Organisaation tiedot
+      select: Valitse
   external_services:
     index:
       actions: Toiminnot
@@ -329,6 +330,12 @@ fi:
         st: Maakunta
         preferredLanguage: Ensisijainen kieli
         eduOrgHomePageURI: Kotisivu
+        puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
+        puavoDeviceAutoPowerOffMode_default: Oletus
+        puavoDeviceAutoPowerOffMode_off: Pois päältä
+        puavoDeviceAutoPowerOffMode_custom: Mukautettu
+        puavoDeviceOnHour: Päivän aloitus
+        puavoDeviceOffHour: Päivän lopetus
       external_service:
         uid: Palvelun tunniste
         description: Kuvaus

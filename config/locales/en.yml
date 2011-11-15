@@ -225,6 +225,7 @@ en:
       title: Information of organisation
     edit:
       title: Information of organisation
+      select: Select
   external_services:
     index:
       actions: Actions
@@ -329,6 +330,12 @@ en:
         st: State
         preferredLanguage: Preferred language
         eduOrgHomePageURI: Home page
+        puavoDeviceAutoPowerOffMode: Auto power off mode
+        puavoDeviceAutoPowerOffMode_default: Default
+        puavoDeviceAutoPowerOffMode_off: "Off"
+        puavoDeviceAutoPowerOffMode_custom: Custom
+        puavoDeviceOnHour: Daytime start
+        puavoDeviceOffHour: Daytime end
       external_service:
         uid: Service Identifier
         description: Description

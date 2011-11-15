@@ -659,3 +659,16 @@ width:460px;
 position: fixed !important;
 top:35px !important;
 }
+
+table#autopoweroff td {
+	display: table-cell;
+	width: auto;
+}
+
+table#autopoweroff td.label_td {
+	padding-top: 20px;
+}
+
+table#autopoweroff td.label_td label {
+	font-weight: normal;
+}
