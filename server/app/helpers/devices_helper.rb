@@ -30,8 +30,6 @@ module DevicesHelper
   def device_type(form)
     device_types = PUAVO_CONFIG['allow_change_device_types']
     if device_types.include?(form.object.puavoDeviceType)
-      form.label(:puavoDeviceType) +
-        tag('br') + 
         form.select( :puavoDeviceType,
                      device_types.map{ |d| [PUAVO_CONFIG['device_types'][d]['label'][I18n.locale.to_s], d] } )
     end
