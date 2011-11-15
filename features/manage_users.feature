@@ -177,8 +177,8 @@ Feature: Manage users
       | Ben       | Mabey   | ben    | secret   | Class 4   | Admin                     | true         |
       | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   | false        |
     And I am on the show user page with "ben"
-    When I follow "Destroy"
-    Then I should see "User was successfully destroyed."
+    When I follow "Remove"
+    Then I should see "User was successfully removed."
     And the memberUid should not include "ben" on the "School 1" school
     And the "School 1" school not include incorret member values
     And the memberUid should not include "ben" on the "Class 4" group
