@@ -296,3 +296,12 @@ label.checkbox {
     padding: 0;
     width: 100px;
 }
+
+table#autopoweroff td.label_td label {
+	font-weight: normal;
+}
+
+table#autopoweroff td.label_td {
+	text-align: left;
+	padding-top: 20px;
+}
