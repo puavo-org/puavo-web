@@ -40,6 +40,13 @@ Before do |scenario|
   domain_users = SambaGroup.find('Domain Admins')
   domain_users.memberUid = []
   domain_users.save
+
+  ldap_organisation = LdapOrganisation.current
+  ldap_organisation.preferredLanguage = "fi"
+  ldap_organisation.puavoDeviceOnHour = "14"
+  ldap_organisation.puavoDeviceOffHour = "15"
+  ldap_organisation.puavoDeviceAutoPowerOffMode = "off"
+  ldap_organisation.save!
 end
 
 Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
