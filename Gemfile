@@ -18,4 +18,6 @@ group :development do
 	gem 'cucumber-rails'
 	gem 'ruby-prof'
 	gem 'ruby-debug'
+	gem 'guard'
+	gem 'guard-coffeescript'
 end
