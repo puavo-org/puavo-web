@@ -47,6 +47,14 @@ Feature: Manage roles
     And I should see "Group name: staff"
     And I should see "Affiliation: Staff"
 
+  Scenario: Delete role
+    Given the following roles:
+    | displayName | cn      | eduPersonAffiliation |
+    | Student     | student | student              |
+    | Teacher     | teacher | teacher              | 
+    When I delete the 1st role
+    Then I shout see the following roles:
+    | Teacher |
 
   Scenario: Listing roles
     Given the following roles:
