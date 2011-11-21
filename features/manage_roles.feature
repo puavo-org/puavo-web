@@ -50,11 +50,14 @@ Feature: Manage roles
   Scenario: Delete role
     Given the following roles:
     | displayName | cn      | eduPersonAffiliation |
+    | Staff       | staff   | staff                |
     | Student     | student | student              |
-    | Teacher     | teacher | teacher              | 
+    | Teacher     | teacher | teacher              |
     When I delete the 1st role
-    Then I shout see the following roles:
-    | Teacher |
+    Then I should see the following roles:
+    | Role name | Group name |
+    | Student   | student    |
+    | Teacher   | teacher    |
 
   Scenario: Listing roles
     Given the following roles:

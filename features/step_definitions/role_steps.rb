@@ -8,7 +8,7 @@ end
 When /^I delete the (\d+)(?:st|nd|rd|th) role$/ do |pos|
   visit roles_url
   within("table tr:nth-child(#{pos.to_i+1})") do
-    click_link "Destroy"
+    click_link "Remove"
   end
 end
 
@@ -20,7 +20,7 @@ When /^I edit the (\d+)(?:st|nd|rd|th) role$/ do |pos|
 end
 
 Then /^I should see the following roles:$/ do |expected_roles_table|
-  expected_roles_table.diff!(tableish('table tr', 'td,th'))
+  expected_roles_table.diff!( tableish('table tr', lambda{ |j| j.search('td,th')[0..1] }) )
 end
 
 Given /^a new role with name "([^\"]*)" and which is joined to the "([^\"]*)" group$/ do
