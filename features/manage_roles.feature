@@ -32,12 +32,20 @@ Feature: Manage roles
 
   Scenario: Edit role and set empty name
     Given the following roles:
-    | displayName |
-    | Student     |
-    And I am on the edit role page with "Student"
+    | displayName | cn      | eduPersonAffiliation |
+    | Student     | student | student              |
+    | Teacher     | teacher | teacher              | 
+    And I edit the 1st role
     When I fill in "Role name" with ""
     And I press "Update"
     Then I should see "Role cannot be saved!"
+    When I fill in "Role name" with "Staff"
+    And I fill in "Group name" with "staff"
+    And I select "Staff" from "Affiliation"
+    And I press "Update"
+    Then I should see "Role name: Staff"
+    And I should see "Group name: staff"
+    And I should see "Affiliation: Staff"
 
 
   Scenario: Listing roles
