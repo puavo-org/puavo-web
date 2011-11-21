@@ -4,6 +4,16 @@
     <%= f.label :displayName %><br />
     <%= f.text_field :displayName %>
   </p>
+  <p>
+    <%= f.label :cn %><br />
+    <%= f.text_field :cn %>
+  </p>
+  <p>
+    <%= f.label :puavoEduPersonAffiliation %><br />
+	<%= f.select( :puavoEduPersonAffiliation,
+                  [[t('default_select_value'), ""]] +
+                  User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } ) %>
+  </p>
   <span style="float:left">
     <%= f.submit submit_text %>
     <div class="cancel"><%= link_to t('link.cancel'),  path, :class => 'cancel_button' %> </div>

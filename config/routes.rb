@@ -3,28 +3,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :external_services
 
-  map.select_school_role( 'roles/:id/select_school',
-                          :controller => 'roles',
-                          :action => 'select_school',
-                          :path_prefix => ':school_id',
-                          :conditions => { :method => :get } )
-  map.select_role_role( 'roles/:id/select_role',
-                        :controller => 'roles',
-                        :action => 'select_role',
-                        :path_prefix => ':school_id',
-                        :conditions => { :method => :post } )
-  map.add_group_role( 'roles/:id/add_group/:group_id',
-                      :controller => 'roles',
-                      :action => 'add_group',
-                      :path_prefix => ':school_id',
-                      :conditions => { :method => :put } )
-  map.remove_group_role( 'roles/:id/remove_group/:group_id',
-                         :controller => 'roles',
-                         :action => 'remove_group',
-                         :path_prefix => ':school_id',
-                         :conditions => { :method => :put } )
-
-  map.resources :roles, :path_prefix => ':school_id'
+  map.resources :roles
 
   map.admins_school( 'schools/:id/admins.:format',
                      :controller => 'schools',

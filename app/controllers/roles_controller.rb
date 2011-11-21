@@ -19,9 +19,6 @@ class RolesController < ApplicationController
   def show
     @role = Role.find(params[:id])
 
-    @member_groups = @role.groups.sort
-    @other_groups = Group.all.delete_if do |g| @member_groups.include?(g) end.sort
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @role }
@@ -49,7 +46,6 @@ class RolesController < ApplicationController
   def create
     @role = Role.new(params[:role])
 
-    @role.puavoSchool = @school.dn
     respond_to do |format|
       if @role.save
         flash[:notice] = t('flash.added', :item => t('activeldap.models.role'))

@@ -1,6 +1,6 @@
 class Role < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
-                :prefix => "ou=Roles",
+                :prefix => "ou=Roles,ou=Groups",
                 :classes => ['top',  'puavoUserRole'] )
 
   has_many :members, :class_name => "User", :wrap => "member", :primary_key => "dn"
@@ -27,7 +27,6 @@ class Role < LdapBase
 
   def set_special_ldap_value
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
-    self.cn = self.displayName
   end
 
   def id
@@ -48,11 +47,5 @@ class Role < LdapBase
     attributes = [ {'member' => [member.dn.to_s]},
                    {'memberUid' => [member.uid.to_s]} ]
     self.ldap_modify_operation(:delete, attributes)
-  end
-
-  def update_associations
-    (self.groups.inject([]) { |result, group| result + group.members } | self.members).each do |member|
-      member.update_associations
-    end
   end
 end

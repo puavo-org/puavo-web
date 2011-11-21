@@ -34,11 +34,11 @@ module NavigationHelpers
       
     # Role
     when /the new role page/
-      new_role_path(@school)
+      new_role_path
     when /the edit role page/
-      edit_role_path(@school)
+      edit_role_path
     when /the roles list page/
-      roles_path(@school)
+      roles_path
 
     # User path
     when /the new user page/

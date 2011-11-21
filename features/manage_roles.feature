@@ -4,21 +4,23 @@ Feature: Manage roles
   wants [behaviour]
 
   Background:
-    Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And the following roles:
-    | displayName |
-    | Staff       |
-    And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
-      | Ben       | Mabey  | ben   | secret   | true         | Staff     | Staff                     |
-    And I am logged in as "pavel" with password "secret"
+    And I am logged in as "example" organisation owner
   
   Scenario: Register new role
     Given I am on the new role page
     When I fill in "Role name" with "Student"
+    And I fill in "Group name" with "student"
+    And I select "Teacher" from "Affiliation"
+    And I select "Staff" from "Affiliation"
+    And I select "Visitor" from "Affiliation"
+    And I select "Parent" from "Affiliation"
+    And I select "Test user" from "Affiliation"
+    And I select "Admin" from "Affiliation"
+    And I select "Student" from "Affiliation"
     And I press "Create"
-    Then I should see "Student"
+    Then I should see "Role name: Student"
+    And I should see "Group name: student"
+    And I should see "Affiliation: Student"
     When I follow "New role"
     Then I should be on the new role page
 

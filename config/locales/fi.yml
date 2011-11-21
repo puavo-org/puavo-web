@@ -269,6 +269,8 @@ fi:
         displayName: "Roolin nimi"
         members: Jäsenet
         groups: Roolin ryhmät
+        puavoEduPersonAffiliation: Käyttäjätyyppi
+        cn: Ryhmänimi
       school:
         cn: "Ryhmän nimi"
         displayName: "Koulun nimi"

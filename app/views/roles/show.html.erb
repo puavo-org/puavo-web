@@ -4,6 +4,16 @@
 </p>
 
 <p>
+  <b><%= t('activeldap.attributes.role.cn') %>:</b>
+  <%=h @role.cn %>
+</p>
+
+<p>
+  <b><%= t('activeldap.attributes.role.puavoEduPersonAffiliation') %>:</b>
+  <%=h t('puavoEduPersonAffiliation_' + @role.puavoEduPersonAffiliation) %>
+</p>
+
+<p>
   <b><%= t('activeldap.attributes.role.members') %>:</b><br />
   <span id="members">
     <% @role.members.each do |m| %>
@@ -12,38 +22,16 @@
   </span>
 </p>
 
-<p>
-  <b><%= t('activeldap.attributes.role.groups') %>:</b><br />
-  <span id="member_groups">
-    <% @member_groups.each do |g| %>
-    <%= "#{g.displayName} (#{g.school.displayName})" %>
-    <%= link_to t('link.remove'), remove_group_role_path(@school, @role, g), :method => :put, :id => "remove_group_#{g.id}" %>
-    <br />
-    <% end %>
-  </span>
-</p>
-
-<p>
-  <b><%= t('.other_groups') %>:</b><br />
-  <span id="other_groups">
-    <% @other_groups.each do |g| %>
-    <%= "#{g.displayName} (#{g.school.displayName})" %>
-    <%= link_to t('link.add'), add_group_role_path(@school, @role, g), :method => :put, :id => "add_group_#{g.id}" %>
-    <br />
-    <% end %>
-  </span>
-</p>
-
 <% content_for :right do %>
 <% if theme=="gray" %>
-<div><%= link_to t('link.edit'), edit_role_path(@school, @role) %></div>
+<div><%= link_to t('link.edit'), edit_role_path(@role) %></div>
 <div><%= link_to t('link.new_role'), new_role_path %></div>
 <div><%= link_to t('.change_school'), select_school_role_path %></div>
 <% end %>
 <% if theme!="gray" %>
 <ul class="tools">
 <li>
-<%= link_to t('link.edit'), edit_role_path(@school, @role) %>
+<%= link_to t('link.edit'), edit_role_path(@role) %>
 </li>
 <li class="tool">
 <span><%= t('link.more') %><%= image_tag("show-more.png")%></span>
@@ -51,35 +39,8 @@
 <li>
 <%= link_to t('link.new_role'), new_role_path %>
 </li>
-<li>
-<%= link_to t('.change_school'), select_school_role_path %>
-</li>
 </ul>
 </li>
 </ul>
 <% end %> 
-<% end %>
-<% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <% link_to school_path(@school) do %>
-    <span><%= t('layouts.application.schools') %></span>
-    <% end %>
-  </li>
-  <% session[:organisation].schools.each do |school| %>
-  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %>
-  </li>
-  <% end %>
-</ul>
-<ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
-<% end %>
-</li>
-  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-</ul>
 <% end %>

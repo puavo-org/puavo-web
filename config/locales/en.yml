@@ -269,6 +269,8 @@ en:
         displayName: "Role name"
         members: Members
         groups: Members groups
+        puavoEduPersonAffiliation: Affiliation
+        cn: Group name
       school:
         cn: "Group name"
         displayName: "School name"
