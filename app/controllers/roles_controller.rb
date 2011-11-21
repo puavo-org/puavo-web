@@ -2,11 +2,7 @@ class RolesController < ApplicationController
   # GET /:school_id/roles
   # GET /:school_id/roles.xml
   def index
-    if @school
-      @roles = @school.roles.sort
-    else
-      @roles = Role.all.sort
-    end
+    @roles = Role.all.sort
 
     respond_to do |format|
       format.html # index.html.erb

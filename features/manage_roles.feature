@@ -42,9 +42,9 @@ Feature: Manage roles
 
   Scenario: Listing roles
     Given the following roles:
-    | displayName |
-    | Student     |
-    | Teacher     |
+    | displayName | cn      | eduPersonAffiliation |
+    | Student     | student | student              |
+    | Teacher     | teacher | teacher              |
     And I am on the roles list page
     Then I should see "Student"
     And I should see "Teacher"
