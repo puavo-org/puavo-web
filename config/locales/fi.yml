@@ -21,6 +21,7 @@ fi:
       printers: Tulostimet
       search_placeholder: Hae
       links: Linkit
+      roles: Roolit
     forms:
       required_field: "* = Pakollinen tieto"
   link:

@@ -21,6 +21,7 @@ en:
       printers: Printers
       search_placeholder: Search
       links: Links
+      roles: Roles
     forms:
       required_field: "* = Required field"
   link:
