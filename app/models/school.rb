@@ -1,6 +1,6 @@
 class School < BaseGroup
   ldap_mapping( :dn_attribute => "puavoId",
-                :prefix => "ou=Groups",
+                :prefix => "ou=Schools,ou=Groups",
                 :classes => ['top','posixGroup','puavoSchool','sambaGroupMapping'] )
 
   has_many( :members, :class_name => "User",
@@ -17,9 +17,10 @@ class School < BaseGroup
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
 
-  has_many( :roles, :class_name => "Role",
-            :primary_key => 'dn',
-            :foreign_key => 'puavoSchool' )
+# FIXME
+#  has_many( :roles, :class_name => "Role",
+#            :primary_key => 'dn',
+#            :foreign_key => 'puavoSchool' )
 
   attr_accessor :image
   before_validation :resize_image

@@ -4,12 +4,10 @@ Feature: Manage schools
   I want to manage the schools
 
   Background:
-    Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Example school 1" school
-    And the following schools:
+    Given the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
-    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Greenwich Steiner School" school
+    | Example school 1         | exampleschool |
     And I am logged in as "example" organisation owner
 
   Scenario: Add new school to organisation
