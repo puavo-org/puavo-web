@@ -41,10 +41,14 @@ Feature: Manage roles
     And I should see "Role name can't be blank"
 
   Scenario: Edit role and set empty name
-    Given the following roles:
-    | displayName | cn      | eduPersonAffiliation |
-    | Student     | student | student              |
-    | Teacher     | teacher | teacher              | 
+    Given the following schools:
+    | displayName      | cn             |
+    | Example school 1 | exampleschool1 |
+    | Example school 2 | exampleschool2 |
+    And the following roles:
+    | displayName | cn      | puavoEduPersonAffiliation |
+    | Student     | student | student                   |
+    | Teacher     | teacher | teacher                   |
     And I edit the 1st role
     When I fill in "Role name" with ""
     And I press "Update"
@@ -56,6 +60,14 @@ Feature: Manage roles
     Then I should see "Role name: Staff"
     And I should see "Group name: staff"
     And I should see "Affiliation: Staff"
+    And I should found following roles on the "Example school 1" school:
+    | displayName | cn                     | puavoEduPersonAffiliation |
+    | Staff       | exampleschool1-staff   | staff                     |
+    | Teacher     | exampleschool1-teacher | teacher                   |
+    And I should found following roles on the "Example school 2" school:
+    | displayName | cn                     | puavoEduPersonAffiliation |
+    | Staff       | exampleschool2-staff   | staff                     |
+    | Teacher     | exampleschool2-teacher | teacher                   |
 
   Scenario: Delete role
     Given the following roles:

@@ -17,7 +17,7 @@ class Role < LdapBase
               :primary_key => 'dn' )
 
   before_validation :set_special_ldap_value
-  after_save :create_role_to_schools
+  after_save :create_or_update_role_to_schools
 
   def validate
     if self.displayName.to_s.empty?
@@ -52,15 +52,28 @@ class Role < LdapBase
 
   private
 
-  def create_role_to_schools
+  def create_or_update_role_to_schools
     schools = School.base_search(:attributes => ['cn'])
     schools.each do |school|
-      if SchoolRole.base_search(:filter => "&(puavoUserRole=#{self.dn})(puavoSchool=#{school[:dn]})").empty?
-        SchoolRole.create( :cn => school[:cn] + "-" + self.cn,
-                           :displayName => self.displayName,
-                           :puavoEduPersonAffiliation => self.puavoEduPersonAffiliation,
-                           :puavoSchool => school[:dn],
-                           :puavoUserRole => self.dn.to_s  )
+      new_school_role = { 
+        :cn => school[:cn] + "-" + self.cn,
+        :displayName => self.displayName,
+        :puavoEduPersonAffiliation => self.puavoEduPersonAffiliation,
+        :puavoSchool => school[:dn],
+        :puavoUserRole => self.dn.to_s }
+      if ( school_role = SchoolRole.base_search(:filter => "&(puavoUserRole=#{self.dn})" +
+                                                           "(puavoSchool=#{school[:dn]})", 
+                                                :attributes => ['cn', 'displayName',
+                                                                'puavoEduPersonAffiliation',
+                                                                'puavoSchool', 'puavoUserRole']).first ).nil?
+        SchoolRole.create(new_school_role)
+      else
+        school_role_puavo_id = school_role.delete(:puavoId)
+        school_role_dn = school_role.delete(:dn)
+        unless new_school_role.diff(school_role).empty?
+          school_role_object = SchoolRole.find(dn)
+          school_role_object.update_attributes(new_school_role)
+        end
       end
     end
   end
