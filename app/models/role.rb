@@ -17,6 +17,7 @@ class Role < LdapBase
               :primary_key => 'dn' )
 
   before_validation :set_special_ldap_value
+  after_save :create_role_to_schools
 
   def validate
     if self.displayName.to_s.empty?
@@ -47,5 +48,20 @@ class Role < LdapBase
     attributes = [ {'member' => [member.dn.to_s]},
                    {'memberUid' => [member.uid.to_s]} ]
     self.ldap_modify_operation(:delete, attributes)
+  end
+
+  private
+
+  def create_role_to_schools
+    schools = School.base_search(:attributes => ['cn'])
+    schools.each do |school|
+      if SchoolRole.base_search(:filter => "&(puavoUserRole=#{self.dn})(puavoSchool=#{school[:dn]})").empty?
+        SchoolRole.create( :cn => school[:cn] + "-" + self.cn,
+                           :displayName => self.displayName,
+                           :puavoEduPersonAffiliation => self.puavoEduPersonAffiliation,
+                           :puavoSchool => school[:dn],
+                           :puavoUserRole => self.dn.to_s  )
+      end
+    end
   end
 end

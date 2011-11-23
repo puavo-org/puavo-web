@@ -7,7 +7,11 @@ Feature: Manage roles
     And I am logged in as "example" organisation owner
   
   Scenario: Register new role
-    Given I am on the new role page
+    Given the following schools:
+    | displayName      | cn             |
+    | Example school 1 | exampleschool1 |
+    | Example school 2 | exampleschool2 |
+    And I am on the new role page
     When I fill in "Role name" with "Student"
     And I fill in "Group name" with "student"
     And I select "Teacher" from "Affiliation"
@@ -23,6 +27,12 @@ Feature: Manage roles
     And I should see "Affiliation: Student"
     When I follow "New role"
     Then I should be on the new role page
+    And I should found following roles on the "Example school 1" school:
+    | displayName | cn                     | puavoEduPersonAffiliation |
+    | Student     | exampleschool1-student | student                   |
+    And I should found following roles on the "Example school 2" school:
+    | displayName | cn                     | puavoEduPersonAffiliation |
+    | Student     | exampleschool2-student | student                   |
 
   Scenario: Register new role without name
     Given I am on the new role page
