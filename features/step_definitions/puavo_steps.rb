@@ -30,6 +30,9 @@ Before do |scenario|
       p.destroy
     end
   end
+  SchoolRole.all.each do |sr|
+    sr.destroy
+  end
 
   ExternalService.all.each do |e| e.destroy end
 

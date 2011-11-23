@@ -8,6 +8,10 @@ Feature: Manage schools
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
     | Example school 1         | exampleschool |
+    And the following roles:
+    | displayName | cn      | puavoEduPersonAffiliation |
+    | Student     | student | student                   |
+    | Teacher     | teacher | teacher                   |
     And I am logged in as "example" organisation owner
 
   Scenario: Add new school to organisation
@@ -41,6 +45,10 @@ Feature: Manage schools
     | 12345                                                                          |
     | 54321                                                                          |
     And I should see "School was successfully created."
+    And I should found following roles on the "Bourne School" school:
+    | displayName | cn             | puavoEduPersonAffiliation |
+    | Student     | bourne-student | student                   |
+    | Teacher     | bourne-teacher | teacher                   |
 
   Scenario: Add new school to organisation without names
     Given I am on the new school page

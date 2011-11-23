@@ -17,13 +17,13 @@ class School < BaseGroup
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
 
-# FIXME
-#  has_many( :roles, :class_name => "Role",
-#            :primary_key => 'dn',
-#            :foreign_key => 'puavoSchool' )
+  has_many( :roles, :class_name => "SchoolRole",
+            :primary_key => 'dn',
+            :foreign_key => 'puavoSchool' )
 
   attr_accessor :image
   before_validation :resize_image
+  after_save :create_school_roles
   
   def validate
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
@@ -77,6 +77,25 @@ class School < BaseGroup
       "samba_SID" => self.sambaSID,
       "samba_group_type" => self.sambaGroupType,
       "post_office_box" => self.postOfficeBox }.to_json
+  end
+
+  def create_school_roles
+    roles = Role.base_search
+    school_roles_by_organisation = []
+    roles.each do |role|
+      school_roles_by_organisation.push( { :cn => self.cn + "-" + role[:cn],
+                                           :displayName => role[:displayName],
+                                           :puavoEduPersonAffiliation => role[:puavoEduPersonAffiliation],
+                                           :puavoSchool => self.dn.to_s,
+                                           :puavoUserRole => role[:dn] } )
+    end
+    school_roles = SchoolRole.base_search( :filter => "puavoSchool=#{self.dn}",
+                                           :attributes => ['cn', 'puavoId'] )
+    school_roles_by_organisation.each do |role|
+      if school_roles.select{ |r| r[:cn] == role[:cn] }.empty?
+        SchoolRole.create(role)
+      end
+    end
   end
 
   private

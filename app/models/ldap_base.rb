@@ -15,6 +15,34 @@ class LdapBase < ActiveLdap::Base
     LdapBase.load(ldif.to_s)
   end
 
+  # Improve method for original search method (ActiveLdap::Base)
+  # Return Array which includes Hash for each ldap entry. 
+  # You can choose keys for Hash by attributes arguments.
+  # Value of attribute convert to string if Array includes only one item
+  # :filter defaults to objectClass=* - usually this isn’t what you want
+  # :scope defaults to :one. Usually you won’t need to change it (You can choose value also from between :one and :base)
+  # :attributes defaults to [] and is the list of attributes you want back. Empty means all of them.
+  def self.base_search( args = {} )
+    search_arguments = {
+      :scope => args.has_key?(:scope) ? args[:scope] : :one
+    }
+    search_arguments = search_arguments.merge({ :filter => args[:filter] }) if args.has_key?(:filter)
+    if args.has_key?(:attributes)
+      attributes = args[:attributes]
+      attributes.push("puavoId") unless attributes.include?('puavoId')
+      search_arguments = search_arguments.merge({ :attributes => attributes })
+    end
+
+    self.search(search_arguments).map do |entry|
+      new_hash = entry.last.inject({}) do |result, (key,value)|
+        result[key.to_sym] = value.count == 1 ? value.to_s : value
+        result
+      end
+      new_hash[:dn] = entry.first.to_s
+      new_hash
+    end
+  end
+
   def <=>(other_object)
     self.displayName.to_s <=> other_object.displayName.to_s
   end

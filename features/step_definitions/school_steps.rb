@@ -108,3 +108,15 @@ Then /^I should be on the "([^\"]*)" school page$/ do |school_name|
   @school = School.find(:first, :attribute => "displayName", :value => school_name)
   URI.parse(current_url).path.should == path_to("the school page")
 end
+
+Then /^I should found following roles on the "([^\"]*)" school:$/ do |school_name, roles|
+  set_ldap_admin_connection
+  school = School.find(:first, :attribute => "displayName", :value => school_name)
+  school_roles =  [['displayName', 'cn', 'puavoEduPersonAffiliation']]
+  school_roles += SchoolRole.find( :all,
+                                   :attribute => "puavoSchool",
+                                   :value => school.dn.to_s ).map do |role|
+    [role.displayName, role.cn, role.puavoEduPersonAffiliation]
+  end
+  roles.diff!(school_roles)
+end

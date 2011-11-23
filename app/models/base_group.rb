@@ -25,10 +25,15 @@ class BaseGroup < LdapBase
   end
 
   def validate_on_create
-    # cn attribute must be unique on the group and school model.
-    # cn == group name (operating system)
-    if self.cn.empty? || Group.find(:first, :attribute => "cn", :value => self.cn) ||
-        School.find(:first, :attribute => "cn", :value => self.cn)
+    # cn attribute must be unique on the ou=Groups branch
+    # cn == group name (posix group)
+    commonName = Net::LDAP::Filter.escape( self.cn )
+    groups = LdapBase.search( :base => "ou=groups,#{LdapBase.base.to_s}",
+                              :filter => "(cn=#{commonName})",
+                              :scope => :sub,
+                              :attributes => ['puavoId'] )
+
+    unless groups.empty?
       errors.add :cn, I18n.t("activeldap.errors.messages.taken",
                              :attribute => I18n.t("activeldap.attributes.#{self.class.to_s.downcase}.cn") )
     end
