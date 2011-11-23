@@ -23,7 +23,7 @@ class School < BaseGroup
 
   attr_accessor :image
   before_validation :resize_image
-  after_save :create_school_roles
+  after_save :create_or_update_school_roles
   
   def validate
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
@@ -79,7 +79,9 @@ class School < BaseGroup
       "post_office_box" => self.postOfficeBox }.to_json
   end
 
-  def create_school_roles
+  private
+
+  def create_or_update_school_roles
     roles = Role.base_search
     school_roles_by_organisation = []
     roles.each do |role|
@@ -90,15 +92,22 @@ class School < BaseGroup
                                            :puavoUserRole => role[:dn] } )
     end
     school_roles = SchoolRole.base_search( :filter => "puavoSchool=#{self.dn}",
-                                           :attributes => ['cn', 'puavoId'] )
+                                           :attributes => ['cn', 'displayName',
+                                                           'puavoEduPersonAffiliation',
+                                                           'puavoSchool', 'puavoUserRole'] )
     school_roles_by_organisation.each do |role|
-      if school_roles.select{ |r| r[:cn] == role[:cn] }.empty?
+      if (school_role = school_roles.select{ |r| r[:puavoUserRole] == role[:puavoUserRole] }.first).nil?
         SchoolRole.create(role)
+      else
+        school_role_puavo_id = school_role.delete(:puavoId)
+        school_role_dn = school_role.delete(:dn)
+        unless role.diff(school_role).empty?
+          school_role_object = SchoolRole.find(school_role_dn)
+          school_role_object.update_attributes(role)
+        end
       end
     end
   end
-
-  private
 
   def resize_image
     if self.image.class == Tempfile

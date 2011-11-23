@@ -83,6 +83,16 @@ Feature: Manage schools
     Then I should see "St. Paul's"
     And I should see "School was successfully updated."
 
+  Scenario: Change school group name
+    Given I am on the school page with "Greenwich Steiner School"
+    And I follow "Edit"
+    When I fill in "Group name" with "greenwichschool"
+    And I press "Update"
+    Then I should see "School was successfully updated."
+    And I should found following roles on the "Greenwich Steiner School" school:
+    | displayName | cn                      | puavoEduPersonAffiliation |
+    | Student     | greenwichschool-student | student                   |
+    | Teacher     | greenwichschool-teacher | teacher                   |
 
   Scenario: Add duplicate school or group abbreviation
     Given the following groups:
