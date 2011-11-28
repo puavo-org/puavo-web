@@ -124,4 +124,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :organisation, :only => [:show, :edit, :update]
 
   map.resources :search, :only => [:index]
+
+  map.resources :student_year_classes, :path_prefix => ':school_id'
 end

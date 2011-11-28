@@ -13,11 +13,11 @@ class School < BaseGroup
             :foreign_key => 'puavoAdminOfSchool' )  
   has_many :user_member_uids, :class_name => "User", :wrap => "memberUid", :primary_key => "uid"
 
-  has_many( :groups, :class_name => 'Group',
+  has_many( :roles, :class_name => "SchoolRole",
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
 
-  has_many( :roles, :class_name => "SchoolRole",
+  has_many( :groups, :class_name => 'StudentYearClass',
             :primary_key => 'dn',
             :foreign_key => 'puavoSchool' )
 

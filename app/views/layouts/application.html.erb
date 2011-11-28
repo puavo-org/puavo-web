@@ -138,7 +138,7 @@
     <div id="navbar_first_level">
       <div id="nav1">
         <ul>
-          <li class="<%= controller_name.match(/schools/) \
+          <li class="<%= controller_name.match(/schools|student_year_classes/) \
                      ? "page_item current_page_item" \
                                                     : "page_item" %>">
             <% link_to school_path(@school) do %>

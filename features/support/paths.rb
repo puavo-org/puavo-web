@@ -68,6 +68,9 @@ module NavigationHelpers
     when /the schools list page/
       schools_path
 
+    when /the new student year class page/
+      student_year_classes_path(@school)
+
     # Add more mappings here.
     # Here is a more fancy example:
     #

@@ -34,6 +34,14 @@ Before do |scenario|
     sr.destroy
   end
 
+  StudentYearClass.all.each do |year_class|
+    year_class.destroy
+  end
+
+  StudentClass.all.each do |student_class|
+    student_class.destroy
+  end
+
   ExternalService.all.each do |e| e.destroy end
 
   domain_users = SambaGroup.find('Domain Users')

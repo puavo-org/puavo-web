@@ -202,7 +202,7 @@ background: url("../../images/iconset-breathe.png") no-repeat scroll left -275px
 .tools a.show:hover {
     background: url("../../images/iconset-breathe.png") no-repeat scroll left -350px transparent;
 }
-.tools a[href$="users/new"], .tools a[href$="external_services/new"], .tools a[href$="schools/new"], .tools a[href$="roles/new"], .tools a[href$="groups/new"] {
+.tools a[href$="users/new"], .tools a[href$="external_services/new"], .tools a[href$="schools/new"], .tools a[href$="roles/new"], .tools a[href$="groups/new"], .tools a[href$="student_year_classes/new"] {
     background: url("../../images/iconset-breathe.png") no-repeat scroll left -390px transparent;
 }
 .tools a[href$="users/new"]:hover, .tools a[href$="external_services/new"]:hover, .tools a[href$="schools/new"]:hover, .tools a[href$="roles/new"]:hover, .tools a[href$="groups/new"]:hover {

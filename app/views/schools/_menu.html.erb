@@ -1,5 +1,6 @@
 <ul>
-  <li <%= action_name == "show" || action_name=="edit" ? "class='current'" : "" %>>
+  <li <%= controller_name == "schools" &&
+          (action_name == "show" || action_name=="edit") ? "class='current'" : "" %>>
   <%= link_to t('.dashboard'), school_path(@school) %>
   </li>
   <% if organisation_owner? %>
@@ -7,5 +8,8 @@
   <%= link_to t('.admins'), admins_school_path(@school) %>
   </li>
   <% end %>
+  <li <%= controller_name == "student_year_classes" ? "class='current'" : "" %>>
+  <%= link_to t('.classes'), student_year_classes_path(@school) %>
+  </li>
 </ul>
   

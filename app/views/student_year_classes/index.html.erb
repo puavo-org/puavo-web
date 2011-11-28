@@ -1,0 +1,27 @@
+<table class="list">
+  <tr>
+    <th><%= t('activeldap.attributes.student_year_class.displayName') %></th>
+    <th><%= t('activeldap.attributes.student_year_class.cn') %></th>
+    <th colspan="2"><%= t('.actions') %></th>
+  </tr>
+
+<% @student_year_classes.each do |year_class| %>
+  <tr>
+    <td>
+      <%= link_to year_class.displayName, student_year_class_path(@school, year_class) %>
+    </td>
+    <td>
+      <%= year_class.cn %>
+    </td>
+    <td><%= link_to t('link.edit'), edit_student_year_class_path(@school, year_class) %></td>
+    <td><%= link_to( t('link.destroy'),
+                     student_year_class_path(@school, year_class),
+                     :confirm => t('general_confirm'),
+                     :method => :delete ) %></td>
+  </tr>
+<% end %>
+</table>
+
+<% content_for :right do %>
+<div><%= link_to t('link.new_class'), new_student_year_class_path(@school) %></div>
+<% end %>

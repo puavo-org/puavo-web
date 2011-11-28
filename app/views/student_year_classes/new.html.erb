@@ -1,0 +1,7 @@
+<h1><span><%= t('.title') %></span></h1>
+
+<%= render( :partial => 'form',
+            :locals => {
+			  :path => student_year_classes_path(@school),
+			  :submit_text => t('link.create'),
+			  :method => :post } ) %>

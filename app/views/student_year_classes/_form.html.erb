@@ -1,0 +1,19 @@
+<% form_for( @student_year_class,
+             :url => path,
+             :html => { :method => method, :class => 'student_year_class' })  do |f| %>
+<p>
+  <%= f.label :puavoSchoolStartYear %><br />
+  <%= f.text_field :puavoSchoolStartYear %>
+</p>
+<p>
+  <label for="student_class_id_0"><%= 'Student classes' %></label><br />
+  <% (0..3).each do |index| %>
+  <%= text_field_tag "student_class_id[#{index}]" %>
+  <% end %>
+</p>
+
+  <span style="float:left">
+  <%= f.submit submit_text %>
+  <div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+</span>
+<% end %>

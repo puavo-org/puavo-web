@@ -54,6 +54,7 @@ en:
     new_school: New school
     new_external_service: New
     rename_groups: Rename groups and roles
+    new_class: New class
   flash:
     added: "{{item}} was successfully created."
     updated: "{{item}} was successfully updated."
@@ -196,6 +197,7 @@ en:
     menu:
       dashboard: Dashboard
       admins: Admins
+      classes: Year classes
     admins:
       this_school_admin_users: "{{school_name}} admin users"
       other_admin_users: Add management access rights
@@ -240,6 +242,11 @@ en:
       title_user: Users
       title_role: Roles
       title_group: Groups
+  student_year_classes:
+    new:
+      title: New year class
+    index:
+      actions: Actions
   controllers:
     import:
       school_has_changed: "User is transferred, old password is used"
@@ -347,6 +354,11 @@ en:
         dn: Bind DN
       device:
         puavoHostname: Name
+      student_year_class:
+        puavoSchoolStartYear: School start year
+        displayName: Class name
+        student_classes: Student classes
+        cn: Group name
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
