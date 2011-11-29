@@ -8,7 +8,7 @@
 <p>
   <label for="student_class_id_0"><%= 'Student classes' %></label><br />
   <% (0..3).each do |index| %>
-  <%= text_field_tag "student_class_id[#{index}]" %>
+  <%= text_field_tag "student_year_class[student_class_ids][#{index}]" %>
   <% end %>
 </p>
 

@@ -18,11 +18,38 @@ Feature: Manage student year classes
     And I follow "Classes"
     And I follow "New class"
     When I fill in "School start year" with "2011"
-    And I fill in "student_class_id_0" with "A"
-    And I fill in "student_class_id_1" with "B"
+    And I fill in "student_year_class_student_class_ids_0" with "A"
+    And I fill in "student_year_class_student_class_ids_1" with "B"
     And I press "Create"
     Then I should see "1. Class (start 2011)"
     And I should see "Student classes: 1A Class, 1B Class"
     And I follow "Classes"
     Then I should see "1. Class (start 2011)"
-    And I should see "exampleschool-opp-2011"
+    And I should see "exampleschool-student-2011"
+
+  Scenario: Edit student year class
+    Given the following student year classes:
+    | puavoSchoolStartYear | student_class_ids | school           |
+    |                 2011 | A                 | Example school 1 |
+    |                 2010 | A                 | Example school 1 |
+    |                 2009 | A                 | Example school 1 |
+    And I follow "Example school 1"
+    And I follow "Classes"
+    And I edit the 1st student year class
+    When I fill in "School start year" with "2008"
+    And I fill in "student_year_class_student_class_ids_1" with "B"
+    And I press "Update"
+    Then I should see "4. Class (start 2008)"
+    And I should see "Student classes: 4A Class, 4B Class"
+    When I follow "Classes"
+    Then I should see "exampleschool-student-2008"
+     
+
+
+#  Scenario: List student year classes
+#    Given the following student year classes:
+#   | puavoSchoolStartYear | student_class_ids |
+#   |                 2011 | A                 |
+#    Given I follow "Example school 1"
+#    And I follow "Classes"
+    

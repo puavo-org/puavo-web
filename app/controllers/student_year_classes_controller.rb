@@ -36,13 +36,36 @@ class StudentYearClassesController < ApplicationController
   # POST /:school_id/student_year_classes/
   def create
     @student_year_class = StudentYearClass.new(params[:student_year_class])
-    @student_year_class.cn = @school.cn + "-opp-" + params[:student_year_class][:puavoSchoolStartYear]
     @student_year_class.puavoSchool = @school.dn.to_s
-    @student_year_class.student_class_ids = params[:student_class_id]
     @student_year_class.save!
 
     respond_to do |format|
       format.html { redirect_to( student_year_class_path(@school, @student_year_class) ) }
+    end
+  end
+
+  # GET /:school_id/student_year_classes/edit
+  def edit
+    @student_year_class = StudentYearClass.find(params[:id])
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # PUT /:school_id/student_year_classes/:id
+  def update
+    @student_year_class = StudentYearClass.find(params[:id])
+
+    respond_to do |format|
+      if @student_year_class.update_attributes(params[:student_year_class])
+        flash[:notice] = t('flash.updated', :item => t('activeldap.models.stduent_year_class'))
+        format.html { redirect_to( student_year_class_path(@school, @student_year_class) ) }
+      else
+        flash[:alert] = t('flash.stduent_year_class.save_failed')
+        format.html { render :action => "edit" }
+      end
+
     end
   end
 end

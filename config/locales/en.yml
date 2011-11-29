@@ -359,6 +359,7 @@ en:
         displayName: Class name
         student_classes: Student classes
         cn: Group name
+    student_cn_prefix: student
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
