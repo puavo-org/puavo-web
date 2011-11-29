@@ -43,13 +43,4 @@ Feature: Manage student year classes
     And I should see "Student classes: 4A Class, 4B Class"
     When I follow "Classes"
     Then I should see "exampleschool-student-2008"
-     
-
-
-#  Scenario: List student year classes
-#    Given the following student year classes:
-#   | puavoSchoolStartYear | student_class_ids |
-#   |                 2011 | A                 |
-#    Given I follow "Example school 1"
-#    And I follow "Classes"
     

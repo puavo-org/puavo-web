@@ -98,6 +98,8 @@ en:
       wrong_user_type: School management access rights can be added only if type of user is admin
       save_failed: Failed to save access rights
       destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
+    student_year_class:
+      save_failed: Year class cannot be saved!
   roles:
     index:
       actions: Actions
@@ -272,6 +274,7 @@ en:
       user: User
       school: School
       external_service: External service
+      student_year_class: Year class
     attributes:
       role:
         displayName: "Role name"

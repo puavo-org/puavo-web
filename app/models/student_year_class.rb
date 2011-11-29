@@ -38,7 +38,6 @@ class StudentYearClass < BaseGroup
       self.student_class_ids.each do |key, class_id|
         next if class_id.empty?
         next if self.student_classes.map{ |c| c.puavoClassId }.include?(class_id)
-        puts "FOO BAR"
         StudentClass.create(:puavoClassId => class_id,
                             :puavoSchool => self.puavoSchool,
                             :puavoYearClass => self.dn.to_s,

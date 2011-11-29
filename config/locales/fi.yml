@@ -97,6 +97,8 @@ fi:
       school_admin_removed:  "{{displayName}} ({{school_name}}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
       wrong_user_type: Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille
       destroyed_failed: Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua
+    student_year_class:
+      save_failed: Vuosiluokan tietoja ei voitu tallentaa!
   roles:
     index:
       actions: Toiminnot
@@ -272,6 +274,7 @@ fi:
       user: Käyttäjä
       school: Koulu
       external_service: Ulkoinen palvelu
+      student_year_class: Vuosiluokka
     attributes:
       role:
         displayName: "Roolin nimi"
@@ -359,6 +362,7 @@ fi:
         displayName: Luokan nimi
         student_classes: Oppilasryhmät
         cn: Ryhmänimi
+    student_cn_prefix: opp
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: Henkilökunta
   puavoEduPersonAffiliation_student: Opiskelija
