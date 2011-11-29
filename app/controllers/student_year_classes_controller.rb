@@ -59,10 +59,10 @@ class StudentYearClassesController < ApplicationController
 
     respond_to do |format|
       if @student_year_class.update_attributes(params[:student_year_class])
-        flash[:notice] = t('flash.updated', :item => t('activeldap.models.stduent_year_class'))
+        flash[:notice] = t('flash.updated', :item => t('activeldap.models.student_year_class'))
         format.html { redirect_to( student_year_class_path(@school, @student_year_class) ) }
       else
-        flash[:alert] = t('flash.stduent_year_class.save_failed')
+        flash[:alert] = t('flash.student_year_class.save_failed')
         format.html { render :action => "edit" }
       end
 
