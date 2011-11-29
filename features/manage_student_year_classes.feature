@@ -36,6 +36,7 @@ Feature: Manage student year classes
     And I follow "Example school 1"
     And I follow "Classes"
     And I edit the 1st student year class
+    Then I should see "A" within "#student_year_class_student_class_ids_0" a input element
     When I fill in "School start year" with "2008"
     And I fill in "student_year_class_student_class_ids_1" with "B"
     And I press "Update"

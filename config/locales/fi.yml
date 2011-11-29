@@ -249,6 +249,8 @@ fi:
       title: Uusi vuosiluokka
     index:
       actions: Toiminnot
+    edit:
+     title: Muokataan vuosiluokkaa
   controllers:
     import:
       school_has_changed: Siirretty käyttäjä, käytössä vanha salasana

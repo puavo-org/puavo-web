@@ -13,3 +13,7 @@
 <%= @student_classes %>
   
 </p>
+
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_student_year_class_path(@school, @studen_year_class) %></div>
+<% end %>

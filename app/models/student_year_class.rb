@@ -11,7 +11,7 @@ class StudentYearClass < BaseGroup
             :primary_key => 'dn',
             :foreign_key => 'puavoYearClass' )
 
-  attr_accessor :student_class_ids
+  attr_accessor :student_class_ids, :student_class_puavo_ids
 
   before_validation :set_displayName_by_puavoClassNamingScheme, :set_cn
   after_save :manage_student_classes
@@ -37,22 +37,21 @@ class StudentYearClass < BaseGroup
     unless self.student_class_ids.nil?
       self.student_class_ids.each do |key, class_id|
         next if class_id.empty?
-        next if self.student_classes.map{ |c| c.puavoClassId }.include?(class_id)
-        StudentClass.create(:puavoClassId => class_id,
-                            :puavoSchool => self.puavoSchool,
-                            :puavoYearClass => self.dn.to_s,
-                            :cn => self.cn + class_id.downcase, 
-                            :displayName =>  name_block.call( class_number, class_id ))
+        student_class_data = { 
+          :puavoClassId => class_id,
+          :puavoSchool => self.puavoSchool,
+          :puavoYearClass => self.dn.to_s,
+          :cn => self.cn + class_id.downcase, 
+          :displayName =>  name_block.call( class_number, class_id )
+        }
+        if self.student_class_puavo_ids && self.student_class_puavo_ids[key]
+          # Update exists student class
+          StudentClass.find(self.student_class_puavo_ids[key]).update_attributes(student_class_data)
+        else
+          # Create new student class
+          StudentClass.create(student_class_data)
+        end
       end
-    end
-    
-    self.student_classes.each do |student_class|
-      class_id = student_class.puavoClassId
-      student_class.update_attributes( :puavoClassId => class_id,
-                                       :puavoSchool => self.puavoSchool,
-                                       :puavoYearClass => self.dn.to_s,
-                                       :cn => self.cn + class_id.downcase, 
-                                       :displayName =>  name_block.call( class_number, class_id ) )
     end
   end
 end

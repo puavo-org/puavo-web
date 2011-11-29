@@ -249,6 +249,8 @@ en:
       title: New year class
     index:
       actions: Actions
+    edit:
+     title: Editing year class
   controllers:
     import:
       school_has_changed: "User is transferred, old password is used"

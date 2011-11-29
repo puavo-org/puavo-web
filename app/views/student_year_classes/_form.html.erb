@@ -6,9 +6,15 @@
   <%= f.text_field :puavoSchoolStartYear %>
 </p>
 <p>
-  <label for="student_class_id_0"><%= 'Student classes' %></label><br />
-  <% (0..3).each do |index| %>
-  <%= text_field_tag "student_year_class[student_class_ids][#{index}]" %>
+  <label for="student_class_id_0"><%= f.label :student_classes %></label><br />
+  <% index = 0 %>
+  <% f.object.student_classes.each do |student_class| %>
+    <%= hidden_field_tag "student_year_class[student_class_puavo_ids][#{index}]", student_class.puavoId %>
+    <%= text_field_tag "student_year_class[student_class_ids][#{index}]", f.object.student_class_ids[index] %>
+	<% index += 1 %>
+  <% end %>
+  <% (index..3).each do |index| %>
+    <%= text_field_tag "student_year_class[student_class_ids][#{index}]" %>
   <% end %>
 </p>
 

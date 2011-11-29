@@ -27,6 +27,7 @@ class StudentYearClassesController < ApplicationController
   # GET /:school_id/student_year_classes/new
   def new
     @student_year_class = StudentYearClass.new
+    @student_year_class.student_class_ids = []
 
     respond_to do |format|
       format.html
@@ -47,6 +48,7 @@ class StudentYearClassesController < ApplicationController
   # GET /:school_id/student_year_classes/edit
   def edit
     @student_year_class = StudentYearClass.find(params[:id])
+    @student_year_class.student_class_ids = @student_year_class.student_classes.map{ |c| c.puavoClassId }
 
     respond_to do |format|
       format.html

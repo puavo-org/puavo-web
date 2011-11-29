@@ -285,6 +285,12 @@ Then /^I should see "([^\"]*)" titled "([^\"]*)"$/ do |text, title|
   end
 end
 
+Then /^I should see "([^\"]*)" within "([^\"]*)" a input element$/ do |value, selector|
+  within(selector) do |content|
+    content.should have_selector("input[value=#{value}]")
+  end
+end
+
 def memberUid_include?(model, object_name, method, uid)
   set_ldap_admin_connection
   # manipulate string to Class name, e.g. "school" -> "School", "samba group" -> "SambaGroup"
