@@ -50,12 +50,15 @@ Feature: Manage schools
     | Student     | bourne-student | student                   |
     | Teacher     | bourne-teacher | teacher                   |
 
-  Scenario: Add new school to organisation without names
+  Scenario: Add new school to organisation with invalid values
     Given I am on the new school page
     And I press "Create"
     Then I should see "Failed to create school!"
     # And I should see "School name can't be blank"
     And I should see "Group name can't be blank"
+    When I fill in "Group name" with "exampleschool12"
+    And I press "Create"
+    Then I should see "Group name is too long (maximum is 14 characters)"
     When I fill in "Group name" with "Example School"
     And I press "Create"
     Then I should see "Group name include invalid characters (allowed characters is a-z0-9-)"

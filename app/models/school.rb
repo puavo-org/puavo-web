@@ -30,6 +30,16 @@ class School < BaseGroup
       errors.add( :cn, I18n.t("activeldap.errors.messages.school.invalid_characters",
                               :attribute => I18n.t("activeldap.attributes.school.cn")) )
     end
+    # man groupadd (linux):
+    # Groupnames may only be up to 32 characters long.
+    # 
+    # School's cn value is prefix for the other groups name.
+    # Set max length (14 characters) on cn
+    if self.cn.to_s.length > 14
+      errors.add( :cn, I18n.t("activeldap.errors.messages.too_long",
+                              :attribute => I18n.t("activeldap.attributes.student_year_class.cn"),
+                              :count => 14) )
+    end
     unless self.puavoNamePrefix.to_s =~ /^[a-z0-9-]*$/
       errors.add( :puavoNamePrefix, I18n.t("activeldap.errors.messages.school.invalid_characters",
                                            :attribute => I18n.t("activeldap.attributes.school.puavoNamePrefix")) )
