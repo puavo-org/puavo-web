@@ -8,8 +8,9 @@ Given /^the following student year classes:$/ do |student_year_classes|
     end
     if new_class["student_class_ids"]
       i = 0
-      new_class["student_class_ids"] = new_class["student_class_ids"].split(",[ ]*").inject({}) do |result, char|
+      new_class["student_class_ids"] = new_class["student_class_ids"].split(/,[ ]*/).inject({}) do |result, char|
         result[i.to_s] = char
+        i += 1
         result
       end
     end

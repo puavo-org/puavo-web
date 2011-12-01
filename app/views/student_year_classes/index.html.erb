@@ -19,6 +19,12 @@
                      :confirm => t('general_confirm'),
                      :method => :delete ) %></td>
   </tr>
+  <% year_class.student_classes.each do |student_class| %>
+  <tr>
+	<td>&nbsp;&nbsp;<%= student_class.displayName %></td>
+	<td><%= student_class.cn %></td><td></td><td></td>
+  </tr>
+  <% end %>
 <% end %>
 </table>
 

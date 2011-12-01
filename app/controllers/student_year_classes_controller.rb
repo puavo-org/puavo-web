@@ -4,7 +4,9 @@ class StudentYearClassesController < ApplicationController
   def index
     @student_year_classes = StudentYearClass.find( :all,
                                                    :attribute => "puavoSchool",
-                                                   :value => @school.dn.to_s )
+                                                   :value => @school.dn.to_s ).sort do |a,b|
+      b.puavoSchoolStartYear <=> a.puavoSchoolStartYear
+    end
     
 
     respond_to do |format|
