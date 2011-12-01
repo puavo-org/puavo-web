@@ -270,6 +270,9 @@ fi:
           invalid_characters: "Lyhenne sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
         school:
           invalid_characters: "{{attribute}} sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
+        student_year_class:
+          invalid_characters: "Koulun aloitusvuosi sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: 0-9)"
+          taken: Valitsemasi koulun aloitusvuosi on jo käytössä tässä koulussa
     models:
       group: Ryhmä
       role: Rooli
@@ -364,6 +367,8 @@ fi:
         displayName: Luokan nimi
         student_classes: Oppilasryhmät
         cn: Ryhmänimi
+      student_class:
+        puavoClassId: Ryhmätunniste
     student_cn_prefix: opp
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: Henkilökunta

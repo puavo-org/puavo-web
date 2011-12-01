@@ -38,10 +38,16 @@ class StudentYearClassesController < ApplicationController
   def create
     @student_year_class = StudentYearClass.new(params[:student_year_class])
     @student_year_class.puavoSchool = @school.dn.to_s
-    @student_year_class.save!
 
     respond_to do |format|
-      format.html { redirect_to( student_year_class_path(@school, @student_year_class) ) }
+      if @student_year_class.save
+        flash[:notice] = t('flash.added', :item => t('activeldap.models.student_year_class'))
+        format.html { redirect_to( student_year_class_path(@school, @student_year_class) ) }
+      else
+        flash[:alert] = t('flash.student_year_class.save_failed')
+        format.html { render :action => "new" }
+      end
+
     end
   end
 

@@ -7,14 +7,17 @@
 </p>
 <p>
   <label for="student_class_id_0"><%= f.label :student_classes %></label><br />
+  <%= field_error_text(f.object, :student_classes) %><br />
   <% index = 0 %>
   <% f.object.student_classes.each do |student_class| %>
     <%= hidden_field_tag "student_year_class[student_class_puavo_ids][#{index}]", student_class.puavoId %>
-    <%= text_field_tag "student_year_class[student_class_ids][#{index}]", f.object.student_class_ids[index] %>
+    <%= text_field_tag( "student_year_class[student_class_ids][#{index}]",
+                        (params["student_year_class"]["student_class_ids"][index.to_s] rescue f.object.student_class_ids[index]) ) %>
 	<% index += 1 %>
   <% end %>
   <% (index..3).each do |index| %>
-    <%= text_field_tag "student_year_class[student_class_ids][#{index}]" %>
+    <%= text_field_tag( "student_year_class[student_class_ids][#{index}]",
+                        (params["student_year_class"]["student_class_ids"][index.to_s] rescue nil )) %>
   <% end %>
 </p>
 

@@ -7,6 +7,14 @@ class BaseGroup < LdapBase
     self.puavoId.to_s unless self.puavoId.nil?
   end
 
+  def search_groups_by_cn
+    commonName = Net::LDAP::Filter.escape( self.cn )
+    LdapBase.base_search( :base => "ou=groups,#{LdapBase.base.to_s}",
+                          :filter => "(cn=#{commonName})",
+                          :scope => :sub,
+                          :attributes => ['puavoId'] )
+  end
+
   private
 
   def set_special_ldap_value

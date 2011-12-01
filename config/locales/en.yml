@@ -270,6 +270,9 @@ en:
           invalid_characters: "Abbveriation include invalid characters (allowed characters is a-z0-9-)"
         school:
           invalid_characters: "{{attribute}} include invalid characters (allowed characters is a-z0-9-)"
+        student_year_class:
+          invalid_characters: School start year include invalid characters (allowed characters is 0-9)
+          taken: School start year has already been taken
     models:
       group: Group
       role: Role
@@ -364,6 +367,8 @@ en:
         displayName: Class name
         student_classes: Student classes
         cn: Group name
+      student_class:
+        puavoClassId: Class id
     student_cn_prefix: student
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
