@@ -369,7 +369,6 @@ fi:
         cn: Ryhmänimi
       student_class:
         puavoClassId: Ryhmätunniste
-    student_cn_prefix: opp
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: Henkilökunta
   puavoEduPersonAffiliation_student: Opiskelija

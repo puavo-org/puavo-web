@@ -369,7 +369,6 @@ en:
         cn: Group name
       student_class:
         puavoClassId: Class id
-    student_cn_prefix: student
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student

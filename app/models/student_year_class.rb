@@ -25,12 +25,12 @@ class StudentYearClass < BaseGroup
 
     unless self.student_class_ids.nil?
       self.student_class_ids.each do |key, class_id|
-        if class_id.length > 7
+        if class_id.length > 11
           errors.add( :student_classes,
                       I18n.t("activeldap.errors.messages.too_long",
                              :attribute => I18n.t("puavoClassId",
                                                   :scope => "activeldap.attributes.student_class."),
-                             :count => 7) )
+                             :count => 11) )
           break
         end
       end
@@ -48,7 +48,7 @@ class StudentYearClass < BaseGroup
 
   def set_cn
     school = School.find(self.puavoSchool)
-    self.cn = school[:cn] + "-" + I18n.t("activeldap.student_cn_prefix")[0..2] + "-" + self.puavoSchoolStartYear.to_s
+    self.cn = school[:cn] + "-" + self.puavoSchoolStartYear.to_s
   end
 
   def manage_student_classes

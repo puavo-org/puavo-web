@@ -25,7 +25,7 @@ Feature: Manage student year classes
     And I should see "Student classes: 1A Class, 1B Class"
     And I follow "Classes"
     Then I should see "1. Class (start 2011)"
-    And I should see "exampleschool-stu-2011"
+    And I should see "exampleschool-2011"
 
   Scenario: Add new student year class with invalid value
     Given the following student year classes:
@@ -49,14 +49,15 @@ Feature: Manage student year classes
     Then I should see "Year class cannot be saved!"
     And I should see "A" within "#student_year_class_student_class_ids_0" a input element
     And I should see "specialgroup" within "#student_year_class_student_class_ids_1" a input element
-    And I should see "Class id is too long (maximum is 7 characters)"
+    And I should see "Class id is too long (maximum is 11 characters)"
     When I fill in "student_year_class_student_class_ids_1" with "B"
-    And I press "Create"    Then I should see "1. Class (start 2011)"
+    And I press "Create"
+    Then I should see "1. Class (start 2011)"
     And I should see "Year class was successfully created."
     And I should see "Student classes: 1A Class, 1B Class"
     When I follow "Classes"
     Then I should see "1. Class (start 2011)"
-    And I should see "exampleschool-stu-2011"
+    And I should see "exampleschool-2011"
 
   Scenario: Edit student year class
     Given the following student year classes:
@@ -83,7 +84,7 @@ Feature: Manage student year classes
     Then I should see "4. Class (start 2008)"
     And I should see "Student classes: 4A Class, 4B Class"
     When I follow "Classes"
-    Then I should see "exampleschool-stu-2008"
+    Then I should see "exampleschool-2008"
     
   Scenario: Edit student year class without modification
     Given the following student year classes:
@@ -107,21 +108,21 @@ Feature: Manage student year classes
     And I follow "Example school 1"
     And I follow "Classes"
     Then I should see "1. Class (start 2011)"
-    And I should see "exampleschool-stu-2011"
+    And I should see "exampleschool-2011"
     And I should see "1A Class"
-    And I should see "exampleschool-stu-2011a"
+    And I should see "exampleschool-2011a"
     And I should see "2. Class (start 2010)"
-    And I should see "exampleschool-stu-2010"
+    And I should see "exampleschool-2010"
     And I should see "2A Class"
-    And I should see "exampleschool-stu-2010a"
+    And I should see "exampleschool-2010a"
     And I should see "2B Class"
-    And I should see "exampleschool-stu-2010b"
+    And I should see "exampleschool-2010b"
     And I should see "2C Class"
-    And I should see "exampleschool-stu-2010c"
+    And I should see "exampleschool-2010c"
     And I should see "3. Class (start 2009)"
-    And I should see "exampleschool-stu-2009"
+    And I should see "exampleschool-2009"
     And I should see "3A Class"
-    And I should see "exampleschool-stu-2009a"
+    And I should see "exampleschool-2009a"
     And I should see "3B Class"
-    And I should see "exampleschool-stu-2009b"
+    And I should see "exampleschool-2009b"
     
