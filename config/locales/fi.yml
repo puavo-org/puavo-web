@@ -7,6 +7,8 @@ fi:
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: "Haluatko varmasti poistaa ({{object_name}})?"
+  student_year_class_naming_scheme_default: "{{class_number}}. luokka"
+  student_class_naming_scheme_default: "{{class_number}}{{class_id}} luokka"
   layouts:
     application:
       schools: Koulut

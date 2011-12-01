@@ -7,6 +7,8 @@ en:
   default_select_value: Select
   general_confirm: Are you sure?
   destroy_confirm: "Do you really want to remove ({{object_name}})?"
+  student_year_class_naming_scheme_default: "{{class_number}}. class"
+  student_class_naming_scheme_default: "{{class_number}}{{class_id}} class"
   layouts:
     application:
       schools: Schools

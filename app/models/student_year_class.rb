@@ -40,10 +40,15 @@ class StudentYearClass < BaseGroup
   private
 
   def set_displayName_by_puavoClassNamingScheme
-    naming_scheme = self.school.puavoClassNamingScheme
-    name_block = eval "lambda { |class_number, start_year| \"" + naming_scheme + "\" }"
+    # FIXME
+    type_of_year_class_name = LdapOrganisation.current.puavoClassNamingType rescue "default"
+    # FIXME
     number = Time.now.year - self.puavoSchoolStartYear.to_i + 1
-    self.displayName = name_block.call( number, self.puavoSchoolStartYear )
+    self.displayName = I18n.t( "student_year_class_naming_scheme_#{type_of_year_class_name}",
+                               :locale => LdapOrganisation.current.preferredLanguage,
+                               :start_year => self.puavoSchoolStartYear,
+                               :class_number => number )
+
   end
 
   def set_cn
@@ -53,8 +58,8 @@ class StudentYearClass < BaseGroup
 
   def manage_student_classes
     # FIXME
-    naming_scheme = '#{class_number}#{class_id} Class'
-    name_block = eval "lambda { |class_number, class_id| \"" + naming_scheme + "\" }"
+    type_of_class_name = "default"
+    # FIXME
     class_number = Time.now.year - self.puavoSchoolStartYear.to_i + 1
     unless self.student_class_ids.nil?
       self.student_class_ids.each do |key, class_id|
@@ -64,7 +69,10 @@ class StudentYearClass < BaseGroup
           :puavoSchool => self.puavoSchool,
           :puavoYearClass => self.dn.to_s,
           :cn => self.cn + class_id.downcase, 
-          :displayName =>  name_block.call( class_number, class_id )
+          :displayName => I18n.t( "student_class_naming_scheme_#{type_of_class_name}",
+                                  :locale => LdapOrganisation.current.preferredLanguage,
+                                  :class_id => class_id.upcase,
+                                  :class_number => class_number )
         }
         if self.student_class_puavo_ids && self.student_class_puavo_ids[key]
           # Update exists student class
