@@ -124,6 +124,7 @@ en:
       contact_information: Contact information
       group_by_roles: Groups by roles
       change_school: Change school
+      user_is_locked: User is locked
     new:
       title: New user
     edit:
@@ -312,6 +313,7 @@ en:
         puavoEduPersonReverseDisplayName: Lastname Firstname
         puavoEduPersonPersonnelNumber: Personel Number
         image: Image
+        puavoLocked: User is locked
       group:
         displayName: "Group name"
         cn: "Abbreviation"

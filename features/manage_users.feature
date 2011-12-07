@@ -299,6 +299,19 @@ Feature: Manage users
     And the member should include "jane" on the "Class 5" role
     And the memberUid should not include "jane" on the "Class 4" role
     And the member should not include "jane" on the "Class 4" role
+
+  Scenario: Lock user
+    Given the following users:
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
+      | Ben       | Mabey   | ben    | secret   | visitor                   | Class 4   |
+      | Joseph    | Wilk    | joseph | secret   | visitor                   | Class 4   |
+    And the following groups:
+    | displayName | cn      |
+    | Class 6B    | class6b |
+    And I am on the edit user page with "ben"
+    When I check "User is locked"
+    And I press "Update"
+    Then I should see "User is locked"
     
 # FIXME
 #  @allow-rescue

@@ -124,6 +124,7 @@ fi:
       contact_information: Yhteystiedot
       group_by_roles: Roolien mukana tulevat ryhmät
       change_school: Vaihda koulua
+      user_is_locked: Käyttäjätunnus on lukittu
     new:
       title: Lisää uusi käyttäjä
     edit:
@@ -312,6 +313,7 @@ fi:
         puavoEduPersonReverseDisplayName: Sukunimi Etunimi
         puavoEduPersonPersonnelNumber: Henkilönumero
         image: Kuva
+        puavoLocked: Käyttäjätunnus on lukittu
       group:
         displayName: "Ryhmän nimi"
         cn: "Lyhenne"
