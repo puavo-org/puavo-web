@@ -305,3 +305,7 @@ table#autopoweroff td.label_td {
 	text-align: left;
 	padding-top: 20px;
 }
+
+.notice_text {
+	color:#FF6666;
+}

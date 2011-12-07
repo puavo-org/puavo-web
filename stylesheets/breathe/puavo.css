@@ -676,3 +676,7 @@ table#autopoweroff td.label_td {
 table#autopoweroff td.label_td label {
 	font-weight: normal;
 }
+
+.notice_text {
+	color:#FF6666;
+}
