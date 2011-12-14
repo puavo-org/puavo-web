@@ -117,9 +117,9 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
     user = User.find(:first, :attribute => "uid", :value => value)
     case page_name
     when /edit/
-      visit edit_user_path(@school, user)
+      visit edit_user_path(user.school.puavoId, user)
     when /show/
-      visit user_path(@school, user)
+      visit user_path(user.school.puavoId, user)
     end
   when /school page$/
     @school = School.find( :first, :attribute => "displayName", :value => value )
@@ -156,9 +156,9 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
       visit "/users/" + @json_user.id.to_s + ".json"
     end
   when /users JSON page$/
-    # FIXME:
-    #school = School.find(:first, :attribute => "displayName", :value => value)
-    visit users_path(@school, :format => :json)
+    set_ldap_admin_connection
+    school = School.find(:first, :attribute => "displayName", :value => value)
+    visit users_path(school, :format => :json)
   when /members group JSON page$/
     json_group = Group.find(:first, :attribute => "displayName", :value => value)
     visit "/#{@school.id}/groups/" + json_group.id.to_s + "/members.json"
@@ -234,6 +234,7 @@ end
 Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
   Array(object.send(method)).each do |dn|
+    puts dn
     lambda{ User.find(dn) }.should_not raise_error
   end
 end
@@ -253,13 +254,30 @@ Then /^the id "([^\"]*)" checkbox should be checked$/ do |id|
   field_with_id(id).should be_checked
 end
 
-
-Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
-  memberUid_include?(model, object_name, method, uid).should == true
+Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" school role in the "([^\"]*)" school$/ do |method, uid, object_name, school_name|
+  set_ldap_admin_connection
+  school = School.find( :first, :attribute => "displayName", :value => school_name )
+  object = SchoolRole.find( :all, :attribute => "displayName", :value => object_name ).select do |role|
+    role.puavoSchool.to_s == school.dn.to_s
+  end.first
+  memberUid_include?("school role", "cn", object.cn.to_s, method, uid).should == true
 end
 
-Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
-  memberUid_include?(model, object_name, method, uid).should == false
+Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" school role in the "([^\"]*)" school$/ do |method, uid, object_name, school_name|
+  set_ldap_admin_connection
+  school = School.find( :first, :attribute => "displayName", :value => school_name )
+  object = SchoolRole.find( :all, :attribute => "displayName", :value => object_name ).select do |role|
+    role.puavoSchool.to_s == school.dn.to_s
+  end.first
+  memberUid_include?("school role", "cn", object.cn.to_s, method, uid).should == false
+end
+
+Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" ([^\"]*)$/ do |method, uid, object_name, model|
+  memberUid_include?(model, "displayName", object_name, method, uid).should == false
+end
+
+Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" ([^\"]*)$/ do |method, uid, object_name, model|
+  memberUid_include?(model, "displayName", object_name, method, uid).should == true
 end
 
 When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
@@ -291,11 +309,11 @@ Then /^I should see "([^\"]*)" within "([^\"]*)" a input element$/ do |value, se
   end
 end
 
-def memberUid_include?(model, object_name, method, uid)
+def memberUid_include?(model, object_attribute, object_name, method, uid)
   set_ldap_admin_connection
   # manipulate string to Class name, e.g. "school" -> "School", "samba group" -> "SambaGroup"
   model = model.split(" ").map { |m| m.capitalize }.join("")
-  object = Class.class_eval(model).find( :first, :attribute => "displayName", :value => object_name )
+  object = Class.class_eval(model).find( :first, :attribute => object_attribute, :value => object_name )
   
   case method
   when "member"

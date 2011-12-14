@@ -144,7 +144,7 @@ en:
     select_role:
       title: School change
       new_school: New school
-      select_new_role: Select new role
+      select_new_student_class: Select new student class
       submit: Change school
     import:
       info:
@@ -332,6 +332,7 @@ en:
         puavoEduPersonReverseDisplayName: Lastname Firstname
         puavoEduPersonPersonnelNumber: Personel Number
         image: Image
+        student_class_id: Student class
       group:
         displayName: "Group name"
         cn: "Abbreviation"

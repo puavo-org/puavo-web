@@ -23,7 +23,22 @@ Given /^the following users:$/ do |users|
       school = School.find(:first, :attribute => "displayName", :value => u["school"])
       u.delete("school")
     end
+
+    if u["student_class"]
+      u["student_class_id"] = BaseGroup.find(:first,
+                                          :attribute => "displayName",
+                                          :value => u["student_class"]).puavoId.to_s
+      u.delete("student_class")
+    end
    
+    if roles
+      u["role_ids"] = []
+      roles.each do |role_name|
+        role = SchoolRole.base_search( :filter => "&(displayName=#{role_name})" +
+                                       "(puavoSchool=#{school.dn.to_s})" ).first
+        u["role_ids"].push role[:puavoId]
+      end
+    end
     user = User.new(u)
     user.puavoSchool = (school || @school).dn
     if u["school_admin"] && u["school_admin"] == "true"
@@ -33,14 +48,6 @@ Given /^the following users:$/ do |users|
     user.userPassword = "{SSHA}" + 
       Base64.encode64(Digest::SHA1.digest(u["password"] + salt) + salt).chomp!
     user.save!
-    if roles
-      roles.each do |role_name|
-        Role.find( :first,
-                   :attribute => "displayName",
-                   :value => role_name ).members << user
-      end
-    end
-    user.update_associations
   end
 end
 
@@ -101,6 +108,7 @@ Then /^I should see the following special ldap attributes on the "([^\"]*)" obje
   case model
   when "User"
     object = User.find( :first, :attribute => "uid", :value => key )
+    @school = object.school
   when "School"
     object = School.find( :first, :attribute => "displayName", :value => key )
   when "Group"

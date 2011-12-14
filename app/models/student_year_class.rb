@@ -16,6 +16,22 @@ class StudentYearClass < BaseGroup
   before_validation :set_displayName_by_puavoClassNamingScheme, :set_cn
   after_save :manage_student_classes
 
+  def self.classes_by_school(school)
+    self.find( :all,
+               :attribute => 'puavoSchool',
+               :value => school.dn.to_s ).inject([]) do |result, student_year_class|
+      # Return only student year class if student classes not found
+      # If student year class include subclass (StudentClass) return only all student classes.
+      # Year class can be a user's main group only if subclasses (StudentClass) can not be found
+      if student_year_class.student_classes.empty?
+        result.push(student_year_class)
+      else
+        result += student_year_class.student_classes
+      end
+      result
+    end
+  end
+
   def validate
     unless self.puavoSchoolStartYear.to_s =~ /^[0-9]+$/
       errors.clear

@@ -42,27 +42,31 @@
 
     <%= link_to t('.add_telephone_number'), "#", :class => "clone_prev_input_element" %>
 </td>
+<tr>
+  <td><%= f.label :student_class_id %></td>
+  <td>
+    <%= f.select( :student_class_id,
+                  [[t('default_select_value'), ""]] +
+                  @student_classes.map{ |sc| [ sc.displayName, sc.puavoId.to_s] } ) %>
+  </td>
 </tr>
-    <tr>
-      <td><%= f.label :puavoEduPersonAffiliation %></td>
-      <td class='required'>
-        <%= f.select :puavoEduPersonAffiliation,
-           [[t('default_select_value'), ""]] +
-             User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
-      </td>
-    </tr>
     <tr>
       <td class="label_for_checkbox_list required_role required"><%= f.label :role_ids %></td>
       <td>
-    <% @roles.each do |p| %>
+    <% @roles.each do |role| %>
     <div>
-      <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>" /><%=h p.displayName %></label>
+      <label>
+		<%= check_box_tag( "user[role_ids][]",
+                           role[:puavoId],
+                           (@user_roles.include?(role) ? true : false),
+                           :id => "role_" + role[:cn] ) %>
+       <%=h role[:displayName] %>
+     </label>
   </div>
     <% end %>
     <%= field_error_text(f.object, :role_ids) %>
   </td>
   </tr>
-
   <tr>
     <td><%= f.label :preferredLanguage %></td>
     <td>

@@ -13,17 +13,12 @@ class User < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
-  belongs_to :groups, :class_name => 'Group', :many => 'member', :primary_key => "dn"
   belongs_to :uidGroups, :class_name => 'Group', :many => 'memberUid', :primary_key => "Uid"
-  belongs_to( :primary_group, :class_name => 'School',
-              :foreign_key => 'gidNumber',
-              :primary_key => 'gidNumber' )
   belongs_to( :school, :class_name => 'School',
               :foreign_key => 'puavoSchool',
               :primary_key => 'dn' )
   belongs_to :member_school, :class_name => 'School', :many => 'member', :primary_key => "dn"
   belongs_to :member_uid_school, :class_name => 'School', :many => 'memberUid', :primary_key => "uid"
-  belongs_to :roles, :class_name => 'Role', :many => 'member', :primary_key => "dn"
   belongs_to :uidRoles, :class_name => 'Role', :many => 'memberUid', :primary_key => "uid"
 
   before_validation :set_special_ldap_value, :resize_image
@@ -32,7 +27,7 @@ class User < LdapBase
 
   before_update :change_ldap_password
 
-  after_save :set_school_admin
+  after_save :update_student_class
   after_save :add_member_uid_to_models
   after_save :update_roles
 
@@ -50,7 +45,9 @@ class User < LdapBase
                  :mass_import,
                  :image,
                  :earlier_user,
-                 :new_password_confirmation )
+                 :new_password_confirmation,
+                 :student_class,
+                 :student_class_id )
 
   cattr_accessor :reserved_uids
 
@@ -173,41 +170,26 @@ class User < LdapBase
     # The user must have at least one role
     #
     # Set role_ids value by role_name. If get false role_name is invalid.
-    if set_role_ids_by_role_name(role_name) == false
-      errors.add( :role_name,
-                  I18n.t("activeldap.errors.messages.invalid",
-                         :attribute => I18n.t("activeldap.attributes.user.role_name") ) )
-   # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
+    # FIXME
+    # if set_role_ids_by_role_name(role_name) == false
+    #   errors.add( :role_name,
+    #               I18n.t("activeldap.errors.messages.invalid",
+    #                      :attribute => I18n.t("activeldap.attributes.user.role_name") ) )
+    #
+    # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
     # If role_ids is not nil: user's roles value will change when save object. Then role_ids must not be empty!
-    elsif (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && roles.empty? )
+    if (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && self.roles.empty? )
       errors.add_on_blank :role_ids, I18n.t("activeldap.errors.messages.blank",
                                          :attribute => I18n.t("activeldap.attributes.user.roles") )
     else
       # Role must be found by id!
       unless role_ids.nil?
         role_ids.each do |id|
-          if Role.find(:first, id).nil?
+          if SchoolRole.find(:first, id).nil?
             errors.add_on_blank :role_ids, I18n.t("activeldap.errors.messages.blank",
                                                   :attribute => I18n.t("activeldap.attributes.user.role_ids") )
           end
         end
-      end
-    end
-
-    # puavoEduPersonAffiliation validation
-    unless self.class.puavoEduPersonAffiliation_list.include?(puavoEduPersonAffiliation.to_s)
-      # User type of user can be set by locale type value.
-      # Find locale value and set correct key value to attribute.
-      self.class.puavoEduPersonAffiliation_list.each do |value|
-        if I18n.t( 'puavoEduPersonAffiliation_' + value ).downcase == puavoEduPersonAffiliation.to_s.downcase
-          self.puavoEduPersonAffiliation = value
-          break
-        end
-      end
-      unless self.class.puavoEduPersonAffiliation_list.include?(puavoEduPersonAffiliation.to_s)
-        errors.add( :puavoEduPersonAffiliation,
-                    I18n.t("activeldap.errors.messages.invalid",
-                           :attribute => I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation") ) )
       end
     end
 
@@ -334,28 +316,33 @@ class User < LdapBase
   def update_roles
     unless self.role_ids.nil?
       add_roles = self.role_ids
-      Role.search( :filter => "(memberUid=#{self.uid})",
-                   :scope => :one,
-                   :attributes => ["puavoId"] ).each do |role_dn, values|
-
-        if add_roles.include?(values["puavoId"])
-          add_roles.delete(values["puavoId"])
-        else
-          # Delete roles
-          Role.ldap_modify_operation(role_dn, :delete, [{ "memberUid" => [self.uid] },
-                                                        { "member" => [self.dn.to_s] }])
+      SchoolRole.base_search( :filter => "member=#{self.dn}",
+                              :attributes => ['puavoId',
+                                              'puavoUserRole'] ).each do |role|
+        if add_roles.include?(role[:puavoId])
+          add_roles.delete(role[:puavoId])
         end
       end
       
       # Add roles
       add_roles.each do |role_id|
-        Role.ldap_modify_operation("puavoId=#{role_id},#{Role.base.to_s}",
+        role = SchoolRole.base_search( :filter => "puavoId=#{role_id}",
+                                       :attributes => ['puavoId',
+                                                       'puavoUserRole',
+                                                       'puavoEduPersonAffiliation'] ).first
+        User.ldap_modify_operation( self.dn,
+                                    :add, [{ "puavoEduPersonAffiliation" => [role[:puavoEduPersonAffiliation]] }]
+                                    ) rescue ActiveLdap::LdapError::TypeOrValueExists
+
+        SchoolRole.ldap_modify_operation(role[:dn],
+                                         :add, [{ "memberUid" => [self.uid] }, 
+                                                { "member" => [self.dn.to_s] }]
+                                         ) rescue ActiveLdap::LdapError::TypeOrValueExists
+        Role.ldap_modify_operation(role[:puavoUserRole],
                                    :add, [{ "memberUid" => [self.uid] }, 
-                                          { "member" => [self.dn.to_s] }])
+                                          { "member" => [self.dn.to_s] }]
+                                   ) rescue ActiveLdap::LdapError::TypeOrValueExists
       end
-      
-      self.reload
-      self.update_associations
     end
   end
 
@@ -420,6 +407,23 @@ class User < LdapBase
     self.puavoSchool = new_school_dn
   end
 
+  def student_class
+    @student_class || ( self.puavoId.nil? ?
+                        nil :
+                        @student_class = StudentClass.find( :first,
+                                                            :attribute => "member",
+                                                            :value => self.dn.to_s ) )
+  end
+
+  def student_class_id
+    @student_class_id || ( self.student_class.nil? ? nil : self.student_class.puavoId)
+  end
+
+  def roles
+    @roles || @roles = SchoolRole.base_search( :filter => "member=#{self.dn}",
+                                               :attributes => ['displayName', 'cn'])
+  end
+
   private
 
   # Find role object by name (role_name) and set id to role_ids array.
@@ -474,14 +478,6 @@ class User < LdapBase
     self.uidNumber = IdPool.next_uid_number
   end
 
-  # FIXME: This method is used only cucumber test. Move this methmod to test code.
-  def set_school_admin
-    if self.school_admin == "true"
-      self.school.puavoSchoolAdmin = Array(self.school.puavoSchoolAdmin).push self.dn
-      self.school.save
-    end
-  end
-
   def is_uid_changed
     unless self.puavoId.nil?
       begin
@@ -489,48 +485,27 @@ class User < LdapBase
         if self.uid != old_user.uid
           self.uid_has_changed = true
           logger.debug "User uid has changed. Remove memberUid from roles and groups"
-          Role.search( :filter => "(memberUid=#{old_user.uid})",
-                       :scope => :one,
-                       :attributes => ['dn'] ).each do |role_dn, values|
-            LdapBase.ldap_modify_operation(role_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+          old_uid = Net::LDAP::Filter.escape(old_user.uid)
+          BaseGroup.base_search( :filter => "(memberUid=#{old_uid})",
+                                 :scope => :sub,
+                                 :attributes => ['puavoId'] ).each do |group|
+            begin
+              BaseGroup.ldap_modify_operation(group[:dn],
+                                              :delete, [{ "memberUid" => [old_uid] }])
+            rescue Exception; end
           end
-          Group.search( :filter => "(memberUid=#{old_user.uid})",
-                        :scope => :one,
-                        :attributes => ['dn'] ).each do |group_dn, values|
-            LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
-          end
-          School.search( :filter => "(memberUid=#{old_user.uid})",
-                         :scope => :one,
-                         :attributes => ['dn'] ).each do |school_dn, values|
-            LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
-          end
-          # Remove uid from Domain Users group
-          SambaGroup.delete_uid_from_memberUid('Domain Users', old_user.uid)
         end
-      rescue ActiveLdap::EntryNotFound
-      end
+      rescue ActiveLdap::EntryNotFound; end
     end
   end
 
   def add_member_uid_to_models
-    if self.uid_has_changed
-      logger.debug "User uid has changed. Add new uid to roles and groups if it not exists"
-      self.uid_has_changed = false
-      self.roles.each do |role|
-        role.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
-      end
-      self.groups.each do |group|
-        group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )        
-      end
-    end
-    unless Array(self.school.memberUid).include?(self.uid)
+    begin
       self.school.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
-    end
-    unless Array(self.school.member).include?(self.dn)
-      # FIXME
+    rescue ActiveLdap::LdapError::TypeOrValueExists; end
+    begin
       self.school.ldap_modify_operation( :add, [{"member" => [self.dn.to_s]}] )
-    end
-
+    rescue ActiveLdap::LdapError::TypeOrValueExists; end
     # Set uid to Domain Users group
     SambaGroup.add_uid_to_memberUid('Domain Users', self.uid)
   end
@@ -544,14 +519,22 @@ class User < LdapBase
       SambaGroup.delete_uid_from_memberUid('Domain Admins', self.uid)
     end
 
-    self.roles.each do |p|
-      p.delete_member(self)
-    end
-    self.groups.each do |g|
-      g.remove_user(self)
-    end
+    # Remove users from schools, roles, school roles, student classes and student year classes
+    BaseGroup.base_search( :filter => "member=#{self.dn}",
+                           :scope => :sub ).each do |group|
+      BaseGroup.ldap_modify_operation(group[:dn],
+                                      :delete, [{ "memberUid" => [self.uid] }]
+                                      ) rescue Exception
+      BaseGroup.ldap_modify_operation(group[:dn],
+                                      :delete, [{ "member" => [self.dn.to_s] }]
+                                      ) rescue Exception
 
-    self.school.remove_user(self)
+    end
+    Array(self.puavoAdminOfSchool).each do |school|
+      school.ldap_modify_operation( :delete,
+                                    [{ "puavoSchoolAdmin" => [self.dn.to_s] }]
+                                    ) rescue Exception
+    end
   end
 
   def set_samba_settings 
@@ -566,6 +549,56 @@ class User < LdapBase
     end
   end
 
+  def update_student_class
+    unless self.student_class_id.nil?
+      user_student_class_id = Net::LDAP::Filter.escape( self.student_class_id )
+      old_groups = BaseGroup.base_search( :filter => "member=#{self.dn}",
+                                          :base => "ou=Classes,#{BaseGroup.base.to_s}",
+                                          :scope => :sub,
+                                          :attributes => ['puavoId'] )
+      
+      new_student_class = BaseGroup.base_search( :filter => "puavoId=#{user_student_class_id}",
+                                                 :base => "ou=Classes,#{BaseGroup.base.to_s}",
+                                                 :scope => :sub,
+                                                 :attributes => ['puavoId',
+                                                                 'puavoYearClass',
+                                                                 'objectClass'] ).first
+      old_groups.delete_if{ |g| g[:puavoId] == new_student_class[:puavoId] }
+      
+      if new_student_class[:puavoYearClass]
+        new_student_year_class =
+          StudentYearClass.base_search( :filter => "#{new_student_class[:puavoYearClass].split(",").first}",
+                                        :attributes => ['puavoId',
+                                                        'puavoYearClass',
+                                                        'objectClass'] ).first
+        old_groups.delete_if{ |g| g[:puavoId] == new_student_year_class[:puavoId] }
+      end
+
+      begin
+        StudentClass.ldap_modify_operation(new_student_class[:dn],
+                                           :add, [{ "memberUid" => [self.uid] }, 
+                                                  { "member" => [self.dn.to_s] }])
+      rescue ActiveLdap::LdapError::TypeOrValueExists; end
+      
+      begin
+        StudentYearClass.ldap_modify_operation(new_student_year_class[:dn],
+                                               :add, [{ "memberUid" => [self.uid] }, 
+                                                      { "member" => [self.dn.to_s] }])
+      rescue ActiveLdap::LdapError::TypeOrValueExists; end
+
+      # FIXME delete also SchoolRole's memeber attributes?
+      old_groups.each do |group|
+        begin
+          BaseGroup.ldap_modify_operation(group[:dn],
+                                          :delete, [{ "memberUid" => [self.uid] }])
+        rescue Exception; end
+        begin
+          BaseGroup.ldap_modify_operation(group[:dn],
+                                          :delete, [{ "member" => [self.dn.to_s] }])
+        rescue Exception; end
+      end
+    end
+  end
 end
 
 # FIXME: this code have to move to better place.

@@ -144,7 +144,7 @@ fi:
     select_role:
       title: Koulun vaihto
       new_school: Uusi koulu
-      select_new_role: Valitse uusi rooli
+      select_new_student_class: Valitse uusi oppilasryhmä
       submit: Vaihda koulu
     import:
       info:
@@ -332,6 +332,7 @@ fi:
         puavoEduPersonReverseDisplayName: Sukunimi Etunimi
         puavoEduPersonPersonnelNumber: Henkilönumero
         image: Kuva
+        student_class_id: Oppilasryhmä
       group:
         displayName: "Ryhmän nimi"
         cn: "Lyhenne"

@@ -46,15 +46,6 @@ class School < BaseGroup
     end
   end
 
-  def remove_user(user)
-    self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
-                                         { "member" => [user.dn.to_s] }])
-
-    if Array(user.puavoAdminOfSchool).map{ |s| s.to_s }.include?(self.dn.to_s)
-      self.ldap_modify_operation(:delete, [{ "puavoSchoolAdmin" => [user.dn.to_s] }])
-    end
-  end
-
   def self.all_with_permissions
     if Puavo::Authorization.organisation_owner?
       self.all.sort

@@ -13,13 +13,15 @@
 	<%= label "user", 'uid' %><br />
 	<%=h @user.uid %>
       </p>
-      <p>
-      <%= label "user", 'puavoEduPersonAffiliation' %><br />
-      <%=h t('puavoEduPersonAffiliation_' + @user.puavoEduPersonAffiliation) %>
-      </p>
+
+	  <p>
+		<%= label 'user', 'student_class'%><br />
+		<%=h @user.student_class ? @user.student_class.displayName : nil %>
+	  </p>
+
       <p>
       <%= label "user", 'roles' %><br />
-      <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
+      <%=h @user.roles.map{ |r| r[:displayName] }.join(", ") %>
       </p>
     </td>
   </tr>
@@ -52,17 +54,6 @@
   <tr>
     <td class="label_td view"><%= label "user", "uidNumber" %></td>
     <td class="value_td"><%=h @user.uidNumber %></tr>
-  </tr>
-
-  <tr>
-    <td class="label_td view"><%= label "user", "groups" %></td>
-    <td class="value_td">
-      <span id="groups_by_roles">
-      <% @user.groups.each do |p| %>
-      <%=h p.displayName %><br />
-      <% end %>
-      </span>
-    </td>
   </tr>
 
   <tr>
