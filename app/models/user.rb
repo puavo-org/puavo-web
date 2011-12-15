@@ -544,10 +544,6 @@ class User < LdapBase
 
   def update_student_class
     if self.student_class_id && self.student_class_id.empty? == false
-      puts StudentYearClass.find_first_by_member(self.dn.to_s).inspect
-      if StudentYearClass.find_first_by_member(self.dn.to_s)
-        puts StudentYearClass.find_first_by_member(self.dn.to_s).puavoId.inspect
-      end
       if old_student_class = StudentYearClass.find_first_by_member(self.dn.to_s)
         if old_student_class.puavoId.to_s != self.student_class_id
           # Remove user from old student class and student year class
