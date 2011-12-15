@@ -162,17 +162,17 @@ class UsersController < ApplicationController
 
     params[:user_ids].each do |user_id|
       @user = User.find(user_id)
-      user_old_school_roles = SchoolRole.base_search( :filter => "member=#{@user.dn}",
-                                                       :attributes => ['displayName', 'cn', 'puavoUserRole'] )
-      user_new_school_roles = SchoolRole.base_search( :filter => "puavoSchool=#{@new_school.dn}",
-                                                       :attributes => ['displayName',
-                                                                       'cn',
-                                                                       'puavoUserRole'] ).select do |role|
-        user_old_school_roles.map{ |ur| ur[:puavoUserRole] }.include?(role[:puavoUserRole])
+      user_old_school_roles = SchoolRole.find( :all,
+                                               :attribute => "member",
+                                               :value => @user.dn.to_s )
+      user_new_school_roles = SchoolRole.find( :all,
+                                               :attribute => "puavoSchool",
+                                               :value => @new_school.dn.to_s ).select do |role|
+        user_old_school_roles.map{ |ur| ur.puavoUserRole }.include?(role.puavoUserRole)
       end
       @user.change_school(@new_school.dn.to_s)
       @user.student_class_id = params[:new_student_class]
-      @user.role_ids = user_new_school_roles.map{ |r| r[:puavoId] }
+      @user.role_ids = user_new_school_roles.map{ |r| r.puavoId.to_s }
       @user.save
     end
 
