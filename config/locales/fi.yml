@@ -141,7 +141,7 @@ fi:
       title: Koulun vaihto
       select_new_school: Valitse uusi koulu
       submit: Seuraava
-    select_role:
+    select_student_class:
       title: Koulun vaihto
       new_school: Uusi koulu
       select_new_student_class: Valitse uusi oppilasryhmä

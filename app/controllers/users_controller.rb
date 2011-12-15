@@ -198,8 +198,8 @@ class UsersController < ApplicationController
     end
   end
 
-  # POST /:school_id/users/:id/select_role
-  def select_role
+  # POST /:school_id/users/:id/select_student_class
+  def select_student_class
     @user = User.find(params[:id])
     @new_school = School.find(params[:new_school])
     @student_classes = StudentYearClass.classes_by_school(@new_school)

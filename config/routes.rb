@@ -40,11 +40,11 @@ ActionController::Routing::Routes.draw do |map|
                           :action => 'select_school',
                           :path_prefix => ':school_id',
                           :conditions => { :method => :get } )
-  map.select_role_user( 'users/:id/select_role',
-                        :controller => 'users',
-                        :action => 'select_role',
-                        :path_prefix => ':school_id',
-                        :conditions => { :method => :post } )
+  map.select_student_class_user( 'users/:id/select_student_class',
+                                 :controller => 'users',
+                                 :action => 'select_student_class',
+                                 :path_prefix => ':school_id',
+                                 :conditions => { :method => :post } )
   map.change_school_users( 'users/change_school',
                            :controller => 'users',
                            :action => 'change_school',
