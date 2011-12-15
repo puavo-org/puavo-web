@@ -43,6 +43,15 @@ class StudentYearClass < BaseGroup
                              :value => member )
   end
 
+  def self.find_by_puavoId(puavoId)
+    StudentClass.find( :first,
+                       :attribute => "puavoId",
+                       :value => puavoId ) or
+      StudentYearClass.find( :first,
+                             :attribute => "puavoId",
+                             :value => puavoId )
+  end
+
   def validate
     unless self.puavoSchoolStartYear.to_s =~ /^[0-9]+$/
       errors.clear

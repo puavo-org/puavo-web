@@ -333,6 +333,13 @@ class User < LdapBase
                                               'puavoUserRole'] ).each do |role|
         if add_roles.include?(role[:puavoId])
           add_roles.delete(role[:puavoId])
+        else
+          SchoolRole.ldap_modify_operation(role[:dn],
+                                           :delete, [{ "memberUid" => [self.uid] }]
+                                           ) rescue Exception
+          SchoolRole.ldap_modify_operation(role[:dn],
+                                           :delete, [{ "member" => [self.dn.to_s] }]
+                                           ) rescue Exception
         end
       end
       
@@ -537,54 +544,46 @@ class User < LdapBase
 
   def update_student_class
     if self.student_class_id && self.student_class_id.empty? == false
-      user_student_class_id = Net::LDAP::Filter.escape( self.student_class_id )
-      old_groups = BaseGroup.base_search( :filter => "member=#{self.dn}",
-                                          :base => "ou=Classes,#{BaseGroup.base.to_s}",
-                                          :scope => :sub,
-                                          :attributes => ['puavoId'] )
-      
-      new_student_class = BaseGroup.base_search( :filter => "puavoId=#{user_student_class_id}",
-                                                 :base => "ou=Classes,#{BaseGroup.base.to_s}",
-                                                 :scope => :sub,
-                                                 :attributes => ['puavoId',
-                                                                 'puavoYearClass',
-                                                                 'objectClass'] ).first
-      old_groups.delete_if{ |g| g[:puavoId] == new_student_class[:puavoId] }
-      
-      if new_student_class[:puavoYearClass]
-        new_student_year_class =
-          StudentYearClass.base_search( :filter => "#{new_student_class[:puavoYearClass].split(",").first}",
-                                        :attributes => ['puavoId',
-                                                        'puavoYearClass',
-                                                        'objectClass'] ).first
-        old_groups.delete_if{ |g| g[:puavoId] == new_student_year_class[:puavoId] }
-      else
-        new_student_year_class = new_student_class
+      puts StudentYearClass.find_first_by_member(self.dn.to_s).inspect
+      if StudentYearClass.find_first_by_member(self.dn.to_s)
+        puts StudentYearClass.find_first_by_member(self.dn.to_s).puavoId.inspect
+      end
+      if old_student_class = StudentYearClass.find_first_by_member(self.dn.to_s)
+        if old_student_class.puavoId.to_s != self.student_class_id
+          # Remove user from old student class and student year class
+          if old_student_class.class == StudentClass
+            StudentYearClass.
+              ldap_modify_operation( old_student_class.puavoYearClass.to_s,
+                                     :delete, [{ "memberUid" => [self.uid] }] ) rescue Exception
+            StudentYearClass.
+              ldap_modify_operation( old_student_class.puavoYearClass.to_s,
+                                     :delete, [{ "member" => [self.dn.to_s] }] ) rescue Exception
+          end
+          old_student_class.
+            ldap_modify_operation( :delete,
+                                   [{ "memberUid" => [self.uid] }] ) rescue Exception
+          old_student_class.
+            ldap_modify_operation( :delete,
+                                   [{ "member" => [self.dn.to_s] }] ) rescue Exception
+        end
+      end
+      # Add user to new student class and student year class
+      new_student_class = StudentYearClass.find_by_puavoId(self.student_class_id)
+      if new_student_class.class == StudentClass
+        begin
+          StudentClass.
+            ldap_modify_operation(new_student_class.puavoYearClass.to_s,
+                                  :add, [{ "memberUid" => [self.uid] }, 
+                                         { "member" => [self.dn.to_s] }])
+        rescue ActiveLdap::LdapError::TypeOrValueExists; end
       end
 
       begin
-        StudentClass.ldap_modify_operation(new_student_class[:dn],
-                                           :add, [{ "memberUid" => [self.uid] }, 
-                                                  { "member" => [self.dn.to_s] }])
+        StudentClass.
+          ldap_modify_operation(new_student_class.dn.to_s,
+                                :add, [{ "memberUid" => [self.uid] }, 
+                                       { "member" => [self.dn.to_s] }])
       rescue ActiveLdap::LdapError::TypeOrValueExists; end
-      
-      begin
-        StudentYearClass.ldap_modify_operation(new_student_year_class[:dn],
-                                               :add, [{ "memberUid" => [self.uid] }, 
-                                                      { "member" => [self.dn.to_s] }])
-      rescue ActiveLdap::LdapError::TypeOrValueExists; end
-
-      # FIXME delete also SchoolRole's memeber attributes?
-      old_groups.each do |group|
-        begin
-          BaseGroup.ldap_modify_operation(group[:dn],
-                                          :delete, [{ "memberUid" => [self.uid] }])
-        rescue Exception; end
-        begin
-          BaseGroup.ldap_modify_operation(group[:dn],
-                                          :delete, [{ "member" => [self.dn.to_s] }])
-        rescue Exception; end
-      end
     end
   end
 end
