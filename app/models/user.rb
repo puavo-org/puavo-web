@@ -209,6 +209,18 @@ class User < LdapBase
                                 :attribute => I18n.t("activeldap.attributes.user.uid") )
       end
     end
+
+    # Student class validation
+    # Student class must be selected if the user belongs to the Student role
+    student_school_role = SchoolRole.base_search( :filter => "(puavoEduPersonAffiliation=student)" +
+                                                  "(puavoSchool=#{self.school.dn})" ).first
+    if self.role_ids.include?( student_school_role[:puavoId].to_s )
+      if self.student_class_id.empty?
+        errors.add_on_blank( :student_class_id,
+                             I18n.t("activeldap.errors.messages.blank",
+                                    :attribute => I18n.t("activeldap.attributes.user.student_class_id") ) )
+      end
+    end
   end
 
   def change_ldap_password

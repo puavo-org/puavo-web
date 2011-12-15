@@ -31,7 +31,42 @@ Feature: Manage users
     And I am logged in as "example" organisation owner
     And I follow "Example school 1"
     And I follow "Users"
-  
+
+  Scenario: Add new student
+    Given I follow "New user"
+    When I fill in the following:
+    | Surname                   | Mabey                 |
+    | Given name                | Ben                   |
+    | Username                  | ben                   |
+    | New password              | secretpw              |
+    | New password confirmation | secretpw              |
+    And I check "Student"
+    And I press "Create"
+    Then I should see "Student class can't be blank"
+    And I should see "Failed to create user!"
+    When I select "2C class" from "Student class"
+    And I press "Create"
+    Then I should not see "Failed to create user!"
+    And I should see the following:
+    |                       |
+    | Mabey                 |
+    | Ben                   |
+    | ben                   |
+    | 2C class              |
+    And the memberUid should include "ben" on the "2C class" student class
+    And the member should include "ben" on the "2C class" student class
+    And the memberUid should include "ben" on the "2. class" student year class
+    And the member should include "ben" on the "2. class" student year class
+    And the memberUid should include "ben" on the "Example school 1" school
+    And the member should include "ben" on the "Example school 1" school
+    And the memberUid should include "ben" on the "Domain Users" samba group
+    And the member should include "ben" on the "Student" school role in the "Example school 1" school
+    And the memberUid should include "ben" on the "Student" school role in the "Example school 1" school
+    And the member should include "ben" on the "Student" role
+    And the memberUid should include "ben" on the "Student" role
+    And I should see the following special ldap attributes on the "User" object with "ben":
+    | puavoEduPersonAffiliation | "^student$" |
+
   Scenario: Create new user
     Given I follow "New user"
     When I fill in the following:
