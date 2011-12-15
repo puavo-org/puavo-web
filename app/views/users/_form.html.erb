@@ -57,9 +57,9 @@
     <div>
       <label>
 		<%= check_box_tag( "user[role_ids][]",
-                           role[:puavoId],
-                           (@user_roles.include?(role) ? true : false),
-                           :id => "role_" + role[:cn] ) %>
+                           role.puavoId,
+                           ( Array(f.object.role_ids).include?(role.puavoId.to_s) ? true : false ),
+                           :id => "role_" + role.cn ) %>
        <%=h role[:displayName] %>
      </label>
   </div>

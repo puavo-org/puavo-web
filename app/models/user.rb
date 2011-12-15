@@ -357,31 +357,6 @@ class User < LdapBase
     end.join.downcase.gsub(/[^a-z]/, '')
   end
 
-  # Update User - Group association by roles
-  def update_associations
-    new_group_list =
-      self.roles.inject([]) do |result, role|
-      result + role.groups.map{ |g| g.dn.to_s }
-    end
-
-    Group.search( :filter => "(memberUid=#{self.uid})",
-                  :scope => :one,
-                  :attributes => ["puavoId"] ).each do |group_dn, values|
-
-      if new_group_list.include?(group_dn)
-        new_group_list.delete(group_dn)
-      else
-        Group.ldap_modify_operation(group_dn, :delete, [{ "memberUid" => [self.uid]},
-                                                        { "member" => [self.dn.to_s] }])
-      end
-    end
-    
-    new_group_list.each do |group_dn|
-      Group.ldap_modify_operation(group_dn, :add, [{ "memberUid" => [self.uid]}, 
-                                                   { "member" => [self.dn.to_s] }])
-    end
-  end
-
   def human_readable_format(attribute)
     case attribute
     when "role_ids"
@@ -420,8 +395,9 @@ class User < LdapBase
   end
 
   def roles
-    @roles || @roles = SchoolRole.base_search( :filter => "member=#{self.dn}",
-                                               :attributes => ['displayName', 'cn'])
+    SchoolRole.find( :all,
+                     :attribute => "member",
+                     :value => self.dn.to_s )
   end
 
   private

@@ -143,6 +143,7 @@ Feature: Manage users
       | Ben       | Mabey   | ben    | secret   | 2C class      | Student | Example school 1 |
       | Joseph    | Wilk    | joseph | secret   | 2C class      | Student | Example school 1 |
     And I am on the edit user page with "ben"
+    Then the id "role_exampleschool-student" checkbox should be checked
     When I fill in the following:
     | Surname    | MabeyEDIT |
     | Given name | BenEDIT   |

@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_filter :find_roles, :only => [:new, :edit, :create, :update]
+
   # GET /:school_id/users
   # GET /:school_id/users.xml
   def index
@@ -72,9 +74,6 @@ class UsersController < ApplicationController
   def new
     @student_classes = StudentYearClass.classes_by_school(@school)
     @user = User.new
-    @roles = SchoolRole.base_search( :filter => "puavoSchool=#{@school.dn}",
-                                     :attributes => ['displayName', 'cn'] )
-    @user_roles = []
 
     respond_to do |format|
       format.html # new.html.erb
@@ -85,10 +84,8 @@ class UsersController < ApplicationController
   # GET /:school_id/users/1/edit
   def edit
     @user = User.find(params[:id])
+    @user.role_ids = @user.roles.map{ |r| r.puavoId.to_s }
     @student_classes = StudentYearClass.classes_by_school(@school)
-    @roles = SchoolRole.base_search( :filter => "puavoSchool=#{@school.dn}",
-                                     :attributes => ['displayName', 'cn'] )
-    @user_roles =  @user.roles
   end
 
   # POST /:school_id/users
@@ -96,9 +93,6 @@ class UsersController < ApplicationController
   def create
     @student_classes = StudentYearClass.classes_by_school(@school)
     @user = User.new(params[:user])
-    @user_roles = []
-    @roles = SchoolRole.base_search( :filter => "puavoSchool=#{@school.dn}",
-                                     :attributes => ['displayName', 'cn'] )
 
     @user.puavoSchool = @school.dn
 
@@ -110,18 +104,11 @@ class UsersController < ApplicationController
         flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue User::PasswordChangeFailed => e
-        # FIXME @user_roles?
         flash[:alert] = t('flash.password_set_failed')
         format.html { redirect_to( user_path(@school,@user) ) }
       #rescue ActiveLdap::LdapError::ConstraintViolation
       rescue Exception => e
         logger.info "Create user, Exception: " + e.to_s
-        if params[:user][:role_ids]
-          @user_roles = 
-            SchoolRole.base_search( :filter => "|" +
-                                    params[:user][:role_ids].map{ |id| "(puavoId=#{id})" }.join,
-                                    :attributes => ['displayName', 'cn'] )
-        end
         error_message_and_render(format, 'new', t('flash.user.create_failed'))
       end
     end
@@ -132,9 +119,6 @@ class UsersController < ApplicationController
   def update
     @student_classes = StudentYearClass.classes_by_school(@school)
     @user = User.find(params[:id])
-    @user_roles =  @user.roles
-    @roles = SchoolRole.base_search( :filter => "puavoSchool=#{@school.dn}",
-                                     :attributes => ['displayName', 'cn'] )
 
     respond_to do |format|
       begin
@@ -150,14 +134,9 @@ class UsersController < ApplicationController
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue User::PasswordChangeFailed => e
-        # FIXME @user_roles!!!
         error_message_and_render(format, 'edit',  t('flash.password_set_failed'))
       rescue Exception => e
         logger.info "Update user, Exception: " + e.to_s
-        @user_roles = 
-          SchoolRole.base_search( :filter => "|" +
-                                  params[:user][:role_ids].map{ |id| "(puavoId=#{id})" }.join,
-                                  :attributes => ['displayName', 'cn'] )
         error_message_and_render(format, 'edit', t('flash.user.save_failed'))
       end
     end
@@ -237,5 +216,11 @@ class UsersController < ApplicationController
 
     format.html { render :action => action }
     format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
+  end
+
+  def find_roles
+    @roles = SchoolRole.find( :all,
+                              :attribute => "puavoSchool",
+                              :value => @school.dn.to_s )
   end
 end
