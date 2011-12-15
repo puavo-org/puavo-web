@@ -229,6 +229,29 @@ Feature: Manage users
     Then I should see "Failed to create user!"
     And I should see "New password doesn't match confirmation"
 
+  Scenario: Change user role
+    Given the following users:
+      | givenName | surname | uid    | password | student_class | roles   | school           |
+      | Ben       | Mabey   | ben    | secret   | 2C class      | Student | Example school 1 |
+    And I am on the edit user page with "ben"
+    Then the id "role_exampleschool-student" checkbox should be checked
+    And "2C class" should be selected for "user_student_class_id"
+    When I select "Select" from "Student class"
+    And I check "Teacher"
+    And I uncheck "Student"
+    And I press "Update"
+    Then I should not see "User cannot be saved!"
+    And the member should include "ben" on the "Teacher" school role in the "Example school 1" school
+    And the memberUid should include "ben" on the "Teacher" school role in the "Example school 1" school
+    And the member should not include "ben" on the "Student" school role in the "Example school 1" school
+    And the memberUid should not include "ben" on the "Student" school role in the "Example school 1" school
+    And the member should include "ben" on the "Teacher" role
+    And the memberUid should include "ben" on the "Teacher" role
+    And the member should not include "ben" on the "Student" role
+    And the memberUid should not include "ben" on the "Student" role
+    And the memberUid should not include "ben" on the "2C class" student class
+    And the memberUid should not include "ben" on the "2. class" student year class
+
   Scenario: Edit user
     Given the following users:
       | givenName | surname | uid    | password | student_class | roles   | school           |

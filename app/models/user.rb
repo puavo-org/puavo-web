@@ -340,6 +340,12 @@ class User < LdapBase
           SchoolRole.ldap_modify_operation(role[:dn],
                                            :delete, [{ "member" => [self.dn.to_s] }]
                                            ) rescue Exception
+          SchoolRole.ldap_modify_operation(role[:puavoUserRole],
+                                           :delete, [{ "memberUid" => [self.uid] }]
+                                           ) rescue Exception
+          SchoolRole.ldap_modify_operation(role[:puavoUserRole],
+                                           :delete, [{ "member" => [self.dn.to_s] }]
+                                           ) rescue Exception
         end
       end
       
@@ -543,7 +549,7 @@ class User < LdapBase
   end
 
   def update_student_class
-    if self.student_class_id && self.student_class_id.empty? == false
+    unless self.student_class_id.nil?
       if old_student_class = StudentYearClass.find_first_by_member(self.dn.to_s)
         if old_student_class.puavoId.to_s != self.student_class_id
           # Remove user from old student class and student year class
@@ -563,23 +569,24 @@ class User < LdapBase
                                    [{ "member" => [self.dn.to_s] }] ) rescue Exception
         end
       end
-      # Add user to new student class and student year class
-      new_student_class = StudentYearClass.find_by_puavoId(self.student_class_id)
-      if new_student_class.class == StudentClass
+      unless self.student_class_id.empty?
+        # Add user to new student class and student year class
+        new_student_class = StudentYearClass.find_by_puavoId(self.student_class_id)
+        if new_student_class.class == StudentClass
+          begin
+            StudentClass.
+              ldap_modify_operation(new_student_class.puavoYearClass.to_s,
+                                    :add, [{ "memberUid" => [self.uid] }, 
+                                           { "member" => [self.dn.to_s] }])
+          rescue ActiveLdap::LdapError::TypeOrValueExists; end
+        end
         begin
           StudentClass.
-            ldap_modify_operation(new_student_class.puavoYearClass.to_s,
+            ldap_modify_operation(new_student_class.dn.to_s,
                                   :add, [{ "memberUid" => [self.uid] }, 
                                          { "member" => [self.dn.to_s] }])
         rescue ActiveLdap::LdapError::TypeOrValueExists; end
       end
-
-      begin
-        StudentClass.
-          ldap_modify_operation(new_student_class.dn.to_s,
-                                :add, [{ "memberUid" => [self.uid] }, 
-                                       { "member" => [self.dn.to_s] }])
-      rescue ActiveLdap::LdapError::TypeOrValueExists; end
     end
   end
 end
