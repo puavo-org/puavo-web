@@ -538,7 +538,7 @@ class User < LdapBase
   end
 
   def update_student_class
-    unless self.student_class_id.nil?
+    if self.student_class_id && self.student_class_id.empty? == false
       user_student_class_id = Net::LDAP::Filter.escape( self.student_class_id )
       old_groups = BaseGroup.base_search( :filter => "member=#{self.dn}",
                                           :base => "ou=Classes,#{BaseGroup.base.to_s}",
