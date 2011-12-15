@@ -32,7 +32,37 @@ Feature: Manage users
     And I follow "Example school 1"
     And I follow "Users"
 
-  Scenario: Add new student
+  Scenario: Add new student to student year class
+    Given I follow "New user"
+    When I fill in the following:
+    | Surname                   | Mabey                 |
+    | Given name                | Ben                   |
+    | Username                  | ben                   |
+    | New password              | secretpw              |
+    | New password confirmation | secretpw              |
+    And I check "Student"
+    When I select "4. class" from "Student class"
+    And I press "Create"
+    Then I should not see "Failed to create user!"
+    And I should see the following:
+    |                       |
+    | Mabey                 |
+    | Ben                   |
+    | ben                   |
+    | 4. class              |
+    And the memberUid should include "ben" on the "4. class" student year class
+    And the member should include "ben" on the "4. class" student year class
+    And the memberUid should include "ben" on the "Example school 1" school
+    And the member should include "ben" on the "Example school 1" school
+    And the memberUid should include "ben" on the "Domain Users" samba group
+    And the member should include "ben" on the "Student" school role in the "Example school 1" school
+    And the memberUid should include "ben" on the "Student" school role in the "Example school 1" school
+    And the member should include "ben" on the "Student" role
+    And the memberUid should include "ben" on the "Student" role
+    And I should see the following special ldap attributes on the "User" object with "ben":
+    | puavoEduPersonAffiliation | "^student$" |
+
+  Scenario: Add new student to student class
     Given I follow "New user"
     When I fill in the following:
     | Surname                   | Mabey                 |

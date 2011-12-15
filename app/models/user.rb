@@ -397,9 +397,7 @@ class User < LdapBase
   def student_class
     @student_class || ( self.puavoId.nil? ?
                         nil :
-                        @student_class = StudentClass.find( :first,
-                                                            :attribute => "member",
-                                                            :value => self.dn.to_s ) )
+                        @student_class = StudentYearClass.find_first_by_member(self.dn.to_s) )
   end
 
   def student_class_id
@@ -560,6 +558,8 @@ class User < LdapBase
                                                         'puavoYearClass',
                                                         'objectClass'] ).first
         old_groups.delete_if{ |g| g[:puavoId] == new_student_year_class[:puavoId] }
+      else
+        new_student_year_class = new_student_class
       end
 
       begin

@@ -32,6 +32,17 @@ class StudentYearClass < BaseGroup
     end
   end
 
+  # If any student class not found by member then try to find member's student year class.
+  # Student classes is not defined on the small school.
+  def self.find_first_by_member(member)
+    StudentClass.find( :first,
+                       :attribute => "member",
+                       :value => member ) or
+      StudentYearClass.find( :first,
+                             :attribute => "member",
+                             :value => member )
+  end
+
   def validate
     unless self.puavoSchoolStartYear.to_s =~ /^[0-9]+$/
       errors.clear
