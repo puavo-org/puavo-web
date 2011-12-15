@@ -353,8 +353,8 @@ Feature: Manage users
       | givenName | surname | uid | password | student_class | roles   | school           |
       | Ben       | Mabey   | ben | secret   | 2C class      | Student | Example school 1 |
     And I am on the edit user page with "ben"
+    Then "2C class" should be selected for "user_student_class_id"
     When I fill in "New password" with "some text"
-    And I select "2C class" from "Student class"
     And I press "Update"
     Then I should see "New password doesn't match confirmation"
     And "2C class" should be selected for "user_student_class_id"

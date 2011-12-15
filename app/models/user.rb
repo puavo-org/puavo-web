@@ -408,7 +408,7 @@ class User < LdapBase
   end
 
   def student_class_id
-    @student_class_id || ( self.student_class.nil? ? nil : self.student_class.puavoId)
+    @student_class_id || ( self.student_class.nil? ? nil : self.student_class.puavoId.to_s)
   end
 
   def roles
