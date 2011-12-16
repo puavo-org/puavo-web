@@ -251,6 +251,8 @@ Feature: Manage users
     And the memberUid should not include "ben" on the "Student" role
     And the memberUid should not include "ben" on the "2C class" student class
     And the memberUid should not include "ben" on the "2. class" student year class
+    And I should see the following special ldap attributes on the "User" object with "ben":
+    | puavoEduPersonAffiliation | "^teacher$" |
 
   Scenario: Edit user
     Given the following users:

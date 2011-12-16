@@ -330,6 +330,7 @@ class User < LdapBase
       add_roles = self.role_ids
       SchoolRole.base_search( :filter => "member=#{self.dn}",
                               :attributes => ['puavoId',
+                                              'puavoEduPersonAffiliation',
                                               'puavoUserRole'] ).each do |role|
         if add_roles.include?(role[:puavoId])
           add_roles.delete(role[:puavoId])
@@ -346,6 +347,9 @@ class User < LdapBase
           SchoolRole.ldap_modify_operation(role[:puavoUserRole],
                                            :delete, [{ "member" => [self.dn.to_s] }]
                                            ) rescue Exception
+          User.ldap_modify_operation( self.dn,
+                                      :delete,
+                                      [{ "puavoEduPersonAffiliation" => [role[:puavoEduPersonAffiliation]] }]) 
         end
       end
       
@@ -356,9 +360,7 @@ class User < LdapBase
                                                        'puavoUserRole',
                                                        'puavoEduPersonAffiliation'] ).first
         User.ldap_modify_operation( self.dn,
-                                    :add, [{ "puavoEduPersonAffiliation" => [role[:puavoEduPersonAffiliation]] }]
-                                    ) rescue ActiveLdap::LdapError::TypeOrValueExists
-
+                                    :add, [{ "puavoEduPersonAffiliation" => [role[:puavoEduPersonAffiliation]] }]) 
         SchoolRole.ldap_modify_operation(role[:dn],
                                          :add, [{ "memberUid" => [self.uid] }, 
                                                 { "member" => [self.dn.to_s] }]
