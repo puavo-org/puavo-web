@@ -1,7 +1,7 @@
 class Role < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Roles,ou=Groups",
-                :classes => ['top',  'puavoRole'] )
+                :classes => ['top', 'posixGroup', 'puavoRole', 'sambaGroupMapping'] )
 
   has_many :members, :class_name => "User", :wrap => "member", :primary_key => "dn"
   has_many :memberUids, :class_name => "User", :wrap => "memberUid", :primary_key => "uid"
