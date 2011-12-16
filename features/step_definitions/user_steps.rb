@@ -60,8 +60,9 @@ Then /^I should get "([^\"]*)" with "([^\"]*)" from "([^\"]*)"$/ do |text, metho
   User.find_by_username(username).send(method).should == text
 end
 
-Then /^I should see the following users:$/ do |users_table|
-  users_table.diff!(tableish('table.validate_users_list tr', 'td,th'))
+# FIXME user mass import?
+Then /^I should see the following users:$/ do |expected_users_table|
+  expected_users_table.diff!( tableish('table tr', lambda{ |j| j.search('td,th')[0..2] }) )
 end
 
 When /^I fill test data into user forms$/ do

@@ -2,19 +2,19 @@
   <tr>
     <th><%= t('activeldap.attributes.user.displayName') %></th>
     <th><%= t('activeldap.attributes.user.uid') %></th>
-    <th><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></th>
+    <th><%= t('activeldap.attributes.user.role_ids') %></th>
     <th colspan="2"><%= t('.actions') %></th>
   </tr>
 
 <% @users.each do |user| %>
   <tr>
-    <td><%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %></td>
-    <td><%=h user["uid"] %></td>
-    <td><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
-    <td><%= link_to t('link.edit'), edit_user_path(@school, user["puavoId"]) %></td>
+    <td><%= link_to "#{user[:sn]} #{user[:givenName]}", user_path(@school, user[:puavoId]) %></td>
+    <td><%=h user[:uid] %></td>
+    <td><%=h Array(@roles_by_user_dn[ user[:dn].to_s ]).join(", ") %></td>
+    <td><%= link_to t('link.edit'), edit_user_path(@school, user[:puavoId]) %></td>
     <td><%= link_to( t('link.destroy'),
-            user_path(@school, user["puavoId"]),
-            :confirm => t('destroy_confirm', :object_name => "#{user['sn']} #{user['givenName']}"),
+            user_path(@school, user[:puavoId]),
+            :confirm => t('destroy_confirm', :object_name => "#{user[:sn]} #{user[:givenName]}"),
             :method => :delete ) %></td>
   </tr>
 <% end %>

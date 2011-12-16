@@ -318,7 +318,7 @@ en:
         mail: "Email"
         telephoneNumber: "Telephone number"
         puavoEduPersonAffiliation: "User type"
-        role_ids: Role
+        role_ids: Roles
         role_name: Role
         roles: Roles
         preferredLanguage: Language

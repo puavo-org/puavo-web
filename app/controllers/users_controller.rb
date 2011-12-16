@@ -21,14 +21,22 @@ class UsersController < ApplicationController
                   'puavoAdminOfSchool',
                   'sambaPrimaryGroupSID']
 
-    @users = User.search( :filter => filter,
-                          :scope => :one,
-                          :attributes => attributes )
-
-    @users = @users.map do |user|
-      user.last
-    end.sort do |a,b|
+    @users = User.base_search( :filter => filter,
+                               :scope => :one,
+                               :attributes => attributes )
+    
+    @users = @users.sort do |a,b|
       a["sn"].to_s + a["givenName"].to_s <=> b["sn"].to_s + b["givenName"].to_s
+    end
+
+    @roles_by_user_dn =
+      SchoolRole.base_search( :filter => "puavoSchool=#{@school.dn}",
+                              :attributes => ['member',
+                                              'displayName'] ).inject({}) do |result, role|
+      Array(role[:member]).each do |member|
+        result[member.to_s] = Array(result[member].to_s) + [ role[:displayName] ]
+      end
+      result
     end
 
     if request.format == 'application/json'

@@ -33,6 +33,18 @@ Feature: Manage users
     And I follow "Example school 1"
     And I follow "Users"
 
+  Scenario: Users list
+    Given the following users:
+    | givenName | sn     | uid  | password | student_class | roles           | school           |
+    | Joe       | Bloggs | joe  | secret   | 2C class      | Student         | Example school 1 |
+    | Jane      | Doe    | jane | secret   | 2C class      | Teacher, Parent | Example school 1 | 
+    And I follow "Example school 1"
+    And I follow "Users"
+    Then I should see the following users:
+    | Name       | Username | Roles           |
+    | Bloggs Joe | joe      | Student         |
+    | Doe Jane   | jane     | Teacher, Parent |
+
   Scenario: Add new student to student year class
     Given I follow "New user"
     When I fill in the following:
