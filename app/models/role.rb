@@ -1,4 +1,4 @@
-class Role < LdapBase
+class Role < BaseGroup
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Roles,ou=Groups",
                 :classes => ['top', 'posixGroup', 'puavoRole', 'sambaGroupMapping'] )
