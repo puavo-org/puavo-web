@@ -22,6 +22,7 @@ Feature: Manage users
     | Student     | student | student                   |
     | Teacher     | teacher | teacher                   |
     | Staff       | staff   | staff                     |
+    | Parent      | parent  | parent                    |
     And the following student year classes:
     | puavoSchoolStartYear | student_class_ids | school           |
     |                 2011 | A                 | Example school 1 |
@@ -253,6 +254,26 @@ Feature: Manage users
     And the memberUid should not include "ben" on the "2. class" student year class
     And I should see the following special ldap attributes on the "User" object with "ben":
     | puavoEduPersonAffiliation | "^teacher$" |
+
+  Scenario: Set multiple roles to user
+    Given the following users:
+      | givenName | surname | uid | password | roles   | school           |
+      | Ben       | Mabey   | ben | secret   | Teacher | Example school 1 |
+    And I am on the edit user page with "ben"
+    Then the id "role_exampleschool-teacher" checkbox should be checked
+    When I check "Parent"
+    And I press "Update"
+    Then I should not see "User cannot be saved!"
+    And the member should include "ben" on the "Teacher" school role in the "Example school 1" school
+    And the memberUid should include "ben" on the "Teacher" school role in the "Example school 1" school
+    And the member should include "ben" on the "Teacher" role
+    And the memberUid should include "ben" on the "Teacher" role
+    And the member should include "ben" on the "Parent" school role in the "Example school 1" school
+    And the memberUid should include "ben" on the "Parent" school role in the "Example school 1" school
+    And the member should include "ben" on the "Parent" role
+    And the memberUid should include "ben" on the "Parent" role
+    And I should see the following special ldap attributes on the "User" object with "ben":
+    | puavoEduPersonAffiliation | "^teacherparent$" |
 
   Scenario: Edit user
     Given the following users:
