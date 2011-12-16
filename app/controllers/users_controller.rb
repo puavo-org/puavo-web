@@ -176,7 +176,7 @@ class UsersController < ApplicationController
       user_new_school_roles = SchoolRole.find( :all,
                                                :attribute => "puavoSchool",
                                                :value => @new_school.dn.to_s ).select do |role|
-        user_old_school_roles.map{ |ur| ur.puavoUserRole }.include?(role.puavoUserRole)
+        user_old_school_roles.map{ |ur| ur.puavoRole }.include?(role.puavoRole)
       end
       @user.change_school(@new_school.dn.to_s)
       @user.student_class_id = params[:new_student_class]

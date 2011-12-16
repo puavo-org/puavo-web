@@ -90,14 +90,14 @@ class School < BaseGroup
                                            :displayName => role[:displayName],
                                            :puavoEduPersonAffiliation => role[:puavoEduPersonAffiliation],
                                            :puavoSchool => self.dn.to_s,
-                                           :puavoUserRole => role[:dn] } )
+                                           :puavoRole => role[:dn] } )
     end
     school_roles = SchoolRole.base_search( :filter => "puavoSchool=#{self.dn}",
                                            :attributes => ['cn', 'displayName',
                                                            'puavoEduPersonAffiliation',
-                                                           'puavoSchool', 'puavoUserRole'] )
+                                                           'puavoSchool', 'puavoRole'] )
     school_roles_by_organisation.each do |role|
-      if (school_role = school_roles.select{ |r| r[:puavoUserRole] == role[:puavoUserRole] }.first).nil?
+      if (school_role = school_roles.select{ |r| r[:puavoRole] == role[:puavoRole] }.first).nil?
         SchoolRole.create(role)
       else
         school_role_puavo_id = school_role.delete(:puavoId)

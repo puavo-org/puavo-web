@@ -1,7 +1,7 @@
 class Role < LdapBase
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Roles,ou=Groups",
-                :classes => ['top',  'puavoUserRole'] )
+                :classes => ['top',  'puavoRole'] )
 
   has_many :members, :class_name => "User", :wrap => "member", :primary_key => "dn"
   has_many :memberUids, :class_name => "User", :wrap => "memberUid", :primary_key => "uid"
@@ -60,12 +60,12 @@ class Role < LdapBase
         :displayName => self.displayName,
         :puavoEduPersonAffiliation => self.puavoEduPersonAffiliation,
         :puavoSchool => school[:dn],
-        :puavoUserRole => self.dn.to_s }
-      if ( school_role = SchoolRole.base_search(:filter => "&(puavoUserRole=#{self.dn})" +
+        :puavoRole => self.dn.to_s }
+      if ( school_role = SchoolRole.base_search(:filter => "&(puavoRole=#{self.dn})" +
                                                            "(puavoSchool=#{school[:dn]})", 
                                                 :attributes => ['cn', 'displayName',
                                                                 'puavoEduPersonAffiliation',
-                                                                'puavoSchool', 'puavoUserRole']).first ).nil?
+                                                                'puavoSchool', 'puavoRole']).first ).nil?
         SchoolRole.create(new_school_role)
       else
         school_role_puavo_id = school_role.delete(:puavoId)
