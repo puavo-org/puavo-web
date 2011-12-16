@@ -4,13 +4,15 @@ Feature: Manage sessions
   wants [behaviour]
 
   Background:
-    Given a new school and group with names "School 1", "Class 4" on the "example" organisation
+    Given the following schools:
+    | displayName      | cn            |
+    | Example school 1 | exampleschool |
     And the following roles:
-    | displayName |
-    | Staff       |
+    | displayName | cn      | puavoEduPersonAffiliation |
+    | Staff       | staff   | staff                     |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
+      | givenName | sn     | uid   | password | school_admin | roles | school           |
+      | Pavel     | Taylor | pavel | secret   | true         | Staff | Example school 1 |
 
   Scenario: Login
     Given I am on the login page

@@ -48,6 +48,12 @@ Given /^the following users:$/ do |users|
     user.userPassword = "{SSHA}" + 
       Base64.encode64(Digest::SHA1.digest(u["password"] + salt) + salt).chomp!
     user.save!
+    if u["school_admin"] && u["school_admin"] == "true"
+      s = (school || @school)
+      s.puavoSchoolAdmin = Array(s.puavoSchoolAdmin) + [ user.dn.to_s ]
+      s.save!
+      debugger
+    end
   end
 end
 
