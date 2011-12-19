@@ -533,7 +533,8 @@ class User < LdapBase
 
     end
     Array(self.puavoAdminOfSchool).each do |school|
-      school.ldap_modify_operation( :delete,
+      School.ldap_modify_operation( school.to_s,
+                                    :delete,
                                     [{ "puavoSchoolAdmin" => [self.dn.to_s] }]
                                     ) rescue Exception
     end
