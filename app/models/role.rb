@@ -67,7 +67,7 @@ class Role < BaseGroup
         school_role_puavo_id = school_role.delete(:puavoId)
         school_role_dn = school_role.delete(:dn)
         unless new_school_role.diff(school_role).empty?
-          school_role_object = SchoolRole.find(dn)
+          school_role_object = SchoolRole.find(school_role_dn)
           school_role_object.update_attributes(new_school_role)
         end
       end
