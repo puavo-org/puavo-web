@@ -4,22 +4,28 @@ Feature: Search users
   wants search other users by name
   
   Background:
-    Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And a new role with name "Class 1A" and which is joined to the "Class 1" group
+    Given the following schools:
+    | displayName      | cn            |
+    | Example school 1 | exampleschool |
     And the following roles:
-    | displayName |
-    | Staff       |
+    | displayName | cn      | puavoEduPersonAffiliation |
+    | Student     | student | student                   |
+    | Teacher     | teacher | teacher                   |
+    | Staff       | staff   | staff                     |
+    And the following student year classes:
+    | puavoSchoolStartYear | student_class_ids | school           |
+    |                 2011 | A                 | Example school 1 |
     And the following users:
-      | givenName | sn       | uid       | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor   | pavel     | secret   | true         | Staff     | Staff                     |
-      | Johnny    | Harris   | johnny    | secret   | false        | Class 1A   | Student                   |
-      | Harry     | Johnson  | harry     | secret   | false        | Class 1A   | Student                   |
-      | Jack      | Walker   | jack      | secret   | false        | Class 1A   | Student                   |
-      | Kelly     | Williams | kelly     | secret   | false        | Class 1A   | Student                   |
-      | Eric      | Williams | eric      | secret   | false        | Class 1A   | Student                   |
-      | Anthony   | Davis    | anthony   | secret   | false        | Class 1A   | Student                   |
-      | Isabella  | Jackson  | isabella  | secret   | false        | Class 1A   | Student                   |
-      | Elizabeth | Jones    | elizabeth | secret   | false        | Class 1A   | Student                   |
+      | givenName | sn       | uid       | password | school_admin | student_class | roles   | school           |
+      | Pavel     | Taylor   | pavel     | secret   | true         |               | Staff   | Example school 1 |
+      | Johnny    | Harris   | johnny    | secret   | false        | 1A class      | Student | Example school 1 |
+      | Harry     | Johnson  | harry     | secret   | false        | 1A class      | Student | Example school 1 |
+      | Jack      | Walker   | jack      | secret   | false        | 1A class      | Student | Example school 1 |
+      | Kelly     | Williams | kelly     | secret   | false        | 1A class      | Student | Example school 1 |
+      | Eric      | Williams | eric      | secret   | false        | 1A class      | Student | Example school 1 |
+      | Anthony   | Davis    | anthony   | secret   | false        | 1A class      | Student | Example school 1 |
+      | Isabella  | Jackson  | isabella  | secret   | false        | 1A class      | Student | Example school 1 |
+      | Elizabeth | Jones    | elizabeth | secret   | false        | 1A class      | Student | Example school 1 |
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Find user by first name
