@@ -4,13 +4,10 @@ Feature: Manage external services
   add and remove System Accounts
 
   Background:
-    Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And the following schools:
+    Given the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
-    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Greenwich Steiner School" school
     And I am logged in as "example" organisation owner
-
   
   Scenario: Add new external service
     Given I follow "External service"
