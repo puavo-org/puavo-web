@@ -4,16 +4,23 @@ Feature: Manage passwords
   wants [behaviour]
 
   Background:
-    Given a new school and group with names "School 1", "Class 4" on the "example" organisation
-    And a new role with name "Class 4" and which is joined to the "Class 4" group
+    # Given a new school and group with names "School 1", "Class 4" on the "example" organisation
+    # And a new role with name "Class 4" and which is joined to the "Class 4" group
+    Given the following schools:
+    | displayName      | cn            |
+    | Example school 1 | exampleschool |
     And the following roles:
-    | displayName |
-    | Teacher |
-    | Student  |
+    | displayName | cn      | puavoEduPersonAffiliation |
+    | Student     | student | student                   |
+    | Teacher     | teacher | teacher                   |
+    | Admin       | admin   | admin                     |
+    And the following student year classes:
+    | puavoSchoolStartYear | student_class_ids | school           |
+    |                 2008 | A                 | Example school 1 |
     And the following users:
-    | givenName | sn     | uid   | password    | school_admin | role_name | puavoEduPersonAffiliation |
-    | Pavel     | Taylor | pavel | pavelsecret | true         | Teacher   | Admin                     |
-    | Ben       | Mabey  | ben   | bensecret   | false        | Class 4   | Student                   |
+    | givenName | sn     | uid   | password    | school_admin | roles   | student_class | school           |
+    | Pavel     | Taylor | pavel | pavelsecret | true         | Admin   |               | Example school 1 |
+    | Ben       | Mabey  | ben   | bensecret   | false        | Student | 4A class      | Example school 1 |
     And I am on the password change page
 
   Scenario: Non-existent user tries to change another user's password

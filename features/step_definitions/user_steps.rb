@@ -25,9 +25,11 @@ Given /^the following users:$/ do |users|
     end
 
     if u["student_class"]
-      u["student_class_id"] = BaseGroup.find(:first,
-                                          :attribute => "displayName",
-                                          :value => u["student_class"]).puavoId.to_s
+     unless u["student_class"].empty?
+       u["student_class_id"] = BaseGroup.find(:first,
+                                              :attribute => "displayName",
+                                              :value => u["student_class"]).puavoId.to_s
+     end
       u.delete("student_class")
     end
    
