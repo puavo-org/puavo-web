@@ -52,7 +52,6 @@ Given /^the following users:$/ do |users|
       s = (school || @school)
       s.puavoSchoolAdmin = Array(s.puavoSchoolAdmin) + [ user.dn.to_s ]
       s.save!
-      debugger
     end
   end
 end

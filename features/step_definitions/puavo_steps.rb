@@ -234,7 +234,6 @@ end
 Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
   Array(object.send(method)).each do |dn|
-    puts dn
     lambda{ User.find(dn) }.should_not raise_error
   end
 end
