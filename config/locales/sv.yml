@@ -1,0 +1,3 @@
+sv:
+  student_year_class_naming_scheme_default: "{{class_number}}. klass"
+  student_class_naming_scheme_default: "{{class_number}}{{class_id}} klass"
