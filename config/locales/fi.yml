@@ -338,6 +338,8 @@ fi:
         puavoDeviceAutoPowerOffMode_custom: Mukautettu
         puavoDeviceOnHour: Päivän aloitus
         puavoDeviceOffHour: Päivän lopetus
+        o: Nimi
+        puavoEduOrgAbbreviation: Lyhenne
       external_service:
         uid: Palvelun tunniste
         description: Kuvaus

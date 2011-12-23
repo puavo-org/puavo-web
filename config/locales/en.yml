@@ -338,6 +338,8 @@ en:
         puavoDeviceAutoPowerOffMode_custom: Custom
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
+        o: Name
+        puavoEduOrgAbbreviation: Abbreviation
       external_service:
         uid: Service Identifier
         description: Description

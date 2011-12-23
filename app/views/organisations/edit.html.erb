@@ -3,6 +3,14 @@
 <% form_for(@organisation, :url => organisation_path)  do |f| %>
 <table>
   <tr>
+    <td><%= f.label :o %></td>
+    <td><%= f.text_field :o %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :puavoEduOrgAbbreviation %></td>
+    <td><%= f.text_field :puavoEduOrgAbbreviation %></td>
+  </tr>
+  <tr>
     <td><%= f.label :description %></td>
     <td><%= f.text_field :description %></td>
   </tr>

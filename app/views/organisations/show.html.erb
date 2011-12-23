@@ -2,6 +2,14 @@
 <h3><%= t('.title') %></h3>
 <table>
   <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "o" %></td>
+    <td class="value_td"><%=h @organisation.o %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "puavoEduOrgAbbreviation" %></td>
+    <td class="value_td"><%=h @organisation.puavoEduOrgAbbreviation %></td>
+  </tr>
+  <tr>
     <td class="label_td view"><%= label "ldap_organisation", "description" %></td>
     <td class="value_td"><%=h @organisation.description %></td>
   </tr>
