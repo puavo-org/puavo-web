@@ -14,6 +14,7 @@ form table:not(.validate_users_list) th, form table:not(.validate_users_list) td
 
 .edit_user tr {
     margin: 0 0 10px;
+    white-space: nowrap
 }
 .edit_user tr td{
     margin: 0;
