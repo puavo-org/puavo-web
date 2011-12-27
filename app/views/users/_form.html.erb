@@ -101,9 +101,6 @@
     <td><%= f.label :puavoLocked %></td>
     <td><%= f.check_box :puavoLocked %></td>
   </tr>
-</table>
-
-<table>
   <tr>
     <td><%= f.label :new_password %></td>
     <td class='required'><%= f.password_field :new_password %></td>
@@ -114,10 +111,12 @@
     <td class='required'><%= f.password_field :new_password_confirmation %></td>
   </tr>
 
-  <tr>
-    <td>
-      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %> 
-      </div></td>
-  </tr>
 </table>
+
+
+<div>
+      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %> 
+</div>
+
 <% end %>
+
