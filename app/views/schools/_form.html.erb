@@ -113,13 +113,12 @@
       <%= f.file_field :image %>
     </td>
   </tr>
-  <tr>
-  <td>
-  <span style="float:left">
+</table>
+
+<div>
+
     <%= f.submit submit_text %>
     <div class="cancel"> <%=link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
-  </span>
-  </td>
-  </tr>
-</table>
+
+</div>
 <% end %>
