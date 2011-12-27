@@ -4,29 +4,23 @@
 <% end %>
 
 <h1><span><%= t('.title') %></span></h1>
-<% if theme !="gray" %>
 <p class="mass_import_info"><span class="current">1. <%= t('users.import.info.phase_1') %> </span> &gt; 2. <%= t('users.import.info.phase_2') %> &gt; 3.<%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
-<% end %>
 <% form_for(:users_import, :url => refine_users_import_path(@school), :html => { :method => :post } ) do %>
 
-    <p>
-      <%= t('.example_title')%>:
-      <pre>
-<%= t('.example') %>
-      </pre>
-    </p>
-    <p><%= t('.hint') %></p>
-    <p>
-  <%= t('.help') %>:
-  </p>
-    <%= text_area_tag "raw_users", nil, :rows => 20, :cols => 100 %>
-  </p>
+  <%= t('.example_title')%>:
+  <pre><%= t('.example') %></pre>
+
+  <p><%= t('.hint') %></p>
+
+  <p><%= t('.help') %>:</p>
+
+  <%= text_area_tag "raw_users", nil, :rows => 20, :cols => 100 %>
 
   <p>
     <%= submit_tag t('link.user_mass_import.handle_user_data') %>
   </p>
 
-  <% end %>
+<% end %>
 
   <% content_for :footer do %>
 <ul>
@@ -43,7 +37,8 @@
 </ul>
 <ul>
 <li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
+<li>
+<% link_to users_path(@school) do %>
   <span><%= t('layouts.application.users') %></span>
 <% end %>
 </li>
