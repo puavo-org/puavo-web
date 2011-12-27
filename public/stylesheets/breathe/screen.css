@@ -57,12 +57,6 @@ dd {margin-left:1.5em;}
 table {margin-bottom:1.4em; table-layout:fixed;}
 th {font-weight:bold;}
 thead th {background:#c3d9ff;}
-form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption { 
-display: block;
-padding: 0 10px 0 0;
-position:relative;
-width:100%;
-}
 .import_define th, .import_define td{
 float: left;
 min-width: 200px;
@@ -348,12 +342,3 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 .clearfix:after, .container:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
 .clearfix, .container {display:block;}
 .clear {clear:both;}
-.edit_user tr {
-    display: block;
-    margin: 0 0 10px;
-}
-.edit_user tr td{
-    display: block;
-    margin: 0;
-     padding: 0;
-}
