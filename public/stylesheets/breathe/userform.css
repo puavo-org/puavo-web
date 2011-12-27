@@ -1,0 +1,17 @@
+
+form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption { 
+display: block;
+padding: 0 10px 0 0;
+position:relative;
+/* width:100%; */
+}
+
+.edit_user tr {
+    display: block;
+    margin: 0 0 10px;
+}
+.edit_user tr td{
+    display: block;
+    margin: 0;
+    padding: 0;
+}
