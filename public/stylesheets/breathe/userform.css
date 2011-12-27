@@ -9,16 +9,16 @@ form table:not(.validate_users_list) th, form table:not(.validate_users_list) td
     form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption { 
         display: block;
     }
-    .edit_user tr td input[type="text"] {
+    form tr td input[type="text"] {
         width: 95%;
     }
-    .edit_user table {
+    form table {
         width: 95%;
     }
 }
 
 
-.edit_user tr {
+form tr {
     margin: 0 0 10px;
     white-space: nowrap;
     overflow: scroll;
@@ -26,7 +26,7 @@ form table:not(.validate_users_list) th, form table:not(.validate_users_list) td
     width: 95%;
 }
 
-.edit_user tr td {
+form tr td {
     margin: 0;
     padding: 0;
 }
