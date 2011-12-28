@@ -1,3 +1,9 @@
+puavodevices-client-register (0.1.5) lucid; urgency=low
+
+  * Remove opinsys-specific stuff from code.
+
+ -- Juha Erkkilä <Juha.Erkkila@opinsys.fi>  Mon, 04 Oct 2010 12:05:57 +0300
+
 puavodevices-client-register (0.1.4) lucid; urgency=low
 
   * Move install-puavodevice into a separate package.
