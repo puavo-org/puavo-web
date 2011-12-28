@@ -84,17 +84,16 @@ label {font-weight:bold;}
 fieldset {padding:1.4em;margin:0 0 1.5em 0;border:1px solid #ccc;}
 legend {font-weight:bold;font-size:16pt;}
 form input[type="text"],input[type="password"], input.text {
-background: none repeat scroll 0 0 #F2F2F2;
-border: 1px solid #CCCCCC;
-border-radius: 8px 8px 8px 8px;
-font-size: 16pt;
-margin:0 0 5px;
-height:30px
-padding: 7px 8px;
-text-shadow: 0 1px 0 #EEEEEE;
-width: 450px;
--moz-border-radius: 8px;
--webkit-border-radius: 8px;
+  background: none repeat scroll 0 0 #F2F2F2;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px 8px 8px 8px;
+  font-size: 16pt;
+  margin:0 0 5px;
+  height:30px
+  padding: 7px 8px;
+  width: 450px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
 }
 input[type="file"] {
 background: none repeat scroll 0 0 #F2F2F2;
