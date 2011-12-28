@@ -678,5 +678,16 @@ table#autopoweroff td.label_td label {
 }
 
 .notice_text {
-	color:#FF6666;
+  color:#FF6666;
+}
+
+.clone_prev_input_element {
+  padding-right: 15px;
+  font-weight: normal;
+}
+
+.clone_prev_input_element:hover {
+  background-image: url(/images/show-more.png);
+  background-repeat: no-repeat;
+  background-position: right;
 }
