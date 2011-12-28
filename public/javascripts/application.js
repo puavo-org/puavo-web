@@ -13,10 +13,12 @@ $(document).ready(function() {
     typeDelay: 400,
     width: 'auto'
   });
-	$('a[href^=http]').click( function() {
+
+  // Open external links always in new page
+  $('a[href^=http]').click(function() {
     window.open(this.href);
-		return false;
-	});
+    return false;
+  });
 
 });
 
