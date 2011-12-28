@@ -1,4 +1,4 @@
-<% if theme!="gray"%><p class='required_info'><%= t('layouts.forms.required_field')%></p><%end%>
+<p class='required_info'><%= t('layouts.forms.required_field')%></p>
 <% form_for(@user, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
 
   <table>
@@ -19,11 +19,11 @@
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
-      <input name='user[mail][]' type='text' />
+        <input name='user[mail][]' type='text' />
       <% else %>
-      <% Array(@user.mail).each_index do |index| %>
-      <input name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
-      <% end %>
+        <% Array(@user.mail).each_index do |index| %>
+          <input name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
+        <% end %>
       <% end %>
     </div>
     <%= link_to t('.add_email'), "#", :class => "clone_prev_input_element" %>
@@ -32,11 +32,11 @@
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
     <td><span id="user_telephoneNumber_list">
       <% if Array(@user.telephoneNumber).empty? %>
-      <input name='user[telephoneNumber][]' type='text' />
+        <input name='user[telephoneNumber][]' type='text' />
       <% else %>
-      <% Array(@user.telephoneNumber).each_index do |index| %>
-      <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' />
-      <% end %>
+        <% Array(@user.telephoneNumber).each_index do |index| %>
+          <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' />
+        <% end %>
       <% end %>
     </span>
 
@@ -55,9 +55,9 @@
       <td class="label_for_checkbox_list required_role required"><%= f.label :role_ids %></td>
       <td>
     <% @roles.each do |p| %>
-    <div>
-      <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>" /><%=h p.displayName %></label>
-  </div>
+      <div>
+        <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>" /><%=h p.displayName %></label>
+      </div>
     <% end %>
     <%= field_error_text(f.object, :role_ids) %>
   </td>
@@ -115,7 +115,7 @@
 
 
 <div>
-      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %> 
+      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %>
 </div>
 
 <% end %>

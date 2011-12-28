@@ -6,11 +6,11 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>
     <% if not @school.nil? %>
-    <%= @school.displayName %>
+      <%= @school.displayName %>
     <% elsif session.has_key?(:organisation) %>
-    <%= session[:organisation].name %>
+      <%= session[:organisation].name %>
     <% else %>
-      Puavo Users
+        Puavo Users
     <% end %>
   </title>
   <%= stylesheet_link_tag "#{theme}/screen.css", :media => 'screen, projection' %>
@@ -27,7 +27,7 @@
                               "jquery.jeditable.mini.js",
                               "jquery.tooltip.min.js",
                               "jquery.liveSearch" ) %>
-  <% if theme!="gray" %> <%= javascript_include_tag "new_themes" %> <% end %>
+   <%= javascript_include_tag "new_themes" %>
   <%= yield :javascript %>
 
   <% search_urls = { "users-search" => "/users/search?words=" } %>
@@ -38,99 +38,49 @@
   <meta name="csrf-param" content="authenticity_token" />
 </head>
 <body>
-<% if theme!="gray"%>
 <div class="topNavContainer">
   <div class="topNavContentContainer">
   <ul id="top-menu">
       <% if current_user %>
-      <% if organisation_owner? %>
-      <li>
-	      <%= link_to session[:organisation].name, organisation_path, :class => "sub" %>
-	      <ul id="help">
-         <li><%= link_to t('.external_services'),  external_services_path %></li>
-          <% if Puavo::DEVICE_CONFIG %>
-         <li><%= link_to t('.printers'), "/devices/printers" %></li>
-         <li><%= link_to t('.servers'), "/devices/servers" %></li>
-        <% end %>
-	      </ul>
-      </li>
-      <% else %>
-      <li><span class="sub"><%= session[:organisation].name %></span></li>
-      <% end %>
-      <li><%= link_to t('.schools'),  schools_path, :class => "sub" %>
-        <ul>
-          <% session[:organisation].schools.each do |school| %>
-          <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
+        <% if organisation_owner? %>
+        <li>
+                <%= link_to session[:organisation].name, organisation_path, :class => "sub" %>
+                <ul id="help">
+           <li><%= link_to t('.external_services'),  external_services_path %></li>
+            <% if Puavo::DEVICE_CONFIG %>
+           <li><%= link_to t('.printers'), "/devices/printers" %></li>
+           <li><%= link_to t('.servers'), "/devices/servers" %></li>
           <% end %>
+                </ul>
+        </li>
+        <% else %>
+        <li><span class="sub"><%= session[:organisation].name %></span></li>
+        <% end %>
+        <li><%= link_to t('.schools'),  schools_path, :class => "sub" %>
+          <ul>
+            <% session[:organisation].schools.each do |school| %>
+            <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
+            <% end %>
+          </ul>
+        </li>
+        <li>
+              <%= text_field_tag( "search",
+                                nil,
+                                :id => "search",
+                                :size => 30,
+                                :placeholder => t('.search_placeholder') ) %>
+              </li>
+        </ul> <!-- top-menu -->
+        <ul id="top-menu-right" class="menu">
+            <li><span><%= t('.logged_in_as') %>:</span></li>
+                <li><a href="#"><%= current_user.displayName %></a></li>
+                <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
         </ul>
-      </li>
-      <li>
-	    <%= text_field_tag( "search",
-                              nil,
-                              :id => "search",
-                              :size => 30,
-                              :placeholder => t('.search_placeholder') ) %>
-	    </li>
-    </ul> <!-- top-menu -->
-    <ul id="top-menu-right" class="menu">
-        <li><span><%= t('.logged_in_as') %>:</span></li>
-	    <li><a href="#"><%= current_user.displayName %></a></li>
-	    <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
-    </ul>
-     <% end %>    
+     <% end %>
    </div>
 </div><!-- topNavContainer -->
-<% end %>
 <div id="container" class="container">
 <div class="container_wrap">
-<% if theme=="gray"%>
-  <ul id="top-menu" class="menu">
-      <% if current_user %>
-      <% if organisation_owner? %>
-      <li>
-	<%= link_to session[:organisation].name, organisation_path, :class => "sub" %>
-	<ul>
-      <li><%= link_to t('.external_services'),  external_services_path %></li>
-      <% if Puavo::DEVICE_CONFIG %>
-      <li><%= link_to t('.printers'), "/devices/printers" %></li>
-      <li><%= link_to t('.servers'), "/devices/servers" %></li>
-      <% end %>
-	</ul>
-      </li>
-      <% else %>
-      <li><span class="sub"><%= session[:organisation].name %></span></li>
-      <% end %>
-      <li><%= link_to t('.schools'),  schools_path, :class => "sub" %>
-        <ul>
-          <% session[:organisation].schools.each do |school| %>
-          <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
-            <%= link_to school.displayName,  school_path(school) %></li>
-          <% end %>
-        </ul>
-      </li>
-
-      <div id="top-menu-right">
-	<li>
-	  <%= text_field_tag( "search",
-                              nil,
-                              :id => "search",
-                              :size => 30,
-                              :placeholder => t('.search_placeholder') ) %>
-	</li>
-        <li><span><%= t('.logged_in_as') %></span></li>
-	
-	<!--<li>
-	 link_to current_user.displayName, user_path(@school, current_user)
-	 
-	</li>-->
-	<li><a href="#"><%= current_user.displayName %></a></li>
-
-	<li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
-      </div>
-      <% end %>
-    </ul> <!-- top-menu -->
-    <hr class="space" />
-<% end %>
     <% if session[:organisation] %>
     <% if @school && !@school.id.nil? && controller_name != 'password' %>
     <h1><%= @school.displayName %></h1>
@@ -176,31 +126,21 @@
          <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
       <% message_keys.each do |key| %>
       <p class="message_<%= key %>">
-	<%= flash[key] %>
+        <%= flash[key] %>
       </p>
-       <% end %>     
+       <% end %>
        <% end %>
 
-  <% if theme!="gray" %>   
-          <% if current_user %>
-    <div class="tools">
-        <%= yield :right %>
-      </div>
+      <% if current_user %>
+        <div class="tools">
+          <%= yield :right %>
+        </div>
       <% end %>
-  <% end %> 
       <%= yield %>
-    </div>  
-    <% if theme=="gray" %>
-    <% if current_user %>
-      <div class="tools">
-      <h1><%= t('.tools') %></h1>
-        <%= yield :right %>
-      </div>
-      <% end %>
-    <% end %>
+    </div>
     <hr class="space" />
     </div> <!-- wrap -->
   </div> <!-- container_wrap-->
-  </div> <!-- container --> 
+  </div> <!-- container -->
 </body>
 </html>
