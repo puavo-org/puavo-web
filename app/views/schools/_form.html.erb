@@ -1,4 +1,5 @@
-<% if theme!="gray"%><p class='required_info'><%= t('layouts.forms.required_field')%></tr><%end%>
+<p class='required_info'><%= t('layouts.forms.required_field')%></tr>
+
 <% form_for(@school, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
 <table>
   <tr>

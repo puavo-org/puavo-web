@@ -3,88 +3,89 @@
 <% end %>
 
 <h1><span><%= t('.title') %></span></h1>
-<% if theme !="gray" %>
 <p class="mass_import_info"><span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> <span class="done">2. <%= t('users.import.info.phase_2') %> &gt; </span><span class="done">3. <%= t('users.import.info.phase_3') %> &gt; </span><span class="current">4. <%= t('users.import.info.phase_4') %></span></p>
-<% end %>
 <p><%= t('.info') %></p>
+
 
 <% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
  <table class="validate_users_list">
   <% @columns.each do |column| %>
-  <th>
-    <%= User.human_attribute_name(column) %>
-    <%= hidden_field_tag "columns[]", column %>
-  </th>
+    <th>
+      <%= User.human_attribute_name(column) %>
+      <%= hidden_field_tag "columns[]", column %>
+    </th>
   <% end %>
 
   <% user_index = 0 %>
   <% @invalid_users.each do |user| %>
-  <tr class="user_row">
-    <% column_index = 0 %>
-    <% @columns.each do |column| %>
-    <td>
-      <%= user_list_editable_item(user, user_index, column, column_index) %>
-    </td>
-    <% column_index += 1 %>
+    <tr class="user_row">
+      <% column_index = 0 %>
+      <% @columns.each do |column| %>
+        <td>
+          <%= user_list_editable_item(user, user_index, column, column_index) %>
+        </td>
+        <% column_index += 1 %>
+      <% end %>
+
+    <% if organisation_owner? && user.earlier_user %>
+      <td class="action">
+        <%= label_tag "users[#{@columns.count}][#{user_index}]", t('.change_school'), :class => "checkbox" %>
+        <%= check_box_tag( "users[#{@columns.count}][#{user_index}]", user.earlier_user.puavoId ) %>
+        <br />
+        <% content_tag :span do %>
+          <%= user.earlier_user.school.displayName %>,
+          <%= user.earlier_user.roles.map{ |role| role.displayName }.join(', ') %>
+        <% end %>
+      </td>
     <% end %>
-	<% if organisation_owner? && user.earlier_user %>
-	<td class="action">
-	  <%= label_tag "users[#{@columns.count}][#{user_index}]", t('.change_school'), :class => "checkbox" %>
-	  <%= check_box_tag( "users[#{@columns.count}][#{user_index}]", user.earlier_user.puavoId ) %>
-	  <br />
-	  <% content_tag :span do %>
-	  <%= user.earlier_user.school.displayName %>,
-	  <%= user.earlier_user.roles.map{ |role| role.displayName }.join(', ') %>
-	  <% end %>
-	</td>
-	<% end %>
-    <td class="action"><%= link_to t('link.destroy'), '#', :class => "destroy" %></td>
-  </tr>
-  <% user_index += 1 %>
+      <td class="action"><%= link_to t('link.destroy'), '#', :class => "destroy" %></td>
+    </tr>
+    <% user_index += 1 %>
   <% end %>
 
   <% @valid_users.each do |user| %>
-  <tr class="user_row">
-    <% column_index = 0 %>
-    <% @columns.each do |column| %>
-    <td>
-      <%= user_list_editable_item(user, user_index, column, column_index) %>
-    </td>
-    <% column_index += 1 %>
-    <% end %>
-    <td class="action"><%= link_to t('link.destroy'), '#', :class => "destroy" %></td>
-  </tr>
-  <% user_index += 1 %>
+    <tr class="user_row">
+      <% column_index = 0 %>
+      <% @columns.each do |column| %>
+        <td>
+          <%= user_list_editable_item(user, user_index, column, column_index) %>
+        </td>
+        <% column_index += 1 %>
+      <% end %>
+      <td class="action"><%= link_to t('link.destroy'), '#', :class => "destroy" %></td>
+    </tr>
+    <% user_index += 1 %>
   <% end %>
 </table>
 <%= f.submit t('link.user_mass_import.create') %>
 <% end %>
 
 <% content_for :right do %>
-<div><%= link_to t('.select_all'), '#', :id => 'select_change_school_users' %></div>
+  <div><%= link_to t('.select_all'), '#', :id => 'select_change_school_users' %></div>
 <% end %>
 
 <% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <% link_to school_path(@school) do %>
-    <span><%= t('layouts.application.schools') %></span>
+  <ul>
+    <li class="link_header">
+      <% link_to school_path(@school) do %>
+        <span><%= t('layouts.application.schools') %></span>
+      <% end %>
+    </li>
+    <% session[:organisation].schools.each do |school| %>
+      <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+        <%= link_to school.displayName,  school_path(school) %>
+      </li>
     <% end %>
-  </li>
-  <% session[:organisation].schools.each do |school| %>
-  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %>
-  </li>
+  </ul>
+  <ul>
+  <li class="link_header"><%= @school.displayName %></li>
+  <li>
+  <% link_to users_path(@school) do %>
+    <span><%= t('layouts.application.users') %></span>
   <% end %>
-</ul>
-<ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
-<% end %>
-</li>
-  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-</ul>
+  </li>
+    <li><%= link_to t('link.groups'), groups_path(@school) %></li>
+    <li><%= link_to t('link.roles'), roles_path(@school) %></li>
+    <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
+  </ul>
 <% end %>
