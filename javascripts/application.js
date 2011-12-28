@@ -1,4 +1,34 @@
+$.fn.submenu = function(selector) {
+  var subMenuButton = this;
+  var subMenu = $(selector);
+
+  var open = false;
+  var hide = function(e) {
+    // Allow touching of the link elements
+    if (e && e.target.tagName === "A") return;
+
+    if (open) {
+      subMenu.removeClass("open");
+      open = false;
+    }
+  };
+
+  // For touch devices
+  $(document).bind("touchstart", hide);
+  subMenuButton.bind("touchstart", function() {
+    subMenu.addClass("open");
+    // Use small timeout so that close event won't fire at same time.
+    setTimeout(function() {
+      open = true;
+    }, 500);
+  });
+
+  return this;
+};
+
+
 $(document).ready(function() {
+
   $('.clone_prev_input_element').click(function(e) {
     e.preventDefault();
     clone_element = $(this).prev().find('input:first').clone()
@@ -19,6 +49,9 @@ $(document).ready(function() {
     window.open(this.href);
     return false;
   });
+
+
+  $(".tool").submenu(".tools .tool ul");
 
 });
 

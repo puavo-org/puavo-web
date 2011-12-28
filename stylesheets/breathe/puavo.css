@@ -78,7 +78,7 @@ h1 {
   margin: 15px 10px 0;
 }
 .logo{
-  float: right; 
+  float: right;
   margin: 10px;
 }
 .logo:hover {
@@ -104,14 +104,37 @@ h1 {
 .tools .tool ul{
   display: none;
 }
-.tools .tool:hover ul{
-  border: 1px solid #AAAAAA;
+
+
+.tools .tool ul.open {
+  /*
+  Used by submenu jquery plugin in application.js
+
+  This is exactly the same as ".tools .tool:hover ul" style.
+  TODO: Maybe we could use some CSS preprocessor mixins to avoid code
+  duplication
+  */
   display: block;
+  border: 1px solid #AAAAAA;
   padding: 0;
   position: absolute;
   margin: 0 0 0 -5px;
   right: 0;
 }
+
+.tools .tool:hover ul {
+  display: block;
+  border: 1px solid #AAAAAA;
+  padding: 0;
+  position: absolute;
+  margin: 0 0 0 -5px;
+  right: 0;
+}
+
+
+
+
+
 .tools .tool ul li{
   background: none repeat scroll 0 0 #FFFFFF;
   min-width: 150px;
@@ -120,15 +143,9 @@ h1 {
 .tools .tool ul li:hover {
   background:none repeat scroll 0 0 #C0772F;
 }
-.cancel div {
-  border: 1px dashed #AD0000;
-  border-radius: 6px 6px 6px 6px;
-  margin: 5px 0;
-  padding: 0 0 0 5px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
-}
-.tools > li:hover, .tools > div:hover {
+
+.tools > li:hover,
+.tools > div:hover {
   background:none repeat scroll 0 0 #C0772F;
   border-radius:6px 6px 0 0;
   -moz-border-radius:6px 6px 0 0;
@@ -145,6 +162,15 @@ h1 {
 }
 .tools a:hover {
   color:#222;
+}
+
+.cancel div {
+  border: 1px dashed #AD0000;
+  border-radius: 6px 6px 6px 6px;
+  margin: 5px 0;
+  padding: 0 0 0 5px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  -webkit-border-radius: 6px 6px 6px 6px;
 }
 .cancel a {
   color: #AA1133;
