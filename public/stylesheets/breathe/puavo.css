@@ -106,24 +106,7 @@ h1 {
 }
 
 
-.tools .tool ul.open {
-  /*
-  Used by submenu jquery plugin in application.js
-
-  This is exactly the same as ".tools .tool:hover ul" style.
-  TODO: Maybe we could use some CSS preprocessor mixins to avoid code
-  duplication
-  */
-  display: block;
-  border: 1px solid #AAAAAA;
-  padding: 0;
-  position: absolute;
-  margin: 0 0 0 -5px;
-  right: 0;
-}
-
-.tools .tool:hover ul {
-  display: block;
+.tools .tool ul {
   border: 1px solid #AAAAAA;
   padding: 0;
   position: absolute;
@@ -133,13 +116,12 @@ h1 {
 
 
 
-
-
-.tools .tool ul li{
+.tools .tool ul li {
   background: none repeat scroll 0 0 #FFFFFF;
   min-width: 150px;
   width: auto !important;
 }
+
 .tools .tool ul li:hover {
   background:none repeat scroll 0 0 #C0772F;
 }
