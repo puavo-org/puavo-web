@@ -62,15 +62,14 @@
       <% if current_user %>
         <% if organisation_owner? %>
         <li>
-
            <span class="organisation-menu-button"><%= session[:organisation].name %></span>
            <ul id="help" class="organisation-menu">
              <%# TODO: Translate Info %>
-             <li><%= link_to "Info",  organisation_path %></li>
-             <li><%= link_to t('.external_services'),  external_services_path %></li>
+             <li class="top-menu-item"><%= link_to "Info",  organisation_path %></li>
+             <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
               <% if Puavo::DEVICE_CONFIG %>
-               <li><%= link_to t('.printers'), "/devices/printers" %></li>
-               <li><%= link_to t('.servers'), "/devices/servers" %></li>
+               <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
+               <li class="top-menu-item"><%= link_to t('.servers'), "/devices/servers" %></li>
             <% end %>
            </ul>
         </li>
@@ -81,9 +80,13 @@
 
           <span class="school-menu-button"><%= t('.schools') %></span>
           <ul class="school-menu">
+
             <% session[:organisation].schools.each do |school| %>
-            <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
+              <li class="top-menu-item<% if session[:organisation].schools.last == school %> last<% end %>">
+                <%= link_to school.displayName,  school_path(school) %>
+              </li>
             <% end %>
+
             <li class="add-new-school">
               <%= link_to t('link.new_school'), new_school_path %>
             </li>
