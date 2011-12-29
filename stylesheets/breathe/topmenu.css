@@ -122,9 +122,13 @@
   border-right: 1px solid #222;
 }
 
+/* Keeps top menus open. Usefull for debugging */
+/* #top-menu li ul, */
+/* #nav1 ul li ul { */
+/*   display: block; */
+/* } */
 
-
-#top-menu li ul li, #nav1 ul li ul li {
+li.top-menu-item {
   border-top:1px solid #E6E6E6;
   display: block;
   font-size: 9pt;
@@ -134,21 +138,47 @@
   width: auto !important;
   white-space: nowrap;
 }
-#top-menu li ul li a:hover {
+
+li.top-menu-item a {
+
+  margin: -8px -20px -5px -20px;
+  padding: 15px 20px 15px 20px;
+  display: block;
+
+}
+
+li.top-menu-item a:hover {
   background: none repeat scroll 0 0 #f4f4f4;
   border-radius: 0 8px 8px 0;
-  margin: -8px -20px -5px -20px;
-  padding: 8px 20px 5px 20px;
   -webkit-border-radius: 0 8px 8px 0;
   -moz-border-radius: 0 8px 8px 0;
 }
-#top-menu li ul li:first-child,
-#nav1 ul li ul li:first-child {
+
+li.top-menu-item:first-child {
   border-top: medium none;
 }
-#top-menu li ul li a, #nav1 ul li ul li a {
-  display: block;
+
+li.top-menu-item:last-child {
+  padding-bottom: 15px;
 }
+
+.add-new-school a,
+.add-new-school a:hover {
+  background: url("../../images/iconset-breathe.png") no-repeat scroll left -510px white !important;
+  text-transform: none;
+  margin-right: 5px;
+  float: right;
+  padding: 10px;
+  padding-left: 30px;
+
+  -webkit-border-radius: 8px 8px 0 0;
+  -moz-border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 0 0;
+
+}
+
+
+
 #top-menu #main,
 #nav1 ul #main {
   background-color: #7CB7E3;
@@ -158,9 +188,7 @@
   top: -20px;
   z-index: 999;
 }
-#top-menu li ul li:last-child {
-  padding-bottom: 15px;
-}
+
 
 .topNavContainer {
   background: none repeat scroll 0 0 #F59545;
