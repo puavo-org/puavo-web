@@ -21,6 +21,24 @@
   <%= stylesheet_link_tag "#{theme}/puavo.css" %>
   <%= stylesheet_link_tag "#{theme}/jquery.tooltip" %>
   <%= stylesheet_link_tag "jquery.liveSearch" %>
+
+  <style id="menuHandling" media="screen" rel="stylesheet" type="text/css" >
+    <%#
+    CSS for opening menus without Javascript on mouse hover. This should not
+    contain anything else. Since for touch devices this element will be
+    overridden.
+    %>
+    .tools .tool:hover ul {
+      display: block;
+    }
+    #top-menu li:hover ul,
+    #nav1 ul li:hover ul {
+      display: block;
+    }
+
+  </style>
+
+
   <%= javascript_include_tag( "jquery-1.4.2.min",
                               "rails",
                               "application",
