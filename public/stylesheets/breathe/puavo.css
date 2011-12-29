@@ -248,23 +248,6 @@ background: url("../../images/iconset-breathe.png") no-repeat scroll left -150px
 }
 
 
-.add-new-school a,
-.add-new-school a:hover {
-  background: url("../../images/iconset-breathe.png") no-repeat scroll left -510px white !important;
-  text-transform: none;
-
-  /* Copied from "#top-menu li ul li a:hover" */
-  background: none repeat scroll 0 0 #f4f4f4;
-  border-radius: 0 8px 8px 0;
-  margin: -8px -20px -5px -20px;
-  padding: 8px 20px 5px 20px;
-  -webkit-border-radius: 0 8px 8px 0;
-  -moz-border-radius: 0 8px 8px 0;
-
-  padding-left: 35px !important;
-  height: 25px;
-}
-
 
 a[href*="import/download.pdf"] {
   color: #F44000;
@@ -494,26 +477,6 @@ table.list {
   border-bottom: 1px solid #AAAAAA;
 }
 .list > tbody > tr th {
-<<<<<<< HEAD
-background: none repeat scroll 0 0 #A36A2A;
-background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
-background: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.35, rgb(153,106,42)),
-    color-stop(0.6, rgb(186,114,45))
-);
-background-image: -o-linear-gradient(top,rgb(186,114,45),rgb(153,106,42));
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
--ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
-border-bottom: 1px solid #222222;
-color: #E9E9A9;
-font-size: 10pt;
-padding-bottom: 10px;
-padding-top: 10px;
-text-shadow: 0 1px 0 #3D3828;
-=======
   background: none repeat scroll 0 0 #A36A2A;
   background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
   background: -webkit-gradient(
@@ -527,12 +490,11 @@ text-shadow: 0 1px 0 #3D3828;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
   border-bottom: 1px solid #222222;
-  color: #E6E6D8;
+  color: #E9E9A9;
   font-size: 10pt;
   padding-bottom: 10px;
   padding-top: 10px;
   text-shadow: 0 1px 0 #3D3828;
->>>>>>> 2f59c39... Unify coding style in css-files
 }
 .label_error {
   color: #AD0000;
