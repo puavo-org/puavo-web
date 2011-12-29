@@ -50,8 +50,7 @@
 }
 #top-menu > li {
   float: left;
-  margin: 0 5px 0 0;
-  padding: 0 5px 0 15px;
+  margin-right: 20px;
   position: relative;
   width: auto !important;
 }
@@ -178,7 +177,6 @@ li.top-menu-item:last-child {
 }
 
 
-
 #top-menu #main,
 #nav1 ul #main {
   background-color: #7CB7E3;
@@ -189,6 +187,20 @@ li.top-menu-item:last-child {
   z-index: 999;
 }
 
+
+.school-menu-button > span,
+.organisation-menu-button > span {
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.school-menu-button,
+.organisation-menu-button {
+  background-image: url(/images/show-more.png);
+  background-repeat: no-repeat;
+  background-position: right;
+  padding-right: 12px;
+}
 
 .topNavContainer {
   background: none repeat scroll 0 0 #F59545;
