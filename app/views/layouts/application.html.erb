@@ -64,8 +64,7 @@
         <li class="organisation-menu-button">
            <span><%= session[:organisation].name %></span>
            <ul id="help" class="organisation-menu">
-             <%# TODO: Translate Info %>
-             <li class="top-menu-item"><%= link_to "Info",  organisation_path %></li>
+             <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
              <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
               <% if Puavo::DEVICE_CONFIG %>
                <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
