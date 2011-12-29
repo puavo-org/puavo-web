@@ -18,6 +18,7 @@ fi:
       devices: Laitteet
       servers: Palvelimet
       external_services: Ulkoiset palvelut
+      about: Tietoja
       printers: Tulostimet
       search_placeholder: Hae
       links: Linkit
