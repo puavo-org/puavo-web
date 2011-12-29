@@ -61,8 +61,8 @@
   <ul id="top-menu">
       <% if current_user %>
         <% if organisation_owner? %>
-        <li>
-           <span class="organisation-menu-button"><%= session[:organisation].name %></span>
+        <li class="organisation-menu-button">
+           <span><%= session[:organisation].name %></span>
            <ul id="help" class="organisation-menu">
              <%# TODO: Translate Info %>
              <li class="top-menu-item"><%= link_to "Info",  organisation_path %></li>
@@ -76,9 +76,9 @@
         <% else %>
         <li><span class="sub"><%= session[:organisation].name %></span></li>
         <% end %>
-        <li>
+        <li class="school-menu-button">
 
-          <span class="school-menu-button"><%= t('.schools') %></span>
+          <span><%= t('.schools') %></span>
           <ul class="school-menu">
 
             <% session[:organisation].schools.each do |school| %>
