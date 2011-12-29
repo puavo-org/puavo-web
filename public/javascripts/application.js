@@ -8,6 +8,7 @@
    * Usage: $( button selector ).opensMenu(menu selector);
    *
    * */
+  var prevent = function(e) { e.preventDefault(); };
   $.fn.opensMenu = function(menuSelector) {
     var subMenuButton = this;
     var subMenu = $(menuSelector);
@@ -20,19 +21,24 @@
       if (e && e.target.tagName === "A") return;
       if (open) {
         subMenu.removeClass("open");
+        subMenuButton.removeClass("touch-selected");
         open = false;
       }
     });
 
     subMenuButton.bind("touchstart", function() {
+
+      subMenu.find("a:first").bind("click", prevent);
+
       subMenu.addClass("open");
+      subMenuButton.addClass("touch-selected");
+
 
       // Use small timeout so that close event won't fire at same time.
-      if (!open) {
         setTimeout(function() {
+          subMenu.find("a:first").unbind("click", prevent);
           open = true;
         }, 500);
-      }
 
     });
 
