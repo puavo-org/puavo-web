@@ -729,7 +729,7 @@ table#autopoweroff td.label_td label {
 }
 
 .clone_prev_input_element:hover {
-  background-image: url(/images/show-more.png);
+  background-image: url(../../images/show-more.png);
   background-repeat: no-repeat;
   background-position: right;
 }

@@ -196,7 +196,7 @@ li.top-menu-item:last-child {
 
 .school-menu-button,
 .organisation-menu-button {
-  background-image: url(/images/show-more.png);
+  background-image: url(../../images/show-more.png);
   background-repeat: no-repeat;
   background-position: right;
   padding-right: 12px;
