@@ -2,14 +2,17 @@
   <%= f.error_messages %>
 
   <h1><span><%=h f.object.printerDescription %></span></h1>
+
   <table>
     <tr>
       <td class="label_td"><%= f.label :puavoRule %></td>
       <td><%= f.text_field :puavoRule %></td>
     </tr>
     <tr>
-  <tr><td>
-  <%= f.submit t('link.update') %><div class="cancel"><%=link_to t('cancel'), printers_path, :class => 'cancel_button' %> </div>
-  </td></tr>
   </table>
+
+  <div>
+  <%= f.submit t('link.update') %><div class="cancel"><%=link_to t('cancel'), printers_path, :class => 'cancel_button' %> </div>
+  </div>
+
 <% end %>
