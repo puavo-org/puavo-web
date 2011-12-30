@@ -23,14 +23,16 @@
 	<% end %>
       </td>
   </tr>
+    <% if is_device_change_allowed f %>
     <tr>
 	  <td>
 		<%= f.label :puavoDeviceType %>
 	  </td>
       <td>
-		<%= device_type(f) %>
+        <%= device_type f  %>
       </td>
       </tr>
+      <% end %>
       <tr>
       <td>
 	<%= f.label :puavoTag %>
