@@ -3,31 +3,31 @@
   <%if theme=="gray" %>
     <td>
       <div>
-		<% path = f.object.class == Server ? image_server_path(f.object) : image_device_path(@school, f.object) %>
-		<%= image_tag( f.object.jpegPhoto.nil? ? "computer.png" : path,
+                <% path = f.object.class == Server ? image_server_path(f.object) : image_device_path(@school, f.object) %>
+                <%= image_tag( f.object.jpegPhoto.nil? ? "computer.png" : path,
                        :class => "image" ) %>
-	  </div>
+          </div>
     </td>
     </tr>
     <%end%>
     <tr>
     <td class="label_td">
-	<%= f.label :puavoHostname %>
-	</td>
-	<td class='required'>
-	<% if f.object.userCertificate %>
-	<%= f.object.puavoHostname %>
-	<% else %>
-	<%= f.text_field :puavoHostname %>
-	<%= f.object.userCertificate.to_s %>
-	<% end %>
+        <%= f.label :puavoHostname %>
+        </td>
+        <td class='required'>
+        <% if f.object.userCertificate %>
+        <%= f.object.puavoHostname %>
+        <% else %>
+        <%= f.text_field :puavoHostname %>
+        <%= f.object.userCertificate.to_s %>
+        <% end %>
       </td>
   </tr>
     <% if is_device_change_allowed f %>
     <tr>
-	  <td>
-		<%= f.label :puavoDeviceType %>
-	  </td>
+          <td>
+                <%= f.label :puavoDeviceType %>
+          </td>
       <td>
         <%= device_type f  %>
       </td>
@@ -35,25 +35,25 @@
       <% end %>
       <tr>
       <td>
-	<%= f.label :puavoTag %>
-	</td>
-	<td>
-	<%= f.text_field :puavoTag %>
+        <%= f.label :puavoTag %>
+        </td>
+        <td>
+        <%= f.text_field :puavoTag %>
   </td>
   </tr>
   <td>
-	<%= f.label :puavoDeviceStatus %>
-	</td>
-	<td>
-	<%= f.text_field :puavoDeviceStatus %>
+        <%= f.label :puavoDeviceStatus %>
+        </td>
+        <td>
+        <%= f.text_field :puavoDeviceStatus %>
   </td>
   </tr>
   <tr>
   <td>
-		<%= f.label :image %>
-		</td>
-	<td>
-		<%= f.file_field :image %>
+                <%= f.label :image %>
+                </td>
+        <td>
+                <%= f.file_field :image %>
    </td>
   </tr>
 </table>
