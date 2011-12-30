@@ -30,6 +30,7 @@ form tr td {
   padding: 0;
 }
 
-#device_puavoDeviceXrandr input {
+#device_puavoDeviceXrandr input,
+#server_puavoExport_list input {
   display: block;
 }
