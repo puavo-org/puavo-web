@@ -413,7 +413,7 @@ select {
   font-weight: normal;
   margin: 0 0 5px;
   padding: .1em 0;
-  width: 95%;
+  width: 100px;
 }
 .required_info {
   color:#FF6666;

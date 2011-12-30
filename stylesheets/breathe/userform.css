@@ -17,7 +17,6 @@ form table:not(.validate_users_list) th, form table:not(.validate_users_list) td
   }
 }
 
-
 form tr {
   margin: 0 0 10px;
   white-space: nowrap;
@@ -31,4 +30,6 @@ form tr td {
   padding: 0;
 }
 
-
+#device_puavoDeviceXrandr input {
+  display: block;
+}
