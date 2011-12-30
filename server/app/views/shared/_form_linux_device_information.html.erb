@@ -16,16 +16,16 @@
 <tr>
   <td class="label_td"><%= f.label :macAddress %></td>
   <td class='required'>
-	<div id="device_macAddress">
-	  <% if f.object.macAddress.nil? %>
+  <div id="device_macAddress">
+    <% if f.object.macAddress.nil? %>
         <input name='device[macAddress][]' size='30' type='text' />
-	  <% else %>
-	    <% Array(f.object.macAddress).each do |mac_address| %>
-          <input name='device[macAddress][]' size='30' type='text' value='<%= mac_address %>' />	
-	    <% end %>
-	  <% end %>
-	</div>
-	<%= link_to t('shared.add_macAddress'), "#", :class => "clone_prev_input_element" %>
+    <% else %>
+      <% Array(f.object.macAddress).each do |mac_address| %>
+          <input name='device[macAddress][]' size='30' type='text' value='<%= mac_address %>' />
+      <% end %>
+    <% end %>
+  </div>
+  <%= link_to t('shared.add_macAddress'), "#", :class => "clone_prev_input_element" %>
   </td>
 </tr>
 <% end %>
@@ -61,49 +61,49 @@
 <h2><span><%= t('shared.autopoweroff') %></span></h2>
 <table id="autopoweroff">
   <tr>
-	<td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
-	<td>
-	  <table>
-	  <tr>
-		<td class="label_td">
-		  <%= f.label :puavoDeviceAutoPowerOffMode_default %>
-		</td>
-		<td class="label_td">
-		  <%= f.label :puavoDeviceAutoPowerOffMode_off %>
-		</td>
-		<td class="label_td">
-		  <%= f.label :puavoDeviceAutoPowerOffMode_custom %>
-		</td>
-	  </tr>
-	  <tr>
-		<td>
-		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "default" %>
-		</td>
-		<td>
-		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "off" %>
-		</td>
-		<td>
-		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "custom" %>
-		</td>
-	  </tr>
-	  <tr>
-		<td class="label_td"><%= f.label :puavoDeviceOnHour %></td>
-		<td class="label_td"><%= f.label :puavoDeviceOffHour %></td>
-	  </tr>
-	  <tr>
-		<td>
-		  <%= f.select( :puavoDeviceOnHour,
+  <td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
+  <td>
+    <table>
+    <tr>
+    <td class="label_td">
+      <%= f.label :puavoDeviceAutoPowerOffMode_default %>
+    </td>
+    <td class="label_td">
+      <%= f.label :puavoDeviceAutoPowerOffMode_off %>
+    </td>
+    <td class="label_td">
+      <%= f.label :puavoDeviceAutoPowerOffMode_custom %>
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <%= f.radio_button :puavoDeviceAutoPowerOffMode, "default" %>
+    </td>
+    <td>
+      <%= f.radio_button :puavoDeviceAutoPowerOffMode, "off" %>
+    </td>
+    <td>
+      <%= f.radio_button :puavoDeviceAutoPowerOffMode, "custom" %>
+    </td>
+    </tr>
+    <tr>
+    <td class="label_td"><%= f.label :puavoDeviceOnHour %></td>
+    <td class="label_td"><%= f.label :puavoDeviceOffHour %></td>
+    </tr>
+    <tr>
+    <td>
+      <%= f.select( :puavoDeviceOnHour,
                     [[t('.select'), '']] + (1..24).each.map{ |h| [h.to_s, h.to_s] },
                     :selected => (f.object.puavoDeviceOnHour or "") ) %>
-		</td>
-		<td>
-		  <%= f.select( :puavoDeviceOffHour,
+    </td>
+    <td>
+      <%= f.select( :puavoDeviceOffHour,
                         [[t('.select'), '']] + ( (1..24).map{ |h| [h.to_s, h.to_s] } ),
                         :selected => (f.object.puavoDeviceOffHour or "" ) ) %>
-		</td>
-	  </tr>
-	  </table>
-	</td>
+    </td>
+    </tr>
+    </table>
+  </td>
   </tr>
 </table>
 <% end %>
