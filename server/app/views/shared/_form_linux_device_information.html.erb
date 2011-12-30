@@ -141,14 +141,15 @@
   <td>
     <div id="device_puavoDeviceXrandr">
       <% if f.object.puavoDeviceXrandr.nil? %>
-      <input name='device[puavoDeviceXrandr][]' size='45' type='text' />
+        <input name='device[puavoDeviceXrandr][]'  type='text' />
       <% else %>
-      <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
-      <input name='device[puavoDeviceXrandr][]' size='45' type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
+        <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
+      <input name='device[puavoDeviceXrandr][]'  type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
       <% end %>
       <% end %>
     </div>
     <%= link_to t('shared.add_puavoDeviceXrandr'), "#", :class => "clone_prev_input_element" %>
+
   </td>
 </tr>
 
