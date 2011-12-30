@@ -37,6 +37,16 @@
   </style>
 
 
+  <%= javascript_include_tag( "jquery-1.4.2.min",
+                              "rails",
+                              "application",
+                              "/shared/javascripts/jquery.jeditable.mini.js",
+                              "/shared/javascripts/jquery.tooltip.min.js",
+                              "/shared/javascripts/jquery.liveSearch.js",
+                              "/shared/javascripts/application.js"
+
+                              ) %>
+
 
 
 <% search_urls = { "devices-search" => "/devices/search?words=" } %>
