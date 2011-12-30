@@ -14,8 +14,8 @@
 
 <% if f.object.classes.include?('puavoPrinter') %>
 <tr>
-  <td class="label_td"><%= f.label :macAddress %></td>
-  <td class='required'>
+  <td class="required label_td"><%= f.label :macAddress %></td>
+  <td>
   <div id="device_macAddress">
     <% if f.object.macAddress.nil? %>
         <input name='device[macAddress][]' size='30' type='text' />
