@@ -41,4 +41,6 @@ class ApplicationController < ActionController::Base
   def theme
     session[:organisation].value_by_key('theme') or "breathe"
   end
+
+
 end
