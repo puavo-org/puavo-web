@@ -8,17 +8,41 @@
 <%= session[:organisation].name if session.has_key?(:organisation) %>
 <%= " - " + @school.displayName if not @school.nil? %>
 </title>
-<%= stylesheet_link_tag "#{theme}/screen.css", :media => 'screen, projection' %>
-<%= stylesheet_link_tag "#{theme}/print.css", :media => 'print' %>
-<%= stylesheet_link_tag "#{theme}/topmenu.css" %>
-<%= stylesheet_link_tag "#{theme}/navmenu.css" %>
-<%= stylesheet_link_tag "#{theme}/puavo.css" %>
-<%= stylesheet_link_tag "jquery.liveSearch" %>
 
-<%= javascript_include_tag "jquery-1.4.2.min", "rails", "application", "jquery.liveSearch" %>
-<% if theme!="gray" %> <%= javascript_include_tag "new_themes" %> <% end %>
+
+
+  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/screen.css", :media => 'screen, projection' %>
+  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/print.css", :media => 'print' %>
+  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/userform.css" %>
+  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/topmenu.css" %>
+  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/navmenu.css" %>
+  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/puavo.css" %>
+  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/jquery.tooltip.css" %>
+  <%= stylesheet_link_tag "/shared/stylesheets/jquery.liveSearch.css" %>
+
+  <style id="menuHandling" media="screen" rel="stylesheet" type="text/css" >
+    <%#
+    CSS for opening menus without Javascript on mouse hover. This should not
+    contain anything else. Since for touch devices this element will be
+    overridden.
+    %>
+    .tools .tool:hover ul {
+      display: block;
+    }
+    #top-menu li:hover ul,
+    #nav1 ul li:hover ul {
+      display: block;
+    }
+
+  </style>
+
+
+
+
 <% search_urls = { "devices-search" => "/devices/search?words=" } %>
+
 <% if PUAVO_CONFIG["puavo_users"] == "enabled" then search_urls["users-search"] = "/users/search?words=" end %>
+
 <%= javascript_tag "var search_urls = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
 
 <%= yield :javascript %>
@@ -27,37 +51,29 @@
 <meta name="csrf-param" content="authenticity_token" />
 </head>
 <body>
-  <% if theme!="gray"%>
     <div class="topNavContainer">
       <div class="topNavContentContainer">
         <ul id="top-menu">
           <% if organisation_owner? %>
-          <li>
-            <% if puavo_users? %>
-              <%= link_to session[:organisation].name, "/users/organisation", :class => "sub" %>
-              <% else %>
-              <span class="sub"><%= session[:organisation].name %></span>
-            <% end %>
-            <ul id="help">
+          <li class="organisation-menu-button">
+            <span><%= session[:organisation].name %></span>
+            <ul id="help" class="organisation-menu">
               <% if puavo_users? %>
-                <li><%= link_to t('.external_services'),  "/users/organisation"%></li>
+                <li class="top-menu-item"><%= link_to t('.external_services'),  "/users/organisation"%></li>
               <% end %>
-                <li><%= link_to t('.printers'), printers_path %></li>
-                <li><%= link_to t('.servers'), servers_path %></li>
+                <li class="top-menu-item"><%= link_to t('.printers'), printers_path %></li>
+                <li class="top-menu-item"><%= link_to t('.servers'), servers_path %></li>
             </ul>
           </li>
           <% else %>
-          <li><span class="sub"><%= session[:organisation].name %></span></li>
+          <li class="organisation-menu-button"><span class="sub"><%= session[:organisation].name %></span></li>
           <% end %>
-          <li>
-            <% if puavo_users? %>
-              <%= link_to t('.schools'), "/users/schools", :class => "sub" %>
-              <% else %>
-              <span class="sub"><%= t('.schools') %></span>
-            <% end %>
+
+          <li class="school-menu-button">
+            <span class="sub"><%= t('.schools') %></span>
             <ul>
               <% session[:organisation].schools.each do |school| %>
-                <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+                <li class="top-menu-item<% if session[:organisation].schools.last == school %> last<% end %>">
                   <%= link_to school.displayName,  devices_path(school) %>
                 </li>
               <% end %>
@@ -79,59 +95,10 @@
         </ul>
       </div><!-- topNavContentContainer -->
     </div><!-- topNavContainer -->
-  <% end %>
 
   <div id="container" class="container">
     <div class="container_wrap">
-      <% if theme=="gray"%>
-        <ul id="top-menu" class="menu">
-          <% if organisation_owner? %>
-            <li>
-              <% if puavo_users? %>
-                <%= link_to session[:organisation].name, "/users/organisation", :class => "sub" %>
-              <% else %>
-                <span class="sub"><%= session[:organisation].name %></span>
-              <% end %>
-              <ul>
-                <% if puavo_users? %>
-                  <li><%= link_to t('.external_services'), "/users/external_services" %></li>
-                <% end %>
-                  <li><%= link_to t('.printers'), printers_path %></li>
-                  <li><%= link_to t('.servers'), servers_path %></li>
-               </ul>
-            </li>
-            <% else %>
-              <li><span class="sub"><%= session[:organisation].name %></span></li>
-            <% end %>
-            <li>
-              <% if puavo_users? %>
-                <%= link_to t('.schools'), "/users/schools", :class => "sub" %>
-              <% else %>
-                <span class="sub"><%= t('.schools') %></span>
-              <% end %>
-              <ul>
-                <% session[:organisation].schools.each do |school| %>
-                  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  devices_path(school) %></li>
-                  <% end %>
-              </ul>
-            </li>
-            <% if logged_in? %>
-              <div id="top-menu-right">
-                <li>
-                  <%= text_field_tag( "search",
-                  nil,
-                  :id => "search",
-                  :size => 30,
-                  :placeholder => t('.search_placeholder') ) %>
-                </li>
-                <li><span><%= t('.logged_in_as') %></span></li>
-                <li><a href="#"><%= current_user_displayName %></a></li>
-                <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
-              </div><!-- top-menu-right -->
-            <% end %>
-          </ul> <!-- top-menu -->
           <hr class="space" />
-        <% end %>
         <% if session[:organisation] %>
         <% if @school && !@school.id.nil? %>
           <h1><%= @school.displayName %></h1>
@@ -166,13 +133,12 @@
         <hr class="space" />
         <div class="wrap">
           <div class="maincontent">
-              
+
               <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
                 <% message_keys.each do |key| %>
                   <p class="message_<%= key %>"> <%= flash[key] %></p>
                 <% end %>
               <% end %>
-              <% if theme!="gray" %> 
               <% if current_user %>
                 <div class="tools">
                   <%= yield :right %>
@@ -180,18 +146,7 @@
               <% end %>
               <%= yield %>
             </div> <!-- maincontent -->
-          <% end %> 
 
-           <% if theme=="gray" %>  
-            <%= yield %>
-          </div> <!-- maincontent -->
-          <% if logged_in? %>
-            <div class="tools">
-              <h1><%= t('.tools') %></h1>
-              <%= yield :right %>
-            </div>
-          <% end %>
-        <% end %>
 
       </div> <!-- wrap -->
     </div> <!-- container_wrap-->
