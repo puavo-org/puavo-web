@@ -1,4 +1,4 @@
-<% if theme!="gray"%><p class='required_info'><%= t('layouts.forms.required_field')%></p><%end%>
+<p class='required_info'><%= t('layouts.forms.required_field')%></p>
 <% form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
   <%= f.error_messages %>
 
