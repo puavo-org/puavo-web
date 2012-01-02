@@ -5,40 +5,61 @@
   /*
    * Submenu jQuery plugin.
    *
-   * Usage: $( button selector ).opensMenu(menu selector);
+   * Usage: $(button selector).opensMenu(menu selector);
    *
    * */
-  var prevent = function(e) { e.preventDefault(); };
   $.fn.opensMenu = function(menuSelector) {
     var subMenuButton = this;
     var subMenu = $(menuSelector);
 
-    var open = false;
+    var menuOpen = false;
+    var menuClickBlock = false;
 
-    // For touch devices
-    $(document).bind("touchstart", function(e) {
-      // Allow touching of the link elements
-      if (e && e.target.tagName === "A") return;
-      if (open) {
-        subMenu.removeClass("open");
-        subMenuButton.removeClass("touch-selected");
-        open = false;
+    // Do not allow menu item clicking immediately after menu opening.
+    // Prevents unwanted navigation to the first item.
+    subMenu.find("a:first").bind("click", function(e) {
+      if (menuClickBlock) {
+        e.preventDefault();
       }
     });
 
+    // If menu is open on a touch device, close it when user touches somewhere
+    // else.
+    $(document).bind("touchstart", function(e) {
+      if (!menuOpen) return;
+
+      // Allow touching of the link elements
+      if (e && e.target.tagName === "A") return;
+
+      subMenu.removeClass("open");
+      subMenuButton.removeClass("touch-selected");
+      menuOpen = false;
+
+    });
+
     subMenuButton.bind("touchstart", function() {
+      // This will get fired also when menu item is clicked, because the items
+      // are children of the main button. So we have to bail out if menu is
+      // open.
+      if (menuOpen) return;
 
-      subMenu.find("a:first").bind("click", prevent);
 
+      menuClickBlock = true;
+
+      // CSS Class opens the menu
       subMenu.addClass("open");
+
+      // So that we can style touch
       subMenuButton.addClass("touch-selected");
 
-
       // Use small timeout so that close event won't fire at same time.
-        setTimeout(function() {
-          subMenu.find("a:first").unbind("click", prevent);
-          open = true;
-        }, 500);
+      setTimeout(function() {
+
+        // Remove menu item block
+        menuClickBlock = false;
+
+        menuOpen = true;
+      }, 500);
 
     });
 
@@ -65,7 +86,7 @@
       width: 'auto'
     });
 
-    // Open external links always in new page
+    // Open external links always in a new tab
     $('a[href^=http]').click(function() {
       window.open(this.href);
       return false;
