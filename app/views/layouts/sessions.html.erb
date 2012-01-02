@@ -1,15 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+jhttp://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <title>Puavo</title>
-    <%= stylesheet_link_tag "#{theme}/screen.css", :media => 'screen, projection' %>
-    <%= stylesheet_link_tag "#{theme}/print.css", :media => 'print' %>
-    <%= stylesheet_link_tag "#{theme}/puavo.css" %>
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.js"></script>
-    <script language="javascript" type="text/javascript" src="/javascripts/flot/jquery.flot.js"></script>
+    <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/screen.css", :media => 'screen, projection' %>
+    <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/print.css", :media => 'print' %>
+    <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/puavo.css" %>
+
+    <%= javascript_include_tag( "jquery-1.4.2.min" ) %>
+
+    <script type="text/javascript" charset="utf-8">
+      jQuery(function($) {
+        $("input[type='text']").get(0).focus()
+      });
+    </script>
+
+    <%# <%= yield :javascript %>
+
   </head>
   <body>
     <hr class="space" />
@@ -29,13 +38,6 @@
     </div>
   </div>
 
-    <script type="text/javascript" src="/javascripts/prototype.js"></script>
-    <script type="text/javascript" src="/javascripts/protofish.js"></script>
-    <script type="text/javascript">
-      document.observe("dom:loaded", function() {
-          new ProtoFish("top-menu", "200", "hover", false, true, true);
-      });
-    </script>
 
   </body>
 </html>
