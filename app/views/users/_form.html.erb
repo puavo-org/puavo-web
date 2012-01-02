@@ -3,16 +3,16 @@
 
   <table>
     <tr>
-      <td><%= f.label :givenName %></td>
-      <td class='required'><%= f.text_field :givenName %></td>
+      <td class='required'><%= f.label :givenName %></td>
+      <td><%= f.text_field :givenName %></td>
     </tr>
     <tr>
-      <td><%= f.label :sn %></td>
-      <td class='required'><%= f.text_field :sn %></td>
+      <td class='required'><%= f.label :sn %></td>
+      <td><%= f.text_field :sn %></td>
     </tr>
     <tr>
-      <td><%= f.label :uid %></td>
-      <td class='required'><%= f.text_field :uid %></td>
+      <td class='required'><%= f.label :uid %></td>
+      <td><%= f.text_field :uid %></td>
     </tr>
     <tr>
       <td class="label_for_input_text_list"><%= f.label :mail %></td>
@@ -44,8 +44,8 @@
 </td>
 </tr>
     <tr>
-      <td><%= f.label :puavoEduPersonAffiliation %></td>
-      <td class='required'>
+      <td class='required'><%= f.label :puavoEduPersonAffiliation %></td>
+      <td>
         <%= f.select :puavoEduPersonAffiliation,
            [[t('default_select_value'), ""]] +
              User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
@@ -102,13 +102,13 @@
     <td><%= f.check_box :puavoLocked %></td>
   </tr>
   <tr>
-    <td><%= f.label :new_password %></td>
-    <td class='required'><%= f.password_field :new_password %></td>
+    <td class='required'><%= f.label :new_password %></td>
+    <td><%= f.password_field :new_password %></td>
   </tr>
 
   <tr>
-    <td><%= f.label :new_password_confirmation %></td>
-    <td class='required'><%= f.password_field :new_password_confirmation %></td>
+    <td class='required'><%= f.label :new_password_confirmation %></td>
+    <td><%= f.password_field :new_password_confirmation %></td>
   </tr>
 
 </table>
