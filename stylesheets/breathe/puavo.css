@@ -348,6 +348,7 @@ a:hover {
   margin: 0 auto;
   padding: 5em 0 0;
 }
+
 .login_container {
   background: none repeat scroll 0 0 #E5E2DE;
   box-shadow: 0 4px 8px #222222;
@@ -357,6 +358,7 @@ a:hover {
   -moz-box-shadow: 0 4px 8px #222222;
   -webkit-box-shadow: 0 4px 8px #222222;
 }
+
 .login_content {
   background: none repeat scroll 0 0 #FFFFFF;
   padding: 1em;
@@ -381,12 +383,10 @@ a:hover {
 .login_content form{
   margin: 1em 0 0;
 }
-.login_content input{
+.login_content input {
   display:block;
   margin: 0 0 .5em 0;
-}
-.login_content input[type="submit"]{
-  width:460px;
+  width: auto !important;
 }
 .login_content a {
   font-size: 12pt;
