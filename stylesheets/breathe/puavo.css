@@ -422,10 +422,7 @@ select {
 .required::after {
   color: #FF6666;
   content: "*";
-  font-size: 22pt;
-  margin: 0;
-  margin-left: 5px;
-  padding: 0;
+  font-size: 150%;
 }
 .required_role {
   color: #FF6666;
