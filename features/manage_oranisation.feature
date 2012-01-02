@@ -12,7 +12,7 @@ Feature: Manage organisation
     And I am logged in as "example" organisation owner
 
   Scenario: Show information of the organisation
-    When I follow "Example Organisation"
+    When I follow "About"
     Then I should see the following:
     | Example Organisation |
     | Description          |
@@ -31,7 +31,7 @@ Feature: Manage organisation
     | Daytime end          |
 
   Scenario: Edit information of the organisation
-    When I follow "Example Organisation"
+    When I follow "About"
     And I follow "Edit"
     Then I fill in the following:
     | Description     | Example Organisation located  in the middle of the Finland |
