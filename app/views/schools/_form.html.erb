@@ -3,10 +3,10 @@
 <% form_for(@school, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
 <table>
   <tr>
-    <td>
+    <td class='required'>
       <%= f.label :displayName %>
     </td>
-    <td class='required'>
+    <td>
       <%= f.text_field :displayName %>
     </td>
   </tr>
@@ -34,10 +34,10 @@
     </td>
   </tr>
   <tr>
-    <td>
+    <td class='required'>
       <%= f.label :cn %>
     </td>
-    <td class='required'>
+    <td>
       <%= f.text_field :cn %>
     </td>
   </tr>
