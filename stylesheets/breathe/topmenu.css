@@ -114,6 +114,16 @@
   width: auto !important;
 }
 
+/* .touch is added by Modernizr to top html-element
+ * */
+.touch #top-menu > li > ul{
+  max-height: none;
+  overflow-y: visible;
+}
+.touch .topNavContainer {
+  position: absolute;
+}
+
 #top-menu li ul,
 #nav1 ul li ul {
   border-bottom: 1px solid #222;
