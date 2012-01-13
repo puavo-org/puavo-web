@@ -52,7 +52,7 @@
 
   <%= yield :javascript %>
 
-  <% search_urls = { "users-search" => "/search?words=" } %>
+  <% search_urls = { "users-search" => "/users/search?words=" } %>
   <% if Puavo::DEVICE_CONFIG then search_urls[ "devices-search"] = "/devices/search?words=" end %>
   <%= javascript_tag "var search_urls = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
 
