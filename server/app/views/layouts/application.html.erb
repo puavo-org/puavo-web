@@ -70,14 +70,15 @@
             <span><%= session[:organisation].name %></span>
             <ul id="help" class="organisation-menu">
               <% if puavo_users? %>
-                <li class="top-menu-item"><%= link_to t('.external_services'),  "/users/organisation"%></li>
+                <li class="top-menu-item"><%= link_to t('.about'),  "/users/organisation"%></li>
+                <li class="top-menu-item"><%= link_to t('.external_services'),  "/users/external_services"%></li>
               <% end %>
                 <li class="top-menu-item"><%= link_to t('.printers'), printers_path %></li>
                 <li class="top-menu-item"><%= link_to t('.servers'), servers_path %></li>
             </ul>
           </li>
           <% else %>
-          <li class="organisation-menu-button"><span class="sub"><%= session[:organisation].name %></span></li>
+          <li><span class="sub"><%= session[:organisation].name %></span></li>
           <% end %>
 
           <li class="school-menu-button">

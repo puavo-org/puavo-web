@@ -138,6 +138,7 @@ fi:
       external_services: Ulkoiset palvelut
       printers: Tulostimet
       search_placeholder: Hae
+      about: Tietoja
     forms:
       required_field: "* = Pakollinen tieto"
   link:

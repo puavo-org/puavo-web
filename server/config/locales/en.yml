@@ -140,6 +140,7 @@ en:
       external_services: External services
       printers: Printers
       search_placeholder: Search
+      about: About
     forms:
       required_field: "* = Required field"
   link:
