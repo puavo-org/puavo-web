@@ -415,8 +415,9 @@ class User < LdapBase
   def change_school(new_school_dn)
     school_dn = self.puavoSchool
     LdapBase.ldap_modify_operation( self.puavoSchool,
-                                    :delete, [{ "memberUid" => [self.uid.to_s],
-                                                "member" => [self.dn.to_s] }])
+                                    :delete, [{ "member" => [self.dn.to_s] }]) rescue Exception
+    LdapBase.ldap_modify_operation( self.puavoSchool,
+                                    :delete, [{ "memberUid" => [self.uid.to_s] }]) rescue Exception
     self.puavoSchool = new_school_dn
   end
 
