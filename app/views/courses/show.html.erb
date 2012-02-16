@@ -1,0 +1,18 @@
+<p>
+  <b>Puavocoursename:</b>
+  <%=h @course.puavoCourseName %>
+</p>
+
+<p>
+  <b>Puavocourseid:</b>
+  <%=h @course.puavoCourseId %>
+</p>
+
+<p>
+  <b>Puavocoursedescription:</b>
+  <%=h @course.puavoCourseDescription %>
+</p>
+
+
+<%= link_to 'Edit', edit_course_path(@course) %> |
+<%= link_to 'Back', courses_path %>

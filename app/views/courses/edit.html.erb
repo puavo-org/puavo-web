@@ -1,0 +1,24 @@
+<h1>Editing course</h1>
+
+<% form_for(@course) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :puavoCourseName %><br />
+    <%= f.text_field :puavoCourseName %>
+  </p>
+  <p>
+    <%= f.label :puavoCourseId %><br />
+    <%= f.text_field :puavoCourseId %>
+  </p>
+  <p>
+    <%= f.label :puavoCourseDescription %><br />
+    <%= f.text_area :puavoCourseDescription %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @course %> |
+<%= link_to 'Back', courses_path %>
