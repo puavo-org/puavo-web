@@ -12,4 +12,11 @@ class Course < LdapBase
   def id
     self.puavoId.to_s unless puavoId.nil?
   end
+
+  def to_json(*args)
+    { "name" => self.puavoCourseName,
+      "course_id" => self.puavoCourseId,
+      "description" => self.puavoCourseDescription,
+      "puavo_id" => self.puavoId }.to_json
+  end
 end
