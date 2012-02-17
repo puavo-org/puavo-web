@@ -1,34 +1,34 @@
 class CoursesController < ApplicationController
   # GET /courses
-  # GET /courses.xml
+  # GET /courses.json
   def index
     @courses = Course.all
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @courses }
+      format.json  { render :json => @courses }
     end
   end
 
   # GET /courses/1
-  # GET /courses/1.xml
+  # GET /courses/1.json
   def show
     @course = Course.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @course }
+      format.json  { render :json => @course }
     end
   end
 
   # GET /courses/new
-  # GET /courses/new.xml
+  # GET /courses/new.json
   def new
     @course = Course.new
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @course }
+      format.json  { render :json => @course }
     end
   end
 
@@ -38,46 +38,46 @@ class CoursesController < ApplicationController
   end
 
   # POST /courses
-  # POST /courses.xml
+  # POST /courses.json
   def create
     @course = Course.new(params[:course])
 
     respond_to do |format|
       if @course.save
         format.html { redirect_to(@course, :notice => 'Course was successfully created.') }
-        format.xml  { render :xml => @course, :status => :created, :location => @course }
+        format.json  { render :json => @course, :status => :created, :location => @course }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @course.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @course.errors, :status => :unprocessable_entity }
       end
     end
   end
 
   # PUT /courses/1
-  # PUT /courses/1.xml
+  # PUT /courses/1.json
   def update
     @course = Course.find(params[:id])
 
     respond_to do |format|
       if @course.update_attributes(params[:course])
         format.html { redirect_to(@course, :notice => 'Course was successfully updated.') }
-        format.xml  { head :ok }
+        format.json  { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @course.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @course.errors, :status => :unprocessable_entity }
       end
     end
   end
 
   # DELETE /courses/1
-  # DELETE /courses/1.xml
+  # DELETE /courses/1.json
   def destroy
     @course = Course.find(params[:id])
     @course.destroy
 
     respond_to do |format|
       format.html { redirect_to(courses_url) }
-      format.xml  { head :ok }
+      format.json  { head :ok }
     end
   end
 end
