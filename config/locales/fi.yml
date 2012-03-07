@@ -213,7 +213,7 @@ fi:
   password:
     edit:
       title: Vaihda toisen käyttäjän salasana
-      head: Vaihtaaksesi toisen käyttäjän salasanaa, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittu tunnuksellesi.
+      head: Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi.
       changing_user: Vaihtaja
       changed_user: Vaihdettava tunnus
       password: Salasana
