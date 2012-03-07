@@ -402,7 +402,6 @@ text-align: center;
 }
 .password_container .login_content span:hover a {
 background: url("../../images/iconset-breathe.png") no-repeat scroll 5px -835px transparent;
-color: #666 !important;
 }
 .password_container .login_content span.change_other_pswd a{
 background: url("../../images/iconset-breathe.png") no-repeat scroll 5px -875px transparent;
@@ -412,7 +411,6 @@ text-align: left;
 }
 .password_container .login_content span.change_other_pswd:hover a{
 background: url("../../images/iconset-breathe.png") no-repeat scroll 5px -915px transparent;
-color: #666 !important;
 }
 .login_content form{
   margin: 1em 0 0;
