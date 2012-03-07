@@ -2,7 +2,7 @@
 <h1><%= t('.title') %></h1>
 <% end %>
 
-<button class="change_other_pswd"><%= link_to t('.link_other_password'), password_path %></button>
+<span class="change_other_pswd"><%= link_to t('.link_other_password'), password_path %></span>
 
 <% form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
 <%= f.error_messages %>
