@@ -106,7 +106,7 @@ input[type="file"] {
   -webkit-border-radius: 6px;
 }
 
-input[type="submit"], .login_content button {
+input[type="submit"], .login_content span {
   background: none repeat scroll 0 0 #EEEEED;
   background: -moz-linear-gradient(center bottom , #EEEEED 0%, #EEEEEE 40%, #FFFFFF 100%) repeat scroll 0 0 transparent;
   background: -webkit-gradient(
