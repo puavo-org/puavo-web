@@ -6,7 +6,7 @@
 <%= t('.head') %>
 </p>
 
-<button><%= link_to t('.link_own_password'), own_password_path %></button>
+<span><%= link_to t('.link_own_password'), own_password_path %></span>
 
 <% form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
 <%= f.error_messages %>
