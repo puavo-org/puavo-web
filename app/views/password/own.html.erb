@@ -1,8 +1,10 @@
 <% content_for :title do %>
 <h1><%= t('.title') %></h1>
 <% end %>
-
-<span class="change_other_pswd"><%= link_to t('.link_other_password'), password_path %></span>
+<div class="password_buttons">
+<span class="active"><%= link_to t('password.edit.link_own_password'), own_password_path %></span>
+<span class="change_other_pswd"><%= link_to t('password.own.link_other_password'), password_path %></span>
+</div>
 
 <% form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
 <%= f.error_messages %>
