@@ -115,7 +115,7 @@ input[type="submit"], .login_content span {
   color-stop(0.40, rgb(238,238,238)),
   color-stop(1, rgb(255,255,255))
   );
-  background-image: -o-linear-gradient(top,rgb(238,238,237),rgb(255,255,255));
+  background-image: -o-linear-gradient(top, #FFFFFF, #EEEEED) 0px 0px #EEEEED;
   border: 1px solid #222222;
   border-radius: 8px 8px 8px 8px;
   cursor: pointer;
