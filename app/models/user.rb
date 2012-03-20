@@ -582,11 +582,14 @@ class User < LdapBase
   end
 
   def webhook(action)
-    config = Puavo::Organisation.find( LdapOrganisation.first.cn.to_s )
+    organisation = LdapOrganisation.first.cn.to_s
+    config = Puavo::Organisation.find( organisation )
     if webhook_config = config.value_by_key("webhooks")
       if webhook_config.has_key?("user")
         if webhook_config["user"]["actions"].to_a.include?(action)
-          payload = { :user => self, :action => action }.to_json
+          payload = ({ :user => self,
+                       :action => action,
+                       :organisation => organisation }).to_json
           hexdigest = HMAC::SHA1.hexdigest( webhook_config["private_api_key"],
                                             payload )
           RestClient.post( webhook_config["user"]["url"],
