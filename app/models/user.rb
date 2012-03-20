@@ -587,8 +587,11 @@ class User < LdapBase
       if webhook_config.has_key?("user")
         if webhook_config["user"]["actions"].to_a.include?(action)
           payload = { :user => self, :action => action }.to_json
+          hexdigest = HMAC::SHA1.hexdigest( webhook_config["private_api_key"],
+                                            payload )
           RestClient.post( webhook_config["user"]["url"],
-                           {:payload => payload},
+                           { :payload => payload,
+                             :hmac => hexdigest },
                            :content_type => :json,
                            :accept => :json) 
         end

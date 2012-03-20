@@ -11,6 +11,7 @@ gem 'puavo_authentication', :require => 'puavo_authentication'
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
 gem 'rest-client'
+gem 'ruby-hmac', :require => 'hmac-sha1'
 
 group :development do
 	gem 'webrat'

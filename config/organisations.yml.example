@@ -18,6 +18,7 @@ default:
   # allow_uppercase_characters_uid: true
   # # Puavo will POST user object to that URL when someone create, update or destroy user
   # webhooks:
+  #   private_api_key: xxxxxxxxxxxxxxxxxxxx
   #   user:
   #     url: http://puavo-moodle-integration.example.com/webhook
   #     actions:
