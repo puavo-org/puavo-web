@@ -32,6 +32,10 @@ class User < LdapBase
 
   before_update :change_ldap_password
 
+  after_update :webhook_update
+  after_create :webhook_create
+  after_destroy :webhook_destroy
+
   after_save :set_school_admin
   after_save :add_member_uid_to_models
   after_save :update_roles
@@ -567,6 +571,30 @@ class User < LdapBase
     end
   end
 
+  def webhook_create
+    webhook("create")
+  end
+  def webhook_update
+    webhook("update")
+  end
+  def webhook_destroy
+    webhook("destroy")
+  end
+
+  def webhook(action)
+    config = Puavo::Organisation.find( LdapOrganisation.first.cn.to_s )
+    if webhook_config = config.value_by_key("webhooks")
+      if webhook_config.has_key?("user")
+        if webhook_config["user"]["actions"].to_a.include?(action)
+          payload = { :user => self, :action => action }.to_json
+          RestClient.post( webhook_config["user"]["url"],
+                           {:payload => payload},
+                           :content_type => :json,
+                           :accept => :json) 
+        end
+      end
+    end
+  end
 end
 
 # FIXME: this code have to move to better place.

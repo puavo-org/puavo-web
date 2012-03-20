@@ -12,4 +12,16 @@ default:
   host: *
   ldap_host: localhost
   ldap_base: dc=edu,dc=example,dc=org
+  # Optional configurations
+  # locale: fi
+  # theme: breathe
+  # allow_uppercase_characters_uid: true
+  # # Puavo will POST user object to that URL when someone create, update or destroy user
+  # webhooks:
+  #   user:
+  #     url: http://puavo-moodle-integration.example.com/webhook
+  #     actions:
+  #     - create
+  #     - update
+  #     - destroy
 

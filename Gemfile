@@ -10,6 +10,8 @@ gem 'puavo_organisation', :require => 'puavo_organisation'
 gem 'puavo_authentication', :require => 'puavo_authentication'
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
+gem 'rest-client'
+
 group :development do
 	gem 'webrat'
 	gem 'rspec-rails', '1.3.2'
