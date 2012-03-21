@@ -25,4 +25,8 @@ default:
   #     - create
   #     - update
   #     - destroy
+  #   course:
+  #     url: http://puavo-moodle-integration.example.com/webhook
+  #     actions:
+  #     - create
 
