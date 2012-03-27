@@ -20,7 +20,7 @@ module Puavo
 
             # Allow authentication always if logged in user is ExteralService object
             if user.class == ExternalService
-              return @current_user = user
+              return user
             end
 
             # Allow authetication only if user is School Admin in the some School or organisation owner.
