@@ -221,7 +221,7 @@ fi:
     own:
       title: Vaihda salasana
       password: Vanha salasana
-      link_other_password: Vaihda toisen käyttäjä salasana
+      link_other_password: Vaihda toisen käyttäjän salasana
   organisations:
     show:
       title: Organisaation tiedot
