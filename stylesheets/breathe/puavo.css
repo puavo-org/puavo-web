@@ -9,8 +9,7 @@ body {
     color-stop(0.6, rgb(170,170,170))
   );
   background-image: -o-linear-gradient(top,rgb(170,170,170),rgb(242,242,242));
-
-  font-family: "Cronos Pro","Myriad Web Pro","Myriad Pro","Myriad","Helvetica Neue LT Std",Calibri,sans-serif;
+  font-family: "Cronos Pro","Myriad Web Pro","Myriad Pro","Myriad","Helvetica Neue LT Std",Calibri,Arial,sans-serif;
   font-size: 0.8em;
   line-height: 1.5;
   margin: 0;
@@ -44,6 +43,11 @@ h1 {
   -webkit-border-radius: 10px 10px 0 0;
   -moz-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.70);
   -webkit-box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.70);
+}
+@media all and (max-width: 762px) {
+  .container_wrap{
+    margin: 50px auto;
+  }
 }
 .maincontent {
   float: left;
@@ -366,7 +370,7 @@ a:hover {
 }
 .login_content h1 {
   color: #2D2D2D;
-  font-size: 3em;
+  font-size: 2.2em;
   font-weight: bold;
   letter-spacing: -3px;
   text-align: center;
@@ -454,11 +458,14 @@ width: auto !important;
 .login_content a:hover {
   color:#AD0000;
 }
+.password_container .login_content table{
+  margin:0;
+}
 .password_container .login_content table tr td:nth-of-type(2n-1) {
 display: inline;
 float: left;
 padding: 0 0 0 10px;
-width: 220px;
+min-width: 220px;
 }
 .password_container .login_content table tr td:nth-of-type(2n){
 float:left;
