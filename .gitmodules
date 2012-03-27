@@ -1,0 +1,6 @@
+[submodule "puavo-themes"]
+	path = puavo-themes
+	url = git@github.com:opinsys/puavo-themes.git
+[submodule "public/shared"]
+	path = public/shared
+	url = git@github.com:opinsys/puavo-themes.git

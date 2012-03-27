@@ -6,7 +6,10 @@
 <%= t('.head') %>
 </p>
 
-<p><%= link_to t('.link_own_password'), own_password_path %></p>
+<div class="password_buttons">
+<span><%= link_to t('password.edit.link_own_password'), own_password_path %></span>
+<span class="change_other_pswd active"><%= link_to t('password.own.link_other_password'), password_path %></span>
+</div>
 
 <% form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
 <%= f.error_messages %>

@@ -1,49 +1,47 @@
 <h1><span><%= t('.title') %></span></h1>
-<% if theme !="gray" %>
 <p class="mass_import_info"><span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> <span class="done">2. <%= t('users.import.info.phase_2') %> &gt; </span><span class="current">3. <%= t('users.import.info.phase_3') %></span> &gt; 4. <%= t('users.import.info.phase_4') %></p>
-<% end %>
 <% form_for(:user, :url => validate_users_import_path(@school), :html => { :method => :post, :class => "mass_import_form" }) do |f| %>
 
-<p><%= t('.help') %>:</p>
+  <p><%= t('.help') %>:</p>
 
-<% unless @columns.include?('puavoEduPersonAffiliation') %>
-<p>
-  <%= f.label :puavoEduPersonAffiliation %>:<br />
-  <%= f.select :puavoEduPersonAffiliation,
-[[t('default_select_value'), ""]] +
-  User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
-</p>
-<% end %>
-
-<% unless @columns.include?('role_name') %>
-<p>
-  <%= f.label :role_name %><br />
-  <%= f.select :role_name,
-  options_for_select([[t('default_select_value'), ""]] + @roles.collect{ |g| [g.displayName, g.displayName] })%>
-</p>
-<% end %>
-
-<% user_index = 0 %>
-<% @raw_users.each do |user| %>
-  <% index = 0 %>
-  <% 0.upto(@number_of_columns-1) do |index| %>
-    <%= hidden_field_tag "users[#{index}][]", user[index].to_s.strip, {:id => "users_#{index}_#{user_index}"} %>
+  <% unless @columns.include?('puavoEduPersonAffiliation') %>
+    <p>
+      <%= f.label :puavoEduPersonAffiliation %>:<br />
+      <%= f.select :puavoEduPersonAffiliation,
+    [[t('default_select_value'), ""]] +
+      User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
+    </p>
   <% end %>
-<% user_index += 1 %>
-<% end %>
 
-<% @columns.each do |column| %>
-<%= hidden_field_tag "columns[]", column %>
-<% end %>
+  <% unless @columns.include?('role_name') %>
+    <p>
+      <%= f.label :role_name %><br />
+      <%= f.select :role_name,
+      options_for_select([[t('default_select_value'), ""]] + @roles.collect{ |g| [g.displayName, g.displayName] })%>
+    </p>
+  <% end %>
 
-<%= f.submit t('link.continue') %>
+  <% user_index = 0 %>
+  <% @raw_users.each do |user| %>
+    <% index = 0 %>
+    <% 0.upto(@number_of_columns-1) do |index| %>
+      <%= hidden_field_tag "users[#{index}][]", user[index].to_s.strip, {:id => "users_#{index}_#{user_index}"} %>
+    <% end %>
+  <% user_index += 1 %>
+  <% end %>
+
+  <% @columns.each do |column| %>
+    <%= hidden_field_tag "columns[]", column %>
+  <% end %>
+
+  <%= f.submit t('link.continue') %>
 
 <% end %>
 <% content_for :footer do %>
 <ul>
   <li class="link_header">
     <% link_to school_path(@school) do %>
-    <span><%= t('layouts.application.schools') %></span>
+      <span><%= t('layouts.application.schools') %></span>
     <% end %>
   </li>
   <% session[:organisation].schools.each do |school| %>
@@ -54,7 +52,8 @@
 </ul>
 <ul>
 <li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
+<li>
+<% link_to users_path(@school) do %>
   <span><%= t('layouts.application.users') %></span>
 <% end %>
 </li>

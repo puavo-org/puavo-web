@@ -1,11 +1,12 @@
-<% if theme!="gray"%><p class='required_info'><%= t('layouts.forms.required_field')%></tr><%end%>
+<p class='required_info'><%= t('layouts.forms.required_field')%></tr>
+
 <% form_for(@school, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
 <table>
   <tr>
-    <td>
+    <td class='required'>
       <%= f.label :displayName %>
     </td>
-    <td class='required'>
+    <td>
       <%= f.text_field :displayName %>
     </td>
   </tr>
@@ -33,10 +34,10 @@
     </td>
   </tr>
   <tr>
-    <td>
+    <td class='required'>
       <%= f.label :cn %>
     </td>
-    <td class='required'>
+    <td>
       <%= f.text_field :cn %>
     </td>
   </tr>
@@ -113,13 +114,12 @@
       <%= f.file_field :image %>
     </td>
   </tr>
-  <tr>
-  <td>
-  <span style="float:left">
+</table>
+
+<div>
+
     <%= f.submit submit_text %>
     <div class="cancel"> <%=link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
-  </span>
-  </td>
-  </tr>
-</table>
+
+</div>
 <% end %>

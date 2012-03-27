@@ -1,51 +1,4 @@
-<% if theme=="gray" %>
-<div class="dashboard">
-<div class="dashboard_box school_image">
-<%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
-               :class => "image" ) %>
-</div>
-<div class="dashboard_box contacts">
-<h3><%= t('.contacts') %></h3>
-<h4><%=h @school.displayName %></h4>
-<div class="row"><%=h @school.street %></div>
-<div class="row"><%=h @school.postalCode %> <%=h @school.postalAddress %></div>
-<div class="row"><%=h @school.postOfficeBox %></div>
-<div class="row"><%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'), @school.puavoSchoolHomePageURL %></div>
-</div>
 
-
-<div class="dashboard_box list users">
-<h3><%= t('.users') %></h3>
-<h4><%= t('.statistics') %></h4>
-
-<% User.puavoEduPersonAffiliation_list.each do |type| %>
-<div class="row"><div class="column_1"><%= t('puavoEduPersonAffiliation_' + type) %>: </div> <div class="column_2"><%= @members.select{ |m| m.last["puavoEduPersonAffiliation"] == [type]}.count %></div></div>
-<% end %>
-<div class="row"></div>
-<h4><%= t('.admin_users') %></h4>
-<% @school.user_school_admins.each do |user| %>
-<% if user.displayName %>
-<div class="row">
-<%= [(link_to user.displayName, user_path(@school, user)), user.telephoneNumber, user.mail].delete_if{ |data| data.nil? }.join(", ") %>
-
-</div>
-<% end %>
-<% end %>
-</div>
-
-<% if @devices_by_type %>
-<div class="dashboard_box list">
-<h3><%= t('.devices') %></h3>
-<% @devices_by_type.each do |device_type, count| %>
-<div class="row"><div class="column_1"><%= device_type %>:</div> <div class="column_2"><%= count %></div></div>
-<% end %>
-</div>
-<% end %>
-
-</div>
-<% end %>
-
-<% else if theme!="gray" %>
 <div class="dashboard">
 <div class="dashboard_box school_image">
 <%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
@@ -65,18 +18,18 @@
 <h3><%= t('.users') %></h3>
 <h4><%= t('.statistics') %></h4>
 <% User.puavoEduPersonAffiliation_list.each do |type| %>
-<div class="row"><div class="column_1"><%= t('puavoEduPersonAffiliation_' + type) %>: </div> <div class="column_2"><%= @members.select{ |m| m.last["puavoEduPersonAffiliation"] == [type]}.count %></div>
-</div>
+  <div class="row"><div class="column_1"><%= t('puavoEduPersonAffiliation_' + type) %>: </div> <div class="column_2"><%= @members.select{ |m| m.last["puavoEduPersonAffiliation"] == [type]}.count %></div>
+  </div>
 <% end %>
 </div>
 
 <% if @devices_by_type %>
-<div class="dashboard_box list">
-<h3><%= t('.devices') %></h3>
-<% @devices_by_type.each do |device_type, count| %>
-<div class="row"><div class="column_1"><%= device_type %>:</div> <div class="column_2"><%= count %></div></div>
-<% end %>
-</div>
+  <div class="dashboard_box list">
+  <h3><%= t('.devices') %></h3>
+  <% @devices_by_type.each do |device_type, count| %>
+    <div class="row"><div class="column_1"><%= device_type %>:</div> <div class="column_2"><%= count %></div></div>
+  <% end %>
+  </div>
 <% end %>
 </div>
 <div id="admin_users_list" class="dashboard_box list users">
@@ -84,67 +37,57 @@
 
 <div class="row admins_headers"><span><%= t('.name') %></span><span><%= t('.phone') %></span><span><%= t('.mail') %></span></div>
 <% @school.user_school_admins.each do |user| %>
-<% if user.displayName %>
-<div class="row">
-  <span><%= link_to user.displayName, user_path(@school, user) %></span>
-  <span><%= [user.telephoneNumber].delete_if{ |data| data.nil? }.join(", ") %></span>
-  <span class="admin_emails"><%= [user.mail].delete_if{ |data| data.nil? }.join(", ") %></span>
-</div>
-<% end %>
+  <% if user.displayName %>
+    <div class="row">
+      <span><%= link_to user.displayName, user_path(@school, user) %></span>
+      <span><%= [user.telephoneNumber].delete_if{ |data| data.nil? }.join(", ") %></span>
+      <span class="admin_emails"><%= [user.mail].delete_if{ |data| data.nil? }.join(", ") %></span>
+    </div>
+  <% end %>
 <% end %>
 <hr />
-<% end %>
 </div>
 
 <% content_for :right do %>
-<% if theme=="gray" %>
-<div><%= link_to t('link.edit'), edit_school_path(@school) %></div>
-<div><%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %></div>
-<% if organisation_owner? %>
-<div><%= link_to t('link.rename_groups'), new_rename_groups_path(@school) %></div>
-<% end %>
-<% end %>
-
-<% if theme!="gray" %>
-<ul class="tools">
-<li>
-<%= link_to t('link.edit'), edit_school_path(@school) %>
-</li>
-<li class="tool">
-<span><%= t('link.more') %><%= image_tag("show-more.png")%></span>
-<ul>
-<% if organisation_owner? %>
-<li>
-<%= link_to t('link.rename_groups'), new_rename_groups_path(@school) %>
-</li>
-<% end %>
-<li>
-<%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %>
-</li>
-</ul>
-</li>
-</ul>
-<% end %> 
+  <ul class="tools">
+  <li>
+  <%= link_to t('link.edit'), edit_school_path(@school) %>
+  </li>
+  <li class="tool">
+  <span><%= t('link.more')%></span>
+  <ul>
+  <% if organisation_owner? %>
+    <li>
+    <%= link_to t('link.rename_groups'), new_rename_groups_path(@school) %>
+    </li>
+  <% end %>
+  <li>
+  <%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %>
+  </li>
+  </ul>
+  </li>
+  </ul>
 <% end %>
 
 <% content_for :footer do %>
-<ul>  
-  <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %> 
-  </li>
-  <% session[:organisation].schools.each do |school| %>
-  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %></li>
+  <ul>
+    <li class="link_header">
+      <%= link_to t('layouts.application.schools'),  schools_path %>
+    </li>
+    <% session[:organisation].schools.each do |school| %>
+      <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+        <%= link_to school.displayName,  school_path(school) %></li>
+    <% end %>
+  </ul>
+  <ul>
+  <li class="link_header"><%= @school.displayName %></li>
+  <li>
+  <% link_to users_path(@school) do %>
+    <span><%= t('layouts.application.users') %></span>
   <% end %>
-</ul>
-<ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
-<% end %>
-</li>
-  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-</ul>
+  </li>
+    <li><%= link_to t('link.groups'), groups_path(@school) %></li>
+    <li><%= link_to t('link.roles'), roles_path(@school) %></li>
+    <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
+  </ul>
 <% end %>

@@ -38,11 +38,11 @@
       </ul>
     </div>
     <div class="span-8 last">
-      <ul id="top-menu" class="menu">                                                                                    
+      <ul id="top-menu" class="menu">
       <% if current_user %>
         <li><a href="#"><%= current_user.displayName %></li>
       <% end %>
-	<li><%= link_to 'LOGOUT', logout_path, :method => :delete %></li>
+  <li><%= link_to 'LOGOUT', logout_path, :method => :delete %></li>
       </ul>
     </div>
 
@@ -50,32 +50,32 @@
     <div class="span-24">
       <% if session[:organisation] %>
         <% if @school && !@school.id.nil? && controller_name != 'password' %>
-	  <h1><%= @school.displayName %></h1>
+    <h1><%= @school.displayName %></h1>
 
-	  <div id="navbar">
+    <div id="navbar">
             <div id="nav1">
 
               <ul>
-		<li class="<%= controller_name.match(/schools|groups|roles/) \
+    <li class="<%= controller_name.match(/schools|groups|roles/) \
                            ? "page_item current_page_item" \
                            : "page_item" %>">
-		  <% link_to school_path(@school) do %>
+      <% link_to school_path(@school) do %>
                   <span>School</span>
-		  <% end %>
-		</li>
-		<li class="<%= controller_name == "users" ? "page_item current_page_item" : "page_item" %>">
-		  <% link_to users_path(@school) do %>
+      <% end %>
+    </li>
+    <li class="<%= controller_name == "users" ? "page_item current_page_item" : "page_item" %>">
+      <% link_to users_path(@school) do %>
                   <span>Users</span>
-		  <% end %>
-		</li>
-		<% if @oauth_applications %>
-		<% @oauth_applications.each do |app| %>
-		<li class="page_item"><a href="<%= app.url %>" title="<%= app.name %>"><span><%= app.name %></span></a></li>
-		<% end %>
-		<% end %>
+      <% end %>
+    </li>
+    <% if @oauth_applications %>
+    <% @oauth_applications.each do |app| %>
+    <li class="page_item"><a href="<%= app.url %>" title="<%= app.name %>"><span><%= app.name %></span></a></li>
+    <% end %>
+    <% end %>
               </ul>
             </div>
-	  </div>
+    </div>
     </div>
 
     <div class="span-24">
@@ -94,13 +94,13 @@
        <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
         <% message_keys.each do |key| %>
           <p class="notice_<%= key %>">
-	          <%= flash[key] %>
+            <%= flash[key] %>
           </p>
         <% end %>
       <% end %>
       <%= yield %>
     </div>
-    
+
     <div class="span-6 last">
 
 
@@ -114,9 +114,9 @@
   <script type="text/javascript" src="/javascripts/prototype.js"></script>
   <script type="text/javascript" src="/javascripts/protofish.js"></script>
   <script type="text/javascript">
-		document.observe("dom:loaded", function() {
-			new ProtoFish("top-menu", "200", "hover", false, true, true);
-		});
+    document.observe("dom:loaded", function() {
+      new ProtoFish("top-menu", "200", "hover", false, true, true);
+    });
   </script>
 
 </body>

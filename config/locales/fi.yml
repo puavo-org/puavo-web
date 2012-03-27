@@ -18,13 +18,14 @@ fi:
       devices: Laitteet
       servers: Palvelimet
       external_services: Ulkoiset palvelut
+      about: Tietoja
       printers: Tulostimet
       search_placeholder: Hae
       links: Linkit
     forms:
       required_field: "* = Pakollinen tieto"
   link:
-    more: Lisää
+    more: Muut toiminnot
     edit: Muokkaa
     back: Takaisin
     cancel: "- Peruuta"
@@ -212,7 +213,7 @@ fi:
   password:
     edit:
       title: Vaihda toisen käyttäjän salasana
-      head: Vaihtaaksesi toisen käyttäjän salasanaa, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittu tunnuksellesi.
+      head: Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi.
       changing_user: Vaihtaja
       changed_user: Vaihdettava tunnus
       password: Salasana

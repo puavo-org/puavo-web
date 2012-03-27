@@ -17,13 +17,13 @@
   <b><%= t('.roles_and_members') %>:</b><br />
   <span id="roles_and_members">
     <% @roles.each do |p| %>
-    <%= "#{p.displayName} (#{p.school.displayName})" %>
-    <%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), :method => :put, :id => "remove_role_#{p.id}" %>
-    <ul>
-      <% p.members.each do |m| %>
-      <li><%= link_to m.displayName, user_path(@school, m) %></li>
-      <% end %>
-    </ul>
+      <%= "#{p.displayName} (#{p.school.displayName})" %>
+      <%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), :method => :put, :id => "remove_role_#{p.id}" %>
+      <ul>
+        <% p.members.each do |m| %>
+          <li><%= link_to m.displayName, user_path(@school, m) %></li>
+        <% end %>
+      </ul>
     <% end %>
   </span>
 </p>
@@ -32,62 +32,54 @@
   <b><%= t('.other_roles') %>:</b><br />
   <span id="other_roles">
   <% @other_roles.each do |p| %>
-  <%= "#{p.displayName} (#{p.school.displayName})" %>
-  <%= link_to t('link.add'), add_role_group_path(@school, @group, p), :method => :put, :id => "add_role_#{p.id}" %>
-  <br />
+    <%= "#{p.displayName} (#{p.school.displayName})" %>
+    <%= link_to t('link.add'), add_role_group_path(@school, @group, p), :method => :put, :id => "add_role_#{p.id}" %>
+    <br />
   <% end %>
   </span>
 </p>
 
 <% content_for :right do %>
-<% if theme=="gray" %>
-<div><%= link_to t('link.edit'), edit_group_path(@school, @group) %></div>
-<div><%= link_to t('link.destroy'), group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete %></div>
-<div><%= link_to t('link.new_group'), new_group_path(@school) %></div>
-<% end %>
-<% if theme!="gray" %>
 <ul class="tools">
-<li>
-<%= link_to t('link.edit'), edit_group_path(@school, @group) %>
-</li>
-<li class="tool">
-<span><%= t('link.more') %><%= image_tag("show-more.png")%></span>
-<ul>
-<li>
-<%= link_to t('link.new_group'), new_group_path(@school) %>
-</li>
-<li>
-<%= link_to t('link.destroy'), group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete %>
-</li>
+  <li>
+    <%= link_to t('link.edit'), edit_group_path(@school, @group) %>
+  </li>
+  <li class="tool">
+    <span><%=t('link.more')%></span>
+  <ul>
+    <li>
+      <%= link_to t('link.new_group'), new_group_path(@school) %>
+    </li>
+    <li>
+      <%= link_to t('link.destroy'), group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete %>
+    </li>
+  </ul>
 </ul>
-</li>
-</ul>
-<% end %> 
 <% end %>
 
 <% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <% link_to school_path(@school) do %>
-    <span><%= t('layouts.application.schools') %></span>
+  <ul>
+    <li class="link_header">
+      <% link_to school_path(@school) do %>
+        <span><%= t('layouts.application.schools') %></span>
+      <% end %>
+    </li>
+    <% session[:organisation].schools.each do |school| %>
+    <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+      <%= link_to school.displayName,  school_path(school) %>
+    </li>
     <% end %>
-  </li>
-  <% session[:organisation].schools.each do |school| %>
-  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %>
-  </li>
+  </ul>
+  <ul>
+  <li class="link_header"><%= @school.displayName %></li>
+  <li>
+  <% link_to users_path(@school) do %>
+    <span><%= t('layouts.application.users') %></span>
   <% end %>
-</ul>
-<ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
+  </li>
+    <li><%= link_to t('link.groups'), groups_path(@school) %></li>
+    <li><%= link_to t('link.roles'), roles_path(@school) %></li>
+    <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
+  </ul>
 <% end %>
-</li>
-  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-</ul>
-<% end %>
-
 
