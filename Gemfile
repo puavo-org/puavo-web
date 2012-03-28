@@ -7,7 +7,7 @@ gem "prawn"
 gem 'activeldap', :require => 'active_ldap'
 gem 'net-ldap', '0.2.2'
 gem 'puavo_organisation', :require => 'puavo_organisation'
-gem 'puavo_authentication', :require => 'puavo_authentication'
+gem 'puavo_authentication', '>=0.0.17', :require => 'puavo_authentication'
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
 group :development do
