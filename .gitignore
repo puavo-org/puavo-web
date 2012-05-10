@@ -5,4 +5,3 @@ config/puavo_devices.yml
 config/organisations.yml
 config/ldap.yml
 config/database.yml
-Gemfile.lock
