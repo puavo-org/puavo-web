@@ -25,7 +25,7 @@
   <li class="link_header">
     <%= link_to t('layouts.application.schools'),  schools_path %>
   </li>
-  <% session[:organisation].schools.each do |school| %>
+  <% school_list.each do |school| %>
   <li>
     <%= link_to school.displayName,  school_path(school) %>
   </li>

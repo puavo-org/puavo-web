@@ -35,8 +35,8 @@
       <span><%= t('layouts.application.schools') %></span>
     <% end %>
   </li>
-  <% session[:organisation].schools.each do |school| %>
-  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>>
+  <% school_list.each do |school| %>
+  <li<% if school_list.last == school %> class="last"<% end %>>
     <%= link_to school.displayName,  school_path(school) %>
   </li>
   <% end %>

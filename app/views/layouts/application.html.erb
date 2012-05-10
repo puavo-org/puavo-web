@@ -84,8 +84,8 @@
           <span><%= t('.schools') %></span>
           <ul class="school-menu">
 
-            <% session[:organisation].schools.each do |school| %>
-              <li class="top-menu-item<% if session[:organisation].schools.last == school %> last<% end %>">
+            <% school_list.each do |school| %>
+              <li class="top-menu-item<% if school_list.last == school %> last<% end %>">
                 <%= link_to school.displayName,  school_path(school) %>
               </li>
             <% end %>

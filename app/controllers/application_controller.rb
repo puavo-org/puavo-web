@@ -3,7 +3,7 @@
 
 class ApplicationController < ActionController::Base
   before_filter :set_organisation_to_session, :set_locale
-  helper_method :theme
+  helper_method :theme, :school_list
 
   before_filter :ldap_setup_connection
   helper :all # include all helpers, all the time
@@ -17,6 +17,12 @@ class ApplicationController < ActionController::Base
   after_filter :remove_ldap_connection
 
   filter_parameter_logging :password, :new_password, :new_password_confirmation
+
+  # Cached schools query
+  def school_list
+    @school_cache if @school_cache
+    @school_cache = session[:organisation].schools
+  end
 
   private
 

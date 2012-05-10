@@ -28,8 +28,8 @@
         <% if current_user %>
             <li><%= link_to "Schools",  schools_path, :class => "sub" %>
               <ul>
-                <% session[:organisation].schools.each do |school| %>
-                  <li<% if session[:organisation].schools.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
+                <% school_list.each do |school| %>
+                  <li<% if school_list.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
                 <% end %>
               </ul>
             </li>
