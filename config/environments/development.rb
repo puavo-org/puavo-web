@@ -15,8 +15,6 @@ config.action_controller.perform_caching             = false
 
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
-config.cache_store = :file_store, "/home/opinsys/puavo/cache"
-
 config.cache_store = :memory_store
 
 if File.exists?(File.join(RAILS_ROOT,'tmp', 'debug.txt'))
