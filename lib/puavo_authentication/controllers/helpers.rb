@@ -33,7 +33,6 @@ module PuavoAuthentication
               User.authenticate(login, password)
             end
           end
-          logger.debug "Basic Auth User: " + user.inspect
           if user
             session[:dn] = user.dn
             session[:password_plaintext] = password
@@ -71,15 +70,16 @@ module PuavoAuthentication
         if session[:dn]
           dn = session[:dn]
           password = session[:password_plaintext]
+          logger.debug "Using user's credentials for LDAP connection"
         else
+          logger.debug "Using Puavo credentials for LDAP connection"
           dn =  default_ldap_configuration["bind_dn"]
           password = default_ldap_configuration["password"]
         end
         logger.debug "Set host, bind_dn, base and password by user:"
         logger.debug "host: #{host}"
         logger.debug "base: #{base}"
-        logger.debug "dn: #{session[:dn]}"
-        #logger.debug "password: #{session[:password_plaintext]}"
+        logger.debug "dn: #{dn}"
         LdapBase.ldap_setup_connection(host, base, dn, password)
       end
 
