@@ -6,7 +6,7 @@ en:
     group_name: Maintenance
   default_select_value: Select
   general_confirm: Are you sure?
-  destroy_confirm: "Do you really want to remove ({{object_name}})?"
+  destroy_confirm: "Do you really want to remove (%{object_name})?"
   layouts:
     application:
       schools: Schools
@@ -55,11 +55,11 @@ en:
     new_external_service: New
     rename_groups: Rename groups and roles
   flash:
-    added: "{{item}} was successfully created."
-    updated: "{{item}} was successfully updated."
-    destroyed: "{{item}} was successfully removed."
-    create_failed: "Failed to create {{model}}!"
-    save_failed: "{{model}} cannot be saved!"
+    added: "%{item} was successfully created."
+    updated: "%{item} was successfully updated."
+    destroyed: "%{item} was successfully removed."
+    create_failed: "Failed to create %{model}!"
+    save_failed: "%{model} cannot be saved!"
     group:
       role_added: "Role was added to group."
       role_added_failed: Failed to add.
@@ -88,12 +88,12 @@ en:
     password:
       successful: Password change succesfully!
       failed: Failed to change password!
-      invalid_login: "Invalid password or username ({{uid}})"
+      invalid_login: "Invalid password or username (%{uid})"
       confirmation_failed: New password doesn't match confirmation
-      invalid_user: "User ({{uid}}) does not exist"
+      invalid_user: "User (%{uid}) does not exist"
     school:
-      school_admin_added: "{{displayName}} ({{school_name}}) is now admin users"
-      school_admin_removed:  "{{displayName}} ({{school_name}}) is no longer admin user on this school"
+      school_admin_added: "%{displayName} (%{school_name}) is now admin users"
+      school_admin_removed:  "%{displayName} (%{school_name}) is no longer admin user on this school"
       wrong_user_type: School management access rights can be added only if type of user is admin
       save_failed: Failed to save access rights
       destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
@@ -123,7 +123,7 @@ en:
     index:
       actions: Actions
     show:
-      user_type_and_role: "User's type is <b>{{user_type}}</b> and has following roles: <b>{{roles}}</b>"
+      user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information
       contact_information: Contact information
       group_by_roles: Groups by roles
@@ -158,10 +158,10 @@ en:
         example: "Joe, Bloggs\nJane, Doe"
         hint: "You can paste the following text box users data which you like adding"
       show:
-        title: "Users ({{count}}) was successfully created."
+        title: "Users (%{count}) was successfully created."
         title_with_error: "All users was not successfully created!"
-        successful: "Successful: {{count}}"
-        failed: "Failed: {{count}}"
+        successful: "Successful: %{count}"
+        failed: "Failed: %{count}"
         pdf_info: You can print users list to paper
         title_of_failed_users_list: Following users was not successfully created!
       role:
@@ -201,7 +201,7 @@ en:
       dashboard: Dashboard
       admins: Admins
     admins:
-      this_school_admin_users: "{{school_name}} admin users"
+      this_school_admin_users: "%{school_name} admin users"
       other_admin_users: Add management access rights
       school_admins: School admins
     show:
@@ -254,19 +254,19 @@ en:
   activeldap:
     errors:
       messages:
-        taken: "{{attribute}} has already been taken"
-        blank: "{{attribute}} can't be blank"
-        invalid: "{{attribute}} is invalid"
-        confirmation: "{{attribute}} doesn't match confirmation"
-        too_long: "{{attribute}} is too long (maximum is {{count}} characters)"
-        too_short: "{{attribute}} is too short (min is {{count}} characters)"
+        taken: "%{attribute} has already been taken"
+        blank: "%{attribute} can't be blank"
+        invalid: "%{attribute} is invalid"
+        confirmation: "%{attribute} doesn't match confirmation"
+        too_long: "%{attribute} is too long (maximum is %{count} characters)"
+        too_short: "%{attribute} is too short (min is %{count} characters)"
         user:
           must_begin_with: Username must begin with the small letter
           invalid_characters: Username include invalid characters (allowed characters is a-z0-9.-)
         group: 
           invalid_characters: "Abbveriation include invalid characters (allowed characters is a-z0-9-)"
         school:
-          invalid_characters: "{{attribute}} include invalid characters (allowed characters is a-z0-9-)"
+          invalid_characters: "%{attribute} include invalid characters (allowed characters is a-z0-9-)"
     models:
       group: Group
       role: Role
