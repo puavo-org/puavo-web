@@ -322,6 +322,16 @@ class User < LdapBase
     ["teacher", "staff", "student", "visitor", "parent", "admin", "testuser"]
   end
 
+  def destroy(*args)
+    self.class.delete_caches uid
+    super
+  end
+
+  def update_attributes(*args)
+    self.class.delete_caches uid
+    super
+  end
+
   def id
     self.puavoId.to_s unless self.puavoId.nil?
   end
