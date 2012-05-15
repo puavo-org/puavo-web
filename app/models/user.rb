@@ -5,11 +5,6 @@ class User < LdapBase
 
   include Puavo::Authentication
 
-  # Raised by change_ldap_password method when password cannot be changed.
-  # Example this happens when kerberos servers is down.
-  class PasswordChangeFailed < UserError
-  end
-
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
@@ -239,7 +234,8 @@ class User < LdapBase
               '-s', new_password,
               dn.to_s )
       if $?.exitstatus != 0
-        raise PasswordChangeFailed, I18n.t('flash.password.failed')
+        # FIXME: On Ruby 1.9 log stderr. Not possible with 1.8.
+        raise User::UserError, I18n.t('flash.password.failed')
       end
     end
   end
