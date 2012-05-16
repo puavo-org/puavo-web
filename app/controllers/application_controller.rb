@@ -41,4 +41,29 @@ class ApplicationController < ActionController::Base
   def theme
     session[:organisation].value_by_key('theme') or "gray"
   end
+  def ldap_setup_connection
+    host = ""
+    base = ""
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    unless session[:organisation].nil?
+      host = session[:organisation].ldap_host
+      base = session[:organisation].ldap_base
+    end
+    if session[:dn]
+      dn = session[:dn]
+      password = session[:password_plaintext]
+    else
+      dn =  default_ldap_configuration["bind_dn"]
+      password = default_ldap_configuration["password"]
+    end
+    dn = "uid=admin,o=puavo"
+    password = "password"
+
+    logger.debug "Set host, bind_dn, base and password by user:"
+    logger.debug "host: #{host}"
+    logger.debug "base: #{base}"
+    logger.debug "dn: #{session[:dn]}"
+    #logger.debug "password: #{session[:password_plaintext]}"
+    LdapBase.ldap_setup_connection(host, base, dn, password)
+  end
 end
