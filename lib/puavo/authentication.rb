@@ -82,7 +82,7 @@ module Puavo
         # bad password.
         begin
           admin_permissions = School.search(
-            :filter => "(puavoSchoolAdmin=#{user_dn}d)",
+            :filter => "(puavoSchoolAdmin=#{user_dn})",
             :scope => :one, :attributes => ["puavoId"],
             :limit => 1 )
         rescue ActiveLdap::AuthenticationError
