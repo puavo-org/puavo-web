@@ -206,12 +206,14 @@ class User < LdapBase
       end
     end
 
-    # uid validation
-    if user = User.find(:first, :attribute => "uid", :value => self.uid)
-      if user.puavoId != self.puavoId
-        self.earlier_user = user
-        errors.add :uid, I18n.t("activeldap.errors.messages.taken",
-                                :attribute => I18n.t("activeldap.attributes.user.uid") )
+    # Validate uid uniqueness only if there are no other errors in the uid
+    if errors.select{ |k,v| k == "uid" }.empty?
+      if user = User.find(:first, :attribute => "uid", :value => self.uid)
+        if user.puavoId != self.puavoId
+          self.earlier_user = user
+          errors.add :uid, I18n.t("activeldap.errors.messages.taken",
+                                  :attribute => I18n.t("activeldap.attributes.user.uid") )
+        end
       end
     end
 
