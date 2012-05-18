@@ -32,18 +32,18 @@ Feature: Manage groups
     | displayName | cn      |
     | Class 4A    | class4a |
     And I am on the new group page
-    When I fill in "Group name" with "Class 4A" 
+    When I fill in "Group name" with "Class 4A"
     And I fill in "Abbreviation" with "class4a"
-    And I press "Create" 
+    And I press "Create"
     #Then I should see "Group name has already been taken"
     And I should see "Abbreviation has already been taken"
     When I fill in "Abbreviation" with "exampleschool1"
-    And I press "Create" 
+    And I press "Create"
     Then I should see "Abbreviation has already been taken"
 
   Scenario: Add group with empty Group name and Abbreviation
     And I am on the new group page
-    When I press "Create" 
+    When I press "Create"
     Then I should see "Group name can't be blank"
     And I should see "Abbreviation can't be blank"
     And I should see "Failed to create group!"
@@ -142,15 +142,15 @@ Feature: Manage groups
 
   Scenario: Add new group with invalid abbreviation
     Given I am on the new group page
-    When I fill in "Group name" with "Class 4A" 
+    When I fill in "Group name" with "Class 4A"
     And I fill in "Abbreviation" with "Class4a"
-    And I press "Create" 
+    And I press "Create"
     Then I should see "Abbveriation include invalid characters (allowed characters is a-z0-9-)"
     When I fill in "Abbreviation" with "class 4a"
-    And I press "Create" 
+    And I press "Create"
     Then I should see "Abbveriation include invalid characters (allowed characters is a-z0-9-)"
     When I fill in "Abbreviation" with "class-4a"
-    And I press "Create" 
+    And I press "Create"
     Then I should see "Group was successfully created."
     And I should see "Class 4A"
     And I should see "Example school 1"
