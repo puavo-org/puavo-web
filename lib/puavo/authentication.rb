@@ -45,11 +45,22 @@ module Puavo
           # to fetch the user object which contains the user dn.
 
           # This find call actually initializes the LDAP connection under the
-          # hood with those credentials.
+          # hood with Puavo credentials.
           user = self.find(:first, :attribute => "uid", :value => login)
+
           # Remove connection made with Puavo credentials
-          user.remove_connection
+          self.remove_connection
+
+          if user.nil?
+            return nil
+          end
+
           user.dn
+        end
+
+        if user_dn.nil?
+          logger.info "Login failed for #{ login }: Unknown username"
+          return false
         end
 
         user = LazyUser.new user_dn
