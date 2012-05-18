@@ -13,12 +13,13 @@ Feature: Manage groups
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
       | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
     And I am logged in as "pavel" with password "secret"
-  
+
   Scenario: Add new group to school
     Given I am on the new group page
-    When I fill in "Group name" with "Class 4A" 
+    Then I should see "New group"
+    When I fill in "Group name" with "Class 4A"
     And I fill in "Abbreviation" with "class4a"
-    And I press "Create" 
+    And I press "Create"
     Then I should see "Group was successfully created."
     And I should see "Class 4A"
     And I should see "Example school 1"
