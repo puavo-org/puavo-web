@@ -1,0 +1,30 @@
+<p>
+  <b>Displayname:</b>
+  <%=h @oauth_client.displayName %>
+</p>
+
+<p>
+  <b>Puavooauthclientid:</b>
+  <%=h @oauth_client.puavoOAuthClientId %>
+</p>
+
+<p>
+  <b>Userpassword:</b>
+  <%=h @oauth_client.userPassword %>
+</p>
+
+<p>
+  <b>Puavooauthaccess:</b>
+  <%=h @oauth_client.puavoOAuthAccess %>
+</p>
+
+<p>
+  <!--
+  <b>Puavodisabled:</b>
+  < %=h @oauth_client.puavoDisabled %>
+  -->
+</p>
+
+
+<%= link_to 'Edit', edit_oauth_client_path(@oauth_client) %> |
+<%= link_to 'Back', oauth_clients_path %>

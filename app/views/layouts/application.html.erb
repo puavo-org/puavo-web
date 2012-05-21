@@ -70,6 +70,7 @@
            <ul id="help" class="organisation-menu">
              <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
              <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+             <li class="top-menu-item"><%= link_to t('.oauth_clients'), oauth_clients_path %></li>
               <% if Puavo::DEVICE_CONFIG %>
                <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
                <li class="top-menu-item"><%= link_to t('.servers'), "/devices/servers" %></li>

@@ -22,6 +22,7 @@ en:
       printers: Printers
       search_placeholder: Search
       links: Links
+      oauth_clients: OAuth clients
     forms:
       required_field: "* = Required field"
   link:
@@ -356,6 +357,11 @@ en:
         dn: Bind DN
       device:
         puavoHostname: Name
+      oauth_client:
+        displayName: Name
+        puavoOAuthClientId: Client id
+        userPassword: Client secret
+        puavoOAuthAccess: Access
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
