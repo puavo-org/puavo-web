@@ -33,6 +33,8 @@ Before do |scenario|
 
   ExternalService.all.each do |e| e.destroy end
 
+  OauthClient.all.each do |c| c.destroy end
+
   domain_users = SambaGroup.find('Domain Users')
   domain_users.memberUid = []
   domain_users.save
