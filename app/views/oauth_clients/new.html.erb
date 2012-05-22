@@ -1,33 +1,9 @@
-<h1>New oauth_client</h1>
+<h1><span><%= t('.title') %></span></h1>
 
-<% form_for(@oauth_client) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :displayName %><br />
-    <%= f.text_field :displayName %>
-  </p>
-  <p>
-    <%= f.label :puavoOAuthClientId %><br />
-    <%= f.text_field :puavoOAuthClientId %>
-  </p>
-  <p>
-    <%= f.label :userPassword %><br />
-    <%= f.text_field :userPassword %>
-  </p>
-  <p>
-    <%= f.label :puavoOAuthAccess %><br />
-    <%= f.text_field :puavoOAuthAccess %>
-  </p>
-  <p>
-	<!--
-    < %= f.label :puavoDisabled %><br />
-    < %= f.check_box :puavoDisabled %>
-	-->
-  </p>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
+<%= render( :partial => 'form',
+            :locals => {
+              :path => oauth_clients_path,
+              :submit_text => t('link.create'),
+              :method => :post } ) %>
 
 <%= link_to 'Back', oauth_clients_path %>
