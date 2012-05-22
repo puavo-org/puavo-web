@@ -13,7 +13,8 @@ Feature: Manage users
 
   Scenario: Add new oauth client
     Given I follow "OAuth clients"
-    And I follow "New"
+    When I follow "New"
+    Then I should see "New OAuth client"
     When I fill in "Name" with "Example software"
     And I fill in "Client id" with "fXLDE5FKas42DFgsfhRTfdli"
     And I fill in "Client secret" with "zK7oEm34gYk3hA54DKX8da4"
