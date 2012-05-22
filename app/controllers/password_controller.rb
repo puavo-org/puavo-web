@@ -31,8 +31,8 @@ class PasswordController < ApplicationController
         format.html { render :action => "edit" }
       end
     end
-  rescue User::PasswordChangeFailed => e
-    logger.info "Execption User::PasswordChangeFailed: " + e.to_s
+  rescue User::UserError => e
+    logger.info "Execption User::UserError: " + e.to_s
     error_message_and_redirect(e)
   rescue Exception => e
     logger.info "Execption: " + e.to_s
@@ -60,7 +60,7 @@ class PasswordController < ApplicationController
         else
           @user = @logged_in_user
         end
-        
+
         system( 'ldappasswd', '-x', '-Z',
                 '-h', User.configuration[:host],
                 '-D', @logged_in_user.dn.to_s,
@@ -68,10 +68,10 @@ class PasswordController < ApplicationController
                 '-s', params[:user][:new_password],
                 @user.dn.to_s )
         if $?.exitstatus != 0
-          raise User::PasswordChangeFailed, I18n.t('flash.password.failed')
+          raise User::UserError, I18n.t('flash.password.failed')
         end
 
-        return true 
+        return true
       end
     end
 

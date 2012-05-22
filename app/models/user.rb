@@ -5,11 +5,6 @@ class User < LdapBase
 
   include Puavo::Authentication
 
-  # Raised by change_ldap_password method when password cannot be changed.
-  # Example this happens when kerberos servers is down.
-  class PasswordChangeFailed < UserError
-  end
-
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
                 :classes => ['top', 'posixAccount', 'inetOrgPerson', 'puavoEduPerson','sambaSamAccount','eduPerson'] )
@@ -67,7 +62,7 @@ class User < LdapBase
   def to_json(*args)
     self.class.build_hash_for_to_json(self).to_json
   end
-  
+
   # Building hash for to_json method with better name of attributes
   #  * data argument may be User or Hash
   def self.build_hash_for_to_json(data)
@@ -125,7 +120,7 @@ class User < LdapBase
         { :original_attribute_name => "sambaPrimaryGroupSID",
           :new_attribute_name => "samba_primary_group_SID",
           :value_block => lambda{ |value| Array(value).first } } ]
-    
+
     user_attributes.each do |attr|
       attribute_value = data.class == Hash ? data[attr[:original_attribute_name]] : data.send(attr[:original_attribute_name])
       new_user_hash[attr[:new_attribute_name]] = attr[:value_block].call(attribute_value)
@@ -211,12 +206,14 @@ class User < LdapBase
       end
     end
 
-    # uid validation
-    if user = User.find(:first, :attribute => "uid", :value => self.uid)
-      if user.puavoId != self.puavoId
-        self.earlier_user = user
-        errors.add :uid, I18n.t("activeldap.errors.messages.taken",
-                                :attribute => I18n.t("activeldap.attributes.user.uid") )
+    # Validate uid uniqueness only if there are no other errors in the uid
+    if errors.select{ |k,v| k == "uid" }.empty?
+      if user = User.find(:first, :attribute => "uid", :value => self.uid)
+        if user.puavoId != self.puavoId
+          self.earlier_user = user
+          errors.add :uid, I18n.t("activeldap.errors.messages.taken",
+                                  :attribute => I18n.t("activeldap.attributes.user.uid") )
+        end
       end
     end
 
@@ -239,7 +236,8 @@ class User < LdapBase
               '-s', new_password,
               dn.to_s )
       if $?.exitstatus != 0
-        raise PasswordChangeFailed, I18n.t('flash.password.failed')
+        # FIXME: On Ruby 1.9 log stderr. Not possible with 1.8.
+        raise User::UserError, I18n.t('flash.password.failed')
       end
     end
   end
@@ -259,11 +257,11 @@ class User < LdapBase
   end
 
   #
-  # Retruns the array (users). 
+  # Retruns the array (users).
   #
   # Example of Data: {"0"=>["Wilk", "Mabey"], "1"=>["Ben", "Joseph"], "2"=>["Class 4", "Class 4"]}
   # Example of Columns: {"0" => "Lastname", "1" => "Given names", "2" => "Group" }
-  # 
+  #
   def self.hash_array_data_to_user(data, columns, school)
     users = []
     max_data_column_number = (columns.count - 1).to_s
@@ -326,6 +324,16 @@ class User < LdapBase
     ["teacher", "staff", "student", "visitor", "parent", "admin", "testuser"]
   end
 
+  def destroy(*args)
+    self.class.delete_caches uid
+    super
+  end
+
+  def update_attributes(*args)
+    self.class.delete_caches uid
+    super
+  end
+
   def id
     self.puavoId.to_s unless self.puavoId.nil?
   end
@@ -346,14 +354,14 @@ class User < LdapBase
                                                         { "member" => [self.dn.to_s] }])
         end
       end
-      
+
       # Add roles
       add_roles.each do |role_id|
         Role.ldap_modify_operation("puavoId=#{role_id},#{Role.base.to_s}",
-                                   :add, [{ "memberUid" => [self.uid] }, 
+                                   :add, [{ "memberUid" => [self.uid] },
                                           { "member" => [self.dn.to_s] }])
       end
-      
+
       self.reload
       self.update_associations
     end
@@ -388,9 +396,9 @@ class User < LdapBase
                                                         { "member" => [self.dn.to_s] }])
       end
     end
-    
+
     new_group_list.each do |group_dn|
-      Group.ldap_modify_operation(group_dn, :add, [{ "memberUid" => [self.uid]}, 
+      Group.ldap_modify_operation(group_dn, :add, [{ "memberUid" => [self.uid]},
                                                    { "member" => [self.dn.to_s] }])
     end
   end
@@ -521,7 +529,7 @@ class User < LdapBase
         role.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
       end
       self.groups.each do |group|
-        group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )        
+        group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
       end
     end
     unless Array(self.school.memberUid).include?(self.uid)
@@ -555,7 +563,7 @@ class User < LdapBase
     self.school.remove_user(self)
   end
 
-  def set_samba_settings 
+  def set_samba_settings
     self.sambaSID = SambaDomain.next_samba_sid
     self.sambaAcctFlags = "[U]"
   end

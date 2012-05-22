@@ -6,7 +6,7 @@ fi:
     group_name: Ylläpito
   default_select_value: Valitse
   general_confirm: Oletko varma?
-  destroy_confirm: "Haluatko varmasti poistaa ({{object_name}})?"
+  destroy_confirm: "Haluatko varmasti poistaa (%{object_name})?"
   layouts:
     application:
       schools: Koulut
@@ -55,9 +55,9 @@ fi:
     new_external_service: Uusi # revalidate term?
     rename_groups: Vuosiluokkasiirto
   flash:
-    added: "{{item}} luotiin onnistuneesti."
-    updated: "{{item}} päivitettiin onnistuneesti."
-    destroyed: "{{item}} poistettiin onnistuneesti."
+    added: "%{item} luotiin onnistuneesti."
+    updated: "%{item} päivitettiin onnistuneesti."
+    destroyed: "%{item} poistettiin onnistuneesti."
     create_failed: "Lisääminen epäonnistui!"
     save_failed: "Tallennus epäonnistui!"
     group:
@@ -88,12 +88,12 @@ fi:
     password:
       successful: Salasanan vaihto onnistui!
       failed: Salasanan vaihto epäonnistui!
-      invalid_login: "Salasana tai käyttäjätunnus ({{uid}}) on virheellinen"
+      invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"
       confirmation_failed: Uusi salasana ei täsmää salasanan vahvistukseen
-      invalid_user: "Käyttäjätunnusta ({{uid}}) ei ole olemassa"
+      invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
     school:
-      school_admin_added: "{{displayName}} ({{school_name}}) on lisätty ylläpitäjäkäyttäjäksi"
-      school_admin_removed:  "{{displayName}} ({{school_name}}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
+      school_admin_added: "%{displayName} (%{school_name}) on lisätty ylläpitäjäkäyttäjäksi"
+      school_admin_removed:  "%{displayName} (%{school_name}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
       wrong_user_type: Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille
       destroyed_failed: Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua
   roles:
@@ -119,8 +119,8 @@ fi:
     index:
       actions: Toiminnot
     show:
-      user_type_and_role: "Käyttäjän tyyppi on <b>{{user_type}}</b> ja häneen liittyvät seuraavat roolit: 
-<b>{{roles}}</b>"
+      user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: 
+<b>%{roles}</b>"
       system_information: Järjestelmätietoja
       contact_information: Yhteystiedot
       group_by_roles: Roolien mukana tulevat ryhmät
@@ -155,10 +155,10 @@ fi:
         example: "Matti, Meikäläinen\nMaija, Meikäläinen"
         hint: Voit käyttää eroittimena myös sarkainta. Näin ollen voit liittää käyttäjien tiedot taulukkolaskentaohjelmasta leikepöydän kautta alla olevaan tekstikenttään.
       show:
-        title: "Käyttäjät ({{count}}) lisättiin onnistuneesti."
+        title: "Käyttäjät (%{count}) lisättiin onnistuneesti."
         title_with_error: "Kaikkien käyttäjien lisäys ei onnistunut!"
-        successful: "Onnistui: {{count}}"
-        failed: "Epäonnistui: {{count}}"
+        successful: "Onnistui: %{count}"
+        failed: "Epäonnistui: %{count}"
         pdf_info: Voit tulostaa käyttäjälistat paperille
         title_of_failed_users_list: Seuraavien käyttäjien luonti epäonnistui!
       role:
@@ -198,7 +198,7 @@ fi:
       dashboard: Kojetaulu
       admins: Ylläpitäjät
     admins:
-      this_school_admin_users: "{{school_name}}: ylläpitäjät"
+      this_school_admin_users: "%{school_name}: ylläpitäjät"
       other_admin_users: Lisää ylläpitäjän oikeudet
       school_admins: Ylläpitäjät
     show:
@@ -247,19 +247,19 @@ fi:
   activeldap:
     errors:
       messages:
-        taken: "{{attribute}} on jo käytössä"
-        blank: "{{attribute}} pitää olla asetettuna"
-        invalid: "{{attribute}} on virheellinen"
-        confirmation: "{{attribute}} ei täsmää vahvistukseen"
-        too_long: "{{attribute}} on liian pitkä (suurin sallittu pituus on {{count}} merkkiä)"
-        too_short: "{{attribute}} on liian lyhyt (pienin sallittu pituus on {{count}} merkkiä)"
+        taken: "%{attribute} on jo käytössä"
+        blank: "%{attribute} pitää olla asetettuna"
+        invalid: "%{attribute} on virheellinen"
+        confirmation: "%{attribute} ei täsmää vahvistukseen"
+        too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
+        too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         user:
           must_begin_with: Käyttäjätunnuksen pitää alkaa pienellä kirjaimella
           invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
         group: 
           invalid_characters: "Lyhenne sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
         school:
-          invalid_characters: "{{attribute}} sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
+          invalid_characters: "%{attribute} sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
     models:
       group: Ryhmä
       role: Rooli

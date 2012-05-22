@@ -8,7 +8,7 @@ class ExternalService < LdapBase
                 :classes => ["simpleSecurityObject", "account"] )
 
   belongs_to :groups, :class_name => 'SystemGroup', :many => 'member', :primary_key => "dn"
-  
+
   before_save :encrypt_userPassword
   after_save :update_groups
   before_destroy :remove_groups
@@ -18,7 +18,9 @@ class ExternalService < LdapBase
                        :message =>
                        I18n.t("activeldap.errors.messages.too_short",
                               :attribute => I18n.t("userPassword",
-                                                   :scope => "activeldap.attributes.external_service") ) )
+                                                   :scope => "activeldap.attributes.external_service"),
+                              :count => 12
+                              ))
 
   def update_groups
     new_groups = self.groups.map{ |g| g.class == String ? g : g.id }
@@ -45,7 +47,7 @@ class ExternalService < LdapBase
     if !self.userPassword.empty? && !self.userPassword.match(/^\{SSHA\}/)
       characters = (("a".."z").to_a + ("0".."9").to_a)
       salt = Array.new(16) { characters[rand(characters.size)] }.join
-      self.userPassword = "{SSHA}" + 
+      self.userPassword = "{SSHA}" +
         Base64.encode64( Digest::SHA1.digest( self.userPassword +
                                               salt) +
                          salt).chomp!
