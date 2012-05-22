@@ -245,6 +245,10 @@ en:
       title: New OAuth client
     edit:
       title: Editing OAuth client
+    index:
+      title: OAuth cliets
+      actions: Actions
+      new: New
   search:
     search_result:
       title_user: Users
