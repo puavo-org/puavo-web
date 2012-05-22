@@ -6,9 +6,9 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate( params[:user][:uid], params[:user][:password] ) # REST/OAuth?
+    if user_dn = User.authenticate( params[:user][:uid], params[:user][:password] ) # REST/OAuth?
       flash[:notice] = t('flash.session.login_successful')
-      session[:dn] = user.dn
+      session[:dn] = user_dn
       session[:password_plaintext] = params[:user][:password]
 
       #redirect_back_or_default schools_url

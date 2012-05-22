@@ -26,16 +26,15 @@ module PuavoAuthentication
           logger.debug "Using HTTP basic authentication"
           password = ""
 
-          user = authenticate_with_http_basic do |login, password|
+          user_dn = authenticate_with_http_basic do |login, password|
             if login.match(/^service\//)
               ExternalService.authenticate(login.match(/^service\/(.*)/)[1], password)
             else
               User.authenticate(login, password)
             end
           end
-          logger.debug "Basic Auth User: " + user.inspect
-          if user
-            session[:dn] = user.dn
+          if user_dn
+            session[:dn] = user_dn
             session[:password_plaintext] = password
             logger.debug "Logged in with http basic authentication"
           else
@@ -71,15 +70,16 @@ module PuavoAuthentication
         if session[:dn]
           dn = session[:dn]
           password = session[:password_plaintext]
+          logger.debug "Using user's credentials for LDAP connection"
         else
+          logger.debug "Using Puavo credentials for LDAP connection"
           dn =  default_ldap_configuration["bind_dn"]
           password = default_ldap_configuration["password"]
         end
         logger.debug "Set host, bind_dn, base and password by user:"
         logger.debug "host: #{host}"
         logger.debug "base: #{base}"
-        logger.debug "dn: #{session[:dn]}"
-        #logger.debug "password: #{session[:password_plaintext]}"
+        logger.debug "dn: #{dn}"
         LdapBase.ldap_setup_connection(host, base, dn, password)
       end
 
