@@ -1,0 +1,31 @@
+<% form_for(@oauth_client, :url => path, :html => { :method => method }) do |f| %>
+  <p>
+    <%= f.label :displayName %><br />
+    <%= f.text_field :displayName %>
+  </p>
+  <p>
+    <%= f.label :puavoOAuthClientId %><br />
+    <%= f.text_field :puavoOAuthClientId %>
+  </p>
+  <p>
+    <%= f.label :userPassword %><br />
+    <%= f.text_field :userPassword %>
+  </p>
+  <p>
+    <%= f.label :puavoOAuthAccess %><br />
+    <%= f.text_field :puavoOAuthAccess %>
+  </p>
+  <p>
+	<!--
+    < %= f.label :puavoDisabled %><br />
+    < %= f.check_box :puavoDisabled %>
+	-->
+  </p>
+  <p>
+    <%= f.submit submit_text %>
+<!--	<div class="cancel">
+      <%= link_to t('link.cancel'), path, :class => 'cancel_button' %>
+	</div>
+-->
+  </p>
+<% end %>
