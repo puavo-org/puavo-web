@@ -2,21 +2,18 @@
 
 <table>
   <tr>
-    <th>Displayname</th>
-    <th>Puavooauthclientid</th>
-    <th>Userpassword</th>
-    <th>Puavooauthaccess</th>
-    <th>Puavodisabled</th>
+    <th><%= t('activeldap.attributes.oauth_client.displayName') %></th>
+    <th><%= t('activeldap.attributes.oauth_client.puavoOAuthClientId') %></th>
   </tr>
 
 <% @oauth_clients.each do |oauth_client| %>
   <tr>
-    <td><%=h oauth_client.displayName %></td>
+    <td><%= link_to oauth_client.displayName, oauth_client %></td>
     <td><%=h oauth_client.puavoOAuthClientId %></td>
     <td><%=h oauth_client.puavoOAuthAccess %></td>
     <td><%= link_to 'Show', oauth_client %></td>
     <td><%= link_to 'Edit', edit_oauth_client_path(oauth_client) %></td>
-    <td><%= link_to 'Destroy', oauth_client, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to t('link.destroy'), oauth_client, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
