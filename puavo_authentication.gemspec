@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{puavo_authentication}
-  s.version = "0.0.17"
+  s.name = "puavo_authentication"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jouni Korhonen"]
-  s.date = %q{2012-03-27}
-  s.description = %q{Authentication solution for Puavo applications}
-  s.email = %q{puavo@opinsys.fi}
+  s.date = "2012-05-22"
+  s.description = "Authentication solution for Puavo applications"
+  s.email = "puavo@opinsys.fi"
   s.extra_rdoc_files = [
     "COPYING",
     "README.rdoc",
@@ -33,13 +33,12 @@ Gem::Specification.new do |s|
     "lib/user_error.rb",
     "rails/init.rb"
   ]
-  s.homepage = %q{http://github.com/opinsys/puavo_authentication}
+  s.homepage = "http://github.com/opinsys/puavo_authentication"
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Authentication solution for Puavo applications}
+  s.rubygems_version = "1.8.24"
+  s.summary = "Authentication solution for Puavo applications"
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
