@@ -4,27 +4,6 @@ module Puavo
       base.send :extend, ClassMethods
     end
 
-    # Works like the User object from ActiveLdap, but only for the dn method.
-    # Real user object can fetched with real_user if needed.
-    #
-    # TODO: We could simulate the real user object lazily with method_missing,
-    # but Puavo does not currently use this object too much from here so there
-    # is no really a need for it yet.
-    class LazyUser
-
-      def initialize(dn)
-        @dn = dn
-      end
-
-      def dn
-        @dn
-      end
-
-      def real_user
-        User.find dn
-      end
-
-    end
 
     module ClassMethods
 
@@ -36,6 +15,8 @@ module Puavo
         Rails.cache.delete dn_cache_key login_uid
       end
 
+      # Authenticate user with login username and password.
+      # Returns user dn string on successful login or false on invalid login
       def authenticate(login, password)
 
         # To authenticate an user we need to make a LDAP bind with user's dn
@@ -62,8 +43,6 @@ module Puavo
           logger.info "Login failed for #{ login }: Unknown username"
           return false
         end
-
-        user = LazyUser.new user_dn
 
         # Setup new ActiveLdap connections to use user's credentials
         LdapBase.ldap_setup_connection(
@@ -92,18 +71,18 @@ module Puavo
 
         # Allow authentication if user is  a school admin in the some school.
         if not admin_permissions.empty?
-          return user
+          return user_dn
         end
 
         # Allow authentication if user is an organisation owner
         organisation = LdapOrganisation.first
         if organisation && organisation.owner.include?(user_dn)
-          return user
+          return user_dn
         end
 
         # Allow authentication always if logged in user an external service
         if user_dn.rdns[1]["ou"] == "System Accounts"
-          return user
+          return user_dn
         end
 
         logger.info "Login failed for #{ login } (#{ user_dn }): Not school admin or organisation owner"

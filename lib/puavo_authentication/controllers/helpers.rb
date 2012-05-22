@@ -26,15 +26,15 @@ module PuavoAuthentication
           logger.debug "Using HTTP basic authentication"
           password = ""
 
-          user = authenticate_with_http_basic do |login, password|
+          user_dn = authenticate_with_http_basic do |login, password|
             if login.match(/^service\//)
               ExternalService.authenticate(login.match(/^service\/(.*)/)[1], password)
             else
               User.authenticate(login, password)
             end
           end
-          if user
-            session[:dn] = user.dn
+          if user_dn
+            session[:dn] = user_dn
             session[:password_plaintext] = password
             logger.debug "Logged in with http basic authentication"
           else
