@@ -36,4 +36,20 @@ Feature: Manage users
       | client 2 | 1234567002 |
       | client 4 | 1234567004 |
 
-
+  Scenario: Edit OAuth client
+    Given the following oauth client:
+      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthAccess  |
+      | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
+      | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
+      | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
+      | client 4    |         1234567004 | secretpassword4 | read:presonalInfo |
+    And I follow "OAuth clients"
+    And I follow "client 1"
+    When I follow "Edit"
+    Then I should see "Editing OAuth client"
+    When I fill in "Name" with "Example software"
+    And I fill in "Client id" with "fXLDE5FKas42DFgsfhRTfdli"
+    And I fill in "Client secret" with "zK7oEm34gYk3hA54DKX8da4"
+    And I fill in "Access" with "read:personalInfo"
+    And I press "Update"
+    Then I should see "Example software"
