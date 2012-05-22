@@ -104,11 +104,11 @@ class Users::ImportController < ApplicationController
     flash[:notice] = exception.message
     flash[:notice_css_class] = "notice_error"
     @number_of_columns = params[:users_import_columns].length
-    @raw_users = params[:users].values.transpose
+    @raw_users = to_list(params[:users])
     render "refine"
   rescue RoleEduPersonAffiliationError => exception
     @number_of_columns = @columns.length
-    @raw_users = params[:users].values.transpose
+    @raw_users = to_list(params[:users])
     @roles = Role.all.delete_if{ |r| r.puavoSchool != @school.dn }
     render "role"
   end
@@ -326,5 +326,11 @@ class Users::ImportController < ApplicationController
         pdf.draw_text "#{session[:organisation].name}, #{@school.displayName}, #{users.first.roles.first.displayName}", :at => pdf.bounds.top_left
       end
     end
+  end
+
+  def to_list(data)
+    data.keys.sort{ |a,b| a.to_i <=> b.to_i }.map do |key|
+      data[key]
+    end.transpose
   end
 end
