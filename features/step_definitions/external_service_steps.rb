@@ -21,9 +21,8 @@ Then /^"([^"]*)" is not member of "([^"]*)" system group$/ do |uid, group_cn|
 end
 
 Then /^I should bind "([^\"]*)" with "([^\"]*)" to ldap$/ do |dn, password|
-  host = ActiveLdap::Base.ensure_configuration["host"]
-  ldap = LDAP::Conn.new( host )
-  ldap.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
-  ldap.start_tls
-  ldap.bind(dn, password)
+  set_ldap_admin_connection
+  external_service = ExternalService.find(dn)
+  external_service.bind(password)
+  external_service.remove_connection
 end
