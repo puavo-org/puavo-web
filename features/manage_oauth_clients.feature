@@ -54,3 +54,18 @@ Feature: Manage users
     And I fill in "Access" with "read:personalInfo"
     And I press "Update"
     Then I should see "Example software"
+
+  Scenario: List OAuth client
+    Given the following oauth client:
+      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthAccess  |
+      | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
+      | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
+      | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
+      | client 4    |         1234567004 | secretpassword4 | read:presonalInfo |
+    When I follow "OAuth clients"
+    Then I should see the following oauth clients:
+      | Name     |  Client id |
+      | client 1 | 1234567001 |
+      | client 2 | 1234567002 |
+      | client 3 | 1234567003 |
+      | client 4 | 1234567004 |

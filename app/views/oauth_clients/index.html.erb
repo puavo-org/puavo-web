@@ -1,17 +1,15 @@
-<h1>Listing oauth_clients</h1>
-
-<table>
+<h1><span><%= t('.title')%></span></h1>
+<table class="list">
   <tr>
     <th><%= t('activeldap.attributes.oauth_client.displayName') %></th>
     <th><%= t('activeldap.attributes.oauth_client.puavoOAuthClientId') %></th>
+    <th colspan="2"><%= t('.actions') %></th>
   </tr>
 
 <% @oauth_clients.each do |oauth_client| %>
   <tr>
     <td><%= link_to oauth_client.displayName, oauth_client %></td>
     <td><%=h oauth_client.puavoOAuthClientId %></td>
-    <td><%=h oauth_client.puavoOAuthAccess %></td>
-    <td><%= link_to 'Show', oauth_client %></td>
     <td><%= link_to 'Edit', edit_oauth_client_path(oauth_client) %></td>
     <td><%= link_to t('link.destroy'), oauth_client, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
@@ -19,5 +17,8 @@
 </table>
 
 <br />
-
-<%= link_to 'New oauth_client', new_oauth_client_path %>
+<% content_for :right do %>
+<div>
+  <%= link_to t('.new'), new_oauth_client_path %>
+</div>
+<% end %>
