@@ -21,3 +21,19 @@ Feature: Manage users
 #    And I check "False"
     And I press "Create"
     Then I should see "Example software"
+
+  Scenario: Delete oauth client
+    Given the following oauth client:
+      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthAccess  |
+      | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
+      | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
+      | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
+      | client 4    |         1234567004 | secretpassword4 | read:presonalInfo |
+    When I delete the 3rd oauth client
+    Then I should see the following oauth clients:
+      | Name     |  Client id |
+      | client 1 | 1234567001 |
+      | client 2 | 1234567002 |
+      | client 4 | 1234567004 |
+
+
