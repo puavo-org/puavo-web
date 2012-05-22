@@ -90,11 +90,6 @@ module Puavo
           return false
         end
 
-        # Allow authentication always if logged in user is ExteralService object
-        if user.class == ExternalService
-          return user
-        end
-
         # Allow authentication if user is  a school admin in the some school.
         if not admin_permissions.empty?
           return user
@@ -103,6 +98,11 @@ module Puavo
         # Allow authentication if user is an organisation owner
         organisation = LdapOrganisation.first
         if organisation && organisation.owner.include?(user_dn)
+          return user
+        end
+
+        # Allow authentication always if logged in user an external service
+        if user_dn.rdns[1]["ou"] == "System Accounts"
           return user
         end
 
