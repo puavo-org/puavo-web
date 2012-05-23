@@ -102,18 +102,14 @@ class UsersController < ApplicationController
     respond_to do |format|
       begin
         unless @user.save
-          raise
+          raise User::UserError, I18n.t('flash.user.create_failed')
         end
         flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
-      rescue User::PasswordChangeFailed => e
-        flash[:alert] = t('flash.password_set_failed')
-        format.html { redirect_to( user_path(@school,@user) ) }
-      #rescue ActiveLdap::LdapError::ConstraintViolation
-      rescue Exception => e
+      rescue User::UserError => e
         logger.info "Create user, Exception: " + e.to_s
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
-        error_message_and_render(format, 'new', t('flash.user.create_failed'))
+        error_message_and_render(format, 'new', e.message)
       end
     end
   end
@@ -129,7 +125,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       begin
         unless @user.update_attributes(params[:user])
-          raise
+          raise User::UserError, I18n.t('flash.user.save_failed')
         end
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
@@ -139,13 +135,9 @@ class UsersController < ApplicationController
         end
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
-      rescue User::PasswordChangeFailed => e
+      rescue User::UserError => e
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
-        error_message_and_render(format, 'edit',  t('flash.password_set_failed'))
-      rescue Exception => e
-        logger.info "Update user, Exception: " + e.to_s
-        @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
-        error_message_and_render(format, 'edit', t('flash.user.save_failed'))
+        error_message_and_render(format, 'edit',  e.message)
       end
     end
   end
