@@ -76,7 +76,7 @@ module Puavo
 
         # Allow authentication if user is an organisation owner
         organisation = LdapOrganisation.first
-        if organisation && organisation.owner.include?(user_dn)
+        if organisation && organisation.owner && organisation.owner.include?(user_dn)
           return user_dn
         end
 
