@@ -49,6 +49,7 @@ Feature: Manage users
     And I follow "client 1"
     When I follow "Edit"
     Then I should see "Editing OAuth client"
+    And the "Client secret" field should not contain "SSHA"
     When I fill in "Name" with "Example software"
     And I fill in "Client id" with "fXLDE5FKas42DFgsfhRTfdli"
     And I fill in "Client secret" with "zK7oEm34gYk3hA54DKX8da4"
