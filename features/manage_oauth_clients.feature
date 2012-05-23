@@ -22,6 +22,7 @@ Feature: Manage users
 #    And I check "False"
     And I press "Create"
     Then I should see "Example software"
+    And I should not see "{SSHA}"
 
   Scenario: Delete oauth client
     Given the following oauth client:
