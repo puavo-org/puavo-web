@@ -338,6 +338,10 @@ class User < LdapBase
     self.puavoId.to_s unless self.puavoId.nil?
   end
 
+  def organisation_owner?
+    LdapOrganisation.current.owner.include? self.dn
+  end
+
   # Update user's role list by role_ids
   def update_roles
     unless self.role_ids.nil?
