@@ -61,11 +61,11 @@ class School < BaseGroup
     )
   end
 
-  def self.all_with_permissions
-    if Puavo::Authorization.organisation_owner?
+  def self.all_with_permissions(user)
+    if user.organisation_owner?
       self.all.sort
     else
-      self.find(:all, :attribute => "puavoSchoolAdmin", :value => Puavo::Authorization.current_user.dn).sort
+      self.find(:all, :attribute => "puavoSchoolAdmin", :value => user.dn).sort
     end
   end
 
