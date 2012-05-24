@@ -9,7 +9,7 @@ class SchoolsController < ApplicationController
     end
 
     respond_to do |format|
-      if @schools.count < 2  && !organisation_owner?
+      if @schools.count < 2  && !current_user.organisation_owner?
         format.html { redirect_to( school_path(@schools.first) ) }
         format.json  { render :json => @schools }
       else

@@ -64,7 +64,7 @@
   <div class="topNavContentContainer">
   <ul id="top-menu">
       <% if current_user %>
-        <% if organisation_owner? %>
+        <% if current_user.organisation_owner? %>
         <li class="organisation-menu-button">
            <span><%= session[:organisation].name %></span>
            <ul id="help" class="organisation-menu">
@@ -90,7 +90,7 @@
               </li>
             <% end %>
 
-            <% if organisation_owner? %>
+            <% if current_user.organisation_owner? %>
             <li class="add-new-school">
               <%= link_to t('link.new_school'), new_school_path %>
             </li>
