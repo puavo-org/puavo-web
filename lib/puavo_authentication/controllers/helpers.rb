@@ -29,34 +29,79 @@ module PuavoAuthentication
 
       end
 
-      def login_required
-        case request.format
-        when !current_user && Mime::JSON
-          logger.debug "Using HTTP basic authentication"
-          password = ""
+      # Returns dn and password for some available login mean
+      def login_credentials
 
-          user_dn = authenticate_with_http_basic do |login, password|
-            if login.match(/^service\//)
-              ExternalService.authenticate(login.match(/^service\/(.*)/)[1], password)
-            else
-              User.authenticate(login, password)
+        @UserClass = User
+
+        if auth_header = request.headers["HTTP_AUTHORIZATION"]
+          type, data = auth_header.split
+          type.downcase!
+
+          if type == "basic"
+            authenticate_with_http_basic do |uid, password|
+              logger.debug "Using basic authentication with #{ uid }"
+
+              if uid.match(/^service\//)
+                uid = uid.match(/^service\/(.*)/)[1]
+                # User is initialized from ExternalService in this special case
+                @UserClass = ExternalService
+              end
+
+              return @UserClass.uid_to_dn(uid), password, uid
             end
           end
-          if user_dn
-            session[:dn] = user_dn
-            session[:password_plaintext] = password
-            logger.debug "Logged in with http basic authentication"
-          else
-            request_http_basic_authentication
-          end
-        else
-          unless current_user
-            store_location
-            flash[:notice] = t('must_be_logged_in')
-            redirect_to login_path
-            return false
-          end
+
         end
+
+        if uid = session[:uid]
+          logger.debug "Using session authentication with #{ uid }"
+          return User.uid_to_dn(uid), session[:password_plaintext], uid
+        end
+
+      end
+
+      # Authenticate filter
+      def require_login
+        return if @logged_in_dn
+
+        begin
+          dn, password, uid = login_credentials
+        rescue Puavo::Authentication::UnknownUID => e
+          logger.debug "Failed to get credentials: #{ e.message }"
+          show_authentication_error t('flash.session.failed')
+          return false
+        end
+
+        if dn.nil?
+          logger.debug "No credentials supplied"
+          show_authentication_error t('must_be_logged_in')
+          return false
+        end
+
+        logger.debug "Going to login in with #{ dn }"
+
+        begin
+          @UserClass.authorize dn, password
+        rescue Puavo::Authentication::AuthenticationError => e
+          logger.info "Login failed for #{ dn } (#{ uid }): #{ e }"
+          show_authentication_error t('flash.session.failed')
+          return false
+        end
+
+        @logged_in_dn = dn
+        nil
+      end
+
+      def show_authentication_error(msg)
+        # if request.format == Mime::JSON
+        # end
+        # if @authentication_type == "session"
+        # end
+        session.delete :password_plaintext
+        session.delete :uid
+        flash[:notice] = t('flash.session.failed')
+        redirect_to login_path
       end
 
       def store_location
