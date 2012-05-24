@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_filter :ldap_setup_connection
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user, :ldap_setup_connection, :organisation_owner?
+  helper_method :current_user, :ldap_setup_connection
 
   before_filter :require_login
   before_filter :find_school
