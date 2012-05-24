@@ -157,10 +157,6 @@ module PuavoAuthentication
         end
       end
 
-      def organisation_owner?
-        raise "DEPRECATED call to organisation_owner? helper. Use `current_user.organisation_owner?` instead"
-      end
-
     end
   end
 end
