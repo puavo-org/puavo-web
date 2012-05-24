@@ -95,6 +95,11 @@ module PuavoAuthentication
           return false
         end
 
+        if session[:login_flash]
+          flash[:notice] = session[:login_flash]
+          session.delete :login_flash
+        end
+
         @logged_in_dn = dn
         nil
       end
