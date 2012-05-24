@@ -38,6 +38,12 @@ module PuavoAuthentication
           type, data = auth_header.split
           type.downcase!
 
+          if type == "token"
+            credentials = ActiveSupport::JSON.decode Base64.decode64(data)
+            logger.debug "Using OAuth #{ credentials }"
+            return credentials["dn"], credentials["pw"]
+          end
+
           if type == "basic"
             authenticate_with_http_basic do |uid, password|
               logger.debug "Using basic authentication with #{ uid }"
