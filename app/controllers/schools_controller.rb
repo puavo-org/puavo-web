@@ -5,7 +5,7 @@ class SchoolsController < ApplicationController
     if request.format == 'application/json'
       @schools = School.all.sort
     else
-      @schools = School.all_with_permissions
+      @schools = School.all_with_permissions current_user
     end
 
     respond_to do |format|
