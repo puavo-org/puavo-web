@@ -56,7 +56,7 @@
   <li class="tool">
   <span><%= t('link.more')%></span>
   <ul>
-  <% if organisation_owner? %>
+  <% if current_user.organisation_owner? %>
     <li>
     <%= link_to t('link.rename_groups'), new_rename_groups_path(@school) %>
     </li>
