@@ -11,7 +11,7 @@
   <% objects.each do |o| %>
   <tr>
     <td>
-      <% if organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(o['puavoSchool']) %>
+      <% if current_user.organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(o['puavoSchool']) %>
       <%= link_to o["name"], path.call(o['school_id'], o['id']) %>
       <% else %>
       <%=h o["name"] %>
