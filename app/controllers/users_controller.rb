@@ -183,7 +183,7 @@ class UsersController < ApplicationController
   # GET /:school_id/users/:id/select_school
   def select_school
     @user = User.find(params[:id])
-    @schools = School.all_with_permissions
+    @schools = School.all_with_permissions current_user
 
     respond_to do |format|
       format.html
