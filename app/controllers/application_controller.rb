@@ -12,7 +12,6 @@ class ApplicationController < ActionController::Base
 
   before_filter :require_login
   before_filter :find_school
-  before_filter :set_authorization_user
 
   after_filter :remove_ldap_connection
 
