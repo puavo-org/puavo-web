@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   # Cached schools query
   def school_list
     return @school_cache if @school_cache
-    @school_cache = session[:organisation].schools
+    @school_cache = session[:organisation].schools current_user
   end
 
   private
