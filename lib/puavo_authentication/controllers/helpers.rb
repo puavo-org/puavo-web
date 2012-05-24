@@ -29,35 +29,38 @@ module PuavoAuthentication
 
       end
 
+      # Returns [oauth_dn, password] if user supplied "Authorization: token <data>" header
+      def oauth_credentials
+        if auth_header = request.headers["HTTP_AUTHORIZATION"]
+          type, data = auth_header.split
+          if type.downcase == "token"
+            credentials = ActiveSupport::JSON.decode Base64.decode64 data
+            return credentials["dn"], credentials["pw"]
+          end
+        end
+        return nil
+      end
+
       # Returns dn and password for some available login mean
       def login_credentials
 
         @UserClass = User
 
-        if auth_header = request.headers["HTTP_AUTHORIZATION"]
-          type, data = auth_header.split
-          type.downcase!
+        if oc = oauth_credentials
+          logger.debug "Using OAuth authentication with #{ oc[0] }"
+          return oc
+        end
 
-          if type == "token"
-            credentials = ActiveSupport::JSON.decode Base64.decode64(data)
-            logger.debug "Using OAuth #{ credentials }"
-            return credentials["dn"], credentials["pw"]
+        authenticate_with_http_basic do |uid, password|
+          logger.debug "Using basic authentication with #{ uid }"
+
+          if uid.match(/^service\//)
+            uid = uid.match(/^service\/(.*)/)[1]
+            # User is initialized from ExternalService in this special case
+            @UserClass = ExternalService
           end
 
-          if type == "basic"
-            authenticate_with_http_basic do |uid, password|
-              logger.debug "Using basic authentication with #{ uid }"
-
-              if uid.match(/^service\//)
-                uid = uid.match(/^service\/(.*)/)[1]
-                # User is initialized from ExternalService in this special case
-                @UserClass = ExternalService
-              end
-
-              return @UserClass.uid_to_dn(uid), password, uid
-            end
-          end
-
+          return @UserClass.uid_to_dn(uid), password, uid
         end
 
         if uid = session[:uid]

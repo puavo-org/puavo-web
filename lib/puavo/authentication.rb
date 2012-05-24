@@ -55,6 +55,7 @@ module Puavo
         return dn
       end
 
+
       def find_by_uid(uid)
         self.find uid_to_dn uid
       end
