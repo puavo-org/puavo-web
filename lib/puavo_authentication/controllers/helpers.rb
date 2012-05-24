@@ -100,14 +100,17 @@ module PuavoAuthentication
       end
 
       def show_authentication_error(msg)
-        # if request.format == Mime::JSON
-        # end
-        # if @authentication_type == "session"
-        # end
         session.delete :password_plaintext
         session.delete :uid
-        flash[:notice] = t('flash.session.failed')
-        redirect_to login_path
+        if request.format == Mime::JSON
+          render :json => {
+            :error => "authorization error",
+            :message => msg,
+          }.to_json
+        else
+          flash[:notice] = t('flash.session.failed')
+          redirect_to login_path
+        end
       end
 
       def store_location
