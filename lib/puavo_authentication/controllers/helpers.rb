@@ -1,23 +1,32 @@
 module PuavoAuthentication
   module Controllers
     module Helpers
+
+      # Lazy getter for current user object
       def current_user
-        unless session[:dn].nil?
-          unless @current_user.nil?
-            return @current_user
-          else
-            begin
-              return @current_user = User.find(session[:dn]) # REST/OAuth?
-            rescue
-              logger.info "Session's user not found! User is removed from ldap server."
-              logger.info "session[:dn]: #{session[:dn]}"
-              # Delete ldap connection informations from session.
-              session.delete :password_plaintext
-              session.delete :dn
-            end
-          end
+
+        # ExternalService has no permission to find itself.
+        return if @UserClass == ExternalService
+
+        # TODO
+        if @logged_in_dn.starts_with? "puavoOAuthAccessToken"
+          logger.warn "Cannot get User object for #{ @logged_in_dn }"
+          return
         end
-        return nil
+
+        return @current_user if @current_user
+
+        if @logged_in_dn
+          @current_user = @UserClass.find @logged_in_dn
+          return @current_user
+        end
+
+        logger.info "Session's user not found! User is removed from ldap server."
+        logger.info "session[:dn]: #{session[:dn]}"
+        # Delete ldap connection informations from session.
+        session.delete :password_plaintext
+        session.delete :uid
+
       end
 
       def login_required
