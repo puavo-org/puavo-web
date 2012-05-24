@@ -5,50 +5,81 @@ module Puavo
     end
 
 
+    class AuthenticationError < UserError
+    end
+
+    # Bad username or password
+    class AuthenticationFailed < AuthenticationError
+    end
+
+    # No permissions
+    class AuthorizationFailed < AuthenticationError
+    end
+
+    class UnknownUID < UserError
+    end
+
     module ClassMethods
 
-      def dn_cache_key(login_uid)
-        "user_dn:#{ login_uid }"
+      def dn_cache_key(uid)
+        "user_dn:#{ uid }"
       end
 
-      def delete_caches(login_uid)
-        Rails.cache.delete dn_cache_key login_uid
+      def delete_caches(uid)
+        Rails.cache.delete dn_cache_key uid
       end
 
-      # Authenticate user with login username and password.
-      # Returns user dn string on successful login or false on invalid login
-      def authenticate(login, password)
+      def uid_to_dn(uid)
+        if uid.nil? || uid.empty?
+          raise UnknownUID, "Cannot get dn from empty or nil uid"
+        end
 
-        # To authenticate an user we need to make a LDAP bind with user's dn
-        # and password. Lets look it up from cache:
-        user_dn = Rails.cache.fetch dn_cache_key(login) do
+        logger.debug "Looking up dn for #{ uid }"
+        dn = Rails.cache.fetch dn_cache_key(uid) do
           # On cache miss we need to use the Puavo credentials from config/ldap.yml
           # to fetch the user object which contains the user dn.
 
           # This find call actually initializes the LDAP connection under the
           # hood with Puavo credentials.
-          user = self.find(:first, :attribute => "uid", :value => login)
+          user = self.find(:first, :attribute => "uid", :value => uid)
 
-          # Remove connection made with Puavo credentials
-          self.remove_connection
-
-          if user.nil?
-            return nil
+          if user
+            user.dn.to_s
+          else
+            nil
           end
-
-          user.dn
         end
+
+        raise UnknownUID, "Cannot get dn for #{ uid }" if not dn
+        logger.debug "Found #{ dn } for #{ uid }"
+        return dn
+      end
+
+      def find_by_uid(uid)
+        self.find uid_to_dn uid
+      end
+
+
+      # Authenticate dn to LDAP and make ActiveLdap to use these credentials in
+      # future connections.
+      #
+      # Raises AuthenticationFailed if connection could not be made.
+      # Returns possible admin permissions on successful connect
+      def authenticate(user_dn, password)
 
         if user_dn.nil?
-          logger.info "Login failed for #{ login }: Unknown username"
-          return false
+          logger.info "Login failed: Bad dn"
+          raise AuthenticationFailed, "Bad dn"
         end
+
+        # Remove previous connection
+        self.remove_connection
 
         # Setup new ActiveLdap connections to use user's credentials
         LdapBase.ldap_setup_connection(
           LdapBase.configuration[:host],
           LdapBase.base.to_s,
-          user_dn,
+          user_dn.to_s,
           password)
 
         # Do not never ever allow anonymous connections in Puavo. Should be
@@ -60,33 +91,48 @@ module Puavo
         # will raise ActiveLdap::AuthenticationError if user supplied a
         # bad password.
         begin
-          admin_permissions = School.search(
+          return School.search(
             :filter => "(puavoSchoolAdmin=#{user_dn})",
             :scope => :one, :attributes => ["puavoId"],
             :limit => 1 )
         rescue ActiveLdap::AuthenticationError
-          logger.info "Login failed for #{ login } (#{ user_dn }): Bad password"
-          return false
+          raise AuthenticationFailed, "Bad dn or password"
         end
 
-        # Allow authentication if user is  a school admin in the some school.
+      end
+
+      def authorize(user_dn, password)
+
+        user_dn = ActiveLdap::DistinguishedName.parse user_dn.to_s
+
+        admin_permissions = authenticate user_dn, password
+
+        # Authorize school admins
         if not admin_permissions.empty?
+          logger.info "Authorization ok: Admin #{ user_dn }"
           return user_dn
         end
 
-        # Allow authentication if user is an organisation owner
+        # Authorize OAuth users
+        if user_dn.rdns[0].keys[0] == "puavoOAuthAccessToken"
+          logger.info "Authorization ok: OAuth #{ user_dn }"
+          return user_dn
+        end
+
+        # Authorize External Services
+        if user_dn.rdns[1]["ou"] == "System Accounts"
+          logger.info "Authorization ok: External Service #{ user_dn }"
+          return user_dn
+        end
+
+        # Authorize organisation owners
         organisation = LdapOrganisation.first
         if organisation && organisation.owner && organisation.owner.include?(user_dn)
+          logger.info "Authorization ok: Organisation owner #{ user_dn }"
           return user_dn
         end
 
-        # Allow authentication always if logged in user an external service
-        if user_dn.rdns[1]["ou"] == "System Accounts"
-          return user_dn
-        end
-
-        logger.info "Login failed for #{ login } (#{ user_dn }): Not school admin or organisation owner"
-        return false
+        raise AuthorizationFailed, "Unauthorized access"
       end
     end
   end
