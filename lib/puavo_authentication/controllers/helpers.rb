@@ -35,7 +35,7 @@ module PuavoAuthentication
           type, data = auth_header.split
           if type.downcase == "token"
             credentials = ActiveSupport::JSON.decode Base64.decode64 data
-            return credentials["dn"], credentials["pw"]
+            return  ActiveLdap::DistinguishedName.parse(credentials["dn"]), credentials["pw"]
           end
         end
         return nil

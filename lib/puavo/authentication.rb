@@ -52,7 +52,7 @@ module Puavo
 
         raise UnknownUID, "Cannot get dn for #{ uid }" if not dn
         logger.debug "Found #{ dn } for #{ uid }"
-        return dn
+        return ActiveLdap::DistinguishedName.parse dn.to_s
       end
 
 
