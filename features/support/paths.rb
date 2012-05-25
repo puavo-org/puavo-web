@@ -68,6 +68,10 @@ module NavigationHelpers
     when /the schools list page/
       schools_path
 
+    # OAuth
+    when /the OAuth login page/
+      oauth_login_path
+
     # Add more mappings here.
     # Here is a more fancy example:
     #

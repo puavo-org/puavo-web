@@ -1,4 +1,13 @@
 class OauthController < ApplicationController
+  before_filter :set_organisation_to_session, :set_locale
+
+  skip_before_filter :ldap_setup_connection
+
+  skip_before_filter :login_required
+  skip_before_filter :find_school
+  skip_before_filter :set_authorization_user
+
+  skip_after_filter :remove_ldap_connection
 
   # GET /oauth/authorize
   def login
@@ -15,13 +24,26 @@ class OauthController < ApplicationController
 
   # POST /oauth/code
   def code
-    @code = 100000 + Random.rand(900000)
     # this post comes from the browser from the login page, or the login method
     # give the code, redirect to client software
+    @code = UUID.new.generate 
+    user = User.find( :first, :attribute => 'uid', :value => params[:user][:uid])
+    begin
+       user.bind( params[:user][:password] ) 
+       access_code = AccessCode.create( :access_code => @code, :client_id => params[:client_id], :user_dn => user.dn.to_s)
+       # TODO: must consider if the redirect_url should be verified against the database
+       # render :text => params.inspect
+       redirect_to params[:redirect_uri] + url_for(:jee => "juu", :foo => "foobar")
+    rescue
+       flash[:notice] = t('flash.session.failed')
+       render :action => :login
+    end
   end
 
   # POST /oauth/authorize
   def token 
+    logger.debug "\n\nAUTHORIZE POST\n\n" + params.inspect
+    render :text => 'testi'
     # this post comes from the client
     # Here we exchange the code with the token
   end
