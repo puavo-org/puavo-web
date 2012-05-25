@@ -20,3 +20,7 @@ begin
 rescue LoadError
   puts "Jeweler, or one of its dependencies, is not available. Install it with: gem install jeweler"
 end
+
+
+require "rspec/core/rake_task"
+RSpec::Core::RakeTask.new
