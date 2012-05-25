@@ -9,7 +9,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091110124253) do
+ActiveRecord::Schema.define(:version => 20120524103807) do
+
+  create_table "access_codes", :force => true do |t|
+    t.string   "access_code"
+    t.string   "client_id"
+    t.string   "user_dn"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false

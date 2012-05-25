@@ -10,6 +10,7 @@ gem 'puavo_organisation', '0.0.4', :path => 'development_gems/puavo_organisation
 gem 'puavo_authentication', '0.2.0', :path => 'development_gems/puavo_authentication' # from oauth branch
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
+gem 'uuid'
 group :development do
 	gem 'webrat', '0.7.3'
 	gem 'rspec-rails', '1.3.2'
