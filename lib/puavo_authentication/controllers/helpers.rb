@@ -2,6 +2,10 @@ module PuavoAuthentication
   module Controllers
     module Helpers
 
+      def token_manager
+        @token_manager ||= Puavo::OAuth::TokenManager.new Puavo::OAUTH_CONFIG["token_key"]
+      end
+
       # Lazy getter for current user object
       def current_user
 
@@ -34,8 +38,7 @@ module PuavoAuthentication
         if auth_header = request.headers["HTTP_AUTHORIZATION"]
           type, data = auth_header.split
           if type.downcase == "token"
-            credentials = ActiveSupport::JSON.decode Base64.decode64 data
-            return  ActiveLdap::DistinguishedName.parse(credentials["dn"]), credentials["pw"]
+            return token_manager.decrypt data
           end
         end
         return nil
