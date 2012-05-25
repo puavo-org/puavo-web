@@ -9,7 +9,7 @@ module PuavoAuthentication
         return if @UserClass == ExternalService
 
         # TODO
-        if @logged_in_dn.starts_with? "puavoOAuthAccessToken"
+        if @logged_in_dn.to_s.starts_with? "puavoOAuthAccessToken"
           logger.warn "Cannot get User object for #{ @logged_in_dn }"
           return
         end
