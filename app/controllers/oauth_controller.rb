@@ -56,11 +56,11 @@ class OauthController < ApplicationController
   def redirect_with_access_code
     # this post comes from the browser from the login page, or the login method
     # give the code, redirect to client software
-    code = UUID.new.generate 
-    access_code = AccessCode.create( :access_code => @code, :client_id => params[:client_id], :user_dn => user_current.dn.to_s)
+    code = UUID.new.generate
+    access_code = AccessCode.create( :access_code => code, :client_id => params[:client_id], :user_dn => user_current.dn.to_s)
     # TODO: must consider if the redirect_url should be verified against the database
     # render :text => params.inspect
-    redirect_to params[:redirect_uri] + url_for(:code => @code, :state => params[:state] )
+    redirect_to params[:redirect_uri] + url_for(:code => code, :state => params[:state] )
   end
 
 
