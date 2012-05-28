@@ -3,7 +3,7 @@ class OauthController < ApplicationController
 
   skip_before_filter :ldap_setup_connection
 
-  skip_before_filter :login_required
+  skip_before_filter :require_login
   skip_before_filter :find_school
   skip_before_filter :set_authorization_user
 
