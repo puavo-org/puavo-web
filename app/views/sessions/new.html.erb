@@ -1,3 +1,8 @@
+<% if session[:requested_path] -%>
+  <%# TODO: i18n %>
+  You must be logged in to access <%= session[:requested_path] %>
+<% end -%>
+
 <% form_tag sessions_path do %>
 <table>
   <tr>
