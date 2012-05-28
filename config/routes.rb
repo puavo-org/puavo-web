@@ -151,5 +151,6 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'oauth' do |oauth|
     oauth.oauth_authorize "oauth/authorize", :action => 'authorize', :conditions => {:method => :get}
     oauth.oauth_access_token 'oauth/authorize', :action => 'code', :conditions => {:method => :post}
+    oauth.oauth_refresh_access_token 'oauth/token', :action => 'refresh_token', :conditions => {:method => :post}
   end
 end
