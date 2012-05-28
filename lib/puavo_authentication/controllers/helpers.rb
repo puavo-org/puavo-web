@@ -75,6 +75,7 @@ module PuavoAuthentication
 
       # Authenticate filter
       def require_login
+
         return if @logged_in_dn
 
         begin
@@ -107,6 +108,12 @@ module PuavoAuthentication
         end
 
         @logged_in_dn = dn
+
+        if url = session[:requested_path]
+          session.delete :requested_path
+          redirect_to url
+        end
+
         nil
       end
 
@@ -119,6 +126,7 @@ module PuavoAuthentication
             :message => msg,
           }.to_json
         else
+          session[:requested_path] = request.path
           flash[:notice] = t('flash.session.failed')
           redirect_to login_path
         end
