@@ -65,7 +65,7 @@ class OauthController < ApplicationController
       :access_code => code,
       :client_id =>
       oauth_params[:client_id],
-      :user_dn => user_current.dn.to_s
+      :user_dn => current_user.dn.to_s
     )
 
     url = url_for(:code => code, :state => oauth_params[:state] )
