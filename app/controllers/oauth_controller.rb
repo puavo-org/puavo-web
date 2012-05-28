@@ -22,20 +22,28 @@ class OauthController < ApplicationController
 
   # POST /oauth/authorize
   def code
-    # TODO: handle cancel button
     redirect_with_access_code
   end
 
   # POST /oauth/authorize
   def token 
-    logger.debug "\n\nAUTHORIZE POST\n\n" + params.inspect
-    render :text => 'testi'
     # this post comes from the client
     # Here we exchange the code with the token
+    at = AccessToken.new
+    rt = RefreshToken.new
+    at.userPassword = "secret"
+    at.save
+    # OauthClient.find()    
+
+    # at.dn, "secret"
+    logger.debug "\n\nAUTHORIZE POST\n\n" + params.inspect
+    render :text => 'testi'
   end
 
-  # POST /oauth/????
+  # POST /oauth/token
   def refresh_token
+
+
     # get new accesstoken by using refresh_token and user credentials
   end
 
@@ -46,11 +54,13 @@ class OauthController < ApplicationController
   end
 
   def redirect_with_access_code
+    # this post comes from the browser from the login page, or the login method
+    # give the code, redirect to client software
     code = UUID.new.generate 
-    access_code = AccessCode.create( :access_code => code, :client_id => params[:client_id], :user_dn => current_user.dn.to_s)
+    access_code = AccessCode.create( :access_code => @code, :client_id => params[:client_id], :user_dn => user_current.dn.to_s)
     # TODO: must consider if the redirect_url should be verified against the database
     # render :text => params.inspect
-    redirect_to params[:redirect_uri] + url_for(:jee => "juu", :foo => "foobar")
+    redirect_to params[:redirect_uri] + url_for(:code => @code, :state => params[:state] )
   end
 
 
