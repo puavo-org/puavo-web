@@ -23,14 +23,6 @@ Feature: OAuth login
     When I fill in "Username" with "joe.bloggs"
     And I fill in "Password" with "secret"
     And I press "Login"
-    Then I should get OAuth access token
-    And I should get user information with access token
-
-    #When 
-    # test redirect url
-
-#    Then I am on the application main page
-#    And I should see "Joe Bloggs"
-#    And I should see "Class 1"
-#    And I should see "Studnet"
-
+    Then I should get OAuth access code
+    And I should get OAuth access token with access code
+    And I should get "joe.bloggs" information with access token
