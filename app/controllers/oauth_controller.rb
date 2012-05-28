@@ -20,20 +20,21 @@ class OauthController < ApplicationController
 
   end
 
+
   # POST /oauth/authorize
   def code
     redirect_with_access_code
   end
 
   # POST /oauth/authorize
-  def token 
+  def token
     # this post comes from the client
     # Here we exchange the code with the token
     at = AccessToken.new
     rt = RefreshToken.new
     at.userPassword = "secret"
     at.save
-    # OauthClient.find()    
+    # OauthClient.find()
 
     # at.dn, "secret"
     logger.debug "\n\nAUTHORIZE POST\n\n" + params.inspect
