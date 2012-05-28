@@ -151,8 +151,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :profile, :only => [:edit, :update, :show]
 
   map.with_options :controller => 'oauth' do |oauth|
-    oauth.oauth_login "oauth/authorize", :action => 'login', :conditions => {:method => :get}
-    oauth.oauth_access_code 'oauth/code', :action => 'code', :conditions => {:method => :post}
-    oauth.oauth_access_token 'oauth/authorize', :action => 'token', :conditions => {:method => :post}
+    oauth.oauth_authorize "oauth/authorize", :action => 'authorize', :conditions => {:method => :get}
+    oauth.oauth_access_token 'oauth/authorize', :action => 'code', :conditions => {:method => :post}
   end
 end
