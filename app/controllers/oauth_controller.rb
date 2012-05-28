@@ -60,8 +60,16 @@ class OauthController < ApplicationController
     raise "OAuth params are not in the session" if oauth_params.nil?
 
     code = UUID.new.generate
-    access_code = AccessCode.create( :access_code => code, :client_id => oauth_params[:client_id], :user_dn => user_current.dn.to_s)
-    redirect_to oauth_params[:redirect_uri] + url_for(:code => code, :state => oauth_params[:state] )
+
+    access_code = AccessCode.create(
+      :access_code => code,
+      :client_id =>
+      oauth_params[:client_id],
+      :user_dn => user_current.dn.to_s
+    )
+
+    url = url_for(:code => code, :state => oauth_params[:state] )
+    redirect_to oauth_params[:redirect_uri] + url
   end
 
 
