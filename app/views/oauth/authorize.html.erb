@@ -1,25 +1,14 @@
-<% form_tag oauth_access_code_path do %>
+<% form_tag oauth_authorize_path do %>
 <table>
   <tr>
-    <td><%= label :user, :uid %></td>
-    <td><%= text_field :user, :uid %></td>
-  </tr>
-  <tr>
-  <td><%= label :user, :password %></td>
-  <td><%= password_field :user, :password %></td>
+    <td>Accept login to</td>
+    <td><%= session[:oauth_params][:client_id] %></td>
   </tr>
   <tr>
     <td></td>
-    <td><%= submit_tag t('link.login') %></td>
+    <td><%= submit_tag "ok" %></td>
+    <td><%= submit_tag "cancel" %></td>
   </tr>
 </table>
-<%= hidden_field_tag :state, params[:state] %>
-<%= hidden_field_tag :client_id, params[:client_id] %>
-<%= hidden_field_tag :redirect_uri, params[:redirect_uri] %>
-<%= hidden_field_tag :scope, params[:scope] %>
-<%= hidden_field_tag :response_type, params[:code] %>
-<%= hidden_field_tag :approval_prompt, params[:approval_prompt] %>
-<%= hidden_field_tag :access_type, params[:access_type] %>
-
 
 <% end %>
