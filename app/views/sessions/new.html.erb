@@ -1,6 +1,6 @@
-<% if session[:requested_path] -%>
+<% if session[:return_to] -%>
   <%# TODO: i18n %>
-  You must be logged in to access <%= session[:requested_path] %>
+  You must be logged in to access <%= session[:return_to] %>
 <% end -%>
 
 <% form_tag sessions_path do %>
