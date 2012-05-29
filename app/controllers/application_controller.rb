@@ -5,10 +5,9 @@ class ApplicationController < ActionController::Base
   before_filter :set_organisation_to_session, :set_locale
   helper_method :theme, :school_list
 
-  before_filter :ldap_setup_connection
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user, :ldap_setup_connection
+  helper_method :current_user
 
   before_filter :require_login
   before_filter :find_school

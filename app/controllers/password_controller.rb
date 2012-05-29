@@ -1,5 +1,5 @@
 class PasswordController < ApplicationController
-  skip_before_filter :ldap_setup_connection, :find_school, :require_login
+  skip_before_filter :find_school, :require_login
   before_filter :set_ldap_connection
 
   # GET /password/edit
