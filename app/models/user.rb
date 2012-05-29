@@ -325,12 +325,12 @@ class User < LdapBase
   end
 
   def destroy(*args)
-    self.class.delete_caches uid
+    delete_dn_cache
     super
   end
 
   def update_attributes(*args)
-    self.class.delete_caches uid
+    delete_dn_cache
     super
   end
 
