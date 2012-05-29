@@ -1,7 +1,7 @@
 require 'sha1'
 require 'base64'
 class ExternalService < LdapBase
-  include Puavo::Authentication
+  include Puavo::AuthenticationMixin
   include Puavo::Security
 
   ldap_mapping( :dn_attribute => "uid",
