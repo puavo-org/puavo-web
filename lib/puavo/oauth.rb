@@ -11,8 +11,8 @@ module Puavo
             @cipher = OpenSSL::Cipher::Cipher.new("aes-#{size}-cbc")
           end
 
-          def encrypt(dn, password)
-            data = { :dn => dn.to_s, :pw => password }.to_json
+          def encrypt(dn, password, host, base)
+            data = [dn.to_s, password, host, base].to_json
             salt = generate_salt
             setup_cipher(:encrypt, salt)
             e = @cipher.update(data) + @cipher.final
@@ -26,8 +26,10 @@ module Puavo
             salt = data[8..15]
             data = data[16..-1]
             setup_cipher(:decrypt, salt)
+
             values = JSON.parse @cipher.update(data) + @cipher.final
-            return ActiveLdap::DistinguishedName.parse(values["dn"]), values["pw"]
+            values[0] = ActiveLdap::DistinguishedName.parse values[0]
+            values
           end
 
           private
