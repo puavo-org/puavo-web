@@ -2,6 +2,8 @@ module PuavoAuthentication
   module Controllers
     module Helpers
 
+      attr_accessor :authentication
+
       def token_manager
         @token_manager ||= Puavo::OAuth::TokenManager.new Puavo::OAUTH_CONFIG["token_key"]
       end
