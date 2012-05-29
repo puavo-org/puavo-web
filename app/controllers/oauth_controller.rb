@@ -8,7 +8,7 @@ class OauthController < ApplicationController
   # GET /oauth/authorize
   def authorize
     # Save parameters given by the Client Service
-    session[:oauth_params] = params 
+    session[:oauth_params] = params
 
     # No need to show anything to user if the service is trusted
     return redirect_with_access_code if trusted_client_service?
@@ -28,39 +28,37 @@ class OauthController < ApplicationController
   end
 
   # POST /oauth/authorize
+  # This post comes from the client server
+  # Here we exchange the code with the token
   def token
-    # this post comes from the client
-    # Here we exchange the code with the token
-    ac = AccessCode.find_by_access_code_and_client_id_and_client_secret( 
-       :access_code => params[:code], 
-       :client_id => params[:client_id], 
-       :client_secret => params[:client_secret]
-    )
-    
+    ac = AccessCode.find_by_access_code_and_client_id params[:code], params[:client_id]
+    # NO need to authenticate here! Handled by puavo_authentication already
+
+    raise "TODO: build Access Code now!"
+
     redirect_uri = params[:redirect_uri]
     grant_type = params[:grant_type]
 
     at = AccessToken.new
-    # rt = RefreshToken.new
-    at.userPassword = "secret"
-    # generate userPassword i.e. with UUID
-    at.save
-    # OauthClient.find()
+
+    at.userPassword = "secret" # TODO: generate with uuid or something
+    at.puavoOAuthAccessTokenId = "342343" # TODO: geneate with uuid or something
+    at.puavoUser = current_user.dn
+    at.puavoOAuthClient = params[:client_id]
+
+    # NOTE: host and base are found from authenticate.host authenticate.base
     token_hash = {
-         :access_token => at.token,
+         :access_token => "xxx", # TODO: use token_manager.encrypt(token_dn, token_pw, host, base)
          :token_type => "Bearer",
          :expires_in => 3600,
          :refresh_token => nil
     }
 
     render :text, token_hash.to_json
-    # at.dn, "secret"
   end
 
   # POST /oauth/token
   def refresh_token
-
-
     # get new accesstoken by using refresh_token and user credentials
   end
 
