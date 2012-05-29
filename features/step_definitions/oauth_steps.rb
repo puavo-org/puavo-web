@@ -19,9 +19,9 @@ Then /^I should get OAuth access token with access code$/ do
            :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
            :client_secret => 'zK7oEm34gYk3hA54DKX8da4',
            :grant_type => 'authorization_code',
-           :code => params[:code], 
+           :code => @oauth_code,
            :redirect_uri => 'http://www.example2.com',
-           :approval_prompt => 'force' }) 
+           :approval_prompt => 'force' })
 
   # FIXME
   # check access token?
@@ -44,5 +44,5 @@ Then /^I should get OAuth access code$/ do
   params["code"].first.should_not be_nil
   params["state"].first.should_not be_nil
 
-   
+  @oauth_code = params["code"].first
 end
