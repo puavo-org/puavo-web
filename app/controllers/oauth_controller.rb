@@ -20,9 +20,10 @@ class OauthController < ApplicationController
 
   end
 
-
-  # POST /oauth/authorize
-  def code
+  # POST /oauth/???
+  # TODO: a route
+  def handle_form_accept
+    # TODO: handle cancel button
     redirect_with_access_code
   end
 
