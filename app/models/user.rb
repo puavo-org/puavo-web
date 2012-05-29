@@ -3,7 +3,7 @@ class User < LdapBase
   # When using user mass import we have to store uids which are already been taken. See validate method.
   @@reserved_uids = Array.new
 
-  include Puavo::Authentication
+  include Puavo::AuthenticationMixin
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
