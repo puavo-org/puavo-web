@@ -72,5 +72,11 @@ class OauthController < ApplicationController
     redirect_to oauth_params[:redirect_uri] + '?' + url
   end
 
+  def ping
+    render :json => {
+      :method => request.method,
+      :msg => "pong"
+    }.to_json
+  end
 
 end
