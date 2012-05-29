@@ -25,8 +25,9 @@ Then /^I should get OAuth access token with access code$/ do
 
   # FIXME
   # check access token?
+  # response.body.to_json
   @access_token = "foobar"
-  response.should contain("testi")
+  JSON.parse( response ).should contain("access_token")
 end
 
 Then /^I should get "([^\"]*)" information with access token$/ do |uid|
