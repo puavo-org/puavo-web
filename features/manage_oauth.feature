@@ -13,8 +13,9 @@ Feature: OAuth login
     | Greenwich Steiner School | greenwich |
     And a new role with name "Class 1" and which is joined to the "Class 1" group to "Example school 1" school
     And the following users:
-    | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe.bloggs | secret   | Class 1   | Student                   |
+    | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation | school_admin|
+    | Joe       | Bloggs | joee.bloggs | secret   | Class 1   | Student                   | false |
+    | Joe       | Bloggs | joe.bloggs | secret   | Class 1   | Admin                   | true |
     #And I am logged in as "example" organisation owner
 
   Scenario: User logged in the application
