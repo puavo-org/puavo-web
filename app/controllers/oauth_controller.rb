@@ -6,9 +6,8 @@ class OauthController < ApplicationController
 
   # GET /oauth/authorize
   def authorize
-
     # Save parameters given by the Client Service
-    session[:oauth_params] = params unless session[:oauth_params]
+    session[:oauth_params] = params 
 
     # No need to show anything to user if the service is trusted
     return redirect_with_access_code if trusted_client_service?
@@ -51,7 +50,7 @@ class OauthController < ApplicationController
 
   def trusted_client_service?
     # TODO: inspect session[:oauth_params]
-    false
+    true
   end
 
   def redirect_with_access_code
@@ -68,8 +67,8 @@ class OauthController < ApplicationController
       :user_dn => current_user.dn.to_s
     )
 
-    url = url_for(:code => code, :state => oauth_params[:state] )
-    redirect_to oauth_params[:redirect_uri] + url
+    url = { :code => code, :state => oauth_params[:state]  }.to_query
+    redirect_to oauth_params[:redirect_uri] + '?' + url
   end
 
 
