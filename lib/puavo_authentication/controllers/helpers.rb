@@ -44,10 +44,8 @@ module PuavoAuthentication
         return nil
       end
 
-      # Returns dn and password for some available login mean
+      # Returns user dn and password for some available login mean
       def login_credentials
-
-        @UserClass = User
 
         if oc = oauth_credentials
           logger.debug "Using OAuth authentication with #{ oc[0] }"
@@ -59,11 +57,9 @@ module PuavoAuthentication
 
           if uid.match(/^service\//)
             uid = uid.match(/^service\/(.*)/)[1]
-            # User is initialized from ExternalService in this special case
-            @UserClass = ExternalService
           end
 
-          return @UserClass.uid_to_dn(uid), password, uid
+          return User.uid_to_dn(uid), password, uid
         end
 
         if uid = session[:uid]
@@ -73,14 +69,33 @@ module PuavoAuthentication
 
       end
 
+
       # Authenticate filter
       def require_login
 
-        return if @logged_in_dn
+        if @authentication && @authentication.authenticated
+          logger.debug "Already required login with #{ @authentication.dn }"
+          return
+        end
+
+        host = session[:organisation].ldap_host
+        base = session[:organisation].ldap_base
+
+        @authentication = Puavo::Authentication.new
+
+        # First configure ActiveLdap to use the default configuration from
+        # ldap.yml. This allows Puavo to search user dn from user uids.
+        default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+        @authentication.configure_ldap_connection(
+          default_ldap_configuration["bind_dn"],
+          default_ldap_configuration["password"],
+          host,
+          base)
+
 
         begin
           dn, password, uid = login_credentials
-        rescue Puavo::Authentication::UnknownUID => e
+        rescue Puavo::UnknownUID => e
           logger.debug "Failed to get credentials: #{ e.message }"
           show_authentication_error t('flash.session.failed')
           return false
@@ -92,11 +107,13 @@ module PuavoAuthentication
           return false
         end
 
-        logger.debug "Going to login in with #{ dn }"
+        # Configure ActiveLdap to use user dn and password
+        @authentication.configure_ldap_connection dn, password, host, base
 
+        logger.debug "Going to login in with #{ dn }"
         begin
-          @UserClass.authorize dn, password
-        rescue Puavo::Authentication::AuthenticationError => e
+          @authentication.authenticate
+        rescue Puavo::AuthenticationError => e
           logger.info "Login failed for #{ dn } (#{ uid }): #{ e }"
           show_authentication_error t('flash.session.failed')
           return false
@@ -107,9 +124,20 @@ module PuavoAuthentication
           session.delete :login_flash
         end
 
-        @logged_in_dn = dn
-
         nil
+      end
+
+      def require_puavo_authorization
+
+        return false unless @authentication
+
+        begin
+          @authentication.authorize
+        rescue Puavo::AuthorizationFailed => e
+          logger.info "Authorization  failed: #{ e }"
+          show_authentication_error t('flash.session.failed')
+          return false
+        end
       end
 
       def show_authentication_error(msg)
@@ -136,34 +164,8 @@ module PuavoAuthentication
         session[:return_to] = nil
       end
 
-      def ldap_setup_connection
-        host = ""
-        base = ""
-        default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-        unless session[:organisation].nil?
-          host = session[:organisation].ldap_host
-          base = session[:organisation].ldap_base
-        end
-        if session[:dn]
-          dn = session[:dn]
-          password = session[:password_plaintext]
-          logger.debug "Using user's credentials for LDAP connection"
-        else
-          logger.debug "Using Puavo credentials for LDAP connection"
-          dn =  default_ldap_configuration["bind_dn"]
-          password = default_ldap_configuration["password"]
-        end
-        logger.debug "Set host, bind_dn, base and password by user:"
-        logger.debug "host: #{host}"
-        logger.debug "base: #{base}"
-        logger.debug "dn: #{dn}"
-        LdapBase.ldap_setup_connection(host, base, dn, password)
-      end
-
       def remove_ldap_connection
-        ActiveLdap::Base.active_connections.keys.each do |connection_name|
-          ActiveLdap::Base.remove_connection(connection_name)
-        end
+        Puavo::Authentication.remove_connection
       end
 
     end
