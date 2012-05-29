@@ -3,6 +3,8 @@
 
 module Puavo
     module OAuth
+
+      # Token Manager for creating encrypted OAuth tokens
       class TokenManager
 
         def initialize(key, size=256)
@@ -11,6 +13,8 @@ module Puavo
             @cipher = OpenSSL::Cipher::Cipher.new("aes-#{size}-cbc")
           end
 
+          # Returns dn, password, host and base as encrypted base64 string.
+          # Use decrypt method to get the data back.
           def encrypt(dn, password, host, base)
             data = [dn.to_s, password, host, base].to_json
             salt = generate_salt
@@ -21,6 +25,8 @@ module Puavo
             Base64.encode64(e).gsub /\n/, ""
           end
 
+          # Decrypt OAuth token data (base64 string) to [dn, password, host,
+          # base] array
           def decrypt(data)
             data = Base64.decode64(data)
             salt = data[8..15]
