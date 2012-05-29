@@ -85,6 +85,7 @@ class OauthController < ApplicationController
     redirect_to oauth_params[:redirect_uri] + '?' + url
   end
 
+  # GET/POST /oauth/ping
   def ping
     render :json => {
       :method => request.method,
