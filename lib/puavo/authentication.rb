@@ -146,6 +146,21 @@ module Puavo
       raise AuthorizationFailed, "Unauthorized access for #{ @dn }"
     end
 
+    def current_user
+
+      # TODO: find user object with puavoOAuthAccessToken
+      if @dn.to_s.starts_with? "puavoOAuthAccessToken"
+        logger.warn "Cannot get User object for #{ @dn }"
+        return
+      end
+
+      if external_service?
+        # ExternalService has no permission to find itself.
+        # @current_user ||= ExternalService.find @dn
+      else
+        @current_user ||= User.find @dn
+      end
+    end
 
     def logger
       RAILS_DEFAULT_LOGGER

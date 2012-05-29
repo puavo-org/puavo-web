@@ -9,24 +9,13 @@ module PuavoAuthentication
       # Lazy getter for current user object
       def current_user
 
-        # ExternalService has no permission to find itself.
-        return if @UserClass == ExternalService
+        return unless @authentication
 
-        # TODO
-        if @logged_in_dn.to_s.starts_with? "puavoOAuthAccessToken"
-          logger.warn "Cannot get User object for #{ @logged_in_dn }"
-          return
+        if user = @authentication.current_user
+          return user
         end
 
-        return @current_user if @current_user
-
-        if @logged_in_dn
-          @current_user = @UserClass.find @logged_in_dn
-          return @current_user
-        end
-
-        logger.info "Session's user not found! User is removed from ldap server."
-        logger.info "session[:dn]: #{session[:dn]}"
+        logger.warn "Current user look up failed for #{ @authentication.dn }"
         # Delete ldap connection informations from session.
         session.delete :password_plaintext
         session.delete :uid
