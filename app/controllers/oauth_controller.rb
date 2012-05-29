@@ -30,15 +30,30 @@ class OauthController < ApplicationController
   def token
     # this post comes from the client
     # Here we exchange the code with the token
+    ac = AccessCode.find_by_access_code_and_client_id_and_client_secret( 
+       :access_code => params[:code], 
+       :client_id => params[:client_id], 
+       :client_secret => params[:client_secret]
+    )
+    
+    redirect_uri = params[:redirect_uri]
+    grant_type = params[:grant_type]
+
     at = AccessToken.new
-    rt = RefreshToken.new
+    # rt = RefreshToken.new
     at.userPassword = "secret"
+    # generate userPassword i.e. with UUID
     at.save
     # OauthClient.find()
+    token_hash = {
+         :access_token => at.token,
+         :token_type => "Bearer",
+         :expires_in => 3600,
+         :refresh_token => nil
+    }
 
+    render :text, token_hash.to_json
     # at.dn, "secret"
-    logger.debug "\n\nAUTHORIZE POST\n\n" + params.inspect
-    render :text => 'testi'
   end
 
   # POST /oauth/token
@@ -63,8 +78,7 @@ class OauthController < ApplicationController
 
     access_code = AccessCode.create(
       :access_code => code,
-      :client_id =>
-      oauth_params[:client_id],
+      :client_id => oauth_params[:client_id],
       :user_dn => current_user.dn.to_s
     )
 
