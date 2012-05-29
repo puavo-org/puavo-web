@@ -58,6 +58,13 @@ module PuavoAuthentication
           return User.uid_to_dn(uid), session[:password_plaintext], uid
         end
 
+        # OAuth Client server Access Token request
+        if request.method == "post" && request.path == "/oauth/authorize" # TODO: use variable
+          if oc = OauthClient.find(:first, :attribute => "puavoOAuthClientId", :value => params["client_id"])
+            return oc.dn,  params["client_secret"]
+          end
+        end
+
       end
 
 
