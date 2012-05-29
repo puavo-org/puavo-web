@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   before_filter :require_login
+  before_filter :require_puavo_authorization
   before_filter :find_school
 
   after_filter :remove_ldap_connection
