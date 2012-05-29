@@ -1,8 +1,14 @@
 
 Given /^I have been redirected to (.*)$/ do |page_name|
-  # visit(url = nil, http_method = :get, data = {})
-  visit( path_to(page_name), :get, { :client_id => 'fXLDE4FKas42DFgsfhRTfdlizK7oEm', :scope => 'read:presonalInfo', :redirect_uri => 'http://www.example2.com', :state => '123456789', :response_type => 'code', :approval_prompt => 'auto', :access_type => 'offline'  } )
-
+  visit( url_for(:controller => :oauth,
+                 :action => :authorize,
+                 :client_id => 'fXLDE4FKas42DFgsfhRTfdlizK7oEm',
+                 :scope => 'read:presonalInfo',
+                 :redirect_uri => 'http://www.example2.com',
+                 :state => '123456789',
+                 :response_type => 'code',
+                 :approval_prompt => 'auto',
+                 :access_type => 'offline'  ) )
 end
 
 Then /^I should get OAuth access token with access code$/ do
