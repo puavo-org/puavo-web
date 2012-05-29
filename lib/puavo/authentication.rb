@@ -125,12 +125,6 @@ module Puavo
         return @authorized = true
       end
 
-      # Authorize OAuth users
-      if @dn.rdns[0].keys[0] == "puavoOAuthAccessToken"
-        logger.info "Authorization ok: OAuth #{ @dn }"
-        return @authorized = true
-      end
-
       # Authorize External Services
       if external_service?
         logger.info "Authorization ok: External Service #{ @dn }"
