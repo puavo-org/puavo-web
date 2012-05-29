@@ -2,6 +2,7 @@ class OauthController < ApplicationController
   before_filter :set_organisation_to_session, :set_locale
 
   skip_before_filter :find_school
+  skip_before_filter :require_puavo_authorization
 
 
   # GET /oauth/authorize
