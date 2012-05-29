@@ -37,5 +37,11 @@ Then /^I should get "([^\"]*)" information with access token$/ do |uid|
 end
 
 Then /^I should get OAuth access code$/ do
-  pending # express the regexp above with the code you wish you had
+  params = CGI::parse( URI.parse( response.headers["Location"]).query )
+
+  # response.body.should contain("http://www.example2.com")
+  params["code"].first.should_not be_nil
+  params["state"].first.should_not be_nil
+
+   
 end
