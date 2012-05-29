@@ -99,7 +99,6 @@ module PuavoAuthentication
         # Configure ActiveLdap to use user dn and password
         @authentication.configure_ldap_connection dn, password, host, base
 
-        logger.debug "Going to login in with #{ dn }"
         begin
           @authentication.authenticate
         rescue Puavo::AuthenticationError => e

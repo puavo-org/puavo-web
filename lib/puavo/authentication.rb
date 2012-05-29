@@ -71,6 +71,7 @@ module Puavo
     def configure_ldap_connection(dn, password, host, base)
       # Remove previous connection
       self.class.remove_connection
+      logger.info "Configuring ActiveLdap to use dn '#{ dn }' on '#{ host }' with '#{ base }'"
 
       @dn = dn
       @password = password
@@ -86,7 +87,7 @@ module Puavo
 
     end
 
-    # Authenticate configured connection to LDAP
+    # Authenticate configured connection to LDAP.
     #
     # Raises AuthenticationFailed if connection could not be made.
     # Returns possible admin permissions on successful connect
