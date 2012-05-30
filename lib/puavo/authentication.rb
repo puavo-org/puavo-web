@@ -60,7 +60,7 @@ module Puavo
 
   class Authentication
 
-    attr_accessor :authenticated, :authorized, :dn
+    attr_accessor :authenticated, :authorized, :dn, :host, :base
 
     def self.remove_connection
       ActiveLdap::Base.active_connections.keys.each do |connection_name|
