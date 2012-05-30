@@ -14,7 +14,7 @@ end
 Then /^I should get OAuth access token with access code$/ do
   params = request.params
   params[:redirect_uri].should contain("http://www.example2.com")
-  visit( oauth_access_token_path,
+  visit( oauth_access_token_path(:format => :json),
          :post, {
            :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
            :client_secret => 'zK7oEm34gYk3hA54DKX8da4',
@@ -23,11 +23,14 @@ Then /^I should get OAuth access token with access code$/ do
            :redirect_uri => 'http://www.example2.com',
            :approval_prompt => 'force' })
 
-  # FIXME
-  # check access token?
-  # response.body.to_json
-  @access_token = "foobar"
-  JSON.parse( response ).should contain("access_token")
+  response.status.should == "200 OK"
+
+  data = JSON.parse( response.body )
+  data["token_type"].should == "Bearer"
+  data["expires_in"].should_not be_nil
+  data["access_token"].should_not be_nil
+
+  @access_token = data["access_token"]
 end
 
 Then /^I should get "([^\"]*)" information with access token$/ do |uid|
