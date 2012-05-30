@@ -132,7 +132,7 @@ module Puavo
       end
 
       # Authorize OAuth Access Tokens
-      if @dn.rdns[0].keys[0] == "puavoOAuthAccessTokenId"
+      if @dn.rdns[0].keys[0] == "puavoOAuthTokenId"
         return @authorized = true
       end
 
@@ -150,7 +150,7 @@ module Puavo
     def current_user
 
       # TODO: find user object with puavoOAuthAccessToken
-      if @dn.to_s.starts_with? "puavoOAuthAccessToken"
+      if @dn.to_s.starts_with? "puavoOAuthToken"
         logger.warn "Cannot get User object for #{ @dn }"
         return
       end

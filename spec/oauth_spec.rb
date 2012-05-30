@@ -12,7 +12,7 @@ describe Puavo::OAuth::TokenManager, "OAuth token manager" do
   token_manager = Puavo::OAuth::TokenManager.new "testkeysadfjasdkfaskdfasjsd"
 
   it "can create and decrypt token" do
-    dn = "puavoOAuthAccessToken=12345678,ou=Tokens,ou=OAuth,dc=edu,dc=kunta1,dc=fi"
+    dn = "puavoOAuthTokenId=12345678,ou=Tokens,ou=OAuth,dc=edu,dc=kunta1,dc=fi"
     pw = "password"
     host = "ldap1.example.com"
     base = "dc=edu,dc=kunta1,dc=fi"
