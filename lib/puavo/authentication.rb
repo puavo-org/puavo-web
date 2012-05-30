@@ -68,15 +68,17 @@ module Puavo
       end
     end
 
-    def configure_ldap_connection(dn, password, host, base)
+    def configure_ldap_connection(dn, password, host=nil, base=nil)
       # Remove previous connection
       self.class.remove_connection
       logger.info "Configuring ActiveLdap to use dn '#{ dn }' on '#{ host }' with '#{ base }'"
 
       @dn = dn
       @password = password
-      @host = host
-      @base = base
+
+      # Change host and base only if supplied
+      @host = host if host
+      @base = base if base
 
       # Setup new ActiveLdap connections to use user's credentials
       LdapBase.ldap_setup_connection @host, @base.to_s, @dn.to_s, @password
