@@ -62,17 +62,10 @@ module PuavoAuthentication
 
       end
 
-
-      # Authenticate filter
-      def require_login
-
-        if @authentication && @authentication.authenticated
-          logger.debug "Already required login with #{ @authentication.dn }"
-          return
-        end
-
-        host = session[:organisation].ldap_host
-        base = session[:organisation].ldap_base
+      # Before filter
+      # Setup authentication object with default credentials from
+      # config/ldap.yml
+      def setup_authentication
 
         @authentication = Puavo::Authentication.new
 
@@ -82,8 +75,19 @@ module PuavoAuthentication
         @authentication.configure_ldap_connection(
           default_ldap_configuration["bind_dn"],
           default_ldap_configuration["password"],
-          host,
-          base)
+          session[:organisation].ldap_host,
+          session[:organisation].ldap_base)
+
+      end
+
+      # Before filter
+      # Require user login credentials
+      def require_login
+
+        if @authentication && @authentication.authenticated
+          logger.debug "Already required login with #{ @authentication.dn }"
+          return
+        end
 
 
         begin
@@ -101,7 +105,7 @@ module PuavoAuthentication
         end
 
         # Configure ActiveLdap to use user dn and password
-        @authentication.configure_ldap_connection dn, password, host, base
+        @authentication.configure_ldap_connection dn, password
 
         begin
           @authentication.authenticate
@@ -119,8 +123,11 @@ module PuavoAuthentication
         nil
       end
 
+      # Before filter
+      # Require Puavo access rights
       def require_puavo_authorization
 
+        # Unauthorized always when not authenticated
         return false unless @authentication
 
         begin
