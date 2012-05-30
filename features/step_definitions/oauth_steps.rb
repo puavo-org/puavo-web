@@ -34,10 +34,12 @@ Then /^I should get OAuth access token with access code$/ do
 end
 
 Then /^I should get "([^\"]*)" information with access token$/ do |uid|
-  @access_token.should_not be_nil
+  set_ldap_admin_connection
   user = User.find(:first, :attribute => "uid", :value => uid)
+  cookies.clear
+  header "Authorization", "token #{ @access_token }"
   visit( "/users/#{user.puavoId}.json", :get )
-  response.should contain("test")
+  response.should contain("cucumber")
 end
 
 Then /^I should get OAuth access code$/ do
