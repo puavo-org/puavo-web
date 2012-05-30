@@ -95,7 +95,7 @@ module PuavoAuthentication
         begin
           dn, password, uid = login_credentials
         rescue Puavo::UnknownUID => e
-          logger.debug "Failed to get credentials: #{ e.message }"
+          logger.info "Failed to get credentials: #{ e.message }"
           show_authentication_error t('flash.session.failed')
           return false
         end
@@ -148,7 +148,7 @@ module PuavoAuthentication
           }.to_json
         else
           store_location
-          flash[:notice] = t('flash.session.failed')
+          flash[:notice] = msg
           redirect_to login_path
         end
       end
