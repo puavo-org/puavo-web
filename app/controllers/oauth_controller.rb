@@ -70,11 +70,27 @@ class OauthController < ApplicationController
       authentication.base
     )
 
+    rt = RefreshToken.new
+    client_secret = params[:client_secret]
+
+    refresh_token = Base64.encode64( UUID.new.generate )
+    refresh_token = refresh_token_password[1..20]
+    refresh_token += Base64.encode64(client_secret)
+
+    refresh_token_password = UUID.new.generate
+    rt.puavoOAuthAccessToken = at.dn
+    rt.puavoOAuthTokenId = UUID.new.generate
+    rt.userPassword = refresh_token_password
+    rt.puavoOAuthEduPerson = ac.user_dn
+    rt.puavoOAuthClient = client_dn
+
+    rt.save!
+
     token_hash = {
          :access_token => access_token,
          :token_type => "Bearer",
          :expires_in => 3600,
-         :refresh_token => nil
+         :refresh_token => refresh_token
     }
 
     render :json => token_hash.to_json
@@ -83,6 +99,10 @@ class OauthController < ApplicationController
   # POST /oauth/token
   def refresh_token
     # get new accesstoken by using refresh_token and user credentials
+    client_id = params[:client_id]
+    client_secret = params[:client_secret]
+    refresh_token = params[:refresh_token]
+    
   end
 
 
