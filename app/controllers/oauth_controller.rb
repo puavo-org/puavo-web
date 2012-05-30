@@ -49,9 +49,10 @@ class OauthController < ApplicationController
     grant_type = params[:grant_type]
 
     at = AccessToken.new
+    access_token_password = UUID.new.generate
 
     at.puavoOAuthAccessTokenId = UUID.new.generate
-    at.userPassword = UUID.new.generate
+    at.userPassword = access_token_password
     at.puavoOAuthEduPerson = ac.user_dn
     at.puavoOAuthClient = client_dn
 
@@ -59,7 +60,7 @@ class OauthController < ApplicationController
 
     access_token = token_manager.encrypt(
       at.dn.to_s,
-      at.userPassword,
+      access_token_password,
       authentication.host,
       authentication.base
     )
