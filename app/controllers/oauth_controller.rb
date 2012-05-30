@@ -3,6 +3,7 @@ class OauthController < ApplicationController
 
   skip_before_filter :find_school
   skip_before_filter :require_puavo_authorization
+  skip_before_filter :require_login, :only => :token
 
 
   # GET /oauth/authorize
@@ -31,19 +32,23 @@ class OauthController < ApplicationController
   # This post comes from the client server
   # Here we exchange the code with the token
   def token
-    # NO need to authenticate here! Handled by puavo_authentication already
-    client_dn = authentication.dn
 
-    host = session[:organisation].ldap_host
-    base = session[:organisation].ldap_base
-    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-    authentication.configure_ldap_connection(
-      default_ldap_configuration["bind_dn"],
-      default_ldap_configuration["password"],
-      host,
-      base)
+    oc = OauthClient.find(:first,
+      :attribute => "puavoOAuthClientId",
+      :value => params["client_id"])
 
-    ac = AccessCode.find_by_access_code_and_client_id params[:code], params[:client_id]
+    # Authenticate Client Server
+    authentication.configure_ldap_connection oc.dn, params["client_secret"]
+    begin
+      authentication.authenticate
+    rescue Puavo::AuthenticationError => e
+      return show_authentication_error e.message
+    end
+
+    setup_authentication # restore default authentication
+
+    ac = AccessCode.find_by_access_code_and_client_id(
+      params[:code], params[:client_id])
 
     redirect_uri = params[:redirect_uri]
     grant_type = params[:grant_type]
@@ -54,7 +59,7 @@ class OauthController < ApplicationController
     at.puavoOAuthTokenId = UUID.new.generate
     at.userPassword = access_token_password
     at.puavoOAuthEduPerson = ac.user_dn
-    at.puavoOAuthClient = client_dn
+    at.puavoOAuthClient = oc.dn
 
     at.save!
 
