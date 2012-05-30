@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
 
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  helper_method :current_user
 
   before_filter :setup_authentication
   before_filter :require_login
