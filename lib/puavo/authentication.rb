@@ -71,7 +71,6 @@ module Puavo
     def configure_ldap_connection(dn, password, host=nil, base=nil)
       # Remove previous connection
       self.class.remove_connection
-      logger.info "Configuring ActiveLdap to use dn '#{ dn }' on '#{ host }' with '#{ base }'"
 
       @dn = dn
       @password = password
@@ -80,13 +79,14 @@ module Puavo
       @host = host if host
       @base = base if base
 
+      logger.info "Configuring ActiveLdap to use dn '#{ @dn }' on '#{ @host }' with '#{ @base }'"
+      logger.debug "PW: #{ @password }" if ENV["LOG_LDAP_PASSWORD"]
       # Setup new ActiveLdap connections to use user's credentials
       LdapBase.ldap_setup_connection @host, @base.to_s, @dn.to_s, @password
 
       # Do not never ever allow anonymous connections in Puavo. Should be
       # false in config/ldap.yml, but we just make sure here.
       LdapBase.connection.instance_variable_set :@allow_anonymous, false
-
     end
 
     # Authenticate configured connection to LDAP.
