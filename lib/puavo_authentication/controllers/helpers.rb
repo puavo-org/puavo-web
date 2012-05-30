@@ -13,6 +13,7 @@ module PuavoAuthentication
 
         return unless @authentication
 
+
         if user = @authentication.current_user
           return user
         end

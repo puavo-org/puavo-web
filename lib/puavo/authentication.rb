@@ -131,12 +131,18 @@ module Puavo
         return @authorized = true
       end
 
+      # Authorize OAuth Access Tokens
+      if @dn.rdns[0].keys[0] == "puavoOAuthAccessTokenId"
+        return @authorized = true
+      end
+
       # Authorize organisation owners
       organisation = LdapOrganisation.first
       if organisation && organisation.owner && organisation.owner.include?(@dn)
         logger.info "Authorization ok: Organisation owner #{ @dn }"
         return @authorized = true
       end
+
 
       raise AuthorizationFailed, "Unauthorized access for #{ @dn }"
     end
