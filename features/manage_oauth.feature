@@ -29,4 +29,4 @@ Feature: OAuth login
     # When I press "ok"
     Then I should get OAuth access code
     And I should get OAuth access token with access code
-    # And I should get "joe.bloggs" information with access token
+    And I should get "cucumber" information with access token
