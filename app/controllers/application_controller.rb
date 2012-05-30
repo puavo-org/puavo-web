@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
+  before_filter :setup_authentication
   before_filter :require_login
   before_filter :require_puavo_authorization
   before_filter :find_school
