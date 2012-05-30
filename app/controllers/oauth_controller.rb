@@ -51,7 +51,7 @@ class OauthController < ApplicationController
     at = AccessToken.new
     access_token_password = UUID.new.generate
 
-    at.puavoOAuthAccessTokenId = UUID.new.generate
+    at.puavoOAuthTokenId = UUID.new.generate
     at.userPassword = access_token_password
     at.puavoOAuthEduPerson = ac.user_dn
     at.puavoOAuthClient = client_dn
