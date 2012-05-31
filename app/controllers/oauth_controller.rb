@@ -36,13 +36,8 @@ class OauthController < ApplicationController
     access_code = AccessCode.find_by_access_code_and_client_id(
       params[:code], params[:client_id])
 
-    begin
-       access_token, refresh_token = create_tokens access_code.user_dn
-    rescue Puavo::AuthenticationError => e
-      return show_authentication_error e.message
-    end
-
-
+    oauth_client_server_dn = authenticate_client_server
+    access_token, refresh_token = create_tokens access_code.user_dn, oauth_client_server_dn
 
     redirect_uri = params[:redirect_uri]
     grant_type = params[:grant_type]
@@ -66,12 +61,14 @@ class OauthController < ApplicationController
     # Authenticate Refresh Token
     authentication.configure_ldap_connection refresh_token_dn, password
     authentication.authenticate
-    setup_authentication # restore default authentication
+    setup_authentication
+
+    oauth_client_server_dn = authenticate_client_server
 
     refresh_token_entry = RefreshToken.find(refresh_token_dn)
     user_dn = refresh_token_entry.puavoOAuthEduPerson
 
-    access_token, refresh_token = create_tokens user_dn
+    access_token, refresh_token = create_tokens user_dn, oauth_client_server_dn
 
     token_hash = {
          :access_token => access_token,
@@ -83,24 +80,14 @@ class OauthController < ApplicationController
     render :json => token_hash.to_json
   end
 
-  def create_tokens( user_dn )
-
-    oauth_client_server = OauthClient.find(:first,
-      :attribute => "puavoOAuthClientId",
-      :value => params["client_id"])
-
-    # Authenticate Client Server
-    authentication.configure_ldap_connection oauth_client_server.dn, params["client_secret"]
-    authentication.authenticate
-    setup_authentication # restore default authentication
-
+  def create_tokens( user_dn, oauth_client_server_dn )
     access_token_entry = AccessToken.new
     access_token_password = UUID.new.generate
 
     access_token_entry.puavoOAuthTokenId = UUID.new.generate
     access_token_entry.userPassword = access_token_password
     access_token_entry.puavoOAuthEduPerson = user_dn
-    access_token_entry.puavoOAuthClient = oauth_client_server.dn
+    access_token_entry.puavoOAuthClient = oauth_client_server_dn
 
     access_token_entry.save!
 
@@ -119,7 +106,7 @@ class OauthController < ApplicationController
     refresh_token_entry.puavoOAuthTokenId = UUID.new.generate
     refresh_token_entry.userPassword = client_secret
     refresh_token_entry.puavoOAuthEduPerson = user_dn
-    refresh_token_entry.puavoOAuthClient = oauth_client_server.dn
+    refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
 
     refresh_token_entry.save!
 
@@ -163,4 +150,16 @@ class OauthController < ApplicationController
     }.to_json
   end
 
+  private
+
+  def authenticate_client_server
+    oauth_client_server = OauthClient.find(:first,
+                                           :attribute => "puavoOAuthClientId",
+                                           :value => params["client_id"])
+    
+    # Authenticate Client Server
+    authentication.configure_ldap_connection oauth_client_server.dn, params["client_secret"]
+    authentication.authenticate
+    oauth_client_server.dn
+  end
 end
