@@ -1,9 +1,14 @@
 class OauthController < ApplicationController
+
   before_filter :set_organisation_to_session, :set_locale
 
   skip_before_filter :find_school
   skip_before_filter :require_puavo_authorization, :except => :ping
   skip_before_filter :require_login, :only => [:token, :refresh_token]
+
+  rescue_from Puavo::AuthenticationFailed do |e|
+    show_authentication_error e.message
+  end
 
 
   # GET /oauth/authorize
@@ -156,7 +161,7 @@ class OauthController < ApplicationController
     oauth_client_server = OauthClient.find(:first,
                                            :attribute => "puavoOAuthClientId",
                                            :value => params["client_id"])
-    
+
     # Authenticate Client Server
     authentication.configure_ldap_connection oauth_client_server.dn, params["client_secret"]
     authentication.authenticate
