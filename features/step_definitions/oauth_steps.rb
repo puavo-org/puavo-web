@@ -19,7 +19,7 @@ Then /^I should get OAuth access token with access code$/ do
            :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
            :client_secret => 'zK7oEm34gYk3hA54DKX8da4',
            :grant_type => 'authorization_code',
-           :code => @oauth_code,
+           :code => @access_code,
            :redirect_uri => 'http://www.example2.com',
            :approval_prompt => 'force' })
 
@@ -29,7 +29,9 @@ Then /^I should get OAuth access token with access code$/ do
   data["token_type"].should == "Bearer"
   data["expires_in"].should_not be_nil
   data["access_token"].should_not be_nil
+  data["refresh_token"].should_not be_nil
 
+  @refresh_token = data["refresh_token"]
   @access_token = data["access_token"]
 end
 
@@ -49,5 +51,24 @@ Then /^I should get OAuth access code$/ do
   params["code"].first.should_not be_nil
   params["state"].first.should_not be_nil
 
-  @oauth_code = params["code"].first
+  @access_code = params["code"].first
+end
+
+
+Then /^And I should get a new access token and a new refresh token with existing refresh token$/ do
+  visit( oauth_refresh_access_token_path(:format => :json),
+         :post, {
+           :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
+           :client_secret => 'zK7oEm34gYk3hA54DKX8da4',
+           :refresh_token => @refresh_token
+         }
+  )
+
+  data = JSON.parse( response.body )
+  data["token_type"].should == "Bearer"
+  data["expires_in"].should_not be_nil
+  data["access_token"].should_not be_nil
+  data["refresh_token"].should_not be_nil
+  
+
 end
