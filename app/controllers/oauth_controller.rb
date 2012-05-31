@@ -33,58 +33,20 @@ class OauthController < ApplicationController
   # Here we exchange the code with the token
   def token
 
-    oc = OauthClient.find(:first,
-      :attribute => "puavoOAuthClientId",
-      :value => params["client_id"])
+    access_code = AccessCode.find_by_access_code_and_client_id(
+      params[:code], params[:client_id])
 
-    # Authenticate Client Server
-    authentication.configure_ldap_connection oc.dn, params["client_secret"]
     begin
-      authentication.authenticate
+       access_token, refresh_token = create_tokens access_code.user_dn
     rescue Puavo::AuthenticationError => e
       return show_authentication_error e.message
     end
 
-    setup_authentication # restore default authentication
 
-    ac = AccessCode.find_by_access_code_and_client_id(
-      params[:code], params[:client_id])
 
     redirect_uri = params[:redirect_uri]
     grant_type = params[:grant_type]
 
-    at = AccessToken.new
-    access_token_password = UUID.new.generate
-
-    at.puavoOAuthTokenId = UUID.new.generate
-    at.userPassword = access_token_password
-    at.puavoOAuthEduPerson = ac.user_dn
-    at.puavoOAuthClient = oc.dn
-
-    at.save!
-
-    access_token = token_manager.encrypt(
-      at.dn.to_s,
-      access_token_password,
-      authentication.host,
-      authentication.base
-    )
-
-    rt = RefreshToken.new
-    client_secret = params[:client_secret]
-
-    refresh_token = Base64.encode64( UUID.new.generate )
-    refresh_token = refresh_token_password[1..20]
-    refresh_token += Base64.encode64(client_secret)
-
-    refresh_token_password = UUID.new.generate
-    rt.puavoOAuthAccessToken = at.dn
-    rt.puavoOAuthTokenId = UUID.new.generate
-    rt.userPassword = refresh_token_password
-    rt.puavoOAuthEduPerson = ac.user_dn
-    rt.puavoOAuthClient = client_dn
-
-    rt.save!
 
     token_hash = {
          :access_token => access_token,
@@ -99,12 +61,65 @@ class OauthController < ApplicationController
   # POST /oauth/token
   def refresh_token
     # get new accesstoken by using refresh_token and user credentials
-    client_id = params[:client_id]
-    client_secret = params[:client_secret]
     refresh_token = params[:refresh_token]
+    
+    debugger
+    AccessCode
+
+    access_token_entry, refresh_token = create_tokens 
     
   end
 
+  def create_tokens( user_dn )
+
+    oauth_client_server = OauthClient.find(:first,
+      :attribute => "puavoOAuthClientId",
+      :value => params["client_id"])
+
+    # Authenticate Client Server
+    authentication.configure_ldap_connection oauth_client_server.dn, params["client_secret"]
+    authentication.authenticate
+
+    setup_authentication # restore default authentication
+
+    access_token_entry = AccessToken.new
+    access_token_password = UUID.new.generate
+
+    access_token_entry.puavoOAuthTokenId = UUID.new.generate
+    access_token_entry.userPassword = access_token_password
+    access_token_entry.puavoOAuthEduPerson = user_dn
+    access_token_entry.puavoOAuthClient = oauth_client_server.dn
+
+    access_token_entry.save!
+
+    access_token = token_manager.encrypt(
+      access_token_entry.dn.to_s,
+      access_token_password,
+      authentication.host,
+      authentication.base
+    )
+
+    refresh_token_entry = RefreshToken.new
+    client_secret = params[:client_secret]
+
+
+    refresh_token_entry.puavoOAuthAccessToken = access_token_entry.dn
+    refresh_token_entry.puavoOAuthTokenId = UUID.new.generate
+    refresh_token_entry.userPassword = client_secret
+    refresh_token_entry.puavoOAuthEduPerson = user_dn
+    refresh_token_entry.puavoOAuthClient = oauth_client_server.dn
+
+    refresh_token_entry.save!
+
+    refresh_token = token_manager.encrypt(
+      refresh_token_entry.dn.to_s,
+      client_secret,
+      authentication.host,
+      authentication.base
+    )
+
+    return access_token, refresh_token
+  end
 
   def trusted_client_service?
     # TODO: inspect session[:oauth_params]
