@@ -2,8 +2,8 @@ class OauthController < ApplicationController
   before_filter :set_organisation_to_session, :set_locale
 
   skip_before_filter :find_school
-  skip_before_filter :require_puavo_authorization
-  skip_before_filter :require_login, :only => :token
+  skip_before_filter :require_puavo_authorization, :except => :ping
+  skip_before_filter :require_login, :only => [:token, :refresh_token]
 
 
   # GET /oauth/authorize
@@ -61,13 +61,26 @@ class OauthController < ApplicationController
   # POST /oauth/token
   def refresh_token
     # get new accesstoken by using refresh_token and user credentials
-    refresh_token = params[:refresh_token]
-    
-    debugger
-    AccessCode
+    refresh_token_dn, password = token_manager.decrypt params[:refresh_token]
 
-    access_token_entry, refresh_token = create_tokens 
-    
+    # Authenticate Refresh Token
+    authentication.configure_ldap_connection refresh_token_dn, password
+    authentication.authenticate
+    setup_authentication # restore default authentication
+
+    refresh_token_entry = RefreshToken.find(refresh_token_dn)
+    user_dn = refresh_token_entry.puavoOAuthEduPerson
+
+    access_token, refresh_token = create_tokens user_dn
+
+    token_hash = {
+         :access_token => access_token,
+         :token_type => "Bearer",
+         :expires_in => 3600,
+         :refresh_token => refresh_token
+    }
+
+    render :json => token_hash.to_json
   end
 
   def create_tokens( user_dn )
@@ -79,7 +92,6 @@ class OauthController < ApplicationController
     # Authenticate Client Server
     authentication.configure_ldap_connection oauth_client_server.dn, params["client_secret"]
     authentication.authenticate
-
     setup_authentication # restore default authentication
 
     access_token_entry = AccessToken.new
