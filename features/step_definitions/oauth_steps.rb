@@ -55,7 +55,7 @@ Then /^I should get OAuth access code$/ do
 end
 
 
-Then /^And I should get a new access token and a new refresh token with existing refresh token$/ do
+Then /^I should get a new access token and a new refresh token with existing refresh token$/ do
   visit( oauth_refresh_access_token_path(:format => :json),
          :post, {
            :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
