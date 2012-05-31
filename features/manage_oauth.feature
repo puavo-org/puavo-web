@@ -29,4 +29,6 @@ Feature: OAuth login
     # When I press "ok"
     Then I should get OAuth access code
     And I should get OAuth access token with access code
+    And I should get a new access token and a new refresh token with existing refresh token
     And I should get "cucumber" information with access token
+
