@@ -69,6 +69,7 @@ Then /^I should get a new access token and a new refresh token with existing ref
   data["expires_in"].should_not be_nil
   data["access_token"].should_not be_nil
   data["refresh_token"].should_not be_nil
-  
 
+  @refresh_token = data["refresh_token"]
+  @access_token = data["access_token"]
 end
