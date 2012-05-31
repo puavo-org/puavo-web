@@ -40,8 +40,8 @@ Then /^I should get "([^\"]*)" information with access token$/ do |uid|
   user = User.find(:first, :attribute => "uid", :value => uid)
   cookies.clear
   header "Authorization", "token #{ @access_token }"
-  visit( "/users/#{user.puavoId}.json", :get )
-  response.should contain("cucumber")
+  visit(ping_path, :get )
+  JSON.parse(response.body)["msg"].should == "pong"
 end
 
 Then /^I should get OAuth access code$/ do
