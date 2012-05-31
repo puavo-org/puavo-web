@@ -31,4 +31,5 @@ Feature: OAuth login
     And I should get OAuth access token with access code
     And I should get a new access token and a new refresh token with existing refresh token
     And I should get "cucumber" information with access token
+    And I should get a new access token and a new refresh token with existing refresh token
 
