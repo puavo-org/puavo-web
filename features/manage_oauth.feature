@@ -24,12 +24,9 @@ Feature: OAuth login
     When I fill in "Username" with "cucumber"
     And I fill in "Password" with "cucumber"
     And I press "Login"
-    Then I have been redirected to the OAuth authorize page
-    And I should not see "You must be logged in"
     # When I press "ok"
     Then I should get OAuth access code
     And I should get OAuth access token with access code
-    And I should get a new access token and a new refresh token with existing refresh token
     And I should get "cucumber" information with access token
     And I should get a new access token and a new refresh token with existing refresh token
     # New access token should work
