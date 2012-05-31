@@ -3,7 +3,7 @@ class OauthController < ApplicationController
   before_filter :set_organisation_to_session, :set_locale
 
   skip_before_filter :find_school
-  skip_before_filter :require_puavo_authorization, :except => :ping
+  skip_before_filter :require_puavo_authorization, :except => [:ping, :whoami]
   skip_before_filter :require_login, :only => [:token, :refresh_token]
 
   rescue_from Puavo::AuthenticationFailed do |e|
@@ -153,6 +153,11 @@ class OauthController < ApplicationController
       :method => request.method,
       :msg => "pong"
     }.to_json
+  end
+
+  # GET/POST /oauth/whoami
+  def whoami
+    render :json => current_user.to_jsoo
   end
 
   private
