@@ -170,7 +170,8 @@ module Puavo
         @current_user = ExternalService.find @dn
       elsif oauth_token?
         # TODO: find user object with puavoOAuthAccessToken
-        raise "Not implemented: Find user by puavoOAuthToken"
+        access_token = AccessToken.find @dn
+        @current_user = User.find access_token.puavoOAuthEduPerson
       else
         @current_user = User.find @dn
       end
