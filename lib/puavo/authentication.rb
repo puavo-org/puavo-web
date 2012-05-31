@@ -69,6 +69,12 @@ module Puavo
     end
 
     def configure_ldap_connection(dn, password, host=nil, base=nil)
+
+      # Reset attributes on new configuration
+      @current_user = nil
+      @authenticated = false
+      @authorized = false
+
       # Remove previous connection
       self.class.remove_connection
 
@@ -151,18 +157,23 @@ module Puavo
 
     def current_user
 
+      raise "Cannot get current user before authentication" if not @authenticated
+
+      return @current_user if @current_user
+
       # TODO: find user object with puavoOAuthAccessToken
       if @dn.to_s.starts_with? "puavoOAuthToken"
-        logger.warn "Cannot get User object for #{ @dn }"
-        return
+        raise "Not implemented: Find user by puavoOAuthToken"
       end
 
       if external_service?
-        # ExternalService has no permission to find itself.
-        # @current_user ||= ExternalService.find @dn
+        @current_user = ExternalService.find @dn
       else
-        @current_user ||= User.find @dn
+        @current_user = User.find @dn
       end
+
+      raise "Failed get User object for #{ dn }" if @current_user.nil?
+      return @current_user
     end
 
     def logger
