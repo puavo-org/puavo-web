@@ -11,17 +11,11 @@ module PuavoAuthentication
       # Lazy getter for current user object
       def current_user
 
-        return unless @authentication
-
-
-        if user = @authentication.current_user
-          return user
+        if @authentication.nil?
+          raise "Cannot call 'current_user' before 'setup_authentication'"
         end
 
-        logger.warn "Current user look up failed for #{ @authentication.dn }"
-        # Delete ldap connection informations from session.
-        session.delete :password_plaintext
-        session.delete :uid
+        @authentication.current_user
 
       end
 
