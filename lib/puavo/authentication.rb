@@ -122,6 +122,10 @@ module Puavo
       @dn.rdns[1]["ou"] == "System Accounts"
     end
 
+    def oauth_token?
+      @dn.rdns[0].keys[0] == "puavoOAuthTokenId"
+    end
+
     # Authorize that user has permissions to use Puavo
     def authorize
 
@@ -140,7 +144,7 @@ module Puavo
       end
 
       # Authorize OAuth Access Tokens
-      if @dn.rdns[0].keys[0] == "puavoOAuthTokenId"
+      if oauth_token?
         return @authorized = true
       end
 
@@ -161,13 +165,12 @@ module Puavo
 
       return @current_user if @current_user
 
-      # TODO: find user object with puavoOAuthAccessToken
-      if @dn.to_s.starts_with? "puavoOAuthToken"
-        raise "Not implemented: Find user by puavoOAuthToken"
-      end
 
       if external_service?
         @current_user = ExternalService.find @dn
+      elsif oauth_token?
+        # TODO: find user object with puavoOAuthAccessToken
+        raise "Not implemented: Find user by puavoOAuthToken"
       else
         @current_user = User.find @dn
       end
