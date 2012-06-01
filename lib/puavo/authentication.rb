@@ -122,6 +122,10 @@ module Puavo
       @dn.rdns[1]["ou"] == "System Accounts"
     end
 
+    def oauth_client?
+      @dn.rdns.first.keys.first == "puavoOAuthClientId"
+    end
+
     def oauth_token?
       @dn.rdns[0].keys[0] == "puavoOAuthTokenId"
     end
