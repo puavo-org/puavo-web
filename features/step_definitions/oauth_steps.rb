@@ -1,9 +1,12 @@
 
-Given /^I have been redirected to (.*)$/ do |page_name|
+Given /^I have been redirected to (.*) from "([^\"]*)"$/ do |page_name, client_name|
+  @oauth_client = OauthClient.find( :first,
+                                    :attribute => 'displayName',
+                                    :value => client_name )
   visit( url_for(:controller => :oauth,
                  :action => :authorize,
-                 :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
-                 :scope => 'read:presonalInfo',
+                 :client_id => @oauth_client.puavoOAuthClientId,
+                 :scope => @oauth_client.puavoOAuthScope,
                  :redirect_uri => 'http://www.example2.com',
                  :state => '123456789',
                  :response_type => 'code',
@@ -14,7 +17,7 @@ end
 Then /^I should get OAuth access token with access code$/ do
   params = request.params
   params[:redirect_uri].should contain("http://www.example2.com")
-  basic_auth('fXLDE5FKas42DFgsfhRTfdlizK7oEm', 'zK7oEm34gYk3hA54DKX8da4')
+  basic_auth(@oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
   visit( oauth_access_token_path(:format => :json),
          :post, {
            :grant_type => 'authorization_code',
@@ -55,10 +58,9 @@ end
 
 
 Then /^I should get a new access token and a new refresh token with existing refresh token$/ do
+  basic_auth(@oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
   visit( oauth_refresh_access_token_path(:format => :json),
          :post, {
-           :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
-           :client_secret => 'zK7oEm34gYk3hA54DKX8da4',
            :refresh_token => @refresh_token
          }
   )
