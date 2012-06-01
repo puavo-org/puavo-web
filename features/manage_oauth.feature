@@ -5,7 +5,7 @@ Feature: OAuth login
 
   Background:
     Given the following oauth client:
-      | displayName      | puavoOAuthClientId             | userPassword            | puavoOAuthAccess  | ClientRedirectURI       |
+      | displayName      | puavoOAuthClientId             | userPassword            | puavoOAuthScope   | ClientRedirectURI       |
       | Example software | fXLDE5FKas42DFgsfhRTfdlizK7oEm | zK7oEm34gYk3hA54DKX8da4 | read:presonalInfo | http://www.example2.com |
     And a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following schools:
