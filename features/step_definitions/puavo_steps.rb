@@ -9,6 +9,15 @@ Before do |scenario|
                                   test_organisation.ldap_base,
                                   default_ldap_configuration["bind_dn"],
                                   default_ldap_configuration["password"] )
+
+  @owner_dn = User.find(:first, :attribute => "uid", :value => test_organisation.owner).dn.to_s
+  @owner_password = test_organisation.owner_pw
+
+  LdapBase.ldap_setup_connection( test_organisation.ldap_host,
+                                  test_organisation.ldap_base,
+                                  @owner_dn,
+                                  @owner_password )
+
   # Clean Up LDAP server: destroy all schools, groups and users
   User.all.each do |u|
     unless u.uid == "cucumber"
@@ -298,7 +307,7 @@ def set_ldap_admin_connection
     # Setting up ldap configuration
     LdapBase.ldap_setup_connection( test_organisation.ldap_host,
                                     test_organisation.ldap_base,
-                                    default_ldap_configuration["bind_dn"],
-                                    default_ldap_configuration["password"] )
+                                    @owner_dn,
+                                    @owner_password )
   end
 end
