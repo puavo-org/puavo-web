@@ -26,48 +26,45 @@ Feature: Manage users
 
   Scenario: Delete oauth client
     Given the following oauth client:
-      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthScope   |
-      | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
-      | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
-      | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
-      | client 4    |         1234567004 | secretpassword4 | read:presonalInfo |
+      | displayName | userPassword    | puavoOAuthScope   |
+      | client 1    | secretpassword1 | read:presonalInfo |
+      | client 2    | secretpassword2 | read:presonalInfo |
+      | client 3    | secretpassword3 | read:presonalInfo |
+      | client 4    | secretpassword4 | read:presonalInfo |
     When I delete the 3rd oauth client
     Then I should see the following oauth clients:
-      | Name     |  Client id |
-      | client 1 | 1234567001 |
-      | client 2 | 1234567002 |
-      | client 4 | 1234567004 |
+      | Name     |
+      | client 1 |
+      | client 2 |
+      | client 4 |
 
   Scenario: Edit OAuth client
     Given the following oauth client:
-      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthScope |
-      | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
-      | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
-      | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
-      | client 4    |         1234567004 | secretpassword4 | read:presonalInfo |
+      | displayName | userPassword    | puavoOAuthScope   |
+      | client 1    | secretpassword1 | read:presonalInfo |
+      | client 2    | secretpassword2 | read:presonalInfo |
+      | client 3    | secretpassword3 | read:presonalInfo |
+      | client 4    | secretpassword4 | read:presonalInfo |
     And I follow "OAuth clients"
     And I follow "client 1"
     When I follow "Edit"
     Then I should see "Editing OAuth client"
-    And the "Client secret" field should not contain "SSHA"
     When I fill in "Name" with "Example software"
-    And I fill in "Client id" with "fXLDE5FKas42DFgsfhRTfdli"
-    And I fill in "Client secret" with "zK7oEm34gYk3hA54DKX8da4"
     And I fill in "Scope" with "read:personalInfo"
     And I press "Update"
     Then I should see "Example software"
 
   Scenario: List OAuth client
     Given the following oauth client:
-      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthScope   |
-      | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
-      | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
-      | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
-      | client 4    |         1234567004 | secretpassword4 | read:presonalInfo |
+      | displayName | userPassword    | puavoOAuthScope   |
+      | client 1    | secretpassword1 | read:presonalInfo |
+      | client 2    | secretpassword2 | read:presonalInfo |
+      | client 3    | secretpassword3 | read:presonalInfo |
+      | client 4    | secretpassword4 | read:presonalInfo |
     When I follow "OAuth clients"
     Then I should see the following oauth clients:
-      | Name     |  Client id |
-      | client 1 | 1234567001 |
-      | client 2 | 1234567002 |
-      | client 3 | 1234567003 |
-      | client 4 | 1234567004 |
+      | Name     |
+      | client 1 |
+      | client 2 |
+      | client 3 |
+      | client 4 |
