@@ -43,12 +43,13 @@ Then /^I should get OAuth access token with access code$/ do
 end
 
 Then /^I should get "([^\"]*)" information with access token$/ do |uid|
-  set_ldap_admin_connection
-  user = User.find(:first, :attribute => "uid", :value => uid)
   cookies.clear
   header "Authorization", "token #{ @access_token }"
-  visit("users/#{user.puavoId}.json")
-  JSON.parse(response.body)["uid"].should == uid
+  visit(whoami_path)
+  response.status.should == "200 OK"
+  data = JSON.parse(response.body)
+  data["error"].should be_nil
+  data["uid"].should == uid
 end
 
 Then /^I should get OAuth access code$/ do
