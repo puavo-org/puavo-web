@@ -14,10 +14,9 @@ end
 Then /^I should get OAuth access token with access code$/ do
   params = request.params
   params[:redirect_uri].should contain("http://www.example2.com")
+  basic_auth('fXLDE5FKas42DFgsfhRTfdlizK7oEm', 'zK7oEm34gYk3hA54DKX8da4')
   visit( oauth_access_token_path(:format => :json),
          :post, {
-           :client_id => 'fXLDE5FKas42DFgsfhRTfdlizK7oEm',
-           :client_secret => 'zK7oEm34gYk3hA54DKX8da4',
            :grant_type => 'authorization_code',
            :code => @access_code,
            :redirect_uri => 'http://www.example2.com',
