@@ -8,6 +8,13 @@
   <%=h @oauth_client.puavoOAuthClientId %>
 </p>
 
+<% if flash[:oauth_client_new_password] %>
+<p>
+  <b><%= t('activeldap.attributes.oauth_client.userPassword') %></b>
+  <%=h flash[:oauth_client_new_password] %>
+</p>
+<% end %>
+
 <p>
   <b>Puavooauthaccess:</b>
   <%=h @oauth_client.puavoOAuthScope %>
