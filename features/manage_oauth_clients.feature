@@ -16,12 +16,12 @@ Feature: Manage users
     When I follow "New"
     Then I should see "New OAuth client"
     When I fill in "Name" with "Example software"
-    And I fill in "Client id" with "fXLDE5FKas42DFgsfhRTfdli"
-    And I fill in "Client secret" with "zK7oEm34gYk3hA54DKX8da4"
     And I fill in "Scope" with "read:personalInfo"
 #    And I check "False"
     And I press "Create"
     Then I should see "Example software"
+    And I should see "Client secret"
+    And I should see "confidential"
     And I should not see "{SSHA}"
 
   Scenario: Delete oauth client
