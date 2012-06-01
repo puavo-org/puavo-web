@@ -364,6 +364,7 @@ en:
         puavoOAuthClientId: Client id
         userPassword: Client secret
         puavoOAuthScope: Scope
+        puavoOAuthClientType: Client type
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
