@@ -41,10 +41,15 @@ class OauthClientsController < ApplicationController
   # POST /oauth_clients.xml
   def create
     @oauth_client = OauthClient.new(params[:oauth_client])
+    new_password = UUID.new.generate
+    @oauth_client.userPassword = new_password
 
     respond_to do |format|
       if @oauth_client.save
-        format.html { redirect_to(@oauth_client, :notice => 'OauthClient was successfully created.') }
+        format.html do 
+          flash[:oauth_client_new_password] = new_password
+          redirect_to(@oauth_client, :notice => 'OauthClient was successfully created.')
+        end
         format.xml  { render :xml => @oauth_client, :status => :created, :location => @oauth_client }
       else
         format.html { render :action => "new" }
