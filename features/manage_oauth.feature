@@ -13,16 +13,14 @@ Feature: OAuth login
     | Greenwich Steiner School | greenwich |
     And a new role with name "Class 1" and which is joined to the "Class 1" group to "Example school 1" school
     And the following users:
-    | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation | school_admin|
-    | Joe       | Bloggs | joee.bloggs | secret   | Class 1   | Student                   | false |
-    | Joe       | Bloggs | joe.bloggs | secret   | Class 1   | Admin                   | true |
-    #And I am logged in as "example" organisation owner
+    | givenName | sn     | uid         | password | role_name | puavoEduPersonAffiliation | school_admin |
+    | Joe       | Bloggs | joe.bloggs  | secret   | Class 1   | Student                   | false        |
 
   Scenario: User logged in the application
     Given I have been redirected to the OAuth authorize page
     Then I should be on the login page
-    When I fill in "Username" with "cucumber"
-    And I fill in "Password" with "cucumber"
+    When I fill in "Username" with "joe.bloggs"
+    And I fill in "Password" with "secret"
     And I press "Login"
     # When I press "ok"
     Then I should get OAuth access code
