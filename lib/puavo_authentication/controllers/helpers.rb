@@ -38,11 +38,20 @@ module PuavoAuthentication
           return oc
         end
 
-        authenticate_with_http_basic do |uid, password|
-          logger.debug "Using basic authentication with #{ uid }"
+        authenticate_with_http_basic do |username, password|
+          logger.debug "Using basic authentication with #{ username }"
 
-          if uid.match(/^service\//)
-            uid = uid.match(/^service\/(.*)/)[1]
+          if username.match(/^oauth_client_id\//)
+            oauth_client_id = username.match(/^oauth_client_id\/(.*)/)[1]
+            if oauth_client_server = OauthClient.find(:first,
+              :attribute => "puavoOAuthClientId",
+              :value => oauth_client_id)
+              return oauth_client_server.dn, password
+            end
+          end
+
+          if username.match(/^service\//)
+            uid = username.match(/^service\/(.*)/)[1]
           end
 
           return User.uid_to_dn(uid), password, uid
