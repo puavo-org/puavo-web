@@ -18,7 +18,7 @@ Feature: Manage users
     When I fill in "Name" with "Example software"
     And I fill in "Client id" with "fXLDE5FKas42DFgsfhRTfdli"
     And I fill in "Client secret" with "zK7oEm34gYk3hA54DKX8da4"
-    And I fill in "Access" with "read:personalInfo"
+    And I fill in "Scope" with "read:personalInfo"
 #    And I check "False"
     And I press "Create"
     Then I should see "Example software"
@@ -26,7 +26,7 @@ Feature: Manage users
 
   Scenario: Delete oauth client
     Given the following oauth client:
-      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthAccess  |
+      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthScope   |
       | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
       | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
       | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
@@ -40,7 +40,7 @@ Feature: Manage users
 
   Scenario: Edit OAuth client
     Given the following oauth client:
-      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthAccess  |
+      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthScope |
       | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
       | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
       | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
@@ -53,13 +53,13 @@ Feature: Manage users
     When I fill in "Name" with "Example software"
     And I fill in "Client id" with "fXLDE5FKas42DFgsfhRTfdli"
     And I fill in "Client secret" with "zK7oEm34gYk3hA54DKX8da4"
-    And I fill in "Access" with "read:personalInfo"
+    And I fill in "Scope" with "read:personalInfo"
     And I press "Update"
     Then I should see "Example software"
 
   Scenario: List OAuth client
     Given the following oauth client:
-      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthAccess  |
+      | displayName | puavoOAuthClientId | userPassword    | puavoOAuthScope   |
       | client 1    |         1234567001 | secretpassword1 | read:presonalInfo |
       | client 2    |         1234567002 | secretpassword2 | read:presonalInfo |
       | client 3    |         1234567003 | secretpassword3 | read:presonalInfo |
