@@ -11,7 +11,7 @@ class OauthClient < LdapBase
   private
 
   def generate_puavoOAuthClientId
-    self.puavoOAuthClientId = UUID.new.generate
+    self.puavoOAuthClientId = UUID.new.generate if self.puavoOAuthClientId.nil?
   end
 
   def set_client_type
