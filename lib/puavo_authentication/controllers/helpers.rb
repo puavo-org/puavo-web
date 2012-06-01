@@ -97,7 +97,7 @@ module PuavoAuthentication
           dn, password, uid = login_credentials
         rescue Puavo::UnknownUID => e
           logger.info "Failed to get credentials: #{ e.message }"
-          show_authentication_error t('flash.session.failed')
+          show_authentication_error t('flash.session.failed'), e.message
           return false
         end
 
@@ -114,7 +114,7 @@ module PuavoAuthentication
           @authentication.authenticate
         rescue Puavo::AuthenticationError => e
           logger.info "Login failed for #{ dn } (#{ uid }): #{ e }"
-          show_authentication_error t('flash.session.failed')
+          show_authentication_error t('flash.session.failed'), e.message
           return false
         end
 
@@ -137,18 +137,17 @@ module PuavoAuthentication
           @authentication.authorize
         rescue Puavo::AuthorizationFailed => e
           logger.info "Authorization  failed: #{ e }"
-          show_authentication_error t('flash.session.failed')
+          show_authentication_error t('flash.session.failed'), e.message
           return false
         end
       end
 
-      def show_authentication_error(msg)
+      def show_authentication_error(msg, details="")
         session.delete :password_plaintext
         session.delete :uid
         if request.format == Mime::JSON
           render :json => {
-            :error => "authorization error",
-            :message => msg,
+            :error => "authentication error: #{ msg }, #{ details }",
           }.to_json
         else
           store_location
