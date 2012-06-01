@@ -157,7 +157,7 @@ class OauthController < ApplicationController
 
   # GET/POST /oauth/whoami
   def whoami
-    render :json => current_user.to_jsoo
+    render :json => current_user.to_json
   end
 
   private
