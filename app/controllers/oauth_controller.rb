@@ -4,11 +4,14 @@ class OauthController < ApplicationController
 
   skip_before_filter :find_school
   skip_before_filter :require_puavo_authorization, :except => [:ping, :whoami]
-  skip_before_filter :require_login, :only => [:token, :refresh_token]
+
+  class InvalidOAuthRequest < UserError
+  end
 
   rescue_from Puavo::AuthenticationFailed do |e|
     show_authentication_error e.message
   end
+
 
 
   # GET /oauth/authorize
@@ -33,16 +36,29 @@ class OauthController < ApplicationController
     redirect_with_access_code
   end
 
+  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.2
+  #
   # POST /oauth/authorize
   # This post comes from the client server
   # Here we exchange the code with the token
   def token
 
-    access_code = AccessCode.find_by_access_code_and_client_id(
-      params[:code], params[:client_id])
+    if not authentication.oauth_client?
+      raise InvalidOAuthRequest, "Bad OAuth Client credentials"
+    end
 
-    oauth_client_server_dn = authenticate_client_server
-    access_token, refresh_token = create_tokens access_code.user_dn, oauth_client_server_dn
+    # Authenticated previously. Just get the client id here.
+    client_id = authenticate_with_http_basic { |username, password| username }
+
+    access_code = AccessCode.find_by_access_code_and_client_id(
+      params[:code], client_id)
+
+    if access_code.nil?
+      raise InvalidOAuthRequest "Cannot find Authorization Grant"
+    end
+
+
+    access_token, refresh_token = create_tokens access_code.user_dn, authentication.dn
 
     redirect_uri = params[:redirect_uri]
     grant_type = params[:grant_type]
@@ -60,6 +76,11 @@ class OauthController < ApplicationController
 
   # POST /oauth/token
   def refresh_token
+
+    if not authentication.oauth_client?
+      raise InvalidOAuthRequest, "Bad OAuth Client credentials: #{ authentication.dn }"
+    end
+
     # get new accesstoken by using refresh_token and user credentials
     refresh_token_dn, password = token_manager.decrypt params[:refresh_token]
 
@@ -68,12 +89,11 @@ class OauthController < ApplicationController
     authentication.authenticate
     setup_authentication
 
-    oauth_client_server_dn = authenticate_client_server
 
     refresh_token_entry = RefreshToken.find(refresh_token_dn)
     user_dn = refresh_token_entry.puavoOAuthEduPerson
 
-    access_token, refresh_token = create_tokens user_dn, oauth_client_server_dn
+    access_token, refresh_token = create_tokens user_dn, authentication.dn
 
     token_hash = {
          :access_token => access_token,
@@ -104,12 +124,12 @@ class OauthController < ApplicationController
     )
 
     refresh_token_entry = RefreshToken.new
-    client_secret = params[:client_secret]
+    refresh_token_password = UUID.new.generate
 
 
     refresh_token_entry.puavoOAuthAccessToken = access_token_entry.dn
     refresh_token_entry.puavoOAuthTokenId = UUID.new.generate
-    refresh_token_entry.userPassword = client_secret
+    refresh_token_entry.userPassword = refresh_token_password
     refresh_token_entry.puavoOAuthEduPerson = user_dn
     refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
 
@@ -117,7 +137,7 @@ class OauthController < ApplicationController
 
     refresh_token = token_manager.encrypt(
       refresh_token_entry.dn.to_s,
-      client_secret,
+      refresh_token_password,
       authentication.host,
       authentication.base
     )
@@ -162,14 +182,4 @@ class OauthController < ApplicationController
 
   private
 
-  def authenticate_client_server
-    oauth_client_server = OauthClient.find(:first,
-                                           :attribute => "puavoOAuthClientId",
-                                           :value => params["client_id"])
-
-    # Authenticate Client Server
-    authentication.configure_ldap_connection oauth_client_server.dn, params["client_secret"]
-    authentication.authenticate
-    oauth_client_server.dn
-  end
 end
