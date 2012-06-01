@@ -370,7 +370,7 @@ en:
         displayName: Name
         puavoOAuthClientId: Client id
         userPassword: Client secret
-        puavoOAuthAccess: Access
+        puavoOAuthScope: Scope
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student
