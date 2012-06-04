@@ -50,59 +50,45 @@ class OauthController < ApplicationController
     # Authenticated previously. Just get the client id here.
     client_id = authenticate_with_http_basic { |username, password| username }
 
-    access_code = AccessCode.find_by_access_code_and_client_id(
-      params[:code], client_id)
+    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
+    if params["grant_type"] == "authorization_code"
+      access_code = AccessCode.find_by_access_code_and_client_id(
+        params[:code], client_id)
 
-    if access_code.nil?
-      raise InvalidOAuthRequest "Cannot find Authorization Grant"
+      if access_code.nil?
+        raise InvalidOAuthRequest "Cannot find Authorization Grant"
+      end
+
+      user_dn = access_code.user_dn
+      # TODO: delete access code
+
+    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
+    elsif params["grant_type"] == "refresh_token"
+
+      refresh_token_dn, password = token_manager.decrypt params[:refresh_token]
+      refresh_token_entry = RefreshToken.find(refresh_token_dn)
+
+      if refresh_token_entry.nil?
+        raise InvalidOAuthRequest "Cannot find Refresh Token"
+      end
+
+      authentication.test_bind refresh_token_dn, password
+      user_dn = refresh_token_entry.puavoOAuthEduPerson
+
     end
 
-
-    access_token, refresh_token = create_tokens access_code.user_dn, authentication.dn
+    access_token, refresh_token = create_tokens user_dn, authentication.dn
 
     redirect_uri = params[:redirect_uri]
     grant_type = params[:grant_type]
 
-
-    token_hash = {
-         :access_token => access_token,
-         :token_type => "Bearer",
-         :expires_in => 3600,
-         :refresh_token => refresh_token
-    }
-
-    render :json => token_hash.to_json
-  end
-
-  # POST /oauth/token
-  def refresh_token
-
-    if not authentication.oauth_client?
-      raise InvalidOAuthRequest, "Bad OAuth Client credentials: #{ authentication.dn }"
-    end
-
-    # get new accesstoken by using refresh_token and user credentials
-    refresh_token_dn, password = token_manager.decrypt params[:refresh_token]
-
-    # Authenticate Refresh Token
-    authentication.configure_ldap_connection refresh_token_dn, password
-    authentication.authenticate
-    setup_authentication
-
-
-    refresh_token_entry = RefreshToken.find(refresh_token_dn)
-    user_dn = refresh_token_entry.puavoOAuthEduPerson
-
-    access_token, refresh_token = create_tokens user_dn, authentication.dn
-
-    token_hash = {
-         :access_token => access_token,
-         :token_type => "Bearer",
-         :expires_in => 3600,
-         :refresh_token => refresh_token
-    }
-
-    render :json => token_hash.to_json
+    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
+    render :json => {
+      :access_token => access_token,
+      :token_type => "Bearer",
+      :expires_in => 3600,
+      :refresh_token => refresh_token
+    }.to_json
   end
 
   def create_tokens( user_dn, oauth_client_server_dn )
@@ -180,6 +166,5 @@ class OauthController < ApplicationController
     render :json => current_user.to_json
   end
 
-  private
 
 end
