@@ -14,6 +14,16 @@ Given /^I have been redirected to (.*) from "([^\"]*)"$/ do |page_name, client_n
                  :access_type => 'offline'  ) )
 end
 
+Then /^I should get OAuth access code$/ do
+  params = CGI::parse( URI.parse( response.headers["Location"]).query )
+
+  # response.body.should contain("http://www.example2.com")
+  params["code"].first.should_not be_nil
+  params["state"].first.should_not be_nil
+
+  @access_code = params["code"].first
+end
+
 Then /^I should get OAuth access token with access code$/ do
   params = request.params
   params[:redirect_uri].should contain("http://www.example2.com")
@@ -52,15 +62,6 @@ Then /^I should get "([^\"]*)" information with access token$/ do |uid|
   data["uid"].should == uid
 end
 
-Then /^I should get OAuth access code$/ do
-  params = CGI::parse( URI.parse( response.headers["Location"]).query )
-
-  # response.body.should contain("http://www.example2.com")
-  params["code"].first.should_not be_nil
-  params["state"].first.should_not be_nil
-
-  @access_code = params["code"].first
-end
 
 
 Then /^I should get a new access token and a new refresh token with existing refresh token$/ do
