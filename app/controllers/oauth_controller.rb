@@ -93,9 +93,9 @@ class OauthController < ApplicationController
 
   def create_tokens( user_dn, oauth_client_server_dn )
     access_token_entry = AccessToken.new
-    access_token_password = UUID.new.generate
+    access_token_password = generate_nonsense
 
-    access_token_entry.puavoOAuthTokenId = UUID.new.generate
+    access_token_entry.puavoOAuthTokenId = generate_nonsense
     access_token_entry.userPassword = access_token_password
     access_token_entry.puavoOAuthEduPerson = user_dn
     access_token_entry.puavoOAuthClient = oauth_client_server_dn
@@ -110,11 +110,11 @@ class OauthController < ApplicationController
     )
 
     refresh_token_entry = RefreshToken.new
-    refresh_token_password = UUID.new.generate
+    refresh_token_password = generate_nonsense
 
 
     refresh_token_entry.puavoOAuthAccessToken = access_token_entry.dn
-    refresh_token_entry.puavoOAuthTokenId = UUID.new.generate
+    refresh_token_entry.puavoOAuthTokenId = generate_nonsense
     refresh_token_entry.userPassword = refresh_token_password
     refresh_token_entry.puavoOAuthEduPerson = user_dn
     refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
@@ -141,7 +141,7 @@ class OauthController < ApplicationController
     session.delete :oauth_params
     raise "OAuth params are not in the session" if oauth_params.nil?
 
-    code = UUID.new.generate
+    code = generate_nonsense
 
     access_code = AccessCode.create(
       :access_code => code,
@@ -166,5 +166,10 @@ class OauthController < ApplicationController
     render :json => current_user.to_json
   end
 
+  private
+
+  def generate_nonsense
+    UUID.new.generate
+  end
 
 end
