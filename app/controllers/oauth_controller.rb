@@ -49,6 +49,7 @@ class OauthController < ApplicationController
 
     # Authenticated previously. Just get the client id here.
     client_id = authenticate_with_http_basic { |username, password| username }
+    oauth_client_server_dn = authentication.dn
 
     # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
     if params["grant_type"] == "authorization_code"
@@ -61,6 +62,7 @@ class OauthController < ApplicationController
 
       user_dn = access_code.user_dn
       # TODO: delete access code
+      # TODO: verify request_uri
 
     # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
     elsif params["grant_type"] == "refresh_token"
@@ -75,32 +77,29 @@ class OauthController < ApplicationController
       authentication.test_bind refresh_token_dn, password
       user_dn = refresh_token_entry.puavoOAuthEduPerson
 
+    else
+      raise InvalidOAuthRequest "grant_type is missing"
     end
 
-    access_token, refresh_token = create_tokens user_dn, authentication.dn
 
-    redirect_uri = params[:redirect_uri]
-    grant_type = params[:grant_type]
-
-    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
-    render :json => {
-      :access_token => access_token,
-      :token_type => "Bearer",
-      :expires_in => 3600,
-      :refresh_token => refresh_token
-    }.to_json
-  end
-
-  def create_tokens( user_dn, oauth_client_server_dn )
-    access_token_entry = AccessToken.new
+    access_token_entry = AccessToken.find(:first,
+      :attribute => "puavoOAuthEduPerson",
+      :value => user_dn) || AccessToken.new
     access_token_password = generate_nonsense
-
-    access_token_entry.puavoOAuthTokenId = generate_nonsense
+    access_token_entry.puavoOAuthTokenId ||= generate_nonsense
     access_token_entry.userPassword = access_token_password
     access_token_entry.puavoOAuthEduPerson = user_dn
     access_token_entry.puavoOAuthClient = oauth_client_server_dn
-
     access_token_entry.save!
+
+    refresh_token_entry ||= RefreshToken.new
+    refresh_token_password = generate_nonsense
+    refresh_token_entry.puavoOAuthTokenId ||= generate_nonsense
+    refresh_token_entry.puavoOAuthAccessToken = access_token_entry.dn
+    refresh_token_entry.userPassword = refresh_token_password
+    refresh_token_entry.puavoOAuthEduPerson = user_dn
+    refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
+    refresh_token_entry.save!
 
     access_token = token_manager.encrypt(
       access_token_entry.dn.to_s,
@@ -109,18 +108,6 @@ class OauthController < ApplicationController
       authentication.base
     )
 
-    refresh_token_entry = RefreshToken.new
-    refresh_token_password = generate_nonsense
-
-
-    refresh_token_entry.puavoOAuthAccessToken = access_token_entry.dn
-    refresh_token_entry.puavoOAuthTokenId = generate_nonsense
-    refresh_token_entry.userPassword = refresh_token_password
-    refresh_token_entry.puavoOAuthEduPerson = user_dn
-    refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
-
-    refresh_token_entry.save!
-
     refresh_token = token_manager.encrypt(
       refresh_token_entry.dn.to_s,
       refresh_token_password,
@@ -128,7 +115,13 @@ class OauthController < ApplicationController
       authentication.base
     )
 
-    return access_token, refresh_token
+    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
+    render :json => {
+      :access_token => access_token,
+      :refresh_token => refresh_token,
+      :token_type => "Bearer",
+      :expires_in => 3600,
+    }.to_json
   end
 
   def trusted_client_service?
