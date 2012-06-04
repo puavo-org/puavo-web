@@ -95,6 +95,26 @@ module Puavo
       LdapBase.connection.instance_variable_set :@allow_anonymous, false
     end
 
+    # Test dn&password bind to LDAP without actually configuring ActiveLdap to
+    # use them
+    def test_bind(dn, password)
+      ldap = Net::LDAP.new(
+        :host => @host,
+        :port => 389,
+        :encryption => {
+          :method => :start_tls
+        },
+        :auth => {
+          :method => :simple,
+          :username => dn.to_s,
+          :password => password
+      })
+
+      if not ldap.bind
+        raise AuthenticationFailed, "Test bind failed: Bad dn or password"
+      end
+    end
+
     # Authenticate configured connection to LDAP.
     #
     # Raises AuthenticationFailed if connection could not be made.
