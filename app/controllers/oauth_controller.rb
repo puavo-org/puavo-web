@@ -61,7 +61,8 @@ class OauthController < ApplicationController
       end
 
       user_dn = access_code.user_dn
-      # TODO: delete access code
+      access_code.destroy
+
       # TODO: verify request_uri
 
     # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
