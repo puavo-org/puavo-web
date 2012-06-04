@@ -67,8 +67,9 @@ end
 Then /^I should get a new access token and a new refresh token with existing refresh token$/ do
 
   basic_auth("oauth_client_id/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
-  visit( oauth_refresh_access_token_path(:format => :json),
+  visit( oauth_access_token_path(:format => :json),
          :post, {
+           :grant_type => 'refresh_token',
            :refresh_token => @refresh_token
          }
   )
