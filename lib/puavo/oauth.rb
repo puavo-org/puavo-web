@@ -15,11 +15,11 @@ module Puavo
 
           # Returns dn, password, host and base as encrypted base64 string.
           # Use decrypt method to get the data back.
-          def encrypt(dn, password, host, base)
-            data = [dn.to_s, password, host, base].to_json
+          def encrypt(ruby_data)
+            json = ruby_data.to_json
             salt = generate_salt
             setup_cipher(:encrypt, salt)
-            e = @cipher.update(data) + @cipher.final
+            e = @cipher.update(json) + @cipher.final
             e = "Salted__#{salt}#{e}" # OpenSSL compatible
             # wtf http://stackoverflow.com/questions/2620975/strange-n-in-base64-encoded-string-in-ruby
             Base64.encode64(e).gsub /\n/, ""
@@ -32,10 +32,7 @@ module Puavo
             salt = data[8..15]
             data = data[16..-1]
             setup_cipher(:decrypt, salt)
-
-            values = JSON.parse @cipher.update(data) + @cipher.final
-            values[0] = ActiveLdap::DistinguishedName.parse values[0]
-            values
+            JSON.parse @cipher.update(data) + @cipher.final
           end
 
           private
