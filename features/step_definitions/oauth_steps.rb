@@ -44,7 +44,7 @@ end
 
 Then /^I should get "([^\"]*)" information with access token$/ do |uid|
   cookies.clear
-  header "Authorization", "token #{ @access_token }"
+  header "HTTP_AUTHORIZATION", "token #{ @access_token }"
   visit(whoami_path)
   response.status.should == "200 OK"
   data = JSON.parse(response.body)
