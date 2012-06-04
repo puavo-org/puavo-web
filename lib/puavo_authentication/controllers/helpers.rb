@@ -24,7 +24,9 @@ module PuavoAuthentication
         if auth_header = request.headers["HTTP_AUTHORIZATION"]
           type, data = auth_header.split
           if type.downcase == "token"
-            return token_manager.decrypt data
+            credentials = token_manager.decrypt data
+            dn = ActiveLdap::DistinguishedName.parse credentials["dn"]
+            return dn, credentials["password"]
           end
         end
         return nil
