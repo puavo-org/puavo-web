@@ -67,14 +67,14 @@ class OauthController < ApplicationController
     # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
     elsif params["grant_type"] == "refresh_token"
 
-      refresh_token_dn, password = token_manager.decrypt params[:refresh_token]
-      refresh_token_entry = RefreshToken.find(refresh_token_dn)
+      refresh_token = token_manager.decrypt params[:refresh_token]
+      refresh_token_entry = RefreshToken.find(refresh_token["dn"])
 
       if refresh_token_entry.nil?
         raise InvalidOAuthRequest "Cannot find Refresh Token"
       end
 
-      authentication.test_bind refresh_token_dn, password
+      authentication.test_bind refresh_token["dn"], refresh_token["password"]
       user_dn = refresh_token_entry.puavoOAuthEduPerson
 
     else
@@ -101,18 +101,18 @@ class OauthController < ApplicationController
     refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
     refresh_token_entry.save!
 
-    access_token = token_manager.encrypt(
-      access_token_entry.dn.to_s,
-      access_token_password,
-      authentication.host,
-      authentication.base
-    )
+    access_token = token_manager.encrypt({
+      "dn" => access_token_entry.dn.to_s,
+      "password" => access_token_password,
+      "host" => authentication.host,
+      "base" => authentication.base
+    })
 
     refresh_token = token_manager.encrypt(
-      refresh_token_entry.dn.to_s,
-      refresh_token_password,
-      authentication.host,
-      authentication.base
+      "dn" => refresh_token_entry.dn.to_s,
+      "password" => refresh_token_password,
+      "host" => authentication.host,
+      "base" => authentication.base
     )
 
     # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
