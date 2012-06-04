@@ -15,6 +15,7 @@ class OauthController < ApplicationController
 
 
   # GET /oauth/authorize
+  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.1
   def authorize
     # Save parameters given by the Client Service
     session[:oauth_params] = params
@@ -36,9 +37,8 @@ class OauthController < ApplicationController
     redirect_with_access_code
   end
 
+  # POST /oauth/token
   # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.2
-  #
-  # POST /oauth/authorize
   # This post comes from the client server
   # Here we exchange the code with the token
   def token
@@ -136,6 +136,7 @@ class OauthController < ApplicationController
     true
   end
 
+  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
   def redirect_with_access_code
     oauth_params = session[:oauth_params]
     session.delete :oauth_params
