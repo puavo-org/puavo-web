@@ -27,3 +27,12 @@ Feature: OAuth login
     # New access token should work
     And I should get "joe.bloggs" information with access token
 
+  Scenario: I try to get an Access Token with expired Authorization Code
+    Given I have been redirected to the OAuth authorize page from "Example software"
+    Then I should be on the login page
+    When I fill in "Username" with "joe.bloggs"
+    And I fill in "Password" with "secret"
+    And I press "Login"
+    Then I should get OAuth authorization code
+    Given I wait 5 hours
+    Then I should not get OAuth access token with authorization code
