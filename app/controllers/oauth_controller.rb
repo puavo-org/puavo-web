@@ -6,10 +6,25 @@ class OauthController < ApplicationController
   skip_before_filter :require_puavo_authorization, :except => [:ping, :whoami]
 
   class InvalidOAuthRequest < UserError
+    attr_accessor :code
+    def initialize(message, code)
+      super message
+      @code = code || "unknown_error"
+    end
   end
 
   rescue_from Puavo::AuthenticationFailed do |e|
     show_authentication_error e.message
+  end
+
+
+  rescue_from InvalidOAuthRequest do |e|
+    # Error Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-5.2
+    render :json => {
+      :error => e.code,
+      :message => e.message
+    }.to_json,
+    :status => 400
   end
 
 
