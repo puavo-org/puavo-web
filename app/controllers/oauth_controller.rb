@@ -104,15 +104,23 @@ class OauthController < ApplicationController
     end
 
 
+    # TODO: This find must include :puavoOAuthClient too!!
     access_token_entry = AccessToken.find(:first,
       :attribute => "puavoOAuthEduPerson",
-      :value => user_dn) || AccessToken.new
-    access_token_password = generate_nonsense
-    access_token_entry.puavoOAuthTokenId ||= generate_nonsense
-    access_token_entry.userPassword = access_token_password
-    access_token_entry.puavoOAuthEduPerson = user_dn
-    access_token_entry.puavoOAuthClient = oauth_client_server_dn
-    access_token_entry.save!
+      :value => user_dn)
+
+    if access_token_entry.nil?
+      access_token_entry = AccessToken.new(
+        :puavoOAuthEduPerson => user_dn,
+        :puavoOAuthClient => oauth_client_server_dn
+      )
+    end
+
+    access_token = access_token_entry.encrypt_token(
+      "host" => authentication.host,
+      "base" => authentication.base
+    )
+
 
     refresh_token_entry ||= RefreshToken.new
     refresh_token_password = generate_nonsense
@@ -123,13 +131,6 @@ class OauthController < ApplicationController
     refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
     refresh_token_entry.save!
 
-    access_token = token_manager.encrypt({
-      "dn" => access_token_entry.dn.to_s,
-      "password" => access_token_password,
-      "host" => authentication.host,
-      "base" => authentication.base,
-      "created" => Time.now,
-    })
 
     refresh_token = token_manager.encrypt({
       "dn" => refresh_token_entry.dn.to_s,
@@ -192,6 +193,7 @@ class OauthController < ApplicationController
   private
 
   def generate_nonsense
+    logger.warn "DEPRECATED generate_nonsense"
     UUID.new.generate
   end
 
