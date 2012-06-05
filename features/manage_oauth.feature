@@ -48,3 +48,14 @@ Feature: OAuth login
     And I should get OAuth Access Token with Authorization Code
     Given I wait 1 year
     Then I should not get "joe.bloggs" information with expired Access Token
+
+  Scenario: I try to get new Access Token with expired Refresh Token
+    Given I have been redirected to the OAuth authorize page from "Example software"
+    Then I should be on the login page
+    When I fill in "Username" with "joe.bloggs"
+    And I fill in "Password" with "secret"
+    And I press "Login"
+    Then I should get OAuth Authorization Code
+    And I should get OAuth Access Token with Authorization Code
+    Given I wait 10 years
+    Then I should not get a new Access Token and a new refresh Token with expired refresh Token
