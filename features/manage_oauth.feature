@@ -20,8 +20,8 @@ Feature: OAuth login
     And I fill in "Password" with "secret"
     And I press "Login"
     # When I press "ok"
-    Then I should get OAuth access code
-    And I should get OAuth access token with access code
+    Then I should get OAuth authorization code
+    And I should get OAuth access token with authorization code
     And I should get "joe.bloggs" information with access token
     And I should get a new access token and a new refresh token with existing refresh token
     # New access token should work

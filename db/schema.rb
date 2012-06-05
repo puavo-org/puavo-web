@@ -11,10 +11,11 @@
 
 ActiveRecord::Schema.define(:version => 20120524103807) do
 
-  create_table "access_codes", :force => true do |t|
-    t.string   "access_code"
+  create_table "authorization_codes", :force => true do |t|
+    t.string   "code"
     t.string   "client_id"
     t.string   "user_dn"
+    t.string   "redirect_uri"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
