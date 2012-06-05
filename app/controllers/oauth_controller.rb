@@ -122,15 +122,17 @@ class OauthController < ApplicationController
       "dn" => access_token_entry.dn.to_s,
       "password" => access_token_password,
       "host" => authentication.host,
-      "base" => authentication.base
+      "base" => authentication.base,
+      "created" => Time.now,
     })
 
-    refresh_token = token_manager.encrypt(
+    refresh_token = token_manager.encrypt({
       "dn" => refresh_token_entry.dn.to_s,
       "password" => refresh_token_password,
       "host" => authentication.host,
-      "base" => authentication.base
-    )
+      "base" => authentication.base,
+      "created" => Time.now,
+    })
 
     # Access Token Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
     render :json => {
