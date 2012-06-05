@@ -58,10 +58,13 @@ class OauthController < ApplicationController
         raise InvalidOAuthRequest "Cannot find Authorization Grant"
       end
 
+      if authorization_code.redirect_uri != params[:redirect_uri]
+        raise InvalidOAuthRequest, "redirect_uri does not match to redirect_uri given in authorization grant"
+      end
+
       user_dn = authorization_code.user_dn
       authorization_code.destroy
 
-      # TODO: verify request_uri
 
     # Refreshing an Access Token http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
     elsif params["grant_type"] == "refresh_token"
@@ -135,13 +138,16 @@ class OauthController < ApplicationController
     oauth_params = session[:oauth_params]
     session.delete :oauth_params
     raise "OAuth params are not in the session" if oauth_params.nil?
+    # TODO: Raise if oauth_params[:redirect_uri] is missing?
+    # It's optional in the RFC but do we require it?
 
     code = generate_nonsense
 
     authorization_code = AuthorizationCode.create(
       :code => code,
       :client_id => oauth_params[:client_id],
-      :user_dn => current_user.dn.to_s
+      :user_dn => current_user.dn.to_s,
+      :redirect_uri => oauth_params[:redirect_uri]
     )
 
     url = { :code => code, :state => oauth_params[:state]  }.to_query
