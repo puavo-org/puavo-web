@@ -21,4 +21,5 @@ group :development do
 	gem 'ruby-debug'
 	gem 'rbtrace'
 	gem 'colorize'
+	gem 'timecop'
 end
