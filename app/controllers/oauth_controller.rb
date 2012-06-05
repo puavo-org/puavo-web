@@ -84,7 +84,12 @@ class OauthController < ApplicationController
     # Refreshing an Access Token http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
     elsif params["grant_type"] == "refresh_token"
 
-      refresh_token = token_manager.decrypt params[:refresh_token]
+      begin
+        refresh_token = RefreshToken.decrypt params[:refresh_token]
+      rescue RefreshToken::Expired => e
+        raise InvalidOAuthRequest.new "Refresh Token has expired", "invalid_grant"
+      end
+
       refresh_token_entry = RefreshToken.find(refresh_token["dn"])
 
       if refresh_token_entry.nil?
