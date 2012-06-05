@@ -20,12 +20,12 @@ Feature: OAuth login
     And I fill in "Password" with "secret"
     And I press "Login"
     # When I press "ok"
-    Then I should get OAuth authorization code
-    And I should get OAuth access token with authorization code
-    And I should get "joe.bloggs" information with access token
-    And I should get a new access token and a new refresh token with existing refresh token
-    # New access token should work
-    And I should get "joe.bloggs" information with access token
+    Then I should get OAuth Authorization Code
+    And I should get OAuth Access Token with Authorization Code
+    And I should get "joe.bloggs" information with Access Token
+    And I should get a new Access Token and a new Refresh Token with existing Refresh Token
+    # New Access Token should work
+    And I should get "joe.bloggs" information with Access Token
 
   Scenario: I try to get an Access Token with expired Authorization Code
     Given I have been redirected to the OAuth authorize page from "Example software"
@@ -33,9 +33,9 @@ Feature: OAuth login
     When I fill in "Username" with "joe.bloggs"
     And I fill in "Password" with "secret"
     And I press "Login"
-    Then I should get OAuth authorization code
+    Then I should get OAuth Authorization Code
     Given I wait 5 hours
-    Then I should not get OAuth access token with authorization code
+    Then I should not get OAuth Access Token with expired Authorization Code
 
   Scenario: I try to get user data with expired Access Token
     Given I have been redirected to the OAuth authorize page from "Example software"
@@ -44,7 +44,7 @@ Feature: OAuth login
     And I fill in "Password" with "secret"
     And I press "Login"
     # When I press "ok"
-    Then I should get OAuth authorization code
-    And I should get OAuth access token with authorization code
+    Then I should get OAuth Authorization Code
+    And I should get OAuth Access Token with Authorization Code
     Given I wait 1 year
-    Then I should not get "joe.bloggs" information with access token
+    Then I should not get "joe.bloggs" information with expired Access Token
