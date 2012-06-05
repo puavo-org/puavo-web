@@ -122,3 +122,18 @@ Then /^I should not get "([^\"]*)" information with expired Access Token$/ do |u
   data = JSON.parse(response.body)
   data["error"].should_not be_nil
 end
+
+Then /^I should not get a new Access Token and a new refresh Token with expired refresh Token$/ do
+
+  basic_auth("oauth_client_id/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  visit( oauth_access_token_path(:format => :json),
+         :post, {
+           :grant_type => 'refresh_token',
+           :refresh_token => @refresh_token
+         }
+  )
+
+  response.status.should_not == "200 OK"
+  data = JSON.parse( response.body )
+  data["error"].should_not be_nil
+end
