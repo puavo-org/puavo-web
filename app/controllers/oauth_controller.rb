@@ -78,6 +78,7 @@ class OauthController < ApplicationController
       end
 
       if authorization_code.expired?
+        authorization_code.destroy
         raise InvalidOAuthRequest.new "Authorization Code has expired", "invalid_grant"
       end
 
