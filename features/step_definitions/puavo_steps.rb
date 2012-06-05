@@ -323,7 +323,7 @@ def set_ldap_admin_connection
   end
 end
 
-Given /^I wait ([0-9]+) (hours|days|months|years)$/ do |digit, type|
+Given /^I wait ([0-9]+) (hour|day|month|year)s?$/ do |digit, type|
   Timecop.travel Time.now + digit.to_i.send(type)
 end
 
