@@ -1,5 +1,6 @@
 require 'sha1'
 require 'base64'
+require 'timecop'
 
 Before do |scenario|
   test_organisation = Puavo::Organisation.find('example')
@@ -311,3 +312,8 @@ def set_ldap_admin_connection
                                     @owner_password )
   end
 end
+
+Given /^I wait ([0-9]+) (hours|days|months|years)$/ do |digit, type|
+  Timecop.travel Time.now + digit.to_i.send(type)
+end
+
