@@ -24,7 +24,7 @@ module PuavoAuthentication
         if auth_header = request.headers["HTTP_AUTHORIZATION"]
           type, data = auth_header.split
           if type.downcase == "token"
-            token = AccessToken.decrypt data
+            token = AccessToken.decrypt_token data
             return token["dn"], token["password"]
           end
         end
