@@ -85,7 +85,7 @@ class OauthController < ApplicationController
     elsif params["grant_type"] == "refresh_token"
 
       begin
-        refresh_token = RefreshToken.decrypt params[:refresh_token]
+        refresh_token = RefreshToken.decrypt_token params[:refresh_token]
       rescue RefreshToken::Expired => e
         raise InvalidOAuthRequest.new "Refresh Token has expired", "invalid_grant"
       end
