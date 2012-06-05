@@ -11,7 +11,7 @@ class RefreshToken < LdapBase
   class Expired < UserError
   end
 
-  def self.decrypt(raw_token)
+  def self.decrypt_token(raw_token)
     tm = Puavo::OAuth::TokenManager.new Puavo::OAUTH_CONFIG["token_key"]
     token = tm.decrypt raw_token
 
