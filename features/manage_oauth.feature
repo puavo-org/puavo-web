@@ -13,7 +13,7 @@ Feature: OAuth login
     | givenName | sn     | uid         | password | role_name | puavoEduPersonAffiliation | school_admin |
     | Joe       | Bloggs | joe.bloggs  | secret   | Class 1   | Student                   | false        |
 
-  Scenario: User logged in the application
+  Scenario: I Can get user data with OAuth Access Token
     Given I have been redirected to the OAuth authorize page from "Example software"
     Then I should be on the login page
     When I fill in "Username" with "joe.bloggs"
@@ -36,3 +36,15 @@ Feature: OAuth login
     Then I should get OAuth authorization code
     Given I wait 5 hours
     Then I should not get OAuth access token with authorization code
+
+  Scenario: I try to get user data with expired Access Token
+    Given I have been redirected to the OAuth authorize page from "Example software"
+    Then I should be on the login page
+    When I fill in "Username" with "joe.bloggs"
+    And I fill in "Password" with "secret"
+    And I press "Login"
+    # When I press "ok"
+    Then I should get OAuth authorization code
+    And I should get OAuth access token with authorization code
+    Given I wait 1 year
+    Then I should not get "joe.bloggs" information with access token
