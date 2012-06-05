@@ -15,7 +15,7 @@ class OauthController < ApplicationController
 
 
   # GET /oauth/authorize
-  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.1
+  # Authorization Endpoint http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.1
   def authorize
     # Save parameters given by the Client Service
     session[:oauth_params] = params
@@ -38,9 +38,7 @@ class OauthController < ApplicationController
   end
 
   # POST /oauth/token
-  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.2
-  # This post comes from the client server
-  # Here we exchange the code with the token
+  # Token Endpoint http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.2
   def token
 
     if not authentication.oauth_client?
@@ -51,7 +49,7 @@ class OauthController < ApplicationController
     client_id = authenticate_with_http_basic { |username, password| username }
     oauth_client_server_dn = authentication.dn
 
-    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
+    # Access Token Request http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
     if params["grant_type"] == "authorization_code"
       authorization_code = AuthorizationCode.find_by_code_and_client_id(
         params[:code], client_id)
@@ -65,7 +63,7 @@ class OauthController < ApplicationController
 
       # TODO: verify request_uri
 
-    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
+    # Refreshing an Access Token http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
     elsif params["grant_type"] == "refresh_token"
 
       refresh_token = token_manager.decrypt params[:refresh_token]
@@ -116,7 +114,7 @@ class OauthController < ApplicationController
       "base" => authentication.base
     )
 
-    # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
+    # Access Token Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
     render :json => {
       :access_token => access_token,
       :refresh_token => refresh_token,
@@ -130,8 +128,9 @@ class OauthController < ApplicationController
     true
   end
 
-  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.1
-  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.1
+  # Redirection Endpoint http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.1.2
+  # Authorization Request http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.1
+  # Authorization Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
   def redirect_with_authorization_code
     oauth_params = session[:oauth_params]
     session.delete :oauth_params
