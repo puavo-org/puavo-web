@@ -29,6 +29,7 @@ class OauthController < ApplicationController
   def authorize
     # Save parameters given by the Client Service
     session[:oauth_params] = params
+    # TODO: Require user dn and password!!!
 
     # No need to show anything to user if the service is trusted
     return redirect_with_authorization_code if trusted_client_service?
