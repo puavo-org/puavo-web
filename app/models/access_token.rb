@@ -1,11 +1,33 @@
 class AccessToken < LdapBase
   include Puavo::Security
-  LIFETIME = 5.days
 
   ldap_mapping( :dn_attribute => "puavoOAuthTokenId",
                 :prefix => "ou=Tokens,ou=OAuth",
                 :classes => ["simpleSecurityObject", "puavoOAuthAccessToken"] )
 
   before_save :encrypt_userPassword
+
+  LIFETIME = 5.days
+
+  class Expired < UserError
+  end
+
+
+  def self.decrypt(raw_token)
+    tm = Puavo::OAuth::TokenManager.new Puavo::OAUTH_CONFIG["token_key"]
+    token = tm.decrypt raw_token
+
+    if self.expired? token["created"]
+      raise Expired
+    end
+
+    token["dn"] = ActiveLdap::DistinguishedName.parse token["dn"]
+    return token
+  end
+
+  def self.expired?(created)
+    age = Time.now - created.to_time
+    return age > LIFETIME
+  end
 
 end
