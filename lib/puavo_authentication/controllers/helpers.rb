@@ -98,13 +98,16 @@ module PuavoAuthentication
           dn, password, uid = login_credentials
         rescue Puavo::UnknownUID => e
           logger.info "Failed to get credentials: #{ e.message }"
-          show_authentication_error t('flash.session.failed'), e.message
+          show_authentication_error "unknown_credentials", t('flash.session.failed')
+          return false
+        rescue AccessToken::Expired => e
+          show_authentication_error "expired_credentials", t('flash.session.failed')
           return false
         end
 
         if dn.nil?
           logger.debug "No credentials supplied"
-          show_authentication_error t('must_be_logged_in')
+          show_authentication_error "no_credentials", t('must_be_logged_in')
           return false
         end
 
@@ -115,7 +118,7 @@ module PuavoAuthentication
           @authentication.authenticate
         rescue Puavo::AuthenticationError => e
           logger.info "Login failed for #{ dn } (#{ uid }): #{ e }"
-          show_authentication_error t('flash.session.failed'), e.message
+          show_authentication_error "bad_credentials", t('flash.session.failed')
           return false
         end
 
@@ -138,21 +141,23 @@ module PuavoAuthentication
           @authentication.authorize
         rescue Puavo::AuthorizationFailed => e
           logger.info "Authorization  failed: #{ e }"
-          show_authentication_error t('flash.session.failed'), e.message
+          show_authentication_error "unauthorized", t('flash.session.failed')
           return false
         end
       end
 
-      def show_authentication_error(msg, details="")
+      def show_authentication_error(code, message)
         session.delete :password_plaintext
         session.delete :uid
         if request.format == Mime::JSON
-          render :json => {
-            :error => "authentication error: #{ msg }, #{ details }",
-          }.to_json
+          render(:json => {
+            :error => code,
+            :message => message,
+          }.to_json,
+          :status => 400)
         else
           store_location
-          flash[:notice] = msg
+          flash[:notice] = message
           redirect_to login_path
         end
       end
