@@ -13,7 +13,7 @@ Given /^I have been redirected to (.*) from "([^\"]*)"$/ do |page_name, client_n
                  :access_type => 'offline'  ) )
 end
 
-Then /^I should get OAuth authorization code$/ do
+Then /^I should get OAuth Authorization Code$/ do
   params = CGI::parse( URI.parse( response.headers["Location"]).query )
 
   # response.body.should contain("http://www.example2.com")
@@ -23,7 +23,7 @@ Then /^I should get OAuth authorization code$/ do
   @authorization_code = params["code"].first
 end
 
-Then /^I should get OAuth access token with authorization code$/ do
+Then /^I should get OAuth Access Token with Authorization Code$/ do
   params = request.params
   params[:redirect_uri].should contain("http://www.example2.com")
 
@@ -51,7 +51,7 @@ Then /^I should get OAuth access token with authorization code$/ do
   @access_token = data["access_token"]
 end
 
-Then /^I should get "([^\"]*)" information with access token$/ do |uid|
+Then /^I should get "([^\"]*)" information with Access Token$/ do |uid|
   cookies.clear
   header "HTTP_AUTHORIZATION", "token #{ @access_token }"
   visit(whoami_path(:format => :json))
@@ -63,7 +63,7 @@ end
 
 
 
-Then /^I should get a new access token and a new refresh token with existing refresh token$/ do
+Then /^I should get a new Access Token and a new Refresh Token with existing Refresh Token$/ do
 
   basic_auth("oauth_client_id/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
   visit( oauth_access_token_path(:format => :json),
@@ -86,7 +86,7 @@ end
 
 
 
-Then /^I should not get OAuth access token with authorization code$/ do
+Then /^I should not get OAuth Access Token with expired Authorization Code$/ do
   params = request.params
   params[:redirect_uri].should contain("http://www.example2.com")
 
@@ -112,7 +112,7 @@ Then /^I should not get OAuth access token with authorization code$/ do
 end
 
 
-Then /^I should not get "([^\"]*)" information with access token$/ do |uid|
+Then /^I should not get "([^\"]*)" information with expired Access Token$/ do |uid|
   cookies.clear
   header "HTTP_AUTHORIZATION", "token #{ @access_token }"
   visit(whoami_path(:format => :json))
