@@ -21,7 +21,7 @@ class OauthController < ApplicationController
     session[:oauth_params] = params
 
     # No need to show anything to user if the service is trusted
-    return redirect_with_access_code if trusted_client_service?
+    return redirect_with_authorization_code if trusted_client_service?
 
     # If service is not trusted show a form to user where she/he can choose to trust it
     respond_to do |format|
@@ -34,7 +34,7 @@ class OauthController < ApplicationController
   # TODO: a route
   def handle_form_accept
     # TODO: handle cancel button
-    redirect_with_access_code
+    redirect_with_authorization_code
   end
 
   # POST /oauth/token
@@ -53,15 +53,15 @@ class OauthController < ApplicationController
 
     # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
     if params["grant_type"] == "authorization_code"
-      access_code = AccessCode.find_by_access_code_and_client_id(
+      authorization_code = AuthorizationCode.find_by_code_and_client_id(
         params[:code], client_id)
 
-      if access_code.nil?
+      if authorization_code.nil?
         raise InvalidOAuthRequest "Cannot find Authorization Grant"
       end
 
-      user_dn = access_code.user_dn
-      access_code.destroy
+      user_dn = authorization_code.user_dn
+      authorization_code.destroy
 
       # TODO: verify request_uri
 
@@ -130,16 +130,17 @@ class OauthController < ApplicationController
     true
   end
 
-  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
-  def redirect_with_access_code
+  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.1
+  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.1
+  def redirect_with_authorization_code
     oauth_params = session[:oauth_params]
     session.delete :oauth_params
     raise "OAuth params are not in the session" if oauth_params.nil?
 
     code = generate_nonsense
 
-    access_code = AccessCode.create(
-      :access_code => code,
+    authorization_code = AuthorizationCode.create(
+      :code => code,
       :client_id => oauth_params[:client_id],
       :user_dn => current_user.dn.to_s
     )
