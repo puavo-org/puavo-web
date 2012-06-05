@@ -54,7 +54,7 @@ end
 Then /^I should get "([^\"]*)" information with access token$/ do |uid|
   cookies.clear
   header "HTTP_AUTHORIZATION", "token #{ @access_token }"
-  visit(whoami_path)
+  visit(whoami_path(:format => :json))
   response.status.should == "200 OK"
   data = JSON.parse(response.body)
   data["error"].should be_nil
@@ -86,7 +86,6 @@ end
 
 
 
-
 Then /^I should not get OAuth access token with authorization code$/ do
   params = request.params
   params[:redirect_uri].should contain("http://www.example2.com")
@@ -110,5 +109,16 @@ Then /^I should not get OAuth access token with authorization code$/ do
   data = JSON.parse( response.body )
   data["error"].should_not be_nil
 
+end
 
+
+Then /^I should not get "([^\"]*)" information with access token$/ do |uid|
+  cookies.clear
+  header "HTTP_AUTHORIZATION", "token #{ @access_token }"
+  visit(whoami_path(:format => :json))
+
+  # TODO 401
+  response.status.should_not == "200 OK"
+  data = JSON.parse(response.body)
+  data["error"].should_not be_nil
 end
