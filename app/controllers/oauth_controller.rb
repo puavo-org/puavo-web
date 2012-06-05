@@ -1,4 +1,7 @@
 class OauthController < ApplicationController
+  AUTHORIZATION_CODE_LIFETIME = 2.minutes
+  ACCESS_TOKEN_LIFETIME = 5.days
+  REFRESH_TOKEN_LIFETIME = 6.months
 
   before_filter :set_organisation_to_session, :set_locale
 
@@ -75,6 +78,11 @@ class OauthController < ApplicationController
 
       if authorization_code.redirect_uri != params[:redirect_uri]
         raise InvalidOAuthRequest, "redirect_uri does not match to redirect_uri given in authorization grant"
+      end
+
+      age = Time.now - authorization_code.created_at
+      if age > AUTHORIZATION_CODE_LIFETIME
+        raise InvalidOAuthRequest.new "Authorization Code has expired", "invalid_grant"
       end
 
       user_dn = authorization_code.user_dn
