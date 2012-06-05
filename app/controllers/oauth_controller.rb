@@ -14,17 +14,12 @@ class OauthController < ApplicationController
   end
 
   rescue_from Puavo::AuthenticationFailed do |e|
-    show_authentication_error e.message
+    show_authentication_error "authentication_error", e.message
   end
-
 
   rescue_from InvalidOAuthRequest do |e|
     # Error Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-5.2
-    render :json => {
-      :error => e.code,
-      :message => e.message
-    }.to_json,
-    :status => 400
+    show_authentication_error e.code, e.message
   end
 
 
