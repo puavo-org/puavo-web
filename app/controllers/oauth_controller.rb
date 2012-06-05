@@ -72,13 +72,13 @@ class OauthController < ApplicationController
         raise InvalidOAuthRequest, "redirect_uri does not match to redirect_uri given in authorization grant"
       end
 
-      if authorization_code.expired?
-        authorization_code.destroy
+      user_dn = authorization_code.user_dn
+
+      begin
+        authorization_code.consume
+      rescue AuthorizationCode::Expired => e
         raise InvalidOAuthRequest.new "Authorization Code has expired", "invalid_grant"
       end
-
-      user_dn = authorization_code.user_dn
-      authorization_code.destroy
 
 
     # Refreshing an Access Token http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
