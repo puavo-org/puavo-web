@@ -28,11 +28,13 @@ class AccessToken < LdapBase
     return token
   end
 
-    if self.expired? token["created"]
-      raise Expired.new "Access Token expired", token
+  def self.validate(token)
+    if self.expired? token[:created]
+      at = AccessToken.find token[:dn]
+      at.userPassword = AccessToken.generate_nonsense
+      at.save!
+      raise Expired.new "Token expired", token
     end
-
-    return token
   end
 
   def self.expired?(created)
@@ -46,7 +48,7 @@ class AccessToken < LdapBase
     self.puavoOAuthTokenId ||= UUID.new.generate
 
     # Change password so the encrypted token is different each time
-    access_token_password = generate_nonsense
+    access_token_password = AccessToken.generate_nonsense
     self.userPassword = access_token_password
 
     save!
