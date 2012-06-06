@@ -13,17 +13,22 @@ class AccessToken < LdapBase
   LIFETIME = 5.days
 
   class Expired < UserError
+    attr_accessor :token
+    def initialize(message, token)
+      super message
+      @token = token
+    end
   end
 
 
   def self.decrypt_token(raw_token)
     token = self.token_manager.decrypt raw_token
+    token["dn"] = ActiveLdap::DistinguishedName.parse token["dn"]
 
     if self.expired? token["created"]
-      raise Expired
+      raise Expired.new "Access Token expired", token
     end
 
-    token["dn"] = ActiveLdap::DistinguishedName.parse token["dn"]
     return token
   end
 
