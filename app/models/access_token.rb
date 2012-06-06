@@ -22,13 +22,29 @@ class AccessToken < LdapBase
   end
 
 
+  # Return new or existing AccessCode entry with given user_dn and
+  # oauth_client_server_dn
   def self.find_or_create(user_dn, oauth_client_server_dn)
-    self.find(:first,
-      :attribute => "puavoOAuthEduPerson",
-      :value => user_dn) || self.new(
-        :puavoOAuthEduPerson => user_dn,
-        :puavoOAuthClient => oauth_client_server_dn
+
+    filter = "(&(puavoOAuthEduPerson=#{ user_dn })(puavoOAuthClient=#{ oauth_client_server_dn }))"
+
+    results = self.search(
+      :filter => filter,
+      :attributes => "dn"
     )
+
+    if results.empty?
+      return self.new(
+        :puavoOAuthEduPerson => user_dn,
+        :puavoOAuthClient => oauth_client_server_dn)
+    end
+
+    if results.size > 1
+      raise "#{ user_dn } has more than one AccessTokens to #{ oauth_client_server_dn }"
+    end
+
+    access_token_dn = ActiveLdap::DistinguishedName.parse results.first.first
+    return self.find(access_token_dn)
   end
 
 end
