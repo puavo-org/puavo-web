@@ -142,12 +142,18 @@ module Puavo
       # will raise ActiveLdap::AuthenticationError if user supplied a
       # bad password.
       begin
+
         @admin_permissions = School.search(
           :filter => "(puavoSchoolAdmin=#{ dn })",
           :scope => :one, :attributes => ["puavoId"],
           :limit => 1 )
+
+        AccessToken.validate @credentials if oauth_token?
+
       rescue ActiveLdap::AuthenticationError
         raise AuthenticationFailed, "Bad dn or password"
+      rescue AccessToken::Expired
+        raise AuthenticationFailed, "OAuth Access Token expired"
       end
 
 
