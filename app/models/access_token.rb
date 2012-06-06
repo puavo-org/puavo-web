@@ -21,24 +21,4 @@ class AccessToken < LdapBase
     end
   end
 
-
-  def encrypt_token(extra)
-
-    # Set token id only once
-    self.puavoOAuthTokenId ||= UUID.new.generate
-
-    # Change password so the encrypted token is different each time
-    access_token_password = AccessToken.generate_nonsense
-    self.userPassword = access_token_password
-
-    save!
-
-    access_token = self.class.token_manager.encrypt({
-      "dn" => dn.to_s,
-      "password" => access_token_password,
-      "created" => Time.now,
-    }.merge!(extra))
-
-  end
-
 end
