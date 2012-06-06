@@ -19,5 +19,4 @@ class RefreshToken < LdapBase
     end
   end
 
-
 end

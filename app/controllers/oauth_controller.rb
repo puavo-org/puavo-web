@@ -120,23 +120,17 @@ class OauthController < ApplicationController
     )
 
 
-    refresh_token_entry ||= RefreshToken.new
-    refresh_token_password = generate_nonsense
-    refresh_token_entry.puavoOAuthTokenId ||= generate_nonsense
+    refresh_token_entry ||= RefreshToken.new(
+      :puavoOAuthEduPerson => user_dn,
+      :puavoOAuthClient => oauth_client_server_dn
+    )
+
     refresh_token_entry.puavoOAuthAccessToken = access_token_entry.dn
-    refresh_token_entry.userPassword = refresh_token_password
-    refresh_token_entry.puavoOAuthEduPerson = user_dn
-    refresh_token_entry.puavoOAuthClient = oauth_client_server_dn
-    refresh_token_entry.save!
 
-
-    refresh_token = token_manager.encrypt({
-      "dn" => refresh_token_entry.dn.to_s,
-      "password" => refresh_token_password,
+    refresh_token = refresh_token_entry.encrypt_token(
       "host" => authentication.host,
-      "base" => authentication.base,
-      "created" => Time.now,
-    })
+      "base" => authentication.base
+    )
 
     # Access Token Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
     render :json => {
