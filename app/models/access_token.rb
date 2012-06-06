@@ -23,7 +23,10 @@ class AccessToken < LdapBase
 
   def self.decrypt_token(raw_token)
     token = self.token_manager.decrypt raw_token
-    token["dn"] = ActiveLdap::DistinguishedName.parse token["dn"]
+    token.symbolize_keys!
+    token[:dn] = ActiveLdap::DistinguishedName.parse token[:dn]
+    return token
+  end
 
     if self.expired? token["created"]
       raise Expired.new "Access Token expired", token
