@@ -4,13 +4,14 @@ class AccessToken < LdapBase
   include Puavo::Security
   include OAuthHelpers
 
+  LIFETIME = 5.days
+
   ldap_mapping( :dn_attribute => "puavoOAuthTokenId",
                 :prefix => "ou=Tokens,ou=OAuth",
                 :classes => ["simpleSecurityObject", "puavoOAuthAccessToken"] )
 
   before_save :encrypt_userPassword
 
-  LIFETIME = 5.days
 
   class Expired < UserError
     attr_accessor :token
@@ -21,20 +22,14 @@ class AccessToken < LdapBase
   end
 
 
-  def self.decrypt_token(raw_token)
-    token = self.token_manager.decrypt raw_token
-    token.symbolize_keys!
-    token[:dn] = ActiveLdap::DistinguishedName.parse token[:dn]
-    return token
-  end
-
   def self.validate(token)
     if self.expired? token[:created]
       at = AccessToken.find token[:dn]
       at.userPassword = AccessToken.generate_nonsense
       at.save!
-      raise Expired.new "Token expired", token
+      raise Expired.new "Access Token expired", token
     end
+    return true
   end
 
   def self.expired?(created)
