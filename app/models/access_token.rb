@@ -21,4 +21,14 @@ class AccessToken < LdapBase
     end
   end
 
+
+  def self.find_or_create(user_dn, oauth_client_server_dn)
+    self.find(:first,
+      :attribute => "puavoOAuthEduPerson",
+      :value => user_dn) || self.new(
+        :puavoOAuthEduPerson => user_dn,
+        :puavoOAuthClient => oauth_client_server_dn
+    )
+  end
+
 end

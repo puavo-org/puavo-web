@@ -102,17 +102,9 @@ class OauthController < ApplicationController
     end
 
 
-    # TODO: This find must include :puavoOAuthClient too!!
-    access_token_entry = AccessToken.find(:first,
-      :attribute => "puavoOAuthEduPerson",
-      :value => user_dn)
+    access_token_entry = AccessToken.find_or_create(
+      user_dn, oauth_client_server_dn)
 
-    if access_token_entry.nil?
-      access_token_entry = AccessToken.new(
-        :puavoOAuthEduPerson => user_dn,
-        :puavoOAuthClient => oauth_client_server_dn
-      )
-    end
 
     access_token = access_token_entry.encrypt_token(
       "host" => authentication.host,
