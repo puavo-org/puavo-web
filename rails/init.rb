@@ -7,7 +7,6 @@ end
 
 require 'puavo/authentication'
 require 'puavo/connection'
-require 'puavo/oauth'
 
 require 'puavo_authentication/controllers/helpers'
 

@@ -4,10 +4,6 @@ module PuavoAuthentication
 
       attr_accessor :authentication
 
-      def token_manager
-        @token_manager ||= Puavo::OAuth::TokenManager.new Puavo::OAUTH_CONFIG["token_key"]
-      end
-
       # Lazy getter for current user object
       def current_user
 
