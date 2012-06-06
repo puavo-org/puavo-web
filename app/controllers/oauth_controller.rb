@@ -85,19 +85,16 @@ class OauthController < ApplicationController
     # Refreshing an Access Token http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
     elsif params["grant_type"] == "refresh_token"
 
+      refresh_token = RefreshToken.decrypt_token params[:refresh_token]
+
       begin
-        refresh_token = RefreshToken.decrypt_token params[:refresh_token]
+        refresh_token_entry = RefreshToken.find_and_validate refresh_token
       rescue RefreshToken::Expired => e
-        raise InvalidOAuthRequest.new "Refresh Token has expired", "invalid_grant"
+        raise InvalidOAuthRequest.new e.message, "invalid_grant"
       end
 
-      refresh_token_entry = RefreshToken.find(refresh_token["dn"])
+      authentication.test_bind refresh_token[:dn], refresh_token[:password]
 
-      if refresh_token_entry.nil?
-        raise InvalidOAuthRequest "Cannot find Refresh Token"
-      end
-
-      authentication.test_bind refresh_token["dn"], refresh_token["password"]
       user_dn = refresh_token_entry.puavoOAuthEduPerson
 
     else

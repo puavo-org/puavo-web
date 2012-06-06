@@ -1,5 +1,7 @@
 class RefreshToken < LdapBase
   include Puavo::Security
+  include OAuthHelpers
+
   LIFETIME = 6.months
 
   ldap_mapping( :dn_attribute => "puavoOAuthTokenId",
@@ -9,18 +11,26 @@ class RefreshToken < LdapBase
   before_save :encrypt_userPassword
 
   class Expired < UserError
+    attr_accessor :token
+    def initialize(message, token)
+      super message
+      @token = token
+    end
   end
 
-  def self.decrypt_token(raw_token)
-    tm = Puavo::OAuth::TokenManager.new Puavo::OAUTH_CONFIG["token_key"]
-    token = tm.decrypt raw_token
-
-    if self.expired? token["created"]
-      raise Expired
+  def self.validate(token)
+    if self.expired? token[:created]
+      rt = RefreshToken.find token[:dn]
+      rt.userPassword = RefreshToken.generate_nonsense
+      rt.save!
+      raise Expired.new "Reresh Token Expired", token
     end
+    return true
+  end
 
-    token["dn"] = ActiveLdap::DistinguishedName.parse token["dn"]
-    return token
+  def self.find_and_validate(token)
+    self.validate token
+    self.find token[:dn]
   end
 
   def self.expired?(created)
