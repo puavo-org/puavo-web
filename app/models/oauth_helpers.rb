@@ -14,7 +14,7 @@ module OAuthHelpers
 
     save!
 
-    access_token = self.class.token_manager.encrypt({
+    access_token = self.class.json_vault.encrypt({
       "dn" => dn.to_s,
       "password" => access_token_password,
       "created" => Time.now,
@@ -25,8 +25,8 @@ module OAuthHelpers
 
   module ClassMethods
 
-    def token_manager
-      tm = Puavo::OAuth::TokenManager.new Puavo::OAUTH_CONFIG["token_key"]
+    def json_vault
+      Puavo::JSONVault.new Puavo::OAUTH_CONFIG["token_key"]
     end
 
     def generate_nonsense
@@ -35,7 +35,7 @@ module OAuthHelpers
 
     # Decrypt raw token to Ruby Hash
     def decrypt_token(raw_token)
-        token = token_manager.decrypt raw_token
+        token = json_vault.decrypt raw_token
         token.symbolize_keys!
         token[:dn] = ActiveLdap::DistinguishedName.parse token[:dn]
         return token
