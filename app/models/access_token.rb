@@ -22,21 +22,6 @@ class AccessToken < LdapBase
   end
 
 
-  def self.validate(token)
-    if self.expired? token[:created]
-      at = AccessToken.find token[:dn]
-      at.userPassword = AccessToken.generate_nonsense
-      at.save!
-      raise Expired.new "Access Token expired", token
-    end
-    return true
-  end
-
-  def self.expired?(created)
-    age = Time.now - created.to_time
-    return age > LIFETIME
-  end
-
   def encrypt_token(extra)
 
     # Set token id only once
