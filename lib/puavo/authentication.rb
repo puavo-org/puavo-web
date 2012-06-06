@@ -60,7 +60,24 @@ module Puavo
 
   class Authentication
 
-    attr_accessor :authenticated, :authorized, :dn, :host, :base
+    attr_accessor :authenticated, :authorized
+
+
+    def initialize
+      @credentials = {}
+    end
+
+    def dn
+      @credentials[:dn]
+    end
+
+    def host
+      @credentials[:host]
+    end
+
+    def base
+      @credentials[:base]
+    end
 
     def self.remove_connection
       ActiveLdap::Base.active_connections.keys.each do |connection_name|
@@ -68,7 +85,11 @@ module Puavo
       end
     end
 
-    def configure_ldap_connection(dn, password, host=nil, base=nil)
+    def configure_ldap_connection(credentials)
+
+      @credentials.merge! credentials.symbolize_keys
+
+      @credentials[:dn] = ActiveLdap::DistinguishedName.parse dn.to_s
 
       # Reset attributes on new configuration
       @current_user = nil
@@ -78,17 +99,12 @@ module Puavo
       # Remove previous connection
       self.class.remove_connection
 
-      @dn = dn
-      @password = password
 
-      # Change host and base only if supplied
-      @host = host if host
-      @base = base if base
 
-      logger.info "Configuring ActiveLdap to use dn '#{ @dn }' on '#{ @host }' with '#{ @base }'"
-      logger.debug "PW: #{ @password }" if ENV["LOG_LDAP_PASSWORD"]
+      logger.info "Configuring ActiveLdap to use #{ @credentials }"
+      logger.debug "PW: #{ @credentials[:password] }" if ENV["LOG_LDAP_PASSWORD"]
       # Setup new ActiveLdap connections to use user's credentials
-      LdapBase.ldap_setup_connection @host, @base.to_s, @dn.to_s, @password
+      LdapBase.ldap_setup_connection host, base.to_s, dn, @credentials[:password]
 
       # Do not never ever allow anonymous connections in Puavo. Should be
       # false in config/ldap.yml, but we just make sure here.
@@ -99,7 +115,7 @@ module Puavo
     # use them
     def test_bind(dn, password)
       ldap = Net::LDAP.new(
-        :host => @host,
+        :host => host,
         :port => 389,
         :encryption => {
           :method => :start_tls
@@ -127,27 +143,28 @@ module Puavo
       # bad password.
       begin
         @admin_permissions = School.search(
-          :filter => "(puavoSchoolAdmin=#{@dn})",
+          :filter => "(puavoSchoolAdmin=#{ dn })",
           :scope => :one, :attributes => ["puavoId"],
           :limit => 1 )
       rescue ActiveLdap::AuthenticationError
         raise AuthenticationFailed, "Bad dn or password"
       end
 
+
       @authenticated = true
 
     end
 
     def external_service?
-      @dn.rdns[1]["ou"] == "System Accounts"
+      dn.rdns[1]["ou"] == "System Accounts"
     end
 
     def oauth_client?
-      @dn.rdns.first.keys.first == "puavoOAuthClientId"
+      dn.rdns.first.keys.first == "puavoOAuthClientId"
     end
 
     def oauth_token?
-      @dn.rdns[0].keys[0] == "puavoOAuthTokenId"
+      dn.rdns[0].keys[0] == "puavoOAuthTokenId"
     end
 
     # Authorize that user has permissions to use Puavo
@@ -157,13 +174,13 @@ module Puavo
 
       # Authorize school admins
       if not @admin_permissions.empty?
-        logger.info "Authorization ok: Admin #{ @dn }"
+        logger.info "Authorization ok: Admin #{ dn }"
         return @authorized = true
       end
 
       # Authorize External Services
       if external_service?
-        logger.info "Authorization ok: External Service #{ @dn }"
+        logger.info "Authorization ok: External Service #{ dn }"
         return @authorized = true
       end
 
@@ -174,13 +191,12 @@ module Puavo
 
       # Authorize organisation owners
       organisation = LdapOrganisation.first
-      if organisation && organisation.owner && organisation.owner.include?(@dn)
-        logger.info "Authorization ok: Organisation owner #{ @dn }"
+      if organisation && organisation.owner && organisation.owner.include?(dn)
+        logger.info "Authorization ok: Organisation owner #{ dn }"
         return @authorized = true
       end
 
-
-      raise AuthorizationFailed, "Unauthorized access for #{ @dn }"
+      raise AuthorizationFailed, "Unauthorized access for #{ dn }"
     end
 
     def current_user
@@ -191,12 +207,12 @@ module Puavo
 
 
       if external_service?
-        @current_user = ExternalService.find @dn
+        @current_user = ExternalService.find dn
       elsif oauth_token?
-        access_token = AccessToken.find @dn
+        access_token = AccessToken.find dn
         @current_user = User.find access_token.puavoOAuthEduPerson
       else
-        @current_user = User.find @dn
+        @current_user = User.find dn
       end
 
       raise "Failed get User object for #{ dn }" if @current_user.nil?

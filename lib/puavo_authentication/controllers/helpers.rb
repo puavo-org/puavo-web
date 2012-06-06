@@ -25,17 +25,16 @@ module PuavoAuthentication
           type, data = auth_header.split
           if type.downcase == "token"
             token = AccessToken.decrypt_token data
-            return token["dn"], token["password"]
+            return token
           end
         end
         return nil
       end
 
       # Returns user dn and password for some available login mean
-      def login_credentials
+      def acquire_credentials
 
         if oc = oauth_credentials
-          logger.debug "Using OAuth authentication with #{ oc[0] }"
           return oc
         end
 
@@ -47,7 +46,7 @@ module PuavoAuthentication
             if oauth_client_server = OauthClient.find(:first,
               :attribute => "puavoOAuthClientId",
               :value => oauth_client_id)
-              return oauth_client_server.dn, password
+              return { :dn => oauth_client_server.dn, :password => password }
             end
           end
 
@@ -55,12 +54,12 @@ module PuavoAuthentication
             uid = username.match(/^service\/(.*)/)[1]
           end
 
-          return User.uid_to_dn(uid), password, uid
+          return { :dn => User.uid_to_dn(uid), :password => password }
         end
 
         if uid = session[:uid]
           logger.debug "Using session authentication with #{ uid }"
-          return User.uid_to_dn(uid), session[:password_plaintext], uid
+          return { :dn => User.uid_to_dn(uid), :password => session[:password_plaintext] }
         end
 
 
@@ -77,10 +76,11 @@ module PuavoAuthentication
         # ldap.yml. This allows Puavo to search user dn from user uids.
         default_ldap_configuration = ActiveLdap::Base.ensure_configuration
         @authentication.configure_ldap_connection(
-          default_ldap_configuration["bind_dn"],
-          default_ldap_configuration["password"],
-          session[:organisation].ldap_host,
-          session[:organisation].ldap_base)
+          :dn => default_ldap_configuration["bind_dn"],
+          :password => default_ldap_configuration["password"],
+          :host => session[:organisation].ldap_host,
+          :base => session[:organisation].ldap_base
+        )
 
       end
 
@@ -95,29 +95,26 @@ module PuavoAuthentication
 
 
         begin
-          dn, password, uid = login_credentials
+          credentials = acquire_credentials
         rescue Puavo::UnknownUID => e
           logger.info "Failed to get credentials: #{ e.message }"
           show_authentication_error "unknown_credentials", t('flash.session.failed')
           return false
-        rescue AccessToken::Expired => e
-          show_authentication_error "expired_credentials", t('flash.session.failed')
-          return false
         end
 
-        if dn.nil?
+        if credentials.nil?
           logger.debug "No credentials supplied"
           show_authentication_error "no_credentials", t('must_be_logged_in')
           return false
         end
 
         # Configure ActiveLdap to use user dn and password
-        @authentication.configure_ldap_connection dn, password
+        @authentication.configure_ldap_connection credentials
 
         begin
           @authentication.authenticate
         rescue Puavo::AuthenticationError => e
-          logger.info "Login failed for #{ dn } (#{ uid }): #{ e }"
+          logger.info "Login failed for #{ credentials }: #{ e }"
           show_authentication_error "bad_credentials", t('flash.session.failed')
           return false
         end
