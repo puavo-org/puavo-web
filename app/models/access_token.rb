@@ -22,7 +22,7 @@ class AccessToken < LdapBase
   end
 
 
-  # Return new or existing AccessCode entry with given user_dn and
+  # Return new or existing AccessToken entry with given user_dn and
   # oauth_client_server_dn
   def self.find_or_create(user_dn, oauth_client_server_dn)
 

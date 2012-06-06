@@ -1,6 +1,8 @@
 
+# Generic mixin for AccessToken and RefreshToken
 module OAuthHelpers
 
+  # Create new encrypted token
   def encrypt_token(extra)
 
     # Set token id only once
@@ -31,6 +33,7 @@ module OAuthHelpers
       UUID.new.generate
     end
 
+    # Decrypt raw token to Ruby Hash
     def decrypt_token(raw_token)
         token = token_manager.decrypt raw_token
         token.symbolize_keys!
@@ -43,11 +46,13 @@ module OAuthHelpers
       return age > self::LIFETIME
     end
 
+    # Find token entry and validate it
     def find_and_validate(token)
       validate token
       self.find token[:dn]
     end
 
+    # Validate given token
     def validate(token)
       if expired? token[:created]
         token_entry = self.find token[:dn]
