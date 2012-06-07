@@ -24,6 +24,11 @@ Feature: Manage users
     And I should see "confidential"
     And I should not see "{SSHA}"
     And I should see "OAuth client was successfully created."
+    And I should see "Name"
+    And I should see "Client id"
+    And I should see "Client secret"
+    And I should see "Scope"
+    And I should see "Client type"
 
   Scenario: Delete oauth client
     Given the following oauth client:
