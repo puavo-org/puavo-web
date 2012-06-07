@@ -148,7 +148,7 @@ module Puavo
           :scope => :one, :attributes => ["puavoId"],
           :limit => 1 )
 
-        AccessToken.validate @credentials if oauth_token?
+        AccessToken.validate @credentials if oauth_access_token?
 
       rescue ActiveLdap::AuthenticationError
         raise AuthenticationFailed, "Bad dn or password"
@@ -165,12 +165,18 @@ module Puavo
       dn.rdns[1]["ou"] == "System Accounts"
     end
 
-    def oauth_client?
+    def oauth_client_server?
       dn.rdns.first.keys.first == "puavoOAuthClientId"
     end
 
-    def oauth_token?
-      dn.rdns[0].keys[0] == "puavoOAuthTokenId"
+    def oauth_access_token?
+      dn.rdns.first.keys.first == "puavoOAuthTokenId"
+    end
+
+    # User is authenticated with real password
+    def user_password?
+      return false if oauth_access_token?
+      current_user.classes.include? "puavoEduPerson"
     end
 
     # Authorize that user has permissions to use Puavo
@@ -191,7 +197,7 @@ module Puavo
       end
 
       # Authorize OAuth Access Tokens
-      if oauth_token?
+      if oauth_access_token?
         return @authorized = true
       end
 
@@ -214,7 +220,7 @@ module Puavo
 
       if external_service?
         @current_user = ExternalService.find dn
-      elsif oauth_token?
+      elsif oauth_access_token?
         access_token = AccessToken.find dn
         @current_user = User.find access_token.puavoOAuthEduPerson
       else
