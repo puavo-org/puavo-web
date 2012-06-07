@@ -113,7 +113,7 @@ class OauthController < ApplicationController
 
 
     access_token_entry = AccessToken.find_or_create(
-      user_dn, oauth_client_server_dn)
+      user_dn, oauth_client_server_dn, authentication.scope)
 
     access_token = access_token_entry.encrypt_token(
       "host" => authentication.host,
