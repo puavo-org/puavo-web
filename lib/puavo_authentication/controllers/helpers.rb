@@ -48,6 +48,7 @@ module PuavoAuthentication
             end
           end
 
+          uid = username
           if username.match(/^service\//)
             uid = username.match(/^service\/(.*)/)[1]
           end
