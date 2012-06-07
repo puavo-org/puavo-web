@@ -2,7 +2,7 @@ class RefreshToken < LdapBase
   include Puavo::Security
   include OAuthHelpers
 
-  LIFETIME = 6.months
+  LIFETIME = 1.year
 
   ldap_mapping( :dn_attribute => "puavoOAuthTokenId",
               :prefix => "ou=Tokens,ou=OAuth",
