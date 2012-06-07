@@ -24,7 +24,7 @@ class AccessToken < LdapBase
 
   # Return new or existing AccessToken entry with given user_dn and
   # oauth_client_server_dn
-  def self.find_or_create(user_dn, oauth_client_server_dn)
+  def self.find_or_create(user_dn, oauth_client_server_dn, oauth_scope)
 
     filter = "(&(puavoOAuthEduPerson=#{ user_dn })(puavoOAuthClient=#{ oauth_client_server_dn }))"
 
@@ -36,7 +36,8 @@ class AccessToken < LdapBase
     if results.empty?
       return self.new(
         :puavoOAuthEduPerson => user_dn,
-        :puavoOAuthClient => oauth_client_server_dn)
+        :puavoOAuthClient => oauth_client_server_dn,
+        :puavoOAuthScope => oauth_scope )
     end
 
     if results.size > 1
@@ -44,7 +45,10 @@ class AccessToken < LdapBase
     end
 
     access_token_dn = ActiveLdap::DistinguishedName.parse results.first.first
-    return self.find(access_token_dn)
+    access_token_entry = self.find(access_token_dn)
+    access_token_entry.puavoOAuthScope = oauth_scope
+    access_token_entry.save!
+    return access_token_entry
   end
 
 end
