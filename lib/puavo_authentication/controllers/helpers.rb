@@ -42,7 +42,9 @@ module PuavoAuthentication
             if oauth_client_server = OauthClient.find(:first,
               :attribute => "puavoOAuthClientId",
               :value => oauth_client_id)
-              return { :dn => oauth_client_server.dn, :password => password }
+              return { :dn => oauth_client_server.dn,
+                :password => password,
+                :scope => oauth_client_server.puavoOAuthScope }
             end
           end
 

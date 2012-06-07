@@ -79,6 +79,10 @@ module Puavo
       @credentials[:base]
     end
 
+    def scope
+      @credentials[:scope]
+    end
+
     def self.remove_connection
       ActiveLdap::Base.active_connections.keys.each do |connection_name|
         ActiveLdap::Base.remove_connection(connection_name)
