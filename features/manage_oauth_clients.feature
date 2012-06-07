@@ -43,6 +43,12 @@ Feature: Manage users
       | client 1 |
       | client 2 |
       | client 4 |
+    When I follow "client 4"
+    And I follow "Remove"
+    Then I should see the following oauth clients:
+      | Name     |
+      | client 1 |
+      | client 2 |
 
   Scenario: Edit OAuth client
     Given the following oauth client:
