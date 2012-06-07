@@ -19,6 +19,7 @@ group :development do
 	gem 'cucumber-rails', '0.3.2'
 	gem 'ruby-prof'
 	gem 'ruby-debug'
+	gem "ruby-debug-completion", :require => "ruby-debug/completion"
 	gem 'rbtrace'
 	gem 'colorize'
 	gem 'timecop'
