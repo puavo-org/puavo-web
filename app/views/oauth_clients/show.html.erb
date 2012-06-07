@@ -1,37 +1,36 @@
-<p>
-  <b>Displayname:</b>
-  <%=h @oauth_client.displayName %>
-</p>
+<table>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "displayName" %></td>
+  <td class="value_td"><%= @oauth_client.displayName %></td>
+  </tr>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "puavoOAuthClientId" %></td>
+  <td class="value_td"><%= @oauth_client.puavoOAuthClientId %></td>
+  </tr>
+  <% if flash[:oauth_client_new_password] %>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "userPassword" %></td>
+  <td class="value_td"><%= flash[:oauth_client_new_password] %></td>
+  </tr>
+  <% end %>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "puavoOAuthScope" %></td>
+  <td class="value_td"><%= @oauth_client.puavoOAuthScope %></td>
+  </tr>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "puavoOAuthClientType" %></td>
+  <td class="value_td"><%= @oauth_client.puavoOAuthClientType %></td>
+  </tr>
+</table>
 
-<p>
-  <b>Puavooauthclientid:</b>
-  <%=h @oauth_client.puavoOAuthClientId %>
-</p>
 
-<% if flash[:oauth_client_new_password] %>
-<p>
-  <b><%= t('activeldap.attributes.oauth_client.userPassword') %></b>
-  <%=h flash[:oauth_client_new_password] %>
-</p>
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_oauth_client_path(@oauth_client) %></div>
+<div>
+  <%= link_to( t('link.destroy'),
+               oauth_clients_path,
+               :confirm => t('destroy_confirm',
+                             :object_name => @oauth_client.displayName),
+               :method => :delete ) %>
+</div>
 <% end %>
-
-<p>
-  <b>Puavooauthaccess:</b>
-  <%=h @oauth_client.puavoOAuthScope %>
-</p>
-
-<p>
-  <b><%= t('activeldap.attributes.oauth_client.puavoOAuthClientType') %></b>
-  <%=h @oauth_client.puavoOAuthClientType %>
-</p>
-
-<p>
-  <!--
-  <b>Puavodisabled:</b>
-  < %=h @oauth_client.puavoDisabled %>
-  -->
-</p>
-
-
-<%= link_to 'Edit', edit_oauth_client_path(@oauth_client) %> |
-<%= link_to 'Back', oauth_clients_path %>
