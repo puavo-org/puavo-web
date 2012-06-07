@@ -28,7 +28,7 @@
 <div><%= link_to t('link.edit'), edit_oauth_client_path(@oauth_client) %></div>
 <div>
   <%= link_to( t('link.destroy'),
-               oauth_clients_path,
+               oauth_client_path(@oauth_client),
                :confirm => t('destroy_confirm',
                              :object_name => @oauth_client.displayName),
                :method => :delete ) %>
