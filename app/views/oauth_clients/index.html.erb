@@ -11,7 +11,11 @@
     <td><%= link_to oauth_client.displayName, oauth_client %></td>
     <td><%=h oauth_client.puavoOAuthClientId %></td>
     <td><%= link_to 'Edit', edit_oauth_client_path(oauth_client) %></td>
-    <td><%= link_to t('link.destroy'), oauth_client, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to( t('link.destroy'),
+                     oauth_client_path(oauth_client),
+                     :confirm => t('destroy_confirm',
+                                   :object_name => oauth_client.displayName),
+                     :method => :delete ) %></td>
   </tr>
 <% end %>
 </table>
