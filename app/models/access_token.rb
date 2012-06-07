@@ -4,7 +4,7 @@ class AccessToken < LdapBase
   include Puavo::Security
   include OAuthHelpers
 
-  LIFETIME = 5.days
+  LIFETIME = 1.hour
 
   ldap_mapping( :dn_attribute => "puavoOAuthTokenId",
                 :prefix => "ou=Tokens,ou=OAuth",
