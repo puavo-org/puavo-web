@@ -47,9 +47,12 @@ module OAuthHelpers
     end
 
     # Find token entry and validate it
-    def find_and_validate(token)
+    def find_and_validate(raw_token)
+      token = decrypt_token raw_token
       validate token
-      self.find token[:dn]
+      entry = self.find token[:dn]
+      yield token, entry
+      entry
     end
 
     # Validate given token
