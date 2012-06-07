@@ -77,8 +77,8 @@ module PuavoAuthentication
         @authentication.configure_ldap_connection(
           :dn => default_ldap_configuration["bind_dn"],
           :password => default_ldap_configuration["password"],
-          :host => session[:organisation].ldap_host,
-          :base => session[:organisation].ldap_base
+          :host => current_organisation.ldap_host,
+          :base => current_organisation.ldap_base
         )
 
       end
