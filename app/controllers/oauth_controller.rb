@@ -27,9 +27,16 @@ class OauthController < ApplicationController
   # GET /oauth/authorize
   # Authorization Endpoint http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.1
   def authorize
+
+    # Authorization Grant must be given only with password authentication or
+    # with kerberos ticket. TODO: Kerberos ticket
+    if not authentication.user_password?
+      raise Puavo::AuthenticationFailed,
+        "Authorization grant can be only given with User UID and password"
+    end
+
     # Save parameters given by the Client Service
     session[:oauth_params] = params
-    # TODO: Require user dn and password!!!
 
     # No need to show anything to user if the service is trusted
     return redirect_with_authorization_code if trusted_client_service?
