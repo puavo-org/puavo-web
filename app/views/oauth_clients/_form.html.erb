@@ -1,22 +1,22 @@
 <% form_for(@oauth_client, :url => path, :html => { :method => method }) do |f| %>
-  <p>
-    <%= f.label :displayName %><br />
-    <%= f.text_field :displayName %>
-  </p>
-    <%= f.label :puavoOAuthScope %><br />
-    <%= f.text_field :puavoOAuthScope %>
-  </p>
-  <p>
-	<!--
-    < %= f.label :puavoDisabled %><br />
-    < %= f.check_box :puavoDisabled %>
-	-->
-  </p>
-  <p>
-    <%= f.submit submit_text %>
-<!--	<div class="cancel">
-      <%= link_to t('link.cancel'), path, :class => 'cancel_button' %>
-	</div>
--->
-  </p>
+<table>
+  <tr>
+    <td><%= f.label :displayName %></td>
+    <td><%= f.text_field :displayName %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :puavoOAuthScope %></td>
+    <td><%= f.text_field :puavoOAuthScope %></td>
+  </tr>
+</table>
+<div>
+  <tr>
+	<td>
+	  <%= f.submit submit_text %>
+	  <div class="cancel">
+		<%= link_to t('link.cancel'), path, :class => 'cancel_button' %>
+	  </div>
+	</td>
+  </tr>
+</div>
 <% end %>
