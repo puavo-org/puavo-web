@@ -67,7 +67,11 @@ class OauthClientsController < ApplicationController
 
     respond_to do |format|
       if @oauth_client.update_attributes(params[:oauth_client])
-        format.html { redirect_to(@oauth_client, :notice => 'OauthClient was successfully updated.') }
+        format.html do
+          redirect_to( @oauth_client,
+                       :notice => t('flash.updated',
+                                    :item => t('activeldap.models.oauth_client') ) )
+        end
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

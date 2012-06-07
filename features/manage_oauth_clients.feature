@@ -59,6 +59,7 @@ Feature: Manage users
     And I fill in "Scope" with "read:personalInfo"
     And I press "Update"
     Then I should see "Example software"
+    And I should see "OAuth client was successfully updated."
 
   Scenario: List OAuth client
     Given the following oauth client:
