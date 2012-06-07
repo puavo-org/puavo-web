@@ -10,7 +10,7 @@
   <tr>
     <td><%= link_to oauth_client.displayName, oauth_client %></td>
     <td><%=h oauth_client.puavoOAuthClientId %></td>
-    <td><%= link_to 'Edit', edit_oauth_client_path(oauth_client) %></td>
+    <td><%= link_to t('link.edit'), edit_oauth_client_path(oauth_client) %></td>
     <td><%= link_to( t('link.destroy'),
                      oauth_client_path(oauth_client),
                      :confirm => t('destroy_confirm',
