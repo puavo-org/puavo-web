@@ -59,6 +59,7 @@ class OauthController < ApplicationController
     # Authenticated previously. Just get the client id here.
     client_id = authenticate_with_http_basic { |username, password| username }
     oauth_client_server_dn = authentication.dn
+    user_dn = nil
 
     # Access Token Request http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
     if params["grant_type"] == "authorization_code"
@@ -85,17 +86,19 @@ class OauthController < ApplicationController
     # Refreshing an Access Token http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-6
     elsif params["grant_type"] == "refresh_token"
 
-      refresh_token = RefreshToken.decrypt_token params[:refresh_token]
-
       begin
-        refresh_token_entry = RefreshToken.find_and_validate refresh_token
+
+        refresh_token_entry = nil
+        RefreshToken.find_and_validate(params[:refresh_token]) do |token, entry|
+          authentication.test_bind token[:dn], token[:password]
+          refresh_token_entry = entry
+          user_dn = entry.puavoOAuthEduPerson
+        end
+
       rescue RefreshToken::Expired => e
         raise InvalidOAuthRequest.new e.message, "invalid_grant"
       end
 
-      authentication.test_bind refresh_token[:dn], refresh_token[:password]
-
-      user_dn = refresh_token_entry.puavoOAuthEduPerson
 
     else
       raise InvalidOAuthRequest "grant_type is missing"
