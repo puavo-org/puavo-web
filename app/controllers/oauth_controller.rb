@@ -59,7 +59,7 @@ class OauthController < ApplicationController
   # Token Endpoint http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.2
   def token
 
-    if not authentication.oauth_client?
+    if not authentication.oauth_client_server?
       raise InvalidOAuthRequest, "Bad OAuth Client credentials"
     end
 
