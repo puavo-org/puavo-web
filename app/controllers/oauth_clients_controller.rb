@@ -48,7 +48,9 @@ class OauthClientsController < ApplicationController
       if @oauth_client.save
         format.html do 
           flash[:oauth_client_new_password] = new_password
-          redirect_to(@oauth_client, :notice => 'OauthClient was successfully created.')
+          redirect_to( @oauth_client,
+                       :notice => t('flash.added',
+                                    :item => t('activeldap.models.oauth_client') ) )
         end
         format.xml  { render :xml => @oauth_client, :status => :created, :location => @oauth_client }
       else

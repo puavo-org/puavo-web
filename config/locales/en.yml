@@ -276,6 +276,7 @@ en:
       user: User
       school: School
       external_service: External service
+      oauth_client: OAuth client
     attributes:
       role:
         displayName: "Role name"
