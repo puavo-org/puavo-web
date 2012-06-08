@@ -19,7 +19,7 @@ module PuavoAuthentication
       def oauth_credentials
         if auth_header = request.headers["HTTP_AUTHORIZATION"]
           type, data = auth_header.split
-          if type.downcase == "token"
+          if type.downcase == "bearer"
             token = AccessToken.decrypt_token data
             return token
           end
