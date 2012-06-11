@@ -38,14 +38,19 @@ module PuavoAuthentication
           logger.debug "Using basic authentication with #{ username }"
 
           if username.match(/^oauth_client_id\//)
+
             oauth_client_id = username.match(/^oauth_client_id\/(.*)/)[1]
-            if oauth_client_server = OauthClient.find(:first,
+            oauth_client_server = OauthClient.find(:first,
               :attribute => "puavoOAuthClientId",
               :value => oauth_client_id)
-              return { :dn => oauth_client_server.dn,
-                :password => password,
-                :scope => oauth_client_server.puavoOAuthScope }
-            end
+            raise Puavo::UnknownUID if oauth_client_server.nil?
+
+            return {
+              :dn => oauth_client_server.dn,
+              :password => password,
+              :scope => oauth_client_server.puavoOAuthScope
+            }
+
           end
 
           uid = username
