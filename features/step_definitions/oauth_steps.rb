@@ -114,7 +114,7 @@ end
 
 Then /^I should not get "([^\"]*)" information with expired Access Token$/ do |uid|
   cookies.clear
-  header "HTTP_AUTHORIZATION", "token #{ @access_token }"
+  header "HTTP_AUTHORIZATION", "Bearer #{ @access_token }"
   visit(whoami_path(:format => :json))
 
   # TODO 401
