@@ -3,11 +3,6 @@ PATH
   specs:
     puavo_authentication (0.2.0)
 
-PATH
-  remote: development_gems/puavo_organisation
-  specs:
-    puavo_organisation (0.0.4)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -118,7 +113,6 @@ DEPENDENCIES
   pg
   prawn
   puavo_authentication (= 0.2.0)!
-  puavo_organisation (= 0.0.4)!
   rails (= 2.3.11)
   rbtrace
   rmagick
