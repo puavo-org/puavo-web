@@ -150,6 +150,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.with_options :controller => 'oauth' do |oauth|
     oauth.oauth_authorize "oauth/authorize", :action => 'authorize', :conditions => {:method => :get}
+    oauth.oauth_authorize_post "oauth/authorize", :action => 'authorize_post', :conditions => {:method => :post}
     oauth.oauth_access_token 'oauth/token', :action => 'token', :conditions => {:method => :post}
     oauth.ping 'oauth/ping', :action => 'ping'
     oauth.whoami 'oauth/whoami', :action => 'whoami'
