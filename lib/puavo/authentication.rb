@@ -69,23 +69,33 @@ module Puavo
 
 
     def initialize
-      @credentials = {}
+      # First configure ActiveLdap to use the default configuration from
+      # ldap.yml. This allows Puavo to search user dn from user uids.
+      @credentials = {
+        :dn => puavo_configuration["bind_dn"],
+        :password => puavo_configuration["password"],
+      }
     end
 
-    def dn
-      @credentials[:dn]
+    [:dn, :organisation_key, :scope].each do |accessor|
+      define_method accessor do
+        @credentials[accessor]
+        # value = @credentials[accessor]
+        # raise "#{ accessor } is missing!" if value.nil?
+        # value
+      end
     end
 
-    def host
-      @credentials[:host]
+    def puavo_configuration
+      ActiveLdap::Base.ensure_configuration
     end
 
     def base
-      @credentials[:base]
+      return current_organisation.ldap_base
     end
 
-    def scope
-      @credentials[:scope]
+    def ldap_host
+      @credentials[:ldap_host] || puavo_configuration["host"]
     end
 
     def self.remove_connection
@@ -96,7 +106,7 @@ module Puavo
 
     def configure_ldap_connection(credentials)
 
-      @credentials.merge! credentials.symbolize_keys
+      @credentials.merge! credentials.dup.symbolize_keys
 
       @credentials[:dn] = ActiveLdap::DistinguishedName.parse dn.to_s
 
@@ -113,7 +123,7 @@ module Puavo
       logger.info "Configuring ActiveLdap to use #{ @credentials.map { |k,v| "#{ k }: #{ v }" }.join ", " }"
       logger.debug "PW: #{ @credentials[:password] }" if ENV["LOG_LDAP_PASSWORD"]
       # Setup new ActiveLdap connections to use user's credentials
-      LdapBase.ldap_setup_connection host, base.to_s, dn, @credentials[:password]
+      LdapBase.ldap_setup_connection ldap_host, base.to_s, dn, @credentials[:password]
 
       # Do not never ever allow anonymous connections in Puavo. Should be
       # false in config/ldap.yml, but we just make sure here.
@@ -238,6 +248,10 @@ module Puavo
 
       raise "Failed get User object for #{ dn }" if @current_user.nil?
       return @current_user
+    end
+
+    def current_organisation
+      Puavo::Organisation.find organisation_key
     end
 
     def logger
