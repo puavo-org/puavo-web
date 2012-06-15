@@ -1,18 +1,23 @@
 module Puavo
 
   class AuthenticationError < UserError
+    def code
+      "authentication_error"
+    end
   end
 
-  # Bad username or password
   class AuthenticationFailed < AuthenticationError
+    def code
+      "bad_credentials"
+    end
   end
 
-  # No permissions
   class AuthorizationFailed < AuthenticationError
+    def code
+      "no_permissions"
+    end
   end
 
-  class UnknownUID < UserError
-  end
 
   # For User model
   module AuthenticationMixin
@@ -34,7 +39,7 @@ module Puavo
 
       def uid_to_dn(uid)
         if uid.nil? || uid.empty?
-          raise UnknownUID, "Cannot get dn from empty or nil uid"
+          raise AuthenticationFailed, "Cannot get dn from empty or nil uid"
         end
 
         logger.debug "Looking up dn for #{ uid }"
@@ -49,7 +54,7 @@ module Puavo
           end
         end
 
-        raise UnknownUID, "Cannot get dn for #{ uid }" if not dn
+        raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'" if not dn
         logger.debug "Found #{ dn } for #{ uid }"
         return ActiveLdap::DistinguishedName.parse dn.to_s
       end
@@ -105,7 +110,7 @@ module Puavo
 
 
 
-      logger.info "Configuring ActiveLdap to use #{ @credentials }"
+      logger.info "Configuring ActiveLdap to use #{ @credentials.map { |k,v| "#{ k }: #{ v }" }.join ", " }"
       logger.debug "PW: #{ @credentials[:password] }" if ENV["LOG_LDAP_PASSWORD"]
       # Setup new ActiveLdap connections to use user's credentials
       LdapBase.ldap_setup_connection host, base.to_s, dn, @credentials[:password]
