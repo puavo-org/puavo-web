@@ -1,9 +1,12 @@
 class OauthController < ApplicationController
+  layout nil
 
-  before_filter :set_locale
+  helper_method [:client_name, :trusted_client?]
 
   skip_before_filter :find_school
-  skip_before_filter :require_puavo_authorization, :except => [:ping, :whoami]
+  skip_before_filter :require_login, :only => [:authorize, :authorize_post]
+  skip_before_filter :require_puavo_authorization
+
 
   class InvalidOAuthRequest < UserError
     attr_accessor :code
@@ -27,32 +30,55 @@ class OauthController < ApplicationController
   # GET /oauth/authorize
   # Authorization Endpoint http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.1
   def authorize
-
-    # Authorization Grant must be given only with password authentication or
-    # with kerberos ticket. TODO: Kerberos ticket
-    if not authentication.user_password?
-      raise Puavo::AuthenticationFailed,
-        "Authorization grant can be only given with User UID and password"
-    end
+    # TODO: Kerberos
 
     # Save parameters given by the Client Service
     session[:oauth_params] = params
 
     # No need to show anything to user if the service is trusted
-    return redirect_with_authorization_code if trusted_client_service?
-
-    # If service is not trusted show a form to user where she/he can choose to trust it
-    respond_to do |format|
-      format.html
+    if trusted_client? # && kerberos?
+      return redirect_with_authorization_code
     end
 
+    render
   end
 
-  # POST /oauth/???
-  # TODO: a route
-  def handle_form_accept
-    # TODO: handle cancel button
+  # POST /oauth/authorize
+  def authorize_post
+
+    if params[:cancel]
+      return redirect_to session[:oauth_params][:redirect_uri]
+    end
+
+
+    [:uid, :password, :organisation_key].each do |key|
+      if params[key].nil? || params[key].empty?
+        return render :action => "authorize"
+      end
+    end
+
+    begin
+      perform_login(
+        :uid => params[:uid],
+        :password => params[:password],
+        :organisation_key => params[:organisation_key]
+      )
+    rescue Puavo::AuthenticationError => e
+      flash[:notice] = t('flash.session.failed')
+      return render :action => "authorize"
+    end
+
     redirect_with_authorization_code
+  end
+
+  def trusted_client?
+    # TODO: inspect session[:oauth_params]
+    false
+  end
+
+  def client_name
+    # TODO: query human readable name
+    session[:oauth_params][:client_id]
   end
 
   # POST /oauth/token
@@ -116,8 +142,7 @@ class OauthController < ApplicationController
       user_dn, oauth_client_server_dn, authentication.scope)
 
     access_token = access_token_entry.encrypt_token(
-      "host" => authentication.host,
-      "base" => authentication.base
+      "organisation_key" => authentication.organisation_key
     )
 
 
@@ -129,8 +154,7 @@ class OauthController < ApplicationController
     refresh_token_entry.puavoOAuthAccessToken = access_token_entry.dn
 
     refresh_token = refresh_token_entry.encrypt_token(
-      "host" => authentication.host,
-      "base" => authentication.base
+      "organisation_key" => authentication.organisation_key
     )
 
     # Access Token Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.4
@@ -142,17 +166,21 @@ class OauthController < ApplicationController
     }.to_json
   end
 
-  def trusted_client_service?
-    # TODO: inspect session[:oauth_params]
-    true
-  end
 
   # Redirection Endpoint http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-3.1.2
   # Authorization Request http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.1
   # Authorization Response http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
   def redirect_with_authorization_code
+
+    # Authorization Grant must be given only with password authentication or
+    # with kerberos ticket.
+    if not authentication.user_password?
+      raise Puavo::AuthenticationFailed,
+        "Authorization grant can be only given with User UID and password"
+    end
+
     oauth_params = session[:oauth_params]
-    session.delete :oauth_params
+    session[:oauth_params] = nil
     raise "OAuth params are not in the session" if oauth_params.nil?
     # TODO: Raise if oauth_params[:redirect_uri] is missing?
     # It's optional in the RFC but do we require it?
@@ -166,6 +194,7 @@ class OauthController < ApplicationController
       :redirect_uri => oauth_params[:redirect_uri]
     )
 
+    # TODO: delete session
     url = { :code => code, :state => oauth_params[:state]  }.to_query
     redirect_to oauth_params[:redirect_uri] + '?' + url
   end

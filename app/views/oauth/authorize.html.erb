@@ -1,14 +1,26 @@
-<% form_tag oauth_authorize_path do %>
-<table>
-  <tr>
-    <td>Accept login to</td>
-    <td><%= session[:oauth_params][:client_id] %></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td><%= submit_tag "ok" %></td>
-    <td><%= submit_tag "cancel" %></td>
-  </tr>
-</table>
+<% form_tag oauth_authorize_post_path do %>
+
+<h1>Opinsys login for <%= client_name %></h1>
+
+<% if not trusted_client? -%>
+<p>
+  <span style="color: red">TODO: Warning</span>
+</p>
+<% end -%>
+
+<p>
+
+  Username <%= text_field_tag "uid", params[:uid] %>
+  Password<%= password_field_tag "password" %>
+  Organisation <%= text_field_tag "organisation_key", params[:organisation_key] %>
+
+</p>
+
+
+<p>
+  <%= submit_tag "ok", :name => "ok" %>
+  <%= submit_tag "cancel", :name => "cancel" %>
+
+</p>
 
 <% end %>
