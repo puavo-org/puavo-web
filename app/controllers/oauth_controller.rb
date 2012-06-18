@@ -50,18 +50,19 @@ class OauthController < ApplicationController
       return redirect_to session[:oauth_params][:redirect_uri]
     end
 
+    data = params["oauth"]
 
     [:uid, :password, :organisation_key].each do |key|
-      if params[key].nil? || params[key].empty?
+      if data[key].nil? || data[key].empty?
         return render :action => "authorize"
       end
     end
 
     begin
       perform_login(
-        :uid => params[:uid],
-        :password => params[:password],
-        :organisation_key => params[:organisation_key]
+        :uid => data[:uid],
+        :password => data[:password],
+        :organisation_key => data[:organisation_key]
       )
     rescue Puavo::AuthenticationError => e
       flash[:notice] = t('flash.session.failed')
