@@ -43,17 +43,22 @@ module PuavoAuthentication
           logger.debug "Using basic authentication with #{ username }"
 
           # TODO: move to oauth controller
-          if username.match(/^oauth_client_id\//)
+          if match = username.match(/^oauth_client_id\/(.*)\/(.*)$/)
 
-            oauth_client_id = username.match(/^oauth_client_id\/(.*)/)[1]
+            org_key = match[1]
+            oauth_client_id = match[2]
+
+            @authentication.configure_ldap_connection(
+              :organisation_key => org_key
+            )
+
             oauth_client_server = OauthClient.find(:first,
               :attribute => "puavoOAuthClientId",
               :value => oauth_client_id)
-            raise Puavo::AuthenticationFailed, "Bad Client Id" if oauth_client_server.nil?
 
             return {
               :dn => oauth_client_server.dn,
-              :organisation_key => organisation_key_from_host,
+              :organisation_key => org_key,
               :password => password,
               :scope => oauth_client_server.puavoOAuthScope
             }
