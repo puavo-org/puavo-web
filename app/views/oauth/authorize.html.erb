@@ -1,31 +1,89 @@
-<% form_tag oauth_authorize_post_path do %>
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Puavo-kirjautuminen - Opinsys Oy</title>
 
-<h1>Opinsys login for <%= client_name %></h1>
+  <%= stylesheet_link_tag "/oauth-authorize/css/login-styles.css" %>
+  <%= stylesheet_link_tag "/oauth-authorize/chosen/chosen.css" %>
+  <%= javascript_include_tag( "jquery-1.4.2.min",
+                              "/oauth-authorize/chosen/chosen.jquery.min.js " ) %>
+</head>
+<body>
+    <form class="login">
+    <% form_tag oauth_authorize_post_path, :class => "login" do %>
+      <h1>Kirjaudu sisään palveluun:</h1><img src="/oauth-authorize/img/unelmakoulu.jpg" class="service-logo">
+      <p class='chosen-organization disabled'><a href='#' class='change-organization switch-view'> (Vaihda organisaatiota)</a></p>
+      <fieldset class="choose-organization active">
+        <legend>Valitse organisaatio:</legend>
+        <select data-placeholder="Organisaatio" class="organization chzn-select">
+            <option value="" disabled selected>Valitse organisaatiosi</option>
+            <option value="demo">Demo</option>
+            <option value="esbo">Esbo</option>
+            <option value="espoo">Espoo</option>
+            <option value="jyvaskyla">Jyväskylä</option>
+            <option value="jamsa">Jämsä</option>
+            <option value="kemi">Kemi</option>
+            <option value="toimisto">Toimisto</option>
+            <option value="vihti">Vihti</option>
+            <option value="ahtari">Ähtäri</option>
+        </select>
+        <span class="what-this-means" title="Valitse valikosta se organisaatio, jonka tunnuksilla haluat kirjautua. Esim. Jyväskylä">?</span>
+        <button class="continue-button switch-view disabled">Jatka</button>
+      </fieldset>
+      <fieldset class="inputs">
+        <div class="user-details-header">
+          <img src="/oauth-authorize/img/opinsys_logo_ds.png" class="opinsys-legend">
+          <span>-tunnukset:</span>
+        </div>
+        <div class="field-placeholder">
+          <legend>Käyttäjätunnus:</legend>
+          <%= text_field :oauth, :uid, :value => params[:uid], :class => :username %>
+        </div>
+          <div class="field-placeholder">
+          <legend>Salasana:</legend>
+          <%= text_field :oauth, :organisation_key, :value => params[:organisation_key], :class => :password %>
+          </div>
+      </fieldset>
+      <fieldset class="actions">
+          <%= submit_tag "Login", :name => "login", :class => "submit" %>
+          <%= submit_tag "Cancel", :name => "cancel", :class => "submit" %>
+          <a href="">Unohditko salasanasi?</a>
+      </fieldset>
+  <% end -%>
+    </form>
+</body>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.continue-button').addClass('active').removeClass('disabled');
+    $('.chosen-organization').addClass('disabled');
+    $('.inputs').addClass('disabled');
+    $('.actions').addClass('disabled');
 
-<% if not trusted_client? -%>
-<p>
-  <span style="color: red">TODO: Warning</span>
-</p>
-<% end -%>
 
-<p>
-
-  <%= label :oauth, :uid %>
-  <%= text_field :oauth, :uid, :value => params[:uid] %>
-
-  <%= label :oauth, :password %>
-  <%= password_field :oauth, :password %>
-
-  <%= label :oauth, :organisation_key %>
-  <%= text_field :oauth, :organisation_key, :value => params[:organisation_key] %>
-
-</p>
+    $(".chzn-select").chosen({no_results_text: "Organisaatioita ei löydy sanalla: "});
 
 
-<p>
-  <%= submit_tag "Login", :name => "login" %>
-  <%= submit_tag "Cancel", :name => "cancel" %>
-
-</p>
-
-<% end %>
+    $(".switch-view").each(function(index){
+      $(this).click(function(){
+        var e1 = $(".chosen-organization");
+        var e2 = $(".choose-organization");
+        var e3 = $(".inputs");
+        var e4 = $(".actions");
+        var a = [];
+        a.push(e1,e2,e3,e4);
+        switch_view(a);
+        if ($('.chosen-organization span').length<=0) $('.chosen-organization').prepend('<span>Valittu organisaatio: <strong>' +$('option:selected').text()+'</strong></span>');
+        else $('.chosen-organization span').remove();
+      });
+    });
+    function switch_view(elements){
+      $(elements).each(function(index){
+        $(this).hasClass('disabled') ? $(this).removeClass('disabled') : $(this).addClass('disabled');
+        $(this).hasClass('active') ? $(this).removeClass('active') : $(this).addClass('active');
+      });
+    }
+  });
+</script>
+</html>
