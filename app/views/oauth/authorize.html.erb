@@ -10,16 +10,21 @@
 
 <p>
 
-  Username <%= text_field_tag "uid", params[:uid] %>
-  Password<%= password_field_tag "password" %>
-  Organisation <%= text_field_tag "organisation_key", params[:organisation_key] %>
+  <%= label :oauth, :uid %>
+  <%= text_field :oauth, :uid, :value => params[:uid] %>
+
+  <%= label :oauth, :password %>
+  <%= password_field :oauth, :password %>
+
+  <%= label :oauth, :organisation_key %>
+  <%= text_field :oauth, :organisation_key, :value => params[:organisation_key] %>
 
 </p>
 
 
 <p>
-  <%= submit_tag "ok", :name => "ok" %>
-  <%= submit_tag "cancel", :name => "cancel" %>
+  <%= submit_tag "Login", :name => "login" %>
+  <%= submit_tag "Cancel", :name => "cancel" %>
 
 </p>
 
