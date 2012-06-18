@@ -4,7 +4,7 @@ Given /^I have been redirected to (.*) from "([^\"]*)"$/ do |page_name, client_n
                                     :value => client_name )
   visit( url_for(:controller => :oauth,
                  :action => :authorize,
-                 :client_id => "oauth_client_id/" + @oauth_client.puavoOAuthClientId,
+                 :client_id => "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
                  :scope => @oauth_client.puavoOAuthScope,
                  :redirect_uri => 'http://www.example2.com',
                  :state => '123456789',
@@ -16,7 +16,7 @@ end
 Then /^I should get OAuth Authorization Code$/ do
   params = CGI::parse( URI.parse( response.headers["Location"]).query )
 
-  # response.body.should contain("http://www.example2.com")
+  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
   params["code"].first.should_not be_nil
   params["state"].first.should_not be_nil
 
@@ -24,13 +24,8 @@ Then /^I should get OAuth Authorization Code$/ do
 end
 
 Then /^I should get OAuth Access Token with Authorization Code$/ do
-  params = request.params
-  params[:redirect_uri].should contain("http://www.example2.com")
 
-  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
-  request.params["response_type"].should == "code"
-
-  basic_auth("oauth_client_id/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
 
   visit( oauth_access_token_path(:format => :json),
          :post, {
@@ -65,7 +60,7 @@ end
 
 Then /^I should get a new Access Token and a new Refresh Token with existing Refresh Token$/ do
 
-  basic_auth("oauth_client_id/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
   visit( oauth_access_token_path(:format => :json),
          :post, {
            :grant_type => 'refresh_token',
@@ -87,13 +82,8 @@ end
 
 
 Then /^I should not get OAuth Access Token with expired Authorization Code$/ do
-  params = request.params
-  params[:redirect_uri].should contain("http://www.example2.com")
 
-  # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
-  request.params["response_type"].should == "code"
-
-  basic_auth("oauth_client_id/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
 
   visit( oauth_access_token_path(:format => :json),
          :post, {
@@ -125,7 +115,7 @@ end
 
 Then /^I should not get a new Access Token and a new refresh Token with expired refresh Token$/ do
 
-  basic_auth("oauth_client_id/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
   visit( oauth_access_token_path(:format => :json),
          :post, {
            :grant_type => 'refresh_token',
