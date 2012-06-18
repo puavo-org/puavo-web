@@ -134,7 +134,7 @@ module Puavo
     # use them
     def test_bind(dn, password)
       ldap = Net::LDAP.new(
-        :host => host,
+        :host => ldap_host,
         :port => 389,
         :encryption => {
           :method => :start_tls
