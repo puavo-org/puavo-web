@@ -47,12 +47,15 @@ class OauthController < ApplicationController
 
   def render_login_form
     @organisations = Puavo::Organisation.all.map do |k, v|
-      [k, v["name"]]
+      [v["name"], k]
     end
 
     @@towns.each do |name|
-      @organisations.push [name.downcase, name]
+      @organisations.push [name, name.downcase]
     end
+
+    @client_name = "Unelmakoulu"
+    @client_logo = "/oauth-authorize/img/unelmakoulu.jpg"
 
     render :action => "authorize"
   end
@@ -60,14 +63,13 @@ class OauthController < ApplicationController
   # POST /oauth/authorize
   def authorize_post
 
-
     if params[:cancel]
       return redirect_to session[:oauth_params][:redirect_uri]
     end
 
     data = params["oauth"]
 
-    [:uid, :password, :organisation_key].each do |key|
+    [:uid, :password].each do |key|
       if data[key].nil? || data[key].empty?
         return render_login_form
       end
@@ -77,7 +79,7 @@ class OauthController < ApplicationController
       perform_login(
         :uid => data[:uid],
         :password => data[:password],
-        :organisation_key => data[:organisation_key]
+        :organisation_key => params[:organisation_key]
       )
     rescue Puavo::AuthenticationError => e
       flash[:notice] = t('flash.session.failed')
