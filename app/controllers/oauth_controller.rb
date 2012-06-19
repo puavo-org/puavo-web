@@ -40,11 +40,17 @@ class OauthController < ApplicationController
       return redirect_with_authorization_code
     end
 
-    render
+    return render_login_form
+  end
+
+  def render_login_form
+    @organisations = Puavo::Organisation.all
+    render :action => "authorize"
   end
 
   # POST /oauth/authorize
   def authorize_post
+
 
     if params[:cancel]
       return redirect_to session[:oauth_params][:redirect_uri]
@@ -54,7 +60,7 @@ class OauthController < ApplicationController
 
     [:uid, :password, :organisation_key].each do |key|
       if data[key].nil? || data[key].empty?
-        return render :action => "authorize"
+        return render_login_form
       end
     end
 
@@ -66,7 +72,7 @@ class OauthController < ApplicationController
       )
     rescue Puavo::AuthenticationError => e
       flash[:notice] = t('flash.session.failed')
-      return render :action => "authorize"
+      return render_login_form
     end
 
     redirect_with_authorization_code
