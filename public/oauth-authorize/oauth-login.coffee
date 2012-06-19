@@ -2,9 +2,12 @@
 
 class Login
 
+  # Backbone.js style scoped jQuery
+  $: (selector) -> $(selector, @$el)
+
   constructor: ({el}) ->
-    @el = $ el
-    @selection = $(".chzn-select", @el)
+    @$el = $ el
+    @selection = @$ ".chzn-select"
 
 
     if localStorage.lastUsedOrgKey
@@ -18,30 +21,29 @@ class Login
     @selection.change (e) =>
       @selectOrganisation e.target.value
 
-    $(".continue-button", @el).click (e) =>
+    @$(".continue-button").click (e) =>
       e.preventDefault()
       @loginOnly()
 
-    $("a.change-organization", @el).click (e) =>
+    @$("a.change-organization").click (e) =>
       e.preventDefault()
       @organisationSelectionOnly()
 
 
   selectOrganisation: (orgKey) ->
     @selection.val orgKey
-    humanName = $("option[value=#{ orgKey }]").text()
-    $(".org-container", @el).text humanName
+    humanName = @$("option[value=#{ orgKey }]").text()
+    @$(".org-container").text humanName
     localStorage.lastUsedOrgKey = orgKey
 
 
   organisationSelectionOnly: ->
-    @el.addClass "organisation-only"
-    @el.removeClass "login-only"
+    @$el.addClass "organisation-only"
+    @$el.removeClass "login-only"
 
   loginOnly: ->
-    @el.addClass "login-only"
-    @el.removeClass "organisation-only"
-
+    @$el.addClass "login-only"
+    @$el.removeClass "organisation-only"
 
 
 
