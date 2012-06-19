@@ -43,8 +43,17 @@ class OauthController < ApplicationController
     return render_login_form
   end
 
+  @@towns = YAML.load_file("#{RAILS_ROOT}/config/towns.yml")["towns"]
+
   def render_login_form
-    @organisations = Puavo::Organisation.all
+    @organisations = Puavo::Organisation.all.map do |k, v|
+      [k, v["name"]]
+    end
+
+    @@towns.each do |name|
+      @organisations.push [name.downcase, name]
+    end
+
     render :action => "authorize"
   end
 

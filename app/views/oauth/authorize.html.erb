@@ -29,8 +29,8 @@
         <legend>Valitse organisaatio:</legend>
         <select data-placeholder="Organisaatio" class="organization chzn-select">
             <option value="" selected>Valitse organisaatiosi</option>
-            <% @organisations.each do |k, v| -%>
-              <option value="<%= k %>" ><%= v["name"] %></option>
+            <% @organisations.each do |i| -%>
+              <option value="<%= i.first %>" ><%= i.second %></option>
             <% end -%>
         </select>
         <span class="what-this-means" title="Valitse valikosta se organisaatio, jonka tunnuksilla haluat kirjautua. Esim. Jyväskylä">?</span>
