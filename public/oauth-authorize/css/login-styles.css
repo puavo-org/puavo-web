@@ -120,10 +120,8 @@ img{
 
 /*--------------------*/
 
-.login h1{
-  float: left;
+.chosen-organization .org-container {
   font-size: 140%;
-  margin: 0 0 10px 0;
   letter-spacing: 3px;
   padding: .5em 0 0 .5em;
   position: relative;
@@ -131,6 +129,15 @@ img{
   text-transform: uppercase;
   text-align: left;
 }
+
+.service {
+  margin: 1em;
+}
+
+.service img {
+  float: right;
+}
+
 .login .service-logo{
   border: 1px solid #ED7113;
   margin: 0 2%;
