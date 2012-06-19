@@ -144,14 +144,12 @@ fieldset{
   margin: 0;
 }
 /*--------------------*/
-.active{
-  display: block !important;
-}
-.disabled{
-  display: none !important;
-}
+
+
+
+
+
 .choose-organization button{
-  display: block;
   margin-top:1em;
 }
 
@@ -336,3 +334,29 @@ fieldset{
 }
 
 /* End of Media Querys */
+
+
+.choose-organization button,
+.chosen-organization {
+  display: none;
+}
+
+/* Organisation selection only */
+.organisation-only .choose-organization button {
+  display: block;
+}
+.organisation-only .inputs,
+.organisation-only .chosen-organization,
+.organisation-only .actions {
+  display: none;
+}
+
+
+/* Login form only */
+.login-only .chosen-organization {
+  display: block;
+}
+.login-only .choose-organization {
+  display: none;
+}
+
