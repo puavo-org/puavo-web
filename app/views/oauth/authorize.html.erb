@@ -16,8 +16,11 @@
     <form class="login">
     <% form_tag oauth_authorize_post_path, :class => "login" do %>
       <h1>Kirjaudu sisään palveluun:</h1><img src="/oauth-authorize/img/unelmakoulu.jpg" class="service-logo">
-      <p class='chosen-organization disabled'><a href='#' class='change-organization switch-view'> (Vaihda organisaatiota)</a></p>
-      <fieldset class="choose-organization active">
+      <p class='chosen-organization '>
+        <span class='org-container'>TODO</span>
+        <a href='#' class='change-organization switch-view'> (Vaihda organisaatiota)</a>
+      </p>
+      <fieldset class="choose-organization">
         <legend>Valitse organisaatio:</legend>
         <select data-placeholder="Organisaatio" class="organization chzn-select">
             <option value="" disabled selected>Valitse organisaatiosi</option>
@@ -32,7 +35,7 @@
             <option value="ahtari">Ähtäri</option>
         </select>
         <span class="what-this-means" title="Valitse valikosta se organisaatio, jonka tunnuksilla haluat kirjautua. Esim. Jyväskylä">?</span>
-        <button class="continue-button switch-view disabled">Jatka</button>
+        <button class="continue-button switch-view">Jatka</button>
       </fieldset>
       <fieldset class="inputs">
         <div class="user-details-header">
