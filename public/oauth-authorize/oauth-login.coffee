@@ -20,9 +20,6 @@ class Login
 
     @selection.change (e) =>
       @selectOrganisation e.target.value
-
-    @$(".continue-button").click (e) =>
-      e.preventDefault()
       @loginOnly()
 
     @$("a.change-organization").click (e) =>
@@ -33,17 +30,19 @@ class Login
   selectOrganisation: (orgKey) ->
     @selection.val orgKey
     humanName = @$("option[value=#{ orgKey }]").text()
-    @$(".org-container").text humanName
+    @$(".chosen-organization .container").text humanName
     localStorage.lastUsedOrgKey = orgKey
 
 
   organisationSelectionOnly: ->
     @$el.addClass "organisation-only"
     @$el.removeClass "login-only"
+    @selection.get(0).focus()
 
   loginOnly: ->
     @$el.addClass "login-only"
     @$el.removeClass "organisation-only"
+    @$("#oauth_uid").get(0).focus()
 
 
 
