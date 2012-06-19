@@ -14,11 +14,17 @@
 </head>
 <body class="" >
     <% form_tag oauth_authorize_post_path, :class => "login" do %>
-      <h1>Kirjaudu sisään palveluun:</h1><img src="/oauth-authorize/img/unelmakoulu.jpg" class="service-logo">
-      <p class='chosen-organization '>
+
+      <div class='chosen-organization'>
         <span class='org-container'>TODO</span>
-        <a href='#' class='change-organization switch-view'> (Vaihda organisaatiota)</a>
-      </p>
+        <a href='#' class='change-organization switch-view'> (vaihda)</a>
+      </div>
+
+      <div class="service">
+        <h2>Kirjaudu sisään palveluun &quot;<span class="service-name">Unelmakoulu</span>&quot;</h2>
+        <img src="/oauth-authorize/img/unelmakoulu.jpg" class="service-logo">
+      </div>
+
       <fieldset class="choose-organization">
         <legend>Valitse organisaatio:</legend>
         <select data-placeholder="Organisaatio" class="organization chzn-select">
