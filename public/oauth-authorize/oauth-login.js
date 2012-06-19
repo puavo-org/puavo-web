@@ -4,12 +4,16 @@
 
   Login = (function() {
 
+    Login.prototype.$ = function(selector) {
+      return $(selector, this.$el);
+    };
+
     function Login(_arg) {
       var el,
         _this = this;
       el = _arg.el;
-      this.el = $(el);
-      this.selection = $(".chzn-select", this.el);
+      this.$el = $(el);
+      this.selection = this.$(".chzn-select");
       if (localStorage.lastUsedOrgKey) {
         this.selectOrganisation(localStorage.lastUsedOrgKey);
         this.loginOnly();
@@ -22,11 +26,11 @@
       this.selection.change(function(e) {
         return _this.selectOrganisation(e.target.value);
       });
-      $(".continue-button", this.el).click(function(e) {
+      this.$(".continue-button").click(function(e) {
         e.preventDefault();
         return _this.loginOnly();
       });
-      $("a.change-organization", this.el).click(function(e) {
+      this.$("a.change-organization").click(function(e) {
         e.preventDefault();
         return _this.organisationSelectionOnly();
       });
@@ -35,19 +39,19 @@
     Login.prototype.selectOrganisation = function(orgKey) {
       var humanName;
       this.selection.val(orgKey);
-      humanName = $("option[value=" + orgKey + "]").text();
-      $(".org-container", this.el).text(humanName);
+      humanName = this.$("option[value=" + orgKey + "]").text();
+      this.$(".org-container").text(humanName);
       return localStorage.lastUsedOrgKey = orgKey;
     };
 
     Login.prototype.organisationSelectionOnly = function() {
-      this.el.addClass("organisation-only");
-      return this.el.removeClass("login-only");
+      this.$el.addClass("organisation-only");
+      return this.$el.removeClass("login-only");
     };
 
     Login.prototype.loginOnly = function() {
-      this.el.addClass("login-only");
-      return this.el.removeClass("organisation-only");
+      this.$el.addClass("login-only");
+      return this.$el.removeClass("organisation-only");
     };
 
     return Login;
