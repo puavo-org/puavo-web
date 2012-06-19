@@ -1,4 +1,4 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
+/* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
 */
@@ -12,8 +12,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
     margin: 0;
@@ -24,7 +24,7 @@ time, mark, audio, video {
     vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
@@ -56,7 +56,7 @@ html, body
 
 body{
   color: #666;
-  font: 100%/1 Ubuntu,'Lucida Sans Unicode', 'Trebuchet MS', Arial, Helvetica, sans-serif;    
+  font: 100%/1 Ubuntu,'Lucida Sans Unicode', 'Trebuchet MS', Arial, Helvetica, sans-serif;
   margin: 0;
   background-color: #d9dee2;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#ebeef2), to(#d9dee2));
@@ -64,7 +64,7 @@ body{
   background-image: -moz-linear-gradient(top, #ebeef2, #d9dee2);
   background-image: -ms-linear-gradient(top, #ebeef2, #d9dee2);
   background-image: -o-linear-gradient(top, #ebeef2, #d9dee2);
-  background-image: linear-gradient(top, #ebeef2, #d9dee2);    
+  background-image: linear-gradient(top, #ebeef2, #d9dee2);
 }
 
 a{
@@ -90,7 +90,7 @@ img{
   border: 5px solid rgba(237,113,19,0.5);
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
-  border-radius: 3px;  
+  border-radius: 3px;
   -webkit-box-shadow:
     2px -2px 2px rgba(0, 0, 0, 0.5), -2px 2px 2px rgba(0,0,0,0.5), inset 0 5px 100px rgba(65, 120, 107, 0.2);
   -moz-box-shadow:
@@ -102,6 +102,7 @@ img{
   position: relative;
   width: 60%;
   z-index: 0;
+  min-height: 320px;
 }
 
 .login:before{
@@ -120,27 +121,38 @@ img{
 
 /*--------------------*/
 
-.chosen-organization .org-container {
-  font-size: 140%;
+.chosen-organization {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.chosen-organization .container {
+  font-size: 160%;
   letter-spacing: 3px;
-  padding: .5em 0 0 .5em;
   position: relative;
   text-shadow: 0 -1px 1px rgba(237, 113, 19, 0.75);
   text-transform: uppercase;
   text-align: left;
 }
 
-.service {
-  margin: 1em;
+.service-notice {
+  margin-top: 1em;
 }
 
-.service img {
+.service-notice h2 {
+  font-size: 120%;
+}
+
+.service-notice .service-name {
+  font-style: italic;
+}
+
+.opinsys-logo {
+  height: 50px;
   float: right;
 }
 
 .login .service-logo{
   border: 1px solid #ED7113;
-  margin: 0 2%;
 }
 
 /*--------------------*/
@@ -156,7 +168,11 @@ fieldset{
 
 
 
-.choose-organization button{
+.choose-organization button {
+  margin-top:1em;
+}
+
+.choose-organization {
   margin-top:1em;
 }
 
@@ -172,19 +188,24 @@ fieldset{
   padding: 0.75em;
   margin: 0 0 10px 0;
 }
-.chosen-organization{
-  color:#333333;
+
+.client-title {
   font-size:100%;
   line-height:1;
-  padding: .5em 0 0 .5em;
+  white-space: nowrap
 }
-.chosen-organization strong{
-  color: #00A911;
-  margin-right:0.5em;
-}
-.chosen-organization a{
+
+.client-title a{
   font-size:90%;
 }
+
+.client-title .client-name {
+  font-size: 250%;
+  margin-left: .2em;
+  color: #D69E31;
+  text-shadow: 0 -1px 1px rgba(237, 113, 19, 0.75);
+}
+
 .inputs .user-details-header{
   padding: 2% 2% 2% 0;
   position: relative;
@@ -210,7 +231,7 @@ fieldset{
   width:90% !important;
 }
 .username, .organization,.password{
-  width: 80%;  
+  width: 80%;
 }
 
 .inputs input:focus{
@@ -229,7 +250,7 @@ fieldset{
   background-image: -webkit-gradient(linear, left top, left bottom, from(#ffb94b), to(#f17931));
   background-image: -webkit-linear-gradient(top, #ffb94b, #f17931);
   background-image: -moz-linear-gradient(top, #ffb94b, #f17931);
-  background-image: -ms-linear-gradient(top, #ffb94b, #f17931); 
+  background-image: -ms-linear-gradient(top, #ffb94b, #f17931);
   background-image: -o-linear-gradient(top, #ffb94b, #f17931);
   background-image: linear-gradient(top, #ffb94b, #f17931);
   border-radius:50%;
@@ -250,12 +271,12 @@ fieldset{
 
 /*--------------------*/
 
-.submit, .choose-organization button{   
+.submit, .choose-organization button{
   background-color: #ffb94b;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#ffb94b), to(#f17931));
   background-image: -webkit-linear-gradient(top, #ffb94b, #f17931);
   background-image: -moz-linear-gradient(top, #ffb94b, #f17931);
-  background-image: -ms-linear-gradient(top, #ffb94b, #f17931); 
+  background-image: -ms-linear-gradient(top, #ffb94b, #f17931);
   background-image: -o-linear-gradient(top, #ffb94b, #f17931);
   background-image: linear-gradient(top, #ffb94b, #f17931);
   border: solid 1px #d69e31;
@@ -270,11 +291,11 @@ fieldset{
   font-size:1em;
   height: 50px;
   padding: 0;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.5);    
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
   width: 50%;
 }
 
-.submit:hover,.submit:focus, .choose-organization button:hover, .choose-organization button:focus{   
+.submit:hover,.submit:focus, .choose-organization button:hover, .choose-organization button:focus{
   background-color: #fddb6f;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#ffb94b), to(#fddb6f));
   background-image: -webkit-linear-gradient(top, #ffb94b, #fddb6f);
@@ -282,9 +303,9 @@ fieldset{
   background-image: -ms-linear-gradient(top, #ffb94b, #fddb6f);
   background-image: -o-linear-gradient(top, #ffb94b, #fddb6f);
   background-image: linear-gradient(top, #ffb94b, #fddb6f);
-} 
+}
 
-.submit:active, ..choose-organization button:active{   
+.submit:active, ..choose-organization button:active{
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
   -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;

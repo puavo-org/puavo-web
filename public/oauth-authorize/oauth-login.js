@@ -24,10 +24,7 @@
         no_results_text: "Organisaatioita ei löydy sanalla: "
       });
       this.selection.change(function(e) {
-        return _this.selectOrganisation(e.target.value);
-      });
-      this.$(".continue-button").click(function(e) {
-        e.preventDefault();
+        _this.selectOrganisation(e.target.value);
         return _this.loginOnly();
       });
       this.$("a.change-organization").click(function(e) {
@@ -40,18 +37,20 @@
       var humanName;
       this.selection.val(orgKey);
       humanName = this.$("option[value=" + orgKey + "]").text();
-      this.$(".org-container").text(humanName);
+      this.$(".chosen-organization .container").text(humanName);
       return localStorage.lastUsedOrgKey = orgKey;
     };
 
     Login.prototype.organisationSelectionOnly = function() {
       this.$el.addClass("organisation-only");
-      return this.$el.removeClass("login-only");
+      this.$el.removeClass("login-only");
+      return this.selection.get(0).focus();
     };
 
     Login.prototype.loginOnly = function() {
       this.$el.addClass("login-only");
-      return this.$el.removeClass("organisation-only");
+      this.$el.removeClass("organisation-only");
+      return this.$("#oauth_uid").get(0).focus();
     };
 
     return Login;

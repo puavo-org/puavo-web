@@ -15,31 +15,41 @@
 <body class="" >
     <% form_tag oauth_authorize_post_path, :class => "login" do %>
 
-      <div class='chosen-organization'>
-        <span class='org-container'>TODO</span>
-        <a href='#' class='change-organization switch-view'> (vaihda)</a>
+      <img src="/oauth-authorize/img/opinsys_logo_ds.png" class="opinsys-logo" />
+
+
+      <div class='client-title'>
+        <% if @client_logo -%>
+        <img class="service-logo"
+          src="<%= @client_logo %>"
+          alt="<%= @client_name %>"
+          title="<%= @client_name %>"
+          >
+        <% end -%>
+        <span class='client-name'><%= @client_name %></span>
       </div>
 
-      <div class="service">
-        <h2>Kirjaudu sisään palveluun &quot;<span class="service-name">Unelmakoulu</span>&quot;</h2>
-        <img src="/oauth-authorize/img/unelmakoulu.jpg" class="service-logo">
+      <div class='chosen-organization' >
+        <span class='container'>JS</span>
+        <a href='#' class='change-organization'> (vaihda)</a>
       </div>
+
+      <div class="service-notice">
+        <h2>Kirjautuminen palveluun <span class="service-name"><%= @client_name %></span> Opinsys-järjestelmän tunnuksilla.</h2>
+      </div>
+
 
       <fieldset class="choose-organization">
-        <legend>Valitse organisaatio:</legend>
+        <legend>Valitse koulu tai organisaatio:</legend>
         <select data-placeholder="Organisaatio" class="organization chzn-select">
-            <option value="" selected>Valitse organisaatiosi</option>
             <% @organisations.each do |i| -%>
               <option value="<%= i.first %>" ><%= i.second %></option>
             <% end -%>
         </select>
         <span class="what-this-means" title="Valitse valikosta se organisaatio, jonka tunnuksilla haluat kirjautua. Esim. Jyväskylä">?</span>
-        <button class="continue-button switch-view">Jatka</button>
       </fieldset>
       <fieldset class="inputs">
         <div class="user-details-header">
-          <img src="/oauth-authorize/img/opinsys_logo_ds.png" class="opinsys-legend">
-          <span>-tunnukset:</span>
         </div>
         <div class="field-placeholder">
           <legend>Käyttäjätunnus:</legend>
