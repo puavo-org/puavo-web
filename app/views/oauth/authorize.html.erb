@@ -41,11 +41,7 @@
 
       <fieldset class="choose-organization">
         <legend>Valitse koulu tai organisaatio:</legend>
-        <select data-placeholder="Organisaatio" class="organization chzn-select">
-            <% @organisations.each do |i| -%>
-              <option value="<%= i.first %>" ><%= i.second %></option>
-            <% end -%>
-        </select>
+        <%= select_tag :organisation_key, options_for_select(@organisations), :class => "organization chzn-select" %>
         <span class="what-this-means" title="Valitse valikosta se organisaatio, jonka tunnuksilla haluat kirjautua. Esim. Jyväskylä">?</span>
       </fieldset>
       <fieldset class="inputs">
@@ -57,7 +53,7 @@
         </div>
           <div class="field-placeholder">
           <legend>Salasana:</legend>
-          <%= text_field :oauth, :organisation_key, :value => params[:organisation_key], :class => :password %>
+          <%= password_field :oauth, :password, :class => :password %>
           </div>
       </fieldset>
       <fieldset class="actions">
