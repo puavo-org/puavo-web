@@ -18,8 +18,10 @@ class Login
 
     @selection.chosen no_results_text: "Organisaatioita ei löydy sanalla: "
 
-    @selection.change (e) =>
-      @selectOrganisation e.target.value
+
+    @$("button.next").click (e) =>
+      e.preventDefault()
+      @selectOrganisation $("select").get(0).value
       @loginOnly()
 
     @$("a.change-organization").click (e) =>
@@ -48,6 +50,3 @@ class Login
 
 $ ->
   window.login = new Login el: $("body").get 0
-
-
-

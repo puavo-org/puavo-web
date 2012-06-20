@@ -26,7 +26,7 @@
           title="<%= @client_name %>"
           >
         <% end -%>
-        <span class='client-name'><%= @client_name %></span>
+        <!-- <span class='client-name'><%= @client_name %></span> -->
       </div>
 
       <div class='chosen-organization' >
@@ -35,7 +35,7 @@
       </div>
 
       <div class="service-notice">
-        <h2>Kirjautuminen palveluun <span class="service-name"><%= @client_name %></span> Opinsys-järjestelmän tunnuksilla.</h2>
+        <h2>Kirjautuminen palveluun <span class="service-name"><%= @client_name %></span> Opinsys-järjestelmän tunnuksilla</h2>
       </div>
 
 
@@ -56,6 +56,7 @@
           <%= password_field :oauth, :password, :class => :password %>
           </div>
       </fieldset>
+      <button class="next">Next</button>
       <fieldset class="actions">
           <%= submit_tag "Login", :name => "login", :class => "submit" %>
           <!-- <%= submit_tag "Cancel", :name => "cancel", :class => "submit" %> -->

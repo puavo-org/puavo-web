@@ -151,9 +151,6 @@ img{
   float: right;
 }
 
-.login .service-logo{
-  border: 1px solid #ED7113;
-}
 
 /*--------------------*/
 
@@ -200,7 +197,7 @@ fieldset{
 }
 
 .client-title .client-name {
-  font-size: 250%;
+  font-size: 150%;
   margin-left: .2em;
   color: #D69E31;
   text-shadow: 0 -1px 1px rgba(237, 113, 19, 0.75);
@@ -271,7 +268,7 @@ fieldset{
 
 /*--------------------*/
 
-.submit, .choose-organization button{
+.submit, button.next {
   background-color: #ffb94b;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#ffb94b), to(#f17931));
   background-image: -webkit-linear-gradient(top, #ffb94b, #f17931);
@@ -293,6 +290,9 @@ fieldset{
   padding: 0;
   text-shadow: 0 1px 0 rgba(255,255,255,0.5);
   width: 50%;
+}
+button.next {
+  margin-top: 10px;
 }
 
 .submit:hover,.submit:focus, .choose-organization button:hover, .choose-organization button:focus{
@@ -365,12 +365,15 @@ fieldset{
 
 
 .choose-organization button,
-.chosen-organization {
+.chosen-organization,
+button.next {
   display: none;
 }
 
+
 /* Organisation selection only */
-.organisation-only .choose-organization button {
+.organisation-only .choose-organization button,
+.organisation-only button.next {
   display: block;
 }
 .organisation-only .inputs,
