@@ -23,8 +23,9 @@
       this.selection.chosen({
         no_results_text: "Organisaatioita ei löydy sanalla: "
       });
-      this.selection.change(function(e) {
-        _this.selectOrganisation(e.target.value);
+      this.$("button.next").click(function(e) {
+        e.preventDefault();
+        _this.selectOrganisation($("select").get(0).value);
         return _this.loginOnly();
       });
       this.$("a.change-organization").click(function(e) {
