@@ -32,6 +32,13 @@
         e.preventDefault();
         return _this.organisationSelectionOnly();
       });
+      this.$("form").submit(function() {
+        _this.$("input").addClass("disabled");
+        _this.$("img.loading").css("display", "inline");
+        return $("input").click(function(e) {
+          return e.preventDefault();
+        });
+      });
     }
 
     Login.prototype.selectOrganisation = function(orgKey) {
