@@ -295,7 +295,10 @@ button.next {
   margin-top: 10px;
 }
 
-.submit:hover,.submit:focus, .choose-organization button:hover, .choose-organization button:focus{
+.submit:hover:not(.disabled),
+.submit:focus:not(.disabled),
+.choose-organization button:hover:not(.disabled),
+.choose-organization button:focus:not(.disabled){
   background-color: #fddb6f;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#ffb94b), to(#fddb6f));
   background-image: -webkit-linear-gradient(top, #ffb94b, #fddb6f);
@@ -304,6 +307,16 @@ button.next {
   background-image: -o-linear-gradient(top, #ffb94b, #fddb6f);
   background-image: linear-gradient(top, #ffb94b, #fddb6f);
 }
+
+.disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.loading {
+  display: none;
+}
+
 
 .submit:active, ..choose-organization button:active{
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;

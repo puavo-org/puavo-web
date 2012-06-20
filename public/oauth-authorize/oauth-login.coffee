@@ -28,6 +28,11 @@ class Login
       e.preventDefault()
       @organisationSelectionOnly()
 
+    @$("form").submit =>
+      @$("input").addClass("disabled")
+      @$("img.loading").css "display", "inline"
+      $("input").click (e) -> e.preventDefault()
+
 
   selectOrganisation: (orgKey) ->
     @selection.val orgKey
