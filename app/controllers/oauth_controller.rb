@@ -54,8 +54,8 @@ class OauthController < ApplicationController
       @organisations.push [name, name.downcase]
     end
 
-    @client_name = "Unelmakoulu"
-    @client_logo = "/oauth-authorize/img/unelmakoulu.jpg"
+    @client_name = "Tuki - Zendesk"
+    @client_logo = "http://cdn.zendesk.com/images/zendesk-logo.png"
 
     render :action => "authorize"
   end
