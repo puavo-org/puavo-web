@@ -106,7 +106,13 @@ module Puavo
 
     def configure_ldap_connection(credentials)
 
+
       @credentials.merge! credentials.dup.symbolize_keys
+
+      if current_organisation.nil?
+        raise Puavo::AuthenticationError, "Bad organisation"
+      end
+
 
       @credentials[:dn] = ActiveLdap::DistinguishedName.parse dn.to_s
 
@@ -128,6 +134,7 @@ module Puavo
       # Do not never ever allow anonymous connections in Puavo. Should be
       # false in config/ldap.yml, but we just make sure here.
       LdapBase.connection.instance_variable_set :@allow_anonymous, false
+
     end
 
     # Test dn&password bind to LDAP without actually configuring ActiveLdap to
