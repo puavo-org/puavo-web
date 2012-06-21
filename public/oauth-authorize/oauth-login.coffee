@@ -18,7 +18,6 @@ class Login
 
     @selection.chosen no_results_text: "Organisaatioita ei löydy sanalla: "
 
-
     @$("button.next").click (e) =>
       e.preventDefault()
       @selectOrganisation $("select").get(0).value
@@ -41,6 +40,7 @@ class Login
     humanName = @$("option[value=#{ orgKey }]").text()
     @$(".chosen-organization .container").text humanName
     localStorage.lastUsedOrgKey = orgKey
+
 
 
   organisationSelectionOnly: ->
