@@ -49,9 +49,13 @@ table {
 
 /* STYLES BEGIN */
 
-html, body
-{
+html, body {
     height: 100%;
+}
+
+h1 {
+  font-size: 200%;
+  font-weight: bold;
 }
 
 body{
