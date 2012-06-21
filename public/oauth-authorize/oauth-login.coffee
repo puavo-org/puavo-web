@@ -27,11 +27,13 @@ class Login
     @$("a.change-organization").click (e) =>
       e.preventDefault()
       @organisationSelectionOnly()
+      # Remove possible error messages when user is fixing organistion
+      @$(".error").remove()
 
     @$("form").submit =>
       @$("input").addClass("disabled")
       @$("img.loading").css "display", "inline"
-      $("input").click (e) -> e.preventDefault()
+      $("input[type=submit]").click (e) -> e.preventDefault()
 
 
   selectOrganisation: (orgKey) ->

@@ -34,6 +34,14 @@
         <a href='#' class='change-organization'> (vaihda)</a>
       </div>
 
+      <% flash.each do |key, value| -%>
+      <div class="error">
+        <div class="<%= key %>">
+        <%= value %>
+        </div>
+      </div>
+      <% end -%>
+
       <div class="service-notice">
         <h2>Kirjautuminen palveluun <span class="service-name"><%= @client_name %></span> Opinsys-järjestelmän tunnuksilla</h2>
       </div>
