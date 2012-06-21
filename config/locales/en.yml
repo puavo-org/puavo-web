@@ -1,5 +1,16 @@
 en:
   must_be_logged_in: You must be logged in
+  oauth:
+    change: change
+    login: Login
+    password_forget: Forgot your password?
+    username: Username
+    password: Password
+    login_description1: Login to service
+    login_description2: with your Opinsys-credentials
+    select_organistion: Select school or organistion
+    next: Next
+    organisation_help: lalala
   create_organisation_owner:
     school_name: Administration
     role_name: Maintenance

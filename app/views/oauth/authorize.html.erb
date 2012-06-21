@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width">
-  <title>Puavo-kirjautuminen - Opinsys Oy</title>
+  <title><%= @client_name %> - Opinsys Oy</title>
 
   <%= stylesheet_link_tag "/oauth-authorize/css/login-styles.css" %>
   <%= stylesheet_link_tag "/oauth-authorize/chosen/chosen.css" %>
@@ -33,7 +33,7 @@
 
       <div class='chosen-organization' >
         <span class='container'>JS</span>
-        <a href='#' class='change-organization'> (vaihda)</a>
+        <a href='#' class='change-organization'> (<%= I18n.t "oauth.change"  %>)</a>
       </div>
 
       <% flash.each do |key, value| -%>
@@ -45,33 +45,37 @@
       <% end -%>
 
       <div class="service-notice">
-        <h2>Kirjautuminen palveluun <span class="service-name"><%= @client_name %></span> Opinsys-järjestelmän tunnuksilla</h2>
+        <h2>
+          <%= I18n.t "oauth.login_description1" %>
+          <span class="service-name"><%= @client_name %></span>
+          <%= I18n.t "oauth.login_description2" %>
+        </h2>
       </div>
 
 
       <fieldset class="choose-organization">
-        <legend>Valitse koulu tai organisaatio:</legend>
+      <legend><%= I18n.t "oauth.select_organistion" %>:</legend>
         <%= select_tag :organisation_key, options_for_select(@organisations), :class => "organization chzn-select" %>
-        <span class="what-this-means" title="Valitse valikosta se organisaatio, jonka tunnuksilla haluat kirjautua. Esim. Jyväskylä">?</span>
+        <span class="what-this-means" title="<%= I18n.t "oauth.organisation_help" %>">?</span>
       </fieldset>
       <fieldset class="inputs">
         <div class="user-details-header">
         </div>
         <div class="field-placeholder">
-          <legend>Käyttäjätunnus:</legend>
+          <legend><%= I18n.t "oauth.username" %>:</legend>
           <%= text_field :oauth, :uid, :value => params[:uid], :class => :username %>
         </div>
           <div class="field-placeholder">
-          <legend>Salasana:</legend>
+          <legend><%= I18n.t "oauth.password" %>:</legend>
           <%= password_field :oauth, :password, :class => :password %>
           </div>
       </fieldset>
       <button class="next">Next</button>
       <fieldset class="actions">
-          <%= submit_tag "Login", :name => "login", :class => "submit" %>
+          <%= submit_tag I18n.t("oauth.login"), :name => "login", :class => "submit" %>
           <img class="loading" src="/images/ajax-loader.gif" alt="sending..." />
           <!-- <%= submit_tag "Cancel", :name => "cancel", :class => "submit" %> -->
-          <a href="">Unohditko salasanasi?</a>
+          <a href="#" onclick="alert('Not implemented.')" ><%= I18n.t "oauth.password_forget" %></a>
       </fieldset>
   <% end -%>
 </body>
