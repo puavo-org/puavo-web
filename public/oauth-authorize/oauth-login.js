@@ -30,12 +30,13 @@
       });
       this.$("a.change-organization").click(function(e) {
         e.preventDefault();
-        return _this.organisationSelectionOnly();
+        _this.organisationSelectionOnly();
+        return _this.$(".error").remove();
       });
       this.$("form").submit(function() {
         _this.$("input").addClass("disabled");
         _this.$("img.loading").css("display", "inline");
-        return $("input").click(function(e) {
+        return $("input[type=submit]").click(function(e) {
           return e.preventDefault();
         });
       });
