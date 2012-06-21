@@ -16,9 +16,9 @@ Feature: OAuth login
   Scenario: I Can get user data with OAuth Access Token
     Given I have been redirected to the OAuth authorize page from "Example software"
     Then I should be on the OAuth Authorize Endpoint
-    When I fill in "Uid" with "joe.bloggs"
-    And I fill in "Password" with "secret"
-    And I fill in "Organisation key" with "example"
+    When I select "Example Organisation" from "organisation_key"
+    And I fill in "oauth_uid" with "joe.bloggs"
+    And I fill in "oauth_password" with "secret"
     And I press "Login"
     Then I should get OAuth Authorization Code
     And I should get OAuth Access Token with Authorization Code
@@ -29,9 +29,9 @@ Feature: OAuth login
   Scenario: I try to get an Access Token with expired Authorization Code
     Given I have been redirected to the OAuth authorize page from "Example software"
     Then I should be on the OAuth Authorize Endpoint
-    When I fill in "Uid" with "joe.bloggs"
-    And I fill in "Password" with "secret"
-    And I fill in "Organisation key" with "example"
+    When I select "Example Organisation" from "organisation_key"
+    And I fill in "oauth_uid" with "joe.bloggs"
+    And I fill in "oauth_password" with "secret"
     And I press "Login"
     Then I should get OAuth Authorization Code
     Given I wait 5 hours
@@ -40,11 +40,10 @@ Feature: OAuth login
   Scenario: I try to get user data with expired Access Token
     Given I have been redirected to the OAuth authorize page from "Example software"
     Then I should be on the OAuth Authorize Endpoint
-    When I fill in "Uid" with "joe.bloggs"
-    And I fill in "Password" with "secret"
-    And I fill in "Organisation key" with "example"
+    When I select "Example Organisation" from "organisation_key"
+    And I fill in "oauth_uid" with "joe.bloggs"
+    And I fill in "oauth_password" with "secret"
     And I press "Login"
-    # When I press "ok"
     Then I should get OAuth Authorization Code
     And I should get OAuth Access Token with Authorization Code
     Given I wait 1 year
@@ -53,9 +52,9 @@ Feature: OAuth login
   Scenario: I try to get new Access Token with expired Refresh Token
     Given I have been redirected to the OAuth authorize page from "Example software"
     Then I should be on the OAuth Authorize Endpoint
-    When I fill in "Uid" with "joe.bloggs"
-    And I fill in "Password" with "secret"
-    And I fill in "Organisation key" with "example"
+    When I select "Example Organisation" from "organisation_key"
+    And I fill in "oauth_uid" with "joe.bloggs"
+    And I fill in "oauth_password" with "secret"
     And I press "Login"
     Then I should get OAuth Authorization Code
     And I should get OAuth Access Token with Authorization Code
