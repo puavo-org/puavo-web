@@ -1,5 +1,16 @@
 fi:
   must_be_logged_in: Sinun täytyy olla kirjautuneena
+  oauth:
+    change: vaihda
+    login: Kirjaudu
+    password_forget: Unohditko salasanasi?
+    username: Käyttäjätunnus
+    password: Salasana
+    login_description1: Kirjaudu palveluun
+    login_description2: Opinsys-tunnuksillasi
+    select_organistion: Valitse koulu tai organisaatio
+    next: Jatka
+    organisation_help: lalala
   create_organisation_owner:
     school_name: Hallinto
     role_name: Ylläpito
