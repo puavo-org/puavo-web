@@ -15,7 +15,7 @@
 <body class="" >
     <% form_tag oauth_authorize_post_path, :class => "login" do %>
 
-      <img src="/oauth-authorize/img/opinsys_logo_ds.png" class="opinsys-logo" />
+      <%= image_tag "/oauth-authorize/img/opinsys_logo_ds.png", :class => "opinsys-logo" %>
 
 
       <div class='client-title'>
@@ -73,7 +73,7 @@
       <button class="next">Next</button>
       <fieldset class="actions">
           <%= submit_tag I18n.t("oauth.login"), :name => "login", :class => "submit" %>
-          <img class="loading" src="/images/ajax-loader.gif" alt="sending..." />
+          <%= image_tag "ajax-loader.gif", :class => "loading", :alt => "sending..." %>
           <!-- <%= submit_tag "Cancel", :name => "cancel", :class => "submit" %> -->
           <a href="#" onclick="alert('Not implemented.')" ><%= I18n.t "oauth.password_forget" %></a>
       </fieldset>
