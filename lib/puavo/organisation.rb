@@ -13,6 +13,10 @@ module Puavo
     attr_accessor :organisation_key
 
 
+    def locale
+      @@configurations[organisation_key]["locale"] || :en
+    end
+
     def schools(user)
       School.all_with_permissions user
     end
