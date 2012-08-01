@@ -194,12 +194,7 @@ module PuavoAuthentication
       end
 
       def organisation_key_from_host(host=nil)
-        # <organisation key>.<domain>
-        # Example: toimisto.opinsys.fi
-        if match = request.host.match(/^([^\.]+)/)
-          return match[1]
-        end
-        "kunta1" # XXX
+        Puavo::Organisation.key_by_host(request.host)
       end
 
 

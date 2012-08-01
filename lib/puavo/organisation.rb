@@ -41,6 +41,10 @@ module Puavo
         end
       end
 
+      def key_by_host(host)
+        @@key_by_host[host]
+      end
+
       def find_by_host(host)
         if @@key_by_host.has_key?(host)
           organisation = Organisation.new

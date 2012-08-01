@@ -4,10 +4,6 @@ class SessionsController < ApplicationController
   skip_before_filter :require_login
 
   def new
-    # Puavo logins require always a hostname
-    if request.host.match /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/
-      render :text => "Host is missing", :status => 406
-    end
   end
 
   def create
