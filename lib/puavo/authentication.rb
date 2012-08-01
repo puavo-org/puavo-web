@@ -1,4 +1,5 @@
 module Puavo
+  mattr_accessor :available_languages
 
   class AuthenticationError < UserError
     def code
