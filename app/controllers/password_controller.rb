@@ -1,5 +1,6 @@
 class PasswordController < ApplicationController
-  skip_before_filter :find_school, :require_login, :require_puavo_authorization
+  before_filter :set_ldap_connection
+  skip_before_filter :find_school, :require_login, :require_puavo_authorization,
 
   # GET /password/edit
   def edit
@@ -85,8 +86,9 @@ class PasswordController < ApplicationController
 
   def set_ldap_connection
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-    host = session[:organisation].ldap_host
-    base = session[:organisation].ldap_base
+    organisation = Puavo::Organisation.find_by_host(request.host)
+    host = organisation.ldap_host
+    base = organisation.ldap_base
     dn =  default_ldap_configuration["bind_dn"]
     password = default_ldap_configuration["password"]
     LdapBase.ldap_setup_connection(host, base, dn, password)
