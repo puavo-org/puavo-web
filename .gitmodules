@@ -1,3 +1,3 @@
 [submodule "server/public/shared"]
 	path = server/public/shared
-	url = git@github.com:opinsys/puavo-themes.git
+	url = https://github.com/opinsys/puavo-themes.git
