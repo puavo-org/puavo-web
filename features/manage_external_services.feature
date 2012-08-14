@@ -28,10 +28,10 @@ Feature: Manage external services
     And I should see "description 1"
     And I should not see "{SSHA}"
     And I should see "Bind DN"
-    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example4,dc=fi"
+    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi"
     And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I should see "Services that have access to all information needed for getent"
-    And I should bind "uid=uid 1,ou=System Accounts,dc=edu,dc=example4,dc=fi" with "secretpassword" to ldap
+    And I should bind "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi" with "secretpassword" to ldap
 
   Scenario: Delete external service
     Given the following external services:
@@ -63,7 +63,7 @@ Feature: Manage external services
     And I check "Services that have access to all information needed for getent"
     And I press "Update"
     Then I should see "test description one"
-    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example4,dc=fi"
+    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi"
     And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
     And I should see "Services that have access to all information needed for getent"
 
