@@ -171,12 +171,22 @@ Then /^I should see JSON "([^\"]*)"$/ do |json_string|
       end
     end
   end
-  response_data = response_data.sort { |a,b| a.inspect <=> b.inspect }
-  compare_data = compare_data.sort { |a,b| a.inspect <=> b.inspect }
-  response_data.should == compare_data
+
+  keys = response_data.first.keys
+
+  response_data = response_data.sort { |a,b| stringify(a, keys) <=> stringify(b, keys) }
+  compare_data = compare_data.sort { |a,b| stringify(a, keys) <=> stringify(b, keys) }
+  response_data.length.should == compare_data.length
+  response_data.each_index do |i|
+    response_data[i].should == compare_data[i]
+  end
 end
 
 private
+
+def stringify(hash_data, keys)
+  keys.map{ |k| "#{k} => #{hash_data[k]}" }.join
+end
 
 def sort_tags(tags)
   return tags.split(TagList.delimiter).sort.join(TagList.delimiter)
