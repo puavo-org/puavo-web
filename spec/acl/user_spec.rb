@@ -108,13 +108,13 @@ describe "User ACL" do
 
   it "should not allow students to bind with bad password" do
     lambda {
-      acl_user(@student1, "badpassword")
+      acl_user(@student1.dn, "badpassword")
     }.should raise_error(ACLViolation)
   end
 
   it "should not allow teachers to bind with bad password" do
     lambda {
-      acl_user(@teacher, "badpassword")
+      acl_user(@teacher.dn, "badpassword")
     }.should raise_error(ACLViolation)
   end
 
