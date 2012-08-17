@@ -119,30 +119,30 @@ describe "User ACL" do
   end
 
   it "should allow students to read their own attributes" do
-    acl_user(@student1.dn, "kala") do |user|
-      user.can_read @student1.dn, [:sn, :givenName]
+    acl_user(@student1.dn, "kala") do |student|
+      student.can_read @student1.dn, [:sn, :givenName]
     end
   end
 
   it "should allow students to read other students" do
-    acl_user(@student1.dn, "kala") do |user|
-      user.can_read @student2.dn, [:sn, :givenName]
+    acl_user(@student1.dn, "kala") do |student|
+      student.can_read @student2.dn, [:sn, :givenName]
     end
   end
 
   # XXX: fails!
   it "should allow teachers to modify students" do
-    acl_user(@teacher.dn, "kala") do |user|
-      user.can_modify @student1.dn, [
+    acl_user(@teacher.dn, "kala") do |teacher|
+      teacher.can_modify @student1.dn, [
         [:replace, :givenName, ["newname"]]
       ]
     end
   end
 
   it "should not allow students to modify other students" do
-    acl_user(@student1.dn, "kala") do |user|
+    acl_user(@student1.dn, "kala") do |student|
       lambda {
-        user.can_modify @student2.dn, [
+        student.can_modify @student2.dn, [
           [:replace, :givenName, ["newname"]]
         ]
       }.should raise_error(ACLViolation)
