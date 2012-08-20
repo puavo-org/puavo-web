@@ -1,7 +1,49 @@
 
+
+# before(:all) block
+# Usage: before :each, &reset_ldap
+def reset_ldap
+  lambda do
+    test_organisation = Puavo::Organisation.find('example')
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    # Setting up ldap configuration
+    @ldap_host = test_organisation.ldap_host
+    @ldap_base = test_organisation.ldap_base
+    LdapBase.ldap_setup_connection( test_organisation.ldap_host,
+                                    test_organisation.ldap_base,
+                                    default_ldap_configuration["bind_dn"],
+                                    default_ldap_configuration["password"] )
+
+
+
+    # Clean Up LDAP server: destroy all schools, groups and users
+    User.all.each do |u|
+      unless u.uid == "cucumber"
+        u.destroy
+      end
+    end
+    Group.all.each do |g|
+      unless g.displayName == "Maintenance"
+        g.destroy
+      end
+    end
+    School.all.each do |s|
+      unless s.displayName == "Administration"
+        s.destroy
+      end
+    end
+    Role.all.each do |p|
+      unless p.displayName == "Maintenance"
+        p.destroy
+      end
+    end
+  end
+end
+
+
 # net-ldap based OpenLDAP ACL testing helper for RSPEC
 
-def acl_user(dn, password)
+def as_user(dn, password)
   a = ACLTester.new(@ldap_host, dn.to_s, password)
   a.connect
   yield a
