@@ -80,6 +80,19 @@ describe "User ACL" do
       :puavoEduPersonAffiliation => "Staff"
     )
 
+    @admin = User.create!(
+      :puavoSchool => school.dn,
+      :givenName => "Minerva",
+      :sn => "McGonagall",
+      :uid => "minerva.mcgonagall",
+      :role_name => "Staff",
+      :new_password => "kala",
+      :new_password_confirmation => "kala",
+      :puavoEduPersonAffiliation => "Admin",
+      :school_admin => true
+    )
+    school.add_admin(@admin)
+
     @student1 = User.create!(
       :puavoSchool => school.dn,
       :givenName => "Harry",
@@ -182,6 +195,12 @@ describe "User ACL" do
         student.can_modify @student2.dn, [:replace, :mail, ["bad@example.com"]]
       }.should raise_error(InsufficientAccessRights)
 
+    end
+  end
+
+  it "should allow admins to modify students" do
+    acl_user(@admin.dn, "kala") do |admin|
+        admin.can_modify @student1.dn, [:replace, :givenName, ["newname"]]
     end
   end
 
