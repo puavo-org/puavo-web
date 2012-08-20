@@ -204,4 +204,31 @@ describe "User ACL" do
     end
   end
 
+  it "should allow students to change their own passwords" do
+    acl_user(@student1.dn, "kala") do |admin|
+      admin.set_password(@student1.dn, "kala2")
+    end
+  end
+
+  it "should not allow students to change other's passwords" do
+    acl_user(@student1.dn, "kala") do |admin|
+      lambda {
+        admin.set_password(@student2.dn, "kala2")
+      }.should raise_error(LDAPException)
+    end
+
+  end
+
+  it "should allow school admin to change student password" do
+    acl_user(@admin.dn, "kala") do |admin|
+      admin.set_password(@student1.dn, "kala2")
+    end
+  end
+
+  it "should allow teacher to change student password" do
+    acl_user(@teacher.dn, "kala") do |teacher|
+      teacher.set_password(@student1.dn, "kala2")
+    end
+  end
+
 end
