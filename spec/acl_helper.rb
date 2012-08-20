@@ -150,7 +150,7 @@ class ACLTester
     })
 
     if not @conn.bind
-      raise InsufficientAccessRights, "Cannot bind #{ @dn } : #{ @password } to #{ @ldap_host }"
+      raise BindFailed, "Cannot bind #{ @dn } : #{ @password } to #{ @ldap_host }"
     end
 
   end
