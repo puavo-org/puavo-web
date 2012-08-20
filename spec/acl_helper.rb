@@ -3,6 +3,7 @@
 
 def acl_user(dn, password)
   a = ACLTester.new(@ldap_host, dn.to_s, password)
+  a.connect
   yield a
   a
 end
@@ -25,11 +26,11 @@ end
 
 class ACLTester
 
+
   def initialize(ldap_host, dn, password)
     @ldap_host = ldap_host
     @dn = dn
     @password = password
-    connect
   end
 
 
@@ -72,7 +73,26 @@ class ACLTester
     return res
   end
 
-  private
+  def set_password(target_dn, new_password)
+    args = [
+      'ldappasswd', '-x', '-Z',
+      '-h', @ldap_host,
+      '-D', @dn,
+      '-w', @password,
+      '-s', new_password,
+      target_dn.to_s
+    ]
+
+    system(*args)
+
+    if $?.exitstatus != 0
+      raise LDAPException, "Failed to execute #{ args.join " " }"
+    end
+
+    pw_test = ACLTester.new(@ldap_host, target_dn, new_password)
+    pw_test.connect
+
+  end
 
   def connect
     @conn = Net::LDAP.new(
@@ -83,7 +103,7 @@ class ACLTester
       },
       :auth => {
         :method => :simple,
-        :username => @dn,
+        :username => @dn.to_s,
         :password => @password
     })
 
