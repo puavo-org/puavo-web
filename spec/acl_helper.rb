@@ -7,8 +7,13 @@ def acl_user(dn, password)
   a
 end
 
+
+
 class ACLViolation < Exception
 end
+
+
+
 
 class ACLTester
 
@@ -38,12 +43,12 @@ class ACLTester
     return entry
   end
 
-  def can_modify(target_dn, ops)
+  def can_modify(target_dn, op)
     # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
-    @conn.modify :dn => target_dn.to_s, :operations => ops
+    @conn.modify :dn => target_dn.to_s, :operations => [op]
     res = @conn.get_operation_result()
     if res.code != 0
-      raise ACLViolation, "Failed to modify '#{ target_dn.to_s }' as '#{ @dn }'. Message: #{ res.message }"
+      raise ACLViolation, "Failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target_dn.to_s }' as '#{ @dn }'. Message: #{ res.message }"
     end
     return res
   end
