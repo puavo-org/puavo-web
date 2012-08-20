@@ -84,6 +84,7 @@ describe "User ACL" do
       :puavoSchool => school.dn,
       :givenName => "Harry",
       :sn => "Potter",
+      :mail => "harry@example.com",
       :uid => "harry.potter",
       :role_name => "Class 4",
       :new_password => "kala",
@@ -94,9 +95,12 @@ describe "User ACL" do
     @student2 = User.create!(
       :puavoSchool => school.dn,
       :givenName => "Ron",
+      :mail => "ron@example.com",
       :sn => "Wesley",
       :uid => "ron.wesley",
       :role_name => "Class 4",
+      :new_password => "kala",
+      :new_password_confirmation => "kala",
       :puavoEduPersonAffiliation => "Student"
     )
 
@@ -109,13 +113,13 @@ describe "User ACL" do
   it "should not allow students to bind with bad password" do
     lambda {
       acl_user(@student1.dn, "badpassword")
-    }.should raise_error(ACLViolation)
+    }.should raise_error(InsufficientAccessRights)
   end
 
   it "should not allow teachers to bind with bad password" do
     lambda {
       acl_user(@teacher.dn, "badpassword")
-    }.should raise_error(ACLViolation)
+    }.should raise_error(InsufficientAccessRights)
   end
 
   it "should allow students to read their own attributes" do
@@ -135,15 +139,49 @@ describe "User ACL" do
     acl_user(@teacher.dn, "kala") do |teacher|
       lambda {
         teacher.can_modify @student1.dn, [:replace, :givenName, ["newname"]]
-      }.should raise_error(ACLViolation)
+      }.should raise_error(InsufficientAccessRights)
     end
+  end
+
+  it "should allow student to modify its own email" do
+    acl_user(@student1.dn, "kala") do |student|
+      student.can_modify @student1.dn, [:replace, :mail, ["foo@example.com"]]
+    end
+  end
+
+  it "should not allow student to modify its own name" do
+    acl_user(@student1.dn, "kala") do |student|
+      lambda {
+        student.can_modify @student1.dn, [:replace, :givenName, ["bad"]]
+      }.should raise_error(InsufficientAccessRights)
+    end
+  end
+
+  it "should not allow users to have same email addresses" do
+
+    acl_user(@student1.dn, "kala") do |student|
+      student.can_modify @student1.dn, [:replace, :mail, ["foo@example.com"]]
+    end
+
+    lambda {
+      acl_user(@student2.dn, "kala") do |student|
+        student.can_modify @student2.dn, [:replace, :mail, ["foo@example.com"]]
+      end
+    }.should raise_error(ConstraintViolation)
+
   end
 
   it "should not allow students to modify other students" do
     acl_user(@student1.dn, "kala") do |student|
+
       lambda {
         student.can_modify @student2.dn, [:replace, :givenName, ["newname"]]
-      }.should raise_error(ACLViolation)
+      }.should raise_error(InsufficientAccessRights)
+
+      lambda {
+        student.can_modify @student2.dn, [:replace, :mail, ["bad@example.com"]]
+      }.should raise_error(InsufficientAccessRights)
+
     end
   end
 

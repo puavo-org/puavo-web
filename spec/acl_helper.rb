@@ -9,9 +9,17 @@ end
 
 
 
-class ACLViolation < Exception
+class LDAPException < Exception
 end
 
+class InsufficientAccessRights < LDAPException
+end
+
+class ConstraintViolation < LDAPException
+end
+
+class BindFailed < LDAPException
+end
 
 
 
@@ -31,12 +39,12 @@ class ACLTester
     entry = @conn.search(:base => target_dn.to_s)
 
     if entry.size == 0
-      raise ACLViolation, "Failed to read #{ target_dn.to_s } from #{ @ldap_host }"
+      raise InsufficientAccessRights, "Failed to read #{ target_dn.to_s } from #{ @ldap_host }"
     end
 
     attributes.each do |attr|
       if entry.first[attr].size == 0
-        raise ACLViolation, "Failed to read attribute '#{ attr }' from #{ target_dn.to_s  } in #{ @ldap_host }"
+        raise InsufficientAccessRights, "Failed to read attribute '#{ attr }' from #{ target_dn.to_s  } in #{ @ldap_host }"
       end
     end
 
@@ -44,11 +52,22 @@ class ACLTester
   end
 
   def can_modify(target_dn, op)
+
     # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
+    # Allow only one operation at once so that we can show clear error messages
     @conn.modify :dn => target_dn.to_s, :operations => [op]
+
     res = @conn.get_operation_result()
     if res.code != 0
-      raise ACLViolation, "Failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target_dn.to_s }' as '#{ @dn }'. Message: #{ res.message }"
+      err_msg = "Failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target_dn.to_s }' as '#{ @dn }'"
+
+      # http://web500gw.sourceforge.net/errors.html
+      if res.code == 19
+        raise ConstraintViolation, err_msg
+      end
+
+      raise InsufficientAccessRights, err_msg +  ". Message: #{ res.message }"
+
     end
     return res
   end
@@ -69,10 +88,9 @@ class ACLTester
     })
 
     if not @conn.bind
-      raise ACLViolation, "Cannot bind #{ @dn } : #{ @password } to #{ @ldap_host }"
+      raise InsufficientAccessRights, "Cannot bind #{ @dn } : #{ @password } to #{ @ldap_host }"
     end
 
   end
 
 end
-
