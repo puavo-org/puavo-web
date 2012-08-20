@@ -82,13 +82,13 @@ describe "User ACL" do
   it "should not allow students to bind with bad password" do
     lambda {
       as_user(@student1.dn, "badpassword")
-    }.should raise_error(InsufficientAccessRights)
+    }.should raise_error(BindFailed)
   end
 
   it "should not allow teachers to bind with bad password" do
     lambda {
       as_user(@teacher.dn, "badpassword")
-    }.should raise_error(InsufficientAccessRights)
+    }.should raise_error(BindFailed)
   end
 
   it "should allow students to read their own attributes" do
