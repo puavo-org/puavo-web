@@ -130,10 +130,12 @@ describe "User ACL" do
     end
   end
 
-  # XXX: fails!
-  it "should allow teachers to modify students" do
+
+  it "should not allow teachers to modify students" do
     acl_user(@teacher.dn, "kala") do |teacher|
-      teacher.can_modify @student1.dn, [:replace, :givenName, ["newname"]]
+      lambda {
+        teacher.can_modify @student1.dn, [:replace, :givenName, ["newname"]]
+      }.should raise_error(ACLViolation)
     end
   end
 
