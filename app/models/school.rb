@@ -44,6 +44,14 @@ class School < BaseGroup
     end
   end
 
+  def add_admin(user)
+    return (
+      self.ldap_modify_operation( :add, [{"puavoSchoolAdmin" => [user.dn.to_s]}] ) &&
+      user.ldap_modify_operation( :add, [{"puavoAdminOfSchool" => [self.dn.to_s]}] ) &&
+      SambaGroup.add_uid_to_memberUid('Domain Admins', user.uid)
+    )
+  end
+
   def self.all_with_permissions
     if Puavo::Authorization.organisation_owner?
       self.all.sort
