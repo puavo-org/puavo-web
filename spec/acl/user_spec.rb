@@ -127,7 +127,7 @@ describe "ACL" do
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "student"
     )
-    config.dn = other_school_student
+    config.dn = other_school_student.dn
   end
 
 
@@ -166,10 +166,9 @@ describe "ACL" do
       }.should raise_error LDAPException
     end
 
-
-    # it "should allow school admins to change students of other schools" do
-    #   env.admin.can_set_password_for :other_school_student
-    # end
+    it "should allow school admins to change attributes of students in other schools" do
+      env.admin.can_set_password_for :other_school_student
+    end
 
   end
 
