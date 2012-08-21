@@ -1,9 +1,25 @@
 
+class LDAPException < Exception
+end
 
-# before(:all) block
-# Usage: before :each, &reset_ldap
-def reset_ldap
-  lambda do
+class InsufficientAccessRights < LDAPException
+end
+
+class ConstraintViolation < LDAPException
+end
+
+class BindFailed < LDAPException
+end
+
+
+class LDAPTestEnv
+
+  def initialize
+    @seeders = []
+  end
+
+  def reset
+    # Configure LDAP
     test_organisation = Puavo::Organisation.find('example')
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
     # Setting up ldap configuration
@@ -16,7 +32,7 @@ def reset_ldap
 
 
 
-    # Clean Up LDAP server: destroy all schools, groups and users
+    # Clean Up LDAP destroy all schools, groups and users
     User.all.each do |u|
       unless u.uid == "cucumber"
         u.destroy
@@ -37,72 +53,114 @@ def reset_ldap
         p.destroy
       end
     end
+
+    @entries = {}
+
+    @seeders.each do |seed|
+      id = seed[0]
+      seeder = seed[1]
+
+      model = LDAPObject.new @ldap_host, self
+
+      if @entries[id]
+        raise "Duplicate LDAPObject definition #{ id }"
+      end
+
+      @entries[id] = model
+      seeder.call model
+    end
+
   end
+
+
+  def define(id, &seeder)
+    @seeders.push [ id, seeder ]
+  end
+
+  def method_missing(id)
+    e = @entries[id]
+    if not e
+      raise "Undefined LDAP Object #{ id }"
+    end
+    e.connect
+    e
+  end
+
+  # def use_with(*ids)
+  #   reset
+
+  #   entries = ids.map do |id|
+  #     e = @entries[id]
+  #     e.connect
+  #     e
+  #   end
+  #   yield(*entries)
+  # end
+
+
 end
 
 
-# net-ldap based OpenLDAP ACL testing helper for RSPEC
-
-def as_user(dn, password)
-  a = ACLTester.new(@ldap_host, dn.to_s, password)
-  a.connect
-  yield a
-  a
-end
 
 
+class LDAPObject
 
-class LDAPException < Exception
-end
+  attr_accessor :password
 
-class InsufficientAccessRights < LDAPException
-end
-
-class ConstraintViolation < LDAPException
-end
-
-class BindFailed < LDAPException
-end
-
-
-
-class ACLTester
-
-
-  def initialize(ldap_host, dn, password)
+  def initialize(ldap_host, env)
     @ldap_host = ldap_host
-    @dn = dn
-    @password = password
+    @env = env
   end
 
+  def ensure_object(target)
+    if target.class == self.class
+      return target
+    end
+    return @env.send target
+  end
 
-  def can_read(target_dn, attributes=nil)
+  def to_s
+    @dn.to_s
+  end
+
+  def default_password
+    @password = "secret"
+  end
+
+  attr_reader :dn
+  def dn=(dn)
+    @dn = dn.to_s
+  end
+
+  def can_read(target, attributes=nil)
+    target = ensure_object(target)
     attributes = [attributes] if attributes.class != Array
 
-    entry = @conn.search(:base => target_dn.to_s)
+    entry = @conn.search(:base => target.dn)
 
-    if entry.size == 0
-      raise InsufficientAccessRights, "Failed to read #{ target_dn.to_s } from #{ @ldap_host }"
+    if entry == false || entry.size == 0
+      raise InsufficientAccessRights, "Failed to read #{ target.dn } from #{ @ldap_host }"
     end
 
     attributes.each do |attr|
       if entry.first[attr].size == 0
-        raise InsufficientAccessRights, "Failed to read attribute '#{ attr }' from #{ target_dn.to_s  } in #{ @ldap_host }"
+        raise InsufficientAccessRights, "Failed to read attribute '#{ attr }' from #{ target.dn  } in #{ @ldap_host }"
       end
     end
 
     return entry
   end
 
-  def can_modify(target_dn, op)
+  def can_modify(target, op)
+    target = ensure_object(target)
 
     # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
     # Allow only one operation at once so that we can show clear error messages
-    @conn.modify :dn => target_dn.to_s, :operations => [op]
+    @conn.modify :dn => target.dn, :operations => [op]
 
     res = @conn.get_operation_result()
     if res.code != 0
-      err_msg = "Failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target_dn.to_s }' as '#{ @dn }'"
+      err_msg = "Failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target.dn }' as '#{ @dn }'"
 
       # http://web500gw.sourceforge.net/errors.html
       if res.code == 19
@@ -115,14 +173,17 @@ class ACLTester
     return res
   end
 
-  def set_password(target_dn, new_password)
+  def can_set_password_for(target, foo=nil)
+    target = ensure_object(target)
+
+    new_password = "secret2"
     args = [
       'ldappasswd', '-x', '-Z',
       '-h', @ldap_host,
       '-D', @dn,
       '-w', @password,
       '-s', new_password,
-      target_dn.to_s
+      target.dn
     ]
 
     system(*args)
@@ -131,12 +192,16 @@ class ACLTester
       raise LDAPException, "Failed to execute #{ args.join " " }"
     end
 
-    pw_test = ACLTester.new(@ldap_host, target_dn, new_password)
+    pw_test = LDAPObject.new(@ldap_host, @env)
+    pw_test.dn = target.dn
+    pw_test.password = new_password
     pw_test.connect
 
   end
 
   def connect
+    return if @connected
+
     @conn = Net::LDAP.new(
       :host => @ldap_host,
       :port => 389,
@@ -153,6 +218,7 @@ class ACLTester
       raise BindFailed, "Cannot bind #{ @dn } : #{ @password } to #{ @ldap_host }"
     end
 
+    @connected = true
   end
 
 end
