@@ -227,26 +227,18 @@ describe "ACL" do
         env.admin.can_modify :student1, [:replace, :givenName, ["newname"]]
     end
 
+    it "should not allow teachers to change admin attributes" do
+      lambda {
+        env.teacher.can_modify :admin, [:replace, :givenName, ["newname"]]
+      }.should raise_error(InsufficientAccessRights)
+    end
+
   end
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   # it "should not allow teachers to change admin passwords" do
   # end
 
-  # it "should not allow teachers to change admin attributes" do
-  # end
 
 
   # it "should allow only organisation owner to change organisation attributes" do
