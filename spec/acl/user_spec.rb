@@ -7,8 +7,6 @@ describe "ACL" do
 
   env = LDAPTestEnv.new
 
-  puts "Creating models"
-
   env.define :school do |config|
 
     @school = School.create!(
@@ -147,11 +145,15 @@ describe "ACL" do
     it "should not allow students to change other's passwords" do
       lambda {
         env.student1.can_set_password_for :student2
-      }.should raise_error(LDAPException)
+      }.should raise_error LDAPException
     end
 
     it "should allow school admin to change student password" do
       env.admin.can_set_password_for :student1
+    end
+
+    it "should allow school admin to change teacher's passwords" do
+      env.admin.can_set_password_for :teacher
     end
 
     it "should allow teacher to change student password" do
@@ -161,7 +163,7 @@ describe "ACL" do
     it "should not allow teachers to change other teacher's paswords" do
       lambda {
         env.teacher.can_set_password_for :teacher2
-      }.should raise_error(LDAPException)
+      }.should raise_error LDAPException
     end
 
 
@@ -190,7 +192,7 @@ describe "ACL" do
     it "should not allow teachers to modify students" do
       lambda {
         env.teacher.can_modify :student1, [:replace, :givenName, ["newname"]]
-      }.should raise_error(InsufficientAccessRights)
+      }.should raise_error InsufficientAccessRights
     end
 
     it "should allow student to modify its own email" do
@@ -200,7 +202,7 @@ describe "ACL" do
     it "should not allow student to modify its own name" do
       lambda {
         env.student1.can_modify :student1, [:replace, :givenName, ["bad"]]
-      }.should raise_error(InsufficientAccessRights)
+      }.should raise_error InsufficientAccessRights
     end
 
     it "should not allow users to have same email addresses" do
@@ -209,18 +211,18 @@ describe "ACL" do
 
       lambda {
           env.student1.can_modify :student2, [:replace, :mail, ["foo@example.com"]]
-      }.should raise_error(ConstraintViolation)
+      }.should raise_error ConstraintViolation
 
     end
 
     it "should not allow students to modify other students" do
         lambda {
           env.student1.can_modify :student2, [:replace, :givenName, ["newname"]]
-        }.should raise_error(InsufficientAccessRights)
+        }.should raise_error InsufficientAccessRights
 
         lambda {
           env.student1.can_modify :student2, [:replace, :mail, ["bad@example.com"]]
-        }.should raise_error(InsufficientAccessRights)
+        }.should raise_error InsufficientAccessRights
     end
 
     it "should allow admins to modify students" do
@@ -230,7 +232,7 @@ describe "ACL" do
     it "should not allow teachers to change admin attributes" do
       lambda {
         env.teacher.can_modify :admin, [:replace, :givenName, ["newname"]]
-      }.should raise_error(InsufficientAccessRights)
+      }.should raise_error InsufficientAccessRights
     end
 
   end
