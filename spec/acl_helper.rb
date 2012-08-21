@@ -82,7 +82,6 @@ class LDAPTestEnv
     if not e
       raise "Undefined LDAP Object #{ id } (or just method missing)"
     end
-    e.connect
     e
   end
 
@@ -134,6 +133,8 @@ class LDAPObject
 
   def can_read(target, attributes=nil)
     target = ensure_object(target)
+    connect
+
     attributes = [attributes] if attributes.class != Array
 
     entry = @conn.search(:base => target.dn)
@@ -153,6 +154,7 @@ class LDAPObject
 
   def can_modify(target, op)
     target = ensure_object(target)
+    connect
 
     # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
     # Allow only one operation at once so that we can show clear error messages
@@ -175,6 +177,7 @@ class LDAPObject
 
   def can_set_password_for(target, foo=nil)
     target = ensure_object(target)
+    connect
 
     new_password = "secret2"
     args = [
@@ -201,7 +204,6 @@ class LDAPObject
 
   def connect
     return if @connected
-
     @conn = Net::LDAP.new(
       :host => @ldap_host,
       :port => 389,
