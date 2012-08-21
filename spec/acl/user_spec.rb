@@ -134,9 +134,7 @@ describe "ACL" do
 
   describe "password" do
 
-    before(:each) do
-      env.reset
-    end
+    before(:each) { env.reset }
 
     it "should allow students to change their own passwords" do
       env.student1.can_set_password_for :student1
@@ -173,19 +171,18 @@ describe "ACL" do
   end
 
 
-
   describe "user attributes" do
 
-    before :all do
-      env.reset
-    end
+    before(:all) { env.reset }
 
     it "should allow students to read their own attributes" do
       env.student1.can_read :student1, [:sn, :givenName]
     end
 
-    it "should allow students to read other students" do
-      env.student1.can_read :student2, [:sn, :givenName, :uid]
+    it "should allow students to read other users" do
+      [:teacher, :student2, :admin].each do |user|
+        env.student1.can_read user, [:sn, :givenName, :uid]
+      end
     end
 
     it "should not allow teachers to modify students" do
@@ -226,6 +223,10 @@ describe "ACL" do
 
     it "should allow admins to modify students" do
         env.admin.can_modify :student1, [:replace, :givenName, ["newname"]]
+    end
+
+    it "should allow admins to modify teachers" do
+        env.admin.can_modify :teacher, [:replace, :givenName, ["newname"]]
     end
 
     it "should not allow teachers to change admin attributes" do
