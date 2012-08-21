@@ -37,7 +37,7 @@ describe "ACL" do
       :role_name => "Staff",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "Teacher"
+      :puavoEduPersonAffiliation => "teacher"
     )
     config.dn = teacher.dn
   end
@@ -52,7 +52,7 @@ describe "ACL" do
       :role_name => "Staff",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "Teacher"
+      :puavoEduPersonAffiliation => "teacher"
     )
     config.dn = teacher2.dn
   end
@@ -66,7 +66,7 @@ describe "ACL" do
       :role_name => "Staff",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "Admin",
+      :puavoEduPersonAffiliation => "admin",
       :school_admin => true
     )
     @school.add_admin(admin)
@@ -83,7 +83,7 @@ describe "ACL" do
       :role_name => "Class 4",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "Student"
+      :puavoEduPersonAffiliation => "student"
     )
     config.dn = student1.dn
   end
@@ -98,7 +98,7 @@ describe "ACL" do
       :role_name => "Class 4",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "Student"
+      :puavoEduPersonAffiliation => "student"
     )
     config.dn = student2.dn
   end
@@ -127,7 +127,7 @@ describe "ACL" do
       :role_name => "Class 4",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "Student"
+      :puavoEduPersonAffiliation => "student"
     )
     config.dn = other_school_student
   end
