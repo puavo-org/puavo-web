@@ -71,8 +71,8 @@ describe "ACL" do
     config.dn = admin.dn
   end
 
-  env.define :student1 do |config|
-    student1 = User.create!(
+  env.define :student do |config|
+    student = User.create!(
       :puavoSchool => @school.dn,
       :givenName => "Harry",
       :sn => "Potter",
@@ -83,7 +83,7 @@ describe "ACL" do
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "student"
     )
-    config.dn = student1.dn
+    config.dn = student.dn
   end
 
   env.define :student2 do |config|
@@ -137,17 +137,17 @@ describe "ACL" do
     before(:each) { env.reset }
 
     it "should allow students to change their own passwords" do
-      env.student1.can_set_password_for :student1
+      env.student.can_set_password_for :student
     end
 
     it "should not allow students to change other's passwords" do
       lambda {
-        env.student1.can_set_password_for :student2
+        env.student.can_set_password_for :student2
       }.should raise_error LDAPException
     end
 
     it "should allow school admin to change student password" do
-      env.admin.can_set_password_for :student1
+      env.admin.can_set_password_for :student
     end
 
     it "should allow school admin to change teacher's passwords" do
@@ -155,7 +155,7 @@ describe "ACL" do
     end
 
     it "should allow teacher to change student password" do
-      env.teacher.can_set_password_for :student1
+      env.teacher.can_set_password_for :student
     end
 
     it "should not allow teachers to change other teacher's paswords" do
@@ -176,53 +176,53 @@ describe "ACL" do
     before(:all) { env.reset }
 
     it "should allow students to read their own attributes" do
-      env.student1.can_read :student1, [:sn, :givenName]
+      env.student.can_read :student, [:sn, :givenName]
     end
 
     it "should allow students to read other users" do
       [:teacher, :student2, :admin].each do |user|
-        env.student1.can_read user, [:sn, :givenName, :uid]
+        env.student.can_read user, [:sn, :givenName, :uid]
       end
     end
 
     it "should not allow teachers to modify students" do
       lambda {
-        env.teacher.can_modify :student1, [:replace, :givenName, ["newname"]]
+        env.teacher.can_modify :student, [:replace, :givenName, ["newname"]]
       }.should raise_error InsufficientAccessRights
     end
 
     it "should allow student to modify its own email" do
-      env.student1.can_modify :student1, [:replace, :mail, ["foo@example.com"]]
+      env.student.can_modify :student, [:replace, :mail, ["foo@example.com"]]
     end
 
     it "should not allow student to modify its own name" do
       lambda {
-        env.student1.can_modify :student1, [:replace, :givenName, ["bad"]]
+        env.student.can_modify :student, [:replace, :givenName, ["bad"]]
       }.should raise_error InsufficientAccessRights
     end
 
     it "should not allow users to have same email addresses" do
 
-      env.student1.can_modify :student1, [:replace, :mail, ["foo@example.com"]]
+      env.student.can_modify :student, [:replace, :mail, ["foo@example.com"]]
 
       lambda {
-          env.student1.can_modify :student2, [:replace, :mail, ["foo@example.com"]]
+          env.student.can_modify :student2, [:replace, :mail, ["foo@example.com"]]
       }.should raise_error ConstraintViolation
 
     end
 
     it "should not allow students to modify other students" do
         lambda {
-          env.student1.can_modify :student2, [:replace, :givenName, ["newname"]]
+          env.student.can_modify :student2, [:replace, :givenName, ["newname"]]
         }.should raise_error InsufficientAccessRights
 
         lambda {
-          env.student1.can_modify :student2, [:replace, :mail, ["bad@example.com"]]
+          env.student.can_modify :student2, [:replace, :mail, ["bad@example.com"]]
         }.should raise_error InsufficientAccessRights
     end
 
     it "should allow admins to modify students" do
-        env.admin.can_modify :student1, [:replace, :givenName, ["newname"]]
+        env.admin.can_modify :student, [:replace, :givenName, ["newname"]]
     end
 
     it "should allow admins to modify teachers" do
