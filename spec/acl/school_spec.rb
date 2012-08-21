@@ -124,6 +124,12 @@ describe "ACL" do
       env.owner.can_modify :school, [ :replace, :puavoSchoolAdmin, [env.new_admin.dn] ]
     end
 
+    it "should not allow student to change school attributes" do
+      lambda {
+        env.student.can_modify :school, [ :replace, :displayName, ["newname"] ]
+      }.should raise_error InsufficientAccessRights
+    end
+
   end
-  
+
 end
