@@ -75,8 +75,8 @@ describe "ACL" do
     config.password = "cucumber"
   end
 
-  env.define :student1 do |config|
-    student1 = User.create!(
+  env.define :student do |config|
+    student = User.create!(
       :puavoSchool => @school.dn,
       :givenName => "Harry",
       :sn => "Potter",
@@ -87,12 +87,12 @@ describe "ACL" do
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "student"
     )
-    config.dn = student1.dn
+    config.dn = student.dn
   end
 
 
   describe "school" do
-    
+
     before(:all) { env.reset }
 
     it "should allow admins to read school attributes" do
@@ -111,7 +111,7 @@ describe "ACL" do
 
     it "should not allow admins to write school puavoSchoolAdmin attribute" do
       lambda {
-        env.admin.can_modify :school, [ :replace, :puavoSchoolAdmin, [env.student1.dn] ]
+        env.admin.can_modify :school, [ :replace, :puavoSchoolAdmin, [env.student.dn] ]
       }.should raise_error InsufficientAccessRights
 
     end
