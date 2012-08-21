@@ -80,7 +80,7 @@ class LDAPTestEnv
   def method_missing(id)
     e = @entries[id]
     if not e
-      raise "Undefined LDAP Object #{ id }"
+      raise "Undefined LDAP Object #{ id } (or just method missing)"
     end
     e.connect
     e
