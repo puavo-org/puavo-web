@@ -1,15 +1,18 @@
 require 'acl_data'
 
-class LDAPException < Exception
+class LDAPTestEnvException < Exception
 end
 
-class InsufficientAccessRights < LDAPException
+class InsufficientAccessRights < LDAPTestEnvException
 end
 
-class ConstraintViolation < LDAPException
+class ConstraintViolation < LDAPTestEnvException
 end
 
-class BindFailed < LDAPException
+class BindFailed < LDAPTestEnvException
+end
+
+class ExpectationError < LDAPTestEnvException
 end
 
 
@@ -201,7 +204,7 @@ class LDAPObject
     system(*args)
 
     if $?.exitstatus != 0
-      raise LDAPException, "Failed to execute #{ args.join " " }"
+      raise LDAPTestEnvException, "Failed to execute #{ args.join " " }"
     end
 
     pw_test = LDAPObject.new(@id, @ldap_host, @env)
