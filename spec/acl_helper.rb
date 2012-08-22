@@ -224,3 +224,113 @@ class LDAPObject
   end
 
 end
+
+
+def define_school(env)
+
+  env.define :school do |config|
+
+    @school = School.create!(
+      :cn => "gryffindor",
+      :displayName => "Gryffindor"
+    )
+    config.dn = @school.dn
+
+    Role.create!(
+      :displayName => "Class 4",
+      :puavoSchool => env.school.dn
+    )
+
+  end
+
+  env.define :role do |config|
+    role = Role.create!(
+      :displayName => "Staff",
+      :puavoSchool => env.school.dn
+    )
+    config.dn = role.dn
+  end
+
+  env.define :teacher do |config|
+    teacher = User.create!(
+      :puavoSchool => env.school.dn,
+      :givenName => "Severus",
+      :sn => "Snape",
+      :uid => "severus.snape",
+      :role_name => "Staff",
+      :new_password => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => "teacher"
+    )
+    config.dn = teacher.dn
+  end
+
+  env.define :admin do |config|
+    admin = User.create!(
+      :puavoSchool => env.school.dn,
+      :givenName => "Minerva",
+      :sn => "McGonagall",
+      :uid => "minerva.mcgonagall",
+      :role_name => "Staff",
+      :new_password => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => "admin",
+      :school_admin => true
+    )
+    @school.add_admin(admin)
+    config.dn = admin.dn
+  end
+
+
+  env.define :owner do |config|
+    config.dn = User.find(:first, :attribute => "uid", :value => "cucumber").dn.to_s
+    config.password = "cucumber"
+  end
+
+  env.define :student do |config|
+    student = User.create!(
+      :puavoSchool => env.school.dn,
+      :givenName => "Harry",
+      :sn => "Potter",
+      :mail => "harry@example.com",
+      :uid => "harry.potter",
+      :role_name => "Class 4",
+      :new_password => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => "student"
+    )
+    config.dn = student.dn
+  end
+
+end
+
+def define_other_school(env)
+  env.define :other_school do |config|
+    @other_school = School.create!(
+      :cn => "slytherin",
+      :displayName => "Slytherin"
+    )
+    config.dn = @other_school.dn
+
+    Role.create!(
+      :displayName => "Class 4",
+      :puavoSchool => @other_school.dn
+    )
+  end
+
+
+  env.define :other_school_student do |config|
+    other_school_student = User.create!(
+      :puavoSchool => env.other_school.dn,
+      :givenName => "Draco",
+      :sn => "Malfoy",
+      :mail => "malfoy@example.com",
+      :uid => "draco.malfoy",
+      :role_name => "Class 4",
+      :new_password => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => "student"
+    )
+    config.dn = other_school_student.dn
+  end
+end

@@ -6,56 +6,7 @@ describe "ACL" do
 
 
   env = LDAPTestEnv.new
-
-  env.define :school do |config|
-
-    @school = School.create!(
-      :cn => "gryffindor",
-      :displayName => "Gryffindor"
-    )
-    config.dn = @school.dn
-
-    Role.create!(
-      :displayName => "Class 4",
-      :puavoSchool => @school.dn
-    )
-
-    Role.create!(
-      :displayName => "Staff",
-      :puavoSchool => @school.dn
-    )
-  end
-
-  env.define :teacher do |config|
-    teacher = User.create!(
-      :puavoSchool => @school.dn,
-      :givenName => "Severus",
-      :sn => "Snape",
-      :uid => "severus.snape",
-      :role_name => "Staff",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "teacher"
-    )
-    config.dn = teacher.dn
-  end
-
-  env.define :admin do |config|
-    admin = User.create!(
-      :puavoSchool => @school.dn,
-      :givenName => "Minerva",
-      :sn => "McGonagall",
-      :uid => "minerva.mcgonagall",
-      :role_name => "Staff",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "admin",
-      :school_admin => true
-    )
-    @school.add_admin(admin)
-    config.dn = admin.dn
-  end
-
+  define_school(env)
   env.define :new_admin do |config|
     admin = User.create!(
       :puavoSchool => @school.dn,
@@ -68,26 +19,6 @@ describe "ACL" do
       :puavoEduPersonAffiliation => "admin"
     )
     config.dn = admin.dn
-  end
-
-  env.define :owner do |config|
-    config.dn = User.find(:first, :attribute => "uid", :value => "cucumber").dn.to_s
-    config.password = "cucumber"
-  end
-
-  env.define :student do |config|
-    student = User.create!(
-      :puavoSchool => @school.dn,
-      :givenName => "Harry",
-      :sn => "Potter",
-      :mail => "harry@example.com",
-      :uid => "harry.potter",
-      :role_name => "Class 4",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "student"
-    )
-    config.dn = student.dn
   end
 
 
