@@ -22,6 +22,10 @@ class SambaGroup < LdapBase
   end
 
   def delete_uid_from_memberUid(uid)
-    self.ldap_modify_operation( :delete, [{"memberUid" => [uid]}] )
+    begin
+      self.ldap_modify_operation( :delete, [{"memberUid" => [uid]}] )
+    rescue ActiveLdap::LdapError::NoSuchAttribute
+      logger.warn "Cannot remove nonexistent memberUid=#{ uid } from SambaGroup #{ dn }"
+    end
   end
 end
