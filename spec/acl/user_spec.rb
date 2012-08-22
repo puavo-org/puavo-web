@@ -4,45 +4,7 @@ require 'acl_helper'
 
 describe "ACL" do
 
-
   env = LDAPTestEnv.new
-
-  define_school(env)
-  define_other_school(env)
-
-  env.define :teacher2 do |config|
-    teacher2 = User.create!(
-      :puavoSchool => env.school.dn,
-      :givenName => "Gilderoy",
-      :sn => "Lockhart",
-      :uid => "gilderoy.lockhart",
-      :role_name => "Staff",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "teacher"
-    )
-    config.dn = teacher2.dn
-  end
-
-
-  env.define :student2 do |config|
-    student2 = User.create!(
-      :puavoSchool => env.school.dn,
-      :givenName => "Ron",
-      :mail => "ron@example.com",
-      :sn => "Wesley",
-      :uid => "ron.wesley",
-      :role_name => "Class 4",
-      :new_password => config.default_password,
-      :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "student"
-    )
-    config.dn = student2.dn
-  end
-
-
-
-
 
 
   describe "password" do

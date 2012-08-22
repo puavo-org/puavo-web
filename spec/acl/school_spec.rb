@@ -6,10 +6,10 @@ describe "ACL" do
 
 
   env = LDAPTestEnv.new
-  define_school(env)
+
   env.define :new_admin do |config|
     admin = User.create!(
-      :puavoSchool => @school.dn,
+      :puavoSchool => env.school.dn,
       :givenName => "Gilderoy",
       :sn => "Lockhart",
       :uid => "gilderoy.lockhart",
