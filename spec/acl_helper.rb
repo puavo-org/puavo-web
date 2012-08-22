@@ -84,7 +84,7 @@ class LDAPTestEnv
     seeder = definition[1]
 
     entries = other_ids.map do |other_id|
-      e = LDAPObject.new @ldap_host, self
+      e = LDAPObject.new id, @ldap_host, self
       @entries[other_id] = e
       e
     end
@@ -113,8 +113,10 @@ end
 class LDAPObject
 
   attr_accessor :password
+  attr_reader :dn, :id
 
-  def initialize(ldap_host, env)
+  def initialize(id, ldap_host, env)
+    @id = id
     @ldap_host = ldap_host
     @env = env
   end
@@ -134,7 +136,6 @@ class LDAPObject
     @password = "secret"
   end
 
-  attr_reader :dn
   def dn=(dn)
     @dn = dn.to_s
   end
@@ -148,12 +149,12 @@ class LDAPObject
     entry = @conn.search(:base => target.dn)
 
     if entry == false || entry.size == 0
-      raise InsufficientAccessRights, "Failed to read #{ target.dn } from #{ @ldap_host }"
+      raise InsufficientAccessRights, "#{ @id } failed to read #{ target.dn } from #{ @ldap_host }"
     end
 
     attributes.each do |attr|
       if entry.first[attr].size == 0
-        raise InsufficientAccessRights, "Failed to read attribute '#{ attr }' from #{ target.dn  } in #{ @ldap_host }"
+        raise InsufficientAccessRights, "#{ @id } failed to read attribute '#{ attr }' from #{ target.dn  } in #{ @ldap_host }"
       end
     end
 
@@ -170,7 +171,7 @@ class LDAPObject
 
     res = @conn.get_operation_result()
     if res.code != 0
-      err_msg = "Failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target.dn }' as '#{ @dn }'"
+      err_msg = "#{ @id } failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target.dn }' as '#{ @dn }'"
 
       # http://web500gw.sourceforge.net/errors.html
       if res.code == 19
@@ -203,7 +204,7 @@ class LDAPObject
       raise LDAPException, "Failed to execute #{ args.join " " }"
     end
 
-    pw_test = LDAPObject.new(@ldap_host, @env)
+    pw_test = LDAPObject.new(@id, @ldap_host, @env)
     pw_test.dn = target.dn
     pw_test.password = new_password
     pw_test.connect
