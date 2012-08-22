@@ -36,11 +36,20 @@ class School < BaseGroup
   end
 
   def remove_user(user)
+    begin
     self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
                                          { "member" => [user.dn.to_s] }])
+    rescue ActiveLdap::LdapError::NoSuchAttribute
+      logger.warn "Cannot remove nonexistent memberUid=#{ user.uid } or member=#{ user.dn.to_s } from #{ displayName }"
+    end
 
     if Array(user.puavoAdminOfSchool).map{ |s| s.to_s }.include?(self.dn.to_s)
-      self.ldap_modify_operation(:delete, [{ "puavoSchoolAdmin" => [user.dn.to_s] }])
+      begin
+        self.ldap_modify_operation(:delete, [{ "puavoSchoolAdmin" => [user.dn.to_s] }])
+      rescue ActiveLdap::LdapError::NoSuchAttribute
+        logger.warn "Cannot remove nonexistent puavoSchoolAdmin=#{ user.dn.to_s } from #{ displayName }"
+      end
+
     end
   end
 
