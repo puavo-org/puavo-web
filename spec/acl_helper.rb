@@ -78,8 +78,10 @@ class LDAPTestEnv
   end
 
 
-  def define(id, &seeder)
-    @definitions[id] = seeder
+  def define(*ids, &seeder)
+    ids.each do |id|
+      @definitions[id] = [ids, seeder]
+    end
   end
 
   def method_missing(id)
@@ -89,16 +91,22 @@ class LDAPTestEnv
       return e
     end
 
-    seeder = @definitions[id]
-    if not seeder
+    definition = @definitions[id]
+    if not definition
       raise "Undefined LDAP Object #{ id } (or just method missing)"
     end
 
-    e = LDAPObject.new @ldap_host, self
-    @entries[id] = e
-    # puts "Creating #{ id }".red
-    seeder.call e
-    return e
+    other_ids = definition[0]
+    seeder = definition[1]
+
+    entries = other_ids.map do |other_id|
+      e = LDAPObject.new @ldap_host, self
+      @entries[other_id] = e
+      e
+    end
+
+    seeder.call(*entries)
+    return @entries[id]
   end
 
   # def use_with(*ids)
