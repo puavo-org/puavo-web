@@ -15,7 +15,8 @@ end
 class LDAPTestEnv
 
   def initialize
-    @seeders = []
+    @definitions = {}
+    define_basic(self)
   end
 
   def reset
@@ -56,33 +57,48 @@ class LDAPTestEnv
 
     @entries = {}
 
-    @seeders.each do |seed|
-      id = seed[0]
-      seeder = seed[1]
+    # @seeders.each do |seed|
+    #   id = seed[0]
+    #   seeder = seed[1]
 
-      model = LDAPObject.new @ldap_host, self
+    #   model = LDAPObject.new @ldap_host, self
 
-      if @entries[id]
-        raise "Duplicate LDAPObject definition #{ id }"
-      end
+    #   if @entries[id]
+    #     raise "Duplicate LDAPObject definition #{ id }"
+    #   end
 
-      @entries[id] = model
-      seeder.call model
-    end
+    #   @entries[id] = model
+
+    #   @creating = id
+    #   seeder.call model
+    #   @creating = nil
+
+    # end
 
   end
 
 
   def define(id, &seeder)
-    @seeders.push [ id, seeder ]
+    @definitions[id] = seeder
   end
 
   def method_missing(id)
-    e = @entries[id]
-    if not e
+
+    if e = @entries[id]
+      # puts "Using cached #{ id }".green
+      return e
+    end
+
+    seeder = @definitions[id]
+    if not seeder
       raise "Undefined LDAP Object #{ id } (or just method missing)"
     end
-    e
+
+    e = LDAPObject.new @ldap_host, self
+    @entries[id] = e
+    # puts "Creating #{ id }".red
+    seeder.call e
+    return e
   end
 
   # def use_with(*ids)
@@ -226,7 +242,7 @@ class LDAPObject
 end
 
 
-def define_school(env)
+def define_basic(env)
 
   env.define :school do |config|
 
@@ -238,17 +254,14 @@ def define_school(env)
 
     Role.create!(
       :displayName => "Class 4",
-      :puavoSchool => env.school.dn
+      :puavoSchool => @school.dn
     )
 
-  end
-
-  env.define :role do |config|
-    role = Role.create!(
+    Role.create!(
       :displayName => "Staff",
-      :puavoSchool => env.school.dn
+      :puavoSchool => @school.dn
     )
-    config.dn = role.dn
+
   end
 
   env.define :teacher do |config|
@@ -302,9 +315,37 @@ def define_school(env)
     config.dn = student.dn
   end
 
-end
+  env.define :teacher2 do |config|
+    teacher2 = User.create!(
+      :puavoSchool => env.school.dn,
+      :givenName => "Gilderoy",
+      :sn => "Lockhart",
+      :uid => "gilderoy.lockhart",
+      :role_name => "Staff",
+      :new_password => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => "teacher"
+    )
+    config.dn = teacher2.dn
+  end
 
-def define_other_school(env)
+  env.define :student2 do |config|
+    student2 = User.create!(
+      :puavoSchool => env.school.dn,
+      :givenName => "Ron",
+      :mail => "ron@example.com",
+      :sn => "Wesley",
+      :uid => "ron.wesley",
+      :role_name => "Class 4",
+      :new_password => config.default_password,
+      :new_password_confirmation => config.default_password,
+      :puavoEduPersonAffiliation => "student"
+    )
+    config.dn = student2.dn
+  end
+
+
+
   env.define :other_school do |config|
     @other_school = School.create!(
       :cn => "slytherin",
@@ -317,7 +358,6 @@ def define_other_school(env)
       :puavoSchool => @other_school.dn
     )
   end
-
 
   env.define :other_school_student do |config|
     other_school_student = User.create!(
@@ -333,4 +373,5 @@ def define_other_school(env)
     )
     config.dn = other_school_student.dn
   end
+
 end
