@@ -9,16 +9,24 @@ def define_basic(env)
     )
     school_config.dn = @school.dn
 
-    role = Role.create!(
+    # Role for students
+    Role.create!(
       :displayName => "Class 4",
       :puavoSchool => @school.dn
     )
-    role_config.dn = role.dn
 
+    # Role for teachers and admins
     Role.create!(
       :displayName => "Staff",
       :puavoSchool => @school.dn
     )
+
+    # Unused role for testing
+    role = Role.create!(
+      :displayName => "Class 5",
+      :puavoSchool => @school.dn
+    )
+    role_config.dn = role.dn
 
   end
 
