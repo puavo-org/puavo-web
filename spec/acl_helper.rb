@@ -58,23 +58,6 @@ class LDAPTestEnv
 
     @entries = {}
 
-    # @seeders.each do |seed|
-    #   id = seed[0]
-    #   seeder = seed[1]
-
-    #   model = LDAPObject.new @ldap_host, self
-
-    #   if @entries[id]
-    #     raise "Duplicate LDAPObject definition #{ id }"
-    #   end
-
-    #   @entries[id] = model
-
-    #   @creating = id
-    #   seeder.call model
-    #   @creating = nil
-
-    # end
 
   end
 
