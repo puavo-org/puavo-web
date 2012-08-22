@@ -71,6 +71,7 @@ class LDAPTestEnv
     end
   end
 
+
   def method_missing(id)
 
     if e = @entries[id]
@@ -95,17 +96,6 @@ class LDAPTestEnv
     seeder.call(*entries)
     return @entries[id]
   end
-
-  # def use_with(*ids)
-  #   reset
-
-  #   entries = ids.map do |id|
-  #     e = @entries[id]
-  #     e.connect
-  #     e
-  #   end
-  #   yield(*entries)
-  # end
 
 
 end
@@ -214,6 +204,7 @@ class LDAPObject
     connect
 
     new_password = "secret2"
+
     args = [
       'ldappasswd', '-x', '-Z',
       '-h', @ldap_host,
