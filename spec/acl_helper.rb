@@ -143,6 +143,28 @@ class LDAPObject
     @dn = dn.to_s
   end
 
+
+  def self.method_added(method_name)
+
+    # create "cannot_" versions of "can_" methods
+    if method_name.to_s[0...4] == "can_"
+      new_name = method_name.to_s.gsub(/can_/, "cannot_")
+
+      define_method new_name.to_sym do |*args|
+        exception = args.last
+        args = args[0...-1]
+        begin
+          send(method_name, *args)
+        rescue exception
+          return
+        end
+        raise "#{ @id }.#{ new_name } expected to raise #{ exception }"
+      end
+
+    end
+  end
+
+
   def can_read(target, attributes=nil)
     target = ensure_object(target)
     connect
