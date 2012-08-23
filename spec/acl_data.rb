@@ -30,6 +30,15 @@ def define_basic(env)
 
   end
 
+  env.define :group do |config|
+    group = Group.create!(
+      :displayName => "Test Group",
+      :cn          => "testgroup",
+      :puavoSchool => env.school.dn
+    )
+    config.dn = group.dn
+  end
+
   env.define :teacher do |config|
     teacher = User.create!(
       :puavoSchool => env.school.dn,
