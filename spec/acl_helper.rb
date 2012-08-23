@@ -221,7 +221,8 @@ class LDAPObject
     system(*args)
 
     if $?.exitstatus != 0
-      raise LDAPTestEnvException, "#{ to_s  } failed to execute #{ args.join " " }"
+      # TODO: Add stdout&stderr to the message
+      raise LDAPTestEnvException, "#{ to_s  } failed to change password for #{ target }"
     end
 
     pw_test = LDAPObject.new(@id, @ldap_host, @env)
