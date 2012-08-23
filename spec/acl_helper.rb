@@ -19,7 +19,6 @@ end
 class LDAPTestEnv
 
   def initialize
-    @definitions = {}
     define_basic(self)
   end
 
@@ -65,36 +64,29 @@ class LDAPTestEnv
   end
 
 
+  # Define test data object.
   def define(*ids, &seeder)
     ids.each do |id|
-      @definitions[id] = [ids, seeder]
+
+      # Define lazy method that creates and returns the ldap object when called
+      singleton = class << self; self end
+      singleton.send :define_method, id, lambda {
+
+        if e = @entries[id]
+          return e
+        end
+
+        # Single define can create multiple ldap objects
+        entries_to_be = ids.map do |other_id|
+          e = LDAPObject.new id, @ldap_host, self
+          @entries[other_id] = e
+          e
+        end
+
+        seeder.call(*entries_to_be)
+        @entries[id]
+      }
     end
-  end
-
-
-  def method_missing(id)
-
-    if e = @entries[id]
-      # puts "Using cached #{ id }".green
-      return e
-    end
-
-    definition = @definitions[id]
-    if not definition
-      raise "Undefined LDAP Object #{ id } (or just method missing)"
-    end
-
-    other_ids = definition[0]
-    seeder = definition[1]
-
-    entries = other_ids.map do |other_id|
-      e = LDAPObject.new id, @ldap_host, self
-      @entries[other_id] = e
-      e
-    end
-
-    seeder.call(*entries)
-    return @entries[id]
   end
 
 
@@ -242,7 +234,7 @@ class LDAPObject
     })
 
     if not @conn.bind
-      raise BindFailed, "Cannot bind #{ @dn } : #{ @password } to #{ @ldap_host }"
+      raise BindFailed, "#{ @id } cannot bind with password '#{ @password }' to #{ @ldap_host }"
     end
 
     @connected = true
