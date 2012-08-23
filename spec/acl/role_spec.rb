@@ -15,6 +15,18 @@ describe "ACL" do
       env.admin.can_read :role, [:displayName, :puavoSchool ]
     end
 
+    it "should allow teachers to read roles" do
+      lambda {
+        env.teacher.can_read :role, [:displayName, :puavoSchool ]
+      }.should raise_error InsufficientAccessRights
+    end
+
+    it "should not allow students to read roles" do
+      lambda {
+        env.student.can_read :role, [:displayName, :puavoSchool ]
+      }.should raise_error InsufficientAccessRights
+    end
+
     it "should allow admins to edit roles" do
       env.admin.can_modify :role, [ :replace, :displayName, ["newname"] ]
     end
