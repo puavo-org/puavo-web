@@ -1,6 +1,10 @@
 
 def define_basic(env)
 
+  env.define :organisation do |config|
+    config.dn = LdapOrganisation.first.dn
+  end
+
   env.define :school, :role do |school_config, role_config|
 
     @school = School.create!(
@@ -158,4 +162,11 @@ def define_basic(env)
     config.dn = "cn=IdPool,o=puavo"
   end
 
+  env.define :domain_users do |config|
+    config.dn = "cn=Domain Users,ou=Groups," + env.organisation.dn
+  end
+
+  env.define :domain_admins do |config|
+    config.dn = "cn=Domain Admins,ou=Groups," + env.organisation.dn
+  end
 end
