@@ -25,42 +25,30 @@ describe "ACL" do
   describe "school" do
 
     before(:all) { env.reset }
+    school_attributes = [
+      :cn,
+      :displayName,
+      :gidNumber,
+      :member,
+      :memberUid,
+      :objectClass,
+      :puavoId,
+      :puavoSchoolAdmin,
+      :sambaGroupType,
+      :sambaSID,
+    ]
 
-    it "should allow admins to read school attributes" do
-      env.admin.can_read :school, [:puavoId,
-                                   :objectClass,
-                                   :gidNumber,
-                                   :displayName,
-                                   :sambaSID,
-                                   :cn,
-                                   :sambaGroupType,
-                                   :memberUid,
-                                   :member,
-                                   :puavoSchoolAdmin ]
-    end
+    it "should enforce basic school permissions" do
+      env.admin.can_read :school, school_attributes
+      env.student.can_read :school, school_attributes
+      env.teacher.can_read :school, school_attributes
 
-
-    it "should not allow admins to write school puavoSchoolAdmin attribute" do
-      lambda {
-        env.admin.can_modify :school, [ :replace, :puavoSchoolAdmin, [env.student.dn] ]
-      }.should raise_error InsufficientAccessRights
-
-    end
-
-    it "should allow owner to write school attributes" do
       env.owner.can_modify :school, [ :replace, :displayName, ["Test school"] ]
-    end
-
-    it "should allow owner to write school puavoSchoolAdmin attribute" do
       env.owner.can_modify :school, [ :replace, :puavoSchoolAdmin, [env.new_admin.dn] ]
-    end
 
-    it "should not allow student to change school attributes" do
-      lambda {
-        env.student.can_modify :school, [ :replace, :displayName, ["newname"] ]
-      }.should raise_error InsufficientAccessRights
+      env.student.cannot_modify :school, [ :replace, :displayName, ["newname"] ], InsufficientAccessRights
+      env.admin.cannot_modify :school, [ :replace, :puavoSchoolAdmin, [env.student.dn] ], InsufficientAccessRights
     end
-
   end
 
 end
