@@ -119,7 +119,7 @@ class LDAPObject
   end
 
   def to_s
-    @dn.to_s
+    "<#{ @id }(#{ @dn })>"
   end
 
   def default_password
@@ -145,7 +145,7 @@ class LDAPObject
         rescue exception
           return
         end
-        raise "#{ @id }.#{ new_name } expected to raise #{ exception }"
+        raise "Expected '#{ new_name }(#{ args.join ", " })' on #{ to_s } to raise #{ exception }"
       end
 
     end
@@ -161,12 +161,12 @@ class LDAPObject
     entry = @conn.search(:base => target.dn)
 
     if entry == false || entry.size == 0
-      raise InsufficientAccessRights, "#{ @id } failed to read #{ target.dn } from #{ @ldap_host }"
+      raise InsufficientAccessRights, "#{ to_s } failed to read anything from #{ target }"
     end
 
     attributes.each do |attr|
       if entry.first[attr].size == 0
-        raise InsufficientAccessRights, "#{ @id } failed to read attribute '#{ attr }' from #{ target.dn  } in #{ @ldap_host }"
+        raise InsufficientAccessRights, "#{ to_s } failed to read attribute '#{ attr }' from #{ target }"
       end
     end
 
@@ -183,7 +183,7 @@ class LDAPObject
 
     res = @conn.get_operation_result()
     if res.code != 0
-      err_msg = "#{ @id } failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target.dn }' as '#{ @dn }'"
+      err_msg = "#{ to_s } failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target }'"
 
       # http://web500gw.sourceforge.net/errors.html
       if res.code == 19
@@ -214,7 +214,7 @@ class LDAPObject
     system(*args)
 
     if $?.exitstatus != 0
-      raise LDAPTestEnvException, "Failed to execute #{ args.join " " }"
+      raise LDAPTestEnvException, "#{ to_s  } failed to execute #{ args.join " " }"
     end
 
     pw_test = LDAPObject.new(@id, @ldap_host, @env)
@@ -239,7 +239,7 @@ class LDAPObject
     })
 
     if not @conn.bind
-      raise BindFailed, "#{ @id } cannot bind with password '#{ @password }' to #{ @ldap_host }"
+      raise BindFailed, "#{ to_s } cannot bind with password '#{ @password }' to #{ @ldap_host }"
     end
 
     @connected = true
