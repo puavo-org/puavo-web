@@ -57,6 +57,12 @@ class LDAPTestEnv
         p.destroy
       end
     end
+    id_pool = IdPool.find('IdPool')
+    id_pool.puavoNextGidNumber = 10004
+    id_pool.puavoNextUidNumber = 10002
+    id_pool.puavoNextRid = 3
+    id_pool.puavoNextId = 9
+    id_pool.save!
 
     @entries = {}
 
@@ -157,6 +163,7 @@ class LDAPObject
     connect
 
     attributes = [attributes] if attributes.class != Array
+    raise "Invalid arguments: " + attributes.inspect if attributes.first.class == Array
 
     entry = @conn.search(:base => target.dn)
 

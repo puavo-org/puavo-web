@@ -75,6 +75,11 @@ def define_basic(env)
     config.password = "cucumber"
   end
 
+  env.define :puavo do |config|
+    config.dn = "uid=puavo,o=puavo"
+    config.password = "password"
+  end
+
   env.define :student do |config|
     student = User.create!(
       :puavoSchool => env.school.dn,
@@ -147,6 +152,10 @@ def define_basic(env)
       :puavoEduPersonAffiliation => "student"
     )
     config.dn = other_school_student.dn
+  end
+
+  env.define :id_pool do |config|
+    config.dn = "cn=IdPool,o=puavo"
   end
 
 end
