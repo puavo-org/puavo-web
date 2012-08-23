@@ -6,14 +6,6 @@ require 'acl_helper'
 describe "ACL" do
 
   env = LDAPTestEnv.new
-  env.define :group do |config|
-    group = Group.create!(
-      :displayName => "Test Group",
-      :cn          => "testgroup",
-      :puavoSchool => env.school.dn
-    )
-    config.dn = group.dn
-  end
 
   before(:all) { env.reset }
 
