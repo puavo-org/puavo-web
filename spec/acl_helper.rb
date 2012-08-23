@@ -84,6 +84,11 @@ class LDAPTestEnv
         end
 
         seeder.call(*entries_to_be)
+        entries_to_be.each do |e|
+          if not e.dn
+            raise "Definition for #{ e.id } did not set a dn!"
+          end
+        end
         @entries[id]
       }
     end
