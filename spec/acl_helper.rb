@@ -69,6 +69,10 @@ class LDAPTestEnv
 
   end
 
+  def with_data(&block)
+    reset
+    instance_eval(&block)
+  end
 
   # Define test data object.
   def define(*ids, &seeder)
