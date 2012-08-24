@@ -1,4 +1,3 @@
-require 'acl_data'
 
 class LDAPTestEnvException < Exception
 end
@@ -17,9 +16,18 @@ end
 
 
 class LDAPTestEnv
+  @@test_count = 0
 
   def initialize
     define_basic(self)
+  end
+
+  def self.raport
+    puts "#{ @@test_count } tests ok".green
+  end
+
+  def inc_test_count
+    @@test_count += 1
   end
 
   def reset
@@ -69,7 +77,8 @@ class LDAPTestEnv
 
   end
 
-  def with_data(&block)
+  def validate(name, &block)
+    puts "### #{ name } ACLs ###".yellow
     reset
     instance_eval(&block)
   end
@@ -114,11 +123,13 @@ class LDAPObject
 
   attr_accessor :password
   attr_reader :dn, :id
+  @@test_count = 0
 
   def initialize(id, ldap_host, env)
     @id = id
     @ldap_host = ldap_host
     @env = env
+    @log_prefix = ""
   end
 
   def ensure_object(target)
@@ -129,7 +140,8 @@ class LDAPObject
   end
 
   def to_s
-    "<#{ @id }(#{ @dn })>"
+    # "<#{ @id }(#{ @dn })>"
+    "<#{ @id }>"
   end
 
   def default_password
@@ -140,6 +152,11 @@ class LDAPObject
     @dn = dn.to_s
   end
 
+  def log(msg)
+    puts @log_prefix + msg
+    @log_prefix = ""
+    @env.inc_test_count
+  end
 
   def self.method_added(method_name)
 
@@ -151,6 +168,7 @@ class LDAPObject
         exception = args.last
         args = args[0...-1]
         begin
+          @log_prefix = "NOT: "
           send(method_name, *args)
         rescue exception
           return
@@ -163,10 +181,12 @@ class LDAPObject
 
 
   def can_read(target, attributes=nil)
+    attributes = [attributes] if attributes.class != Array
     target = ensure_object(target)
     connect
 
-    attributes = [attributes] if attributes.class != Array
+    log "#{ to_s } can read #{ attributes.join ", " } from #{ target }"
+
     raise "Invalid arguments: " + attributes.inspect if attributes.first.class == Array
 
     entry = @conn.search(:base => target.dn)
@@ -188,6 +208,7 @@ class LDAPObject
     target = ensure_object(target)
     connect
 
+    log "#{ to_s } can do #{ op.join "|" } to #{ target }"
     # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
     # Allow only one operation at once so that we can show clear error messages
     @conn.modify :dn => target.dn, :operations => [op]
@@ -210,6 +231,7 @@ class LDAPObject
   def can_set_password_for(target, foo=nil)
     target = ensure_object(target)
     connect
+    log "#{ to_s } change change password for #{ target }"
 
     new_password = "secret2"
 
