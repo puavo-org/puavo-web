@@ -28,4 +28,4 @@ else
   end
 end
 
-LDAPTestEnv.raport
+LDAPTestEnv.report
