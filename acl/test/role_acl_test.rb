@@ -1,11 +1,11 @@
 
 env = LDAPTestEnv.new
 
-env.validate "should validate basic role permissions" do
-  env.admin.can_read :role, [:displayName, :puavoSchool ]
-  env.teacher.cannot_read :role, [:displayName, :puavoSchool ], InsufficientAccessRights
-  env.student.cannot_read :role, [:displayName, :puavoSchool ], InsufficientAccessRights
-  env.admin.can_modify :role, [ :replace, :displayName, ["newname"] ]
-  env.teacher.cannot_modify :role, [ :replace, :displayName, ["badnaname"] ], InsufficientAccessRights
-  env.student.cannot_modify :role, [ :replace, :displayName, ["badnaname2"] ], InsufficientAccessRights
+env.validate "Role" do
+  admin.can_read role, [:displayName, :puavoSchool ]
+  teacher.cannot_read role, [:displayName, :puavoSchool ], InsufficientAccessRights
+  student.cannot_read role, [:displayName, :puavoSchool ], InsufficientAccessRights
+  admin.can_modify role, [ :replace, :displayName, ["newname"] ]
+  teacher.cannot_modify role, [ :replace, :displayName, ["badnaname"] ], InsufficientAccessRights
+  student.cannot_modify role, [ :replace, :displayName, ["badnaname2"] ], InsufficientAccessRights
 end
