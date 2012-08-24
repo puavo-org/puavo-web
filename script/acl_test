@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+# require 'rubygems' unless ENV['NO_RUBYGEMS']
+
+ENV["RAILS_ENV"] ||= 'test'
+require File.expand_path(File.dirname(__FILE__) + "/../config/environment") unless defined?(RAILS_ROOT)
+require "colorize"
+
+require File.expand_path(File.dirname(__FILE__) + "/../acl/data")
+require File.expand_path(File.dirname(__FILE__) + "/../acl/helper")
+
+require 'pp'
+ARGV.each do |file|
+    require file
+end
+
+LDAPTestEnv.raport
