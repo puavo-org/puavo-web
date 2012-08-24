@@ -141,7 +141,7 @@ class LDAPObject
 
   def to_s
     # "<#{ @id }(#{ @dn })>"
-    "<#{ @id }>"
+    "#{ @id }"
   end
 
   def default_password
@@ -185,7 +185,7 @@ class LDAPObject
     target = ensure_object(target)
     connect
 
-    log "#{ to_s } can read #{ attributes.join ", " } from #{ target }"
+    log "#{ to_s.blue } can read  [#{ attributes.join "|" }] from #{ target.to_s.blue }"
 
     raise "Invalid arguments: " + attributes.inspect if attributes.first.class == Array
 
@@ -208,7 +208,7 @@ class LDAPObject
     target = ensure_object(target)
     connect
 
-    log "#{ to_s } can do #{ op.join "|" } to #{ target }"
+    log "#{ to_s.blue } can do [#{ op.join "|" }] to #{ target.to_s.blue }"
     # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
     # Allow only one operation at once so that we can show clear error messages
     @conn.modify :dn => target.dn, :operations => [op]
@@ -231,7 +231,7 @@ class LDAPObject
   def can_set_password_for(target, foo=nil)
     target = ensure_object(target)
     connect
-    log "#{ to_s } change change password for #{ target }"
+    log "#{ to_s.blue } change change password for #{ target.to_s.blue }"
 
     new_password = "secret2"
 
