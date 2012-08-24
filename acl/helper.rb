@@ -22,7 +22,7 @@ class LDAPTestEnv
     define_basic(self)
   end
 
-  def self.raport
+  def self.report
     puts "#{ @@test_count } tests ok".green
   end
 
