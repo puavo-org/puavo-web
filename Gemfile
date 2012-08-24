@@ -19,4 +19,5 @@ group :development do
 	gem 'ruby-prof'
 	gem 'ruby-debug'
 	gem 'rbtrace'
+	gem 'colorize'
 end
