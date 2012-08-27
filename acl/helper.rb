@@ -24,6 +24,11 @@ class LDAPTestEnv
     define_basic(self)
   end
 
+  # Disable all testing for this env
+  def disable
+    @disabled = true
+  end
+
   def self.report
     puts "#{ @@test_count } tests ok".green
   end
@@ -80,6 +85,12 @@ class LDAPTestEnv
   end
 
   def validate(name, &block)
+
+    if @disabled
+      puts "Skipping '#{ name }' because it is disabled".red
+      return
+    end
+
     puts "### #{ name } ACLs ###".yellow
     reset
     instance_eval(&block)
