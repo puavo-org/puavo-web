@@ -1,4 +1,6 @@
 
+require "colorize"
+
 class LDAPTestEnvException < Exception
 end
 
