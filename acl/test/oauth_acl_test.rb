@@ -1,21 +1,23 @@
 
 env = LDAPTestEnv.new
-# No working implementation yet
-env.disable
 
-env.validate "OAuth Access Token creation" do
+env.validate "create oc" do
+  oauth_client
+end
+
+env.validate "OAuth Access Token creation", false do
 
   student.can_add :authorization_code, client_server.id
   client_server.can_add :access_token, client_server.id
 
 end
 
-env.validate "OAuth Access Token cannot be added without Authorization Code" do
+env.validate "OAuth Access Token cannot be added without Authorization Code", false do
   client_server.cannot_add :authorization_code, client_server.id
 end
 
 
-env.validate "OAuth Access Token" do
+env.validate "OAuth Access Token", false do
 
   student_access_token.can_read student,        [:sn,       :givenName,  :uid]
   student_access_token.can_read student2,       [:sn,       :givenName,  :uid]
