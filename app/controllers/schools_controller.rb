@@ -149,7 +149,7 @@ class SchoolsController < ApplicationController
         # FIXME: change notice type (ERROR)
         flash[:alert] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
-      elsif  @schoold.add_admin(@user)
+      elsif  @school.add_admin(@user)
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )
