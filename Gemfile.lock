@@ -24,6 +24,7 @@ GEM
     activesupport (2.3.11)
     bond (0.4.2)
     builder (3.0.0)
+    colorize (0.5.8)
     columnize (0.3.2)
     cucumber (0.10.0)
       builder (>= 2.1.2)
@@ -105,6 +106,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeldap (= 1.2.4)
+  colorize
   cucumber
   cucumber-rails (= 0.3.2)
   net-ldap (= 0.2.2)

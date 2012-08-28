@@ -21,4 +21,5 @@ group :development do
 	gem "ruby-debug-completion", :require => "ruby-debug/completion"
 	gem 'rbtrace'
 	gem 'timecop'
+	gem 'colorize'
 end
