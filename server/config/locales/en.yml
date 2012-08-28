@@ -63,6 +63,7 @@ en:
       title: List of devices
     new:
       new_printer: New printer
+      new_device: New device
     edit:
       edit: Edit
       title: Device settings

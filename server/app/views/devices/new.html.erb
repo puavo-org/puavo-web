@@ -1,4 +1,10 @@
-<h1><span><%= t('.new_printer') %></span></h1>
+<h1><span>
+  <% if @device.classes.include?('puavoPrinter') %>
+    <%= t('.new_printer') %>
+  <% else %>
+    <%= t('.new_device') %>
+  <% end %>
+</span></h1>
 
 <%= render :partial => 'form',
  :locals => {

@@ -2,7 +2,7 @@
 <% form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
   <%= f.error_messages %>
 
-    <% if f.object.classes.include?('puavoPrinter') %>
+    <% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
       <%= f.hidden_field :puavoDeviceType %>
       <% Array(PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["classes"]).each do |device_objectClass| %>
       <%= hidden_field_tag "device[classes][]", device_objectClass %>

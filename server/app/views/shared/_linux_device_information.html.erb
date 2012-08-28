@@ -32,14 +32,14 @@
   <td class="value_td"><%=h device.puavoDevicePrimaryUser %></td>
 </tr>
 
-<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') %>
+<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceBootMode" %></td>
   <td class="value_td"><%=h t("shared.boot_mode_#{device.puavoDeviceBootMode}") %></td>
 </tr>
 <% end %>
 
-<% unless device.classes.include?('puavoPrinter') %>
+<% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDefaultPrinter" %></td>
   <td class="value_td"><%=h device.puavoDefaultPrinter %></td>
@@ -53,7 +53,7 @@
 </table>
 </div>
 
-<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') %>
+<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
 <div class="dashboard_box">
   <h3><%= t('shared.autopoweroff') %></h3>
   <table class="list widelist">

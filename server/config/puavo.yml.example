@@ -69,3 +69,38 @@ device_types:
     order: 8
     puppetclass: host
     school_required: true
+  wirelessaccesspoint:
+    label:
+      en: Wireless access point
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=wirelessaccesspoint
+    order: 9
+    school_required: true
+  projector:
+    label:
+      en: Projector
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=projector
+    order: 10
+    school_required: true
+  webcam:
+    label:
+      en: Webcam
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=webcamera
+    order: 11
+    school_required: true
+  switch:
+    label:
+      en: Switch (network)
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=switch
+    order: 12
+    school_required: true
+  other:
+    label:
+      en: Other
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=other
+    order: 13
+    school_required: true

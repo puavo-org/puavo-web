@@ -61,6 +61,7 @@ fi:
       title: Laitteet
     new:
       new_printer: Uusi tulostin
+      new_device: Uusi laite
     edit:
       edit: Muokkaa
       title: Laiteasetukset
