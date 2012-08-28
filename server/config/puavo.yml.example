@@ -64,9 +64,7 @@ device_types:
     label:
       en: Printer
       fi: Tulostin
-    classes:
-    - puavoPrinter
-    - cupsPrinter
+    classes: puavoPrinter
     url: /devices/%s/devices/new.json?device_type=printer
     order: 8
     puppetclass: host
