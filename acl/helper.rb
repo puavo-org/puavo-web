@@ -84,9 +84,9 @@ class LDAPTestEnv
 
   end
 
-  def validate(name, &block)
+  def validate(name, enabled=true,  &block)
 
-    if @disabled
+    if @disabled || !enabled
       puts "Skipping '#{ name }' because it is disabled".red
       return
     end
