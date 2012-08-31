@@ -41,7 +41,17 @@ def define_basic(env)
       "userPassword"=> config.default_password
     )
     config.dn = oc.dn
-    debugger; nil
+  end
+
+  env.define :oauth_token do |config|
+    ot = AccessToken.create!({
+      :puavoOAuthTokenId => "1",
+      :puavoOAuthEduPerson => env.student.dn,
+      :puavoOAuthClient => env.oauth_client.dn,
+      :userPassword => config.default_password
+      # TODO: scope
+    })
+    config.dn = ot.dn
   end
 
   env.define :group do |config|
