@@ -28,6 +28,11 @@
 </tr>
 
 <tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "ipHostNumber" %></td>
+  <td class="value_td"><%=h device.ipHostNumber %></td>
+</tr>
+
+<tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %></td>
   <td class="value_td"><%=h device.puavoDevicePrimaryUser %></td>
 </tr>

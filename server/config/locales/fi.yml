@@ -37,7 +37,7 @@ fi:
     location: Sijainti
     display_settings: Näytönasetukset
     kernel_settings: Kernel-asetukset
-    title: Laitteen asetukset
+    title: Laitteen tiedot
     printer_title: Tulostimen tiedot
     server_title: Palvelimen tiedot
     add_puavoDeviceXrandr: Lisää uusi xrandr-rivi
@@ -179,7 +179,7 @@ fi:
     attributes:
       server:
         puavoDeviceType: Laitteen tyyppi
-        puavoHostname: Nimi
+        puavoHostname: Verkkonimi
         macAddress: MAC-osoite
         userCertificate: Sertifikaatti
         serialNumber: Sarjanumero
@@ -212,8 +212,9 @@ fi:
         image: Kuva
       device:
         puavoDeviceType: Laitteen tyyppi
-        puavoHostname: Nimi
+        puavoHostname: Verkkonimi
         macAddress: MAC-osoite
+        ipHostNumber: IP-osoite
         userCertificate: Sertifikaatti
         serialNumber: Sarjanumero
         puavoDeviceManufacturer: Laitteen valmistaja

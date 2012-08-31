@@ -216,6 +216,7 @@ en:
         puavoDeviceType: Device type
         puavoHostname: Hostname
         macAddress: MAC address(es)
+        ipHostNumber: IP address
         userCertificate: Certificate
         serialNumber: Serial number
         puavoDeviceManufacturer: Device manufacturer
