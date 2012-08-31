@@ -26,5 +26,18 @@
 <br />
 
 <% content_for :right do %>
-<div><%= link_to t('.add_new_printer'), new_device_path(@school, :device_type => 'printer') %></div>
+<div>
+
+<% form_for(@device, :url => new_device_path(@school), :html => { :method => :get }) do |f| %>
+<span><%= t('.add_new_device') %></span>
+<%= select_tag "device_type",
+    options_for_select( @device_types ) %>
+<%= f.submit t('link.add') %>
+<% end %>
+
+</div>
+<% end %>
+
+<% content_for :javascript do %>
+  <%= javascript_include_tag "devices/index" %>
 <% end %>

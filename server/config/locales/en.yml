@@ -59,7 +59,7 @@ en:
       select: Select
   devices:
     index:
-      add_new_printer: Add new printer
+      add_new_device: Add new device
       title: List of devices
     new:
       new_printer: New printer

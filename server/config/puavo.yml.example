@@ -72,6 +72,7 @@ device_types:
   wirelessaccesspoint:
     label:
       en: Wireless access point
+      fi: Langaton tukiasema
     classes: puavoOtherDevice
     url: /devices/%s/devices/new.json?device_type=wirelessaccesspoint
     order: 9
@@ -79,6 +80,7 @@ device_types:
   projector:
     label:
       en: Projector
+      fi: Projektori
     classes: puavoOtherDevice
     url: /devices/%s/devices/new.json?device_type=projector
     order: 10
@@ -86,6 +88,7 @@ device_types:
   webcam:
     label:
       en: Webcam
+      fi: Web-kamera
     classes: puavoOtherDevice
     url: /devices/%s/devices/new.json?device_type=webcamera
     order: 11
@@ -93,6 +96,7 @@ device_types:
   switch:
     label:
       en: Switch (network)
+      fi: Kytkin (verkko)
     classes: puavoOtherDevice
     url: /devices/%s/devices/new.json?device_type=switch
     order: 12
@@ -100,6 +104,7 @@ device_types:
   other:
     label:
       en: Other
+      fi: Muu
     classes: puavoOtherDevice
     url: /devices/%s/devices/new.json?device_type=other
     order: 13

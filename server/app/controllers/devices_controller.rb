@@ -4,8 +4,11 @@ class DevicesController < ApplicationController
   # GET /devices
   # GET /devices.xml
   def index
+    @device = Device.new
     @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
     @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
+
+    @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
 
     respond_to do |format|
       format.html # index.html.erb

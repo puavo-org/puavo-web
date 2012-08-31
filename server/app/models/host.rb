@@ -38,6 +38,11 @@ class Host < DeviceBase
       type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoNetbootDevice") }
     when "local"
       type_list = type_list.delete_if{ |type, value| !Array(value["classes"]).include?("puavoLocalbootDevice") }
+    when "nothing"
+      type_list = type_list.delete_if do |type, value|
+        Array(value["classes"]).include?("puavoLocalbootDevice") ||
+          Array(value["classes"]).include?("puavoNetbootDevice")
+      end
     end
 
     # Set host's label by user's locale. Localization values must be set on the puavo.yml

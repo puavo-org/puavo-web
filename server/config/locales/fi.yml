@@ -57,7 +57,7 @@ fi:
       select: Valitse
   devices:
     index:
-      add_new_printer: Lisää uusi tulostin
+      add_new_device: Lisää uusi laite
       title: Laitteet
     new:
       new_printer: Uusi tulostin
