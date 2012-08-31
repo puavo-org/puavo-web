@@ -222,18 +222,35 @@ class LDAPObject
   end
 
   def can_modify(target, op)
+    # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
     target = ensure_object(target)
     connect
 
     log "#{ to_s.blue } can do [#{ op.join "|" }] to #{ target.to_s.blue }"
-    # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-modify
     # Allow only one operation at once so that we can show clear error messages
     @conn.modify :dn => target.dn, :operations => [op]
+    handle_error "#{ to_s } failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target }'"
+  end
 
+  def can_add(dn, attributes)
+    # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-add
+    connect
+    log "#{ to_s.blue } can add #{ dn.to_s.blue }"
+    @conn.add(:dn => dn, :attributes => attributes)
+    handle_error "Failed to add #{ dn }"
+  end
+
+  def can_delete(dn)
+    # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-delete
+    connect
+    log "#{ to_s.blue } can delete #{ dn.to_s.blue }"
+    @conn.delete(:dn => dn)
+    handle_error "Failed to delete #{ dn }"
+  end
+
+  def handle_error(err_msg)
     res = @conn.get_operation_result()
     if res.code != 0
-      err_msg = "#{ to_s } failed to do '#{ op[0] }' on attribute '#{ op[1] }' in '#{ target }'"
-
       # http://web500gw.sourceforge.net/errors.html
       if res.code == 19
         raise ConstraintViolation, err_msg
@@ -245,7 +262,7 @@ class LDAPObject
     return res
   end
 
-  def can_set_password_for(target, foo=nil)
+  def can_set_password_for(target)
     target = ensure_object(target)
     connect
     log "#{ to_s.blue } change change password for #{ target.to_s.blue }"
