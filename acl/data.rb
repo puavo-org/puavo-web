@@ -48,7 +48,8 @@ def define_basic(env)
       :puavoOAuthTokenId => "1",
       :puavoOAuthEduPerson => env.student.dn,
       :puavoOAuthClient => env.oauth_client.dn,
-      :userPassword => config.default_password
+      :userPassword => config.default_password,
+      :puavoOAuthTokenType => ["bar"]
       # TODO: scope
     })
     config.dn = ot.dn
