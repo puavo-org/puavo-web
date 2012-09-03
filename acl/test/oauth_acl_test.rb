@@ -18,7 +18,8 @@ env.validate "create oc" do
       :puavoOAuthEduPerson => student.dn.to_s,
       :userPassword => "secret",
       :puavoOAuthTokenId => ["2"],
-      :puavoOAuthScope => ["scope", "attributes", "here"]
+      :puavoOAuthScope => ["scope", "attributes", "here"],
+      :puavoOAuthTokenType => ["bar"]
       # :type => "authorization_code",
   })
 
@@ -28,7 +29,8 @@ env.validate "create oc" do
       :puavoOAuthEduPerson => student.dn.to_s,
       :userPassword => "secret",
       :puavoOAuthTokenId => ["2"],
-      :puavoOAuthScope => ["scope", "attributes", "here"]
+      :puavoOAuthScope => ["scope", "attributes", "here"],
+      :puavoOAuthTokenType => ["bar"]
       # :type => "authorization_code",
   }, InsufficientAccessRights)
 
@@ -36,17 +38,19 @@ env.validate "create oc" do
   student.cannot_modify oauth_token, [:replace, :userPassword, ["bad"]], InsufficientAccessRights
   student2.cannot_modify oauth_token, [:replace, :userPassword, ["bad"]], InsufficientAccessRights
 
+  owner.can_modify oauth_token, [:replace, :puavoOAuthTokenType, ["foo"]]
+
   # student.cannot_modify oauth_token, [:replace, :type, ["access_token"]]
   # oauth_client.can_modify oauth_token, [:replace, :type, ["access_token"]]
 
 end
 
-env.validate "oauth token deletion" do
-  student.can_delete oauth_token.dn
-  reset
-  student2.cannot_delete oauth_token.dn, InsufficientAccessRights
-  # oauth_client.cannot_delete oauth_token.dn, InsufficientAccessRights
-end
+# env.validate "oauth token deletion" do
+#   student.can_delete oauth_token.dn
+#   reset
+#   student2.cannot_delete oauth_token.dn, InsufficientAccessRights
+#   # oauth_client.cannot_delete oauth_token.dn, InsufficientAccessRights
+# end
 
 
 
