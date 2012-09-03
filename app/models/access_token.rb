@@ -41,7 +41,7 @@ class AccessToken < LdapBase
     end
 
     if results.size > 1
-      raise "#{ user_dn } has more than one AccessTokens to #{ oauth_client_server_dn }"
+      raise "#{ user_dn } has more than one AccessTokens for #{ oauth_client_server_dn }"
     end
 
     access_token_dn = ActiveLdap::DistinguishedName.parse results.first.first
