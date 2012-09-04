@@ -14,7 +14,7 @@
 
 <% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
 <tr>
-  <td class="required label_td"><%= f.label :macAddress %></td>
+  <td class="label_td"><%= f.label :macAddress %></td>
   <td>
   <div id="device_macAddress">
     <% if f.object.macAddress.nil? %>
