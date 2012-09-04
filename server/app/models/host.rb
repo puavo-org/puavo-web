@@ -19,9 +19,13 @@ class Host < DeviceBase
     Server.all + Device.all
   end
 
-  def self.validates_uniqueness_of_hostname(hostname)
-    Host.find(:first, :attribute => 'puavoHostname', :value => hostname) ?
-    false : true
+  def self.validates_uniqueness_of_hostname(new_host)
+    if host =  Host.find(:first, :attribute => 'puavoHostname', :value => new_host.puavoHostname)
+      if host.puavoId != new_host.puavoId
+        return false
+      end
+    end
+    true
   end
 
   def self.objectClass_by_device_type(device_type)

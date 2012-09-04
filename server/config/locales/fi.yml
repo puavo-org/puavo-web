@@ -176,6 +176,7 @@ fi:
     errors:
       messages:
         uniqueness: "{{attribute}} on jo käytössä"
+        taken: "%{attribute} on jo käytössä"
         blank: "%{attribute} pitää olla asetettuna"
         device:
           puavoHostname:

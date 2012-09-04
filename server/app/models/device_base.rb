@@ -42,11 +42,6 @@ class DeviceBase < LdapBase
   end
 
   def validate_on_create
-    unless Host.validates_uniqueness_of_hostname(self.puavoHostname)
-      # FIXME: localization
-      errors.add "puavoHostname", "Hostname must be unique"
-    end
-
     if host_certificate_request_send?
       if self.userCertificate.nil?
         # FIXME: Localization
@@ -60,6 +55,11 @@ class DeviceBase < LdapBase
     unless self.puavoHostname.to_s =~ /^[0-9a-z-]+$/
       errors.add( :puavoHostname,
                   I18n.t("activeldap.errors.messages.device.puavoHostname.invalid_characters" ) )
+    end
+
+    unless Host.validates_uniqueness_of_hostname(self)
+      errors.add :puavoHostname, I18n.t('activeldap.errors.messages.taken',
+                                        :attribute => I18n.t('activeldap.attributes.device.puavoHostname'))
     end
   end
 
