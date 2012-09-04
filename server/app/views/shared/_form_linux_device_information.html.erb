@@ -30,7 +30,7 @@
 </tr>
 <% end %>
 
-<% if f.object.classes.include?('puavoOtherDevice') %>
+<% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
 <tr>
   <td><%= f.label :ipHostNumber %></td>
   <td><%= f.text_field :ipHostNumber %></td>
