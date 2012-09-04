@@ -5,8 +5,6 @@ class DeviceBase < LdapBase
   before_validation :set_puavo_id, :set_password, :downcase_mac_addresses, :resize_image
   before_save :set_puppetclass, :set_parentNode
 
-  validates_format_of :puavoHostname, :with => /^[0-9a-z-]+$/
-
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
   end
@@ -54,6 +52,14 @@ class DeviceBase < LdapBase
         # FIXME: Localization
         errors.add "userCertificate", "Unable to sign certificate"
       end
+    end
+  end
+
+  def validate
+    # Validate format of puavoHostname
+    unless self.puavoHostname.to_s =~ /^[0-9a-z-]+$/
+      errors.add( :puavoHostname,
+                  I18n.t("activeldap.errors.messages.device.puavoHostname.invalid_characters" ) )
     end
   end
 

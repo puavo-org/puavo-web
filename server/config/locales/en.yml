@@ -179,6 +179,9 @@ en:
       messages:
         uniqueness: "{{attribute}} is already in use"
         blank: "%{attribute} can't be blank"
+        device:
+          puavoHostname:
+            invalid_characters: "Hostname include invalid characters (allowed characters is: a-z0-9-)"
     attributes:
       server:
         puavoDeviceType: Device type

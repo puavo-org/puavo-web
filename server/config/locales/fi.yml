@@ -177,6 +177,9 @@ fi:
       messages:
         uniqueness: "{{attribute}} on jo käytössä"
         blank: "%{attribute} pitää olla asetettuna"
+        device:
+          puavoHostname:
+            invalid_characters: "Verkkonimi sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
     attributes:
       server:
         puavoDeviceType: Laitteen tyyppi
