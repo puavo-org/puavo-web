@@ -178,6 +178,7 @@ en:
     errors:
       messages:
         uniqueness: "{{attribute}} is already in use"
+        blank: "%{attribute} can't be blank"
     attributes:
       server:
         puavoDeviceType: Device type
