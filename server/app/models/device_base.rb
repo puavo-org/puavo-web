@@ -79,12 +79,12 @@ class DeviceBase < LdapBase
     end
 
     # Validate format of macAddress
-    unless self.macAddress.to_s.empty?
-      self.macAddress.each do |mac|
+    Array(self.macAddress).each do |mac|
+      unless mac.to_s.empty?
         unless mac =~ /^([0-9a-f]{2}[:]){5}[0-9a-f]{2}$/
           errors.add( :macAddress,
                       I18n.t("activeldap.errors.messages.device.macAddress.invalid_characters" ) )
-        break
+          break
         end
       end
     end
