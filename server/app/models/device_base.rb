@@ -68,6 +68,16 @@ class DeviceBase < LdapBase
        end
     end
 
+    # macAddress is required attribute if device is bootable device (server, fatclient, thinclient, laptop etc.)
+    if self.classes.include?('puavoNetbootDevice') ||
+        self.classes.include?('puavoLocalbootDevice') ||
+        self.classes.include?('puavoServer')
+      if self.macAddress.to_s.empty?
+        errors.add :macAddress, I18n.t('activeldap.errors.messages.taken',
+                                       :attribute => I18n.t('activeldap.attributes.device.macAddress'))
+      end
+    end
+
     # Validate format of macAddress
     unless self.macAddress.to_s.empty?
       self.macAddress.each do |mac|
