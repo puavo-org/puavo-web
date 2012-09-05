@@ -34,10 +34,12 @@
 </tr>
 <% end %>
 
+<% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %></td>
   <td class="value_td"><%=h device.puavoDevicePrimaryUser %></td>
 </tr>
+<% end %>
 
 <% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
 <tr>

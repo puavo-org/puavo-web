@@ -37,10 +37,12 @@
 </tr>
 <% end %>
 
+<% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
 <tr>
   <td class="label_td"><%= f.label :puavoDevicePrimaryUser %></td>
   <td><%= f.text_field :puavoDevicePrimaryUser %></td>
 </tr>
+<% end %>
 
 <% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
 <tr>
