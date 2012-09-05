@@ -59,6 +59,7 @@ fi:
     index:
       add_new_device: Lisää uusi laite
       title: Laitteet
+      select_device_label: Valitse
     new:
       new_printer: Uusi tulostin
       new_device: "Uusi laite (%{device_type})"

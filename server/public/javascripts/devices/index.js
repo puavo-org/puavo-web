@@ -4,4 +4,6 @@ $(document).ready(function() {
     $('#device_type').change( function() {
 	$('#new_device').submit();
     });
+
+    $('#device_type').val('');
 });

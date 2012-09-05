@@ -9,6 +9,7 @@ class DevicesController < ApplicationController
     @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
 
     @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
+    @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
 
     respond_to do |format|
       format.html # index.html.erb
