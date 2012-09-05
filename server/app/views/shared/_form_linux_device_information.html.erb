@@ -26,6 +26,7 @@
     <% end %>
   </div>
   <%= link_to t('shared.add_macAddress'), "#", :class => "clone_prev_input_element" %>
+  <div><%= field_error_text(f.object, :macAddress) %></div>
   </td>
 </tr>
 <% end %>

@@ -67,6 +67,17 @@ class DeviceBase < LdapBase
          self.puavoPurchaseURL = 'http://' + self.puavoPurchaseURL.to_s
        end
     end
+
+    # Validate format of macAddress
+    unless self.macAddress.to_s.empty?
+      self.macAddress.each do |mac|
+        unless mac =~ /^([0-9a-f]{2}[:]){5}[0-9a-f]{2}$/
+          errors.add( :macAddress,
+                      I18n.t("activeldap.errors.messages.device.macAddress.invalid_characters" ) )
+        break
+        end
+      end
+    end
   end
 
   def sign_certificate(organisation_key, dn, password)
@@ -225,7 +236,9 @@ class DeviceBase < LdapBase
   end
 
   def downcase_mac_addresses
-    self.macAddress = self.macAddress.to_a.map{ |mac| mac.to_s.downcase }
+    self.macAddress = self.macAddress.to_a.map do |mac|
+      mac.to_s.gsub('-', ':').downcase
+    end
   end
 
   def resize_image

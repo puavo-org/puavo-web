@@ -182,6 +182,8 @@ fi:
         device:
           puavoHostname:
             invalid_characters: "Verkkonimi sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
+          macAddress:
+            invalid_characters: "MAC-osoite sisältää virheellisiä merkkejä tai se on väärän muotoinen. Esim: 0f:1f:a9:2f:a3:ad"
     attributes:
       server:
         puavoDeviceType: Laitteen tyyppi

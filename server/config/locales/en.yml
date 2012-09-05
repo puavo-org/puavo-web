@@ -184,6 +184,8 @@ en:
         device:
           puavoHostname:
             invalid_characters: "Hostname include invalid characters (allowed characters is: a-z0-9-)"
+          macAddress:
+            invalid_characters: "MAC address include invalid characters. Eg 0f:1f:a9:2f:a3:ad"
     attributes:
       server:
         puavoDeviceType: Device type
