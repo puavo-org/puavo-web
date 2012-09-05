@@ -61,6 +61,12 @@ class DeviceBase < LdapBase
       errors.add :puavoHostname, I18n.t('activeldap.errors.messages.taken',
                                         :attribute => I18n.t('activeldap.attributes.device.puavoHostname'))
     end
+
+    unless self.puavoPurchaseURL.to_s.empty?
+       unless self.puavoPurchaseURL.to_s =~ URI::regexp(%w(http https))
+         self.puavoPurchaseURL = 'http://' + self.puavoPurchaseURL.to_s
+       end
+    end
   end
 
   def sign_certificate(organisation_key, dn, password)
