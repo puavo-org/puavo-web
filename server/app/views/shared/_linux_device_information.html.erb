@@ -27,10 +27,12 @@
   </td>
 </tr>
 
+<% if device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "ipHostNumber" %></td>
   <td class="value_td"><%=h device.ipHostNumber %></td>
 </tr>
+<% end %>
 
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %></td>
