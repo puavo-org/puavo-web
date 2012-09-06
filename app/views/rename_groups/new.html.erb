@@ -10,8 +10,8 @@ Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyne
 
 <table>
 <tr>
-<th>Vanha nimi</th>
-<th>Uusi nimi</th>
+<th class="rename_group_old_name">Vanha nimi</th>
+<th class="rename_group_new_name">Uusi nimi</th>
 </tr>
 <% @roles.each do |role| %>
 <tr>
@@ -50,10 +50,10 @@ täsmäävät
 <% end %>
 </h4>
 
-<table>
+<table class="rename_groups_table">
 <tr>
-<th>Vanha nimi</th>
-<th>Uusi nimi</th>
+<th class="rename_group_old_name">Vanha nimi</th>
+<th class="rename_group_new_name">Uusi nimi</th>
 </tr>
 <% @groups.each do |group| %>
 <tr>
@@ -75,7 +75,7 @@ täsmäävät
 </table>
 
 <h4>Luodaan seuraavat uudet ryhmät uudelleen nimeämisen jälkeen:</h4>
-<table>
+<table class="new_groups_table">
 <tr>
 <th>Ryhmän lyhenne</th>
 <th>Ryhmän nimi</th>

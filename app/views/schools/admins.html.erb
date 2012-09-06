@@ -7,7 +7,7 @@
     <% Array(@school_admins).each do |u| %>
       <div class="row">
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
-      <%= link_to t('link.remove'), remove_school_admin_school_path(@school, u), :method => :put, :id => "remove_user_#{u.id}" %>
+      <%= link_to t('link.remove'), remove_school_admin_school_path(@school, u), :method => :put, :id => "remove_user_#{u.id}", :class=>"btn btn-danger" %>
       </div>
     <% end %>
   </span>
@@ -18,7 +18,7 @@
     <% Array(@allowed_school_admins).each do |u| %>
       <div class="row">
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
-      <%= link_to t('link.add'), add_school_admin_school_path(@school, u), :method => :put, :id => "add_user_#{u.id}" %>
+      <%= link_to t('link.add'), add_school_admin_school_path(@school, u), :method => :put, :id => "add_user_#{u.id}", :class=>"btn btn-success" %>
       </div>
     <% end %>
     </span>

@@ -16,7 +16,7 @@
   </tr>
   <tr>
     <td class="label_for_checkbox_list"><%= f.label :groups %></td>
-    <td>
+    <td class="external_services_system_groups">
     <% @system_groups.each do |g| %>
     <div>
       <input<%= external_service_group_checked?(f.object, g) %> id="group_<%= g.cn %>" name="external_service[groups][]" type="checkbox" value="<%= g.id %>" />
@@ -25,10 +25,8 @@
     <% end %>
     </td>
   </tr>
-  <tr>
-    <td><%= f.submit submit_text %>
-<div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
-    </td>
-  </tr>
-</table>
+  </table>
+  <div class="submit_button_container external_service"><%= f.submit submit_text, :class => "submit_button_container"  %></div>
+  <div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+
   <% end %>

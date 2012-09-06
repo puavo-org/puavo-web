@@ -3,8 +3,12 @@
 <% end %>
 
 <h1><span><%= t('.title') %></span></h1>
-<p class="mass_import_info"><span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> <span class="done">2. <%= t('users.import.info.phase_2') %> &gt; </span><span class="done">3. <%= t('users.import.info.phase_3') %> &gt; </span><span class="current">4. <%= t('users.import.info.phase_4') %></span></p>
-<p><%= t('.info') %></p>
+<p class="mass_import_info">
+  <span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> 
+  <span class="done">2. <%= t('users.import.info.phase_2') %> &gt; </span>
+  <span class="done">3. <%= t('users.import.info.phase_3') %> &gt; </span>
+  <span class="current">4. <%= t('users.import.info.phase_4') %></span></p>
+<p class="mass_import_info_text"><%= t('.info') %></p>
 
 
 <% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
@@ -57,7 +61,9 @@
     <% user_index += 1 %>
   <% end %>
 </table>
-<%= f.submit t('link.user_mass_import.create') %>
+<div class="submit_button_container">
+  <%= f.submit t('link.user_mass_import.create') %>
+</div>
 <% end %>
 
 <% content_for :right do %>

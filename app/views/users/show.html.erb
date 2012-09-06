@@ -13,7 +13,6 @@
                   <%= t('.user_is_locked') %>
             </p>
           <% end %>
-
       <p>
         <%= label "user", 'uid' %><br />
         <%=h @user.uid %>
@@ -32,7 +31,7 @@
 <div class="show_user">
 <div class="user_box">
 <h3><%= t('.contact_information') %></h3>
-<table>
+<table class="list full-width-list">
   <tr>
   <td class="label_td view"><%= label "user", "mail" %></td>
   <td class="value_td"><%= Array(@user.mail).map{ |mail| mail_to mail }.join(", ") %></td>
@@ -48,7 +47,7 @@
 </div>
 <div class="user_box">
 <h3><%= t('.system_information') %></h3>
-<table>
+<table class="list full-width-list">
   <tr>
     <td class="label_td view"><%= label "user", "homeDirectory" %></td>
     <td class="value_td"><%=h @user.homeDirectory %></td>
@@ -56,7 +55,7 @@
 
   <tr>
     <td class="label_td view"><%= label "user", "uidNumber" %></td>
-    <td class="value_td"><%=h @user.uidNumber %></tr>
+    <td class="value_td"><%=h @user.uidNumber %></td>
   </tr>
 
   <tr>
@@ -72,22 +71,22 @@
 
   <tr>
     <td class="label_td view"><%= label "user", "preferredLanguage" %></td>
-    <td class="value_td"><%=h @user.preferredLanguage ? t('language_' + @user.preferredLanguage) : "" %></tr>
+    <td class="value_td"><%=h @user.preferredLanguage ? t('language_' + @user.preferredLanguage) : "" %></td>
   </tr>
 
   <tr>
     <td class="label_td view"><%= label "user", "puavoAllowRemoteAccess" %></td>
-    <td class="value_td"><%=h t("activeldap.attributes.user.puavoAllowRemoteAccess_#{@user.puavoAllowRemoteAccess}") %></tr>
+    <td class="value_td"><%=h t("activeldap.attributes.user.puavoAllowRemoteAccess_#{@user.puavoAllowRemoteAccess}") %></td>
   </tr>
 
   <tr>
     <td class="label_td view"><%= label "user", "puavoEduPersonReverseDisplayName" %></td>
-    <td class="value_td"><%=h @user.puavoEduPersonReverseDisplayName %></tr>
+    <td class="value_td"><%=h @user.puavoEduPersonReverseDisplayName %></td>
   </tr>
 
   <tr>
     <td class="label_td view"><%= label "user", "puavoEduPersonPersonnelNumber" %></td>
-    <td class="value_td"><%=h @user.puavoEduPersonPersonnelNumber %></tr>
+    <td class="value_td"><%=h @user.puavoEduPersonPersonnelNumber %></td>
   </tr>
 
 </table>

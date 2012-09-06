@@ -4,10 +4,14 @@
 <% end %>
 
 <h1><span><%= t('.title') %></span></h1>
-<p class="mass_import_info"><span class="current">1. <%= t('users.import.info.phase_1') %> </span> &gt; 2. <%= t('users.import.info.phase_2') %> &gt; 3.<%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
+<p class="mass_import_info">
+  <span class="current">1. <%= t('users.import.info.phase_1') %>  &gt; </span> 
+  <span>2. <%= t('users.import.info.phase_2') %> &gt; </span>
+  <span>3.<%= t('users.import.info.phase_3') %> &gt;</span> 
+  <span>4. <%= t('users.import.info.phase_4') %></span></p>
 <% form_for(:users_import, :url => refine_users_import_path(@school), :html => { :method => :post } ) do %>
 
-  <%= t('.example_title')%>:
+  <p><%= t('.example_title')%>:</p>
   <pre><%= t('.example') %></pre>
 
   <p><%= t('.hint') %></p>

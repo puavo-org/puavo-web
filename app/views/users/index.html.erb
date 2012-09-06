@@ -11,9 +11,9 @@
     <td><%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %></td>
     <td><%=h user["uid"] %></td>
     <td><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
-    <td><%= link_to t('link.edit'), edit_user_path(@school, user["puavoId"]) %></td>
-    <td><%= link_to( t('link.destroy'),
-            user_path(@school, user["puavoId"]),
+    <td class="user_actions"><%= link_to t('link.edit'), edit_user_path(@school, user["puavoId"]), :class => "btn" %></td>
+    <td class="user_actions"><%= link_to( t('link.destroy'),
+            user_path(@school, user["puavoId"]), :class => "btn btn-danger",
             :confirm => t('destroy_confirm', :object_name => "#{user['sn']} #{user['givenName']}"),
             :method => :delete ) %></td>
   </tr>

@@ -1,5 +1,5 @@
 <p class='required_info'><%= t('layouts.forms.required_field')%></p>
-<% form_for(@user, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
+<% form_for(@user, :url => path, :class =>"form-horizontal", :html => { :method => method, :multipart => true })  do |f| %>
 
   <table>
     <tr>
@@ -19,10 +19,10 @@
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
-        <input name='user[mail][]' type='text' />
+        <input name='user[mail][]' type='email' />
       <% else %>
         <% Array(@user.mail).each_index do |index| %>
-          <input name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
+          <input name='user[mail][]' type='email' value='<%= Array(@user.mail)[index] %>' />
         <% end %>
       <% end %>
     </div>
@@ -32,10 +32,10 @@
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
     <td><span id="user_telephoneNumber_list">
       <% if Array(@user.telephoneNumber).empty? %>
-        <input name='user[telephoneNumber][]' type='text' />
+        <input name='user[telephoneNumber][]' type='tel' />
       <% else %>
         <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' />
+          <input name='user[telephoneNumber][]' type='tel' value='<%= Array(@user.telephoneNumber)[index] %>' />
         <% end %>
       <% end %>
     </span>
@@ -114,8 +114,8 @@
 </table>
 
 
-<div>
-      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %>
+<div class="submit_button_container">
+      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %></div>
 </div>
 
 <% end %>

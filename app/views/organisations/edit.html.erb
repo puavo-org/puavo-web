@@ -59,57 +59,56 @@
     <td><%= f.text_field :eduOrgHomePageURI %></td>
   </tr>
   <tr>
-	<td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
-	<td>
-	  <table id="autopoweroff">
-	  <tr>
-		<td class="label_td">
-		  <%= f.label :puavoDeviceAutoPowerOffMode_default %>
-		</td>
-		<td class="label_td">
-		  <%= f.label :puavoDeviceAutoPowerOffMode_off %>
-		</td>
-		<td class="label_td">
-		  <%= f.label :puavoDeviceAutoPowerOffMode_custom %>
-		</td>
-	  </tr>
-	  <tr>
-		<td>
-		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "default" %>
-		</td>
-		<td>
-		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "off" %>
-		</td>
-		<td>
-		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "custom" %>
-		</td>
-	  </tr>
-	  <tr>
-		<td class="label_td"><%= f.label :puavoDeviceOnHour %></td>
-		<td class="label_td"><%= f.label :puavoDeviceOffHour %></td>
-	  </tr>
-	  <tr>
-		<td>
-		  <%= f.select( :puavoDeviceOnHour,
-                    [[t('.select'), '']] + (1..24).each.map{ |h| [h.to_s, h.to_s] },
-                    :selected => (f.object.puavoDeviceOnHour or "") ) %>
-		</td>
-		<td>
-		  <%= f.select( :puavoDeviceOffHour,
-                        [[t('.select'), '']] + ( (1..24).map{ |h| [h.to_s, h.to_s] } ),
-                        :selected => (f.object.puavoDeviceOffHour or "" ) ) %>
-		</td>
-	  </tr>
-	  </table>
-	</td>
-  </tr>
-  <tr>
-    <td><%= f.submit t('link.update') %>
-      <div class="cancel"><%= link_to t('link.cancel'), organisation_path, :class => 'cancel_button' %></div></td>
+	 <td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
+  	<td>
+  	  <table id="autopoweroff">
+  	   <tr>
+    		<th class="label_td">
+    		  <%= f.label :puavoDeviceAutoPowerOffMode_default %>
+    		</th>
+  		  <th class="label_td">
+  		    <%= f.label :puavoDeviceAutoPowerOffMode_off %>
+  		  </th>
+    		<th class="label_td">
+    		  <%= f.label :puavoDeviceAutoPowerOffMode_custom %>
+    		</th>
+  	  </tr>
+  	  <tr>
+    		<td class="checkbox">
+    		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "default" %>
+    		</td>
+    		<td class="checkbox">
+    		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "off" %>
+    		</td>
+    		<td class="checkbox">
+    		  <%= f.radio_button :puavoDeviceAutoPowerOffMode, "custom" %>
+    		</td>
+  	  </tr>
+  	  <tr>
+    		<td class="label_td"><%= f.label :puavoDeviceOnHour %></td>
+    		<td class="label_td"><%= f.label :puavoDeviceOffHour %></td>
+  	  </tr>
+  	  <tr>
+    		<td>
+    		  <%= f.select( :puavoDeviceOnHour,
+                        [[t('.select'), '']] + (1..24).each.map{ |h| [h.to_s, h.to_s] },
+                        :selected => (f.object.puavoDeviceOnHour or "") ) %>
+    		</td>
+    		<td>
+    		  <%= f.select( :puavoDeviceOffHour,
+                            [[t('.select'), '']] + ( (1..24).map{ |h| [h.to_s, h.to_s] } ),
+                            :selected => (f.object.puavoDeviceOffHour or "" ) ) %>
+    		</td>
+  	  </tr>
+  	  </table>
+  	</td>
   </tr>
 </table>
+<div class="submit_button_container">
+  <%= f.submit t('link.update') %>
+  <div class="cancel"><%= link_to t('link.cancel'), organisation_path, :class => 'cancel_button' %></div>
+</div>  
 <% end %>
-
 <% content_for :footer do %>
 <ul>  
   <li class="link_header">
