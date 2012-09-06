@@ -9,10 +9,10 @@
     <th><%= t('.example') %></th>
       <% 0.upto(@number_of_columns-1) do |index| %>
         <tr>
-          <td>
+          <td class="refine_example">
             <%= select_tag "users_import_columns[#{index}]", options_for_select(User.import_columns.collect{ |c| [ User.human_attribute_name(c), c]},  @columns.nil? ? "" : @columns[index] ) %>
           </td>
-          <td><%= @raw_users.first[index].to_s + ", " + @raw_users.last[index].to_s %></td>
+          <td class="refine_example"><%= @raw_users.first[index].to_s + ", " + @raw_users.last[index].to_s %></td>
         </tr>
       <% end %>
   </table>

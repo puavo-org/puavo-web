@@ -26,7 +26,9 @@
     </td>
   </tr>
   </table>
-  <div class="submit_button_container external_service"><%= f.submit submit_text, :class => "submit_button_container"  %></div>
-  <div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+  <div class="submit_button_container external_service">
+    <%= f.submit submit_text, :class => "submit_button_container"  %>
+    <div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+  </div>
 
   <% end %>
