@@ -94,6 +94,9 @@ class DeviceBase < LdapBase
 
     # Validate format of serialNumber
     if !self.serialNumber.to_s.empty? && (self.serialNumber.to_s =~ /^[#{PRINTABLE_STRING_CHARACTERS}]+$/).nil?
+      unless errors[:serialNumber].nil?
+        errors.delete(:serialNumber)
+      end
       errors.add( :serialNumber,
                   I18n.t("activeldap.errors.messages.invalid_characters",
                          :attribute => I18n.t('activeldap.attributes.device.serialNumber') ) )
