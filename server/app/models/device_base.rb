@@ -5,6 +5,9 @@ class DeviceBase < LdapBase
   before_validation :set_puavo_id, :set_password, :downcase_mac_addresses, :resize_image
   before_save :set_puppetclass, :set_parentNode
 
+  IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
+  PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\?')
+
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
   end
@@ -87,6 +90,32 @@ class DeviceBase < LdapBase
           break
         end
       end
+    end
+
+    # Validate format of serialNumber
+    if !self.serialNumber.to_s.empty? && (self.serialNumber.to_s =~ /^[#{PRINTABLE_STRING_CHARACTERS}]+$/).nil?
+      errors.add( :serialNumber,
+                  I18n.t("activeldap.errors.messages.invalid_characters",
+                         :attribute => I18n.t('activeldap.attributes.device.serialNumber') ) )
+    end
+
+    # Validate format of puavoLongitude and puavoLatitude
+    if !self.puavoLongitude.to_s.empty? && (self.puavoLongitude =~ /^[#{IA5STRING_CHARACTERS}]+$/).nil?
+      errors.add( :puavoLongitude,
+                  I18n.t("activeldap.errors.messages.invalid_characters",
+                         :attribute => I18n.t('activeldap.attributes.device.puavoLongitude') ) )
+    end
+    if !self.puavoLatitude.to_s.empty? && (self.puavoLatitude.to_s =~ /^[#{IA5STRING_CHARACTERS}]+$/).nil?
+      errors.add( :puavoLatitude,
+                  I18n.t("activeldap.errors.messages.invalid_characters",
+                         :attribute => I18n.t('activeldap.attributes.device.puavoLatitude') ) )
+    end
+
+    # Valdiate format of ipHostNumber
+    if !self.ipHostNumber.to_s.empty? && (self.ipHostNumber =~ /^([0-9]{1,3}[.]){3}[0-9]{1,3}$/).nil?
+      errors.add( :ipHostNumber,
+                  I18n.t("activeldap.errors.messages.invalid",
+                         :attribute => I18n.t('activeldap.attributes.device.ipHostNumber') ) )
     end
   end
 

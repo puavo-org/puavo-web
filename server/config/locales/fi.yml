@@ -179,6 +179,8 @@ fi:
         uniqueness: "{{attribute}} on jo käytössä"
         taken: "%{attribute} on jo käytössä"
         blank: "%{attribute} pitää olla asetettuna"
+        invalid_characters: "%{attribute} sisältää virheellisiä merkkejä"
+        invalid: "%{attribute} on virheellinen"
         device:
           puavoHostname:
             invalid_characters: "Verkkonimi sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"

@@ -181,6 +181,8 @@ en:
         uniqueness: "{{attribute}} is already in use"
         taken: "%{attribute} has already been taken"
         blank: "%{attribute} can't be blank"
+        invalid_characters: "%{attribute} include invalid characters"
+        invalid: "%{attribute} is invalid"
         device:
           puavoHostname:
             invalid_characters: "Hostname include invalid characters (allowed characters is: a-z0-9-)"
