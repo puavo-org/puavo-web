@@ -115,10 +115,12 @@ class DeviceBase < LdapBase
     end
 
     # Valdiate format of ipHostNumber
-    if !self.ipHostNumber.to_s.empty? && (self.ipHostNumber =~ /^([0-9]{1,3}[.]){3}[0-9]{1,3}$/).nil?
-      errors.add( :ipHostNumber,
-                  I18n.t("activeldap.errors.messages.invalid",
-                         :attribute => I18n.t('activeldap.attributes.device.ipHostNumber') ) )
+    if self.classes.include?('puavoOtherDevice') || self.classes.include?('puavoPrinter')
+      if !self.ipHostNumber.to_s.empty? && (self.ipHostNumber =~ /^([0-9]{1,3}[.]){3}[0-9]{1,3}$/).nil?
+        errors.add( :ipHostNumber,
+                    I18n.t("activeldap.errors.messages.invalid",
+                           :attribute => I18n.t('activeldap.attributes.device.ipHostNumber') ) )
+      end
     end
   end
 
