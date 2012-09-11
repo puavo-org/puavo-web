@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+#
+# Usage:
+# sudo -u www-data RAILS_ENV=production ./script/users2csv <organisation> <filename>
+#
+
+require File.expand_path('../../config/boot',  __FILE__)
+require RAILS_ROOT + '/config/environment'
+
+key = ARGV[0]
+
+unless organisation = Puavo::Organisation.find(key)
+  puts "Can't find organisation configuration."
+  exit
+end
+
+I18n.locale = :en
+
+puts "Get all users"
+puts "Organisation: " + organisation.name.to_s
+
+puts "Login: admin"
+login = "admin"
+print "Password: "
+system('stty','-echo');
+password = STDIN.gets.chomp
+system('stty','echo');
+
+filename = ARGV[1]
+
+default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+
+# Setting up ldap configuration
+LdapBase.ldap_setup_connection( organisation.ldap_host,
+                                organisation.ldap_base,
+                                default_ldap_configuration["bind_dn"],
+                                default_ldap_configuration["password"] )
+
+user = User.find(:first, :attribute => "uid", :value => login)
+
+# Setting up ldap configuration
+LdapBase.ldap_setup_connection( organisation.ldap_host,
+                                organisation.ldap_base,
+                                user.dn.to_s,
+                                password )
+
+f = File.new(filename, 'w')
+
+User.all.each do |u|
+  if u.roles.first.nil?
+    puts f.puts "#{u.uid}; ERROR, NO ROLE"
+    next
+  end
+  if u.puavoEduPersonAffiliation == "student"
+    f.puts "#{u.puavoId};#{u.uid};ldap1:;#{u.givenName};#{u.sn};;#{u.puavoEduPersonAffiliation};#{u.school.displayName};#{u.roles.first.displayName}"
+  else
+    f.puts "#{u.puavoId};#{u.uid};ldap1:;#{u.givenName};#{u.sn};;#{u.puavoEduPersonAffiliation};#{u.school.displayName};;"
+  end
+end
+
+f.close
