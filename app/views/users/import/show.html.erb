@@ -1,4 +1,4 @@
-<h2>
+<h2 class="pdf_info">
 <% if @invalid_users.empty? %>
 <%= t('.title', :count => @users.count) %></h2>
 <% else %>
@@ -10,7 +10,7 @@
 <% end %>
 
 <% if @users.count > 0 %>
-<p>
+<p class="pdf_info">
 <%= t('.pdf_info') %>, <%= link_to t('link.user_mass_import.download_pdf'),
                                    download_users_import_path(@school,
                                                              :format => 'pdf',
