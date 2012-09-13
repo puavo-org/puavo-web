@@ -7,10 +7,18 @@
 <div class="dashboard_box contacts">
 <h3><%= t('.contacts') %></h3>
 <h4><%=h @school.displayName %></h4>
-<div class="row"><%=h @school.street %></div>
-<div class="row"><%=h @school.postalCode %> <%=h @school.postalAddress %></div>
-<div class="row"><%=h @school.postOfficeBox %></div>
-<div class="row"><%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'), @school.puavoSchoolHomePageURL %></div>
+<% if @school.street %> 
+  <div class="row"><%=h @school.street %></div>
+<% end %>
+<% if @school.postalCode %> 
+  <div class="row"><%=h @school.postalCode %> <%=h @school.postalAddress %></div>
+<% end %>
+<% if @school.postOfficeBox %> 
+  <div class="row"><%=h @school.postOfficeBox %></div>
+<% end %>
+<% if @school.puavoSchoolHomePageURL %> 
+  <div class="row"><%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'), @school.puavoSchoolHomePageURL %></div>
+<% end %>
 </div>
 
 
