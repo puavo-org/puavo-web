@@ -93,6 +93,9 @@ class DeviceBase < LdapBase
     end
 
     # Validate format of serialNumber
+    #
+    # Remove spaces from the end of the string
+    self.serialNumber = self.serialNumber.to_s.rstrip
     if !self.serialNumber.to_s.empty? && (self.serialNumber.to_s =~ /^[#{PRINTABLE_STRING_CHARACTERS}]+$/).nil?
       unless errors[:serialNumber].nil?
         errors.delete(:serialNumber)
