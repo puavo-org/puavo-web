@@ -6,7 +6,7 @@ class DeviceBase < LdapBase
   before_save :set_puppetclass, :set_parentNode
 
   IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
-  PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\?')
+  PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\? ')
 
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
