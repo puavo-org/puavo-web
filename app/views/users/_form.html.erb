@@ -19,10 +19,10 @@
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
-        <input name='user[mail][]' type='email' />
+        <input name='user[mail][]' type='text' />
       <% else %>
         <% Array(@user.mail).each_index do |index| %>
-          <input name='user[mail][]' type='email' value='<%= Array(@user.mail)[index] %>' />
+          <input name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
         <% end %>
       <% end %>
     </div>
@@ -32,10 +32,10 @@
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
     <td><span id="user_telephoneNumber_list">
       <% if Array(@user.telephoneNumber).empty? %>
-        <input name='user[telephoneNumber][]' type='tel' />
+        <input name='user[telephoneNumber][]' type='text' />
       <% else %>
         <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input name='user[telephoneNumber][]' type='tel' value='<%= Array(@user.telephoneNumber)[index] %>' />
+          <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' />
         <% end %>
       <% end %>
     </span>
