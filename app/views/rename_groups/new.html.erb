@@ -9,7 +9,7 @@ Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyne
 <h2>Roolit</h2>
 <% form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
 
-<table>
+<table class="rename_groups_roles_table">
 <tr>
 <th class="rename_group_old_name">Vanha nimi</th>
 <th class="rename_group_new_name">Uusi nimi</th>
@@ -36,11 +36,16 @@ Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyne
 </table>
 
 <h4>Luodaan seuraavat uudet roolit uudelleen nimeämisen jälkeen:</h4>
-<% @first_class_roles.each do |role| %>
-<%= text_field_tag "new_roles[]", role.displayName %><br/>
-<% end %>
-
-<br/>
+<table>
+  <tr>
+    <td></td>
+    <td>
+    <% @first_class_roles.each do |role| %>
+    <%= text_field_tag "new_roles[]", role.displayName %><br/>
+    <% end %>
+    </td>
+  </tr>
+</table>
 
 <h2>Ryhmät</h2>
 <h4>Ryhmien ja roolien luokka-asteet 
@@ -51,7 +56,7 @@ täsmäävät
 <% end %>
 </h4>
 
-<table class="rename_groups_table">
+<table class="rename_groups_roles_table">
 <tr>
 <th class="rename_group_old_name">Vanha nimi</th>
 <th class="rename_group_new_name">Uusi nimi</th>
@@ -76,10 +81,10 @@ täsmäävät
 </table>
 
 <h4>Luodaan seuraavat uudet ryhmät uudelleen nimeämisen jälkeen:</h4>
-<table class="new_groups_table">
+<table class="new_groups_table rename_groups_roles_table">
 <tr>
-<th>Ryhmän lyhenne</th>
-<th>Ryhmän nimi</th>
+<th class="rename_group_name_abbr">Ryhmän lyhenne</th>
+<th class="rename_group_new_name">Ryhmän nimi</th>
 </tr>
 <% @first_class_groups.each do |group| %>
 <tr>
@@ -95,30 +100,5 @@ täsmäävät
 
 <%= f.submit "Toteuta muutokset" %>
 
-<% end %>
-
-<% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <% link_to school_path(@school) do %>
-    <span><%= t('layouts.application.schools') %></span>
-    <% end %>
-  </li>
-  <% school_list.each do |school| %>
-  <li<% if school_list.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %>
-  </li>
-  <% end %>
-</ul>
-<ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
-<% end %>
-</li>
-  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-</ul>
 <% end %>
 </div>
