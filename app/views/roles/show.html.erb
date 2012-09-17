@@ -15,24 +15,26 @@
 
 <p>
   <b><%= t('activeldap.attributes.role.groups') %>:</b><br />
-  <span id="member_groups">
+  <table id="member_groups">
     <% @member_groups.each do |g| %>
-    <%= "#{g.displayName} (#{g.school.displayName})" %>
-    <%= link_to t('link.remove'), remove_group_role_path(@school, @role, g), :method => :put, :id => "remove_group_#{g.id}" %>
-    <br />
+    <tr>
+    <td><%= "#{g.displayName} (#{g.school.displayName})" %></td>
+    <td><%= link_to t('link.remove'), remove_group_role_path(@school, @role, g), :method => :put, :id => "remove_group_#{g.id}", :class=> "btn btn-danger" %></td>
+    </tr>
     <% end %>
-  </span>
+  </table>
 </p>
 
 <p>
   <b><%= t('.other_groups') %>:</b><br />
-  <span id="other_groups">
+  <table id="other_groups">
     <% @other_groups.each do |g| %>
-    <%= "#{g.displayName} (#{g.school.displayName})" %>
-    <%= link_to t('link.add'), add_group_role_path(@school, @role, g), :method => :put, :id => "add_group_#{g.id}" %>
-    <br />
+    <tr>
+    <td><%= "#{g.displayName} (#{g.school.displayName})" %></td>
+    <td><%= link_to t('link.add'), add_group_role_path(@school, @role, g), :method => :put, :id => "add_group_#{g.id}", :class => "btn btn-success" %></td>
+    </tr>
     <% end %>
-  </span>
+  </table>
 </p>
 
 <% content_for :right do %>

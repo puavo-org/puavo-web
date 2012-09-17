@@ -15,30 +15,39 @@
 </p>
 
 <p>
-  <b><%= t('.roles_and_members') %>:</b><br />
-  <span id="roles_and_members">
-    <% @roles.each do |p| %>
-      <%= "#{p.displayName} (#{p.school.displayName})" %>
-      <%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), :method => :put, :id => "remove_role_#{p.id}" %>
-      <ul>
-        <% p.members.each do |m| %>
-          <li><%= link_to m.displayName, user_path(@school, m) %></li>
-        <% end %>
-      </ul>
-    <% end %>
-  </span>
+  <b><%= t('.roles_and_members') %>:</b>
 </p>
+  <table id="roles_and_members">
+    <% @roles.each do |p| %>
+<tr>
+  <td> <%= "#{p.displayName} (#{p.school.displayName})" %></td>
+  <td><%= link_to t('link.remove'), delete_role_group_path(@school, @group, p), :method => :put, :id => "remove_role_#{p.id}", :class=> "btn btn-danger" %>
+  </td>
+</tr>
+<tr>
+  <td> 
+    <ul>
+      <% p.members.each do |m| %>
+        <li><%= link_to m.displayName, user_path(@school, m) %></li>
+      <% end %>
+    </ul>
+  </td>
+</tr>
+<% end %>
+</table>
 
 <p>
   <b><%= t('.other_roles') %>:</b><br />
-  <span id="other_roles">
+  <table id="other_roles">
   <% @other_roles.each do |p| %>
-    <%= "#{p.displayName} (#{p.school.displayName})" %>
-    <%= link_to t('link.add'), add_role_group_path(@school, @group, p), :method => :put, :id => "add_role_#{p.id}" %>
-    <br />
+  <tr>
+    <td><%= "#{p.displayName} (#{p.school.displayName})" %></td>
+    <td><%= link_to t('link.add'), add_role_group_path(@school, @group, p), :method => :put, :id => "add_role_#{p.id}", :class=> "btn btn-success" %></td>
+    </tr>
   <% end %>
-  </span>
+  </table>
 </p>
+
 
 <% content_for :right do %>
 <ul class="tools">
