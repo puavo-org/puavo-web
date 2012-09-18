@@ -5,11 +5,16 @@ class DevicesController < ApplicationController
   # GET /devices.xml
   def index
     @device = Device.new
-    @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
-    @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
 
-    @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
-    @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
+    if @school
+      @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
+      @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
+      @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
+    else
+      @devices = Device.find(:all)
+    end
+
+    @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
 
     respond_to do |format|
       format.html # index.html.erb
@@ -185,6 +190,8 @@ class DevicesController < ApplicationController
   private
 
   def find_school
-    @school = School.find(params[:school_id])
+    if params[:school_id]
+      @school = School.find(params[:school_id])
+    end
   end
 end

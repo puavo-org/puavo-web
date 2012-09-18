@@ -18,7 +18,15 @@ ActionController::Routing::Routes.draw do |map|
                       :action => 'image',
                       :path_prefix => ':school_id',
                       :conditions => { :method => :get } )
+
+  map.organisation_devices( 'devices.:format',
+                            :controller => 'devices',
+                            :action => 'index',
+                            :conditions => { :method => :get } )
+
   map.resources :devices, :path_prefix => ':school_id'
+
+
   map.revoke_certificate_device '/devices/:id/revoke_certificate', :controller => 'devices', :action => 'revoke_certificate', :conditions => { :method => :delete }, :path_prefix => ':school_id'
 
   map.image_server( 'servers/:id/image',
