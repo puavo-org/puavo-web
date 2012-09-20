@@ -10,11 +10,18 @@ class DevicesController < ApplicationController
       @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
       @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
       @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
+      @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
+    elsif request.format == 'application/json' && params[:version] && params[:version] == "v2"
+      @devices = Device.search( :scope => :one,
+                                :attributes => attributes ).map do |d|
+        d.last
+      end
+      @devices = @devices.map{ |d| Device.build_hash_for_to_json(d) }
     else
       @devices = Device.find(:all)
     end
 
-    @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
+
 
     respond_to do |format|
       format.html # index.html.erb
@@ -193,5 +200,29 @@ class DevicesController < ApplicationController
     if params[:school_id]
       @school = School.find(params[:school_id])
     end
+  end
+
+  def attributes
+    [ "description",
+      "ipHostNumber",
+      "jpegPhoto",
+      "macAddress",
+      "puavoDefaultPrinter",
+      "puavoDeviceAutoPowerOffMode",
+      "puavoDeviceBootMode",
+      "puavoDeviceManufacturer",
+      "puavoDeviceModel",
+      "puavoLatitude",
+      "puavoLocationName",
+      "puavoLongitude",
+      "puavoPurchaseDate",
+      "puavoPurchaseLocation",
+      "puavoPurchaseURL",
+      "puavoSupportContract",
+      "puavoTag",
+      "puavoWarrantyEndDate",
+      "serialNumber",
+      "puavoSchool",
+      "puavoHostname" ]
   end
 end
