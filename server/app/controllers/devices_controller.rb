@@ -8,8 +8,6 @@ class DevicesController < ApplicationController
 
     if @school
       @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
-      @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
-      @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
       @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
     elsif request.format == 'application/json' && params[:version] && params[:version] == "v2"
       @devices = Device.search( :scope => :one,
@@ -21,7 +19,10 @@ class DevicesController < ApplicationController
       @devices = Device.find(:all)
     end
 
-
+    if request.format == 'text/html'
+      @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
+      @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
+    end
 
     respond_to do |format|
       format.html # index.html.erb
