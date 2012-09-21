@@ -19,6 +19,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :find_school
 
+  after_filter :remove_authorization_user
   after_filter :remove_ldap_connection
 
   def find_school
