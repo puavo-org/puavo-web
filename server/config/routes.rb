@@ -46,6 +46,11 @@ ActionController::Routing::Routes.draw do |map|
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
 
+  map.auth( '/auth.:format',
+            :controller => 'sessions',
+            :action => 'auth',
+            :method => :get )
+  
   map.resources :search, :only => [:index]
 
   # The priority is based upon order of creation: first created -> highest priority.
