@@ -53,15 +53,17 @@ class Host < DeviceBase
     type_list.each_key do |type|
       type_list[type]["label"] = type_list[type]["label"][I18n.locale.to_s]
     end
-
+    
     # Set default device type by last device
-    if device = Device.find( :all,
-                             :attributes => ["*", "+"],
-                             :attribute => 'creatorsName',
-                             :value => Puavo::Authorization.current_user.dn.to_s).max do |a,b|
-        a.puavoId.to_i <=> b.puavoId.to_i
+    if Puavo::Authorization.current_user
+      if device = Device.find( :all,
+                               :attributes => ["*", "+"],
+                               :attribute => 'creatorsName',
+                               :value => Puavo::Authorization.current_user.dn.to_s ).max do |a,b|
+          a.puavoId.to_i <=> b.puavoId.to_i
+        end
+        default_device_type = device.puavoDeviceType
       end
-      default_device_type = device.puavoDeviceType
     end
     
     unless type_list.keys.include?(default_device_type)
