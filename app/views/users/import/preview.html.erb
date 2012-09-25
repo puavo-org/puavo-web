@@ -35,8 +35,7 @@
       <td class="action">
         <%= label_tag "users[#{@columns.count}][#{user_index}]", t('.change_school'), :class => "checkbox" %>
         <%= check_box_tag( "users[#{@columns.count}][#{user_index}]", user.earlier_user.puavoId ) %>
-        <br />
-        <% content_tag :span do %>
+        <% content_tag :span, :class => "change_school_info" do %>
           <%= user.earlier_user.school.displayName %>,
           <%= user.earlier_user.roles.map{ |role| role.displayName }.join(', ') %>
         <% end %>

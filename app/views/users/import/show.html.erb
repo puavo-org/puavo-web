@@ -1,3 +1,4 @@
+<div class="content_wrapper">
 <h2 class="pdf_info">
 <% if @invalid_users.empty? %>
 <%= t('.title', :count => @users.count) %></h2>
@@ -37,6 +38,7 @@
 <% end %>
 </table>
 <% end %>
+</div> <!-- content_wrapper -->
 <% content_for :footer do %>
 <ul>
   <li class="link_header">
