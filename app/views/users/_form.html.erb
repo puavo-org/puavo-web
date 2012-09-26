@@ -1,5 +1,5 @@
 <p class='required_info'><%= t('layouts.forms.required_field')%></p>
-<% form_for(@user, :url => path, :class =>"form-horizontal", :html => { :method => method, :multipart => true })  do |f| %>
+<% form_for(@user, :url => path, :class =>"form-horizontal", :html => { :method => method, :multipart => true,:autocapitalize =>"off" })  do |f| %>
 
   <table>
     <tr>
