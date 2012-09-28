@@ -49,6 +49,9 @@
 <%= link_to t('link.new_role'), new_role_path %>
 </li>
 <li>
+  <%= link_to t('link.destroy'), role_path, :confirm => t('general_confirm'), :method => :delete %>
+</li>
+<li>
 <%= link_to t('.change_school'), select_school_role_path %>
 </li>
 </ul>
