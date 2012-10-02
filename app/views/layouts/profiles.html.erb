@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title>Opinsys - (Web) Desktop - Muokkaa profiilin asetuksia</title>
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/iconfont.css">
+        <link rel="stylesheet" href="css/bootstrap-responsive.css">
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/master.css">
+    </head>
+    <body>
+      <div class="container-fluid well"> 
+      <button class="close">&times;</button>  
+        <div class="row-fluid">
+          <div class="span12 navigation">
+            <ul class="span9 nav nav-pills">
+              <li class="span5 justify"><a href="#">« Takaisin päänäkymään</a></li>
+            </ul>
+            <!-- Search form -->
+            <div class="span3">
+              <form class="form-inline clearfix">
+                  <input type="text" class="input-small search span10" placeholder="Hae">
+              </form> 
+            </div>
+          </div>
+          <div class="span12">
+            <div class="margin0auto w50">
+              <legend>Profiilin asetukset:</legend>  
+              <div class="span12 profile-details">
+                <div class="span4">
+                  <img class="avatar img-polaroid" src="img/avatar.jpg">
+                </div>
+                <div class="span6">
+                  <ul class="user-info-details">
+                    <li class="user-full-name"><strong>Mikko Möttönen</strong></li>
+                    <li class="user-class">7.luokka</li>
+                    <li class="user-school">Jyskän koulu</li>
+                  </ul>
+                </div>
+              </div>
+              <form class="form-horizontal">
+                <div class="control-group">
+                  <h4>Omat tiedot</h4>
+                  <label class="control-label">Puhelinnumero:</label>
+                  <div class="controls">
+                    <input type="text" placeholder="Puhelinnumero">
+                  </div>
+                  <div class="margin20">
+                    <label class="control-label">Sähköposti:</label>
+                    <div class="controls">
+                      <input type="text" placeholder="Sähköposti">
+                    </div>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <h4>Järjestelmän asetukset</h4>
+                  <label class="control-label">Teema:</label>
+                  <div class="controls">
+                    <select id="user-theme">
+                      <option>Teema 1</option>
+                      <option>Teema 2</option>
+                      <option>Teema 3</option>
+                    </select>
+                  </div>
+                  <div class="margin20">
+                    <label class="control-label">Taustakuva:</label>
+                    <div class="controls">
+                      <select id="user-bg">
+                        <option>Taustakuva 1</option>
+                        <option>Taustakuva 2</option>
+                        <option>Taustakuva 3</option>
+                     </select>
+                    </div>
+                  </div>
+                  <div class="margin20">
+                    <label class="control-label">Kieli:</label>
+                    <div class="controls">
+                      <select id="user-bg">
+                        <option>Kieli 1</option>
+                        <option>Kieli 2</option>
+                        <option>Kieli 3</option>
+                     </select>
+                    </div>
+                  </div>
+                  <div class="margin20">
+                    <label class="control-label">Hiiren kätisyys:</label>
+                    <div class="controls">
+                      <select id="user-bg">
+                        <option>Hiiren kätisyys 1</option>
+                        <option>Hiiren kätisyys 2</option>
+                        <option>Hiiren kätisyys 3</option>
+                     </select>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>  <!-- margin0auto -->
+          </div> <!-- main -->
+        </div> <!-- row-fluid -->
+      </div> <!-- container-fluid -->
+    </body>
+</html>
