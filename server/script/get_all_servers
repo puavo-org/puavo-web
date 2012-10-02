@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+require File.expand_path('../../config/boot',  __FILE__)
+require RAILS_ROOT + '/config/environment'
+
+bind_dn = "uid=admin,o=puavo"
+print "uid=admin,o=puavo password: "
+system('stty','-echo');
+password = STDIN.gets.chomp
+system('stty','echo');
+puts
+
+ldap_bases = []
+
+ldap_host = YAML.load_file("#{RAILS_ROOT}/config/ldap.yml")["production"]["host"]
+
+organisations = YAML.load_file("#{RAILS_ROOT}/config/organisations.yml")
+
+organisations.keys.each do |org|
+  ldap_bases.push organisations[org]["ldap_base"]
+end
+
+I18n.locale = :en
+
+default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+
+ldap_bases.each do |ldap_base|
+  puts ldap_base
+  # Setting up ldap configuration
+  LdapBase.ldap_setup_connection( ldap_host,
+                                  ldap_base,
+                                  bind_dn,
+                                  password )
+  
+  puts "\t" + (Server.all.map &:puavoHostname).inspect
+  puts
+end
+
