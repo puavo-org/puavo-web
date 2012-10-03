@@ -3,8 +3,9 @@ require File.expand_path('../../config/boot',  __FILE__)
 require RAILS_ROOT + '/config/environment'
 
 tag = ARGV[0]
-unless tag
+if tag.nil?
   puts "Server tag is no set. Usage: ruby script/set_tag_to_servers newtag"
+  exit
 end
 
 bind_dn = "uid=admin,o=puavo"
