@@ -241,6 +241,9 @@ fi:
       title_user: Käyttäjät
       title_role: Roolit
       title_group: Ryhmät
+  profiles:
+    edit:
+      title: Omat tiedot
   controllers:
     import:
       school_has_changed: Siirretty käyttäjä, käytössä vanha salasana

@@ -1,8 +1,26 @@
-<%= "#{@user.givenName} #{@user.surname}"  %>
+<div class="span12">
+  <div class="margin0auto w50">
 
-<%= render( :partial => 'form',
- :locals => {
-  :path => profile_path(@user),
-  :submit_text => t('link.update'),
-  :method => :put } ) %>
+    <legend><%= t('.title') %></legend>  
+    <div class="span12 profile-details">
+      <div class="span4">
+	<img class="avatar img-polaroid" src="img/avatar.jpg" />
+      </div>
+      <div class="span6">
+	<ul class="user-info-details">
+	  <li class="user-full-name"><strong><%= current_user.displayName %></strong></li>
+	  <li class="user-class"><%= (current_user.roles.map &:displayName).join(", ") %></li>
+	  <li class="user-school"><%= current_user.school.displayName %></li>
+	</ul>
+      </div>
+    </div>
+      
+    <%= render( :partial => 'form',
+                :locals => {
+                  :path => profile_path(@user),
+                  :submit_text => t('link.update'),
+                  :method => :put } ) %>
+    
+  </div>  <!-- margin0auto -->
+</div> <!-- span12 -->
 

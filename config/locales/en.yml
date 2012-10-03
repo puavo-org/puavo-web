@@ -241,6 +241,9 @@ en:
       title_user: Users
       title_role: Roles
       title_group: Groups
+  profiles:
+    edit:
+      title: My profile
   controllers:
     import:
       school_has_changed: "User is transferred, old password is used"

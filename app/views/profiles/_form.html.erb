@@ -1,9 +1,27 @@
-<% form_for(@user, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
-
-<%= f.label :mail %>
-<%= f.text_field :mail %>
-
-<%= f.label :telephoneNumber %>
-<%= f.text_field :telephoneNumber %>
-
+<% form_for( @user,
+             :url => path,
+             :html => {
+               :method => method,
+               :multipart => true,
+               :class => "form-horizontal" } ) do |f| %>
+  <div class="control-group">
+    <%= f.label :telephoneNumber, nil, :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
+    </div>
+    <div class="margin20">
+      <%= f.label :mail, nil, :class => "control-label" %>
+      <div class="controls">
+        <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
+      </div>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :preferredLanguage, nil, :class => "control-label" %>
+    <div class="controls">
+      <%= f.select( :preferredLanguage,
+                    [[t('language_default'), ""]] +
+                    Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } ) %>
+    </div>
+  </div>
 <% end %>

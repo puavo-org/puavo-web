@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>
+	<% if session.has_key?(:organisation) %>
+	  <%= session[:organisation].name %>
+	<% end %>
+      </title>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/reset.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/iconfont.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap-responsive.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/master.css" %>
+  </head>
+  
+  <body>
+    <div class="container-fluid well"> 
+      <button class="close">&times;</button>  
+      <div class="row-fluid">
+	<%= yield %>
+      </div> <!-- row-fluid -->
+    </div> <!-- container-fluid -->
+  </body>
+
+</html>
