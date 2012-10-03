@@ -1,0 +1,9 @@
+<% form_for(@user, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
+
+<%= f.label :mail %>
+<%= f.text_field :mail %>
+
+<%= f.label :telephoneNumber %>
+<%= f.text_field :telephoneNumber %>
+
+<% end %>

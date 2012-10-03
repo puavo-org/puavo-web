@@ -68,6 +68,11 @@ module NavigationHelpers
     when /the schools list page/
       schools_path
 
+    # Profile path
+    when /the edit profile page/
+      edit_profile_path
+
+
     # Add more mappings here.
     # Here is a more fancy example:
     #

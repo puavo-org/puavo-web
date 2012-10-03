@@ -145,4 +145,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :organisation, :only => [:show, :edit, :update]
 
   map.resources :search, :only => [:index]
+
+  map.resource :profile, :only => [:edit, :update]
 end

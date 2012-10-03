@@ -1,0 +1,8 @@
+<%= "#{@user.givenName} #{@user.surname}"  %>
+
+<%= render( :partial => 'form',
+ :locals => {
+  :path => profile_path(@user),
+  :submit_text => t('link.update'),
+  :method => :put } ) %>
+
