@@ -47,12 +47,15 @@ ldap_bases.each do |ldap_base|
 
   servers.each do |server|
     puts "\t#{server.puavoHostname}"
-    old_tags = server.puavoTag
-    new_tags = server.puavoTag.split(" ") + [tag]
+    old_tags = server.puavoTag.split(" ")
+    new_tags = old_tags
     puts "\t\told tags: " + old_tags.inspect
+    unless old_tags.include?(tag)
+      new_tags += [tag] 
+      server.puavoTag = new_tags
+      server.save!
+    end
     puts "\t\tnew tags: " + new_tags.inspect
-    server.puavoTag = new_tags
-    server.save!
   end
   puts
 end
