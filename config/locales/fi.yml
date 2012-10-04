@@ -96,6 +96,9 @@ fi:
       school_admin_removed:  "{{displayName}} ({{school_name}}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
       wrong_user_type: Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille
       destroyed_failed: Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua
+    profile:
+      updated: Tietojen tallennus onnistui
+      save_failed: Tietojen tallennus epäonnistui
   roles:
     index:
       actions: Toiminnot

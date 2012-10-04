@@ -1,5 +1,5 @@
 <% form_for( @user,
-             :url => path,
+             :url => profile_path,
              :html => {
                :method => method,
                :multipart => true,
@@ -22,6 +22,23 @@
       <%= f.select( :preferredLanguage,
                     [[t('language_default'), ""]] +
                     Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } ) %>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit submit_text %>
+      <div class="cancel">
+	<%= link_to t('link.cancel'),  edit_profile_path, :class => 'cancel_button' %>
+      </div>
+    </div>
+    <div class="controls">
+      <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
+        <% message_keys.each do |key| %>
+	  <p class="message_<%= key %>">
+	    <%= flash[key] %>
+	  </p>
+	<% end %>
+      <% end %>
     </div>
   </div>
 <% end %>

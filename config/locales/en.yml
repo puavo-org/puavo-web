@@ -97,6 +97,9 @@ en:
       wrong_user_type: School management access rights can be added only if type of user is admin
       save_failed: Failed to save access rights
       destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
+    profile:
+      updated: Profile was successfully updated
+      save_failed: Profile cannot be saved!
   roles:
     index:
       actions: Actions
