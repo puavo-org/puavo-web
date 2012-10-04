@@ -27,12 +27,9 @@
   <div class="control-group">
     <div class="controls">
       <%= f.submit submit_text %>
-      <div class="cancel">
-	<%= link_to t('link.cancel'),  edit_profile_path, :class => 'cancel_button' %>
-      </div>
     </div>
     <div class="controls">
-      <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
+      <% if message_keys = flash.keys.select { |key| [:notice, :alert].include?(key) } %>
         <% message_keys.each do |key| %>
 	  <p class="message_<%= key %>">
 	    <%= flash[key] %>
