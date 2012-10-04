@@ -1,7 +1,7 @@
 class ProfilesController < ApplicationController
   # skip_before_filter :ldap_setup_connection, :find_school, :login_required
 
-  # GET /profile
+  # GET /profile/edit
   def edit
 
     @user = User.find( session[:dn] )
