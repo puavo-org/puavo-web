@@ -1,9 +1,12 @@
+<% html_args = { :method => method,
+                 :multipart => true,
+                 :class => "form-horizontal" } %>
+<% html_args[:'data-remote'] = true if @data_remote %>
+               
+
 <% form_for( @user,
              :url => profile_path,
-             :html => {
-               :method => method,
-               :multipart => true,
-               :class => "form-horizontal" } ) do |f| %>
+             :html => html_args ) do |f| %>
   <div class="control-group">
     <%= f.label :telephoneNumber, nil, :class => "control-label" %>
     <div class="controls">

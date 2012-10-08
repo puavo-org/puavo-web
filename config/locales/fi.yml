@@ -247,6 +247,9 @@ fi:
   profiles:
     edit:
       title: Omat tiedot
+      save_and_close: Tallenna ja sulje
+    show:
+      message: Tietojen tallennus onnistui
   controllers:
     import:
       school_has_changed: Siirretty käyttäjä, käytössä vanha salasana

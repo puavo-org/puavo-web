@@ -247,6 +247,7 @@ en:
   profiles:
     edit:
       title: My profile
+      save_and_close: Save and close
   controllers:
     import:
       school_has_changed: "User is transferred, old password is used"

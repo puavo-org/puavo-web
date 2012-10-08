@@ -14,13 +14,14 @@
 	</ul>
       </div>
     </div>
-      
+
+    <span class="myProfileFormContent">
     <%= render( :partial => 'form',
                 :locals => {
                   :path => profile_path(@user),
-                  :submit_text => t('link.update'),
+                  :submit_text => ( @data_remote ? t('.save_and_close') : t('link.update') ),
                   :method => :put } ) %>
-    
+    </span>
   </div>  <!-- margin0auto -->
 </div> <!-- span12 -->
 

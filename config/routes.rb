@@ -146,5 +146,5 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :search, :only => [:index]
 
-  map.resource :profile, :only => [:edit, :update]
+  map.resource :profile, :only => [:edit, :update, :show]
 end
