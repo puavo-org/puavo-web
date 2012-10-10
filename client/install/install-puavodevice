@@ -65,7 +65,7 @@ def setup_kerberos(principals)
   end while error
 end
 
-def setup_openvpn
+def setup_openvpn(devicetype)
   begin
     mkdir('/etc/openvpn/keys')
 
@@ -90,32 +90,36 @@ def setup_openvpn
 	exit 0
 	EOF
     end
+
+    conflines = [
+      'client',
+      'dev tun',
+      'proto tcp-client',
+      'remote 217.112.254.13 443',
+      '',
+      "ca #{ ovpn_orgcabundle }",
+      "cert #{ ovpn_crt }",
+      "key #{ ovpn_key }",
+      'ns-cert-type server',
+      '',
+      'verb 3',
+      '',
+      'comp-lzo',
+      'keepalive 10 30',
+      (devicetype != 'laptop' \
+         ? [ "persist-tun", "persist-key", ] \
+	 : []),
+      'up-delay',
+      '',
+      'down "/etc/openvpn/runme down"',
+      'ipchange "/etc/openvpn/runme ipchange"',
+      'route-up "/etc/openvpn/runme route-up"',
+      'tls-verify "/etc/openvpn/runme tls-verify"',
+      'up "/etc/openvpn/runme up"',
+    ].flatten
+
     File.open('/etc/openvpn/puavoclient.conf', 'w', 0644) do |f|
-      f.print <<-EOF.gsub(/^\t+/, '')
-	client
-	dev tun
-	proto tcp-client
-	remote 217.112.254.13 443
-
-	ca #{ ovpn_orgcabundle }
-	cert #{ ovpn_crt }
-	key #{ ovpn_key }
-	ns-cert-type server
-
-	verb 3
-
-	comp-lzo
-	keepalive 10 60
-	persist-tun
-	persist-key
-	up-delay
-
-	down "/etc/openvpn/runme down"
-	ipchange "/etc/openvpn/runme ipchange"
-	route-up "/etc/openvpn/runme route-up"
-	tls-verify "/etc/openvpn/runme tls-verify"
-	up "/etc/openvpn/runme up"
-	EOF
+      f.print conflines.map { |s| "#{ s }\n" }.join('')
     end
     unless system('service openvpn restart')
       raise 'problem restarting openvpn'
@@ -210,6 +214,6 @@ case conf['devicetype']
     kerberos_principals = false
 end
 
-setup_openvpn()
+setup_openvpn(conf['devicetype'])
 setup_kerberos(kerberos_principals) if kerberos_principals
 setup_puppet(conf['puppet_server'], fqdn) if conf['puppet_server']
