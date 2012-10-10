@@ -1,5 +1,5 @@
 class User < LdapBase
-  include Puavo::Authentication if defined?(Puavo::Authentication)
+  include Puavo::AuthenticationMixin
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -41,5 +41,11 @@ class User < LdapBase
     end
     return result
   end
+
+
+  def organisation_owner?
+    LdapOrganisation.current.owner.include? self.dn
+  end
+
 end
 

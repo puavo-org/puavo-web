@@ -15,7 +15,7 @@ class HostsController < ApplicationController
   def types
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render :json => Host.types(params[:boottype]) }
+      format.json { render :json => Host.types(params[:boottype], current_user) }
     end
   end
 

@@ -2,25 +2,22 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  # puavo_organisation plugin
-  before_filter :set_organisation_to_session, :set_locale
-  helper_method :theme
-  # puavo_authentication plugin
-  before_filter :ldap_setup_connection, :login_required
-  before_filter :set_authorization_user
+  helper_method :theme, :school_list, :puavo_users?, :current_organisation
 
   helper :all # include all helpers, all the time
-  helper_method :logged_in?, :current_user_displayName, :organisation_owner?, :puavo_users?, :current_user
-
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  helper_method :current_user
 
-  # Scrub sensitive parameters from your log
-  filter_parameter_logging :password, :new_password, :new_password_confirmation
-
+  before_filter :set_initial_locale
+  before_filter :setup_authentication
+  before_filter :require_login
+  before_filter :require_puavo_authorization
+  before_filter :set_organisation_to_session
   before_filter :find_school
 
-  after_filter :remove_authorization_user
   after_filter :remove_ldap_connection
+
+  filter_parameter_logging :password, :new_password, :new_password_confirmation
 
   def find_school
     if params.has_key?(:school_id)

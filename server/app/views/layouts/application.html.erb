@@ -65,7 +65,7 @@
     <div class="topNavContainer">
       <div class="topNavContentContainer">
         <ul id="top-menu">
-          <% if organisation_owner? %>
+          <% if current_user.organisation_owner? %>
           <li class="organisation-menu-button">
             <span><%= session[:organisation].name %></span>
             <ul id="help" class="organisation-menu">
@@ -78,14 +78,14 @@
             </ul>
           </li>
           <% else %>
-          <li><span class="sub"><%= session[:organisation].name %></span></li>
+          <li><span class="sub"><%= current_organisation.name %></span></li>
           <% end %>
 
           <li class="school-menu-button">
             <span class="sub"><%= t('.schools') %></span>
             <ul>
-              <% session[:organisation].schools.each do |school| %>
-                <li class="top-menu-item<% if session[:organisation].schools.last == school %> last<% end %>">
+              <% current_organisation.schools(current_user).each do |school| %>
+                <li class="top-menu-item<% if current_organisation.schools(current_user).last.puavoId == school.puavoId %> last<% end %>">
                   <%= link_to school.displayName,  devices_path(school) %>
                 </li>
               <% end %>
@@ -102,7 +102,7 @@
 
         <ul id="top-menu-right" class="menu">
           <li><span><%= t('.logged_in_as') %></span></li>
-          <li><a href="#"><%= current_user_displayName %></a></li>
+          <li><a href="#"><%= current_user.displayName %></a></li>
           <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
         </ul>
       </div><!-- topNavContentContainer -->

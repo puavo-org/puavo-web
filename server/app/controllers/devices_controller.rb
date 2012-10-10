@@ -20,7 +20,7 @@ class DevicesController < ApplicationController
     end
 
     if request.format == 'text/html'
-      @device_types = Host.types('nothing')["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
+      @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
       @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
     end
 
