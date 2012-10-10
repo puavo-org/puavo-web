@@ -4,6 +4,7 @@ html,body{
 
 body{
   font-size: 100%;
+  overflow: hidden;
 }
 img{
   width: 100%;
@@ -13,10 +14,9 @@ img{
   font-size: 300%;
 }
 .container-fluid{
-  margin: 1em auto;
   padding: 2%;
   position: relative;
-  width: 93.333%;
+  height: 100%;
 }
 .main{
   margin: 5% 0 0;
@@ -169,4 +169,16 @@ button.close{
   .w50, .w60, .w70{
     width: 100%;
   }
+}
+
+.label_error {
+  color: red;
+}
+
+.field_error {
+  color: gray;
+}
+
+.controls {
+  font-size: 70%;    
 }
