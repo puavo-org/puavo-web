@@ -13,4 +13,8 @@ require 'puavo_authentication/controllers/helpers'
 
 ActionController::Base.send :include, PuavoAuthentication::Controllers::Helpers
 
-Puavo::OAUTH_CONFIG = YAML.load_file("#{ RAILS_ROOT }/config/oauth.yml")
+begin
+  Puavo::OAUTH_CONFIG = YAML.load_file("#{ RAILS_ROOT }/config/oauth.yml")
+rescue Errno::ENOENT => e
+  puts "WARNING: " + e.to_s
+end
