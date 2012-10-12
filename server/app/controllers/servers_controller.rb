@@ -6,7 +6,7 @@ class ServersController < ApplicationController
     @servers = @servers.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
 
     respond_to do |format|
-      if organisation_owner?
+      if current_user.organisation_owner?
         format.html # index.html.erb
         format.xml  { render :xml => @servers }
       else
