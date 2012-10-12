@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   layout 'sessions'
-  skip_before_filter :require_puavo_authorization
-  skip_before_filter :require_login
+  skip_before_filter :require_puavo_authorization, :execpt => [:show]
+  skip_before_filter :login_required, :only => [:new, :create]
 
   def new
   end
