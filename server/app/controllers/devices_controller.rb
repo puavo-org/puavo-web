@@ -65,7 +65,7 @@ class DevicesController < ApplicationController
     device = Device.find( :all,
                           :attributes => ["*", "+"],
                           :attribute => 'creatorsName',
-                          :value => Puavo::Authorization.current_user.dn.to_s).max do |a,b|
+                          :value => current_user.dn.to_s).max do |a,b|
       a.puavoId.to_i <=> b.puavoId.to_i
     end
 
