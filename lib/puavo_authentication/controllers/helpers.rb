@@ -194,7 +194,11 @@ module PuavoAuthentication
       end
 
       def organisation_key_from_host(host=nil)
-        Puavo::Organisation.key_by_host(request.host)
+        organisation_key = Puavo::Organisation.key_by_host(request.host)
+        unless organisation_key
+          organisation_key = Puavo::Organisation.key_by_host("*")
+        end
+        return organisation_key
       end
 
 
