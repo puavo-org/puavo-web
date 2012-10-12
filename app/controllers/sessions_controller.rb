@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
   end
 
   def show
-    @user = User.find(session[:dn])
+    @user = current_user
     respond_to do |format|
       format.json  { render :json => @user.to_json(:methods => :managed_schools) }
     end
