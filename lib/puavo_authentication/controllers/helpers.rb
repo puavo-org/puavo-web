@@ -176,7 +176,7 @@ module PuavoAuthentication
             :error => code,
             :message => message,
           }.to_json,
-          :status => 400)
+          :status => 401)
         else
           store_location
           flash[:notice] = message
