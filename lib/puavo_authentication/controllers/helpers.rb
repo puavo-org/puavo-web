@@ -42,7 +42,7 @@ module PuavoAuthentication
         authenticate_with_http_basic do |username, password|
           logger.debug "Using basic authentication with #{ username }"
 
-          # TODO: move to oauth controller
+          # FIXME: move to Puavo::Authentication class (configure_ldap_connection)
           if match = username.match(/^oauth_client_id\/(.*)\/(.*)$/)
 
             org_key = match[1]
