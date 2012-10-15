@@ -110,16 +110,6 @@ module PuavoAuthentication
           raise Puavo::AuthenticationFailed, "No credentials supplied"
         end
 
-
-        if uid = credentials[:uid]
-          # Configure new organisation for default Puavo credentials. This is
-          # used to fetch user dn from uid.
-          @authentication.configure_ldap_connection(
-            :organisation_key => credentials[:organisation_key]
-          )
-          credentials[:dn] = User.uid_to_dn(uid)
-        end
-
         # Configure ActiveLdap to use the credentials
         @authentication.configure_ldap_connection credentials
 

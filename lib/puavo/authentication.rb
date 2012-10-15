@@ -27,38 +27,13 @@ module Puavo
       base.send :extend, ClassMethods
     end
 
-
+    # FIXME Observer?
     def delete_dn_cache
-      Rails.cache.delete self.class.dn_cache_key uid
+      organisation_key = LdapOrganisation.first.cn.to_s
+      Rails.cache.delete Puavo::Authentication.dn_cache_key organisation_key, uid
     end
 
     module ClassMethods
-
-      def dn_cache_key(uid)
-        "user_dn:#{ uid }"
-      end
-
-      def uid_to_dn(uid)
-        if uid.nil? || uid.empty?
-          raise AuthenticationFailed, "Cannot get dn from empty or nil uid"
-        end
-
-        logger.debug "Looking up dn for #{ uid }"
-        dn = Rails.cache.fetch dn_cache_key(uid) do
-
-          user = self.find(:first, :attribute => "uid", :value => uid)
-
-          if user
-            user.dn.to_s
-          else
-            nil
-          end
-        end
-
-        raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'" if not dn
-        logger.debug "Found #{ dn } for #{ uid }"
-        return ActiveLdap::DistinguishedName.parse dn.to_s
-      end
 
     end
 
@@ -68,14 +43,12 @@ module Puavo
 
     attr_accessor :authenticated, :authorized
 
+    def self.dn_cache_key(organisation_key, uid)
+      "user_dn:#{ organisation_key }:#{ uid }"
+    end
 
     def initialize
-      # First configure ActiveLdap to use the default configuration from
-      # ldap.yml. This allows Puavo to search user dn from user uids.
-      @credentials = {
-        :dn => puavo_configuration["bind_dn"],
-        :password => puavo_configuration["password"],
-      }
+      @credentials = {}
     end
 
     [:dn, :organisation_key, :scope].each do |accessor|
@@ -107,15 +80,34 @@ module Puavo
 
     def configure_ldap_connection(credentials)
 
-
-      @credentials.merge! credentials.dup.symbolize_keys
+      @credentials = credentials
 
       if current_organisation.nil?
         raise Puavo::AuthenticationError, "Bad organisation"
       end
 
+      if uid = @credentials[:uid]
+        user_class = User
 
-      @credentials[:dn] = ActiveLdap::DistinguishedName.parse dn.to_s
+        user_dn = Rails.cache.fetch self.class.dn_cache_key(organisation_key, uid) do
+          # Remove previous connection
+          self.class.remove_connection
+          LdapBase.ldap_setup_connection( ldap_host,
+                                          base.to_s,
+                                          puavo_configuration["bind_dn"],
+                                          puavo_configuration["password"] )
+          
+          user = user_class.find(:first, :attribute => "uid", :value => uid)
+          
+          if user
+            user.dn.to_s
+          else
+            nil
+          end
+        end
+        @credentials[:dn] = ActiveLdap::DistinguishedName.parse user_dn
+        
+      end
 
       # Reset attributes on new configuration
       @current_user = nil
@@ -130,7 +122,7 @@ module Puavo
       logger.info "Configuring ActiveLdap to use #{ @credentials.map { |k,v| "#{ k }: #{ v }" }.join ", " }"
       logger.debug "PW: #{ @credentials[:password] }" if ENV["LOG_LDAP_PASSWORD"]
       # Setup new ActiveLdap connections to use user's credentials
-      LdapBase.ldap_setup_connection ldap_host, base.to_s, dn, @credentials[:password]
+      LdapBase.ldap_setup_connection ldap_host, base.to_s, @credentials[:dn], @credentials[:password]
 
       # Do not never ever allow anonymous connections in Puavo. Should be
       # false in config/ldap.yml, but we just make sure here.
