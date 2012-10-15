@@ -65,13 +65,8 @@ module PuavoAuthentication
 
           end
 
-          uid = username
-          if username.match(/^service\//)
-            uid = username.match(/^service\/(.*)/)[1]
-          end
-
           return {
-            :uid => uid,
+            :uid => username,
             :organisation_key => organisation_key_from_host,
             :password => password
           }

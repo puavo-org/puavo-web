@@ -84,7 +84,12 @@ module Puavo
       end
 
       if uid = @credentials[:uid]
-        user_class = User
+        if uid.match(/^service\//)
+          uid = uid.match(/^service\/(.*)/)[1]
+          user_class = ExternalService
+        else
+          user_class = User
+        end
 
         user_dn = Rails.cache.fetch self.class.dn_cache_key(organisation_key, uid) do
           # Remove previous connection
