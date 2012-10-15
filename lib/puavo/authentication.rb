@@ -51,12 +51,9 @@ module Puavo
       @credentials = {}
     end
 
-    [:dn, :organisation_key, :scope].each do |accessor|
-      define_method accessor do
-        @credentials[accessor]
-        # value = @credentials[accessor]
-        # raise "#{ accessor } is missing!" if value.nil?
-        # value
+    [:dn, :organisation_key, :scope].each do |attr|
+      define_method attr do
+        @credentials[attr]
       end
     end
 
