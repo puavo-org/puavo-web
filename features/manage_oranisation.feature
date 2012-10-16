@@ -44,7 +44,7 @@ Feature: Manage organisation
     | Postal code     | 88888                                                      |
     | State           | Keski-suomen lääni                                         |
     | Home page       | http://www.example.org                                     |
-    | Name            | Jyväskylä                                                  |
+    | Name            | Example Organisation 2                                     |
     | Abbreviation    | jkl                                                        |
     And I select "English" from "ldap_organisation[preferredLanguage]"
     And I select "13" from "ldap_organisation[puavoDeviceOnHour]"
@@ -68,5 +68,5 @@ Feature: Manage organisation
     | 13                                                         |
     | 19                                                         |
     | Custom                                                     |
-    | Jyväskylä                                                  |
+    | Example Organisation 2                                     |
     | jkl                                                        |

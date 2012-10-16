@@ -4,7 +4,7 @@ class ProfilesController < ApplicationController
   # GET /profile/edit
   def edit
 
-    @user = User.find( session[:dn] )
+    @user = current_user
 
     @data_remote = true if params[:'data-remote']
     
@@ -16,7 +16,7 @@ class ProfilesController < ApplicationController
   # PUT /profile
   def update
     
-    @user = User.find( session[:dn] )
+    @user = current_user
 
     respond_to do |format|
       if @user.update_attributes(params[:user])

@@ -36,6 +36,8 @@ module NavigationHelpers
       
     when /the new organisation page/
       new_organisation_path
+    when /the organisation page/
+      organisation_path
       
     # Role
     when /the new role page/
