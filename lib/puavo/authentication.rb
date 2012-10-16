@@ -22,21 +22,11 @@ module Puavo
 
   # For User model
   module AuthenticationMixin
-
-    def self.included(base)
-      base.send :extend, ClassMethods
-    end
-
     # FIXME Observer?
     def delete_dn_cache
       organisation_key = LdapOrganisation.first.cn.to_s
       Rails.cache.delete Puavo::Authentication.dn_cache_key organisation_key, uid
     end
-
-    module ClassMethods
-
-    end
-
   end
 
   class Authentication
