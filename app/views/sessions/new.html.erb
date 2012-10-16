@@ -1,5 +1,4 @@
-<% if session[:return_to] -%>
-  <%# TODO: i18n %>
+<% if RAILS_ENV == "development" && session[:return_to] -%>
   You must be logged in to access <%= session[:return_to] %>
 <% end -%>
 
