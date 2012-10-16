@@ -84,6 +84,10 @@ module Puavo
       end
 
       if uid = @credentials[:uid]
+        if uid.nil? || uid.empty?
+          raise AuthenticationFailed, "Cannot get dn from empty or nil uid"
+        end
+
         if uid.match(/^service\//)
           uid = uid.match(/^service\/(.*)/)[1]
           user_class = ExternalService
@@ -107,8 +111,10 @@ module Puavo
             nil
           end
         end
-        @credentials[:dn] = ActiveLdap::DistinguishedName.parse user_dn
         
+        raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'" if not user_dn
+        logger.debug "Found #{ dn } for #{ uid }"
+        @credentials[:dn] = ActiveLdap::DistinguishedName.parse user_dn
       end
 
       # Reset attributes on new configuration
