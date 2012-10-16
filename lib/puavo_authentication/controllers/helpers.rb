@@ -198,9 +198,9 @@ module PuavoAuthentication
         # TODO: set from user agent
 
         # Set from hostname if it is a known organisation
-        # if organisation_from_host
-        #   I18n.locale = organisation_from_host.locale
-        # end
+        if organisation = Puavo::Organisation.find_by_host(request.host)
+          I18n.locale = organisation.locale
+        end
 
       end
 
