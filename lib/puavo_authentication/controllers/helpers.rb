@@ -96,11 +96,6 @@ module PuavoAuthentication
 
       def perform_login(credentials)
 
-        if @authentication && @authentication.authenticated
-          logger.debug "Already required login with #{ @authentication.dn }"
-          return true
-        end
-
         if credentials.nil?
           raise Puavo::AuthenticationFailed, "No credentials supplied"
         end
