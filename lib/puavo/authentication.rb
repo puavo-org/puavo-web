@@ -117,7 +117,7 @@ module Puavo
 
 
 
-      logger.info "Configuring ActiveLdap to use #{ @credentials.map { |k,v| "#{ k }: #{ v }" }.join ", " }"
+      logger.info "Configuring ActiveLdap to use #{ @credentials.select{ |a,b| a != :password }.map { |k,v| "#{ k }: #{ v }" }.join ", " }"
       logger.debug "PW: #{ @credentials[:password] }" if ENV["LOG_LDAP_PASSWORD"]
       # Setup new ActiveLdap connections to use user's credentials
       LdapBase.ldap_setup_connection ldap_host, base.to_s, @credentials[:dn], @credentials[:password]
