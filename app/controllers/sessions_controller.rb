@@ -13,6 +13,13 @@ class SessionsController < ApplicationController
     redirect_back_or_default root_path
   end
 
+  def auth
+    
+    respond_to do |format|
+      format.json { render :json => true.to_json }
+    end
+  end
+
   def show
     @user = current_user
     respond_to do |format|
