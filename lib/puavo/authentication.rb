@@ -182,6 +182,10 @@ module Puavo
       dn.rdns[1]["ou"] == "System Accounts"
     end
 
+    def server?
+      dn.rdns[1]["ou"] == "Servers"
+    end
+
     def oauth_client_server?
       dn.rdns.first.keys.first == "puavoOAuthClientId"
     end
@@ -222,6 +226,12 @@ module Puavo
       organisation = LdapOrganisation.first
       if organisation && organisation.owner && organisation.owner.include?(dn)
         logger.info "Authorization ok: Organisation owner #{ dn }"
+        return @authorized = true
+      end
+
+      # Authorize servers
+      if server?
+        logger.info "Authorization ok: Server #{ dn }"
         return @authorized = true
       end
 

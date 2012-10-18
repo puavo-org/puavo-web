@@ -39,6 +39,7 @@ module PuavoAuthentication
         #  * OAuth Client Server ID & Secrect
         #  * External Service UID & password
         #  * User UID & password
+        #  * Server dn & password
         authenticate_with_http_basic do |username, password|
           logger.debug "Using basic authentication with #{ username }"
 
@@ -63,6 +64,17 @@ module PuavoAuthentication
               :scope => oauth_client_server.puavoOAuthScope
             }
 
+          end
+
+          # Authenticate with server's distinguished name and password
+          if (server_dn = ActiveLdap::DistinguishedName.parse(username) rescue nil)
+            if server_dn.parent.rdns.first["ou"] == "Servers"
+              return {
+                :dn => server_dn,
+                :organisation_key => organisation_key_from_host,
+                :password => password,
+              }
+            end
           end
 
           return {
