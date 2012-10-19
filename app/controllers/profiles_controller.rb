@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  # skip_before_filter :ldap_setup_connection, :find_school, :login_required
+  skip_before_filter :require_puavo_authorization
 
   # GET /profile/edit
   def edit
