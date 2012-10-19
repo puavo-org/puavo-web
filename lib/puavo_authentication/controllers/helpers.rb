@@ -67,7 +67,7 @@ module PuavoAuthentication
           end
 
           # Authenticate with server's distinguished name and password
-          if (server_dn = ActiveLdap::DistinguishedName.parse(username) rescue nil)
+          if !username.to_s.empty? && (server_dn = ActiveLdap::DistinguishedName.parse(username) rescue nil)
             if server_dn.parent.rdns.first["ou"] == "Servers"
               return {
                 :dn => server_dn,
