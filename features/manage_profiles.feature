@@ -9,9 +9,11 @@ Feature: Manage profile
     And the following roles:
       | displayName |
       | Teacher     |
+      | Class 4     |
     And the following users:
-      | givenName | surname | uid       | password | puavoEduPersonAffiliation | role_name | school_admin |
-      | Ken       | Jones   | ken.jones | secret   | teacher                   | Teacher   | true         |
+      | givenName | surname | uid       | password   | puavoEduPersonAffiliation | role_name | school_admin |
+      | Ken       | Jones   | ken.jones | secret     | teacher                   | Teacher   | true         |
+      | Jane      | Doe     | jane.doe  | janesecret | student                   | Class 4   | false        |
 
 
   Scenario: School admin edit profile
@@ -37,5 +39,18 @@ Feature: Manage profile
     # And I fill in "theme" with ""
     # And I fill in "mouse?" with ""
 
+    When I press "Update"
+    Then I should see "Profile was successfully updated"
+
+  Scenario: Student edit profile
+    When I am on the edit profile page
+    Then I should be on the login page
+    When I fill in "Username" with "jane.doe"
+    And I fill in "Password" with "janesecret"
+    And I press "Login"
+    Then I should see "Login successful!"
+    And I should see "Jane Doe"
+    When I fill in "Email" with "jane.doe@opinsys.fi"
+    And I fill in "Telephone number" with "+35814987654321"
     When I press "Update"
     Then I should see "Profile was successfully updated"

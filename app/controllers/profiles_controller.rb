@@ -17,9 +17,14 @@ class ProfilesController < ApplicationController
   def update
     
     @user = current_user
+    
+    # Create params for ldap replace operation.
+    modify_params = params[:user].select{ |k,v| !v.empty? }.inject([]) do |result, attribute|
+      result.push attribute.first => attribute.last
+    end
 
     respond_to do |format|
-      if @user.update_attributes(params[:user])
+      if @user.ldap_modify_operation( :replace, modify_params )
         flash[:notice] = t('flash.profile.updated')
         format.html { redirect_to( profile_path ) }
         format.js { render :text => 'window.close()' }
