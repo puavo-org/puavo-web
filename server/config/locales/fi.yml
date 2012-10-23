@@ -265,6 +265,7 @@ fi:
         puavoDeviceAutoPowerOffMode_custom: Mukautettu
         puavoDeviceOnHour: Päivän aloitus
         puavoDeviceOffHour: Päivän lopetus
+        puavoDeviceImage: Levykuva
       user:
         uid: Käyttäjätunnus
         password: Salasana

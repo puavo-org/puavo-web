@@ -52,6 +52,10 @@
                     [ [t('shared.boot_mode_netboot'),"netboot"],
                       [t('shared.boot_mode_dualboot'), "dualboot"] ] ) %></td>
 </tr>
+<tr>
+  <td><%= f.label :puavoDeviceImage %></td>
+  <td><%= f.text_field :puavoDeviceImage %></td>
+</tr>
 <% end %>
 
 <% unless f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>

@@ -267,6 +267,7 @@ en:
         puavoDeviceAutoPowerOffMode_custom: Custom
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
+        puavoDeviceImage: Device image
       user:
         uid: Username
         password: Password
