@@ -54,6 +54,24 @@
 <hr />
 </div>
 
+<% if current_user.organisation_owner? %>
+
+<div class="dashboard_box list billing_info">
+<h3><%= t('.billing_info') %></h3>
+<h4><%= t('.rule_lines') %></h4>
+
+  <div class="row">
+    <% Array(@school.puavoBillingInfo).each do |billing_info| %>
+      <div class="row">
+	<span><%=h billing_info %></span>
+      </div>
+    <% end %>
+  </div>
+
+</div>
+
+<% end %>
+
 <% content_for :right do %>
   <ul class="tools">
   <li>

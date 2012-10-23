@@ -122,6 +122,27 @@
       <%= f.text_field :puavoDeviceImage %>
     </td>
   </tr>
+  <% if current_user.organisation_owner? %>
+  <tr>
+    <td>
+      <%= f.label :puavoBillingInfo %>
+    </td>
+    <td>
+
+    <div id="school_puavoBillingInfo">
+      <% if Array(f.object.puavoBillingInfo).empty? %>
+        <input name='school[puavoBillingInfo][]' type='text' />
+      <% else %>
+        <% Array(f.object.puavoBillingInfo).each_index do |index| %>
+          <input name='school[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
+        <% end %>
+      <% end %>
+    </div>
+    <%= link_to t('.add_puavo_billing_info'), "#", :class => "clone_prev_input_element" %>
+
+    </td>
+  </tr>
+  <% end %>
 </table>
 
 <div>

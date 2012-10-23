@@ -225,6 +225,10 @@ fi:
       name: Nimi
       phone: Puhelinnumero
       mail: Sähköpostiosoite
+      billing_info: Laskutustiedot
+      rule_lines: Laskusäännöt
+    form:
+      add_puavo_billing_info: Lisää laskutustietoja
   password:
     edit:
       title: Vaihda toisen käyttäjän salasana
@@ -319,6 +323,7 @@ fi:
         st: "Maakunta"
         gidNumber: "Gid-numero"
         puavoDeviceImage: Levykuva
+        puavoBillingInfo: Laskutustiedot
       user:
         displayName: "Nimi"
         sn: "Sukunimi"

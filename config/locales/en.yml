@@ -225,6 +225,10 @@ en:
       name: Name
       phone: Phone number
       mail: E-mail
+      billing_info: Billing info
+      rule_lines: Rules
+    form:
+      add_puavo_billing_info:  Add another billing info
   password:
     edit:
       title: Change password for other user
@@ -319,6 +323,7 @@ en:
         st: "State"
         gidNumber: "Gid number"
         puavoDeviceImage: Device image
+        puavoBillingInfo: Billing info
       user:
         displayName: "Name"
         sn: "Surname"
