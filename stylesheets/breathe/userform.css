@@ -36,6 +36,7 @@ table, td, th {
 #device_puavoDeviceXrandr input,
 #device_macAddress input,
 #server_puavoExport_list input,
+#organisation_puavoBillingInfo input,
 #school_puavoBillingInfo input {
   display: block;
 }
