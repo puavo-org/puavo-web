@@ -247,6 +247,7 @@ fi:
     edit:
       title: Organisaation tiedot
       select: Valitse
+      add_puavo_billing_info: Lisää laskutustietoja
   external_services:
     index:
       actions: Toiminnot
@@ -378,6 +379,7 @@ fi:
         puavoDeviceOffHour: Päivän lopetus
         o: Nimi
         puavoEduOrgAbbreviation: Lyhenne
+        puavoBillingInfo: Laskutustiedot
       external_service:
         uid: Palvelun tunniste
         description: Kuvaus

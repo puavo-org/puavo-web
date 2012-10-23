@@ -247,6 +247,7 @@ en:
     edit:
       title: Information of organisation
       select: Select
+      add_puavo_billing_info: Add another billing info
   external_services:
     index:
       actions: Actions
@@ -378,6 +379,7 @@ en:
         puavoDeviceOffHour: Daytime end
         o: Name
         puavoEduOrgAbbreviation: Abbreviation
+        puavoBillingInfo: Billing info
       external_service:
         uid: Service Identifier
         description: Description
