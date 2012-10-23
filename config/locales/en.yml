@@ -318,6 +318,7 @@ en:
         postalCode: "Postal code"
         st: "State"
         gidNumber: "Gid number"
+        puavoDeviceImage: Device image
       user:
         displayName: "Name"
         sn: "Surname"
