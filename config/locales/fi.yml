@@ -318,7 +318,7 @@ fi:
         postalCode: "Postinumero"
         st: "Maakunta"
         gidNumber: "Gid-numero"
-        puavoDeviceImage: Laitekuva
+        puavoDeviceImage: Levykuva
       user:
         displayName: "Nimi"
         sn: "Sukunimi"
