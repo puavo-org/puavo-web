@@ -32,6 +32,9 @@ class DeviceBase < LdapBase
                             :host_configuration ]
     end
     method_values = { }
+
+    allowed_attributes["dn"] = dn.to_s
+
     # Create Hash by :methods name if :methods options is set.
     if options.has_key?(:methods)
       method_values = Array(options[:methods]).inject({ }) do |result, method|
