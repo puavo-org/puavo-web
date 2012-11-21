@@ -34,6 +34,7 @@ class DeviceBase < LdapBase
     method_values = { }
 
     allowed_attributes["dn"] = dn.to_s
+    allowed_attributes["base"] = base.to_s
 
     # Create Hash by :methods name if :methods options is set.
     if options.has_key?(:methods)
