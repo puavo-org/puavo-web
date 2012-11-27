@@ -6,7 +6,15 @@ class OrganisationsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render :json => @organisation }
+      format.json do
+        json = JSON.parse @organisation.to_json
+
+        json[:ldap_host] = LdapBase.ensure_configuration["host"]
+        json[:kerberos_realm] = @organisation.puavoKerberosRealm
+        json[:puavo_domain] = @organisation.puavoDomain
+
+        render :json => json
+      end
     end
   end
 
