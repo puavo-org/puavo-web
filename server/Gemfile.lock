@@ -98,7 +98,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activeldap
+  activeldap (= 1.2.4)
   capybara
   cucumber-rails
   database_cleaner
