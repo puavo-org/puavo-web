@@ -6,7 +6,7 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 gem "prawn"
 gem "net-ldap", '0.2.2' # review monkeypatches.rb before upgrading this
 gem 'activeldap', '1.2.4', :require => 'active_ldap' # review monkeypatches.rb before upgrading this
-gem 'puavo_authentication', '0.2.4'
+gem 'puavo_authentication', '0.2.5'
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
 gem 'uuid'
