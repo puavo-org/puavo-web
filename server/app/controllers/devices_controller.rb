@@ -37,7 +37,7 @@ class DevicesController < ApplicationController
   def show
     @device = Device.find(params[:id])
 
-    @device.get_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+    @device.get_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(session[:organisation].organisation_key)
 
     respond_to do |format|
@@ -91,7 +91,7 @@ class DevicesController < ApplicationController
   # GET /devices/1/edit
   def edit
     @device = Device.find(params[:id])
-    @device.get_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+    @device.get_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
   end
 
   # POST /devices
@@ -107,7 +107,7 @@ class DevicesController < ApplicationController
 
     if @device.valid?
       unless @device.host_certificate_request.nil?
-        @device.sign_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+        @device.sign_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
         @device.get_ca_certificate(session[:organisation].organisation_key)
       end
     end
@@ -149,7 +149,7 @@ class DevicesController < ApplicationController
   def destroy
     @device = Device.find(params[:id])
     # FIXME, revoke certificate only if device's include certificate
-    @device.revoke_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+    @device.revoke_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
     @device.destroy
 
     respond_to do |format|
@@ -162,7 +162,7 @@ class DevicesController < ApplicationController
   def revoke_certificate
     @device = Device.find(params[:id])
     # FIXME, revoke certificate only if device's include certificate
-    @device.revoke_certificate(session[:organisation].organisation_key, session[:dn], session[:password_plaintext])
+    @device.revoke_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
 
     # If certificate revoked we have to also disabled device's userPassword
     @server.userPassword = nil
