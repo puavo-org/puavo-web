@@ -41,7 +41,7 @@ module Puavo
       @credentials = {}
     end
 
-    [:dn, :organisation_key, :scope].each do |attr|
+    [:dn, :organisation_key, :scope, :password].each do |attr|
       define_method attr do
         @credentials[attr]
       end
