@@ -103,6 +103,27 @@
 	  </table>
 	</td>
   </tr>
+
+  <tr>
+    <td>
+      <%= f.label :puavoBillingInfo %>
+    </td>
+    <td>
+
+    <div id="organisation_puavoBillingInfo">
+      <% if Array(f.object.puavoBillingInfo).empty? %>
+        <input name='ldap_organisation[puavoBillingInfo][]' type='text' />
+      <% else %>
+        <% Array(f.object.puavoBillingInfo).each_index do |index| %>
+          <input name='ldap_organisation[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
+        <% end %>
+      <% end %>
+    </div>
+    <%= link_to t('.add_puavo_billing_info'), "#", :class => "clone_prev_input_element" %>
+
+    </td>
+  </tr>
+
   <tr>
     <td><%= f.submit t('link.update') %>
       <div class="cancel"><%= link_to t('link.cancel'), organisation_path, :class => 'cancel_button' %></div></td>

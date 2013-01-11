@@ -1,0 +1,7 @@
+<h1><span><%= t('.title') %></span></h1>
+
+<%= render( :partial => 'form',
+            :locals => {
+              :path => oauth_clients_path,
+              :submit_text => t('link.create'),
+              :method => :post } ) %>

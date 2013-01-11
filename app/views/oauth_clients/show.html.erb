@@ -1,0 +1,36 @@
+<table>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "displayName" %></td>
+  <td class="value_td"><%= @oauth_client.displayName %></td>
+  </tr>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "puavoOAuthClientId" %></td>
+  <td class="value_td"><%= @oauth_client.puavoOAuthClientId %></td>
+  </tr>
+  <% if flash[:oauth_client_new_password] %>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "userPassword" %></td>
+  <td class="value_td"><%= flash[:oauth_client_new_password] %></td>
+  </tr>
+  <% end %>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "puavoOAuthScope" %></td>
+  <td class="value_td"><%= @oauth_client.puavoOAuthScope %></td>
+  </tr>
+  <tr>
+  <td class="label_td view"><%= label "oauth_client", "puavoOAuthClientType" %></td>
+  <td class="value_td"><%= @oauth_client.puavoOAuthClientType %></td>
+  </tr>
+</table>
+
+
+<% content_for :right do %>
+<div><%= link_to t('link.edit'), edit_oauth_client_path(@oauth_client) %></div>
+<div>
+  <%= link_to( t('link.destroy'),
+               oauth_client_path(@oauth_client),
+               :confirm => t('destroy_confirm',
+                             :object_name => @oauth_client.displayName),
+               :method => :delete ) %>
+</div>
+<% end %>

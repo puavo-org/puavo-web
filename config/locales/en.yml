@@ -1,5 +1,16 @@
 en:
   must_be_logged_in: You must be logged in
+  oauth:
+    change: change
+    login: Login
+    password_forget: Forgot your password?
+    username: Username
+    password: Password
+    login_description1: Login to service
+    login_description2: with your Opinsys-credentials
+    select_organistion: Select school or organistion
+    next: Next
+    organisation_help: lalala
   create_organisation_owner:
     school_name: Administration
     role_name: Maintenance
@@ -22,6 +33,7 @@ en:
       printers: Printers
       search_placeholder: Search
       links: Links
+      oauth_clients: OAuth clients
     forms:
       required_field: "* = Required field"
   link:
@@ -97,6 +109,9 @@ en:
       wrong_user_type: School management access rights can be added only if type of user is admin
       save_failed: Failed to save access rights
       destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
+    profile:
+      updated: Profile was successfully updated
+      save_failed: Profile cannot be saved!
   roles:
     index:
       actions: Actions
@@ -210,6 +225,10 @@ en:
       name: Name
       phone: Phone number
       mail: E-mail
+      billing_info: Billing info
+      rule_lines: Rules
+    form:
+      add_puavo_billing_info:  Add another billing info
   password:
     edit:
       title: Change password for other user
@@ -228,6 +247,7 @@ en:
     edit:
       title: Information of organisation
       select: Select
+      add_puavo_billing_info: Add another billing info
   external_services:
     index:
       actions: Actions
@@ -236,11 +256,26 @@ en:
       title: New external service
     edit:
       title: Edit external service
+  oauth_clients:
+    new:
+      title: New OAuth client
+    edit:
+      title: Editing OAuth client
+    index:
+      title: OAuth cliets
+      actions: Actions
+      new: New
   search:
     search_result:
       title_user: Users
       title_role: Roles
       title_group: Groups
+  profiles:
+    edit:
+      title: My profile
+      save_and_close: Save and close
+    show:
+      message: Profile was successfully updated
   controllers:
     import:
       school_has_changed: "User is transferred, old password is used"
@@ -266,6 +301,7 @@ en:
       user: User
       school: School
       external_service: External service
+      oauth_client: OAuth client
     attributes:
       role:
         displayName: "Role name"
@@ -287,6 +323,8 @@ en:
         postalCode: "Postal code"
         st: "State"
         gidNumber: "Gid number"
+        puavoDeviceImage: Device image
+        puavoBillingInfo: Billing info
       user:
         displayName: "Name"
         sn: "Surname"
@@ -341,6 +379,7 @@ en:
         puavoDeviceOffHour: Daytime end
         o: Name
         puavoEduOrgAbbreviation: Abbreviation
+        puavoBillingInfo: Billing info
       external_service:
         uid: Service Identifier
         description: Description
@@ -349,6 +388,12 @@ en:
         dn: Bind DN
       device:
         puavoHostname: Name
+      oauth_client:
+        displayName: Name
+        puavoOAuthClientId: Client id
+        userPassword: Client secret
+        puavoOAuthScope: Scope
+        puavoOAuthClientType: Client type
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student

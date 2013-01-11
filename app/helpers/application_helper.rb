@@ -8,9 +8,9 @@ module ApplicationHelper
     # Using humanize method by String class If args[2] is nil
     args[2] = attribute_translate_name unless attribute_translate_name.nil?
 
-    # Add lable_error class to fiel element if object is invalid
+    # Add lable_error class to field element if object is invalid
     if args[3] && args[3][:object] && args[3][:object].errors.invalid?(args[1])
-      args[3][:class] = 'label_error'
+      args[3][:class] = Array([ 'label_error', args[3][:class] ]).join(" ")
     end
     super(*args)
   end

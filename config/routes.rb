@@ -1,4 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
+  # Enable OAuth route only if configuration file found
+  oauth_enabled = (File.open("#{RAILS_ROOT}/config/oauth.yml") rescue nil) ? true : false
+
+  map.resources :oauth_clients if oauth_enabled
+
   map.resource :rename_groups, :path_prefix => ':school_id'
 
   map.resources :external_services
@@ -145,4 +150,16 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :organisation, :only => [:show, :edit, :update]
 
   map.resources :search, :only => [:index]
+
+  map.resource :profile, :only => [:edit, :update, :show]
+
+  if oauth_enabled
+    map.with_options :controller => 'oauth' do |oauth|
+      oauth.oauth_authorize "oauth/authorize", :action => 'authorize', :conditions => {:method => :get}
+      oauth.oauth_authorize_post "oauth/authorize", :action => 'authorize_post', :conditions => {:method => :post}
+      oauth.oauth_access_token 'oauth/token', :action => 'token', :conditions => {:method => :post}
+      oauth.ping 'oauth/ping', :action => 'ping'
+      oauth.whoami 'oauth/whoami', :action => 'whoami'
+    end
+  end
 end

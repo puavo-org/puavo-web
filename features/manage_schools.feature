@@ -16,32 +16,36 @@ Feature: Manage schools
     Given I am on the new school page
     Then I should see "New school"
     When I fill in the following:
-    | School name        | Bourne School                                                                  |
-    | Name prefix        | bourne                                                                         |
-    | School's home page | www.bourneschool.com                                                           |
-    | Description        | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
-    | Group name         | bourne                                                                         |
-    | Phone number       | 0123456789                                                                     |
-    | Fax number         | 9876543210                                                                     |
-    | Locality           | England                                                                        |
-    | Street             | Raymond Mays Way                                                               |
-    | Post Office Box    | 123                                                                            |
-    | Postal address     | 12345                                                                          |
-    | Postal code        | 54321                                                                          |
-    | State              | East Midlands                                                                  |
+    | School name                | Bourne School                                                                  |
+    | Name prefix                | bourne                                                                         |
+    | School's home page         | www.bourneschool.com                                                           |
+    | Description                | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
+    | Group name                 | bourne                                                                         |
+    | Phone number               | 0123456789                                                                     |
+    | Fax number                 | 9876543210                                                                     |
+    | Locality                   | England                                                                        |
+    | Street                     | Raymond Mays Way                                                               |
+    | Post Office Box            | 123                                                                            |
+    | Postal address             | 12345                                                                          |
+    | Postal code                | 54321                                                                          |
+    | State                      | East Midlands                                                                  |
+    | Device image               | presice-20121023                                                               |
+    | school[puavoBillingInfo][] | school_base:500                                                                |
     And I attach the file at "features/support/test.jpg" to "image"
     And I press "Create"
     Then I should not see "error"
     # Translation missing
     And I should not see "en, activeldap, attributes, school"
     And I should see the following:
-    |                                                                                |
-    | Bourne School                                                                  |
-    | School's home page                                                             |
-    | Raymond Mays Way                                                               |
-    | 123                                                                            |
-    | 12345                                                                          |
-    | 54321                                                                          |
+    |                    |
+    | Bourne School      |
+    | School's home page |
+    | Raymond Mays Way   |
+    | 123                |
+    | 12345              |
+    | 54321              |
+    | presice-20121023   |
+    | school_base:500    |
     And I should see "School was successfully created."
 
   Scenario: Add new school to organisation without names

@@ -1,0 +1,6 @@
+<% @data_remote = true %>
+$('.myProfileFormContent').html("<%= escape_javascript( render( :partial => 'form',
+                                                   :locals => {
+                                                     :path => profile_path(@user),
+                                                     :submit_text => t('profiles.edit.save_and_close'),
+                                                     :method => :put } ) ) %>");

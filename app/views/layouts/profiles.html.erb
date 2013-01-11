@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>
+	<% if session.has_key?(:organisation) %>
+	  <%= session[:organisation].name %>
+	<% end %>
+      </title>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/reset.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/iconfont.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap-responsive.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap.css" %>
+    <%= stylesheet_link_tag "/web-desktop-theme/css/master.css" %>
+
+    <%= javascript_include_tag( "jquery-1.8.2",
+                                "rails-1.8.2" ) %>
+  </head>
+  
+  <body>
+    <div class="container-fluid well"> 
+      <div class="row-fluid">
+	<%= yield %>
+      </div> <!-- row-fluid -->
+    </div> <!-- container-fluid -->
+  </body>
+
+</html>

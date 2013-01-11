@@ -90,3 +90,10 @@ Feature: Manage external services
       | uid 1 | description 1 | secretpassword1 | auth   |
       | uid 2 | description 2 | secretpassword2 | auth   |
       | uid 3 | description 3 | secretpassword3 | getent |
+
+  Scenario: Get organisation information with external service user
+    Given the following external services:
+      | uid    | description   | userPassword    | groups  |
+      | iivari | description 1 | secretpassword1 | orginfo |
+    When I get the organisation JSON page with "service/iivari" and "secretpassword1"
+    Then I should see JSON "{preferred_language: en, domain: example.opinsys.net, name: Example Organisation}"

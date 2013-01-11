@@ -2,7 +2,12 @@ class RenameGroupsController < ApplicationController
 
   def new
     # Detect class range
-    @roles = @school.roles.select{ |r| r.displayName.match(/\d+/) }.sort{ |a,b| a.displayName <=> b.displayName }
+    @roles = @school.roles.select do |r|
+      r.displayName.match(/\d+/) && !r.displayName.match(/poistuvat/)
+    end.sort do |a,b|
+      a.displayName <=> b.displayName
+    end
+
     @class_numbers = @roles.map{ |r| r.displayName.match(/\d+/)[0].to_i }
 
     @first_class_number = @class_numbers.min
@@ -17,7 +22,12 @@ class RenameGroupsController < ApplicationController
 
     @first_class_roles = @roles.select{ |r| r.displayName.match(/\d+/)[0].to_i == @first_class_number }
 
-    @groups = @school.groups.select{ |g| g.displayName.match(/\d+/) }.sort{ |a,b| a.displayName <=> b.displayName }
+    @groups = @school.groups.select do |g|
+      g.displayName.match(/\d+/) && !g.displayName.match(/poistuvat/)
+    end.sort do |a,b|
+      a.displayName <=> b.displayName
+    end
+
     @group_class_numbers = @groups.map{ |g| g.displayName.match(/\d+/)[0].to_i }
     @first_group_class_number = @group_class_numbers.min
     @last_group_class_number = @group_class_numbers.max

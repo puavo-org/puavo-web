@@ -3,7 +3,7 @@ class User < LdapBase
   # When using user mass import we have to store uids which are already been taken. See validate method.
   @@reserved_uids = Array.new
 
-  include Puavo::Authentication
+  include Puavo::AuthenticationMixin
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -325,17 +325,21 @@ class User < LdapBase
   end
 
   def destroy(*args)
-    self.class.delete_caches uid
+    delete_dn_cache
     super
   end
 
   def update_attributes(*args)
-    self.class.delete_caches uid
+    delete_dn_cache
     super
   end
 
   def id
     self.puavoId.to_s unless self.puavoId.nil?
+  end
+
+  def organisation_owner?
+    LdapOrganisation.current.owner.include? self.dn
   end
 
   # Update user's role list by role_ids

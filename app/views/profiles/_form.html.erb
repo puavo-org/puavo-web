@@ -1,0 +1,44 @@
+<% html_args = { :method => method,
+                 :multipart => true,
+                 :class => "form-horizontal" } %>
+<% html_args[:'data-remote'] = true if @data_remote %>
+               
+
+<% form_for( @user,
+             :url => profile_path,
+             :html => html_args ) do |f| %>
+  <div class="control-group">
+    <%= f.label :telephoneNumber, nil, :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
+    </div>
+    <div class="margin20">
+      <%= f.label :mail, nil, :class => "control-label" %>
+      <div class="controls">
+        <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
+      </div>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :preferredLanguage, nil, :class => "control-label" %>
+    <div class="controls">
+      <%= f.select( :preferredLanguage,
+                    [[t('language_default'), ""]] +
+                    Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } ) %>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit submit_text %>
+    </div>
+    <div class="controls">
+      <% if message_keys = flash.keys.select { |key| [:notice, :alert].include?(key) } %>
+        <% message_keys.each do |key| %>
+	  <p class="message_<%= key %>">
+	    <%= flash[key] %>
+	  </p>
+	<% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -15,7 +15,7 @@ Cucumber::Rails::World.use_transactional_fixtures = true
 #
 # If you leave this to false, you can turn on Rails rescuing on a
 # per-scenario basis, simply tagging it with @allow-rescue
-ActionController::Base.allow_rescue = false
+ActionController::Base.allow_rescue = true
 
 # Comment out the next line if you don't want Cucumber Unicode support
 require 'cucumber/formatter/unicode'

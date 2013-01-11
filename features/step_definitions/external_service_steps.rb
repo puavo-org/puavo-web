@@ -26,3 +26,9 @@ Then /^I should bind "([^\"]*)" with "([^\"]*)" to ldap$/ do |dn, password|
   external_service.bind(password)
   external_service.remove_connection
 end
+
+When /^I get the organisation JSON page with "([^\"]*)" and "([^\"]*)"$/ do |username, password|
+  basic_auth(username, password)
+  
+  visit "/organisation.json"
+end

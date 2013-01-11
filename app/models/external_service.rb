@@ -1,7 +1,8 @@
 require 'sha1'
 require 'base64'
 class ExternalService < LdapBase
-  include Puavo::Authentication
+  include Puavo::AuthenticationMixin
+  include Puavo::Security
 
   ldap_mapping( :dn_attribute => "uid",
                 :prefix => "ou=System Accounts",
@@ -40,17 +41,6 @@ class ExternalService < LdapBase
   def remove_groups
     self.groups.each do |group|
       update_group_member(group.cn, :delete)
-    end
-  end
-
-  def encrypt_userPassword
-    if !self.userPassword.empty? && !self.userPassword.match(/^\{SSHA\}/)
-      characters = (("a".."z").to_a + ("0".."9").to_a)
-      salt = Array.new(16) { characters[rand(characters.size)] }.join
-      self.userPassword = "{SSHA}" +
-        Base64.encode64( Digest::SHA1.digest( self.userPassword +
-                                              salt) +
-                         salt).chomp!
     end
   end
 

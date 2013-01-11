@@ -5,11 +5,11 @@ class SchoolsController < ApplicationController
     if request.format == 'application/json'
       @schools = School.all.sort
     else
-      @schools = School.all_with_permissions
+      @schools = School.all_with_permissions current_user
     end
 
     respond_to do |format|
-      if @schools.count < 2  && !organisation_owner?
+      if @schools.count < 2  && !current_user.organisation_owner?
         format.html { redirect_to( school_path(@schools.first) ) }
         format.json  { render :json => @schools }
       else
@@ -149,9 +149,7 @@ class SchoolsController < ApplicationController
         # FIXME: change notice type (ERROR)
         flash[:alert] = t('flash.school.wrong_user_type')
         format.html { redirect_to( admins_school_path(@school) ) }
-      elsif @school.ldap_modify_operation( :add, [{"puavoSchoolAdmin" => [@user.dn.to_s]}] ) &&
-          @user.ldap_modify_operation( :add, [{"puavoAdminOfSchool" => [@school.dn.to_s]}] ) &&
-          SambaGroup.add_uid_to_memberUid('Domain Admins', @user.uid)
+      elsif  @school.add_admin(@user)
         flash[:notice] = t('flash.school.school_admin_added',
                            :displayName => @user.displayName,
                            :school_name => @school.displayName )

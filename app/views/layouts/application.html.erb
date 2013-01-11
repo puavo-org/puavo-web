@@ -64,12 +64,15 @@
   <div class="topNavContentContainer">
   <ul id="top-menu">
       <% if current_user %>
-        <% if organisation_owner? %>
+        <% if current_user.organisation_owner? %>
         <li class="organisation-menu-button">
            <span><%= session[:organisation].name %></span>
            <ul id="help" class="organisation-menu">
              <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
              <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+	     <% if Puavo::OAUTH_CONFIG %>
+             <li class="top-menu-item"><%= link_to t('.oauth_clients'), oauth_clients_path %></li>
+	     <% end %>
               <% if Puavo::DEVICE_CONFIG %>
                <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
                <li class="top-menu-item"><%= link_to t('.servers'), "/devices/servers" %></li>
@@ -90,7 +93,7 @@
               </li>
             <% end %>
 
-            <% if organisation_owner? %>
+            <% if current_user.organisation_owner? %>
             <li class="add-new-school">
               <%= link_to t('link.new_school'), new_school_path %>
             </li>

@@ -2,17 +2,18 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  before_filter :set_organisation_to_session, :set_locale
   helper_method :theme, :school_list
 
-  before_filter :ldap_setup_connection
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user, :ldap_setup_connection, :organisation_owner?
+  helper_method :current_user
 
-  before_filter :login_required
+  before_filter :set_initial_locale
+  before_filter :setup_authentication
+  before_filter :require_login
+  before_filter :require_puavo_authorization
+  before_filter :set_organisation_to_session
   before_filter :find_school
-  before_filter :set_authorization_user
 
   after_filter :remove_ldap_connection
 
@@ -21,7 +22,7 @@ class ApplicationController < ActionController::Base
   # Cached schools query
   def school_list
     return @school_cache if @school_cache
-    @school_cache = session[:organisation].schools
+    @school_cache = current_organisation.schools current_user
   end
 
   private
@@ -44,9 +45,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def theme
-    session[:organisation].value_by_key('theme') or "breathe"
-  end
 
 
 end

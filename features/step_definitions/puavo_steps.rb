@@ -1,5 +1,6 @@
 require 'sha1'
 require 'base64'
+require 'timecop'
 
 Before do |scenario|
   test_organisation = Puavo::Organisation.find('example')
@@ -9,6 +10,15 @@ Before do |scenario|
                                   test_organisation.ldap_base,
                                   default_ldap_configuration["bind_dn"],
                                   default_ldap_configuration["password"] )
+
+  @owner_dn = User.find(:first, :attribute => "uid", :value => test_organisation.owner).dn.to_s
+  @owner_password = test_organisation.owner_pw
+
+  LdapBase.ldap_setup_connection( test_organisation.ldap_host,
+                                  test_organisation.ldap_base,
+                                  @owner_dn,
+                                  @owner_password )
+
   # Clean Up LDAP server: destroy all schools, groups and users
   User.all.each do |u|
     unless u.uid == "cucumber"
@@ -33,6 +43,8 @@ Before do |scenario|
 
   ExternalService.all.each do |e| e.destroy end
 
+  OauthClient.all.each do |c| c.destroy end
+
   domain_users = SambaGroup.find('Domain Users')
   domain_users.memberUid = []
   domain_users.save
@@ -46,6 +58,8 @@ Before do |scenario|
   ldap_organisation.puavoDeviceOnHour = "14"
   ldap_organisation.puavoDeviceOffHour = "15"
   ldap_organisation.puavoDeviceAutoPowerOffMode = "off"
+  ldap_organisation.preferredLanguage = "en"
+  ldap_organisation.o = "Example Organisation"
   ldap_organisation.save!
 end
 
@@ -306,7 +320,12 @@ def set_ldap_admin_connection
     # Setting up ldap configuration
     LdapBase.ldap_setup_connection( test_organisation.ldap_host,
                                     test_organisation.ldap_base,
-                                    default_ldap_configuration["bind_dn"],
-                                    default_ldap_configuration["password"] )
+                                    @owner_dn,
+                                    @owner_password )
   end
 end
+
+Given /^I wait ([0-9]+) (hour|day|month|year)s?$/ do |digit, type|
+  Timecop.travel Time.now + digit.to_i.send(type)
+end
+
