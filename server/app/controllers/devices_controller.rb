@@ -165,7 +165,7 @@ class DevicesController < ApplicationController
     @device.revoke_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
 
     # If certificate revoked we have to also disabled device's userPassword
-    @server.userPassword = nil
+    @device.userPassword = nil
 
     respond_to do |format|
       format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully set to install mode.') }
