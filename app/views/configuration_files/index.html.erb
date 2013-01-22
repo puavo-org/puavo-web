@@ -1,0 +1,49 @@
+<h1><span><%= t('.title')%></span></h1>
+<table class="list">
+  <tr>
+    <th><%= t('activeldap.attributes.configuration_file.puavoFileName') %></th>
+    <th colspan="2"><%= t('.actions') %></th>
+  </tr>
+
+<% @files.each do |configuration_file| %>
+  <tr>
+    <td><%= link_to configuration_file.puavoFileName, configuration_file_path(configuration_file) %></td>
+    <td><%= link_to t('link.edit'), edit_configuration_file_path(@school, configuration_file) %></td>
+    <td><%= link_to( t('link.destroy'),
+                     configuration_file_path(@school, configuration_file),
+                     :confirm => t('destroy_confirm',
+                                   :object_name => configuration_file.puavoFileName),
+                     :method => :delete ) %></td>
+  </tr>
+<% end %>
+</table>
+
+<% form_for(@file, :url => configuration_files_path, :html => { :method => :post })  do |f| %>
+<table>
+  <tr>
+    <td><%= f.label :puavoFileId %></td>
+    <td><%= f.select :puavoFileId,  @select_options  %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :puavoFileData %></td>
+    <td><%= f.file_field :puavoFileData %></td>
+  </tr>
+  <tr>
+    <td><%= f.submit t('.submit') %>
+    </td>
+  </tr>
+</table>
+<% end %>
+
+
+<% content_for :footer do %>
+<ul>  
+  <li class="link_header">
+    <%= link_to t('layouts.application.schools'),  schools_path %> 
+  </li>
+  <% school_list.each do |school| %>
+  <li<% if school_list.last == school %> class="last"<% end %>>
+    <%= link_to school.displayName,  school_path(school) %></li>
+  <% end %>
+</ul>
+<% end %>

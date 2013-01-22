@@ -276,6 +276,11 @@ en:
       save_and_close: Save and close
     show:
       message: Profile was successfully updated
+  configuration_files:
+    index:
+      title: Configuration files
+      actions: Actions
+      submit: Send
   controllers:
     import:
       school_has_changed: "User is transferred, old password is used"
@@ -302,6 +307,7 @@ en:
       school: School
       external_service: External service
       oauth_client: OAuth client
+      configuration_file: Configuration file
     attributes:
       role:
         displayName: "Role name"
@@ -394,6 +400,9 @@ en:
         userPassword: Client secret
         puavoOAuthScope: Scope
         puavoOAuthClientType: Client type
+      configuration_file:
+        puavoFileName: Filename
+        puavoFileData: File
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
   puavoEduPersonAffiliation_student: Student

@@ -162,4 +162,6 @@ ActionController::Routing::Routes.draw do |map|
       oauth.whoami 'oauth/whoami', :action => 'whoami'
     end
   end
+
+  map.resources :configuration_files
 end
