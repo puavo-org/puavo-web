@@ -10,6 +10,7 @@ gem 'puavo_authentication', '0.2.5'
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
 gem 'uuid'
+gem 'rdoc' 
 group :development do
 	gem 'webrat', '0.7.3'
 	gem 'rspec-rails', '1.3.2'
