@@ -91,7 +91,28 @@ class Device < DeviceBase
          :value_block => lambda{ |value| Array(value).first } },
        { :original_attribute_name => "puavoSchool",
          :new_attribute_name => "school_id",
-         :value_block => lambda{ |value| value.to_s.match(/puavoId=([^, ]+)/)[1].to_i } } ]
+         :value_block => lambda{ |value| value.to_s.match(/puavoId=([^, ]+)/)[1].to_i } },
+       { :original_attribute_name => "puavoId",
+         :new_attribute_name => "puavo_id",
+         :value_block => lambda{ |value| Array(value).first } },
+       { :original_attribute_name => "puavoDeviceKernelVersion",
+         :new_attribute_name => "kernel_version",
+         :value_block => lambda{ |value| Array(value).first } },
+       { :original_attribute_name => "puavoDeviceKernelArguments",
+         :new_attribute_name => "kernel_arguments",
+         :value_block => lambda{ |value| Array(value).first } },
+       { :original_attribute_name => "puavoDeviceXrandr",
+         :new_attribute_name => "xrandr",
+         :value_block => lambda{ |value| Array(value).first } },
+       { :original_attribute_name => "puavoDeviceXrandrDisable",
+         :new_attribute_name => "xrandr_disable",
+         :value_block => lambda{ |value| Array(value).first } },
+       { :original_attribute_name => "puavoDeviceType",
+         :new_attribute_name => "device_type",
+         :value_block => lambda{ |value| Array(value).first } },
+       { :original_attribute_name => "puavoDeviceImage",
+         :new_attribute_name => "device_image",
+         :value_block => lambda{ |value| Array(value).first } } ]
 
     device_attributes.each do |attr|
       attribute_value = data.class == Hash ? data[attr[:original_attribute_name]] : data.send(attr[:original_attribute_name])

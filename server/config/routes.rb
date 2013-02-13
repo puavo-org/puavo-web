@@ -19,10 +19,11 @@ ActionController::Routing::Routes.draw do |map|
                       :path_prefix => ':school_id',
                       :conditions => { :method => :get } )
 
-  map.api_organisation_devices( '/api/:version/devices.:format',
-                            :controller => 'devices',
-                            :action => 'index',
-                            :conditions => { :method => :get } )
+  map.namespace :api do |api| 
+    api.namespace :v2 do |v2| 
+      v2.resources :devices
+    end
+  end
 
   map.organisation_devices( 'devices.:format',
                             :controller => 'devices',
