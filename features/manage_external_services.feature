@@ -96,4 +96,4 @@ Feature: Manage external services
       | uid    | description   | userPassword    | groups  |
       | iivari | description 1 | secretpassword1 | orginfo |
     When I get the organisation JSON page with "service/iivari" and "secretpassword1"
-    Then I should see JSON "{preferred_language: en, domain: example.opinsys.net, name: Example Organisation}"
+    Then I should see JSON '{"preferred_language": "en", "domain": "example.opinsys.net", "name": "Example Organisation"}'

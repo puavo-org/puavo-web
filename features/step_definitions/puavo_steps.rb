@@ -168,7 +168,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
   end
 end
 
-Then /^I should see JSON "([^\"]*)"$/ do |json_string|
+Then /^I should see JSON '([^\']*)'$/ do |json_string|
   response_data = ActiveSupport::JSON.decode(response.body)
   compare_data = ActiveSupport::JSON.decode(json_string)
 
