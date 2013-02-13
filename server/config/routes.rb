@@ -22,6 +22,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :api do |api| 
     api.namespace :v2 do |v2| 
       v2.resources :devices
+      v2.resources :servers
     end
   end
 
