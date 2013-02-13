@@ -10,6 +10,7 @@ gem 'puavo-view-helpers', '0.0.3'
 gem 'json'
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
+gem 'rdoc'
 group :development do
 	gem 'cucumber-rails'
 	gem 'database_cleaner'
