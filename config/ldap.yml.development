@@ -1,0 +1,27 @@
+development:
+  host: <%= PUAVO_ETC.ldap_master %>
+  bind_dn: <%= PUAVO_ETC.ds_puavo_dn %>
+  password: <%= PUAVO_ETC.ds_puavo_password %>
+  base: o=puavo
+  method: tls
+
+test:
+  host: <%= PUAVO_ETC.ldap_master %>
+  bind_dn: <%= PUAVO_ETC.ds_puavo_dn %>
+  password: <%= PUAVO_ETC.ds_puavo_password %>
+  base: o=puavo
+  method: tls
+
+cucumber:
+  host: <%= PUAVO_ETC.ldap_master %>
+  bind_dn: <%= PUAVO_ETC.ds_puavo_dn %>
+  password: <%= PUAVO_ETC.ds_puavo_password %>
+  base: o=puavo
+  method: tls
+
+production:
+  host: <%= PUAVO_ETC.ldap_master %>
+  bind_dn: <%= PUAVO_ETC.ds_puavo_dn %>
+  password: <%= PUAVO_ETC.ds_puavo_password %>
+  base: o=puavo
+  method: tls

@@ -1,0 +1,123 @@
+device_types:
+  thinclient:
+    label:
+      en: Thinclient
+      fi: Kevytpääte
+    classes: puavoNetbootDevice
+    url: /devices/%s/devices/new.json?device_type=thinclient
+    order: 1
+    puppetclass: netboot
+    school_required: true
+    show_dashboard: true
+  fatclient:
+    label:
+      en: Fatclient
+      fi: Tehopääte
+    classes: puavoNetbootDevice
+    url: /devices/%s/devices/new.json?device_type=fatclient
+    order: 2
+    puppetclass: netboot
+    school_required: true
+    show_dashboard: true
+  laptop:
+    label:
+      en: Laptop
+      fi: Kannettava
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=laptop
+    order: 3
+    puppetclass: host
+    school_required: true
+    ldap_password: true
+    show_dashboard: true
+  workstation:
+    label:
+      en: Workstation
+      fi: Työasema
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=workstation
+    order: 4
+    puppetclass: host
+    school_required: true
+    show_dashboard: true
+  ltspserver:
+    label:
+      en: LTSP server
+      fi: LTSP palvelin
+    classes: puavoLocalbootDevice
+    url: /devices/servers/new.json?device_type=ltspserver
+    order: 5
+    puppetclass: host
+    school_required: false
+    ldap_password: true
+    show_dashboard: false
+  netstand:
+    label:
+      en: Netstand
+      fi: Nettikulma
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=netstand
+    order: 6
+    puppetclass: host
+    school_required: true
+    show_dashboard: true
+  infotv:
+    label:
+      en: Digital signage
+      fi: Info-tv
+    classes: puavoLocalbootDevice
+    url: /devices/%s/devices/new.json?device_type=infotv
+    order: 7
+    puppetclass: host
+    school_required: true
+    show_dashboard: true
+  printer:
+    label:
+      en: Printer
+      fi: Tulostin
+    classes: puavoPrinter
+    url: /devices/%s/devices/new.json?device_type=printer
+    order: 8
+    puppetclass: host
+    school_required: true
+    show_dashboard: true
+  wirelessaccesspoint:
+    label:
+      en: Wireless access point
+      fi: Langaton tukiasema
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=wirelessaccesspoint
+    order: 9
+    school_required: true
+  projector:
+    label:
+      en: Projector
+      fi: Projektori
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=projector
+    order: 10
+    school_required: true
+  webcam:
+    label:
+      en: Webcam
+      fi: Web-kamera
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=webcamera
+    order: 11
+    school_required: true
+  switch:
+    label:
+      en: Switch (network)
+      fi: Kytkin (verkko)
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=switch
+    order: 12
+    school_required: true
+  other:
+    label:
+      en: Other
+      fi: Muu
+    classes: puavoOtherDevice
+    url: /devices/%s/devices/new.json?device_type=other
+    order: 13
+    school_required: true
