@@ -7,8 +7,6 @@ Setup Puavo development environment to a single machine. See also https://github
 12.04 LTS (Precise Pangolin):
 
     sudo apt-get install ruby1.8 rubygems ruby1.8-dev ruby-bundler
- 
-    # FIXME: sudo apt-get install irb 
 
     sudo apt-get install libxml2-dev libxslt-dev \
       libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev \
