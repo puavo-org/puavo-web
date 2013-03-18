@@ -27,7 +27,6 @@ Setup Puavo development environment to a single machine. See also https://github
 
 ## Use bundler to install all the required Ruby Gems
 
-    cd puavo-users
     bundle install --deployment
 
 ## Configurations
