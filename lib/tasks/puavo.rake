@@ -28,8 +28,6 @@ namespace :puavo do
 
     cp tempfile.path, "config/organisations.yml"
     tempfile.delete
-
-    puts "Open browser: http://#{@hostname}/users"
   end
 
   desc "Set config/puavo_device.yml"
