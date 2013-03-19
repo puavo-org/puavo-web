@@ -1,3 +1,5 @@
+require "user_error"
+
 module Puavo
   mattr_accessor :available_languages
 
