@@ -6,7 +6,6 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 gem "prawn"
 gem "net-ldap"
 gem 'activeldap'
-gem 'puavo_authentication'
 gem 'pg'
 gem 'rmagick', :require => 'RMagick'
 gem 'uuid'

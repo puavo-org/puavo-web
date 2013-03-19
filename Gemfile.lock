@@ -101,7 +101,6 @@ GEM
     prawn (0.12.0)
       pdf-reader (>= 0.9.0)
       ttfunk (~> 1.0.2)
-    puavo_authentication (0.2.5)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -202,7 +201,6 @@ DEPENDENCIES
   net-ldap
   pg
   prawn
-  puavo_authentication
   rails (= 3.2.12)
   rbtrace
   rdoc
