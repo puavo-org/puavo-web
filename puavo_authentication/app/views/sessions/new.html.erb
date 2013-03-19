@@ -1,0 +1,20 @@
+<% if RAILS_ENV == "development" && session[:return_to] -%>
+  You must be logged in to access <%= session[:return_to] %>
+<% end -%>
+
+<% form_tag sessions_path do %>
+<table>
+  <tr>
+    <td><%= label :user, :uid %></td>
+    <td><%= text_field :user, :uid %></td>
+  </tr>
+  <tr>
+  <td><%= label :user, :password %></td>
+  <td><%= password_field :user, :password %></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><%= submit_tag t('link.login') %></td>
+  </tr>
+</table>
+<% end %>
