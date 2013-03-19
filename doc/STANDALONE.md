@@ -28,7 +28,7 @@ Setup Puavo development environment to a single machine. See also https://github
     cd puavo-users
     bundle install --deployment
 
-## Configurations
+## Configure
 
     cd puavo-users
     bundle exec rake puavo:configuration
