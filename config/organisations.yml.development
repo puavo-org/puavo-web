@@ -1,7 +1,7 @@
 example:
   name: Example Organisation
   host: www.example.com
-  ldap_host: ldap1-devel.opinsys.net
+  ldap_host: <%= @hostname %>
   ldap_base: dc=edu,dc=example,dc=fi
   owner: cucumber
   owner_pw: cucumber

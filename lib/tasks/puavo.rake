@@ -1,4 +1,5 @@
 require 'tempfile'
+require 'puavo/etc'
 
 namespace :puavo do
   desc "Set config/database.yml"
@@ -18,7 +19,7 @@ namespace :puavo do
 
   desc "Set config/organisation.yml"
   task :organisation do
-    @hostname = (`hostname -f`).strip
+    @hostname = (`hostname -s`).strip + ".#{PUAVO_ETC.topdomain}"
     template = File.read("config/organisations.yml.development")
     parse_file = ERB.new(template, 0, "%<>")
 
