@@ -18,8 +18,8 @@ Feature: Manage external services
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "password"
-    And I check "Services that have only minimal information needed for ldap simple binds (dn, uid)"
-    And I check "Services that have access to all information needed for getent"
+    And I check "LDAP bind (dn, uid)"
+    And I check "getent passwd and group"
     And I press "Create"
     Then I should see "Password is too short (min is 12 characters)"
     When I fill in "Password" with "secretpassword"
@@ -29,8 +29,8 @@ Feature: Manage external services
     And I should not see "{SSHA}"
     And I should see "Bind DN"
     And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi"
-    And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
-    And I should see "Services that have access to all information needed for getent"
+    And I should see "LDAP bind (dn, uid)"
+    And I should see "getent passwd and group"
     And I should bind "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi" with "secretpassword" to ldap
 
   Scenario: Delete external service
@@ -60,12 +60,12 @@ Feature: Manage external services
     And I follow "Edit"
     Then I should not see "{SSHA}"
     When I fill in "Description" with "test description one"
-    And I check "Services that have access to all information needed for getent"
+    And I check "getent passwd and group"
     And I press "Update"
     Then I should see "test description one"
     And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi"
-    And I should see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
-    And I should see "Services that have access to all information needed for getent"
+    And I should see "LDAP bind (dn, uid)"
+    And I should see "getent passwd and group"
 
 
   Scenario: Edit external service and unceck all system groups
@@ -74,15 +74,15 @@ Feature: Manage external services
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "secretpassword"
-    And I check "Services that have only minimal information needed for ldap simple binds (dn, uid)"
-    And I check "Services that have access to all information needed for getent"
+    And I check "LDAP bind (dn, uid)"
+    And I check "getent passwd and group"
     And I press "Create"
     And I follow "Edit"
-    And I uncheck "Services that have access to all information needed for getent"
-    And I uncheck "Services that have only minimal information needed for ldap simple binds (dn, uid)"
+    And I uncheck "getent passwd and group"
+    And I uncheck "LDAP bind (dn, uid)"
     And I press "Update"
-    And I should not see "Services that have only minimal information needed for ldap simple binds (dn, uid)"
-    And I should not see "Services that have access to all information needed for getent"
+    And I should not see "LDAP bind (dn, uid)"
+    And I should not see "getent passwd and group"
 
   Scenario: Get groups information with external service users
     Given the following external services:
