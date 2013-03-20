@@ -1,7 +1,3 @@
-<% if RAILS_ENV == "development" && session[:return_to] -%>
-  You must be logged in to access <%= session[:return_to] %>
-<% end -%>
-
 <% form_tag sessions_path do %>
 <table>
   <tr>
