@@ -46,7 +46,8 @@ Feature: Manage organisation
     | Home page                        | http://www.example.org                                     |
     | Name                             | Example Organisation 2                                     |
     | Abbreviation                     | jkl                                                        |
-    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
+# FIXME: fix acl?
+#    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
     And I select "English" from "ldap_organisation[preferredLanguage]"
     And I select "13" from "ldap_organisation[puavoDeviceOnHour]"
     And I select "19" from "ldap_organisation[puavoDeviceOffHour]"
@@ -71,4 +72,4 @@ Feature: Manage organisation
     | Custom                                                     |
     | Example Organisation 2                                     |
     | jkl                                                        |
-    | base:500                                                   |
+#    | base:500                                                   |
