@@ -17,8 +17,6 @@ class ApplicationController < ActionController::Base
 
   after_filter :remove_ldap_connection
 
-  filter_parameter_logging :password, :new_password, :new_password_confirmation
-
   # Cached schools query
   def school_list
     return @school_cache if @school_cache
