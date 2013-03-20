@@ -2,7 +2,7 @@ module Puavo
   mattr_accessor :available_languages
 
   class Organisation
-    @@configurations = YAML.load_file("#{RAILS_ROOT}/config/organisations.yml")
+    @@configurations = YAML.load_file("#{Rails.root}/config/organisations.yml")
     @@key_by_host = {}
 
     @@configurations.each do |key, value|
