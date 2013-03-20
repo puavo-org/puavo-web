@@ -14,7 +14,7 @@ module Puavo
 
         # Updated subclasses base value.
         LdapBase.subclasses.each  do |_subclass|
-          Class.class_eval(_subclass).base = base
+          _subclass.base = base
         end
       end
     end
