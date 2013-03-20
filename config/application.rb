@@ -4,6 +4,8 @@ require 'puavo/etc'
 
 require 'rails/all'
 
+require "active_ldap/railtie"
+
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require(*Rails.groups(:assets => %w(development test)))
