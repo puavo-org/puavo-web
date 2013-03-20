@@ -4,46 +4,48 @@ require "ruby-debug"
 env = LDAPTestEnv.new
 # http://www.openldap.org/faq/data/cache/1140.html
 
-env.validate "create oc" do
-  puts oauth_token
+puts "WARNING: OAuth tests is disable!"
 
-  owner.cannot_read oauth_client, [:displayName], InsufficientAccessRights
-  student.cannot_modify oauth_client,   [:replace,  :displayName,  ["bad"]],              InsufficientAccessRights
-  teacher.cannot_modify oauth_client,   [:replace,  :displayName,  ["bad"]],              InsufficientAccessRights
-
-
-  student.can_add("#{ AccessToken.dn_attribute }=2,#{ AccessToken.base }", {
-      :objectclass => ["simpleSecurityObject", "puavoOAuthAccessToken"],
-      :puavoOAuthClient => oauth_client.dn.to_s,
-      :puavoOAuthEduPerson => student.dn.to_s,
-      :userPassword => "secret",
-      :puavoOAuthTokenId => ["2"],
-      :puavoOAuthScope => ["scope", "attributes", "here"],
-      :puavoOAuthTokenType => ["bar"]
-      # :type => "authorization_code",
-  })
-
-  oauth_client.cannot_add("#{ AccessToken.dn_attribute }=2,#{ AccessToken.base }", {
-      :objectclass => ["simpleSecurityObject", "puavoOAuthAccessToken"],
-      :puavoOAuthClient => oauth_client.dn.to_s,
-      :puavoOAuthEduPerson => student.dn.to_s,
-      :userPassword => "secret",
-      :puavoOAuthTokenId => ["2"],
-      :puavoOAuthScope => ["scope", "attributes", "here"],
-      :puavoOAuthTokenType => ["bar"]
-      # :type => "authorization_code",
-  }, InsufficientAccessRights)
-
-
-  student.cannot_modify oauth_token, [:replace, :userPassword, ["bad"]], InsufficientAccessRights
-  student2.cannot_modify oauth_token, [:replace, :userPassword, ["bad"]], InsufficientAccessRights
-
-  owner.can_modify oauth_token, [:replace, :puavoOAuthTokenType, ["foo"]]
-
-  # student.cannot_modify oauth_token, [:replace, :type, ["access_token"]]
-  # oauth_client.can_modify oauth_token, [:replace, :type, ["access_token"]]
-
-end
+#env.validate "create oc" do
+#  puts oauth_token
+#
+#  owner.cannot_read oauth_client, [:displayName], InsufficientAccessRights
+#  student.cannot_modify oauth_client,   [:replace,  :displayName,  ["bad"]],              InsufficientAccessRights
+#  teacher.cannot_modify oauth_client,   [:replace,  :displayName,  ["bad"]],              InsufficientAccessRights
+#
+#
+#  student.can_add("#{ AccessToken.dn_attribute }=2,#{ AccessToken.base }", {
+#      :objectclass => ["simpleSecurityObject", "puavoOAuthAccessToken"],
+#      :puavoOAuthClient => oauth_client.dn.to_s,
+#      :puavoOAuthEduPerson => student.dn.to_s,
+#      :userPassword => "secret",
+#      :puavoOAuthTokenId => ["2"],
+#      :puavoOAuthScope => ["scope", "attributes", "here"],
+#      :puavoOAuthTokenType => ["bar"]
+#      # :type => "authorization_code",
+#  })
+#
+#  oauth_client.cannot_add("#{ AccessToken.dn_attribute }=2,#{ AccessToken.base }", {
+#      :objectclass => ["simpleSecurityObject", "puavoOAuthAccessToken"],
+#      :puavoOAuthClient => oauth_client.dn.to_s,
+#      :puavoOAuthEduPerson => student.dn.to_s,
+#      :userPassword => "secret",
+#      :puavoOAuthTokenId => ["2"],
+#      :puavoOAuthScope => ["scope", "attributes", "here"],
+#      :puavoOAuthTokenType => ["bar"]
+#      # :type => "authorization_code",
+#  }, InsufficientAccessRights)
+#
+#
+#  student.cannot_modify oauth_token, [:replace, :userPassword, ["bad"]], InsufficientAccessRights
+#  student2.cannot_modify oauth_token, [:replace, :userPassword, ["bad"]], InsufficientAccessRights
+#
+#  owner.can_modify oauth_token, [:replace, :puavoOAuthTokenType, ["foo"]]
+#
+#  # student.cannot_modify oauth_token, [:replace, :type, ["access_token"]]
+#  # oauth_client.can_modify oauth_token, [:replace, :type, ["access_token"]]
+#
+#end
 
 # env.validate "oauth token deletion" do
 #   student.can_delete oauth_token.dn
