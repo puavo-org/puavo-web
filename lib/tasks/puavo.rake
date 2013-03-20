@@ -39,7 +39,6 @@ namespace :puavo do
   desc "Set all Puavo configuration files (development)"
   task :configuration => [:database,
                           :ldap,
-                          :oauth,
                           :puavo_devices,
                           :organisation]
 
