@@ -29,7 +29,7 @@ jQuery(document).ready(function($) {
 
   $('#search').liveSearch({
     minLength: 2,
-    url: search_urls,
+    url: window.SEARCH_URLS,
     duration: 400,
     typeDelay: 400,
     width: 'auto'
