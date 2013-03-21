@@ -183,10 +183,6 @@ GEM
     tzinfo (0.3.37)
     uuid (2.3.7)
       macaddr (~> 1.0)
-    webrat (0.7.3)
-      nokogiri (>= 1.2.0)
-      rack (>= 1.0)
-      rack-test (>= 0.5.3)
     websocket (1.0.7)
     xpath (1.0.0)
       nokogiri (~> 1.3)
@@ -196,6 +192,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeldap
+  capybara
   colorize
   cucumber
   cucumber-rails
@@ -215,4 +212,3 @@ DEPENDENCIES
   sqlite3-ruby
   timecop
   uuid
-  webrat

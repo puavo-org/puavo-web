@@ -11,7 +11,7 @@ gem 'rmagick', :require => 'RMagick'
 gem 'uuid'
 gem 'rdoc' 
 group :development do
-	gem 'webrat'
+	gem 'capybara'
 	gem 'rspec-rails'
 	gem 'rspec'
 	gem 'cucumber'
