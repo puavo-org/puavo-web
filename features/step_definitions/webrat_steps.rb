@@ -116,46 +116,46 @@ When /^I attach the file at "([^\"]*)" to "([^\"]*)"$/ do |path, field|
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  response.should contain(text)
+  page.should have_content(text)
 end
 
 Then /^I should see "([^\"]*)" within "([^\"]*)"$/ do |text, selector|
   within(selector) do |content|
-    content.should contain(text)
+    content.should have_content(text)
   end
 end
 
 Then /^I should see \/([^\/]*)\/$/ do |regexp|
   regexp = Regexp.new(regexp)
-  response.should contain(regexp)
+  page.should have_content(regexp)
 end
 
 Then /^I should see \/([^\/]*)\/ within "([^\"]*)"$/ do |regexp, selector|
   within(selector) do |content|
     regexp = Regexp.new(regexp)
-    content.should contain(regexp)
+    content.should have_content(regexp)
   end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |text|
-  response.should_not contain(text)
+  page.should_not have_content(text)
 end
 
 Then /^I should not see "([^\"]*)" within "([^\"]*)"$/ do |text, selector|
   within(selector) do |content|
-    content.should_not contain(text)
+    content.should_not have_content(text)
   end
 end
 
 Then /^I should not see \/([^\/]*)\/$/ do |regexp|
   regexp = Regexp.new(regexp)
-  response.should_not contain(regexp)
+  page.should_not have_content(regexp)
 end
 
 Then /^I should not see \/([^\/]*)\/ within "([^\"]*)"$/ do |regexp, selector|
   within(selector) do |content|
     regexp = Regexp.new(regexp)
-    content.should_not contain(regexp)
+    content.should_not have_content(regexp)
   end
 end
 

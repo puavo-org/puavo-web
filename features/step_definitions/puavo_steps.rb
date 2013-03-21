@@ -70,7 +70,7 @@ Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
   fill_in("Username", :with => organisation.owner)
   fill_in("Password", :with => organisation.owner_pw)
   click_button("Login")
-  response.should contain("Login successful!")
+  page.should have_content("Login successful!")
 end
 
 Given /^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/ \
@@ -169,7 +169,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
 end
 
 Then /^I should see JSON '([^\']*)'$/ do |json_string|
-  response_data = ActiveSupport::JSON.decode(response.body)
+  response_data = ActiveSupport::JSON.decode(page.body)
   compare_data = ActiveSupport::JSON.decode(json_string)
 
   if compare_data.class == Hash
@@ -278,12 +278,12 @@ end
 When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
   click_link(link_name)
   tmp_pdf = Tempfile.new('tmp_pdf')
-  tmp_pdf << response.body
+  tmp_pdf << page.body
   tmp_pdf.close
   tmp_txt = Tempfile.new('tmp_txt')
   tmp_txt.close
   `pdftotext -q #{tmp_pdf.path} #{tmp_txt.path}`
-  response.body = File.read tmp_txt.path
+  page.body = File.read tmp_txt.path
 end
 
 When /^I cut nextPuavoId value by one$/ do

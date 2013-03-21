@@ -28,13 +28,13 @@ end
 
 Then /^I should see same test data on the page$/ do
   default_form_value.each do |field, value|
-    response.should contain(value)
+    page.should have_content(value)
   end
 end
 
 Then /^I should see same modify test data on the page$/ do
   default_form_value.each do |field, value|
-    response.should contain(value + " modify")
+    page.should have_content(value + " modify")
   end
 end
 
