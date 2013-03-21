@@ -23,12 +23,16 @@ class School < BaseGroup
 
   attr_accessor :image
   before_validation :resize_image
+  validate :validate_group_name, :validate_name_prefix
   
-  def validate
+  def validate_group_name
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
       errors.add( :cn, I18n.t("activeldap.errors.messages.school.invalid_characters",
                               :attribute => I18n.t("activeldap.attributes.school.cn")) )
     end
+  end
+
+  def validate_name_prefix
     unless self.puavoNamePrefix.to_s =~ /^[a-z0-9-]*$/
       errors.add( :puavoNamePrefix, I18n.t("activeldap.errors.messages.school.invalid_characters",
                                            :attribute => I18n.t("activeldap.attributes.school.puavoNamePrefix")) )
