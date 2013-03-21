@@ -1,6 +1,6 @@
 <h1><span><%= t('.title') %></span></h1>
 
-<% form_for(@organisation, :url => organisation_path)  do |f| %>
+<%= form_for(@organisation, :url => organisation_path)  do |f| %>
 <table>
   <tr>
     <td><%= f.label :o %></td>

@@ -1,5 +1,5 @@
 <h1><span><%= t('.title') %></span></h1>
-<% form_for("role", :url => change_school_users_path(@school))  do |f| %>
+<%= form_for("role", :url => change_school_users_path(@school))  do |f| %>
 <%= hidden_field_tag :new_school, @new_school.id %>
 <%= hidden_field_tag "user_ids[]", @user.id %>
 <table>

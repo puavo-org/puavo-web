@@ -6,7 +6,7 @@ Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyne
 </h4>
 
 <h2>Roolit</h2>
-<% form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
+<%= form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
 
 <table>
 <tr>

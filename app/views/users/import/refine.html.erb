@@ -1,5 +1,5 @@
 <p class="mass_import_info"><span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> <span class="current">2. <%= t('users.import.info.phase_2') %></span> &gt; 3. <%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
-<% form_for(:user, :url => validate_users_import_path(@school)) do |f| %>
+<%= form_for(:user, :url => validate_users_import_path(@school)) do |f| %>
 
   <p><%= t('.column_info') %></p>
   <table id="users_list" class="import_define">

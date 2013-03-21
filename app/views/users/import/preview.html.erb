@@ -7,7 +7,7 @@
 <p><%= t('.info') %></p>
 
 
-<% form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
+<%= form_for(:user, :url => create_users_import_path(@school), :html => { :method => :post }) do |f| %>
  <table class="validate_users_list">
   <% @columns.each do |column| %>
     <th>
