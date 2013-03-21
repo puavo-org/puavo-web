@@ -1,6 +1,6 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  def label(object_name, method, human_name, content, *args)
+  def label(object_name, method, human_name=nil, content=nil, *args)
 
     # If we don't get human name from the label get use the string from translation
     human_name ||= translate_name_attribute(object_name, method)
