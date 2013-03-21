@@ -5,7 +5,7 @@ module ApplicationHelper
     # If we don't get human name from the label get use the string from translation
     human_name ||= translate_name_attribute(object_name, method)
 
-    # Add lable_error CSS class to field element if object is invalid
+    # Add CSS class 'label_error' to field element if object is invalid
     if content && content[:object] && !content[:object].errors[method].empty?
       (content[:class] ||= []).push "label_error"
     end
