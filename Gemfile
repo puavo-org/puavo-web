@@ -22,4 +22,5 @@ group :development do
 	gem 'rbtrace'
 	gem 'colorize'
 	gem 'timecop'
+        gem 'database_cleaner'
 end
