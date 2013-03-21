@@ -2,7 +2,7 @@ Given /^the following roles:$/ do |roles|
   set_ldap_admin_connection
   roles.hashes.each do |new_role|
     new_role[:puavoSchool] = @school.dn
-    Role.create!(new_role)
+    Role.create(new_role)
   end
 end
 
