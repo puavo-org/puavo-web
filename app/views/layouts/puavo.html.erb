@@ -59,12 +59,12 @@
     <li class="<%= controller_name.match(/schools|groups|roles/) \
                            ? "page_item current_page_item" \
                            : "page_item" %>">
-      <% link_to school_path(@school) do %>
+      <%= link_to school_path(@school) do %>
                   <span>School</span>
       <% end %>
     </li>
     <li class="<%= controller_name == "users" ? "page_item current_page_item" : "page_item" %>">
-      <% link_to users_path(@school) do %>
+      <%= link_to users_path(@school) do %>
                   <span>Users</span>
       <% end %>
     </li>

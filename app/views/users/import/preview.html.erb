@@ -67,7 +67,7 @@
 <% content_for :footer do %>
   <ul>
     <li class="link_header">
-      <% link_to school_path(@school) do %>
+      <%= link_to school_path(@school) do %>
         <span><%= t('layouts.application.schools') %></span>
       <% end %>
     </li>
@@ -80,7 +80,7 @@
   <ul>
   <li class="link_header"><%= @school.displayName %></li>
   <li>
-  <% link_to users_path(@school) do %>
+  <%= link_to users_path(@school) do %>
     <span><%= t('layouts.application.users') %></span>
   <% end %>
   </li>
