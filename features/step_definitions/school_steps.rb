@@ -1,6 +1,6 @@
 Given /^the following schools:$/ do |schools|
   set_ldap_admin_connection
-  schools = School.create!(schools.hashes)
+  schools = School.create(schools.hashes)
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) school$/ do |pos|
