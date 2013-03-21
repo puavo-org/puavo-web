@@ -2,7 +2,7 @@
 module ApplicationHelper
   def label(object_name, method, human_name, content, *args)
 
-    # Is we don't get human name from the label get use the string from translation
+    # If we don't get human name from the label get use the string from translation
     human_name ||= translate_name_attribute(object_name, method)
 
     # Add lable_error CSS class to field element if object is invalid
