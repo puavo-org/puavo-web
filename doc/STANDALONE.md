@@ -17,12 +17,6 @@ Setup Puavo development environment to a single machine. See also https://github
 
     git clone git://github.com/opinsys/puavo-users.git
 
-## Fetch submodules
-
-    cd puavo-users
-    git submodule init
-    git submodule update
-
 ## Use bundler to install all the required Ruby Gems
 
     cd puavo-users
