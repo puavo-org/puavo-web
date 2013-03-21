@@ -98,7 +98,7 @@ class School < BaseGroup
   private
 
   def resize_image
-    if self.image.class == Tempfile
+    if self.image && !self.image.path.to_s.empty?
       image_orig = Magick::Image.read(self.image.path).first
       self.jpegPhoto = image_orig.resize_to_fit(400,200).to_blob
     end
