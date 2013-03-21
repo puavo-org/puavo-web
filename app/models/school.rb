@@ -23,6 +23,8 @@ class School < BaseGroup
 
   attr_accessor :image
   before_validation :resize_image
+
+  validates :displayName, :presence => true
   validate :validate_group_name, :validate_name_prefix
   
   def validate_group_name
