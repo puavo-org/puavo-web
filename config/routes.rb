@@ -1,23 +1,34 @@
 PuavoUsers::Application.routes.draw do
   resource :rename_groups
   resources :external_services
-  match 'roles/:id/select_school' => 'roles#select_school', :as => :select_school_role, :path_prefix => ':school_id', :via => :get
-  match 'roles/:id/select_role' => 'roles#select_role', :as => :select_role_role, :path_prefix => ':school_id', :via => :post
-  match 'roles/:id/add_group/:group_id' => 'roles#add_group', :as => :add_group_role, :path_prefix => ':school_id', :via => :put
-  match 'roles/:id/remove_group/:group_id' => 'roles#remove_group', :as => :remove_group_role, :path_prefix => ':school_id', :via => :put
+
+  scope :path => ':school_id' do
+    match 'roles/:id/select_school' => 'roles#select_school', :as => :select_school_role, :via => :get
+    match 'roles/:id/select_role' => 'roles#select_role', :as => :select_role_role, :via => :post
+    match 'roles/:id/add_group/:group_id' => 'roles#add_group', :as => :add_group_role, :via => :put
+    match 'roles/:id/remove_group/:group_id' => 'roles#remove_group', :as => :remove_group_role, :via => :put
+  end
   resources :roles
+
   match 'schools/:id/admins.:format' => 'schools#admins', :as => :admins_school, :via => :get
   match 'schools/:id/add_school_admin/:user_id.:format' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
   match 'schools/:id/remove_school_admin/:user_id.:format' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
   resources :schools
-  match 'groups/:id/members.:format' => 'groups#members', :as => :add_role_group, :path_prefix => ':school_id', :via => :get
-  match 'groups/:id/add_role/:role_id' => 'groups#add_role', :as => :add_role_group, :path_prefix => ':school_id', :via => :put
-  match 'groups/:id/delete_role/:role_id' => 'groups#delete_role', :as => :delete_role_group, :path_prefix => ':school_id', :via => :put
-  match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :path_prefix => ':school_id', :via => :get
-  match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :path_prefix => ':school_id', :via => :post
-  match 'users/change_school' => 'users#change_school', :as => :change_school_users, :path_prefix => ':school_id', :via => :post
-  resources :users
-  match 'users/:id/image' => 'users#image', :as => :image_user, :path_prefix => ':school_id', :via => :get
+
+  scope :path => ':school_id' do
+    match 'groups/:id/members.:format' => 'groups#members', :as => :add_role_group, :via => :get
+    match 'groups/:id/add_role/:role_id' => 'groups#add_role', :as => :add_role_group, :via => :put
+    match 'groups/:id/delete_role/:role_id' => 'groups#delete_role', :as => :delete_role_group, :via => :put
+    match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
+    match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
+    match 'users/change_school' => 'users#change_school', :as => :change_school_users, :via => :post
+  end
+
+  scope :path => ':school_id' do
+    resources :users
+    match 'users/:id/image' => 'users#image', :as => :image_user, :via => :get
+  end
+
   resources :users
   resources :groups
   resources :groups
