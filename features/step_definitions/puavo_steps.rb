@@ -149,7 +149,6 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
   end
 end
 
-require "ruby-debug"
 When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value| 
   page.driver.browser.basic_authorize('cucumber', 'cucumber')
   case page_name
