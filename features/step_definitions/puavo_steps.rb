@@ -217,7 +217,7 @@ end
 Then /^I should see the following:$/ do |values|
   # FIXME: the first value of table is ignored
   values.rows.each do |value|
-    Then %{I should see "#{value}"}
+    step %{I should see "#{value}"}
   end
 end
 
