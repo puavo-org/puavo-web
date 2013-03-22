@@ -40,9 +40,3 @@ Given /^a new role with name "([^\"]*)" and which is joined to the "([^\"]*)" gr
   role.save
   role.groups << group
 end
-
-When /^I check "([^\"]*)" from roles$/ do |role_name|
-  steps %Q{
-    When I check field by id "role_#{role_name.to_s.downcase.gsub(/ /, '_')}"
-  }
-end

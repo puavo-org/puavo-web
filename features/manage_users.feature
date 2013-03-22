@@ -41,7 +41,7 @@ Feature: Manage users
     And the "Language" select box should contain "Finnish"
     And the "Language" select box should contain "Swedish"
     And I select "English" from "user[preferredLanguage]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     # FIXME
     And I choose "user_puavoAllowRemoteAccess_true"
     And I attach the file at "features/support/test.jpg" to "image"
@@ -88,7 +88,7 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I press "Create"
     Then I should see "Username has already been taken"
     Then I should see "Failed to create user!"
@@ -114,7 +114,7 @@ Feature: Manage users
     | user[new_password]        | secretpw          |
     | New password confirmation | test confirmation |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I press "Create"
     Then I should see "Failed to create user!"
     And I should see "New password doesn't match confirmation"
@@ -142,7 +142,7 @@ Feature: Manage users
 #   | Password confirmation      |           |
     # And set photo?
     And I select "Visitor" from "user[puavoEduPersonAffiliation]"
-    And I check "Staff" from roles
+    And I check "Staff"
     And I press "Update"
     Then I should see the following:
     |           |
@@ -215,7 +215,7 @@ Feature: Manage users
       | Ben       | Mabey   | ben | secret   | visitor                   | Class 4   |
     And I am on the edit user page with "ben"
     When I fill in "user[new_password]" with "some text"
-    And I check "Staff" from roles
+    And I check "Staff"
     And I press "Update"
     Then I should see "New password doesn't match confirmation"
     And the id "role_staff" checkbox should be checked
@@ -226,7 +226,7 @@ Feature: Manage users
     | Surname    | Mabey |
     | Given name | Ben   |
     | Username   | ben   |
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I press "Create"
     Then I should see "User type is invalid"
     And the id "role_class_4" checkbox should be checked
@@ -244,7 +244,7 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I fill in "Username" with "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     And I press "Create"
     Then I should see "Username is too long (maximum is 255 characters)"
