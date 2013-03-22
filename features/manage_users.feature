@@ -68,9 +68,9 @@ Feature: Manage users
     And the member should include "ben" on the "School 1" school
     And the memberUid should include "ben" on the "Domain Users" samba group
     When I follow "Edit"
-    Then I should be on the edit user page
+    Then I am on the edit user page with "ben"
     When I follow "Cancel"
-    Then I should be on the user page
+    Then I am on the show user page with "ben"
     When I follow "Users"
     Then I should see "Mabey Ben"
     And I should see "ben"
