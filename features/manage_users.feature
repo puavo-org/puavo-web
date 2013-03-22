@@ -26,7 +26,7 @@ Feature: Manage users
     | Username                  | ben                   |
     | user[mail][]              | ben.mabey@example.com |
     | user[telephoneNumber][]   | +35814123123123       |
-    | New password              | secretpw              |
+    | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     | Personel Number           | 556677                |
 # FIXME test mail and telephoneNumber for more values  
@@ -85,7 +85,7 @@ Feature: Manage users
     | Surname                   | Mabey                 |
     | Given name                | Ben                   |
     | Username                  | ben                   |
-    | New password              | secretpw              |
+    | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I check "Class 4" from roles
@@ -111,7 +111,7 @@ Feature: Manage users
     | Surname                   | Mabey             |
     | Given name                | Ben               |
     | Username                  | ben               |
-    | New password              | secretpw          |
+    | user[new_password]        | secretpw          |
     | New password confirmation | test confirmation |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I check "Class 4" from roles
@@ -214,7 +214,7 @@ Feature: Manage users
       | givenName | surname | uid | password | puavoEduPersonAffiliation | role_name |
       | Ben       | Mabey   | ben | secret   | visitor                   | Class 4   |
     And I am on the edit user page with "ben"
-    When I fill in "New password" with "some text"
+    When I fill in "user[new_password]" with "some text"
     And I check "Staff" from roles
     And I press "Update"
     Then I should see "New password doesn't match confirmation"
@@ -241,7 +241,7 @@ Feature: Manage users
     | Given name                | Ben                   |
     | user[mail][]              | ben.mabey@example.com |
     | user[telephoneNumber][]   | +35814123123123       |
-    | New password              | secretpw              |
+    | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
     And I check "Class 4" from roles
