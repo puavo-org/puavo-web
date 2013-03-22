@@ -8,6 +8,10 @@ PuavoUsers::Application.routes.draw do
     match 'roles/:id/add_group/:group_id' => 'roles#add_group', :as => :add_group_role, :via => :put
     match 'roles/:id/remove_group/:group_id' => 'roles#remove_group', :as => :remove_group_role, :via => :put
   end
+
+  scope :path => ':school_id' do
+    resources :roles
+  end
   resources :roles
 
   match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
