@@ -35,6 +35,8 @@ class User < LdapBase
 
   after_create :change_ldap_password
 
+  validate :validate
+
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
   attr_accessor( :password,
                  :new_password,
