@@ -10,13 +10,13 @@ PuavoUsers::Application.routes.draw do
   end
   resources :roles
 
-  match 'schools/:id/admins.:format' => 'schools#admins', :as => :admins_school, :via => :get
-  match 'schools/:id/add_school_admin/:user_id.:format' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
-  match 'schools/:id/remove_school_admin/:user_id.:format' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
+  match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
+  match 'schools/:id/add_school_admin/:user_id' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
+  match 'schools/:id/remove_school_admin/:user_id' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
   resources :schools
 
   scope :path => ':school_id' do
-    match 'groups/:id/members.:format' => 'groups#members', :as => :add_role_group, :via => :get
+    match 'groups/:id/members' => 'groups#members', :as => :add_role_group, :via => :get
     match 'groups/:id/add_role/:role_id' => 'groups#add_role', :as => :add_role_group, :via => :put
     match 'groups/:id/delete_role/:role_id' => 'groups#delete_role', :as => :delete_role_group, :via => :put
     match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
@@ -42,9 +42,9 @@ PuavoUsers::Application.routes.draw do
   match ':school_id/users/import/show' => 'users/import#show', :as => :users_import, :via => :get
   match ':school_id/users/import/new' => 'users/import#new', :as => :new_users_import, :via => :get
   match ':school_id/users/import/' => 'users/import#create', :as => :create_users_import, :via => :post
-  match ':school_id/users/import/user_validate.:format' => 'users/import#user_validate', :as => :user_validate_users_import, :via => :post
-  match ':school_id/users/import/options.:format' => 'users/import#options', :as => :options_users_import, :via => :get
-  match ':school_id/users/import/download.:format' => 'users/import#download', :as => :download_users_import, :via => :get
+  match ':school_id/users/import/user_validate' => 'users/import#user_validate', :as => :user_validate_users_import, :via => :post
+  match ':school_id/users/import/options' => 'users/import#options', :as => :options_users_import, :via => :get
+  match ':school_id/users/import/download' => 'users/import#download', :as => :download_users_import, :via => :get
   match 'password' => 'password#edit', :as => :password, :via => :get
   match 'password/edit' => 'password#edit', :as => :edit_password, :via => :get
   match 'password/own' => 'password#own', :as => :own_password, :via => :get
