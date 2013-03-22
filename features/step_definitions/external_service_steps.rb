@@ -28,7 +28,7 @@ Then /^I should bind "([^\"]*)" with "([^\"]*)" to ldap$/ do |dn, password|
 end
 
 When /^I get the organisation JSON page with "([^\"]*)" and "([^\"]*)"$/ do |username, password|
-  basic_auth(username, password)
+  page.driver.browser.basic_authorize(username, password)
   
   visit "/organisation.json"
 end

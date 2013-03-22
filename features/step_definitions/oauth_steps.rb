@@ -25,7 +25,10 @@ end
 
 Then /^I should get OAuth Access Token with Authorization Code$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
 
   visit( oauth_access_token_path(:format => :json),
          :post, {
@@ -60,7 +63,10 @@ end
 
 Then /^I should get a new Access Token and a new Refresh Token with existing Refresh Token$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
   visit( oauth_access_token_path(:format => :json),
          :post, {
            :grant_type => 'refresh_token',
@@ -83,7 +89,10 @@ end
 
 Then /^I should not get OAuth Access Token with expired Authorization Code$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
 
   visit( oauth_access_token_path(:format => :json),
          :post, {
@@ -115,7 +124,11 @@ end
 
 Then /^I should not get a new Access Token and a new refresh Token with expired refresh Token$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
+
   visit( oauth_access_token_path(:format => :json),
          :post, {
            :grant_type => 'refresh_token',

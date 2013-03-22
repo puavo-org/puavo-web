@@ -149,8 +149,9 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
   end
 end
 
+require "ruby-debug"
 When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value| 
-  basic_auth('cucumber', 'cucumber')
+  page.driver.browser.basic_authorize('cucumber', 'cucumber')
   case page_name
   when /user JSON page$/
     @json_user = User.find(:first, :attribute => "uid", :value => value)
