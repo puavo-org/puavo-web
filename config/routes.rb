@@ -24,14 +24,19 @@ PuavoUsers::Application.routes.draw do
     match 'users/change_school' => 'users#change_school', :as => :change_school_users, :via => :post
   end
 
+
   scope :path => ':school_id' do
     resources :users
     match 'users/:id/image' => 'users#image', :as => :image_user, :via => :get
   end
 
   resources :users
+
+  scope :path => ':school_id' do
+    resources :groups
+  end
   resources :groups
-  resources :groups
+
   match '/login' => 'sessions#new', :as => :login
   match '/logout' => 'sessions#destroy', :as => :logout
   resources :sessions
