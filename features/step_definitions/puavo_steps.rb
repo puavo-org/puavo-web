@@ -186,7 +186,11 @@ Then /^I should see JSON '([^\']*)'$/ do |json_string|
     end
   end
 
-  keys = response_data.first.keys
+  if response_data.first
+    keys = response_data.first.keys
+  else
+    keys = []
+  end
 
   response_data = response_data.sort { |a,b| stringify(a, keys) <=> stringify(b, keys) }
   compare_data = compare_data.sort { |a,b| stringify(a, keys) <=> stringify(b, keys) }
