@@ -115,7 +115,7 @@ end
 Given /^I am set the "([^\"]*)" role for "([^\"]*)"$/ do |role, uid|
   steps %Q{
     And I am on the edit user page with "#{uid}"
-    And I check "#{role}" from roles
+    And I check "#{role}"
     And I press "Update"
 }
 end
