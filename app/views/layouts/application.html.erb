@@ -135,7 +135,13 @@
     </div><!-- navbar_first_level -->
 
     <div id="navbar_second_level">&nbsp;
-      <%= render :partial => "menu.html.erb" rescue nil %>
+      <%=
+        # Display second level menu partial if the current view has one
+        begin
+          render :partial => "menu.html.erb"
+        rescue ActionView::MissingTemplate
+        end
+       %>
     </div><!-- navbar_second_level -->
 
     <% end %>
