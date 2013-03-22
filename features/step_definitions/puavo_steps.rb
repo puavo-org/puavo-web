@@ -230,19 +230,19 @@ Then /^id the "([^\"]*)" field should not contain "([^\"]*)"$/ do |field_id, val
 end
 
 Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field_id|
-  field_with_id(field_id).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+  field_with_id(field_id).native.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
 Then /^I can select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
-  field_with_id(field_id).element.inner_html.should =~ /#{value}/
+  field_with_id(field_id).native.inner_html.should =~ /#{value}/
 end
 
 Then /^the "([^\"]*)" select box should contain "([^\"]*)"$/ do |field, value|
-  field_labeled(field).element.inner_html.should =~ /#{value}/
+  field_labeled(field).native.inner_html.should =~ /#{value}/
 end
 
 Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
-  field_with_id(field_id).element.inner_html.should_not =~ /#{value}/
+  field_with_id(field_id).native.inner_html.should_not =~ /#{value}/
 end
 Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
