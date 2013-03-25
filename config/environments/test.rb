@@ -35,3 +35,18 @@ PuavoUsers::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 end
+
+# Bug normalizing whitespaces on ruby 1.8.7 (capybara 2.0.2)
+# https://github.com/jnicklas/capybara/issues/916
+# 
+# FIXME: remove this code when we use new version of capybara
+# https://github.com/jnicklas/capybara/commit/8852e4d
+require 'capybara/helpers'
+
+module Capybara
+  module Helpers
+    def self.normalize_whitespace(text)
+      text.to_s.gsub(/[[:space:]]+/, ' ').strip
+    end
+  end
+end
