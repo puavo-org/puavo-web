@@ -116,10 +116,7 @@ When /^I attach the file at "([^\"]*)" to "([^\"]*)"$/ do |path, field|
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  assert(
-    page.body.include?(text),
-    "Page #{ page.current_path } does not contain '#{ text }' text"
-  )
+  page.has_text?(text)
 end
 
 Then /^I should see "([^\"]*)" within "([^\"]*)"$/ do |text, selector|
