@@ -218,7 +218,7 @@ Feature: Manage users
     And I check "Staff"
     And I press "Update"
     Then I should see "New password doesn't match confirmation"
-    And the id "role_staff" checkbox should be checked
+    And the "Staff" checkbox should be checked
 
   Scenario: Role selection does not lost when create new user and get error
     Given I am on the new user page
@@ -229,7 +229,7 @@ Feature: Manage users
     And I check "Class 4"
     And I press "Create"
     Then I should see "User type is invalid"
-    And the id "role_class_4" checkbox should be checked
+    And the "Class 4" checkbox should be checked
 
   Scenario: Create new user with invalid username
     Given the following groups:

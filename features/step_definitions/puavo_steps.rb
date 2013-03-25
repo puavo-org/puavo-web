@@ -266,10 +266,6 @@ When /^I follow "([^\"]*)" on the "([^\"]*)" ([^ ]+)$/ do |link_name, name, mode
   }
 end
 
-Then /^the id "([^\"]*)" checkbox should be checked$/ do |id|
-  field_with_id(id).should be_checked
-end
-
 
 Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
   memberUid_include?(model, object_name, method, uid).should == true
