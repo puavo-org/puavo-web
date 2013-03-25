@@ -493,7 +493,7 @@ class User < LdapBase
   def set_school_admin
     if self.school_admin == "true"
       self.school.puavoSchoolAdmin = Array(self.school.puavoSchoolAdmin).push self.dn
-      self.school.save
+      self.school.save!
     end
   end
 
