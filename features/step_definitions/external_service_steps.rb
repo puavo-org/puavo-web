@@ -1,6 +1,6 @@
 Given /^the following external services:$/ do |external_services|
   set_ldap_admin_connection
-  ExternalService.create!(external_services.hashes)
+  ExternalService.create(external_services.hashes)
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) external service$/ do |pos|
