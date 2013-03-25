@@ -15,6 +15,8 @@ class Group < BaseGroup
               :many => "puavoMemberGroup",
               :primary_key => "dn" )
 
+  validate :validate
+
   def validate
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
       errors.add( :cn, I18n.t("activeldap.errors.messages.group.invalid_characters") )
