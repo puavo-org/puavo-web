@@ -2,6 +2,7 @@
 # Also School is group on the LDAP and operating systems.
 class BaseGroup < LdapBase
   before_validation :set_special_ldap_value
+  validate :validate_unique_cn
 
   def id
     self.puavoId.to_s unless self.puavoId.nil?
@@ -24,7 +25,7 @@ class BaseGroup < LdapBase
     self.sambaSID = SambaDomain.next_samba_sid
   end
 
-  def validate_on_create
+  def validate_unique_cn
     # cn attribute must be unique on the group and school model.
     # cn == group name (operating system)
     if self.cn.empty? || Group.find(:first, :attribute => "cn", :value => self.cn) ||
