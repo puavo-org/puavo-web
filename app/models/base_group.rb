@@ -28,8 +28,21 @@ class BaseGroup < LdapBase
   def validate_unique_cn
     # cn attribute must be unique on the group and school model.
     # cn == group name (operating system)
-    if self.cn.empty? || Group.find(:first, :attribute => "cn", :value => self.cn) ||
-        School.find(:first, :attribute => "cn", :value => self.cn)
+
+    cn_escape = Net::LDAP::Filter.escape( self.cn )
+
+    filter = "(&" +
+      "(|(objectClass=puavoSchool)(objectClass=puavoEduGroup))" +
+      "(cn=#{ cn_escape })" +
+      ")"
+    group_ids = BaseGroup.search( :filter => filter,
+                                  :scope => :sub ).map{ |u| u.last["puavoId"].first }
+
+    if self.puavoId
+      group_ids.delete_if{ |id| self.puavoId.to_i == id.to_i }
+    end
+
+    if self.cn.empty? || ! group_ids.empty?
       errors.add :cn, I18n.t("activeldap.errors.messages.taken",
                              :attribute => I18n.t("activeldap.attributes.#{self.class.to_s.downcase}.cn") )
     end
