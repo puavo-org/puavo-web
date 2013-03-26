@@ -293,12 +293,12 @@ end
 When /^I cut nextPuavoId value by one$/ do
   pool = IdPool.find('IdPool')
   pool.puavoNextId -= 1
-  pool.save
+  pool.save!
 end
 
 Then /^I should see "([^\"]*)" titled "([^\"]*)"$/ do |text, title|
-  within("div[text()='#{text}']") do |content|
-    content.should have_selector('*', :title => title)
+  within("div[text()='#{text}']") do
+    page.should have_selector('*', :title => title)
   end
 end
 
