@@ -298,7 +298,7 @@ end
 
 Then /^I should see "([^\"]*)" titled "([^\"]*)"$/ do |text, title|
   within("div[text()='#{text}']") do
-    page.should have_selector('*', :title => title)
+    page.has_xpath?("//div[@title='#{ title }']")
   end
 end
 
