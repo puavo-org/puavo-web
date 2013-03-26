@@ -14,7 +14,7 @@ Feature: Manage external services
   
   Scenario: Add new external service
     Given I follow "External service"
-    And I follow "New"
+    And I follow "New" within ".maincontent"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "password"
@@ -70,7 +70,7 @@ Feature: Manage external services
 
   Scenario: Edit external service and unceck all system groups
     Given I follow "External service"
-    And I follow "New"
+    And I follow "New" within ".maincontent"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "secretpassword"
