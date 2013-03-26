@@ -283,7 +283,11 @@ When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
   tmp_txt = Tempfile.new('tmp_txt')
   tmp_txt.close
   `pdftotext -q #{tmp_pdf.path} #{tmp_txt.path}`
-  page.body = File.read tmp_txt.path
+  @pdf_text = File.read tmp_txt.path
+end
+
+Then /^I should see "([^\"]*)" on the PDF$/ do |text|
+  @pdf_text.should have_content(text)
 end
 
 When /^I cut nextPuavoId value by one$/ do
