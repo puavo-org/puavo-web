@@ -2,7 +2,7 @@
 
 <%= render :partial => 'form',
  :locals => {
-  :path => external_service_path(@school, @external_service),
+  :path => external_service_path(@external_service),
   :submit_text => t('link.update'),
   :method => :put
 }
