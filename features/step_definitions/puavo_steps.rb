@@ -297,9 +297,7 @@ When /^I cut nextPuavoId value by one$/ do
 end
 
 Then /^I should see "([^\"]*)" titled "([^\"]*)"$/ do |text, title|
-  within("div[text()='#{text}']") do
-    page.has_xpath?("//div[@title='#{ title }']")
-  end
+  page.has_xpath?("//div[text()='#{text}'][@title='#{ title }']")
 end
 
 def memberUid_include?(model, object_name, method, uid)
