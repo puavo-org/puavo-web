@@ -103,7 +103,7 @@ Feature: User mass import
     #Then I should see "Select the role you want to add users or start again and add the role to the user list"
     Then I should see "Following field value must be select when create new users:"
     And I should not see "User type"
-    And I can not select "Class 5" from the "user_role_name"
+    And I can not select "Class 5" from the "Role"
     When I select "Class 4" from "user[role_name]"
     And I press "Continue"
     #Then I should see "Username has already been taken"

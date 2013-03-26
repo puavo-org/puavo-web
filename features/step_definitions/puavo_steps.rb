@@ -245,8 +245,8 @@ Then /^the "([^\"]*)" select box should contain "([^\"]*)"$/ do |field, value|
   field_labeled(field).native.inner_html.should =~ /#{value}/
 end
 
-Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
-  field_with_id(field_id).native.inner_html.should_not =~ /#{value}/
+Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field|
+  field_labeled(field).native.inner_html.should_not =~ /#{value}/
 end
 Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
