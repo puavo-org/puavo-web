@@ -11,5 +11,7 @@ When /^I delete the (\d+)(?:st|nd|rd|th) oauth client$/ do |pos|
 end
 
 Then /^I should see the following oauth clients:$/ do |expected_oauth_clients_table|
-  expected_oauth_clients_table.diff!( tableish('table tr', 'td,th').map{ |a| a[0..1] } )
+  rows = find('table').all('tr')
+  table = rows.map { |r| r.all('th,td')[0..1].map { |c| c.text.strip } }
+  expected_oauth_clients_table.diff!(table)
 end

@@ -54,7 +54,9 @@ Then /^I should get "([^\"]*)" with "([^\"]*)" from "([^\"]*)"$/ do |text, metho
 end
 
 Then /^I should see the following users:$/ do |users_table|
-  users_table.diff!(tableish('table.validate_users_list tr', 'td,th'))
+  rows = find('table').all('tr')
+  table = rows.map { |r| r.all('th,td').map { |c| c.text.strip } }
+  users_table.diff!(table)
 end
 
 When /^I fill test data into user forms$/ do

@@ -14,7 +14,9 @@ When /^I delete the (\d+)(?:st|nd|rd|th) role$/ do |pos|
 end
 
 Then /^I should see the following roles:$/ do |expected_roles_table|
-  expected_roles_table.diff!(tableish('table tr', 'td,th'))
+  rows = find('table').all('tr')
+  table = rows.map { |r| r.all('th,td').map { |c| c.text.strip } }
+  expected_roles_table.diff!(table)
 end
 
 Given /^a new role with name "([^\"]*)" and which is joined to the "([^\"]*)" group$/ do

@@ -10,5 +10,7 @@ When /^I delete the (\d+)(?:st|nd|rd|th) session$/ do |pos|
 end
 
 Then /^I should see the following sessions:$/ do |expected_sessions_table|
-  expected_sessions_table.diff!(tableish('table tr', 'td,th'))
+  rows = find('table').all('tr')
+  table = rows.map { |r| r.all('th,td').map { |c| c.text.strip } }
+  expected_sessions_table.diff!(table)
 end
