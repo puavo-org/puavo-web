@@ -33,4 +33,4 @@ Create sessions table to database
 
 Start development server
 
-    bundle exec script/server
+    bundle exec rails server
