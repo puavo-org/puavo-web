@@ -19,11 +19,12 @@ class LdapBase < ActiveLdap::Base
     self.displayName.to_s <=> other_object.displayName.to_s
   end
 
+
   # Activeldap object's to_json method return Array by default.
   # E.g. @server.to_json -> [["puavoHostname", "puavoHostname 1"],["macAddress", "00-00-00-00-00-00-00-00"]]
   # When we use @server.attributes.to_json method we get Hash value. This is better and
   # following method make it automatically when we call to_json method.
-  def to_json(options = {})
+  def json_hash(options = {})
     allowed_attributes = self.attributes
     allowed_attributes.delete_if do |attribute, value|
       !self.schema.attribute(attribute).syntax.human_readable?
@@ -38,7 +39,23 @@ class LdapBase < ActiveLdap::Base
       options.delete(:methods)
     end
     # Include method's values to the return value'
-    method_values.empty? ? allowed_attributes.to_json(options) :
-      allowed_attributes.merge( method_values ).to_json(options)
+    method_values.empty? ? allowed_attributes :
+      allowed_attributes.merge( method_values )
   end
+
+  def to_json(options = {})
+    json_hash(options).to_json(options)
+  end
+
+  # Because Activeldap includes Enumerable mixin to the Base class[1] it gets
+  # the enumerable version of the as_json method from ActiveSupport[2].  Which
+  # is not what we want. Our models are more Hash like objects than
+  # Enumerables.
+  #
+  # [1]: https://github.com/activeldap/activeldap/blob/3.2.2/lib/active_ldap/base.rb#L662
+  # [2]: https://github.com/rails/rails/blob/v3.2.12/activesupport/lib/active_support/json/encoding.rb#L207
+  def as_json(options = {})
+    json_hash(options)
+  end
+
 end
