@@ -18,8 +18,7 @@ Get the sources:
     git clone git://github.com/opinsys/puavo-users.git
     cd puavo-users
 
-Use bundler to install all the required Ruby Gems
-
+Use bundler to install all the required gems
     
     bundle install --deployment
 
