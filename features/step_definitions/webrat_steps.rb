@@ -19,8 +19,10 @@ When /^I follow "([^\"]*)"$/ do |link|
   click_link(link)
 end
 
-When /^I follow "([^\"]*)" within "([^\"]*)"$/ do |link, parent|
-  click_link_within(parent, link)
+When /^I follow "([^\"]*)" within "([^\"]*)"$/ do |link, selector|
+  within(selector) do
+    click_link(link)
+  end
 end
 
 When /^I fill in "([^\"]*)" with "([^\"]*)"$/ do |field, value|
