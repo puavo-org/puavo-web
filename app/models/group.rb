@@ -36,14 +36,14 @@ class Group < BaseGroup
                                          { "member" => [user.dn.to_s] }])
   end
 
-  def to_json(*args)
+  def as_json(*args)
     { "school_id" => self.school.puavoId,
       "abbreviation" => self.cn.to_s,
       "gid" => self.gidNumber,
       "name" => self.displayName,
       "puavo_id" => self.puavoId,
       "samba_SID" => self.sambaSID,
-      "samba_group_type" => self.sambaGroupType }.to_json
+      "samba_group_type" => self.sambaGroupType }
   end
 end
 

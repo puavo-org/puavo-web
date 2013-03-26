@@ -61,11 +61,11 @@ class User < LdapBase
     "é" => "e"
   }
 
-  def to_json(*args)
-    self.class.build_hash_for_to_json(self).to_json
+  def as_json(*args)
+    self.class.build_hash_for_to_json(self)
   end
 
-  # Building hash for to_json method with better name of attributes
+  # Building hash for as_json method with better name of attributes
   #  * data argument may be User or Hash
   def self.build_hash_for_to_json(data)
     new_user_hash = {}

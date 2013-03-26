@@ -85,7 +85,7 @@ class School < BaseGroup
   #  super(*args)
   #end
 
-  def to_json(*args)
+  def as_json(*args)
     { "group_name" => self.cn,
       "state" => self.st,
       "postal_address" => self.postalAddress,
@@ -98,7 +98,7 @@ class School < BaseGroup
       "home_page" => self.puavoSchoolHomePageURL,
       "samba_SID" => self.sambaSID,
       "samba_group_type" => self.sambaGroupType,
-      "post_office_box" => self.postOfficeBox }.to_json
+      "post_office_box" => self.postOfficeBox }
   end
 
   private
