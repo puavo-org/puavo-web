@@ -2,7 +2,7 @@
 
 Setup Puavo development environment to a single machine. See also https://github.com/opinsys/puavo-standalone/blob/master/README.md
 
-## Install Ruby and other dependencies
+Install Ruby and other dependencies
 
 12.04 LTS (Precise Pangolin):
 
@@ -13,23 +13,23 @@ Setup Puavo development environment to a single machine. See also https://github
       libssl-dev build-essential libopenssl-ruby xpdf-utils \
       git libreadline6-dev
 
-## Get the sources
+Get the sources:
 
     git clone git://github.com/opinsys/puavo-users.git
-
-## Use bundler to install all the required Ruby Gems
-
     cd puavo-users
+
+Use bundler to install all the required gems
+    
     bundle install --deployment
 
-## Configure
+Configure
 
-    cd puavo-users
     bundle exec rake puavo:configuration
 
-## Create sessions table to database
-    cd puavo-users
+Create sessions table to database
+
     bundle exec rake db:migrate
 
-## Start development server
-    bundle exec script/server
+Start development server
+
+    bundle exec rails server
