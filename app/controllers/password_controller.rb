@@ -85,8 +85,14 @@ class PasswordController < ApplicationController
   end
 
   def set_ldap_connection
+    organisation_key = Puavo::Organisation.key_by_host(request.host)
+    unless organisation_key
+      organisation_key = Puavo::Organisation.key_by_host("*")
+    end
+    organisation_key
+
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-    organisation = Puavo::Organisation.find_by_host(request.host)
+    organisation = Puavo::Organisation.find(organisation_key)
     host = organisation.ldap_host
     base = organisation.ldap_base
     dn =  default_ldap_configuration["bind_dn"]

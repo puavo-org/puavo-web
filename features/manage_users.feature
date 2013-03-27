@@ -26,7 +26,7 @@ Feature: Manage users
     | Username                  | ben                   |
     | user[mail][]              | ben.mabey@example.com |
     | user[telephoneNumber][]   | +35814123123123       |
-    | New password              | secretpw              |
+    | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     | Personel Number           | 556677                |
 # FIXME test mail and telephoneNumber for more values  
@@ -41,10 +41,10 @@ Feature: Manage users
     And the "Language" select box should contain "Finnish"
     And the "Language" select box should contain "Swedish"
     And I select "English" from "user[preferredLanguage]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     # FIXME
     And I choose "user_puavoAllowRemoteAccess_true"
-    And I attach the file at "features/support/test.jpg" to "image"
+    And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
     Then I should see the following:
     |                       |
@@ -68,9 +68,9 @@ Feature: Manage users
     And the member should include "ben" on the "School 1" school
     And the memberUid should include "ben" on the "Domain Users" samba group
     When I follow "Edit"
-    Then I should be on the edit user page
+    Then I am on the edit user page with "ben"
     When I follow "Cancel"
-    Then I should be on the user page
+    Then I am on the show user page with "ben"
     When I follow "Users"
     Then I should see "Mabey Ben"
     And I should see "ben"
@@ -85,10 +85,10 @@ Feature: Manage users
     | Surname                   | Mabey                 |
     | Given name                | Ben                   |
     | Username                  | ben                   |
-    | New password              | secretpw              |
+    | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I press "Create"
     Then I should see "Username has already been taken"
     Then I should see "Failed to create user!"
@@ -111,10 +111,10 @@ Feature: Manage users
     | Surname                   | Mabey             |
     | Given name                | Ben               |
     | Username                  | ben               |
-    | New password              | secretpw          |
+    | user[new_password]        | secretpw          |
     | New password confirmation | test confirmation |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I press "Create"
     Then I should see "Failed to create user!"
     And I should see "New password doesn't match confirmation"
@@ -142,7 +142,7 @@ Feature: Manage users
 #   | Password confirmation      |           |
     # And set photo?
     And I select "Visitor" from "user[puavoEduPersonAffiliation]"
-    And I check "Staff" from roles
+    And I check "Staff"
     And I press "Update"
     Then I should see the following:
     |           |
@@ -214,11 +214,11 @@ Feature: Manage users
       | givenName | surname | uid | password | puavoEduPersonAffiliation | role_name |
       | Ben       | Mabey   | ben | secret   | visitor                   | Class 4   |
     And I am on the edit user page with "ben"
-    When I fill in "New password" with "some text"
-    And I check "Staff" from roles
+    When I fill in "user[new_password]" with "some text"
+    And I check "Staff"
     And I press "Update"
     Then I should see "New password doesn't match confirmation"
-    And the id "role_staff" checkbox should be checked
+    And the "Staff" checkbox should be checked
 
   Scenario: Role selection does not lost when create new user and get error
     Given I am on the new user page
@@ -226,10 +226,10 @@ Feature: Manage users
     | Surname    | Mabey |
     | Given name | Ben   |
     | Username   | ben   |
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I press "Create"
     Then I should see "User type is invalid"
-    And the id "role_class_4" checkbox should be checked
+    And the "Class 4" checkbox should be checked
 
   Scenario: Create new user with invalid username
     Given the following groups:
@@ -241,10 +241,10 @@ Feature: Manage users
     | Given name                | Ben                   |
     | user[mail][]              | ben.mabey@example.com |
     | user[telephoneNumber][]   | +35814123123123       |
-    | New password              | secretpw              |
+    | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     And I select "Student" from "user[puavoEduPersonAffiliation]"
-    And I check "Class 4" from roles
+    And I check "Class 4"
     And I fill in "Username" with "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     And I press "Create"
     Then I should see "Username is too long (maximum is 255 characters)"

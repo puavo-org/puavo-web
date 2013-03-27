@@ -1,6 +1,6 @@
 Given /^the following external services:$/ do |external_services|
   set_ldap_admin_connection
-  ExternalService.create!(external_services.hashes)
+  ExternalService.create(external_services.hashes)
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) external service$/ do |pos|
@@ -11,7 +11,9 @@ When /^I delete the (\d+)(?:st|nd|rd|th) external service$/ do |pos|
 end
 
 Then /^I should see the following external services:$/ do |expected_external_services_table|
-  expected_external_services_table.diff!( tableish('table tr', 'td,th').map{ |a| a[0..1] } )
+  rows = find('table').all('tr')
+  table = rows.map { |r| r.all('th,td')[0..1].map { |c| c.text.strip } }
+  expected_external_services_table.diff!(table)
 end
 
 Then /^"([^"]*)" is not member of "([^"]*)" system group$/ do |uid, group_cn|
@@ -28,7 +30,7 @@ Then /^I should bind "([^\"]*)" with "([^\"]*)" to ldap$/ do |dn, password|
 end
 
 When /^I get the organisation JSON page with "([^\"]*)" and "([^\"]*)"$/ do |username, password|
-  basic_auth(username, password)
+  page.driver.browser.basic_authorize(username, password)
   
   visit "/organisation.json"
 end

@@ -1,4 +1,4 @@
-<% form_for(@external_service, :url => path, :html => { :method => method })  do |f| %>
+<%= form_for(@external_service, :url => path, :html => { :method => method })  do |f| %>
 <table>
   <% if action_name == "new" || action_name == "create" %>
   <tr>

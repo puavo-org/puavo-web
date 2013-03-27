@@ -14,14 +14,8 @@
     <% end %>
   </title>
 
-  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/screen.css", :media => 'screen, projection' %>
-  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/print.css", :media => 'print' %>
-  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/userform.css" %>
-  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/topmenu.css" %>
-  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/navmenu.css" %>
-  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/puavo.css" %>
-  <%= stylesheet_link_tag "/shared/stylesheets/#{theme}/jquery.tooltip.css" %>
-  <%= stylesheet_link_tag "/shared/stylesheets/jquery.liveSearch.css" %>
+  <%= stylesheet_link_tag "breathe/print", :media => 'print' %>
+  <%= stylesheet_link_tag "application" %>
 
   <style id="menuHandling" media="screen" rel="stylesheet" type="text/css" >
     <%#
@@ -39,22 +33,12 @@
 
   </style>
 
-  <%= javascript_include_tag( "jquery-1.4.2.min",
-                              "rails",
-                              "application",
-                              "/shared/javascripts/modernizr.custom.js",
-                              "/shared/javascripts/jquery.jeditable.mini.js",
-                              "/shared/javascripts/jquery.tooltip.min.js",
-                              "/shared/javascripts/jquery.liveSearch.js",
-                              "/shared/javascripts/application.js"
-
-                              ) %>
-
-  <%= yield :javascript %>
-
-  <% search_urls = { "users-search" => "/users/search?words=" } %>
+  <% search_urls = { "users-search" => "#{ rack_mount_point }search?words=" } %>
   <% if Puavo::DEVICE_CONFIG then search_urls[ "devices-search"] = "/devices/search?words=" end %>
-  <%= javascript_tag "var search_urls = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
+  <%= javascript_tag "window.SEARCH_URLS = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
+
+  <%= javascript_include_tag "application" %>
+  <%= yield :javascript %>
 
   <meta name="csrf-token" content="<%= form_authenticity_token %>" />
   <meta name="csrf-param" content="authenticity_token" />
@@ -128,12 +112,12 @@
           <li class="<%= controller_name.match(/schools/) \
                      ? "page_item current_page_item" \
                                                     : "page_item" %>">
-            <% link_to school_path(@school) do %>
+            <%= link_to school_path(@school) do %>
             <span><%= t('.school') %></span>
             <% end %>
           </li>
           <li class="<%= controller_name.match(/users|groups|roles|import/) ? "page_item current_page_item" : "page_item" %>">
-            <% link_to users_path(@school) do %>
+            <%= link_to users_path(@school) do %>
             <span><%= t('.users') %></span>
             <% end %>
           </li>
@@ -151,7 +135,13 @@
     </div><!-- navbar_first_level -->
 
     <div id="navbar_second_level">&nbsp;
-      <%= render :partial => "menu.html.erb" rescue nil %>
+      <%=
+        # Display second level menu partial if the current view has one
+        begin
+          render :partial => "menu"
+        rescue ActionView::MissingTemplate
+        end
+       %>
     </div><!-- navbar_second_level -->
 
     <% end %>

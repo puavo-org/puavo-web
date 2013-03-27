@@ -19,8 +19,10 @@ When /^I follow "([^\"]*)"$/ do |link|
   click_link(link)
 end
 
-When /^I follow "([^\"]*)" within "([^\"]*)"$/ do |link, parent|
-  click_link_within(parent, link)
+When /^I follow "([^\"]*)" within "([^\"]*)"$/ do |link, selector|
+  within(selector) do
+    click_link(link)
+  end
 end
 
 When /^I fill in "([^\"]*)" with "([^\"]*)"$/ do |field, value|
@@ -44,7 +46,7 @@ end
 #
 When /^I fill in the following:$/ do |fields|
   fields.rows_hash.each do |name, value|
-    When %{I fill in "#{name}" with "#{value}"}
+    step %{I fill in "#{name}" with "#{value}"}
   end
 end
 
@@ -116,46 +118,46 @@ When /^I attach the file at "([^\"]*)" to "([^\"]*)"$/ do |path, field|
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  response.should contain(text)
+  page.has_text?(text)
 end
 
 Then /^I should see "([^\"]*)" within "([^\"]*)"$/ do |text, selector|
-  within(selector) do |content|
-    content.should contain(text)
+  within(selector) do
+    page.should have_content(text)
   end
 end
 
 Then /^I should see \/([^\/]*)\/$/ do |regexp|
   regexp = Regexp.new(regexp)
-  response.should contain(regexp)
+  page.should have_content(regexp)
 end
 
 Then /^I should see \/([^\/]*)\/ within "([^\"]*)"$/ do |regexp, selector|
-  within(selector) do |content|
+  within(selector) do
     regexp = Regexp.new(regexp)
-    content.should contain(regexp)
+    page.should have_content(regexp)
   end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |text|
-  response.should_not contain(text)
+  page.should_not have_content(text)
 end
 
 Then /^I should not see "([^\"]*)" within "([^\"]*)"$/ do |text, selector|
-  within(selector) do |content|
-    content.should_not contain(text)
+  within(selector) do
+    page.should_not have_content(text)
   end
 end
 
 Then /^I should not see \/([^\/]*)\/$/ do |regexp|
   regexp = Regexp.new(regexp)
-  response.should_not contain(regexp)
+  page.should_not have_content(regexp)
 end
 
 Then /^I should not see \/([^\/]*)\/ within "([^\"]*)"$/ do |regexp, selector|
-  within(selector) do |content|
+  within(selector) do
     regexp = Regexp.new(regexp)
-    content.should_not contain(regexp)
+    page.should_not have_content(regexp)
   end
 end
 

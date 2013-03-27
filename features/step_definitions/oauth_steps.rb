@@ -14,7 +14,7 @@ Given /^I have been redirected to (.*) from "([^\"]*)"$/ do |page_name, client_n
 end
 
 Then /^I should get OAuth Authorization Code$/ do
-  params = CGI::parse( URI.parse( response.headers["Location"]).query )
+  params = CGI::parse( URI.parse( page.headers["Location"]).query )
 
   # http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.2
   params["code"].first.should_not be_nil
@@ -25,7 +25,10 @@ end
 
 Then /^I should get OAuth Access Token with Authorization Code$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
 
   visit( oauth_access_token_path(:format => :json),
          :post, {
@@ -34,9 +37,9 @@ Then /^I should get OAuth Access Token with Authorization Code$/ do
            :redirect_uri => 'http://www.example2.com',
            :approval_prompt => 'force' })
 
-  response.status.should == "200 OK"
+  page.status.should == "200 OK"
 
-  data = JSON.parse( response.body )
+  data = JSON.parse( page.body )
   data["token_type"].should == "Bearer"
   data["expires_in"].should_not be_nil
   data["access_token"].should_not be_nil
@@ -50,8 +53,8 @@ Then /^I should get "([^\"]*)" information with Access Token$/ do |uid|
   cookies.clear
   header "HTTP_AUTHORIZATION", "Bearer #{ @access_token }"
   visit(whoami_path(:format => :json))
-  response.status.should == "200 OK"
-  data = JSON.parse(response.body)
+  page.status.should == "200 OK"
+  data = JSON.parse(page.body)
   data["error"].should be_nil
   data["uid"].should == uid
 end
@@ -60,7 +63,10 @@ end
 
 Then /^I should get a new Access Token and a new Refresh Token with existing Refresh Token$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
   visit( oauth_access_token_path(:format => :json),
          :post, {
            :grant_type => 'refresh_token',
@@ -68,7 +74,7 @@ Then /^I should get a new Access Token and a new Refresh Token with existing Ref
          }
   )
 
-  data = JSON.parse( response.body )
+  data = JSON.parse( page.body )
   data["token_type"].should == "Bearer"
   data["expires_in"].should_not be_nil
   data["access_token"].should_not be_nil
@@ -83,7 +89,10 @@ end
 
 Then /^I should not get OAuth Access Token with expired Authorization Code$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
 
   visit( oauth_access_token_path(:format => :json),
          :post, {
@@ -94,9 +103,9 @@ Then /^I should not get OAuth Access Token with expired Authorization Code$/ do
 
 
   # TODO 401
-  response.status.should_not == "200 OK"
+  page.status.should_not == "200 OK"
 
-  data = JSON.parse( response.body )
+  data = JSON.parse( page.body )
   data["error"].should_not be_nil
 
 end
@@ -108,14 +117,18 @@ Then /^I should not get "([^\"]*)" information with expired Access Token$/ do |u
   visit(whoami_path(:format => :json))
 
   # TODO 401
-  response.status.should_not == "200 OK"
-  data = JSON.parse(response.body)
+  page.status.should_not == "200 OK"
+  data = JSON.parse(page.body)
   data["error"].should_not be_nil
 end
 
 Then /^I should not get a new Access Token and a new refresh Token with expired refresh Token$/ do
 
-  basic_auth("oauth_client_id/example/" + @oauth_client.puavoOAuthClientId, 'zK7oEm34gYk3hA54DKX8da4')
+  page.driver.browser.basic_authorize(
+    "oauth_client_id/example/" + @oauth_client.puavoOAuthClientId,
+    'zK7oEm34gYk3hA54DKX8da4'
+  )
+
   visit( oauth_access_token_path(:format => :json),
          :post, {
            :grant_type => 'refresh_token',
@@ -123,7 +136,7 @@ Then /^I should not get a new Access Token and a new refresh Token with expired 
          }
   )
 
-  response.status.should_not == "200 OK"
-  data = JSON.parse( response.body )
+  page.status.should_not == "200 OK"
+  data = JSON.parse( page.body )
   data["error"].should_not be_nil
 end

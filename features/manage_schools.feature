@@ -31,7 +31,7 @@ Feature: Manage schools
     | State                      | East Midlands                                                                  |
     | Device image               | presice-20121023                                                               |
     | school[puavoBillingInfo][] | school_base:500                                                                |
-    And I attach the file at "features/support/test.jpg" to "image"
+    And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
     Then I should not see "error"
     # Translation missing

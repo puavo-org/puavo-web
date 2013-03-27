@@ -1,18 +1,15 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  def label(*args)
-    # Using value by localize if found it
-    # 
-    # Model key name
-    attribute_translate_name = translate_name_attribute(args[0], args[1])
-    # Using humanize method by String class If args[2] is nil
-    args[2] = attribute_translate_name unless attribute_translate_name.nil?
+  def label(object_name, method, human_name=nil, content=nil, *args)
 
-    # Add lable_error class to field element if object is invalid
-    if args[3] && args[3][:object] && args[3][:object].errors.invalid?(args[1])
-      args[3][:class] = Array([ 'label_error', args[3][:class] ]).join(" ")
+    # If we don't get human name from the label get use the string from translation
+    human_name ||= translate_name_attribute(object_name, method)
+
+    # Add CSS class 'label_error' to field element if object is invalid
+    if content && content[:object] && !content[:object].errors[method].empty?
+      (content[:class] ||= []).push "label_error"
     end
-    super(*args)
+    super(object_name, method, human_name, content, *args)
   end
 
   def text_field(*args)
@@ -35,9 +32,9 @@ module ApplicationHelper
   end
 
   def field_error_text(object, method)
-    if object.errors.invalid?(method)
-      error_message = Array(object.errors.on(method)).first
-      if error_message.match(/is required attribute by objectClass/)
+    if !object.errors[method].empty?
+      error_message = Array(object.errors[method]).first
+      if error_message && error_message.match(/is required attribute by objectClass/)
         error_message = translate_error(object, method)
       end
       error_message

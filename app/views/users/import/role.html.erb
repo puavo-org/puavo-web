@@ -1,6 +1,6 @@
 <h1><span><%= t('.title') %></span></h1>
 <p class="mass_import_info"><span class="done">1. <%= t('users.import.info.phase_1') %> &gt; </span> <span class="done">2. <%= t('users.import.info.phase_2') %> &gt; </span><span class="current">3. <%= t('users.import.info.phase_3') %></span> &gt; 4. <%= t('users.import.info.phase_4') %></p>
-<% form_for(:user, :url => validate_users_import_path(@school), :html => { :method => :post, :class => "mass_import_form" }) do |f| %>
+<%= form_for(:user, :url => validate_users_import_path(@school), :html => { :method => :post, :class => "mass_import_form" }) do |f| %>
 
   <p><%= t('.help') %>:</p>
 
@@ -40,7 +40,7 @@
 <% content_for :footer do %>
 <ul>
   <li class="link_header">
-    <% link_to school_path(@school) do %>
+    <%= link_to school_path(@school) do %>
       <span><%= t('layouts.application.schools') %></span>
     <% end %>
   </li>
@@ -53,7 +53,7 @@
 <ul>
 <li class="link_header"><%= @school.displayName %></li>
 <li>
-<% link_to users_path(@school) do %>
+<%= link_to users_path(@school) do %>
   <span><%= t('layouts.application.users') %></span>
 <% end %>
 </li>

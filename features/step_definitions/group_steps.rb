@@ -2,7 +2,7 @@ Given /^the following groups:$/ do |groups|
   set_ldap_admin_connection
   groups.hashes.each do |new_group| 
     new_group[:puavoSchool] = @school.dn
-    group = Group.create!(new_group)
+    group = Group.create(new_group)
   end
 end
 

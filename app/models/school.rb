@@ -23,12 +23,18 @@ class School < BaseGroup
 
   attr_accessor :image
   before_validation :resize_image
+
+  validates :displayName, :presence => true
+  validate :validate_group_name, :validate_name_prefix
   
-  def validate
+  def validate_group_name
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
       errors.add( :cn, I18n.t("activeldap.errors.messages.school.invalid_characters",
                               :attribute => I18n.t("activeldap.attributes.school.cn")) )
     end
+  end
+
+  def validate_name_prefix
     unless self.puavoNamePrefix.to_s =~ /^[a-z0-9-]*$/
       errors.add( :puavoNamePrefix, I18n.t("activeldap.errors.messages.school.invalid_characters",
                                            :attribute => I18n.t("activeldap.attributes.school.puavoNamePrefix")) )
@@ -79,7 +85,7 @@ class School < BaseGroup
   #  super(*args)
   #end
 
-  def to_json(*args)
+  def as_json(*args)
     { "group_name" => self.cn,
       "state" => self.st,
       "postal_address" => self.postalAddress,
@@ -92,13 +98,13 @@ class School < BaseGroup
       "home_page" => self.puavoSchoolHomePageURL,
       "samba_SID" => self.sambaSID,
       "samba_group_type" => self.sambaGroupType,
-      "post_office_box" => self.postOfficeBox }.to_json
+      "post_office_box" => self.postOfficeBox }
   end
 
   private
 
   def resize_image
-    if self.image.class == Tempfile
+    if self.image && !self.image.path.to_s.empty?
       image_orig = Magick::Image.read(self.image.path).first
       self.jpegPhoto = image_orig.resize_to_fit(400,200).to_blob
     end

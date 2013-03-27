@@ -35,6 +35,8 @@ class User < LdapBase
 
   after_create :change_ldap_password
 
+  validate :validate
+
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
   attr_accessor( :password,
                  :new_password,
@@ -59,11 +61,11 @@ class User < LdapBase
     "é" => "e"
   }
 
-  def to_json(*args)
-    self.class.build_hash_for_to_json(self).to_json
+  def as_json(*args)
+    self.class.build_hash_for_to_json(self)
   end
 
-  # Building hash for to_json method with better name of attributes
+  # Building hash for as_json method with better name of attributes
   #  * data argument may be User or Hash
   def self.build_hash_for_to_json(data)
     new_user_hash = {}
@@ -175,14 +177,14 @@ class User < LdapBase
    # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
     # If role_ids is not nil: user's roles value will change when save object. Then role_ids must not be empty!
     elsif (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && roles.empty? )
-      errors.add_on_blank :role_ids, I18n.t("activeldap.errors.messages.blank",
+      errors.add :role_ids, I18n.t("activeldap.errors.messages.blank",
                                          :attribute => I18n.t("activeldap.attributes.user.roles") )
     else
       # Role must be found by id!
       unless role_ids.nil?
         role_ids.each do |id|
           if Role.find(:first, id).nil?
-            errors.add_on_blank :role_ids, I18n.t("activeldap.errors.messages.blank",
+            errors.add :role_ids, I18n.t("activeldap.errors.messages.blank",
                                                   :attribute => I18n.t("activeldap.attributes.user.role_ids") )
           end
         end
@@ -491,7 +493,7 @@ class User < LdapBase
   def set_school_admin
     if self.school_admin == "true"
       self.school.puavoSchoolAdmin = Array(self.school.puavoSchoolAdmin).push self.dn
-      self.school.save
+      self.school.save!
     end
   end
 

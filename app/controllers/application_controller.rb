@@ -2,11 +2,11 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  helper_method :theme, :school_list
+  include Puavo::AuthenticationHelper
 
-  helper :all # include all helpers, all the time
+  helper_method :theme, :current_user, :current_organisation, :acquire_credentials, :setup_authentication, :perform_login, :require_login, :require_puavo_authorization, :show_authentication_error, :store_location, :redirect_back_or_default, :organisation_key_from_host, :set_organisation_to_session, :set_initial_locale, :remove_ldap_connection, :theme, :school_list, :rack_mount_point
+
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user
 
   before_filter :set_initial_locale
   before_filter :setup_authentication
@@ -17,12 +17,15 @@ class ApplicationController < ActionController::Base
 
   after_filter :remove_ldap_connection
 
-  filter_parameter_logging :password, :new_password, :new_password_confirmation
-
   # Cached schools query
   def school_list
     return @school_cache if @school_cache
     @school_cache = current_organisation.schools current_user
+  end
+
+  def rack_mount_point
+    # See more information from: http://rack.rubyforge.org/doc/SPEC.html
+    ENV["PATH_INFO"] || "/"
   end
 
   private
