@@ -36,7 +36,6 @@ GEM
       multi_json (~> 1.0)
     afm (0.2.0)
     arel (3.0.2)
-    bond (0.4.3)
     builder (3.0.4)
     capybara (2.0.2)
       mime-types (>= 1.16)
@@ -60,6 +59,12 @@ GEM
       nokogiri (>= 1.5.0)
       rails (~> 3.0)
     database_cleaner (0.9.1)
+    debugger (1.5.0)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.0)
+    debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.0)
     diff-lcs (1.2.1)
     erubis (2.7.0)
     fast_gettext (0.7.0)
@@ -80,8 +85,6 @@ GEM
       thor (>= 0.14, < 2.0)
     json (1.7.7)
     levenshtein (0.2.2)
-    linecache (0.46)
-      rbx-require-relative (> 0.0.4)
     locale (2.0.8)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
@@ -132,7 +135,6 @@ GEM
       ffi (>= 1.0.6)
       msgpack (>= 0.4.3)
       trollop (>= 1.16.2)
-    rbx-require-relative (0.0.9)
     rdoc (3.12.2)
       json (~> 1.4)
     rmagick (2.13.2)
@@ -151,13 +153,6 @@ GEM
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
       rspec-mocks (~> 2.13.0)
-    ruby-debug (0.10.4)
-      columnize (>= 0.1)
-      ruby-debug-base (~> 0.10.4.0)
-    ruby-debug-base (0.10.4)
-      linecache (>= 0.3)
-    ruby-debug-completion (0.2.1)
-      bond (>= 0.3.3)
     ruby-prof (0.13.0)
     ruby-rc4 (0.1.5)
     rubyzip (0.9.9)
@@ -200,6 +195,7 @@ DEPENDENCIES
   cucumber
   cucumber-rails
   database_cleaner
+  debugger
   jquery-rails
   net-ldap
   pg
@@ -210,8 +206,6 @@ DEPENDENCIES
   rmagick
   rspec
   rspec-rails
-  ruby-debug
-  ruby-debug-completion
   ruby-prof
   sqlite3-ruby
   timecop
