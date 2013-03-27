@@ -1,4 +1,4 @@
-require 'sha1'
+require 'digest'
 require 'base64'
 require 'timecop'
 
