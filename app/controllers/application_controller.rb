@@ -23,6 +23,11 @@ class ApplicationController < ActionController::Base
     @school_cache = current_organisation.schools current_user
   end
 
+  def rack_mount_point
+    # See more information from: http://rack.rubyforge.org/doc/SPEC.html
+    ENV["PATH_INFO"] || "/"
+  end
+
   private
 
   def find_school

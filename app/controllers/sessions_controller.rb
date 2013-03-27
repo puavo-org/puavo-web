@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
     session[:uid] = params[:user][:uid]
     session[:password_plaintext] = params[:user][:password]
     session[:login_flash] = t('flash.session.login_successful')
-    redirect_back_or_default  ENV["PATH_INFO"] || "/"
+    redirect_back_or_default  rack_mount_point
   end
 
   def auth

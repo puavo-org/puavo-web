@@ -33,7 +33,7 @@
 
   </style>
 
-  <% search_urls = { "users-search" => "/users/search?words=" } %>
+  <% search_urls = { "users-search" => "#{ rack_mount_point }search?words=" } %>
   <% if Puavo::DEVICE_CONFIG then search_urls[ "devices-search"] = "/devices/search?words=" end %>
   <%= javascript_tag "window.SEARCH_URLS = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
 
