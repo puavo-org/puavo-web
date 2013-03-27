@@ -4,7 +4,7 @@
 class ApplicationController < ActionController::Base
   include Puavo::AuthenticationHelper
 
-  helper_method :theme, :current_user, :current_organisation, :acquire_credentials, :setup_authentication, :perform_login, :require_login, :require_puavo_authorization, :show_authentication_error, :store_location, :redirect_back_or_default, :organisation_key_from_host, :set_organisation_to_session, :set_initial_locale, :remove_ldap_connection, :theme, :school_list
+  helper_method :theme, :current_user, :current_organisation, :acquire_credentials, :setup_authentication, :perform_login, :require_login, :require_puavo_authorization, :show_authentication_error, :store_location, :redirect_back_or_default, :organisation_key_from_host, :set_organisation_to_session, :set_initial_locale, :remove_ldap_connection, :theme, :school_list, :rack_mount_point
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
