@@ -1,5 +1,5 @@
 <h2><%= t('.title') %></h2>
-<% form_for("role", :url => select_role_role_path(@school))  do |f| %>
+<%= form_for("role", :url => select_role_role_path(@school))  do |f| %>
 <table>
   <tr>
 	<td>
@@ -18,7 +18,7 @@
 <% content_for :footer do %>
 <ul>
   <li class="link_header">
-    <% link_to school_path(@school) do %>
+    <%= link_to school_path(@school) do %>
     <span><%= t('layouts.application.schools') %></span>
     <% end %>
   </li>
@@ -30,7 +30,7 @@
 </ul>
 <ul>
 <li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
+<li><%= link_to users_path(@school) do %>
   <span><%= t('layouts.application.users') %></span>
 <% end %>
 </li>

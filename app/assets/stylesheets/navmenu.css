@@ -1,0 +1,107 @@
+#navbar{
+        height: 20px;
+}
+
+#navbar .spacer{
+        float: left;
+}
+
+#top-area {
+        background: #f7efe7;
+}
+
+#navbar2 {
+        background: #EF6E43;
+        height: 25px;
+        clear: both;
+        font-color: #000000;
+	-moz-border-radius-topright: 12px;
+	-webkit-border-top-right-radius: 12px;
+}
+
+#navbar2 a {
+    font-color: #000000;
+}
+
+#nav1 {
+        font-size:16px;
+        font-weight:bold;
+        height:30px;
+        letter-spacing:-1px;
+        margin:0 0 0 0;
+        text-transform:uppercase;
+}
+#nav1, #nav1 ul {
+        padding: 0;
+        list-style: none; 
+        line-height: 1;
+        z-index: 100;
+}
+
+#nav1 a {
+        display: block;
+        line-height: 30px;
+        padding: 0 5px;
+        z-index: 100;
+}
+
+#nav1 li {
+        float: left;
+        line-height: 30px;
+        margin: 0 4px 0 0;
+	background: #F7B7A1;
+	-moz-border-radius-topright: 12px;
+	-moz-border-radius-topleft: 12px;
+	-webkit-border-top-right-radius: 12px;
+	-webkit-border-top-left-radius: 12px;
+}
+#nav1 li a{
+        color: #3f3f3f;
+        text-decoration: none
+}
+
+#nav1 li a span{
+        display: inline-block;
+        height: 25px;
+        padding: 14px 8px 14px 8px;
+}
+
+#nav1 li a:hover,
+#nav1 li.active a, 
+#nav1 li.current_page_item a{
+        background: #EF6E43;
+        color: #ffffff;
+        cursor: pointer;
+        text-decoration: none;
+	-moz-border-radius-topright: 12px;
+	-moz-border-radius-topleft: 12px;
+	-webkit-border-top-right-radius: 12px;
+	-webkit-border-top-left-radius: 12px;
+}
+
+#nav1 li.active a span,
+#nav1 li.current_page_item a span,
+#nav1 li a:hover span{
+}
+
+/* IE7 Fix */
+
+#nav1 li:hover, #nav1 li.hover {  
+        position: static;
+        visibility:visible
+}
+
+/*=== Navigation ===*/
+/*- Nav1 -*/
+#nav1 li a{
+        color: #3f3f3f;
+}
+#nav1 li a:hover,
+#nav1 li.active a, #nav1 li.current_page_item a{
+        background: #EF6E43;
+        color: #ffffff;
+}
+#nav1 li.active a span,
+#nav1 li.current_page_item a span,
+#nav1 li a:hover span{
+}

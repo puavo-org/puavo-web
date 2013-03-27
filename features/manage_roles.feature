@@ -66,7 +66,7 @@ Feature: Manage roles
     And I should see "Ben Mabey" on the "Members"
     And the memberUid should include "ben" on the "Class 4A" group
     When I follow "Ben Mabey"
-    Then I should be on the user page
+    Then I am on the user page with "ben"
 
   Scenario: Remove group from the role
     Given the following groups:

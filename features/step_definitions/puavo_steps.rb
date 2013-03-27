@@ -70,7 +70,7 @@ Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
   fill_in("Username", :with => organisation.owner)
   fill_in("Password", :with => organisation.owner_pw)
   click_button("Login")
-  response.should contain("Login successful!")
+  page.should have_content("Login successful!")
 end
 
 Given /^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/ \
@@ -150,7 +150,7 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
 end
 
 When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value| 
-  basic_auth('cucumber', 'cucumber')
+  page.driver.browser.basic_authorize('cucumber', 'cucumber')
   case page_name
   when /user JSON page$/
     @json_user = User.find(:first, :attribute => "uid", :value => value)
@@ -169,7 +169,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
 end
 
 Then /^I should see JSON '([^\']*)'$/ do |json_string|
-  response_data = ActiveSupport::JSON.decode(response.body)
+  response_data = ActiveSupport::JSON.decode(page.body)
   compare_data = ActiveSupport::JSON.decode(json_string)
 
   if compare_data.class == Hash
@@ -186,7 +186,11 @@ Then /^I should see JSON '([^\']*)'$/ do |json_string|
     end
   end
 
-  keys = response_data.first.keys
+  if response_data.first
+    keys = response_data.first.keys
+  else
+    keys = []
+  end
 
   response_data = response_data.sort { |a,b| stringify(a, keys) <=> stringify(b, keys) }
   compare_data = compare_data.sort { |a,b| stringify(a, keys) <=> stringify(b, keys) }
@@ -213,7 +217,7 @@ end
 Then /^I should see the following:$/ do |values|
   # FIXME: the first value of table is ignored
   values.rows.each do |value|
-    Then %{I should see "#{value}"}
+    step %{I should see "#{value}"}
   end
 end
 
@@ -230,19 +234,19 @@ Then /^id the "([^\"]*)" field should not contain "([^\"]*)"$/ do |field_id, val
 end
 
 Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field_id|
-  field_with_id(field_id).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+  field_with_id(field_id).native.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
 Then /^I can select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
-  field_with_id(field_id).element.inner_html.should =~ /#{value}/
+  field_with_id(field_id).native.inner_html.should =~ /#{value}/
 end
 
 Then /^the "([^\"]*)" select box should contain "([^\"]*)"$/ do |field, value|
-  field_labeled(field).element.inner_html.should =~ /#{value}/
+  field_labeled(field).native.inner_html.should =~ /#{value}/
 end
 
-Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
-  field_with_id(field_id).element.inner_html.should_not =~ /#{value}/
+Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field|
+  field_labeled(field).native.inner_html.should_not =~ /#{value}/
 end
 Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
@@ -262,10 +266,6 @@ When /^I follow "([^\"]*)" on the "([^\"]*)" ([^ ]+)$/ do |link_name, name, mode
   }
 end
 
-Then /^the id "([^\"]*)" checkbox should be checked$/ do |id|
-  field_with_id(id).should be_checked
-end
-
 
 Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
   memberUid_include?(model, object_name, method, uid).should == true
@@ -278,24 +278,26 @@ end
 When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
   click_link(link_name)
   tmp_pdf = Tempfile.new('tmp_pdf')
-  tmp_pdf << response.body
+  tmp_pdf << page.body
   tmp_pdf.close
   tmp_txt = Tempfile.new('tmp_txt')
   tmp_txt.close
   `pdftotext -q #{tmp_pdf.path} #{tmp_txt.path}`
-  response.body = File.read tmp_txt.path
+  @pdf_text = File.read tmp_txt.path
+end
+
+Then /^I should see "([^\"]*)" on the PDF$/ do |text|
+  @pdf_text.should have_content(text)
 end
 
 When /^I cut nextPuavoId value by one$/ do
   pool = IdPool.find('IdPool')
   pool.puavoNextId -= 1
-  pool.save
+  pool.save!
 end
 
 Then /^I should see "([^\"]*)" titled "([^\"]*)"$/ do |text, title|
-  within("div[text()='#{text}']") do |content|
-    content.should have_selector('*', :title => title)
-  end
+  page.has_xpath?("//div[text()='#{text}'][@title='#{ title }']")
 end
 
 def memberUid_include?(model, object_name, method, uid)

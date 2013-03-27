@@ -1,0 +1,129 @@
+* {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0; 
+}
+body { background-color: #fff; color: #333; }
+
+body, p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   13px;
+  line-height: 18px;
+}
+
+div.sidebar {
+    width: 150pt;
+    padding: 5px;
+    margin-left: 0;
+    margin-right: 0;
+    border: 1px solid black;
+    float: left;
+}
+
+#header {
+    border: 1px solid black;
+    height: 50pt;
+    padding: 5px;
+}
+
+#content {
+    width: 75%;
+    height: 100%;
+//    border: 1px solid black;
+    border: 0px;
+    float: left;
+    padding: 5px;
+}
+
+#left {
+
+}
+
+#right {
+    width: 20%;
+
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}
+
+a { color: #000; }
+a:visited { color: #666; }
+a:hover { color: #fff; background-color:#000; }
+
+.fieldWithErrors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+#errorExplanation {
+  width: 400px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#errorExplanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#errorExplanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#errorExplanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+
+.tag1 { font-size: 1.0em; }
+.tag2 { font-size: 1.2em; }
+.tag3 { font-size: 1.4em; }
+.tag4 { font-size: 1.6em; }
+
+.new_link {
+
+    font-size: 8pt;
+}
+
+div#content p.notice_error {
+    color: red;
+}
+div#content p.notice {
+    color: green;
+}
+
+#users_list td{
+    padding: 2px;
+}
+
+#validate_users_list {
+    padding: 0px;
+    margin: 10px 0px 10px 0px;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+}
+#validate_users_list td {
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    padding: 2px 5px 2px 5px;
+}
+#validate_users_list th {
+    border-right: 1px solid black;
+    padding: 2px 5px 2px 5px;
+}

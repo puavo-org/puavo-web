@@ -54,7 +54,9 @@ Then /^I should get "([^\"]*)" with "([^\"]*)" from "([^\"]*)"$/ do |text, metho
 end
 
 Then /^I should see the following users:$/ do |users_table|
-  users_table.diff!(tableish('table.validate_users_list tr', 'td,th'))
+  rows = find('table').all('tr')
+  table = rows.map { |r| r.all('th,td').map { |c| c.text.strip } }
+  users_table.diff!(table)
 end
 
 When /^I fill test data into user forms$/ do
@@ -115,7 +117,7 @@ end
 Given /^I am set the "([^\"]*)" role for "([^\"]*)"$/ do |role, uid|
   steps %Q{
     And I am on the edit user page with "#{uid}"
-    And I check "#{role}" from roles
+    And I check "#{role}"
     And I press "Update"
 }
 end

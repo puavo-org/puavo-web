@@ -2,7 +2,7 @@ Given /^the following roles:$/ do |roles|
   set_ldap_admin_connection
   roles.hashes.each do |new_role|
     new_role[:puavoSchool] = @school.dn
-    Role.create!(new_role)
+    Role.create(new_role)
   end
 end
 
@@ -14,7 +14,9 @@ When /^I delete the (\d+)(?:st|nd|rd|th) role$/ do |pos|
 end
 
 Then /^I should see the following roles:$/ do |expected_roles_table|
-  expected_roles_table.diff!(tableish('table tr', 'td,th'))
+  rows = find('table').all('tr')
+  table = rows.map { |r| r.all('th,td').map { |c| c.text.strip } }
+  expected_roles_table.diff!(table)
 end
 
 Given /^a new role with name "([^\"]*)" and which is joined to the "([^\"]*)" group$/ do
@@ -39,10 +41,4 @@ Given /^a new role with name "([^\"]*)" and which is joined to the "([^\"]*)" gr
   role.puavoSchool = School.find(:first, :attribute => "displayName", :value => school_name).dn
   role.save
   role.groups << group
-end
-
-When /^I check "([^\"]*)" from roles$/ do |role_name|
-  steps %Q{
-    When I check field by id "role_#{role_name.to_s.downcase.gsub(/ /, '_')}"
-  }
 end

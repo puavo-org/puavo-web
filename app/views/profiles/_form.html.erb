@@ -4,7 +4,7 @@
 <% html_args[:'data-remote'] = true if @data_remote %>
                
 
-<% form_for( @user,
+<%= form_for( @user,
              :url => profile_path,
              :html => html_args ) do |f| %>
   <div class="control-group">

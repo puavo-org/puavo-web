@@ -6,7 +6,7 @@ Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyne
 </h4>
 
 <h2>Roolit</h2>
-<% form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
+<%= form_for("renamge_groups", :url => rename_groups_path(@school) ) do |f| %>
 
 <table>
 <tr>
@@ -99,7 +99,7 @@ täsmäävät
 <% content_for :footer do %>
 <ul>
   <li class="link_header">
-    <% link_to school_path(@school) do %>
+    <%= link_to school_path(@school) do %>
     <span><%= t('layouts.application.schools') %></span>
     <% end %>
   </li>
@@ -111,7 +111,7 @@ täsmäävät
 </ul>
 <ul>
 <li class="link_header"><%= @school.displayName %></li>
-<li><% link_to users_path(@school) do %>
+<li><%= link_to users_path(@school) do %>
   <span><%= t('layouts.application.users') %></span>
 <% end %>
 </li>

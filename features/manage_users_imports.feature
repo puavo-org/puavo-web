@@ -51,11 +51,11 @@ Feature: User mass import
     And the memberUid should include "ben.mabey" on the "Domain Users" samba group
     And the memberUid should include "joseph.wilk" on the "Domain Users" samba group
     When I follow the PDF link "download pdf-file."
-    Then I should see "Name: Ben Mabey"
-    And I should see "Username: ben.mabey"
-    And I should see "Name: Joseph Wilk"
-    And I should see "Username: joseph.wilk"
-    And I should see "Password"
+    Then I should see "Name: Ben Mabey" on the PDF
+    And I should see "Username: ben.mabey" on the PDF
+    And I should see "Name: Joseph Wilk" on the PDF
+    And I should see "Username: joseph.wilk" on the PDF
+    And I should see "Password" on the PDF
 
   Scenario: User mass import when create failed
     When I send to the following user mass import data
@@ -84,9 +84,9 @@ Feature: User mass import
     And I should see "Student "
     And I should see "You can print users list to paper, download pdf-file."
     When I follow the PDF link "download pdf-file."
-    Then I should see "Name: Joseph Wilk"
-    And I should see "Username: joseph.wilk"
-    And I should see "Password"
+    Then I should see "Name: Joseph Wilk" on the PDF
+    And I should see "Username: joseph.wilk" on the PDF
+    And I should see "Password" on the PDF
 
 
   Scenario: User mass import when role is not defined
@@ -103,7 +103,7 @@ Feature: User mass import
     #Then I should see "Select the role you want to add users or start again and add the role to the user list"
     Then I should see "Following field value must be select when create new users:"
     And I should not see "User type"
-    And I can not select "Class 5" from the "user_role_name"
+    And I can not select "Class 5" from the "Role"
     When I select "Class 4" from "user[role_name]"
     And I press "Continue"
     #Then I should see "Username has already been taken"
@@ -119,11 +119,11 @@ Feature: User mass import
     Then I should see "Users (2) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
     When I follow the PDF link "download pdf-file."
-    Then I should see "Name: Ben Mabey"
-    And I should see "Username: ben.mabey"
-    And I should see "Password"
-    And I should see "Name: Ben Karl Mabey"
-    And I should see "Username: benkarl.mabey"
+    Then I should see "Name: Ben Mabey" on the PDF
+    And I should see "Username: ben.mabey" on the PDF
+    And I should see "Password" on the PDF
+    And I should see "Name: Ben Karl Mabey" on the PDF
+    And I should see "Username: benkarl.mabey" on the PDF
 
   Scenario: User mass import when role is not defined and select empty role value
     Given I send to the following user mass import data
@@ -157,11 +157,11 @@ Feature: User mass import
     Then I should see "Users (2) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
     When I follow the PDF link "download pdf-file."
-    Then I should see "Name: Ben Mabey"
-    And I should see "Username: ben.mabey"
-    And I should see "Password"
-    And I should see "Name: Ben Karl Mabey"
-    And I should see "Username: benkarl.mabey"
+    Then I should see "Name: Ben Mabey" on the PDF
+    And I should see "Username: ben.mabey" on the PDF
+    And I should see "Password" on the PDF
+    And I should see "Name: Ben Karl Mabey" on the PDF
+    And I should see "Username: benkarl.mabey" on the PDF
 
   Scenario: User mass import when user type is not defined
     Given I send to the following user mass import data
@@ -212,11 +212,11 @@ Feature: User mass import
 #    Then I should see "Users (2) was successfully created."
 #    And I should see "You can print users list to paper, download pdf-file."
 #    When I follow the PDF link "download pdf-file."
-#    Then I should see "Name: Ben Mabey"
-#    And I should see "Username: ben.mabey"
-#    And I should see "Password"
-#    And I should see "Name: Ben Karl Mabey"
-#    And I should see "Username: benk.mabey"
+#    Then I should see "Name: Ben Mabey" on the PDF
+#    And I should see "Username: ben.mabey" on the PDF
+#    And I should see "Password" on the PDF
+#    And I should see "Name: Ben Karl Mabey" on the PDF
+#    And I should see "Username: benk.mabey" on the PDF
 
   Scenario: User mass import without given name or surname
     Given I send to the following user mass import data
@@ -413,13 +413,13 @@ Feature: User mass import
     Then I should see "Users (3) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
     When I follow the PDF link "download pdf-file."
-    Then I should see "Name: Jane Doe"
-    And I should see "Username: jane.doe"
-    And I should see "Password"
-    And I should see "Name: Joe Bloggs"
-    And I should see "Username: joe.bloggs"
-    And I should see "Name: Ben Mabey"
-    And I should see "Username: ben.mabey"
+    Then I should see "Name: Jane Doe" on the PDF
+    And I should see "Username: jane.doe" on the PDF
+    And I should see "Password" on the PDF
+    And I should see "Name: Joe Bloggs" on the PDF
+    And I should see "Username: joe.bloggs" on the PDF
+    And I should see "Name: Ben Mabey" on the PDF
+    And I should see "Username: ben.mabey" on the PDF
     And I should see "User is transferred, old password is used"
     And the sambaPrimaryGroupSID attribute should contain "School 2" of "joe.bloggs"
     And the homeDirectory attribute should contain "School 2" of "joe.bloggs"
@@ -466,12 +466,12 @@ Feature: User mass import
     Then I should see "Users (3) was successfully created."
     And I should see "You can print users list to paper, download pdf-file."
     When I follow the PDF link "download pdf-file."
-    Then I should see "Name: Jane Doe"
-    And I should see "Username: jane.doe"
-    And I should see "Password"
-    And I should see "Name: Joe Bloggs"
-    And I should see "Username: joe.bloggs"
-    And I should see "Name: Ben Mabey"
-    And I should see "Username: ben.mabey"
+    Then I should see "Name: Jane Doe" on the PDF
+    And I should see "Username: jane.doe" on the PDF
+    And I should see "Password" on the PDF
+    And I should see "Name: Joe Bloggs" on the PDF
+    And I should see "Username: joe.bloggs" on the PDF
+    And I should see "Name: Ben Mabey" on the PDF
+    And I should see "Username: ben.mabey" on the PDF
     And I should login with "jane.doe" and "secret111"
     And I should login with "ben.mabey" and "secret333"

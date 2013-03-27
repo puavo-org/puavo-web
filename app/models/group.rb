@@ -15,6 +15,8 @@ class Group < BaseGroup
               :many => "puavoMemberGroup",
               :primary_key => "dn" )
 
+  validate :validate
+
   def validate
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
       errors.add( :cn, I18n.t("activeldap.errors.messages.group.invalid_characters") )
@@ -34,14 +36,14 @@ class Group < BaseGroup
                                          { "member" => [user.dn.to_s] }])
   end
 
-  def to_json(*args)
+  def as_json(*args)
     { "school_id" => self.school.puavoId,
       "abbreviation" => self.cn.to_s,
       "gid" => self.gidNumber,
       "name" => self.displayName,
       "puavo_id" => self.puavoId,
       "samba_SID" => self.sambaSID,
-      "samba_group_type" => self.sambaGroupType }.to_json
+      "samba_group_type" => self.sambaGroupType }
   end
 end
 

@@ -1,6 +1,6 @@
 Given /^the following schools:$/ do |schools|
   set_ldap_admin_connection
-  schools = School.create!(schools.hashes)
+  schools = School.create(schools.hashes)
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) school$/ do |pos|
@@ -28,13 +28,13 @@ end
 
 Then /^I should see same test data on the page$/ do
   default_form_value.each do |field, value|
-    response.should contain(value)
+    page.should have_content(value)
   end
 end
 
 Then /^I should see same modify test data on the page$/ do
   default_form_value.each do |field, value|
-    response.should contain(value + " modify")
+    page.should have_content(value + " modify")
   end
 end
 
@@ -100,7 +100,7 @@ When /^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/ do |user
   set_ldap_admin_connection
   school = School.find( :first, :attribute => "displayName", :value => school_name )
   user = User.find( :first, :attribute => "displayName", :value => username )
-  visit( add_school_admin_school_path(school, user.id), :put )
+  page.driver.put(add_school_admin_school_path(school, user.id))
 end
 
 Then /^I should be on the "([^\"]*)" school page$/ do |school_name|

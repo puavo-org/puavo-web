@@ -52,13 +52,6 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
 
-    # Convert array to hash
-    # Example: {"cn" => "Pavel Taylor","givenName" => "Pavel","gidNumber":=> "10567"
-    json_user = @user.inject({}) do |result, array|
-      result[array[0]] = array[1].to_s
-      result
-    end
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
