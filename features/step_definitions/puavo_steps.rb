@@ -277,6 +277,7 @@ end
 When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
   click_link(link_name)
   tmp_pdf = Tempfile.new('tmp_pdf')
+  tmp_pdf.binmode # Switch to binary mode to avoid encoding errors
   tmp_pdf << page.body
   tmp_pdf.close
   tmp_txt = Tempfile.new('tmp_txt')
