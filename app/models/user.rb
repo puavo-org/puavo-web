@@ -421,6 +421,11 @@ class User < LdapBase
       else
         self.send(attribute).to_s
       end
+    when "role_name"
+      if self.send(attribute).class == Array
+        return self.send(attribute).join(", ")
+      end
+      self.send(attribute)
     else
       self.send(attribute).to_s
     end
