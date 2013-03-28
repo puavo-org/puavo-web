@@ -182,6 +182,8 @@ Feature: Manage users
     When I follow "School 1" within ".school-menu-button"
     And I follow "Users"
     Then I should see "Mabey Ben" within ".container"
+    And I should see not /["ben"]/
+    And I should not see "PuavoEduPersonAffiliation"
 
 
 
