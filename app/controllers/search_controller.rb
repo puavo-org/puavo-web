@@ -8,7 +8,7 @@ class SearchController < ApplicationController
     # Users search
     @users = ldap_search( 'user',
                           ["sn", "givenName", "uid"],
-                          lambda{ |v| "#{v['sn']} #{v['givenName']}" },
+                          lambda{ |v| "#{v['sn'].first} #{v['givenName'].first}" },
                           lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
                           words )
 
@@ -29,7 +29,7 @@ class SearchController < ApplicationController
     @schools = Hash.new
     School.search( :scope => :one,
                    :attributes => ["puavoId", "displayName"] ).map do |dn, v|
-      @schools[v["puavoId"].to_s] = v["displayName"].to_s
+      @schools[v["puavoId"].first] = v["displayName"].first
     end
 
     respond_to do |format|
@@ -53,9 +53,9 @@ class SearchController < ApplicationController
                                                 :attributes => (["puavoId",
                                                                  "puavoSchool"] +
                                                                 attributes) ).map do |dn, v|
-      { "id" => v["puavoId"],
-        "school_id" => v["puavoSchool"].to_s.match(/^puavoId=([^,]+)/).to_a[1],
-        "puavoSchool" => v["puavoSchool"].to_s,
+      { "id" => v["puavoId"].first,
+        "school_id" => v["puavoSchool"].first.match(/^puavoId=([^,]+)/).to_a[1],
+        "puavoSchool" => v["puavoSchool"].first,
         "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block]
       }.merge( attributes.inject({}) { |result, a|
                  result.merge(a => v[a])
