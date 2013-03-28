@@ -215,9 +215,8 @@ When /^I fill in textarea "([^\"]*)" with "([^\"]*)"$/ do |field, value|
 end
 
 Then /^I should see the following:$/ do |values|
-  # FIXME: the first value of table is ignored
   values.rows.each do |value|
-    step %{I should see "#{value}"}
+    step %{I should see "#{value.first}"}
   end
 end
 
