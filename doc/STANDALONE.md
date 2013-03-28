@@ -6,12 +6,15 @@ Install Ruby and other dependencies
 
 12.04 LTS (Precise Pangolin):
 
-    sudo apt-get install ruby1.8 rubygems ruby1.8-dev ruby-bundler
+    sudo apt-get install ruby1.9.1 ruby1.9.1-dev
 
     sudo apt-get install libxml2-dev libxslt-dev \
       libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev \
       libssl-dev build-essential libopenssl-ruby xpdf-utils \
       git libreadline6-dev
+     
+    # Ubuntu has no bundler for 1.9 ruby
+    sudo gem1.9.1 install bundler
 
 Get the sources:
 
