@@ -119,10 +119,11 @@ Feature: Manage groups
     | displayName | cn      |
     | Class 4A    | class4a |
     | Class 6B    | class6b |
+    And I am set the "Student" role for "pavel"
     And I am on the groups list page
     Then I should see "Class 4A"
     And I should see "Class 6B"
-    And I should see "Class 1"
+    And I should see "Class 1 (1)"
 
   Scenario: Delete group
     Given the following groups:
