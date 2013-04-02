@@ -419,7 +419,7 @@ class User < LdapBase
       if self.class.puavoEduPersonAffiliation_list.include?(self.send(attribute).to_s)
         I18n.t( 'puavoEduPersonAffiliation_' + self.send(attribute) )
       else
-        self.send(attribute).to_s
+        Array(self.send(attribute)).first.to_s
       end
     when "role_name"
       if self.send(attribute).class == Array
@@ -427,7 +427,7 @@ class User < LdapBase
       end
       self.send(attribute)
     else
-      self.send(attribute).to_s
+      Array(self.send(attribute)).first.to_s
     end
   end
 
