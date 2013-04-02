@@ -157,7 +157,11 @@ class Users::ImportController < ApplicationController
       @users.delete(failed_user)
     end
     session[:failed_users] = {}
-    session[:failed_users][create_timestamp] = failed_users.map { |u| u.attributes }
+    session[:failed_users][create_timestamp] = failed_users.map do |u|
+      attrs = u.attributes 
+      attrs["role_name"] = u.role_name
+      attrs
+    end
 
     # If data of users inlucde new password then not generate new password when create pdf-file.
     reset_password = params[:columns].include?("new_password") ? false : true
