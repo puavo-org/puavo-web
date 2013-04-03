@@ -159,7 +159,10 @@ class Users::ImportController < ApplicationController
 
     session[:failed_users] = {}
     session[:failed_users][create_timestamp] = failed_users.map do |u|
-      u.all_attributes
+      attrs = u.all_attributes
+      attrs.delete(:objectClass)
+      attrs.delete("earlier_user")
+      attrs
     end
 
     # If data of users inlucde new password then not generate new password when create pdf-file.
@@ -178,7 +181,6 @@ class Users::ImportController < ApplicationController
     @columns = ["sn", "givenName", "uid", "puavoEduPersonAffiliation", "role_name"]
     @invalid_users = session[:failed_users] ? session[:failed_users][params[:create_timestamp]] : []
     @invalid_users = @invalid_users.map do |attrs|
-      attrs.delete(:objectClass)
       u = User.new
       u.attributes = attrs
       u
