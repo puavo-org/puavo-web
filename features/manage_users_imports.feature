@@ -420,7 +420,7 @@ Feature: User mass import
     And I should see "Username: joe.bloggs" on the PDF
     And I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
-    And I should see "User is transferred, old password is used"
+    And I should see "User is transferred, old password is used" on the PDF
     And the sambaPrimaryGroupSID attribute should contain "School 2" of "joe.bloggs"
     And the homeDirectory attribute should contain "School 2" of "joe.bloggs"
     And the gidNumber attribute should contain "School 2" of "joe.bloggs"

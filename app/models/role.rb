@@ -18,6 +18,8 @@ class Role < LdapBase
 
   before_validation :set_special_ldap_value
 
+  validate :validate
+
   def validate
     if self.displayName.to_s.empty?
       errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",

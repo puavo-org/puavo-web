@@ -171,6 +171,22 @@ Feature: Manage users
     And I should not see "MabeyEDIT"
     And I should not see "ben-edit"
 
+  Scenario: Listing users
+    Given the following users:
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
+      | Ben       | Mabey   | ben    | secret   | visitor                   | Class 4   |
+      | Joseph    | Wilk    | joseph | secret   | visitor                   | Class 4   |
+    And the following groups:
+    | displayName | cn      |
+    | Class 6B    | class6b |
+    When I follow "School 1" within ".school-menu-button"
+    And I follow "Users"
+    Then I should see "Mabey Ben" within ".container"
+    And I should not see /\["ben"\]/
+    And I should not see "PuavoEduPersonAffiliation"
+
+
+
   Scenario: Delete user
     Given the following users:
       | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation | school_admin |
