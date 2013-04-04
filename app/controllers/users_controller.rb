@@ -24,10 +24,13 @@ class UsersController < ApplicationController
                           :attributes => attributes )
 
     @users = @users.map do |user|
-      user.last
+      # ldap values are always arrays. Convert hash values from arrays by
+      # grabbing the first value
+      Hash[user.last.map { |k,v| [k, v.first] }]
     end.sort do |a,b|
       a["sn"].to_s + a["givenName"].to_s <=> b["sn"].to_s + b["givenName"].to_s
     end
+
 
     if request.format == 'application/json'
       @users = @users.map{ |u| User.build_hash_for_to_json(u) }

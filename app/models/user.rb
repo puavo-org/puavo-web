@@ -37,17 +37,22 @@ class User < LdapBase
 
   validate :validate
 
+  # Attributes from relations and other helpers
+  @@extra_attributes = [
+     :password,
+     :new_password,
+     :school_admin,
+     :uid_has_changed,
+     :role_ids,
+     :role_name,
+     :mass_import,
+     :image,
+     :earlier_user,
+     :new_password_confirmation
+  ]
+
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
-  attr_accessor( :password,
-                 :new_password,
-                 :school_admin,
-                 :uid_has_changed,
-                 :role_ids,
-                 :role_name,
-                 :mass_import,
-                 :image,
-                 :earlier_user,
-                 :new_password_confirmation )
+  attr_accessor(*@@extra_attributes)
 
   cattr_accessor :reserved_uids
 
@@ -128,6 +133,14 @@ class User < LdapBase
       new_user_hash[attr[:new_attribute_name]] = attr[:value_block].call(attribute_value)
     end
     return new_user_hash
+  end
+
+  def all_attributes
+    attrs = attributes
+    @@extra_attributes.each do |attr|
+      attrs[attr.to_s] = send(attr)
+    end
+    attrs
   end
 
   def validate
@@ -419,10 +432,15 @@ class User < LdapBase
       if self.class.puavoEduPersonAffiliation_list.include?(self.send(attribute).to_s)
         I18n.t( 'puavoEduPersonAffiliation_' + self.send(attribute) )
       else
-        self.send(attribute).to_s
+        Array(self.send(attribute)).first.to_s
       end
+    when "role_name"
+      if self.send(attribute).class == Array
+        return self.send(attribute).join(", ")
+      end
+      self.send(attribute)
     else
-      self.send(attribute).to_s
+      Array(self.send(attribute)).first.to_s
     end
   end
 

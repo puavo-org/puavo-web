@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 gem 'rails', '3.2.12'
 
-gem 'sqlite3-ruby', :require => 'sqlite3'
+gem 'sqlite3', :require => 'sqlite3'
 
 gem "prawn"
 gem "net-ldap"
@@ -18,8 +18,7 @@ group :development do
 	gem 'cucumber'
 	gem 'cucumber-rails'
 	gem 'ruby-prof'
-	gem 'ruby-debug'
-	gem "ruby-debug-completion", :require => "ruby-debug/completion"
+	gem 'debugger'
 	gem 'rbtrace'
 	gem 'colorize'
 	gem 'timecop'

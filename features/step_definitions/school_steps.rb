@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 Given /^the following schools:$/ do |schools|
   set_ldap_admin_connection
   schools = School.create(schools.hashes)

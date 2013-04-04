@@ -5,7 +5,7 @@ module Users::ImportHelper
     
     css_classes = "edit"
     css_classes += ["role_name", "puavoEduPersonAffiliation"].include?(column) ? " select" : " text"
-    css_classes += user.errors[column] ? " invalid" : ""
+    css_classes += " invalid" if error_message
 
     html = content_tag :div, :class => css_classes, :title => error_message.to_s do
       user.human_readable_format(column)

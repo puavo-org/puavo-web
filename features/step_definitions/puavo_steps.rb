@@ -1,4 +1,4 @@
-require 'sha1'
+require 'digest'
 require 'base64'
 require 'timecop'
 
@@ -215,9 +215,8 @@ When /^I fill in textarea "([^\"]*)" with "([^\"]*)"$/ do |field, value|
 end
 
 Then /^I should see the following:$/ do |values|
-  # FIXME: the first value of table is ignored
   values.rows.each do |value|
-    step %{I should see "#{value}"}
+    step %{I should see "#{value.first}"}
   end
 end
 
@@ -278,6 +277,7 @@ end
 When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
   click_link(link_name)
   tmp_pdf = Tempfile.new('tmp_pdf')
+  tmp_pdf.binmode # Switch to binary mode to avoid encoding errors
   tmp_pdf << page.body
   tmp_pdf.close
   tmp_txt = Tempfile.new('tmp_txt')
