@@ -16,6 +16,7 @@
 //= require jquery.opensmenu
 //= require jquery.jeditable
 //= require jquery.liveSearch
+//= require jquery.tooltip
 
 
 jQuery(document).ready(function($) {
