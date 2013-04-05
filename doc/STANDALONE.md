@@ -36,6 +36,11 @@ Create sessions table to database
 Start development server
 
     bundle exec rails server
+    
+## Production PostgreSQL for sessions
+
+    sudo apt-get install postgresql-9.1
+    RAILS_ENV=production bundle exec rake db:migrate
 
 ## Test environment
 
