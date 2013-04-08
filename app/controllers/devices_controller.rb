@@ -59,7 +59,7 @@ class DevicesController < ApplicationController
   # GET /devices/new.json
   def new
     @device = Device.new
-    @device_type_label = PUAVO_CONFIG['device_types'][params[:device_type]]['label'][I18n.locale.to_s]
+    @device_type_label = Puavo::DEVICE_CONFIG['device_types'][params[:device_type]]['label'][I18n.locale.to_s]
 
     # Try to set default value for hostname
     device = Device.find( :all,
