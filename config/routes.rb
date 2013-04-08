@@ -68,11 +68,36 @@ PuavoUsers::Application.routes.draw do
   end
 
   scope :path => "devices" do
+    resources :hosts, :only => [:index], :collection => { :types => :get }
 
-    scope :path => ':school_id' do
-      resources :devices
+    scope :path => 'api' do
+      scope :path => 'v2' do
+        resources :devices
+        resources :servers
+      end
     end
 
+    scope :path => ':school_id' do
+      match 'devices/:id/select_school' => 'devices#select_school', :as => 'select_school_device', :via => :get
+      match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
+      match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
+
+      resources :devices
+
+      match( 'devices/:id/revoke_certificate' => 'devices#revoke_certificate',
+             :as => 'revoke_certificate_device',
+             :via => :delete )
+
+      match 'servers/:id/image' => 'servers#image', :as => 'image_server', :via => :get
+      match( 'servers/:id/revoke_certificate' => 'servers#revoke_certificate',
+             :as => 'revoke_certificate',
+             :via => :delete )
+    end
+
+    resources :printers, :except => [:show, :new]
+
+    resources :search, :only => [:index]
+    
   end
 
 end
