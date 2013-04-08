@@ -1,0 +1,13 @@
+<h1>Listing hosts</h1>
+
+<table>
+  <tr>
+    <th>Puavohostname</th>
+  </tr>
+
+<% @hosts.each do |host| %>
+  <tr>
+    <td><%=h host.puavoHostname %></td>
+  </tr>
+<% end %>
+</table>

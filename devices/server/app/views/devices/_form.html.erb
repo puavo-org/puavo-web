@@ -1,0 +1,25 @@
+<p class='required_info'><%= t('layouts.forms.required_field')%></p>
+<% form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
+    <% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
+      <%= f.hidden_field :puavoDeviceType %>
+      <% Array(PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["classes"]).each do |device_objectClass| %>
+      <%= hidden_field_tag "device[classes][]", device_objectClass %>
+      <% end %>
+    <% end %>
+
+    <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
+
+  <p>&nbsp;</p>
+  <table>
+  <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
+
+  <% if f.object.classes.include?('puavoPrinter') %>
+    <%= render :partial => 'form_cups', :locals => { :f => f } %>
+  <% end %>
+
+  </table>
+
+  <%= f.submit submit_text %> 
+  <div class="cancel"> <%=link_to t('cancel'), path, :class => 'cancel_button' %> </div>
+
+<% end %>

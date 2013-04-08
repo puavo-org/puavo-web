@@ -1,0 +1,20 @@
+<h1><span><%= t('.title') %></span></h1>
+
+<table class='list'>
+  <tr>
+    <th><%= t("activeldap.attributes.automount.cn") %></th>
+    <th colspan="2"><%= t("actions") %></th>
+  </tr>
+
+<% @automounts.each do |automount| %>
+  <tr>
+    <td><%=h automount.cn %></td>
+    <td><%= link_to t('link.edit'), edit_server_automount_path(@server, automount) %></td>
+    <td><%= link_to t('link.destroy'), server_automount_path(@server, automount), :confirm => t('destroy_confirm', :object_name => automount.cn), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<% content_for :right do %>
+<div><%= link_to t('link.new_automount'), new_server_automount_path(@server) %></div>
+<% end %>

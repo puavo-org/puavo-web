@@ -1,0 +1,5 @@
+{ "attributes": [
+<%= render :partial => 'shared/puavoDevice', :locals => { :object => @device} %>,
+   { "id": "classes", "label": "", "default": <%= @device.classes.delete_if{ |c| ! Device.allowed_classes.include?(c) }.to_json %> } ],
+  "url": "/devices/%s/devices.json",
+  "object_key": "device" }

@@ -1,0 +1,219 @@
+#!/usr/bin/ruby
+
+require 'fileutils'
+require 'highline/import'
+require 'openssl'
+require 'yaml'
+
+HostCrtPath     = '/etc/puavo/certs/host.crt'
+HostKeyPath     = '/etc/puavo/certs/host.key'
+OrgCABundlePath = '/etc/puavo/certs/orgcabundle.pem'
+RootCAPath      = '/etc/puavo/certs/rootca.pem'
+
+# XXX repetition elsewhere
+def colormsg(msg, tag, color)
+  HighLine.say(HighLine.new.color("*** #{ tag }: #{ msg }", color))
+end
+
+def errmsg(msg) ; colormsg(msg, 'ERROR', HighLine::RED)  ; end
+def goodmsg(msg); colormsg(msg, 'OK',    HighLine::GREEN); end
+
+def fqdn
+  cert = OpenSSL::X509::Certificate.new(IO.read('/etc/puavo/certs/host.crt'))
+  ((/^.*CN=(.*?)(\/|$)/.match(cert.subject.to_s))[1])
+end
+
+def mkdir(path, mode=0755)
+  begin
+    FileUtils.mkdir(path, :mode => mode)
+    rescue Errno::EEXIST
+  end
+end
+
+def run_puppet(opts='')
+  unless system('puppetd --test --logdest console' +
+		" --logdest /var/log/puppet/install.log #{ opts }")
+    # XXX puppetd will not returned error codes even if errors occur,
+    # XXX so this will not be triggered.  This is apparently fixed in 2.6.0 ?
+    raise 'problem running puppetd'
+  end
+end
+
+def setup_kerberos(principals)
+  # XXX not used yet
+  return
+  begin
+    error = false
+    principal = HighLine.ask("\nKerberos principal: ")
+    password  = HighLine.ask('Password: ') { |q| q.echo = '*' }
+
+    principals.each do |princ|
+      goodmsg, errmsg = [], []
+      Open3.popen3('kadmin', '-p', principal, '-w', password, '-q',
+		   "add_principal #{ princ }") do |stdin, stdout, stderr|
+	goodmsg = stdout.readlines
+	errmsg  = stderr.readlines
+      end
+      # XXX use some criteria to figure out if operation was ok
+      status = $?.exitstatus
+      errmsg("exit status is #{ status }")
+      goodmsg.each { |l| goodmsg(l.chomp) }
+      errmsg .each { |l| errmsg(l.chomp)  }
+      error = true
+      break
+    end
+  end while error
+end
+
+def setup_openvpn(devicetype)
+  begin
+    mkdir('/etc/openvpn/keys')
+
+    ovpn_crt         = '/etc/openvpn/keys/host.crt'
+    ovpn_key         = '/etc/openvpn/keys/host.key'
+    ovpn_orgcabundle = '/etc/openvpn/keys/orgcabundle.pem'
+
+    FileUtils.cp(HostCrtPath,     ovpn_crt)
+    FileUtils.cp(HostKeyPath,     ovpn_key)
+    FileUtils.cp(OrgCABundlePath, ovpn_orgcabundle)
+
+    File.open('/etc/openvpn/runme', 'w', 0755) do |f|
+      f.print <<-EOF.gsub(/^\t+/, '')
+	#!/bin/sh
+
+	SCRIPTSUBDIR=$1
+
+	for script in /etc/openvpn/scripts/$SCRIPTSUBDIR/*; do
+	  test -x $script && timeout 30 $script "$@"
+	done
+
+	exit 0
+	EOF
+    end
+
+    conflines = [
+      'client',
+      'dev tun',
+      'proto tcp-client',
+      'remote 217.112.254.13 443',
+      '',
+      "ca #{ ovpn_orgcabundle }",
+      "cert #{ ovpn_crt }",
+      "key #{ ovpn_key }",
+      'ns-cert-type server',
+      '',
+      'verb 3',
+      '',
+      'comp-lzo',
+      'keepalive 10 30',
+      (devicetype != 'laptop' \
+         ? [ "persist-tun", "persist-key", ] \
+	 : []),
+      'up-delay',
+      '',
+      'down "/etc/openvpn/runme down"',
+      'ipchange "/etc/openvpn/runme ipchange"',
+      'route-up "/etc/openvpn/runme route-up"',
+      'tls-verify "/etc/openvpn/runme tls-verify"',
+      'up "/etc/openvpn/runme up"',
+    ].flatten
+
+    File.open('/etc/openvpn/puavoclient.conf', 'w', 0644) do |f|
+      f.print conflines.map { |s| "#{ s }\n" }.join('')
+    end
+    unless system('service openvpn restart')
+      raise 'problem restarting openvpn'
+    end
+
+    sleep 2
+    until system('ifconfig tun0 >/dev/null 2>&1')
+      errmsg('waiting for tun0 to come up...')
+      sleep 2
+    end
+    sleep 2
+
+  rescue => msg
+    errmsg(msg)
+    exit 1
+  end
+  goodmsg('OpenVPN setup is done.')
+end
+
+def setup_puppet(puppet_server, fqdn)
+  begin
+    # needed by some facter rules
+    FileUtils.rmtree('/etc/puppet/ssl')
+    mkdir('/etc/puppet/ssl',              0771)
+    mkdir('/etc/puppet/ssl/certs')
+    mkdir('/etc/puppet/ssl/private_keys', 0750)
+    FileUtils.chown('puppet', 'root', [ '/etc/puppet/ssl',
+					'/etc/puppet/ssl/certs',
+					'/etc/puppet/ssl/private_keys', ])
+
+    FileUtils.cp(HostCrtPath,     "/etc/puppet/ssl/certs/#{ fqdn }.pem")
+    FileUtils.cp(HostKeyPath,     "/etc/puppet/ssl/private_keys/#{ fqdn }.pem")
+    FileUtils.cp(OrgCABundlePath, '/etc/puppet/ssl/certs/ca.pem')
+
+    File.open('/etc/default/puppet', 'w') do |f|
+      f.print <<-EOF.gsub(/^\t+/, '')
+	START=yes
+	DAEMON_OPTS=""
+	EOF
+    end
+
+    File.open('/etc/puppet/puppet.conf', 'w') do |f|
+      f.print <<-EOF.gsub(/^\t+/, '')
+	[main]
+	certname=#{ fqdn }
+	factpath=/var/lib/puppet/lib/facter
+	logdir=/var/log/puppet
+	pluginsync=true
+	postrun_command=/etc/puppet/etckeeper-commit-post
+	prerun_command=/etc/puppet/etckeeper-commit-pre
+	rundir=/var/run/puppet
+	server=#{ puppet_server }
+	templatedir=$confdir/templates
+	vardir=/var/lib/puppet
+	EOF
+    end
+
+    goodmsg('Puppet setup is done, running puppet once...')
+    run_puppet('--tags debian::apt::client')
+    run_puppet()
+    goodmsg('Puppet run is done.')
+    goodmsg('Check that all is okay, and re-execute this if in doubt.')
+  rescue => msg
+    errmsg(msg)
+    exit 1
+  end
+end
+
+#
+# main
+#
+
+raise 'run me as root'		    unless Process.uid == 0
+raise 'root password is not usable' unless %x(passwd -S root).split[1] == 'P'
+
+begin
+  conf = YAML.load_file('/etc/puavo/host_configuration')
+rescue Errno::ENOENT
+  system('/usr/sbin/register-puavodevice', *ARGV) \
+    or raise 'failure in running register-puavodevice'
+  conf = YAML.load_file('/etc/puavo/host_configuration')
+end
+
+fqdn = fqdn()
+
+case conf['devicetype']
+  when 'ltspserver'
+    kerberos_principals = %w(host ldap cifs IPP nfs).map do |p| 
+			    "#{ p }/#{ fqdn }@#{ conf['kerberos_realm'] }"
+			  end
+  else
+    kerberos_principals = false
+end
+
+setup_openvpn(conf['devicetype'])
+setup_kerberos(kerberos_principals) if kerberos_principals
+setup_puppet(conf['puppet_server'], fqdn) if conf['puppet_server']

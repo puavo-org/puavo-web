@@ -1,0 +1,6 @@
+<%= render( :partial => "search_result",
+            :locals => {
+              :objects => @devices,
+              :model => 'device',
+              :path => lambda { |school_id, id| "/devices/#{school_id}/devices/#{id}" },
+              :attributes => ["puavoHostname"] } ) %>

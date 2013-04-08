@@ -1,0 +1,43 @@
+<h1><span><%= t('.title') %></span></h1>
+
+<table class='list'>
+  <tr>
+    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceManufacturer') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceModel') %></th>
+    <th><%= t('activeldap.attributes.device.serialNumber') %></th>
+    <th colspan="2"><%= t('actions') %></th>
+  </tr>
+
+<% @devices.each do |device| %>
+  <tr>
+    <td><%= link_to device.puavoHostname, device_path(@school, device) %></td>
+    <td><%=h PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
+    <td><%=h device.puavoDeviceManufacturer %></td>
+    <td><%=h device.puavoDeviceModel %></td>
+    <td><%=h device.serialNumber %></td>
+    <td><%= link_to t('link.edit'), edit_device_path(@school, device) %></td>
+    <td><%= link_to t('link.destroy'), device_path(@school, device), :confirm => t('destroy_confirm', :object_name => device.puavoHostname), :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<% content_for :right do %>
+<div>
+
+<% form_for(@device, :url => new_device_path(@school), :html => { :method => :get }) do |f| %>
+<span><%= t('.add_new_device') %></span>
+<%= select_tag "device_type",
+    options_for_select( @device_types ) %>
+<%= f.submit t('link.add') %>
+<% end %>
+
+</div>
+<% end %>
+
+<% content_for :javascript do %>
+  <%= javascript_include_tag "devices/index" %>
+<% end %>

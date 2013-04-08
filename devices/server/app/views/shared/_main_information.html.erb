@@ -1,0 +1,29 @@
+<table>
+  <tr>
+    <td>
+      <div>
+		    <% path = device.class == Server ? image_server_path(device) : image_device_path(@school, device) %>
+          	<%= image_tag( device.jpegPhoto.nil? ? "computer.png" : path,
+                       :class => "image" ) %>
+	    </div>
+    </td>
+    <td>
+      <h1><%=h device.puavoHostname %></h1>
+        <% if controller_name == "devices" %>
+          <p><%= label device.class.to_s.downcase, "puavoDeviceType" %><br />
+	          <%= PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %>
+          </p>
+        <% end %>
+        <p><%= label device.class.to_s.downcase, "puavoTag" %><br />
+	        <%=h device.puavoTag %>
+        </p>
+
+        <% unless device.classes.include?('puavoPrinter') ||  device.classes.include?('puavoOtherDevice') %>
+        <p><%= label device.class.to_s.downcase, "puavoDeviceStatus" %><br />
+	        <%=h device.puavoDeviceStatus %>
+        </p>
+	<% end %>
+
+      </td>
+    </tr>
+</table>

@@ -1,0 +1,42 @@
+<% form_for(@server, :html => { :multipart => true }) do |f| %>
+
+  <table>
+  <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
+  </table>
+  <p>&nbsp;</p>
+  <table>
+
+    <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
+    
+  </table>
+  <h2><%= t('.automounts') %></h2>
+  <table>
+    <tr>
+      <td class="label_for_input_text_list"><%= f.label :puavoExport %></td>
+      <td>
+	<div id="server_puavoExport_list">
+	  <% if Array(@server.puavoExport).empty? %>
+	  <input name='server[puavoExport][]' size='30' type='text' />
+	  <% else %>
+	  <% Array(@server.puavoExport).each_index do |index| %>
+	  <input name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
+	  <% end %>
+	  <% end %>
+	</div>
+	<%= link_to t('.add_puavoExport'), "#", :class => "clone_prev_input_element" %>
+  </td></tr>
+
+  <!--
+    <tr>
+      <td class="label_td"><%= f.label :puavoExport %></td>
+      <td><%= f.text_field :puavoExport %></td>
+    </tr>
+-->
+  </table>
+  <table>
+    <tr><td>
+    <%= f.submit submit_text %> 
+    <div class="cancel"> <%=link_to t('cancel'), @server, :class => 'cancel_button' %> </div>
+    </tr></td>
+  </table>
+<% end %>
