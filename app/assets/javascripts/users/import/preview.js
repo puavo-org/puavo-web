@@ -84,7 +84,7 @@ $(document).ready(function() {
 		});
 
 		submitdata["columns"] = new Array();
-		$('input[name=columns[]]').each(function(e) {
+		$('input[name*="columns"]').each(function(e) {
 			submitdata["columns"][e] = this.value;
 		});
 
