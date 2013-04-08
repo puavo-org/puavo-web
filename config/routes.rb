@@ -67,4 +67,12 @@ PuavoUsers::Application.routes.draw do
     resource :profile, :only => [:edit, :update, :show]
   end
 
+  scope :path => "devices" do
+
+    scope :path => ':school_id' do
+      resources :devices
+    end
+
+  end
+
 end
