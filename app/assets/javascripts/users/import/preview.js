@@ -35,7 +35,6 @@ $(document).ready(function() {
 		$(this).removeClass('edit_hoover');
     });
 
-    $('.edit.invalid').tooltip();
 
     function update_after_validation(current_element, validation_results_json) {
 		var current_index = null;
@@ -61,14 +60,12 @@ $(document).ready(function() {
 		label = td_element.find('div');
 		if(validation_results[index]["status"] == "true") {
 			label.attr('title', "");
-			label.tooltip().off;
 			if( label.hasClass("invalid") ) {
 				label.removeClass("invalid");
 			}
 		}
 		if(validation_results[index]["status"] == "false") {
 			label.attr('title', validation_results[index]["error"]);
-			label.tooltip();
 			if( !label.hasClass("invalid") ) {
 				label.addClass("invalid");
 			} 
