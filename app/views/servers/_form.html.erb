@@ -1,4 +1,4 @@
-<% form_for(@server, :html => { :multipart => true }) do |f| %>
+<%= form_for(@server, :html => { :multipart => true }) do |f| %>
 
   <table>
   <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
