@@ -28,7 +28,7 @@
 <% content_for :right do %>
 <div>
 
-<% form_for(@device, :url => new_device_path(@school), :html => { :method => :get }) do |f| %>
+<%= form_for(@device, :url => new_device_path(@school), :html => { :method => :get }) do |f| %>
 <span><%= t('.add_new_device') %></span>
 <%= select_tag "device_type",
     options_for_select( @device_types ) %>

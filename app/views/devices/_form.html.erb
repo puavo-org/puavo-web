@@ -1,8 +1,8 @@
 <p class='required_info'><%= t('layouts.forms.required_field')%></p>
-<% form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
+<%= form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
     <% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
       <%= f.hidden_field :puavoDeviceType %>
-      <% Array(PUAVO_CONFIG["device_types"][@device.puavoDeviceType]["classes"]).each do |device_objectClass| %>
+      <% Array(Puavo::DEVICE_CONFIG["device_types"][@device.puavoDeviceType]["classes"]).each do |device_objectClass| %>
       <%= hidden_field_tag "device[classes][]", device_objectClass %>
       <% end %>
     <% end %>
