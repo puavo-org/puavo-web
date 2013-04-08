@@ -259,7 +259,7 @@ class Users::ImportController < ApplicationController
 
     @user_validation_status = @columns.inject([]) do |result, column|
       status = "true"
-      error_message = Array( @user.errors.on(column) ).first
+      error_message = Array( @user.errors[column] ).first
       unless error_message.nil?
         status = "false"        
       end
