@@ -18,7 +18,7 @@ en:
     group_name: Maintenance
   default_select_value: Select
   general_confirm: Are you sure?
-  destroy_confirm: Are you sure? ({{object_name}})?
+  destroy_confirm: Are you sure? (%{object_name})?
   layouts: 
     application: 
       schools: Schools
@@ -309,7 +309,7 @@ en:
           invalid_characters: Abbveriation include invalid characters (allowed characters is a-z0-9-)
         school: 
           invalid_characters: "%{attribute} include invalid characters (allowed characters is a-z0-9-)"
-        uniqueness: "{{attribute}} is already in use"
+        uniqueness: "%{attribute} is already in use"
         invalid_characters: "%{attribute} include invalid characters"
         device: 
           puavoHostname: 

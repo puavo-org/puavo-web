@@ -18,7 +18,7 @@ fi:
     group_name: "Yll\xC3\xA4pito"
   default_select_value: Valitse
   general_confirm: Oletko varma?
-  destroy_confirm: Haluatko varmasti poistaa ({{object_name}})?
+  destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
   layouts: 
     application: 
       schools: Koulut
@@ -307,7 +307,7 @@ fi:
           invalid_characters: "Lyhenne sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4 (sallittuja merkkej\xC3\xA4 ovat: a-z0-9.-)"
         school: 
           invalid_characters: "%{attribute} sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4 (sallittuja merkkej\xC3\xA4 ovat: a-z0-9.-)"
-        uniqueness: "{{attribute}} on jo k\xC3\xA4yt\xC3\xB6ss\xC3\xA4"
+        uniqueness: "%{attribute} on jo k\xC3\xA4yt\xC3\xB6ss\xC3\xA4"
         invalid_characters: "%{attribute} sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4"
         device: 
           puavoHostname: 
