@@ -68,9 +68,10 @@ PuavoUsers::Application.routes.draw do
   end
 
   scope :path => "devices" do
+    match 'sessions/show' => 'api/v1/sessions#show', :via => :get
     resources :sessions
 
-    match 'hosts/types' => 'hosts#index'
+    match 'hosts/types' => 'hosts#types'
 
     scope :path => ':school_id' do
       match 'devices/:id/select_school' => 'devices#select_school', :as => 'select_school_device', :via => :get
