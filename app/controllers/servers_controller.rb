@@ -11,7 +11,7 @@ class ServersController < ApplicationController
         format.xml  { render :xml => @servers }
       else
         @schools = School.all_with_permissions
-        if @schools.count > 1 && PUAVO_CONFIG["school"]
+        if @schools.count > 1 && Puavo::DEVICE_CONFIG["school"]
           format.html { redirect_to( "/users/schools" ) }
         else
           format.html { redirect_to( devices_path(@schools.first) ) }

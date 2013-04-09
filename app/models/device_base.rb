@@ -240,16 +240,16 @@ class DeviceBase < LdapBase
   private
 
   def http_puavo_ca
-    http = Net::HTTP.new(PUAVO_CONFIG['puavo_ca']['host'], PUAVO_CONFIG['puavo_ca']['port'] || '80')
+    http = Net::HTTP.new(Puavo::DEVICE_CONFIG['puavo_ca']['host'], Puavo::DEVICE_CONFIG['puavo_ca']['port'] || '80')
     http.use_ssl = true
-    http.ca_file = PUAVO_CONFIG['puavo_ca']['ca_file']
+    http.ca_file = Puavo::DEVICE_CONFIG['puavo_ca']['ca_file']
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     http.verify_depth = 5
     return http
   end
 
   def set_puppetclass
-    self.puppetclass = PUAVO_CONFIG['device_types'][self.puavoDeviceType]['puppetclass']
+    self.puppetclass = Puavo::DEVICE_CONFIG['device_types'][self.puavoDeviceType]['puppetclass']
   end
 
   def host_configuration
@@ -264,7 +264,7 @@ class DeviceBase < LdapBase
   end
 
   def set_password
-    if PUAVO_CONFIG['device_types'][self.puavoDeviceType]['ldap_password']
+    if Puavo::DEVICE_CONFIG['device_types'][self.puavoDeviceType]['ldap_password']
       unless self.classes.include?('simpleSecurityObject')
         self.add_class('simpleSecurityObject')
       end

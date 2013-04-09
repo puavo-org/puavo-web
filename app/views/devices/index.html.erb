@@ -13,7 +13,7 @@
 <% @devices.each do |device| %>
   <tr>
     <td><%= link_to device.puavoHostname, device_path(@school, device) %></td>
-    <td><%=h PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
+    <td><%=h Puavo::DEVICE_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
     <td><%=h device.puavoDeviceManufacturer %></td>
     <td><%=h device.puavoDeviceModel %></td>
     <td><%=h device.serialNumber %></td>

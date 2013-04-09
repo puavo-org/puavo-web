@@ -11,7 +11,7 @@
       <h1><%=h device.puavoHostname %></h1>
         <% if controller_name == "devices" %>
           <p><%= label device.class.to_s.downcase, "puavoDeviceType" %><br />
-	          <%= PUAVO_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %>
+	          <%= Puavo::DEVICE_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %>
           </p>
         <% end %>
         <p><%= label device.class.to_s.downcase, "puavoTag" %><br />
