@@ -32,7 +32,7 @@
 <span><%= t('.add_new_device') %></span>
 <%= select_tag "device_type",
     options_for_select( @device_types ) %>
-<%= f.submit t('link.add') %>
+  <%= f.submit t('link.add'), :id => "device_submit" %>
 <% end %>
 
 </div>
