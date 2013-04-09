@@ -1,31 +1,32 @@
-fi:
-  must_be_logged_in: Sinun täytyy olla kirjautuneena
-  oauth:
+--- 
+fi: 
+  must_be_logged_in: "Sinun t\xC3\xA4ytyy olla kirjautuneena"
+  oauth: 
     change: vaihda
     login: Kirjaudu
     password_forget: Unohditko salasanasi?
-    username: Käyttäjätunnus
+    username: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnus"
     password: Salasana
     login_description1: Kirjaudu palveluun
     login_description2: Opinsys-tunnuksillasi
     select_organistion: Valitse koulu tai organisaatio
     next: Jatka
     organisation_help: lalala
-  create_organisation_owner:
+  create_organisation_owner: 
     school_name: Hallinto
-    role_name: Ylläpito
-    group_name: Ylläpito
+    role_name: "Yll\xC3\xA4pito"
+    group_name: "Yll\xC3\xA4pito"
   default_select_value: Valitse
   general_confirm: Oletko varma?
-  destroy_confirm: "Haluatko varmasti poistaa (%{object_name})?"
-  layouts:
-    application:
+  destroy_confirm: Haluatko varmasti poistaa ({{object_name}})?
+  layouts: 
+    application: 
       schools: Koulut
       school: Koulu
       logout: Kirjaudu ulos
-      users: Käyttäjät
-      tools: Työkalut
-      logged_in_as: Kirjauduttu käyttäjänä
+      users: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
+      tools: "Ty\xC3\xB6kalut"
+      logged_in_as: "Kirjauduttu k\xC3\xA4ytt\xC3\xA4j\xC3\xA4n\xC3\xA4:"
       devices: Laitteet
       servers: Palvelimet
       external_services: Ulkoiset palvelut
@@ -34,332 +35,349 @@ fi:
       search_placeholder: Hae
       links: Linkit
       oauth_clients: OAuth asiakassovellukset
-    forms:
+      desktop: "Ty\xC3\xB6p\xC3\xB6yt\xC3\xA4"
+    forms: 
       required_field: "* = Pakollinen tieto"
-  link:
+  link: 
     more: Muut toiminnot
     edit: Muokkaa
     back: Takaisin
     cancel: "- Peruuta"
     destroy: Poista
-    new_group: Luo uusi ryhmä
-    update: Päivitä
+    new_group: "Uusi ryhm\xC3\xA4"
+    update: "P\xC3\xA4ivit\xC3\xA4 tiedot"
     create: Luo
-    show: Näytä
-    users: Käyttäjälista
-    groups: Ryhmät
+    show: "N\xC3\xA4yt\xC3\xA4"
+    users: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
+    groups: "Ryhm\xC3\xA4t"
     roles: Roolit
-    add: Lisää
+    add: "Lis\xC3\xA4\xC3\xA4"
     remove: Poista
-    new_role: Luo uusi rooli
-    new_user: Lisää uusi käyttäjä
-    user_mass_import:
-      new: Lisää käyttäjiä massa-ajona
-      handle_user_data: Käsittele käyttäjätieto
+    new_role: Uusi rooli
+    new_user: "Uusi k\xC3\xA4ytt\xC3\xA4j\xC3\xA4"
+    user_mass_import: 
+      new: Users mass import
+      handle_user_data: "K\xC3\xA4sittele k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tieto"
       download_pdf: lataa pdf-tiedosto.
-      revalidate: Validoi uudelleen # revalidate term?
-      validate: Tarkasta syötetyt tiedot
-      create: Lisää käyttäjät
-    continue: Jatka
-    login: Kirjaudu
-    change_password: Vaihda salasana
-    new_school: Uusi koulu
-    new_external_service: Uusi # revalidate term?
+      revalidate: Revalidate
+      validate: Validates users
+      create: "Lis\xC3\xA4\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
+    continue: Continue
+    login: Login
+    change_password: Change password
+    new_school: New school
+    new_external_service: Uusi
     rename_groups: Vuosiluokkasiirto
-  flash:
+    devices: Laitelista
+    servers: Palvelimet
+    set_install_mode: Peruuta sertifikaatti
+    automounts: Hakemistoliitokset
+    new_automount: Uusi hakemistoliitos
+  flash: 
     added: "%{item} luotiin onnistuneesti."
-    updated: "%{item} päivitettiin onnistuneesti."
+    updated: "%{item} p\xC3\xA4ivitettiin onnistuneesti."
     destroyed: "%{item} poistettiin onnistuneesti."
-    create_failed: "Lisääminen epäonnistui!"
-    save_failed: "Tallennus epäonnistui!"
-    group:
-      role_added: "Rooli lisättiin ryhmään."
-      role_added_failed: Lisäys epäonnistui.
-      role_removed: Rooli poistettiin ryhmästä.
-      role_removed_failed: Poistaminen epäonnistui.
-    role:
-      group_added: Ryhmä lisättiin rooliin.
-      group_added_failed: Lisäys epäonnistui
-      group_removed: Ryhmä poistettiin roolista.
-      group_remove_failed: Poistaminen epäonnistui.
-      create_failed: Roolin lisääminen epäonnistui!
+    create_failed: "Lis\xC3\xA4\xC3\xA4minen ep\xC3\xA4onnistui!"
+    save_failed: "Tallennus ep\xC3\xA4onnistui!"
+    group: 
+      role_added: "Rooli lis\xC3\xA4ttiin ryhm\xC3\xA4\xC3\xA4n."
+      role_added_failed: "Lis\xC3\xA4ys ep\xC3\xA4onnistui."
+      role_removed: "Rooli poistettiin ryhm\xC3\xA4st\xC3\xA4."
+      role_removed_failed: "Poistaminen ep\xC3\xA4onnistui."
+    role: 
+      group_added: "Ryhm\xC3\xA4 lis\xC3\xA4ttiin rooliin."
+      group_added_failed: "Lis\xC3\xA4ys ep\xC3\xA4onnistui"
+      group_removed: "Ryhm\xC3\xA4 poistettiin roolista."
+      group_remove_failed: "Poistaminen ep\xC3\xA4onnistui."
+      create_failed: "Roolin lis\xC3\xA4\xC3\xA4minen ep\xC3\xA4onnistui!"
       save_failed: Roolia ei voitu tallentaa!
-    user:
-      save_failed: Käyttäjää ei voitu tallentaa!
-      create_failed: Käyttäjän lisääminen epäonnistui!
-      import:
-        dupplicate_column_name_error: Kahdelle sarakkeelle on valittu sama kenttätieto
-        require_error: Käyttäjälle on syötettävä etu- ja sukunimi
-        role_require_error: Rooli pitää olla valittuna
-      school_changed: Käyttäjän/käyttäjien koulu on vaihdettu!
-    password_set_failed: Salasanan vaihto epäonnistui. Yritä uudelleen.
-    session:
-      login_successful: Kirjautuminen onnistui
-      failed: Kirjautuminen epäonnistui!
+    user: 
+      save_failed: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4\xC3\xA4 ei voitu tallentaa!"
+      create_failed: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4n lis\xC3\xA4\xC3\xA4minen ep\xC3\xA4onnistui!"
+      import: 
+        dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kentt\xC3\xA4tieto"
+        require_error: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4lle on sy\xC3\xB6tett\xC3\xA4v\xC3\xA4 etu- ja sukunimi"
+        role_require_error: "Rooli pit\xC3\xA4\xC3\xA4 olla valittuna"
+      school_changed: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4n/k\xC3\xA4ytt\xC3\xA4jien koulu on vaihdettu!"
+    password_set_failed: "Salasanan vaihto ep\xC3\xA4onnistui. Yrit\xC3\xA4 uudelleen."
+    session: 
+      login_successful: Kirjautuminen onnistui!
+      failed: "Kirjautuminen ep\xC3\xA4onnistui!"
       logout_successful: Uloskirjautuminen onnistui!
-    password:
+    password: 
       successful: Salasanan vaihto onnistui!
-      failed: Salasanan vaihto epäonnistui!
-      invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"
-      confirmation_failed: Uusi salasana ei täsmää salasanan vahvistukseen
-      invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
-    school:
-      school_admin_added: "%{displayName} (%{school_name}) on lisätty ylläpitäjäkäyttäjäksi"
-      school_admin_removed:  "%{displayName} (%{school_name}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
-      wrong_user_type: Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille
-      destroyed_failed: Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua
-    profile:
+      failed: "Salasanan vaihto ep\xC3\xA4onnistui!"
+      invalid_login: "Salasana tai k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnus (%{uid}) on virheellinen"
+      confirmation_failed: "Uusi salasana ei t\xC3\xA4sm\xC3\xA4\xC3\xA4 salasanan vahvistukseen"
+      invalid_user: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnusta (%{uid}) ei ole olemassa"
+    school: 
+      school_admin_added: "%{displayName} (%{school_name}) on lis\xC3\xA4tty yll\xC3\xA4pit\xC3\xA4j\xC3\xA4k\xC3\xA4ytt\xC3\xA4j\xC3\xA4ksi"
+      school_admin_removed: "%{displayName} (%{school_name}) ei ole en\xC3\xA4\xC3\xA4 yll\xC3\xA4pit\xC3\xA4j\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4 t\xC3\xA4ss\xC3\xA4 koulussa"
+      wrong_user_type: "Yll\xC3\xA4pito-oikeudet voidaan antaa vain admin-k\xC3\xA4ytt\xC3\xA4jille"
+      destroyed_failed: "Koulun poistaminen ep\xC3\xA4onnistui. K\xC3\xA4ytt\xC3\xA4j\xC3\xA4t, roolit ja ryhm\xC3\xA4t pit\xC3\xA4\xC3\xA4 poistaa ennen koulua"
+    profile: 
       updated: Tietojen tallennus onnistui
-      save_failed: Tietojen tallennus epäonnistui
-  roles:
-    index:
+      save_failed: "Tietojen tallennus ep\xC3\xA4onnistui"
+    printer: 
+      updated: "Tulostimen tietojen p\xC3\xA4ivitys onnistui"
+    devices: 
+      school_changed: Laitteen koulu on nyt vaihdettu!
+  roles: 
+    index: 
       actions: Toiminnot
-    show:
-      other_groups: Muut ryhmät
-      change_school: Siirrä käyttäjät toiseen kouluun
-    new:
+    show: 
+      other_groups: "Muut ryhm\xC3\xA4t"
+      change_school: "Siirr\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4t toiseen kouluun"
+    new: 
       title: Uusi rooli
-    edit:
+    edit: 
       title: Muokataan roolia
-    select_school:
-      title: Käyttäjien siirto
+    select_school: 
+      title: "K\xC3\xA4ytt\xC3\xA4jien siirto"
       select_new_school: Valitse uusi koulu
       submit: Seuraava
-    select_role:
-      title: Käyttäjien siirto
+    select_role: 
+      title: "K\xC3\xA4ytt\xC3\xA4jien siirto"
       new_school: Uusi koulu
       select_new_role: Valitse uusi rooli
-      submit: Siirrä käyttäjät
-  users:
-    index:
+      submit: "Siirr\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
+  users: 
+    index: 
       actions: Toiminnot
-    show:
-      user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: 
-<b>%{roles}</b>"
-      system_information: Järjestelmätietoja
+    show: 
+      user_type_and_role: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4n tyyppi on <b>%{user_type}</b> ja h\xC3\xA4neen liittyv\xC3\xA4t seuraavat roolit:  <b>%{roles}</b>"
+      system_information: "J\xC3\xA4rjestelm\xC3\xA4tietoja"
       contact_information: Yhteystiedot
-      group_by_roles: Roolien mukana tulevat ryhmät
+      group_by_roles: "Roolien mukana tulevat ryhm\xC3\xA4t"
       change_school: Vaihda koulua
-      user_is_locked: Käyttäjätunnus on lukittu
-    new:
-      title: Lisää uusi käyttäjä
-    edit:
-      title: Muokataan käyttäjää
-    form:
-      add_email: Lisää sähköpostiosoitteita
-      add_telephone_number: Lisää puhelinnumeroita
-    select_school:
+      user_is_locked: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnus on lukittu"
+    new: 
+      title: "Lis\xC3\xA4\xC3\xA4 uusi k\xC3\xA4ytt\xC3\xA4j\xC3\xA4"
+    edit: 
+      title: "Muokataan k\xC3\xA4ytt\xC3\xA4j\xC3\xA4\xC3\xA4"
+    form: 
+      add_email: "Lis\xC3\xA4\xC3\xA4 s\xC3\xA4hk\xC3\xB6postiosoitteita"
+      add_telephone_number: "Lis\xC3\xA4\xC3\xA4 puhelinnumeroita"
+    select_school: 
       title: Koulun vaihto
       select_new_school: Valitse uusi koulu
       submit: Seuraava
-    select_role:
+    select_role: 
       title: Koulun vaihto
       new_school: Uusi koulu
       select_new_role: Valitse uusi rooli
       submit: Vaihda koulu
-    import:
-      info:
-        phase_1: Syötä käyttäjätiedot
-        phase_2: Määrittele käyttäjätiedot
-        phase_3: Täydennä käyttäjätiedot
-        phase_4: Tarkista käyttäjätiedot ja lisää käyttäjät
-      new:
-        title: Lisää käyttäjiä massa-ajona
-        help: "Syötä käyttäjätieto alla olevaan tekstikenttään"
+    import: 
+      info: 
+        phase_1: "Sy\xC3\xB6t\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tiedot"
+        phase_2: "M\xC3\xA4\xC3\xA4rittele k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tiedot"
+        phase_3: "T\xC3\xA4ydenn\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tiedot"
+        phase_4: "Tarkista k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tiedot ja lis\xC3\xA4\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
+      new: 
+        title: "Lis\xC3\xA4\xC3\xA4 k\xC3\xA4ytt\xC3\xA4ji\xC3\xA4 massa-ajona"
+        help: "Sy\xC3\xB6t\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tieto alla olevaan tekstikentt\xC3\xA4\xC3\xA4n"
         example_title: Esimerkki
-        example: "Matti, Meikäläinen\nMaija, Meikäläinen"
-        hint: Voit käyttää eroittimena myös sarkainta. Näin ollen voit liittää käyttäjien tiedot taulukkolaskentaohjelmasta leikepöydän kautta alla olevaan tekstikenttään.
-      show:
-        title: "Käyttäjät (%{count}) lisättiin onnistuneesti."
-        title_with_error: "Kaikkien käyttäjien lisäys ei onnistunut!"
+        example: "Matti, Meik\xC3\xA4l\xC3\xA4inen\n\
+          Maija, Meik\xC3\xA4l\xC3\xA4inen"
+        hint: "Voit k\xC3\xA4ytt\xC3\xA4\xC3\xA4 eroittimena my\xC3\xB6s sarkainta. N\xC3\xA4in ollen voit liitt\xC3\xA4\xC3\xA4 k\xC3\xA4ytt\xC3\xA4jien tiedot taulukkolaskentaohjelmasta leikep\xC3\xB6yd\xC3\xA4n kautta alla olevaan tekstikentt\xC3\xA4\xC3\xA4n."
+      show: 
+        title: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4t (%{count}) lis\xC3\xA4ttiin onnistuneesti."
+        title_with_error: "Kaikkien k\xC3\xA4ytt\xC3\xA4jien lis\xC3\xA4ys ei onnistunut!"
         successful: "Onnistui: %{count}"
-        failed: "Epäonnistui: %{count}"
-        pdf_info: Voit tulostaa käyttäjälistat paperille
-        title_of_failed_users_list: Seuraavien käyttäjien luonti epäonnistui!
-      role:
-        title: Käyttäjien massalisäystiedon tarkistus
-        help: Seuraaville kentille tulee määrittää tiedot uusia tunnuksia lisättäessä
-      refine:
-        title: Käyttäjien massalisäys
-        info: Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta "Tarkista uudelleen" -painiketta.
-        column_info: Valitse sopivat kentät esimerkkien avulla
+        failed: "Ep\xC3\xA4onnistui: %{count}"
+        pdf_info: "Voit tulostaa k\xC3\xA4ytt\xC3\xA4j\xC3\xA4listat paperille"
+        title_of_failed_users_list: "Seuraavien k\xC3\xA4ytt\xC3\xA4jien luonti ep\xC3\xA4onnistui!"
+      role: 
+        title: "K\xC3\xA4ytt\xC3\xA4jien massalis\xC3\xA4ystiedon tarkistus"
+        help: "Seuraaville kentille tulee m\xC3\xA4\xC3\xA4ritt\xC3\xA4\xC3\xA4 tiedot uusia tunnuksia lis\xC3\xA4tt\xC3\xA4ess\xC3\xA4"
+      refine: 
+        title: "K\xC3\xA4ytt\xC3\xA4jien massalis\xC3\xA4ys"
+        info: "Seuraavat uudet k\xC3\xA4ytt\xC3\xA4j\xC3\xA4t eiv\xC3\xA4t l\xC3\xA4p\xC3\xA4isseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta \"Tarkista uudelleen\" -painiketta."
+        column_info: "Valitse sopivat kent\xC3\xA4t esimerkkien avulla"
         delete: Poista
-        name_of_column: Kentän nimi
+        name_of_column: "Kent\xC3\xA4n nimi"
         example: Esimerkki
-      preview:
-        title: Käyttäjien massalisäys, esikatselu
-        info: Tarkista käyttäjien tiedot. Punaisilla merkityt tiedot ovat virheellisiä ja kyseisiä käyttäjiä ei voida lisätä ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi "Lisää käyttäjät"
+      preview: 
+        title: "K\xC3\xA4ytt\xC3\xA4jien massalis\xC3\xA4ys, esikatselu"
+        info: "Tarkista k\xC3\xA4ytt\xC3\xA4jien tiedot. Punaisilla merkityt tiedot ovat virheellisi\xC3\xA4 ja kyseisi\xC3\xA4 k\xC3\xA4ytt\xC3\xA4ji\xC3\xA4 ei voida lis\xC3\xA4t\xC3\xA4 ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi \"Lis\xC3\xA4\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4t\""
         change_school: Vaihda koulua
         select_all: Valitse kaikki
-  groups:
-    index:
+  groups: 
+    index: 
       actions: Toiminnot
-    show:
-      roles_and_members: Roolit ja jäsenet
+    show: 
+      roles_and_members: "Roolit ja j\xC3\xA4senet"
       other_roles: Muut roolit
-    new:
-      title: Luo uusi ryhmä
-    edit:
-      title: Muokataan ryhmää
-  schools:
-    index:
+    new: 
+      title: "Luo uusi ryhm\xC3\xA4"
+    edit: 
+      title: "Muokataan ryhm\xC3\xA4\xC3\xA4"
+  schools: 
+    index: 
       actions: Toiminnot
       title: Listataan koulut
-    edit:
+    edit: 
       title: Muokataan koulua
-    new:
-      title: Lisää uusi koulu
-    menu:
+    new: 
+      title: "Lis\xC3\xA4\xC3\xA4 uusi koulu"
+    menu: 
       dashboard: Kojetaulu
-      admins: Ylläpitäjät
-    admins:
-      this_school_admin_users: "%{school_name}: ylläpitäjät"
-      other_admin_users: Lisää ylläpitäjän oikeudet
-      school_admins: Ylläpitäjät
-    show:
+      admins: "Yll\xC3\xA4pit\xC3\xA4j\xC3\xA4t"
+    admins: 
+      this_school_admin_users: "%{school_name}: yll\xC3\xA4pit\xC3\xA4j\xC3\xA4t"
+      other_admin_users: "Lis\xC3\xA4\xC3\xA4 yll\xC3\xA4pit\xC3\xA4j\xC3\xA4n oikeudet"
+      school_admins: "Yll\xC3\xA4pit\xC3\xA4j\xC3\xA4t"
+    show: 
       contacts: Yhteystiedot
       devices: Laitteet
-      users: Käyttäjät
+      users: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
       statistics: Tilastot
-      admin_users: Ylläpitäjät
+      admin_users: "Yll\xC3\xA4pit\xC3\xA4j\xC3\xA4t"
       name: Nimi
       phone: Puhelinnumero
-      mail: Sähköpostiosoite
+      mail: "S\xC3\xA4hk\xC3\xB6postiosoite"
       billing_info: Laskutustiedot
-      rule_lines: Laskusäännöt
-    form:
-      add_puavo_billing_info: Lisää laskutustietoja
-  password:
-    edit:
-      title: Vaihda toisen käyttäjän salasana
-      head: Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi.
+      rule_lines: "Laskus\xC3\xA4\xC3\xA4nn\xC3\xB6t"
+    form: 
+      add_puavo_billing_info: "Lis\xC3\xA4\xC3\xA4 laskutustietoja"
+  password: 
+    edit: 
+      title: "Vaihda toisen k\xC3\xA4ytt\xC3\xA4j\xC3\xA4n salasana"
+      head: "Vaihtaaksesi toisen k\xC3\xA4ytt\xC3\xA4j\xC3\xA4n salasanan, sy\xC3\xB6t\xC3\xA4 alle oma k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnuksesi ja salasanasi sek\xC3\xA4 toisen k\xC3\xA4ytt\xC3\xA4j\xC3\xA4n k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnus ja uusi salasana. Toisen k\xC3\xA4ytt\xC3\xA4j\xC3\xA4n salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."
       changing_user: Vaihtaja
       changed_user: Vaihdettava tunnus
       password: Salasana
       link_own_password: Vaihda oma salasanasi
-    own:
+    own: 
       title: Vaihda salasana
       password: Vanha salasana
-      link_other_password: Vaihda toisen käyttäjän salasana
-  organisations:
-    show:
+      link_other_password: "Vaihda toisen k\xC3\xA4ytt\xC3\xA4j\xC3\xA4n salasana"
+  organisations: 
+    show: 
       title: Organisaation tiedot
-    edit:
+    edit: 
       title: Organisaation tiedot
       select: Valitse
-      add_puavo_billing_info: Lisää laskutustietoja
-  external_services:
-    index:
+      add_puavo_billing_info: "Lis\xC3\xA4\xC3\xA4 laskutustietoja"
+  external_services: 
+    index: 
       actions: Toiminnot
       title: Ulkoiset palvelut
-    new:
+    new: 
       title: Uuden ulkoisen palvelun tiedot
-    edit:
+    edit: 
       title: Ulkoisen palvelun tietojen muokkaus
-  oauth_clients:
-    new:
+  oauth_clients: 
+    new: 
       title: Uuden OAuth asiakassovelluksen tiedot
-    edit:
+    edit: 
       title: Muokataan OAuth asiakassovelluksen tietoja
-    index:
+    index: 
       title: OAuth asiakassovellukset
       actions: Toiminnot
       new: Uusi
-  search:
-    search_result:
-      title_user: Käyttäjät
+  search: 
+    search_result: 
+      title_user: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
       title_role: Roolit
-      title_group: Ryhmät
-  profiles:
-    edit:
+      title_group: "Ryhm\xC3\xA4t"
+      title_device: Laitteet
+  profiles: 
+    edit: 
       title: Omat tiedot
       save_and_close: Tallenna ja sulje
-    show:
+    show: 
       message: Tietojen tallennus onnistui
-  controllers:
-    import:
-      school_has_changed: Siirretty käyttäjä, käytössä vanha salasana
-  activeldap:
-    errors:
-      messages:
-        taken: "%{attribute} on jo käytössä"
-        blank: "%{attribute} pitää olla asetettuna"
+  controllers: 
+    import: 
+      school_has_changed: "Siirretty k\xC3\xA4ytt\xC3\xA4j\xC3\xA4, k\xC3\xA4yt\xC3\xB6ss\xC3\xA4 vanha salasana"
+  activeldap: 
+    errors: 
+      messages: 
+        taken: "%{attribute} on jo k\xC3\xA4yt\xC3\xB6ss\xC3\xA4"
+        blank: "%{attribute} pit\xC3\xA4\xC3\xA4 olla asetettuna"
         invalid: "%{attribute} on virheellinen"
-        confirmation: "%{attribute} ei täsmää vahvistukseen"
-        too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
-        too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
-        user:
-          must_begin_with: Käyttäjätunnuksen pitää alkaa pienellä kirjaimella
-          invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
+        confirmation: "%{attribute} ei t\xC3\xA4sm\xC3\xA4\xC3\xA4 vahvistukseen"
+        too_long: "%{attribute} on liian pitk\xC3\xA4 (suurin sallittu pituus on %{count} merkki\xC3\xA4)"
+        too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkki\xC3\xA4)"
+        user: 
+          must_begin_with: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnuksen pit\xC3\xA4\xC3\xA4 alkaa pienell\xC3\xA4 kirjaimella"
+          invalid_characters: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnus sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4 (sallittuja merkkej\xC3\xA4 ovat: a-z0-9.-)"
         group: 
-          invalid_characters: "Lyhenne sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
-        school:
-          invalid_characters: "%{attribute} sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
-    models:
-      group: Ryhmä
+          invalid_characters: "Lyhenne sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4 (sallittuja merkkej\xC3\xA4 ovat: a-z0-9.-)"
+        school: 
+          invalid_characters: "%{attribute} sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4 (sallittuja merkkej\xC3\xA4 ovat: a-z0-9.-)"
+        uniqueness: "{{attribute}} on jo k\xC3\xA4yt\xC3\xB6ss\xC3\xA4"
+        invalid_characters: "%{attribute} sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4"
+        device: 
+          puavoHostname: 
+            invalid_characters: "Verkkonimi sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4 (sallittuja merkkej\xC3\xA4 ovat: a-z0-9-)"
+          macAddress: 
+            invalid_characters: "MAC-osoite sis\xC3\xA4lt\xC3\xA4\xC3\xA4 virheellisi\xC3\xA4 merkkej\xC3\xA4 tai se on v\xC3\xA4\xC3\xA4r\xC3\xA4n muotoinen. Esim: 0f:1f:a9:2f:a3:ad"
+    models: 
+      group: "Ryhm\xC3\xA4"
       role: Rooli
-      user: Käyttäjä
+      user: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4"
       school: Koulu
       external_service: Ulkoinen palvelu
       oauth_client: OAuth asiakassovellus
-    attributes:
-      role:
-        displayName: "Roolin nimi"
-        members: Jäsenet
-        groups: Roolin ryhmät
-      school:
-        cn: "Ryhmän nimi"
-        displayName: "Koulun nimi"
-        puavoNamePrefix: "Etuliite"
-        puavoSchoolHomePageURL: "Koulun kotisivu"
-        description: "Kuvaus"
-        puavoSchoolNameAbbreviation: "Ryhmän lyhenne"
-        telephoneNumber: "Puhelinnumero"
-        facsimileTelephoneNumber: "Faxin numero"
-        l: "Locality"
-        street: "Katu"
-        postOfficeBox: "Postilokero"
-        postalAddress: "Postiosoite"
-        postalCode: "Postinumero"
-        st: "Maakunta"
-        gidNumber: "Gid-numero"
+    attributes: 
+      role: 
+        displayName: Roolin nimi
+        members: "J\xC3\xA4senet"
+        groups: "Roolin ryhm\xC3\xA4t"
+      school: 
+        cn: "Ryhm\xC3\xA4n nimi"
+        displayName: Koulun nimi
+        puavoNamePrefix: Etuliite
+        puavoSchoolHomePageURL: Koulun kotisivu
+        description: Kuvaus
+        puavoSchoolNameAbbreviation: "Ryhm\xC3\xA4n lyhenne"
+        telephoneNumber: Puhelinnumero
+        facsimileTelephoneNumber: Faxin numero
+        l: Locality
+        street: Katu
+        postOfficeBox: Postilokero
+        postalAddress: Postiosoite
+        postalCode: Postinumero
+        st: Maakunta
+        gidNumber: Gid-numero
         puavoDeviceImage: Levykuva
         puavoBillingInfo: Laskutustiedot
-      user:
-        displayName: "Nimi"
-        sn: "Sukunimi"
-        givenName: "Etunimi"
-        uid: "Käyttäjätunnus"
-        primary_group: "Ensisijainen ryhmä"
-        homeDirectory: "Kotikansio"
-        uidNumber: "Uid-numero"
-        gidNumber: "Ryhmä"
-        password: "Salasana"
-        mail: "Sähköpostiosoite"
-        telephoneNumber: "Puhelinnumero"
-        puavoEduPersonAffiliation: "Käyttäjätyyppi"
+      user: 
+        displayName: Nimi
+        sn: Sukunimi
+        givenName: Etunimi
+        uid: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnus"
+        primary_group: "Ensisijainen ryhm\xC3\xA4"
+        homeDirectory: Kotikansio
+        uidNumber: Uid-numero
+        gidNumber: "Ryhm\xC3\xA4"
+        password: Salasana
+        mail: "S\xC3\xA4hk\xC3\xB6postiosoite"
+        telephoneNumber: Puhelinnumero
+        puavoEduPersonAffiliation: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tyyppi"
         role_ids: Rooli
         role_name: Rooli
         roles: Roolit
         preferredLanguage: Kieli
-        password: Salasana
         new_password: Uusi salasana
         new_password_confirmation: Vahvista uusi salasana
-        puavoAllowRemoteAccess: Sallitaan etäyhteys
-        puavoAllowRemoteAccess_true: "Kyllä"
-        puavoAllowRemoteAccess_false: "Ei"
-        puavoAllowRemoteAccess_: "Ei"
+        puavoAllowRemoteAccess: "Sallitaan et\xC3\xA4yhteys"
+        puavoAllowRemoteAccess_true: "Kyll\xC3\xA4"
+        puavoAllowRemoteAccess_false: Ei
+        puavoAllowRemoteAccess_: Ei
         puavoEduPersonReverseDisplayName: Sukunimi Etunimi
-        puavoEduPersonPersonnelNumber: Henkilönumero
+        puavoEduPersonPersonnelNumber: "Henkil\xC3\xB6numero"
         image: Kuva
-        puavoLocked: Käyttäjätunnus on lukittu
-      group:
-        displayName: "Ryhmän nimi"
-        cn: "Lyhenne"
+        puavoLocked: "K\xC3\xA4ytt\xC3\xA4j\xC3\xA4tunnus on lukittu"
+      group: 
+        displayName: "Ryhm\xC3\xA4n nimi"
+        cn: Lyhenne
         gidNumber: Gid-numero
-        primary_members: Ensisijaiset jäsenet
-        members: Jäsenet
-      ldap_organisation:
+        primary_members: "Ensisijaiset j\xC3\xA4senet"
+        members: "J\xC3\xA4senet"
+      ldap_organisation: 
         description: Kuvaus
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero
@@ -373,35 +391,271 @@ fi:
         eduOrgHomePageURI: Kotisivu
         puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
         puavoDeviceAutoPowerOffMode_default: Oletus
-        puavoDeviceAutoPowerOffMode_off: Pois päältä
+        puavoDeviceAutoPowerOffMode_off: "Pois p\xC3\xA4\xC3\xA4lt\xC3\xA4"
         puavoDeviceAutoPowerOffMode_custom: Mukautettu
-        puavoDeviceOnHour: Päivän aloitus
-        puavoDeviceOffHour: Päivän lopetus
+        puavoDeviceOnHour: "P\xC3\xA4iv\xC3\xA4n aloitus"
+        puavoDeviceOffHour: "P\xC3\xA4iv\xC3\xA4n lopetus"
         o: Nimi
         puavoEduOrgAbbreviation: Lyhenne
         puavoBillingInfo: Laskutustiedot
-      external_service:
+      external_service: 
         uid: Palvelun tunniste
         description: Kuvaus
         userPassword: Salasana
-        groups: Järjestelmäryhmät
+        groups: "J\xC3\xA4rjestelm\xC3\xA4ryhm\xC3\xA4t"
         dn: Bind DN
-      device:
-        puavoHostname: Nimi
-      oauth_client:
+      device: 
+        puavoHostname: Verkkonimi
+        puavoDeviceType: Laitteen tyyppi
+        macAddress: MAC-osoite
+        ipHostNumber: IP-osoite
+        userCertificate: Sertifikaatti
+        serialNumber: Sarjanumero
+        puavoDeviceManufacturer: Laitteen valmistaja
+        puavoDeviceModel: Laitteen malli
+        puavoDevicePrimaryUser: "Laitteen ensisijainen k\xC3\xA4ytt\xC3\xA4j\xC3\xA4"
+        jpegPhoto: Valokuva
+        puavoLatitude: Leveysaste
+        puavoLongitude: Pituusaste
+        puavoLocationName: Sijainnin nimi
+        puavoRole: Rooli
+        puavoDeviceStatus: Tila
+        puavoDeviceBootMode: "K\xC3\xA4ynnistymistapa"
+        description: Kuvaus
+        puavoTag: Tagit
+        puavoPurchaseDate: Hankinta pvm.
+        puavoWarrantyEndDate: "Takuun p\xC3\xA4\xC3\xA4ttymis pvm."
+        puavoPurchaseLocation: Hankintapaikka
+        puavoPurchaseURL: Hankinta-URL
+        puavoSupportContract: "Tukiyhteyshenkil\xC3\xB6"
+        puavoDefaultPrinter: Oletustulostin
+        puavoDeviceXserver: "N\xC3\xA4yt\xC3\xB6ohjaimen ajuri"
+        puavoDeviceXrandr: Xrandr asetukset
+        puavoDeviceXrandrDisable: "Poista Xrandr k\xC3\xA4yt\xC3\xB6st\xC3\xA4"
+        puavoDeviceKernelVersion: Kernel-versio
+        puavoDeviceKernelArguments: Kernel parametrit
+        puavoDeviceResolution: Resoluutio
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
+        puavoPrinterCartridge: "Tulostimen v\xC3\xA4rikasetti"
+        printerDescription: Kuvaus
+        printerURI: Laiteosoite
+        printerLocation: Sijainti
+        printerMakeAndModel: Merkki ja malli
+        image: Kuva
+        puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
+        puavoDeviceAutoPowerOffMode_default: Oletus
+        puavoDeviceAutoPowerOffMode_off: "Pois p\xC3\xA4\xC3\xA4lt\xC3\xA4"
+        puavoDeviceAutoPowerOffMode_custom: Mukautettu
+        puavoDeviceOnHour: "P\xC3\xA4iv\xC3\xA4n aloitus"
+        puavoDeviceOffHour: "P\xC3\xA4iv\xC3\xA4n lopetus"
+        puavoDeviceImage: Levykuva
+      oauth_client: 
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)
         userPassword: Asiakassovelluksen salaisuus (Client secret)
         puavoOAuthScope: Oikeudet
         puavoOAuthClientType: Tyyppi
+      server: 
+        puavoDeviceType: Laitteen tyyppi
+        puavoHostname: Verkkonimi
+        macAddress: MAC-osoite
+        userCertificate: Sertifikaatti
+        serialNumber: Sarjanumero
+        puavoDeviceManufacturer: Laitteen valmistaja
+        puavoDeviceModel: Laitteen malli
+        puavoDevicePrimaryUser: "Laitteen ensisijainen k\xC3\xA4ytt\xC3\xA4j\xC3\xA4"
+        jpegPhoto: Valokuva
+        puavoLatitude: Leveysaste
+        puavoLongitude: Pituusaste
+        puavoLocationName: Sijainnin nimi
+        puavoRole: Rooli
+        puavoDeviceStatus: Tila
+        description: Kuvaus
+        puavoTag: Tagit
+        puavoPurchaseDate: Hankinta pvm.
+        puavoWarrantyEndDate: "Takuun p\xC3\xA4\xC3\xA4ttymis pvm."
+        puavoPurchaseLocation: Hankintapaikka
+        puavoPurchaseURL: Hankinta-URL
+        puavoSupportContract: "Tukiyhteyshenkil\xC3\xB6"
+        puavoDefaultPrinter: Oletustulostin
+        puavoDeviceXserver: "N\xC3\xA4yt\xC3\xB6ohjaimen ajuri"
+        puavoDeviceXrandr: Xrandr asetukset
+        puavoDeviceXrandrDisable: "Poista Xrandr k\xC3\xA4yt\xC3\xB6st\xC3\xA4"
+        puavoDeviceKernelVersion: Kernel-versio
+        puavoDeviceKernelArguments: Kernel parametrit
+        puavoDeviceResolution: Resoluutio
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
+        puavoExport: Hakemistopolku
+        image: Kuva
+      automount: 
+        cn: Hakemisto
+      printer: 
+        printerDescription: Tulostimen nimi
+        printerMakeAndModel: Valmistaja ja malli
+        printerLocation: Sijainti
+        puavoRule: "K\xC3\xA4ytt\xC3\xB6oikeudet"
+        printerType: Tyyppi
+        printerURI: Polku
+        puavoPrinterPPD: Ajuritiedosto (PPD)
+    values: 
+      device: 
+        roles: 
+          puavoNetbootDevice: "Verkkok\xC3\xA4ynnistys"
+          puavoLocalbootDevice: "Paikallinen k\xC3\xA4ynnistys"
+          puavoPrinter: Tulostin
   puavoEduPersonAffiliation_teacher: Opettaja
-  puavoEduPersonAffiliation_staff: Henkilökunta
+  puavoEduPersonAffiliation_staff: "Henkil\xC3\xB6kunta"
   puavoEduPersonAffiliation_student: Opiskelija
   puavoEduPersonAffiliation_visitor: Vierailija
   puavoEduPersonAffiliation_parent: Huoltaja
-  puavoEduPersonAffiliation_admin: Ylläpitäjä
+  puavoEduPersonAffiliation_admin: "Yll\xC3\xA4pit\xC3\xA4j\xC3\xA4"
   puavoEduPersonAffiliation_testuser: Testitunnus
   language_fi: Suomi
   language_en: Englanti
   language_sv: Ruotsi
   language_default: Oletus
+  date: 
+    formats: 
+      default: "%d.%m.%Y"
+      short: "%b %d"
+      long: "%B %d, %Y"
+    day_names: 
+    - Sunnuntai
+    - Maanantai
+    - Tiistai
+    - Keskiviikko
+    - Torstai
+    - Perjantai
+    - Lauantai
+    abbr_day_names: 
+    - Su
+    - Ma
+    - Ti
+    - Ke
+    - To
+    - Pe
+    - La
+    month_names: 
+    - 
+    - Tammikuu
+    - Helmikuu
+    - Maaliskuu
+    - Huhtikuu
+    - Toukokuu
+    - "Kes\xC3\xA4kuu"
+    - "Hein\xC3\xA4kuu"
+    - Elokuu
+    - Syyskuu
+    - Lokakuu
+    - Marraskuu
+    - Joulukuu
+    abbr_month_names: 
+    - 
+    - tammik.
+    - helmik.
+    - maalisk.
+    - huhtik.
+    - toukok.
+    - "kes\xC3\xA4k."
+    - "hein\xC3\xA4k."
+    - elokk.
+    - syysk.
+    - lokak.
+    - marrask.
+    - jouluk.
+    order: 
+    - :day
+    - :month
+    - :year
+  time: 
+    formats: 
+      default: "%d.%m.%Y"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+  actions: Toiminnot
+  cancel: "- Peruuta"
+  or: tai
+  shared: 
+    terminal_title: "P\xC3\xA4\xC3\xA4tteen tiedot"
+    location: Sijainti
+    display_settings: "N\xC3\xA4yt\xC3\xB6nasetukset"
+    kernel_settings: Kernel-asetukset
+    title: Laitteen tiedot
+    printer_title: Tulostimen tiedot
+    server_title: Palvelimen tiedot
+    add_puavoDeviceXrandr: "Lis\xC3\xA4\xC3\xA4 uusi xrandr-rivi"
+    boot_mode_netboot: "P\xC3\xA4\xC3\xA4te"
+    boot_mode_dualboot: "Kaksoisk\xC3\xA4ynnistys"
+    boot_mode_: "P\xC3\xA4\xC3\xA4te"
+    purchase_information: Hankintatiedot
+    add_macAddress: "Lis\xC3\xA4\xC3\xA4 uusi MAC-osoite"
+    autopoweroff: Automaattisammutus
+    linux_device_information: 
+      certificate_status_true: Voimassa
+      certificate_status_false: Ei ole voimassa
+      xrandr_status_true: "Kyll\xC3\xA4"
+      xrandr_status_false: Ei
+      xrandr_status_: Ei
+    form_linux_device_information: 
+      select: Valitse
+  devices: 
+    index: 
+      add_new_device: "Lis\xC3\xA4\xC3\xA4 uusi laite"
+      title: Laitteet
+      select_device_label: Valitse
+    new: 
+      new_printer: Uusi tulostin
+      new_device: Uusi laite (%{device_type})
+    edit: 
+      edit: Muokkaa
+      title: Laiteasetukset
+      terminal_title: "P\xC3\xA4\xC3\xA4teasetukset"
+      printer_title: Tulostinasetukset
+    form_cups: 
+      cups_settings: CUPS asetukset
+    cups: 
+      cups_settings: CUPS asetukset
+    show: 
+      change_school: Vaihda koulua
+    select_school: 
+      title: "Laitteen (%{name}) siirt\xC3\xA4minen toiseen kouluun"
+      select_new_school: Valitse uusi koulu
+      submit: "Siirr\xC3\xA4"
+  servers: 
+    index: 
+      title: Palvelimet
+    edit: 
+      title: Palvelimen asetukset
+    form: 
+      automounts: Hakemistoliitokset
+      add_puavoExport: "Lis\xC3\xA4\xC3\xA4 hakemistopolkuja"
+    show: 
+      automounts: Hakemistoliitokset
+  automounts: 
+    index: 
+      title: Hakemistoliitokset
+    new: 
+      title: Uusi hakemistoliitos
+    edit: 
+      title: Hakemistoliitoksen muokkaus
+  host: 
+    types: 
+      register_label: Laitetyyppi
+      register_title: Laitetyypin valinta
+      register_question: "Valitse laitetyyppi: "
+      thinclient: "Kevytp\xC3\xA4\xC3\xA4te"
+      fatclient: "Tehop\xC3\xA4\xC3\xA4te"
+      laptop: Kannettava
+      workstation: "Ty\xC3\xB6asema"
+      server: Palvelin
+      netstand: Nettikulma
+      infotv: Info-tv
+  printers: 
+    index: 
+      server_title: "Palvelin: %{server}"
+  helpers: 
+    submit: 
+      servers: 
+        create: Luo
