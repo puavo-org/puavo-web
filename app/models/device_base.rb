@@ -287,7 +287,7 @@ class DeviceBase < LdapBase
   end
 
   def downcase_mac_addresses
-    self.macAddress = self.macAddress.to_a.map do |mac|
+    self.macAddress = Array(self.macAddress).map do |mac|
       mac.to_s.gsub('-', ':').downcase
     end
   end
