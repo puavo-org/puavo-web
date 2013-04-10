@@ -86,7 +86,7 @@ PuavoUsers::Application.routes.draw do
 
       match 'servers/:id/image' => 'servers#image', :as => 'image_server', :via => :get
       match( 'servers/:id/revoke_certificate' => 'servers#revoke_certificate',
-             :as => 'revoke_certificate',
+             :as => 'revoke_certificate_server',
              :via => :delete )
     end
     
