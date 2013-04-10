@@ -89,6 +89,8 @@ PuavoUsers::Application.routes.draw do
              :as => 'revoke_certificate',
              :via => :delete )
     end
+    
+    resources :servers
 
     scope :path => 'api' do
       scope :path => 'v2' do
