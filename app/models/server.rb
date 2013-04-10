@@ -11,7 +11,7 @@ class Server < DeviceBase
             :foreign_key => 'puavoServer' )
 
   def self.ssha_hash(password)
-    salt = ActiveSupport::SecureRandom.base64(16)
+    salt = SecureRandom.base64(16)
     "{SSHA}" + Base64.encode64(Digest::SHA1.digest(password + salt) + salt).chomp!
   end
 
