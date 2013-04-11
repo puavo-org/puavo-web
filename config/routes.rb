@@ -63,7 +63,7 @@ PuavoUsers::Application.routes.draw do
     match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
     resource :organisation, :only => [:show, :edit, :update]
-    resources :search, :only => [:index]
+    match "search" => "users_search#index"
     resource :profile, :only => [:edit, :update, :show]
   end
 

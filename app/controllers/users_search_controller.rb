@@ -1,4 +1,4 @@
-class SearchController < ApplicationController
+class UsersSearchController < ApplicationController
   layout false
 
   # GET /users/search?words=Williams
