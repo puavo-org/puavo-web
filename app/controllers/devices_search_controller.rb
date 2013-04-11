@@ -42,7 +42,7 @@ class DevicesSearchController < ApplicationController
       { "id" => v["puavoId"],
         "school_id" => v["puavoSchool"].first.match(/^puavoId=([^,]+)/)[1],
         "puavoSchool" => v["puavoSchool"].first,
-        "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block]
+        "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block].first
       }.merge( attributes.inject({}) { |result, a|
                  result.merge(a => v[a])
                } )

@@ -56,7 +56,7 @@ class UsersSearchController < ApplicationController
       { "id" => v["puavoId"].first,
         "school_id" => v["puavoSchool"].first.match(/^puavoId=([^,]+)/).to_a[1],
         "puavoSchool" => v["puavoSchool"].first,
-        "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block]
+        "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block].first
       }.merge( attributes.inject({}) { |result, a|
                  result.merge(a => v[a])
                } )
