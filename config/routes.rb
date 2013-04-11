@@ -101,7 +101,7 @@ PuavoUsers::Application.routes.draw do
 
     resources :printers, :except => [:show, :new]
 
-    resources :search, :only => [:index]
+    match "search" => "devices_search#index"
     
   end
 

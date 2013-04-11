@@ -1,4 +1,4 @@
-class SearchController < ApplicationController
+class DevicesSearchController < ApplicationController
   layout false
 
   # GET /devices/search?words=Williams
@@ -15,7 +15,7 @@ class SearchController < ApplicationController
     @schools = Hash.new
     School.search( :scope => :one,
                    :attributes => ["puavoId", "displayName"] ).map do |dn, v|
-      @schools[v["puavoId"].to_s] = v["displayName"].to_s
+      @schools[v["puavoId"].first] = v["displayName"].first
     end
 
     respond_to do |format|
@@ -40,8 +40,8 @@ class SearchController < ApplicationController
                                                                  "puavoSchool"] +
                                                                 attributes) ).map do |dn, v|
       { "id" => v["puavoId"],
-        "school_id" => v["puavoSchool"].to_s.match(/^puavoId=([^,]+)/)[1],
-        "puavoSchool" => v["puavoSchool"].to_s,
+        "school_id" => v["puavoSchool"].first.match(/^puavoId=([^,]+)/)[1],
+        "puavoSchool" => v["puavoSchool"].first,
         "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block]
       }.merge( attributes.inject({}) { |result, a|
                  result.merge(a => v[a])
