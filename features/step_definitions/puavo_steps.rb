@@ -156,7 +156,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
     @json_user = User.find(:first, :attribute => "uid", :value => value)
     case page_name
     when /show/
-      visit "/users/" + @json_user.id.to_s + ".json"
+      visit "/users/users/" + @json_user.id.to_s + ".json"
     end
   when /users JSON page$/
     # FIXME:
