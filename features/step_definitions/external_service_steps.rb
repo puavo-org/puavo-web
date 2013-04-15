@@ -32,5 +32,5 @@ end
 When /^I get the organisation JSON page with "([^\"]*)" and "([^\"]*)"$/ do |username, password|
   page.driver.browser.basic_authorize(username, password)
   
-  visit "/organisation.json"
+  visit "/users/organisation.json"
 end
