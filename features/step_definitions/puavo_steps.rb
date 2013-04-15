@@ -164,7 +164,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
     visit users_path(@school, :format => :json)
   when /members group JSON page$/
     json_group = Group.find(:first, :attribute => "displayName", :value => value)
-    visit "/users//#{@school.id}/groups/" + json_group.id.to_s + "/members.json"
+    visit "/users/#{@school.id}/groups/" + json_group.id.to_s + "/members.json"
   end
 end
 
