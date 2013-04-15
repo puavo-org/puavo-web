@@ -43,7 +43,7 @@ en:
     edit: Edit
     back: Back
     cancel: "- Cancel"
-    destroy: Destroy
+    destroy: Remove
     new_group: New group
     update: Update
     create: Create
