@@ -90,7 +90,7 @@ do |names_of_the_models, values, organisation|
     @school = School.new( :displayName =>  models_value['school'],
                           :cn => models_value['school'].downcase.gsub(/[^a-z0-9]/, "")
                           )
-    @school.save
+    @school.save!
   end
   if models_value.has_key?('group')
     @group = Group.create( :displayName => models_value['group'],
