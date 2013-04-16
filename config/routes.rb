@@ -1,5 +1,7 @@
 PuavoUsers::Application.routes.draw do
 
+  root :to => "schools#index"
+
   scope :path => "users" do
     resource :rename_groups
     resources :external_services
@@ -68,6 +70,7 @@ PuavoUsers::Application.routes.draw do
   end
 
   scope :path => "devices" do
+    match '/' => 'schools#index'
     match 'sessions/show' => 'api/v1/sessions#show', :via => :get
     resources :sessions
 
