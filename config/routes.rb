@@ -105,6 +105,8 @@ PuavoUsers::Application.routes.draw do
     resources :printers, :except => [:show, :new]
 
     match "search" => "devices_search#index"
+
+    match '/auth' => 'sessions#auth', :via => :get
     
   end
 
