@@ -13,8 +13,17 @@ Install Ruby and other dependencies
       libssl-dev build-essential libopenssl-ruby xpdf-utils \
       git libreadline6-dev
      
-    # Ubuntu has no bundler for 1.9 ruby
+Ubuntu has no bundler for 1.9 ruby. Install it from gem
+
     sudo gem1.9.1 install bundler
+
+or from our repository
+
+    sudo apt-get install ruby-bundler
+    
+Install [puavo-client](https://github.com/opinsys/puavo-client) manually or from our repo
+
+    sudo apt-get install puavo-client
 
 Get the sources:
 
