@@ -10,6 +10,7 @@ school:
     name: displayName
 puavo_ca:
   host: localhost
+  use_ssl: true
   port: 443
   ca_file: /etc/ssl/certs/puavo-ca.crt
 puavo_users: enabled

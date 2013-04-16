@@ -247,10 +247,11 @@ class DeviceBase < LdapBase
 
   def http_puavo_ca
     http = Net::HTTP.new(Puavo::DEVICE_CONFIG['puavo_ca']['host'], Puavo::DEVICE_CONFIG['puavo_ca']['port'] || '80')
-    http.use_ssl = true
-    http.ca_file = Puavo::DEVICE_CONFIG['puavo_ca']['ca_file']
-    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    http.verify_depth = 5
+    if Puavo::DEVICE_CONFIG['puavo_ca']['use_ssl']
+      http.use_ssl = true
+      http.ca_file = Puavo::DEVICE_CONFIG['puavo_ca']['ca_file']
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    end
     return http
   end
 
