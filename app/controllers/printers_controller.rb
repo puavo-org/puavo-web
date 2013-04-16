@@ -16,7 +16,7 @@ class PrintersController < ApplicationController
   # GET /devices/printers
   def index
     @servers_and_printers = Server.all.inject({ }) do |result, server|
-      result.merge( { server.dn.first => { :server => server} } )
+      result.merge( { server.dn.to_s => { :server => server} } )
     end
 
     Printer.all.each do |printer|
