@@ -95,8 +95,8 @@ PuavoUsers::Application.routes.draw do
            :via => :delete )
     resources :servers
 
-    scope :path => 'api' do
-      scope :path => 'v2' do
+    namespace :api do
+      namespace :v2 do
         resources :devices
         resources :servers
       end
