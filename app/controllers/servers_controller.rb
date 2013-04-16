@@ -115,6 +115,8 @@ class ServersController < ApplicationController
     @server.revoke_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
     @server.destroy
 
+    # FIXME: remove printers of this server!
+
     respond_to do |format|
       format.html { redirect_to(servers_url) }
       format.xml  { head :ok }

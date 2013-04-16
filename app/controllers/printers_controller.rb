@@ -20,10 +20,12 @@ class PrintersController < ApplicationController
     end
 
     Printer.all.each do |printer|
-      unless @servers_and_printers[printer.puavoServer.to_s].has_key?(:printers)
-        @servers_and_printers[printer.puavoServer.to_s][:printers] = Array.new
+      if @servers_and_printers[printer.puavoServer.to_s]
+        unless @servers_and_printers[printer.puavoServer.to_s].has_key?(:printers)
+          @servers_and_printers[printer.puavoServer.to_s][:printers] = Array.new
+        end
+        @servers_and_printers[printer.puavoServer.to_s][:printers].push(printer)
       end
-      @servers_and_printers[printer.puavoServer.to_s][:printers].push(printer)
     end
 
     respond_to do |format|
