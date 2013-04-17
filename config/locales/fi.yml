@@ -115,6 +115,7 @@ fi:
       school_admin_removed: "%{displayName} (%{school_name}) ei ole en\xC3\xA4\xC3\xA4 yll\xC3\xA4pit\xC3\xA4j\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4 t\xC3\xA4ss\xC3\xA4 koulussa"
       wrong_user_type: "Yll\xC3\xA4pito-oikeudet voidaan antaa vain admin-k\xC3\xA4ytt\xC3\xA4jille"
       destroyed_failed: "Koulun poistaminen ep\xC3\xA4onnistui. K\xC3\xA4ytt\xC3\xA4j\xC3\xA4t, roolit ja ryhm\xC3\xA4t pit\xC3\xA4\xC3\xA4 poistaa ennen koulua"
+      roles_not_found: Yhtään roolia ei ole määritetty
     profile: 
       updated: Tietojen tallennus onnistui
       save_failed: "Tietojen tallennus ep\xC3\xA4onnistui"

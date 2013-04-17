@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+Given(/^Remove all roles on "(.*?)" school$/) do |school_name|
+  set_ldap_admin_connection
+  @school = School.find(:first, :attribute => "displayName", :value => school_name)
+  @school.roles.each do |role|
+    role.destroy
+  end
+end
+
+
 Given /^the following schools:$/ do |schools|
   set_ldap_admin_connection
   schools = School.create(schools.hashes)

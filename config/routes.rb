@@ -3,7 +3,6 @@ PuavoUsers::Application.routes.draw do
   root :to => "schools#index"
 
   scope :path => "users" do
-    resource :rename_groups
     resources :external_services
 
     scope :path => ':school_id' do
@@ -14,6 +13,7 @@ PuavoUsers::Application.routes.draw do
     end
 
     scope :path => ':school_id' do
+      resource :rename_groups
       resources :roles
     end
     resources :roles

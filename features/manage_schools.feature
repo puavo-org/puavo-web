@@ -207,3 +207,10 @@ Feature: Manage schools
     And I am logged in as "pavel" with password "secret"
     And I am on the school page with "Greenwich Steiner School"
     Then I should not see "Admins"
+
+  Scenario: Try to rename roles when roles is no defined
+    Given Remove all roles on "Greenwich Steiner School" school
+    And I am on the school page with "Greenwich Steiner School"
+    When I follow "Rename groups and roles"
+    Then I should see "Cannot find any roles!"
+    
