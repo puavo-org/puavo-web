@@ -46,7 +46,13 @@ Start development server
 
     bundle exec rails server
     
-## Production PostgreSQL for sessions
+## Production environment
+
+Precompile assets
+
+    bundle exec rake assets:precompile
+
+PostgreSQL
 
     sudo apt-get install postgresql-9.1
     RAILS_ENV=production bundle exec rake db:migrate
