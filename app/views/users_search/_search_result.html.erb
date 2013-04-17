@@ -1,0 +1,32 @@
+<% if objects.length > 0 %>
+<fieldset class="search_result">
+<legend><%=h t(".title_#{model}") %></legend>
+<table class="list widelist">
+  <tr>
+    <% attributes.each do |attribute| %>
+    <th><%= t("activeldap.attributes.#{model}.#{attribute}") %></th>
+    <% end %>
+    <th><%= t('activeldap.attributes.school.displayName') %></th>
+  </tr>
+  <% objects.each do |o| %>
+  <tr>
+    <td>
+      <% if current_user.organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(o['puavoSchool']) %>
+      <%= link_to o["name"], path.call(o['school_id'], o['id']) %>
+      <% else %>
+      <%=h o["name"] %>
+      <% end %>
+    </td>
+    <% attributes[1..attributes.length].each do |attribute| %>
+    <td>
+      <%=h o[attribute].first %>
+    </td>
+    <% end %>
+    <td>
+      <%=h @schools[o["school_id"]] %>
+    </td>
+  </tr>
+  <% end %>
+</table>
+</fieldset>
+<% end %>

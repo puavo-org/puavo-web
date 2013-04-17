@@ -1,0 +1,178 @@
+<% unless device.classes.include?('puavoServer')  %>
+<div class="dashboard_box">
+<%end%>
+<h3><%= title(device) %></h3>
+<table class="list widelist">
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceManufacturer" %></td>
+  <td class="value_td"><%=h device.puavoDeviceManufacturer %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceModel" %></td>
+  <td class="value_td"><%=h device.puavoDeviceModel %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "serialNumber" %></td>
+  <td class="value_td"><%=h device.serialNumber %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "macAddress" %></td>
+  <td class="value_td">
+	<% Array(device.macAddress).each do |mac_address| %>
+	<div><%=h mac_address %></div>
+	<% end %>
+  </td>
+</tr>
+
+<% if device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "ipHostNumber" %></td>
+  <td class="value_td"><%=h device.ipHostNumber %></td>
+</tr>
+<% end %>
+
+<% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDevicePrimaryUser" %></td>
+  <td class="value_td"><%=h device.puavoDevicePrimaryUser %></td>
+</tr>
+<% end %>
+
+<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceBootMode" %></td>
+  <td class="value_td"><%=h t("shared.boot_mode_#{device.puavoDeviceBootMode}") %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceImage" %></td>
+  <td class="value_td"><%=h device.puavoDeviceImage %></td>
+</tr>
+<% end %>
+
+<% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDefaultPrinter" %></td>
+  <td class="value_td"><%=h device.puavoDefaultPrinter %></td>
+</tr>
+<% end %>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "description" %></td>
+  <td class="value_td"><%=h device.description %></td>
+</tr>
+</table>
+</div>
+
+<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+<div class="dashboard_box">
+  <h3><%= t('shared.autopoweroff') %></h3>
+  <table class="list widelist">
+	<tr>
+	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceAutoPowerOffMode" %></td>
+	  <td class="value_td">
+		<%=h t('puavoDeviceAutoPowerOffMode_' + (device.puavoDeviceAutoPowerOffMode or 'default'),
+               :scope => 'activeldap.attributes.device') %>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceOnHour" %></td>
+	  <td class="value_td">
+		<%=h device.puavoDeviceOnHour %>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceOffHour" %></td>
+	  <td class="value_td">
+		<%=h device.puavoDeviceOffHour %>
+	  </td>
+	</tr>
+  </table>
+</div>
+<% end %>
+
+<%= render :partial => 'shared/purchase_information', :locals => { :device => device} %>
+
+<div class="dashboard_box clear">
+<h3><%= t('shared.location') %></h3>
+
+<table class="list widelist">
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLocationName" %></td>
+  <td class="value_td"><%=h device.puavoLocationName %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLatitude" %></td>
+  <td class="value_td"><%=h device.puavoLatitude %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLongitude" %></td>
+  <td class="value_td"><%=h device.puavoLongitude %></td>
+</tr>
+</table>
+</div>
+<% if (device.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (device.classes.count + 3) %>
+<div class="dashboard_box">
+<h3><%= t('shared.display_settings') %></h3>
+
+<table class="list widelist">
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXserver" %></td>
+  <td class="value_td"><%=h device.puavoDeviceXserver %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandr" %></td>
+  <td class="value_td"><%= Array(device.puavoDeviceXrandr).join("<br />") %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandrDisable" %></td>
+  <td class="value_td"><%=h t(".xrandr_status_#{device.puavoDeviceXrandrDisable}") %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceResolution" %></td>
+  <td class="value_td"><%=h device.puavoDeviceResolution %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceHorzSync" %></td>
+  <td class="value_td"><%=h device.puavoDeviceHorzSync %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceVertRefresh" %></td>
+  <td class="value_td"><%=h device.puavoDeviceVertRefresh %></td>
+</tr>
+</table>
+</div>
+<div class="dashboard_box">
+<h3><%= t('shared.kernel_settings') %></h3>
+
+<table class="list widelist">
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
+  <td class="value_td"><%=h device.puavoDeviceKernelVersion %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelArguments" %></td>
+  <td class="value_td"><%=h device.puavoDeviceKernelArguments %></td>
+</tr>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "userCertificate" %></td>
+  <td class="value_td">
+  <% if device.userCertificate %>
+    <%= t(".certificate_status_true") %>
+  <% else %>
+    <%= t(".certificate_status_false") %>
+  <% end %>
+  </td>
+</tr>
+</table>
+</div>
+<% end %>

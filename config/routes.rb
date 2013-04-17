@@ -1,5 +1,7 @@
 PuavoUsers::Application.routes.draw do
 
+  root :to => "schools#index"
+
   scope :path => "users" do
     resource :rename_groups
     resources :external_services
@@ -63,8 +65,49 @@ PuavoUsers::Application.routes.draw do
     match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
     resource :organisation, :only => [:show, :edit, :update]
-    resources :search, :only => [:index]
+    match "search" => "users_search#index", :as => :search_index
     resource :profile, :only => [:edit, :update, :show]
+  end
+
+  scope :path => "devices" do
+    match '/' => 'schools#index'
+    match 'sessions/show' => 'api/v1/sessions#show', :via => :get
+    resources :sessions
+
+    match 'hosts/types' => 'hosts#types'
+
+    scope :path => ':school_id' do
+      match 'devices/:id/select_school' => 'devices#select_school', :as => 'select_school_device', :via => :get
+      match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
+      match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
+
+      resources :devices
+
+      match( 'devices/:id/revoke_certificate' => 'devices#revoke_certificate',
+             :as => 'revoke_certificate_device',
+             :via => :delete )
+
+    end
+    
+    match 'servers/:id/image' => 'servers#image', :as => 'image_server', :via => :get
+    match( 'servers/:id/revoke_certificate' => 'servers#revoke_certificate',
+           :as => 'revoke_certificate_server',
+           :via => :delete )
+    resources :servers
+
+    namespace :api do
+      namespace :v2 do
+        resources :devices
+        resources :servers
+      end
+    end
+
+    resources :printers, :except => [:show, :new]
+
+    match "search" => "devices_search#index"
+
+    match '/auth' => 'sessions#auth', :via => :get
+    
   end
 
 end

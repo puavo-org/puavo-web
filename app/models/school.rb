@@ -26,6 +26,8 @@ class School < BaseGroup
 
   validates :displayName, :presence => true
   validate :validate_group_name, :validate_name_prefix
+
+  alias_method :v1_as_json, :as_json
   
   def validate_group_name
     unless self.cn.to_s =~ /^[a-z0-9-]+$/

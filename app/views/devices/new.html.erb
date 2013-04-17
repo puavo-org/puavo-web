@@ -1,0 +1,14 @@
+<h1>
+  <span>
+  <%= t('.new_device', :device_type => @device_type_label ) %>
+  </span>
+</h1>
+
+<%= render :partial => 'form',
+ :locals => {
+  :path => devices_path(@school),
+  :submit_text => t('link.create'),
+  :method => :post
+}
+%>
+

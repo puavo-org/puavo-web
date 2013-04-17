@@ -24,8 +24,25 @@ class ApplicationController < ActionController::Base
   end
 
   def rack_mount_point
-    # See more information from: http://rack.rubyforge.org/doc/SPEC.html
-    ENV["PATH_INFO"] || "/"
+    "/users"
+  end
+
+  def handle_date_multiparameter_attribute(object_params, attribute)
+    if !object_params[:"#{attribute}(1i)"].nil? && !object_params[:"#{attribute}(1i)"].empty? &&
+       !object_params[:"#{attribute}(2i)"].nil? && !object_params[:"#{attribute}(2i)"].empty? &&
+       !object_params[:"#{attribute}(3i)"].nil? && !object_params[:"#{attribute}(3i)"].empty?
+
+      object_params[attribute] = Time.local( object_params[:"#{attribute}(1i)"].to_i, 
+                                             object_params[:"#{attribute}(2i)"].to_i,
+                                             object_params[:"#{attribute}(3i)"].to_i )
+    end
+  end
+
+  def puavo_users?
+    # FIXME
+    logger.warn "Deprecated call to puavo_users?"
+    return true
+    # PUAVO_CONFIG["puavo_users"] == "enabled" ? true : false
   end
 
   private
