@@ -12,7 +12,7 @@ Install Ruby and other dependencies
       libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev \
       libssl-dev build-essential libopenssl-ruby xpdf-utils \
       git libreadline6-dev libxml2-dev libxslt1-dev libpq-dev \
-      libmagickwand-dev
+      libmagickwand-dev libsqlite3-dev
      
 Ubuntu has no bundler for 1.9 ruby. Install it from gem
 
