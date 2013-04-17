@@ -11,7 +11,7 @@ Install Ruby and other dependencies
     sudo apt-get install libxml2-dev libxslt-dev \
       libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev \
       libssl-dev build-essential libopenssl-ruby xpdf-utils \
-      git libreadline6-dev
+      git libreadline6-dev libxml2-dev
      
 Ubuntu has no bundler for 1.9 ruby. Install it from gem
 
