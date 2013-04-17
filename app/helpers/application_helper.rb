@@ -1,5 +1,6 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  # FIXME: see code from Github: https://github.com/opinsys/puavo-view-helpers
   def label(object_name, method, human_name=nil, content=nil, *args)
 
     # If we don't get human name from the label get use the string from translation

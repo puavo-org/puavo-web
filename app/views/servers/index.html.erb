@@ -1,0 +1,23 @@
+<h1><span><%= t('.title') %></span></h1>
+
+<table class='list'>
+  <tr>
+    <th><%= t("activeldap.attributes.server.puavoHostname") %></th>
+    <th><%= t('activeldap.attributes.server.puavoDeviceManufacturer') %></th>
+    <th><%= t('activeldap.attributes.server.puavoDeviceModel') %></th>
+    <th><%= t('activeldap.attributes.server.serialNumber') %></th>
+    <th colspan="3"><%= t("actions") %></th>
+  </tr>
+
+<% @servers.each do |server| %>
+  <tr>
+    <td><%= link_to server.puavoHostname, server %></td>
+    <td><%=h server.puavoDeviceManufacturer %></td>
+    <td><%=h server.puavoDeviceModel %></td>
+    <td><%=h server.serialNumber %></td>
+    <td><%= link_to t('link.edit'), edit_server_path(server) %></td>
+    <td><%= link_to t('link.destroy'), server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete %>
+    </td>
+  </tr>
+<% end %>
+</table>

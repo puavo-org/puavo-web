@@ -1,0 +1,54 @@
+<table>
+  <tr>
+    <tr>
+    <td class="label_td required">
+        <%= f.label :puavoHostname %>
+        </td>
+        <td>
+        <% if f.object.userCertificate %>
+        <%= f.object.puavoHostname %>
+        <% else %>
+        <%= f.text_field :puavoHostname %>
+        <%= f.object.userCertificate.to_s %>
+        <% end %>
+      </td>
+  </tr>
+    <% if is_device_change_allowed f %>
+    <tr>
+          <td>
+                <%= f.label :puavoDeviceType %>
+          </td>
+      <td>
+        <%= device_type f  %>
+      </td>
+      </tr>
+      <% end %>
+      <tr>
+      <td>
+        <%= f.label :puavoTag %>
+        </td>
+        <td>
+        <%= f.text_field :puavoTag %>
+  </td>
+  </tr>
+
+  <% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
+  <tr>
+  <td>
+        <%= f.label :puavoDeviceStatus %>
+        </td>
+        <td>
+        <%= f.text_field :puavoDeviceStatus %>
+  </td>
+  </tr>
+  <% end %>
+
+  <tr>
+  <td>
+                <%= f.label :image %>
+                </td>
+        <td>
+                <%= f.file_field :image %>
+   </td>
+  </tr>
+</table>

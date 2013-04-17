@@ -1,0 +1,26 @@
+<div class="dashboard_box">
+<h3><%= t('.cups_settings') %></h3>
+
+<table class="list widelist">
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "printerDescription" %></td>
+  <td class="value_td"><%=h device.attributes.include?("printerDescription") ? device.printerDescription : "" %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "printerURI" %></td>
+  <td class="value_td"><%=h device.attributes.include?("printerURI") ? device.printerURI : "" %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "printerLocation" %></td>
+  <td class="value_td"><%=h device.attributes.include?("printerLocation") ? device.printerLocation : "" %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "printerMakeAndModel" %></td>
+  <td class="value_td"><%=h device.attributes.include?("printerMakeAndModel") ? device.printerMakeAndModel : "" %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPrinterCartridge" %></td>
+  <td class="value_td"><%=h device.puavoPrinterCartridge %></td>
+</tr>
+</table>
+</div>

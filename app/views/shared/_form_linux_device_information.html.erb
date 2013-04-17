@@ -1,0 +1,205 @@
+<h2><span><span><%= title(f.object) %></span></h2>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceManufacturer %></td>
+  <td><%= f.text_field :puavoDeviceManufacturer %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceModel %></td>
+  <td><%= f.text_field :puavoDeviceModel %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :serialNumber %></td>
+  <td><%= f.text_field :serialNumber %></td>
+</tr>
+
+<% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td"><%= f.label :macAddress %></td>
+  <td>
+  <div id="device_macAddress">
+    <% if f.object.macAddress.nil? %>
+        <input name='device[macAddress][]' size='30' type='text' />
+    <% else %>
+      <% Array(f.object.macAddress).each do |mac_address| %>
+          <input name='device[macAddress][]' size='30' type='text' value='<%= mac_address %>' />
+      <% end %>
+    <% end %>
+  </div>
+  <%= link_to t('shared.add_macAddress'), "#", :class => "clone_prev_input_element" %>
+  <div><%= field_error_text(f.object, :macAddress) %></div>
+  </td>
+</tr>
+<% end %>
+
+<% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td><%= f.label :ipHostNumber %></td>
+  <td><%= f.text_field :ipHostNumber %></td>
+</tr>
+<% end %>
+
+<% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td"><%= f.label :puavoDevicePrimaryUser %></td>
+  <td><%= f.text_field :puavoDevicePrimaryUser %></td>
+</tr>
+<% end %>
+
+<% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceBootMode %></td>
+  <td><%= f.select( :puavoDeviceBootMode,
+                    [ [t('shared.boot_mode_netboot'),"netboot"],
+                      [t('shared.boot_mode_dualboot'), "dualboot"] ] ) %></td>
+</tr>
+<tr>
+  <td><%= f.label :puavoDeviceImage %></td>
+  <td><%= f.text_field :puavoDeviceImage %></td>
+</tr>
+<% end %>
+
+<% unless f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
+<tr>
+  <td class="label_td"><%= f.label :puavoDefaultPrinter %></td>
+  <td><%= f.text_field :puavoDefaultPrinter %></td>
+</tr>
+<% end %>
+
+<tr>
+  <td class="label_td"><%= f.label :description %></td>
+  <td><%= f.text_field :description %></td>
+</tr>
+</table>
+
+<% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
+<h2><span><%= t('shared.autopoweroff') %></span></h2>
+<table id="autopoweroff">
+  <tr>
+  <td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
+  <td>
+    <table>
+    <tr>
+    <td class="label_td">
+      <%= f.label :puavoDeviceAutoPowerOffMode_default %>
+    </td>
+    <td class="label_td">
+      <%= f.label :puavoDeviceAutoPowerOffMode_off %>
+    </td>
+    <td class="label_td">
+      <%= f.label :puavoDeviceAutoPowerOffMode_custom %>
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <%= f.radio_button :puavoDeviceAutoPowerOffMode, "default" %>
+    </td>
+    <td>
+      <%= f.radio_button :puavoDeviceAutoPowerOffMode, "off" %>
+    </td>
+    <td>
+      <%= f.radio_button :puavoDeviceAutoPowerOffMode, "custom" %>
+    </td>
+    </tr>
+    <tr>
+    <td class="label_td"><%= f.label :puavoDeviceOnHour %></td>
+    <td class="label_td"><%= f.label :puavoDeviceOffHour %></td>
+    </tr>
+    <tr>
+    <td>
+      <%= f.select( :puavoDeviceOnHour,
+                    [[t('.select'), '']] + (1..24).each.map{ |h| [h.to_s, h.to_s] },
+                    :selected => (f.object.puavoDeviceOnHour or "") ) %>
+    </td>
+    <td>
+      <%= f.select( :puavoDeviceOffHour,
+                        [[t('.select'), '']] + ( (1..24).map{ |h| [h.to_s, h.to_s] } ),
+                        :selected => (f.object.puavoDeviceOffHour or "" ) ) %>
+    </td>
+    </tr>
+    </table>
+  </td>
+  </tr>
+</table>
+<% end %>
+
+<%= render :partial => 'shared/form_purchase_information', :locals => { :f => f } %>
+
+<h2><span><%= t('shared.location') %></span></h2>
+
+<table>
+<tr>
+  <td class="label_td"><%= f.label :puavoLocationName %></td>
+  <td><%= f.text_field :puavoLocationName %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoLatitude %></td>
+  <td><%= f.text_field :puavoLatitude %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoLongitude %></td>
+  <td><%= f.text_field :puavoLongitude %></td>
+</tr>
+
+<% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
+</table>
+
+<h2><span><%= t('shared.display_settings') %></span></h2>
+<table>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceXserver %></td>
+  <td><%= f.text_field :puavoDeviceXserver, :size => 45 %></td>
+</tr>
+
+<tr>
+  <td class="label_td label_for_input_text_list"><%= f.label :puavoDeviceXrandr %></td>
+  <td>
+    <div id="device_puavoDeviceXrandr">
+      <% if f.object.puavoDeviceXrandr.nil? %>
+        <input name='device[puavoDeviceXrandr][]'  type='text' />
+      <% else %>
+        <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
+      <input name='device[puavoDeviceXrandr][]'  type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
+      <% end %>
+      <% end %>
+    </div>
+    <%= link_to t('shared.add_puavoDeviceXrandr'), "#", :class => "clone_prev_input_element" %>
+
+  </td>
+</tr>
+
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceXrandrDisable %></td>
+  <td><%= f.check_box :puavoDeviceXrandrDisable %></td>
+</tr>
+
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceResolution %></td>
+  <td><%= f.text_field :puavoDeviceResolution %></td>
+</tr>
+
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceHorzSync %></td>
+  <td><%= f.text_field :puavoDeviceHorzSync %></td>
+</tr>
+
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceVertRefresh %></td>
+  <td><%= f.text_field :puavoDeviceVertRefresh %></td>
+</tr>
+
+</table>
+
+<h2><span><%= t('shared.kernel_settings') %></span></h2>
+<table>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
+  <td><%= f.text_field :puavoDeviceKernelVersion %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoDeviceKernelArguments %></td>
+  <td><%= f.text_field :puavoDeviceKernelArguments %></td>
+</tr>
+</table>
+<table>
+
+<% end %>

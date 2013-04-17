@@ -1,0 +1,9 @@
+<h1><span><%= t('.title') %></span></h1>
+
+<%= render :partial => 'form',
+ :locals => {
+  :path => server_automounts_path(@server),
+  :submit_text => t('link.create'),
+  :method => :post
+}
+%>

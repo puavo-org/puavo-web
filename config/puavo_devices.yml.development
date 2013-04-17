@@ -102,7 +102,7 @@ device_types:
       en: Webcam
       fi: Web-kamera
     classes: puavoOtherDevice
-    url: /devices/%s/devices/new.json?device_type=webcamera
+    url: /devices/%s/devices/new.json?device_type=webcam
     order: 11
     school_required: true
   switch:

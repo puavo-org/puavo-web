@@ -90,7 +90,7 @@ do |names_of_the_models, values, organisation|
     @school = School.new( :displayName =>  models_value['school'],
                           :cn => models_value['school'].downcase.gsub(/[^a-z0-9]/, "")
                           )
-    @school.save
+    @school.save!
   end
   if models_value.has_key?('group')
     @group = Group.create( :displayName => models_value['group'],
@@ -156,7 +156,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
     @json_user = User.find(:first, :attribute => "uid", :value => value)
     case page_name
     when /show/
-      visit "/users/" + @json_user.id.to_s + ".json"
+      visit "/users/users/" + @json_user.id.to_s + ".json"
     end
   when /users JSON page$/
     # FIXME:
@@ -164,7 +164,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
     visit users_path(@school, :format => :json)
   when /members group JSON page$/
     json_group = Group.find(:first, :attribute => "displayName", :value => value)
-    visit "/#{@school.id}/groups/" + json_group.id.to_s + "/members.json"
+    visit "/users/#{@school.id}/groups/" + json_group.id.to_s + "/members.json"
   end
 end
 

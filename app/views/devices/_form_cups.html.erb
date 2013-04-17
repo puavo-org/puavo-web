@@ -1,0 +1,23 @@
+</table>
+<h2><span><%= t('.cups_settings') %></span></h2>
+<table>
+<tr>
+  <td class="label_td"><%= f.label :printerDescription %></td>
+  <td><%= f.object.attributes.include?("printerDescription") ? (f.text_field :printerDescription) :(text_field_tag  "device[printerDescription]", '', :size => "30") %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :printerURI %></td>
+  <td><%= f.object.attributes.include?("printerURI") ? (f.text_field :printerURI) : (text_field_tag "device[printerURI]", '', :size => "30") %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :printerLocation %></td>
+  <td><%= f.object.attributes.include?("printerLocation") ? (f.text_field :printerLocation) : (text_field_tag "device[printerLocation]", '', :size => "30") %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :printerMakeAndModel %></td>
+  <td><%= f.object.attributes.include?("printerMakeAndModel") ? (f.text_field :printerMakeAndModel) : (text_field_tag "device[printerMakeAndModel]", '', :size => "30") %></td>
+</tr>
+<tr>
+  <td class="label_td"><%= f.label :puavoPrinterCartridge %></td>
+  <td><%= f.text_field :puavoPrinterCartridge %></td>
+</tr>

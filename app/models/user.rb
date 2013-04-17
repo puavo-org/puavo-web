@@ -37,6 +37,8 @@ class User < LdapBase
 
   validate :validate
 
+  alias_method :v1_as_json, :as_json
+
   # Attributes from relations and other helpers
   @@extra_attributes = [
      :password,
@@ -451,6 +453,22 @@ class User < LdapBase
     LdapBase.ldap_modify_operation( self.puavoSchool,
                                     :delete, [{ "memberUid" => [self.uid.to_s] }]) rescue Exception
     self.puavoSchool = new_school_dn
+  end
+
+  def managed_schools
+    if Array(LdapOrganisation.current.owner).include?(self.dn)
+      schools = School.all
+    else
+      schools = School.find( :all,
+                             :attribute => 'puavoSchoolAdmin',
+                             :value => self.dn )
+    end
+
+    return ( { 'label' => 'School',
+               'default' => schools.first.puavoId,
+               'title' => 'School selection',
+               'question' => 'Select school: ',
+               'list' =>  schools.map{ |s| s.v1_as_json }  } ) unless schools.empty?
   end
 
   private

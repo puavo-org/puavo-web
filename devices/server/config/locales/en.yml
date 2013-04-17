@@ -1,0 +1,291 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      # When no format has been given, it uses default.
+      # You can provide other formats here if you like!
+      default: "%Y-%m-%d"
+      short: "%b %d"
+      long: "%B %d, %Y"
+      
+    day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+    abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+      
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
+    abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+    # Used in date_select and datime_select.
+    order: [ :year, :month, :day ]
+
+  time:
+    formats:
+      default: "%Y-%m-%d"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+    am: "am"
+    pm: "pm"
+  must_be_logged_in: You must be logged in
+  actions: Actions
+  general_confirm: Are you sure?
+  destroy_confirm: "Are you sure? ({{object_name}})?"
+  cancel: "- Cancel"
+  or: or
+  shared:
+    terminal_title: Terminal information
+    location: Location
+    display_settings: Display settings
+    kernel_settings: Kernel settings
+    terminal_title: Terminal information
+    title: Device information
+    printer_title: Printer information
+    server_title: Server information
+    add_puavoDeviceXrandr: Add a new line of xrandr
+    boot_mode_netboot: Terminal
+    boot_mode_dualboot: Dualboot
+    boot_mode_: Terminal
+    purchase_information: Purchase information
+    add_macAddress: Add a new line of MAC addresses
+    autopoweroff: Automatic power off
+    linux_device_information:
+      certificate_status_true: "Valid"
+      certificate_status_false: "Not valid"
+      xrandr_status_true: "Yes"
+      xrandr_status_false: "No"
+      xrandr_status_: "No"
+    form_linux_device_information:
+      select: Select
+  devices:
+    index:
+      add_new_device: Add new device
+      title: List of devices
+      select_device_label: Select
+    new:
+      new_printer: New printer
+      new_device: New device
+    edit:
+      edit: Edit
+      title: Device settings
+      terminal_title: Terminal settings
+      printer_title: Printer settings
+    form_cups:
+      cups_settings: CUPS settings
+    cups:
+      cups_settings: CUPS settings
+    show:
+      change_school: Change school
+    select_school:
+      title: "Device transfer (%{name})"
+      select_new_school: Select new school
+      submit: Move device
+  servers:
+    index:
+      title: List of servers
+    edit:
+      title: Edit server settings
+    form:
+      automounts: Automounts
+      add_puavoExport: Add paths
+    show:
+      automounts: Automounts
+  automounts:
+    index:
+      title: Automounts
+    new:
+      title: New automount
+    edit:
+      title: Editing automount
+  host:
+    types:
+      register_label: Device type
+      register_title: Device type selection
+      register_question: "Select device type: "
+      thinclient: Thin Client
+      fatclient: Fat Client
+      laptop: Laptop
+      workstation: Workstation
+      server: Server
+      netstand: Netstand
+      infotv: Info-tv
+  printers:
+    index:
+      server_title: "Server: %{server}"
+  search:
+    search_result:
+      title_device: Devices
+  helpers:
+    submit:
+      servers:
+        create: "Create"
+  flash:
+    session:
+      login_successful: Login successful!
+      failed: Login failed!
+      logout_successful: Logout successful!
+    printer:
+      updated: Printer was successfully updated
+    devices:
+      school_changed: Device school has been changed!
+  layouts:
+    application:
+      schools: Schools
+      school: School
+      logout: Logout
+      users: Users
+      tools: Tools
+      logged_in_as: Logged in as
+      devices: Devices
+      desktop: Desktop
+      servers: Servers
+      external_services: External services
+      printers: Printers
+      search_placeholder: Search
+      about: About
+    forms:
+      required_field: "* = Required field"
+  link:
+    edit: Edit
+    back: Back
+    destroy: Destroy
+    new_group: New group
+    update: Update
+    create: Create
+    show: Show
+    users: Users
+    groups: Groups
+    roles: Roles
+    devices: Device list
+    servers: Servers
+    add: Add
+    remove: Remove
+    new_role: New role
+    new_user: New user
+    user_mass_import:
+      new: Users mass import
+      handle_user_data: Handle the user data
+      download_pdf: download pdf-file.
+      revalidate: Revalidate
+      validate: Validates users
+    continue: Continue
+    login: Login
+    change_password: Change password
+    new_school: New school
+    set_install_mode: Revoke certificate
+    automounts: Automounts
+    new_automount: New automount
+  activeldap:
+    errors:
+      messages:
+        uniqueness: "{{attribute}} is already in use"
+        taken: "%{attribute} has already been taken"
+        blank: "%{attribute} can't be blank"
+        invalid_characters: "%{attribute} include invalid characters"
+        invalid: "%{attribute} is invalid"
+        device:
+          puavoHostname:
+            invalid_characters: "Hostname include invalid characters (allowed characters is: a-z0-9-)"
+          macAddress:
+            invalid_characters: "MAC address include invalid characters. Eg 0f:1f:a9:2f:a3:ad"
+    attributes:
+      server:
+        puavoDeviceType: Device type
+        puavoHostname: Hostname
+        macAddress: MAC address(es)
+        userCertificate: Certificate
+        serialNumber: Serial number
+        puavoDeviceManufacturer: Device manufacturer
+        puavoDeviceModel: Device model
+        puavoDevicePrimaryUser: Device primary user
+        jpegPhoto: Photo
+        puavoLatitude: Latitude
+        puavoLongitude: Longitude
+        puavoLocationName: Location name
+        puavoRole: Role
+        puavoDeviceStatus: Status
+        description: Description
+        puavoTag: Tags
+        puavoPurchaseDate: Purchase date
+        puavoWarrantyEndDate: Warranty end date
+        puavoPurchaseLocation: Purchase location
+        puavoPurchaseURL: Purchase URL
+        puavoSupportContract: Support contract
+        puavoDefaultPrinter: Default printer
+        puavoDeviceXserver: Graphic adapter drivers
+        puavoDeviceXrandr: Xrandr settings
+        puavoDeviceXrandrDisable: Disable Xrandr
+        puavoDeviceKernelVersion: Kernel version
+        puavoDeviceKernelArguments: Kernel arguments
+        puavoDeviceResolution: Resolution
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
+        puavoExport: Path
+        image: Image
+      device:
+        puavoDeviceType: Device type
+        puavoHostname: Hostname
+        macAddress: MAC address(es)
+        ipHostNumber: IP address
+        userCertificate: Certificate
+        serialNumber: Serial number
+        puavoDeviceManufacturer: Device manufacturer
+        puavoDeviceModel: Device model
+        puavoDevicePrimaryUser: Device primary user
+        jpegPhoto: Photo
+        puavoLatitude: Latitude
+        puavoLongitude: Longitude
+        puavoLocationName: Location name
+        puavoRole: Role
+        puavoDeviceStatus: Status
+        puavoDeviceBootMode: Boot mode
+        description: Description
+        puavoTag: Tags
+        puavoPurchaseDate: Purchase date
+        puavoWarrantyEndDate: Warranty end date
+        puavoPurchaseLocation: Purchase location
+        puavoPurchaseURL: Purchase URL
+        puavoSupportContract: Support contract
+        puavoDefaultPrinter: Default printer
+        puavoDeviceXserver: Graphic adapter drivers
+        puavoDeviceXrandr: Xrandr settings
+        puavoDeviceXrandrDisable: Disable Xrandr
+        puavoDeviceKernelVersion: Kernel version
+        puavoDeviceKernelArguments: Kernel arguments
+        puavoDeviceResolution: Resolution
+        puavoDeviceHorzSync: HorzSync
+        puavoDeviceVertRefresh: VertRefresh
+        puavoPrinterCartridge: Printer cartridge
+        printerDescription: Description
+        printerURI: URI
+        printerLocation: Location
+        printerMakeAndModel: Make and model
+        image: Image
+        puavoDeviceAutoPowerOffMode: Auto power off mode
+        puavoDeviceAutoPowerOffMode_default: Default
+        puavoDeviceAutoPowerOffMode_off: "Off"
+        puavoDeviceAutoPowerOffMode_custom: Custom
+        puavoDeviceOnHour: Daytime start
+        puavoDeviceOffHour: Daytime end
+        puavoDeviceImage: Device image
+      user:
+        uid: Username
+        password: Password
+      automount:
+        cn: Directory
+      printer:
+        printerDescription: Printer name
+        printerMakeAndModel: Manufacturer and model
+        printerLocation: Location
+        puavoRule: Access
+        printerType: Type
+        printerURI: URI
+        puavoPrinterPPD: Driver file (PPD)
+      school:
+        displayName: School name
+    values:
+      device:
+        roles:
+          puavoNetbootDevice: Netboot
+          puavoLocalbootDevice: Localboot
+          puavoPrinter: Printer
