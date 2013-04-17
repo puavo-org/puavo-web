@@ -440,11 +440,16 @@ background: url("../../images/iconset-breathe.png") no-repeat scroll 5px -915px 
   margin: 1em 0 0;
 }
 
+.maincontent form input[type="text"],input[type="password"], input.text  {
+  width: 450px;
+}
+
 .login_content input{
 display: block;
 margin: 0 0 0.5em;
-width: auto !important;
+width: 80%;
 }
+
 .login_content form table td{
   float:left;
 }
