@@ -1,7 +1,5 @@
 <h1><span><%= t('.title') %></span></h1>
 
-<%= form_for(@school) do |f| %>
-
 <%= render :partial => 'form',
  :locals => {
   :path => schools_path,
@@ -9,8 +7,6 @@
   :method => :post
 }
 %>
-<% end %>
-
 
 <% content_for :footer do %>
 <ul>  
