@@ -4,12 +4,12 @@ Feature: Manage schools
   I want to manage the schools
 
   Background:
-    Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Example school 1" school
+    Given a new school and group with names "Example school 1", "Teacher" on the "example" organisation
+    And a new role with name "Teacher" and which is joined to the "Teacher" group to "Example school 1" school
     And the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
-    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Greenwich Steiner School" school
+    And a new role with name "Teacher" and which is joined to the "Teacher" group to "Greenwich Steiner School" school
     And I am logged in as "example" organisation owner
 
   Scenario: Add new school to organisation
@@ -115,7 +115,7 @@ Feature: Manage schools
   Scenario: Schools list page when we have only one school and user is not organisation owner
     Given the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |
-      | Pavel     | Taylor | pavel | secret   | true         | Class 1   | admin                     | Greenwich Steiner School | 
+      | Pavel     | Taylor | pavel | secret   | true         | Teacher   | admin                     | Greenwich Steiner School | 
     And I follow "Logout"
     And I am logged in as "pavel" with password "secret"
     When I go to the schools list page
@@ -145,7 +145,7 @@ Feature: Manage schools
   Scenario: Add school management access rights to the user
     Given the following users:
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Greenwich Steiner School |
+    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     Then I should see "Greenwich Steiner School admin users"
@@ -162,7 +162,7 @@ Feature: Manage schools
   Scenario: Remove school management access rights from the user
     Given the following users:
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school           | school_admin |
-    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Example school 1 | true         |
+    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Example school 1 | true         |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     And I follow "Add" on the "Pavel Taylor" user
@@ -184,8 +184,8 @@ Feature: Manage schools
   Scenario: School management access can be added only if user type is admin
     Given the following users:
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Class 1   | admin                     | Greenwich Steiner School |
-    | Ben       | Mabey  | ben   | secret   | Class 1   | staff                     | Greenwich Steiner School |
+    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
+    | Ben       | Mabey  | ben   | secret   | Teacher   | staff                     | Greenwich Steiner School |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     Then I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
@@ -203,7 +203,7 @@ Feature: Manage schools
   Scenario: School dashboard page with admin user
     Given the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |
-      | Pavel     | Taylor | pavel | secret   | true         | Class 1   | admin                     | Greenwich Steiner School |
+      | Pavel     | Taylor | pavel | secret   | true         | Teacher   | admin                     | Greenwich Steiner School |
     And I am logged in as "pavel" with password "secret"
     And I am on the school page with "Greenwich Steiner School"
     Then I should not see "Admins"
@@ -214,3 +214,22 @@ Feature: Manage schools
     When I follow "Rename groups and roles"
     Then I should see "Cannot find any roles!"
     
+  Scenario: Rename roles and groups
+    Given the following groups to "Example school 1"
+    | displayName | cn           |
+    | Class 1     | student-2006 |
+    | Class 2     | student-2007 |
+    | Class 3     | student-2008 |
+    | Class 4     | student-2009 |
+    | Class 5     | student-2010 |
+    | Class 6     | student-2011 |
+    And the following roles to "Example school 1":
+    | displayName | group_cn     |
+    | Class 1     | student-2006 |
+    | Class 2     | student-2007 |
+    | Class 3     | student-2008 |
+    | Class 4     | student-2009 |
+    | Class 5     | student-2010 |
+    | Class 6     | student-2011 |
+    And I am on the school page with "Example school 1"
+    When I follow "Rename groups and roles"

@@ -1,3 +1,16 @@
+Given(/^the following roles to "(.*?)":$/) do |school_name, roles|
+  set_ldap_admin_connection
+  school = School.find(:first, :attribute => "displayName", :value => school_name)
+  roles.hashes.each do |new_role|
+    new_role[:puavoSchool] = school.dn
+    role = Role.create(new_role)
+    if new_role["group_cn"]
+      group = Group.find(:first, :attribute => "cn", :value => new_role["group_cn"])
+      role.groups << group
+    end
+  end
+end
+
 Given /^the following roles:$/ do |roles|
   set_ldap_admin_connection
   roles.hashes.each do |new_role|
