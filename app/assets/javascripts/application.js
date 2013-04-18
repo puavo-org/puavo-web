@@ -16,6 +16,9 @@
 //= require jquery.opensmenu
 //= require jquery.jeditable
 //= require jquery.liveSearch
+//= require jquery.textarea
+//= require users/import/new
+//= require users/import/preview
 
 
 jQuery(document).ready(function($) {

@@ -1,8 +1,3 @@
-<% content_for :javascript do %>
-  <%= javascript_include_tag "jquery.textarea" %>
-  <%= javascript_include_tag "users/import/new" %>
-<% end %>
-
 <h1><span><%= t('.title') %></span></h1>
 <p class="mass_import_info"><span class="current">1. <%= t('users.import.info.phase_1') %> </span> &gt; 2. <%= t('users.import.info.phase_2') %> &gt; 3.<%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
 <%= form_for(:users_import, :url => refine_users_import_path(@school), :html => { :method => :post } ) do %>
