@@ -170,6 +170,7 @@ module Puavo
                :status => 401)
       else
         store_location
+        flash[:notice_css_class] = "message_alert"
         flash[:notice] = message
         redirect_to login_path
       end

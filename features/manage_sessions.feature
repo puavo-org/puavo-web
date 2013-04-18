@@ -33,7 +33,7 @@ Feature: Manage sessions
     And I fill in "Username" with "something"
     And I fill in "Password" with "secret"
     And I press "Login"
-    Then I should see "Login failed!"
+    Then I should see "Login failed!" within ".message_alert"
 
   Scenario: Login with incorrect password
     Given I am on the login page
