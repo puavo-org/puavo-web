@@ -51,4 +51,19 @@ class LdapBase < ActiveLdap::Base
     as_json(options).to_json
   end
 
+  def self.search(*args)
+    search_result = super
+
+    search_result.each do |entry|
+      dn = entry[0]
+      attributes = entry[1]
+
+      attributes.each do |key, value|
+        value.each do |v|
+          v.force_encoding('utf-8') if v.class == String
+        end
+      end
+    end
+  end
+
 end
