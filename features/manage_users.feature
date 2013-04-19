@@ -100,6 +100,7 @@ Feature: Manage users
     And I am on the new user page
     And I press "Create"
     Then I should see "Failed to create user!"
+    And I should see "Given name can't be blank"
     And I should see "Surname can't be blank"
     And I should see "Username can't be blank"
     And I should see "User type is invalid"

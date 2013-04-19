@@ -146,6 +146,12 @@ class User < LdapBase
   end
 
   def validate
+    # givenName validation
+    if self.givenName.empty?
+      errors.add( :givenName, I18n.t("activeldap.errors.messages.blank",
+                                    :attribute => I18n.t("activeldap.attributes.user.givenName") ) )
+    end
+
     # Uid validation
     #
     # Password confirmation
