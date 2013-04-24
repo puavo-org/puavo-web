@@ -1,5 +1,8 @@
 PuavoUsers::Application.routes.draw do
 
+  resources :external_files
+
+
   root :to => "schools#index"
 
   scope :path => "users" do

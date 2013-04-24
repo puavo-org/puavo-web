@@ -1,0 +1,17 @@
+<%= form_for(@external_file) do |f| %>
+  <% if @external_file.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@external_file.errors.count, "error") %> prohibited this external_file from being saved:</h2>
+
+      <ul>
+      <% @external_file.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

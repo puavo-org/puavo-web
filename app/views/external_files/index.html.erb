@@ -1,0 +1,21 @@
+<h1>Listing external_files</h1>
+
+<table>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @external_files.each do |external_file| %>
+  <tr>
+    <td><%= link_to 'Show', external_file %></td>
+    <td><%= link_to 'Edit', edit_external_file_path(external_file) %></td>
+    <td><%= link_to 'Destroy', external_file, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New External file', new_external_file_path %>
