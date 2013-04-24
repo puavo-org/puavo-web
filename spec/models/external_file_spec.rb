@@ -21,11 +21,10 @@ describe ExternalFile do
 
     f = ExternalFile.new
     f.puavoData = "lol"
-    f.puavoDataHash = "sdf"
     f.cn = "filename"
-
     f.save!
 
-    ExternalFile.all.size.should == 1
+    hash = Digest::SHA1.new.update(f.puavoData).to_s
+    ExternalFile.first.puavoDataHash.should == hash
   end
 end
