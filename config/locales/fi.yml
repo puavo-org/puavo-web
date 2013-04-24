@@ -56,16 +56,16 @@ fi:
     new_role: Uusi rooli
     new_user: "Uusi k\xC3\xA4ytt\xC3\xA4j\xC3\xA4"
     user_mass_import: 
-      new: Users mass import
+      new: Lisää käyttäjiä massa-ajona
       handle_user_data: "K\xC3\xA4sittele k\xC3\xA4ytt\xC3\xA4j\xC3\xA4tieto"
       download_pdf: lataa pdf-tiedosto.
-      revalidate: Revalidate
-      validate: Validates users
+      revalidate: Tarkista uudelleen
+      validate: Tarkasta syötetyt tiedot
       create: "Lis\xC3\xA4\xC3\xA4 k\xC3\xA4ytt\xC3\xA4j\xC3\xA4t"
-    continue: Continue
-    login: Login
-    change_password: Change password
-    new_school: New school
+    continue: Jatka
+    login: Kirjaudu
+    change_password: Vaihda salasana
+    new_school: Uusi koulu
     new_external_service: Uusi
     rename_groups: Vuosiluokkasiirto
     devices: Laitelista
