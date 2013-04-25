@@ -11,11 +11,6 @@ module Puavo
                                                         "base" => base,
                                                         "bind_dn" => dn,
                                                         "password" => password } ) )
-
-        # Updated subclasses base value.
-        LdapBase.subclasses.each  do |_subclass|
-          _subclass.base = base
-        end
       end
     end
   end

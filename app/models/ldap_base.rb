@@ -66,4 +66,11 @@ class LdapBase < ActiveLdap::Base
     end
   end
 
+  def self.base
+    if self.name == "LdapBase"
+      super
+    else
+      self.prefix ? self.prefix + LdapBase.base : LdapBase.base
+    end
+  end
 end
