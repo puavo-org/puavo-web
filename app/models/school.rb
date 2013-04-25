@@ -24,10 +24,16 @@ class School < BaseGroup
   attr_accessor :image
   before_validation :resize_image
 
-  validates :displayName, :presence => true
-  validate :validate_group_name, :validate_name_prefix
+  validate :validate_group_name, :validate_name_prefix, :validate_name
 
   alias_method :v1_as_json, :as_json
+
+  def validate_name
+    if self.displayName.to_s.empty?
+      errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",
+                                       :attribute => I18n.t("activeldap.attributes.school.displayName")) )
+    end
+  end
   
   def validate_group_name
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
