@@ -62,17 +62,33 @@ describe ExternalFile do
     f2.puavoData.should == "lol"
   end
 
-  it "can save non utf-8 files" do
-    img_path = File.join(File.dirname(__FILE__), "img.jpg")
-    f = ExternalFile.new
-    f.cn = "image"
-    image_data = File.open(img_path, "rb").read
-    f.puavoData = image_data
-    f.save!
 
-    saved = ExternalFile.find_or_create_by_cn("image")
-    saved.puavoDataHash.should == "6e3340086404d981c1874be69346e224138be37d"
-    saved.puavoData.size.should == image_data.size
+  describe "binary files" do
+    img_path = File.join(File.dirname(__FILE__), "img.jpg")
+
+    it "can save non utf-8 files" do
+      f = ExternalFile.new
+      f.cn = "image"
+      image_data = File.open(img_path, "rb").read
+      f.puavoData = image_data
+      f.save!
+
+      saved = ExternalFile.find_or_create_by_cn("image")
+      saved.puavoDataHash.should_not be_nil
+    end
+
+    it "can change files" do
+      f = ExternalFile.new
+      f.cn = "image"
+      image_data = File.open(img_path, "rb").read
+      f.puavoData = image_data
+      f.save!
+
+      saved = ExternalFile.find_or_create_by_cn("image")
+      saved.puavoData = image_data
+      saved.save!
+      saved.puavoDataHash.should_not be_nil
+    end
   end
 
 end
