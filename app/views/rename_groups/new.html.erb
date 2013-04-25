@@ -2,7 +2,7 @@
 <h4>Roolien ja ryhmien uudelleen nimeäminen</h4>
 <h4>
 Koulun luokka-asteet: <b><%= @first_class_number %> - <%= @last_class_number %></b><br/>
-Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyneet</b>" %>
+Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyneet</b>".html_safe %>
 </h4>
 
 <h2>Roolit</h2>
