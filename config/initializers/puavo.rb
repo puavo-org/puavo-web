@@ -6,6 +6,8 @@ Puavo::DEVICE_CONFIG = YAML.load_file("#{Rails.root}/config/puavo_devices.yml") 
 
 Puavo::EXTERNAL_LINKS = YAML.load_file("#{Rails.root}/config/puavo_external_links.yml") rescue nil
 
+Puavo::EXTERNAL_FILES = YAML.load_file("#{Rails.root}/config/puavo_external_files.yml") rescue nil
+
 begin
   Puavo::OAUTH_CONFIG = YAML.load_file("#{ Rails.root }/config/oauth.yml")
 rescue Errno::ENOENT => e

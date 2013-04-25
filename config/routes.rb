@@ -1,7 +1,9 @@
 PuavoUsers::Application.routes.draw do
 
+  # match "external_files" => "external_files#index", :via => :get
+  # match "external_files" => "external_files#update", :via => :post
+  # match "external_files/:id" => "external_files#destroy", :via => :delete
   resources :external_files
-
 
   root :to => "schools#index"
 

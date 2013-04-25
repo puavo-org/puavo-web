@@ -18,4 +18,27 @@ class ExternalFile < LdapBase
     self.puavoDataHash = sha1.to_s
   end
 
+  # Find all external files configured in config/puavo_external_files.yml
+  def self.find_configured(config=Puavo::EXTERNAL_FILES)
+
+    # Create or ldap filter
+    filter = "(|" 
+    filter += config.map do |o|
+      "(cn=#{ o["name"] })"
+    end.join("")
+    filter += ")"
+
+    return ExternalFile.find(:all, :filter => filter)
+  end
+
+  def self.find_or_create_by_cn(cn)
+    if f = ExternalFile.find(:first, :attribute => "cn", :value => cn)
+      return f
+    end
+
+    f = ExternalFile.new
+    f.cn = cn
+    return f
+  end
+
 end

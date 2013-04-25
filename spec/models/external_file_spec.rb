@@ -18,7 +18,6 @@ LdapBase.ldap_setup_connection( test_organisation.ldap_host,
 
 describe ExternalFile do
   it "can save " do
-
     f = ExternalFile.new
     f.puavoData = "lol"
     f.cn = "filename"
@@ -27,4 +26,53 @@ describe ExternalFile do
     hash = Digest::SHA1.new.update(f.puavoData).to_s
     ExternalFile.first.puavoDataHash.should == hash
   end
+
+  it "can find configured files" do
+    f = ExternalFile.new
+    f.puavoData = "lol"
+    f.cn = "findme.txt"
+    f.save!
+
+    f = ExternalFile.new
+    f.puavoData = "haha"
+    f.cn = "butnotme.txt"
+    f.save!
+
+    files = ExternalFile.find_configured([{ "name" => "findme.txt" }])
+    files.size.should == 1
+    files.first.cn.should == "findme.txt"
+  end
+
+  it "can create by cn" do
+    name = "newfile.txt"
+    f = ExternalFile.find_or_create_by_cn(name)
+    f.cn.should == name
+    f.puavoData.should == nil
+  end
+
+  it "can find by cn" do
+    name = "findme.txt"
+    f = ExternalFile.new
+    f.puavoData = "lol"
+    f.cn = name
+    f.save!
+
+    f2 = ExternalFile.find_or_create_by_cn(name)
+    f2.cn.should == name
+    f2.puavoData.should == "lol"
+  end
+
+  it "can save non utf-8 files" do
+    img_path = File.join(File.dirname(__FILE__), "img.jpg")
+    f = ExternalFile.new
+    f.cn = "image"
+    image_data = File.open(img_path, "rb").read
+    f.puavoData = image_data
+    f.save!
+
+    saved = ExternalFile.find_or_create_by_cn("image")
+    saved.puavoDataHash.should == "6e3340086404d981c1874be69346e224138be37d"
+    saved.puavoData.size.should == image_data.size
+  end
+
 end
