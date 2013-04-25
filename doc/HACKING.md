@@ -1,5 +1,6 @@
-
 ## Using specific organisation connection in Rails Console
+
+Start console with `bundle exec rails c`
 
 ```ruby
 Puavo::Console.new("hogwarts", "password", "admin")
