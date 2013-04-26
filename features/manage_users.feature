@@ -60,6 +60,7 @@ Feature: Manage users
     | Mabey Ben             |
     | 556677                |
     And I should see "Class 4" on the "Groups by roles"
+    And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
     And the member should include "ben" on the "Class 4" group
     And the memberUid should include "ben" on the "Class 4" role

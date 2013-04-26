@@ -152,3 +152,10 @@ Then /^the ([^ ]*) attribute should contain "([^\"]*)" of "([^\"]*)"$/ do |attri
     user.sambaPrimaryGroupSID.to_s.should == "#{SambaDomain.first.sambaSID}-#{school.puavoId}"
   end
 end
+
+Then(/^I should see image of "(.*?)"$/) do |uid|
+  set_ldap_admin_connection
+  user = User.find(:first, :attribute => 'uid', :value => uid)
+
+  page.should have_xpath("//img[@src='/users/#{ user.school.puavoId }/users/#{ user.puavoId }/image']")
+end

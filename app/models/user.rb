@@ -68,6 +68,11 @@ class User < LdapBase
     "é" => "e"
   }
 
+
+  def image_size
+    { width: 120, height: 160 }
+  end
+
   def as_json(*args)
     self.class.build_hash_for_to_json(self)
   end
@@ -614,13 +619,6 @@ class User < LdapBase
   def set_samba_settings
     self.sambaSID = SambaDomain.next_samba_sid
     self.sambaAcctFlags = "[U]"
-  end
-
-  def resize_image
-    if self.image.class == Tempfile
-      image_orig = Magick::Image.read(self.image.path).first
-      self.jpegPhoto = image_orig.resize_to_fit(120,160).to_blob
-    end
   end
 
 end
