@@ -12,3 +12,5 @@ rescue Errno::ENOENT => e
   Puavo::OAUTH_CONFIG = nil
   puts "WARNING: " + e.to_s
 end
+
+require "monkeypatches"
