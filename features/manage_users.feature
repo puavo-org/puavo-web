@@ -145,6 +145,7 @@ Feature: Manage users
     # And set photo?
     And I select "Visitor" from "user[puavoEduPersonAffiliation]"
     And I check "Staff"
+    And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Update"
     Then I should see the following:
     |           |
@@ -154,6 +155,7 @@ Feature: Manage users
     | Staff     |
     | Visitor |
     And I should see "Class 4" on the "Groups by roles"
+    And I should see image of "ben-edit"
     And the memberUid should include "ben-edit" on the "Class 4" group
     And the member should include "ben-edit" on the "Class 4" group
     And the memberUid should not include "ben" on the "Class 4" group
@@ -165,6 +167,10 @@ Feature: Manage users
     And the member should include "ben-edit" on the "School 1" school
     And the memberUid should include "ben-edit" on the "Domain Users" samba group
     And the memberUid should not include "ben" on the "Domain Users" samba group
+    When I follow "Edit"
+    And I fill in "Given name" with "BenEDIT2"
+    And I press "Update"
+    Then I should see "User was successfully updated."
     Given I am on the show user page with "joseph"
     And I should see "Joseph"
     And I should see "Wilk"
