@@ -10,6 +10,11 @@ class DeviceBase < LdapBase
   IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
   PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\? ')
 
+  def image_size
+    { width: 220, height: 220 }
+  end
+
+
   def host_certificate_request_send?
     host_certificate_request_send ? true : false
   end
@@ -295,13 +300,6 @@ class DeviceBase < LdapBase
   def downcase_mac_addresses
     self.macAddress = Array(self.macAddress).map do |mac|
       mac.to_s.gsub('-', ':').downcase
-    end
-  end
-
-  def resize_image
-    if self.image.class == Tempfile
-      image_orig = Magick::Image.read(self.image.path).first
-      self.jpegPhoto = image_orig.resize_to_fit(220,220).to_blob
     end
   end
 
