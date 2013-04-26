@@ -10,7 +10,7 @@ class DevicesController < ApplicationController
       @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
       @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
     elsif request.format == 'application/json' && params[:version] && params[:version] == "v2"
-      @devices = Device.search( :scope => :one,
+      @devices = Device.search_as_utf8( :scope => :one,
                                 :attributes => attributes ).map do |d|
         d.last
       end

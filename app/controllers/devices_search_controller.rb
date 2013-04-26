@@ -13,7 +13,7 @@ class DevicesSearchController < ApplicationController
                             words )
     
     @schools = Hash.new
-    School.search( :scope => :one,
+    School.search_as_utf8( :scope => :one,
                    :attributes => ["puavoId", "displayName"] ).map do |dn, v|
       @schools[v["puavoId"].first] = v["displayName"].first
     end
@@ -34,7 +34,7 @@ class DevicesSearchController < ApplicationController
       filter_block.call(w)
     end.join() + ")"
 
-    Module.class_eval(model.capitalize).search( :filter => filter,
+    Module.class_eval(model.capitalize).search_as_utf8( :filter => filter,
                                                 :scope => :one,
                                                 :attributes => (["puavoId",
                                                                  "puavoSchool"] +

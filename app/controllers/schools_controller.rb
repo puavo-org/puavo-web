@@ -25,7 +25,7 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
 
     unless Puavo::DEVICE_CONFIG.nil?
-      @devices_by_type = Device.search( :filter => "(puavoSchool=#{@school.dn})",
+      @devices_by_type = Device.search_as_utf8( :filter => "(puavoSchool=#{@school.dn})",
                                         :scope => :one,
                                         :attributes => ['puavoDeviceType'] ).inject({}) do |result, device|
         device_type = Puavo::DEVICE_CONFIG["device_types"][device.last["puavoDeviceType"].first]["label"][I18n.locale.to_s] 
@@ -34,7 +34,7 @@ class SchoolsController < ApplicationController
       end
     end
 
-    @members = User.search( :filter => "(puavoSchool=#{@school.dn})",
+    @members = User.search_as_utf8( :filter => "(puavoSchool=#{@school.dn})",
                             :scope => :one,
                             :attributes => ['puavoEduPersonAffiliation'] )
 

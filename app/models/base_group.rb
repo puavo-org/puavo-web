@@ -35,7 +35,7 @@ class BaseGroup < LdapBase
       "(|(objectClass=puavoSchool)(objectClass=puavoEduGroup))" +
       "(cn=#{ cn_escape })" +
       ")"
-    group_ids = BaseGroup.search( :filter => filter,
+    group_ids = BaseGroup.search_as_utf8( :filter => filter,
                                   :scope => :sub ).map{ |u| u.last["puavoId"].first }
 
     if self.puavoId

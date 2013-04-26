@@ -3,7 +3,7 @@ class Api::V2::DevicesController < ApplicationController
   # GET /devices
   # GET /devices.xml
   def index
-    @devices = Device.search( :scope => :one,
+    @devices = Device.search_as_utf8( :scope => :one,
                               :attributes => attributes ).map do |d|
       d.last
     end

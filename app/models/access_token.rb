@@ -28,7 +28,7 @@ class AccessToken < LdapBase
 
     filter = "(&(puavoOAuthEduPerson=#{ user_dn })(puavoOAuthClient=#{ oauth_client_server_dn }))"
 
-    results = self.search(
+    results = self.search_as_utf8(
       :filter => filter,
       :attributes => "dn"
     )

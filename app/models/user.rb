@@ -374,7 +374,7 @@ class User < LdapBase
   def update_roles
     unless self.role_ids.nil?
       add_roles = self.role_ids
-      Role.search( :filter => "(memberUid=#{self.uid})",
+      Role.search_as_utf8( :filter => "(memberUid=#{self.uid})",
                    :scope => :one,
                    :attributes => ["puavoId"] ).each do |role_dn, values|
 
@@ -417,7 +417,7 @@ class User < LdapBase
       result + role.groups.map{ |g| g.dn.to_s }
     end
 
-    Group.search( :filter => "(memberUid=#{self.uid})",
+    Group.search_as_utf8( :filter => "(memberUid=#{self.uid})",
                   :scope => :one,
                   :attributes => ["puavoId"] ).each do |group_dn, values|
 
@@ -551,17 +551,17 @@ class User < LdapBase
         if self.uid != old_user.uid
           self.uid_has_changed = true
           logger.debug "User uid has changed. Remove memberUid from roles and groups"
-          Role.search( :filter => "(memberUid=#{old_user.uid})",
+          Role.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                        :scope => :one,
                        :attributes => ['dn'] ).each do |role_dn, values|
             LdapBase.ldap_modify_operation(role_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
           end
-          Group.search( :filter => "(memberUid=#{old_user.uid})",
+          Group.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                         :scope => :one,
                         :attributes => ['dn'] ).each do |group_dn, values|
             LdapBase.ldap_modify_operation(group_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
           end
-          School.search( :filter => "(memberUid=#{old_user.uid})",
+          School.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                          :scope => :one,
                          :attributes => ['dn'] ).each do |school_dn, values|
             LdapBase.ldap_modify_operation(school_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
