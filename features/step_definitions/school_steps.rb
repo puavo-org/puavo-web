@@ -118,3 +118,11 @@ Then /^I should be on the "([^\"]*)" school page$/ do |school_name|
   @school = School.find(:first, :attribute => "displayName", :value => school_name)
   URI.parse(current_url).path.should == path_to("the school page")
 end
+
+
+Then(/^I should see school image of "(.*?)"$/) do |school_name|
+  set_ldap_admin_connection
+  school = School.find(:first, :attribute => 'displayName', :value => school_name)
+
+  page.should have_xpath("//img[@src='/users/schools/#{ school.puavoId }/image']")
+end

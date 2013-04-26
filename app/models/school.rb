@@ -28,6 +28,10 @@ class School < BaseGroup
 
   alias_method :v1_as_json, :as_json
 
+  def image_size
+    { width: 400, height: 200 }
+  end
+
   def validate_name
     if self.displayName.to_s.empty?
       errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",
@@ -107,14 +111,5 @@ class School < BaseGroup
       "samba_SID" => self.sambaSID,
       "samba_group_type" => self.sambaGroupType,
       "post_office_box" => self.postOfficeBox }
-  end
-
-  private
-
-  def resize_image
-    if self.image && !self.image.path.to_s.empty?
-      image_orig = Magick::Image.read(self.image.path).first
-      self.jpegPhoto = image_orig.resize_to_fit(400,200).to_blob
-    end
   end
 end

@@ -47,6 +47,7 @@ Feature: Manage schools
     | presice-20121023   |
     | school_base:500    |
     And I should see "School was successfully created."
+    And I should see school image of "Bourne School"
 
   Scenario: Add new school to organisation without names
     Given I am on the new school page
