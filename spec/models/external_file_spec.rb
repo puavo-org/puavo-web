@@ -85,7 +85,7 @@ describe ExternalFile do
       f.save!
 
       saved = ExternalFile.find_or_create_by_cn("image")
-      saved.puavoData = image_data
+      saved.puavoData = "new data"
       saved.save!
       saved.puavoDataHash.should_not be_nil
     end
