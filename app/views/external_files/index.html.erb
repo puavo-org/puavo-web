@@ -1,35 +1,63 @@
-<h1>External Files</h1>
+<div class="external-files">
+  <h1><span>External Files</span></h1>
 
-<p>
-Custom files in Opinsys desktops
-</p>
+  <p>
+  Custom files for Opinsys desktops.
+  </p>
 
-<%= form_tag({:action => :create}, :multipart => true) do %>
+  <%= form_tag({:action => :create}, :multipart => true) do %>
 
-<% @external_files.each do |file| %>
+  <table class="list">
+    <tr>
+      <th>File name</th>
+      <th>Description</th>
+      <th>File size</th>
+      <th colspan="2"><%= t('.actions') %></th>
+    </tr>
 
-    <h2><%= file["meta"]["name"] %></h2>
+  <% @external_files.each do |file| %>
+    <tr>
 
-    <% if file["meta"]["description"] %>
-    <p><%= file["meta"]["description"] %></p>
-    <% end %>
-
-    <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
-
-    <% if file["model"] %>
-    <h3>Current file</h3>
-    <p>
-      Size: <%= file["model"].puavoData.size %> bytes
-      Sha1sum: <%= file["model"].puavoDataHash %>
-      <%= link_to 'Delete', file["model"], method: :delete, data: { confirm: 'Are you sure?' } %>
-    </p>
-    <% end %>
+      <td>
+        <span class="filename">
+          <%= file["meta"]["name"] %>
+        </span>
+      </td>
 
 
-<% end %>
+      <td>
+      <% if file["meta"]["description"] %>
+      <%= file["meta"]["description"] %>
+      <% end %>
+      </td>
 
-<p>
-<%= submit_tag("Save") %>
-</p>
+      <td>
+      <% if file["model"] %>
+        <%= file["model"].puavoData.size %>
+      <% else %>
+        (no file)
+      <% end %>
 
-<% end %>
+      </td>
+
+      <td class="actions">
+      <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
+      <% if file["model"] %>
+        <a href="">
+          download
+        </a>
+        <%= link_to 'Remove', file["model"], method: :delete, data: { confirm: 'Are you sure?' } %>
+      <% end %>
+      </td>
+
+    </tr>
+  <% end %>
+
+  </table>
+
+  <p>
+  <%= submit_tag("Save") %>
+  </p>
+
+  <% end %>
+</div>
