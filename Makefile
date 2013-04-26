@@ -5,3 +5,7 @@ all:
 
 install:
 	@echo todo
+
+test-spec:
+	bundle exec rspec
+
