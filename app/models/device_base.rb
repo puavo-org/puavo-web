@@ -10,6 +10,8 @@ class DeviceBase < LdapBase
   IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
   PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\? ')
 
+  validate :validate
+
   def image_size
     { width: 220, height: 220 }
   end
