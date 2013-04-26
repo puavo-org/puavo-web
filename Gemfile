@@ -12,6 +12,7 @@ gem 'uuid'
 gem 'rdoc' 
 gem 'jquery-rails'
 gem 'uglifier'
+gem 'sass'
 group :development do
 	gem 'capybara'
 	gem 'rspec-rails'
