@@ -7,26 +7,26 @@ def define_basic(env)
 
   env.define :school, :role do |school_config, role_config|
 
-    @school = School.create!(
+    @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
     school_config.dn = @school.dn
 
     # Role for students
-    Role.create!(
+    Role.create(
       :displayName => "Class 4",
       :puavoSchool => @school.dn
     )
 
     # Role for teachers and admins
-    Role.create!(
+    Role.create(
       :displayName => "Staff",
       :puavoSchool => @school.dn
     )
 
     # Unused role for testing
-    role = Role.create!(
+    role = Role.create(
       :displayName => "Class 5",
       :puavoSchool => @school.dn
     )
@@ -35,7 +35,7 @@ def define_basic(env)
   end
 
   env.define :oauth_client do |config|
-    oc = OauthClient.create!(
+    oc = OauthClient.create(
       "displayName"=>"Example software",
       "puavoOAuthScope"=>"read:presonalInfo",
       "userPassword"=> config.default_password
@@ -44,7 +44,7 @@ def define_basic(env)
   end
 
   env.define :oauth_token do |config|
-    ot = AccessToken.create!({
+    ot = AccessToken.create({
       :puavoOAuthTokenId => "1",
       :puavoOAuthEduPerson => env.student.dn,
       :puavoOAuthClient => env.oauth_client.dn,
@@ -56,7 +56,7 @@ def define_basic(env)
   end
 
   env.define :group do |config|
-    group = Group.create!(
+    group = Group.create(
       :displayName => "Test Group",
       :cn          => "testgroup",
       :puavoSchool => env.school.dn
@@ -65,7 +65,7 @@ def define_basic(env)
   end
 
   env.define :teacher do |config|
-    teacher = User.create!(
+    teacher = User.create(
       :puavoSchool => env.school.dn,
       :givenName => "Severus",
       :sn => "Snape",
@@ -79,7 +79,7 @@ def define_basic(env)
   end
 
   env.define :admin do |config|
-    admin = User.create!(
+    admin = User.create(
       :puavoSchool => env.school.dn,
       :givenName => "Minerva",
       :sn => "McGonagall",
@@ -106,7 +106,7 @@ def define_basic(env)
   end
 
   env.define :student do |config|
-    student = User.create!(
+    student = User.create(
       :puavoSchool => env.school.dn,
       :givenName => "Harry",
       :sn => "Potter",
@@ -121,7 +121,7 @@ def define_basic(env)
   end
 
   env.define :teacher2 do |config|
-    teacher2 = User.create!(
+    teacher2 = User.create(
       :puavoSchool => env.school.dn,
       :givenName => "Gilderoy",
       :sn => "Lockhart",
@@ -135,7 +135,7 @@ def define_basic(env)
   end
 
   env.define :student2 do |config|
-    student2 = User.create!(
+    student2 = User.create(
       :puavoSchool => env.school.dn,
       :givenName => "Ron",
       :mail => "ron@example.com",
@@ -152,20 +152,20 @@ def define_basic(env)
 
 
   env.define :other_school do |config|
-    @other_school = School.create!(
+    @other_school = School.create(
       :cn => "slytherin",
       :displayName => "Slytherin"
     )
     config.dn = @other_school.dn
 
-    Role.create!(
+    Role.create(
       :displayName => "Class 4",
       :puavoSchool => @other_school.dn
     )
   end
 
   env.define :other_school_student do |config|
-    other_school_student = User.create!(
+    other_school_student = User.create(
       :puavoSchool => env.other_school.dn,
       :givenName => "Draco",
       :sn => "Malfoy",
