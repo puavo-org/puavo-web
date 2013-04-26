@@ -19,7 +19,7 @@ class UsersController < ApplicationController
                   'puavoAdminOfSchool',
                   'sambaPrimaryGroupSID']
 
-    @users = User.search( :filter => filter,
+    @users = User.search_as_utf8( :filter => filter,
                           :scope => :one,
                           :attributes => attributes )
 
