@@ -36,9 +36,9 @@ MIT kerberos support is provided by smbkrb5pwd overlay that is not part OpenLDAP
 
 == Get started
 
-To get started easily, these steps are needed:
+To get started, these steps are needed:
 
-1. Install Ubuntu 10.04 server (preferably 64-bit version)
+1. Install Ubuntu 12.04 server (preferably 64-bit version)
 2. Get the sources for puavo-users using git
 3. {Setup the database}[https://github.com/opinsys/puavo-users/wikis/database-setup]
 4. {Configure Puavo server}[https://github.com/opinsys/puavo-users/wikis/installation-instructions]
