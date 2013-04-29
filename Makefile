@@ -7,5 +7,9 @@ install:
 	@echo todo
 
 test-spec:
-	bundle exec rspec
+	bundle exec rspec -b
 
+test-acceptance:
+	bundle exec cucumber
+
+test: test-spec test-acceptance
