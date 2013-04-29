@@ -41,4 +41,12 @@ class ExternalFile < LdapBase
     return f
   end
 
+  def as_json(*args)
+    return {
+      "id" => puavoId,
+      "name" => cn,
+      "hash" => puavoDataHash
+    }
+  end
+
 end

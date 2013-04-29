@@ -47,6 +47,19 @@ describe ExternalFile do
     f2.puavoData.should == "lol"
   end
 
+  it "can serialize to nice json" do
+    f = ExternalFile.new
+    f.puavoData = "lol"
+    f.cn = "filename.txt"
+    f.save!
+
+    f.as_json.should equal({
+      "id" => 31,
+      "name" => "filename.txt",
+      "hash" => "403926033d001b5279df37cbbe5287b7c7c267fa"
+    })
+  end
+
 
   describe "binary files" do
     img_path = File.join(File.dirname(__FILE__), "img.jpg")
