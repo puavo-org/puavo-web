@@ -1,0 +1,4 @@
+- name: primus.exe
+  description: "opiskelijahallinnon tietokantaohjelma"
+- name: smartlicense
+  description: "SMART license"
