@@ -118,7 +118,7 @@ $(document).ready(function() {
 	$('#select_change_school_users').click(function() {
 		$('input[type=checkbox]').each(function() {
 			// Toggle
-			$(this).attr('checked', !$(this).attr('checked'));
+			$(this).prop( 'checked', !$(this).prop('checked') )
 		});
 	});
 
