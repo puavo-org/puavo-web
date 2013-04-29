@@ -1,9 +1,5 @@
 PuavoUsers::Application.routes.draw do
 
-  # match "external_files" => "external_files#index", :via => :get
-  # match "external_files" => "external_files#update", :via => :post
-  # match "external_files/:id" => "external_files#destroy", :via => :delete
-  resources :external_files
 
   root :to => "schools#index"
 
@@ -113,6 +109,25 @@ PuavoUsers::Application.routes.draw do
 
     match '/auth' => 'sessions#auth', :via => :get
     
+  end
+
+  ["api/v2/", ""].each do |prefix|
+    match("#{ prefix }external_files" => "external_files#index", :via => :get)
+    match("#{ prefix }external_files" => "external_files#upload", :via => :post)
+    match(
+      "#{ prefix }external_files/:name" => "external_files#get_file",
+      :name => /.+/,
+      :format => false,
+      :via => :get,
+      :as => "download_external_file"
+    )
+    match(
+      "#{ prefix }external_files/:name" => "external_files#destroy",
+      :name => /.+/,
+      :format => false,
+      :via => :delete,
+      :as => "destroy_external_file"
+    )
   end
 
 end

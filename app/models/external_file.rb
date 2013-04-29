@@ -22,7 +22,7 @@ class ExternalFile < LdapBase
   def self.find_configured(config=Puavo::EXTERNAL_FILES)
 
     # Create or ldap filter
-    filter = "(|" 
+    filter = "(|"
     filter += config.map do |o|
       "(cn=#{ o["name"] })"
     end.join("")
@@ -31,8 +31,12 @@ class ExternalFile < LdapBase
     return ExternalFile.find(:all, :filter => filter)
   end
 
+  def self.find_by_cn(cn)
+    ExternalFile.find(:first, :attribute => "cn", :value => cn)
+  end
+
   def self.find_or_create_by_cn(cn)
-    if f = ExternalFile.find(:first, :attribute => "cn", :value => cn)
+    if f = self.find_by_cn(cn)
       return f
     end
 

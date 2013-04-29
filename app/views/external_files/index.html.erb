@@ -5,7 +5,7 @@
   Custom files for Opinsys desktops.
   </p>
 
-  <%= form_tag({:action => :create}, :multipart => true) do %>
+  <%= form_tag({:action => :upload}, :multipart => true) do %>
 
   <table class="list">
     <tr>
@@ -43,10 +43,18 @@
       <td class="actions">
       <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
       <% if file["model"] %>
-        <a href="">
-          download
-        </a>
-        <%= link_to 'Remove', file["model"], method: :delete, data: { confirm: 'Are you sure?' } %>
+
+        <%= link_to(
+              'download',
+              download_external_file_path(file["meta"]["name"])
+            )
+        %>
+        <%= link_to(
+              'delete',
+              destroy_external_file_path(file["meta"]["name"]),
+              method: :delete, data: { confirm: 'Are you sure?' }
+            )
+        %>
       <% end %>
       </td>
 
