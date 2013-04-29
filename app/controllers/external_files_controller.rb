@@ -14,16 +14,18 @@ class ExternalFilesController < ApplicationController
       }
     end
 
+
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json => file_models }
+      format.json { render :json => file_models }
     end
   end
 
 
   # GET /external_files/:name
   def get_file
-    if ef = ExternalFile.find_by_cn(params[:name])
+    cn = params[:name]
+    if ef = ExternalFile.find_by_cn(cn)
       render(
         :content_type => 'application/octet-stream',
         :text => ef.puavoData
