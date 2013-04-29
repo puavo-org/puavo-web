@@ -256,15 +256,20 @@ class User < LdapBase
 
   def change_ldap_password
     unless new_password.nil? || new_password.empty?
+      logger.info "Change user password"
       ldap_conf = User.configuration
-      system( 'ldappasswd', '-Z',
-              '-h', ldap_conf[:host],
-              '-D', ldap_conf[:bind_dn],
-              '-w', ldap_conf[:password],
-              '-s', new_password,
-              dn.to_s )
+      logger.info "Run command-line: ldappasswd -Z -h #{ldap_conf[:host]} -D #{ldap_conf[:bind_dn]} -w FILTERED -s FILTERED #{dn}"
+      system_response = system( 'ldappasswd', '-Z',
+                                '-h', ldap_conf[:host],
+                                '-D', ldap_conf[:bind_dn],
+                                '-w', ldap_conf[:password],
+                                '-s', new_password,
+                                dn.to_s)
+      logger.info "Exit status: #{$?.exitstatus}"
+      logger.info "System response: #{system_response.inspect}"
       if $?.exitstatus != 0
         # FIXME: On Ruby 1.9 log stderr. Not possible with 1.8.
+        logger.info "Exit status is not 0 -> raise"
         raise User::UserError, I18n.t('flash.password.failed')
       end
     end
