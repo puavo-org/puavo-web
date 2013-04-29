@@ -15,6 +15,12 @@ module Puavo
     end
   end
 
+  class NoCredentials < AuthenticationError
+    def code
+      "no_credentials"
+    end
+  end
+
   class AuthorizationFailed < AuthenticationError
     def code
       "no_permissions"
@@ -77,7 +83,8 @@ module Puavo
 
       if uid = @credentials[:uid]
         if uid.nil? || uid.empty?
-          raise AuthenticationFailed, "Cannot get dn from empty or nil uid"
+          logger.info "Cannot get dn from empty or nil uid"
+          raise NoCredentials, "Cannot get dn from empty or nil uid"
         end
 
         if uid.match(/^service\//)

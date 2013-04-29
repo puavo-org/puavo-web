@@ -93,6 +93,8 @@ module Puavo
         }
       end
 
+      raise NoCredentials, "No credentials supplied"
+
     end
 
     # Before filter
@@ -106,10 +108,6 @@ module Puavo
 
 
     def perform_login(credentials)
-
-      if credentials.nil?
-        raise Puavo::AuthenticationFailed, "No credentials supplied"
-      end
 
       # Configure ActiveLdap to use the credentials
       @authentication.configure_ldap_connection credentials
@@ -129,6 +127,8 @@ module Puavo
 
       begin
         perform_login(acquire_credentials)
+      rescue Puavo::NoCredentials => e
+        return false
       rescue Puavo::AuthenticationError => e
         logger.info "Login failed for: #{ e }"
         show_authentication_error e.code, t('flash.session.failed')
@@ -149,6 +149,11 @@ module Puavo
 
       # Unauthorized always when not authenticated
       return false unless @authentication
+
+      unless @authentication.authenticated
+        redirect_to login_path
+        return false
+      end
 
       begin
         @authentication.authorize
