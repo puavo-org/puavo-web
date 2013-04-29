@@ -53,11 +53,13 @@ describe ExternalFile do
     f.cn = "filename.txt"
     f.save!
 
-    f.as_json.should equal({
-      "id" => 31,
-      "name" => "filename.txt",
-      "hash" => "403926033d001b5279df37cbbe5287b7c7c267fa"
-    })
+    json = f.as_json
+
+    # id sequence is not reseted between test runs. Assert everthing else
+    expect(json.keys).to eq(["id", "name", "hash"])
+    json["name"].should == "filename.txt"
+    json["hash"].should == "403926033d001b5279df37cbbe5287b7c7c267fa"
+    json["id"].class.should == Fixnum
   end
 
 
