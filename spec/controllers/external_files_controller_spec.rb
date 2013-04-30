@@ -43,7 +43,24 @@ describe ExternalFilesController do
 
   end
 
+  describe "POST file" do
+    it "can upload file to ldap" do
+      file = fixture_file_upload("/img.jpg", 'image/jpeg', :binary)
+
+      @request.env['HTTP_REFERER'] = external_files_path
+      post(:upload, {
+        :file => {
+          "img.jpg" => file
+        }
+      }, valid_session)
+
+      setup_connection
+      ExternalFile.find_by_cn("img.jpg").should_not be_nil
+    end
+  end
+
   describe "GET file" do
+
     it "can fetch saved file" do
       get :get_file, { :name => "file.txt" }, valid_session
       expect(response.status).to eq(200)
@@ -83,6 +100,5 @@ describe ExternalFilesController do
     end
 
   end
-
 
 end

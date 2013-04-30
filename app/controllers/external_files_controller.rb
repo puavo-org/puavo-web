@@ -1,4 +1,5 @@
 class ExternalFilesController < ApplicationController
+
   # GET /external_files
   # GET /external_files.json
   def index
@@ -39,12 +40,11 @@ class ExternalFilesController < ApplicationController
 
   end
 
-  # POST
+  # POST /external_files
   def upload
     return if not params["file"]
     params["file"].each do |k, file|
       f = ExternalFile.find_or_create_by_cn(k)
-
       data = File.open(file.path, "rb").read.to_blob
       f.puavoData = data
       f.save!

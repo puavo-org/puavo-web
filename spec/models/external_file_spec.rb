@@ -64,7 +64,6 @@ describe ExternalFile do
 
 
   describe "binary files" do
-    img_path = File.join(File.dirname(__FILE__), "img.jpg")
 
     it "can save non utf-8 files" do
       f = ExternalFile.new

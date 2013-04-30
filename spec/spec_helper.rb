@@ -8,6 +8,10 @@ require 'rspec/autorun'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+def img_path
+    File.join(File.dirname(__FILE__), "fixtures", "img.jpg")
+end
+
 def setup_connection
   test_organisation = Puavo::Organisation.find('example')
   default_ldap_configuration = ActiveLdap::Base.ensure_configuration
