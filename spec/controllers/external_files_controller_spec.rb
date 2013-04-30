@@ -4,6 +4,8 @@ describe ExternalFilesController do
 
   before(:each) do
     controller.request.host = 'www.example.com'
+
+    # XXX: Prints warnings on every test run
     Puavo::EXTERNAL_FILES = [
       {
         "name"=>"file.txt",
@@ -14,6 +16,7 @@ describe ExternalFilesController do
         "description" => "Another file for testing"
       }
     ]
+
     f = ExternalFile.new
     f.puavoData = "data"
     f.cn = "file.txt"
@@ -30,9 +33,9 @@ describe ExternalFilesController do
   describe "GET index" do
 
     it "lists files" do
-      res = get :index, { :format => :json }, valid_session
+      get :index, { :format => :json }, valid_session
       expect(response.status).to eq(200)
-      json = JSON.parse(res.body)
+      json = JSON.parse(response.body)
 
       json.size.should == 1
       json[0]["name"].should == "file.txt"
@@ -42,13 +45,13 @@ describe ExternalFilesController do
 
   describe "GET file" do
     it "can fetch saved file" do
-      res = get :get_file, { :name => "file.txt" }, valid_session
+      get :get_file, { :name => "file.txt" }, valid_session
       expect(response.status).to eq(200)
-      res.body.should == "data"
+      response.body.should == "data"
     end
 
     it "responds 404 on non defined files" do
-      res = get :get_file, { :name => "nofile.txt" }, valid_session
+      get :get_file, { :name => "nofile.txt" }, valid_session
       expect(response.status).to eq(404)
     end
 
@@ -56,5 +59,8 @@ describe ExternalFilesController do
       res = get :get_file, { :name => "another.txt" }, valid_session
       expect(response.status).to eq(404)
     end
+
   end
+
+
 end
