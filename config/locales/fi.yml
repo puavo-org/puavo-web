@@ -91,6 +91,7 @@ fi:
       group_remove_failed: "Poistaminen epäonnistui."
       create_failed: "Roolin lisääminen epäonnistui!"
       save_failed: Roolia ei voitu tallentaa!
+      destroyed_failed: "Roolia (%{name}) ei voitu poistaa, koska siihen on liitetty käyttäjiä."
     user: 
       save_failed: "Käyttäjää ei voitu tallentaa!"
       create_failed: "Käyttäjän lisääminen epäonnistui!"

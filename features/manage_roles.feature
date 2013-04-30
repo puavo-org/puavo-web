@@ -127,3 +127,13 @@ Feature: Manage roles
     And the member should include "joe" on the "Class 7" role
     And the memberUid should not include "joe" on the "Class 6" role
     And the member should not include "joe" on the "Class 6" role
+
+  Scenario: Remove role when it still contains the users
+    Given the following roles:
+    | displayName |
+    | Student     |
+    | Teacher     |
+    And I am set the "Student" role for "ben"
+    And I am on the show role page with "Student"
+    When I follow "Remove"
+    Then I should see "You can not remove role (Student) because it contains the users"

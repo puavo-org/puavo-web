@@ -85,11 +85,15 @@ class RolesController < ApplicationController
   # DELETE /:school_id/roles/1.xml
   def destroy
     @role = Role.find(params[:id])
-    @role.destroy
 
     respond_to do |format|
-      format.html { redirect_to(roles_url) }
-      format.xml  { head :ok }
+      if @role.members.count > 0
+        flash[:alert] = t('flash.role.destroyed_failed', :name => @role.displayName)
+        format.html { redirect_to(roles_path(@school)) }
+      elsif @role.destroy
+        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.role'))
+        format.html { redirect_to(roles_url) }
+      end
     end
   end
 
