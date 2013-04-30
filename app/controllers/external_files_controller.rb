@@ -54,9 +54,13 @@ class ExternalFilesController < ApplicationController
 
   # DELETE /external_files/:name
   def destroy
-    @external_file = ExternalFile.find_by_cn(params[:name])
-    @external_file.destroy
+    cn = params[:name]
+    @external_file = ExternalFile.find_by_cn(cn)
+    if not @external_file
+      return render(:status => 404, :text => "Cannot find file #{ cn }")
+    end
 
+    @external_file.destroy
     respond_to do |format|
       format.html { redirect_to external_files_url }
       format.json { head :no_content }

@@ -56,7 +56,29 @@ describe ExternalFilesController do
     end
 
     it "responds 404 on nonexistent files" do
-      res = get :get_file, { :name => "another.txt" }, valid_session
+      get :get_file, { :name => "another.txt" }, valid_session
+      expect(response.status).to eq(404)
+    end
+  end
+
+  describe "DELETE file" do
+
+    it "deletes file" do
+      f = ExternalFile.new
+      f.puavoData = "data"
+      f.cn = "new.txt"
+      f.save!
+
+      delete :destroy, { :name => "new.txt" }, valid_session
+
+      # Doing accessing controller removes the ldap connection for some reason.
+      # Restore it...
+      setup_connection
+      ExternalFile.find_by_cn("new.txt").should == nil
+    end
+
+    it "responds 404 on nonexistent file" do
+      delete :destroy, { :name => "nofile.txt" }, valid_session
       expect(response.status).to eq(404)
     end
 
