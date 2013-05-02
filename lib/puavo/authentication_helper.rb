@@ -150,7 +150,7 @@ module Puavo
       # Unauthorized always when not authenticated
       return false unless @authentication
 
-      unless @authentication.authenticated
+      if request.format != Mime::JSON && !@authentication.authenticated
         redirect_to login_path
         return false
       end
