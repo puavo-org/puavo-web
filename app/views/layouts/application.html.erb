@@ -56,6 +56,9 @@
            <ul id="help" class="organisation-menu">
              <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
              <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+             <% if Puavo::EXTERNAL_FILES %>
+             <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
+             <% end -%>
 	     <% if Puavo::OAUTH_CONFIG %>
              <li class="top-menu-item"><%= link_to t('.oauth_clients'), oauth_clients_path %></li>
 	     <% end %>
