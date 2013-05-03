@@ -25,4 +25,5 @@ group :development do
 	gem 'colorize'
 	gem 'timecop'
         gem 'database_cleaner'
+        gem 'greenletters'
 end

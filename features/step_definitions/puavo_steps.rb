@@ -41,6 +41,10 @@ Before do |scenario|
     end
   end
 
+  Device.all.each do |d|
+    d.destroy
+  end
+
   ExternalService.all.each do |e| e.destroy end
 
   OauthClient.all.each do |c| c.destroy end
