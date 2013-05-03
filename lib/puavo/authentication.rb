@@ -73,6 +73,37 @@ module Puavo
       end
     end
 
+    def uid_to_dn(uid)
+
+      if uid.match(/^service\//)
+        uid = uid.match(/^service\/(.*)/)[1]
+        user_class = ExternalService
+      else
+        user_class = User
+      end
+
+      user_dn = Rails.cache.fetch self.class.dn_cache_key(organisation_key, uid) do
+        # Remove previous connection
+        self.class.remove_connection
+        LdapBase.ldap_setup_connection( ldap_host,
+                                        base.to_s,
+                                        puavo_configuration["bind_dn"],
+                                        puavo_configuration["password"] )
+
+        user = user_class.find(:first, :attribute => "uid", :value => uid)
+
+        if user
+          user.dn.to_s
+        else
+          nil
+        end
+      end
+
+      raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'" if not user_dn
+      logger.debug "Found #{ dn } for #{ uid }"
+      return ActiveLdap::DistinguishedName.parse user_dn
+    end
+
     def configure_ldap_connection(credentials)
 
       @credentials = credentials
@@ -82,38 +113,7 @@ module Puavo
       end
 
       if uid = @credentials[:uid]
-        if uid.nil? || uid.empty?
-          logger.info "Cannot get dn from empty or nil uid"
-          raise NoCredentials, "Cannot get dn from empty or nil uid"
-        end
-
-        if uid.match(/^service\//)
-          uid = uid.match(/^service\/(.*)/)[1]
-          user_class = ExternalService
-        else
-          user_class = User
-        end
-
-        user_dn = Rails.cache.fetch self.class.dn_cache_key(organisation_key, uid) do
-          # Remove previous connection
-          self.class.remove_connection
-          LdapBase.ldap_setup_connection( ldap_host,
-                                          base.to_s,
-                                          puavo_configuration["bind_dn"],
-                                          puavo_configuration["password"] )
-          
-          user = user_class.find(:first, :attribute => "uid", :value => uid)
-          
-          if user
-            user.dn.to_s
-          else
-            nil
-          end
-        end
-        
-        raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'" if not user_dn
-        logger.debug "Found #{ dn } for #{ uid }"
-        @credentials[:dn] = ActiveLdap::DistinguishedName.parse user_dn
+        @credentials[:dn] = uid_to_dn(uid)
       end
 
       # Reset attributes on new configuration
@@ -123,8 +123,6 @@ module Puavo
 
       # Remove previous connection
       self.class.remove_connection
-
-
 
       logger.info "Configuring ActiveLdap to use #{ @credentials.select{ |a,b| a != :password }.map { |k,v| "#{ k }: #{ v }" }.join ", " }"
       logger.debug "PW: #{ @credentials[:password] }" if ENV["LOG_LDAP_PASSWORD"]
