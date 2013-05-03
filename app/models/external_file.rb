@@ -49,7 +49,7 @@ class ExternalFile < LdapBase
     return {
       "id" => puavoId,
       "name" => cn,
-      "hash" => puavoDataHash
+      "data_hash" => puavoDataHash
     }
   end
 
