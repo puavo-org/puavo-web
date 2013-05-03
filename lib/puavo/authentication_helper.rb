@@ -65,15 +65,13 @@ module Puavo
 
         end
 
-        # Authenticate with server's distinguished name and password
-        if !username.to_s.empty? && (server_dn = ActiveLdap::DistinguishedName.parse(username) rescue nil)
-          if server_dn.parent.rdns.first["ou"] == "Servers"
-            return {
-              :dn => server_dn,
-              :organisation_key => organisation_key_from_host,
-              :password => password,
-            }
-          end
+        # Allow logins with dn
+        if !username.to_s.empty? && (dn = ActiveLdap::DistinguishedName.parse(username) rescue nil)
+          return {
+            :dn => dn,
+            :organisation_key => organisation_key_from_host,
+            :password => password,
+          }
         end
 
         return {
