@@ -1,18 +1,29 @@
 
 module PuavoRest
-
+# Possible error responses in PuavoRest.
+#
+# Example response:
+#
+#    {
+#      "error": {
+#        "code": <[String] error code>,
+#        "message": <[String] human readable error message>,
+#
+#      }
+#    }
+#
 module ErrorMethods
 
   # Halt request with not_found code
   # @param msg [String] Human readable description of the situation
-  # @return [JSON] Error message { "error": { "code": ... } }
+  # @return [HTTP response]
   def bad_credentials(msg="")
     json_format(401, "bad_credentials", msg)
   end
 
   # Halt request with not_found code
   # @param msg [String] Human readable description of the situation
-  # @return [JSON] Error message { "error": { "code": ... } }
+  # @return [HTTP response]
   def not_found(msg="")
     json_format(404, "not_found", msg)
   end
@@ -30,16 +41,18 @@ module ErrorMethods
 
 end
 
-# Abstract Sinatra application base
-# @author Esa-Matti Suuronen
+# Abstract base from which every REST resource using LDAP as the datastore
+# should inherit from.
 class LdapBase < Sinatra::Base
 
   include ErrorMethods
   helpers Sinatra::JSON
 
   not_found do
+    puts "not found in #{ self.class }"
     not_found "Cannot find resource from #{ request.path }"
   end
+
 
   before do
 
@@ -53,6 +66,7 @@ class LdapBase < Sinatra::Base
     @ldap_conn.start_tls
 
     begin
+      puts "binding #{ cred[:username] } in #{ self.class }"
       @ldap_conn.bind(cred[:username], cred[:password])
     rescue LDAP::ResultError
       bad_credentials("Bad username or password")
