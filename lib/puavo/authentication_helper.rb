@@ -126,6 +126,16 @@ module Puavo
       begin
         perform_login(acquire_credentials)
       rescue Puavo::NoCredentials => e
+        if request.format == Mime::JSON
+          render(:json => {
+                   :error => e.code,
+                   :message => e,
+                 }.to_json,
+                 :status => 401)
+        else
+          store_location
+          redirect_to login_path
+        end
         return false
       rescue Puavo::AuthenticationError => e
         logger.info "Login failed for: #{ e }"
@@ -147,11 +157,6 @@ module Puavo
 
       # Unauthorized always when not authenticated
       return false unless @authentication
-
-      if request.format != Mime::JSON && !@authentication.authenticated
-        redirect_to login_path
-        return false
-      end
 
       begin
         @authentication.authorize
