@@ -1,3 +1,5 @@
+build:
+	bundle install --deployment
 
 yard:
 	bundle exec yard doc root.rb .
