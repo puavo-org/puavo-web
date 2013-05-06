@@ -1,3 +1,7 @@
 require "./root"
-use PuavoRest::ExternalFiles
 run PuavoRest::Root
+
+# run Rack::Cascade.new([
+#   PuavoRest::Root,
+#   PuavoRest::ExternalFiles
+# ])

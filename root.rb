@@ -9,24 +9,18 @@ require "debugger"
 require "pry"
 
 require "./credentials"
-require "./base"
-require "./external_files"
+require "./resources/base"
+require "./resources/external_files"
+require "./resources/users"
+
+# @!macro route
+#   @overload $0 $1
+#   @method $0_$1 $1
+#   @return [HTTP response]
 
 module PuavoRest
-class Root < Sinatra::Base
-
-  # @method get_root
-  # @overload get "/"
-  # Get hello message
-  get "/" do
-    "Hello :)"
-  end
-
-
-  # Post to foo
-  # @return 
-  post "/foo" do
-  end
-
+class Root < LdapBase
+  use PuavoRest::ExternalFiles
+  use PuavoRest::Users
 end
 end
