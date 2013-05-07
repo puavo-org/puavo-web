@@ -24,6 +24,10 @@ or from our repository
 Install [puavo-client](https://github.com/opinsys/puavo-client) manually or from our repo
 
     sudo apt-get install puavo-client
+    
+Install [node.js](http://nodejs.org/) manually or from our repo
+
+    sudo apt-get install nodejs-bundle
 
 Get the sources:
 
