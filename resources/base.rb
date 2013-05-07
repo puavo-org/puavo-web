@@ -1,5 +1,23 @@
 
 module PuavoRest
+
+
+class LdapModel
+
+  def initialze(ldap_conn, organisation)
+    @ldap_conn = ldap_conn
+    @organisation = organisation
+  end
+
+  # Escape unsafe user input for safe LDAP filter use
+  def self.escape(s)
+    # TODO
+  end
+
+end
+
+
+
 # Possible error responses in PuavoRest.
 #
 # Example response:
@@ -47,13 +65,17 @@ class LdapSinatra < Sinatra::Base
   include ErrorMethods
   helpers Sinatra::JSON
 
+
   not_found do
     puts "not found in #{ self.class }"
     not_found "Cannot find resource from #{ request.path }"
   end
 
 
-  before do
+  before "/:organisation/*" do
+
+    # XXX: Escape!
+    @organisation = params["organisation"]
 
     cred = request.env["PUAVO_CREDENTIALS"]
     if not cred
@@ -71,6 +93,15 @@ class LdapSinatra < Sinatra::Base
       bad_credentials("Bad username or password")
     end
 
+  end
+
+  # Model instance factory
+  # Create new model instance with the current organisation and ldap connection
+  #
+  # @param klass [Model class]
+  # @return [Model instance]
+  def new_model(klass)
+    klass.new(@ldap_conn, @organisation)
   end
 
 end
