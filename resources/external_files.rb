@@ -1,14 +1,49 @@
 module PuavoRest
+
+
+class ExternalFilesModel < LdapModel
+
+  ldap_attr_conversion :cn, :name
+  ldap_attr_conversion :puavoDataHash, :data_hash
+
+  def ldap_base
+    "ou=Files,ou=Desktops,dc=edu,dc=#{ @organisation },dc=fi"
+  end
+
+  def index
+    filter(
+      "(&(objectClass=top)(objectClass=puavoFile))",
+      ExternalFilesModel.ldap_attrs
+    ).map do |entry|
+      ExternalFilesModel.convert(entry)
+    end
+  end
+
+  def file_filter(name)
+    name = LdapModel.escape(name)
+    "(&(cn=#{ name })(objectClass=top)(objectClass=puavoFile))"
+  end
+
+  def metadata(name)
+    ExternalFilesModel.convert filter(
+      file_filter(name),
+      ExternalFilesModel.ldap_attrs
+    ).first
+  end
+
+  def data(name)
+    name = LdapModel.escape(name)
+    filter(file_filter(name), ["puavoData"]).first["puavoData"]
+  end
+
+end
+
+
 # External Files saved in LDAP
 class ExternalFiles < LdapSinatra
 
   use Credentials::BasicAuth
   use Credentials::BootServer
-
-  def ldap_base
-    # XXX: Escape!
-    "ou=Files,ou=Desktops,dc=edu,dc=#{ params["organisation"] },dc=fi"
-  end
 
   # Get metadata list of external files
   #    [
@@ -22,23 +57,18 @@ class ExternalFiles < LdapSinatra
   # @!macro route
   # @param foo
   get "/:organisation/external_files" do
+    json new_model(ExternalFilesModel).index
+  end
 
-    external_files = []
-    @ldap_conn.search(ldap_base, LDAP::LDAP_SCOPE_SUBTREE, "(&(objectClass=top)(objectClass=puavoFile))", [
-      "cn", "puavoDataHash"
-    ]) do |entry|
-      external_files.push({
-        "name" => entry.vals("cn").first,
-        "data_hash" => entry.vals("puavoDataHash").first,
-      })
-    end
-    json external_files
+  get "/:organisation/external_files/:name/metadata" do
+    json new_model(ExternalFilesModel).metadata(params[:name])
   end
 
   # Get file contents
   # @!macro route
   get "/:organisation/external_files/:name" do
-    # TODO
+    content_type "application/octet-stream"
+    new_model(ExternalFilesModel).data(params[:name])
   end
 
 end
