@@ -21,6 +21,11 @@ require "./resources/users"
 
 module PuavoRest
 class Root < LdapSinatra
+
+  get "/" do
+    "hello"
+  end
+
   use PuavoRest::ExternalFiles
   use PuavoRest::Users
 end
