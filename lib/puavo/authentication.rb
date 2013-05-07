@@ -193,6 +193,10 @@ module Puavo
       dn.rdns[1]["ou"] == "Servers"
     end
 
+    def device?
+      dn.rdns[1]["ou"] == "Devices"
+    end
+
     def oauth_client_server?
       dn.rdns.first.keys.first == "puavoOAuthClientId"
     end
@@ -239,6 +243,12 @@ module Puavo
       # Authorize servers
       if server?
         logger.info "Authorization ok: Server #{ dn }"
+        return @authorized = true
+      end
+
+      # Authorize devices
+      if device?
+        logger.info "Authorization ok: Device #{ dn }"
         return @authorized = true
       end
 
