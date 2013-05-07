@@ -4,7 +4,7 @@ module PuavoRest
 
 class LdapModel
 
-  def initialze(ldap_conn, organisation)
+  def initialize(ldap_conn, organisation)
     @ldap_conn = ldap_conn
     @organisation = organisation
   end
