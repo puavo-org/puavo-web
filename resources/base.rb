@@ -41,9 +41,8 @@ module ErrorMethods
 
 end
 
-# Abstract base from which every REST resource using LDAP as the datastore
-# should inherit from.
-class LdapBase < Sinatra::Base
+# Abstract Sinatra base class which add ldap connection to instance scope
+class LdapSinatra < Sinatra::Base
 
   include ErrorMethods
   helpers Sinatra::JSON

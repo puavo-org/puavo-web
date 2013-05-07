@@ -1,6 +1,6 @@
 module PuavoRest
 # External Files saved in LDAP
-class ExternalFiles < LdapBase
+class ExternalFiles < LdapSinatra
 
   use Credentials::BasicAuth
   use Credentials::BootServer

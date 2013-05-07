@@ -19,7 +19,7 @@ require "./resources/users"
 #   @return [HTTP response]
 
 module PuavoRest
-class Root < LdapBase
+class Root < LdapSinatra
   use PuavoRest::ExternalFiles
   use PuavoRest::Users
 end

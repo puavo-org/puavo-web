@@ -1,7 +1,7 @@
 
 module PuavoRest
 # Just for example here
-class Users < LdapBase
+class Users < LdapSinatra
 
   use Credentials::BasicAuth
   use Credentials::BootServer
