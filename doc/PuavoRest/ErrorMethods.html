@@ -78,12 +78,12 @@
   
   
     <dt class="r1">Included in:</dt>
-    <dd class="r1"><span class='object_link'><a href="LdapBase.html" title="PuavoRest::LdapBase (class)">LdapBase</a></span></dd>
+    <dd class="r1"><span class='object_link'><a href="LdapSinatra.html" title="PuavoRest::LdapSinatra (class)">LdapSinatra</a></span></dd>
     
   
   
     <dt class="r2 last">Defined in:</dt>
-    <dd class="r2 last">base.rb</dd>
+    <dd class="r2 last">resources/base.rb</dd>
   
 </dl>
 <div class="clear"></div>
@@ -242,12 +242,12 @@
       <pre class="lines">
 
 
-20
-21
-22</pre>
+121
+122
+123</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'base.rb', line 20</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 121</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bad_credentials'>bad_credentials</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_json_format'>json_format</span><span class='lparen'>(</span><span class='int'>401</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>bad_credentials</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
@@ -318,12 +318,12 @@
       <pre class="lines">
 
 
-27
-28
-29</pre>
+128
+129
+130</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'base.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 128</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_not_found'>not_found</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_json_format'>json_format</span><span class='lparen'>(</span><span class='int'>404</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>not_found</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
@@ -338,7 +338,7 @@
 </div>
 
     <div id="footer">
-  Generated on Mon May  6 21:25:37 2013 by
+  Generated on Tue May  7 14:04:05 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.6.1 (ruby-1.9.3).
 </div>
