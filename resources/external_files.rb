@@ -46,6 +46,7 @@ class ExternalFiles < LdapSinatra
   use Credentials::BootServer
 
   # Get metadata list of external files
+  #
   #    [
   #      {
   #        "name": <filename>,
@@ -55,11 +56,17 @@ class ExternalFiles < LdapSinatra
   #    ]
   #
   # @!macro route
-  # @param foo
   get "/:organisation/external_files" do
     json new_model(ExternalFilesModel).index
   end
 
+  # Get metadata for external file
+  #
+  #    {
+  #      "name": <filename>,
+  #      "data_hash": <sha1 checksum of the file>
+  #    }
+  # @!macro route
   get "/:organisation/external_files/:name/metadata" do
     json new_model(ExternalFilesModel).metadata(params[:name])
   end
