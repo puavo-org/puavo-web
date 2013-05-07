@@ -20,7 +20,10 @@ class ProfilesController < ApplicationController
     
     # Create params for ldap replace operation.
     modify_params = params[:user].select{ |k,v| !v.empty? }.inject([]) do |result, attribute|
-      result.push attribute.first => attribute.last
+      # FIXME: Is there a better solutions?
+      key = String.new(attribute.first)
+      key.force_encoding('utf-8')
+      result.push key => attribute.last
     end
 
     respond_to do |format|
