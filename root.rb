@@ -9,6 +9,7 @@ require "debugger"
 require "pry"
 
 require "./credentials"
+require "./errors"
 require "./resources/base"
 require "./resources/external_files"
 require "./resources/users"
