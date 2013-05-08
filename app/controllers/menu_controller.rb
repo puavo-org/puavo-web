@@ -5,16 +5,13 @@ class MenuController < ApplicationController
 
   # GET /menu
   def index
+
+    @services = Puavo::SERVICES["services"]
+
     @organisation = Puavo::Organisation.find organisation_key_from_host
 
-    if organisation_services = @organisation.value_by_key("services")
-      services = @organisation.value_by_key("services")
-    else
-      services = @services = Puavo::SERVICES["defaults"]
-    end
+    @services = @organisation.value_by_key("services") || @services
 
-    @services = Puavo::SERVICES["services"].select{ |s| services.include?(s.keys.first) }
-    
     respond_to do |format|
       format.html
     end
