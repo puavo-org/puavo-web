@@ -8,6 +8,7 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
+ * Raw inlining css requires via Rails Asset Pipeline
  *= require breathe/screen.css
  *= require breathe/userform.css
  *= require breathe/topmenu.css
@@ -15,7 +16,9 @@
  *= require breathe/puavo.css
  *= require breathe/jquery.tooltip.css
  *= require jquery.liveSearch.css
- *= require external_files.scss
  */
-~
+
+// Stylus imports
+@import "nib"
+@import "external_files.styl"
 

@@ -1,6 +1,7 @@
 
 all:
 	bundle install --deployment
+	npm install # nib for stylys
 	bundle exec rake assets:precompile
 
 install:

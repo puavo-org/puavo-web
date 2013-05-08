@@ -1,0 +1,12 @@
+{
+  "name": "puavo-users",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/opinsys/puavo-users.git"
+  },
+  "license": "GPLv2",
+  "dependencies": {
+    "nib": "~0.9.1"
+  }
+}
