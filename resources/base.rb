@@ -112,7 +112,7 @@ class LdapSinatra < Sinatra::Base
   end
 
 
-  before "/:organisation/*" do
+  before "/v1/:organisation/*" do
     @organisation = LdapModel.escape(params["organisation"])
 
     cred = request.env["PUAVO_CREDENTIALS"]
