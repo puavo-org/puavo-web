@@ -6,18 +6,18 @@ require 'rails/all'
 
 require "active_ldap/railtie"
 
-# https://github.com/lucasmazza/ruby-stylus/issues/29
-if Rails.env != 'production'
-  require 'stylus'
-  Stylus.use(:nib)
-  Stylus.debug = true
-end
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require(*Rails.groups(:assets => %w(development test)))
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
+end
+
+# https://github.com/lucasmazza/ruby-stylus/issues/29
+if defined? Stylus
+  Stylus.use(:nib)
+  Stylus.debug = Rails.env != "production"
 end
 
 module PuavoUsers
