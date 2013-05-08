@@ -1,0 +1,8 @@
+services:
+ - puavo: /users
+ - infotv: /infotv
+ - change_password: /users/password
+defaults:
+- puavo
+- infotv
+- change_password
