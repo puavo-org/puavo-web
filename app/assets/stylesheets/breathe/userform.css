@@ -1,28 +1,156 @@
 
-form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption { 
+form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption {
   padding: 0 10px 0 0;
   position:relative;
 }
-
+.rename_group_old_name{
+  text-align: right;
+  width: 35%;
+}
+.rename_group_new_name{
+  width: 60%;
+}
+.rename_group_name_abbr{
+  width: 45%;
+}
+table.new_groups_table tr td{
+  text-align: left !important;
+}
 
 @media all and (max-width: 800px) {
-  form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption { 
+   form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption {
+    float: left;
+    display: block !important;
+    text-align: left !important;
+    width: 100% !important;
+  }
+  form table.autopoweroff_organisation tr td {
+    width: auto !important;
+  }
+  form tr td input[type="text"], form tr td input[type="password"], form tr td input[type="email"], form tr td input[type="tel"], form input[type="text"], form input[type="password"] {
+    width: 95%;
+  }
+  form table, .new_external_service table, .edit_external_service table {
+    padding-left: 2%;
+    width: 100%;
+  }
+  .new_external_service tr td:nth-child(even), .new_external_service tr td:nth-child(odd), .edit_external_service tr:nth-child(even), .edit_external_service tr:nth-child(odd){
+    width: 95% !important;
+  }
+  form table:not(.validate_users_list) tr {
+    display: block !important;
+    position: relative;
+  }
+  .label_td.view{
+    width:35%;
+  }
+  table#autopoweroff th{
+    display: inline-block !important;
+    width: auto !important;
+  }
+  table#autopoweroff td.checkbox {
+    display: inline-block !important;
+    width: 10% !important;
+    text-align: center !important;
+  }
+  .show_user table.list td{
+    display: inline-block;
+  }
+  .show_user table.list td.value_td{
+    padding-left: 1em;
+  }
+  .show_user table.list td.value_td{
+    text-align: left !important;
+  }
+  .mass_import_info, .mass_import_info_text{
+    padding: 2%;
+  }
+  form[action$="import/validate"] p, form[action$="import/refine"] p, form[action$="import/refine"] pre{
+    padding: 0 0 0 2%;
+  }
+  .mass_import_form input{
+    margin-left: 2%;
+  }
+  textarea#raw_users{
+    margin-left: 2%;
+    width: 90% !important;
+  }
+  .mass_import_form {
+    width: 90% !important;
+  }
+  form table.import_define th, form table.import_define td {
+    width: 45% !important;
+    display: inline-block;
+  }
+  .submit_button_container{
+    margin-left: 2% !important;
+  }
+  .btn{
+    font-size: 100% !important;
+  }
+  form.form_inline{
+    padding: 2% 0;
+  }
+  .form_inline > * {
+    padding: 0 2%;
+  }
+  .form_inline label{
     display: block;
+    font-size: 120%;
+    text-align: left;
   }
-  form tr td input[type="text"] {
+  form.form_inline .submit_button_login{
+    margin: 5% 0 0;
+  }
+  form.form_inline input{
+    max-width: 100%;
+    min-height: 50px;
+    width: 98%;
+  }
+  form.new_device h2, form.edit_device h2, form.edit_server h2{
+    padding: 0 2%;
+  }
+  form table.rename_groups_roles_table tr th, form table.rename_groups_roles_table tr td{
+    width: 45% !important;
+  }
+  #other_groups td, #member_groups td{
+    line-height: 3;
+  }
+  table#autopoweroff td table{
     width: 95%;
   }
-  form table {
-    width: 95%;
+  table#autopoweroff td table td{
+    width: 30% !important;
   }
 }
 
-form tr {
+form table:not(.validate_users_list) tr {
+  display: table;
+  margin: 0 0 5px;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+  width: 100%;
+}
+form table.rename_groups_table tr{
+  white-space: normal;
+}
+form table.new_groups_table tr td{
+  float: left !important;
+  width: 45% !important;
+}
+form table.validate_users_list tr{
   margin: 0 0 10px;
   white-space: nowrap;
   overflow: scroll;
   text-overflow: clip;
   width: 95%;
+}
+form table:not(.validate_users_list) tr:before,
+form table:not(.validate_users_list) tr:after {
+  display: table;
+  line-height: 0;
+  content: "";
 }
 
 form tr td {
@@ -33,10 +161,27 @@ table, td, th {
   vertical-align: top;
 }
 
+.external_services_system_groups div {
+  word-wrap: break-word;
+}
+.submit_button_container{
+  margin-left: 26.2345%;
+}
+.submit_button_container_no_margin{
+  margin-left: 0;
+}
+form[action$="users/import"] .submit_button_container{
+  margin-left:0;
+}
+.external_service{
+  margin-left: 20%;
+}
 #device_puavoDeviceXrandr input,
 #device_macAddress input,
-#server_puavoExport_list input,
-#organisation_puavoBillingInfo input,
-#school_puavoBillingInfo input {
+#server_puavoExport_list input {
   display: block;
+}
+
+.purchase_date select {
+  width: auto;
 }

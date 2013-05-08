@@ -1,19 +1,19 @@
 #top-menu {
   float: left;
-  font-size: 9pt;
+  font-size: 90%;
   font-weight: bold;
   line-height: 3em;
   list-style: none outside none;
   margin: 0;
-  padding: 0 5px 0 10px;
+  padding: 0 5px;
   text-transform: uppercase;
   z-index: 1000;
 }
 #nav1 ul {
   display: inline-block;
-  font-size: 10pt;
+  font-size: 100%;
   font-weight: bold;
-  line-height: 3.5;
+  line-height: 3;
   list-style: none outside none;
   margin: 0;
   padding: 0;
@@ -34,15 +34,14 @@
   background-image: -o-linear-gradient(top,rgb(250,179,46),rgb(245,149,69));
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#F59545, endColorstr=#FAB32E);
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#F59545, endColorstr=#FAB32E)";
-  border-radius: 15px 15px 0 0;
+  border-radius: 10px 10px 0 0;
   float: left;
-  height:45px;
   margin: 0 3px 0 0;
-  min-width: 80px;
+  min-width: 50px;
   white-space: nowrap;
   width: auto !important;
-  -moz-border-radius:15px 15px 0 0;
-  -webkit-border-radius:15px 15px 0 0;
+  -moz-border-radius:10px 10px 0 0;
+  -webkit-border-radius:10px 10px 0 0;
 }
 #nav1 ul a{
   display:block;
@@ -84,7 +83,6 @@
   background-image: -o-linear-gradient(top,rgb(153,106,42),rgb(186,114,45));
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
-  height:45px;
 }
 #top-menu > li > ul,
 #nav1 ul li ul {
@@ -92,7 +90,7 @@
   border-radius: 0 0 20px 20px;
   display: none;
   left: 0;
-  line-height: 16px;
+  line-height: 1.5;
   margin-top: 50px;
   padding: 0;
   position: absolute;
@@ -106,10 +104,12 @@
 }
 #top-menu > li > ul {
   left: -5px;
-  margin: 36px 0 0;
+  min-width: 200px;
+  margin: 0;
   max-height: 400px;
   overflow-y: auto;
   padding: 0 10px 0 0;
+  top:100%;
   white-space: nowrap;
   width: auto !important;
 }
@@ -132,15 +132,15 @@
 }
 
 /* Keeps top menus open. Useful for debugging */
-/* #top-menu li ul, */
-/* #nav1 ul li ul { */
-/*   display: block; */
-/* } */
+/*#top-menu li ul,
+ #nav1 ul li ul {
+ display: block;
+}*/
 
 li.top-menu-item {
   border-top:1px solid #E6E6E6;
   display: block;
-  font-size: 9pt;
+  font-size: 90%;
   list-style-type: none;
   margin: 8px 20px;
   padding: 5px 15px 0 0;
@@ -185,8 +185,6 @@ li.top-menu-item:last-child {
   border-radius: 8px 8px 0 0;
 
 }
-
-
 #top-menu #main,
 #nav1 ul #main {
   background-color: #7CB7E3;
@@ -209,7 +207,7 @@ li.top-menu-item:last-child {
   background-image: url(../../images/show-more.png);
   background-repeat: no-repeat;
   background-position: right;
-  padding-right: 12px;
+  padding-right: 10px;
 }
 
 .topNavContainer {
@@ -223,11 +221,10 @@ li.top-menu-item:last-child {
     color-stop(0.80, rgb(250,179,46))
   );
   background-image: -o-linear-gradient(top,rgb(250,179,46),rgb(245,149,69));
-
   box-shadow: 2px 4px 6px rgba(68, 68, 68, 0.80);
   height: auto;
   margin: 0;
-  min-width: 500px;
+  min-width: 315px;
   position: fixed;
   top:0;
   width: 100%;
@@ -237,16 +234,16 @@ li.top-menu-item:last-child {
 }
 
 .topNavContainer input {
-  background: url("../../images/magnifier.png") no-repeat scroll 95% 3px #FFFFFF;
+  background: url("../../images/magnifier.png") no-repeat scroll 95% center #FFFFFF;
   border: 1px solid #AAAAAA;
-  border-radius: 7px;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
   box-shadow: 0 1px 0 #FAB32E;
   float: left;
   margin: 5px 0 0 5px !important;
   padding: 5px 30px 5px 10px;
-  width: 13em;
-  -moz-border-radius: 7px;
-  -webkit-border-radius: 7px;
+  width: 15em;
 }
 .topNavContainer input.loading {
   background: url("../../images/ajax-loader.gif") no-repeat scroll 95% 4px #FFFFFF !important;
@@ -254,7 +251,7 @@ li.top-menu-item:last-child {
 .topNavContentContainer,
 .footer_wrap {
   margin: 0 auto;
-  max-width: 980px;
+  max-width: 1200px;
   width:90%;
 }
 #top-menu .last_one,
@@ -278,7 +275,7 @@ li.top-menu-item:last-child {
   float: right;
   margin: 0 5px 2px 0;
 }
-#top-menu-right li a[onclick] {
+#top-menu-right li a[data-method="delete"] {
   background: none repeat scroll 0 0 #AD0000;
   border-radius: 6px 6px 6px 6px;
   color: #FFFFF0;
@@ -288,7 +285,7 @@ li.top-menu-item:last-child {
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;
 }
-#top-menu-right li a[onclick]:hover {
+#top-menu-right li a[data-method="delete"]:hover {
   background: none repeat scroll 0 0 #DA0000;
 }
 #top-menu li ul li .school_submenu{display:none;}
@@ -328,7 +325,6 @@ margin: 8px;
 }
 #nav1 ul .current_page_item a {
   color: #FFFFF0;
-  height:40px;
 }
 ul.menu {
   list-style: none outside none;
@@ -344,7 +340,7 @@ ul.menu li {
 }
 ul.menu li span {
   display: block;
-  padding: 0 5px;
+  padding: 0;
   text-decoration: none;
   width: auto;
 }
