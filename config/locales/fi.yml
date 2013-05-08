@@ -290,6 +290,12 @@ fi:
       save_and_close: Tallenna ja sulje
     show: 
       message: Tietojen tallennus onnistui
+  menu:
+    index:
+      service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta
+      service_link_name_infotv: Info-TV
+      service_link_name_change_password: Vaihda salasanaa
+      service_link_name_webdisk: Kotihakemistojen etäkäyttö
   controllers: 
     import: 
       school_has_changed: "Siirretty käyttäjä, käytössä vanha salasana"

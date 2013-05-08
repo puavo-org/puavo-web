@@ -3,6 +3,8 @@ PuavoUsers::Application.routes.draw do
 
   root :to => "schools#index"
 
+  match '/menu' => 'menu#index', :via => :get
+
   scope :path => "users" do
     resources :external_services
 
