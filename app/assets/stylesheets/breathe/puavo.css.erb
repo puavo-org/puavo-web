@@ -148,8 +148,6 @@ h1 {
   font-weight: bold;
 }
 .tools_ul, .tools{
-  border-color: #222222;
-  border-style: solid;
   margin: 5px 1em .2em;
   padding: 0;
 }
@@ -181,10 +179,10 @@ h1 {
 .tools a[href$="edit"]:hover {
     background-position: left -30px;
 }
-.tools a[data-method$="delete"]{
+.tools a[data-method="delete"]{
   background-position: left -70px;
 }
-.tools a[data-method$="delete"]:hover{
+.tools a[data-method="delete"]:hover{
   background-position: left -110px;
 }
 .tools a[href$="select_school"],
@@ -260,29 +258,7 @@ a[href*="import/download.pdf"] {
   color: #B50000;
   padding: 0 0 0 10px;
 }
-table.list td a[href$="edit"],
-table.list td a[onclick],
-table.list td a[href$="automounts"] {
-  float: left;
-  margin: 0;
-  padding: 4px 2px;
-  text-align: center;
-  width: 60%;
-}
-table.list td a[href$="edit"]:hover,
-table.list td a[onclick]:hover,
-table.list td a[href$="automounts"]:hover {
-  /*background-color: #BD966A;*/
-}
-tbody a {
-  font-weight: bold;
-  text-decoration: underline;
-}
-tbody th {
-  font-size: 110%;
-  font-weight: bold;
-  text-decoration: none;
-}
+
 
 a:hover {
   color: #352608;
@@ -700,59 +676,6 @@ table.list {
   float:left;
   margin: 0 2px 0 0;
 }
-.btn{
-  color: #333;
-  cursor: pointer;
-  background-color: #f5f5f5;
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-  background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
-  background-repeat: repeat-x;
-  border: 1px solid #AAAAAA;
-  border-radius: 2px 2px 2px 2px;
-  -moz-border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px 2px 2px 2px;
-  font-weight: normal;
-  padding: 4px 8px;
-  text-align: center;
-  text-decoration: none;
-}
-.btn-danger{
-  background-color: #D14836;
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#D14836), to(#8F0000));
-  background-image: -webkit-linear-gradient(top, #D14836, #8F0000);
-  background-image: -o-linear-gradient(top, #D14836, #8F0000);
-  background-image: linear-gradient(to bottom, #D14836, #8F0000);
-  background-image: -moz-linear-gradient(top, #D14836, #8F0000);
-  background-image: -ms-linear-gradient(top, #D14836, #8F0000);
-  background-repeat: repeat-x;
-  color:#fff;
-}
-.btn-success{
-  background-color: #60C260;
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#60C260), to(#51a351));
-  background-image: -webkit-linear-gradient(top, #60C260, #51a351);
-  background-image: -o-linear-gradient(top, #60C260, #51a351);
-  background-image: linear-gradient(to bottom, #60C260, #51a351);
-  background-image: -moz-linear-gradient(top, #60C260, #51a351);
-  background-image: -ms-linear-gradient(top, #60C260, #51a351);
-  background-repeat: repeat-x;
-  color:#fff;
-}
-.btn:hover{
-  background: #f5f5f5;
-}
-.btn-danger:hover{
-  background: #D14836;
-  color: #ffffff;
-}
-.btn-success:hover{
-  background: #54B954;
-  color: #ffffff;
-}
 .dashboard .school_admins a, .dashboard .other_admins a {
   float: right;
   margin: 0;
@@ -1012,11 +935,6 @@ Responsive styles
   }
   #top-menu > li > ul{
     top:98%;
-  }
-  table.list td a[href$="edit"],
-  table.list td a[onclick],
-  table.list td a[href$="automounts"] {
-    width: 95%;
   }
 }
 @media screen and (orientation: portrait) and (max-device-width: 800px){
