@@ -14,8 +14,8 @@
     <td>
       <%= group.cn %>
     </td>
-    <td><%= link_to t('link.edit'), edit_group_path(@school, group) %></td>
-    <td><%= link_to t('link.destroy'), group_path(@school, group), :confirm => t('general_confirm'), :method => :delete %></td>
+    <td><%= link_to t('link.edit'), edit_group_path(@school, group),:class=> "btn" %></td>
+    <td><%= link_to t('link.destroy'), group_path(@school, group), :confirm => t('general_confirm'), :method => :delete, :class=> "btn btn-danger" %></td>
   </tr>
 <% end %>
 </table>
