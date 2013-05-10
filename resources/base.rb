@@ -112,7 +112,7 @@ class LdapSinatra < Sinatra::Base
   end
 
 
-  before "/v3/:organisation/*" do
+  before "/v3/:organisation*" do
     @organisation = LdapModel.escape(params["organisation"])
 
     cred = request.env["PUAVO_CREDENTIALS"]
@@ -131,6 +131,10 @@ class LdapSinatra < Sinatra::Base
       bad_credentials("Bad username or password")
     end
 
+  end
+
+  get "/v3/:organisation" do
+    json({ :organisation => @organisation })
   end
 
   # Model instance factory
