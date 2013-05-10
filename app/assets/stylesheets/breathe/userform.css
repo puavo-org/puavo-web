@@ -1,8 +1,3 @@
-
-form table:not(.validate_users_list) th, form table:not(.validate_users_list) td, form table:not(.validate_users_list) caption {
-  padding: 0 10px 0 0;
-  position:relative;
-}
 .rename_group_old_name{
   text-align: right;
   width: 35%;
@@ -122,66 +117,4 @@ table.new_groups_table tr td{
   table#autopoweroff td table td{
     width: 30% !important;
   }
-}
-
-form table:not(.validate_users_list) tr {
-  display: table;
-  margin: 0 0 5px;
-  overflow: hidden;
-  text-overflow: clip;
-  white-space: nowrap;
-  width: 100%;
-}
-form table.rename_groups_table tr{
-  white-space: normal;
-}
-form table.new_groups_table tr td{
-  float: left !important;
-  width: 45% !important;
-}
-form table.validate_users_list tr{
-  margin: 0 0 10px;
-  white-space: nowrap;
-  overflow: scroll;
-  text-overflow: clip;
-  width: 95%;
-}
-form table:not(.validate_users_list) tr:before,
-form table:not(.validate_users_list) tr:after {
-  display: table;
-  line-height: 0;
-  content: "";
-}
-
-form tr td {
-  margin: 0;
-  padding: 0;
-}
-table, td, th {
-  vertical-align: top;
-}
-
-.external_services_system_groups div {
-  word-wrap: break-word;
-}
-.submit_button_container{
-  margin-left: 26.2345%;
-}
-.submit_button_container_no_margin{
-  margin-left: 0;
-}
-form[action$="users/import"] .submit_button_container{
-  margin-left:0;
-}
-.external_service{
-  margin-left: 20%;
-}
-#device_puavoDeviceXrandr input,
-#device_macAddress input,
-#server_puavoExport_list input {
-  display: block;
-}
-
-.purchase_date select {
-  width: auto;
 }
