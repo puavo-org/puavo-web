@@ -125,7 +125,6 @@ class LdapSinatra < Sinatra::Base
     @ldap_conn.start_tls
 
     begin
-      puts "binding #{ cred[:username] } in #{ self.class }"
       @ldap_conn.bind(cred[:username], cred[:password])
     rescue LDAP::ResultError
       bad_credentials("Bad username or password")
