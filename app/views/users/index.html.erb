@@ -11,15 +11,15 @@
     <td><%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %></td>
     <td><%=h user["uid"] %></td>
     <td><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
-    <td><%= link_to t('link.edit'), edit_user_path(@school, user["puavoId"]) %></td>
+    <td><%= link_to t('link.edit'), edit_user_path(@school, user["puavoId"]), :class=> "btn" %></td>
     <td><%= link_to( t('link.destroy'),
             user_path(@school, user["puavoId"]),
             :confirm => t('destroy_confirm', :object_name => "#{user['sn']} #{user['givenName']}"),
-            :method => :delete ) %></td>
+            :method => :delete, :class=> "btn btn-danger" ) %></td>
   </tr>
 <% end %>
 </table>
-    
+
 <% content_for :right do %>
 <div><%= link_to t('link.new_user'), new_user_path %></div>
 <div><%= link_to t('link.user_mass_import.new'), new_users_import_path %></div>
