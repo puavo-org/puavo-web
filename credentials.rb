@@ -1,3 +1,5 @@
+require "puavo"
+
 module PuavoRest
 
 # Various Rack middleware classes for acquiring login credentials.
@@ -23,7 +25,6 @@ class BasicAuth < Base
     type, data = env["HTTP_AUTHORIZATION"].split(" ")
     if type == "Basic"
       plain = Base64.decode64(data)
-      puts "using basic auth credentials"
       username, password = plain.split(":")
       {
         :username => username,
@@ -37,11 +38,9 @@ end
 # Can be used to make public resources on the school network.
 class BootServer < Base
   def acquire(env)
-    # TODO: read from /etc/puavo
-    puts "using boot credentials"
     {
-      :username => "uid=admin,o=puavo",
-      :password => "password"
+      :username => PUAVO_ETC.ldap_dn,
+      :password => PUAVO_ETC.ldap_password
     }
   end
 end

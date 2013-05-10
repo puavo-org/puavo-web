@@ -5,9 +5,6 @@ require "sinatra/base"
 require "sinatra/json"
 require "base64"
 
-require "debugger"
-require "pry"
-
 require "./credentials"
 require "./errors"
 require "./resources/base"
