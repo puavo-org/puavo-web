@@ -120,7 +120,7 @@ class LdapSinatra < Sinatra::Base
       bad_credentials "No credentials supplied"
     end
 
-    @ldap_conn = LDAP::Conn.new("precise64.opinsys.net")
+    @ldap_conn = LDAP::Conn.new(CONFIG["ldap"])
     @ldap_conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     @ldap_conn.start_tls
 

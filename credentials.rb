@@ -38,10 +38,12 @@ end
 # Can be used to make public resources on the school network.
 class BootServer < Base
   def acquire(env)
-    {
-      :username => PUAVO_ETC.ldap_dn,
-      :password => PUAVO_ETC.ldap_password
-    }
+    if CONFIG["bootserver"]
+      {
+        :username => PUAVO_ETC.ldap_dn,
+        :password => PUAVO_ETC.ldap_password
+      }
+    end
   end
 end
 
