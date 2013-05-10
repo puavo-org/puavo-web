@@ -276,11 +276,10 @@ li.top-menu-item:last-child {
   margin: 0 5px 2px 0;
 }
 #top-menu-right li a[data-method="delete"] {
-  background: none repeat scroll 0 0 #AD0000;
-  border-radius: 6px 6px 6px 6px;
+  border-radius: 6px;
   color: #FFFFF0;
   line-height: 1.8;
-  margin: -1px 0 0 10px;
+  margin: 0 0 0 10px;
   padding: 2px 10px;
   -moz-border-radius: 6px 6px 6px 6px;
   -webkit-border-radius: 6px 6px 6px 6px;

@@ -101,7 +101,7 @@
         <ul id="top-menu-right" class="menu">
             <li><span><%= t('.logged_in_as') %>:</span></li>
                 <li><a href="#"><%= current_user.displayName %></a></li>
-                <li><%= link_to t('.logout'), logout_path, :method => :delete %></li>
+                <li><%= link_to t('.logout'), logout_path, :method => :delete, :class => "btn btn-danger" %></li>
         </ul>
      <% end %>
    </div>
