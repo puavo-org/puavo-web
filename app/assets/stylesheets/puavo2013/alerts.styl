@@ -1,0 +1,52 @@
+@import 'nib'
+
+.message_error,
+.message_notice,
+.message_success,
+.notice,
+.message_alert
+  padding 0.5em
+  margin 15px 15px 1em 0
+  border 2px solid #ddd
+
+.message_error, .message_alert
+  background none repeat scroll 0 0 #AD0000
+  border 1px solid #AAAAAA
+  border-radius 4px
+  color #F4F4F4
+  font-size 130%
+  text-align center
+
+.message_notice, .notice
+  background none repeat scroll 0 0 #86B410
+  border 1px solid #56340E
+  border-radius 4px
+  font-size 130%
+  text-align center
+
+.login_content .notice, .login_content .message_notice
+  left 0
+  margin 0
+  position relative
+  top 0
+
+.message_success
+  background #E6EFC2
+  color #264409
+  border 1px solid #C6D880
+  font-size 14pt
+  text-align center
+  a
+    color #264409
+
+.message_error
+  a
+    color #8a1f11
+
+.message_notice a,
+.message_alert a
+  color #514721
+
+.notice
+  a
+    color #514721
