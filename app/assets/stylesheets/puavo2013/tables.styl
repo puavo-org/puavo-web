@@ -1,11 +1,29 @@
 @import 'nib'
 
+table, th, td
+  vertical-align middle
+
+table
+  border-collapse collapse
+  a
+    font-weight bold
+    text-decoration underline
 th
+  text-decoration none
+  font-size 110%
   font-weight bold
 
 thead
   th
     background #c3d9ff
+
+th,td
+  padding 6px
+
+tr
+  &.even
+    td
+      background #e5ecf9
 
 .import_define th, .import_define td
   float left
@@ -19,30 +37,6 @@ thead
           td
             &.refine_example
               color black
-
-th,td,caption
-  padding 5px 1%
-
-tr
-  &.even
-    td
-      background #e5ecf9
-
-table.list td a[href$="edit"],
-table.list td a[data-method="delete"],
-table.list td a[href$="automounts"]
-  float left
-  margin 0
-  text-align center
-
-tbody
-  a
-    font-weight bold
-    text-decoration underline
-  th
-    font-size 110%
-    font-weight bold
-    text-decoration none
 
 tfoot
   font-style italic
