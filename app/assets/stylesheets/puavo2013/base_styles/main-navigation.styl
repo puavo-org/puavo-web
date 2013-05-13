@@ -1,0 +1,147 @@
+@import 'nib'
+
+.navbar-first-level
+  clear both
+  margin 5px 0 -1px
+  h1
+    float left
+    font-size 2.5em
+    margin 10px 0 0 10px
+  ul
+    display inline-block
+    font-size 100%
+    font-weight bold
+    line-height 3
+    list-style none outside none
+    margin 0
+    padding 0
+    text-align center
+    text-transform uppercase
+    width 100%
+    .current_page_item
+      background none repeat scroll 0 0 #A36A2A
+      background-image linear-gradient(rgb(153,106,42) 0%,rgb(186,114,45) 100%)
+      border-left 1px solid #222222
+      border-right 1px solid #222222
+      border-top 1px solid #222222
+      position relative
+      a
+        color #FFFFF0
+    .last_one
+      background none repeat scroll 0 0 transparent
+      border medium none
+      height 0
+      margin 0
+      padding 0
+      position relative
+    .middle
+      height 20px
+      left 18px
+      position absolute
+      top 0
+      width 105px
+    & > li
+      background none repeat scroll 0 0 #FAB32E
+      background-image linear-gradient(rgb(250,179,46) 0%,rgb(245,149,69) 100%)
+      border-radius 10px 10px 0 0
+      float left
+      margin 0 3px 0 0
+      min-width 50px
+      white-space nowrap
+      &:last-child
+        margin 0
+      &:hover
+        background none repeat scroll 0 0 #A36A2A
+        background-image linear-gradient(rgb(153,106,42) 0%,rgb(186,114,45) 100%)
+    li ul
+      background none repeat scroll 0 0 #F59545
+      border-bottom 1px solid #222
+      border-left 1px solid #222
+      border-right 1px solid #222
+      border-radius 0 0 20px 20px
+      display none
+      left 0
+      line-height 1.5
+      margin-top 50px
+      padding 0
+      position absolute
+      top 0
+      width 130px
+      z-index 999
+    a
+      display block
+      padding 0 1em
+
+.navbar-second-level
+  background none repeat scroll 0 0 #A36A2A
+  background-image linear-gradient(rgb(186, 114, 45) 35%, rgb(163, 106, 42) 60%)
+  border 1px solid #222222
+  border-radius 0 12px 0 0
+  clear both
+  color #4A4D4A
+  font-size 85%
+  font-weight normal
+  height 35px
+  margin 0
+  padding 0
+  text-transform uppercase
+  width 100%
+  z-index 9999
+  ul
+    &:not(.submenu)
+      display inline-block
+      margin 5px 0 0
+      padding 0
+  & > ul
+    display inline-block
+    margin 5px 0 0
+    padding 0
+  li
+    display inline
+    float left
+    height 29px
+    margin 0 0 0 5px
+    min-width 50px
+    padding 0
+    position relative
+    text-align center
+    text-decoration none
+    white-space nowrap
+    width auto !important
+    &:first-child
+      margin 0 0 0 6px
+    &:hover
+      &:not(.current)
+        background none repeat scroll 0 0 #FFFFFF
+        border-radius 10px 10px 0 0
+        border-left 1px solid #222222
+        border-right 1px solid #222222
+        border-top 1px solid #222222
+        margin-right -2px
+        z-index 9999
+    a
+      border-radius 10px 10px 0 0
+      color #E6E6D8
+      display block
+      line-height 3
+      margin 0
+      padding 0 0.6em
+      text-decoration none
+      &:hover
+        color #222222
+    &.current
+      background none repeat scroll 0 0 #FFFFFF
+      border-left 1px solid #222222
+      border-radius 10px 10px 0 0
+      border-right 1px solid #222222
+      border-top 1px solid #222222
+      a
+        color #4A4D4A
+
+div
+  &:not(.navbar-second-level)
+    .wrap
+      &:first-of-type
+        border-top 1px solid #222
+        margin 1em 0
+
