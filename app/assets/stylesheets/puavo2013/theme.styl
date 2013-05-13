@@ -11,10 +11,16 @@ body
   border-radius 10px 10px 0 0
   box-shadow 0px 15px 15px rgba(68, 68, 68, 0.70)
 
+.maincontent
+  background-color #FFFFFF
+  border-bottom 1px solid #222222
+  border-left 1px solid #222222
+  border-right 1px solid #222222
+  border-radius 0 0 4px 4px
 
 .topNavContainer
-  background none repeat scroll 0 0 rgb(237, 113, 19)
-  background-image linear-gradient(rgb(245, 149, 69) 0%, rgb(237, 113, 19) 100%)
+  background none repeat scroll 0 0 rgb(245,149,69)
+  background-image linear-gradient(rgb(250,179,46) 0% ,rgb(245,149,69) 100%)
   box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
   height auto
   margin 0
@@ -25,6 +31,51 @@ body
   z-index 9999
   box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
 
-#top-menu > li > ul,
-#nav1 ul li ul
-  background none repeat scroll 0 0 rgb(237, 113, 19)
+#top-menu > li > ul
+  background none repeat scroll 0 0 rgb(245,149,69)
+
+.content-box
+  background none repeat scroll 0 0 #FBFBFB
+  background-image linear-gradient(rgb(251,251,251) 0%,rgb(250,250,250) 100%)
+  border-radius 4px
+  &.school_image
+    background none repeat scroll 0 0 transparent
+    border 0 none
+    border-radius 0
+  h4
+    border-bottom 2px solid
+  .row
+    &:not(:first-of-type)
+      border-top 1px solid #AAAAAA
+
+  h3, .show_user h3
+    background none repeat scroll 0 0 #A36A2A
+    background-image linear-gradient(rgb(186,114,45) 0%, rgb(153,106,42) 100%)
+    border-radius 4px 4px 0 0
+    color #E6E6D8
+
+// .tools ->
+.tools
+  a
+    &:hover
+      color #222
+  & > div
+    border-bottom 1px dashed #ECEADA
+  .tool
+    span
+      background-position center -630px
+      &:hover
+        background-position center -670px transparent
+        cursor pointer
+    ul
+      border 1px solid #AAAAAA
+      li
+        background none repeat scroll 0 0 #FFFFFF
+        &:hover
+          background none repeat scroll 0 0 #C0772F
+
+.tools > li:hover,
+.tools > div:hover
+  background none repeat scroll 0 0 #C0772F
+  border-radius 6px 6px 0 0
+// End of .tools

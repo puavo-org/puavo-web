@@ -1,7 +1,7 @@
 @import 'nib'
 
 *
-  box-sizing padding-box
+  box-sizing border-box
 
 html, body
   height 100%
@@ -204,29 +204,17 @@ caption
   max-width 1200px
   padding 5px 10px 0
   width 90%
-
-.main-wrap
   & > h1
     font-size 250%
     font-variant small-caps
     margin 0
     padding 1% 0 0 0
 
-.wrap
-  background none repeat scroll 0 0 #FFFFFF
-  border-bottom 1px solid #222222
-  border-left 1px solid #222222
-  border-right 1px solid #222222
-  border-radius 0 0 0 10px
-  border-radius 0 0 0 10px
-  margin 0 0 1em
-  width 100%
-
 .maincontent
-  margin 0 0 0 2%
-  padding 1% 0 10px
+  margin 0 0 2% 0
+  padding 1%
   position relative
-  width 95%
+  width 100%
   h1
     font-size 220%
     line-height 1.2em
@@ -235,39 +223,28 @@ caption
     span
       border-bottom 2px solid #435266
 
+// .tools ->
 .tools
-  a
-    &:hover
-      color #222
-  & > div
-    border-bottom 1px dashed #ECEADA
+  a > div
     float left
     margin 0
     padding 0 0 0 5px
     position relative
   .tool
     span
-      background-position center -630px
       font-size 0
       padding 20px 5px
       text-indent -9999px
       width 24px
-      &:hover
-        background-position center -670px transparent
-        cursor pointer
     ul
       display none
-      border 1px solid #AAAAAA
       padding 0
       position absolute
       margin 0 0 0 -5px
       right 0
       li
-        background none repeat scroll 0 0 #FFFFFF
         min-width 150px
         width auto !important
-        &:hover
-          background none repeat scroll 0 0 #C0772F
 
 .tools a, .tool span
   font-size 120%
@@ -279,7 +256,37 @@ caption
   white-space nowrap
   width auto
 
-.tools > li:hover,
-.tools > div:hover
-  background none repeat scroll 0 0 #C0772F
-  border-radius 6px 6px 0 0
+// End of .tools
+
+.content-box
+  float left
+  font-size 110%
+  margin-top 5px
+  min-width 45%
+  padding 0 0 5px
+  width 45%
+  &.list .row
+    clear both
+  &.school_image
+    float left
+    margin 5px 15px 15px 0
+  h4
+    clear both
+    margin 0 0 5px
+    padding 5px 0 5px 10px
+  p
+    float left
+    margin 0 2px 0 0
+  .row
+    margin 0
+    padding 5px 10px
+    a, p
+      font-weight bold
+    & > span
+      float left
+      padding 5px 0 5px
+      word-wrap break-word
+      width 33.3%
+  h3, .show_user h3
+    margin 0
+    padding 10px

@@ -42,8 +42,8 @@
       width 105px
     & > li
       background none repeat scroll 0 0 #FAB32E
-      background-image linear-gradient(rgb(250,179,46) 0%,rgb(245,149,69) 100%)
-      border-radius 10px 10px 0 0
+      background-image linear-gradient(rgb(250,179,46) 0% ,rgb(245,149,69) 100%)
+      border-radius 4px 4px 0 0
       float left
       margin 0 3px 0 0
       min-width 50px
@@ -76,12 +76,12 @@
   background none repeat scroll 0 0 #A36A2A
   background-image linear-gradient(rgb(186, 114, 45) 35%, rgb(163, 106, 42) 60%)
   border 1px solid #222222
-  border-radius 0 12px 0 0
+  border-radius 0 4px 0 0
   clear both
   color #4A4D4A
   font-size 85%
   font-weight normal
-  height 35px
+  height 40px
   margin 0
   padding 0
   text-transform uppercase
@@ -99,7 +99,7 @@
   li
     display inline
     float left
-    height 29px
+    height 30px
     margin 0 0 0 5px
     min-width 50px
     padding 0
@@ -110,38 +110,22 @@
     width auto !important
     &:first-child
       margin 0 0 0 6px
-    &:hover
-      &:not(.current)
-        background none repeat scroll 0 0 #FFFFFF
-        border-radius 10px 10px 0 0
-        border-left 1px solid #222222
-        border-right 1px solid #222222
-        border-top 1px solid #222222
-        margin-right -2px
-        z-index 9999
     a
       border-radius 10px 10px 0 0
+      border 1px solid transparent
       color #E6E6D8
       display block
-      line-height 3
       margin 0
-      padding 0 0.6em
+      padding 8px
       text-decoration none
       &:hover
         color #222222
-    &.current
+    &.current a, a:hover
       background none repeat scroll 0 0 #FFFFFF
       border-left 1px solid #222222
-      border-radius 10px 10px 0 0
+      border-radius 4px 4px 0 0
       border-right 1px solid #222222
       border-top 1px solid #222222
-      a
-        color #4A4D4A
+      color #4A4D4A
 
-div
-  &:not(.navbar-second-level)
-    .wrap
-      &:first-of-type
-        border-top 1px solid #222
-        margin 1em 0
 
