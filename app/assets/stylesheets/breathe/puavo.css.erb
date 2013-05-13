@@ -1,47 +1,4 @@
-h1 {
-  font-size: 250%;
-  margin: 10px 0 0.5em;
-}
 
-#container{
-  height: 100%;
-  margin:0;
-  min-width: 315px;
-}
-
-.maincontent {
-/*  float: left;*/
-  margin: 0 0 0 2%;
-  padding: 1% 0 10px;
-  position: relative;
-  width: 95%;
-}
-.maincontent h1 {
-  font-size: 220%;
-  line-height: 1.2em;
-  margin: 0 0 2%;
-  padding: 0;
-}
-.maincontent h1 span {
-  border-bottom: 2px solid #435266;
-}
-.wrap {
-  background: none repeat scroll 0 0 #FFFFFF;
-  border-bottom: 1px solid #222222;
-  border-left: 1px solid #222222;
-  border-right: 1px solid #222222;
-  border-radius: 0 0 0 10px;
-  -moz-border-radius:0 0 0 10px;
-  -webkit-border-radius:0 0 0 10px;
-  margin:0 0 1em;
-  width: 100%;
-}
-.container_wrap > h1 {
-  font-size: 250%;
-  font-variant: small-caps;
-  margin: 0;
-  padding: 1% 0 0 0;
-}
 .logo{
   float: right;
   margin: 10px;
@@ -54,63 +11,9 @@ h1 {
   -moz-box-shadow: 0 2px 6px #222;
   -webkit-box-shadow: 0 2px 6px #222;
 }
-.pdf_file a{
-  color:#FF6666;
-  font-size:12pt;
-}
-.tools_ul > li, .tools > div {
-  border-bottom: 1px dashed #ECEADA;
-  float: left;
-  margin: 0;
-  padding: 0 0 0 5px;
-  position: relative;
-}
-.tools_ul > li.tool{padding:0 1em;}
-.tools .tool ul{
-  display: none;
-}
 
-.tools .tool ul {
-  border: 1px solid #AAAAAA;
-  padding: 0;
-  position: absolute;
-  margin: 0 0 0 -5px;
-  right: 0;
-}
-
-.tools .tool ul li {
-  background: none repeat scroll 0 0 #FFFFFF;
-  min-width: 150px;
-  width: auto !important;
-}
-
-.tools .tool ul li:hover {
-  background:none repeat scroll 0 0 #C0772F;
-}
-
-.tools_ul > li:hover,
-.tools > li:hover,
-.tools > div:hover {
-  background:none repeat scroll 0 0 #C0772F;
-  border-radius:6px 6px 0 0;
-  -moz-border-radius:6px 6px 0 0;
-  -webkit-border-radius:6px 6px 0 0;
-}
 .devices.tools > div.add_new_device_select_container:hover{
   background-color: transparent;
-}
-.tools a, .tool span{
-  font-size: 120%;
-  display: block;
-  height: auto;
-  line-height: 1.25;
-  margin: 0;
-  padding: 15px 10px 15px 35px;
-  white-space: nowrap;
-  width: auto;
-}
-.tools a:hover {
-  color:#222;
 }
 
 .cancel div {
@@ -172,11 +75,11 @@ h1 {
   background-position: left -110px;
 }
 .tools a[href$="select_school"],
-.wrap .tools a[href$="rename_groups/new"] {
+.maincontent .tools a[href$="rename_groups/new"] {
   background-position: left -150px;
 }
 .tools a[href$="select_school"]:hover,
-.wrap .tools a[href$="rename_groups/new"]:hover {
+.maincontent .tools a[href$="rename_groups/new"]:hover {
   background-position: left -190px;
 }
 .tools .videolink {
@@ -213,18 +116,7 @@ h1 {
 .tools a[href$="import/new"]:hover {
   background-position:left -510px;
 }
-.tool span {
-  background-image: url(<%= asset_path 'iconset-breathe.png' %>);
-  background-position:center -630px;
-  font-size: 0;
-  padding:20px 5px;
-  text-indent: -9999px;
-  width:24px;
-}
-.tool span:hover {
-  background-position: center -670px transparent;
-  cursor:pointer;
-}
+
 
 a[href*="import/download.pdf"] {
   color: #F44000;
@@ -518,10 +410,10 @@ table.list {
 .list tr:hover {
   background: #F9F7E6 !important;
 }
-.list tr:nth-child(even), .dashboard_box table tr:nth-child(even) {
+.list tr:nth-child(even), .content-box table tr:nth-child(even) {
   background:none repeat scroll 0 0 #FAFAFA;
 }
-.list tr:nth-child(odd), .dashboard_box table tr:nth-child(odd) {
+.list tr:nth-child(odd), .content-box table tr:nth-child(odd) {
   background: none repeat scroll 0 0 #F1F1F1;
 }
 .list td {
@@ -561,7 +453,7 @@ table.list {
 .dashboard > *, .show_user > * {
   margin:10px 15px 10px 0;
 }
-.dashboard_box, .user_box {
+.content-box, .user_box {
   background: none repeat scroll 0 0 #FBFBFB;
   background:-moz-linear-gradient(center bottom , #FBFBFB 20%, #FAFAFA 70%) repeat scroll 0 0 transparent;
   background: -webkit-gradient(
@@ -591,11 +483,11 @@ table.list {
   margin: 5px 0 0;
   width: 100%;
 }
-.dashboard_box.users {
+.content-box.users {
   clear: both
 }
 
-.dashboard_box.school_image {
+.content-box.school_image {
   background: none repeat scroll 0 0 transparent;
   border: 0 none;
   border-radius: 0 0 0 0;
@@ -604,13 +496,13 @@ table.list {
   -moz-border-radius: 0 0 0 0;
   -webkit-border-radius: 0 0 0 0;
 }
-.dashboard_box h4 {
+.content-box h4 {
   border-bottom: 2px solid;
   clear: both;
   margin: 0 0 5px;
   padding: 5px 0 5px 10px;
 }
-.dashboard_box h3, .show_user h3 {
+.content-box h3, .show_user h3 {
   background: none repeat scroll 0 0 #A36A2A;
   background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
   background: -webkit-gradient(
@@ -630,10 +522,10 @@ table.list {
   -moz-border-radius: 6px 6px 0 0;
   -webkit-border-radius: 6px 6px 0 0;
 }
-.dashboard_box .row:not(:first-of-type) {
+.content-box .row:not(:first-of-type) {
   border-top:1px solid #AAAAAA;
 }
-.dashboard_box .row {
+.content-box .row {
   margin: 0;
   padding: 5px 10px;
 }
@@ -642,7 +534,7 @@ table.list {
   margin: 2px 0 2px 0;
   padding: 8px 10px 7px;
 }
-.dashboard_box.list .row {
+.content-box.list .row {
   clear: both;
 }
 .row > span{
@@ -651,33 +543,12 @@ table.list {
   word-wrap: break-word;
   width: 33.3%;
 }
-.admins_headers span {
-  font-size: 10pt;
-  font-weight: bold;
-}
-.row a, .row p {
-  font-weight: bold;
-}
-.dashboard_box p {
+
+.content-box p {
   float:left;
   margin: 0 2px 0 0;
 }
-.dashboard .school_admins a, .dashboard .other_admins a {
-  float: right;
-  margin: 0;
-  font-weight: normal;
 
-}
-.row .admin_display_name{
-  display: inline-block;
-  float:none;
-  max-width: 70%;
-  width:auto;
-}
-#admin_users_list{
-  max-width:905px;
-  width:100%;
-}
 .list .column_1 {
   display: inline;
 }
@@ -765,20 +636,7 @@ textarea#raw_users{
   width:460px;
 }
 
-table#autopoweroff td {
-  display: table-cell;
-  text-align: left;
-}
-table#autopoweroff td.label_td {
-  padding-top: 20px;
-}
 
-table#autopoweroff td.label_td label {
-  font-weight: normal;
-}
-table#autopoweroff td select{
-  width: auto;
-}
 .notice_text {
   color:#FF6666;
 }
@@ -799,7 +657,7 @@ Responsive styles
 
 */
 @media all and (max-width: 800px) {
-  #navbar_second_level, .container_wrap{
+  .navbar-second-level, .main-wrap{
     border-radius:0;
     -moz-border-radius:0;
     -webkit-border-radius:0;
@@ -842,13 +700,13 @@ Responsive styles
     margin: 0;
     width: 98%;
   }
-  .container_wrap, .login_container{
+  .main-wrap, .login_container{
     border: none !important;
     margin:0 !important;
     padding: 0 !important;
     width: 100% !important;
   }
-  .wrap{
+  .maincontent{
     border: none !important;
     border-radius: 0 !important;
     -moz-border-radius: 0 !important;
@@ -868,7 +726,7 @@ Responsive styles
   .maincontent .content_wrapper h1{
     padding-left: 0 !important;
   }
-  div:not(#navbar_second_level) .wrap:first-of-type .maincontent{
+  div:not(.navbar-second-level) .maincontent{
     margin: 3% 0 0;
   }
   .maincontent > h1{
@@ -878,14 +736,14 @@ Responsive styles
   .maincontent .dashboard{
     width: 100%;
   }
-  .container_wrap > h1{
+  .main-wrap > h1{
     margin-top: 0 !important;
     padding: 1% 0 0 1%;
   }
-  .dashboard_box.school_image{
+  .content-box.school_image{
     padding-left: 1.5%;
   }
-  .dashboard_box h3, .show_user h3{
+  .content-box h3, .show_user h3{
     padding:1.5%;
   }
   div.organization{
@@ -897,7 +755,7 @@ Responsive styles
   .message_error, .message_notice, .message_success, .notice, .message_alert{
     margin: 2% 2.5% 1% 2.5% !important;
   }
-  .dashboard_box, .user_box, .dashboard_box h3, .show_user h3{
+  .content-box, .user_box, .content-box h3, .show_user h3{
     border-radius: 0 !important;
     -moz-border-radius: 0 !important;
     -webkit-border-radius: 0 !important;
@@ -924,10 +782,10 @@ Responsive styles
   }
 }
 @media screen and (orientation: portrait) and (max-device-width: 800px){
-  .container_wrap > h1{
+  .main-wrap > h1{
     margin-top: 1.2em !important;
   }
-  div:not(#navbar_second_level) .wrap:first-of-type {
+  div:not(.navbar-second-level) .maincontent:first-of-type {
     margin: 1em 0 0 !important;
   }
   .maincontent{
@@ -935,18 +793,18 @@ Responsive styles
   }
 }
 @media screen and (orientation: landscape) and (max-device-width: 960px){
-  div:not(#navbar_second_level) .wrap:first-of-type {
+  div:not(.navbar-second-level) .maincontent:first-of-type {
     margin: 2em 0 0 !important;
   }
-  .container_wrap{
+  .main-wrap{
     margin: 3em 0 0 !important;
   }
 }
 @media screen and (orientation: portrait) and (max-device-width: 540px){
-  div:not(#navbar_second_level) .wrap:first-of-type {
+  div:not(.navbar-second-level) .maincontent:first-of-type {
     margin: 1em 0 0 !important;
   }
-  .container_wrap{
+  .main-wrap{
     margin: 3em 0 0 !important;
   }
 }
@@ -973,7 +831,7 @@ Responsive styles
   #top-menu-right li a[onclick]:hover{
     background: url("../../images/iconset-breathe.png") no-repeat scroll center -955px #DA0000;
   }
-  .container_wrap > h1{
+  .main-wrap > h1{
     margin-top: 0 !important;
   }
   .mass_import_info span {

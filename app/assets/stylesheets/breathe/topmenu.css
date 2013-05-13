@@ -9,44 +9,7 @@
   text-transform: uppercase;
   z-index: 1000;
 }
-#nav1 ul {
-  display: inline-block;
-  font-size: 100%;
-  font-weight: bold;
-  line-height: 3;
-  list-style: none outside none;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  text-transform: uppercase;
-  width: 100%;
-}
-#nav1 ul > li {
-  background: none repeat scroll 0 0 #FAB32E;
-  background:-moz-linear-gradient(center bottom , #FAB32E 20%, #F59545 75%) repeat scroll 0 0 transparent;
-  background:-webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.20, rgb(250,179,46)),
-    color-stop(0.75, rgb(245,149,69))
-  );
-  background-image: -o-linear-gradient(top,rgb(250,179,46),rgb(245,149,69));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#F59545, endColorstr=#FAB32E);
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#F59545, endColorstr=#FAB32E)";
-  border-radius: 10px 10px 0 0;
-  float: left;
-  margin: 0 3px 0 0;
-  min-width: 50px;
-  white-space: nowrap;
-  width: auto !important;
-  -moz-border-radius:10px 10px 0 0;
-  -webkit-border-radius:10px 10px 0 0;
-}
-#nav1 ul a{
-  display:block;
-  padding: 0 1em;
-}
+
 #top-menu > li {
   float: left;
   margin-right: 20px;
@@ -67,25 +30,8 @@
 .topNavContainer {
   border-bottom: 1px solid #222;
 }
-#nav1 ul > li:last-child {
-  margin: 0;
-}
-#nav1 ul > li:hover {
-  background: none repeat scroll 0 0 #A36A2A;
-  background:-moz-linear-gradient(center bottom , #BA722D 35%, #A36A2A 60%) repeat scroll 0 0 transparent;
-  background: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.35, rgb(186,114,45)),
-    color-stop(0.6, rgb(153,106,42))
-  );
-  background-image: -o-linear-gradient(top,rgb(153,106,42),rgb(186,114,45));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
-}
-#top-menu > li > ul,
-#nav1 ul li ul {
+
+#top-menu > li > ul{
   background: none repeat scroll 0 0 #F59545;
   border-radius: 0 0 20px 20px;
   display: none;
@@ -99,9 +45,7 @@
   -webkit-border-radius: 0 0 20px 20px;
   -moz-border-radius: 0 0 20px 20px;
 }
-#nav1 ul li ul {
-  width: 130px;
-}
+
 #top-menu > li > ul {
   left: -5px;
   min-width: 200px;
@@ -124,8 +68,7 @@
   position: absolute;
 }
 
-#top-menu li ul,
-#nav1 ul li ul {
+#top-menu li ul{
   border-bottom: 1px solid #222;
   border-left: 1px solid #222;
   border-right: 1px solid #222;
@@ -185,8 +128,7 @@ li.top-menu-item:last-child {
   border-radius: 8px 8px 0 0;
 
 }
-#top-menu #main,
-#nav1 ul #main {
+#top-menu #main {
   background-color: #7CB7E3;
   color: #FFFFFF;
   left: 0;
@@ -254,8 +196,7 @@ li.top-menu-item:last-child {
   max-width: 1200px;
   width:90%;
 }
-#top-menu .last_one,
-#nav1 ul .last_one {
+#top-menu .last_one{
   background: none repeat scroll 0 0 transparent;
   border: medium none;
   height: 0;
@@ -263,8 +204,7 @@ li.top-menu-item:last-child {
   padding: 0;
   position: relative;
 }
-#top-menu .middle,
-#nav1 ul .middle {
+#top-menu .middle {
   height: 20px;
   left: 18px;
   position: absolute;
@@ -276,13 +216,11 @@ li.top-menu-item:last-child {
   margin: 0 5px 2px 0;
 }
 #top-menu-right li a[data-method="delete"] {
-  border-radius: 6px;
+  border: none;
   color: #FFFFF0;
   line-height: 1.8;
   margin: 0 0 0 10px;
   padding: 2px 10px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  -webkit-border-radius: 6px 6px 6px 6px;
 }
 #top-menu-right li a[data-method="delete"]:hover {
   background: none repeat scroll 0 0 #DA0000;
@@ -304,27 +242,7 @@ position: absolute;
 border-top: 1px solid #E6E6E6;
 margin: 8px;
 }
-#nav1 ul .current_page_item {
-  background: none repeat scroll 0 0 #A36A2A;
-  background:-moz-linear-gradient(center bottom , #BA722D 35%, #A36A2A 60%) repeat scroll 0 0 transparent;
-  background: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.35, rgb(186,114,45)),
-    color-stop(0.6, rgb(153,106,42))
-  );
-  background-image: -o-linear-gradient(top,rgb(153,106,42),rgb(186,114,45));
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A);
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#BA722D, endColorstr=#A36A2A)";
-  border-left: 1px solid #222222;
-  border-right: 1px solid #222222;
-  border-top: 1px solid #222222;
-  position: relative;
-}
-#nav1 ul .current_page_item a {
-  color: #FFFFF0;
-}
+
 ul.menu {
   list-style: none outside none;
   margin: 0;
