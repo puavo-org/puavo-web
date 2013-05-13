@@ -292,6 +292,11 @@ en:
       save_and_close: Save and close
     show: 
       message: Profile was successfully updated
+  menu:
+    index:
+      service_link_name_puavo: Puavo - users and devices management
+      service_link_name_infotv: Info-TV
+      service_link_name_change_password: Change password
   controllers: 
     import: 
       school_has_changed: User is transferred, old password is used
