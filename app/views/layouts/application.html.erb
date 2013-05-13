@@ -150,7 +150,6 @@
     <% end %>
     <% end %>
 
-  <div class="wrap">
   <div class="maincontent clearfix">
          <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
       <% message_keys.each do |key| %>
@@ -167,7 +166,6 @@
       <% end %>
       <%= yield %>
     </div>
-    </div> <!-- wrap -->
   </div> <!-- container_wrap-->
   </div> <!-- container -->
 </body>

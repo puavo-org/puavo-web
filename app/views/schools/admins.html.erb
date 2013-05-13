@@ -1,6 +1,6 @@
 <h1><span><%= t('.school_admins') %></span></h1>
 <div class="dashboard">
-<div class="dashboard_box school_admins">
+<div class="content-box school_admins">
   <h3><%= t('.this_school_admin_users', :school_name => @school.displayName) %></h3>
 
   <span id="this_school_admin_users">
@@ -12,7 +12,7 @@
     <% end %>
   </span>
 </div>
-<div class="dashboard_box other_admins">
+<div class="content-box other_admins">
   <h3><%= t('.other_admin_users') %>:</h3>
   <span id="other_admin_users">
     <% Array(@allowed_school_admins).each do |u| %>
