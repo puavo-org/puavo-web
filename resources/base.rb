@@ -105,31 +105,59 @@ class LdapSinatra < Sinatra::Base
   include ErrorMethods
   helpers Sinatra::JSON
 
-
   not_found do
-    puts "not found in #{ self.class }"
     not_found "Cannot find resource from #{ request.path }"
   end
 
+  @@auth_config = {}
 
-  before "/v3/:organisation*" do
-    @organisation = LdapModel.escape(params["organisation"])
+  # Define classes that are used to get credentials for this resource
+  #
+  # @param auth_klass [Class] Authentication class
+  # @param options [Hash] Options hash.
+  # @option options [Symbol] :skip
+  #   Skip credentials lookup on HTTP method(s). Possible values: :get, :post:,
+  #   :put, :patch, :options
+  def self.auth(auth_klass, options={})
+    (@@auth_config[self] ||= []).push([auth_klass, options])
+  end
 
-    cred = request.env["PUAVO_CREDENTIALS"]
-    if not cred
-      bad_credentials "No credentials supplied"
+
+
+  # Acquire credentials using the specified auth classes
+  # @see auth
+  def acquire_credentials
+    (@@auth_config[self.class] || []).each do |auth|
+      auth_klass, options = auth
+      if cred = auth_klass.new.call(request.env, options)
+        return cred
+      end
     end
+    nil
+  end
 
+  # Setup ldap connection
+  # @param credentials [Hash]
+  # @option credentials [Symbol] :username username (dn)
+  # @option credentials [Symbol] :password plain text password
+  # @see #new_model
+  def setup_ldap_connection(credentials)
     @ldap_conn = LDAP::Conn.new(CONFIG["ldap"])
     @ldap_conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     @ldap_conn.start_tls
 
     begin
-      @ldap_conn.bind(cred[:username], cred[:password])
+      @ldap_conn.bind(credentials[:username], credentials[:password])
     rescue LDAP::ResultError
       bad_credentials("Bad username or password")
     end
+  end
 
+  before "/v3/:organisation*" do
+    @organisation = LdapModel.escape(params["organisation"])
+    if c = acquire_credentials
+      setup_ldap_connection(c)
+    end
   end
 
   get "/v3/:organisation" do
@@ -142,7 +170,11 @@ class LdapSinatra < Sinatra::Base
   # @param klass [Model class]
   # @return [Model instance]
   def new_model(klass)
-    klass.new(@ldap_conn, @organisation)
+    if @ldap_conn
+      klass.new(@ldap_conn, @organisation)
+    else
+      bad_credentials "No credentials supplied"
+    end
   end
 
 end

@@ -3,8 +3,8 @@ module PuavoRest
 # Just for example here
 class Users < LdapSinatra
 
-  use Credentials::BasicAuth
-  use Credentials::BootServer
+  auth Credentials::BasicAuth
+  auth Credentials::BootServer
 
   # Return users in a organisation
   get "/:organisation/users" do

@@ -42,8 +42,8 @@ end
 # External Files saved in LDAP
 class ExternalFiles < LdapSinatra
 
-  use Credentials::BasicAuth
-  use Credentials::BootServer
+  auth Credentials::BasicAuth
+  auth Credentials::BootServer
 
   # Get metadata list of external files
   #

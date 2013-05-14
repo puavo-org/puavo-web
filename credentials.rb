@@ -2,24 +2,25 @@ require "puavo"
 
 module PuavoRest
 
-# Various Rack middleware classes for acquiring login credentials.
+# Various auth classes for acquiring login credentials.
 module Credentials
 
-class Base
+class AuthBase
 
-  def initialize(app)
-    @app = app
+  def skip(env, options)
+    options[:skip] && options[:skip].to_s.upcase == env["REQUEST_METHOD"].upcase
   end
 
-  def call(env)
-    env["PUAVO_CREDENTIALS"] ||= acquire(env)
-    @app.call(env)
+  def call(env, options={})
+    return if skip(options, env)
+    acquire(env)
   end
 
 end
 
 # Get user credentials from Basic Auth
-class BasicAuth < Base
+class BasicAuth < AuthBase
+
   def acquire(env)
     return if not env["HTTP_AUTHORIZATION"]
     type, data = env["HTTP_AUTHORIZATION"].split(" ")
@@ -36,7 +37,7 @@ end
 
 # If PuavoRest is running on a boot server use the credentials of the server.
 # Can be used to make public resources on the school network.
-class BootServer < Base
+class BootServer < AuthBase
   def acquire(env)
     if CONFIG["bootserver"]
       {
