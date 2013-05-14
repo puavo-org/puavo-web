@@ -26,7 +26,7 @@
 <br />
 
 <% content_for :right do %>
-<div>
+<div class="add-new-device">
 
 <%= form_for(@device, :url => new_device_path(@school), :html => { :method => :get }) do |f| %>
 <span><%= t('.add_new_device') %></span>

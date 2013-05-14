@@ -160,8 +160,10 @@
        <% end %>
 
       <% if current_user %>
-        <div class="tools">
+        <div class="tools-container">
+          <span class="tools">
           <%= yield :right %>
+          </span>
         </div>
       <% end %>
       <%= yield %>
