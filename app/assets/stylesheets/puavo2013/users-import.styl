@@ -1,0 +1,63 @@
+@import 'nib'
+
+form[action$="import"]
+  .validate_users_list
+    td
+      width auto
+      .btn
+        display inline-block
+        margin-left 5px
+        padding 1px 6px
+
+table
+  &.rename_groups_table
+    tr
+      white-space normal
+  &.new_groups_table
+    tr
+      td
+        float left !important
+        width 45% !important
+  &.validate_users_list, &.import_define
+    border-collapse collapse
+    width 100%
+  &.validate_users_list
+    label
+      &.checkbox
+        & ~ input[type="checkbox"]
+          display block
+    tr
+      margin 0 0 10px
+      white-space nowrap
+      overflow scroll
+      text-overflow clip
+      width 95%
+    td
+      border 1px solid black
+      overflow hidden
+      &.action
+        border medium none
+      form
+        *
+          width auto !important
+          margin 0 0 0 .3em
+      .change_school_info
+        margin 0 0 0 3px
+
+#select_change_school_users
+  background-image none
+
+.mass_import_info
+  font-size 100%
+  .current
+    font-size 110%
+    font-weight bold
+  .done
+    color #CCCCCC
+
+.mass_import_info_text
+  font-weight bold
+  margin-top 1.5em
+
+.mass_import_form
+  width 460px
