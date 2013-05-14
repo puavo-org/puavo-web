@@ -18,12 +18,14 @@ require "./resources/users"
 #   @method $0_$1 $1
 #   @return [HTTP response]
 
+# Puavo Rest module
 module PuavoRest
 
 begin
   CONFIG = YAML.load_file "/etc/puavo-rest.yml"
 rescue Errno::ENOENT
   # Do automatc configuration on boot servers
+  require "puavo/etc"
   CONFIG = {
     "ldap" => PUAVO_ETC.domain,
     "bootserver" => true
@@ -38,5 +40,9 @@ class Root < LdapSinatra
 
   use PuavoRest::ExternalFiles
   use PuavoRest::Users
+  if CONFIG["bootserver"]
+    require "./resources/ltsp_servers"
+    use PuavoRest::LtspServers
+  end
 end
 end
