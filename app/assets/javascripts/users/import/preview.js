@@ -22,7 +22,7 @@ $(document).ready(function() {
 			update_after_validation($(this), value);
 		},
     });
-    
+
 
     $('.edit').mouseover(function() {
 		td_element = $(this).closest('td')
@@ -68,7 +68,7 @@ $(document).ready(function() {
 			label.attr('title', validation_results[index]["error"]);
 			if( !label.hasClass("invalid") ) {
 				label.addClass("invalid");
-			} 
+			}
 		}
     }
 
@@ -106,14 +106,14 @@ $(document).ready(function() {
 		});
     });
 
-    $('.user_row').mouseover(function() {
-		$(this).closest('table').find('.destroy').hide();
-		$(this).find('.destroy').show();
-    });
+  //   $('.user_row').mouseover(function() {
+		// $(this).closest('table').find('.destroy').hide();
+		// $(this).find('.destroy').show();
+  //   });
 
-    $('table.validate_users_list').mouseout(function() {
-		$(this).closest('table').find('.destroy').hide();
-    });
+  //   $('table.validate_users_list').mouseout(function() {
+		// $(this).closest('table').find('.destroy').hide();
+  //   });
 
 	$('#select_change_school_users').click(function() {
 		$('input[type=checkbox]').each(function() {
