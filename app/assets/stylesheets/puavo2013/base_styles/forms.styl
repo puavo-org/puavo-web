@@ -1,23 +1,7 @@
 @import 'nib'
+@import 'base_styles/mediaqueries'
 
 form
-  table
-      width 100%
-    &.rename_groups_table
-      tr
-        white-space normal
-    &.new_groups_table
-      tr
-        td
-          float left !important
-          width 45% !important
-    &.validate_users_list
-      tr
-        margin 0 0 10px
-        white-space nowrap
-        overflow scroll
-        text-overflow clip
-        width 95%
   tr
     display table-row
     margin 0 0 5px
@@ -38,6 +22,22 @@ form table tr:after
   display table
   line-height 0
   content ""
+
+.rename_group_old_name
+  text-align right
+  width 35%
+
+.rename_group_new_name
+  width 60%
+
+.rename_group_name_abbr
+  width 45%
+
+table
+  &.new_groups_table
+    tr
+      td
+        text-align left !important
 
 .external_services_system_groups
   div
@@ -67,6 +67,9 @@ form[action$="users/import"]
 
 label
   font-weight bold
+  &.checkbox
+    font-size 100%
+    font-weight normal
 
 fieldset
   padding 1.4em
@@ -77,7 +80,7 @@ legend
   font-weight bold
   font-size 120%
 
-form input[type="text"],input[type="password"], input.text, input[type="email"], form tr td input[type="tel"]
+form input
   background-color #FFFFFF
   border 1px solid #cccccc
   border-radius 4px
@@ -107,7 +110,11 @@ form
   width 22%
 
 input[type="file"]
+  border none
+  box-shadow none
   color initial
+  display inline-block
+  width auto
 
 input[type="submit"]
   cursor pointer
@@ -148,6 +155,129 @@ input[type=checkbox],
 input[type=radio],
 input.checkbox,
 input.radio
+  border none
+  display inline-block
   margin 5px
   position relative
   top 0
+  width auto
+
+#user_mail_list
+  input
+    display block
+    margin 0 0 5px
+
+#user_telephoneNumber_list
+  input
+    display block
+    margin 0 0 5px
+
+@media screen-breakpoint-one
+  form table not(.validate_users_list) th,
+  form table:not(.validate_users_list) td,
+  form table:not(.validate_users_list) caption
+    float left
+    display block !important
+    text-align left !important
+    width 100% !important
+
+  form
+    table
+      &.autopoweroff_organisation
+        tr
+          td
+            width auto !important
+      &:not(.validate_users_list)
+        tr
+          display block !important
+          position relative
+    &.form_inline
+      padding 2% 0
+      .submit_button_login
+        margin 5% 0 0
+      input
+        max-width 100%
+        min-height 50px
+        width 98%
+
+  form
+    input
+      width 95%
+    input[type="submit"]
+      width 50%
+
+  form table, .new_external_service table, .edit_external_service table
+    padding-left 2%
+    width 100%
+
+  .new_external_service tr td:nth-child(even), .new_external_service tr td:nth-child(odd), .edit_external_service tr:nth-child(even), .edit_external_service tr:nth-child(odd)
+    width 95% !important
+
+  .label_td
+    &.view
+      width 35%
+
+  table#autopoweroff
+    th
+      display inline-block !important
+      width auto !important
+    td
+      &.checkbox
+        display inline-block !important
+        width 10% !important
+        text-align center !important
+      table
+        width 95%
+        td
+          width 30% !important
+
+  .show_user
+    table
+      &.list
+        td
+          display inline-block
+          &.value_td
+            padding-left 1em
+            text-align left !important
+
+  .mass_import_info, .mass_import_info_text
+    padding 2%
+
+  form[action$="import/validate"] p, form[action$="import/refine"] p, form[action$="import/refine"] pre
+    padding 0 0 0 2%
+
+  .mass_import_form
+    width 90% !important
+    input
+      margin-left 2%
+
+  textarea#raw_users
+    margin-left 2%
+    width 90% !important
+
+  form table.import_define th, form table.import_define td
+    width 45% !important
+    display inline-block
+
+  .submit_button_container
+    margin-left 2% !important
+
+  .btn
+    font-size 100% !important
+
+  .form_inline
+    & > *
+      padding 0 2%
+    label
+      display block
+      font-size 120%
+      text-align left
+
+  form.new_device h2, form.edit_device h2, form.edit_server h2
+    padding 0 2%
+
+  form table.rename_groups_roles_table tr th, form table.rename_groups_roles_table tr td
+    width 45% !important
+
+  #other_groups td, #member_groups td
+    line-height 3

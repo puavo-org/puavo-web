@@ -12,10 +12,6 @@
   -webkit-box-shadow: 0 2px 6px #222;
 }
 
-.devices.tools > div.add_new_device_select_container:hover{
-  background-color: transparent;
-}
-
 .cancel div {
   border: 1px dashed #AD0000;
   border-radius: 6px 6px 6px 6px;
@@ -35,18 +31,6 @@
 .cancel a:hover {
   color: #AA1133;
   font-weight: bold;
-}
-.tools_ul, .tools{
-  margin: 5px 1em .2em;
-  padding: 0;
-}
-.tools {
-  font-size: 90%;
-  float: right;
-  min-width: 110px;
-}
-.tools > li {
-  float: left;
 }
 .cancel {
   display:inline;
@@ -453,7 +437,7 @@ table.list {
 .dashboard > *, .show_user > * {
   margin:10px 15px 10px 0;
 }
-.content-box, .user_box {
+.user_box {
   background: none repeat scroll 0 0 #FBFBFB;
   background:-moz-linear-gradient(center bottom , #FBFBFB 20%, #FAFAFA 70%) repeat scroll 0 0 transparent;
   background: -webkit-gradient(
@@ -477,32 +461,7 @@ table.list {
   -webkit-border-radius: 6px 6px 6px 6px;
   width: 45%;
 }
-
-.maincontent .dashboard{
-  float:left;
-  margin: 5px 0 0;
-  width: 100%;
-}
-.content-box.users {
-  clear: both
-}
-
-.content-box.school_image {
-  background: none repeat scroll 0 0 transparent;
-  border: 0 none;
-  border-radius: 0 0 0 0;
-  float: left;
-  margin:5px 15px 15px 0;
-  -moz-border-radius: 0 0 0 0;
-  -webkit-border-radius: 0 0 0 0;
-}
-.content-box h4 {
-  border-bottom: 2px solid;
-  clear: both;
-  margin: 0 0 5px;
-  padding: 5px 0 5px 10px;
-}
-.content-box h3, .show_user h3 {
+.show_user h3 {
   background: none repeat scroll 0 0 #A36A2A;
   background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
   background: -webkit-gradient(
@@ -522,32 +481,6 @@ table.list {
   -moz-border-radius: 6px 6px 0 0;
   -webkit-border-radius: 6px 6px 0 0;
 }
-.content-box .row:not(:first-of-type) {
-  border-top:1px solid #AAAAAA;
-}
-.content-box .row {
-  margin: 0;
-  padding: 5px 10px;
-}
-#this_school_admin_users .row,
-#other_admin_users .row {
-  margin: 2px 0 2px 0;
-  padding: 8px 10px 7px;
-}
-.content-box.list .row {
-  clear: both;
-}
-.row > span{
-  float:left;
-  padding:5px 0 5px;
-  word-wrap: break-word;
-  width: 33.3%;
-}
-
-.content-box p {
-  float:left;
-  margin: 0 2px 0 0;
-}
 
 .list .column_1 {
   display: inline;
@@ -558,50 +491,18 @@ table.list {
   margin-left: 10px;
 }
 
-.validate_users_list {
-  border-collapse: collapse;
-  width: 100%;
-}
-.validate_users_list td:not(.action) {
-  border: 1px solid black;
-  overflow: hidden;
-}
-.validate_users_list td form * {
-  width: auto !important;
-  margin: 0 0 0 .3em;
-}
+
 .invalid {
   color: red;
 }
-td.action {
-  border: medium none;
-}
-.validate_users_list .change_school_info{
-  margin: 0 0 0 3px;
-}
+
 .destroy {
   color: #A13;
   display: none;
   line-height: 2;
   padding-left: .5em;
 }
-#user_mail_list input {
-  display: block;
-  margin: 0 0 5px;
-}
-#user_telephoneNumber_list input {
-  display: block;
-  margin:0 0 5px;
-}
-label.checkbox {
-  font-size: 100%;
-  font-weight: normal;
-}
-.validate_users_list label.checkbox  ~ input[type="checkbox"]{display:block;}
-.search_result td {
-  border-bottom: 1px solid #AAAAAA;
-  width: 33.333%;
-}
+
 .search_result th {
   background: none repeat scroll 0 0 #A36A2A;
   background:-moz-linear-gradient(center bottom , #A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent;
@@ -617,25 +518,6 @@ label.checkbox {
 textarea#raw_users{
   width: 100%;
 }
-.mass_import_info{
-  font-family:  'Helvetica Neue',Arial,Helvetica,sans-serif;
-  font-size: 100%;
-}
-.mass_import_info span.current{
-  font-size: 110%;
-  font-weight: bold;
-}
-.mass_import_info span.done{
-  color: #CCCCCC;
-}
-.mass_import_info_text{
-  font-weight: bold;
-  margin-top: 1.5em;
-}
-.mass_import_form{
-  width:460px;
-}
-
 
 .notice_text {
   color:#FF6666;
@@ -661,9 +543,6 @@ Responsive styles
     border-radius:0;
     -moz-border-radius:0;
     -webkit-border-radius:0;
-  }
-  body{
-    font-size: 72.777% !important;
   }
   .topNavContainer{
     display: block;
@@ -700,34 +579,12 @@ Responsive styles
     margin: 0;
     width: 98%;
   }
-  .main-wrap, .login_container{
-    border: none !important;
-    margin:0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-  }
-  .maincontent{
-    border: none !important;
-    border-radius: 0 !important;
-    -moz-border-radius: 0 !important;
-    -webkit-border-radius: 0 !important;
-    margin: 0 !important;
-    padding-bottom: 2%;
-  }
-  .maincontent, .login_content{
-    float: none !important;
-    margin: 0 !important;
-    padding: 0.5% 0 !important;
-    width: 100% !important;
-  }
+
   .content_wrapper{
     padding: 2%;
   }
   .maincontent .content_wrapper h1{
     padding-left: 0 !important;
-  }
-  div:not(.navbar-second-level) .maincontent{
-    margin: 3% 0 0;
   }
   .maincontent > h1{
     font-size: 180% !important;
@@ -739,9 +596,6 @@ Responsive styles
   .main-wrap > h1{
     margin-top: 0 !important;
     padding: 1% 0 0 1%;
-  }
-  .content-box.school_image{
-    padding-left: 1.5%;
   }
   .content-box h3, .show_user h3{
     padding:1.5%;
@@ -755,13 +609,7 @@ Responsive styles
   .message_error, .message_notice, .message_success, .notice, .message_alert{
     margin: 2% 2.5% 1% 2.5% !important;
   }
-  .content-box, .user_box, .content-box h3, .show_user h3{
-    border-radius: 0 !important;
-    -moz-border-radius: 0 !important;
-    -webkit-border-radius: 0 !important;
-    margin:0 !important;
-    width: 100% !important;
-  }
+
   #this_school_admin_users .row, #other_admin_users .row{
     padding: 1% 2% !important;
   }

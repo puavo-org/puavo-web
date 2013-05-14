@@ -1,11 +1,11 @@
 @import 'nib'
+@import 'base_styles/mediaqueries'
 
 *
   box-sizing border-box
 
 html, body
-  height 100%
-  width 100%
+  min-height 100%
 
 body
   font-family "Helvetica Neue", Helvetica,Calibri,Arial,sans-serif
@@ -210,11 +210,16 @@ caption
     margin 0
     padding 1% 0 0 0
 
+//.maincontent
 .maincontent
   margin 0 0 2% 0
   padding 1%
   position relative
   width 100%
+  .dashboard
+    float left
+    margin 1% 0 0
+    width 100%
   h1
     font-size 220%
     line-height 1.2em
@@ -222,20 +227,28 @@ caption
     padding 0
     span
       border-bottom 2px solid #435266
+// end of .maincontent
 
 // .tools ->
+.tools-container
+  float right
 .tools
-  a > div
+  font-size 90%
+  float right
+  height 40px
+  margin 5px 1em .2em
+  min-width 110px
+  padding 0
+  > div, .sub-tools > li
     float left
     margin 0
     padding 0 0 0 5px
     position relative
+  .sub-tools > li.tool
+    padding 0 1em
   .tool
     span
-      font-size 0
-      padding 20px 5px
       text-indent -9999px
-      width 24px
     ul
       display none
       padding 0
@@ -258,18 +271,18 @@ caption
 
 // End of .tools
 
+// .content-box
 .content-box
   float left
   font-size 110%
-  margin-top 5px
+  margin 1% 1% 0 0
   min-width 45%
-  padding 0 0 5px
-  width 45%
+  padding 0
+  width 49%
+  &.school_image
+    padding-top 0
   &.list .row
     clear both
-  &.school_image
-    float left
-    margin 5px 15px 15px 0
   h4
     clear both
     margin 0 0 5px
@@ -289,4 +302,31 @@ caption
       width 33.3%
   h3, .show_user h3
     margin 0
-    padding 10px
+    padding 5px 10px
+// end of .content-box
+
+@media screen-breakpoint-one
+  body
+    font-size 70%
+
+  .main-wrap, .login_container
+    margin 0
+    padding 0
+    width 100%
+
+  .maincontent
+    margin 0
+    padding-bottom 2%
+
+  .maincontent, .login_content
+    float none
+    margin 0
+    padding 0.5% 0
+    width 100%
+
+  .content-box, .user_box, .content-box h3, .show_user h3
+    margin 0
+    width 100%
+  .content-box
+    &.school_image
+      padding 0 1% 1%

@@ -1,5 +1,6 @@
 @import 'nib'
 @import 'colors'
+@import 'base_styles/mediaqueries'
 
 body
   background none repeat scroll 0 0 baseBg
@@ -35,31 +36,36 @@ body
   background none repeat scroll 0 0 rgb(245,149,69)
 
 .content-box
-  background none repeat scroll 0 0 #FBFBFB
-  background-image linear-gradient(rgb(251,251,251) 0%,rgb(250,250,250) 100%)
+  background none repeat scroll 0 0 rgb(250, 250, 250)
+  background-image linear-gradient(rgb(250, 250, 250) 0%,rgb(247,247,247) 100%)
   border-radius 4px
+  box-shadow inset 0 0 10px rgba(237, 113, 19, 0.25)
   &.school_image
     background none repeat scroll 0 0 transparent
+    background-image none
     border 0 none
     border-radius 0
+    box-shadow none
   h4
     border-bottom 2px solid
   .row
     &:not(:first-of-type)
       border-top 1px solid #AAAAAA
+    &:empty
+      border none
 
   h3, .show_user h3
     background none repeat scroll 0 0 #A36A2A
     background-image linear-gradient(rgb(186,114,45) 0%, rgb(153,106,42) 100%)
-    border-radius 4px 4px 0 0
-    color #E6E6D8
+    border-radius 3px 3px 0 0
+    color rgb(245,245,245)
 
 // .tools ->
 .tools
   a
     &:hover
       color #222
-  & > div
+  > div, .sub-tools > li
     border-bottom 1px dashed #ECEADA
   .tool
     span
@@ -74,8 +80,17 @@ body
         &:hover
           background none repeat scroll 0 0 #C0772F
 
-.tools > li:hover,
+.tools .sub-tools > li:hover,
 .tools > div:hover
   background none repeat scroll 0 0 #C0772F
   border-radius 6px 6px 0 0
 // End of .tools
+
+@media screen-breakpoint-one
+  .main-wrap, .login_container
+    border none
+  .maincontent
+    border none
+    border-radius 0
+  .content-box, .user_box, .content-box h3, .show_user h3
+    border-radius 0

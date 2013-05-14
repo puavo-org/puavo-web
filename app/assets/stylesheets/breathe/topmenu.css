@@ -176,7 +176,6 @@ li.top-menu-item:last-child {
 }
 
 .topNavContainer input {
-  background: url("../../images/magnifier.png") no-repeat scroll 95% center #FFFFFF;
   border: 1px solid #AAAAAA;
   border-radius: 4px;
   -moz-border-radius: 4px;
@@ -187,9 +186,7 @@ li.top-menu-item:last-child {
   padding: 5px 30px 5px 10px;
   width: 15em;
 }
-.topNavContainer input.loading {
-  background: url("../../images/ajax-loader.gif") no-repeat scroll 95% 4px #FFFFFF !important;
-}
+
 .topNavContentContainer,
 .footer_wrap {
   margin: 0 auto;
