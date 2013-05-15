@@ -10,21 +10,26 @@ class LtspServersModel
     @store = PStore.new(path)
   end
 
-  def update(domain, cpu_count, load_avg)
+  # set server load average for domain
+  # @param [String] domain
+  # @param [Float] load_avg
+  def set(domain, load_avg)
     @store.transaction do
       @store[domain] = {
         :domain => domain,
-        :cpu_count => cpu_count,
         :load_avg => load_avg,
         :updated => Time.now
       }
     end
   end
 
-  def relative_load(server)
-    server[:load_avg] / server[:cpu_count]
+  def get(domain)
+    @store.transaction(true) do
+      @store[domain]
+    end
   end
 
+  # Return all known ltsp servers
   def all
     a = []
     @store.transaction(true) do
@@ -37,8 +42,8 @@ class LtspServersModel
 
   def most_idle
     all.sort do |a, b|
-      relative_load(a) <=> relative_load(b)
-    end
+      a[:load_avg] <=> b[:load_avg]
+    end.first
   end
 
 end
@@ -59,24 +64,33 @@ class LtspServers < LdapSinatra
     json limit @m.all
   end
 
+  # Computed resource for the most idle ltsp server
+  #
   # @!macro route
   get "/v3/:organisation/ltsp_servers/_most_idle.?:format?" do
     if params["format"] == "txt"
-      json @m.most_idle.first
+      json @m.most_idle
     else
-      txt @m.most_idle.first[:domain]
+      txt @m.most_idle[:domain]
     end
   end
 
-  # Update LTSP server idle status
+  get "/v3/:organisation/ltsp_servers/:domain" do
+    json @m.get(params["domain"])
+  end
+
+  # set LTSP server idle status
   #
   # @!macro route
   put "/v3/:organisation/ltsp_servers/:domain" do
-    @m.update(
-      params["domain"],
-      params["cpu_count"].to_i,
-      params["load_avg"].to_f
-    )
+    if params["cpu_count"]
+      load_avg = params["load_avg"].to_f / params["cpu_count"].to_i
+    else
+      load_avg = params["load_avg"].to_f
+    end
+
+    @m.set(params["domain"], load_avg)
+
     json "ok" => true
   end
 
