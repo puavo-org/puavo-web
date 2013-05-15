@@ -171,7 +171,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>set LTSP server idle status.</p>
+<p>Set LTSP server idle status as x-www-form-urlencoded.</p>
 </div></span>
   
 </li>
@@ -274,12 +274,12 @@
       <pre class="lines">
 
 
-66
-67
-68</pre>
+68
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/ltsp_servers.rb', line 66</span>
+      <pre class="code"><span class="info file"># File 'resources/ltsp_servers.rb', line 68</span>
 
 <span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/v3/:organisation/ltsp_servers</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
   <span class='id identifier rubyid_json'>json</span> <span class='id identifier rubyid_limit'>limit</span> <span class='ivar'>@m</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span>
@@ -301,7 +301,8 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>set LTSP server idle status</p>
+<p>Set LTSP server idle status as x-www-form-urlencoded. If cpu_count is
+provided load_avg will be divided using it.</p>
 
 
   </div>
@@ -309,6 +310,37 @@
 <div class="tags">
   
   
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>load_avg</span>
+      
+      
+        <span class='type'>(<tt>Float</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>cpu_count</span>
+      
+      
+        <span class='type'>(<tt>Fixnum</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>optional</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 <p class="tag_title">Returns:</p>
 <ul class="return">
@@ -330,20 +362,20 @@
       <pre class="lines">
 
 
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98</pre>
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/ltsp_servers.rb', line 88</span>
+      <pre class="code"><span class="info file"># File 'resources/ltsp_servers.rb', line 98</span>
 
 <span class='id identifier rubyid_put'>put</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/v3/:organisation/ltsp_servers/:domain</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cpu_count</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
@@ -375,6 +407,12 @@
     
 <p>Computed resource for the most idle ltsp server</p>
 
+<p>Set format to txt to get only the server name as plain/text</p>
+
+<p>Example: curl /v3/hogwarts/ltsp_servers/_most_idle.txt</p>
+
+<h1>&gt; someservername</h1>
+
 
   </div>
 </div>
@@ -402,16 +440,16 @@
       <pre class="lines">
 
 
-73
-74
-75
-76
-77
-78
-79</pre>
+80
+81
+82
+83
+84
+85
+86</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/ltsp_servers.rb', line 73</span>
+      <pre class="code"><span class="info file"># File 'resources/ltsp_servers.rb', line 80</span>
 
 <span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/v3/:organisation/ltsp_servers/_most_idle.?:format?</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>format</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>txt</span><span class='tstring_end'>&quot;</span></span>
@@ -430,7 +468,7 @@
 </div>
 
     <div id="footer">
-  Generated on Wed May 15 13:19:36 2013 by
+  Generated on Wed May 15 13:43:57 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.6.1 (ruby-1.9.3).
 </div>
