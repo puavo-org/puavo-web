@@ -105,6 +105,19 @@ class LdapSinatra < Sinatra::Base
   include ErrorMethods
   helpers Sinatra::JSON
 
+  def txt(text)
+    content_type :txt
+    halt 200, text.to_s
+  end
+
+  def limit(a)
+    if params["limit"]
+      a[0...params["limit"].to_i]
+    else
+      a
+    end
+  end
+
   not_found do
     not_found "Cannot find resource from #{ request.path }"
   end
