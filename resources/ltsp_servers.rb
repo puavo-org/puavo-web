@@ -116,6 +116,8 @@ class LtspServers < LdapSinatra
   # @param [Fixnum] cpu_count optional
   # @!macro route
   put "/v3/:organisation/ltsp_servers/:domain" do
+    require_auth
+
     if params["cpu_count"]
       load_avg = params["load_avg"].to_f / params["cpu_count"].to_i
     else

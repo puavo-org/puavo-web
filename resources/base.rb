@@ -183,6 +183,14 @@ class LdapSinatra < Sinatra::Base
     json({ :organisation => @organisation })
   end
 
+  # Assert that authentication is required for this route even if the the ldap
+  # connection is not actually used
+  def require_auth
+    if not @ldap_conn
+      bad_credentials "No credentials supplied"
+    end
+  end
+
   # Model instance factory
   # Create new model instance with the current organisation and ldap connection
   #
