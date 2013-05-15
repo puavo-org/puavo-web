@@ -7,7 +7,6 @@ describe PuavoRest::LtspServers do
     dir = "/tmp/puavo-rest-test"
     PuavoRest::CONFIG["ltsp_server_data_dir"] = dir
     FileUtils.rm_rf dir
-    FileUtils.mkdir_p dir
   end
 
   it "responds with empty data" do

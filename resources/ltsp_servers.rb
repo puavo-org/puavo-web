@@ -1,4 +1,5 @@
 require "pstore"
+require "fileutils"
 
 module PuavoRest
 
@@ -7,6 +8,7 @@ module PuavoRest
 class LtspServersModel
 
   def initialize(path)
+    FileUtils.mkdir_p File.dirname(path)
     @store = PStore.new(path)
   end
 
