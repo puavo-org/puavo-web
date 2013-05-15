@@ -1,7 +1,7 @@
---- 
-fi: 
+---
+fi:
   must_be_logged_in: "Sinun täytyy olla kirjautuneena"
-  oauth: 
+  oauth:
     change: vaihda
     login: Kirjaudu
     password_forget: Unohditko salasanasi?
@@ -12,15 +12,15 @@ fi:
     select_organistion: Valitse koulu tai organisaatio
     next: Jatka
     organisation_help: lalala
-  create_organisation_owner: 
+  create_organisation_owner:
     school_name: Hallinto
     role_name: "Ylläpito"
     group_name: "Ylläpito"
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
-  layouts: 
-    application: 
+  layouts:
+    application:
       schools: Koulut
       school: Koulu
       logout: Kirjaudu ulos
@@ -36,13 +36,13 @@ fi:
       links: Linkit
       oauth_clients: OAuth asiakassovellukset
       desktop: "Työpöytä"
-    forms: 
+    forms:
       required_field: "* = Pakollinen tieto"
-  link: 
+  link:
     more: Muut toiminnot
     edit: Muokkaa
     back: Takaisin
-    cancel: "- Peruuta"
+    cancel: "Peruuta"
     destroy: Poista
     new_group: "Uusi ryhmä"
     update: "Päivitä tiedot"
@@ -55,7 +55,7 @@ fi:
     remove: Poista
     new_role: Uusi rooli
     new_user: "Uusi käyttäjä"
-    user_mass_import: 
+    user_mass_import:
       new: Lisää käyttäjiä massa-ajona
       handle_user_data: "Käsittele käyttäjätieto"
       download_pdf: lataa pdf-tiedosto.
@@ -73,7 +73,7 @@ fi:
     set_install_mode: Peruuta sertifikaatti
     automounts: Hakemistoliitokset
     new_automount: Uusi hakemistoliitos
-  flash: 
+  flash:
     added: "%{item} luotiin onnistuneesti."
     updated: "%{item} päivitettiin onnistuneesti."
     destroyed: "%{item} poistettiin onnistuneesti."
@@ -81,12 +81,12 @@ fi:
     save_failed: "Tallennus epäonnistui!"
     wlan_updated: WLAN-asetukset päivitetty
     wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
-    group: 
+    group:
       role_added: "Rooli lisättiin ryhmään."
       role_added_failed: "Lisäys epäonnistui."
       role_removed: "Rooli poistettiin ryhmästä."
       role_removed_failed: "Poistaminen epäonnistui."
-    role: 
+    role:
       group_added: "Ryhmä lisättiin rooliin."
       group_added_failed: "Lisäys epäonnistui"
       group_removed: "Ryhmä poistettiin roolista."
@@ -94,145 +94,147 @@ fi:
       create_failed: "Roolin lisääminen epäonnistui!"
       save_failed: Roolia ei voitu tallentaa!
       destroyed_failed: "Roolia (%{name}) ei voitu poistaa, koska siihen on liitetty käyttäjiä."
-    user: 
+    user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
       create_failed: "Käyttäjän lisääminen epäonnistui!"
-      import: 
+      import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
         role_require_error: "Rooli pitää olla valittuna"
       school_changed: "Käyttäjän/käyttäjien koulu on vaihdettu!"
     password_set_failed: "Salasanan vaihto epäonnistui. Yritä uudelleen."
-    session: 
+    session:
       login_successful: Kirjautuminen onnistui!
       failed: "Kirjautuminen epäonnistui!"
       logout_successful: Uloskirjautuminen onnistui!
-    password: 
+    password:
       successful: Salasanan vaihto onnistui!
       failed: "Salasanan vaihto epäonnistui!"
       invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
-    school: 
+    school:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty ylläpitäjäkäyttäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
       wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille"
       destroyed_failed: "Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua"
       roles_not_found: Yhtään roolia ei ole määritetty
-    profile: 
+      wlan_updated: WLAN-asetukset päivitetty
+      wlan_save_failed: WLAN-asetusten tallennus epäonnistui
+    profile:
       updated: Tietojen tallennus onnistui
       save_failed: "Tietojen tallennus epäonnistui"
-    printer: 
+    printer:
       updated: "Tulostimen tietojen päivitys onnistui"
-    devices: 
+    devices:
       school_changed: Laitteen koulu on nyt vaihdettu!
-  roles: 
-    index: 
+  roles:
+    index:
       actions: Toiminnot
-    show: 
+    show:
       other_groups: "Muut ryhmät"
       change_school: "Siirrä käyttäjät toiseen kouluun"
-    new: 
+    new:
       title: Uusi rooli
-    edit: 
+    edit:
       title: Muokataan roolia
-    select_school: 
+    select_school:
       title: "Käyttäjien siirto"
       select_new_school: Valitse uusi koulu
       submit: Seuraava
-    select_role: 
+    select_role:
       title: "Käyttäjien siirto"
       new_school: Uusi koulu
       select_new_role: Valitse uusi rooli
       submit: "Siirrä käyttäjät"
-  users: 
-    index: 
+  users:
+    index:
       actions: Toiminnot
-    show: 
+    show:
       user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit:  <b>%{roles}</b>"
       system_information: "Järjestelmätietoja"
       contact_information: Yhteystiedot
       group_by_roles: "Roolien mukana tulevat ryhmät"
       change_school: Vaihda koulua
       user_is_locked: "Käyttäjätunnus on lukittu"
-    new: 
+    new:
       title: "Lisää uusi käyttäjä"
-    edit: 
+    edit:
       title: "Muokataan käyttäjää"
-    form: 
+    form:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"
-    select_school: 
+    select_school:
       title: Koulun vaihto
       select_new_school: Valitse uusi koulu
       submit: Seuraava
-    select_role: 
+    select_role:
       title: Koulun vaihto
       new_school: Uusi koulu
       select_new_role: Valitse uusi rooli
       submit: Vaihda koulu
-    import: 
-      info: 
+    import:
+      info:
         phase_1: "Syötä käyttäjätiedot"
         phase_2: "Määrittele käyttäjätiedot"
         phase_3: "Täydennä käyttäjätiedot"
         phase_4: "Tarkista käyttäjätiedot ja lisää käyttäjät"
-      new: 
+      new:
         title: "Lisää käyttäjiä massa-ajona"
         help: "Syötä käyttäjätieto alla olevaan tekstikenttään"
         example_title: Esimerkki
         example: "Matti, Meikäläinen\n\
           Maija, Meikäläinen"
         hint: "Voit käyttää eroittimena myös sarkainta. Näin ollen voit liittää käyttäjien tiedot taulukkolaskentaohjelmasta leikepöydän kautta alla olevaan tekstikenttään."
-      show: 
+      show:
         title: "Käyttäjät (%{count}) lisättiin onnistuneesti."
         title_with_error: "Kaikkien käyttäjien lisäys ei onnistunut!"
         successful: "Onnistui: %{count}"
         failed: "Epäonnistui: %{count}"
         pdf_info: "Voit tulostaa käyttäjälistat paperille"
         title_of_failed_users_list: "Seuraavien käyttäjien luonti epäonnistui!"
-      role: 
+      role:
         title: "Käyttäjien massalisäystiedon tarkistus"
         help: "Seuraaville kentille tulee määrittää tiedot uusia tunnuksia lisättäessä"
-      refine: 
+      refine:
         title: "Käyttäjien massalisäys"
         info: "Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta \"Tarkista uudelleen\" -painiketta."
         column_info: "Valitse sopivat kentät esimerkkien avulla"
         delete: Poista
         name_of_column: "Kentän nimi"
         example: Esimerkki
-      preview: 
+      preview:
         title: "Käyttäjien massalisäys, esikatselu"
         info: "Tarkista käyttäjien tiedot. Punaisilla merkityt tiedot ovat virheellisiä ja kyseisiä käyttäjiä ei voida lisätä ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi \"Lisää käyttäjät\""
         change_school: Vaihda koulua
         select_all: Valitse kaikki
-  groups: 
-    index: 
+  groups:
+    index:
       actions: Toiminnot
-    show: 
+    show:
       roles_and_members: "Roolit ja jäsenet"
       other_roles: Muut roolit
-    new: 
+    new:
       title: "Luo uusi ryhmä"
-    edit: 
+    edit:
       title: "Muokataan ryhmää"
-  schools: 
-    index: 
+  schools:
+    index:
       actions: Toiminnot
       title: Listataan koulut
-    edit: 
+    edit:
       title: Muokataan koulua
-    new: 
+    new:
       title: "Lisää uusi koulu"
-    menu: 
+    menu:
       dashboard: Kojetaulu
       admins: "Ylläpitäjät"
       wlan: WLAN
-    admins: 
+    admins:
       this_school_admin_users: "%{school_name}: ylläpitäjät"
       other_admin_users: "Lisää ylläpitäjän oikeudet"
       school_admins: "Ylläpitäjät"
-    show: 
+    show:
       contacts: Yhteystiedot
       devices: Laitteet
       users: "Käyttäjät"
@@ -243,102 +245,102 @@ fi:
       mail: "Sähköpostiosoite"
       billing_info: Laskutustiedot
       rule_lines: "Laskusäännöt"
-    form: 
+    form:
       add_puavo_billing_info: "Lisää laskutustietoja"
-  password: 
-    edit: 
+  password:
+    edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."
       changing_user: Vaihtaja
       changed_user: Vaihdettava tunnus
       password: Salasana
       link_own_password: Vaihda oma salasanasi
-    own: 
+    own:
       title: Vaihda salasana
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
-  organisations: 
-    show: 
+  organisations:
+    show:
       title: Organisaation tiedot
-    edit: 
+    edit:
       title: Organisaation tiedot
       select: Valitse
       add_puavo_billing_info: "Lisää laskutustietoja"
-  external_services: 
-    index: 
+  external_services:
+    index:
       actions: Toiminnot
       title: Ulkoiset palvelut
-    new: 
+    new:
       title: Uuden ulkoisen palvelun tiedot
-    edit: 
+    edit:
       title: Ulkoisen palvelun tietojen muokkaus
-  oauth_clients: 
-    new: 
+  oauth_clients:
+    new:
       title: Uuden OAuth asiakassovelluksen tiedot
-    edit: 
+    edit:
       title: Muokataan OAuth asiakassovelluksen tietoja
-    index: 
+    index:
       title: OAuth asiakassovellukset
       actions: Toiminnot
       new: Uusi
-  search: 
-    search_result: 
+  search:
+    search_result:
       title_user: "Käyttäjät"
       title_role: Roolit
       title_group: "Ryhmät"
       title_device: Laitteet
-  profiles: 
-    edit: 
+  profiles:
+    edit:
       title: Omat tiedot
       save_and_close: Tallenna ja sulje
-    show: 
+    show:
       message: Tietojen tallennus onnistui
   menu:
     index:
       service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta
       service_link_name_infotv: Info-TV
       service_link_name_change_password: Vaihda salasanaa
-  controllers: 
-    import: 
+  controllers:
+    import:
       school_has_changed: "Siirretty käyttäjä, käytössä vanha salasana"
-  activeldap: 
-    errors: 
-      messages: 
+  activeldap:
+    errors:
+      messages:
         taken: "%{attribute} on jo käytössä"
         blank: "%{attribute} pitää olla asetettuna"
         invalid: "%{attribute} on virheellinen"
         confirmation: "%{attribute} ei täsmää vahvistukseen"
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
-        user: 
+        user:
           must_begin_with: "Käyttäjätunnuksen pitää alkaa pienellä kirjaimella"
           invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
-        group: 
+        group:
           invalid_characters: "Lyhenne sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
-        school: 
+        school:
           invalid_characters: "%{attribute} sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"
         uniqueness: "%{attribute} on jo käytössä"
         invalid_characters: "%{attribute} sisältää virheellisiä merkkejä"
-        device: 
-          puavoHostname: 
+        device:
+          puavoHostname:
             invalid_characters: "Verkkonimi sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
-          macAddress: 
+          macAddress:
             invalid_characters: "MAC-osoite sisältää virheellisiä merkkejä tai se on väärän muotoinen. Esim: 0f:1f:a9:2f:a3:ad"
         wlan:
           duplicate_name: langattomien verkkojen asetuksissa sama verkkonimi useammalla verkolla
-    models: 
+    models:
       group: "Ryhmä"
       role: Rooli
       user: "Käyttäjä"
       school: Koulu
       external_service: Ulkoinen palvelu
       oauth_client: OAuth asiakassovellus
-    attributes: 
-      role: 
+    attributes:
+      role:
         displayName: Roolin nimi
         members: "Jäsenet"
         groups: "Roolin ryhmät"
-      school: 
+      school:
         cn: "Ryhmän nimi"
         displayName: Koulun nimi
         puavoNamePrefix: Etuliite
@@ -357,7 +359,7 @@ fi:
         puavoDeviceImage: Levykuva
         puavoBillingInfo: Laskutustiedot
         puavoWlanChannel: Kanava
-      user: 
+      user:
         displayName: Nimi
         sn: Sukunimi
         givenName: Etunimi
@@ -384,13 +386,13 @@ fi:
         puavoEduPersonPersonnelNumber: "Henkilönumero"
         image: Kuva
         puavoLocked: "Käyttäjätunnus on lukittu"
-      group: 
+      group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne
         gidNumber: Gid-numero
         primary_members: "Ensisijaiset jäsenet"
         members: "Jäsenet"
-      ldap_organisation: 
+      ldap_organisation:
         description: Kuvaus
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero
@@ -412,13 +414,13 @@ fi:
         puavoEduOrgAbbreviation: Lyhenne
         puavoBillingInfo: Laskutustiedot
         puavoDeviceImage: Levykuva
-      external_service: 
+      external_service:
         uid: Palvelun tunniste
         description: Kuvaus
         userPassword: Salasana
         groups: "Järjestelmäryhmät"
         dn: Bind DN
-      device: 
+      device:
         puavoHostname: Verkkonimi
         puavoDeviceType: Laitteen tyyppi
         macAddress: MAC-osoite
@@ -465,13 +467,13 @@ fi:
         puavoDeviceOffHour: "Päivän lopetus"
         puavoDeviceImage: Levykuva
         puavoDeviceBootImage: Käynnistyslevykuva
-      oauth_client: 
+      oauth_client:
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)
         userPassword: Asiakassovelluksen salaisuus (Client secret)
         puavoOAuthScope: Oikeudet
         puavoOAuthClientType: Tyyppi
-      server: 
+      server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi
         macAddress: MAC-osoite
@@ -505,9 +507,9 @@ fi:
         puavoExport: Hakemistopolku
         image: Kuva
         puavoDeviceImage: Levykuva
-      automount: 
+      automount:
         cn: Hakemisto
-      printer: 
+      printer:
         printerDescription: Tulostimen nimi
         printerMakeAndModel: Valmistaja ja malli
         printerLocation: Sijainti
@@ -515,9 +517,9 @@ fi:
         printerType: Tyyppi
         printerURI: Polku
         puavoPrinterPPD: Ajuritiedosto (PPD)
-    values: 
-      device: 
-        roles: 
+    values:
+      device:
+        roles:
           puavoNetbootDevice: "Verkkokäynnistys"
           puavoLocalbootDevice: "Paikallinen käynnistys"
           puavoPrinter: Tulostin
@@ -532,12 +534,12 @@ fi:
   language_en: Englanti
   language_sv: Ruotsi
   language_default: Oletus
-  date: 
-    formats: 
+  date:
+    formats:
       default: "%d.%m.%Y"
       short: "%b %d"
       long: "%B %d, %Y"
-    day_names: 
+    day_names:
     - Sunnuntai
     - Maanantai
     - Tiistai
@@ -545,7 +547,7 @@ fi:
     - Torstai
     - Perjantai
     - Lauantai
-    abbr_day_names: 
+    abbr_day_names:
     - Su
     - Ma
     - Ti
@@ -553,8 +555,8 @@ fi:
     - To
     - Pe
     - La
-    month_names: 
-    - 
+    month_names:
+    -
     - Tammikuu
     - Helmikuu
     - Maaliskuu
@@ -567,8 +569,8 @@ fi:
     - Lokakuu
     - Marraskuu
     - Joulukuu
-    abbr_month_names: 
-    - 
+    abbr_month_names:
+    -
     - tammik.
     - helmik.
     - maalisk.
@@ -581,19 +583,19 @@ fi:
     - lokak.
     - marrask.
     - jouluk.
-    order: 
+    order:
     - :day
     - :month
     - :year
-  time: 
-    formats: 
+  time:
+    formats:
       default: "%d.%m.%Y"
       short: "%d %b %H:%M"
       long: "%B %d, %Y %H:%M"
   actions: Toiminnot
   cancel: "- Peruuta"
   or: tai
-  shared: 
+  shared:
     terminal_title: "Päätteen tiedot"
     location: Sijainti
     display_settings: "Näytönasetukset"
@@ -608,13 +610,13 @@ fi:
     purchase_information: Hankintatiedot
     add_macAddress: "Lisää uusi MAC-osoite"
     autopoweroff: Automaattisammutus
-    linux_device_information: 
+    linux_device_information:
       certificate_status_true: Voimassa
       certificate_status_false: Ei ole voimassa
       xrandr_status_true: "Kyllä"
       xrandr_status_false: Ei
       xrandr_status_: Ei
-    form_linux_device_information: 
+    form_linux_device_information:
       select: Valitse
     form_wlan:
       wireless_access_point_setup: Koulun tukiasemien oletusasetukset
@@ -627,52 +629,52 @@ fi:
       select_value_open: Avoin
       select_value_psk: PSK
       default: Oletus
-  devices: 
-    index: 
+  devices:
+    index:
       add_new_device: "Lisää uusi laite"
       title: Laitteet
       select_device_label: Valitse
-    new: 
+    new:
       new_printer: Uusi tulostin
       new_device: Uusi laite (%{device_type})
-    edit: 
+    edit:
       edit: Muokkaa
       title: Laiteasetukset
       terminal_title: "Pääteasetukset"
       printer_title: Tulostinasetukset
-    form_cups: 
+    form_cups:
       cups_settings: CUPS asetukset
-    cups: 
+    cups:
       cups_settings: CUPS asetukset
-    show: 
+    show:
       change_school: Vaihda koulua
-    select_school: 
+    select_school:
       title: "Laitteen (%{name}) siirtäminen toiseen kouluun"
       select_new_school: Valitse uusi koulu
       submit: "Siirrä"
-  servers: 
-    index: 
+  servers:
+    index:
       title: Palvelimet
-    edit: 
+    edit:
       title: Palvelimen asetukset
-    form: 
+    form:
       automounts: Hakemistoliitokset
       add_puavoExport: "Lisää hakemistopolkuja"
-    show: 
+    show:
       automounts: Hakemistoliitokset
     school_limit:
       title: Rajoita kouluihin
       description: Tämä LTSP-palvelin on käytössä vain näissä kouluissa
       description_edit: Jos mitään ei ole valittu palvelin palvelee kaikkia organisaation kouluja
-  automounts: 
-    index: 
+  automounts:
+    index:
       title: Hakemistoliitokset
-    new: 
+    new:
       title: Uusi hakemistoliitos
-    edit: 
+    edit:
       title: Hakemistoliitoksen muokkaus
-  host: 
-    types: 
+  host:
+    types:
       register_label: Laitetyyppi
       register_title: Laitetyypin valinta
       register_question: "Valitse laitetyyppi: "
@@ -683,10 +685,10 @@ fi:
       server: Palvelin
       netstand: Nettikulma
       infotv: Info-tv
-  printers: 
-    index: 
+  printers:
+    index:
       server_title: "Palvelin: %{server}"
-  helpers: 
-    submit: 
-      servers: 
+  helpers:
+    submit:
+      servers:
         create: Luo
