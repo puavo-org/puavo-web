@@ -4,8 +4,8 @@ module PuavoRest
 
 class LoadBalanceModel
 
-  def initialize
-    @store = PStore.new("/tmp/ltsp_server_loads.pstore")
+  def initialize(organisation)
+    @store = PStore.new("/tmp/ltsp_server.#{ organisation }.pstore")
   end
 
   def update(domain, cpu_count, load_avg)
@@ -56,7 +56,7 @@ class LtspServers < LdapSinatra
   auth Credentials::BasicAuth, :skip => :get
 
   before do
-    @m = LoadBalanceModel.new
+    @m = LoadBalanceModel.new @organisation
   end
 
   # Get list of LTSP servers with their load averages
