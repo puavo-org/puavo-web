@@ -28,6 +28,7 @@ rescue Errno::ENOENT
   require "puavo/etc"
   CONFIG = {
     "ldap" => PUAVO_ETC.domain,
+    "ltsp_server_data_dir" => "/run/puavo-rest",
     "bootserver" => true
   }
 end

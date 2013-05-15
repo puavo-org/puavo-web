@@ -54,7 +54,10 @@ class LtspServers < LdapSinatra
   auth Credentials::BasicAuth, :skip => :get
 
   before do
-    @m = LtspServersModel.new "/tmp/ltsp_server.#{ @organisation }.pstore"
+    @m = LtspServersModel.new File.join(
+      CONFIG["ltsp_server_data_dir"],
+      "ltsp_servers.#{ @organisation }.pstore"
+    )
   end
 
   # Get list of LTSP servers sorted by they load. Most idle server is the first
@@ -69,9 +72,9 @@ class LtspServers < LdapSinatra
   # @!macro route
   get "/v3/:organisation/ltsp_servers/_most_idle.?:format?" do
     if params["format"] == "txt"
-      json @m.most_idle
-    else
       txt @m.most_idle[:domain]
+    else
+      json @m.most_idle
     end
   end
 
