@@ -1,0 +1,12 @@
+language: ruby
+rvm:
+  - 1.9.3
+script: make test
+notifications:
+  email:
+    - dev@opinsys.fi
+    - esa-matti@suuronen.org
+  irc: "irc.freenode.org#opinsys"
+branches:
+  only:
+    - master
