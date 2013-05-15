@@ -30,7 +30,7 @@ install:
 
 .PHONY: test
 test:
-	bundle exec ruby1.9.1 test/*_test.rb
+	bundle exec ruby1.9.1 test/all.rb
 
 dev:
 	bundle exec shotgun
