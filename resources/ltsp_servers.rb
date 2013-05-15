@@ -7,6 +7,9 @@ module PuavoRest
 # balancing data
 class LtspServersModel
 
+  # How old servers we report as available
+  MAX_AGE = 60 * 2
+
   def initialize(path)
     FileUtils.mkdir_p File.dirname(path)
     @store = PStore.new(path)
@@ -42,8 +45,14 @@ class LtspServersModel
     a
   end
 
+  def all_without_old
+    all.select do |server|
+      Time.now - server[:updated] < MAX_AGE
+    end
+  end
+
   def most_idle
-    all.sort do |a, b|
+    all_without_old.sort do |a, b|
       a[:load_avg] <=> b[:load_avg]
     end.first
   end

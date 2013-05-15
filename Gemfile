@@ -11,4 +11,5 @@ group :development do
   gem "shotgun"
   gem "debugger"
   gem "pry"
+  gem "timecop"
 end

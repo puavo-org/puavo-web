@@ -21,4 +21,13 @@ describe PuavoRest::LtspServersModel do
     assert_equal "idle", @model.most_idle[:domain]
   end
 
+  it "can figure out the most idle server" do
+    @model.set("too-old", 0.0)
+    Timecop.travel 60 * 5
+    @model.set("littleload", 0.1)
+    @model.set("lotload", 1.1)
+
+    assert_equal "littleload", @model.most_idle[:domain]
+  end
+
 end
