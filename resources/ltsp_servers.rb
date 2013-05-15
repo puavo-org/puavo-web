@@ -2,10 +2,12 @@ require "pstore"
 
 module PuavoRest
 
-class LoadBalanceModel
+# Pstore packed model for LTSP server data. Currently contains mainly load
+# balancing data
+class LtspServersModel
 
-  def initialize(organisation)
-    @store = PStore.new("/tmp/ltsp_server.#{ organisation }.pstore")
+  def initialize(path)
+    @store = PStore.new(path)
   end
 
   def update(domain, cpu_count, load_avg)
@@ -47,7 +49,7 @@ class LtspServers < LdapSinatra
   auth Credentials::BasicAuth, :skip => :get
 
   before do
-    @m = LoadBalanceModel.new @organisation
+    @m = LtspServersModel.new "/tmp/ltsp_server.#{ @organisation }.pstore"
   end
 
   # Get list of LTSP servers sorted by they load. Most idle server is the first
