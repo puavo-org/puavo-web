@@ -16,10 +16,12 @@
   <% if f.object.classes.include?('puavoPrinter') %>
     <%= render :partial => 'form_cups', :locals => { :f => f } %>
   <% end %>
-
+    <tr>
+      <td></td>
+      <td>
+        <%= f.submit submit_text %>
+        <div class="cancel"> <%=link_to t('cancel'), path, :class => 'btn btn-danger' %> </div>
+      </td>
+    </tr>
   </table>
-
-  <%= f.submit submit_text %> 
-  <div class="cancel"> <%=link_to t('cancel'), path, :class => 'cancel_button' %> </div>
-
 <% end %>

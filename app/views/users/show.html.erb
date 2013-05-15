@@ -29,10 +29,10 @@
     </td>
   </tr>
 </table>
-<div class="show_user">
-<div class="user_box">
+<div class="show_user clearfix">
+<div class="content-box">
 <h3><%= t('.contact_information') %></h3>
-<table>
+<table class="user-information">
   <tr>
   <td class="label_td view"><%= label "user", "mail" %></td>
   <td class="value_td"><%= Array(@user.mail).map{ |mail| mail }.join(", ") %></td>
@@ -46,9 +46,9 @@
   </tr>
 </table>
 </div>
-<div class="user_box">
+<div class="content-box">
 <h3><%= t('.system_information') %></h3>
-<table>
+<table class="user-information">
   <tr>
     <td class="label_td view"><%= label "user", "homeDirectory" %></td>
     <td class="value_td"><%=h @user.homeDirectory %></td>

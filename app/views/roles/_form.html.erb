@@ -1,11 +1,12 @@
 <%= form_for(@role, :url => path, :html => { :method => method })  do |f| %>
-
+<div class="no-table-form">
   <p>
     <%= f.label :displayName %><br />
     <%= f.text_field :displayName %>
   </p>
   <span>
     <%= f.submit submit_text %>
-    <div class="cancel"><%= link_to t('link.cancel'),  path, :class => 'cancel_button' %> </div>
+    <div class="cancel"><%= link_to t('link.cancel'),  path, :class => 'btn btn-danger' %> </div>
   </span>
+</div>
 <% end %>

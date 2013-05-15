@@ -124,7 +124,7 @@
   </tr>
   <% if current_user.organisation_owner? %>
   <tr>
-    <td>
+    <td class="label_for_input_text_list">
       <%= f.label :puavoBillingInfo %>
     </td>
     <td>
@@ -138,17 +138,17 @@
         <% end %>
       <% end %>
     </div>
-    <%= link_to t('.add_puavo_billing_info'), "#", :class => "clone_prev_input_element" %>
+    <%= link_to t('.add_puavo_billing_info'), "#", :class => "clone_prev_input_element btn" %>
 
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+      <%= f.submit submit_text %>
+      <div class="cancel"><%=link_to t('link.cancel'), path, :class => 'btn btn-danger' %> </div>
     </td>
   </tr>
   <% end %>
 </table>
-
-<div>
-
-    <%= f.submit submit_text %>
-    <div class="cancel"> <%=link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
-
-</div>
 <% end %>
