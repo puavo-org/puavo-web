@@ -28,6 +28,10 @@ class LtspServersModel
     end
   end
 
+  # Get server info for domain
+  #
+  # @param [String] domain
+  # @return [Hash]
   def get(domain)
     @store.transaction(true) do
       @store[domain]
@@ -35,6 +39,7 @@ class LtspServersModel
   end
 
   # Return all known ltsp servers
+  # @return [Array]
   def all
     a = []
     @store.transaction(true) do
@@ -45,12 +50,18 @@ class LtspServersModel
     a
   end
 
+  # Return all known ltsp servers which updated under MAX_AGE
+  #
+  # @return [Array]
   def all_without_old
     all.select do |server|
       Time.now - server[:updated] < MAX_AGE
     end
   end
 
+  # Return the most idle LTSP server which is update under MAX_AGE
+  #
+  # @return [Array]
   def most_idle
     all_without_old.sort do |a, b|
       a[:load_avg] <=> b[:load_avg]
