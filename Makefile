@@ -10,7 +10,7 @@ yard:
 
 publish-yard: yard
 	git commit doc -m "Compiled YARD docs"
-	git push origin master:gh-pages
+	git push -f origin master:gh-pages
 
 install:
 	mkdir -p $(DESTDIR)$(installdir)
