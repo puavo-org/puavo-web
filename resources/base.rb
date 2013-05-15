@@ -105,11 +105,17 @@ class LdapSinatra < Sinatra::Base
   include ErrorMethods
   helpers Sinatra::JSON
 
+  # Respond with a text content
   def txt(text)
     content_type :txt
     halt 200, text.to_s
   end
 
+  # In routes handlers use limit query string to slice arrays
+  #
+  # Example: /foos?limit=2
+  #
+  # @param a [Array] Array to slice
   def limit(a)
     if params["limit"]
       a[0...params["limit"].to_i]
