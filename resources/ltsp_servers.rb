@@ -71,6 +71,11 @@ class LtspServers < LdapSinatra
 
   # Computed resource for the most idle ltsp server
   #
+  # Set format to txt to get only the server name as plain/text
+  #
+  # Example: curl /v3/hogwarts/ltsp_servers/_most_idle.txt
+  # => someservername
+  #
   # @!macro route
   get "/v3/:organisation/ltsp_servers/_most_idle.?:format?" do
     if params["format"] == "txt"
@@ -84,8 +89,11 @@ class LtspServers < LdapSinatra
     json @m.get(params["domain"])
   end
 
-  # set LTSP server idle status
+  # Set LTSP server idle status as x-www-form-urlencoded. If cpu_count is
+  # provided load_avg will be divided using it.
   #
+  # @param [Float] load_avg
+  # @param [Fixnum] cpu_count optional
   # @!macro route
   put "/v3/:organisation/ltsp_servers/:domain" do
     if params["cpu_count"]
