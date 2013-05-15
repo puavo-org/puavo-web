@@ -65,6 +65,10 @@ body
   a
     &:hover
       color #222
+    &.show
+      background-position left -310px
+      &:hover
+        background-position left -350px
   > div, .sub-tools > li
     border-bottom 1px dashed #ECEADA
   .tool
@@ -80,11 +84,102 @@ body
         &:hover
           background none repeat scroll 0 0 #C0772F
 
+  a[href$="edit"]
+    background-position left 10px
+  a[href$="edit"]:hover
+    background-position left -30px
+  a[data-method="delete"]
+    background-position left -70px
+  a[data-method="delete"]:hover
+    background-position left -110px
+  .videolink
+    background-position left -235px
+    &:hover
+      background-position left -275px
+  a[href$="import/new"]
+    background-position left -470px
+  a[href$="import/new"]:hover
+    background-position left -510px
+
 .tools .sub-tools > li:hover,
 .tools > div:hover
   background none repeat scroll 0 0 #C0772F
   border-radius 6px 6px 0 0
+.tool
+  span
+    img
+      margin 0 0 0 5px
+
+.tools a[href$="select_school"],
+.maincontent .tools a[href$="rename_groups/new"]
+  background-position left -150px
+
+.tools a[href$="select_school"]:hover,
+.maincontent .tools a[href$="rename_groups/new"]:hover
+  background-position left -190px
+
+.tools a[href$="users/new"],
+.tools a[href$="external_services/new"],
+.tools a[href$="schools/new"],
+.tools a[href$="roles/new"],
+.tools a[href$="groups/new"]
+  background-position left -390px
+
+.tools a[href$="users/new"]:hover,
+.tools a[href$="external_services/new"]:hover,
+.tools a[href$="schools/new"]:hover,
+.tools a[href$="roles/new"]:hover,
+.tools a[href$="groups/new"]:hover
+  background-position left -430px
+
 // End of .tools
+
+// Forms
+form
+  input
+    background-color white
+    border 1px solid formElementBorderColor
+    border-radius 4px
+    box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.075)
+  select
+    background-color white
+    background-image linear-gradient(white 0%, rgb(240,240,240) 100%)
+    border 1px solid formElementBorderColor
+  .field_with_errors
+    input, select
+      border 1px solid errorRed
+
+label
+  &.label_error
+    color errorRed
+
+.required_info
+  color errorRed
+
+.required::after
+  color errorRed
+
+// End of forms
+
+// Tables
+table
+  tr
+    &.even
+      td
+        background #e5ecf9
+  &.list
+    tr
+      &:hover
+        background #F9F7E6
+    td
+      border-bottom 1px solid #AAAAAA
+    th
+      background none repeat scroll 0 0 #A36A2A
+      background linear-gradient(#A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent
+      border-bottom 1px solid #222222
+      color #F5F5E8
+
+// End of tables
 
 @media screen-breakpoint-one
   .main-wrap, .login_container

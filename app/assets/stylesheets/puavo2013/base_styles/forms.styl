@@ -2,6 +2,13 @@
 @import 'base_styles/mediaqueries'
 
 form
+  input
+    margin 0 0 2%
+    padding 7px 8px
+    width 100%
+  #school_puavoBillingInfo, #organisation_puavoBillingInfo
+    input
+      display block
   tr
     display table-row
     margin 0 0 5px
@@ -9,6 +16,10 @@ form
     text-overflow clip
     white-space nowrap
     width 100%
+    &:before, &:after
+      content ""
+      display table
+      line-height 0
     td
       margin 0
       padding 0
@@ -16,12 +27,14 @@ form
       text-align right
       padding-right 1em
       width 20%
-
-form table tr:before,
-form table tr:after
-  display table
-  line-height 0
-  content ""
+  select
+    height 30px
+    margin 0 0 5px
+    padding 0.2em 0
+    width 100%
+  textarea
+    &#raw_users
+      width 100%
 
 .rename_group_old_name
   text-align right
@@ -32,12 +45,6 @@ form table tr:after
 
 .rename_group_name_abbr
   width 45%
-
-table
-  &.new_groups_table
-    tr
-      td
-        text-align left !important
 
 .external_services_system_groups
   div
@@ -66,10 +73,23 @@ form[action$="users/import"]
     width auto
 
 label
+  color #222222
+  font-size 90%
   font-weight bold
+  line-height 2
+  margin 0
   &.checkbox
     font-size 100%
     font-weight normal
+
+.label_for_checkbox_list
+  vertical-align top
+
+.label_for_input_text_list
+  vertical-align top
+
+.label_td
+  text-align left
 
 fieldset
   padding 1.4em
@@ -78,20 +98,7 @@ fieldset
 
 legend
   font-weight bold
-  font-size 120%
-
-form input
-  background-color #FFFFFF
-  border 1px solid #cccccc
-  border-radius 4px
-  box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.075)
-  font-size 120%
-  margin 0 0 2%
-  padding 7px 8px
-  width 100%
-
-table .fieldWithErrors input, table .fieldWithErrors select
-  border-color #F66
+  font-size 100%
 
 form
   &.inline
@@ -121,10 +128,9 @@ input[type="submit"]
   box-shadow inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05)
   background none repeat scroll 0 0 #EEEEED
   background-image linear-gradient(#FFFFFF 0%, #EEEEED 100%)
-  border 1px solid #222222
   border-radius 4px
   cursor pointer
-  font-size 140%
+  font-size 120%
   height 70px
   margin 5px 0 0
   max-width 333px
@@ -172,25 +178,40 @@ input.radio
     display block
     margin 0 0 5px
 
-@media screen-breakpoint-one
-  form table not(.validate_users_list) th,
-  form table:not(.validate_users_list) td,
-  form table:not(.validate_users_list) caption
-    float left
-    display block !important
-    text-align left !important
-    width 100% !important
+.cancel
+  display inline
+  *display inline
+  font-size 100%
+  margin 0
+  padding 0
+  width 100px
+  &:before
+    content: " – "
+.clone_prev_input_element
+  font-size 90%
+  font-weight normal
+  margin-bottom 0.5em
 
+.required
+  &::after
+    content "*"
+    font-size 150%
+  .field_with_errors
+    display inline-block
+
+@media screen-breakpoint-one
   form
+    table, tbody
+      display block
     table
-      &.autopoweroff_organisation
-        tr
-          td
-            width auto !important
-      &:not(.validate_users_list)
-        tr
-          display block !important
-          position relative
+      padding 2%
+      tr
+        display block
+        position relative
+        td, td:first-child, th
+          display block
+          text-align left
+          width 100%
     &.form_inline
       padding 2% 0
       .submit_button_login
@@ -199,16 +220,11 @@ input.radio
         max-width 100%
         min-height 50px
         width 98%
-
-  form
-    input
+    input, select
+      padding 2%
       width 95%
     input[type="submit"]
       width 50%
-
-  form table, .new_external_service table, .edit_external_service table
-    padding-left 2%
-    width 100%
 
   .new_external_service tr td:nth-child(even), .new_external_service tr td:nth-child(odd), .edit_external_service tr:nth-child(even), .edit_external_service tr:nth-child(odd)
     width 95% !important
@@ -216,21 +232,6 @@ input.radio
   .label_td
     &.view
       width 35%
-
-  table#autopoweroff
-    th
-      display inline-block !important
-      width auto !important
-    td
-      &.checkbox
-        display inline-block !important
-        width 10% !important
-        text-align center !important
-      table
-        width 95%
-        td
-          width 30% !important
-
   .show_user
     table
       &.list
@@ -238,7 +239,7 @@ input.radio
           display inline-block
           &.value_td
             padding-left 1em
-            text-align left !important
+            text-align left
 
   .mass_import_info, .mass_import_info_text
     padding 2%
@@ -247,30 +248,26 @@ input.radio
     padding 0 0 0 2%
 
   .mass_import_form
-    width 90% !important
+    width 90%
     input
       margin-left 2%
 
   textarea#raw_users
     margin-left 2%
-    width 90% !important
+    width 90%
 
   form table.import_define th, form table.import_define td
-    width 45% !important
+    width 45%
     display inline-block
 
   .submit_button_container
     margin-left 2% !important
-
-  .btn
-    font-size 100% !important
 
   .form_inline
     & > *
       padding 0 2%
     label
       display block
-      font-size 120%
       text-align left
 
   form.new_device h2, form.edit_device h2, form.edit_server h2

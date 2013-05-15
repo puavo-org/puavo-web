@@ -34,13 +34,18 @@ global-reset()
 @import "puavo2013/schools.styl"
 @import "puavo2013/schools-admins.styl"
 @import "puavo2013/theme.styl"
+@import "puavo2013/users.styl"
 @import "puavo2013/users-import.styl"
 @import "puavo2013/base_styles/print.styl"
 
-.tool
-  span
-    background-image-sprite()
+.tool span, .tools a
+  tools-image-sprite()
+
 .topNavContainer input
   search-input-image()
+
 .topNavContainer input.loading
   search-input-spinner()
+
+.clone_prev_input_element:hover
+  clone-prev-input-element-image()

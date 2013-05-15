@@ -1,6 +1,5 @@
 #top-menu {
   float: left;
-  font-size: 90%;
   font-weight: bold;
   line-height: 3em;
   list-style: none outside none;
@@ -189,6 +188,7 @@ li.top-menu-item:last-child {
 
 .topNavContentContainer,
 .footer_wrap {
+  font-size: 80%;
   margin: 0 auto;
   max-width: 1200px;
   width:90%;
