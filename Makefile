@@ -6,7 +6,7 @@ build:
 	bundle install --deployment --without development
 
 yard:
-	bundle exec yard doc root.rb .
+	bundle exec yard doc --exclude vendor root.rb .
 
 publish-yard: yard
 	git commit doc -m "Compiled YARD docs"
