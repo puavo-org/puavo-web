@@ -7,12 +7,18 @@ cpu_count=$(nproc)
 # Load average from last minute
 # http://linux.die.net/man/5/proc
 load_avg=$(sed -rne 's/^([0-9\.]+) .*$/\1/p' /proc/loadavg)
+
 domain=$(cat /etc/puavo/domain)
-organisation="hogwarts"
+
+# TODO: https://github.com/opinsys/puavo-client/issues/7
+organisation=$(sed -rne 's/^([^\.]+).*$/\1/p' /etc/puavo/domain)
+
+# TODO: dns hackery
+rest_server="http://127.0.0.1:9393"
 
 curl --config - \
      --request PUT \
-    "http://127.0.0.1:9393/v3/$organisation/ltsp_servers/$domain" << EOF
+    "$rest_server/v3/$organisation/ltsp_servers/$domain" << EOF
 data="cpu_count=$cpu_count"
 data="load_avg=$load_avg"
 user=$(cat /etc/puavo/ldap/dn):$(cat /etc/puavo/ldap/password)
