@@ -93,7 +93,7 @@
   
     
       <dt class="r2">Includes:</dt>
-      <dd class="r2"><span class='object_link'><a href="ErrorMethods.html" title="PuavoRest::ErrorMethods (module)">ErrorMethods</a></span></dd>
+      <dd class="r2"><span class='object_link'><a href="../ErrorMethods.html" title="ErrorMethods (module)">ErrorMethods</a></span></dd>
       
     
   
@@ -118,8 +118,20 @@
 
 </div><div id="subclasses">
   <h2>Direct Known Subclasses</h2>
-  <p class="children"><span class='object_link'><a href="ExternalFiles.html" title="PuavoRest::ExternalFiles (class)">ExternalFiles</a></span>, <span class='object_link'><a href="Users.html" title="PuavoRest::Users (class)">Users</a></span></p>
+  <p class="children"><span class='object_link'><a href="ExternalFiles.html" title="PuavoRest::ExternalFiles (class)">ExternalFiles</a></span>, <span class='object_link'><a href="LtspServers.html" title="PuavoRest::LtspServers (class)">LtspServers</a></span>, <span class='object_link'><a href="Root.html" title="PuavoRest::Root (class)">Root</a></span>, <span class='object_link'><a href="Users.html" title="PuavoRest::Users (class)">Users</a></span></p>
 </div>
+
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="auth_config-classvariable" class="">@@auth_config =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span><span class='rbrace'>}</span></pre></dd>
+      
+    </dl>
+  
 
 
 
@@ -129,11 +141,92 @@
 
   
     <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#auth-class_method" title="auth (class method)">+ (Object) <strong>auth</strong>(auth_klass, options = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Define classes that are used to get credentials for this resource.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
       Instance Method Summary
       <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
     </h2>
 
     <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#acquire_credentials-instance_method" title="#acquire_credentials (instance method)">- (Object) <strong>acquire_credentials</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Acquire credentials using the specified auth classes.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#limit-instance_method" title="#limit (instance method)">- (Object) <strong>limit</strong>(a) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>In routes handlers use limit query string to slice arrays.</p>
+</div></span>
+  
+</li>
+
       
         <li class="public ">
   <span class="summary_signature">
@@ -160,6 +253,54 @@ organisation and ldap connection.</p>
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#setup_ldap_connection-instance_method" title="#setup_ldap_connection (instance method)">- (Object) <strong>setup_ldap_connection</strong>(credentials) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Setup ldap connection.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#txt-instance_method" title="#txt (instance method)">- (Object) <strong>txt</strong>(text) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Respond with a text content.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -172,17 +313,258 @@ organisation and ldap connection.</p>
   
   
   
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="ErrorMethods.html" title="PuavoRest::ErrorMethods (module)">ErrorMethods</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="ErrorMethods.html#bad_credentials-instance_method" title="PuavoRest::ErrorMethods#bad_credentials (method)">#bad_credentials</a></span>, <span class='object_link'><a href="ErrorMethods.html#not_found-instance_method" title="PuavoRest::ErrorMethods#not_found (method)">#not_found</a></span></p>
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../ErrorMethods.html" title="ErrorMethods (module)">ErrorMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ErrorMethods.html#bad_credentials-instance_method" title="ErrorMethods#bad_credentials (method)">#bad_credentials</a></span>, <span class='object_link'><a href="../ErrorMethods.html#not_found-instance_method" title="ErrorMethods#not_found (method)">#not_found</a></span></p>
 
   
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="auth-class_method">
+  
+    + (<tt>Object</tt>) <strong>auth</strong>(auth_klass, options = {}) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Define classes that are used to get credentials for this resource</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>auth_klass</span>
+      
+      
+        <span class='type'>(<tt>Class</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Authentication class</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Options hash.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>options</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:skip</span>
+          <span class="type">(<tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Skip credentials lookup on HTTP method(s). Possible values: :get, :post:,
+:put, :patch, :options</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+140
+141
+142</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 140</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_auth'>auth</span><span class='lparen'>(</span><span class='id identifier rubyid_auth_klass'>auth_klass</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='lparen'>(</span><span class='cvar'>@@auth_config</span><span class='lbracket'>[</span><span class='kw'>self</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='id identifier rubyid_auth_klass'>auth_klass</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="new_model-instance_method">
+  <h3 class="signature first" id="acquire_credentials-instance_method">
+  
+    - (<tt>Object</tt>) <strong>acquire_credentials</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Acquire credentials using the specified auth classes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#auth-class_method" title="PuavoRest::LdapSinatra.auth (method)">auth</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+148
+149
+150
+151
+152
+153
+154
+155
+156</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 148</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_acquire_credentials'>acquire_credentials</span>
+  <span class='lparen'>(</span><span class='cvar'>@@auth_config</span><span class='lbracket'>[</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_auth'>auth</span><span class='op'>|</span>
+    <span class='id identifier rubyid_auth_klass'>auth_klass</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_auth'>auth</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_cred'>cred</span> <span class='op'>=</span> <span class='id identifier rubyid_auth_klass'>auth_klass</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_env'>env</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+      <span class='kw'>return</span> <span class='id identifier rubyid_cred'>cred</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="limit-instance_method">
+  
+    - (<tt>Object</tt>) <strong>limit</strong>(a) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>In routes handlers use limit query string to slice arrays</p>
+
+<p>Example: /foos?limit=2</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>a</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Array to slice</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+119
+120
+121
+122
+123
+124
+125</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 119</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_limit'>limit</span><span class='lparen'>(</span><span class='id identifier rubyid_a'>a</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>limit</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='int'>0</span><span class='op'>...</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>limit</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_a'>a</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="new_model-instance_method">
   
     - (<tt>Model instance</tt>) <strong>new_model</strong>(klass) 
   
@@ -236,15 +618,180 @@ organisation and ldap connection</p>
       <pre class="lines">
 
 
-184
-185
-186</pre>
+191
+192
+193
+194
+195
+196
+197</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 184</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 191</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new_model'>new_model</span><span class='lparen'>(</span><span class='id identifier rubyid_klass'>klass</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_klass'>klass</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@ldap_conn</span><span class='comma'>,</span> <span class='ivar'>@organisation</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='ivar'>@ldap_conn</span>
+    <span class='id identifier rubyid_klass'>klass</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@ldap_conn</span><span class='comma'>,</span> <span class='ivar'>@organisation</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_bad_credentials'>bad_credentials</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No credentials supplied</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="setup_ldap_connection-instance_method">
+  
+    - (<tt>Object</tt>) <strong>setup_ldap_connection</strong>(credentials) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Setup ldap connection</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>credentials</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    <p class="tag_title">Options Hash (<tt>credentials</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:username</span>
+          <span class="type">(<tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>username (dn)</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:password</span>
+          <span class="type">(<tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>plain text password</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#new_model-instance_method" title="PuavoRest::LdapSinatra#new_model (method)">#new_model</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 163</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_setup_ldap_connection'>setup_ldap_connection</span><span class='lparen'>(</span><span class='id identifier rubyid_credentials'>credentials</span><span class='rparen'>)</span>
+  <span class='ivar'>@ldap_conn</span> <span class='op'>=</span> <span class='const'>LDAP</span><span class='op'>::</span><span class='const'>Conn</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>CONFIG</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ldap</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='ivar'>@ldap_conn</span><span class='period'>.</span><span class='id identifier rubyid_set_option'>set_option</span><span class='lparen'>(</span><span class='const'>LDAP</span><span class='op'>::</span><span class='const'>LDAP_OPT_PROTOCOL_VERSION</span><span class='comma'>,</span> <span class='int'>3</span><span class='rparen'>)</span>
+  <span class='ivar'>@ldap_conn</span><span class='period'>.</span><span class='id identifier rubyid_start_tls'>start_tls</span>
+
+  <span class='kw'>begin</span>
+    <span class='ivar'>@ldap_conn</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='id identifier rubyid_credentials'>credentials</span><span class='lbracket'>[</span><span class='symbol'>:username</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_credentials'>credentials</span><span class='lbracket'>[</span><span class='symbol'>:password</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>rescue</span> <span class='const'>LDAP</span><span class='op'>::</span><span class='const'>ResultError</span>
+    <span class='id identifier rubyid_bad_credentials'>bad_credentials</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Bad username or password</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="txt-instance_method">
+  
+    - (<tt>Object</tt>) <strong>txt</strong>(text) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Respond with a text content</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+109
+110
+111
+112</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 109</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_txt'>txt</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_content_type'>content_type</span> <span class='symbol'>:txt</span>
+  <span class='id identifier rubyid_halt'>halt</span> <span class='int'>200</span><span class='comma'>,</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -256,7 +803,7 @@ organisation and ldap connection</p>
 </div>
 
     <div id="footer">
-  Generated on Tue May  7 14:04:40 2013 by
+  Generated on Wed May 15 13:15:48 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.6.1 (ruby-1.9.3).
 </div>

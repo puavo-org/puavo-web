@@ -73,14 +73,14 @@
   
     <dt class="r1">Inherits:</dt>
     <dd class="r1">
-      <span class="inheritName"><span class='object_link'><a href="LdapBase.html" title="PuavoRest::LdapBase (class)">LdapBase</a></span></span>
+      <span class="inheritName"><span class='object_link'><a href="LdapSinatra.html" title="PuavoRest::LdapSinatra (class)">LdapSinatra</a></span></span>
       
         <ul class="fullTree">
           <li>Object</li>
           
             <li class="next">Sinatra::Base</li>
           
-            <li class="next"><span class='object_link'><a href="LdapBase.html" title="PuavoRest::LdapBase (class)">LdapBase</a></span></li>
+            <li class="next"><span class='object_link'><a href="LdapSinatra.html" title="PuavoRest::LdapSinatra (class)">LdapSinatra</a></span></li>
           
             <li class="next">PuavoRest::Root</li>
           
@@ -110,89 +110,17 @@
 
 
 
-  
-    <h2>
-      Instance Method Summary
-      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#%2Fanother2-instance_method" title="#get (instance method)">- (HTTP response) <strong>get</strong>(/another2) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
 
   
-    <span class="summary_desc"><div class='inline'>
-<p>Another route.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#%2Fbar-instance_method" title="#post (instance method)">- (HTTP response) <strong>post</strong>(/bar) </a>
-    
-
-    
-  </span>
   
   
   
   
   
+  <h2>Method Summary</h2>
   
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Bar post.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#%2Fbar2-instance_method" title="#post (instance method)">- (HTTP response) <strong>post</strong>(/bar2) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Bar2 post.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
-  
-
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="LdapSinatra.html" title="PuavoRest::LdapSinatra (class)">LdapSinatra</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LdapSinatra.html#acquire_credentials-instance_method" title="PuavoRest::LdapSinatra#acquire_credentials (method)">#acquire_credentials</a></span>, <span class='object_link'><a href="LdapSinatra.html#auth-class_method" title="PuavoRest::LdapSinatra.auth (method)">auth</a></span>, <span class='object_link'><a href="LdapSinatra.html#limit-instance_method" title="PuavoRest::LdapSinatra#limit (method)">#limit</a></span>, <span class='object_link'><a href="LdapSinatra.html#new_model-instance_method" title="PuavoRest::LdapSinatra#new_model (method)">#new_model</a></span>, <span class='object_link'><a href="LdapSinatra.html#setup_ldap_connection-instance_method" title="PuavoRest::LdapSinatra#setup_ldap_connection (method)">#setup_ldap_connection</a></span>, <span class='object_link'><a href="LdapSinatra.html#txt-instance_method" title="PuavoRest::LdapSinatra#txt (method)">#txt</a></span></p>
 
   
   
@@ -202,189 +130,15 @@
   
   
   
-  
-  
-  
-  
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="ErrorMethods.html" title="PuavoRest::ErrorMethods (module)">ErrorMethods</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="ErrorMethods.html#bad_credentials-instance_method" title="PuavoRest::ErrorMethods#bad_credentials (method)">#bad_credentials</a></span>, <span class='object_link'><a href="ErrorMethods.html#not_found-instance_method" title="PuavoRest::ErrorMethods#not_found (method)">#not_found</a></span></p>
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../ErrorMethods.html" title="ErrorMethods (module)">ErrorMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ErrorMethods.html#bad_credentials-instance_method" title="ErrorMethods#bad_credentials (method)">#bad_credentials</a></span>, <span class='object_link'><a href="../ErrorMethods.html#not_found-instance_method" title="ErrorMethods#not_found (method)">#not_found</a></span></p>
 
   
-
-  <div id="instance_method_details" class="method_details_list">
-    <h2>Instance Method Details</h2>
-
-    
-      <div class="method_details first">
-  <h3 class="signature first" id="/another2-instance_method">
-  
-    - (<tt>HTTP response</tt>) <strong>get</strong>(/another2) 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Another route</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-  
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>HTTP response</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-37
-38</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'root.rb', line 37</span>
-
-<span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/another2</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="/bar-instance_method">
-  
-    - (<tt>HTTP response</tt>) <strong>post</strong>(/bar) 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Bar post</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-  
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>HTTP response</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-26
-27</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'root.rb', line 26</span>
-
-<span class='id identifier rubyid_post'>post</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/bar</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="/bar2-instance_method">
-  
-    - (<tt>HTTP response</tt>) <strong>post</strong>(/bar2) 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Bar2 post</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-  
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>HTTP response</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-31
-32</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'root.rb', line 31</span>
-
-<span class='id identifier rubyid_post'>post</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/bar2</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
 
 </div>
 
     <div id="footer">
-  Generated on Mon May  6 21:25:37 2013 by
+  Generated on Wed May 15 13:15:48 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.6.1 (ruby-1.9.3).
 </div>
