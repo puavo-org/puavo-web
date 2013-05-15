@@ -9,7 +9,8 @@ yard:
 	bundle exec yard doc --exclude vendor root.rb .
 
 publish-yard: yard
-	git commit doc -m "Compiled YARD docs"
+	git add doc
+	git commit -m "Compiled YARD docs"
 	git push -f origin master:gh-pages
 
 install:
