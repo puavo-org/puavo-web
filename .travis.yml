@@ -1,7 +1,7 @@
 language: ruby
 script: bundle exec /usr/bin/ruby1.9.1 test/all.rb
 before_install:
-  - apt-get install ruby1.9.1 ruby1.9.1-dev ruby-ldap ruby-bundler
+  - sudo apt-get install ruby1.9.1 ruby1.9.1-dev ruby-ldap ruby-bundler
 notifications:
   email:
     - dev@opinsys.fi
