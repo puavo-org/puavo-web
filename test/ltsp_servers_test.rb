@@ -1,5 +1,5 @@
-
 require "fileutils"
+require "./test/helper"
 
 describe PuavoRest::LtspServers do
 
