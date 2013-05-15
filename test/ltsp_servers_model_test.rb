@@ -12,13 +12,13 @@ describe PuavoRest::LtspServersModel do
     @model.set("test", 0.1)
     data = @model.get("test")
     assert_equal data[:domain], "test"
-    assert_in_delta data[:load_avg], 0.1, 0.01
+    assert_in_delta 0.1, data[:load_avg], 0.01
   end
 
   it "can figure out the most idle server" do
     @model.set("loaded", 1.1)
     @model.set("idle", 0.1)
-    assert_equal @model.most_idle[:domain], "idle"
+    assert_equal "idle", @model.most_idle[:domain]
   end
 
 end
