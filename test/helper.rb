@@ -4,6 +4,7 @@ ENV['RACK_ENV'] = 'test'
 require_relative '../root'
 require 'minitest/autorun'
 require 'rack/test'
+require "debugger"
 
 # Include rack helpers and expose full application stack
 class MiniTest::Spec
