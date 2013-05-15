@@ -2,6 +2,8 @@ language: ruby
 rvm:
   - 1.9.3
 script: bundle exec ruby test/all.rb
+before_install:
+  - sudo apt-get install ruby-ldap
 notifications:
   email:
     - dev@opinsys.fi
