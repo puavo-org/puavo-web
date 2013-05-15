@@ -23,21 +23,6 @@ class LoadBalanceModel
     server[:load_avg] / server[:cpu_count]
   end
 
-  def most_idle
-    current = nil
-    @store.transaction(true) do
-      @store.roots.each do |k|
-        server = @store[k]
-        if not current
-          current = server
-        elsif relative_load(current) > relative_load(server)
-          current = server
-        end
-      end
-    end
-    current
-  end
-
   def all
     a = []
     @store.transaction(true) do
@@ -46,6 +31,12 @@ class LoadBalanceModel
       end
     end
     a
+  end
+
+  def most_idle
+    all.sort do |a, b|
+      relative_load(a) <=> relative_load(b)
+    end
   end
 
 end
@@ -59,24 +50,26 @@ class LtspServers < LdapSinatra
     @m = LoadBalanceModel.new @organisation
   end
 
-  # Get list of LTSP servers with their load averages
+  # Get list of LTSP servers sorted by they load. Most idle server is the first
   #
   # @!macro route
   get "/v3/:organisation/ltsp_servers" do
-    json @m.all
+    json limit @m.all
   end
 
-  # Get the most idle LTSP server
-  #
   # @!macro route
-  get "/v3/:organisation/ltsp_servers/most_idle" do
-    json @m.most_idle
+  get "/v3/:organisation/ltsp_servers/_most_idle.?:format?" do
+    if params["format"] == "txt"
+      json @m.most_idle.first
+    else
+      txt @m.most_idle.first[:domain]
+    end
   end
 
   # Update LTSP server idle status
   #
   # @!macro route
-  post "/v3/:organisation/ltsp_servers/most_idle" do
+  put "/v3/:organisation/ltsp_servers/:domain" do
     @m.update(
       params["domain"],
       params["cpu_count"].to_i,
