@@ -117,6 +117,8 @@ fi:
       wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille"
       destroyed_failed: "Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua"
       roles_not_found: Yhtään roolia ei ole määritetty
+      wlan_updated: WLAN-asetukset päivitetty
+      wlan_save_failed: WLAN-asetusten tallennus epäonnistui
     profile: 
       updated: Tietojen tallennus onnistui
       save_failed: "Tietojen tallennus epäonnistui"
@@ -351,6 +353,10 @@ fi:
         gidNumber: Gid-numero
         puavoDeviceImage: Levykuva
         puavoBillingInfo: Laskutustiedot
+        wlan_name: Verkkonimi
+        wlan_type: Verkon tyyppi
+        wlan_password: Salasana
+        puavoWlanChannel: Kanava
       user: 
         displayName: Nimi
         sn: Sukunimi
@@ -607,6 +613,9 @@ fi:
       xrandr_status_: Ei
     form_linux_device_information: 
       select: Valitse
+    form_wlan:
+      title: Tukiasemtiedot
+      channel_random: Satunnainen
   devices: 
     index: 
       add_new_device: "Lisää uusi laite"

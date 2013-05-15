@@ -1,0 +1,39 @@
+<h2><%= t('.title') %>
+<table>
+  <tr>
+    <td class="label_td"><%= f.label :wlan_name %></td>
+    <td><%= f.text_field :wlan_name %></td>
+  </tr>
+  <tr>
+    <td class="label_td"><%= f.label :wlan_type %></td>
+    <td><%= f.select( :wlan_type,
+	              [ ["Open", "open"], 
+                        ["PSK", "psk"] ] )%></td>
+  </tr>
+  <tr>
+    <td class="label_td"><%= f.label :wlan_password %></td>
+    <td><%= f.text_field :wlan_password %></td>
+  </tr>
+  <tr>
+    <td class="label_td"><%= f.label :puavoWlanChannel %></td>
+    <td><%= f.select( :puavoWlanChannel,
+	              [ [t('.channel_random'), "random"], 
+                        ["1", "1"],
+                        ["2", "2"],
+                        ["3", "3"],
+                        ["4", "4"],
+                        ["5", "5"],
+                        ["6", "6"],
+                        ["7", "7"],
+                        ["8", "8"],
+                        ["9", "9"],
+                        ["10", "10"],
+                        ["11", "11"],
+                        ["12", "12"],
+                        ["13", "13"] ] )%></td>
+  </tr>
+</table>
+
+<div>
+  <%= f.submit t('link.update') %>
+</div>

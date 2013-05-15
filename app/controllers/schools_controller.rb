@@ -182,4 +182,30 @@ class SchoolsController < ApplicationController
       format.html { redirect_to( admins_school_path(@school) ) }
     end
   end
+
+  # GET /schools/1/wlan
+  def wlan
+    @school = School.find(params[:id])
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # PUT /schools/1/wlan/update
+  def wlan_update
+    @school = School.find(params[:id])
+
+    @school.update_wlan_attributes(params[:school])
+
+    respond_to do |format|
+      if @school.save
+        flash[:notice] = t('flash.school.wlan_updated')
+        format.html { redirect_to( school_wlan_path ) }
+      else
+        flash[:alert] = t('flash.school.wlan_save_failed')
+        format.html { render :action => "edit" }
+      end
+    end
+  end
 end

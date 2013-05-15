@@ -118,6 +118,8 @@ en:
       save_failed: Failed to save access rights
       destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
       roles_not_found: Cannot find any roles!
+      wlan_updated: WLAN-settings was succesfully updated
+      wlan_save_failed: WLAN-settings cannot be saved!
     profile: 
       updated: Profile was successfully updated
       save_failed: Profile cannot be saved!
@@ -353,6 +355,10 @@ en:
         gidNumber: Gid number
         puavoDeviceImage: Device image
         puavoBillingInfo: Billing info
+        wlan_name: Network name
+        wlan_type: Network type
+        wlan_password: Password
+        puavoWlanChannel: Channel
       user: 
         displayName: Name
         sn: Surname
@@ -611,6 +617,9 @@ en:
       xrandr_status_: "No"
     form_linux_device_information: 
       select: Select
+    form_wlan:
+      title: Wireless Access Point setup
+      channel_random: Random
   devices: 
     index: 
       add_new_device: Add new device
