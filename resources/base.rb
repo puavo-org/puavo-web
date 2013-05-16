@@ -203,6 +203,12 @@ class LdapSinatra < Sinatra::Base
 
   before "/v3/*" do
     credentials = acquire_credentials
+
+    @organisation_info = (
+      LdapModel.organisations_by_domain[request.host] ||
+      LdapModel.organisations_by_domain["*"]
+    )
+
     if credentials and @ldap_conn.nil?
       @ldap_conn = setup_ldap_connection(credentials)
     end
