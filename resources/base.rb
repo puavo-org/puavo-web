@@ -19,7 +19,7 @@ class LdapModel
       if organisation_entry = puavo_ldap.organisation
         organisation = Puavo::Client::Base.new_by_ldap_entry( organisation_entry )
         if PUAVO_ETC.domain == organisation.domain
-          organisations_by_domain["default"] = organisation
+          organisations_by_domain["*"] = organisation
         end
         organisations_by_domain[organisation.domain] = organisation
       end
