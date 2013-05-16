@@ -29,6 +29,10 @@ install:
 		.bundle \
 		$(DESTDIR)$(installdir)
 
+install-client:
+	mkdir -p $(DESTDIR)/usr/sbin
+	install -m 644 bin/puavo-post-ltsp-server-load $(DESTDIR)/usr/sbin
+
 .PHONY: test
 test:
 	bundle exec ruby1.9.1 test/all.rb
