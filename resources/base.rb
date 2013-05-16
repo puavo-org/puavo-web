@@ -161,21 +161,21 @@ class LdapSinatra < Sinatra::Base
   # @option credentials [Symbol] :password plain text password
   # @see #new_model
   def setup_ldap_connection(credentials)
-    @ldap_conn = LDAP::Conn.new(CONFIG["ldap"])
-    @ldap_conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
-    @ldap_conn.start_tls
+    ldap_conn = LDAP::Conn.new(CONFIG["ldap"])
+    ldap_conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
+    ldap_conn.start_tls
 
     begin
-      @ldap_conn.bind(credentials[:username], credentials[:password])
+      ldap_conn.bind(credentials[:username], credentials[:password])
     rescue LDAP::ResultError
       bad_credentials("Bad username or password")
     end
   end
 
-  before "/v3/:organisation*" do
-    @organisation = LdapModel.escape(params["organisation"])
-    if c = acquire_credentials
-      setup_ldap_connection(c)
+  before "/v3/*" do
+    credentials = acquire_credentials
+    if credentials and @ldap_conn.nil?
+      @ldap_conn = setup_ldap_connection(credentials)
     end
   end
 
@@ -183,10 +183,6 @@ class LdapSinatra < Sinatra::Base
     if @ldap_conn
       # TODO: unbind connection
     end
-  end
-
-  get "/v3/:organisation" do
-    json({ :organisation => @organisation })
   end
 
   # Assert that authentication is required for this route even if the the ldap

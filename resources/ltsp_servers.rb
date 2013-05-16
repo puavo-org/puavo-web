@@ -85,7 +85,7 @@ class LtspServers < LdapSinatra
   # Get list of LTSP servers sorted by they load. Most idle server is the first
   #
   # @!macro route
-  get "/v3/:organisation/ltsp_servers" do
+  get "/v3/ltsp_servers" do
     json limit @m.all
   end
 
@@ -97,7 +97,7 @@ class LtspServers < LdapSinatra
   # => someservername
   #
   # @!macro route
-  get "/v3/:organisation/ltsp_servers/_most_idle.?:format?" do
+  get "/v3/ltsp_servers/_most_idle.?:format?" do
     if params["format"] == "txt"
       txt @m.most_idle[:domain]
     else
@@ -105,7 +105,7 @@ class LtspServers < LdapSinatra
     end
   end
 
-  get "/v3/:organisation/ltsp_servers/:domain" do
+  get "/v3/ltsp_servers/:domain" do
     json @m.get(params["domain"])
   end
 
@@ -115,7 +115,7 @@ class LtspServers < LdapSinatra
   # @param [Float] load_avg
   # @param [Fixnum] cpu_count optional
   # @!macro route
-  put "/v3/:organisation/ltsp_servers/:domain" do
+  put "/v3/ltsp_servers/:domain" do
     require_auth
 
     if params["cpu_count"]

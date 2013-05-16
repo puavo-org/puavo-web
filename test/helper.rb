@@ -1,11 +1,15 @@
 
 ENV['RACK_ENV'] = 'test'
 
-require_relative "../credentials"
-require_relative "../errors"
-require_relative "../resources/base"
-require_relative "../resources/external_files"
-require_relative "../resources/users"
+module PuavoRest
+  CONFIG = {
+    "ldap" => "test",
+    "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
+    "bootserver" => true
+  }
+end
+
+require_relative "../root"
 
 require 'minitest/autorun'
 require 'rack/test'
