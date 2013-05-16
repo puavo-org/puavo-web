@@ -37,14 +37,15 @@ Feature: Devices registration
     3. Laptop
     4. Workstation
     5. LTSP server
-    6. Netstand
-    7. Digital signage
-    8. Printer
-    9. Wireless access point
-    10. Projector
-    11. Webcam
-    12. Switch (network)
-    13. Other
+    6. Boot server
+    7. Netstand
+    8. Digital signage
+    9. Printer
+    10. Wireless access point
+    11. Projector
+    12. Webcam
+    13. Switch (network)
+    14. Other
     """
     When I enter "Thinclient" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
