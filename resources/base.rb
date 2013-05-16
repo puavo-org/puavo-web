@@ -6,18 +6,25 @@ class LdapModel
   @@ldap2json = {}
 
   def self.read_organisations
-    ldap_conn = Puavo::Ldap.new(:base => "")
-    organisation_bases = ldap_conn.all_bases
+    puavo_ldap = Puavo::Ldap.new(:base => "")
+    organisation_bases = puavo_ldap.all_bases
 
-    ldap_conn.unbind
+    puavo_ldap.unbind
 
     organisations_by_domain = Hash.new
 
     organisation_bases.each do |base|
-      ldap_conn = Puavo::Ldap.new(:base => base)
-      organisation = Puavo::Client::Base.new_by_ldap_entry( ldap_conn.organisation )
-      organisations_by_domain[organisation.domain] = organisation
-      ldap_conn.unbind
+      puavo_ldap = Puavo::Ldap.new(:base => base)
+
+      if organisation_entry = puavo_ldap.organisation
+        organisation = Puavo::Client::Base.new_by_ldap_entry( organisation_entry )
+        if PUAVO_ETC.domain == organisation.domain
+          organisations_by_domain["default"] = organisation
+        end
+        organisations_by_domain[organisation.domain] = organisation
+      end
+
+      puavo_ldap.unbind
     end
   end
 
