@@ -15,7 +15,7 @@
 
 <table>
 <tr>
-<td colspan="2"><h2 style="text-align: center; margin: 0;"><%= t('.changing_user') %></h2></td>
+<td colspan="2"><h2><%= t('.changing_user') %></h2></td>
 </tr>
 
 <tr>
@@ -28,7 +28,7 @@
   <td><%= password_field :login, :password %></td>
 </tr>
 
-<td colspan="2"><h2 style="text-align: center;margin: 0;"><%=t('.changed_user') %></h2></td>
+<td colspan="2"><h2><%=t('.changed_user') %></h2></td>
 <tr>
   <td><%= f.label :uid, t('activeldap.attributes.user.uid') %></td>
   <td><%= text_field :user, :uid, :value => "" %></td>
