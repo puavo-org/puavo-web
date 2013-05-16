@@ -1,0 +1,46 @@
+@import 'nib'
+
+.login_container
+  margin 0 auto
+  max-width 1000px
+  padding 10px
+  width 70%
+  .login_content
+    background none repeat scroll 0 0 white
+    padding 1em
+  h1
+    color #2D2D2D
+    font-size 220%
+    font-weight bold
+    letter-spacing -1px
+    margin 0
+    text-align center
+    text-transform uppercase
+  h2
+    text-align left
+    color #323232
+  a
+    font-weight bold
+    margin 0 0 0 .2em
+    padding 0.5em
+    &:hover
+      color #AD0000
+  form
+    margin 1em 0 0
+    table
+      margin 0 auto
+      width 80%
+      td
+        width 100%
+      td:first-child
+        width auto
+      input
+        max-width 500px
+        padding 3%
+      input[type="submit"]
+        width 100%
+
+@media screen-breakpoint-one
+  .login_container
+    margin 0
+    width 98%
