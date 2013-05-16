@@ -1,7 +1,12 @@
 
 ENV['RACK_ENV'] = 'test'
 
-require_relative '../root'
+require_relative "../credentials"
+require_relative "../errors"
+require_relative "../resources/base"
+require_relative "../resources/external_files"
+require_relative "../resources/users"
+
 require 'minitest/autorun'
 require 'rack/test'
 require "timecop"
