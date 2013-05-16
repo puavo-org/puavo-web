@@ -179,6 +179,12 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
+  after do
+    if @ldap_conn
+      # TODO: unbind connection
+    end
+  end
+
   get "/v3/:organisation" do
     json({ :organisation => @organisation })
   end
