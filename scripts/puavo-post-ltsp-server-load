@@ -13,7 +13,10 @@ domain=$(cat /etc/puavo/domain)
 # TODO: https://github.com/opinsys/puavo-client/issues/7
 organisation=$(sed -rne 's/^([^\.]+).*$/\1/p' /etc/puavo/domain)
 
+# TODO: --cacert /etc/puavo/certs/rootca.pem
+
 # TODO: dns hackery
+# dig +time=2 +tries=1 SRV _puavo-api._tcp.kehitys.opinsys.fi +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }'
 rest_server="http://127.0.0.1:9393"
 
 url="$rest_server/v3/$organisation/ltsp_servers/$domain"
