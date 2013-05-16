@@ -5,6 +5,7 @@ require "sinatra/base"
 require "sinatra/json"
 require "base64"
 require "yaml"
+require "socket"
 
 require "./credentials"
 require "./errors"
@@ -26,8 +27,9 @@ begin
 rescue Errno::ENOENT
   # Do automatc configuration on boot servers
   require "puavo/etc"
+  fqdn = Socket.gethostbyname(Socket.gethostname).first
   CONFIG = {
-    "ldap" => PUAVO_ETC.domain,
+    "ldap" => fqdn,
     "ltsp_server_data_dir" => "/run/puavo-rest",
     "bootserver" => true
   }
