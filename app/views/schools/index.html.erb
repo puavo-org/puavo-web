@@ -11,7 +11,7 @@
   <tr>
     <td><%= link_to school.displayName, school_path(school) %></td>
     <td><%=h school.cn %></td>
-    <td><%= link_to t('link.edit'), edit_school_path(school) %></td>
+    <td><%= link_to t('link.edit'), edit_school_path(school), :class=> "btn" %></td>
   </tr>
 <% end %>
 </table>
@@ -21,7 +21,7 @@
 <div><%= link_to t('link.new_school'), new_school_path %></div>
 <% end %>
 <% content_for :footer do %>
-<ul>  
+<ul>
   <li class="link_header">
     <%= link_to t('layouts.application.schools'),  schools_path %>
   </li>
