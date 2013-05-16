@@ -5,13 +5,16 @@ module PuavoRest
 class LdapModel
   @@ldap2json = {}
 
-  def self.read_organisations
+  @@organisations_by_domain = nil
+  def self.organisations_by_domain
+    return @@organisations_by_domain if @@organisations_by_domain
+
     puavo_ldap = Puavo::Ldap.new(:base => "")
     organisation_bases = puavo_ldap.all_bases
 
     puavo_ldap.unbind
 
-    organisations_by_domain = Hash.new
+    organisations_by_domain = {}
 
     organisation_bases.each do |base|
       puavo_ldap = Puavo::Ldap.new(:base => base)
@@ -26,9 +29,9 @@ class LdapModel
 
       puavo_ldap.unbind
     end
-  end
 
-  @@organisations_by_domain = read_organisations
+    @@organisations_by_domain = organisations_by_domain
+  end
 
   def initialize(ldap_conn, organisation)
     @ldap_conn = ldap_conn
