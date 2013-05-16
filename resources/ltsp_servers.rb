@@ -18,13 +18,11 @@ class LtspServersModel
   # set server load average for domain
   # @param [String] domain
   # @param [Float] load_avg
-  def set(domain, load_avg)
+  def set(domain, attrs)
+    attrs[:updated] = Time.now
+    attrs[:domain] = domain
     @store.transaction do
-      @store[domain] = {
-        :domain => domain,
-        :load_avg => load_avg,
-        :updated => Time.now
-      }
+      @store[domain] = attrs
     end
   end
 
@@ -118,13 +116,17 @@ class LtspServers < LdapSinatra
   put "/v3/ltsp_servers/:domain" do
     require_auth
 
+    attrs = {}
+
     if params["cpu_count"]
-      load_avg = params["load_avg"].to_f / params["cpu_count"].to_i
+      attrs[:load_avg] = params["load_avg"].to_f / params["cpu_count"].to_i
     else
-      load_avg = params["load_avg"].to_f
+      attrs[:load_avg] = params["load_avg"].to_f
     end
 
-    @m.set(params["domain"], load_avg)
+    attrs[:ltsp_image] = params["ltsp_image"]
+
+    @m.set(params["domain"], attrs)
 
     json "ok" => true
   end
