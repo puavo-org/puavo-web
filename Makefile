@@ -30,8 +30,8 @@ install:
 		$(DESTDIR)$(installdir)
 
 install-client:
-	mkdir -p $(DESTDIR)/usr/sbin
-	install -m 644 bin/puavo-post-ltsp-server-load $(DESTDIR)/usr/sbin
+	mkdir -p $(DESTDIR)$(prefix)/sbin
+	install -m 644 bin/puavo-post-ltsp-server-load $(DESTDIR)$(prefix)/sbin
 
 .PHONY: test
 test:
