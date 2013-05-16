@@ -1,5 +1,7 @@
 #!/bin/sh
 
+URL=$1
+
 set -eu
 
 cpu_count=$(nproc)
@@ -8,22 +10,26 @@ cpu_count=$(nproc)
 # http://linux.die.net/man/5/proc
 load_avg=$(sed -rne 's/^([0-9\.]+) .*$/\1/p' /proc/loadavg)
 
-domain=$(cat /etc/puavo/domain)
+PUAVO_DOMAIN=$(cat /etc/puavo/domain)
 
-# TODO: --cacert /etc/puavo/certs/rootca.pem
+if [ "${URL}" = "" ]; then
+  API_SERVER=$(dig +time=2 +tries=1 SRV _puavo-api._tcp.${PUAVO_DOMAIN} +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }')
 
-# TODO: dns hackery
-# dig +time=2 +tries=1 SRV _puavo-api._tcp.kehitys.opinsys.fi +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }'
-rest_server="http://127.0.0.1:9393"
-
-url="$rest_server/v3/ltsp_servers/$domain"
+  if [ "${API_SERVER}" != "" ]; then
+    HOSTNAME=$(hostname -f)
+    URL="https://${API_SERVER}/v3/ltsp_servers/${HOSTNAME}"
+  else
+    echo "Missing URL and _puavo-api._tcp.${PUAVO_DOMAIN} did not return anything!"
+    exit 1
+  fi
+fi
 
 curl --config - \
      --request PUT \
      --max-time 5 \
-    $url << EOF
+     --cacert /etc/puavo/certs/rootca.pem \
+     $URL << EOF
 data="cpu_count=$cpu_count"
 data="load_avg=$load_avg"
 user=$(cat /etc/puavo/ldap/dn):$(cat /etc/puavo/ldap/password)
 EOF
-
