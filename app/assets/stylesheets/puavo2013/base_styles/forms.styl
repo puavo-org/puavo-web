@@ -4,13 +4,12 @@
 form
   input
     margin 0 0 2%
-    padding 7px 8px
+    padding 2%
     width 100%
   #school_puavoBillingInfo, #organisation_puavoBillingInfo
     input
       display block
   tr
-    display table-row
     margin 0 0 5px
     overflow hidden
     text-overflow clip
@@ -29,12 +28,31 @@ form
       width 20%
   select
     height 30px
+    line-height 30px
     margin 0 0 5px
-    padding 0.2em 0
+    padding 0
     width 100%
   textarea
     &#raw_users
       width 100%
+  &.inline
+    line-height 3
+    p
+      margin-bottom 0
+  &.form_inline
+    input
+      display inline-block
+      margin-bottom 0
+      vertical-align middle
+      width auto
+    label
+      display inline-block
+      text-align right
+      width 35%
+    span
+      margin-bottom 1%
+    .submit_button_login
+      margin-left 36%
 
 .rename_group_old_name
   text-align right
@@ -99,12 +117,6 @@ fieldset
 legend
   font-weight bold
   font-size 100%
-
-form
-  &.inline
-    line-height 3
-    p
-      margin-bottom 0
 
 .new_external_service table, .edit_external_service table
   width 80%
@@ -193,7 +205,7 @@ input.radio
   margin-bottom 0.5em
 
 .required
-  &::after
+  &:after
     content "*"
     font-size 150%
   .field_with_errors
@@ -261,7 +273,7 @@ input.radio
     display inline-block
 
   .submit_button_container
-    margin-left 2% !important
+    margin-left 2%
 
   .form_inline
     & > *
@@ -274,7 +286,7 @@ input.radio
     padding 0 2%
 
   form table.rename_groups_roles_table tr th, form table.rename_groups_roles_table tr td
-    width 45% !important
+    width 45%
 
   #other_groups td, #member_groups td
     line-height 3

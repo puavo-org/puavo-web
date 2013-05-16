@@ -7,21 +7,21 @@ body
   background-image linear-gradient(baseGradientBg 0%, baseBg 100%)
 
 .main-wrap
-  background none repeat scroll 0 0 #f2f0e6
+  background none repeat scroll 0 0 baseBg
   border 5px solid #3E3E2D
   border-radius 10px 10px 0 0
   box-shadow 0px 15px 15px rgba(68, 68, 68, 0.70)
 
 .maincontent
   background-color #FFFFFF
-  border-bottom 1px solid #222222
-  border-left 1px solid #222222
-  border-right 1px solid #222222
+  border-bottom 1px solid baseBoxShadowBorderColor
+  border-left 1px solid baseBoxShadowBorderColor
+  border-right 1px solid baseBoxShadowBorderColor
   border-radius 0 0 4px 4px
 
 .topNavContainer
-  background none repeat scroll 0 0 rgb(245,149,69)
-  background-image linear-gradient(rgb(250,179,46) 0% ,rgb(245,149,69) 100%)
+  background-color baseOrangeGradient
+  background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
   box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
   height auto
   margin 0
@@ -33,11 +33,11 @@ body
   box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
 
 #top-menu > li > ul
-  background none repeat scroll 0 0 rgb(245,149,69)
+  background-color baseOrangeGradient
 
 .content-box
   background none repeat scroll 0 0 rgb(250, 250, 250)
-  background-image linear-gradient(rgb(250, 250, 250) 0%,rgb(247,247,247) 100%)
+  background-image linear-gradient(rgb(250, 250, 250) 0%, rgb(247,247,247) 100%)
   border-radius 4px
   box-shadow inset 0 0 10px rgba(237, 113, 19, 0.25)
   &.school_image
@@ -55,12 +55,58 @@ body
       border none
 
   h3, .show_user h3
-    background none repeat scroll 0 0 #A36A2A
-    background-image linear-gradient(rgb(186,114,45) 0%, rgb(153,106,42) 100%)
+    background-color baseBrown
+    background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
     border-radius 3px 3px 0 0
     color rgb(245,245,245)
 
-// .tools ->
+// main-navigation
+.navbar-first-level
+  .current_page_item
+    background-color baseBrown
+    background-image linear-gradient(baseBrown 0%, baseBrownGradient 100%)
+    border-left 1px solid baseBoxShadowBorderColor
+    border-right 1px solid baseBoxShadowBorderColor
+    border-top 1px solid baseBoxShadowBorderColor
+  li
+    background-color baseOrange
+    background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+    border-radius 4px 4px 0 0
+
+.navbar-second-level
+  background-color baseBrown
+  background-image linear-gradient(baseBrownGradient 35%, baseBrown 60%)
+  .current a, a:hover
+    background-color white
+    border-left 1px solid baseBoxShadowBorderColor
+    border-radius 4px 4px 0 0
+    border-right 1px solid baseBoxShadowBorderColor
+    border-top 1px solid baseBoxShadowBorderColor
+    color #4A4D4A
+
+// end of main-navigation
+.login-wrap
+  .password_container
+    background-color baseBrown
+  .login_content
+    background-color white
+    p
+      background-color infoBgColor
+      border 2px dotted baseBoxShadowBorderColor
+
+    .password_buttons span
+      background none repeat scroll 0 0 #FAB32E
+      background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+      &.active, &:hover
+        background none repeat scroll 0 0 baseBrown
+        background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
+        border-left 1px solid baseBoxShadowBorderColor
+        border-right 1px solid baseBoxShadowBorderColor
+        border-top 1px solid baseBoxShadowBorderColor
+        a
+          color white
+
+// tools
 .tools
   a
     &:hover
@@ -143,7 +189,6 @@ form
     box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.075)
   select
     background-color white
-    background-image linear-gradient(white 0%, rgb(240,240,240) 100%)
     border 1px solid formElementBorderColor
   .field_with_errors
     input, select
@@ -156,7 +201,7 @@ label
 .required_info
   color errorRed
 
-.required::after
+.required:after
   color errorRed
 
 // End of forms
@@ -174,12 +219,39 @@ table
     td
       border-bottom 1px solid #AAAAAA
     th
-      background none repeat scroll 0 0 #A36A2A
-      background linear-gradient(#A36A2A 35%, #BA722D 60%) repeat scroll 0 0 transparent
-      border-bottom 1px solid #222222
+      background none repeat scroll 0 0 baseBrown
+      background linear-gradient(baseBrown 35%, #BA722D 60%) repeat scroll 0 0 transparent
+      border-bottom 1px solid baseBoxShadowBorderColor
       color #F5F5E8
 
+.field_error
+  color #CCCCCC
+
+.field_value_error
+  color errorRed
+
+.notice_text
+  color errorRed
+
 // End of tables
+
+// login
+
+.login_container
+  background none repeat scroll 0 0 baseBg
+  box-shadow 0 4px 8px baseBoxShadowBorderColor
+
+// end of login
+
+// password
+
+
+
+// end of password
+
+.link_header
+  border-bottom 1px dashed #555555
+  font-weight bold
 
 @media screen-breakpoint-one
   .main-wrap, .login_container

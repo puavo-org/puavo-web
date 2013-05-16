@@ -1,10 +1,28 @@
 @import 'nib'
 
+table, tbody
+  display block
+
 table, th, td
   vertical-align middle
 
 table
   border-collapse collapse
+  thead
+    th
+      background #c3d9ff
+  tfoot
+    font-style italic
+  th,td
+    padding 6px
+    text-align left
+  th
+    text-decoration none
+    font-size 110%
+    font-weight bold
+  td
+    & > label
+      margin 0 0 0 2px
   &.new_groups_table
     tr
       td
@@ -12,10 +30,7 @@ table
   a
     font-weight bold
     text-decoration underline
-  th
-    text-decoration none
-    font-size 110%
-    font-weight bold
+
   &.list
     border-spacing 0
     margin-right 1em
@@ -46,23 +61,8 @@ table
     &.value_td
       width 50%
 
-thead
-  th
-    background #c3d9ff
-
-th,td
-  padding 6px
-  text-align left
-
-.import_define th, .import_define td
-  float left
-  width 35% !important
-
 .refine_example
   color black
-
-tfoot
-  font-style italic
 
 table#autopoweroff
   td
@@ -79,6 +79,28 @@ table#autopoweroff
   td
     border-bottom 1px solid #AAAAAA
     width 33.333%
+
+.required
+  & > .fieldWithErrors
+    display inline
+
+.label_td
+  &.view
+    width 55%
+
+.widelist
+  width 100%
+
+.dashboard > *, .show_user > *
+  margin 10px 15px 10px 0
+
+.list
+  .column_1
+    display inline
+  .column_2
+    font-weight bold
+    float right
+    margin-left 10px
 
 @media screen-breakpoint-one
   table

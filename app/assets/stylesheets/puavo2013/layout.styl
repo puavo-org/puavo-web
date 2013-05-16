@@ -3,12 +3,13 @@
 
 *
   box-sizing border-box
+  font-smoothing antialiased
 
 html, body
   min-height 100%
 
 body
-  font-family "Helvetica Neue", Helvetica,Calibri,Arial,sans-serif
+  font-family "Helvetica Neue",Arial,sans-serif
   font-size 100%
   line-height 1.5
   margin 0
@@ -16,10 +17,10 @@ body
 
 h1, h2, h3, h4, h5, h6
   font-weight normal
-  color #2D2D2D
+  color #1b1b1b
 h1
-  font-size 300%
-  margin-bottom 0.5em
+  font-size 250%
+  margin 0
 h2
   font-size 200%
   margin-bottom 0.75em
@@ -45,13 +46,14 @@ p
     &.right
       float right
       margin 1.5em 0 1.5em 1.5em
-
-a:focus, a:hover
-  color #000
-
 a
   color #13243F
   text-decoration none
+  &:hover
+    color #352608
+    text-decoration none
+  &:focus
+    color #000
   img
     border none
 
@@ -190,9 +192,6 @@ caption
 .clear
   clear both
 
-.display_block
-  display block !important
-
 // Custom global classes
 .container
   height 100%
@@ -303,6 +302,16 @@ caption
     padding 5px 10px
 // end of .content-box
 
+.display_block
+  display block !important
+
+.image
+  margin 0
+  padding 0
+
+.link_header
+  margin 0 0 0 -5px
+
 @media screen-breakpoint-one
   body
     font-size 80%
@@ -313,6 +322,7 @@ caption
     width 100%
 
   .maincontent
+    font-size 90%
     margin 0
     padding-bottom 2%
 
