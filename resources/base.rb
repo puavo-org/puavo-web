@@ -1,8 +1,27 @@
+require 'puavo/ldap'
 
 module PuavoRest
 
 class LdapModel
   @@ldap2json = {}
+
+  def self.read_organisations
+    ldap_conn = Puavo::Ldap.new(:base => "")
+    organisation_bases = ldap_conn.all_bases
+
+    ldap_conn.unbind
+
+    organisations_by_domain = Hash.new
+
+    organisation_bases.each do |base|
+      ldap_conn = Puavo::Ldap.new(:base => base)
+      organisation = Puavo::Client::Base.new_by_ldap_entry( ldap_conn.organisation )
+      organisations_by_domain[organisation.domain] = organisation
+      ldap_conn.unbind
+    end
+  end
+
+  @@organisations_by_domain = read_organisations
 
   def initialize(ldap_conn, organisation)
     @ldap_conn = ldap_conn
