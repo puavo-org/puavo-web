@@ -1,4 +1,5 @@
 require "socket"
+require "yaml"
 
 module PuavoRest
 begin
