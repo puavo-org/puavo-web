@@ -78,7 +78,7 @@ class LtspServers < LdapSinatra
   before do
     @m = LtspServersModel.new File.join(
       CONFIG["ltsp_server_data_dir"],
-      "ltsp_servers.#{ @organisation }.pstore"
+      "ltsp_servers.#{ @organisation_info["domain"] }.pstore"
     )
   end
 
