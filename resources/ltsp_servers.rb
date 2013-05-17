@@ -60,7 +60,10 @@ class LtspServersModel
   # Return the most idle LTSP server which is update under MAX_AGE
   #
   # @return [Array]
-  def most_idle
+  def most_idle(ltsp_image=nil)
+    # TODO: Return server by ltsp image
+    # device > school > organisation
+    # puavoDeviceImage
     all_without_old.sort do |a, b|
       a[:load_avg] <=> b[:load_avg]
     end.first
@@ -68,10 +71,21 @@ class LtspServersModel
 
 end
 
+
+class DeviceModel < LdapModel
+
+  def image(hostname)
+
+  end
+
+end
+
 # Load balancer resource for LTSP servers
 class LtspServers < LdapSinatra
 
-  auth Credentials::BasicAuth, :skip => :get
+  # auth Credentials::BasicAuth, :skip => :get
+  auth Credentials::BasicAuth
+  auth Credentials::BootServer
 
   before do
     @m = LtspServersModel.new File.join(
@@ -133,6 +147,48 @@ class LtspServers < LdapSinatra
     @m.set(params["domain"], attrs)
 
     json "ok" => true
+  end
+
+
+  def search(base, attrs=[], filter="(objectclass=*)")
+    res = nil
+    @ldap_conn.search(base, LDAP::LDAP_SCOPE_SUBTREE, filter,
+      attrs
+    ) do |entry|
+      res = entry.to_hash
+      break
+    end
+    res
+  end
+
+
+  get "/v3/load_balance/:hostname" do
+
+    device = search(
+      "ou=Devices,ou=Hosts,#{ @organisation_info["base"] }",
+      ["puavoSchool", "puavoDeviceImage" ],
+      "(cn=#{ LdapModel.escape params["hostname"] })"
+    )
+
+    if device.nil?
+      not_found "Unknown device #{ params["hostname"] }"
+    end
+
+    if device["puavoDeviceImage"]
+      halt json device["puavoDeviceImage"].first
+    end
+
+    school = search(
+      device["puavoSchool"].first,
+      []
+    )
+
+    # if school["puavoDeviceImage"]
+    #   halt json school["puavoDeviceImage"].first
+    # end
+
+    json ":(" => school
+
   end
 
 end

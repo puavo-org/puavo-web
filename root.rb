@@ -12,6 +12,9 @@ require "./resources/base"
 require "./resources/external_files"
 require "./resources/users"
 require "./resources/ltsp_servers"
+require "./resources/schools"
+require "./resources/devices"
+require "./resources/sessions"
 
 
 # @!macro route
@@ -36,6 +39,8 @@ class Root < LdapSinatra
 
   use PuavoRest::ExternalFiles
   use PuavoRest::Users
+  use PuavoRest::Devices
+  use PuavoRest::Sessions
   if CONFIG["bootserver"]
     require "./resources/ltsp_servers"
     use PuavoRest::LtspServers
