@@ -202,7 +202,7 @@ caption
   margin 25px auto
   max-width 1200px
   padding 5px 10px 0
-  width 90%
+  width 95%
   & > h1
     font-size 220%
     font-variant small-caps
@@ -312,6 +312,14 @@ caption
 .link_header
   margin 0 0 0 -5px
 
+.list
+  .column_1
+    display inline
+  .column_2
+    font-weight bold
+    float right
+    margin-left 10px
+
 @media screen-breakpoint-one
   body
     font-size 80%
@@ -320,11 +328,19 @@ caption
     margin 0
     padding 0
     width 100%
+    & > h1
+      margin-top 0
+      padding 1% 0 0 1%
 
   .maincontent
     font-size 90%
     margin 0
     padding-bottom 2%
+    .dashboard
+      width 100%
+    & > h1
+      font-size 180%
+      padding 1.5% 0 0 1.5%
 
   .maincontent, .login_content
     float none
@@ -336,5 +352,35 @@ caption
     margin 0
     width 100%
   .content-box
+    h3
+      padding 1.5%
     &.school_image
       padding 0 1% 1%
+
+@media screen-breakpoint-two
+  .main-wrap
+    & > h1
+      margin-top 0
+
+@media screen-portrait-breakpoint-one
+  .main-wrap
+    & > h1
+      margin-top 1.2em
+  .maincontent
+    padding-top 4%
+    &:first-of-type
+      margin 1em 0 0
+
+@media screen-portrait-breakpoint-two
+  .maincontent
+  &:first-of-type
+    margin 1em 0 0
+  .main-wrap
+    margin 3em 0 0
+
+@media screen-landcape-breakpoint-one
+  .maincontent
+    &:first-of-type
+      margin 2em 0 0
+  .main-wrap
+    margin 3em 0 0

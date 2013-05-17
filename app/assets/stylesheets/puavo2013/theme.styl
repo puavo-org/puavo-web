@@ -19,21 +19,30 @@ body
   border-right 1px solid baseBoxShadowBorderColor
   border-radius 0 0 4px 4px
 
-.topNavContainer
+// topmenu
+.topmenu
   background-color baseOrangeGradient
   background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+  border-bottom 1px solid baseBoxShadowBorderColor
   box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
-  height auto
-  margin 0
-  min-width 315px
-  position fixed
-  top 0
-  width 100%
-  z-index 9999
-  box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
+  .top-menu-item
+    border-top 1px solid #E6E6E6
+    a
+      &:hover
+        background-color #f4f4f4
+        border-radius 0 8px 8px 0
+    &:first-child
+      border-top medium none
+  input
+    border 1px solid formElementBorderColor
+    border-radius 4px
+    box-shadow 0 1px 0 #FAB32E
+.topmenu-left
+  & > li
+    & > ul
+      background-color baseOrangeGradient
 
-#top-menu > li > ul
-  background-color baseOrangeGradient
+// end of topmenu
 
 .content-box
   background none repeat scroll 0 0 rgb(250, 250, 250)
@@ -254,7 +263,7 @@ table
   font-weight bold
 
 @media screen-breakpoint-one
-  .main-wrap, .login_container
+  .main-wrap, .login_container, .navbar-second-level
     border none
   .maincontent
     border none

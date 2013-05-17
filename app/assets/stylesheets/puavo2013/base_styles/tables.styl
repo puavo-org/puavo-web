@@ -1,6 +1,6 @@
 @import 'nib'
 
-table, tbody
+table, tbody, tr
   display block
 
 table, th, td
@@ -34,6 +34,8 @@ table
   &.list
     border-spacing 0
     margin-right 1em
+    tr
+      display table-row
     .column_1
       display inline
     .column_2
@@ -91,19 +93,10 @@ table#autopoweroff
 .widelist
   width 100%
 
-.dashboard > *, .show_user > *
-  margin 10px 15px 10px 0
-
-.list
-  .column_1
-    display inline
-  .column_2
-    font-weight bold
-    float right
-    margin-left 10px
-
 @media screen-breakpoint-one
   table
+    &.list
+      width 100%
     &#autopoweroff
       padding 0
       th, td
