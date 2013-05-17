@@ -9,13 +9,6 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  * Raw inlining css requires via Rails Asset Pipeline
- * require breathe/screen.css
- * require breathe/navmenu.css
- *= require breathe/userform.css
- *= require breathe/topmenu.css
- *= require breathe/puavo.css
- *= require breathe/jquery.tooltip.css
- *= require jquery.liveSearch.css
  */
 
 // Stylus imports
@@ -35,6 +28,8 @@ global-reset()
 @import "puavo2013/password.styl"
 @import "puavo2013/schools.styl"
 @import "puavo2013/schools-admins.styl"
+@import "puavo2013/search.styl"
+@import "puavo2013/topmenu.styl"
 @import "puavo2013/theme.styl"
 @import "puavo2013/users.styl"
 @import "puavo2013/users-import.styl"
@@ -43,10 +38,10 @@ global-reset()
 .tool span, .tools a
   tools-image-sprite()
 
-.topNavContainer input
+.topmenu-left input
   search-input-image()
 
-.topNavContainer input.loading
+.topmenu-left input.loading
   search-input-spinner()
 
 .clone_prev_input_element:hover
