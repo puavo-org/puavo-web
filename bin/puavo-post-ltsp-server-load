@@ -25,11 +25,14 @@ while true; do
 	fi
     fi
 
+    echo
+    echo `date`
+
     curl --config - \
 	--request PUT \
 	--max-time 5 \
 	--cacert /etc/puavo/certs/rootca.pem \
-	$URL << EOF
+	$URL << EOF || true
 data="cpu_count=$cpu_count"
 data="load_avg=$load_avg"
 user=$(cat /etc/puavo/ldap/dn):$(cat /etc/puavo/ldap/password)
