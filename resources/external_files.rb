@@ -7,7 +7,7 @@ class ExternalFilesModel < LdapModel
   ldap_attr_conversion :puavoDataHash, :data_hash
 
   def ldap_base
-    "ou=Files,ou=Desktops,#{ @organisation_info["base"] }"
+    "ou=Files,ou=Desktops,#{ @organisation_base }"
   end
 
   def index
