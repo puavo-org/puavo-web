@@ -101,7 +101,7 @@
 
 <div id="subclasses">
   <h2>Direct Known Subclasses</h2>
-  <p class="children"><span class='object_link'><a href="ExternalFilesModel.html" title="PuavoRest::ExternalFilesModel (class)">ExternalFilesModel</a></span></p>
+  <p class="children"><span class='object_link'><a href="DeviceModel.html" title="PuavoRest::DeviceModel (class)">DeviceModel</a></span>, <span class='object_link'><a href="DevicesModel.html" title="PuavoRest::DevicesModel (class)">DevicesModel</a></span>, <span class='object_link'><a href="ExternalFilesModel.html" title="PuavoRest::ExternalFilesModel (class)">ExternalFilesModel</a></span>, <span class='object_link'><a href="SchoolsModel.html" title="PuavoRest::SchoolsModel (class)">SchoolsModel</a></span></p>
 </div>
 
   <h2>Constant Summary</h2>
@@ -158,6 +158,11 @@ escape.</p>
           
         </dt>
         <dd><pre class="code"><span class='lbrace'>{</span><span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="organisations_by_domain-classvariable" class="">@@organisations_by_domain =
+          
+        </dt>
+        <dd><pre class="code"><span class='kw'>nil</span></pre></dd>
       
     </dl>
   
@@ -272,6 +277,28 @@ escape.</p>
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#organisations_by_domain-class_method" title="organisations_by_domain (class method)">+ (Object) <strong>organisations_by_domain</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
     </ul>
   
     <h2>
@@ -280,6 +307,30 @@ escape.</p>
     </h2>
 
     <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#_find_by_dn-instance_method" title="#_find_by_dn (instance method)">- (Object) <strong>_find_by_dn</strong>(dn, attributes = []) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Find any ldap entry by dn.</p>
+</div></span>
+  
+</li>
+
       
         <li class="public ">
   <span class="summary_signature">
@@ -308,7 +359,7 @@ escape.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">- (LdapModel) <strong>initialize</strong>(ldap_conn, organisation) </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (LdapModel) <strong>initialize</strong>(ldap_conn, organisation_base) </a>
     
 
     
@@ -364,7 +415,7 @@ escape.</p>
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    - (<tt><span class='object_link'><a href="" title="PuavoRest::LdapModel (class)">LdapModel</a></span></tt>) <strong>initialize</strong>(ldap_conn, organisation) 
+    - (<tt><span class='object_link'><a href="" title="PuavoRest::LdapModel (class)">LdapModel</a></span></tt>) <strong>initialize</strong>(ldap_conn, organisation_base) 
   
 
   
@@ -387,17 +438,17 @@ escape.</p>
       <pre class="lines">
 
 
-7
-8
-9
-10</pre>
+36
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 7</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 36</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_ldap_conn'>ldap_conn</span><span class='comma'>,</span> <span class='id identifier rubyid_organisation'>organisation</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_ldap_conn'>ldap_conn</span><span class='comma'>,</span> <span class='id identifier rubyid_organisation_base'>organisation_base</span><span class='rparen'>)</span>
   <span class='ivar'>@ldap_conn</span> <span class='op'>=</span> <span class='id identifier rubyid_ldap_conn'>ldap_conn</span>
-  <span class='ivar'>@organisation</span> <span class='op'>=</span> <span class='id identifier rubyid_organisation'>organisation</span>
+  <span class='ivar'>@organisation_base</span> <span class='op'>=</span> <span class='id identifier rubyid_organisation_base'>organisation_base</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -484,22 +535,22 @@ escape.</p>
       <pre class="lines">
 
 
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72</pre>
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 89</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_convert'>convert</span><span class='lparen'>(</span><span class='id identifier rubyid_entry'>entry</span><span class='comma'>,</span> <span class='id identifier rubyid_all'>all</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_h'>h</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -552,12 +603,12 @@ escape.</p>
       <pre class="lines">
 
 
-33
-34
-35</pre>
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_escape'>escape</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_string'>string</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='const'>ESCAPE_RE</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_char'>char</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\\</span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span> <span class='const'>ESCAPES</span><span class='lbracket'>[</span><span class='id identifier rubyid_char'>char</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
@@ -652,15 +703,15 @@ escape.</p>
       <pre class="lines">
 
 
-42
-43
-44
-45
-46
-47</pre>
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ldap_attr_conversion'>ldap_attr_conversion</span><span class='lparen'>(</span><span class='id identifier rubyid_ldap_name'>ldap_name</span><span class='comma'>,</span> <span class='id identifier rubyid_json_name'>json_name</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_convert'>convert</span><span class='rparen'>)</span>
   <span class='cvar'>@@ldap2json</span><span class='lbracket'>[</span><span class='id identifier rubyid_ldap_name'>ldap_name</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span>
@@ -699,15 +750,91 @@ escape.</p>
       <pre class="lines">
 
 
-50
-51
-52</pre>
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ldap_attrs'>ldap_attrs</span>
   <span class='cvar'>@@ldap2json</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="organisations_by_domain-class_method">
+  
+    + (<tt>Object</tt>) <strong>organisations_by_domain</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 9</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_organisations_by_domain'>organisations_by_domain</span>
+  <span class='kw'>return</span> <span class='cvar'>@@organisations_by_domain</span> <span class='kw'>if</span> <span class='cvar'>@@organisations_by_domain</span>
+
+  <span class='id identifier rubyid_puavo_ldap'>puavo_ldap</span> <span class='op'>=</span> <span class='const'>Puavo</span><span class='op'>::</span><span class='const'>Ldap</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='symbol'>:base</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_organisation_bases'>organisation_bases</span> <span class='op'>=</span> <span class='id identifier rubyid_puavo_ldap'>puavo_ldap</span><span class='period'>.</span><span class='id identifier rubyid_all_bases'>all_bases</span>
+
+  <span class='id identifier rubyid_puavo_ldap'>puavo_ldap</span><span class='period'>.</span><span class='id identifier rubyid_unbind'>unbind</span>
+
+  <span class='id identifier rubyid_organisations_by_domain'>organisations_by_domain</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_organisation_bases'>organisation_bases</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_base'>base</span><span class='op'>|</span>
+    <span class='id identifier rubyid_puavo_ldap'>puavo_ldap</span> <span class='op'>=</span> <span class='const'>Puavo</span><span class='op'>::</span><span class='const'>Ldap</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='symbol'>:base</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_base'>base</span><span class='rparen'>)</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_organisation_entry'>organisation_entry</span> <span class='op'>=</span> <span class='id identifier rubyid_puavo_ldap'>puavo_ldap</span><span class='period'>.</span><span class='id identifier rubyid_organisation'>organisation</span>
+      <span class='id identifier rubyid_organisation'>organisation</span> <span class='op'>=</span> <span class='const'>Puavo</span><span class='op'>::</span><span class='const'>Client</span><span class='op'>::</span><span class='const'>Base</span><span class='period'>.</span><span class='id identifier rubyid_new_by_ldap_entry'>new_by_ldap_entry</span><span class='lparen'>(</span> <span class='id identifier rubyid_organisation_entry'>organisation_entry</span> <span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='const'>PUAVO_ETC</span><span class='period'>.</span><span class='id identifier rubyid_domain'>domain</span> <span class='op'>==</span> <span class='id identifier rubyid_organisation'>organisation</span><span class='period'>.</span><span class='id identifier rubyid_domain'>domain</span>
+        <span class='id identifier rubyid_organisations_by_domain'>organisations_by_domain</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>*</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_organisation'>organisation</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_organisations_by_domain'>organisations_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_organisation'>organisation</span><span class='period'>.</span><span class='id identifier rubyid_domain'>domain</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_organisation'>organisation</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_puavo_ldap'>puavo_ldap</span><span class='period'>.</span><span class='id identifier rubyid_unbind'>unbind</span>
+  <span class='kw'>end</span>
+
+  <span class='cvar'>@@organisations_by_domain</span> <span class='op'>=</span> <span class='id identifier rubyid_organisations_by_domain'>organisations_by_domain</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -721,7 +848,100 @@ escape.</p>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="filter-instance_method">
+  <h3 class="signature first" id="_find_by_dn-instance_method">
+  
+    - (<tt>Object</tt>) <strong>_find_by_dn</strong>(dn, attributes = []) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Find any ldap entry by dn</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>dn</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>attributes</span>
+      
+      
+        <span class='type'>(<tt>Array of Strings</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[]</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 132</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid__find_by_dn'>_find_by_dn</span><span class='lparen'>(</span><span class='id identifier rubyid_dn'>dn</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='op'>=</span><span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_res'>res</span> <span class='op'>=</span> <span class='kw'>nil</span>
+
+  <span class='ivar'>@ldap_conn</span><span class='period'>.</span><span class='id identifier rubyid_search'>search</span><span class='lparen'>(</span>
+    <span class='id identifier rubyid_dn'>dn</span><span class='comma'>,</span>
+    <span class='const'>LDAP</span><span class='op'>::</span><span class='const'>LDAP_SCOPE_SUBTREE</span><span class='comma'>,</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(objectclass=*)</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='id identifier rubyid_attributes'>attributes</span>
+  <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_entry'>entry</span><span class='op'>|</span>
+    <span class='id identifier rubyid_res'>res</span> <span class='op'>=</span> <span class='id identifier rubyid_entry'>entry</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span>
+    <span class='kw'>break</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_res'>res</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="filter-instance_method">
   
     - (<tt>Object</tt>) <strong>filter</strong>(filter, attributes = nil) 
   
@@ -793,23 +1013,23 @@ escape.</p>
       <pre class="lines">
 
 
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97</pre>
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_filter'>filter</span><span class='lparen'>(</span><span class='id identifier rubyid_filter'>filter</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_res'>res</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -823,7 +1043,7 @@ escape.</p>
     <span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='id identifier rubyid_entry'>entry</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>return</span> <span class='id identifier rubyid_res'>res</span>
+  <span class='id identifier rubyid_res'>res</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -856,12 +1076,12 @@ escape.</p>
       <pre class="lines">
 
 
-75
-76
-77</pre>
+104
+105
+106</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'resources/base.rb', line 75</span>
+      <pre class="code"><span class="info file"># File 'resources/base.rb', line 104</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ldap_base'>ldap_base</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>not implemented</span><span class='tstring_end'>&quot;</span></span>
@@ -876,7 +1096,7 @@ escape.</p>
 </div>
 
     <div id="footer">
-  Generated on Wed May 15 16:31:34 2013 by
+  Generated on Fri May 17 16:18:56 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.6.1 (ruby-1.9.3).
 </div>
