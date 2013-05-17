@@ -17,6 +17,7 @@ install:
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
 	cp -r \
+		config.rb \
 		config.ru \
 		errors.rb \
 		credentials.rb \
