@@ -174,7 +174,7 @@ class LdapSinatra < Sinatra::Base
   end
 
   not_found do
-    not_found "Cannot find resource from #{ request.path }"
+    not_found "Cannot find resource from #{ env["REQUEST_METHOD"] } #{ request.path }"
   end
 
   @@auth_config = {}
