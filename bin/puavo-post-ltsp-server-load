@@ -12,24 +12,28 @@ load_avg=$(sed -rne 's/^([0-9\.]+) .*$/\1/p' /proc/loadavg)
 
 PUAVO_DOMAIN=$(cat /etc/puavo/domain)
 
-if [ "${URL}" = "" ]; then
-  API_SERVER=$(dig +time=2 +tries=1 SRV _puavo-api._tcp.${PUAVO_DOMAIN} +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }')
+while true; do
+    if [ "${URL}" = "" ]; then
+	API_SERVER=$(dig +time=2 +tries=1 SRV _puavo-api._tcp.${PUAVO_DOMAIN} +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }')
 
-  if [ "${API_SERVER}" != "" ]; then
-    HOSTNAME=$(hostname -f)
-    URL="https://${API_SERVER}/v3/ltsp_servers/${HOSTNAME}"
-  else
-    echo "Missing URL and _puavo-api._tcp.${PUAVO_DOMAIN} did not return anything!"
-    exit 1
-  fi
-fi
+	if [ "${API_SERVER}" != "" ]; then
+	    HOSTNAME=$(hostname -f)
+	    URL="https://${API_SERVER}/v3/ltsp_servers/${HOSTNAME}"
+	else
+	    echo "Missing URL and _puavo-api._tcp.${PUAVO_DOMAIN} did not return anything!"
+	    exit 1
+	fi
+    fi
 
-curl --config - \
-     --request PUT \
-     --max-time 5 \
-     --cacert /etc/puavo/certs/rootca.pem \
-     $URL << EOF
+    curl --config - \
+	--request PUT \
+	--max-time 5 \
+	--cacert /etc/puavo/certs/rootca.pem \
+	$URL << EOF
 data="cpu_count=$cpu_count"
 data="load_avg=$load_avg"
 user=$(cat /etc/puavo/ldap/dn):$(cat /etc/puavo/ldap/password)
 EOF
+
+sleep 15
+done
