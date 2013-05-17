@@ -29,7 +29,7 @@
     .tools .tool:hover ul {
       display: block;
     }
-    #top-menu li:hover ul,
+    .topmenu-left li:hover ul,
     #nav1 ul li:hover ul {
       display: block;
     }
@@ -47,9 +47,9 @@
   <meta name="csrf-param" content="authenticity_token" />
 </head>
 <body>
-<div class="topNavContainer">
-  <div class="topNavContentContainer">
-  <ul id="top-menu">
+<div class="topmenu">
+  <div class="topmenu-content">
+  <ul class="topmenu-left">
       <% if current_user %>
         <% if current_user.organisation_owner? %>
         <li class="organisation-menu-button">
@@ -98,9 +98,9 @@
                                 :size => 30,
                                 :placeholder => t('.search_placeholder') ) %>
               </li>
-        </ul> <!-- top-menu -->
-        <ul id="top-menu-right" class="menu">
-            <li><span><%= t('.logged_in_as') %>:</span></li>
+        </ul> <!-- topmenu-left -->
+        <ul class="menu topmenu-right">
+            <!-- <li><span><%= t('.logged_in_as') %>:</span></li> -->
                 <li><a href="#"><%= current_user.displayName %></a></li>
                 <li><%= link_to t('.logout'), logout_path, :method => :delete, :class => "btn btn-danger" %></li>
         </ul>

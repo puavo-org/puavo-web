@@ -1,0 +1,266 @@
+@import 'nib'
+
+.topmenu
+  height auto
+  margin 0
+  min-width 315px
+  position fixed
+  top 0
+  width 100%
+  z-index 9999
+  input
+    float left
+    margin 5px 0 0 5px
+    padding 5px 30px 5px 10px
+    width 15em
+
+.topmenu-content
+  font-size 80%
+  margin 0 auto
+  max-width 1200px
+  width 95%
+
+.topmenu-left
+  float left
+  font-weight bold
+  line-height 3em
+  list-style none outside none
+  margin 0
+  padding 0 5px
+  text-transform uppercase
+  z-index 1000
+  & > li
+    float left
+    margin-right 20px
+    position relative
+    width auto
+    & > ul
+      background none repeat scroll 0 0 #F59545
+      border-radius 0 0 20px 20px
+      display none
+      left 0
+      line-height 1.5
+      margin-top 50px
+      padding 0
+      position absolute
+      top 0
+      z-index 999
+      border-radius 0 0 20px 20px
+      left -5px
+      min-width 200px
+      margin 0
+      max-height 400px
+      overflow-y auto
+      padding 0 10px 0 0
+      top 100%
+      white-space nowrap
+      width auto
+  li
+    ul
+      border-bottom 1px solid #222
+      border-left 1px solid #222
+      border-right 1px solid #222
+      li
+        .school_submenu
+          display none
+        &:hover
+          .school_submenu
+            background none repeat scroll 0 0 #F59545
+            border medium none
+            border-radius 0 0 6px 0
+            display block
+            left 100%
+            margin -29px 0 0 -1px
+            padding 0
+            position absolute
+            border-radius 0 0 6px 0
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
+    height 0
+    margin 0
+    padding 0
+    position relative
+  .middle
+    height 20px
+    left 18px
+    position absolute
+    top 0
+    width 105px
+  .school_submenu
+    li
+      border-top 1px solid #E6E6E6
+      margin 8px
+
+.touch
+  .topmenu
+    position absolute
+    & > li
+      & > ul
+        max-height none
+        overflow-y visible
+
+
+li
+  &.top-menu-item
+    display block
+    font-size 90%
+    list-type none
+    margin 8px 20px
+    padding 5px 15px 0 0
+    width auto
+    white-space nowrap
+    a
+      margin -8px -20px -5px -20px
+      padding 15px 20px 15px 20px
+      display block
+    &:last-child
+      padding-bottom 15px
+  &.left
+    a
+      borderleft-radius 12px
+
+.add-new-school a,
+.add-new-school a:hover
+  background url("../../images/iconset-breathe.png") no-repeat scroll left -510px white
+  text-transform none
+  margin-right 5px
+  float right
+  padding 10px
+  padding-left 30px
+  border-radius 8px 8px 0 0
+  border-radius 8px 8px 0 0
+
+.school-menu-button > span,
+.organisation-menu-button > span
+  padding 6px
+  border-radius 6px
+
+.school-menu-button,
+.organisation-menu-button
+  background-image url(../../images/show-more.png)
+  background-repeat no-repeat
+  background-position right
+  padding-right 10px
+
+.topmenu-right
+  float right
+  margin 0 5px 2px 0
+  li
+    a[data-method="delete"]
+      border none
+      color #FFFFF0
+      line-height 1.8
+      margin 0 0 0 10px
+      padding 2px 10px
+    a[data-method="delete"]:hover
+      background none repeat scroll 0 0 #DA0000
+
+ul
+  &.menu
+    list-style none outside none
+    margin 0
+    padding 5px 0 0
+    li
+      float left
+      line-height 2
+      margin 0
+      padding 0 2px
+      position relative
+      span
+        display block
+        padding 0
+        text-decoration none
+        width auto
+        &.sub
+          color #222222
+          font-weight bolder
+          padding-right 10px
+          text-transform uppercase
+      a
+        display block
+        font-weight normal
+        text-decoration none
+        &.sub
+          padding-right 15px
+          text-transform uppercase
+      &.last
+        a
+          background none repeat scroll 0 0 transparent
+      &.active
+        a
+          color #B6E3EC
+      li
+        border-left 1px solid #D7D7D7
+        border-right 1px solid #D7D7D7
+        width 100%
+        &.last
+          border-bottom 1px solid #D7D7D7
+        a
+          padding 5px 5px 5px 10px
+          &.sub
+            padding-right 15px
+    ul
+      border-top 1px solid #D7D7D7
+      list-style none outside none
+      margin 0
+      padding 0
+      top 32px
+      width 168px
+      ul
+        background-color #FFFFFF
+        margin-left 169px
+        top -1px
+
+ul.menu ul,
+ul.menu li:hover ul ul,
+ul.menu ul ul,
+ul.menu li:hover ul ul ul,
+ul.menu ul ul ul,
+ul.menu li:hover ul ul ul ul
+  left -999em
+  position absolute
+
+ul.menu li:hover ul,
+ul.menu li li:hover ul,
+ul.menu li li li:hover ul,
+ul.menu li li li li:hover ul
+  left -1px
+  z-index 999
+
+ul.menu li.hover ul ul,
+ul.menu li.hover ul ul ul,
+ul.menu li.hover ul ul ul ul
+  left -999em
+  position absolute
+
+ul.menu li.hover ul,
+ul.menu li li.hover ul,
+ul.menu li li li.hover ul,
+ul.menu li li li li.hover ul
+  left -1px
+  z-index 999
+
+@media screen-breakpoint-one
+  .topmenu
+    display block
+    height 2.7em
+    position relative
+    input
+      margin-top 3%
+      width 13em
+  .topmenu-right
+    li
+      &:last-of-type
+        line-height 1.75
+      a[data-method="delete"]
+        margin 0
+
+  .responsive_padding2
+    padding 2%
+
+  .topmenu-left
+    & > li
+      & > ul
+        top 98%
+
