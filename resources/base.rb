@@ -122,7 +122,27 @@ class LdapModel
       res.push(entry.to_hash)
     end
 
-    return res
+    res
+  end
+
+  # Find any ldap entry by dn
+  #
+  # @param dn [String]
+  # @param attributes [Array of Strings]
+  def _find_by_dn(dn, attributes=[])
+    res = nil
+
+    @ldap_conn.search(
+      dn,
+      LDAP::LDAP_SCOPE_SUBTREE,
+      "(objectclass=*)",
+      attributes
+    ) do |entry|
+      res = entry.to_hash
+      break
+    end
+
+    res
   end
 
 end
