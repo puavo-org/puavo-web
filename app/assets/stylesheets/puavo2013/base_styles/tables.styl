@@ -1,6 +1,6 @@
 @import 'nib'
 
-table, tbody, tr
+table, thead, tbody, tr
   display block
 
 table, th, td
@@ -86,17 +86,26 @@ table#autopoweroff
   & > .fieldWithErrors
     display inline
 
-.label_td
-  &.view
-    width 55%
-
 .widelist
   width 100%
 
 @media screen-breakpoint-one
   table
     &.list
+      font-size 140%
       width 100%
+      .thead, thead
+        display none
+      tr
+        display block
+        padding 2%
+      td
+        display block
+      td[data-title]:before
+        content attr(data-title) ":\00A0"
+        font-weight bold
+      .table-actions
+        display inline-block
     &#autopoweroff
       padding 0
       th, td
