@@ -36,7 +36,6 @@ body
   input
     border 1px solid formElementBorderColor
     border-radius 4px
-    box-shadow 0 1px 0 #FAB32E
 .topmenu-left
   & > li
     & > ul
@@ -85,6 +84,8 @@ body
 .navbar-second-level
   background-color baseBrown
   background-image linear-gradient(baseBrownGradient 35%, baseBrown 60%)
+  border 1px solid baseBoxShadowBorderColor
+  border-radius 0 4px 0 0
   .current a, a:hover
     background-color white
     border-left 1px solid baseBoxShadowBorderColor
@@ -264,9 +265,20 @@ table
 
 @media screen-breakpoint-one
   .main-wrap, .login_container, .navbar-second-level
-    border none
+    border solid 1px transparent
   .maincontent
     border none
     border-radius 0
   .content-box, .user_box, .content-box h3, .show_user h3
     border-radius 0
+
+  table
+    &.list
+      tr
+        border-bottom 1px solid baseBoxShadowBorderColor
+        &:nth-child(2)
+          border-top 1px solid baseBoxShadowBorderColor
+      th
+        display none
+      td
+        border-bottom none

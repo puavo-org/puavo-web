@@ -213,7 +213,7 @@ caption
 .maincontent
   font-size 80%
   margin 0 0 2% 0
-  padding 1%
+  padding 2%
   position relative
   width 100%
   .dashboard
@@ -221,42 +221,39 @@ caption
     margin 1% 0 0
     width 100%
   h1
-    font-size 200%
-    line-height 1.2em
+    line-height 1
     margin 0 0 2%
     padding 0
-    span
-      border-bottom 2px solid #435266
 // end of .maincontent
 
 // .tools ->
 .tools-container
   float right
-.tools
-  float right
-  height 40px
-  margin 5px 1em .2em
-  min-width 110px
-  padding 0
-  > div, .sub-tools > li
-    float left
-    margin 0
-    padding 0 0 0 5px
-    position relative
-  .sub-tools > li.tool
-    padding 0 1em
-  .tool
-    span
-      text-indent -9999px
-    ul
-      display none
-      padding 0
-      position absolute
-      margin 0 0 0 -5px
-      right 0
-      li
-        min-width 150px
-        width auto !important
+  .tools
+    float right
+    height 40px
+    margin 5px 1em .2em
+    min-width 110px
+    padding 0
+    > div, .sub-tools > li
+      float left
+      margin 0
+      padding 0 0 0 5px
+      position relative
+    .sub-tools > li.tool
+      padding 0 1em
+    .tool
+      span
+        text-indent -9999px
+      ul
+        display none
+        padding 0
+        position absolute
+        margin 0 0 0 -5px
+        right 0
+        li
+          min-width 150px
+          width auto !important
 
 .tools a, .tool span
   display block
@@ -339,8 +336,7 @@ caption
     .dashboard
       width 100%
     & > h1
-      font-size 180%
-      padding 1.5% 0 0 1.5%
+      padding 0 2%
 
   .maincontent, .login_content
     float none
@@ -356,6 +352,12 @@ caption
       padding 1.5%
     &.school_image
       padding 0 1% 1%
+
+  .tools-container
+    float none
+    margin-bottom 2%
+    &:empty, span:empty
+      display none
 
 @media screen-breakpoint-two
   .main-wrap
