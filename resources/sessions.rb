@@ -9,6 +9,10 @@ class Sessions < LdapSinatra
 
   auth Credentials::BootServer
 
+  before do
+    @m = LtspServersModel.from_domain @organisation_info["domain"]
+  end
+
   def generate_uuid
     4
   end
@@ -18,23 +22,28 @@ class Sessions < LdapSinatra
   # @param hostname
   # @param username
   post "/v3/sessions" do
+    session = {
+      "uuid" => generate_uuid,
+    }
 
     device = new_model(DevicesModel).by_hostname(params["hostname"])
     if device.nil?
-      not_found_ "Unknown device #{ params["hostname"] }"
+      halt 400, json("error" => "Unknown device #{ params["hostname"] }")
     end
 
-    session = device.dup
-    session[:uuid] = generate_uuid
-
-    if session["image"]
+    if device["image"]
+      session["ltsp_server"] = @m.most_idle(device["image"]).first
       halt json session
     end
 
     school = new_model(SchoolsModel).by_dn device["school_dn"]
-    halt json school
+    if school["image"]
+      session["ltsp_server"] = @m.most_idle(school["image"]).first
+      halt json session
+    end
 
-    json ":(" => session
+    json session
+
   end
 
   get "/v3/sessions/:uuid" do

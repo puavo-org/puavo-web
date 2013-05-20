@@ -15,6 +15,13 @@ class LtspServersModel
     @store = PStore.new(path)
   end
 
+  def self.from_domain(organisation_domain)
+    @m = LtspServersModel.new File.join(
+      CONFIG["ltsp_server_data_dir"],
+      "ltsp_servers.#{ organisation_domain }.pstore"
+    )
+  end
+
   # set server load average for domain
   # @param [String] domain
   # @param [Float] load_avg
@@ -61,12 +68,16 @@ class LtspServersModel
   #
   # @return [Array]
   def most_idle(ltsp_image=nil)
-    # TODO: Return server by ltsp image
-    # device > school > organisation
-    # puavoDeviceImage
-    all_without_old.sort do |a, b|
+    servers = all_without_old
+    if ltsp_image
+      servers.select! do |s|
+        s[:ltsp_image] == ltsp_image
+      end
+    end
+
+    servers.sort do |a, b|
       a[:load_avg] <=> b[:load_avg]
-    end.first
+    end
   end
 
 end
@@ -88,10 +99,7 @@ class LtspServers < LdapSinatra
   auth Credentials::BootServer
 
   before do
-    @m = LtspServersModel.new File.join(
-      CONFIG["ltsp_server_data_dir"],
-      "ltsp_servers.#{ @organisation_info["domain"] }.pstore"
-    )
+    @m = LtspServersModel.from_domain @organisation_info["domain"] 
   end
 
   # Get list of LTSP servers sorted by they load. Most idle server is the first
@@ -115,9 +123,9 @@ class LtspServers < LdapSinatra
   # @!macro route
   get "/v3/ltsp_servers/_most_idle.?:format?" do
     if params["format"] == "txt"
-      txt @m.most_idle[:domain]
+      txt @m.most_idle.first[:domain]
     else
-      json @m.most_idle
+      json @m.most_idle.first
     end
   end
 
