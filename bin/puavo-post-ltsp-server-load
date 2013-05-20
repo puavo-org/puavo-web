@@ -12,8 +12,7 @@ load_avg=$(sed -rne 's/^([0-9\.]+) .*$/\1/p' /proc/loadavg)
 
 PUAVO_DOMAIN=$(cat /etc/puavo/domain)
 
-while true; do
-    if [ "${URL}" = "" ]; then
+if [ "${URL}" = "" ]; then
     API_SERVER=$(dig +time=2 +tries=1 SRV _puavo-api._tcp.${PUAVO_DOMAIN} +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }')
 
     if [ "${API_SERVER}" != "" ]; then
@@ -23,8 +22,9 @@ while true; do
         echo "Missing URL and _puavo-api._tcp.${PUAVO_DOMAIN} did not return anything!"
         exit 1
     fi
-    fi
+fi
 
+while true; do
     echo
     echo `date`
 
