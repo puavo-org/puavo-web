@@ -107,7 +107,7 @@ class LtspServers < LdapSinatra
   #
   # Examples:
   # curl /v3/hogwarts/ltsp_servers/_most_idle
-  # => {"load_avg":0.035,"ltsp_image":null,"updated":"2013-05-20 11:29:13 +0300","domain":"foo"}
+  # => {"load_avg":0.035,"ltsp_image":null,"updated":"2013-05-20 11:29:13 +0300","domain":"someservername"}
   #
   # curl /v3/hogwarts/ltsp_servers/_most_idle.txt
   # => someservername
