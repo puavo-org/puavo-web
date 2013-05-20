@@ -55,34 +55,30 @@
       position absolute
       top 0
       width 130px
-      z-index 999
     a
       display block
       padding 0 1em
 
 .navbar-second-level
-  background none repeat scroll 0 0 #A36A2A
-  background-image linear-gradient(rgb(186, 114, 45) 35%, rgb(163, 106, 42) 60%)
-  border 1px solid #222222
-  border-radius 0 4px 0 0
-  clear both
-  color #4A4D4A
   font-size 70%
   font-weight normal
-  height 40px
   margin 0
   padding 0
   text-transform uppercase
   width 100%
-  z-index 9999
   ul
-    display inline-block
-    margin 5px 0 0
-    padding 0
+    display block
+    margin 0 0 -1px
+    padding 5px 0 0
+    &:after
+      clear both
+      content " 0020"
+      display block
+      height 0
+      overflow hidden
+      visibility hidden
   li
-    display inline
     float left
-    height 30px
     margin 0 0 0 5px
     min-width 50px
     padding 0
@@ -90,7 +86,7 @@
     text-align center
     text-decoration none
     white-space nowrap
-    width auto !important
+    width auto
     &:first-child
       margin 0 0 0 6px
     a
