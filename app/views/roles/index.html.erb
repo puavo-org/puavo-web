@@ -1,43 +1,18 @@
 <table class="list">
-  <tr>
+  <tr class="thead">
     <th><%= t('activeldap.attributes.role.displayName') %></th>
     <th colspan="2"><%= t('.actions') %></th>
   </tr>
 
 <% @roles.each do |role| %>
   <tr>
-    <td><%= link_to role.displayName, role_path(@school, role) %></td>
-    <td><%= link_to t('link.edit'), edit_role_path(@school, role), :class=> "btn" %></td>
-    <td><%= link_to t('link.destroy'), role_path(@school, role), :confirm => t('general_confirm'), :method => :delete, :class=> "btn btn-danger" %></td>
+    <td data-title="<%= t('activeldap.attributes.role.displayName')%>"><%= link_to role.displayName, role_path(@school, role) %></td>
+    <td data-title="<%=t('.actions')%>" class="table-actions"><%= link_to t('link.edit'), edit_role_path(@school, role), :class=> "btn" %></td>
+    <td class="table-actions"><%= link_to t('link.destroy'), role_path(@school, role), :confirm => t('general_confirm'), :method => :delete, :class=> "btn btn-danger" %></td>
   </tr>
 <% end %>
 </table>
 
 <% content_for :right do %>
 <div><%= link_to t('link.new_role'), new_role_path %></div>
-<% end %>
-
-<% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <%= link_to school_path(@school) do %>
-    <span><%= t('layouts.application.schools') %></span>
-    <% end %>
-  </li>
-  <% school_list.each do |school| %>
-  <li<% if school_list.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %>
-  </li>
-  <% end %>
-</ul>
-<ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li><%= link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
-<% end %>
-</li>
-  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-</ul>
 <% end %>

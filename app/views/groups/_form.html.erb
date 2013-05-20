@@ -9,8 +9,8 @@
   <%= f.text_field :cn %>
 </p>
   <span>
-  <%= f.submit submit_text %>
-  <div class="cancel"><%= link_to t('link.cancel'), path, :class => 'btn btn-danger' %> </div>
+  <%= f.submit submit_text, :class=>'btn' %>
+  <div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'btn btn-danger' %>
 </span>
 </div>
 <% end %>

@@ -1,7 +1,7 @@
 <h1><span><%= t('.title') %></span></h1>
 
 <table class="list">
-  <tr>
+  <tr class="thead">
     <th><%= t('activeldap.attributes.school.displayName') %></th>
     <th><%= t('activeldap.attributes.school.cn') %></th>
     <th colspan="2"><%= t('.actions') %></th>
@@ -9,27 +9,12 @@
 
 <% @schools.each do |school| %>
   <tr>
-    <td><%= link_to school.displayName, school_path(school) %></td>
-    <td><%=h school.cn %></td>
-    <td><%= link_to t('link.edit'), edit_school_path(school), :class=> "btn" %></td>
+    <td data-title="<%=t('activeldap.attributes.school.displayName')%>"><%= link_to school.displayName, school_path(school) %></td>
+    <td data-title="<%=t('activeldap.attributes.school.cn') %>"><%=h school.cn %></td>
+    <td data-title="<%= t('.actions') %>"><%= link_to t('link.edit'), edit_school_path(school), :class=> "btn" %></td>
   </tr>
 <% end %>
 </table>
-
-<br />
 <% content_for :right do %>
 <div><%= link_to t('link.new_school'), new_school_path %></div>
 <% end %>
-<% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %>
-  </li>
-  <% school_list.each do |school| %>
-  <li>
-    <%= link_to school.displayName,  school_path(school) %>
-  </li>
-  <% end %>
-</ul>
-<% end %>
-
