@@ -33,9 +33,9 @@ class LdapModel
     @@organisations_by_domain = organisations_by_domain
   end
 
-  def initialize(ldap_conn, organisation_base)
+  def initialize(ldap_conn, organisation_info)
     @ldap_conn = ldap_conn
-    @organisation_base = organisation_base
+    @organisation_info = organisation_info
   end
 
   # http://tools.ietf.org/html/rfc4515 lists these exceptions from UTF1
@@ -256,7 +256,7 @@ class LdapSinatra < Sinatra::Base
   # @return [Model instance]
   def new_model(klass)
     if @ldap_conn
-      klass.new(@ldap_conn, @organisation_info["base"])
+      klass.new(@ldap_conn, @organisation_info)
     else
       bad_credentials "No credentials supplied"
     end
