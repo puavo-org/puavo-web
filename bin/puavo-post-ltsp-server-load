@@ -8,7 +8,7 @@ CPU_COUNT=$(nproc)
 
 # Load average from last minute
 # http://linux.die.net/man/5/proc
-LOAD_AVG=$(sed -rne 's/^([0-9\.]+) .*$/\1/p' /proc/loadavg)
+LOAD_AVG=$(awk '{ print $1 }' /proc/loadavg)
 
 PUAVO_DOMAIN=$(cat /etc/puavo/domain)
 
