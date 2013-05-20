@@ -4,7 +4,7 @@
 form
   input
     margin 0 0 2%
-    padding 2%
+    padding 1em
     width 100%
   #school_puavoBillingInfo, #organisation_puavoBillingInfo
     input
@@ -23,6 +23,7 @@ form
     td
       margin 0
       padding 0
+      width 100%
     td:first-child
       text-align right
       padding-right 1em
@@ -93,7 +94,7 @@ form[action$="users/import"]
 
 label
   color #222222
-  font-size 90%
+  font-size 120%
   font-weight bold
   line-height 2
   margin 0
@@ -119,15 +120,6 @@ legend
   font-weight bold
   font-size 100%
 
-.new_external_service table, .edit_external_service table
-  width 80%
-
-.maincontent form.new_external_service table tr td:nth-child(even), .maincontent form.edit_external_service table tr td:nth-child(even)
-  width 73%
-
-.maincontent form.new_external_service table tr td:nth-child(odd), .maincontent form.edit_external_service table tr td:nth-child(odd)
-  padding-right 1.25%
-  width 22%
 
 input[type="file"]
   border none
@@ -234,17 +226,13 @@ input.radio
         min-height 50px
         width 98%
     input, select
-      padding 2%
+      padding 1.5em
       width 95%
     input[type="submit"]
       width 50%
 
   .new_external_service tr td:nth-child(even), .new_external_service tr td:nth-child(odd), .edit_external_service tr:nth-child(even), .edit_external_service tr:nth-child(odd)
-    width 95% !important
-
-  .label_td
-    &.view
-      width 35%
+    width 95%
   .show_user
     table
       &.list
@@ -294,3 +282,6 @@ input.radio
 
   .required_info
     margin-left 2%
+
+  .no-table-form
+    padding 2%
