@@ -35,7 +35,7 @@ while true; do
     $URL << EOF || true
 data="cpu_count=$CPU_COUNT"
 data="load_avg=$LOAD_AVG"
-data="ltps_image=$(cat /etc/ltsp/this_ltspimage_name || true)"
+data="ltsp_image=$(cat /etc/ltsp/this_ltspimage_name || true)"
 user=$(cat /etc/puavo/ldap/dn):$(cat /etc/puavo/ldap/password)
 EOF
 
