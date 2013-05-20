@@ -4,7 +4,7 @@ require "multi_json"
 require "sinatra/base"
 require "sinatra/json"
 require "base64"
-require "debugger"
+require "debugger" if Sinatra::Base.development?
 
 require "./credentials"
 require "./errors"
