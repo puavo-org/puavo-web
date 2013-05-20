@@ -91,7 +91,11 @@ class LtspServers < LdapSinatra
   #
   # Set format to txt to get only the server name as plain/text
   #
-  # Example: curl /v3/hogwarts/ltsp_servers/_most_idle.txt
+  # Examples:
+  # curl /v3/hogwarts/ltsp_servers/_most_idle
+  # => {"load_avg":0.035,"ltsp_image":null,"updated":"2013-05-20 11:29:13 +0300","domain":"foo"}
+  #
+  # curl /v3/hogwarts/ltsp_servers/_most_idle.txt
   # => someservername
   #
   # @!macro route
