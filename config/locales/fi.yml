@@ -623,6 +623,7 @@ fi:
       wlan_password: Salasana
       select_value_open: Avoin
       select_value_psk: PSK
+      default: Oletus
   devices: 
     index: 
       add_new_device: "Lisää uusi laite"

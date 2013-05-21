@@ -627,6 +627,7 @@ en:
       wlan_password: Password
       select_value_open: Open
       select_value_psk: PSK
+      default: Oletus
   devices: 
     index: 
       add_new_device: Add new device
