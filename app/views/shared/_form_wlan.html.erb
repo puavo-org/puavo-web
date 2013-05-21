@@ -25,7 +25,6 @@
 <h2><%= t('.wireless_network_setup') %></h2>
 
 <table>
-  <% max_network_index = f.object.wlan_name.count - 1 %>
   <% (0..4).each do |index| %>
 
   <tr><td><h4><%= t('.wireless_network_title', :index => index + 1) %></h4></td></tr>
