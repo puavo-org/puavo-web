@@ -10,9 +10,9 @@ class DevicesModel < LdapModel
 
   def ldap_base
     "ou=Devices,ou=Hosts,#{ @organisation_info["base"] }"
-    "ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
   end
 
+  # Find device by it's hostname
   def by_hostname(hostname)
     data = filter(
       "(cn=#{ LdapModel.escape hostname })",
