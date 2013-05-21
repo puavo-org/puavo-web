@@ -21,13 +21,10 @@ describe PuavoRest::Sessions do
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
-
     put "/v3/ltsp_servers/otherserver",
       "load_avg" => "0.8",
       "cpu_count" => 2,
       "ltsp_image" => "otherimage"
-
-
   end
 
   describe "nonexistent device hostname" do
@@ -92,8 +89,28 @@ describe PuavoRest::Sessions do
       test_organisation.save!
 
       post "/v3/sessions", "hostname" => "thinnoimage"
+      assert_equal 200, last_response.status
       data = JSON.parse last_response.body
       assert_equal  "organisation-image-server", data["ltsp_server"]["hostname"]
+    end
+  end
+
+  describe "no image at all" do
+    it "gets the most idle server" do
+      put "/v3/ltsp_servers/most-idle-server",
+        "load_avg" => "0.0",
+        "cpu_count" => 2,
+        "ltsp_image" => "someimage"
+
+      create_device(
+        :puavoHostname => "thinnoimage",
+        :macAddress => "bc:5f:f4:56:59:72"
+      )
+
+      post "/v3/sessions", "hostname" => "thinnoimage"
+      assert_equal 200, last_response.status
+      data = JSON.parse last_response.body
+      assert_equal  "most-idle-server", data["ltsp_server"]["hostname"]
     end
   end
 

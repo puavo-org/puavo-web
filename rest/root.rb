@@ -13,6 +13,7 @@ require_relative "./resources/external_files"
 require_relative "./resources/users"
 require_relative "./resources/schools"
 require_relative "./resources/devices"
+require_relative "./resources/organisations"
 require_relative "./resources/sessions"
 
 # @!macro route
