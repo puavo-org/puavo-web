@@ -48,6 +48,7 @@ module Test
     ldap_organisation.puavoDeviceAutoPowerOffMode = "off"
     ldap_organisation.preferredLanguage = "en"
     ldap_organisation.o = "Example Organisation"
+    ldap_organisation.puavoDeviceImage = nil
     ldap_organisation.save!
 
   end
