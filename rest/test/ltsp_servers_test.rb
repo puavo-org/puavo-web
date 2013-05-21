@@ -19,6 +19,17 @@ describe PuavoRest::LtspServers do
     assert_in_delta 1.0, data["load_avg"], 0.01
   end
 
+  it "respond 400 to 0 cpu_count" do
+    put "/v3/ltsp_servers/testserver", "load_avg" => "3.13", "cpu_count" => "0"
+    data = JSON.parse(last_response.body)
+    assert_equal 400, last_response.status
+    assert_equal(
+      {"message"=>"0 cpu_count makes no sense"},
+      data
+    )
+
+  end
+
   it "can set load average with cpu_count" do
     put "/v3/ltsp_servers/testserver", "load_avg" => "1.0", "cpu_count" => 2
     get "/v3/ltsp_servers/testserver"

@@ -144,6 +144,10 @@ class LtspServers < LdapSinatra
 
     attrs = {}
 
+    if params["cpu_count"] && params["cpu_count"].to_i == 0
+      halt 400, json("message" => "0 cpu_count makes no sense")
+    end
+
     if params["cpu_count"]
       attrs[:load_avg] = params["load_avg"].to_f / params["cpu_count"].to_i
     else
