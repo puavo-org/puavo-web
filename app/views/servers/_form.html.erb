@@ -60,9 +60,12 @@
   <!-- </table> -->
 
   <table>
-    <tr><td>
-    <%= f.submit submit_text %>
-    <div class="cancel"> <%=link_to t('cancel'), @server, :class => 'btn btn-danger' %> </div>
-    </tr></td>
+    <tr>
+      <td></td>
+      <td>
+        <%= f.submit submit_text %>
+        <div class="cancel"> <%=link_to t('cancel'), @server, :class => 'btn btn-danger' %> </div>
+      </td>
+  </tr>
   </table>
 <% end %>

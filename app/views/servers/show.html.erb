@@ -1,34 +1,26 @@
-<table>
 <%= render :partial => 'shared/main_information', :locals => { :device => @server} %>
-</table>
-<div class="dashboard">
-  <div class="dashboard_box">
+<div class="content-box">
   <table>
-
   <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
-
   </table>
 
-  <div class="dashboard_box">
-    <h3><%= t('.automounts') %></h3>
-
-    <table>
+<div class="content-box">
+  <h3><%= t('.automounts') %></h3>
+  <table>
     <tr>
       <td class="label_td view"><%= label @server.class.to_s.downcase, "puavoExport" %></td>
       <td class="value_td"><%= Array(@server.puavoExport).join("<br />")  %></td>
     </tr>
-    </table>
-  </div>
+  </table>
+</div>
 
   <% if not Array(@server.puavoSchool).empty? %>
-  <div class="dashboard_box">
+  <div class="content-box">
     <h3><%= t('servers.school_limit.title') %></h3>
     <table class="list widelist">
-
       <tr>
         <th><%= t('servers.school_limit.description') %></th>
       </tr>
-
       <% @server.forced_schools.each do |school| %>
       <tr>
         <td class="value_td view">
@@ -36,13 +28,9 @@
         </td>
       </tr>
       <% end %>
-
     </table>
   </div>
   <% end %>
-
-  </div>
-</div>
 
 <% content_for :right do %>
   <div><%= link_to t('link.edit'), edit_server_path(@server) %></div>
