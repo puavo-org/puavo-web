@@ -6,16 +6,14 @@ require "sinatra/json"
 require "base64"
 require "debugger" if Sinatra::Base.development?
 
-require "./credentials"
-require "./errors"
-require "./resources/base"
-require "./resources/external_files"
-require "./resources/users"
-require "./resources/ltsp_servers"
-require "./resources/schools"
-require "./resources/devices"
-require "./resources/sessions"
-
+require_relative "./credentials"
+require_relative "./errors"
+require_relative "./resources/base"
+require_relative "./resources/external_files"
+require_relative "./resources/users"
+require_relative "./resources/schools"
+require_relative "./resources/devices"
+require_relative "./resources/sessions"
 
 # @!macro route
 #   @overload $0 $1
@@ -42,7 +40,7 @@ class Root < LdapSinatra
   use PuavoRest::Devices
   use PuavoRest::Sessions
   if CONFIG["bootserver"]
-    require "./resources/ltsp_servers"
+    require_relative "./resources/ltsp_servers"
     use PuavoRest::LtspServers
   end
 end
