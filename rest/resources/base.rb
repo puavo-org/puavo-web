@@ -87,6 +87,8 @@ class LdapModel
   # @see ldap_attr_conversion
   # @see #filter
   def self.convert(entry, all=false)
+    return nil if entry.nil?
+
     h = {}
 
     entry.each do |k,v|
