@@ -33,7 +33,7 @@
       <%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %>
     </td>
     <td>
-      <%= text_field_tag "wlan_name[#{ index }]", f.object.wlan_name[index] %>
+      <%= text_field_tag "wlan_name[#{ index }]", f.object.wlan_name ? f.object.wlan_name[index] : "" %>
     </td>
   </tr>
 
@@ -44,7 +44,7 @@
     <td>
       <%= select_tag( "wlan_type[#{ index }]",
                       options_for_select([ ["Open", t('.select_value_open')],
-                                           ["PSK", t('.select_value_psk')] ], :selected => f.object.wlan_type[index] ) )%>
+                                           ["PSK", t('.select_value_psk')] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
     </td>
   </tr>
 
@@ -53,7 +53,7 @@
       <%= label_tag "wlan_password[#{ index }]", t('.wlan_password') %>
     </td>
     <td>
-      <%= text_field_tag "wlan_password[#{ index }]", f.object.wlan_password[index] %>
+      <%= text_field_tag "wlan_password[#{ index }]", f.object.wlan_password ? f.object.wlan_password[index] : "" %>
     </td>
   </tr>
 
