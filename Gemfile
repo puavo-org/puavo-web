@@ -12,9 +12,24 @@ gem 'uuid'
 gem 'rdoc'
 gem 'jquery-rails'
 gem 'uglifier'
+gem "multi_json"
 
 group :assets do
   gem 'stylus'
+end
+
+group :rest do
+  gem "sinatra"
+  gem "sinatra-contrib"
+  gem "puma"
+end
+
+group :rest_development do
+  gem "yard"
+  gem "shotgun"
+  gem "debugger"
+  gem "pry"
+  gem "timecop"
 end
 
 group :development do
