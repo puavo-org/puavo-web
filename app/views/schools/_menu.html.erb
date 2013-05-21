@@ -6,6 +6,9 @@
   <li <%= action_name == "admins" ? "class=current" : "" %>>
   <%= link_to t('.admins'), admins_school_path(@school) %>
   </li>
+  <li <%= action_name == "wlan" ? "class=current" : "" %>>
+  <%= link_to t('.wlan'), wlan_school_path(@school) %>
+  </li>
   <% end %>
 </ul>
   

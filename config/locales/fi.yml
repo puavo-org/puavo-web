@@ -227,6 +227,7 @@ fi:
     menu: 
       dashboard: Kojetaulu
       admins: "Ylläpitäjät"
+      wlan: WLAN
     admins: 
       this_school_admin_users: "%{school_name}: ylläpitäjät"
       other_admin_users: "Lisää ylläpitäjän oikeudet"

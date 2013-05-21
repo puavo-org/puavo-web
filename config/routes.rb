@@ -24,8 +24,8 @@ PuavoUsers::Application.routes.draw do
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
     match 'schools/:id/add_school_admin/:user_id' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
     match 'schools/:id/remove_school_admin/:user_id' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
-    match 'schools/:id/wlan' => 'schools#wlan', :as => :school_wlan, :via => :get
-    match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :school_wlan_update, :via => :put
+    match 'schools/:id/wlan' => 'schools#wlan', :as => :wlan_school, :via => :get
+    match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :wlan_update_school, :via => :put
     resources :schools
 
     scope :path => ':school_id' do

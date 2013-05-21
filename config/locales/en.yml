@@ -229,6 +229,7 @@ en:
     menu: 
       dashboard: Dashboard
       admins: Admins
+      wlan: WLAN
     admins: 
       this_school_admin_users: "%{school_name} admin users"
       other_admin_users: Add management access rights
