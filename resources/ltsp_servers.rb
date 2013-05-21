@@ -22,24 +22,24 @@ class LtspServersModel
     )
   end
 
-  # set server load average for domain
-  # @param [String] domain
+  # set server load average for server hostname
+  # @param [String] hostname
   # @param [Float] load_avg
-  def set(domain, attrs)
+  def set(hostname, attrs)
     attrs[:updated] = Time.now
-    attrs[:domain] = domain
+    attrs[:hostname] = hostname
     @store.transaction do
-      @store[domain] = attrs
+      @store[hostname] = attrs
     end
   end
 
-  # Get server info for domain
+  # Get server info for hostname
   #
-  # @param [String] domain
+  # @param [String] hostname
   # @return [Hash]
-  def get(domain)
+  def get(hostname)
     @store.transaction(true) do
-      @store[domain]
+      @store[hostname]
     end
   end
 
@@ -115,7 +115,7 @@ class LtspServers < LdapSinatra
   #
   # Examples:
   # curl /v3/hogwarts/ltsp_servers/_most_idle
-  # => {"load_avg":0.035,"ltsp_image":null,"updated":"2013-05-20 11:29:13 +0300","domain":"someservername"}
+  # => {"load_avg":0.035,"ltsp_image":null,"updated":"2013-05-20 11:29:13 +0300","hostname":"someservername"}
   #
   # curl /v3/hogwarts/ltsp_servers/_most_idle.txt
   # => someservername
@@ -123,14 +123,14 @@ class LtspServers < LdapSinatra
   # @!macro route
   get "/v3/ltsp_servers/_most_idle.?:format?" do
     if params["format"] == "txt"
-      txt @m.most_idle.first[:domain]
+      txt @m.most_idle.first[:hostname]
     else
       json @m.most_idle.first
     end
   end
 
-  get "/v3/ltsp_servers/:domain" do
-    json @m.get(params["domain"])
+  get "/v3/ltsp_servers/:hostname" do
+    json @m.get(params["hostname"])
   end
 
   # Set LTSP server idle status as x-www-form-urlencoded. If cpu_count is
@@ -139,7 +139,7 @@ class LtspServers < LdapSinatra
   # @param [Float] load_avg
   # @param [Fixnum] cpu_count optional
   # @!macro route
-  put "/v3/ltsp_servers/:domain" do
+  put "/v3/ltsp_servers/:hostname" do
     require_auth
 
     attrs = {}
@@ -152,7 +152,7 @@ class LtspServers < LdapSinatra
 
     attrs[:ltsp_image] = params["ltsp_image"]
 
-    @m.set(params["domain"], attrs)
+    @m.set(params["hostname"], attrs)
 
     json "ok" => true
   end
