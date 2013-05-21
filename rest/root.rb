@@ -8,7 +8,8 @@ require "debugger" if Sinatra::Base.development?
 
 require_relative "./credentials"
 require_relative "./errors"
-require_relative "./resources/base"
+require_relative "./ldap_model"
+require_relative "./ldap_sinatra"
 require_relative "./resources/external_files"
 require_relative "./resources/users"
 require_relative "./resources/schools"
