@@ -118,7 +118,7 @@ fi:
       destroyed_failed: "Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua"
       roles_not_found: Yhtään roolia ei ole määritetty
       wlan_updated: WLAN-asetukset päivitetty
-      wlan_save_failed: WLAN-asetusten tallennus epäonnistui
+      wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
     profile: 
       updated: Tietojen tallennus onnistui
       save_failed: "Tietojen tallennus epäonnistui"
@@ -324,6 +324,8 @@ fi:
             invalid_characters: "Verkkonimi sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
           macAddress: 
             invalid_characters: "MAC-osoite sisältää virheellisiä merkkejä tai se on väärän muotoinen. Esim: 0f:1f:a9:2f:a3:ad"
+        wlan:
+          duplicate_name: langattomien verkkojen asetuksissa sama verkkonimi useammalla verkolla
     models: 
       group: "Ryhmä"
       role: Rooli
@@ -354,9 +356,6 @@ fi:
         gidNumber: Gid-numero
         puavoDeviceImage: Levykuva
         puavoBillingInfo: Laskutustiedot
-        wlan_name: Verkkonimi
-        wlan_type: Verkon tyyppi
-        wlan_password: Salasana
         puavoWlanChannel: Kanava
       user: 
         displayName: Nimi
@@ -595,7 +594,7 @@ fi:
     terminal_title: "Päätteen tiedot"
     location: Sijainti
     display_settings: "Näytönasetukset"
-    kernel_settings: Kernel-asetukset
+    kernel_settings: Levykuva ja kernel-asetukset
     title: Laitteen tiedot
     printer_title: Tulostimen tiedot
     server_title: Palvelimen tiedot
@@ -615,8 +614,15 @@ fi:
     form_linux_device_information: 
       select: Valitse
     form_wlan:
-      title: Tukiasemtiedot
+      wireless_access_point_setup: Koulun tukiasemien oletusasetukset
       channel_random: Satunnainen
+      wireless_network_setup: Langattomien verkkojen asetukset
+      wireless_network_title: Verkko %{index}
+      wlan_name: Verkonnimi
+      wlan_type: Verkon tyyppi
+      wlan_password: Salasana
+      select_value_open: Avoin
+      select_value_psk: PSK
   devices: 
     index: 
       add_new_device: "Lisää uusi laite"

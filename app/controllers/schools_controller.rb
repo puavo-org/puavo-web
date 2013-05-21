@@ -196,15 +196,18 @@ class SchoolsController < ApplicationController
   def wlan_update
     @school = School.find(params[:id])
 
-    @school.update_wlan_attributes(params[:school])
+    @school.update_wlan_attributes( params[:wlan_name],
+                                    params[:wlan_type],
+                                    params[:wlan_password] )
+    @school.puavoWlanChannel = params[:school][:puavoWlanChannel]
 
     respond_to do |format|
       if @school.save
         flash[:notice] = t('flash.school.wlan_updated')
         format.html { redirect_to( wlan_school_path ) }
       else
-        flash[:alert] = t('flash.school.wlan_save_failed')
-        format.html { render :action => "edit" }
+        flash[:alert] = t('flash.school.wlan_save_failed', :error => @school.errors["puavoWlanSSID"].first )
+        format.html { render :action => "wlan" }
       end
     end
   end

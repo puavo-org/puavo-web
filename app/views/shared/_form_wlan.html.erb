@@ -1,23 +1,11 @@
-<h2><%= t('.title') %>
+<h2><%= t('.wireless_access_point_setup') %></h2>
 <table>
-  <tr>
-    <td class="label_td"><%= f.label :wlan_name %></td>
-    <td><%= f.text_field :wlan_name %></td>
-  </tr>
-  <tr>
-    <td class="label_td"><%= f.label :wlan_type %></td>
-    <td><%= f.select( :wlan_type,
-	              [ ["Open", "open"], 
-                        ["PSK", "psk"] ] )%></td>
-  </tr>
-  <tr>
-    <td class="label_td"><%= f.label :wlan_password %></td>
-    <td><%= f.text_field :wlan_password %></td>
-  </tr>
+
   <tr>
     <td class="label_td"><%= f.label :puavoWlanChannel %></td>
     <td><%= f.select( :puavoWlanChannel,
-	              [ [t('.channel_random'), "random"], 
+	              [ [t('.default'), ""],
+	                [t('.channel_random'), "random"],
                         ["1", "1"],
                         ["2", "2"],
                         ["3", "3"],
@@ -32,6 +20,46 @@
                         ["12", "12"],
                         ["13", "13"] ] )%></td>
   </tr>
+</table>
+
+<h2><%= t('.wireless_network_setup') %></h2>
+
+<table>
+  <% max_network_index = f.object.wlan_name.count - 1 %>
+  <% (0..4).each do |index| %>
+
+  <tr><td><h4><%= t('.wireless_network_title', :index => index + 1) %></h4></td></tr>
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_name[#{ index }]", f.object.wlan_name[index] %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_type[#{ index }]", t('.wlan_type') %>
+    </td>
+    <td>
+      <%= select_tag( "wlan_type[#{ index }]",
+                      options_for_select([ ["Open", t('.select_value_open')],
+                                           ["PSK", t('.select_value_psk')] ], :selected => f.object.wlan_type[index] ) )%>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_password[#{ index }]", t('.wlan_password') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_password[#{ index }]", f.object.wlan_password[index] %>
+    </td>
+  </tr>
+
+  <% end %>
+
 </table>
 
 <div>
