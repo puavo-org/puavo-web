@@ -3,6 +3,9 @@ puavo_ca:
   use_ssl: false
   port: 8080
   ca_file: /etc/ssl/certs/puavo-ca.crt
+allow_change_device_types:
+- thinclient
+- fatclient
 device_types:
   thinclient:
     label:
