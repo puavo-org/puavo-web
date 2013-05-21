@@ -118,6 +118,8 @@ en:
       save_failed: Failed to save access rights
       destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
       roles_not_found: Cannot find any roles!
+      wlan_updated: WLAN-settings was succesfully updated
+      wlan_save_failed: "WLAN-settings cannot be saved: %{error}"
     profile: 
       updated: Profile was successfully updated
       save_failed: Profile cannot be saved!
@@ -227,6 +229,7 @@ en:
     menu: 
       dashboard: Dashboard
       admins: Admins
+      wlan: WLAN
     admins: 
       this_school_admin_users: "%{school_name} admin users"
       other_admin_users: Add management access rights
@@ -292,6 +295,11 @@ en:
       save_and_close: Save and close
     show: 
       message: Profile was successfully updated
+  menu:
+    index:
+      service_link_name_puavo: Puavo - users and devices management
+      service_link_name_infotv: Info-TV
+      service_link_name_change_password: Change password
   controllers: 
     import: 
       school_has_changed: User is transferred, old password is used
@@ -318,6 +326,8 @@ en:
             invalid_characters: "Hostname include invalid characters (allowed characters is: a-z0-9-)"
           macAddress: 
             invalid_characters: MAC address include invalid characters. Eg 0f:1f:a9:2f:a3:ad
+        wlan:
+          duplicate_name: a duplicate name exists (Network name) on the network setup
     models: 
       group: Group
       role: Role
@@ -348,6 +358,7 @@ en:
         gidNumber: Gid number
         puavoDeviceImage: Device image
         puavoBillingInfo: Billing info
+        puavoWlanChannel: Channel
       user: 
         displayName: Name
         sn: Surname
@@ -607,6 +618,17 @@ en:
       xrandr_status_: "No"
     form_linux_device_information: 
       select: Select
+    form_wlan:
+      wireless_access_point_setup: Default Wireless Access Point setup in school
+      channel_random: Random
+      wireless_network_setup: Wireless network setup
+      wireless_network_title: Network %{index}
+      wlan_name: Network name
+      wlan_type: Network type
+      wlan_password: Password
+      select_value_open: Open
+      select_value_psk: PSK
+      default: Oletus
   devices: 
     index: 
       add_new_device: Add new device

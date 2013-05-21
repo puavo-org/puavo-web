@@ -22,11 +22,10 @@ class Api::V2::DevicesController < ApplicationController
     end
   end
 
-
+  # FIXME: jpegPhoto attribute?
   def attributes
     [ "description",
       "ipHostNumber",
-      "jpegPhoto",
       "macAddress",
       "puavoDefaultPrinter",
       "puavoDeviceAutoPowerOffMode",

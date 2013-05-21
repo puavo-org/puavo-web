@@ -1,0 +1,7 @@
+<% @services.each do |service| %>
+<% key = service.keys.first %>
+<% @link_name = service[key]["link_name"] || t(".service_link_name_#{ key }") %>
+<p>
+  <%= link_to @link_name, service[key]["url"] %>
+</p>
+<% end %>

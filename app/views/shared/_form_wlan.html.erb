@@ -1,0 +1,66 @@
+<h2><%= t('.wireless_access_point_setup') %></h2>
+<table>
+
+  <tr>
+    <td class="label_td"><%= f.label :puavoWlanChannel %></td>
+    <td><%= f.select( :puavoWlanChannel,
+	              [ [t('.default'), ""],
+	                [t('.channel_random'), "random"],
+                        ["1", "1"],
+                        ["2", "2"],
+                        ["3", "3"],
+                        ["4", "4"],
+                        ["5", "5"],
+                        ["6", "6"],
+                        ["7", "7"],
+                        ["8", "8"],
+                        ["9", "9"],
+                        ["10", "10"],
+                        ["11", "11"],
+                        ["12", "12"],
+                        ["13", "13"] ] )%></td>
+  </tr>
+</table>
+
+<h2><%= t('.wireless_network_setup') %></h2>
+
+<table>
+  <% (0..4).each do |index| %>
+
+  <tr><td><h4><%= t('.wireless_network_title', :index => index + 1) %></h4></td></tr>
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_name[#{ index }]", f.object.wlan_name ? f.object.wlan_name[index] : "" %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_type[#{ index }]", t('.wlan_type') %>
+    </td>
+    <td>
+      <%= select_tag( "wlan_type[#{ index }]",
+                      options_for_select([ [t('.select_value_open'), "open"],
+                                           [t('.select_value_psk'), "psk"] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_password[#{ index }]", t('.wlan_password') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_password[#{ index }]", f.object.wlan_password ? f.object.wlan_password[index] : "" %>
+    </td>
+  </tr>
+
+  <% end %>
+
+</table>
+
+<div>
+  <%= f.submit t('link.update') %>
+</div>

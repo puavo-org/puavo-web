@@ -117,6 +117,8 @@ fi:
       wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille"
       destroyed_failed: "Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua"
       roles_not_found: Yhtään roolia ei ole määritetty
+      wlan_updated: WLAN-asetukset päivitetty
+      wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
     profile: 
       updated: Tietojen tallennus onnistui
       save_failed: "Tietojen tallennus epäonnistui"
@@ -225,6 +227,7 @@ fi:
     menu: 
       dashboard: Kojetaulu
       admins: "Ylläpitäjät"
+      wlan: WLAN
     admins: 
       this_school_admin_users: "%{school_name}: ylläpitäjät"
       other_admin_users: "Lisää ylläpitäjän oikeudet"
@@ -290,6 +293,11 @@ fi:
       save_and_close: Tallenna ja sulje
     show: 
       message: Tietojen tallennus onnistui
+  menu:
+    index:
+      service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta
+      service_link_name_infotv: Info-TV
+      service_link_name_change_password: Vaihda salasanaa
   controllers: 
     import: 
       school_has_changed: "Siirretty käyttäjä, käytössä vanha salasana"
@@ -316,6 +324,8 @@ fi:
             invalid_characters: "Verkkonimi sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9-)"
           macAddress: 
             invalid_characters: "MAC-osoite sisältää virheellisiä merkkejä tai se on väärän muotoinen. Esim: 0f:1f:a9:2f:a3:ad"
+        wlan:
+          duplicate_name: langattomien verkkojen asetuksissa sama verkkonimi useammalla verkolla
     models: 
       group: "Ryhmä"
       role: Rooli
@@ -346,6 +356,7 @@ fi:
         gidNumber: Gid-numero
         puavoDeviceImage: Levykuva
         puavoBillingInfo: Laskutustiedot
+        puavoWlanChannel: Kanava
       user: 
         displayName: Nimi
         sn: Sukunimi
@@ -584,7 +595,7 @@ fi:
     terminal_title: "Päätteen tiedot"
     location: Sijainti
     display_settings: "Näytönasetukset"
-    kernel_settings: Kernel-asetukset
+    kernel_settings: Levykuva ja kernel-asetukset
     title: Laitteen tiedot
     printer_title: Tulostimen tiedot
     server_title: Palvelimen tiedot
@@ -603,6 +614,17 @@ fi:
       xrandr_status_: Ei
     form_linux_device_information: 
       select: Valitse
+    form_wlan:
+      wireless_access_point_setup: Koulun tukiasemien oletusasetukset
+      channel_random: Satunnainen
+      wireless_network_setup: Langattomien verkkojen asetukset
+      wireless_network_title: Verkko %{index}
+      wlan_name: Verkonnimi
+      wlan_type: Verkon tyyppi
+      wlan_password: Salasana
+      select_value_open: Avoin
+      select_value_psk: PSK
+      default: Oletus
   devices: 
     index: 
       add_new_device: "Lisää uusi laite"

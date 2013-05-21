@@ -1,4 +1,6 @@
 class School < BaseGroup
+  include Wlan
+
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
                 :classes => ['top','posixGroup','puavoSchool','sambaGroupMapping'] )
@@ -24,7 +26,7 @@ class School < BaseGroup
   attr_accessor :image
   before_validation :resize_image
 
-  validate :validate_group_name, :validate_name_prefix, :validate_name
+  validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_wlan_attributes
 
   alias_method :v1_as_json, :as_json
 

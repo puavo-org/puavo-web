@@ -1,10 +1,13 @@
 <ul>
-  <li <%= action_name == "show" || action_name=="edit" ? "class='current'" : "" %>>
+  <li <%= action_name == "show" || action_name=="edit" ? "class=current" : "" %>>
   <%= link_to t('.dashboard'), school_path(@school) %>
   </li>
   <% if current_user.organisation_owner? %>
-  <li <%= action_name == "admins" ? "class='current'" : "" %>>
+  <li <%= action_name == "admins" ? "class=current" : "" %>>
   <%= link_to t('.admins'), admins_school_path(@school) %>
+  </li>
+  <li <%= action_name == "wlan" || action_name == "wlan_update" ? "class=current" : "" %>>
+  <%= link_to t('.wlan'), wlan_school_path(@school) %>
   </li>
   <% end %>
 </ul>
