@@ -1,5 +1,5 @@
 require "fileutils"
-require "./test/helper"
+require_relative "./helper"
 
 describe PuavoRest::LtspServers do
 

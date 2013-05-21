@@ -1,4 +1,4 @@
-require "./test/helper"
+require_relative "./helper"
 
 describe PuavoRest::LtspServersModel do
 

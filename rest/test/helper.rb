@@ -1,20 +1,13 @@
 
 ENV['RACK_ENV'] = 'test'
 
-module PuavoRest
-  CONFIG = {
-    "ldap" => "test",
-    "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
-    "bootserver" => true
-  }
-end
-
-require_relative "../root"
-
 require 'minitest/autorun'
 require 'rack/test'
 require "timecop"
 require "debugger"
+
+require_relative "../config.rb"
+require_relative "../root"
 
 # Include rack helpers and expose full application stack
 class MiniTest::Spec
