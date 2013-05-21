@@ -1,8 +1,8 @@
 <% unless device.classes.include?('puavoServer')  %>
-<div class="dashboard_box">
+<div class="content-box">
 <%end%>
 <h3><%= title(device) %></h3>
-<table class="list widelist">
+<table class="widelist">
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceManufacturer" %></td>
   <td class="value_td"><%=h device.puavoDeviceManufacturer %></td>
@@ -63,9 +63,9 @@
 </div>
 
 <% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
-<div class="dashboard_box">
+<div class="content-box">
   <h3><%= t('shared.autopoweroff') %></h3>
-  <table class="list widelist">
+  <table class="widelist">
 	<tr>
 	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceAutoPowerOffMode" %></td>
 	  <td class="value_td">
@@ -91,10 +91,10 @@
 
 <%= render :partial => 'shared/purchase_information', :locals => { :device => device} %>
 
-<div class="dashboard_box clear">
+<div class="content-box">
 <h3><%= t('shared.location') %></h3>
 
-<table class="list widelist">
+<table class="widelist">
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLocationName" %></td>
   <td class="value_td"><%=h device.puavoLocationName %></td>
@@ -111,10 +111,10 @@
 </table>
 </div>
 <% if (device.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (device.classes.count + 3) %>
-<div class="dashboard_box">
+<div class="content-box">
 <h3><%= t('shared.display_settings') %></h3>
 
-<table class="list widelist">
+<table class="widelist">
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXserver" %></td>
   <td class="value_td"><%=h device.puavoDeviceXserver %></td>
@@ -146,10 +146,10 @@
 </tr>
 </table>
 </div>
-<div class="dashboard_box">
+<div class="content-box">
 <h3><%= t('shared.kernel_settings') %></h3>
 
-<table class="list widelist">
+<table class="widelist">
 <% if ["thinclient", "fatclient", "laptop", "ltspserver"].include?(device.puavoDeviceType) %>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceImage" %></td>
@@ -162,6 +162,7 @@
   <td class="value_td"><%=h device.puavoDeviceBootImage %></td>
 </tr>
 <% end %>
+<table class="widelist">
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
   <td class="value_td"><%=h device.puavoDeviceKernelVersion %></td>
