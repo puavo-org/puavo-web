@@ -12,7 +12,8 @@ class LtspServersModel
 
   def initialize(path)
     FileUtils.mkdir_p File.dirname(path)
-    @store = PStore.new(path)
+    @store = PStore.new(path, true)
+    @store.ultra_safe = true
   end
 
   def self.from_domain(organisation_domain)
