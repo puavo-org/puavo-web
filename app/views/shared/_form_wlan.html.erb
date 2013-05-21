@@ -43,8 +43,8 @@
     </td>
     <td>
       <%= select_tag( "wlan_type[#{ index }]",
-                      options_for_select([ ["Open", t('.select_value_open')],
-                                           ["PSK", t('.select_value_psk')] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
+                      options_for_select([ [t('.select_value_open'), "open"],
+                                           [t('.select_value_psk'), "psk"] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
     </td>
   </tr>
 
