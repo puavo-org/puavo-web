@@ -32,7 +32,7 @@ describe PuavoRest::LtspServers do
 
     get "/v3/ltsp_servers/_most_idle"
     data = JSON.parse(last_response.body)
-    assert_equal "idleserver", data["domain"]
+    assert_equal "idleserver", data["hostname"]
   end
 
 end
