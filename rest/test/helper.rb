@@ -31,6 +31,13 @@ require "debugger"
 
 require_relative "../config.rb"
 require_relative "../root"
+require_relative '../../lib/cleanup_ldap'
+
+module Rack
+  module Test
+    DEFAULT_HOST = "example.opinsys.net"
+  end
+end
 
 # Include rack helpers and expose full application stack
 class MiniTest::Spec
