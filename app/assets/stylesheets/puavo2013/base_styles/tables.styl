@@ -1,8 +1,5 @@
 @import 'nib'
 
-table, thead, tbody, tr
-  display block
-
 table, th, td
   vertical-align middle
 
@@ -48,12 +45,6 @@ table
       padding-top 10px
       word-wrap break-word
 
-.list tr:nth-child(even), .content-box table tr:nth-child(even)
-  background none repeat scroll 0 0 #FAFAFA
-
-.list tr:nth-child(odd), .content-box table tr:nth-child(odd)
-  background none repeat scroll 0 0 #F1F1F1
-
 .show_user
   td
     border none
@@ -77,11 +68,6 @@ table#autopoweroff
     select
       width auto
 
-.search_result
-  td
-    border-bottom 1px solid #AAAAAA
-    width 33.333%
-
 .required
   & > .fieldWithErrors
     display inline
@@ -92,7 +78,6 @@ table#autopoweroff
 @media screen-breakpoint-one
   table
     &.list
-      font-size 140%
       width 100%
       .thead, thead
         display none

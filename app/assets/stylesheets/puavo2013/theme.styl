@@ -1,6 +1,5 @@
 @import 'nib'
 @import 'colors'
-@import 'base_styles/mediaqueries'
 
 body
   background none repeat scroll 0 0 baseBg
@@ -13,11 +12,13 @@ body
   box-shadow 0px 15px 15px rgba(68, 68, 68, 0.70)
 
 .maincontent
-  background-color #FFFFFF
+  background-color white
   border-bottom 1px solid baseBoxShadowBorderColor
   border-left 1px solid baseBoxShadowBorderColor
   border-right 1px solid baseBoxShadowBorderColor
   border-radius 0 0 4px 4px
+  > h1 span
+    border-bottom 1px solid baseBoxShadowBorderColor
 
 // topmenu
 .topmenu
@@ -40,6 +41,12 @@ body
   & > li
     & > ul
       background-color baseOrangeGradient
+
+.add-new-school a,
+.add-new-school a:hover
+  background-color white
+  background-position left -510px
+  border-radius 8px 8px 0 0
 
 // end of topmenu
 
@@ -125,7 +132,7 @@ body
       background-position left -310px
       &:hover
         background-position left -350px
-  > div, .sub-tools > li
+  .sub-tools > li
     border-bottom 1px dashed #ECEADA
   .tool
     span
@@ -243,6 +250,11 @@ table
 .notice_text
   color errorRed
 
+.list tr:nth-child(even), .content-box table tr:nth-child(even)
+  background-color rowEvenBgColor
+
+.list tr:nth-child(odd), .content-box table tr:nth-child(odd)
+  background-color rowOddBgColor
 // End of tables
 
 // login
@@ -262,6 +274,10 @@ table
 .link_header
   border-bottom 1px dashed #555555
   font-weight bold
+
+.search_result
+  td
+    border-bottom 1px solid #AAAAAA
 
 @media screen-breakpoint-one
   .main-wrap, .login_container, .navbar-second-level

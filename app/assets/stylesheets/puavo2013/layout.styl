@@ -1,5 +1,4 @@
 @import 'nib'
-@import 'base_styles/mediaqueries'
 
 *
   box-sizing border-box
@@ -18,15 +17,13 @@ body
 h1, h2, h3, h4, h5, h6
   font-weight normal
   color #1b1b1b
+  margin 0 0 1em
 h1
   font-size 250%
-  margin 0
 h2
   font-size 200%
-  margin-bottom 0.75em
 h3
   font-size 130%
-  margin-bottom 1em
 h4
   font-size 115%
   line-height 1.25
@@ -221,19 +218,19 @@ caption
     margin 1% 0 0
     width 100%
   h1
-    line-height 1
-    margin 0 0 2%
+    margin 0 0 1%
     padding 0
 // end of .maincontent
 
 // .tools ->
 .tools-container
   float right
+  &:empty, span:empty
+    display none
   .tools
     float right
     height 40px
     margin 5px 1em .2em
-    min-width 110px
     padding 0
     > div, .sub-tools > li
       float left
@@ -319,7 +316,7 @@ caption
 
 @media screen-breakpoint-one
   body
-    font-size 80%
+    font-size 85%
 
   .main-wrap, .login_container
     margin 0
@@ -331,12 +328,12 @@ caption
 
   .maincontent
     font-size 90%
-    margin 0
+    margin 0 0 1em
     padding-bottom 2%
     .dashboard
       width 100%
     & > h1
-      padding 0 2%
+      padding 2%
 
   .maincontent, .login_content
     float none
@@ -356,8 +353,6 @@ caption
   .tools-container
     float none
     margin-bottom 2%
-    &:empty, span:empty
-      display none
 
 @media screen-breakpoint-two
   .main-wrap
