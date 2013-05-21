@@ -153,6 +153,7 @@ class LdapSinatra < Sinatra::Base
 
   include ErrorMethods
   helpers Sinatra::JSON
+  set :json_encoder, :to_json
 
   # Respond with a text content
   def txt(text)
