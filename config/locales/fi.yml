@@ -411,6 +411,7 @@ fi:
         o: Nimi
         puavoEduOrgAbbreviation: Lyhenne
         puavoBillingInfo: Laskutustiedot
+        puavoDeviceImage: Levykuva
       external_service: 
         uid: Palvelun tunniste
         description: Kuvaus

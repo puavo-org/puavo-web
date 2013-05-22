@@ -1,0 +1,43 @@
+#!/bin/sh
+
+URL=$1
+
+set -eu
+
+CPU_COUNT=$(nproc)
+
+# Load average from last minute
+# http://linux.die.net/man/5/proc
+LOAD_AVG=$(awk '{ print $1 }' /proc/loadavg)
+
+PUAVO_DOMAIN=$(cat /etc/puavo/domain)
+
+if [ "${URL}" = "" ]; then
+    API_SERVER=$(dig +time=2 +tries=1 SRV _puavo-api._tcp.${PUAVO_DOMAIN} +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }')
+
+    if [ "${API_SERVER}" != "" ]; then
+        HOSTNAME=$(hostname -f)
+        URL="https://${API_SERVER}/v3/ltsp_servers/${HOSTNAME}"
+    else
+        echo "Missing URL and _puavo-api._tcp.${PUAVO_DOMAIN} did not return anything!"
+        exit 1
+    fi
+fi
+
+while true; do
+    echo
+    echo `date`
+
+    curl --config - \
+    --request PUT \
+    --max-time 5 \
+    --cacert /etc/puavo/certs/rootca.pem \
+    $URL << EOF || true
+data="cpu_count=$CPU_COUNT"
+data="load_avg=$LOAD_AVG"
+data="ltsp_image=$(cat /etc/ltsp/this_ltspimage_name || true)"
+user=$(cat /etc/puavo/ldap/dn):$(cat /etc/puavo/ldap/password)
+EOF
+
+    sleep 15
+done

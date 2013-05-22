@@ -73,6 +73,10 @@
 	</td>
   </tr>
   <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "puavoDeviceImage" %></td>
+    <td class="value_td"><%= @organisation.puavoDeviceImage %></td>
+  </tr>
+  <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoBillingInfo" %></td>
     <td class="value_td">
       <% Array(@organisation.puavoBillingInfo).each do |billing_info| %>

@@ -413,6 +413,7 @@ en:
         o: Name
         puavoEduOrgAbbreviation: Abbreviation
         puavoBillingInfo: Billing info
+        puavoDeviceImage: Device Image
       external_service: 
         uid: Service Identifier
         description: Description
