@@ -218,6 +218,7 @@ caption
     margin 1% 0 0
     width 100%
   h1
+    line-height 1
     margin 0 0 1%
     padding 0
 // end of .maincontent
@@ -360,24 +361,17 @@ caption
       margin-top 0
 
 @media screen-portrait-breakpoint-one
-  .main-wrap
-    & > h1
-      margin-top 1.2em
-  .maincontent
-    padding-top 4%
-    &:first-of-type
-      margin 1em 0 0
+  body
+    font-size 110%
 
-@media screen-portrait-breakpoint-two
   .maincontent
-  &:first-of-type
-    margin 1em 0 0
-  .main-wrap
-    margin 3em 0 0
+    h1
+      font-size 200%
+      margin 5% 0
 
-@media screen-landcape-breakpoint-one
-  .maincontent
-    &:first-of-type
-      margin 2em 0 0
-  .main-wrap
-    margin 3em 0 0
+  .tools-container
+    margin-bottom 0
+
+// @media screen-portrait-breakpoint-two
+
+// @media screen-landcape-breakpoint-one

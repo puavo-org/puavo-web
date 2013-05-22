@@ -32,7 +32,7 @@ form
     td:first-child
       text-align right
       padding-right 1em
-      width 25%
+      width 35%
   select
     height 30px
     line-height 30px
@@ -167,15 +167,13 @@ textarea
   height 250px
   padding 5px
 
-input[type=checkbox],
-input[type=radio],
+input[type="checkbox"],
+input[type="radio"],
 input.checkbox,
 input.radio
-  border none
   display inline-block
   margin 5px
   position relative
-  top 0
   width auto
 
 #user_mail_list
@@ -208,6 +206,7 @@ input.radio
     font-size 150%
   .field_with_errors
     display inline-block
+
 .no-table-form
   input
     max-width 80%
@@ -235,7 +234,7 @@ input.radio
         min-height 50px
         width 98%
     input, select
-      padding 1.5em
+      padding 1em
       width 95%
     input[type="submit"]
       width 50%
@@ -296,3 +295,8 @@ input.radio
     padding 2%
     input
       max-width 100%
+  .content-box
+    table
+      td
+        label
+          line-height 1.5
