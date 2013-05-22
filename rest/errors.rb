@@ -1,3 +1,4 @@
+module PuavoRest
 
 # Possible error responses in PuavoRest.
 #
@@ -38,4 +39,5 @@ module ErrorMethods
     }.to_json
   end
 
+end
 end
