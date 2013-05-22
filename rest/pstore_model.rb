@@ -42,6 +42,12 @@ class PstoreModel
     end
   end
 
+  def delete(key)
+    @store.transaction do
+      @store.delete key
+    end
+  end
+
   # Return all known keys
   # @return [Array]
   def all

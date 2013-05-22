@@ -82,7 +82,16 @@ class Sessions < LdapSinatra
   end
 
   get "/v3/sessions/:uuid" do
-    json @sessions.get params["uuid"]
+    if s = @sessions.get(params["uuid"])
+      json s
+    else
+      halt 404, json(:error => "unknown session uid #{ params["uuid"] }")
+    end
+  end
+
+  delete "/v3/sessions/:uuid" do
+    @sessions.delete params["uuid"]
+    json :ok => true
   end
 
 end

@@ -139,6 +139,18 @@ describe PuavoRest::Sessions do
       assert_equal post_data["uuid"], get_data["uuid"]
     end
 
+    it "can be deleted with DELETE" do
+      post "/v3/sessions", "hostname" => "thinnoimage"
+      assert_equal 200, last_response.status
+      data = JSON.parse last_response.body
+
+      delete "/v3/sessions/#{ data["uuid"] }"
+      assert_equal 200, last_response.status
+
+      get "/v3/sessions/#{ data["uuid"] }"
+      assert_equal 404, last_response.status
+    end
+
     it "all sessions can be fetched from index" do
       create_device(
         :puavoHostname => "thin1",
