@@ -64,7 +64,6 @@ class Sessions < LdapSinatra
       lambda { device },
       lambda { new_model(SchoolsModel).by_dn(device["school_dn"]) },
       lambda { new_model(Organisations).by_dn(@organisation_info["base"]) }
-
     ].each do |block|
       model = block.call
       next if model["image"].nil?
