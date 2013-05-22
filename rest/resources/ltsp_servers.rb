@@ -59,9 +59,14 @@ class LtspServers < LdapSinatra
 
   # Get list of LTSP servers sorted by they load. Most idle server is the first
   #
+  # @param all [Boolean] Include old servers too
   # @!macro route
   get "/v3/ltsp_servers" do
-    json limit @m.all
+    if params["all"]
+      json limit @m.all
+    else
+      json limit @m.all_without_old
+    end
   end
 
   # Computed resource for the most idle ltsp server
