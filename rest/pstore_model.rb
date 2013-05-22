@@ -29,6 +29,7 @@ class PstoreModel
     @store.transaction do
       @store[key] = data
     end
+    data
   end
 
   # Get server info for hostname
