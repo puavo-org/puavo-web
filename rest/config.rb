@@ -11,7 +11,6 @@ if ENV["RACK_ENV"] == "test"
     "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
     "bootserver" => true
   }
-
 else
   begin
     CONFIG = YAML.load_file "/etc/puavo-rest.yml"
