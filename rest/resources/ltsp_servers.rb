@@ -1,60 +1,15 @@
 require "pstore"
 require "fileutils"
+require_relative "../pstore_model"
 
 module PuavoRest
 
 # Pstore packed model for LTSP server data. Currently contains mainly load
 # balancing data
-class LtspServersModel
+class LtspServersModel < PstoreModel
 
   # How old servers we report as available
   MAX_AGE = 60 * 2
-
-  def initialize(path)
-    FileUtils.mkdir_p File.dirname(path)
-    @store = PStore.new(path, true)
-    @store.ultra_safe = true
-  end
-
-  def self.from_domain(organisation_domain)
-    @m = LtspServersModel.new File.join(
-      CONFIG["ltsp_server_data_dir"],
-      "ltsp_servers.#{ organisation_domain }.pstore"
-    )
-  end
-
-  # set server load average for server hostname
-  # @param [String] hostname
-  # @param [Float] load_avg
-  def set(hostname, attrs)
-    attrs[:updated] = Time.now
-    attrs[:hostname] = hostname
-    @store.transaction do
-      @store[hostname] = attrs
-    end
-  end
-
-  # Get server info for hostname
-  #
-  # @param [String] hostname
-  # @return [Hash]
-  def get(hostname)
-    @store.transaction(true) do
-      @store[hostname]
-    end
-  end
-
-  # Return all known ltsp servers
-  # @return [Array]
-  def all
-    a = []
-    @store.transaction(true) do
-      @store.roots.each do |k|
-        a.push(@store[k])
-      end
-    end
-    a
-  end
 
   # Return all known ltsp servers which updated under MAX_AGE
   #
@@ -64,6 +19,13 @@ class LtspServersModel
       Time.now - server[:updated] < MAX_AGE
     end
   end
+
+  def set_server(key, data)
+    data[:updated] = Time.now
+    data[:hostname] = key
+    set key, data
+  end
+
 
   # Return the most idle LTSP server which is update under MAX_AGE
   #
@@ -149,7 +111,7 @@ class LtspServers < LdapSinatra
 
     attrs[:ltsp_image] = params["ltsp_image"]
 
-    @m.set(params["hostname"], attrs)
+    @m.set_server(params["hostname"], attrs)
 
     json "ok" => true
   end
