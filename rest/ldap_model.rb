@@ -20,8 +20,6 @@ class LdapModel
 
       if organisation_entry = puavo_ldap.organisation
         organisation = Puavo::Client::Base.new_by_ldap_entry( organisation_entry )
-        puts "#"*80
-        puts "org #{ organisation.domain }"
         if PUAVO_ETC.domain == organisation.domain
           organisations_by_domain["*"] = organisation.data
         end
@@ -142,8 +140,6 @@ class LdapModel
       "(objectclass=*)",
       attributes
     ) do |entry|
-      puts "##"*80
-      puts entry.to_hash.inspect
       res = entry.to_hash
       break
     end

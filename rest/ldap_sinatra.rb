@@ -78,7 +78,6 @@ class LdapSinatra < Sinatra::Base
       LdapModel.organisations_by_domain[request.host] ||
       LdapModel.organisations_by_domain["*"]
     )
-    puts "Using organisation #{ @organisation_info.inspect }"
 
     if credentials and @ldap_conn.nil?
       @ldap_conn = setup_ldap_connection(credentials)
