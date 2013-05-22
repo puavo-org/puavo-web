@@ -203,10 +203,10 @@ class SchoolsController < ApplicationController
 
     respond_to do |format|
       if @school.save
-        flash[:notice] = t('flash.school.wlan_updated')
+        flash[:notice] = t('flash.wlan_updated')
         format.html { redirect_to( wlan_school_path ) }
       else
-        flash[:alert] = t('flash.school.wlan_save_failed', :error => @school.errors["puavoWlanSSID"].first )
+        flash[:alert] = t('flash.wlan_save_failed', :error => @school.errors["puavoWlanSSID"].first )
         format.html { render :action => "wlan" }
       end
     end
