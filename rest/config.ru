@@ -1,5 +1,5 @@
-require "./rest/config"
-require "./rest/root"
+require "./config"
+require "./root"
 run PuavoRest::Root
 # run Rack::Cascade.new([
 #   PuavoRest::Root,
