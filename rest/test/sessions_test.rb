@@ -114,4 +114,40 @@ describe PuavoRest::Sessions do
     end
   end
 
+  describe "GET sessions" do
+    before(:each) do
+      put "/v3/ltsp_servers/most-idle-server",
+        "load_avg" => "0.0",
+        "cpu_count" => 2,
+        "ltsp_image" => "someimage"
+
+      create_device(
+        :puavoHostname => "thinnoimage",
+        :macAddress => "bc:5f:f4:56:59:72"
+      )
+    end
+
+    it "can be fetched with GET" do
+      post "/v3/sessions", "hostname" => "thinnoimage"
+      assert_equal 200, last_response.status
+      post_data = JSON.parse last_response.body
+      assert post_data["uuid"], "has uuid"
+
+      get "/v3/sessions/#{ post_data["uuid"] }"
+      get_data = JSON.parse last_response.body
+      assert_equal post_data["uuid"], get_data["uuid"]
+    end
+
+    it "all sessions can be fetched from index" do
+      post "/v3/sessions", "hostname" => "thinnoimage"
+      post "/v3/sessions", "hostname" => "thinnoimage2"
+      assert_equal 200, last_response.status
+
+      get "/v3/sessions"
+      data = JSON.parse last_response.body
+      assert data
+    end
+
+  end
+
 end
