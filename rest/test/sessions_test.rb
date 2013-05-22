@@ -17,6 +17,7 @@ describe PuavoRest::Sessions do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
@@ -139,13 +140,27 @@ describe PuavoRest::Sessions do
     end
 
     it "all sessions can be fetched from index" do
-      post "/v3/sessions", "hostname" => "thinnoimage"
-      post "/v3/sessions", "hostname" => "thinnoimage2"
+      create_device(
+        :puavoHostname => "thin1",
+        :macAddress => "bc:5f:f4:56:59:72"
+      )
+      create_device(
+        :puavoHostname => "thin2",
+        :macAddress => "bc:5f:f4:56:59:73"
+      )
+
+      post "/v3/sessions", "hostname" => "thin1"
+      assert_equal 200, last_response.status
+      post "/v3/sessions", "hostname" => "thin2"
       assert_equal 200, last_response.status
 
       get "/v3/sessions"
       data = JSON.parse last_response.body
-      assert data
+
+      assert_equal 2, data.size
+      data.each do |s|
+        assert s["ltsp_server"], "have ltsp server"
+      end
     end
 
   end

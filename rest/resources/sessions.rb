@@ -1,8 +1,35 @@
+require "uuid"
 require_relative "../pstore_model"
 
 module PuavoRest
 
 class SessionsModel < PstoreModel
+
+  def generate_uuid
+    UUID.generator.generate
+  end
+
+  def initialize(path, ltsp_servers)
+    @ltsp_servers = ltsp_servers
+    super(path)
+  end
+
+  def self.from_domain(organisation_domain)
+    lsm = LtspServersModel.from_domain organisation_domain
+    super organisation_domain, lsm
+  end
+
+  def create_session(attrs={})
+    uuid = generate_uuid
+    session = {
+      :uuid => uuid,
+      :created => Time.now
+    }.merge(attrs)
+
+    session[:ltsp_server] ||= @ltsp_servers.most_idle(attrs[:image]).first
+
+    set uuid, session
+  end
 
 
 end
@@ -14,12 +41,7 @@ class Sessions < LdapSinatra
   auth Credentials::BootServer
 
   before do
-    @ltsp_servers = LtspServersModel.from_domain @organisation_info["domain"]
     @sessions = SessionsModel.from_domain @organisation_info["domain"]
-  end
-
-  def generate_uuid
-    4
   end
 
   # Create new desktop session
@@ -27,41 +49,40 @@ class Sessions < LdapSinatra
   # @param hostname
   # @param username
   post "/v3/sessions" do
+    session = nil
     hostname = params["hostname"]
-    session = {
-      "uuid" => generate_uuid,
-    }
+    if hostname.nil?
+      halt 400, json("error" => "'hostname' missing")
+    end
 
     device = new_model(DevicesModel).by_hostname(hostname)
     if device.nil?
       halt 400, json("error" => "Unknown device #{ hostname }")
     end
 
-    if device["image"]
-      puts "Using device's own #{ device["image"] } for #{ hostname }"
-      session["ltsp_server"] = @ltsp_servers.most_idle(device["image"]).first
-      halt json session
+    [
+      lambda { device },
+      lambda { new_model(SchoolsModel).by_dn(device["school_dn"]) },
+      lambda { new_model(Organisations).by_dn(@organisation_info["base"]) }
+
+    ].each do |block|
+      model = block.call
+      next if model["image"].nil?
+      session = @sessions.create_session(
+        :hostname => hostname,
+        :image => model["image"]
+      )
     end
 
-    school = new_model(SchoolsModel).by_dn device["school_dn"]
-    if school["image"]
-      session["ltsp_server"] = @ltsp_servers.most_idle(school["image"]).first
-      puts "Using school's image #{ school["image"] } for #{ hostname }"
-      halt json session
-    end
+    json session || @sessions.create_session(:hostname => hostname)
+  end
 
-    organisation = new_model(Organisations).by_dn @organisation_info["base"]
-    if organisation["image"]
-      puts "Using organisation's image #{ organisation["image"] } for #{ hostname }"
-      session["ltsp_server"] = @ltsp_servers.most_idle(organisation["image"]).first
-      halt json session
-    end
-
-    session["ltsp_server"] = @ltsp_servers.most_idle.first
-    json session
+  get "/v3/sessions" do
+    json @sessions.all
   end
 
   get "/v3/sessions/:uuid" do
+    json @sessions.get params["uuid"]
   end
 
 end
