@@ -116,7 +116,6 @@ class LtspServers < LdapSinatra
     json "ok" => true
   end
 
-
   def search(base, attrs=[], filter="(objectclass=*)")
     res = nil
     @ldap_conn.search(base, LDAP::LDAP_SCOPE_SUBTREE, filter,
@@ -127,36 +126,5 @@ class LtspServers < LdapSinatra
     end
     res
   end
-
-
-  get "/v3/load_balance/:hostname" do
-
-    device = search(
-      "ou=Devices,ou=Hosts,#{ @organisation_info["base"] }",
-      ["puavoSchool", "puavoDeviceImage" ],
-      "(cn=#{ LdapModel.escape params["hostname"] })"
-    )
-
-    if device.nil?
-      not_found "Unknown device #{ params["hostname"] }"
-    end
-
-    if device["puavoDeviceImage"]
-      halt json device["puavoDeviceImage"].first
-    end
-
-    school = search(
-      device["puavoSchool"].first,
-      []
-    )
-
-    # if school["puavoDeviceImage"]
-    #   halt json school["puavoDeviceImage"].first
-    # end
-
-    json ":(" => school
-
-  end
-
 end
 end
