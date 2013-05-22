@@ -597,7 +597,7 @@ en:
     am: am
     pm: pm
   actions: Actions
-  cancel: "- Cancel"
+  cancel: "Cancel"
   or: or
   shared:
     terminal_title: Terminal information

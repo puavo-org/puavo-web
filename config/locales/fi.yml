@@ -593,7 +593,7 @@ fi:
       short: "%d %b %H:%M"
       long: "%B %d, %Y %H:%M"
   actions: Toiminnot
-  cancel: "- Peruuta"
+  cancel: "Peruuta"
   or: tai
   shared:
     terminal_title: "Päätteen tiedot"
