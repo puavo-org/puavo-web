@@ -199,7 +199,8 @@ class SchoolsController < ApplicationController
 
     @school.update_wlan_attributes( params[:wlan_name],
                                     params[:wlan_type],
-                                    params[:wlan_password] )
+                                    params[:wlan_password],
+                                    params[:wlan_ap])
     @school.puavoWlanChannel = params[:school][:puavoWlanChannel]
 
     respond_to do |format|

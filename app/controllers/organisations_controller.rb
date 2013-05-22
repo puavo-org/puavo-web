@@ -57,7 +57,8 @@ class OrganisationsController < ApplicationController
 
     @organisation.update_wlan_attributes( params[:wlan_name],
                                           params[:wlan_type],
-                                          params[:wlan_password] )
+                                          params[:wlan_password],
+                                          params[:wlan_ap] )
     @organisation.puavoWlanChannel = params[:ldap_organisation][:puavoWlanChannel]
 
     respond_to do |format|

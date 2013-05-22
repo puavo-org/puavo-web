@@ -631,6 +631,7 @@ en:
       wlan_name: Network name
       wlan_type: Network type
       wlan_password: Password
+      wlan_ap: Enabled in access point
       select_value_open: Open
       select_value_psk: PSK
       default: Oletus

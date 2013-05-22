@@ -7,15 +7,21 @@ module Wlan
     end
   end
 
-  def update_wlan_attributes(wlan_name, wlan_type, wlan_password)
+  def update_wlan_attributes(wlan_name, wlan_type, wlan_password, wlan_ap)
+    wlan_ap = {} if wlan_ap.nil?
     max_index = wlan_name.keys.count - 1
 
     new_wlan_ssid = []
 
     (0..max_index).each do |index|
       next if wlan_name[index.to_s].empty?
+      if wlan_ap.has_key?(index.to_s)
+        wlan_ap_status = wlan_ap[index.to_s] == "enabled" ? true : false
+      end
+
       new_wlan_ssid.push( { :ssid => wlan_name[index.to_s],
                             :type => wlan_type[index.to_s],
+                            :wlan_ap => wlan_ap_status,
                             :password => wlan_password[index.to_s] }.to_json  )
     end
 
@@ -48,6 +54,17 @@ module Wlan
     if wlan_ssid = get_attribute( "puavoWlanSSID" )
       begin
         Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["password"] }
+      rescue JSON::ParserError => e
+        logger.info "Invalid puavoWlanSSID value"
+        return []
+      end
+    end
+  end
+
+  def wlan_ap
+    if wlan_ssid = get_attribute( "puavoWlanSSID" )
+      begin
+        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["wlan_ap"] }
       rescue JSON::ParserError => e
         logger.info "Invalid puavoWlanSSID value"
         return []

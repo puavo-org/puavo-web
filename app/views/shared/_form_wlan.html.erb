@@ -57,6 +57,15 @@
     </td>
   </tr>
 
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_ap[#{ index }]", t('.wlan_ap') %>
+    </td>
+    <td>
+      <%= check_box_tag "wlan_ap[#{ index }]", "enabled", f.object.wlan_ap ? f.object.wlan_ap[index] : false %>
+    </td>
+  </tr>
+
   <% end %>
   <tr>
     <td></td>

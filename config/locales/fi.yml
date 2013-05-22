@@ -627,6 +627,7 @@ fi:
       wlan_name: Verkonnimi
       wlan_type: Verkon tyyppi
       wlan_password: Salasana
+      wlan_ap: Käytössä tukiasemissa
       select_value_open: Avoin
       select_value_psk: PSK
       default: Oletus
