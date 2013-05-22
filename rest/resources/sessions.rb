@@ -66,11 +66,13 @@ class Sessions < LdapSinatra
       lambda { new_model(Organisations).by_dn(@organisation_info["base"]) }
     ].each do |block|
       model = block.call
-      next if model["image"].nil?
-      session = @sessions.create_session(
-        :hostname => hostname,
-        :image => model["image"]
-      )
+      if model["image"]
+        session = @sessions.create_session(
+          :hostname => hostname,
+          :image => model["image"]
+        )
+        break
+      end
     end
 
     json session || @sessions.create_session(:hostname => hostname)
