@@ -84,14 +84,6 @@ class LtspServersModel
 end
 
 
-class DeviceModel < LdapModel
-
-  def image(hostname)
-
-  end
-
-end
-
 # Load balancer resource for LTSP servers
 class LtspServers < LdapSinatra
 
