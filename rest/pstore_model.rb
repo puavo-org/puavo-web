@@ -3,6 +3,7 @@ module PuavoRest
 
 # Abstract class for local persistent models
 class PstoreModel
+
   def initialize(path)
     FileUtils.mkdir_p File.dirname(path)
     @store = PStore.new(path, true)
@@ -12,11 +13,12 @@ class PstoreModel
   # Create instance from organisation domain using PuavoRest::CONFIG
   #
   # @param organisation_domain [String]
-  def self.from_domain(organisation_domain)
-    @m = LtspServersModel.new File.join(
+  def self.from_domain(organisation_domain, *args)
+    path = File.join(
       CONFIG["ltsp_server_data_dir"],
-      "ltsp_servers.#{ organisation_domain }.pstore"
+      "#{ self.name }.#{ organisation_domain }.pstore"
     )
+    self.new(path, *args)
   end
 
   # Save attributes to key
