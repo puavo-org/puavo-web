@@ -7,7 +7,8 @@ class Api::V2::DevicesController < ApplicationController
                               :attributes => attributes ).map do |d|
       d.last
     end
-    @devices = @devices.map{ |d| Device.build_hash_for_to_json(d) }
+    # FIXME: fix ldap_prettify api
+    @devices = @devices.map{ |d| Device.new.ldap_prettify(d) }
 
     respond_to do |format|
       format.json  { render :json => @devices }
@@ -15,7 +16,9 @@ class Api::V2::DevicesController < ApplicationController
   end
 
   def show
-    @device = Device.build_hash_for_to_json( Device.find(params[:id]).attributes )
+    device = Device.find(params[:id])
+    # FIXME: fix ldap_prettify api
+    @device = device.ldap_prettify(device)
 
     respond_to do |format|
       format.json  { render :json => @device }
