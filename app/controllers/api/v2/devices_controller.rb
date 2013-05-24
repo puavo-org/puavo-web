@@ -23,4 +23,13 @@ class Api::V2::DevicesController < ApplicationController
       format.json  { render :json => @device }
     end
   end
+
+  def by_hostname
+    device = Device.find(:first, :attribute => "puavoHostname", :value => params[:hostname] )
+    @device = device.ldap_prettify
+
+    respond_to do |format|
+      format.json  { render :json => @device }
+    end
+  end
 end
