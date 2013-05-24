@@ -442,7 +442,7 @@ fi:
         puavoPurchaseURL: Hankinta-URL
         puavoSupportContract: "Tukiyhteyshenkilö"
         puavoDefaultPrinter: Oletustulostin
-        puavoDeviceXserver: "Näytöohjaimen ajuri"
+        puavoDeviceXserver: "Näytönohjaimen ajuri"
         puavoDeviceXrandr: Xrandr asetukset
         puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio
