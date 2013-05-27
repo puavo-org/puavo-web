@@ -1,5 +1,6 @@
 class School < BaseGroup
   include Wlan
+  include Puavo::Client::HashMixin::School
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
@@ -100,18 +101,6 @@ class School < BaseGroup
   #end
 
   def as_json(*args)
-    { "group_name" => self.cn,
-      "state" => self.st,
-      "postal_address" => self.postalAddress,
-      "phone_number" => self.telephoneNumber,
-      "gid" => self.gidNumber,
-      "name" => self.displayName,
-      "street" => self.street,
-      "puavo_id" => self.puavoId,
-      "postal_code" => self.postalCode,
-      "home_page" => self.puavoSchoolHomePageURL,
-      "samba_SID" => self.sambaSID,
-      "samba_group_type" => self.sambaGroupType,
-      "post_office_box" => self.postOfficeBox }
+    return ldap_prettify
   end
 end
