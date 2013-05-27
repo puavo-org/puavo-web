@@ -41,6 +41,7 @@ class SchoolsController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @school }
+      format.json  { render :json => @school }
     end
   end
 
