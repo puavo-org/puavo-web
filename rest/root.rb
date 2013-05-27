@@ -23,11 +23,6 @@ require_relative "./resources/sessions"
 #   @return [HTTP response]
 
 
-# Simple logger
-def log(msg)
-  STDERR.puts(Time.now.to_s + ": " + msg)
-end
-
 # Puavo Rest module
 module PuavoRest
 
