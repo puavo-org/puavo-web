@@ -1,15 +1,16 @@
 source 'http://rubygems.org'
 
-group :rest do
-  gem "sinatra"
-  gem "sinatra-contrib"
-  gem "puma"
-end
+gem "sinatra"
+gem "sinatra-contrib"
+gem "uuid"
+gem "puma"
 
-group :rest_development do
+group :development do
   gem "yard"
   gem "shotgun"
   gem "debugger"
   gem "pry"
   gem "timecop"
+  eval File.read('../Gemfile'), nil, '../Gemfile'
 end
+

@@ -34,4 +34,3 @@ group :development do
   gem 'timecop'
 end
 
-eval File.read('rest/Gemfile'), nil, 'rest/Gemfile'
