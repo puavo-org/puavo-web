@@ -1,8 +1,11 @@
 
 all:
-	bundle install --deployment --without rest
+	# Install puavo-users gems without puavo-rest
+	bundle install --deployment --without rest rest_development
 	npm install # nib for stylys
 	bundle exec rake assets:precompile
+	# Install puavo-rest gems in to its own directory
+	$(MAKE) -C rest
 
 install:
 	@echo todo

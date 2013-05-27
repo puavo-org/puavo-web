@@ -1,0 +1,15 @@
+source 'http://rubygems.org'
+
+group :rest do
+  gem "sinatra"
+  gem "sinatra-contrib"
+  gem "puma"
+end
+
+group :rest_development do
+  gem "yard"
+  gem "shotgun"
+  gem "debugger"
+  gem "pry"
+  gem "timecop"
+end

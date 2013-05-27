@@ -18,20 +18,6 @@ group :assets do
   gem 'stylus'
 end
 
-group :rest do
-  gem "sinatra"
-  gem "sinatra-contrib"
-  gem "puma"
-end
-
-group :rest_development do
-  gem "yard"
-  gem "shotgun"
-  gem "debugger"
-  gem "pry"
-  gem "timecop"
-end
-
 group :development do
   gem 'capybara'
   gem 'colorize'
@@ -47,3 +33,5 @@ group :development do
   gem 'ruby-prof'
   gem 'timecop'
 end
+
+eval File.read('rest/Gemfile'), nil, 'rest/Gemfile'
