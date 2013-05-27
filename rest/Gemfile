@@ -5,7 +5,7 @@ gem "sinatra-contrib"
 gem "uuid"
 gem "puma"
 
-group :development do
+group :rest_development do
   gem "yard"
   gem "shotgun"
   gem "debugger"
