@@ -6,6 +6,7 @@ class LdapSinatra < Sinatra::Base
   include ErrorMethods
   helpers Sinatra::JSON
   set :json_encoder, :to_json
+  enable :logging
 
   # Respond with a text content
   def txt(text)

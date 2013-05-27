@@ -105,6 +105,7 @@ class LtspServers < LdapSinatra
     attrs = {}
 
     if params["cpu_count"] && params["cpu_count"].to_i == 0
+      logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["hostname"] }'"
       halt 400, json("message" => "0 cpu_count makes no sense")
     end
 

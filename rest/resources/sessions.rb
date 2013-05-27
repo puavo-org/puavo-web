@@ -59,11 +59,13 @@ class Sessions < LdapSinatra
     session = nil
 
     if params["hostname"].nil?
+      logger.warn "'hostname' missing"
       halt 400, json("error" => "'hostname' missing")
     end
 
     device = new_model(DevicesModel).by_hostname(params["hostname"])
     if device.nil?
+      logger.warn "Unknown device hostname '#{ params["hostname"] }' requested session"
       halt 400, json("error" => "Unknown device #{ params["hostname"] }")
     end
 
@@ -87,22 +89,29 @@ class Sessions < LdapSinatra
 
     # Try to find ltsp server this this image
     if image
+      logger.info "'#{ params["hostname"] }' requests image '#{ image }'"
       begin
-        halt 200, json(@sessions.create_session(
+        session = @sessions.create_session(
           session_attrs.merge(:image => image)
-        ))
+        )
       rescue SessionsModel::CannotFindLtspServer
-        puts "Cannot find ltsp server for image: #{ image }"
+        logger.warn "Cannot find ltsp server for image: #{ image }"
       end
     end
 
-    # If not found fallback to any available ltsp server with least amount of
-    # load
-    begin
-      halt 200, json(@sessions.create_session(session_attrs))
-    rescue SessionsModel::CannotFindLtspServer
-      halt 500, json(:error => "I have no LTSP servers for you :(")
+    if not session
+      # If not found fallback to any available ltsp server with least amount of
+      # load
+      begin
+        session = @sessions.create_session(session_attrs)
+      rescue SessionsModel::CannotFindLtspServer
+        logger.fatal "Failed to create session for '#{ params["hostname"] }'"
+        halt 400, json(:error => "I have no LTSP servers for you :(")
+      end
     end
+
+    logger.info "Session #{ session[:uuid] } created on '#{ session[:ltsp_server][:hostname] }' for device '#{ params["hostname"] }'"
+    json session
   end
 
   get "/v3/sessions" do
