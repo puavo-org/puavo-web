@@ -1,4 +1,6 @@
 class Device < DeviceBase
+  include Puavo::Client::HashMixin::Device
+
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Devices,ou=Hosts",
                 :classes => ['top', 'device', 'puppetClient'] )

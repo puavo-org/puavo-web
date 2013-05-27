@@ -41,4 +41,33 @@ class OrganisationsController < ApplicationController
       end
     end
   end
+
+  # GET /organisation/wlan
+  def wlan
+    @organisation = LdapOrganisation.current
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # PUT /organisation/wlan/update
+  def wlan_update
+    @organisation = LdapOrganisation.current
+
+    @organisation.update_wlan_attributes( params[:wlan_name],
+                                          params[:wlan_type],
+                                          params[:wlan_password] )
+    @organisation.puavoWlanChannel = params[:ldap_organisation][:puavoWlanChannel]
+
+    respond_to do |format|
+      if @organisation.save
+        flash[:notice] = t('flash.wlan_updated')
+        format.html { redirect_to( wlan_organisation_path ) }
+      else
+        flash[:alert] = t('flash.wlan_save_failed', :error => @organisation.errors["puavoWlanSSID"].first )
+        format.html { render :action => "wlan" }
+      end
+    end
+  end
 end

@@ -79,6 +79,8 @@ fi:
     destroyed: "%{item} poistettiin onnistuneesti."
     create_failed: "Lisääminen epäonnistui!"
     save_failed: "Tallennus epäonnistui!"
+    wlan_updated: WLAN-asetukset päivitetty
+    wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
     group: 
       role_added: "Rooli lisättiin ryhmään."
       role_added_failed: "Lisäys epäonnistui."
@@ -117,8 +119,6 @@ fi:
       wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille"
       destroyed_failed: "Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua"
       roles_not_found: Yhtään roolia ei ole määritetty
-      wlan_updated: WLAN-asetukset päivitetty
-      wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
     profile: 
       updated: Tietojen tallennus onnistui
       save_failed: "Tietojen tallennus epäonnistui"
@@ -443,7 +443,7 @@ fi:
         puavoPurchaseURL: Hankinta-URL
         puavoSupportContract: "Tukiyhteyshenkilö"
         puavoDefaultPrinter: Oletustulostin
-        puavoDeviceXserver: "Näytöohjaimen ajuri"
+        puavoDeviceXserver: "Näytönohjaimen ajuri"
         puavoDeviceXrandr: Xrandr asetukset
         puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio

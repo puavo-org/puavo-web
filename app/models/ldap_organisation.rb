@@ -1,7 +1,11 @@
 class LdapOrganisation < LdapBase
+  include Wlan
+
   ldap_mapping( :dn_attribute => "dc",
                 :prefix => "",
                 :classes => ["dcObject", "organization", "puavoEduOrg", "eduOrg"] )
+
+  validate :validate_wlan_attributes
 
   def self.current
     LdapOrganisation.first

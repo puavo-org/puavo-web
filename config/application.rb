@@ -1,6 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
-require 'puavo/etc'
+require 'puavo'
 
 require 'rails/all'
 
