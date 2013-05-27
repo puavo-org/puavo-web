@@ -82,11 +82,15 @@ class LtspServers < LdapSinatra
   #
   # @!macro route
   get "/v3/ltsp_servers/_most_idle.?:format?" do
-    if params["format"] == "txt"
-      txt @m.most_idle.first[:hostname]
+    server = @m.most_idle.first
+    if server
+      logger.info "Sending '#{ server[:hostname] }' as the most idle server to #{ request.ip }"
     else
-      json @m.most_idle.first
+      logger.warn "Cannot find any ltsp servers..."
+      halt 400, json(:error => "cannot find any ltsp servers...")
     end
+
+    json server
   end
 
   get "/v3/ltsp_servers/:hostname" do
