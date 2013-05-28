@@ -2,25 +2,27 @@
 <%= render :partial => 'shared/main_information', :locals => { :device => @server} %>
 </table>
 <div class="dashboard">
-<div class="dashboard_box">
-<table>
+  <div class="dashboard_box">
+  <table>
 
-<%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
+  <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
 
-</table>
+  </table>
 
-<div class="dashboard_box">
-<h3><%= t('.automounts') %></h3>
+  <div class="dashboard_box">
+    <h3><%= t('.automounts') %></h3>
 
-<table>
-<tr>
-  <td class="label_td view"><%= label @server.class.to_s.downcase, "puavoExport" %></td>
-  <td class="value_td"><%= Array(@server.puavoExport).join("<br />")  %></td>
-</tr>
-</table>
+    <table>
+    <tr>
+      <td class="label_td view"><%= label @server.class.to_s.downcase, "puavoExport" %></td>
+      <td class="value_td"><%= Array(@server.puavoExport).join("<br />")  %></td>
+    </tr>
+    </table>
+  </div>
+
+  </div>
 </div>
-</div>
-</div>
+
 <% content_for :right do %>
   <div><%= link_to t('link.edit'), edit_server_path(@server) %></div>
   <% if @server.userCertificate %>
