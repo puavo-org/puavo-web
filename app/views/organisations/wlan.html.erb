@@ -1,0 +1,5 @@
+<%= form_for( @organisation, :url => wlan_update_organisation_path ) do |f| %>
+
+<%= render :partial => 'shared/form_wlan', :locals => { :f => f } %>
+
+<% end %>
