@@ -17,7 +17,7 @@ group :assets do
   gem 'stylus'
 end
 
-group :users_development do
+group :development do
   gem 'capybara'
   gem 'colorize'
   gem 'cucumber'
