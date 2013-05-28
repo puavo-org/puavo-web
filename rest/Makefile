@@ -4,8 +4,13 @@ installdir = /var/app/puavo-rest
 
 build:
 	RACK_ENV=production bundle install --deployment --without rest_development
+
 yard:
 	bundle exec yard doc --exclude vendor root.rb .
+
+update-production-gemfile.lock:
+	sudo rm -rf .bundle Gemfile.lock
+	RACK_ENV=production sudo -E bundle install
 
 publish-yard: yard
 	git add doc
