@@ -4,6 +4,7 @@ gem "sinatra"
 gem "sinatra-contrib"
 gem "uuid"
 gem "puma"
+gem "multi_json"
 
 group :rest_development do
   gem "yard"
