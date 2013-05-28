@@ -658,6 +658,10 @@ fi:
       add_puavoExport: "Lisää hakemistopolkuja"
     show: 
       automounts: Hakemistoliitokset
+    school_limit:
+      title: Rajoita kouluihin
+      description: Tämä LTSP-palvelin on käytössä vain näissä kouluissa
+      description_edit: Jos mitään ei ole valittu palvelin palvelee kaikkia organisaation kouluja
   automounts: 
     index: 
       title: Hakemistoliitokset

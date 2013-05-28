@@ -20,6 +20,27 @@
     </table>
   </div>
 
+  <% if not Array(@server.puavoSchool).empty? %>
+  <div class="dashboard_box">
+    <h3><%= t('servers.school_limit.title') %></h3>
+    <table class="list widelist">
+
+      <tr>
+        <th><%= t('servers.school_limit.description') %></th>
+      </tr>
+
+      <% @server.forced_schools.each do |school| %>
+      <tr>
+        <td class="value_td view">
+          <%= link_to school.displayName, school_path(school)  %>
+        </td>
+      </tr>
+      <% end %>
+
+    </table>
+  </div>
+  <% end %>
+
   </div>
 </div>
 
