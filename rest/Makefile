@@ -10,6 +10,7 @@ yard:
 
 update-production-gemfile.lock:
 	sudo rm -rf .bundle Gemfile.lock
+	# how to get rid of sudo...
 	RACK_ENV=production sudo -E bundle install
 
 publish-yard: yard
