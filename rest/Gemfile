@@ -11,6 +11,11 @@ group :rest_development do
   gem "debugger"
   gem "pry"
   gem "timecop"
-  eval File.read('../Gemfile'), nil, '../Gemfile'
+  # Load development gems from puavo-users if we are in development or testing
+  # env
+  if ENV["RACK_ENV"] != "production"
+    STDERR.puts "Using the puavo-users Gemfile too"
+    eval File.read('../Gemfile'), nil, '../Gemfile'
+  end
 end
 

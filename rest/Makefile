@@ -3,8 +3,7 @@ sysconfdir = /etc
 installdir = /var/app/puavo-rest
 
 build:
-	bundle install --deployment --without "rest_development users users_development assets"
-
+	RACK_ENV=production bundle install --deployment --without rest_development
 yard:
 	bundle exec yard doc --exclude vendor root.rb .
 
