@@ -106,6 +106,9 @@ PuavoUsers::Application.routes.draw do
 
     namespace :api do
       namespace :v2 do
+        match( 'devices/by_hostname/:hostname' => 'devices#by_hostname',
+               :as => 'by_hostname_api_v2_device',
+               :via => :get )
         resources :devices
         resources :servers
       end
