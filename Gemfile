@@ -1,18 +1,17 @@
 source 'http://rubygems.org'
-group :users do
-  gem 'rails', '3.2.12'
-  gem 'sqlite3', :require => 'sqlite3'
-  gem "prawn"
-  gem "net-ldap"
-  gem 'activeldap', :require => 'active_ldap'
-  gem 'pg'
-  gem 'rmagick', :require => 'RMagick'
-  gem 'uuid'
-  gem 'rdoc'
-  gem 'jquery-rails'
-  gem 'uglifier'
-  gem "multi_json"
-end
+
+gem 'rails', '3.2.12'
+gem 'sqlite3', :require => 'sqlite3'
+gem "prawn"
+gem "net-ldap"
+gem 'activeldap', :require => 'active_ldap'
+gem 'pg'
+gem 'rmagick', :require => 'RMagick'
+gem 'uuid'
+gem 'rdoc'
+gem 'jquery-rails'
+gem 'uglifier'
+gem "multi_json"
 
 group :assets do
   gem 'stylus'
