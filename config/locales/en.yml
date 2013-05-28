@@ -662,6 +662,10 @@ en:
       add_puavoExport: Add paths
     show: 
       automounts: Automounts
+    school_limit:
+      title: School limit
+      description: This LTSP server will only serve these schools
+      description_edit: If none is selected it will serve all schools in the organisation
   automounts: 
     index: 
       title: Automounts

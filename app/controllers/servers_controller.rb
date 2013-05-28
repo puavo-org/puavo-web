@@ -55,6 +55,7 @@ class ServersController < ApplicationController
   # GET /servers/1/edit
   def edit
     @server = Server.find(params[:id])
+    @schools = School.all
     @server.get_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
   end
 
@@ -91,12 +92,20 @@ class ServersController < ApplicationController
   # PUT /servers/1.xml
   def update
     @server = Server.find(params[:id])
+    @schools = School.all
 
     handle_date_multiparameter_attribute(params[:server], :puavoPurchaseDate)
     handle_date_multiparameter_attribute(params[:server], :puavoWarrantyEndDate)
 
+    @server.attributes = params[:server]
+
+    # Just updating attributes is not enough for removing #puavoSchool value
+    # when no checkboxes are checked because params[:server][:puavoSchool] will
+    # be nil and it will be just ignored by attributes update
+    @server.puavoSchool = params[:server][:puavoSchool]
+
     respond_to do |format|
-      if @server.update_attributes(params[:server])
+      if @server.save
         flash[:notice] = 'Server was successfully updated.'
         format.html { redirect_to(@server) }
         format.xml  { head :ok }
