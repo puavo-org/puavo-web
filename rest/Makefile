@@ -23,6 +23,7 @@ install:
 	mkdir -p $(DESTDIR)$(sysconfdir)
 	cp -r \
 		*.rb \
+		config.ru \
 		Gemfile \
 		Gemfile.lock \
 		Makefile \
