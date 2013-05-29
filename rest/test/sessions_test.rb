@@ -5,9 +5,6 @@ describe PuavoRest::Sessions do
   def create_device(attrs)
     @thin_with_image = Device.new
     @thin_with_image.classes = ["top", "device", "puppetClient", "puavoNetbootDevice"]
-    @thin_with_image.puavoSchool = @school.dn
-    # @thin_with_image.puavoDeviceImage = "ownimage"
-    # @thin_with_image.puavoHostname = "thinwithimage"
     @thin_with_image.puavoDeviceType = "thinclient"
     @thin_with_image.macAddress = "bc:5f:f4:56:59:71"
 
@@ -45,7 +42,8 @@ describe PuavoRest::Sessions do
       create_device(
         :puavoDeviceImage => "ownimage",
         :puavoHostname => "thinwithimage",
-        :macAddress => "bc:5f:f4:56:59:71"
+        :macAddress => "bc:5f:f4:56:59:71",
+        :puavoSchool => @school.dn
       )
 
       post "/v3/sessions", "hostname" => "thinwithimage"
@@ -65,7 +63,8 @@ describe PuavoRest::Sessions do
 
       create_device(
         :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72"
+        :macAddress => "bc:5f:f4:56:59:72",
+        :puavoSchool => @school.dn
       )
 
       post "/v3/sessions", "hostname" => "thinnoimage"
@@ -82,7 +81,8 @@ describe PuavoRest::Sessions do
         "ltsp_image" => "organisationimage"
       create_device(
         :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72"
+        :macAddress => "bc:5f:f4:56:59:72",
+        :puavoSchool => @school.dn
       )
 
       test_organisation = LdapOrganisation.first
@@ -105,7 +105,8 @@ describe PuavoRest::Sessions do
 
       create_device(
         :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72"
+        :macAddress => "bc:5f:f4:56:59:72",
+        :puavoSchool => @school.dn
       )
 
       post "/v3/sessions", "hostname" => "thinnoimage"
@@ -124,7 +125,8 @@ describe PuavoRest::Sessions do
 
       create_device(
         :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72"
+        :macAddress => "bc:5f:f4:56:59:72",
+        :puavoSchool => @school.dn
       )
     end
 
@@ -154,11 +156,13 @@ describe PuavoRest::Sessions do
     it "all sessions can be fetched from index" do
       create_device(
         :puavoHostname => "thin1",
-        :macAddress => "bc:5f:f4:56:59:72"
+        :macAddress => "bc:5f:f4:56:59:72",
+        :puavoSchool => @school.dn
       )
       create_device(
         :puavoHostname => "thin2",
-        :macAddress => "bc:5f:f4:56:59:73"
+        :macAddress => "bc:5f:f4:56:59:73",
+        :puavoSchool => @school.dn
       )
 
       post "/v3/sessions", "hostname" => "thin1"
