@@ -1,6 +1,120 @@
 @import 'nib'
 @import 'colors'
 
+// base_styles -->
+
+// Forms
+form
+  input
+    background-color white
+    border 1px solid formElementBorderColor
+    border-radius 4px
+    box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.075)
+  select
+    background-color white
+    border 1px solid formElementBorderColor
+  .field_with_errors
+    input, select
+      border 1px solid errorRed
+
+input[type="file"]
+  border none
+  box-shadow none
+  color initial
+
+input[type="submit"]
+  box-shadow inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05)
+  background none repeat scroll 0 0 #EEEEED
+  background-image linear-gradient(white 0%, #EEEEED 100%)
+  border-radius 4px
+  cursor pointer
+  &:hover
+    background none repeat scroll 0 0 #EEEEEE
+    background-image linear-gradient(white 0%,rgb(238,238,237) 100%)
+    border 1px solid focusColor
+
+label
+  color #222222
+  &.label_error
+    color errorRed
+
+fieldset
+  border 1px solid formElementBorderColor
+
+.required_info
+  color errorRed
+
+.required:after
+  color errorRed
+
+// End of forms
+
+// Tables
+table
+  tr
+    &.even
+      td
+        background #e5ecf9
+  &.list
+    tr
+      &:hover
+        background #F9F7E6
+    td
+      border-bottom 1px solid formElementBorderColor
+    th
+      background none repeat scroll 0 0 baseBrown
+      background linear-gradient(baseBrown 35%, baseBrownGradient 60%) repeat scroll 0 0 transparent
+      border-bottom 1px solid baseBoxShadowBorderColor
+      color #F5F5E8
+
+.field_error
+  color #CCCCCC
+
+.field_value_error
+  color errorRed
+
+.notice_text
+  color errorRed
+
+.list tr:nth-child(even), .content-box table tr:nth-child(even)
+  background-color rowEvenBgColor
+
+.list tr:nth-child(odd), .content-box table tr:nth-child(odd)
+  background-color rowOddBgColor
+// End of tables
+
+// Buttons
+.btn
+  background-color buttonBg
+  *background-color buttonBg
+  background-image linear-gradient(buttonBg 0%, buttonGradientBg 100%)
+  background-repeat repeat-x
+  border 1px solid #cccccc
+  *border 0
+  border-color buttonBorderHexColor buttonBorderHexColor buttonBorderHexColor2
+  border-color buttonBorderColor buttonBorderColor buttonBorderColor2
+  border-radius 3px
+  box-shadow inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05)
+  color #333333
+
+.btn:hover, .btn:focus
+  background-color buttonGradientBg
+  background-image none
+  color buttonHoverColor
+
+.btn-danger
+  color rgb(255, 255, 255)
+  background-color buttonDangerBgColor
+  background-image linear-gradient(top, buttonDangerBgImage, buttonDangerGradientBgImage)
+
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active
+  color rgb(255, 255, 255)
+  background-color buttonDangerHoverBg
+  background-image none
+// End of Buttons
+
+// End of base_styles
+
 body
   background none repeat scroll 0 0 baseBg
   background-image linear-gradient(baseGradientBg 0%, baseBg 100%)
@@ -38,9 +152,26 @@ body
     border 1px solid formElementBorderColor
     border-radius 4px
 .topmenu-left
-  & > li
-    & > ul
+  li
+    ul
       background-color baseOrangeGradient
+      border-bottom 1px solid #222
+      border-left 1px solid #222
+      border-right 1px solid #222
+      border-radius 0 0 4px 4px
+      li
+        &:hover
+            .school_submenu
+              background none repeat scroll 0 0 #F59545
+              border medium none
+              border-radius 0 0 6px 0
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
+  .school_submenu
+    li
+      border-top 1px solid #E6E6E6
+
 
 .add-new-school a,
 .add-new-school a:hover
@@ -83,6 +214,15 @@ body
     border-left 1px solid baseBoxShadowBorderColor
     border-right 1px solid baseBoxShadowBorderColor
     border-top 1px solid baseBoxShadowBorderColor
+    a
+      color creamWhite
+  ul > li
+    &:hover
+      background none repeat scroll 0 0 baseBrown
+      background-image linear-gradient(baseBrown 0%, baseBrownGradient 100%)
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
   li
     background-color baseOrange
     background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
@@ -100,6 +240,13 @@ body
     border-right 1px solid baseBoxShadowBorderColor
     border-top 1px solid baseBoxShadowBorderColor
     color #4A4D4A
+  li
+    a
+      border-radius 10px 10px 0 0
+      border 1px solid transparent
+      color #E6E6D8
+      &:hover
+        color #222222
 
 // end of main-navigation
 .login-wrap
@@ -199,71 +346,22 @@ body
 
 // End of .tools
 
-// Forms
-form
-  input
-    background-color white
-    border 1px solid formElementBorderColor
-    border-radius 4px
-    box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.075)
-  select
-    background-color white
-    border 1px solid formElementBorderColor
-  .field_with_errors
-    input, select
-      border 1px solid errorRed
-
-label
-  &.label_error
-    color errorRed
-
-.required_info
-  color errorRed
-
-.required:after
-  color errorRed
-
-// End of forms
-
-// Tables
-table
-  tr
-    &.even
-      td
-        background #e5ecf9
-  &.list
-    tr
-      &:hover
-        background #F9F7E6
-    td
-      border-bottom 1px solid #AAAAAA
-    th
-      background none repeat scroll 0 0 baseBrown
-      background linear-gradient(baseBrown 35%, #BA722D 60%) repeat scroll 0 0 transparent
-      border-bottom 1px solid baseBoxShadowBorderColor
-      color #F5F5E8
-
-.field_error
-  color #CCCCCC
-
-.field_value_error
-  color errorRed
-
-.notice_text
-  color errorRed
-
-.list tr:nth-child(even), .content-box table tr:nth-child(even)
-  background-color rowEvenBgColor
-
-.list tr:nth-child(odd), .content-box table tr:nth-child(odd)
-  background-color rowOddBgColor
-// End of tables
-
 // login
 
 .login_container
   background none repeat scroll 0 0 baseBg
   box-shadow 0 4px 8px baseBoxShadowBorderColor
+  .login_content
+    background none repeat scroll 0 0 white
+  a
+    &:hover
+      color #AD0000
+
+.password_container
+  .login_content
+    span
+      border 1px solid transparent
+      border-radius 8px 8px 0 0
 
 // end of login
 
@@ -272,14 +370,6 @@ table
 
 
 // end of password
-
-// Login
-.password_container
-  .login_content
-    span
-      border 1px solid transparent
-      border-radius 8px 8px 0 0
-// end of login
 
 .link_header
   border-bottom 1px dashed #555555
