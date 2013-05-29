@@ -10,7 +10,10 @@ install:
 test-spec:
 	bundle exec rspec -b
 
+test-rest:
+	$(MAKE) -C rest test
+
 test-acceptance:
 	bundle exec cucumber
 
-test: test-spec test-acceptance
+test: test-spec test-acceptance test-rest
