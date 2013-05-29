@@ -16,6 +16,7 @@ test-rest:
 	$(MAKE) -C rest test
 
 test-acceptance:
-	bundle exec cucumber
+	bundle exec cucumber features/registering_devices.feature
+	bundle exec cucumber --exclude registering_devices
 
 test: test-spec test-acceptance test-rest

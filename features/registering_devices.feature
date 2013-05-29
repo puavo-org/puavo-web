@@ -3,6 +3,7 @@ Feature: Devices registration
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
   
+  @start_test_server
   Scenario: Register new fatclient
     Given process activity is logged to "greenletters.log"
     Given a process "puavo-register" from command "fakeroot puavo-register --puavoserver http://127.0.0.1:37634 --nocolor"

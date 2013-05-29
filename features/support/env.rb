@@ -60,14 +60,3 @@ require 'greenletters'
 require 'greenletters/cucumber_steps'
 
 Greenletters::Process::DEFAULT_TIMEOUT = 10.0
-
-# FIXME: puavo-register test needs Capybara server
-module Capybara
-  module RackTest
-    class Driver
-      def needs_server?
-        true
-      end
-    end
-  end
-end
