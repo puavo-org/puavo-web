@@ -52,10 +52,6 @@
                     [ [t('shared.boot_mode_netboot'),"netboot"],
                       [t('shared.boot_mode_dualboot'), "dualboot"] ] ) %></td>
 </tr>
-<tr>
-  <td><%= f.label :puavoDeviceImage %></td>
-  <td><%= f.text_field :puavoDeviceImage %></td>
-</tr>
 <% end %>
 
 <% unless f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
@@ -191,6 +187,10 @@
 
 <h2><span><%= t('shared.kernel_settings') %></span></h2>
 <table>
+<tr>
+  <td><%= f.label :puavoDeviceImage %></td>
+  <td><%= f.text_field :puavoDeviceImage %></td>
+</tr>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
   <td><%= f.text_field :puavoDeviceKernelVersion %></td>

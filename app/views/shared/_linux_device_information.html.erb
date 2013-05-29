@@ -46,10 +46,6 @@
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceBootMode" %></td>
   <td class="value_td"><%=h t("shared.boot_mode_#{device.puavoDeviceBootMode}") %></td>
 </tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceImage" %></td>
-  <td class="value_td"><%=h device.puavoDeviceImage %></td>
-</tr>
 <% end %>
 
 <% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
@@ -154,6 +150,10 @@
 <h3><%= t('shared.kernel_settings') %></h3>
 
 <table class="list widelist">
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceImage" %></td>
+  <td class="value_td"><%=h device.puavoDeviceImage %></td>
+</tr>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
   <td class="value_td"><%=h device.puavoDeviceKernelVersion %></td>
