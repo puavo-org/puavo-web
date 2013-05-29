@@ -47,7 +47,8 @@
         <%= check_box_tag(
           "server[puavoSchool][]",
           school.dn,
-          Array(@server.puavoSchool).include?(school.dn.to_s)
+          Array(@server.puavoSchool).include?(school.dn.to_s),
+          :id => "school_limit_#{ school.puavoId }"
         ) %>
         <span><%= school.displayName %></span>
       </label>
