@@ -13,11 +13,6 @@ update-production-gemfile.lock:
 	# how to get rid of sudo...
 	RACK_ENV=production sudo -E bundle install
 
-publish-yard: yard
-	git add doc
-	git commit -m "Compiled YARD docs"
-	git push -f origin master:gh-pages
-
 install:
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
