@@ -118,7 +118,7 @@ When /^I attach the file at "([^\"]*)" to "([^\"]*)"$/ do |path, field|
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  page.should have_content(text)
+  page.body.should have_content(text)
 end
 
 Then /^I should see "([^\"]*)" within "([^\"]*)"$/ do |text, selector|

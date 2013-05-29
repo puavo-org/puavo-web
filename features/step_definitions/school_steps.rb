@@ -111,6 +111,7 @@ When /^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/ do |user
   school = School.find( :first, :attribute => "displayName", :value => school_name )
   user = User.find( :first, :attribute => "displayName", :value => username )
   page.driver.put(add_school_admin_school_path(school, user.id))
+  page.driver.browser.follow_redirect!
 end
 
 Then /^I should be on the "([^\"]*)" school page$/ do |school_name|
