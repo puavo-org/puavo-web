@@ -25,13 +25,10 @@ module Test
       end
     end
 
-    Device.all.each do |d|
-      d.destroy
-    end
-
-    ExternalService.all.each do |e| e.destroy end
-
-    OauthClient.all.each do |c| c.destroy end
+    Device.all.each { |d| d.destroy }
+    Server.all.each { |d| d.destroy }
+    ExternalService.all.each { |e| e.destroy }
+    OauthClient.all.each { |c| c.destroy }
 
     domain_users = SambaGroup.find('Domain Users')
     domain_users.memberUid = []

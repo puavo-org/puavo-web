@@ -80,6 +80,8 @@ module NavigationHelpers
     # OAuth
     when /the OAuth login page/
       oauth_login_path
+    when /the server list page/
+      servers_path
 
     # Add more mappings here.
     # Here is a more fancy example:
