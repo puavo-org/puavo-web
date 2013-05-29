@@ -15,5 +15,7 @@ Feature: Manage servers
     Given I am on the server list page
     Then I should see "someserver"
     And I follow "someserver"
+    And I follow "Edit"
     And I check "Example school 2"
     And I press "Update"
+    And I should see "This LTSP server will only serve these schools"
