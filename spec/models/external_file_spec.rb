@@ -56,9 +56,9 @@ describe ExternalFile do
     json = f.as_json
 
     # id sequence is not reseted between test runs. Assert everthing else
-    expect(json.keys).to eq(["id", "name", "hash"])
+    expect(json.keys).to eq(["id", "name", "data_hash"])
     json["name"].should == "filename.txt"
-    json["hash"].should == "403926033d001b5279df37cbbe5287b7c7c267fa"
+    json["data_hash"].should == "403926033d001b5279df37cbbe5287b7c7c267fa"
     json["id"].class.should == Fixnum
   end
 
