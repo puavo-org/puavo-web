@@ -1,8 +1,12 @@
+# Require net-ldap for ActiveLdap. Rails env require below should do this. Not
+# sure why it is  not...
+require "net-ldap"
 
 ENV['RACK_ENV'] = 'test'
 
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../../config/environment", __FILE__)
+
 
 def setup_connection
   test_organisation = Puavo::Organisation.find('example')
