@@ -187,10 +187,18 @@
 
 <h2><span><%= t('shared.kernel_settings') %></span></h2>
 <table>
+<% if ["thinclient", "fatclient", "laptop", "ltspserver"].include?(f.object.puavoDeviceType) %>
 <tr>
   <td><%= f.label :puavoDeviceImage %></td>
   <td><%= f.text_field :puavoDeviceImage %></td>
 </tr>
+<% end %>
+<% if f.object.puavoDeviceType == "thinclient" %>
+<tr>
+  <td><%= f.label :puavoDeviceBootImage %></td>
+  <td><%= f.text_field :puavoDeviceBootImage %></td>
+</tr>
+<% end %>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
   <td><%= f.text_field :puavoDeviceKernelVersion %></td>

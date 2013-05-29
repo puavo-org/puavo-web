@@ -464,6 +464,7 @@ fi:
         puavoDeviceOnHour: "Päivän aloitus"
         puavoDeviceOffHour: "Päivän lopetus"
         puavoDeviceImage: Levykuva
+        puavoDeviceBootImage: Käynnistyslevykuva
       oauth_client: 
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)
@@ -503,6 +504,7 @@ fi:
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Hakemistopolku
         image: Kuva
+        puavoDeviceImage: Levykuva
       automount: 
         cn: Hakemisto
       printer: 

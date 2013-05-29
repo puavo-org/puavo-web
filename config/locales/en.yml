@@ -466,6 +466,7 @@ en:
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
         puavoDeviceImage: Device image
+        puavoDeviceBootImage: Device boot image
       oauth_client: 
         displayName: Name
         puavoOAuthClientId: Client id
@@ -505,6 +506,7 @@ en:
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Path
         image: Image
+        puavoDeviceImage: Device image
       automount: 
         cn: Directory
       printer: 
