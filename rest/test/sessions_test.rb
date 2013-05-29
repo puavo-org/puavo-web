@@ -181,4 +181,78 @@ describe PuavoRest::Sessions do
 
   end
 
+  describe "LTSP server school limit" do
+    before(:each) do
+      ltsp_school = School.create(
+        :cn => "ltspschool",
+        :displayName => "School with private LTSP server"
+      )
+
+      server = Server.new
+      server.puavoDeviceType = "ltspserver"
+      server.puavoHostname = "normalserver"
+      server.macAddress = "42:67:8d:2b:d1:82"
+      server.save!
+
+      limited_server = Server.new
+      limited_server.puavoDeviceType = "ltspserver"
+      limited_server.puavoHostname = "limitedserver"
+      limited_server.macAddress = "76:62:8f:79:9a:a3"
+      limited_server.puavoSchool = [ltsp_school.dn]
+      limited_server.save!
+
+      create_device(
+        :puavoHostname => "limitedschooldevice",
+        :macAddress => "38:f5:f8:35:4c:4d",
+        :puavoSchool => ltsp_school.dn
+      )
+      create_device(
+        :puavoHostname => "normalschooldevice",
+        :macAddress => "79:61:37:31:d1:ba",
+        :puavoSchool => @school.dn
+      )
+
+
+    end
+
+    it "must not serve limited servers to others" do
+      # Limited server has less load
+      put "/v3/ltsp_servers/limitedserver",
+        "load_avg" => "0.2",
+        "cpu_count" => 2,
+        "ltsp_image" => "someimage"
+
+      put "/v3/ltsp_servers/normalserver",
+        "load_avg" => "0.8",
+        "cpu_count" => 2,
+        "ltsp_image" => "anotherimage"
+
+      post "/v3/sessions", "hostname" => "normalschooldevice"
+      data = JSON.parse last_response.body
+
+      # But the client will get normalserver regardless
+      assert_equal "normalserver", data["ltsp_server"]["hostname"]
+    end
+
+    it "must force limited servers to schools they are limited to" do
+      put "/v3/ltsp_servers/limitedserver",
+        "load_avg" => "0.9",
+        "cpu_count" => 2,
+        "ltsp_image" => "someimage"
+
+      # Normal server has less load
+      put "/v3/ltsp_servers/normalserver",
+        "load_avg" => "0.1",
+        "cpu_count" => 2,
+        "ltsp_image" => "anotherimage"
+
+      post "/v3/sessions", "hostname" => "limitedschooldevice"
+      data = JSON.parse last_response.body
+
+      # But client will get limitedserver because it is forced to its school
+      assert_equal "limitedserver", data["ltsp_server"]["hostname"]
+    end
+
+  end
+
 end
