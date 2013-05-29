@@ -19,4 +19,4 @@ test-acceptance:
 	bundle exec cucumber features/registering_devices.feature
 	bundle exec cucumber --exclude registering_devices
 
-test: test-spec test-acceptance test-rest
+test: test-spec test-rest test-acceptance
