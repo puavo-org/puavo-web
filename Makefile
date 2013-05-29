@@ -3,6 +3,8 @@ all:
 	bundle install --deployment --without development
 	npm install # nib for stylys
 	bundle exec rake assets:precompile
+	## Activate when puavo-users package is being build too
+	# $(MAKE) -C rest
 
 install:
 	@echo todo
