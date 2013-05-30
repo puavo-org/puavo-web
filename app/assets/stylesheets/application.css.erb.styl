@@ -35,9 +35,6 @@ global-reset()
 @import "puavo2013/users.styl"
 @import "puavo2013/users-import.styl"
 
-.tool span, .tools a
-  tools-image-sprite()
-
 .topmenu-left input
   search-input-image()
 
@@ -48,8 +45,12 @@ global-reset()
   clone-prev-input-element-image()
 
 .add-new-school a,
-.add-new-school a:hover
-  tools-image-sprite()
-
+.add-new-school a:hover,
+.tool span,
+.tools a,
 .login_content span a
   tools-image-sprite()
+
+.school-menu-button,
+.organisation-menu-button
+  show-more-image()
