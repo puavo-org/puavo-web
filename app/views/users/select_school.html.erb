@@ -9,8 +9,9 @@
 	  <%= select_tag :new_school, options_from_collection_for_select(@schools, "puavoId", "displayName") %>
 	</td>
   </tr>
-  <tr><td></td>
-  <td><%= f.submit t('.submit') %></td>
+  <tr>
+    <td></td>
+    <td><%= f.submit t('.submit'),:class=>'btn' %></td>
   </tr>
 </table>
 <% end %>

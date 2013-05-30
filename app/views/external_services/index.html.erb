@@ -1,6 +1,6 @@
 <h1><span><%= t('.title')%></span></h1>
 <table class="list">
-  <tr>
+  <tr class="thead">
     <th><%= t('activeldap.attributes.external_service.uid') %></th>
     <th><%= t('activeldap.attributes.external_service.description') %></th>
     <th colspan="2"><%= t('.actions') %></th>
@@ -8,30 +8,18 @@
 
 <% @external_services.each do |external_service| %>
   <tr>
-    <td><%= link_to external_service.uid, external_service_path(external_service) %></td>
-    <td><%=h external_service.description %></td>
-    <td><%= link_to t('link.edit'), edit_external_service_path(external_service) %></td>
-    <td><%= link_to( t('link.destroy'),
+    <td data-title="<%= t('activeldap.attributes.external_service.uid') %>"><%= link_to external_service.uid, external_service_path(external_service) %></td>
+    <td data-title="<%= t('activeldap.attributes.external_service.description') %>"><%=h external_service.description %></td>
+    <td data-title="<%= t('.actions') %>" class="table-actions"><%= link_to t('link.edit'), edit_external_service_path(external_service), :class=> "btn" %></td>
+    <td class="table-actions"><%= link_to( t('link.destroy'),
                      external_service_path(external_service),
                      :confirm => t('destroy_confirm',
                                    :object_name => external_service.uid),
-                     :method => :delete ) %></td>
+                     :method => :delete, :class=> "btn btn-danger" ) %></td>
   </tr>
 <% end %>
 </table>
 
 <% content_for :right do %>
 <div><%= link_to t('link.new_external_service'), new_external_service_path %></div>
-<% end %>
-
-<% content_for :footer do %>
-<ul>  
-  <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %> 
-  </li>
-  <% school_list.each do |school| %>
-  <li<% if school_list.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %></li>
-  <% end %>
-</ul>
 <% end %>

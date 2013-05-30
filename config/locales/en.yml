@@ -1,7 +1,7 @@
---- 
-en: 
+---
+en:
   must_be_logged_in: You must be logged in
-  oauth: 
+  oauth:
     change: change
     login: Login
     password_forget: Forgot your password?
@@ -12,15 +12,15 @@ en:
     select_organistion: Select school or organistion
     next: Next
     organisation_help: lalala
-  create_organisation_owner: 
+  create_organisation_owner:
     school_name: Administration
     role_name: Maintenance
     group_name: Maintenance
   default_select_value: Select
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
-  layouts: 
-    application: 
+  layouts:
+    application:
       schools: Schools
       school: School
       logout: Logout
@@ -36,13 +36,13 @@ en:
       links: Links
       oauth_clients: OAuth clients
       desktop: Desktop
-    forms: 
+    forms:
       required_field: "* = Required field"
-  link: 
+  link:
     more: More
     edit: Edit
     back: Back
-    cancel: "- Cancel"
+    cancel: "Cancel"
     destroy: Remove
     new_group: New group
     update: Update
@@ -55,7 +55,7 @@ en:
     remove: Remove
     new_role: New role
     new_user: New user
-    user_mass_import: 
+    user_mass_import:
       new: Users mass import
       handle_user_data: Handle the user data
       download_pdf: download pdf-file.
@@ -73,7 +73,7 @@ en:
     set_install_mode: Revoke certificate
     automounts: Automounts
     new_automount: New automount
-  flash: 
+  flash:
     added: "%{item} was successfully created."
     updated: "%{item} was successfully updated."
     destroyed: "%{item} was successfully removed."
@@ -81,12 +81,12 @@ en:
     save_failed: "%{model} cannot be saved!"
     wlan_updated: WLAN-settings was succesfully updated
     wlan_save_failed: "WLAN-settings cannot be saved: %{error}"
-    group: 
+    group:
       role_added: Role was added to group.
       role_added_failed: Failed to add.
       role_removed: Role was removed from the group.
       role_removed_failed: Failed to delete.
-    role: 
+    role:
       group_added: Group was added to role.
       group_added_failed: Failed to add
       group_removed: Group was removed from the role.
@@ -94,91 +94,93 @@ en:
       create_failed: Failed to create role!
       save_failed: Role cannot be saved!
       destroyed_failed: You can not remove role (%{name}) because it contains the users
-    user: 
+    user:
       save_failed: User cannot be saved!
       create_failed: Failed to create user!
-      import: 
+      import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
         role_require_error: You must be select Role
       school_changed: User(s) school has been changed!
     password_set_failed: Failed to change password! Try again!
-    session: 
+    session:
       login_successful: Login successful!
       failed: Login failed!
       logout_successful: Logout successful!
-    password: 
+    password:
       successful: Password change succesfully!
       failed: Failed to change password!
       invalid_login: Invalid password or username (%{uid})
       confirmation_failed: New password doesn't match confirmation
       invalid_user: User (%{uid}) does not exist
-    school: 
+    school:
       school_admin_added: "%{displayName} (%{school_name}) is now admin users"
       school_admin_removed: "%{displayName} (%{school_name}) is no longer admin user on this school"
       wrong_user_type: School management access rights can be added only if type of user is admin
       save_failed: Failed to save access rights
       destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
       roles_not_found: Cannot find any roles!
-    profile: 
+    profile:
+      wlan_updated: WLAN-settings was succesfully updated
+      wlan_save_failed: WLAN-settings cannot be saved!
       updated: Profile was successfully updated
       save_failed: Profile cannot be saved!
-    printer: 
+    printer:
       updated: Printer was successfully updated
-    devices: 
+    devices:
       school_changed: Device school has been changed!
-  roles: 
-    index: 
+  roles:
+    index:
       actions: Actions
-    show: 
+    show:
       other_groups: Other groups
       change_school: Move users to another school
-    new: 
+    new:
       title: New role
-    edit: 
+    edit:
       title: Editing role
-    select_school: 
+    select_school:
       title: Users transfer
       select_new_school: Select new school
       submit: Next
-    select_role: 
+    select_role:
       title: Users transfer
       new_school: New school
       select_new_role: Select new role
       submit: Move users
-  users: 
-    index: 
+  users:
+    index:
       actions: Actions
-    show: 
+    show:
       user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information
       contact_information: Contact information
       group_by_roles: Groups by roles
       change_school: Change school
       user_is_locked: User is locked
-    new: 
+    new:
       title: New user
-    edit: 
+    edit:
       title: Editing user
-    form: 
+    form:
       add_email: Add another email
       add_telephone_number: Add another telephone number
-    select_school: 
+    select_school:
       title: School change
       select_new_school: Select new school
       submit: Next
-    select_role: 
+    select_role:
       title: School change
       new_school: New school
       select_new_role: Select new role
       submit: Change school
-    import: 
-      info: 
+    import:
+      info:
         phase_1: Insert user data
         phase_2: Define user data
         phase_3: Complete user data
         phase_4: Preview data and add users
-      new: 
+      new:
         title: User mass import
         help: Enter your user data in the text box
         example_title: Example
@@ -186,55 +188,55 @@ en:
           Joe, Bloggs
           Jane, Doe
         hint: You can paste the following text box users data which you like adding
-      show: 
+      show:
         title: Users (%{count}) was successfully created.
         title_with_error: All users was not successfully created!
         successful: "Successful: %{count}"
         failed: "Failed: %{count}"
         pdf_info: You can print users list to paper
         title_of_failed_users_list: Following users was not successfully created!
-      role: 
+      role:
         title: User mass import validation
         help: Following field value must be select when create new users
-      refine: 
+      refine:
         title: User mass import
         info: The following new users of the data are not valid. Please repair the information and select revalidate button.
         column_info: Select correct name of column for each data
         delete: Delete
         name_of_column: Name of column
         example: Example data
-      preview: 
+      preview:
         title: User mass import preview
         info: Check information of the users and select "Create users"
         change_school: Change school
         select_all: Select all
-  groups: 
-    index: 
+  groups:
+    index:
       actions: Actions
-    show: 
+    show:
       roles_and_members: Roles and members
       other_roles: Other roles
-    new: 
+    new:
       title: New group
-    edit: 
+    edit:
       title: Editing group
-  schools: 
-    index: 
+  schools:
+    index:
       actions: Actions
       title: Listing schools
-    edit: 
+    edit:
       title: Editing school
-    new: 
+    new:
       title: New school
-    menu: 
+    menu:
       dashboard: Dashboard
       admins: Admins
       wlan: WLAN
-    admins: 
+    admins:
       this_school_admin_users: "%{school_name} admin users"
       other_admin_users: Add management access rights
       school_admins: School admins
-    show: 
+    show:
       contacts: Contacts
       devices: Devices
       users: Users
@@ -245,102 +247,102 @@ en:
       mail: E-mail
       billing_info: Billing info
       rule_lines: Rules
-    form: 
+    form:
       add_puavo_billing_info: Add another billing info
-  password: 
-    edit: 
+  password:
+    edit:
       title: Change password for other user
       head: To change the password of another user, fill in your own username and password and the username and the new password for the user whose password is being changed. You have to have sufficient privileges to change the passwords of other users.
       changing_user: Changing user
       changed_user: Changed user
       password: Password
       link_own_password: Change your own password
-    own: 
+    own:
       title: Change password
       password: Old password
       link_other_password: Change password for other user
-  organisations: 
-    show: 
+  organisations:
+    show:
       title: Information of organisation
-    edit: 
+    edit:
       title: Information of organisation
       select: Select
       add_puavo_billing_info: Add another billing info
-  external_services: 
-    index: 
+  external_services:
+    index:
       actions: Actions
       title: External services
-    new: 
+    new:
       title: New external service
-    edit: 
+    edit:
       title: Edit external service
-  oauth_clients: 
-    new: 
+  oauth_clients:
+    new:
       title: New OAuth client
-    edit: 
+    edit:
       title: Editing OAuth client
-    index: 
+    index:
       title: OAuth cliets
       actions: Actions
       new: New
-  search: 
-    search_result: 
+  search:
+    search_result:
       title_user: Users
       title_role: Roles
       title_group: Groups
       title_device: Devices
-  profiles: 
-    edit: 
+  profiles:
+    edit:
       title: My profile
       save_and_close: Save and close
-    show: 
+    show:
       message: Profile was successfully updated
   menu:
     index:
       service_link_name_puavo: Puavo - users and devices management
       service_link_name_infotv: Info-TV
       service_link_name_change_password: Change password
-  controllers: 
-    import: 
+  controllers:
+    import:
       school_has_changed: User is transferred, old password is used
-  activeldap: 
-    errors: 
-      messages: 
+  activeldap:
+    errors:
+      messages:
         taken: "%{attribute} has already been taken"
         blank: "%{attribute} can't be blank"
         invalid: "%{attribute} is invalid"
         confirmation: "%{attribute} doesn't match confirmation"
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
-        user: 
+        user:
           must_begin_with: Username must begin with the small letter
           invalid_characters: Username include invalid characters (allowed characters is a-z0-9.-)
-        group: 
+        group:
           invalid_characters: Abbveriation include invalid characters (allowed characters is a-z0-9-)
-        school: 
+        school:
           invalid_characters: "%{attribute} include invalid characters (allowed characters is a-z0-9-)"
         uniqueness: "%{attribute} is already in use"
         invalid_characters: "%{attribute} include invalid characters"
-        device: 
-          puavoHostname: 
+        device:
+          puavoHostname:
             invalid_characters: "Hostname include invalid characters (allowed characters is: a-z0-9-)"
-          macAddress: 
+          macAddress:
             invalid_characters: MAC address include invalid characters. Eg 0f:1f:a9:2f:a3:ad
         wlan:
           duplicate_name: a duplicate name exists (Network name) on the network setup
-    models: 
+    models:
       group: Group
       role: Role
       user: User
       school: School
       external_service: External service
       oauth_client: OAuth client
-    attributes: 
-      role: 
+    attributes:
+      role:
         displayName: Role name
         members: Members
         groups: Members groups
-      school: 
+      school:
         cn: Group name
         displayName: School name
         puavoNamePrefix: Name prefix
@@ -359,7 +361,7 @@ en:
         puavoDeviceImage: Device image
         puavoBillingInfo: Billing info
         puavoWlanChannel: Channel
-      user: 
+      user:
         displayName: Name
         sn: Surname
         givenName: Given name
@@ -386,13 +388,13 @@ en:
         puavoEduPersonPersonnelNumber: Personel Number
         image: Image
         puavoLocked: User is locked
-      group: 
+      group:
         displayName: Group name
         cn: Abbreviation
         gidNumber: Gid number
         primary_members: Primary members
         members: Members
-      ldap_organisation: 
+      ldap_organisation:
         description: Description
         telephoneNumber: Phone number
         facsimileTelephoneNumber: Fax number
@@ -414,13 +416,13 @@ en:
         puavoEduOrgAbbreviation: Abbreviation
         puavoBillingInfo: Billing info
         puavoDeviceImage: Device Image
-      external_service: 
+      external_service:
         uid: Service Identifier
         description: Description
         userPassword: Password
         groups: System Groups
         dn: Bind DN
-      device: 
+      device:
         puavoHostname: Hostname
         puavoDeviceType: Device type
         macAddress: MAC address(es)
@@ -467,13 +469,13 @@ en:
         puavoDeviceOffHour: Daytime end
         puavoDeviceImage: Device image
         puavoDeviceBootImage: Device boot image
-      oauth_client: 
+      oauth_client:
         displayName: Name
         puavoOAuthClientId: Client id
         userPassword: Client secret
         puavoOAuthScope: Scope
         puavoOAuthClientType: Client type
-      server: 
+      server:
         puavoDeviceType: Device type
         puavoHostname: Hostname
         macAddress: MAC address(es)
@@ -507,9 +509,9 @@ en:
         puavoExport: Path
         image: Image
         puavoDeviceImage: Device image
-      automount: 
+      automount:
         cn: Directory
-      printer: 
+      printer:
         printerDescription: Printer name
         printerMakeAndModel: Manufacturer and model
         printerLocation: Location
@@ -517,9 +519,9 @@ en:
         printerType: Type
         printerURI: URI
         puavoPrinterPPD: Driver file (PPD)
-    values: 
-      device: 
-        roles: 
+    values:
+      device:
+        roles:
           puavoNetbootDevice: Netboot
           puavoLocalbootDevice: Localboot
           puavoPrinter: Printer
@@ -534,12 +536,12 @@ en:
   language_en: English
   language_sv: Swedish
   language_default: Default
-  date: 
-    formats: 
+  date:
+    formats:
       default: "%Y-%m-%d"
       short: "%b %d"
       long: "%B %d, %Y"
-    day_names: 
+    day_names:
     - Sunday
     - Monday
     - Tuesday
@@ -547,7 +549,7 @@ en:
     - Thursday
     - Friday
     - Saturday
-    abbr_day_names: 
+    abbr_day_names:
     - Sun
     - Mon
     - Tue
@@ -555,8 +557,8 @@ en:
     - Thu
     - Fri
     - Sat
-    month_names: 
-    - 
+    month_names:
+    -
     - January
     - February
     - March
@@ -569,8 +571,8 @@ en:
     - October
     - November
     - December
-    abbr_month_names: 
-    - 
+    abbr_month_names:
+    -
     - Jan
     - Feb
     - Mar
@@ -583,21 +585,21 @@ en:
     - Oct
     - Nov
     - Dec
-    order: 
+    order:
     - :year
     - :month
     - :day
-  time: 
-    formats: 
+  time:
+    formats:
       default: "%Y-%m-%d"
       short: "%d %b %H:%M"
       long: "%B %d, %Y %H:%M"
     am: am
     pm: pm
   actions: Actions
-  cancel: "- Cancel"
+  cancel: "Cancel"
   or: or
-  shared: 
+  shared:
     terminal_title: Terminal information
     location: Location
     display_settings: Display settings
@@ -612,13 +614,13 @@ en:
     purchase_information: Purchase information
     add_macAddress: Add a new line of MAC addresses
     autopoweroff: Automatic power off
-    linux_device_information: 
+    linux_device_information:
       certificate_status_true: Valid
       certificate_status_false: Not valid
       xrandr_status_true: "Yes"
       xrandr_status_false: "No"
       xrandr_status_: "No"
-    form_linux_device_information: 
+    form_linux_device_information:
       select: Select
     form_wlan:
       wireless_access_point_setup: Default Wireless Access Point setup in school
@@ -631,52 +633,52 @@ en:
       select_value_open: Open
       select_value_psk: PSK
       default: Oletus
-  devices: 
-    index: 
+  devices:
+    index:
       add_new_device: Add new device
       title: List of devices
       select_device_label: Select
-    new: 
+    new:
       new_printer: New printer
       new_device: New device
-    edit: 
+    edit:
       edit: Edit
       title: Device settings
       terminal_title: Terminal settings
       printer_title: Printer settings
-    form_cups: 
+    form_cups:
       cups_settings: CUPS settings
-    cups: 
+    cups:
       cups_settings: CUPS settings
-    show: 
+    show:
       change_school: Change school
-    select_school: 
+    select_school:
       title: Device transfer (%{name})
       select_new_school: Select new school
       submit: Move device
-  servers: 
-    index: 
+  servers:
+    index:
       title: List of servers
-    edit: 
+    edit:
       title: Edit server settings
-    form: 
+    form:
       automounts: Automounts
       add_puavoExport: Add paths
-    show: 
+    show:
       automounts: Automounts
     school_limit:
       title: School limit
       description: This LTSP server will only serve these schools
       description_edit: If none is selected it will serve all schools in the organisation
-  automounts: 
-    index: 
+  automounts:
+    index:
       title: Automounts
-    new: 
+    new:
       title: New automount
-    edit: 
+    edit:
       title: Editing automount
-  host: 
-    types: 
+  host:
+    types:
       register_label: Device type
       register_title: Device type selection
       register_question: "Select device type: "
@@ -687,10 +689,10 @@ en:
       server: Server
       netstand: Netstand
       infotv: Info-tv
-  printers: 
-    index: 
+  printers:
+    index:
       server_title: "Server: %{server}"
-  helpers: 
-    submit: 
-      servers: 
+  helpers:
+    submit:
+      servers:
         create: Create

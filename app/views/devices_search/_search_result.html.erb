@@ -2,7 +2,7 @@
 <fieldset class="search_result">
 <legend><%=h t(".title_#{model}") %></legend>
 <table class="list widelist">
-  <tr>
+  <tr class="thead">
     <% attributes.each do |attribute| %>
     <th><%= t("activeldap.attributes.#{model}.#{attribute}") %></th>
     <% end %>
@@ -10,7 +10,7 @@
   </tr>
   <% objects.each do |o| %>
   <tr>
-    <td>
+    <td data-title="Hostname">
       <% if current_user.organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(o['puavoSchool']) %>
       <%= link_to o["name"], path.call(o['school_id'], o['id'].first) %>
       <% else %>
@@ -18,11 +18,11 @@
       <% end %>
     </td>
     <% attributes[1..attributes.length].each do |attribute| %>
-    <td>
+    <td data-title="<%= t("activeldap.attributes.#{model}.#{attribute}") %>">
       <%=h o[attribute].first %>
     </td>
     <% end %>
-    <td>
+    <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
       <%=h @schools[o["school_id"]] %>
     </td>
   </tr>

@@ -15,8 +15,9 @@
 	  <%= select_tag :new_role, options_from_collection_for_select(@roles, "puavoId", "displayName") %>
 	</td>
   </tr>
-  <tr><td></td>
-  <td><%= f.submit t('.submit') %></td>
+  <tr>
+    <td></td>
+    <td><%= f.submit t('.submit'),:class=>'btn' %></td>
   </tr>
 </table>
 <% end %>

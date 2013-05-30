@@ -1,9 +1,9 @@
-<div class="dashboard_box">
+<div class="content-box">
 <h3><%= t('.title') %></h3>
 <table>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "o" %></td>
-    <td class="value_td"><%=h @organisation.o %></td>
+    <td data-title="<%=h @organisation.o %>" class="value_td"><%=h @organisation.o %></td>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoEduOrgAbbreviation" %></td>
@@ -91,9 +91,9 @@
 <% end %>
 
 <% content_for :footer do %>
-<ul>  
+<ul>
   <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %> 
+    <%= link_to t('layouts.application.schools'),  schools_path %>
   </li>
   <% school_list.each do |school| %>
   <li<% if school_list.last == school %> class="last"<% end %>>

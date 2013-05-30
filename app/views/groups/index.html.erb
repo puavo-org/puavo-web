@@ -1,5 +1,5 @@
 <table class="list">
-  <tr>
+  <tr class="thead">
     <th><%= t('activeldap.attributes.group.displayName') %></th>
     <th><%= t('activeldap.attributes.group.cn') %></th>
     <th colspan="2"><%= t('.actions') %></th>
@@ -7,15 +7,15 @@
 
 <% @groups.each do |group| %>
   <tr>
-    <td>
+    <td data-title="<%=t('activeldap.attributes.group.displayName')%>">
       <%= link_to group.displayName, group_path(@school, group) %>
       <%= " (#{Array(group.memberUid).count})" %>
     </td>
-    <td>
+    <td data-title="<%=t('activeldap.attributes.group.cn')%>">
       <%= group.cn %>
     </td>
-    <td><%= link_to t('link.edit'), edit_group_path(@school, group) %></td>
-    <td><%= link_to t('link.destroy'), group_path(@school, group), :confirm => t('general_confirm'), :method => :delete %></td>
+    <td data-title="<%=t('.actions')%>" class="table-actions"><%= link_to t('link.edit'), edit_group_path(@school, group),:class=> "btn" %></td>
+    <td class="table-actions"><%= link_to t('link.destroy'), group_path(@school, group), :confirm => t('general_confirm'), :method => :delete, :class=> "btn btn-danger" %></td>
   </tr>
 <% end %>
 </table>

@@ -1,0 +1,286 @@
+@import 'nib'
+
+form
+  table
+    display block
+    max-width 80%
+  tbody
+    display block
+  input
+    font-size 110%
+    margin 0 0 2%
+    padding 0.5em
+    width 100%
+  #school_puavoBillingInfo, #organisation_puavoBillingInfo
+    input
+      display block
+  tr
+    display table-row
+    margin 0 0 5px
+    overflow hidden
+    text-overflow clip
+    white-space nowrap
+    width 100%
+    &:before, &:after
+      content ""
+      display table
+      line-height 0
+    td
+      margin 0
+      padding 0
+      width 100%
+    td:first-child
+      text-align right
+      padding-right 1em
+      width 35%
+  select
+    height 30px
+    line-height 30px
+    margin 0 0 5px
+    padding 0
+    width 100%
+  textarea
+    &#raw_users
+      width 100%
+  &.inline
+    line-height 3
+    p
+      margin-bottom 0
+  &.form_inline
+    input
+      display inline-block
+      margin-bottom 0
+      vertical-align middle
+      width auto
+    label
+      display inline-block
+      text-align right
+      width 35%
+    span
+      margin-bottom 1%
+    .submit_button_login
+      margin-left 36%
+
+.rename_group_old_name
+  text-align right
+  width 35%
+
+.rename_group_new_name
+  width 60%
+
+.rename_group_name_abbr
+  width 45%
+
+.external_services_system_groups
+  div
+    word-wrap break-word
+
+.submit_button_container
+  margin-left 26.2345%
+
+.submit_button_container_no_margin
+  margin-left 0
+
+form[action$="users/import"]
+  .submit_button_container
+    margin-left 0
+
+.external_service
+  margin-left 20%
+
+#device_puavoDeviceXrandr input,
+#device_macAddress input,
+#server_puavoExport_list input
+  display block
+
+.purchase_date
+  select
+    width auto
+
+label
+  font-size 120%
+  font-weight bold
+  line-height 2
+  margin 0
+  &.checkbox
+    font-size 100%
+    font-weight normal
+
+.label_for_checkbox_list
+  vertical-align top
+
+.label_for_input_text_list
+  vertical-align top
+
+.label_td
+  text-align left
+
+fieldset
+  padding 1.4em
+  margin 0 0 1.5em 0
+
+legend
+  font-weight bold
+  font-size 100%
+
+
+input[type="file"]
+  display inline-block
+  width auto
+
+input[type="submit"]
+  font-size 120%
+  height 70px
+  margin 5px 0 0
+  max-width 333px
+  padding 5px 8px
+  vertical-align middle
+  width 50%
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input.text:focus,
+input.title:focus,
+textarea:focus,
+select:focus
+  border 1px solid #5897FB
+  color #222
+
+textarea
+  width 450px
+  height 250px
+  padding 5px
+
+input[type="checkbox"],
+input[type="radio"],
+input.checkbox,
+input.radio
+  display inline-block
+  margin 5px
+  position relative
+  width auto
+
+#user_mail_list
+  input
+    display block
+    margin 0 0 5px
+
+#user_telephoneNumber_list
+  input
+    display block
+    margin 0 0 5px
+
+.cancel
+  display inline
+  *display inline
+  font-size 100%
+  margin 0
+  padding 0
+  width 100px
+  &:before
+    content: " – "
+.clone_prev_input_element
+  font-size 90%
+  font-weight normal
+  margin-bottom 0.5em
+
+.required
+  &:after
+    content "*"
+    font-size 150%
+  .field_with_errors
+    display inline-block
+
+.no-table-form
+  input
+    max-width 80%
+
+@media screen-breakpoint-one
+  form
+    table, tbody
+      display block
+    table
+      padding 0 2%
+      max-width 100%
+      tr
+        display block
+        position relative
+        td, td:first-child, th
+          display block
+          text-align left
+          width 100%
+    &.form_inline
+      padding 2% 0
+      .submit_button_login
+        margin 5% 0 0
+      input
+        max-width 100%
+        min-height 50px
+        width 98%
+    input, select
+      padding 1em
+      width 95%
+    input[type="submit"]
+      width 50%
+
+  .new_external_service tr td:nth-child(even), .new_external_service tr td:nth-child(odd), .edit_external_service tr:nth-child(even), .edit_external_service tr:nth-child(odd)
+    width 95%
+  .show_user
+    table
+      &.list
+        td
+          display inline-block
+          &.value_td
+            padding-left 1em
+            text-align left
+
+  .mass_import_info, .mass_import_info_text
+    padding 2%
+
+  form[action$="import/validate"] p, form[action$="import/refine"] p, form[action$="import/refine"] pre
+    padding 0 0 0 2%
+
+  .mass_import_form
+    width 90%
+    input
+      margin-left 2%
+
+  textarea#raw_users
+    margin-left 2%
+    width 90%
+
+  form table.import_define th, form table.import_define td
+    width 45%
+    display inline-block
+
+  .submit_button_container
+    margin-left 2%
+
+  .form_inline
+    & > *
+      padding 0 2%
+    label
+      display block
+      text-align left
+
+  form.new_device h2, form.edit_device h2, form.edit_server h2
+    padding 0 2%
+
+  form table.rename_groups_roles_table tr th, form table.rename_groups_roles_table tr td
+    width 45%
+
+  #other_groups td, #member_groups td
+    line-height 3
+
+  .required_info
+    margin-left 2%
+
+  .no-table-form
+    padding 2%
+    input
+      max-width 100%
+  .content-box
+    table
+      td
+        label
+          line-height 1.5
