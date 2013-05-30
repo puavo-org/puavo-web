@@ -7,7 +7,7 @@
   <table>
 
     <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
-    
+
   </table>
   <h2><%= t('.automounts') %></h2>
   <table>
@@ -23,7 +23,7 @@
 	  <% end %>
 	  <% end %>
 	</div>
-	<%= link_to t('.add_puavoExport'), "#", :class => "clone_prev_input_element" %>
+	<%= link_to t('.add_puavoExport'), "#", :class => "clone_prev_input_element btn" %>
   </td></tr>
 
   <!--
@@ -60,9 +60,12 @@
   <!-- </table> -->
 
   <table>
-    <tr><td>
-    <%= f.submit submit_text %> 
-    <div class="cancel"> <%=link_to t('cancel'), @server, :class => 'cancel_button' %> </div>
-    </tr></td>
+    <tr>
+      <td></td>
+      <td>
+        <%= f.submit submit_text %>
+        <div class="cancel"> <%=link_to t('cancel'), @server, :class => 'btn btn-danger' %> </div>
+      </td>
+  </tr>
   </table>
 <% end %>

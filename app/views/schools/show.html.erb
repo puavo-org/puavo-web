@@ -1,10 +1,10 @@
 
 <div class="dashboard">
-<div class="dashboard_box school_image">
+<div class="content-box school_image">
 <%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
                :class => "image" ) %>
 </div>
-<div class="dashboard_box contacts">
+<div class="content-box contacts">
 <h3><%= t('.contacts') %></h3>
 <h4><%=h @school.displayName %></h4>
 <div class="row"><%=h @school.street %></div>
@@ -14,7 +14,7 @@
 </div>
 
 
-<div class="dashboard_box list users">
+<div class="content-box list users">
 <h3><%= t('.users') %></h3>
 <h4><%= t('.statistics') %></h4>
 <% User.puavoEduPersonAffiliation_list.each do |type| %>
@@ -24,7 +24,7 @@
 </div>
 
 <% if @devices_by_type %>
-  <div class="dashboard_box list">
+  <div class="content-box list">
   <h3><%= t('.devices') %></h3>
   <% @devices_by_type.each do |device_type, count| %>
     <div class="row"><div class="column_1"><%= device_type %>:</div> <div class="column_2"><%= count %></div></div>
@@ -38,7 +38,7 @@
   </div>
 <% end %>
 </div>
-<div id="admin_users_list" class="dashboard_box list users">
+<div class="admin-users-list content-box list users">
 <h3><%= t('.admin_users') %></h3>
 
 <div class="row admins_headers"><span><%= t('.name') %></span><span><%= t('.phone') %></span><span><%= t('.mail') %></span></div>
@@ -56,7 +56,7 @@
 
 <% if current_user.organisation_owner? %>
 
-<div class="dashboard_box list billing_info">
+<div class="content-box list billing-info">
 <h3><%= t('.billing_info') %></h3>
 <h4><%= t('.rule_lines') %></h4>
 
@@ -73,7 +73,7 @@
 <% end %>
 
 <% content_for :right do %>
-  <ul class="tools">
+  <ul class="sub-tools">
   <li>
   <%= link_to t('link.edit'), edit_school_path(@school) %>
   </li>

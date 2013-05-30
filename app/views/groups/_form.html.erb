@@ -1,4 +1,5 @@
 <%= form_for(@group, :url => path, :html => { :method => method } ) do |f| %>
+<div class="no-table-form">
 <p>
   <%= f.label :displayName %><br />
   <%= f.text_field :displayName %>
@@ -7,8 +8,9 @@
   <%= f.label :cn %><br />
   <%= f.text_field :cn %>
 </p>
-  <span style="float:left">
-  <%= f.submit submit_text %>
-  <div class="cancel"><%= link_to t('link.cancel'), path, :class => 'cancel_button' %> </div>
+  <span>
+  <%= f.submit submit_text, :class=>'btn' %>
+  <div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'btn btn-danger' %>
 </span>
+</div>
 <% end %>

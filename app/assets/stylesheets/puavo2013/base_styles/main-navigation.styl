@@ -1,0 +1,97 @@
+@import 'nib'
+
+.navbar-first-level
+  clear both
+  margin 5px 0 -1px
+  ul
+    display inline-block
+    font-size 80%
+    font-weight bold
+    line-height 3
+    list-style none outside none
+    margin 0
+    padding 0
+    text-align center
+    text-transform uppercase
+    width 100%
+    .current_page_item
+      position relative
+    .last_one
+      height 0
+      margin 0
+      padding 0
+      position relative
+    .middle
+      height 20px
+      left 18px
+      position absolute
+      top 0
+      width 105px
+    & > li
+      float left
+      margin 0 3px 0 0
+      min-width 50px
+      white-space nowrap
+      &:last-child
+        margin 0
+    a
+      display block
+      padding 0 1em
+
+.navbar-second-level
+  font-size 70%
+  font-weight normal
+  margin 0
+  padding 0
+  text-transform uppercase
+  width 100%
+  ul
+    display block
+    margin 0 0 -1px
+    padding 5px 0 0
+    &:after
+      clear both
+      content " 0020"
+      display block
+      height 0
+      overflow hidden
+      visibility hidden
+  li
+    float left
+    margin 0 0 0 5px
+    min-width 50px
+    padding 0
+    position relative
+    text-align center
+    text-decoration none
+    white-space nowrap
+    width auto
+    &:first-child
+      margin 0 0 0 6px
+    a
+      display block
+      margin 0
+      padding 8px
+      text-decoration none
+      &:hover
+        color #222222
+
+@media screen-breakpoint-one
+  .navbar-first-level
+    ul
+      a
+        padding 1em 3em
+  .navbar-second-level
+    li
+      a
+        padding 1em 3em
+
+@media screen-portrait-breakpoint-one
+  .navbar-first-level
+    ul
+      a
+        padding 0.7em 2em
+  .navbar-second-level
+    li
+      a
+        padding 0.7em 2em

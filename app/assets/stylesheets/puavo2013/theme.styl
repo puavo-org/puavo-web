@@ -1,0 +1,471 @@
+@import 'nib'
+@import 'colors'
+
+// base_styles -->
+
+// Forms
+form
+  input
+    background-color white
+    border 1px solid formElementBorderColor
+    border-radius 4px
+    box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.075)
+  select
+    background-color white
+    border 1px solid formElementBorderColor
+  .field_with_errors
+    input, select
+      border 1px solid errorRed
+
+input[type="file"]
+  border none
+  box-shadow none
+  color initial
+
+input[type="submit"]
+  box-shadow inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05)
+  background none repeat scroll 0 0 #EEEEED
+  background-image linear-gradient(white 0%, #EEEEED 100%)
+  border-radius 4px
+  cursor pointer
+  &:hover
+    background none repeat scroll 0 0 #EEEEEE
+    background-image linear-gradient(white 0%,rgb(238,238,237) 100%)
+    border 1px solid focusColor
+
+label
+  color #222222
+  &.label_error
+    color errorRed
+
+fieldset
+  border 1px solid formElementBorderColor
+
+.required_info
+  color errorRed
+
+.required:after
+  color errorRed
+
+// End of forms
+
+// Tables
+table
+  tr
+    &.even
+      td
+        background #e5ecf9
+  &.list
+    tr
+      &:hover
+        background #F9F7E6
+    td
+      border-bottom 1px solid formElementBorderColor
+    th
+      background none repeat scroll 0 0 baseBrown
+      background linear-gradient(baseBrown 35%, baseBrownGradient 60%) repeat scroll 0 0 transparent
+      border-bottom 1px solid baseBoxShadowBorderColor
+      color #F5F5E8
+
+.field_error
+  color #CCCCCC
+
+.field_value_error
+  color errorRed
+
+.notice_text
+  color errorRed
+
+.list tr:nth-child(even), .content-box table tr:nth-child(even)
+  background-color rowEvenBgColor
+
+.list tr:nth-child(odd), .content-box table tr:nth-child(odd)
+  background-color rowOddBgColor
+// End of tables
+
+// Buttons
+.btn
+  background-color buttonBg
+  *background-color buttonBg
+  background-image linear-gradient(buttonBg 0%, buttonGradientBg 100%)
+  background-repeat repeat-x
+  border 1px solid #cccccc
+  *border 0
+  border-color buttonBorderHexColor buttonBorderHexColor buttonBorderHexColor2
+  border-color buttonBorderColor buttonBorderColor buttonBorderColor2
+  border-radius 3px
+  box-shadow inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05)
+  color #333333
+
+.btn:hover, .btn:focus
+  background-color buttonGradientBg
+  background-image none
+  color buttonHoverColor
+
+.btn-danger
+  color rgb(255, 255, 255)
+  background-color buttonDangerBgColor
+  background-image linear-gradient(top, buttonDangerBgImage, buttonDangerGradientBgImage)
+
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active
+  color rgb(255, 255, 255)
+  background-color buttonDangerHoverBg
+  background-image none
+// End of Buttons
+
+// Alerts
+.message_error,
+.message_notice,
+.message_success,
+.notice,
+.message_alert
+  border 2px solid #ddd
+
+.message_error, .message_alert
+  background none repeat scroll 0 0 #AD0000
+  border 1px solid #AAAAAA
+  border-radius 4px
+  color #F4F4F4
+
+.message_notice, .notice
+  background none repeat scroll 0 0 #86B410
+  border 1px solid #56340E
+  border-radius 4px
+
+.message_success
+  background #E6EFC2
+  color #264409
+  border 1px solid #C6D880
+  a
+    color #264409
+
+.message_error
+  a
+    color #8a1f11
+
+.message_notice a,
+.message_alert a
+  color #514721
+
+.notice
+  a
+    color #514721
+
+.message-info
+  background-color infoBgColor
+  border 2px dotted baseBoxShadowBorderColor
+// End of Alerts
+
+// End of base_styles
+
+body
+  background none repeat scroll 0 0 baseBg
+  background-image linear-gradient(baseGradientBg 0%, baseBg 100%)
+
+.main-wrap
+  background none repeat scroll 0 0 baseBg
+  border 5px solid #3E3E2D
+  border-radius 10px 10px 0 0
+  box-shadow 0px 15px 15px rgba(68, 68, 68, 0.70)
+
+.maincontent
+  background-color white
+  border-bottom 1px solid baseBoxShadowBorderColor
+  border-left 1px solid baseBoxShadowBorderColor
+  border-right 1px solid baseBoxShadowBorderColor
+  border-radius 0 0 4px 4px
+  > h1 span
+    border-bottom 1px solid baseBoxShadowBorderColor
+
+// topmenu
+.topmenu
+  background-color baseOrangeGradient
+  background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+  border-bottom 1px solid baseBoxShadowBorderColor
+  box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
+  .top-menu-item
+    border-top 1px solid #E6E6E6
+    a
+      &:hover
+        background-color #f4f4f4
+        border-radius 0 8px 8px 0
+    &:first-child
+      border-top medium none
+  input
+    border 1px solid formElementBorderColor
+    border-radius 4px
+.topmenu-left
+  li
+    ul
+      background-color baseOrangeGradient
+      border-bottom 1px solid #222
+      border-left 1px solid #222
+      border-right 1px solid #222
+      border-radius 0 0 4px 4px
+      li
+        &:hover
+            .school_submenu
+              background none repeat scroll 0 0 #F59545
+              border medium none
+              border-radius 0 0 6px 0
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
+  .school_submenu
+    li
+      border-top 1px solid #E6E6E6
+.menu
+  li
+    span
+      &.sub
+        color #222222
+    &.last
+      a
+        background none repeat scroll 0 0 transparent
+    &.active
+      a
+        color #B6E3EC
+    li
+      border-left 1px solid creamWhite
+      border-right 1px solid creamWhite
+      &.last
+        border-bottom 1px solid creamWhite
+    ul
+      border-top 1px solid creamWhite
+      list-style none outside none
+      ul
+        background-color white
+
+.add-new-school a,
+.add-new-school a:hover
+  background-color white
+  background-position left -510px
+  border-radius 8px 8px 0 0
+
+// end of topmenu
+
+.content-box
+  background none repeat scroll 0 0 rgb(250, 250, 250)
+  background-image linear-gradient(rgb(250, 250, 250) 0%, rgb(247,247,247) 100%)
+  border-radius 4px
+  box-shadow inset 0 0 10px rgba(237, 113, 19, 0.25)
+  &.school_image
+    background none repeat scroll 0 0 transparent
+    background-image none
+    border 0 none
+    border-radius 0
+    box-shadow none
+  h4
+    border-bottom 2px solid
+  .row
+    &:not(:first-of-type)
+      border-top 1px solid #AAAAAA
+    &:empty
+      border none
+
+  h3, .show_user h3
+    background-color baseBrown
+    background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
+    border-radius 3px 3px 0 0
+    color rgb(245,245,245)
+
+// main-navigation
+.navbar-first-level
+  .current_page_item
+    background-color baseBrown
+    background-image linear-gradient(baseBrown 0%, baseBrownGradient 100%)
+    border-left 1px solid baseBoxShadowBorderColor
+    border-right 1px solid baseBoxShadowBorderColor
+    border-top 1px solid baseBoxShadowBorderColor
+    a
+      color creamWhite
+  ul > li
+    &:hover
+      background none repeat scroll 0 0 baseBrown
+      background-image linear-gradient(baseBrown 0%, baseBrownGradient 100%)
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
+  li
+    background-color baseOrange
+    background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+    border-radius 4px 4px 0 0
+
+.navbar-second-level
+  background-color baseBrown
+  background-image linear-gradient(baseBrownGradient 35%, baseBrown 60%)
+  border 1px solid baseBoxShadowBorderColor
+  border-radius 0 4px 0 0
+  .current a, a:hover
+    background-color white
+    border-left 1px solid baseBoxShadowBorderColor
+    border-radius 4px 4px 0 0
+    border-right 1px solid baseBoxShadowBorderColor
+    border-top 1px solid baseBoxShadowBorderColor
+    color #4A4D4A
+  li
+    a
+      border-radius 10px 10px 0 0
+      border 1px solid transparent
+      color #E6E6D8
+      &:hover
+        color #222222
+
+// end of main-navigation
+
+// tools
+.tools
+  a
+    &:hover
+      color #222
+    &.show
+      background-position left -310px
+      &:hover
+        background-position left -350px
+  .sub-tools > li
+    border-bottom 1px dashed #ECEADA
+  .tool
+    span
+      background-position center -630px
+      &:hover
+        background-position center -670px transparent
+        cursor pointer
+    ul
+      border 1px solid #AAAAAA
+      li
+        background none repeat scroll 0 0 #FFFFFF
+        &:hover
+          background none repeat scroll 0 0 #C0772F
+
+  a[href$="edit"]
+    background-position left 10px
+  a[href$="edit"]:hover
+    background-position left -30px
+  a[data-method="delete"]
+    background-position left -70px
+  a[data-method="delete"]:hover
+    background-position left -110px
+  .videolink
+    background-position left -235px
+    &:hover
+      background-position left -275px
+  a[href$="import/new"]
+    background-position left -470px
+  a[href$="import/new"]:hover
+    background-position left -510px
+
+.tools .sub-tools > li:hover,
+.tools > div:hover
+  background none repeat scroll 0 0 #C0772F
+  border-radius 6px 6px 0 0
+.tool
+  span
+    img
+      margin 0 0 0 5px
+
+.tools a[href$="select_school"],
+.maincontent .tools a[href$="rename_groups/new"]
+  background-position left -150px
+
+.tools a[href$="select_school"]:hover,
+.maincontent .tools a[href$="rename_groups/new"]:hover
+  background-position left -190px
+
+.tools a[href$="users/new"],
+.tools a[href$="external_services/new"],
+.tools a[href$="schools/new"],
+.tools a[href$="roles/new"],
+.tools a[href$="groups/new"]
+  background-position left -390px
+
+.tools a[href$="users/new"]:hover,
+.tools a[href$="external_services/new"]:hover,
+.tools a[href$="schools/new"]:hover,
+.tools a[href$="roles/new"]:hover,
+.tools a[href$="groups/new"]:hover
+  background-position left -430px
+
+// End of .tools
+
+// login
+
+.login_container
+  background none repeat scroll 0 0 baseBg
+  box-shadow 0 4px 8px baseBoxShadowBorderColor
+  .login_content
+    background none repeat scroll 0 0 white
+  h1
+    color #2D2D2D
+  h2
+    color #323232
+  a
+    &:hover
+      color #AD0000
+
+.password_container
+  background-color baseBrown
+.login_content
+  background-color white
+  span
+    border 1px solid transparent
+    border-radius 8px 8px 0 0
+    a
+      background-position 5px -790px
+    &:hover
+      a
+        background-position 5px -830px
+    &.change_other_pswd
+      a
+        background-position 5px -870px
+      &:hover
+        a
+          background-position 5px -910px
+  .message_alert
+    background-color errorRed
+
+  .password_buttons span
+    background none repeat scroll 0 0 #FAB32E
+    background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+    &.active, &:hover
+      background none repeat scroll 0 0 baseBrown
+      background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
+      border-left 1px solid baseBoxShadowBorderColor
+      border-right 1px solid baseBoxShadowBorderColor
+      border-top 1px solid baseBoxShadowBorderColor
+      a
+        color white
+// end of login
+
+// password
+
+
+
+// end of password
+
+.link_header
+  border-bottom 1px dashed #555555
+  font-weight bold
+
+.search_result
+  td
+    border-bottom 1px solid #AAAAAA
+
+@media screen-breakpoint-one
+  .main-wrap, .login_container, .navbar-second-level
+    border solid 1px transparent
+  .maincontent
+    border none
+    border-radius 0
+  .content-box, .user_box, .content-box h3, .show_user h3
+    border-radius 0
+
+  table
+    &.list
+      tr
+        border-bottom 1px solid baseBoxShadowBorderColor
+        &:nth-child(2)
+          border-top 1px solid baseBoxShadowBorderColor
+      th
+        display none
+      td
+        border-bottom none

@@ -1,7 +1,7 @@
 <h1><span><%= t('.title') %></span></h1>
 
 <table class='list'>
-  <tr>
+  <tr class="thead">
     <th><%= t("activeldap.attributes.server.puavoHostname") %></th>
     <th><%= t('activeldap.attributes.server.puavoDeviceManufacturer') %></th>
     <th><%= t('activeldap.attributes.server.puavoDeviceModel') %></th>
@@ -11,12 +11,12 @@
 
 <% @servers.each do |server| %>
   <tr>
-    <td><%= link_to server.puavoHostname, server %></td>
-    <td><%=h server.puavoDeviceManufacturer %></td>
-    <td><%=h server.puavoDeviceModel %></td>
-    <td><%=h server.serialNumber %></td>
-    <td><%= link_to t('link.edit'), edit_server_path(server) %></td>
-    <td><%= link_to t('link.destroy'), server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete %>
+    <td data-title="<%= t("activeldap.attributes.server.puavoHostname") %>"><%= link_to server.puavoHostname, server %></td>
+    <td data-title="<%= t("activeldap.attributes.server.puavoDeviceManufacturer") %>"><%=h server.puavoDeviceManufacturer %></td>
+    <td data-title="<%= t("activeldap.attributes.server.puavoDeviceModel") %>"><%=h server.puavoDeviceModel %></td>
+    <td data-title="<%= t("activeldap.attributes.server.serialNumber") %>"><%=h server.serialNumber %></td>
+    <td data-title="<%= t("actions") %>" class="table-actions"><%= link_to t('link.edit'), edit_server_path(server), :class => 'btn' %></td>
+    <td class="table-actions"><%= link_to t('link.destroy'), server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete, :class => 'btn btn-danger' %>
     </td>
   </tr>
 <% end %>

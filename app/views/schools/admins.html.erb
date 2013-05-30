@@ -1,51 +1,26 @@
 <h1><span><%= t('.school_admins') %></span></h1>
 <div class="dashboard">
-<div class="dashboard_box school_admins">
+<div class="content-box school_admins">
   <h3><%= t('.this_school_admin_users', :school_name => @school.displayName) %></h3>
 
   <span id="this_school_admin_users">
     <% Array(@school_admins).each do |u| %>
-      <div class="row">
+      <div class="row clearfix">
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
-      <%= link_to t('link.remove'), remove_school_admin_school_path(@school, u), :method => :put, :id => "remove_user_#{u.id}" %>
+      <%= link_to t('link.remove'), remove_school_admin_school_path(@school, u), :method => :put, :id => "remove_user_#{u.id}",:class=> "btn btn-danger" %>
       </div>
     <% end %>
   </span>
 </div>
-<div class="dashboard_box other_admins">
+<div class="content-box other_admins">
   <h3><%= t('.other_admin_users') %>:</h3>
   <span id="other_admin_users">
     <% Array(@allowed_school_admins).each do |u| %>
-      <div class="row">
+      <div class="row clearfix">
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
-      <%= link_to t('link.add'), add_school_admin_school_path(@school, u), :method => :put, :id => "add_user_#{u.id}" %>
+      <%= link_to t('link.add'), add_school_admin_school_path(@school, u), :method => :put, :id => "add_user_#{u.id}",:class=> "btn" %>
       </div>
     <% end %>
     </span>
 </div>
 </div>
-<% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <%= link_to school_path(@school) do %>
-      <span><%= t('layouts.application.schools') %></span>
-    <% end %>
-  </li>
-  <% school_list.each do |school| %>
-  <li<% if school_list.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %>
-  </li>
-  <% end %>
-</ul>
-<ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li>
-<%= link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
-<% end %>
-</li>
-  <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-  <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-  <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-</ul>
-<% end %>

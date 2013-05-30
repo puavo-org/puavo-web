@@ -1,0 +1,30 @@
+@import 'nib'
+
+.message_error,
+.message_notice,
+.message_success,
+.notice,
+.message_alert
+  padding 0.5em
+  margin 15px 15px 1em 0
+
+.message_error, .message_alert
+  font-size 130%
+  text-align center
+
+.message_notice, .notice
+  font-size 130%
+  text-align center
+
+.login_content .notice, .login_content .message_notice
+  left 0
+  margin 0
+  position relative
+  top 0
+
+.message_success
+  text-align center
+
+@media screen-breakpoint-one
+  .message_error, .message_notice, .message_success, .notice, .message_alert
+    margin 2% 2.5% 1% 2.5%

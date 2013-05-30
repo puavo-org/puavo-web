@@ -1,0 +1,378 @@
+@import 'nib'
+
+*
+  box-sizing border-box
+  font-smoothing antialiased
+
+html, body
+  min-height 100%
+
+body
+  font-family "Helvetica Neue",Arial,sans-serif
+  font-size 100%
+  line-height 1.5
+  margin 0
+  padding 0
+
+h1, h2, h3, h4, h5, h6
+  font-weight normal
+  color #1b1b1b
+  margin 0 0 1em
+h1
+  font-size 250%
+h2
+  font-size 200%
+h3
+  font-size 130%
+h4
+  font-size 115%
+  line-height 1.25
+h5
+  font-size 110%
+h6
+  font-size 105%
+h1 img, h2 img, h3 img, h4 img, h5 img, h6 img
+  margin 0
+p
+  margin 0 0 .5em
+  img
+    &.left
+      float left
+      margin 1.5em 1.5em 1.5em 0
+      padding 0
+    &.right
+      float right
+      margin 1.5em 0 1.5em 1.5em
+a
+  color #13243F
+  text-decoration none
+  &:hover
+    color #352608
+    text-decoration none
+  &:focus
+    color #000
+  img
+    border none
+
+blockquote
+  margin 1.5em
+  color #666
+  font-style italic
+
+strong
+  font-weight bold
+
+em, dfn
+  font-style italic
+
+dfn
+  font-weight bold
+
+sup, sub
+  line-height 0
+
+abbr, acronym
+  border-bottom 1px dotted #666
+
+address
+  margin 0 0 1.5em
+  font-style italic
+
+del
+  color #666
+
+pre
+  margin 1.5em 0
+  white-space pre
+
+pre, code, tt
+  font 100% 'andale mono', 'lucida console', monospace
+  line-height 1.5
+
+li ul, li ol
+  margin 0
+
+ul, ol
+  list-style none
+  margin 0 1.5em 1.5em 0
+  padding-left 3.333em
+
+ol
+  list-style-type decimal
+
+dl
+  margin 0 0 1.5em 0
+  dt
+    font-weight bold
+
+dd
+  margin-left 1.5em
+
+img
+  border none
+  max-width 100%
+
+div.space,hr
+  border medium none
+  clear both
+  float none
+  height 0
+  margin 0 0 0
+  width 100%
+
+hr
+  &.space
+    background #fff
+    color #fff
+    visibility hidden
+
+caption
+  background #eee
+
+.small
+  font-size 80%
+  margin-bottom 1.875em
+  line-height 1.875em
+
+.large
+  font-size 120%
+  line-height 2.5em
+  margin-bottom 1.25em
+
+.hide
+  display none
+
+.quiet
+  color #666
+
+.loud
+  color #000
+
+.highlight
+  background #ff0
+
+.added
+  background #060
+  color #fff
+
+.removed
+  background #900
+  color #fff
+
+.first
+  margin-left 0
+  padding-left 0
+
+.last
+  margin-right 0
+  padding-right 0
+
+.top
+  margin-top 0
+  padding-top 0
+
+.bottom
+  margin-bottom 0
+  padding-bottom 0
+
+.clearfix:after, .container:after
+  content "\0020"
+  display block
+  height 0
+  clear both
+  visibility hidden
+  overflow hidden
+
+.clearfix, .container
+  display block
+
+.clear
+  clear both
+
+// Custom global classes
+.container
+  height 100%
+  margin 0
+  min-width 315px
+
+.main-wrap
+  margin 25px auto
+  max-width 1200px
+  padding 5px 10px 0
+  width 95%
+  & > h1
+    font-size 220%
+    font-variant small-caps
+    margin 0
+    padding 1% 0 0 0
+
+//.maincontent
+.maincontent
+  font-size 80%
+  margin 0 0 2% 0
+  padding 2%
+  position relative
+  width 100%
+  .dashboard
+    float left
+    margin 1% 0 0
+    width 100%
+  h1
+    line-height 1
+    margin 0 0 1%
+    padding 0
+// end of .maincontent
+
+// .tools ->
+.tools-container
+  float right
+  margin-bottom 2%
+  &:empty, span:empty
+    display none
+  .tools
+    float right
+    height 40px
+    margin 5px 1em .2em
+    padding 0
+    > div, .sub-tools > li
+      float left
+      margin 0
+      padding 0 0 0 5px
+      position relative
+    .sub-tools > li.tool
+      padding 0 1em
+    .tool
+      span
+        text-indent -9999px
+      ul
+        display none
+        padding 0
+        position absolute
+        margin 0 0 0 -5px
+        right 0
+        li
+          min-width 150px
+          width auto !important
+
+.tools a, .tool span
+  display block
+  height auto
+  line-height 1.25
+  margin 0
+  padding 15px 10px 15px 35px
+  white-space nowrap
+  width auto
+
+// End of .tools
+
+// .content-box
+.content-box
+  float left
+  margin 1% 1% 0 0
+  min-width 45%
+  padding 0
+  width 49%
+  &.school_image
+    padding-top 0
+  &.list .row
+    clear both
+  h4
+    clear both
+    margin 0 0 5px
+    padding 5px 0 5px 10px
+  p
+    float left
+    margin 0 2px 0 0
+  .row
+    margin 0
+    padding 5px 10px
+    a, p
+      font-weight bold
+    & > span
+      float left
+      padding 5px 0 5px
+      word-wrap break-word
+      width 33.3%
+  h3
+    margin 0
+    padding 5px 10px
+// end of .content-box
+
+.display_block
+  display block !important
+
+.image
+  margin 0
+  padding 0
+
+.link_header
+  margin 0 0 0 -5px
+
+.list
+  .column_1
+    display inline
+  .column_2
+    font-weight bold
+    float right
+    margin-left 10px
+
+@media screen-breakpoint-one
+  body
+    font-size 85%
+
+  .main-wrap, .login_container
+    margin 0
+    padding 0
+    width 100%
+    & > h1
+      margin-top 0
+      padding 1% 0 0 1%
+
+  .maincontent
+    font-size 90%
+    margin 0 0 1em
+    padding-bottom 2%
+    .dashboard
+      width 100%
+    & > h1
+      padding 2%
+
+  .maincontent, .login_content
+    float none
+    margin 0
+    padding 0.5% 0
+    width 100%
+
+  .content-box, .content-box h3
+    margin 0
+    width 100%
+  .content-box
+    h3
+      padding 1.5%
+    &.school_image
+      padding 0 1% 1%
+
+  .tools-container
+    float none
+    margin-bottom 2%
+
+@media screen-breakpoint-two
+  .main-wrap
+    & > h1
+      margin-top 0
+
+@media screen-portrait-breakpoint-one
+  body
+    font-size 110%
+
+  .maincontent
+    h1
+      font-size 200%
+      margin 5% 0
+
+  .tools-container
+    margin-bottom 0
+
+// @media screen-portrait-breakpoint-two
+
+// @media screen-landcape-breakpoint-one

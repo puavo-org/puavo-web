@@ -110,7 +110,7 @@
   </tr>
 
   <tr>
-    <td>
+    <td class="label_for_input_text_list">
       <%= f.label :puavoBillingInfo %>
     </td>
     <td>
@@ -124,22 +124,25 @@
         <% end %>
       <% end %>
     </div>
-    <%= link_to t('.add_puavo_billing_info'), "#", :class => "clone_prev_input_element" %>
+    <%= link_to t('.add_puavo_billing_info'), "#", :class => "clone_prev_input_element btn" %>
 
     </td>
   </tr>
-
   <tr>
-    <td><%= f.submit t('link.update') %>
-      <div class="cancel"><%= link_to t('link.cancel'), organisation_path, :class => 'cancel_button' %></div></td>
+    <td></td>
+    <td>
+      <%= f.submit t('link.update') %>
+      <div class="cancel"><%= link_to t('link.cancel'), organisation_path, :class => 'btn btn-danger' %></div>
+    </td>
   </tr>
 </table>
+
 <% end %>
 
 <% content_for :footer do %>
-<ul>  
+<ul>
   <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %> 
+    <%= link_to t('layouts.application.schools'),  schools_path %>
   </li>
   <% school_list.each do |school| %>
   <li<% if school_list.last == school %> class="last"<% end %>>

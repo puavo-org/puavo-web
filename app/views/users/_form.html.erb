@@ -26,7 +26,7 @@
         <% end %>
       <% end %>
     </div>
-    <%= link_to t('.add_email'), "#", :class => "clone_prev_input_element" %>
+    <%= link_to t('.add_email'), "#", :class => "clone_prev_input_element btn" %>
   </td></tr>
   <tr>
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
@@ -40,7 +40,7 @@
       <% end %>
     </span>
 
-    <%= link_to t('.add_telephone_number'), "#", :class => "clone_prev_input_element" %>
+    <%= link_to t('.add_telephone_number'), "#", :class => "clone_prev_input_element btn" %>
 </td>
 </tr>
     <tr>
@@ -110,13 +110,13 @@
     <td class='required'><%= f.label :new_password_confirmation %></td>
     <td><%= f.password_field :new_password_confirmation %></td>
   </tr>
-
+  <tr>
+    <td></td>
+    <td>
+      <%= f.submit submit_text, :class=>'btn' %>
+      <div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'btn btn-danger' %>
+    </td>
+  </tr>
 </table>
-
-
-<div>
-      <%= f.submit submit_text %><div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'cancel_button' %>
-</div>
-
 <% end %>
 
