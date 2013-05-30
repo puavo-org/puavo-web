@@ -40,6 +40,12 @@ class DevicesController < ApplicationController
     @device.get_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(session[:organisation].organisation_key)
 
+    if @device.puavoPreferredServer
+      if preferred_server = Server.find(@device.puavoPreferredServer)
+        @preferred_server_name = preferred_server.puavoHostname
+      end
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @device }
