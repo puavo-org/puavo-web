@@ -469,6 +469,7 @@ en:
         puavoDeviceOffHour: Daytime end
         puavoDeviceImage: Device image
         puavoDeviceBootImage: Device boot image
+        puavoPreferredServer: Preferred LTSP server
       oauth_client:
         displayName: Name
         puavoOAuthClientId: Client id

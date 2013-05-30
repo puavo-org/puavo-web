@@ -92,6 +92,9 @@ class DevicesController < ApplicationController
   def edit
     @device = Device.find(params[:id])
     @device.get_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
+
+    @servers = Server.all.map{ |server|  [server.puavoHostname, server.dn.to_s] }
+
   end
 
   # POST /devices

@@ -161,8 +161,13 @@
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceBootImage" %></td>
   <td class="value_td"><%=h device.puavoDeviceBootImage %></td>
 </tr>
+  <% if current_user.organisation_owner? %>
+  <tr>
+    <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPreferredServer" %></td>
+    <td class="value_td"><%=h Server.find(device.puavoPreferredServer).puavoHostname %></td>
+  </tr>
+  <% end %>
 <% end %>
-<table class="widelist">
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
   <td class="value_td"><%=h device.puavoDeviceKernelVersion %></td>

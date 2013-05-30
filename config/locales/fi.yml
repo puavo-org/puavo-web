@@ -467,6 +467,7 @@ fi:
         puavoDeviceOffHour: "Päivän lopetus"
         puavoDeviceImage: Levykuva
         puavoDeviceBootImage: Käynnistyslevykuva
+        puavoPreferredServer: Ensisijainen LTSP-palvelin
       oauth_client:
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)

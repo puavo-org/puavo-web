@@ -198,6 +198,13 @@
   <td><%= f.label :puavoDeviceBootImage %></td>
   <td><%= f.text_field :puavoDeviceBootImage %></td>
 </tr>
+  <% if current_user.organisation_owner? %>
+  <tr>
+    <td><%= f.label :puavoPreferredServer %></td>
+    <td><%= f.select( :puavoPreferredServer,
+                      [[t('.select'), ""]] + @servers ) %></td>
+  </tr>
+  <% end %>
 <% end %>
 <tr>
   <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
