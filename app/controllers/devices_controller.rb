@@ -40,7 +40,7 @@ class DevicesController < ApplicationController
     @device.get_certificate(session[:organisation].organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(session[:organisation].organisation_key)
 
-    if @device.puavoPreferredServer
+    if @device.attributes.include?("puavoPreferredServer") && @device.puavoPreferredServer
       if preferred_server = Server.find(@device.puavoPreferredServer)
         @preferred_server_name = preferred_server.puavoHostname
       end
