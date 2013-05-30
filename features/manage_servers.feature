@@ -11,7 +11,7 @@ Feature: Manage servers
     | someserver    | bc:5f:f4:56:59:71 |
     And I am logged in as "cucumber" with password "cucumber"
 
-  Scenario: Add new group to school
+  Scenario: Edit server configuration
     Given I am on the server list page
     Then I should see "someserver"
     And I follow "someserver"
