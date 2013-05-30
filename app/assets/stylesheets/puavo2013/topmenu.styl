@@ -117,8 +117,6 @@ li
 
 .school-menu-button,
 .organisation-menu-button
-  background-image url(../../images/show-more.png)
-  background-repeat no-repeat
   background-position right
   padding-right 10px
 
@@ -136,56 +134,41 @@ li
     a[data-method="delete"]:hover
       background none repeat scroll 0 0 #DA0000
 
-ul
-  &.menu
+.menu
+  li
+    float left
+    line-height 2
+    margin 0
+    padding 0 2px
+    position relative
+    span
+      display block
+      padding 0
+      text-decoration none
+      width auto
+      &.sub
+        font-weight bolder
+        padding-right 10px
+        text-transform uppercase
+    a
+      display block
+      font-weight normal
+      text-decoration none
+      &.sub
+        padding-right 15px
+        text-transform uppercase
     li
-      float left
-      line-height 2
-      margin 0
-      padding 0 2px
-      position relative
-      span
-        display block
-        padding 0
-        text-decoration none
-        width auto
-        &.sub
-          color #222222
-          font-weight bolder
-          padding-right 10px
-          text-transform uppercase
+      width 100%
       a
-        display block
-        font-weight normal
-        text-decoration none
+        padding 5px 5px 5px 10px
         &.sub
           padding-right 15px
-          text-transform uppercase
-      &.last
-        a
-          background none repeat scroll 0 0 transparent
-      &.active
-        a
-          color #B6E3EC
-      li
-        border-left 1px solid #D7D7D7
-        border-right 1px solid #D7D7D7
-        width 100%
-        &.last
-          border-bottom 1px solid #D7D7D7
-        a
-          padding 5px 5px 5px 10px
-          &.sub
-            padding-right 15px
     ul
-      border-top 1px solid #D7D7D7
-      list-style none outside none
       margin 0
       padding 0
       top 32px
       width 168px
       ul
-        background-color #FFFFFF
         margin-left 169px
         top -1px
 

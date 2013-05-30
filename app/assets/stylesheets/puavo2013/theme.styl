@@ -113,6 +113,49 @@ table
   background-image none
 // End of Buttons
 
+// Alerts
+.message_error,
+.message_notice,
+.message_success,
+.notice,
+.message_alert
+  border 2px solid #ddd
+
+.message_error, .message_alert
+  background none repeat scroll 0 0 #AD0000
+  border 1px solid #AAAAAA
+  border-radius 4px
+  color #F4F4F4
+
+.message_notice, .notice
+  background none repeat scroll 0 0 #86B410
+  border 1px solid #56340E
+  border-radius 4px
+
+.message_success
+  background #E6EFC2
+  color #264409
+  border 1px solid #C6D880
+  a
+    color #264409
+
+.message_error
+  a
+    color #8a1f11
+
+.message_notice a,
+.message_alert a
+  color #514721
+
+.notice
+  a
+    color #514721
+
+.message-info
+  background-color infoBgColor
+  border 2px dotted baseBoxShadowBorderColor
+// End of Alerts
+
 // End of base_styles
 
 body
@@ -171,7 +214,27 @@ body
   .school_submenu
     li
       border-top 1px solid #E6E6E6
-
+.menu
+  li
+    span
+      &.sub
+        color #222222
+    &.last
+      a
+        background none repeat scroll 0 0 transparent
+    &.active
+      a
+        color #B6E3EC
+    li
+      border-left 1px solid creamWhite
+      border-right 1px solid creamWhite
+      &.last
+        border-bottom 1px solid creamWhite
+    ul
+      border-top 1px solid creamWhite
+      list-style none outside none
+      ul
+        background-color white
 
 .add-new-school a,
 .add-new-school a:hover
@@ -249,28 +312,6 @@ body
         color #222222
 
 // end of main-navigation
-.login-wrap
-  .password_container
-    background-color baseBrown
-  .login_content
-    background-color white
-    p
-      background-color infoBgColor
-      border 2px dotted baseBoxShadowBorderColor
-      &.message_alert
-        background-color errorRed
-
-    .password_buttons span
-      background none repeat scroll 0 0 #FAB32E
-      background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
-      &.active, &:hover
-        background none repeat scroll 0 0 baseBrown
-        background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
-        border-left 1px solid baseBoxShadowBorderColor
-        border-right 1px solid baseBoxShadowBorderColor
-        border-top 1px solid baseBoxShadowBorderColor
-        a
-          color white
 
 // tools
 .tools
@@ -353,16 +394,46 @@ body
   box-shadow 0 4px 8px baseBoxShadowBorderColor
   .login_content
     background none repeat scroll 0 0 white
+  h1
+    color #2D2D2D
+  h2
+    color #323232
   a
     &:hover
       color #AD0000
 
 .password_container
-  .login_content
-    span
-      border 1px solid transparent
-      border-radius 8px 8px 0 0
+  background-color baseBrown
+.login_content
+  background-color white
+  span
+    border 1px solid transparent
+    border-radius 8px 8px 0 0
+    a
+      background-position 5px -790px
+    &:hover
+      a
+        background-position 5px -830px
+    &.change_other_pswd
+      a
+        background-position 5px -870px
+      &:hover
+        a
+          background-position 5px -910px
+  .message_alert
+    background-color errorRed
 
+  .password_buttons span
+    background none repeat scroll 0 0 #FAB32E
+    background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+    &.active, &:hover
+      background none repeat scroll 0 0 baseBrown
+      background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
+      border-left 1px solid baseBoxShadowBorderColor
+      border-right 1px solid baseBoxShadowBorderColor
+      border-top 1px solid baseBoxShadowBorderColor
+      a
+        color white
 // end of login
 
 // password
