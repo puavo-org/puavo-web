@@ -17,21 +17,20 @@
 
   <% @external_files.each do |file| %>
     <tr>
-
       <td>
-        <span class="filename">
+        <span data-title="File name" class="filename">
           <%= file["meta"]["name"] %>
         </span>
       </td>
 
 
-      <td>
+      <td data-title="Description">
       <% if file["meta"]["description"] %>
       <%= file["meta"]["description"] %>
       <% end %>
       </td>
 
-      <td>
+      <td data-title="File size">
       <% if file["model"] %>
         <%= file["model"].puavoData.size %>
       <% else %>
@@ -39,22 +38,26 @@
       <% end %>
 
       </td>
-
-      <td class="actions">
+      <td data-title="Actions" class="actions table-actions">
       <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
       <% if file["model"] %>
-
+      <td>
+      <span class="table-actions">
         <%= link_to(
               'download',
-              download_external_file_path(file["meta"]["name"])
+              download_external_file_path(file["meta"]["name"]), :class => 'btn'
             )
         %>
+        </span>
+        <span class="table-actions">
         <%= link_to(
               'delete',
               destroy_external_file_path(file["meta"]["name"]),
-              method: :delete, data: { confirm: 'Are you sure?' }
+              method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-danger'
             )
         %>
+        </span>
+        </td>
       <% end %>
       </td>
 
