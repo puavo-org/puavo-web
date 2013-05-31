@@ -3,7 +3,6 @@
 form
   table
     display block
-    max-width 80%
   tbody
     display block
   input
@@ -15,16 +14,6 @@ form
     input
       display block
   tr
-    display table-row
-    margin 0 0 5px
-    overflow hidden
-    text-overflow clip
-    white-space nowrap
-    width 100%
-    &:before, &:after
-      content ""
-      display table
-      line-height 0
     td
       margin 0
       padding 0
@@ -32,7 +21,14 @@ form
     td:first-child
       text-align right
       padding-right 1em
-      width 35%
+      width 25%
+      &:empty
+        width auto
+  .list
+    tr
+      td
+        text-align left
+        width auto
   select
     height 30px
     line-height 30px
@@ -125,8 +121,23 @@ legend
 
 
 input[type="file"]
-  display inline-block
+  font-size 90%
+
+input[type="file"],
+input[type="image"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="radio"],
+input[type="checkbox"]
   width auto
+
+select,
+input[type="file"]
+  height 30px
+  *margin-top 4px
+  line-height 30px
+
 
 input[type="submit"]
   font-size 120%
@@ -145,11 +156,6 @@ textarea:focus,
 select:focus
   border 1px solid #5897FB
   color #222
-
-textarea
-  width 450px
-  height 250px
-  padding 5px
 
 input[type="checkbox"],
 input[type="radio"],
