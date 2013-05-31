@@ -3,6 +3,7 @@
 form
   table
     display block
+    max-width 80%
   tbody
     display block
   input
@@ -19,14 +20,15 @@ form
       padding 0
       width 100%
     td:first-child
+      display inline-block
       text-align right
       padding-right 1em
-      width 25%
-      &:empty
-        width auto
+      width 15em
   .list
+    max-width 100%
     tr
       td
+        display table-cell
         text-align left
         width auto
   select
