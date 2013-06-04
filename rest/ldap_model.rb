@@ -68,7 +68,7 @@ class LdapModel
   # @param convert [Block] Use block to
   # @see convert
   def self.ldap_attr_conversion(ldap_name, json_name, &convert)
-    hash = @@ldap2json[self.class.name] ||= {}
+    hash = @@ldap2json[self.name] ||= {}
     hash[ldap_name.to_s] = {
       :attr => json_name.to_s,
       :convert => convert || lambda { |v| Array(v).first }
@@ -77,7 +77,7 @@ class LdapModel
 
   # Return LDAP attributes that will be converted
   def self.ldap_attrs
-    @@ldap2json[self.class.name].keys
+    @@ldap2json[self.name].keys
   end
 
   # Covert LDAP entry Hash to JSON style Hash
@@ -92,7 +92,7 @@ class LdapModel
     h = {}
 
     entry.each do |k,v|
-      if ob = @@ldap2json[self.class.name][k.to_s]
+      if ob = @@ldap2json[self.name][k.to_s]
         h[ob[:attr]] = ob[:convert].call(v)
       elsif all
         h[k] = v
