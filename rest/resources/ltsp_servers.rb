@@ -108,6 +108,7 @@ class LtspServersModel < LdapModel
     data["updated"] = Time.now
     data["hostname"] = key
     @store.set key, data
+    data
   end
 
 
@@ -231,9 +232,7 @@ class LtspServers < LdapSinatra
 
     attrs["ltsp_image"] = params["ltsp_image"]
 
-    @m.set_server(params["hostname"], attrs)
-
-    json "ok" => true
+    json @m.set_server(params["hostname"], attrs)
   end
 
   def search(base, attrs=[], filter="(objectclass=*)")
