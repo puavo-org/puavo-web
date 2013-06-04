@@ -20,10 +20,6 @@ describe PuavoRest::Sessions do
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
-    put "/v3/ltsp_servers/otherserver",
-      "load_avg" => "0.8",
-      "cpu_count" => 2,
-      "ltsp_image" => "otherimage"
   end
 
   describe "nonexistent device hostname" do
