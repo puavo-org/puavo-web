@@ -300,20 +300,18 @@ describe PuavoRest::Sessions do
         :displayName => "School with private LTSP server"
       )
 
-      server = Server.new
-      server.puavoDeviceType = "ltspserver"
-      server.puavoHostname = "normalserver"
-      server.macAddress = "42:67:8d:2b:d1:82"
-      server.save!
+      create_server(
+        :puavoHostname => "normalserver",
+        :macAddress => "42:67:8d:2b:d1:82"
+      )
 
-      limited_server = Server.new
-      limited_server.puavoDeviceType = "ltspserver"
-      limited_server.puavoHostname = "limitedserver"
-      limited_server.macAddress = "76:62:8f:79:9a:a3"
-      limited_server.puavoSchool = [ltsp_school.dn]
-      limited_server.save!
+      create_server(
+        :puavoHostname => "limitedserver",
+        :macAddress => "76:62:8f:79:9a:a3",
+        :puavoSchool => [ltsp_school.dn]
+      )
 
-      d = create_device(
+      create_device(
         :puavoHostname => "limitedschooldevice",
         :macAddress => "38:f5:f8:35:4c:4d",
         :puavoSchool => ltsp_school.dn
