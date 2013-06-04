@@ -1,5 +1,5 @@
 require "uuid"
-require_relative "../pstore_model"
+require_relative "../local_store"
 
 module PuavoRest
 
