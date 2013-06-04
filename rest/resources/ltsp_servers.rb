@@ -94,7 +94,11 @@ class LtspServers < LdapSinatra
   end
 
   get "/v3/ltsp_servers/:hostname" do
-    json @m.get(params["hostname"])
+    if server = @m.get(params["hostname"])
+      json server
+    else
+      not_found "server not found"
+    end
   end
 
   # Set LTSP server idle status as x-www-form-urlencoded. If cpu_count is
