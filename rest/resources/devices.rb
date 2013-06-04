@@ -42,6 +42,31 @@ class Devices < LdapSinatra
 
   auth Credentials::BootServer
 
+  # Get detailed information about the server by hostname
+  #
+  # Example:
+  #
+  #    GET /v3/devices/testthin
+  #
+  #    {
+  #      "kernel_arguments": "lol",
+  #      "kernel_version": "0.1",
+  #      "vertical_refresh": "2",
+  #      "resolution": "320x240",
+  #      "graphics_driver": "nvidia",
+  #      "image": "myimage",
+  #      "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+  #      "puavo_id": "10",
+  #      "mac_address": "08:00:27:88:0c:a6",
+  #      "type": "thinclient",
+  #      "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+  #      "hostname": "testthin",
+  #      "boot_mode": "netboot",
+  #      "xrand_disable": "FALSE"
+  #    }
+  #
+  #
+  # @!macro route
   get "/v3/devices/:hostname" do
     d = new_model(DevicesModel).by_hostname(params["hostname"])
     if d

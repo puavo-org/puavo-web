@@ -67,7 +67,7 @@ class Sessions < LdapSinatra
   # some specific LTSP image and no server provides it will get the most idle
   # LTSP server with what ever image it has
   #
-  # @param hostname Thin client hostname requesting a desktop session
+  # @!macro route
   post "/v3/sessions" do
 
     if params["hostname"].nil?
@@ -109,18 +109,27 @@ class Sessions < LdapSinatra
     json session
   end
 
+  # Return all sessions
+  #
+  # @!macro route
   get "/v3/sessions" do
     json @sessions.store.all
   end
 
+  # Get session by uid
+  #
+  # @!macro route
   get "/v3/sessions/:uuid" do
     if s = @sessions.store.get(params["uuid"])
       json s
     else
-      halt 404, json(:error => "unknown session uid #{ params["uuid"] }")
+      halt 404, json(:error => "unknown session uuid #{ params["uuid"] }")
     end
   end
 
+  # Delete session
+  #
+  # @!macro route
   delete "/v3/sessions/:uuid" do
     @sessions.store.delete params["uuid"]
     json :ok => true
