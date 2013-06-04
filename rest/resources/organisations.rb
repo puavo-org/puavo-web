@@ -5,7 +5,7 @@ class Organisations < LdapModel
 
   def by_dn(dn)
     data = _find_by_dn(dn)
-    LdapModel.convert data
+    Organisations.convert data
   end
 
 end
