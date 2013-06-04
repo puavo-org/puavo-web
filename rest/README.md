@@ -131,6 +131,8 @@ will return the most appropriate ltsp server depending on
   - ltsp server load
   - details https://github.com/opinsys/puavo-users/blob/master/rest/resources/sessions.rb#L33
 
+sessions are stored on memory only but are not automatically deleted
+
 post fields:
   - hostname
 
@@ -161,4 +163,7 @@ return all sessions
 
 return session by uuid
 
+### delete /v3/sessions/:uuid
+
+delete session by uuid
 
