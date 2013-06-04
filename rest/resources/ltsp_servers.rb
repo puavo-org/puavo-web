@@ -40,14 +40,18 @@ class ServerFilter
     end
   end
 
-  def filter_by_school(school_dn)
+
+  # Filter out servers that are dedicated to some other schools
+  def filter_by_other_schools(school_dn)
     @servers = @servers.select do |server|
       schools = Array(server["schools"])
+      # If schools attribute is empty server will serve any school
       schools.empty? || schools.include?(school_dn)
     end
   end
 
-  def filter_by_forced_schools(school_dn)
+  # get only those servers that are dedicated to this school
+  def filter_by_school(school_dn)
     @servers = @servers.select do |server|
       Array(server["schools"]).include?(school_dn)
     end

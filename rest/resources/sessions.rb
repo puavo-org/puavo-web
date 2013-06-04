@@ -29,21 +29,22 @@ class SessionsModel < LdapModel
 
   # Create new desktop session
   #
-  # @param attrs [Hash]
-  def create_session(attrs={})
+  # @param device_attrs [Hash]
+  def create_session(device_attrs={})
     uuid = generate_uuid
     session = {
       "uuid" => uuid,
       "created" => Time.now
-    }.merge(attrs)
+    }.merge(device_attrs)
 
     servers = ServerFilter.new(@ltsp_servers.all)
     servers.filter_old
-    servers.safe_apply(:filter_by_image, attrs["image"]) if attrs["image"]
-    servers.safe_apply(:filter_by_server, attrs["preferred_server"])
-    servers.safe_apply(:filter_by_school, attrs["school"])
-    servers.safe_apply(:filter_by_forced_schools, attrs["school"])
+    servers.safe_apply(:filter_by_image, device_attrs["image"]) if device_attrs["image"]
+    servers.safe_apply(:filter_by_server, device_attrs["preferred_server"])
+    servers.safe_apply(:filter_by_other_schools, device_attrs["school"])
+    servers.safe_apply(:filter_by_school, device_attrs["school"])
     servers.sort_by_load
+
 
     session["ltsp_server"] = servers.first
     raise CannotFindLtspServer if session["ltsp_server"].nil?
