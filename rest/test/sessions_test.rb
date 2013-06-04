@@ -77,7 +77,7 @@ describe PuavoRest::Sessions do
         "load_avg" => "0.5",
         "cpu_count" => 2,
         "ltsp_image" => "ownimage"
-      assert_equal 200, last_response.status
+      assert_200
 
       create_device(
         :puavoDeviceImage => "ownimage",
@@ -102,7 +102,7 @@ describe PuavoRest::Sessions do
         "load_avg" => "0.8",
         "cpu_count" => 2,
         "ltsp_image" => "schoolsimage"
-      assert_equal 200, last_response.status
+      assert_200
       @school.puavoDeviceImage = "schoolsimage"
       @school.save!
 
@@ -128,7 +128,7 @@ describe PuavoRest::Sessions do
         "load_avg" => "0.8",
         "cpu_count" => 2,
         "ltsp_image" => "organisationimage"
-      assert_equal 200, last_response.status
+      assert_200
       create_device(
         :puavoHostname => "thinnoimage",
         :macAddress => "bc:5f:f4:56:59:72",
@@ -140,7 +140,7 @@ describe PuavoRest::Sessions do
       test_organisation.save!
 
       post "/v3/sessions", "hostname" => "thinnoimage"
-      assert_equal 200, last_response.status
+      assert_200
       data = JSON.parse last_response.body
       assert_equal  "organisation-image-server", data["ltsp_server"]["hostname"]
     end
@@ -156,7 +156,7 @@ describe PuavoRest::Sessions do
         "load_avg" => "0.0",
         "cpu_count" => 2,
         "ltsp_image" => "someimage"
-      assert_equal 200, last_response.status
+      assert_200
 
       create_device(
         :puavoHostname => "thinnoimage",
@@ -165,7 +165,8 @@ describe PuavoRest::Sessions do
       )
 
       post "/v3/sessions", "hostname" => "thinnoimage"
-      assert_equal 200, last_response.status
+      assert_200
+
       data = JSON.parse last_response.body
       assert_equal  "most-idle-server", data["ltsp_server"]["hostname"]
     end
@@ -191,7 +192,8 @@ describe PuavoRest::Sessions do
 
     it "can be fetched with GET" do
       post "/v3/sessions", "hostname" => "thinnoimage"
-      assert_equal 200, last_response.status
+      assert_200
+
       post_data = JSON.parse last_response.body
       assert post_data["uuid"], "has uuid"
 
@@ -202,11 +204,12 @@ describe PuavoRest::Sessions do
 
     it "can be deleted with DELETE" do
       post "/v3/sessions", "hostname" => "thinnoimage"
-      assert_equal 200, last_response.status
+      assert_200
+
       data = JSON.parse last_response.body
 
       delete "/v3/sessions/#{ data["uuid"] }"
-      assert_equal 200, last_response.status
+      assert_200
 
       get "/v3/sessions/#{ data["uuid"] }"
       assert_equal 404, last_response.status
@@ -225,9 +228,10 @@ describe PuavoRest::Sessions do
       )
 
       post "/v3/sessions", "hostname" => "thin1"
-      assert_equal 200, last_response.status
+      assert_200
+
       post "/v3/sessions", "hostname" => "thin2"
-      assert_equal 200, last_response.status
+      assert_200
 
       get "/v3/sessions"
       data = JSON.parse last_response.body
@@ -280,13 +284,13 @@ describe PuavoRest::Sessions do
         "load_avg" => "0.2",
         "cpu_count" => 2,
         "ltsp_image" => "someimage"
-      assert_equal 200, last_response.status
+      assert_200
 
       put "/v3/ltsp_servers/normalserver",
         "load_avg" => "0.8",
         "cpu_count" => 2,
         "ltsp_image" => "anotherimage"
-      assert_equal 200, last_response.status
+      assert_200
 
       post "/v3/sessions", "hostname" => "normalschooldevice"
       data = JSON.parse last_response.body
