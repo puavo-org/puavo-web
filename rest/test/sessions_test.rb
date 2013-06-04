@@ -20,21 +20,25 @@ describe PuavoRest::Sessions do
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
+    create_device(
+      :puavoDeviceImage => "ownimage",
+      :puavoHostname => "athin",
+      :macAddress => "bf:9a:8c:1b:e0:6a",
+      :puavoSchool => @school.dn
+    )
+    create_server(
+      :puavoHostname => "server1",
+      :macAddress => "bc:5f:f4:56:59:71"
+    )
+    create_server(
+      :puavoHostname => "server2",
+      :macAddress => "bc:5f:f4:56:59:72"
+    )
   end
 
   describe "old server filter" do
     it "filters out servers that are not updated recently" do
-      create_device(
-        :puavoDeviceImage => "ownimage",
-        :puavoHostname => "athin",
-        :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoSchool => @school.dn
-      )
-      create_server(
-        :puavoHostname => "littleload",
-        :macAddress => "bc:5f:f4:56:59:71"
-      )
-      put "/v3/ltsp_servers/littleload",
+      put "/v3/ltsp_servers/server1",
         "load_avg" => "0.1",
         "cpu_count" => 2,
         "ltsp_image" => "image1"
@@ -42,11 +46,7 @@ describe PuavoRest::Sessions do
 
       Timecop.travel 60 * 5
 
-      create_server(
-        :puavoHostname => "moreloaded",
-        :macAddress => "bc:5f:f4:56:59:72"
-      )
-      put "/v3/ltsp_servers/moreloaded",
+      put "/v3/ltsp_servers/server2",
         "load_avg" => "0.9",
         "cpu_count" => 2,
         "ltsp_image" => "image2"
@@ -56,7 +56,10 @@ describe PuavoRest::Sessions do
       assert_200
 
       data = JSON.parse last_response.body
-      assert_equal "moreloaded", data["ltsp_server"]["hostname"]
+      assert_equal(
+        "server2", data["ltsp_server"]["hostname"],
+        "server1 has less load but server2 is given because server1 has timed out"
+      )
     end
   end
 
