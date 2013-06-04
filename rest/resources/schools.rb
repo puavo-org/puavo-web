@@ -5,7 +5,7 @@ class SchoolsModel < LdapModel
   ldap_attr_conversion :puavoDeviceImage, :image
 
   def by_dn(dn)
-    LdapModel.convert _find_by_dn(LdapModel.escape dn)
+    SchoolsModel.convert _find_by_dn(SchoolsModel.escape dn)
   end
 
 end
