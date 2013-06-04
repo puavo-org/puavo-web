@@ -7,6 +7,13 @@ ENV['RACK_ENV'] = 'test'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../../config/environment", __FILE__)
 
+def create_server(attrs)
+  server = Server.new
+  server.attributes = attrs
+  server.puavoDeviceType = "ltspserver"
+  server.save!
+end
+
 
 def setup_connection
   test_organisation = Puavo::Organisation.find('example')

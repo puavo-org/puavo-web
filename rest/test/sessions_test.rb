@@ -3,13 +3,14 @@ require_relative "./helper"
 describe PuavoRest::Sessions do
 
   def create_device(attrs)
-    @thin_with_image = Device.new
-    @thin_with_image.classes = ["top", "device", "puppetClient", "puavoNetbootDevice"]
-    @thin_with_image.puavoDeviceType = "thinclient"
-    @thin_with_image.macAddress = "bc:5f:f4:56:59:71"
+    d = Device.new
+    d.classes = ["top", "device", "puppetClient", "puavoNetbootDevice"]
+    d.puavoDeviceType = "thinclient"
+    d.macAddress = "bc:5f:f4:56:59:71"
 
-    @thin_with_image.attributes = attrs
-    @thin_with_image.save!
+    d.attributes = attrs
+    d.save!
+    d
   end
 
   before(:each) do
@@ -34,10 +35,15 @@ describe PuavoRest::Sessions do
 
   describe "thin with own image" do
     it "uses it's own image" do
+      create_server(
+        :puavoHostname => "testserver",
+        :macAddress => "bc:5f:f4:56:59:71"
+      )
       put "/v3/ltsp_servers/testserver",
         "load_avg" => "0.5",
         "cpu_count" => 2,
         "ltsp_image" => "ownimage"
+      assert_equal 200, last_response.status
 
       create_device(
         :puavoDeviceImage => "ownimage",
@@ -54,10 +60,15 @@ describe PuavoRest::Sessions do
 
   describe "thinclient with no own image" do
     it "uses image from school" do
+      create_server(
+        :puavoHostname => "school-image-server",
+        :macAddress => "bc:5f:f4:56:59:71"
+      )
       put "/v3/ltsp_servers/school-image-server",
         "load_avg" => "0.8",
         "cpu_count" => 2,
         "ltsp_image" => "schoolsimage"
+      assert_equal 200, last_response.status
       @school.puavoDeviceImage = "schoolsimage"
       @school.save!
 
@@ -75,10 +86,15 @@ describe PuavoRest::Sessions do
 
   describe "organisation level image" do
     it "is given to other clients" do
+      create_server(
+        :puavoHostname => "organisation-image-server",
+        :macAddress => "bc:5f:f4:56:59:71"
+      )
       put "/v3/ltsp_servers/organisation-image-server",
         "load_avg" => "0.8",
         "cpu_count" => 2,
         "ltsp_image" => "organisationimage"
+      assert_equal 200, last_response.status
       create_device(
         :puavoHostname => "thinnoimage",
         :macAddress => "bc:5f:f4:56:59:72",
@@ -98,10 +114,15 @@ describe PuavoRest::Sessions do
 
   describe "no image at all" do
     it "gets the most idle server" do
+      create_server(
+        :puavoHostname => "most-idle-server",
+        :macAddress => "bc:5f:f4:56:59:71"
+      )
       put "/v3/ltsp_servers/most-idle-server",
         "load_avg" => "0.0",
         "cpu_count" => 2,
         "ltsp_image" => "someimage"
+      assert_equal 200, last_response.status
 
       create_device(
         :puavoHostname => "thinnoimage",
@@ -118,6 +139,10 @@ describe PuavoRest::Sessions do
 
   describe "GET sessions" do
     before(:each) do
+      create_server(
+        :puavoHostname => "most-idle-server",
+        :macAddress => "bc:5f:f4:56:59:71"
+      )
       put "/v3/ltsp_servers/most-idle-server",
         "load_avg" => "0.0",
         "cpu_count" => 2,
@@ -201,17 +226,17 @@ describe PuavoRest::Sessions do
       limited_server.puavoSchool = [ltsp_school.dn]
       limited_server.save!
 
-      create_device(
+      d = create_device(
         :puavoHostname => "limitedschooldevice",
         :macAddress => "38:f5:f8:35:4c:4d",
         :puavoSchool => ltsp_school.dn
       )
+
       create_device(
         :puavoHostname => "normalschooldevice",
         :macAddress => "79:61:37:31:d1:ba",
         :puavoSchool => @school.dn
       )
-
 
     end
 
@@ -221,11 +246,13 @@ describe PuavoRest::Sessions do
         "load_avg" => "0.2",
         "cpu_count" => 2,
         "ltsp_image" => "someimage"
+      assert_equal 200, last_response.status
 
       put "/v3/ltsp_servers/normalserver",
         "load_avg" => "0.8",
         "cpu_count" => 2,
         "ltsp_image" => "anotherimage"
+      assert_equal 200, last_response.status
 
       post "/v3/sessions", "hostname" => "normalschooldevice"
       data = JSON.parse last_response.body
@@ -234,7 +261,7 @@ describe PuavoRest::Sessions do
       assert_equal "normalserver", data["ltsp_server"]["hostname"]
     end
 
-    it "must force limited servers to schools they are limited to" do
+    it "must prefer servers to schools they are prefered to" do
       put "/v3/ltsp_servers/limitedserver",
         "load_avg" => "0.9",
         "cpu_count" => 2,
