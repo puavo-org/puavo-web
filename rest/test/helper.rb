@@ -12,6 +12,7 @@ def create_server(attrs)
   server.attributes = attrs
   server.puavoDeviceType = "ltspserver"
   server.save!
+  server
 end
 
 def assert_200(res=nil)
