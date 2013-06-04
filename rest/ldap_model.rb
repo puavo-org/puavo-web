@@ -4,6 +4,14 @@ module PuavoRest
 class LdapModel
   attr_accessor :store
 
+  class ModelError < Exception
+  end
+
+  class BadInput < ModelError
+    def code
+      400
+    end
+  end
 
   @@ldap2json = {}
 
