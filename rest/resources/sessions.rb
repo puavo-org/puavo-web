@@ -3,7 +3,7 @@ require_relative "../pstore_model"
 
 module PuavoRest
 
-class SessionsModel < PstoreModel
+class SessionsModel < LdapModel
 
   class CannotFindLtspServer < Exception; end
 
