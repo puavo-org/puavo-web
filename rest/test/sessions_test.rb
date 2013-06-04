@@ -80,7 +80,7 @@ describe PuavoRest::Sessions do
       data = JSON.parse last_response.body
       assert_equal(
         "server2", data["ltsp_server"]["hostname"],
-        "server1 has less load but server2 is given because server1 has timed out"
+        "server1 has less load but server2 must be given because server1 has timed out"
       )
     end
   end
