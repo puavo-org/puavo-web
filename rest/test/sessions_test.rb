@@ -26,11 +26,11 @@ describe PuavoRest::Sessions do
       :macAddress => "bf:9a:8c:1b:e0:6a",
       :puavoSchool => @school.dn
     )
-    create_server(
+    @server1 = create_server(
       :puavoHostname => "server1",
       :macAddress => "bc:5f:f4:56:59:71"
     )
-    create_server(
+    @server2 = create_server(
       :puavoHostname => "server2",
       :macAddress => "bc:5f:f4:56:59:72"
     )
@@ -82,6 +82,39 @@ describe PuavoRest::Sessions do
         "server2", data["ltsp_server"]["hostname"],
         "server1 has less load but server2 must be given because server1 has timed out"
       )
+    end
+  end
+
+  describe "prefered server on client" do
+    it "is served first" do
+
+      create_device(
+        :puavoHostname => "thin-with-prefered-server",
+        :puavoPreferredServer => @server2.dn,
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoSchool => @school.dn
+      )
+
+      put "/v3/ltsp_servers/server1",
+        "load_avg" => "0.1",
+        "cpu_count" => 2,
+        "ltsp_image" => "image1"
+      assert_200
+      put "/v3/ltsp_servers/server2",
+        "load_avg" => "0.9",
+        "cpu_count" => 2,
+        "ltsp_image" => "image2"
+      assert_200
+
+      post "/v3/sessions", "hostname" => "thin-with-prefered-server"
+      assert_200
+
+      data = JSON.parse last_response.body
+      assert_equal(
+        "server2", data["ltsp_server"]["hostname"],
+        "server1 has less load but server2 must be given because server1 is prefered by the client"
+      )
+
     end
   end
 

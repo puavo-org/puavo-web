@@ -27,7 +27,7 @@ class SessionsModel < LdapModel
     super organisation_domain, lsm
   end
 
-  # Create new desktop session
+  # Create new desktop session for a device
   #
   # @param device_attrs [Hash]
   def create_session(device_attrs={})
@@ -93,7 +93,7 @@ class Sessions < LdapSinatra
     json @sessions.create_session(
       "image" => image,
       "hostname" => params["hostname"],
-      "preferred_server" => device[:preferred_server],
+      "preferred_server" => device["preferred_server"],
       "school" => device["school"]
     )
   end
