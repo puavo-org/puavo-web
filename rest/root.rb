@@ -27,6 +27,7 @@ require_relative "./resources/sessions"
 module PuavoRest
 
 class Root < LdapSinatra
+  set :public_folder, "public"
 
   get "/" do
     "hello"
