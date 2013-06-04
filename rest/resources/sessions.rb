@@ -90,12 +90,23 @@ class Sessions < LdapSinatra
       image
     end
 
-    json @sessions.create_session(
+    logger.info "Thin #{ params["hostname"] } " +
+      "from school #{ device["school"].inspect } " +
+      "prefering image #{ image.inspect } " +
+      "and server #{ device["preferred_server"].inspect } " +
+      "is requesting a desktop session"
+
+    session = @sessions.create_session(
       "image" => image,
       "hostname" => params["hostname"],
       "preferred_server" => device["preferred_server"],
       "school" => device["school"]
     )
+
+    logger.info "Created session #{ session["uuid"] } " +
+      "to ltsp server #{ session["ltsp_server"]["hostname"] } " +
+      "for #{ params["hostname"] }"
+    json session
   end
 
   get "/v3/sessions" do
