@@ -187,6 +187,7 @@ class LtspServers < LdapSinatra
   #
   # @!macro route
   get "/v3/ltsp_servers/_most_idle.?:format?" do
+    logger.warn "Call to legacy _most_idle route. Use POST /v3/sessions in future"
     server = @m.most_idle.first
     if server
       logger.info "Sending '#{ server["hostname"] }' as the most idle server to #{ request.ip }"
