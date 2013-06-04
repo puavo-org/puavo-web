@@ -6,6 +6,7 @@ class DevicesModel < LdapModel
   ldap_attr_conversion :puavoSchool, :school_dn
   ldap_attr_conversion :puavoDeviceType, :type
   ldap_attr_conversion :puavoDeviceImage, :image
+  ldap_attr_conversion :puavoPreferredServer, :preferred_server
   # TODO: Audio device etc...
 
   def ldap_base
