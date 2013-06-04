@@ -235,15 +235,5 @@ class LtspServers < LdapSinatra
     json @m.set_server(params["hostname"], attrs)
   end
 
-  def search(base, attrs=[], filter="(objectclass=*)")
-    res = nil
-    @ldap_conn.search(base, LDAP::LDAP_SCOPE_SUBTREE, filter,
-      attrs
-    ) do |entry|
-      res = entry.to_hash
-      break
-    end
-    res
-  end
 end
 end
