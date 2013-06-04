@@ -7,7 +7,16 @@ class DevicesModel < LdapModel
   ldap_attr_conversion :puavoDeviceType, :type
   ldap_attr_conversion :puavoDeviceImage, :image
   ldap_attr_conversion :puavoPreferredServer, :preferred_server
-  # TODO: Audio device etc...
+  ldap_attr_conversion :puavoDeviceKernelArguments, :kernel_arguments
+  ldap_attr_conversion :puavoDeviceKernelVersion, :kernel_version
+  ldap_attr_conversion :puavoDeviceVertRefresh, :vertical_refresh
+  ldap_attr_conversion :macAddress, :mac_address
+  ldap_attr_conversion :puavoId, :puavo_id
+  ldap_attr_conversion :puavoId, :puavo_id
+  ldap_attr_conversion :puavoDeviceBootMode, :boot_mode
+  ldap_attr_conversion :puavoDeviceXrandrDisable, :xrand_disable
+  ldap_attr_conversion :puavoDeviceXserver, :graphics_driver
+  ldap_attr_conversion :puavoDeviceResolution, :resolution
 
   def ldap_base
     "ou=Devices,ou=Hosts,#{ @organisation_info["base"] }"
