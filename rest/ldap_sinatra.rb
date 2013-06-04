@@ -91,6 +91,11 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
+  error LdapModel::ModelError do |err|
+    halt err.code, json(:message => err.message)
+  end
+
+
   # Assert that authentication is required for this route even if the the ldap
   # connection is not actually used
   def require_auth
