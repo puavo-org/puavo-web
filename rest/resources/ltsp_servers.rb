@@ -176,17 +176,12 @@ class LtspServers < LdapSinatra
 
   # Computed resource for the most idle ltsp server
   #
-  # Set format to txt to get only the server name as plain/text
-  #
   # Examples:
   # curl /v3/hogwarts/ltsp_servers/_most_idle
   # => {"load_avg":0.035,"ltsp_image":null,"updated":"2013-05-20 11:29:13 +0300","hostname":"someservername"}
   #
-  # curl /v3/hogwarts/ltsp_servers/_most_idle.txt
-  # => someservername
-  #
   # @!macro route
-  get "/v3/ltsp_servers/_most_idle.?:format?" do
+  get "/v3/ltsp_servers/_most_idle" do
     logger.warn "Call to legacy _most_idle route. Use POST /v3/sessions in future"
     server = @m.most_idle.first
     if server
