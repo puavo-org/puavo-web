@@ -14,6 +14,11 @@ def create_server(attrs)
   server.save!
 end
 
+def assert_200(res=nil)
+  res ||= last_response
+  assert_equal 200, res.status, "Body: #{ res.body }"
+end
+
 
 def setup_connection
   test_organisation = Puavo::Organisation.find('example')

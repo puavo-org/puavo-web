@@ -22,6 +22,44 @@ describe PuavoRest::Sessions do
     )
   end
 
+  describe "old server filter" do
+    it "filters out servers that are not updated recently" do
+      create_device(
+        :puavoDeviceImage => "ownimage",
+        :puavoHostname => "athin",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoSchool => @school.dn
+      )
+      create_server(
+        :puavoHostname => "littleload",
+        :macAddress => "bc:5f:f4:56:59:71"
+      )
+      put "/v3/ltsp_servers/littleload",
+        "load_avg" => "0.1",
+        "cpu_count" => 2,
+        "ltsp_image" => "image1"
+      assert_200
+
+      Timecop.travel 60 * 5
+
+      create_server(
+        :puavoHostname => "moreloaded",
+        :macAddress => "bc:5f:f4:56:59:72"
+      )
+      put "/v3/ltsp_servers/moreloaded",
+        "load_avg" => "0.9",
+        "cpu_count" => 2,
+        "ltsp_image" => "image2"
+      assert_200
+
+      post "/v3/sessions", "hostname" => "athin"
+      assert_200
+
+      data = JSON.parse last_response.body
+      assert_equal "moreloaded", data["ltsp_server"]["hostname"]
+    end
+  end
+
   describe "nonexistent device hostname" do
     it "gets 400" do
       post "/v3/sessions", "hostname" => "nonexistent"
