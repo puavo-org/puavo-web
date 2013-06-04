@@ -39,3 +39,8 @@ test:
 
 dev:
 	bundle exec shotgun
+
+clean:
+	rm -rf .bundle
+	rm -rf vendor
+	rm -rf public/doc/*
