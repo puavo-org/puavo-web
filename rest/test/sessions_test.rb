@@ -2,17 +2,6 @@ require_relative "./helper"
 
 describe PuavoRest::Sessions do
 
-  def create_device(attrs)
-    d = Device.new
-    d.classes = ["top", "device", "puppetClient", "puavoNetbootDevice"]
-    d.puavoDeviceType = "thinclient"
-    d.macAddress = "bc:5f:f4:56:59:71"
-
-    d.attributes = attrs
-    d.save!
-    d
-  end
-
   before(:each) do
     Puavo::Test.clean_up_ldap
     FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]

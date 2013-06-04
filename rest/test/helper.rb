@@ -15,6 +15,17 @@ def create_server(attrs)
   server
 end
 
+def create_device(attrs)
+  d = Device.new
+  d.classes = ["top", "device", "puppetClient", "puavoNetbootDevice"]
+  d.puavoDeviceType = "thinclient"
+  d.macAddress = "bc:5f:f4:56:59:71"
+
+  d.attributes = attrs
+  d.save!
+  d
+end
+
 def assert_200(res=nil)
   res ||= last_response
   assert_equal 200, res.status, "Body: #{ res.body }"
