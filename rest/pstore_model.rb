@@ -1,13 +1,15 @@
 
 module PuavoRest
 
-# Abstract class for local persistent models
-class PstoreModel
+# Writeable local store. Sense ldap connection is read only on boot servers we
+# need some simple store we can write to.. Here's simple Pstore wrapper.
+class LocalStore
 
   def initialize(path)
     FileUtils.mkdir_p File.dirname(path)
-    @store = PStore.new(path, true)
-    @store.ultra_safe = true
+    @path = path
+    @pstore = PStore.new(path, true)
+    @pstore.ultra_safe = true
   end
 
   # Create instance from organisation domain using PuavoRest::CONFIG
@@ -26,8 +28,8 @@ class PstoreModel
   # @param key [String]
   # @param data [Hash]
   def set(key, data)
-    @store.transaction do
-      @store[key] = data
+    @pstore.transaction do
+      @pstore[key] = data
     end
     data
   end
@@ -37,14 +39,14 @@ class PstoreModel
   # @param key [String]
   # @return [Hash]
   def get(key)
-    @store.transaction(true) do
-      @store[key]
+    @pstore.transaction(true) do
+      @pstore[key]
     end
   end
 
   def delete(key)
-    @store.transaction do
-      @store.delete key
+    @pstore.transaction do
+      @pstore.delete key
     end
   end
 
@@ -57,15 +59,21 @@ class PstoreModel
   end
 
   def each(&block)
-    @store.transaction(true) do
-      @store.roots.each do |k|
+    @pstore.transaction(true) do
+      @pstore.roots.each do |k|
         if block.arity == 1
-          block.call @store[k]
+          block.call @pstore[k]
         else
-          block.call k, @store[k]
+          block.call k, @pstore[k]
         end
       end
     end
   end
+
+  def destroy
+    @pstore =nil
+    File.unlink(@path)
+  end
+
 end
 end

@@ -2,6 +2,9 @@ require 'puavo/ldap'
 
 module PuavoRest
 class LdapModel
+  attr_accessor :store
+
+
   @@ldap2json = {}
 
   @@organisations_by_domain = nil
