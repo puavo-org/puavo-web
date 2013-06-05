@@ -56,7 +56,7 @@ class ExternalFiles < LdapSinatra
   #    ]
   #
   # @!macro route
-  get "/v3/:organisation/external_files" do
+  get "/v3/external_files" do
     json new_model(ExternalFilesModel).index
   end
 
@@ -67,13 +67,13 @@ class ExternalFiles < LdapSinatra
   #      "data_hash": <sha1 checksum of the file>
   #    }
   # @!macro route
-  get "/v3/:organisation/external_files/:name/metadata" do
+  get "/v3/external_files/:name/metadata" do
     json new_model(ExternalFilesModel).metadata(params[:name])
   end
 
   # Get file contents
   # @!macro route
-  get "/v3/:organisation/external_files/:name" do
+  get "/v3/external_files/:name" do
     content_type "application/octet-stream"
     new_model(ExternalFilesModel).data(params[:name])
   end
