@@ -5,9 +5,9 @@ gem "sinatra-contrib"
 gem "uuid"
 gem "puma"
 gem "multi_json"
+gem "yard"
 
 group :rest_development do
-  gem "yard"
   gem "shotgun"
   gem "debugger"
   gem "pry"
