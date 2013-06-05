@@ -4,7 +4,7 @@ installdir = /var/app/puavo-rest
 
 build:
 	RACK_ENV=production bundle install --deployment --without rest_development
-	$(MAKE) yard
+	RACK_ENV=production $(MAKE) yard
 
 yard:
 	mkdir -p public/doc
