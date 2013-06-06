@@ -85,6 +85,13 @@ describe LdapHash do
       assert called
     end
 
+    it "returns values from with block" do
+      val = LdapHash.with(:connection => "foo") do
+        "value"
+      end
+      assert_equal "value", val
+    end
+
   end
 
 

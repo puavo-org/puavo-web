@@ -24,9 +24,10 @@ class LdapHash < Hash
     prev = Thread.current[:ldap_hash_settings]
 
     setup(settings.merge(temp_settings))
-    block.call
+    val = block.call
 
     Thread.current[:ldap_hash_settings] = prev
+    val
   end
 
   def self.settings
