@@ -22,17 +22,41 @@ class DevicesModel < LdapModel
     "ou=Devices,ou=Hosts,#{ @organisation_info["base"] }"
   end
 
+
+  def fill_attributes(attrs, &block)
+    missing = attrs.any? { |attr| self[attr].nil? }
+    if missing
+      from = block.call
+      attrs.each do |attr|
+        self[attr] ||= from[attr]
+      end
+    end
+  end
+
   # Find device by it's hostname
-  def by_hostname(hostname)
-    data = filter(
+  def by_hostname(hostname, fallback_defaults=false)
+    device = DevicesModel.convert filter(
       "(cn=#{ LdapModel.escape hostname })",
       self.class.ldap_attrs
-    )
+    ).first
 
-    if data.first.nil?
+    fill_attributes("preferred_server") do
+      school = SchoolsModel.
+        new(@ldap_conn, @organisation_info).
+        by_dn(device["school"])
+    end
+
+    if fallback_defaults && device["preferred_image"].nil?
+      school = SchoolsModel.
+        new(@ldap_conn, @organisation_info).
+        by_dn(device["school"])
+      device["preferred_image"] = school["preferred_image"]
+    end
+
+    if device.nil?
       raise BadInput, "Cannot find device with hostname '#{ hostname }'"
     else
-      DevicesModel.convert data.first
+      device
     end
   end
 
@@ -68,7 +92,11 @@ class Devices < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname" do
-    d = new_model(DevicesModel).by_hostname(params["hostname"])
+    d = new_model(DevicesModel).by_hostname(
+      params["hostname"],
+      !!params["fallback_defaults"]
+    )
+
     if d
       json d
     else
