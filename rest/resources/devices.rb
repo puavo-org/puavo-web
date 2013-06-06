@@ -5,7 +5,7 @@ class DevicesModel < LdapModel
   ldap_attr_conversion :cn, :hostname
   ldap_attr_conversion :puavoSchool, :school
   ldap_attr_conversion :puavoDeviceType, :type
-  ldap_attr_conversion :puavoDeviceImage, :image
+  ldap_attr_conversion :puavoDeviceImage, :preferred_image
   ldap_attr_conversion :puavoPreferredServer, :preferred_server
   ldap_attr_conversion :puavoDeviceKernelArguments, :kernel_arguments
   ldap_attr_conversion :puavoDeviceKernelVersion, :kernel_version

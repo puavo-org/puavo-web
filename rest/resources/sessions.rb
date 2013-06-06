@@ -86,7 +86,7 @@ class Sessions < LdapSinatra
     ].reduce(nil) do |image, block|
       if image.nil?
         model = block.call
-        image = model["image"] if model
+        image = model["preferred_image"] if model
       end
       image
     end
