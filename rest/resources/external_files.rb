@@ -14,7 +14,7 @@ class ExternalFile < LdapHash
   end
 
   def self.file_filter(name)
-    name = LdapModel.escape(name)
+    name = escape(name)
     "(&(cn=#{ name })(objectClass=top)(objectClass=puavoFile))"
   end
 
@@ -25,7 +25,7 @@ class ExternalFile < LdapHash
 
   # return file contents for file name
   def self.data_only(name)
-    name = LdapModel.escape(name)
+    name = escape(name)
     raw_filter(file_filter(name), ["puavoData"]).first["puavoData"]
   end
 
