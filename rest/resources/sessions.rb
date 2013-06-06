@@ -34,12 +34,13 @@ class SessionsModel < LdapModel
     uuid = generate_uuid
     session = {
       "uuid" => uuid,
-      "created" => Time.now
-    }.merge(device_attrs)
+      "created" => Time.now,
+      "client" => device_attrs
+    }
 
     servers = ServerFilter.new(@ltsp_servers.all)
     servers.filter_old
-    servers.safe_apply(:filter_by_image, device_attrs["image"]) if device_attrs["image"]
+    servers.safe_apply(:filter_by_image, device_attrs["preferred_image"]) if device_attrs["preferred_image"]
     servers.safe_apply(:filter_by_server, device_attrs["preferred_server"])
     servers.safe_apply(:filter_by_other_schools, device_attrs["school"])
     servers.safe_apply(:filter_by_school, device_attrs["school"])
@@ -97,10 +98,10 @@ class Sessions < LdapSinatra
       "is requesting a desktop session"
 
     session = @sessions.create_session(
-      "image" => image,
       "hostname" => params["hostname"],
-      "preferred_server" => device["preferred_server"],
-      "school" => device["school"]
+      "school" => device["school"],
+      "preferred_image" => image,
+      "preferred_server" => device["preferred_server"]
     )
 
     logger.info "Created session #{ session["uuid"] } " +

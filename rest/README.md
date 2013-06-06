@@ -139,21 +139,22 @@ post fields:
 return
 
     {
+      "created": "2013-06-06 09:54:05 +0300",
+      "uuid": "cd600a50-b0a3-0130-b677-080027880ca6",
       "ltsp_server": {
         "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
         "hostname": "ltspserver1",
-        "updated": "2013-06-04 16:17:50 +0300",
+        "updated": "2013-06-06 09:54:01 +0300",
         "ltsp_image": "test-image",
-        "load_avg": 0.1
+        "load_avg": 0.095
       },
-      "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
-      "preferred_server": null,
-      "hostname": "testthin",
-      "image": "myimage",
-      "created": "2013-06-04 16:17:58 +0300",
-      "uuid": "198c8c90-af47-0130-fb98-080027880ca6"
+      "client": {
+        "preferred_server": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi,
+        "preferred_image": "someimage",
+        "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+        "hostname": "testthin"
+      }
     }
-
 
 ### GET /v3/sessions
 
