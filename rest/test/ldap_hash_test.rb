@@ -8,6 +8,7 @@ describe LdapHash do
 
     class TestHash1 < LdapHash
       ldap_map :fooBar, :foo_bar
+      ldap_map(:number, :integer) { |v| v.to_i }
     end
 
     class TestHash2 < LdapHash
@@ -41,6 +42,18 @@ describe LdapHash do
     it "can create new instances from normal hashes" do
       h = TestHash1.from_hash(:fooBar => "value")
       assert_equal "value", h["foo_bar"]
+    end
+
+    it "mapping picks the first item if the value is array by default" do
+      h = TestHash1.new
+      h.ldap_set("fooBar",  ["first", "second"])
+      assert_equal "first", h["foo_bar"]
+    end
+
+    it "mapping can have custom converter as block" do
+      h = TestHash1.new
+      h.ldap_set("number",  "2")
+      assert_equal 2, h["integer"]
     end
 
   end
