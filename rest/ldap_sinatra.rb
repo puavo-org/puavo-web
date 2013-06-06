@@ -83,6 +83,11 @@ class LdapSinatra < Sinatra::Base
     if credentials and @ldap_conn.nil?
       @ldap_conn = setup_ldap_connection(credentials)
     end
+
+    LdapHash.setup(
+      :connection => @ldap_conn,
+      :organisation => @organisation_info
+    )
   end
 
   after do

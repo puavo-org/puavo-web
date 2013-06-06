@@ -1,39 +1,32 @@
 module PuavoRest
 
+class ExternalFile < LdapHash
 
-class ExternalFilesModel < LdapModel
+  ldap_map :cn, :name
+  ldap_map :puavoDataHash, :data_hash
 
-  ldap_attr_conversion :cn, :name
-  ldap_attr_conversion :puavoDataHash, :data_hash
-
-  def ldap_base
-    "ou=Files,ou=Desktops,#{ @organisation_info["base"] }"
+  def self.ldap_base
+    "ou=Files,ou=Desktops,#{ organisation["base"] }"
   end
 
-  def index
-    filter(
-      "(&(objectClass=top)(objectClass=puavoFile))",
-      ExternalFilesModel.ldap_attrs
-    ).map do |entry|
-      ExternalFilesModel.convert(entry)
-    end
+  def self.all
+    filter("(&(objectClass=top)(objectClass=puavoFile))")
   end
 
-  def file_filter(name)
+  def self.file_filter(name)
     name = LdapModel.escape(name)
     "(&(cn=#{ name })(objectClass=top)(objectClass=puavoFile))"
   end
 
-  def metadata(name)
-    ExternalFilesModel.convert filter(
-      file_filter(name),
-      ExternalFilesModel.ldap_attrs
-    ).first
+  # return file metadata for file name
+  def self.metadata(name)
+    filter(file_filter(name)).first
   end
 
-  def data(name)
+  # return file contents for file name
+  def self.data_only(name)
     name = LdapModel.escape(name)
-    filter(file_filter(name), ["puavoData"]).first["puavoData"]
+    raw_filter(file_filter(name), ["puavoData"]).first["puavoData"]
   end
 
 end
@@ -57,7 +50,7 @@ class ExternalFiles < LdapSinatra
   #
   # @!macro route
   get "/v3/external_files" do
-    json new_model(ExternalFilesModel).index
+    json ExternalFile.all
   end
 
   # Get metadata for external file
@@ -68,14 +61,14 @@ class ExternalFiles < LdapSinatra
   #    }
   # @!macro route
   get "/v3/external_files/:name/metadata" do
-    json new_model(ExternalFilesModel).metadata(params[:name])
+    json ExternalFile.metadata(params[:name])
   end
 
   # Get file contents
   # @!macro route
   get "/v3/external_files/:name" do
     content_type "application/octet-stream"
-    new_model(ExternalFilesModel).data(params[:name])
+    ExternalFile.data_only(params[:name])
   end
 
 end
