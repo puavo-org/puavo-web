@@ -49,8 +49,6 @@ end
 
 # ldap attribute conversions
 class LdapHash < Hash
-  class UnknownLdapMap < Exception
-  end
 
   @@ldap2json = {}
   # Define conversion between LDAP attribute and the JSON attribute
@@ -74,8 +72,6 @@ class LdapHash < Hash
   def ldap_set(key, value)
       if ob = @@ldap2json[self.class.name][key.to_s]
         self[ob[:attr]] = ob[:convert].call(value)
-      else
-        raise UnknownLdapMap, key
       end
   end
 

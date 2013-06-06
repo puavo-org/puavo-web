@@ -20,11 +20,10 @@ describe LdapHash do
       assert_equal "value", h["foo_bar"]
     end
 
-    it "don't mix ldap maps with other classes" do
+    it "should ignore attributes without mapping" do
       h = TestHash1.new
-      assert_raises LdapHash::UnknownLdapMap do
-        h.ldap_set("otherAttr", "value")
-      end
+      h.ldap_set("unknownattr", "value")
+      assert h.empty?
     end
 
     it "can merge ldap attrs from hash" do
@@ -41,7 +40,6 @@ describe LdapHash do
 
     it "can create new instances from normal hashes" do
       h = TestHash1.from_hash(:fooBar => "value")
-      debugger; nil
       assert_equal "value", h["foo_bar"]
     end
 
