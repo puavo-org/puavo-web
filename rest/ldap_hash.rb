@@ -84,3 +84,61 @@ class LdapHash < Hash
 
 end
 
+
+# generic ldap search rutines
+class LdapHash < Hash
+
+  # LDAP base for this model. Must be implemented by subclasses
+  def self.ldap_base
+    raise "not implemented"
+  end
+
+  # LDAP::LDAP_SCOPE_SUBTREE filter search for #ldap_base
+  # @param filter [String] LDAP filter
+  # @param attributes [Array] Limit search results to these attributes
+  # @see http://ruby-ldap.sourceforge.net/rdoc/classes/LDAP/Conn.html#M000025
+  # @return [Array]
+  def self.raw_filter(filter, attributes=nil)
+    res = []
+    attributes ||= ldap_attrs
+
+    connection.search(
+      ldap_base,
+      LDAP::LDAP_SCOPE_SUBTREE,
+      filter,
+      attributes
+    ) do |entry|
+      res.push(entry.to_hash)
+    end
+
+    res
+  end
+
+  # Return convert values to LdapHashes before returning
+  def self.filter(*args)
+    raw_filter(*args).map! do |entry|
+      from_hash(entry)
+    end
+  end
+
+  # Find any ldap entry by dn
+  #
+  # @param dn [String]
+  # @param attributes [Array of Strings]
+  def by_dn(dn, attributes=[])
+    res = nil
+
+    connection.search(
+      dn,
+      LDAP::LDAP_SCOPE_SUBTREE,
+      "(objectclass=*)",
+      attributes
+    ) do |entry|
+      res = from_hash entry.to_hash
+      break
+    end
+
+    res
+  end
+
+end
