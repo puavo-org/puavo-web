@@ -12,6 +12,7 @@ group :rest_development do
   gem "debugger"
   gem "pry"
   gem "timecop"
+  gem "m"
   # Load development gems from puavo-users if we are in development or testing
   # env
   if ENV["RACK_ENV"] != "production"
