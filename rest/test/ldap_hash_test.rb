@@ -1,8 +1,4 @@
-# require_relative "./helper"
-require 'minitest/autorun'
-require 'rack/test'
-require "timecop"
-require "debugger"
+require_relative "./helper"
 require_relative "../ldap_hash"
 
 
