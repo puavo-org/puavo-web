@@ -10,7 +10,7 @@ all routes return json documents unless mentioned otherwise
 
 ## devices
 
-### get /v3/devices/:hostname
+### GET /v3/devices/:hostname
 
 get device information by device hostname
 
@@ -35,7 +35,7 @@ return
 
 ## external files
 
-### get /v3/:organisation/external_files
+### GET /v3/:organisation/external_files
 
 get metadata list of external files
 
@@ -50,7 +50,7 @@ return
      ...
     ]
 
-### get /v3/:organisation/external_files/:name/metadata
+### GET /v3/:organisation/external_files/:name/metadata
 
 
 get metadata for external file
@@ -62,7 +62,7 @@ return
       "data_hash": <sha1 checksum of the file>
     }
 
-### get /v3/:organisation/external_files/:name
+### GET /v3/:organisation/external_files/:name
 
 get file contents
 
@@ -72,7 +72,7 @@ return
 
 ## ltsp servers
 
-### get /v3/ltsp_servers
+### GET /v3/ltsp_servers
 
 get metadata for all ltsp servers
 
@@ -90,14 +90,14 @@ return
     ]
 
 
-### get /v3/ltsp_servers/_most_idle
+### GET /v3/ltsp_servers/_most_idle
 
 *DEPRECATED! use `post /v3/sessions`*
 
 get the most idle ltsp server
 
 
-### get /v3/ltsp_servers/:hostname
+### GET /v3/ltsp_servers/:hostname
 
 get ltsp server metadata by hostname
 
@@ -111,7 +111,7 @@ return
       "load_avg": 0.1
     },
 
-### put /v3/ltsp_servers/:hostname
+### PUT /v3/ltsp_servers/:hostname
 
 set ltsp server status
 
@@ -120,7 +120,7 @@ post fields:
   - load_avg
   - cpu_count (optional)
 
-### post /v3/sessions
+### POST /v3/sessions
 
 create new thin client session
 
@@ -155,15 +155,15 @@ return
     }
 
 
-### get /v3/sessions
+### GET /v3/sessions
 
 return all sessions
 
-### get /v3/sessions/:uuid
+### GET /v3/sessions/:uuid
 
 return session by uuid
 
-### delete /v3/sessions/:uuid
+### DELETE /v3/sessions/:uuid
 
 delete session by uuid
 
