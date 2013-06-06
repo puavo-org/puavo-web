@@ -6,6 +6,11 @@ class LdapHash < Hash
       klass.send(method, *args)
     end
   end
+
+  # Create LdapHash from other hash. Converts attributes.
+  def self.from_hash(hash)
+    new.ldap_merge!(hash)
+  end
 end
 
 # Connection management
@@ -78,6 +83,8 @@ class LdapHash < Hash
     hash.each do |k,v|
       ldap_set(k,v)
     end
+    self
   end
 
 end
+

@@ -39,6 +39,12 @@ describe LdapHash do
       assert_equal "value", h["hello"]
     end
 
+    it "can create new instances from normal hashes" do
+      h = TestHash1.from_hash(:fooBar => "value")
+      debugger; nil
+      assert_equal "value", h["foo_bar"]
+    end
+
   end
 
   describe "connection management" do
