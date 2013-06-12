@@ -133,8 +133,9 @@ class LdapHash < Hash
   #
   # @param dn [String]
   # @param attributes [Array of Strings]
-  def by_dn(dn, attributes=[])
+  def self.by_dn(dn, attributes=[])
     res = nil
+    attributes ||= ldap_attrs
 
     connection.search(
       dn,
