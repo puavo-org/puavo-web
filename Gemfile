@@ -12,6 +12,7 @@ gem 'rdoc'
 gem 'jquery-rails'
 gem 'uglifier'
 gem "multi_json"
+gem 'redcarpet'
 
 group :assets do
   gem 'stylus'

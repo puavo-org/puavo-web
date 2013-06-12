@@ -135,6 +135,7 @@ GEM
       trollop (>= 1.16.2)
     rdoc (3.12.2)
       json (~> 1.4)
+    redcarpet (2.3.0)
     rmagick (2.13.2)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
@@ -202,6 +203,7 @@ DEPENDENCIES
   rails (= 3.2.13)
   rbtrace
   rdoc
+  redcarpet
   rmagick
   rspec
   rspec-rails
