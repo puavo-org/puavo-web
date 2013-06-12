@@ -178,4 +178,5 @@ class LdapHash < Hash
   def self.escape(string)
     string.gsub(ESCAPE_RE) { |char| "\\" + ESCAPES[char] }
   end
+  callable_from_instance :escape
 end
