@@ -1,12 +1,5 @@
 module PuavoRest
-class Organisations < LdapModel
-
-  ldap_attr_conversion :puavoDeviceImage, :preferred_image
-
-  def by_dn(dn)
-    data = _find_by_dn(dn)
-    Organisations.convert data
-  end
-
+class Organisation < LdapHash
+  ldap_map :puavoDeviceImage, :preferred_image
 end
 end
