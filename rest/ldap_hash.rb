@@ -98,7 +98,7 @@ class LdapHash < Hash
 
   # LDAP base for this model. Must be implemented by subclasses
   def self.ldap_base
-    raise "not implemented"
+    raise "ldap_base is not implemented for #{ self.name }"
   end
 
   # LDAP::LDAP_SCOPE_SUBTREE filter search for #ldap_base
