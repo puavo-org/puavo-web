@@ -9,7 +9,7 @@
   <table>
     <tr>
       <td class="label_td view"><%= label @server.class.to_s.downcase, "puavoExport" %></td>
-      <td class="value_td"><%= Array(@server.puavoExport).join("<br />")  %></td>
+      <td class="value_td"><%= raw Array(@server.puavoExport).join("<br />")  %></td>
     </tr>
   </table>
 </div>
