@@ -30,6 +30,27 @@ module LocalStoreMixin
         pstore[key]
       end
     end
+
+    def each(&block)
+      pstore = setup_local_store
+      pstore.transaction(true) do
+        pstore.roots.each do |k|
+          if block.arity == 1
+            block.call pstore[k]
+          else
+            block.call k, pstore[k]
+          end
+        end
+      end
+    end
+
+    # Return all known keys
+    # @return [Array]
+    def all
+      a = []
+      each { |v| a.push  v }
+      a
+    end
   end
 
   def self.included(base)
