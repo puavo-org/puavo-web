@@ -18,24 +18,44 @@ class Device < LdapHash
   ldap_map :puavoDeviceXserver, :graphics_driver
   ldap_map :puavoDeviceResolution, :resolution
 
+  FALLBACK_KEYS = [
+    "preferred_image"
+  ]
+
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
   end
 
 
   # Find device by it's hostname
-  def self.by_hostname(hostname, fallback_defaults=false)
+  def self.by_hostname(hostname)
     device = filter("(puavoHostname=#{ escape hostname })").first
-
-    if fallback_defaults && device["preferred_image"].nil?
-      school = School.by_dn(device["school"])
-      device["preferred_image"] = school["preferred_image"]
-    end
-
     if device.nil?
       raise BadInput, "Cannot find device with hostname '#{ hostname }'"
-    else
-      device
+    end
+    device
+  end
+
+  # Cached school query
+  def school
+    return @school if @school
+    @school = School.by_dn(self["school"])
+  end
+
+  # Cached organisation query
+  def organisation
+    return @organisation if @organisation
+    @organisation = Organisation.by_dn(self.class.organisation["base"])
+  end
+
+  # Find fallbacks from school and organisation for given keys if their values
+  # are nil
+  def fallback_defaults(keys=FALLBACK_KEYS)
+    keys.each do |key|
+      next if self[key]
+      self[key] = school[key]
+      next if self[key]
+      self[key] = organisation[key]
     end
   end
 
@@ -71,16 +91,11 @@ class Devices < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname" do
-    d = Device.by_hostname(
-      params["hostname"],
-      !!params["fallback_defaults"]
-    )
-
-    if d
-      json d
-    else
-      not_found "Cannot find device by hostname #{ params["hostname"] }"
+    device = Device.by_hostname(params["hostname"])
+    if params["fallback_defaults"]
+      device.fallback_defaults
     end
+    json device
   end
 
 end
