@@ -414,6 +414,7 @@ fi:
         puavoEduOrgAbbreviation: Lyhenne
         puavoBillingInfo: Laskutustiedot
         puavoDeviceImage: Levykuva
+        puavoWlanChannel: Kanava
       external_service:
         uid: Palvelun tunniste
         description: Kuvaus
@@ -620,7 +621,7 @@ fi:
     form_linux_device_information:
       select: Valitse
     form_wlan:
-      wireless_access_point_setup: Koulun tukiasemien oletusasetukset
+      wireless_access_point_setup: Tukiasemien oletusasetukset
       channel_random: Satunnainen
       wireless_network_setup: Langattomien verkkojen asetukset
       wireless_network_title: Verkko %{index}

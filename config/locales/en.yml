@@ -416,6 +416,7 @@ en:
         puavoEduOrgAbbreviation: Abbreviation
         puavoBillingInfo: Billing info
         puavoDeviceImage: Device Image
+        puavoWlanChannel: Channel
       external_service:
         uid: Service Identifier
         description: Description
@@ -624,7 +625,7 @@ en:
     form_linux_device_information:
       select: Select
     form_wlan:
-      wireless_access_point_setup: Default Wireless Access Point setup in school
+      wireless_access_point_setup: Default Wireless Access Point setup
       channel_random: Random
       wireless_network_setup: Wireless network setup
       wireless_network_title: Network %{index}
