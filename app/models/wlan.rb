@@ -14,7 +14,9 @@ module Wlan
 
     (0..max_index).each do |index|
       next if wlan_name[index.to_s].empty?
-      new_wlan_ssid.push( "#{ wlan_type[index.to_s] }:#{ wlan_name[index.to_s] }:#{ wlan_password[index.to_s] }" )
+      new_wlan_ssid.push( { :ssid => wlan_name[index.to_s],
+                            :type => wlan_type[index.to_s],
+                            :password => wlan_password[index.to_s] }.to_json  )
     end
 
     set_attribute( "puavoWlanSSID", new_wlan_ssid )
@@ -22,19 +24,34 @@ module Wlan
 
   def wlan_name
     if wlan_ssid = get_attribute( "puavoWlanSSID" )
-      Array(wlan_ssid).map{ |ssid| ssid.split(":")[1] }
+      begin
+        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["ssid"] }
+      rescue JSON::ParserError => e
+        logger.info "Invalid puavoWlanSSID value"
+        return []
+      end
     end
   end
 
   def wlan_type
     if wlan_ssid = get_attribute( "puavoWlanSSID" )
-      Array(wlan_ssid).map{ |ssid| ssid.split(":")[0] }
+      begin
+        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["type"] }
+      rescue JSON::ParserError => e
+        logger.info "Invalid puavoWlanSSID value"
+        return []
+      end
     end
   end
 
   def wlan_password
     if wlan_ssid = get_attribute( "puavoWlanSSID" )
-      Array(wlan_ssid).map{ |ssid| ssid.split(":")[2] }
+      begin
+        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["password"] }
+      rescue JSON::ParserError => e
+        logger.info "Invalid puavoWlanSSID value"
+        return []
+      end
     end
   end
 end
