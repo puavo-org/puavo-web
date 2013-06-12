@@ -16,7 +16,7 @@ describe PuavoRest::LtspServers do
 
   it "responds with empty data" do
     get "/v3/ltsp_servers"
-    assert_equal last_response.body, "[]"
+    assert_equal "[]", last_response.body
   end
 
   it "responds 400 for unknown servers" do
@@ -42,7 +42,7 @@ describe PuavoRest::LtspServers do
     get "/v3/ltsp_servers/testserver"
     data = JSON.parse(last_response.body)
     assert_equal 200, last_response.status
-    assert_in_delta 1.0, data["load_avg"], 0.01
+    assert_in_delta 1.0, data["state"]["load_avg"], 0.01
   end
 
   it "respond 400 to 0 cpu_count" do
@@ -70,7 +70,7 @@ describe PuavoRest::LtspServers do
     put "/v3/ltsp_servers/testserver", "load_avg" => "1.0", "cpu_count" => 2
     get "/v3/ltsp_servers/testserver"
     data = JSON.parse(last_response.body)
-    assert_in_delta 0.5, data["load_avg"], 0.01
+    assert_in_delta 0.5, data["state"]["load_avg"], 0.01
   end
 
   it "can will contain school data if set" do

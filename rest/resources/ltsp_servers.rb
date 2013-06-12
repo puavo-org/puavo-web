@@ -1,5 +1,6 @@
 require "fileutils"
-require_relative "../local_store"
+require_relative "../local_store" # DEPRECATED
+require_relative "../local_store_mixin"
 
 module PuavoRest
 
@@ -65,7 +66,7 @@ class ServerFilter
 
   def sort_by_load
     @servers = @servers.sort do |a, b|
-      a["load_avg"] <=> b["load_avg"]
+      a["state"]["load_avg"] <=> b["state"]["load_avg"]
     end
   end
 
@@ -150,6 +151,29 @@ class LtspServersModel < LdapModel
 
 end
 
+class LtspServer < LdapHash
+  include LocalStoreMixin
+
+  ldap_map :dn, :dn
+  ldap_map :puavoHostname, :hostname
+  ldap_map(:puavoSchool, :schools) { |v| v }
+
+  def self.ldap_base
+    "ou=Servers,ou=Hosts,#{ organisation["base"] }"
+  end
+
+  def self.save_server_state(hostname, attrs)
+    server = filter("(puavoHostname=#{ escape hostname })").first
+    if server.nil?
+      raise BadInput, "cannot find server from LDAP for hostname #{ hostname }"
+    end
+    server["state"] = attrs
+    server["state"]["updated"] = Time.now
+    server.save attrs["fqdn"]
+    server
+  end
+
+end
 
 # Load balancer resource for LTSP servers
 class LtspServers < LdapSinatra
@@ -158,19 +182,16 @@ class LtspServers < LdapSinatra
   auth Credentials::BasicAuth
   auth Credentials::BootServer
 
-  before do
-    @m = new_model(LtspServersModel)
-  end
-
   # Get list of LTSP servers sorted by they load. Most idle server is the first
   #
   # @param all [Boolean] Include old servers too
   # @!macro route
   get "/v3/ltsp_servers" do
     if params["all"]
-      json limit @m.all
+      json limit LtspServer.all
     else
-      json limit ServerFilter.new(@m.all).filter_old
+      servers = ServerFilter.new(LtspServer.all)
+      json limit servers.sort_by_load.to_a
     end
   end
 
@@ -183,7 +204,8 @@ class LtspServers < LdapSinatra
   # @!macro route
   get "/v3/ltsp_servers/_most_idle" do
     logger.warn "Call to legacy _most_idle route. Use POST /v3/sessions in future"
-    server = @m.most_idle.first
+    servers = ServerFilter.new(LtspServer.all)
+    server = servers.sort_by_load.first
     if server
       logger.info "Sending '#{ server["hostname"] }' as the most idle server to #{ request.ip }"
     else
@@ -194,8 +216,8 @@ class LtspServers < LdapSinatra
     json server
   end
 
-  get "/v3/ltsp_servers/:hostname" do
-    if server = @m.get(params["hostname"])
+  get "/v3/ltsp_servers/:fqdn" do
+    if server = LtspServer.load(params["fqdn"])
       json server
     else
       not_found "server not found"
@@ -208,13 +230,13 @@ class LtspServers < LdapSinatra
   # @param [Float] load_avg
   # @param [Fixnum] cpu_count optional
   # @!macro route
-  put "/v3/ltsp_servers/:hostname" do
+  put "/v3/ltsp_servers/:fqdn" do
     require_auth
 
     attrs = {}
 
     if params["cpu_count"] && params["cpu_count"].to_i == 0
-      logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["hostname"] }'"
+      logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["fqdn"] }'"
       halt 400, json("message" => "0 cpu_count makes no sense")
     end
 
@@ -225,8 +247,10 @@ class LtspServers < LdapSinatra
     end
 
     attrs["ltsp_image"] = params["ltsp_image"]
-
-    json @m.set_server(params["hostname"], attrs)
+    attrs["fqdn"] = params["fqdn"]
+    hostname = params["fqdn"].split(".").first
+    server = LtspServer.save_server_state(hostname, attrs)
+    json server
   end
 
 end
