@@ -16,6 +16,13 @@ end
 # Connection management
 class LdapHash < Hash
 
+  class LdapHashError < Exception; end
+  class BadInput < LdapHashError
+    def code
+      400
+    end
+  end
+
   def self.setup(settings)
     Thread.current[:ldap_hash_settings] = settings
   end
