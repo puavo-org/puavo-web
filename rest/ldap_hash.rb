@@ -40,17 +40,14 @@ class LdapHash < Hash
   def self.settings
     Thread.current[:ldap_hash_settings]
   end
-  callable_from_instance :settings
 
   def self.connection
     Thread.current[:ldap_hash_settings][:connection]
   end
-  callable_from_instance :connection
 
   def self.organisation
     Thread.current[:ldap_hash_settings][:organisation]
   end
-  callable_from_instance :organisation
 
 end
 
