@@ -134,7 +134,7 @@ class LdapHash < Hash
   #
   # @param dn [String]
   # @param attributes [Array of Strings]
-  def self.by_dn(dn, attributes=[])
+  def self.by_dn(dn, attributes=nil)
     res = nil
     attributes ||= ldap_attrs
 

@@ -1,9 +1,7 @@
 require "fileutils"
 require_relative "../local_store" # DEPRECATED
-require_relative "../local_store_mixin"
 
 module PuavoRest
-
 
 class ServerFilter
 
