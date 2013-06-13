@@ -97,7 +97,7 @@ class LdapSinatra < Sinatra::Base
   end
 
   error LdapHash::LdapHashError do |err|
-    halt err.code, json(:message => err.message)
+    halt err.code, json(:error => { :message => err.message })
   end
 
 
