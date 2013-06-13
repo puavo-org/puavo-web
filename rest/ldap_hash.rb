@@ -23,6 +23,12 @@ class LdapHash < Hash
     end
   end
 
+  class NotFound < LdapHashError
+    def code
+      404
+    end
+  end
+
   def self.setup(settings)
     Thread.current[:ldap_hash_settings] = settings
   end
