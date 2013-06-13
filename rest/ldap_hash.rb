@@ -17,6 +17,7 @@ end
 class LdapHash < Hash
 
   class LdapHashError < Exception; end
+
   class BadInput < LdapHashError
     def code
       400
@@ -29,14 +30,23 @@ class LdapHash < Hash
     end
   end
 
+  # Configure ldap connection and orgation to Ldaphash
+  # @param [Hash]
+  # @option settings [Object] :connection LDAP connection object
+  # @option settings [Object] :settings Organisation info
   def self.setup(settings)
     Thread.current[:ldap_hash_settings] = settings
   end
 
+  # Clear current setup
   def self.clear_setup
     Thread.current[:ldap_hash_settings] = nil
   end
 
+  # Temporally change settings
+  #
+  # @param [Hash] The temp settings
+  # @param [Block] Temp settings will be in use during the block execution
   def self.with(temp_settings, &block)
     prev = Thread.current[:ldap_hash_settings]
 
@@ -47,14 +57,17 @@ class LdapHash < Hash
     val
   end
 
+  # Get current settings
   def self.settings
     Thread.current[:ldap_hash_settings]
   end
 
+  # Get current connection
   def self.connection
     Thread.current[:ldap_hash_settings][:connection]
   end
 
+  # Get current organisation
   def self.organisation
     Thread.current[:ldap_hash_settings][:organisation]
   end
@@ -65,8 +78,11 @@ end
 # ldap attribute conversions
 class LdapHash < Hash
 
+  # Store for ldap attribute mappings
   @@ldap2json = {}
+
   # Define conversion between LDAP attribute and the JSON attribute
+  #
   # @param ldap_name [Symbol] LDAP attribute to convert
   # @param json_name [Symbol] Value conversion block. Default: Get first array item
   # @param convert [Block] Use block to
@@ -79,17 +95,22 @@ class LdapHash < Hash
     }
   end
 
-  # Return LDAP attributes that will be converted
+  # @return [Array] LDAP attributes that will be converted
   def self.ldap_attrs
     @@ldap2json[self.name].keys
   end
 
+  # Set Hash attribute with ldap attr conversion
+  #
+  # @param [String]
+  # @param [any]
   def ldap_set(key, value)
       if ob = @@ldap2json[self.class.name][key.to_s]
         self[ob[:attr]] = ob[:convert].call(value)
       end
   end
 
+  # Like normal Hash#merge! but convert attributes using the ldap mapping
   def ldap_merge!(hash)
     hash.each do |k,v|
       ldap_set(k,v)
@@ -109,6 +130,7 @@ class LdapHash < Hash
   end
 
   # LDAP::LDAP_SCOPE_SUBTREE filter search for #ldap_base
+  #
   # @param filter [String] LDAP filter
   # @param attributes [Array] Limit search results to these attributes
   # @see http://ruby-ldap.sourceforge.net/rdoc/classes/LDAP/Conn.html#M000025
@@ -130,12 +152,16 @@ class LdapHash < Hash
   end
 
   # Return convert values to LdapHashes before returning
+  # @see raw_filter
   def self.filter(*args)
     raw_filter(*args).map! do |entry|
       from_hash(entry)
     end
   end
 
+  # Return all ldap entries from the current base
+  #
+  # @see ldap_base
   def self.all
     filter("(objectClass=*)")
   end

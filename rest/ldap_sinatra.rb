@@ -96,6 +96,7 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
+  # Render LdapHash::LdapHashError classes as nice json responses
   error LdapHash::LdapHashError do |err|
     halt err.code, json(:error => { :message => err.message })
   end
