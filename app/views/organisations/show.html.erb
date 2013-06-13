@@ -77,6 +77,14 @@
     <td class="value_td"><%= @organisation.puavoDeviceImage %></td>
   </tr>
   <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "puavoAllowGuest" %></td>
+    <td class="value_td"><%= t(".allow_quest_#{ @organisation.puavoAllowGuest ? true : false }") %></td>
+  </tr>
+  <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "puavoPersonalDevice" %></td>
+    <td class="value_td"><%= t(".personal_device_#{ @organisation.puavoPersonalDevice ? true : false }") %></td>
+  </tr>
+  <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoBillingInfo" %></td>
     <td class="value_td">
       <% Array(@organisation.puavoBillingInfo).each do |billing_info| %>

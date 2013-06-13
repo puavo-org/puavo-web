@@ -35,6 +35,18 @@
       </div>
       <div class="column_2"><%=h @school.puavoDeviceImage %></div>
     </div>
+    <div class="row">
+      <div class="column_1">
+        <%= label "school", 'puavoAllowGuest' %>:
+      </div>
+      <div class="column_2"><%= t(".allow_guest_#{ @school.puavoAllowGuest ? true : false }") %></div>
+    </div>
+    <div class="row">
+      <div class="column_1">
+        <%= label "school", 'puavoPersonalDevice' %>:
+      </div>
+      <div class="column_2"><%= t(".personal_device_#{ @school.puavoPersonalDevice ? true : false }") %></div>
+    </div>
   </div>
 <% end %>
 </div>

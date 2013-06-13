@@ -245,6 +245,10 @@ fi:
       mail: "Sähköpostiosoite"
       billing_info: Laskutustiedot
       rule_lines: "Laskusäännöt"
+      allow_guest_false: Ei
+      allow_guest_true: Kyllä
+      personal_device_false: Ei
+      personal_device_true: Kyllä
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:
@@ -262,6 +266,10 @@ fi:
   organisations:
     show:
       title: Organisaation tiedot
+      allow_guest_false: Ei
+      allow_guest_true: Kyllä
+      personal_device_false: Ei
+      personal_device_true: Kyllä
     edit:
       title: Organisaation tiedot
       select: Valitse
@@ -359,6 +367,8 @@ fi:
         puavoDeviceImage: Levykuva
         puavoBillingInfo: Laskutustiedot
         puavoWlanChannel: Kanava
+        puavoAllowGuest: Vieraskirjautuminen sallittu
+        puavoPersonalDevice: Laitteet henkilökohtaisia
       user:
         displayName: Nimi
         sn: Sukunimi
@@ -414,6 +424,8 @@ fi:
         puavoEduOrgAbbreviation: Lyhenne
         puavoBillingInfo: Laskutustiedot
         puavoDeviceImage: Levykuva
+        puavoAllowGuest: Vieraskirjautuminen sallittu
+        puavoPersonalDevice: Laitteet henkilökohtaisia
       external_service:
         uid: Palvelun tunniste
         description: Kuvaus
