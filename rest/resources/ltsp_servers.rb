@@ -1,5 +1,5 @@
 require "fileutils"
-require_relative "../local_store" # DEPRECATED
+require_relative "../local_store"
 
 module PuavoRest
 
