@@ -251,6 +251,13 @@ describe PuavoRest::Sessions do
       assert_equal post_data["uuid"], get_data["uuid"]
     end
 
+    it "get 404 for nonexistent sessions" do
+      get "/v3/sessions/doesnotexists"
+      assert_equal 404, last_response.status
+      data = JSON.parse(last_response.body)
+      assert_equal "unknown session uuid 'doesnotexists'", data["error"]["message"]
+    end
+
     it "can be deleted with DELETE" do
       post "/v3/sessions", "hostname" => "thinnoimage"
       assert_200
@@ -263,6 +270,7 @@ describe PuavoRest::Sessions do
       get "/v3/sessions/#{ data["uuid"] }"
       assert_equal 404, last_response.status
     end
+
 
     it "all sessions can be fetched from index" do
       create_device(

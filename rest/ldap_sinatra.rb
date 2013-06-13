@@ -3,7 +3,6 @@ module PuavoRest
 # Abstract Sinatra base class which add ldap connection to instance scope
 class LdapSinatra < Sinatra::Base
 
-  include ErrorMethods
   helpers Sinatra::JSON
   set :json_encoder, :to_json
   enable :logging
@@ -75,24 +74,28 @@ class LdapSinatra < Sinatra::Base
   before "/v3/*" do
     credentials = acquire_credentials
 
-    @organisation_info = (
-      LdapModel.organisations_by_domain[request.host] ||
-      LdapModel.organisations_by_domain["*"]
-    )
-
     if credentials and @ldap_conn.nil?
       @ldap_conn = setup_ldap_connection(credentials)
     end
+
+    LdapHash.setup(
+      :connection => @ldap_conn,
+      :organisation =>
+        Organisation.by_domain[request.host] || Organisation.by_domain["*"]
+    )
   end
 
   after do
+    LdapHash.clear_setup
     if @ldap_conn
-      # TODO: unbind connection
+      @ldap_conn.unbind
+      @ldap_conn = nil
     end
   end
 
-  error LdapModel::ModelError do |err|
-    halt err.code, json(:message => err.message)
+  # Render LdapHash::LdapHashError classes as nice json responses
+  error LdapHash::LdapHashError do |err|
+    halt err.code, json(:error => { :message => err.message })
   end
 
 
@@ -100,20 +103,6 @@ class LdapSinatra < Sinatra::Base
   # connection is not actually used
   def require_auth
     if not @ldap_conn
-      bad_credentials "No credentials supplied"
-    end
-  end
-
-  # Model instance factory
-  # Create new model instance with the current organisation info and ldap
-  # connection
-  #
-  # @param klass [Model class]
-  # @return [Model instance]
-  def new_model(klass)
-    if @ldap_conn
-      klass.new(@ldap_conn, @organisation_info)
-    else
       bad_credentials "No credentials supplied"
     end
   end

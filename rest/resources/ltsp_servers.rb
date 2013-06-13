@@ -1,8 +1,7 @@
 require "fileutils"
-require_relative "../local_store"
+require_relative "../local_store" # DEPRECATED
 
 module PuavoRest
-
 
 class ServerFilter
 
@@ -29,7 +28,7 @@ class ServerFilter
   # assume them being offline
   def filter_old
     @servers = @servers.select do |server|
-      Time.now - server["updated"] < MAX_AGE
+      Time.now - server["state"]["updated"] < MAX_AGE
     end
   end
 
@@ -39,6 +38,11 @@ class ServerFilter
     end
   end
 
+  def filter_has_state
+    @servers = @servers.select do |server|
+      server["state"]
+    end
+  end
 
   # Filter out servers that are dedicated to some other schools
   def filter_by_other_schools(school_dn)
@@ -65,7 +69,7 @@ class ServerFilter
 
   def sort_by_load
     @servers = @servers.sort do |a, b|
-      a["load_avg"] <=> b["load_avg"]
+      a["state"]["load_avg"] <=> b["state"]["load_avg"]
     end
   end
 
@@ -82,74 +86,50 @@ class ServerFilter
 
 end
 
+class LtspServer < LdapHash
+  include LocalStoreMixin
 
-# Pstore packed model for LTSP server data. Currently contains mainly load
-# balancing data
-class LtspServersModel < LdapModel
+  ldap_map :dn, :dn
+  ldap_map :puavoHostname, :hostname
+  ldap_map(:puavoSchool, :schools) { |v| v }
 
-  ldap_attr_conversion :dn, :dn
-  ldap_attr_conversion(:puavoSchool, :schools) { |v| v }
-
-  # How old servers we report as available
-  MAX_AGE = 60 * 2
-
-  def initialize(ldap_conn, organisation_info)
-    @store = LocalStore.from_domain organisation_info["domain"] + self.class.name
-    super(ldap_conn, organisation_info)
+  def self.ldap_base
+    "ou=Servers,ou=Hosts,#{ organisation["base"] }"
   end
 
-  def set_server(key, data)
-
-    if filter("(puavoHostname=#{ LdapModel.escape key })").empty?
-      raise BadInput, "cannot find server from LDAP for #{ key }"
+  def self.by_hostname(hostname)
+    server = filter("(puavoHostname=#{ escape hostname })").first
+    if server.nil?
+      raise BadInput, "cannot find server from LDAP for hostname #{ hostname }"
     end
-
-    data["updated"] = Time.now
-    data["hostname"] = key
-    @store.set key, data
-    data
+    server.load_state
+    server
   end
 
-
-  def ldap_base
-    "ou=Servers,ou=Hosts,#{ @organisation_info["base"] }"
+  def self.by_fqdn(fqdn)
+    hostname = fqdn.split(".").first
+    by_hostname(hostname)
   end
 
-  def all
-    @store.all.map do |server|
-      inject_ldap_data server
+  def self.all_with_state
+    all.select do |server|
+      server.load_state
+      not server["state"].nil?
     end
   end
 
-  def inject_ldap_data(server)
-    data = filter(
-      "(puavoHostname=#{ LdapModel.escape server["hostname"] })"
-    ).first
-
-    if data
-      server.merge(LtspServersModel.convert data)
-    else
-      server
-    end
+  def save_state(state)
+    state["updated"] = Time.now
+    self["state"] = state
+    self.class.store.set self["hostname"], state
+    state
   end
 
-  def get(key)
-    inject_ldap_data @store.get(key)
-  end
-
-  # Return the most idle LTSP server which is update under MAX_AGE
-  #
-  # @return [Array]
-  def most_idle(ltsp_image=nil)
-    servers = ServerFilter.new(@store.all)
-    servers.filter_old
-    servers.safe_apply(:filter_by_image, ltsp_image)
-    servers.sort_by_load
-    servers.to_a
+  def load_state
+    self["state"] = self.class.store.get self["hostname"]
   end
 
 end
-
 
 # Load balancer resource for LTSP servers
 class LtspServers < LdapSinatra
@@ -158,19 +138,19 @@ class LtspServers < LdapSinatra
   auth Credentials::BasicAuth
   auth Credentials::BootServer
 
-  before do
-    @m = new_model(LtspServersModel)
-  end
-
   # Get list of LTSP servers sorted by they load. Most idle server is the first
   #
   # @param all [Boolean] Include old servers too
   # @!macro route
   get "/v3/ltsp_servers" do
+    filtered = ServerFilter.new(LtspServer.all_with_state)
+    filtered.filter_has_state
+    filtered.sort_by_load
     if params["all"]
-      json limit @m.all
+      json limit filtered.to_a
     else
-      json limit ServerFilter.new(@m.all).filter_old
+      servers = ServerFilter.new(LtspServer.all_with_state)
+      json limit filtered.to_a
     end
   end
 
@@ -183,7 +163,11 @@ class LtspServers < LdapSinatra
   # @!macro route
   get "/v3/ltsp_servers/_most_idle" do
     logger.warn "Call to legacy _most_idle route. Use POST /v3/sessions in future"
-    server = @m.most_idle.first
+    filtered = ServerFilter.new(LtspServer.all_with_state)
+    filtered.filter_has_state
+    filtered.sort_by_load
+    server = filtered.first
+
     if server
       logger.info "Sending '#{ server["hostname"] }' as the most idle server to #{ request.ip }"
     else
@@ -194,8 +178,8 @@ class LtspServers < LdapSinatra
     json server
   end
 
-  get "/v3/ltsp_servers/:hostname" do
-    if server = @m.get(params["hostname"])
+  get "/v3/ltsp_servers/:fqdn" do
+    if server = LtspServer.by_fqdn(params["fqdn"])
       json server
     else
       not_found "server not found"
@@ -208,25 +192,27 @@ class LtspServers < LdapSinatra
   # @param [Float] load_avg
   # @param [Fixnum] cpu_count optional
   # @!macro route
-  put "/v3/ltsp_servers/:hostname" do
+  put "/v3/ltsp_servers/:fqdn" do
     require_auth
 
-    attrs = {}
+    state = {}
 
     if params["cpu_count"] && params["cpu_count"].to_i == 0
-      logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["hostname"] }'"
+      logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["fqdn"] }'"
       halt 400, json("message" => "0 cpu_count makes no sense")
     end
 
     if params["cpu_count"]
-      attrs["load_avg"] = params["load_avg"].to_f / params["cpu_count"].to_i
+      state["load_avg"] = params["load_avg"].to_f / params["cpu_count"].to_i
     else
-      attrs["load_avg"] = params["load_avg"].to_f
+      state["load_avg"] = params["load_avg"].to_f
     end
 
-    attrs["ltsp_image"] = params["ltsp_image"]
-
-    json @m.set_server(params["hostname"], attrs)
+    state["ltsp_image"] = params["ltsp_image"]
+    state["fqdn"] = params["fqdn"]
+    server = LtspServer.by_fqdn(params["fqdn"])
+    server.save_state(state)
+    json server
   end
 
 end

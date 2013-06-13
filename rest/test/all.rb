@@ -1,3 +1,4 @@
-require_relative "./ltsp_servers_test"
-require_relative "./ldap_model_test"
-require_relative "./sessions_test"
+Dir.glob(File.expand_path(File.dirname(__FILE__)) + "/*_test.rb").each do |p|
+    puts "TEST #{ p }"
+    require_relative p
+end

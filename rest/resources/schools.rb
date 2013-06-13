@@ -1,12 +1,6 @@
 module PuavoRest
-class SchoolsModel < LdapModel
-
-  ldap_attr_conversion :dn, :dn
-  ldap_attr_conversion :puavoDeviceImage, :preferred_image
-
-  def by_dn(dn)
-    SchoolsModel.convert _find_by_dn(SchoolsModel.escape dn)
-  end
-
+class School < LdapHash
+  ldap_map :dn, :dn
+  ldap_map :puavoDeviceImage, :preferred_image
 end
 end

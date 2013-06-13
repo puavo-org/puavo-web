@@ -77,4 +77,21 @@ class LocalStore
   end
 
 end
+
+
+
+module LocalStoreMixin
+
+  def self.included(base)
+
+    base.define_singleton_method(:store) do
+      LocalStore.new File.join(
+        CONFIG["ltsp_server_data_dir"],
+        "#{ base.name.downcase }.#{ base.organisation["domain"] }.pstore"
+      )
+    end
+
+  end
+end
+
 end

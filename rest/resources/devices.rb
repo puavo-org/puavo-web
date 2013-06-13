@@ -1,62 +1,61 @@
 module PuavoRest
-class DevicesModel < LdapModel
+class Device < LdapHash
 
-  ldap_attr_conversion :dn, :dn
-  ldap_attr_conversion :cn, :hostname
-  ldap_attr_conversion :puavoSchool, :school
-  ldap_attr_conversion :puavoDeviceType, :type
-  ldap_attr_conversion :puavoDeviceImage, :preferred_image
-  ldap_attr_conversion :puavoPreferredServer, :preferred_server
-  ldap_attr_conversion :puavoDeviceKernelArguments, :kernel_arguments
-  ldap_attr_conversion :puavoDeviceKernelVersion, :kernel_version
-  ldap_attr_conversion :puavoDeviceVertRefresh, :vertical_refresh
-  ldap_attr_conversion :macAddress, :mac_address
-  ldap_attr_conversion :puavoId, :puavo_id
-  ldap_attr_conversion :puavoId, :puavo_id
-  ldap_attr_conversion :puavoDeviceBootMode, :boot_mode
-  ldap_attr_conversion :puavoDeviceXrandrDisable, :xrand_disable
-  ldap_attr_conversion :puavoDeviceXserver, :graphics_driver
-  ldap_attr_conversion :puavoDeviceResolution, :resolution
+  ldap_map :dn, :dn
+  ldap_map :cn, :hostname
+  ldap_map :puavoSchool, :school
+  ldap_map :puavoDeviceType, :type
+  ldap_map :puavoDeviceImage, :preferred_image
+  ldap_map :puavoPreferredServer, :preferred_server
+  ldap_map :puavoDeviceKernelArguments, :kernel_arguments
+  ldap_map :puavoDeviceKernelVersion, :kernel_version
+  ldap_map :puavoDeviceVertRefresh, :vertical_refresh
+  ldap_map :macAddress, :mac_address
+  ldap_map :puavoId, :puavo_id
+  ldap_map :puavoId, :puavo_id
+  ldap_map :puavoDeviceBootMode, :boot_mode
+  ldap_map :puavoDeviceXrandrDisable, :xrand_disable
+  ldap_map :puavoDeviceXserver, :graphics_driver
+  ldap_map :puavoDeviceResolution, :resolution
 
-  def ldap_base
-    "ou=Devices,ou=Hosts,#{ @organisation_info["base"] }"
+  FALLBACK_KEYS = [
+    "preferred_image"
+  ]
+
+  def self.ldap_base
+    "ou=Devices,ou=Hosts,#{ organisation["base"] }"
   end
 
-
-  def fill_attributes(attrs, &block)
-    missing = attrs.any? { |attr| self[attr].nil? }
-    if missing
-      from = block.call
-      attrs.each do |attr|
-        self[attr] ||= from[attr]
-      end
-    end
-  end
 
   # Find device by it's hostname
-  def by_hostname(hostname, fallback_defaults=false)
-    device = DevicesModel.convert filter(
-      "(cn=#{ LdapModel.escape hostname })",
-      self.class.ldap_attrs
-    ).first
-
-    fill_attributes("preferred_server") do
-      school = SchoolsModel.
-        new(@ldap_conn, @organisation_info).
-        by_dn(device["school"])
-    end
-
-    if fallback_defaults && device["preferred_image"].nil?
-      school = SchoolsModel.
-        new(@ldap_conn, @organisation_info).
-        by_dn(device["school"])
-      device["preferred_image"] = school["preferred_image"]
-    end
-
+  def self.by_hostname(hostname)
+    device = filter("(puavoHostname=#{ escape hostname })").first
     if device.nil?
       raise BadInput, "Cannot find device with hostname '#{ hostname }'"
-    else
-      device
+    end
+    device
+  end
+
+  # Cached school query
+  def school
+    return @school if @school
+    @school = School.by_dn(self["school"])
+  end
+
+  # Cached organisation query
+  def organisation
+    return @organisation if @organisation
+    @organisation = Organisation.by_dn(self.class.organisation["base"])
+  end
+
+  # Find fallbacks from school and organisation for given keys if their values
+  # are nil
+  def fallback_defaults(keys=FALLBACK_KEYS)
+    keys.each do |key|
+      next if self[key]
+      self[key] = school[key]
+      next if self[key]
+      self[key] = organisation[key]
     end
   end
 
@@ -92,16 +91,11 @@ class Devices < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname" do
-    d = new_model(DevicesModel).by_hostname(
-      params["hostname"],
-      !!params["fallback_defaults"]
-    )
-
-    if d
-      json d
-    else
-      not_found "Cannot find device by hostname #{ params["hostname"] }"
+    device = Device.by_hostname(params["hostname"])
+    if params["fallback_defaults"]
+      device.fallback_defaults
     end
+    json device
   end
 
 end
