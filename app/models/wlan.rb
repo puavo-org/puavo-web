@@ -1,5 +1,33 @@
 module Wlan
 
+  # Set WLAN networks as array
+  #
+  # @param [Array] Array of wlan networks.
+  #     Each item should be a Hash with keys :ssid, :type, :wlan_ap and
+  #     :password
+  def wlan_networks=(data)
+    set_attribute("puavoWlanSSID",
+      data.map do |network|
+        network.to_json
+      end
+   )
+    data
+  end
+
+  # Get WLAN networks as array of Hashes
+  #
+  # @return [Array] Array of WLAN Network Hashes
+  def wlan_networks
+    Array(get_attribute("puavoWlanSSID")).map do |network_json|
+      begin
+        JSON.parse(network_json)
+      rescue JSON::ParserError
+        logger.info "Invalid puavoWlanSSID JSON value: #{ network_json }"
+        nil
+      end
+    end.compact
+  end
+
   def validate_wlan_attributes
     wlan_names = Array( get_attribute("puavoWlanSSID") ).map { |ssid| ssid.split(":")[1] }
     if wlan_names.count != wlan_names.uniq.count
@@ -11,7 +39,7 @@ module Wlan
     wlan_ap = {} if wlan_ap.nil?
     max_index = wlan_name.keys.count - 1
 
-    new_wlan_ssid = []
+    new_wlan_networks = []
 
     (0..max_index).each do |index|
       next if wlan_name[index.to_s].empty?
@@ -19,57 +47,29 @@ module Wlan
         wlan_ap_status = wlan_ap[index.to_s] == "enabled" ? true : false
       end
 
-      new_wlan_ssid.push( { :ssid => wlan_name[index.to_s],
-                            :type => wlan_type[index.to_s],
-                            :wlan_ap => wlan_ap_status,
-                            :password => wlan_password[index.to_s] }.to_json  )
+      new_wlan_networks.push(:ssid => wlan_name[index.to_s],
+                             :type => wlan_type[index.to_s],
+                             :wlan_ap => wlan_ap_status,
+                             :password => wlan_password[index.to_s])
     end
 
-    set_attribute( "puavoWlanSSID", new_wlan_ssid )
+    wlan_networks = new_wlan_networks
   end
 
   def wlan_name
-    if wlan_ssid = get_attribute( "puavoWlanSSID" )
-      begin
-        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["ssid"] }
-      rescue JSON::ParserError => e
-        logger.info "Invalid puavoWlanSSID value"
-        return []
-      end
-    end
+    wlan_networks.map { |w| w["ssid"] }
   end
 
   def wlan_type
-    if wlan_ssid = get_attribute( "puavoWlanSSID" )
-      begin
-        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["type"] }
-      rescue JSON::ParserError => e
-        logger.info "Invalid puavoWlanSSID value"
-        return []
-      end
-    end
+    wlan_networks.map { |w| w["type"] }
   end
 
   def wlan_password
-    if wlan_ssid = get_attribute( "puavoWlanSSID" )
-      begin
-        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["password"] }
-      rescue JSON::ParserError => e
-        logger.info "Invalid puavoWlanSSID value"
-        return []
-      end
-    end
+    wlan_networks.map { |w| w["password"] }
   end
 
   def wlan_ap
-    if wlan_ssid = get_attribute( "puavoWlanSSID" )
-      begin
-        Array(wlan_ssid).map{ |ssid| JSON.parse(ssid)["wlan_ap"] }
-      rescue JSON::ParserError => e
-        logger.info "Invalid puavoWlanSSID value"
-        return []
-      end
-    end
+    wlan_networks.map { |w| w["wlan_ap"] }
   end
 end
 
