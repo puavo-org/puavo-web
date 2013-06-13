@@ -28,7 +28,7 @@ class ServerFilter
   # assume them being offline
   def filter_old
     @servers = @servers.select do |server|
-      Time.now - server["updated"] < MAX_AGE
+      Time.now - server["state"]["updated"] < MAX_AGE
     end
   end
 
@@ -119,6 +119,7 @@ class LtspServer < LdapHash
   end
 
   def save_state(state)
+    state["updated"] = Time.now
     self["state"] = state
     self.class.store.set self["hostname"], state
     state
