@@ -1,6 +1,7 @@
 class School < BaseGroup
   include Wlan
   include Puavo::Client::HashMixin::School
+  include BooleanAttributes
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",

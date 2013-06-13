@@ -114,30 +114,9 @@
       <%= f.file_field :image %>
     </td>
   </tr>
-  <tr>
-    <td>
-      <%= f.label :puavoDeviceImage %>
-    </td>
-    <td>
-      <%= f.text_field :puavoDeviceImage %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :puavoAllowGuest %>
-    </td>
-    <td>
-      <%= f.check_box :puavoAllowGuest %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :puavoPersonalDevice %>
-    </td>
-    <td>
-      <%= f.check_box :puavoPersonalDevice %>
-    </td>
-  </tr>
+
+  <%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
+
   <% if current_user.organisation_owner? %>
   <tr>
     <td class="label_for_input_text_list">
