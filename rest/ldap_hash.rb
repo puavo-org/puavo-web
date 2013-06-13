@@ -33,6 +33,10 @@ class LdapHash < Hash
     Thread.current[:ldap_hash_settings] = settings
   end
 
+  def self.clear_setup
+    Thread.current[:ldap_hash_settings] = nil
+  end
+
   def self.with(temp_settings, &block)
     prev = Thread.current[:ldap_hash_settings]
 

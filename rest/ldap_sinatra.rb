@@ -90,6 +90,7 @@ class LdapSinatra < Sinatra::Base
   end
 
   after do
+    LdapHash.clear_setup
     if @ldap_conn
       # TODO: unbind connection
     end
