@@ -44,7 +44,11 @@ class Session < LdapHash
   end
 
   def self.load(uuid)
-    store.get(uuid)
+    session = store.get(uuid)
+    if session.nil?
+      raise NotFound, "unknown session uuid '#{ uuid }'"
+    end
+    session
   end
 
   def self.all
@@ -108,11 +112,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   get "/v3/sessions/:uuid" do
-    if s = Session.load(params["uuid"])
-      json s
-    else
-      halt 404, json(:error => "unknown session uuid #{ params["uuid"] }")
-    end
+    json Session.load(params["uuid"])
   end
 
   # Delete session
