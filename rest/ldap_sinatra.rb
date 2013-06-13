@@ -3,7 +3,6 @@ module PuavoRest
 # Abstract Sinatra base class which add ldap connection to instance scope
 class LdapSinatra < Sinatra::Base
 
-  include ErrorMethods
   helpers Sinatra::JSON
   set :json_encoder, :to_json
   enable :logging
