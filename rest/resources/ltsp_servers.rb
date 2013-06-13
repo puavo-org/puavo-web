@@ -112,9 +112,9 @@ class LtspServer < LdapHash
   end
 
   def self.all_with_state
-    all.map do |server|
+    all.select do |server|
       server.load_state
-      server
+      not server["state"].nil?
     end
   end
 
