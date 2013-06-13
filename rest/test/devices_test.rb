@@ -74,4 +74,5 @@ describe PuavoRest::Devices do
 
   end
 
+
 end

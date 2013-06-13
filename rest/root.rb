@@ -15,6 +15,7 @@ require_relative "./resources/schools"
 require_relative "./resources/devices"
 require_relative "./resources/organisations"
 require_relative "./resources/sessions"
+require_relative "./resources/wlan_networks"
 
 # @!macro route
 #   @overload $0 $1
@@ -36,6 +37,7 @@ class Root < LdapSinatra
   use PuavoRest::Users
   use PuavoRest::Devices
   use PuavoRest::Sessions
+  use PuavoRest::WlanNetworks
   if CONFIG["bootserver"]
     require_relative "./resources/ltsp_servers"
     use PuavoRest::LtspServers

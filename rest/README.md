@@ -168,3 +168,39 @@ return session by uuid
 
 delete session by uuid
 
+### GET /v3/devices/:hostname/wlan_networks
+
+configured client wlan networks
+
+return
+
+    [
+      {
+        "password": "",
+        "wlan_ap": true,
+        "type": "open",
+        "ssid": "orgwlan"
+      },
+      {
+        "password": "",
+        "wlan_ap": null,
+        "type": "open",
+        "ssid": "3rdpartywlan"
+      }
+    ]
+
+### GET /v3/devices/:hostname/wlan_hotspot_configurations
+
+get wlan hotspot configurations
+
+return
+
+    [
+      {
+        "password": "",
+        "wlan_ap": true,
+        "type": "open",
+        "ssid": "orgwlan"
+      }
+    ]
+
