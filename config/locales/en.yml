@@ -361,6 +361,8 @@ en:
         puavoDeviceImage: Device image
         puavoBillingInfo: Billing info
         puavoWlanChannel: Channel
+        puavoAllowGuest: Allow guest
+        puavoPersonalDevice: Personal devices
       user:
         displayName: Name
         sn: Surname
@@ -417,6 +419,8 @@ en:
         puavoBillingInfo: Billing info
         puavoDeviceImage: Device Image
         puavoWlanChannel: Channel
+        puavoAllowGuest: Allow guest
+        puavoPersonalDevice: Personal devices
       external_service:
         uid: Service Identifier
         description: Description
@@ -471,6 +475,8 @@ en:
         puavoDeviceImage: Device image
         puavoDeviceBootImage: Device boot image
         puavoPreferredServer: Preferred LTSP server
+        puavoAllowGuest: Allow guest
+        puavoPersonalDevice: Personal device
       oauth_client:
         displayName: Name
         puavoOAuthClientId: Client id
@@ -696,6 +702,9 @@ en:
     index:
       server_title: "Server: %{server}"
   helpers:
+    boolean_true: "Yes"
+    boolean_false: "No"
+    default: Default
     submit:
       servers:
         create: Create

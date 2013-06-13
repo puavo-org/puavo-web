@@ -1,5 +1,6 @@
 class LdapOrganisation < LdapBase
   include Wlan
+  include BooleanAttributes
 
   ldap_mapping( :dn_attribute => "dc",
                 :prefix => "",

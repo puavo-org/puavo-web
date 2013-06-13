@@ -1,6 +1,8 @@
 require 'net/http'
 
 class DeviceBase < LdapBase
+  include BooleanAttributes
+
   attr_accessor :host_certificate_request_send, :image
   attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
 

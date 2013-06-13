@@ -109,6 +109,8 @@
     <td><%= f.text_field :puavoDeviceImage %></td>
   </tr>
 
+  <%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
+
   <tr>
     <td class="label_for_input_text_list">
       <%= f.label :puavoBillingInfo %>

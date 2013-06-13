@@ -59,6 +59,9 @@
   <td class="label_td"><%= f.label :puavoDefaultPrinter %></td>
   <td><%= f.text_field :puavoDefaultPrinter %></td>
 </tr>
+
+<%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
+
 <% end %>
 
 <tr>

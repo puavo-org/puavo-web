@@ -359,6 +359,8 @@ fi:
         puavoDeviceImage: Levykuva
         puavoBillingInfo: Laskutustiedot
         puavoWlanChannel: Kanava
+        puavoAllowGuest: Vieraskirjautuminen sallittu
+        puavoPersonalDevice: Laitteet henkilökohtaisia
       user:
         displayName: Nimi
         sn: Sukunimi
@@ -415,6 +417,8 @@ fi:
         puavoBillingInfo: Laskutustiedot
         puavoDeviceImage: Levykuva
         puavoWlanChannel: Kanava
+        puavoAllowGuest: Vieraskirjautuminen sallittu
+        puavoPersonalDevice: Laitteet henkilökohtaisia
       external_service:
         uid: Palvelun tunniste
         description: Kuvaus
@@ -469,6 +473,8 @@ fi:
         puavoDeviceImage: Levykuva
         puavoDeviceBootImage: Käynnistyslevykuva
         puavoPreferredServer: Ensisijainen LTSP-palvelin
+        puavoAllowGuest: Vieraskirjautuminen sallittu
+        puavoPersonalDevice: Henkilökohtainen laite
       oauth_client:
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)
@@ -692,6 +698,9 @@ fi:
     index:
       server_title: "Palvelin: %{server}"
   helpers:
+    boolean_true: "Kyllä"
+    boolean_false: "Ei"
+    default: Oletus
     submit:
       servers:
         create: Luo

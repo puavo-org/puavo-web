@@ -56,4 +56,15 @@ module ApplicationHelper
       return I18n.t("activeldap.attributes.#{model}.#{attribute}")
     end
   end
+
+  def translate_boolean_value(value)
+    case value
+    when true
+      return I18n.t("helpers.boolean_true")
+    when false
+      return I18n.t("helpers.boolean_false")
+    else
+      return I18n.t("helpers.default")
+    end
+  end
 end
