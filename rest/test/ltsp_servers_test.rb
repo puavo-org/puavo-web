@@ -28,7 +28,7 @@ describe PuavoRest::LtspServers do
     data = JSON.parse(last_response.body)
     assert_equal(
       "cannot find server from LDAP for hostname unknownserver",
-      data["message"]
+      data["error"]["message"]
     )
   end
 
