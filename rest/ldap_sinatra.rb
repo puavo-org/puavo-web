@@ -96,11 +96,6 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
-  # XXX: DEPRECATED
-  error LdapModel::ModelError do |err|
-    halt err.code, json(:message => err.message)
-  end
-
   error LdapHash::LdapHashError do |err|
     halt err.code, json(:message => err.message)
   end
