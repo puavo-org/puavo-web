@@ -126,6 +126,10 @@ class LdapHash < Hash
     end
   end
 
+  def self.all
+    filter("(objectClass=*)")
+  end
+
   # Find any ldap entry by dn
   #
   # @param dn [String]
