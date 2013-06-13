@@ -31,7 +31,7 @@ class Device < LdapHash
   def self.by_hostname(hostname)
     device = filter("(puavoHostname=#{ escape hostname })").first
     if device.nil?
-      raise BadInput, "Cannot find device with hostname '#{ hostname }'"
+      raise NotFound, "Cannot find device with hostname '#{ hostname }'"
     end
     device
   end
