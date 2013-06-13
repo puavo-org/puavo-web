@@ -36,11 +36,11 @@ class Root < LdapSinatra
   use PuavoRest::ExternalFiles
   use PuavoRest::Users
   use PuavoRest::Devices
-  use PuavoRest::Sessions
   use PuavoRest::WlanNetworks
   if CONFIG["bootserver"]
     require_relative "./resources/ltsp_servers"
     use PuavoRest::LtspServers
+    use PuavoRest::Sessions
   end
 end
 end
