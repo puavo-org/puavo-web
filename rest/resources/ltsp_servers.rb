@@ -100,7 +100,7 @@ class LtspServer < LdapHash
   def self.by_hostname(hostname)
     server = filter("(puavoHostname=#{ escape hostname })").first
     if server.nil?
-      raise BadInput, "cannot find server from LDAP for hostname #{ hostname }"
+      raise NotFound, "cannot find server from LDAP for hostname #{ hostname }"
     end
     server.load_state
     server
@@ -162,7 +162,7 @@ class LtspServers < LdapSinatra
   #
   # @!macro route
   get "/v3/ltsp_servers/_most_idle" do
-    logger.warn "Call to legacy _most_idle route. Use POST /v3/sessions in future"
+    logger.warn "DEPRECATED!! Call to legacy _most_idle route. Use POST /v3/sessions !"
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_has_state
     filtered.sort_by_load
@@ -179,11 +179,7 @@ class LtspServers < LdapSinatra
   end
 
   get "/v3/ltsp_servers/:fqdn" do
-    if server = LtspServer.by_fqdn(params["fqdn"])
-      json server
-    else
-      not_found "server not found"
-    end
+    json LtspServer.by_fqdn(params["fqdn"])
   end
 
   # Set LTSP server idle status as x-www-form-urlencoded. If cpu_count is
@@ -199,7 +195,7 @@ class LtspServers < LdapSinatra
 
     if params["cpu_count"] && params["cpu_count"].to_i == 0
       logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["fqdn"] }'"
-      halt 400, json("message" => "0 cpu_count makes no sense")
+      raise LdapHash::BadInput, "0 cpu_count makes no sense"
     end
 
     if params["cpu_count"]

@@ -110,9 +110,9 @@ describe PuavoRest::Sessions do
 
 
   describe "nonexistent device hostname" do
-    it "gets 400" do
+    it "gets 404" do
       post "/v3/sessions", "hostname" => "nonexistent"
-      assert_equal 400, last_response.status
+      assert_equal 404, last_response.status
     end
   end
 

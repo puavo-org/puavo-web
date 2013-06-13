@@ -19,12 +19,12 @@ describe PuavoRest::LtspServers do
     assert_equal "[]", last_response.body
   end
 
-  it "responds 400 for unknown servers" do
+  it "responds 404 for unknown servers" do
     put "/v3/ltsp_servers/unknownserver",
       "load_avg" => "1.0",
       "cpu_count" => 1
 
-    assert_equal 400, last_response.status
+    assert_equal 404, last_response.status
     data = JSON.parse(last_response.body)
     assert_equal(
       "cannot find server from LDAP for hostname unknownserver",
@@ -55,7 +55,7 @@ describe PuavoRest::LtspServers do
     data = JSON.parse(last_response.body)
     assert_equal 400, last_response.status
     assert_equal(
-      {"message"=>"0 cpu_count makes no sense"},
+      {"error" => {"message"=>"0 cpu_count makes no sense"}},
       data
     )
 
