@@ -3,9 +3,7 @@ require 'puavo/ldap'
 module PuavoRest
 class Organisation < LdapHash
   ldap_map :puavoDeviceImage, :preferred_image
-  ldap_map(:puavoWlanSSID, :wlan_networks) do |networks|
-    networks.map { |n| JSON.parse(n) }
-  end
+  ldap_map :puavoWlanSSID, :wlan_networks, &School.method(:parse_wlan)
 
   @@by_domain = nil
   def self.by_domain

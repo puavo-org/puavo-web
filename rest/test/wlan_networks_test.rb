@@ -1,3 +1,4 @@
+require "set"
 require_relative "./helper"
 
 describe PuavoRest::WlanNetworks do
@@ -5,9 +6,9 @@ describe PuavoRest::WlanNetworks do
     before(:each) do
       Puavo::Test.clean_up_ldap
 
-      test_organisation = LdapOrganisation.first
-      test_organisation.puavoDeviceImage = "organisationimage"
-      test_organisation.wlan_networks = [
+      @test_organisation = LdapOrganisation.first
+      @test_organisation.puavoDeviceImage = "organisationimage"
+      @test_organisation.wlan_networks = [
         {
           :ssid => "orgwlan",
           :type => "open",
@@ -21,7 +22,7 @@ describe PuavoRest::WlanNetworks do
           :password => "secret"
         }
       ]
-      test_organisation.save!
+      @test_organisation.save!
 
       @school = School.create(
         :cn => "gryffindor",
@@ -73,7 +74,41 @@ describe PuavoRest::WlanNetworks do
         end).size
       end
 
+
     end
+
+    describe "lecacy configuration" do
+
+      it "is ignored from school" do
+        @school.puavoWlanSSID = "fuuck:oldie:here"
+        @school.save!
+
+        get "/v3/devices/athin/wlan_networks"
+        assert_200
+        data = JSON.parse last_response.body
+
+        assert_equal(
+          Set.new(["orgwlan", "3rdpartywlan"]),
+          Set.new(data.map { |w| w["ssid"] })
+        )
+      end
+
+      it "is ignored from organisation" do
+        @test_organisation.puavoWlanSSID = "fuuck:oldie:here"
+        @test_organisation.save!
+
+        get "/v3/devices/athin/wlan_networks"
+        assert_200
+        data = JSON.parse last_response.body
+
+        assert_equal(
+          Set.new(["schoolwlan"]),
+          Set.new(data.map { |w| w["ssid"] })
+        )
+      end
+
+    end
+
 
     describe "wlan hotspot configuration" do
 
@@ -88,7 +123,6 @@ describe PuavoRest::WlanNetworks do
           wlan["ssid"] == "3rdpartywlan"
         end).size
       end
-
 
     end
 
