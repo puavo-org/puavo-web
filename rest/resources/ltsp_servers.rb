@@ -87,6 +87,7 @@ class ServerFilter
 end
 
 class LtspServer < LdapHash
+  include LocalStoreMixin
 
   ldap_map :dn, :dn
   ldap_map :puavoHostname, :hostname
@@ -117,22 +118,14 @@ class LtspServer < LdapHash
     end
   end
 
-  def initialize(*args)
-    super(*args)
-    @store = LocalStore.new File.join(
-      CONFIG["ltsp_server_data_dir"],
-      "#{ self.class.name.downcase }.#{ self.class.organisation["domain"] }.pstore"
-    )
-  end
-
   def save_state(state)
     self["state"] = state
-    @store.set self["hostname"], state
+    self.class.store.set self["hostname"], state
     state
   end
 
   def load_state
-    self["state"] = @store.get self["hostname"]
+    self["state"] = self.class.store.get self["hostname"]
   end
 
 end
