@@ -110,20 +110,6 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
-  # Model instance factory
-  # Create new model instance with the current organisation info and ldap
-  # connection
-  #
-  # @param klass [Model class]
-  # @return [Model instance]
-  def new_model(klass)
-    if @ldap_conn
-      klass.new(@ldap_conn, @organisation_info)
-    else
-      bad_credentials "No credentials supplied"
-    end
-  end
-
 end
 
 end
