@@ -59,6 +59,67 @@
   <td class="label_td"><%= f.label :puavoDefaultPrinter %></td>
   <td><%= f.text_field :puavoDefaultPrinter %></td>
 </tr>
+
+<tr>
+  <td class="label_td"><%= f.label :puavoAllowGuest %></td>
+  <td>
+    <table>
+      <tr>
+	<td class="label_td">
+	  <%= f.label t("helpers.default"), :for => "device_puavoAllowGuest_" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_true"), :for => "device_puavoAllowGuest_true" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_false"), :for => "device_puavoAllowGuest_false" %>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  <%= f.radio_button :puavoAllowGuest, "" %>
+	</td>
+	<td>
+	  <%= f.radio_button :puavoAllowGuest, true %>
+	</td>
+	<td>
+	  <%= f.radio_button :puavoAllowGuest, false %>
+	</td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
+<tr>
+  <td class="label_td"><%= f.label :puavoPersonalDevice %></td>
+  <td>
+    <table>
+      <tr>
+	<td class="label_td">
+	  <%= f.label t("helpers.default"), :for => "device_puavoPersonalDevice_" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_true"), :for => "device_puavoPersonalDevice_true" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_false"), :for => "device_puavoPersonalDevice_false" %>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  <%= f.radio_button :puavoPersonalDevice, "" %>
+	</td>
+	<td>
+	  <%= f.radio_button :puavoPersonalDevice, true %>
+	</td>
+	<td>
+	  <%= f.radio_button :puavoPersonalDevice, false %>
+	</td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
 <% end %>
 
 <tr>
