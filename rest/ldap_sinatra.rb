@@ -88,7 +88,8 @@ class LdapSinatra < Sinatra::Base
   after do
     LdapHash.clear_setup
     if @ldap_conn
-      # TODO: unbind connection
+      @ldap_conn.unbind
+      @ldap_conn = nil
     end
   end
 
