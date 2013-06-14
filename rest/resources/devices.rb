@@ -92,9 +92,7 @@ class Devices < LdapSinatra
   # @!macro route
   get "/v3/devices/:hostname" do
     device = Device.by_hostname(params["hostname"])
-    if params["fallback_defaults"]
-      device.fallback_defaults
-    end
+    device.fallback_defaults
     json device
   end
 

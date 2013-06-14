@@ -58,20 +58,6 @@ describe PuavoRest::Devices do
       )
     end
 
-    it "has school preferred image when fallback_defaults=1 is set" do
-      get "/v3/devices/athin?fallback_defaults=1"
-      assert_200
-      @data = JSON.parse last_response.body
-      assert_equal "schoolprefimage", @data["preferred_image"]
-    end
-
-    it "is not in use unless fallback_defaults=1 is defined" do
-      get "/v3/devices/athin"
-      assert_200
-      @data = JSON.parse last_response.body
-      assert_equal nil, @data["preferred_image"]
-    end
-
   end
 
 
