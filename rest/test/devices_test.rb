@@ -33,6 +33,7 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoDeviceImage => "customimage",
         :puavoSchool => @school1.dn,
+        :puavoPersonalDevice => false,
         :puavoAllowGuest => false
       )
       get "/v3/devices/athin"
@@ -54,6 +55,10 @@ describe PuavoRest::Devices do
 
     it "has allow guest" do
       assert_equal "FALSE", @data["allow_guest"]
+    end
+
+    it "has personal device" do
+      assert_equal "FALSE", @data["personal_device"]
     end
   end
 

@@ -18,6 +18,7 @@ class Device < LdapHash
   ldap_map :puavoDeviceXserver, :graphics_driver
   ldap_map :puavoDeviceResolution, :resolution
   ldap_map :puavoAllowGuest, :allow_guest
+  ldap_map :puavoPersonalDevice, :personal_device
 
   FALLBACK_KEYS = [
     "preferred_image",
