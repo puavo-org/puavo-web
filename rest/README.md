@@ -6,7 +6,8 @@ installation from opinsys-debs https://github.com/opinsys/opinsys-debs/tree/mast
 
 ## hacking
 
-  1. `make clean` Gemfile.lock must be removed!
+  1. `make clean`
+    - Gemfile.lock must be removed!
   2. `bundle install`
   3. make sure /etc/puavo/ldap has working dn and password
     - they are used for resolve usernames to dn attrs
