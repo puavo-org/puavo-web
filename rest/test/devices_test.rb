@@ -20,14 +20,15 @@ describe PuavoRest::Devices do
     )
   end
 
-  describe "device infromation without fallback" do
+  describe "device infromation" do
     before(:each) do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoPreferredServer => @server1.dn,
         :puavoDeviceImage => "customimage",
-        :puavoSchool => @school.dn
+        :puavoSchool => @school.dn,
+        :puavoAllowGuest => false
       )
       get "/v3/devices/athin"
       assert_200
@@ -44,6 +45,10 @@ describe PuavoRest::Devices do
 
     it "has preferred image" do
       assert_equal "customimage", @data["preferred_image"]
+    end
+
+    it "has allow guest" do
+      assert_equal "FALSE", @data["allow_guest"]
     end
   end
 
