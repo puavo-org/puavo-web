@@ -27,86 +27,82 @@ class LdapSinatra < Sinatra::Base
   end
 
 
-  @@auth_config = {}
+  # Resolve username using the credentials
+  def resolve_dn(username)
 
-  # Define classes that are used to get credentials for this resource
-  #
-  # @param auth_klass [Class] Authentication class
-  # @param options [Hash] Options hash.
-  # @option options [Symbol] :skip
-  #   Skip credentials lookup on HTTP method(s). Possible values: :get, :post:,
-  #   :put, :patch, :options
-  def self.auth(auth_klass, options={})
-    (@@auth_config[self] ||= []).push([auth_klass, options])
+    if LdapHash.organisation.nil?
+      raise LdapHash::InternalError, "Cannot resolve username to dn before organisation is set!"
+    end
+
+    conn = create_ldap_connection(
+      :dn => PUAVO_ETC.ldap_dn,
+      :password => PUAVO_ETC.ldap_password
+    )
+
+    res = LdapHash.with(:connection => conn) do
+      User.by_username(username)["dn"]
+    end
+
+    conn.unbind
+    res
   end
-
-
 
   # Acquire credentials using the specified auth classes
   # @see auth
-  def acquire_credentials
-    (@@auth_config[self.class] || []).each do |auth|
-      auth_klass, options = auth
-      if cred = auth_klass.new.call(request.env, options)
-        return cred
+  def acquire_credentials(klasses)
+    credentials = nil
+
+    klasses.each do |auth_klass|
+      credentials = auth_klass.new.call(request.env)
+      next if credentials.nil?
+
+      if match = credentials[:username].match(/^dn\:(.+)$/)
+        credentials[:dn] = match[1]
+      else
+        credentials[:dn] = resolve_dn(credentials[:username])
       end
+
+      logger.info "#{ self.class.name } got credentials using #{ auth_klass.name }"
+      break if credentials
     end
-    nil
+
+    if credentials.nil?
+      raise LdapHash::BadCredentials, "Cannot find credentials using #{ klasses.inspect }"
+    end
+
+    credentials
   end
 
-  # Setup ldap connection
+  def auth(*klasses)
+    credentials = acquire_credentials(klasses)
+    LdapHash.setup(:connection => create_ldap_connection(credentials))
+  end
+
+  # Create ldap connection
+  #
   # @param credentials [Hash]
-  # @option credentials [Symbol] :username username (dn)
+  # @option credentials [Symbol] :dn ldap dn
   # @option credentials [Symbol] :password plain text password
   # @see #new_model
-  def setup_ldap_connection(credentials)
+  def create_ldap_connection(credentials)
     ldap_conn = LDAP::Conn.new(CONFIG["ldap"])
     ldap_conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     ldap_conn.start_tls
 
+    logger.info "#{ self } Bind with #{ credentials[:dn] } (#{ credentials[:username] })"
     begin
-      ldap_conn.bind(credentials[:username], credentials[:password])
+      ldap_conn.bind(credentials[:dn], credentials[:password])
     rescue LDAP::ResultError
-      bad_credentials("Bad username or password")
-    end
-  end
-
-  before "/v3/*" do
-    credentials = acquire_credentials
-
-    if credentials and @ldap_conn.nil?
-      @ldap_conn = setup_ldap_connection(credentials)
-    end
-
-    LdapHash.setup(
-      :connection => @ldap_conn,
-      :organisation =>
-        Organisation.by_domain[request.host] || Organisation.by_domain["*"]
-    )
-  end
-
-  after do
-    LdapHash.clear_setup
-    if @ldap_conn
-      @ldap_conn.unbind
-      @ldap_conn = nil
+      raise LdapHash::BadCredentials, "Bad username/dn or password"
     end
   end
 
   # Render LdapHash::LdapHashError classes as nice json responses
   error LdapHash::LdapHashError do |err|
+    logger.warn err
     halt err.code, json(:error => { :message => err.message })
   end
 
 
-  # Assert that authentication is required for this route even if the the ldap
-  # connection is not actually used
-  def require_auth
-    if not @ldap_conn
-      bad_credentials "No credentials supplied"
-    end
-  end
-
 end
-
 end

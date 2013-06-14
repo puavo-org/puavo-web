@@ -67,8 +67,6 @@ end
 
 class Devices < LdapSinatra
 
-  auth Credentials::BootServer
-
   # Get detailed information about the server by hostname
   #
   # Example:
@@ -95,6 +93,8 @@ class Devices < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname" do
+    auth Credentials::BootServer
+
     device = Device.by_hostname(params["hostname"])
     device.fallback_defaults
     json device

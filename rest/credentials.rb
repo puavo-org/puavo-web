@@ -7,12 +7,7 @@ module Credentials
 
 class AuthBase
 
-  def skip(env, options)
-    options[:skip] && options[:skip].to_s.upcase == env["REQUEST_METHOD"].upcase
-  end
-
-  def call(env, options={})
-    return if skip(options, env)
+  def call(env)
     acquire(env)
   end
 
@@ -39,12 +34,16 @@ end
 # Can be used to make public resources on the school network.
 class BootServer < AuthBase
   def acquire(env)
-    if CONFIG["bootserver"]
-      {
-        :username => PUAVO_ETC.ldap_dn,
-        :password => PUAVO_ETC.ldap_password
-      }
+    return if CONFIG["bootserver"].nil?
+
+    if c = CONFIG["bootserver_override"]
+      return c
     end
+
+    return {
+      :username => "dn:" + PUAVO_ETC.ldap_dn,
+      :password => PUAVO_ETC.ldap_password
+    }
   end
 end
 

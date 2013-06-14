@@ -134,15 +134,13 @@ end
 # Load balancer resource for LTSP servers
 class LtspServers < LdapSinatra
 
-  # auth Credentials::BasicAuth, :skip => :get
-  auth Credentials::BasicAuth
-  auth Credentials::BootServer
-
   # Get list of LTSP servers sorted by they load. Most idle server is the first
   #
   # @param all [Boolean] Include old servers too
   # @!macro route
   get "/v3/ltsp_servers" do
+    auth Credentials::BasicAuth, Credentials::BootServer
+
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_has_state
     filtered.sort_by_load
@@ -162,6 +160,8 @@ class LtspServers < LdapSinatra
   #
   # @!macro route
   get "/v3/ltsp_servers/_most_idle" do
+    auth Credentials::BasicAuth, Credentials::BootServer
+
     logger.warn "DEPRECATED!! Call to legacy _most_idle route. Use POST /v3/sessions !"
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_has_state
@@ -179,6 +179,8 @@ class LtspServers < LdapSinatra
   end
 
   get "/v3/ltsp_servers/:fqdn" do
+    auth Credentials::BasicAuth, Credentials::BootServer
+
     json LtspServer.by_fqdn(params["fqdn"])
   end
 
@@ -189,7 +191,7 @@ class LtspServers < LdapSinatra
   # @param [Fixnum] cpu_count optional
   # @!macro route
   put "/v3/ltsp_servers/:fqdn" do
-    require_auth
+    auth Credentials::BasicAuth, Credentials::BootServer
 
     state = {}
 

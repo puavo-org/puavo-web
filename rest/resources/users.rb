@@ -1,14 +1,40 @@
 
 module PuavoRest
-# Just for example here
+
+class User < LdapHash
+
+  ldap_map :dn, :dn
+  ldap_map :uid, :username
+  ldap_map :sn, :last_name
+  ldap_map :givenName, :first_name
+  ldap_map :mail, :email
+
+  def self.ldap_base
+    "ou=People,#{ organisation["base"] }"
+  end
+
+  # aka by_uuid
+  def self.by_username(username)
+    filter("(uid=#{ escape username })").first
+  end
+
+end
+
 class Users < LdapSinatra
 
-  auth Credentials::BasicAuth
-  auth Credentials::BootServer
 
   # Return users in a organisation
-  get "/:organisation/users" do
-    "current cred #{ env["PUAVO_CREDENTIALS"] }"
+  get "/v3/users" do
+    auth Credentials::BasicAuth
+
+    json User.all
+  end
+
+  # Return users in a organisation
+  get "/v3/users/:username" do
+    auth Credentials::BasicAuth
+
+    json User.by_username(params["username"])
   end
 
 end

@@ -30,17 +30,31 @@ class LdapHash < Hash
     end
   end
 
+  class InternalError < LdapHashError
+    def code
+      500
+    end
+  end
+
+  class BadCredentials < LdapHashError
+    def code
+      401
+    end
+  end
+
   # Configure ldap connection and orgation to Ldaphash
   # @param [Hash]
   # @option settings [Object] :connection LDAP connection object
   # @option settings [Object] :settings Organisation info
   def self.setup(settings)
-    Thread.current[:ldap_hash_settings] = settings
+    Thread.current[:ldap_hash_settings] =
+      (Thread.current[:ldap_hash_settings] || {}).merge(settings)
   end
 
   # Clear current setup
   def self.clear_setup
-    Thread.current[:ldap_hash_settings] = nil
+    connection.unbind if connection?
+    Thread.current[:ldap_hash_settings] = {}
   end
 
   # Temporally change settings
@@ -50,7 +64,7 @@ class LdapHash < Hash
   def self.with(temp_settings, &block)
     prev = Thread.current[:ldap_hash_settings]
 
-    setup(settings.merge(temp_settings))
+    setup(prev.merge(temp_settings))
     val = block.call
 
     Thread.current[:ldap_hash_settings] = prev
@@ -62,14 +76,30 @@ class LdapHash < Hash
     Thread.current[:ldap_hash_settings]
   end
 
+  # returns true if connection is configured
+  def self.connection?
+    settings && settings[:connection]
+  end
+
+  # returns true if organisation is configured
+  def self.organisation?
+    settings && settings[:organisation]
+  end
+
   # Get current connection
   def self.connection
-    Thread.current[:ldap_hash_settings][:connection]
+    if not connection?
+      raise InternalError, "LDAP connection is not configured!"
+    end
+    settings[:connection]
   end
 
   # Get current organisation
   def self.organisation
-    Thread.current[:ldap_hash_settings][:organisation]
+    if not organisation?
+      raise InternalError, "Organisation is not configured!"
+    end
+    settings[:organisation]
   end
 
 end

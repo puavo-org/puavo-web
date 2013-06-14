@@ -3,8 +3,6 @@ require_relative "./devices"
 module PuavoRest
 class WlanNetworks < LdapSinatra
 
-  auth Credentials::BootServer
-
   def networks
     device = Device.by_hostname(params["hostname"])
     return (
@@ -14,10 +12,14 @@ class WlanNetworks < LdapSinatra
   end
 
   get "/v3/devices/:hostname/wlan_networks" do
+    auth Credentials::BootServer
+
     json networks
   end
 
   get "/v3/devices/:hostname/wlan_hotspot_configurations" do
+    auth Credentials::BootServer
+
     # TODO: should be only served to fatclients
     json(networks.select do |wlan|
       wlan["wlan_ap"]

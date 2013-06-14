@@ -60,18 +60,13 @@ end
 # Desktop login sessions
 class Sessions < LdapSinatra
 
-  auth Credentials::BootServer
-
-  # before do
-  #   @sessions = new_model(SessionsModel)
-  # end
-
   # Create new desktop session for a thin client. If the thin client requests
   # some specific LTSP image and no server provides it will get the most idle
   # LTSP server with what ever image it has
   #
   # @!macro route
   post "/v3/sessions" do
+    auth Credentials::BootServer
 
     if params["hostname"].nil?
       logger.warn "'hostname' missing"
@@ -105,6 +100,8 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   get "/v3/sessions" do
+    auth Credentials::BootServer
+
     json limit Session.all
   end
 
@@ -112,6 +109,8 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   get "/v3/sessions/:uuid" do
+    auth Credentials::BootServer
+
     json Session.load(params["uuid"])
   end
 
@@ -119,6 +118,8 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   delete "/v3/sessions/:uuid" do
+    auth Credentials::BootServer
+
     Session.load(params["uuid"]).destroy
     json :ok => true
   end

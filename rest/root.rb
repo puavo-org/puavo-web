@@ -17,7 +17,7 @@ require_relative "./resources/organisations"
 require_relative "./resources/sessions"
 require_relative "./resources/wlan_networks"
 
-# @!macro route
+
 #   @overload $0 $1
 #   @method $0_$1 $1
 #   @return [HTTP response]
@@ -26,13 +26,30 @@ require_relative "./resources/wlan_networks"
 # Puavo Rest module
 module PuavoRest
 
-class Root < LdapSinatra
-  set :public_folder, "public"
-
+class BeforeFilters < LdapSinatra
   get "/" do
     "hello"
   end
 
+  before do
+    logger.info "REQUEST to #{ request.path }"
+    LdapHash.setup(
+      :organisation =>
+        Organisation.by_domain[request.host] || Organisation.by_domain["*"]
+    )
+  end
+end
+
+class Root < LdapSinatra
+  set :public_folder, "public"
+
+
+  after do
+    logger.info "CLEAR #{ request.path }"
+    LdapHash.clear_setup
+  end
+
+  use BeforeFilters
   use PuavoRest::ExternalFiles
   use PuavoRest::Users
   use PuavoRest::Devices
