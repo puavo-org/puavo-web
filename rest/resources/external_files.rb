@@ -45,7 +45,7 @@ class ExternalFiles < LdapSinatra
   #
   # @!macro route
   get "/v3/external_files" do
-    auth Credentials::BasicAuth, Credentials::BootServer
+    auth Auth::Basic, Auth::BootServer
 
     json ExternalFile.all
   end
@@ -58,7 +58,7 @@ class ExternalFiles < LdapSinatra
   #    }
   # @!macro route
   get "/v3/external_files/:name/metadata" do
-    auth Credentials::BasicAuth, Credentials::BootServer
+    auth Auth::Basic, Auth::BootServer
 
     json ExternalFile.metadata(params[:name])
   end
@@ -66,7 +66,7 @@ class ExternalFiles < LdapSinatra
   # Get file contents
   # @!macro route
   get "/v3/external_files/:name" do
-    auth Credentials::BasicAuth, Credentials::BootServer
+    auth Auth::Basic, Auth::BootServer
 
     content_type "application/octet-stream"
     ExternalFile.data_only(params[:name])

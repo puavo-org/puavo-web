@@ -3,7 +3,7 @@ require "puavo"
 module PuavoRest
 
 # Various auth classes for acquiring login credentials.
-module Credentials
+module Auth
 
 class AuthBase
 
@@ -14,7 +14,7 @@ class AuthBase
 end
 
 # Get user credentials from Basic Auth
-class BasicAuth < AuthBase
+class Basic < AuthBase
 
   def acquire(env)
     return if not env["HTTP_AUTHORIZATION"]

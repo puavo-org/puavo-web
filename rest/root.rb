@@ -6,7 +6,7 @@ require "sinatra/json"
 require "base64"
 require "debugger" if Sinatra::Base.development?
 
-require_relative "./credentials"
+require_relative "./auth"
 require_relative "./ldap_hash"
 require_relative "./ldap_sinatra"
 require_relative "./resources/external_files"
