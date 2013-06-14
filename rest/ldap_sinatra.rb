@@ -89,7 +89,7 @@ class LdapSinatra < Sinatra::Base
     ldap_conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     ldap_conn.start_tls
 
-    logger.info "#{ self } Bind with #{ credentials[:dn] } (#{ credentials[:username] })"
+    logger.info "#{ self.class.name } Bind with #{ credentials[:dn] } (#{ credentials[:username] })"
     begin
       ldap_conn.bind(credentials[:dn], credentials[:password])
     rescue LDAP::ResultError
