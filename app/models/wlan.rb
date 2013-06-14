@@ -53,7 +53,7 @@ module Wlan
                              :password => wlan_password[index.to_s])
     end
 
-    wlan_networks = new_wlan_networks
+    self.wlan_networks = new_wlan_networks
   end
 
   def wlan_name
