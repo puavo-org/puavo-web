@@ -4,6 +4,7 @@ module PuavoRest
 class Organisation < LdapHash
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoWlanSSID, :wlan_networks, &School.method(:parse_wlan)
+  ldap_map :puavoAllowGuest, :allow_guest
 
   @@by_domain = nil
   def self.by_domain
