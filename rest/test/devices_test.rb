@@ -52,7 +52,7 @@ describe PuavoRest::Devices do
     end
   end
 
-  describe "device with school fallback" do
+  describe "device information with school fallback" do
 
     before(:each) do
       create_device(
@@ -61,6 +61,13 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
+      get "/v3/devices/athin"
+      assert_200
+      @data = JSON.parse last_response.body
+    end
+
+    it "has preferred image" do
+      assert_equal "schoolprefimage", @data["preferred_image"]
     end
 
   end
