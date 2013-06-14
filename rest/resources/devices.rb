@@ -20,7 +20,8 @@ class Device < LdapHash
   ldap_map :puavoAllowGuest, :allow_guest
 
   FALLBACK_KEYS = [
-    "preferred_image"
+    "preferred_image",
+    "allow_guest"
   ]
 
   def self.ldap_base

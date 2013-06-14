@@ -8,7 +8,8 @@ describe PuavoRest::Devices do
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
-      :puavoDeviceImage => "schoolprefimage"
+      :puavoDeviceImage => "schoolprefimage",
+      :puavoAllowGuest => true
     )
     @server1 = create_server(
       :puavoHostname => "server1",
@@ -70,6 +71,9 @@ describe PuavoRest::Devices do
       assert_equal "schoolprefimage", @data["preferred_image"]
     end
 
+    it "has allow guest" do
+      assert_equal "TRUE", @data["allow_guest"]
+    end
   end
 
 
