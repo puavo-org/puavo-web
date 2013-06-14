@@ -5,6 +5,7 @@ class Organisation < LdapHash
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoWlanSSID, :wlan_networks, &School.method(:parse_wlan)
   ldap_map :puavoAllowGuest, :allow_guest
+  ldap_map :puavoPersonalDevice, :personal_device
 
   @@by_domain = nil
   def self.by_domain

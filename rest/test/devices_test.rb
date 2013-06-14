@@ -13,6 +13,7 @@ describe PuavoRest::Devices do
       :cn => "gryffindor2",
       :displayName => "Gryffindor2",
       :puavoDeviceImage => "schoolprefimage",
+      :puavoPersonalDevice => true,
       :puavoAllowGuest => true
     )
     @server1 = create_server(
@@ -83,6 +84,10 @@ describe PuavoRest::Devices do
     it "has allow guest" do
       assert_equal "TRUE", @data["allow_guest"]
     end
+
+    it "has personal device" do
+      assert_equal "TRUE", @data["personal_device"]
+    end
   end
 
   describe "device information with organisation fallback" do
@@ -96,6 +101,7 @@ describe PuavoRest::Devices do
       )
       test_organisation = LdapOrganisation.first
       test_organisation.puavoAllowGuest = "FALSE"
+      test_organisation.puavoPersonalDevice = "FALSE"
       test_organisation.save!
       get "/v3/devices/athin"
       assert_200
@@ -106,5 +112,8 @@ describe PuavoRest::Devices do
       assert_equal "FALSE", @data["allow_guest"]
     end
 
+    it "has personal device" do
+      assert_equal "FALSE", @data["personal_device"]
+    end
   end
 end

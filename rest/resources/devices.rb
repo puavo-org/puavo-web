@@ -22,7 +22,8 @@ class Device < LdapHash
 
   FALLBACK_KEYS = [
     "preferred_image",
-    "allow_guest"
+    "allow_guest",
+    "personal_device"
   ]
 
   def self.ldap_base
