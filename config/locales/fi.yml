@@ -629,7 +629,8 @@ fi:
     form_wlan:
       wireless_access_point_setup: Tukiasemien oletusasetukset
       channel_random: Satunnainen
-      wireless_network_setup: Langattomien verkkojen asetukset
+      wireless_network_setup: Tukiasemaverkko
+      other_wireless_network_setup: Muut langattomat verko
       wireless_network_title: Verkko %{index}
       wlan_name: Verkonnimi
       wlan_type: Verkon tyyppi

@@ -13,9 +13,44 @@
 <h2><%= t('.wireless_network_setup') %></h2>
 
 <table>
-  <% (0..4).each do |index| %>
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_name[#{ 0 }]", t('.wlan_name') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_name[#{ 0 }]", f.object.wlan_name ? f.object.wlan_name[0] : "" %>
+    </td>
+  </tr>
 
-  <tr><td><h4><%= t('.wireless_network_title', :index => index + 1) %></h4></td></tr>
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_type[#{ 0 }]", t('.wlan_type') %>
+    </td>
+    <td>
+      <%= select_tag( "wlan_type[#{ 0 }]",
+                      options_for_select([ [t('.select_value_open'), "open"],
+                                           [t('.select_value_psk'), "psk"] ], :selected => f.object.wlan_type ? f.object.wlan_type[0] : "" ) )%>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_password[#{ 0 }]", t('.wlan_password') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_password[#{ 0 }]", f.object.wlan_password ? f.object.wlan_password[0] : "" %>
+      <%= hidden_field_tag "wlan_ap[#{ 0 }]", "enabled" %>
+    </td>
+  </tr>
+
+</table>
+
+<h2><%= t('.other_wireless_network_setup') %></h2>
+
+<table>
+  <% (1..4).each do |index| %>
+
+  <tr><td><h3><%= t('.wireless_network_title', :index => index) %></h3></td></tr>
   <tr>
     <td class="label_td">
       <%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %>
@@ -42,18 +77,9 @@
     </td>
     <td>
       <%= text_field_tag "wlan_password[#{ index }]", f.object.wlan_password ? f.object.wlan_password[index] : "" %>
+      <%= hidden_field_tag "wlan_ap[#{ index }]", "disable" %>
     </td>
   </tr>
-
-  <tr>
-    <td class="label_td">
-      <%= label_tag "wlan_ap[#{ index }]", t('.wlan_ap') %>
-    </td>
-    <td>
-      <%= check_box_tag "wlan_ap[#{ index }]", "enabled", f.object.wlan_ap ? f.object.wlan_ap[index] : false %>
-    </td>
-  </tr>
-
   <% end %>
   <tr>
     <td></td>
