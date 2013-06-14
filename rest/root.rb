@@ -27,26 +27,26 @@ require_relative "./resources/wlan_networks"
 module PuavoRest
 
 class BeforeFilters < LdapSinatra
-  get "/" do
-    "hello"
-  end
 
   before do
-    logger.info "REQUEST to #{ request.path }"
+    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path }"
     LdapHash.setup(
       :organisation =>
         Organisation.by_domain[request.host] || Organisation.by_domain["*"]
     )
+  end
+
+  after do
+    logger.info "CLEAR #{ request.path }"
+    LdapHash.clear_setup
   end
 end
 
 class Root < LdapSinatra
   set :public_folder, "public"
 
-
-  after do
-    logger.info "CLEAR #{ request.path }"
-    LdapHash.clear_setup
+  get "/" do
+    "hello"
   end
 
   use BeforeFilters
