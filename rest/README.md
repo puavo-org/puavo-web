@@ -30,7 +30,9 @@ return
       "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
       "hostname": "testthin",
       "boot_mode": "netboot",
-      "xrand_disable": "FALSE"
+      "xrand_disable": "FALSE",
+      "allow_guest": "FALSE",
+      "personal_device": "TRUE"
     }
 
 ## external files
