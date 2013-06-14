@@ -23,7 +23,6 @@ require_relative "./resources/wlan_networks"
 #   @return [HTTP response]
 
 
-# Puavo Rest module
 module PuavoRest
 
 class BeforeFilters < LdapSinatra
