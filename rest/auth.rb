@@ -41,7 +41,7 @@ class BootServer < AuthBase
     end
 
     return {
-      :username => "dn:" + PUAVO_ETC.ldap_dn,
+      :username => PUAVO_ETC.ldap_dn,
       :password => PUAVO_ETC.ldap_password
     }
   end

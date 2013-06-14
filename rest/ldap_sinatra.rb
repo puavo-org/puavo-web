@@ -47,6 +47,12 @@ class LdapSinatra < Sinatra::Base
     res
   end
 
+  def is_dn(s)
+    # Could be slightly better I think :)
+    # but usernames should have no commas or equal signs
+    s.include?(",") && s.include?("=")
+  end
+
   # Acquire credentials using the specified auth classes
   # @see auth
   def acquire_credentials(klasses)
@@ -56,8 +62,8 @@ class LdapSinatra < Sinatra::Base
       credentials = auth_klass.new.call(request.env)
       next if credentials.nil?
 
-      if match = credentials[:username].match(/^dn\:(.+)$/)
-        credentials[:dn] = match[1]
+      if is_dn(credentials[:username])
+        credentials[:dn] = credentials[:username]
       else
         credentials[:dn] = resolve_dn(credentials[:username])
       end
