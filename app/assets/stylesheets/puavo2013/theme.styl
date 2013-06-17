@@ -2,6 +2,8 @@
 @import 'colors'
 
 // base_styles -->
+h1, h2, h3, h4, h5, h6
+  color baseFont
 
 // Forms
 form
@@ -460,6 +462,14 @@ body
 .search_result
   td
     border-bottom 1px solid #AAAAAA
+
+// markdown
+.markdown
+  h1,h2,h3,h4,h5,h6,p
+    background-color transparent
+    background-image none
+    color baseFont
+// end of markdown
 
 @media screen-breakpoint-one
   .main-wrap, .login_container, .navbar-second-level
