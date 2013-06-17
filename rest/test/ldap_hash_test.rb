@@ -9,6 +9,7 @@ describe LdapHash do
     class TestHash1 < LdapHash
       ldap_map :fooBar, :foo_bar
       ldap_map(:number, :integer) { |v| v.to_i }
+      ldap_map :withDefault, :with_default, 2
     end
 
     class TestHash2 < LdapHash
@@ -54,6 +55,18 @@ describe LdapHash do
       h = TestHash1.new
       h.ldap_set("number",  "2")
       assert_equal 2, h["integer"]
+    end
+
+    it "can use defaults from mapping" do
+      h = TestHash1.new
+      h.ldap_set("withDefault", nil)
+      assert_equal 2, h["with_default"]
+    end
+
+    it "considers false as value" do
+      h = TestHash1.new
+      h.ldap_set("withDefault", false)
+      assert_equal false, h["with_default"]
     end
 
   end

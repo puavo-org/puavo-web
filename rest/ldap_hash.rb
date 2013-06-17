@@ -137,7 +137,7 @@ class LdapHash < Hash
   # @param [any]
   def ldap_set(key, value)
       if ob = @@ldap2json[self.class.name][key.to_s]
-        if value
+        if not value.nil?
           self[ob[:attr]] = ob[:convert].call(value)
         else
           self[ob[:attr]] = ob[:default]
