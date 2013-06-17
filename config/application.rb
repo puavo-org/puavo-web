@@ -7,6 +7,7 @@ require 'rails/all'
 
 require "active_ldap/railtie"
 
+require_relative "../monkeypatches"
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
