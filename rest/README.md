@@ -20,6 +20,13 @@ installation from opinsys-debs https://github.com/opinsys/opinsys-debs/tree/mast
 
 all routes return json documents unless mentioned otherwise
 
+example usage:
+
+    curl $(puavo-resolve-api-server)/v3/devices/$(hostname)
+    
+displays information of the current device
+
+
 ## devices
 
 ### GET /v3/devices/:hostname
