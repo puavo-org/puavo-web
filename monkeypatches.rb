@@ -6,7 +6,7 @@ puts "Monkey patching LDAP schema caches to activeldap. Expecting version 3.2.2"
 require "active_ldap/adapter/base"
 class ActiveLdap::Adapter::Base
   alias orig_schema schema
-  def schema(options=nil)
+  def schema(options={})
     @schema ||= Rails.cache.fetch "ldap_schemas:#{ options.to_s }" do
       orig_schema(options)
     end
