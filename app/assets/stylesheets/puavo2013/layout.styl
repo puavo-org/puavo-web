@@ -6,6 +6,7 @@
 
 html, body
   min-height 100%
+  overflow-x hidden
 
 body
   font-family "Helvetica Neue",Arial,sans-serif
@@ -16,7 +17,6 @@ body
 
 h1, h2, h3, h4, h5, h6
   font-weight normal
-  color #1b1b1b
   margin 0 0 1em
 h1
   font-size 250%
@@ -193,7 +193,7 @@ caption
 .container
   height 100%
   margin 0
-  min-width 315px
+  min-width 300px
 
 .main-wrap
   margin 25px auto
@@ -210,12 +210,12 @@ caption
 .maincontent
   font-size 80%
   margin 0 0 2% 0
-  padding 2%
+  padding 1% 2%
   position relative
   width 100%
   .dashboard
     float left
-    margin 1% 0 0
+    margin 0
     width 100%
   h1
     line-height 1
@@ -315,6 +315,16 @@ caption
     font-weight bold
     float right
     margin-left 10px
+
+// markdown
+.markdown
+  h1,h2,h3,h4,h5,h6,p
+    float none
+    margin 0
+    padding 0
+  ul
+    list-style disc
+// end of markdown
 
 @media screen-breakpoint-one
   body
