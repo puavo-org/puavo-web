@@ -63,7 +63,7 @@ describe PuavoRest::Devices do
     end
 
     it "has allow guest" do
-      assert_equal "FALSE", @data["allow_guest"]
+      assert_equal false, @data["allow_guest"]
     end
 
     it "has personal device" do
@@ -90,7 +90,7 @@ describe PuavoRest::Devices do
     end
 
     it "has allow guest" do
-      assert_equal "TRUE", @data["allow_guest"]
+      assert_equal true, @data["allow_guest"]
     end
 
     it "has personal device" do
@@ -113,11 +113,11 @@ describe PuavoRest::Devices do
     end
 
     it "has allow guest" do
-      assert_equal "FALSE", @data["allow_guest"]
+      assert_equal false, @data["allow_guest"]
     end
 
     it "has personal device" do
-      assert_equal "FALSE", @data["personal_device"]
+      assert_equal false, @data["personal_device"]
     end
   end
 end
