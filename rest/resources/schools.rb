@@ -16,6 +16,7 @@ class School < LdapHash
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoWlanSSID, :wlan_networks, &method(:parse_wlan)
   ldap_map :puavoAllowGuest, :allow_guest
-  ldap_map :puavoPersonalDevice, :personal_device
+  ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
+
 end
 end

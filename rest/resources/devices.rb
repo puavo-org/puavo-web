@@ -18,7 +18,7 @@ class Device < LdapHash
   ldap_map :puavoDeviceXserver, :graphics_driver
   ldap_map :puavoDeviceResolution, :resolution
   ldap_map :puavoAllowGuest, :allow_guest
-  ldap_map :puavoPersonalDevice, :personal_device
+  ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
 
   FALLBACK_KEYS = [
     "preferred_image",
@@ -56,9 +56,9 @@ class Device < LdapHash
   # are nil
   def fallback_defaults(keys=FALLBACK_KEYS)
     keys.each do |key|
-      next if self[key]
+      next if not self[key].nil?
       self[key] = school[key]
-      next if self[key]
+      next if not self[key].nil?
       self[key] = organisation[key]
     end
   end
