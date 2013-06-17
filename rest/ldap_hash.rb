@@ -117,9 +117,10 @@ class LdapHash < Hash
   # @param json_name [Symbol] Value conversion block. Default: Get first array item
   # @param convert [Block] Use block to
   # @see convert
-  def self.ldap_map(ldap_name, json_name, &convert)
+  def self.ldap_map(ldap_name, json_name, default_value = nil, &convert)
     hash = @@ldap2json[self.name] ||= {}
     hash[ldap_name.to_s] = {
+      :default => default_value,
       :attr => json_name.to_s,
       :convert => convert || lambda { |v| Array(v).first }
     }
@@ -136,14 +137,18 @@ class LdapHash < Hash
   # @param [any]
   def ldap_set(key, value)
       if ob = @@ldap2json[self.class.name][key.to_s]
-        self[ob[:attr]] = ob[:convert].call(value)
+        if value
+          self[ob[:attr]] = ob[:convert].call(value)
+        else
+          self[ob[:attr]] = ob[:default]
+        end
       end
   end
 
   # Like normal Hash#merge! but convert attributes using the ldap mapping
   def ldap_merge!(hash)
-    hash.each do |k,v|
-      ldap_set(k,v)
+    @@ldap2json[self.class.name].keys.each do |key|
+      ldap_set(key, hash[key])
     end
     self
   end

@@ -120,4 +120,31 @@ describe PuavoRest::Devices do
       assert_equal false, @data["personal_device"]
     end
   end
+
+  describe "device information with global default" do
+    before(:each) do
+      create_device(
+        :puavoHostname => "athin",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school_without_fallback_value.dn
+      )
+      test_organisation = LdapOrganisation.first
+      test_organisation.puavoAllowGuest = nil
+      test_organisation.puavoPersonalDevice = nil
+      test_organisation.save!
+      get "/v3/devices/athin"
+      assert_200
+      @data = JSON.parse last_response.body
+    end
+
+    it "has allow guest" do
+      assert_equal false, @data["allow_guest"]
+    end
+
+    it "has personal device" do
+      assert_equal false, @data["personal_device"]
+    end
+    
+  end
 end

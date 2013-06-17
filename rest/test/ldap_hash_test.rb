@@ -29,7 +29,7 @@ describe LdapHash do
 
     it "can merge ldap attrs from hash" do
       h = TestHash1.new
-      h.ldap_merge!(:fooBar => "value")
+      h.ldap_merge!("fooBar" => "value")
       assert_equal "value", h["foo_bar"]
     end
 
@@ -40,7 +40,7 @@ describe LdapHash do
     end
 
     it "can create new instances from normal hashes" do
-      h = TestHash1.from_hash(:fooBar => "value")
+      h = TestHash1.from_hash("fooBar" => "value")
       assert_equal "value", h["foo_bar"]
     end
 
