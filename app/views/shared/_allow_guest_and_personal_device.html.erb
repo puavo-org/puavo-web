@@ -2,7 +2,10 @@
   <td class="label_td view"><%= label object.class.to_s.downcase, "puavoAllowGuest" %></td>
   <td class="value_td"><%= translate_boolean_value(object.puavoAllowGuest) %></td>
 </tr>
+
+<% if [School, LdapOrganisation].include?(object.class) || ( object.class == Device && object.puavoDeviceType == "laptop" ) %>
 <tr>
   <td class="label_td view"><%= label object.class.to_s.downcase, "puavoPersonalDevice" %></td>
   <td class="value_td"><%= translate_boolean_value(object.puavoPersonalDevice) %></td>
 </tr>
+<% end %>

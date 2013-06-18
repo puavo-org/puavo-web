@@ -28,6 +28,7 @@
   </td>
 </tr>
 
+<% if [School, LdapOrganisation].include?(f.object.class) || ( f.object.class == Device && f.object.puavoDeviceType == "laptop" ) %>
 <tr>
   <td class="label_td"><%= f.label :puavoPersonalDevice %></td>
   <td>
@@ -57,3 +58,4 @@
     </table>
   </td>
 </tr>
+<% end %>

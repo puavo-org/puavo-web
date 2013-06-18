@@ -60,7 +60,9 @@
   <td><%= f.text_field :puavoDefaultPrinter %></td>
 </tr>
 
-<%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
+<% if f.object.class == Device %>
+  <%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
+<% end %>
 
 <% end %>
 
