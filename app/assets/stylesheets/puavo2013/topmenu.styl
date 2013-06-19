@@ -200,8 +200,27 @@ ul.menu li li li.hover ul,
 ul.menu li li li li.hover ul
   left -1px
   z-index 999
+.desktop-menu-container
+  display block
+.mobile-menu-container
+  display none
 
 @media screen-breakpoint-one
+  .desktop-menu-container
+    display none
+  .mobile-menu-container
+    display block
+    .topmenu-left
+      float none
+    .search-container
+      display block
+      padding 0
+      width 100%
+      input
+        float none
+        height 30px
+        width 100%
+
   .topmenu
     display block
     position relative
