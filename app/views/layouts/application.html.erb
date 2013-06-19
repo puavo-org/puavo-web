@@ -48,63 +48,119 @@
 </head>
 <body>
 <div class="topmenu clearfix">
-  <div class="topmenu-content">
-  <ul class="topmenu-left">
-      <% if current_user %>
-        <% if current_user.organisation_owner? %>
-        <li class="organisation-menu-button">
-           <span><%= session[:organisation].name %></span>
-           <ul id="help" class="organisation-menu">
-             <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
-             <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
-             <% if Puavo::EXTERNAL_FILES %>
-             <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
-             <% end -%>
-	     <% if Puavo::OAUTH_CONFIG %>
-             <li class="top-menu-item"><%= link_to t('.oauth_clients'), oauth_clients_path %></li>
-	     <% end %>
-              <% if Puavo::DEVICE_CONFIG %>
-               <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
-               <li class="top-menu-item"><%= link_to t('.servers'), "/devices/servers" %></li>
-            <% end %>
-             <li class="top-menu-item"><%= link_to t('.wlan'),  wlan_organisation_path %></li>
-           </ul>
-        </li>
-        <% else %>
-        <li><span class="sub"><%= session[:organisation].name %></span></li>
-        <% end %>
-        <li class="school-menu-button">
-
-          <span><%= t('.schools') %></span>
-          <ul class="school-menu">
-
-            <% school_list.each do |school| %>
-              <li class="top-menu-item<% if school_list.last == school %> last<% end %>">
-                <%= link_to school.displayName,  school_path(school) %>
-              </li>
-            <% end %>
-
-            <% if current_user.organisation_owner? %>
-            <li class="add-new-school">
-              <%= link_to t('link.new_school'), new_school_path %>
+    <div class="topmenu-content">
+    <div class="desktop-menu-container">
+      <ul class="topmenu-left">
+        <% if current_user %>
+          <% if current_user.organisation_owner? %>
+            <li class="organisation-menu-button">
+              <span><%= session[:organisation].name %></span>
+              <ul id="help" class="organisation-menu">
+                <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
+                <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+                <% if Puavo::EXTERNAL_FILES %>
+                <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
+                <% end -%>
+  	             <% if Puavo::OAUTH_CONFIG %>
+                <li class="top-menu-item"><%= link_to t('.oauth_clients'), oauth_clients_path %></li>
+  	             <% end %>
+                <% if Puavo::DEVICE_CONFIG %>
+                  <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
+                  <li class="top-menu-item"><%= link_to t('.servers'), "/devices/servers" %></li>
+                <% end %>
+                <li class="top-menu-item"><%= link_to t('.wlan'),  wlan_organisation_path %></li>
+               </ul>
             </li>
-			<% end %>
-          </ul>
-        </li>
-        <li>
+            <% else %>
+            <li><span class="sub"><%= session[:organisation].name %></span></li>
+            <% end %>
+            <li class="school-menu-button">
+              <span><%= t('.schools') %></span>
+              <ul class="school-menu">
+                <% school_list.each do |school| %>
+                  <li class="top-menu-item<% if school_list.last == school %> last<% end %>">
+                    <%= link_to school.displayName,  school_path(school) %>
+                  </li>
+                <% end %>
+                <% if current_user.organisation_owner? %>
+                <li class="add-new-school">
+                  <%= link_to t('link.new_school'), new_school_path %>
+                </li>
+    			     <% end %>
+              </ul>
+            </li>
+            <li>
               <%= text_field_tag( "search",
-                                nil,
-                                :id => "search",
-                                :size => 30,
-                                :placeholder => t('.search_placeholder') ) %>
-              </li>
-        </ul> <!-- topmenu-left -->
-        <ul class="menu topmenu-right">
-            <!-- <li><span><%= t('.logged_in_as') %>:</span></li> -->
-                <li><a href="#"><%= current_user.displayName %></a></li>
-                <li><%= link_to t('.logout'), logout_path, :method => :delete, :class => "btn btn-danger" %></li>
-        </ul>
+                                    nil,
+                                    :class => "search",
+                                    :size => 30,
+                                    :placeholder => t('.search_placeholder') ) %>
+                  </li>
+      </ul> <!-- topmenu-left -->
+      <ul class="menu topmenu-right">
+          <li><a href="#"><%= current_user.displayName %></a></li>
+          <li><%= link_to t('.logout'), logout_path, :method => :delete, :class => "btn btn-danger" %></li>
+      </ul>
+    <% end %>
+  </div> <!-- desktop-menu-container -->
+  <div class="mobile-menu-container">
+    <ul class="search-container">
+      <li>
+        <%= text_field_tag( "search",
+          nil,
+          :class => "search",
+          :size => 30,
+          :placeholder => t('.search_placeholder') ) %>
+      </li>
+    </ul>
+     <ul class="topmenu-left">
+          <% if current_user %>
+            <% if current_user.organisation_owner? %>
+            <li class="organisation-menu-button">
+               <span><%= session[:organisation].name %></span>
+               <ul id="help" class="organisation-menu">
+                 <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
+                 <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+                 <% if Puavo::EXTERNAL_FILES %>
+                 <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
+                 <% end -%>
+           <% if Puavo::OAUTH_CONFIG %>
+                 <li class="top-menu-item"><%= link_to t('.oauth_clients'), oauth_clients_path %></li>
+           <% end %>
+                  <% if Puavo::DEVICE_CONFIG %>
+                   <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
+                   <li class="top-menu-item"><%= link_to t('.servers'), "/devices/servers" %></li>
+                <% end %>
+                 <li class="top-menu-item"><%= link_to t('.wlan'),  wlan_organisation_path %></li>
+               </ul>
+            </li>
+            <% else %>
+            <li><span class="sub"><%= session[:organisation].name %></span></li>
+            <% end %>
+            <li class="school-menu-button">
+
+              <span><%= t('.schools') %></span>
+              <ul class="school-menu">
+
+                <% school_list.each do |school| %>
+                  <li class="top-menu-item<% if school_list.last == school %> last<% end %>">
+                    <%= link_to school.displayName,  school_path(school) %>
+                  </li>
+                <% end %>
+
+                <% if current_user.organisation_owner? %>
+                <li class="add-new-school">
+                  <%= link_to t('link.new_school'), new_school_path %>
+                </li>
+          <% end %>
+              </ul>
+            </li>
+      </ul> <!-- topmenu-left -->
      <% end %>
+     <ul class="menu topmenu-right">
+        <li><%= link_to t('.logout'), logout_path, :method => :delete, :class => "btn btn-danger" %></li>
+      </ul>
+     </div> <!-- mobile-menu-container -->
    </div>
 </div><!-- topNavContainer -->
 <div class="container">
