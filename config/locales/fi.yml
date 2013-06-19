@@ -475,6 +475,7 @@ fi:
         puavoPreferredServer: Ensisijainen LTSP-palvelin
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Henkilökohtainen laite
+        puavoPrinterDeviceURI: Tulostimen laiteosoite
       oauth_client:
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)

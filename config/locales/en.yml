@@ -477,6 +477,7 @@ en:
         puavoPreferredServer: Preferred LTSP server
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal device
+        puavoPrinterDeviceURI: Printer device URI
       oauth_client:
         displayName: Name
         puavoOAuthClientId: Client id

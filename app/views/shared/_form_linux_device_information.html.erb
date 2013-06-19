@@ -55,6 +55,12 @@
 <% end %>
 
 <% unless f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
+
+<tr>
+  <td class="label_td"><%= f.label :puavoPrinterDeviceURI %></td>
+  <td><%= f.text_field :puavoPrinterDeviceURI %></td>
+</tr>
+
 <tr>
   <td class="label_td"><%= f.label :puavoDefaultPrinter %></td>
   <td><%= f.text_field :puavoDefaultPrinter %></td>
