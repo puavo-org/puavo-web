@@ -205,7 +205,7 @@ class LdapHash < Hash
   #
   # @param dn [String]
   # @param attributes [Array of Strings]
-  def self.by_dn(dn, attributes=nil)
+  def self.raw_by_dn(dn, attributes=nil)
     res = nil
     attributes ||= ldap_attrs
 
@@ -215,11 +215,17 @@ class LdapHash < Hash
       "(objectclass=*)",
       attributes
     ) do |entry|
-      res = from_hash entry.to_hash
+      res = entry.to_hash
       break
     end
 
     res
+  end
+
+  # Return convert value to LdapHashes before returning
+  # @see raw_by_dn
+  def self.by_dn(*args)
+    from_hash( raw_by_dn(*args) )
   end
 
 end
