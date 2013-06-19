@@ -91,4 +91,16 @@ describe PuavoRest::ExternalFiles do
     )
   end
 
+  it "has printer.ppd file contents by hostname" do
+    get "/v3/devices/athin01/external_files/printer.ppd"
+    assert_200
+    assert_equal "PPD-data", last_response.body
+  end
+
+  it "has file contents by hostname" do
+    get "/v3/devices/athin01/external_files/test.txt"
+    assert_200
+    assert_equal "test data", last_response.body
+  end
+
 end

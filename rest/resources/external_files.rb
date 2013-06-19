@@ -104,5 +104,21 @@ class ExternalFiles < LdapSinatra
     json external_files
   end
 
+  # Get file contents by device hostname
+  # @!macro route
+  get "/v3/devices/:hostname/external_files/:name" do
+    auth Auth::Basic, Auth::BootServer
+
+    content_type "application/octet-stream"
+
+    if params[:name] == "printer.ppd"
+      if device = Device.by_hostname(params[:hostname])
+        device.printer_ppd
+      end
+    else
+      ExternalFile.data_only(params[:name])
+    end
+  end
+
 end
 end
