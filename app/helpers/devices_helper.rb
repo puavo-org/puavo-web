@@ -37,4 +37,12 @@ module DevicesHelper
                  device_types.map{ |d| [Puavo::DEVICE_CONFIG['device_types'][d]['label'][I18n.locale.to_s], d] } )
   end
 
+  def model_name_from_ppd(ppd)
+    return I18n.t('helpers.ppd_file.no_file') if ppd.nil?
+    if match_data = ppd.match(/\*ModelName:(.*)\n/)
+      return match_data[1].lstrip.gsub("\"", "")
+    end
+    return I18n.t('helpers.ppd_file.cannot_detect_filetype')
+  end
+
 end

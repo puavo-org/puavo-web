@@ -7,6 +7,14 @@ class Device < DeviceBase
 
 #  after_save :set_mac_addresses
   before_destroy :remove_mac_addresses
+  before_validation :read_ppd_data
+
+  def read_ppd_data
+    if self.puavoPrinterPPD.class == ActionDispatch::Http::UploadedFile
+      data = File.open(self.puavoPrinterPPD.path, "rb").read.to_blob
+      self.puavoPrinterPPD = data
+    end
+  end
 
   def self.allowed_classes
     ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoPrinter', 'cupsPrinter']

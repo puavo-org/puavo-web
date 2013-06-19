@@ -476,6 +476,7 @@ fi:
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Henkilökohtainen laite
         puavoPrinterDeviceURI: Tulostimen laiteosoite
+        puavoPrinterPPD: Tulostimen ajuritiedosto
       oauth_client:
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)
@@ -702,6 +703,9 @@ fi:
     boolean_true: "Kyllä"
     boolean_false: "Ei"
     default: Oletus
+    ppd_file:
+      no_file: Ajuritiedostoa ei ole asetettu
+      cannot_detect_filetype: Tuntematon ajuritiedosto
     submit:
       servers:
         create: Luo

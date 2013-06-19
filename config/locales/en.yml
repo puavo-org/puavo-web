@@ -478,6 +478,7 @@ en:
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal device
         puavoPrinterDeviceURI: Printer device URI
+        puavoPrinterPPD: Printer driver file
       oauth_client:
         displayName: Name
         puavoOAuthClientId: Client id
@@ -706,6 +707,9 @@ en:
     boolean_true: "Yes"
     boolean_false: "No"
     default: Default
+    ppd_file:
+      no_file: No driver file
+      cannot_detect_filetype: Cannot detect driver file
     submit:
       servers:
         create: Create
