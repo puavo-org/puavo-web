@@ -14,6 +14,25 @@ describe PuavoRest::ExternalFiles do
     @file2.cn = "another.txt"
     @file2.puavoData = "some other data"
     @file2.save!
+
+    @school = School.create(
+      :cn => "gryffindor",
+      :displayName => "Gryffindor"
+    )
+
+    @device = create_device(
+      :puavoHostname => "athin01",
+      :macAddress => "bf:9a:8c:1b:e0:6a",
+      :puavoSchool => @school.dn,
+      :puavoPrinterPPD => 'PPD-data'
+    )
+
+    @device = create_device(
+      :puavoHostname => "athin02",
+      :macAddress => "bf:9a:8c:1b:e0:6b",
+      :puavoSchool => @school.dn
+    )
+
   end
 
   it "has file metadata in index" do
@@ -42,6 +61,33 @@ describe PuavoRest::ExternalFiles do
     assert_equal(
       {"name"=>"test.txt", "data_hash"=>"f48dd853820860816c75d54d0f584dc863327a7c"},
       data
+    )
+  end
+
+  it "has file metadata in index by device" do
+    get "/v3/devices/athin01/external_files"
+    assert_200
+    data = JSON.parse last_response.body
+    assert_equal(
+      [
+        {"name"=>"test.txt", "data_hash"=>"f48dd853820860816c75d54d0f584dc863327a7c"},
+        {"name"=>"another.txt", "data_hash"=>"7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"},
+        {"name"=>"printer.ppd", "data_hash"=>"f6faa9d255137ce1482dc9a958f7299c234ef4f9"}
+      ],
+    data
+    )
+  end
+
+  it "has no file metadata of printer_ppd in index by device" do
+    get "/v3/devices/athin02/external_files"
+    assert_200
+    data = JSON.parse last_response.body
+    assert_equal(
+      [
+        {"name"=>"test.txt", "data_hash"=>"f48dd853820860816c75d54d0f584dc863327a7c"},
+        {"name"=>"another.txt", "data_hash"=>"7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"}
+      ],
+    data
     )
   end
 

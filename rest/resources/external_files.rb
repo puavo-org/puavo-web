@@ -72,5 +72,37 @@ class ExternalFiles < LdapSinatra
     ExternalFile.data_only(params[:name])
   end
 
+  # Get metadata list of external files by device hostname
+  #
+  #    [
+  #      {
+  #        "name": <filename>,
+  #        "data_hash": <sha1 checksum of the file>
+  #      },
+  #      ...
+  #    ]
+  #
+  # @!macro route
+  get "/v3/devices/:hostname/external_files" do
+    auth Auth::Basic, Auth::BootServer
+
+    if device = Device.by_hostname(params[:hostname])
+      if device.printer_ppd
+        printer_ppd_data_hash = Digest::SHA1.new
+        printer_ppd_data_hash.update(device.printer_ppd)
+      end
+    end
+
+    external_files = ExternalFile.all
+
+    if printer_ppd_data_hash
+      external_files.push(
+        {"name" => "printer.ppd", "data_hash" => printer_ppd_data_hash.to_s }
+      )
+    end
+
+    json external_files
+  end
+
 end
 end

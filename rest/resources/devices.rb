@@ -40,6 +40,10 @@ class Device < LdapHash
     device
   end
 
+  def printer_ppd
+    Array(self.class.raw_by_dn(self["dn"], "puavoPrinterPPD")["puavoPrinterPPD"]).first
+  end
+
   # Cached school query
   def school
     return @school if @school
