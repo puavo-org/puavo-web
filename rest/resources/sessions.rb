@@ -6,12 +6,6 @@ module PuavoRest
 class Session < LdapHash
   include LocalStoreMixin
 
-  class CannotFindLtspServer < LdapHashError
-    def code
-      500
-    end
-  end
-
   # Create new desktop session for a device
   #
   # @param device_attrs [Hash]
@@ -66,7 +60,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   post "/v3/sessions" do
-    auth Auth::BootServer
+    auth :boot_server
 
     if params["hostname"].nil?
       logger.warn "'hostname' missing"
@@ -100,7 +94,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   get "/v3/sessions" do
-    auth Auth::BootServer
+    auth :boot_server
 
     json limit Session.all
   end
@@ -109,7 +103,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   get "/v3/sessions/:uuid" do
-    auth Auth::BootServer
+    auth :boot_server
 
     json Session.load(params["uuid"])
   end
@@ -118,7 +112,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   delete "/v3/sessions/:uuid" do
-    auth Auth::BootServer
+    auth :boot_server
 
     Session.load(params["uuid"]).destroy
     json :ok => true

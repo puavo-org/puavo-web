@@ -24,6 +24,8 @@ else
     CONFIG = {
       "ldap" => fqdn,
       "ltsp_server_data_dir" => "/run/puavo-rest",
+      "fqdn" => fqdn,
+      "keytab" => "/etc/puavo/puavo-rest.keytab",
       "bootserver" => true
     }
   end

@@ -18,30 +18,6 @@ class LdapHash < Hash
 
   class LdapHashError < Exception; end
 
-  class BadInput < LdapHashError
-    def code
-      400
-    end
-  end
-
-  class NotFound < LdapHashError
-    def code
-      404
-    end
-  end
-
-  class InternalError < LdapHashError
-    def code
-      500
-    end
-  end
-
-  class BadCredentials < LdapHashError
-    def code
-      401
-    end
-  end
-
   # Configure ldap connection and orgation to Ldaphash
   # @param [Hash]
   # @option settings [Object] :connection LDAP connection object
@@ -89,7 +65,7 @@ class LdapHash < Hash
   # Get current connection
   def self.connection
     if not connection?
-      raise InternalError, "LDAP connection is not configured!"
+      raise LdapHashError, "LDAP connection is not configured!"
     end
     settings[:connection]
   end
@@ -97,7 +73,7 @@ class LdapHash < Hash
   # Get current organisation
   def self.organisation
     if not organisation?
-      raise InternalError, "Organisation is not configured!"
+      raise LdapHashError, "Organisation is not configured!"
     end
     settings[:organisation]
   end

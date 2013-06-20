@@ -100,7 +100,7 @@ class LtspServer < LdapHash
   def self.by_hostname(hostname)
     server = filter("(puavoHostname=#{ escape hostname })").first
     if server.nil?
-      raise NotFound, "cannot find server from LDAP for hostname #{ hostname }"
+      raise NotFound, :user => "cannot find server from LDAP for hostname #{ hostname }"
     end
     server.load_state
     server
@@ -139,7 +139,7 @@ class LtspServers < LdapSinatra
   # @param all [Boolean] Include old servers too
   # @!macro route
   get "/v3/ltsp_servers" do
-    auth Auth::Basic, Auth::BootServer
+    auth :basic_auth, :boot_server
 
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_has_state
@@ -160,7 +160,7 @@ class LtspServers < LdapSinatra
   #
   # @!macro route
   get "/v3/ltsp_servers/_most_idle" do
-    auth Auth::Basic, Auth::BootServer
+    auth :basic_auth, :boot_server
 
     logger.warn "DEPRECATED!! Call to legacy _most_idle route. Use POST /v3/sessions !"
     filtered = ServerFilter.new(LtspServer.all_with_state)
@@ -179,7 +179,7 @@ class LtspServers < LdapSinatra
   end
 
   get "/v3/ltsp_servers/:fqdn" do
-    auth Auth::Basic, Auth::BootServer
+    auth :basic_auth, :boot_server
 
     json LtspServer.by_fqdn(params["fqdn"])
   end
@@ -191,7 +191,7 @@ class LtspServers < LdapSinatra
   # @param [Fixnum] cpu_count optional
   # @!macro route
   put "/v3/ltsp_servers/:fqdn" do
-    auth Auth::Basic, Auth::BootServer
+    auth :basic_auth, :boot_server
 
     state = {}
 

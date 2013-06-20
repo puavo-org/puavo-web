@@ -4,6 +4,8 @@ require "multi_json"
 require "sinatra/base"
 require "sinatra/json"
 require "base64"
+require "gssapi"
+require "gssapi/lib_gssapi"
 require "debugger" if Sinatra::Base.development?
 
 require_relative "./auth"
@@ -22,6 +24,8 @@ require_relative "./resources/wlan_networks"
 #   @overload $0 $1
 #   @method $0_$1 $1
 #   @return [HTTP response]
+
+
 
 
 module PuavoRest
@@ -44,10 +48,6 @@ end
 
 class Root < LdapSinatra
   set :public_folder, "public"
-
-  get "/" do
-    "hello"
-  end
 
   use BeforeFilters
   use PuavoRest::ExternalFiles

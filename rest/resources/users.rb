@@ -25,14 +25,14 @@ class Users < LdapSinatra
 
   # Return users in a organisation
   get "/v3/users" do
-    auth Auth::Basic
+    auth :basic_auth, :kerberos
 
     json User.all
   end
 
   # Return users in a organisation
   get "/v3/users/:username" do
-    auth Auth::Basic
+    auth :basic_auth, :kerberos
 
     json User.by_username(params["username"])
   end

@@ -36,7 +36,7 @@ class Device < LdapHash
   def self.by_hostname(hostname)
     device = filter("(puavoHostname=#{ escape hostname })").first
     if device.nil?
-      raise NotFound, "Cannot find device with hostname '#{ hostname }'"
+      raise NotFound, :user => "Cannot find device with hostname '#{ hostname }'"
     end
     device
   end
@@ -98,7 +98,7 @@ class Devices < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname" do
-    auth Auth::BootServer
+    auth :boot_server
 
     device = Device.by_hostname(params["hostname"])
     device.fallback_defaults

@@ -12,13 +12,13 @@ class WlanNetworks < LdapSinatra
   end
 
   get "/v3/devices/:hostname/wlan_networks" do
-    auth Auth::BootServer
+    auth :boot_server
 
     json networks
   end
 
   get "/v3/devices/:hostname/wlan_hotspot_configurations" do
-    auth Auth::BootServer
+    auth :boot_server
 
     # TODO: should be only served to fatclients
     json(networks.select do |wlan|
