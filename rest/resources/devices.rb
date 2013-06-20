@@ -19,6 +19,7 @@ class Device < LdapHash
   ldap_map :puavoDeviceResolution, :resolution
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
+  ldap_map :puavoPrinterDeviceURI, :printer_device_uri
 
   FALLBACK_KEYS = [
     "preferred_image",

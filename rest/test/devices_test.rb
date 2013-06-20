@@ -39,7 +39,8 @@ describe PuavoRest::Devices do
         :puavoDeviceImage => "customimage",
         :puavoSchool => @school.dn,
         :puavoPersonalDevice => false,
-        :puavoAllowGuest => false
+        :puavoAllowGuest => false,
+        :puavoPrinterDeviceURI => "usb:/dev/usb/lp1"
       )
       test_organisation = LdapOrganisation.first
       test_organisation.puavoAllowGuest = "TRUE"
@@ -68,6 +69,10 @@ describe PuavoRest::Devices do
 
     it "has personal device" do
       assert_equal false, @data["personal_device"]
+    end
+
+    it "has printer uri" do
+      assert_equal "usb:/dev/usb/lp1", @data["printer_device_uri"]
     end
   end
 
