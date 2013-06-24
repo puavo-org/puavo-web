@@ -1,0 +1,82 @@
+@font-face {
+  font-family: 'puavo-icons';
+  src: url('../font/puavo-icons.eot?36139605');
+  src: url('../font/puavo-icons.eot?36139605#iefix') format('embedded-opentype'),
+       url('../font/puavo-icons.woff?36139605') format('woff'),
+       url('../font/puavo-icons.ttf?36139605') format('truetype'),
+       url('../font/puavo-icons.svg?36139605#puavo-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'puavo-icons';
+    src: url('../font/puavo-icons.svg?36139605#puavo-icons') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "puavo-icons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+     
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.icon-plus:before { content: '\e80a'; } /* '' */
+.icon-minus:before { content: '\e80b'; } /* '' */
+.icon-home:before { content: '\e808'; } /* '' */
+.icon-attention:before { content: '\e813'; } /* '' */
+.icon-pencil:before { content: '\e812'; } /* '' */
+.icon-cancel:before { content: '\e806'; } /* '' */
+.icon-eye:before { content: '\e80e'; } /* '' */
+.icon-tag:before { content: '\e80f'; } /* '' */
+.icon-tags:before { content: '\e810'; } /* '' */
+.icon-location:before { content: '\e818'; } /* '' */
+.icon-trash:before { content: '\e814'; } /* '' */
+.icon-inbox:before { content: '\e81b'; } /* '' */
+.icon-link-ext:before { content: '\e807'; } /* '' */
+.icon-hdd:before { content: '\e81c'; } /* '' */
+.icon-docs:before { content: '\e816'; } /* '' */
+.icon-exchange:before { content: '\e819'; } /* '' */
+.icon-info:before { content: '\e809'; } /* '' */
+.icon-lock-open-alt:before { content: '\e80d'; } /* '' */
+.icon-collapse:before { content: '\e81a'; } /* '' */
+.icon-picture:before { content: '\e804'; } /* '' */
+.icon-videocam:before { content: '\e803'; } /* '' */
+.icon-user:before { content: '\e801'; } /* '' */
+.icon-users:before { content: '\e802'; } /* '' */
+.icon-doc:before { content: '\e815'; } /* '' */
+.icon-phone:before { content: '\e817'; } /* '' */
+.icon-download:before { content: '\e811'; } /* '' */
+.icon-camera:before { content: '\e805'; } /* '' */
+.icon-search:before { content: '\e800'; } /* '' */
+.icon-key:before { content: '\e81d'; } /* '' */
+.icon-lock:before { content: '\e80c'; } /* '' */
