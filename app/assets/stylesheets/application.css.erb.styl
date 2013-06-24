@@ -19,6 +19,7 @@ global-reset()
 @import "puavo2013/base_styles/alerts.styl"
 @import "puavo2013/base_styles/buttons.styl"
 @import "puavo2013/base_styles/forms.styl"
+@import "puavo2013/base_styles/icons.styl"
 @import "puavo2013/base_styles/main-navigation.styl"
 @import "puavo2013/base_styles/tables.styl"
 @import "puavo2013/layout.styl"
@@ -35,10 +36,10 @@ global-reset()
 @import "puavo2013/users.styl"
 @import "puavo2013/users-import.styl"
 
-.topmenu-left input
+.topmenu-left input, .search-container input
   search-input-image()
 
-.topmenu-left input.loading
+.topmenu-left input.loading, .search-container input.loading
   search-input-spinner()
 
 .clone_prev_input_element:hover
