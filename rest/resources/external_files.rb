@@ -84,7 +84,7 @@ class ExternalFiles < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname/external_files" do
-    auth Auth::Basic, Auth::BootServer
+    auth :basic_auth, :boot_server
 
     if device = Device.by_hostname(params[:hostname])
       if device.printer_ppd
@@ -107,7 +107,7 @@ class ExternalFiles < LdapSinatra
   # Get file contents by device hostname
   # @!macro route
   get "/v3/devices/:hostname/external_files/:name" do
-    auth Auth::Basic, Auth::BootServer
+    auth :basic_auth, :boot_server
 
     content_type "application/octet-stream"
 
