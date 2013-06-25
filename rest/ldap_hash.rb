@@ -112,13 +112,13 @@ class LdapHash < Hash
   # @param [String]
   # @param [any]
   def ldap_set(key, value)
-      if ob = @@ldap2json[self.class.name][key.to_s]
-        if not value.nil?
-          self[ob[:attr]] = ob[:convert].call(value)
-        else
-          self[ob[:attr]] = ob[:default]
-        end
+    if ob = @@ldap2json[self.class.name][key.to_s]
+      if not value.nil?
+        self[ob[:attr]] = ob[:convert].call(value)
+      else
+        self[ob[:attr]] = ob[:default]
       end
+    end
   end
 
   # Like normal Hash#merge! but convert attributes using the ldap mapping
