@@ -19,11 +19,20 @@ installation from opinsys-debs https://github.com/opinsys/opinsys-debs/tree/mast
 
 all routes return json documents unless mentioned otherwise
 
-example usage:
+### examples
+
+basic usage:
 
     curl $(puavo-resolve-api-server)/v3/devices/$(hostname)
-    
+
 displays information of the current device
+
+usage with kerberos:
+
+  curl --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/users/$(whoami)
+
+`--user :` is required to activate the authentication code properly in curl for
+some reason.
 
 
 ## devices
