@@ -20,6 +20,14 @@
 </table>
 
 <% content_for :right do %>
-<div><%= link_to t('link.new_user'), new_user_path %></div>
-<div><%= link_to t('link.user_mass_import.new'), new_users_import_path %></div>
+<div>
+  <%= link_to new_user_path do %>
+    <i class='icon-user'></i><%=t('link.new_user')%>
+  <% end %>
+</div>
+<div>
+  <%= link_to new_users_import_path do %>
+    <i class='icon-users'></i><%=t('link.user_mass_import.new')%>
+  <% end %>
+</div>
 <% end %>
