@@ -21,9 +21,11 @@ dev-install:
 	bundle install --without rails --deployment
 
 install:
-	# Delete .git dir from vendor/. Caused some permission issues on .deb
-	# builder
+	# Delete .git dir and caches from vendor/. Caused some permission issues on
+	# .deb builder
 	find vendor/ -type d -name .git | xargs rm -rf
+	rm -rf vendor/bundle/ruby/*/cache/bundler/git
+
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
 	cp -r \
