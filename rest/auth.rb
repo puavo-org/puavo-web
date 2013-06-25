@@ -1,5 +1,6 @@
 require "puavo"
 
+require "thread"
 require "base64"
 require "gssapi"
 require "gssapi/lib_gssapi"
@@ -111,6 +112,7 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
+  KRB_LOCK = Mutex.new
 
   def kerberos
     # TODO: locks!
@@ -119,28 +121,32 @@ class LdapSinatra < Sinatra::Base
     return if auth_key.downcase != "negotiate"
 
     started = Time.now
+    conn = nil
 
-    input_token = Base64.decode64(env["HTTP_AUTHORIZATION"].split()[1])
-    kg = Krb5Gssapi.new(CONFIG["fqdn"], CONFIG["keytab"])
+    KRB_LOCK.synchronize do
 
-    begin
-      kg.copy_ticket(input_token)
-    rescue GSSAPI::GssApiError => err
-      if err.message.match(/Clock skew too great/)
-        raise KerberosError, :user => "Your clock is messed up"
-      else
-        raise err
+      input_token = Base64.decode64(env["HTTP_AUTHORIZATION"].split()[1])
+      kg = Krb5Gssapi.new(CONFIG["fqdn"], CONFIG["keytab"])
+
+      begin
+        kg.copy_ticket(input_token)
+      rescue GSSAPI::GssApiError => err
+        if err.message.match(/Clock skew too great/)
+          raise KerberosError, :user => "Your clock is messed up"
+        else
+          raise err
+        end
+      rescue Krb5Gssapi::NoDelegation => err
+        raise KerberosError, :user =>
+          "Credentials are not delegated! '--delegation always' missing?"
       end
-    rescue Krb5Gssapi::NoDelegation => err
-      raise KerberosError, :user =>
-        "Credentials are not delegated! '--delegation always' missing?"
+
+      logger.info "Creating LDAP connection using Kerberos for #{ kg.display_name }"
+      conn = create_ldap_connection(:sasl => true)
+      kg.clean_up
+
+      logger.info "SASL bind with Kerberos took #{ Time.now - started } seconds"
     end
-
-    logger.info "Creating LDAP connection using Kerberos for #{ kg.display_name }"
-    conn = create_ldap_connection(:sasl => true)
-    kg.clean_up
-
-    logger.info "GSSAPI-KRB bind took #{ Time.now - started } seconds"
 
     return conn
   end
@@ -166,4 +172,3 @@ class LdapSinatra < Sinatra::Base
 
 end
 end
-
