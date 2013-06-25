@@ -1,6 +1,9 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.13'
+group :rails do
+  gem 'rails', '3.2.13'
+end
+
 gem 'sqlite3', :require => 'sqlite3'
 gem "prawn"
 gem "net-ldap"

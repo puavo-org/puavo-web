@@ -15,6 +15,11 @@ update-production-gemfile.lock:
 	# how to get rid of sudo...
 	RACK_ENV=production sudo -E bundle install
 
+dev-install:
+	sudo rm -rf .bundle Gemfile.lock
+	bundle install --without rails
+	bundle install --without rails --deployment
+
 install:
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
