@@ -23,7 +23,7 @@ dev-install:
 install:
 	# Delete .git dir from vendor/. Caused some permission issues on .deb
 	# builder
-	find vendor/ -delete -type d -name .git
+	find vendor/ -type d -name .git | xargs rm -rf
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
 	cp -r \
