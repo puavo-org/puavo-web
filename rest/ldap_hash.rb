@@ -112,6 +112,16 @@ class LdapHash < Hash
   # @param [String]
   # @param [any]
   def ldap_set(key, value)
+
+    # String values in our LDAP are always UTF-8
+    value = Array(value).map do |item|
+      if item.respond_to?(:force_encoding)
+        item.force_encoding("UTF-8")
+      else
+        item
+      end
+    end
+
     if ob = @@ldap2json[self.class.name][key.to_s]
       if not value.nil?
         self[ob[:attr]] = ob[:convert].call(value)
