@@ -3,6 +3,9 @@ module PuavoRest
 
   class JSONError < Exception
 
+    # @param [String, Hash] error message
+    # @option message :user Error message that is displayed to requesting user
+    # @option message :mgs Internal error message for stack traces
     def initialize(message)
       if message.class == String
         super(message)
