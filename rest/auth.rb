@@ -91,6 +91,13 @@ class LdapSinatra < Sinatra::Base
   def boot_server
     return if CONFIG["bootserver"].nil?
 
+    # In future we will only use Bootserver based authentication if
+    # 'Authorization: Bootserver' is set. Otherwise we will assume Kerberos
+    # authentication.
+    if env["HTTP_AUTHORIZATION"] != "Bootserver"
+      logger.warn "DEPRECATED! Header 'Authorization: Bootserver' is missing from bootserver authenticated resource"
+    end
+
     if c = CONFIG["bootserver_override"]
       return create_ldap_connection(
         :username => c[:username],
