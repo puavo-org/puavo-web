@@ -19,6 +19,9 @@ dev-install:
 	sudo rm -rf .bundle Gemfile.lock
 	bundle install --without rails
 	bundle install --without rails --deployment
+	# Delete .git dir from vendor/. Caused some permission issues on .deb
+	# builder
+	find vendor/ -delete -type d -name .git
 
 install:
 	mkdir -p $(DESTDIR)$(installdir)
