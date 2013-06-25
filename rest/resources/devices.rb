@@ -1,3 +1,5 @@
+require_relative "../lib/error_codes"
+
 module PuavoRest
 class Device < LdapHash
 

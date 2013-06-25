@@ -1,5 +1,6 @@
 require "uuid"
 require_relative "../local_store"
+require_relative "../lib/error_codes"
 
 module PuavoRest
 
@@ -25,7 +26,9 @@ class Session < LdapHash
     filtered.sort_by_load
 
     session["ltsp_server"] = filtered.first
-    raise CannotFindLtspServer if session["ltsp_server"].nil?
+    if session["ltsp_server"].nil?
+      raise NotFound :user => "cannot find any LTSP servers"
+    end
     session
   end
 

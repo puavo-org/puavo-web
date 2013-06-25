@@ -1,5 +1,6 @@
 require "fileutils"
 require_relative "../local_store"
+require_relative "../lib/error_codes"
 
 module PuavoRest
 
@@ -197,7 +198,7 @@ class LtspServers < LdapSinatra
 
     if params["cpu_count"] && params["cpu_count"].to_i == 0
       logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["fqdn"] }'"
-      raise LdapHash::BadInput, "0 cpu_count makes no sense"
+      raise BadInput, :user => "0 cpu_count makes no sense"
     end
 
     if params["cpu_count"]

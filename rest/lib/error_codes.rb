@@ -45,6 +45,12 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
+  class BadInput < JSONError
+    def http_code
+      400
+    end
+  end
+
   class BadCredentials < JSONError
     def http_code
       401
