@@ -4,7 +4,7 @@ standalone JSON API server for boot servers and public web
 
 installation from opinsys-debs https://github.com/opinsys/opinsys-debs/tree/master/packages/puavo-users
 
-## hacking
+## Hacking
 
   1. `make dev-install`
     - kinda ugly hack...
@@ -15,33 +15,33 @@ installation from opinsys-debs https://github.com/opinsys/opinsys-debs/tree/mast
   4. before releasing create test dep free Gemfile.lock with
      `make update-production-gemfile.lock`
 
-## api routes
+## Api Routes
 
-all routes return json documents unless mentioned otherwise
+All routes return json documents unless mentioned otherwise.
 
-### examples
+### Examples
 
-basic usage:
+Basic usage
 
     curl $(puavo-resolve-api-server)/v3/devices/$(hostname)
 
 displays information of the current device
 
-usage with kerberos:
+Usage with kerberos:
 
   curl --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/users/$(whoami)
 
-`--user :` is required to activate the authentication code properly in curl for
-some reason.
+Option `--user :` is required to activate the authentication code properly in
+curl for some reason.
 
 
-## devices
+## Devices
 
 ### GET /v3/devices/:hostname
 
-get device information by device hostname
+Get device information by device hostname.
 
-return
+returns
 
     {
       "kernel_arguments": "lol",
@@ -62,14 +62,14 @@ return
       "personal_device": "TRUE"
     }
 
-## external files
+## External files
 
 ### GET /v3/:organisation/external_files
 
-get metadata list of external files
+Get metadata list of external files.
 
 
-return
+returns
 
     [
      {
@@ -82,9 +82,9 @@ return
 ### GET /v3/:organisation/external_files/:name/metadata
 
 
-get metadata for external file
+Get metadata for external file.
 
-return
+returns
 
     {
       "name": <filename>,
@@ -93,19 +93,19 @@ return
 
 ### GET /v3/:organisation/external_files/:name
 
-get file contents
+Get file contents.
 
-return
+returns
 
     (Content-Type: application/octet-stream))
 
-## ltsp servers
+## LTSP servers
 
 ### GET /v3/ltsp_servers
 
-get metadata for all ltsp servers
+Get metadata for all ltsp servers.
 
-return
+returns
 
     [
       {
@@ -123,14 +123,14 @@ return
 
 *DEPRECATED! use `post /v3/sessions`*
 
-get the most idle ltsp server
+Get the most idle ltsp server.
 
 
 ### GET /v3/ltsp_servers/:hostname
 
-get ltsp server metadata by hostname
+Get ltsp server metadata by hostname.
 
-return
+returns
 
     {
       "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
@@ -142,30 +142,30 @@ return
 
 ### PUT /v3/ltsp_servers/:hostname
 
-set ltsp server status
+Set LTSP server status.
 
-post fields:
+Post fields:
   - ltsp_image
   - load_avg
   - cpu_count (optional)
 
 ### POST /v3/sessions
 
-create new thin client session
+Create new thin client session.
 
-will return the most appropriate ltsp server depending on
+Will return the most appropriate ltsp server depending on
   - preferred device image attribute on device, school or organisation
   - preferred server attribute on device
   - preferred school attribute on ltsp server
   - ltsp server load
   - details https://github.com/opinsys/puavo-users/blob/master/rest/resources/sessions.rb#L33
 
-sessions are stored in memory only but are not automatically deleted
+Sessions are stored in memory only but are not automatically deleted.
 
-post fields:
+Post fields:
   - hostname
 
-return
+returns
 
     {
       "created": "2013-06-06 09:54:05 +0300",
@@ -187,21 +187,21 @@ return
 
 ### GET /v3/sessions
 
-return all sessions
+Return all sessions.
 
 ### GET /v3/sessions/:uuid
 
-return session by uuid
+Return session by uuid.
 
 ### DELETE /v3/sessions/:uuid
 
-delete session by uuid
+Delete session by uuid.
 
 ### GET /v3/devices/:hostname/wlan_networks
 
-configured client wlan networks
+Configured client WLAN networks.
 
-return
+returns
 
     [
       {
@@ -220,9 +220,9 @@ return
 
 ### GET /v3/devices/:hostname/wlan_hotspot_configurations
 
-get wlan hotspot configurations
+Get WLAN hotspot configurations.
 
-return
+returns
 
     [
       {
@@ -233,13 +233,13 @@ return
       }
     ]
 
-## GSSAPI SPNEGO WTF
+## KERBEROS GSSAPI SPNEGO WTF setup
 
-on master
+On LDAP master do
 
     # kadmin.local -r <REALM> -q "addprinc -randkey HTTP/<bootserver fqdn>"
 
-on bootserver
+and on bootserver
 
     # kadmin.local -q "ktadd -norandkey -k /etc/puavo/puavo-rest.keytab HTTP/$(hostname -f)"
     # chgrp puavo /etc/puavo/puavo-rest.keytab
