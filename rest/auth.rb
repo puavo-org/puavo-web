@@ -24,7 +24,9 @@ class LdapSinatra < Sinatra::Base
     )
 
     res = LdapHash.with(:connection => conn) do
-      User.by_username(username)["dn"]
+      user = User.by_username(username)
+      raise BadCredentials, "No such username #{ username }" if not user
+      user["dn"]
     end
 
     conn.unbind
