@@ -65,12 +65,6 @@ module PuavoRest
     end
   end
 
-  class KerberosError < JSONError
-    def http_code
-      500
-    end
-  end
-
   class InternalError < JSONError
     def http_code
       500
