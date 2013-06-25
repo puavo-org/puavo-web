@@ -1,6 +1,5 @@
 
 module PuavoRest
-class LdapSinatra < Sinatra::Base
 
   class JSONError < Exception
 
@@ -76,5 +75,4 @@ class LdapSinatra < Sinatra::Base
   end
 
 
-end
 end

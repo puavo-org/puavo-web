@@ -55,7 +55,7 @@ describe PuavoRest::LtspServers do
     data = JSON.parse(last_response.body)
     assert_equal 400, last_response.status
     assert_equal(
-      {"error" => {"message"=>"0 cpu_count makes no sense"}},
+      {"error"=>{"code"=>"BadInput", "message"=>"0 cpu_count makes no sense"}},
       data
     )
 

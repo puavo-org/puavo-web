@@ -255,7 +255,7 @@ describe PuavoRest::Sessions do
       get "/v3/sessions/doesnotexists"
       assert_equal 404, last_response.status
       data = JSON.parse(last_response.body)
-      assert_equal "unknown session uuid 'doesnotexists'", data["error"]["message"]
+      assert_equal({"error"=>{"code"=>"NotFound"}}, data)
     end
 
     it "can be deleted with DELETE" do
