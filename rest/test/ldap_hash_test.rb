@@ -8,7 +8,7 @@ describe LdapHash do
 
     class TestHash1 < LdapHash
       ldap_map :fooBar, :foo_bar
-      ldap_map(:number, :integer) { |v| v.to_i }
+      ldap_map(:number, :integer) { |v| v.first.to_i }
       ldap_map :withDefault, :with_default, 2
     end
 

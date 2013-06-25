@@ -123,7 +123,7 @@ class LdapHash < Hash
     end
 
     if ob = @@ldap2json[self.class.name][key.to_s]
-      if not value.nil?
+      if not (value.nil? || value.empty?)
         self[ob[:attr]] = ob[:convert].call(value)
       else
         self[ob[:attr]] = ob[:default]
