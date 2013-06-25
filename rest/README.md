@@ -8,14 +8,14 @@ installation from opinsys-debs https://github.com/opinsys/opinsys-debs/tree/mast
 
   1. `make dev-install`
     - kinda ugly hack...
-  2. make sure /etc/puavo/ldap has working dn and password
-    - they are used for resolve usernames to dn attrs
-    - boot server auth
+  2. make sure `/etc/puavo/ldap` has working dn and password
+    - they are used for resolve usernames to dn attributes
+    - and boot server auth
   3. `make test` to test things
   4. before releasing create test dep free Gemfile.lock with
      `make update-production-gemfile.lock`
 
-## Api Routes
+## API Routes
 
 All routes return json documents unless mentioned otherwise.
 
@@ -29,7 +29,7 @@ displays information of the current device
 
 Usage with kerberos:
 
-  curl --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/users/$(whoami)
+    curl --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/users/$(whoami)
 
 Option `--user :` is required to activate the authentication code properly in
 curl for some reason.
