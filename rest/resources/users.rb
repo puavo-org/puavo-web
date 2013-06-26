@@ -44,8 +44,13 @@ class Users < LdapSinatra
   get "/v3/users/:username/profile.jpg" do
     auth :basic_auth, :kerberos
 
-    content_type "image/jpeg"
-    User.profile_image(params["username"])
+    image = User.profile_image(params["username"])
+    if image
+      content_type "image/jpeg"
+      image
+    else
+      raise NotFound, :user => "#{ params["username"] } has no profile image"
+    end
   end
 
 end
