@@ -74,12 +74,16 @@ class LdapBase < ActiveLdap::Base
     end
   end
 
+  def self.resize_image(image_path)
+    image_orig = Magick::Image.read(image_path).first
+    image_orig.resize_to_fit( self.image_size[:width], self.image_size[:height] ).to_blob
+  end
+
   private
 
   def resize_image
     if self.image && !self.image.path.to_s.empty?
-      image_orig = Magick::Image.read(self.image.path).first
-      self.jpegPhoto = image_orig.resize_to_fit( self.image_size[:width], self.image_size[:height] ).to_blob
+      self.jpegPhoto = LdapBase.resize_image(self.image.path)
     end
   end
 
