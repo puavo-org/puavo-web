@@ -1,7 +1,7 @@
 <table>
   <tr>
     <td>
-      <%= image_tag( @user.jpegPhoto.nil? ? "anonymous.png" : image_user_path(@school, @user),
+      <%= image_tag( profile_image_path(@user),
                      :class => "image" ) %>
     </td>
     <td>
