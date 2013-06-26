@@ -7,11 +7,13 @@
 <%= form_for( @user,
              :url => profile_path,
              :html => html_args ) do |f| %>
+
   <div class="control-group">
     <%= f.label :telephoneNumber, nil, :class => "control-label" %>
     <div class="controls">
       <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
     </div>
+
     <div class="margin20">
       <%= f.label :mail, nil, :class => "control-label" %>
       <div class="controls">
@@ -19,6 +21,7 @@
       </div>
     </div>
   </div>
+
   <div class="control-group">
     <%= f.label :preferredLanguage, nil, :class => "control-label" %>
     <div class="controls">
@@ -27,6 +30,14 @@
                     Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } ) %>
     </div>
   </div>
+
+  <div class="control-group">
+    <%= f.label :image, nil, :class => "control-label" %>
+    <div class="controls">
+    <%= f.file_field :jpegPhoto %>
+    </div>
+  </div>
+
   <div class="control-group">
     <div class="controls">
       <%= f.submit submit_text %>
@@ -41,4 +52,5 @@
       <% end %>
     </div>
   </div>
+
 <% end %>

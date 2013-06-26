@@ -15,15 +15,28 @@ class ProfilesController < ApplicationController
 
   # PUT /profile
   def update
-    
+
+    # TODO:: Add delete profile photo button
+
     @user = current_user
-    
+
     # Create params for ldap replace operation.
-    modify_params = params[:user].select{ |k,v| !v.empty? }.inject([]) do |result, attribute|
-      # FIXME: Is there a better solutions?
+    modify_params = params[:user].select do |key, value|
+      # do not update empty form values
+      !value.to_s.empty?
+    end.map do |attribute|
+
+      # XXX: to avoid encoding issues with scandinavian chars
       key = String.new(attribute.first)
       key.force_encoding('utf-8')
-      result.push key => attribute.last
+
+      value = attribute.last
+
+      if key == "jpegPhoto"
+        value = User.resize_image(value.path)
+      end
+
+      { key => value }
     end
 
     respond_to do |format|
