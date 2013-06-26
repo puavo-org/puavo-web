@@ -14,7 +14,7 @@ class DeviceBase < LdapBase
 
   validate :validate
 
-  def image_size
+  def self.image_size
     { width: 220, height: 220 }
   end
 

@@ -69,7 +69,7 @@ class User < LdapBase
   }
 
 
-  def image_size
+  def self.image_size
     { width: 120, height: 160 }
   end
 
