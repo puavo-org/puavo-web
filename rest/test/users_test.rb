@@ -16,7 +16,8 @@ describe PuavoRest::Users do
       :givenName => "Bob",
       :sn  => "Brown",
       :uid => "bob",
-      :puavoEduPersonAffiliation => "student"
+      :puavoEduPersonAffiliation => "student",
+      :mail => "bob@example.com"
     )
     @user.set_password "secret"
     @user.puavoSchool = @school.dn
@@ -25,6 +26,33 @@ describe PuavoRest::Users do
     ]
     @user.save!
     puts "created user with #{ @user.dn }"
+  end
+
+
+  describe "GET /v3/users/bob" do
+
+    it "returns user data" do
+      basic_authorize "bob", "secret"
+      get "/v3/users/bob"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "bob", data["username"]
+      assert_equal "Bob", data["first_name"]
+      assert_equal "Brown", data["last_name"]
+      assert_equal "bob@example.com", data["email"]
+    end
+
+    it "returns 401 without auth" do
+      get "/v3/users/bob"
+      assert_equal 401, last_response.status, last_response.body
+    end
+
+    it "returns 401 with bad auth" do
+      basic_authorize "bob", "bad"
+      get "/v3/users/bob"
+      assert_equal 401, last_response.status, last_response.body
+    end
   end
 
   describe "GET /v3/users/bob/profile.jpg" do
@@ -53,8 +81,12 @@ describe PuavoRest::Users do
         JSON.parse(last_response.body)
       )
     end
+
+    it "returns 401 without auth" do
+      get "/v3/users/bob/profile.jpg"
+      assert_equal 401, last_response.status, last_response.body
+    end
+
   end
-
-
 
 end
