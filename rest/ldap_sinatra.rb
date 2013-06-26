@@ -38,18 +38,6 @@ class LdapSinatra < Sinatra::Base
     halt err.http_code, json(err)
   end
 
-  # class Err < Exception; end
-
-  # error Err do |err|
-  #   debugger; nil
-  #   "foo"
-  # end
-
-  get "/err" do
-    # raise Err, "Internal mesasge"
-    "hello"
-  end
-
   not_found do
     json({
       :error => {
