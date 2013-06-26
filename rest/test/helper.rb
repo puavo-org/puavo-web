@@ -65,6 +65,9 @@ require_relative "../config.rb"
 require_relative "../root"
 require_relative '../../lib/cleanup_ldap'
 
+# Some random require calls required by Puavo Activeldap models
+require "RMagick"
+
 module Rack
   module Test
     DEFAULT_HOST = "example.opinsys.net"
