@@ -348,9 +348,20 @@ class User < LdapBase
     end
     return users_by_role
   end
-  def generate_password
+
+  def generate_password(size=8)
     characters = (("a".."z").to_a + ("0".."9").to_a).delete_if do |char| not char[/[015iIosq]/].nil? end
-    self.new_password = Array.new(8) { characters[rand(characters.size)] }.join
+    Array.new(size) { characters[rand(characters.size)] }.join
+  end
+
+  def set_generated_password
+    self.new_password = generate_password
+  end
+
+  def set_password(password, salt=nil)
+    salt ||= generate_password(5)
+    pw = Base64.encode64(Digest::SHA1.digest(password + salt) + salt).chomp!
+    self.userPassword = "{SSHA}" + pw
   end
 
   def self.puavoEduPersonAffiliation_list

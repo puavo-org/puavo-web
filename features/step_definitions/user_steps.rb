@@ -11,7 +11,6 @@ end
 
 Given /^the following users:$/ do |users|
   set_ldap_admin_connection
-  salt = "testsalt"
   users.hashes.each do |u|
     roles = nil
     if u["roles"]
@@ -30,8 +29,7 @@ Given /^the following users:$/ do |users|
       user.puavoAdminOfSchool = user.puavoSchool
       SambaGroup.add_uid_to_memberUid('Domain Admins', user.uid)
     end
-    user.userPassword = "{SSHA}" + 
-      Base64.encode64(Digest::SHA1.digest(u["password"] + salt) + salt).chomp!
+    user.set_password(u["password"])
     user.save!
     if roles
       roles.each do |role_name|

@@ -210,7 +210,7 @@ class Users::ImportController < ApplicationController
                         :value => params[:create_timestamp] ) if params[:create_timestamp]
 
     @users.each do |user|
-      user.generate_password if params[:reset_password] == "true"
+      user.set_generated_password if params[:reset_password] == "true"
       # Update puavoTimestamp
       user.puavoTimestamp = Array(user.puavoTimestamp).push password_timestamp
       user.save!
