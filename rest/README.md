@@ -34,6 +34,39 @@ Usage with kerberos:
 Option `--user :` is required to activate the authentication code properly in
 curl for some reason.
 
+## Users
+
+### GET /v3/users
+
+Get list of all user data
+
+returns
+
+    [
+      <user object, see next>,
+      ...
+    ]
+
+### GET /v3/users/:username
+
+Get user information
+
+returns
+    {
+      "email": "olli.oppilas@example.com",
+      "first_name": "Olli",
+      "last_name": "Oppilas",
+      "username": "oppilas",
+      "dn": "puavoId=202228,ou=People,dc=edu,dc=kehitys,dc=fi"
+    }
+
+### GET /v3/users/:username/profile.jpg
+
+Get profile image for the user
+
+returns
+
+    (Content-Type: image/jpeg)
 
 ## Devices
 
