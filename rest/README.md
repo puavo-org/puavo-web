@@ -52,6 +52,7 @@ returns
 Get user information
 
 returns
+
     {
       "email": "olli.oppilas@example.com",
       "first_name": "Olli",
