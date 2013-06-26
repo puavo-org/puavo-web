@@ -18,6 +18,10 @@ class User < LdapHash
     filter("(uid=#{ escape username })").first
   end
 
+  def self.profile_image(uid)
+    raw_filter("(uid=#{ escape uid })", ["jpegPhoto"]).first["jpegPhoto"]
+  end
+
 end
 
 class Users < LdapSinatra
@@ -35,6 +39,13 @@ class Users < LdapSinatra
     auth :basic_auth, :kerberos
 
     json User.by_username(params["username"])
+  end
+
+  get "/v3/users/:username/profile.jpg" do
+    auth :basic_auth, :kerberos
+
+    content_type "image/jpeg"
+    User.profile_image(params["username"])
   end
 
 end
