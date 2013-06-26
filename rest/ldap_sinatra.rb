@@ -50,5 +50,13 @@ class LdapSinatra < Sinatra::Base
     "hello"
   end
 
+  not_found do
+    json({
+      :error => {
+        :message => "Not found"
+      }
+    })
+  end
+
 end
 end
