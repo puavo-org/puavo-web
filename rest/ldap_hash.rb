@@ -38,7 +38,7 @@ class LdapHash < Hash
   # @param [Hash] The temp settings
   # @param [Block] Temp settings will be in use during the block execution
   def self.with(temp_settings, &block)
-    prev = Thread.current[:ldap_hash_settings]
+    prev = Thread.current[:ldap_hash_settings] || {}
 
     setup(prev.merge(temp_settings))
     val = block.call
