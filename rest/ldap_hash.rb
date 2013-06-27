@@ -70,6 +70,14 @@ class LdapHash < Hash
     settings[:connection]
   end
 
+  def self.rest_root
+    settings && settings[:rest_root]
+  end
+
+  def link(path)
+    self.class.rest_root + path
+  end
+
   # Get current organisation
   def self.organisation
     if not organisation?

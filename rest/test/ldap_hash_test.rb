@@ -81,6 +81,15 @@ describe LdapHash do
 
       assert_equal "foo", h["b"]
     end
+
+    it "can create full links" do
+
+      LdapHash.with(:rest_root => "http://someroot") do
+        h = LdapHash.new
+        assert_equal "http://someroot/foo", h.link("/foo")
+      end
+
+    end
   end
 
   describe "connection management" do
