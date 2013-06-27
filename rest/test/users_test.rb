@@ -45,16 +45,39 @@ describe PuavoRest::Users do
       assert_equal nil, data["profile_image_link"]
     end
 
-    it "returns user data with image link" do
-      @user.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
-      @user.save!
+    describe "with image" do
+      before(:each) do
+        @user.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+        @user.save!
+      end
 
-      basic_authorize "bob", "secret"
-      get "/v3/users/bob"
-      assert_200
-      data = JSON.parse(last_response.body)
+      it "returns user data with image link" do
+        basic_authorize "bob", "secret"
+        get "/v3/users/bob"
+        assert_200
+        data = JSON.parse(last_response.body)
 
-      assert_equal "http://example.opinsys.net:80/v3/users/bob/profile.jpg", data["profile_image_link"]
+        assert_equal "http://example.org/v3/users/bob/profile.jpg", data["profile_image_link"]
+      end
+
+      it "can be faked with VirtualHostBase" do
+        basic_authorize "bob", "secret"
+        get "/VirtualHostBase/http/fakedomain:1234/v3/users/bob"
+        assert_200
+        data = JSON.parse(last_response.body)
+
+        assert_equal "http://fakedomain:1234/v3/users/bob/profile.jpg", data["profile_image_link"]
+      end
+
+      it "does not have 443 in uri if https" do
+        basic_authorize "bob", "secret"
+        get "/VirtualHostBase/https/fakedomain:443/v3/users/bob"
+        assert_200
+        data = JSON.parse(last_response.body)
+
+        assert_equal "https://fakedomain/v3/users/bob/profile.jpg", data["profile_image_link"]
+      end
+
     end
 
     it "returns 401 without auth" do
