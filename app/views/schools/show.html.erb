@@ -87,12 +87,12 @@
 <% content_for :right do %>
   <ul class="sub-tools">
   <li>
-  <%= link_to edit_school_path(@school) do %>
+  <%= link_to edit_school_path(@school), :class => "btn" do %>
   <i class='icon-pencil'></i> <%=t('link.edit')%>
   <% end %>
   </li>
   <li class="tool">
-  <span><i class='icon-collapse'></i><%= t('link.more')%></span>
+  <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
   <ul>
   <% if current_user.organisation_owner? %>
     <li>
@@ -108,28 +108,5 @@
   </li>
   </ul>
   </li>
-  </ul>
-<% end %>
-
-<% content_for :footer do %>
-  <ul>
-    <li class="link_header">
-      <%= link_to t('layouts.application.schools'),  schools_path %>
-    </li>
-    <% school_list.each do |school| %>
-      <li<% if school_list.last == school %> class="last"<% end %>>
-        <%= link_to school.displayName,  school_path(school) %></li>
-    <% end %>
-  </ul>
-  <ul>
-  <li class="link_header"><%= @school.displayName %></li>
-  <li>
-  <%= link_to users_path(@school) do %>
-    <span><%= t('layouts.application.users') %></span>
-  <% end %>
-  </li>
-    <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-    <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-    <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
   </ul>
 <% end %>
