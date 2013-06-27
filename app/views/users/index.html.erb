@@ -21,12 +21,12 @@
 
 <% content_for :right do %>
 <div>
-  <%= link_to new_user_path do %>
+  <%= link_to new_user_path, :class => 'btn' do %>
     <i class='icon-user'></i><%=t('link.new_user')%>
   <% end %>
 </div>
 <div>
-  <%= link_to new_users_import_path do %>
+  <%= link_to new_users_import_path, :class => 'btn' do %>
     <i class='icon-users'></i><%=t('link.user_mass_import.new')%>
   <% end %>
 </div>
