@@ -25,7 +25,7 @@ class Organisation < LdapHash
         organisation = Puavo::Client::Base.new_by_ldap_entry( organisation_entry )
 
         # Default organisation is the organisation of the bootserver
-        if PUAVO_ETC.domain == organisation.domain
+        if CONFIG["default_organisation_domain"] == organisation.domain
           by_domain["*"] = organisation.data
         end
 

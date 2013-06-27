@@ -9,6 +9,7 @@ if ENV["RACK_ENV"] == "test"
   CONFIG = {
     "ldap" => fqdn,
     "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
+    "default_organisation_domain" => "example.opinsys.net",
     "bootserver" => true,
     "server" => {
       :username => "cucumber",
@@ -26,6 +27,7 @@ else
       "ltsp_server_data_dir" => "/run/puavo-rest",
       "fqdn" => fqdn,
       "keytab" => "/etc/puavo/puavo-rest.keytab",
+      "default_organisation_domain" => PUAVO_ETC.domain,
       "bootserver" => true,
       "server" => {
         :username => PUAVO_ETC.ldap_dn,

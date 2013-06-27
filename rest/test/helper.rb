@@ -68,12 +68,6 @@ require_relative '../../lib/cleanup_ldap'
 # Some random require calls required by Puavo Activeldap models
 require "RMagick"
 
-module Rack
-  module Test
-    DEFAULT_HOST = "example.opinsys.net"
-  end
-end
-
 # Include rack helpers and expose full application stack
 class MiniTest::Spec
   include Rack::Test::Methods
