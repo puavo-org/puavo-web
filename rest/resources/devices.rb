@@ -100,7 +100,7 @@ class Devices < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname" do
-    auth :boot_server
+    auth :server_auth
 
     device = Device.by_hostname(params["hostname"])
     device.fallback_defaults

@@ -87,29 +87,16 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
-  # If PuavoRest is running on a boot server use the credentials of the server.
-  # Can be used to make public resources on the school network.
-  def boot_server
+  def server_auth
     return if CONFIG["bootserver"].nil?
 
-    # In future we will only use Bootserver based authentication if
-    # 'Authorization: Bootserver' is set. Otherwise we will assume Kerberos
-    # authentication.
+    # In future we will only use server based authentication if 'Authorization:
+    # Bootserver' is set. Otherwise we will assume Kerberos authentication.
     if env["HTTP_AUTHORIZATION"] != "Bootserver"
       logger.warn "DEPRECATED! Header 'Authorization: Bootserver' is missing from bootserver authenticated resource"
     end
 
-    if c = CONFIG["bootserver_override"]
-      return create_ldap_connection(
-        :username => c[:username],
-        :password => c[:password]
-      )
-    else
-      return create_ldap_connection(
-        :username => PUAVO_ETC.ldap_dn,
-        :password => PUAVO_ETC.ldap_password
-      )
-    end
+    create_ldap_connection(CONFIG["server"])
   end
 
   KRB_LOCK = Mutex.new

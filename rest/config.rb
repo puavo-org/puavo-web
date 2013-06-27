@@ -10,7 +10,7 @@ if ENV["RACK_ENV"] == "test"
     "ldap" => fqdn,
     "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
     "bootserver" => true,
-    "bootserver_override" => {
+    "server" => {
       :username => "cucumber",
       :password => "cucumber"
     }
@@ -26,7 +26,11 @@ else
       "ltsp_server_data_dir" => "/run/puavo-rest",
       "fqdn" => fqdn,
       "keytab" => "/etc/puavo/puavo-rest.keytab",
-      "bootserver" => true
+      "bootserver" => true,
+      "server" => {
+        :username => PUAVO_ETC.ldap_dn,
+        :password => PUAVO_ETC.ldap_password
+      }
     }
   end
 end

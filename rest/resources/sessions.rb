@@ -63,7 +63,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   post "/v3/sessions" do
-    auth :boot_server
+    auth :server_auth
 
     if params["hostname"].nil?
       logger.warn "'hostname' missing"
@@ -97,7 +97,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   get "/v3/sessions" do
-    auth :boot_server
+    auth :server_auth
 
     json limit Session.all
   end
@@ -106,7 +106,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   get "/v3/sessions/:uuid" do
-    auth :boot_server
+    auth :server_auth
 
     json Session.load(params["uuid"])
   end
@@ -115,7 +115,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   delete "/v3/sessions/:uuid" do
-    auth :boot_server
+    auth :server_auth
 
     Session.load(params["uuid"]).destroy
     json :ok => true

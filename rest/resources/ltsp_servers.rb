@@ -140,7 +140,7 @@ class LtspServers < LdapSinatra
   # @param all [Boolean] Include old servers too
   # @!macro route
   get "/v3/ltsp_servers" do
-    auth :basic_auth, :boot_server
+    auth :basic_auth, :server_auth
 
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_has_state
@@ -161,7 +161,7 @@ class LtspServers < LdapSinatra
   #
   # @!macro route
   get "/v3/ltsp_servers/_most_idle" do
-    auth :basic_auth, :boot_server
+    auth :basic_auth, :server_auth
 
     logger.warn "DEPRECATED!! Call to legacy _most_idle route. Use POST /v3/sessions !"
     filtered = ServerFilter.new(LtspServer.all_with_state)
@@ -180,7 +180,7 @@ class LtspServers < LdapSinatra
   end
 
   get "/v3/ltsp_servers/:fqdn" do
-    auth :basic_auth, :boot_server
+    auth :basic_auth, :server_auth
 
     json LtspServer.by_fqdn(params["fqdn"])
   end
@@ -192,7 +192,7 @@ class LtspServers < LdapSinatra
   # @param [Fixnum] cpu_count optional
   # @!macro route
   put "/v3/ltsp_servers/:fqdn" do
-    auth :basic_auth, :boot_server
+    auth :basic_auth, :server_auth
 
     state = {}
 
