@@ -25,7 +25,6 @@ describe PuavoRest::Users do
       Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
     ]
     @user.save!
-    puts "created user with #{ @user.dn }"
   end
 
 
