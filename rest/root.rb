@@ -36,7 +36,8 @@ class BeforeFilters < LdapSinatra
     logger.info "#{ env["REQUEST_METHOD"] } #{ request.path }"
     LdapHash.setup(
       :organisation =>
-        Organisation.by_domain[request.host] || Organisation.by_domain["*"]
+        Organisation.by_domain[request.host] || Organisation.by_domain["*"],
+      :rest_root => "#{ request.scheme }://#{ request.host }:#{ request.port }"
     )
   end
 

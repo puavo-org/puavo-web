@@ -41,6 +41,20 @@ describe PuavoRest::Users do
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
+      assert !data["profile_image_link"]
+      assert_equal nil, data["profile_image_link"]
+    end
+
+    it "returns user data with image link" do
+      @user.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+      @user.save!
+
+      basic_authorize "bob", "secret"
+      get "/v3/users/bob"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "http://example.opinsys.net:80/v3/users/bob/profile.jpg", data["profile_image_link"]
     end
 
     it "returns 401 without auth" do

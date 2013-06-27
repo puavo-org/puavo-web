@@ -8,6 +8,11 @@ class User < LdapHash
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
   ldap_map :mail, :email
+  ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
+    if image_data
+      link "/v3/users/#{ self["username"] }/profile.jpg"
+    end
+  end
 
   def self.ldap_base
     "ou=People,#{ organisation["base"] }"
