@@ -21,6 +21,7 @@ config/ldap.yml
 config/organisations.yml
 config/puavo_devices.yml
 config/puavo_external_files.yml
+config/services.yml
 node_modules/
 public/assets/
 vendor/bundle/
