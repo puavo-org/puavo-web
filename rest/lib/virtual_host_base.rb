@@ -17,6 +17,7 @@ require 'rack/rewrite'
 # This is used to build correct uris inside the application when it is run
 # under reverse proxies such as nginx. It's also usefull for testing.
 #
+# Inspired by the "Virtual Host Monster" in Zope
 #
 class VirtualHostBase < Rack::Rewrite
   def initialize(app)
