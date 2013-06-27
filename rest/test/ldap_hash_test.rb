@@ -69,6 +69,18 @@ describe LdapHash do
       assert_equal false, h["with_default"]
     end
 
+    it "can reference other values from blocks using self" do
+      class H < LdapHash
+        ldap_map :a, :a
+        ldap_map(:b, :b){ |v| self["a"] }
+      end
+
+      h = H.new
+      h.ldap_set("a", "foo")
+      h.ldap_set("b", "bar")
+
+      assert_equal "foo", h["b"]
+    end
   end
 
   describe "connection management" do
