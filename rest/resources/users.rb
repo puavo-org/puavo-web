@@ -23,6 +23,10 @@ class User < LdapHash
     filter("(uid=#{ escape username })").first
   end
 
+  def self.resolve_dn(username)
+    raw_filter("(uid=#{ escape username })", ["dn"]).first["dn"].first
+  end
+
   def self.profile_image(uid)
     raw_filter("(uid=#{ escape uid })", ["jpegPhoto"]).first["jpegPhoto"]
   end

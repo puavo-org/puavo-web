@@ -12,8 +12,8 @@ if ENV["RACK_ENV"] == "test"
     "default_organisation_domain" => "example.opinsys.net",
     "bootserver" => true,
     "server" => {
-      :username => "cucumber",
-      :password => "cucumber"
+      :dn => PUAVO_ETC.ldap_dn,
+      :password => PUAVO_ETC.ldap_password
     }
   }
 else
@@ -30,7 +30,7 @@ else
       "default_organisation_domain" => PUAVO_ETC.domain,
       "bootserver" => true,
       "server" => {
-        :username => PUAVO_ETC.ldap_dn,
+        :dn => PUAVO_ETC.ldap_dn,
         :password => PUAVO_ETC.ldap_password
       }
     }

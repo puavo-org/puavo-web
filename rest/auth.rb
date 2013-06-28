@@ -34,45 +34,6 @@ class LdapSinatra < Sinatra::Base
     res
   end
 
-  def is_dn(s)
-    # Could be slightly better I think :)
-    # but usernames should have no commas or equal signs
-    s && s.include?(",") && s.include?("=")
-  end
-
-  # Create ldap connection
-  #
-  # @param credentials [Hash]
-  # @option credentials [Symbol] :dn ldap dn
-  # @option credentials [Symbol] :password plain text password
-  # @see #new_model
-  def create_ldap_connection(credentials)
-    ldap_conn = LDAP::Conn.new(CONFIG["ldap"])
-    ldap_conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
-    ldap_conn.start_tls
-
-    if credentials[:dn]
-      dn = credentials[:dn]
-    elsif is_dn(credentials[:username])
-      dn = credentials[:username]
-    elsif credentials[:username]
-      dn = resolve_dn(credentials[:username])
-    end
-
-    logger.info "#{ self.class.name } Bind with #{ credentials[:username] } #{ dn }"
-    begin
-      if credentials[:sasl]
-        ldap_conn.sasl_quiet = true
-        ldap_conn.sasl_bind('', 'GSSAPI')
-      else
-        ldap_conn.bind(dn, credentials[:password])
-      end
-    rescue LDAP::ResultError
-      raise BadCredentials, "Bad username/dn or password"
-    end
-
-    return ldap_conn
-  end
 
   def basic_auth
     return if not env["HTTP_AUTHORIZATION"]
@@ -80,10 +41,14 @@ class LdapSinatra < Sinatra::Base
     if type == "Basic"
       plain = Base64.decode64(data)
       username, password = plain.split(":")
-      return create_ldap_connection(
-        :username => username,
-        :password => password
-      )
+
+      credentials = { :password => password  }
+      if LdapHash.is_dn(username)
+        credentials[:dn] = username
+      else
+        credentials[:username] = username
+      end
+      return credentials
     end
   end
 
@@ -96,59 +61,30 @@ class LdapSinatra < Sinatra::Base
       logger.warn "DEPRECATED! Header 'Authorization: Bootserver' is missing from bootserver authenticated resource"
     end
 
-    create_ldap_connection(CONFIG["server"])
+    return CONFIG["server"]
   end
 
-  KRB_LOCK = Mutex.new
 
   def kerberos
-    # TODO: locks!
     return if env["HTTP_AUTHORIZATION"].nil?
     auth_key = env["HTTP_AUTHORIZATION"].split()[0]
     return if auth_key.downcase != "negotiate"
-
-    started = Time.now
-    conn = nil
-
-    KRB_LOCK.synchronize do
-
-      input_token = Base64.decode64(env["HTTP_AUTHORIZATION"].split()[1])
-      kg = Krb5Gssapi.new(CONFIG["fqdn"], CONFIG["keytab"])
-
-      begin
-        kg.copy_ticket(input_token)
-      rescue GSSAPI::GssApiError => err
-        if err.message.match(/Clock skew too great/)
-          raise KerberosError, :user => "Your clock is messed up"
-        else
-          raise err
-        end
-      rescue Krb5Gssapi::NoDelegation => err
-        raise KerberosError, :user =>
-          "Credentials are not delegated! '--delegation always' missing?"
-      end
-
-      logger.info "Creating LDAP connection using Kerberos for #{ kg.display_name }"
-      conn = create_ldap_connection(:sasl => true)
-      kg.clean_up
-
-      logger.info "SASL bind with Kerberos took #{ Time.now - started } seconds"
-    end
-
-    return conn
+    return {
+      :kerberos => Base64.decode64(env["HTTP_AUTHORIZATION"].split()[1])
+    }
   end
 
   def auth(*auth_methods)
 
     auth_methods.each do |method|
-      if conn = send(method)
-        LdapHash.setup(:connection => conn)
+      if credentials = send(method)
+        LdapHash.setup(:credentials => credentials)
         logger.info "Auth: Using #{ method }"
         break
       end
     end
 
-    if not LdapHash.connection?
+    if not LdapHash.connection
       headers "WWW-Authenticate" => "Negotiate"
       halt 401, json(:error => {
         :message => "Could not create ldap connection. Bad/missing credentials.",

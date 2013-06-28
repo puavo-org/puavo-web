@@ -1,6 +1,7 @@
 require_relative "./helper"
 require_relative "../ldap_hash"
 
+LdapHash = PuavoRest::LdapHash
 
 describe LdapHash do
 
@@ -84,61 +85,12 @@ describe LdapHash do
 
     it "can create full links" do
 
-      LdapHash.with(:rest_root => "http://someroot") do
+      LdapHash.setup(:rest_root => "http://someroot") do
         h = LdapHash.new
         assert_equal "http://someroot/foo", h.link("/foo")
       end
 
     end
-  end
-
-  describe "connection management" do
-    before(:each) do
-      LdapHash.setup(
-        :connection => "connection object",
-        :organisation => "organisation object"
-      )
-    end
-
-    it "can access connection and organisation from class" do
-      assert_equal "connection object", LdapHash.connection
-      assert_equal "organisation object", LdapHash.organisation
-    end
-
-    it "connection can be changed temporally with block" do
-      called = false
-      LdapHash.with(:connection => "tmp conn") do
-        assert_equal "tmp conn", LdapHash.connection
-        assert_equal(
-          "organisation object",
-          LdapHash.organisation,
-          "organisation is not changed"
-        )
-        called = true
-      end
-      assert_equal "connection object", LdapHash.connection
-      assert called
-    end
-
-    it "connection is changed to subclasses too" do
-      called = false
-      class Subclass < LdapHash; end
-
-      LdapHash.with(:connection => "subclass conn") do
-        called = true
-        assert_equal "subclass conn", Subclass.connection
-      end
-
-      assert called
-    end
-
-    it "returns values from with block" do
-      val = LdapHash.with(:connection => "foo") do
-        "value"
-      end
-      assert_equal "value", val
-    end
-
   end
 
 

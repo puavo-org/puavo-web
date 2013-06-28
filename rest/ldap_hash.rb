@@ -1,3 +1,4 @@
+module PuavoRest
 # Random helpers
 class LdapHash < Hash
   def self.callable_from_instance(method)
@@ -11,6 +12,13 @@ class LdapHash < Hash
   def self.from_hash(hash)
     new.ldap_merge!(hash)
   end
+
+  def self.is_dn(s)
+    # Could be slightly better I think :)
+    # but usernames should have no commas or equal signs
+    s && s.include?(",") && s.include?("=")
+  end
+
 end
 
 # Connection management
@@ -18,72 +26,110 @@ class LdapHash < Hash
 
   class LdapHashError < Exception; end
 
-  # Configure ldap connection and orgation to Ldaphash
-  # @param [Hash]
-  # @option settings [Object] :connection LDAP connection object
-  # @option settings [Object] :settings Organisation info
-  def self.setup(settings)
-    Thread.current[:ldap_hash_settings] =
-      (Thread.current[:ldap_hash_settings] || {}).merge(settings)
-  end
 
-  # Clear current setup
-  def self.clear_setup
-    connection.unbind if connection?
-    Thread.current[:ldap_hash_settings] = {}
-  end
-
-  # Temporally change settings
-  #
-  # @param [Hash] The temp settings
-  # @param [Block] Temp settings will be in use during the block execution
-  def self.with(temp_settings, &block)
-    prev = Thread.current[:ldap_hash_settings] || {}
-
-    setup(prev.merge(temp_settings))
-    val = block.call
-
-    Thread.current[:ldap_hash_settings] = prev
-    val
-  end
-
-  # Get current settings
-  def self.settings
-    Thread.current[:ldap_hash_settings]
-  end
-
-  # returns true if connection is configured
-  def self.connection?
-    settings && settings[:connection]
-  end
-
-  # returns true if organisation is configured
-  def self.organisation?
-    settings && settings[:organisation]
-  end
-
-  # Get current connection
-  def self.connection
-    if not connection?
-      raise LdapHashError, "LDAP connection is not configured!"
+  KRB_LOCK = Mutex.new
+  def self.sasl_bind(ticket)
+    conn = LDAP::Conn.new(CONFIG["ldap"])
+    conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
+    conn.start_tls
+    KRB_LOCK.synchronize do
+      begin
+        kg = Krb5Gssapi.new(CONFIG["fqdn"], CONFIG["keytab"])
+        kg.copy_ticket(ticket)
+        conn.sasl_bind('', 'GSSAPI')
+      rescue GSSAPI::GssApiError => err
+        if err.message.match(/Clock skew too great/)
+          raise KerberosError, :user => "Your clock is messed up"
+        else
+          raise err
+        end
+      rescue Krb5Gssapi::NoDelegation => err
+        raise KerberosError, :user =>
+          "Credentials are not delegated! '--delegation always' missing?"
+      ensure
+        kg.clean_up
+      end
     end
-    settings[:connection]
+    conn
   end
 
-  def self.rest_root
-    settings && settings[:rest_root]
+  def self.dn_bind(dn, pw)
+    conn = LDAP::Conn.new(CONFIG["ldap"])
+    conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
+    conn.start_tls
+    conn.bind(dn, pw)
+    conn
+  end
+
+  def self.create_connection
+    raise "Cannot create connection without credentials" if settings[:credentials].nil?
+    credentials = settings[:credentials]
+    conn = nil
+
+    begin
+
+      if credentials[:kerberos]
+        conn = sasl_bind(credentials[:kerberos])
+      else
+        if credentials[:dn].nil?
+          credentials[:dn] = LdapHash.setup(:credentials => CONFIG["server"]) do
+            User.resolve_dn(credentials[:username])
+          end
+        end
+        conn = dn_bind(credentials[:dn], credentials[:password])
+      end
+
+    rescue LDAP::ResultError
+      raise BadCredentials, "Bad username/dn or password"
+    end
+
+    return conn
+  end
+
+  def self.settings
+    Thread.current[:ldap_hash_settings] || { :credentials_cache => {} }
+  end
+
+  def self.settings=(settings)
+    Thread.current[:ldap_hash_settings] = settings
+  end
+
+  def self.setup(opts, &block)
+    prev = self.settings
+    self.settings = prev.merge(opts)
+
+    if opts[:credentials]
+      self.settings[:credentials_cache] = {}
+    end
+
+    if block
+      res = block.call if block
+      self.settings = prev
+    end
+    res
+  end
+
+  def self.connection
+    if conn = settings[:credentials_cache][:current_connection]
+      return conn
+    end
+    if settings[:credentials]
+      settings[:credentials_cache][:current_connection] = create_connection
+    end
+  end
+
+  def self.organisation
+    settings[:organisation]
+  end
+
+
+
+  def self.clear_setup
+    self.settings = nil
   end
 
   def link(path)
-    self.class.rest_root + path
-  end
-
-  # Get current organisation
-  def self.organisation
-    if not organisation?
-      raise LdapHashError, "Organisation is not configured!"
-    end
-    settings[:organisation]
+    self.class.settings[:rest_root] + path
   end
 
 end
@@ -251,4 +297,5 @@ class LdapHash < Hash
     string.gsub(ESCAPE_RE) { |char| "\\" + ESCAPES[char] }
   end
   callable_from_instance :escape
+end
 end
