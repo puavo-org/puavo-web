@@ -25,24 +25,17 @@
 </table>
 
 <% content_for :right do %>
-<div><%= link_to t('link.edit'), edit_external_service_path(@external_service) %></div>
 <div>
-  <%= link_to( t('link.destroy'),
-               external_service_path(@external_service),
-               :confirm => t('destroy_confirm',
-                             :object_name => @external_service.uid),
-               :method => :delete ) %>
-</div>
-<% end %>
-
-<% content_for :footer do %>
-<ul>  
-  <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %> 
-  </li>
-  <% school_list.each do |school| %>
-  <li<% if school_list.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %></li>
+  <%= link_to edit_external_service_path(@external_service), :class => 'btn' do%>
+    <i class="icon-pencil"></i><%= t('link.edit') %>
   <% end %>
-</ul>
+</div>
+<div>
+  <%= link_to( external_service_path(@external_service),
+               :confirm => t('destroy_confirm',
+               :object_name => @external_service.uid),
+               :method => :delete, :class => 'btn btn-danger' ) do %>
+  <i class="icon-trash"></i><%= t('link.destroy') %>
+  <% end %>
+</div>
 <% end %>

@@ -10,11 +10,17 @@
     <td data-title="<%= t('activeldap.attributes.user.displayName') %>"><%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %></td>
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%=h user["uid"] %></td>
     <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
-    <td data-title="<%= t('.actions')%>" class="table-actions"><%= link_to t('link.edit'), edit_user_path(@school, user["puavoId"]), :class=> "btn" %></td>
-    <td class="table-actions"><%= link_to( t('link.destroy'),
-            user_path(@school, user["puavoId"]),
-            :confirm => t('destroy_confirm', :object_name => "#{user['sn']} #{user['givenName']}"),
-            :method => :delete, :class=> "btn btn-danger" ) %></td>
+    <td data-title="<%= t('.actions')%>" class="table-actions">
+      <%= link_to edit_user_path(@school, user["puavoId"]), :class=> "btn" do%>
+        <i class='icon-pencil'></i><%= t('link.edit') %>
+      <% end %>
+    </td>
+    <td class="table-actions">
+      <%= link_to user_path(@school, user["puavoId"]), :confirm => t('destroy_confirm', :object_name => "#{user['sn']} #{user['givenName']}"),
+            :method => :delete, :class=> "btn btn-danger" do%>
+        <i class='icon-trash'></i><%= t('link.destroy')%>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 </table>
