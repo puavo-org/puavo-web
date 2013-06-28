@@ -31,6 +31,20 @@ class User < LdapHash
     raw_filter("(uid=#{ escape uid })", ["jpegPhoto"]).first["jpegPhoto"]
   end
 
+  def self.current
+    return settings[:credentials_cache][:current_user] if settings[:credentials_cache][:current_user]
+
+    user_credentials = settings[:credentials]
+
+    if user_credentials[:dn]
+      user = User.by_dn(user_credentials[:dn])
+    elsif user_credentials[:username]
+      user = User.by_username(user_credentials[:username])
+    end
+
+    settings[:credentials_cache][:current_user] = user
+  end
+
 end
 
 class Users < LdapSinatra
@@ -60,6 +74,12 @@ class Users < LdapSinatra
     else
       raise NotFound, :user => "#{ params["username"] } has no profile image"
     end
+  end
+
+  get "/v3/whoami" do
+    auth :basic_auth, :kerberos, :server_auth
+
+    json User.current
   end
 
 end

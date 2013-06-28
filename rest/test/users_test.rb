@@ -27,6 +27,23 @@ describe PuavoRest::Users do
     @user.save!
   end
 
+  describe "GET /v3/whoami" do
+    it "returns information about authenticated user" do
+      basic_authorize "bob", "secret"
+      get "/v3/whoami"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "bob", data["username"]
+      assert_equal "Bob", data["first_name"]
+      assert_equal "Brown", data["last_name"]
+      assert_equal "bob@example.com", data["email"]
+      assert !data["profile_image_link"]
+      assert_equal nil, data["profile_image_link"]
+
+    end
+  end
+
 
   describe "GET /v3/users/bob" do
 

@@ -45,6 +45,10 @@ returns
       "dn": "puavoId=202228,ou=People,dc=edu,dc=kehitys,dc=fi"
     }
 
+## GET /v3/whoami
+
+Like previous but for the authenticated uses
+
 ## GET /v3/users/:username/profile.jpg
 
 Get profile image for the user
