@@ -11,30 +11,6 @@ module PuavoRest
 
 class LdapSinatra < Sinatra::Base
 
-
-  # Resolve username using the credentials
-  def resolve_dn(username)
-
-    if LdapHash.organisation.nil?
-      raise JSONError, INTERNAL_ERROR, "Cannot resolve username to dn before organisation is set!"
-    end
-
-    conn = create_ldap_connection(
-      :dn => PUAVO_ETC.ldap_dn,
-      :password => PUAVO_ETC.ldap_password
-    )
-
-    res = LdapHash.with(:connection => conn) do
-      user = User.by_username(username)
-      raise BadCredentials, "No such username #{ username }" if not user
-      user["dn"]
-    end
-
-    conn.unbind
-    res
-  end
-
-
   def basic_auth
     return if not env["HTTP_AUTHORIZATION"]
     type, data = env["HTTP_AUTHORIZATION"].split(" ")
