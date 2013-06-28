@@ -48,6 +48,7 @@ class LdapSinatra < Sinatra::Base
       else
         credentials[:username] = username
       end
+      logger.info "Using Basic Auth #{ credentials[:dn] ? "with dn" : "with uid" }"
       return credentials
     end
   end
@@ -58,7 +59,7 @@ class LdapSinatra < Sinatra::Base
     # In future we will only use server based authentication if 'Authorization:
     # Bootserver' is set. Otherwise we will assume Kerberos authentication.
     if env["HTTP_AUTHORIZATION"] != "Bootserver"
-      logger.warn "DEPRECATED! Header 'Authorization: Bootserver' is missing from bootserver authenticated resource"
+      logger.warn "DEPRECATED! Header 'Authorization: Bootserver' is missing from server auth"
     end
 
     return CONFIG["server"]
@@ -69,6 +70,7 @@ class LdapSinatra < Sinatra::Base
     return if env["HTTP_AUTHORIZATION"].nil?
     auth_key = env["HTTP_AUTHORIZATION"].split()[0]
     return if auth_key.downcase != "negotiate"
+    logger.info "Using Kerberos authentication"
     return {
       :kerberos => Base64.decode64(env["HTTP_AUTHORIZATION"].split()[1])
     }
@@ -79,7 +81,6 @@ class LdapSinatra < Sinatra::Base
     auth_methods.each do |method|
       if credentials = send(method)
         LdapHash.setup(:credentials => credentials)
-        logger.info "Auth: Using #{ method }"
         break
       end
     end

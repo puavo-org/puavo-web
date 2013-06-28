@@ -31,9 +31,17 @@ module PuavoRest
 class BeforeFilters < LdapSinatra
 
   before do
-    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path }"
+    ip = env["HTTP_X_REAL_IP"] || request.ip
 
-    port = [80, 443].include?(request.port) ? "": ":#{ request.port }" 
+    begin
+      hostname = " (#{ Resolv.new.getname(ip) })"
+    rescue Resolv::ResolvError
+      hostname = ""
+    end
+
+    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path } by #{ ip }#{ hostname }"
+
+    port = [80, 443].include?(request.port) ? "": ":#{ request.port }"
 
     LdapHash.setup(
       :organisation =>
@@ -43,7 +51,6 @@ class BeforeFilters < LdapSinatra
   end
 
   after do
-    logger.info "CLEAR #{ request.path }"
     LdapHash.clear_setup
   end
 end

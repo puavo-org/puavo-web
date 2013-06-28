@@ -31,6 +31,7 @@ class LdapHash < Hash
   def self.sasl_bind(ticket)
     conn = LDAP::Conn.new(CONFIG["ldap"])
     conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
+    conn.sasl_quiet = true
     conn.start_tls
     KRB_LOCK.synchronize do
       begin
