@@ -77,6 +77,9 @@ class LdapSinatra < Sinatra::Base
   end
 
   def auth(*auth_methods)
+    if auth_methods.include?(:kerberos) && auth_methods.include?(:server_auth)
+      raise "server auth and kerberos is not yet supported on same resource"
+    end
 
     auth_methods.each do |method|
       if credentials = send(method)
