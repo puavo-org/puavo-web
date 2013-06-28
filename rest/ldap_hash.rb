@@ -105,7 +105,7 @@ class LdapHash < Hash
     end
 
     if block
-      res = block.call if block
+      res = block.call
       self.settings = prev
     end
     res
