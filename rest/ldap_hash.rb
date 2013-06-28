@@ -37,6 +37,7 @@ class LdapHash < Hash
       begin
         kg = Krb5Gssapi.new(CONFIG["fqdn"], CONFIG["keytab"])
         kg.copy_ticket(ticket)
+        settings[:credentials][:username] = kg.display_name.split("@").first
         conn.sasl_bind('', 'GSSAPI')
       rescue GSSAPI::GssApiError => err
         if err.message.match(/Clock skew too great/)

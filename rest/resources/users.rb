@@ -77,7 +77,7 @@ class Users < LdapSinatra
   end
 
   get "/v3/whoami" do
-    auth :basic_auth, :kerberos, :server_auth
+    auth :basic_auth, :kerberos
 
     json User.current
   end
