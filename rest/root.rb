@@ -26,8 +26,6 @@ require_relative "./resources/wlan_networks"
 #   @return [HTTP response]
 
 
-
-
 module PuavoRest
 
 class BeforeFilters < LdapSinatra
@@ -58,6 +56,7 @@ class Root < LdapSinatra
   use PuavoRest::Users
   use PuavoRest::Devices
   use PuavoRest::WlanNetworks
+  use PuavoRest::Organisations if Sinatra::Base.development?
   if CONFIG["bootserver"]
     require_relative "./resources/ltsp_servers"
     use PuavoRest::LtspServers

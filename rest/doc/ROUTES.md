@@ -251,3 +251,44 @@ returns
       }
     ]
 
+# Organisations
+
+Available only in development
+
+## GET /v3/current_organisation
+
+Return current organisation
+
+returns
+
+    {
+      "auto_power_off_hour": null,
+      "auto_power_on_hour": null,
+      "base": "dc=edu,dc=hogwarts,dc=fi",
+      "samba_domain_name": "EDUHOGWARTS",
+      "domain": "hogwarts.opinsys.net",
+      "puppet_host": "hogwarts.puppet.opinsys.net",
+      "owners": [
+        4
+      ],
+      "preferred_language": null,
+      "name": "hogwarts",
+      "auto_power_off_mode": null
+    }
+
+## GET /v3/organisations/:domain
+
+Return organisation info by domain
+
+returns
+
+    (see prev)
+
+## GET /v3/organisations
+
+Rerturn all organisation data
+
+returns
+
+    (Array)
+

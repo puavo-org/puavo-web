@@ -39,4 +39,23 @@ class Organisation < LdapHash
   end
 
 end
+
+
+class Organisations < LdapSinatra
+
+  get "/v3/current_organisation" do
+    json LdapHash.organisation
+  end
+
+  get "/v3/organisations/:domain" do
+    json Organisation.by_domain[params[:domain]]
+  end
+
+  get "/v3/organisations" do
+    json(Organisation.by_domain.map do |k, v|
+      v.merge("domain" => k)
+    end)
+  end
+
+end
 end
