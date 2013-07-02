@@ -249,12 +249,6 @@ body
       ul
         background-color white
 
-.add-new-school a,
-.add-new-school a:hover
-  background-color white
-  background-position left -510px
-  border-radius 8px 8px 0 0
-
 // end of topmenu
 
 .content-box
@@ -415,18 +409,7 @@ body
   background-color white
   span
     border 1px solid transparent
-    border-radius 8px 8px 0 0
-    a
-      background-position 5px -790px
-    &:hover
-      a
-        background-position 5px -830px
-    &.change_other_pswd
-      a
-        background-position 5px -870px
-      &:hover
-        a
-          background-position 5px -910px
+    border-radius 4px 4px 0 0
   .message_alert
     background-color errorRed
 
@@ -484,3 +467,7 @@ body
         display none
       td
         border-bottom none
+  .login_content
+    .password_buttons
+      span, span.active
+        border-radius 4px
