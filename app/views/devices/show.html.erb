@@ -18,13 +18,6 @@
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
     <ul>
       <li>
-        <%= link_to(device_path(@school, @device),
-        :confirm => t('destroy_confirm', :object_name => @device.puavoHostname),
-        :method => :delete ) do %>
-          <i class="icon-trash"></i><%= t('link.destroy') %>
-        <% end %>
-      </li>
-      <li>
         <% if @device.userCertificate %>
           <%= link_to revoke_certificate_device_path(@school, @device), :method => :delete do %>
             <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
@@ -34,6 +27,13 @@
       <li>
         <%= link_to select_school_device_path(@school, @device) do%>
           <i class="icon-exchange"></i><%= t('.change_school') %>
+        <% end %>
+      </li>
+      <li>
+        <%= link_to(device_path(@school, @device),
+        :confirm => t('destroy_confirm', :object_name => @device.puavoHostname),
+        :method => :delete ) do %>
+          <i class="icon-trash"></i><%= t('link.destroy') %>
         <% end %>
       </li>
     </ul>
