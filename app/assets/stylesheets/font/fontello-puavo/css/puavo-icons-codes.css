@@ -2,6 +2,7 @@
 .icon-plus:before { content: '\e80a'; } /* '' */
 .icon-minus:before { content: '\e80b'; } /* '' */
 .icon-home:before { content: '\e808'; } /* '' */
+.icon-check:before { content: '\e823'; } /* '' */
 .icon-cog:before { content: '\e822'; } /* '' */
 .icon-attention:before { content: '\e813'; } /* '' */
 .icon-cog-alt:before { content: '\e821'; } /* '' */
