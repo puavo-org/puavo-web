@@ -38,6 +38,7 @@ describe PuavoRest::Users do
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
+      assert_equal "student", data["user_type"]
       assert !data["profile_image_link"]
       assert_equal nil, data["profile_image_link"]
 
@@ -57,6 +58,7 @@ describe PuavoRest::Users do
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
+      assert_equal "student", data["user_type"]
       assert !data["profile_image_link"]
       assert_equal nil, data["profile_image_link"]
     end
