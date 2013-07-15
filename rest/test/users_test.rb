@@ -39,6 +39,11 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
+      assert_equal({
+        "name" => "Example Organisation",
+        "domain"=>"example.opinsys.net",
+        "base"=>"dc=edu,dc=example,dc=fi"
+      }, data["organisation"])
       assert !data["profile_image_link"]
       assert_equal nil, data["profile_image_link"]
 

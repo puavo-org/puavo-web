@@ -15,6 +15,15 @@ class User < LdapHash
     end
   end
 
+  def initialize(*args)
+    super(*args)
+    self["organisation"] = {
+      "name" => LdapHash.organisation["name"],
+      "domain" => LdapHash.organisation["domain"],
+      "base" => LdapHash.organisation["base"]
+    }
+  end
+
   def self.ldap_base
     "ou=People,#{ organisation["base"] }"
   end
