@@ -14,6 +14,9 @@ if ENV["RACK_ENV"] == "test"
     "server" => {
       :dn => PUAVO_ETC.ldap_dn,
       :password => PUAVO_ETC.ldap_password
+    },
+    "remote_auth" => {
+      "test-client-service.example.com" => "this is a shared secret"
     }
   }
 else
