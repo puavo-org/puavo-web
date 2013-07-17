@@ -12,7 +12,7 @@ class RemoteAuth < LdapSinatra
     end
 
     return_url = Addressable::URI.parse(params["return_to"])
-    shared_secret =  CONFIG["remote_auth"][return_url.host]
+    shared_secret =  (CONFIG["remote_auth"] || {})[return_url.host]
 
     if shared_secret.nil?
       raise Unauthorized,
