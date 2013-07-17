@@ -71,5 +71,11 @@ module PuavoRest
     end
   end
 
+  class Unauthorized < JSONError
+    def http_code
+      401
+    end
+  end
+
 
 end

@@ -29,6 +29,14 @@ class LdapSinatra < Sinatra::Base
     end
   end
 
+  def from_post
+    return if env["REQUEST_METHOD"] != "POST"
+    return {
+      :username => params["username"],
+      :password => params["password"]
+    }
+  end
+
   def server_auth
     return if CONFIG["bootserver"].nil?
 
@@ -66,10 +74,10 @@ class LdapSinatra < Sinatra::Base
 
     if not LdapHash.connection
       headers "WWW-Authenticate" => "Negotiate"
-      halt 401, json(:error => {
+      raise Unauthorized, :user => {
         :message => "Could not create ldap connection. Bad/missing credentials.",
         :methods => auth_methods
-      })
+      }
     end
   end
 

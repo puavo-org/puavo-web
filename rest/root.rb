@@ -19,6 +19,7 @@ require_relative "./resources/devices"
 require_relative "./resources/organisations"
 require_relative "./resources/sessions"
 require_relative "./resources/wlan_networks"
+require_relative "./resources/remote_auth"
 
 
 #   @overload $0 $1
@@ -63,6 +64,7 @@ class Root < LdapSinatra
   use PuavoRest::Users
   use PuavoRest::Devices
   use PuavoRest::WlanNetworks
+  use PuavoRest::RemoteAuth
   use PuavoRest::Organisations if Sinatra::Base.development?
   if CONFIG["bootserver"]
     require_relative "./resources/ltsp_servers"
