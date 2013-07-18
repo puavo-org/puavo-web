@@ -1,4 +1,4 @@
-require "openssl"
+require "jwt"
 require "addressable/uri"
 # http://ruby-doc.org/stdlib-1.9.3/libdoc/openssl/rdoc/OpenSSL/HMAC.html
 # h = OpenSSL::HMAC.new "foo", OpenSSL::Digest::SHA1.new
@@ -29,7 +29,12 @@ class RemoteAuth < LdapSinatra
 
     user = User.current
 
-    query_values = (return_url.query_values || {}).merge({
+    jwt = JWT.encode({
+      # Issued At
+      "iat" => Time.now.to_i.to_s,
+      # JWT ID
+      "jti" => UUID.generator.generate,
+
       "username" => user["username"],
       "first_name" => user["first_name"],
       "last_name" => user["last_name"],
@@ -37,16 +42,11 @@ class RemoteAuth < LdapSinatra
       "email" => user["email"],
       "organisation_name" => user["organisation"]["name"],
       "organisation_domain" => user["organisation"]["domain"],
-      "timestamp" => Time.now.to_i.to_s,
-    })
+    }, shared_secret)
 
-    hmac = OpenSSL::HMAC.new(shared_secret, OpenSSL::Digest::SHA1.new)
-
-    query_values.keys.sort.each do |k|
-      hmac.update(query_values[k])
-    end
-
-    return_url.query_values = query_values.merge("hmac" => hmac.to_s)
+    return_url.query_values = (
+      return_url.query_values || {}
+    ).merge("jwt" => jwt)
 
     redirect return_url.to_s
   end

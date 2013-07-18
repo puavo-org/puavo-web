@@ -2,7 +2,7 @@
 require_relative "./helper"
 
 require "addressable/uri"
-require "openssl"
+require "jwt"
 
 describe PuavoRest::RemoteAuth do
   before(:each) do
@@ -56,6 +56,10 @@ describe PuavoRest::RemoteAuth do
       get url.to_s
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
+      @jwt = JWT.decode(
+        @redirect_url.query_values["jwt"],
+        PuavoRest::CONFIG["remote_auth"]["test-client-service.example.com"]
+      )
     end
 
     it "redirects to return_to url" do
@@ -68,34 +72,17 @@ describe PuavoRest::RemoteAuth do
       assert_equal "bar" , @redirect_url.query_values["foo"]
     end
 
-    it "adds user information" do
-      assert_equal "bob" , @redirect_url.query_values["username"]
-      assert_equal "Bob" , @redirect_url.query_values["first_name"]
-      assert_equal "Brown" , @redirect_url.query_values["last_name"]
-      assert_equal "student" , @redirect_url.query_values["user_type"]
-      assert_equal "bob@example.com" , @redirect_url.query_values["email"]
-      assert_equal "Example Organisation" , @redirect_url.query_values["organisation_name"]
-      assert_equal "example.opinsys.net" , @redirect_url.query_values["organisation_domain"]
-      assert_equal "example.opinsys.net" , @redirect_url.query_values["organisation_domain"]
+    it "adds JSON Web Token (jwt) with user data" do
+      assert_equal "bob" , @jwt["username"]
+      assert_equal "Bob" , @jwt["first_name"]
+      assert_equal "Brown" , @jwt["last_name"]
+      assert_equal "student" , @jwt["user_type"]
+      assert_equal "bob@example.com" , @jwt["email"]
+      assert_equal "Example Organisation", @jwt["organisation_name"]
+      assert_equal "example.opinsys.net", @jwt["organisation_domain"]
+      assert_equal "example.opinsys.net", @jwt["organisation_domain"]
     end
 
-    it "adds timestamp" do
-      assert @redirect_url.query_values["timestamp"].to_i
-    end
-
-    it "builds hmac of user information and timestamp" do
-
-      hmac = OpenSSL::HMAC.new(
-        PuavoRest::CONFIG["remote_auth"]["test-client-service.example.com"],
-        OpenSSL::Digest::SHA1.new
-      )
-
-      @redirect_url.query_values.keys.select{ |k| k != "hmac" }.sort.each do |k|
-        hmac.update @redirect_url.query_values[k]
-      end
-
-      assert_equal hmac.to_s, @redirect_url.query_values["hmac"]
-    end
 
   end
 
@@ -120,8 +107,7 @@ describe PuavoRest::RemoteAuth do
       assert_equal 302, last_response.status
       assert last_response.headers["Location"]
       url = Addressable::URI.parse(last_response.headers["Location"])
-      assert_equal "bob", url.query_values["username"]
-      assert_equal "Brown", url.query_values["last_name"]
+      assert url.query_values["jwt"], "has jwt token"
     end
 
     it "renders form errors on the form"  do

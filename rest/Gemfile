@@ -8,6 +8,7 @@ gem "multi_json"
 gem "yard"
 gem "rack-rewrite"
 gem "addressable"
+gem "jwt"
 gem "gssapi", :git => "https://github.com/opinsys/gssapi.git", :branch => "gss_krb5_copy_ccache"
 
 group :rest_development do
