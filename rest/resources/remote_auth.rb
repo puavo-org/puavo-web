@@ -22,8 +22,9 @@ class RemoteAuth < LdapSinatra
 
     begin
       auth :basic_auth, :from_post, :kerberos
-    rescue Unauthorized
-      halt 401, erb(:login_form)
+    rescue Exception => err
+      @error_message = err.to_s
+      halt 401, {'Content-Type' => 'text/html'}, erb(:login_form)
     end
 
     user = User.current

@@ -16,5 +16,12 @@
         <input type="password" name="password">
         <input type="submit" value="Login">
     </form>
+
+    <% if @error_message %>
+    <div class="error">
+        error: <%= @error_message %>
+    </div>
+    <% end -%>
+
 </body>
 </html>

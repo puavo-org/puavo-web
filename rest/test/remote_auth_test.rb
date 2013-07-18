@@ -124,6 +124,21 @@ describe PuavoRest::RemoteAuth do
       assert_equal "Brown", url.query_values["last_name"]
     end
 
+    it "renders form errors on the form"  do
+      post "/v3/remote_auth", {
+        "username" => "bob",
+        "password" => "bad",
+        "return_to" => "http://test-client-service.example.com/path"
+      }
+
+      assert_equal 401, last_response.status
+      assert_equal "text/html", last_response.content_type
+      assert(
+        last_response.body.include?("Bad username"),
+        "Error message missing from #{ last_response.body }"
+      )
+    end
+
   end
 
 
