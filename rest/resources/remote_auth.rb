@@ -1,7 +1,6 @@
 require "jwt"
 require "addressable/uri"
-# http://ruby-doc.org/stdlib-1.9.3/libdoc/openssl/rdoc/OpenSSL/HMAC.html
-# h = OpenSSL::HMAC.new "foo", OpenSSL::Digest::SHA1.new
+
 
 module PuavoRest
 class RemoteAuth < LdapSinatra
