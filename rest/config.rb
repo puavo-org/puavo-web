@@ -35,6 +35,9 @@ else
       "server" => {
         :dn => PUAVO_ETC.ldap_dn,
         :password => PUAVO_ETC.ldap_password
+      },
+      "remote_auth" => {
+        "foobar" => "this is a shared secret"
       }
     }
   end
