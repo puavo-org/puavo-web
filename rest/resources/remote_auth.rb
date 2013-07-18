@@ -22,7 +22,7 @@ class RemoteAuth < LdapSinatra
 
     begin
       auth :basic_auth, :from_post, :kerberos
-    rescue Exception => err
+    rescue JSONError => err
       @error_message = err.to_s
       halt 401, {'Content-Type' => 'text/html'}, erb(:login_form)
     end
