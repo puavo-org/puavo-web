@@ -35,6 +35,9 @@ class RemoteAuth < LdapSinatra
       # JWT ID
       "jti" => UUID.generator.generate,
 
+      # use external_id like in Zendesk?
+      # https://support.zendesk.com/entries/23675367
+      "user_dn" => user["dn"],
       "username" => user["username"],
       "first_name" => user["first_name"],
       "last_name" => user["last_name"],
