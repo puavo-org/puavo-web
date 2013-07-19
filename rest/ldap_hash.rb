@@ -43,7 +43,7 @@ class LdapHash < Hash
         if err.message.match(/Clock skew too great/)
           raise KerberosError, :user => "Your clock is messed up"
         else
-          raise err
+          raise KerberosError, :user => err.message
         end
       rescue Krb5Gssapi::NoDelegation => err
         raise KerberosError, :user =>
