@@ -15,7 +15,7 @@ if ENV["RACK_ENV"] == "test"
       :dn => PUAVO_ETC.ldap_dn,
       :password => PUAVO_ETC.ldap_password
     },
-    "remote_auth" => {
+    "sso" => {
       "test-client-service.example.com" => "this is a shared secret"
     }
   }
@@ -32,12 +32,16 @@ else
       "keytab" => "/etc/puavo/puavo-rest.keytab",
       "default_organisation_domain" => PUAVO_ETC.domain,
       "bootserver" => true,
+      "sso" => {
+        "foobar" => "share sdaf"
+      },
       "server" => {
         :dn => PUAVO_ETC.ldap_dn,
         :password => PUAVO_ETC.ldap_password
       },
-      "remote_auth" => {
-        "foobar" => "this is a shared secret"
+      "sso" => {
+        "foobar" => "this is a shared secret",
+        "esanboot2.kehitys.opinsys.fi" => "secret"
       }
     }
   end

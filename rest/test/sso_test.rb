@@ -4,7 +4,7 @@ require_relative "./helper"
 require "addressable/uri"
 require "jwt"
 
-describe PuavoRest::RemoteAuth do
+describe PuavoRest::SSO do
   before(:each) do
     Puavo::Test.clean_up_ldap
     FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
@@ -28,19 +28,19 @@ describe PuavoRest::RemoteAuth do
     @user.save!
   end
   it "responds with 400 error for missing return_to" do
-    get "/v3/remote_auth"
+    get "/v3/sso"
     assert_equal 400, last_response.status
   end
 
   it "responds 401 for unknown services" do
-    url = Addressable::URI.parse("/v3/remote_auth")
+    url = Addressable::URI.parse("/v3/sso")
     url.query_values = { "return_to" => "http://unknown.example.com/path" }
     get url.to_s
     assert_equal 401, last_response.status
   end
 
   it "responds 401 for bad credentials" do
-    url = Addressable::URI.parse("/v3/remote_auth")
+    url = Addressable::URI.parse("/v3/sso")
     url.query_values = { "return_to" => "http://test-client-service.example.com/path" }
     basic_authorize "bob", "bad"
     get url.to_s
@@ -50,7 +50,7 @@ describe PuavoRest::RemoteAuth do
 
   describe "successful login redirect" do
     before(:each) do
-      url = Addressable::URI.parse("/v3/remote_auth")
+      url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
       basic_authorize "bob", "secret"
       get url.to_s
@@ -58,7 +58,7 @@ describe PuavoRest::RemoteAuth do
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       @jwt = JWT.decode(
         @redirect_url.query_values["jwt"],
-        PuavoRest::CONFIG["remote_auth"]["test-client-service.example.com"]
+        PuavoRest::CONFIG["sso"]["test-client-service.example.com"]
       )
     end
 
@@ -89,7 +89,7 @@ describe PuavoRest::RemoteAuth do
 
   describe "login form" do
     before(:each) do
-      url = Addressable::URI.parse("/v3/remote_auth")
+      url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path" }
       get url.to_s
     end
@@ -100,7 +100,7 @@ describe PuavoRest::RemoteAuth do
     end
 
     it "can login from post"  do
-      post "/v3/remote_auth", {
+      post "/v3/sso", {
         "username" => "bob",
         "password" => "secret",
         "return_to" => "http://test-client-service.example.com/path"
@@ -112,7 +112,7 @@ describe PuavoRest::RemoteAuth do
     end
 
     it "renders form errors on the form"  do
-      post "/v3/remote_auth", {
+      post "/v3/sso", {
         "username" => "bob",
         "password" => "bad",
         "return_to" => "http://test-client-service.example.com/path"

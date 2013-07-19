@@ -1,9 +1,8 @@
 require "jwt"
 require "addressable/uri"
 
-
 module PuavoRest
-class RemoteAuth < LdapSinatra
+class SSO < LdapSinatra
 
   def respond_auth
     if params["return_to"].nil?
@@ -11,7 +10,7 @@ class RemoteAuth < LdapSinatra
     end
 
     return_url = Addressable::URI.parse(params["return_to"])
-    shared_secret =  (CONFIG["remote_auth"] || {})[return_url.host]
+    shared_secret =  (CONFIG["sso"] || {})[return_url.host]
 
     if shared_secret.nil?
       raise Unauthorized,
@@ -53,11 +52,11 @@ class RemoteAuth < LdapSinatra
     redirect return_url.to_s
   end
 
-  get "/v3/remote_auth" do
+  get "/v3/sso" do
     respond_auth
   end
 
-  post "/v3/remote_auth" do
+  post "/v3/sso" do
     respond_auth
   end
 
