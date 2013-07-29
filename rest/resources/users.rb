@@ -35,7 +35,10 @@ class User < LdapHash
   end
 
   def self.resolve_dn(username)
-    raw_filter("(uid=#{ escape username })", ["dn"]).first["dn"].first
+    dn = raw_filter("(uid=#{ escape username })", ["dn"])
+    if dn && !dn.empty?
+      dn.first["dn"].first
+    end
   end
 
   def self.profile_image(uid)

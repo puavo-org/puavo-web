@@ -80,6 +80,7 @@ class LdapHash < Hash
             User.resolve_dn(credentials[:username])
           end
         end
+        raise BadCredentials, "Bad username/dn or password" if not credentials[:dn]
         conn = dn_bind(credentials[:dn], credentials[:password])
       end
 
