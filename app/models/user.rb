@@ -350,7 +350,7 @@ class User < LdapBase
   end
 
   def generate_password(size=8)
-    characters = (("a".."z").to_a + ("0".."9").to_a).delete_if do |char| not char[/[015iIosq]/].nil? end
+    characters = (("a".."z").to_a + ("0".."9").to_a).delete_if do |char| not char[/[015iIosql]/].nil? end
     Array.new(size) { characters[rand(characters.size)] }.join
   end
 
