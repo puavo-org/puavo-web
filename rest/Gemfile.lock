@@ -9,33 +9,37 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
-    backports (3.3.2)
+    addressable (2.3.5)
+    backports (3.3.3)
     coderay (1.0.9)
     columnize (0.3.6)
-    debugger (1.6.0)
+    debugger (1.6.1)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.1)
+      debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.2)
+    debugger-ruby_core_source (1.2.3)
     eventmachine (1.0.3)
     ffi (1.9.0)
+    jwt (0.1.8)
+      multi_json (>= 1.5)
     m (1.3.2)
       method_source (>= 0.6.7)
       rake (>= 0.9.2.2)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
-    method_source (0.8.1)
+    method_source (0.8.2)
     multi_json (1.7.7)
     pry (0.9.12.2)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
-    puma (2.1.1)
+    puma (2.4.0)
       rack (>= 1.1, < 2.0)
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
+    rack-rewrite (1.3.3)
     rack-test (0.6.2)
       rack (>= 1.0)
     rake (10.1.0)
@@ -52,24 +56,27 @@ GEM
       rack-test
       sinatra (~> 1.4.2)
       tilt (~> 1.3)
-    slop (3.4.5)
+    slop (3.4.6)
     systemu (2.5.2)
     tilt (1.4.1)
-    timecop (0.6.1)
+    timecop (0.6.2.2)
     uuid (2.3.7)
       macaddr (~> 1.0)
-    yard (0.8.6.1)
+    yard (0.8.7)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   debugger
   gssapi!
+  jwt
   m
   multi_json
   pry
   puma
+  rack-rewrite
   shotgun
   sinatra
   sinatra-contrib
