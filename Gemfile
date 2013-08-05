@@ -16,6 +16,7 @@ gem 'jquery-rails'
 gem 'uglifier'
 gem "multi_json"
 gem 'redcarpet'
+gem 'unicorn'
 
 group :assets do
   gem 'stylus'
