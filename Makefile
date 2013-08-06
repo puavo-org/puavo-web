@@ -58,6 +58,9 @@ install: mkdirs
 	cp config/puavo_devices.yml.development $(CONF_DIR)/puavo_devices.yml
 	ln -s ../../../../etc/puavo-web/puavo_devices.yml $(RAILS_CONFIG_DIR)/puavo_devices.yml
 
+	cp config/unicorn.rb.example $(CONF_DIR)/unicorn.rb
+	ln -s ../../../../etc/puavo-web/unicorn.rb $(RAILS_CONFIG_DIR)/unicorn.rb
+
 test-spec:
 	bundle exec rspec -b
 
