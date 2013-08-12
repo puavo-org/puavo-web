@@ -38,6 +38,7 @@ install:
 		resources \
 		vendor \
 		.bundle \
+		views \
 		$(DESTDIR)$(installdir)
 
 install-client:
