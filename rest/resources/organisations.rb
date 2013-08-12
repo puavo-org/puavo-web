@@ -11,7 +11,7 @@ class Organisation < LdapHash
   def self.by_domain
     return @@by_domain if @@by_domain
 
-    puavo_ldap = Puavo::Ldap.new(:base => "")
+    puavo_ldap = Puavo::Ldap.new(:base => "", :server => CONFIG["ldap"])
     organisation_bases = puavo_ldap.all_bases
 
     puavo_ldap.unbind
@@ -19,7 +19,7 @@ class Organisation < LdapHash
     by_domain = {}
 
     organisation_bases.each do |base|
-      puavo_ldap = Puavo::Ldap.new(:base => base)
+      puavo_ldap = Puavo::Ldap.new(:base => base, :server => CONFIG["ldap"])
 
       if organisation_entry = puavo_ldap.organisation
         organisation = Puavo::Client::Base.new_by_ldap_entry( organisation_entry )
