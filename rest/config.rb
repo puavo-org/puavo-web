@@ -1,9 +1,27 @@
 require "socket"
 require "yaml"
+require "puavo/etc"
 
 module PuavoRest
 
 fqdn = Socket.gethostbyname(Socket.gethostname).first
+
+default_config = {
+  "ldap" => fqdn,
+  "ltsp_server_data_dir" => "/run/puavo-rest",
+  "fqdn" => fqdn,
+  "keytab" => "/etc/puavo/puavo-rest.keytab",
+  "default_organisation_domain" => PUAVO_ETC.get(:domain),
+  "bootserver" => true,
+  "server" => {
+    :dn => PUAVO_ETC.ldap_dn,
+    :password => PUAVO_ETC.ldap_password
+  },
+  "sso" => {
+    "foobar" => "this is a shared secret",
+    "esanboot2.kehitys.opinsys.fi" => "secret"
+  }
+}
 
 if ENV["RACK_ENV"] == "test"
   CONFIG = {
@@ -21,29 +39,10 @@ if ENV["RACK_ENV"] == "test"
   }
 else
   begin
-    CONFIG = YAML.load_file "/etc/puavo-rest.yml"
+    custom_config = YAML.load_file "/etc/puavo-rest.yml"
   rescue Errno::ENOENT
-    # Do automatc configuration on boot servers
-    require "puavo/etc"
-    CONFIG = {
-      "ldap" => fqdn,
-      "ltsp_server_data_dir" => "/run/puavo-rest",
-      "fqdn" => fqdn,
-      "keytab" => "/etc/puavo/puavo-rest.keytab",
-      "default_organisation_domain" => PUAVO_ETC.domain,
-      "bootserver" => true,
-      "sso" => {
-        "foobar" => "share sdaf"
-      },
-      "server" => {
-        :dn => PUAVO_ETC.ldap_dn,
-        :password => PUAVO_ETC.ldap_password
-      },
-      "sso" => {
-        "foobar" => "this is a shared secret",
-        "esanboot2.kehitys.opinsys.fi" => "secret"
-      }
-    }
+    custom_config = {}
   end
+  CONFIG = default_config.merge(custom_config)
 end
 end
