@@ -1,4 +1,3 @@
-
 # Single Sign-On
 
 Service is located at `/v3/sso`.
@@ -16,7 +15,7 @@ sso:
 ## Usage
 
 Client service requesting authentication must redirect user to
-`/v3/sso` with `return_to` to query value which determines where user
+`/v3/sso` with `return_to` query value which determines where user
 is redirected back. Hostname of the `return_to` url must match with above
 configuration.
 
