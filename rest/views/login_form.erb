@@ -12,15 +12,28 @@
 
     <form action="" method="post" accept-charset="utf-8">
         <input type="hidden" value="<%= params["return_to"] %>">
+
+        <% if PuavoRest::LdapHash.organisation.nil? %>
+            <select name="organisation">
+                <% PuavoRest::Organisation.all.each do |org| %>
+                    <option value="<%= org["domain"] %>">
+                        <%= org["name"] %>
+                    </option>
+                <% end %>
+            </select>
+        <% else %>
+            <h2><%= PuavoRest::LdapHash.organisation["name"] %></h2>
+        <% end %>
+
         <input placeholder="Username" type="text" name="username" autofocus>
         <input placeholder="Password" type="password" name="password">
         <input type="submit" value="Login">
     </form>
 
     <% if @error_message %>
-    <div class="error">
+    <small class="error">
         error: <%= @error_message %>
-    </div>
+    </small>
     <% end %>
 
 </body>

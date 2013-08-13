@@ -38,6 +38,10 @@ class Organisation < LdapHash
     @@by_domain = by_domain
   end
 
+  def self.all
+    by_domain.values
+  end
+
 end
 
 

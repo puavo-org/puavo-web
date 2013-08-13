@@ -59,6 +59,10 @@ end
 class Root < LdapSinatra
   set :public_folder, "public"
 
+  get "/" do
+    "Puavo says hello!"
+  end
+
   use BeforeFilters
   use PuavoRest::ExternalFiles
   use PuavoRest::Users

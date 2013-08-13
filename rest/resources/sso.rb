@@ -58,6 +58,10 @@ class SSO < LdapSinatra
   end
 
   post "/v3/sso" do
+    if org = params["organisation"]
+        LdapHash.setup(:organisation => Organisation.by_domain[org])
+    end
+
     respond_auth
   end
 

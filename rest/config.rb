@@ -18,8 +18,7 @@ default_config = {
     :password => PUAVO_ETC.ldap_password
   },
   "sso" => {
-    "foobar" => "this is a shared secret",
-    "esanboot2.kehitys.opinsys.fi" => "secret"
+    "localhost" => "secret"
   }
 }
 
