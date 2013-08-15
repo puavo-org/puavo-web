@@ -107,6 +107,14 @@
     </td>
   </tr>
   <tr>
+    <td><%= f.label :preferredLanguage %></td>
+    <td>
+      <%= f.select :preferredLanguage,
+          [[t('language_default'), ""]] +
+            Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } %>
+    </td>
+  </tr>
+  <tr>
     <td>
       <%= f.label :image %>
     </td>

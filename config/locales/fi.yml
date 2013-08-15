@@ -361,6 +361,7 @@ fi:
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Laitteet henkilökohtaisia
+        preferredLanguage: Kieli
       user:
         displayName: Nimi
         sn: Sukunimi

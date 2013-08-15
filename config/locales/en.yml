@@ -363,6 +363,7 @@ en:
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
+        preferredLanguage: Language
       user:
         displayName: Name
         sn: Surname
