@@ -45,7 +45,7 @@ class Krb5Gssapi
 
     res = GSSAPI::LibGSSAPI::gss_krb5_copy_ccache(minor, @srv.delegated_credentials, ccache.get_pointer(0))
 
-    ENV['KRB6CCNAME'] = @cachename
+    ENV['KRB5CCNAME'] = @cachename
     @ok = true
   end
 
