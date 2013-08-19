@@ -80,7 +80,7 @@ describe PuavoRest::Users do
         assert_200
         data = JSON.parse(last_response.body)
 
-        assert_equal "http://example.org/v3/users/bob/profile.jpg", data["profile_image_link"]
+        assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
       end
 
       it "can be faked with VirtualHostBase" do

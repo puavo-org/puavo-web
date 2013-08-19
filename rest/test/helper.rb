@@ -61,6 +61,12 @@ require 'rack/test'
 require "timecop"
 require "debugger"
 
+module Rack
+  module Test
+    DEFAULT_HOST = "example.opinsys.net"
+  end
+end
+
 require_relative "../config.rb"
 require_relative "../root"
 require_relative '../../lib/cleanup_ldap'
