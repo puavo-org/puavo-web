@@ -2,7 +2,7 @@ Feature: Search users
   In order to could find a user quickly
   User
   wants search other users by name
-  
+
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And a new role with name "Class 1A" and which is joined to the "Class 1" group
@@ -19,7 +19,6 @@ Feature: Search users
       | Eric      | Williams | eric      | secret   | false        | Class 1A   | Student                   |
       | Anthony   | Davis    | anthony   | secret   | false        | Class 1A   | Student                   |
       | Isabella  | Jackson  | isabella  | secret   | false        | Class 1A   | Student                   |
-      | Elizabeth | Jones    | elizabeth | secret   | false        | Class 1A   | Student                   |
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Find user by first name
@@ -49,3 +48,14 @@ Feature: Search users
     | Name          | School name      |
     | Johnson Harry | Example school 1 |
 
+  Scenario: School admin should not find students from other schools
+    Given a new school and group with names "Example school 2", "Class 1" on the "example" organisation
+    And a new role with name "Class 1A" and which is joined to the "Class 1" group
+    And the following roles:
+    | displayName |
+    | Staff       |
+    And the following users:
+      | givenName | sn       | uid       | password | school_admin | role_name | puavoEduPersonAffiliation |
+      | Elizabeth | Jones    | elizabeth | secret   | false        | Class 1A   | Student                   |
+    When I search user with "Elizabeth"
+    And I should get no search results

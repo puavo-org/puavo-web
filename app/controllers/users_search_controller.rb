@@ -48,18 +48,18 @@ class UsersSearchController < ApplicationController
       filter_block.call(w)
     end.join() + ")"
 
-    Module.class_eval(model.capitalize).search_as_utf8( :filter => filter,
-                                                :scope => :one,
-                                                :attributes => (["puavoId",
-                                                                 "puavoSchool"] +
-                                                                attributes) ).map do |dn, v|
+    Module.class_eval(model.capitalize).search_as_utf8(
+      :filter => filter,
+      :scope => :one,
+      :attributes => (["puavoId", "puavoSchool"] + attributes)
+    ).select do |dn, v|
+        not Array(v["puavoSchool"]).empty?
+    end.map do |dn, v|
       { "id" => v["puavoId"].first,
         "school_id" => v["puavoSchool"].first.match(/^puavoId=([^,]+)/).to_a[1],
         "puavoSchool" => v["puavoSchool"].first,
         "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block].first
-      }.merge( attributes.inject({}) { |result, a|
-                 result.merge(a => v[a])
-               } )
+      }.merge( attributes.inject({}) { |result, a| result.merge(a => v[a]) } )
     end.sort{ |a,b| a['name'] <=> b['name'] }
   end
 end
