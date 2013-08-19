@@ -13,15 +13,7 @@
     <form action="" method="post" accept-charset="utf-8">
         <input type="hidden" value="<%= params["return_to"] %>">
 
-        <% if PuavoRest::LdapHash.organisation.nil? %>
-            <select name="organisation">
-                <% PuavoRest::Organisation.all.each do |org| %>
-                    <option value="<%= org["domain"] %>">
-                        <%= org["name"] %>
-                    </option>
-                <% end %>
-            </select>
-        <% else %>
+        <% if PuavoRest::LdapHash.organisation %>
             <h2><%= PuavoRest::LdapHash.organisation["name"] %></h2>
         <% end %>
 

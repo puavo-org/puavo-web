@@ -21,8 +21,7 @@ class SSO < LdapSinatra
     begin
       auth :basic_auth, :from_post, :kerberos
     rescue JSONError => err
-      @error_message = err.to_s
-      halt 401, {'Content-Type' => 'text/html'}, erb(:login_form)
+      return render_form(err.to_s)
     end
 
     user = User.current
@@ -57,9 +56,55 @@ class SSO < LdapSinatra
     respond_auth
   end
 
+  def render_form(error_message)
+      @error_message = error_message
+      @organisation = preferred_organisation_domain
+      halt 401, {'Content-Type' => 'text/html'}, erb(:login_form)
+  end
+
+  def ensure_topdomain(org)
+    return if org.nil?
+    if !org.end_with?(CONFIG["topdomain"])
+      return "#{ org }.#{ CONFIG["topdomain"] }"
+    end
+    org
+  end
+
+  def preferred_organisation_domain
+    [
+      params["organisation"],
+      request.host,
+    ].compact.map do |org|
+      ensure_topdomain(org)
+    end.select do |org|
+      Organisation.by_domain[org]
+    end.first
+  end
+
   post "/v3/sso" do
-    if org = params["organisation"]
-        LdapHash.setup(:organisation => Organisation.by_domain[org])
+    user_org = nil
+
+    if params["username"].include?("@")
+      _, user_org = params["username"].split("@")
+      if Organisation.by_domain[ensure_topdomain(user_org)].nil?
+        logger.warn "Could not find organisation for domain #{ user_org }"
+        render_form("Bad username or password")
+      end
+    end
+
+    org = [
+      user_org,
+      params["organisation"],
+      request.host,
+    ].map do |org|
+      Organisation.by_domain[ensure_topdomain(org)]
+    end.compact.first
+
+
+    if org
+      LdapHash.setup(:organisation => org)
+    else
+      render_form("No Organisation")
     end
 
     respond_auth
