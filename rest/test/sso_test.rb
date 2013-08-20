@@ -143,17 +143,6 @@ describe PuavoRest::SSO do
         assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
       end
 
-      it "from post using custom organisation in query string"  do
-        post "/v3/sso?organisation=anotherorg.opinsys.net", {
-          "username" => "admin",
-          "password" => "admin",
-          "return_to" => "http://test-client-service.example.com/path"
-        }
-
-        claims = decode_jwt
-        assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
-      end
-
     end
 
     it "renders form errors on the form"  do
