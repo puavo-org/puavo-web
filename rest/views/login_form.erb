@@ -10,15 +10,28 @@
         <%= params["return_to"] %>
     </p>
 
-    <form action="" method="post" accept-charset="utf-8">
-        <input type="hidden" value="<%= params["return_to"] %>">
+    <% if @organisation %>
+        <h2><%= @organisation["name"] %></h2>
+    <% end %>
 
-        <% if PuavoRest::LdapHash.organisation %>
-            <h2><%= PuavoRest::LdapHash.organisation["name"] %></h2>
+    <form action="" method="post" accept-charset="utf-8" >
+
+        <input type="hidden" name="return_to" value="<%= params["return_to"] %>">
+
+        <% if @organisation %>
+            <input type="hidden" name="organisation" value="<%= @organisation["domain"] %>">
         <% end %>
 
-        <input placeholder="Username" type="text" name="username" autofocus>
-        <input placeholder="Password" type="password" name="password">
+
+        <label class="field">
+            <input placeholder="Username" type="text" name="username" value="<%= params["username"] %>" autofocus>
+        <% if @organisation %>
+            @<%= @organisation["domain"] %>
+        <% end %>
+        </label>
+
+        <input class="field" placeholder="Password" type="password" value="<%= params["password"] %>" name="password">
+
         <input type="submit" value="Login">
     </form>
 

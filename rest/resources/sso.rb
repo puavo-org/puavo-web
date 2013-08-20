@@ -58,7 +58,7 @@ class SSO < LdapSinatra
 
   def render_form(error_message)
       @error_message = error_message
-      @organisation = preferred_organisation_domain
+      @organisation = preferred_organisation
       halt 401, {'Content-Type' => 'text/html'}, erb(:login_form)
   end
 
@@ -70,18 +70,27 @@ class SSO < LdapSinatra
     org
   end
 
-  def preferred_organisation_domain
+  def preferred_organisation
     [
       params["organisation"],
       request.host,
     ].compact.map do |org|
       ensure_topdomain(org)
-    end.select do |org|
+    end.map do |org|
       Organisation.by_domain[org]
     end.first
   end
 
   post "/v3/sso" do
+
+    if params["username"].include?("@") && params["organisation"]
+      render_form("Invalid username")
+    end
+
+    if !params["username"].include?("@") && params["organisation"].nil?
+      render_form("Organisation is missing from user name. Use username@organisation format.")
+    end
+
     user_org = nil
 
     if params["username"].include?("@")

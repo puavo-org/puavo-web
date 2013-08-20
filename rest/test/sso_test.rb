@@ -114,8 +114,10 @@ describe PuavoRest::SSO do
         post "/v3/sso", {
           "username" => "bob",
           "password" => "secret",
+          "organisation" => "example.opinsys.net",
           "return_to" => "http://test-client-service.example.com/path"
         }
+
         claims = decode_jwt
         assert_equal "example.opinsys.net", claims["organisation_domain"]
       end
@@ -145,17 +147,56 @@ describe PuavoRest::SSO do
 
     end
 
+    describe "hidden organisation field" do
+
+      def hidden_organisation_field
+        el = css("input[name=organisation]").first
+        el.attributes["value"].value if el
+      end
+
+      it "is added from hostname" do
+        get "/v3/sso", {
+          "return_to" => "http://test-client-service.example.com/path",
+        }, {
+            "HTTP_HOST" => "anotherorg.opinsys.net"
+        }
+        assert_equal "anotherorg.opinsys.net", hidden_organisation_field
+      end
+
+      it "is overridden from query string" do
+        get "/v3/sso", {
+          "organisation" => "anotherorg.opinsys.net",
+          "return_to" => "http://test-client-service.example.com/path",
+        }, {
+            "HTTP_HOST" => "example.opinsys.net"
+        }
+        assert_equal "anotherorg.opinsys.net", hidden_organisation_field
+      end
+
+      it "is not set for non-organisation domains" do
+        get "/v3/sso", {
+          "return_to" => "http://test-client-service.example.com/path",
+        }, {
+            "HTTP_HOST" => "login.opinsys.net"
+        }
+        assert_equal nil, hidden_organisation_field
+      end
+
+
+    end
+
     it "renders form errors on the form"  do
       post "/v3/sso", {
         "username" => "bob",
         "password" => "bad",
+        "organisation" => "example.opinsys.net",
         "return_to" => "http://test-client-service.example.com/path"
       }
 
       assert_equal 401, last_response.status
       assert_equal "text/html", last_response.content_type
       assert(
-        last_response.body.include?("Bad username"),
+        css(".error").first.content.include?("Bad username"),
         "Error message missing from #{ last_response.body }"
       )
     end

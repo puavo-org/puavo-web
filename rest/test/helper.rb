@@ -59,6 +59,7 @@ setup_connection
 require 'minitest/autorun'
 require 'rack/test'
 require "timecop"
+require 'nokogiri'
 require "debugger"
 
 module Rack
@@ -71,7 +72,7 @@ require_relative "../config.rb"
 require_relative "../root"
 require_relative '../../lib/cleanup_ldap'
 
-# Some random require calls required by Puavo Activeldap models
+# Puavo Activeldap models requires this require for some reason
 require "RMagick"
 
 # Include rack helpers and expose full application stack
@@ -79,6 +80,11 @@ class MiniTest::Spec
   include Rack::Test::Methods
   def app
     Rack::Builder.parse_file(File.dirname(__FILE__) + '/../config.ru').first
+  end
+
+  def css(selector)
+      doc = Nokogiri::HTML(last_response.body)
+      doc.css(selector)
   end
 end
 
