@@ -86,9 +86,10 @@ Set password to the ldap.yml
       base: o=puavo
       method: tls
 
-Add test organisation. Owner's username and password must be the *cucumber*
+Add testing organisations.
 
     puavo-add-new-organisation example --username cucumber --password cucumber --given-name cucumber --surname cucumber
+    puavo-add-new-organisation anotherorg --username admin --password admin --given-name Admin --surname Administrator
 
 Create sessions table to database
 
