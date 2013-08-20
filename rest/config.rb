@@ -19,7 +19,10 @@ default_config = {
     :password => PUAVO_ETC.ldap_password
   },
   "sso" => {
-    "localhost" => "secret"
+    "localhost" => {
+      "name" => "Localhost Example Service",
+      "secret" => "secret"
+    }
   }
 }
 
@@ -35,7 +38,10 @@ if ENV["RACK_ENV"] == "test"
       :password => PUAVO_ETC.ldap_password
     },
     "sso" => {
-      "test-client-service.example.com" => "this is a shared secret"
+      "test-client-service.example.com" => {
+        "name" => "Testing Service",
+        "secret" => "this is a shared secret"
+      }
     }
   }
 else

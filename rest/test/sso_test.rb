@@ -58,7 +58,7 @@ describe PuavoRest::SSO do
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       @jwt = JWT.decode(
         @redirect_url.query_values["jwt"],
-        PuavoRest::CONFIG["sso"]["test-client-service.example.com"]
+        PuavoRest::CONFIG["sso"]["test-client-service.example.com"]["secret"]
       )
     end
 

@@ -4,19 +4,22 @@ require "addressable/uri"
 module PuavoRest
 class SSO < LdapSinatra
 
+  def return_to
+    Addressable::URI.parse(params["return_to"]) if params["return_to"]
+  end
+  def external_service
+    (CONFIG["sso"] || {})[return_to.host] if return_to
+  end
+
   def respond_auth
-    if params["return_to"].nil?
+    if return_to.nil?
       raise BadInput, :user => "return_to missing"
     end
 
-    return_url = Addressable::URI.parse(params["return_to"])
-    shared_secret =  (CONFIG["sso"] || {})[return_url.host]
-
-    if shared_secret.nil?
+    if external_service.nil?
       raise Unauthorized,
-        :user => "Unknown client service #{ return_url.host }"
+        :user => "Unknown client service #{ return_to.host }"
     end
-
 
     begin
       auth :basic_auth, :from_post, :kerberos
@@ -43,13 +46,12 @@ class SSO < LdapSinatra
       "email" => user["email"],
       "organisation_name" => user["organisation"]["name"],
       "organisation_domain" => user["organisation"]["domain"],
-    }, shared_secret)
+    }, external_service["secret"])
 
-    return_url.query_values = (
-      return_url.query_values || {}
-    ).merge("jwt" => jwt)
 
-    redirect return_url.to_s
+    r = return_to
+    r.query_values = (r.query_values || {}).merge("jwt" => jwt)
+    redirect r.to_s
   end
 
   get "/v3/sso" do
