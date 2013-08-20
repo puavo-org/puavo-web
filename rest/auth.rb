@@ -32,7 +32,7 @@ class LdapSinatra < Sinatra::Base
   def from_post
     return if env["REQUEST_METHOD"] != "POST"
     return {
-      :username => params["username"],
+      :username => params["username"].split("@").first,
       :password => params["password"]
     }
   end

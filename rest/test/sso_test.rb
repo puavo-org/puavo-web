@@ -99,16 +99,50 @@ describe PuavoRest::SSO do
       assert last_response.body.include?("form"), "has login form  #{ last_response.body }"
     end
 
-    it "can login from post"  do
-      post "/v3/sso", {
-        "username" => "bob",
-        "password" => "secret",
-        "return_to" => "http://test-client-service.example.com/path"
-      }
-      assert_equal 302, last_response.status
-      assert last_response.headers["Location"]
-      url = Addressable::URI.parse(last_response.headers["Location"])
-      assert url.query_values["jwt"], "has jwt token"
+
+    describe "login" do
+      def decode_jwt
+        assert_equal 302, last_response.status
+        assert last_response.headers["Location"]
+        url = Addressable::URI.parse(last_response.headers["Location"])
+        assert url.query_values["jwt"], "has jwt token"
+
+        JWT.decode(url.query_values["jwt"], "this is a shared secret")
+      end
+
+      it "from post"  do
+        post "/v3/sso", {
+          "username" => "bob",
+          "password" => "secret",
+          "return_to" => "http://test-client-service.example.com/path"
+        }
+        claims = decode_jwt
+        assert_equal "example.opinsys.net", claims["organisation_domain"]
+      end
+
+      it "from post using custom organisation"  do
+        post "/v3/sso", {
+          "username" => "admin",
+          "password" => "admin",
+          "organisation" => "anotherorg.opinsys.net",
+          "return_to" => "http://test-client-service.example.com/path"
+        }
+
+        claims = decode_jwt
+        assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
+      end
+
+      it "from post using custom organisation in username"  do
+        post "/v3/sso", {
+          "username" => "admin@anotherorg.opinsys.net",
+          "password" => "admin",
+          "return_to" => "http://test-client-service.example.com/path"
+        }
+
+        claims = decode_jwt
+        assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
+      end
+
     end
 
     it "renders form errors on the form"  do
