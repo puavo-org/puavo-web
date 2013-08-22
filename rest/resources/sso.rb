@@ -68,7 +68,7 @@ class SSO < LdapSinatra
   def render_form(error_message)
       @error_message = error_message
       @organisation = preferred_organisation
-      halt 401, {'Content-Type' => 'text/html'}, erb(:login_form)
+      halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
 
   def ensure_topdomain(org)
