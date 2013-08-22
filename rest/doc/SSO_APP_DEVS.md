@@ -3,10 +3,10 @@
 For now to implement Opinsys SSO to a remote application you must receive a
 shared secret from Opinsys staff. To receive it you must provide a fully
 qualified domain name (fqdn) for your application and a human readable name for
-it which will be displayed on the login form in our end.
+it which will be displayed on the login form on our end.
 
-Once the shared sercret is in place the remote  application may redirect
-client's web browser to `https://api.opinsys.fi/v3/sso` with a `return_to`
+Once the shared sercret is in place the remote application may redirect
+user's web browser to `https://api.opinsys.fi/v3/sso` with a `return_to`
 query string key which determines where user is redirected back. The hostname
 of the `return_to` URL must match with the given application fqdn.
 
@@ -52,12 +52,19 @@ Using this users don't have to manually type their organisation during login.
 When user is coming from a Opinsys managed desktop Kerberos will be used for
 the authentication. User will not even see the Opinsys login form in this case.
 He/she will be directly redirected back to `return_to` url with a `jwt` key.
-The organisation presetting is ignored when Kerberos is active. This is enabled
-by default for all remote application using Opinsys SSO.
+The organisation presetting is ignored when Kerberos is active because the
+organisation will read from the Kerberos ticket. This is enabled by default for
+all remote applications using Opinsys SSO.
 
 ## Implementation help
 
-See [node-jwtsso][] for [Express] middleware implementation.
+  - [JSON Web Token draft][jwt]
+  - Known working JSON Web Token implementations
+    - For [Ruby](https://github.com/progrium/ruby-jwt)
+    - For [node.js](https://npmjs.org/package/jwt-simple)
+  - [Express][] middleware implementation: [node-jwtsso][]
+  - Example [remote application](https://github.com/opinsys/node-jwtsso/blob/master/example/app.js)
+
 
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token
 [node-jwtsso]: https://github.com/opinsys/node-jwtsso
