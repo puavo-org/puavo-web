@@ -136,7 +136,7 @@ class SSO < LdapSinatra
   )
 
   get "/v3/sso/developers" do
-    File.open("doc/SSO.md", "r") do |f|
+    File.open("doc/SSO_APP_DEVS.md", "r") do |f|
       @body = markdown.render(f.read())
       erb :developers, :layout => :layout
     end
