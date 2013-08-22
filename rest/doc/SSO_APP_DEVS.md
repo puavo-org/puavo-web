@@ -1,9 +1,10 @@
 # Opinsys Single Sign-On (SSO) for remote applications
 
 For now to implement Opinsys SSO to a remote application you must receive a
-shared secret from Opinsys staff. To receive it you must provide a fully
-qualified domain name (fqdn) for your application and a human readable name for
-it which will be displayed on the login form on our end.
+shared secret from Opinsys support (tuki aet opinsys.fi). To receive it you
+must provide a fully qualified domain name (fqdn) for your application and a
+human readable name for it which will be displayed on the login form on our
+end.
 
 Once the shared sercret is in place the remote application may redirect
 user's web browser to `https://api.opinsys.fi/v3/sso` with a `return_to`
