@@ -4,7 +4,7 @@ For now to implement Opinsys SSO to a external service you must receive a
 shared secret from Opinsys support (tuki aet opinsys.fi). To receive it you
 must provide following:
 
-  -Fully qualified domain name (fqdn)
+  - Fully qualified domain name (fqdn)
     - The service must be available on this domain
   - Name and small description of the service
     - Will be displayed on the login form and admin configuration panel for school admins
