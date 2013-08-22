@@ -17,8 +17,8 @@ update-production-gemfile.lock:
 
 dev-install:
 	sudo rm -rf .bundle Gemfile.lock
-	bundle install --without rails
-	bundle install --without rails --deployment
+	sudo bundle install --without rails
+	sudo bundle install --without rails --deployment
 
 install:
 	# Delete .git dir and caches from vendor/. Caused some permission issues on
