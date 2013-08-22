@@ -9,3 +9,6 @@ sso:
   organisation_missing: Organisaatio puuttuu käyttäjänimestä. Käytä muotoa käyttäjätunnus@organisaatiosi.opinsys.fi
   invalid_username: Väärän muotoinen käyttäjätunnus
   error: Virhe
+  help: Apua
+  username_help: Käytä samaa käyttäjätunnusta kuin Opinsys-tietokoneille kirjautuessasi.
+  organisation_help: "Käyttäjätunnus tulee syöttää muodossa <i>käyttäjätunnus</i>@<i>organisaatio</i>.opinsys.fi. Käyttäjätunnusosa on sama kuin Opinsys-tietokoneille kirjautuessasi. Organisaatio-osa tulee koulusi kaupungin/kunnan mukaan. Se kirjoitetaan pienellä sekä siitä tulee poistaa skandinaavisetmerkit. Esimerkiksi jos olet Jyväskylästä ja Opinsys-tunnuksesi on matti.meikalainen silloin organisaatio-osa on <i>jyvaskyla</i> eli kirjaudut tunnuksella <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."

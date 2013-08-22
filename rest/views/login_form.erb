@@ -35,3 +35,17 @@
 </small>
 <% end %>
 
+
+
+<div id="username-help">
+    <h2><%= t.sso.help %></h2>
+    <p>
+    <% if @organisation %>
+        <%= t.sso.username_help %>
+    <% else %>
+        <%= t.sso.organisation_help %>
+    <% end %>
+    </p>
+
+</div>
+
