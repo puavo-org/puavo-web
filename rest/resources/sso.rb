@@ -1,8 +1,10 @@
 require "jwt"
 require "addressable/uri"
+require "sinatra/r18n"
 
 module PuavoRest
 class SSO < LdapSinatra
+  register Sinatra::R18n
 
   def return_to
     Addressable::URI.parse(params["return_to"]) if params["return_to"]
@@ -23,8 +25,12 @@ class SSO < LdapSinatra
 
     begin
       auth :basic_auth, :from_post, :kerberos
+    rescue KerberosError => err
+      logger.info("SSO kerberos error: #{ err }")
+      return render_form(t.sso.kerberos_error)
     rescue JSONError => err
-      return render_form(err.to_s)
+      logger.info("SSO error: #{ err }")
+      return render_form(t.sso.bad_username_or_pw)
     end
 
     user = User.current
@@ -86,11 +92,11 @@ class SSO < LdapSinatra
   post "/v3/sso" do
 
     if params["username"].include?("@") && params["organisation"]
-      render_form("Invalid username")
+      render_form(t.sso.invalid_username)
     end
 
     if !params["username"].include?("@") && params["organisation"].nil?
-      render_form("Organisation is missing from user name. Use username@organisation format.")
+      render_form(t.sso.organisation_missing)
     end
 
     user_org = nil
@@ -98,8 +104,8 @@ class SSO < LdapSinatra
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
       if Organisation.by_domain[ensure_topdomain(user_org)].nil?
-        logger.warn "Could not find organisation for domain #{ user_org }"
-        render_form("Bad username or password")
+        logger.info "Could not find organisation for domain #{ user_org }"
+        render_form(t.sso.bad_username_or_pw)
       end
     end
 
@@ -115,7 +121,7 @@ class SSO < LdapSinatra
     if org
       LdapHash.setup(:organisation => org)
     else
-      render_form("No Organisation")
+      render_form(t.sso.no_organisation)
     end
 
     respond_auth

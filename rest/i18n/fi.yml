@@ -1,0 +1,9 @@
+sso:
+  title: Opinsys-kirjautuminen
+  bad_username_or_pw: Väärä käyttäjätunnus tai salasana
+  kerberos_error: Kerberos virhe
+  no_organisation: Organisaatiota ei ole asetettu
+  organisation_missing: Organisation is missing from username. Use username@yourorganisation.opinsys.fi format.
+  organisation_missing: Organisaatio puuttuu käyttäjänimestä. Käytä muotoa käyttäjätunnus@organisaatiosi.opinsys.fi
+  invalid_username: Väärän muotoinen käyttäjätunnus
+  error: Virhe

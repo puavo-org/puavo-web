@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
 <head>
-    <title>Opinsys Login</title>
+    <meta charset="utf-8">
+    <title><%= t.sso.title %></title>
     <style type="text/css">
         .field {
             display: block;
@@ -9,7 +10,8 @@
     </style>
 </head>
 <body>
-    <h1>Opinsys Login</h1>
+
+    <h1><%= t.sso.title %></h1>
 
     <p>
         <%= external_service["name"] %>
@@ -42,7 +44,7 @@
 
     <% if @error_message %>
     <small class="error">
-        error: <%= @error_message %>
+        <%= t.sso.error %>: <%= @error_message %>
     </small>
     <% end %>
 
