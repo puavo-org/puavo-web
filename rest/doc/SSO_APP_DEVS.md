@@ -41,7 +41,7 @@ contain following claims:
 ## Organisation presetting
 
 If the remote application knows in advance from which organisation the user is
-coming from it can make the login bit easier specifying an additional query
+coming from it can make the login bit easier by specifying an additional query
 string key `organisation` to the redirect URL:
 
     https://api.opinsys.net/v3/sso?organisation=kehitys.opinsys.fi&return_to=http%3A%2F%2Fexample.com
