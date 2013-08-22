@@ -1,5 +1,7 @@
 sso:
   title: Opinsys Login
+  username: Username
+  password: Password
   bad_username_or_pw: Bad username or password
   kerberos_error: Kerberos error
   no_organisation: No organisation

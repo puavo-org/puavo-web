@@ -17,13 +17,14 @@
     <% end %>
 
     <label class="field">
-        <input placeholder="Username" type="text" name="username" value="<%= params["username"] %>" autofocus>
-    <% if @organisation %>
-        @<%= @organisation["domain"] %>
-    <% end %>
+        <input placeholder="<%= t.sso.username %>" type="text" name="username" value="<%= params["username"] %>" autofocus>
+        <% if @organisation %>
+            @<%= @organisation["domain"] %>
+        <% end %>
+        <a href="#username-help">*</a>
     </label>
 
-    <input class="field" placeholder="Password" type="password" value="<%= params["password"] %>" name="password">
+    <input class="field" placeholder="<%= t.sso.password %>" type="password" value="<%= params["password"] %>" name="password">
 
     <input type="submit" value="Login">
 </form>

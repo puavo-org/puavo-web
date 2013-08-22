@@ -1,5 +1,7 @@
 sso:
   title: Opinsys-kirjautuminen
+  username: Käyttäjätunnus
+  password: Salasana
   bad_username_or_pw: Väärä käyttäjätunnus tai salasana
   kerberos_error: Kerberos virhe
   no_organisation: Organisaatiota ei ole asetettu
