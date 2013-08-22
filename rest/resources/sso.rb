@@ -1,6 +1,7 @@
 require "jwt"
 require "addressable/uri"
 require "sinatra/r18n"
+require "redcarpet"
 
 module PuavoRest
 class SSO < LdapSinatra
@@ -125,6 +126,20 @@ class SSO < LdapSinatra
     end
 
     respond_auth
+  end
+
+  markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
+    :autolink => true,
+    :prettify => true,
+    :fenced_code_blocks => true,
+    :space_after_headers => true
+  )
+
+  get "/v3/sso/developers" do
+    File.open("doc/SSO.md", "r") do |f|
+      @body = markdown.render(f.read())
+      erb :developers, :layout => :layout
+    end
   end
 
 end

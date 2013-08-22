@@ -11,6 +11,7 @@ gem "addressable"
 gem "jwt"
 gem "gssapi", :git => "https://github.com/opinsys/gssapi.git", :branch => "gss_krb5_copy_ccache"
 gem "sinatra-r18n"
+gem "redcarpet"
 
 group :rest_development do
   gem "shotgun"
