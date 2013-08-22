@@ -37,6 +37,7 @@ install:
 		Makefile \
 		resources \
 		vendor \
+		i18n \
 		.bundle \
 		views \
 		$(DESTDIR)$(installdir)
