@@ -27,20 +27,20 @@ expected to decode this token, validate it with the given shared secret and
 make sure that it is not issued too long a ago or in future. The token will
 contain following claims:
 
-  - aiat
+  - `iat`
     - Issued at. Identifies the time at which the JWT was issued as unix timestamp.
-  - jti
+  - `jti`
     - A unique identifier for the JWT
-  - username
-  - first_name
-  - last_name
-  - user_type
+  - `username`
+  - `first_name`
+  - `last_name`
+  - `user_type`
     - TODO: list possible values
-  - email
+  - `email`
     - Unfortunately this is not set for all users.
-  - organisation_name
+  - `organisation_name`
     - Human readable organisation name.
-  - organisation_domain
+  - `organisation_domain`
     - For example `jyvaskyla.opinsys.fi`.
 
 ## Organisation presetting
