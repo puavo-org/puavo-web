@@ -187,7 +187,6 @@
   }
 
   .username-help{
-    border: 2px solid rgb(86, 167, 255);
     margin: 0 auto;
     max-width: 800px;
     padding: 1rem;
@@ -198,7 +197,9 @@
     font-size: 2rem;
   }
   .username-help p{
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    margin: auto;
+    line-height: 2.5em;
   }
   /* Media Querys */
 
