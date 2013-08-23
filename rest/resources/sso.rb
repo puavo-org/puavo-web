@@ -66,9 +66,11 @@ class SSO < LdapSinatra
   end
 
   def render_form(error_message)
+    if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
-      @organisation = preferred_organisation
-      halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
+    end
+    @organisation = preferred_organisation
+    halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
 
   def ensure_topdomain(org)
