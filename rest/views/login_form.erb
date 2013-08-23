@@ -1,43 +1,53 @@
-<h1><%= t.sso.title %></h1>
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width">
+  <title>Opinsys Login</title>
+  <link rel="stylesheet" type="text/css" href="/styles/theme.css">
+</head>
+<body>
+<div class="login">
+  <object type="image/svg+xml" data="/img/opinsys_logo.svg" class="logo">
+    Opinsys login
+  </object>
+  <p>
+    <%= external_service["name"] %>
+  </p>
 
-<p>
-    <%= t.sso.login_to %> <%= external_service["name"] %>
-</p>
-
-<% if @organisation %>
+  <% if @organisation %>
     <h2><%= @organisation["name"] %></h2>
-<% end %>
+  <% end %>
 
-<form action="" method="post" accept-charset="utf-8" >
+  <form action="" method="post" accept-charset="utf-8">
+    <fieldset class="inputs">
+      <input type="hidden" name="return_to" value="<%= params["return_to"] %>">
 
-    <input type="hidden" name="return_to" value="<%= params["return_to"] %>">
-
-    <% if @organisation %>
-        <input type="hidden" name="organisation" value="<%= @organisation["domain"] %>">
-    <% end %>
-
-    <label class="field">
-        <input placeholder="<%= t.sso.username %>" type="text" name="username" value="<%= params["username"] %>" autofocus>
-        <% if @organisation %>
-            @<%= @organisation["domain"] %>
-        <% end %>
-        <a href="#username-help">*</a>
-    </label>
-
-    <input class="field" placeholder="<%= t.sso.password %>" type="password" value="<%= params["password"] %>" name="password">
-
-    <input type="submit" value="Login">
-</form>
-
-<% if @error_message %>
-<small class="error">
-    <%= t.sso.error %>: <%= @error_message %>
-</small>
-<% end %>
+      <% if @organisation %>
+          <input type="hidden" name="organisation" value="<%= @organisation["domain"] %>">
+      <% end %>
 
 
+      <label class="field">
+        <input placeholder="Username" type="text" name="username" value="<%= params["username"] %>" autofocus required>
+      <% if @organisation %>
+          @<%= @organisation["domain"] %>
+      <% end %>
+      </label>
 
-<div id="username-help">
+      <input placeholder="Password" type="password" value="<%= params["password"] %>" name="password" required>
+    </fieldset>
+    <fieldset class="actions">
+      <input type="submit" value="Login" class="submit">
+    </fieldset>
+  </form>
+
+  <% if @error_message %>
+  <small class="error">
+      error: <%= @error_message %>
+  </small>
+  <% end %>
+</div>
+<div id="username-help" class="username-help">
     <h2><%= t.sso.help %></h2>
     <p>
     <% if @organisation %>
@@ -46,6 +56,6 @@
         <%= t.sso.organisation_help %>
     <% end %>
     </p>
-
 </div>
-
+</body>
+</html>
