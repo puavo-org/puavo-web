@@ -18,7 +18,7 @@ of the `return_to` URL must match with the fqdn provided to us.
 
 Example redirect URL might be:
 
-    https://api.opinsys.net/v3/sso?return_to=http%3A%2F%2Fexample.com
+    https://api.opinsys.fi/v3/sso?return_to=http%3A%2F%2Fexample.com
 
 When user is authenticated he/she will be redirected to the URL specified in
 `return_to` query string key. The URL is augmented with a `jwt` query string
@@ -49,7 +49,7 @@ If the external service knows in advance from which organisation the user is
 coming from it can make the login bit easier by specifying an additional query
 string key `organisation` to the redirect URL:
 
-    https://api.opinsys.net/v3/sso?organisation=kehitys.opinsys.fi&return_to=http%3A%2F%2Fexample.com
+    https://api.opinsys.fi/v3/sso?organisation=kehitys.opinsys.fi&return_to=http%3A%2F%2Fexample.com
 
 Using this users don't have to manually type their organisation during login.
 
