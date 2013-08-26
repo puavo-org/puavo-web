@@ -18,19 +18,20 @@
           <input type="hidden" name="organisation" value="<%= @organisation["domain"] %>">
       <% end %>
 
-
-      <label class="field">
+      <label class="field <%= @organisation ? "organisation-prefilled" : "" %>">
         <input
           placeholder="Username"
           type="text"
           name="username"
-          value="<%= username_prefill %>"
+          value="<%= params["username"] %>"
           autofocus required>
-      </label>
+        <% if @organisation %>
+        <span class="organisation-prefill">@<%= @organisation["domain"] %></span>
+        <br>
+        <% end %>
+    </label>
 
       <input placeholder="Password" type="password" value="<%= params["password"] %>" name="password" required>
-    </fieldset>
-    <fieldset class="actions">
       <input type="submit" value="Login" class="submit">
     </fieldset>
   </form>

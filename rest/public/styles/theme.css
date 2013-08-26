@@ -129,7 +129,7 @@
     font-size: 100%;
     margin: 0 0 10px 0;
     padding: 0.75em;
-    width: 50%;
+    width: 100%;
   }
   input:focus{
     background-color: #fff;
@@ -201,6 +201,20 @@
     margin: auto;
     line-height: 2.5em;
   }
+
+  .organisation-prefilled input[name=username] {
+    width: 50%;
+  }
+  .organisation-prefill {
+    width: 50%;
+  }
+
+  .inputs {
+    text-align: left;
+    width: 50%;
+    margin: auto;
+  }
+
   /* Media Querys */
 
   @media (max-width: 1024px){
