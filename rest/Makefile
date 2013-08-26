@@ -40,6 +40,8 @@ install:
 		i18n \
 		.bundle \
 		views \
+		public \
+		doc \
 		$(DESTDIR)$(installdir)
 
 install-client:
