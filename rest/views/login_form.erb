@@ -3,12 +3,12 @@
     Opinsys login
   </object>
   <p>
-    <%= external_service["name"] %>
+    <%= t.sso.login_to %> <%= external_service["name"] %>
   </p>
 
-  <% if @organisation %>
-    <h2><%= @organisation["name"] %></h2>
-  <% end %>
+  <%# <% if @organisation %>
+  <%#   <h2><%= @organisation["name"] %></h2>
+  <%# <% end %>
 
   <form action="" method="post" accept-charset="utf-8">
     <fieldset class="inputs">
@@ -20,7 +20,7 @@
 
       <label class="field <%= @organisation ? "organisation-prefilled" : "" %>">
         <input
-          placeholder="Username"
+        placeholder="<%= t.sso.username %>"
           type="text"
           name="username"
           value="<%= params["username"] %>"
@@ -31,8 +31,8 @@
         <% end %>
     </label>
 
-      <input placeholder="Password" type="password" value="<%= params["password"] %>" name="password" required>
-      <input type="submit" value="Login" class="submit">
+    <input placeholder="<%= t.sso.password %>" type="password" value="<%= params["password"] %>" name="password" required>
+    <input type="submit" value="<%= t.sso.login %>" class="submit">
     </fieldset>
   </form>
 
