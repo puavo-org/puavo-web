@@ -37,6 +37,8 @@ contain following claims:
     - Issued at. Identifies the time at which the JWT was issued as unix timestamp.
   - `jti`
     - A unique identifier for the JWT
+  - `id`
+    - Organisation wide unique id
   - `username`
   - `first_name`
   - `last_name`
