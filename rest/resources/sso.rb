@@ -73,6 +73,15 @@ class SSO < LdapSinatra
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
 
+  def username_prefill
+    [
+      # what user typed last
+      params["username"],
+      # organisation presetting
+      (@organisation ? "@#{ @organisation["domain"] }" : nil),
+    ].compact.first
+  end
+
   def ensure_topdomain(org)
     return if org.nil?
     if !org.end_with?(CONFIG["topdomain"])
