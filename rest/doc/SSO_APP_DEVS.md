@@ -1,4 +1,10 @@
-# Opinsys Single Sign-On (SSO) for external services
+<div class="master-docs">
+This the documentation for the git master branch. For the current production
+documentation please see
+<a href="https://api.opinsys.fi/v3/sso/developers">https://api.opinsys.fi/v3/sso/developers</a>
+</div>
+
+# Opinsys Single Sign-On
 
 For now to implement Opinsys SSO to a external service you must receive a
 shared secret from Opinsys support (tuki aet opinsys.fi). To receive it you
