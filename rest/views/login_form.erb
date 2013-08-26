@@ -25,7 +25,9 @@
           value="<%= params["username"] %>"
           autofocus required>
         <% if @organisation %>
-        <span class="organisation-prefill">@<%= @organisation["domain"] %></span>
+          <span class="organisation-prefill"
+            title="<%= @organisation["name"] %>"
+          >@<%= @organisation["domain"] %></span>
         <br>
         <% end %>
     </label>
