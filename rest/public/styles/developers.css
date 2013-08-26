@@ -1,0 +1,59 @@
+
+.doc {
+  text-align: left;
+  font-size: 10pt;
+}
+
+.master-docs {
+  display: none;
+}
+
+p, li {
+  line-height: 2em;
+}
+
+
+h1, h2 {
+  margin-top: 1em;
+  margin-bottom: 0.25em;
+}
+
+p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+ul {
+  padding-left: 4em;
+}
+
+h1 {
+  font-size: 25pt;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+h2 {
+  font-size: 20pt;
+}
+
+code, pre {
+  margin: 0 2px;
+  padding: 0px 5px;
+  background: #E5E2CD;
+  border: 1px solid #8F8F8F;
+  border-radius: 3px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+  font-size: 12px;
+}
+pre code {
+  border: 0px;
+}
+pre {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+a:hover {
+  text-decoration: underline;
+}
