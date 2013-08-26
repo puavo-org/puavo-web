@@ -202,6 +202,9 @@
     line-height: 2.5em;
   }
 
+  .organisation-prefilled {
+    white-space: nowrap;
+  }
   .organisation-prefilled input[name=username] {
     width: 50%;
   }
