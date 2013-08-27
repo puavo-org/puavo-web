@@ -14,6 +14,7 @@ must provide following:
     - The service must be available on this domain
   - Name and small description of the service
     - Will be displayed on the login form and admin configuration panel for school admins
+  - Email address of the service maintainer
   - Optionally a link describing the service in more detail
 
 
