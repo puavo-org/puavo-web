@@ -27,6 +27,12 @@ LdapBase.ldap_setup_connection(
   ask("LDAP admin pw", :default => PUAVO_ETC.get(:ldap_password))
 )
 
+puts "Current services:"
+ExternalApplication.all.each do |ea|
+  puts "#{ ea.cn } - #{ ea.puavoServiceDomain } #{ ea.puavoServicePathPrefix }"
+end
+puts
+
 app = ExternalApplication.new
 app.classes = ["top", "puavoJWTService"]
 
