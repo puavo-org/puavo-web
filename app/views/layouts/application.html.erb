@@ -130,6 +130,11 @@
         <li class="<%= controller_name.match(/devices/) ? "page_item current_page_item" : "page_item" %>">
           <a href="/devices/<%= @school.id%>/devices"><span><%= t('.devices') %></span></a>
         </li>
+
+        <li class="<%= controller_name.match(/external_service/) ? "page_item current_page_item" : "page_item" %>">
+          <a href="<%= external_services_school_path(@school) %>"><span>External Services</span></a>
+        </li>
+
         <% if @oauth_applications %>
         <% @oauth_applications.each do |app| %>
         <li class="page_item"><a href="<%= app.url %>" title="<%= app.name %>"><span><%= app.name %></span></a></li>
