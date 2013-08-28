@@ -6,7 +6,7 @@ PuavoUsers::Application.routes.draw do
   match '/menu' => 'menu#index', :via => :get
 
   scope :path => "users" do
-    resources :external_services
+    resources :ldap_services
 
     scope :path => ':school_id' do
       match 'roles/:id/select_school' => 'roles#select_school', :as => :select_school_role, :via => :get

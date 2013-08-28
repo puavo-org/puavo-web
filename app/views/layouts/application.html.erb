@@ -56,7 +56,7 @@
            <span><%= session[:organisation].name %></span>
            <ul id="help" class="organisation-menu">
              <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
-             <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+             <li class="top-menu-item"><%= link_to t('.ldap_services'),  ldap_services_path %></li>
              <% if Puavo::EXTERNAL_FILES %>
              <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
              <% end -%>

@@ -29,7 +29,7 @@ en:
       logged_in_as: Logged in as
       devices: Devices
       servers: Servers
-      external_services: External services
+      ldap_services: LDAP services
       about: About
       printers: Printers
       search_placeholder: Search
@@ -66,7 +66,7 @@ en:
     login: Login
     change_password: Change password
     new_school: New school
-    new_external_service: New
+    new_ldap_service: New
     rename_groups: Rename groups and roles
     devices: Device list
     servers: Servers
@@ -268,14 +268,14 @@ en:
       title: Information of organisation
       select: Select
       add_puavo_billing_info: Add another billing info
-  external_services:
+  ldap_services:
     index:
       actions: Actions
-      title: External services
+      title: LDAP services
     new:
-      title: New external service
+      title: New LDAP service
     edit:
-      title: Edit external service
+      title: Edit LDAP service
   oauth_clients:
     new:
       title: New OAuth client
@@ -335,7 +335,7 @@ en:
       role: Role
       user: User
       school: School
-      external_service: External service
+      ldap_service: LDAP service
       oauth_client: OAuth client
     attributes:
       role:
@@ -422,7 +422,7 @@ en:
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
-      external_service:
+      ldap_service:
         uid: Service Identifier
         description: Description
         userPassword: Password

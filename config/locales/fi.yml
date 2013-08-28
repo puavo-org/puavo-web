@@ -29,7 +29,7 @@ fi:
       logged_in_as: "Kirjauduttu käyttäjänä:"
       devices: Laitteet
       servers: Palvelimet
-      external_services: Ulkoiset palvelut
+      ldap_services: Ulkoiset palvelut
       about: Tietoja
       printers: Tulostimet
       search_placeholder: Hae
@@ -66,7 +66,7 @@ fi:
     login: Kirjaudu
     change_password: Vaihda salasana
     new_school: Uusi koulu
-    new_external_service: Uusi
+    new_ldap_service: Uusi
     rename_groups: Vuosiluokkasiirto
     devices: Laitelista
     servers: Palvelimet
@@ -266,7 +266,7 @@ fi:
       title: Organisaation tiedot
       select: Valitse
       add_puavo_billing_info: "Lisää laskutustietoja"
-  external_services:
+  ldap_services:
     index:
       actions: Toiminnot
       title: Ulkoiset palvelut
@@ -333,7 +333,7 @@ fi:
       role: Rooli
       user: "Käyttäjä"
       school: Koulu
-      external_service: Ulkoinen palvelu
+      ldap_service: Ulkoinen palvelu
       oauth_client: OAuth asiakassovellus
     attributes:
       role:
@@ -420,7 +420,7 @@ fi:
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Laitteet henkilökohtaisia
-      external_service:
+      ldap_service:
         uid: Palvelun tunniste
         description: Kuvaus
         userPassword: Salasana

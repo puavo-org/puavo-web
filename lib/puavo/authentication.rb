@@ -77,7 +77,7 @@ module Puavo
 
       if uid.match(/^service\//)
         uid = uid.match(/^service\/(.*)/)[1]
-        user_class = ExternalService
+        user_class = LdapService
       else
         user_class = User
       end
@@ -185,7 +185,7 @@ module Puavo
 
     end
 
-    def external_service?
+    def ldap_service?
       dn.rdns[1]["ou"] == "System Accounts"
     end
 
@@ -222,9 +222,9 @@ module Puavo
         return @authorized = true
       end
 
-      # Authorize External Services
-      if external_service?
-        logger.info "Authorization ok: External Service #{ dn }"
+      # Authorize LDAP Services
+      if ldap_service?
+        logger.info "Authorization ok: LDAP Service #{ dn }"
         return @authorized = true
       end
 
@@ -262,8 +262,8 @@ module Puavo
       return @current_user if @current_user
 
 
-      if external_service?
-        @current_user = ExternalService.find dn
+      if ldap_service?
+        @current_user = LdapService.find dn
       elsif oauth_access_token?
         access_token = AccessToken.find dn
         @current_user = User.find access_token.puavoOAuthEduPerson

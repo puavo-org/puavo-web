@@ -1,4 +1,4 @@
-# Usage: bundle exec rails runner script/add_external_application.rb
+# Usage: bundle exec rails runner script/add-external-service.rb
 
 def ask(question, opts={})
   new_value = nil
@@ -28,12 +28,12 @@ LdapBase.ldap_setup_connection(
 )
 
 puts "Current services:"
-ExternalApplication.all.each do |ea|
+ExternalService.all.each do |ea|
   puts "#{ ea.cn } - #{ ea.puavoServiceDomain } #{ ea.puavoServicePathPrefix }"
 end
 puts
 
-app = ExternalApplication.new
+app = ExternalService.new
 app.classes = ["top", "puavoJWTService"]
 
 app.cn = ask "Name"

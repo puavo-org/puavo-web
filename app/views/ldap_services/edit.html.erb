@@ -2,9 +2,9 @@
 
 <%= render :partial => 'form',
  :locals => {
-  :path => external_services_path(),
-  :submit_text => t('link.create'),
-  :method => :post
+  :path => ldap_service_path(@ldap_service),
+  :submit_text => t('link.update'),
+  :method => :put
 }
 %>
 <% content_for :footer do %>

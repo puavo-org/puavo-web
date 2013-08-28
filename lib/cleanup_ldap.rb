@@ -27,7 +27,7 @@ module Test
 
     Device.all.each { |d| d.destroy }
     Server.all.each { |d| d.destroy }
-    ExternalService.all.each { |e| e.destroy }
+    LdapService.all.each { |e| e.destroy }
     ExternalFile.all.each { |e| e.destroy }
     OauthClient.all.each { |c| c.destroy }
 
