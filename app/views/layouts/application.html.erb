@@ -18,7 +18,7 @@
   <%= favicon_link_tag "anonymous.png" %>
   <%= stylesheet_link_tag "font/fontello-puavo/css/puavo-icons", :media => "screen" %>
   <%= stylesheet_link_tag "application-print", :media => "print" %>
-  <%= stylesheet_link_tag "application", :media => "all" %>
+  <%= stylesheet_link_tag "application_", :media => "all" %>
 
   <style id="menuHandling" media="screen" rel="stylesheet" type="text/css" >
     <%#
@@ -40,7 +40,7 @@
   <% if Puavo::DEVICE_CONFIG then search_urls[ "devices-search"] = "/devices/search?words=" end %>
   <%= javascript_tag "window.SEARCH_URLS = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
 
-  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "application_" %>
   <%= yield :javascript %>
 
   <meta name="csrf-token" content="<%= form_authenticity_token %>" />
@@ -112,7 +112,7 @@
   <div class="mobile-menu-container">
     <ul class="search-container">
       <li>
-        <%= text_field_tag( "search",
+        <%= text_field_tag( "mobile-search",
           nil,
           :class => "search",
           :size => 30,
