@@ -3,14 +3,12 @@
 <table class="list">
   <tr class="thead">
     <th><%= t('activeldap.attributes.school.displayName') %></th>
-    <th><%= t('activeldap.attributes.school.cn') %></th>
     <th colspan="2"><%= t('.actions') %></th>
   </tr>
 
 <% @schools.each do |school| %>
   <tr>
     <td data-title="<%=t('activeldap.attributes.school.displayName')%>"><%= link_to school.displayName, school_path(school) %></td>
-    <td data-title="<%=t('activeldap.attributes.school.cn') %>"><%=h school.cn %></td>
     <td data-title="<%= t('.actions') %>">
       <%= link_to edit_school_path(school), :class=> "btn" do %>
         <i class="icon-pencil"></i><%= t('link.edit') %>
