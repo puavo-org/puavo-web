@@ -1,4 +1,6 @@
-class ExternalService < LdapBase
+class ExternalService < ActiveLdap::Base
+  include Puavo::Connection
+
   ldap_mapping(
     :dn_attribute => "puavoId",
     :prefix => "ou=Services"

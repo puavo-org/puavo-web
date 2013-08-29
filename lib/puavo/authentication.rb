@@ -126,8 +126,22 @@ module Puavo
 
       logger.info "Configuring ActiveLdap to use #{ @credentials.select{ |a,b| a != :password }.map { |k,v| "#{ k }: #{ v }" }.join ", " }"
       logger.debug "PW: #{ @credentials[:password] }" if ENV["LOG_LDAP_PASSWORD"]
+
       # Setup new ActiveLdap connections to use user's credentials
-      LdapBase.ldap_setup_connection ldap_host, base.to_s, @credentials[:dn], @credentials[:password]
+      LdapBase.ldap_setup_connection(
+        ldap_host,
+        base.to_s,
+        @credentials[:dn],
+        @credentials[:password]
+      )
+
+      # ExternalService is on o=puavo database. So use always uid=puavo for it.
+      ExternalService.ldap_setup_connection(
+        ldap_host,
+        puavo_configuration["base"],
+        puavo_configuration["bind_dn"],
+        puavo_configuration["password"]
+      )
 
       # Do not never ever allow anonymous connections in Puavo. Should be
       # false in config/ldap.yml, but we just make sure here.
