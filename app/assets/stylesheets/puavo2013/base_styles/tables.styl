@@ -59,7 +59,7 @@ table
 .refine_example
   color black
 
-table#autopoweroff
+#autopoweroff
   td
     display table-cell
     text-align left
@@ -69,6 +69,8 @@ table#autopoweroff
         font-weight normal
     select
       width auto
+  tbody tr > td:last-of-type
+    width auto
 
 .required
   & > .fieldWithErrors
