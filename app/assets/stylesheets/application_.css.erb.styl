@@ -1,0 +1,43 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ * Raw inlining css requires via Rails Asset Pipeline
+ */
+
+// Stylus imports
+// https://github.com/lucasmazza/ruby-stylus#import-and-file-extensions
+global-reset()
+@import "puavo2013/_images.styl"
+@import 'puavo2013/base_styles/mediaqueries'
+@import "puavo2013/base_styles/alerts.styl"
+@import "puavo2013/base_styles/buttons.styl"
+@import "puavo2013/base_styles/forms.styl"
+@import "puavo2013/base_styles/icons.styl"
+@import "puavo2013/base_styles/main-navigation.styl"
+@import "puavo2013/base_styles/tables.styl"
+@import "puavo2013/layout.styl"
+@import "puavo2013/login.styl"
+@import "puavo2013/devices.styl"
+@import "puavo2013/organisation.styl"
+@import "puavo2013/external_files.styl"
+@import "puavo2013/password.styl"
+@import "puavo2013/schools.styl"
+@import "puavo2013/schools-admins.styl"
+@import "puavo2013/search.styl"
+@import "puavo2013/topmenu.styl"
+@import "puavo2013/theme.styl"
+@import "puavo2013/users.styl"
+@import "puavo2013/users-import.styl"
+
+.topmenu-left input, .search-container input
+  search-input-image()
+
+.topmenu-left input.loading, .search-container input.loading
+  search-input-spinner()
