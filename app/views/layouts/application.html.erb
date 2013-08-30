@@ -132,7 +132,7 @@
         </li>
 
         <li class="<%= controller_name.match(/external_service/) ? "page_item current_page_item" : "page_item" %>">
-          <a href="<%= external_services_school_path(@school) %>"><span>External Services</span></a>
+          <a href="<%= schools_active_services_path(@school) %>"><span>External Services</span></a>
         </li>
 
         <% if @oauth_applications %>

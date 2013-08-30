@@ -21,6 +21,12 @@ PuavoUsers::Application.routes.draw do
     end
     resources :roles
 
+    namespace :schools do
+      scope :path => ':school_id' do
+        resource :active_services
+      end
+    end
+
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
     match 'schools/:id/add_school_admin/:user_id' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
     match 'schools/:id/remove_school_admin/:user_id' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
