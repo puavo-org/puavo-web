@@ -1,5 +1,5 @@
 <ul>
-  <li <%= action_name == "show" || action_name=="edit" ? "class=current" : "" %>>
+  <li <%= controller_name == "schools" && ["show", "edit"].include?(action_name) ? "class=current" : "" %>>
   <%= link_to t('.dashboard'), school_path(@school) %>
   </li>
   <% if current_user.organisation_owner? %>
@@ -8,6 +8,9 @@
   </li>
   <li <%= action_name == "wlan" || action_name == "wlan_update" ? "class=current" : "" %>>
   <%= link_to t('.wlan'), wlan_school_path(@school) %>
+  </li>
+  <li <%= request.path == schools_active_services_path(@school) ? "class=current" : "" %>>
+    <%= link_to "External Services", schools_active_services_path(@school) %>
   </li>
   <% end %>
 </ul>
