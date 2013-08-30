@@ -7,12 +7,25 @@
 <% @roles.each do |role| %>
   <tr>
     <td data-title="<%= t('activeldap.attributes.role.displayName')%>"><%= link_to role.displayName, role_path(@school, role) %></td>
-    <td data-title="<%=t('.actions')%>" class="table-actions"><%= link_to t('link.edit'), edit_role_path(@school, role), :class=> "btn" %></td>
-    <td class="table-actions"><%= link_to t('link.destroy'), role_path(@school, role), :confirm => t('general_confirm'), :method => :delete, :class=> "btn btn-danger" %></td>
+    <td data-title="<%=t('.actions')%>" class="table-actions">
+      <%= link_to edit_role_path(@school, role), :class=> "btn" do%>
+        <i class='icon-pencil'></i><%= t('link.edit') %>
+      <% end %>
+    </td>
+    <td class="table-actions">
+      <%= link_to role_path(@school, role), :confirm => t('general_confirm'), :method => :delete, :class=> "btn btn-danger" do%>
+        <i class='icon-trash'></i><%= t('link.destroy')%>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 </table>
 
 <% content_for :right do %>
-<div><%= link_to t('link.new_role'), new_role_path %></div>
+<div>
+  <%= link_to new_role_path, :class => 'btn' do%>
+  <i class='icon-plus'></i><%= t('link.new_role') %>
+  <% end %>
+</div>
+
 <% end %>

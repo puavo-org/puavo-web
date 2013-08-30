@@ -23,7 +23,7 @@
   float left
   font-size 85%
   font-weight bold
-  line-height 3
+  line-height 3.5
   list-style none outside none
   margin 0
   padding 0 5px
@@ -104,8 +104,8 @@ li
 .add-new-school a,
 .add-new-school a:hover
   float right
-  margin-right 5px
-  padding 10px 0 10px 30px
+  margin 2px 0
+  padding 10px 5px
   text-transform none
 
 .school-menu, .organisation-menu
@@ -128,7 +128,6 @@ li
     a[data-method="delete"]
       border none
       color creamWhite
-      line-height 1.8
       margin 0 0 0 10px
       padding 2px 10px
     a[data-method="delete"]:hover
@@ -200,8 +199,27 @@ ul.menu li li li.hover ul,
 ul.menu li li li li.hover ul
   left -1px
   z-index 999
+.desktop-menu-container
+  display block
+.mobile-menu-container
+  display none
 
 @media screen-breakpoint-one
+  .desktop-menu-container
+    display none
+  .mobile-menu-container
+    display block
+    .topmenu-left
+      float none
+    .search-container
+      display block
+      padding 0
+      width 100%
+      input
+        float none
+        height 30px
+        width 100%
+
   .topmenu
     display block
     position relative
@@ -211,9 +229,3 @@ ul.menu li li li li.hover ul
     li
       a[data-method="delete"]
         margin 0
-
-  .topmenu-left
-    & > li
-      & > ul
-        top 98%
-

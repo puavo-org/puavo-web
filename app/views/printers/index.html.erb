@@ -18,8 +18,16 @@
     <td><%=h printer.printerMakeAndModel %></td>
     <td><%=h printer.printerLocation %></td>
 
-    <td><%= link_to t('link.edit'), edit_printer_path(printer), :class => 'btn' %></td>
-    <td><%= link_to t('link.destroy'), printer_path(printer), :confirm => t('destroy_confirm', :object_name => printer.printerDescription), :method => :delete, :class => 'btn btn-danger' %></td>
+    <td>
+      <%= link_to edit_printer_path(printer), :class => 'btn' do %>
+      <i class="icon-pencil"></i><%=t('link.edit') %>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to printer_path(printer), :confirm => t('destroy_confirm', :object_name => printer.printerDescription), :method => :delete, :class => 'btn btn-danger' do %>
+        <i class="icon-trash"></i><%=t('link.destroy') %>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 </table>

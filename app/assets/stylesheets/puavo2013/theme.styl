@@ -249,12 +249,6 @@ body
       ul
         background-color white
 
-.add-new-school a,
-.add-new-school a:hover
-  background-color white
-  background-position left -510px
-  border-radius 8px 8px 0 0
-
 // end of topmenu
 
 .content-box
@@ -331,17 +325,9 @@ body
   a
     &:hover
       color #222
-    &.show
-      background-position left -310px
-      &:hover
-        background-position left -350px
-  .sub-tools > li
-    border-bottom 1px dashed #ECEADA
   .tool
     span
-      background-position center -630px
       &:hover
-        background-position center -670px transparent
         cursor pointer
     ul
       border 1px solid #AAAAAA
@@ -349,54 +335,6 @@ body
         background none repeat scroll 0 0 #FFFFFF
         &:hover
           background none repeat scroll 0 0 #C0772F
-
-  a[href$="edit"]
-    background-position left 10px
-  a[href$="edit"]:hover
-    background-position left -30px
-  a[data-method="delete"]
-    background-position left -70px
-  a[data-method="delete"]:hover
-    background-position left -110px
-  .videolink
-    background-position left -235px
-    &:hover
-      background-position left -275px
-  a[href$="import/new"]
-    background-position left -470px
-  a[href$="import/new"]:hover
-    background-position left -510px
-
-.tools .sub-tools > li:hover,
-.tools > div:hover
-  background none repeat scroll 0 0 #C0772F
-  border-radius 6px 6px 0 0
-.tool
-  span
-    img
-      margin 0 0 0 5px
-
-.tools a[href$="select_school"],
-.maincontent .tools a[href$="rename_groups/new"]
-  background-position left -150px
-
-.tools a[href$="select_school"]:hover,
-.maincontent .tools a[href$="rename_groups/new"]:hover
-  background-position left -190px
-
-.tools a[href$="users/new"],
-.tools a[href$="external_services/new"],
-.tools a[href$="schools/new"],
-.tools a[href$="roles/new"],
-.tools a[href$="groups/new"]
-  background-position left -390px
-
-.tools a[href$="users/new"]:hover,
-.tools a[href$="external_services/new"]:hover,
-.tools a[href$="schools/new"]:hover,
-.tools a[href$="roles/new"]:hover,
-.tools a[href$="groups/new"]:hover
-  background-position left -430px
 
 // End of .tools
 
@@ -421,18 +359,7 @@ body
   background-color white
   span
     border 1px solid transparent
-    border-radius 8px 8px 0 0
-    a
-      background-position 5px -790px
-    &:hover
-      a
-        background-position 5px -830px
-    &.change_other_pswd
-      a
-        background-position 5px -870px
-      &:hover
-        a
-          background-position 5px -910px
+    border-radius 4px 4px 0 0
   .message_alert
     background-color errorRed
 
@@ -490,3 +417,7 @@ body
         display none
       td
         border-bottom none
+  .login_content
+    .password_buttons
+      span, span.active
+        border-radius 4px

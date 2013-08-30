@@ -210,7 +210,7 @@ caption
 .maincontent
   font-size 80%
   margin 0 0 2% 0
-  padding 1% 2%
+  padding 2%
   position relative
   width 100%
   .dashboard
@@ -232,8 +232,10 @@ caption
   .tools
     float right
     height 40px
-    margin 5px 1em .2em
+    margin 5px 0 .2em 1em
     padding 0
+    .sub-tools
+      margin 0
     > div, .sub-tools > li
       float left
       margin 0
@@ -242,24 +244,21 @@ caption
     .sub-tools > li.tool
       padding 0 1em
     .tool
-      span
-        text-indent -9999px
       ul
         display none
+        right 1em
         padding 0
         position absolute
-        margin 0 0 0 -5px
-        right 0
+        margin 0
         li
-          min-width 150px
-          width auto !important
+          padding 0 5px
 
 .tools a, .tool span
   display block
   height auto
   line-height 1.25
   margin 0
-  padding 15px 10px 15px 35px
+  padding 10px
   white-space nowrap
   width auto
 
@@ -340,8 +339,7 @@ caption
 
   .maincontent
     font-size 90%
-    margin 0 0 1em
-    padding-bottom 2%
+    padding 2%
     .dashboard
       width 100%
     & > h1
@@ -350,7 +348,6 @@ caption
   .maincontent, .login_content
     float none
     margin 0
-    padding 0.5% 0
     width 100%
 
   .content-box, .content-box h3
@@ -381,8 +378,11 @@ caption
       margin 5% 0
 
   .tools-container
-    margin-bottom 0
-
+    margin-bottom 1em
+    .tools
+      float right
+  .basic-info td:first-of-type
+    width 30%
 // @media screen-portrait-breakpoint-two
 
 // @media screen-landcape-breakpoint-one

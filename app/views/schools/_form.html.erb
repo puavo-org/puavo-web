@@ -141,7 +141,9 @@
         <% end %>
       <% end %>
     </div>
-    <%= link_to t('.add_puavo_billing_info'), "#", :class => "clone_prev_input_element btn" %>
+    <%= link_to "#", :class => "clone_prev_input_element btn" do %>
+      <i class="icon-plus"></i><%= t('.add_puavo_billing_info') %>
+    <% end %>
 
     </td>
   </tr>

@@ -15,8 +15,15 @@
     <td data-title="<%= t("activeldap.attributes.server.puavoDeviceManufacturer") %>"><%=h server.puavoDeviceManufacturer %></td>
     <td data-title="<%= t("activeldap.attributes.server.puavoDeviceModel") %>"><%=h server.puavoDeviceModel %></td>
     <td data-title="<%= t("activeldap.attributes.server.serialNumber") %>"><%=h server.serialNumber %></td>
-    <td data-title="<%= t("actions") %>" class="table-actions"><%= link_to t('link.edit'), edit_server_path(server), :class => 'btn' %></td>
-    <td class="table-actions"><%= link_to t('link.destroy'), server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete, :class => 'btn btn-danger' %>
+    <td data-title="<%= t("actions") %>" class="table-actions">
+      <%= link_to edit_server_path(server), :class => 'btn' do %>
+        <i class="icon-pencil"></i><%= t('link.edit') %>
+      <% end %>
+    </td>
+    <td class="table-actions">
+      <%= link_to server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete, :class => 'btn btn-danger' do %>
+        <i class="icon-trash"></i><%= t('link.destroy') %>
+      <% end %>
     </td>
   </tr>
 <% end %>
