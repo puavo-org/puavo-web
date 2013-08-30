@@ -20,7 +20,7 @@ def ask(question, opts={})
   new_value
 end
 
-LdapBase.ldap_setup_connection(
+ExternalService.ldap_setup_connection(
   ask("LDAP master", :default => PUAVO_ETC.get(:ldap_master)),
   "o=Puavo",
   ask("LDAP admin dn", :default => "uid=admin,o=puavo"),
