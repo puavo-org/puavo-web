@@ -95,17 +95,9 @@
 </table>
 </div>
 <% content_for :right do %>
-<div><%= link_to t('link.edit'), edit_organisation_path %></div>
-<% end %>
-
-<% content_for :footer do %>
-<ul>
-  <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %>
-  </li>
-  <% school_list.each do |school| %>
-  <li<% if school_list.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %></li>
+<div>
+  <%= link_to edit_organisation_path, :class=>"btn" do%>
+  <i class="icon-pencil"></i> <%= t('link.edit')%>
   <% end %>
-</ul>
+</div>
 <% end %>

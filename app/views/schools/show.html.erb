@@ -93,43 +93,26 @@
 <% content_for :right do %>
   <ul class="sub-tools">
   <li>
-  <%= link_to t('link.edit'), edit_school_path(@school) %>
+  <%= link_to edit_school_path(@school), :class => "btn" do %>
+  <i class='icon-pencil'></i> <%=t('link.edit')%>
+  <% end %>
   </li>
   <li class="tool">
-  <span><%= t('link.more')%></span>
+  <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
   <ul>
   <% if current_user.organisation_owner? %>
     <li>
-    <%= link_to t('link.rename_groups'), new_rename_groups_path(@school) %>
-    </li>
-  <% end %>
-  <li>
-  <%= link_to t('link.destroy'), @school, :confirm => t('general_confirm'), :method => :delete %>
-  </li>
-  </ul>
-  </li>
-  </ul>
-<% end %>
-
-<% content_for :footer do %>
-  <ul>
-    <li class="link_header">
-      <%= link_to t('layouts.application.schools'),  schools_path %>
-    </li>
-    <% school_list.each do |school| %>
-      <li<% if school_list.last == school %> class="last"<% end %>>
-        <%= link_to school.displayName,  school_path(school) %></li>
+    <%= link_to new_rename_groups_path(@school) do %>
+      <i class='icon-exchange'></i><%=t('link.rename_groups')%>
     <% end %>
-  </ul>
-  <ul>
-  <li class="link_header"><%= @school.displayName %></li>
+    </li>
+  <% end %>
   <li>
-  <%= link_to users_path(@school) do %>
-    <span><%= t('layouts.application.users') %></span>
+  <%= link_to @school, :confirm => t('general_confirm'), :method => :delete do%>
+    <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
   </li>
-    <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-    <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-    <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
+  </ul>
+  </li>
   </ul>
 <% end %>

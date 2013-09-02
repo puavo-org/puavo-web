@@ -42,16 +42,22 @@
 <% content_for :right do %>
 <ul class="sub-tools">
   <li>
-    <%= link_to t('link.edit'), edit_group_path(@school, @group) %>
+    <%= link_to edit_group_path(@school, @group), :class => 'btn' do %>
+      <i class="icon-pencil"></i><%= t('link.edit') %>
+    <% end %>
   </li>
   <li class="tool">
-    <span><%=t('link.more')%></span>
+    <span class="btn"><i class="icon-collapse"></i> <%=t('link.more')%></span>
   <ul>
     <li>
-      <%= link_to t('link.new_group'), new_group_path(@school) %>
+      <%= link_to new_group_path(@school) do %>
+        <i class="icon-plus"></i><%= t('link.new_group') %>
+      <% end %>
     </li>
     <li>
-      <%= link_to t('link.destroy'), group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete %>
+      <%= link_to group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete  do %>
+      <i class="icon-trash"></i><%= t('link.destroy') %>
+      <% end %>
     </li>
   </ul>
 </ul>

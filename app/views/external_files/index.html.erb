@@ -44,18 +44,20 @@
       <td>
       <span class="table-actions">
         <%= link_to(
-              'download',
               download_external_file_path(file["meta"]["name"]), :class => 'btn'
-            )
+            ) do
         %>
+        <i class="icon-download"></i> <%= 'download' %>
+        <% end %>
         </span>
         <span class="table-actions">
         <%= link_to(
-              'delete',
               destroy_external_file_path(file["meta"]["name"]),
               method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-danger'
-            )
+            ) do
         %>
+        <i class="icon-trash"></i><%='delete'%>
+        <% end %>
         </span>
         </td>
       <% end %>

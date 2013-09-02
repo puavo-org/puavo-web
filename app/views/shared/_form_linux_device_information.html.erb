@@ -25,7 +25,9 @@
       <% end %>
     <% end %>
   </div>
-  <%= link_to t('shared.add_macAddress'), "#", :class => "clone_prev_input_element" %>
+  <%= link_to "#", :class => "clone_prev_input_element btn" do %>
+    <i class="icon-plus"></i><%= t('.shared.add_macAddress') %>
+  <% end %>
   <div><%= field_error_text(f.object, :macAddress) %></div>
   </td>
 </tr>
@@ -89,7 +91,7 @@
   <tr>
   <td class="label_td"><%= f.label :puavoDeviceAutoPowerOffMode %></td>
   <td>
-    <table>
+    <table class="table-in-table">
     <tr>
     <td class="label_td">
       <%= f.label :puavoDeviceAutoPowerOffMode_default %>
@@ -174,8 +176,9 @@
       <% end %>
       <% end %>
     </div>
-    <%= link_to t('shared.add_puavoDeviceXrandr'), "#", :class => "clone_prev_input_element btn" %>
-
+    <%= link_to "#", :class => "clone_prev_input_element btn" do %>
+      <i class="icon-plus"></i><%= t('.shared.add_puavoDeviceXrandr') %>
+    <% end %>
   </td>
 </tr>
 

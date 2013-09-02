@@ -26,6 +26,7 @@ table
     text-decoration underline
 
   &.list
+    float left
     border-spacing 0
     margin 0 1em 1em 0
     tr
@@ -41,6 +42,10 @@ table
       padding-bottom 10px
       padding-top 10px
       word-wrap break-word
+    td
+      word-break break-word
+    .table-actions
+      word-break normal
 
 .show_user
   td
@@ -54,7 +59,7 @@ table
 .refine_example
   color black
 
-table#autopoweroff
+#autopoweroff
   td
     display table-cell
     text-align left
@@ -62,8 +67,11 @@ table#autopoweroff
       padding-top 20px
       label
         font-weight normal
+        line-height 1.5
     select
       width auto
+  tbody tr > td:last-of-type
+    width auto
 
 .required
   & > .fieldWithErrors
@@ -73,6 +81,7 @@ table#autopoweroff
   width 100%
 
 .table-in-table
+  width 100%
   tr
     td, td:first-of-type
       display table-cell
@@ -101,7 +110,6 @@ table#autopoweroff
     &#autopoweroff
       padding 0
       th, td
-        display inline-block
         min-width 50px
         width auto
       td

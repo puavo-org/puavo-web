@@ -10,16 +10,27 @@
   <tr>
     <td data-title="<%= t('activeldap.attributes.ldap_service.uid') %>"><%= link_to ldap_service.uid, ldap_service_path(ldap_service) %></td>
     <td data-title="<%= t('activeldap.attributes.ldap_service.description') %>"><%=h ldap_service.description %></td>
-    <td data-title="<%= t('.actions') %>" class="table-actions"><%= link_to t('link.edit'), edit_ldap_service_path(ldap_service), :class=> "btn" %></td>
-    <td class="table-actions"><%= link_to( t('link.destroy'),
-                     ldap_service_path(ldap_service),
-                     :confirm => t('destroy_confirm',
-                                   :object_name => ldap_service.uid),
-                     :method => :delete, :class=> "btn btn-danger" ) %></td>
+    <td data-title="<%= t('.actions') %>" class="table-actions">
+      <%= link_to edit_ldap_service_path(ldap_service), :class=> "btn" do%>
+       <i class="icon-pencil"></i> <%=t('link.edit')%>
+      <% end %>
+    </td>
+    <td class="table-actions">
+      <%= link_to( ldap_service_path(ldap_service),
+                    :confirm => t('destroy_confirm',
+                    :object_name => ldap_service.uid),
+                    :method => :delete, :class=> 'btn btn-danger' ) do %>
+        <i class="icon-trash"></i> <%=t('link.destroy')%>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 </table>
 
 <% content_for :right do %>
-<div><%= link_to t('link.new_ldap_service'), new_ldap_service_path %></div>
+<div>
+  <%= link_to new_ldap_service_path, :class => 'btn' do%>
+   <i class="icon-plus"></i> <%= t('link.new_ldap_service')%>
+  <% end %>
+</div>
 <% end %>

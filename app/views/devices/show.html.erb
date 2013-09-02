@@ -10,24 +10,31 @@
 <% content_for :right do %>
 <ul class="sub-tools">
   <li>
-    <%= link_to t('link.edit'), edit_device_path(@school, @device) %>
+    <%= link_to edit_device_path(@school, @device), :class => 'btn' do %>
+      <i class="icon-pencil"></i><%= t('link.edit') %>
+    <% end %>
   </li>
   <li class="tool">
-    <span><%= t('link.more')%></span>
+    <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
     <ul>
       <li>
-        <%= link_to( t('link.destroy'),
-        device_path(@school, @device),
-        :confirm => t('destroy_confirm', :object_name => @device.puavoHostname),
-        :method => :delete ) %>
-      </li>
-      <li>
         <% if @device.userCertificate %>
-          <%= link_to t('link.set_install_mode'), revoke_certificate_device_path(@school, @device), :method => :delete %>
+          <%= link_to revoke_certificate_device_path(@school, @device), :method => :delete do %>
+            <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
+          <% end %>
         <% end %>
       </li>
       <li>
-        <%= link_to t('.change_school'), select_school_device_path(@school, @device) %>
+        <%= link_to select_school_device_path(@school, @device) do%>
+          <i class="icon-exchange"></i><%= t('.change_school') %>
+        <% end %>
+      </li>
+      <li>
+        <%= link_to(device_path(@school, @device),
+        :confirm => t('destroy_confirm', :object_name => @device.puavoHostname),
+        :method => :delete ) do %>
+          <i class="icon-trash"></i><%= t('link.destroy') %>
+        <% end %>
       </li>
     </ul>
   </li>

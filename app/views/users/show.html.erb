@@ -1,4 +1,4 @@
-<table>
+<table class="basic-info">
   <tr>
     <td>
       <%= image_tag( profile_image_path(@user),
@@ -97,47 +97,24 @@
 
 <ul class="sub-tools">
 <li>
-<%= link_to t('link.edit'), edit_user_path(@school, @user) %>
+  <%= link_to edit_user_path(@school, @user), :class => 'btn' do %>
+  <i class='icon-pencil'></i><%=t('link.edit')%>
+  <% end %>
 </li>
 <li class="tool">
-<span><%= t('link.more') %></span>
+<span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
 <ul>
 <li>
-<%= link_to t('.change_school'), select_school_user_path(@school, @user) %>
+<%= link_to select_school_user_path(@school, @user) do %>
+  <i class='icon-exchange'></i><%=t('.change_school')%>
+  <% end %>
 </li>
 <li>
-<%= link_to( t('link.destroy'),
-                  user_path(@school, @user),
-                  :confirm => t('destroy_confirm', :object_name => @user.displayName),
-                  :method => :delete ) %>
-</li>
-</ul>
-</li>
-</ul>
-<% end %>
-
-<% content_for :footer do %>
-  <ul>
-    <li class="link_header">
-      <%= link_to school_path(@school) do %>
-        <span><%= t('layouts.application.schools') %></span>
-      <% end %>
-    </li>
-    <% school_list.each do |school| %>
-    <li<% if school_list.last == school %> class="last"<% end %>>
-      <%= link_to school.displayName,  school_path(school) %>
-    </li>
-    <% end %>
-  </ul>
-  <ul>
-  <li class="link_header"><%= @school.displayName %></li>
-  <li>
-  <%= link_to users_path(@school) do %>
-    <span><%= t('layouts.application.users') %></span>
+  <%= link_to( @school, :confirm => t('destroy_confirm', :object_name => @user.displayName), :method => :delete) do %>
+    <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
-  </li>
-    <li><%= link_to t('link.groups'), groups_path(@school) %></li>
-    <li><%= link_to t('link.roles'), roles_path(@school) %></li>
-    <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>
-  </ul>
+</li>
+</ul>
+</li>
+</ul>
 <% end %>
