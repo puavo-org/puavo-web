@@ -7,32 +7,55 @@ External services with Opinsys integration.
 <%= form_tag(put_path, :method => :put) do %>
 
   <% @external_services.each do |external_service| %>
+    <div class="external-services <%= "disabled" if is_disabled?(external_service) %>">
     <h2>
         <%= external_service.cn %>
     </h2>
 
-    <p><%= external_service.description %></p>
-
     <p>
+      <%= external_service.description %>
       <% if external_service.puavoServiceDescriptionURL %>
-        <a href="<%= external_service.puavoServiceDescriptionURL %>">Additional info</a>
+        <a href="<%= external_service.puavoServiceDescriptionURL %>" target="_new">Additional info...</a>
       <% end %>
-    <p>
+    </p>
 
-    </p>
-    <label>
-      <%= check_box_tag(
-        "puavoActiveService[]",
-        external_service.dn,
-        is_checked?(external_service),
-        :disabled => is_disabled?(external_service)
-      )
-      %>
-      Active
-  </label>
-    </p>
+    <table class="list">
+      <tr>
+        <th>Domain</th>
+        <td><%= external_service.puavoServiceDomain %></td>
+      </tr>
+      <tr>
+        <th>Maintainer email</th>
+        <td><%= external_service.mail  %></td>
+      </tr>
+      <tr>
+        <th>Path prefix</th>
+        <td><%= external_service.puavoServicePathPrefix %></td>
+      </tr>
+      <tr>
+        <th>Active</th>
+        <td>
+          <%= check_box_tag(
+            "puavoActiveService[]",
+            external_service.dn,
+            is_checked?(external_service),
+            :disabled => is_disabled?(external_service)
+          )
+          %>
+        </td>
+      </tr>
+    </table>
+
+    <% if is_disabled?(external_service) %>
+      <p class="organisation-active-notice">
+      This service is activated from the <%= link_to "organisation", organisation_external_services_path %>.
+      </p>
+    <% end %>
+    </div>
   <% end %>
 
+  <div class="submit-container">
   <%= submit_tag "Save" %>
+  </div>
 <% end %>
 
