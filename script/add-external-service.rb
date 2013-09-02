@@ -43,6 +43,7 @@ app.puavoServiceSecret = ask "Shared secret"
 app.description = ask "Description"
 app.mail = ask "Maintainer email"
 app.puavoServiceDescriptionURL = ask "Description url", :optional => true
+app.puavoServiceTrusted = ask("Trusted y/n?", :default => "n") == "y"
 
 puts
 if ask("Ok?", :default => "y") == "y"
