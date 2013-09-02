@@ -714,3 +714,13 @@ en:
     submit:
       servers:
         create: Create
+  external_services:
+    title: External Services
+    description: External services with Opinsys integration.
+    email: Maintainer Email
+    path_prefix: Path prefix
+    active: Active
+    additional_info: Additional info...
+    save: Save
+    organisation: organisation
+    disabled_description: This service is activated from the %{organisation}.

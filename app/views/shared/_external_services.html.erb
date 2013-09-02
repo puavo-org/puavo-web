@@ -1,7 +1,7 @@
-<h1><span>External Services</span></h1>
+<h1><span><%= t("external_services.title") %></span></h1>
 
 <p>
-External services with Opinsys integration.
+  <%= t("external_services.description") %>
 </p>
 
 <%= form_tag(put_path, :method => :put) do %>
@@ -15,7 +15,8 @@ External services with Opinsys integration.
     <p>
       <%= external_service.description %>
       <% if external_service.puavoServiceDescriptionURL %>
-        <a href="<%= external_service.puavoServiceDescriptionURL %>" target="_new">Additional info...</a>
+        <a href="<%= external_service.puavoServiceDescriptionURL %>"
+           target="_new"><%= t("external_services.additional_info") %></a>
       <% end %>
     </p>
 
@@ -25,15 +26,15 @@ External services with Opinsys integration.
         <td><%= external_service.puavoServiceDomain %></td>
       </tr>
       <tr>
-        <th>Maintainer email</th>
+        <th><%= t("external_services.email") %></th>
         <td><%= external_service.mail  %></td>
       </tr>
       <tr>
-        <th>Path prefix</th>
+        <th><%= t("external_services.path_prefix") %></th>
         <td><%= external_service.puavoServicePathPrefix %></td>
       </tr>
       <tr>
-        <th>Active</th>
+        <th><%= t("external_services.active") %></th>
         <td>
           <%= check_box_tag(
             "puavoActiveService[]",
@@ -48,14 +49,15 @@ External services with Opinsys integration.
 
     <% if is_disabled?(external_service) %>
       <p class="organisation-active-notice">
-      This service is activated from the <%= link_to "organisation", organisation_external_services_path %>.
+      <%= t("external_services.disabled_description",
+            :organisation => link_to(t("external_services.organisation"), organisation_external_services_path)).html_safe %>
       </p>
     <% end %>
     </div>
   <% end %>
 
   <div class="submit-container">
-  <%= submit_tag "Save" %>
+  <%= submit_tag t("external_services.save") %>
   </div>
 <% end %>
 

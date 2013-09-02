@@ -710,3 +710,13 @@ fi:
     submit:
       servers:
         create: Luo
+  external_services:
+    title: Ulkoiset Palvelut
+    description: Ulkoiset palvelut Opinsys-integraatiolla.
+    email: Ylläpitäjän sähköpostiosoite
+    path_prefix: Polun etuliite
+    active: Aktiivinen
+    additional_info: Lisätietoja...
+    save: Tallenna
+    disabled_description: Tämä palvelu on aktivoitu %{organisation}.
+    organisation: organisaatiosta
