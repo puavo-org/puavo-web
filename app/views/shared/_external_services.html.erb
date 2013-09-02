@@ -1,0 +1,38 @@
+<h1><span>External Services</span></h1>
+
+<p>
+External services with Opinsys integration.
+</p>
+
+<%= form_tag(put_path, :method => :put) do %>
+
+  <% @external_services.each do |external_service| %>
+    <h2>
+        <%= external_service.cn %>
+    </h2>
+
+    <p><%= external_service.description %></p>
+
+    <p>
+      <% if external_service.puavoServiceDescriptionURL %>
+        <a href="<%= external_service.puavoServiceDescriptionURL %>">Additional info</a>
+      <% end %>
+    <p>
+
+    </p>
+    <label>
+      <%= check_box_tag(
+        "puavoActiveService[]",
+        external_service.dn,
+        is_checked?(external_service),
+        :disabled => is_disabled?(external_service)
+      )
+      %>
+      Active
+  </label>
+    </p>
+  <% end %>
+
+  <%= submit_tag "Save" %>
+<% end %>
+

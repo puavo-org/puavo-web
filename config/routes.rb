@@ -7,6 +7,7 @@ PuavoUsers::Application.routes.draw do
 
   scope :path => "users" do
     resources :ldap_services
+    resource :organisation_external_services
 
     scope :path => ':school_id' do
       match 'roles/:id/select_school' => 'roles#select_school', :as => :select_school_role, :via => :get
