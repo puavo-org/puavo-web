@@ -23,7 +23,7 @@ PuavoUsers::Application.routes.draw do
 
     namespace :schools do
       scope :path => ':school_id' do
-        resource :active_services
+        resource :external_services
       end
     end
 

@@ -1,4 +1,4 @@
-class Schools::ActiveServicesController < ApplicationController
+class Schools::ExternalServicesController < ApplicationController
 
   def show
     @external_services = ExternalService.all

@@ -9,8 +9,8 @@
   <li <%= action_name == "wlan" || action_name == "wlan_update" ? "class=current" : "" %>>
   <%= link_to t('.wlan'), wlan_school_path(@school) %>
   </li>
-  <li <%= request.path == schools_active_services_path(@school) ? "class=current" : "" %>>
-    <%= link_to "External Services", schools_active_services_path(@school) %>
+  <li <%= request.path == schools_external_services_path(@school) ? "class=current" : "" %>>
+    <%= link_to "External Services", schools_external_services_path(@school) %>
   </li>
   <% end %>
 </ul>
