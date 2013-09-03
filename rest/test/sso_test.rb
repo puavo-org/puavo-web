@@ -8,6 +8,17 @@ describe PuavoRest::SSO do
   before(:each) do
     Puavo::Test.clean_up_ldap
     FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+
+    @external_service = ExternalService.new
+    @external_service.classes = ["top", "puavoJWTService"]
+    @external_service.cn = "Testing Service"
+    @external_service.puavoServiceDomain = "test-client-service.example.com"
+    @external_service.puavoServiceSecret = "this is a shared secret"
+    @external_service.description = "Description"
+    @external_service.mail = "contact@test-client-service.example.com"
+    @external_service.puavoServiceTrusted = true
+    @external_service.save!
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
@@ -26,16 +37,6 @@ describe PuavoRest::SSO do
       Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
     ]
     @user.save!
-
-    @external_service = ExternalService.new
-    @external_service.classes = ["top", "puavoJWTService"]
-    @external_service.cn = "Testing Service"
-    @external_service.puavoServiceDomain = "test-client-service.example.com"
-    @external_service.puavoServiceSecret = "this is a shared secret"
-    @external_service.description = "Description"
-    @external_service.mail = "contact@test-client-service.example.com"
-    @external_service.save!
-
 
   end
   it "responds with 400 error for missing return_to" do
@@ -57,7 +58,6 @@ describe PuavoRest::SSO do
     get url.to_s
     assert_equal 401, last_response.status
   end
-
 
   describe "successful login redirect" do
     before(:each) do
@@ -94,6 +94,47 @@ describe PuavoRest::SSO do
       assert_equal "example.opinsys.net", @jwt["organisation_domain"]
       assert_equal "example.opinsys.net", @jwt["organisation_domain"]
     end
+
+  end
+
+  describe "external service activation" do
+    before(:each) do
+      @external_service.puavoServiceTrusted = false
+      @external_service.save!
+    end
+
+    it "responds 401 for untrusted and inactive services" do
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert_equal 401, last_response.status
+    end
+
+    it "responds 302 when service is activated on user's school" do
+      @school.puavoActiveService = [@external_service.dn]
+      @school.save!
+
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert_equal 302, last_response.status
+    end
+
+
+    it "responds 302 when service is activated on user's organisation" do
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
+      test_organisation.puavoActiveService = [@external_service.dn]
+      test_organisation.save!
+
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert_equal 302, last_response.status
+    end
+
 
 
   end

@@ -7,6 +7,7 @@ module PuavoRest
 
 class ExternalService < LdapHash
 
+  ldap_map :dn, :dn
   ldap_map :cn, :name
   ldap_map :puavoServiceDomain, :domain
   ldap_map :puavoServicePathPrefix, :prefix
@@ -62,6 +63,18 @@ class SSO < LdapSinatra
     end
 
     user = User.current
+    school = School.by_dn(user["school_dn"])
+
+    school_allows = Array(school["external_services"]).
+      include?(external_service["dn"])
+    organisation_allows = Array(LdapHash.organisation["external_services"]).
+      include?(external_service["dn"])
+    trusted = external_service["trusted"]
+
+    if not (trusted || school_allows || organisation_allows)
+      return render_form("Service is not activated for your organisation/school")
+    end
+
 
     jwt = JWT.encode({
       # Issued At

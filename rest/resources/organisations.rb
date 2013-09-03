@@ -2,10 +2,12 @@ require 'puavo/ldap'
 
 module PuavoRest
 class Organisation < LdapHash
+  ldap_map :dn, :dn
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, false, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, false, &LdapConverters.string_boolean
+  ldap_map(:puavoActiveService, :external_services){ |v| Array(v) }
 
   @@by_domain = nil
   def self.by_domain

@@ -24,7 +24,7 @@ describe PuavoRest::Devices do
       :puavoHostname => "server2",
       :macAddress => "bc:5f:f4:56:59:72"
     )
-    test_organisation = LdapOrganisation.first
+    test_organisation = LdapOrganisation.first # TODO: fetch by name
     test_organisation.puavoAllowGuest = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
     test_organisation.save!
@@ -42,7 +42,7 @@ describe PuavoRest::Devices do
         :puavoAllowGuest => false,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1"
       )
-      test_organisation = LdapOrganisation.first
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
       test_organisation.puavoPersonalDevice = "TRUE"
       test_organisation.save!
@@ -134,7 +134,7 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
-      test_organisation = LdapOrganisation.first
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = nil
       test_organisation.puavoPersonalDevice = nil
       test_organisation.save!
