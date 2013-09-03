@@ -36,12 +36,6 @@ if ENV["RACK_ENV"] == "test"
     "server" => {
       :dn => PUAVO_ETC.ldap_dn,
       :password => PUAVO_ETC.ldap_password
-    },
-    "sso" => {
-      "test-client-service.example.com" => {
-        "name" => "Testing Service",
-        "secret" => "this is a shared secret"
-      }
     }
   }
 else

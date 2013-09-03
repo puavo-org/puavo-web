@@ -4,14 +4,41 @@ require "sinatra/r18n"
 require "redcarpet"
 
 module PuavoRest
+
+class ExternalService < LdapHash
+
+  ldap_map :cn, :name
+  ldap_map :puavoServiceDomain, :domain
+  ldap_map :puavoServicePathPrefix, :prefix
+  ldap_map :puavoServiceSecret, :secret
+  ldap_map :description, :description
+  ldap_map :puavoServiceDescriptionURL, :description_url
+  ldap_map :puavoServiceTrusted, :trusted
+
+  def self.ldap_base
+    "ou=Services,o=puavo"
+  end
+
+  def self.by_domain(domain)
+    filter("(puavoServiceDomain=#{ escape domain })")
+  end
+
+end
+
 class SSO < LdapSinatra
   register Sinatra::R18n
 
   def return_to
     Addressable::URI.parse(params["return_to"]) if params["return_to"]
   end
+
   def external_service
-    (CONFIG["sso"] || {})[return_to.host] if return_to
+    if return_to
+      LdapHash.setup(:credentials => CONFIG["server"]) do
+        ExternalService.by_domain(return_to.host).first
+      end
+    end
+
   end
 
   def respond_auth

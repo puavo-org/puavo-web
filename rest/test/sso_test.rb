@@ -26,6 +26,17 @@ describe PuavoRest::SSO do
       Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
     ]
     @user.save!
+
+    @external_service = ExternalService.new
+    @external_service.classes = ["top", "puavoJWTService"]
+    @external_service.cn = "Testing Service"
+    @external_service.puavoServiceDomain = "test-client-service.example.com"
+    @external_service.puavoServiceSecret = "this is a shared secret"
+    @external_service.description = "Description"
+    @external_service.mail = "contact@test-client-service.example.com"
+    @external_service.save!
+
+
   end
   it "responds with 400 error for missing return_to" do
     get "/v3/sso"
@@ -58,7 +69,7 @@ describe PuavoRest::SSO do
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       @jwt = JWT.decode(
         @redirect_url.query_values["jwt"],
-        PuavoRest::CONFIG["sso"]["test-client-service.example.com"]["secret"]
+        @external_service.puavoServiceSecret
       )
     end
 
