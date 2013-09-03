@@ -14,7 +14,12 @@ class ExternalService < ActiveLdap::Base
   end
 
   def unique_domain
-    used_domains = self.class.all.map { |s| s.puavoServiceDomain }
+    used_domains = self.class.all.select do |s|
+      self.new_entry? || s.dn != self.dn
+    end.map do |s|
+      s.puavoServiceDomain
+    end
+
     if used_domains.include?(self.puavoServiceDomain)
       errors.add(
         :puavoServiceDomain,
