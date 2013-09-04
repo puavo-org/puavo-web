@@ -116,6 +116,7 @@ class SSO < LdapSinatra
     if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
     end
+    @external_service ||= fetch_external_service
     @organisation = preferred_organisation
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
