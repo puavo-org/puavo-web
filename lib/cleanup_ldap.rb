@@ -49,6 +49,7 @@ module Test
     ldap_organisation.o = "Example Organisation"
     ldap_organisation.puavoDeviceImage = nil
     ldap_organisation.puavoAllowGuest = nil
+    ldap_organisation.puavoActiveService = nil
     ldap_organisation.save!
 
   end
