@@ -92,7 +92,6 @@ describe PuavoRest::SSO do
       assert_equal "bob@example.com" , @jwt["email"]
       assert_equal "Example Organisation", @jwt["organisation_name"]
       assert_equal "example.opinsys.net", @jwt["organisation_domain"]
-      assert_equal "example.opinsys.net", @jwt["organisation_domain"]
     end
 
   end
