@@ -92,6 +92,7 @@ describe PuavoRest::SSO do
       assert_equal "bob@example.com" , @jwt["email"]
       assert_equal "Example Organisation", @jwt["organisation_name"]
       assert_equal "example.opinsys.net", @jwt["organisation_domain"]
+      assert_equal "/", @jwt["external_service_path_prefix"]
     end
 
   end
@@ -253,6 +254,49 @@ describe PuavoRest::SSO do
       )
     end
 
+  end
+
+  describe "sub service with path prefix" do
+    before(:each) do
+      @sub_service = ExternalService.new
+      @sub_service.classes = ["top", "puavoJWTService"]
+      @sub_service.cn = "Sub Service"
+      @sub_service.puavoServiceDomain = "test-client-service.example.com"
+      @sub_service.puavoServiceSecret = "other shared secret"
+      @sub_service.description = "Description"
+      @sub_service.mail = "contact@test-client-service.example.com"
+      @sub_service.puavoServiceTrusted = true
+      @sub_service.puavoServicePathPrefix = "/prefix"
+      @sub_service.save!
+    end
+
+    it "does not interfere with the main service" do
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert last_response.headers["Location"]
+      @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
+      @jwt = JWT.decode(
+        @redirect_url.query_values["jwt"],
+        @external_service.puavoServiceSecret
+      )
+      assert_equal "/", @jwt["external_service_path_prefix"]
+    end
+
+    it "is served form the prefix" do
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/prefix?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert last_response.headers["Location"]
+      @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
+      @jwt = JWT.decode(
+        @redirect_url.query_values["jwt"],
+        @sub_service.puavoServiceSecret
+      )
+      assert_equal "/prefix", @jwt["external_service_path_prefix"]
+    end
   end
 
 

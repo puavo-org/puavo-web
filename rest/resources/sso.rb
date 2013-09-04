@@ -10,11 +10,11 @@ class ExternalService < LdapHash
   ldap_map :dn, :dn
   ldap_map :cn, :name
   ldap_map :puavoServiceDomain, :domain
-  ldap_map :puavoServicePathPrefix, :prefix
   ldap_map :puavoServiceSecret, :secret
   ldap_map :description, :description
   ldap_map :puavoServiceDescriptionURL, :description_url
   ldap_map :puavoServiceTrusted, :trusted
+  ldap_map :puavoServicePathPrefix, :prefix, "/"
 
   def self.ldap_base
     "ou=Services,o=puavo"
@@ -33,10 +33,14 @@ class SSO < LdapSinatra
     Addressable::URI.parse(params["return_to"]) if params["return_to"]
   end
 
-  def external_service
+  def fetch_external_service
     if return_to
       LdapHash.setup(:credentials => CONFIG["server"]) do
-        ExternalService.by_domain(return_to.host).first
+        ExternalService.by_domain(return_to.host).sort do |a,b|
+          b["prefix"].size <=> a["prefix"].size
+        end.select do |s|
+          return_to.path.start_with?(s["prefix"])
+        end.first
       end
     end
 
@@ -47,7 +51,9 @@ class SSO < LdapSinatra
       raise BadInput, :user => "return_to missing"
     end
 
-    if external_service.nil?
+    @external_service = fetch_external_service
+
+    if @external_service.nil?
       raise Unauthorized,
         :user => "Unknown client service #{ return_to.host }"
     end
@@ -66,10 +72,10 @@ class SSO < LdapSinatra
     school = School.by_dn(user["school_dn"])
 
     school_allows = Array(school["external_services"]).
-      include?(external_service["dn"])
+      include?(@external_service["dn"])
     organisation_allows = Array(LdapHash.organisation["external_services"]).
-      include?(external_service["dn"])
-    trusted = external_service["trusted"]
+      include?(@external_service["dn"])
+    trusted = @external_service["trusted"]
 
     if not (trusted || school_allows || organisation_allows)
       return render_form("Service is not activated for your organisation/school")
@@ -93,7 +99,8 @@ class SSO < LdapSinatra
       "email" => user["email"],
       "organisation_name" => user["organisation"]["name"],
       "organisation_domain" => user["organisation"]["domain"],
-    }, external_service["secret"])
+      "external_service_path_prefix" => @external_service["prefix"]
+    }, @external_service["secret"])
 
 
     r = return_to
