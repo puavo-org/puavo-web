@@ -33,6 +33,10 @@ class Organisation < LdapHash
     @@by_domain
   end
 
+  def self.clear_domain_cache
+    @@by_domain = nil
+  end
+
   def self.bases
     connection.search("", LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", ["namingContexts"]) do |e|
       return e.get_values("namingContexts").select do |base|

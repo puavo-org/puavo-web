@@ -123,17 +123,18 @@ describe PuavoRest::SSO do
     end
 
 
-    # it "responds 302 when service is activated on user's organisation" do
-    #   test_organisation = LdapOrganisation.first # TODO: fetch by name
-    #   test_organisation.puavoActiveService = [@external_service.dn]
-    #   test_organisation.save!
+    it "responds 302 when service is activated on user's organisation" do
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
+      test_organisation.puavoActiveService = [@external_service.dn]
+      test_organisation.save!
+      PuavoRest::Organisation.clear_domain_cache
 
-    #   url = Addressable::URI.parse("/v3/sso")
-    #   url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
-    #   basic_authorize "bob", "secret"
-    #   get url.to_s
-    #   assert_equal 302, last_response.status
-    # end
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert_equal 302, last_response.status
+    end
 
 
 

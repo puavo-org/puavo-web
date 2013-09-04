@@ -67,9 +67,8 @@ class SSO < LdapSinatra
 
     school_allows = Array(school["external_services"]).
       include?(external_service["dn"])
-    # organisation_allows = Array(LdapHash.organisation["external_services"]).
-    #   include?(external_service["dn"])
-    organisation_allows = false
+    organisation_allows = Array(LdapHash.organisation["external_services"]).
+      include?(external_service["dn"])
     trusted = external_service["trusted"]
 
     if not (trusted || school_allows || organisation_allows)
