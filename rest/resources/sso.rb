@@ -78,7 +78,7 @@ class SSO < LdapSinatra
     trusted = @external_service["trusted"]
 
     if not (trusted || school_allows || organisation_allows)
-      return render_form("Service is not activated for your organisation/school")
+      return render_form(t.sso.service_not_activated)
     end
 
 
