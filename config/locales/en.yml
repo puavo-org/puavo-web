@@ -716,7 +716,7 @@ en:
         create: Create
   external_services:
     title: External Services
-    description: External services with Opinsys integration.
+    description: "External service activation enables logging to the service with Opinsys credentials. User's full name, email, organisation name and school name will be given to the external service during login."
     email: Maintainer Email
     path_prefix: Path prefix
     active: Active

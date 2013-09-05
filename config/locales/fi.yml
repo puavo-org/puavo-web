@@ -712,7 +712,7 @@ fi:
         create: Luo
   external_services:
     title: Ulkoiset Palvelut
-    description: Ulkoiset palvelut Opinsys-integraatiolla.
+    description: "Ulkoisen palvelun aktivointi mahdollistaa palveluun kirjautumisen Opinsys-käyttäjä tunnuksella sekä salasanalla. Aktivoidulle palvelulle siirretään kirjautumisen yhteydessä käyttäjän koko nimi, sähköposti, organisaation nimi ja koulun nimi."
     email: Ylläpitäjän sähköpostiosoite
     path_prefix: Polun etuliite
     active: Aktiivinen
