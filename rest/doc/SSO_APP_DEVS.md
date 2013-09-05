@@ -85,6 +85,14 @@ all external services using Opinsys SSO.
   - Example [external service](https://github.com/opinsys/node-jwtsso/blob/master/example/app.js)
 
 
+## Service activation
+
+By default external services are not activated for all Opinsys organisations.
+Each organisation or individual schools must activate the external services on
+their behalf. They can do this directly from their management interface for the
+external services they feel comfortable to share the above information about
+the students and teachers.
+
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token
 [node-jwtsso]: https://github.com/opinsys/node-jwtsso
 [Express]: http://expressjs.com/
