@@ -2,6 +2,8 @@ module PuavoRest
 class School < LdapHash
 
   ldap_map :dn, :dn
+  ldap_map :puavoId, :puavo_id
+  ldap_map :displayName, :name
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean

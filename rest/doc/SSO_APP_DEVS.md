@@ -51,6 +51,10 @@ contain following claims:
     - TODO: list possible values
   - `email`
     - Unfortunately this is not set for all users.
+  - `school_name`
+    - Human readable school name.
+  - `school_id`
+    - Unique school id
   - `organisation_name`
     - Human readable organisation name.
   - `organisation_domain`

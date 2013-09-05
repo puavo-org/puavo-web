@@ -93,6 +93,8 @@ describe PuavoRest::SSO do
       assert_equal "Example Organisation", @jwt["organisation_name"]
       assert_equal "example.opinsys.net", @jwt["organisation_domain"]
       assert_equal "/", @jwt["external_service_path_prefix"]
+      assert_equal "Gryffindor", @jwt["school_name"]
+      assert !@jwt["school_id"].to_s.empty?
     end
 
   end

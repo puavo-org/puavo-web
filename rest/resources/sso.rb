@@ -97,6 +97,8 @@ class SSO < LdapSinatra
       "last_name" => user["last_name"],
       "user_type" => user["user_type"],
       "email" => user["email"],
+      "school_name" => school["name"],
+      "school_id" => school["puavo_id"],
       "organisation_name" => user["organisation"]["name"],
       "organisation_domain" => user["organisation"]["domain"],
       "external_service_path_prefix" => @external_service["prefix"]
