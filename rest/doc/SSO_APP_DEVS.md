@@ -12,7 +12,10 @@ must provide following:
 
   - Fully qualified domain name (fqdn)
     - The application must be available on this domain
-  - Name and small description of the application
+  - Optionally a path prefix for the service
+    - Required only if multiple external services must be served from the same
+      domain with different shared secrets
+  - Name and small description of the service
     - Will be displayed on the login form and admin configuration panel for
       school admins
   - Email address of the application maintainer
