@@ -6,23 +6,23 @@ documentation please see
 
 # Opinsys Single Sign-On
 
-For now to implement Opinsys SSO to a external application you must receive a
+For now to implement Opinsys SSO to a external service you must receive a
 shared secret from Opinsys support (tuki aet opinsys.fi). To receive it you
 must provide following:
 
   - Fully qualified domain name (fqdn)
-    - The application must be available on this domain
+    - The service must be available on this domain
   - Optionally a path prefix for the service
     - Required only if multiple external services must be served from the same
       domain with different shared secrets
   - Name and small description of the service
     - Will be displayed on the login form and admin configuration panel for
       school admins
-  - Email address of the application maintainer
-  - Optionally a link describing the application in more detail
+  - Email address of the service maintainer
+  - Optionally a link describing the service in more detail
 
 
-Once the shared sercret is in place the external application may redirect
+Once the shared sercret is in place the external service may redirect
 user's web browser to `https://api.opinsys.fi/v3/sso` with a `return_to`
 query string key which determines where user is redirected back. The hostname
 of the `return_to` URL must match with the fqdn provided to us.
@@ -33,7 +33,7 @@ Example redirect URL might be:
 
 When user is authenticated he/she will be redirected to the URL specified in
 `return_to` query string key. The URL is augmented with a `jwt` query string
-key which will contain a [JSON Web Token][jwt]. The remote application is
+key which will contain a [JSON Web Token][jwt]. The external service is
 expected to decode this token, validate it with the given shared secret and
 make sure that it is not issued too long a ago or in future. The token will
 contain following claims:
@@ -58,7 +58,7 @@ contain following claims:
 
 ## Organisation presetting
 
-If the external application knows in advance from which organisation the user
+If the external service knows in advance from which organisation the user
 is coming from it can make the login bit easier by specifying an additional
 query string key `organisation` to the redirect URL:
 
@@ -73,7 +73,7 @@ the authentication. User will not even see the Opinsys login form in this case.
 He/she will be directly redirected back to `return_to` url with a `jwt` key.
 The organisation presetting is ignored when Kerberos is active because the
 organisation will read from the Kerberos ticket. This is enabled by default for
-all external applications using Opinsys SSO.
+all external services using Opinsys SSO.
 
 ## Implementation help
 
@@ -82,7 +82,7 @@ all external applications using Opinsys SSO.
     - For [Ruby](https://github.com/progrium/ruby-jwt)
     - For [node.js](https://npmjs.org/package/jwt-simple)
   - [Express][] middleware implementation: [node-jwtsso][]
-  - Example [external application](https://github.com/opinsys/node-jwtsso/blob/master/example/app.js)
+  - Example [external service](https://github.com/opinsys/node-jwtsso/blob/master/example/app.js)
 
 
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token
