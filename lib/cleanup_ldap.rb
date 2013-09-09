@@ -27,9 +27,11 @@ module Test
 
     Device.all.each { |d| d.destroy }
     Server.all.each { |d| d.destroy }
+    LdapService.all.each { |e| e.destroy }
     ExternalService.all.each { |e| e.destroy }
     ExternalFile.all.each { |e| e.destroy }
     OauthClient.all.each { |c| c.destroy }
+    Printer.all.each { |p| p.destroy }
 
     domain_users = SambaGroup.find('Domain Users')
     domain_users.memberUid = []
@@ -48,6 +50,7 @@ module Test
     ldap_organisation.o = "Example Organisation"
     ldap_organisation.puavoDeviceImage = nil
     ldap_organisation.puavoAllowGuest = nil
+    ldap_organisation.puavoActiveService = nil
     ldap_organisation.save!
 
   end

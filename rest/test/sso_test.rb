@@ -8,6 +8,17 @@ describe PuavoRest::SSO do
   before(:each) do
     Puavo::Test.clean_up_ldap
     FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+
+    @external_service = ExternalService.new
+    @external_service.classes = ["top", "puavoJWTService"]
+    @external_service.cn = "Testing Service"
+    @external_service.puavoServiceDomain = "test-client-service.example.com"
+    @external_service.puavoServiceSecret = "this is a shared secret"
+    @external_service.description = "Description"
+    @external_service.mail = "contact@test-client-service.example.com"
+    @external_service.puavoServiceTrusted = true
+    @external_service.save!
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
@@ -26,6 +37,7 @@ describe PuavoRest::SSO do
       Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
     ]
     @user.save!
+
   end
   it "responds with 400 error for missing return_to" do
     get "/v3/sso"
@@ -47,7 +59,6 @@ describe PuavoRest::SSO do
     assert_equal 401, last_response.status
   end
 
-
   describe "successful login redirect" do
     before(:each) do
       url = Addressable::URI.parse("/v3/sso")
@@ -58,7 +69,7 @@ describe PuavoRest::SSO do
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
       @jwt = JWT.decode(
         @redirect_url.query_values["jwt"],
-        PuavoRest::CONFIG["sso"]["test-client-service.example.com"]["secret"]
+        @external_service.puavoServiceSecret
       )
     end
 
@@ -81,8 +92,52 @@ describe PuavoRest::SSO do
       assert_equal "bob@example.com" , @jwt["email"]
       assert_equal "Example Organisation", @jwt["organisation_name"]
       assert_equal "example.opinsys.net", @jwt["organisation_domain"]
-      assert_equal "example.opinsys.net", @jwt["organisation_domain"]
+      assert_equal "/", @jwt["external_service_path_prefix"]
+      assert_equal "Gryffindor", @jwt["school_name"]
+      assert !@jwt["school_id"].to_s.empty?
     end
+
+  end
+
+  describe "external service activation" do
+    before(:each) do
+      @external_service.puavoServiceTrusted = false
+      @external_service.save!
+    end
+
+    it "responds 401 for untrusted and inactive services" do
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert_equal 401, last_response.status
+    end
+
+    it "responds 302 when service is activated on user's school" do
+      @school.puavoActiveService = [@external_service.dn]
+      @school.save!
+
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert_equal 302, last_response.status
+    end
+
+
+    it "responds 302 when service is activated on user's organisation" do
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
+      test_organisation.puavoActiveService = [@external_service.dn]
+      test_organisation.save!
+      PuavoRest::Organisation.clear_domain_cache
+
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert_equal 302, last_response.status
+    end
+
 
 
   end
@@ -201,6 +256,49 @@ describe PuavoRest::SSO do
       )
     end
 
+  end
+
+  describe "sub service with path prefix" do
+    before(:each) do
+      @sub_service = ExternalService.new
+      @sub_service.classes = ["top", "puavoJWTService"]
+      @sub_service.cn = "Sub Service"
+      @sub_service.puavoServiceDomain = "test-client-service.example.com"
+      @sub_service.puavoServiceSecret = "other shared secret"
+      @sub_service.description = "Description"
+      @sub_service.mail = "contact@test-client-service.example.com"
+      @sub_service.puavoServiceTrusted = true
+      @sub_service.puavoServicePathPrefix = "/prefix"
+      @sub_service.save!
+    end
+
+    it "does not interfere with the main service" do
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert last_response.headers["Location"]
+      @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
+      @jwt = JWT.decode(
+        @redirect_url.query_values["jwt"],
+        @external_service.puavoServiceSecret
+      )
+      assert_equal "/", @jwt["external_service_path_prefix"]
+    end
+
+    it "is served form the prefix" do
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/prefix?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert last_response.headers["Location"]
+      @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
+      @jwt = JWT.decode(
+        @redirect_url.query_values["jwt"],
+        @sub_service.puavoServiceSecret
+      )
+      assert_equal "/prefix", @jwt["external_service_path_prefix"]
+    end
   end
 
 

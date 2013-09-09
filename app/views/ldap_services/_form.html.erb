@@ -1,4 +1,4 @@
-<%= form_for(@external_service, :url => path, :html => { :method => method })  do |f| %>
+<%= form_for(@ldap_service, :url => path, :html => { :method => method })  do |f| %>
 <table>
   <% if action_name == "new" || action_name == "create" %>
   <tr>
@@ -19,7 +19,7 @@
     <td>
     <% @system_groups.each do |g| %>
     <div>
-      <input<%= external_service_group_checked?(f.object, g) %> id="group_<%= g.cn %>" name="external_service[groups][]" type="checkbox" value="<%= g.id %>" />
+      <input<%= ldap_service_group_checked?(f.object, g) %> id="group_<%= g.cn %>" name="ldap_service[groups][]" type="checkbox" value="<%= g.id %>" />
       <label class="checkbox" for="group_<%= g.cn %>"><%=h g.description %></label>
     </div>
     <% end %>

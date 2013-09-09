@@ -13,3 +13,4 @@ sso:
   login_to: Login to service
   username_help: Use the same username you use when logging in Opinsys desktops.
   organisation_help: "Username must be provided in the form of <i>username</i>@<i>organisation</i>.opinsys.fi. The username part is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all scandinavian letters must be removed. For example if you are from Jyväskylä and your Opinsys username is matti.meikalainen the organisation part is <i>jyvaskyla</i> which means that you login with <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
+  service_not_activated: This service is not activated. You may ask your school's administrator to activate it.

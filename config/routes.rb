@@ -6,7 +6,8 @@ PuavoUsers::Application.routes.draw do
   match '/menu' => 'menu#index', :via => :get
 
   scope :path => "users" do
-    resources :external_services
+    resources :ldap_services
+    resource :organisation_external_services
 
     scope :path => ':school_id' do
       match 'roles/:id/select_school' => 'roles#select_school', :as => :select_school_role, :via => :get
@@ -21,11 +22,18 @@ PuavoUsers::Application.routes.draw do
     end
     resources :roles
 
+    namespace :schools do
+      scope :path => ':school_id' do
+        resource :external_services
+      end
+    end
+
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
     match 'schools/:id/add_school_admin/:user_id' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
     match 'schools/:id/remove_school_admin/:user_id' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
     match 'schools/:id/wlan' => 'schools#wlan', :as => :wlan_school, :via => :get
     match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :wlan_update_school, :via => :put
+    match 'schools/:id/external_services' => 'external_services#index', :as => :external_services_school, :via => :get
     resources :schools
 
     scope :path => ':school_id' do

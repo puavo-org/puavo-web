@@ -57,7 +57,8 @@
               <span><%= session[:organisation].name %></span>
               <ul id="help" class="organisation-menu">
                 <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
-                <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+                <li class="top-menu-item"><%= link_to t('external_services.title'),  organisation_external_services_path %></li>
+                <li class="top-menu-item"><%= link_to t('.ldap_services'),  ldap_services_path %></li>
                 <% if Puavo::EXTERNAL_FILES %>
                 <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
                 <% end -%>
@@ -126,7 +127,7 @@
                <span><%= session[:organisation].name %></span>
                <ul id="help" class="organisation-menu">
                  <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
-                 <li class="top-menu-item"><%= link_to t('.external_services'),  external_services_path %></li>
+                 <li class="top-menu-item"><%= link_to t('.ldap_services'),  ldap_services_path %></li>
                  <% if Puavo::EXTERNAL_FILES %>
                  <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
                  <% end -%>
@@ -183,7 +184,7 @@
 
     <div class="navbar-first-level">
       <ul>
-        <li class="<%= controller_name.match(/schools/) \
+        <li class="<%= controller_name.match(/schools|external_services/) \
                    ? "page_item current_page_item" \
                                                   : "page_item" %>">
           <%= link_to school_path(@school) do %>

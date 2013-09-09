@@ -1,0 +1,41 @@
+<table>
+  <tr>
+  <td class="label_td view"><%= label "ldap_service", "uid" %></td>
+  <td class="value_td"><%= @ldap_service.uid %></td>
+  </tr>
+
+  <tr>
+  <td class="label_td view"><%= label "ldap_service", "description" %></td>
+  <td class="value_td"><%= @ldap_service.description %></td>
+  </tr>
+
+  <tr>
+  <td class="label_td view"><%= label "ldap_service", "dn" %></td>
+  <td class="value_td"><%= @ldap_service.dn.to_s %></td>
+  </tr>
+
+  <tr>
+  <td class="label_td view"><%= label "ldap_service", "groups" %></td>
+  <td class="value_td">
+    <% @ldap_service.groups.each do |group| %>
+    <div><%= group.description %></div>
+    <% end %>
+  </td>
+  </tr>
+</table>
+
+<% content_for :right do %>
+<div>
+  <%= link_to edit_ldap_service_path(@ldap_service), :class => 'btn' do%>
+    <i class="icon-pencil"></i><%= t('link.edit') %>
+  <% end %>
+</div>
+<div>
+  <%= link_to( ldap_service_path(@ldap_service),
+               :confirm => t('destroy_confirm',
+               :object_name => @ldap_service.uid),
+               :method => :delete, :class => 'btn btn-danger' ) do %>
+  <i class="icon-trash"></i><%= t('link.destroy') %>
+  <% end %>
+</div>
+<% end %>

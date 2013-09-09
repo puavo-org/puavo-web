@@ -26,7 +26,7 @@ class Printer < LdapBase
   end
 
   def set_empty_location
-    if self.printerLocation.empty? || self.printerLocation.nil?
+    if self.printerLocation.to_s.empty?
       self.printerLocation = "-"
     end
   end
