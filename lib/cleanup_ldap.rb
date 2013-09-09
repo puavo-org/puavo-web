@@ -31,6 +31,7 @@ module Test
     ExternalService.all.each { |e| e.destroy }
     ExternalFile.all.each { |e| e.destroy }
     OauthClient.all.each { |c| c.destroy }
+    Printer.all.each { |p| p.destroy }
 
     domain_users = SambaGroup.find('Domain Users')
     domain_users.memberUid = []
