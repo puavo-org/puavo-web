@@ -36,11 +36,15 @@ class SSO < LdapSinatra
   def fetch_external_service
     if return_to
       LdapHash.setup(:credentials => CONFIG["server"]) do
+
+        # Single domain might have multiple external services configured to
+        # different paths. Match paths from the longest to shortest.
         ExternalService.by_domain(return_to.host).sort do |a,b|
           b["prefix"].size <=> a["prefix"].size
         end.select do |s|
           return_to.path.start_with?(s["prefix"])
         end.first
+
       end
     end
 
