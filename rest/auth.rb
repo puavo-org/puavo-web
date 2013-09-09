@@ -13,7 +13,7 @@ class LdapSinatra < Sinatra::Base
 
   def basic_auth
     return if not env["HTTP_AUTHORIZATION"]
-    type, data = env["HTTP_AUTHORIZATION"].split(" ")
+    type, data = env["HTTP_AUTHORIZATION"].split(" ", 2)
     if type == "Basic"
       plain = Base64.decode64(data)
       username, password = plain.split(":")

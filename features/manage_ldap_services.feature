@@ -1,5 +1,5 @@
-Feature: Manage external services
-  In order to external services can be use in Puavo LDAP-authentication
+Feature: Manage LDAP services
+  In order to LDAP services can be use in Puavo LDAP-authentication
   Organisation owner should be able to
   add and remove System Accounts
 
@@ -12,8 +12,8 @@ Feature: Manage external services
     And I am logged in as "example" organisation owner
 
   
-  Scenario: Add new external service
-    Given I follow "External service"
+  Scenario: Add new LDAP service
+    Given I follow "LDAP service"
     And I follow "New" within ".maincontent"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
@@ -33,29 +33,29 @@ Feature: Manage external services
     And I should see "getent passwd and group"
     And I should bind "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi" with "secretpassword" to ldap
 
-  Scenario: Delete external service
-    Given the following external services:
+  Scenario: Delete LDAP service
+    Given the following LDAP services:
       | uid   | description   | userPassword    | groups |
       | uid 1 | description 1 | secretpassword1 | auth   |
       | uid 2 | description 2 | secretpassword2 | auth   |
       | uid 3 | description 3 | secretpassword3 | getent |
       | uid 4 | description 4 | secretpassword4 | getent |
-    When I delete the 3rd external service
-    Then I should see the following external services:
+    When I delete the 3rd LDAP service
+    Then I should see the following LDAP services:
       | Service Identifier | Description   |
       | uid 1              | description 1 |
       | uid 2              | description 2 |
       | uid 4              | description 4 |
     And "uid 3" is not member of "getent" system group
 
-  Scenario: Edit external service
-    Given the following external services:
+  Scenario: Edit LDAP service
+    Given the following LDAP services:
       | uid   | description   | userPassword     | groups |
       | uid 1 | description 1 | sercretpassword1 | auth   |
       | uid 2 | description 2 | sercretpassword2 | auth   |
       | uid 3 | description 3 | sercretpassword3 | auth   |
       | uid 4 | description 4 | sercretpassword4 | auth   |
-    And I follow "External service"
+    And I follow "LDAP service"
     And I follow "uid 1"
     And I follow "Edit"
     Then I should not see "{SSHA}"
@@ -68,8 +68,8 @@ Feature: Manage external services
     And I should see "getent passwd and group"
 
 
-  Scenario: Edit external service and unceck all system groups
-    Given I follow "External service"
+  Scenario: Edit LDAP service and unceck all system groups
+    Given I follow "LDAP service"
     And I follow "New" within ".maincontent"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
@@ -84,15 +84,15 @@ Feature: Manage external services
     And I should not see "LDAP bind (dn, uid)"
     And I should not see "getent passwd and group"
 
-  Scenario: Get groups information with external service users
-    Given the following external services:
+  Scenario: Get groups information with LDAP service users
+    Given the following LDAP services:
       | uid   | description   | userPassword    | groups |
       | uid 1 | description 1 | secretpassword1 | auth   |
       | uid 2 | description 2 | secretpassword2 | auth   |
       | uid 3 | description 3 | secretpassword3 | getent |
 
-  Scenario: Get organisation information with external service user
-    Given the following external services:
+  Scenario: Get organisation information with LDAP service user
+    Given the following LDAP services:
       | uid    | description   | userPassword    | groups  |
       | iivari | description 1 | secretpassword1 | orginfo |
     When I get the organisation JSON page with "service/iivari" and "secretpassword1"

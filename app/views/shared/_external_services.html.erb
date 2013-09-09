@@ -1,0 +1,63 @@
+<h1><span><%= t("external_services.title") %></span></h1>
+
+<p>
+  <%= t("external_services.description") %>
+</p>
+
+<%= form_tag(put_path, :method => :put) do %>
+
+  <% @external_services.each do |external_service| %>
+    <div class="external-services <%= "disabled" if is_disabled?(external_service) %>">
+    <h2>
+        <%= external_service.cn %>
+    </h2>
+
+    <p>
+      <%= external_service.description %>
+      <% if external_service.puavoServiceDescriptionURL %>
+        <a href="<%= external_service.puavoServiceDescriptionURL %>"
+           target="_new"><%= t("external_services.additional_info") %></a>
+      <% end %>
+    </p>
+
+    <table class="list">
+      <tr>
+        <th>Domain</th>
+        <td><%= external_service.puavoServiceDomain %></td>
+      </tr>
+      <tr>
+        <th><%= t("external_services.email") %></th>
+        <td><%= external_service.mail  %></td>
+      </tr>
+      <tr>
+        <th><%= t("external_services.path_prefix") %></th>
+        <td><%= external_service.puavoServicePathPrefix %></td>
+      </tr>
+      <tr>
+        <th><%= t("external_services.active") %></th>
+        <td>
+          <%= check_box_tag(
+            "puavoActiveService[]",
+            external_service.dn,
+            is_checked?(external_service),
+            :disabled => is_disabled?(external_service)
+          )
+          %>
+        </td>
+      </tr>
+    </table>
+
+    <% if is_disabled?(external_service) %>
+      <p class="organisation-active-notice">
+      <%= t("external_services.disabled_description",
+            :organisation => link_to(t("external_services.organisation"), organisation_external_services_path)).html_safe %>
+      </p>
+    <% end %>
+    </div>
+  <% end %>
+
+  <div class="submit-container">
+  <%= submit_tag t("external_services.save") %>
+  </div>
+<% end %>
+

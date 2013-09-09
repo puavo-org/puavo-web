@@ -3,5 +3,5 @@ class SystemGroup < LdapBase
                 :prefix => "ou=System Groups",
                 :classes => ["puavoSystemGroup"] )
 
-  has_many :members, :class_name => "ExternalService", :wrap => "member", :primary_key => "dn"
+  has_many :members, :class_name => "LdapService", :wrap => "member", :primary_key => "dn"
 end

@@ -2,44 +2,53 @@ require 'puavo/ldap'
 
 module PuavoRest
 class Organisation < LdapHash
+  ldap_map :dn, :dn
+  ldap_map :o, :name
+  ldap_map :puavoDomain, :domain
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, false, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, false, &LdapConverters.string_boolean
+  ldap_map(:puavoActiveService, :external_services){ |v| Array(v) }
+
+  def self.ldap_base
+    ""
+  end
 
   @@by_domain = nil
+
   def self.by_domain
     return @@by_domain if @@by_domain
+    @@by_domain = {}
 
-    puavo_ldap = Puavo::Ldap.new(:base => "", :server => CONFIG["ldap"])
-    organisation_bases = puavo_ldap.all_bases
-
-    puavo_ldap.unbind
-
-    by_domain = {}
-
-    organisation_bases.each do |base|
-      puavo_ldap = Puavo::Ldap.new(:base => base, :server => CONFIG["ldap"])
-
-      if organisation_entry = puavo_ldap.organisation
-        organisation = Puavo::Client::Base.new_by_ldap_entry( organisation_entry )
-
-        # Default organisation is the organisation of the bootserver
-        if CONFIG["default_organisation_domain"] == organisation.domain
-          by_domain["*"] = organisation.data
+    LdapHash.setup(:credentials => CONFIG["server"]) do
+      all.each do |org|
+        @@by_domain[org["domain"]] = org
+        if CONFIG["default_organisation_domain"] == org["domain"]
+          @@by_domain["*"] = org
         end
-
-        by_domain[organisation.domain] = organisation.data
       end
-
-      puavo_ldap.unbind
     end
 
-    @@by_domain = by_domain
+    @@by_domain
+  end
+
+  def self.clear_domain_cache
+    @@by_domain = nil
+  end
+
+  def self.bases
+    connection.search("", LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", ["namingContexts"]) do |e|
+      return e.get_values("namingContexts").select do |base|
+        base != "o=puavo"
+      end
+    end
   end
 
   def self.all
-    by_domain.values
+    bases.map do |base|
+      by_dn(base).merge("base" => base)
+    end
   end
 
 end

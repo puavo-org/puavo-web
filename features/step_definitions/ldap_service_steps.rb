@@ -1,19 +1,19 @@
-Given /^the following external services:$/ do |external_services|
+Given /^the following LDAP services:$/ do |ldap_service|
   set_ldap_admin_connection
-  ExternalService.create(external_services.hashes)
+  LdapService.create(ldap_service.hashes)
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) external service$/ do |pos|
-  visit external_services_path
+When /^I delete the (\d+)(?:st|nd|rd|th) LDAP service$/ do |pos|
+  visit ldap_services_path
   within("table tr:nth-child(#{pos.to_i+1})") do
     click_link "Remove"
   end
 end
 
-Then /^I should see the following external services:$/ do |expected_external_services_table|
+Then /^I should see the following LDAP services:$/ do |expected_ldap_services_table|
   rows = find('table').all('tr')
   table = rows.map { |r| r.all('th,td')[0..1].map { |c| c.text.strip } }
-  expected_external_services_table.diff!(table)
+  expected_ldap_services_table.diff!(table)
 end
 
 Then /^"([^"]*)" is not member of "([^"]*)" system group$/ do |uid, group_cn|
@@ -24,9 +24,9 @@ end
 
 Then /^I should bind "([^\"]*)" with "([^\"]*)" to ldap$/ do |dn, password|
   set_ldap_admin_connection
-  external_service = ExternalService.find(dn)
-  external_service.bind(password)
-  external_service.remove_connection
+  ldap_service = LdapService.find(dn)
+  ldap_service.bind(password)
+  ldap_service.remove_connection
 end
 
 When /^I get the organisation JSON page with "([^\"]*)" and "([^\"]*)"$/ do |username, password|

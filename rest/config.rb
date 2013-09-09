@@ -33,15 +33,10 @@ if ENV["RACK_ENV"] == "test"
     "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
     "default_organisation_domain" => "example.opinsys.net",
     "bootserver" => true,
+    "cloud" => true,
     "server" => {
       :dn => PUAVO_ETC.ldap_dn,
       :password => PUAVO_ETC.ldap_password
-    },
-    "sso" => {
-      "test-client-service.example.com" => {
-        "name" => "Testing Service",
-        "secret" => "this is a shared secret"
-      }
     }
   }
 else

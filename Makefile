@@ -61,6 +61,12 @@ install: mkdirs
 	cp config/unicorn.rb.example $(CONF_DIR)/unicorn.rb
 	ln -s ../../../../etc/puavo-web/unicorn.rb $(RAILS_CONFIG_DIR)/unicorn.rb
 
+clean:
+	rm -rf .bundle
+	rm -rf vendor
+	rm -rf node_modules
+	# TODO: clean precompiled assets
+
 test-spec:
 	bundle exec rspec -b
 
