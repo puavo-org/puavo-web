@@ -12,14 +12,8 @@ require_relative "./auth"
 require_relative "./lib/ldap_converters"
 require_relative "./ldap_hash"
 require_relative "./ldap_sinatra"
-require_relative "./resources/external_files"
-require_relative "./resources/users"
 require_relative "./resources/schools"
-require_relative "./resources/devices"
 require_relative "./resources/organisations"
-require_relative "./resources/sessions"
-require_relative "./resources/wlan_networks"
-require_relative "./resources/sso"
 
 
 #   @overload $0 $1
@@ -64,16 +58,32 @@ class Root < LdapSinatra
   end
 
   use BeforeFilters
-  use PuavoRest::ExternalFiles
-  use PuavoRest::Users
-  use PuavoRest::Devices
-  use PuavoRest::WlanNetworks
-  use PuavoRest::SSO
-  use PuavoRest::Organisations if Sinatra::Base.development?
+
+  if CONFIG["cloud"]
+    require_relative "./resources/sso"
+    use PuavoRest::SSO
+  end
+
   if CONFIG["bootserver"]
     require_relative "./resources/ltsp_servers"
     use PuavoRest::LtspServers
+
+    require_relative "./resources/sessions"
     use PuavoRest::Sessions
+
+    require_relative "./resources/wlan_networks"
+    use PuavoRest::WlanNetworks
+
+    require_relative "./resources/external_files"
+    use PuavoRest::ExternalFiles
+
+    require_relative "./resources/users"
+    use PuavoRest::Users
+
+    require_relative "./resources/devices"
+    use PuavoRest::Devices
+
+    use PuavoRest::Organisations if Sinatra::Base.development?
   end
 end
 end
