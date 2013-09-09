@@ -225,7 +225,7 @@ class LdapHash < Hash
       filter,
       attributes
     ) do |entry|
-      res.push(entry.to_hash)
+      res.push(entry.to_hash) if entry.dn != ldap_base
     end
 
     res
