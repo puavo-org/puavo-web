@@ -29,7 +29,7 @@ fi:
       logged_in_as: "Kirjauduttu käyttäjänä:"
       devices: Laitteet
       servers: Palvelimet
-      ldap_services: Ulkoiset palvelut
+      ldap_services: LDAP palvelut
       about: Tietoja
       printers: Tulostimet
       search_placeholder: Hae
@@ -269,11 +269,11 @@ fi:
   ldap_services:
     index:
       actions: Toiminnot
-      title: Ulkoiset palvelut
+      title: LDAP palvelut
     new:
-      title: Uuden ulkoisen palvelun tiedot
+      title: Uuden LDAP palvelun tiedot
     edit:
-      title: Ulkoisen palvelun tietojen muokkaus
+      title: LDAP palvelun tietojen muokkaus
   oauth_clients:
     new:
       title: Uuden OAuth asiakassovelluksen tiedot
@@ -333,7 +333,7 @@ fi:
       role: Rooli
       user: "Käyttäjä"
       school: Koulu
-      ldap_service: Ulkoinen palvelu
+      ldap_service: LDAP palvelu
       oauth_client: OAuth asiakassovellus
     attributes:
       role:
