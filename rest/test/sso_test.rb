@@ -299,6 +299,21 @@ describe PuavoRest::SSO do
       )
       assert_equal "/prefix", @jwt["external_service_path_prefix"]
     end
+
+    it "return_to without a path gets matched to /" do
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert last_response.headers["Location"]
+      @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
+      @jwt = JWT.decode(
+        @redirect_url.query_values["jwt"],
+        @external_service.puavoServiceSecret
+      )
+      assert_equal "/", @jwt["external_service_path_prefix"]
+    end
+
   end
 
 

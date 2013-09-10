@@ -42,7 +42,12 @@ class SSO < LdapSinatra
         ExternalService.by_domain(return_to.host).sort do |a,b|
           b["prefix"].size <=> a["prefix"].size
         end.select do |s|
-          return_to.path.start_with?(s["prefix"])
+          if return_to.path.to_s.empty?
+            path = "/"
+          else
+            path = return_to.path
+          end
+          path.start_with?(s["prefix"])
         end.first
 
       end
