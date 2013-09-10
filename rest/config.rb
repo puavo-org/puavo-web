@@ -40,11 +40,20 @@ if ENV["RACK_ENV"] == "test"
     }
   }
 else
-  begin
-    custom_config = YAML.load_file "/etc/puavo-rest.yml"
-  rescue Errno::ENOENT
-    custom_config = {}
+
+  customizations = [
+    "/etc/puavo-rest.yml",
+    "./puavo-rest.yml",
+  ].map do |path|
+    begin
+      YAML.load_file path
+    rescue Errno::ENOENT
+      {}
+    end
+  end.reduce({}) do |memo, config|
+    memo.merge(config)
   end
-  CONFIG = default_config.merge(custom_config)
+
+  CONFIG = default_config.merge(customizations)
 end
 end
