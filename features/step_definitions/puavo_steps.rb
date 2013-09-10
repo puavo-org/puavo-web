@@ -20,6 +20,14 @@ test_organisation = Puavo::Organisation.find('example')
                                   @owner_dn,
                                   @owner_password )
 
+  ExternalService.ldap_setup_connection(
+    test_organisation.ldap_host,
+    "o=puavo",
+    "uid=admin,o=puavo",
+    "password"
+  )
+
+
   Puavo::Test.clean_up_ldap
 end
 
