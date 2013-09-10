@@ -59,6 +59,9 @@ class Root < LdapSinatra
 
   use BeforeFilters
 
+  require_relative "./resources/printer_queues"
+  use PuavoRest::PrinterQueues
+
   if CONFIG["cloud"]
     require_relative "./resources/sso"
     use PuavoRest::SSO
