@@ -116,6 +116,8 @@ class SSO < LdapSinatra
 
     r = return_to
     r.query_values = (r.query_values || {}).merge("jwt" => jwt)
+
+    logger.info "Redirecting SSO auth #{ user["first_name"] } #{ user["last_name"] } (#{ user["dn"] } to #{ r }"
     redirect r.to_s
   end
 
