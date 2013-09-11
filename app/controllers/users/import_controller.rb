@@ -25,7 +25,7 @@ class Users::ImportController < ApplicationController
       format.html # refine.html.erb
     end
   end
-  
+
   # POST /:school_id/users/import/validate
   # Validate action use following template: refine, role and preview
   def validate
@@ -42,11 +42,11 @@ class Users::ImportController < ApplicationController
       # params[:users_import_columns]: {"0" => "givenName", "1" => "sn"}
       # @columns: ["givenName", "sn"]
       @columns = params[:users_import_columns].keys.sort do |a,b|
-        a.to_i <=> b.to_i 
+        a.to_i <=> b.to_i
       end.map do |key|
         params[:users_import_columns][key]
       end
-     
+
       # givenName and sn is required attributes
       unless @columns.include?('givenName') && @columns.include?('sn')
         raise ColumnError, t('flash.user.import.require_error')
@@ -85,7 +85,7 @@ class Users::ImportController < ApplicationController
         end
       end
     end
-    
+
     # puavoEduPersonAffiliation and role is required attributes
     if !@columns.include?('role_name') || !@columns.include?('puavoEduPersonAffiliation')
       raise RoleEduPersonAffiliationError
@@ -118,14 +118,14 @@ class Users::ImportController < ApplicationController
     @users = User.hash_array_data_to_user( params[:users],
                                            params[:columns],
                                            @school )
-    
+
     users_of_roles = Hash.new
     failed_users = Array.new
 
     timestamp = Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
     create_timestamp = "create:#{current_user.dn}:" + timestamp
     change_school_timestamp = "change_school:#{current_user.dn}:" + timestamp
-    
+
     puavo_ids = IdPool.next_puavo_id_range(@users.select{ |u| u.puavoId.nil? }.count)
     id_index = 0
 
@@ -192,7 +192,7 @@ class Users::ImportController < ApplicationController
     @users += User.find( :all,
                          :attribute => "puavoTimestamp",
                          :value => params[:change_school_timestamp] ) if params[:change_school_timestamp]
-    
+
     # Reload roles association
     @users.each do |u| u.roles.reload end
 
@@ -239,7 +239,7 @@ class Users::ImportController < ApplicationController
                   :type => 'application/pdf',
                   :disposition => 'inline' )
       end
-    end    
+    end
   end
 
   def user_validate
@@ -261,9 +261,9 @@ class Users::ImportController < ApplicationController
       status = "true"
       error_message = Array( @user.errors[column] ).first
       unless error_message.nil?
-        status = "false"        
+        status = "false"
       end
-      
+
       index = @columns.index(column)
       result.push( { "index" => index,
                      "value" => params[:column] == column ? params[:value] : @users[index.to_s].first,
@@ -290,7 +290,7 @@ class Users::ImportController < ApplicationController
 
     respond_to do |format|
       format.json { render :json => @data }
-    end        
+    end
   end
 
   private
