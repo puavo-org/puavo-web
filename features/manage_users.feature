@@ -72,7 +72,7 @@ Feature: Manage users
     Then I am on the edit user page with "ben"
     When I follow "Cancel"
     Then I am on the show user page with "ben"
-    When I follow "Users" within "#navbar_first_level"
+    When I follow "Users" within ".navbar-first-level"
     Then I should see "Mabey Ben"
     And I should see "ben"
     And I should see "Student"
