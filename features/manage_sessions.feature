@@ -18,7 +18,7 @@ Feature: Manage sessions
     And I fill in "Password" with "secret"
     And I press "Login"
     Then I should see "Login successful!"
-    And I should not see "External services"
+    And I should not see "LDAP services"
 
   Scenario: Login with organisation owner
     Given I am on the login page
@@ -26,7 +26,7 @@ Feature: Manage sessions
     And I fill in "Password" with "cucumber"
     And I press "Login"
     Then I should see "Login successful!"
-    And I should see "External services"
+    And I should see "LDAP services"
 
   Scenario: Login with incorrect username
     Given I am on the login page
