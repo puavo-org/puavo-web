@@ -177,6 +177,7 @@ class SSO < LdapSinatra
     end
 
     if !params["username"].include?("@") && params["organisation"].nil?
+      logger.fatal "SSO: Organisation missing from username: #{ params["username"] }"
       render_form(t.sso.organisation_missing)
     end
 
