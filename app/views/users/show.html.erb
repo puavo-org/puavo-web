@@ -5,9 +5,7 @@
                      :class => "image" ) %>
     </td>
     <td>
-      <p>
       <h1><%=h @user.displayName %></h1>
-      </p>
           <% if @user.puavoLocked == true %>
             <p class="notice_text">
                   <%= t('.user_is_locked') %>
