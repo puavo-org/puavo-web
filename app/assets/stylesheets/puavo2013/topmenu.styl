@@ -17,9 +17,10 @@
   font-size 80%
   margin 0 auto
   max-width 1200px
+  position relative
   width 95%
 
-.topmenu-left
+.topmenu-left, .topmenu-search
   float left
   font-size 85%
   font-weight bold
@@ -199,33 +200,56 @@ ul.menu li li li.hover ul,
 ul.menu li li li li.hover ul
   left -1px
   z-index 999
-.desktop-menu-container
+.menu-container
   display block
-.mobile-menu-container
-  display none
 
 @media screen-breakpoint-one
-  .desktop-menu-container
-    display none
-  .mobile-menu-container
+  .menu-container
     display block
     .topmenu-left
-      float none
-    .search-container
-      display block
+      left 0
+    .topmenu-left, .topmenu-right
+      margin 0
       padding 0
+      top 44px
+    .topmenu-left, .topmenu-search, .topmenu-right
+      float none
+      position absolute
+    .topmenu-search
+      left 0
+      padding 0
+      top 0
       width 100%
+      li
+        width 100%
       input
-        float none
-        height 30px
+        height 35px
         width 100%
 
   .topmenu
     display block
+    height 80px
     position relative
   .topmenu-content
     font-size 90%
   .topmenu-right
+    right 0
     li
       a[data-method="delete"]
         margin 0
+
+@media screen-breakpoint-two
+  .topmenu
+    height 120px
+  .menu-container
+    .topmenu-left
+      top 84px
+  .topmenu-right
+    left 0
+  .menu li
+    width 50%
+
+@media screen-portrait-breakpoint-two
+  .menu-container
+    .topmenu-left
+      top 72px
