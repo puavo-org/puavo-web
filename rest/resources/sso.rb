@@ -55,6 +55,14 @@ class SSO < LdapSinatra
 
   end
 
+  def username_placeholder
+    if preferred_organisation
+      t.sso.username
+    else
+      "#{ t.sso.username }@#{ t.sso.organisation }.#{ CONFIG["topdomain"] }"
+    end
+  end
+
   def respond_auth
     if return_to.nil?
       raise BadInput, :user => "return_to missing"

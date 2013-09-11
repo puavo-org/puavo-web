@@ -1,11 +1,12 @@
 sso:
   title: Opinsys Login
   username: Username
+  organisation: organisation
   password: Password
   bad_username_or_pw: Bad username or password
   kerberos_error: Kerberos error
   no_organisation: No organisation
-  organisation_missing: Organisation is missing from user name. Use username@organisation.fi format.
+  organisation_missing: Organisation is missing from username. Use username@organisation.opinsys.fi format.
   invalid_username: Invalid username
   error: Error
   help: Help
