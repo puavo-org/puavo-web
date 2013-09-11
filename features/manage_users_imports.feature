@@ -35,7 +35,7 @@ Feature: User mass import
       | Joseph | Wilk  | joseph.wilk | Class 4 | Student |
     When I press "Create users"
     Then I should see "Users (2) was successfully created."
-    And I should see "You can print users list to paper, download pdf-file."
+    And I should see "You can now generate passwords to a printable PDF file."
     And the memberUid should include "ben.mabey" on the "Class 4" role
     And the member should include "ben.mabey" on the "Class 4" role
     And the memberUid should include "joseph.wilk" on the "Class 4" role
@@ -50,7 +50,7 @@ Feature: User mass import
     And the member should include "joseph.wilk" on the "Class 4" group
     And the memberUid should include "ben.mabey" on the "Domain Users" samba group
     And the memberUid should include "joseph.wilk" on the "Domain Users" samba group
-    When I follow the PDF link "download pdf-file."
+    When I press the PDF button "Generate passwords PDF"
     Then I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
     And I should see "Name: Joseph Wilk" on the PDF
@@ -82,8 +82,8 @@ Feature: User mass import
     And I should see "ben.mabey"
     And I should see "Class 4"
     And I should see "Student "
-    And I should see "You can print users list to paper, download pdf-file."
-    When I follow the PDF link "download pdf-file."
+    And I should see "You can now generate passwords to a printable PDF file."
+    When I press the PDF button "Generate passwords PDF"
     Then I should see "Name: Joseph Wilk" on the PDF
     And I should see "Username: joseph.wilk" on the PDF
     And I should see "Password" on the PDF
@@ -117,8 +117,8 @@ Feature: User mass import
       | Ben Karl | Mabey | Class 4 | Student | benkarl.mabey |
     When I press "Create users"
     Then I should see "Users (2) was successfully created."
-    And I should see "You can print users list to paper, download pdf-file."
-    When I follow the PDF link "download pdf-file."
+    And I should see "You can now generate passwords to a printable PDF file."
+    When I press the PDF button "Generate passwords PDF"
     Then I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
     And I should see "Password" on the PDF
@@ -155,8 +155,8 @@ Feature: User mass import
       | Ben Karl | Mabey | Class 4 | Student | benkarl.mabey |
     When I press "Create users"
     Then I should see "Users (2) was successfully created."
-    And I should see "You can print users list to paper, download pdf-file."
-    When I follow the PDF link "download pdf-file."
+    And I should see "You can now generate passwords to a printable PDF file."
+    When I press the PDF button "Generate passwords PDF"
     Then I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
     And I should see "Password" on the PDF
@@ -182,7 +182,7 @@ Feature: User mass import
       | Ben | Mabey | ben.mabey | Class 4 | Student |
     When I press "Create users"
     Then I should see "Users (1) was successfully created."
-    And I should see "You can print users list to paper, download pdf-file."
+    And I should see "You can now generate passwords to a printable PDF file."
 
   Scenario: User mass import when user type is not defined and select empty value
     Given I send to the following user mass import data
@@ -411,8 +411,8 @@ Feature: User mass import
     And I check "users[5][1]"
     And I press "Create users"
     Then I should see "Users (3) was successfully created."
-    And I should see "You can print users list to paper, download pdf-file."
-    When I follow the PDF link "download pdf-file."
+    And I should see "You can now generate passwords to a printable PDF file."
+    When I press the PDF button "Generate passwords PDF"
     Then I should see "Name: Jane Doe" on the PDF
     And I should see "Username: jane.doe" on the PDF
     And I should see "Password" on the PDF
@@ -464,8 +464,8 @@ Feature: User mass import
     And I check "users[6][1]"
     And I press "Create users"
     Then I should see "Users (3) was successfully created."
-    And I should see "You can print users list to paper, download pdf-file."
-    When I follow the PDF link "download pdf-file."
+    And I should see "You can now generate passwords to a printable PDF file."
+    When I press the PDF button "Generate passwords PDF"
     Then I should see "Name: Jane Doe" on the PDF
     And I should see "Username: jane.doe" on the PDF
     And I should see "Password" on the PDF

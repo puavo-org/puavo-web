@@ -58,7 +58,7 @@ en:
     user_mass_import:
       new: Users mass import
       handle_user_data: Handle the user data
-      download_pdf: download pdf-file.
+      generate_passwords_pdf: Generate passwords PDF
       revalidate: Revalidate
       validate: Validates users
       create: Create users
@@ -193,7 +193,7 @@ en:
         title_with_error: All users was not successfully created!
         successful: "Successful: %{count}"
         failed: "Failed: %{count}"
-        pdf_info: You can print users list to paper
+        pdf_info: You can now generate passwords to a printable PDF file.
         title_of_failed_users_list: Following users was not successfully created!
       role:
         title: User mass import validation

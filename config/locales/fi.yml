@@ -58,7 +58,7 @@ fi:
     user_mass_import:
       new: Lisää käyttäjiä massa-ajona
       handle_user_data: "Käsittele käyttäjätieto"
-      download_pdf: lataa pdf-tiedosto.
+      generate_passwords_pdf: Generoi salasana PDF
       revalidate: Tarkista uudelleen
       validate: Tarkasta syötetyt tiedot
       create: "Lisää käyttäjät"
@@ -191,7 +191,7 @@ fi:
         title_with_error: "Kaikkien käyttäjien lisäys ei onnistunut!"
         successful: "Onnistui: %{count}"
         failed: "Epäonnistui: %{count}"
-        pdf_info: "Voit tulostaa käyttäjälistat paperille"
+        pdf_info: "Voit nyt generoida salasanat tulostettavalle PDF-tiedostolle."
         title_of_failed_users_list: "Seuraavien käyttäjien luonti epäonnistui!"
       role:
         title: "Käyttäjien massalisäystiedon tarkistus"

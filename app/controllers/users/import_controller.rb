@@ -201,8 +201,8 @@ class Users::ImportController < ApplicationController
     end
   end
 
-  # GET /:school_id/users/import/download?create_timestamp=create:20110402152432Z
-  def download
+  # POST /:school_id/users/import/generate_passwords_pdf?create_timestamp=create:20110402152432Z
+  def generate_passwords_pdf
     password_timestamp = "password:#{current_user.dn}:" + Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
 
     @users = User.find( :all,
@@ -237,7 +237,7 @@ class Users::ImportController < ApplicationController
                   create_pdf(@users),
                   :filename => filename,
                   :type => 'application/pdf',
-                  :disposition => 'inline' )
+                  :disposition => 'attachment' )
       end
     end
   end

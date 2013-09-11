@@ -70,7 +70,7 @@ PuavoUsers::Application.routes.draw do
     match ':school_id/users/import/' => 'users/import#create', :as => :create_users_import, :via => :post
     match ':school_id/users/import/user_validate' => 'users/import#user_validate', :as => :user_validate_users_import, :via => :post
     match ':school_id/users/import/options' => 'users/import#options', :as => :options_users_import, :via => :get
-    match ':school_id/users/import/download' => 'users/import#download', :as => :download_users_import, :via => :get
+    match ':school_id/users/import/download' => 'users/import#generate_passwords_pdf', :as => :generate_passwords_pdf, :via => :post
     match 'password' => 'password#edit', :as => :password, :via => :get
     match 'password/edit' => 'password#edit', :as => :edit_password, :via => :get
     match 'password/own' => 'password#own', :as => :own_password, :via => :get

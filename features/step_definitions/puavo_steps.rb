@@ -242,8 +242,7 @@ Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |me
   memberUid_include?(model, object_name, method, uid).should == false
 end
 
-When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
-  click_link(link_name)
+def read_pdf
   tmp_pdf = Tempfile.new('tmp_pdf')
   tmp_pdf.binmode # Switch to binary mode to avoid encoding errors
   tmp_pdf << page.body
@@ -252,6 +251,16 @@ When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
   tmp_txt.close
   `pdftotext -q #{tmp_pdf.path} #{tmp_txt.path}`
   @pdf_text = File.read tmp_txt.path
+end
+
+When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
+  click_link(link_name)
+  read_pdf
+end
+
+When /^I press the PDF button "([^\"]*)"$/ do |button_name|
+  click_button(button_name)
+  read_pdf
 end
 
 Then /^I should see "([^\"]*)" on the PDF$/ do |text|
