@@ -67,7 +67,7 @@ clean-assets:
 
 clean: clean-assets
 	rm -rf .bundle
-	rm -rf vendor
+	rm -rf vendor/bundle
 	rm -rf node_modules
 
 test-spec:
