@@ -109,7 +109,7 @@ the students and teachers.
   - [Express][] middleware implementation: [node-jwtsso][]
   - Example [external service](https://github.com/opinsys/node-jwtsso/blob/master/example/app.js)
 
-Feel free to contact us at `dev aet opinsys.fi` or open up an issue to
+Feel free to contact us at `dev aet opinsys.fi` or open up an issue on
 [Github][issue] if you have any trouble implementing this. You can also send a
 [pull request][pr] to this document if you feel it is missing something.
 
