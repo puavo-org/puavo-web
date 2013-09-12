@@ -50,15 +50,23 @@ if ARGV.size > 0
       path_ok = true
     end
 
+    domain_ok && path_ok
+  end
+
+  if apps.empty?
+    puts "Cannot find ExternalService with #{ ARGV.inspect }"
+    exit 1
   end
 
   if apps.size != 1
-    puts "Invalid ExternalService selection"
+    puts "Invalid ExternalService selection with #{ ARGV.inspect }"
     exit 1
   end
 
   app = apps.first
+  puts
   puts app.cn
+  puts
   app.puavoServiceSecret = ask "Shared secret", :default => app.puavoServiceSecret
   app.save!
   puts "saved"
