@@ -3,17 +3,9 @@ require "addressable/uri"
 require "sinatra/r18n"
 require "redcarpet"
 
-require_relative "../local_store"
-
 module PuavoRest
 
 class ExternalService < LdapHash
-  SHARE = LocalStore.new(
-    File.join(
-      CONFIG["ltsp_server_data_dir"],
-      "secrets.pstore"
-    )
-  )
 
   ldap_map :dn, :dn
   ldap_map :cn, :name
@@ -36,17 +28,6 @@ end
 
 class SSO < LdapSinatra
   register Sinatra::R18n
-
-  get "/v3/sso/share_once/:key" do
-    content_type :txt
-
-    if secret = ExternalService::SHARE.get(params["key"])
-      ExternalService::SHARE.delete(params["key"])
-      secret
-    else
-      halt 404, "no such key"
-    end
-  end
 
   def generate_secret(size=40)
     (0...size).map{ (('a'..'z').to_a + ('A'..'Z').to_a)[rand(52)] }.join
