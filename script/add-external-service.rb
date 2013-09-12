@@ -1,4 +1,13 @@
-# Usage: bundle exec rails runner script/add-external-service.rb
+# Usage
+#
+# Add new ExternalService:
+#
+#   bundle exec rails runner script/add-external-service.rb
+#
+# Update existing shared secret:
+#
+#   bundle exec rails runner script/add-external-service.rb <domain> [path prefix]
+#
 
 def ask(question, opts={})
   new_value = nil
@@ -20,12 +29,42 @@ def ask(question, opts={})
   new_value
 end
 
+
 ExternalService.ldap_setup_connection(
   ask("LDAP master", :default => PUAVO_ETC.get(:ldap_master)),
   "o=Puavo",
   ask("LDAP admin dn", :default => "uid=admin,o=puavo"),
   ask("LDAP admin pw", :default => PUAVO_ETC.get(:ldap_password))
 )
+
+
+
+if ARGV.size > 0
+  apps = ExternalService.all.select do |app|
+
+    domain_ok = app.puavoServiceDomain == ARGV[0]
+
+    if ARGV[1]
+      path_ok = app.puavoServicePathPrefix == ARGV[1]
+    else
+      path_ok = true
+    end
+
+  end
+
+  if apps.size != 1
+    puts "Invalid ExternalService selection"
+    exit 1
+  end
+
+  app = apps.first
+  puts app.cn
+  app.puavoServiceSecret = ask "Shared secret", :default => app.puavoServiceSecret
+  app.save!
+  puts "saved"
+  exit 0
+end
+
 
 puts "Current services:"
 ExternalService.all.each do |ea|
