@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /var/app/puavo-web
+export RAILS_ENV=production
+bundle exec rails r script/add-external-service.rb

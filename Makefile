@@ -1,8 +1,13 @@
 prefix = /usr/local
+exec_prefix = $(prefix)
+sbindir = $(exec_prefix)/sbin
 sysconfdir = /etc
+
 INSTALL_DIR = $(DESTDIR)/var/app/puavo-web
 CONF_DIR = $(DESTDIR)$(sysconfdir)/puavo-web
 RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
+INSTALL = install
+INSTALL_PROGRAM = $(INSTALL)
 
 
 build:
@@ -41,7 +46,7 @@ install: mkdirs
 		db \
 		$(INSTALL_DIR)
 
-	rm $(RAILS_CONFIG_DIR)/database.yml
+	rm -r $(RAILS_CONFIG_DIR)/database.yml
 
 	cp config/database.yml.development $(CONF_DIR)/database.yml
 	ln -s ../../../../etc/puavo-web/database.yml $(RAILS_CONFIG_DIR)/database.yml
@@ -63,6 +68,8 @@ install: mkdirs
 
 	cp config/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
 	ln -s ../../../../etc/puavo-web/puavo_external_files.yml $(RAILS_CONFIG_DIR)/puavo_external_files.yml
+
+	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 
 clean-assets:
 	rm -rf public/assets
