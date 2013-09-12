@@ -24,6 +24,7 @@ mkdirs:
 	mkdir -p $(INSTALL_DIR)/tmp
 	mkdir -p $(INSTALL_DIR)/db
 	mkdir -p $(INSTALL_DIR)/log
+	mkdir -p $(DESTDIR)$(sbindir)
 
 install: mkdirs
 	cp -r \
