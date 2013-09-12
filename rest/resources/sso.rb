@@ -40,8 +40,8 @@ class SSO < LdapSinatra
   get "/v3/sso/share_once/:key" do
     content_type :txt
 
-    if secret = SHARE.get(params["key"])
-      SHARE.delete(params["key"])
+    if secret = ExternalService::SHARE.get(params["key"])
+      ExternalService::SHARE.delete(params["key"])
       secret
     else
       halt 404, "no such key"
