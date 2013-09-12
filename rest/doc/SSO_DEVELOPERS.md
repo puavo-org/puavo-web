@@ -79,6 +79,27 @@ The organisation presetting is ignored when Kerberos is active because the
 organisation will read from the Kerberos ticket. This is enabled by default for
 all external services using Opinsys SSO.
 
+## Custom fields
+
+If you need to relay some custom fields through the SSO service you can just
+add them to the `return_to` URL. Just remember to escape the value.
+
+Example:
+
+    https://api.opinsys.fi/v3/sso?return_to=http%3A//example.com/path%3Fcustom_field%3Dbar
+
+Redirects user to:
+
+    http://example.com/path?custom_field=bar&jwt=<the jwt token>
+
+## Service activation
+
+By default external services are not activated for all Opinsys organisations.
+Each organisation or individual schools must activate the external services on
+their behalf. They can do this directly from their management interface for the
+external services they feel comfortable to share the above information about
+the students and teachers.
+
 ## Implementation help
 
   - [JSON Web Token draft][jwt]
@@ -88,14 +109,6 @@ all external services using Opinsys SSO.
   - [Express][] middleware implementation: [node-jwtsso][]
   - Example [external service](https://github.com/opinsys/node-jwtsso/blob/master/example/app.js)
 
-
-## Service activation
-
-By default external services are not activated for all Opinsys organisations.
-Each organisation or individual schools must activate the external services on
-their behalf. They can do this directly from their management interface for the
-external services they feel comfortable to share the above information about
-the students and teachers.
 
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token
 [node-jwtsso]: https://github.com/opinsys/node-jwtsso
