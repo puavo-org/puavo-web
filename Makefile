@@ -14,7 +14,7 @@ build:
 ifeq ($(wildcard config/database.yml),)
 	cp config/database.yml.example config/database.yml
 endif
-	bundle install --deployment --without test
+	bundle install --deployment --without development
 	npm install # nib for stylys
 	bundle exec rake assets:precompile
 

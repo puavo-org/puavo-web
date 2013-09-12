@@ -22,7 +22,7 @@ group :assets do
   gem 'stylus'
 end
 
-group :test do
+group :development do
   gem 'capybara'
   gem 'colorize'
   gem 'cucumber'
@@ -37,3 +37,4 @@ group :test do
   gem 'ruby-prof'
   gem 'timecop'
 end
+
