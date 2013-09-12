@@ -88,9 +88,15 @@ class SSO < LdapSinatra
     user = User.current
     school = School.by_dn(user["school_dn"])
 
+    # Read organisation data manually instead of using the cached one because
+    # enabled external services might be updated.
+    organisation = LdapHash.setup(:credentials => CONFIG["server"]) do
+      Organisation.by_dn(LdapHash.organisation["dn"])
+    end
+
     school_allows = Array(school["external_services"]).
       include?(@external_service["dn"])
-    organisation_allows = Array(LdapHash.organisation["external_services"]).
+    organisation_allows = Array(organisation["external_services"]).
       include?(@external_service["dn"])
     trusted = @external_service["trusted"]
 
