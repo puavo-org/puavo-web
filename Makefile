@@ -61,6 +61,9 @@ install: mkdirs
 	cp config/unicorn.rb.example $(CONF_DIR)/unicorn.rb
 	ln -s ../../../../etc/puavo-web/unicorn.rb $(RAILS_CONFIG_DIR)/unicorn.rb
 
+	cp config/puavo_external_files.yml.development $(CONF_DIR)/puavo_external_files.yml
+	ln -s ../../../../etc/puavo-web/puavo_external_files.yml $(RAILS_CONFIG_DIR)/puavo_external_files.yml
+
 clean-assets:
 	rm -rf public/assets
 	rm -rf tmp/cache/assets
