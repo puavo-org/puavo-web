@@ -255,3 +255,15 @@
   }
 
   /* End of Media Querys */
+
+
+.shared-secret {
+  margin: 1em;
+  padding: 1em;
+  background: #E5E2CD;
+  border: 1px solid #8F8F8F;
+  border-radius: 3px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+  font-size: 12px;
+}
+

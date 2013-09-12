@@ -48,6 +48,38 @@ class SSO < LdapSinatra
     end
   end
 
+  def generate_secret(size=40)
+    (0...size).map{ (('a'..'z').to_a + ('A'..'Z').to_a)[rand(52)] }.join
+  end
+
+
+  get "/v3/sso/edit/:domain" do
+    erb(:reset_form, :layout => :layout)
+  end
+
+  post "/v3/sso/edit/:domain" do
+
+
+    LdapHash.setup(:credentials => CONFIG["server"]) do
+      # TODO: path prefix support
+      @external_service = ExternalService.by_domain(params["domain"]).first
+
+      if params["current_shared_secret"].to_s.empty? \
+        || params["current_shared_secret"] != @external_service["secret"]
+        @error_message = "Bad current secret"
+        status 401
+      else
+        @new_secret = generate_secret
+        ExternalService.connection.modify(
+          @external_service["dn"], "puavoServiceSecret" => [@new_secret]
+        )
+      end
+
+    end
+
+    erb(:reset_form, :layout => :layout)
+  end
+
   def return_to
     Addressable::URI.parse(params["return_to"]) if params["return_to"]
   end
