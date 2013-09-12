@@ -109,7 +109,12 @@ the students and teachers.
   - [Express][] middleware implementation: [node-jwtsso][]
   - Example [external service](https://github.com/opinsys/node-jwtsso/blob/master/example/app.js)
 
+Feel free to contact us at `dev aet opinsys.fi` or open up an issue to
+[Github][issue] if you have any trouble implementing this. You can also send a
+[pull request][pr] to this document if you feel it is missing something.
 
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token
 [node-jwtsso]: https://github.com/opinsys/node-jwtsso
 [Express]: http://expressjs.com/
+[issue]: https://github.com/opinsys/puavo-users/issues
+[pr]: https://github.com/opinsys/puavo-users/blob/master/rest/doc/SSO_DEVELOPERS.md
