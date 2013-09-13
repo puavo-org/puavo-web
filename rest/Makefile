@@ -37,6 +37,7 @@ install:
 		Makefile \
 		resources \
 		vendor \
+		scripts \
 		i18n \
 		.bundle \
 		views \
