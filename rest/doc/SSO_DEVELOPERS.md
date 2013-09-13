@@ -60,6 +60,12 @@ contain following claims:
   - `organisation_domain`
     - For example `jyvaskyla.opinsys.fi`.
 
+## Service activation
+
+By default external services are not activated for all Opinsys organisations.
+Each organisation or individual schools must activate the external services on
+their behalf. They can do this directly from their management interface.
+
 ## Organisation presetting
 
 If the external service knows in advance from which organisation the user
@@ -92,13 +98,6 @@ Redirects user to:
 
     http://example.com/path?custom_field=bar&jwt=<the jwt token>
 
-## Service activation
-
-By default external services are not activated for all Opinsys organisations.
-Each organisation or individual schools must activate the external services on
-their behalf. They can do this directly from their management interface for the
-external services they feel comfortable to share the above information about
-the students and teachers.
 
 ## Implementation help
 
