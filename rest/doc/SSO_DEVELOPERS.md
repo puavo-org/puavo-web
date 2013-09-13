@@ -43,7 +43,7 @@ contain following claims:
   - `jti`
     - A unique identifier for the JWT
   - `id`
-    - Organisation wide unique id
+    - Organisation wide unique id for the user
   - `username`
   - `first_name`
   - `last_name`
