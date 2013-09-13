@@ -78,7 +78,7 @@ class SSO < LdapSinatra
     if preferred_organisation
       t.sso.username
     else
-      "#{ t.sso.username }@#{ t.sso.organisation }.#{ CONFIG["topdomain"] }"
+      "#{ t.sso.username }@#{ t.sso.organisation }.#{ topdomain }"
     end
   end
 
@@ -176,10 +176,14 @@ class SSO < LdapSinatra
     ].compact.first
   end
 
+  def topdomain
+    CONFIG["topdomain"]
+  end
+
   def ensure_topdomain(org)
     return if org.nil?
-    if !org.end_with?(CONFIG["topdomain"])
-      return "#{ org }.#{ CONFIG["topdomain"] }"
+    if !org.end_with?(topdomain)
+      return "#{ org }.#{ topdomain }"
     end
     org
   end
