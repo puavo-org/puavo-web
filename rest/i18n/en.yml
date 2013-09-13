@@ -1,5 +1,5 @@
 sso:
-  title: Opinsys Login
+  title: Opinsys Authentication
   username: Username
   organisation: organisation
   password: Password

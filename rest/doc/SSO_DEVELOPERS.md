@@ -4,10 +4,10 @@ documentation please see
 <a href="https://api.opinsys.fi/v3/sso/developers">https://api.opinsys.fi/v3/sso/developers</a>
 </div>
 
-# Opinsys Single Sign-On
+# Opinsys Authentication
 
-For now to implement Opinsys SSO to a external service you must receive a
-shared secret from Opinsys support (tuki aet opinsys.fi). To receive it you
+For now to implement Opinsys Authentication to a external service you must receive a
+shared secret from Opinsys support `tuki aet opinsys.fi`. To receive it you
 must provide following:
 
   - Fully qualified domain name (fqdn)
@@ -83,12 +83,13 @@ the authentication. User will not even see the Opinsys login form in this case.
 He/she will be directly redirected back to `return_to` url with a `jwt` key.
 The organisation presetting is ignored when Kerberos is active because the
 organisation will read from the Kerberos ticket. This is enabled by default for
-all external services using Opinsys SSO.
+all external services using Opinsys Authentication.
 
 ## Custom fields
 
-If you need to relay some custom fields through the SSO service you can just
-add them to the `return_to` URL. Just remember to escape the value.
+If you need to relay some custom fields through the Authentication service you
+can just add them to the `return_to` URL. Just remember to escape the value.
+
 
 Example:
 
@@ -113,6 +114,7 @@ Feel free to contact us at `dev aet opinsys.fi` or open up an issue on
 [pull request][pr] to this document if you feel it is missing something.
 
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token
+
 [node-jwtsso]: https://github.com/opinsys/node-jwtsso
 [Express]: http://expressjs.com/
 [issue]: https://github.com/opinsys/puavo-users/issues
