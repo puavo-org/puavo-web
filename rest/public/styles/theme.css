@@ -255,3 +255,6 @@
   }
 
   /* End of Media Querys */
+  .username-help p{
+    margin-bottom: 2em;
+  }

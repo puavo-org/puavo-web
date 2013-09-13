@@ -40,6 +40,7 @@
   <% end %>
 </div>
 <div id="username-help" class="username-help">
+    <h3><%= t.sso.help %></h3>
     <p>
     <% if @organisation %>
         <%= t.sso.username_help %>
@@ -47,4 +48,8 @@
         <%= t.sso.organisation_help %>
     <% end %>
     </p>
+
+    <h3><%= t.sso.developers %></h3>
+    <p><%= t.sso.developers_info %> </p>
+
 </div>

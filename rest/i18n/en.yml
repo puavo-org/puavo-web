@@ -10,6 +10,8 @@ sso:
   invalid_username: Invalid username
   error: Error
   help: Help
+  developers: Developers
+  developers_info: "Read <a href=/v3/sso/developers target=_blank>this</a> document if you are interested in implementing Opinsys authentication."
   login: Login
   login_to: Login to service
   username_help: Use the same username you use when logging in Opinsys desktops.
