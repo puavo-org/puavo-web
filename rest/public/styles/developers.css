@@ -54,6 +54,10 @@ pre {
   padding-bottom: 1em;
 }
 
+.login {
+  padding: 4em;
+}
+
 a:hover {
   text-decoration: underline;
 }
