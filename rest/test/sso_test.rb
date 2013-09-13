@@ -316,43 +316,5 @@ describe PuavoRest::SSO do
 
   end
 
-  describe "shared secret" do
-    it "can be reseted with the current shared secret" do
-      post "/v3/sso/edit/test-client-service.example.com", {
-        "current_shared_secret" => @external_service.puavoServiceSecret
-      }
-      assert_200
-      new_secret = css(".shared-secret").first.text
-
-      url = Addressable::URI.parse("/v3/sso")
-      url.query_values = { "return_to" => "http://test-client-service.example.com/" }
-      basic_authorize "bob", "secret"
-      get url.to_s
-      assert last_response.headers["Location"]
-      @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
-      @jwt = JWT.decode(@redirect_url.query_values["jwt"], new_secret)
-    end
-
-    it "cannot be changed with bad secret" do
-      ["bad", nil, ""].each do |bad_secret|
-        post "/v3/sso/edit/test-client-service.example.com", {
-          "current_shared_secret" => bad_secret
-        }
-        assert_equal 401, last_response.status
-
-        url = Addressable::URI.parse("/v3/sso")
-        url.query_values = { "return_to" => "http://test-client-service.example.com/" }
-        basic_authorize "bob", "secret"
-        get url.to_s
-        assert last_response.headers["Location"]
-        @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
-        assert_raises(JWT::DecodeError) do
-          @jwt = JWT.decode(@redirect_url.query_values["jwt"], bad_secret.to_s)
-        end
-
-      end
-    end
-  end
-
 
 end
