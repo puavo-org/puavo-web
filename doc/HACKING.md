@@ -3,7 +3,7 @@
 Start console with `bundle exec rails c`
 
 ```ruby
-Puavo::Console.new("hogwarts", "password", "admin")
+Puavo::Console.new("hogwarts", "albus", "albus")
 ```
 
 https://github.com/opinsys/puavo-users/blob/master/lib/puavo/console.rb
