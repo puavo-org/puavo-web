@@ -139,6 +139,15 @@ class DevicesController < ApplicationController
   def update
     @device = Device.find(params[:id])
 
+    (params["printers"] || {}).each do |printer_dn, bool|
+      if bool == "true"
+        @device.add_printer(printer_dn)
+      else
+        @device.remove_printer(printer_dn)
+      end
+    end
+    @device.save!
+
     handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
     handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
 
