@@ -1,7 +1,4 @@
 (function() {
-    function startWith(data, input) {
-        return data.substring(0, input.length) === input;
-    }
 
     function toAscii(str) {
         return str
