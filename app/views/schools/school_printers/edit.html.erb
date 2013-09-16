@@ -33,8 +33,8 @@
       <% Group.all.each do |group| %>
       <li>
         <label>
-          <%= hidden_field_tag "groups[#{ group.dn }", false %>
-          <%= check_box_tag "groups[#{ group.dn }", true, group.has_printer?(@printer) %>
+          <%= hidden_field_tag "groups[#{ group.dn }]", false %>
+          <%= check_box_tag "groups[#{ group.dn }]", true, group.has_printer?(@printer) %>
           <%= group.displayName %>
         </label>
       </li>
