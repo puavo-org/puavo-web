@@ -29,6 +29,16 @@ class Schools::SchoolPrintersController < ApplicationController
       @school.remove_wireless_printer(@printer)
     end
 
+    (params["groups"] || {}).each do |group_dn, bool|
+      group = Group.find(group_dn)
+      if bool == "true"
+        group.add_printer(@printer)
+      else
+        group.remove_printer(@printer)
+      end
+      group.save!
+    end
+
     @school.save!
     redirect_to :action => :edit
   end

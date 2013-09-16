@@ -30,12 +30,15 @@
     <legend>Groups</legend>
 
     <ul>
+      <% Group.all.each do |group| %>
       <li>
         <label>
-          <%= check_box_tag "Group1", true, false, :disabled => true %>
-          Group 1
+          <%= hidden_field_tag "groups[#{ group.dn }", false %>
+          <%= check_box_tag "groups[#{ group.dn }", true, group.has_printer?(@printer) %>
+          <%= group.displayName %>
         </label>
       </li>
+      <% end %>
     </ul>
 
   </fieldset>

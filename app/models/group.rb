@@ -1,4 +1,5 @@
 class Group < BaseGroup
+  include HasPrinterMixin
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
                 :classes => ['top', 'posixGroup', 'puavoEduGroup','sambaGroupMapping'] )

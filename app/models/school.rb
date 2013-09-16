@@ -2,6 +2,7 @@ class School < BaseGroup
   include Wlan
   include Puavo::Client::HashMixin::School
   include BooleanAttributes
+  include HasPrinterMixin
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
@@ -103,21 +104,6 @@ class School < BaseGroup
 
   def as_json(*args)
     return ldap_prettify
-  end
-
-  def has_printer?(printer)
-    Array(self.puavoPrinterQueue).include?(printer.dn)
-  end
-
-  def add_printer(printer)
-    return if has_printer?(printer)
-    self.puavoPrinterQueue = Array(self.puavoPrinterQueue) + [printer.dn]
-  end
-
-  def remove_printer(printer)
-    self.puavoPrinterQueue = Array(self.puavoPrinterQueue).select do |printer_dn|
-      printer_dn != printer.dn
-    end
   end
 
   def has_wireless_printer?(printer)
