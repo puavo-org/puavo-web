@@ -2,7 +2,7 @@ class Schools::SchoolPrintersController < ApplicationController
 
   def index
 
-    # TODO: limit printers to current school
+    # TODO: limit printers to current school (@school)
     @printers = Printer.all
 
     respond_to do |format|
@@ -10,14 +10,21 @@ class Schools::SchoolPrintersController < ApplicationController
     end
   end
 
-  def show
-    render :text => "asdf"
+  def edit
+    @printer = Printer.find(params["id"])
   end
 
-  def edit
-    respond_to do |format|
-      format.html # edit.html.erb
+  def update
+    @printer = Printer.find(params["id"])
+
+    if params["activate"]
+      @school.add_printer(@printer)
+    else
+      @school.remove_printer(@printer)
     end
+
+    @school.save!
+    redirect_to :action => :edit
   end
 
 end

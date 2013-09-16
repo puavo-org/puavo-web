@@ -1,2 +1,21 @@
 
-edit
+<h1><span><%= @printer.printerDescription %></span></h1>
+
+<p>Printer usage permissions</p>
+
+<%= form_tag(schools_school_printer_path(@school, @printer), :method => :put) do %>
+
+  <fieldset>
+    <legend>Global</legend>
+  <label>
+    <%= check_box_tag "activate", true, @school.has_printer?(@printer) %>
+    Active for all
+  </label>
+  </fieldset>
+
+  <%= submit_tag "Save",  :class => "btn" %>
+  <div class="cancel">
+    <%= link_to t('link.cancel'), schools_school_printers_path, :class => 'btn btn-danger' %>
+  </div>
+
+<% end %>
