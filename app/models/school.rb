@@ -106,6 +106,18 @@ class School < BaseGroup
     return ldap_prettify
   end
 
+  def printers
+    # TODO
+    # Printers always belong to a bootserver. Bootserver might be configured
+    # to specfic schools or to all schools.
+    #
+    # Fetch bootservers configured to this school and combine printers from
+    # them and return them
+    #
+    # For now we just return all printers
+    Printer.all
+  end
+
   def has_wireless_printer?(printer)
     Array(self.puavoWirelessPrinterQueue).include?(printer.dn)
   end
