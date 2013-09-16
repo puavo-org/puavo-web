@@ -5,7 +5,7 @@ class Schools::SchoolPrintersController < ApplicationController
     # TODO: limit printers to current school (@school)
     @printers = Printer.all
 
-    respond_to do |format|
+   respond_to do |format|
       format.html # index.html.erb
     end
   end

@@ -7,11 +7,53 @@
 
   <fieldset>
     <legend>Global</legend>
-  <label>
-    <%= check_box_tag "activate", true, @school.has_printer?(@printer) %>
-    Active for all
-  </label>
+
+    <ul>
+      <li>
+        <label>
+          <%= check_box_tag "activate", true, @school.has_printer?(@printer) %>
+          Activate for all users
+        </label>
+      </li>
+
+      <li>
+        <label>
+          <%= check_box_tag "activate_wireless", true, false, :disabled => true %>
+          Activate for anonymous wireless users too (iPads etc).
+        </label>
+      </li>
+    </ul>
+
   </fieldset>
+
+  <fieldset>
+    <legend>Groups</legend>
+
+    <ul>
+      <li>
+        <label>
+          <%= check_box_tag "Group1", true, false, :disabled => true %>
+          Group 1
+        </label>
+      </li>
+    </ul>
+
+  </fieldset>
+
+  <fieldset>
+    <legend>Devices</legend>
+    <p>
+      Printer is activated for following individual devices.
+    </p>
+
+    <ul>
+      <li>
+        <a href="">Device1</a> <button>x</button>
+      </li>
+    </ul>
+
+  </fieldset>
+
 
   <%= submit_tag "Save",  :class => "btn" %>
   <div class="cancel">
