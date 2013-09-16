@@ -9,7 +9,6 @@
 
     <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
 
-  <table>
   <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
 
   <% if f.object.classes.include?('puavoPrinter') %>
