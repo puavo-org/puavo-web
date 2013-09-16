@@ -134,7 +134,7 @@
           <span><%= t('.users') %></span>
           <% end %>
         </li>
-        <li class="<%= controller_name.match(/devices/) ? "page_item current_page_item" : "page_item" %>">
+        <li class="<%= controller_name.match(/devices|school_printers/) ? "page_item current_page_item" : "page_item" %>">
           <a href="/devices/<%= @school.id%>/devices"><span><%= t('.devices') %></span></a>
         </li>
         <% if @oauth_applications %>

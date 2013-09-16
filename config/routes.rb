@@ -25,6 +25,7 @@ PuavoUsers::Application.routes.draw do
     namespace :schools do
       scope :path => ':school_id' do
         resource :external_services
+        resources :school_printers
       end
     end
 
