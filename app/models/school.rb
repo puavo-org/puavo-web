@@ -120,4 +120,21 @@ class School < BaseGroup
     end
   end
 
+  def has_wireless_printer?(printer)
+    Array(self.puavoWirelessPrinterQueue).include?(printer.dn)
+  end
+
+  def add_wireless_printer(printer)
+    return if has_wireless_printer?(printer)
+    self.puavoWirelessPrinterQueue = Array(self.puavoWirelessPrinterQueue) + [printer.dn]
+  end
+
+  def remove_wireless_printer(printer)
+    self.puavoWirelessPrinterQueue = Array(self.puavoWirelessPrinterQueue).select do |printer_dn|
+      printer_dn != printer.dn
+    end
+  end
+
+
+
 end

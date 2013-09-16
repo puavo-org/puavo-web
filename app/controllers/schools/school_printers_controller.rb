@@ -17,10 +17,16 @@ class Schools::SchoolPrintersController < ApplicationController
   def update
     @printer = Printer.find(params["id"])
 
-    if params["activate"]
+    if params["activate"] || params["activate_wireless"]
       @school.add_printer(@printer)
     else
       @school.remove_printer(@printer)
+    end
+
+    if params["activate_wireless"]
+      @school.add_wireless_printer(@printer)
+    else
+      @school.remove_wireless_printer(@printer)
     end
 
     @school.save!

@@ -18,7 +18,7 @@
 
       <li>
         <label>
-          <%= check_box_tag "activate_wireless", true, false, :disabled => true %>
+          <%= check_box_tag "activate_wireless", true, @school.has_wireless_printer?(@printer)%>
           Activate for anonymous wireless users too (iPads etc).
         </label>
       </li>
