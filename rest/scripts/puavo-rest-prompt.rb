@@ -4,6 +4,7 @@ require 'bundler/setup'
 require_relative "../puavo-rest"
 require "pry"
 require "io/console"
+require "puavo/etc"
 
 
 def ask(question, opts={})
@@ -28,9 +29,9 @@ end
 
 module PuavoRest
 
-  @domain = ask "Organisation domain", :default => "hogwarts.opinsys.net"
+  @domain = ask "Organisation domain", :default => PUAVO_ETC.get(:domain)
   @credentials = {}
-  u = ask("Username", :default => "albus")
+  u = ask("Username", :default => PUAVO_ETC.get(:ldap_dn))
   if LdapHash.is_dn(u)
     @credentials[:dn] = u
   else
@@ -38,7 +39,7 @@ module PuavoRest
   end
 
   STDIN.noecho do
-    @credentials[:password] = ask("Password", :default => "albus")
+    @credentials[:password] = ask("Password", :default => PUAVO_ETC.get(:ldap_password))
   end
 
   LdapHash.setup(:rest_root => "https://#{ @domain }")
@@ -56,8 +57,10 @@ module PuavoRest
     "You are now #{ User.current["username"] }"
   end
 
-  as_user
-
+  puts
+  puts
+  puts as_user
+  puts
   puts "Use as_server to act as server and as_user to return to user"
   binding.pry
 end
