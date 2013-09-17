@@ -6,7 +6,7 @@ require "sinatra/json"
 require "base64"
 require "gssapi"
 require "gssapi/lib_gssapi"
-require "debugger" if Sinatra::Base.development?
+require "debugger" if Sinatra::Base.development? || ENV["DEBUG"]
 
 require_relative "./auth"
 require_relative "./lib/ldap_converters"
