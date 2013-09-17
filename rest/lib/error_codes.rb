@@ -77,5 +77,17 @@ module PuavoRest
     end
   end
 
+  class SuppressJSONError
+    def initialize(app)
+      @app = app
+    end
 
+    def call(env)
+      begin
+        @app.call(env)
+      rescue JSONError => err
+        [err.http_code, {'Content-Type' => 'application/json'}, [err.to_json]]
+      end
+    end
+  end
 end

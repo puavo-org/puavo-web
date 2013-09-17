@@ -24,6 +24,7 @@ require_relative "./resources/organisations"
 module PuavoRest
 
 class BeforeFilters < LdapSinatra
+  enable :logging
 
   before do
     ip = env["HTTP_X_REAL_IP"] || request.ip
@@ -51,10 +52,27 @@ class BeforeFilters < LdapSinatra
 end
 
 class Root < LdapSinatra
+  use SuppressJSONError
   set :public_folder, "public"
 
+  not_found do
+    json({
+      :error => {
+        :message => "Not found"
+      }
+    })
+  end
+
   get "/" do
-    "Puavo says hello!"
+    "puavo-rest root"
+  end
+
+  get "/v3" do
+    "puavo-rest v3 root"
+  end
+
+  get "/v3/error_test" do
+    1 / 0
   end
 
   use BeforeFilters

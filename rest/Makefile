@@ -53,8 +53,12 @@ install-client:
 test:
 	bundle exec ruby1.9.1 test/all.rb
 
-dev:
-	bundle exec shotgun
+serve-dev:
+	bundle exec shotgun --host 0.0.0.0 --port 9393 --server puma
+
+serve-production:
+	RACK_ENV=production bundle exec rackup --host 0.0.0.0 --port 9393 --server puma
+
 
 clean:
 	rm -rf .bundle

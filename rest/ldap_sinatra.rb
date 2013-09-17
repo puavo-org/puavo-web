@@ -6,13 +6,11 @@ module PuavoRest
 
 # Abstract Sinatra base class which add ldap connection to instance scope
 class LdapSinatra < Sinatra::Base
-
-
-
   helpers Sinatra::JSON
   set :json_encoder, :to_json
   set :show_exceptions, false
-  enable :logging
+  set :dump_errors, false
+  set :raise_errors, true
 
   # Respond with a text content
   def txt(text)
@@ -31,19 +29,6 @@ class LdapSinatra < Sinatra::Base
     else
       a
     end
-  end
-
-  # Render LdapHash::LdapHashError classes as nice json responses
-  error JSONError do |err|
-    halt err.http_code, json(err)
-  end
-
-  not_found do
-    json({
-      :error => {
-        :message => "Not found"
-      }
-    })
   end
 
 end
