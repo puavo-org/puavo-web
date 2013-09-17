@@ -13,10 +13,10 @@ gem "gssapi", :git => "https://github.com/opinsys/gssapi.git", :branch => "gss_k
 gem "sinatra-r18n"
 gem "redcarpet"
 gem "debugger"
+gem "pry"
 
 group :rest_development do
   gem "shotgun"
-  gem "pry"
   gem "timecop"
   gem "m"
   # Load development gems from puavo-users if we are in development or testing

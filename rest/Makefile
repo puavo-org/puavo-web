@@ -28,6 +28,7 @@ install:
 
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
+	mkdir -p $(DESTDIR)$(prefix)/bin
 	cp -r \
 		*.rb \
 		lib \
@@ -44,6 +45,8 @@ install:
 		public \
 		doc \
 		$(DESTDIR)$(installdir)
+	
+	install -t $(DESTDIR)$(prefix)/bin scripts/puavo-rest-prompt
 
 install-client:
 	mkdir -p $(DESTDIR)$(prefix)/sbin
