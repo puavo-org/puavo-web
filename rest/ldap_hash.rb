@@ -124,10 +124,12 @@ class LdapHash < Hash
   end
 
   def self.organisation
-    settings[:organisation]
+    if settings[:organisation].nil?
+      raise BadInput :user => "Cannot configure organisation for this request"
+    else
+      settings[:organisation]
+    end
   end
-
-
 
   def self.clear_setup
     self.settings = nil
