@@ -2,6 +2,7 @@ require "jwt"
 require "addressable/uri"
 require "sinatra/r18n"
 require "redcarpet"
+require_relative "./users"
 
 require_relative "../local_store"
 

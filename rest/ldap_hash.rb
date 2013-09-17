@@ -1,4 +1,3 @@
-require_relative "./resources/users"
 
 module PuavoRest
 # Random helpers
