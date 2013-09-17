@@ -16,7 +16,7 @@ class ExternalService < LdapHash
     )
   )
 
-  ldap_map :dn, :dn
+  ldap_map(:dn, :dn){ |dn| Array(dn).first.downcase.strip }
   ldap_map :cn, :name
   ldap_map :puavoServiceDomain, :domain
   ldap_map :puavoServiceSecret, :secret
