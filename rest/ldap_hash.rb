@@ -125,7 +125,7 @@ class LdapHash < Hash
 
   def self.organisation
     if settings[:organisation].nil?
-      raise BadInput :user => "Cannot configure organisation for this request"
+      raise BadInput, :user => "Cannot configure organisation for this request"
     else
       settings[:organisation]
     end
