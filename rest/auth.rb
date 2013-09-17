@@ -38,7 +38,10 @@ class LdapSinatra < Sinatra::Base
   end
 
   def server_auth
-    return if CONFIG["bootserver"].nil?
+    if not CONFIG["bootserver"]
+      logger.error "Cannot use bootserver auth on cloud installation"
+      return
+    end
 
     # In future we will only use server based authentication if 'Authorization:
     # Bootserver' is set. Otherwise we will assume Kerberos authentication.
