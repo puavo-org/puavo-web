@@ -150,6 +150,15 @@ describe PuavoRest::Devices do
     it "has personal device" do
       assert_equal false, @data["personal_device"]
     end
-    
+  end
+
+  describe "error handling" do
+    it "responds 404 for non existent device" do
+      get "/v3/devices/notexists"
+      assert_equal 404, last_response.status
+      data = JSON.parse last_response.body
+      assert_equal "NotFound", data["error"]["code"], data
+    end
+
   end
 end
