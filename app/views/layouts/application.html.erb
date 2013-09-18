@@ -176,9 +176,6 @@
     </div>
   </div> <!-- container_wrap-->
   </div> <!-- container -->
-  <footer style="color: transparent; font-size: small; text-align: right">
-    hostname: <%= Socket.gethostname %>,
-    uptime: <%= uptime %> sec
-  </footer>
+  <%= debug_footer %>
 </body>
 </html>

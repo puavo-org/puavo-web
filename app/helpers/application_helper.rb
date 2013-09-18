@@ -70,8 +70,13 @@ module ApplicationHelper
 
 
   STARTED = Time.now
-  def uptime
-    (Time.now - STARTED).to_i
+  def debug_footer
+    "
+    <footer class=debug style='color: transparent; font-size: small; text-align: right'>
+      hostname: #{ Socket.gethostname },
+      uptime: #{ (Time.now - STARTED).to_i } sec
+    </footer>
+    ".html_safe
   end
 
 end
