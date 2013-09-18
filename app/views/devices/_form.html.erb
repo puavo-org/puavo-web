@@ -23,6 +23,13 @@
     <%= hidden_field_tag "printers[#{ printer.dn}]", false %>
     <%= check_box_tag "printers[#{ printer.dn}]", true, @device.has_printer?(printer) %>
     <%= printer.printerDescription %>
+
+    (
+    <%= link_to(
+      "Edit all permissions",
+      edit_schools_school_printer_path(@school, printer)
+    ) %>
+    )
     </label>
   </li>
 <% end %>
