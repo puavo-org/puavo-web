@@ -3,7 +3,6 @@
 require "pry"
 require "puavo/etc"
 
-
 def ask(question, opts={})
   new_value = nil
   while true
@@ -31,21 +30,29 @@ def ldap_host
   puavo_configuration["host"]
 end
 
-# ExternalService is on o=puavo database. So use always uid=puavo for it.
-ExternalService.ldap_setup_connection(
-  ldap_host,
-  puavo_configuration["base"],
-  puavo_configuration["bind_dn"],
-  puavo_configuration["password"]
-)
+@credentials = {}
+@credentials[:organisation_key] = ask("Organisation key", :default => "hogwarts")
 
-puts "LdapBase connection:"
-LdapBase.ldap_setup_connection(
-  ask("ldap host", :default => ldap_host),
-  puavo_configuration["base"],
-  ask("dn", :default => puavo_configuration["bind_dn"]),
-  ask("password", :default => puavo_configuration["password"])
-)
+uid_or_dn = ask("Username/DN", :default => "uid=admin,o=puavo")
 
+begin
+  @credentials[:dn] = ActiveLdap::DistinguishedName.parse uid_or_dn
+rescue ActiveLdap::DistinguishedNameInvalid
+  @credentials[:uid] = uid_or_dn
+end
+@credentials[:password] = ask("Password", :default => PUAVO_ETC.get(:ldap_password))
+
+@authentication = Puavo::Authentication.new
+@authentication.configure_ldap_connection(@credentials)
+@authentication.authenticate
+
+if ask("Use these for ExternalService too? y/n", :default => "n") == "y"
+  ExternalService.ldap_setup_connection(
+    @authentication.ldap_host,
+    @authentication.puavo_configuration["base"],
+    @authentication.dn,
+    @credentials[:password]
+  )
+end
 
 binding.pry
