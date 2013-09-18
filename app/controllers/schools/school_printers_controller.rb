@@ -36,6 +36,7 @@ class Schools::SchoolPrintersController < ApplicationController
     end
 
     @school.save!
+    flash[:notice] = "Saved!"
     redirect_to :action => :edit
   end
 
