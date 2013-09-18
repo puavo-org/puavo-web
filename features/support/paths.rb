@@ -43,6 +43,10 @@ module NavigationHelpers
     when /the roles list page/
       roles_path(@school)
 
+    when /printer permissions page/
+      schools_school_printers_path(@school)
+
+
     # User path
     when /the new user page/
       new_user_path(@school)

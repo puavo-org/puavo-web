@@ -15,6 +15,12 @@ When(/^I press "([^\"]*)"$/) do |button|
   click_button(button)
 end
 
+When(/^I press "([^\"]*)" on the "([^\"]*)" row$/) do |link, row|
+  within "tr:contains('#{ row }')" do
+    click_link(link)
+  end
+end
+
 When(/^I follow "([^\"]*)"$/) do |link|
   click_link(link)
 end

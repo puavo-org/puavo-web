@@ -21,12 +21,21 @@ Feature: Manage printer permissions
     And the following printers:
       | printerDescription | printerLocation | printerMakeAndModel  | printerType | printerURI   |
       | printer1           | a school        | foo                  | 1234        | socket://baz |
+      | printer2           | a home          | foo                  | 1234        | socket://baz |
 
   Scenario: Can navigate to printer permissions list
-    And I am logged in as "pavel" with password "secret"
+    Given I am logged in as "pavel" with password "secret"
     And I am on the show school page with "Example school 1"
     When I follow "Devices"
     And I follow "Printer Queues"
     Then I should see "Available printers"
     Then I should see "printer1"
     Then I should see "Edit permissions"
+
+  Scenario: Can activate printer for school
+    Given I am logged in as "pavel" with password "secret"
+    And I am on the printer permissions page
+    And I should see "Available printers"
+    And I press "Edit permissions" on the "printer1" row
+    Then I should see "Printer usage permissions"
+    Then I should see "printer1"
