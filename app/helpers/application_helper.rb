@@ -70,10 +70,12 @@ module ApplicationHelper
 
 
   STARTED = Time.now
+  VERSION = Array(`dpkg -l | grep puavo-web`.split())[2]
   def debug_footer
     "
     <footer class=debug style='color: transparent; font-size: small; text-align: right'>
       hostname: #{ Socket.gethostname },
+      version: #{ VERSION },
       uptime: #{ (Time.now - STARTED).to_i } sec
     </footer>
     ".html_safe
