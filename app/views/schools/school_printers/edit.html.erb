@@ -49,11 +49,22 @@
       Printer is activated for following individual devices.
     </p>
 
-    <ul>
-      <li>
-        <a href="">Device1</a> <button>x</button>
-      </li>
-    </ul>
+    <table>
+      <tr>
+        <th>Hostname</th>
+        <th>Remove permission</th>
+      </tr>
+      <% @devices.each do |device| %>
+      <tr>
+        <td>
+          <%= link_to device.cn, edit_device_path(@school, device)  %>
+        </td>
+        <td>
+          <%= check_box_tag "remove_device_permission[]", device.dn %>
+        </td>
+      </tr>
+      <% end %>
+    </table>
 
   </fieldset>
 

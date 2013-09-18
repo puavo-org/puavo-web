@@ -8,6 +8,11 @@ class Schools::SchoolPrintersController < ApplicationController
 
   def edit
     @printer = Printer.find(params["id"])
+    @devices = Device.find(:all,
+      :attribute => "puavoPrinterQueue",
+      :value => @printer.dn
+    )
+
   end
 
   def update
@@ -23,6 +28,12 @@ class Schools::SchoolPrintersController < ApplicationController
       @school.add_wireless_printer(@printer)
     else
       @school.remove_wireless_printer(@printer)
+    end
+
+    Array(params["remove_device_permission"]).each do |device_dn|
+      device = Device.find(device_dn)
+      device.remove_printer(@printer)
+      device.save!
     end
 
     (params["groups"] || {}).each do |group_dn, bool|
