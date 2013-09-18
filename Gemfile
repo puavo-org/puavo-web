@@ -17,6 +17,9 @@ gem 'uglifier'
 gem "multi_json"
 gem 'redcarpet'
 gem 'unicorn'
+gem 'debugger'
+gem 'pry'
+
 
 group :assets do
   gem 'stylus'
