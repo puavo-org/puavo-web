@@ -1,6 +1,7 @@
 #!/usr/bin/ruby1.9.1
 
 require "pry"
+require "io/console"
 require "puavo/etc"
 
 def ask(question, opts={})
@@ -40,12 +41,16 @@ begin
 rescue ActiveLdap::DistinguishedNameInvalid
   @credentials[:uid] = uid_or_dn
 end
-@credentials[:password] = ask("Password", :default => PUAVO_ETC.get(:ldap_password))
+
+STDIN.noecho do
+  @credentials[:password] = ask("Password", :default => PUAVO_ETC.get(:ldap_password))
+end
 
 @authentication = Puavo::Authentication.new
 @authentication.configure_ldap_connection(@credentials)
 @authentication.authenticate
 
+puts
 if ask("Use these for ExternalService too? y/n", :default => "n") == "y"
   ExternalService.ldap_setup_connection(
     @authentication.ldap_host,
