@@ -67,4 +67,11 @@ module ApplicationHelper
       return I18n.t("helpers.default")
     end
   end
+
+
+  STARTED = Time.now
+  def uptime
+    (Time.now - STARTED).to_i
+  end
+
 end
