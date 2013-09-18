@@ -1,9 +1,9 @@
 ## Using specific organisation connection in Rails Console
 
-Start console with `bundle exec rails c`
+In development
 
-```ruby
-Puavo::Console.new("hogwarts", "albus", "albus")
-```
+    $ bundle exec rails runner script/puavo-web-prompt.rb
+    
+In production
 
-https://github.com/opinsys/puavo-users/blob/master/lib/puavo/console.rb
+    # puavo-web-prompt
