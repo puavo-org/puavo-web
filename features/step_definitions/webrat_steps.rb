@@ -21,6 +21,12 @@ When(/^I press "([^\"]*)" on the "([^\"]*)" row$/) do |link, row|
   end
 end
 
+When(/^I press "([^\"]*)" on the "([^\"]*)" list$/) do |link, row|
+  within "li:contains('#{ row }')" do
+    click_link(link)
+  end
+end
+
 When(/^I follow "([^\"]*)"$/) do |link|
   click_link(link)
 end

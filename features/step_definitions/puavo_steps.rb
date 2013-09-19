@@ -308,3 +308,9 @@ Given(/^I wait ([0-9]+) (hour|day|month|year)s?$/) do |digit, type|
   Timecop.travel Time.now + digit.to_i.send(type)
 end
 
+
+Given /^I am on the edit page of "(.*?)" device$/ do |hostname|
+  set_ldap_admin_connection
+  device = Device.find_by_hostname(hostname)
+  visit edit_device_path(@school, device)
+end

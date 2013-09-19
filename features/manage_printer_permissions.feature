@@ -64,5 +64,17 @@ Feature: Manage printer permissions
     And I press "Edit permissions" on the "printer1" row
     And I check "Class 1"
     And I press "Save"
-    Then the "Class" checkbox should be checked
+    Then the "Class 1" checkbox should be checked
 
+  Scenario: Can activate printer from device
+    # Given I am logged in as "pavel" with password "secret"
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the edit page of "athin" device
+    And I should see "Terminal information"
+    And I check "printer1"
+    And I press "Update"
+    And I follow "Edit"
+    Then the "printer1" checkbox should be checked
+    And I press "Edit all permissions" on the "printer1" list
+    And I should see "athin"
+    # TODO: test remove
