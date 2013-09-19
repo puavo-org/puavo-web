@@ -27,15 +27,42 @@ Feature: Manage printer permissions
     Given I am logged in as "pavel" with password "secret"
     And I am on the show school page with "Example school 1"
     When I follow "Devices"
-    And I follow "Printer Queues"
+    And I follow "Printer Permissions"
     Then I should see "Available printers"
     Then I should see "printer1"
     Then I should see "Edit permissions"
 
   Scenario: Can activate printer for school
-    Given I am logged in as "pavel" with password "secret"
+    # Given I am logged in as "pavel" with password "secret"
+    Given I am logged in as "cucumber" with password "cucumber"
     And I am on the printer permissions page
     And I should see "Available printers"
     And I press "Edit permissions" on the "printer1" row
     Then I should see "Printer usage permissions"
-    Then I should see "printer1"
+    And I should see "printer1"
+    And I check "Activate for all users"
+    And I press "Save"
+    Then the "Activate for all users" checkbox should be checked
+    Then the "Activate for anonymous" checkbox should not be checked
+
+  Scenario: Can activate wireless printer for school
+    # Given I am logged in as "pavel" with password "secret"
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the printer permissions page
+    And I should see "Available printers"
+    And I press "Edit permissions" on the "printer1" row
+    And I check "Activate for anonymous"
+    And I press "Save"
+    Then the "Activate for all users" checkbox should be checked
+    Then the "Activate for anonymous" checkbox should be checked
+
+  Scenario: Can activate printer for group
+    # Given I am logged in as "pavel" with password "secret"
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the printer permissions page
+    And I should see "Available printers"
+    And I press "Edit permissions" on the "printer1" row
+    And I check "Class 1"
+    And I press "Save"
+    Then the "Class" checkbox should be checked
+
