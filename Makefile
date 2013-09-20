@@ -73,6 +73,10 @@ install: mkdirs
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 
+dev-install:
+	rm -rf .bundle Gemfile.lock
+	sudo bundle install
+
 clean-assets:
 	rm -rf public/assets
 	rm -rf tmp/cache/assets
