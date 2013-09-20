@@ -77,4 +77,8 @@ Feature: Manage printer permissions
     Then the "printer1" checkbox should be checked
     And I press "Edit all permissions" on the "printer1" list
     And I should see "athin"
-    # TODO: test remove
+    # the remove checkbox
+    Then I check box on the "athin" row
+    And I press "Save"
+    Then I should not see "athin"
+

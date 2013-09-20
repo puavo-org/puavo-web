@@ -27,6 +27,12 @@ When(/^I press "([^\"]*)" on the "([^\"]*)" list$/) do |link, row|
   end
 end
 
+Then(/^I check box on the "(.*?)" row$/) do |row|
+  within "tr:contains('#{ row }')" do
+    find("input[type=checkbox]").set(true)
+  end
+end
+
 When(/^I follow "([^\"]*)"$/) do |link|
   click_link(link)
 end
