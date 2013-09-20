@@ -8,47 +8,47 @@ Given(/^Remove all roles on "(.*?)" school$/) do |school_name|
 end
 
 
-Given /^the following schools:$/ do |schools|
+Given(/^the following schools:$/) do |schools|
   set_ldap_admin_connection
   schools = School.create(schools.hashes)
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) school$/ do |pos|
+When(/^I delete the (\d+)(?:st|nd|rd|th) school$/) do |pos|
   visit schools_url
   within("table > tr:nth-child(#{pos.to_i+1})") do
     click_link "Destroy"
   end
 end
 
-Then /^I should see the following schools:$/ do |expected_schools_table|
+Then(/^I should see the following schools:$/) do |expected_schools_table|
   expected_schools_table.diff!(table_at('table').to_a)
 end
 
-When /^I fill test data into school forms$/ do
+When(/^I fill test data into school forms$/) do
   default_form_value.each do |field, value|
     fill_in(field, :with => value)
   end
 end
 
-When /^I fill modify test data into school forms$/ do
+When(/^I fill modify test data into school forms$/) do
   default_form_value.each do |field, value|
     fill_in(field, :with => value + " modify")
   end
 end
 
-Then /^I should see same test data on the page$/ do
+Then(/^I should see same test data on the page$/) do
   default_form_value.each do |field, value|
     page.should have_content(value)
   end
 end
 
-Then /^I should see same modify test data on the page$/ do
+Then(/^I should see same modify test data on the page$/) do
   default_form_value.each do |field, value|
     page.should have_content(value + " modify")
   end
 end
 
-Then /^I should see same test data on the forms$/ do
+Then(/^I should see same test data on the forms$/) do
   default_form_value.each do |field, value|
     field_named(field).value.should =~ /#{value}/
   end
@@ -82,31 +82,31 @@ def default_form_value
     "billing_address[email]" => "london@test.uk" }
 end
 
-Then /^I should not see "([^"]*)" on the school admin list$/ do |user|
+Then(/^I should not see "([^"]*)" on the school admin list$/) do |user|
   steps %Q{
     Then I should not see "#{user}" within "#this_school_admin_users"
   }
 end
 
-Then /^I should be added school management access to the "([^"]*)"$/ do |user|
+Then(/^I should be added school management access to the "([^"]*)"$/) do |user|
   steps %Q{
     Then I should see "#{user}" within "#other_admin_users"
   }
 end
 
-Then /^I should see "([^"]*)" on the school admin list$/ do |user|
+Then(/^I should see "([^"]*)" on the school admin list$/) do |user|
   steps %Q{
     Then I should see "#{user}" within "#this_school_admin_users"
   }
 end
 
-Then /^I should not be added school management access to the "([^"]*)"$/ do |user|
+Then(/^I should not be added school management access to the "([^"]*)"$/) do |user|
   steps %Q{
     Then I should not see "#{user}" within "#other_admin_users"
   }
 end
 
-When /^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/ do |username, school_name|
+When(/^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/) do |username, school_name|
   set_ldap_admin_connection
   school = School.find( :first, :attribute => "displayName", :value => school_name )
   user = User.find( :first, :attribute => "displayName", :value => username )
@@ -114,7 +114,7 @@ When /^I try to add "([^\"]*)" to admin user on the "([^\"]*)" school$/ do |user
   page.driver.browser.follow_redirect!
 end
 
-Then /^I should be on the "([^\"]*)" school page$/ do |school_name|
+Then(/^I should be on the "([^\"]*)" school page$/) do |school_name|
   set_ldap_admin_connection
   @school = School.find(:first, :attribute => "displayName", :value => school_name)
   URI.parse(current_url).path.should == path_to("the school page")

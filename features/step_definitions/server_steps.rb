@@ -1,4 +1,4 @@
-Given /^the following servers:$/ do |servers|
+Given(/^the following servers:$/) do |servers|
   set_ldap_admin_connection
   servers.hashes.each do |attrs|
     server = Server.new

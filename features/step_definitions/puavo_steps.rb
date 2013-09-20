@@ -31,7 +31,7 @@ test_organisation = Puavo::Organisation.find('example')
   Puavo::Test.clean_up_ldap
 end
 
-Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
+Given(/^I am logged in as "([^\"]*)" organisation owner$/) do |organisation_name|
   organisation = Puavo::Organisation.find(organisation_name)
 
   visit login_path
@@ -41,7 +41,7 @@ Given /^I am logged in as "([^\"]*)" organisation owner$/ do |organisation_name|
   page.should have_content("Login successful!")
 end
 
-Given /^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/ \
+Given(/^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/) \
 do |names_of_the_models, values, organisation|
   set_ldap_admin_connection
   Puavo::Organisation.find(organisation)
@@ -67,7 +67,7 @@ do |names_of_the_models, values, organisation|
   end
 end
 
-Given /^"([^\"]*)" is a school admin on the "([^\"]*)" school$/ do |uid, school_name|
+Given(/^"([^\"]*)" is a school admin on the "([^\"]*)" school$/) do |uid, school_name|
   set_ldap_admin_connection
   school = School.find(:first, :attribute => "displayName", :value => school_name)
   user = User.find(:first, :attribute => "uid", :value => uid)
@@ -77,11 +77,11 @@ Given /^"([^\"]*)" is a school admin on the "([^\"]*)" school$/ do |uid, school_
   school.save
 end
 
-When /^I check field by id "([^\"]*)"$/ do |field_id|
+When(/^I check field by id "([^\"]*)"$/) do |field_id|
   check( field_with_id(field_id) )
 end
 
-Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
+Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
   set_ldap_admin_connection
   case page_name
   when /user page$/
@@ -117,7 +117,7 @@ Given /^I am on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
   end
 end
 
-When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value| 
+When(/^I get on ([^\"]+) with "([^\"]*)"$/) do |page_name, value| 
   page.driver.browser.basic_authorize('cucumber', 'cucumber')
   case page_name
   when /user JSON page$/
@@ -136,7 +136,7 @@ When /^I get on ([^\"]+) with "([^\"]*)"$/ do |page_name, value|
   end
 end
 
-Then /^I should see JSON '([^\']*)'$/ do |json_string|
+Then(/^I should see JSON '([^\']*)'$/) do |json_string|
   response_data = ActiveSupport::JSON.decode(page.body)
   compare_data = ActiveSupport::JSON.decode(json_string)
 
@@ -178,51 +178,51 @@ def sort_tags(tags)
   return tags.split(TagList.delimiter).sort.join(TagList.delimiter)
 end
 
-When /^I fill in textarea "([^\"]*)" with "([^\"]*)"$/ do |field, value|
+When(/^I fill in textarea "([^\"]*)" with "([^\"]*)"$/) do |field, value|
   fill_in(field, :with => value)
 end
 
-Then /^I should see the following:$/ do |values|
+Then(/^I should see the following:$/) do |values|
   values.rows.each do |value|
     step %{I should see "#{value.first}"}
   end
 end
 
-Then /^named the "([^\"]*)" field should contain "([^\"]*)"$/ do |field, value|
+Then(/^named the "([^\"]*)" field should contain "([^\"]*)"$/) do |field, value|
   field_named(field).value.should =~ /#{value}/
 end
 
-Then /^id the "([^\"]*)" field should contain "([^\"]*)"$/ do |field_id, value|
+Then(/^id the "([^\"]*)" field should contain "([^\"]*)"$/) do |field_id, value|
   field_with_id(field_id).value.should =~ /#{value}/
 end
 
-Then /^id the "([^\"]*)" field should not contain "([^\"]*)"$/ do |field_id, value|
+Then(/^id the "([^\"]*)" field should not contain "([^\"]*)"$/) do |field_id, value|
   field_with_id(field_id).value.should_not =~ /#{value}/
 end
 
-Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field_id|
+Then(/^"([^"]*)" should be selected for "([^"]*)"$/) do |value, field_id|
   field_with_id(field_id).native.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
-Then /^I can select "([^\"]*)" from the "([^\"]*)"$/ do |value, field_id|
+Then(/^I can select "([^\"]*)" from the "([^\"]*)"$/) do |value, field_id|
   field_with_id(field_id).native.inner_html.should =~ /#{value}/
 end
 
-Then /^the "([^\"]*)" select box should contain "([^\"]*)"$/ do |field, value|
+Then(/^the "([^\"]*)" select box should contain "([^\"]*)"$/) do |field, value|
   field_labeled(field).native.inner_html.should =~ /#{value}/
 end
 
-Then /^I can not select "([^\"]*)" from the "([^\"]*)"$/ do |value, field|
+Then(/^I can not select "([^\"]*)" from the "([^\"]*)"$/) do |value, field|
   field_labeled(field).native.inner_html.should_not =~ /#{value}/
 end
-Then /^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/ do |object_name, class_name, method|
+Then(/^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/) do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
   Array(object.send(method)).each do |dn|
     lambda{ User.find(dn) }.should_not raise_error
   end
 end
 
-When /^I follow "([^\"]*)" on the "([^\"]*)" ([^ ]+)$/ do |link_name, name, model|
+When(/^I follow "([^\"]*)" on the "([^\"]*)" ([^ ]+)$/) do |link_name, name, model|
   set_ldap_admin_connection
   link_id = link_name.downcase + "_#{model}_" + 
     eval(model.capitalize).send("find", :first,
@@ -234,11 +234,11 @@ When /^I follow "([^\"]*)" on the "([^\"]*)" ([^ ]+)$/ do |link_name, name, mode
 end
 
 
-Then /^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
+Then(/^the ([^ ]*) should include "([^\"]*)" on the "([^\"]*)" (.*)$/) do |method, uid, object_name, model|
   memberUid_include?(model, object_name, method, uid).should == true
 end
 
-Then /^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" (.*)$/ do |method, uid, object_name, model|
+Then(/^the ([^ ]*) should not include "([^\"]*)" on the "([^\"]*)" (.*)$/) do |method, uid, object_name, model|
   memberUid_include?(model, object_name, method, uid).should == false
 end
 
@@ -253,27 +253,27 @@ def read_pdf
   @pdf_text = File.read tmp_txt.path
 end
 
-When /^I follow the PDF link "([^\"]*)"$/ do |link_name|
+When(/^I follow the PDF link "([^\"]*)"$/) do |link_name|
   click_link(link_name)
   read_pdf
 end
 
-When /^I press the PDF button "([^\"]*)"$/ do |button_name|
+When(/^I press the PDF button "([^\"]*)"$/) do |button_name|
   click_button(button_name)
   read_pdf
 end
 
-Then /^I should see "([^\"]*)" on the PDF$/ do |text|
+Then(/^I should see "([^\"]*)" on the PDF$/) do |text|
   @pdf_text.should have_content(text)
 end
 
-When /^I cut nextPuavoId value by one$/ do
+When(/^I cut nextPuavoId value by one$/) do
   pool = IdPool.find('IdPool')
   pool.puavoNextId -= 1
   pool.save!
 end
 
-Then /^I should see "([^\"]*)" titled "([^\"]*)"$/ do |text, title|
+Then(/^I should see "([^\"]*)" titled "([^\"]*)"$/) do |text, title|
   page.has_xpath?("//div[text()='#{text}'][@title='#{ title }']")
 end
 
@@ -304,7 +304,7 @@ def set_ldap_admin_connection
   end
 end
 
-Given /^I wait ([0-9]+) (hour|day|month|year)s?$/ do |digit, type|
+Given(/^I wait ([0-9]+) (hour|day|month|year)s?$/) do |digit, type|
   Timecop.travel Time.now + digit.to_i.send(type)
 end
 

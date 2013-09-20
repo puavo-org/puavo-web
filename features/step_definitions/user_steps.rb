@@ -1,15 +1,15 @@
-Given /^I am logged in as "([^\"]*)" with password "([^\"]*)"$/ do |login, password|
+Given(/^I am logged in as "([^\"]*)" with password "([^\"]*)"$/) do |login, password|
   visit login_path
   fill_in("Username", :with => login)
   fill_in("Password", :with => password)
   click_button("Login")
 end
 
-Given /^I am logged out$/ do
+Given(/^I am logged out$/) do
   visit logout_path
 end
 
-Given /^the following users:$/ do |users|
+Given(/^the following users:$/) do |users|
   set_ldap_admin_connection
   users.hashes.each do |u|
     roles = nil
@@ -42,22 +42,22 @@ Given /^the following users:$/ do |users|
   end
 end
 
-When /^I set in "([^\"]*)" with "([^\"]*)" to "([^\"]*)"$/ do |method, text, username|
+When(/^I set in "([^\"]*)" with "([^\"]*)" to "([^\"]*)"$/) do |method, text, username|
   user = User.find_by_username(username)
   user.send(method.to_s + "=", text)
 end
 
-Then /^I should get "([^\"]*)" with "([^\"]*)" from "([^\"]*)"$/ do |text, method, username|
+Then(/^I should get "([^\"]*)" with "([^\"]*)" from "([^\"]*)"$/) do |text, method, username|
   User.find_by_username(username).send(method).should == text
 end
 
-Then /^I should see the following users:$/ do |users_table|
+Then(/^I should see the following users:$/) do |users_table|
   rows = find('table').all('tr')
   table = rows.map { |r| r.all('th,td').map { |c| c.text.strip } }
   users_table.diff!(table)
 end
 
-When /^I fill test data into user forms$/ do
+When(/^I fill test data into user forms$/) do
   steps %Q{
     And I fill in "Given names" with "Ben Lars"
     And I fill in "Nickname" with "Ben"
@@ -77,7 +77,7 @@ When /^I fill test data into user forms$/ do
   }
 end
 
-When /^I should see same test data on the user page$/ do
+When(/^I should see same test data on the user page$/) do
   steps %Q{
     And I should see "Ben Lars"
     And I should see "Ben"
@@ -95,7 +95,8 @@ When /^I should see same test data on the user page$/ do
     And I should see "programming"
 }
 end
-Then /^I should see the following special ldap attributes on the "([^\"]*)" object with "([^\"]*)":$/  do
+
+Then(/^I should see the following special ldap attributes on the "([^\"]*)" object with "([^\"]*)":$/) do
   |model, key, table|
   set_ldap_admin_connection
   case model
@@ -112,7 +113,7 @@ Then /^I should see the following special ldap attributes on the "([^\"]*)" obje
   end
 end
 
-Given /^I am set the "([^\"]*)" role for "([^\"]*)"$/ do |role, uid|
+Given(/^I am set the "([^\"]*)" role for "([^\"]*)"$/) do |role, uid|
   steps %Q{
     And I am on the edit user page with "#{uid}"
     And I check "#{role}"
@@ -120,21 +121,21 @@ Given /^I am set the "([^\"]*)" role for "([^\"]*)"$/ do |role, uid|
 }
 end
 
-Then /^I should login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
+Then(/^I should login with "([^"]*)" and "([^"]*)"$/) do |uid, password|
   set_ldap_admin_connection
   user = User.find(:first, :attribute => "uid", :value => uid)
   lambda{ user.bind(password) }.should_not raise_error
   user.remove_connection
 end
 
-Then /^I should not login with "([^"]*)" and "([^"]*)"$/ do |uid, password|
+Then(/^I should not login with "([^"]*)" and "([^"]*)"$/) do |uid, password|
   set_ldap_admin_connection
   user = User.find(:first, :attribute => "uid", :value => uid)
   lambda{ user.bind(password) }.should raise_error
   user.remove_connection
 end
 
-Then /^the ([^ ]*) attribute should contain "([^\"]*)" of "([^\"]*)"$/ do |attribute, school_name, uid|
+Then(/^the ([^ ]*) attribute should contain "([^\"]*)" of "([^\"]*)"$/) do |attribute, school_name, uid|
   set_ldap_admin_connection
   school = School.find(:first, :attribute => "displayName", :value => school_name)
   user = User.find(:first, :attribute => "uid", :value => uid)
