@@ -1,4 +1,4 @@
-
+<div class="printer-permissions">
 <h1><span><%= @printer.printerDescription %></span></h1>
 
 <p>Printer usage permissions</p>
@@ -43,28 +43,40 @@
 
   </fieldset>
 
-  <fieldset>
+  <fieldset class="devices">
     <legend>Devices</legend>
     <p>
-      Printer is activated for following individual devices.
+      Printer is allowed for following individual devices:
     </p>
 
-    <table>
-      <tr>
+    <table class="list">
+      <tr class="thead">
         <th>Hostname</th>
-        <th>Remove permission</th>
+        <th>Remove</th>
+        <th>Actions</th>
       </tr>
       <% @devices.each do |device| %>
       <tr>
         <td>
-          <%= link_to device.cn, edit_device_path(@school, device)  %>
+          <%= device.cn %>
         </td>
         <td>
           <%= check_box_tag "remove_device_permission[]", device.dn %>
         </td>
+        <td>
+          <%= link_to edit_device_path(@school, device), :class => "btn" do %>
+            <i class="icon-pencil"></i> <%= t('link.edit') %>
+          <% end %>
+        </td>
       </tr>
       <% end %>
     </table>
+
+    <div class="clearfix"></div>
+
+    <p>
+       Printers for devices are set from the device edit page.
+    </p>
 
   </fieldset>
 
@@ -75,3 +87,4 @@
   </div>
 
 <% end %>
+</div>
