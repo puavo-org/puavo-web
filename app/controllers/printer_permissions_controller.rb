@@ -1,4 +1,4 @@
-class Schools::SchoolPrintersController < ApplicationController
+class PrinterPermissionsController < ApplicationController
 
   def index
    respond_to do |format|

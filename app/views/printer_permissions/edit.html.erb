@@ -3,7 +3,7 @@
 
 <p>Printer usage permissions</p>
 
-<%= form_tag(schools_school_printer_path(@school, @printer), :method => :put) do %>
+<%= form_tag(printer_permission_path(@school, @printer), :method => :put) do %>
 
   <fieldset>
     <legend>Global</legend>
@@ -83,7 +83,7 @@
 
   <%= submit_tag "Save",  :class => "btn" %>
   <div class="cancel">
-    <%= link_to t('link.cancel'), schools_school_printers_path, :class => 'btn btn-danger' %>
+    <%= link_to t('link.cancel'), printer_permissions_path(@school), :class => 'btn btn-danger' %>
   </div>
 
 <% end %>

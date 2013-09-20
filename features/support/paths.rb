@@ -44,7 +44,7 @@ module NavigationHelpers
       roles_path(@school)
 
     when /printer permissions page/
-      schools_school_printers_path(@school)
+      printer_permissions_path(@school)
 
 
     # User path
