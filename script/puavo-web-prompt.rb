@@ -34,7 +34,7 @@ end
 @credentials = {}
 @credentials[:organisation_key] = ask("Organisation key", :default => "hogwarts")
 
-uid_or_dn = ask("Username/DN", :default => "uid=admin,o=puavo")
+uid_or_dn = ask("Username/DN", :default => "admin")
 
 begin
   @credentials[:dn] = ActiveLdap::DistinguishedName.parse uid_or_dn
