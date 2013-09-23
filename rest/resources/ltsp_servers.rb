@@ -165,6 +165,7 @@ class LtspServers < LdapSinatra
 
     logger.warn "DEPRECATED!! Call to legacy _most_idle route. Use POST /v3/sessions !"
     filtered = ServerFilter.new(LtspServer.all_with_state)
+    filtered.filter_old
     filtered.filter_has_state
     filtered.sort_by_load
     server = filtered.first

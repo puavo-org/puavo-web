@@ -104,4 +104,23 @@ describe PuavoRest::LtspServers do
     assert_equal "idleserver", data["hostname"]
   end
 
+  it "_most_idle filters out old servers" do
+    create_server(
+      :puavoHostname => "oldserver",
+      :macAddress => "bc:5f:f4:56:59:71"
+    )
+    create_server(
+      :puavoHostname => "newserver",
+      :macAddress => "bc:5f:f4:56:59:72"
+    )
+
+    put "/v3/ltsp_servers/oldserver", "load_avg" => "0.2", "cpu_count" => 2
+    Timecop.travel 60 * 5
+    put "/v3/ltsp_servers/newserver", "load_avg" => "1.2", "cpu_count" => 2
+
+    get "/v3/ltsp_servers/_most_idle"
+    data = JSON.parse(last_response.body)
+    assert_equal "newserver", data["hostname"]
+  end
+
 end
