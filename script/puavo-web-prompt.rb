@@ -50,14 +50,13 @@ end
 @authentication.configure_ldap_connection(@credentials)
 @authentication.authenticate
 
-puts
-if ask("Use these for ExternalService too? y/n", :default => "n") == "y"
-  ExternalService.ldap_setup_connection(
-    @authentication.ldap_host,
-    @authentication.puavo_configuration["base"],
-    @authentication.dn,
-    @credentials[:password]
-  )
-end
+# Manually configure ExternalService because Puavo::Authentication configures
+# read-only access to it with o=Puavo
+ExternalService.ldap_setup_connection(
+  @authentication.ldap_host,
+  @authentication.puavo_configuration["base"],
+  @authentication.dn,
+  @credentials[:password]
+)
 
 binding.pry
