@@ -1,6 +1,5 @@
 
 ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment") unless defined?(RAILS_ROOT)
 
 require File.dirname(__FILE__) + "/data"
 require File.dirname(__FILE__) + "/helper"
