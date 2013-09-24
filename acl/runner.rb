@@ -1,8 +1,8 @@
 
 ENV["RAILS_ENV"] ||= 'test'
 
-require File.dirname(__FILE__) + "/data"
-require File.dirname(__FILE__) + "/helper"
+require './acl/data'
+require './acl/helper'
 
 require 'pp'
 
@@ -20,7 +20,7 @@ def run_acl_tests
       next if [".", ".."].include? file
       file = TEST_DIR + file
       puts "Loading #{ file }"
-      require file
+      require "./" + file
     end
   end
 
