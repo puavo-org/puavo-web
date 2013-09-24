@@ -33,11 +33,12 @@ env.validate "school" do
   student.can_read school, school_attributes
   teacher.can_read school, school_attributes
 
-  owner.can_modify school, [ :replace, :displayName, ["Test school"] ]
-  owner.can_modify school, [ :replace, :puavoSchoolAdmin, [new_admin.dn] ]
+  owner.can_modify school, [ :replace, :displayName,        ["Test school"]   ]
+  owner.can_modify school, [ :replace, :puavoSchoolAdmin,   [new_admin.dn]    ]
 
-  student.cannot_modify school, [ :replace, :displayName, ["newname"] ], InsufficientAccessRights
-  admin.cannot_modify school, [ :replace, :puavoSchoolAdmin, [student.dn] ], InsufficientAccessRights
+  student.cannot_modify school, [ :replace, :displayName,   ["newname"]   ], InsufficientAccessRights
+
+  admin.cannot_modify school, [ :replace, :puavoSchoolAdmin,   [student.dn]   ], InsufficientAccessRights
 end
 
 

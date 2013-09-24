@@ -208,7 +208,7 @@ class LDAPObject
 
     entry = @conn.search(:base => target.dn)
 
-    if entry == false || entry.size == 0
+    if entry == false || entry.nil?
       raise InsufficientAccessRights, "#{ to_s } failed to read anything from #{ target }"
     end
 
