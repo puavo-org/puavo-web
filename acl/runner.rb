@@ -13,7 +13,7 @@ def run_acl_tests
   if not ARGV.empty?
     ARGV.each do |file|
       puts "Loading #{ file }"
-      require file
+      require "./" + file
     end
   else
     Dir.foreach TEST_DIR do |file|
