@@ -33,15 +33,19 @@ env.validate "school" do
   student.can_read school, school_attributes
   teacher.can_read school, school_attributes
 
-  owner.can_modify school, [ :replace, :displayName,        ["Test school"]   ]
-  owner.can_modify school, [ :add,     :puavoSchoolAdmin,   [new_admin.dn]    ]
-  owner.can_modify school, [ :replace, :puavoPrinterQueue,  [printer.dn]      ]
+  owner.can_modify school, [ :replace, :displayName,                ["Test school"]   ]
+  owner.can_modify school, [ :add,     :puavoSchoolAdmin,           [new_admin.dn]    ]
+  owner.can_modify school, [ :replace, :puavoPrinterQueue,          [printer.dn]      ]
+  owner.can_modify school, [ :replace, :puavoWirelessPrinterQueue,  [printer.dn]      ]
 
-  student.cannot_modify school, [ :replace, :displayName,        ["newname"]   ], InsufficientAccessRights
-  student.cannot_modify school, [ :replace, :puavoPrinterQueue,  [printer.dn]  ], InsufficientAccessRights
+  student.cannot_modify school, [ :replace, :displayName,                ["newname"]   ], InsufficientAccessRights
+  student.cannot_modify school, [ :replace, :puavoPrinterQueue,          [printer.dn]  ], InsufficientAccessRights
+  student.cannot_modify school, [ :replace, :puavoWirelessPrinterQueue,  [printer.dn]  ], InsufficientAccessRights
 
-  admin.cannot_modify school, [ :replace, :puavoSchoolAdmin,   [student.dn]   ], InsufficientAccessRights
-  admin.can_modify    school, [ :replace, :puavoPrinterQueue,  [printer.dn]   ]
+  admin.cannot_modify school, [ :replace, :puavoSchoolAdmin,           [student.dn]   ], InsufficientAccessRights
+  admin.can_modify    school, [ :replace, :puavoPrinterQueue,          [printer.dn]   ]
+  admin.can_modify    school, [ :replace, :puavoWirelessPrinterQueue,  [printer.dn]   ]
+
 end
 
 
