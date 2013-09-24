@@ -59,6 +59,17 @@ device_types:
     school_required: false
     ldap_password: true
     show_dashboard: false
+  bootserver:
+    label:
+      en: Boot server
+      fi: Boot palvelin
+    classes: puavoLocalbootDevice
+    url: /devices/servers/new.json?device_type=bootserver
+    order: 6
+    puppetclass: host
+    school_required: false
+    ldap_password: true
+    show_dashboard: false
   netstand:
     label:
       en: Netstand
