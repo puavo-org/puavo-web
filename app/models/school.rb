@@ -119,20 +119,25 @@ class School < BaseGroup
   end
 
   def has_wireless_printer?(printer)
-    Array(self.puavoWirelessPrinterQueue).include?(printer.dn)
+    printer = self.class.ensure_dn(printer)
+    Array(self.puavoWirelessPrinterQueue).include?(printer)
   end
 
   def add_wireless_printer(printer)
-    return if has_wireless_printer?(printer)
-    self.puavoWirelessPrinterQueue = Array(self.puavoWirelessPrinterQueue) + [printer.dn]
+    printer = self.class.ensure_dn(printer)
+    ldap_modify_operation(:add, [
+      { "puavoWirelessPrinterQueue" => printer }
+    ]) rescue ActiveLdap::LdapError::TypeOrValueExists
+    reload
   end
 
   def remove_wireless_printer(printer)
-    self.puavoWirelessPrinterQueue = Array(self.puavoWirelessPrinterQueue).select do |printer_dn|
-      printer_dn != printer.dn
-    end
+    printer = self.class.ensure_dn(printer)
+    ldap_modify_operation(:delete, [
+      { "puavoWirelessPrinterQueue" => [printer.to_s] }
+    ]) rescue ActiveLdap::LdapError::NoSuchAttribute
+    reload
   end
-
 
 
 end
