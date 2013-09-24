@@ -2,7 +2,7 @@
 env = LDAPTestEnv.new
 
 env.define :new_admin do |config|
-  admin = User.create!(
+  admin = User.create(
     :puavoSchool => env.school.dn,
     :givenName => "Gilderoy",
     :sn => "Lockhart",
