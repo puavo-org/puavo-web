@@ -35,10 +35,13 @@ env.validate "school" do
 
   owner.can_modify school, [ :replace, :displayName,        ["Test school"]   ]
   owner.can_modify school, [ :add,     :puavoSchoolAdmin,   [new_admin.dn]    ]
+  owner.can_modify school, [ :replace, :puavoPrinterQueue,  [printer.dn]      ]
 
-  student.cannot_modify school, [ :replace, :displayName,   ["newname"]   ], InsufficientAccessRights
+  student.cannot_modify school, [ :replace, :displayName,        ["newname"]   ], InsufficientAccessRights
+  student.cannot_modify school, [ :replace, :puavoPrinterQueue,  [printer.dn]  ], InsufficientAccessRights
 
   admin.cannot_modify school, [ :replace, :puavoSchoolAdmin,   [student.dn]   ], InsufficientAccessRights
+  admin.can_modify    school, [ :replace, :puavoPrinterQueue,  [printer.dn]   ]
 end
 
 

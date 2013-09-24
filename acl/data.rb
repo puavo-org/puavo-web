@@ -190,4 +190,11 @@ def define_basic(env)
   env.define :domain_admins do |config|
     config.dn = "cn=Domain Admins,ou=Groups," + env.organisation.dn
   end
+
+  env.define :printer do |config|
+    printer = Printer.create(
+      :printerDescription => "foo"
+    )
+    config.dn = printer.dn
+  end
 end
