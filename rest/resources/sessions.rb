@@ -26,8 +26,9 @@ class Session < LdapHash
     filtered.sort_by_load
 
     session["ltsp_server"] = filtered.first
+
     if session["ltsp_server"].nil?
-      raise NotFound :user => "cannot find any LTSP servers"
+      raise NotFound, :user => "cannot find any LTSP servers"
     end
     session
   end
@@ -85,6 +86,9 @@ class Sessions < LdapSinatra
       "preferred_image" => device["image"],
       "preferred_server" => device["preferred_server"]
     )
+
+    session["printer_queues"] = device.printers
+
     session.save
 
     logger.info "Created session #{ session["uuid"] } " +

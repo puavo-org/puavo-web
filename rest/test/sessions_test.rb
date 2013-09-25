@@ -1,5 +1,20 @@
 require_relative "./helper"
 
+def create_printer(server, name)
+  printer = Printer.new
+  printer.attributes = {
+    :printerDescription => name,
+    :printerLocation => "school2",
+    :printerMakeAndModel => "foo",
+    :printerType => "1234",
+    :printerURI => "socket://baz",
+    :puavoServer => server.dn,
+  }
+  printer.save!
+  printer
+end
+
+
 describe PuavoRest::Sessions do
 
   before(:each) do
@@ -371,6 +386,45 @@ describe PuavoRest::Sessions do
 
       # But client will get limitedserver because it is forced to its school
       assert_equal "limitedserver", data["ltsp_server"]["hostname"]
+    end
+
+  end
+
+  describe "printers" do
+
+    before(:each) do
+      @bootserver = Server.new
+      @bootserver.attributes = {
+        :puavoHostname => "boot",
+        :macAddress => "27:b0:59:3c:ac:a4",
+        :puavoDeviceType => "bootserver"
+      }
+      @bootserver.save!
+
+      @printer1 = create_printer(@bootserver, "printer1")
+      @wireless_printer = create_printer(@bootserver, "wireless printer")
+
+      @school.add_printer(@printer1)
+      @school.add_wireless_printer(@wireless_printer)
+
+      put "/v3/ltsp_servers/server1",
+        "load_avg" => "0.1",
+        "cpu_count" => 2,
+        "ltsp_image" => "image1"
+
+    end
+
+    it "are given to guest sessions" do
+      post "/v3/sessions", "hostname" => "athin"
+      assert_200
+      data = JSON.parse last_response.body
+
+      assert data["printer_queues"], "must have printer queues"
+      assert_equal data["printer_queues"].size, 2
+
+      assert_equal data["printer_queues"][0]["description"], "printer1"
+      assert_equal data["printer_queues"][1]["description"], "wireless printer"
+
     end
 
   end
