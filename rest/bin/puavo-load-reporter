@@ -8,13 +8,13 @@ CPU_COUNT=$(nproc)
 PUAVO_DOMAIN=$(cat /etc/puavo/domain)
 
 if [ "${URL}" = "" ]; then
-    API_SERVER=$(dig +time=2 +tries=1 SRV _puavo-api._tcp.${PUAVO_DOMAIN} +search +short | awk '{ sub(/\.$/, ""); printf "%s:%s", $4, $3 }')
+    API_SERVER=$(puavo-resolve-api-server)
 
     if [ "${API_SERVER}" != "" ]; then
         HOSTNAME=$(hostname -f)
-        URL="https://${API_SERVER}/v3/ltsp_servers/${HOSTNAME}"
+        URL="${API_SERVER}/v3/ltsp_servers/${HOSTNAME}"
     else
-        echo "Missing URL and _puavo-api._tcp.${PUAVO_DOMAIN} did not return anything!"
+        echo "No URL was passed and puavo-resolve-api-server failed"
         exit 1
     fi
 fi
