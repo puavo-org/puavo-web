@@ -71,23 +71,34 @@ class Sessions < LdapSinatra
       halt 400, json("error" => "'hostname' missing")
     end
 
-    device = Device.by_hostname(params["hostname"])
-    device.fallback_defaults
+    # Normal user has no permission to read device attributes so force server
+    # credentials here.
+    session = LdapHash.setup(:credentials => CONFIG["server"]) do
+      device = Device.by_hostname(params["hostname"])
+      device.fallback_defaults
 
-    logger.info "Thin #{ params["hostname"] } " +
-      "from school #{ device["school"].inspect } " +
-      "prefering image #{ device["image"] } " +
-      "and server #{ device["preferred_server"].inspect } " +
-      "is requesting a desktop session"
+      logger.info "Thin #{ params["hostname"] } " +
+        "from school #{ device["school"].inspect } " +
+        "prefering image #{ device["image"] } " +
+        "and server #{ device["preferred_server"].inspect } " +
+        "is requesting a desktop session"
 
-    session = Session.create(
-      "hostname" => params["hostname"],
-      "school" => device["school"],
-      "preferred_image" => device["image"],
-      "preferred_server" => device["preferred_server"]
-    )
+      session = Session.create(
+        "hostname" => params["hostname"],
+        "school" => device["school"],
+        "preferred_image" => device["image"],
+        "preferred_server" => device["preferred_server"]
+      )
 
-    session["printer_queues"] = device.printers
+      session["printer_queues"] = device.printers
+      session
+    end
+
+    if User.current
+      Group.by_user_dn(User.current["dn"]).each do |g|
+        session["printer_queues"] += g.printers
+      end
+    end
 
     session.save
 

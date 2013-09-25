@@ -460,11 +460,11 @@ describe PuavoRest::Sessions do
       data = JSON.parse last_response.body
 
       assert data["printer_queues"], "must have printer queues"
-      assert_equal data["printer_queues"].size, 3
 
-      assert_equal data["printer_queues"][0]["description"], "printer1"
-      assert_equal data["printer_queues"][1]["description"], "wireless printer"
-      # TODO: assert 3rd printer
+      assert_equal(data["printer_queues"].select do |p|
+        p["description"] == "group printer"
+      end.size, 1)
+
     end
 
   end
