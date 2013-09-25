@@ -2,6 +2,16 @@
 
 URL=$1
 
+[ "$1" = "--help" -o "$1" = "-h" ] && {
+    echo "
+    usage: $(basename $0) [URL]
+
+    Report LTSP server load average to puavo-rest running in bootserver.
+
+    "
+} && exit 0
+
+
 set -eu
 
 CPU_COUNT=$(nproc)
@@ -9,7 +19,6 @@ PUAVO_DOMAIN=$(cat /etc/puavo/domain)
 
 if [ "${URL}" = "" ]; then
     API_SERVER=$(puavo-resolve-api-server)
-
     if [ "${API_SERVER}" != "" ]; then
         HOSTNAME=$(hostname -f)
         URL="${API_SERVER}/v3/ltsp_servers/${HOSTNAME}"
