@@ -11,6 +11,10 @@ URL=$1
     "
 } && exit 0
 
+if [ "$(cat /etc/puavo/hosttype)" != "ltspserver" ]; then
+    echo "This machine is not a ltsp server" 1>&2
+    exit 1
+fi
 
 set -eu
 
