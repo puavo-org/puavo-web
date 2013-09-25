@@ -407,6 +407,33 @@ describe PuavoRest::Sessions do
       @school.add_printer(@printer1)
       @school.add_wireless_printer(@wireless_printer)
 
+      @group_printer = create_printer(@bootserver, "group printer")
+      @group = Group.new
+      @group.cn = "group1"
+      @group.displayName = "Group 1"
+      @group.puavoSchool = @school.dn
+      @group.save!
+      @group.add_printer(@group_printer)
+
+      @role = Role.new
+      @role.displayName = "Some role"
+      @role.puavoSchool = @school.dn
+      @role.groups << @group
+      @role.save!
+
+      @user = User.new(
+        :givenName => "Bob",
+        :sn  => "Brown",
+        :uid => "bob",
+        :puavoEduPersonAffiliation => "student",
+        :mail => "bob@example.com"
+      )
+      @user.set_password "secret"
+      @user.puavoSchool = @school.dn
+      @user.role_ids = [@role.puavoId]
+      @user.save!
+
+
       put "/v3/ltsp_servers/server1",
         "load_avg" => "0.1",
         "cpu_count" => 2,
@@ -424,7 +451,20 @@ describe PuavoRest::Sessions do
 
       assert_equal data["printer_queues"][0]["description"], "printer1"
       assert_equal data["printer_queues"][1]["description"], "wireless printer"
+    end
 
+    it "from groups are given to authenticated users" do
+      basic_authorize "bob", "secret"
+      post "/v3/sessions", "hostname" => "athin"
+      assert_200
+      data = JSON.parse last_response.body
+
+      assert data["printer_queues"], "must have printer queues"
+      assert_equal data["printer_queues"].size, 3
+
+      assert_equal data["printer_queues"][0]["description"], "printer1"
+      assert_equal data["printer_queues"][1]["description"], "wireless printer"
+      # TODO: assert 3rd printer
     end
 
   end

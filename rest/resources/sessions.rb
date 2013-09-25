@@ -64,7 +64,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   post "/v3/sessions" do
-    auth :server_auth
+    auth :basic_auth, :server_auth
 
     if params["hostname"].nil?
       logger.warn "'hostname' missing"
