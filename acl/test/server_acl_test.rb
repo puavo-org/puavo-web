@@ -8,7 +8,8 @@ env.validate "server" do
   admin.can_search bootserver
   admin.can_read   bootserver, [ :dn, :puavoHostname ]
 
-  admin.cannot_read bootserver, [ :description ], InsufficientAccessRights
+  admin.cannot_read bootserver,  [ :description ],   InsufficientAccessRights
+  admin.cannot_read bootserver2, [ :puavoHostname ], InsufficientAccessRights
 
   admin.cannot_modify bootserver, [ :replace, :puavoHostname,                ["boot03"]   ], InsufficientAccessRights
 
