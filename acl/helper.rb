@@ -73,6 +73,10 @@ class LDAPTestEnv
       end
     end
 
+    Server.all.each do |s|
+      s.destroy
+    end
+
     AccessToken.all.each { |e| e.destroy }
 
 

@@ -197,4 +197,14 @@ def define_basic(env)
     )
     config.dn = printer.dn
   end
+
+  env.define :bootserver do |config|
+    bootserver = Server.create(
+      :puavoHostname => "boot01",
+      :puavoDeviceType => "bootserver",
+      :macAddress => "27:c0:59:3c:bc:b4",
+      :description => "test",
+      :puavoSchool => env.school.dn )
+    config.dn = bootserver.dn
+  end
 end
