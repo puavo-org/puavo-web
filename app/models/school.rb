@@ -107,15 +107,8 @@ class School < BaseGroup
   end
 
   def printers
-    # TODO
-    # Printers always belong to a bootserver. Bootserver might be configured
-    # to specfic schools or to all schools.
-    #
-    # Fetch bootservers configured to this school and combine printers from
-    # them and return them
-    #
-    # For now we just return all printers
-    Printer.all
+    servers_dn = Server.all.map{ |server| server.dn.to_s }
+    Printer.all.select{ |p| school_servers_dn.include?(p.puavoServer.to_s) }
   end
 
   def has_wireless_printer?(printer)
