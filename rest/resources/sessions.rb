@@ -132,7 +132,6 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   delete "/v3/sessions/:uuid" do
-    auth :server_auth, :legacy_server_auth
 
     Session.load(params["uuid"]).destroy
     json :ok => true
