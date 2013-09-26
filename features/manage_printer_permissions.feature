@@ -18,6 +18,7 @@ Feature: Manage printer permissions
     And the following bootserver:
       | puavoHostname | macAddress        | school           |
       | boot1         | 27:b0:59:3c:ac:a4 | Example school 1 |
+      | boot2         | 27:b0:59:3c:ac:a5 | Test School 1    |
     And the following printers for "boot1" bootserver:
       | printerDescription | printerLocation | printerMakeAndModel  | printerType | printerURI   |
       | printer1           | a school        | foo                  | 1234        | socket://baz |
