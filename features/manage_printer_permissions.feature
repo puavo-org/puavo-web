@@ -4,7 +4,10 @@ Feature: Manage printer permissions
   wants [behaviour]
 
   Background:
-    Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
+    Given the following schools:
+    | displayName   | cn          |
+    | Test School 1 | testschool1 |
+    And a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following roles:
       | displayName |
       | Staff       |
@@ -23,6 +26,10 @@ Feature: Manage printer permissions
       | printerDescription | printerLocation | printerMakeAndModel  | printerType | printerURI   |
       | printer1           | a school        | foo                  | 1234        | socket://baz |
       | printer2           | a home          | foo                  | 1234        | socket://baz |
+    And the following printers for "boot2" bootserver:
+      | printerDescription | printerLocation | printerMakeAndModel  | printerType | printerURI   |
+      | printer3           | a school        | foo                  | 1234        | socket://baz |
+      | printer4           | a home          | foo                  | 1234        | socket://baz |
 
   Scenario: Can navigate to printer permissions list
     Given I am logged in as "pavel" with password "secret"
@@ -32,6 +39,7 @@ Feature: Manage printer permissions
     Then I should see "Available printers"
     Then I should see "printer1"
     Then I should see "Edit permissions"
+    And I should not see "printer3"
 
   Scenario: Can activate printer for school
     Given I am logged in as "pavel" with password "secret"
