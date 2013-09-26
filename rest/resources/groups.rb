@@ -3,7 +3,7 @@ module PuavoRest
 class Group < LdapHash
   ldap_map :dn, :dn
   ldap_map :cn, :name
-  ldap_map :puavoPrinterQueue, :printer_queues
+  ldap_map :puavoPrinterQueue, :printer_queue_dns
 
   def self.ldap_base
     "ou=Groups,#{ organisation["base"] }"
@@ -13,9 +13,8 @@ class Group < LdapHash
     filter("(member=#{ escape dn })")
   end
 
-  def printers
-      Array(self["printer_queues"]).map do |dn|
-      # TODO: optimize to single ldap query
+  def printer_queues
+    Array(self["printer_queue_dns"]).map do |dn|
       PrinterQueue.by_dn(dn)
     end
   end

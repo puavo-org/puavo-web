@@ -53,14 +53,8 @@ class Device < LdapHash
     @school = School.by_dn(self["school"])
   end
 
-  def printers
-    (
-      Array(school["printer_queues"]) +
-      Array(school["wireless_printer_queues"])
-    ).map do |dn|
-      # TODO: optimize to single ldap query
-      PrinterQueue.by_dn(dn)
-    end
+  def printer_queues
+    []
   end
 
   # Cached organisation query

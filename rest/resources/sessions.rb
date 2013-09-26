@@ -90,13 +90,14 @@ class Sessions < LdapSinatra
         "preferred_server" => device["preferred_server"]
       )
 
-      session["printer_queues"] = device.printers
+      session["printer_queues"] = device.school.printer_queues
+      session["printer_queues"] += device.school.wireless_printer_queues
       session
     end
 
     if User.current
-      Group.by_user_dn(User.current["dn"]).each do |g|
-        session["printer_queues"] += g.printers
+      Group.by_user_dn(User.current["dn"]).each do |group|
+        session["printer_queues"] += group.printer_queues
       end
     end
 
