@@ -200,6 +200,15 @@ class LDAPObject
     end
   end
 
+  def can_search(target)
+    base = target.dn.gsub(/^[^,]*,/, '')
+    connect
+    entry = @conn.search(:base => base)
+
+    if entry == false || entry.nil?
+      raise InsufficientAccessRights, "#{ to_s } failed to search anything from #{ target }"
+    end
+  end
 
   def can_read(target, attributes=nil)
     attributes = [attributes] if attributes.class != Array

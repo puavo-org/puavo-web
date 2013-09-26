@@ -5,7 +5,8 @@ env.validate "server" do
   owner.can_modify bootserver, [ :replace, :puavoHostname,                ["boot02"]   ]
   owner.can_modify bootserver, [ :replace, :description,                  ["test"]   ]
 
-  admin.can_read bootserver, [ :dn, :puavoHostname ]
+  admin.can_search bootserver
+  admin.can_read   bootserver, [ :dn, :puavoHostname ]
 
   admin.cannot_read bootserver, [ :description ], InsufficientAccessRights
 
