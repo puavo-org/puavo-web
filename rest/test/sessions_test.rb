@@ -494,8 +494,19 @@ describe PuavoRest::Sessions do
       assert_equal(data["printer_queues"].select do |p|
         p["description"] == "group printer"
       end.size, 1)
-
     end
+
+    it "for wireless users are given from /v3/devices/:hostname/wireless_printer_queues" do
+      get "/v3/devices/athin/wireless_printer_queues", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal data.size, 1
+      printer = data.first
+      assert_equal printer["description"], "wireless printer"
+    end
+
 
   end
 

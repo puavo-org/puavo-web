@@ -14,5 +14,23 @@ class School < LdapHash
       Array(es).map { |s| s.downcase.strip }
   end
 
+  def printers
+      (
+          Array(self["printer_queues"]) +
+          Array(self["wireless_printer_queues"])
+      ).map do |dn|
+      # TODO: optimize to single ldap query
+      PrinterQueue.by_dn(dn)
+    end
+  end
+
+  def wireless_printer_queues
+      Array(self["wireless_printer_queues"]).map do |dn|
+      # TODO: optimize to single ldap query
+      PrinterQueue.by_dn(dn)
+    end
+
+  end
+
 end
 end

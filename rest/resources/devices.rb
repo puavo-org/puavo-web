@@ -117,5 +117,12 @@ class Devices < LdapSinatra
     json device
   end
 
+  get "/v3/devices/:hostname/wireless_printer_queues" do
+    auth :basic_auth, :server_auth
+
+    device = Device.by_hostname(params["hostname"])
+    json device.school.wireless_printer_queues
+  end
+
 end
 end
