@@ -16,8 +16,8 @@ Feature: Manage printer permissions
       | athin         | 33:2d:2b:13:ce:a0 | thinclient      |
       | anotherthin   | a0:4e:68:94:a1:7b | thinclient      |
     And the following bootserver:
-      | puavoHostname | macAddress        |
-      | boot1         | 27:b0:59:3c:ac:a4 |
+      | puavoHostname | macAddress        | school           |
+      | boot1         | 27:b0:59:3c:ac:a4 | Example school 1 |
     And the following printers:
       | printerDescription | printerLocation | printerMakeAndModel  | printerType | printerURI   |
       | printer1           | a school        | foo                  | 1234        | socket://baz |
@@ -33,8 +33,7 @@ Feature: Manage printer permissions
     Then I should see "Edit permissions"
 
   Scenario: Can activate printer for school
-    # Given I am logged in as "pavel" with password "secret"
-    Given I am logged in as "cucumber" with password "cucumber"
+    Given I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
     And I should see "Available printers"
     And I press "Edit permissions" on the "printer1" row
@@ -46,8 +45,7 @@ Feature: Manage printer permissions
     Then the "Activate for anonymous" checkbox should not be checked
 
   Scenario: Can activate wireless printer for school
-    # Given I am logged in as "pavel" with password "secret"
-    Given I am logged in as "cucumber" with password "cucumber"
+    Given I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
     And I should see "Available printers"
     And I press "Edit permissions" on the "printer1" row
@@ -57,8 +55,7 @@ Feature: Manage printer permissions
     Then the "Activate for anonymous" checkbox should be checked
 
   Scenario: Can activate printer for group
-    # Given I am logged in as "pavel" with password "secret"
-    Given I am logged in as "cucumber" with password "cucumber"
+    Given I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
     And I should see "Available printers"
     And I press "Edit permissions" on the "printer1" row
@@ -67,8 +64,7 @@ Feature: Manage printer permissions
     Then the "Class 1" checkbox should be checked
 
   Scenario: Can activate printer from device
-    # Given I am logged in as "pavel" with password "secret"
-    Given I am logged in as "cucumber" with password "cucumber"
+    Given I am logged in as "pavel" with password "secret"
     And I am on the edit page of "athin" device
     And I should see "Terminal information"
     And I check "printer1"

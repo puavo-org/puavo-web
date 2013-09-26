@@ -25,9 +25,16 @@ Given /^the following bootserver:$/ do |servers|
     raise "Can add only one bootserver!"
   end
   attrs = servers.hashes.first
+  school = nil
+  if attrs["school"]
+    school = School.find(:first, :attribute => "displayName", :value => attrs["school"])
+    attrs.delete("school")
+  end
+
   server = Server.new
   server.attributes = attrs
-  server.puavoDeviceType = "ltspserver" # TODO: can this be bootserver?
+  server.puavoSchool = school.dn
+  server.puavoDeviceType = "bootserver"
   server.save!
   @bootserver = server
 end
