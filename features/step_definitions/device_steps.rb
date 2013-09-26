@@ -19,27 +19,6 @@ Given /^the following devices:$/ do |servers|
   end
 end
 
-Given /^the following bootserver:$/ do |servers|
-  set_ldap_admin_connection
-  if @bootserver
-    raise "Can add only one bootserver!"
-  end
-  attrs = servers.hashes.first
-  school = nil
-  if attrs["school"]
-    school = School.find(:first, :attribute => "displayName", :value => attrs["school"])
-    attrs.delete("school")
-  end
-
-  server = Server.new
-  server.attributes = attrs
-  server.puavoSchool = school.dn
-  server.puavoDeviceType = "bootserver"
-  server.save!
-  @bootserver = server
-end
-
-
 Given /^the following printers:$/ do |servers|
   set_ldap_admin_connection
 
