@@ -189,38 +189,38 @@ Post fields:
 
 returns
 
-{
-  "printer_queues": [
     {
-      "uri": "socket://tulostin-joyk-opehuone-brother.ltsp.joroinen.opinsys.fi",
-      "description": "Ylakoulu-Opehuone-Brother",
-      "type": "8433692",
-      "location": "Yläkoulun ja Lukion opehuone",
-      "model": "Brother HL-4050CDN Foomatic/Postscript",
-      "server": "uid=admin,o=puavo",
-      "dn": "puavoId=5389,ou=Printers,dc=edu,dc=hogwarts,dc=fi"
+      "printer_queues": [
+        {
+          "uri": "socket://tulostin-joyk-opehuone-brother.ltsp.joroinen.opinsys.fi",
+          "description": "Ylakoulu-Opehuone-Brother",
+          "type": "8433692",
+          "location": "Yläkoulun ja Lukion opehuone",
+          "model": "Brother HL-4050CDN Foomatic/Postscript",
+          "server": "uid=admin,o=puavo",
+          "dn": "puavoId=5389,ou=Printers,dc=edu,dc=hogwarts,dc=fi"
+        }
+      ],
+      "ltsp_server": {
+        "state": {
+          "updated": "2013-09-26 15:44:46 +0300",
+          "fqdn": "myltsp",
+          "ltsp_image": "",
+          "load_avg": 0.14
+        },
+        "schools": null,
+        "hostname": "myltsp",
+        "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
+      },
+      "client": {
+        "preferred_server": null,
+        "preferred_image": null,
+        "school": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+        "hostname": "testfat"
+      },
+      "created": "2013-09-26 15:45:00 +0300",
+      "uuid": "613ee7b0-08d7-0131-84a3-52540007db7f"
     }
-  ],
-  "ltsp_server": {
-    "state": {
-      "updated": "2013-09-26 15:44:46 +0300",
-      "fqdn": "myltsp",
-      "ltsp_image": "",
-      "load_avg": 0.14
-    },
-    "schools": null,
-    "hostname": "myltsp",
-    "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
-  },
-  "client": {
-    "preferred_server": null,
-    "preferred_image": null,
-    "school": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
-    "hostname": "testfat"
-  },
-  "created": "2013-09-26 15:45:00 +0300",
-  "uuid": "613ee7b0-08d7-0131-84a3-52540007db7f"
-}
 
 ### Examples
 
