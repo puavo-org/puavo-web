@@ -50,7 +50,7 @@ install:
 
 install-client:
 	mkdir -p $(DESTDIR)$(prefix)/sbin
-	install -m 644 bin/puavo-post-ltsp-server-load $(DESTDIR)$(prefix)/sbin
+	install -m 644 bin/puavo-load-reporter $(DESTDIR)$(prefix)/sbin
 
 .PHONY: test
 test:

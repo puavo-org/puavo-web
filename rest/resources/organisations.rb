@@ -32,6 +32,12 @@ class Organisation < LdapHash
       end
     end
 
+    # Bootservers must have default organisation because they might use unknown
+    # hostnames.
+    if CONFIG["bootserver"] && @@by_domain["*"].nil?
+      raise "Failed to configure #{ CONFIG["default_organisation_domain"].inspect } as default organisation"
+    end
+
     @@by_domain
   end
 
