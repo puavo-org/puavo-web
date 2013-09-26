@@ -43,6 +43,7 @@ while true; do
 
     curl --config - \
     --request PUT \
+    --header 'Authorization: Bootserver' \
     --max-time 5 \
     --cacert /etc/puavo/certs/rootca.pem \
     $URL << EOF || true
