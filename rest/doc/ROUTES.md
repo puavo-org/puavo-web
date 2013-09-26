@@ -189,23 +189,48 @@ Post fields:
 
 returns
 
+{
+  "printer_queues": [
     {
-      "created": "2013-06-06 09:54:05 +0300",
-      "uuid": "cd600a50-b0a3-0130-b677-080027880ca6",
-      "ltsp_server": {
-        "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
-        "hostname": "ltspserver1",
-        "updated": "2013-06-06 09:54:01 +0300",
-        "ltsp_image": "test-image",
-        "load_avg": 0.095
-      },
-      "client": {
-        "preferred_server": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi,
-        "preferred_image": "someimage",
-        "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
-        "hostname": "testthin"
-      }
+      "uri": "socket://tulostin-joyk-opehuone-brother.ltsp.joroinen.opinsys.fi",
+      "description": "Ylakoulu-Opehuone-Brother",
+      "type": "8433692",
+      "location": "Yläkoulun ja Lukion opehuone",
+      "model": "Brother HL-4050CDN Foomatic/Postscript",
+      "server": "uid=admin,o=puavo",
+      "dn": "puavoId=5389,ou=Printers,dc=edu,dc=hogwarts,dc=fi"
     }
+  ],
+  "ltsp_server": {
+    "state": {
+      "updated": "2013-09-26 15:44:46 +0300",
+      "fqdn": "myltsp",
+      "ltsp_image": "",
+      "load_avg": 0.14
+    },
+    "schools": null,
+    "hostname": "myltsp",
+    "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
+  },
+  "client": {
+    "preferred_server": null,
+    "preferred_image": null,
+    "school": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+    "hostname": "testfat"
+  },
+  "created": "2013-09-26 15:45:00 +0300",
+  "uuid": "613ee7b0-08d7-0131-84a3-52540007db7f"
+}
+
+### Examples
+
+For authenticated users with kerberos:
+
+    curl --form hostname=$(hostname) --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/sessions
+
+For guests
+
+    curl --form hostname=$(hostname) --header 'Authorization: Bootserver'  $(puavo-resolve-api-server)/v3/sessions
 
 ## GET /v3/sessions
 
@@ -218,6 +243,10 @@ Return session by uuid.
 ## DELETE /v3/sessions/:uuid
 
 Delete session by uuid.
+
+### Examples
+
+    curl --request DELETE $(puavo-resolve-api-server)/v3/sessions/<uuid from post>
 
 ## GET /v3/devices/:hostname/wlan_networks
 
