@@ -37,7 +37,22 @@ class LdapSinatra < Sinatra::Base
     }
   end
 
+  # Pick bootserver credentials when Header 'Authorization: Bootserver' is set
   def server_auth
+    if not CONFIG["bootserver"]
+      logger.error "Cannot use bootserver auth on cloud installation"
+      return
+    end
+
+    if env["HTTP_AUTHORIZATION"].to_s.downcase == "bootserver"
+      return CONFIG["server"]
+    end
+  end
+
+  # In an old version bootserver authentication was picked when no other
+  # authentication were available. But that conflicted with the kerberos
+  # authentication. This is now legacy and will removed in future.
+  def legacy_server_auth
     if not CONFIG["bootserver"]
       logger.error "Cannot use bootserver auth on cloud installation"
       return
@@ -45,18 +60,27 @@ class LdapSinatra < Sinatra::Base
 
     # In future we will only use server based authentication if 'Authorization:
     # Bootserver' is set. Otherwise we will assume Kerberos authentication.
-    if env["HTTP_AUTHORIZATION"] != "Bootserver"
-      logger.warn "DEPRECATED! Header 'Authorization: Bootserver' is missing from server auth"
+    if env["HTTP_AUTHORIZATION"].to_s.downcase != "bootserver"
+      logger.warn "WARNING! Using deprecated bootserver authentication without the Header 'Authorization: Bootserver'"
     end
+
+    ## Helper to sweep out lecagy calls from tests
+    # if ENV["RACK_ENV"] == "test"
+    #   puts "Legacy legacy_server_auth usage from:"
+    #   puts caller[0..5]
+    #   puts
+    # end
 
     return CONFIG["server"]
   end
 
 
+  # This must be always the last authentication option because it is
+  # initialized by the server by responding 401 Unauthorized
   def kerberos
     return if env["HTTP_AUTHORIZATION"].nil?
     auth_key = env["HTTP_AUTHORIZATION"].split()[0]
-    return if auth_key.downcase != "negotiate"
+    return if auth_key.to_s.downcase != "negotiate"
     logger.info "Using Kerberos authentication"
     return {
       :kerberos => Base64.decode64(env["HTTP_AUTHORIZATION"].split()[1])
@@ -64,8 +88,8 @@ class LdapSinatra < Sinatra::Base
   end
 
   def auth(*auth_methods)
-    if auth_methods.include?(:kerberos) && auth_methods.include?(:server_auth)
-      raise "server auth and kerberos is not yet supported on same resource"
+    if auth_methods.include?(:kerberos) && auth_methods.include?(:legacy_server_auth)
+      raise "legacy server auth and kerberos cannot be used on the same resource"
     end
 
     auth_methods.each do |method|

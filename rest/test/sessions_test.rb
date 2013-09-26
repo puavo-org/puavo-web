@@ -54,7 +54,9 @@ describe PuavoRest::Sessions do
         "ltsp_image" => "image2"
       assert_200
 
-      post "/v3/sessions", "hostname" => "athin"
+      post "/v3/sessions", { "hostname" => "athin" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
       data = JSON.parse last_response.body
@@ -78,7 +80,9 @@ describe PuavoRest::Sessions do
         "ltsp_image" => "image2"
       assert_200
 
-      post "/v3/sessions", "hostname" => "athin"
+      post "/v3/sessions", { "hostname" => "athin" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
       data = JSON.parse last_response.body
@@ -110,7 +114,9 @@ describe PuavoRest::Sessions do
         "ltsp_image" => "image2"
       assert_200
 
-      post "/v3/sessions", "hostname" => "thin-with-prefered-server"
+      post "/v3/sessions", { "hostname" => "thin-with-prefered-server" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver",
+      }
       assert_200
 
       data = JSON.parse last_response.body
@@ -126,7 +132,9 @@ describe PuavoRest::Sessions do
 
   describe "nonexistent device hostname" do
     it "gets 404" do
-      post "/v3/sessions", "hostname" => "nonexistent"
+      post "/v3/sessions", { "hostname" => "nonexistent" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_equal 404, last_response.status
     end
   end
@@ -150,7 +158,9 @@ describe PuavoRest::Sessions do
         :puavoSchool => @school.dn
       )
 
-      post "/v3/sessions", "hostname" => "thinwithimage"
+      post "/v3/sessions", { "hostname" => "thinwithimage" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       data = JSON.parse last_response.body
       assert_equal data["ltsp_server"]["hostname"], "testserver"
     end
@@ -176,7 +186,9 @@ describe PuavoRest::Sessions do
         :puavoSchool => @school.dn
       )
 
-      post "/v3/sessions", "hostname" => "thinnoimage"
+      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       data = JSON.parse last_response.body
       assert_equal  "school-image-server", data["ltsp_server"]["hostname"]
     end
@@ -203,7 +215,9 @@ describe PuavoRest::Sessions do
       test_organisation.puavoDeviceImage = "organisationimage"
       test_organisation.save!
 
-      post "/v3/sessions", "hostname" => "thinnoimage"
+      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
       data = JSON.parse last_response.body
       assert_equal  "organisation-image-server", data["ltsp_server"]["hostname"]
@@ -228,7 +242,9 @@ describe PuavoRest::Sessions do
         :puavoSchool => @school.dn
       )
 
-      post "/v3/sessions", "hostname" => "thinnoimage"
+      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
       data = JSON.parse last_response.body
@@ -255,7 +271,9 @@ describe PuavoRest::Sessions do
     end
 
     it "can be fetched with GET" do
-      post "/v3/sessions", "hostname" => "thinnoimage"
+      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
       post_data = JSON.parse last_response.body
@@ -274,7 +292,9 @@ describe PuavoRest::Sessions do
     end
 
     it "can be deleted with DELETE" do
-      post "/v3/sessions", "hostname" => "thinnoimage"
+      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
       data = JSON.parse last_response.body
@@ -299,10 +319,14 @@ describe PuavoRest::Sessions do
         :puavoSchool => @school.dn
       )
 
-      post "/v3/sessions", "hostname" => "thin1"
+      post "/v3/sessions", { "hostname" => "thin1" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
-      post "/v3/sessions", "hostname" => "thin2"
+      post "/v3/sessions", { "hostname" => "thin2" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
       get "/v3/sessions"
@@ -362,7 +386,9 @@ describe PuavoRest::Sessions do
         "ltsp_image" => "anotherimage"
       assert_200
 
-      post "/v3/sessions", "hostname" => "normalschooldevice"
+      post "/v3/sessions", { "hostname" => "normalschooldevice" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       data = JSON.parse last_response.body
 
       # But the client will get normalserver regardless
@@ -381,7 +407,9 @@ describe PuavoRest::Sessions do
         "cpu_count" => 2,
         "ltsp_image" => "anotherimage"
 
-      post "/v3/sessions", "hostname" => "limitedschooldevice"
+      post "/v3/sessions", { "hostname" => "limitedschooldevice" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       data = JSON.parse last_response.body
 
       # But client will get limitedserver because it is forced to its school
@@ -442,7 +470,9 @@ describe PuavoRest::Sessions do
     end
 
     it "are given to guest sessions" do
-      post "/v3/sessions", "hostname" => "athin"
+      post "/v3/sessions", { "hostname" => "athin" }, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
       data = JSON.parse last_response.body
 

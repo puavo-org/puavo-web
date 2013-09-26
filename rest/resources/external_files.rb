@@ -45,7 +45,7 @@ class ExternalFiles < LdapSinatra
   #
   # @!macro route
   get "/v3/external_files" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     json ExternalFile.all
   end
@@ -58,7 +58,7 @@ class ExternalFiles < LdapSinatra
   #    }
   # @!macro route
   get "/v3/external_files/:name/metadata" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     json ExternalFile.metadata(params[:name])
   end
@@ -66,7 +66,7 @@ class ExternalFiles < LdapSinatra
   # Get file contents
   # @!macro route
   get "/v3/external_files/:name" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     content_type "application/octet-stream"
     ExternalFile.data_only(params[:name])
@@ -84,7 +84,7 @@ class ExternalFiles < LdapSinatra
   #
   # @!macro route
   get "/v3/devices/:hostname/external_files" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     if device = Device.by_hostname(params[:hostname])
       if device.printer_ppd
@@ -107,7 +107,7 @@ class ExternalFiles < LdapSinatra
   # Get file contents by device hostname
   # @!macro route
   get "/v3/devices/:hostname/external_files/:name" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     content_type "application/octet-stream"
 
