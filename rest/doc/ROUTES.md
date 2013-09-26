@@ -1,4 +1,3 @@
-
 # API Routes
 
 All routes return json documents unless mentioned otherwise.
@@ -180,7 +179,7 @@ Will return the most appropriate ltsp server depending on
   - preferred server attribute on device
   - preferred school attribute on ltsp server
   - ltsp server load
-  - details https://github.com/opinsys/puavo-users/blob/master/rest/resources/sessions.rb#L33
+  - printer queues the user can use
 
 Sessions are stored in memory only but are not automatically deleted.
 
