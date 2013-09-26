@@ -1,15 +1,18 @@
 
-Given /^the following printers:$/ do |servers|
+Given /^the following printers for "([^\"]*)" bootserver:$/ do |bootserver, printers|
   set_ldap_admin_connection
 
-  if @bootserver.nil?
+  bootserver = Server.find(:first,
+                           :attribute => "puavoHostname",
+                           :value => bootserver)
+  if bootserver.nil?
     raise "Cannot add printers before bootserver is added"
   end
 
-  servers.hashes.each do |attrs|
+  printers.hashes.each do |attrs|
     d = Printer.new
     d.attributes = attrs
-    d.puavoServer = @bootserver.dn
+    d.puavoServer = bootserver.dn
     d.save!
   end
 end

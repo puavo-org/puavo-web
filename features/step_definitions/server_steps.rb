@@ -10,9 +10,6 @@ end
 
 Given /^the following bootserver:$/ do |servers|
   set_ldap_admin_connection
-  if @bootserver
-    raise "Can add only one bootserver!"
-  end
   attrs = servers.hashes.first
   school = nil
   if attrs["school"]
