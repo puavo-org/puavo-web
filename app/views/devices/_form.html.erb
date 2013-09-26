@@ -18,10 +18,16 @@
 <h2>Printers</h2>
 <ul>
 <% @school.printers.each do |printer| %>
+  <% device_has_printer = @device.has_printer?(printer) %>
+  <% printer_disabled = false %>
+  <% if @school.has_printer?(printer) %>
+    <% printer_disabled = true %>
+    <% device_has_printer = true %>
+  <% end %>
   <li>
     <label>
     <%= hidden_field_tag "printers[#{ printer.dn}]", false %>
-    <%= check_box_tag "printers[#{ printer.dn}]", true, @device.has_printer?(printer) %>
+    <%= check_box_tag "printers[#{ printer.dn}]", true, device_has_printer, :disabled => printer_disabled %>
     <%= printer.printerDescription %>
 
     (
