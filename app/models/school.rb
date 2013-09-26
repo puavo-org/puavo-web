@@ -108,7 +108,7 @@ class School < BaseGroup
 
   def printers
     servers_dn = Server.all.map{ |server| server.dn.to_s }
-    Printer.all.select{ |p| school_servers_dn.include?(p.puavoServer.to_s) }
+    Printer.all.select{ |p| servers_dn.include?(p.puavoServer.to_s) }
   end
 
   def has_wireless_printer?(printer)
