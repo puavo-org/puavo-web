@@ -24,7 +24,7 @@ describe PuavoRest::Sessions do
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
-    create_device(
+    @device = create_device(
       :puavoDeviceImage => "ownimage",
       :puavoHostname => "athin",
       :macAddress => "bf:9a:8c:1b:e0:6a",
@@ -443,6 +443,9 @@ describe PuavoRest::Sessions do
       @group.save!
       @group.add_printer(@group_printer)
 
+      @device_printer = create_printer(@bootserver, "device printer")
+      @device.add_printer(@device_printer)
+
       @role = Role.new
       @role.displayName = "Some role"
       @role.puavoSchool = @school.dn
@@ -477,24 +480,37 @@ describe PuavoRest::Sessions do
       data = JSON.parse last_response.body
 
       assert data["printer_queues"], "must have printer queues"
-      assert_equal data["printer_queues"].size, 2
+      assert_equal data["printer_queues"].size, 3
 
-      assert_equal data["printer_queues"][0]["description"], "printer1"
-      assert_equal data["printer_queues"][1]["description"], "wireless printer"
+      assert_equal data["printer_queues"][0]["description"], "device printer"
+      assert_equal data["printer_queues"][1]["description"], "printer1"
+      assert_equal data["printer_queues"][2]["description"], "wireless printer"
     end
 
-    it "from groups are given to authenticated users" do
-      basic_authorize "bob", "secret"
-      post "/v3/sessions", "hostname" => "athin"
-      assert_200
-      data = JSON.parse last_response.body
+    describe "for authenticated users" do
 
-      assert data["printer_queues"], "must have printer queues"
+      before(:each) do
+        basic_authorize "bob", "secret"
+        post "/v3/sessions", "hostname" => "athin"
+        assert_200
+        @data = JSON.parse last_response.body
+        assert @data["printer_queues"], "must have printer queues"
+      end
 
-      assert_equal(data["printer_queues"].select do |p|
-        p["description"] == "group printer"
-      end.size, 1)
+      it "from groups are given to authenticated users" do
+        assert_equal(@data["printer_queues"].select do |p|
+          p["description"] == "group printer"
+        end.size, 1)
+      end
+
+      it "from devices are given to authenticated users" do
+        assert_equal(@data["printer_queues"].select do |p|
+          p["description"] == "device printer"
+        end.size, 1)
+      end
+
     end
+
 
     it "for wireless users are given from /v3/devices/:hostname/wireless_printer_queues" do
       get "/v3/devices/athin/wireless_printer_queues", {}, {

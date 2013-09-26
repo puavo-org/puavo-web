@@ -90,7 +90,8 @@ class Sessions < LdapSinatra
         "preferred_server" => device["preferred_server"]
       )
 
-      session["printer_queues"] = device.school.printer_queues
+      session["printer_queues"] = device.printer_queues
+      session["printer_queues"] += device.school.printer_queues
       session["printer_queues"] += device.school.wireless_printer_queues
       session
     end

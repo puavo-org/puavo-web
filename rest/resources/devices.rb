@@ -12,6 +12,7 @@ class Device < LdapHash
   ldap_map :puavoDeviceKernelArguments, :kernel_arguments
   ldap_map :puavoDeviceKernelVersion, :kernel_version
   ldap_map :puavoDeviceVertRefresh, :vertical_refresh
+  ldap_map :puavoPrinterQueue, :printer_queue_dns
   ldap_map :macAddress, :mac_address
   ldap_map :puavoId, :puavo_id
   ldap_map :puavoId, :puavo_id
@@ -54,7 +55,9 @@ class Device < LdapHash
   end
 
   def printer_queues
-    []
+    Array(self["printer_queue_dns"]).map do |dn|
+      PrinterQueue.by_dn(dn)
+    end
   end
 
   # Cached organisation query
