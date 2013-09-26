@@ -192,12 +192,12 @@ returns
     {
       "printer_queues": [
         {
-          "uri": "socket://tulostin-joyk-opehuone-brother.ltsp.joroinen.opinsys.fi",
+          "uri": "socket://tulostin-joyk-opehuone-brother.ltsp.hogwarts.opinsys.fi",
           "description": "Ylakoulu-Opehuone-Brother",
           "type": "8433692",
           "location": "Yläkoulun ja Lukion opehuone",
           "model": "Brother HL-4050CDN Foomatic/Postscript",
-          "server": "uid=admin,o=puavo",
+          "server": "puavoId=202295,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
           "dn": "puavoId=5389,ou=Printers,dc=edu,dc=hogwarts,dc=fi"
         }
       ],
@@ -212,7 +212,7 @@ returns
         "hostname": "myltsp",
         "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
       },
-      "client": {
+      "device": {
         "preferred_server": null,
         "preferred_image": null,
         "school": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
