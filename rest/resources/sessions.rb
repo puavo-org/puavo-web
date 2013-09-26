@@ -14,7 +14,7 @@ class Session < LdapHash
     session = new.merge!(
       "uuid" => UUID.generator.generate,
       "created" => Time.now,
-      "client" => device_attrs
+      "device" => device_attrs
     )
 
     filtered = ServerFilter.new(LtspServer.all_with_state)
