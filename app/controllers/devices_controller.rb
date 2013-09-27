@@ -101,6 +101,19 @@ class DevicesController < ApplicationController
 
     @servers = Server.all.map{ |server|  [server.puavoHostname, server.dn.to_s] }
 
+    @school_printers = []
+    @school.printers.each do |printer|
+      has_printer = @device.has_printer?(printer)
+      input_disabled = false
+      if @school.has_printer?(printer)
+        input_disabled = true
+        has_printer = true
+      end
+      @school_printers.push({ :has_printer => has_printer,
+                              :input_disabled => input_disabled,
+                              :object => printer })
+    end
+
   end
 
   # POST /devices

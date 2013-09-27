@@ -20,21 +20,15 @@
 <p><%= t('.printer_description') %></p>
 
 <ul>
-<% @school.printers.each do |printer| %>
-  <% device_has_printer = @device.has_printer?(printer) %>
-  <% printer_disabled = false %>
-  <% if @school.has_printer?(printer) %>
-    <% printer_disabled = true %>
-    <% device_has_printer = true %>
-  <% end %>
+<% @school_printers.each do |printer| %>
   <li>
     <label>
-    <%= hidden_field_tag "printers[#{ printer.dn}]", false %>
-    <%= check_box_tag "printers[#{ printer.dn}]", true, device_has_printer, :disabled => printer_disabled %>
+    <%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
+    <%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
 
     <%= link_to(
-      printer.printerDescription,
-      edit_printer_permission_path(@school, printer)
+      printer[:object].printerDescription,
+      edit_printer_permission_path(@school, printer[:object])
     ) %>
     </label>
   </li>
