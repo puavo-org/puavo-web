@@ -16,6 +16,9 @@
   <% end %>
 
 <h2><%= t('.printer_title') %></h2>
+
+<p><%= t('.printer_description') %></p>
+
 <ul>
 <% @school.printers.each do |printer| %>
   <% device_has_printer = @device.has_printer?(printer) %>
@@ -28,14 +31,11 @@
     <label>
     <%= hidden_field_tag "printers[#{ printer.dn}]", false %>
     <%= check_box_tag "printers[#{ printer.dn}]", true, device_has_printer, :disabled => printer_disabled %>
-    <%= printer.printerDescription %>
 
-    (
     <%= link_to(
-      t('.link_printer_permission'),
+      printer.printerDescription,
       edit_printer_permission_path(@school, printer)
     ) %>
-    )
     </label>
   </li>
 <% end %>

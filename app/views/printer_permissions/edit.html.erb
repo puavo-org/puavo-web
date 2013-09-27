@@ -1,25 +1,31 @@
 <div class="printer-permissions">
 <h1><span><%= @printer.printerDescription %></span></h1>
 
-<p>Printer usage permissions</p>
+<p><%= t('.title') %></p>
 
 <%= form_tag(printer_permission_path(@school, @printer), :method => :put) do %>
 
   <fieldset>
-    <legend>Global</legend>
+    <legend><%= t('.global') %></legend>
 
     <ul>
       <li>
         <label>
+          <%= check_box_tag "activate_wireless", true, @school.has_wireless_printer?(@printer)%>
+	  <%= t('.active_for_wireless') %>
+        </label>
+      </li>
+      <li>
+        <label>
           <%= check_box_tag "activate", true, @school.has_printer?(@printer) %>
-          Activate for all users
+          <%= t('.active_for_all_users') %>
         </label>
       </li>
 
       <li>
         <label>
-          <%= check_box_tag "activate_wireless", true, @school.has_wireless_printer?(@printer)%>
-          Activate for anonymous wireless users too (iPads etc).
+          <%= check_box_tag "activate", true, @school.has_printer?(@printer) %>
+          <%= t('.active_advanced') %>
         </label>
       </li>
     </ul>
@@ -27,7 +33,7 @@
   </fieldset>
 
   <fieldset>
-    <legend>Groups</legend>
+    <legend><%= t('.groups') %></legend>
 
     <ul>
       <% Group.all.each do |group| %>
@@ -44,16 +50,16 @@
   </fieldset>
 
   <fieldset class="devices">
-    <legend>Devices</legend>
+    <legend><%= t('.devices') %></legend>
     <p>
-      Printer is allowed for following individual devices:
+      <%= t('.device_header_text') %>
     </p>
 
     <table class="list">
       <tr class="thead">
-        <th>Hostname</th>
-        <th>Remove</th>
-        <th>Actions</th>
+        <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
+        <th><%= t('link.remove') %></th>
+        <th><%= t('actions') %></th>
       </tr>
       <% @devices.each do |device| %>
       <tr>
@@ -75,13 +81,13 @@
     <div class="clearfix"></div>
 
     <p>
-       Printers for devices are set from the device edit page.
+       <%= t('.device_footer_text') %>
     </p>
 
   </fieldset>
 
 
-  <%= submit_tag "Save",  :class => "btn" %>
+  <%= submit_tag t('link.save'),  :class => "btn" %>
   <div class="cancel">
     <%= link_to t('link.cancel'), printer_permissions_path(@school), :class => 'btn btn-danger' %>
   </div>

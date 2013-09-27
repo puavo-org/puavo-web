@@ -39,6 +39,7 @@ en:
     forms:
       required_field: "* = Required field"
   link:
+    save: Save
     more: More
     edit: Edit
     back: Back
@@ -73,6 +74,7 @@ en:
     set_install_mode: Revoke certificate
     automounts: Automounts
     new_automount: New automount
+    printer_permissions: Printer permissions
   flash:
     added: "%{item} was successfully created."
     updated: "%{item} was successfully updated."
@@ -658,8 +660,8 @@ en:
       title: Device settings
       terminal_title: Terminal settings
     form:
-      printer_title: Printers
-      link_printer_permission: Edit all permissions
+      printer_title: Printer permissions
+      printer_description: Tällä laitteella on tulostaminen sallittu seraaviin tulostimiin
     form_cups:
       cups_settings: CUPS settings
     cups:
@@ -726,3 +728,14 @@ en:
     save: Save
     organisation: organisation
     disabled_description: This service is activated from the %{organisation}.
+  printer_permissions:
+    edit:
+      title: Printer usage permissions
+      global: Global
+      active_for_all_users: Tulostaminen sallittu kaikilta järjestelmän laitteilta
+      active_for_wireless: Tulostaminen sallittu kaikilta järjestelmän laitteilta sekä ulkopuolisilta langattoman verkon laitteilta (esim. tabletit, puhelimet jne.)
+      active_advanced: AdvancedMukautetut tulostusoikeudet
+      groups: Printer usage permissions by group
+      devices: Printer usage permissions by device
+      device_header_text: "Printer is allowed for following individual devices:"
+      device_footer_text: "Printers for devices are set from the device edit page."

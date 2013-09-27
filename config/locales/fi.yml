@@ -39,6 +39,7 @@ fi:
     forms:
       required_field: "* = Pakollinen tieto"
   link:
+    save: Tallenna
     more: Muut toiminnot
     edit: Muokkaa
     back: Takaisin
@@ -73,6 +74,7 @@ fi:
     set_install_mode: Peruuta sertifikaatti
     automounts: Hakemistoliitokset
     new_automount: Uusi hakemistoliitos
+    printer_permissions: Tulostinoikeudet
   flash:
     added: "%{item} luotiin onnistuneesti."
     updated: "%{item} päivitettiin onnistuneesti."
@@ -609,7 +611,7 @@ fi:
   shared:
     terminal_title: "Päätteen tiedot"
     location: Sijainti
-    display_settings: "Näytönasetukset"
+    display_settings: "Näyttöasetukset"
     kernel_settings: Levykuva ja kernel-asetukset
     title: Laitteen tiedot
     printer_title: Tulostimen tiedot
@@ -655,8 +657,8 @@ fi:
       terminal_title: "Pääteasetukset"
       printer_title: Tulostinasetukset
     form:
-      printer_title: Tulostimet
-      link_printer_permission: Muokkaa kaikkia oikeuksia
+      printer_title: Tulostusoikeudet
+      printer_description: Tällä laitteella on tulostaminen sallittu seraaviin tulostimiin
     form_cups:
       cups_settings: CUPS asetukset
     cups:
@@ -723,3 +725,14 @@ fi:
     save: Tallenna
     disabled_description: Tämä palvelu on aktivoitu %{organisation}.
     organisation: organisaatiosta
+  printer_permissions:
+    edit:
+      title: Tulostimen käyttöoikeudet
+      global: Yleiset
+      active_for_all_users: Tulostaminen sallittu kaikilta järjestelmän laitteilta
+      active_for_wireless: Tulostaminen sallittu kaikilta järjestelmän laitteilta sekä ulkopuolisilta langattoman verkon laitteilta (esim. tabletit, puhelimet jne.)
+      active_advanced: Mukautetut tulostusoikeudet
+      groups: Tulostusoikeus ryhmän mukaan
+      devices: Tulostusoikeus laitteen mukaan
+      device_header_text: "Tulostaminen on sallittu seuraavilta yksittäisiltä laitteilta:"
+      device_footer_text: Laitekohtaiset tulostusoikeudet asetetaan laitteen tiedoista

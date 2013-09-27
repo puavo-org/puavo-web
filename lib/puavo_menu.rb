@@ -82,7 +82,7 @@ class PuavoMenu < MetaMenu
     end
 
     child do
-      title { "Printer Permissions" }
+      title { t('link.printer_permissions') }
       link { printer_permissions_path(@school) }
       active_on PrinterPermissionsController
     end
