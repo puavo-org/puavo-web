@@ -730,7 +730,7 @@ fi:
       title: Tulostimen käyttöoikeudet
       global: Yleiset
       active_for_all_users: Tulostaminen sallittu kaikilta järjestelmän laitteilta
-      active_for_wireless: Tulostaminen sallittu kaikilta järjestelmän laitteilta sekä ulkopuolisilta langattoman verkon laitteilta (esim. tabletit, puhelimet jne.)
+      active_for_wireless: Tulostaminen sallittu kaikilta järjestelmän laitteilta sekä ulkopuolisilta langattoman verkon laitteilta (esim. tabletit, puhelimet, jne.)
       active_advanced: Mukautetut tulostusoikeudet
       groups: Tulostusoikeus ryhmän mukaan
       devices: Tulostusoikeus laitteen mukaan
