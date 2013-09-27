@@ -11,20 +11,20 @@
     <ul>
       <li>
         <label>
-          <%= check_box_tag "activate_wireless", true, @school.has_wireless_printer?(@printer)%>
+          <%= radio_button_tag "activate", "wireless", @school.has_wireless_printer?(@printer)%>
 	  <%= t('.active_for_wireless') %>
         </label>
       </li>
       <li>
         <label>
-          <%= check_box_tag "activate", true, @school.has_printer?(@printer) %>
+          <%= radio_button_tag "activate", "desktop", @school.has_printer?(@printer) && !@school.has_wireless_printer?(@printer) %>
           <%= t('.active_for_all_users') %>
         </label>
       </li>
 
       <li>
         <label>
-          <%= check_box_tag "activate", true, @school.has_printer?(@printer) %>
+          <%= radio_button_tag "activate", "advanced", !@school.has_printer?(@printer) && !@school.has_wireless_printer?(@printer) %>
           <%= t('.active_advanced') %>
         </label>
       </li>

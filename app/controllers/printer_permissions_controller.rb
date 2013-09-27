@@ -18,13 +18,13 @@ class PrinterPermissionsController < ApplicationController
   def update
     @printer = Printer.find(params["id"])
 
-    if params["activate"] || params["activate_wireless"]
+    if params["activate"] == "desktop" || params["activate"] == "wireless"
       @school.add_printer(@printer)
     else
       @school.remove_printer(@printer)
     end
 
-    if params["activate_wireless"]
+    if params["activate"] == "wireless"
       @school.add_wireless_printer(@printer)
     else
       @school.remove_wireless_printer(@printer)
