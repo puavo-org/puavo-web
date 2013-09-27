@@ -657,7 +657,9 @@ en:
       edit: Edit
       title: Device settings
       terminal_title: Terminal settings
-      printer_title: Printer settings
+    form:
+      printer_title: Printers
+      link_printer_permission: Edit all permissions
     form_cups:
       cups_settings: CUPS settings
     cups:

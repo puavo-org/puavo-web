@@ -654,6 +654,9 @@ fi:
       title: Laiteasetukset
       terminal_title: "Pääteasetukset"
       printer_title: Tulostinasetukset
+    form:
+      printer_title: Tulostimet
+      link_printer_permission: Muokkaa kaikkia oikeuksia
     form_cups:
       cups_settings: CUPS asetukset
     cups:
