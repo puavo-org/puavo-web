@@ -34,7 +34,7 @@ class School < BaseGroup
   alias_method :v1_as_json, :as_json
 
   def self.image_size
-    { width: 400, height: 200 }
+    { :width => 400, :height => 200 }
   end
 
   def validate_name
