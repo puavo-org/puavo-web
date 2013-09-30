@@ -157,11 +157,12 @@ class LdapHash < Hash
   # @see convert
   def self.ldap_map(ldap_name, json_name, default_value = nil, &convert)
     hash = @@ldap2json[self.name] ||= {}
-    hash[ldap_name.to_s] = {
+    converters = hash[ldap_name.to_s] ||= []
+    converters.append({
       :default => default_value,
       :attr => json_name.to_s,
       :convert => convert || lambda { |v| Array(v).first }
-    }
+    })
   end
 
   # @return [Array] LDAP attributes that will be converted
@@ -184,11 +185,13 @@ class LdapHash < Hash
       end
     end
 
-    if ob = @@ldap2json[self.class.name][key.to_s]
-      if not (value.nil? || value.empty?)
-        self[ob[:attr]] = instance_exec(value, &ob[:convert])
-      else
-        self[ob[:attr]] = ob[:default]
+    if converters = @@ldap2json[self.class.name][key.to_s]
+      converters.each do |conv|
+        if not (value.nil? || value.empty?)
+          self[conv[:attr]] = instance_exec(value, &conv[:convert])
+        else
+          self[conv[:attr]] = conv[:default]
+        end
       end
     end
   end

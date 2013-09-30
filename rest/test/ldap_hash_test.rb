@@ -11,6 +11,9 @@ describe LdapHash do
       ldap_map :fooBar, :foo_bar
       ldap_map(:number, :integer) { |v| v.first.to_i }
       ldap_map :withDefault, :with_default, 2
+
+      ldap_map :double, :double_one
+      ldap_map :double, :double_two
     end
 
     class TestHash2 < LdapHash
@@ -81,6 +84,13 @@ describe LdapHash do
       h.ldap_set("b", "bar")
 
       assert_equal "foo", h["b"]
+    end
+
+    it "can have multiple mappings for single value" do
+      h = TestHash1.new
+      h.ldap_set("double", "double_value")
+      assert_equal "double_value", h["double_one"]
+      assert_equal "double_value", h["double_two"]
     end
 
     it "can create full links" do
