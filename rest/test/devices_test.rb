@@ -18,12 +18,23 @@ describe PuavoRest::Devices do
     )
     @server1 = create_server(
       :puavoHostname => "server1",
-      :macAddress => "bc:5f:f4:56:59:71"
+      :macAddress => "bc:5f:f4:56:59:71",
+      :puavoSchool => @school.dn
     )
     @server2 = create_server(
       :puavoHostname => "server2",
       :macAddress => "bc:5f:f4:56:59:72"
     )
+    @printer = Printer.create(
+      :printerDescription => "printer1",
+      :printerLocation => "school2",
+      :printerMakeAndModel => "foo",
+      :printerType => "1234",
+      :printerURI => "socket://baz",
+      :puavoServer => @server1.dn )
+
+    @school.add_wireless_printer(@printer)
+
     test_organisation = LdapOrganisation.first # TODO: fetch by name
     test_organisation.puavoAllowGuest = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
@@ -160,5 +171,30 @@ describe PuavoRest::Devices do
       assert_equal "NotFound", data["error"]["code"], data
     end
 
+  end
+
+describe "wireless printer queues by device with school fallback" do
+
+    before(:each) do
+      create_device(
+        :puavoHostname => "athin",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn
+      )
+      get "/v3/devices/athin/wireless_printer_queues", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      @data = JSON.parse last_response.body
+    end
+
+    it "has printer" do
+      assert_equal 1, @data.count
+      printer = @data.first
+      assert_equal "server1.example.opinsys.net", printer["server_fqdn"]
+      assert_equal "printer1", printer["name"]
+      assert_equal "printer1", printer["description"]
+    end
   end
 end
