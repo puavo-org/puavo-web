@@ -106,6 +106,7 @@ describe PuavoRest::Users do
     it "returns 401 without auth" do
       get "/v3/users/bob"
       assert_equal 401, last_response.status, last_response.body
+      assert_equal "Negotiate", last_response.headers["WWW-Authenticate"], "WWW-Authenticate must be Negotiate for kerberos to work"
     end
 
     it "returns 401 with bad auth" do

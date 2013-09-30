@@ -100,7 +100,6 @@ class LdapSinatra < Sinatra::Base
     end
 
     if not LdapHash.connection
-      headers "WWW-Authenticate" => "Negotiate"
       raise Unauthorized,
         :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }"
     end

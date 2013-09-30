@@ -23,6 +23,10 @@ module PuavoRest
       500
     end
 
+    def headers
+     {"Content-Type" => "application/json"}
+    end
+
     def as_json
       res = {
         :error => {
@@ -75,6 +79,10 @@ module PuavoRest
     def http_code
       401
     end
+
+    def headers
+      super.merge "WWW-Authenticate" => "Negotiate"
+    end
   end
 
   class SuppressJSONError
@@ -86,7 +94,7 @@ module PuavoRest
       begin
         @app.call(env)
       rescue JSONError => err
-        [err.http_code, {'Content-Type' => 'application/json'}, [err.to_json]]
+        [err.http_code, err.headers, [err.to_json]]
       end
     end
   end
