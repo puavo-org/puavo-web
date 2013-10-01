@@ -10,7 +10,7 @@ class PrinterQueue < LdapHash
   ldap_map :printerDescription, :description
   ldap_map :printerDescription, :name
   ldap_map(:puavoServer, :server_fqdn) do |dn|
-    Server.by_dn(Array(dn).first)["hostname"] + "." +  LdapHash.organisation["domain"]
+    BootServer.by_dn(Array(dn).first)["hostname"] + "." +  LdapHash.organisation["domain"]
   end
   ldap_map(:puavoServer, :remote_uri) do |dn|
     "ipp://#{self['server_fqdn']}/printers/#{self['name']}"
