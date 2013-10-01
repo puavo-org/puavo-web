@@ -158,7 +158,7 @@ class LdapHash < Hash
   def self.ldap_map(ldap_name, json_name, default_value = nil, &convert)
     hash = @@ldap2json[self.name] ||= {}
     converters = hash[ldap_name.to_s] ||= []
-    converters.append({
+    converters.push({
       :default => default_value,
       :attr => json_name.to_s,
       :convert => convert || lambda { |v| Array(v).first }
