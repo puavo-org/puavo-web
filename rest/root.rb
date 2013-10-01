@@ -76,6 +76,7 @@ class Root < LdapSinatra
     use PuavoRest::LtspServers
     use PuavoRest::Sessions
     use PuavoRest::Organisations if Sinatra::Base.development?
+    use PuavoRest::BootServers
   end
 end
 end
