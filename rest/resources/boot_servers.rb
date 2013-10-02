@@ -12,7 +12,7 @@ class BootServer < LdapHash
 
   # Find server by it's hostname
   def self.by_hostname(hostname)
-    server = filter("(puavoHostname=#{ escape hostname })").first
+    server = filter("(&(puavoHostname=#{ escape hostname })(puavoDeviceType=bootserver))").first
     if server.nil?
       raise NotFound, :user => "Cannot find boot server with hostname '#{ hostname }'"
     end
@@ -23,6 +23,10 @@ class BootServer < LdapHash
     self["school_dns"].map do |school_dn|
       School.by_dn(school_dn)
     end
+  end
+
+  def self.all
+    filter("(puavoDeviceType=bootserver)")
   end
 
 end
