@@ -91,7 +91,7 @@ describe PuavoRest::SSO do
       assert_equal "student" , @jwt["user_type"]
       assert_equal "bob@example.com" , @jwt["email"]
       assert_equal "Example Organisation", @jwt["organisation_name"]
-      assert_equal "example.opinsys.net", @jwt["organisation_domain"]
+      assert_equal "example.example.net", @jwt["organisation_domain"]
       assert_equal "/", @jwt["external_service_path_prefix"]
       assert_equal "Gryffindor", @jwt["school_name"]
       assert !@jwt["school_id"].to_s.empty?
@@ -169,35 +169,35 @@ describe PuavoRest::SSO do
         post "/v3/sso", {
           "username" => "bob",
           "password" => "secret",
-          "organisation" => "example.opinsys.net",
+          "organisation" => "example.example.net",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
         claims = decode_jwt
-        assert_equal "example.opinsys.net", claims["organisation_domain"]
+        assert_equal "example.example.net", claims["organisation_domain"]
       end
 
       it "from post using custom organisation"  do
         post "/v3/sso", {
           "username" => "admin",
           "password" => "admin",
-          "organisation" => "anotherorg.opinsys.net",
+          "organisation" => "anotherorg.example.net",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
         claims = decode_jwt
-        assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
+        assert_equal "anotherorg.example.net", claims["organisation_domain"]
       end
 
       it "from post using custom organisation in username"  do
         post "/v3/sso", {
-          "username" => "admin@anotherorg.opinsys.net",
+          "username" => "admin@anotherorg.example.net",
           "password" => "admin",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
         claims = decode_jwt
-        assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
+        assert_equal "anotherorg.example.net", claims["organisation_domain"]
       end
 
     end
@@ -213,26 +213,26 @@ describe PuavoRest::SSO do
         get "/v3/sso", {
           "return_to" => "http://test-client-service.example.com/path",
         }, {
-            "HTTP_HOST" => "anotherorg.opinsys.net"
+            "HTTP_HOST" => "anotherorg.example.net"
         }
-        assert_equal "anotherorg.opinsys.net", hidden_organisation_field
+        assert_equal "anotherorg.example.net", hidden_organisation_field
       end
 
       it "is overridden from query string" do
         get "/v3/sso", {
-          "organisation" => "anotherorg.opinsys.net",
+          "organisation" => "anotherorg.example.net",
           "return_to" => "http://test-client-service.example.com/path",
         }, {
-            "HTTP_HOST" => "example.opinsys.net"
+            "HTTP_HOST" => "example.example.net"
         }
-        assert_equal "anotherorg.opinsys.net", hidden_organisation_field
+        assert_equal "anotherorg.example.net", hidden_organisation_field
       end
 
       it "is not set for non-organisation domains" do
         get "/v3/sso", {
           "return_to" => "http://test-client-service.example.com/path",
         }, {
-            "HTTP_HOST" => "login.opinsys.net"
+            "HTTP_HOST" => "login.example.net"
         }
         assert_equal nil, hidden_organisation_field
       end
@@ -244,7 +244,7 @@ describe PuavoRest::SSO do
       post "/v3/sso", {
         "username" => "bob",
         "password" => "bad",
-        "organisation" => "example.opinsys.net",
+        "organisation" => "example.example.net",
         "return_to" => "http://test-client-service.example.com/path"
       }
 

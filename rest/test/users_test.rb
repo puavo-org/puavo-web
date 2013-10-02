@@ -43,10 +43,10 @@ describe PuavoRest::Users do
       assert data["organisation"], "has organisation data added"
 
       assert_equal "Example Organisation", data["organisation"]["name"]
-      assert_equal "example.opinsys.net", data["organisation"]["domain"]
+      assert_equal "example.example.net", data["organisation"]["domain"]
       assert_equal "dc=edu,dc=example,dc=fi", data["organisation"]["base"]
 
-      assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+      assert_equal "http://example.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 
     end
   end
@@ -65,7 +65,7 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
-      assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+      assert_equal "http://example.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
     end
 
     describe "with image" do
@@ -80,7 +80,7 @@ describe PuavoRest::Users do
         assert_200
         data = JSON.parse(last_response.body)
 
-        assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+        assert_equal "http://example.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
       end
 
       it "can be faked with VirtualHostBase" do

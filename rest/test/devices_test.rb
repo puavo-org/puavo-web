@@ -192,10 +192,10 @@ describe "wireless printer queues by device with school fallback" do
     it "has printer" do
       assert_equal 1, @data.count
       printer = @data.first
-      assert_equal "server1.example.opinsys.net", printer["server_fqdn"]
+      assert_equal "server1.example.example.net", printer["server_fqdn"]
       assert_equal "printer1", printer["name"]
       assert_equal "printer1", printer["description"]
-      assert_equal "ipp://server1.example.opinsys.net/printers/printer1", printer["remote_uri"]
+      assert_equal "ipp://server1.example.example.net/printers/printer1", printer["remote_uri"]
     end
   end
 end
