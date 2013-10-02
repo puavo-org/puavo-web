@@ -78,9 +78,17 @@ class Sessions < LdapSinatra
       halt 400, json("error" => "'hostname' missing")
     end
 
+    user_printer_queues = []
+
+    if User.current
+      Group.by_user_dn(User.current.dn).each do |group|
+        user_printer_queues += group.printer_queues
+      end
+    end
+
     # Normal user has no permission to read device attributes so force server
     # credentials here.
-    session = LdapHash.setup(:credentials => CONFIG["server"]) do
+    json(LdapHash.setup(:credentials => CONFIG["server"]) do
       device = Device.by_hostname(params["hostname"])
       device.fallback_defaults
 
@@ -100,21 +108,15 @@ class Sessions < LdapSinatra
       session["printer_queues"] = device.printer_queues
       session["printer_queues"] += device.school.printer_queues
       session["printer_queues"] += device.school.wireless_printer_queues
+      session["printer_queues"] += user_printer_queues
+      session.save
+
+      logger.info "Created session #{ session["uuid"] } " +
+        "to ltsp server #{ session["ltsp_server"]["hostname"] } " +
+        "for #{ params["hostname"] }"
+
       session
-    end
-
-    if User.current
-      Group.by_user_dn(User.current["dn"]).each do |group|
-        session["printer_queues"] += group.printer_queues
-      end
-    end
-
-    session.save
-
-    logger.info "Created session #{ session["uuid"] } " +
-      "to ltsp server #{ session["ltsp_server"]["hostname"] } " +
-      "for #{ params["hostname"] }"
-    json session
+    end)
   end
 
   # Return all sessions
