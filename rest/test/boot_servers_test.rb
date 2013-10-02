@@ -11,15 +11,20 @@ describe PuavoRest::BootServer do
       :puavoPersonalDevice => true,
       :puavoAllowGuest => true
     )
+
     @school2 = School.create(
       :cn => "exampleschool1",
       :displayName => "Example school 1"
     )
-    @server1 = create_server(
+    @server1 = Server.new
+    @server1.attributes = {
       :puavoHostname => "server1",
       :macAddress => "bc:5f:f4:56:59:71",
-      :puavoSchool => [@school.dn, @school2.dn]
-    )
+      :puavoSchool => @school.dn,
+      :puavoDeviceType => "bootserver"
+    }
+    @server1.save!
+
     @printer = Printer.create(
       :printerDescription => "printer1",
       :printerLocation => "school2",
