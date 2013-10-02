@@ -152,15 +152,7 @@ class LtspServers < LdapSinatra
   get "/v3/ltsp_servers" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    filtered = ServerFilter.new(LtspServer.all_with_state)
-    filtered.filter_has_state
-    filtered.sort_by_load
-    if params["all"]
-      json limit filtered.to_a
-    else
-      servers = ServerFilter.new(LtspServer.all_with_state)
-      json limit filtered.to_a
-    end
+    json LtspServer.all
   end
 
   # Computed resource for the most idle ltsp server
