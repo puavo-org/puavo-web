@@ -17,15 +17,6 @@ class User < LdapHash
     end
   end
 
-  def initialize(*args)
-    super(*args)
-    self["organisation"] = {
-      "name" => LdapHash.organisation["name"],
-      "domain" => LdapHash.organisation["domain"],
-      "base" => LdapHash.organisation["base"]
-    }
-  end
-
   def self.ldap_base
     "ou=People,#{ organisation["base"] }"
   end
@@ -44,6 +35,10 @@ class User < LdapHash
 
   def self.profile_image(uid)
     raw_filter("(uid=#{ escape uid })", ["jpegPhoto"]).first["jpegPhoto"]
+  end
+
+  def organisation
+    User.organisation
   end
 
   def self.current
@@ -93,8 +88,8 @@ class Users < LdapSinatra
 
   get "/v3/whoami" do
     auth :basic_auth, :kerberos
-
-    json User.current
+    user = User.current.to_hash
+    json user.merge("organisation" => LdapHash.organisation.to_hash)
   end
 
 end

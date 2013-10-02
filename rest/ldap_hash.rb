@@ -1,7 +1,8 @@
+require "redis"
 
 module PuavoRest
 # Random helpers
-class LdapHash < Hash
+class LdapHash
   def self.callable_from_instance(method)
     klass = self
     define_method method do |*args|
@@ -23,7 +24,7 @@ class LdapHash < Hash
 end
 
 # Connection management
-class LdapHash < Hash
+class LdapHash
 
   class LdapHashError < Exception; end
 
@@ -124,6 +125,7 @@ class LdapHash < Hash
     end
   end
 
+
   def self.organisation
     if settings[:organisation].nil?
       raise BadInput, :user => "Cannot configure organisation for this request"
@@ -144,71 +146,151 @@ end
 
 
 # ldap attribute conversions
-class LdapHash < Hash
+class LdapHash
 
   # Store for ldap attribute mappings
-  @@ldap2json = {}
+  @@class_store = {}
+  @@ldap2pretty = {}
+
+  def self.class_store
+    @@class_store[self] ||= {}
+  end
+  def class_store
+    self.class.class_store
+  end
+
+  def self.pretty2ldap
+    class_store[:pretty2ldap] ||= {}
+  end
+  def pretty2ldap
+    class_store[:pretty2ldap] ||= {}
+  end
+
+  def self.ldap2pretty
+    class_store[:ldap2pretty] ||= {}
+  end
+  def ldap2pretty
+    class_store[:ldap2pretty] ||= {}
+  end
+
+  attr_reader :ldap_attr_store
+
+  def initialize(ldap_attr_store={})
+    @ldap_attr_store = ldap_attr_store
+    @cache = {}
+  end
+
 
   # Define conversion between LDAP attribute and the JSON attribute
   #
   # @param ldap_name [Symbol] LDAP attribute to convert
-  # @param json_name [Symbol] Value conversion block. Default: Get first array item
+  # @param pretty_name [Symbol] Value conversion block. Default: Get first array item
   # @param convert [Block] Use block to
   # @see convert
-  def self.ldap_map(ldap_name, json_name, default_value = nil, &convert)
-    hash = @@ldap2json[self.name] ||= {}
-    converters = hash[ldap_name.to_s] ||= []
-    converters.push({
-      :default => default_value,
-      :attr => json_name.to_s,
-      :convert => convert || lambda { |v| Array(v).first }
-    })
+  def self.ldap_map(ldap_name, pretty_name, default_value=nil, &convert)
+    pretty2ldap[pretty_name] = ldap_name
+    ldap2pretty[ldap_name] = pretty_name
+
+    define_method pretty_name.to_sym do
+      return @cache[pretty_name] if not @cache[pretty_name].nil?
+
+      value = Array(@ldap_attr_store[ldap_name.to_sym])
+
+      # String values in our LDAP are always UTF-8
+      value = value.map do |item|
+        if item.respond_to?(:force_encoding)
+          item.force_encoding("UTF-8")
+        else
+          item
+        end
+      end
+
+      if Array(value).empty? && !default_value.nil?
+        return default_value
+      end
+
+      if convert
+        value = instance_exec(value, &convert)
+      else
+        value = Array(value).first
+      end
+
+      @cache[pretty_name] = value
+    end
+  end
+
+  def [](pretty_name)
+    send(pretty_name.to_sym)
+  end
+
+  def []=(pretty_name, value)
+    set(pretty_name, value)
+  end
+
+  def empty?
+    @ldap_attr_store.empty?
   end
 
   # @return [Array] LDAP attributes that will be converted
   def self.ldap_attrs
-    @@ldap2json[self.name].keys
+    ldap2pretty.keys
   end
 
-  # Set Hash attribute with ldap attr conversion
+  # Set attribute using the original ldap attribute
   #
   # @param [String]
   # @param [any]
-  def ldap_set(key, value)
-
-    # String values in our LDAP are always UTF-8
-    value = Array(value).map do |item|
-      if item.respond_to?(:force_encoding)
-        item.force_encoding("UTF-8")
-      else
-        item
-      end
-    end
-
-    if converters = @@ldap2json[self.class.name][key.to_s]
-      converters.each do |conv|
-        if not (value.nil? || value.empty?)
-          self[conv[:attr]] = instance_exec(value, &conv[:convert])
-        else
-          self[conv[:attr]] = conv[:default]
-        end
-      end
-    end
+  def ldap_set(ldap_name, value)
+    return if ldap2pretty[ldap_name.to_sym].nil?
+    @ldap_attr_store[ldap_name.to_sym] = value
   end
 
-  # Like normal Hash#merge! but convert attributes using the ldap mapping
+  def set(pretty_name, value)
+    @cache[pretty_name.to_sym] = value
+  end
+
+  # Like normal Hash#merge!
   def ldap_merge!(hash)
-    @@ldap2json[self.class.name].keys.each do |key|
-      ldap_set(key, hash[key])
+    hash.each do |ldap_name, value|
+      ldap_set(ldap_name, value)
     end
     self
+  end
+
+  def merge(other)
+    h = other.class == Hash ? other : other.ldap_attr_store
+    new_h = @ldap_attr_store.dup
+    h.each do |pretty_name, value|
+      new_h[pretty2ldap[pretty_name.to_sym]] = value
+    end
+    self.class.new(new_h)
+  end
+
+  def to_hash
+    h = {}
+    pretty2ldap.each do |pretty_name, _|
+      h[pretty_name.to_s] = send(pretty_name)
+    end
+    h
+  end
+
+  def to_ldap_hash
+    @ldap_attr_store.dup
+  end
+
+  def as_json(*)
+    to_hash
+  end
+
+  def to_json(*)
+    as_json.to_json
   end
 
 end
 
 
 # generic ldap search rutines
-class LdapHash < Hash
+class LdapHash
 
   # LDAP base for this model. Must be implemented by subclasses
   def self.ldap_base
@@ -229,7 +311,7 @@ class LdapHash < Hash
       ldap_base,
       LDAP::LDAP_SCOPE_SUBTREE,
       filter,
-      attributes
+      attributes.map{ |a| a.to_s }
     ) do |entry|
       res.push(entry.to_hash) if entry.dn != ldap_base
     end
@@ -258,7 +340,7 @@ class LdapHash < Hash
   # @param attributes [Array of Strings]
   def self.raw_by_dn(dn, attributes=nil)
     res = nil
-    attributes ||= ldap_attrs
+    attributes ||= ldap_attrs.map{ |a| a.to_s }
 
     connection.search(
       dn,
@@ -282,7 +364,7 @@ class LdapHash < Hash
 end
 
 # escaping helpers
-class LdapHash < Hash
+class LdapHash
   # http://tools.ietf.org/html/rfc4515 lists these exceptions from UTF1
   # charset for filters. All of the following must be escaped in any normal
   # string using a single backslash ('\') as escape.

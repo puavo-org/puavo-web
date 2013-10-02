@@ -39,13 +39,14 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
-      assert_equal({
-        "name" => "Example Organisation",
-        "domain"=>"example.opinsys.net",
-        "base"=>"dc=edu,dc=example,dc=fi"
-      }, data["organisation"])
-      assert !data["profile_image_link"]
-      assert_equal nil, data["profile_image_link"]
+
+      assert data["organisation"], "has organisation data added"
+
+      assert_equal "Example Organisation", data["organisation"]["name"]
+      assert_equal "example.opinsys.net", data["organisation"]["domain"]
+      assert_equal "dc=edu,dc=example,dc=fi", data["organisation"]["base"]
+
+      assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 
     end
   end
@@ -64,8 +65,7 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
-      assert !data["profile_image_link"]
-      assert_equal nil, data["profile_image_link"]
+      assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
     end
 
     describe "with image" do

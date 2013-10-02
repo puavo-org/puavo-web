@@ -19,6 +19,7 @@ describe PuavoRest::Sessions do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    PuavoRest::Session.local_store.flushdb
     FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
@@ -288,7 +289,8 @@ describe PuavoRest::Sessions do
       get "/v3/sessions/doesnotexists"
       assert_equal 404, last_response.status
       data = JSON.parse(last_response.body)
-      assert_equal({"error"=>{"code"=>"NotFound"}}, data)
+      assert data["error"], "Must have error"
+      assert_equal "NotFound", data["error"]["code"]
     end
 
     it "can be deleted with DELETE" do

@@ -4,16 +4,16 @@ require_relative "../lib/error_codes"
 
 module PuavoRest
 
-class Session < LdapHash
-  include LocalStoreMixin
+class Session < Hash
+  include LocalStore
 
   # Create new desktop session for a device
   #
   # @param device_attrs [Hash]
   def self.create(device_attrs={})
-    session = new.merge!(
+    session = new.merge(
       "uuid" => UUID.generator.generate,
-      "created" => Time.now,
+      "created" => Time.now.to_i,
       "device" => device_attrs
     )
 
@@ -21,36 +21,43 @@ class Session < LdapHash
     filtered.filter_old
     filtered.safe_apply(:filter_by_image, device_attrs["preferred_image"]) if device_attrs["preferred_image"]
     filtered.safe_apply(:filter_by_server, device_attrs["preferred_server"])
-    filtered.safe_apply(:filter_by_other_schools, device_attrs["school"])
-    filtered.safe_apply(:filter_by_school, device_attrs["school"])
+    filtered.safe_apply(:filter_by_other_schools, device_attrs["school_dn"])
+    filtered.safe_apply(:filter_by_school, device_attrs["school_dn"])
     filtered.sort_by_load
 
-    session["ltsp_server"] = filtered.first
-
-    if session["ltsp_server"].nil?
+    if filtered.first.nil?
       raise NotFound, :user => "cannot find any LTSP servers"
     end
+
+    session["ltsp_server"] = filtered.first.to_hash
+
     session
+  end
+
+  def session_key
+    "session:#{ self["uuid"] }"
   end
 
   def save
-    self.class.store.set self["uuid"], self
+    local_store.set(session_key, self.to_json)
   end
 
   def destroy
-    self.class.store.delete self["uuid"]
+    local_store.del(session_key)
   end
 
   def self.load(uuid)
-    session = store.get(uuid)
-    if session.nil?
-      raise NotFound, "unknown session uuid '#{ uuid }'"
+    json = local_store.get("session:#{ uuid }")
+    if json.nil?
+      raise NotFound, :user => "Cannot find session"
     end
-    session
+    new.merge JSON.parse(json)
   end
 
   def self.all
-    store.all
+    local_store.keys("session:*").map do |k|
+      new.merge JSON.parse(local_store.get(k))
+    end
   end
 
 end
@@ -79,15 +86,15 @@ class Sessions < LdapSinatra
 
       logger.info "Thin #{ params["hostname"] } " +
         "from school #{ device["school"].inspect } " +
-        "prefering image #{ device["image"] } " +
+        "prefering image #{ device.preferred_image } " +
         "and server #{ device["preferred_server"].inspect } " +
         "is requesting a desktop session"
 
       session = Session.create(
         "hostname" => params["hostname"],
-        "school" => device["school"],
-        "preferred_image" => device["image"],
-        "preferred_server" => device["preferred_server"]
+        "school_dn" => device.school_dn,
+        "preferred_image" => device.preferred_image,
+        "preferred_server" => device.preferred_server
       )
 
       session["printer_queues"] = device.printer_queues

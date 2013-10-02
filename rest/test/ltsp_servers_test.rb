@@ -6,6 +6,7 @@ describe PuavoRest::LtspServers do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    PuavoRest::LtspServer.local_store.flushdb
     FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
 
     @school = School.create(
@@ -83,7 +84,7 @@ describe PuavoRest::LtspServers do
     put "/v3/ltsp_servers/testserver", "load_avg" => "1.0", "cpu_count" => 2
     get "/v3/ltsp_servers/testserver"
     data = JSON.parse(last_response.body)
-    assert_equal @school.dn, data["schools"].first
+    assert_equal @school.dn, data["school_dns"].first
   end
 
   it "can return only the most idle sever" do

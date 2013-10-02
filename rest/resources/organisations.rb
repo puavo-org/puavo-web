@@ -3,6 +3,7 @@ require 'puavo/ldap'
 module PuavoRest
 class Organisation < LdapHash
   ldap_map :dn, :dn
+  ldap_map :dn, :base
   ldap_map :o, :name
   ldap_map :puavoDomain, :domain
   ldap_map :puavoDeviceImage, :preferred_image
@@ -55,7 +56,7 @@ class Organisation < LdapHash
 
   def self.all
     bases.map do |base|
-      by_dn(base).merge("base" => base)
+      by_dn(base)
     end
   end
 

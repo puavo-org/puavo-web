@@ -5,7 +5,7 @@ class Device < LdapHash
 
   ldap_map :dn, :dn
   ldap_map :cn, :hostname
-  ldap_map :puavoSchool, :school
+  ldap_map :puavoSchool, :school_dn
   ldap_map :puavoDeviceType, :type
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoPreferredServer, :preferred_server
@@ -51,7 +51,7 @@ class Device < LdapHash
   # Cached school query
   def school
     return @school if @school
-    @school = School.by_dn(self["school"])
+    @school = School.by_dn(school_dn)
   end
 
   def printer_queues
