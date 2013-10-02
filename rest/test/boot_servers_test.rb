@@ -38,6 +38,33 @@ describe PuavoRest::BootServer do
 
   end
 
+  describe "basic get resources" do
+
+    it "lists all servers from GET /v3/boot_servers" do
+      get "/v3/boot_servers", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal 1, data.size
+      assert_equal "server1", data.first["hostname"]
+      assert data.first["dn"]
+      assert data.first["school_dns"]
+    end
+
+    it "can be used to fetch single boot server data by hostname" do
+      get "/v3/boot_servers/server1", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal "server1", data["hostname"]
+      assert data["dn"]
+      assert data["school_dns"]
+    end
+
+  end
+
   describe "wireless printer queues by boot server" do
     before(:each) do
       get "/v3/boot_servers/server1/wireless_printer_queues", {}, {
