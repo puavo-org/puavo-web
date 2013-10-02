@@ -37,7 +37,7 @@ class BootServers < LdapSinatra
     server.schools.each do |school|
       printer_queues += school.wireless_printer_queues
     end
-    json printer_queues
+    json printer_queues.uniq { |printer_queue| printer_queue.name }
   end
 
 end

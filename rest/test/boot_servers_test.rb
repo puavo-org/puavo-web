@@ -11,10 +11,14 @@ describe PuavoRest::BootServer do
       :puavoPersonalDevice => true,
       :puavoAllowGuest => true
     )
+    @school2 = School.create(
+      :cn => "exampleschool1",
+      :displayName => "Example school 1"
+    )
     @server1 = create_server(
       :puavoHostname => "server1",
       :macAddress => "bc:5f:f4:56:59:71",
-      :puavoSchool => @school.dn
+      :puavoSchool => [@school.dn, @school2.dn]
     )
     @printer = Printer.create(
       :printerDescription => "printer1",
@@ -25,6 +29,7 @@ describe PuavoRest::BootServer do
       :puavoServer => @server1.dn )
 
     @school.add_wireless_printer(@printer)
+    @school2.add_wireless_printer(@printer)
 
   end
 
