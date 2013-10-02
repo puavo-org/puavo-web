@@ -4,7 +4,7 @@ URL=$1
 
 [ "$1" = "--help" -o "$1" = "-h" ] && {
     echo "
-    usage: $(basename $0) [URL]
+    usage: $(basename $0) [FULL URL]
 
     Report LTSP server load average to puavo-rest running in bootserver.
 
