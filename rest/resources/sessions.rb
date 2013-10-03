@@ -7,33 +7,6 @@ module PuavoRest
 class Session < Hash
   include LocalStore
 
-  # Create new desktop session for a device
-  #
-  # @param device_attrs [Hash]
-  def self.create(device_attrs={})
-    session = new.merge(
-      "uuid" => UUID.generator.generate,
-      "created" => Time.now.to_i,
-      "device" => device_attrs
-    )
-
-    filtered = ServerFilter.new(LtspServer.all_with_state)
-    filtered.filter_old
-    filtered.safe_apply(:filter_by_image, device_attrs["preferred_image"]) if device_attrs["preferred_image"]
-    filtered.safe_apply(:filter_by_server, device_attrs["preferred_server"])
-    filtered.safe_apply(:filter_by_other_schools, device_attrs["school_dn"])
-    filtered.safe_apply(:filter_by_school, device_attrs["school_dn"])
-    filtered.sort_by_load
-
-    if filtered.first.nil?
-      raise NotFound, :user => "cannot find any LTSP servers"
-    end
-
-    session["ltsp_server"] = filtered.first.to_hash
-
-    session
-  end
-
   def session_key
     "session:#{ self["uuid"] }"
   end
@@ -65,6 +38,24 @@ end
 # Desktop login sessions
 class Sessions < LdapSinatra
 
+  def find_ltsp_server(preferred_image, preferred_server, school_dn)
+
+    filtered = ServerFilter.new(LtspServer.all_with_state)
+    filtered.filter_old
+    filtered.safe_apply(:filter_by_image, preferred_image) if preferred_image
+    filtered.safe_apply(:filter_by_server, preferred_server)
+    filtered.safe_apply(:filter_by_other_schools, school_dn)
+    filtered.safe_apply(:filter_by_school, school_dn)
+    filtered.sort_by_load
+
+    if filtered.first.nil?
+      raise NotFound, :user => "cannot find any LTSP servers"
+    end
+
+    filtered.first
+  end
+
+
   # Create new desktop session for a thin client. If the thin client requests
   # some specific LTSP image and no server provides it will get the most idle
   # LTSP server with what ever image it has
@@ -78,11 +69,17 @@ class Sessions < LdapSinatra
       halt 400, json("error" => "'hostname' missing")
     end
 
-    user_printer_queues = []
+    session = Session.new
+    session.merge!(
+      "uuid" => UUID.generator.generate,
+      "created" => Time.now.to_i,
+      "printer_queues" => []
+    )
 
     if User.current
+      session["user"] = User.current.to_hash
       Group.by_user_dn(User.current.dn).each do |group|
-        user_printer_queues += group.printer_queues
+        session["printer_queues"] += group.printer_queues
       end
     end
 
@@ -98,17 +95,17 @@ class Sessions < LdapSinatra
         "and server #{ device["preferred_server"].inspect } " +
         "is requesting a desktop session"
 
-      session = Session.create(
-        "hostname" => params["hostname"],
-        "school_dn" => device.school_dn,
-        "preferred_image" => device.preferred_image,
-        "preferred_server" => device.preferred_server
+      session["ltsp_server"] = find_ltsp_server(
+        device.preferred_image,
+        device.preferred_server,
+        device.school_dn
       )
 
-      session["printer_queues"] = device.printer_queues
+      session["device"] = device.to_hash
+      session["printer_queues"] += device.printer_queues
       session["printer_queues"] += device.school.printer_queues
       session["printer_queues"] += device.school.wireless_printer_queues
-      session["printer_queues"] += user_printer_queues
+
       session.save
 
       logger.info "Created session #{ session["uuid"] } " +

@@ -497,6 +497,9 @@ describe PuavoRest::Sessions do
         assert_200
         @data = JSON.parse last_response.body
         assert @data["printer_queues"], "must have printer queues"
+
+        assert @data["user"], "must have user data"
+        assert_equal "bob", @data["user"]["username"], "username must be 'bob' because we authenticated as bob"
       end
 
       it "from groups are given to authenticated users" do
