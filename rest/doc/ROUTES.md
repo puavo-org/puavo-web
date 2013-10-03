@@ -265,11 +265,11 @@ returns
 
 For authenticated users with kerberos:
 
-    curl --form hostname=$(hostname) --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/sessions
+    curl --data hostname=$(hostname) --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/sessions
 
 For guests
 
-    curl --form hostname=$(hostname) --header 'Authorization: Bootserver'  $(puavo-resolve-api-server)/v3/sessions
+    curl --data hostname=$(hostname) --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/sessions
 
 ## GET /v3/sessions
 
