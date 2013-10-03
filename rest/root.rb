@@ -43,7 +43,8 @@ class Root < LdapSinatra
   not_found do
     json({
       :error => {
-        :message => "Not found"
+        :code => "UnknownResource",
+        :message => "Unknown resource"
       }
     })
   end
