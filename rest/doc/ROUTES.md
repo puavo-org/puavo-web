@@ -189,37 +189,77 @@ Post fields:
 returns
 
     {
-      "printer_queues": [
-        {
-          "uri": "socket://tulostin-joyk-opehuone-brother.ltsp.hogwarts.opinsys.fi",
-          "description": "Ylakoulu-Opehuone-Brother",
-          "type": "8433692",
-          "location": "Yläkoulun ja Lukion opehuone",
-          "model": "Brother HL-4050CDN Foomatic/Postscript",
-          "server": "puavoId=202295,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
-          "dn": "puavoId=5389,ou=Printers,dc=edu,dc=hogwarts,dc=fi"
-        }
-      ],
+      "device": {
+        "printer_device_uri": null,
+        "personal_device": false,
+        "allow_guest": false,
+        "kernel_version": null,
+        "kernel_arguments": null,
+        "preferred_server": null,
+        "preferred_image": null,
+        "type": "fatclient",
+        "school_dn": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+        "hostname": "testfat",
+        "dn": "puavoId=5370,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+        "vertical_refresh": null,
+        "printer_queue_dns": null,
+        "mac_address": "bc:5f:f4:56:59:71",
+        "puavo_id": "5370",
+        "boot_mode": null,
+        "xrand_disable": null,
+        "graphics_driver": null,
+        "resolution": null
+      },
       "ltsp_server": {
         "state": {
-          "updated": "2013-09-26 15:44:46 +0300",
+          "updated": 1380803986,
           "fqdn": "myltsp",
           "ltsp_image": "",
-          "load_avg": 0.14
+          "load_avg": 0.5
         },
-        "schools": null,
+        "school_dns": [],
         "hostname": "myltsp",
         "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
       },
-      "device": {
-        "preferred_server": null,
-        "preferred_image": null,
-        "school": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
-        "hostname": "testfat"
+      "user": {
+        "profile_image_link": "http://127.0.0.1:9393/v3/users/admin/profile.jpg",
+        "dn": "uid=admin,o=puavo",
+        "username": "admin",
+        "last_name": null,
+        "first_name": null,
+        "email": null,
+        "user_type": null,
+        "puavo_id": null,
+        "school_dn": null
       },
-      "created": "2013-09-26 15:45:00 +0300",
-      "uuid": "613ee7b0-08d7-0131-84a3-52540007db7f"
+      "printer_queues": [
+        {
+          "remote_uri": "ipp://boot.hogwarts.opinsys.net/printers/Kirkonkyla-Luokka-202",
+          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
+          "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
+          "location": "Satun luokka",
+          "type": "36876",
+          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.opinsys.fi",
+          "description": "Kirkonkyla-Luokka-202",
+          "name": "Kirkonkyla-Luokka-202",
+          "server_fqdn": "boot.hogwarts.opinsys.net"
+        },
+        {
+          "remote_uri": "ipp://boot.hogwarts.opinsys.net/printers/Kirkonkyla-Luokka-202",
+          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
+          "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
+          "location": "Satun luokka",
+          "type": "36876",
+          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.opinsys.fi",
+          "description": "Kirkonkyla-Luokka-202",
+          "name": "Kirkonkyla-Luokka-202",
+          "server_fqdn": "boot.hogwarts.opinsys.net"
+        }
+      ],
+      "created": 1380803997,
+      "uuid": "d5eba820-0e56-0131-84e4-52540007db7f"
     }
+
 
 ### Examples
 
