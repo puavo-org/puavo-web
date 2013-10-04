@@ -33,6 +33,7 @@ class BeforeFilters < LdapSinatra
 
   after do
     LdapHash.clear_setup
+    LocalStore.close_connection
   end
 end
 

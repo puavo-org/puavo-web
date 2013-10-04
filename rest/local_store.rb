@@ -8,7 +8,7 @@ module LocalStore
 
   module ClassMethods
     def local_store
-      Redis.new :db => CONFIG["redis_db"]
+      Thread.current[:redis_connection] ||= Redis.new :db => CONFIG["redis_db"]
     end
   end
 
@@ -20,6 +20,12 @@ module LocalStore
     base.extend(ClassMethods)
   end
 
-end
+  def self.close_connection
+    if c = Thread.current[:redis_connection]
+      c.quit
+      Thread.current[:redis_connection] = nil
+    end
+  end
 
+end
 end
