@@ -145,46 +145,31 @@ class LdapHash
 end
 
 
-# ldap attribute conversions
+# Class store implementation
 class LdapHash
 
   # Store for ldap attribute mappings
-  @@class_store = {}
-  @@ldap2pretty = {}
-
-  def self.class_store
-    @@class_store[self] ||= {
-      :pretty2ldap => {},
-      :ldap2pretty => {},
-      :converters => {}
-    }
-  end
-  def class_store
-    self.class.class_store
+  @@_class_store = {}
+  def self._class_store
+    @@_class_store[self] ||= {}
   end
 
-  def self.pretty2ldap
-    class_store[:pretty2ldap]
-  end
-  def pretty2ldap
-    class_store[:pretty2ldap]
-  end
-
-  def self.ldap2pretty
-    class_store[:ldap2pretty]
-  end
-  def ldap2pretty
-    class_store[:ldap2pretty]
+  def self.class_store(name)
+    define_method(name) do
+      self.class._class_store[name] ||= {}
+    end
+    define_singleton_method(name) do
+      _class_store[name] ||= {}
+    end
   end
 
-  def converters
-    class_store[:converters]
-  end
-  def self.converters
-    class_store[:converters]
-  end
+end
 
-
+# ldap attribute conversions
+class LdapHash
+  class_store :pretty2ldap
+  class_store :ldap2pretty
+  class_store :converters
   attr_reader :ldap_attr_store
 
   def initialize(ldap_attr_store={})
