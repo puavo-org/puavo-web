@@ -7,12 +7,17 @@ module PuavoRest
 class Session < Hash
   include LocalStore
 
+  # Clear sessions after after 12 hours if they are not manually cleared during
+  # logout. Ie. on crash
+  MAX_AGE = 60 * 60 * 12
+
   def session_key
     "session:#{ self["uuid"] }"
   end
 
   def save
     local_store.set(session_key, self.to_json)
+    local_store.expire(session_key, MAX_AGE)
   end
 
   def destroy
