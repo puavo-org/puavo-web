@@ -11,8 +11,21 @@ class Session < Hash
   # logout. Ie. on crash
   MAX_AGE = 60 * 60 * 12
 
+  UUID_CHARS = ["a".."z", "A".."Z", "0".."9"].reduce([]) do |memo, range|
+    memo + range.to_a
+  end
+
+  def self.generate_uuid
+    (0...50).map{ UUID_CHARS[rand(UUID_CHARS.size)] }.join
+  end
+
+
   def session_key
-    "session:#{ self["uuid"] }"
+    "session:#{ self["device"]["hostname"] }"
+  end
+
+  def self.session_key(hostname)
+    "session:#{ hostname }"
   end
 
   def save
@@ -24,16 +37,20 @@ class Session < Hash
     local_store.del(session_key)
   end
 
-  def self.load(uuid)
-    json = local_store.get("session:#{ uuid }")
+  def self.load(hostname)
+    json = local_store.get(session_key hostname)
     if json.nil?
       raise NotFound, :user => "Cannot find session"
     end
     new.merge JSON.parse(json)
   end
 
+  def self.keys
+    local_store.keys("session:*")
+  end
+
   def self.all
-    local_store.keys("session:*").map do |k|
+    keys.map do |k|
       new.merge JSON.parse(local_store.get(k))
     end
   end
@@ -64,8 +81,6 @@ class Sessions < LdapSinatra
   # Create new desktop session for a thin client. If the thin client requests
   # some specific LTSP image and no server provides it will get the most idle
   # LTSP server with what ever image it has
-  #
-  # @!macro route
   post "/v3/sessions" do
     auth :basic_auth, :server_auth, :kerberos
 
@@ -76,7 +91,7 @@ class Sessions < LdapSinatra
 
     session = Session.new
     session.merge!(
-      "uuid" => UUID.generator.generate,
+      "uuid" => Session.generate_uuid,
       "created" => Time.now.to_i,
       "printer_queues" => []
     )
@@ -121,30 +136,48 @@ class Sessions < LdapSinatra
     end)
   end
 
+
   # Return all sessions
   #
   # @!macro route
   get "/v3/sessions" do
     auth :server_auth, :legacy_server_auth
 
-    json limit Session.all
+    session_hostnames = Session.keys.map do |key|
+      key.split(":")[1]
+    end
+
+    json limit session_hostnames
+  end
+
+
+  def assert_uuid(session)
+    if params["uuid"].nil?
+      raise BadInput, :user => "uuid query string is missing"
+    end
+
+    if session["uuid"] != params["uuid"]
+      raise BadInput, :user => "uuid does not match"
+    end
   end
 
   # Get session by uid
   #
   # @!macro route
-  get "/v3/sessions/:uuid" do
+  get "/v3/sessions/:hostname" do
     auth :server_auth, :legacy_server_auth
-
-    json Session.load(params["uuid"])
+    session = Session.load(params["hostname"])
+    assert_uuid session
+    json session
   end
 
   # Delete session
   #
   # @!macro route
-  delete "/v3/sessions/:uuid" do
-
-    Session.load(params["uuid"]).destroy
+  delete "/v3/sessions/:hostname" do
+    session = Session.load(params["hostname"])
+    assert_uuid session
+    session.destroy
     json :ok => true
   end
 

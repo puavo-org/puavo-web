@@ -273,15 +273,23 @@ For guests
 
 ## GET /v3/sessions
 
-Return all sessions.
+Return array device hostnames that have a desktop session
 
-## GET /v3/sessions/:uuid
+## GET /v3/sessions/:hostname
+
+Required params:
+
+  - uuid
 
 Return session by uuid.
 
-## DELETE /v3/sessions/:uuid
+## DELETE /v3/sessions/:hostname
 
-Delete session by uuid.
+Required params:
+
+  - uuid
+
+Delete session
 
 ### Examples
 

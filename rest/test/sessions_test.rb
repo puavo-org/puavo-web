@@ -271,41 +271,75 @@ describe PuavoRest::Sessions do
       )
     end
 
-    it "can be fetched with GET" do
-      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
+    describe "GET and DELETE" do
+      before do
+        post "/v3/sessions", { "hostname" => "thinnoimage" }, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
+        assert_200
 
-      post_data = JSON.parse last_response.body
-      assert post_data["uuid"], "has uuid"
+        @post_data = JSON.parse last_response.body
+        assert @post_data["uuid"], "has uuid"
+      end
 
-      get "/v3/sessions/#{ post_data["uuid"] }"
-      get_data = JSON.parse last_response.body
-      assert_equal post_data["uuid"], get_data["uuid"]
-    end
+      it "can be fetched with GET" do
+        get "/v3/sessions/thinnoimage", "uuid" => @post_data["uuid"]
+        get_data = JSON.parse last_response.body
+        assert_200
+        assert_equal @post_data["uuid"], get_data["uuid"]
+      end
 
-    it "get 404 for nonexistent sessions" do
-      get "/v3/sessions/doesnotexists"
-      assert_equal 404, last_response.status
-      data = JSON.parse(last_response.body)
-      assert data["error"], "Must have error"
-      assert_equal "NotFound", data["error"]["code"]
-    end
+      it "responds 400 for bad uuid" do
+        get "/v3/sessions/thinnoimage", "uuid" => "bad"
+        data = JSON.parse last_response.body
+        assert data["error"], "Must have error"
+        assert_equal 400, last_response.status
+        assert_equal "BadInput", data["error"]["code"]
+      end
 
-    it "can be deleted with DELETE" do
-      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
+      it "responds 400 for gets without uuid" do
+        get "/v3/sessions/thinnoimage"
+        data = JSON.parse last_response.body
+        assert data["error"], "Must have error"
+        assert_equal 400, last_response.status
+        assert_equal "BadInput", data["error"]["code"]
+      end
 
-      data = JSON.parse last_response.body
+      it "responds 404 for unknown sessions" do
+        get "/v3/sessions/doesnotexists", "uuid" => "foo"
+        assert_equal 404, last_response.status
+        data = JSON.parse(last_response.body)
+        assert data["error"], "Must have error"
+        assert_equal "NotFound", data["error"]["code"]
+      end
 
-      delete "/v3/sessions/#{ data["uuid"] }"
-      assert_200
+      it "can be deleted with DELETE" do
+        delete "/v3/sessions/#{ @post_data["device"]["hostname"] }",
+          "uuid" => @post_data["uuid"]
+        assert_200
 
-      get "/v3/sessions/#{ data["uuid"] }"
-      assert_equal 404, last_response.status
+        get "/v3/sessions/#{ @post_data["device"]["hostname"] }",
+          "uuid" => @post_data["uuid"]
+        assert_equal 404, last_response.status
+      end
+
+      it "cannot be deleted without uuid" do
+        delete "/v3/sessions/#{ @post_data["device"]["hostname"] }"
+        assert_equal 400, last_response.status
+
+        get "/v3/sessions/#{ @post_data["device"]["hostname"] }", "uuid" => @post_data["uuid"]
+        assert_200
+      end
+
+      it "cannot be deleted with bad uuid" do
+        delete "/v3/sessions/#{ @post_data["device"]["hostname"] }",
+          "uuid" => "bad"
+        assert_equal 400, last_response.status
+
+        get "/v3/sessions/#{ @post_data["device"]["hostname"] }", "uuid" => @post_data["uuid"]
+        assert_200
+      end
+
     end
 
 
@@ -334,10 +368,8 @@ describe PuavoRest::Sessions do
       get "/v3/sessions"
       data = JSON.parse last_response.body
 
+      assert_equal Array, data.class
       assert_equal 2, data.size
-      data.each do |s|
-        assert s["ltsp_server"], "have ltsp server"
-      end
     end
 
   end
