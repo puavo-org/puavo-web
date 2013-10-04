@@ -12,17 +12,20 @@ class PrinterQueue < LdapHash
   ldap_map(:puavoServer, :server_fqdn) do |dn|
     BootServer.by_dn(Array(dn).first)["hostname"] + "." +  LdapHash.organisation["domain"]
   end
-  ldap_map(:puavoServer, :remote_uri) do |dn|
-    "ipp://#{self['server_fqdn']}/printers/#{self['name']}"
-  end
 
-  # TODO: as link maybe?
-  # ldap_map :puavoPrinterPPD, :pdd
+  def remote_uri
+    "ipp://#{ server_fqdn }/printers/#{ name }"
+  end
 
   def self.ldap_base
     "ou=Printers,#{ organisation["base"] }"
   end
 
+  def to_hash
+    o = super
+    o["remote_uri"] = remote_uri
+    o
+  end
 
   def self.by_server(server_dn)
     filter("(puavoServer=#{ escape server_dn })")

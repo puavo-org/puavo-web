@@ -107,7 +107,6 @@ class Sessions < LdapSinatra
     # credentials here.
     json(LdapHash.setup(:credentials => CONFIG["server"]) do
       device = Device.by_hostname(params["hostname"])
-      device.fallback_defaults
 
       logger.info "Thin #{ params["hostname"] } " +
         "from school #{ device["school"].inspect } " +

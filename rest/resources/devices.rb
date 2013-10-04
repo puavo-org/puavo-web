@@ -24,11 +24,6 @@ class Device < LdapHash
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
   ldap_map :puavoPrinterDeviceURI, :printer_device_uri
 
-  FALLBACK_KEYS = [
-    "preferred_image",
-    "allow_guest",
-    "personal_device"
-  ]
 
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
@@ -54,27 +49,41 @@ class Device < LdapHash
     @school = School.by_dn(school_dn)
   end
 
-  def printer_queues
-    Array(self["printer_queue_dns"]).map do |dn|
-      PrinterQueue.by_dn(dn)
-    end
-  end
-
   # Cached organisation query
   def organisation
     return @organisation if @organisation
     @organisation = Organisation.by_dn(self.class.organisation["base"])
   end
 
-  # Find fallbacks from school and organisation for given keys if their values
-  # are nil
-  def fallback_defaults(keys=FALLBACK_KEYS)
-    keys.each do |key|
-      next if not self[key].nil?
-      self[key] = school[key]
-      next if not self[key].nil?
-      self[key] = organisation[key]
+  def printer_queues
+    Array(self["printer_queue_dns"]).map do |dn|
+      PrinterQueue.by_dn(dn)
     end
+  end
+
+
+  def preferred_image
+     if get_original(:preferred_image).nil?
+       school.preferred_image
+     else
+       get_original(:preferred_image)
+     end
+  end
+
+  def allow_guest
+     if get_original(:allow_guest).nil?
+        school.allow_guest
+      else
+        get_original(:allow_guest)
+      end
+  end
+
+  def personal_device
+     if get_original(:personal_device).nil?
+       school.personal_device
+     else
+       get_original(:personal_device)
+     end
   end
 
 end
@@ -110,7 +119,6 @@ class Devices < LdapSinatra
     auth :basic_auth, :server_auth, :legacy_server_auth
 
     device = Device.by_hostname(params["hostname"])
-    device.fallback_defaults
     json device
   end
 

@@ -153,25 +153,37 @@ class LdapHash
   @@ldap2pretty = {}
 
   def self.class_store
-    @@class_store[self] ||= {}
+    @@class_store[self] ||= {
+      :pretty2ldap => {},
+      :ldap2pretty => {},
+      :converters => {}
+    }
   end
   def class_store
     self.class.class_store
   end
 
   def self.pretty2ldap
-    class_store[:pretty2ldap] ||= {}
+    class_store[:pretty2ldap]
   end
   def pretty2ldap
-    class_store[:pretty2ldap] ||= {}
+    class_store[:pretty2ldap]
   end
 
   def self.ldap2pretty
-    class_store[:ldap2pretty] ||= {}
+    class_store[:ldap2pretty]
   end
   def ldap2pretty
-    class_store[:ldap2pretty] ||= {}
+    class_store[:ldap2pretty]
   end
+
+  def converters
+    class_store[:converters]
+  end
+  def self.converters
+    class_store[:converters]
+  end
+
 
   attr_reader :ldap_attr_store
 
@@ -188,35 +200,52 @@ class LdapHash
   # @param convert [Block] Use block to
   # @see convert
   def self.ldap_map(ldap_name, pretty_name, default_value=nil, &convert)
+    pretty_name = pretty_name.to_sym
+    ldap_name = ldap_name.to_sym
     pretty2ldap[pretty_name] = ldap_name
     ldap2pretty[ldap_name] = pretty_name
 
-    define_method pretty_name.to_sym do
-      return @cache[pretty_name] if not @cache[pretty_name].nil?
+    converters[ldap_name] = {
+      :default => default_value,
+      :convert => convert
+    }
 
-      value = Array(@ldap_attr_store[ldap_name.to_sym])
-
-      # String values in our LDAP are always UTF-8
-      value = value.map do |item|
-        if item.respond_to?(:force_encoding)
-          item.force_encoding("UTF-8")
-        else
-          item
-        end
-      end
-
-      if Array(value).empty? && !default_value.nil?
-        return default_value
-      end
-
-      if convert
-        value = instance_exec(value, &convert)
-      else
-        value = Array(value).first
-      end
-
-      @cache[pretty_name] = value
+    define_method pretty_name do
+      get_original(pretty_name)
     end
+  end
+
+
+  def get_original(pretty_name)
+    pretty_name = pretty_name.to_sym
+    return @cache[pretty_name] if not @cache[pretty_name].nil?
+
+    ldap_name = pretty2ldap[pretty_name]
+    default_value = converters[ldap_name][:default]
+    convert = converters[ldap_name][:convert]
+
+    value = Array(@ldap_attr_store[ldap_name])
+
+    # String values in our LDAP are always UTF-8
+    value = value.map do |item|
+      if item.respond_to?(:force_encoding)
+        item.force_encoding("UTF-8")
+      else
+        item
+      end
+    end
+
+    if Array(value).empty? && !default_value.nil?
+      return default_value
+    end
+
+    if convert
+      value = instance_exec(value, &convert)
+    else
+      value = Array(value).first
+    end
+
+    @cache[pretty_name] = value
   end
 
   def [](pretty_name)

@@ -26,5 +26,36 @@ class School < LdapHash
     end
   end
 
+  # Cached organisation query
+  def organisation
+    return @organisation if @organisation
+    @organisation = Organisation.by_dn(self.class.organisation["base"])
+  end
+
+
+  def preferred_image
+     if get_original(:preferred_image).nil?
+       organisation.preferred_image
+      else
+        get_original(:preferred_image)
+      end
+  end
+
+  def allow_guest
+     if get_original(:allow_guest).nil?
+       organisation.allow_guest
+     else
+       get_original(:allow_guest)
+     end
+  end
+
+  def personal_device
+     if get_original(:personal_device).nil?
+       organisation.personal_device
+     else
+       get_original(:personal_device)
+     end
+  end
+
 end
 end
