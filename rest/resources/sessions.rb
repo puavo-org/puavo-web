@@ -51,7 +51,7 @@ class Session < Hash
 
   def self.all
     keys.map do |k|
-      new.merge JSON.parse(local_store.get(k))
+      new.merge! JSON.parse(local_store.get(k))
     end
   end
 
