@@ -1,7 +1,7 @@
 
 module PuavoRest
 
-class User < LdapHash
+class User < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :uid, :username
@@ -89,7 +89,7 @@ class Users < LdapSinatra
   get "/v3/whoami" do
     auth :basic_auth, :kerberos
     user = User.current.to_hash
-    json user.merge("organisation" => LdapHash.organisation.to_hash)
+    json user.merge("organisation" => LdapModel.organisation.to_hash)
   end
 
 end

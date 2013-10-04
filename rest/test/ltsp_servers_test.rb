@@ -7,7 +7,7 @@ describe PuavoRest::LtspServers do
   before(:each) do
     Puavo::Test.clean_up_ldap
     PuavoRest::LtspServer.local_store.flushdb
-    FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
     @school = School.create(
       :cn => "gryffindor",

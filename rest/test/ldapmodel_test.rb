@@ -1,13 +1,11 @@
 require_relative "./helper"
-require_relative "../ldap_hash"
+require_relative "../lib/ldapmodel"
 
-LdapHash = PuavoRest::LdapHash
-
-describe LdapHash do
+describe LdapModel do
 
   describe "attribute mapping" do
 
-    class TestHash1 < LdapHash
+    class TestHash1 < LdapModel
       ldap_map :fooBar, :foo_bar
       ldap_map :Baz, :baz
       ldap_map(:number, :integer) { |v| v.first.to_i }
@@ -17,7 +15,7 @@ describe LdapHash do
       ldap_map :double, :double_two
     end
 
-    class TestHash2 < LdapHash
+    class TestHash2 < LdapModel
       ldap_map :otherAttr, :other_attr
     end
 
@@ -86,7 +84,7 @@ describe LdapHash do
     end
 
     it "can reference other values from blocks using self" do
-      class H < LdapHash
+      class H < LdapModel
         ldap_map :a, :a
         ldap_map(:b, :b){ |v| self["a"] }
       end
@@ -114,7 +112,7 @@ describe LdapHash do
     # end
 
     it "can use custom getter via method" do
-      class CustomMethod < LdapHash
+      class CustomMethod < LdapModel
         ldap_map :puavoValue, :value
         def value
           "foo"
@@ -129,7 +127,7 @@ describe LdapHash do
     end
 
     it "can set false as default value" do
-      class FalseDefault < LdapHash
+      class FalseDefault < LdapModel
         ldap_map :puavoValue, :value, false
       end
 
@@ -138,7 +136,7 @@ describe LdapHash do
     end
 
     it "default values are not run through converters" do
-      class DefaultWithBlock < LdapHash
+      class DefaultWithBlock < LdapModel
         ldap_map(:puavoValue, :value, false) do
           "bad"
         end
@@ -150,8 +148,8 @@ describe LdapHash do
 
     it "can create full links" do
 
-      LdapHash.setup(:rest_root => "http://someroot") do
-        h = LdapHash.new
+      LdapModel.setup(:rest_root => "http://someroot") do
+        h = LdapModel.new
         assert_equal "http://someroot/foo", h.link("/foo")
       end
 

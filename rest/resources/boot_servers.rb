@@ -1,6 +1,6 @@
 
 module PuavoRest
-class BootServer < LdapHash
+class BootServer < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :puavoHostname, :hostname

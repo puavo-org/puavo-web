@@ -2,7 +2,6 @@ require "socket"
 require "yaml"
 require "puavo/etc"
 
-module PuavoRest
 
 fqdn = Socket.gethostbyname(Socket.gethostname).first
 
@@ -57,5 +56,5 @@ else
   end
 
   CONFIG = default_config.merge(customizations)
-end
+
 end

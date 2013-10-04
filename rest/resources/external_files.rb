@@ -1,6 +1,6 @@
 module PuavoRest
 
-class ExternalFile < LdapHash
+class ExternalFile < LdapModel
 
   ldap_map :cn, :name
   ldap_map :puavoDataHash, :data_hash

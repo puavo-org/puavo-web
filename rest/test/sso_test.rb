@@ -7,7 +7,7 @@ require "jwt"
 describe PuavoRest::SSO do
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
     @external_service = ExternalService.new
     @external_service.classes = ["top", "puavoJWTService"]

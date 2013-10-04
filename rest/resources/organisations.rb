@@ -1,7 +1,7 @@
 require 'puavo/ldap'
 
 module PuavoRest
-class Organisation < LdapHash
+class Organisation < LdapModel
   ldap_map :dn, :dn
   ldap_map :dn, :base
   ldap_map :o, :name
@@ -24,7 +24,7 @@ class Organisation < LdapHash
     return @@by_domain if @@by_domain
     @@by_domain = {}
 
-    LdapHash.setup(:credentials => CONFIG["server"]) do
+    LdapModel.setup(:credentials => CONFIG["server"]) do
       all.each do |org|
         @@by_domain[org["domain"]] = org
         if CONFIG["default_organisation_domain"] == org["domain"]
@@ -66,7 +66,7 @@ end
 class Organisations < LdapSinatra
 
   get "/v3/current_organisation" do
-    json LdapHash.organisation
+    json LdapModel.organisation
   end
 
   get "/v3/organisations/:domain" do

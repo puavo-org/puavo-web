@@ -19,7 +19,7 @@ class LdapSinatra < Sinatra::Base
       username, password = plain.split(":")
 
       credentials = { :password => password  }
-      if LdapHash.is_dn(username)
+      if LdapModel.is_dn(username)
         credentials[:dn] = username
       else
         credentials[:username] = username
@@ -94,12 +94,20 @@ class LdapSinatra < Sinatra::Base
 
     auth_methods.each do |method|
       if credentials = send(method)
-        LdapHash.setup(:credentials => credentials)
+
+        if credentials[:dn].nil?
+          credentials[:dn] = LdapModel.setup(:credentials => CONFIG["server"]) do
+            User.resolve_dn(credentials[:username])
+          end
+        end
+
+        LdapModel.setup(:credentials => credentials)
         break
       end
     end
 
-    if not LdapHash.connection
+
+    if not LdapModel.connection
       raise Unauthorized,
         :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }"
     end

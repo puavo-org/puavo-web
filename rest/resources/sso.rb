@@ -8,7 +8,7 @@ require_relative "../local_store"
 
 module PuavoRest
 
-class ExternalService < LdapHash
+class ExternalService < LdapModel
 
   ldap_map(:dn, :dn){ |dn| Array(dn).first.downcase.strip }
   ldap_map :cn, :name
@@ -49,7 +49,7 @@ class SSO < LdapSinatra
 
   def fetch_external_service
     if return_to
-      LdapHash.setup(:credentials => CONFIG["server"]) do
+      LdapModel.setup(:credentials => CONFIG["server"]) do
 
         # Single domain might have multiple external services configured to
         # different paths. Match paths from the longest to shortest.
@@ -104,8 +104,8 @@ class SSO < LdapSinatra
 
     # Read organisation data manually instead of using the cached one because
     # enabled external services might be updated.
-    organisation = LdapHash.setup(:credentials => CONFIG["server"]) do
-      Organisation.by_dn(LdapHash.organisation["dn"])
+    organisation = LdapModel.setup(:credentials => CONFIG["server"]) do
+      Organisation.by_dn(LdapModel.organisation["dn"])
     end
 
     school_allows = Array(school["external_services"]).
@@ -225,7 +225,7 @@ class SSO < LdapSinatra
 
 
     if org
-      LdapHash.setup(:organisation => org)
+      LdapModel.setup(:organisation => org)
     else
       render_form(t.sso.no_organisation)
     end

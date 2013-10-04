@@ -1,4 +1,4 @@
-require "pstore"
+require "redis"
 
 module PuavoRest
 

@@ -1,6 +1,6 @@
 module PuavoRest
 
-class Group < LdapHash
+class Group < LdapModel
   ldap_map :dn, :dn
   ldap_map :cn, :name
   ldap_map :puavoPrinterQueue, :printer_queue_dns

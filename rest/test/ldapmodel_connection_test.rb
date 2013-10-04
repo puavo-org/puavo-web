@@ -1,11 +1,11 @@
 require_relative "./helper"
-require_relative "../ldap_hash"
+require_relative "../lib/ldapmodel"
 
-describe "LdapHash connection management" do
+describe "LdapModel connection management" do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
@@ -27,9 +27,9 @@ describe "LdapHash connection management" do
   end
 
   it "can get current user with dn and password" do
-    PuavoRest::LdapHash.setup(
+    LdapModel.setup(
       :credentials => {
-        :dn => @user.dn,
+        :dn => @user.dn.to_s,
         :password => "secret"
       },
       :organisation => PuavoRest::Organisation.by_domain["*"]
@@ -42,9 +42,9 @@ describe "LdapHash connection management" do
   end
 
   it "can get current user with username and password" do
-    PuavoRest::LdapHash.setup(
+    LdapModel.setup(
       :credentials => {
-        :username => "bob",
+        :dn => @user.dn.to_s,
         :password => "secret"
       },
       :organisation => PuavoRest::Organisation.by_domain["*"]
@@ -57,23 +57,23 @@ describe "LdapHash connection management" do
   end
 
   it "can change current user temporally" do
-    alice = User.new(
+    @alice = User.new(
       :givenName => "Alice",
       :sn  => "Wonderland",
       :uid => "alice",
       :puavoEduPersonAffiliation => "student",
       :mail => "alice@example.com"
     )
-    alice.set_password "secret2"
-    alice.puavoSchool = @school.dn
-    alice.role_ids = [
+    @alice.set_password "secret2"
+    @alice.puavoSchool = @school.dn
+    @alice.role_ids = [
       Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
     ]
-    alice.save!
+    @alice.save!
 
-    PuavoRest::LdapHash.setup(
+    LdapModel.setup(
       :credentials => {
-        :username => "bob",
+        :dn => @user.dn.to_s,
         :password => "secret"
       },
       :organisation => PuavoRest::Organisation.by_domain["*"]
@@ -81,9 +81,9 @@ describe "LdapHash connection management" do
 
     assert_equal "Bob", PuavoRest::User.current["first_name"]
 
-    PuavoRest::LdapHash.setup(
+    LdapModel.setup(
       :credentials => {
-        :username => "alice",
+        :dn => @alice.dn.to_s,
         :password => "secret2"
       }) do
 

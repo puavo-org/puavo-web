@@ -11,14 +11,15 @@ if Sinatra::Base.development? || ENV["DEBUG"]
   require "pry"
 end
 
+require_relative "./lib/ldapmodel"
 require_relative "./middleware/hide_errors"
 require_relative "./middleware/suppress_json_errors"
 require_relative "./middleware/virtual_host_base"
+require_relative "./middleware/always_request_body"
 
 require_relative "./config"
 require_relative "./auth"
 require_relative "./lib/ldap_converters"
-require_relative "./ldap_hash"
 require_relative "./ldap_sinatra"
 require_relative "./resources/users"
 require_relative "./resources/groups"

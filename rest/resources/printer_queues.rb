@@ -1,6 +1,6 @@
 module PuavoRest
 
-class PrinterQueue < LdapHash
+class PrinterQueue < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :printerMakeAndModel, :model
@@ -10,7 +10,7 @@ class PrinterQueue < LdapHash
   ldap_map :printerDescription, :description
   ldap_map :printerDescription, :name
   ldap_map(:puavoServer, :server_fqdn) do |dn|
-    BootServer.by_dn(Array(dn).first)["hostname"] + "." +  LdapHash.organisation["domain"]
+    BootServer.by_dn(Array(dn).first)["hostname"] + "." +  LdapModel.organisation["domain"]
   end
 
   def remote_uri

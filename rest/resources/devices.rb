@@ -1,7 +1,7 @@
 require_relative "../lib/error_codes"
 
 module PuavoRest
-class Device < LdapHash
+class Device < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :cn, :hostname

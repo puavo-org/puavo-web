@@ -89,7 +89,7 @@ class ServerFilter
 
 end
 
-class LtspServer < LdapHash
+class LtspServer < LdapModel
   include LocalStore
 
   ldap_map :dn, :dn

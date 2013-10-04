@@ -1,5 +1,5 @@
 module PuavoRest
-class School < LdapHash
+class School < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :puavoId, :puavo_id

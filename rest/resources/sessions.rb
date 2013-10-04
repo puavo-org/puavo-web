@@ -105,7 +105,7 @@ class Sessions < LdapSinatra
 
     # Normal user has no permission to read device attributes so force server
     # credentials here.
-    json(LdapHash.setup(:credentials => CONFIG["server"]) do
+    json(LdapModel.setup(:credentials => CONFIG["server"]) do
       device = Device.by_hostname(params["hostname"])
 
       logger.info "Thin #{ params["hostname"] } " +

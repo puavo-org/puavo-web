@@ -1,4 +1,3 @@
-
 require_relative "./puavo-rest"
 
 #   @overload $0 $1
@@ -24,7 +23,7 @@ class BeforeFilters < LdapSinatra
 
     port = [80, 443].include?(request.port) ? "": ":#{ request.port }"
 
-    LdapHash.setup(
+    LdapModel.setup(
       :organisation =>
         Organisation.by_domain[request.host] || Organisation.by_domain["*"],
       :rest_root => "#{ request.scheme }://#{ request.host }#{ port }"
@@ -32,7 +31,7 @@ class BeforeFilters < LdapSinatra
   end
 
   after do
-    LdapHash.clear_setup
+    LdapModel.clear_setup
     LocalStore.close_connection
   end
 end
