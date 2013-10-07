@@ -42,6 +42,21 @@ class User < LdapModel
     User.organisation
   end
 
+  # Cached school query
+  def school
+    return @school if @school
+    return if school_dn.nil?
+    @school = School.by_dn(school_dn)
+  end
+
+  def preferred_language
+    if get_original(:preferred_language).nil? && school
+      school.preferred_language
+    else
+      get_original(:preferred_language)
+    end
+  end
+
   def self.current
     return settings[:credentials_cache][:current_user] if settings[:credentials_cache][:current_user]
 

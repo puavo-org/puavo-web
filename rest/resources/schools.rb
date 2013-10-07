@@ -7,6 +7,7 @@ class School < LdapModel
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoPrinterQueue, :printer_queue_dns
   ldap_map :puavoWirelessPrinterQueue, :wireless_printer_queue_dns
+  ldap_map :preferredLanguage, :preferred_language
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
@@ -55,6 +56,14 @@ class School < LdapModel
      else
        get_original(:personal_device)
      end
+  end
+
+  def preferred_language
+    if get_original(:preferred_language).nil?
+      organisation.preferred_language
+    else
+      get_original(:preferred_language)
+    end
   end
 
 end

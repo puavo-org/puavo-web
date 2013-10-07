@@ -70,6 +70,49 @@ describe PuavoRest::Users do
       assert_equal "http://example.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
     end
 
+    describe "with language fallbacks" do
+      [
+        {
+          :name   => "user lang is the most preferred",
+          :org    => "en",
+          :school => "fi",
+          :user   => "sv",
+          :expect => "sv"
+        },
+        {
+          :name   => "first fallback is school",
+          :org    => "en",
+          :school => "fi",
+          :user   => nil,
+          :expect => "fi"
+        },
+        {
+          :name   => "organisation is the least preferred",
+          :org    => "en",
+          :school => nil,
+          :user   => nil,
+          :expect => "en"
+        },
+      ].each do |opts|
+        it opts[:name] do
+          @user.preferredLanguage = opts[:user]
+          @user.save!
+          @school.preferredLanguage = opts[:school]
+          @school.save!
+
+          test_organisation = LdapOrganisation.first # TODO: fetch by name
+          test_organisation.preferredLanguage = opts[:org]
+          test_organisation.save!
+
+          basic_authorize "bob", "secret"
+          get "/v3/users/bob"
+          assert_200
+          data = JSON.parse(last_response.body)
+          assert_equal opts[:expect], data["preferred_language"]
+        end
+      end
+    end
+
     describe "with image" do
       before(:each) do
         @user.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
