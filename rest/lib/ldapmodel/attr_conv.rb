@@ -42,6 +42,12 @@ class LdapModel
     attrs.each { |a| computed_attributes.push(a.to_sym) }
   end
 
+  # Ignore one or more ldap_map attributes `to_hash` and `to_json`
+  # serializations
+  def self.ignore_attr(*attrs)
+    attrs.each { |a| ignored_attributes[a.to_sym] = true }
+  end
+
   def get_original(pretty_name)
     pretty_name = pretty_name.to_sym
     return @cache[pretty_name] if not @cache[pretty_name].nil?
@@ -124,7 +130,9 @@ class LdapModel
   def to_hash
     h = {}
     pretty2ldap.each do |pretty_name, _|
-      h[pretty_name.to_s] = send(pretty_name)
+      if !ignored_attributes[pretty_name.to_sym]
+        h[pretty_name.to_s] = send(pretty_name)
+      end
     end
     computed_attributes.each do |attr|
       h[attr.to_s] = send(attr)

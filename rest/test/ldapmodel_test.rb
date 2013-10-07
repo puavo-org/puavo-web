@@ -178,6 +178,39 @@ describe LdapModel do
 
     end
 
+    describe "ignore attributes" do
+      class IgnoredAttributes < LdapModel
+        ldap_map :puavoFoo, :foo
+        ldap_map :puavoBar, :bar
+        ignore_attr :bar
+      end
+
+      before do
+        @model = IgnoredAttributes.new.ldap_merge!(
+          :puavoFoo => "foo",
+          :puavoBar => "bar"
+        )
+      end
+
+      it "can be accessed normally" do
+        assert_equal "bar", @model.bar
+        assert_equal "foo", @model.foo
+      end
+
+      it "ignored attr is not present in to_hash serialization" do
+        h = @model.to_hash
+        assert_equal "foo", h["foo"]
+        assert h["bar"].nil?, "bar was not missing!"
+      end
+
+      it "ignored attr is not present in to_json serialization" do
+        h = JSON.parse @model.to_json
+        assert_equal "foo", h["foo"]
+        assert h["bar"].nil?, "bar was not missing!"
+      end
+
+    end
+
   end
 
 
