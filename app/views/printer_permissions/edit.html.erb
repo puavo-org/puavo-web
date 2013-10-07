@@ -36,7 +36,7 @@
     <legend><%= t('.groups') %></legend>
 
     <ul>
-      <% Group.all.each do |group| %>
+      <% @school.groups.each do |group| %>
       <li>
         <label>
           <%= hidden_field_tag "groups[#{ group.dn }]", false %>
