@@ -83,11 +83,11 @@ describe LdapModel do
       assert_equal false, h.with_default
     end
 
+    class H < LdapModel
+      ldap_map :a, :a
+      ldap_map(:b, :b){ |v| self["a"] }
+    end
     it "can reference other values from blocks using self" do
-      class H < LdapModel
-        ldap_map :a, :a
-        ldap_map(:b, :b){ |v| self["a"] }
-      end
 
       h = H.new
       h.ldap_set("a", "foo")
@@ -111,14 +111,13 @@ describe LdapModel do
     #   assert_equal "nil", h.to_json
     # end
 
-    it "can use custom getter via method" do
-      class CustomMethod < LdapModel
-        ldap_map :puavoValue, :value
-        def value
-          "foo"
-        end
+    class CustomMethod < LdapModel
+      ldap_map :puavoValue, :value
+      def value
+        "foo"
       end
-
+    end
+    it "can use custom getter via method" do
       h = CustomMethod.new
       h.ldap_set("puavoValue", "bad")
       assert_equal h.value, "foo"
@@ -126,34 +125,59 @@ describe LdapModel do
 
     end
 
+    class FalseDefault < LdapModel
+      ldap_map :puavoValue, :value, false
+    end
     it "can set false as default value" do
-      class FalseDefault < LdapModel
-        ldap_map :puavoValue, :value, false
-      end
-
       h = FalseDefault.new
       assert_equal false, h.value
     end
 
-    it "default values are not run through converters" do
-      class DefaultWithBlock < LdapModel
-        ldap_map(:puavoValue, :value, false) do
-          "bad"
-        end
+    class DefaultWithBlock < LdapModel
+      ldap_map(:puavoValue, :value, false) do
+        "bad"
       end
-
+    end
+    it "default values are not run through converters" do
       h = DefaultWithBlock.new
       assert_equal false, h.value
     end
 
     it "can create full links" do
-
       LdapModel.setup(:rest_root => "http://someroot") do
         h = LdapModel.new
         assert_equal "http://someroot/foo", h.link("/foo")
       end
+    end
+
+    describe "Computed attributes" do
+      class ComputedAttributes < LdapModel
+        ldap_map :puavoFoo, :foo
+        computed_attr :bar
+        def bar
+          "bar#{ foo }bar"
+        end
+      end
+      before do
+        @model = ComputedAttributes.new.ldap_merge!(:puavoFoo => "foo")
+      end
+
+      it "can be accessed normally" do
+        assert_equal "barfoobar", @model.bar
+      end
+
+      it "are added to to_hash" do
+        h = @model.to_hash
+        assert_equal "barfoobar", h["bar"]
+      end
+
+      it "are added to serialized json" do
+        h = JSON.parse @model.to_json
+        assert_equal "barfoobar", h["bar"]
+      end
 
     end
+
   end
 
 

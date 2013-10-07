@@ -4,6 +4,7 @@ class LdapModel
   class_store :pretty2ldap
   class_store :ldap2pretty
   class_store :converters
+  class_store :computed_attributes, []
   attr_reader :ldap_attr_store
 
   def initialize(ldap_attr_store={})
@@ -34,6 +35,11 @@ class LdapModel
     end
   end
 
+  # A method that will be executed and added to `to_hash` and `to_json`
+  # conversions of this models
+  def self.computed_attr(*attrs)
+    attrs.each { |a| computed_attributes.push(a.to_sym) }
+  end
 
   def get_original(pretty_name)
     pretty_name = pretty_name.to_sym
@@ -118,6 +124,9 @@ class LdapModel
     h = {}
     pretty2ldap.each do |pretty_name, _|
       h[pretty_name.to_s] = send(pretty_name)
+    end
+    computed_attributes.each do |attr|
+      h[attr.to_s] = send(attr)
     end
     h
   end

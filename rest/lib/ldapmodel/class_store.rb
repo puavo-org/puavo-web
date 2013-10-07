@@ -5,12 +5,12 @@ class LdapModel
     @@_class_store[self] ||= {}
   end
 
-  def self.class_store(name)
+  def self.class_store(name, default=nil)
     define_method(name) do
-      self.class._class_store[name] ||= {}
+      self.class._class_store[name] ||= (default || {})
     end
     define_singleton_method(name) do
-      _class_store[name] ||= {}
+      _class_store[name] ||= (default || {})
     end
   end
 
