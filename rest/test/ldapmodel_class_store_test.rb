@@ -6,9 +6,23 @@ describe LdapModel do
 
   class ClassStoreA < LdapModel
     pretty2ldap[:foo] = 1
+    computed_attr :bar
+    def bar
+      "a bar"
+    end
+    def foo
+      "a foo"
+    end
   end
   class ClassStoreB < LdapModel
     pretty2ldap[:foo] = 2
+    def bar
+      "b bar"
+    end
+
+    def foo
+      "b foo"
+    end
   end
 
   describe "class store" do
@@ -31,6 +45,13 @@ describe LdapModel do
       assert_equal 2, o.pretty2ldap[:foo]
     end
 
+    it "computed attributes are not shared with different classes" do
+      a = ClassStoreA.new
+      assert_equal "a bar", a.to_hash["bar"]
+
+      b = ClassStoreB.new
+      assert b.to_hash["bar"].nil?, "was not nil: #{ b["bar"] }"
+    end
 
   end
 

@@ -4,7 +4,8 @@ class LdapModel
   class_store :pretty2ldap
   class_store :ldap2pretty
   class_store :converters
-  class_store :computed_attributes, []
+  class_store :ignored_attributes
+  class_store(:computed_attributes){ [] }
   attr_reader :ldap_attr_store
 
   def initialize(ldap_attr_store={})
