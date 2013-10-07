@@ -12,14 +12,12 @@ class PrinterQueue < LdapModel
   ldap_map(:puavoServer, :server_fqdn) do |dn|
     BootServer.by_dn(Array(dn).first)["hostname"] + "." +  LdapModel.organisation["domain"]
   end
-  ldap_map :puavoPrinterPPD, :pdd_link
+  ldap_map :puavoPrinterPPD, :ppd
+  ignore_attr :ppd
+  computed_attr :pdd_link
 
   def pdd_link
     link "/v3/printer_queues/#{ name }/ppd"
-  end
-
-  def ppd
-    get_original(:pdd_link)
   end
 
   def remote_uri
