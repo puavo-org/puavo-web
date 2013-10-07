@@ -63,7 +63,7 @@ Feature: Devices registration
     Hostname:
     """
     When I enter "test-thin-01" into process "puavo-register"
-    When I enter "" into process "puavo-register"
+    When I enter "52:54:00:aa:aa:aa" into process "puavo-register"
     When I enter "" into process "puavo-register"
     When I enter "" into process "puavo-register"
     When I enter "" into process "puavo-register"
@@ -75,7 +75,7 @@ Feature: Devices registration
     Device type:            Thinclient
     School:                 Example school 1
     Hostname:               test-thin-01
-    MAC address(es):        52:54:00:84:c2:1c
+    MAC address(es):        52:54:00:aa:aa:aa
     Serial number:          
     Device manufacturer:    
     Device model:           
