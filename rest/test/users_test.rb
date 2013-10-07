@@ -17,6 +17,7 @@ describe PuavoRest::Users do
       :sn  => "Brown",
       :uid => "bob",
       :puavoEduPersonAffiliation => "student",
+      :preferredLanguage => "en",
       :mail => "bob@example.com"
     )
     @user.set_password "secret"
@@ -39,6 +40,7 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
+      assert_equal "en", data["preferred_language"]
 
       assert data["organisation"], "has organisation data added"
 

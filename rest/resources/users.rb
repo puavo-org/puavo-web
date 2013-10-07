@@ -11,6 +11,7 @@ class User < LdapModel
   ldap_map :puavoEduPersonAffiliation, :user_type
   ldap_map :puavoId, :puavo_id
   ldap_map :puavoSchool, :school_dn
+  ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
       link "/v3/users/#{ self["username"] }/profile.jpg"
