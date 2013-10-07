@@ -10,6 +10,7 @@ def create_printer(server, name)
     :printerMakeAndModel => "foo",
     :printerType => "1234",
     :printerURI => "socket://baz",
+    :puavoPrinterPPD => "ppddata:#{ name }",
     :puavoServer => server.dn,
   }
   printer.save!
@@ -20,7 +21,7 @@ end
 describe PuavoRest::PrinterQueues do
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
     @server = Server.new
     @server.attributes = {
@@ -37,6 +38,35 @@ describe PuavoRest::PrinterQueues do
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
+
+  end
+
+  describe "GET /v3/printer_queues" do
+    before do
+      basic_authorize "cucumber", "cucumber"
+      get "/v3/printer_queues"
+      assert_200
+      @data = JSON.parse(last_response.body)
+      assert_equal 2, @data.size, "has two priters"
+    end
+
+    it "first has name" do
+      assert_equal "printer1", @data.first["name"]
+    end
+
+    it "first has pdd_link" do
+      assert_equal "http://example.example.net/v3/printer_queues/printer1/ppd", @data.first["pdd_link"]
+    end
+
+  end
+
+  describe "GET http://example.example.net/v3/printer_queues/printer1/ppd" do
+    it "returns ppd data" do
+      basic_authorize "cucumber", "cucumber"
+      get "http://example.example.net/v3/printer_queues/printer1/ppd"
+      assert_200
+      assert_equal "ppddata:printer1", last_response.body
+    end
 
   end
 

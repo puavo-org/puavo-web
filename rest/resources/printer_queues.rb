@@ -12,6 +12,15 @@ class PrinterQueue < LdapModel
   ldap_map(:puavoServer, :server_fqdn) do |dn|
     BootServer.by_dn(Array(dn).first)["hostname"] + "." +  LdapModel.organisation["domain"]
   end
+  ldap_map :puavoPrinterPPD, :pdd_link
+
+  def pdd_link
+    link "/v3/printer_queues/#{ name }/ppd"
+  end
+
+  def ppd
+    get_original(:pdd_link)
+  end
 
   def remote_uri
     "ipp://#{ server_fqdn }/printers/#{ name }"
@@ -30,6 +39,15 @@ class PrinterQueue < LdapModel
   def self.by_server(server_dn)
     filter("(puavoServer=#{ escape server_dn })")
   end
+
+  def self.by_name(name)
+    pq = Array(filter("(printerDescription=#{ escape name })")).first
+    if pq.nil?
+      raise NotFound, :user => "Cannot find printer queue by name '#{ name }'"
+    end
+    pq
+  end
+
 end
 
 class PrinterQueues < LdapSinatra
@@ -42,6 +60,12 @@ class PrinterQueues < LdapSinatra
     else
       json PrinterQueue.all
     end
+  end
+
+  get "/v3/printer_queues/:name/ppd" do
+    content_type 'application/octet-stream'
+    auth :basic_auth
+    PrinterQueue.by_name(params["name"]).ppd
   end
 
 end
