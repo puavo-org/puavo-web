@@ -50,6 +50,7 @@ describe PuavoRest::Devices do
         :puavoDeviceImage => "customimage",
         :puavoSchool => @school.dn,
         :puavoPersonalDevice => false,
+        :puavoDefaultPrinter => "defaultprinter",
         :puavoAllowGuest => false,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1"
       )
@@ -84,6 +85,10 @@ describe PuavoRest::Devices do
 
     it "has printer uri" do
       assert_equal "usb:/dev/usb/lp1", @data["printer_device_uri"]
+    end
+
+    it "has default printer" do
+      assert_equal "defaultprinter", @data["default_printer_name"]
     end
   end
 

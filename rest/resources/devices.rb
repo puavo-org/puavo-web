@@ -19,6 +19,7 @@ class Device < LdapModel
   ldap_map :puavoDeviceBootMode, :boot_mode
   ldap_map :puavoDeviceXrandrDisable, :xrand_disable
   ldap_map :puavoDeviceXserver, :graphics_driver
+  ldap_map :puavoDefaultPrinter, :default_printer_name
   ldap_map :puavoDeviceResolution, :resolution
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
