@@ -20,33 +20,48 @@ class Session < Hash
   end
 
 
-  def session_key
-    "session:#{ self["device"]["hostname"] }"
+  def hostname_key
+    self.class.hostname_key("#{ self["device"]["hostname"] }")
+  end
+  def self.hostname_key(hostname)
+    "session:hostname:#{ hostname }"
   end
 
-  def self.session_key(hostname)
-    "session:#{ hostname }"
+  def self.uuid_key(uuid)
+    "session:uuid:#{ uuid }"
+  end
+  def uuid_key
+    self.class.uuid_key("#{ self["uuid"] }")
   end
 
   def save
-    local_store.set(session_key, self.to_json)
-    local_store.expire(session_key, MAX_AGE)
+    local_store.set(hostname_key, self.to_json)
+    local_store.set(uuid_key, self["device"]["hostname"])
+
+    local_store.expire(hostname_key, MAX_AGE)
+    local_store.expire(uuid_key, MAX_AGE)
   end
 
   def destroy
-    local_store.del(session_key)
+    local_store.del(hostname_key)
+    local_store.del(uuid_key)
   end
 
-  def self.load(hostname)
-    json = local_store.get(session_key hostname)
+  def self.by_hostname(hostname)
+    json = local_store.get(hostname_key(hostname))
     if json.nil?
       raise NotFound, :user => "Cannot find session"
     end
     new.merge JSON.parse(json)
   end
 
+  def self.by_uuid(uuid)
+    hostname = local_store.get(uuid_key(uuid))
+    by_hostname(hostname)
+  end
+
   def self.keys
-    local_store.keys("session:*")
+    local_store.keys("session:hostname:*")
   end
 
   def self.all
@@ -160,13 +175,19 @@ class Sessions < LdapSinatra
     end
   end
 
-  # Get session by uid
+  # Get session by hostname and uuid
   #
   # @!macro route
   get "/v3/sessions/:hostname" do
     auth :server_auth, :legacy_server_auth
-    session = Session.load(params["hostname"])
+    session = Session.by_hostname(params["hostname"])
     assert_uuid session
+    json session
+  end
+
+  get "/v3/sessions_by_uuid/:uuid" do
+    auth :server_auth
+    session = Session.by_uuid(params["uuid"])
     json session
   end
 
@@ -174,7 +195,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   delete "/v3/sessions/:hostname" do
-    session = Session.load(params["hostname"])
+    session = Session.by_hostname(params["hostname"])
     assert_uuid session
     session.destroy
     json :ok => true

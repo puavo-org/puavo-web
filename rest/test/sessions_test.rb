@@ -289,6 +289,15 @@ describe PuavoRest::Sessions do
         assert_equal @post_data["uuid"], get_data["uuid"]
       end
 
+      it "can be fetched with uuid only" do
+        get "/v3/sessions_by_uuid/#{ @post_data["uuid"] }", {}, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
+        get_data = JSON.parse last_response.body
+        assert_200
+        assert_equal @post_data["uuid"], get_data["uuid"]
+      end
+
       it "responds 400 for bad uuid" do
         get "/v3/sessions/thinnoimage", "uuid" => "bad"
         data = JSON.parse last_response.body
