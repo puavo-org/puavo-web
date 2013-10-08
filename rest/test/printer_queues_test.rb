@@ -2,7 +2,7 @@
 require_relative "./helper"
 class PrinterQueuesTest < MiniTest::Spec
 
-def create_printer(server, name)
+def create_printer(server, name, attrs={})
   printer = Printer.new
   printer.attributes = {
     :printerDescription => name,
@@ -12,7 +12,7 @@ def create_printer(server, name)
     :printerURI => "socket://baz",
     :puavoPrinterPPD => "ppddata:#{ name }",
     :puavoServer => server.dn,
-  }
+  }.merge(attrs)
   printer.save!
   printer
 end
