@@ -281,7 +281,13 @@ Required params:
 
   - uuid
 
-Return session by uuid.
+Return session by hostname and uuid.
+
+XXX: should we allow this only with hostaname and only for servers?
+
+## GET /v3/sessions_by_uuid/:uuid
+
+Get session data by uuid
 
 ## DELETE /v3/sessions/:hostname
 
