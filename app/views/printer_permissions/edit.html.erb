@@ -1,8 +1,6 @@
 <div class="printer-permissions">
 <h1><span><%= @printer.printerDescription %></span></h1>
 
-<p><%= t('.title') %></p>
-
 <%= form_tag(printer_permission_path(@school, @printer), :method => :put) do %>
 
   <fieldset>
