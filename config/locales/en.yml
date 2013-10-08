@@ -729,6 +729,8 @@ en:
     organisation: organisation
     disabled_description: This service is activated from the %{organisation}.
   printer_permissions:
+    index:
+      edit_permissions: Edit permissions
     edit:
       title: Printer usage permissions
       global: Global

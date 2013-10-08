@@ -726,6 +726,8 @@ fi:
     disabled_description: Tämä palvelu on aktivoitu %{organisation}.
     organisation: organisaatiosta
   printer_permissions:
+    index:
+      edit_permissions: Muokkaa oikeuksia
     edit:
       title: Tulostimen käyttöoikeudet
       global: Yleiset
