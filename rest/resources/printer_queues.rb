@@ -9,29 +9,39 @@ class PrinterQueue < LdapModel
   ldap_map :printerURI, :local_uri
   ldap_map :printerDescription, :description
   ldap_map :printerDescription, :name
-  ldap_map(:puavoServer, :server_fqdn) do |dn|
-    BootServer.by_dn(Array(dn).first)["hostname"] + "." +  LdapModel.organisation["domain"]
-  end
+  ldap_map(:puavoServer, :server_dn)
   ldap_map :puavoPrinterPPD, :ppd
+
+  computed_attr :server_fqdn
+  def server_fqdn
+    if s = server
+      s.hostname + "." +  LdapModel.organisation["domain"]
+    end
+  end
+
+  # Do not add pdd file contents to json presentation. Only a link to it.
   ignore_attr :ppd
   computed_attr :pdd_link
-
   def pdd_link
     link "/v3/printer_queues/#{ name }/ppd"
   end
 
+  def server
+    return @server if @server
+    return if server_dn.nil?
+    begin
+      @server = BootServer.by_dn(server_dn)
+    rescue LDAP::ResultError
+    end
+  end
+
+  computed_attr :remote_uri
   def remote_uri
     "ipp://#{ server_fqdn }/printers/#{ name }"
   end
 
   def self.ldap_base
     "ou=Printers,#{ organisation["base"] }"
-  end
-
-  def to_hash
-    o = super
-    o["remote_uri"] = remote_uri
-    o
   end
 
   def self.by_server(server_dn)
