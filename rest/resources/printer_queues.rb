@@ -53,8 +53,8 @@ class PrinterQueues < LdapSinatra
 
   get "/v3/printer_queues" do
     auth :basic_auth
-    if params["server"]
-      json PrinterQueue.by_server(params["server"])
+    if params["server_dn"]
+      json PrinterQueue.by_server(params["server_dn"])
     else
       json PrinterQueue.all
     end
