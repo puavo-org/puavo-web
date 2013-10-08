@@ -9,7 +9,7 @@ class PrinterQueue < LdapModel
   ldap_map :printerURI, :local_uri
   ldap_map :printerDescription, :description
   ldap_map :printerDescription, :name
-  ldap_map(:puavoServer, :server_dn)
+  ldap_map :puavoServer, :server_dn
   ldap_map :puavoPrinterPPD, :ppd
 
   computed_attr :server_fqdn
@@ -21,8 +21,8 @@ class PrinterQueue < LdapModel
 
   # Do not add pdd file contents to json presentation. Only a link to it.
   ignore_attr :ppd
-  computed_attr :pdd_link
-  def pdd_link
+  computed_attr :ppd_link
+  def ppd_link
     link "/v3/printer_queues/#{ name }/ppd"
   end
 

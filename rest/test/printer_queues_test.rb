@@ -81,7 +81,7 @@ describe PuavoRest::PrinterQueues do
       printer = @data.first
       assert_equal "foo", printer["model"]
       assert_equal @server2.dn, printer["server_dn"]
-      assert_equal "http://example.example.net/v3/printer_queues/printer2/ppd", @data.first["pdd_link"]
+      assert_equal "http://example.example.net/v3/printer_queues/printer2/ppd", @data.first["ppd_link"]
       assert_equal "boot2.example.example.net", @data.first["server_fqdn"]
       assert_equal "socket://baz", @data.first["local_uri"]
       assert_equal "ipp://boot2.example.example.net/printers/printer2", @data.first["remote_uri"]
