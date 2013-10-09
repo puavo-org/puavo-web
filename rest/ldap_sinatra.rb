@@ -1,4 +1,3 @@
-require_relative "./ldap_hash"
 require_relative "./lib/error_codes"
 require_relative "./auth"
 

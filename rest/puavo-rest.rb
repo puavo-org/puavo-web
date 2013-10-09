@@ -11,12 +11,17 @@ if Sinatra::Base.development? || ENV["DEBUG"]
   require "pry"
 end
 
+require_relative "./lib/ldapmodel"
+require_relative "./middleware/hide_errors"
+require_relative "./middleware/suppress_json_errors"
+require_relative "./middleware/virtual_host_base"
+
 require_relative "./config"
 require_relative "./auth"
 require_relative "./lib/ldap_converters"
-require_relative "./ldap_hash"
 require_relative "./ldap_sinatra"
 require_relative "./resources/users"
+require_relative "./resources/groups"
 require_relative "./resources/schools"
 require_relative "./resources/organisations"
 require_relative "./resources/printer_queues"
@@ -26,3 +31,4 @@ require_relative "./resources/sessions"
 require_relative "./resources/wlan_networks"
 require_relative "./resources/external_files"
 require_relative "./resources/devices"
+require_relative "./resources/boot_servers"

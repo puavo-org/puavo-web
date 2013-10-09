@@ -1,7 +1,7 @@
 
 module PuavoRest
 
-class User < LdapHash
+class User < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :uid, :username
@@ -11,19 +11,11 @@ class User < LdapHash
   ldap_map :puavoEduPersonAffiliation, :user_type
   ldap_map :puavoId, :puavo_id
   ldap_map :puavoSchool, :school_dn
+  ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
       link "/v3/users/#{ self["username"] }/profile.jpg"
     end
-  end
-
-  def initialize(*args)
-    super(*args)
-    self["organisation"] = {
-      "name" => LdapHash.organisation["name"],
-      "domain" => LdapHash.organisation["domain"],
-      "base" => LdapHash.organisation["base"]
-    }
   end
 
   def self.ldap_base
@@ -44,6 +36,25 @@ class User < LdapHash
 
   def self.profile_image(uid)
     raw_filter("(uid=#{ escape uid })", ["jpegPhoto"]).first["jpegPhoto"]
+  end
+
+  def organisation
+    User.organisation
+  end
+
+  # Cached school query
+  def school
+    return @school if @school
+    return if school_dn.nil?
+    @school = School.by_dn(school_dn)
+  end
+
+  def preferred_language
+    if get_original(:preferred_language).nil? && school
+      school.preferred_language
+    else
+      get_original(:preferred_language)
+    end
   end
 
   def self.current
@@ -93,8 +104,8 @@ class Users < LdapSinatra
 
   get "/v3/whoami" do
     auth :basic_auth, :kerberos
-
-    json User.current
+    user = User.current.to_hash
+    json user.merge("organisation" => LdapModel.organisation.to_hash)
   end
 
 end

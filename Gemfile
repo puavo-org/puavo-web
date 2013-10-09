@@ -26,6 +26,8 @@ group :assets do
 end
 
 group :development do
+  gem 'minitest-rails'
+  gem 'm'
   gem 'capybara'
   gem 'colorize'
   gem 'cucumber'

@@ -2,6 +2,7 @@ class School < BaseGroup
   include Wlan
   include Puavo::Client::HashMixin::School
   include BooleanAttributes
+  include HasPrinterMixin
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
@@ -33,7 +34,7 @@ class School < BaseGroup
   alias_method :v1_as_json, :as_json
 
   def self.image_size
-    { width: 400, height: 200 }
+    { :width => 400, :height => 200 }
   end
 
   def validate_name
@@ -104,4 +105,32 @@ class School < BaseGroup
   def as_json(*args)
     return ldap_prettify
   end
+
+  def printers
+    servers_dn = Server.all.map{ |server| server.dn }
+    Printer.all.select{ |p| servers_dn.include?(p.puavoServer) }
+  end
+
+  def has_wireless_printer?(printer)
+    printer = self.class.ensure_dn(printer)
+    Array(self.puavoWirelessPrinterQueue).include?(printer)
+  end
+
+  def add_wireless_printer(printer)
+    printer = self.class.ensure_dn(printer)
+    ldap_modify_operation(:add, [
+      { "puavoWirelessPrinterQueue" => printer }
+    ]) rescue ActiveLdap::LdapError::TypeOrValueExists
+    reload
+  end
+
+  def remove_wireless_printer(printer)
+    printer = self.class.ensure_dn(printer)
+    ldap_modify_operation(:delete, [
+      { "puavoWirelessPrinterQueue" => [printer.to_s] }
+    ]) rescue ActiveLdap::LdapError::NoSuchAttribute
+    reload
+  end
+
+
 end

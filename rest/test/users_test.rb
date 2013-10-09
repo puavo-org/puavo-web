@@ -6,7 +6,7 @@ describe PuavoRest::Users do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
@@ -17,6 +17,7 @@ describe PuavoRest::Users do
       :sn  => "Brown",
       :uid => "bob",
       :puavoEduPersonAffiliation => "student",
+      :preferredLanguage => "en",
       :mail => "bob@example.com"
     )
     @user.set_password "secret"
@@ -39,13 +40,15 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
-      assert_equal({
-        "name" => "Example Organisation",
-        "domain"=>"example.opinsys.net",
-        "base"=>"dc=edu,dc=example,dc=fi"
-      }, data["organisation"])
-      assert !data["profile_image_link"]
-      assert_equal nil, data["profile_image_link"]
+      assert_equal "en", data["preferred_language"]
+
+      assert data["organisation"], "has organisation data added"
+
+      assert_equal "Example Organisation", data["organisation"]["name"]
+      assert_equal "example.example.net", data["organisation"]["domain"]
+      assert_equal "dc=edu,dc=example,dc=fi", data["organisation"]["base"]
+
+      assert_equal "http://example.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 
     end
   end
@@ -64,8 +67,50 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
-      assert !data["profile_image_link"]
-      assert_equal nil, data["profile_image_link"]
+      assert_equal "http://example.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+    end
+
+    describe "with language fallbacks" do
+      [
+        {
+          :name   => "user lang is the most preferred",
+          :org    => "en",
+          :school => "fi",
+          :user   => "sv",
+          :expect => "sv"
+        },
+        {
+          :name   => "first fallback is school",
+          :org    => "en",
+          :school => "fi",
+          :user   => nil,
+          :expect => "fi"
+        },
+        {
+          :name   => "organisation is the least preferred",
+          :org    => "en",
+          :school => nil,
+          :user   => nil,
+          :expect => "en"
+        },
+      ].each do |opts|
+        it opts[:name] do
+          @user.preferredLanguage = opts[:user]
+          @user.save!
+          @school.preferredLanguage = opts[:school]
+          @school.save!
+
+          test_organisation = LdapOrganisation.first # TODO: fetch by name
+          test_organisation.preferredLanguage = opts[:org]
+          test_organisation.save!
+
+          basic_authorize "bob", "secret"
+          get "/v3/users/bob"
+          assert_200
+          data = JSON.parse(last_response.body)
+          assert_equal opts[:expect], data["preferred_language"]
+        end
+      end
     end
 
     describe "with image" do
@@ -80,7 +125,7 @@ describe PuavoRest::Users do
         assert_200
         data = JSON.parse(last_response.body)
 
-        assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+        assert_equal "http://example.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
       end
 
       it "can be faked with VirtualHostBase" do
@@ -106,6 +151,7 @@ describe PuavoRest::Users do
     it "returns 401 without auth" do
       get "/v3/users/bob"
       assert_equal 401, last_response.status, last_response.body
+      assert_equal "Negotiate", last_response.headers["WWW-Authenticate"], "WWW-Authenticate must be Negotiate for kerberos to work"
     end
 
     it "returns 401 with bad auth" do

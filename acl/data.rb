@@ -190,4 +190,30 @@ def define_basic(env)
   env.define :domain_admins do |config|
     config.dn = "cn=Domain Admins,ou=Groups," + env.organisation.dn
   end
+
+  env.define :printer do |config|
+    printer = Printer.create(
+      :printerDescription => "foo"
+    )
+    config.dn = printer.dn
+  end
+
+  env.define :bootserver do |config|
+    bootserver = Server.create(
+      :puavoHostname => "boot01",
+      :puavoDeviceType => "bootserver",
+      :macAddress => "27:c0:59:3c:bc:b4",
+      :description => "test",
+      :puavoSchool => env.school.dn )
+    config.dn = bootserver.dn
+  end
+
+  env.define :bootserver2 do |config|
+    bootserver = Server.create(
+      :puavoHostname => "boot01",
+      :puavoDeviceType => "bootserver",
+      :macAddress => "27:c0:59:3c:bc:b5",
+      :description => "test" )
+    config.dn = bootserver.dn
+  end
 end

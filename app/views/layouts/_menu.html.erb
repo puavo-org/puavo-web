@@ -1,0 +1,25 @@
+<div class="navbar-first-level">
+  <ul>
+  <% @menu_items.each do |item| %>
+    <% if not item.hide? %>
+      <li class="page_item <%= item.active? && "current_page_item" %>">
+        <%= link_to item.link do %>
+          <span><%= item.title %></span>
+        <% end %>
+      </li>
+    <% end %>
+  <% end %>
+  </ul>
+</div>
+
+<div class="navbar-second-level">
+  <ul>
+    <% @child_items.each do |item| %>
+      <% if not item.hide? %>
+        <li <%= item.active? && "class=current" %>>
+          <%= link_to item.title, item.link %>
+        </li>
+       <% end %>
+    <% end %>
+  </ul>
+</div>

@@ -4,7 +4,7 @@ describe PuavoRest::Devices do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf PuavoRest::CONFIG["ltsp_server_data_dir"]
+    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -18,12 +18,23 @@ describe PuavoRest::Devices do
     )
     @server1 = create_server(
       :puavoHostname => "server1",
-      :macAddress => "bc:5f:f4:56:59:71"
+      :macAddress => "bc:5f:f4:56:59:71",
+      :puavoSchool => @school.dn
     )
     @server2 = create_server(
       :puavoHostname => "server2",
       :macAddress => "bc:5f:f4:56:59:72"
     )
+    @printer = Printer.create(
+      :printerDescription => "printer1",
+      :printerLocation => "school2",
+      :printerMakeAndModel => "foo",
+      :printerType => "1234",
+      :printerURI => "socket://baz",
+      :puavoServer => @server1.dn )
+
+    @school.add_wireless_printer(@printer)
+
     test_organisation = LdapOrganisation.first # TODO: fetch by name
     test_organisation.puavoAllowGuest = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
@@ -39,6 +50,7 @@ describe PuavoRest::Devices do
         :puavoDeviceImage => "customimage",
         :puavoSchool => @school.dn,
         :puavoPersonalDevice => false,
+        :puavoDefaultPrinter => "defaultprinter",
         :puavoAllowGuest => false,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1"
       )
@@ -73,6 +85,10 @@ describe PuavoRest::Devices do
 
     it "has printer uri" do
       assert_equal "usb:/dev/usb/lp1", @data["printer_device_uri"]
+    end
+
+    it "has default printer" do
+      assert_equal "defaultprinter", @data["default_printer_name"]
     end
   end
 
@@ -160,5 +176,31 @@ describe PuavoRest::Devices do
       assert_equal "NotFound", data["error"]["code"], data
     end
 
+  end
+
+describe "wireless printer queues by device with school fallback" do
+
+    before(:each) do
+      create_device(
+        :puavoHostname => "athin",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn
+      )
+      get "/v3/devices/athin/wireless_printer_queues", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      @data = JSON.parse last_response.body
+    end
+
+    it "has printer" do
+      assert_equal 1, @data.count
+      printer = @data.first
+      assert_equal "server1.example.example.net", printer["server_fqdn"]
+      assert_equal "printer1", printer["name"]
+      assert_equal "printer1", printer["description"]
+      assert_equal "ipp://server1.example.example.net/printers/printer1", printer["remote_uri"]
+    end
   end
 end

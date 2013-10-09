@@ -1,0 +1,23 @@
+<table class='list'>
+  <tr>
+    <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
+    <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
+    <th><%= t('activeldap.attributes.printer.printerLocation') %></th>
+    <th colspan="2"><%= t('actions') %></th>
+  </tr>
+
+<% @school.printers.each do |printer| %>
+  <tr>
+
+    <td><%=h printer.printerDescription %></td>
+    <td><%=h printer.printerMakeAndModel %></td>
+    <td><%=h printer.printerLocation %></td>
+
+    <td>
+      <%= link_to edit_printer_permission_path(@school, printer), :class => 'btn' do %>
+      <i class="icon-pencil"></i><%= t('.edit_permissions') %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
+</table>

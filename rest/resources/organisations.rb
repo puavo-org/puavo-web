@@ -1,11 +1,13 @@
 require 'puavo/ldap'
 
 module PuavoRest
-class Organisation < LdapHash
+class Organisation < LdapModel
   ldap_map :dn, :dn
+  ldap_map :dn, :base
   ldap_map :o, :name
   ldap_map :puavoDomain, :domain
   ldap_map :puavoDeviceImage, :preferred_image
+  ldap_map :preferredLanguage, :preferred_language
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, false, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, false, &LdapConverters.string_boolean
@@ -23,7 +25,7 @@ class Organisation < LdapHash
     return @@by_domain if @@by_domain
     @@by_domain = {}
 
-    LdapHash.setup(:credentials => CONFIG["server"]) do
+    LdapModel.setup(:credentials => CONFIG["server"]) do
       all.each do |org|
         @@by_domain[org["domain"]] = org
         if CONFIG["default_organisation_domain"] == org["domain"]
@@ -55,7 +57,7 @@ class Organisation < LdapHash
 
   def self.all
     bases.map do |base|
-      by_dn(base).merge("base" => base)
+      by_dn(base)
     end
   end
 
@@ -65,7 +67,7 @@ end
 class Organisations < LdapSinatra
 
   get "/v3/current_organisation" do
-    json LdapHash.organisation
+    json LdapModel.organisation
   end
 
   get "/v3/organisations/:domain" do

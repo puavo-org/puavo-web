@@ -1,6 +1,34 @@
-# Test helpers for Puavo development
+# Generic test helpers shared with rails and puavo-rest
 module Puavo
 module Test
+
+  def self.setup_test_connection
+    test_organisation = Puavo::Organisation.find('example')
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+
+    # Setting up ldap configuration
+    LdapBase.ldap_setup_connection(
+      test_organisation.ldap_host,
+      test_organisation.ldap_base,
+      default_ldap_configuration["bind_dn"],
+      default_ldap_configuration["password"]
+    )
+
+    owner = User.find(:first, :attribute => "uid", :value => test_organisation.owner)
+    if owner.nil?
+      raise "Cannot find organisation owner for 'example'. Organisation not created?"
+    end
+
+    ExternalService.ldap_setup_connection(
+      test_organisation.ldap_host,
+      "o=puavo",
+      "uid=admin,o=puavo",
+      "password"
+    )
+
+    return owner.dn.to_s, test_organisation.owner_pw
+  end
+
   def self.clean_up_ldap
 
     # Clean Up LDAP server: destroy all schools, groups and users
@@ -48,11 +76,31 @@ module Test
     ldap_organisation.puavoDeviceAutoPowerOffMode = "off"
     ldap_organisation.preferredLanguage = "en"
     ldap_organisation.o = "Example Organisation"
+    ldap_organisation.puavoDomain = "example.example.net"
     ldap_organisation.puavoDeviceImage = nil
     ldap_organisation.puavoAllowGuest = nil
     ldap_organisation.puavoActiveService = nil
     ldap_organisation.save!
 
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    anotherorg_conf = Puavo::Organisation.find('anotherorg')
+    LdapBase.ldap_setup_connection(
+      default_ldap_configuration["host"],
+      anotherorg_conf.ldap_base,
+      "uid=admin,o=puavo",
+      "password"
+    )
+
+    anotherorg = LdapOrganisation.current
+    anotherorg.puavoDomain = "anotherorg.example.net"
+    anotherorg.o = "Another Organisation"
+    anotherorg.save!
+
+    # restore connection
+    setup_test_connection
   end
+
+
+
 end
 end
