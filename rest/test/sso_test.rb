@@ -157,7 +157,7 @@ describe PuavoRest::SSO do
 
     describe "login" do
       def decode_jwt
-        assert_equal 302, last_response.status
+        assert_equal 302, last_response.status, last_response.body
         assert last_response.headers["Location"]
         url = Addressable::URI.parse(last_response.headers["Location"])
         assert url.query_values["jwt"], "has jwt token"

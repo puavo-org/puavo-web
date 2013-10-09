@@ -82,6 +82,22 @@ module Test
     ldap_organisation.puavoActiveService = nil
     ldap_organisation.save!
 
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    anotherorg_conf = Puavo::Organisation.find('anotherorg')
+    LdapBase.ldap_setup_connection(
+      default_ldap_configuration["host"],
+      anotherorg_conf.ldap_base,
+      "uid=admin,o=puavo",
+      "password"
+    )
+
+    anotherorg = LdapOrganisation.current
+    anotherorg.puavoDomain = "anotherorg.example.net"
+    anotherorg.o = "Another Organisation"
+    anotherorg.save!
+
+    # restore connection
+    setup_test_connection
   end
 
 
