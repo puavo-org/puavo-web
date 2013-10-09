@@ -50,8 +50,8 @@ class LdapSinatra < Sinatra::Base
   end
 
   # In an old version bootserver authentication was picked when no other
-  # authentication were available. But that conflicted with the kerberos
-  # authentication. This is now legacy and will removed in future.
+  # authentication methods were available. But that conflicted with the
+  # kerberos authentication. This is now legacy and will removed in future.
   def legacy_server_auth
     if not CONFIG["bootserver"]
       logger.error "Cannot use bootserver auth on cloud installation"
