@@ -23,11 +23,11 @@
 
 jQuery(document).ready(function($) {
 
-  activate_advanced = document.getElementById("activate_advanced");
+  var activate_advanced = document.getElementById("activate_advanced");
 
   function showAdvancedSettings(e) {
-    groups = $('.printer-permissions .groups')
-    devices = $('.printer-permissions .devices')
+    var groups = $('.printer-permissions .groups');
+    var devices = $('.printer-permissions .devices');
     if(e.checked) {
       groups.show();
       devices.show();
