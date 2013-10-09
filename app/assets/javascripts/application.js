@@ -25,20 +25,22 @@ jQuery(document).ready(function($) {
 
   activate_advanced = document.getElementById("activate_advanced");
 
-  function show_advanced_settings(e) {
+  function showAdvancedSettings(e) {
+    groups = $('.printer-permissions .groups')
+    devices = $('.printer-permissions .devices')
     if(e.checked) {
-      $('.printer_permission_groups').show();
-      $('.devices').show();
+      groups.show();
+      devices.show();
     } else {
-      $('.printer_permission_groups').hide();
-      $('.devices').hide();
+      groups.hide();
+      devices.hide();
     }
   }
 
-  show_advanced_settings(activate_advanced);
+  showAdvancedSettings(activate_advanced);
 
   $('input[name="activate"]').click(function(e) {
-    show_advanced_settings(activate_advanced);
+    showAdvancedSettings(activate_advanced);
   });
 
   $('.clone_prev_input_element').click(function(e) {
