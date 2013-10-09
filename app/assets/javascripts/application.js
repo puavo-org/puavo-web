@@ -21,9 +21,9 @@
 //= require users/import/preview
 
 
-jQuery(document).ready(function($) {
-
-  var activate_advanced = document.getElementById("activate_advanced");
+window.jQuery(document).ready(function($) {
+  "use strict";
+  var activate_advanced = $('.printer-permissions input[value=advanced]')[0];
 
   function showAdvancedSettings(e) {
     var groups = $('.printer-permissions .groups');
@@ -37,9 +37,11 @@ jQuery(document).ready(function($) {
     }
   }
 
-  showAdvancedSettings(activate_advanced);
+  if(activate_advanced) {
+    showAdvancedSettings(activate_advanced);
+  }
 
-  $('input[name="activate"]').click(function(e) {
+  $('input[name="activate"]').click(function() {
     showAdvancedSettings(activate_advanced);
   });
 
