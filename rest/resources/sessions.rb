@@ -191,12 +191,21 @@ class Sessions < LdapSinatra
     json session
   end
 
-  # Delete session
+  # Delete session by hostname and uuid
   #
   # @!macro route
   delete "/v3/sessions/:hostname" do
     session = Session.by_hostname(params["hostname"])
     assert_uuid session
+    session.destroy
+    json :ok => true
+  end
+
+  # Delete session by uuid
+  #
+  # @!macro route
+  delete "/v3/sessions_by_uuid/:uuid" do
+    session = Session.by_uuid(params["uuid"])
     session.destroy
     json :ok => true
   end

@@ -272,7 +272,7 @@ describe PuavoRest::Sessions do
     end
 
     describe "GET and DELETE" do
-      before do
+      before(:each) do
         post "/v3/sessions", { "hostname" => "thinnoimage" }, {
           "HTTP_AUTHORIZATION" => "Bootserver"
         }
@@ -296,6 +296,17 @@ describe PuavoRest::Sessions do
         get_data = JSON.parse last_response.body
         assert_200
         assert_equal @post_data["uuid"], get_data["uuid"]
+      end
+
+      it "can be deleted with uuid only" do
+        delete "/v3/sessions_by_uuid/#{ @post_data["uuid"] }", {}, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
+        assert_200
+
+        get "/v3/sessions/#{ @post_data["device"]["hostname"] }",
+          "uuid" => @post_data["uuid"]
+        assert_equal 404, last_response.status
       end
 
       it "responds 400 for bad uuid" do

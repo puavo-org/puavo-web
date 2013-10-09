@@ -297,9 +297,13 @@ Required params:
 
 Delete session
 
+## DELETE /v3/sessions_by_uuid/:uuid
+
+Delete session
+
 ### Examples
 
-    curl --request DELETE $(puavo-resolve-api-server)/v3/sessions/<uuid from post>
+    curl --request DELETE $(puavo-resolve-api-server)/v3/sessions_by_uuid/<uuid from post>
 
 ## GET /v3/devices/:hostname/wlan_networks
 
