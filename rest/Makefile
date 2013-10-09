@@ -43,6 +43,7 @@ install:
 		.bundle \
 		views \
 		public \
+		middleware \
 		doc \
 		$(DESTDIR)$(installdir)
 	

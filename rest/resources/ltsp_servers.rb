@@ -29,35 +29,37 @@ class ServerFilter
   # assume them being offline
   def filter_old
     @servers = @servers.select do |server|
-      Time.now - server["state"]["updated"] < MAX_AGE
+      Time.now.to_i - server.state["updated"] < MAX_AGE
     end
   end
 
   def filter_by_image(ltsp_image)
     @servers = @servers.select do |server|
-      server["ltsp_image"] == ltsp_image
+      server.state["ltsp_image"] == ltsp_image
     end
   end
 
   def filter_has_state
     @servers = @servers.select do |server|
-      server["state"]
+      server.state
     end
   end
 
   # Filter out servers that are dedicated to some other schools
   def filter_by_other_schools(school_dn)
     @servers = @servers.select do |server|
-      schools = Array(server["schools"])
+      schools_dedicated_to = Array(server.school_dns)
       # If schools attribute is empty server will serve any school
-      schools.empty? || schools.include?(school_dn)
+      # TODO: dn string comparison!!
+      schools_dedicated_to.empty? || schools_dedicated_to.include?(school_dn.downcase)
     end
   end
 
   # get only those servers that are dedicated to this school
   def filter_by_school(school_dn)
     @servers = @servers.select do |server|
-      Array(server["schools"]).include?(school_dn)
+      # TODO: dn string comparison!!
+      Array(server.school_dns).include?(school_dn.downcase)
     end
   end
 
@@ -87,12 +89,12 @@ class ServerFilter
 
 end
 
-class LtspServer < LdapHash
-  include LocalStoreMixin
+class LtspServer < LdapModel
+  include LocalStore
 
   ldap_map :dn, :dn
   ldap_map :puavoHostname, :hostname
-  ldap_map(:puavoSchool, :schools) { |v| v }
+  ldap_map(:puavoSchool, :school_dns) { |v| Array(v).map{ |v| v.downcase } }
 
   def self.ldap_base
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
@@ -103,7 +105,6 @@ class LtspServer < LdapHash
     if server.nil?
       raise NotFound, :user => "cannot find server from LDAP for hostname #{ hostname }"
     end
-    server.load_state
     server
   end
 
@@ -114,20 +115,29 @@ class LtspServer < LdapHash
 
   def self.all_with_state
     all.select do |server|
-      server.load_state
-      not server["state"].nil?
+      not server.state.nil?
     end
   end
 
+  def state_key
+    "ltsp_server:#{ hostname }:state"
+  end
+
   def save_state(state)
-    state["updated"] = Time.now
-    self["state"] = state
-    self.class.store.set self["hostname"], state
+    state["updated"] = Time.now.to_i
+    local_store[state_key] = state.to_json
     state
   end
 
-  def load_state
-    self["state"] = self.class.store.get self["hostname"]
+  def state
+    json = local_store[state_key]
+    JSON.parse(json) if json
+  end
+
+  def to_hash
+    o = super
+    o["state"] = state
+    o
   end
 
 end
@@ -140,17 +150,9 @@ class LtspServers < LdapSinatra
   # @param all [Boolean] Include old servers too
   # @!macro route
   get "/v3/ltsp_servers" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
-    filtered = ServerFilter.new(LtspServer.all_with_state)
-    filtered.filter_has_state
-    filtered.sort_by_load
-    if params["all"]
-      json limit filtered.to_a
-    else
-      servers = ServerFilter.new(LtspServer.all_with_state)
-      json limit filtered.to_a
-    end
+    json LtspServer.all
   end
 
   # Computed resource for the most idle ltsp server
@@ -161,7 +163,7 @@ class LtspServers < LdapSinatra
   #
   # @!macro route
   get "/v3/ltsp_servers/_most_idle" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     logger.warn "DEPRECATED!! Call to legacy _most_idle route. Use POST /v3/sessions !"
     filtered = ServerFilter.new(LtspServer.all_with_state)
@@ -181,7 +183,7 @@ class LtspServers < LdapSinatra
   end
 
   get "/v3/ltsp_servers/:fqdn" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     json LtspServer.by_fqdn(params["fqdn"])
   end
@@ -193,7 +195,7 @@ class LtspServers < LdapSinatra
   # @param [Fixnum] cpu_count optional
   # @!macro route
   put "/v3/ltsp_servers/:fqdn" do
-    auth :basic_auth, :server_auth
+    auth :basic_auth, :server_auth, :legacy_server_auth
 
     state = {}
 

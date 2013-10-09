@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   include Puavo::AuthenticationHelper
 
+  attr_reader :school
   helper_method :theme, :current_user, :current_organisation, :acquire_credentials, :setup_authentication, :perform_login, :require_login, :require_puavo_authorization, :show_authentication_error, :store_location, :redirect_back_or_default, :organisation_key_from_host, :set_organisation_to_session, :set_initial_locale, :remove_ldap_connection, :theme, :school_list, :rack_mount_point
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -14,6 +15,7 @@ class ApplicationController < ActionController::Base
   before_filter :require_puavo_authorization
   before_filter :set_organisation_to_session
   before_filter :find_school
+  before_filter :set_menu
 
   after_filter :remove_ldap_connection
 
@@ -65,6 +67,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_menu
+    # TODO: Where this should be required?
+    # It must be require after all controllers are defined
+    require_relative "../../lib/puavo_menu"
+
+    @menu_items = PuavoMenu.new(self).children
+    @child_items = []
+    @menu_items.each do |i|
+      @child_items = i.children if i.active?
+    end
+
+  end
 
 
 end

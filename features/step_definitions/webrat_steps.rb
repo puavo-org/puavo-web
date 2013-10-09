@@ -15,6 +15,24 @@ When(/^I press "([^\"]*)"$/) do |button|
   click_button(button)
 end
 
+When(/^I press "([^\"]*)" on the "([^\"]*)" row$/) do |link, row|
+  within "tr:contains('#{ row }')" do
+    click_link(link)
+  end
+end
+
+When(/^I press "([^\"]*)" on the "([^\"]*)" list$/) do |link, row|
+  within "li:contains('#{ row }')" do
+    click_link(link)
+  end
+end
+
+Then(/^I check box on the "(.*?)" row$/) do |row|
+  within "tr:contains('#{ row }')" do
+    find("input[type=checkbox]").set(true)
+  end
+end
+
 When(/^I follow "([^\"]*)"$/) do |link|
   click_link(link)
 end

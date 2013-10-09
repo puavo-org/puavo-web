@@ -1,33 +1,10 @@
 require 'digest'
 require 'base64'
 require 'timecop'
-require_relative '../../lib/cleanup_ldap'
+require_relative '../../test/generic_test_helpers'
 
 Before do |scenario|
-test_organisation = Puavo::Organisation.find('example')
-  default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-  # Setting up ldap configuration
-  LdapBase.ldap_setup_connection( test_organisation.ldap_host,
-                                  test_organisation.ldap_base,
-                                  default_ldap_configuration["bind_dn"],
-                                  default_ldap_configuration["password"] )
-
-  @owner_dn = User.find(:first, :attribute => "uid", :value => test_organisation.owner).dn.to_s
-  @owner_password = test_organisation.owner_pw
-
-  LdapBase.ldap_setup_connection( test_organisation.ldap_host,
-                                  test_organisation.ldap_base,
-                                  @owner_dn,
-                                  @owner_password )
-
-  ExternalService.ldap_setup_connection(
-    test_organisation.ldap_host,
-    "o=puavo",
-    "uid=admin,o=puavo",
-    "password"
-  )
-
-
+  @owner_dn, @owner_password = Puavo::Test.setup_test_connection
   Puavo::Test.clean_up_ldap
 end
 
@@ -308,3 +285,9 @@ Given(/^I wait ([0-9]+) (hour|day|month|year)s?$/) do |digit, type|
   Timecop.travel Time.now + digit.to_i.send(type)
 end
 
+
+Given /^I am on the edit page of "(.*?)" device$/ do |hostname|
+  set_ldap_admin_connection
+  device = Device.find_by_hostname(hostname)
+  visit edit_device_path(@school, device)
+end

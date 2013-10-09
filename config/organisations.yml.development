@@ -7,6 +7,15 @@ example:
   owner_pw: cucumber
   locale: en
 
+example2:
+  name: Example Organisation
+  host: 127.0.0.1
+  ldap_host: jokor-puavo.example.net
+  ldap_base: dc=edu,dc=example,dc=fi
+  owner: cucumber
+  owner_pw: cucumber
+  locale: en
+
 # Default organisation configurations.
 # This is used to if browser request host not matched with other settings.
 hogwarts:

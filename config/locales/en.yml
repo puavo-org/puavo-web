@@ -39,6 +39,7 @@ en:
     forms:
       required_field: "* = Required field"
   link:
+    save: Save
     more: More
     edit: Edit
     back: Back
@@ -73,6 +74,7 @@ en:
     set_install_mode: Revoke certificate
     automounts: Automounts
     new_automount: New automount
+    printer_permissions: Printing permissions
   flash:
     added: "%{item} was successfully created."
     updated: "%{item} was successfully updated."
@@ -657,7 +659,9 @@ en:
       edit: Edit
       title: Device settings
       terminal_title: Terminal settings
-      printer_title: Printer settings
+    form:
+      printer_title: Printing permissions
+      printer_description: Printing is allowed on the following printers
     form_cups:
       cups_settings: CUPS settings
     cups:
@@ -724,3 +728,16 @@ en:
     save: Save
     organisation: organisation
     disabled_description: This service is activated from the %{organisation}.
+  printer_permissions:
+    index:
+      edit_permissions: Edit permissions
+    edit:
+      title: Printer usage permissions
+      global: Global
+      active_for_all_users: Printing allowed on the all system devices
+      active_for_wireless: Printing allowed on the all system devices and also other devices (eg. tablets, phones, etc.)
+      active_advanced: Advanced
+      groups: Printer usage permissions by group
+      devices: Printer usage permissions by device
+      device_header_text: "Printer is allowed for following individual devices:"
+      device_footer_text: "Printers for devices are set from the device edit page."

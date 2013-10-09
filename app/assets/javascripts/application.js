@@ -23,6 +23,26 @@
 
 jQuery(document).ready(function($) {
 
+  var activate_advanced = document.getElementById("activate_advanced");
+
+  function showAdvancedSettings(e) {
+    var groups = $('.printer-permissions .groups');
+    var devices = $('.printer-permissions .devices');
+    if(e.checked) {
+      groups.show();
+      devices.show();
+    } else {
+      groups.hide();
+      devices.hide();
+    }
+  }
+
+  showAdvancedSettings(activate_advanced);
+
+  $('input[name="activate"]').click(function(e) {
+    showAdvancedSettings(activate_advanced);
+  });
+
   $('.clone_prev_input_element').click(function(e) {
     e.preventDefault();
     var clone_element = $(this).prev().find('input:first').clone();

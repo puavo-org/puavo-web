@@ -15,6 +15,16 @@ class LdapBase < ActiveLdap::Base
     LdapBase.load(ldif.to_s)
   end
 
+  def self.ensure_dn(o)
+    if o.class == ActiveLdap::DistinguishedName
+      o
+    elsif o.class == String
+      ActiveLdap::DistinguishedName.parse o
+    else
+      o.dn
+    end
+  end
+
   def <=>(other_object)
     self.displayName.to_s <=> other_object.displayName.to_s
   end

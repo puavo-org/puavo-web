@@ -1,4 +1,3 @@
-
 # API Routes
 
 All routes return json documents unless mentioned otherwise.
@@ -180,7 +179,7 @@ Will return the most appropriate ltsp server depending on
   - preferred server attribute on device
   - preferred school attribute on ltsp server
   - ltsp server load
-  - details https://github.com/opinsys/puavo-users/blob/master/rest/resources/sessions.rb#L33
+  - printer queues the user can use
 
 Sessions are stored in memory only but are not automatically deleted.
 
@@ -190,34 +189,121 @@ Post fields:
 returns
 
     {
-      "created": "2013-06-06 09:54:05 +0300",
-      "uuid": "cd600a50-b0a3-0130-b677-080027880ca6",
-      "ltsp_server": {
-        "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
-        "hostname": "ltspserver1",
-        "updated": "2013-06-06 09:54:01 +0300",
-        "ltsp_image": "test-image",
-        "load_avg": 0.095
+      "device": {
+        "printer_device_uri": null,
+        "personal_device": false,
+        "allow_guest": false,
+        "kernel_version": null,
+        "kernel_arguments": null,
+        "preferred_server": null,
+        "preferred_image": null,
+        "type": "fatclient",
+        "school_dn": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+        "hostname": "testfat",
+        "dn": "puavoId=5370,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+        "vertical_refresh": null,
+        "printer_queue_dns": null,
+        "mac_address": "bc:5f:f4:56:59:71",
+        "puavo_id": "5370",
+        "boot_mode": null,
+        "xrand_disable": null,
+        "graphics_driver": null,
+        "resolution": null
       },
-      "client": {
-        "preferred_server": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi,
-        "preferred_image": "someimage",
-        "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
-        "hostname": "testthin"
-      }
+      "ltsp_server": {
+        "state": {
+          "updated": 1380803986,
+          "fqdn": "myltsp",
+          "ltsp_image": "",
+          "load_avg": 0.5
+        },
+        "school_dns": [],
+        "hostname": "myltsp",
+        "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
+      },
+      "user": {
+        "profile_image_link": "http://127.0.0.1:9393/v3/users/admin/profile.jpg",
+        "dn": "uid=admin,o=puavo",
+        "username": "admin",
+        "last_name": null,
+        "first_name": null,
+        "email": null,
+        "user_type": null,
+        "puavo_id": null,
+        "school_dn": null
+      },
+      "printer_queues": [
+        {
+          "remote_uri": "ipp://boot.hogwarts.opinsys.net/printers/Kirkonkyla-Luokka-202",
+          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
+          "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
+          "location": "Satun luokka",
+          "type": "36876",
+          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.opinsys.fi",
+          "description": "Kirkonkyla-Luokka-202",
+          "name": "Kirkonkyla-Luokka-202",
+          "server_fqdn": "boot.hogwarts.opinsys.net"
+        },
+        {
+          "remote_uri": "ipp://boot.hogwarts.opinsys.net/printers/Kirkonkyla-Luokka-202",
+          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
+          "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
+          "location": "Satun luokka",
+          "type": "36876",
+          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.opinsys.fi",
+          "description": "Kirkonkyla-Luokka-202",
+          "name": "Kirkonkyla-Luokka-202",
+          "server_fqdn": "boot.hogwarts.opinsys.net"
+        }
+      ],
+      "created": 1380803997,
+      "uuid": "d5eba820-0e56-0131-84e4-52540007db7f"
     }
+
+
+### Examples
+
+For authenticated users with kerberos:
+
+    curl --data hostname=$(hostname) --negotiate --delegation always --user : $(puavo-resolve-api-server)/v3/sessions
+
+For guests
+
+    curl --data hostname=$(hostname) --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/sessions
 
 ## GET /v3/sessions
 
-Return all sessions.
+Return array device hostnames that have a desktop session
 
-## GET /v3/sessions/:uuid
+## GET /v3/sessions/:hostname
 
-Return session by uuid.
+Required params:
 
-## DELETE /v3/sessions/:uuid
+  - uuid
 
-Delete session by uuid.
+Return session by hostname and uuid.
+
+XXX: should we allow this only with hostaname and only for servers?
+
+## GET /v3/sessions_by_uuid/:uuid
+
+Get session data by uuid
+
+## DELETE /v3/sessions/:hostname
+
+Required params:
+
+  - uuid
+
+Delete session
+
+## DELETE /v3/sessions_by_uuid/:uuid
+
+Delete session
+
+### Examples
+
+    curl --request DELETE $(puavo-resolve-api-server)/v3/sessions_by_uuid/<uuid from post>
 
 ## GET /v3/devices/:hostname/wlan_networks
 
