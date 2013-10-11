@@ -7,6 +7,15 @@ example:
   owner_pw: cucumber
   locale: en
 
+anotherorg:
+  name: Another Organisation
+  host: example.example.net
+  ldap_host: <%= @hostname %>
+  ldap_base: dc=edu,dc=example,dc=fi
+  owner: admin
+  owner_pw: admin
+  locale: en
+
 example2:
   name: Example Organisation
   host: 127.0.0.1
