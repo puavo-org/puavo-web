@@ -81,18 +81,18 @@ describe PuavoRest::PrinterQueues do
       printer = @data.first
       assert_equal "foo", printer["model"]
       assert_equal @server2.dn, printer["server_dn"]
-      assert_equal "http://example.example.net/v3/printer_queues/printer2/ppd", @data.first["ppd_link"]
-      assert_equal "boot2.example.example.net", @data.first["server_fqdn"]
+      assert_equal "http://www.example.net/v3/printer_queues/printer2/ppd", @data.first["ppd_link"]
+      assert_equal "boot2.www.example.net", @data.first["server_fqdn"]
       assert_equal "socket://baz", @data.first["local_uri"]
-      assert_equal "ipp://boot2.example.example.net/printers/printer2", @data.first["remote_uri"]
+      assert_equal "ipp://boot2.www.example.net/printers/printer2", @data.first["remote_uri"]
     end
 
   end
 
-  describe "GET http://example.example.net/v3/printer_queues/printer1/ppd" do
+  describe "GET http://www.example.net/v3/printer_queues/printer1/ppd" do
     it "returns ppd data" do
       basic_authorize "cucumber", "cucumber"
-      get "http://example.example.net/v3/printer_queues/printer1/ppd"
+      get "http://www.example.net/v3/printer_queues/printer1/ppd"
       assert_200
       assert_equal "ppddata:printer1", last_response.body
     end

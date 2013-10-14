@@ -43,7 +43,7 @@ Puavo::Test.setup_test_connection
 
 module Rack
   module Test
-    DEFAULT_HOST = "example.example.net"
+    DEFAULT_HOST = "www.example.net"
   end
 end
 

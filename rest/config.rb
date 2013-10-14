@@ -31,7 +31,7 @@ if ENV["RACK_ENV"] == "test"
     "ldap" => fqdn,
     "topdomain" => "example.net",
     "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
-    "default_organisation_domain" => "example.example.net",
+    "default_organisation_domain" => "www.example.net",
     "bootserver" => true,
     "cloud" => true,
     "redis_db" => 1,
