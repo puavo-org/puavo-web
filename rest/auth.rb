@@ -95,13 +95,13 @@ class LdapSinatra < Sinatra::Base
     auth_methods.each do |method|
       if credentials = send(method)
 
-        if credentials[:dn].nil?
+        if credentials[:dn].nil? && credentials[:username]
           credentials[:dn] = LdapModel.setup(:credentials => CONFIG["server"]) do
             User.resolve_dn(credentials[:username])
           end
         end
 
-        if credentials[:dn].nil?
+        if credentials[:dn].nil? && credentials[:kerberos].nil?
           puts "Cannot resolve #{ credentials[:username].inspect } to DN"
           raise Unauthorized,
             :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }",
