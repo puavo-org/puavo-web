@@ -7,6 +7,7 @@ class Device < LdapModel
   ldap_map :cn, :hostname
   ldap_map :puavoSchool, :school_dn
   ldap_map :puavoDeviceType, :type
+  ldap_map :puavoDeviceBootImage, :preferred_boot_image
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoPreferredServer, :preferred_server
   ldap_map :puavoDeviceKernelArguments, :kernel_arguments
@@ -60,6 +61,13 @@ class Device < LdapModel
     PrinterQueue.by_dn_array(printer_queue_dns)
   end
 
+  def preferred_boot_image
+    if get_original(:preferred_boot_image).nil?
+      preferred_image
+    else
+      get_original(:preferred_boot_image)
+    end
+  end
 
   def preferred_image
      if get_original(:preferred_image).nil?

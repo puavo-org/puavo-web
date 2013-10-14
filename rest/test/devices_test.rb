@@ -178,6 +178,71 @@ describe PuavoRest::Devices do
 
   end
 
+  describe "device boot configuration" do
+    before(:each) do
+      @thinclient01 = create_device(
+        :puavoHostname => "thinclient-01",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn,
+        :puavoDeviceBootImage => "deviceprefbootimage",
+        :puavoDeviceImage => "deviceprefimage"
+      )
+      @thinclient02 = create_device(
+        :puavoHostname => "thinclient-02",
+        :macAddress => "bf:9a:8c:1b:e0:6b",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn,
+        :puavoDeviceImage => "deviceprefimage"
+      )
+      @thinclient03 = create_device(
+        :puavoHostname => "thinclient-03",
+        :macAddress => "bf:9a:8c:1b:e0:6b",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn
+      )
+      @thinclient04 = create_device(
+        :puavoHostname => "thinclient-04",
+        :macAddress => "bf:9a:8c:1b:e0:6b",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school_without_fallback_value.dn
+      )
+
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
+      test_organisation.puavoDeviceImage = "organisationprefimage"
+      test_organisation.save!
+
+      LdapModel.setup(
+        :organisation =>
+          PuavoRest::Organisation.by_domain[CONFIG["default_organisation_domain"]],
+        :rest_root => "http://" + CONFIG["default_organisation_domain"],
+                      :credentials => { :dn => PUAVO_ETC.ldap_dn, :password => PUAVO_ETC.ldap_password }
+      )
+      @rest_thinclient01 = PuavoRest::Device.by_dn(@thinclient01.dn.to_s)
+      @rest_thinclient02 = PuavoRest::Device.by_dn(@thinclient02.dn.to_s)
+      @rest_thinclient03 = PuavoRest::Device.by_dn(@thinclient03.dn.to_s)
+      @rest_thinclient04 = PuavoRest::Device.by_dn(@thinclient04.dn.to_s)
+    end
+
+    it "has preferred boot image by device" do
+      assert_equal @rest_thinclient01.preferred_boot_image, "deviceprefbootimage"
+    end
+
+    it "has preferred boot image by device preferred image" do
+      assert_equal @rest_thinclient02.preferred_boot_image, "deviceprefimage"
+    end
+
+    it "has preferred boot image by school preferred image" do
+      assert_equal @rest_thinclient03.preferred_boot_image, "schoolprefimage"
+    end
+    it "has preferred boot image by organisation preferred image" do
+      assert_equal @rest_thinclient04.preferred_boot_image, "organisationprefimage"
+    end
+    it "has not preferred boot image" do
+
+    end
+  end
+
   describe "wireless printer queues by device with school fallback" do
 
     before(:each) do
