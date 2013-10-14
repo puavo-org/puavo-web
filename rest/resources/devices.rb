@@ -137,6 +137,9 @@ class Devices < LdapSinatra
   end
 
   get "/v3/devices/:mac_address/boot_configuration" do
+    
+    device = Device.by_mac_address(params["mac_address"])
+    json device.boot_configuration
 
   end
 end
