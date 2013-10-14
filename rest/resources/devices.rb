@@ -136,5 +136,8 @@ class Devices < LdapSinatra
     json device.school.wireless_printer_queues
   end
 
+  get "/v3/devices/:mac_address/boot_configuration" do
+
+  end
 end
 end
