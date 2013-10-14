@@ -178,7 +178,7 @@ describe PuavoRest::Devices do
 
   end
 
-describe "wireless printer queues by device with school fallback" do
+  describe "wireless printer queues by device with school fallback" do
 
     before(:each) do
       create_device(
