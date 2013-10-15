@@ -41,6 +41,15 @@ class Device < LdapModel
     device
   end
 
+  # Find device by it's mac address
+  def self.by_mac_address(mac_address)
+    device = filter("(macAddress=#{ escape mac_address })").first
+    if device.nil?
+      raise NotFound, :user => "Cannot find device with mac address '#{ mac address }'"
+    end
+    device
+  end
+
   def printer_ppd
     Array(self.class.raw_by_dn(self["dn"], "puavoPrinterPPD")["puavoPrinterPPD"]).first
   end
@@ -93,6 +102,56 @@ class Device < LdapModel
      end
   end
 
+  def grub_kernel_version
+    if kernel_version.to_s.empty?
+      return ""
+    end
+    "-" + kernel_version.to_s
+  end
+
+  def grub_type
+    if type.to_s.empty?
+      return "unregistered"
+    end
+    type.to_s
+  end
+
+  def grub_boot_configuration
+    grub_header + grub_configuration
+  end
+
+  def grub_header
+    if boot_mode == "dualboot"
+      header =<<EOF
+default menu.c32
+menu title Choose a system
+prompt 0
+timeout 100
+
+label local
+  menu label Local OS
+  localboot 0
+EOF
+    else
+      header =<<EOF
+default ltsp-NBD
+ontimeout ltsp-NBD
+
+EOF
+    end
+  end
+
+  def grub_configuration
+    return <<EOF
+
+label ltsp-NBD
+  menu label LTSP, using NBD
+  menu default
+  kernel ltsp/#{preferred_boot_image}/vmlinuz#{grub_kernel_version}
+  append ro initrd=ltsp/#{preferred_boot_image}/initrd.img#{grub_kernel_version} init=/sbin/init-puavo puavo.hosttype=#{grub_type} root=/dev/nbd0 nbdroot=:#{preferred_boot_image} #{kernel_arguments}
+  ipappend 2
+EOF
+  end
 end
 
 class Devices < LdapSinatra
@@ -139,7 +198,7 @@ class Devices < LdapSinatra
   get "/v3/devices/:mac_address/boot_configuration" do
     
     device = Device.by_mac_address(params["mac_address"])
-    json device.boot_configuration
+    device.grub_boot_configuration
 
   end
 end
