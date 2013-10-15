@@ -598,6 +598,19 @@ describe PuavoRest::Sessions do
       end
     end
 
+    it "group data is in user hash" do
+      # TODO: should not be under printer tests
+      basic_authorize "bob", "secret"
+      post "/v3/sessions", "hostname" => "athin"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert data["user"], "has user data"
+      assert data["user"]["groups"], "has groups data"
+      assert data["user"]["groups"].first["gid_number"], "groups have gid_numbers"
+      assert_equal Fixnum, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
+    end
+
 
   end
 

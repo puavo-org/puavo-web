@@ -112,8 +112,11 @@ class Sessions < LdapSinatra
     )
 
     if User.current
-      session["user"] = User.current.to_hash
-      groups = User.current.groups
+      user = User.current
+      session["user"] = user.to_hash
+      groups = user.groups
+      session["user"]["groups"] = groups
+
       groups.each do |group|
         session["printer_queues"] += group.printer_queues
       end
