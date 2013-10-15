@@ -187,7 +187,9 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
-      get "/v3/devices/bf:9a:8c:1b:e0:6a/boot_configuration"
+      get "/v3/bf:9a:8c:1b:e0:6a/boot_configuration", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
       @data = last_response.body
     end
