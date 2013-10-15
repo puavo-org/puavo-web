@@ -9,9 +9,9 @@ example:
 
 anotherorg:
   name: Another Organisation
-  host: example.example.net
+  host: anotherorg.example.net
   ldap_host: <%= @hostname %>
-  ldap_base: dc=edu,dc=example,dc=fi
+  ldap_base: dc=edu,dc=anotherorg,dc=fi
   owner: admin
   owner_pw: admin
   locale: en
