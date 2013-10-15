@@ -1,6 +1,7 @@
 require "fileutils"
 require_relative "../local_store"
 require_relative "../lib/error_codes"
+require_relative "./hosts"
 
 module PuavoRest
 
@@ -89,12 +90,18 @@ class ServerFilter
 
 end
 
-class LtspServer < LdapModel
+class LtspServer < Host
   include LocalStore
 
   ldap_map :dn, :dn
   ldap_map :puavoHostname, :hostname
   ldap_map(:puavoSchool, :school_dns) { |v| Array(v).map{ |v| v.downcase } }
+  ldap_map :puavoDeviceBootMode, :boot_mode
+  ldap_map :puavoDeviceBootImage, :preferred_boot_image
+  ldap_map :puavoDeviceImage, :preferred_image
+  ldap_map :puavoDeviceKernelArguments, :kernel_arguments
+  ldap_map :puavoDeviceKernelVersion, :kernel_version
+  ldap_map :puavoDeviceType, :type
 
   def self.ldap_base
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
@@ -138,6 +145,19 @@ class LtspServer < LdapModel
     o = super
     o["state"] = state
     o
+  end
+
+  def preferred_image
+     if get_original(:preferred_image).nil?
+       organisation.preferred_image
+     else
+       get_original(:preferred_image)
+     end
+  end
+
+  def preferred_boot_image
+    # FIXME
+    super
   end
 
 end

@@ -56,5 +56,32 @@ EOF
     end
   end
 
+  describe "ltsp server" do
+
+    before(:each) do
+      get "/v3/bc:5f:f4:56:59:73/boot_configuration", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      @data = last_response.body
+    end
+
+    it "has following boot configuration" do
+      configuration =<<EOF
+default ltsp-NBD
+ontimeout ltsp-NBD
+
+
+label ltsp-NBD
+  menu label LTSP, using NBD
+  menu default
+  kernel ltsp/organisationprefimage/vmlinuz
+  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=ltspserver root=/dev/nbd0 nbdroot=:organisationprefimage 
+  ipappend 2
+EOF
+      assert_equal configuration, @data
+    end
+  end
+
 
 end
