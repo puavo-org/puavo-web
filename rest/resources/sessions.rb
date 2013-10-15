@@ -139,7 +139,7 @@ class Sessions < LdapSinatra
       session["printer_queues"] += device.printer_queues
       session["printer_queues"] += device.school.printer_queues
       session["printer_queues"] += device.school.wireless_printer_queues
-
+      session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
       session.save
 
       logger.info "Created session #{ session["uuid"] } " +

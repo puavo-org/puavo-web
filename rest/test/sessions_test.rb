@@ -580,6 +580,24 @@ describe PuavoRest::Sessions do
       assert_equal printer["description"], "wireless printer"
     end
 
+    it "does not duplicate printers if they are in multiple sources" do
+      @dupprinter = create_printer(@bootserver, "dupprinter")
+      @device.add_printer(@dupprinter)
+      @school.add_printer(@dupprinter)
+
+      basic_authorize "bob", "secret"
+      post "/v3/sessions", "hostname" => "athin"
+      assert_200
+
+      data = JSON.parse(last_response.body)
+      dn_set = Set.new
+      data["printer_queues"].each do |pq|
+        dn = pq["dn"].downcase
+        assert !dn_set.include?(dn), "Duplicate printer queue: #{ pq.inspect }"
+        dn_set.add(dn)
+      end
+    end
+
 
   end
 
