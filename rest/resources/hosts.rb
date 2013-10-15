@@ -22,6 +22,20 @@ class Host < LdapModel
     host
   end
 
+  # Cached organisation query
+  def organisation
+    return @organisation if @organisation
+    @organisation = Organisation.by_dn(self.class.organisation["base"])
+  end
+
+  def preferred_boot_image
+    if get_original(:preferred_boot_image).nil?
+      preferred_image
+    else
+      get_original(:preferred_boot_image)
+    end
+  end
+
   def grub_kernel_version
     if kernel_version.to_s.empty?
       return ""
