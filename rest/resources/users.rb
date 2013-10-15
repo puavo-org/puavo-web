@@ -5,7 +5,7 @@ class User < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :uid, :username
-  ldap_map :uidNumber, :uid_number
+  ldap_map(:uidNumber, :uid_number){ |v| Array(v).first.to_i }
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
   ldap_map :mail, :email
