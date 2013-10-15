@@ -58,6 +58,10 @@ class User < LdapModel
     end
   end
 
+  def groups
+    Group.by_user_dn(dn)
+  end
+
   def self.current
     return settings[:credentials_cache][:current_user] if settings[:credentials_cache][:current_user]
 
