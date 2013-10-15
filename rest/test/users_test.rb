@@ -41,6 +41,7 @@ describe PuavoRest::Users do
       assert_equal "bob@example.com", data["email"]
       assert_equal "student", data["user_type"]
       assert_equal "en", data["preferred_language"]
+      assert data["uid_number"], "has uid number"
 
       assert data["organisation"], "has organisation data added"
 
