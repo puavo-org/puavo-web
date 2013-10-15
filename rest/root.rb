@@ -68,6 +68,7 @@ class Root < LdapSinatra
   use PuavoRest::ExternalFiles
   use PuavoRest::Users
   use PuavoRest::Devices
+  use PuavoRest::BootConfigurations
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
