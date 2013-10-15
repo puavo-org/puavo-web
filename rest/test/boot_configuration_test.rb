@@ -3,21 +3,35 @@ require_relative "./helper"
 
 describe PuavoRest::BootConfigurations do
 
+  before(:each) do
+    Puavo::Test.clean_up_ldap
+    @school = School.create(
+      :cn => "gryffindor",
+      :displayName => "Gryffindor",
+      :puavoDeviceImage => "schoolprefimage"
+    )
+
+    create_device(
+      :puavoHostname => "thinclient05",
+      :puavoDeviceType => "thinclient",
+      :macAddress => "bf:9a:8c:1b:e0:6a",
+      :puavoSchool => @school.dn
+    )
+
+    @server3 = create_server(
+      :puavoHostname => "server3",
+      :macAddress => "bc:5f:f4:56:59:73",
+      :puavoDeviceType => "ltspserver"
+    )
+
+    test_organisation = LdapOrganisation.first # TODO: fetch by name
+    test_organisation.puavoDeviceImage = "organisationprefimage"
+    test_organisation.save!
+  end
 
   describe "device" do
 
     before(:each) do
-      @school = School.create(
-        :cn => "gryffindor",
-        :displayName => "Gryffindor",
-        :puavoDeviceImage => "schoolprefimage"
-      )
-      create_device(
-        :puavoHostname => "thinclient05",
-        :puavoDeviceType => "thinclient",
-        :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoSchool => @school.dn
-      )
       get "/v3/bf:9a:8c:1b:e0:6a/boot_configuration", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
