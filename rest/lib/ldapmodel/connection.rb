@@ -48,7 +48,7 @@ class LdapModel
     credentials = settings[:credentials]
     conn = nil
 
-    if credentials[:dn].nil?
+    if credentials[:dn].nil? && credentials[:kerberos].nil?
       raise BadCredentials, "Cannot connect - DN is missing!"
     end
 
