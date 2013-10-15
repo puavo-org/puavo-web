@@ -22,5 +22,56 @@ class Host < LdapModel
     host
   end
 
+  def grub_kernel_version
+    if kernel_version.to_s.empty?
+      return ""
+    end
+    "-" + kernel_version.to_s
+  end
+
+  def grub_type
+    if type.to_s.empty?
+      return "unregistered"
+    end
+    type.to_s
+  end
+
+  def grub_boot_configuration
+    grub_header + grub_configuration
+  end
+
+  def grub_header
+    if boot_mode == "dualboot"
+      header =<<EOF
+default menu.c32
+menu title Choose a system
+prompt 0
+timeout 100
+
+label local
+  menu label Local OS
+  localboot 0
+EOF
+    else
+      header =<<EOF
+default ltsp-NBD
+ontimeout ltsp-NBD
+
+EOF
+    end
+  end
+
+  def grub_configuration
+    return <<EOF
+
+label ltsp-NBD
+  menu label LTSP, using NBD
+  menu default
+  kernel ltsp/#{preferred_boot_image}/vmlinuz#{grub_kernel_version}
+  append ro initrd=ltsp/#{preferred_boot_image}/initrd.img#{grub_kernel_version} init=/sbin/init-puavo puavo.hosttype=#{grub_type} root=/dev/nbd0 nbdroot=:#{preferred_boot_image} #{kernel_arguments}
+  ipappend 2
+EOF
+  end
+
 end
 end
