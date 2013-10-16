@@ -57,9 +57,7 @@ class Device < LdapModel
   end
 
   def printer_queues
-    Array(self["printer_queue_dns"]).map do |dn|
-      PrinterQueue.by_dn(dn)
-    end
+    PrinterQueue.by_dn_array(printer_queue_dns)
   end
 
 

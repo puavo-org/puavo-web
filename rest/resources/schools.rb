@@ -16,15 +16,11 @@ class School < LdapModel
   end
 
   def printer_queues
-    Array(self["printer_queue_dns"]).map do |dn|
-      PrinterQueue.by_dn(dn)
-    end
+    PrinterQueue.by_dn_array(printer_queue_dns)
   end
 
   def wireless_printer_queues
-    Array(self["wireless_printer_queue_dns"]).map do |dn|
-      PrinterQueue.by_dn(dn)
-    end
+    PrinterQueue.by_dn_array(wireless_printer_queue_dns)
   end
 
   # Cached organisation query
