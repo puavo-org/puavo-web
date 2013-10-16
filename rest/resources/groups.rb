@@ -16,8 +16,11 @@ class Group < LdapModel
 
   def printer_queues
     Array(self["printer_queue_dns"]).map do |dn|
-      PrinterQueue.by_dn(dn)
-    end
+      begin
+        PrinterQueue.by_dn(dn)
+      rescue LDAP::ResultError
+      end
+    end.compact
   end
 
 end

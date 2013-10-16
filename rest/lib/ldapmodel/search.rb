@@ -72,4 +72,17 @@ class LdapModel
     from_hash( raw_by_dn(*args) )
   end
 
+  # Get array of models by their dn attributes.
+  #
+  # Nonexistent DNs are ignored.
+  def self.by_dn_array(dns)
+    Array(dns).map do |dn|
+      begin
+        by_dn(dn)
+      rescue LDAP::ResultError
+        # Ignore broken dn pointers
+      end
+    end.compact
+  end
+
 end
