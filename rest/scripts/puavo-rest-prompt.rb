@@ -32,7 +32,7 @@ module PuavoRest
   @domain = ask "Organisation domain", :default => PUAVO_ETC.get(:domain)
   @credentials = {}
   u = ask("Username", :default => PUAVO_ETC.get(:ldap_dn))
-  if LdapHash.is_dn(u)
+  if LdapModel.is_dn(u)
     @credentials[:dn] = u
   else
     @credentials[:username] = u
@@ -42,10 +42,10 @@ module PuavoRest
     @credentials[:password] = ask("Password", :default => PUAVO_ETC.get(:ldap_password))
   end
 
-  LdapHash.setup(:rest_root => "https://#{ @domain }")
+  LdapModel.setup(:rest_root => "https://#{ @domain }")
 
   def self.as_user
-    LdapHash.setup(
+    LdapModel.setup(
       :organisation => Organisation.by_domain[@domain],
       :credentials => @credentials
     )
@@ -53,7 +53,7 @@ module PuavoRest
   end
 
   def self.as_server
-    LdapHash.setup(:credentials => CONFIG["server"])
+    LdapModel.setup(:credentials => CONFIG["server"])
     "You are now #{ User.current["username"] }"
   end
 
