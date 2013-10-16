@@ -16,7 +16,7 @@ class LdapModel
         kg.copy_ticket(ticket)
         username, org = kg.display_name.split("@")
         settings[:credentials][:username] = username
-        LdapModel.setup(:organisation => Organisation.by_domain[org.downcase])
+        LdapModel.setup(:organisation => PuavoRest::Organisation.by_domain[org.downcase])
         conn.sasl_bind('', 'GSSAPI')
       rescue GSSAPI::GssApiError => err
         if err.message.match(/Clock skew too great/)
