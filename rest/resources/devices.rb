@@ -12,7 +12,7 @@ class Device < LdapModel
   ldap_map :puavoDeviceKernelArguments, :kernel_arguments
   ldap_map :puavoDeviceKernelVersion, :kernel_version
   ldap_map :puavoDeviceVertRefresh, :vertical_refresh
-  ldap_map :puavoPrinterQueue, :printer_queue_dns
+  ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
   ldap_map :macAddress, :mac_address
   ldap_map :puavoId, :puavo_id
   ldap_map :puavoId, :puavo_id
