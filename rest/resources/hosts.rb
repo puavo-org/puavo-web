@@ -50,6 +50,14 @@ class Host < LdapModel
     type.to_s
   end
 
+  def grub_kernel_arguments
+    if get_original(:kernel_arguments)
+      kernel_arguments
+    else
+      "quiet splash"
+    end
+  end
+
   def grub_boot_configuration
     grub_header + grub_configuration
   end
@@ -82,7 +90,7 @@ label ltsp-NBD
   menu label LTSP, using NBD
   menu default
   kernel ltsp/#{preferred_boot_image}/vmlinuz#{grub_kernel_version}
-  append ro initrd=ltsp/#{preferred_boot_image}/initrd.img#{grub_kernel_version} init=/sbin/init-puavo puavo.hosttype=#{grub_type} root=/dev/nbd0 nbdroot=:#{preferred_boot_image} #{kernel_arguments}
+  append ro initrd=ltsp/#{preferred_boot_image}/initrd.img#{grub_kernel_version} init=/sbin/init-puavo puavo.hosttype=#{grub_type} root=/dev/nbd0 nbdroot=:#{preferred_boot_image} #{grub_kernel_arguments}
   ipappend 2
 EOF
   end
