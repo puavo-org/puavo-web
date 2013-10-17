@@ -15,6 +15,7 @@ describe PuavoRest::BootConfigurations do
       :puavoHostname => "thinclient05",
       :puavoDeviceType => "thinclient",
       :macAddress => "bf:9a:8c:1b:e0:6a",
+      :puavoDeviceKernelArguments => "ACPI",
       :puavoSchool => @school.dn
     )
 
@@ -49,7 +50,7 @@ label ltsp-NBD
   menu label LTSP, using NBD
   menu default
   kernel ltsp/schoolprefimage/vmlinuz
-  append ro initrd=ltsp/schoolprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=thinclient root=/dev/nbd0 nbdroot=:schoolprefimage 
+  append ro initrd=ltsp/schoolprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=thinclient root=/dev/nbd0 nbdroot=:schoolprefimage ACPI
   ipappend 2
 EOF
       assert_equal configuration, @data
@@ -76,7 +77,7 @@ label ltsp-NBD
   menu label LTSP, using NBD
   menu default
   kernel ltsp/organisationprefimage/vmlinuz
-  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=ltspserver root=/dev/nbd0 nbdroot=:organisationprefimage 
+  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=ltspserver root=/dev/nbd0 nbdroot=:organisationprefimage quiet splash
   ipappend 2
 EOF
       assert_equal configuration, @data
@@ -103,7 +104,7 @@ label ltsp-NBD
   menu label LTSP, using NBD
   menu default
   kernel ltsp/organisationprefimage/vmlinuz
-  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=unregistered root=/dev/nbd0 nbdroot=:organisationprefimage 
+  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=unregistered root=/dev/nbd0 nbdroot=:organisationprefimage quiet splash
   ipappend 2
 EOF
       assert_equal configuration, @data
