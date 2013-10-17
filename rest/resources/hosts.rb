@@ -51,7 +51,9 @@ class Host < LdapModel
   end
 
   def grub_kernel_arguments
-    if get_original(:kernel_arguments)
+    if ["unregistered", "laptop"].include?(grub_type)
+      ""
+    elsif get_original(:kernel_arguments)
       kernel_arguments
     else
       "quiet splash"
