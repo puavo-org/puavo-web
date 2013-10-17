@@ -104,7 +104,7 @@ label ltsp-NBD
   menu label LTSP, using NBD
   menu default
   kernel ltsp/organisationprefimage/vmlinuz
-  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=unregistered root=/dev/nbd0 nbdroot=:organisationprefimage quiet splash
+  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=unregistered root=/dev/nbd0 nbdroot=:organisationprefimage 
   ipappend 2
 EOF
       assert_equal configuration, @data
