@@ -15,7 +15,12 @@ class BootConfigurations < LdapSinatra
     auth :server_auth
 
     # Get Device or LtspServer
-    host = host_by_mac_address(params["mac_address"])
+    begin
+      host = host_by_mac_address(params["mac_address"])
+    rescue NotFound => e
+      # Create dummy host object for getting boot configuration to unregistered device
+      host = PuavoRest::LtspServer.new
+    end
     host.grub_boot_configuration
 
   end
