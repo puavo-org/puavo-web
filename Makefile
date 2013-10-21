@@ -15,7 +15,7 @@ ifeq ($(wildcard config/database.yml),)
 	cp config/database.yml.example config/database.yml
 endif
 	bundle install --deployment --without development
-	npm install # nib for stylys
+	npm install --registry http://registry.npmjs.org # nib for stylys
 	bundle exec rake assets:precompile
 
 mkdirs:
