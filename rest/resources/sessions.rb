@@ -127,17 +127,13 @@ class Sessions < LdapSinatra
     json(LdapModel.setup(:credentials => CONFIG["server"]) do
       device = Device.by_hostname(params["hostname"])
 
-      logger.info "Thin #{ params["hostname"] } " +
-        "from school #{ device["school"].inspect } " +
-        "prefering image #{ device.preferred_image } " +
-        "and server #{ device["preferred_server"].inspect } " +
-        "is requesting a desktop session"
-
-      session["ltsp_server"] = find_ltsp_server(
-        device.preferred_image,
-        device.preferred_server,
-        device.school_dn
-      )
+      if device.type == "thinclient"
+        session["ltsp_server"] = find_ltsp_server(
+          device.preferred_image,
+          device.preferred_server,
+          device.school_dn
+        )
+      end
 
       session["device"] = device.to_hash
       session["printer_queues"] += device.printer_queues
@@ -146,9 +142,7 @@ class Sessions < LdapSinatra
       session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
       session.save
 
-      logger.info "Created session #{ session["uuid"] } " +
-        "to ltsp server #{ session["ltsp_server"]["hostname"] } " +
-        "for #{ params["hostname"] }"
+      logger.info "Created session #{ session["uuid"] } for #{ params["hostname"] }"
 
       session
     end)
