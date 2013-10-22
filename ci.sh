@@ -24,5 +24,6 @@ cd ..
 
 RAILS_ENV=test bundle exec rake db:migrate
 
-bundle exec cucumber features/manage_users.feature
+bundle exec cucumber --tags @start_test_server
+bundle exec cucumber --tags ~@start_test_server
 
