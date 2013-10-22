@@ -138,6 +138,7 @@ class SSO < LdapSinatra
       "school_id" => school["puavo_id"],
       "organisation_name" => user["organisation"]["name"],
       "organisation_domain" => user["organisation"]["domain"],
+      "groups" => user.groups.map{ |g| { "id" => g.id, "name" => g.name } },
       "external_service_path_prefix" => @external_service["prefix"]
     }, @external_service["secret"])
 

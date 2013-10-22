@@ -2,7 +2,9 @@ module PuavoRest
 
 class Group < LdapModel
   ldap_map :dn, :dn
-  ldap_map :cn, :name
+  ldap_map :puavoId, :id
+  ldap_map :cn, :abbreviation
+  ldap_map :displayName, :name
   ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
 
