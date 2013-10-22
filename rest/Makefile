@@ -51,7 +51,7 @@ install-client:
 
 .PHONY: test
 test:
-	bundle exec ruby1.9.1 test/all.rb
+	bundle exec turn test/*_test.rb
 
 serve-dev:
 	bundle exec shotgun --host 0.0.0.0 --port 9393 --server puma

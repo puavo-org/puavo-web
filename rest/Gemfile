@@ -23,5 +23,6 @@ group :test do
   gem "shotgun"
   gem "timecop"
   gem "m"
+  gem "turn"
 end
 
