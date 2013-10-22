@@ -35,8 +35,8 @@ class Session < Hash
   end
 
   def save
-    local_store.set(hostname_key, self.to_json)
-    local_store.set(uuid_key, self["device"]["hostname"])
+    local_store.set(uuid_key, self.to_json)
+    local_store.set(hostname_key, self["uuid"])
 
     local_store.expire(hostname_key, MAX_AGE)
     local_store.expire(uuid_key, MAX_AGE)
@@ -48,16 +48,19 @@ class Session < Hash
   end
 
   def self.by_hostname(hostname)
-    json = local_store.get(hostname_key(hostname))
-    if json.nil?
-      raise NotFound, :user => "Cannot find session"
+    uuid = local_store.get(hostname_key(hostname))
+    if uuid.nil?
+      raise NotFound, :user => "Cannot find session for hostname: #{ hostname }"
     end
-    new.merge JSON.parse(json)
+    by_uuid(uuid)
   end
 
   def self.by_uuid(uuid)
-    hostname = local_store.get(uuid_key(uuid))
-    by_hostname(hostname)
+    json = local_store.get(uuid_key(uuid))
+    if json.nil?
+      raise NotFound, :user => "Cannot find session for uuid: #{ uuid }"
+    end
+    new.merge(JSON.parse(json))
   end
 
   def self.keys
@@ -162,28 +165,7 @@ class Sessions < LdapSinatra
     json limit session_hostnames
   end
 
-
-  def assert_uuid(session)
-    if params["uuid"].nil?
-      raise BadInput, :user => "uuid query string is missing"
-    end
-
-    if session["uuid"] != params["uuid"]
-      raise BadInput, :user => "uuid does not match"
-    end
-  end
-
-  # Get session by hostname and uuid
-  #
-  # @!macro route
-  get "/v3/sessions/:hostname" do
-    auth :server_auth, :legacy_server_auth
-    session = Session.by_hostname(params["hostname"])
-    assert_uuid session
-    json session
-  end
-
-  get "/v3/sessions_by_uuid/:uuid" do
+  get "/v3/sessions/:uuid" do
     auth :server_auth
     session = Session.by_uuid(params["uuid"])
     json session
@@ -192,9 +174,8 @@ class Sessions < LdapSinatra
   # Delete session by hostname and uuid
   #
   # @!macro route
-  delete "/v3/sessions/:hostname" do
-    session = Session.by_hostname(params["hostname"])
-    assert_uuid session
+  delete "/v3/sessions/:uuid" do
+    session = Session.by_uuid(params["uuid"])
     session.destroy
     json :ok => true
   end
@@ -202,7 +183,7 @@ class Sessions < LdapSinatra
   # Delete session by uuid
   #
   # @!macro route
-  delete "/v3/sessions_by_uuid/:uuid" do
+  delete "/v3/sessions/:uuid" do
     session = Session.by_uuid(params["uuid"])
     session.destroy
     json :ok => true

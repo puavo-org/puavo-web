@@ -282,15 +282,8 @@ describe PuavoRest::Sessions do
         assert @post_data["uuid"], "has uuid"
       end
 
-      it "can be fetched with GET" do
-        get "/v3/sessions/thinnoimage", "uuid" => @post_data["uuid"]
-        get_data = JSON.parse last_response.body
-        assert_200
-        assert_equal @post_data["uuid"], get_data["uuid"]
-      end
-
       it "can be fetched with uuid only" do
-        get "/v3/sessions_by_uuid/#{ @post_data["uuid"] }", {}, {
+        get "/v3/sessions/#{ @post_data["uuid"] }", {}, {
           "HTTP_AUTHORIZATION" => "Bootserver"
         }
         get_data = JSON.parse last_response.body
@@ -299,65 +292,34 @@ describe PuavoRest::Sessions do
       end
 
       it "can be deleted with uuid only" do
-        delete "/v3/sessions_by_uuid/#{ @post_data["uuid"] }", {}, {
+        delete "/v3/sessions/#{ @post_data["uuid"] }", {}, {
           "HTTP_AUTHORIZATION" => "Bootserver"
         }
         assert_200
 
-        get "/v3/sessions/#{ @post_data["device"]["hostname"] }",
-          "uuid" => @post_data["uuid"]
+        get "/v3/sessions/#{ @post_data["uuid"] }", {}, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
         assert_equal 404, last_response.status
       end
 
-      it "responds 400 for bad uuid" do
-        get "/v3/sessions/thinnoimage", "uuid" => "bad"
-        data = JSON.parse last_response.body
-        assert data["error"], "Must have error"
-        assert_equal 400, last_response.status
-        assert_equal "BadInput", data["error"]["code"]
-      end
-
-      it "responds 400 for gets without uuid" do
-        get "/v3/sessions/thinnoimage"
-        data = JSON.parse last_response.body
-        assert data["error"], "Must have error"
-        assert_equal 400, last_response.status
-        assert_equal "BadInput", data["error"]["code"]
-      end
 
       it "responds 404 for unknown sessions" do
-        get "/v3/sessions/doesnotexists", "uuid" => "foo"
+        get "/v3/sessions/doesnotexists", {}, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
         assert_equal 404, last_response.status
         data = JSON.parse(last_response.body)
         assert data["error"], "Must have error"
         assert_equal "NotFound", data["error"]["code"]
       end
 
-      it "can be deleted with DELETE" do
-        delete "/v3/sessions/#{ @post_data["device"]["hostname"] }",
-          "uuid" => @post_data["uuid"]
-        assert_200
 
-        get "/v3/sessions/#{ @post_data["device"]["hostname"] }",
-          "uuid" => @post_data["uuid"]
+      it "DELETE responds 404 for bad uuids" do
+        delete "/v3/sessions/baduid", {}, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
         assert_equal 404, last_response.status
-      end
-
-      it "cannot be deleted without uuid" do
-        delete "/v3/sessions/#{ @post_data["device"]["hostname"] }"
-        assert_equal 400, last_response.status
-
-        get "/v3/sessions/#{ @post_data["device"]["hostname"] }", "uuid" => @post_data["uuid"]
-        assert_200
-      end
-
-      it "cannot be deleted with bad uuid" do
-        delete "/v3/sessions/#{ @post_data["device"]["hostname"] }",
-          "uuid" => "bad"
-        assert_equal 400, last_response.status
-
-        get "/v3/sessions/#{ @post_data["device"]["hostname"] }", "uuid" => @post_data["uuid"]
-        assert_200
       end
 
     end

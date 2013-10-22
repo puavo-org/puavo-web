@@ -275,35 +275,17 @@ For guests
 
 Return array device hostnames that have a desktop session
 
-## GET /v3/sessions/:hostname
-
-Required params:
-
-  - uuid
-
-Return session by hostname and uuid.
-
-XXX: should we allow this only with hostaname and only for servers?
-
-## GET /v3/sessions_by_uuid/:uuid
+## GET /v3/sessions/:uuid
 
 Get session data by uuid
 
-## DELETE /v3/sessions/:hostname
-
-Required params:
-
-  - uuid
-
-Delete session
-
-## DELETE /v3/sessions_by_uuid/:uuid
+## DELETE /v3/sessions/:uuid
 
 Delete session
 
 ### Examples
 
-    curl --request DELETE $(puavo-resolve-api-server)/v3/sessions_by_uuid/<uuid from post>
+    curl --request DELETE $(puavo-resolve-api-server)/v3/sessions/<uuid from post>
 
 ## GET /v3/devices/:hostname/wlan_networks
 
