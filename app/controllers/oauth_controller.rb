@@ -43,7 +43,7 @@ class OauthController < ApplicationController
     return render_login_form
   end
 
-  @@towns = YAML.load_file("#{Rails.root}/config/towns.yml")["towns"]
+  # @@towns = YAML.load_file("#{Rails.root}/config/towns.yml")["towns"]
 
   def render_login_form
     @organisations = Puavo::Organisation.all.map do |k, v|
