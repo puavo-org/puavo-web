@@ -14,7 +14,7 @@ clean-for-install:
 	bundle clean
 
 clean:
-	rm -vrf .bundle vendor
+	rm -rf .bundle vendor
 
 install: clean-for-install
 	# Delete .git dir and caches from vendor/. Caused some permission issues on
