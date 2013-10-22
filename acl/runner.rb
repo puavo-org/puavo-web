@@ -1,5 +1,5 @@
 
-ENV["RAILS_ENV"] ||= 'test'
+Rails.env = 'test'
 
 require './acl/data'
 require './acl/helper'
