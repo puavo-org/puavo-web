@@ -111,4 +111,4 @@ test-acceptance:
 
 .PHONY: test
 test:
-	bundle exec cucumber features/manage_groups.feature
+	bundle exec cucumber --exclude registering_devices
