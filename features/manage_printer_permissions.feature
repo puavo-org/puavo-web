@@ -36,7 +36,6 @@ Feature: Manage printer permissions
     And I am on the show school page with "Example school 1"
     When I follow "Devices"
     And I follow "Printing permissions"
-    Then I should see "Available printers"
     Then I should see "printer1"
     Then I should see "Edit permissions"
     And I should not see "printer3"
@@ -44,7 +43,6 @@ Feature: Manage printer permissions
   Scenario: Can activate printer for school
     Given I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
-    And I should see "Available printers"
     And I press "Edit permissions" on the "printer1" row
     Then I should see "Printer usage permissions"
     And I should see "printer1"
@@ -57,7 +55,6 @@ Feature: Manage printer permissions
   Scenario: Can activate wireless printer for school
     Given I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
-    And I should see "Available printers"
     And I press "Edit permissions" on the "printer1" row
     And I choose "Printing allowed on the all system devices and also other devices (eg. tablets, phones, etc.)"
     And I press "Save"
@@ -67,7 +64,6 @@ Feature: Manage printer permissions
   Scenario: Can activate printer for group
     Given I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
-    And I should see "Available printers"
     And I press "Edit permissions" on the "printer1" row
     And I check "Class 1"
     And I press "Save"
