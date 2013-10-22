@@ -69,6 +69,7 @@ class Root < LdapSinatra
   use PuavoRest::Users
   use PuavoRest::Devices
   use PuavoRest::BootConfigurations
+  use PuavoRest::Sessions
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
@@ -76,7 +77,6 @@ class Root < LdapSinatra
 
   if CONFIG["bootserver"]
     use PuavoRest::LtspServers
-    use PuavoRest::Sessions
     use PuavoRest::Organisations if Sinatra::Base.development?
     use PuavoRest::BootServers
   end
