@@ -31,6 +31,12 @@ describe PuavoRest::Sessions do
       :macAddress => "bf:9a:8c:1b:e0:6a",
       :puavoSchool => @school.dn
     )
+    create_device(
+      :puavoHostname => "afat",
+      :macAddress => "00:60:2f:D5:F8:60",
+      :puavoSchool => @school.dn,
+      :puavoDeviceType => "fatclient"
+    )
     @server1 = create_server(
       :puavoHostname => "server1",
       :macAddress => "bc:5f:f4:56:59:71"
@@ -128,7 +134,6 @@ describe PuavoRest::Sessions do
 
     end
   end
-
 
 
   describe "nonexistent device hostname" do
@@ -380,6 +385,7 @@ describe PuavoRest::Sessions do
         :puavoSchool => ltsp_school.dn
       )
 
+
       create_device(
         :puavoHostname => "normalschooldevice",
         :macAddress => "79:61:37:31:d1:ba",
@@ -434,8 +440,7 @@ describe PuavoRest::Sessions do
 
   end
 
-  describe "printers" do
-
+  describe "With users" do
     before(:each) do
       @bootserver = Server.new
       @bootserver.attributes = {
@@ -445,22 +450,12 @@ describe PuavoRest::Sessions do
       }
       @bootserver.save!
 
-      @printer1 = create_printer(@bootserver, "printer1")
-      @wireless_printer = create_printer(@bootserver, "wireless printer")
-
-      @school.add_printer(@printer1)
-      @school.add_wireless_printer(@wireless_printer)
-
-      @group_printer = create_printer(@bootserver, "group printer")
       @group = Group.new
       @group.cn = "group1"
       @group.displayName = "Group 1"
       @group.puavoSchool = @school.dn
       @group.save!
-      @group.add_printer(@group_printer)
 
-      @device_printer = create_printer(@bootserver, "device printer")
-      @device.add_printer(@device_printer)
 
       @role = Role.new
       @role.displayName = "Some role"
@@ -481,99 +476,129 @@ describe PuavoRest::Sessions do
       @user.save!
 
 
-      put "/v3/ltsp_servers/server1",
-        "load_avg" => "0.1",
-        "cpu_count" => 2,
-        "ltsp_image" => "image1"
-
     end
 
-    it "are given to guest sessions" do
-      post "/v3/sessions", { "hostname" => "athin" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-      data = JSON.parse last_response.body
+    describe "fat client" do
+      it "does not need a ltsp server" do
+        basic_authorize "bob", "secret"
+        post "/v3/sessions", { "hostname" => "afat" }
+        assert_200
 
-      assert data["printer_queues"], "must have printer queues"
-      assert_equal data["printer_queues"].size, 3
-
-      assert_equal data["printer_queues"][0]["description"], "device printer"
-      assert_equal data["printer_queues"][1]["description"], "printer1"
-      assert_equal data["printer_queues"][2]["description"], "wireless printer"
+        data = JSON.parse last_response.body
+        assert data["ltsp_server"].nil?, "fat clients must not get ltsp server"
+        assert data["device"], "has device"
+        assert_equal "afat", data["device"]["hostname"]
+      end
     end
 
-    describe "for authenticated users" do
+    describe "printers" do
 
       before(:each) do
+        @printer1 = create_printer(@bootserver, "printer1")
+        @wireless_printer = create_printer(@bootserver, "wireless printer")
+
+        @school.add_printer(@printer1)
+        @school.add_wireless_printer(@wireless_printer)
+
+        @group_printer = create_printer(@bootserver, "group printer")
+        @group.add_printer(@group_printer)
+
+        @device_printer = create_printer(@bootserver, "device printer")
+        @device.add_printer(@device_printer)
+
+        put "/v3/ltsp_servers/server1",
+          "load_avg" => "0.1",
+          "cpu_count" => 2,
+          "ltsp_image" => "image1"
+      end
+
+      it "are given to guest sessions" do
+        post "/v3/sessions", { "hostname" => "athin" }, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
+        assert_200
+        data = JSON.parse last_response.body
+
+        assert data["printer_queues"], "must have printer queues"
+        assert_equal data["printer_queues"].size, 3
+
+        assert_equal data["printer_queues"][0]["description"], "device printer"
+        assert_equal data["printer_queues"][1]["description"], "printer1"
+        assert_equal data["printer_queues"][2]["description"], "wireless printer"
+      end
+
+      describe "for authenticated users" do
+
+        before(:each) do
+          basic_authorize "bob", "secret"
+          post "/v3/sessions", "hostname" => "athin"
+          assert_200
+          @data = JSON.parse last_response.body
+          assert @data["printer_queues"], "must have printer queues"
+
+          assert @data["user"], "must have user data"
+          assert_equal "bob", @data["user"]["username"], "username must be 'bob' because we authenticated as bob"
+        end
+
+        it "from groups are given to authenticated users" do
+          assert_equal(@data["printer_queues"].select do |p|
+            p["description"] == "group printer"
+          end.size, 1)
+        end
+
+        it "from devices are given to authenticated users" do
+          assert_equal(@data["printer_queues"].select do |p|
+            p["description"] == "device printer"
+          end.size, 1)
+        end
+
+      end
+
+
+      it "for wireless users are given from /v3/devices/:hostname/wireless_printer_queues" do
+        get "/v3/devices/athin/wireless_printer_queues", {}, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
+        assert_200
+        data = JSON.parse last_response.body
+        assert_equal data.size, 1
+        printer = data.first
+        assert_equal printer["description"], "wireless printer"
+      end
+
+      it "does not duplicate printers if they are in multiple sources" do
+        @dupprinter = create_printer(@bootserver, "dupprinter")
+        @device.add_printer(@dupprinter)
+        @school.add_printer(@dupprinter)
+
         basic_authorize "bob", "secret"
         post "/v3/sessions", "hostname" => "athin"
         assert_200
-        @data = JSON.parse last_response.body
-        assert @data["printer_queues"], "must have printer queues"
 
-        assert @data["user"], "must have user data"
-        assert_equal "bob", @data["user"]["username"], "username must be 'bob' because we authenticated as bob"
+        data = JSON.parse(last_response.body)
+        dn_set = Set.new
+        data["printer_queues"].each do |pq|
+          dn = pq["dn"].downcase
+          assert !dn_set.include?(dn), "Duplicate printer queue: #{ pq.inspect }"
+          dn_set.add(dn)
+        end
       end
 
-      it "from groups are given to authenticated users" do
-        assert_equal(@data["printer_queues"].select do |p|
-          p["description"] == "group printer"
-        end.size, 1)
+      it "group data is in user hash" do
+        # TODO: should not be under printer tests
+        basic_authorize "bob", "secret"
+        post "/v3/sessions", "hostname" => "athin"
+        assert_200
+        data = JSON.parse(last_response.body)
+
+        assert data["user"], "has user data"
+        assert data["user"]["groups"], "has groups data"
+        assert data["user"]["groups"].first["gid_number"], "groups have gid_numbers"
+        assert_equal Fixnum, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
       end
 
-      it "from devices are given to authenticated users" do
-        assert_equal(@data["printer_queues"].select do |p|
-          p["description"] == "device printer"
-        end.size, 1)
-      end
 
     end
-
-
-    it "for wireless users are given from /v3/devices/:hostname/wireless_printer_queues" do
-      get "/v3/devices/athin/wireless_printer_queues", {}, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-      data = JSON.parse last_response.body
-      assert_equal data.size, 1
-      printer = data.first
-      assert_equal printer["description"], "wireless printer"
-    end
-
-    it "does not duplicate printers if they are in multiple sources" do
-      @dupprinter = create_printer(@bootserver, "dupprinter")
-      @device.add_printer(@dupprinter)
-      @school.add_printer(@dupprinter)
-
-      basic_authorize "bob", "secret"
-      post "/v3/sessions", "hostname" => "athin"
-      assert_200
-
-      data = JSON.parse(last_response.body)
-      dn_set = Set.new
-      data["printer_queues"].each do |pq|
-        dn = pq["dn"].downcase
-        assert !dn_set.include?(dn), "Duplicate printer queue: #{ pq.inspect }"
-        dn_set.add(dn)
-      end
-    end
-
-    it "group data is in user hash" do
-      # TODO: should not be under printer tests
-      basic_authorize "bob", "secret"
-      post "/v3/sessions", "hostname" => "athin"
-      assert_200
-      data = JSON.parse(last_response.body)
-
-      assert data["user"], "has user data"
-      assert data["user"]["groups"], "has groups data"
-      assert data["user"]["groups"].first["gid_number"], "groups have gid_numbers"
-      assert_equal Fixnum, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
-    end
-
-
   end
 
 end
