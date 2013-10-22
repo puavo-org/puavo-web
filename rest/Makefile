@@ -3,20 +3,20 @@ sysconfdir = /etc
 installdir = /var/app/puavo-rest
 
 build:
-	RACK_ENV=production bundle install --deployment --without rest_development
+	bundle install --deployment
 
+update-gemfile-lock: clean
+	rm -f Gemfile.lock
+	bundle install
 
-update-production-gemfile.lock:
-	sudo rm -rf .bundle Gemfile.lock
-	# how to get rid of sudo...
-	RACK_ENV=production sudo -E bundle install
+clean-test:
+	bundle install --deployment --without test --without shared
+	bundle clean
 
-dev-install:
-	sudo rm -rf .bundle Gemfile.lock
-	sudo -E bundle install --without rails
-	sudo -E bundle install --without rails --deployment
+clean:
+	rm -vrf .bundle vendor
 
-install:
+install: clean-test
 	# Delete .git dir and caches from vendor/. Caused some permission issues on
 	# .deb builder
 	find vendor/ -type d -name .git | xargs rm -rf
@@ -59,8 +59,3 @@ serve-dev:
 serve-production:
 	RACK_ENV=production bundle exec rackup --host 0.0.0.0 --port 9393 --server puma
 
-
-clean:
-	rm -rf .bundle
-	rm -rf vendor
-	rm -rf public/doc/*

@@ -1,0 +1,18 @@
+
+# Gems that must be shared with puavo-rest test runner
+
+group :shared do
+  gem 'rails', '3.2.14'
+  gem 'sqlite3', :require => 'sqlite3'
+  gem "prawn"
+  gem "net-ldap", :require => "net-ldap"
+  gem 'activeldap', :require => 'active_ldap'
+  gem 'pg'
+  gem 'rmagick', :require => 'RMagick'
+  gem 'uuid'
+  gem 'rdoc'
+  gem 'uglifier'
+  gem "multi_json"
+  gem 'redcarpet'
+  gem "nokogiri"
+end

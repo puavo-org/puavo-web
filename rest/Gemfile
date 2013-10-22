@@ -1,4 +1,8 @@
-source 'http://rubygems.org'
+source "http://rubygems.org"
+
+File.open("../Gemfile.shared") do |f|
+  eval f.read, nil, "../Gemfile.shared"
+end rescue Errno::ENOENT
 
 gem "sinatra"
 gem "sinatra-contrib"
@@ -15,15 +19,9 @@ gem "debugger"
 gem "pry"
 gem "redis"
 
-group :rest_development do
+group :test do
   gem "shotgun"
   gem "timecop"
   gem "m"
-  # Load development gems from puavo-users if we are in development or testing
-  # env
-  if ENV["RACK_ENV"] != "production"
-    STDERR.puts "Using the puavo-users Gemfile too"
-    eval File.read('../Gemfile'), nil, '../Gemfile'
-  end
 end
 

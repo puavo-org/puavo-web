@@ -9,14 +9,30 @@ RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
-
 build:
-ifeq ($(wildcard config/database.yml),)
-	cp config/database.yml.example config/database.yml
-endif
-	bundle install --deployment --without development
+	bundle install --deployment
 	npm install --registry http://registry.npmjs.org # nib for stylys
+	bundle exec rake puavo:configuration
 	bundle exec rake assets:precompile
+	bundle exec rake db:migrate
+	RAILS_ENV=test bundle exec rake db:migrate
+
+update-gemfile-lock: clean
+	rm -f Gemfile.lock
+	bundle install
+
+clean-test:
+	bundle install --deployment --without test
+	bundle clean
+
+clean-assets:
+	rm -rf public/assets
+	rm -rf tmp/cache/assets
+
+clean: clean-assets
+	rm -rf .bundle
+	rm -rf vendor/bundle
+	rm -rf node_modules
 
 mkdirs:
 	mkdir -p $(CONF_DIR)
@@ -73,18 +89,6 @@ install: mkdirs
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 
-dev-install:
-	rm -rf .bundle Gemfile.lock
-	sudo bundle install
-
-clean-assets:
-	rm -rf public/assets
-	rm -rf tmp/cache/assets
-
-clean: clean-assets
-	rm -rf .bundle
-	rm -rf vendor/bundle
-	rm -rf node_modules
 
 test-spec:
 	bundle exec rspec -b
