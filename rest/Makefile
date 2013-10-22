@@ -9,14 +9,14 @@ update-gemfile-lock: clean
 	rm -f Gemfile.lock
 	bundle install
 
-clean-test:
-	bundle install --deployment --without test --without shared
+clean-for-install:
+	bundle install --deployment --without test shared
 	bundle clean
 
 clean:
 	rm -vrf .bundle vendor
 
-install: clean-test
+install: clean-for-install
 	# Delete .git dir and caches from vendor/. Caused some permission issues on
 	# .deb builder
 	find vendor/ -type d -name .git | xargs rm -rf

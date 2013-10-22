@@ -21,9 +21,14 @@ update-gemfile-lock: clean
 	rm -f Gemfile.lock
 	bundle install
 
-clean-test:
+clean-for-install:
+	# Remove testing gems
 	bundle install --deployment --without test
 	bundle clean
+
+	# Remove any testing or development configuration files
+	rm -f config/*.yml
+	rm -f config/*.sqlite3
 
 clean-assets:
 	rm -rf public/assets
@@ -34,6 +39,9 @@ clean: clean-assets
 	rm -rf vendor/bundle
 	rm -rf node_modules
 
+clean-deb:
+	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
+
 mkdirs:
 	mkdir -p $(CONF_DIR)
 	mkdir -p $(RAILS_CONFIG_DIR)
@@ -42,7 +50,7 @@ mkdirs:
 	mkdir -p $(INSTALL_DIR)/log
 	mkdir -p $(DESTDIR)$(sbindir)
 
-install: mkdirs
+install: clean-for-install mkdirs
 	cp -r \
 		app \
 		config \
@@ -50,6 +58,7 @@ install: mkdirs
 		doc \
 		Gemfile \
 		Gemfile.lock \
+		Gemfile.shared \
 		lib \
 		Makefile \
 		monkeypatches.rb \
@@ -63,7 +72,7 @@ install: mkdirs
 		db \
 		$(INSTALL_DIR)
 
-	rm -r $(RAILS_CONFIG_DIR)/database.yml
+	rm -f $(RAILS_CONFIG_DIR)/database.yml
 
 	cp config/database.yml.development $(CONF_DIR)/database.yml
 	ln -s ../../../../etc/puavo-web/database.yml $(RAILS_CONFIG_DIR)/database.yml
@@ -100,4 +109,6 @@ test-acceptance:
 	bundle exec cucumber features/registering_devices.feature
 	bundle exec cucumber --exclude registering_devices
 
-test: test-spec test-rest test-acceptance
+.PHONY: test
+test:
+	bundle exec cucumber features/manage_groups.feature
