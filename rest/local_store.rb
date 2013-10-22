@@ -8,7 +8,7 @@ module LocalStore
 
   module ClassMethods
     def local_store
-      Thread.current[:redis_connection] ||= Redis.new :db => CONFIG["redis_db"]
+      Thread.current[:redis_connection] ||= Redis.new CONFIG["redis"].symbolize_keys
     end
   end
 

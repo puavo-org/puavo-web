@@ -13,7 +13,9 @@ default_config = {
   "keytab" => "/etc/puavo/puavo-rest.keytab",
   "default_organisation_domain" => PUAVO_ETC.get(:domain),
   "bootserver" => true,
-  "redis_db" => 0,
+  "redis" => {
+    :db => 0
+  },
   "server" => {
     :dn => PUAVO_ETC.ldap_dn,
     :password => PUAVO_ETC.ldap_password
@@ -34,7 +36,9 @@ if ENV["RACK_ENV"] == "test"
     "default_organisation_domain" => "www.example.net",
     "bootserver" => true,
     "cloud" => true,
-    "redis_db" => 1,
+    "redis" => {
+      :db => 1
+    },
     "server" => {
       :dn => PUAVO_ETC.ldap_dn,
       :password => PUAVO_ETC.ldap_password
@@ -56,5 +60,4 @@ else
   end
 
   CONFIG = default_config.merge(customizations)
-
 end
