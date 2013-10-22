@@ -61,6 +61,11 @@ class Organisation < LdapModel
     end
   end
 
+  def self.current
+    # TODO: Refresh organisation from ldap
+    LdapModel.organisation
+  end
+
 end
 
 

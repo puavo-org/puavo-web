@@ -136,6 +136,7 @@ class Sessions < LdapSinatra
 
     logger.info "Created session #{ session["uuid"] }"
     session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
+    session["organisation"] = Organisation.current.domain
     session.save
     json session
   end

@@ -478,7 +478,7 @@ describe PuavoRest::Sessions do
 
     end
 
-    describe "session without hostname" do
+    describe "session without device hostname" do
       it "can be created" do
         basic_authorize "bob", "secret"
         post "/v3/sessions"
@@ -500,6 +500,7 @@ describe PuavoRest::Sessions do
         assert_200
 
         data = JSON.parse last_response.body
+        assert_equal "www.example.net", data["organisation"], "has organisation info"
         assert data["ltsp_server"].nil?, "fat clients must not get ltsp server"
         assert data["device"], "has device"
         assert_equal "afat", data["device"]["hostname"]
