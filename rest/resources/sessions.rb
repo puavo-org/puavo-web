@@ -34,17 +34,23 @@ class Session < Hash
     self.class.uuid_key("#{ self["uuid"] }")
   end
 
+  def device?
+    !self["device"].nil?
+  end
+
   def save
     local_store.set(uuid_key, self.to_json)
-    local_store.set(hostname_key, self["uuid"])
-
-    local_store.expire(hostname_key, MAX_AGE)
     local_store.expire(uuid_key, MAX_AGE)
+
+    if device?
+      local_store.set(hostname_key, self["uuid"])
+      local_store.expire(hostname_key, MAX_AGE)
+    end
   end
 
   def destroy
-    local_store.del(hostname_key)
     local_store.del(uuid_key)
+    local_store.del(hostname_key) if device?
   end
 
   def self.by_hostname(hostname)
@@ -102,11 +108,6 @@ class Sessions < LdapSinatra
   post "/v3/sessions" do
     auth :basic_auth, :server_auth, :kerberos
 
-    if params["hostname"].nil?
-      logger.warn "'hostname' missing"
-      halt 400, json("error" => "'hostname' missing")
-    end
-
     session = Session.new
     session.merge!(
       "uuid" => Session.generate_uuid,
@@ -125,30 +126,36 @@ class Sessions < LdapSinatra
       end
     end
 
-    # Normal user has no permission to read device attributes so force server
-    # credentials here.
-    json(LdapModel.setup(:credentials => CONFIG["server"]) do
-      device = Device.by_hostname(params["hostname"])
-
-      if device.type == "thinclient"
-        session["ltsp_server"] = find_ltsp_server(
-          device.preferred_image,
-          device.preferred_server,
-          device.school_dn
-        )
+    if params["hostname"]
+      # Normal user has no permission to read device attributes so force server
+      # credentials here.
+      LdapModel.setup(:credentials => CONFIG["server"]) do
+        inject_device_info(params["hostname"], session)
       end
+    end
 
-      session["device"] = device.to_hash
-      session["printer_queues"] += device.printer_queues
-      session["printer_queues"] += device.school.printer_queues
-      session["printer_queues"] += device.school.wireless_printer_queues
-      session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
-      session.save
+    logger.info "Created session #{ session["uuid"] }"
+    session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
+    session.save
+    json session
+  end
 
-      logger.info "Created session #{ session["uuid"] } for #{ params["hostname"] }"
+  def inject_device_info(hostname, session)
+    device = Device.by_hostname(hostname)
 
-      session
-    end)
+    if device.type == "thinclient"
+      session["ltsp_server"] = find_ltsp_server(
+        device.preferred_image,
+        device.preferred_server,
+        device.school_dn
+      )
+    end
+
+    session["device"] = device.to_hash
+    session["printer_queues"] += device.printer_queues
+    session["printer_queues"] += device.school.printer_queues
+    session["printer_queues"] += device.school.wireless_printer_queues
+    session
   end
 
 

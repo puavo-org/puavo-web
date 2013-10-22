@@ -184,7 +184,9 @@ Will return the most appropriate ltsp server depending on
 Sessions are stored in memory only but are not automatically deleted.
 
 Post fields:
-  - hostname
+  - hostname (optional)
+    - Device hostname
+    - If this is a thin client a ltsp server will be required
 
 returns
 
