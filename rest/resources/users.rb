@@ -63,6 +63,12 @@ class User < LdapModel
     Group.by_user_dn(dn)
   end
 
+  def roles
+    LdapModel.setup(:credentials => CONFIG["server"]) do
+      Role.by_user_dn(dn)
+    end
+  end
+
   def self.current
     return settings[:credentials_cache][:current_user] if settings[:credentials_cache][:current_user]
 

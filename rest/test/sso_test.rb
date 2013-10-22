@@ -98,6 +98,9 @@ describe PuavoRest::SSO do
       user_groups.push( { "id" => @user.school.puavoId.to_s, "name" => @user.school.displayName } )
       assert_equal( user_groups.sort{ |a,b| a["name"] <=> b["name"] },
                     @jwt["groups"].sort{ |a,b| a["name"] <=> b["name"] } )
+      user_roles = @user.roles.map{ |r| { "id" => r.puavoId.to_s, "name" => r.displayName } }
+      assert_equal( user_roles.sort{ |a,b| a["name"] <=> b["name"] },
+                    @jwt["roles"].sort{ |a,b| a["name"] <=> b["name"] } )
       assert !@jwt["school_id"].to_s.empty?
     end
 

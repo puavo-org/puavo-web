@@ -139,6 +139,7 @@ class SSO < LdapSinatra
       "organisation_name" => user["organisation"]["name"],
       "organisation_domain" => user["organisation"]["domain"],
       "groups" => user.groups.map{ |g| { "id" => g.id, "name" => g.name } },
+      "roles" => user.roles.map{ |r| { "id" => r.id, "name" => r.name } },
       "external_service_path_prefix" => @external_service["prefix"]
     }, @external_service["secret"])
 
