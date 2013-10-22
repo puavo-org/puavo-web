@@ -1,0 +1,16 @@
+description "puavo-rest"
+
+start on runlevel [23]
+stop on shutdown
+
+pre-start script
+    mkdir -p /run/puavo-rest
+    chown puavo:puavo /run/puavo-rest
+end script
+
+chdir /var/app/puavo-rest
+env RACK_ENV=production
+
+exec sudo -E -u puavo bundle exec rackup --server puma
+
+respawn

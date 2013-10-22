@@ -1,0 +1,12 @@
+description "puavo-web"
+
+start on runlevel [23]
+stop on shutdown
+
+chdir /var/app/puavo-web
+
+env RAILS_ENV=production
+
+exec sudo -E -u puavo bundle exec unicorn_rails -c ./config/unicorn.rb
+
+respawn

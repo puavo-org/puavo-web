@@ -1,0 +1,27 @@
+Source: puavo-users
+Section: admin
+Priority: extra
+Maintainer: Esa-Matti Suuronen <esa-matti.suuronen@opinsys.fi>
+Build-Depends: debhelper (>= 8), ruby1.9.1, ruby1.9.1-dev, rubygems1.9.1, ruby-bundler (>= 1.3.5), nodejs-bundle, puavo-client, libssl-dev, ruby-ldap, git-core, libxslt-dev, libsqlite3-dev, libmagickwand-dev, libmagickwand4, ldap-utils, libpq-dev, libopenssl-ruby, xpdf-utils, libreadline6-dev, libxml2-dev, libxslt1-dev
+Standards-Version: 3.9.3
+Homepage: https://github.com/opinsys/puavo-users/
+
+Package: puavo-rest
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, make, ruby1.9.1, ruby-bundler (>= 1.3.5), puavo-client, ruby-ldap, krb5-user, libsasl2-modules-gssapi-mit
+Description: puavo-rest
+ JSON-REST Adapter for LDAP
+
+Package: puavo-rest-bootserver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, make, nginx, puavo-rest (>= 0.3.8), redis-server
+Breaks: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
+Replaces: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
+Description: puavo-rest for bootservers
+ Metapackage for bootservers. Installs nginx, puavo-rest and required configuration files.
+
+Package: puavo-web
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ruby1.9.1, ruby-bundler (>= 1.3.5), puavo-client, ruby-ldap, nodejs-bundle, libpq5, libssl1.0.0, libxslt1.1, libsqlite3-0, libmagickwand4, xpdf-utils, ruby-ldap, ldap-utils, libopenssl-ruby
+Description: puavo-web
+ Linux system management for schools

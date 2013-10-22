@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh  $@
+
+override_dh_auto_test:
+
+# Disable. Adds weird libmagickcore5 dependcy which in not installable on precise
+override_dh_shlibdeps:
+
+override_dh_auto_build:
+	$(MAKE)
+	$(MAKE) -C rest
+
+override_dh_install:
+	$(MAKE) -C rest install prefix=/usr sysconfdir=/etc DESTDIR=$(CURDIR)/debian/puavo-rest
+	mkdir -p $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-available/
+	install -m 644 $(CURDIR)/debian/nginx-puavo-rest $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-available/puavo-rest
+	mkdir -p $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-enabled/
+	ln -s ../sites-available/puavo-rest $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-enabled/puavo-rest
+
+	# puavo-web
+	$(MAKE) install prefix=/usr sysconfdir=/etc DESTDIR=$(CURDIR)/debian/puavo-web

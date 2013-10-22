@@ -1,0 +1,8 @@
+description "puavo-load-balancer"
+
+start on runlevel [23]
+stop on shutdown
+
+exec /usr/sbin/puavo-post-ltsp-server-load
+
+respawn
