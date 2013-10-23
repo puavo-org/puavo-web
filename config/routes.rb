@@ -123,6 +123,9 @@ PuavoUsers::Application.routes.draw do
                :via => :get )
         resources :devices
         resources :servers
+        match( 'hosts/:hostname/sign_certificate' => 'hosts#sign_certificate',
+               :as => 'hosts_sign_certificate',
+               :via => :post )
       end
     end
 
