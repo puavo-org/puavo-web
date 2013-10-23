@@ -3,6 +3,7 @@ sysconfdir = /etc
 installdir = /var/app/puavo-rest
 
 build:
+	cp ../VERSION VERSION
 	bundle install --deployment
 
 update-gemfile-lock: clean
@@ -26,6 +27,7 @@ install: clean-for-install
 	mkdir -p $(DESTDIR)$(sysconfdir)
 	mkdir -p $(DESTDIR)$(prefix)/bin
 	cp -r \
+		VERSION \
 		*.rb \
 		lib \
 		config.ru \

@@ -4,7 +4,7 @@ set -x
 set -eu
 
 debbox_url="$1"
-version="$(sed -rne 's/^.*VERSION.*\"([0-9\.]+)\".*$/\1/p' config/version.rb)"
+version="$(cat VERSION)"
 
 sudo apt-get update
 

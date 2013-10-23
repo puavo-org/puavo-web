@@ -6,6 +6,9 @@ require_relative "./puavo-rest"
 
 
 module PuavoRest
+DEB_PACKAGE = Array(`dpkg -l | grep puavo-rest`.split())[2]
+VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
+STARTED = Time.now
 
 class BeforeFilters < LdapSinatra
   enable :logging
@@ -59,6 +62,14 @@ class Root < LdapSinatra
 
   get "/v3/error_test" do
     1 / 0
+  end
+
+  get "/v3/about" do
+    json({
+      "version" => VERSION,
+      "deb_packge" => DEB_PACKAGE,
+      "uptime" => (Time.now - STARTED).to_i
+    })
   end
 
   use BeforeFilters

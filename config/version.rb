@@ -1,3 +1,3 @@
 module PuavoUsers
-  VERSION = "0.6.0"
+  VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 end

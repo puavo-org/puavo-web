@@ -2,4 +2,5 @@
 .yardoc/
 vendor/
 public/doc/
+VERSION
 

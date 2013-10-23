@@ -52,6 +52,7 @@ mkdirs:
 
 install: clean-for-install mkdirs
 	cp -r \
+		VERSION \
 		app \
 		config \
 		config.ru \
