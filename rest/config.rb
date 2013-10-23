@@ -19,12 +19,6 @@ default_config = {
   "server" => {
     :dn => PUAVO_ETC.ldap_dn,
     :password => PUAVO_ETC.ldap_password
-  },
-  "sso" => {
-    "localhost" => {
-      "name" => "Localhost Example Service",
-      "secret" => "secret"
-    }
   }
 }
 
