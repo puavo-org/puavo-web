@@ -134,6 +134,15 @@ PuavoUsers::Application.routes.draw do
     
   end
 
+    namespace :api do
+      namespace :v2 do
+        match( 'hosts/sign_certificate' => 'hosts#sign_certificate',
+               :as => 'hosts_sign_certificate',
+               :via => :post,
+               :format => :json )
+      end
+    end
+
   ["api/v2/", ""].each do |prefix|
     match("#{ prefix }external_files" => "external_files#index", :via => :get)
     match("#{ prefix }external_files" => "external_files#upload", :via => :post)
