@@ -327,7 +327,6 @@ returns
 
 # Organisations
 
-Available only in development
 
 ## GET /v3/current_organisation
 
@@ -360,7 +359,8 @@ returns
 
 ## GET /v3/organisations
 
-Rerturn all organisation data
+Return all organisations. On bootservers this will return only the organisation
+the bootserver belongs to.
 
 returns
 

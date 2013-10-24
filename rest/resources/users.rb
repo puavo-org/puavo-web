@@ -59,6 +59,10 @@ class User < LdapModel
     end
   end
 
+  def admin?
+    user_type == "admin"
+  end
+
   def groups
     Group.by_user_dn(dn)
   end

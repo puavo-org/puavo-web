@@ -79,18 +79,33 @@ class Organisations < LdapSinatra
     Organisation.refresh
   end
 
-  get "/v3/current_organisation" do
-    json LdapModel.organisation
-  end
-
-  get "/v3/organisations/:domain" do
-    json Organisation.by_domain[params[:domain]]
+  def require_admin
+    if not User.current.admin?
+      raise Unauthorized, :user => "Sorry, only administrators can access this resource."
+    end
   end
 
   get "/v3/organisations" do
-    json(Organisation.by_domain.map do |k, v|
-      v.merge("domain" => k)
-    end)
+    auth :basic_auth, :kerberos
+    require_admin
+
+    LdapModel.setup(:credentials => CONFIG["server"]) do
+      json Organisation.all
+    end
+  end
+
+  get "/v3/current_organisation" do
+    auth :basic_auth, :kerberos
+    require_admin
+
+    json Organisation.current
+  end
+
+  get "/v3/organisations/:domain" do
+    auth :basic_auth, :kerberos
+    require_admin
+
+    json Organisation.by_domain[params[:domain]]
   end
 
 end
