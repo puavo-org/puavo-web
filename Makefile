@@ -54,6 +54,7 @@ mkdirs:
 install: clean-for-install mkdirs
 	cp -r \
 		VERSION \
+		GIT_COMMIT \
 		app \
 		config \
 		config.ru \

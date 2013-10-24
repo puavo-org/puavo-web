@@ -29,6 +29,7 @@ install: clean-for-install
 	mkdir -p $(DESTDIR)$(prefix)/bin
 	cp -r \
 		VERSION \
+		GIT_COMMIT \
 		*.rb \
 		lib \
 		config.ru \
