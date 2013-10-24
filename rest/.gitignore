@@ -3,4 +3,5 @@
 vendor/
 public/doc/
 VERSION
+GIT_COMMIT
 

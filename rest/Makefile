@@ -3,6 +3,7 @@ sysconfdir = /etc
 installdir = /var/app/puavo-rest
 
 build:
+	git rev-parse HEAD > GIT_COMMIT
 	cp ../VERSION VERSION
 	bundle install --deployment
 

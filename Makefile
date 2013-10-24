@@ -10,6 +10,7 @@ INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
 build:
+	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	npm install --registry http://registry.npmjs.org # nib for stylys
 	bundle exec rake puavo:configuration

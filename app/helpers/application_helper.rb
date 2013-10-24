@@ -76,6 +76,7 @@ module ApplicationHelper
     <footer class=debug style='color: transparent; font-size: small; text-align: right'>
       hostname: #{ Socket.gethostname },
       version: #{ PuavoUsers::VERSION },
+      git commit: #{ PuavoUsers::GIT_COMMIT },
       deb package: #{ DEB_PACKAGE },
       uptime: #{ (Time.now - STARTED).to_i } sec
     </footer>

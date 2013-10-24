@@ -8,6 +8,7 @@ require_relative "./puavo-rest"
 module PuavoRest
 DEB_PACKAGE = Array(`dpkg -l | grep puavo-rest`.split())[2]
 VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
+GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 
 class BeforeFilters < LdapSinatra
@@ -66,6 +67,7 @@ class Root < LdapSinatra
 
   get "/v3/about" do
     json({
+      "git_commit" => GIT_COMMIT,
       "version" => VERSION,
       "deb_packge" => DEB_PACKAGE,
       "uptime" => (Time.now - STARTED).to_i
