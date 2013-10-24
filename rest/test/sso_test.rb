@@ -6,6 +6,7 @@ require "jwt"
 
 describe PuavoRest::SSO do
   before(:each) do
+    PuavoRest::Organisation.refresh
     Puavo::Test.clean_up_ldap
     FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
@@ -133,7 +134,7 @@ describe PuavoRest::SSO do
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoActiveService = [@external_service.dn]
       test_organisation.save!
-      PuavoRest::Organisation.clear_domain_cache
+      PuavoRest::Organisation.refresh
 
       url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }

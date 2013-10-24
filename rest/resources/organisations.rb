@@ -22,30 +22,33 @@ class Organisation < LdapModel
   @@by_domain = nil
 
   def self.by_domain
-    return @@by_domain if @@by_domain
-    @@by_domain = {}
+    if @@by_domain.nil?
+      raise "Call Organisation.refresh first!"
+    end
+    return @@by_domain
+  end
+
+  def self.refresh
+    by_domain = {}
 
     LdapModel.setup(:credentials => CONFIG["server"]) do
       all.each do |org|
-        @@by_domain[org["domain"]] = org
+        by_domain[org["domain"]] = org
         if CONFIG["default_organisation_domain"] == org["domain"]
-          @@by_domain["*"] = org
+          by_domain["*"] = org
         end
       end
     end
 
     # Bootservers must have default organisation because they might use unknown
     # hostnames.
-    if CONFIG["bootserver"] && @@by_domain["*"].nil?
+    if CONFIG["bootserver"] && by_domain["*"].nil?
       raise "Failed to configure #{ CONFIG["default_organisation_domain"].inspect } as default organisation"
     end
 
-    @@by_domain
+    @@by_domain = by_domain
   end
 
-  def self.clear_domain_cache
-    @@by_domain = nil
-  end
 
   def self.bases
     connection.search("", LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", ["namingContexts"]) do |e|
@@ -66,10 +69,15 @@ class Organisation < LdapModel
     LdapModel.organisation
   end
 
+  refresh
 end
 
 
 class Organisations < LdapSinatra
+
+  post "/v3/refresh_organisations" do
+    Organisation.refresh
+  end
 
   get "/v3/current_organisation" do
     json LdapModel.organisation
