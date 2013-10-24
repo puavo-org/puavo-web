@@ -6,7 +6,7 @@ class Api::V2::HostsController < ApplicationController
   class InvalidDeviceType < StandardError
   end
 
-  # POST /hosts/:hostname/sign_certificate
+  # POST /hosts/sign_certificate
   def sign_certificate
 
     allowed_device_type = ["ltspserver", "bootserver", "infotv"]
