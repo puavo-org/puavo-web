@@ -16,6 +16,7 @@ class BeforeFilters < LdapSinatra
 
   before do
     ip = env["HTTP_X_REAL_IP"] || request.ip
+    response.headers["X-puavo-rest-version"] = "#{ VERSION } #{ GIT_COMMIT }"
 
     begin
       hostname = " (#{ Resolv.new.getname(ip) })"
