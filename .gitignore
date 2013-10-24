@@ -27,3 +27,4 @@ public/assets/
 vendor/bundle/
 
 GIT_COMMIT
+debian/
