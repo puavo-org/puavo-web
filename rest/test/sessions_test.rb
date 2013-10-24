@@ -356,7 +356,7 @@ describe PuavoRest::Sessions do
       data = JSON.parse last_response.body
 
       assert_equal Array, data.class
-      assert_equal 2, data.size
+      assert_equal 2, data.size, "Bad session count! #{ data.inspect }"
     end
 
   end
