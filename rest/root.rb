@@ -28,9 +28,10 @@ class BeforeFilters < LdapSinatra
 
     port = [80, 443].include?(request.port) ? "": ":#{ request.port }"
 
+    request_host = request.host.to_s.gsub(/^staging\-/, "")
     LdapModel.setup(
       :organisation =>
-        Organisation.by_domain[request.host] || Organisation.by_domain["*"],
+        Organisation.by_domain[request_host] || Organisation.by_domain["*"],
       :rest_root => "#{ request.scheme }://#{ request.host }#{ port }"
     )
   end

@@ -194,7 +194,8 @@ module Puavo
     end
 
     def organisation_key_from_host(host=nil)
-      organisation_key = Puavo::Organisation.key_by_host(request.host)
+      request_host = request.host.to_s.gsub(/^staging\-/, "")
+      organisation_key = Puavo::Organisation.key_by_host(request_host)
       unless organisation_key
         organisation_key = Puavo::Organisation.key_by_host("*")
       end
