@@ -191,7 +191,7 @@ class SSO < LdapSinatra
     ].compact.map do |org|
       ensure_topdomain(org)
     end.map do |org|
-      Organisation.by_domain[org]
+      Organisation.by_domain(org)
     end.first
   end
 
@@ -210,7 +210,7 @@ class SSO < LdapSinatra
 
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
-      if Organisation.by_domain[ensure_topdomain(user_org)].nil?
+      if Organisation.by_domain(ensure_topdomain(user_org)).nil?
         logger.info "Could not find organisation for domain #{ user_org }"
         render_form(t.sso.bad_username_or_pw)
       end
@@ -221,7 +221,7 @@ class SSO < LdapSinatra
       params["organisation"],
       request.host,
     ].map do |org|
-      Organisation.by_domain[ensure_topdomain(org)]
+      Organisation.by_domain(ensure_topdomain(org))
     end.compact.first
 
 

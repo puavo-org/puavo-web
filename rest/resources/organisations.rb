@@ -19,36 +19,39 @@ class Organisation < LdapModel
     ""
   end
 
-  @@by_domain = nil
+  @@organisation_cache = nil
 
-  def self.by_domain
-    if @@by_domain.nil?
-      raise "Call Organisation.refresh first!"
-    end
-    return @@by_domain
+  def self.by_domain(domain)
+    @@organisation_cache && @@organisation_cache[domain]
   end
 
+  def self.by_domain!(domain)
+    org = by_domain(domain)
+    if org.nil?
+      raise NotFound, {
+        :user => "Cannot find organisation for #{ domain }",
+        :msg => "Try Organisation.refresh"
+      }
+    end
+    return org
+  end
+
+  def self.default_organisation_domain!
+    by_domain!(CONFIG["default_organisation_domain"])
+  end
+
+  REFRESH_LOCK = Mutex.new
   def self.refresh
-    by_domain = {}
+    REFRESH_LOCK.synchronize do
+      cache = {}
 
-    LdapModel.setup(:credentials => CONFIG["server"]) do
-      all.each do |org|
-        by_domain[org["domain"]] = org
-        if CONFIG["default_organisation_domain"] == org["domain"]
-          by_domain["*"] = org
-        end
+      LdapModel.setup(:credentials => CONFIG["server"]) do
+        all.each{ |org| cache[org.domain] = org }
       end
-    end
 
-    # Bootservers must have default organisation because they might use unknown
-    # hostnames.
-    if CONFIG["bootserver"] && by_domain["*"].nil?
-      raise "Failed to configure #{ CONFIG["default_organisation_domain"].inspect } as default organisation"
+      @@organisation_cache = cache
     end
-
-    @@by_domain = by_domain
   end
-
 
   def self.bases
     connection.search("", LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", ["namingContexts"]) do |e|
@@ -105,7 +108,7 @@ class Organisations < LdapSinatra
     auth :basic_auth, :kerberos
     require_admin
 
-    json Organisation.by_domain[params[:domain]]
+    json Organisation.by_domain(params[:domain])
   end
 
 end

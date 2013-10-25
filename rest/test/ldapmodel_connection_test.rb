@@ -32,7 +32,7 @@ describe "LdapModel connection management" do
         :dn => @user.dn.to_s,
         :password => "secret"
       },
-      :organisation => PuavoRest::Organisation.by_domain["*"]
+      :organisation => PuavoRest::Organisation.default_organisation_domain!
     )
 
     user = PuavoRest::User.current
@@ -47,7 +47,7 @@ describe "LdapModel connection management" do
         :dn => @user.dn.to_s,
         :password => "secret"
       },
-      :organisation => PuavoRest::Organisation.by_domain["*"]
+      :organisation => PuavoRest::Organisation.default_organisation_domain!
     )
 
     user = PuavoRest::User.current
@@ -76,7 +76,7 @@ describe "LdapModel connection management" do
         :dn => @user.dn.to_s,
         :password => "secret"
       },
-      :organisation => PuavoRest::Organisation.by_domain["*"]
+      :organisation => PuavoRest::Organisation.default_organisation_domain!
     )
 
     assert_equal "Bob", PuavoRest::User.current["first_name"]

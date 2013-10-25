@@ -214,7 +214,7 @@ describe PuavoRest::Devices do
 
       LdapModel.setup(
         :organisation =>
-          PuavoRest::Organisation.by_domain[CONFIG["default_organisation_domain"]],
+          PuavoRest::Organisation.default_organisation_domain!,
         :rest_root => "http://" + CONFIG["default_organisation_domain"],
                       :credentials => { :dn => PUAVO_ETC.ldap_dn, :password => PUAVO_ETC.ldap_password }
       )
