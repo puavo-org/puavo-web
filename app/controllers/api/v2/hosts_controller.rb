@@ -9,7 +9,7 @@ class Api::V2::HostsController < ApplicationController
   # POST /hosts/sign_certificate
   def sign_certificate
 
-    allowed_device_type = ["ltspserver", "bootserver", "infotv"]
+    allowed_device_type = ["ltspserver", "bootserver", "infotv", "laptop"]
 
     begin
       @host = Server.find(:first, :attribute => "puavoHostname", :value => params[:hostname])
