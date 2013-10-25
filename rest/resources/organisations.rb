@@ -22,6 +22,7 @@ class Organisation < LdapModel
   @@organisation_cache = nil
 
   def self.by_domain(domain)
+    refresh if @@organisation_cache.nil?
     @@organisation_cache && @@organisation_cache[domain]
   end
 
@@ -72,7 +73,6 @@ class Organisation < LdapModel
     LdapModel.organisation
   end
 
-  refresh
 end
 
 
