@@ -12,7 +12,11 @@ class BootServer < LdapModel
 
   # Find server by it's hostname
   def self.by_hostname(hostname)
-    server = filter("(&(puavoHostname=#{ escape hostname })(puavoDeviceType=bootserver))").first
+    Array(filter("(&(puavoHostname=#{ escape hostname })(puavoDeviceType=bootserver))")).first
+  end
+
+  def self.by_hostname!(hostname)
+    server = by_hostname(hostname)
     if server.nil?
       raise NotFound, :user => "Cannot find boot server with hostname '#{ hostname }'"
     end
@@ -40,13 +44,13 @@ class BootServers < LdapSinatra
 
   get "/v3/boot_servers/:hostname" do
     auth :basic_auth, :server_auth
-    json BootServer.by_hostname(params["hostname"])
+    json BootServer.by_hostname!(params["hostname"])
   end
 
   get "/v3/boot_servers/:hostname/wireless_printer_queues" do
     auth :basic_auth, :server_auth
 
-    server = BootServer.by_hostname(params["hostname"])
+    server = BootServer.by_hostname!(params["hostname"])
     printer_queues = []
     server.schools.each do |school|
       printer_queues += school.wireless_printer_queues

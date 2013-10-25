@@ -108,16 +108,20 @@ class LtspServer < Host
   end
 
   def self.by_hostname(hostname)
-    server = filter("(puavoHostname=#{ escape hostname })").first
+    Array(filter("(puavoHostname=#{ escape hostname })")).first
+  end
+
+  def self.by_hostname!(hostname)
+    server = by_hostname(hostname)
     if server.nil?
       raise NotFound, :user => "cannot find server from LDAP for hostname #{ hostname }"
     end
     server
   end
 
-  def self.by_fqdn(fqdn)
+  def self.by_fqdn!(fqdn)
     hostname = fqdn.split(".").first
-    by_hostname(hostname)
+    by_hostname!(hostname)
   end
 
   def self.all_with_state
@@ -205,7 +209,7 @@ class LtspServers < LdapSinatra
   get "/v3/ltsp_servers/:fqdn" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    json LtspServer.by_fqdn(params["fqdn"])
+    json LtspServer.by_fqdn!(params["fqdn"])
   end
 
   # Set LTSP server idle status as x-www-form-urlencoded. If cpu_count is
@@ -232,7 +236,7 @@ class LtspServers < LdapSinatra
 
     state["ltsp_image"] = params["ltsp_image"]
     state["fqdn"] = params["fqdn"]
-    server = LtspServer.by_fqdn(params["fqdn"])
+    server = LtspServer.by_fqdn!(params["fqdn"])
     server.save_state(state)
     json server
   end

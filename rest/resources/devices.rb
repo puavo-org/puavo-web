@@ -35,7 +35,11 @@ class Device < Host
 
   # Find device by it's hostname
   def self.by_hostname(hostname)
-    device = filter("(puavoHostname=#{ escape hostname })").first
+    Array(filter("(puavoHostname=#{ escape hostname })")).first
+  end
+
+  def self.by_hostname!(hostname)
+    device = by_hostname(hostname)
     if device.nil?
       raise NotFound, :user => "Cannot find device with hostname '#{ hostname }'"
     end
@@ -43,7 +47,7 @@ class Device < Host
   end
 
   # Find device by it's mac address
-  def self.by_mac_address(mac_address)
+  def self.by_mac_address!(mac_address)
     device = filter("(macAddress=#{ escape mac_address })").first
     if device.nil?
       raise NotFound, :user => "Cannot find device with mac address '#{ mac address }'"
@@ -125,14 +129,14 @@ class Devices < LdapSinatra
   get "/v3/devices/:hostname" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    device = Device.by_hostname(params["hostname"])
+    device = Device.by_hostname!(params["hostname"])
     json device
   end
 
   get "/v3/devices/:hostname/wireless_printer_queues" do
     auth :basic_auth, :server_auth
 
-    device = Device.by_hostname(params["hostname"])
+    device = Device.by_hostname!(params["hostname"])
     json device.school.wireless_printer_queues
   end
 

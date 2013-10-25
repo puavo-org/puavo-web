@@ -53,15 +53,15 @@ class Session < Hash
     local_store.del(hostname_key) if device?
   end
 
-  def self.by_hostname(hostname)
+  def self.by_hostname!(hostname)
     uuid = local_store.get(hostname_key(hostname))
     if uuid.nil?
       raise NotFound, :user => "Cannot find session for hostname: #{ hostname }"
     end
-    by_uuid(uuid)
+    by_uuid!(uuid)
   end
 
-  def self.by_uuid(uuid)
+  def self.by_uuid!(uuid)
     json = local_store.get(uuid_key(uuid))
     if json.nil?
       raise NotFound, :user => "Cannot find session for uuid: #{ uuid }"
@@ -84,7 +84,7 @@ end
 # Desktop login sessions
 class Sessions < LdapSinatra
 
-  def find_ltsp_server(preferred_image, preferred_server, school_dn)
+  def find_ltsp_server!(preferred_image, preferred_server, school_dn)
 
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_old
@@ -142,10 +142,10 @@ class Sessions < LdapSinatra
   end
 
   def inject_device_info(hostname, session)
-    device = Device.by_hostname(hostname)
+    device = Device.by_hostname!(hostname)
 
     if device.type == "thinclient"
-      session["ltsp_server"] = find_ltsp_server(
+      session["ltsp_server"] = find_ltsp_server!(
         device.preferred_image,
         device.preferred_server,
         device.school_dn
@@ -175,7 +175,7 @@ class Sessions < LdapSinatra
 
   get "/v3/sessions/:uuid" do
     auth :server_auth
-    session = Session.by_uuid(params["uuid"])
+    session = Session.by_uuid!(params["uuid"])
     json session
   end
 
@@ -183,7 +183,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   delete "/v3/sessions/:uuid" do
-    session = Session.by_uuid(params["uuid"])
+    session = Session.by_uuid!(params["uuid"])
     session.destroy
     json :ok => true
   end
@@ -192,7 +192,7 @@ class Sessions < LdapSinatra
   #
   # @!macro route
   delete "/v3/sessions/:uuid" do
-    session = Session.by_uuid(params["uuid"])
+    session = Session.by_uuid!(params["uuid"])
     session.destroy
     json :ok => true
   end

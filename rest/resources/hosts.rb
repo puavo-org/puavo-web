@@ -14,7 +14,7 @@ class Host < LdapModel
   end
 
   # Find host by it's mac address
-  def self.by_mac_address(mac_address)
+  def self.by_mac_address!(mac_address)
     host = filter("(macAddress=#{ escape mac_address })").first
     if host.nil?
       raise NotFound, :user => "Cannot find host with mac address '#{ mac_address }'"
