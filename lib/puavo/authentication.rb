@@ -107,7 +107,7 @@ module Puavo
     def configure_ldap_connection(credentials)
       credentials = credentials.dup
       if credentials[:dn]
-        credential[:dn] = ActiveLdap::DistinguishedName.parse(credentials[:dn])
+        credentials[:dn] = ActiveLdap::DistinguishedName.parse(credentials[:dn])
       end
 
       @credentials = credentials

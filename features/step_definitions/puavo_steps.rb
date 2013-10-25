@@ -94,6 +94,15 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
   end
 end
 
+When(/^I find device by hostname "([^\"]*)"$/) do |hostname|
+  device = Device.find(:first, :attribute => "puavoHostname", :value => hostname )
+  # Generate new password for laptop
+  device.userPassword = nil
+  device.save
+  page.driver.browser.basic_authorize(device.dn.to_s,  device.ldap_password)
+  visit "/devices/api/v2/devices/by_hostname/#{ hostname }.json"
+end
+
 When(/^I get on ([^\"]+) with "([^\"]*)"$/) do |page_name, value| 
   page.driver.browser.basic_authorize('cucumber', 'cucumber')
   case page_name
