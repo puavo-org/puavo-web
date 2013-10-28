@@ -14,10 +14,29 @@ class ApplicationController < ActionController::Base
   before_filter :require_login
   before_filter :require_puavo_authorization
   before_filter :set_organisation_to_session
+  before_filter :log_request
   before_filter :find_school
   before_filter :set_menu
 
   after_filter :remove_ldap_connection
+
+
+  def log_request
+    flog.info "request"
+  end
+
+  def flog
+    FLOG.merge(self.class.name, {
+      :organisation_key => current_organisation.organisation_key,
+      :user => {
+        :uid => current_user.uid,
+        :dn => current_user.dn.to_s
+      },
+      :request => {
+        :url => request.url,
+        :method => request.method
+    }})
+  end
 
   # Cached schools query
   def school_list

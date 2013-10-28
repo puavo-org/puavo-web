@@ -67,6 +67,7 @@ module Puavo
 
         # Allow logins with dn
         if !username.to_s.empty? && (dn = ActiveLdap::DistinguishedName.parse(username) rescue nil)
+          flog.info "Basic auth with DN", "dn" => dn
           return {
             :dn => dn,
             :organisation_key => organisation_key_from_host,
@@ -74,6 +75,7 @@ module Puavo
           }
         end
 
+        flog.info "Basic auth with uid", "uid" => username
         return {
           :uid => username,
           :organisation_key => organisation_key_from_host,
@@ -139,6 +141,7 @@ module Puavo
         return false
       rescue Puavo::AuthenticationError => e
         logger.info "Login failed for: #{ e }"
+        flog.info "Login failed", "error" => e
         show_authentication_error e.code, t('flash.session.failed')
         return false
       end

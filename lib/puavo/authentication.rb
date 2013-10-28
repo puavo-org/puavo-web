@@ -99,8 +99,12 @@ module Puavo
         end
       end
 
-      raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'" if not user_dn
-      logger.debug "Found #{ dn } for #{ uid }"
+      if not user_dn
+        FLOG.warn "Cannot resolve UID to DN", "uid" => uid
+        raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'"
+      end
+
+      FLOG.info "Resolved UID to DN", "uid" => uid, "dn" => user_dn
       return ActiveLdap::DistinguishedName.parse user_dn
     end
 
