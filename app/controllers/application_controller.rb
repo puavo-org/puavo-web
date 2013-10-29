@@ -35,11 +35,8 @@ class ApplicationController < ActionController::Base
       }
     }
 
-    if current_organisation
+    if current_organisation?
       attrs[:organisation_key] = current_organisation.organisation_key
-    end
-
-    if authenticated?
       attrs[:username] = current_user.uid
     end
 
