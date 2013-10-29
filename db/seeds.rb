@@ -171,6 +171,25 @@ end
   device.save!
 end
 
+[
+  {
+    :puavoHostname => "laptop1",
+    :puavoDeviceType => "laptop",
+    :macAddress => "00:60:2f:98:63:F8",
+  },
+  {
+    :puavoHostname => "laptop2",
+    :puavoDeviceType => "laptop",
+    :macAddress => "00:60:2f:42:16:FF",
+  }
+].each do |attrs|
+  device = Device.new
+  device.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice", "simpleSecurityObject"]
+  device.attributes = attrs
+  device.puavoSchool = school.dn
+  device.save!
+end
+
 
 [
   {
