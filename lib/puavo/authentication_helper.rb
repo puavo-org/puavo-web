@@ -14,7 +14,7 @@ module Puavo
     end
 
     def current_user?
-      current_organisation? && @authentication.dn
+      current_organisation? && @authentication.authenticated? && @authentication.user?
     end
 
     def current_organisation?

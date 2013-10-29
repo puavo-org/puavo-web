@@ -206,12 +206,20 @@ module Puavo
 
     end
 
+    def authenticated?
+      !!@authenticated
+    end
+
     def ldap_service?
       dn && dn.rdns[1]["ou"] == "System Accounts"
     end
 
     def server?
       dn && dn.rdns[1]["ou"] == "Servers"
+    end
+
+    def user?
+      dn && dn.rdns[1]["ou"] == "People"
     end
 
     def device?
@@ -285,8 +293,10 @@ module Puavo
       elsif oauth_access_token?
         access_token = AccessToken.find dn
         @current_user = User.find access_token.puavoOAuthEduPerson
-      else
+      elsif user?
         @current_user = User.find dn
+      else
+        raise "Bad user type #{ dn.to_s }"
       end
 
       raise "Failed get User object for #{ dn }" if @current_user.nil?
