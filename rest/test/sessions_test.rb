@@ -352,6 +352,15 @@ describe PuavoRest::Sessions do
       }
       assert_200
 
+      # XXX: This test seem to fail ramdomly on Jenkins.
+      #
+      #    Bad session count! ["hostname"].
+      #     Expected: 2
+      #       Actual: 1
+      #
+      # As a crazy idea try to workaround it by sleeping...
+      sleep 1
+
       get "/v3/sessions"
       data = JSON.parse last_response.body
 
