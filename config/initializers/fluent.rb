@@ -33,8 +33,8 @@ class FluetWrap
     log(msg, attrs.merge(:level => "error"))
   end
 
-  def merge(tag, more_attrs={})
-    FluetWrap.new(@tag + "." + tag, @base_attrs.merge(more_attrs))
+  def merge(more_attrs={})
+    FluetWrap.new(@tag, @base_attrs.merge(more_attrs))
   end
 
   def clean_passwords(attrs)

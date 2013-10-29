@@ -27,6 +27,7 @@ class ApplicationController < ActionController::Base
 
   def flog
     attrs = {
+      :controller => self.class.name,
       :organisation_key => "NOT SET",
       :request => {
         :url => request.url,
@@ -43,7 +44,7 @@ class ApplicationController < ActionController::Base
       attrs[:username] = current_user.uid
     end
 
-    FLOG.merge(self.class.name, attrs)
+    FLOG.merge(attrs)
   end
 
   # Cached schools query
