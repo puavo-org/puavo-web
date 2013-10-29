@@ -5,6 +5,9 @@ class SambaDomain < LdapBase
 
   def self.next_samba_sid
     samba_domain = first
+    if samba_domain.nil?
+      raise "Cannot find samba domain. Organisation missing?"
+    end
     next_rid = samba_domain.sambaNextRid
     samba_domain.sambaNextRid = next_rid.nil? ? 2 : next_rid + 1
     samba_domain.save
