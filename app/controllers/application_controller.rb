@@ -39,11 +39,8 @@ class ApplicationController < ActionController::Base
       attrs[:organisation_key] = current_organisation.organisation_key
     end
 
-    if @authenticated
-      attrs[:user] = {
-        :uid => current_user.uid,
-        :dn => current_user.dn.to_s
-      }
+    if authenticated?
+      attrs[:username] = current_user.uid
     end
 
     FLOG.merge(self.class.name, attrs)

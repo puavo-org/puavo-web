@@ -10,18 +10,14 @@ class FluetWrap
 
   def initialize(tag, base_attrs)
     @tag = tag
-    @base_attrs = base_attrs
+    @base_attrs = clean_passwords(base_attrs)
   end
 
-  def log(msg, attrs={})
+  def log(msg, attrs=nil)
+    attrs ||= {}
     attrs["msg"] = msg
-    attrs = clean(attrs.merge(@base_attrs),
-      :new_password,
-      :new_password_confirmation,
-      :password_plaintext,
-      :password,
-      :authenticity_token
-    )
+    attrs = clean_passwords(attrs)
+    attrs[:meta] = @base_attrs
     Fluent::Logger.post(@tag, attrs)
   end
 
@@ -39,6 +35,16 @@ class FluetWrap
 
   def merge(tag, more_attrs={})
     FluetWrap.new(@tag + "." + tag, @base_attrs.merge(more_attrs))
+  end
+
+  def clean_passwords(attrs)
+    clean(attrs,
+      :new_password,
+      :new_password_confirmation,
+      :password_plaintext,
+      :password,
+      :authenticity_token
+    )
   end
 
   def clean(hash, *del_keys)

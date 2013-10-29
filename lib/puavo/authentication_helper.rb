@@ -3,6 +3,10 @@ module Puavo
 
     attr_accessor :authentication
 
+    def authenticated?
+      @authentication && @authentication.current_user
+    end
+
     def current_user
 
       if @authentication.nil?
