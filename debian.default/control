@@ -22,6 +22,6 @@ Description: puavo-rest for bootservers
 
 Package: puavo-web
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ruby1.9.1, ruby-bundler (>= 1.3.5), puavo-client, ruby-ldap, nodejs-bundle, libpq5, libssl1.0.0, libxslt1.1, libsqlite3-0, libmagickwand4, xpdf-utils, ruby-ldap, ldap-utils, libopenssl-ruby
+Depends: ${shlibs:Depends}, ${misc:Depends}, ruby1.9.1, ruby-bundler (>= 1.3.5), puavo-client, ruby-ldap, nodejs-bundle, libpq5, libssl1.0.0, libxslt1.1, libsqlite3-0, libmagickwand4, xpdf-utils, ruby-ldap, ldap-utils, libopenssl-ruby, td-agent (>= 1.1.17-1)
 Description: puavo-web
  Linux system management for schools
