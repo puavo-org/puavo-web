@@ -207,23 +207,23 @@ module Puavo
     end
 
     def ldap_service?
-      dn.rdns[1]["ou"] == "System Accounts"
+      dn && dn.rdns[1]["ou"] == "System Accounts"
     end
 
     def server?
-      dn.rdns[1]["ou"] == "Servers"
+      dn && dn.rdns[1]["ou"] == "Servers"
     end
 
     def device?
-      dn.rdns[1]["ou"] == "Devices"
+      dn && dn.rdns[1]["ou"] == "Devices"
     end
 
     def oauth_client_server?
-      dn.rdns.first.keys.first == "puavoOAuthClientId"
+      dn && dn.rdns.first.keys.first == "puavoOAuthClientId"
     end
 
     def oauth_access_token?
-      dn.rdns.first.keys.first == "puavoOAuthTokenId"
+      dn && dn.rdns.first.keys.first == "puavoOAuthTokenId"
     end
 
     # User is authenticated with real password

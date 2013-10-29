@@ -37,6 +37,9 @@ class ApplicationController < ActionController::Base
 
     if current_organisation?
       attrs[:organisation_key] = current_organisation.organisation_key
+    end
+
+    if current_user?
       attrs[:username] = current_user.uid
     end
 

@@ -13,6 +13,10 @@ module Puavo
 
     end
 
+    def current_user?
+      current_organisation? && @authentication.dn
+    end
+
     def current_organisation?
       !!@authentication && !!@authentication.current_organisation
     end
