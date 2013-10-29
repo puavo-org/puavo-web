@@ -1,6 +1,7 @@
 # Require net-ldap for ActiveLdap. Rails env require below should do this. Not
 # sure why it is  not...
 require "net-ldap"
+require "fluent-logger"
 
 ENV['RACK_ENV'] = 'test'
 

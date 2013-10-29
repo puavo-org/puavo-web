@@ -7,7 +7,6 @@ end
 gem "pry"
 gem "unicorn"
 gem "debugger"
-gem 'fluent-logger', "~> 0.4.3"
 
 group :assets do
   gem "stylus"
