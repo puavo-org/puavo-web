@@ -90,13 +90,35 @@ role.save!
 end
 
 
-bootserver = Server.new
-bootserver.attributes = {
- :puavoHostname => "boot1",
- :macAddress => "27:b0:59:3c:ac:a4",
- :puavoDeviceType => "bootserver"
-}
+bootserver = Server.new(
+  :puavoHostname => "boot1",
+  :macAddress => "27:b0:59:3c:ac:a4",
+  :puavoDeviceType => "bootserver"
+)
 bootserver.save!
+
+[
+  {
+    :puavoHostname => "boot2",
+    :macAddress => "00:60:2f:A4:40:8C",
+    :puavoDeviceType => "bootserver"
+  },
+  {
+    :puavoHostname => "ltsp1",
+    :macAddress => "00:60:2f:2C:C3:ED",
+    :puavoDeviceType => "ltspserver"
+  },
+  {
+    :puavoHostname => "ltsp2",
+    :macAddress => "00:60:2f:4D:00:4B",
+    :puavoDeviceType => "ltspserver"
+  },
+].each do |attrs|
+  server = Server.new
+  server.attributes = attrs
+  server.save!
+end
+
 
 [
   {
