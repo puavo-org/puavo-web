@@ -16,6 +16,14 @@ class ExternalServicesBase < ApplicationController
   def update
     logger.info "#{ current_user.displayName } (#{ current_user.dn }) is setting #{ @model.cn} (#{ @model.dn }) external services to #{ params["puavoActiveService"].inspect }"
 
+    flog.info "external service update", {
+      :service => {
+        :dn => @model.dn,
+        :cn => @model.cn,
+      },
+      :params => params["puavoActiveService"]
+    }
+
     @model.puavoActiveService = params["puavoActiveService"]
     @model.save!
     flash[:notice] = "Saved!"

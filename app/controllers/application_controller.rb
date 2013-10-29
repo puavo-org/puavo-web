@@ -26,16 +26,27 @@ class ApplicationController < ActionController::Base
   end
 
   def flog
-    FLOG.merge(self.class.name, {
-      :organisation_key => current_organisation.organisation_key,
-      :user => {
-        :uid => current_user.uid,
-        :dn => current_user.dn.to_s
-      },
+    attrs = {
+      :organisation_key => "NOT SET",
       :request => {
         :url => request.url,
-        :method => request.method
-    }})
+        :method => request.method,
+        :ip => env["HTTP_X_REAL_IP"]
+      }
+    }
+
+    if current_organisation
+      attrs[:organisation_key] = current_organisation.organisation_key
+    end
+
+    if @authenticated
+      attrs[:user] = {
+        :uid => current_user.uid,
+        :dn => current_user.dn.to_s
+      }
+    end
+
+    FLOG.merge(self.class.name, attrs)
   end
 
   # Cached schools query

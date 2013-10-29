@@ -141,7 +141,7 @@ module Puavo
         return false
       rescue Puavo::AuthenticationError => e
         logger.info "Login failed for: #{ e }"
-        flog.info "Login failed", "error" => e
+        flog.info "Login authentication failed", "error" => e.message
         show_authentication_error e.code, t('flash.session.failed')
         return false
       end
@@ -164,6 +164,7 @@ module Puavo
       begin
         @authentication.authorize
       rescue Puavo::AuthorizationFailed => e
+        flog.info "Authorization failed", "error" => e.message
         logger.info "Authorization  failed: #{ e }"
         show_authentication_error "unauthorized", t('flash.session.failed')
         return false

@@ -55,5 +55,9 @@ class FluetWrap
 
 end
 
-FLOG = FluetWrap.new("puavo-web", "hostname" => hostname)
+FLOG = FluetWrap.new("puavo-web",
+  :hostname => hostname,
+  :version => "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
+)
+
 FLOG.info "starting"

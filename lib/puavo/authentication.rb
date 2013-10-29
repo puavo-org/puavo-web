@@ -104,7 +104,6 @@ module Puavo
         raise AuthenticationFailed, "Cannot get dn for UID '#{ uid }'"
       end
 
-      FLOG.info "Resolved UID to DN", "uid" => uid, "dn" => user_dn
       return ActiveLdap::DistinguishedName.parse user_dn
     end
 
