@@ -114,4 +114,6 @@ test-acceptance:
 
 .PHONY: test
 test:
-	bundle exec cucumber --exclude registering_devices
+	bundle exec cucumber --tags ~@start_test_server
+	bundle exec cucumber --tags @start_test_server
+	bundle exec rails runner acl/runner.rb
