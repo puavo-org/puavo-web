@@ -278,10 +278,7 @@ module Puavo
 
     def current_user
 
-      raise "Cannot get current user before authentication" if not @authenticated
-
       return @current_user if @current_user
-
 
       if ldap_service?
         @current_user = LdapService.find dn
