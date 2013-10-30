@@ -6,6 +6,8 @@ dpkg -i ../*deb
 set -eu
 apt-get install -f -y
 
+echo "hogwarts.opinsys.net" > /etc/puavo/domain
+
 cd /var/app/puavo-web
 RAILS_ENV=production bundle exec rake db:migrate
 
