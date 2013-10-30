@@ -1,10 +1,10 @@
 #!/bin/sh
 
-set -eu
 set -x
 
 dpkg -i ../*deb
-
+set -eu
+apt-get install -f
 
 cd /var/app/puavo-web
 RAILS_ENV=production bundle exec rake db:migrate
