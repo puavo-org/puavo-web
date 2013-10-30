@@ -49,6 +49,7 @@ mkdirs:
 	mkdir -p $(INSTALL_DIR)/tmp
 	mkdir -p $(INSTALL_DIR)/db
 	mkdir -p $(INSTALL_DIR)/log
+	mkdir -p $(INSTALL_DIR)/rest
 	mkdir -p $(DESTDIR)$(sbindir)
 
 install: clean-for-install mkdirs
@@ -74,6 +75,8 @@ install: clean-for-install mkdirs
 		.bundle \
 		db \
 		$(INSTALL_DIR)
+
+	cp -r rest/lib $(INSTALL_DIR)/rest
 
 	rm -f $(RAILS_CONFIG_DIR)/database.yml
 
