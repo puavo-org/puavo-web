@@ -46,7 +46,7 @@ module PuavoRest
 
   def self.as_user
     LdapModel.setup(
-      :organisation => Organisation.by_domain[@domain],
+      :organisation => Organisation.by_domain!(@domain),
       :credentials => @credentials
     )
     "You are now #{ User.current["username"] }"
