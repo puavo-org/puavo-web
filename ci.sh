@@ -19,5 +19,8 @@ sudo puavo-add-new-organisation --yes anotherorg --username admin --password adm
 puavo-build-debian-dir
 puavo-dch $version
 puavo-debuild
+
+sudo script/test-install.sh
+
 puavo-deb-upload "$debbox_url" ../*.deb
 
