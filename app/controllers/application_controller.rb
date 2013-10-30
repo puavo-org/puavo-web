@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
+  before_filter do
+    response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
+  end
+
   before_filter :set_initial_locale
   before_filter :setup_authentication
   before_filter :require_login

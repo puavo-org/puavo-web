@@ -15,5 +15,5 @@ sleep 10
 curl -v --fail --noproxy "*"  http://localhost:9292/v3/about
 echo "puavo-rest .deb package OK!"
 
-curl -v --fail --noproxy "*"  http://localhost:8081
+curl -v --fail --noproxy "*"  http://localhost:8081/users/login > /dev/null
 echo "puavo-web .deb package OK!"
