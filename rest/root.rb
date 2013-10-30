@@ -45,6 +45,8 @@ class BeforeFilters < LdapSinatra
 
     self.flog = FLOG.merge(
       :organisation_key => Organisation.current.organisation_key,
+      :bootserver => !!CONFIG["bootserver"],
+      :cloud => !!CONFIG["cloud"],
       :request => {
         :url => request.url,
         :method => env["REQUEST_METHOD"],
