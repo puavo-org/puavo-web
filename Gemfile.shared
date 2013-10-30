@@ -15,5 +15,4 @@ group :shared do
   gem "multi_json"
   gem 'redcarpet'
   gem "nokogiri"
-  gem 'fluent-logger', "~> 0.4.3"
 end

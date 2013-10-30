@@ -18,6 +18,7 @@ gem "redcarpet"
 gem "debugger"
 gem "pry"
 gem "redis"
+gem 'fluent-logger', "~> 0.4.3"
 
 group :test do
   gem "shotgun"
