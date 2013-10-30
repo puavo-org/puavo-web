@@ -4,7 +4,7 @@ set -x
 
 dpkg -i ../*deb
 set -eu
-apt-get install -f
+apt-get install -f -y
 
 cd /var/app/puavo-web
 RAILS_ENV=production bundle exec rake db:migrate
