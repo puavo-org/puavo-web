@@ -18,7 +18,7 @@ sudo puavo-add-new-organisation --yes anotherorg --username admin --password adm
 
 puavo-build-debian-dir
 puavo-dch $version
-puavo-install-deps debian/control
+sudo puavo-install-deps debian/control
 puavo-debuild
 
 sudo script/test-install.sh
