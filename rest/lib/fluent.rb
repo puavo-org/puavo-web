@@ -10,24 +10,25 @@ class FluetWrap
     @base_attrs = clean_passwords(base_attrs)
   end
 
-  def log(msg, attrs=nil)
+  def log(level, msg, attrs=nil)
     attrs ||= {}
     attrs["msg"] = msg
     attrs = clean_passwords(attrs)
     attrs[:meta] = @base_attrs
+    attrs[:meta][:level] = level
     Fluent::Logger.post(@tag, attrs)
   end
 
-  def info(msg, attrs={})
-    log(msg, attrs.merge(:level => "info"))
+  def info(msg, attrs=nil)
+    log("info", msg, attrs)
   end
 
-  def warn(msg, attrs={})
-    log(msg, attrs.merge(:level => "warn"))
+  def warn(msg, attrs=nil)
+    log("warn", msg, attrs)
   end
 
-  def error(msg, attrs={})
-    log(msg, attrs.merge(:level => "error"))
+  def error(msg, attrs=nil)
+    log("error", msg, attrs)
   end
 
   def merge(more_attrs={})
