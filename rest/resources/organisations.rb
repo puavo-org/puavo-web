@@ -15,6 +15,10 @@ class Organisation < LdapModel
       Array(es).map { |s| s.downcase.strip }
   end
 
+  def organisation_key
+    domain.split(".").first if domain
+  end
+
   def self.ldap_base
     ""
   end

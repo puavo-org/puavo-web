@@ -11,6 +11,14 @@ class LdapSinatra < Sinatra::Base
   set :dump_errors, false
   set :raise_errors, true
 
+  def flog
+    Thread.current[:fluent]
+  end
+
+  def flog=(logger)
+    Thread.current[:fluent] = logger
+  end
+
   # Respond with a text content
   def txt(text)
     content_type :txt

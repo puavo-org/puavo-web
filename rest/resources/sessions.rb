@@ -138,6 +138,8 @@ class Sessions < LdapSinatra
     session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
     session["organisation"] = Organisation.current.domain
     session.save
+
+    flog.info "new session", :device => params["hostname"]
     json session
   end
 

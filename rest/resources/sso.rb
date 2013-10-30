@@ -92,9 +92,15 @@ class SSO < LdapSinatra
     begin
       auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
+      flog.warn "sso login error",
+        :type => "kerberos",
+        :error_message => err.message
       logger.info("SSO kerberos error: #{ err }")
       return render_form(t.sso.kerberos_error)
     rescue JSONError => err
+      flog.warn "sso login error",
+        :type => "json",
+        :error_message => err.message
       logger.info("SSO error: #{ err }")
       return render_form(t.sso.bad_username_or_pw)
     end
@@ -147,6 +153,7 @@ class SSO < LdapSinatra
     r.query_values = (r.query_values || {}).merge("jwt" => jwt)
 
     logger.info "Redirecting SSO auth #{ user["first_name"] } #{ user["last_name"] } (#{ user["dn"] } to #{ r }"
+    flog.info "sso login ok", :return_to => r.to_s
     redirect r.to_s
   end
 

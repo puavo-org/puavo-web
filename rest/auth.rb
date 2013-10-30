@@ -108,6 +108,7 @@ class LdapSinatra < Sinatra::Base
             :msg => "Cannot resolve #{ credentials[:username].inspect } to DN"
         end
 
+        credentials[:auth_method] = method
         LdapModel.setup(:credentials => credentials)
         break
       end
@@ -118,6 +119,12 @@ class LdapSinatra < Sinatra::Base
       raise Unauthorized,
         :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }"
     end
+
+    self.flog = flog.merge(
+      :auth_method => LdapModel.settings[:credentials][:auth_method],
+      :username => User.current.username
+    )
+    flog.info "authenticated"
   end
 
 end

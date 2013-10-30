@@ -11,6 +11,14 @@ VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 
+FLOG = FluetWrap.new(
+  "puavo-rest",
+  :hostname => Socket.gethostname,
+  :version => "#{ VERSION } #{ GIT_COMMIT }"
+)
+
+FLOG.info "starting"
+
 class BeforeFilters < LdapSinatra
   enable :logging
 
@@ -19,12 +27,12 @@ class BeforeFilters < LdapSinatra
     response.headers["X-puavo-rest-version"] = "#{ VERSION } #{ GIT_COMMIT }"
 
     begin
-      hostname = " (#{ Resolv.new.getname(ip) })"
+      client_hostname = Resolv.new.getname(ip)
     rescue Resolv::ResolvError
-      hostname = ""
+      client_hostname = ""
     end
 
-    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path } by #{ ip }#{ hostname }"
+    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path } by #{ ip } (#{ client_hostname })"
 
     port = [80, 443].include?(request.port) ? "": ":#{ request.port }"
 
@@ -34,11 +42,23 @@ class BeforeFilters < LdapSinatra
       :organisation => Organisation.by_domain(request_host) || Organisation.default_organisation_domain!,
       :rest_root => "#{ request.scheme }://#{ request.host }#{ port }"
     )
+
+    self.flog = FLOG.merge(
+      :organisation_key => Organisation.current.organisation_key,
+      :request => {
+        :url => request.url,
+        :method => env["REQUEST_METHOD"],
+        :client_hostname => client_hostname,
+        :ip => ip
+      }
+    )
+    flog.info "request"
   end
 
   after do
     LdapModel.clear_setup
     LocalStore.close_connection
+    flog = nil
   end
 end
 
