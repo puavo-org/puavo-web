@@ -60,7 +60,7 @@ class BeforeFilters < LdapSinatra
   after do
     LdapModel.clear_setup
     LocalStore.close_connection
-    flog = nil
+    self.flog = nil
   end
 end
 
