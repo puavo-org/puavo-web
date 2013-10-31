@@ -2,11 +2,17 @@
 
 set -x
 
+echo "hogwarts.opinsys.net" > /etc/puavo/domain
+
 dpkg -i ../*deb
 set -eu
 apt-get install -f -y
 
-echo "hogwarts.opinsys.net" > /etc/puavo/domain
+stop puavo-web || true
+stop puavo-rest || true
+
+start puavo-web
+start puavo-rest
 
 cd /var/app/puavo-web
 RAILS_ENV=production bundle exec rake db:migrate
