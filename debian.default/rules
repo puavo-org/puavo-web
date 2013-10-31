@@ -8,9 +8,6 @@
 	dh  $@
 
 override_dh_auto_test:
-	# Run rest tests first because they are bit more low level
-	$(MAKE) -C rest test
-	$(MAKE) test
 
 # Disable. Adds weird libmagickcore5 dependcy which in not installable on precise
 override_dh_shlibdeps:
