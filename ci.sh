@@ -26,5 +26,5 @@ puavo-debuild
 
 sudo script/test-install.sh
 
-puavo-deb-upload "$debbox_url" ../*.deb
+# puavo-deb-upload "$debbox_url" ../*.deb
 
