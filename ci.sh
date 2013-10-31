@@ -13,7 +13,7 @@ sudo apt-get install -y --force-yes td-agent
 
 sudo apt-get install -y puavo-standalone ruby1.9.1 ruby1.9.1-dev libxml2-dev libxslt-dev libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev libssl-dev build-essential libopenssl-ruby xpdf-utils git libreadline6-dev libxml2-dev libxslt1-dev libpq-dev libmagickwand-dev libsqlite3-dev ruby-bundler puavo-client nodejs-bundle puavo-ca-rails redis-server puavo-devscripts
 
-# sudo puavo-init-standalone --unsafe-passwords opinsys.net
+sudo puavo-init-standalone --unsafe-passwords opinsys.net
 # 
 # sudo puavo-add-new-organisation --yes hogwarts --username albus --password albus --given-name Albus --surname Dumbledore
 # sudo puavo-add-new-organisation --yes example --username cucumber --password cucumber --given-name cucumber --surname cucumber
