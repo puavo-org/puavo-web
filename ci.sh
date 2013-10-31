@@ -26,5 +26,4 @@ puavo-debuild
 
 # sudo script/test-install.sh
 
-puavo-deb-upload "$debbox_url" ../*.deb
-
+puavo-upload-packages "$debbox_url" ../puavo*.changes "git-${GIT_BRANCH}"
