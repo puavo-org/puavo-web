@@ -58,6 +58,19 @@ class BeforeFilters < LdapSinatra
   end
 
   after do
+    if env["sinatra.error"]
+      err = env["sinatra.error"]
+      if err.kind_of?(JSONError)
+        flog.info "request rejected", :reason => err.as_json
+      else
+        flog.error "unhandled exception", :error => {
+          :class => err.class.name,
+          :message => err.message,
+          :backtrace => err.backtrace
+        }
+      end
+    end
+
     LdapModel.clear_setup
     LocalStore.close_connection
     self.flog = nil
