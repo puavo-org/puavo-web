@@ -45,7 +45,10 @@ class ApplicationController < ActionController::Base
     end
 
     if current_user?
-      attrs[:username] = current_user.uid
+      attrs[:credentials] = {
+        :username => current_user.uid,
+        :dn => current_user.dn
+      }
     end
 
     FLOG.merge(attrs)
