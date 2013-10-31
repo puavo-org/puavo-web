@@ -58,22 +58,38 @@ class BeforeFilters < LdapSinatra
   end
 
   after do
+    unhandled_exception = nil
+
     if env["sinatra.error"]
       err = env["sinatra.error"]
       if err.kind_of?(JSONError)
         flog.info "request rejected", :reason => err.as_json
       else
-        flog.error "unhandled exception", :error => {
-          :class => err.class.name,
-          :message => err.message,
-          :backtrace => err.backtrace
+        unhandled_exception = {
+          :error => {
+            :uuid => (0...25).map{ ('a'..'z').to_a[rand(26)] }.join,
+            :code => err.class.name,
+            :message => err.message
+          }
         }
+        flog.error(
+          "unhandled exception",
+          unhandled_exception.merge(:backtrace => err.backtrace)
+        )
       end
     end
+
 
     LdapModel.clear_setup
     LocalStore.close_connection
     self.flog = nil
+    if unhandled_exception && ENV["RACK_ENV"] == "production"
+      time = Time.now.to_s
+      puts "Unhandled exception #{ err.class.name }: '#{ err }' at #{ time } (#{ time.to_i })"
+      puts err.backtrace
+      halt 500, json(unhandled_exception)
+    end
+
   end
 end
 

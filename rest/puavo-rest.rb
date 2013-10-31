@@ -12,7 +12,6 @@ require "pry"
 require_relative "./lib/helpers"
 require_relative "./lib/fluent"
 require_relative "./lib/ldapmodel"
-require_relative "./middleware/hide_errors"
 require_relative "./middleware/suppress_json_errors"
 require_relative "./middleware/virtual_host_base"
 
