@@ -4,7 +4,7 @@ class ErrorsController < ApplicationController
     @error_uuid = (0...25).map{ ('a'..'z').to_a[rand(26)] }.join
     flog.error "unhandled exception", :error => {
       :uuid => @error_uuid,
-      :class => @error.class.name,
+      :code => @error.class.name,
       :message => @error.message,
       :backtrace => @error.backtrace
     }
