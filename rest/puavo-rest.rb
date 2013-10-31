@@ -6,10 +6,8 @@ require "sinatra/json"
 require "base64"
 require "gssapi"
 require "gssapi/lib_gssapi"
-if Sinatra::Base.development? || ENV["DEBUG"]
-  require "debugger"
-  require "pry"
-end
+require "debugger"
+require "pry"
 
 require_relative "./lib/helpers"
 require_relative "./lib/fluent"
