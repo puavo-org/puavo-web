@@ -11,6 +11,8 @@ override_dh_auto_test:
 
 # Disable. Adds weird libmagickcore5 dependcy which in not installable on precise
 override_dh_shlibdeps:
+	$(MAKE) -C rest test
+	$(MAKE) test
 
 override_dh_auto_build:
 	$(MAKE)
