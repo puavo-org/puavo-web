@@ -3,7 +3,7 @@ require 'socket'
 
 require_relative "../../rest/lib/fluent"
 
-FLOG = FluetWrap.new(
+FLOG = FluentWrap.new(
   "puavo-web",
   :hostname => Socket.gethostname,
   :version => "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"

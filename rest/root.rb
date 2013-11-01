@@ -11,7 +11,7 @@ VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 
-FLOG = FluetWrap.new(
+FLOG = FluentWrap.new(
   "puavo-rest",
   :hostname => Socket.gethostname,
   :version => "#{ VERSION } #{ GIT_COMMIT }"

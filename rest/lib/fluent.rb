@@ -3,20 +3,21 @@ require 'fluent-logger'
 
 Fluent::Logger::FluentLogger.open(nil, :host=>'localhost', :port=>24224)
 
-class FluetWrap
+class FluentWrap
 
-  def initialize(tag, base_attrs)
+  def initialize(tag, base_attrs, logger=Fluent::Logger)
     @tag = tag
-    @base_attrs = clean_passwords(base_attrs)
+    @logger = logger
+    @base_attrs = clean(base_attrs)
   end
 
   def log(level, msg, attrs=nil)
     attrs ||= {}
     attrs["msg"] = msg
-    attrs = clean_passwords(attrs)
+    attrs = clean(attrs)
     attrs[:meta] = @base_attrs
     attrs[:meta][:level] = level
-    Fluent::Logger.post(@tag, attrs)
+    @logger.post(@tag, attrs)
   end
 
   def info(msg, attrs=nil)
@@ -32,26 +33,17 @@ class FluetWrap
   end
 
   def merge(more_attrs={})
-    FluetWrap.new(@tag, @base_attrs.merge(more_attrs))
+    FluentWrap.new(@tag, @base_attrs.merge(more_attrs), @logger)
   end
 
-  def clean_passwords(attrs)
-    clean(attrs,
-      :new_password,
-      :new_password_confirmation,
-      :password_plaintext,
-      :password,
-      :authenticity_token
-    )
-  end
-
-  def clean(hash, *del_keys)
+  def clean(hash)
     hash = hash.symbolize_keys
     hash.each do |k, v|
-      if del_keys.include?(k)
-        hash.delete(k)
+      # Sensor keys that contain word password
+      if k.to_s.include?("password")
+        hash[k] = "*"*v.size
       elsif v.class == Hash
-        hash[k] = clean(v, *del_keys)
+        hash[k] = clean(v)
       end
     end
     return hash
