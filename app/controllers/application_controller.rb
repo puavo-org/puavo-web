@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
     if current_user?
       attrs[:credentials] = {
         :username => current_user.uid,
-        :dn => current_user.dn
+        :dn => current_user.dn.to_s.downcase!
       }
     end
 
