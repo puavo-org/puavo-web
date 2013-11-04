@@ -26,4 +26,4 @@ puavo-debuild
 
 sudo script/test-install.sh
 
-puavo-upload-packages "$debbox_url" ../puavo*.changes "git-$(echo "$GIT_BRANCH" | cut -d / -f 2)"
+aptirepo-upload -r $APTIREPO_REMOTE -b "git-$(echo "$GIT_BRANCH" | cut -d / -f 2)" ../puavo*.changes
