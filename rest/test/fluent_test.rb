@@ -44,6 +44,22 @@ describe FluentWrap do
       assert_equal "*******", data[:meta][:password_in_base]
   end
 
+  it "cleans passwords from nested ActiveSupport::HashWithIndifferentAccess hashes" do
+    logger = MockLogger.new
+    flog = FluentWrap.new("testtag", {}, logger)
+
+    flog.info("testmsg", ActiveSupport::HashWithIndifferentAccess.new(:params => {
+      :user => {
+        "new_password" => "secret1"
+      }
+    }))
+
+    assert logger.data, "has data"
+    data = logger.data.first[1]
+    assert_equal "*******", data[:params][:user][:new_password]
+  end
+
+
   it "can merge new meta variables" do
       logger = MockLogger.new
       flog = FluentWrap.new "testtag", {:meta_attr1 => true}, logger

@@ -42,7 +42,7 @@ class FluentWrap
       # Sensor keys that contain word password
       if k.to_s.include?("password")
         hash[k] = "*"*v.size
-      elsif v.class == Hash
+      elsif v.kind_of?(Hash)
         hash[k] = clean(v)
       end
     end
