@@ -4,6 +4,8 @@ File.open("./Gemfile.shared") do |f|
   eval f.read, nil, "./Gemfile.shared"
 end
 
+gem 'sidekiq'
+
 gem "pry"
 gem "unicorn"
 gem "debugger"
