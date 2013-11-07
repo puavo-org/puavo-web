@@ -137,6 +137,7 @@ class Root < LdapSinatra
   use PuavoRest::BootConfigurations
   use PuavoRest::Sessions
   use PuavoRest::Organisations
+  use PuavoRest::FluentRelay
 
   if CONFIG["cloud"]
     use PuavoRest::SSO

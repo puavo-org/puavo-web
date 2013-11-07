@@ -1,22 +1,12 @@
 require_relative "./helper"
 require_relative "../lib/fluent"
 
-class MockLogger
-
-  attr_reader :data
-
-  def post(*args)
-    @data ||= []
-    @data.push args
-  end
-
-end
 
 describe FluentWrap do
 
   [:info, :warn, :error].each do |level|
     it "flog##{ level }(...) sets log level" do
-      logger = MockLogger.new
+      logger = MockFluent.new
 
       flog = FluentWrap.new "testtag", {:meta_attr => true}, logger
       flog.send(level, "testmsg")
@@ -34,7 +24,7 @@ describe FluentWrap do
   end
 
   it "cleans passwords" do
-      logger = MockLogger.new
+      logger = MockFluent.new
       flog = FluentWrap.new "testtag", {:password_in_base => "secret1"}, logger
       flog.info("testmsg", :password_in_arg => "secret2")
 
@@ -45,7 +35,7 @@ describe FluentWrap do
   end
 
   it "cleans passwords from nested ActiveSupport::HashWithIndifferentAccess hashes" do
-    logger = MockLogger.new
+    logger = MockFluent.new
     flog = FluentWrap.new("testtag", {}, logger)
 
     flog.info("testmsg", ActiveSupport::HashWithIndifferentAccess.new(:params => {
@@ -61,7 +51,7 @@ describe FluentWrap do
 
 
   it "can merge new meta variables" do
-      logger = MockLogger.new
+      logger = MockFluent.new
       flog = FluentWrap.new "testtag", {:meta_attr1 => true}, logger
       flog.info("testmsg1")
 
