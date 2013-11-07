@@ -17,6 +17,8 @@ class FluentRelay < LdapSinatra
   end
 
   post "/v3/fluent/:tag" do
+    auth :basic_auth, :kerberos
+
     if request.content_type.downcase != "application/json"
       raise BadInput, :user => "Only json body is allowed"
     end

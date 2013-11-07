@@ -39,6 +39,39 @@ def create_device(attrs)
   d
 end
 
+def create_basic_data
+  @school = School.create(
+    :cn => "gryffindor",
+    :displayName => "Gryffindor"
+  )
+
+  @user = User.new(
+    :givenName => "Bob",
+    :sn  => "Brown",
+    :uid => "bob",
+    :puavoEduPersonAffiliation => "student",
+    :preferredLanguage => "en",
+    :mail => "bob@example.com"
+  )
+  @user.set_password "secret"
+  @user.puavoSchool = @school.dn
+  @user.role_ids = [
+    Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
+  ]
+  @user.save!
+
+  @laptop = Device.new
+  @laptop.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice", "simpleSecurityObject"]
+  @laptop.attributes = {
+    :puavoHostname => "laptop1",
+    :puavoDeviceType => "laptop",
+    :macAddress => "00:60:2f:98:63:F8",
+  }
+  @laptop.puavoSchool = @school.dn
+  @laptop.save!
+
+end
+
 def assert_200(res=nil)
   res ||= last_response
   assert_equal 200, res.status, "Body: #{ res.body }"

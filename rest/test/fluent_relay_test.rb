@@ -3,6 +3,11 @@ require_relative "../lib/fluent"
 
 describe PuavoRest::FluentRelay do
 
+  before do
+    Puavo::Test.clean_up_ldap
+    create_basic_data
+  end
+
   before(:each) do
     @orig_logger = FLUENT_RELAY
     PuavoRest::FluentRelay.fluent_logger = MockFluent.new
@@ -13,6 +18,7 @@ describe PuavoRest::FluentRelay do
   end
 
   it "can relay log data to fluentd" do
+    basic_authorize @laptop.dn, @laptop.ldap_password
     post "/v3/fluent/testtag1", {
       "foo" => 1,
       "bar" => 2
@@ -27,6 +33,7 @@ describe PuavoRest::FluentRelay do
   end
 
   it "can relay multiple records at once" do
+    basic_authorize @laptop.dn, @laptop.ldap_password
     post(
       "/v3/fluent/testtag2",
       [ { "foo" => 3 }, { "bar" => 4 } ].to_json,
@@ -46,6 +53,7 @@ describe PuavoRest::FluentRelay do
 
   it "responds non 200 if fluent post failed" do
     PuavoRest::FluentRelay.fluent_logger = MockFluent.new :broken => true
+    basic_authorize @laptop.dn, @laptop.ldap_password
     post "/v3/fluent/testtag1", {
       "foo" => 1,
       "bar" => 2
