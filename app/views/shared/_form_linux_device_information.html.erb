@@ -238,6 +238,27 @@
 </tr>
 <% end %>
 
+
+<h2><%= t('.printer_title') %></h2>
+
+<p><%= t('.printer_description') %></p>
+
+<ul>
+<% @school_printers.each do |printer| %>
+  <li>
+    <label>
+    <%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
+    <%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
+
+    <%= link_to(
+      printer[:object].printerDescription,
+      edit_printer_permission_path(@school, printer[:object])
+    ) %>
+    </label>
+  </li>
+<% end %>
+</ul>
+
 </table>
 
 <% end %>

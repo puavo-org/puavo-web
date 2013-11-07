@@ -83,6 +83,12 @@ module NavigationHelpers
     when /the server list page/
       servers_path
 
+    # Device path
+    when /the devices list page/
+      devices_path(@school)
+    when /the new printer device page/
+      new_device_path(@school, :device_type => "printer")
+
     # Add more mappings here.
     # Here is a more fancy example:
     #
