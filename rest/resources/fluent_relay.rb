@@ -16,15 +16,11 @@ class FluentRelay < LdapSinatra
     @@logger = logger
   end
 
-  post "/v3/fluent/:tag" do
+  post "/v3/fluent" do
     auth :basic_auth, :kerberos
 
     if request.content_type.downcase != "application/json"
       raise BadInput, :user => "Only json body is allowed"
-    end
-
-    if params["tag"].to_s.strip == ""
-      raise BadInput, :user => "bad tag"
     end
 
     request.body.rewind
@@ -40,7 +36,11 @@ class FluentRelay < LdapSinatra
     end
 
     records.each do |r|
-      if not fluent_logger.post(params["tag"], r)
+      tag = r["_tag"]
+      time = r["_time"]
+      r.delete("_tag")
+      r.delete("_time")
+      if not fluent_logger.post_with_time(tag, time, r)
         raise InternalError, :user => "Failed to relay fluent packages"
       end
     end

@@ -19,34 +19,47 @@ describe PuavoRest::FluentRelay do
 
   it "can relay log data to fluentd" do
     basic_authorize @laptop.dn, @laptop.ldap_password
-    post "/v3/fluent/testtag1", {
+    time = Time.now.to_i
+    post "/v3/fluent", {
+      "_tag" => "testtag1",
+      "_time" => time,
       "foo" => 1,
       "bar" => 2
     }.to_json, "CONTENT_TYPE" => "application/json"
     assert_200
 
-    data = PuavoRest::FluentRelay.fluent_logger.data
+    data = PuavoRest::FluentRelay.fluent_logger.timed_data
     assert_equal(
-      [["testtag1", {"foo"=>1, "bar"=>2}]],
+      [["testtag1",  time, {"foo"=>1, "bar"=>2}]],
       data
     )
   end
 
   it "can relay multiple records at once" do
     basic_authorize @laptop.dn, @laptop.ldap_password
-    post(
-      "/v3/fluent/testtag2",
-      [ { "foo" => 3 }, { "bar" => 4 } ].to_json,
+    time1 = Time.now.to_i - 10
+    time2 = Time.now.to_i
+    post("/v3/fluent", [
+        {
+          "_tag" => "tag1",
+          "_time" => time1,
+          "foo" => 1
+        },
+        {
+          "_tag" => "tag2",
+          "_time" => time2,
+          "foo" => 3
+        }
+    ].to_json,
       "CONTENT_TYPE" => "application/json"
     )
     assert_200
 
-    data = PuavoRest::FluentRelay.fluent_logger.data
-    assert_equal(
-      [
-        ["testtag2", {"foo"=>3}],
-        ["testtag2", {"bar"=>4}]
-      ],
+    data = PuavoRest::FluentRelay.fluent_logger.timed_data
+    assert_equal([
+        [ "tag1", time1, {"foo" => 1} ],
+        [ "tag2", time2, {"foo" => 3} ],
+    ],
       data
     )
   end
@@ -54,7 +67,10 @@ describe PuavoRest::FluentRelay do
   it "responds non 200 if fluent post failed" do
     PuavoRest::FluentRelay.fluent_logger = MockFluent.new :broken => true
     basic_authorize @laptop.dn, @laptop.ldap_password
-    post "/v3/fluent/testtag1", {
+    time = Time.now.to_i
+    post "/v3/fluent", {
+      "_tag" => "testtag1",
+      "_time" => time,
       "foo" => 1,
       "bar" => 2
     }.to_json, "CONTENT_TYPE" => "application/json"
