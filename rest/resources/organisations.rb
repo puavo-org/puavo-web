@@ -31,6 +31,11 @@ class Organisation < LdapModel
   end
 
   def self.by_domain!(domain)
+
+    if domain.to_s.strip == ""
+      raise InternalError, :user => "Invalid organisation: [EMPTY]"
+    end
+
     org = by_domain(domain)
     if org.nil?
       raise NotFound, {
