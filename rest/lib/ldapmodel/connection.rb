@@ -101,6 +101,10 @@ class LdapModel
   end
 
 
+  def self.organisation?
+    !!settings[:organisation]
+  end
+
   def self.organisation
     if settings[:organisation].nil?
       raise BadInput, :user => "Cannot configure organisation for this request"

@@ -38,13 +38,17 @@ class BeforeFilters < LdapSinatra
 
     request_host = request.host.to_s.gsub(/^staging\-/, "")
 
+    organisation = Organisation.by_domain(request_host)
+    if organisation.nil? && CONFIG["bootserver"]
+      organisation = Organisation.default_organisation_domain!
+    end
+
     LdapModel.setup(
-      :organisation => Organisation.by_domain(request_host) || Organisation.default_organisation_domain!,
+      :organisation => organisation,
       :rest_root => "#{ request.scheme }://#{ request.host }#{ port }"
     )
 
-    self.flog = FLOG.merge(
-      :organisation_key => Organisation.current.organisation_key,
+    log_meta = {
       :bootserver => !!CONFIG["bootserver"],
       :cloud => !!CONFIG["cloud"],
       :request => {
@@ -53,7 +57,12 @@ class BeforeFilters < LdapSinatra
         :client_hostname => client_hostname,
         :ip => ip
       }
-    )
+    }
+    if Organisation.current?
+      log_meta[:organisation_key] = Organisation.current.organisation_key
+    end
+
+    self.flog = FLOG.merge(log_meta)
     flog.info "request"
   end
 

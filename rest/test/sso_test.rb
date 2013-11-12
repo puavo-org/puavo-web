@@ -6,6 +6,10 @@ require "jwt"
 
 describe PuavoRest::SSO do
   before(:each) do
+    @orig_config = CONFIG.dup
+    CONFIG.delete("default_organisation_domain")
+    CONFIG["bootserver"] = false
+
     PuavoRest::Organisation.refresh
     Puavo::Test.clean_up_ldap
     FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
@@ -40,6 +44,12 @@ describe PuavoRest::SSO do
     @user.save!
 
   end
+
+  after do
+    CONFIG = @orig_config
+  end
+
+
   it "responds with 400 error for missing return_to" do
     get "/v3/sso"
     assert_equal 400, last_response.status
@@ -151,11 +161,13 @@ describe PuavoRest::SSO do
     before(:each) do
       url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path" }
-      get url.to_s
+      get url.to_s, {}, {
+        "HTTP_HOST" => "api.example.net"
+      }
     end
 
     it "renders login form with 401 for missing credentials" do
-      assert_equal 401, last_response.status
+      assert_equal 401, last_response.status, last_response.body
       assert last_response.body.include?("form"), "has login form  #{ last_response.body }"
     end
 
