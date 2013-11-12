@@ -35,12 +35,16 @@ class FluentRelay < LdapSinatra
       raise BadInput, :user => "Invalid json type #{ klass }"
     end
 
+    puts "Relaying #{ records.size } fluentd records from http to local fluentd"
+
     records.each do |r|
       tag = r["_tag"]
       time = r["_time"]
       r.delete("_tag")
       r.delete("_time")
-      if not fluent_logger.post_with_time(tag, time, r)
+
+      # https://github.com/fluent/fluent-logger-ruby/blob/master/lib/fluent/logger/fluent_logger.rb#L115
+      if not fluent_logger.post_with_time(tag, r, time)
         raise InternalError, :user => "Failed to relay fluent packages"
       end
     end

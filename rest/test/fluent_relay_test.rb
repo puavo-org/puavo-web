@@ -30,7 +30,7 @@ describe PuavoRest::FluentRelay do
 
     data = PuavoRest::FluentRelay.fluent_logger.timed_data
     assert_equal(
-      [["testtag1",  time, {"foo"=>1, "bar"=>2}]],
+      [["testtag1",  {"foo"=>1, "bar"=>2}, time]],
       data
     )
   end
@@ -57,8 +57,8 @@ describe PuavoRest::FluentRelay do
 
     data = PuavoRest::FluentRelay.fluent_logger.timed_data
     assert_equal([
-        [ "tag1", time1, {"foo" => 1} ],
-        [ "tag2", time2, {"foo" => 3} ],
+        [ "tag1", {"foo" => 1}, time1],
+        [ "tag2", {"foo" => 3}, time2],
     ],
       data
     )
