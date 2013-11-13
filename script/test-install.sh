@@ -6,7 +6,7 @@ echo "hogwarts.opinsys.net" > /etc/puavo/domain
 
 dpkg -i ../*deb
 set -eu
-apt-get install -f -y
+apt-get install -f -y --force-yes
 
 stop puavo-web || true
 stop puavo-rest || true
