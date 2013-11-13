@@ -9,7 +9,7 @@ version="$(cat VERSION)"
 echo "deb http://packages.treasure-data.com/precise/ precise contrib" | sudo su -c 'cat > /etc/apt/sources.list.d/treasure-data.list'
 sudo apt-get update
 
-sudo apt-get install -y --force-yes puavo-standalone ruby1.9.1 ruby1.9.1-dev libxml2-dev libxslt-dev libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev libssl-dev build-essential libopenssl-ruby xpdf-utils git libreadline6-dev libxml2-dev libxslt1-dev libpq-dev libmagickwand-dev libsqlite3-dev ruby-bundler puavo-client nodejs-bundle puavo-ca-rails redis-server td-agent aptirepo-upload puavo-devscripts
+sudo apt-get install -y --force-yes puavo-standalone ruby1.9.1 ruby1.9.1-dev libxml2-dev libxslt-dev libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev libssl-dev build-essential libopenssl-ruby xpdf-utils git libreadline6-dev libxml2-dev libxslt1-dev libpq-dev libmagickwand-dev libsqlite3-dev ruby-bundler puavo-client nodejs-bundle puavo-ca-rails redis-server aptirepo-upload puavo-devscripts
 
 # fluentd does not work on standalone installations yet because it's not a
 # puavo managed installation. It also might cause log forwarding loops.
