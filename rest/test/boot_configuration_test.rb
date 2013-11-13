@@ -50,7 +50,7 @@ label ltsp-NBD
   menu label LTSP, using NBD
   menu default
   kernel ltsp/schoolprefimage/vmlinuz
-  append ro initrd=ltsp/schoolprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=thinclient root=/dev/nbd0 nbdroot=:schoolprefimage ACPI
+  append ro initrd=ltsp/schoolprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=thinclient root=/dev/nbd0 nbdroot=:schoolprefimage ACPI usbcore.autosuspend=-1
   ipappend 2
 EOF
       assert_equal configuration, @data

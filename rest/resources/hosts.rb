@@ -52,12 +52,19 @@ class Host < LdapModel
 
   def grub_kernel_arguments
     if ["unregistered", "laptop"].include?(grub_type)
-      ""
-    elsif get_original(:kernel_arguments)
-      kernel_arguments
-    else
-      "quiet splash"
+      return ""
     end
+
+    retval = "quiet splash"
+    if get_original(:kernel_arguments)
+      retval = kernel_arguments
+    end
+
+    if ["thinclient", "fatclient"].include?(grub_type)
+      retval += " usbcore.autosuspend=-1"
+    end
+
+    return retval
   end
 
   def grub_boot_configuration
