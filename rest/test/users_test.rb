@@ -50,6 +50,7 @@ describe PuavoRest::Users do
       assert_equal "Example Organisation", data["organisation"]["name"]
       assert_equal "www.example.net", data["organisation"]["domain"]
       assert_equal "dc=edu,dc=example,dc=fi", data["organisation"]["base"]
+      assert_equal "bob@www.example.net", data["domain_username"]
 
       assert_equal "http://www.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 

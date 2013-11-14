@@ -67,6 +67,11 @@ class User < LdapModel
     Group.by_user_dn(dn)
   end
 
+  computed_attr :domain_username
+  def domain_username
+    "#{ username }@#{ organisation.domain }"
+  end
+
   def self.current
     return settings[:credentials_cache][:current_user] if settings[:credentials_cache][:current_user]
 
