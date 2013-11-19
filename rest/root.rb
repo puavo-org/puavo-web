@@ -14,7 +14,8 @@ STARTED = Time.now
 FLOG = FluentWrap.new(
   "puavo-rest",
   :hostname => Socket.gethostname,
-  :version => "#{ VERSION } #{ GIT_COMMIT }"
+  :version => "#{ VERSION } #{ GIT_COMMIT }",
+  :deb_package => DEB_PACKAGE
 )
 
 FLOG.info "starting"
