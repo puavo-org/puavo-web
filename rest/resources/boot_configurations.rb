@@ -2,16 +2,38 @@
 module PuavoRest
 class BootConfigurations < LdapSinatra
 
-  def host_by_mac_address!(mac_address)
-    host = PuavoRest::Host.by_mac_address!(mac_address)
-    if host.type == "ltspserver"
-      LtspServer.by_dn(host.dn)
-    else
-      Device.by_dn(host.dn)
-    end
-  end
 
   get "/v3/:mac_address/boot_configuration" do
+
+    # This resource is inconsistent with other resources in puavo-rest. It's
+    # now deprecated and usage of it will be logged.
+    puts "call to legacy boot_configuration route. Use /v3/boot_configurations/:mac_address in future"
+    flog.warn "legacy call", {
+      :route => "/v3/:mac_address/boot_configuration",
+      :params  => params
+    }
+    boot_configuration
+  end
+
+  get "/v3/boot_configurations/:mac_address" do
+    boot_configuration
+  end
+
+  post "/v3/boot_done/:hostname" do
+    auth :server_auth
+    host = Host.by_hostname!(params["hostname"])
+
+    res = {
+      :boot_duration => host.boot_duration,
+      :hostname => host.hostname,
+      :type => host.type,
+    }
+
+    flog.info "boot done", res
+    json res
+  end
+
+  def boot_configuration
     auth :server_auth
 
     log_attrs = {
@@ -20,7 +42,7 @@ class BootConfigurations < LdapSinatra
 
     # Get Device or LtspServer
     begin
-      host = host_by_mac_address!(params["mac_address"])
+      host = Host.by_mac_address!(params["mac_address"])
       log_attrs.merge!(host.to_hash)
     rescue NotFound => e
       log_attrs[:unregistered] = true
@@ -29,6 +51,7 @@ class BootConfigurations < LdapSinatra
     end
 
     flog.info "send boot configuration", :host => log_attrs
+    host.save_boot_time
     host.grub_boot_configuration
   end
 

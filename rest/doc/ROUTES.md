@@ -366,3 +366,14 @@ returns
 
     (Array)
 
+## GET /v3/boot_configurations/:mac_address
+
+Get boot configuration for given mac address in grub format
+
+## POST /v3/:hostname/boot_done
+
+Log that boot has been done.
+
+Example
+
+    curl -X POST  --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/devices/$(hostname)

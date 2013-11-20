@@ -15,6 +15,10 @@ describe PuavoRest::LtspServers do
     )
   end
 
+  after(:each) do
+    Timecop.return
+  end
+
   it "responds with empty data" do
     get "/v3/ltsp_servers"
     assert_equal "[]", last_response.body

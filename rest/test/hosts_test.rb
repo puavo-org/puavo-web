@@ -78,4 +78,56 @@ describe PuavoRest::Host do
 
     end
   end
+
+
+  describe "boot time" do
+
+    before(:each) do
+      @org_log = $rest_flog
+      @logger = MockFluent.new
+      $rest_flog = @org_log.merge(nil, @logger)
+    end
+
+    after(:each) do
+      $rest_flog = @org_log
+    end
+
+    it "will be logged" do
+      thin = @host["thinclient"]
+
+
+      get "/v3/boot_configurations/#{ thin.mac_address }"
+      assert_200
+
+      Timecop.travel 60
+
+      post "/v3/boot_done/#{ thin.puavoHostname }", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert data["boot_duration"], "should have boot time field"
+      assert_equal Fixnum, data["boot_duration"].class, data["boot_duration"]
+
+      assert_equal 60, data["boot_duration"]
+
+      boot_start = @logger.data.select do |l|
+        l[1][:msg] == "send boot configuration"
+      end.first
+      assert boot_start, "send boot configuration was logged"
+
+      boot_end = @logger.data.select do |l|
+        l[1][:msg] == "boot done"
+      end.first
+      assert boot_end, "boot end was logged"
+      assert_equal 60, boot_end[1][:boot_duration]
+      assert_equal thinclient05, boot_end[1][:hostname]
+
+
+    end
+  end
+
+
+
 end
