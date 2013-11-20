@@ -32,8 +32,12 @@ class FluentWrap
     log("error", msg, attrs)
   end
 
-  def merge(more_attrs={})
-    FluentWrap.new(@tag, @base_attrs.merge(more_attrs), @logger)
+  def merge(more_attrs=nil, new_logger=nil)
+    FluentWrap.new(
+      @tag,
+      @base_attrs.merge(more_attrs || {}),
+      new_logger || @logger
+    )
   end
 
   def clean(hash)
