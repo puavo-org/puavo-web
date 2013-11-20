@@ -45,7 +45,6 @@ class LdapModel
 
   def self.by_ldap_attr(attr, value, option=nil)
     res = Array(filter("(#{ escape attr }=#{ escape value })"))
-    return if res.empty?
     if option == :multi
       res
     else
@@ -55,7 +54,7 @@ class LdapModel
 
   def self.by_ldap_attr!(attr, value, option=nil)
      res = by_ldap_attr(attr, value, option)
-     if res.nil?
+     if Array(res).empty?
       raise(
         NotFound,
         "Cannot find #{ self } by #{ attr }=#{ value }"
