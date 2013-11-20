@@ -44,16 +44,12 @@ class PrinterQueue < LdapModel
     "ou=Printers,#{ organisation["base"] }"
   end
 
-  def self.by_server(server_dn)
-    filter("(puavoServer=#{ escape server_dn })")
+  def self.by_server!(server_dn)
+    by_attr!(:server_dn, server_dn, :multi)
   end
 
-  def self.by_name(name)
-    pq = Array(filter("(printerDescription=#{ escape name })")).first
-    if pq.nil?
-      raise NotFound, :user => "Cannot find printer queue by name '#{ name }'"
-    end
-    pq
+  def self.by_name!(name)
+    by_attr!(:name, name)
   end
 
 end
@@ -64,7 +60,7 @@ class PrinterQueues < LdapSinatra
   get "/v3/printer_queues" do
     auth :basic_auth
     if params["server_dn"]
-      json PrinterQueue.by_server(params["server_dn"])
+      json PrinterQueue.by_server!(params["server_dn"])
     else
       json PrinterQueue.all
     end
@@ -73,7 +69,7 @@ class PrinterQueues < LdapSinatra
   get "/v3/printer_queues/:name/ppd" do
     content_type 'application/octet-stream'
     auth :basic_auth
-    PrinterQueue.by_name(params["name"]).ppd
+    PrinterQueue.by_name!(params["name"]).ppd
   end
 
 end

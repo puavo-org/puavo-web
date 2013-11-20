@@ -35,24 +35,16 @@ class Device < Host
 
   # Find device by it's hostname
   def self.by_hostname(hostname)
-    Array(filter("(puavoHostname=#{ escape hostname })")).first
+    by_attr(:hostname, hostname)
   end
 
   def self.by_hostname!(hostname)
-    device = by_hostname(hostname)
-    if device.nil?
-      raise NotFound, :user => "Cannot find device with hostname '#{ hostname }'"
-    end
-    device
+    by_attr!(:hostname, hostname)
   end
 
   # Find device by it's mac address
   def self.by_mac_address!(mac_address)
-    device = filter("(macAddress=#{ escape mac_address })").first
-    if device.nil?
-      raise NotFound, :user => "Cannot find device with mac address '#{ mac address }'"
-    end
-    device
+    by_attr!(:hostname, mac_address)
   end
 
   def printer_ppd

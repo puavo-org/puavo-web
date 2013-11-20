@@ -24,7 +24,7 @@ class ExternalService < LdapModel
   end
 
   def self.by_domain(domain)
-    filter("(puavoServiceDomain=#{ escape domain })")
+    by_attr(:domain, domain, :multi)
   end
 
 end

@@ -94,7 +94,7 @@ EOF
       @data = last_response.body
     end
 
-    it "has following boot configuration" do
+    it "has following boot configuration too" do
       configuration =<<EOF
 default ltsp-NBD
 ontimeout ltsp-NBD

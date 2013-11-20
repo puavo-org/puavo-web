@@ -10,7 +10,8 @@ class BootServer < LdapModel
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
   end
 
-  # Find server by it's hostname
+  # Find server by it's hostname. Bootservers are saved to same ldap branch as
+  # ltsp servers so we must filter with type too
   def self.by_hostname(hostname)
     Array(filter("(&(puavoHostname=#{ escape hostname })(puavoDeviceType=bootserver))")).first
   end

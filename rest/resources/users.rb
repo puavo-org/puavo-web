@@ -26,7 +26,7 @@ class User < LdapModel
 
   # aka by_uuid
   def self.by_username(username)
-    filter("(uid=#{ escape username })").first
+    by_attr(:username, username)
   end
 
   def self.resolve_dn(username)

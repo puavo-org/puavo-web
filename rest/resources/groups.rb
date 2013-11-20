@@ -13,7 +13,7 @@ class Group < LdapModel
   end
 
   def self.by_user_dn(dn)
-    filter("(member=#{ escape dn })")
+    by_ldap_attr(:member, dn, :multi)
   end
 
   def printer_queues
