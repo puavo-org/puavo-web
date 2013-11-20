@@ -11,14 +11,14 @@ VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 
-FLOG = FluentWrap.new(
+$rest_flog = FluentWrap.new(
   "puavo-rest",
   :hostname => Socket.gethostname,
   :version => "#{ VERSION } #{ GIT_COMMIT }",
   :deb_package => DEB_PACKAGE
 )
 
-FLOG.info "starting"
+$rest_flog.info "starting"
 
 class BeforeFilters < LdapSinatra
   enable :logging
@@ -63,7 +63,7 @@ class BeforeFilters < LdapSinatra
       log_meta[:organisation_key] = Organisation.current.organisation_key
     end
 
-    self.flog = FLOG.merge(log_meta)
+    self.flog = $rest_flog.merge(log_meta)
     flog.info "request"
   end
 
