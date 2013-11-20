@@ -58,7 +58,7 @@ class LdapModel
      if res.nil?
       raise(
         NotFound,
-        :user => "Cannot find #{ self.class } by #{ attr }=#{ val }"
+        "Cannot find #{ self } by #{ attr }=#{ value }"
       )
      end
      res
@@ -112,6 +112,14 @@ class LdapModel
   # @see raw_by_dn
   def self.by_dn(*args)
     from_hash( raw_by_dn(*args) )
+  end
+
+  def self.by_dn!(*args)
+    res = by_dn(*args)
+    if not res
+      raise NotFound, :user => "Cannot find #{ self.class } by dn: #{ args.first.inspect }"
+    end
+    res
   end
 
   # Get array of models by their dn attributes.
