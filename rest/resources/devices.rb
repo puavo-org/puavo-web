@@ -5,7 +5,7 @@ module PuavoRest
 class Device < Host
 
   ldap_map :dn, :dn
-  ldap_map :cn, :hostname
+  ldap_map :puavoHostname, :hostname
   ldap_map :puavoSchool, :school_dn
   ldap_map :puavoDeviceType, :type
   ldap_map :puavoDeviceBootImage, :preferred_boot_image
