@@ -43,15 +43,20 @@ class BootConfigurations < LdapSinatra
     # Get Device or LtspServer
     begin
       host = Host.by_mac_address!(params["mac_address"])
-      log_attrs.merge!(host.to_hash)
     rescue NotFound => e
       log_attrs[:unregistered] = true
-      # Create dummy host object for getting boot configuration to unregistered device
+      # Create dummy host object for getting boot configuration for unregistered device
       host = PuavoRest::LtspServer.new
     end
 
+
+    if not log_attrs[:unregistered]
+      log_attrs.merge!(host.to_hash)
+      host.save_boot_time
+    end
+
     flog.info "send boot configuration", :host => log_attrs
-    host.save_boot_time
+
     host.grub_boot_configuration
   end
 
