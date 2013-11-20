@@ -16,6 +16,23 @@ module LocalStore
     self.class.local_store
   end
 
+  # Simple shortcuts for redis set and get. The class in which this mixin is
+  # included to must implemented a instance_key method which uniquely
+  # identifies the object
+  def local_store_set(key, val)
+    local_store.set("#{ instance_key }:#{ key }", val)
+  end
+  def local_store_get(key)
+    local_store.get("#{ instance_key }:#{ key }")
+  end
+  def local_store_del(key)
+    local_store.del("#{ instance_key }:#{ key }")
+  end
+  def local_store_expire(key, time)
+    local_store.expire("#{ instance_key }:#{ key }", time)
+  end
+
+
   def self.included(base)
     base.extend(ClassMethods)
   end
