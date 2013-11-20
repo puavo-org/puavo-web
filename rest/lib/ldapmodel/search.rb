@@ -18,6 +18,10 @@ class LdapModel
     res = []
     attributes ||= ldap_attrs
 
+    if not connection
+      raise "Cannot search without a connection"
+    end
+
     connection.search(
       ldap_base,
       LDAP::LDAP_SCOPE_SUBTREE,
