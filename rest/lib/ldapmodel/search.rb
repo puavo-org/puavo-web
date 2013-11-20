@@ -42,6 +42,44 @@ class LdapModel
     end
   end
 
+
+  def self.by_ldap_attr(attr, value, option=nil)
+    res = Array(filter("(#{ escape attr }=#{ escape value })"))
+    return if res.empty?
+    if option == :multi
+      res
+    else
+      res.first
+    end
+  end
+
+  def self.by_ldap_attr!(attr, value, option=nil)
+     res = by_ldap_attr(attr, value, option)
+     if res.nil?
+      raise(
+        NotFound,
+        :user => "Cannot find #{ self.class } by #{ attr }=#{ val }"
+      )
+     end
+     res
+  end
+
+  # Find model by it's mapped attribute. It's safe to call with user input
+  # since the value is escaped before ldap search.
+  #
+  # @param attr [Symbol] Mapped attribute
+  # @param value [String] Attribute value to match
+  # @param option [Symbol] Set to :multi to return an Array
+  # @return [LdapModel]
+  def self.by_attr(attr, value, option=nil)
+    by_ldap_attr(pretty2ldap[attr.to_sym], value, option)
+  end
+
+  # Same as by_attr but it will throw NotFound exception if the value is nil
+  def self.by_attr!(attr, value, option=nil)
+    by_ldap_attr!(pretty2ldap[attr.to_sym], value, option)
+  end
+
   # Return all ldap entries from the current base
   #
   # @see ldap_base

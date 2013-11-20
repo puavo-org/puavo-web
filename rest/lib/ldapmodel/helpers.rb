@@ -40,7 +40,7 @@ class LdapModel
   #
   # @see https://github.com/ruby-ldap/ruby-net-ldap/blob/8ddb2d7c8476c3a2b2ad9fcd367ca0d36edaa611/lib/net/ldap/filter.rb#L247-L264
   def self.escape(string)
-    string.gsub(ESCAPE_RE) { |char| "\\" + ESCAPES[char] }
+    string.to_s.gsub(ESCAPE_RE) { |char| "\\" + ESCAPES[char] }
   end
   callable_from_instance :escape
 end
