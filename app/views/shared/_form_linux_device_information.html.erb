@@ -13,7 +13,7 @@
   <td><%= f.text_field :serialNumber %></td>
 </tr>
 
-<% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
+<% if (f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice')) || current_user.organisation_owner? %>
 <tr>
   <td class="label_td"><%= f.label :macAddress %></td>
   <td>
