@@ -684,8 +684,9 @@ en:
       automounts: Automounts
     school_limit:
       title: School limit
-      description: This LTSP server will only serve these schools
-      description_edit: If none is selected it will serve all schools in the organisation
+      ltsp_description: This LTSP server will only serve these schools.
+      ltsp_description_edit: If none is selected it will serve all schools in the organisation.
+      boot_description: Schools that this boot server will serve.
   automounts:
     index:
       title: Automounts

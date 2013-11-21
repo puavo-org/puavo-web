@@ -25,6 +25,10 @@ class Printer < LdapBase
     self.puavoId.to_s unless self.puavoId.nil?
   end
 
+  def server
+    Server.find(self.puavoServer)
+  end
+
   def set_empty_location
     if self.printerLocation.to_s.empty?
       self.printerLocation = "-"

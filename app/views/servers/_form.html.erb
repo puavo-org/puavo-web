@@ -37,10 +37,15 @@
   </table>
 
   <h2><%= t('servers.school_limit.title') %></h2>
-  <p>
-    <%= t('servers.school_limit.description') %>.
-    <%= t('servers.school_limit.description_edit') %>.
-  </p>
+
+  <% if @server.puavoDeviceType == "ltspserver" %>
+    <p>
+      <%= t('servers.school_limit.ltsp_description') %>
+      <%= t('servers.school_limit.ltsp_description_edit') %>
+    </p>
+  <% else %>
+      <%= t('servers.school_limit.boot_description') %>
+  <% end %>
 
   <ul>
   <% @schools.each do |school| %>

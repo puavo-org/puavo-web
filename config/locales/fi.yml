@@ -681,8 +681,9 @@ fi:
       automounts: Hakemistoliitokset
     school_limit:
       title: Rajoita kouluihin
-      description: Tämä LTSP-palvelin on käytössä vain näissä kouluissa
-      description_edit: Jos mitään ei ole valittu palvelin palvelee kaikkia organisaation kouluja
+      ltsp_description: Tämä LTSP-palvelin on käytössä vain näissä kouluissa
+      ltsp_description_edit: Jos mitään ei ole valittu palvelin palvelee kaikkia organisaation kouluja
+      boot_description: Koulut joita tämä boot-palvelin palvelee.
   automounts:
     index:
       title: Hakemistoliitokset

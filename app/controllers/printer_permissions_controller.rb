@@ -1,6 +1,8 @@
 class PrinterPermissionsController < ApplicationController
 
   def index
+    @printers = @school.printers
+
    respond_to do |format|
       format.html # index.html.erb
     end

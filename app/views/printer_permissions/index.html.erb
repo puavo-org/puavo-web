@@ -6,7 +6,7 @@
     <th colspan="2"><%= t('actions') %></th>
   </tr>
 
-<% @school.printers.each do |printer| %>
+<% @printers.each do |printer| %>
   <tr>
 
     <td><%=h printer.printerDescription %></td>
@@ -21,3 +21,11 @@
   </tr>
 <% end %>
 </table>
+
+<% if @printers.empty? && current_user.organisation_owner? %>
+  <p  style="clear: both;">
+    This school has no printers. As a school admin you might want to set some
+    <%= link_to servers_path do %>boot servers<% end %>
+    to this school.
+  </p>
+<% end %>
