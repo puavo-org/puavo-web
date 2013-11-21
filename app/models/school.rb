@@ -107,7 +107,14 @@ class School < BaseGroup
   end
 
   def printers
-    servers_dn = Server.all.map{ |server| server.dn }
+    servers_dn = Server.find(
+      :all,
+      {
+        :attribute => "puavoSchool",
+        :value => self.dn
+      }
+    ).map{ |server| server.dn }
+
     Printer.all.select{ |p| servers_dn.include?(p.puavoServer) }
   end
 
