@@ -30,8 +30,8 @@ describe FluentWrap do
 
       assert logger.data, "has data"
       data = logger.data.first[1]
-      assert_equal "*******", data[:password_in_arg]
-      assert_equal "*******", data[:meta][:password_in_base]
+      assert_equal "[FILTERED]", data[:password_in_arg]
+      assert_equal "[FILTERED]", data[:meta][:password_in_base]
   end
 
   it "cleans passwords from nested ActiveSupport::HashWithIndifferentAccess hashes" do
@@ -46,7 +46,7 @@ describe FluentWrap do
 
     assert logger.data, "has data"
     data = logger.data.first[1]
-    assert_equal "*******", data[:params][:user][:new_password]
+    assert_equal "[FILTERED]", data[:params][:user][:new_password]
   end
 
 
