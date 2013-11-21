@@ -530,6 +530,7 @@ fi:
         printerType: Tyyppi
         printerURI: Polku
         puavoPrinterPPD: Ajuritiedosto (PPD)
+        puavoServer: Boot-palvelin
     values:
       device:
         roles:

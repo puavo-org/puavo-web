@@ -1,8 +1,12 @@
+
+
 <table class='list'>
   <tr>
     <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
     <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
-    <th><%= t('activeldap.attributes.printer.printerLocation') %></th>
+    <th><%= t('activeldap.printer.puavoServer') %></th>
+
+    <th>Bootserver</th>
     <th colspan="2"><%= t('actions') %></th>
   </tr>
 
@@ -14,12 +18,23 @@
     <td><%=h printer.printerLocation %></td>
 
     <td>
+
+    <% if current_user.organisation_owner? %>
+      <%= link_to printer.server.puavoHostname, edit_server_path(printer.server) %>
+    <% else %>
+      <%=h printer.server.puavoHostname %>
+    <% end %>
+    </td>
+
+
+    <td>
       <%= link_to edit_printer_permission_path(@school, printer), :class => 'btn' do %>
       <i class="icon-pencil"></i><%= t('.edit_permissions') %>
       <% end %>
     </td>
   </tr>
 <% end %>
+
 </table>
 
 <% if @printers.empty? && current_user.organisation_owner? %>

@@ -532,6 +532,7 @@ en:
         printerType: Type
         printerURI: URI
         puavoPrinterPPD: Driver file (PPD)
+        puavoServer: Boot server
     values:
       device:
         roles:
