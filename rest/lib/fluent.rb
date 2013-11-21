@@ -45,7 +45,7 @@ class FluentWrap
     hash.each do |k, v|
       # Sensor keys that contain word password
       if k.to_s.include?("password")
-        hash[k] = "*"*v.size
+        hash[k] = "[FILTERED]"
       elsif v.kind_of?(Hash)
         hash[k] = clean(v)
       end
