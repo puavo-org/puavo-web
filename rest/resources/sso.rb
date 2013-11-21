@@ -92,17 +92,9 @@ class SSO < LdapSinatra
     begin
       auth :basic_auth, :from_post, :kerberos
     rescue KerberosError => err
-      flog.warn "sso login error",
-        :type => "kerberos",
-        :error_message => err.message
-      logger.info("SSO kerberos error: #{ err }")
-      return render_form(t.sso.kerberos_error)
+      return render_form(t.sso.kerberos_error, err)
     rescue JSONError => err
-      flog.warn "sso login error",
-        :type => "json",
-        :error_message => err.message
-      logger.info("SSO error: #{ err }")
-      return render_form(t.sso.bad_username_or_pw)
+      return render_form(t.sso.bad_username_or_pw, err)
     end
 
     user = User.current
@@ -124,8 +116,7 @@ class SSO < LdapSinatra
       return render_form(t.sso.service_not_activated)
     end
 
-
-    jwt = JWT.encode({
+    jwt_data ={
       # Issued At
       "iat" => Time.now.to_i.to_s,
       # JWT ID
@@ -146,14 +137,18 @@ class SSO < LdapSinatra
       "organisation_domain" => user["organisation"]["domain"],
       "groups" => user.groups.map{ |g| { "id" => g.id, "name" => g.name } },
       "external_service_path_prefix" => @external_service["prefix"]
-    }, @external_service["secret"])
+    }
 
-
+    jwt = JWT.encode(jwt_data, @external_service["secret"])
     r = return_to
     r.query_values = (r.query_values || {}).merge("jwt" => jwt)
 
     logger.info "Redirecting SSO auth #{ user["first_name"] } #{ user["last_name"] } (#{ user["dn"] } to #{ r }"
-    flog.info "sso login ok", :return_to => r.to_s
+    flog.info("sso", {
+      :login_ok => true,
+      :return_to => return_to,
+      :jwt => jwt_data
+    })
     redirect r.to_s
   end
 
@@ -161,10 +156,21 @@ class SSO < LdapSinatra
     respond_auth
   end
 
-  def render_form(error_message)
+  def render_form(error_message, err=nil)
     if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
+      err_msg = {
+        :login_ok => false,
+        :reason => error_message,
+        :params => params
+      }
+      if err
+        err_msg[:error_class] = err.class.name
+        err_msg[:error_message] = err.message
+      end
+      flog.warn "sso", err_msg
     end
+
     @external_service ||= fetch_external_service
     @organisation = preferred_organisation
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
