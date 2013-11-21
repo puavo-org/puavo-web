@@ -36,6 +36,47 @@ class PrintersController < ApplicationController
   # GET /devices/printers/1/edit
   def edit
     @printer = Printer.find(params[:id])
+
+    @schools = School.find(
+      :all,
+      {
+        :attribute => 'puavoPrinterQueue',
+        :value => @printer.dn
+      }
+    )
+
+    @schools_by_wireless = School.find(
+      :all,
+      {
+        :attribute => 'puavoWirelessPrinterQueue',
+        :value => @printer.dn
+      }
+    )
+
+    @groups = Group.find(
+      :all,
+      {
+        :attribute => 'puavoPrinterQueue',
+        :value => @printer.dn
+      }
+    )
+
+    @schools_by_groups = @groups.map do |group|
+      [group, School.find(group.puavoSchool)]
+    end
+
+    @devices = Device.find(
+      :all,
+      {
+        :attribute => 'puavoPrinterQueue',
+        :value => @printer.dn
+      }
+    )
+
+    @schools_by_devices = @devices.map do |device|
+      [device, School.find(device.puavoSchool)]
+    end
+
   end
 
   # PUT /devices/printers/1
