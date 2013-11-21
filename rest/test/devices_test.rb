@@ -31,7 +31,8 @@ describe PuavoRest::Devices do
       :printerMakeAndModel => "foo",
       :printerType => "1234",
       :printerURI => "socket://baz",
-      :puavoServer => @server1.dn )
+      :puavoServer => @server1.dn
+    )
 
     @school.add_wireless_printer(@printer)
 
@@ -252,20 +253,48 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
+    end
+
+    it "has printer" do
       get "/v3/devices/athin/wireless_printer_queues", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
-      @data = JSON.parse last_response.body
-    end
-
-    it "has printer" do
-      assert_equal 1, @data.count
-      printer = @data.first
+      data = JSON.parse last_response.body
+      assert_equal 1, data.count
+      printer = data.first
       assert_equal "server1.www.example.net", printer["server_fqdn"]
       assert_equal "printer1", printer["name"]
       assert_equal "printer1", printer["description"]
       assert_equal "ipp://server1.www.example.net/printers/printer1", printer["remote_uri"]
+    end
+
+    it "can handle multiple printers" do
+
+      printer2 = Printer.create(
+        :printerDescription => "printer2",
+        :printerLocation => "school2",
+        :printerMakeAndModel => "foo",
+        :printerType => "1234",
+        :printerURI => "socket://baz",
+        :puavoServer => @server1.dn
+      )
+      printer2.save!
+      @school.add_wireless_printer(printer2)
+
+      get "/v3/devices/athin/wireless_printer_queues", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse last_response.body
+
+      assert_equal 2, data.count
+      assert(
+        data.select do |p|
+          p["name"] == "printer2"
+        end.first,
+        "must have the second printer"
+      )
     end
   end
 end
