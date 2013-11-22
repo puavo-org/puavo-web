@@ -377,3 +377,23 @@ Log that boot has been done.
 Example
 
     curl -X POST  --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/devices/$(hostname)
+
+
+## GET /v3/device_images
+
+Return array of unique device images that are configured to the organisation,
+schools or devices.
+
+Authentication
+
+Basic auth or boot server auth
+
+Query strings
+
+  - `boot_server`/`boot_server[]`: Boot server hostname
+    - to limit the search to given boot servers
+
+Example
+
+    curl --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/device_images?boot_server[]=boot1&boot_server[]=boot2
+
