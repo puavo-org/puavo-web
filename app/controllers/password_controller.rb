@@ -1,3 +1,5 @@
+require "open3"
+
 class PasswordController < ApplicationController
   before_filter :set_ldap_connection
   skip_before_filter :find_school, :require_login, :require_puavo_authorization,
@@ -63,23 +65,35 @@ class PasswordController < ApplicationController
 
         started = Time.now.to_i
 
-        system( 'ldappasswd', '-x', '-Z',
-                '-h', User.configuration[:host],
-                '-D', @logged_in_user.dn.to_s,
-                '-w', params[:login][:password],
-                '-s', params[:user][:new_password],
-                @user.dn.to_s )
+        Open3.popen3(
+          'ldappasswd', '-x', '-Z',
+          '-h', User.configuration[:host],
+          '-D', @logged_in_user.dn.to_s,
+          '-w', params[:login][:password],
+          '-s', params[:user][:new_password],
+          @user.dn.to_s
+        ) do |stdin, stdout, stderr, wait_thr|
+          wait_thr.join
 
-        flog.info "ldappasswd call", {
-          :duration => Time.now.to_i - started,
-          :exit_status => $?.exitstatus,
-          :user => @logged_in_user.as_json,
-          :user_host => User.configuration[:host],
-        }
+          log_msg = {
+            :duration => Time.now.to_i - started,
+            :stdout => stdout.read(1024 * 5),
+            :stderr => stderr.read(1024 * 5),
+            :exit_status => wait_thr.value.exitstatus,
+            :user => @logged_in_user.as_json,
+            :user_host => User.configuration[:host],
+          }
+          flog.info "ldappasswd call",log_msg
 
-        if $?.exitstatus != 0
-          raise User::UserError, I18n.t('flash.password.failed')
+          if wait_thr.value.exitstatus != 0
+            logger.info "ldappasswd failed: #{ log_msg }"
+
+            raise User::UserError, I18n.t('flash.password.failed')
+          end
+
         end
+
+
 
         return true
       end
