@@ -44,7 +44,10 @@ class LdapModel
 
 
   def self.by_ldap_attr(attr, value, option=nil)
-    res = Array(filter("(#{ escape attr }=#{ escape value })"))
+    custom_filter = "(#{ escape attr }=#{ escape value })"
+    full_filter = "(&#{ base_filter }#{ custom_filter })"
+
+    res = Array(filter(full_filter))
     if option == :multi
       res
     else
@@ -83,7 +86,7 @@ class LdapModel
   #
   # @see ldap_base
   def self.all
-    filter("(objectClass=*)")
+    filter base_filter
   end
 
   # Find any ldap entry by dn
@@ -105,6 +108,10 @@ class LdapModel
     end
 
     res
+  end
+
+  def self.base_filter
+    "(objectclass=*)"
   end
 
   # Return convert value to LdapHashes before returning
