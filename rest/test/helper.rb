@@ -26,9 +26,10 @@ class MockFluent
 end
 
 def create_server(attrs)
+  attrs[:puavoDeviceType] ||=  "ltspserver"
+
   server = Server.new
   server.attributes = attrs
-  server.puavoDeviceType = "ltspserver"
   server.save!
   server
 end
