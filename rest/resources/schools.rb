@@ -15,6 +15,14 @@ class School < LdapModel
       Array(es).map { |s| s.downcase.strip }
   end
 
+  def self.ldap_base
+    "ou=Groups,#{ organisation["base"] }"
+  end
+
+  def self.base_filter
+    "(objectClass=puavoSchool)"
+  end
+
   def printer_queues
     PrinterQueue.by_dn_array(printer_queue_dns)
   end
