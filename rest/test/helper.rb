@@ -34,11 +34,11 @@ def create_server(attrs)
 end
 
 def create_device(attrs)
+  attrs[:puavoDeviceType] ||=  "thinclient"
+  attrs[:macAddress] ||= "bc:5f:f4:56:59:71"
+
   d = Device.new
   d.classes = ["top", "device", "puppetClient", "puavoNetbootDevice"]
-  d.puavoDeviceType = "thinclient"
-  d.macAddress = "bc:5f:f4:56:59:71"
-
   d.attributes = attrs
   d.save!
   d
