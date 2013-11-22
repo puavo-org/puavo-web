@@ -110,6 +110,11 @@ class LdapModel
     res
   end
 
+  # When filtering models with `LdapModel#filter(...)` this filter will be
+  # added to it automatically with AND operator (&). Usefull when there are
+  # multiple LdapModel is the same LDAP branch.
+  #
+  # Override this in subclasses when needed.
   def self.base_filter
     "(objectclass=*)"
   end
