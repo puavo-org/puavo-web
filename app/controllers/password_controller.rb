@@ -71,6 +71,7 @@ class PasswordController < ApplicationController
           '-D', @logged_in_user.dn.to_s,
           '-w', params[:login][:password],
           '-s', params[:user][:new_password],
+          '-o', 'nettimeout=20',
           @user.dn.to_s
         ) do |stdin, stdout, stderr, wait_thr|
           wait_thr.join
