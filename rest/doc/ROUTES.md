@@ -23,7 +23,7 @@ curl for some reason.
 
 Get list of all user data
 
-returns
+### Returns
 
     [
       <user object, see next>,
@@ -34,7 +34,7 @@ returns
 
 Get user information
 
-returns
+### Returns
 
     {
       "email": "olli.oppilas@example.com",
@@ -52,7 +52,7 @@ Like previous but for the authenticated uses
 
 Get profile image for the user
 
-returns
+### Returns
 
     (Content-Type: image/jpeg)
 
@@ -62,7 +62,7 @@ returns
 
 Get device information by device hostname.
 
-returns
+### Returns
 
     {
       "kernel_arguments": "lol",
@@ -90,7 +90,7 @@ returns
 Get metadata list of external files.
 
 
-returns
+### Returns
 
     [
      {
@@ -105,7 +105,7 @@ returns
 
 Get metadata for external file.
 
-returns
+### Returns
 
     {
       "name": <filename>,
@@ -116,7 +116,7 @@ returns
 
 Get file contents.
 
-returns
+### Returns
 
     (Content-Type: application/octet-stream))
 
@@ -126,7 +126,7 @@ returns
 
 Get metadata for all ltsp servers.
 
-returns
+### Returns
 
     [
       {
@@ -151,7 +151,7 @@ Get the most idle ltsp server.
 
 Get ltsp server metadata by hostname.
 
-returns
+### Returns
 
     {
       "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
@@ -165,7 +165,8 @@ returns
 
 Set LTSP server status.
 
-Post fields:
+### Post fields
+
   - ltsp_image
   - load_avg
   - cpu_count (optional)
@@ -183,12 +184,13 @@ Will return the most appropriate ltsp server depending on
 
 Sessions are stored in memory only but are not automatically deleted.
 
-Post fields:
+### Post fields
+
   - hostname (optional)
     - Device hostname
     - If this is a thin client a ltsp server will be required
 
-returns
+### Returns
 
     {
       "device": {
@@ -293,7 +295,7 @@ Delete session
 
 Configured client WLAN networks.
 
-returns
+### Returns
 
     [
       {
@@ -314,7 +316,7 @@ returns
 
 Get WLAN hotspot configurations.
 
-returns
+### Returns
 
     [
       {
@@ -332,7 +334,7 @@ returns
 
 Return current organisation
 
-returns
+### Returns
 
     {
       "auto_power_off_hour": null,
@@ -353,7 +355,7 @@ returns
 
 Return organisation info by domain
 
-returns
+### Returns
 
     (see prev)
 
@@ -362,7 +364,7 @@ returns
 Return all organisations. On bootservers this will return only the organisation
 the bootserver belongs to.
 
-returns
+### Returns
 
     (Array)
 
@@ -374,7 +376,7 @@ Get boot configuration for given mac address in grub format
 
 Log that boot has been done.
 
-Example
+### Example
 
     curl -X POST  --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/devices/$(hostname)
 
@@ -384,16 +386,19 @@ Example
 Return array of unique device images that are configured to the organisation,
 schools or devices.
 
-Authentication
+### Authentication
 
 Basic auth or boot server auth
 
-Query strings
+### Query strings
 
   - `boot_server`/`boot_server[]`: Boot server hostname
     - to limit the search to given boot servers
 
-Example
+### Example
 
     curl --header 'Authorization: Bootserver' $(puavo-resolve-api-server)/v3/device_images?boot_server[]=boot1&boot_server[]=boot2
 
+### Returns
+
+    (Array)
