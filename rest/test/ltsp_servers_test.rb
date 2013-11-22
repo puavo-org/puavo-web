@@ -24,6 +24,20 @@ describe PuavoRest::LtspServers do
     assert_equal "[]", last_response.body
   end
 
+  it "does not list boot servers as ltsp servers" do
+    create_server(
+      :puavoHostname => "evilbootserver",
+      :puavoDeviceType => "bootserver",
+      :macAddress => "00:60:2f:37:6C:DE"
+    )
+
+    get "/v3/ltsp_servers"
+    assert_equal "[]", last_response.body
+
+    get "/v3/ltsp_servers/evilbootserver"
+    assert_equal 404, last_response.status, last_response.body
+  end
+
   it "responds 404 for unknown servers" do
     put "/v3/ltsp_servers/unknownserver",
       "load_avg" => "1.0",
@@ -31,10 +45,7 @@ describe PuavoRest::LtspServers do
 
     assert_equal 404, last_response.status
     data = JSON.parse(last_response.body)
-    assert_equal(
-      "cannot find server from LDAP for hostname unknownserver",
-      data["error"]["message"]
-    )
+    assert_equal("NotFound", data["error"]["code"])
   end
 
   it "can set load average" do

@@ -107,16 +107,18 @@ class LtspServer < Host
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
   end
 
+  # Bootservers are saved to same ldap branch as ltsp servers so we must filter
+  # with type too
+  def self.base_filter
+    "(puavoDeviceType=ltspserver)"
+  end
+
   def self.by_hostname(hostname)
-    Array(filter("(puavoHostname=#{ escape hostname })")).first
+    by_attr(:hostname, hostname)
   end
 
   def self.by_hostname!(hostname)
-    server = by_hostname(hostname)
-    if server.nil?
-      raise NotFound, :user => "cannot find server from LDAP for hostname #{ hostname }"
-    end
-    server
+    by_attr!(:hostname, hostname)
   end
 
   def self.by_fqdn!(fqdn)
