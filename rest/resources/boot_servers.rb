@@ -10,28 +10,24 @@ class BootServer < LdapModel
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
   end
 
-  # Find server by it's hostname. Bootservers are saved to same ldap branch as
-  # ltsp servers so we must filter with type too
+  # Bootservers are saved to same ldap branch as ltsp servers so we must filter
+  # with type too
+  def self.base_filter
+    "(puavoDeviceType=bootserver)"
+  end
+
   def self.by_hostname(hostname)
-    Array(filter("(&(puavoHostname=#{ escape hostname })(puavoDeviceType=bootserver))")).first
+    by_attr(:hostname, hostname)
   end
 
   def self.by_hostname!(hostname)
-    server = by_hostname(hostname)
-    if server.nil?
-      raise NotFound, :user => "Cannot find boot server with hostname '#{ hostname }'"
-    end
-    server
+    by_attr!(:hostname, hostname)
   end
 
   def schools
     self["school_dns"].map do |school_dn|
       School.by_dn(school_dn)
     end
-  end
-
-  def self.all
-    filter("(puavoDeviceType=bootserver)")
   end
 
 end

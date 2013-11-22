@@ -72,17 +72,14 @@ describe PuavoRest::BootServer do
       assert data["school_dns"]
     end
 
-    it "must not make ltsp server available" do
+    it "must not make ltsp server available as boot server" do
       get "/v3/boot_servers/evil-ltsp-server", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_equal 404, last_response.status
       data = JSON.parse last_response.body
       assert data["error"]
-      assert_equal(
-        "Cannot find boot server with hostname 'evil-ltsp-server'",
-        data["error"]["message"]
-      )
+      assert_equal("NotFound", data["error"]["code"])
     end
 
   end

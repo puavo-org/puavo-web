@@ -33,7 +33,6 @@ class Device < Host
   end
 
 
-  # Find device by it's hostname
   def self.by_hostname(hostname)
     by_attr(:hostname, hostname)
   end
