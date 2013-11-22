@@ -61,12 +61,22 @@ class PasswordController < ApplicationController
           @user = @logged_in_user
         end
 
+        started = Time.now.to_i
+
         system( 'ldappasswd', '-x', '-Z',
                 '-h', User.configuration[:host],
                 '-D', @logged_in_user.dn.to_s,
                 '-w', params[:login][:password],
                 '-s', params[:user][:new_password],
                 @user.dn.to_s )
+
+        flog.info "ldappasswd call", {
+          :duration => Time.now.to_i - started,
+          :exit_status => $?.exitstatus,
+          :user => @logged_in_user.as_json,
+          :user_host => User.configuration[:host],
+        }
+
         if $?.exitstatus != 0
           raise User::UserError, I18n.t('flash.password.failed')
         end
