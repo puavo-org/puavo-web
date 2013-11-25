@@ -1,4 +1,3 @@
-require "open3"
 
 class PasswordController < ApplicationController
   before_filter :set_ldap_connection
@@ -63,36 +62,23 @@ class PasswordController < ApplicationController
           @user = @logged_in_user
         end
 
-        started = Time.now.to_i
-
-        Open3.popen3(
-          'ldappasswd', '-x', '-Z',
-          '-h', User.configuration[:host],
-          '-D', @logged_in_user.dn.to_s,
-          '-w', params[:login][:password],
-          '-s', params[:user][:new_password],
-          '-o', 'nettimeout=20',
+        res = Puavo.ldap_passwd(
+          User.configuration[:host],
+          @logged_in_user.dn,
+          params[:login][:password],
+          params[:user][:new_password],
           @user.dn.to_s
-        ) do |stdin, stdout, stderr, wait_thr|
-          wait_thr.join
+        )
+        flog.info "ldappasswd call", res.merge(
+          :user => @user.as_json,
+          :bind_user => @logged_in_user
+        )
 
-          log_msg = {
-            :duration => Time.now.to_i - started,
-            :stdout => stdout.read(1024 * 5),
-            :stderr => stderr.read(1024 * 5),
-            :exit_status => wait_thr.value.exitstatus,
-            :user => @logged_in_user.as_json,
-            :user_host => User.configuration[:host],
-          }
-          flog.info "ldappasswd call",log_msg
-
-          if wait_thr.value.exitstatus != 0
-            logger.info "ldappasswd failed: #{ log_msg }"
-
-            raise User::UserError, I18n.t('flash.password.failed')
-          end
-
+        if res[:exit_status] != 0
+          logger.warn "ldappasswd failed: #{ res.inspect }"
+          raise User::UserError, I18n.t('flash.password.failed')
         end
+
 
 
 

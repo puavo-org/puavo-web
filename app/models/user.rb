@@ -70,7 +70,7 @@ class User < LdapBase
 
 
   def self.image_size
-    { width: 120, height: 160 }
+    { :width => 120, :height => 160 }
   end
 
   def as_json(*args)
@@ -256,22 +256,22 @@ class User < LdapBase
 
   def change_ldap_password
     unless new_password.nil? || new_password.empty?
-      logger.info "Change user password"
       ldap_conf = User.configuration
-      logger.info "Run command-line: ldappasswd -Z -h #{ldap_conf[:host]} -D #{ldap_conf[:bind_dn]} -w FILTERED -s FILTERED #{dn}"
-      system_response = system( 'ldappasswd', '-Z',
-                                '-h', ldap_conf[:host],
-                                '-D', ldap_conf[:bind_dn],
-                                '-w', ldap_conf[:password],
-                                '-s', new_password,
-                                dn.to_s)
-      logger.info "Exit status: #{$?.exitstatus}"
-      logger.info "System response: #{system_response.inspect}"
-      if $?.exitstatus != 0
-        # FIXME: On Ruby 1.9 log stderr. Not possible with 1.8.
-        logger.info "Exit status is not 0 -> raise"
+
+      res = Puavo.ldap_passwd(
+        ldap_conf[:host],
+        ldap_conf[:bind_dn],
+        ldap_conf[:password],
+        new_password,
+        self.dn.to_s
+      )
+      FLOG.info "ldappasswd call", res.merge(:user => self.as_json)
+
+      if res[:exit_status] != 0
+        logger.warn "ldappasswd failed: #{ res.inspect }"
         raise User::UserError, I18n.t('flash.password.failed')
       end
+
     end
   end
 
