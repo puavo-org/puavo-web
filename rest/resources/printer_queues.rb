@@ -48,6 +48,10 @@ class PrinterQueue < LdapModel
     by_attr!(:server_dn, server_dn, :multi)
   end
 
+  def self.by_server(server_dn)
+    by_attr(:server_dn, server_dn, :multi)
+  end
+
   def self.by_name!(name)
     by_attr!(:name, name)
   end
@@ -60,7 +64,7 @@ class PrinterQueues < LdapSinatra
   get "/v3/printer_queues" do
     auth :basic_auth
     if params["server_dn"]
-      json PrinterQueue.by_server!(params["server_dn"])
+      json PrinterQueue.by_server(params["server_dn"])
     else
       json PrinterQueue.all
     end

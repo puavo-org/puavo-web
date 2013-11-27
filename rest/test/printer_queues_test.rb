@@ -87,6 +87,14 @@ describe PuavoRest::PrinterQueues do
       assert_equal "ipp://boot2.www.example.net/printers/printer2", @data.first["remote_uri"]
     end
 
+    it "returns an empty array if no mathes are made" do
+      get "/v3/printer_queues", "server_dn" => "does not exists"
+      assert_200
+      @data = JSON.parse(last_response.body)
+      assert_equal Array, @data.class
+      assert_equal 0, @data.size, "return an empty array"
+    end
+
   end
 
   describe "GET http://www.example.net/v3/printer_queues/printer1/ppd" do
