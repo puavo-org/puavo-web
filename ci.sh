@@ -3,7 +3,6 @@
 set -x
 set -eu
 
-debbox_url="$1"
 version="$(cat VERSION)"
 
 sudo apt-get update
