@@ -66,8 +66,14 @@ class PasswordController < ApplicationController
           @user.dn.to_s
         )
         flog.info "ldappasswd call", res.merge(
-          :user => @user.as_json,
-          :bind_user => @logged_in_user
+          :user => {
+            :uid => @user.uid,
+            :dn => @user.dn.to_s
+          },
+          :bind_user => {
+            :uid => @logged_in_user.uid,
+            :dn => @logged_in_user.dn.to_s
+          }
         )
 
         if res[:exit_status] != 0

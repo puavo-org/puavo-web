@@ -265,7 +265,10 @@ class User < LdapBase
         new_password,
         self.dn.to_s
       )
-      FLOG.info "ldappasswd call", res.merge(:user => self.as_json)
+      FLOG.info "ldappasswd call", res.merge(:user => {
+        :uid => self.uid,
+        :dn => self.dn.to_s
+      })
 
       if res[:exit_status] != 0
         logger.warn "ldappasswd failed: #{ res.inspect }"
