@@ -1,7 +1,7 @@
 
 class PasswordController < ApplicationController
   before_filter :set_ldap_connection
-  skip_before_filter :find_school, :require_login, :require_puavo_authorization,
+  skip_before_filter :find_school, :require_login, :require_puavo_authorization
 
   # GET /password/edit
   def edit
@@ -17,11 +17,11 @@ class PasswordController < ApplicationController
   def update
 
     unless params[:user][:new_password] == params[:user][:new_password_confirmation]
-      raise I18n.t('flash.password.confirmation_failed')
+      raise User::UserError, I18n.t('flash.password.confirmation_failed')
     end
 
     unless change_user_password
-      raise I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
+      raise User::UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
 
     respond_to do |format|
@@ -33,10 +33,6 @@ class PasswordController < ApplicationController
       end
     end
   rescue User::UserError => e
-    logger.info "Execption User::UserError: " + e.to_s
-    error_message_and_redirect(e)
-  rescue Exception => e
-    logger.info "Execption: " + e.to_s
     error_message_and_redirect(e)
   end
 
@@ -56,7 +52,7 @@ class PasswordController < ApplicationController
       if authenticate(@logged_in_user, params[:login][:password])
         if params[:user][:uid]
           unless @user = User.find(:first, :attribute => "uid", :value => params[:user][:uid])
-            raise I18n.t('flash.password.invalid_user', :uid => params[:user][:uid])
+            raise User::UserError, I18n.t('flash.password.invalid_user', :uid => params[:user][:uid])
           end
         else
           @user = @logged_in_user
