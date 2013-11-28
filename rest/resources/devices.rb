@@ -65,6 +65,11 @@ class Device < Host
     super
   end
 
+  computed_attr :preferred_language
+  def preferred_language
+    school.preferred_language
+  end
+
   def preferred_image
      if get_original(:preferred_image).nil?
        school.preferred_image

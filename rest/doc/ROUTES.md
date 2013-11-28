@@ -78,9 +78,10 @@ Get device information by device hostname.
       "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
       "hostname": "testthin",
       "boot_mode": "netboot",
-      "xrand_disable": "FALSE",
-      "allow_guest": "FALSE",
-      "personal_device": "TRUE"
+      "xrand_disable": false,
+      "allow_guest": true,
+      "personal_device": true,
+      "preferred_language": "en"
     }
 
 # External files

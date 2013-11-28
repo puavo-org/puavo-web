@@ -36,6 +36,10 @@ describe PuavoRest::Devices do
 
     @school.add_wireless_printer(@printer)
 
+    # School#reload for some reason clears some attributes. Workaround it for
+    # now.
+    @school = School.find(@school.dn)
+
     test_organisation = LdapOrganisation.first # TODO: fetch by name
     test_organisation.puavoAllowGuest = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
@@ -91,6 +95,21 @@ describe PuavoRest::Devices do
     it "has default printer" do
       assert_equal "defaultprinter", @data["default_printer_name"]
     end
+
+    it "has preferred language" do
+      assert_equal "en", @data["preferred_language"]
+    end
+
+    it "it prefers language from the school" do
+      @school.preferredLanguage = "sv"
+      @school.save!
+      get "/v3/devices/athin"
+      assert_200
+      data = JSON.parse last_response.body
+
+      assert_equal "sv", data["preferred_language"]
+    end
+
   end
 
   describe "device information with school fallback" do
@@ -117,6 +136,11 @@ describe PuavoRest::Devices do
 
     it "has personal device" do
       assert_equal true, @data["personal_device"]
+    end
+
+    it "has preferred language" do
+      assert @data["preferred_language"]
+      assert_equal "en", @data["preferred_language"]
     end
   end
 
