@@ -66,6 +66,7 @@ class PasswordController < ApplicationController
           @user.dn.to_s
         )
         flog.info "ldappasswd call", res.merge(
+          :from => "password controller",
           :user => {
             :uid => @user.uid,
             :dn => @user.dn.to_s

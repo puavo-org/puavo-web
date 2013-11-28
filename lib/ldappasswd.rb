@@ -41,12 +41,7 @@ module Puavo
         :duration => Time.now.to_i - started,
         :stdout => stdout.read(1024 * 5),
         :stderr => stderr.read(1024 * 5),
-        :exit_status => wait_thr.value.exitstatus,
-        :args => {
-          :host => host,
-          :bind_dn => bind_dn.to_s,
-          :user_dn => user_dn.to_s,
-        }
+        :exit_status => wait_thr.value.exitstatus
       }
 
     end
