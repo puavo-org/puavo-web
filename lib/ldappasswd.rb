@@ -4,7 +4,7 @@ require "open3"
 module Puavo
 
   def self.ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
-    started = Time.now.to_i
+    started = Time.now
     res = nil
 
     Open3.popen3(
@@ -38,7 +38,7 @@ module Puavo
       wait_thr.join
 
       res = {
-        :duration => Time.now.to_i - started,
+        :duration => (Time.now.to_f - started.to_f).round(5),
         :stdout => stdout.read(1024 * 5),
         :stderr => stderr.read(1024 * 5),
         :exit_status => wait_thr.value.exitstatus
