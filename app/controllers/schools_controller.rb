@@ -66,6 +66,17 @@ class SchoolsController < ApplicationController
   # GET /schools/1/edit
   def edit
     @school = School.find(params[:id])
+
+    @current_boot_server = Server.find(:first, {
+      :attribute => "puavoSchool",
+      :value => @school.dn.to_s
+    })
+
+    @boot_servers = Server.find(:all, {
+      :attribute => "puavoDeviceType",
+      :value => "bootserver"
+    })
+
   end
 
   # POST /schools
@@ -90,6 +101,25 @@ class SchoolsController < ApplicationController
   # PUT /schools/1.xml
   def update
     @school = School.find(params[:id])
+
+    new_bootserver_id = params["current_boot_server"]["id"]
+
+    Server.find(:all, {
+      :attribute => "puavoSchool",
+      :value => @school.dn.to_s
+    }).each do |bs|
+      bs.remove_attribute(:puavoSchool, @school.dn.to_s, :ignore_case)
+      bs.save!
+    end
+
+    new_bootserver = Server.find(new_bootserver_id)
+
+    new_bootserver.append_attribute(
+      :puavoSchool,
+      @school.dn.to_s,
+      :ignore_case
+    )
+    new_bootserver.save!
 
     respond_to do |format|
       if @school.update_attributes(params[:school])

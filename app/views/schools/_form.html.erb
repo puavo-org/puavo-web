@@ -147,6 +147,16 @@
 
     </td>
   </tr>
+
+  <tr>
+    <td>
+      Boot server
+    </td>
+    <td>
+      <%= collection_select(:current_boot_server, :id, @boot_servers, :puavoId, :puavoHostname) %>
+    </td>
+  </tr>
+
   <tr>
     <td><%= f.label :puavoDeviceImage %></td>
     <td><%= f.text_field :puavoDeviceImage %></td>
