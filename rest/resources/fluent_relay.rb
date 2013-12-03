@@ -1,5 +1,3 @@
-
-FLUENT_RELAY = 
 module PuavoRest
 
 class FluentRelay < LdapSinatra

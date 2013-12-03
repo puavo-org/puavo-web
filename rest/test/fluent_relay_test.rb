@@ -9,7 +9,6 @@ describe PuavoRest::FluentRelay do
   end
 
   before(:each) do
-    @orig_logger = FLUENT_RELAY
     PuavoRest::FluentRelay.fluent_logger = MockFluent.new
   end
 
