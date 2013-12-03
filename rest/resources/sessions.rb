@@ -90,7 +90,7 @@ class Sessions < LdapSinatra
     filtered.filter_old
     filtered.safe_apply(:filter_by_image, preferred_image) if preferred_image
     filtered.safe_apply(:filter_by_server, preferred_server)
-    filtered.safe_apply(:filter_by_other_schools, school_dn)
+    filtered.filter_by_other_schools(school_dn)
     filtered.safe_apply(:filter_by_school, school_dn)
     filtered.sort_by_load
 

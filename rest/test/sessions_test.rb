@@ -135,6 +135,71 @@ describe PuavoRest::Sessions do
     end
   end
 
+  describe "school filter for for ltsp servers" do
+    before do
+      @device_school = School.create(
+        :cn => "deviceschool",
+        :displayName => "deviceschool"
+      )
+
+      @other_school = School.create(
+        :cn => "otherschool",
+        :displayName => "otherschool"
+      )
+
+      @other_school_server = create_server(
+        :puavoHostname => "other-school-server",
+        :macAddress => "00:60:2f:4F:2C:73",
+        :puavoSchool => [@other_school.dn.to_s]
+      )
+
+      @other_device = create_device(
+        :puavoHostname => "other-device",
+        :macAddress => "00:60:2f:70:89:5B",
+        :puavoSchool => [@other_school.dn]
+      )
+
+      @serverless_device = create_device(
+        :puavoHostname => "serverless",
+        :macAddress => "00:60:2f:D5:DB:3F",
+        :puavoSchool => @device_school.dn
+      )
+
+      put "/v3/ltsp_servers/other-school-server",
+        "load_avg" => "0.5",
+        "cpu_count" => 2,
+        "ltsp_image" => "organisationimage"
+      assert_200
+    end
+
+    it "does not give ltsp servers dedicated to other schools" do
+      post "/v3/sessions", { "hostname" => @serverless_device.puavoHostname}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_equal 404, last_response.status
+
+      data = JSON.parse(last_response.body)
+      assert !data["ltsp_server"], "should not have an ltsp server"
+      assert data["error"], "has an error"
+      assert_equal "NotFound", data["error"]["code"]
+      assert_equal "cannot find any LTSP servers", data["error"]["message"]
+    end
+
+    it "gives server to other device" do
+      post "/v3/sessions", { "hostname" => @other_device.puavoHostname}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert data["ltsp_server"], "has ltsp server"
+      assert_equal(
+        @other_school_server.puavoHostname,
+        data["ltsp_server"]["hostname"]
+      )
+    end
+
+  end
+
 
   describe "nonexistent device hostname" do
     it "gets 404" do
