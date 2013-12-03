@@ -47,12 +47,25 @@
       </div>
       <div class="column_2"><%= translate_boolean_value(@school.puavoAllowGuest) %></div>
     </div>
+
+    <% if current_user.organisation_owner? %>
+    <%# Only organisation owners can access the server page. So hide it from others.  %>
     <div class="row">
       <div class="column_1">
-        <%= label "school", 'puavoPersonalDevice' %>:
+        Bootserver(s)
       </div>
-      <div class="column_2"><%= translate_boolean_value(@school.puavoPersonalDevice) %></div>
+      <div class="column_2">
+        <ul>
+          <% @school.boot_servers.each do |bs| %>
+          <li>
+            <%= link_to bs.puavoHostname, server_path(bs) %>
+          </li>
+          <% end %>
+        </ul>
+      </div>
     </div>
+    <% end %>
+
   </div>
 <% end %>
 </div>
