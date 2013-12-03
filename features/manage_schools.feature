@@ -29,7 +29,7 @@ Feature: Manage schools
     | Postal address             | 12345                                                                          |
     | Postal code                | 54321                                                                          |
     | State                      | East Midlands                                                                  |
-    | Device image               | presice-20121023                                                               |
+    | Desktop Image              | presice-20121023                                                               |
     | school[puavoBillingInfo][] | school_base:500                                                                |
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
