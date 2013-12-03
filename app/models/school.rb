@@ -118,6 +118,13 @@ class School < BaseGroup
     Printer.all.select{ |p| servers_dn.include?(p.puavoServer) }
   end
 
+  def boot_servers
+    Server.find(:all, {
+      :attribute => "puavoSchool",
+      :value => self.dn.to_s
+    })
+  end
+
   def has_wireless_printer?(printer)
     printer = self.class.ensure_dn(printer)
     Array(self.puavoWirelessPrinterQueue).include?(printer)
