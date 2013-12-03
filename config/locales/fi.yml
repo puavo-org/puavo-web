@@ -358,7 +358,7 @@ fi:
         postalCode: Postinumero
         st: Maakunta
         gidNumber: Gid-numero
-        puavoDeviceImage: Levykuva
+        puavoDeviceImage: Työpöytäkuva
         puavoBillingInfo: Laskutustiedot
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu
@@ -418,7 +418,7 @@ fi:
         o: Nimi
         puavoEduOrgAbbreviation: Lyhenne
         puavoBillingInfo: Laskutustiedot
-        puavoDeviceImage: Levykuva
+        puavoDeviceImage: Työpöytäkuva
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Laitteet henkilökohtaisia
@@ -473,7 +473,7 @@ fi:
         puavoDeviceAutoPowerOffMode_custom: Mukautettu
         puavoDeviceOnHour: "Päivän aloitus"
         puavoDeviceOffHour: "Päivän lopetus"
-        puavoDeviceImage: Levykuva
+        puavoDeviceImage: Työpöytäkuva
         puavoDeviceBootImage: Käynnistyslevykuva
         puavoPreferredServer: Ensisijainen LTSP-palvelin
         puavoAllowGuest: Vieraskirjautuminen sallittu
@@ -519,7 +519,7 @@ fi:
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Hakemistopolku
         image: Kuva
-        puavoDeviceImage: Levykuva
+        puavoDeviceImage: Työpöytäkuva
       automount:
         cn: Hakemisto
       printer:

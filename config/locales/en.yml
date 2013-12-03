@@ -360,7 +360,7 @@ en:
         postalCode: Postal code
         st: State
         gidNumber: Gid number
-        puavoDeviceImage: Device image
+        puavoDeviceImage: Desktop Image
         puavoBillingInfo: Billing info
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
@@ -420,7 +420,7 @@ en:
         o: Name
         puavoEduOrgAbbreviation: Abbreviation
         puavoBillingInfo: Billing info
-        puavoDeviceImage: Device Image
+        puavoDeviceImage: Desktop Image
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
@@ -475,7 +475,7 @@ en:
         puavoDeviceAutoPowerOffMode_custom: Custom
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
-        puavoDeviceImage: Device image
+        puavoDeviceImage: Desktop Image
         puavoDeviceBootImage: Device boot image
         puavoPreferredServer: Preferred LTSP server
         puavoAllowGuest: Allow guest
@@ -521,7 +521,7 @@ en:
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Path
         image: Image
-        puavoDeviceImage: Device image
+        puavoDeviceImage: Desktop Image
       automount:
         cn: Directory
       printer:
