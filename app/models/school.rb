@@ -122,7 +122,9 @@ class School < BaseGroup
     Server.find(:all, {
       :attribute => "puavoSchool",
       :value => self.dn.to_s
-    })
+    }).select do |s|
+      s.puavoDeviceType == "bootserver"
+    end
   end
 
   def has_wireless_printer?(printer)
