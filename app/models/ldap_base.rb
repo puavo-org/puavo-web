@@ -96,41 +96,4 @@ class LdapBase < ActiveLdap::Base
     end
   end
 
-  def has_attribute(attr, value, option)
-    current_attributes = Array(attributes[attr.to_s])
-    missing = nil
-
-    if option == :ignore_case
-      missing = current_attributes.select do |a|
-        a.to_s.downcase == value.to_s.downcase
-      end.first.nil?
-    else
-      missing = current_attributes.select do |a|
-        a.to_s == value.to_s
-      end.first.nil?
-    end
-
-    !missing
-  end
-
-  def append_attribute(attr, value, option)
-    return if has_attribute(attr, value, option)
-
-    current_attributes = Array(attributes[attr.to_s])
-    current_attributes.push(value)
-    self.send("#{ attr }=" ,current_attributes)
-  end
-
-  def remove_attribute(attr, value, option)
-    current_attributes = Array(attributes[attr.to_s])
-    current_attributes = current_attributes.select do |a|
-      if option == :ignore_case
-        a.to_s.downcase != value.to_s.downcase
-      else
-        a.to_s != value.to_s
-      end
-    end
-    self.send("#{ attr }=", current_attributes)
-  end
-
 end
