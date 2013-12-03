@@ -132,7 +132,7 @@ class Root < LdapSinatra
     json({
       "git_commit" => GIT_COMMIT,
       "version" => VERSION,
-      "deb_packge" => DEB_PACKAGE,
+      "deb_package" => DEB_PACKAGE,
       "uptime" => (Time.now - STARTED).to_i
     })
   end
