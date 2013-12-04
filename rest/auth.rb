@@ -120,7 +120,10 @@ class LdapSinatra < Sinatra::Base
         :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }"
     end
 
-    self.flog = flog.merge(:credentials => LdapModel.settings[:credentials])
+    log_creds = LdapModel.settings[:credentials].dup
+    log_creds.delete(:kerberos)
+    log_creds.delete(:password)
+    self.flog = flog.merge(:credentials => log_creds)
     flog.info "authenticated"
   end
 
