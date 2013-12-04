@@ -39,34 +39,34 @@ class School < LdapModel
 
 
   def preferred_image
-     if get_original(:preferred_image).nil?
+     if get_own(:preferred_image).nil?
        organisation.preferred_image
       else
-        get_original(:preferred_image)
+        get_own(:preferred_image)
       end
   end
 
   def allow_guest
-     if get_original(:allow_guest).nil?
+     if get_own(:allow_guest).nil?
        organisation.allow_guest
      else
-       get_original(:allow_guest)
+       get_own(:allow_guest)
      end
   end
 
   def personal_device
-     if get_original(:personal_device).nil?
+     if get_own(:personal_device).nil?
        organisation.personal_device
      else
-       get_original(:personal_device)
+       get_own(:personal_device)
      end
   end
 
   def preferred_language
-    if get_original(:preferred_language).nil?
+    if get_own(:preferred_language).nil?
       organisation.preferred_language
     else
-      get_original(:preferred_language)
+      get_own(:preferred_language)
     end
   end
 

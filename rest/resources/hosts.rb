@@ -57,10 +57,10 @@ class Host < LdapModel
   end
 
   def preferred_boot_image
-    if get_original(:preferred_boot_image).nil?
+    if get_own(:preferred_boot_image).nil?
       preferred_image
     else
-      get_original(:preferred_boot_image)
+      get_own(:preferred_boot_image)
     end
   end
 
@@ -84,7 +84,7 @@ class Host < LdapModel
     end
 
     retval = "quiet splash"
-    if get_original(:kernel_arguments)
+    if get_own(:kernel_arguments)
       retval = kernel_arguments
     end
 

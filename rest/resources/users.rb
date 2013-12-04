@@ -52,10 +52,10 @@ class User < LdapModel
   end
 
   def preferred_language
-    if get_original(:preferred_language).nil? && school
+    if get_own(:preferred_language).nil? && school
       school.preferred_language
     else
-      get_original(:preferred_language)
+      get_own(:preferred_language)
     end
   end
 

@@ -19,14 +19,14 @@ class DeviceImages < LdapSinatra
 
     School.all.each do |s|
       if school_limit.nil? || school_limit[s.dn.downcase]
-        # Use get_original to avoid fallbacking to school or organisation
-        images.push s.get_original(:preferred_image)
+        # Use get_own to avoid fallbacking to school or organisation
+        images.push s.get_own(:preferred_image)
       end
     end
 
     Device.all.each do |d|
       if school_limit.nil? || school_limit[d.school_dn.downcase]
-        images.push d.get_original(:preferred_image)
+        images.push d.get_own(:preferred_image)
       end
     end
 

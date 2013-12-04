@@ -71,26 +71,26 @@ class Device < Host
   end
 
   def preferred_image
-     if get_original(:preferred_image).nil?
+     if get_own(:preferred_image).nil?
        school.preferred_image
      else
-       get_original(:preferred_image)
+       get_own(:preferred_image)
      end
   end
 
   def allow_guest
-     if get_original(:allow_guest).nil?
+     if get_own(:allow_guest).nil?
         school.allow_guest
       else
-        get_original(:allow_guest)
+        get_own(:allow_guest)
       end
   end
 
   def personal_device
-     if get_original(:personal_device).nil?
+     if get_own(:personal_device).nil?
        school.personal_device
      else
-       get_original(:personal_device)
+       get_own(:personal_device)
      end
   end
 end

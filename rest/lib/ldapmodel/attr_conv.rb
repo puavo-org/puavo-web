@@ -32,7 +32,7 @@ class LdapModel
     }
 
     define_method pretty_name do
-      get_original(pretty_name)
+      get_own(pretty_name)
     end
   end
 
@@ -48,7 +48,7 @@ class LdapModel
     attrs.each { |a| ignored_attributes[a.to_sym] = true }
   end
 
-  def get_original(pretty_name)
+  def get_own(pretty_name)
     pretty_name = pretty_name.to_sym
     return @cache[pretty_name] if not @cache[pretty_name].nil?
 

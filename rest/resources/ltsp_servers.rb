@@ -154,10 +154,10 @@ class LtspServer < Host
   end
 
   def preferred_image
-     if get_original(:preferred_image).nil?
+     if get_own(:preferred_image).nil?
        organisation.preferred_image
      else
-       get_original(:preferred_image)
+       get_own(:preferred_image)
      end
   end
 
