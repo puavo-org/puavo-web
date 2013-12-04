@@ -72,7 +72,7 @@ class BeforeFilters < LdapSinatra
 
     if env["sinatra.error"]
       err = env["sinatra.error"]
-      if err.kind_of?(JSONError)
+      if err.kind_of?(JSONError) || err.kind_of?(Sinatra::NotFound)
         flog.info "request rejected", :reason => err.as_json
       else
         unhandled_exception = {
