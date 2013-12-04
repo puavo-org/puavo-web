@@ -42,7 +42,7 @@ class LdapModel
     attrs.each { |a| computed_attributes.push(a.to_sym) }
   end
 
-  # Ignore one or more ldap_map attributes `to_hash` and `to_json`
+  # Ignore one or more ldap_map attributes from `to_hash` and `to_json`
   # serializations
   def self.ignore_attr(*attrs)
     attrs.each { |a| ignored_attributes[a.to_sym] = true }
