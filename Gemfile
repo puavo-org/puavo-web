@@ -10,7 +10,7 @@ gem "debugger"
 gem 'fluent-logger', "~> 0.4.3"
 
 group :assets do
-  gem "stylus"
+  gem "stylus", "~> 0.7.2"
   gem 'jquery-rails'
 end
 
