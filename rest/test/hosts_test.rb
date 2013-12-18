@@ -110,7 +110,10 @@ describe PuavoRest::Host do
       assert data["boot_duration"], "should have boot time field"
       assert_equal Fixnum, data["boot_duration"].class, data["boot_duration"]
 
-      assert_equal 60, data["boot_duration"]
+      assert(
+        data["boot_duration"] > 50,
+        "boot duration (#{ data["boot_duration"] }) should be more than 50"
+      )
 
       boot_start = @logger.data.select do |l|
         l[1][:msg] == "send boot configuration"
