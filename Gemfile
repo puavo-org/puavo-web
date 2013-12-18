@@ -15,9 +15,6 @@ group :assets do
 end
 
 group :test do
-  gem "minitest-rails"
-  gem "m"
-  gem "turn"
   gem "capybara"
   gem "colorize"
   gem "cucumber"

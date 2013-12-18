@@ -54,7 +54,7 @@ describe ExternalFilesController do
         }
       }, valid_session)
 
-      setup_connection
+      Puavo::Test.setup_test_connection
       ExternalFile.find_by_cn("img.jpg").should_not be_nil
     end
   end
@@ -90,7 +90,7 @@ describe ExternalFilesController do
 
       # Doing accessing controller removes the ldap connection for some reason.
       # Restore it...
-      setup_connection
+      Puavo::Test.setup_test_connection
       ExternalFile.find_by_cn("new.txt").should == nil
     end
 

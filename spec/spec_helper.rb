@@ -3,33 +3,15 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
+require_relative "../test/generic_test_helpers"
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
 def img_path
-    File.join(File.dirname(__FILE__), "fixtures", "img.jpg")
+  File.join(File.dirname(__FILE__), "fixtures", "img.jpg")
 end
-
-def setup_connection
-  test_organisation = Puavo::Organisation.find('example')
-  default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-  # Setting up ldap configuration
-  LdapBase.ldap_setup_connection( test_organisation.ldap_host,
-                                  test_organisation.ldap_base,
-                                  default_ldap_configuration["bind_dn"],
-                                  default_ldap_configuration["password"] )
-
-  @owner_dn = User.find(:first, :attribute => "uid", :value => test_organisation.owner).dn.to_s
-  @owner_password = test_organisation.owner_pw
-
-  LdapBase.ldap_setup_connection( test_organisation.ldap_host,
-                                  test_organisation.ldap_base,
-                                  @owner_dn,
-                                  @owner_password )
-end
-
 
 
 RSpec.configure do |config|
@@ -40,11 +22,11 @@ RSpec.configure do |config|
   # config.mock_with :mocha
   # config.mock_with :flexmock
   # config.mock_with :rr
+  config.before do
+    Puavo::Test.setup_test_connection
+  end
   config.before(:each) do
-    setup_connection
-    ExternalFile.all.each do |m|
-      m.destroy
-    end
+    Puavo::Test.clean_up_ldap
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
