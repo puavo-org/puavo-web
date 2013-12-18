@@ -90,7 +90,7 @@ require "timecop"
 require 'nokogiri'
 require "debugger"
 
-require_relative '../../test/generic_test_helpers'
+require_relative '../../generic_test_helpers'
 Puavo::Test.setup_test_connection
 
 module Rack

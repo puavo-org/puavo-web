@@ -19,6 +19,7 @@ gem "debugger"
 gem "pry"
 gem "redis"
 gem 'fluent-logger', "~> 0.4.3"
+gem "yajl-ruby"
 
 group :test do
   gem "shotgun"

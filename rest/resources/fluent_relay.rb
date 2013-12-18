@@ -1,3 +1,5 @@
+require "yajl"
+
 module PuavoRest
 
 class FluentRelay < LdapSinatra
@@ -22,7 +24,8 @@ class FluentRelay < LdapSinatra
     end
 
     request.body.rewind
-    records = JSON.parse(request.body.read)
+    json_parser = Yajl::Parser.new
+    records = json_parser.parse(request.body)
 
     klass = records.class
     if klass == Hash
