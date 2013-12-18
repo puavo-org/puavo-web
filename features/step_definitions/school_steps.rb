@@ -127,15 +127,3 @@ Then(/^I should see school image of "(.*?)"$/) do |school_name|
 
   page.should have_xpath("//img[@src='/users/schools/#{ school.puavoId }/image']")
 end
-
-Then(/^allow guest is disable in the "(.*?)" school$/) do |school_name|
-  set_ldap_admin_connection
-  school = School.find(:first, :attribute => 'displayName', :value => school_name)
-  school.puavoAllowGuest.should == false
-end
-
-Then(/^personal device is enable in the "(.*?)" school$/) do |school_name|
-  set_ldap_admin_connection
-  school = School.find(:first, :attribute => 'displayName', :value => school_name)
-  school.puavoAllowGuest.should == true
-end
