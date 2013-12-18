@@ -35,7 +35,6 @@ class PrinterPermissionsController < ApplicationController
     Array(params["remove_device_permission"]).each do |device_dn|
       device = Device.find(device_dn)
       device.remove_printer(@printer)
-      device.save!
     end
 
     (params["groups"] || {}).each do |group_dn, bool|
@@ -45,10 +44,8 @@ class PrinterPermissionsController < ApplicationController
       else
         group.remove_printer(@printer)
       end
-      group.save!
     end
 
-    @school.save!
     flash[:notice] = "Saved!"
     redirect_to :action => :edit
   end
