@@ -1,5 +1,7 @@
 source "http://rubygems.org"
 
+# Some code and dependencies of puavo-web is used in puavo-rest during test
+# runs (ActiveLdap models). But in production we can safely ignore those.
 File.open("../Gemfile.shared") do |f|
   eval f.read, nil, "../Gemfile.shared"
 end rescue Errno::ENOENT
