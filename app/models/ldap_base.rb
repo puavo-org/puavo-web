@@ -76,6 +76,10 @@ class LdapBase < ActiveLdap::Base
     end
   end
 
+  def find_self
+    self.find(self.dn)
+  end
+
   def self.base
     if self.name == "LdapBase"
       super

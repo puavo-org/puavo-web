@@ -137,7 +137,6 @@ class School < BaseGroup
     ldap_modify_operation(:add, [
       { "puavoWirelessPrinterQueue" => printer }
     ]) rescue ActiveLdap::LdapError::TypeOrValueExists
-    reload
   end
 
   def remove_wireless_printer(printer)
@@ -145,7 +144,6 @@ class School < BaseGroup
     ldap_modify_operation(:delete, [
       { "puavoWirelessPrinterQueue" => [printer.to_s] }
     ]) rescue ActiveLdap::LdapError::NoSuchAttribute
-    reload
   end
 
 

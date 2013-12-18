@@ -32,7 +32,8 @@ describe School do
 
     @school = School.create(
       :cn => "gryffindor",
-      :displayName => "Gryffindor"
+      :displayName => "Gryffindor",
+      :puavoPersonalDevice => true
     )
   end
 
@@ -40,23 +41,41 @@ describe School do
 
     it "can add printer" do
       @school.add_printer @printer1
+
+      @school = @school.find_self
       assert_equal Array(@school.puavoPrinterQueue).first, @printer1.dn
+    end
+
+    it "adding a printer does not break other attributes" do
+      @school.add_printer @printer1
+      assert_equal Array(@school.puavoPersonalDevice).first, true
+    end
+
+    it "adding a wireless printer does not break other attributes" do
+      @school.add_wireless_printer @printer1
+      assert_equal Array(@school.puavoPersonalDevice).first, true
     end
 
     it "can add two printers" do
       @school.add_printer @printer1
       @school.add_printer @printer2
+
+      @school = @school.find_self
       assert_equal Array(@school.puavoPrinterQueue), [@printer1.dn, @printer2.dn]
     end
 
     it "does not duplicate printers with add" do
       @school.add_printer @printer1
       @school.add_printer @printer1
+
+      @school = @school.find_self
       assert_equal Array(@school.puavoPrinterQueue), [@printer1.dn]
     end
 
     it "does case insensitive comparison" do
       @school.add_printer @printer1
+
+      @school = @school.find_self
       assert @school.has_printer?(@printer1.dn.to_s.upcase), "upcased dn must be ok"
     end
 
@@ -64,6 +83,8 @@ describe School do
       @school.add_printer @printer1
       @school.add_printer @printer2
       @school.remove_printer @printer2.dn
+
+      @school = @school.find_self
       assert_equal Array(@school.puavoPrinterQueue), [@printer1.dn]
     end
 
