@@ -106,9 +106,6 @@ install: clean-for-install mkdirs
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
 
 
-test-spec:
-	bundle exec rspec -b
-
 test-rest:
 	$(MAKE) -C rest test
 
@@ -118,6 +115,7 @@ test-acceptance:
 
 .PHONY: test
 test:
+	bundle exec rspec --format documentation
 	bundle exec cucumber --color --tags ~@start_test_server
 	bundle exec cucumber --color --tags @start_test_server
 	bundle exec rails runner acl/runner.rb
