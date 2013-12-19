@@ -5,8 +5,8 @@ Feature: Manage printer permissions
 
   Background:
     Given the following schools:
-    | displayName   | cn          |
-    | Test School 1 | testschool1 |
+    | displayName   | cn          | puavoAllowGuest | puavoPersonalDevice |
+    | Test School 1 | testschool1 | false           | true                |
     And a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following roles:
       | displayName |
@@ -51,6 +51,8 @@ Feature: Manage printer permissions
     Then the "Printing allowed on the all system devices" checkbox should be checked
     Then the "Printing allowed on the all system devices and also other devices (eg. tablets, phones, etc.)" checkbox should not be checked
     And the "Advanced" checkbox should not be checked
+    And allow guest is disable in the "Example school 1" school
+    And personal device is enable in the "Example school 1" school
 
   Scenario: Can activate wireless printer for school
     Given I am logged in as "pavel" with password "secret"
