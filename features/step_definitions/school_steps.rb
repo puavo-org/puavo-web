@@ -139,3 +139,17 @@ Then(/^personal device is enable in the "(.*?)" school$/) do |school_name|
   school = School.find(:first, :attribute => 'displayName', :value => school_name)
   school.puavoPersonalDevice.should == true
 end
+
+Given(/^disable allow guest in the "(.*?)" school$/) do |school_name|
+  set_ldap_admin_connection
+  school = School.find(:first, :attribute => 'displayName', :value => school_name)
+  school.puavoAllowGuest = false
+  school.save!
+end
+
+Given(/^enable personal device in the "(.*?)" school$/) do |school_name|
+  set_ldap_admin_connection
+  school = School.find(:first, :attribute => 'displayName', :value => school_name)
+  school.puavoPersonalDevice = true
+  school.save!
+end

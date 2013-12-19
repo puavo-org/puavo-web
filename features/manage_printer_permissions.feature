@@ -41,7 +41,9 @@ Feature: Manage printer permissions
     And I should not see "printer3"
 
   Scenario: Can activate printer for school
-    Given I am logged in as "pavel" with password "secret"
+    Given disable allow guest in the "Example school 1" school
+    And enable personal device in the "Example school 1" school
+    And I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
     And I press "Edit permissions" on the "printer1" row
     Then I should see "Printer usage permissions"
