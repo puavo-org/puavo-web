@@ -98,7 +98,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
-    pg (0.17.0)
+    pg (0.17.1)
     polyglot (0.3.3)
     prawn (0.13.0)
       afm
@@ -197,6 +197,7 @@ DEPENDENCIES
   gssapi!
   jwt
   m
+  msgpack
   multi_json
   net-ldap
   nokogiri

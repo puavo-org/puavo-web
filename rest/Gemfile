@@ -22,6 +22,7 @@ gem "pry"
 gem "redis"
 gem 'fluent-logger', "~> 0.4.3"
 gem "yajl-ruby"
+gem "msgpack"
 
 group :test do
   gem "shotgun"

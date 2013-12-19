@@ -1,4 +1,5 @@
 require "yajl"
+require "msgpack"
 
 module PuavoRest
 
@@ -16,14 +17,7 @@ class FluentRelay < LdapSinatra
     @@logger = logger
   end
 
-  post "/v3/fluent" do
-    auth :basic_auth, :kerberos
-
-    if request.content_type.downcase != "application/json"
-      raise BadInput, :user => "Only json body is allowed"
-    end
-
-    request.body.rewind
+  def handle_json
     json_parser = Yajl::Parser.new
     records = json_parser.parse(request.body)
 
@@ -48,6 +42,34 @@ class FluentRelay < LdapSinatra
       if not fluent_logger.post_with_time(tag, r, time)
         raise InternalError, :user => "Failed to relay fluent packages"
       end
+    end
+  end
+
+  def handle_msgpack
+    u = MessagePack::Unpacker.new(request.body)
+    puts "Relaying #{ request.body.size } bytes of msgpack data to fluentd"
+
+    i = 0
+    u.each do |(tag, time, r)|
+      i += 1
+      if not fluent_logger.post_with_time(tag, r, time)
+        raise InternalError, :user => "Failed to relay fluent packages"
+      end
+    end
+
+    puts "Relayed #{ i } records to fluentd"
+  end
+
+
+  post "/v3/fluent" do
+    auth :basic_auth, :kerberos
+
+    request.body.rewind
+
+    if request.content_type.downcase == "application/json"
+      handle_json
+    elsif request.content_type.downcase == "application/x-msgpack"
+      handle_msgpack
     end
 
     "ok"

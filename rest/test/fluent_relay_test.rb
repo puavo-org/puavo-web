@@ -34,6 +34,45 @@ describe PuavoRest::FluentRelay do
     )
   end
 
+  it "can relay msgpack log data to fluentd" do
+    basic_authorize @laptop.dn, @laptop.ldap_password
+    time = Time.now.to_i
+
+    post "/v3/fluent", [
+      "testtag1",
+      time,
+      { "foo" => 1, "bar" => 2 }
+    ].to_msgpack, "CONTENT_TYPE" => "application/x-msgpack"
+
+    assert_200
+
+    data = PuavoRest::FluentRelay.fluent_logger.timed_data
+    assert_equal(
+      [["testtag1",  {"foo"=>1, "bar"=>2}, time]],
+      data
+    )
+  end
+
+  it "can relay multiple msgpack records at once" do
+    basic_authorize @laptop.dn, @laptop.ldap_password
+    time1 = Time.now.to_i - 10
+    time2 = Time.now.to_i
+
+    body = [ "tag1", time1, {"foo" => 1} ].to_msgpack
+    body += [ "tag2", time2, {"foo" => 3} ].to_msgpack
+
+    post "/v3/fluent", body, "CONTENT_TYPE" => "application/x-msgpack"
+    assert_200
+
+    data = PuavoRest::FluentRelay.fluent_logger.timed_data
+    assert_equal([
+        [ "tag1", {"foo" => 1}, time1],
+        [ "tag2", {"foo" => 3}, time2],
+    ],
+      data
+    )
+  end
+
   it "can relay multiple records at once" do
     basic_authorize @laptop.dn, @laptop.ldap_password
     time1 = Time.now.to_i - 10
