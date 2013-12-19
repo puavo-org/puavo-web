@@ -137,5 +137,5 @@ end
 Then(/^personal device is enable in the "(.*?)" school$/) do |school_name|
   set_ldap_admin_connection
   school = School.find(:first, :attribute => 'displayName', :value => school_name)
-  school.puavoAllowGuest.should == true
+  school.puavoPersonalDevice.should == true
 end
