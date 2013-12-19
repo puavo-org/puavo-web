@@ -5,8 +5,8 @@ Feature: Manage printer permissions
 
   Background:
     Given the following schools:
-    | displayName   | cn          | puavoAllowGuest | puavoPersonalDevice |
-    | Test School 1 | testschool1 | false           | true                |
+    | displayName   | cn          |
+    | Test School 1 | testschool1 |
     And a new school and group with names "Example school 1", "Class 1" on the "example" organisation
     And the following roles:
       | displayName |
