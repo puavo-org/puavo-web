@@ -9,6 +9,10 @@ gem "unicorn"
 gem "debugger"
 gem 'fluent-logger', "~> 0.4.3"
 
+# This fix was not in the release version yet
+# https://github.com/resque/resque/commit/74c2025ab5fa46cdcbc4e13c4e3d044d46443fa0
+gem "resque", :git => "https://github.com/resque/resque.git", :ref => "74c2025ab5fa46cdcbc4e13c4e3d044d46443fa0"
+
 group :assets do
   gem "stylus", "~> 0.7.2"
   gem 'jquery-rails'

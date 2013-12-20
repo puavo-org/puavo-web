@@ -115,6 +115,9 @@ class Users::ImportController < ApplicationController
 
   # POST /:school_id/users/import
   def create
+    # TODO: move importing to resque job
+    #Resque.enqueue(UserMassImport, params)
+
     @users = User.hash_array_data_to_user( params[:users],
                                            params[:columns],
                                            @school )
