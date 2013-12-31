@@ -116,67 +116,15 @@ class Users::ImportController < ApplicationController
   # POST /:school_id/users/import
   def create
     # TODO: move importing to resque job
-    #Resque.enqueue(UserMassImport, params)
+    Resque.enqueue(UserMassImport, current_organisation.organisation_key, current_user.dn.to_s, params)
 
-    @users = User.hash_array_data_to_user( params[:users],
-                                           params[:columns],
-                                           @school )
-
-    users_of_roles = Hash.new
-    failed_users = Array.new
-
-    timestamp = Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
-    create_timestamp = "create:#{current_user.dn}:" + timestamp
-    change_school_timestamp = "change_school:#{current_user.dn}:" + timestamp
-
-    puavo_ids = IdPool.next_puavo_id_range(@users.select{ |u| u.puavoId.nil? }.count)
-    id_index = 0
-
-    User.reserved_uids = []
-
-    @users.each do |user|
-      begin
-        if user.puavoId.nil?
-          user.puavoId = puavo_ids[id_index]
-          id_index += 1
-        end
-        if user.earlier_user
-          user.earlier_user.change_school(user.puavoSchool.to_s)
-          user.earlier_user.role_name = user.role_name
-          user.earlier_user.puavoTimestamp = Array(user.earlier_user.puavoTimestamp).push change_school_timestamp
-          user.earlier_user.new_password = user.new_password
-          user.earlier_user.save!
-        else
-          user.puavoTimestamp = create_timestamp
-          user.save!
-        end
-      rescue Exception => e
-        logger.info "Import Controller, create user, Exception: #{e}"
-        failed_users.push user
-      end
-    end
-
-    failed_users.each do |failed_user|
-      @users.delete(failed_user)
-    end
-
-    session[:failed_users] = {}
-    session[:failed_users][create_timestamp] = failed_users.map do |u|
-      attrs = u.all_attributes
-      attrs.delete(:objectClass)
-      attrs.delete("earlier_user")
-      attrs
-    end
-
-    # If data of users inlucde new password then not generate new password when create pdf-file.
-    reset_password = params[:columns].include?("new_password") ? false : true
-
-    respond_to do |format|
-      format.html { redirect_to users_import_path(@school,
-                                                  :create_timestamp => create_timestamp,
-                                                  :change_school_timestamp => change_school_timestamp,
-                                                  :reset_password => reset_password) }
-    end
+    render :text => "Hello"
+#    respond_to do |format|
+#      format.html { redirect_to users_import_path(@school,
+#                                                  :create_timestamp => create_timestamp,
+#                                                  :change_school_timestamp => change_school_timestamp,
+#                                                  :reset_password => reset_password) }
+#    end
   end
 
   # GET /:school_id/users/import/show?create_timestamp=create:20110402152432Z
