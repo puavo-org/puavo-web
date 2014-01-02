@@ -36,6 +36,11 @@ namespace :puavo do
     cp "config/puavo_devices.yml.development", "config/puavo_devices.yml"
   end
 
+  desc "Set config/initializers/secret_token.rb"
+  task : do
+    cp "config/initializers/secret_token.rb.development", "config/initializers/secret_token.rb"
+  end
+
   desc "Set all Puavo configuration files (development)"
   task :configuration => [:database,
                           :ldap,
