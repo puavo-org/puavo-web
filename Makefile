@@ -101,6 +101,9 @@ install: clean-for-install mkdirs
 	cp config/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
 	ln -s ../../../../etc/puavo-web/puavo_external_files.yml $(RAILS_CONFIG_DIR)/puavo_external_files.yml
 
+	cp config/initializers/secret_token.rb.development $(CONF_DIR)/secret_token.rb
+	ln -s ../../../../etc/puavo-web/secret_token.rb $(RAILS_CONFIG_DIR)/initializers/secret_token.rb
+
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
