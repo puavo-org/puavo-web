@@ -1,13 +1,16 @@
 class UserMassImport
-
   @queue = :user_mass_import
 
-  def self.perform(organisation, user_dn, params)
+  def self.perform(organisation, user_dn, encrypt_password, params)
+    # Decrypt user password by private key
+    password = Puavo::RESQUE_WORKER_PRIVATE_KEY.private_decrypt Base64.decode64(encrypt_password)
+
+    # Create LDAP-connection
     authentication = Puavo::Authentication.new
     authentication.configure_ldap_connection({
-                                               :dn => "uid=admin,o=puavo",
-                                               :password => "password",
-                                               :organisation_key => "hogwarts"
+                                               :dn => user_dn,
+                                               :password => password,
+                                               :organisation_key => organisation
                                              })
     authentication.authenticate
 
