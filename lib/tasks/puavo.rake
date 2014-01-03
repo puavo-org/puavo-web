@@ -41,6 +41,16 @@ namespace :puavo do
     cp "config/initializers/secret_token.rb.development", "config/initializers/secret_token.rb"
   end
 
+  desc "Set config/resque_worker_private_key"
+  task : do
+    cp "config/resque_worker_private_key.development", "config/resque_worker_private_key"
+  end
+
+  desc "Set config/resque_worker_public_key"
+  task : do
+    cp "config/resque_worker_public_key.development", "config/resque_worker_public_key"
+  end
+
   desc "Set all Puavo configuration files (development)"
   task :configuration => [:database,
                           :ldap,
