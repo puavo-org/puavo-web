@@ -115,8 +115,17 @@ class Users::ImportController < ApplicationController
 
   # POST /:school_id/users/import
   def create
+    # Crypt user password by public key
+    encrypt_password = Base64.encode64(
+      Puavo::RESQUE_WORKER_PUBLIC_KEY.public_encrypt(
+        session[:password_plaintext] ) )
+
     # TODO: move importing to resque job
-    Resque.enqueue(UserMassImport, current_organisation.organisation_key, current_user.dn.to_s, params)
+    Resque.enqueue( UserMassImport,
+                    current_organisation.organisation_key,
+                    current_user.dn.to_s,
+                    encrypt_password,
+                    params )
 
     render :text => "Hello"
 #    respond_to do |format|
