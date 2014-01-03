@@ -7,3 +7,7 @@ In development
 In production
 
     # puavo-web-prompt
+
+## Start a Resque worker with verbose (development)
+
+    $ bundle exec rake resque:work QUEUE='*' VERBOSE=true
