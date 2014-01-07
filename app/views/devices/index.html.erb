@@ -5,6 +5,7 @@
     <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
     <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
     <th><%= t('activeldap.attributes.device.puavoDeviceManufacturer') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceModel') %></th>
     <th><%= t('activeldap.attributes.device.serialNumber') %></th>
     <th><%= t('activeldap.attributes.device.macAddress') %></th>
     <th><%= t('activeldap.attributes.device.puavoDeviceImage') %></th>
@@ -19,6 +20,7 @@
       data-title="<%= t('activeldap.attributes.device.puavoDeviceManufacturer') %>"
       title="<%=h device.puavoDeviceModel %>"
       ><%=h device.puavoDeviceManufacturer %></td>
+    <td data-title="<%= t('activeldap.attributes.device.serialNumber') %>"><%=h device.puavoDeviceModel %></td>
     <td data-title="<%= t('activeldap.attributes.device.serialNumber') %>"><%=h device.serialNumber %></td>
     <td data-title="<%= t('activeldap.attributes.device.macAddress') %>"><%=h device.macAddress %></td>
     <td data-title="<%= t('activeldap.attributes.device.puavoDeviceImage') %>"><%=h device.puavoDeviceImage %></td>
