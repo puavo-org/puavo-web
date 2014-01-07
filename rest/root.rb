@@ -24,16 +24,16 @@ class BeforeFilters < LdapSinatra
   enable :logging
 
   before do
+    @req_start = Time.now
     ip = env["HTTP_X_REAL_IP"] || request.ip
     response.headers["X-puavo-rest-version"] = "#{ VERSION } #{ GIT_COMMIT }"
 
     begin
-      client_hostname = Resolv.new.getname(ip)
+      @client_hostname = Resolv.new.getname(ip)
     rescue Resolv::ResolvError
-      client_hostname = ""
     end
 
-    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path } by #{ ip } (#{ client_hostname })"
+    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path } by #{ ip } (#{ @client_hostname })"
 
     port = [80, 443].include?(request.port) ? "": ":#{ request.port }"
 
@@ -55,7 +55,7 @@ class BeforeFilters < LdapSinatra
       :request => {
         :url => request.url,
         :method => env["REQUEST_METHOD"],
-        :client_hostname => client_hostname,
+        :client_hostname => @client_hostname,
         :ip => ip
       }
     }
@@ -64,11 +64,12 @@ class BeforeFilters < LdapSinatra
     end
 
     self.flog = $rest_flog.merge(log_meta)
-    flog.info "request"
   end
 
   after do
-    unhandled_exception = nil
+    request_duration = (Time.now - @req_start).to_f
+    self.flog = self.flog.merge :request_duration => request_duration
+    flog.info "request"
 
     if env["sinatra.error"]
       err = env["sinatra.error"]
@@ -88,7 +89,6 @@ class BeforeFilters < LdapSinatra
         )
       end
     end
-
 
     LdapModel.clear_setup
     LocalStore.close_connection
@@ -126,6 +126,12 @@ class Root < LdapSinatra
 
   get "/v3/error_test" do
     1 / 0
+  end
+
+
+  get "/v3/slow_test" do
+    sleep 2
+    "I was slow"
   end
 
   get "/v3/about" do
