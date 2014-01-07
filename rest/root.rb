@@ -24,6 +24,7 @@ class BeforeFilters < LdapSinatra
   enable :logging
 
   before do
+    LdapModel::PROF.reset
     @req_start = Time.now
     ip = env["HTTP_X_REAL_IP"] || request.ip
     response.headers["X-puavo-rest-version"] = "#{ VERSION } #{ GIT_COMMIT }"
@@ -67,6 +68,10 @@ class BeforeFilters < LdapSinatra
   end
 
   after do
+
+    LdapModel::PROF.print_search_count(request.path)
+    LdapModel::PROF.reset
+
     request_duration = (Time.now - @req_start).to_f
     self.flog = self.flog.merge :request_duration => request_duration
     flog.info "request"

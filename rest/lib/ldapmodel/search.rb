@@ -1,6 +1,57 @@
 
+class ThreadProfiler
+
+  def initialize(key)
+    @key = key
+  end
+
+  def store
+    Thread.current["profiler:#{ @key }"] ||= {}
+  end
+
+  # Create profiling methods only when profiling is activated
+  if ENV["LDAP_PROFILE"]
+    puts "#"*40
+    puts "LDAP profiling active!"
+    puts "#"*40
+
+    def reset
+      Thread.current["profiler:#{ @key }"] = nil
+    end
+
+    def print_search_count(request_path)
+      puts "Did #{ store[:count] } ldap searches in #{ request_path }"
+    end
+
+    def start(msg)
+      store[:msg] = msg
+      store[:start] = Time.now
+    end
+
+    def stop
+      diff = Time.now - store[:start]
+      puts "#{ store[:msg] } took #{ diff.to_f }"
+      store[:count] ||= 0
+      store[:count] += 1
+    end
+  else
+    # Just dummy out profiling calls when profiling is not active
+    def method_missing(*); end
+  end
+
+  def time(msg)
+    start(msg)
+    res = yield
+    stop
+    res
+  end
+
+end
+
+
 # generic ldap search rutines
 class LdapModel
+  PROF = ThreadProfiler.new "ldapsearch"
 
   # LDAP base for this model. Must be implemented by subclasses
 
@@ -22,13 +73,15 @@ class LdapModel
       raise "Cannot search without a connection"
     end
 
-    connection.search(
-      ldap_base,
-      LDAP::LDAP_SCOPE_SUBTREE,
-      filter,
-      attributes.map{ |a| a.to_s }
-    ) do |entry|
-      res.push(entry.to_hash) if entry.dn != ldap_base
+    PROF.time("filter(#{ filter.inspect }, #{ attributes.inspect })") do
+      connection.search(
+        ldap_base,
+        LDAP::LDAP_SCOPE_SUBTREE,
+        filter,
+        attributes.map{ |a| a.to_s }
+      ) do |entry|
+        res.push(entry.to_hash) if entry.dn != ldap_base
+      end
     end
 
     res
@@ -97,14 +150,16 @@ class LdapModel
     res = nil
     attributes ||= ldap_attrs.map{ |a| a.to_s }
 
-    connection.search(
-      dn,
-      LDAP::LDAP_SCOPE_SUBTREE,
-      "(objectclass=*)",
-      attributes
-    ) do |entry|
-      res = entry.to_hash
-      break
+    PROF.time("by_dn(#{ dn.inspect }, #{ attributes.inspect })") do
+      connection.search(
+        dn,
+        LDAP::LDAP_SCOPE_SUBTREE,
+        "(objectclass=*)",
+        attributes
+      ) do |entry|
+        res = entry.to_hash
+        break
+      end
     end
 
     res
