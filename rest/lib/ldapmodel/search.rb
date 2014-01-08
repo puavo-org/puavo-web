@@ -105,8 +105,8 @@ class LdapModel
 
     connection.search(
       dn,
-      LDAP::LDAP_SCOPE_SUBTREE,
-      "(objectclass=*)",
+      LDAP::LDAP_SCOPE_BASE,
+      base_filter,
       attributes
     ) do |entry|
       res = entry.to_hash
