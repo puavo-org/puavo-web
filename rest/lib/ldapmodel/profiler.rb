@@ -13,14 +13,16 @@ class LdapSearchProfiler
   end
 
   class Timer
+    attr_accessor :duration
     def initialize
       @started = Time.now
+      @duration = 0
     end
 
     def stop(msg="")
       if ENV["LDAP_PROFILER"]
-        diff = Time.now - @started
-        puts "#{ msg } in #{ diff.to_f * 1000 } ms".colorize(:blue)
+        @duration = (Time.now - @started).to_f * 1000
+        puts "#{ msg } in #{ @duration } ms".colorize(:blue)
       end
     end
   end
@@ -42,15 +44,17 @@ class LdapSearchProfiler
 
     def reset
       Thread.current["profiler:#{ @key }"] = nil
+      store[:queries] = []
     end
 
     def print_search_count(target)
-      puts "Did #{ store[:query_count] } ldap queries in #{ target }".colorize(:blue)
+      duration = store[:queries].reduce(0){ |memo, q| memo + q.duration }
+
+      puts "Did #{ store[:queries].size } LDAP queries in #{ duration }ms for #{ target }".colorize(:blue)
     end
 
-    def count
-      store[:query_count] ||= 0
-      store[:query_count] += 1
+    def count(timer)
+      store[:queries].push(timer)
     end
 
 

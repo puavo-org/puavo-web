@@ -22,7 +22,6 @@ class LdapModel
     end
 
     timer = PROF.start
-    PROF.count
 
     connection.search(
       ldap_base,
@@ -34,6 +33,7 @@ class LdapModel
     end
 
     timer.stop("#{ self.name }#filter(#{ filter.inspect }) found #{ res.size } items")
+    PROF.count(timer)
 
     res
   end
@@ -102,7 +102,6 @@ class LdapModel
     attributes ||= ldap_attrs.map{ |a| a.to_s }
 
     timer = PROF.start
-    PROF.count
 
     connection.search(
       dn,
@@ -115,6 +114,7 @@ class LdapModel
     end
 
     timer.stop("#{ self.name }#by_dn(#{ dn.inspect }) found #{ res.size } items")
+    PROF.count(timer)
 
     res
   end
