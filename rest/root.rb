@@ -69,7 +69,7 @@ class BeforeFilters < LdapSinatra
 
   after do
 
-    LdapModel::PROF.print_search_count(request.path)
+    LdapModel::PROF.print_search_count("#{ env["REQUEST_METHOD"] } #{ request.path }")
     LdapModel::PROF.reset
 
     request_duration = (Time.now - @req_start).to_f

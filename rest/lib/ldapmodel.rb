@@ -1,3 +1,4 @@
+require_relative "./ldapmodel/profiler"
 require_relative "./ldapmodel/helpers"
 require_relative "./ldapmodel/errors"
 require_relative "./ldapmodel/connection"

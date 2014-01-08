@@ -1,57 +1,5 @@
-
-class ThreadProfiler
-
-  def initialize(key)
-    @key = key
-  end
-
-  def store
-    Thread.current["profiler:#{ @key }"] ||= {}
-  end
-
-  # Create profiling methods only when profiling is activated
-  if ENV["LDAP_PROFILE"]
-    puts "#"*40
-    puts "LDAP profiling active!"
-    puts "#"*40
-
-    def reset
-      Thread.current["profiler:#{ @key }"] = nil
-    end
-
-    def print_search_count(request_path)
-      puts "Did #{ store[:count] } ldap searches in #{ request_path }"
-    end
-
-    def start(msg)
-      store[:msg] = msg
-      store[:start] = Time.now
-    end
-
-    def stop
-      diff = Time.now - store[:start]
-      puts "#{ store[:msg] } took #{ diff.to_f }"
-      store[:count] ||= 0
-      store[:count] += 1
-    end
-  else
-    # Just dummy out profiling calls when profiling is not active
-    def method_missing(*); end
-  end
-
-  def time(msg)
-    start(msg)
-    res = yield
-    stop
-    res
-  end
-
-end
-
-
 # generic ldap search rutines
 class LdapModel
-  PROF = ThreadProfiler.new "ldapsearch"
 
   # LDAP base for this model. Must be implemented by subclasses
 
@@ -73,16 +21,19 @@ class LdapModel
       raise "Cannot search without a connection"
     end
 
-    PROF.time("filter(#{ filter.inspect }, #{ attributes.inspect })") do
-      connection.search(
-        ldap_base,
-        LDAP::LDAP_SCOPE_SUBTREE,
-        filter,
-        attributes.map{ |a| a.to_s }
-      ) do |entry|
-        res.push(entry.to_hash) if entry.dn != ldap_base
-      end
+    timer = PROF.start
+    PROF.count
+
+    connection.search(
+      ldap_base,
+      LDAP::LDAP_SCOPE_SUBTREE,
+      filter,
+      attributes.map{ |a| a.to_s }
+    ) do |entry|
+      res.push(entry.to_hash) if entry.dn != ldap_base
     end
+
+    timer.stop("#{ self.name }#filter(#{ filter.inspect }) found #{ res.size } items")
 
     res
   end
@@ -150,17 +101,20 @@ class LdapModel
     res = nil
     attributes ||= ldap_attrs.map{ |a| a.to_s }
 
-    PROF.time("by_dn(#{ dn.inspect }, #{ attributes.inspect })") do
-      connection.search(
-        dn,
-        LDAP::LDAP_SCOPE_SUBTREE,
-        "(objectclass=*)",
-        attributes
-      ) do |entry|
-        res = entry.to_hash
-        break
-      end
+    timer = PROF.start
+    PROF.count
+
+    connection.search(
+      dn,
+      LDAP::LDAP_SCOPE_SUBTREE,
+      "(objectclass=*)",
+      attributes
+    ) do |entry|
+      res = entry.to_hash
+      break
     end
+
+    timer.stop("#{ self.name }#by_dn(#{ dn.inspect }) found #{ res.size } items")
 
     res
   end
@@ -192,13 +146,19 @@ class LdapModel
   #
   # Nonexistent DNs are ignored.
   def self.by_dn_array(dns)
-    Array(dns).map do |dn|
+    timer = PROF.start
+
+    res = Array(dns).map do |dn|
       begin
         by_dn(dn)
       rescue LDAP::ResultError
         # Ignore broken dn pointers
       end
     end.compact
+
+    timer.stop("#{ self.name }#by_dn_array(<with #{ dns.size } items>)")
+
+    res
   end
 
 end
