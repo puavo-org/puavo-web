@@ -105,7 +105,7 @@ class LdapModel
 
     connection.search(
       dn,
-      LDAP::LDAP_SCOPE_SUBTREE,
+      LDAP::LDAP_SCOPE_BASE,
       "(objectclass=*)",
       attributes
     ) do |entry|
