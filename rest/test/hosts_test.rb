@@ -123,8 +123,14 @@ describe PuavoRest::Host do
       boot_end = @logger.data.select do |l|
         l[1][:msg] == "boot done"
       end.first
+
       assert boot_end, "boot end was logged"
-      assert_equal 60, boot_end[1][:boot_duration]
+
+      assert(
+        boot_end[1][:boot_duration] > 55,
+        "has boot duration near 60: #{ boot_end[1][:boot_duration] }"
+      )
+
       assert_equal "thinclient05", boot_end[1][:hostname]
 
 
