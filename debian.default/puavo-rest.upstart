@@ -11,6 +11,6 @@ end script
 chdir /var/app/puavo-rest
 env RACK_ENV=production
 
-exec sudo -E -u puavo bundle exec rackup --server puma
+exec sudo -E -u puavo bundle exec puma --workers 4 --port 9292
 
 respawn
