@@ -64,7 +64,7 @@ class User < LdapModel
   end
 
   def groups
-    Group.by_user_dn(dn)
+    @groups ||= Group.by_user_dn(dn)
   end
 
   computed_attr :domain_username

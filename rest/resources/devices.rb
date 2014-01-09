@@ -56,7 +56,7 @@ class Device < Host
   end
 
   def printer_queues
-    PrinterQueue.by_dn_array(printer_queue_dns)
+    @printer_queues ||= PrinterQueue.by_dn_array(printer_queue_dns)
   end
 
   def preferred_boot_image

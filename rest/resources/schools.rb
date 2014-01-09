@@ -24,11 +24,11 @@ class School < LdapModel
   end
 
   def printer_queues
-    PrinterQueue.by_dn_array(printer_queue_dns)
+    @printer_queues ||= PrinterQueue.by_dn_array(printer_queue_dns)
   end
 
   def wireless_printer_queues
-    PrinterQueue.by_dn_array(wireless_printer_queue_dns)
+    @wireless_printer_queues ||= PrinterQueue.by_dn_array(wireless_printer_queue_dns)
   end
 
   # Cached organisation query
