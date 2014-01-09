@@ -4,21 +4,10 @@ require_relative "../lib/error_codes"
 module PuavoRest
 class Device < Host
 
-  ldap_map :dn, :dn
-  ldap_map :puavoHostname, :hostname
   ldap_map :puavoSchool, :school_dn
-  ldap_map :puavoDeviceType, :type
-  ldap_map :puavoDeviceBootImage, :preferred_boot_image
-  ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoPreferredServer, :preferred_server
-  ldap_map :puavoDeviceKernelArguments, :kernel_arguments
-  ldap_map :puavoDeviceKernelVersion, :kernel_version
   ldap_map :puavoDeviceVertRefresh, :vertical_refresh
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
-  ldap_map :macAddress, :mac_address
-  ldap_map :puavoId, :puavo_id
-  ldap_map :puavoId, :puavo_id
-  ldap_map :puavoDeviceBootMode, :boot_mode
   ldap_map :puavoDeviceXrandrDisable, :xrand_disable
   ldap_map :puavoDeviceXserver, :graphics_driver
   ldap_map :puavoDefaultPrinter, :default_printer_name

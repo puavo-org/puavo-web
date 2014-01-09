@@ -9,6 +9,11 @@ class Host < LdapModel
   ldap_map :macAddress, :mac_address
   ldap_map :puavoId, :puavo_id
   ldap_map :puavoHostname, :hostname
+  ldap_map :puavoDeviceBootImage, :preferred_boot_image
+  ldap_map :puavoDeviceImage, :preferred_image
+  ldap_map :puavoDeviceKernelArguments, :kernel_arguments
+  ldap_map :puavoDeviceBootMode, :boot_mode
+  ldap_map :puavoDeviceKernelVersion, :kernel_version
 
 
   def self.ldap_base

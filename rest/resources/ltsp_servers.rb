@@ -93,15 +93,7 @@ end
 class LtspServer < Host
   include LocalStore
 
-  ldap_map :dn, :dn
-  ldap_map :puavoHostname, :hostname
   ldap_map(:puavoSchool, :school_dns) { |v| Array(v).map{ |v| v.downcase } }
-  ldap_map :puavoDeviceBootMode, :boot_mode
-  ldap_map :puavoDeviceBootImage, :preferred_boot_image
-  ldap_map :puavoDeviceImage, :preferred_image
-  ldap_map :puavoDeviceKernelArguments, :kernel_arguments
-  ldap_map :puavoDeviceKernelVersion, :kernel_version
-  ldap_map :puavoDeviceType, :type
 
   def self.ldap_base
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
