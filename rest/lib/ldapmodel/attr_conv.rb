@@ -31,8 +31,11 @@ class LdapModel
       :convert => convert
     }
 
-    define_method pretty_name do
-      get_own(pretty_name)
+    # Create simple getter for the attribute if no custom one is defined
+    if not method_defined?(pretty_name)
+      define_method pretty_name do
+        get_own(pretty_name)
+      end
     end
   end
 

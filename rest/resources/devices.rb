@@ -59,11 +59,6 @@ class Device < Host
     @printer_queues ||= PrinterQueue.by_dn_array(printer_queue_dns)
   end
 
-  def preferred_boot_image
-    # FIXME
-    super
-  end
-
   computed_attr :preferred_language
   def preferred_language
     school.preferred_language

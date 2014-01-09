@@ -161,11 +161,6 @@ class LtspServer < Host
      end
   end
 
-  def preferred_boot_image
-    # FIXME
-    super
-  end
-
 end
 
 # Load balancer resource for LTSP servers
