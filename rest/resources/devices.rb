@@ -52,8 +52,7 @@ class Device < Host
 
   # Cached school query
   def school
-    return @school if @school
-    @school = School.by_dn(school_dn)
+    @school ||= School.by_dn(school_dn)
   end
 
   def printer_queues

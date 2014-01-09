@@ -33,8 +33,7 @@ class School < LdapModel
 
   # Cached organisation query
   def organisation
-    return @organisation if @organisation
-    @organisation = Organisation.by_dn(self.class.organisation["base"])
+    @organisation ||= Organisation.by_dn(self.class.organisation["base"])
   end
 
 
