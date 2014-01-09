@@ -20,16 +20,21 @@ class LdapModel
   #
   # @param [Symbol] accessor name
   # @param [Block] default value creator
-  def self.class_store(name, &create_default)
+  def self.class_store(name)
+    _class_store[name] = {}
     define_method(name) do
-      default = create_default.call if create_default
-      default ||= {}
-      self.class._class_store[name] ||= default
+      self.class._class_store[name]
     end
     define_singleton_method(name) do
-      default = create_default.call if create_default
-      default ||= {}
-      _class_store[name] ||= default
+      _class_store[name]
+    end
+  end
+
+  # copy attributes to inherited subclasses
+  def self.inherited(subclass)
+    _class_store.keys.each do |k|
+      subclass._class_store[k] ||= {}
+      subclass._class_store[k].merge!(_class_store[k])
     end
   end
 

@@ -5,7 +5,8 @@ class LdapModel
   class_store :ldap2pretty
   class_store :converters
   class_store :skip_serialize_attrs
-  class_store(:computed_attributes){ [] }
+  class_store :computed_attributes
+
   attr_reader :ldap_attr_store
 
   def initialize(ldap_attr_store={})
@@ -42,7 +43,7 @@ class LdapModel
   # A method that will be executed and added to `to_hash` and `to_json`
   # conversions of this models
   def self.computed_attr(*attrs)
-    attrs.each { |a| computed_attributes.push(a.to_sym) }
+    attrs.each { |a| computed_attributes[a.to_sym] = true }
   end
 
   # Skip this attribute(s) from serializations such as `to_hash` and `to_json`
@@ -138,7 +139,7 @@ class LdapModel
         h[pretty_name.to_s] = send(pretty_name)
       end
     end
-    computed_attributes.each do |attr|
+    computed_attributes.keys.each do |attr|
       h[attr.to_s] = send(attr)
     end
     h

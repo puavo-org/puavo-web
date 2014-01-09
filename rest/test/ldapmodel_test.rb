@@ -211,7 +211,55 @@ describe LdapModel do
 
     end
 
+    describe "subclasses" do
+      class Parent < LdapModel
+        ldap_map :parentAttr, :parent_attr
+      end
+
+      class ChildA < Parent
+        ldap_map :childAttrA, :child_attr_a
+      end
+
+      class ChildB < Parent
+        ldap_map :childAttrB, :child_attr_b
+      end
+
+      it "can use own attributes when inherited" do
+        child = ChildA.new
+        child.ldap_set(:childAttrA, "bar")
+
+        assert_equal "bar", child.child_attr_a
+      end
+
+      it "can use attributes from parent" do
+        child = ChildA.new
+        child.ldap_set(:parentAttr, "foo")
+
+        assert_equal "foo", child.parent_attr
+      end
+
+      it "does not respond to other children methods" do
+        child = ChildB.new
+        assert !child.respond_to?(:child_attr_a)
+        child.child_attr_b
+      end
+
+      it "to_hash serializes super class methods too" do
+        child = ChildA.new
+        child.ldap_set(:parentAttr, "foo")
+        child.ldap_set(:childAttrA, "bar")
+
+        h = child.to_hash
+        assert_equal(
+          {"parent_attr"=>"foo", "child_attr_a"=>"bar"},
+          h
+        )
+      end
+
+    end
+
   end
+
 
 
 end
