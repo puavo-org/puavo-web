@@ -196,7 +196,7 @@ DEPENDENCIES
   debugger
   fluent-logger (~> 0.4.3)
   gssapi!
-  jwt
+  jwt (~> 0.1.8)
   m
   msgpack
   multi_json
@@ -205,17 +205,17 @@ DEPENDENCIES
   pg
   prawn
   pry
-  puma
-  rack-rewrite
-  rails (= 3.2.16)
+  puma (~> 2.7.1)
+  rack-rewrite (~> 1.4.01)
+  rails (~> 3.2.16)
   rdoc
   redcarpet
   redis
   rmagick
   shotgun
-  sinatra
+  sinatra (~> 1.4.4)
   sinatra-contrib
-  sinatra-r18n
+  sinatra-r18n (~> 1.1.8)
   sqlite3
   timecop
   turn
