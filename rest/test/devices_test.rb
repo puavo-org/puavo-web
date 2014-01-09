@@ -193,6 +193,47 @@ describe PuavoRest::Devices do
     end
   end
 
+  describe "Device#preferred_boot_image" do
+    it "is used for thinclients" do
+      @thin = create_device(
+        :puavoHostname => "athin",
+        :puavoDeviceType =>  "thinclient",
+        :macAddress => "00:60:2f:28:DC:51",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn,
+
+        :puavoDeviceBootImage => "bootimage",
+        :puavoDeviceImage => "normalimage"
+      )
+      @thin.save!
+
+      get "/v3/devices/athin"
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal "bootimage", data["preferred_boot_image"]
+    end
+
+    it "is preferred_image for fatclients" do
+      @fat = create_device(
+        :puavoHostname => "afat",
+        :puavoDeviceType =>  "fatclient",
+        :macAddress => "00:60:2f:E5:A1:37",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn,
+
+        :puavoDeviceBootImage => "bootimage",
+        :puavoDeviceImage => "normalimage"
+      )
+      @fat.save!
+
+      get "/v3/devices/afat"
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal "normalimage", data["preferred_boot_image"]
+    end
+
+  end
+
   describe "error handling" do
     it "responds 404 for non existent device" do
       get "/v3/devices/notexists"

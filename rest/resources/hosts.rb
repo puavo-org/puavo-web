@@ -56,12 +56,18 @@ class Host < LdapModel
     @organisation = Organisation.by_dn(self.class.organisation["base"])
   end
 
+  def preferred_image
+    raise "not implemented"
+  end
+
   def preferred_boot_image
-    if get_own(:preferred_boot_image).nil?
-      preferred_image
-    else
-      get_own(:preferred_boot_image)
+    # preferred_boot_image is only used for thinclients. In fatclients and ltsp
+    # servers the boot image is always the same as the main image
+    if type == "thinclient" && get_own(:preferred_boot_image)
+      return get_own(:preferred_boot_image)
     end
+
+    preferred_image
   end
 
   def grub_kernel_version
