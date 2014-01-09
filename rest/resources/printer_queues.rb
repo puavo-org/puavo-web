@@ -20,7 +20,7 @@ class PrinterQueue < LdapModel
   end
 
   # Do not add pdd file contents to json presentation. Only a link to it.
-  ignore_attr :ppd
+  skip_serialize :ppd
   computed_attr :ppd_link
   def ppd_link
     link "/v3/printer_queues/#{ name }/ppd"

@@ -4,7 +4,7 @@ class LdapModel
   class_store :pretty2ldap
   class_store :ldap2pretty
   class_store :converters
-  class_store :ignored_attributes
+  class_store :skip_serialize_attrs
   class_store(:computed_attributes){ [] }
   attr_reader :ldap_attr_store
 
@@ -42,10 +42,11 @@ class LdapModel
     attrs.each { |a| computed_attributes.push(a.to_sym) }
   end
 
-  # Ignore one or more ldap_map attributes from `to_hash` and `to_json`
-  # serializations
-  def self.ignore_attr(*attrs)
-    attrs.each { |a| ignored_attributes[a.to_sym] = true }
+  # Skip this attribute(s) from serializations such as `to_hash` and `to_json`
+  #
+  # @param attr [Symbol or array of Symbols]
+  def self.skip_serialize(*attrs)
+    attrs.each { |a| skip_serialize_attrs[a.to_sym] = true }
   end
 
   def get_own(pretty_name)
@@ -130,7 +131,7 @@ class LdapModel
   def to_hash
     h = {}
     pretty2ldap.each do |pretty_name, _|
-      if !ignored_attributes[pretty_name.to_sym]
+      if not skip_serialize_attrs[pretty_name.to_sym]
         h[pretty_name.to_s] = send(pretty_name)
       end
     end

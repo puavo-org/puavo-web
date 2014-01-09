@@ -178,15 +178,15 @@ describe LdapModel do
 
     end
 
-    describe "ignore attributes" do
-      class IgnoredAttributes < LdapModel
+    describe "skip serialize attributes" do
+      class SkipSerializeAttributes < LdapModel
         ldap_map :puavoFoo, :foo
         ldap_map :puavoBar, :bar
-        ignore_attr :bar
+        skip_serialize :bar
       end
 
       before do
-        @model = IgnoredAttributes.new.ldap_merge!(
+        @model = SkipSerializeAttributes.new.ldap_merge!(
           :puavoFoo => "foo",
           :puavoBar => "bar"
         )
