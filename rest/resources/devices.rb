@@ -15,6 +15,8 @@ class Device < Host
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
   ldap_map :puavoPrinterDeviceURI, :printer_device_uri
+  ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
+  ldap_map :puavoDeviceDefaultAudioSink, :default_audio_sink
 
 
   def self.ldap_base
