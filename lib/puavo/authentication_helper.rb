@@ -35,14 +35,6 @@ module Puavo
     # Returns user dn/uid and password for some available login mean
     def acquire_credentials
 
-      # OAuth Access Token
-      if auth_header = request.headers["HTTP_AUTHORIZATION"]
-        type, data = auth_header.split
-        if type.downcase == "bearer"
-          return AccessToken.decrypt_token data
-        end
-      end
-
       # Basic Auth
       #  * OAuth Client Server ID & Secrect
       #  * External Service UID & password
@@ -50,29 +42,6 @@ module Puavo
       #  * Server dn & password
       authenticate_with_http_basic do |username, password|
         logger.debug "Using basic authentication with #{ username }"
-
-        # FIXME: move to Puavo::Authentication class (configure_ldap_connection)
-        if match = username.match(/^oauth_client_id\/(.*)\/(.*)$/)
-
-          org_key = match[1]
-          oauth_client_id = match[2]
-
-          @authentication.configure_ldap_connection(
-                                                    :organisation_key => org_key
-                                                    )
-
-          oauth_client_server = OauthClient.find(:first,
-                                                 :attribute => "puavoOAuthClientId",
-                                                 :value => oauth_client_id)
-
-          return {
-            :dn => oauth_client_server.dn,
-            :organisation_key => org_key,
-            :password => password,
-            :scope => oauth_client_server.puavoOAuthScope
-          }
-
-        end
 
         # Allow logins with dn
         if !username.to_s.empty? && (dn = ActiveLdap::DistinguishedName.parse(username) rescue nil)

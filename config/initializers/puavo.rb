@@ -9,13 +9,6 @@ Puavo::EXTERNAL_LINKS = YAML.load_file("#{Rails.root}/config/puavo_external_link
 Puavo::EXTERNAL_FILES = YAML.load_file("#{Rails.root}/config/puavo_external_files.yml") rescue nil
 
 begin
-  Puavo::OAUTH_CONFIG = YAML.load_file("#{ Rails.root }/config/oauth.yml")
-rescue Errno::ENOENT => e
-  Puavo::OAUTH_CONFIG = nil
-  puts "WARNING: " + e.to_s
-end
-
-begin
   Puavo::SERVICES = YAML.load_file("#{Rails.root}/config/services.yml")
 rescue Errno::ENOENT => e
   Puavo::SERVICES = nil

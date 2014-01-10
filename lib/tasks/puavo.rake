@@ -7,11 +7,6 @@ namespace :puavo do
     cp "config/ldap.yml.development", "config/ldap.yml"
   end
 
-  desc "Set config/oauth.yml"
-  task :oauth do
-    cp "config/oauth.yml.development", "config/oauth.yml"
-  end
-
   desc "Set config/organisation.yml"
   task :organisation do
     @hostname = (`hostname -s`).strip + ".#{PUAVO_ETC.topdomain}"
