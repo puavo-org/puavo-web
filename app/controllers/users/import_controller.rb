@@ -115,25 +115,34 @@ class Users::ImportController < ApplicationController
 
   # POST /:school_id/users/import
   def create
-    # Crypt user password by public key
-    encrypt_password = Base64.encode64(
-      Puavo::RESQUE_WORKER_PUBLIC_KEY.public_encrypt(
-        session[:password_plaintext] ) )
 
-    # TODO: move importing to resque job
-    Resque.enqueue( UserMassImport,
-                    current_organisation.organisation_key,
-                    current_user.dn.to_s,
-                    encrypt_password,
-                    params )
+    encrypted_password = Base64.encode64(
+      Puavo::RESQUE_WORKER_PUBLIC_KEY.public_encrypt(session[:password_plaintext])
+    )
 
-    render :text => "Hello"
-#    respond_to do |format|
-#      format.html { redirect_to users_import_path(@school,
-#                                                  :create_timestamp => create_timestamp,
-#                                                  :change_school_timestamp => change_school_timestamp,
-#                                                  :reset_password => reset_password) }
-#    end
+    job_id = UUID.generate
+
+    # Save encrypted password separately to redis with expiration date to
+    # ensure that it will not persist there for too long
+    Puavo::REDIS.set("import:#{ job_id }:pw", encrypted_password)
+    Puavo::REDIS.expire("import:#{ job_id }:pw", 60 * 60)
+    Puavo::REDIS.set("import:#{ job_id }:status", "waiting")
+
+    Resque.enqueue(
+      ImportWorker,
+      job_id,
+      current_organisation.organisation_key,
+      current_user.dn.to_s,
+      params
+    )
+
+    redirect_to import_status_path(@school, job_id)
+  end
+
+  # GET /:school_id/users/import/status/:job_id
+  def status
+    job_id = params["job_id"]
+    render :text => Puavo::REDIS.get("import:#{ job_id }:status")
   end
 
   # GET /:school_id/users/import/show?create_timestamp=create:20110402152432Z

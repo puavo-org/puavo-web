@@ -1,20 +1,24 @@
-class UserMassImport
-  @queue = :user_mass_import
+class ImportWorker
+  @queue = :import
 
-  def self.perform(organisation, user_dn, encrypt_password, params)
-    # Decrypt user password by private key
-    password = Puavo::RESQUE_WORKER_PRIVATE_KEY.private_decrypt Base64.decode64(encrypt_password)
+  def self.perform(job_id, organisation_key, user_dn, params)
 
-    # Create LDAP-connection
+    encrypted_password = Puavo::REDIS.get("import:#{ job_id }:pw")
+    Puavo::REDIS.del("import:#{ job_id }:pw")
+    Puavo::REDIS.set("import:#{ job_id }:status", "starting")
+
+    password = Puavo::RESQUE_WORKER_PRIVATE_KEY.private_decrypt(
+      Base64.decode64(encrypted_password)
+    )
+
     authentication = Puavo::Authentication.new
     authentication.configure_ldap_connection({
-                                               :dn => user_dn,
-                                               :password => password,
-                                               :organisation_key => organisation
-                                             })
-    authentication.authenticate
+      :dn => user_dn,
+      :password => password,
+      :organisation_key => organisation_key
+      })
 
-    puts "params: " + params.inspect
+    authentication.authenticate
 
     school = School.find(params["school_id"])
 
@@ -33,7 +37,7 @@ class UserMassImport
 
     User.reserved_uids = []
 
-    users.each do |user|
+    users.each do |user, i|
       begin
         if user.puavoId.nil?
           user.puavoId = puavo_ids[id_index]
@@ -52,10 +56,14 @@ class UserMassImport
       rescue Exception => e
         puts "Failed user: " + user.inspect
       end
+
+      Puavo::REDIS.set("import:#{ job_id }:status", "progress #{ i }/#{ users.size }")
     end
 
     # If data of users inlucde new password then not generate new password when create pdf-file.
     reset_password = params["columns"].include?("new_password") ? false : true
+
+    Puavo::REDIS.set("import:#{ job_id }:status", "finished")
 
   end
 
