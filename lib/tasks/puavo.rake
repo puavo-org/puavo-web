@@ -55,6 +55,8 @@ namespace :puavo do
   task :configuration => [:database,
                           :ldap,
                           :puavo_devices,
-                          :organisation]
+                          :organisation,
+                          :secret_token
+  ]
 
 end
