@@ -115,6 +115,7 @@ install: clean-for-install mkdirs
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
 
+.PHONY: tags
 tags:
 	bundle exec ripper-tags -R --exclude=vendor --exclude rest
 
