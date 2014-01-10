@@ -15,8 +15,6 @@ build:
 	npm install --registry http://registry.npmjs.org # nib for stylys
 	bundle exec rake puavo:configuration
 	bundle exec rake assets:precompile
-	bundle exec rake db:migrate
-	RAILS_ENV=test bundle exec rake db:migrate
 	$(MAKE) tags
 
 update-gemfile-lock: clean
@@ -78,11 +76,6 @@ install: clean-for-install mkdirs
 		$(INSTALL_DIR)
 
 	cp -r rest/lib $(INSTALL_DIR)/rest
-
-	rm -f $(RAILS_CONFIG_DIR)/database.yml
-
-	cp config/database.yml.development $(CONF_DIR)/database.yml
-	ln -s ../../../../etc/puavo-web/database.yml $(RAILS_CONFIG_DIR)/database.yml
 
 	cp config/services.yml.example $(CONF_DIR)/services.yml
 	ln -s ../../../../etc/puavo-web/services.yml $(RAILS_CONFIG_DIR)/services.yml

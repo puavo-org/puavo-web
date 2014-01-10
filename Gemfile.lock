@@ -123,7 +123,6 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
-    pg (0.17.1)
     polyglot (0.3.3)
     prawn (0.13.2)
       pdf-reader (~> 1.2)
@@ -248,7 +247,6 @@ DEPENDENCIES
   multi_json
   net-ldap
   nokogiri
-  pg
   prawn
   pry
   rails (~> 3.2.16)
