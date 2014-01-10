@@ -66,6 +66,14 @@
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDefaultPrinter" %></td>
   <td class="value_td"><%=h device.puavoDefaultPrinter %></td>
 </tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceDefaultAudioSource" %></td>
+  <td class="value_td"><%=h device.puavoDeviceDefaultAudioSource %></td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceDefaultAudioSink" %></td>
+  <td class="value_td"><%=h device.puavoDeviceDefaultAudioSink %></td>
+</tr>
 
 <% if device.class == Device %>
   <%= render :partial => 'shared/allow_guest_and_personal_device', :locals => { :object => device } %>

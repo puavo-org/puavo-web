@@ -480,6 +480,8 @@ fi:
         puavoPersonalDevice: Henkilökohtainen laite
         puavoPrinterDeviceURI: Tulostimen laiteosoite
         puavoPrinterPPD: Tulostimen ajuritiedosto
+        puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
+        puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
       oauth_client:
         displayName: Nimi
         puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)
