@@ -56,7 +56,8 @@ namespace :puavo do
                           :ldap,
                           :puavo_devices,
                           :organisation,
-                          :secret_token
+                          :secret_token,
+                          :resque_worker_public_key
   ]
 
 end
