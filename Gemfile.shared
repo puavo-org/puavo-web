@@ -15,4 +15,5 @@ group :shared do
   gem "multi_json"
   gem "redcarpet"
   gem "nokogiri"
+  gem "redis-namespace"
 end

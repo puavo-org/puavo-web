@@ -93,6 +93,9 @@ install: clean-for-install mkdirs
 	cp config/ldap.yml.development $(CONF_DIR)/ldap.yml
 	ln -s ../../../../etc/puavo-web/ldap.yml $(RAILS_CONFIG_DIR)/ldap.yml
 
+	cp config/redis.yml.development $(CONF_DIR)/redis.yml
+	ln -s ../../../../etc/puavo-web/redis.yml $(RAILS_CONFIG_DIR)/redis.yml
+
 	cp config/puavo_devices.yml.development $(CONF_DIR)/puavo_devices.yml
 	ln -s ../../../../etc/puavo-web/puavo_devices.yml $(RAILS_CONFIG_DIR)/puavo_devices.yml
 

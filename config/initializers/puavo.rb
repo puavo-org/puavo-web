@@ -39,3 +39,7 @@ begin
 rescue Errno::ENOENT => e
   Puavo::RESQUE_WORKER_PUBLIC_KEY = nil
 end
+
+REDIS_CONFIG = File.join(Rails.root, "config", "redis.yml")
+REDIS_CONNECTION = Redis.new YAML.load_file(REDIS_CONFIG).symbolize_keys
+Puavo::REDIS = Redis::Namespace.new(:puavo, REDIS_CONNECTION)

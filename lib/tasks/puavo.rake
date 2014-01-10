@@ -51,13 +51,20 @@ namespace :puavo do
     cp "config/resque_worker_public_key.development", "config/resque_worker_public_key"
   end
 
+  desc "Set config/redis.yml"
+  task :redis do
+    cp "config/redis.yml.development", "config/redis.yml"
+  end
+
   desc "Set all Puavo configuration files (development)"
   task :configuration => [:database,
                           :ldap,
                           :puavo_devices,
                           :organisation,
                           :secret_token,
-                          :resque_worker_public_key
+                          :resque_worker_public_key,
+                          :resque_worker_private_key,
+                          :redis
   ]
 
 end

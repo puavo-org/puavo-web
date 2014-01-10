@@ -255,6 +255,7 @@ DEPENDENCIES
   rbtrace
   rdoc
   redcarpet
+  redis-namespace
   resque!
   ripper-tags
   rmagick
