@@ -482,6 +482,8 @@ en:
         puavoPersonalDevice: Personal device
         puavoPrinterDeviceURI: Printer device URI
         puavoPrinterPPD: Printer driver file
+        puavoDeviceDefaultAudioSource: Default input audio device
+        puavoDeviceDefaultAudioSink: Default output audio device
       oauth_client:
         displayName: Name
         puavoOAuthClientId: Client id
