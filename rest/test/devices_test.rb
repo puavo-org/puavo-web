@@ -57,7 +57,9 @@ describe PuavoRest::Devices do
         :puavoPersonalDevice => false,
         :puavoDefaultPrinter => "defaultprinter",
         :puavoAllowGuest => false,
-        :puavoPrinterDeviceURI => "usb:/dev/usb/lp1"
+        :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
+        :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
+        :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo"
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
@@ -94,6 +96,14 @@ describe PuavoRest::Devices do
 
     it "has default printer" do
       assert_equal "defaultprinter", @data["default_printer_name"]
+    end
+
+    it "has default input audio device" do
+      assert_equal "alsa_input.pci-0000_00_1b.0.analog-stereo", @data["default_audio_source"]
+    end
+
+    it "has default sink audio device" do
+      assert_equal "alsa_output.pci-0000_00_1b.0.analog-stereo", @data["default_audio_sink"]
     end
 
     it "has preferred language" do
