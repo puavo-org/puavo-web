@@ -32,5 +32,6 @@ group :test do
   gem "rspec-rails"
   gem "ruby-prof"
   gem "timecop"
+  gem "ripper-tags"
 end
 

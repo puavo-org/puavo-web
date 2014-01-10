@@ -17,6 +17,7 @@ build:
 	bundle exec rake assets:precompile
 	bundle exec rake db:migrate
 	RAILS_ENV=test bundle exec rake db:migrate
+	$(MAKE) tags
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
@@ -105,6 +106,8 @@ install: clean-for-install mkdirs
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
 
+tags:
+	bundle exec ripper-tags -R --exclude=vendor --exclude rest
 
 test-rest:
 	$(MAKE) -C rest test

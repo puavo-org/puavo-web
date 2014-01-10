@@ -6,6 +6,7 @@ build:
 	git rev-parse HEAD > GIT_COMMIT
 	cp ../VERSION VERSION
 	bundle install --deployment
+	$(MAKE) tags
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
@@ -17,6 +18,9 @@ clean-for-install:
 
 clean:
 	rm -rf .bundle vendor
+
+tags:
+	bundle exec ripper-tags -R --exclude=vendor --exclude rest
 
 install: clean-for-install
 	# Delete .git dir and caches from vendor/. Caused some permission issues on
