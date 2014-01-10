@@ -19,6 +19,7 @@ clean-for-install:
 clean:
 	rm -rf .bundle vendor
 
+.PHONY: tags
 tags:
 	bundle exec ripper-tags -R --exclude=vendor --exclude rest
 
