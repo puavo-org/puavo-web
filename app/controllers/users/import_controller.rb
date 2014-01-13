@@ -197,7 +197,7 @@ class Users::ImportController < ApplicationController
     # Reload roles association
     @users.each do |u| u.roles.reload end
 
-    filename = session[:organisation].organisation_key + "_" +
+    filename = current_organisation.organisation_key + "_" +
       @school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
 
     respond_to do |format|
@@ -303,7 +303,7 @@ class Users::ImportController < ApplicationController
         end
       end
       pdf.repeat start_page_number..pdf.page_number do
-        pdf.draw_text "#{session[:organisation].name}, #{@school.displayName}, #{users.first.roles.first.displayName}", :at => pdf.bounds.top_left
+        pdf.draw_text "#{current_organisation.name}, #{@school.displayName}, #{users.first.roles.first.displayName}", :at => pdf.bounds.top_left
       end
     end
   end
