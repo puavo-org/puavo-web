@@ -39,12 +39,13 @@ module Mountpoint
   end
 
   def set_puavo_mountpoint
+    new_mountpoint_values = Array.new
     self.fs.each_index do |index|
-      self.puavoMountpoint = Array(self.puavoMountpoint) +
-        [{ "fs" => fs[index],
-           "path" => path[index],
-           "mountpoint" => mountpoint[index],
-           "options" => options[index] }.to_json]
+      new_mountpoint_values.push( { "fs" => fs[index],
+                                    "path" => path[index],
+                                    "mountpoint" => mountpoint[index],
+                                    "options" => options[index] }.to_json )
     end
+    self.puavoMountpoint = new_mountpoint_values
   end
 end
