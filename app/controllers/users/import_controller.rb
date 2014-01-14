@@ -121,12 +121,13 @@ class Users::ImportController < ApplicationController
     )
 
     job_id = UUID.generate
+    db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
 
     # Save encrypted password separately to redis with expiration date to
     # ensure that it will not persist there for too long
-    Puavo::REDIS.set("import:#{ job_id }:pw", encrypted_password)
-    Puavo::REDIS.expire("import:#{ job_id }:pw", 60 * 60)
-    Puavo::REDIS.set("import:#{ job_id }:status", "waiting")
+    db.set("pw", encrypted_password)
+    db.expire("pw", 60 * 60)
+    db.set("status", "waiting")
 
     Resque.enqueue(
       ImportWorker,
@@ -141,8 +142,38 @@ class Users::ImportController < ApplicationController
 
   # GET /:school_id/users/import/status/:job_id
   def status
+
     job_id = params["job_id"]
-    render :text => Puavo::REDIS.get("import:#{ job_id }:status")
+    db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+    @import_status = db.get("status")
+
+    if @import_status.nil?
+      return render :text => "unknown job", :status => 404
+    end
+
+    render :status, :status => :not_found
+  end
+
+  # POST /:school_id/users/import/render_pdf/:job_id
+  def render_pdf
+    job_id = params["job_id"]
+    db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+    pdf_data = db.get("pdf")
+
+    if not pdf_data
+      return render :text => "unknown job or not ready", :status => 404
+    end
+
+    @import_status = db.del("status")
+    @import_status = db.del("pdf")
+
+    send_data(
+      pdf_data,
+      :type => "application/pdf",
+      :filename => "import.pdf",
+      :disposition => "attachment"
+    )
+
   end
 
   # GET /:school_id/users/import/show?create_timestamp=create:20110402152432Z
@@ -167,47 +198,6 @@ class Users::ImportController < ApplicationController
 
     respond_to do |format|
       format.html
-    end
-  end
-
-  # POST /:school_id/users/import/generate_passwords_pdf?create_timestamp=create:20110402152432Z
-  def generate_passwords_pdf
-    password_timestamp = "password:#{current_user.dn}:" + Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
-
-    @users = User.find( :all,
-                        :attribute => "puavoTimestamp",
-                        :value => params[:create_timestamp] ) if params[:create_timestamp]
-
-    @users.each do |user|
-      user.set_generated_password if params[:reset_password] == "true"
-      # Update puavoTimestamp
-      user.puavoTimestamp = Array(user.puavoTimestamp).push password_timestamp
-      user.save!
-    end
-
-    if params[:change_school_timestamp]
-      User.find( :all,
-                 :attribute => "puavoTimestamp",
-                 :value => params[:change_school_timestamp] ).each do |user|
-        user.earlier_user = true
-        @users.push user
-      end
-    end
-
-    # Reload roles association
-    @users.each do |u| u.roles.reload end
-
-    filename = current_organisation.organisation_key + "_" +
-      @school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
-
-    respond_to do |format|
-      format.pdf do
-        send_data(
-                  create_pdf(@users),
-                  :filename => filename,
-                  :type => 'application/pdf',
-                  :disposition => 'attachment' )
-      end
     end
   end
 
@@ -264,49 +254,7 @@ class Users::ImportController < ApplicationController
 
   private
 
-  def create_pdf(users)
-    role_name = String.new
-    pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
 
-    users_by_role = User.list_by_role(users)
-    users_by_role.each do |users|
-      role_to_pdf(users, pdf)
-    end
-    pdf.render
-  end
-
-  def role_to_pdf(users, pdf)
-    pdf.start_new_page
-    pdf.font "Times-Roman"
-    pdf.font_size = 12
-    start_page_number = pdf.page_number
-
-    # Sort users by sn + givenName
-    users = users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
-
-    pdf.text "\n"
-
-    users_of_page_count = 0
-    users.each do |user|
-      pdf.indent(300) do
-        pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
-        pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
-        if user.earlier_user
-          pdf.text t('controllers.import.school_has_changed') + "\n\n\n"
-        else
-          pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
-        end
-        users_of_page_count += 1
-        if users_of_page_count > 10 && user != users.last
-          users_of_page_count = 0
-          pdf.start_new_page
-        end
-      end
-      pdf.repeat start_page_number..pdf.page_number do
-        pdf.draw_text "#{current_organisation.name}, #{@school.displayName}, #{users.first.roles.first.displayName}", :at => pdf.bounds.top_left
-      end
-    end
-  end
 
   def to_list(data)
     data.keys.sort{ |a,b| a.to_i <=> b.to_i }.map do |key|
