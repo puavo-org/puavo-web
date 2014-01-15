@@ -3,6 +3,7 @@ class School < BaseGroup
   include Puavo::Client::HashMixin::School
   include BooleanAttributes
   include HasPrinterMixin
+  include Mountpoint
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
@@ -28,6 +29,8 @@ class School < BaseGroup
 
   attr_accessor :image
   before_validation :resize_image
+
+  before_save :set_puavo_mountpoint
 
   validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_wlan_attributes
 
