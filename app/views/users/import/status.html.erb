@@ -1,0 +1,40 @@
+
+<h1><%= t('link.user_mass_import.new') %></h1>
+
+<dd>
+<%= @import_status %>
+</dd>
+
+<% if @import_status == "finished" %>
+
+  <!-- <%= @failed_users.inspect %> -->
+
+  <% if @failed_users %>
+      <h3>
+      Failed to create some users
+      </h3>
+      <p>
+        <pre><%= @failed_users.inspect %></pre>
+      </p>
+  <% end %>
+
+  <p>
+    Import is now ready. Download passwords from below. Note that you can download this only once.
+  </p>
+
+  <%= button_to(
+    t('link.user_mass_import.download_passwords_pdf'),
+    render_pdf_path(@school, params[:job_id]),
+    :method => :post,
+    :class => :once
+  ) %>
+
+<% else %>
+
+<p>
+Importing users. Please wait for few minutes.
+</p>
+
+
+<% end %>
+
