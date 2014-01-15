@@ -9,12 +9,12 @@
     <th><%= t('.mountpoint') %></th>
     <th><%= t('.options') %></th>
   </tr>
-  <% Array(device.puavoMountpoint).each_index do |index| %>
+  <% Array(object.puavoMountpoint).each_index do |index| %>
   <tr>
-    <td class="value_td"><%=h device.fs[index] %></td>
-    <td class="value_td"><%=h device.path[index] %></td>
-    <td class="value_td"><%=h device.mountpoint[index] %></td>
-    <td class="value_td"><%=h device.options[index] %></td>
+    <td class="value_td"><%=h object.fs[index] %></td>
+    <td class="value_td"><%=h object.path[index] %></td>
+    <td class="value_td"><%=h object.mountpoint[index] %></td>
+    <td class="value_td"><%=h object.options[index] %></td>
   </tr>
   <% end %>
 </table>
