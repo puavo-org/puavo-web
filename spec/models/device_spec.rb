@@ -32,4 +32,14 @@ describe Device do
     assert_equal "/home/share", Device.first.mountpoint[0]
     assert_equal nil, Device.first.options[0]
   end
+
+  it "can save mountpoint by json " do
+    @device.puavoMountpoint = '{"fs":"nfs4", "path":"10.0.0.2/share", "mountpoint":"/home/public/share"}'
+    @device.save!
+
+    assert_equal "nfs4", Device.first.fs[0]
+    assert_equal "10.0.0.2/share", Device.first.path[0]
+    assert_equal "/home/public/share", Device.first.mountpoint[0]
+    assert_equal nil, Device.first.options[0]
+  end
 end

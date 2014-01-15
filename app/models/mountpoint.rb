@@ -29,6 +29,16 @@ module Mountpoint
     @options
   end
 
+  def puavoMountpoint=(args)
+    # Reset cache
+    @fs = nil
+    @path = nil
+    @mountpoint = nil
+    @options = nil
+
+    set_attribute("puavoMountpoint", args)
+  end
+
   private
 
   def parse_mountpoint(field)
