@@ -12,8 +12,7 @@
 	<th><%= t('.mountpoint') %></th>
 	<th><%= t('.options') %></th>
       </tr>
-
-      <% Array(f.object.puavoMountpoint).each_index do |index| %>
+      <% Array( (f.object.puavoMountpoint or 1) ).each_index do |index| %>
       <tr>
 	<td><%= text_field_tag(
 		"#{f.object.class.to_s.downcase}[fs][]",

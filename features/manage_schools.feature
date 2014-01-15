@@ -31,6 +31,10 @@ Feature: Manage schools
     | State                      | East Midlands                                                                  |
     | Desktop Image              | presice-20121023                                                               |
     | school[puavoBillingInfo][] | school_base:500                                                                |
+    | school_fs_0                | nfs3                                                                           |
+    | school_path_0              | 10.0.0.1/share                                                                 |
+    | school_mountpoint_0        | /home/share                                                                    |
+    | school_options_0           | -o rw                                                                          |
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
     Then I should not see "error"
@@ -46,6 +50,10 @@ Feature: Manage schools
     | 54321              |
     | presice-20121023   |
     | school_base:500    |
+    | nfs3               |
+    | 10.0.0.1/share     |
+    | /home/share        |
+    | -o rw              |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
 
