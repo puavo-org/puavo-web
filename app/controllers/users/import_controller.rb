@@ -147,6 +147,11 @@ class Users::ImportController < ApplicationController
     db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
     @import_status = db.get("status")
 
+    if fail_json = db.get("failed_users")
+      @failed_users = Array(JSON.parse(fail_json))
+    end
+
+
     if @import_status.nil?
       return render :text => "unknown job", :status => 404
     end
@@ -166,6 +171,7 @@ class Users::ImportController < ApplicationController
 
     @import_status = db.del("status")
     @import_status = db.del("pdf")
+    @import_status = db.del("failed_users")
 
     send_data(
       pdf_data,

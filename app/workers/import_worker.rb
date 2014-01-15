@@ -97,9 +97,7 @@ class ImportWorker
       school
     )
 
-    users = User.hash_array_data_to_user( params["users"],
-                                          params["columns"],
-                                          school )
+    failed_users = []
 
     users_of_roles = Hash.new
 
@@ -127,6 +125,10 @@ class ImportWorker
         end
       rescue Exception => e
         puts "Failed user: " + user.inspect
+        failed_users.push({
+          "user" => user.inspect,
+          "error" => e.message
+        })
       end
 
     end
