@@ -1,9 +1,8 @@
 class ImportWorker
   @queue = :import
 
-  # XXX
-  def self.t(s)
-    s
+  def self.t(*args)
+    I18n.translate(*args)
   end
 
   def self.perform(job_id, organisation_key, user_dn, params)
