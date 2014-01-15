@@ -13,8 +13,7 @@
 	<th><%= t('.options') %></th>
       </tr>
 
-      <% index = 0 %>
-      <% Array(f.object.puavoMountpoint).each do |mountpoint| %>
+      <% Array(f.object.puavoMountpoint).each_index do |index| %>
       <tr>
 	<td><%= text_field_tag(
 		"#{f.object.class.to_s.downcase}[fs][]",
@@ -33,7 +32,6 @@
 		f.object.options[index],
 		:id => "#{ f.object.class.to_s.downcase }_options_#{ index }" ) %></td>
       </tr>
-      <% index += 1 %>
       <% end %>
       </table>
     </td>
