@@ -33,3 +33,7 @@ Feature: Manage devices
     And I press "Update"
     Then I should see "usb://input-audio-device"
     And I should see "usb://output-audio-device"
+    And I should see "nfs3"
+    And I should see "10.0.0.1/share"
+    And I should see "/home/share"
+    And I should see "-o rw"

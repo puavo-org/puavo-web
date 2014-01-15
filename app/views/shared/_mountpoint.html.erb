@@ -1,0 +1,21 @@
+
+<div class="content-box">
+<h3><%= t('.title') %></h3>
+
+<table class="widelist">
+  <tr>
+    <th><%= t('.filesystem') %></th>
+    <th><%= t('.path') %></th>
+    <th><%= t('.mountpoint') %></th>
+    <th><%= t('.options') %></th>
+  </tr>
+  <% Array(device.puavoMountpoint).each_index do |index| %>
+  <tr>
+    <td class="value_td"><%=h device.fs[index] %></td>
+    <td class="value_td"><%=h device.path[index] %></td>
+    <td class="value_td"><%=h device.mountpoint[index] %></td>
+    <td class="value_td"><%=h device.options[index] %></td>
+  </tr>
+  <% end %>
+</table>
+</div>

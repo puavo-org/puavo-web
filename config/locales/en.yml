@@ -650,6 +650,12 @@ en:
       select_value_open: Open
       select_value_psk: PSK
       default: Oletus
+    mountpoint:
+      title: Local and network mounts
+      filesystem: Filesystem
+      path: Path
+      mountpoint: Mountpoint
+      options: Options
     form_mountpoint:
       title: Local and network mounts
       filesystem: Filesystem
