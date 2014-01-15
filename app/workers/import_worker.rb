@@ -1,9 +1,66 @@
-class ImportWorker
-  @queue = :import
+class UsersPdf
 
-  def self.t(*args)
+  def initialize(organisation, school)
+    @organisation = organisation
+    @school = school
+    @role_name = String.new
+    @pdf = Prawn::Document.new(
+      :skip_page_creation => true,
+      :page_size => 'A4'
+    )
+  end
+
+  def add_users(users)
+    User.list_by_role(users).each do |users|
+      @pdf.start_new_page
+      @pdf.font "Times-Roman"
+      @pdf.font_size = 12
+      start_page_number = @pdf.page_number
+
+      # Sort users by sn + givenName
+      users = users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
+
+      @pdf.text "\n"
+
+      users_of_page_count = 0
+      users.each do |user|
+        @pdf.indent(300) do
+          @pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
+          @pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
+          if user.earlier_user
+            @pdf.text t('controllers.import.school_has_changed') + "\n\n\n"
+          else
+            @pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
+          end
+          users_of_page_count += 1
+          if users_of_page_count > 10 && user != users.last
+            users_of_page_count = 0
+            @pdf.start_new_page
+          end
+        end
+        @pdf.repeat start_page_number..@pdf.page_number do
+          @pdf.draw_text(
+            "#{@organisation.o}, #{@school.displayName}, #{users.first.roles.first.displayName}",
+            :at => @pdf.bounds.top_left
+          )
+        end
+      end
+
+    end
+  end
+
+  def render
+    @pdf.render
+  end
+
+  def t(*args)
     I18n.translate(*args)
   end
+
+end
+
+class ImportWorker
+  @queue = :import
 
   def self.perform(job_id, organisation_key, user_dn, params)
     db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
@@ -27,9 +84,18 @@ class ImportWorker
       :organisation_key => organisation_key
       })
 
+
     authentication.authenticate
 
+
     school = School.find(params["school_id"])
+    organisation = LdapOrganisation.current
+
+    users = User.hash_array_data_to_user(
+      params["users"],
+      params["columns"],
+      school
+    )
 
     users = User.hash_array_data_to_user( params["users"],
                                           params["columns"],
@@ -89,59 +155,18 @@ class ImportWorker
     users.each do |u| u.roles.reload end
 
     filename = organisation_key + "_" +
-      # XXX
-      # @school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
-      "TODOschoolCN" + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
+      school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
 
+    users_pdf = UsersPdf.new(organisation, school)
+    users_pdf.add_users(users)
 
-    db.set("pdf", create_pdf(users))
+    if not failed_users.empty?
+      db.set("failed_users", failed_users.to_json)
+    end
+    db.set("pdf", users_pdf.render())
     db.set("status", "finished")
   end
 
-  def self.create_pdf(users)
-    role_name = String.new
-    pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
 
-    users_by_role = User.list_by_role(users)
-    users_by_role.each do |users|
-      role_to_pdf(users, pdf)
-    end
-    pdf.render
-  end
-
-  def self.role_to_pdf(users, pdf)
-    pdf.start_new_page
-    pdf.font "Times-Roman"
-    pdf.font_size = 12
-    start_page_number = pdf.page_number
-
-    # Sort users by sn + givenName
-    users = users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
-
-    pdf.text "\n"
-
-    users_of_page_count = 0
-    users.each do |user|
-      pdf.indent(300) do
-        pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
-        pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
-        if user.earlier_user
-          pdf.text t('controllers.import.school_has_changed') + "\n\n\n"
-        else
-          pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
-        end
-        users_of_page_count += 1
-        if users_of_page_count > 10 && user != users.last
-          users_of_page_count = 0
-          pdf.start_new_page
-        end
-      end
-      pdf.repeat start_page_number..pdf.page_number do
-        # XXX
-        # pdf.draw_text "#{current_organisation.name}, #{@school.displayName}, #{users.first.roles.first.displayName}", :at => pdf.bounds.top_left
-        pdf.draw_text "TODO org name here, TODO school name, #{users.first.roles.first.displayName}", :at => pdf.bounds.top_left
-      end
-    end
-  end
 
 end
