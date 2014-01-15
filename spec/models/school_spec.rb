@@ -52,6 +52,18 @@ describe School do
 
   end
 
+  it "do not save empty  mountpoint " do
+    @school.fs = [""]
+    @school.path = [""]
+    @school.mountpoint = [""]
+    @school.options = [""]
+    @school.save!
+
+    reloaded_school = School.find(@school.id)
+    assert_equal nil, reloaded_school.puavoMountpoint
+
+  end
+
   describe "printer management" do
 
     it "can add printer" do

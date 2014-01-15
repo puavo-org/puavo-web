@@ -51,6 +51,13 @@ module Mountpoint
   def set_puavo_mountpoint
     new_mountpoint_values = Array.new
     self.fs.each_index do |index|
+      if fs[index].empty? &&
+          path[index].empty? &&
+          mountpoint[index].empty? &&
+          options[index].empty?
+        next
+      end
+
       new_mountpoint_values.push( { "fs" => fs[index],
                                     "path" => path[index],
                                     "mountpoint" => mountpoint[index],
