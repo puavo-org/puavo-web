@@ -646,6 +646,12 @@ fi:
       select_value_open: Avoin
       select_value_psk: PSK
       default: Oletus
+    form_mountpoint:
+      title: Levyliitokset (paikallinen/verkko)
+      filesystem: Tiedostojärjestelmä
+      path: Polku
+      mountpoint: Liitoskohta
+      options: Parametrit
   devices:
     index:
       add_new_device: "Lisää uusi laite"

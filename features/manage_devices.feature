@@ -11,9 +11,9 @@ Feature: Manage devices
       | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
     And I am logged in as "pavel" with password "secret"
     And the following devices:
-      | puavoHostname | macAddress        | puavoDeviceType |
-      | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       |
-      | fatclient-02  | a0:4e:68:94:a1:7b | fatclient       |
+      | puavoHostname | macAddress        | puavoDeviceType | puavoMountpoint                                                      |
+      | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
+      | fatclient-02  | a0:4e:68:94:a1:7b | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
 
   Scenario: Add new printer to Puavo
     Given I am on the new printer device page
@@ -26,6 +26,10 @@ Feature: Manage devices
     And I press "Edit" on the "fatclient-01" row
     When I fill in "Default input audio device" with "usb://input-audio-device"
     And I fill in "Default output audio device" with "usb://output-audio-device"
+    And I fill in "device_fs_0" with "nfs3"
+    And I fill in "device_path_0" with "10.0.0.1/share"
+    And I fill in "device_mountpoint_0" with "/home/share"
+    And I fill in "device_options_0" with "-o rw"
     And I press "Update"
     Then I should see "usb://input-audio-device"
     And I should see "usb://output-audio-device"
