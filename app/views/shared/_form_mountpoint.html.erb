@@ -3,40 +3,41 @@
 
 <table>
   <tr>
-    <th class="label_for_input_text_list"></th>
-    <th><%= t('.filesystem') %></th>
-    <th><%= t('.path') %></th>
-    <th><%= t('.mountpoint') %></th>
-    <th><%= t('.options') %></th>
-  </tr>
-
-  <% index = 0 %>
-  <% Array(f.object.puavoMountpoint).each do |mountpoint| %>
-  <tr>
     <td class="label_for_input_text_list"></td>
-    <td><%= text_field_tag(
-            "#{f.object.class.to_s.downcase}[fs][]",
-	    f.object.fs[index],
-	    :id => "#{ f.object.class.to_s.downcase }_fs_#{ index }" ) %></td>
-    <td><%= text_field_tag(
-	    "#{f.object.class.to_s.downcase}[path][]",
-	    f.object.path[index],
-	    :id => "#{ f.object.class.to_s.downcase }_path_#{ index }" ) %></td>
-    <td><%= text_field_tag(
-	    "#{f.object.class.to_s.downcase}[mountpoint][]",
-	    f.object.mountpoint[index],
-	    :id => "#{ f.object.class.to_s.downcase }_mountpoint_#{ index }" ) %></td>
-    <td><%= text_field_tag(
-	    "#{f.object.class.to_s.downcase}[options][]",
-	    f.object.options[index],
-	    :id => "#{ f.object.class.to_s.downcase }_options_#{ index }" ) %></td>
+    <td>
+      <table class="table-in-table">
+      <tr>
+	<th><%= t('.filesystem') %></th>
+	<th><%= t('.path') %></th>
+	<th><%= t('.mountpoint') %></th>
+	<th><%= t('.options') %></th>
+      </tr>
+
+      <% index = 0 %>
+      <% Array(f.object.puavoMountpoint).each do |mountpoint| %>
+      <tr>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[fs][]",
+		f.object.fs[index],
+		:id => "#{ f.object.class.to_s.downcase }_fs_#{ index }" ) %></td>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[path][]",
+		f.object.path[index],
+		:id => "#{ f.object.class.to_s.downcase }_path_#{ index }" ) %></td>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[mountpoint][]",
+		f.object.mountpoint[index],
+		:id => "#{ f.object.class.to_s.downcase }_mountpoint_#{ index }" ) %></td>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[options][]",
+		f.object.options[index],
+		:id => "#{ f.object.class.to_s.downcase }_options_#{ index }" ) %></td>
+      </tr>
+      <% index += 1 %>
+      <% end %>
+      </table>
+    </td>
   </tr>
-  <% index += 1 %>
-  <% end %>
-
-</table>
-
-<table>
   <tr>
     <td class="label_for_input_text_list"></td>
     <td>
