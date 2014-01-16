@@ -1,12 +1,21 @@
 class UsersPdf
 
-  def initialize(organisation, school)
+  # @param [LdapOrganisation] organisation
+  # @param [School] school
+  # @param [String] create_timestamp Timestamp used to create users.
+  # (User#puavoTimestamp)
+  def initialize(organisation, school, create_timestamp)
+    @create_timestamp = create_timestamp
     @organisation = organisation
     @school = school
     @pdf = Prawn::Document.new(
       :skip_page_creation => true,
       :page_size => 'A4'
     )
+  end
+
+  def existing?(user)
+    user.puavoTimestamp != @create_timestamp
   end
 
   def add_users(users)
@@ -26,7 +35,7 @@ class UsersPdf
         @pdf.indent(300) do
           @pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
           @pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
-          if user.earlier_user
+          if existing?(user)
             @pdf.text t('controllers.import.school_has_changed') + "\n\n\n"
           else
             @pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
@@ -113,11 +122,15 @@ class ImportWorker
       end
       db.set("status", "working #{ i }/#{ users.size }")
 
+      # If user existed already just copy the attributes from the new unsaved
+      # user object to the existing one
       if user.earlier_user
         user.earlier_user.change_school(user.puavoSchool.to_s)
         user.earlier_user.role_name = user.role_name
         user.earlier_user.puavoTimestamp = Array(user.earlier_user.puavoTimestamp).push change_school_timestamp
         user.earlier_user.new_password = user.new_password
+
+        # and continue importing with the old one
         user = user.earlier_user
       else
         user.set_generated_password if generate_password
@@ -140,7 +153,7 @@ class ImportWorker
 
     users.each{ |u| u.roles.reload }
 
-    users_pdf = UsersPdf.new(organisation, school)
+    users_pdf = UsersPdf.new(organisation, school, create_timestamp)
     users_pdf.add_users(ok_users)
 
     if not failed_users.empty?
