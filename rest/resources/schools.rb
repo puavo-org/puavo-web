@@ -14,6 +14,7 @@ class School < LdapModel
   ldap_map(:puavoActiveService, :external_services) do |es|
       Array(es).map { |s| s.downcase.strip }
   end
+  ldap_map( :puavoMountpoint, :mountpoints){ |m| Array(m) }
 
   def self.ldap_base
     "ou=Groups,#{ organisation["base"] }"

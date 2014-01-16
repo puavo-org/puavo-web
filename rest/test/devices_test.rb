@@ -10,7 +10,8 @@ describe PuavoRest::Devices do
       :displayName => "Gryffindor",
       :puavoDeviceImage => "schoolprefimage",
       :puavoPersonalDevice => true,
-      :puavoAllowGuest => true
+      :puavoAllowGuest => true,
+      :puavoMountpoint => '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}'
     )
     @school_without_fallback_value = School.create(
       :cn => "gryffindor2",
@@ -157,6 +158,11 @@ describe PuavoRest::Devices do
     it "has preferred language" do
       assert @data["preferred_language"]
       assert_equal "en", @data["preferred_language"]
+    end
+
+    it "has mountpoint" do
+      assert_equal('{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
+                   @data["mountpoints"].first)
     end
   end
 

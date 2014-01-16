@@ -79,6 +79,14 @@ class Device < Host
        get_own(:personal_device)
      end
   end
+
+  def mountpoints
+     if get_own(:mountpoints).empty?
+       school.mountpoints
+     else
+       get_own(:mountpoints)
+     end
+  end
 end
 
 class Devices < LdapSinatra
