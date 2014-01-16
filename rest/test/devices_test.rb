@@ -59,7 +59,8 @@ describe PuavoRest::Devices do
         :puavoAllowGuest => false,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
-        :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo"
+        :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
+        :puavoMountpoint => '{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/public/share","options":"-o rw"}'
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
@@ -118,6 +119,11 @@ describe PuavoRest::Devices do
       data = JSON.parse last_response.body
 
       assert_equal "sv", data["preferred_language"]
+    end
+
+    it "has mountpoint" do
+      assert_equal('{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/public/share","options":"-o rw"}',
+                   @data["mountpoints"].first)
     end
 
   end

@@ -17,6 +17,7 @@ class Device < Host
   ldap_map :puavoPrinterDeviceURI, :printer_device_uri
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
   ldap_map :puavoDeviceDefaultAudioSink, :default_audio_sink
+  ldap_map( :puavoMountpoint, :mountpoints){ |m| Array(m) }
 
 
   def self.ldap_base
