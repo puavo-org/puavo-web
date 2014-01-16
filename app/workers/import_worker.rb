@@ -3,7 +3,6 @@ class UsersPdf
   def initialize(organisation, school)
     @organisation = organisation
     @school = school
-    @role_name = String.new
     @pdf = Prawn::Document.new(
       :skip_page_creation => true,
       :page_size => 'A4'
