@@ -84,7 +84,6 @@ class ImportWorker
       :organisation_key => organisation_key
       })
 
-
     authentication.authenticate
 
 
@@ -99,30 +98,33 @@ class ImportWorker
 
     failed_users = []
 
-    users_of_roles = Hash.new
-
-
     puavo_ids = IdPool.next_puavo_id_range(users.select{ |u| u.puavoId.nil? }.count)
     id_index = 0
+
+    # Generate password if import data does not contain one
+    generate_password = !params["columns"].include?("new_password")
 
     User.reserved_uids = []
 
     users.each do |user, i|
+      if user.puavoId.nil?
+        user.puavoId = puavo_ids[id_index]
+        id_index += 1
+      end
+
+      if user.earlier_user
+        user.earlier_user.change_school(user.puavoSchool.to_s)
+        user.earlier_user.role_name = user.role_name
+        user.earlier_user.puavoTimestamp = Array(user.earlier_user.puavoTimestamp).push change_school_timestamp
+        user.earlier_user.new_password = user.new_password
+        user = user.earlier_user
+      else
+        user.set_generated_password if generate_password
+        user.puavoTimestamp = create_timestamp
+      end
+
       begin
-        if user.puavoId.nil?
-          user.puavoId = puavo_ids[id_index]
-          id_index += 1
-        end
-        if user.earlier_user
-          user.earlier_user.change_school(user.puavoSchool.to_s)
-          user.earlier_user.role_name = user.role_name
-          user.earlier_user.puavoTimestamp = Array(user.earlier_user.puavoTimestamp).push change_school_timestamp
-          user.earlier_user.new_password = user.new_password
-          user.earlier_user.save!
-        else
-          user.puavoTimestamp = create_timestamp
-          user.save!
-        end
+        user.save!
       rescue Exception => e
         puts "Failed user: " + user.inspect
         failed_users.push({
@@ -133,31 +135,7 @@ class ImportWorker
 
     end
 
-    # If data of the users include new password then do not generate new password when creating pdf-file.
-    reset_password = params["columns"].include?("new_password") ? false : true
-    password_timestamp = "password:#{user_dn}:#{ Time.now.getutc.strftime("%Y%m%d%H%M%SZ") }"
-
-    users.each do |user|
-      user.set_generated_password if params[:reset_password] == "true"
-      # Update puavoTimestamp
-      user.puavoTimestamp = Array(user.puavoTimestamp).push password_timestamp
-      user.save!
-    end
-
-    if params[:change_school_timestamp]
-      User.find( :all,
-                 :attribute => "puavoTimestamp",
-                 :value => params[:change_school_timestamp] ).each do |user|
-        user.earlier_user = true
-        users.push user
-      end
-    end
-
-    # Reload roles association
-    users.each do |u| u.roles.reload end
-
-    filename = organisation_key + "_" +
-      school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
+    users.each{ |u| u.roles.reload }
 
     users_pdf = UsersPdf.new(organisation, school)
     users_pdf.add_users(users)
@@ -165,10 +143,9 @@ class ImportWorker
     if not failed_users.empty?
       db.set("failed_users", failed_users.to_json)
     end
+
     db.set("pdf", users_pdf.render())
     db.set("status", "finished")
   end
-
-
 
 end
