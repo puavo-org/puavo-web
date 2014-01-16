@@ -1,9 +1,9 @@
 
 <h1><%= t('link.user_mass_import.new') %></h1>
 
-<dd>
+<div class="import-status" style="display: none;">
 <%= @import_status %>
-</dd>
+</div>
 
 <% if @import_status == "finished" %>
 
@@ -35,6 +35,23 @@
 Importing users. Please wait for few minutes.
 </p>
 
-
 <% end %>
+
+<script>
+(function(){
+
+     var status = document
+         .getElementsByClassName("import-status")[0]
+         .innerText
+         ;
+
+    if (/finished/.test(status)) return;
+
+    document.write("Reloading soon...");
+    setTimeout(function(){
+        window.location.reload();
+    }, 1000*10);
+
+}());
+</script>
 
