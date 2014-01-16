@@ -150,7 +150,6 @@ Feature: User mass import
       | Ben | Mabey | ben.mabey | Class 4 | Student |
     When I press "Create users"
     Then I should see "Import is now ready."
-    And I should see "You can now generate passwords to a printable PDF file."
 
   Scenario: User mass import when user type is not defined and select empty value
     Given I send to the following user mass import data
