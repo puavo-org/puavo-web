@@ -11,7 +11,7 @@
 
   <% if @failed_users %>
       <h3>
-      Failed to create some users
+      <%= t('.title_with_error') %>
       </h3>
       <p>
         <pre><%= @failed_users.inspect %></pre>

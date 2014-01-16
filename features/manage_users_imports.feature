@@ -34,24 +34,10 @@ Feature: User mass import
       | Ben    | Mabey | ben.mabey   | Class 4 | Student |
       | Joseph | Wilk  | joseph.wilk | Class 4 | Student |
     When I press "Create users"
-    Then I should see "Users (2) was successfully created."
-    And I should see "You can now generate passwords to a printable PDF file."
-    And the memberUid should include "ben.mabey" on the "Class 4" role
-    And the member should include "ben.mabey" on the "Class 4" role
-    And the memberUid should include "joseph.wilk" on the "Class 4" role
-    And the member should include "joseph.wilk" on the "Class 4" role
-    And the memberUid should include "ben.mabey" on the "School 1" school
-    And the member should include "ben.mabey" on the "School 1" school
-    And the memberUid should include "joseph.wilk" on the "School 1" school
-    And the member should include "joseph.wilk" on the "School 1" school
-    And the memberUid should include "ben.mabey" on the "Class 4" group
-    And the member should include "ben.mabey" on the "Class 4" group
-    And the memberUid should include "joseph.wilk" on the "Class 4" group
-    And the member should include "joseph.wilk" on the "Class 4" group
-    And the memberUid should include "ben.mabey" on the "Domain Users" samba group
-    And the memberUid should include "joseph.wilk" on the "Domain Users" samba group
-    When I press the PDF button "Generate passwords PDF"
-    Then I should see "Name: Ben Mabey" on the PDF
+    Then I should see "finished"
+    When I press the PDF button "Download passwords PDF"
+    Then I should see "School 1" on the PDF
+    And I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
     And I should see "Name: Joseph Wilk" on the PDF
     And I should see "Username: joseph.wilk" on the PDF
@@ -74,16 +60,8 @@ Feature: User mass import
       | Joseph | Wilk  | joseph.wilk | Class 4 | Student |
     When I cut nextPuavoId value by one
     And I press "Create users"
-    Then I should see "All users was not successfully created!"
-    And I should see "Successful: 1"
-    And I should see "Failed: 1"
-    And I should see "Ben"
-    And I should see "Mabey"
-    And I should see "ben.mabey"
-    And I should see "Class 4"
-    And I should see "Student "
-    And I should see "You can now generate passwords to a printable PDF file."
-    When I press the PDF button "Generate passwords PDF"
+    Then I should see "All users were not successfully created!"
+    When I press the PDF button "Download passwords PDF"
     Then I should see "Name: Joseph Wilk" on the PDF
     And I should see "Username: joseph.wilk" on the PDF
     And I should see "Password" on the PDF
@@ -92,33 +70,25 @@ Feature: User mass import
   Scenario: User mass import when role is not defined
     Given I send to the following user mass import data
     """
-    Ben	Mabey	Student
-    Ben Karl	Mabey	Student
+    Ben Mabey Student
+    Ben Karl  Mabey Student
     """
     Then I should see "Select correct name of column for each data"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "User type" from "users_import_columns[2]"
     And I press "Validates users"
-    #Then I should see "Select the role you want to add users or start again and add the role to the user list"
     Then I should see "Following field value must be select when create new users:"
     And I should not see "User type"
     And I can not select "Class 5" from the "Role"
     When I select "Class 4" from "user[role_name]"
     And I press "Continue"
-    #Then I should see "Username has already been taken"
-    #And "Class 4" should be selected for "users_import_invalid_list_3_0"
-    #And I can not select "Class 5" from the "users_import_invalid_list_3_0"
-    #When I fill in "users_import_invalid_list_0_0" with "Ben Karl"
-    #And I fill in "users_import_invalid_list_4_0" with "benk.mabey"
-    #And I press "Revalidate"
     Then I should see the following users:
       | Ben      | Mabey | Class 4 | Student | ben.mabey  |
       | Ben Karl | Mabey | Class 4 | Student | benkarl.mabey |
     When I press "Create users"
-    Then I should see "Users (2) was successfully created."
-    And I should see "You can now generate passwords to a printable PDF file."
-    When I press the PDF button "Generate passwords PDF"
+    Then I should see "Import is now ready."
+    When I press the PDF button "Download passwords PDF"
     Then I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
     And I should see "Password" on the PDF
@@ -154,9 +124,7 @@ Feature: User mass import
       | Ben      | Mabey | Class 4 | Student | ben.mabey  |
       | Ben Karl | Mabey | Class 4 | Student | benkarl.mabey |
     When I press "Create users"
-    Then I should see "Users (2) was successfully created."
-    And I should see "You can now generate passwords to a printable PDF file."
-    When I press the PDF button "Generate passwords PDF"
+    When I press the PDF button "Download passwords PDF"
     Then I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
     And I should see "Password" on the PDF
@@ -181,7 +149,7 @@ Feature: User mass import
     Then I should see the following users:
       | Ben | Mabey | ben.mabey | Class 4 | Student |
     When I press "Create users"
-    Then I should see "Users (1) was successfully created."
+    Then I should see "Import is now ready."
     And I should see "You can now generate passwords to a printable PDF file."
 
   Scenario: User mass import when user type is not defined and select empty value
@@ -209,7 +177,7 @@ Feature: User mass import
 #      | Ben      | Mabey | Class 4 | Student | ben.mabey  |
 #      | Ben Karl | Mabey | Class 4 | Student | benk.mabey |
 #    When I press "Create users"
-#    Then I should see "Users (2) was successfully created."
+#    Then I should see "Import is now ready."
 #    And I should see "You can print users list to paper, download pdf-file."
 #    When I follow the PDF link "download pdf-file."
 #    Then I should see "Name: Ben Mabey" on the PDF
@@ -410,9 +378,8 @@ Feature: User mass import
     When I check "users[5][0]"
     And I check "users[5][1]"
     And I press "Create users"
-    Then I should see "Users (3) was successfully created."
-    And I should see "You can now generate passwords to a printable PDF file."
-    When I press the PDF button "Generate passwords PDF"
+    Then I should see "Import is now ready."
+    When I press the PDF button "Download passwords PDF"
     Then I should see "Name: Jane Doe" on the PDF
     And I should see "Username: jane.doe" on the PDF
     And I should see "Password" on the PDF
@@ -463,9 +430,7 @@ Feature: User mass import
     When I check "users[6][0]"
     And I check "users[6][1]"
     And I press "Create users"
-    Then I should see "Users (3) was successfully created."
-    And I should see "You can now generate passwords to a printable PDF file."
-    When I press the PDF button "Generate passwords PDF"
+    When I press the PDF button "Download passwords PDF"
     Then I should see "Name: Jane Doe" on the PDF
     And I should see "Username: jane.doe" on the PDF
     And I should see "Password" on the PDF
