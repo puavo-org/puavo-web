@@ -96,6 +96,7 @@ class ImportWorker
     )
 
     failed_users = []
+    ok_users = []
 
     puavo_ids = IdPool.next_puavo_id_range(users.select{ |u| u.puavoId.nil? }.count)
     id_index = 0
@@ -110,6 +111,7 @@ class ImportWorker
         user.puavoId = puavo_ids[id_index]
         id_index += 1
       end
+      db.set("status", "working #{ i }/#{ users.size }")
 
       if user.earlier_user
         user.earlier_user.change_school(user.puavoSchool.to_s)
@@ -124,6 +126,7 @@ class ImportWorker
 
       begin
         user.save!
+        ok_users.push(user)
       rescue Exception => e
         puts "Failed user: " + user.inspect
         failed_users.push({
@@ -133,11 +136,12 @@ class ImportWorker
       end
 
     end
+    db.set("status", "rendering pdf")
 
     users.each{ |u| u.roles.reload }
 
     users_pdf = UsersPdf.new(organisation, school)
-    users_pdf.add_users(users)
+    users_pdf.add_users(ok_users)
 
     if not failed_users.empty?
       db.set("failed_users", failed_users.to_json)
