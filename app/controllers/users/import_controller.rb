@@ -151,9 +151,8 @@ class Users::ImportController < ApplicationController
       @failed_users = Array(JSON.parse(fail_json))
     end
 
-
     if @import_status.nil?
-      return render :text => "unknown job", :status => 404
+      return render_error_page "Unkown import job"
     end
 
     render :status, :status => :not_found
@@ -166,7 +165,7 @@ class Users::ImportController < ApplicationController
     pdf_data = db.get("pdf")
 
     if not pdf_data
-      return render :text => "unknown job or not ready", :status => 404
+      return render_error_page "unknown job or not ready"
     end
 
     @import_status = db.del("status")
