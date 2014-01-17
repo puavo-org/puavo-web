@@ -58,8 +58,11 @@ en:
     new_user: New user
     user_mass_import:
       new: Users mass import
-      handle_user_data: Handle the user data
+      progress: Importing users. This can take few minutes. Please wait without closing the browser.
+      status: Status
+      ready: Import is now ready. Click the button below to download user list. Note that you can download this only once.
       download_passwords_pdf: Download passwords PDF
+      handle_user_data: Handle the user data
       revalidate: Revalidate
       validate: Validates users
       create: Create users

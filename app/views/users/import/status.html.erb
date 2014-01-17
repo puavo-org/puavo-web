@@ -1,9 +1,7 @@
 
 <h1><%= t('link.user_mass_import.new') %></h1>
 
-<div class="import-status" style="display: none;">
-<%= @import_status %>
-</div>
+  <!-- <%= @failed_users.inspect %> -->
 
 <% if @import_status == "finished" %>
 
@@ -19,7 +17,7 @@
   <% end %>
 
   <p>
-    Import is now ready. Download passwords from below. Note that you can download this only once.
+    <%= t("link.user_mass_import.ready") %>
   </p>
 
   <%= button_to(
@@ -32,10 +30,16 @@
 <% else %>
 
 <p>
-Importing users. Please wait for few minutes.
+<%= t("link.user_mass_import.progress") %>
 </p>
 
+
 <% end %>
+
+<p>
+<%= t("link.user_mass_import.status") %>:
+<code class="import-status"><%= @import_status %></code>
+</p>
 
 <script>
 (function(){
@@ -45,9 +49,9 @@ Importing users. Please wait for few minutes.
          .innerText
          ;
 
+    if (window.console) console.log("job status:", status);
     if (/finished/.test(status)) return;
 
-    document.write("Reloading soon...");
     setTimeout(function(){
         window.location.reload();
     }, 1000*10);
