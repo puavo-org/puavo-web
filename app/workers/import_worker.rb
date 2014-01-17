@@ -78,6 +78,11 @@ class ImportWorker
     change_school_timestamp = "change_school:#{user_dn}:" + timestamp
 
     encrypted_password = db.get("pw")
+    if encrypted_password.nil?
+      db.set("status", "error: password missing")
+      return
+    end
+
     db.del("pw")
     db.set("status", "started")
 
