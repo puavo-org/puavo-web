@@ -70,8 +70,8 @@ Feature: User mass import
   Scenario: User mass import when role is not defined
     Given I send to the following user mass import data
     """
-    Ben Mabey Student
-    Ben Karl  Mabey Student
+    Ben	Mabey	Student
+    Ben Karl	Mabey	Student
     """
     Then I should see "Select correct name of column for each data"
     When I select "Given name" from "users_import_columns[0]"
