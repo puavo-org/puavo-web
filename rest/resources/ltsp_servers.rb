@@ -153,6 +153,18 @@ class LtspServer < Host
      end
   end
 
+  computed_attr :mountpoints
+  def mountpoints
+    schools_mountpoints = []
+    schools.each do |school|
+      schools_mountpoints += school.mountpoints.map{ |m| JSON.parse(m) }
+    end
+    schools_mountpoints
+  end
+
+  def schools
+    @schools ||= school_dns.map{ |dn| School.by_dn(dn) }
+  end
 end
 
 # Load balancer resource for LTSP servers

@@ -139,4 +139,39 @@ describe PuavoRest::LtspServers do
     assert_equal "newserver", data["hostname"]
   end
 
+  it "has mountpoints by schools" do
+    @school2 = School.create(
+      :cn => "exampl2",
+      :displayName => "Example school 2",
+      :puavoMountpoint => '{"fs":"nfs3","path":"10.0.0.2/share","mountpoint":"/home/school3/share","options":"-o r"}'
+    )
+
+    @school3 = School.create(
+      :cn => "exampl3",
+      :displayName => "Example school 3",
+      :puavoMountpoint => '{"fs":"nfs4","path":"10.0.0.3/share","mountpoint":"/home/school3/share","options":"-o r"}'   )
+
+    create_server(
+      :puavoHostname => "testserver",
+      :macAddress => "bc:5f:f4:56:59:71",
+      :puavoSchool => [ @school2.dn, @school3.dn ]
+    )
+
+    get "/v3/ltsp_servers/testserver"
+    data = JSON.parse(last_response.body)
+
+    correct_mountpoints = [ { "fs" => "nfs3",
+                              "path" => "10.0.0.2/share",
+                              "mountpoint" => "/home/school3/share",
+                              "options" => "-o r" },
+                            { "fs" => "nfs4",
+                              "path" => "10.0.0.3/share",
+                              "mountpoint" => "/home/school3/share",
+                              "options" => "-o r" } ].sort{ |a,b| a.to_s <=> b.to_s }
+    data_mountpoints = data["mountpoints"].sort{ |a,b| a.to_s <=> b.to_s }
+
+    assert_equal( correct_mountpoints,
+                  data_mountpoints )
+
+  end
 end
