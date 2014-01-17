@@ -114,5 +114,11 @@ class ApplicationController < ActionController::Base
 
   end
 
+  # Render generic error page in the current url with a error message
+  def render_error_page(msg="Unkown error")
+    @error_message = msg
+    render :status => 404, :template => "/errors/generic.html.erb"
+  end
+
 
 end
