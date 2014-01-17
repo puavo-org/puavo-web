@@ -11,7 +11,8 @@ describe PuavoRest::Devices do
       :puavoDeviceImage => "schoolprefimage",
       :puavoPersonalDevice => true,
       :puavoAllowGuest => true,
-      :puavoMountpoint => '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}'
+      :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
+                            '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
     @school_without_fallback_value = School.create(
       :cn => "gryffindor2",
@@ -60,8 +61,7 @@ describe PuavoRest::Devices do
         :puavoAllowGuest => false,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
-        :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
-        :puavoMountpoint => '{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/public/share","options":"-o rw"}'
+        :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo"
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
@@ -122,11 +122,6 @@ describe PuavoRest::Devices do
       assert_equal "sv", data["preferred_language"]
     end
 
-    it "has mountpoint" do
-      assert_equal('{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/public/share","options":"-o rw"}',
-                   @data["mountpoints"].first)
-    end
-
   end
 
   describe "device information with school fallback" do
@@ -136,7 +131,9 @@ describe PuavoRest::Devices do
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoPreferredServer => @server1.dn,
-        :puavoSchool => @school.dn
+        :puavoSchool => @school.dn,
+        :puavoMountpoint => [ '{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/device/share","options":"-o rw"}',
+                              '{"fs":"nfs3","path":"10.4.4.4/share","mountpoint":"/home/school/share","options":"-o r"}' ]
       )
       get "/v3/devices/athin"
       assert_200
@@ -161,8 +158,21 @@ describe PuavoRest::Devices do
     end
 
     it "has mountpoint" do
-      assert_equal('{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
-                   @data["mountpoints"].first)
+      correct_mountpoints = [ { "fs" => "nfs4",
+                                "path" => "10.0.0.2/share",
+                                "mountpoint" => "/home/device/share",
+                                "options" => "-o rw" },
+                              { "fs" => "nfs3",
+                                "path" => "10.4.4.4/share",
+                                "mountpoint" => "/home/school/share",
+                                "options" => "-o r" },
+                              { "fs" => "nfs4",
+                                "path" => "10.5.5.3/share",
+                                "mountpoint" => "/home/school/public",
+                                "options" => "-o r" } ].sort{ |a,b| a.to_s <=> b.to_s }
+      data_mountpoints = @data["mountpoints"].sort{ |a,b| a.to_s <=> b.to_s }
+      assert_equal( correct_mountpoints,
+                    data_mountpoints )
     end
   end
 

@@ -81,11 +81,15 @@ class Device < Host
   end
 
   def mountpoints
-     if get_own(:mountpoints).empty?
-       school.mountpoints
-     else
-       get_own(:mountpoints)
-     end
+    device_mounts = get_own(:mountpoints).map{ |m| JSON.parse(m) }
+    school_mounts = school.mountpoints.map{ |m| JSON.parse(m) }
+
+    school_mounts.each do |mounts|
+      next if device_mounts.map{ |m| m["mountpoint"] }.include?(mounts["mountpoint"])
+
+      device_mounts.push(mounts)
+    end
+    device_mounts
   end
 end
 
