@@ -71,7 +71,14 @@ class ImportWorker
   @queue = "import:#{ Socket.gethostname }"
 
   def self.perform(job_id, organisation_key, user_dn, params)
+    started = Time.now
+
     db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+
+    flog = FLOG.merge(
+      :organisation_key => organisation_key,
+      :user_dn => user_dn
+    )
 
     timestamp = Time.now.getutc.strftime("%Y%m%d%H%M%SZ")
     create_timestamp = "create:#{user_dn}:" + timestamp
@@ -158,15 +165,24 @@ class ImportWorker
 
     users.each{ |u| u.roles.reload }
 
+    log_msg = { :user_count => users.size }
+
     users_pdf = UsersPdf.new(organisation, school, create_timestamp)
     users_pdf.add_users(ok_users)
 
     if not failed_users.empty?
       db.set("failed_users", failed_users.to_json)
+      log_msg[:failed_users] = failed_users
     end
 
     db.set("pdf", users_pdf.render())
     db.set("status", "finished")
+
+
+    flog.info "import finished", log_msg.merge(
+      :duration => (Time.now - started).to_f.round(3)
+    )
+
   end
 
 end
