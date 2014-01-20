@@ -262,8 +262,9 @@ module Puavo
         return @authorized = true
       end
 
-      # Authorize organisation owners
+      # XXX: This line if freaking slow!
       organisation = LdapOrganisation.first
+
       if organisation && organisation.owner && organisation.owner.include?(dn)
         logger.info "Authorization ok: Organisation owner #{ dn }"
         return @authorized = true
