@@ -1,0 +1,3 @@
+#!/bin/sh
+
+bundle exec rake resque:work QUEUE="import:$(hostname)" VERBOSE=true --trace

@@ -1,0 +1,12 @@
+description "puavo-web-worker"
+
+start on puavo-web
+stop on puavo-web
+
+chdir /var/app/puavo-web
+
+env RAILS_ENV=production
+
+exec sudo -E -u puavo ./script/puavo-web-worker
+
+respawn
