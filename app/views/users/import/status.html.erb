@@ -1,20 +1,7 @@
 
 <h1><%= t('link.user_mass_import.new') %></h1>
 
-  <!-- <%= @failed_users.inspect %> -->
-
 <% if @import_status == "finished" %>
-
-  <!-- <%= @failed_users.inspect %> -->
-
-  <% if @failed_users %>
-      <h3>
-      <%= t('.title_with_error') %>
-      </h3>
-      <p>
-        <pre><%= @failed_users.inspect %></pre>
-      </p>
-  <% end %>
 
   <p>
     <%= t("link.user_mass_import.ready") %>
@@ -40,6 +27,21 @@
 <%= t("link.user_mass_import.status") %>:
 <code class="import-status"><%= @import_status %></code>
 </p>
+
+
+<% if @failed_users %>
+    <p class="message_alert">
+        <%= t('.title_with_error') %>
+    </p>
+    <ul>
+        <% @failed_users.each do |u| %>
+            <li>
+                <%= u["error"] %>
+                <!-- <%= u.inspect %> -->
+            </li>
+        <% end %>
+    </ul>
+<% end %>
 
 <script>
 (function(){
