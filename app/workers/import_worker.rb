@@ -68,7 +68,7 @@ class UsersPdf
 end
 
 class ImportWorker
-  @queue = :import
+  @queue = "import:#{ Socket.gethostname }"
 
   def self.perform(job_id, organisation_key, user_dn, params)
     db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
