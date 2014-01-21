@@ -4,13 +4,15 @@ set -x
 
 echo "hogwarts.opinsys.net" > /etc/puavo/domain
 
-# Generate "deployment" workers keys because they were removed during install
-make worker-keys
-cp config/resque_worker_*_key /etc/puavo-web
 
 dpkg -i ../*deb
 set -eu
 apt-get install -f -y --force-yes
+
+# Generate "deployment" workers keys because they were removed during install
+make worker-keys
+
+cp config/resque_worker_*_key /etc/puavo-web
 
 stop puavo-web || true
 stop puavo-rest || true
