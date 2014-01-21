@@ -11,6 +11,10 @@ override_dh_auto_test:
 	$(MAKE) -C rest test
 	$(MAKE) test
 
+override_dh_installinit:
+	dh_installinit
+	dh_installinit --name=puavo-web-worker.upstart
+
 # Disable. Adds weird libmagickcore5 dependcy which in not installable on precise
 override_dh_shlibdeps:
 
