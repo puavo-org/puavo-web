@@ -9,7 +9,7 @@ RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
-build:
+build: worker-keys
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	npm install --registry http://registry.npmjs.org # nib for stylys
@@ -17,7 +17,6 @@ build:
 	bundle exec rake assets:precompile
 	bundle exec rake db:migrate
 	RAILS_ENV=test bundle exec rake db:migrate
-	$(MAKE) worker-keys
 	$(MAKE) tags
 
 update-gemfile-lock: clean
