@@ -27,7 +27,7 @@ clean-for-install:
 	# Remove testing gems
 	bundle install --deployment --without test
 	bundle clean
-	rm -f config/secret_token.rb
+	rm -f config/initializers/secret_token.rb
 
 	# Remove any testing or development configuration files
 	rm -f config/*.yml
