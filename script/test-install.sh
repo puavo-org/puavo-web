@@ -4,6 +4,8 @@ set -x
 
 echo "hogwarts.opinsys.net" > /etc/puavo/domain
 
+cp config/resque_worker_*_key /etc/puavo-web
+
 dpkg -i ../*deb
 set -eu
 apt-get install -f -y --force-yes

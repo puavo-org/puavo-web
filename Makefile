@@ -116,6 +116,9 @@ install: clean-for-install mkdirs
 	cp config/initializers/secret_token.rb.development $(CONF_DIR)/secret_token.rb
 	ln -s ../../../../etc/puavo-web/secret_token.rb $(RAILS_CONFIG_DIR)/initializers/secret_token.rb
 
+	ln -s ../../../../etc/puavo-web/resque_worker_private_key $(RAILS_CONFIG_DIR)/resque_worker_private_key
+	ln -s ../../../../etc/puavo-web/resque_worker_public_key $(RAILS_CONFIG_DIR)/resque_worker_public_key
+
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
