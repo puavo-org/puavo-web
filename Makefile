@@ -27,7 +27,10 @@ clean-for-install:
 	# Remove testing gems
 	bundle install --deployment --without test
 	bundle clean
+	# Do not put development keys in to the package
 	rm -f config/initializers/secret_token.rb
+	rm -f config/resque_worker_private_key
+	rm -f config/resque_worker_public_key
 
 	# Remove any testing or development configuration files
 	rm -f config/*.yml
