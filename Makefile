@@ -17,11 +17,16 @@ build:
 	bundle exec rake assets:precompile
 	bundle exec rake db:migrate
 	RAILS_ENV=test bundle exec rake db:migrate
+	$(MAKE) worker-keys
 	$(MAKE) tags
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
 	bundle install
+
+worker-keys:
+	openssl genrsa -out config/resque_worker_private_key 2048
+	openssl rsa -in config/resque_worker_private_key -pubout > config/resque_worker_public_key
 
 clean-for-install:
 	# Remove testing gems

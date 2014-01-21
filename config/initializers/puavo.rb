@@ -22,23 +22,19 @@ rescue Errno::ENOENT => e
   puts "WARNING: " + e.to_s
 end
 
-begin
-  Puavo::RESQUE_WORKER_PRIVATE_KEY =
-    OpenSSL::PKey::RSA.new( 
-      File.read(
-        File.join(Rails.root, "config", "resque_worker_private_key") ) )
-rescue Errno::ENOENT => e
-  Puavo::RESQUE_WORKER_PRIVATE_KEY = nil
-end
+Puavo::RESQUE_WORKER_PRIVATE_KEY =
+  OpenSSL::PKey::RSA.new(
+    File.read(
+      File.join(Rails.root, "config", "resque_worker_private_key")
+    )
+)
 
-begin
-  Puavo::RESQUE_WORKER_PUBLIC_KEY =
-    OpenSSL::PKey::RSA.new( 
-      File.read(
-        File.join(Rails.root, "config", "resque_worker_public_key") ) )
-rescue Errno::ENOENT => e
-  Puavo::RESQUE_WORKER_PUBLIC_KEY = nil
-end
+Puavo::RESQUE_WORKER_PUBLIC_KEY =
+  OpenSSL::PKey::RSA.new(
+    File.read(
+      File.join(Rails.root, "config", "resque_worker_public_key")
+    )
+)
 
 REDIS_CONFIG = File.join(Rails.root, "config", "redis.yml")
 REDIS_CONNECTION = Redis.new YAML.load_file(REDIS_CONFIG).symbolize_keys

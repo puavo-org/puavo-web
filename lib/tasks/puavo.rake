@@ -46,11 +46,6 @@ namespace :puavo do
     cp "config/resque_worker_private_key.development", "config/resque_worker_private_key"
   end
 
-  desc "Set config/resque_worker_public_key"
-  task :resque_worker_public_key do
-    cp "config/resque_worker_public_key.development", "config/resque_worker_public_key"
-  end
-
   desc "Set config/redis.yml"
   task :redis do
     cp "config/redis.yml.development", "config/redis.yml"
@@ -62,8 +57,6 @@ namespace :puavo do
                           :puavo_devices,
                           :organisation,
                           :secret_token,
-                          :resque_worker_public_key,
-                          :resque_worker_private_key,
                           :redis
   ]
 
