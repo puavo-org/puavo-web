@@ -121,7 +121,10 @@ class Users::ImportController < ApplicationController
     encrypted_password = cipher.enc(session[:password_plaintext])
 
     job_id = UUID.generate
-    db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+    db = Redis::Namespace.new(
+      "puavo:import:#{ job_id }",
+      :redis => REDIS_CONNECTION
+    )
 
     # Save encrypted password separately to redis with expiration date to
     # ensure that it will not persist there for too long
@@ -147,7 +150,10 @@ class Users::ImportController < ApplicationController
   def status
 
     job_id = params["job_id"]
-    db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+    db = Redis::Namespace.new(
+      "puavo:import:#{ job_id }",
+      :redis => REDIS_CONNECTION
+    )
     @import_status = db.get("status")
 
     if fail_json = db.get("failed_users")
@@ -164,7 +170,10 @@ class Users::ImportController < ApplicationController
   # POST /:school_id/users/import/render_pdf/:job_id
   def render_pdf
     job_id = params["job_id"]
-    db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+    db = Redis::Namespace.new(
+      "puavo:import:#{ job_id }",
+      :redis => REDIS_CONNECTION
+    )
     encrypted_pdf = db.get("pdf")
 
     if not encrypted_pdf

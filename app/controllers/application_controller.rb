@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
   def user_store
     @user_store ||= Redis::Namespace.new(
       "puavo:user:#{ current_user.dn.to_s.downcase }",
-      REDIS_CONNECTION
+      :redis => REDIS_CONNECTION
     )
   end
 
