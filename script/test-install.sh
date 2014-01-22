@@ -9,11 +9,7 @@ dpkg -i ../*deb
 set -eu
 apt-get install -f -y --force-yes
 
-# Generate "deployment" workers keys because they were removed during install
-make worker-keys
-
 cp config/initializers/secret_token.rb.development /etc/puavo-web/secret_token.rb
-cp config/resque_worker_*_key /etc/puavo-web
 
 stop puavo-web || true
 stop puavo-rest || true

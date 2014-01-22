@@ -9,7 +9,7 @@ RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
-build: worker-keys
+build:
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	npm install --registry http://registry.npmjs.org # nib for stylys
@@ -23,18 +23,13 @@ update-gemfile-lock: clean
 	rm -f Gemfile.lock
 	bundle install
 
-worker-keys:
-	openssl genrsa -out config/resque_worker_private_key 2048
-	openssl rsa -in config/resque_worker_private_key -pubout > config/resque_worker_public_key
-
 clean-for-install:
 	# Remove testing gems
 	bundle install --deployment --without test
 	bundle clean
-	# Do not put development keys in to the package
+
+	# Do not put development secrets in to the package
 	rm -f config/initializers/secret_token.rb
-	rm -f config/resque_worker_private_key
-	rm -f config/resque_worker_public_key
 
 	# Remove any testing or development configuration files
 	rm -f config/*.yml
@@ -114,9 +109,6 @@ install: clean-for-install mkdirs
 	ln -s ../../../../etc/puavo-web/puavo_external_files.yml $(RAILS_CONFIG_DIR)/puavo_external_files.yml
 
 	ln -s ../../../../../etc/puavo-web/secret_token.rb $(RAILS_CONFIG_DIR)/initializers/secret_token.rb
-
-	ln -s ../../../../etc/puavo-web/resque_worker_private_key $(RAILS_CONFIG_DIR)/resque_worker_private_key
-	ln -s ../../../../etc/puavo-web/resque_worker_public_key $(RAILS_CONFIG_DIR)/resque_worker_public_key
 
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt

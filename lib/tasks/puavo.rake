@@ -41,11 +41,6 @@ namespace :puavo do
     cp "config/initializers/secret_token.rb.development", "config/initializers/secret_token.rb"
   end
 
-  desc "Set config/resque_worker_private_key"
-  task :resque_worker_private_key do
-    cp "config/resque_worker_private_key.development", "config/resque_worker_private_key"
-  end
-
   desc "Set config/redis.yml"
   task :redis do
     cp "config/redis.yml.development", "config/redis.yml"

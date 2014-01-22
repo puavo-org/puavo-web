@@ -74,6 +74,7 @@ class ImportWorker
     started = Time.now
 
     db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
 
     flog = FLOG.merge(
       :organisation_key => organisation_key,
@@ -93,9 +94,7 @@ class ImportWorker
     db.del("pw")
     db.set("status", "started")
 
-    password = Puavo::RESQUE_WORKER_PRIVATE_KEY.private_decrypt(
-      Base64.decode64(encrypted_password)
-    )
+    password = cipher.dec(encrypted_password)
 
     authentication = Puavo::Authentication.new
     authentication.configure_ldap_connection({
@@ -175,9 +174,10 @@ class ImportWorker
       log_msg[:failed_users] = failed_users
     end
 
-    db.set("pdf", users_pdf.render())
-    db.set("status", "finished")
+    encrypted_pdf = cipher.enc(users_pdf.render())
 
+    db.set("pdf", encrypted_pdf)
+    db.set("status", "finished")
 
     flog.info "import finished", log_msg.merge(
       :duration => (Time.now - started).to_f.round(3)

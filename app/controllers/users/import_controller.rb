@@ -116,9 +116,9 @@ class Users::ImportController < ApplicationController
   # POST /:school_id/users/import
   def create
 
-    encrypted_password = Base64.encode64(
-      Puavo::RESQUE_WORKER_PUBLIC_KEY.public_encrypt(session[:password_plaintext])
-    )
+    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
+
+    encrypted_password = cipher.enc(session[:password_plaintext])
 
     job_id = UUID.generate
     db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
@@ -162,15 +162,19 @@ class Users::ImportController < ApplicationController
   def render_pdf
     job_id = params["job_id"]
     db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
-    pdf_data = db.get("pdf")
+    encrypted_pdf = db.get("pdf")
 
-    if not pdf_data
+    if not encrypted_pdf
       return render_error_page "unknown job or not ready"
     end
 
-    @import_status = db.del("status")
-    @import_status = db.del("pdf")
-    @import_status = db.del("failed_users")
+    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
+
+    pdf_data = cipher.dec(encrypted_pdf)
+
+    db.del("status")
+    db.del("pdf")
+    db.del("failed_users")
 
     send_data(
       pdf_data,
