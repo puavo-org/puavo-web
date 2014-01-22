@@ -89,7 +89,10 @@ window.jQuery(document).ready(function($) {
 
 
   // Prevent multi submits from any form.  All submit buttons have name=commit
-  $("input[name=commit][type=submit]").on("click", function(e) {
+  //
+  // input[name=commit][type=submit] will match all standard rails forms and
+  // also the "once" class can be used for any other element
+  $("input[name=commit][type=submit], .once").on("click", function(e) {
     // Set disabled on the next tick so that the form get submitted the one
     // time
     setTimeout(function() {

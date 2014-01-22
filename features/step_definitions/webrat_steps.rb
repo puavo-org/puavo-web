@@ -202,3 +202,8 @@ end
 Then(/^show me the page$/) do
   save_and_open_page
 end
+
+Then(/^I debug$/) do
+  debugger
+  "" # Avoid returning the debugger to wrong context
+end

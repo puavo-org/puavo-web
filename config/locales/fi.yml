@@ -59,7 +59,10 @@ fi:
     user_mass_import:
       new: Lisää käyttäjiä massa-ajona
       handle_user_data: "Käsittele käyttäjätieto"
-      generate_passwords_pdf: Generoi salasana PDF
+      progress: Lisätään käyttäjiä. Tämä voi kestää muutaman minuutin. Odotathan sulkematta selainta.
+      ready: Käyttäjät ovat nyt valmiita. Klikkaa allaolevaa nappia ladataksesi käyttäjälistan. Huomaathan että sen listan voi ladata vain kerran.
+      status: Tila
+      download_passwords_pdf: Download passwords PDF
       revalidate: Tarkista uudelleen
       validate: Tarkasta syötetyt tiedot
       create: "Lisää käyttäjät"

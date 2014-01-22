@@ -70,8 +70,10 @@ PuavoUsers::Application.routes.draw do
     match '/' => 'schools#index'
     match ':school_id/users/import/refine' => 'users/import#refine', :as => :refine_users_import, :via => :post
     match ':school_id/users/import/validate' => 'users/import#validate', :as => :validate_users_import, :via => [:post]
-    match ':school_id/users/import/show' => 'users/import#show', :as => :users_import, :via => :get
     match ':school_id/users/import/new' => 'users/import#new', :as => :new_users_import, :via => :get
+    match ':school_id/users/import/jobs' => 'users/import#jobs', :as => :import_jobs, :via => :get
+    match ':school_id/users/import/status/:job_id' => 'users/import#status', :as => :import_status, :via => :get
+    match ':school_id/users/import/render_pdf/:job_id' => 'users/import#render_pdf', :as => :render_pdf, :via => :post
     match ':school_id/users/import/' => 'users/import#create', :as => :create_users_import, :via => :post
     match ':school_id/users/import/user_validate' => 'users/import#user_validate', :as => :user_validate_users_import, :via => :post
     match ':school_id/users/import/options' => 'users/import#options', :as => :options_users_import, :via => :get

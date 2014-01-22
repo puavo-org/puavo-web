@@ -31,3 +31,7 @@ debian/
 
 tags
 rest/tags
+
+config/resque_worker_private_key
+config/resque_worker_public_key
+

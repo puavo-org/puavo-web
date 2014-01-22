@@ -216,10 +216,6 @@ module Puavo
     end
 
 
-    def set_organisation_to_session
-      session[:organisation] = current_organisation if current_organisation
-    end
-
     def set_initial_locale
       # Default to English
       I18n.locale = "en"

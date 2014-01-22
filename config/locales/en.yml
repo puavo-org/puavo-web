@@ -58,8 +58,11 @@ en:
     new_user: New user
     user_mass_import:
       new: Users mass import
+      progress: Importing users. This can take few minutes. Please wait without closing the browser.
+      status: Status
+      ready: Import is now ready. Click the button below to download user list. Note that you can download this only once.
+      download_passwords_pdf: Download passwords PDF
       handle_user_data: Handle the user data
-      generate_passwords_pdf: Generate passwords PDF
       revalidate: Revalidate
       validate: Validates users
       create: Create users
@@ -191,12 +194,13 @@ en:
           Jane, Doe
         hint: You can paste the following text box users data which you like adding
       show:
-        title: Users (%{count}) was successfully created.
-        title_with_error: All users was not successfully created!
+        title: Users (%{count}) were successfully created.
         successful: "Successful: %{count}"
         failed: "Failed: %{count}"
         pdf_info: You can now generate passwords to a printable PDF file.
-        title_of_failed_users_list: Following users was not successfully created!
+        title_of_failed_users_list: Following users were not successfully created!
+      status:
+        title_with_error: All users were not successfully created!
       role:
         title: User mass import validation
         help: Following field value must be select when create new users

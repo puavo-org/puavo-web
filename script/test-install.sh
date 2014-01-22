@@ -4,9 +4,12 @@ set -x
 
 echo "hogwarts.opinsys.net" > /etc/puavo/domain
 
+
 dpkg -i ../*deb
 set -eu
 apt-get install -f -y --force-yes
+
+cp config/initializers/secret_token.rb.development /etc/puavo-web/secret_token.rb
 
 stop puavo-web || true
 stop puavo-rest || true

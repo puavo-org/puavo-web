@@ -33,7 +33,7 @@ class PasswordController < ApplicationController
       end
     end
   rescue User::UserError => e
-    error_message_and_redirect(e)
+    error_message_and_redirect(e.message)
   end
 
   private
