@@ -27,11 +27,11 @@ class Api::V2::HostsController < ApplicationController
         raise InvalidDeviceType
       end
 
-      @host.revoke_certificate( session[:organisation].organisation_key,
+      @host.revoke_certificate( current_organisation.organisation_key,
                                 @authentication.dn,
                                 @authentication.password )
       @host.host_certificate_request = params[:host_certificate_request]
-      @host.sign_certificate( session[:organisation].organisation_key,
+      @host.sign_certificate( current_organisation.organisation_key,
                               @authentication.dn,
                               @authentication.password )
 

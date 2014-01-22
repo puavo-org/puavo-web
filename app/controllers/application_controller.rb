@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   include Puavo::AuthenticationHelper
 
   attr_reader :school
-  helper_method :theme, :current_user, :current_organisation, :acquire_credentials, :setup_authentication, :perform_login, :require_login, :require_puavo_authorization, :show_authentication_error, :store_location, :redirect_back_or_default, :organisation_key_from_host, :set_organisation_to_session, :set_initial_locale, :remove_ldap_connection, :theme, :school_list, :rack_mount_point
+  helper_method :theme, :current_user, :current_organisation, :current_organisation?, :acquire_credentials, :setup_authentication, :perform_login, :require_login, :require_puavo_authorization, :show_authentication_error, :store_location, :redirect_back_or_default, :organisation_key_from_host, :set_initial_locale, :remove_ldap_connection, :theme, :school_list, :rack_mount_point
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -17,7 +17,6 @@ class ApplicationController < ActionController::Base
   before_filter :setup_authentication
   before_filter :require_login
   before_filter :require_puavo_authorization
-  before_filter :set_organisation_to_session
   before_filter :log_request
   before_filter :find_school
   before_filter :set_menu
@@ -27,6 +26,13 @@ class ApplicationController < ActionController::Base
 
   def log_request
     flog.info "request"
+  end
+
+  def user_store
+    @user_store ||= Redis::Namespace.new(
+      "puavo:user:#{ current_user.dn.to_s.downcase }",
+      REDIS_CONNECTION
+    )
   end
 
   def flog
@@ -113,6 +119,12 @@ class ApplicationController < ActionController::Base
       @child_items = i.children if i.active?
     end
 
+  end
+
+  # Render generic error page in the current url with a error message
+  def render_error_page(msg="Unkown error")
+    @error_message = msg
+    render :status => 404, :template => "/errors/generic.html.erb"
   end
 
 

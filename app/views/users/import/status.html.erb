@@ -1,0 +1,63 @@
+
+<h1><%= t('link.user_mass_import.new') %></h1>
+
+<% if @import_status == "finished" %>
+
+  <p>
+    <%= t("link.user_mass_import.ready") %>
+  </p>
+
+  <%= button_to(
+    t('link.user_mass_import.download_passwords_pdf'),
+    render_pdf_path(@school, params[:job_id]),
+    :method => :post,
+    :class => :once
+  ) %>
+
+<% else %>
+
+<p>
+<%= t("link.user_mass_import.progress") %>
+</p>
+
+
+<% end %>
+
+<p>
+<%= t("link.user_mass_import.status") %>:
+<code class="import-status"><%= @import_status %></code>
+</p>
+
+
+<% if @failed_users %>
+    <p class="message_alert">
+        <%= t('.title_with_error') %>
+    </p>
+    <ul>
+        <% @failed_users.each do |u| %>
+            <li>
+                <%= u["error"] %>
+                <!-- <%= u.inspect %> -->
+            </li>
+        <% end %>
+    </ul>
+<% end %>
+
+<script>
+(function(){
+
+     var status = document
+         .getElementsByClassName("import-status")[0]
+         .innerText
+         ;
+
+    if (window.console) console.log("job status:", status);
+    if (/finished/.test(status)) return;
+
+    setTimeout(function(){
+        window.location.reload();
+    }, 1000*10);
+
+}());
+</script>
+

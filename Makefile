@@ -28,6 +28,9 @@ clean-for-install:
 	bundle install --deployment --without test
 	bundle clean
 
+	# Do not put development secrets in to the package
+	rm -f config/initializers/secret_token.rb
+
 	# Remove any testing or development configuration files
 	rm -f config/*.yml
 	rm -f config/*.sqlite3
@@ -93,6 +96,9 @@ install: clean-for-install mkdirs
 	cp config/ldap.yml.development $(CONF_DIR)/ldap.yml
 	ln -s ../../../../etc/puavo-web/ldap.yml $(RAILS_CONFIG_DIR)/ldap.yml
 
+	cp config/redis.yml.development $(CONF_DIR)/redis.yml
+	ln -s ../../../../etc/puavo-web/redis.yml $(RAILS_CONFIG_DIR)/redis.yml
+
 	cp config/puavo_devices.yml.development $(CONF_DIR)/puavo_devices.yml
 	ln -s ../../../../etc/puavo-web/puavo_devices.yml $(RAILS_CONFIG_DIR)/puavo_devices.yml
 
@@ -101,6 +107,8 @@ install: clean-for-install mkdirs
 
 	cp config/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
 	ln -s ../../../../etc/puavo-web/puavo_external_files.yml $(RAILS_CONFIG_DIR)/puavo_external_files.yml
+
+	ln -s ../../../../../etc/puavo-web/secret_token.rb $(RAILS_CONFIG_DIR)/initializers/secret_token.rb
 
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt

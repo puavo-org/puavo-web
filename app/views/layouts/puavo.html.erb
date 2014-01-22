@@ -8,8 +8,8 @@
   <title>
     <% if not @school.nil? %>
     <%= @school.displayName %>
-    <% elsif session.has_key?(:organisation) %>
-    <%= session[:organisation].name %>
+    <% elsif current_organisation? %>
+    <%= current_organisation.name %>
     <% else %>
       Oiva
     <% end %>
@@ -49,7 +49,7 @@
 
     <hr class="space" />
     <div class="span-24">
-      <% if session[:organisation] %>
+      <% if current_organisation? %>
         <% if @school && !@school.id.nil? && controller_name != 'password' %>
     <h1><%= @school.displayName %></h1>
 

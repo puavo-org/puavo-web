@@ -8,8 +8,8 @@
   <title>
     <% if not @school.nil? %>
       <%= @school.displayName %>
-    <% elsif session.has_key?(:organisation) %>
-      <%= session[:organisation].name %>
+    <% elsif current_organisation? %>
+      <%= current_organisation.name %>
     <% else %>
         Puavo Users
     <% end %>
@@ -54,7 +54,7 @@
           <% if current_user %>
             <% if current_user.organisation_owner? %>
               <li class="organisation-menu-button">
-                <span><%= session[:organisation].name %></span>
+                <span><%= current_organisation.name %></span>
                 <ul id="help" class="organisation-menu">
                   <li class="top-menu-item"><%= link_to t('.about'),  organisation_path %></li>
                   <li class="top-menu-item"><%= link_to t('external_services.title'),  organisation_external_services_path %></li>
@@ -73,7 +73,7 @@
                  </ul>
               </li>
               <% else %>
-              <li><span class="sub"><%= session[:organisation].name %></span></li>
+              <li><span class="sub"><%= current_organisation.name %></span></li>
               <% end %>
               <li class="school-menu-button">
                 <span><%= t('.schools') %></span>
@@ -116,7 +116,7 @@
 </div><!-- topNavContainer -->
 <div class="container">
 <div class="main-wrap">
-    <% if session[:organisation] %>
+    <% if current_organisation? %>
       <% if @school && !@school.id.nil? && controller_name != 'password' %>
         <h1><%= @school.displayName %></h1>
         <%= render :partial => "layouts/menu" %>
