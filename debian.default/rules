@@ -11,10 +11,6 @@ override_dh_auto_test:
 	$(MAKE) -C rest test
 	$(MAKE) test
 
-override_dh_installinit:
-	dh_installinit
-	dh_installinit --name=puavo-web-worker.upstart
-
 # Disable. Adds weird libmagickcore5 dependcy which in not installable on precise
 override_dh_shlibdeps:
 
@@ -29,5 +25,5 @@ override_dh_install:
 	mkdir -p $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-enabled/
 	ln -s ../sites-available/puavo-rest $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-enabled/puavo-rest
 
-	# puavo-web
-	$(MAKE) install prefix=/usr sysconfdir=/etc DESTDIR=$(CURDIR)/debian/puavo-web
+	# puavo-web-core
+	$(MAKE) install prefix=/usr sysconfdir=/etc DESTDIR=$(CURDIR)/debian/puavo-web-core

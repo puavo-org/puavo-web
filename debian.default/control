@@ -20,8 +20,20 @@ Replaces: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
 Description: puavo-rest for bootservers
  Metapackage for bootservers. Installs nginx, puavo-rest and required configuration files.
 
-Package: puavo-web
+Package: puavo-web-core
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ruby1.9.1, ruby-bundler (>= 1.3.5), puavo-client, ruby-ldap, nodejs-bundle, libpq5, libssl1.0.0, libxslt1.1, libsqlite3-0, libmagickwand4, xpdf-utils, ruby-ldap, ldap-utils, libopenssl-ruby, fluentd (>= 0.10.40-3+opinsys1)
+Description: Puavo Rails application core
+ The actual code for the application
+
+Package: puavo-web
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, puavo-web-core
 Description: puavo-web
- Linux system management for schools
+ Upstart script for the web application server
+
+Package: puavo-web-worker
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, puavo-web-core
+Description: puavo-web-worker
+ Resque worker upstart script for puavo-web
