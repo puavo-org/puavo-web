@@ -129,6 +129,9 @@ class Users::ImportController < ApplicationController
     db.expire("pw", 60 * 60)
     db.set("status", "waiting")
 
+    # Save jobs id for later inspection
+    user_store.sadd("jobs", job_id)
+
     Resque.enqueue(
       ImportWorker,
       job_id,
@@ -175,6 +178,7 @@ class Users::ImportController < ApplicationController
     db.del("status")
     db.del("pdf")
     db.del("failed_users")
+    user_store.srem("jobs", job_id)
 
     send_data(
       pdf_data,
@@ -183,6 +187,11 @@ class Users::ImportController < ApplicationController
       :disposition => "attachment"
     )
 
+  end
+
+  # GET /:school_id/users/import/jobs
+  def jobs
+    render :json => user_store.smembers("jobs")
   end
 
   # GET /:school_id/users/import/show?create_timestamp=create:20110402152432Z
