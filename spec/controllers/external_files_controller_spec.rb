@@ -45,7 +45,7 @@ describe ExternalFilesController do
 
   describe "POST file" do
     it "can upload file to ldap" do
-      file = fixture_file_upload("/img.jpg", 'image/jpeg', :binary)
+      file = fixture_file_upload(img_path, 'image/jpeg', :binary)
 
       @request.env['HTTP_REFERER'] = external_files_path
       post(:upload, {
