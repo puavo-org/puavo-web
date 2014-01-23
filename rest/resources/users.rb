@@ -72,6 +72,13 @@ class User < LdapModel
     "#{ username }@#{ organisation.domain }"
   end
 
+  computed_attr :homepage
+  def homepage
+    if school
+      school.homepage
+    end
+  end
+
   def self.current
     return settings[:credentials_cache][:current_user] if settings[:credentials_cache][:current_user]
 

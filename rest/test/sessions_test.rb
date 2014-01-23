@@ -23,7 +23,8 @@ describe PuavoRest::Sessions do
     FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
-      :displayName => "Gryffindor"
+      :displayName => "Gryffindor",
+      :puavoSchoolHomePageURL => "gryffindor.example"
     )
     @device = create_device(
       :puavoDeviceImage => "ownimage",
@@ -567,18 +568,32 @@ describe PuavoRest::Sessions do
     end
 
 
-    describe "fat client" do
-      it "does not need a ltsp server" do
+    describe "fat client sessions" do
+      before(:each) do
         basic_authorize "bob", "secret"
         post "/v3/sessions", { "hostname" => "afat" }
         assert_200
 
-        data = JSON.parse last_response.body
-        assert_equal "www.example.net", data["organisation"], "has organisation info"
-        assert data["ltsp_server"].nil?, "fat clients must not get ltsp server"
-        assert data["device"], "has device"
-        assert_equal "afat", data["device"]["hostname"]
+        @data = JSON.parse last_response.body
+
       end
+      it "does not need a ltsp server" do
+        assert_equal "www.example.net", @data["organisation"], "has organisation info"
+        assert @data["ltsp_server"].nil?, "fat clients must not get ltsp server"
+        assert @data["device"], "has device"
+        assert_equal "afat", @data["device"]["hostname"]
+      end
+
+      it "has homepage for user" do
+        assert @data["user"]
+        assert_equal "gryffindor.example", @data["user"]["homepage"]
+      end
+
+      it "has homepage for device" do
+        assert @data["device"]
+        assert_equal "gryffindor.example", @data["device"]["homepage"]
+      end
+
     end
 
     describe "printers" do

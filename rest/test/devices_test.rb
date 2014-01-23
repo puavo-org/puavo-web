@@ -10,6 +10,7 @@ describe PuavoRest::Devices do
       :displayName => "Gryffindor",
       :puavoDeviceImage => "schoolprefimage",
       :puavoPersonalDevice => true,
+      :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true
     )
     @school_without_fallback_value = School.create(
@@ -108,6 +109,10 @@ describe PuavoRest::Devices do
 
     it "has preferred language" do
       assert_equal "en", @data["preferred_language"]
+    end
+
+    it "has homepage from school" do
+      assert_equal "schoolhomepagefordevice.example", @data["homepage"]
     end
 
     it "it prefers language from the school" do

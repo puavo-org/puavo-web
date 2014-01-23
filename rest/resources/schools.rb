@@ -5,6 +5,7 @@ class School < LdapModel
   ldap_map :puavoId, :puavo_id
   ldap_map :displayName, :name
   ldap_map :puavoDeviceImage, :preferred_image
+  ldap_map :puavoSchoolHomePageURL, :homepage
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
   ldap_map(:puavoWirelessPrinterQueue, :wireless_printer_queue_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language

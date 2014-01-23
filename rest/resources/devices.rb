@@ -78,6 +78,12 @@ class Device < Host
        get_own(:personal_device)
      end
   end
+
+  computed_attr :homepage
+  def homepage
+    school.homepage
+  end
+
 end
 
 class Devices < LdapSinatra
