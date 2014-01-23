@@ -73,7 +73,11 @@ class ImportWorker
   def self.perform(job_id, organisation_key, user_dn, params)
     started = Time.now
 
-    db = Redis::Namespace.new("puavo:import:#{ job_id }", REDIS_CONNECTION)
+    db = Redis::Namespace.new(
+      "puavo:import:#{ job_id }",
+      :redis => REDIS_CONNECTION
+    )
+
     cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
 
     flog = FLOG.merge(
