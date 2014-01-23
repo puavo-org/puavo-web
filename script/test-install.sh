@@ -18,7 +18,6 @@ start puavo-web
 start puavo-rest
 
 cd /var/app/puavo-web
-RAILS_ENV=production bundle exec rake db:migrate
 
 # Wait for puavo-web to start. It's sloooooow.
 sleep 10

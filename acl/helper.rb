@@ -77,9 +77,6 @@ class LDAPTestEnv
       s.destroy
     end
 
-    AccessToken.all.each { |e| e.destroy }
-
-
     id_pool = IdPool.find('IdPool')
     id_pool.puavoNextGidNumber = 10004
     id_pool.puavoNextUidNumber = 10002
