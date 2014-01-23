@@ -12,7 +12,7 @@ module Users::ImportHelper
     end
 
     html += hidden_field_tag( "users[#{column_index}][]",
-                              user.human_readable_format(column),
+                              user.send(column),
                               { :id => "users_#{column_index}_#{user_index}",
                                 :class => "#{column}"} )
     return html
