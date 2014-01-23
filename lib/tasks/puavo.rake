@@ -2,19 +2,9 @@ require 'tempfile'
 require 'puavo/etc'
 
 namespace :puavo do
-  desc "Set config/database.yml"
-  task :database do
-    cp "config/database.yml.development", "config/database.yml"
-  end
-
   desc "Set config/ldap.yml"
   task :ldap do
     cp "config/ldap.yml.development", "config/ldap.yml"
-  end
-
-  desc "Set config/oauth.yml"
-  task :oauth do
-    cp "config/oauth.yml.development", "config/oauth.yml"
   end
 
   desc "Set config/organisation.yml"
@@ -47,7 +37,7 @@ namespace :puavo do
   end
 
   desc "Set all Puavo configuration files (development)"
-  task :configuration => [:database,
+  task :configuration => [
                           :ldap,
                           :puavo_devices,
                           :organisation,

@@ -69,11 +69,6 @@
                   <span>Users</span>
       <% end %>
     </li>
-    <% if @oauth_applications %>
-    <% @oauth_applications.each do |app| %>
-    <li class="page_item"><a href="<%= app.url %>" title="<%= app.name %>"><span><%= app.name %></span></a></li>
-    <% end %>
-    <% end %>
               </ul>
             </div>
     </div>
