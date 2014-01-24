@@ -1,17 +1,6 @@
 ---
 en:
   must_be_logged_in: You must be logged in
-  oauth:
-    change: change
-    login: Login
-    password_forget: Forgot your password?
-    username: Username
-    password: Password
-    login_description1: Login to service
-    login_description2: with your Opinsys-credentials
-    select_organistion: Select school or organistion
-    next: Next
-    organisation_help: lalala
   create_organisation_owner:
     school_name: Administration
     role_name: Maintenance
@@ -34,7 +23,6 @@ en:
       printers: Printers
       search_placeholder: Search
       links: Links
-      oauth_clients: OAuth clients
       desktop: Desktop
     forms:
       required_field: "* = Required field"
@@ -282,15 +270,6 @@ en:
       title: New LDAP service
     edit:
       title: Edit LDAP service
-  oauth_clients:
-    new:
-      title: New OAuth client
-    edit:
-      title: Editing OAuth client
-    index:
-      title: OAuth cliets
-      actions: Actions
-      new: New
   search:
     search_result:
       title_user: Users
@@ -342,7 +321,6 @@ en:
       user: User
       school: School
       ldap_service: LDAP service
-      oauth_client: OAuth client
     attributes:
       role:
         displayName: Role name
@@ -488,12 +466,6 @@ en:
         puavoPrinterPPD: Printer driver file
         puavoDeviceDefaultAudioSource: Default input audio device
         puavoDeviceDefaultAudioSink: Default output audio device
-      oauth_client:
-        displayName: Name
-        puavoOAuthClientId: Client id
-        userPassword: Client secret
-        puavoOAuthScope: Scope
-        puavoOAuthClientType: Client type
       server:
         puavoDeviceType: Device type
         puavoHostname: Hostname

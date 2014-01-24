@@ -34,27 +34,6 @@ def define_basic(env)
 
   end
 
-  env.define :oauth_client do |config|
-    oc = OauthClient.create(
-      "displayName"=>"Example software",
-      "puavoOAuthScope"=>"read:presonalInfo",
-      "userPassword"=> config.default_password
-    )
-    config.dn = oc.dn
-  end
-
-  env.define :oauth_token do |config|
-    ot = AccessToken.create({
-      :puavoOAuthTokenId => "1",
-      :puavoOAuthEduPerson => env.student.dn,
-      :puavoOAuthClient => env.oauth_client.dn,
-      :userPassword => config.default_password,
-      :puavoOAuthTokenType => ["bar"]
-      # TODO: scope
-    })
-    config.dn = ot.dn
-  end
-
   env.define :group do |config|
     group = Group.create(
       :displayName => "Test Group",

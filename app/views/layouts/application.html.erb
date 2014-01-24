@@ -62,9 +62,6 @@
                   <% if Puavo::EXTERNAL_FILES %>
                   <li class="top-menu-item"><%= link_to t('.external_files'),  external_files_path %></li>
                   <% end -%>
-    	             <% if Puavo::OAUTH_CONFIG %>
-                  <li class="top-menu-item"><%= link_to t('.oauth_clients'), oauth_clients_path %></li>
-    	             <% end %>
                   <% if Puavo::DEVICE_CONFIG %>
                     <li class="top-menu-item"><%= link_to t('.printers'), "/devices/printers" %></li>
                     <li class="top-menu-item"><%= link_to t('.servers'), "/devices/servers" %></li>

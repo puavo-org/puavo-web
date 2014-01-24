@@ -193,12 +193,9 @@ module Puavo
           :scope => :one, :attributes => ["puavoId"],
           :limit => 1 )
 
-        AccessToken.validate @credentials if oauth_access_token?
 
       rescue ActiveLdap::AuthenticationError
         raise AuthenticationFailed, "Bad dn or password"
-      rescue AccessToken::Expired
-        raise AuthenticationFailed, "OAuth Access Token expired"
       end
 
 
@@ -226,17 +223,8 @@ module Puavo
       dn && dn.rdns[1]["ou"] == "Devices"
     end
 
-    def oauth_client_server?
-      dn && dn.rdns.first.keys.first == "puavoOAuthClientId"
-    end
-
-    def oauth_access_token?
-      dn && dn.rdns.first.keys.first == "puavoOAuthTokenId"
-    end
-
     # User is authenticated with real password
     def user_password?
-      return false if oauth_access_token?
       current_user.classes.include? "puavoEduPerson"
     end
 
@@ -257,12 +245,8 @@ module Puavo
         return @authorized = true
       end
 
-      # Authorize OAuth Access Tokens
-      if oauth_access_token?
-        return @authorized = true
-      end
-
       # XXX: This line if freaking slow!
+      # Authorize organisation owners
       organisation = LdapOrganisation.first
 
       if organisation && organisation.owner && organisation.owner.include?(dn)
@@ -291,9 +275,6 @@ module Puavo
 
       if ldap_service?
         @current_user = LdapService.find dn
-      elsif oauth_access_token?
-        access_token = AccessToken.find dn
-        @current_user = User.find access_token.puavoOAuthEduPerson
       elsif user?
         @current_user = User.find dn
       else

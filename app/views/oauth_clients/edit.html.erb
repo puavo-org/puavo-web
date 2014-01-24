@@ -1,7 +1,0 @@
-<h1><span><%= t('.title') %></span></h1>
-
-<%= render( :partial => 'form',
-            :locals => {
-              :path => oauth_client_path(@oauth_client),
-              :submit_text => t('link.update'),
-              :method => :put } ) %>
