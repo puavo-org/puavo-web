@@ -5,7 +5,6 @@ development:
   bind_dn: uid=puavo,o=puavo
   password: admin
   method: tls
-  adapter: ldap
 
 test:
   host: localhost
@@ -13,7 +12,6 @@ test:
   bind_dn: uid=puavo,o=puavo
   password: admin
   method: tls
-  adapter: ldap
 
 cucumber:
   host: localhost
@@ -21,7 +19,6 @@ cucumber:
   bind_dn: uid=puavo,o=puavo
   password: admin
   method: tls
-  adapter: ldap
 
 production:
   host: localhost
@@ -29,4 +26,3 @@ production:
   bind_dn: uid=puavo,o=puavo
   password: admin
   method: tls
-  adapter: ldap
