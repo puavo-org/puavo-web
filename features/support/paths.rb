@@ -19,12 +19,6 @@ module NavigationHelpers
     when /the login page/
       login_path
 
-    when /OAuth Authorize Endpoint/
-      oauth_authorize_path
-
-    when /the OAuth authorize page/
-      oauth_authorize_path
-
     when /the password change page/
       password_path
     when /the own password change page/
@@ -77,9 +71,6 @@ module NavigationHelpers
     # Profile path
     when /the edit profile page/
       edit_profile_path
-    # OAuth
-    when /the OAuth login page/
-      oauth_login_path
     when /the server list page/
       servers_path
 

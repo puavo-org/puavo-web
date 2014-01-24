@@ -1,17 +1,6 @@
 ---
 fi:
   must_be_logged_in: "Sinun täytyy olla kirjautuneena"
-  oauth:
-    change: vaihda
-    login: Kirjaudu
-    password_forget: Unohditko salasanasi?
-    username: "Käyttäjätunnus"
-    password: Salasana
-    login_description1: Kirjaudu palveluun
-    login_description2: Opinsys-tunnuksillasi
-    select_organistion: Valitse koulu tai organisaatio
-    next: Jatka
-    organisation_help: lalala
   create_organisation_owner:
     school_name: Hallinto
     role_name: "Ylläpito"
@@ -34,7 +23,6 @@ fi:
       printers: Tulostimet
       search_placeholder: Hae
       links: Linkit
-      oauth_clients: OAuth asiakassovellukset
       desktop: "Työpöytä"
     forms:
       required_field: "* = Pakollinen tieto"
@@ -279,15 +267,6 @@ fi:
       title: Uuden LDAP palvelun tiedot
     edit:
       title: LDAP palvelun tietojen muokkaus
-  oauth_clients:
-    new:
-      title: Uuden OAuth asiakassovelluksen tiedot
-    edit:
-      title: Muokataan OAuth asiakassovelluksen tietoja
-    index:
-      title: OAuth asiakassovellukset
-      actions: Toiminnot
-      new: Uusi
   search:
     search_result:
       title_user: "Käyttäjät"
@@ -339,7 +318,6 @@ fi:
       user: "Käyttäjä"
       school: Koulu
       ldap_service: LDAP palvelu
-      oauth_client: OAuth asiakassovellus
     attributes:
       role:
         displayName: Roolin nimi
@@ -485,12 +463,6 @@ fi:
         puavoPrinterPPD: Tulostimen ajuritiedosto
         puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
         puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
-      oauth_client:
-        displayName: Nimi
-        puavoOAuthClientId: Asiakassovelluksen tunniste (Client id)
-        userPassword: Asiakassovelluksen salaisuus (Client secret)
-        puavoOAuthScope: Oikeudet
-        puavoOAuthClientType: Tyyppi
       server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi
