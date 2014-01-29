@@ -115,22 +115,41 @@ class Sessions < LdapSinatra
       "printer_queues" => []
     )
 
-    if User.current
-      user = User.current
-      session["user"] = user.to_hash
-      groups = user.groups
-      session["user"]["groups"] = groups
-
-      groups.each do |group|
-        session["printer_queues"] += group.printer_queues
-      end
-    end
 
     if params["hostname"]
       # Normal user has no permission to read device attributes so force server
       # credentials here.
       LdapModel.setup(:credentials => CONFIG["server"]) do
-        inject_device_info(params["hostname"], session)
+        device = Device.by_hostname!(params["hostname"])
+
+        if device.type == "thinclient"
+          session["ltsp_server"] = find_ltsp_server!(
+            device.preferred_image,
+            device.preferred_server,
+            device.school_dn
+          )
+        end
+
+        session["preferred_language"] = device.preferred_language
+
+        session["device"] = device.to_hash
+        session["printer_queues"] += device.printer_queues
+        session["printer_queues"] += device.school.printer_queues
+        session["printer_queues"] += device.school.wireless_printer_queues
+        session
+      end
+    end
+
+    if User.current && !User.current.server_user?
+      user = User.current
+      session["user"] = user.to_hash
+      groups = user.groups
+      session["user"]["groups"] = groups
+
+      session["preferred_language"] = user.preferred_language
+
+      groups.each do |group|
+        session["printer_queues"] += group.printer_queues
       end
     end
 
@@ -143,23 +162,6 @@ class Sessions < LdapSinatra
     json session
   end
 
-  def inject_device_info(hostname, session)
-    device = Device.by_hostname!(hostname)
-
-    if device.type == "thinclient"
-      session["ltsp_server"] = find_ltsp_server!(
-        device.preferred_image,
-        device.preferred_server,
-        device.school_dn
-      )
-    end
-
-    session["device"] = device.to_hash
-    session["printer_queues"] += device.printer_queues
-    session["printer_queues"] += device.school.printer_queues
-    session["printer_queues"] += device.school.wireless_printer_queues
-    session
-  end
 
 
   # Return all sessions

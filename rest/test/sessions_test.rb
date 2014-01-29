@@ -24,15 +24,16 @@ describe PuavoRest::Sessions do
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
+      :preferredLanguage => "school-lang",
       :puavoSchoolHomePageURL => "gryffindor.example"
     )
-    @device = create_device(
+    @athin = create_device(
       :puavoDeviceImage => "ownimage",
       :puavoHostname => "athin",
       :macAddress => "bf:9a:8c:1b:e0:6a",
       :puavoSchool => @school.dn
     )
-    create_device(
+    @afat = create_device(
       :puavoHostname => "afat",
       :macAddress => "00:60:2f:D5:F8:60",
       :puavoSchool => @school.dn,
@@ -101,11 +102,11 @@ describe PuavoRest::Sessions do
     end
   end
 
-  describe "prefered server on client" do
+  describe "preferred server on client" do
     it "is served first" do
 
       create_device(
-        :puavoHostname => "thin-with-prefered-server",
+        :puavoHostname => "thin-with-preferred-server",
         :puavoPreferredServer => @server2.dn,
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoSchool => @school.dn
@@ -122,7 +123,7 @@ describe PuavoRest::Sessions do
         "ltsp_image" => "image2"
       assert_200
 
-      post "/v3/sessions", { "hostname" => "thin-with-prefered-server" }, {
+      post "/v3/sessions", { "hostname" => "thin-with-preferred-server" }, {
         "HTTP_AUTHORIZATION" => "Bootserver",
       }
       assert_200
@@ -130,7 +131,7 @@ describe PuavoRest::Sessions do
       data = JSON.parse last_response.body
       assert_equal(
         "server2", data["ltsp_server"]["hostname"],
-        "server1 has less load but server2 must be given because server1 is prefered by the client"
+        "server1 has less load but server2 must be given because server1 is preferred by the client"
       )
 
     end
@@ -492,7 +493,7 @@ describe PuavoRest::Sessions do
       assert_equal "normalserver", data["ltsp_server"]["hostname"]
     end
 
-    it "must prefer servers to schools they are prefered to" do
+    it "must prefer servers to schools they are preferred to" do
       put "/v3/ltsp_servers/limitedserver",
         "load_avg" => "0.9",
         "cpu_count" => 2,
@@ -543,6 +544,7 @@ describe PuavoRest::Sessions do
         :sn  => "Brown",
         :uid => "bob",
         :puavoEduPersonAffiliation => "student",
+        :preferredLanguage => "user-lang",
         :mail => "bob@example.com"
       )
       @user.set_password "secret"
@@ -596,6 +598,32 @@ describe PuavoRest::Sessions do
 
     end
 
+    describe "preferred language attribute" do
+      it "is given from school to guests" do
+        post "/v3/sessions", { "hostname" => "afat" }, {
+          "HTTP_AUTHORIZATION" => "Bootserver"
+        }
+        assert_200
+        data = JSON.parse last_response.body
+
+        assert data["user"].nil?, "User should be nil for guests"
+        assert_equal "school-lang", data["preferred_language"]
+        assert_equal "school-lang", data["device"]["preferred_language"]
+      end
+
+      it "is their own for authenticated users" do
+        basic_authorize "bob", "secret"
+        post "/v3/sessions", { "hostname" => "afat" }
+        assert_200
+        data = JSON.parse last_response.body
+
+        assert_equal "user-lang", data["user"]["preferred_language"]
+        assert_equal "user-lang", data["preferred_language"]
+      end
+
+
+    end
+
     describe "printers" do
 
       before(:each) do
@@ -609,7 +637,7 @@ describe PuavoRest::Sessions do
         @group.add_printer(@group_printer)
 
         @device_printer = create_printer(@bootserver, "device printer")
-        @device.add_printer(@device_printer)
+        @athin.add_printer(@device_printer)
 
         put "/v3/ltsp_servers/server1",
           "load_avg" => "0.1",
@@ -673,7 +701,7 @@ describe PuavoRest::Sessions do
 
       it "does not duplicate printers if they are in multiple sources" do
         @dupprinter = create_printer(@bootserver, "dupprinter")
-        @device.add_printer(@dupprinter)
+        @athin.add_printer(@dupprinter)
         @school.add_printer(@dupprinter)
 
         basic_authorize "bob", "secret"

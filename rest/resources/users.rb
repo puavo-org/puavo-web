@@ -79,6 +79,10 @@ class User < LdapModel
     end
   end
 
+  def server_user?
+    dn == CONFIG["server"][:dn]
+  end
+
   def self.current
     return settings[:credentials_cache][:current_user] if settings[:credentials_cache][:current_user]
 

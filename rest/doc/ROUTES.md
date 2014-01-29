@@ -194,6 +194,7 @@ Sessions are stored in memory only but are not automatically deleted.
 ### Returns
 
     {
+      "preferred_language": "en",
       "device": {
         "printer_device_uri": null,
         "personal_device": false,
