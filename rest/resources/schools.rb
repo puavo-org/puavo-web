@@ -42,7 +42,7 @@ class School < LdapModel
      if get_own(:preferred_image).nil?
        organisation.preferred_image
       else
-        get_own(:preferred_image)
+        get_own(:preferred_image).strip
       end
   end
 

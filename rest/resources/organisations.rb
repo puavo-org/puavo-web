@@ -87,6 +87,12 @@ class Organisation < LdapModel
     LdapModel.organisation?
   end
 
+  def preferred_image
+      if get_own(:preferred_image)
+        get_own(:preferred_image).strip
+      end
+  end
+
 end
 
 
