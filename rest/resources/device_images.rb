@@ -2,11 +2,11 @@
 module PuavoRest
 class DeviceImages < LdapSinatra
 
+  # List all images that are in use in the current organisation
   get "/v3/device_images" do
     auth :basic_auth, :server_auth
     images = []
     images.push Organisation.current.preferred_image
-
 
     school_limit = nil
 
