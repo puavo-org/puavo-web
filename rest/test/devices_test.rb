@@ -47,7 +47,7 @@ describe PuavoRest::Devices do
     test_organisation.save!
   end
 
-  describe "device infromation" do
+  describe "device information" do
     before(:each) do
       create_device(
         :puavoHostname => "athin",
