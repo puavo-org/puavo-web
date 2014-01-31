@@ -20,6 +20,19 @@ $rest_flog = FluentWrap.new(
 
 $rest_flog.info "starting"
 
+mattr_accessor :test_boot_server_dn
+
+
+def self.get_bootserver_dn
+  if ENV["RACK_ENV"] == "test"
+    if !test_boot_server_dn.nil?
+      return test_boot_server_dn
+    end
+  end
+
+  PUAVO_ETC.ldap_dn
+end
+
 class BeforeFilters < LdapSinatra
   enable :logging
 

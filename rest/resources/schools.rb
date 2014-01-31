@@ -40,7 +40,12 @@ class School < LdapModel
 
   def preferred_image
      if get_own(:preferred_image).nil?
-       organisation.preferred_image
+       bootserver = BootServer.by_dn(PuavoRest.get_bootserver_dn)
+       if bootserver.preferred_image.nil?
+         organisation.preferred_image
+       else
+         bootserver.preferred_image.strip
+       end
       else
         get_own(:preferred_image).strip
       end

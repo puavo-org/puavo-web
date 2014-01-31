@@ -20,6 +20,7 @@ describe PuavoRest::Devices do
     @server1 = create_server(
       :puavoHostname => "server1",
       :macAddress => "bc:5f:f4:56:59:71",
+      :puavoDeviceType => "bootserver",
       :puavoSchool => @school.dn
     )
     @server2 = create_server(
@@ -179,6 +180,29 @@ describe PuavoRest::Devices do
 
     it "has personal device" do
       assert_equal false, @data["personal_device"]
+    end
+  end
+
+  describe "device information with bootserver fallback" do
+    before(:each) do
+      create_device(
+        :puavoHostname => "athin",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school_without_fallback_value.dn
+      )
+      @server1.puavoDeviceImage = "bootserverprefimage"
+      @server1.save!
+
+      PuavoRest.test_boot_server_dn = @server1.dn.to_s
+
+      get "/v3/devices/athin"
+      assert_200
+      @data = JSON.parse last_response.body
+    end
+
+    it "has preferred image by bootserver" do
+      assert_equal "bootserverprefimage", @data["preferred_image"]
     end
   end
 

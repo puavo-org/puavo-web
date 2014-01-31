@@ -118,4 +118,3 @@ class MiniTest::Spec
       doc.css(selector)
   end
 end
-
