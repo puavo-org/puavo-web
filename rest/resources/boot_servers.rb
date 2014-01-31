@@ -5,6 +5,7 @@ class BootServer < LdapModel
   ldap_map :dn, :dn
   ldap_map :puavoHostname, :hostname
   ldap_map(:puavoSchool, :school_dns) { |s| s }
+  ldap_map :puavoDeviceImage, :preferred_image
 
   def self.ldap_base
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
