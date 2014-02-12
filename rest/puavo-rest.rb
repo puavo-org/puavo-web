@@ -10,6 +10,7 @@ require "debugger"
 require "pry"
 
 require_relative "./lib/helpers"
+require_relative "./lib/ical_parser"
 require_relative "./lib/fluent"
 require_relative "./lib/ldapmodel"
 require_relative "./middleware/suppress_json_errors"
