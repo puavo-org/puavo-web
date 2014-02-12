@@ -14,7 +14,7 @@ class LdapConverters
     end
   end
 
-  def self.parse_wlan
+  def self.json
     lambda do |networks|
       Array(networks).map do |n|
         begin
@@ -25,5 +25,10 @@ class LdapConverters
       end.compact
     end
   end
+
+  def self.parse_wlan
+    json
+  end
+
 end
 end
