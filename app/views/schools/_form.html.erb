@@ -149,9 +149,13 @@
   </tr>
   <tr>
     <td><%= f.label :puavoDeviceImage %></td>
-    <td><%= f.text_field :puavoDeviceImage %></td>
+    <td><%= f.text_field :puavoDeviceImage  %></td>
   </tr>
   <% end %>
+  <tr>
+    <td><%= f.label :external_feed %></td>
+    <td><%= f.text_field :external_feed, :placeholder => "ical url" %></td>
+  </tr>
   <tr>
     <td></td>
     <td>

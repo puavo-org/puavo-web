@@ -43,7 +43,7 @@ class School < BaseGroup
                                        :attribute => I18n.t("activeldap.attributes.school.displayName")) )
     end
   end
-  
+
   def validate_group_name
     unless self.cn.to_s =~ /^[a-z0-9-]+$/
       errors.add( :cn, I18n.t("activeldap.errors.messages.school.invalid_characters",
@@ -56,6 +56,18 @@ class School < BaseGroup
       errors.add( :puavoNamePrefix, I18n.t("activeldap.errors.messages.school.invalid_characters",
                                            :attribute => I18n.t("activeldap.attributes.school.puavoNamePrefix")) )
     end
+  end
+
+  def external_feed=(value)
+    set_attribute("puavoExternalFeed", {
+      "type" => "ical",
+      "name" => "Opinsys",
+      "value" => value
+    }.to_json)
+  end
+
+  def external_feed
+    JSON.parse(get_attribute("puavoExternalFeed"))["value"]
   end
 
   def remove_user(user)
