@@ -58,7 +58,7 @@ GEM
     afm (0.2.0)
     ansi (1.4.3)
     arel (3.0.3)
-    backports (3.4.0)
+    backports (3.5.0)
     builder (3.0.4)
     coderay (1.1.0)
     colorize (0.6.0)
@@ -76,7 +76,7 @@ GEM
     fluent-logger (0.4.7)
       msgpack (>= 0.4.4, < 0.6.0, != 0.5.3, != 0.5.2, != 0.5.1, != 0.5.0)
       yajl-ruby (~> 1.0)
-    gettext (3.0.3)
+    gettext (3.1.0)
       locale (>= 2.0.5)
       text
     gettext_i18n_rails (1.0.3)
@@ -84,6 +84,7 @@ GEM
     hashery (2.1.1)
     hike (1.2.3)
     i18n (0.6.9)
+    icalendar (1.5.0)
     journey (1.0.4)
     json (1.8.1)
     jwt (0.1.11)
@@ -117,7 +118,7 @@ GEM
       pdf-reader (~> 1.2)
       ruby-rc4
       ttfunk (~> 1.0.3)
-    pry (0.9.12.4)
+    pry (0.9.12.6)
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
@@ -214,6 +215,7 @@ DEPENDENCIES
   debugger
   fluent-logger (~> 0.4.3)
   gssapi!
+  icalendar
   jwt (~> 0.1.8)
   m
   msgpack

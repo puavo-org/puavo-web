@@ -25,6 +25,7 @@ gem "yajl-ruby"
 gem "msgpack"
 gem "colorize"
 gem "redis-namespace"
+gem "icalendar"
 
 group :test do
   gem "shotgun"
