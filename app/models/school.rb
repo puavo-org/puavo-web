@@ -59,11 +59,13 @@ class School < BaseGroup
   end
 
   def external_feed=(value)
-    set_attribute("puavoExternalFeed", {
-      "type" => "ical",
-      "name" => "Opinsys",
-      "value" => value
-    }.to_json)
+    set_attribute("puavoExternalFeed", Array(value).map do |value|
+        {
+          "type" => "ical",
+          "name" => "Opinsys",
+          "value" => value
+        }.to_json
+    end)
   end
 
   def external_feed
