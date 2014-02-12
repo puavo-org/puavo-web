@@ -1,5 +1,8 @@
+require_relative "../local_store"
+
 module PuavoRest
 class School < LdapModel
+  include LocalStore
 
   ldap_map :dn, :dn
   ldap_map :puavoId, :puavo_id
@@ -9,7 +12,7 @@ class School < LdapModel
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
   ldap_map(:puavoWirelessPrinterQueue, :wireless_printer_queue_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language
-  ldap_map(:puavoExternalFeed, :external_feed, &LdapConverters.json)
+  ldap_map(:puavoExternalFeed, :external_feeds, &LdapConverters.json)
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
@@ -69,6 +72,44 @@ class School < LdapModel
     else
       get_own(:preferred_language)
     end
+  end
+
+  def ical_feed_urls
+    Array(external_feeds).select do |feed|
+      feed["type"] == "ical"
+    end.map do |feed|
+      feed["value"]
+    end
+  end
+
+  def cache_feeds
+    ical_feed_urls.each do |url|
+      begin
+        res = HTTParty.get(url)
+      rescue Exception => err
+        # XXX: fluentd
+        puts "Failed to cache #{ url } because: #{ err.inspect }"
+        next
+      end
+
+      local_store.set("feed:#{ url }", res)
+      # Max cache for 12h
+      local_store.expire("feed:#{ url }", 60 * 60 * 12)
+    end
+  end
+
+  computed_attr :messages
+  def messages
+    ical_feed_urls.map do |url|
+      if val = local_store.get("feed:#{ url }")
+        begin
+          ICALParser.parse(val).current_events
+        rescue Exception => err
+          # XXX: fluentd
+          puts "Failed to parse ical: #{ val } because: #{ err.inspect }"
+        end
+      end
+    end.compact.flatten
   end
 
 end

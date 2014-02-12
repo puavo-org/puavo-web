@@ -89,6 +89,7 @@ require 'rack/test'
 require "timecop"
 require 'nokogiri'
 require "debugger"
+require 'webmock/minitest'
 
 require_relative '../../generic_test_helpers'
 Puavo::Test.setup_test_connection
@@ -119,3 +120,10 @@ class MiniTest::Spec
   end
 end
 
+module Fixtures
+  DIR = File.expand_path File.dirname(__FILE__)
+  ICS_FILE = DIR + "/fixtures/ical.ics"
+
+  # This timestamp is in the middle of events defined in the fixture
+  ICS_TIME = Time.local(2014, 2, 12, 14, 5, 0)
+end
