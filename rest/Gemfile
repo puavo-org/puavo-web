@@ -31,6 +31,7 @@ gem "httparty"
 group :test do
   gem "shotgun"
   gem "timecop"
+  gem "webmock"
   gem "m"
   gem "turn"
   gem "ripper-tags"

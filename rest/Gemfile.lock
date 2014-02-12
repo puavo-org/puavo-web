@@ -63,6 +63,8 @@ GEM
     coderay (1.1.0)
     colorize (0.6.0)
     columnize (0.3.6)
+    crack (0.4.2)
+      safe_yaml (~> 1.0.0)
     debugger (1.6.5)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -165,6 +167,7 @@ GEM
       yajl-ruby
     rmagick (2.13.2)
     ruby-rc4 (0.1.5)
+    safe_yaml (1.0.1)
     shotgun (0.9)
       rack (>= 1.0)
     sinatra (1.4.4)
@@ -207,6 +210,9 @@ GEM
       macaddr (~> 1.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
+    webmock (1.17.2)
+      addressable (>= 2.2.7)
+      crack (>= 0.3.2)
     yajl-ruby (1.2.0)
 
 PLATFORMS
@@ -248,4 +254,5 @@ DEPENDENCIES
   turn
   uglifier
   uuid
+  webmock
   yajl-ruby
