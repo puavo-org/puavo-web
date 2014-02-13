@@ -17,7 +17,7 @@ describe PuavoRest::School do
       :puavoSchoolHomePageURL => "gryffindor.example"
     )
 
-    @school.external_feed = "http://cal.example.com/cal.ics"
+    @school.external_feeds = "http://cal.example.com/cal.ics"
     @school.save!
 
     LdapModel.setup(
@@ -71,7 +71,7 @@ describe PuavoRest::School do
   end
 
   it "bad url does not interfere" do
-    @school.external_feed = ["http://cal.example.com/cal.ics", "bad"]
+    @school.external_feeds = ["http://cal.example.com/cal.ics", "bad"]
     @school.save!
 
     school = PuavoRest::School.by_dn!(@school.dn)
