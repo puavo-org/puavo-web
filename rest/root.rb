@@ -11,6 +11,8 @@ VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 
+# Use only when not in sinatra routes. Sinatra routes have a "flog" method
+# which automatically logs the route and user
 $rest_flog = FluentWrap.new(
   "puavo-rest",
   :hostname => Socket.gethostname,
