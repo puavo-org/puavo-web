@@ -87,8 +87,9 @@ class School < LdapModel
       begin
         res = HTTParty.get(url)
       rescue Exception => err
-        # XXX: fluentd
-        puts "Failed to cache #{ url } because: #{ err.inspect }"
+        $rest_flog.error "Failed to fetch ical",
+          :url => url,
+          :error => err.message
         next
       end
 
@@ -101,12 +102,13 @@ class School < LdapModel
   computed_attr :messages
   def messages
     ical_feed_urls.map do |url|
-      if val = local_store.get("feed:#{ url }")
+      if data = local_store.get("feed:#{ url }")
         begin
-          ICALParser.parse(val).current_events
+          ICALParser.parse(data).current_events
         rescue Exception => err
-          # XXX: fluentd
-          puts "Failed to parse ical: #{ val } because: #{ err.inspect }"
+          $rest_flog.error "Failed to parse ical",
+            :data => data.to_s.slice(0, 100),
+            :error => err.message
         end
       end
     end.compact.flatten
