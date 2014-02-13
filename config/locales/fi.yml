@@ -340,7 +340,7 @@ fi:
         st: Maakunta
         gidNumber: Gid-numero
         puavoDeviceImage: Työpöytäkuva
-        external_feed: Webmenu syöte
+        external_feeds: Webmenu syöte
         puavoBillingInfo: Laskutustiedot
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu

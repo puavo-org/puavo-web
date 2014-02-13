@@ -58,7 +58,7 @@ class School < BaseGroup
     end
   end
 
-  def external_feed=(value)
+  def external_feeds=(value)
     set_attribute("puavoExternalFeed", Array(value).map do |value|
         {
           "type" => "ical",
@@ -68,7 +68,7 @@ class School < BaseGroup
     end)
   end
 
-  def external_feed
+  def external_feeds
     Array(get_attribute("puavoExternalFeed")).first
     val = JSON.parse(val) if val
     val["value"] if val
