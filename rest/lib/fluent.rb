@@ -54,17 +54,35 @@ class FluentWrap
     )
   end
 
-  def clean(hash)
-    hash = hash.symbolize_keys
-    hash.each do |k, v|
+  def filter_passwords(val)
+    return val if !val.kind_of?(Hash)
+    val = val.dup
+    val.each do |k, v|
       # Sensor keys that contain word password
       if k.to_s.include?("password")
-        hash[k] = "[FILTERED]"
-      elsif v.kind_of?(Hash)
-        hash[k] = clean(v)
+        val[k] = "[FILTERED]"
       end
     end
-    return hash
+    val
+  end
+
+  def clean(val)
+    val = filter_passwords(val)
+
+    if val.kind_of?(Array)
+      val = val.map do |val|
+        clean(val)
+      end
+    end
+
+    if val.kind_of?(Hash)
+      val = val.dup
+      val.each do |k, v|
+        val[k] = clean(v)
+      end
+    end
+
+    val
   end
 
 end

@@ -26,11 +26,17 @@ describe FluentWrap do
   it "cleans passwords" do
       logger = MockFluent.new
       flog = FluentWrap.new "testtag", {:password_in_base => "secret1"}, logger
-      flog.info("testmsg", :password_in_arg => "secret2")
+      flog.info("testmsg", {
+        :password_in_arg => "secret2",
+        :array => [{
+          :password => "secret3"
+        }]
+      })
 
       assert logger.data, "has data"
       data = logger.data.first[1]
       assert_equal "[FILTERED]", data[:password_in_arg]
+      assert_equal "[FILTERED]", data[:array][0][:password]
       assert_equal "[FILTERED]", data[:meta][:password_in_base]
   end
 
