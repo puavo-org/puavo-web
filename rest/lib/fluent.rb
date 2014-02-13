@@ -24,6 +24,7 @@ class FluentWrap
 
   def log_stdout(attrs)
     return if ENV["RACK_ENV"] == "test"
+    return if ENV["RAILS_ENV"] == "test"
     level = attrs[:meta][:level]
     msg = attrs[:msg]
 
