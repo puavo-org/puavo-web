@@ -69,9 +69,9 @@ class School < BaseGroup
   end
 
   def external_feed
-    JSON.parse(
-      Array(get_attribute("puavoExternalFeed")).first
-    )["value"]
+    Array(get_attribute("puavoExternalFeed")).first
+    val = JSON.parse(val) if val
+    val["value"] if val
   end
 
   def remove_user(user)
