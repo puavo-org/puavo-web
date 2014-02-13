@@ -13,11 +13,25 @@ class FluentWrap
 
   def log(level, msg, attrs=nil)
     attrs ||= {}
-    attrs["msg"] = msg
-    attrs = clean(attrs)
+    attrs[:msg] = msg
     attrs[:meta] = @base_attrs
     attrs[:meta][:level] = level
+    attrs = clean(attrs)
+
     @logger.post(@tag, attrs)
+    log_stdout(attrs)
+  end
+
+  def log_stdout(attrs)
+    return if ENV["RACK_ENV"] == "test"
+    level = attrs[:meta][:level]
+    msg = attrs[:msg]
+
+    attrs = attrs.dup
+    attrs.delete(:msg)
+    attrs.delete(:meta)
+
+    puts "FLUENT-#{ level }: #{ msg } #{ attrs.inspect }"
   end
 
   def info(msg, attrs=nil)
