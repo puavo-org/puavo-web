@@ -54,6 +54,16 @@ class FluentWrap
     )
   end
 
+  MAX_SIZE = 1024 * 512
+  def truncate_large(val)
+    return val if !val.kind_of?(String)
+    if val.size > MAX_SIZE
+      val.slice(0, MAX_SIZE) << "[TRUNCATED #{ val.size - MAX_SIZE } bytes]"
+    else
+      val
+    end
+  end
+
   def filter_passwords(val)
     return val if !val.kind_of?(Hash)
     val = val.dup
@@ -67,6 +77,7 @@ class FluentWrap
   end
 
   def clean(val)
+    val = truncate_large(val)
     val = filter_passwords(val)
 
     if val.kind_of?(Array)

@@ -72,4 +72,18 @@ describe FluentWrap do
       assert_equal true, data[:meta][:meta_attr2]
   end
 
+  it "truncates large values" do
+    logger = MockFluent.new
+    flog = FluentWrap.new "testtag", {:meta_attr1 => true}, logger
+    huge = (0..FluentWrap::MAX_SIZE * 2).to_a.join("")
+    flog.info("test", :huge => huge)
+
+    assert logger.data, "has data"
+    data = logger.data[0][1][:huge]
+    assert(
+      data.size < huge.size,
+      "Data should be truncated. #{ data.size } < #{ huge.size }"
+    )
+  end
+
 end
