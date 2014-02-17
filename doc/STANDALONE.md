@@ -1,65 +1,32 @@
 # puavo-users - standalone
 
-Setup Puavo development environment to a single machine. See also https://github.com/opinsys/puavo-standalone/blob/master/README.md
+Before continuing here you should have a [Puavo environment](https://github.com/opinsys/puavo-standalone) setup.
 
-Install Ruby and other dependencies
+Install Puavo devscripts
 
-12.04 LTS (Precise Pangolin):
+    apt-get install puavo-devscripts
 
-    sudo apt-get install ruby1.9.1 ruby1.9.1-dev \
-      libxml2-dev libxslt-dev \
-      libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev \
-      libssl-dev build-essential libopenssl-ruby xpdf-utils \
-      git libreadline6-dev libxml2-dev libxslt1-dev libpq-dev \
-      libmagickwand-dev libsqlite3-dev
+Clone the source
 
-Ubuntu has no bundler for 1.9 ruby. Install it from gem
+    git clone https://github.com/opinsys/puavo-users.git
 
-    sudo gem1.9.1 install bundler
+Install development dependencies
 
-or from our repository
-
-    sudo apt-get install ruby-bundler
-
-Install [puavo-client](https://github.com/opinsys/puavo-client) manually or from our repo
-
-    sudo apt-get install puavo-client
+    mk-build-deps --install debian.default/control
     
-Install [node.js](http://nodejs.org/) manually or from our repo
-
-    sudo apt-get install nodejs-bundle
-
-Get the sources:
-
-    git clone git://github.com/opinsys/puavo-users.git
-    cd puavo-users
-
-Use install dependencies
+Install Ruby gems, node modules and build assets
 
     make
 
-Configure
+Generate default configuration
 
     bundle exec rake puavo:configuration
-
-Create sessions table to database
-
-    bundle exec rake db:migrate
 
 Start development server
 
     bundle exec rails server
 
-## Production environment
-
-Precompile assets
-
-    bundle exec rake assets:precompile
-
-PostgreSQL
-
-    sudo apt-get install postgresql-9.1
-    RAILS_ENV=production bundle exec rake db:migrate
+Now you should be able to login to `http://localhost:3000` with username `albus` and password `albus`.
 
 ## Test environment
 
