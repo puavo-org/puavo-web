@@ -34,8 +34,8 @@ Now you should be able to login to `http://localhost:3000` with username `albus`
 
 Add testing organisations
 
-    puavo-add-new-organisation example --username cucumber --password cucumber --given-name cucumber --surname cucumber
-    puavo-add-new-organisation anotherorg --username admin --password admin --given-name Admin --surname Administrator
+    sudo puavo-add-new-organisation example --username cucumber --password cucumber --given-name cucumber --surname cucumber
+    sudo puavo-add-new-organisation anotherorg --username admin --password admin --given-name Admin --surname Administrator
 
 and run the tests
 
