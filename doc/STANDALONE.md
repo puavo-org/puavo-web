@@ -21,6 +21,14 @@ Install Ruby gems, node modules and build assets
 
     make
 
+Add organisation
+
+    sudo puavo-add-new-organisation hogwarts --username albus --password albus --given-name Albus --surname Dumbledore
+
+Create certificates for the new organisation:
+
+    sudo puavo-gen-organisation-certs hogwarts
+
 Generate default configuration
 
     bundle exec rake puavo:configuration
