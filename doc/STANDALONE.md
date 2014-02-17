@@ -1,6 +1,8 @@
 # Puavo Web Interface
 
-Before continuing here you should have a [Puavo environment](https://github.com/opinsys/puavo-standalone) setup.
+This document describes how to setup a develoment environment for the Puavo Web Interface.
+
+Before continuing you should have a [Puavo environment](https://github.com/opinsys/puavo-standalone) setup.
 
 Install Puavo devscripts and redis-server
 
