@@ -28,40 +28,14 @@ Start development server
 
 Now you should be able to login to `http://localhost:3000` with username `albus` and password `albus`.
 
-## Test environment
+## Running tests
 
-Configure master user (uid=admin,o=puavo) password to the config/ldap.yml file. You can see it from the /etc/puavo/ldap/password file.
 
-Get password
-
-    sudo cat /etc/puavo/ldap/password
-    dw9e8t5isdjfaosdf
-
-Set password to the ldap.yml
-
-    test:
-      host: <%= PUAVO_ETC.ldap_master %>
-      bind_dn: uid=admin,o=puavo
-      password: dw9e8t5isdjfaosdf
-      base: o=puavo
-      method: tls
-
-    cucumber:
-      host: <%= PUAVO_ETC.ldap_master %>
-      bind_dn: uid=admin,o=puavo
-      password: dw9e8t5isdjfaosdf
-      base: o=puavo
-      method: tls
-
-Add testing organisations.
+Add testing organisations
 
     puavo-add-new-organisation example --username cucumber --password cucumber --given-name cucumber --surname cucumber
     puavo-add-new-organisation anotherorg --username admin --password admin --given-name Admin --surname Administrator
 
-Create sessions table to database
+and run the tests
 
-    RAILS_ENV=test bundle exec rake db:migrate
-
-Run tests
-
-    bundle exec cucumber
+    make test
