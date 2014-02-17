@@ -31,7 +31,7 @@ Install Ruby gems, node modules and build assets
 
     make
 
-Generate default configuration
+Generate default configuration for hogwarts. This also assumes you used `--unsafe-passwords`.
 
     bundle exec rake puavo:configuration
 
