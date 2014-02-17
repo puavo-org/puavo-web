@@ -12,7 +12,7 @@ Clone the source
 
 Install development dependencies
 
-    mk-build-deps --install debian.default/control
+    sudo mk-build-deps --install debian.default/control
     
 Install Ruby gems, node modules and build assets
 
