@@ -1,4 +1,4 @@
-# puavo-users - standalone
+# Puavo Web Interface
 
 Before continuing here you should have a [Puavo environment](https://github.com/opinsys/puavo-standalone) setup.
 
