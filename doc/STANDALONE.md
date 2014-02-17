@@ -4,6 +4,16 @@ This document describes how to setup a develoment environment for the Puavo Web 
 
 Before continuing you should have a [Puavo environment](https://github.com/opinsys/puavo-standalone) setup.
 
+Add organisation
+
+    sudo puavo-add-new-organisation hogwarts --username albus --password albus --given-name Albus --surname Dumbledore
+
+Create certificates for the new organisation:
+
+    sudo puavo-gen-organisation-certs hogwarts
+    
+The certificate password is `password` if you used `--unsafe-passwords` during puavo env init.
+
 Install Puavo devscripts and redis-server
 
     sudo apt-get install puavo-devscripts redis-server
@@ -20,14 +30,6 @@ Install development dependencies
 Install Ruby gems, node modules and build assets
 
     make
-
-Add organisation
-
-    sudo puavo-add-new-organisation hogwarts --username albus --password albus --given-name Albus --surname Dumbledore
-
-Create certificates for the new organisation:
-
-    sudo puavo-gen-organisation-certs hogwarts
 
 Generate default configuration
 
