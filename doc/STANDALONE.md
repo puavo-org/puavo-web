@@ -2,9 +2,9 @@
 
 Before continuing here you should have a [Puavo environment](https://github.com/opinsys/puavo-standalone) setup.
 
-Install Puavo devscripts
+Install Puavo devscripts and redis-server
 
-    apt-get install puavo-devscripts
+    apt-get install puavo-devscripts redis-server
 
 Clone the source
 
