@@ -6,7 +6,7 @@ Before continuing you should have a [Puavo environment](https://github.com/opins
 
 Install Puavo devscripts and redis-server
 
-    apt-get install puavo-devscripts redis-server
+    sudo apt-get install puavo-devscripts redis-server
 
 Clone the source
 
