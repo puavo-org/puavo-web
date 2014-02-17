@@ -4,6 +4,8 @@ This document describes how to setup a develoment environment for the Puavo Web 
 
 Before continuing you should have a [Puavo environment](https://github.com/opinsys/puavo-standalone) setup.
 
+## Organisation setup
+
 Add organisation
 
     sudo puavo-add-new-organisation hogwarts --username albus --password albus --given-name Albus --surname Dumbledore
@@ -13,6 +15,8 @@ Create certificates for the new organisation:
     sudo puavo-gen-organisation-certs hogwarts
     
 The certificate password is `password` if you used `--unsafe-passwords` during puavo env init.
+
+## Installation from sources
 
 Install Puavo devscripts and redis-server
 
@@ -30,10 +34,14 @@ Install development dependencies
 Install Ruby gems, node modules and build assets
 
     make
+    
+## Configuration
 
 Generate default configuration for hogwarts. This also assumes you used `--unsafe-passwords`.
 
     bundle exec rake puavo:configuration
+
+## Running the web server
 
 Start development server
 
@@ -56,3 +64,9 @@ Add testing organisations
 and run the tests
 
     make test
+    
+## Building debian packages
+
+    puavo-build-debian-dir
+    puavo-dch $(cat VERSION)
+    dpkg-buildpackage -uc -us
