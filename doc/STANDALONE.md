@@ -36,6 +36,10 @@ Generate default configuration
 Start development server
 
     bundle exec rails server
+    
+Start resque worker
+
+    script/puavo-web-worker
 
 Now you should be able to login to `http://localhost:3000` with username `albus` and password `albus`.
 
