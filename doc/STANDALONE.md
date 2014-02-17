@@ -9,6 +9,7 @@ Install Puavo devscripts
 Clone the source
 
     git clone https://github.com/opinsys/puavo-users.git
+    cd puavo-users
 
 Install development dependencies
 
