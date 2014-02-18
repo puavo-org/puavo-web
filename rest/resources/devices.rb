@@ -84,6 +84,11 @@ class Device < Host
     school.homepage
   end
 
+  def messages
+    # TODO: merge with devices own messages
+    school.messages
+  end
+
 end
 
 class Devices < LdapSinatra
@@ -119,6 +124,13 @@ class Devices < LdapSinatra
     device = Device.by_hostname!(params["hostname"])
     json device
   end
+
+  get "/v3/devices/:hostname/feed" do
+    auth :basic_auth, :server_auth, :kerberos
+    device =  Device.by_hostname!(params["hostname"])
+    json device.messages
+  end
+
 
   get "/v3/devices/:hostname/wireless_printer_queues" do
     auth :basic_auth, :server_auth

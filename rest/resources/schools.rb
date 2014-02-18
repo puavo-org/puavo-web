@@ -99,8 +99,9 @@ class School < LdapModel
     end
   end
 
-  computed_attr :messages
   def messages
+    # TODO: merge with organisation messages
+
     ical_feed_urls.map do |url|
       if data = local_store.get("feed:#{ url }")
         begin

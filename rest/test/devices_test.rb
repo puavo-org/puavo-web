@@ -377,4 +377,31 @@ describe PuavoRest::Devices do
       )
     end
   end
+
+  describe "feed" do
+
+    before(:each) do
+      create_device(
+        :puavoHostname => "feedthin",
+        :macAddress => "00:60:2f:9B:93:FF",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn
+      )
+    end
+
+    it "is empty without sources" do
+      get "/v3/devices/feedthin/feed", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+
+      data = JSON.parse last_response.body
+      assert_equal [], data
+    end
+
+    it "can have data" do
+      # TODO: add feed to redis, timetravel etc...
+    end
+
+  end
 end
