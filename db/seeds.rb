@@ -5,7 +5,7 @@ authentication = Puavo::Authentication.new
 authentication.configure_ldap_connection({
     :dn => PUAVO_ETC.ldap_dn,
     :password => PUAVO_ETC.ldap_password,
-    :organisation_key => PUAVO_ETC.domain.split(".", 2).first
+    :organisation_key => "hogwarts"
 })
 authentication.authenticate
 
