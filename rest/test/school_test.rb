@@ -33,9 +33,9 @@ describe PuavoRest::School do
     Timecop.return
   end
 
-  it "has external_feeds" do
+  it "has external_feed_sources" do
     school = PuavoRest::School.by_dn!(@school.dn)
-    assert school.external_feeds
+    assert school.external_feed_sources
     assert_equal(
       [
         {
@@ -44,7 +44,7 @@ describe PuavoRest::School do
          "value"=>"http://cal.example.com/cal.ics"
         }
       ],
-      school.external_feeds
+      school.external_feed_sources
     )
   end
 

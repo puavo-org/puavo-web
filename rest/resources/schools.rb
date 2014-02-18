@@ -12,7 +12,7 @@ class School < LdapModel
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
   ldap_map(:puavoWirelessPrinterQueue, :wireless_printer_queue_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language
-  ldap_map(:puavoExternalFeed, :external_feeds, &LdapConverters.json)
+  ldap_map(:puavoExternalFeed, :external_feed_sources, &LdapConverters.json)
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
@@ -75,7 +75,7 @@ class School < LdapModel
   end
 
   def ical_feed_urls
-    Array(external_feeds).select do |feed|
+    Array(external_feed_sources).select do |feed|
       feed["type"] == "ical"
     end.map do |feed|
       feed["value"]
