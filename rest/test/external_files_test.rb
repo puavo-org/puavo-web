@@ -40,11 +40,11 @@ describe PuavoRest::ExternalFiles do
     assert_200
     data = JSON.parse last_response.body
 
-    assert_equal data[0]["name"], "test.txt"
-    assert_equal data[0]["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
+    assert_equal "test.txt", data[0]["name"]
+    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data[0]["data_hash"]
 
-    assert_equal data[1]["name"], "another.txt"
-    assert_equal data[1]["data_hash"], "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"
+    assert_equal "another.txt", data[1]["name"]
+    assert_equal "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519", data[1]["data_hash"]
   end
 
   it "has file contents" do
@@ -58,8 +58,8 @@ describe PuavoRest::ExternalFiles do
     assert_200
     data = JSON.parse last_response.body
 
-    assert_equal data["name"], "test.txt"
-    assert_equal data["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
+    assert_equal "test.txt", data["name"]
+    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data["data_hash"]
   end
 
   it "has file metadata in index by device" do
@@ -67,14 +67,14 @@ describe PuavoRest::ExternalFiles do
     assert_200
     data = JSON.parse last_response.body
 
-    assert_equal data[0]["name"], "test.txt"
-    assert_equal data[0]["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
+    assert_equal "test.txt", data[0]["name"]
+    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data[0]["data_hash"]
 
-    assert_equal data[1]["name"], "another.txt"
-    assert_equal data[1]["data_hash"], "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"
+    assert_equal "another.txt", data[1]["name"]
+    assert_equal "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519", data[1]["data_hash"]
 
-    assert_equal data[2]["name"], "printer.ppd"
-    assert_equal data[2]["data_hash"], "f6faa9d255137ce1482dc9a958f7299c234ef4f9"
+    assert_equal "printer.ppd", data[2]["name"]
+    assert_equal "f6faa9d255137ce1482dc9a958f7299c234ef4f9", data[2]["data_hash"]
 
   end
 
@@ -83,11 +83,11 @@ describe PuavoRest::ExternalFiles do
     assert_200
     data = JSON.parse last_response.body
 
-    assert_equal data[0]["name"], "test.txt"
-    assert_equal data[0]["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
+    assert_equal "test.txt", data[0]["name"]
+    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data[0]["data_hash"]
 
-    assert_equal data[1]["name"], "another.txt"
-    assert_equal data[1]["data_hash"], "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"
+    assert_equal "another.txt", data[1]["name"]
+    assert_equal "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519", data[1]["data_hash"]
   end
 
   it "has printer.ppd file contents by hostname" do

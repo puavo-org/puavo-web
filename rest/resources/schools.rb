@@ -113,7 +113,14 @@ class School < LdapModel
             :error => err.message
         end
       end
-    end.compact.flatten
+    end.compact.flatten.map do |msg|
+      msg["to"] = {
+        "object_model" => object_model,
+        "name" => name,
+        "dn" => dn.to_s
+      }
+      msg
+    end
   end
 
 end
