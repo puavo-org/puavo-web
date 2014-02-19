@@ -250,10 +250,9 @@ describe LdapModel do
         child.ldap_set(:childAttrA, "bar")
 
         h = child.to_hash
-        assert_equal(
-          {"parent_attr"=>"foo", "child_attr_a"=>"bar"},
-          h
-        )
+        assert_equal "foo", h["parent_attr"]
+        assert_equal "bar", h["child_attr_a"]
+        assert_equal "ChildA", h["object_model"], "Object model is always added"
       end
 
     end

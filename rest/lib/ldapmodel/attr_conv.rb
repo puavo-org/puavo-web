@@ -157,4 +157,9 @@ class LdapModel
     as_json.to_json
   end
 
+  computed_attr :object_model
+  def object_model
+    self.class.to_s
+  end
+
 end
