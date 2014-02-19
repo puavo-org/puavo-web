@@ -103,6 +103,10 @@ class LdapModel
 
     timer = PROF.start
 
+    if connection.nil?
+      raise "Connection is not setup!"
+    end
+
     connection.search(
       dn,
       LDAP::LDAP_SCOPE_BASE,
