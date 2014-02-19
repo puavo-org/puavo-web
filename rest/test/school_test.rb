@@ -62,12 +62,13 @@ describe PuavoRest::School do
     school.cache_feeds()
 
     assert_equal(2, school.messages.size, school.messages)
-    assert_equal(
-      [
-        {"message"=>"long event"},
-        {"message"=>"event of today"}
-      ],
-      school.messages)
+    assert_equal "long event", school.messages[0]["message"]
+    assert_equal "Gryffindor", school.messages[0]["to"]["name"]
+    assert_equal "PuavoRest::School", school.messages[0]["to"]["object_model"]
+
+    assert_equal "event of today", school.messages[1]["message"]
+    assert_equal "Gryffindor", school.messages[1]["to"]["name"]
+    assert_equal "PuavoRest::School", school.messages[1]["to"]["object_model"]
   end
 
   it "bad url does not interfere" do
@@ -82,12 +83,13 @@ describe PuavoRest::School do
     school.cache_feeds()
 
     assert_equal(2, school.messages.size, school.messages)
-    assert_equal(
-      [
-        {"message"=>"long event"},
-        {"message"=>"event of today"}
-      ],
-      school.messages)
+    assert_equal "long event", school.messages[0]["message"]
+    assert_equal "Gryffindor", school.messages[0]["to"]["name"]
+    assert_equal "PuavoRest::School", school.messages[0]["to"]["object_model"]
+
+    assert_equal "event of today", school.messages[1]["message"]
+    assert_equal "Gryffindor", school.messages[1]["to"]["name"]
+    assert_equal "PuavoRest::School", school.messages[1]["to"]["object_model"]
   end
 
 end

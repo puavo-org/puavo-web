@@ -39,13 +39,12 @@ describe PuavoRest::ExternalFiles do
     get "/v3/external_files"
     assert_200
     data = JSON.parse last_response.body
-    assert_equal(
-      [
-        {"name"=>"test.txt", "data_hash"=>"f48dd853820860816c75d54d0f584dc863327a7c"},
-        {"name"=>"another.txt", "data_hash"=>"7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"}
-      ],
-    data
-    )
+
+    assert_equal data[0]["name"], "test.txt"
+    assert_equal data[0]["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
+
+    assert_equal data[1]["name"], "another.txt"
+    assert_equal data[1]["data_hash"], "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"
   end
 
   it "has file contents" do
@@ -58,37 +57,37 @@ describe PuavoRest::ExternalFiles do
     get "/v3/external_files/test.txt/metadata"
     assert_200
     data = JSON.parse last_response.body
-    assert_equal(
-      {"name"=>"test.txt", "data_hash"=>"f48dd853820860816c75d54d0f584dc863327a7c"},
-      data
-    )
+
+    assert_equal data["name"], "test.txt"
+    assert_equal data["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
   end
 
   it "has file metadata in index by device" do
     get "/v3/devices/athin01/external_files"
     assert_200
     data = JSON.parse last_response.body
-    assert_equal(
-      [
-        {"name"=>"test.txt", "data_hash"=>"f48dd853820860816c75d54d0f584dc863327a7c"},
-        {"name"=>"another.txt", "data_hash"=>"7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"},
-        {"name"=>"printer.ppd", "data_hash"=>"f6faa9d255137ce1482dc9a958f7299c234ef4f9"}
-      ],
-    data
-    )
+
+    assert_equal data[0]["name"], "test.txt"
+    assert_equal data[0]["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
+
+    assert_equal data[1]["name"], "another.txt"
+    assert_equal data[1]["data_hash"], "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"
+
+    assert_equal data[2]["name"], "printer.ppd"
+    assert_equal data[2]["data_hash"], "f6faa9d255137ce1482dc9a958f7299c234ef4f9"
+
   end
 
   it "has no file metadata of printer_ppd in index by device" do
     get "/v3/devices/athin02/external_files"
     assert_200
     data = JSON.parse last_response.body
-    assert_equal(
-      [
-        {"name"=>"test.txt", "data_hash"=>"f48dd853820860816c75d54d0f584dc863327a7c"},
-        {"name"=>"another.txt", "data_hash"=>"7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"}
-      ],
-    data
-    )
+
+    assert_equal data[0]["name"], "test.txt"
+    assert_equal data[0]["data_hash"], "f48dd853820860816c75d54d0f584dc863327a7c"
+
+    assert_equal data[1]["name"], "another.txt"
+    assert_equal data[1]["data_hash"], "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519"
   end
 
   it "has printer.ppd file contents by hostname" do
