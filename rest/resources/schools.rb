@@ -89,6 +89,7 @@ class School < LdapModel
       rescue Exception => err
         $rest_flog.error "Failed to fetch ical",
           :url => url,
+          :source => self.to_hash,
           :error => err.message
         next
       end
