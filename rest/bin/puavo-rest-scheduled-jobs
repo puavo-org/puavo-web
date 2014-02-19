@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -eu
+
+# Sinatra for some reason requires a body for POST requests. So just add
+# something...
+curl --fail -X POST -d foo=bar http://localhost:9292/v3/scheduled_jobs
+

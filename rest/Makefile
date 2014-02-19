@@ -32,6 +32,8 @@ install: clean-for-install
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
 	mkdir -p $(DESTDIR)$(prefix)/bin
+	mkdir -p $(DESTDIR)/etc/cron.hourly
+
 	cp -r \
 		VERSION \
 		GIT_COMMIT \
@@ -53,6 +55,8 @@ install: clean-for-install
 		$(DESTDIR)$(installdir)
 	
 	install -t $(DESTDIR)$(prefix)/bin scripts/puavo-rest-prompt
+	install -t $(DESTDIR)$(prefix)/bin bin/puavo-rest-scheduled-jobs
+	ln -s $(DESTDIR)$(prefix)/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
 
 install-client:
 	mkdir -p $(DESTDIR)$(prefix)/sbin

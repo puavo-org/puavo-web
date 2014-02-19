@@ -152,6 +152,7 @@ class Root < LdapSinatra
 
   use BeforeFilters
 
+  use PuavoRest::ScheduledJobs
   use PuavoRest::PrinterQueues
   use PuavoRest::WlanNetworks
   use PuavoRest::ExternalFiles
