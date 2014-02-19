@@ -56,7 +56,7 @@ install: clean-for-install
 	
 	install -t $(DESTDIR)$(prefix)/bin scripts/puavo-rest-prompt
 	install -t $(DESTDIR)$(prefix)/bin bin/puavo-rest-scheduled-jobs
-	ln -s $(DESTDIR)$(prefix)/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
+	ln -s ../../usr/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
 
 install-client:
 	mkdir -p $(DESTDIR)$(prefix)/sbin
