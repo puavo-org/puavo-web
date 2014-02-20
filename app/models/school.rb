@@ -69,7 +69,7 @@ class School < BaseGroup
   end
 
   def external_feeds
-    Array(get_attribute("puavoExternalFeed")).first
+    val = Array(get_attribute("puavoExternalFeed")).first
     val = JSON.parse(val) if val
     val["value"] if val
   end
