@@ -70,6 +70,11 @@ describe PuavoRest::Sessions do
 
       data = JSON.parse last_response.body
       assert_equal "server1", data["ltsp_server"]["hostname"]
+
+      assert_equal 1, Array(data["fallback_ltsp_servers"]).size
+      # server2 is the fallback server
+      assert_equal "server2", data["fallback_ltsp_servers"][0]["hostname"]
+
     end
   end
 

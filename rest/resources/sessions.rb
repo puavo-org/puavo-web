@@ -84,8 +84,7 @@ end
 # Desktop login sessions
 class Sessions < LdapSinatra
 
-  def find_ltsp_server!(preferred_image, preferred_server, school_dn)
-
+  def sorted_ltsp_servers(preferred_image, preferred_server, school_dn)
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_old
     filtered.safe_apply(:filter_by_image, preferred_image) if preferred_image
@@ -93,12 +92,6 @@ class Sessions < LdapSinatra
     filtered.filter_by_other_schools(school_dn)
     filtered.safe_apply(:filter_by_school, school_dn)
     filtered.sort_by_load
-
-    if filtered.first.nil?
-      raise NotFound, :user => "cannot find any LTSP servers"
-    end
-
-    filtered.first
   end
 
 
@@ -123,11 +116,19 @@ class Sessions < LdapSinatra
         device = Device.by_hostname!(params["hostname"])
 
         if device.type == "thinclient"
-          session["ltsp_server"] = find_ltsp_server!(
+          servers =  sorted_ltsp_servers(
             device.preferred_image,
             device.preferred_server,
             device.school_dn
           )
+
+          if servers.empty?
+            raise NotFound, :user => "cannot find any LTSP servers"
+          end
+
+          primary, *fallback = servers
+          session["ltsp_server"] = primary
+          session["fallback_ltsp_servers"] = fallback
         end
 
         session["preferred_language"] = device.preferred_language
