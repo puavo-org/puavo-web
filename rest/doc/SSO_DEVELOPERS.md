@@ -48,7 +48,7 @@ contain following claims:
   - `first_name`
   - `last_name`
   - `user_type`
-    - TODO: list possible values
+    - Possible values: `teacher`, `staff`, `student`, `visitor`, `parent`, `admin` or `testuser`
   - `email`
     - Unfortunately this is not set for all users.
   - `school_name`
