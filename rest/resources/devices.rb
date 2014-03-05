@@ -125,6 +125,11 @@ class Devices < LdapSinatra
     json device
   end
 
+  get "/v3/devices" do
+    auth :basic_auth, :server_auth, :kerberos
+    json Device.all
+  end
+
   get "/v3/devices/:hostname/feed" do
 
     messages = LdapModel.setup(:credentials => CONFIG["server"]) do
