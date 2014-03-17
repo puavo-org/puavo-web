@@ -1,8 +1,11 @@
+require_relative "./puavo_tag_mixin"
+
 class School < BaseGroup
   include Wlan
   include Puavo::Client::HashMixin::School
   include BooleanAttributes
   include HasPrinterMixin
+  include PuavoTagMixin
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
