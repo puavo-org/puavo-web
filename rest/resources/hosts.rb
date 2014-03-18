@@ -14,7 +14,6 @@ class Host < LdapModel
   ldap_map :puavoDeviceKernelArguments, :kernel_arguments
   ldap_map :puavoDeviceBootMode, :boot_mode
   ldap_map :puavoDeviceKernelVersion, :kernel_version
-  ldap_map(:puavoTag, :tags){ |v| Array(v) }
 
 
   def self.ldap_base
