@@ -344,7 +344,6 @@ en:
         gidNumber: Gid number
         puavoDeviceImage: Desktop Image
         external_feeds: Webmenu feed
-        puavoTag: Tags
         puavoBillingInfo: Billing info
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
