@@ -23,6 +23,8 @@ describe PuavoRest::Devices do
       :puavoDeviceType => "bootserver",
       :puavoSchool => @school.dn
     )
+    PuavoRest.test_boot_server_dn = @server1.dn.to_s
+
     @server2 = create_server(
       :puavoHostname => "server2",
       :macAddress => "bc:5f:f4:56:59:72"
@@ -193,8 +195,6 @@ describe PuavoRest::Devices do
       )
       @server1.puavoDeviceImage = "bootserverprefimage"
       @server1.save!
-
-      PuavoRest.test_boot_server_dn = @server1.dn.to_s
 
       get "/v3/devices/athin"
       assert_200
