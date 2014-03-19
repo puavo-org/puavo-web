@@ -43,16 +43,19 @@ class School < LdapModel
 
 
   def preferred_image
-     if get_own(:preferred_image).nil?
-       bootserver = BootServer.by_dn(PuavoRest.get_bootserver_dn)
-       if bootserver.preferred_image.nil?
-         organisation.preferred_image
-       else
-         bootserver.preferred_image.strip
-       end
-      else
-        get_own(:preferred_image).strip
+    if get_own(:preferred_image)
+      return get_own(:preferred_image).strip
+    end
+
+    # Use image from the current bootserver if we are running in a bootserver
+    if PuavoRest.bootserver_dn
+      bootserver = BootServer.by_dn!(PuavoRest.bootserver_dn)
+      if bootserver.preferred_image
+        return bootserver.preferred_image.strip
       end
+    end
+
+    return organisation.preferred_image
   end
 
   def allow_guest

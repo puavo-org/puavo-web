@@ -25,7 +25,9 @@ $rest_flog.info "starting"
 mattr_accessor :test_boot_server_dn
 
 
-def self.get_bootserver_dn
+def self.bootserver_dn
+  return if not CONFIG["bootserver"]
+
   if ENV["RACK_ENV"] == "test"
     if !test_boot_server_dn.nil?
       return test_boot_server_dn
