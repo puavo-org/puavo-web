@@ -12,13 +12,23 @@ class FluentWrap
   end
 
   def log(level, msg, attrs=nil)
-    attrs ||= {}
-    attrs[:msg] = msg
-    attrs[:meta] = @base_attrs
-    attrs[:meta][:level] = level
-    attrs = clean(attrs)
 
-    @logger.post(@tag, attrs)
+    if [:msg, :meta, :level].include?(msg)
+      raise "Illegal fluentd message key: #{ msg }"
+    end
+
+    record = {
+      :msg => msg, # for legacy elasticsearch support
+      :meta => clean(@base_attrs),
+    }
+
+    record[:meta][:level] = level
+
+    # Write attrs under a key defined by msg to avoid type errors in
+    # elasticsearch
+    record[msg] = clean(attrs) if attrs
+
+    @logger.post(@tag, record)
     log_stdout(attrs)
   end
 

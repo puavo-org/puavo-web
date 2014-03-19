@@ -127,11 +127,11 @@ describe PuavoRest::Host do
       assert boot_end, "boot end was logged"
 
       assert(
-        boot_end[1][:boot_duration] > 55,
+        boot_end[1]["boot done"][:boot_duration] > 55,
         "has boot duration near 60: #{ boot_end[1][:boot_duration] }"
       )
 
-      assert_equal "thinclient05", boot_end[1][:hostname]
+      assert_equal "thinclient05", boot_end[1]["boot done"][:hostname]
 
 
     end

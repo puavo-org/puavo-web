@@ -34,10 +34,15 @@ describe FluentWrap do
       })
 
       assert logger.data, "has data"
-      data = logger.data.first[1]
+      assert logger.data[0][1]["testmsg"], "has msg as a key"
+
+      record = logger.data[0][1]
+
+      data = record["testmsg"]
+
       assert_equal "[FILTERED]", data[:password_in_arg]
       assert_equal "[FILTERED]", data[:array][0][:password]
-      assert_equal "[FILTERED]", data[:meta][:password_in_base]
+      assert_equal "[FILTERED]", record[:meta][:password_in_base]
   end
 
   it "cleans passwords from nested ActiveSupport::HashWithIndifferentAccess hashes" do
@@ -51,7 +56,9 @@ describe FluentWrap do
     }))
 
     assert logger.data, "has data"
-    data = logger.data.first[1]
+    record = logger.data[0][1]
+
+    data = record["testmsg"]
     assert_equal "[FILTERED]", data[:params][:user][:new_password]
   end
 
@@ -79,7 +86,10 @@ describe FluentWrap do
     flog.info("test", :huge => huge)
 
     assert logger.data, "has data"
-    data = logger.data[0][1][:huge]
+
+    record = logger.data[0][1]
+    data = record["test"][:huge]
+
     assert(
       data.size < huge.size,
       "Data should be truncated. #{ data.size } < #{ huge.size }"
