@@ -29,7 +29,7 @@ class FluentWrap
     record[msg] = clean(attrs) if attrs
 
     @logger.post(@tag, record)
-    log_stdout(attrs)
+    log_stdout(record)
   end
 
   def log_stdout(attrs)
