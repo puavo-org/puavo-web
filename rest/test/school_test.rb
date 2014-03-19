@@ -20,6 +20,14 @@ describe PuavoRest::School do
     @school.external_feeds = "http://cal.example.com/cal.ics"
     @school.save!
 
+    @server2 = create_server(
+      :puavoHostname => "server2",
+      :macAddress => "bc:5f:f4:56:59:72",
+      :puavoDeviceType => "bootserver",
+      :puavoSchool => @school.dn
+    )
+    PuavoRest.test_boot_server_dn = @server2.dn.to_s
+
     LdapModel.setup(
       :organisation =>
         PuavoRest::Organisation.default_organisation_domain!,

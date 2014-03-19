@@ -47,6 +47,14 @@ describe PuavoRest::Sessions do
       :puavoHostname => "server2",
       :macAddress => "bc:5f:f4:56:59:72"
     )
+
+    @server3 = create_server(
+      :puavoHostname => "server3",
+      :macAddress => "bc:5f:f4:56:59:73",
+      :puavoDeviceType => "bootserver",
+      :puavoSchool => @school.dn
+    )
+    PuavoRest.test_boot_server_dn = @server3.dn.to_s
   end
 
   describe "load filter" do

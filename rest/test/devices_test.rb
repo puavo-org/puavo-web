@@ -20,15 +20,16 @@ describe PuavoRest::Devices do
     @server1 = create_server(
       :puavoHostname => "server1",
       :macAddress => "bc:5f:f4:56:59:71",
-      :puavoDeviceType => "bootserver",
-      :puavoSchool => @school.dn
+      :puavoSchool => @school.dn,
+      :puavoDeviceType => "ltspserver"
     )
-    PuavoRest.test_boot_server_dn = @server1.dn.to_s
-
     @server2 = create_server(
       :puavoHostname => "server2",
-      :macAddress => "bc:5f:f4:56:59:72"
+      :macAddress => "bc:5f:f4:56:59:72",
+      :puavoDeviceType => "bootserver"
     )
+    PuavoRest.test_boot_server_dn = @server2.dn.to_s
+
     @printer = Printer.create(
       :printerDescription => "printer1",
       :printerLocation => "school2",
@@ -193,8 +194,8 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
-      @server1.puavoDeviceImage = "bootserverprefimage"
-      @server1.save!
+      @server2.puavoDeviceImage = "bootserverprefimage"
+      @server2.save!
 
       get "/v3/devices/athin"
       assert_200
@@ -381,7 +382,7 @@ describe PuavoRest::Devices do
         :printerMakeAndModel => "foo",
         :printerType => "1234",
         :printerURI => "socket://baz",
-        :puavoServer => @server1.dn
+        :puavoServer => @server2.dn
       )
       printer2.save!
       @school.add_wireless_printer(printer2)
