@@ -22,8 +22,13 @@ $rest_flog = FluentWrap.new(
 
 $rest_flog.info "starting"
 
-mattr_accessor :test_boot_server_dn
+def self.test_boot_server_dn
+  @@test_boot_server_dn
+end
 
+def self.test_boot_server_dn=(dn)
+  @@test_boot_server_dn = dn
+end
 
 def self.bootserver_dn
   return if not CONFIG["bootserver"]
