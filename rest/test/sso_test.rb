@@ -105,10 +105,8 @@ describe PuavoRest::SSO do
       assert_equal "www.example.net", @jwt["organisation_domain"]
       assert_equal "/", @jwt["external_service_path_prefix"]
       assert_equal "Gryffindor", @jwt["school_name"]
-      user_groups = @user.groups.map{ |g| { "id" => g.puavoId.to_s, "name" => g.displayName } }
-      user_groups.push( { "id" => @user.school.puavoId.to_s, "name" => @user.school.displayName } )
-      assert_equal( user_groups.sort{ |a,b| a["name"] <=> b["name"] },
-                    @jwt["groups"].sort{ |a,b| a["name"] <=> b["name"] } )
+      assert_equal 1, @jwt["groups"].size, "should have one group"
+      assert_equal "Maintenance", @jwt["groups"][0]["name"]
       assert !@jwt["school_id"].to_s.empty?
     end
 
