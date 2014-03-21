@@ -13,20 +13,38 @@ describe PuavoRest::Users do
       :puavoSchoolHomePageURL => "schoolhomepage.example"
     )
 
+    @group = Group.new
+    @group.cn = "group1"
+    @group.displayName = "Group 1"
+    @group.puavoSchool = @school.dn
+    @group.save!
+
+    @role = Role.new
+    @role.displayName = "Some role"
+    @role.puavoSchool = @school.dn
+    @role.groups << @group
+    @role.save!
+
     @user = User.new(
       :givenName => "Bob",
       :sn  => "Brown",
       :uid => "bob",
       :puavoEduPersonAffiliation => "student",
       :preferredLanguage => "en",
-      :mail => "bob@example.com"
+      :mail => "bob@example.com",
+      :role_ids => [@role.puavoId]
     )
     @user.set_password "secret"
     @user.puavoSchool = @school.dn
     @user.role_ids = [
-      Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
+      Role.find(:first, {
+        :attribute => "displayName",
+        :value => "Maintenance"
+      }).puavoId,
+      @role.puavoId
     ]
     @user.save!
+
   end
 
   describe "GET /v3/whoami" do
@@ -199,6 +217,28 @@ describe PuavoRest::Users do
       assert_equal 401, last_response.status, last_response.body
     end
 
+  end
+
+  describe "groups" do
+    before(:each) do
+      LdapModel.setup(
+        :organisation => PuavoRest::Organisation.default_organisation_domain!,
+        :rest_root => "http://" + CONFIG["default_organisation_domain"],
+        :credentials => {
+          :dn => PUAVO_ETC.ldap_dn,
+          :password => PUAVO_ETC.ldap_password }
+      )
+    end
+    it "can be listed" do
+      user = PuavoRest::User.by_username(@user.uid)
+      group_names = Set.new(user.groups.map{ |g| g.name })
+      assert !group_names.include?("Gryffindor"), "Group list must not include schools"
+
+      assert_equal(
+        Set.new(["Maintenance", "Group 1"]),
+        group_names
+      )
+    end
   end
 
 end

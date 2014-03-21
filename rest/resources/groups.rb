@@ -8,6 +8,10 @@ class Group < LdapModel
   ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
 
+  def self.base_filter
+    "(objectClass=puavoEduGroup)"
+  end
+
   def self.ldap_base
     "ou=Groups,#{ organisation["base"] }"
   end
