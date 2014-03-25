@@ -51,7 +51,7 @@ contain following claims:
   - `schools` List of school objects user belongs to
     - `id` Unique identifier for the school
     - `name` Human readable school name
-    - `abbreviation` - Valid POSIX name for the school
+    - `abbreviation` Valid POSIX name for the school
   - `groups` List of groups objects users belogs to
     - `id` Unique identifier for the school
     - `name` Human readable group name
