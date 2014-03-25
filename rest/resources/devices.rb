@@ -79,6 +79,10 @@ class Device < Host
      end
   end
 
+  def tags
+    school.tags.concat(get_own(:tags)).uniq.sort
+  end
+
   computed_attr :homepage
   def homepage
     school.homepage

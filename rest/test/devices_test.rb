@@ -11,7 +11,8 @@ describe PuavoRest::Devices do
       :puavoDeviceImage => "schoolprefimage",
       :puavoPersonalDevice => true,
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
-      :puavoAllowGuest => true
+      :puavoAllowGuest => true,
+      :puavoTag => ["schooltag"]
     )
     @school_without_fallback_value = School.create(
       :cn => "gryffindor2",
@@ -122,8 +123,9 @@ describe PuavoRest::Devices do
 
     it "has tags" do
       assert @data["tags"], "has tags"
-      assert_equal "tag1", @data["tags"][0]
-      assert_equal "tag2", @data["tags"][1]
+      assert @data["tags"].include?("tag1"), "has tag1"
+      assert @data["tags"].include?("tag2"), "has tag2"
+      assert @data["tags"].include?("schooltag"), "has schooltag"
     end
 
     it "it prefers language from the school" do
