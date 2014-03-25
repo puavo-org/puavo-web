@@ -49,15 +49,14 @@ contain following claims:
   - `email` - User email
     - Not available always
   - `schools` List of school objects user belongs to
-    - Keys:
-      - `id` - Unique identifier for the school
-      - `name` - Human readable school name
+    - `id` - Unique identifier for the school
+    - `name` - Human readable school name
+    - `abbreviation` - Valid POSIX name for the school
   - `groups` List of groups objects users belogs to
-    - Keys:
-      - `id` - Unique identifier for the school
-      - `name` - Human readable group name
-      - `abbreviation` - Valid POSIX name for the group
-      - `school_id` - id of the school this groups belongs to
+    - `id` - Unique identifier for the school
+    - `name` - Human readable group name
+    - `abbreviation` - Valid POSIX name for the group
+    - `school_id` - Id of the school this groups belongs to
   - `primary_school_id`
     - The school id user primarily attends to
   - `organisation_name`
