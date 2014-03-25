@@ -1,8 +1,7 @@
 module UsersHelper
-  def profile_image_path(user=nil)
-    user ||= current_user
+  def default_image_or_user_image_path(path, user)
     if user.jpegPhoto
-      image_profile_path
+      path
     else
       "anonymous.png"
     end

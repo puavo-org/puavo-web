@@ -1,8 +1,11 @@
 <table class="basic-info">
   <tr>
     <td>
-      <%= image_tag( profile_image_path(@user),
-                     :class => "image" ) %>
+      <%= image_tag(
+            default_image_or_user_image_path(
+              image_user_path(@user.school.id, @user),
+              @user ),
+            :class => "image" ) %>
     </td>
     <td>
       <h1><%=h @user.displayName %></h1>

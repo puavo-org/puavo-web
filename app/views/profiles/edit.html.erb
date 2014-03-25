@@ -4,7 +4,9 @@
     <legend><%= t('.title') %></legend>
     <div class="span12 profile-details">
       <div class="span4">
-        <%= image_tag(profile_image_path, :class => "avatar img-polaroid") %>
+        <%= image_tag(
+              default_image_or_user_image_path(
+                image_profile_path, @user), :class => "avatar img-polaroid") %>
       </div>
       <div class="span6">
         <ul class="user-info-details">
