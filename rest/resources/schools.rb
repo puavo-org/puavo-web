@@ -5,7 +5,7 @@ class School < LdapModel
   include LocalStore
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :puavo_id
+  ldap_map :puavoId, :id
   ldap_map :displayName, :name
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoSchoolHomePageURL, :homepage
@@ -27,6 +27,11 @@ class School < LdapModel
 
   def self.base_filter
     "(objectClass=puavoSchool)"
+  end
+
+  computed_attr :puavo_id
+  def puavo_id
+    id
   end
 
   def printer_queues

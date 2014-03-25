@@ -4,6 +4,7 @@ module PuavoRest
 class User < LdapModel
 
   ldap_map :dn, :dn
+  ldap_map :puavoId, :id
   ldap_map :uid, :username
   ldap_map(:uidNumber, :uid_number){ |v| Array(v).first.to_i }
   ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
@@ -11,13 +12,17 @@ class User < LdapModel
   ldap_map :givenName, :first_name
   ldap_map :mail, :email
   ldap_map :puavoEduPersonAffiliation, :user_type
-  ldap_map :puavoId, :puavo_id
-  ldap_map :puavoSchool, :school_dn
+  ldap_map(:puavoSchool, :school_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
       link "/v3/users/#{ self["username"] }/profile.jpg"
     end
+  end
+
+  computed_attr :puavo_id
+  def puavo_id
+    id
   end
 
   def self.ldap_base
@@ -44,11 +49,23 @@ class User < LdapModel
     User.organisation
   end
 
-  # Cached school query
+  computed_attr :school_dn
+  def school_dn
+    Array(school_dns).first
+  end
+
+  # Primary school
   def school
     return @school if @school
     return if school_dn.nil?
     @school = School.by_dn(school_dn)
+  end
+
+  def schools
+    # TODO: handle errors
+    @schools ||= school_dns.map do |dn|
+      School.by_dn(dn)
+    end.compact
   end
 
   def preferred_language

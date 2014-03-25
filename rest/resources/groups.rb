@@ -5,8 +5,14 @@ class Group < LdapModel
   ldap_map :puavoId, :id
   ldap_map :cn, :abbreviation
   ldap_map :displayName, :name
+  ldap_map :puavoSchool, :school_dn
   ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
+
+  computed_attr :school_id
+  def school_id
+    school_dn.to_s.match(/puavoid=([0-9]+)/i)[1]
+  end
 
   def self.base_filter
     "(objectClass=puavoEduGroup)"

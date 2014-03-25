@@ -36,11 +36,22 @@ describe PuavoRest::SSO do
       :puavoEduPersonAffiliation => "student",
       :mail => "bob@example.com"
     )
+
+    @group = Group.new
+    @group.cn = "group1"
+    @group.displayName = "Group 1"
+    @group.puavoSchool = @school.dn
+    @group.save!
+
+    @role = Role.new
+    @role.displayName = "Some role"
+    @role.puavoSchool = @school.dn
+    @role.groups << @group
+    @role.save!
+
     @user.set_password "secret"
     @user.puavoSchool = @school.dn
-    @user.role_ids = [
-      Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
-    ]
+    @user.role_ids = [ @role.puavoId ]
     @user.save!
 
   end
@@ -104,10 +115,20 @@ describe PuavoRest::SSO do
       assert_equal "Example Organisation", @jwt["organisation_name"]
       assert_equal "www.example.net", @jwt["organisation_domain"]
       assert_equal "/", @jwt["external_service_path_prefix"]
-      assert_equal "Gryffindor", @jwt["school_name"]
+      assert_equal @school.puavoId.to_s, @jwt["primary_school_id"]
       assert_equal 1, @jwt["groups"].size, "should have one group"
-      assert_equal "Maintenance", @jwt["groups"][0]["name"]
-      assert !@jwt["school_id"].to_s.empty?
+      assert_equal 1, @jwt["schools"].size, "should have one school"
+      assert_equal "Group 1", @jwt["groups"][0]["name"]
+      assert(
+        @jwt["groups"][0]["school_id"],
+        "groups must have school_id"
+      )
+
+      assert_equal(
+        @jwt["groups"][0]["school_id"],
+        @jwt["schools"][0]["id"],
+        "Group school id should equal with school id"
+      )
     end
 
   end

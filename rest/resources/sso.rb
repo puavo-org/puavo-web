@@ -98,7 +98,7 @@ class SSO < LdapSinatra
     end
 
     user = User.current
-    school = School.by_dn(user["school_dn"])
+    primary_school = user.school
 
     # Read organisation data manually instead of using the cached one because
     # enabled external services might be updated.
@@ -106,7 +106,7 @@ class SSO < LdapSinatra
       Organisation.by_dn(LdapModel.organisation["dn"])
     end
 
-    school_allows = Array(school["external_services"]).
+    school_allows = Array(primary_school["external_services"]).
       include?(@external_service["dn"])
     organisation_allows = Array(organisation["external_services"]).
       include?(@external_service["dn"])
@@ -124,18 +124,32 @@ class SSO < LdapSinatra
 
       # use external_id like in Zendesk?
       # https://support.zendesk.com/entries/23675367
-      "user_dn" => user["dn"],
-      "id" => user["puavo_id"],
-      "username" => user["username"],
-      "first_name" => user["first_name"],
-      "last_name" => user["last_name"],
-      "user_type" => user["user_type"],
-      "email" => user["email"],
-      "school_name" => school["name"],
-      "school_id" => school["puavo_id"],
-      "organisation_name" => user["organisation"]["name"],
-      "organisation_domain" => user["organisation"]["domain"],
-      "groups" => user.groups.map{ |g| { "id" => g.id, "name" => g.name } },
+      "user_dn" => user.dn,
+      "id" => user.puavo_id,
+      "username" => user.username,
+      "first_name" => user.first_name,
+      "last_name" => user.last_name,
+      "user_type" => user.user_type,
+      "email" => user.email,
+      "organisation_name" => user.organisation.name,
+      "organisation_domain" => user.organisation.domain,
+      "primary_school_id" => primary_school.id,
+      "groups" => user.groups.map do |g|
+        {
+          "name" => g.name,
+          "id" => g.id,
+          "school_id" => g.school_id,
+          "school_dn" => g.school_dn,
+          "abbreviation" => g.abbreviation
+        }
+      end,
+      "schools" => user.schools.map do |g|
+        {
+          "id" => g.id,
+          "name" => g.name,
+          "dn" => g.dn
+        }
+      end,
       "external_service_path_prefix" => @external_service["prefix"]
     }
 

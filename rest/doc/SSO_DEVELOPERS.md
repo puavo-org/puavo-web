@@ -38,23 +38,28 @@ expected to decode this token, validate it with the given shared secret and
 make sure that it is not issued too long a ago or in future. The token will
 contain following claims:
 
-  - `iat`
-    - Issued at. Identifies the time at which the JWT was issued as unix timestamp.
-  - `jti`
-    - A unique identifier for the JWT
-  - `id`
-    - Organisation wide unique id for the user
+  - `iat` Identifies the time at which the JWT was issued as unix timestamp
+  - `jti` A unique identifier for the JWT
+  - `id` Organisation wide unique id for the user
   - `username`
   - `first_name`
   - `last_name`
   - `user_type`
     - Possible values: `teacher`, `staff`, `student`, `visitor`, `parent`, `admin` or `testuser`
-  - `email`
-    - Unfortunately this is not set for all users.
-  - `school_name`
-    - Human readable school name.
-  - `school_id`
-    - Unique school id
+  - `email` - User email
+    - Not available always
+  - `schools` List of school objects user belongs to
+    - Keys:
+      - `id` - Unique identifier for the school
+      - `name` - Human readable school name
+  - `groups` List of groups objects users belogs to
+    - Keys:
+      - `id` - Unique identifier for the school
+      - `name` - Human readable group name
+      - `abbreviation` - Valid POSIX name for the group
+      - `school_id` - id of the school this groups belongs to
+  - `primary_school_id`
+    - The school id user primarily attends to
   - `organisation_name`
     - Human readable organisation name.
   - `organisation_domain`
