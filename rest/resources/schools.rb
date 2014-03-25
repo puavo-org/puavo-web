@@ -17,6 +17,8 @@ class School < LdapModel
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
+  ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
+  ldap_map :cn, :abbreviation
   ldap_map(:puavoActiveService, :external_services) do |es|
       Array(es).map { |s| s.downcase.strip }
   end

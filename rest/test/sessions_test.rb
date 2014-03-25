@@ -740,6 +740,19 @@ describe PuavoRest::Sessions do
         assert data["user"], "has user data"
         assert data["user"]["groups"], "has groups data"
         assert data["user"]["groups"].first["gid_number"], "groups have gid_numbers"
+
+        school_group = data["user"]["groups"].select do |g|
+          g["name"] == "Gryffindor" && g["object_model"] == "PuavoRest::School"
+        end.first
+
+        assert school_group, "Has schools in groups list"
+        assert_equal(
+          "gryffindor",
+          school_group["abbreviation"],
+          "School groups has a gid number too"
+        )
+        assert school_group["gid_number"], "has a gid number"
+
         assert_equal Fixnum, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
       end
 

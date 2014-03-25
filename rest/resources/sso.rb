@@ -147,7 +147,8 @@ class SSO < LdapSinatra
         {
           "id" => g.id,
           "name" => g.name,
-          "dn" => g.dn
+          "dn" => g.dn,
+          "abbreviation" => g.abbreviation
         }
       end,
       "external_service_path_prefix" => @external_service["prefix"]

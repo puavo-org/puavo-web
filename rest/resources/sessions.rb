@@ -146,6 +146,16 @@ class Sessions < LdapSinatra
       session["user"] = user.to_hash
       groups = user.groups
       session["user"]["groups"] = groups
+      session["user"]["groups"] += user.schools.map do |s|
+        {
+          "id" => s.id,
+          "name" => s.name,
+          "dn" => s.dn,
+          "gid_number" => s.gid_number,
+          "abbreviation" => s.abbreviation,
+          "object_model" => s.object_model
+        }
+      end
 
       session["preferred_language"] = user.preferred_language
 
