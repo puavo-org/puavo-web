@@ -1,7 +1,9 @@
 require 'net/http'
+require_relative "./puavo_tag_mixin"
 
 class DeviceBase < LdapBase
   include BooleanAttributes
+  include PuavoTagMixin
 
   attr_accessor :host_certificate_request_send, :image
   attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
@@ -238,22 +240,6 @@ class DeviceBase < LdapBase
       logger.info "Unable to get CA certificate"
       logger.info "Exception: #{e}"
     end
-  end
-
-  def puavoTag
-    Array(get_attribute( "puavoTag")).join(" ")
-  end
-
-  def puavoTag=(tag_string)
-    if tag_string.class == Array
-      set_attribute( "puavoTag", tag_string )
-    elsif tag_string.class == String
-      set_attribute( "puavoTag", tag_string.split(" ") )
-    end
-  end
-
-  def puavoTag_before_type_cast
-    self.puavoTag
   end
 
   private
