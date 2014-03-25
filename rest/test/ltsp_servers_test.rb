@@ -38,6 +38,22 @@ describe PuavoRest::LtspServers do
     assert_equal 404, last_response.status, last_response.body
   end
 
+  it "has tags" do
+    create_server(
+      :puavoHostname => "ltsptagsserver",
+      :macAddress => "00:60:2f:5F:08:97",
+      :puavoTag => ["tag1", "tag2"]
+    )
+
+    get "/v3/ltsp_servers/ltsptagsserver"
+    assert_200
+
+    data = JSON.parse(last_response.body)
+    assert data["tags"], "has tags"
+    assert_equal "tag1", data["tags"][0]
+    assert_equal "tag2", data["tags"][1]
+  end
+
   it "responds 404 for unknown servers" do
     put "/v3/ltsp_servers/unknownserver",
       "load_avg" => "1.0",
