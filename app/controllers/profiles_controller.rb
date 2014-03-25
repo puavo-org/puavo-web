@@ -58,4 +58,12 @@ class ProfilesController < ApplicationController
       format.html
     end
   end
+
+  # GET /profile/image
+  def image
+    @user = current_user
+
+    send_data @user.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
+  end
+
 end

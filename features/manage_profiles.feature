@@ -52,5 +52,6 @@ Feature: Manage profile
     And I should see "Jane Doe"
     When I fill in "Email" with "jane.doe@opinsys.fi"
     And I fill in "Telephone number" with "+35814987654321"
+    And I attach the file at "features/support/test.jpg" to "Image"
     When I press "Update"
     Then I should see "Profile was successfully updated"

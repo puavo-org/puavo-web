@@ -372,6 +372,7 @@ fi:
         puavoEduPersonReverseDisplayName: Sukunimi Etunimi
         puavoEduPersonPersonnelNumber: "Henkilönumero"
         image: Kuva
+        jpegPhoto: Kuva
         puavoLocked: "Käyttäjätunnus on lukittu"
       group:
         displayName: "Ryhmän nimi"

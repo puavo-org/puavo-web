@@ -91,6 +91,7 @@ PuavoUsers::Application.routes.draw do
     resource :organisation, :only => [:show, :edit, :update]
     match "search" => "users_search#index", :as => :search_index
     resource :profile, :only => [:edit, :update, :show]
+    match 'profile/image' => 'profiles#image', :as => :image_profile, :via => :get
   end
 
   scope :path => "devices" do

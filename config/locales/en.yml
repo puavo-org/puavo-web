@@ -376,6 +376,7 @@ en:
         puavoEduPersonReverseDisplayName: Lastname Firstname
         puavoEduPersonPersonnelNumber: Personel Number
         image: Image
+        jpegPhoto: Image
         puavoLocked: User is locked
       group:
         displayName: Group name
