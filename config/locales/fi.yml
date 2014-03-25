@@ -346,6 +346,7 @@ fi:
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Laitteet henkilökohtaisia
         preferredLanguage: Kieli
+        puavoTag: Tagit
       user:
         displayName: Nimi
         sn: Sukunimi

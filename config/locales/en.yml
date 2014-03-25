@@ -350,6 +350,7 @@ en:
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
         preferredLanguage: Language
+        puavoTag: Tags
       user:
         displayName: Name
         sn: Surname
