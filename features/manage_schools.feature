@@ -31,6 +31,7 @@ Feature: Manage schools
     | State                      | East Midlands                                                                  |
     | Desktop Image              | presice-20121023                                                               |
     | school[puavoBillingInfo][] | school_base:500                                                                |
+    | Tags                       | testag1 testag2                                                                |
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
     Then I should not see "error"
@@ -46,6 +47,7 @@ Feature: Manage schools
     | 54321              |
     | presice-20121023   |
     | school_base:500    |
+    | testag1 testag2    |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
 

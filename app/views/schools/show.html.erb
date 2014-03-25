@@ -48,6 +48,13 @@
       <div class="column_2"><%= translate_boolean_value(@school.puavoAllowGuest) %></div>
     </div>
 
+    <div class="row">
+      <div class="column_1">
+        <%= label "school", "puavoTag" %>:
+      </div>
+      <div class="column_2"><%= @school.puavoTag %></div>
+    </div>
+
     <% if current_user.organisation_owner? %>
     <%# Only organisation owners can access the server page. So hide it from others.  %>
     <div class="row">
