@@ -33,7 +33,7 @@ describe PuavoRest::SSO do
       :givenName => "Bob",
       :sn  => "Brown",
       :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
+      :puavoEduPersonAffiliation => ["student"],
       :mail => "bob@example.com"
     )
 
@@ -81,6 +81,28 @@ describe PuavoRest::SSO do
     assert_equal 401, last_response.status
   end
 
+  describe "roles in jwt" do
+
+    it "is set to 'schooladmin' when user is a school admin" do
+      @user.puavoEduPersonAffiliation = ["admin"]
+      @user.save!
+      @school.add_admin(@user)
+
+      url = Addressable::URI.parse("/v3/sso")
+      url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+      basic_authorize "bob", "secret"
+      get url.to_s
+      assert last_response.headers["Location"]
+      redirect_url = Addressable::URI.parse(last_response.headers["Location"])
+      jwt = JWT.decode(
+        redirect_url.query_values["jwt"],
+        @external_service.puavoServiceSecret
+      )
+
+      assert_equal ["admin", "schooladmin"], jwt["schools"][0]["roles"]
+    end
+  end
+
   describe "successful login redirect" do
     before(:each) do
       url = Addressable::URI.parse("/v3/sso")
@@ -117,10 +139,14 @@ describe PuavoRest::SSO do
       assert_equal "/", @jwt["external_service_path_prefix"]
       assert_equal @school.puavoId.to_s, @jwt["primary_school_id"]
 
-
       assert_equal 1, @jwt["schools"].size, "should have one school"
-      assert_equal 1, @jwt["schools"][0]["groups"].size, "should have one group"
 
+      assert_equal(
+        ["student"],
+        @jwt["schools"][0]["roles"], "should have a student role"
+      )
+
+      assert_equal 1, @jwt["schools"][0]["groups"].size, "should have one group"
       group = @jwt["schools"][0]["groups"][0]
       assert_equal "Group 1", group["name"]
     end

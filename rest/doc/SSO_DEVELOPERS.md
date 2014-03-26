@@ -44,8 +44,6 @@ contain following claims:
   - `username`
   - `first_name`
   - `last_name`
-  - `user_type`
-    - Possible values: `teacher`, `staff`, `student`, `visitor`, `parent`, `admin` or `testuser`
   - `email` User email
     - Not available always
   - `primary_school_id`
@@ -54,7 +52,9 @@ contain following claims:
     - `id` Unique identifier for the school
     - `name` Human readable school name
     - `abbreviation` Valid POSIX name for the school
-    - `groups` List of group objects user belongs to in the school
+    - `roles` List of roles (String) user has in the school
+      - `teacher`, `staff`, `student`, `visitor`, `parent`, `admin`, `schooladmin` or `testuser`
+    - `groups` List of group objects user has in the school
       - `id` Unique identifier for the school
       - `name` Human readable group name
       - `abbreviation` Valid POSIX name for the group

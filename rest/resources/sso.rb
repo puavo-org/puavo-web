@@ -129,7 +129,7 @@ class SSO < LdapSinatra
       "username" => user.username,
       "first_name" => user.first_name,
       "last_name" => user.last_name,
-      "user_type" => user.user_type,
+      "user_type" => user.user_type, # XXX: deprecated!
       "email" => user.email,
       "organisation_name" => user.organisation.name,
       "organisation_domain" => user.organisation.domain,
@@ -140,6 +140,7 @@ class SSO < LdapSinatra
           "dn" => school.dn,
           "name" => school.name,
           "abbreviation" => school.abbreviation,
+          "roles" => user.roles_within_school(school),
           "groups" => user.groups_by_school(school).map do |group|
             {
               "id" => group.id,

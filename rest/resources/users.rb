@@ -11,13 +11,44 @@ class User < LdapModel
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
   ldap_map :mail, :email
-  ldap_map :puavoEduPersonAffiliation, :user_type
   ldap_map(:puavoSchool, :school_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
       link "/v3/users/#{ self["username"] }/profile.jpg"
     end
+  end
+
+  # The classic Roles in puavo-web are now deprecated.
+  # puavoEduPersonAffiliation will used as the roles from now on
+  ldap_map(:puavoEduPersonAffiliation, :roles){ |v| Array(v) }
+
+  # Roles does not make much sense without a school
+  skip_serialize :roles
+
+  # List of school DNs where the user is school admin
+  ldap_map(:puavoAdminOfSchool, :admin_of_school_dns) do |dns|
+    Array(dns).map do |dn|
+      dn.downcase
+    end
+  end
+
+  def is_school_admin_in?(school)
+    admin_of_school_dns.include?(school.dn.downcase)
+  end
+
+  def roles_within_school(school)
+    _roles = roles
+    if is_school_admin_in?(school)
+      _roles.append("schooladmin")
+    end
+    _roles
+  end
+
+  # XXX: deprecated!
+  computed_attr :user_type
+  def user_type
+    roles.first
   end
 
   computed_attr :puavo_id
