@@ -106,7 +106,7 @@ describe PuavoRest::SSO do
     end
 
     it "adds JSON Web Token (jwt) with user data" do
-      assert !@jwt["user_dn"].to_s.empty?
+      assert !@jwt["dn"].to_s.empty?
       assert_equal "bob" , @jwt["username"]
       assert_equal "Bob" , @jwt["first_name"]
       assert_equal "Brown" , @jwt["last_name"]

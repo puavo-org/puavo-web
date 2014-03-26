@@ -40,7 +40,7 @@ contain following claims:
 
   - `iat` Identifies the time at which the JWT was issued as unix timestamp
   - `jti` A unique identifier for the JWT
-  - `id` Organisation wide unique id for the user
+  - `id` Unique identifier for the user
   - `username`
   - `first_name`
   - `last_name`

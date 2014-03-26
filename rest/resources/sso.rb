@@ -124,8 +124,8 @@ class SSO < LdapSinatra
 
       # use external_id like in Zendesk?
       # https://support.zendesk.com/entries/23675367
-      "user_dn" => user.dn,
-      "id" => user.puavo_id,
+      "dn" => user.dn,
+      "id" => user.id,
       "username" => user.username,
       "first_name" => user.first_name,
       "last_name" => user.last_name,
@@ -137,12 +137,13 @@ class SSO < LdapSinatra
       "schools" => user.schools.map do |school|
         {
           "id" => school.id,
-          "name" => school.name,
           "dn" => school.dn,
+          "name" => school.name,
           "abbreviation" => school.abbreviation,
           "groups" => user.groups_by_school(school).map do |group|
             {
               "id" => group.id,
+              "dn" => group.dn,
               "name" => group.name,
               "abbreviation" => group.abbreviation
             }
