@@ -48,17 +48,16 @@ contain following claims:
     - Possible values: `teacher`, `staff`, `student`, `visitor`, `parent`, `admin` or `testuser`
   - `email` User email
     - Not available always
+  - `primary_school_id`
+    - The school id user primarily attends to
   - `schools` List of school objects user belongs to
     - `id` Unique identifier for the school
     - `name` Human readable school name
     - `abbreviation` Valid POSIX name for the school
-  - `groups` List of groups objects users belogs to
-    - `id` Unique identifier for the school
-    - `name` Human readable group name
-    - `abbreviation` Valid POSIX name for the group
-    - `school_id` Id of the school this groups belongs to
-  - `primary_school_id`
-    - The school id user primarily attends to
+    - `groups` List of group objects user belongs to in the school
+      - `id` Unique identifier for the school
+      - `name` Human readable group name
+      - `abbreviation` Valid POSIX name for the group
   - `organisation_name`
     - Human readable organisation name.
   - `organisation_domain`

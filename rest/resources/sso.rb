@@ -134,21 +134,19 @@ class SSO < LdapSinatra
       "organisation_name" => user.organisation.name,
       "organisation_domain" => user.organisation.domain,
       "primary_school_id" => primary_school.id,
-      "groups" => user.groups.map do |g|
+      "schools" => user.schools.map do |school|
         {
-          "name" => g.name,
-          "id" => g.id,
-          "school_id" => g.school_id,
-          "school_dn" => g.school_dn,
-          "abbreviation" => g.abbreviation
-        }
-      end,
-      "schools" => user.schools.map do |g|
-        {
-          "id" => g.id,
-          "name" => g.name,
-          "dn" => g.dn,
-          "abbreviation" => g.abbreviation
+          "id" => school.id,
+          "name" => school.name,
+          "dn" => school.dn,
+          "abbreviation" => school.abbreviation,
+          "groups" => user.groups_by_school(school).map do |group|
+            {
+              "id" => group.id,
+              "name" => group.name,
+              "abbreviation" => group.abbreviation
+            }
+          end
         }
       end,
       "external_service_path_prefix" => @external_service["prefix"]

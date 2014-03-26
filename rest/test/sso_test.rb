@@ -116,19 +116,13 @@ describe PuavoRest::SSO do
       assert_equal "www.example.net", @jwt["organisation_domain"]
       assert_equal "/", @jwt["external_service_path_prefix"]
       assert_equal @school.puavoId.to_s, @jwt["primary_school_id"]
-      assert_equal 1, @jwt["groups"].size, "should have one group"
-      assert_equal 1, @jwt["schools"].size, "should have one school"
-      assert_equal "Group 1", @jwt["groups"][0]["name"]
-      assert(
-        @jwt["groups"][0]["school_id"],
-        "groups must have school_id"
-      )
 
-      assert_equal(
-        @jwt["groups"][0]["school_id"],
-        @jwt["schools"][0]["id"],
-        "Group school id should equal with school id"
-      )
+
+      assert_equal 1, @jwt["schools"].size, "should have one school"
+      assert_equal 1, @jwt["schools"][0]["groups"].size, "should have one group"
+
+      group = @jwt["schools"][0]["groups"][0]
+      assert_equal "Group 1", group["name"]
     end
 
   end
