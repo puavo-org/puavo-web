@@ -115,7 +115,7 @@ class User < LdapModel
     @groups ||= Group.by_user_dn(dn)
   end
 
-  def groups_by_school(school)
+  def groups_within_school(school)
     groups.select do |group|
         group.school_id == school.id
     end

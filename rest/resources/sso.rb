@@ -141,7 +141,7 @@ class SSO < LdapSinatra
           "name" => school.name,
           "abbreviation" => school.abbreviation,
           "roles" => user.roles_within_school(school),
-          "groups" => user.groups_by_school(school).map do |group|
+          "groups" => user.groups_within_school(school).map do |group|
             {
               "id" => group.id,
               "dn" => group.dn,
