@@ -66,7 +66,11 @@ describe PuavoRest::Devices do
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
-        :puavoTag => ["tag1", "tag2"]
+        :puavoTag => ["tag1", "tag2"],
+        :puavoDeviceXrandr => [
+          'command="xrandr --output VGA-1 --left-of DVI-I-0" foo=bar',
+          'second=baz'
+        ]
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
@@ -126,6 +130,20 @@ describe PuavoRest::Devices do
       assert @data["tags"].include?("tag1"), "has tag1"
       assert @data["tags"].include?("tag2"), "has tag2"
       assert @data["tags"].include?("schooltag"), "has schooltag"
+    end
+
+    it "has xrandr commands" do
+      assert_equal([
+          {
+            "command"=>"xrandr --output VGA-1 --left-of DVI-I-0",
+            "foo"=>"bar"
+          },
+          {
+            "second"=>"baz"
+          }
+        ],
+        @data["xrandr"]
+      )
     end
 
     it "it prefers language from the school" do

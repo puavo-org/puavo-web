@@ -17,6 +17,23 @@ class Device < Host
   ldap_map :puavoPrinterDeviceURI, :printer_device_uri
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
   ldap_map :puavoDeviceDefaultAudioSink, :default_audio_sink
+  ldap_map(:puavoDeviceXrandr, :xrandr) do |v|
+    Array(v).map do |entry|
+      # Example
+      #
+      # "foo=bar boo=baa"
+      # =>
+      # ["foo=bar", "boo=baa"]
+      # =>
+      # [ ["foo", "bar"], ["boo", "baa"]]
+      # =>
+      # { "foo" => "bar", "boo" => "baa" }
+      keyvalue_pairs = Shellwords.shellwords(entry).map do |s|
+        s.split("=", 2)
+      end.flatten
+      Hash[*keyvalue_pairs]
+    end
+  end
 
 
   def self.ldap_base
