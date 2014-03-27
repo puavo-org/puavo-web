@@ -40,7 +40,7 @@ class User < LdapModel
   def roles_within_school(school)
     _roles = roles
     if is_school_admin_in?(school)
-      _roles.append("schooladmin")
+      _roles.push("schooladmin")
     end
     _roles
   end
