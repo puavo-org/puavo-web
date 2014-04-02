@@ -77,8 +77,10 @@ class Organisation < LdapModel
     end
   end
 
-  def self.current
-    # TODO: Refresh organisation from ldap
+  def self.current(option=nil)
+    if option == :no_cache
+      return Organisation.by_dn(LdapModel.organisation.dn)
+    end
     LdapModel.organisation
   end
 

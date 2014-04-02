@@ -6,7 +6,7 @@ class DeviceImages < LdapSinatra
   get "/v3/device_images" do
     auth :basic_auth, :server_auth
     images = []
-    images.push Organisation.current.preferred_image
+    images.push Organisation.current(:no_cache).preferred_image
 
     school_limit = nil
 
