@@ -94,6 +94,8 @@ class SSO < LdapSinatra
     rescue KerberosError => err
       return render_form(t.sso.kerberos_error, err)
     rescue JSONError => err
+      # Pass custom error headers to the response login page
+      response.headers.merge!(err.headers)
       return render_form(t.sso.bad_username_or_pw, err)
     end
 
