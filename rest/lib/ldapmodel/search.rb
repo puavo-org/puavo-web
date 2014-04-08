@@ -78,7 +78,15 @@ class LdapModel
   # @param option [Symbol] Set to :multi to return an Array
   # @return [LdapModel]
   def self.by_attr(attr, value, option=nil)
-    by_ldap_attr(pretty2ldap[attr.to_sym], value, option)
+    ldap_attr = pretty2ldap[attr.to_sym]
+
+    if ldap_attr.nil?
+      # Would compile to invalid ldap search filter. Throw early with human
+      # readable error message
+      raise "Invalid pretty attribute #{ attr } for #{ self }"
+    end
+
+    by_ldap_attr(ldap_attr, value, option)
   end
 
   # Same as by_attr but it will throw NotFound exception if the value is nil
