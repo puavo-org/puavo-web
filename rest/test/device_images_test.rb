@@ -129,6 +129,29 @@ describe PuavoRest::DeviceImages do
     assert_equal ["bootdeviceimage1", "deviceimage1", "organisationimage"], images
   end
 
+  describe "ltsp server image" do
+    before(:each) do
+      @ltsp_server = Server.new
+      @ltsp_server.puavoDeviceType = "ltspserver"
+      @ltsp_server.puavoHostname = "ltsp1"
+      @ltsp_server.macAddress = "00:60:2f:E1:EC:22"
+      @ltsp_server.puavoSchool = [@school1.dn]
+      @ltsp_server.puavoDeviceImage = "ltspserverimage"
+      @ltsp_server.save!
+    end
+
+    it "gets listed too" do
+      images = get_images
+      assert_equal ["bootdeviceimage1", "bootdeviceimage2", "ltspserverimage", "organisationimage"], images
+    end
+
+    it "gets listed on filtered list too" do
+      images = get_images("?boot_server=#{ @boot1.puavoHostname }")
+      assert_equal ["bootdeviceimage1", "ltspserverimage", "organisationimage"], images
+    end
+
+  end
+
 end
 
 end
