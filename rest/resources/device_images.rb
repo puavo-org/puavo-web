@@ -46,9 +46,9 @@ class DeviceImages < LdapSinatra
   get "/v3/device_images" do
     auth :basic_auth, :server_auth
 
-      boot_servers = Array(params["boot_server"]).map do |hostname|
-        BootServer.by_hostname!(hostname)
-      end
+    boot_servers = Array(params["boot_server"]).map do |hostname|
+      BootServer.by_hostname!(hostname)
+    end
 
     if boot_servers.empty?
       images = all_images
