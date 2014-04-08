@@ -49,6 +49,9 @@ class School < LdapModel
     @organisation ||= Organisation.by_dn(self.class.organisation["base"])
   end
 
+  def devices
+    Device.by_attr(:school_dn, dn, :multi)
+  end
 
   def preferred_image
     if get_own(:preferred_image)
