@@ -50,6 +50,7 @@ describe PuavoRest::DeviceImages do
     @boot1.puavoHostname = "boot1"
     @boot1.macAddress = "00:60:2f:88:6E:81"
     @boot1.puavoSchool = @school1.dn
+    @boot1.puavoDeviceImage = "bootdeviceimage1"
     @boot1.save!
 
     @boot2 = Server.new
@@ -57,6 +58,7 @@ describe PuavoRest::DeviceImages do
     @boot2.puavoHostname = "boot2"
     @boot2.puavoSchool = @school2.dn
     @boot2.macAddress = "00:60:2f:02:F7:22"
+    @boot2.puavoDeviceImage = "bootdeviceimage2"
     @boot2.save!
 
 
@@ -67,9 +69,9 @@ describe PuavoRest::DeviceImages do
     PuavoRest::Organisation.refresh
   end
 
-  it "will find images set on organisation" do
+  it "will find images set on organisation and boot server" do
     images = get_images
-    assert_equal ["organisationimage"], images
+    assert_equal ["bootdeviceimage1", "bootdeviceimage2", "organisationimage"], images
   end
 
   it "will find images set on school" do
@@ -77,7 +79,7 @@ describe PuavoRest::DeviceImages do
     @school1.save!
 
     images = get_images
-    assert_equal ["organisationimage", "schoolimage"], images
+    assert_equal ["bootdeviceimage1", "bootdeviceimage2", "organisationimage", "schoolimage"], images
   end
 
   it "will find images set on devices" do
@@ -85,7 +87,7 @@ describe PuavoRest::DeviceImages do
     @device1.save!
 
     images = get_images
-    assert_equal ["organisationimage", "deviceimage"], images
+    assert_equal ["bootdeviceimage1", "bootdeviceimage2", "deviceimage", "organisationimage"], images
   end
 
   it "can filter schools by bootserver" do
@@ -96,10 +98,10 @@ describe PuavoRest::DeviceImages do
     @school2.save!
 
     images = get_images("?boot_server=#{ @boot1.puavoHostname }")
-    assert_equal ["organisationimage", "schoolimage1"], images
+    assert_equal ["bootdeviceimage1", "organisationimage", "schoolimage1"], images
   end
 
-  it "can filter schools by multiple bootservers" do
+  it "can filter images by multiple bootservers" do
     @school1.puavoDeviceImage = "schoolimage1"
     @school1.save!
 
@@ -113,7 +115,7 @@ describe PuavoRest::DeviceImages do
     ).save!
 
     images = get_images("?boot_server[]=#{ @boot1.puavoHostname }&boot_server[]=#{ @boot2.puavoHostname }")
-    assert_equal ["organisationimage", "schoolimage1", "schoolimage2"], images
+    assert_equal ["bootdeviceimage1", "bootdeviceimage2", "organisationimage", "schoolimage1", "schoolimage2"], images
   end
 
   it "can filter devices by bootserver" do
@@ -124,7 +126,7 @@ describe PuavoRest::DeviceImages do
     @device2.save!
 
     images = get_images("?boot_server=#{ @boot1.puavoHostname }")
-    assert_equal ["organisationimage", "deviceimage1"], images
+    assert_equal ["bootdeviceimage1", "deviceimage1", "organisationimage"], images
   end
 
 end
