@@ -53,6 +53,10 @@ class School < LdapModel
     Device.by_attr(:school_dn, dn, :multi)
   end
 
+  def ltsp_servers
+    LtspServer.by_attr(:school_dns, dn, :multi)
+  end
+
   def preferred_image
     if get_own(:preferred_image)
       return get_own(:preferred_image).strip
