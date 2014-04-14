@@ -151,7 +151,6 @@
     <td><%= f.label :puavoDeviceImage %></td>
     <td><%= f.text_field :puavoDeviceImage  %></td>
   </tr>
-  <% end %>
 
   <tr>
     <td><%= f.label :external_feeds %></td>
@@ -163,7 +162,13 @@
     <td><%= f.text_field :puavoTag %></td>
   </tr>
 
+</table>
+  <% end %>
 
+
+  <%= render :partial => 'shared/form_mountpoint', :locals => { :f => f } %>
+
+<table>
   <tr>
     <td></td>
     <td>
@@ -172,4 +177,5 @@
     </td>
   </tr>
 </table>
+
 <% end %>

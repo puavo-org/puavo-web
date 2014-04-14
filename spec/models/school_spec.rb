@@ -37,6 +37,33 @@ describe School do
     )
   end
 
+  it "can save mountpoint " do
+    @school.fs = ["nfs3"]
+    @school.path = ["10.0.0.1/share"]
+    @school.mountpoint = ["/home/share"]
+    @school.options = []
+    @school.save!
+
+    reloaded_school = School.find(@school.id)
+    assert_equal "nfs3", reloaded_school.fs[0]
+    assert_equal "10.0.0.1/share", reloaded_school.path[0]
+    assert_equal "/home/share", reloaded_school.mountpoint[0]
+    assert_equal nil, reloaded_school.options[0]
+
+  end
+
+  it "do not save empty  mountpoint " do
+    @school.fs = [""]
+    @school.path = [""]
+    @school.mountpoint = [""]
+    @school.options = [""]
+    @school.save!
+
+    reloaded_school = School.find(@school.id)
+    assert_equal nil, reloaded_school.puavoMountpoint
+
+  end
+
   describe "printer management" do
 
     it "can add printer" do

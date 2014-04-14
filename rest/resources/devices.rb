@@ -17,6 +17,7 @@ class Device < Host
   ldap_map :puavoPrinterDeviceURI, :printer_device_uri
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
   ldap_map :puavoDeviceDefaultAudioSink, :default_audio_sink
+  ldap_map( :puavoMountpoint, :mountpoints){ |m| Array(m) }
 
 
   def self.ldap_base
@@ -93,6 +94,20 @@ class Device < Host
     school.messages
   end
 
+  # Merge device's and school's mountpoints.
+  # Use device's mountpoint if it is same that at school
+  def mountpoints
+    device_mounts = get_own(:mountpoints).map{ |m| JSON.parse(m) }
+    school_mounts = school.mountpoints.map{ |m| JSON.parse(m) }
+    mountpoints = device_mounts.map{ |m| m["mountpoint"] }
+
+    school_mounts.each do |mounts|
+      next if mountpoints.include?(mounts["mountpoint"])
+
+      device_mounts.push(mounts)
+    end
+    device_mounts
+  end
 end
 
 class Devices < LdapSinatra

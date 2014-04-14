@@ -4,12 +4,13 @@ require_relative "./puavo_tag_mixin"
 class DeviceBase < LdapBase
   include BooleanAttributes
   include PuavoTagMixin
+  include Mountpoint
 
   attr_accessor :host_certificate_request_send, :image
   attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
 
   before_validation :set_puavo_id, :set_password, :downcase_mac_addresses, :resize_image
-  before_save :set_puppetclass, :set_parentNode
+  before_save :set_puppetclass, :set_parentNode, :set_puavo_mountpoint
 
   IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
   PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\? ')

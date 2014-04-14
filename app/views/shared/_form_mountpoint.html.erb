@@ -1,0 +1,46 @@
+
+<h2><%= t('.title') %></h2>
+
+<table>
+  <tr>
+    <td class="label_for_input_text_list"></td>
+    <td>
+      <table class="table-in-table">
+      <tr>
+	<th><%= t('.filesystem') %></th>
+	<th><%= t('.path') %></th>
+	<th><%= t('.mountpoint') %></th>
+	<th><%= t('.options') %></th>
+      </tr>
+      <% Array( (f.object.puavoMountpoint or 1) ).each_index do |index| %>
+      <tr>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[fs][]",
+		f.object.fs[index],
+		:id => "#{ f.object.class.to_s.downcase }_fs_#{ index }" ) %></td>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[path][]",
+		f.object.path[index],
+		:id => "#{ f.object.class.to_s.downcase }_path_#{ index }" ) %></td>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[mountpoint][]",
+		f.object.mountpoint[index],
+		:id => "#{ f.object.class.to_s.downcase }_mountpoint_#{ index }" ) %></td>
+	<td><%= text_field_tag(
+		"#{f.object.class.to_s.downcase}[options][]",
+		f.object.options[index],
+		:id => "#{ f.object.class.to_s.downcase }_options_#{ index }" ) %></td>
+      </tr>
+      <% end %>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="label_for_input_text_list"></td>
+    <td>
+    <%= link_to "#", :class => "clone_table_row_input_element btn" do %>
+      <i class="icon-plus"></i><%= t('.add_more') %>
+    <% end %>
+    </td>
+  </tr>
+</table>

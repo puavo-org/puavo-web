@@ -12,7 +12,9 @@ describe PuavoRest::Devices do
       :puavoPersonalDevice => true,
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true,
-      :puavoTag => ["schooltag"]
+      :puavoTag => ["schooltag"],
+      :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
+                            '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
     @school_without_fallback_value = School.create(
       :cn => "gryffindor2",
@@ -147,7 +149,9 @@ describe PuavoRest::Devices do
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoPreferredServer => @server1.dn,
-        :puavoSchool => @school.dn
+        :puavoSchool => @school.dn,
+        :puavoMountpoint => [ '{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/device/share","options":"-o rw"}',
+                              '{"fs":"nfs3","path":"10.4.4.4/share","mountpoint":"/home/school/share","options":"-o r"}' ]
       )
       get "/v3/devices/athin"
       assert_200
@@ -169,6 +173,24 @@ describe PuavoRest::Devices do
     it "has preferred language" do
       assert @data["preferred_language"]
       assert_equal "en", @data["preferred_language"]
+    end
+
+    it "has mountpoint" do
+      correct_mountpoints = [ { "fs" => "nfs4",
+                                "path" => "10.0.0.2/share",
+                                "mountpoint" => "/home/device/share",
+                                "options" => "-o rw" },
+                              { "fs" => "nfs3",
+                                "path" => "10.4.4.4/share",
+                                "mountpoint" => "/home/school/share",
+                                "options" => "-o r" },
+                              { "fs" => "nfs4",
+                                "path" => "10.5.5.3/share",
+                                "mountpoint" => "/home/school/public",
+                                "options" => "-o r" } ].sort{ |a,b| a.to_s <=> b.to_s }
+      data_mountpoints = @data["mountpoints"].sort{ |a,b| a.to_s <=> b.to_s }
+      assert_equal( correct_mountpoints,
+                    data_mountpoints )
     end
   end
 

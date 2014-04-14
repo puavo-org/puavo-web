@@ -52,6 +52,14 @@ window.jQuery(document).ready(function($) {
     $(this).prev().append( clone_element );
   });
 
+  $('.clone_table_row_input_element').click(function(e) {
+    e.preventDefault();
+    var this_table = $(this).parents('table').find('table');
+    var clone_element = this_table.find('tr:last').clone();
+    clone_element.find('input').val('');
+    this_table.children().append(clone_element);
+  });
+
   $('.search').liveSearch({
     minLength: 2,
     url: window.SEARCH_URLS,
