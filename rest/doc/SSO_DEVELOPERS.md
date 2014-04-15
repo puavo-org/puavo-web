@@ -32,7 +32,7 @@ Example redirect URL might be:
     https://api.opinsys.fi/v3/sso?return_to=http%3A%2F%2Fexample.com
 
 When user is authenticated he/she will be redirected to the URL specified in
-`return_to` query string key. The URL is augmented with a `jwt` query string
+the `return_to` query string key. The URL is augmented with a `jwt` query string
 key which will contain a [JSON Web Token][jwt]. The external service is
 expected to decode this token, validate it with the given shared secret and
 make sure that it is not issued too long a ago or in future. The token will
