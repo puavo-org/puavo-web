@@ -34,6 +34,7 @@ describe PuavoRest::Users do
       :mail => "bob@example.com",
       :role_ids => [@role.puavoId]
     )
+
     @user.set_password "secret"
     @user.puavoSchool = @school.dn
     @user.role_ids = [
@@ -44,6 +45,26 @@ describe PuavoRest::Users do
       @role.puavoId
     ]
     @user.save!
+
+    @user2 = User.new(
+      :givenName => "Alice",
+      :sn  => "Wonder",
+      :uid => "alice",
+      :puavoEduPersonAffiliation => "student",
+      :preferredLanguage => "en",
+      :mail => "alice@example.com",
+      :role_ids => [@role.puavoId]
+    )
+    @user2.set_password "secret"
+    @user2.puavoSchool = @school.dn
+    @user2.role_ids = [
+      Role.find(:first, {
+        :attribute => "displayName",
+        :value => "Maintenance"
+      }).puavoId,
+      @role.puavoId
+    ]
+    @user2.save!
 
   end
 
@@ -77,6 +98,23 @@ describe PuavoRest::Users do
     end
   end
 
+  describe "GET /v3/users" do
+    it "lists all users" do
+      basic_authorize "bob", "secret"
+      get "/v3/users"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert(data.select do |u|
+        u["username"] == "alice"
+      end.first)
+
+      assert(data.select do |u|
+        u["username"] == "bob"
+      end.first)
+
+    end
+  end
 
   describe "GET /v3/users/bob" do
 
