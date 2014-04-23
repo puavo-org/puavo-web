@@ -124,3 +124,6 @@ test:
 	bundle exec cucumber --color --tags ~@start_test_server
 	bundle exec cucumber --color --tags @start_test_server
 	bundle exec rails runner acl/runner.rb
+
+seed:
+	bundle exec rails runner db/seeds.rb
