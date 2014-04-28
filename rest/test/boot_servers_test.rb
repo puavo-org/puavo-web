@@ -21,6 +21,7 @@ describe PuavoRest::BootServer do
       :puavoHostname => "server1",
       :macAddress => "bc:5f:f4:56:59:71",
       :puavoSchool => @school.dn,
+      :puavoTag => ["servertag"],
       :puavoDeviceType => "bootserver"
     }
     @server1.save!
@@ -59,6 +60,21 @@ describe PuavoRest::BootServer do
       assert_equal "server1", data.first["hostname"]
       assert data.first["dn"]
       assert data.first["school_dns"]
+    end
+
+    it "can list single boot server" do
+      get "/v3/boot_servers/server1", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal("server1", data["hostname"])
+      assert_equal(Array, data["school_dns"].class, "has array of schools")
+      assert_equal(Array, data["tags"].class, "has a tags array")
+      assert(
+        data["tags"].include?("servertag"),
+        "Has 'servertag' in #{ data["tags"].inspect }"
+      )
     end
 
     it "can be used to fetch single boot server data by hostname" do
