@@ -95,9 +95,9 @@ class Sessions < LdapSinatra
   end
 
 
-  # Create new desktop session for a thin client. If the thin client requests
-  # some specific LTSP image and no server provides it will get the most idle
-  # LTSP server with what ever image it has
+  # @api {post} /v3/sessions
+  # @apiName Create new desktop session
+  # @apiGroup sessions
   post "/v3/sessions" do
     auth :basic_auth, :server_auth, :kerberos
 
