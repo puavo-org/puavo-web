@@ -177,6 +177,15 @@ class LdapModel
     raise "search_filters not implemented for #{ self }"
   end
 
+  # Search for models using keywords
+  #
+  # `keywords` can be a string of `+` or space separated keywords or an array
+  # of keywords. Those models are returned which have a match for all the
+  # keywords.
+  #
+  # Each model using this method must implement a `search_filters` method which
+  # returns an array of lambdas which generate the approciate ldap search
+  # filters. See create_filter_lambda
   def self.search(keywords)
     if keywords.kind_of?(String)
       keywords = keywords.gsub("+", " ").split(" ")
