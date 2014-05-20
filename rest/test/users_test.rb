@@ -279,4 +279,74 @@ describe PuavoRest::Users do
     end
   end
 
+  describe "GET /v3/users/_search" do
+
+    before(:each) do
+      @user3 = User.new(
+        :givenName => "Alice",
+        :sn  => "Another",
+        :uid => "another",
+        :puavoEduPersonAffiliation => "student",
+        :preferredLanguage => "en",
+        :mail => "alice.another@example.com",
+        :role_ids => [@role.puavoId]
+      )
+      @user3.set_password "secret"
+      @user3.puavoSchool = @school.dn
+      @user3.role_ids = [
+        Role.find(:first, {
+          :attribute => "displayName",
+          :value => "Maintenance"
+        }).puavoId,
+        @role.puavoId
+      ]
+      @user3.save!
+    end
+
+    it "can list bob" do
+      basic_authorize "bob", "secret"
+      get "/v3/users/_search?q=bob"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      bob = data.select do |u|
+        u["username"] == "bob"
+      end
+
+      assert_equal 1, bob.size
+    end
+
+    it "can find bob with a partial match" do
+      basic_authorize "bob", "secret"
+      get "/v3/users/_search?q=bro"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      bob = data.select do |u|
+        u["username"] == "bob"
+      end
+
+      assert_equal 1, bob.size
+
+    end
+
+    it "can all alices" do
+      basic_authorize "bob", "secret"
+      get "/v3/users/_search?q=alice"
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert_equal 2, data.size, data
+    end
+
+    it "can limit search with multiple keywords" do
+      basic_authorize "bob", "secret"
+      get "/v3/users/_search?q=alice+Wonder"
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert_equal 1, data.size, data
+      assert_equal "alice", data[0]["username"]
+    end
+
+  end
+
 end

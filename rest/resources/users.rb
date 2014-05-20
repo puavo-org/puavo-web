@@ -151,10 +151,42 @@ class User < LdapModel
     settings[:credentials_cache][:current_user] = user
   end
 
+  def self.search_fields
+    return [
+      :username,
+      :first_name,
+      :last_name
+    ].map { |f| pretty2ldap[f].to_s }
+  end
+
+  def self.search(keywords)
+    if keywords.kind_of?(String)
+      keywords = keywords.gsub("+", " ").split(" ")
+    end
+
+    fields = User.search_fields
+
+    filter = "(&" + keywords.map do |k|
+      "(|" + fields.map do |f|
+        "(#{ f }=*#{ escape(k) }*)"
+      end.join("") + ")"
+    end.join("") + ")"
+
+    puts "#"*80
+    puts filter
+
+    User.filter(filter)
+  end
+
 end
 
 class Users < LdapSinatra
 
+
+  get "/v3/users/_search" do
+    auth :basic_auth, :kerberos
+    json User.search(params["q"])
+  end
 
   # Return users in a organisation
   get "/v3/users" do
