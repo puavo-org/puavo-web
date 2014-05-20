@@ -108,9 +108,24 @@ class Device < Host
     end
     device_mounts
   end
+
+  def self.search_filters
+    [
+      create_filter(:hostname) { |v| "*#{ v }*" },
+
+      # Our ldap schema does not allow wildcards in the 'macAddress' field. So
+      # we must match only with excact filters
+      create_filter(:mac_address) { |v| v },
+    ]
+  end
 end
 
 class Devices < LdapSinatra
+
+  get "/v3/devices/_search" do
+    auth :basic_auth, :kerberos
+    json Device.search(params["q"])
+  end
 
   # Get detailed information about the server by hostname
   #

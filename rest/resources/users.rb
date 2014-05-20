@@ -151,14 +151,13 @@ class User < LdapModel
     settings[:credentials_cache][:current_user] = user
   end
 
-  def self.search_fields
-    return [
-      :username,
-      :first_name,
-      :last_name
-    ].map { |f| pretty2ldap[f].to_s }
+  def self.search_filters
+    [
+      create_filter(:username),
+      create_filter(:first_name),
+      create_filter(:last_name)
+    ]
   end
-
 
 end
 

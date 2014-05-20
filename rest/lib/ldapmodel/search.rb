@@ -173,8 +173,8 @@ class LdapModel
     res
   end
 
-  def self.search_fields
-    raise "search_fields not implemented for #{ self }"
+  def self.search_filters
+    raise "search_filters not implemented for #{ self }"
   end
 
   def self.search(keywords)
@@ -182,15 +182,32 @@ class LdapModel
       keywords = keywords.gsub("+", " ").split(" ")
     end
 
-    fields = search_fields
-
-    filter_string = "(&" + keywords.map do |k|
-      "(|" + fields.map do |f|
-        "(#{ f }=*#{ escape(k) }*)"
+    filter_string = "(&" + keywords.map do |keyword|
+      "(|" + search_filters.map do |sf|
+        sf.call(keyword)
       end.join("") + ")"
     end.join("") + ")"
 
     filter(filter_string)
+  end
+
+  # Return a lambda which converts ldap field value to ldap search filter
+  #
+  # Example:
+  #
+  #   f = create_filter(:username) { |value| "*#{ v }*" }
+  #   filter = f.call("foo")
+  #
+  #     => "(uid=*foo*)"
+  #
+  def self.create_filter(pretty_attr, &convert)
+    if convert.nil?
+      convert = lambda { |v| "*#{ v }*" }
+    end
+
+    ldap_attr = pretty2ldap[pretty_attr.to_sym]
+    raise "Unknown pretty attribute '#{ pretty_attr }' for #{ self }" if not ldap_attr
+    lambda { |keyword| "(#{ ldap_attr }=#{ convert.call(escape(keyword)) })" }
   end
 
 end

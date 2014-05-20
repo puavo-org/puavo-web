@@ -460,4 +460,52 @@ describe PuavoRest::Devices do
     end
 
   end
+
+  describe "GET /v3/devices/_search" do
+    before(:each) do
+      create_device(
+        :puavoHostname => "afat",
+        :puavoDeviceType =>  "fatclient",
+        :macAddress => "00:60:2f:E5:A1:37",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn,
+
+        :puavoDeviceBootImage => "bootimage",
+        :puavoDeviceImage => "normalimage"
+      ).save!
+
+      create_device(
+        :puavoHostname => "anotherdevive",
+        :puavoDeviceType =>  "fatclient",
+        :macAddress => "00:60:2f:7F:1F:FE",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn,
+
+        :puavoDeviceBootImage => "bootimage",
+        :puavoDeviceImage => "normalimage"
+      ).save!
+
+    end
+
+    it "can find device by hostname" do
+      basic_authorize CONFIG["server"][:dn], CONFIG["server"][:password]
+      get "/v3/devices/_search?q=afat"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal 1, data.size, data
+      assert_equal "afat", data[0]["hostname"]
+    end
+
+    it "can find device by mac" do
+      basic_authorize "uid=admin,o=puavo", "password"
+      get "/v3/devices/_search?q=00:60:2f:7F:1F:FE"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal 1, data.size, data
+      assert_equal "anotherdevive", data[0]["hostname"]
+    end
+
+  end
 end
