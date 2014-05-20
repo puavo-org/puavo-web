@@ -111,11 +111,11 @@ class Device < Host
 
   def self.search_filters
     [
-      create_filter(:hostname) { |v| "*#{ v }*" },
+      create_filter_lambda(:hostname) { |v| "*#{ v }*" },
 
       # Our ldap schema does not allow wildcards in the 'macAddress' field. So
       # we must match only with excact filters
-      create_filter(:mac_address) { |v| v },
+      create_filter_lambda(:mac_address) { |v| v },
     ]
   end
 end

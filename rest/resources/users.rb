@@ -153,10 +153,10 @@ class User < LdapModel
 
   def self.search_filters
     [
-      create_filter(:username),
-      create_filter(:first_name),
-      create_filter(:last_name),
-      create_filter(:email)
+      create_filter_lambda(:username),
+      create_filter_lambda(:first_name),
+      create_filter_lambda(:last_name),
+      create_filter_lambda(:email)
     ]
   end
 

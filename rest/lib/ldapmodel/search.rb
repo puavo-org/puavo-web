@@ -195,12 +195,11 @@ class LdapModel
   #
   # Example:
   #
-  #   f = create_filter(:username) { |value| "*#{ v }*" }
-  #   filter = f.call("foo")
+  #   l = create_filter_lambda(:username) { |value| "*#{ v }*" }
+  #   filter = l.call("foo")
+  #   "(uid=*foo*)"
   #
-  #     => "(uid=*foo*)"
-  #
-  def self.create_filter(pretty_attr, &convert)
+  def self.create_filter_lambda(pretty_attr, &convert)
     if convert.nil?
       convert = lambda { |v| "*#{ v }*" }
     end
