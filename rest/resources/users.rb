@@ -159,24 +159,6 @@ class User < LdapModel
     ].map { |f| pretty2ldap[f].to_s }
   end
 
-  def self.search(keywords)
-    if keywords.kind_of?(String)
-      keywords = keywords.gsub("+", " ").split(" ")
-    end
-
-    fields = User.search_fields
-
-    filter = "(&" + keywords.map do |k|
-      "(|" + fields.map do |f|
-        "(#{ f }=*#{ escape(k) }*)"
-      end.join("") + ")"
-    end.join("") + ")"
-
-    puts "#"*80
-    puts filter
-
-    User.filter(filter)
-  end
 
 end
 

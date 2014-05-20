@@ -173,4 +173,24 @@ class LdapModel
     res
   end
 
+  def self.search_fields
+    raise "search_fields not implemented for #{ self }"
+  end
+
+  def self.search(keywords)
+    if keywords.kind_of?(String)
+      keywords = keywords.gsub("+", " ").split(" ")
+    end
+
+    fields = search_fields
+
+    filter_string = "(&" + keywords.map do |k|
+      "(|" + fields.map do |f|
+        "(#{ f }=*#{ escape(k) }*)"
+      end.join("") + ")"
+    end.join("") + ")"
+
+    filter(filter_string)
+  end
+
 end
