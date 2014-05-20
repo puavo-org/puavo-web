@@ -44,6 +44,16 @@ Get user information
       "dn": "puavoId=202228,ou=People,dc=edu,dc=kehitys,dc=fi"
     }
 
+## GET /v3/users/_search
+
+### Query strings
+
+  - `q`: keywords to search with. Separate with a `+` or space
+
+### Returns
+
+Array of users objects
+
 ## GET /v3/whoami
 
 Like previous but for the authenticated uses
@@ -100,6 +110,16 @@ Get metadata list of external files.
      },
      ...
     ]
+
+## GET /v3/devices/_search
+
+### Query strings
+
+  - `q`: keywords to search with. Separate with a `+` or space
+
+### Returns
+
+Array of device objects
 
 ## GET /v3/:organisation/external_files/:name/metadata
 
