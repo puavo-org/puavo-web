@@ -347,6 +347,15 @@ describe PuavoRest::Users do
       assert_equal "alice", data[0]["username"]
     end
 
+    it "can find alice by email" do
+      basic_authorize "cucumber", "cucumber"
+      get "/v3/users/_search?q=alice@example.com"
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert_equal 1, data.size, data
+      assert_equal "alice", data[0]["username"]
+    end
+
   end
 
 end

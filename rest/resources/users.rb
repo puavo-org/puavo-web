@@ -155,7 +155,8 @@ class User < LdapModel
     [
       create_filter(:username),
       create_filter(:first_name),
-      create_filter(:last_name)
+      create_filter(:last_name),
+      create_filter(:email)
     ]
   end
 
