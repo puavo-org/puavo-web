@@ -1,5 +1,8 @@
 # encoding: UTF-8
 require "puavo/etc"
+require "socket"
+
+fqdn = Socket.gethostbyname(Socket.gethostname).first
 
 authentication = Puavo::Authentication.new
 authentication.configure_ldap_connection({
@@ -194,7 +197,7 @@ end
 [
   {
     :cn => "Puavo Ticket",
-    :puavoServiceDomain => "",
+    :puavoServiceDomain => fqdn,
     :puavoServiceSecret => "secret",
     :description  => "Services for localhost",
     :mail  => "dev@example.com",
