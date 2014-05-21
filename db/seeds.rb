@@ -193,6 +193,14 @@ end
 
 [
   {
+    :cn => "Puavo Ticket",
+    :puavoServiceDomain => "",
+    :puavoServiceSecret => "secret",
+    :description  => "Services for localhost",
+    :mail  => "dev@example.com",
+    :puavoServiceTrusted => true
+  },
+  {
     :cn => "Localhost Service",
     :puavoServiceDomain => "localhost",
     :puavoServiceSecret => "secret",
