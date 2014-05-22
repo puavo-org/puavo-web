@@ -527,6 +527,7 @@ fi:
   language_fi: Suomi
   language_en: Englanti
   language_sv: Ruotsi
+  language_de: Saksa
   language_default: Oletus
   date:
     formats:

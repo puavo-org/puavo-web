@@ -531,6 +531,7 @@ en:
   language_fi: Finnish
   language_en: English
   language_sv: Swedish
+  language_de: German
   language_default: Default
   date:
     formats:
