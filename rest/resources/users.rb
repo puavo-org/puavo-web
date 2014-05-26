@@ -56,6 +56,11 @@ class User < LdapModel
     id
   end
 
+  computed_attr :unique_id
+  def unique_id
+    dn.downcase
+  end
+
   def self.ldap_base
     "ou=People,#{ organisation["base"] }"
   end
