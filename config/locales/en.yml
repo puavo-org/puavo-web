@@ -532,6 +532,7 @@ en:
   language_en: English
   language_sv: Swedish
   language_de: German
+  language_de_CH: "German (Switzerland)"
   language_default: Default
   date:
     formats:

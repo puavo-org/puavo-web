@@ -528,6 +528,7 @@ fi:
   language_en: Englanti
   language_sv: Ruotsi
   language_de: Saksa
+  language_de_CH: "Saksa (Sveitsi)"
   language_default: Oletus
   date:
     formats:
