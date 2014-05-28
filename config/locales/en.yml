@@ -528,10 +528,10 @@ en:
   puavoEduPersonAffiliation_parent: Parent
   puavoEduPersonAffiliation_admin: Admin
   puavoEduPersonAffiliation_testuser: Test user
-  language_fi: Finnish
-  language_en: English
-  language_sv: Swedish
-  language_de: German
+  language_fi_FI: Finnish
+  language_en_US: English
+  language_sv_FI: Swedish
+  language_de_CH: German
   language_default: Default
   date:
     formats:

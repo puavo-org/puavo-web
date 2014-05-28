@@ -524,10 +524,10 @@ fi:
   puavoEduPersonAffiliation_parent: Huoltaja
   puavoEduPersonAffiliation_admin: "Ylläpitäjä"
   puavoEduPersonAffiliation_testuser: Testitunnus
-  language_fi: Suomi
-  language_en: Englanti
-  language_sv: Ruotsi
-  language_de: Saksa
+  language_fi_FI: Suomi
+  language_en_US: Englanti
+  language_sv_FI: Ruotsi
+  language_de_CH: Saksa
   language_default: Oletus
   date:
     formats:
