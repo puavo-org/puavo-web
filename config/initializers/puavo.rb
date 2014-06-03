@@ -1,6 +1,6 @@
 require 'puavo/authentication'
 
-Puavo.available_languages = ['fi_FI', 'en_US', 'sv_FI', 'de_CH']
+Puavo.available_languages = ['fi_FI.UTF-8', 'en_US.UTF-8', 'sv_FI.UTF-8', 'de_CH.UTF-8']
 
 Puavo::DEVICE_CONFIG = YAML.load_file("#{Rails.root}/config/puavo_devices.yml") rescue nil
 
