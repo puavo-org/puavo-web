@@ -106,6 +106,8 @@ Then(/^I should see the following special ldap attributes on the "([^\"]*)" obje
     object = School.find( :first, :attribute => "displayName", :value => key )
   when "Group"
     object = Group.find( :first, :attribute => "displayName", :value => key )
+  when "Organisation"
+    object = LdapOrganisation.first
   end
   table.rows_hash.each do |attribute, regexp|
     regexp = eval(regexp)

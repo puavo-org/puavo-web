@@ -1,12 +1,15 @@
 class LdapOrganisation < LdapBase
   include Wlan
   include BooleanAttributes
+  include Locale
 
   ldap_mapping( :dn_attribute => "dc",
                 :prefix => "",
                 :classes => ["dcObject", "organization", "puavoEduOrg", "eduOrg"] )
 
   validate :validate_wlan_attributes
+
+  before_save :set_preferred_language
 
   def self.current
     LdapOrganisation.first
