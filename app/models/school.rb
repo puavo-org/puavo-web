@@ -7,7 +7,7 @@ class School < BaseGroup
   include HasPrinterMixin
   include PuavoTagMixin
   include Mountpoint
-  include Locale
+  include Puavo::Locale
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",

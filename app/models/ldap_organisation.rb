@@ -1,7 +1,7 @@
 class LdapOrganisation < LdapBase
   include Wlan
   include BooleanAttributes
-  include Locale
+  include Puavo::Locale
 
   ldap_mapping( :dn_attribute => "dc",
                 :prefix => "",
