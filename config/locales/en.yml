@@ -397,6 +397,7 @@ en:
         postalCode: Postal code
         st: State
         preferredLanguage: Preferred language
+        puavoLocale: Preferred language
         eduOrgHomePageURI: Home page
         puavoDeviceAutoPowerOffMode: Auto power off mode
         puavoDeviceAutoPowerOffMode_default: Default

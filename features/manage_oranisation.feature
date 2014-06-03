@@ -48,7 +48,7 @@ Feature: Manage organisation
     | Abbreviation                     | jkl                                                        |
 # FIXME: fix acl?
 #    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
-    And I select "English" from "ldap_organisation[preferredLanguage]"
+    And I select "English (United States)" from "Preferred language"
     And I select "13" from "ldap_organisation[puavoDeviceOnHour]"
     And I select "19" from "ldap_organisation[puavoDeviceOffHour]"
     And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_default"
@@ -66,7 +66,7 @@ Feature: Manage organisation
     | 88888                                                      |
     | Keski-suomen lääni                                         |
     | http://www.example.org                                     |
-    | English                                                    |
+    | English (United States)                                    |
     | 13                                                         |
     | 19                                                         |
     | Custom                                                     |

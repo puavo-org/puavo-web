@@ -393,6 +393,7 @@ fi:
         postalCode: Postinumero
         st: Maakunta
         preferredLanguage: Ensisijainen kieli
+        puavoLocale: Ensisijainen kieli
         eduOrgHomePageURI: Kotisivu
         puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
         puavoDeviceAutoPowerOffMode_default: Oletus

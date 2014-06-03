@@ -46,8 +46,8 @@
     <td class="value_td"><%= @organisation.st %></td>
   </tr>
   <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "preferredLanguage" %></td>
-    <td class="value_td"><%=h @organisation.preferredLanguage ? t('language_' + @organisation.preferredLanguage) : "" %></tr>
+    <td class="label_td view"><%= label "ldap_organisation", "puavoLocale" %></td>
+    <td class="value_td"><%=h language_by_locale(@organisation.puavoLocale) %></tr>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "eduOrgHomePageURI" %></td>
