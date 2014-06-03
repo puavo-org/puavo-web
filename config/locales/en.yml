@@ -413,6 +413,8 @@ en:
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
         puavoTimezone: Timezone
+        puavoKeyboardLayout: Keyboard layout
+        puavoKeyboardVariant: Keyboard variant
       ldap_service:
         uid: Service Identifier
         description: Description

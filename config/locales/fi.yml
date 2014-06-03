@@ -409,6 +409,8 @@ fi:
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Laitteet henkilökohtaisia
         puavoTimezone: Aikavyöhyke
+        puavoKeyboardLayout: Näppäimistön asettelu
+        puavoKeyboardVariant: Näppäimistön alkuperämaa
       ldap_service:
         uid: Palvelun tunniste
         description: Kuvaus

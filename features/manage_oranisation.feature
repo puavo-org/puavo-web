@@ -34,18 +34,20 @@ Feature: Manage organisation
     When I follow "About"
     And I follow "Edit"
     Then I fill in the following:
-    | Description                      | Example Organisation located  in the middle of the Finland |
-    | Phone number                     | 123456789                                                  |
-    | Fax number                       | 987654321                                                  |
-    | Locality                         | Example locality                                           |
-    | Street address                   | Example stree 435                                          |
-    | Post Office Box                  | 1001                                                       |
-    | Postal address                   | Example postal address                                     |
-    | Postal code                      | 88888                                                      |
-    | State                            | Keski-suomen lääni                                         |
-    | Home page                        | http://www.example.org                                     |
-    | Name                             | Example Organisation 2                                     |
-    | Abbreviation                     | jkl                                                        |
+    | Description     | Example Organisation located  in the middle of the Finland |
+    | Phone number    | 123456789                                                  |
+    | Fax number      | 987654321                                                  |
+    | Locality        | Example locality                                           |
+    | Street address  | Example stree 435                                          |
+    | Post Office Box | 1001                                                       |
+    | Postal address  | Example postal address                                     |
+    | Postal code     | 88888                                                      |
+    | State           | Keski-suomen lääni                                         |
+    | Home page       | http://www.example.org                                     |
+    | Name            | Example Organisation 2                                     |
+    | Abbreviation    | jkl                                                        |
+    | Keyboard layout | en                                                         |
+    | Keyboard varian | US                                                         |
 # FIXME: fix acl?
 #    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
     And I select "Europe/Helsinki" from "Timezone"
@@ -74,6 +76,8 @@ Feature: Manage organisation
     | Example Organisation 2                                     |
     | jkl                                                        |
     | Europe/Helsinki                                            |
+    | en                                                         |
+    | US                                                         |
 #    | base:500                                                   |
     And I should see the following special ldap attributes on the "Organisation" object with "example":
     | preferredLanguage | "sv" |
