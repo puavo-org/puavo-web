@@ -85,6 +85,11 @@ class User < LdapModel
     User.organisation
   end
 
+  computed_attr :organisation_domain
+  def organisation_domain
+    organisation.domain
+  end
+
   computed_attr :school_dn
   def school_dn
     Array(school_dns).first

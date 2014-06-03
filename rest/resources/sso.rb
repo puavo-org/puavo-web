@@ -134,7 +134,7 @@ class SSO < LdapSinatra
       "user_type" => user.user_type, # XXX: deprecated!
       "email" => user.email,
       "organisation_name" => user.organisation.name,
-      "organisation_domain" => user.organisation.domain,
+      "organisation_domain" => user.organisation_domain,
       "primary_school_id" => primary_school.id,
       "schools" => user.schools.map do |school|
         {
