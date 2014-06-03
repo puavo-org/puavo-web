@@ -54,6 +54,13 @@
     </td>
   </tr>
   <tr>
+    <td><%= f.label :puavoTimezone %></td>
+    <td>
+      <%= f.select :puavoTimezone,
+          timezones_for_select(f.object.puavoTimezone) %>
+    </td>
+  </tr>
+  <tr>
     <td><%= f.label :eduOrgHomePageURI %></td>
     <td><%= f.text_field :eduOrgHomePageURI %></td>
   </tr>

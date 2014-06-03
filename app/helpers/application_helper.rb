@@ -100,4 +100,13 @@ module ApplicationHelper
     language = locale.split(".").first
     t("language_#{language}")
   end
+
+  def timezones_for_select(value)
+    options = Puavo.timezones.map do |zone|
+      [zone, zone]
+    end
+    default =  "Europe/Helsinki"
+    default = value if value
+    options_for_select(options, default)
+  end
 end

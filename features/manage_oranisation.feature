@@ -48,6 +48,7 @@ Feature: Manage organisation
     | Abbreviation                     | jkl                                                        |
 # FIXME: fix acl?
 #    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
+    And I select "Europe/Helsinki" from "Timezone"
     And I select "Swedish (Finland)" from "Preferred language"
     And I select "13" from "ldap_organisation[puavoDeviceOnHour]"
     And I select "19" from "ldap_organisation[puavoDeviceOffHour]"
@@ -72,6 +73,7 @@ Feature: Manage organisation
     | Custom                                                     |
     | Example Organisation 2                                     |
     | jkl                                                        |
+    | Europe/Helsinki                                            |
 #    | base:500                                                   |
     And I should see the following special ldap attributes on the "Organisation" object with "example":
     | preferredLanguage | "sv" |

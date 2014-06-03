@@ -408,6 +408,7 @@ fi:
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu
         puavoPersonalDevice: Laitteet henkilökohtaisia
+        puavoTimezone: Aikavyöhyke
       ldap_service:
         uid: Palvelun tunniste
         description: Kuvaus

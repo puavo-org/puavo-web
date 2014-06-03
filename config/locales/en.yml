@@ -412,6 +412,7 @@ en:
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
+        puavoTimezone: Timezone
       ldap_service:
         uid: Service Identifier
         description: Description
