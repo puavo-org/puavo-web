@@ -43,20 +43,21 @@ Feature: Manage schools
     # Translation missing
     And I should not see "en, activeldap, attributes, school"
     And I should see the following:
-    |                    |
-    | Bourne School      |
-    | School's home page |
-    | Raymond Mays Way   |
-    | 123                |
-    | 12345              |
-    | 54321              |
-    | presice-20121023   |
-    | school_base:500    |
-    | testag1 testag2    |
-    | nfs3               |
-    | 10.0.0.1/share     |
-    | /home/share        |
-    | -o rw              |
+    |                         |
+    | Bourne School           |
+    | School's home page      |
+    | Raymond Mays Way        |
+    | 123                     |
+    | 12345                   |
+    | 54321                   |
+    | presice-20121023        |
+    | school_base:500         |
+    | testag1 testag2         |
+    | nfs3                    |
+    | 10.0.0.1/share          |
+    | /home/share             |
+    | -o rw                   |
+    | English (United States) |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
 

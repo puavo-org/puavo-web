@@ -93,4 +93,11 @@ module ApplicationHelper
      end
     return for_select
   end
+
+  def language_by_locale(locale)
+    return t("language_default") if not locale
+
+    language = locale.split(".").first
+    t("language_#{language}")
+  end
 end

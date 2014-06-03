@@ -31,9 +31,9 @@
   <% end %>
     <div class="row">
       <div class="column_1">
-        <%= label "school", 'preferredLanguage' %>:
+        <%= label "school", 'puavoLocale' %>:
       </div>
-      <div class="column_2"><%=h @school.preferredLanguage ? t('language_' + @school.preferredLanguage) : "" %></div>
+      <div class="column_2"><%=h language_by_locale(@school.puavoLocale) %></div>
     </div>
     <div class="row">
       <div class="column_1">
