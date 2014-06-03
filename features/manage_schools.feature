@@ -60,6 +60,8 @@ Feature: Manage schools
     | English (United States) |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
+    And I should see the following special ldap attributes on the "School" object with "Bourne School":
+    | preferredLanguage | "en" |
 
   Scenario: Add new school to organisation without names
     Given I am on the new school page

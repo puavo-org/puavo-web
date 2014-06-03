@@ -7,6 +7,7 @@ class School < BaseGroup
   include HasPrinterMixin
   include PuavoTagMixin
   include Mountpoint
+  include Locale
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=Groups",
@@ -33,7 +34,7 @@ class School < BaseGroup
   attr_accessor :image
   before_validation :resize_image
 
-  before_save :set_puavo_mountpoint
+  before_save :set_puavo_mountpoint, :set_preferred_language
 
   validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_wlan_attributes
 
