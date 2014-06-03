@@ -37,6 +37,7 @@ Feature: Manage schools
     | school_mountpoint_0        | /home/share                                                                    |
     | school_options_0           | -o rw                                                                          |
     And I attach the file at "features/support/test.jpg" to "Image"
+    And I select "English (United States)" from "Language"
     And I press "Create"
     Then I should not see "error"
     # Translation missing

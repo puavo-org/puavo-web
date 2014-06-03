@@ -351,6 +351,7 @@ en:
         puavoPersonalDevice: Personal devices
         preferredLanguage: Language
         puavoTag: Tags
+        puavoLocale: Language
       user:
         displayName: Name
         sn: Surname
@@ -528,10 +529,10 @@ en:
   puavoEduPersonAffiliation_parent: Parent
   puavoEduPersonAffiliation_admin: Admin
   puavoEduPersonAffiliation_testuser: Test user
-  language_fi: Finnish
-  language_en: English
-  language_sv: Swedish
-  language_de: German
+  language_fi_FI: Finnish
+  language_en_US: English (United States)
+  language_sv_FI: Swedish (Finland)
+  language_de_CH: German (Switzerland)
   language_default: Default
   date:
     formats:
