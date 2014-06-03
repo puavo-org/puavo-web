@@ -191,6 +191,7 @@ class LdapModel
       keywords = keywords.gsub("+", " ").split(" ")
     end
 
+    return [] if keywords.nil?
     return [] if keywords.empty?
 
     filter_string = "(&" + keywords.map do |keyword|
