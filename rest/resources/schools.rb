@@ -24,6 +24,9 @@ class School < LdapModel
       Array(es).map { |s| s.downcase.strip }
   end
   ldap_map( :puavoMountpoint, :mountpoints){ |m| Array(m) }
+  ldap_map :puavoTimezone, :timezone
+  ldap_map :puavoKeyboardLayout, :keyboard_layout
+  ldap_map :puavoKeyboardVariant, :keyboard_variant
 
   def self.ldap_base
     "ou=Groups,#{ organisation["base"] }"
@@ -153,6 +156,30 @@ class School < LdapModel
         "dn" => dn.to_s
       }
       msg
+    end
+  end
+
+  def timezone
+    if get_own(:timezone).nil?
+      organisation.timezone
+    else
+      get_own(:timezone)
+    end
+  end
+
+  def keyboard_layout
+    if get_own(:keyboard_layout).nil?
+      organisation.keyboard_layout
+    else
+      get_own(:keyboard_layout)
+    end
+  end
+
+  def keyboard_variant
+    if get_own(:keyboard_variant).nil?
+      organisation.keyboard_variant
+    else
+      get_own(:keyboard_variant)
     end
   end
 

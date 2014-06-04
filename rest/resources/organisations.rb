@@ -15,6 +15,9 @@ class Organisation < LdapModel
   ldap_map(:puavoActiveService, :external_services) do |es|
       Array(es).map { |s| s.downcase.strip }
   end
+  ldap_map :puavoTimezone, :timezone
+  ldap_map :puavoKeyboardLayout, :keyboard_layout
+  ldap_map :puavoKeyboardVariant, :keyboard_variant
 
   def organisation_key
     domain.split(".").first if domain

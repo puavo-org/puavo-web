@@ -134,6 +134,18 @@ describe PuavoRest::Devices do
       assert @data["tags"].include?("schooltag"), "has schooltag"
     end
 
+    it "has timezone" do
+      assert_equal "Europe/Helsinki", @data["timezone"]
+    end
+
+    it "has keyboard layout" do
+      assert_equal "en", @data["keyboard_layout"]
+    end
+
+    it "has kehboard variant" do
+      assert_equal "US", @data["keyboard_variant"]
+    end
+
     it "it prefers language from the school" do
       @school.puavoLocale = "sv_FI.UTF-8"
       @school.save!

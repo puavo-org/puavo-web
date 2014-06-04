@@ -78,6 +78,9 @@ module Test
     ldap_organisation.puavoDeviceImage = nil
     ldap_organisation.puavoAllowGuest = nil
     ldap_organisation.puavoActiveService = nil
+    ldap_organisation.puavoTimezone = "Europe/Helsinki"
+    ldap_organisation.puavoKeyboardLayout = "en"
+    ldap_organisation.puavoKeyboardVariant = "US"
     ldap_organisation.save!
 
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration

@@ -18,6 +18,9 @@ class Device < Host
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
   ldap_map :puavoDeviceDefaultAudioSink, :default_audio_sink
   ldap_map( :puavoMountpoint, :mountpoints){ |m| Array(m) }
+  ldap_map :puavoTimezone, :timezone
+  ldap_map :puavoKeyboardLayout, :keyboard_layout
+  ldap_map :puavoKeyboardVariant, :keyboard_variant
 
 
   def self.ldap_base
@@ -123,6 +126,31 @@ class Device < Host
       create_filter_lambda(:mac_address) { |v| v },
     ]
   end
+
+  def timezone
+    if get_own(:timezone).nil?
+      school.timezone
+    else
+      get_own(:timezone)
+    end
+  end
+
+  def keyboard_layout
+    if get_own(:keyboard_layout).nil?
+      school.keyboard_layout
+    else
+      get_own(:keyboard_layout)
+    end
+  end
+
+  def keyboard_variant
+    if get_own(:keyboard_variant).nil?
+      school.keyboard_variant
+    else
+      get_own(:keyboard_variant)
+    end
+  end
+
 end
 
 class Devices < LdapSinatra
