@@ -139,21 +139,24 @@ describe PuavoRest::Users do
           :org    => "en_US.UTF-8",
           :school => "fi_FI.UTF-8",
           :user   => "sv_FI.UTF-8",
-          :expect_language => "sv"
+          :expect_language => "sv",
+          :expect_locale => "sv_FI.UTF-8"
         },
         {
           :name   => "first fallback is school",
           :org    => "en_US.UTF-8",
           :school => "fi_FI.UTF-8",
           :user   => nil,
-          :expect_language => "fi"
+          :expect_language => "fi",
+          :expect_locale => "fi_FI.UTF-8"
         },
         {
           :name   => "organisation is the least preferred",
           :org    => "en_US.UTF-8",
           :school => nil,
           :user   => nil,
-          :expect_language => "en"
+          :expect_language => "en",
+          :expect_locale => "en_US.UTF-8"
         },
       ].each do |opts|
         it opts[:name] do
@@ -171,6 +174,7 @@ describe PuavoRest::Users do
           assert_200
           data = JSON.parse(last_response.body)
           assert_equal opts[:expect_language], data["preferred_language"]
+          assert_equal opts[:expect_locale], data["locale"]
         end
       end
     end
