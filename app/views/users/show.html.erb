@@ -72,8 +72,8 @@
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "preferredLanguage" %></td>
-    <td class="value_td"><%=h @user.preferredLanguage ? t('language_' + @user.preferredLanguage) : "" %></tr>
+    <td class="label_td view"><%= label "user", "puavoLocale" %></td>
+    <td class="value_td"><%=h language_by_locale(@user.puavoLocale) %></tr>
   </tr>
 
   <tr>

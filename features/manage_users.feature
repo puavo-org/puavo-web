@@ -39,26 +39,28 @@ Feature: Manage users
     And I select "Student" from "user[puavoEduPersonAffiliation]"
     And the "Language" select box should contain "Default"
     And the "Language" select box should contain "Finnish"
-    And the "Language" select box should contain "Swedish"
-    And I select "English" from "user[preferredLanguage]"
+    And the "Language" select box should contain "Swedish \(Finland\)"
+    And the "Language" select box should contain "English \(United States\)"
+    And the "Language" select box should contain "German \(Switzerland\)"
+    And I select "English (United States)" from "Language"
     And I check "Class 4"
     # FIXME
     And I choose "user_puavoAllowRemoteAccess_true"
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
     Then I should see the following:
-    |                       |
-    | Mabey                 |
-    | Ben                   |
-    | ben                   |
-    | Class 4               |
-    | ben.mabey@example.com |
-    | +35814123123123       |
-    | Student               |
-    | English               |
-    | Yes                   |
-    | Mabey Ben             |
-    | 556677                |
+    |                         |
+    | Mabey                   |
+    | Ben                     |
+    | ben                     |
+    | Class 4                 |
+    | ben.mabey@example.com   |
+    | +35814123123123         |
+    | Student                 |
+    | English (United States) |
+    | Yes                     |
+    | Mabey Ben               |
+    | 556677                  |
     And I should see "Class 4" on the "Groups by roles"
     And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
@@ -76,6 +78,8 @@ Feature: Manage users
     Then I should see "Mabey Ben"
     And I should see "ben"
     And I should see "Student"
+    And I should see the following special ldap attributes on the "User" object with "ben":
+    | preferredLanguage      | "en" |
 
   Scenario: Create duplicate user to organisation
     Given the following users:

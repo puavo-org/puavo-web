@@ -68,11 +68,10 @@
   </tr>
 
   <tr>
-    <td><%= f.label :preferredLanguage %></td>
+    <td><%= f.label :puavoLocale %></td>
     <td>
-      <%= f.select :preferredLanguage,
-          [[t('language_default'), ""]] +
-            Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } %>
+      <%= f.select :puavoLocale,
+          locales_for_select %>
     </td>
   </tr>
 

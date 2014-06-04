@@ -380,6 +380,7 @@ en:
         image: Image
         jpegPhoto: Image
         puavoLocked: User is locked
+        puavoLocale: Language
       group:
         displayName: Group name
         cn: Abbreviation

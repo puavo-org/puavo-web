@@ -4,6 +4,7 @@ class User < LdapBase
   @@reserved_uids = Array.new
 
   include Puavo::AuthenticationMixin
+  include Puavo::Locale
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -23,7 +24,7 @@ class User < LdapBase
 
   before_validation :set_special_ldap_value, :resize_image
 
-  before_save :is_uid_changed
+  before_save :is_uid_changed, :set_preferred_language
 
   before_update :change_ldap_password
 
