@@ -132,6 +132,7 @@ class Sessions < LdapSinatra
         end
 
         session["preferred_language"] = device.preferred_language
+        session["locale"] = device.locale
 
         session["device"] = device.to_hash
         session["printer_queues"] += device.printer_queues
@@ -158,6 +159,7 @@ class Sessions < LdapSinatra
       end
 
       session["preferred_language"] = user.preferred_language
+      session["locale"] = user.locale
 
       groups.each do |group|
         session["printer_queues"] += group.printer_queues

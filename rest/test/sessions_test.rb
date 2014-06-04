@@ -24,7 +24,7 @@ describe PuavoRest::Sessions do
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
-      :preferredLanguage => "school-lang",
+      :puavoLocale => "fi_FI.UTF-8",
       :puavoSchoolHomePageURL => "gryffindor.example"
     )
     @athin = create_device(
@@ -557,7 +557,7 @@ describe PuavoRest::Sessions do
         :sn  => "Brown",
         :uid => "bob",
         :puavoEduPersonAffiliation => "student",
-        :preferredLanguage => "user-lang",
+        :puavoLocale => "de_CH.UTF-8",
         :mail => "bob@example.com"
       )
       @user.set_password "secret"
@@ -620,8 +620,10 @@ describe PuavoRest::Sessions do
         data = JSON.parse last_response.body
 
         assert data["user"].nil?, "User should be nil for guests"
-        assert_equal "school-lang", data["preferred_language"]
-        assert_equal "school-lang", data["device"]["preferred_language"]
+        assert_equal "fi", data["preferred_language"]
+        assert_equal "fi", data["device"]["preferred_language"]
+        assert_equal "fi_FI.UTF-8", data["locale"]
+        assert_equal "fi_FI.UTF-8", data["device"]["locale"]
       end
 
       it "is their own for authenticated users" do
@@ -630,8 +632,10 @@ describe PuavoRest::Sessions do
         assert_200
         data = JSON.parse last_response.body
 
-        assert_equal "user-lang", data["user"]["preferred_language"]
-        assert_equal "user-lang", data["preferred_language"]
+        assert_equal "de", data["user"]["preferred_language"]
+        assert_equal "de", data["preferred_language"]
+        assert_equal "de_CH.UTF-8", data["user"]["locale"]
+        assert_equal "de_CH.UTF-8", data["locale"]
       end
 
 

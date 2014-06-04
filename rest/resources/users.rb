@@ -18,6 +18,7 @@ class User < LdapModel
       link "/v3/users/#{ self["username"] }/profile.jpg"
     end
   end
+  ldap_map :puavoLocale, :locale
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
@@ -114,6 +115,14 @@ class User < LdapModel
       school.preferred_language
     else
       get_own(:preferred_language)
+    end
+  end
+
+  def locale
+    if get_own(:locale).nil? && school
+      school.locale
+    else
+      get_own(:locale)
     end
   end
 
