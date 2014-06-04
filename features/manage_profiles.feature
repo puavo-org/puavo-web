@@ -26,6 +26,7 @@ Feature: Manage profile
     And I should see "Ken Jones"
     When I fill in "Email" with "ken.jones@opinsys.fi"
     And I fill in "Telephone number" with "+35814123456789"
+    And I select "German (Switzerland)" from "Language"
     # FIXME: select field?
     # And I fill in "preferredLanguage" with "fi"
     # FIXME image field?
@@ -41,6 +42,9 @@ Feature: Manage profile
 
     When I press "Update"
     Then I should see "Profile was successfully updated"
+    And I should see the following special ldap attributes on the "User" object with "ken.jones":
+    | puavoLocale       | "de_CH.UTF-8" |
+    | preferredLanguage | "de"          |
 
   Scenario: Student edit profile
     When I am on the edit profile page

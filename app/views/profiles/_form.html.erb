@@ -23,11 +23,10 @@
   </div>
 
   <div class="control-group">
-    <%= f.label :preferredLanguage, nil, :class => "control-label" %>
+    <%= f.label :puavoLocale, nil, :class => "control-label" %>
     <div class="controls">
-      <%= f.select( :preferredLanguage,
-                    [[t('language_default'), ""]] +
-                    Puavo.available_languages.map {|lang| [ t('language_' + lang), lang ] } ) %>
+      <%= f.select :puavoLocale,
+          locales_for_select %>
     </div>
   </div>
 

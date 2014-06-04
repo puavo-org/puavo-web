@@ -39,6 +39,11 @@ class ProfilesController < ApplicationController
       { key => value }
     end
 
+    # FIXME should be use User model
+    if params[:user][:puavoLocale] && !params[:user][:puavoLocale].empty?
+      modify_params.push({ "preferredLanguage" => params[:user][:puavoLocale].match(/^[a-z]{2}/)[0] })
+    end
+
     respond_to do |format|
       if @user.ldap_modify_operation( :replace, modify_params )
         flash[:notice] = t('flash.profile.updated')
