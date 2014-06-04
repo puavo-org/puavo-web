@@ -1,7 +1,6 @@
 require "user_error"
 
 module Puavo
-  mattr_accessor :available_languages
   mattr_accessor :locales
   mattr_accessor :timezones
 
