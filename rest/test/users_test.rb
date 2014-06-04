@@ -30,7 +30,7 @@ describe PuavoRest::Users do
       :sn  => "Brown",
       :uid => "bob",
       :puavoEduPersonAffiliation => "student",
-      :preferredLanguage => "en",
+      :puavoLocale => "en_US.UTF-8",
       :mail => "bob@example.com",
       :role_ids => [@role.puavoId]
     )
@@ -51,7 +51,7 @@ describe PuavoRest::Users do
       :sn  => "Wonder",
       :uid => "alice",
       :puavoEduPersonAffiliation => "student",
-      :preferredLanguage => "en",
+      :puavoLocale => "en_US.UTF-8",
       :mail => "alice@example.com",
       :role_ids => [@role.puavoId]
     )
@@ -136,41 +136,41 @@ describe PuavoRest::Users do
       [
         {
           :name   => "user lang is the most preferred",
-          :org    => "en",
-          :school => "fi",
-          :user   => "sv",
-          :expect => "sv"
+          :org    => "en_US.UTF-8",
+          :school => "fi_FI.UTF-8",
+          :user   => "sv_FI.UTF-8",
+          :expect_language => "sv"
         },
         {
           :name   => "first fallback is school",
-          :org    => "en",
-          :school => "fi",
+          :org    => "en_US.UTF-8",
+          :school => "fi_FI.UTF-8",
           :user   => nil,
-          :expect => "fi"
+          :expect_language => "fi"
         },
         {
           :name   => "organisation is the least preferred",
-          :org    => "en",
+          :org    => "en_US.UTF-8",
           :school => nil,
           :user   => nil,
-          :expect => "en"
+          :expect_language => "en"
         },
       ].each do |opts|
         it opts[:name] do
-          @user.preferredLanguage = opts[:user]
+          @user.puavoLocale = opts[:user]
           @user.save!
-          @school.preferredLanguage = opts[:school]
+          @school.puavoLocale = opts[:school]
           @school.save!
 
           test_organisation = LdapOrganisation.first # TODO: fetch by name
-          test_organisation.preferredLanguage = opts[:org]
+          test_organisation.puavoLocale = opts[:org]
           test_organisation.save!
 
           basic_authorize "bob", "secret"
           get "/v3/users/bob"
           assert_200
           data = JSON.parse(last_response.body)
-          assert_equal opts[:expect], data["preferred_language"]
+          assert_equal opts[:expect_language], data["preferred_language"]
         end
       end
     end
@@ -287,7 +287,7 @@ describe PuavoRest::Users do
         :sn  => "Another",
         :uid => "another",
         :puavoEduPersonAffiliation => "student",
-        :preferredLanguage => "en",
+        :puavoLocale => "en_US.UTF-8",
         :mail => "alice.another@example.com",
         :role_ids => [@role.puavoId]
       )
