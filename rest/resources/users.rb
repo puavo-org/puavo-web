@@ -19,6 +19,7 @@ class User < LdapModel
     end
   end
   ldap_map :puavoLocale, :locale
+  ldap_map :puavoTimezone, :timezone
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
@@ -123,6 +124,14 @@ class User < LdapModel
       school.locale
     else
       get_own(:locale)
+    end
+  end
+
+  def timezone
+    if get_own(:timezone).nil? && school
+      school.timezone
+    else
+      get_own(:timezone)
     end
   end
 

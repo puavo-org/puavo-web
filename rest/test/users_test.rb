@@ -95,6 +95,8 @@ describe PuavoRest::Users do
 
       assert_equal "http://www.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 
+      assert_equal "Europe/Helsinki", data["timezone"]
+
     end
   end
 
