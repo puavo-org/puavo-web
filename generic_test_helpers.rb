@@ -72,7 +72,7 @@ module Test
     ldap_organisation.puavoDeviceOnHour = "14"
     ldap_organisation.puavoDeviceOffHour = "15"
     ldap_organisation.puavoDeviceAutoPowerOffMode = "off"
-    ldap_organisation.preferredLanguage = "en"
+    ldap_organisation.puavoLocale = "en_US.UTF-8"
     ldap_organisation.o = "Example Organisation"
     ldap_organisation.puavoDomain = "www.example.net"
     ldap_organisation.puavoDeviceImage = nil

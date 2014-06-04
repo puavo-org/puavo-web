@@ -56,6 +56,11 @@ class Device < Host
     school.preferred_language
   end
 
+  computed_attr :locale
+  def locale
+    school.locale
+  end
+
   def preferred_image
      if get_own(:preferred_image).nil?
        school.preferred_image

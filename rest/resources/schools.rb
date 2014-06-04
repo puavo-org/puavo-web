@@ -12,6 +12,7 @@ class School < LdapModel
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
   ldap_map(:puavoWirelessPrinterQueue, :wireless_printer_queue_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language
+  ldap_map :puavoLocale, :locale
   ldap_map(:puavoExternalFeed, :external_feed_sources, &LdapConverters.json)
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
@@ -95,6 +96,14 @@ class School < LdapModel
       organisation.preferred_language
     else
       get_own(:preferred_language)
+    end
+  end
+
+  def locale
+    if get_own(:locale).nil?
+      organisation.locale
+    else
+      get_own(:locale)
     end
   end
 

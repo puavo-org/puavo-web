@@ -12,6 +12,7 @@ describe PuavoRest::Devices do
       :puavoPersonalDevice => true,
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true,
+      :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
@@ -116,9 +117,12 @@ describe PuavoRest::Devices do
     end
 
     it "has preferred language" do
-      assert_equal "en", @data["preferred_language"]
+      assert_equal "fi", @data["preferred_language"]
     end
 
+    it "has locale" do
+      assert_equal "fi_FI.UTF-8", @data["locale"]
+    end
     it "has homepage from school" do
       assert_equal "schoolhomepagefordevice.example", @data["homepage"]
     end
@@ -131,13 +135,14 @@ describe PuavoRest::Devices do
     end
 
     it "it prefers language from the school" do
-      @school.preferredLanguage = "sv"
+      @school.puavoLocale = "sv_FI.UTF-8"
       @school.save!
       get "/v3/devices/athin"
       assert_200
       data = JSON.parse last_response.body
 
       assert_equal "sv", data["preferred_language"]
+      assert_equal "sv_FI.UTF-8", data["locale"]
     end
 
   end
@@ -172,7 +177,7 @@ describe PuavoRest::Devices do
 
     it "has preferred language" do
       assert @data["preferred_language"]
-      assert_equal "en", @data["preferred_language"]
+      assert_equal "fi", @data["preferred_language"]
     end
 
     it "has mountpoint" do
@@ -215,6 +220,15 @@ describe PuavoRest::Devices do
     it "has personal device" do
       assert_equal false, @data["personal_device"]
     end
+
+    it "has locale" do
+      assert_equal "en_US.UTF-8", @data["locale"]
+    end
+
+    it "has preferred language" do
+      assert_equal "en", @data["preferred_language"]
+    end
+
   end
 
   describe "device information with bootserver fallback" do
