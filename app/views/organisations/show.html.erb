@@ -51,7 +51,7 @@
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoTimezone" %></td>
-    <td class="value_td"><%=h @organisation.puavoTimezone %></tr>
+    <td class="value_td"><%=h humanize_timezone(@organisation.puavoTimezone) %></tr>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoKeyboardLayout" %></td>

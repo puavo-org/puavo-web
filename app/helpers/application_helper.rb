@@ -109,4 +109,9 @@ module ApplicationHelper
     default = value if value
     options_for_select(options, default)
   end
+
+  def humanize_timezone(zone)
+    ActiveSupport::TimeZone[ ActiveSupport::TimeZone::MAPPING.invert["Europe/Helsinki"] ].to_s
+  end
+
 end
