@@ -111,7 +111,10 @@ module ApplicationHelper
   end
 
   def humanize_timezone(zone)
-    ActiveSupport::TimeZone[ ActiveSupport::TimeZone::MAPPING.invert[zone] ].to_s
+    timezones = ActiveSupport::TimeZone::MAPPING.invert
+    return I18n.t("timezone_empty") if timezones[zone].nil?
+
+    ActiveSupport::TimeZone[ timezones[zone] ].to_s
   end
 
 end
