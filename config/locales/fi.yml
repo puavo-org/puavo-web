@@ -534,6 +534,7 @@ fi:
   language_sv_FI: Ruotsi (Suomi)
   language_de_CH: Saksa
   language_default: Oletus
+  old_preferred_language: "Vanha asetus: %{language}"
   timezone_empty: Aikavyöhykettä ei ole asetettu
   date:
     formats:

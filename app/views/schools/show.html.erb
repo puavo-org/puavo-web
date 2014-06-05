@@ -33,7 +33,10 @@
       <div class="column_1">
         <%= label "school", 'puavoLocale' %>:
       </div>
-      <div class="column_2"><%=h language_by_locale(@school.puavoLocale) %></div>
+      <div class="column_2">
+        <%=h language_by_locale(@school.puavoLocale) %><br />
+        <i><%= t("old_preferred_language", :language => @school.preferredLanguage) %></i>
+      </div>
     </div>
     <div class="row">
       <div class="column_1">

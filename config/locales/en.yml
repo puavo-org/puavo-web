@@ -539,6 +539,7 @@ en:
   language_sv_FI: Swedish (Finland)
   language_de_CH: German (Switzerland)
   language_default: Default
+  old_preferred_language: "Old setting: %{language}"
   timezone_empty: Timezone is not set
   date:
     formats:

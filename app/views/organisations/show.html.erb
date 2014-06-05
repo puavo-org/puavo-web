@@ -47,7 +47,10 @@
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoLocale" %></td>
-    <td class="value_td"><%=h language_by_locale(@organisation.puavoLocale) %></tr>
+    <td class="value_td">
+      <%=h language_by_locale(@organisation.puavoLocale) %><br />
+      <i><%= t("old_preferred_language", :language => @organisation.preferredLanguage) %></i>
+    </td>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoTimezone" %></td>
