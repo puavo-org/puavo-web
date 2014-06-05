@@ -2,7 +2,6 @@ require "user_error"
 
 module Puavo
   mattr_accessor :locales
-  mattr_accessor :timezones
 
   class AuthenticationError < UserError
     def code

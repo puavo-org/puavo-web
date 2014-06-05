@@ -102,8 +102,8 @@ module ApplicationHelper
   end
 
   def timezones_for_select(value)
-    options = Puavo.timezones.map do |zone|
-      [zone, zone]
+    options = ActiveSupport::TimeZone.all.map do |zone|
+      [zone.to_s, ActiveSupport::TimeZone::MAPPING[zone.name]]
     end
     default =  "Europe/Helsinki"
     default = value if value

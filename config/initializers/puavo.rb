@@ -17,5 +17,3 @@ end
 
 REDIS_CONFIG = File.join(Rails.root, "config", "redis.yml")
 REDIS_CONNECTION = Redis.new YAML.load_file(REDIS_CONFIG).symbolize_keys
-
-Puavo.timezones = YAML.load_file("#{Rails.root}/config/timezones.yml")
