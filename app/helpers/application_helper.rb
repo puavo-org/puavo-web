@@ -111,7 +111,7 @@ module ApplicationHelper
   end
 
   def humanize_timezone(zone)
-    ActiveSupport::TimeZone[ ActiveSupport::TimeZone::MAPPING.invert["Europe/Helsinki"] ].to_s
+    ActiveSupport::TimeZone[ ActiveSupport::TimeZone::MAPPING.invert[zone] ].to_s
   end
 
 end
