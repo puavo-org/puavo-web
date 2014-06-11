@@ -376,6 +376,7 @@ fi:
         image: Kuva
         jpegPhoto: Kuva
         puavoLocked: "Käyttäjätunnus on lukittu"
+        puavoLocale: Kieli
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne
@@ -532,7 +533,7 @@ fi:
   language_fi_FI: Suomi
   language_en_US: Englanti (Yhdysvallat)
   language_sv_FI: Ruotsi (Suomi)
-  language_de_CH: Saksa
+  language_de_CH: Saksa (Sveitsi)
   language_default: Oletus
   old_preferred_language: "Vanha asetus: %{language}"
   timezone_empty: Aikavyöhykettä ei ole asetettu
