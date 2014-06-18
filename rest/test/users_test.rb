@@ -241,19 +241,15 @@ describe PuavoRest::Users do
       assert last_response.body.size > 10
     end
 
-    it "returns 404 if bob has no image" do
+    it "returns the default anonymous image if bob has no image" do
       basic_authorize "bob", "secret"
       get "/v3/users/bob/profile.jpg"
+      assert_200
 
-      assert_equal 404, last_response.status, last_response.body
-      assert_equal({
-        "error" => {
-          "code" => "NotFound",
-          "message" => "bob has no profile image"
-        }
-      },
-        JSON.parse(last_response.body)
-      )
+      img_data = File.read(PuavoRest::Users::ANONYMOUS_IMAGE_PATH)
+      hash = Digest::MD5.hexdigest(img_data)
+
+      assert_equal(hash, Digest::MD5.hexdigest(last_response.body))
     end
 
     it "returns 401 without auth" do
