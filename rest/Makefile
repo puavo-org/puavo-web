@@ -5,6 +5,7 @@ installdir = /var/app/puavo-rest
 build:
 	git rev-parse HEAD > GIT_COMMIT
 	cp ../VERSION VERSION
+	cp ../app/assets/images/anonymous.png resources/anonymous.png
 	bundle install --deployment
 	$(MAKE) tags
 

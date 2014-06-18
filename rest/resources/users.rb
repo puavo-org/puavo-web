@@ -2,6 +2,8 @@
 module PuavoRest
 
 class User < LdapModel
+  DIR = File.expand_path(File.dirname(__FILE__))
+  ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 
   ldap_map :dn, :dn
   ldap_map :puavoId, :id
@@ -214,13 +216,13 @@ class Users < LdapSinatra
 
   get "/v3/users/:username/profile.jpg" do
     auth :basic_auth, :kerberos
+    content_type "image/jpeg"
 
     image = User.profile_image(params["username"])
     if image
-      content_type "image/jpeg"
       image
     else
-      raise NotFound, :user => "#{ params["username"] } has no profile image"
+      File.open(ANONYMOUS_IMAGE_PATH, "r") { |f| f.read }
     end
   end
 
