@@ -2,8 +2,6 @@
 module PuavoRest
 
 class User < LdapModel
-  DIR = File.expand_path(File.dirname(__FILE__))
-  ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 
   ldap_map :dn, :dn
   ldap_map :puavoId, :id
@@ -193,6 +191,8 @@ class User < LdapModel
 end
 
 class Users < LdapSinatra
+  DIR = File.expand_path(File.dirname(__FILE__))
+  ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 
 
   get "/v3/users/_search" do
