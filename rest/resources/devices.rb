@@ -8,7 +8,8 @@ class Device < Host
   ldap_map :puavoPreferredServer, :preferred_server
   ldap_map :puavoDeviceVertRefresh, :vertical_refresh
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
-  ldap_map :puavoDeviceXrandrDisable, :xrand_disable
+  ldap_map(:puavoDeviceXrandr, :xrandr){ |v| Array(v) }
+  ldap_map :puavoDeviceXrandrDisable, :xrandr_disable, &LdapConverters.string_boolean
   ldap_map :puavoDeviceXserver, :graphics_driver
   ldap_map :puavoDefaultPrinter, :default_printer_name
   ldap_map :puavoDeviceResolution, :resolution
