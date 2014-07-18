@@ -1,5 +1,18 @@
 
 module PuavoRest
+
+
+class UnregisteredDevice < Host
+  def self.ldap_base
+    raise "Cannot use ldap methods on unregistered devices"
+  end
+
+  def preferred_image
+    BootServer.current_image || Organisation.current(:no_cache).preferred_image
+  end
+end
+
+
 class BootConfigurations < LdapSinatra
 
 
@@ -46,7 +59,7 @@ class BootConfigurations < LdapSinatra
     rescue NotFound => e
       log_attrs[:unregistered] = true
       # Create dummy host object for getting boot configuration for unregistered device
-      host = PuavoRest::LtspServer.new
+      host = UnregisteredDevice.new
     end
 
 

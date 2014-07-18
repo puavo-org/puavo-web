@@ -5,8 +5,13 @@ class BootServer < LdapModel
   ldap_map :dn, :dn
   ldap_map :puavoHostname, :hostname
   ldap_map(:puavoSchool, :school_dns) { |s| s }
-  ldap_map :puavoDeviceImage, :preferred_image
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
+  ldap_map(:puavoDeviceImage, :preferred_image) do |img|
+    img = Array(img).first
+    if not img.to_s.strip.empty?
+      img.strip
+    end
+  end
 
   # Return true if the current puavo-rest server is running on a boot server
   def self.running_on?

@@ -25,6 +25,14 @@ describe PuavoRest::BootConfigurations do
       :puavoDeviceType => "ltspserver"
     )
 
+    @boot_server = create_server(
+      :puavoHostname => "bootserver",
+      :macAddress => "00:60:2f:E5:09:B4",
+      # :puavoDeviceImage => "bootserverimage",
+      :puavoDeviceType => "bootserver"
+    )
+    PuavoRest.test_boot_server_dn = @boot_server.dn.to_s
+
     test_organisation = LdapOrganisation.first # TODO: fetch by name
     test_organisation.puavoDeviceImage = "organisationprefimage"
     test_organisation.save!
@@ -86,15 +94,13 @@ EOF
 
   describe "unregistered device" do
 
-    before(:each) do
+    it "has following boot configuration too" do
       get "/v3/bf:9a:8c:1b:e0:77/boot_configuration", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
       @data = last_response.body
-    end
 
-    it "has following boot configuration too" do
       configuration =<<EOF
 default ltsp-NBD
 ontimeout ltsp-NBD
@@ -109,6 +115,35 @@ label ltsp-NBD
 EOF
       assert_equal configuration, @data
     end
-  end
 
+    it "prefers boot server image over organisation image" do
+
+      @boot_server.puavoDeviceImage = "bootserverimage"
+      @boot_server.save!
+
+      get "/v3/bf:9a:8c:1b:e0:77/boot_configuration", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      @data = last_response.body
+
+      configuration =<<EOF
+default ltsp-NBD
+ontimeout ltsp-NBD
+
+
+label ltsp-NBD
+  menu label LTSP, using NBD
+  menu default
+  kernel ltsp/bootserverimage/vmlinuz
+  append ro initrd=ltsp/bootserverimage/initrd.img init=/sbin/init-puavo puavo.hosttype=unregistered root=/dev/nbd0 nbdroot=:bootserverimage 
+  ipappend 2
+EOF
+      assert_equal configuration, @data
+
+    end
+
+
+
+  end
 end
