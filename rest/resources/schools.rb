@@ -68,14 +68,7 @@ class School < LdapModel
     end
 
     # Use image from the current bootserver if we are running in a bootserver
-    if PuavoRest.bootserver_dn
-      bootserver = BootServer.by_dn!(PuavoRest.bootserver_dn)
-      if bootserver.preferred_image
-        return bootserver.preferred_image.strip
-      end
-    end
-
-    return organisation.preferred_image
+    return BootServer.current_image || organisation.preferred_image
   end
 
   def allow_guest

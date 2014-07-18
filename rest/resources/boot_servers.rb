@@ -8,6 +8,34 @@ class BootServer < LdapModel
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
 
+  # Return true if the current puavo-rest server is running on a boot server
+  def self.running_on?
+    !!CONFIG["bootserver"]
+  end
+
+  def self.current_dn
+    return if not running_on?
+
+    if ENV["RACK_ENV"] == "test"
+      if !PuavoRest.test_boot_server_dn.nil?
+        return PuavoRest.test_boot_server_dn
+      end
+    end
+
+    PUAVO_ETC.ldap_dn
+  end
+
+  def self.current!
+    BootServer.by_dn!(current_dn)
+  end
+
+  # return current bootserver image or nil
+  def self.current_image
+    if running_on?
+      current!.preferred_image
+    end
+  end
+
   def self.ldap_base
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
   end

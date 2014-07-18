@@ -22,24 +22,14 @@ $rest_flog = FluentWrap.new(
 
 $rest_flog.info "starting"
 
+@@test_boot_server_dn = nil
+
 def self.test_boot_server_dn
   @@test_boot_server_dn
 end
 
 def self.test_boot_server_dn=(dn)
   @@test_boot_server_dn = dn
-end
-
-def self.bootserver_dn
-  return if not CONFIG["bootserver"]
-
-  if ENV["RACK_ENV"] == "test"
-    if !test_boot_server_dn.nil?
-      return test_boot_server_dn
-    end
-  end
-
-  PUAVO_ETC.ldap_dn
 end
 
 class BeforeFilters < LdapSinatra
