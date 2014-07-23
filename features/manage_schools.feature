@@ -38,26 +38,28 @@ Feature: Manage schools
     | school_options_0           | -o rw                                                                          |
     And I attach the file at "features/support/test.jpg" to "Image"
     And I select "English (United States)" from "Language"
+    And I choose "school_puavoAutomaticImageUpdates_false"
     And I press "Create"
     Then I should not see "error"
     # Translation missing
     And I should not see "en, activeldap, attributes, school"
     And I should see the following:
-    |                         |
-    | Bourne School           |
-    | School's home page      |
-    | Raymond Mays Way        |
-    | 123                     |
-    | 12345                   |
-    | 54321                   |
-    | presice-20121023        |
-    | school_base:500         |
-    | testag1 testag2         |
-    | nfs3                    |
-    | 10.0.0.1/share          |
-    | /home/share             |
-    | -o rw                   |
-    | English (United States) |
+    |                             |
+    | Bourne School               |
+    | School's home page          |
+    | Raymond Mays Way            |
+    | 123                         |
+    | 12345                       |
+    | 54321                       |
+    | presice-20121023            |
+    | school_base:500             |
+    | testag1 testag2             |
+    | nfs3                        |
+    | 10.0.0.1/share              |
+    | /home/share                 |
+    | -o rw                       |
+    | English (United States)     |
+    | Automatic image updates: No |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
     And I should see the following special ldap attributes on the "School" object with "Bourne School":

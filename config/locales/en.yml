@@ -352,6 +352,7 @@ en:
         preferredLanguage: Language
         puavoTag: Tags
         puavoLocale: Language
+        puavoAutomaticImageUpdates: Automatic image updates
       user:
         displayName: Name
         sn: Surname

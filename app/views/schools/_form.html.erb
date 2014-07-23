@@ -124,6 +124,11 @@
 
   <%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
 
+  <%= render( :partial => 'shared/form_boolean_attribute',
+              :locals => {
+                :f => f,
+                :attribute => :puavoAutomaticImageUpdates } ) %>
+
   <% if current_user.organisation_owner? %>
   <tr>
     <td class="label_for_input_text_list">

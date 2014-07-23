@@ -348,6 +348,7 @@ fi:
         preferredLanguage: Kieli
         puavoLocale: Kieli
         puavoTag: Tagit
+        puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
       user:
         displayName: Nimi
         sn: Sukunimi

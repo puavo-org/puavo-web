@@ -53,6 +53,13 @@
 
     <div class="row">
       <div class="column_1">
+        <%= label "school", 'puavoAutomaticImageUpdates' %>:
+      </div>
+      <div class="column_2"><%= translate_boolean_value(@school.puavoAutomaticImageUpdates) %></div>
+    </div>
+
+    <div class="row">
+      <div class="column_1">
         <%= label "school", "puavoTag" %>:
       </div>
       <div class="column_2"><%= @school.puavoTag %></div>
