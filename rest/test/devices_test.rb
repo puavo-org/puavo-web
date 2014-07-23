@@ -69,6 +69,7 @@ describe PuavoRest::Devices do
         :puavoDefaultPrinter => "defaultprinter",
         :puavoAllowGuest => false,
         :puavoAutomaticImageUpdates => false,
+        :puavoPersonallyAdministered => true,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
@@ -101,6 +102,10 @@ describe PuavoRest::Devices do
 
     it "has automatic image updates" do
       assert_equal false, @data["automatic_image_updates"]
+    end
+
+    it "has personally administered" do
+      assert_equal true, @data["personally_administered"]
     end
 
     it "has personal device" do
