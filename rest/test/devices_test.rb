@@ -98,7 +98,7 @@ describe PuavoRest::Devices do
       assert_equal false, @data["allow_guest"]
     end
 
-    it "has automatic image update" do
+    it "has automatic image updates" do
       assert_equal false, @data["automatic_image_updates"]
     end
 
