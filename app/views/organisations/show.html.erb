@@ -65,6 +65,10 @@
     <td class="value_td"><%=h @organisation.puavoKeyboardVariant %></tr>
   </tr>
   <tr>
+    <td class="label_td view"><%= label "ldap_organisation", "puavoAutomaticImageUpdates" %></td>
+    <td class="value_td"><%=h translate_boolean_value(@organisation.puavoAutomaticImageUpdates) %></tr>
+  </tr>
+  <tr>
     <td class="label_td view"><%= label "ldap_organisation", "eduOrgHomePageURI" %></td>
     <td class="value_td"><%= @organisation.eduOrgHomePageURI %></td>
   </tr>

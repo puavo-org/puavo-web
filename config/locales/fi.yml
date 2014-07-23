@@ -413,6 +413,7 @@ fi:
         puavoTimezone: Aikavyöhyke
         puavoKeyboardLayout: Näppäimistön asettelu
         puavoKeyboardVariant: Näppäimistön alkuperämaa
+        puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
       ldap_service:
         uid: Palvelun tunniste
         description: Kuvaus

@@ -417,6 +417,7 @@ en:
         puavoTimezone: Timezone
         puavoKeyboardLayout: Keyboard layout
         puavoKeyboardVariant: Keyboard variant
+        puavoAutomaticImageUpdates: Automatic image updates
       ldap_service:
         uid: Service Identifier
         description: Description

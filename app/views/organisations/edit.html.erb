@@ -68,6 +68,12 @@
     <td><%= f.label :puavoKeyboardVariant %></td>
     <td><%= f.text_field :puavoKeyboardVariant %></td>
   </tr>
+
+  <%= render( :partial => 'shared/form_boolean_attribute',
+              :locals => {
+                :f => f,
+                :attribute => :puavoAutomaticImageUpdates } ) %>
+
   <tr>
     <td><%= f.label :eduOrgHomePageURI %></td>
     <td><%= f.text_field :eduOrgHomePageURI %></td>

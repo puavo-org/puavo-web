@@ -57,6 +57,7 @@ Feature: Manage organisation
     And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_default"
     And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_off"
     And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_custom"
+    And I choose "ldap_organisation_puavoAutomaticImageUpdates_true"
     When I press "Update"
     Then I should see the following:
     | Example Organisation located  in the middle of the Finland |
@@ -78,6 +79,7 @@ Feature: Manage organisation
     | (GMT+02:00) Helsinki                                       |
     | en                                                         |
     | US                                                         |
+    | Automatic image updates Yes                                |
 #    | base:500                                                   |
     And I should see the following special ldap attributes on the "Organisation" object with "example":
     | preferredLanguage | "sv" |
