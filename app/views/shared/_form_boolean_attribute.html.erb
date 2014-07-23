@@ -1,0 +1,29 @@
+<tr>
+  <td class="label_td"><%= f.label attribute %></td>
+  <td>
+    <table class="table-in-table">
+      <tr>
+	<td class="label_td">
+	  <%= f.label t("helpers.default"), :for => "device_#{ attribute }_" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_true"), :for => "device_#{ attribute }_true" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_false"), :for => "device_#{ attribute }_false" %>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  <%= f.radio_button attribute, "" %>
+	</td>
+	<td>
+	  <%= f.radio_button attribute, true %>
+	</td>
+	<td>
+	  <%= f.radio_button attribute, false %>
+	</td>
+      </tr>
+    </table>
+  </td>
+</tr>
