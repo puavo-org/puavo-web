@@ -12,6 +12,7 @@ describe PuavoRest::Devices do
       :puavoPersonalDevice => true,
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true,
+      :puavoAutomaticImageUpdates => true,
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
@@ -66,6 +67,7 @@ describe PuavoRest::Devices do
         :puavoPersonalDevice => false,
         :puavoDefaultPrinter => "defaultprinter",
         :puavoAllowGuest => false,
+        :puavoAutomaticImageUpdates => false,
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
@@ -94,6 +96,10 @@ describe PuavoRest::Devices do
 
     it "has allow guest" do
       assert_equal false, @data["allow_guest"]
+    end
+
+    it "has automatic image update" do
+      assert_equal false, @data["automatic_image_updates"]
     end
 
     it "has personal device" do

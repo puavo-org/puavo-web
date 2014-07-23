@@ -14,6 +14,7 @@ class Device < Host
   ldap_map :puavoDefaultPrinter, :default_printer_name
   ldap_map :puavoDeviceResolution, :resolution
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
+  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
   ldap_map :puavoPrinterDeviceURI, :printer_device_uri
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
