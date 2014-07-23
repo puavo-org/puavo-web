@@ -1,37 +1,30 @@
 module BooleanAttributes
   
   def puavoAllowGuest=(boolean)
-    if boolean == true || boolean == "true" || boolean == "TRUE"
-      boolean = "TRUE"
-    elsif boolean == false || boolean == "false" || boolean == "FALSE"
-      boolean = "FALSE"
-    else
-      boolean = nil
-    end
-    set_attribute("puavoAllowGuest", boolean)
+    value = fix_boolean_value(boolean)
+    set_attribute("puavoAllowGuest", value)
   end
 
   def puavoPersonalDevice=(boolean)
-    if boolean == true || boolean == "true" || boolean == "TRUE"
-      boolean = "TRUE"
-    elsif boolean == false || boolean == "false" || boolean == "FALSE"
-      boolean = "FALSE"
-    else
-      boolean = nil
-    end
-    set_attribute("puavoPersonalDevice", boolean)
+    value = fix_boolean_value(boolean)
+    set_attribute("puavoPersonalDevice", value)
   end
 
   def puavoAutomaticImageUpdates=(boolean)
-    # FIXME refactor!
-    if boolean == true || boolean == "true" || boolean == "TRUE"
-      boolean = "TRUE"
-    elsif boolean == false || boolean == "false" || boolean == "FALSE"
-      boolean = "FALSE"
+    value = fix_boolean_value(boolean)
+    set_attribute("puavoAutomaticImageUpdates", value)
+  end
+
+  private
+
+  def fix_boolean_value(value)
+    if value == true || value == "true" || value == "TRUE"
+      return "TRUE"
+    elsif value == false || value == "false" || value == "FALSE"
+      return "FALSE"
     else
-      boolean = nil
+      return nil
     end
-    set_attribute("puavoAutomaticImageUpdates", boolean)
   end
 
 end
