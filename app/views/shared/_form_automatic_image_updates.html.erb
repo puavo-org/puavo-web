@@ -1,0 +1,29 @@
+<tr>
+  <td class="label_td"><%= f.label :puavoAutomaticImageUpdates %></td>
+  <td>
+    <table class="table-in-table">
+      <tr>
+	<td class="label_td">
+	  <%= f.label t("helpers.default"), :for => "device_puavoAutomaticImageUpdates_" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_true"), :for => "device_puavoAutomaticImageUpdates_true" %>
+	</td>
+	<td class="label_td">
+	  <%= f.label t("helpers.boolean_false"), :for => "device_puavoAutomaticImageUpdates_false" %>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  <%= f.radio_button :puavoAutomaticImageUpdates, "" %>
+	</td>
+	<td>
+	  <%= f.radio_button :puavoAutomaticImageUpdates, true %>
+	</td>
+	<td>
+	  <%= f.radio_button :puavoAutomaticImageUpdates, false %>
+	</td>
+      </tr>
+    </table>
+  </td>
+</tr>
