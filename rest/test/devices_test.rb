@@ -189,6 +189,10 @@ describe PuavoRest::Devices do
       assert_equal true, @data["allow_guest"]
     end
 
+    it "has automatic image updates" do
+      assert_equal true, @data["automatic_image_updates"]
+    end
+
     it "has personal device" do
       assert_equal true, @data["personal_device"]
     end

@@ -82,6 +82,14 @@ class Device < Host
       end
   end
 
+  def automatic_image_updates
+     if get_own(:automatic_image_updates).nil?
+        school.automatic_image_updates
+      else
+        get_own(:automatic_image_updates)
+      end
+  end
+
   def personal_device
      if get_own(:personal_device).nil?
        school.personal_device

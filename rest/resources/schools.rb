@@ -16,6 +16,7 @@ class School < LdapModel
   ldap_map(:puavoExternalFeed, :external_feed_sources, &LdapConverters.json)
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
   ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
+  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, &LdapConverters.string_boolean
   ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
   ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
