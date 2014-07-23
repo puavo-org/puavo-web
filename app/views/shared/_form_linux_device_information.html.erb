@@ -89,11 +89,17 @@
   <% end %>
 
   <% if ["laptop", "wirelessaccesspoint"].include?(f.object.puavoDeviceType) %>
-    <%= render :partial => 'shared/form_automatic_image_updates', :locals => { :f => f } %>
+    <%= render( :partial => 'shared/form_boolean_attribute',
+                :locals => {
+                  :f => f,
+                  :attribute => :puavoAutomaticImageUpdates } ) %>
   <% end %>
 
   <% if ["laptop"].include?(f.object.puavoDeviceType) %>
-    <%= render :partial => 'shared/form_personally_administered', :locals => { :f => f } %>
+    <%= render( :partial => 'shared/form_boolean_attribute',
+                :locals => {
+                  :f => f,
+                  :attribute => :puavoPersonallyAdministered } ) %>
   <% end %>
 
   <% end %>
