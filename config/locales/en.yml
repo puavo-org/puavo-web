@@ -476,6 +476,7 @@ en:
         puavoPrinterPPD: Printer driver file
         puavoDeviceDefaultAudioSource: Default input audio device
         puavoDeviceDefaultAudioSink: Default output audio device
+        puavoAutomaticImageUpdates: Automatic image updates
       server:
         puavoDeviceType: Device type
         puavoHostname: Hostname

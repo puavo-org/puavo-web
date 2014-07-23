@@ -78,6 +78,9 @@
 <% if device.class == Device %>
   <%= render :partial => 'shared/allow_guest_and_personal_device', :locals => { :object => device } %>
 <% end %>
+
+<%= render :partial => 'shared/automatic_image_updates', :locals => { :object => device } %>
+
 <% end %>
 
 <tr>

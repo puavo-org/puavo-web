@@ -14,6 +14,7 @@ Feature: Manage devices
       | puavoHostname | macAddress        | puavoDeviceType | puavoMountpoint                                                      |
       | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | fatclient-02  | a0:4e:68:94:a1:7b | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
+      | laptop-01     | a0:4e:68:94:a1:7c | laptop          | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
 
   Scenario: Add new printer to Puavo
     Given I am on the new printer device page
@@ -37,3 +38,10 @@ Feature: Manage devices
     And I should see "10.0.0.1/share"
     And I should see "/home/share"
     And I should see "-o rw"
+
+  Scenario: Edit laptop configuration
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    When I choose "device_puavoAutomaticImageUpdates_true"
+    And I press "Update"
+    Then I should see "Automatic image updates Yes"

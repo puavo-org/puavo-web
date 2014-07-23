@@ -472,6 +472,7 @@ fi:
         puavoPrinterPPD: Tulostimen ajuritiedosto
         puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
         puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
+        puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
       server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi
