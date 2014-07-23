@@ -88,7 +88,9 @@
   <%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
   <% end %>
 
-  <%= render :partial => 'shared/form_automatic_image_updates', :locals => { :f => f } %>
+  <% if ["laptop", "wirelessaccesspoint"].include?(f.object.puavoDeviceType) %>
+    <%= render :partial => 'shared/form_automatic_image_updates', :locals => { :f => f } %>
+  <% end %>
 
   <% end %>
 
