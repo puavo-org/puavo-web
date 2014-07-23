@@ -92,6 +92,10 @@
     <%= render :partial => 'shared/form_automatic_image_updates', :locals => { :f => f } %>
   <% end %>
 
+  <% if ["laptop"].include?(f.object.puavoDeviceType) %>
+    <%= render :partial => 'shared/form_personally_administered', :locals => { :f => f } %>
+  <% end %>
+
   <% end %>
 
   <tr>

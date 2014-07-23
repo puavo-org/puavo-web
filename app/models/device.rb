@@ -41,6 +41,11 @@ class Device < DeviceBase
                                        :value_block => lambda{ |value| value.to_s.match(/puavoId=([^, ]+)/)[1].to_i } } )
 end
 
+  def puavoPersonallyAdministered=(boolean)
+    value = fix_boolean_value(boolean)
+    set_attribute("puavoPersonallyAdministered", value)
+  end
+
   private
 
   # Create MACAddress object for each device's macAddress etry

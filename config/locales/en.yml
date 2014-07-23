@@ -477,6 +477,7 @@ en:
         puavoDeviceDefaultAudioSource: Default input audio device
         puavoDeviceDefaultAudioSink: Default output audio device
         puavoAutomaticImageUpdates: Automatic image updates
+        puavoPersonallyAdministered: Personally administered
       server:
         puavoDeviceType: Device type
         puavoHostname: Hostname

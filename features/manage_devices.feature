@@ -43,5 +43,7 @@ Feature: Manage devices
     Given I am on the devices list page
     And I press "Edit" on the "laptop-01" row
     When I choose "device_puavoAutomaticImageUpdates_true"
+    And I choose "device_puavoPersonallyAdministered_true"
     And I press "Update"
     Then I should see "Automatic image updates Yes"
+    And I should see "Personally administered Yes"

@@ -473,6 +473,7 @@ fi:
         puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
         puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
+        puavoPersonallyAdministered: Henkilökohtaisesti ylläpidettävä
       server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi
