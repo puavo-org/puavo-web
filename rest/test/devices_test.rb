@@ -52,6 +52,7 @@ describe PuavoRest::Devices do
 
     test_organisation = LdapOrganisation.first # TODO: fetch by name
     test_organisation.puavoAllowGuest = "FALSE"
+    test_organisation.puavoAutomaticImageUpdates = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
     test_organisation.save!
   end
@@ -237,6 +238,10 @@ describe PuavoRest::Devices do
 
     it "has allow guest" do
       assert_equal false, @data["allow_guest"]
+    end
+
+    it "has automatic image updates" do
+      assert_equal false, @data["automatic_image_updates"]
     end
 
     it "has personal device" do

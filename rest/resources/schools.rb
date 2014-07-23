@@ -80,6 +80,14 @@ class School < LdapModel
      end
   end
 
+  def automatic_image_updates
+     if get_own(:automatic_image_updates).nil?
+       organisation.automatic_image_updates
+     else
+       get_own(:automatic_image_updates)
+     end
+  end
+
   def personal_device
      if get_own(:personal_device).nil?
        organisation.personal_device
