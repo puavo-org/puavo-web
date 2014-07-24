@@ -67,7 +67,7 @@ Feature: Devices registration
     When I enter "" into process "puavo-register"
     When I enter "" into process "puavo-register"
     When I enter "" into process "puavo-register"
-    When I enter "" into process "puavo-register"
+    When I enter "cucumber" into process "puavo-register"
     When I enter "" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """
@@ -79,7 +79,7 @@ Feature: Devices registration
     Serial number:          
     Device manufacturer:    
     Device model:           
-    Device primary user:    
+    Device primary user:    cucumber
     """
     When I enter "y" into process "puavo-register"
     Then I should see the following output from process "puavo-register":
