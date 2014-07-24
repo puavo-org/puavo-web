@@ -152,6 +152,7 @@ class DeviceBase < LdapBase
     end
 
     # Validate primary_user_uid and puavoDevicePrimaryUser
+    if !self.primary_user_uid.nil? && !self.primary_user_uid.empty?
       if self.puavoDevicePrimaryUser.nil?
         errors.add( :primary_user_uid,
                     I18n.t("activeldap.errors.messages.invalid",
