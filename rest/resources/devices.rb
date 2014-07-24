@@ -24,7 +24,7 @@ class Device < Host
   ldap_map :puavoTimezone, :timezone
   ldap_map :puavoKeyboardLayout, :keyboard_layout
   ldap_map :puavoKeyboardVariant, :keyboard_variant
-
+  ldap_map :puavoDevicePrimaryUser, :primary_user_dn
 
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
@@ -65,6 +65,16 @@ class Device < Host
   computed_attr :locale
   def locale
     school.locale
+  end
+
+  computed_attr :primary_user
+  def primary_user
+    username = nil
+    if user_dn = get_own(:primary_user_dn)
+      puts user_dn
+      username =  User.by_dn(user_dn).username
+    end
+    return username
   end
 
   def preferred_image

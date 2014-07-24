@@ -18,6 +18,24 @@ describe PuavoRest::Devices do
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
+
+    @role = Role.new
+    @role.displayName = "Some role"
+    @role.puavoSchool = @school.dn
+    @role.save!
+
+    @user = User.new(
+      :givenName => "Bob",
+      :sn  => "Brown",
+      :uid => "bob",
+      :puavoEduPersonAffiliation => "student",
+      :puavoLocale => "en_US.UTF-8",
+      :mail => "bob@example.com",
+      :puavoSchool => @school.dn,
+      :role_ids => [@role.puavoId]
+    )
+    @user.save!
+
     @school_without_fallback_value = School.create(
       :cn => "gryffindor2",
       :displayName => "Gryffindor2"
@@ -70,6 +88,7 @@ describe PuavoRest::Devices do
         :puavoAllowGuest => false,
         :puavoAutomaticImageUpdates => false,
         :puavoPersonallyAdministered => true,
+        :primary_user_uid => 'bob',
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
@@ -106,6 +125,10 @@ describe PuavoRest::Devices do
 
     it "has personally administered" do
       assert_equal true, @data["personally_administered"]
+    end
+
+    it "has primary user" do
+      assert_equal "bob", @data["primary_user"]
     end
 
     it "has personal device" do
