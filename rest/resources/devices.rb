@@ -69,12 +69,13 @@ class Device < Host
 
   computed_attr :primary_user
   def primary_user
-    username = nil
     if user_dn = get_own(:primary_user_dn)
-      puts user_dn
-      username =  User.by_dn(user_dn).username
+      begin
+        return User.by_dn(user_dn).username
+      rescue LDAP::ResultError
+        return ""
+      end
     end
-    return username
   end
 
   def preferred_image

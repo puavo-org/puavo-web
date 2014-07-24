@@ -577,4 +577,29 @@ describe PuavoRest::Devices do
     end
 
   end
+
+  describe "device information with invalid data" do
+    before(:each) do
+      create_device(
+        :puavoHostname => "athin",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn,
+        :primary_user_uid => 'bob'
+      )
+
+      # devices puavoDevicePrimaryUser is invalid when remove 'bob' user
+      @user.destroy
+
+      get "/v3/devices/athin"
+      assert_200
+      @data = JSON.parse last_response.body
+    end
+
+    it "has empty primary user" do
+      assert_equal "", @data["primary_user"]
+    end
+
+  end
+
 end
