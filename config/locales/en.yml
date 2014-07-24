@@ -433,7 +433,7 @@ en:
         serialNumber: Serial number
         puavoDeviceManufacturer: Device manufacturer
         puavoDeviceModel: Device model
-        puavoDevicePrimaryUser: Device primary user
+        primary_user_uid: Device primary user
         jpegPhoto: Photo
         puavoLatitude: Latitude
         puavoLongitude: Longitude
@@ -488,7 +488,7 @@ en:
         serialNumber: Serial number
         puavoDeviceManufacturer: Device manufacturer
         puavoDeviceModel: Device model
-        puavoDevicePrimaryUser: Device primary user
+        primary_user_uid: Device primary user
         jpegPhoto: Photo
         puavoLatitude: Latitude
         puavoLongitude: Longitude

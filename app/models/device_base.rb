@@ -6,10 +6,14 @@ class DeviceBase < LdapBase
   include PuavoTagMixin
   include Mountpoint
 
-  attr_accessor :host_certificate_request_send, :image
+  attr_accessor :host_certificate_request_send, :image, :primary_user_uid
   attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
 
-  before_validation :set_puavo_id, :set_password, :downcase_mac_addresses, :resize_image
+  before_validation( :set_puavo_id,
+                     :set_password,
+                     :downcase_mac_addresses,
+                     :resize_image,
+                     :set_puavo_device_primary_user )
   before_save :set_puppetclass, :set_parentNode, :set_puavo_mountpoint
 
   IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
@@ -144,6 +148,14 @@ class DeviceBase < LdapBase
         errors.add( :ipHostNumber,
                     I18n.t("activeldap.errors.messages.invalid",
                            :attribute => I18n.t('activeldap.attributes.device.ipHostNumber') ) )
+      end
+    end
+
+    # Validate primary_user_uid and puavoDevicePrimaryUser
+      if self.puavoDevicePrimaryUser.nil?
+        errors.add( :primary_user_uid,
+                    I18n.t("activeldap.errors.messages.invalid",
+                           :attribute => I18n.t('activeldap.attributes.device.primary_user_uid') ) )
       end
     end
   end
@@ -397,4 +409,25 @@ class DeviceBase < LdapBase
        :new_attribute_name => "device_image",
        :value_block => lambda{ |value| Array(value).first } } ]
   end
+
+  def uid_to_dn(uid)
+    return nil if uid.nil? || uid.empty?
+
+    uid = Net::LDAP::Filter.escape( uid )
+    filter = "(uid=#{ uid })"
+
+    user_dn = nil
+    users = User.search_as_utf8( :filter => filter,
+                                 :scope => :one,
+                                 :attributes => [] ).each do |dn, attributes|
+      user_dn = dn
+    end
+
+    return user_dn
+  end
+
+  def set_puavo_device_primary_user
+      self.puavoDevicePrimaryUser = uid_to_dn(self.primary_user_uid)
+  end
+
 end

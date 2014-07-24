@@ -117,4 +117,33 @@ module ApplicationHelper
     ActiveSupport::TimeZone[ timezones[zone] ].to_s
   end
 
+  def link_to_user_by_dn(dn)
+    return "" if dn.nil?
+
+    return "" if dn.class != ActiveLdap::DistinguishedName
+
+    begin
+      user = User.find(dn)
+    rescue ActiveLdap::EntryNotFound
+      return ""
+    end
+
+    return link_to( user.displayName, user_path(:school_id => user.school.puavoId, :id => user.puavoId) )
+
+  end
+
+  def uid_by_dn(dn)
+    return "" if dn.nil?
+
+    return "" if dn.class != ActiveLdap::DistinguishedName
+
+    begin
+      user_uid = User.find(dn).uid
+    rescue ActiveLdap::EntryNotFound
+      user_uid = ""
+    end
+
+    return user_uid
+  end
+
 end

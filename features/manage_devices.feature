@@ -45,5 +45,19 @@ Feature: Manage devices
     When I choose "device_puavoAutomaticImageUpdates_true"
     And I choose "device_puavoPersonallyAdministered_true"
     And I press "Update"
-    Then I should see "Automatic image updates Yes"
+    Then I should see "Device was successfully updated."
+    And I should see "Automatic image updates Yes"
     And I should see "Personally administered Yes"
+
+  Scenario: Change primary user for laptop
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I fill in "Device primary user" with "pavel"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see "Device primary user Pavel Taylor"
+    When I follow "Edit"
+    And I fill in "Device primary user" with ""
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should not see "Device primary user Pavel Taylor"

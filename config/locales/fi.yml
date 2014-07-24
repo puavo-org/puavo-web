@@ -429,7 +429,7 @@ fi:
         serialNumber: Sarjanumero
         puavoDeviceManufacturer: Laitteen valmistaja
         puavoDeviceModel: Laitteen malli
-        puavoDevicePrimaryUser: "Laitteen ensisijainen käyttäjä"
+        primary_user_uid: "Laitteen ensisijainen käyttäjä"
         jpegPhoto: Valokuva
         puavoLatitude: Leveysaste
         puavoLongitude: Pituusaste
@@ -484,7 +484,7 @@ fi:
         serialNumber: Sarjanumero
         puavoDeviceManufacturer: Laitteen valmistaja
         puavoDeviceModel: Laitteen malli
-        puavoDevicePrimaryUser: "Laitteen ensisijainen käyttäjä"
+        primary_user_uid: "Laitteen ensisijainen käyttäjä"
         jpegPhoto: Valokuva
         puavoLatitude: Leveysaste
         puavoLongitude: Pituusaste
