@@ -82,6 +82,9 @@ PuavoUsers::Application.routes.draw do
     match 'password/edit' => 'password#edit', :as => :edit_password, :via => :get
     match 'password/own' => 'password#own', :as => :own_password, :via => :get
     match 'password' => 'password#update', :via => :put
+
+    match 'password/forgot' => 'password#forgot', :as => :forgot_password, :via => :get
+
     match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
 

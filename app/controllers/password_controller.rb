@@ -36,6 +36,11 @@ class PasswordController < ApplicationController
     error_message_and_redirect(e.message)
   end
 
+  # GET /password/forgot
+  def forgot
+    @user = User.new
+  end
+
   private
 
   def error_message_and_redirect(message)

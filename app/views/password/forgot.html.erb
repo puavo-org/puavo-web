@@ -1,0 +1,20 @@
+<p>
+<%= t('.title') %>
+</p>
+
+<%= form_for(:forgot, :url => forgot_send_token_password_path, :html => { :method => :put })  do |f| %>
+
+<table>
+<tr>
+  <td><%= label :forgot, :uid, t('activeldap.attributes.user.mail') %></td>
+  <td><%= text_field :forgot, :email %></td>
+</tr>
+
+<tr>
+  <td></td>
+  <td><%= f.submit t('link.continue') %></td>
+</tr>
+
+</table>
+
+<% end %>

@@ -255,6 +255,8 @@ en:
       title: Change password
       password: Old password
       link_other_password: Change password for other user
+    forgot:
+      title: Please enter your email address to get instructions
   organisations:
     show:
       title: Information of organisation
