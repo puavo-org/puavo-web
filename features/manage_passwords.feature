@@ -108,7 +108,7 @@ Feature: Manage passwords
 
 
   Scenario: Reset password by token url
-    Given generate new tokey for "pavel"
+    # Given generate new tokey for "pavel"
     And I am on the own password change by token page
     Then I should see "Reset your password"
     And I should see "Please enter your new password"

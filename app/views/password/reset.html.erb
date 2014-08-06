@@ -1,0 +1,27 @@
+<h1><%= t('.title') %></h1>
+
+<p>
+<%= t('.description') %>
+</p>
+
+<%= form_for(:reset, :url => reset_password_path, :html => { :method => :put })  do |f| %>
+
+<table>
+<tr>
+  <td><%= label :reset, :password, t('.password') %></td>
+  <td><%= text_field :reset, :password %></td>
+</tr>
+
+<tr>
+  <td><%= label :reset, :password_confirmation, t('.password_confirmation') %></td>
+  <td><%= text_field :reset, :password_confirmation %></td>
+</tr>
+
+<tr>
+  <td></td>
+  <td><%= f.submit t('.submit') %></td>
+</tr>
+
+</table>
+
+<% end %>

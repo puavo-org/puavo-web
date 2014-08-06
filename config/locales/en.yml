@@ -257,8 +257,15 @@ en:
       link_other_password: Change password for other user
     forgot:
       title: Please enter your email address to get instructions
+    reset:
+      title: Reset your password
+      password: Enter new password
+      password_confirmation: Re-enter new password
+      description: Please enter your new password
+      submit: Reset password
     successfully:
       send_token: We've sent you an email that will allow you to reset your password.
+      update: Your password has been reset successfully!
   organisations:
     show:
       title: Information of organisation

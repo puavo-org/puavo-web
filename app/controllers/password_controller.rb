@@ -50,10 +50,26 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       @message = "send_token"
-      format.html { render :partial => "successfully" }
+      format.html { render :action => "successfully" }
     end
 
   end
+
+  # GET /password/reset
+  def reset
+  end
+
+  # PUT /password/reset
+  def reset_update
+
+    # FIXME: send change password request to the backedn server
+
+    respond_to do |format|
+      @message = "update"
+      format.html { render :action => "successfully" }
+    end
+  end
+
 
   private
 
