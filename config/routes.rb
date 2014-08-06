@@ -84,6 +84,7 @@ PuavoUsers::Application.routes.draw do
     match 'password' => 'password#update', :via => :put
 
     match 'password/forgot' => 'password#forgot', :as => :forgot_password, :via => :get
+    match 'password/forgot' => 'password#forgot_send_token', :as => :forgot_send_token_password, :via => :put
 
     match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins

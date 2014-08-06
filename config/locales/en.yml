@@ -257,6 +257,8 @@ en:
       link_other_password: Change password for other user
     forgot:
       title: Please enter your email address to get instructions
+    successfully:
+      send_token: We've sent you an email that will allow you to reset your password.
   organisations:
     show:
       title: Information of organisation

@@ -38,7 +38,21 @@ class PasswordController < ApplicationController
 
   # GET /password/forgot
   def forgot
-    @user = User.new
+
+  end
+
+  # PUT /password/forgot
+  def forgot_send_token
+
+    # FIXME: send request to the backend server
+    # dn, email
+
+
+    respond_to do |format|
+      @message = "send_token"
+      format.html { render :partial => "successfully" }
+    end
+
   end
 
   private
