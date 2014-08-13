@@ -27,6 +27,7 @@ gem "colorize"
 gem "redis-namespace"
 gem "icalendar"
 gem "httparty"
+gem "pony"
 
 group :test do
   gem "shotgun"
