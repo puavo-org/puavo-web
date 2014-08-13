@@ -28,6 +28,12 @@
 <code class="import-status"><%= @import_status %></code>
 </p>
 
+<% if @ttl != -1 %>
+    </p>
+    <%= t("link.user_mass_import.download_time", { :seconds => @ttl }) %>
+    </p>
+<% end %>
+
 
 <% if @failed_users %>
     <p class="message_alert">

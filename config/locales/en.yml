@@ -48,12 +48,13 @@ en:
       new: Users mass import
       progress: Importing users. This can take few minutes. Please wait without closing the browser.
       status: Status
-      ready: Import is now ready. Click the button below to download user list. Note that you can download this only once.
+      ready: Import is now ready. Click the button below to download user list.
       download_passwords_pdf: Download passwords PDF
       handle_user_data: Handle the user data
       revalidate: Revalidate
       validate: Validates users
       create: Create users
+      download_time: The password PDF have been downloaded at least once. You can still download it for %{seconds} seconds.
     continue: Continue
     login: Login
     change_password: Change password

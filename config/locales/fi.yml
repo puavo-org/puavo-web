@@ -48,12 +48,13 @@ fi:
       new: Lisää käyttäjiä massa-ajona
       handle_user_data: "Käsittele käyttäjätieto"
       progress: Lisätään käyttäjiä. Tämä voi kestää muutaman minuutin. Odotathan sulkematta selainta.
-      ready: Käyttäjät ovat nyt valmiita. Klikkaa allaolevaa nappia ladataksesi käyttäjälistan. Huomaathan että listan voi ladata vain kerran.
+      ready: Käyttäjät ovat nyt valmiita. Klikkaa allaolevaa nappia ladataksesi käyttäjälistan.
       status: Tila
       download_passwords_pdf: Download passwords PDF
       revalidate: Tarkista uudelleen
       validate: Tarkasta syötetyt tiedot
       create: "Lisää käyttäjät"
+      download_time: Salasana PDF on jo ladattu kerran. Voit vielä ladata sen %{seconds} sekunnin ajan.
     continue: Jatka
     login: Kirjaudu
     change_password: Vaihda salasana

@@ -150,18 +150,20 @@ class Users::ImportController < ApplicationController
   def status
 
     job_id = params["job_id"]
+
     db = Redis::Namespace.new(
       "puavo:import:#{ job_id }",
       :redis => REDIS_CONNECTION
     )
     @import_status = db.get("status")
+    @ttl = db.ttl("status")
 
     if fail_json = db.get("failed_users")
       @failed_users = Array(JSON.parse(fail_json))
     end
 
     if @import_status.nil?
-      return render_error_page "Unkown import job"
+      return render_error_page "Unkown import job. You might have downloaded it already."
     end
 
     render :status, :status => :not_found
@@ -184,10 +186,12 @@ class Users::ImportController < ApplicationController
 
     pdf_data = cipher.dec(encrypted_pdf)
 
-    db.del("status")
-    db.del("pdf")
-    db.del("failed_users")
-    user_store.srem("jobs", job_id)
+    duration = 60*5
+    if db.ttl("pdf") == -1
+      db.expire("status", duration)
+      db.expire("pdf", duration)
+      db.expire("failed_users", duration)
+    end
 
     send_data(
       pdf_data,
@@ -196,11 +200,6 @@ class Users::ImportController < ApplicationController
       :disposition => "attachment"
     )
 
-  end
-
-  # GET /:school_id/users/import/jobs
-  def jobs
-    render :json => user_store.smembers("jobs")
   end
 
   # GET /:school_id/users/import/show?create_timestamp=create:20110402152432Z
