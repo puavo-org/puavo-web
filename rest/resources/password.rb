@@ -38,7 +38,7 @@ class Password < LdapSinatra
 
     jwt = JWT.encode(jwt_data, CONFIG["password_management"]["secret"])
 
-    @password_reset_url = "https://#{ user.organisation_domain }/password/reset/#{ jwt }"
+    @password_reset_url = "https://#{ user.organisation_domain }/password/change/#{ jwt }"
     @first_name = user.first_name
 
     message = erb(:password_email, :layout => false)
@@ -56,9 +56,14 @@ class Password < LdapSinatra
 
   end
 
-  put "/password/change" do
-    # Check JWT and signature
-    # Check timestamp
+  put "/password/change/:jwt" do
+    begin
+      jwt_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])
+    rescue JWT::DecodeError
+      status 404
+      return json({ :status => "failed",
+                    :error => "Invalid jwt token" })
+    end
     # Find user
     # Change password
     # Check organisation, must be match JWT and request.host
