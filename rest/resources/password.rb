@@ -56,12 +56,22 @@ class Password < LdapSinatra
 
   end
 
+  put "/password/change" do
+    # Check JWT and signature
+    # Check timestamp
+    # Find user
+    # Change password
+    # Check organisation, must be match JWT and request.host
   end
 
   private
 
   def language_by_locale(locale)
-    locale.match(/^[a-z]{2}/)[0]
+    begin
+      locale.match(/^[a-z]{2}/)[0]
+    rescue NoMethodError
+      return "en"
+    end
   end
 
 end
