@@ -1,3 +1,4 @@
+require_relative "../lib/ldappasswd"
 
 module PuavoRest
 

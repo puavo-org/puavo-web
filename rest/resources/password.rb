@@ -94,7 +94,25 @@ class Password < LdapSinatra
                     :error => "Cannot find user" })
     end
 
-    # Change password
+    res = Puavo.ldap_passwd(CONFIG["ldap"],
+                            CONFIG["server"][:dn],
+                            CONFIG["server"][:password],
+                            params["new_password"],
+                            user.dn )
+
+    flog.info("ldappasswd call", res.merge(
+      :from => "users resource",
+        :user => {
+        :uid => user.username,
+        :dn => user.dn } ) )
+
+    if res[:exit_status] != 0
+      status 404
+      return json({ :status => "failed",
+                    :error => "Cannot change password for user: #{ user.username }" })
+    end
+
+    json({ :status => 'successfully' })
   end
 
   private
