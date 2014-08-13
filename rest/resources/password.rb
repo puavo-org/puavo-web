@@ -77,7 +77,15 @@ class Password < LdapSinatra
                     :error => "Invalid organisation domain" })
 
     end
-    # Find user
+
+    user = User.by_username(jwt_data["username"])
+
+    if user.nil?
+      status 404
+      return json({ :status => "failed",
+                    :error => "Cannot find user" })
+    end
+
     # Change password
   end
 
