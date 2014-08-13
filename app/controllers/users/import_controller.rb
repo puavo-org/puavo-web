@@ -132,9 +132,6 @@ class Users::ImportController < ApplicationController
     db.expire("pw", 60 * 60)
     db.set("status", "waiting")
 
-    # Save jobs id for later inspection
-    user_store.sadd("jobs", job_id)
-
     Resque.enqueue(
       ImportWorker,
       job_id,
