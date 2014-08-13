@@ -48,7 +48,7 @@ class Password < LdapSinatra
       :subject => t.password_management.subject,
       :body => message,
       :via => :smtp
-    }.merge(CONFIG["password_management"]["smtp"])
+    }.merge(CONFIG["password_management"]["smtp"]).recursive_symbolize_keys!
 
     Pony.mail( email_options )
 
