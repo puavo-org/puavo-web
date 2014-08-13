@@ -57,6 +57,12 @@ class Password < LdapSinatra
   end
 
   put "/password/change/:jwt" do
+    if params[:new_password].nil? || params[:new_password].empty?
+      status 404
+      return json({ :status => "failed",
+                    :error => "Invalid new password" })
+    end
+
     begin
       jwt_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])
     rescue JWT::DecodeError
