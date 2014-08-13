@@ -59,7 +59,7 @@ class Password < LdapSinatra
   put "/password/change/:jwt" do
     auth :server_auth
 
-    if params[:new_password].nil? || params[:new_password].empty?
+    if params["new_password"].nil? || params["new_password"].empty?
       status 404
       return json({ :status => "failed",
                     :error => "Invalid new password" })
