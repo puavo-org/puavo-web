@@ -182,5 +182,10 @@ class Root < LdapSinatra
     use PuavoRest::LtspServers
     use PuavoRest::BootServers
   end
+
+  if CONFIG["password_management"]
+    use PuavoRest::Password
+  end
+
 end
 end
