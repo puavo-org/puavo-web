@@ -71,9 +71,14 @@ class Password < LdapSinatra
                     :error => "Token lifetime has expired" })
     end
 
+    if jwt_data["organisation_domain"] != request.host
+      status 404
+      return json({ :status => "failed",
+                    :error => "Invalid organisation domain" })
+
+    end
     # Find user
     # Change password
-    # Check organisation, must be match JWT and request.host
   end
 
   private
