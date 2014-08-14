@@ -1,4 +1,5 @@
 require_relative "./puavo-rest"
+require_relative "./lib/mailer"
 
 #   @overload $0 $1
 #   @method $0_$1 $1
@@ -21,6 +22,8 @@ $rest_flog = FluentWrap.new(
 )
 
 $rest_flog.info "starting"
+
+$mailer = PuavoRest::Mailer.new
 
 @@test_boot_server_dn = nil
 

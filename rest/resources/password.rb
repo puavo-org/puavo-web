@@ -1,5 +1,4 @@
 require "sinatra/r18n"
-require "pony"
 
 module PuavoRest
 
@@ -43,14 +42,9 @@ class Password < LdapSinatra
 
     message = erb(:password_email, :layout => false)
 
-    email_options = {
-      :to => user.email,
-      :subject => t.password_management.subject,
-      :body => message,
-      :via => :smtp
-    }.merge(CONFIG["password_management"]["smtp"]).recursive_symbolize_keys!
-
-    Pony.mail( email_options )
+    $mailer.send( :to => user.email,
+                  :subject => t.password_management.subject,
+                  :body => message )
 
     json({ :status => 'successfully' })
 

@@ -30,6 +30,17 @@ if ENV["RACK_ENV"] == "test"
     "default_organisation_domain" => "www.example.net",
     "bootserver" => true,
     "cloud" => true,
+    "password_management" => {
+      "secret" => "foobar",
+      "smtp" => {
+        "from" => "Opinsys <no-reply@opinsys.fi>",
+        "via_options" => {
+          "address" => "localhost",
+          "port" => 25,
+          "enable_starttls_auto" => false
+        }
+      }
+    },
     "redis" => {
       :db => 1
     },
