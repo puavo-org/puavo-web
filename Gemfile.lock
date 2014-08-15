@@ -95,6 +95,9 @@ GEM
     greenletters (0.3.0)
     hashery (2.1.1)
     hike (1.2.3)
+    http (0.6.2)
+      http_parser.rb (~> 0.6.0)
+    http_parser.rb (0.6.0)
     i18n (0.6.9)
     journey (1.0.4)
     jquery-rails (3.0.4)
@@ -245,6 +248,7 @@ DEPENDENCIES
   fluent-logger (~> 0.4.3)
   gibberish
   greenletters
+  http
   jquery-rails
   multi_json
   net-ldap
