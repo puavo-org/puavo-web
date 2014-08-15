@@ -69,11 +69,11 @@ class PasswordController < ApplicationController
 
   end
 
-  # GET /password/reset
+  # GET /password/:jwt/reset
   def reset
   end
 
-  # PUT /password/reset
+  # PUT /password/:jwt/reset
   def reset_update
 
     # FIXME: send change password request to the backedn server
