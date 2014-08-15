@@ -76,18 +76,24 @@ class PasswordController < ApplicationController
   # PUT /password/:jwt/reset
   def reset_update
 
-    # FIXME: send change password request to the backedn server
+    # FIXME check password and password confirmation
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
-    response = HTTP.with_headers(:host => current_organisation_domain)
+    res = HTTP.with_headers(:host => current_organisation_domain)
       .put(change_password_url,
            :params => { :new_password => params[:reset][:password] })
 
-    # Errno::ECONNREFUSED: Connection refused - connect(2)
     respond_to do |format|
-      @message = "update"
-      format.html { render :action => "successfully" }
+      if res.status == 200
+        @message = "update"
+        format.html { render :action => "successfully" }
+      elsif res.status == 404
+        debugger; nil
+      else
+        flash[:alert] = I18n.t('flash.password.can_not_change_password')
+        format.html { redirect_to reset_password_path }
+      end
     end
   end
 

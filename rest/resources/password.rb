@@ -67,7 +67,7 @@ class Password < LdapSinatra
                     :error => "Invalid jwt token" })
     end
 
-    if Time.at( jwt_data["iat"].to_i + 24*60*60 ) < Time.now
+    if true
       status 404
       return json({ :status => "failed",
                     :error => "Token lifetime has expired" })
