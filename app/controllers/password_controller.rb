@@ -74,6 +74,13 @@ class PasswordController < ApplicationController
 
     # FIXME: send change password request to the backedn server
 
+    change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
+
+    response = HTTP.with_headers(:host => current_organisation_domain)
+      .put(change_password_url,
+           :params => { :new_password => params[:reset][:password] })
+
+    # Errno::ECONNREFUSED: Connection refused - connect(2)
     respond_to do |format|
       @message = "update"
       format.html { render :action => "successfully" }

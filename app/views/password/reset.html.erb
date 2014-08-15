@@ -3,8 +3,7 @@
 <p>
 <%= t('.description') %>
 </p>
-
-<%= form_for(:reset, :url => reset_password_path, :html => { :method => :put })  do |f| %>
+<%= form_for(:reset, :url => reset_update_password_path)  do |f| %>
 
 <table>
 <tr>
