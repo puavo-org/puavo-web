@@ -85,8 +85,8 @@ PuavoUsers::Application.routes.draw do
 
     match 'password/forgot' => 'password#forgot', :as => :forgot_password, :via => :get
     match 'password/forgot' => 'password#forgot_send_token', :as => :forgot_send_token_password, :via => :put
-    match 'password/reset' => 'password#reset', :as => :reset_password, :via => :get
-    match 'password/reset' => 'password#reset_update', :as => :reset_update_password, :via => :put
+    match 'password/:jwt/reset' => 'password#reset', :as => :reset_password, :via => :get, constraints: { jwt: /.+/ }
+    match 'password/:jwt/reset' => 'password#reset_update', :as => :reset_update_password, :via => :post, constraints: { jwt: /.+/ }
 
     match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins

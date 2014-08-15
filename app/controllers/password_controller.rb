@@ -44,6 +44,16 @@ class PasswordController < ApplicationController
   # PUT /password/forgot
   def forgot_send_token
 
+    user = User.find(:first, :attribute => "mail", :value =>  params[:forgot][:email])
+
+    send_token_url = password_management_host + "/password/send_token"
+
+    if user
+      response = HTTP.with_headers(:host => current_organisation_domain)
+        .post(send_token_url,
+              :params => { :username => user.uid })
+    end
+
     # FIXME: send request to the backend server
     # dn, email
 
@@ -147,5 +157,20 @@ class PasswordController < ApplicationController
     dn =  default_ldap_configuration["bind_dn"]
     password = default_ldap_configuration["password"]
     LdapBase.ldap_setup_connection(host, base, dn, password)
+  end
+
+  def current_organisation_domain
+    LdapOrganisation.first.puavoDomain
+  end
+
+  def password_management_host
+    url = "http://" +
+      Puavo::DEVICE_CONFIG["password_management"]["host"]
+
+    if Puavo::DEVICE_CONFIG["password_management"]["port"]
+      url += ":" + Puavo::DEVICE_CONFIG["password_management"]["port"].to_s
+    end
+
+    return url
   end
 end
