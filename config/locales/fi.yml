@@ -106,6 +106,8 @@ fi:
       invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
+      email_not_found: "Sähköpostiosoitetta ei löydy: %{email}"
+      connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
     school:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty ylläpitäjäkäyttäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"

@@ -106,6 +106,8 @@ en:
       invalid_login: Invalid password or username (%{uid})
       confirmation_failed: New password doesn't match confirmation
       invalid_user: User (%{uid}) does not exist
+      email_not_found: "Couldn't find email: %{email}"
+      connection_failed: We're sorry, but something went wrong. Please try again later!
     school:
       school_admin_added: "%{displayName} (%{school_name}) is now admin users"
       school_admin_removed: "%{displayName} (%{school_name}) is no longer admin user on this school"

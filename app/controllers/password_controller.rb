@@ -54,13 +54,17 @@ class PasswordController < ApplicationController
               :params => { :username => user.uid })
     end
 
-    # FIXME: send request to the backend server
-    # dn, email
-
-
     respond_to do |format|
-      @message = "send_token"
-      format.html { render :action => "successfully" }
+      if not user
+        flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
+        format.html { render :action => "forgot" }
+      elsif response.status != 200
+        flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
+        format.html { render :action => "forgot" }
+      else
+        @message = "send_token"
+        format.html { render :action => "successfully" }
+      end
     end
 
   end
