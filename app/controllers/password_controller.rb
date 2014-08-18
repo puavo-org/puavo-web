@@ -85,7 +85,10 @@ class PasswordController < ApplicationController
            :params => { :new_password => params[:reset][:password] })
 
     respond_to do |format|
-      if rest_response.status == 200
+      if params[:reset][:password] != params[:reset][:password_confirmation]
+        flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
+        format.html { render :action => "reset" }
+      elsif rest_response.status == 200
         @message = "update"
         format.html { render :action => "successfully" }
       elsif rest_response.status == 404 &&
