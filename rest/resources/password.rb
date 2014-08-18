@@ -24,9 +24,6 @@ class Password < LdapSinatra
                     :error => "User does not have an email address" })
     end
 
-    # FIXME: is correct style?
-    R18n::I18n.default = language_by_locale(user.locale)
-
     jwt_data = {
       # Issued At
       "iat" => Time.now.to_i.to_s,
