@@ -84,10 +84,18 @@ class PasswordController < ApplicationController
       .put(change_password_url,
            :params => { :new_password => params[:reset][:password] })
 
-    # Errno::ECONNREFUSED: Connection refused - connect(2)
     respond_to do |format|
-      @message = "update"
-      format.html { render :action => "successfully" }
+      if response.status == 200
+        @message = "update"
+        format.html { render :action => "successfully" }
+      elsif response.status == 404 &&
+          JSON.parse(response.body.readpartial)["error"] == "Token lifetime has expired"
+        flash[:alert] = I18n.t('flash.password.toke_lifegimt_has_expired')
+        format.html { redirect_to forgot_password_path }
+      else
+        flash[:alert] = I18n.t('flash.password.can_not_change_password')
+        format.html { redirect_to reset_password_path }
+      end
     end
   end
 

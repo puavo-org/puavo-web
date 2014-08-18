@@ -108,6 +108,8 @@ en:
       invalid_user: User (%{uid}) does not exist
       email_not_found: "Couldn't find email: %{email}"
       connection_failed: We're sorry, but something went wrong. Please try again later!
+      can_not_change_password: Can't change password. Please try again later!
+      token_lifetime_has_expired: Your link has expired. Please enter your email again.
     school:
       school_admin_added: "%{displayName} (%{school_name}) is now admin users"
       school_admin_removed: "%{displayName} (%{school_name}) is no longer admin user on this school"
