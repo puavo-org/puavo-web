@@ -1,4 +1,5 @@
 class UserNotFound < StandardError; end
+class TooManySendTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
 
 
@@ -53,6 +54,13 @@ class PasswordController < ApplicationController
 
     raise UserNotFound if not user
 
+    db = redis_connect
+
+    raise TooManySendTokenRequest if db.get(user.mail)
+
+    db.set(user.mail, true)
+    db.expire(user.mail, 300)
+
     rest_response = HTTP.with_headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .post(send_token_url,
@@ -66,6 +74,9 @@ class PasswordController < ApplicationController
     end
   rescue UserNotFound
     flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
+    render :action => "forgot"
+  rescue TooManySendTokenRequest
+    flash.now[:alert] = I18n.t('flash.password.too_many_send_token_request')
     render :action => "forgot"
   rescue RestConnectionError
     flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
@@ -201,5 +212,12 @@ class PasswordController < ApplicationController
     end
 
     return url
+  end
+
+  def redis_connect
+    db = Redis::Namespace.new(
+      "puavo:password_management:send_token",
+      :redis => REDIS_CONNECTION
+    )
   end
 end
