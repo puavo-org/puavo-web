@@ -256,6 +256,17 @@ fi:
       title: Vaihda salasana
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
+    forgot:
+      title: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet
+    reset:
+      title: Salasanan vaihto
+      password: Anna uusi salasanasi
+      password_confirmation: Anna uusi salasanasi uudelleen
+      description: Anna uusi salasanasi
+      submit: Vaihda salasanasi
+    successfully:
+      send_token: Olemme lähettäneet sinulle sähkäpostilla linkin, jonka kautta voit vaihtaa salasanasi
+      update: Salasanan vaihto onnistui!
   organisations:
     show:
       title: Organisaation tiedot
