@@ -22,4 +22,4 @@ password_management:
   hello: Hello
   message_head: "You recently requested a password reset."
   message: "To change your password, paste the following link into your browser: %1"
-  footer: The link will expire in 24 hours, so be sure to use it right away.
+  footer: The link will expire in 10 minutes, so be sure to use it right away.

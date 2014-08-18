@@ -22,4 +22,4 @@ password_management:
   hello: Hei
   message_head: "Pyysit juuri, että salasanansi vaihdettaisiin"
   message: "Voit vaihtaa salasanasi seuraavan linkin avulla: %1"
-  footer: Linkki on voimassa seuraavat 24 tuntia.
+  footer: Linkki on voimassa kymmenen (10) minuutin ajan.
