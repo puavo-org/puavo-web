@@ -63,7 +63,7 @@ class PasswordController < ApplicationController
         format.html { render :action => "forgot" }
       else
         @message = "send_token"
-        format.html { render :action => "successfully" }
+        format.html { redirect_to successfully_password_path }
       end
     end
 
@@ -90,7 +90,7 @@ class PasswordController < ApplicationController
         format.html { render :action => "reset" }
       elsif rest_response.status == 200
         @message = "update"
-        format.html { render :action => "successfully" }
+        format.html { redirect_to successfully_password_path }
       elsif rest_response.status == 404 &&
           JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
         flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
@@ -102,6 +102,9 @@ class PasswordController < ApplicationController
     end
   end
 
+  def successfully
+
+  end
 
   private
 
