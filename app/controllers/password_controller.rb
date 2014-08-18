@@ -49,7 +49,8 @@ class PasswordController < ApplicationController
     send_token_url = password_management_host + "/password/send_token"
 
     if user
-      rest_response = HTTP.with_headers(:host => current_organisation_domain)
+      rest_response = HTTP.with_headers(:host => current_organisation_domain,
+                                        "Accept-Language" => locale)
         .post(send_token_url,
               :params => { :username => user.uid })
     end
@@ -80,7 +81,8 @@ class PasswordController < ApplicationController
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
-    rest_response = HTTP.with_headers(:host => current_organisation_domain)
+    rest_response = HTTP.with_headers(:host => current_organisation_domain,
+                                      "Accept-Language" => locale)
       .put(change_password_url,
            :params => { :new_password => params[:reset][:password] })
 
