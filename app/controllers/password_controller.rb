@@ -1,7 +1,8 @@
 class UserNotFound < StandardError; end
 class TooManySendTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
-
+class PasswordConfirmationFailed < StandardError; end
+class TokenLifetimeHasExpired < StandardError; end
 
 class PasswordController < ApplicationController
   before_filter :set_ldap_connection
@@ -90,7 +91,7 @@ class PasswordController < ApplicationController
   # PUT /password/:jwt/reset
   def reset_update
 
-    # FIXME check password and password confirmation
+    raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
@@ -99,22 +100,26 @@ class PasswordController < ApplicationController
       .put(change_password_url,
            :params => { :new_password => params[:reset][:password] })
 
+    if rest_response.status == 404 &&
+        JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
+      raise TokenLifetimeHasExpired
+    end
+
     respond_to do |format|
-      if params[:reset][:password] != params[:reset][:password_confirmation]
-        flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
-        format.html { render :action => "reset" }
-      elsif rest_response.status == 200
+      if rest_response.status == 200
         flash[:message] = I18n.t('password.successfully.update')
         format.html { redirect_to successfully_password_path(:message => "update") }
-      elsif rest_response.status == 404 &&
-          JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
-        flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
-        format.html { redirect_to forgot_password_path }
       else
         flash[:alert] = I18n.t('flash.password.can_not_change_password')
         format.html { redirect_to reset_password_path }
       end
     end
+  rescue PasswordConfirmationFailed
+    flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
+    render :action => "reset"
+  rescue TokenLifetimeHasExpired
+    flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
+    redirect_to forgot_password_path
   end
 
   def successfully
