@@ -1,3 +1,6 @@
+class UserNotFound < StandardError; end
+class RestConnectionError < StandardError; end
+
 
 class PasswordController < ApplicationController
   before_filter :set_ldap_connection
@@ -48,26 +51,25 @@ class PasswordController < ApplicationController
 
     send_token_url = password_management_host + "/password/send_token"
 
-    if user
-      rest_response = HTTP.with_headers(:host => current_organisation_domain,
-                                        "Accept-Language" => locale)
-        .post(send_token_url,
-              :params => { :username => user.uid })
-    end
+    raise UserNotFound if not user
+
+    rest_response = HTTP.with_headers(:host => current_organisation_domain,
+                                      "Accept-Language" => locale)
+      .post(send_token_url,
+            :params => { :username => user.uid })
+
+    raise RestConnectionError if rest_response.status != 200
 
     respond_to do |format|
-      if not user
-        flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
-        format.html { render :action => "forgot" }
-      elsif rest_response.status != 200
-        flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
-        format.html { render :action => "forgot" }
-      else
-        flash[:message] = I18n.t('password.successfully.send_token')
-        format.html { redirect_to successfully_password_path(:message => "send_token") }
-      end
+      flash[:message] = I18n.t('password.successfully.send_token')
+      format.html { redirect_to successfully_password_path(:message => "send_token") }
     end
-
+  rescue UserNotFound
+    flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
+    render :action => "forgot"
+  rescue RestConnectionError
+    flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
+    render :action => "forgot"
   end
 
   # GET /password/:jwt/reset
