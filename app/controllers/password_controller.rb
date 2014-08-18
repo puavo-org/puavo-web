@@ -62,8 +62,8 @@ class PasswordController < ApplicationController
         flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
         format.html { render :action => "forgot" }
       else
-        @message = "send_token"
-        format.html { redirect_to successfully_password_path }
+        flash[:message] = I18n.t('password.successfully.send_token')
+        format.html { redirect_to successfully_password_path(:message => "send_token") }
       end
     end
 
@@ -89,8 +89,8 @@ class PasswordController < ApplicationController
         flash.now[:alert] = I18n.t('flash.password.confirmation_failed')
         format.html { render :action => "reset" }
       elsif rest_response.status == 200
-        @message = "update"
-        format.html { redirect_to successfully_password_path }
+        flash[:message] = I18n.t('password.successfully.update')
+        format.html { redirect_to successfully_password_path(:message => "update") }
       elsif rest_response.status == 404 &&
           JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
         flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')

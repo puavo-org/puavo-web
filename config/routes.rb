@@ -104,7 +104,7 @@ PuavoUsers::Application.routes.draw do
             :to => 'password#reset_update',
             :as => :reset_update_password,
             constraints: { jwt: /.+/ } )
-      get( 'successfully',
+      get( 'successfully/:message',
            :to => 'password#successfully',
            :as => :successfully_password )
     end
