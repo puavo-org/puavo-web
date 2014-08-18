@@ -37,7 +37,7 @@ class Password < LdapSinatra
 
     jwt = JWT.encode(jwt_data, CONFIG["password_management"]["secret"])
 
-    @password_reset_url = "https://#{ user.organisation_domain }/password/change/#{ jwt }"
+    @password_reset_url = "https://#{ user.organisation_domain }/users/password/#{ jwt }/reset"
     @first_name = user.first_name
 
     message = erb(:password_email, :layout => false)
