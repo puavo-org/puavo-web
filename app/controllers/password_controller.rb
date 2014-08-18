@@ -49,7 +49,7 @@ class PasswordController < ApplicationController
     send_token_url = password_management_host + "/password/send_token"
 
     if user
-      response = HTTP.with_headers(:host => current_organisation_domain)
+      rest_response = HTTP.with_headers(:host => current_organisation_domain)
         .post(send_token_url,
               :params => { :username => user.uid })
     end
@@ -58,7 +58,7 @@ class PasswordController < ApplicationController
       if not user
         flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
         format.html { render :action => "forgot" }
-      elsif response.status != 200
+      elsif rest_response.status != 200
         flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])
         format.html { render :action => "forgot" }
       else
@@ -76,21 +76,21 @@ class PasswordController < ApplicationController
   # PUT /password/:jwt/reset
   def reset_update
 
-    # FIXME: send change password request to the backedn server
+    # FIXME check password and password confirmation
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
-    response = HTTP.with_headers(:host => current_organisation_domain)
+    rest_response = HTTP.with_headers(:host => current_organisation_domain)
       .put(change_password_url,
            :params => { :new_password => params[:reset][:password] })
 
     respond_to do |format|
-      if response.status == 200
+      if rest_response.status == 200
         @message = "update"
         format.html { render :action => "successfully" }
-      elsif response.status == 404 &&
-          JSON.parse(response.body.readpartial)["error"] == "Token lifetime has expired"
-        flash[:alert] = I18n.t('flash.password.toke_lifegimt_has_expired')
+      elsif rest_response.status == 404 &&
+          JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
+        flash[:alert] = I18n.t('flash.password.token_lifetime_has_expired')
         format.html { redirect_to forgot_password_path }
       else
         flash[:alert] = I18n.t('flash.password.can_not_change_password')
