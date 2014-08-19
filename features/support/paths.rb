@@ -26,7 +26,7 @@ module NavigationHelpers
     when /the forgot password page/
       forgot_password_path
     when /the own password change by token page/
-      reset_password_path
+      reset_password_path(@jwt)
       
     when /the new organisation page/
       new_organisation_path

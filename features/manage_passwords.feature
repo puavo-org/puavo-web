@@ -100,7 +100,8 @@ Feature: Manage passwords
     And I should login with "pavel" and "pavelsecret"
 
   Scenario: Forgot password
-    Given I am on the forgot password page
+    Given mock password management service
+    And I am on the forgot password page
     Then I should see "Please enter your email address to get instructions"
     When I fill in "Email" with "pavel@foobar.com"
     And I press "Continue"
@@ -108,9 +109,12 @@ Feature: Manage passwords
 
 
   Scenario: Reset password by token url
-    # Given generate new tokey for "pavel"
+    Given generate new token for "pavel"
+    Given mock password management service
     And I am on the own password change by token page
     Then I should see "Reset your password"
     And I should see "Please enter your new password"
-    When I press "Reset password"
+    When I fill in "Enter new password" with "foobar"
+    And I fill in "Re-enter new password" with "foobar"
+    And I press "Reset password"
     Then I should see "Your password has been reset successfully!"
