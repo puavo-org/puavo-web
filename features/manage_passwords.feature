@@ -118,3 +118,11 @@ Feature: Manage passwords
     And I fill in "Re-enter new password" with "foobar"
     And I press "Reset password"
     Then I should see "Your password has been reset successfully!"
+
+  Scenario: Use forgot password form with invalid email
+    Given mock password management service
+    And I am on the forgot password page
+    When I fill in "Email" with "broken@foobar.com"
+    And I press "Continue"
+    Then I should see "Couldn't find email: broken@foobar.com"
+
