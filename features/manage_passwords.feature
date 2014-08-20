@@ -126,3 +126,10 @@ Feature: Manage passwords
     And I press "Continue"
     Then I should see "Couldn't find email: broken@foobar.com"
 
+  Scenario: Reset password when password and password confirmation doesn't match
+    Given generate new token for "pavel"
+    And I am on the own password change by token page
+    When I fill in "Enter new password" with "foobar"
+    And I fill in "Re-enter new password" with "barfoo"
+    And I press "Reset password"
+    Then I should see "New password doesn't match confirmation"
