@@ -47,7 +47,7 @@ env.validate "user attributes"  do
 
   ticket.can_read student, [ :objectClass,
                              :uid,
-#                             :mail,
+                             :mail,
                              :puavoId,
                              :eduPersonPrincipalName,
                              :puavoEduPersonAffiliation,
@@ -58,13 +58,13 @@ env.validate "user attributes"  do
                              :sn,
                              :puavoPreferredDesktop,
                              :loginShell,
-#                             :displayName,
-#                             :puavoEduPersonReverseDisplayName,
-#                             :puavoEduPersonPersonnelNumber,
-#                             :jpegPhoto,
-#                             :preferredLanguage,
-#                             :puavoLocale,
-#                             :telephoneNumber,
+                             :displayName,
+                             :puavoEduPersonReverseDisplayName,
+                             :puavoEduPersonPersonnelNumber,
+                             :jpegPhoto,
+                             :preferredLanguage,
+                             :puavoLocale,
+                             :telephoneNumber,
                              :puavoAcceptedTerms
                            ]
 end
