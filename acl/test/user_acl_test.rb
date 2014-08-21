@@ -17,7 +17,12 @@ env.validate "User passoword" do
   teacher.cannot_set_password_for teacher2,  LDAPTestEnvException
   reset
   admin.can_set_password_for other_school_student
-
+  reset
+  ticket.cannot_set_password_for student, LDAPTestEnvException
+  reset
+  ticket.cannot_set_password_for teacher, LDAPTestEnvException
+  reset
+  ticket.cannot_set_password_for admin, LDAPTestEnvException
 end
 
 
@@ -40,6 +45,28 @@ env.validate "user attributes"  do
 
   teacher.cannot_modify admin,     [:replace,  :givenName,  ["newname"]],          InsufficientAccessRights
 
+  ticket.can_read student, [ :objectClass,
+                             :uid,
+#                             :mail,
+                             :puavoId,
+                             :eduPersonPrincipalName,
+                             :puavoEduPersonAffiliation,
+                             :uidNumber,
+                             :gidNumber,
+                             :homeDirectory,
+                             :givenName,
+                             :sn,
+                             :puavoPreferredDesktop,
+                             :loginShell,
+#                             :displayName,
+#                             :puavoEduPersonReverseDisplayName,
+#                             :puavoEduPersonPersonnelNumber,
+#                             :jpegPhoto,
+#                             :preferredLanguage,
+#                             :puavoLocale,
+#                             :telephoneNumber,
+                             :puavoAcceptedTerms
+                           ]
 end
 
 env.validate "should not allow same email for two students" do

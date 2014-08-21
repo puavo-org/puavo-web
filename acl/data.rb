@@ -84,8 +84,14 @@ def define_basic(env)
     config.password = "password"
   end
 
+  env.define :ticket do |config|
+    config.dn = "uid=puavo-ticket,o=puavo"
+    config.password = "password"
+  end
+
   env.define :student do |config|
-    student = User.create(
+    test_image = Magick::Image.read("/home/opinsys/puavo-users/features/support/test.jpg").first.to_blob
+    student = User.new(
       :puavoSchool => env.school.dn,
       :givenName => "Harry",
       :sn => "Potter",
@@ -94,8 +100,16 @@ def define_basic(env)
       :role_name => "Class 4",
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
-      :puavoEduPersonAffiliation => "student"
+      :puavoEduPersonAffiliation => "student",
+      :puavoPreferredDesktop => "foo",
+      :puavoEduPersonPersonnelNumber => "123",
+      :jpegPhoto => test_image,
+      :preferredLanguage => "en",
+      :puavoLocale => "en_US.UTF-8",
+      :telephoneNumber => "123456",
+      :puavoAcceptedTerms => "TRUE"
     )
+    student.save!
     config.dn = student.dn
   end
 
