@@ -6,6 +6,9 @@ puavo_ca:
 allow_change_device_types:
 - thinclient
 - fatclient
+password_management:
+  host: 127.0.0.1
+  port: 9393
 device_types:
   thinclient:
     label:
