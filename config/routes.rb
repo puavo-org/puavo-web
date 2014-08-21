@@ -77,10 +77,37 @@ PuavoUsers::Application.routes.draw do
     match ':school_id/users/import/user_validate' => 'users/import#user_validate', :as => :user_validate_users_import, :via => :post
     match ':school_id/users/import/options' => 'users/import#options', :as => :options_users_import, :via => :get
     match ':school_id/users/import/download' => 'users/import#generate_passwords_pdf', :as => :generate_passwords_pdf, :via => :post
-    match 'password' => 'password#edit', :as => :password, :via => :get
-    match 'password/edit' => 'password#edit', :as => :edit_password, :via => :get
-    match 'password/own' => 'password#own', :as => :own_password, :via => :get
-    match 'password' => 'password#update', :via => :put
+
+    scope :path => "password" do
+      get( '', :to => 'password#edit',
+           :as => :password )
+      get( 'edit',
+           :to => 'password#edit',
+           :as => :edit_password )
+      get( 'own',
+           :to => 'password#own',
+           :as => :own_password )
+      put( '',
+           :to => 'password#update' )
+      get( 'forgot',
+           :to => 'password#forgot',
+           :as => :forgot_password )
+      put( 'forgot',
+           :to => 'password#forgot_send_token',
+           :as => :forgot_send_token_password )
+      get( ':jwt/reset',
+           :to => 'password#reset',
+           :as => :reset_password,
+           constraints: { jwt: /.+/ } )
+      post( ':jwt/reset',
+            :to => 'password#reset_update',
+            :as => :reset_update_password,
+            constraints: { jwt: /.+/ } )
+      get( 'successfully/:message',
+           :to => 'password#successfully',
+           :as => :successfully_password )
+    end
+
     match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
 

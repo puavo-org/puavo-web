@@ -11,9 +11,9 @@ Feature: Manage passwords
     | Teacher |
     | Student  |
     And the following users:
-    | givenName | sn     | uid   | password    | school_admin | role_name | puavoEduPersonAffiliation |
-    | Pavel     | Taylor | pavel | pavelsecret | true         | Teacher   | Admin                     |
-    | Ben       | Mabey  | ben   | bensecret   | false        | Class 4   | Student                   |
+    | givenName | sn     | uid   | password    | school_admin | role_name | puavoEduPersonAffiliation | mail             |
+    | Pavel     | Taylor | pavel | pavelsecret | true         | Teacher   | Admin                     | pavel@foobar.com |
+    | Ben       | Mabey  | ben   | bensecret   | false        | Class 4   | Student                   | ben@foobar.com   |
     And I am on the password change page
 
   Scenario: Non-existent user tries to change another user's password
@@ -98,3 +98,38 @@ Feature: Manage passwords
     And I should see "New password doesn't match confirmation"
     And I should not login with "pavel" and "newpavelsecret"
     And I should login with "pavel" and "pavelsecret"
+
+  Scenario: Forgot password
+    Given mock password management service
+    And I am on the forgot password page
+    Then I should see "Please enter your email address to get instructions"
+    When I fill in "Email" with "pavel@foobar.com"
+    And I press "Continue"
+    Then I should see "We've sent you an email that will allow you to reset your password."
+
+
+  Scenario: Reset password by token url
+    Given generate new token for "pavel"
+    Given mock password management service
+    And I am on the own password change by token page
+    Then I should see "Reset your password"
+    And I should see "Please enter your new password"
+    When I fill in "Enter new password" with "foobar"
+    And I fill in "Re-enter new password" with "foobar"
+    And I press "Reset password"
+    Then I should see "Your password has been reset successfully!"
+
+  Scenario: Use forgot password form with invalid email
+    Given mock password management service
+    And I am on the forgot password page
+    When I fill in "Email" with "broken@foobar.com"
+    And I press "Continue"
+    Then I should see "Couldn't find email: broken@foobar.com"
+
+  Scenario: Reset password when password and password confirmation doesn't match
+    Given generate new token for "pavel"
+    And I am on the own password change by token page
+    When I fill in "Enter new password" with "foobar"
+    And I fill in "Re-enter new password" with "barfoo"
+    And I press "Reset password"
+    Then I should see "New password doesn't match confirmation"

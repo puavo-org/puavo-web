@@ -107,6 +107,11 @@ en:
       invalid_login: Invalid password or username (%{uid})
       confirmation_failed: New password doesn't match confirmation
       invalid_user: User (%{uid}) does not exist
+      email_not_found: "Couldn't find email: %{email}"
+      connection_failed: We're sorry, but something went wrong. Please try again later!
+      can_not_change_password: Can't change password. Please try again later!
+      token_lifetime_has_expired: Your link has expired. Please enter your email again.
+      too_many_sent_token_request: We're already sent message to your email address.
     school:
       school_admin_added: "%{displayName} (%{school_name}) is now admin users"
       school_admin_removed: "%{displayName} (%{school_name}) is no longer admin user on this school"
@@ -256,6 +261,17 @@ en:
       title: Change password
       password: Old password
       link_other_password: Change password for other user
+    forgot:
+      title: Please enter your email address to get instructions
+    reset:
+      title: Reset your password
+      password: Enter new password
+      password_confirmation: Re-enter new password
+      description: Please enter your new password
+      submit: Reset password
+    successfully:
+      send_token: We've sent you an email that will allow you to reset your password.
+      update: Your password has been reset successfully!
   organisations:
     show:
       title: Information of organisation

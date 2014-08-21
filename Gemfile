@@ -9,6 +9,7 @@ gem "unicorn"
 gem "debugger"
 gem "fluent-logger", "~> 0.4.3"
 gem "gibberish"
+gem "http"
 
 
 group :assets do
@@ -31,5 +32,7 @@ group :test do
   gem "ruby-prof"
   gem "timecop"
   gem "ripper-tags"
+  gem "webmock"
+  gem "jwt", "~> 0.1.8"
 end
 

@@ -6,6 +6,7 @@ end
 
 Before('@start_test_server') do
   Puavo.start_test_server = true
+  WebMock.disable!
 end
 
 Given /^the following devices:$/ do |servers|
