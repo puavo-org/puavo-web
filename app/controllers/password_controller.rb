@@ -1,5 +1,5 @@
 class UserNotFound < StandardError; end
-class TooManySendTokenRequest < StandardError; end
+class TooManySentTokenRequest < StandardError; end
 class RestConnectionError < StandardError; end
 class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
@@ -57,7 +57,7 @@ class PasswordController < ApplicationController
 
     db = redis_connect
 
-    raise TooManySendTokenRequest if db.get(user.mail)
+    raise TooManySentTokenRequest if db.get(user.mail)
 
     db.set(user.mail, true)
     db.expire(user.mail, 300)
@@ -76,8 +76,8 @@ class PasswordController < ApplicationController
   rescue UserNotFound
     flash.now[:alert] = I18n.t('flash.password.email_not_found', :email => params[:forgot][:email])
     render :action => "forgot"
-  rescue TooManySendTokenRequest
-    flash.now[:alert] = I18n.t('flash.password.too_many_send_token_request')
+  rescue TooManySentTokenRequest
+    flash.now[:alert] = I18n.t('flash.password.too_many_sent_token_request')
     render :action => "forgot"
   rescue RestConnectionError
     flash.now[:alert] = I18n.t('flash.password.connection_failed', :email => params[:forgot][:email])

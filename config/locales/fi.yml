@@ -110,7 +110,7 @@ fi:
       connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
       can_not_change_password: Jostakin syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen!
       token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
-      too_many_send_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viestiä.
+      too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viestiä.
     school:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty ylläpitäjäkäyttäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
