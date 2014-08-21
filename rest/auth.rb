@@ -37,12 +37,17 @@ class LdapSinatra < Sinatra::Base
     }
   end
 
-  # Pick bootserver credentials when Header 'Authorization: Bootserver' is set
-  def server_auth
+  def pw_mgmt_server_auth
     if CONFIG["password_management"]
       return CONFIG["server"]
+    else
+      logger.error "Cannot use password management auth on cloud or bootserver installation"
+      return
     end
+  end
 
+  # Pick bootserver credentials when Header 'Authorization: Bootserver' is set
+  def server_auth
     if not CONFIG["bootserver"]
       logger.error "Cannot use bootserver auth on cloud installation"
       return

@@ -6,7 +6,7 @@ class Password < LdapSinatra
   register Sinatra::R18n
 
   post "/password/send_token" do
-    auth :server_auth
+    auth :pw_mgmt_server_auth
 
     # FIXME Request limit? Denial of Service?
 
@@ -48,7 +48,7 @@ class Password < LdapSinatra
   end
 
   put "/password/change/:jwt" do
-    auth :server_auth
+    auth :pw_mgmt_server_auth
 
     if params["new_password"].nil? || params["new_password"].empty?
       status 404
