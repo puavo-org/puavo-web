@@ -23,6 +23,12 @@ env.validate "User passoword" do
   ticket.cannot_set_password_for teacher, LDAPTestEnvException
   reset
   ticket.cannot_set_password_for admin, LDAPTestEnvException
+  reset
+  pwmgmt.can_set_password_for student
+  reset
+  pwmgmt.can_set_password_for teacher
+  reset
+  pwmgmt.can_set_password_for admin
 end
 
 
