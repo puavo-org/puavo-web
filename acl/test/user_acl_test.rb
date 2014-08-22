@@ -67,6 +67,20 @@ env.validate "user attributes"  do
                              :telephoneNumber,
                              :puavoAcceptedTerms
                            ]
+
+  puavo.can_read student, [ :eduPersonPrincipalName,
+                            :gidNumber,
+                            :givenName,
+                            :homeDirectory,
+                            :loginShell,
+                            :objectClass,
+                            :puavoAcceptedTerms,
+                            :puavoEduPersonAffiliation,
+                            :puavoId,
+                            :puavoPreferredDesktop,
+                            :sn,
+                            :uid,
+                            :uidNumber ]
 end
 
 env.validate "should not allow same email for two students" do
