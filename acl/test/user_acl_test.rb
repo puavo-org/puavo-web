@@ -81,6 +81,25 @@ env.validate "user attributes"  do
                             :sn,
                             :uid,
                             :uidNumber ]
+
+  pwmgmt.can_read student, [ :eduPersonPrincipalName,
+                             :gidNumber,
+                             :givenName,
+                             :homeDirectory,
+                             :jpegPhoto,
+                             :loginShell,
+                             :mail,
+                             :objectClass,
+                             :preferredLanguage,
+                             :puavoEduPersonAffiliation,
+                             :puavoId,
+                             :puavoLocale,
+                             :puavoPreferredDesktop,
+                             :sn,
+                             :telephoneNumber,
+                             :uid,
+                             :uidNumber ]
+
 end
 
 env.validate "should not allow same email for two students" do

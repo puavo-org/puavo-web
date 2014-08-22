@@ -89,6 +89,11 @@ def define_basic(env)
     config.password = "password"
   end
 
+  env.define :pwmgmt do |config|
+    config.dn = "uid=pw-mgmt,o=puavo"
+    config.password = "password"
+  end
+
   env.define :student do |config|
     test_image = Magick::Image.read("/home/opinsys/puavo-users/features/support/test.jpg").first.to_blob
     student = User.new(
