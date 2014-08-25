@@ -87,8 +87,8 @@ class Password < LdapSinatra
     end
 
     res = Puavo.ldap_passwd(CONFIG["ldap"],
-                            CONFIG["server"][:dn],
-                            CONFIG["server"][:password],
+                            PUAVO_ETC.ds_pw_mgmt_dn,
+                            PUAVO_ETC.ds_pw_mgmt_password,
                             params["new_password"],
                             user.dn )
 
