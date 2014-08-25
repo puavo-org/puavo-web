@@ -5,9 +5,11 @@ module PuavoRest
   class Mailer
 
     def initialize
-      @options = { :via => :smtp }
-      @options.merge!(CONFIG["password_management"]["smtp"])
-      @options.recursive_symbolize_keys!
+      if CONFIG["password_management"]
+        @options = { :via => :smtp }
+        @options.merge!(CONFIG["password_management"]["smtp"])
+        @options.recursive_symbolize_keys!
+      end
     end
 
     def send(args)
