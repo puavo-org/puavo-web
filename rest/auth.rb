@@ -39,7 +39,10 @@ class LdapSinatra < Sinatra::Base
 
   def pw_mgmt_server_auth
     if CONFIG["password_management"]
-      return CONFIG["server"]
+      return {
+        :dn => PUAVO_ETC.ds_pw_mgmt_dn,
+        :password => PUAVO_ETC.ds_pw_mgmt_password
+      }
     else
       logger.error "Cannot use password management auth on cloud or bootserver installation"
       return
