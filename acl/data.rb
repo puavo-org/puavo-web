@@ -95,7 +95,7 @@ def define_basic(env)
   end
 
   env.define :student do |config|
-    test_image = Magick::Image.read("/home/opinsys/puavo-users/features/support/test.jpg").first.to_blob
+    test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     student = User.new(
       :puavoSchool => env.school.dn,
       :givenName => "Harry",
