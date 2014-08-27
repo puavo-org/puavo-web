@@ -107,9 +107,10 @@ device_types:
     label:
       en: Wireless access point
       fi: Langaton tukiasema
-    classes: puavoOtherDevice
+    classes: puavoLocalbootDevice
     url: /devices/%s/devices/new.json?device_type=wirelessaccesspoint
     order: 9
+    ldap_password: true
     school_required: true
   projector:
     label:
