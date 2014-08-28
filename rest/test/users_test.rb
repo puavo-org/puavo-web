@@ -31,7 +31,7 @@ describe PuavoRest::Users do
       :uid => "bob",
       :puavoEduPersonAffiliation => "student",
       :puavoLocale => "en_US.UTF-8",
-      :mail => "bob@example.com",
+      :mail => ["bob@example.com", "bob@foobar.com", "bob@helloworld.com"],
       :role_ids => [@role.puavoId]
     )
 
@@ -130,6 +130,7 @@ describe PuavoRest::Users do
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
+      assert_equal ["bob@foobar.com", "bob@helloworld.com"], data["secondary_emails"]
       assert_equal "student", data["user_type"]
       assert_equal "http://www.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
     end
