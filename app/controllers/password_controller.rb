@@ -57,10 +57,10 @@ class PasswordController < ApplicationController
 
     db = redis_connect
 
-    raise TooManySentTokenRequest if db.get(user.mail)
+    raise TooManySentTokenRequest if db.get(user.puavoId)
 
-    db.set(user.mail, true)
-    db.expire(user.mail, 300)
+    db.set(user.puavoId, true)
+    db.expire(user.puavoId, 300)
 
     rest_response = HTTP.with_headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
