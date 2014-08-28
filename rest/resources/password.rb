@@ -108,6 +108,18 @@ class Password < LdapSinatra
                     :error => "Cannot change password for user: #{ user.username }" })
     end
 
+    @first_name = user.first_name
+
+    emails = Array(user.email)
+    emails += user.secondary_emails if user.secondary_emails
+    message = erb(:password_has_been_reset, :layout => false)
+
+    emails.each do |email|
+      $mailer.send( :to => email,
+                    :subject => t.password_management.subject,
+                    :body => message )
+    end
+
     json({ :status => 'successfully' })
   end
 
