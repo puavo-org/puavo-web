@@ -262,7 +262,8 @@ en:
       password: Old password
       link_other_password: Change password for other user
     forgot:
-      title: Please enter your email address to get instructions
+      title: Reset your password
+      description: Please enter your email address to get instructions
     reset:
       title: Reset your password
       password: Enter new password

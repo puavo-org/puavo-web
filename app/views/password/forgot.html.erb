@@ -1,5 +1,7 @@
+<h1><%= t('.title') %></h1>
+
 <p>
-<%= t('.title') %>
+<%= t('.description') %>
 </p>
 
 <%= form_for(:forgot, :url => forgot_send_token_password_path, :html => { :method => :put })  do |f| %>

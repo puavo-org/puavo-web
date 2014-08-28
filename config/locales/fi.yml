@@ -259,7 +259,8 @@ fi:
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
-      title: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet
+      title: Vaihda salasanasi
+      description: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet
     reset:
       title: Vaihda salasanasi
       password: Uusi salasana
