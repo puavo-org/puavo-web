@@ -27,7 +27,7 @@ class LdapModel
     pretty2ldap[pretty_name] = ldap_name
     ldap2pretty[ldap_name] = pretty_name
 
-    converters[ldap_name] = {
+    converters[pretty_name] = {
       :default => default_value,
       :convert => convert
     }
@@ -58,8 +58,8 @@ class LdapModel
     return @cache[pretty_name] if not @cache[pretty_name].nil?
 
     ldap_name = pretty2ldap[pretty_name]
-    default_value = converters[ldap_name][:default]
-    convert = converters[ldap_name][:convert]
+    default_value = converters[pretty_name][:default]
+    convert = converters[pretty_name][:convert]
 
     value = Array(@ldap_attr_store[ldap_name])
 
