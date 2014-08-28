@@ -29,6 +29,11 @@ class FluentWrap
     record[msg] = clean(attrs) if attrs
 
     @logger.post(@tag, record)
+
+    if !ENV["FLUENTD_STDOUT"]
+      return if ENV["RACK_ENV"] == "test"
+      return if ENV["RAILS_ENV"] == "test"
+    end
     begin
       puts "#{ msg }: #{ record.to_json }"
     rescue Exception => e
