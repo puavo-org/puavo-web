@@ -88,7 +88,6 @@ class UsersController < ApplicationController
   # POST /:school_id/users
   # POST /:school_id/users.xml
   def create
-    flog.info "Create user", :params => params
     @user = User.new(params[:user])
     @groups = @school.groups
     @roles = @school.roles
@@ -114,7 +113,6 @@ class UsersController < ApplicationController
   # PUT /:school_id/users/1
   # PUT /:school_id/users/1.xml
   def update
-    flog.info "Update user", :params => params
     @user = User.find(params[:id])
     @groups = @school.groups
     @roles = @school.roles
@@ -143,7 +141,6 @@ class UsersController < ApplicationController
   # DELETE /:school_id/users/1
   # DELETE /:school_id/users/1.xml
   def destroy
-    flog.info "Destroy user", :params => params
     @user = User.find(params[:id])
     if @user.destroy
       flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))

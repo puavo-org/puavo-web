@@ -7,7 +7,6 @@ class SessionsController < ApplicationController
   end
 
   def create
-    flog.info "Creating session", :params => params
     session[:uid] = params[:user][:uid]
     session[:password_plaintext] = params[:user][:password]
     session[:login_flash] = t('flash.session.login_successful')

@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
 
 
   def log_request
-    flog.info "request"
+    flog.info "request", :parameters => params
   end
 
   def user_store
