@@ -29,20 +29,12 @@ class FluentWrap
     record[msg] = clean(attrs) if attrs
 
     @logger.post(@tag, record)
-    log_stdout(record)
-  end
-
-  def log_stdout(attrs)
-    return if ENV["RACK_ENV"] == "test"
-    return if ENV["RAILS_ENV"] == "test"
-    level = attrs[:meta][:level]
-    msg = attrs[:msg]
-
-    attrs = attrs.dup
-    attrs.delete(:msg)
-    attrs.delete(:meta)
-
-    puts "FLUENT-#{ level }: #{ msg } #{ attrs.inspect }"
+    begin
+      puts "#{ msg }: #{ record.to_json }"
+    rescue Exception => e
+      puts "Failed to log message: #{ record.inspect }"
+      puts e
+    end
   end
 
   def info(msg, attrs=nil)
