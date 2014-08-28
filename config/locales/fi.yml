@@ -268,7 +268,7 @@ fi:
       description: Anna uusi salasanasi
       submit: Vaihda salasanasi
     successfully:
-      send_token: Olemme lähettäneet sinulle sähkäpostilla linkin, jonka kautta voit vaihtaa salasanasi
+      send_token: Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi.
       update: Salasanan vaihto onnistui!
   organisations:
     show:
