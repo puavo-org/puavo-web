@@ -86,6 +86,7 @@ env.validate "user attributes"  do
                             :puavoPreferredDesktop,
                             :sn,
                             :uid,
+                            :mail,
                             :uidNumber ]
 
   pwmgmt.can_read student, [ :eduPersonPrincipalName,
