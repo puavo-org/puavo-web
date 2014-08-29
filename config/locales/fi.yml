@@ -260,12 +260,12 @@ fi:
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
       title: Vaihda salasanasi
-      description: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet
+      description: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet.
     reset:
       title: Vaihda salasanasi
       password: Uusi salasana
       password_confirmation: Vahvista uusi salasana
-      description: Anna uusi salasanasi
+      description: Anna uusi salasanasi.
       submit: Vaihda salasanasi
     successfully:
       send_token: Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi.
