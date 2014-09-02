@@ -490,6 +490,14 @@ class User < LdapBase
   end
 
   def managed_schools
+    device = Device.find( :all,
+                          :attributes => ["*", "+"],
+                          :attribute => 'creatorsName',
+                          :value => self.dn.to_s).max do |a,b|
+      a.puavoId.to_i <=> b.puavoId.to_i
+    end
+    default_school_dn = device.puavoSchool if device
+
     if Array(LdapOrganisation.current.owner).include?(self.dn)
       schools = School.all
     else
@@ -498,8 +506,14 @@ class User < LdapBase
                              :value => self.dn )
     end
 
+    if default_school = schools.select{ |s| s.dn.to_s == default_school_dn.to_s }.first
+      default_school_id = default_school.puavoId
+    else
+      default_school_id = schools.first.puavoId
+    end
+
     return ( { 'label' => 'School',
-               'default' => schools.first.puavoId,
+               'default' => default_school_id,
                'title' => 'School selection',
                'question' => 'Select school: ',
                'list' =>  schools.map{ |s| s.v1_as_json }  } ) unless schools.empty?
