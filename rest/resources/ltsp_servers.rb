@@ -94,6 +94,7 @@ class LtspServer < Host
   include LocalStore
 
   ldap_map(:puavoSchool, :school_dns) { |v| Array(v).map{ |v| v.downcase } }
+  ldap_map :puavoTimezone, :timezone
 
   def self.ldap_base
     "ou=Servers,ou=Hosts,#{ organisation["base"] }"
@@ -164,6 +165,14 @@ class LtspServer < Host
 
   def schools
     @schools ||= school_dns.map{ |dn| School.by_dn(dn) }
+  end
+
+  def timezone
+    if get_own(:timezone).nil?
+      organisation.timezone
+    else
+      get_own(:timezone)
+    end
   end
 end
 

@@ -38,7 +38,7 @@ describe PuavoRest::LtspServers do
     assert_equal 404, last_response.status, last_response.body
   end
 
-  it "has tags" do
+  it "has tags and timezone" do
     create_server(
       :puavoHostname => "ltsptagsserver",
       :macAddress => "00:60:2f:5F:08:97",
@@ -52,6 +52,7 @@ describe PuavoRest::LtspServers do
     assert data["tags"], "has tags"
     assert_equal "tag1", data["tags"][0]
     assert_equal "tag2", data["tags"][1]
+    assert_equal "Europe/Helsinki", data["timezone"]
   end
 
   it "responds 404 for unknown servers" do
