@@ -8,7 +8,6 @@ gem "pry"
 gem "unicorn"
 gem "debugger"
 gem "fluent-logger", "~> 0.4.3"
-gem "gibberish"
 gem "http"
 
 
