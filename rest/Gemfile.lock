@@ -83,7 +83,6 @@ GEM
       text
     gettext_i18n_rails (1.0.3)
       fast_gettext (>= 0.4.8)
-    gibberish (1.3.1)
     hashery (2.1.1)
     hike (1.2.3)
     httparty (0.12.0)
@@ -227,7 +226,6 @@ DEPENDENCIES
   colorize
   debugger
   fluent-logger (~> 0.4.3)
-  gibberish
   gssapi!
   httparty
   icalendar
