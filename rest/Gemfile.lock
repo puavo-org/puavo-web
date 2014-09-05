@@ -21,7 +21,6 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
-    Ascii85 (1.0.2)
     actionmailer (3.2.19)
       actionpack (= 3.2.19)
       mail (~> 2.5.4)
@@ -55,7 +54,6 @@ GEM
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
     addressable (2.3.6)
-    afm (0.2.2)
     ansi (1.4.3)
     arel (3.0.3)
     backports (3.6.0)
@@ -84,7 +82,6 @@ GEM
     gettext_i18n_rails (1.1.0)
       fast_gettext (>= 0.9.0)
     gibberish (1.4.0)
-    hashery (2.1.1)
     hike (1.2.3)
     httparty (0.13.1)
       json (~> 1.8)
@@ -115,19 +112,13 @@ GEM
     net-ldap (0.7.0)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
-    pdf-reader (1.3.3)
-      Ascii85 (~> 1.0.0)
-      afm (~> 0.2.0)
-      hashery (~> 2.0)
-      ruby-rc4
-      ttfunk
+    pdf-core (0.2.5)
     polyglot (0.3.5)
     pony (1.10)
       mail (>= 2.0)
-    prawn (0.14.0)
-      pdf-reader (~> 1.2)
-      ruby-rc4
-      ttfunk (~> 1.0.3)
+    prawn (1.2.1)
+      pdf-core (~> 0.2.5)
+      ttfunk (~> 1.2.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -170,7 +161,6 @@ GEM
     ripper-tags (0.1.3)
       yajl-ruby
     rmagick (2.13.3)
-    ruby-rc4 (0.1.5)
     safe_yaml (1.0.3)
     shotgun (0.9)
       rack (>= 1.0)
@@ -203,7 +193,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    ttfunk (1.0.3)
+    ttfunk (1.2.2)
     turn (0.9.7)
       ansi
       minitest (~> 4)
@@ -240,7 +230,7 @@ DEPENDENCIES
   net-ldap
   nokogiri
   pony
-  prawn (~> 0.14.0)
+  prawn
   pry
   puma (~> 2.7.1)
   rack-rewrite (~> 1.4.01)
