@@ -28,6 +28,7 @@ gem "redis-namespace"
 gem "icalendar"
 gem "httparty"
 gem "pony"
+gem "gibberish"
 
 group :test do
   gem "shotgun"
