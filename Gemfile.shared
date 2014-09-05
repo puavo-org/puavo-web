@@ -4,7 +4,7 @@
 group :shared do
   gem "rails", "~> 3.2.16"
   gem "sqlite3", :require => "sqlite3"
-  gem "prawn"
+  gem "prawn", "~> 0.14.0" # FIXME new version not work with puavo
   gem "net-ldap", :require => "net-ldap"
   gem "activeldap", :require => "active_ldap"
   gem "rmagick", :require => "RMagick"
