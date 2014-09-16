@@ -22,6 +22,7 @@ class User < LdapModel
   end
   ldap_map :puavoLocale, :locale
   ldap_map :puavoTimezone, :timezone
+  ldap_map :puavoLocked, :locked, &LdapConverters.string_boolean
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
