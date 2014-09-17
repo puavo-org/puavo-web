@@ -26,6 +26,10 @@ class Device < Host
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map :puavoDevicePrimaryUser, :primary_user_dn
 
+  ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
+  ldap_map :puavoDeviceOnHour,           :autopoweroff_onhour
+  ldap_map :puavoDeviceOffHour,          :autopoweroff_offhour
+
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
   end
@@ -173,6 +177,18 @@ class Device < Host
     end
   end
 
+  def autopoweroff_attr_with_school_fallback(attr)
+    [ nil, 'default' ].include?( get_own(:autopoweroff_mode) ) \
+      ? school.send(attr)                                      \
+      : get_own(attr)
+  end
+
+  autopoweroff_attrs = [ :autopoweroff_mode,
+                         :autopoweroff_offhour,
+                         :autopoweroff_onhour ]
+  autopoweroff_attrs.each do |attr|
+    define_method(attr) { autopoweroff_attr_with_school_fallback(attr) }
+  end
 end
 
 class Devices < LdapSinatra

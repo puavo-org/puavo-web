@@ -20,6 +20,10 @@ class Organisation < LdapModel
   ldap_map :puavoKeyboardLayout, :keyboard_layout
   ldap_map :puavoKeyboardVariant, :keyboard_variant
 
+  ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
+  ldap_map :puavoDeviceOnHour,           :autopoweroff_onhour
+  ldap_map :puavoDeviceOffHour,          :autopoweroff_offhour
+
   def organisation_key
     domain.split(".").first if domain
   end
