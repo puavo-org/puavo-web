@@ -112,7 +112,8 @@ def define_basic(env)
       :preferredLanguage => "en",
       :puavoLocale => "en_US.UTF-8",
       :telephoneNumber => "123456",
-      :puavoAcceptedTerms => "TRUE"
+      :puavoAcceptedTerms => "TRUE",
+      :puavoLocked => "FALSE"
     )
     student.save!
     config.dn = student.dn
