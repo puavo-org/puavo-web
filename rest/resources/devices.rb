@@ -27,8 +27,8 @@ class Device < Host
   ldap_map :puavoDevicePrimaryUser, :primary_user_dn
 
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
-  ldap_map :puavoDeviceOnHour,           :autopoweroff_onhour
-  ldap_map :puavoDeviceOffHour,          :autopoweroff_offhour
+  ldap_map :puavoDeviceOnHour,           :daytime_start_hour
+  ldap_map :puavoDeviceOffHour,          :daytime_end_hour
 
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
@@ -184,8 +184,8 @@ class Device < Host
   end
 
   autopoweroff_attrs = [ :autopoweroff_mode,
-                         :autopoweroff_offhour,
-                         :autopoweroff_onhour ]
+                         :daytime_start_hour,
+                         :daytime_end_hour ]
   autopoweroff_attrs.each do |attr|
     define_method(attr) { autopoweroff_attr_with_school_fallback(attr) }
   end
