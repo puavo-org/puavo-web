@@ -10,10 +10,15 @@ class DeviceImages < LdapSinatra
   def all_images
     images = [organisation_image]
 
-    [School, Device, BootServer, LtspServer].each do |model|
+    [School, BootServer, LtspServer].each do |model|
       model.all.each do |s|
           images.push s.get_own(:preferred_image)
         end
+    end
+
+    Device.all.each do |s|
+      images.push s.get_own(:preferred_image)
+      images.push s.get_own(:preferred_boot_image)
     end
 
     images
@@ -30,6 +35,7 @@ class DeviceImages < LdapSinatra
 
         school.devices.each do |device|
           images.push(device.get_own(:preferred_image))
+          images.push(device.get_own(:preferred_boot_image))
         end
 
         school.ltsp_servers.each do |ltsp_server|

@@ -149,6 +149,29 @@ describe PuavoRest::DeviceImages do
       images = get_images("?boot_server=#{ @boot1.puavoHostname }")
       assert_equal ["bootdeviceimage1", "ltspserverimage", "organisationimage"], images
     end
+  end
+
+  describe "thin boot image" do
+
+    before(:each) do
+      create_device(
+        :puavoDeviceBootImage => "thinbootimage",
+        :puavoHostname => "thin1",
+        :puavoDeviceType => "thinclient",
+        :macAddress => "00:60:2f:B2:8C:80",
+        :puavoSchool => @school1.dn
+      )
+    end
+
+    it "gets listed too" do
+      images = get_images
+      assert_equal ["bootdeviceimage1", "bootdeviceimage2", "organisationimage", "thinbootimage"], images
+    end
+
+    it "gets listed on filtered list too" do
+      images = get_images("?boot_server=#{ @boot1.puavoHostname }")
+      assert_equal ["bootdeviceimage1", "organisationimage", "thinbootimage"], images
+    end
 
   end
 
