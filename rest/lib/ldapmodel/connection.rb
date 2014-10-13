@@ -61,8 +61,12 @@ class LdapModel
         conn = dn_bind(credentials[:dn], credentials[:password])
       end
 
-    rescue LDAP::ResultError
-      raise BadCredentials, "Bad username/dn or password"
+    rescue LDAP::ResultError => err
+      if err.message == "Invalid credentials"
+        raise BadCredentials, "Bad username/dn or password"
+      else
+        raise LdapError, err.message
+      end
     end
 
     return conn

@@ -60,6 +60,12 @@ class BadCredentials < JSONError
   end
 end
 
+class LdapError < JSONError
+  def http_code
+    500
+  end
+end
+
 class KerberosError < JSONError
   def http_code
     401
