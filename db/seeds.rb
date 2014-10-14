@@ -377,14 +377,6 @@ role.save!
     :mail => "clark.kent@example.com"
   },
   {
-    :givenName => "Clark",
-    :sn  => "Kent",
-    :uid => "clark.kent",
-    :puavoEduPersonAffiliation => "admin",
-    :preferredLanguage => "fi",
-    :mail => "clark.kent@example.com"
-  },
-  {
     :givenName => "Peter",
     :sn  => "Parker",
     :uid => "peter.parker",
