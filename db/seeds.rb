@@ -299,7 +299,7 @@ end
 ##################################
 # Seeds for heroes.opinsys.net
 ##################################
-#
+
 authentication = Puavo::Authentication.new
 authentication.configure_ldap_connection({
     :dn => PUAVO_ETC.ldap_dn,

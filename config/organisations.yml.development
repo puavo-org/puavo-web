@@ -16,6 +16,15 @@ anotherorg:
   owner_pw: admin
   locale: en
 
+heroes:
+  name: Super Heroes Organisation
+  host: heroes.example.net
+  ldap_host: <%= @hostname %>
+  ldap_base: dc=edu,dc=anotherorg,dc=fi
+  owner: admin
+  owner_pw: admin
+  locale: en
+
 example2:
   name: Example Organisation
   host: 127.0.0.1
