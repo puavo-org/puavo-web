@@ -114,7 +114,7 @@ class User < LdapModel
 
   computed_attr :primary_school_id
   def primary_school_id
-    school.id
+    school.id if school
   end
 
   def schools
