@@ -18,6 +18,7 @@ sudo puavo-init-standalone --unsafe-passwords opinsys.net
 sudo puavo-add-new-organisation --yes hogwarts --username albus --password albus --given-name Albus --surname Dumbledore
 sudo puavo-add-new-organisation --yes example --username cucumber --password cucumber --given-name cucumber --surname cucumber
 sudo puavo-add-new-organisation --yes anotherorg --username admin --password admin --given-name Admin --surname Administrator
+sudo puavo-add-new-organisation --yes heroes --username admin --password admin --given-name Admin --surname Administrator
 
 puavo-build-debian-dir
 puavo-dch $version
