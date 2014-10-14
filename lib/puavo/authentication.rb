@@ -286,7 +286,11 @@ module Puavo
     end
 
     def current_organisation
-      Puavo::Organisation.find organisation_key
+      org = Puavo::Organisation.find(organisation_key)
+      if !org
+        raise "#{ organisation_key } not in organisations.yml"
+      end
+      org
     end
 
     def logger
