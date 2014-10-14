@@ -309,19 +309,19 @@ authentication.configure_ldap_connection({
 authentication.authenticate
 
 school = School.create(
-  :cn => "otherscool",
-  :displayName => "Other School"
+  :cn => "xavierinstitute",
+  :displayName => "Xavier Institute for Higher Learning"
 )
 school.save!
 
 group = Group.new
-group.cn = "group1"
-group.displayName = "Group 1"
+group.cn = "xmen"
+group.displayName = "X-Men"
 group.puavoSchool = school.dn
 group.save!
 
 role = Role.new
-role.displayName = "Some role"
+role.displayName = "Mutant"
 role.puavoSchool = school.dn
 role.groups << group
 role.save!
