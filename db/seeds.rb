@@ -229,8 +229,8 @@ end
 
 ##################################
 # Seeds for anotherorg.opinsys.net
+# Use only in tests
 ##################################
-
 
 authentication = Puavo::Authentication.new
 authentication.configure_ldap_connection({
@@ -284,6 +284,177 @@ role.save!
     :puavoEduPersonAffiliation => "admin",
     :preferredLanguage => "fi",
     :mail => "chuck.norris@example.com"
+  }
+].each do |attrs|
+  user = User.new(attrs)
+  user.set_password "secret"
+  user.puavoSchool = school.dn
+  user.role_ids = [role.puavoId]
+  user.save!
+  if user.puavoEduPersonAffiliation == "admin"
+    school.add_admin(user)
+  end
+end
+
+##################################
+# Seeds for heroes.opinsys.net
+##################################
+#
+authentication = Puavo::Authentication.new
+authentication.configure_ldap_connection({
+    :dn => PUAVO_ETC.ldap_dn,
+    :password => PUAVO_ETC.ldap_password,
+    :organisation_key => "heroes"
+})
+authentication.authenticate
+
+school = School.create(
+  :cn => "otherscool",
+  :displayName => "Other School"
+)
+school.save!
+
+group = Group.new
+group.cn = "group1"
+group.displayName = "Group 1"
+group.puavoSchool = school.dn
+group.save!
+
+role = Role.new
+role.displayName = "Some role"
+role.puavoSchool = school.dn
+role.groups << group
+role.save!
+
+
+[
+  {
+    :givenName => "Peter",
+    :sn  => "pan",
+    :uid => "peter.pan",
+    :puavoEduPersonAffiliation => "student",
+    :preferredLanguage => "en",
+    :mail => "pater.pan@example.com"
+  },
+  {
+    :givenName => "Jack",
+    :sn  => "Bauer",
+    :uid => "jack.bauer",
+    :puavoEduPersonAffiliation => "student",
+    :preferredLanguage => "en",
+    :mail => "jack@example.com"
+  },
+  {
+    :givenName => "Chuck",
+    :sn  => "Norris",
+    :uid => "chuck.norris",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "chuck.norris@example.com"
+  },
+  {
+    :givenName => "John",
+    :sn  => "Rambo",
+    :uid => "john.rambo",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "john.rambo@example.com"
+  },
+  {
+    :givenName => "James",
+    :sn  => "Bond",
+    :uid => "james.bond",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "james.bond@example.com"
+  },
+  {
+    :givenName => "Jason",
+    :sn  => "Bourne",
+    :uid => "jason.bourne",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "jason.bourne@example.com"
+  },
+  {
+    :givenName => "John",
+    :sn  => "McClane",
+    :uid => "john.mcclane",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "john.mcclane@example.com"
+  },
+  {
+    :givenName => "Bruce",
+    :sn  => "Wayne",
+    :uid => "bruce.wayne",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "bruce.wayne@example.com"
+  },
+  {
+    :givenName => "Clark",
+    :sn  => "Kent",
+    :uid => "clark.kent",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "clark.kent@example.com"
+  },
+  {
+    :givenName => "Clark",
+    :sn  => "Kent",
+    :uid => "clark.kent",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "clark.kent@example.com"
+  },
+  {
+    :givenName => "Peter",
+    :sn  => "Parker",
+    :uid => "peter.parker",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "peter.parker@example.com"
+  },
+  {
+    :givenName => "Han",
+    :sn  => "Solo",
+    :uid => "han.solo",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "han.solo@example.com"
+  },
+  {
+    :givenName => "Indiana",
+    :sn  => "Jones",
+    :uid => "indiana.jones",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "indiana.jones@example.com"
+  },
+  {
+    :givenName => "Max",
+    :sn  => "Payne",
+    :uid => "max.payne",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "max.payne@example.com"
+  },
+  {
+    :givenName => "Lara",
+    :sn  => "Croft",
+    :uid => "lara.croft",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "lara.croft@example.com"
+  },
+  {
+    :givenName => "Sarah",
+    :sn  => "Connor",
+    :uid => "sarah.connor",
+    :puavoEduPersonAffiliation => "admin",
+    :preferredLanguage => "fi",
+    :mail => "sarah.connor@example.com"
   }
 ].each do |attrs|
   user = User.new(attrs)

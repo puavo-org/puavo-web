@@ -64,6 +64,7 @@ Add testing organisations
 
     sudo puavo-add-new-organisation example --username cucumber --password cucumber --given-name cucumber --surname cucumber
     sudo puavo-add-new-organisation anotherorg --username admin --password admin --given-name Admin --surname Administrator
+    sudo puavo-add-new-organisation heroes --username admin --password admin --given-name Admin --surname Administrator
 
 and run the tests.
 
