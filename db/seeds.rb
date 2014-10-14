@@ -329,30 +329,6 @@ role.save!
 
 [
   {
-    :givenName => "Peter",
-    :sn  => "pan",
-    :uid => "peter.pan",
-    :puavoEduPersonAffiliation => "student",
-    :preferredLanguage => "en",
-    :mail => "pater.pan@example.com"
-  },
-  {
-    :givenName => "Jack",
-    :sn  => "Bauer",
-    :uid => "jack.bauer",
-    :puavoEduPersonAffiliation => "student",
-    :preferredLanguage => "en",
-    :mail => "jack@example.com"
-  },
-  {
-    :givenName => "Chuck",
-    :sn  => "Norris",
-    :uid => "chuck.norris",
-    :puavoEduPersonAffiliation => "admin",
-    :preferredLanguage => "fi",
-    :mail => "chuck.norris@example.com"
-  },
-  {
     :givenName => "John",
     :sn  => "Rambo",
     :uid => "john.rambo",
