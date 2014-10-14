@@ -286,9 +286,10 @@ module Puavo
     end
 
     def current_organisation
+      return if organisation_key.nil?
       org = Puavo::Organisation.find(organisation_key)
       if !org
-        raise "#{ organisation_key } not in organisations.yml"
+        raise "#{ organisation_key.inspect } not in organisations.yml"
       end
       org
     end
