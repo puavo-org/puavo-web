@@ -140,7 +140,8 @@ class SSO < LdapSinatra
       return render_form(t.sso.service_not_activated)
     end
 
-    jwt_data ={
+
+    jwt_data = user.to_hash_with_schools.merge({
       # Issued At
       "iat" => Time.now.to_i.to_s,
       # JWT ID
@@ -148,35 +149,9 @@ class SSO < LdapSinatra
 
       # use external_id like in Zendesk?
       # https://support.zendesk.com/entries/23675367
-      "dn" => user.dn,
-      "id" => user.id,
-      "username" => user.username,
-      "first_name" => user.first_name,
-      "last_name" => user.last_name,
-      "user_type" => user.user_type, # XXX: deprecated!
-      "email" => user.email,
-      "organisation_name" => user.organisation.name,
-      "organisation_domain" => user.organisation_domain,
-      "primary_school_id" => primary_school.id,
-      "schools" => user.schools.map do |school|
-        {
-          "id" => school.id,
-          "dn" => school.dn,
-          "name" => school.name,
-          "abbreviation" => school.abbreviation,
-          "roles" => user.roles_within_school(school),
-          "groups" => user.groups_within_school(school).map do |group|
-            {
-              "id" => group.id,
-              "dn" => group.dn,
-              "name" => group.name,
-              "abbreviation" => group.abbreviation
-            }
-          end
-        }
-      end,
+
       "external_service_path_prefix" => @external_service["prefix"]
-    }
+    })
 
     jwt = JWT.encode(jwt_data, @external_service["secret"])
     r = return_to

@@ -60,6 +60,11 @@ class BeforeFilters < LdapSinatra
       organisation = Organisation.default_organisation_domain!
     end
 
+    if organisation.nil?
+      logger.warn "Cannot to get organisation for hostname #{ request.host.to_s }"
+    end
+
+
     LdapModel.setup(
       :organisation => organisation,
       :rest_root => "#{ request.scheme }://#{ request.host }#{ port }"

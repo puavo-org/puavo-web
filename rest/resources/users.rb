@@ -95,6 +95,11 @@ class User < LdapModel
     organisation.domain
   end
 
+  computed_attr :organisation_name
+  def organisation_name
+    organisation.name
+  end
+
   computed_attr :school_dn
   def school_dn
     Array(school_dns).first
@@ -105,6 +110,11 @@ class User < LdapModel
     return @school if @school
     return if school_dn.nil?
     @school = School.by_dn(school_dn)
+  end
+
+  computed_attr :primary_school_id
+  def primary_school_id
+    school.id
   end
 
   def schools
@@ -166,6 +176,29 @@ class User < LdapModel
 
   def server_user?
     dn == CONFIG["server"][:dn]
+  end
+
+  def to_hash_with_schools
+    data = to_hash
+    data["schools"] = schools.map do |school|
+        {
+          "id" => school.id,
+          "dn" => school.dn,
+          "name" => school.name,
+          "abbreviation" => school.abbreviation,
+          "roles" => roles_within_school(school),
+          "groups" => groups_within_school(school).map do |group|
+            {
+              "id" => group.id,
+              "dn" => group.dn,
+              "name" => group.name,
+              "abbreviation" => group.abbreviation
+            }
+          end
+        }
+      end
+
+    return data
   end
 
   def self.current
@@ -231,7 +264,7 @@ class Users < LdapSinatra
 
   get "/v3/whoami" do
     auth :basic_auth, :kerberos
-    user = User.current.to_hash
+    user = User.current.to_hash_with_schools
     json user.merge("organisation" => LdapModel.organisation.to_hash)
   end
 
