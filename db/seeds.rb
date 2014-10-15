@@ -65,6 +65,13 @@ role.save!
     :mail => "matti@example.com"
   },
   {
+    :givenName => "Maija",
+    :sn  => "Meikäläinen",
+    :uid => "maija.meikalainen",
+    :puavoEduPersonAffiliation => "student",
+    :preferredLanguage => "fi"
+  },
+  {
     :givenName => "Opettaja",
     :sn  => "Opettajainen",
     :uid => "opettaja",
