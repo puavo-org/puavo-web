@@ -20,7 +20,7 @@ heroes:
   name: Super Heroes Organisation
   host: heroes.example.net
   ldap_host: <%= @hostname %>
-  ldap_base: dc=edu,dc=anotherorg,dc=fi
+  ldap_base: dc=edu,dc=heroes,dc=fi
   owner: admin
   owner_pw: admin
   locale: en
