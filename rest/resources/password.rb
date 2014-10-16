@@ -123,16 +123,6 @@ class Password < LdapSinatra
     json({ :status => 'successfully' })
   end
 
-  private
-
-  def language_by_locale(locale)
-    begin
-      locale.match(/^[a-z]{2}/)[0]
-    rescue NoMethodError
-      return "en"
-    end
-  end
-
 end
 end
 
