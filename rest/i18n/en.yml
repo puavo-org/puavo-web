@@ -24,3 +24,5 @@ password_management:
   message: "To change your password, paste the following link into your browser: %1"
   footer: The link will expire in 10 minutes, so be sure to use it right away.
   password_has_been_reset_message: You've successfully changed your Opinsys password.
+email_confirm:
+  subject: Confirm your email address
