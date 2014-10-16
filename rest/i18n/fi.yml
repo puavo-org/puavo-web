@@ -24,3 +24,9 @@ password_management:
   message: "Voit vaihtaa salasanasi seuraavan linkin avulla: %1"
   footer: Linkki on voimassa kymmenen (10) minuutin ajan.
   password_has_been_reset_message: Sinun salasanasi on juuri vaihdettu Opinsys-järjestelmään.
+email_confirm:
+  subject: Vahvista sähköpostiosoitteesi
+  hello: "Hei %1"
+  head: ""
+  message: "Vahvista sähköpostiosoitteesi seuraavan linkin avulla: %1"
+  footer: ""
