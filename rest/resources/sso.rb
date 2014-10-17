@@ -141,7 +141,7 @@ class SSO < LdapSinatra
     end
 
 
-    jwt_data = user.to_hash_with_schools.merge({
+    jwt_data = user.to_hash.merge({
       # Issued At
       "iat" => Time.now.to_i.to_s,
       # JWT ID

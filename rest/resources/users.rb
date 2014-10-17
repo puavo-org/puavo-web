@@ -178,8 +178,8 @@ class User < LdapModel
     dn == CONFIG["server"][:dn]
   end
 
-  def to_hash_with_schools
-    data = to_hash
+  def to_hash
+    data = super
     data["schools"] = schools.map do |school|
         {
           "id" => school.id,
@@ -264,7 +264,7 @@ class Users < LdapSinatra
 
   get "/v3/whoami" do
     auth :basic_auth, :kerberos
-    user = User.current.to_hash_with_schools
+    user = User.current.to_hash
     json user.merge("organisation" => LdapModel.organisation.to_hash)
   end
 

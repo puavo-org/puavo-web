@@ -93,6 +93,11 @@ describe PuavoRest::Users do
       assert_equal "bob@www.example.net", data["domain_username"]
       assert_equal "schoolhomepage.example", data["homepage"]
 
+      assert data["schools"], "has schools data added"
+      assert_equal(1, data["schools"].size)
+      assert(data["schools"].first["id"], "school data has id")
+      assert_equal("Gryffindor", data["schools"].first["name"])
+
       assert_equal "http://www.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 
       assert_equal "Europe/Helsinki", data["timezone"]
@@ -133,6 +138,9 @@ describe PuavoRest::Users do
       assert_equal ["bob@foobar.com", "bob@helloworld.com"], data["secondary_emails"]
       assert_equal "student", data["user_type"]
       assert_equal "http://www.example.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+
+      assert data["schools"], "has schools data added"
+      assert_equal(1, data["schools"].size)
     end
 
     describe "with language fallbacks" do
@@ -314,9 +322,12 @@ describe PuavoRest::Users do
 
       bob = data.select do |u|
         u["username"] == "bob"
-      end
+      end.first
 
-      assert_equal 1, bob.size
+      assert bob
+
+      assert bob["schools"], "has schools data added"
+      assert_equal(1, bob["schools"].size)
     end
 
     it "can find bob with a partial match" do
@@ -330,7 +341,6 @@ describe PuavoRest::Users do
       end
 
       assert_equal 1, bob.size
-
     end
 
     it "can all alices" do
