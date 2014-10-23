@@ -105,6 +105,13 @@ class Organisation < LdapModel
       end
   end
 
+  computed_attr :owners
+  def owners
+    Array( get_own(:owner) ).select{ |o| o.to_s.match(/#{self.base}$/) }.map do |owner_dn|
+      User.by_dn(owner_dn)
+    end
+  end
+
 end
 
 

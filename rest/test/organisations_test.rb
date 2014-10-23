@@ -31,10 +31,20 @@ describe PuavoRest::Organisations do
     get "/v3/organisations"
     assert_200
     data = JSON.parse(last_response.body)
+
     assert(
       !data.select{ |o| o["domain"] == "www.example.net" }.empty?,
       "Has www.example.net"
     )
+  end
+
+  it "can be fetched current organisation" do
+    basic_authorize "cucumber", "cucumber"
+    get "/v3/current_organisation"
+    assert_200
+    data = JSON.parse(last_response.body)
+    assert_equal "www.example.net", data["domain"]
+    assert_equal "cucumber", data["owners"][0]["username"]
   end
 
   it "cannot be fetched by normal user" do
