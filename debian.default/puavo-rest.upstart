@@ -6,6 +6,11 @@ stop on shutdown
 pre-start script
     mkdir -p /run/puavo-rest
     chown puavo:puavo /run/puavo-rest
+
+    # ruby-uuid creates this file and it breaks puavo-rest if it is owned by
+    # some other user. This can happen when puavo-rest is run by a development
+    # user
+    chown puavo:puavo /tmp/ruby-uuid || true
 end script
 
 chdir /var/app/puavo-rest
