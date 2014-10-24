@@ -46,6 +46,7 @@ owner_uid = ask("Username for new owner user:")
 owner_password = ask("Password: ")
 owner_given_name = ask("Given name: ")
 owner_surname = ask("Surname: ")
+owner_ssh_public_key = ask("Public key: ")
 
 databases.each do |database|
   # Skip o=puavo database
@@ -81,6 +82,7 @@ databases.each do |database|
     user.role_name = role.displayName
     user.puavoSchool = school.dn
     user.puavoEduPersonAffiliation = "admin"
+    user.puavoSshPublicKey = owner_ssh_public_key
     user.save!
   end
 
