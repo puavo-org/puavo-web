@@ -135,7 +135,7 @@ class Organisations < LdapSinatra
 
   get "/v3/organisations" do
     auth :basic_auth, :kerberos
-    require_admin!
+    require_admin_or_not_people!
 
     LdapModel.setup(:credentials => CONFIG["server"]) do
       json Organisation.all
@@ -151,7 +151,7 @@ class Organisations < LdapSinatra
 
   get "/v3/organisations/:domain" do
     auth :basic_auth, :kerberos
-    require_admin!
+    require_admin_or_not_people!
 
     json Organisation.by_domain(params[:domain])
   end
