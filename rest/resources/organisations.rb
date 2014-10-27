@@ -127,6 +127,12 @@ class Organisations < LdapSinatra
     end
   end
 
+  def require_admin_or_not_people!
+    return if not LdapModel.settings[:credentials][:dn].to_s.downcase.match(/people/)
+
+    require_admin!
+  end
+
   get "/v3/organisations" do
     auth :basic_auth, :kerberos
     require_admin!
@@ -138,7 +144,7 @@ class Organisations < LdapSinatra
 
   get "/v3/current_organisation" do
     auth :basic_auth, :kerberos
-    require_admin!
+    require_admin_or_not_people!
 
     json Organisation.current
   end

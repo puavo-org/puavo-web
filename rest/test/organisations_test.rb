@@ -24,6 +24,18 @@ describe PuavoRest::Organisations do
       Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
     ]
     @user.save!
+
+    @server1 = Server.new
+    @server1.attributes = {
+      :puavoHostname => "server1",
+      :macAddress => "bc:5f:f4:56:59:71",
+      :puavoSchool => @school.dn,
+      :puavoTag => ["servertag"],
+      :puavoDeviceType => "bootserver",
+      :userPassword => "secret"
+    }
+    @server1.save!
+
   end
 
   it "can be fetched by admin" do
@@ -36,6 +48,15 @@ describe PuavoRest::Organisations do
       !data.select{ |o| o["domain"] == "www.example.net" }.empty?,
       "Has www.example.net"
     )
+  end
+
+  it "can be fetched by bootserver" do
+    basic_authorize @server1.dn, "secret"
+    get "/v3/current_organisation"
+    assert_200
+    data = JSON.parse(last_response.body)
+    assert_equal "www.example.net", data["domain"]
+    assert_equal "cucumber", data["owners"][0]["username"]
   end
 
   it "can be fetched current organisation" do
