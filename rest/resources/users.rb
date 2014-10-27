@@ -23,6 +23,7 @@ class User < LdapModel
   ldap_map :puavoLocale, :locale
   ldap_map :puavoTimezone, :timezone
   ldap_map :puavoLocked, :locked, &LdapConverters.string_boolean
+  ldap_map :puavoSshPublicKey, :ssh_public_key
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on

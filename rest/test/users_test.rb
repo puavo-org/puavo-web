@@ -32,7 +32,8 @@ describe PuavoRest::Users do
       :puavoEduPersonAffiliation => "student",
       :puavoLocale => "en_US.UTF-8",
       :mail => ["bob@example.com", "bob@foobar.com", "bob@helloworld.com"],
-      :role_ids => [@role.puavoId]
+      :role_ids => [@role.puavoId],
+      :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf"
     )
 
     @user.set_password "secret"
@@ -124,6 +125,17 @@ describe PuavoRest::Users do
   end
 
   describe "GET /v3/users/bob" do
+
+    it "organisation owner can see ssh_public_key of bob" do
+      basic_authorize "cucumber", "cucumber"
+      get "/v3/users/bob"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "bob", data["username"]
+      assert_equal "Bob", data["first_name"]
+      assert_equal "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf", data["ssh_public_key"]
+    end
 
     it "returns user data" do
       basic_authorize "bob", "secret"
