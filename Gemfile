@@ -28,7 +28,7 @@ group :test do
   gem "debugger"
   gem "greenletters"
   gem "rbtrace"
-  gem "rspec"
+  gem "rspec", "~> 2.14.1"
   gem "rspec-rails"
   gem "ruby-prof"
   gem "timecop"
