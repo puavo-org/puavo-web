@@ -32,7 +32,17 @@
         <% end %>
     </label>
 
-    <input placeholder="<%= t.sso.password %>" type="password" <%= params["password"].to_s.empty? || "autofocus" %> name="password" required>
+    <input
+      name="password"
+      placeholder="<%= t.sso.password %>"
+
+      <%# Use plaintext password input for handheld devices if the user login
+        does not succeed at the first time %>
+      type="<%= invalid_credentials? && handheld? ? "text" : "password" %>"
+
+      <%= invalid_credentials? && "autofocus" %>
+
+      required>
     <input type="submit" value="<%= t.sso.login %>" class="submit">
     </fieldset>
   </form>

@@ -170,6 +170,14 @@ class SSO < LdapSinatra
     respond_auth
   end
 
+  def invalid_credentials?
+    env["REQUEST_METHOD"] == "POST" && !params["password"].to_s.empty?
+  end
+
+  def handheld?
+    browser.ios? || browser.android? || browser.nokia? || browser.rim?
+  end
+
   def render_form(error_message, err=nil)
     if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
