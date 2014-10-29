@@ -1,4 +1,5 @@
 require_relative "./lib/error_codes"
+require "sinatra/support"
 require_relative "./auth"
 
 module PuavoRest
@@ -6,6 +7,7 @@ module PuavoRest
 # Abstract Sinatra base class which add ldap connection to instance scope
 class LdapSinatra < Sinatra::Base
   helpers Sinatra::JSON
+  helpers Sinatra::UserAgentHelpers
   set :json_encoder, :to_json
   set :show_exceptions, false
   set :dump_errors, false

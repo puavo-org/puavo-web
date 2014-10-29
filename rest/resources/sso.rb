@@ -187,6 +187,13 @@ class SSO < LdapSinatra
 
     @external_service ||= fetch_external_service
     @organisation = preferred_organisation
+
+    if !(browser.linux? && browser.gecko?)
+      # Kerberos authentication works only on Opinsys desktops with Firefox.
+      # Disable authentication negotiation on others since it  may cause
+      # unwanted basic auth popups (at least Chrome & IE @ Windows).
+      response.headers.delete("WWW-Authenticate")
+    end
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
 
