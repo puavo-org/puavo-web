@@ -3,12 +3,9 @@ require_relative "../lib/fluent"
 
 describe PuavoRest::FluentRelay do
 
-  before do
+  before(:each) do
     Puavo::Test.clean_up_ldap
     create_basic_data
-  end
-
-  before(:each) do
     PuavoRest::FluentRelay.fluent_logger = MockFluent.new
   end
 
