@@ -10,6 +10,7 @@ gem "debugger"
 gem "fluent-logger", "~> 0.4.3"
 gem "gibberish"
 gem "http"
+gem "sinatra-support", require: "sinatra/support"
 
 
 group :assets do

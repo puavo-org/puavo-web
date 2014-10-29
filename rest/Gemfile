@@ -28,6 +28,7 @@ gem "icalendar", "~> 1.5.0"
 gem "httparty"
 gem "pony"
 gem "gibberish"
+gem "sinatra-support", :require => "sinatra/support"
 
 group :test do
   gem "shotgun"
