@@ -22,7 +22,8 @@
           type="text"
           name="username"
           value="<%= params["username"] %>"
-          autofocus required>
+          <%= params["username"].to_s.empty? && "autofocus" %>
+          required>
         <% if @organisation %>
           <span class="organisation-prefill"
             title="<%= @organisation["name"] %>"
@@ -31,7 +32,7 @@
         <% end %>
     </label>
 
-    <input placeholder="<%= t.sso.password %>" type="password" value="<%= params["password"] %>" name="password" required>
+    <input placeholder="<%= t.sso.password %>" type="password" <%= params["password"].to_s.empty? || "autofocus" %> name="password" required>
     <input type="submit" value="<%= t.sso.login %>" class="submit">
     </fieldset>
   </form>
