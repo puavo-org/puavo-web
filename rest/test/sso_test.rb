@@ -84,14 +84,31 @@ describe PuavoRest::SSO do
   it "adds 'WWW-Authenticate: Negotiate' for requests without credentials" do
     url = Addressable::URI.parse("/v3/sso")
     url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
-    get url.to_s
+
+    get url.to_s, {}, {
+      # Only firefox on linux will get the negotiate request
+      "HTTP_USER_AGENT" => "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
+    }
+
+    # This is required for the Kerberos-GSSAPI based authentication for Firefox.
+    # Without this header firefox will never send the kerberos ticket.
     assert_equal(
       "Negotiate",
       last_response.headers["WWW-Authenticate"],
       "WWW-Authenticate: Negotiate must be present on the login page request"
     )
-    # This is required for the Kerberos-GSSAPI based authentication for Firefox.
-    # Without this header firefox will never send the kerberos ticket.
+
+    assert_equal 401, last_response.status
+  end
+
+  it "'WWW-Authenticate: Negotiate' is not added for others" do
+    url = Addressable::URI.parse("/v3/sso")
+    url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
+
+    get url.to_s
+
+    assert(!last_response.headers["WWW-Authenticate"])
+    assert_equal 401, last_response.status
   end
 
   describe "roles in jwt" do
