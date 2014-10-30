@@ -9,11 +9,10 @@ RAILS_CONFIG_DIR = $(INSTALL_DIR)/config
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 
-build:
+build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	npm install --registry http://registry.npmjs.org # nib for stylys
-	bundle exec rake puavo:configuration
 	bundle exec rake assets:precompile
 	$(MAKE) tags
 
@@ -79,33 +78,28 @@ install: clean-for-install mkdirs
 		$(INSTALL_DIR)
 
 	cp -r rest/lib $(INSTALL_DIR)/rest
+	cp $(RAILS_CONFIG_DIR)/services.yml.example $(CONF_DIR)/services.yml
+	cp $(RAILS_CONFIG_DIR)/organisations.yml.development $(CONF_DIR)/organisations.yml
+	cp $(RAILS_CONFIG_DIR)/ldap.yml.development $(CONF_DIR)/ldap.yml
+	cp $(RAILS_CONFIG_DIR)/redis.yml.development $(CONF_DIR)/redis.yml
+	cp $(RAILS_CONFIG_DIR)/puavo_devices.yml.development $(CONF_DIR)/puavo_devices.yml
+	cp $(RAILS_CONFIG_DIR)/unicorn.rb.example $(CONF_DIR)/unicorn.rb
+	cp $(RAILS_CONFIG_DIR)/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
 
-	cp config/services.yml.example $(CONF_DIR)/services.yml
-	ln -s ../../../../etc/puavo-web/services.yml $(RAILS_CONFIG_DIR)/services.yml
-
-	cp config/organisations.yml.development $(CONF_DIR)/organisations.yml
-	ln -s ../../../../etc/puavo-web/organisations.yml $(RAILS_CONFIG_DIR)/organisations.yml
-
-	cp config/ldap.yml.development $(CONF_DIR)/ldap.yml
-	ln -s ../../../../etc/puavo-web/ldap.yml $(RAILS_CONFIG_DIR)/ldap.yml
-
-	cp config/redis.yml.development $(CONF_DIR)/redis.yml
-	ln -s ../../../../etc/puavo-web/redis.yml $(RAILS_CONFIG_DIR)/redis.yml
-
-	cp config/puavo_devices.yml.development $(CONF_DIR)/puavo_devices.yml
-	ln -s ../../../../etc/puavo-web/puavo_devices.yml $(RAILS_CONFIG_DIR)/puavo_devices.yml
-
-	cp config/unicorn.rb.example $(CONF_DIR)/unicorn.rb
-	ln -s ../../../../etc/puavo-web/unicorn.rb $(RAILS_CONFIG_DIR)/unicorn.rb
-
-	cp config/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
-	ln -s ../../../../etc/puavo-web/puavo_external_files.yml $(RAILS_CONFIG_DIR)/puavo_external_files.yml
-
-	ln -s ../../../../../etc/puavo-web/secret_token.rb $(RAILS_CONFIG_DIR)/initializers/secret_token.rb
 
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-owner
+
+symlink-config:
+	ln -sf /etc/puavo-web/ldap.yml config/ldap.yml
+	ln -sf /etc/puavo-web/organisations.yml config/organisations.yml
+	ln -sf /etc/puavo-web/puavo_devices.yml config/puavo_devices.yml
+	ln -sf /etc/puavo-web/puavo_external_files.yml config/puavo_external_files.yml
+	ln -sf /etc/puavo-web/redis.yml config/redis.yml
+	ln -sf /etc/puavo-web/secret_token.rb config/initializers/secret_token.rb
+	ln -sf /etc/puavo-web/services.yml config/services.yml
+	ln -sf /etc/puavo-web/unicorn.rb config/unicorn.rb
 
 .PHONY: tags
 tags:
@@ -127,3 +121,14 @@ test:
 
 seed:
 	bundle exec rails runner db/seeds.rb
+
+
+install-build-dep:
+	mk-build-deps --install debian.default/control \
+		--tool "apt-get --yes --force-yes" --remove
+
+deb:
+	rm -rf debian
+	cp -a debian.default debian
+	puavo-dch $(shell cat VERSION)
+	dpkg-buildpackage -us -uc
