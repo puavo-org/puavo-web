@@ -3,27 +3,18 @@
 set -x
 set -eu
 
-version="$(cat VERSION)"
-
 sudo apt-get update
+sudo apt-get install wget
 
-sudo apt-get install -y --force-yes puavo-standalone ruby1.9.1 ruby1.9.1-dev libxml2-dev libxslt-dev libsqlite3-dev libmagickwand-dev ldap-utils libpq-dev libssl-dev build-essential libopenssl-ruby xpdf-utils git libreadline6-dev libxml2-dev libxslt1-dev libpq-dev libmagickwand-dev libsqlite3-dev ruby-bundler puavo-client nodejs-bundle puavo-ca-rails redis-server aptirepo-upload puavo-devscripts
+# Apply puavo-standalone Ansible rules
+wget -qO - https://github.com/opinsys/puavo-standalone/raw/master/setup.sh | sudo sh
 
-# fluentd does not work on standalone installations yet because it's not a
-# puavo managed installation. It also might cause log forwarding loops.
-sudo stop fluentd || true
 
-sudo puavo-init-standalone --unsafe-passwords opinsys.net
+# Install build dependencies
+sudo make install-build-dep
 
-sudo puavo-add-new-organisation --yes hogwarts --username albus --password albus --given-name Albus --surname Dumbledore
-sudo puavo-add-new-organisation --yes example --username cucumber --password cucumber --given-name cucumber --surname cucumber
-sudo puavo-add-new-organisation --yes anotherorg --username admin --password admin --given-name Admin --surname Administrator
-sudo puavo-add-new-organisation --yes heroes --username admin --password admin --given-name Admin --surname Administrator
-
-puavo-build-debian-dir
-puavo-dch $version
-sudo puavo-install-deps debian/control
-puavo-debuild
+# Build debian package
+make deb
 
 sudo script/test-install.sh
 
