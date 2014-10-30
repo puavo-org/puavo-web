@@ -3,6 +3,7 @@
 set -x
 set -eu
 
+sudo apt-get update
 sudo apt-get install wget
 
 # Apply puavo-standalone Ansible rules
