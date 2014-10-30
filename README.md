@@ -56,3 +56,4 @@ or with a reloading server
 Access model console
 
     bundle exec scripts/puavo-rest-prompt.rb
+
