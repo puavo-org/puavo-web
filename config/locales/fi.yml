@@ -270,6 +270,13 @@ fi:
     successfully:
       send_token: Olemme lähettäneet sinulle sähköpostilla linkin, jonka kautta voit vaihtaa salasanasi.
       update: Salasanan vaihto onnistui!
+  email_confirm:
+    preview:
+      title: Vahvista sähköpostiosoitteesi
+      description: 
+      confirm: Vahvista
+    successfully:
+      info: Sähköpostiosoitteesi on vahvistettu
   organisations:
     show:
       title: Organisaation tiedot

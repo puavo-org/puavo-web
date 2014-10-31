@@ -27,6 +27,9 @@ module NavigationHelpers
       forgot_password_path
     when /the own password change by token page/
       reset_password_path(@jwt)
+
+    when /the email confirm page/
+      preview_email_confirm_path(@jwt)
       
     when /the new organisation page/
       new_organisation_path

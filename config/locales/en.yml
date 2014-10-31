@@ -273,6 +273,13 @@ en:
     successfully:
       send_token: We've sent you an email that will allow you to reset your password.
       update: Your password has been reset successfully!
+  email_confirm:
+    preview:
+      title: Confirm your email address
+      description: 
+      confirm: Confirm
+    successfully:
+      info: Your email address has been confirmed
   organisations:
     show:
       title: Information of organisation
