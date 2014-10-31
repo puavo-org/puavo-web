@@ -70,7 +70,7 @@ install: clean-for-install mkdirs
 		package.json \
 		public \
 		Rakefile \
-		README.rdoc \
+		README.md \
 		script \
 		vendor \
 		.bundle \
