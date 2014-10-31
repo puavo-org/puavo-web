@@ -1,7 +1,6 @@
 require "user_error"
 
 module Puavo
-  mattr_accessor :locales
 
   class AuthenticationError < UserError
     def code

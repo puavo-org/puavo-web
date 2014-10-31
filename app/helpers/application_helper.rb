@@ -87,7 +87,7 @@ module ApplicationHelper
   def locales_for_select
     for_select = []
     for_select.push([t('language_default'), ""])
-    Puavo.locales.each do |locale|
+    Puavo::CONFIG["locales"].each do |locale|
       language, character_encoding = locale.split(".")
       for_select.push( [t("language_#{language}"), language + ".UTF-8"] )
      end
