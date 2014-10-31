@@ -24,12 +24,6 @@ clean-for-install:
 	# Remove testing gems
 	bundle install --deployment --without test
 	bundle clean
-
-	# Do not put development secrets in to the package
-	rm -f config/initializers/secret_token.rb
-
-	# Remove any testing or development configuration files
-	rm -f config/*.yml
 	rm -f config/*.sqlite3
 
 clean-assets:
