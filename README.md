@@ -1,7 +1,7 @@
 
 # puavo-web & puavo-rest
 
-Web interface and api server on top of OpenLDAP with [Puavo
+Web interface and RESTful API server on top of OpenLDAP with [Puavo
 schemas](https://github.com/opinsys/puavo-ds)
 
 ## Hacking
