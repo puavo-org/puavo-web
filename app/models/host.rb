@@ -6,7 +6,7 @@ class Host < DeviceBase
   # Generate new Hash by configuration. Key: Host type, value: list of the object classes
   # Example:
   # { "thinclient" => "puavoNetbootDevice" }
-  @@objectClass_by_device_type = Puavo::DEVICE_CONFIG['device_types'].inject({}) do |result, type|
+  @@objectClass_by_device_type = Puavo::CONFIG['device_types'].inject({}) do |result, type|
     result[type.first] = type.last["classes"]
     result
   end
@@ -34,7 +34,7 @@ class Host < DeviceBase
 
   def self.types(boottype, current_user)
     # Create deep copy of any device_types configuration.
-    type_list = Marshal.load( Marshal.dump(Puavo::DEVICE_CONFIG['device_types']) )
+    type_list = Marshal.load( Marshal.dump(Puavo::CONFIG['device_types']) )
 
     # Filter device_type by params[:boottype]
     case boottype

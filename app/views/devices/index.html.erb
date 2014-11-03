@@ -15,7 +15,7 @@
 <% @devices.each do |device| %>
   <tr>
     <td data-title="<%= t('activeldap.attributes.device.puavoHostname') %>"><%= link_to device.puavoHostname, device_path(@school, device) %></td>
-    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceType') %>"><%=h Puavo::DEVICE_CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
+    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceType') %>"><%=h Puavo::CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
     <td
       data-title="<%= t('activeldap.attributes.device.puavoDeviceManufacturer') %>"
       title="<%=h device.puavoDeviceModel %>"

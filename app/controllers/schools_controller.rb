@@ -24,11 +24,11 @@ class SchoolsController < ApplicationController
   def show
     @school = School.find(params[:id])
 
-    unless Puavo::DEVICE_CONFIG.nil?
+    unless Puavo::CONFIG.nil?
       @devices_by_type = Device.search_as_utf8( :filter => "(puavoSchool=#{@school.dn})",
                                         :scope => :one,
                                         :attributes => ['puavoDeviceType'] ).inject({}) do |result, device|
-        device_type = Puavo::DEVICE_CONFIG["device_types"][device.last["puavoDeviceType"].first]["label"][I18n.locale.to_s] 
+        device_type = Puavo::CONFIG["device_types"][device.last["puavoDeviceType"].first]["label"][I18n.locale.to_s] 
         result[device_type] = result[device_type].to_i + 1
         result
       end

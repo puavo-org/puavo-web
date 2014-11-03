@@ -28,13 +28,13 @@ module DevicesHelper
   end
 
   def is_device_change_allowed(form)
-    Puavo::DEVICE_CONFIG['allow_change_device_types'].include?(form.object.puavoDeviceType)
+    Puavo::CONFIG['allow_change_device_types'].include?(form.object.puavoDeviceType)
   end
 
   def device_type(form)
-    device_types = Puavo::DEVICE_CONFIG['allow_change_device_types']
+    device_types = Puavo::CONFIG['allow_change_device_types']
     form.select( :puavoDeviceType,
-                 device_types.map{ |d| [Puavo::DEVICE_CONFIG['device_types'][d]['label'][I18n.locale.to_s], d] } )
+                 device_types.map{ |d| [Puavo::CONFIG['device_types'][d]['label'][I18n.locale.to_s], d] } )
   end
 
   def model_name_from_ppd(ppd)

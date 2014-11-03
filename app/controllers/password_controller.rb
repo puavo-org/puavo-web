@@ -210,10 +210,10 @@ class PasswordController < ApplicationController
 
   def password_management_host
     url = "http://" +
-      Puavo::DEVICE_CONFIG["password_management"]["host"]
+      Puavo::CONFIG["password_management"]["host"]
 
-    if Puavo::DEVICE_CONFIG["password_management"]["port"]
-      url += ":" + Puavo::DEVICE_CONFIG["password_management"]["port"].to_s
+    if Puavo::CONFIG["password_management"]["port"]
+      url += ":" + Puavo::CONFIG["password_management"]["port"].to_s
     end
 
     return url
