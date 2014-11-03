@@ -76,7 +76,7 @@ install: clean-for-install mkdirs
 	cp $(RAILS_CONFIG_DIR)/organisations.yml.development $(CONF_DIR)/organisations.yml
 	cp $(RAILS_CONFIG_DIR)/ldap.yml.development $(CONF_DIR)/ldap.yml
 	cp $(RAILS_CONFIG_DIR)/redis.yml.development $(CONF_DIR)/redis.yml
-	cp $(RAILS_CONFIG_DIR)/puavo_devices.yml.development $(CONF_DIR)/puavo_devices.yml
+	cp $(RAILS_CONFIG_DIR)/puavo_web.yml.development $(CONF_DIR)/puavo_web.yml
 	cp $(RAILS_CONFIG_DIR)/unicorn.rb.example $(CONF_DIR)/unicorn.rb
 	cp $(RAILS_CONFIG_DIR)/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
 
@@ -88,7 +88,7 @@ install: clean-for-install mkdirs
 symlink-config:
 	ln -sf /etc/puavo-web/ldap.yml config/ldap.yml
 	ln -sf /etc/puavo-web/organisations.yml config/organisations.yml
-	ln -sf /etc/puavo-web/puavo_devices.yml config/puavo_devices.yml
+	ln -sf /etc/puavo-web/puavo_web.yml config/puavo_web.yml
 	ln -sf /etc/puavo-web/puavo_external_files.yml config/puavo_external_files.yml
 	ln -sf /etc/puavo-web/redis.yml config/redis.yml
 	ln -sf /etc/puavo-web/secret_token.rb config/initializers/secret_token.rb
