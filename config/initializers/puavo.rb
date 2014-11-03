@@ -4,7 +4,7 @@ Puavo::EXTERNAL_LINKS = YAML.load_file("#{Rails.root}/config/puavo_external_link
 
 Puavo::EXTERNAL_FILES = YAML.load_file("#{Rails.root}/config/puavo_external_files.yml") rescue nil
 
-Puavo::CONFIG = YAML.load_file("#{Rails.root}/config/puavo-web.yml")
+Puavo::CONFIG = YAML.load_file("#{Rails.root}/config/puavo_web.yml")
 
 begin
   Puavo::SERVICES = YAML.load_file("#{Rails.root}/config/services.yml")
