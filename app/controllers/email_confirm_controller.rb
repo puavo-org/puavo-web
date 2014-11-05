@@ -29,9 +29,8 @@ class EmailConfirmController < ApplicationController
       end
 
     rescue Puavo::AuthenticationFailed
-      # invalid password, redirect?
       # FIXME redirect to the main page. Show "Invalid password" message
-      render :error
+      redirect_to( preview_email_confirm_path(params[:jwt]) )
     rescue ActiveLdap::LdapError::TypeOrValueExists
       # email address already exists
       render :error

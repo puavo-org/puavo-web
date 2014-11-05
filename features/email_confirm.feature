@@ -17,3 +17,13 @@ Feature: Confirm email address
     When I fill in "Password" with "bensecret"
     And I press "Confirm"
     Then I should see "Your email address has been confirmed"
+
+  Scenario: Confirm email address when first login failed
+    Given generate new email confirm token for user "ben" with "ben@example.com"
+    When I am on the email confirm page
+    When I fill in "Password" with "invalid bensecret"
+    And I press "Confirm"
+    And I should see "Confirm your email address"
+    When I fill in "Password" with "bensecret"
+    And I press "Confirm"
+    Then I should see "Your email address has been confirmed"
