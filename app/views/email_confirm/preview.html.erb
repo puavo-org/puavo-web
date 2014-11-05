@@ -6,6 +6,8 @@
 
 <%= form_for(:email_confirm, :url => confirm_email_path, :html => { :method => :put })  do |f| %>
 
+<%= hidden_field_tag :jwt, params[:jwt] %>
+
 <table>
 <tr>
   <td><%= label :email_confirm, :password, t('activeldap.attributes.user.password') %></td>
