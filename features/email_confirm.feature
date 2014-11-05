@@ -21,7 +21,7 @@ Feature: Confirm email address
   Scenario: Confirm email address when first login failed
     Given generate new email confirm token for user "ben" with "ben@example.com"
     When I am on the email confirm page
-    When I fill in "Password" with "invalid bensecret"
+    And I fill in "Password" with "invalid bensecret"
     And I press "Confirm"
     Then I should see "Login failed! Please check your password."
     And I should see "Confirm your email address"
