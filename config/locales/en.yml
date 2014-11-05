@@ -282,6 +282,8 @@ en:
       confirm: Confirm
     successfully:
       info: Your email address has been confirmed
+    error:
+      email_already_exists: "Email address already exists!"
   organisations:
     show:
       title: Information of organisation

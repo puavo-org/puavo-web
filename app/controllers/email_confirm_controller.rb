@@ -32,7 +32,7 @@ class EmailConfirmController < ApplicationController
       flash[:notice] = t('flash.email_confirm.invalid_password')
       redirect_to( preview_email_confirm_path(params[:jwt]) )
     rescue ActiveLdap::LdapError::TypeOrValueExists
-      # email address already exists
+      @message_key = ".email_already_exists"
       render :error
     rescue JWT::DecodeError
       # invalid jwt token

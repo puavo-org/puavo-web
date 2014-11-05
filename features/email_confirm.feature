@@ -6,8 +6,8 @@ Feature: Confirm email address
     | displayName |
     | Students    |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey  | ben   | bensecret | true         | Students  | Student                   |
+      | givenName | sn    | uid | password  | school_admin | role_name | puavoEduPersonAffiliation | mail           |
+      | Ben       | Mabey | ben | bensecret | true         | Students  | Student                   | ben@foobar.com |
 
 
   Scenario: Confirm email address
@@ -28,3 +28,10 @@ Feature: Confirm email address
     When I fill in "Password" with "bensecret"
     And I press "Confirm"
     Then I should see "Your email address has been confirmed"
+
+  Scenario: Email address alredy exists
+    Given generate new email confirm token for user "ben" with "ben@foobar.com"
+    When I am on the email confirm page
+    And I fill in "Password" with "bensecret"
+    And I press "Confirm"
+    Then I should see "Email address already exists!"
