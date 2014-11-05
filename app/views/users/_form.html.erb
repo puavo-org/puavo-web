@@ -15,14 +15,14 @@
       <td><%= f.text_field :uid %></td>
     </tr>
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :mail %></td>
+      <td class="label_for_input_text_list"><%= f.label :mail, :for => "user_mail_0" %></td>
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
-        <input name='user[mail][]' type='text' />
+        <input name='user[mail][]' type='text' id='user_mail_0' />
       <% else %>
         <% Array(@user.mail).each_index do |index| %>
-          <input name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
+          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
         <% end %>
       <% end %>
     </div>

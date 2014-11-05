@@ -135,12 +135,12 @@ Feature: Manage users
     | Class 6B    | class6b |
     And I am on the edit user page with "ben"
     When I fill in the following:
-    | Surname    | MabeyEDIT |
-    | Given name | BenEDIT   |
-    | Username   | ben-edit   |
+    | Surname    | MabeyEDIT       |
+    | Given name | BenEDIT         |
+    | Username   | ben-edit        |
+    | Email      | ben@example.com |
 #   | Uid number                 |           |
 #   | Home directory             |           |
-#   | Email                      |           |
 #   | Telephone number           |           |
 #   | puavoEduPersonEntryYear    |           |
 #   | puavoEduPersonEmailEnabled |           |
@@ -152,12 +152,13 @@ Feature: Manage users
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Update"
     Then I should see the following:
-    |           |
-    | MabeyEDIT |
-    | BenEDIT   |
-    | ben-edit   |
-    | Staff     |
-    | Visitor |
+    |                 |
+    | MabeyEDIT       |
+    | BenEDIT         |
+    | ben-edit        |
+    | Staff           |
+    | Visitor         |
+    | ben@example.com |
     And I should see "Class 4" on the "Groups by roles"
     And I should see image of "ben-edit"
     And the memberUid should include "ben-edit" on the "Class 4" group
