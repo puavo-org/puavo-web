@@ -128,6 +128,8 @@ en:
       updated: Printer was successfully updated
     devices:
       school_changed: Device school has been changed!
+    email_confirm:
+      invalid_password: Login failed! Please check your password.
   roles:
     index:
       actions: Actions

@@ -23,6 +23,7 @@ Feature: Confirm email address
     When I am on the email confirm page
     When I fill in "Password" with "invalid bensecret"
     And I press "Confirm"
+    Then I should see "Login failed! Please check your password."
     And I should see "Confirm your email address"
     When I fill in "Password" with "bensecret"
     And I press "Confirm"
