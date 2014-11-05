@@ -11,7 +11,7 @@ Feature: Confirm email address
 
 
   Scenario: Confirm email address
-    Given generate new email confirm token for user "ben" with "ben@example.com"
+    Given generate new email confirm token for user "ben" with "ben@example.com" with secret "secret"
     When I am on the email confirm page
     Then I should see "Confirm your email address"
     When I fill in "Password" with "bensecret"
@@ -19,7 +19,7 @@ Feature: Confirm email address
     Then I should see "Your email address has been confirmed"
 
   Scenario: Confirm email address when first login failed
-    Given generate new email confirm token for user "ben" with "ben@example.com"
+    Given generate new email confirm token for user "ben" with "ben@example.com" with secret "secret"
     When I am on the email confirm page
     And I fill in "Password" with "invalid bensecret"
     And I press "Confirm"
@@ -30,8 +30,15 @@ Feature: Confirm email address
     Then I should see "Your email address has been confirmed"
 
   Scenario: Email address alredy exists
-    Given generate new email confirm token for user "ben" with "ben@foobar.com"
+    Given generate new email confirm token for user "ben" with "ben@foobar.com" with secret "secret"
     When I am on the email confirm page
     And I fill in "Password" with "bensecret"
     And I press "Confirm"
     Then I should see "Email address already exists!"
+
+  Scenario: Invalid JWT token
+    Given generate new email confirm token for user "ben" with "ben@example.com" with secret "BROKEN"
+    When I am on the email confirm page
+    And I fill in "Password" with "bensecret"
+    And I press "Confirm"
+    Then I should see "Invalid JWT token"

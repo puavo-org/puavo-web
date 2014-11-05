@@ -35,7 +35,7 @@ class EmailConfirmController < ApplicationController
       @message_key = ".email_already_exists"
       render :error
     rescue JWT::DecodeError
-      # invalid jwt token
+      @message_key = ".invalid_jwt_token"
       render :error
     end
   end

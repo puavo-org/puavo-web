@@ -1,4 +1,4 @@
-Given(/^generate new email confirm token for user "(.*?)" with "(.*?)"$/) do |username, email|
+Given(/^generate new email confirm token for user "(.*?)" with "(.*?)" with secret "(.*?)"$/) do |username, email, secret|
   jwt_data = {
     "iat" => Time.now.to_i.to_s,
 
@@ -6,5 +6,5 @@ Given(/^generate new email confirm token for user "(.*?)" with "(.*?)"$/) do |us
     "organisation_domain" => "www.example.net",
     "email" => email
   }
-  @jwt = JWT.encode(jwt_data, "secret")
+  @jwt = JWT.encode(jwt_data, secret)
 end
