@@ -208,17 +208,6 @@ class PasswordController < ApplicationController
     LdapOrganisation.first.puavoDomain
   end
 
-  def password_management_host
-    url = "http://" +
-      Puavo::CONFIG["password_management"]["host"]
-
-    if Puavo::CONFIG["password_management"]["port"]
-      url += ":" + Puavo::CONFIG["password_management"]["port"].to_s
-    end
-
-    return url
-  end
-
   def redis_connect
     db = Redis::Namespace.new(
       "puavo:password_management:send_token",
