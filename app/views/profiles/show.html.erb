@@ -4,5 +4,16 @@
     <div class="span12 profile-details">
       <%= t('.message') %>
     </div>
+
+    <% unless @new_emails.empty? %>
+    <div>
+      <%= t('.email_confirm_info') %>
+      <ul>
+        <% @new_emails.each do |email| %>
+        <li><%= email %></li>
+        <% end %>
+      </ul>
+    </div>
+    <% end %>
   </div>
 </dvi>

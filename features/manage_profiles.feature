@@ -17,6 +17,7 @@ Feature: Manage profile
 
 
   Scenario: School admin edit profile
+    Given mock email confirm service for user "ken.jones" with email "ken.jones@opinsys.fi"
     When I am on the edit profile page
     Then I should be on the login page
     When I fill in "Username" with "ken.jones"
@@ -45,6 +46,7 @@ Feature: Manage profile
     And I should see the following special ldap attributes on the "User" object with "ken.jones":
     | puavoLocale       | "de_CH.UTF-8" |
     | preferredLanguage | "de"          |
+    And I should see "ken.jones@opinsys.fi"
 
   Scenario: Student edit profile
     When I am on the edit profile page
@@ -54,8 +56,25 @@ Feature: Manage profile
     And I press "Login"
     Then I should see "Login successful!"
     And I should see "Jane Doe"
-    When I fill in "Email" with "jane.doe@opinsys.fi"
-    And I fill in "Telephone number" with "+35814987654321"
+    When I fill in "Telephone number" with "+35814987654321"
     And I attach the file at "features/support/test.jpg" to "Image"
     When I press "Update"
     Then I should see "Profile was successfully updated"
+
+  Scenario: Student edit email address
+    Given mock email confirm service for user "jane.doe" with email "jane.doe@opinsys.fi"
+    When I am on the edit profile page
+    Then I should be on the login page
+    When I fill in "Username" with "jane.doe"
+    And I fill in "Password" with "janesecret"
+    And I press "Login"
+    Then I should see "Login successful!"
+    And I should see "Jane Doe"
+    When I fill in "Email" with "jane.doe@opinsys.fi"
+    When I press "Update"
+    Then I should see "Profile was successfully updated"
+    # FIXME: create "shoult not see..." step
+    #And I should not see the following special ldap attributes on the "User" object with "jane.doe":
+    #| mail | "jane.doe@opinsys.fi" |
+    And I should see "Send email message to following email address(es)"
+    And I should see "jane.doe@opinsys.fi"

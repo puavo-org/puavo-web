@@ -312,6 +312,7 @@ en:
       save_and_close: Save and close
     show:
       message: Profile was successfully updated
+      email_confirm_info: "Send email message to following email address(es)"
   menu:
     index:
       service_link_name_puavo: Puavo - users and devices management

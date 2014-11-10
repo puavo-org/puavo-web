@@ -20,6 +20,16 @@ class ProfilesController < ApplicationController
 
     @user = current_user
 
+    current_confirm_emails = Array(@user.mail)
+    @new_emails = params[:user][:mail].empty? ? [] : Array(params[:user][:mail])
+
+    # If params not include old email, user like to remove it
+    current_confirm_emails.delete_if{ |email| @new_emails.include?(email) }
+    params[:user][:mail] = current_confirm_emails
+
+    # List of new email addresses. Require user confirm
+    @new_emails.delete_if{ |email| current_confirm_emails.include?(email) }
+
     # Create params for ldap replace operation.
     modify_params = params[:user].select do |key, value|
       # do not update empty form values
@@ -46,8 +56,22 @@ class ProfilesController < ApplicationController
 
     respond_to do |format|
       if @user.ldap_modify_operation( :replace, modify_params )
+        # Send confirm message to all new email address
+        email_confirm_url = password_management_host + "/email_confirm"
+        @new_emails.each do |email|
+          rest_response = HTTP.with_headers("Host" => request.host,
+                                            "Accept-Language" => locale)
+            .post(email_confirm_url,
+                  :json => {
+                    :username => @user.uid,
+                    :email => email
+                  })
+
+          raise RestConnectionError if rest_response.status != 200
+        end
+
         flash[:notice] = t('flash.profile.updated')
-        format.html { redirect_to( profile_path ) }
+        format.html { redirect_to( profile_path(:emails => @new_emails) ) }
         format.js { render :text => 'window.close()' }
       else
         flash[:alert] = t('flash.profile.save_failed')
@@ -58,6 +82,7 @@ class ProfilesController < ApplicationController
   end
 
   def show
+    @new_emails = params[:emails].nil? ? [] : params[:emails]
     
     respond_to do |format|
       format.html
