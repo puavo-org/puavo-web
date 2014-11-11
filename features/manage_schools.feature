@@ -39,11 +39,11 @@ Feature: Manage schools
     And I attach the file at "features/support/test.jpg" to "Image"
     And I select "English (United States)" from "Language"
     And I choose "school_puavoAutomaticImageUpdates_false"
-    And I select "13" from "ldap_organisation[puavoDeviceOnHour]"
-    And I select "19" from "ldap_organisation[puavoDeviceOffHour]"
-    And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_default"
-    And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_off"
-    And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_custom"
+    And I select "13" from "school[puavoDeviceOnHour]"
+    And I select "19" from "school[puavoDeviceOffHour]"
+    And I choose "school_puavoDeviceAutoPowerOffMode_default"
+    And I choose "school_puavoDeviceAutoPowerOffMode_off"
+    And I choose "school_puavoDeviceAutoPowerOffMode_custom"
     And I press "Create"
     Then I should not see "error"
     # Translation missing
@@ -65,6 +65,9 @@ Feature: Manage schools
     | -o rw                       |
     | English (United States)     |
     | Automatic image updates: No |
+    | Auto power off mode         |
+    | Daytime start               |
+    | Daytime end                 |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
     And I should see the following special ldap attributes on the "School" object with "Bourne School":

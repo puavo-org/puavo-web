@@ -371,6 +371,12 @@ en:
         puavoTag: Tags
         puavoLocale: Language
         puavoAutomaticImageUpdates: Automatic image updates
+        puavoDeviceAutoPowerOffMode: Auto power off mode
+        puavoDeviceAutoPowerOffMode_default: Default
+        puavoDeviceAutoPowerOffMode_off: "Off"
+        puavoDeviceAutoPowerOffMode_custom: Custom
+        puavoDeviceOnHour: Daytime start
+        puavoDeviceOffHour: Daytime end
       user:
         displayName: Name
         sn: Surname

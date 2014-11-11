@@ -166,6 +166,10 @@
     <td><%= f.text_field :puavoTag %></td>
   </tr>
 
+  <%= render( :partial => 'shared/form_auto_power_off_settings',
+              :locals => {
+                :f => f } ) %>
+
 </table>
   <% end %>
 
