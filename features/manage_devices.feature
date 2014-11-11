@@ -31,6 +31,11 @@ Feature: Manage devices
     And I fill in "device_path_0" with "10.0.0.1/share"
     And I fill in "device_mountpoint_0" with "/home/share"
     And I fill in "device_options_0" with "-o rw"
+    And I select "13" from "device[puavoDeviceOnHour]"
+    And I select "19" from "device[puavoDeviceOffHour]"
+    And I choose "device_puavoDeviceAutoPowerOffMode_default"
+    And I choose "device_puavoDeviceAutoPowerOffMode_off"
+    And I choose "device_puavoDeviceAutoPowerOffMode_custom"
     And I press "Update"
     Then I should see "usb://input-audio-device"
     And I should see "usb://output-audio-device"
@@ -38,6 +43,10 @@ Feature: Manage devices
     And I should see "10.0.0.1/share"
     And I should see "/home/share"
     And I should see "-o rw"
+    And I should see "Auto power off mode"
+    And I should see "Auto power off mode"
+    And I should see "Daytime start"
+    And I should see "Daytime end"
 
   Scenario: Edit laptop configuration
     Given I am on the devices list page

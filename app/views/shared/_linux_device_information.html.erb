@@ -103,25 +103,7 @@
 <div class="content-box">
   <h3><%= t('shared.autopoweroff') %></h3>
   <table class="widelist">
-	<tr>
-	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceAutoPowerOffMode" %></td>
-	  <td class="value_td">
-		<%=h t('puavoDeviceAutoPowerOffMode_' + (device.puavoDeviceAutoPowerOffMode or 'default'),
-               :scope => 'activeldap.attributes.device') %>
-	  </td>
-	</tr>
-	<tr>
-	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceOnHour" %></td>
-	  <td class="value_td">
-		<%=h device.puavoDeviceOnHour %>
-	  </td>
-	</tr>
-	<tr>
-	  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceOffHour" %></td>
-	  <td class="value_td">
-		<%=h device.puavoDeviceOffHour %>
-	  </td>
-	</tr>
+    <%= render :partial => 'shared/auto_power_off_settings', :locals => { :object => device } %>
   </table>
 </div>
 <% end %>
