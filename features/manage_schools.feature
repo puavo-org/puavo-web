@@ -39,6 +39,11 @@ Feature: Manage schools
     And I attach the file at "features/support/test.jpg" to "Image"
     And I select "English (United States)" from "Language"
     And I choose "school_puavoAutomaticImageUpdates_false"
+    And I select "13" from "ldap_organisation[puavoDeviceOnHour]"
+    And I select "19" from "ldap_organisation[puavoDeviceOffHour]"
+    And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_default"
+    And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_off"
+    And I choose "ldap_organisation_puavoDeviceAutoPowerOffMode_custom"
     And I press "Create"
     Then I should not see "error"
     # Translation missing

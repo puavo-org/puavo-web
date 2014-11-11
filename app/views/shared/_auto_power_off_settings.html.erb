@@ -1,0 +1,20 @@
+
+<tr>
+  <td class="label_td view"><%= label object.class.human_name, "puavoDeviceAutoPowerOffMode" %><%= object.class.to_s.downcase %></td>
+  <td class="value_td">
+    <%=h t('puavoDeviceAutoPowerOffMode_' + (object.puavoDeviceAutoPowerOffMode or 'default'),
+         :scope => 'activeldap.attributes.ldap_organisation') %>
+  </td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label object.class.human_name, "puavoDeviceOnHour" %></td>
+  <td class="value_td">
+    <%=h object.puavoDeviceOnHour %>
+  </td>
+</tr>
+<tr>
+  <td class="label_td view"><%= label object.class.human_name, "puavoDeviceOffHour" %></td>
+  <td class="value_td">
+    <%=h object.puavoDeviceOffHour %>
+  </td>
+</tr>

@@ -72,25 +72,9 @@
     <td class="label_td view"><%= label "ldap_organisation", "eduOrgHomePageURI" %></td>
     <td class="value_td"><%= @organisation.eduOrgHomePageURI %></td>
   </tr>
-  <tr>
-	<td class="label_td view"><%= label "ldap_organisation", "puavoDeviceAutoPowerOffMode" %></td>
-	<td class="value_td">
-	  <%=h t('puavoDeviceAutoPowerOffMode_' + (@organisation.puavoDeviceAutoPowerOffMode or 'default'),
-      :scope => 'activeldap.attributes.ldap_organisation') %>
-	</td>
-  </tr>
-  <tr>
-	<td class="label_td view"><%= label "ldap_organisation", "puavoDeviceOnHour" %></td>
-	<td class="value_td">
-	  <%=h @organisation.puavoDeviceOnHour %>
-	</td>
-  </tr>
-  <tr>
-	<td class="label_td view"><%= label "ldap_organisation", "puavoDeviceOffHour" %></td>
-	<td class="value_td">
-	  <%=h @organisation.puavoDeviceOffHour %>
-	</td>
-  </tr>
+
+  <%= render :partial => 'shared/auto_power_off_settings', :locals => { :object => @organisation } %>
+
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoDeviceImage" %></td>
     <td class="value_td"><%= @organisation.puavoDeviceImage %></td>
