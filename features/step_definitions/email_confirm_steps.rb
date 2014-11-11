@@ -11,10 +11,9 @@ end
 
 Given(/^mock email confirm service for user "(.*?)" with email "(.*?)"$/) do |username, email|
   stub_request(:post, "http://127.0.0.1:9393/email_confirm").
-    with(:body => "{\"username\":\"#{ username }\",\"email\":\"#{ email }\"}",
+    with(:body => { "username" => username,"email" => email },
          :headers => {
            'Accept-Language'=>'en',
-           'Content-Type'=>'application/json',
            'Host'=>'www.example.com'
          }).
     to_return(:status => 200,

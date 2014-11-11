@@ -62,7 +62,7 @@ class ProfilesController < ApplicationController
           rest_response = HTTP.with_headers("Host" => request.host,
                                             "Accept-Language" => locale)
             .post(email_confirm_url,
-                  :json => {
+                  :form => {
                     :username => @user.uid,
                     :email => email
                   })
