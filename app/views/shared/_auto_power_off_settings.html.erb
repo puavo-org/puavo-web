@@ -3,7 +3,7 @@
   <td class="label_td view"><%= label object.class.human_name, "puavoDeviceAutoPowerOffMode" %><%= object.class.to_s.downcase %></td>
   <td class="value_td">
     <%=h t('puavoDeviceAutoPowerOffMode_' + (object.puavoDeviceAutoPowerOffMode or 'default'),
-         :scope => 'activeldap.attributes.ldap_organisation') %>
+         :scope => "activeldap.attributes.#{ object.class.human_name }") %>
   </td>
 </tr>
 <tr>
