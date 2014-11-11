@@ -11,7 +11,7 @@ gem "fluent-logger", "~> 0.4.3"
 gem "gibberish"
 gem "http"
 gem "sinatra-support", require: "sinatra/support"
-
+gem "jwt", "~> 0.1.8"
 
 group :assets do
   gem "stylus", "~> 0.7.2"
@@ -34,6 +34,5 @@ group :test do
   gem "timecop"
   gem "ripper-tags"
   gem "webmock"
-  gem "jwt", "~> 0.1.8"
 end
 
