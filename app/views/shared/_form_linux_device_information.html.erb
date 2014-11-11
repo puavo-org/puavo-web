@@ -256,7 +256,6 @@
     <% end %>
   <% end %>
 
-  <% if f.object.puavoDeviceType != "laptop" %>
   <tr>
     <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
     <td><%= f.text_field :puavoDeviceKernelVersion %></td>
@@ -265,7 +264,6 @@
     <td class="label_td"><%= f.label :puavoDeviceKernelArguments %></td>
     <td><%= f.text_field :puavoDeviceKernelArguments %></td>
   </tr>
-  <% end %>
 </table>
 
   <% if ["thinclient", "fatclient", "laptop"].include?(f.object.puavoDeviceType) %>
