@@ -673,6 +673,8 @@ fi:
       path: Polku
       mountpoint: Liitoskohta
       options: Parametrit
+    form_auto_power_off_settings:
+      select: Valitse
   devices:
     index:
       add_new_device: "Lisää uusi laite"
