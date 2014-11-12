@@ -127,6 +127,8 @@ fi:
       updated: "Tulostimen tietojen päivitys onnistui"
     devices:
       school_changed: Laitteen koulu on nyt vaihdettu!
+    email_confirm:
+      invalid_password: Kirjautuminen epäonnistui. Tarkista salasanasi.
   roles:
     index:
       actions: Toiminnot
@@ -277,6 +279,9 @@ fi:
       confirm: Vahvista
     successfully:
       info: Sähköpostiosoitteesi on vahvistettu
+    error:
+      email_already_exists: "Sähköpostiosoite on jo asetettu!"
+      invalid_jwt_token: Virheelinen JWT valtuutus
   organisations:
     show:
       title: Organisaation tiedot
