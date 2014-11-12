@@ -367,6 +367,12 @@ fi:
         puavoLocale: Kieli
         puavoTag: Tagit
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
+        puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
+        puavoDeviceAutoPowerOffMode_default: Oletus
+        puavoDeviceAutoPowerOffMode_off: "Pois päältä"
+        puavoDeviceAutoPowerOffMode_custom: Mukautettu
+        puavoDeviceOnHour: "Päivän aloitus"
+        puavoDeviceOffHour: "Päivän lopetus"
       user:
         displayName: Nimi
         sn: Sukunimi
