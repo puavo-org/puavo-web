@@ -46,7 +46,7 @@ Install required rubygems
 Stop the puavo-standalone installed puavo-rest server and start a development
 server
 
-    sudo stop puavo-web
+    sudo stop puavo-rest
     bundle exec puma -p 9292
 
 or with a reloading server
