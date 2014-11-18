@@ -29,13 +29,6 @@ Feature: Confirm email address
     And I press "Confirm"
     Then I should see "Your email address has been confirmed"
 
-  Scenario: Email address alredy exists
-    Given generate new email confirm token for user "ben" with "ben@foobar.com" with secret "secret"
-    When I am on the email confirm page
-    And I fill in "Password" with "bensecret"
-    And I press "Confirm"
-    Then I should see "Email address already exists!"
-
   Scenario: Invalid JWT token
     Given generate new email confirm token for user "ben" with "ben@example.com" with secret "BROKEN"
     When I am on the email confirm page
