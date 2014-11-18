@@ -59,7 +59,7 @@ class ProfilesController < ApplicationController
         # Send confirm message to all new email address
         email_confirm_url = password_management_host + "/email_confirm"
         @new_emails.each do |email|
-          rest_response = HTTP.with_headers("Host" => request.host,
+          rest_response = HTTP.with_headers("Host" => request.host.to_s.gsub(/^staging\-/, ""),
                                             "Accept-Language" => locale)
             .post(email_confirm_url,
                   :form => {
