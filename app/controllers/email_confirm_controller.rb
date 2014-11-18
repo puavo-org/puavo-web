@@ -22,7 +22,7 @@ class EmailConfirmController < ApplicationController
                      :password => params[:email_confirm][:password] )
 
       User.ldap_modify_operation( current_user.dn,
-                                  :add, [{ "mail" => [jwt_data["email"]] }] )
+                                  :replace, [{ "mail" => [jwt_data["email"]] }] )
 
       respond_to do |format|
         format.html { redirect_to( successfully_email_confirm_path ) }
