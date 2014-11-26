@@ -71,6 +71,8 @@ class UsersController < ApplicationController
     @roles = @school.roles
     @user_roles =  []
 
+    @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user }
@@ -83,6 +85,8 @@ class UsersController < ApplicationController
     @groups = @school.groups
     @roles = @school.roles
     @user_roles =  @user.roles || []
+
+    @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
   end
 
   # POST /:school_id/users
@@ -92,6 +96,9 @@ class UsersController < ApplicationController
     @groups = @school.groups
     @roles = @school.roles
     @user_roles =  []
+
+    params[:user][:puavoEduPersonAffiliation] ||= []
+    @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
     @user.puavoSchool = @school.dn
 
@@ -117,6 +124,9 @@ class UsersController < ApplicationController
     @groups = @school.groups
     @roles = @school.roles
     @user_roles =  @user.roles || []
+
+    params[:user][:puavoEduPersonAffiliation] ||= []
+    @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
     respond_to do |format|
       begin

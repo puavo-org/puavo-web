@@ -21,7 +21,7 @@
       </p>
       <p>
       <%= label "user", 'puavoEduPersonAffiliation' %><br />
-      <%=h t('puavoEduPersonAffiliation_' + @user.puavoEduPersonAffiliation) %>
+      <%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(", ") %>
       </p>
       <p>
       <%= label "user", 'roles' %><br />

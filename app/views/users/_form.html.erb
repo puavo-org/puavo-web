@@ -48,11 +48,17 @@
 </td>
 </tr>
     <tr>
-      <td class='required'><%= f.label :puavoEduPersonAffiliation %></td>
+      <td class="label_for_checkbox_list required"><%= f.label :puavoEduPersonAffiliation %></td>
       <td>
-        <%= f.select :puavoEduPersonAffiliation,
-           [[t('default_select_value'), ""]] +
-             User.puavoEduPersonAffiliation_list.map {|a| [ t('puavoEduPersonAffiliation_' + a), a ] } %>
+        <% User.puavoEduPersonAffiliation_list.map do |a| %>
+        <div>
+          <label>
+            <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>" />
+            <%=h t('puavoEduPersonAffiliation_' + a) %>
+          </label>
+        </div>
+        <% end %>
+        <%= field_error_text(f.object, :puavoEduPersonAffiliation) %>
       </td>
     </tr>
     <tr>

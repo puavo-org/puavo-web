@@ -9,10 +9,10 @@ Feature: Manage users
     And a new role with name "Class 4" and which is joined to the "Class 4" group
     And the following roles:
     | displayName |
-    | Staff       |
+    | Staffs      |
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | Staffs     | staff                     |
     And I am logged in as "cucumber" with password "cucumber"
   
   Scenario: Create new user
@@ -36,7 +36,7 @@ Feature: Manage users
 #   | puavoEduPersonEntryYear    |       |
 #   | puavoEduPersonEmailEnabled |       |
     # And set photo?
-    And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And I check "Student"
     And the "Language" select box should contain "Default"
     And the "Language" select box should contain "Finnish"
     And the "Language" select box should contain "Swedish \(Finland\)"
@@ -84,7 +84,7 @@ Feature: Manage users
   Scenario: Create duplicate user to organisation
     Given the following users:
       | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben | secret   | Class 4   | Student                   |
+      | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
     And I am on the new user page
     When I fill in the following:
     | Surname                   | Mabey                 |
@@ -92,7 +92,7 @@ Feature: Manage users
     | Username                  | ben                   |
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
-    And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And I check "Student"
     And I check "Class 4"
     And I press "Create"
     Then I should see "Username has already been taken"
@@ -101,14 +101,14 @@ Feature: Manage users
   Scenario: Create user with empty values
     Given the following users:
       | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben | secret   | Class 4   | Student                   |
+      | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
     And I am on the new user page
     And I press "Create"
     Then I should see "Failed to create user!"
     And I should see "Given name can't be blank"
     And I should see "Surname can't be blank"
     And I should see "Username can't be blank"
-    And I should see "User type is invalid"
+    And I should see "User type can't be blank"
     And I should see "Roles can't be blank"
 
   Scenario: Create user with incorrect password confirmation
@@ -119,7 +119,7 @@ Feature: Manage users
     | Username                  | ben               |
     | user[new_password]        | secretpw          |
     | New password confirmation | test confirmation |
-    And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And I check "Student"
     And I check "Class 4"
     And I press "Create"
     Then I should see "Failed to create user!"
@@ -147,8 +147,8 @@ Feature: Manage users
 #   | Password                   |           |
 #   | Password confirmation      |           |
     # And set photo?
-    And I select "Visitor" from "user[puavoEduPersonAffiliation]"
-    And I check "Staff"
+    And I check "Visitor"
+    And I check "Staffs"
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Update"
     Then I should see the following:
@@ -156,7 +156,7 @@ Feature: Manage users
     | MabeyEDIT       |
     | BenEDIT         |
     | ben-edit        |
-    | Staff           |
+    | Staffs           |
     | Visitor         |
     | ben@example.com |
     And I should see "Class 4" on the "Groups by roles"
@@ -203,8 +203,8 @@ Feature: Manage users
   Scenario: Delete user
     Given the following users:
       | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation | school_admin |
-      | Ben       | Mabey   | ben    | secret   | Class 4   | Admin                     | true         |
-      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   | false        |
+      | Ben       | Mabey   | ben    | secret   | Class 4   | admin                     | true         |
+      | Joseph    | Wilk    | joseph | secret   | Class 4   | student                   | false        |
     And I am on the show user page with "ben"
     When I follow "Remove"
     Then I should see "User was successfully removed."
@@ -221,8 +221,8 @@ Feature: Manage users
   Scenario: Get user information in JSON
     Given the following users:
       | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben    | secret   | Class 4   | Student                   |
-      | Joseph    | Wilk    | joseph | secret   | Class 4   | Student                   |
+      | Ben       | Mabey   | ben    | secret   | Class 4   | student                   |
+      | Joseph    | Wilk    | joseph | secret   | Class 4   | student                   |
     When I get on the show user JSON page with "ben"
     Then I should see JSON '{"given_name": "Ben", "surname": "Mabey", "uid": "ben"}'
     When I get on the users JSON page with "School 1"
@@ -231,7 +231,7 @@ Feature: Manage users
   Scenario: Check new user special ldap attributes
     Given the following users:
       | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben | secret   | Class 4   | Student                   |
+      | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
     Then I should see the following special ldap attributes on the "User" object with "ben":
     | sambaSID             | "^S-[-0-9+]"                   |
     | sambaAcctFlags       | "\[U\]"                        |
@@ -244,10 +244,10 @@ Feature: Manage users
       | Ben       | Mabey   | ben | secret   | visitor                   | Class 4   |
     And I am on the edit user page with "ben"
     When I fill in "user[new_password]" with "some text"
-    And I check "Staff"
+    And I check "Staffs"
     And I press "Update"
     Then I should see "New password doesn't match confirmation"
-    And the "Staff" checkbox should be checked
+    And the "Staffs" checkbox should be checked
 
   Scenario: Role selection does not lost when create new user and get error
     Given I am on the new user page
@@ -257,7 +257,7 @@ Feature: Manage users
     | Username   | ben   |
     And I check "Class 4"
     And I press "Create"
-    Then I should see "User type is invalid"
+    Then I should see "User type can't be blank"
     And the "Class 4" checkbox should be checked
 
   Scenario: Create new user with invalid username
@@ -272,7 +272,7 @@ Feature: Manage users
     | user[telephoneNumber][]   | +35814123123123       |
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
-    And I select "Student" from "user[puavoEduPersonAffiliation]"
+    And I check "Student"
     And I check "Class 4"
     And I fill in "Username" with "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     And I press "Create"
@@ -299,8 +299,8 @@ Feature: Manage users
   Scenario: Move user to another school
     Given the following users:
     | givenName | sn     | uid  | password | role_name | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe  | secret   | Class 4   | Student                   |
-    | Jane      | Doe    | jane | secret   | Class 4   | Student                   |
+    | Joe       | Bloggs | joe  | secret   | Class 4   | student                   |
+    | Jane      | Doe    | jane | secret   | Class 4   | student                   |
     And a new school and group with names "Example school 2", "Class 5" on the "example" organisation
     And a new role with name "Class 5" and which is joined to the "Class 5" group
     And "pavel" is a school admin on the "Example school 2" school

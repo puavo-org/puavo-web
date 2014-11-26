@@ -218,17 +218,14 @@ class User < LdapBase
       end
     end
 
+    if self.puavoEduPersonAffiliation.nil?
+      errors.add( :puavoEduPersonAffiliation, I18n.t("activeldap.errors.messages.blank",
+                                     :attribute => I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation") ) )
+    end
+
     # puavoEduPersonAffiliation validation
-    unless self.class.puavoEduPersonAffiliation_list.include?(puavoEduPersonAffiliation.to_s)
-      # User type of user can be set by locale type value.
-      # Find locale value and set correct key value to attribute.
-      self.class.puavoEduPersonAffiliation_list.each do |value|
-        if I18n.t( 'puavoEduPersonAffiliation_' + value ).downcase == puavoEduPersonAffiliation.to_s.downcase
-          self.puavoEduPersonAffiliation = value
-          break
-        end
-      end
-      unless self.class.puavoEduPersonAffiliation_list.include?(puavoEduPersonAffiliation.to_s)
+    Array(self.puavoEduPersonAffiliation).each do |value|
+      unless self.class.puavoEduPersonAffiliation_list.include?(value)
         errors.add( :puavoEduPersonAffiliation,
                     I18n.t("activeldap.errors.messages.invalid",
                            :attribute => I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation") ) )
