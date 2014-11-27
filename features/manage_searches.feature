@@ -10,15 +10,15 @@ Feature: Search users
     | displayName |
     | Staff       |
     And the following users:
-      | givenName | sn       | uid       | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor   | pavel     | secret   | true         | Staff     | Staff                     |
-      | Johnny    | Harris   | johnny    | secret   | false        | Class 1A   | Student                   |
-      | Harry     | Johnson  | harry     | secret   | false        | Class 1A   | Student                   |
-      | Jack      | Walker   | jack      | secret   | false        | Class 1A   | Student                   |
-      | Kelly     | Williams | kelly     | secret   | false        | Class 1A   | Student                   |
-      | Eric      | Williams | eric      | secret   | false        | Class 1A   | Student                   |
-      | Anthony   | Davis    | anthony   | secret   | false        | Class 1A   | Student                   |
-      | Isabella  | Jackson  | isabella  | secret   | false        | Class 1A   | Student                   |
+      | givenName | sn       | uid      | password | school_admin | role_name | puavoEduPersonAffiliation |
+      | Pavel     | Taylor   | pavel    | secret   | true         | Staff     | staff                     |
+      | Johnny    | Harris   | johnny   | secret   | false        | Class 1A  | student                   |
+      | Harry     | Johnson  | harry    | secret   | false        | Class 1A  | student                   |
+      | Jack      | Walker   | jack     | secret   | false        | Class 1A  | student                   |
+      | Kelly     | Williams | kelly    | secret   | false        | Class 1A  | student                   |
+      | Eric      | Williams | eric     | secret   | false        | Class 1A  | student                   |
+      | Anthony   | Davis    | anthony  | secret   | false        | Class 1A  | student                   |
+      | Isabella  | Jackson  | isabella | secret   | false        | Class 1A  | student                   |
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Find user by first name
@@ -55,7 +55,7 @@ Feature: Search users
     | displayName |
     | Staff       |
     And the following users:
-      | givenName | sn       | uid       | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Elizabeth | Jones    | elizabeth | secret   | false        | Class 1A   | Student                   |
+      | givenName | sn    | uid       | password | school_admin | role_name | puavoEduPersonAffiliation |
+      | Elizabeth | Jones | elizabeth | secret   | false        | Class 1A  | student                   |
     When I search user with "Elizabeth"
     And I should get no search results

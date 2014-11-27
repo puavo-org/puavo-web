@@ -7,7 +7,7 @@ Feature: Confirm email address
     | Students    |
     And the following users:
       | givenName | sn    | uid | password  | school_admin | role_name | puavoEduPersonAffiliation | mail           |
-      | Ben       | Mabey | ben | bensecret | true         | Students  | Student                   | ben@foobar.com |
+      | Ben       | Mabey | ben | bensecret | true         | Students  | student                   | ben@foobar.com |
 
 
   Scenario: Confirm email address

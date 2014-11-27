@@ -12,8 +12,8 @@ Feature: Manage passwords
     | Student  |
     And the following users:
     | givenName | sn     | uid   | password    | school_admin | role_name | puavoEduPersonAffiliation | mail             |
-    | Pavel     | Taylor | pavel | pavelsecret | true         | Teacher   | Admin                     | pavel@foobar.com |
-    | Ben       | Mabey  | ben   | bensecret   | false        | Class 4   | Student                   | ben@foobar.com   |
+    | Pavel     | Taylor | pavel | pavelsecret | true         | Teacher   | admin                     | pavel@foobar.com |
+    | Ben       | Mabey  | ben   | bensecret   | false        | Class 4   | student                   | ben@foobar.com   |
     And I am on the password change page
 
   Scenario: Non-existent user tries to change another user's password

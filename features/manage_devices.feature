@@ -8,7 +8,7 @@ Feature: Manage devices
     | Staff       |
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | Staff     | staff                     |
     And I am logged in as "pavel" with password "secret"
     And the following devices:
       | puavoHostname | macAddress        | puavoDeviceType | puavoMountpoint                                                      |

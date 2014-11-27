@@ -10,7 +10,7 @@ Feature: Manage sessions
     | Staff       |
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | Staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | Staff     | staff                     |
 
   Scenario: Login
     Given I am on the login page
