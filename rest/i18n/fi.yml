@@ -27,6 +27,6 @@ password_management:
 email_confirm:
   subject: Vahvista sähköpostiosoitteesi
   hello: "Hei %1"
-  head: ""
-  message: "Vahvista sähköpostiosoitteesi seuraavan linkin avulla: %1"
-  footer: ""
+  head: "Sähköpostiosoitteesi lisättiin Opinsys-järjestelmään. Jotta uusi sähköposti tulisi käyttöön, sinun tulee vahvistaa se tunnistautumalla alla olevan linkin kautta."
+  message: "%1\n(Jos linkki ei toimi, kopioi ja liitä se selaimeesi.)"
+  footer: "Jos tiedot ovat virheellisiä, jätä tämä viesti huomiotta.\n\nTerveisin,\nOpinsys"

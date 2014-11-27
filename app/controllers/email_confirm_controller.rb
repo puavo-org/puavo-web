@@ -6,6 +6,8 @@ class EmailConfirmController < ApplicationController
   def preview
     # validate jwt
 
+    @jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+
     respond_to do |format|
       format.html
     end

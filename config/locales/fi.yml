@@ -275,7 +275,7 @@ fi:
   email_confirm:
     preview:
       title: Vahvista sähköpostiosoitteesi
-      description: 
+      description: "Vahvista uusi sähköpostiosoitteesi (%{email}) syöttämällä salasanasi ja napsauttamalla Vahvista"
       confirm: Vahvista
     successfully:
       info: Sähköpostiosoitteesi on vahvistettu
@@ -309,6 +309,7 @@ fi:
       save_and_close: Tallenna ja sulje
     show:
       message: Tietojen tallennus onnistui
+      email_confirm_info: Saat vahvistuslinkin uuteen sähköpostiisi hetken kuluttua. Klikkaa linkkiä vahvistaaksesi uusi sähköpostiosoite.
   menu:
     index:
       service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta

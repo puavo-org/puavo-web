@@ -1,7 +1,7 @@
 <h1><%= t('.title') %></h1>
 
 <p>
-<%= t('.description') %>
+<%= t('.description', :email => @jwt_data["email"]) %>
 </p>
 
 <%= form_for(:email_confirm, :url => confirm_email_path, :html => { :method => :put })  do |f| %>
