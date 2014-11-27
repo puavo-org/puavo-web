@@ -60,35 +60,34 @@ class Users::ImportController < ApplicationController
                                            @columns,
                                            @school )
 
-    # Set puavoEduPersonAffiliation and role to users by params
-    if params.has_key?(:user)
-      if !@columns.include?("puavoEduPersonAffiliation") &&
-          params[:user].has_key?(:puavoEduPersonAffiliation) &&
-          !params[:user][:puavoEduPersonAffiliation].empty?
-        @columns.push "puavoEduPersonAffiliation"
-        puavoEduPersonAffiliation = params[:user][:puavoEduPersonAffiliation]
+    # puavoEduPersonAffiliation and role is required attributes
+    if @users.first.role_name.nil?
+      if !params.has_key?(:user) ||
+          !params[:user].has_key?(:role_name) ||
+          params[:user][:role_name].empty?
+
+        raise RoleEduPersonAffiliationError
       end
-      if !@columns.include?("role_name") &&
-          params[:user].has_key?(:role_name) &&
-          !params[:user][:role_name].empty?
-        @columns.push "role_name"
-        role_name = params[:user][:role_name]
-      end
-      if !role_name.nil? || !puavoEduPersonAffiliation.nil?
-        @users.each do |user|
-          unless puavoEduPersonAffiliation.nil?
-            user.puavoEduPersonAffiliation = puavoEduPersonAffiliation
-          end
-          unless role_name.nil?
-            user.role_name = Array(role_name)
-          end
-        end
+    end
+    if @users.first.puavoEduPersonAffiliation.nil?
+      if !params.has_key?(:user) ||
+          !params[:user].has_key?(:puavoEduPersonAffiliation) ||
+          params[:user][:puavoEduPersonAffiliation].empty?
+
+        raise RoleEduPersonAffiliationError
       end
     end
 
-    # puavoEduPersonAffiliation and role is required attributes
-    if !@columns.include?('role_name') || !@columns.include?('puavoEduPersonAffiliation')
-      raise RoleEduPersonAffiliationError
+    @columns.push "puavoEduPersonAffiliation" unless @columns.include?("puavoEduPersonAffiliation")
+    @columns.push "role_name" unless @columns.include?("role_name")
+
+    @users.each do |user|
+      user.puavoEduPersonAffiliation ||= params[:user][:puavoEduPersonAffiliation]
+      user.role_name ||= params[:user][:role_name]
+
+      user.puavoEduPersonAffiliation = User.puavoEduPersonAffiliation_list.select do |value|
+        I18n.t( 'puavoEduPersonAffiliation_' + value ).downcase == user.puavoEduPersonAffiliation.downcase
+      end
     end
 
     # Validate users

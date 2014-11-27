@@ -10,7 +10,7 @@ Feature: User mass import
     And a new role with name "Class 4" and which is joined to the "Class 4" group
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Class 4   | Staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | Class 4   | staff                     |
     And "pavel" is a school admin on the "School 2" school
     And I am logged in as "pavel" with password "secret"
  
@@ -292,7 +292,7 @@ Feature: User mass import
   Scenario: User mass import when username already exists
     Given the following users:
       | givenName | sn    | uid       | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey | ben.mabey | secret   | Class 4   | Student                   |
+      | Ben       | Mabey | ben.mabey | secret   | Class 4   | student                   |
     And I send to the following user mass import data
     """
     Ben	Mabey	Class 4	Student
@@ -357,8 +357,8 @@ Feature: User mass import
     Given I am logged in as "example" organisation owner
     And the following users:
     | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe.bloggs | secret   | Class 4   | Student                   |
-    | Jane      | Doe    | jane.doe   | secret   | Class 4   | Student                   |
+    | Joe       | Bloggs | joe.bloggs | secret   | Class 4   | student                   |
+    | Jane      | Doe    | jane.doe   | secret   | Class 4   | student                   |
     When I am on the school page with "School 2"
     And I send to the following user mass import data
     """
@@ -408,8 +408,8 @@ Feature: User mass import
     Given I am logged in as "example" organisation owner
     And the following users:
     | givenName | sn     | uid        | password | role_name | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe.bloggs | secret   | Class 4   | Student                   |
-    | Jane      | Doe    | jane.doe   | secret   | Class 4   | Student                   |
+    | Joe       | Bloggs | joe.bloggs | secret   | Class 4   | student                   |
+    | Jane      | Doe    | jane.doe   | secret   | Class 4   | student                   |
     When I am on the school page with "School 2"
     And I send to the following user mass import data
     """
