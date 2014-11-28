@@ -6,11 +6,18 @@ class EmailConfirmController < ApplicationController
   def preview
     # validate jwt
 
-    @jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+    begin
+      @jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
 
-    respond_to do |format|
-      format.html
+      respond_to do |format|
+        format.html
+      end
+
+    rescue JWT::DecodeError
+      @message_key = ".invalid_jwt_token"
+      render :error
     end
+
   end
 
   # PUT /users/email_confirm
