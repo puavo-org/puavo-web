@@ -46,7 +46,6 @@ Feature: Manage profile
     And I should see the following special ldap attributes on the "User" object with "ken.jones":
     | puavoLocale       | "de_CH.UTF-8" |
     | preferredLanguage | "de"          |
-    And I should see "ken.jones@opinsys.fi"
 
   Scenario: Student edit profile
     When I am on the edit profile page
@@ -77,4 +76,3 @@ Feature: Manage profile
     #And I should not see the following special ldap attributes on the "User" object with "jane.doe":
     #| mail | "jane.doe@opinsys.fi" |
     And I should see "Send email message to following email address(es)"
-    And I should see "jane.doe@opinsys.fi"
