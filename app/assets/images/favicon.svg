@@ -13,8 +13,8 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    width="200.34375"
-   height="200.3125"
-   sodipodi:docname="anonymous.png">
+   height="200.34375"
+   sodipodi:docname="favicon.svg">
   <metadata
      id="metadata3957">
     <rdf:RDF>
@@ -46,9 +46,9 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:zoom="2.3366337"
-     inkscape:cx="123.86098"
-     inkscape:cy="88.735387"
+     inkscape:zoom="1.6522495"
+     inkscape:cx="86.283393"
+     inkscape:cy="82.65406"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -58,14 +58,20 @@
      id="rect4059"
      width="182.85854"
      height="182.85854"
-     x="8.7439365"
-     y="8.7222214" />
+     x="8.7484436"
+     y="8.7402287"
+     inkscape:export-filename="/home/epeli/code/puavo-users/app/assets/images/favicon.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
   <path
      style="fill:#ed7013;fill-opacity:1;stroke:none"
-     d="m 20.901893,189.50056 c 0,-38.73503 35.490981,-70.13596 79.271307,-70.13596 43.78033,0 79.27132,31.40093 79.27132,70.13596"
+     d="m 20.43568,196.52281 c 0,-34.00785 35.70173,-61.57664 79.74203,-61.57664 44.0403,0 79.74204,27.56879 79.74204,61.57664"
      id="path4573"
      inkscape:connector-curvature="0"
-     sodipodi:nodetypes="csc" />
+     sodipodi:nodetypes="csc"
+     inkscape:export-filename="/home/epeli/code/puavo-users/app/assets/images/favicon.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
   <path
      sodipodi:type="arc"
      style="fill:#ed7013;fill-opacity:1;stroke:none"
@@ -75,12 +81,18 @@
      sodipodi:rx="32.097458"
      sodipodi:ry="32.097458"
      d="m 121.11441,88.588982 a 32.097458,32.097458 0 1 1 -64.194915,0 32.097458,32.097458 0 1 1 64.194915,0 z"
-     transform="matrix(1.3197496,0,0,1.3197496,-17.306884,-40.756504)" />
+     transform="matrix(1.3197496,0,0,1.4997496,-17.30238,-46.890021)"
+     inkscape:export-filename="/home/epeli/code/puavo-users/app/assets/images/favicon.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
   <rect
      style="fill:#ed7013;fill-opacity:1;stroke:none"
      id="rect4581"
      width="38.149323"
      height="38.149323"
-     x="81.098549"
-     y="98.681931" />
+     x="81.103058"
+     y="104.42028"
+     inkscape:export-filename="/home/epeli/code/puavo-users/app/assets/images/favicon.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
 </svg>
