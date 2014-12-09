@@ -25,6 +25,20 @@ def ask(question, opts={})
   new_value
 end
 
+def try_save_user(user)
+  while(true)
+    begin
+      user.save!
+      break
+    rescue Exception => e
+      puts "Can't save user: #{e.to_s}"
+      puts "Try again? Press Enter..."
+      STDIN.gets
+    end
+  end
+end
+
+
 ldap_admin_dn = ask("LDAP admin dn", :default => "uid=admin,o=puavo")
 ldap_admin_password = ask("LDAP admin password")
 
@@ -68,7 +82,7 @@ databases.each do |database|
     puts "User already exists: #{ owner_uid } (#{ database }). Change password."
     user.new_password = owner_password
     user.new_password_confirmation = owner_password
-    user.save!
+    try_save_user(user)
   else
     puts "Create user: #{ owner_uid } (#{ database })."
     school = School.find(:first, :attribute => "displayName", :value => "Administration")
@@ -83,7 +97,7 @@ databases.each do |database|
     user.puavoSchool = school.dn
     user.puavoEduPersonAffiliation = "admin"
     user.puavoSshPublicKey = owner_ssh_public_key
-    user.save!
+    try_save_user(user)
   end
 
   begin
