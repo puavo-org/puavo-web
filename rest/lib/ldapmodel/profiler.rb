@@ -7,6 +7,7 @@
 #
 class LdapSearchProfiler
   require "colorize"
+  ACTIVE = ENV["LDAP_PROFILER"] || ENV["RACK_ENV"] != "production"
 
   def initialize(key)
     @key = key
@@ -20,7 +21,7 @@ class LdapSearchProfiler
     end
 
     def stop
-      if ENV["LDAP_PROFILER"]
+      if ACTIVE
         @duration = (Time.now - @started).to_f * 1000
         return @duration
       end
@@ -54,7 +55,7 @@ class LdapSearchProfiler
   end
 
   # Create profiling methods only when profiling is activated
-  if ENV["LDAP_PROFILER"]
+  if ACTIVE
     puts(("#"*40).colorize(:blue))
     puts "LDAP profiling active!".colorize(:blue)
     puts(("#"*40).colorize(:blue))
@@ -72,8 +73,9 @@ class LdapSearchProfiler
     def print_search_count(target)
       duration = store[:queries].reduce(0){ |memo, q| memo + q.duration }
 
-      puts "Did #{ store[:queries].size } LDAP queries in #{ duration }ms for #{ target }".colorize(:blue)
-      puts(("#"*80).colorize(:blue))
+      msg = "Did #{ store[:queries].size } LDAP queries in #{ duration }ms for #{ target }\n"
+      msg += "#"*80
+      puts(msg.colorize(:blue))
     end
 
     def count(timer)
