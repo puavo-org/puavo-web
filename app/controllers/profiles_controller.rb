@@ -24,7 +24,7 @@ class ProfilesController < ApplicationController
     @new_emails = params[:user][:mail].empty? ? [] : Array(params[:user][:mail])
 
     # If params not include old email, user like to remove it
-    current_confirm_emails.delete_if{ |email| @new_emails.include?(email) }
+    current_confirm_emails.delete_if{ |email| not @new_emails.include?(email) }
     params[:user][:mail] = current_confirm_emails
 
     # List of new email addresses. Require user confirm

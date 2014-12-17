@@ -11,9 +11,9 @@ Feature: Manage profile
       | Teacher     |
       | Class 4     |
     And the following users:
-      | givenName | surname | uid       | password   | puavoEduPersonAffiliation | role_name | school_admin |
-      | Ken       | Jones   | ken.jones | secret     | teacher                   | Teacher   | true         |
-      | Jane      | Doe     | jane.doe  | janesecret | student                   | Class 4   | false        |
+      | givenName | surname | uid       | password   | puavoEduPersonAffiliation | role_name | school_admin | mail                |
+      | Ken       | Jones   | ken.jones | secret     | teacher                   | Teacher   | true         |                     |
+      | Jane      | Doe     | jane.doe  | janesecret | student                   | Class 4   | false        | jane.doe@foobar.com |
 
 
   Scenario: School admin edit profile
