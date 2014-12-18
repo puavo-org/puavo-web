@@ -59,6 +59,7 @@ Feature: Manage profile
     And I attach the file at "features/support/test.jpg" to "Image"
     When I press "Update"
     Then I should see "Profile was successfully updated"
+    And I should not see "Send email message to following email address(es)"
 
   Scenario: Student edit email address
     Given mock email confirm service for user "jane.doe" with email "jane.doe@opinsys.fi"

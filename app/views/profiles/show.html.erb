@@ -5,9 +5,11 @@
       <%= t('.message') %>
     </div>
 
+    <% unless @new_emails.empty? %>
     <div class="span12 profile-details">
       <%= t('.email_confirm_info') %>
     </div>
+    <% end %>
 
   </div>
 </dvi>
