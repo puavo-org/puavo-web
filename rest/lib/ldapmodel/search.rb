@@ -21,16 +21,19 @@ class LdapModel
       raise "Cannot search without a connection"
     end
 
-    PROF.profile(settings[:credentials][:dn], filter, ldap_base, attributes) do
-      connection.search(
-        ldap_base,
-        LDAP::LDAP_SCOPE_SUBTREE,
-        filter,
-        attributes.map{ |a| a.to_s }
-      ) do |entry|
-        res.push(entry.to_hash) if entry.dn != ldap_base
-      end
+    timer = PROF.start
+
+    connection.search(
+      ldap_base,
+      LDAP::LDAP_SCOPE_SUBTREE,
+      filter,
+      attributes.map{ |a| a.to_s }
+    ) do |entry|
+      res.push(entry.to_hash) if entry.dn != ldap_base
     end
+
+    timer.stop("#{ self.name }#filter(#{ filter.inspect }) found #{ res.size } items")
+    PROF.count(timer)
 
     res
   end
@@ -106,24 +109,24 @@ class LdapModel
     res = nil
     attributes ||= ldap_attrs.map{ |a| a.to_s }
 
+    timer = PROF.start
 
     if connection.nil?
       raise "Connection is not setup!"
     end
 
-    filter = "(objectclass=*)"
-
-    PROF.profile(settings[:credentials][:dn], filter, dn, attributes) do
-      connection.search(
-        dn,
-        LDAP::LDAP_SCOPE_BASE,
-        filter,
-        attributes
-      ) do |entry|
-        res = entry.to_hash
-        break
-      end
+    connection.search(
+      dn,
+      LDAP::LDAP_SCOPE_BASE,
+      "(objectclass=*)",
+      attributes
+    ) do |entry|
+      res = entry.to_hash
+      break
     end
+
+    timer.stop("#{ self.name }#by_dn(#{ dn.inspect }) found #{ res.size } items")
+    PROF.count(timer)
 
     res
   end

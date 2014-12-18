@@ -19,10 +19,10 @@ class LdapSearchProfiler
       @duration = 0
     end
 
-    def stop
+    def stop(msg="")
       if ENV["LDAP_PROFILER"]
         @duration = (Time.now - @started).to_f * 1000
-        return @duration
+        puts "#{ msg } in #{ @duration } ms".colorize(:blue)
       end
     end
   end
@@ -31,33 +31,11 @@ class LdapSearchProfiler
     return Timer.new
   end
 
-  def profile(dn, filter, ldap_base, attributes, &block)
-    timer = Timer.new
-
-    msg = "-"*80
-    msg += "\\\n"
-    msg += "Bind dn: #{ dn.inspect }\n"
-    msg += "Filter: #{ filter.inspect }\n"
-    msg += "base: #{ ldap_base.inspect }\n"
-    msg += "Attributes: #{ Array(attributes).join(",") }\n"
-
-    begin
-      block.call
-    ensure
-      duration = timer.stop()
-      count(timer)
-      msg += "Completed in #{ duration } ms\n"
-      msg += "-"*80
-      msg += "/"
-      puts(msg.colorize(:blue))
-    end
-  end
-
   # Create profiling methods only when profiling is activated
   if ENV["LDAP_PROFILER"]
-    puts(("#"*40).colorize(:blue))
-    puts "LDAP profiling active!".colorize(:blue)
-    puts(("#"*40).colorize(:blue))
+    puts "#"*40
+    puts "LDAP profiling active!"
+    puts "#"*40
 
     # Query data is stored to thread local. This should be cleared before usage
     def store
@@ -73,7 +51,6 @@ class LdapSearchProfiler
       duration = store[:queries].reduce(0){ |memo, q| memo + q.duration }
 
       puts "Did #{ store[:queries].size } LDAP queries in #{ duration }ms for #{ target }".colorize(:blue)
-      puts(("#"*80).colorize(:blue))
     end
 
     def count(timer)
