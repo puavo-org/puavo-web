@@ -18,7 +18,10 @@ build: symlink-config
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
-	bundle install
+	GEM_HOME=.tmpgem bundle install
+	rm -rf .tmpgem
+	bundle install --deployment
+
 
 clean-for-install:
 	# Remove testing gems

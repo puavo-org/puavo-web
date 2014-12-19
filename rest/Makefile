@@ -11,7 +11,9 @@ build:
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
-	bundle install
+	GEM_HOME=.tmpgem bundle install
+	rm -rf .tmpgem
+	bundle install --deployment
 
 clean-for-install:
 	bundle install --deployment --without test shared
