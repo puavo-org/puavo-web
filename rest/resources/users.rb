@@ -84,7 +84,12 @@ class User < LdapModel
   end
 
   def self.profile_image(uid)
-    raw_filter("(uid=#{ escape uid })", ["jpegPhoto"]).first["jpegPhoto"]
+    data = raw_filter("(uid=#{ escape uid })", ["jpegPhoto"])
+    if !data || data.size == 0
+      raise NotFound, :user => "Cannot find image data for user: #{ uid }"
+    end
+
+    data.first["jpegPhoto"]
   end
 
   def organisation
