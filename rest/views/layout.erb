@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title><%= t.sso.title %></title>
-  <link rel="stylesheet" type="text/css" href="/v3/styles/theme.css">
+  <title><%= @layout_content['text_title'] %></title>
+  <link rel="stylesheet" type="text/css" href="<%= @layout_content['stylesheet_url'] %>">
 </head>
     <body>
         <%= yield %>

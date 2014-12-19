@@ -210,6 +210,30 @@ class SSO < LdapSinatra
       # unwanted basic auth popups (at least Chrome & IE @ Windows).
       response.headers.delete("WWW-Authenticate")
     end
+
+    @login_content = {
+      "opinsys_logo_url" => "/v3/img/opinsys_logo.png",
+      "external_service_name" =>  @external_service["name"],
+      "return_to" => params["return_to"],
+      "organisation" => @organisation,
+      "username_placeholder" => username_placeholder,
+      "username" => params["username"],
+      "invalid_credentials?" => invalid_credentials?,
+      "handheld?" => handheld?,
+      "error_message" => @error_message,
+      "topdomain" => topdomain,
+      "login_helper_js_url" => "/v3/scripts/login_helpers.js",
+      "text_password" => t.sso.password,
+      "text_login" => t.sso.login,
+      "text_help" => t.sso.help,
+      "text_username_help" => t.sso.username_help,
+      "text_organisation_help" => t.sso.organisation_help,
+      "text_developers" => t.sso.developers,
+      "text_developers_info" => t.sso.developers_info,
+      "text_login_to" => t.sso.login_to
+    }
+
+    @layout_content = layout_content
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
 
@@ -294,8 +318,14 @@ class SSO < LdapSinatra
   get "/v3/sso/developers" do
     File.open("doc/SSO_DEVELOPERS.md", "r") do |f|
       @body = markdown.render(f.read())
+      @layout_content = layout_content
       erb :developers, :layout => :layout
     end
+  end
+
+  def layout_content
+    { "text_title" => t.sso.title,
+      "stylesheet_url" => "/v3/styles/theme.css" }
   end
 
 end

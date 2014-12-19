@@ -1,73 +1,73 @@
 <div class="login">
   <a href="http://opinsys.fi" target="_blank">
-    <img src="/v3/img/opinsys_logo.png" alt="Opinsys Oy">
+    <img src="<%= @login_content['opinsys_logo_url'] %>" alt="Opinsys Oy">
   </a>
 
   <p class="service-name">
-    <%= t.sso.login_to %> <%= @external_service["name"] %>
+    <%= @login_content["text_login_to"] %> <%= @login_content["external_service_name"] %>
   </p>
 
   <form action="" method="post" accept-charset="utf-8">
     <fieldset class="inputs">
-      <input type="hidden" name="return_to" value="<%= params["return_to"] %>">
+      <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
 
-      <% if @organisation %>
-          <input type="hidden" name="organisation" value="<%= @organisation["domain"] %>">
+      <% if @login_content['organisation'] %>
+          <input type="hidden" name="organisation" value="<%= @login_content['organisation']['domain'] %>">
       <% end %>
 
-      <label class="field <%= @organisation ? "organisation-prefilled" : "" %>">
+      <label class="field <%= @login_content['organisation'] ? "organisation-prefilled" : "" %>">
         <input
-          placeholder="<%= username_placeholder %>"
+          placeholder="<%= @login_content['username_placeholder'] %>"
           id="username"
           type="text"
           name="username"
-          value="<%= params["username"] %>"
-          <%= params["username"].to_s.empty? && "autofocus" %>
+          value="<%= @login_content['username'] %>"
+          <%= @login_content['username'].to_s.empty? && "autofocus" %>
           required>
-        <% if @organisation %>
+        <% if @login_content['organisation'] %>
           <span class="organisation-prefill"
-            title="<%= @organisation["name"] %>"
-          >@<%= @organisation["domain"] %></span>
+            title="<%= @login_content['organisation']['name'] %>"
+          >@<%= @login_content['organisation']['domain'] %></span>
         <br>
         <% end %>
     </label>
 
     <input
       name="password"
-      placeholder="<%= t.sso.password %>"
+      placeholder="<%= @login_content['text_password'] %>"
 
       <%# Use plaintext password input for handheld devices if the user login
         does not succeed at the first time %>
-      type="<%= invalid_credentials? && handheld? ? "text" : "password" %>"
+      type="<%= @login_content['invalid_credentials?'] && @login_content['handheld?'] ? "text" : "password" %>"
 
-      <%= invalid_credentials? && "autofocus" %>
+      <%= @login_content['invalid_credentials?'] && "autofocus" %>
 
       required>
-    <input type="submit" value="<%= t.sso.login %>" class="submit">
+    <input type="submit" value="<%= @login_content['text_login'] %>" class="submit">
     </fieldset>
   </form>
 
-  <% if @error_message %>
+  <% if @login_content['error_message'] %>
   <small class="error">
-      <%= @error_message %>
+      <%= @login_content['error_message'] %>
   </small>
   <% end %>
 </div>
 <div id="username-help" class="username-help">
-    <h3><%= t.sso.help %></h3>
+    <h3><%= @login_content['text_help'] %></h3>
     <p>
-    <% if @organisation %>
-        <%= t.sso.username_help %>
+    <% if @login_content['organisation'] %>
+        <%= @login_content['text_username_help'] %>
     <% else %>
-        <%= t.sso.organisation_help %>
+        <%= @login_content['text_organisation_help'] %>
     <% end %>
     </p>
 
-    <h3><%= t.sso.developers %></h3>
-    <p><%= t.sso.developers_info %> </p>
+    <h3><%= @login_content['text_developers'] %></h3>
+    <p><%= @login_content['text_developers_info'] %> </p>
 
 </div>
 <script type="text/javascript" charset="utf-8">
-  var TOP_DOMAIN = "<%= topdomain %>";
+  var TOP_DOMAIN = "<%= @login_content['topdomain'] %>";
 </script>
-<script charset="utf-8" type="text/javascript" src="/v3/scripts/login_helpers.js"></script>
+<script charset="utf-8" type="text/javascript" src="<%= @login_content['login_helper_js_url'] %>"></script>
