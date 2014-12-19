@@ -30,6 +30,47 @@ class ExternalService < LdapModel
     by_attr(:domain, domain, :multi)
   end
 
+  def self.by_url(url)
+    url = Addressable::URI.parse(url.to_s)
+
+    return LdapModel.setup(:credentials => CONFIG["server"]) do
+
+      # Single domain might have multiple external services configured to
+      # different paths. Match paths from the longest to shortest.
+      ExternalService.by_domain(url.host).sort do |a,b|
+        b["prefix"].size <=> a["prefix"].size
+      end.select do |s|
+        if url.path.to_s.empty?
+          path = "/"
+        else
+          path = url.path
+        end
+        path.start_with?(s["prefix"])
+      end.first
+    end
+
+  end
+
+  def generate_login_url(user, return_to_url)
+    return_to_url = Addressable::URI.parse(return_to_url.to_s)
+
+    jwt_data = user.to_hash.merge({
+      # Issued At
+      "iat" => Time.now.to_i.to_s,
+      # JWT ID
+      "jti" => UUID.generator.generate,
+
+      # use external_id like in Zendesk?
+      # https://support.zendesk.com/entries/23675367
+
+      "external_service_path_prefix" => prefix
+    })
+
+    jwt = JWT.encode(jwt_data, secret)
+    return_to_url.query_values = (return_to_url.query_values || {}).merge("jwt" => jwt)
+    return return_to_url.to_s
+  end
+
   def self.secret_by_share_once_token(token)
     encrypt_secret = self.new.local_store_get(token)
 
@@ -70,25 +111,7 @@ class SSO < LdapSinatra
   end
 
   def fetch_external_service
-    if return_to
-      LdapModel.setup(:credentials => CONFIG["server"]) do
-
-        # Single domain might have multiple external services configured to
-        # different paths. Match paths from the longest to shortest.
-        ExternalService.by_domain(return_to.host).sort do |a,b|
-          b["prefix"].size <=> a["prefix"].size
-        end.select do |s|
-          if return_to.path.to_s.empty?
-            path = "/"
-          else
-            path = return_to.path
-          end
-          path.start_with?(s["prefix"])
-        end.first
-
-      end
-    end
-
+    ExternalService.by_url(params["return_to"]) if params["return_to"]
   end
 
   def username_placeholder
@@ -141,29 +164,14 @@ class SSO < LdapSinatra
     end
 
 
-    jwt_data = user.to_hash.merge({
-      # Issued At
-      "iat" => Time.now.to_i.to_s,
-      # JWT ID
-      "jti" => UUID.generator.generate,
-
-      # use external_id like in Zendesk?
-      # https://support.zendesk.com/entries/23675367
-
-      "external_service_path_prefix" => @external_service["prefix"]
-    })
-
-    jwt = JWT.encode(jwt_data, @external_service["secret"])
-    r = return_to
-    r.query_values = (r.query_values || {}).merge("jwt" => jwt)
-
-    logger.info "Redirecting SSO auth #{ user["first_name"] } #{ user["last_name"] } (#{ user["dn"] } to #{ r }"
+    url = @external_service.generate_login_url(user, return_to)
+    logger.info "Redirecting SSO auth #{ user["first_name"] } #{ user["last_name"] } (#{ user["dn"] } to #{ url }"
     flog.info("sso", {
       :login_ok => true,
-      :return_to => return_to,
-      :jwt => jwt_data
+      :return_to => return_to
     })
-    redirect r.to_s
+
+    redirect url
   end
 
   get "/v3/sso" do
