@@ -1,0 +1,57 @@
+#!/usr/bin/ruby1.9.1
+
+require 'optparse'
+
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: puavo-external-service-login [options] SERVICE_URL DOMAIN_USERNAME
+
+Generate login url for given external service
+
+"
+
+  opts.on("-l", "--list", "List external services") do |v|
+    options[:list] = v
+  end
+
+end
+parser.parse!
+
+require 'bundler/setup'
+require_relative "../puavo-rest"
+
+
+LdapModel.setup(
+  :credentials => CONFIG["server"],
+  :rest_root => "DUMMY"
+)
+
+if options[:list]
+  PuavoRest::ExternalService.all.each do |es|
+    puts("http://#{ es.domain }/")
+  end
+  Process.exit()
+end
+
+
+if ARGV.size != 2
+  STDERR.puts("Invalid arguments")
+  STDERR.puts(parser)
+  Process.exit(1)
+end
+
+external_service_url, domain_username = ARGV
+username, organisation_domain = domain_username.split("@")
+
+LdapModel.setup(
+  :organisation => PuavoRest::Organisation.by_domain!(organisation_domain)
+)
+
+user = PuavoRest::User.by_username(username)
+es = PuavoRest::ExternalService.by_url(external_service_url)
+if !es
+  STDERR.puts("Failed to find external service")
+  Process.exit(1)
+end
+
+puts es.generate_login_url(user, external_service_url)
