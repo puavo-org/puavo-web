@@ -328,5 +328,11 @@ class SSO < LdapSinatra
       "stylesheet_url" => "/v3/styles/theme.css" }
   end
 
+  helpers do
+    def raw(string)
+      return string
+    end
+  end
+
 end
 end
