@@ -9,7 +9,6 @@ class SessionsController < ApplicationController
   def create
     session[:uid] = params[:user][:uid]
     session[:password_plaintext] = params[:user][:password]
-    session[:login_flash] = t('flash.session.login_successful')
     redirect_back_or_default  rack_mount_point
   end
 
