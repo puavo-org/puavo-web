@@ -30,7 +30,6 @@ class SessionsController < ApplicationController
     # Remove dn and plaintext password values from session
     session.delete :password_plaintext
     session.delete :uid
-    flash[:notice] = t('flash.session.logout_successful')
     redirect_to login_path
   end
 end
