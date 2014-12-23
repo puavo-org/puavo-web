@@ -1,34 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-     <meta name="viewport" content="width=device-width">
-    <title>Puavo</title>
-    <%= favicon_link_tag "favicon.png" %>
-    <%= stylesheet_link_tag "application" %>
-    <%= stylesheet_link_tag "application-print", :media => "print" %>
-    <%= javascript_include_tag "application" %>
-    <%# <%= yield :javascript %>
-
-  </head>
-  <body>
-    <div class="login_container">
-      <div class="login_content clearfix">
-        <h1>Puavo</h1>
-        <% if flash[:notice] %>
-          <% if flash[:notice_css_class] %>
-            <p class='<%= flash[:notice_css_class] %>'>
-          <% else %>
-            <p class="notice">
-          <% end %>
-          <%= flash[:notice] %>
-          </p>
-        <% end %>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title><%= t(".title") %></title>
+  <link rel="stylesheet" type="text/css" href="login/theme.css">
+</head>
+    <body>
         <%= yield %>
-      </div>
-    </div>
-    <%= debug_footer %>
-  </body>
+    </body>
 </html>

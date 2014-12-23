@@ -26,6 +26,8 @@ fi:
       desktop: "Työpöytä"
     forms:
       required_field: "* = Pakollinen tieto"
+    sessions:
+      title: Opinsys-tunnistautuminen
   link:
     save: Tallenna
     more: Muut toiminnot
@@ -784,3 +786,15 @@ fi:
       devices: Tulostusoikeus laitteen mukaan
       device_header_text: "Tulostaminen on sallittu seuraavilta yksittäisiltä laitteilta:"
       device_footer_text: Laitekohtaiset tulostusoikeudet asetetaan laitteen tiedoista
+  sessions:
+    new:
+      external_service_name: Puavo
+      login_to: Kirjautuminen palveluun
+      password: "Salasana"
+      username_help: "Käytä samaa käyttäjätunnusta kuin Opinsys-tietokoneille kirjautuessasi."
+      organisation_help: "Käyttäjätunnus tulee syöttää muodossa <i>käyttäjätunnus</i>@<i>organisaatio</i>.opinsys.fi. Käyttäjätunnus osa on sama kuin Opinsys-tietokoneille kirjautuessasi. Organisaatio-osa tulee koulusi kaupungin/kunnan mukaan. Se kirjoitetaan pienellä sekä siitä tulee poistaa skandinaavisetmerkit. Esimerkiksi jos olet Jyväskylästä ja Opinsys-tunnuksesi on matti.meikalainen silloin organisaatio-osa on <i>jyvaskyla</i>. Eli kirjaudut tunnuksella <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
+      developers: "Kehittäjät"
+      developers_info: "Lue <a href=https://api.opinsys.fi/v3/sso/developers target=_blank>tämä</a> dokumentti, jos olet kiinnostunut Opinsys-tunnistautumisen toteuttamisesta."
+      username_placeholder: "Käyttäjätunnus"
+      login: "Kirjaudu"
+      help: "Apua"

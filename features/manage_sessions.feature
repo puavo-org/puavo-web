@@ -17,7 +17,8 @@ Feature: Manage sessions
     And I fill in "Username" with "pavel"
     And I fill in "Password" with "secret"
     And I press "Login"
-    Then I should see "Login successful!"
+    Then I should see "Pavel Taylor"
+    And I should not see "Login failed!"
     And I should not see "LDAP services"
 
   Scenario: Login with organisation owner
@@ -25,7 +26,8 @@ Feature: Manage sessions
     And I fill in "Username" with "cucumber"
     And I fill in "Password" with "cucumber"
     And I press "Login"
-    Then I should see "Login successful!"
+    Then I should see "cucumber"
+    And I should not see "Login failed!"
     And I should see "LDAP services"
 
   Scenario: Login with incorrect username
@@ -33,7 +35,7 @@ Feature: Manage sessions
     And I fill in "Username" with "something"
     And I fill in "Password" with "secret"
     And I press "Login"
-    Then I should see "Login failed!" within ".message_alert"
+    Then I should see "Login failed!"
 
   Scenario: Login with incorrect password
     Given I am on the login page

@@ -26,6 +26,8 @@ en:
       desktop: Desktop
     forms:
       required_field: "* = Required field"
+    sessions:
+      title: Opinsys Authentication
   link:
     save: Save
     more: More
@@ -787,3 +789,15 @@ en:
       devices: Printer usage permissions by device
       device_header_text: "Printer is allowed for following individual devices:"
       device_footer_text: "Printers for devices are set from the device edit page."
+  sessions:
+    new:
+      external_service_name: Puavo
+      login_to: Login to service
+      password: Password
+      username_help: Use the same username you use when logging in Opinsys desktops.
+      organisation_help: "Username must be provided in the form of <i>username</i>@<i>organisation</i>.opinsys.fi. The username part is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all scandinavian letters must be removed. For example if you are from Jyväskylä and your Opinsys username is matti.meikalainen the organisation part is <i>jyvaskyla</i> which means that you login with <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
+      developers: Developers
+      developers_info: "Read <a href=https://api.opinsys.fi/v3/sso/developers target=_blank>this</a> document if you are interested in implementing Opinsys authentication."
+      username_placeholder: Username
+      login: Login
+      help: Help

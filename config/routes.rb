@@ -63,8 +63,13 @@ PuavoUsers::Application.routes.draw do
     end
     resources :groups
 
-    match '/login' => 'sessions#new', :as => :login
-    match '/logout' => 'sessions#destroy', :as => :logout
+    match '/login' => 'sessions#new', :as => :login, :via => :get
+    match '/login' => 'sessions#create', :as => :login, :via => :post
+    match '/logout' => 'sessions#destroy', :as => :logout, :via => :delete
+    match '/logo' => 'sessions#logo', :as => :logo, :via => :get, :format => :png
+    match '/login/helpers' => 'sessions#login_helpers', :as => :login_helpers, :via => :get, :format => :js
+    match '/login/theme' => 'sessions#theme', :as => :login_theme, :via => :get, :format => :css
+
     resources :sessions
     match 'schools/:id/image' => 'schools#image', :as => :image_school, :via => :get
     match '/' => 'schools#index'

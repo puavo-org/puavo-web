@@ -15,7 +15,7 @@ Given(/^I am logged in as "([^\"]*)" organisation owner$/) do |organisation_name
   fill_in("Username", :with => organisation.owner)
   fill_in("Password", :with => organisation.owner_pw)
   click_button("Login")
-  page.should have_content("Login successful!")
+  page.should have_content("LDAP services")
 end
 
 Given(/^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/) \
