@@ -233,7 +233,6 @@ class SSO < LdapSinatra
       "text_login_to" => t.sso.login_to
     }
 
-    @layout_content = layout_content
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
 
@@ -318,14 +317,8 @@ class SSO < LdapSinatra
   get "/v3/sso/developers" do
     File.open("doc/SSO_DEVELOPERS.md", "r") do |f|
       @body = markdown.render(f.read())
-      @layout_content = layout_content
       erb :developers, :layout => :layout
     end
-  end
-
-  def layout_content
-    { "text_title" => t.sso.title,
-      "stylesheet_url" => "/v3/styles/theme.css" }
   end
 
   helpers do
