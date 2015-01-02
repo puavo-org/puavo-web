@@ -325,6 +325,15 @@ class SSO < LdapSinatra
     def raw(string)
       return string
     end
+
+    def token_tag(token)
+      # FIXME
+    end
+
+    def form_authenticity_token
+      # FIXME
+    end
+
   end
 
 end

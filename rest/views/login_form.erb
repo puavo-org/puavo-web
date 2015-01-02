@@ -8,6 +8,7 @@
   </p>
 
   <form action="" method="post" accept-charset="utf-8">
+    <%= token_tag form_authenticity_token %>
     <fieldset class="inputs">
       <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
 
