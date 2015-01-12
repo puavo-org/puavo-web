@@ -244,6 +244,19 @@ class Devices < LdapSinatra
     json messages
   end
 
+  get "/v3/devices/:hostname/imagebuildconfig" do
+    auth :server_auth
+
+    # XXX these values should be filled from some configurations in LDAP
+    imagebuildconfig = {
+      'config-target'      => 'ltsp-opinsysbuilder-trusty',
+      'extra-packages-dir' => '/opt/ltsp/images/extradebs',
+      'mirror'             => 'mirror.opinsys.fi',
+      'nfs-mount-device'   => '10.0.70.1:/images',
+    }
+
+    json imagebuildconfig
+  end
 
   get "/v3/devices/:hostname/wireless_printer_queues" do
     auth :basic_auth, :server_auth
