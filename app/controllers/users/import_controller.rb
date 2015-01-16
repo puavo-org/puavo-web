@@ -84,7 +84,7 @@ class Users::ImportController < ApplicationController
     @users.each do |user|
       user.role_name ||= params[:user][:role_name]
 
-      if params[:user][:puavoEduPersonAffiliation]
+      if params[:user] && params[:user][:puavoEduPersonAffiliation]
         user.puavoEduPersonAffiliation = params[:user][:puavoEduPersonAffiliation]
       else
         user.puavoEduPersonAffiliation = User.puavoEduPersonAffiliation_list.select do |value|
