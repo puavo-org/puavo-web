@@ -82,11 +82,14 @@ class Users::ImportController < ApplicationController
     @columns.push "role_name" unless @columns.include?("role_name")
 
     @users.each do |user|
-      user.puavoEduPersonAffiliation ||= params[:user][:puavoEduPersonAffiliation]
       user.role_name ||= params[:user][:role_name]
 
-      user.puavoEduPersonAffiliation = User.puavoEduPersonAffiliation_list.select do |value|
-        I18n.t( 'puavoEduPersonAffiliation_' + value ).downcase == user.puavoEduPersonAffiliation.downcase
+      if params[:user][:puavoEduPersonAffiliation]
+        user.puavoEduPersonAffiliation = params[:user][:puavoEduPersonAffiliation]
+      else
+        user.puavoEduPersonAffiliation = User.puavoEduPersonAffiliation_list.select do |value|
+          I18n.t( 'puavoEduPersonAffiliation_' + value ).downcase == user.puavoEduPersonAffiliation.downcase
+        end
       end
     end
 
