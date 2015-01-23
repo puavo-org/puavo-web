@@ -91,7 +91,7 @@ class Host < LdapModel
   end
 
   def grub_kernel_arguments
-    if ["unregistered", "laptop"].include?(grub_type)
+    if ["unregistered", "laptop", "wirelessaccesspoint"].include?(grub_type)
       return ""
     end
 
