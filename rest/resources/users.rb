@@ -246,7 +246,17 @@ class Users < LdapSinatra
   get "/v3/users" do
     auth :basic_auth, :kerberos
 
-    json User.all
+    # XXX cannot combine filters
+    if params["email"]
+      puts("USIN email FILTER")
+      json User.by_attr(:email, params["email"], :multi)
+    elsif params["id"]
+      puts("USIN ID FILTER")
+      json User.by_attr(:id, params["id"], :multi)
+    else
+      json User.all
+    end
+
   end
 
   # Return users in a organisation
