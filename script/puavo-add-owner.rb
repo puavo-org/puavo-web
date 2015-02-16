@@ -66,6 +66,10 @@ databases.each do |database|
   # Skip o=puavo database
   next if database == "o=puavo"
 
+  if Puavo::CONFIG["puavo_add_owner_skip_organisations"].to_a.include?(database)
+    next
+  end
+
   ActiveLdap::Base.active_connections.keys.each do |connection_name|
     ActiveLdap::Base.remove_connection(connection_name)
   end
