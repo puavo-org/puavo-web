@@ -80,25 +80,23 @@ databases.each do |database|
 
   if user = User.find(:first, :attribute => "uid", :value => owner_uid )
     puts "User already exists: #{ owner_uid } (#{ database }). Change password."
-    user.new_password = owner_password
-    user.new_password_confirmation = owner_password
-    try_save_user(user)
   else
     puts "Create user: #{ owner_uid } (#{ database })."
     school = School.find(:first, :attribute => "displayName", :value => "Administration")
     role = school.roles.first
     user = User.new
-    user.givenName = owner_given_name
-    user.sn = owner_surname
     user.uid = owner_uid
-    user.new_password = owner_password
-    user.new_password_confirmation = owner_password
     user.role_name = role.displayName
     user.puavoSchool = school.dn
-    user.puavoEduPersonAffiliation = "admin"
-    user.puavoSshPublicKey = owner_ssh_public_key
-    try_save_user(user)
   end
+
+  user.givenName = owner_given_name
+  user.sn = owner_surname
+  user.new_password = owner_password
+  user.new_password_confirmation = owner_password
+  user.puavoEduPersonAffiliation = "admin"
+  user.puavoSshPublicKey = owner_ssh_public_key
+  try_save_user(user)
 
   begin
     ldap_organisation = LdapOrganisation.first
