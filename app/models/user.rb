@@ -22,7 +22,7 @@ class User < LdapBase
   belongs_to :roles, :class_name => 'Role', :many => 'member', :primary_key => "dn"
   belongs_to :uidRoles, :class_name => 'Role', :many => 'memberUid', :primary_key => "uid"
 
-  before_validation :set_special_ldap_value, :resize_image, :set_ssh_public_key
+  before_validation :set_special_ldap_value, :resize_image
 
   before_save :is_uid_changed, :set_preferred_language
 
@@ -653,14 +653,6 @@ class User < LdapBase
   def set_samba_settings
     self.sambaSID = SambaDomain.next_samba_sid
     self.sambaAcctFlags = "[U]"
-  end
-
-  def set_ssh_public_key
-    if self.puavoSshPublicKey.class == ActionDispatch::Http::UploadedFile
-      public_key_io = self.puavoSshPublicKey.clone
-      public_key_io.tempfile.seek(0)
-      self.puavoSshPublicKey = public_key_io.read
-    end
   end
 
 end
