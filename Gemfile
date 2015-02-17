@@ -12,6 +12,7 @@ gem "gibberish"
 gem "http"
 gem "sinatra-support", require: "sinatra/support"
 gem "jwt", "~> 0.1.8"
+gem "sshkey"
 
 group :assets do
   gem "stylus", "~> 0.7.2"
