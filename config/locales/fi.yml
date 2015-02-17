@@ -417,6 +417,7 @@ fi:
         jpegPhoto: Kuva
         puavoLocked: "Käyttäjätunnus on lukittu"
         puavoLocale: Kieli
+        puavoSshPublicKey: SSH:n julkinen avain
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne
@@ -763,6 +764,7 @@ fi:
     submit:
       servers:
         create: Luo
+    invalid_ssh_public_key: Virheellinen avain
   external_services:
     title: Ulkoiset Palvelut
     description: "Ulkoisen palvelun aktivointi mahdollistaa palveluun kirjautumisen Opinsys-käyttäjä tunnuksella sekä salasanalla. Aktivoidulle palvelulle siirretään kirjautumisen yhteydessä käyttäjän koko nimi, sähköposti, organisaation nimi ja koulun nimi."

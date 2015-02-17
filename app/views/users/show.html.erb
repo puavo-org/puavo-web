@@ -91,6 +91,11 @@
     <td class="value_td"><%=h @user.puavoEduPersonPersonnelNumber %></tr>
   </tr>
 
+  <tr>
+    <td class="label_td view"><%= label "user", "puavoSshPublicKey" %></td>
+    <td class="value_td"><%= fingerprint @user.puavoSshPublicKey %></tr>
+  </tr>
+
 </table>
 </div>
 </div>

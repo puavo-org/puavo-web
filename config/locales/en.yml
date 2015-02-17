@@ -421,6 +421,7 @@ en:
         jpegPhoto: Image
         puavoLocked: User is locked
         puavoLocale: Language
+        puavoSshPublicKey: SSH public key
       group:
         displayName: Group name
         cn: Abbreviation
@@ -766,6 +767,7 @@ en:
     submit:
       servers:
         create: Create
+    invalid_ssh_public_key: Invalid public key
   external_services:
     title: External Services
     description: "External service activation enables logging to the service with Opinsys credentials. User's full name, email, organisation name and school name will be given to the external service during login."

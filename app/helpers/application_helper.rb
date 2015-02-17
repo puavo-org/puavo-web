@@ -146,4 +146,13 @@ module ApplicationHelper
     return user_uid
   end
 
+  def fingerprint(public_key)
+    if public_key
+      begin
+        SSHKey.fingerprint public_key
+      rescue SSHKey::PublicKeyError
+        return I18n.t("helpers.invalid_ssh_public_key")
+      end
+    end
+  end
 end

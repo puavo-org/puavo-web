@@ -110,6 +110,12 @@
     <td><%= f.label :puavoLocked %></td>
     <td><%= f.check_box :puavoLocked %></td>
   </tr>
+
+  <tr>
+    <td><%= f.label :puavoSshPublicKey %></td>
+    <td><%= f.file_field :puavoSshPublicKey %></td>
+  </tr>
+
   <tr>
     <td class='required'><%= f.label :new_password %></td>
     <td><%= f.password_field :new_password %></td>
