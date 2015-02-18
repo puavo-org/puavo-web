@@ -45,6 +45,7 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     | Personel Number           | 556677                |
+    | SSH public key            | ssh-rsa foobar        |
 # FIXME test mail and telephoneNumber for more values  
 #   | Group                      |       |
 #   | Password                   |       |
@@ -65,18 +66,19 @@ Feature: Manage users
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
     Then I should see the following:
-    |                         |
-    | Mabey                   |
-    | Ben                     |
-    | ben                     |
-    | Class 4                 |
-    | ben.mabey@example.com   |
-    | +35814123123123         |
-    | Student                 |
-    | English (United States) |
-    | Yes                     |
-    | Mabey Ben               |
-    | 556677                  |
+    |                                                 |
+    | Mabey                                           |
+    | Ben                                             |
+    | ben                                             |
+    | Class 4                                         |
+    | ben.mabey@example.com                           |
+    | +35814123123123                                 |
+    | Student                                         |
+    | English (United States)                         |
+    | Yes                                             |
+    | Mabey Ben                                       |
+    | 556677                                          |
+    | 33:1c:56:ea:4f:df:46:c9:13:79:dc:1b:95:35:23:8a |
     And I should see "Class 4" on the "Groups by roles"
     And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
@@ -357,6 +359,21 @@ Feature: Manage users
     When I check "User is locked"
     And I press "Update"
     Then I should see "User is locked"
+
+  Scenario: Create user with invalid SSH public key
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Doe      |
+    | Given name     | Jane     |
+    | Username       | jane.doe |
+    | SSH public key | foobar   |
+    And I check "Class 4"
+    And I check "Student"
+    And I press "Create"
+    Then I should see "Jane"
+    And I should see "Doe"
+    And I should see "Invalid public key"
+
     
 # FIXME
 #  @allow-rescue
