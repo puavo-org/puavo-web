@@ -24,6 +24,7 @@ fi:
       search_placeholder: Hae
       links: Linkit
       desktop: "Työpöytä"
+      owners: Omistajat
     forms:
       required_field: "* = Pakollinen tieto"
     sessions:
@@ -291,6 +292,8 @@ fi:
       title: Organisaation tiedot
       select: Valitse
       add_puavo_billing_info: "Lisää laskutustietoja"
+    owners:
+      title: Organisaation omistajat
   ldap_services:
     index:
       actions: Toiminnot
