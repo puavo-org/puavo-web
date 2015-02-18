@@ -91,10 +91,12 @@
     <td class="value_td"><%=h @user.puavoEduPersonPersonnelNumber %></tr>
   </tr>
 
+  <% if current_user.organisation_owner? %>
   <tr>
     <td class="label_td view"><%= label "user", "puavoSshPublicKey" %></td>
     <td class="value_td"><%= fingerprint @user.puavoSshPublicKey %></tr>
   </tr>
+  <% end %>
 
 </table>
 </div>

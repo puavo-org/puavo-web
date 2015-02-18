@@ -111,10 +111,12 @@
     <td><%= f.check_box :puavoLocked %></td>
   </tr>
 
-  <tr>
-    <td><%= f.label :puavoSshPublicKey %></td>
-    <td><%= f.text_area :puavoSshPublicKey, cols: 80, rows: 10 %></td>
-  </tr>
+  <% if current_user.organisation_owner? %>
+    <tr>
+      <td><%= f.label :puavoSshPublicKey %></td>
+      <td><%= f.text_area :puavoSshPublicKey, cols: 80, rows: 10 %></td>
+    </tr>
+  <% end %>
 
   <tr>
     <td class='required'><%= f.label :new_password %></td>
