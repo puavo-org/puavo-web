@@ -160,3 +160,10 @@ Then(/^I should see image of "(.*?)"$/) do |uid|
 
   page.should have_xpath("//img[@src='/users/#{ user.school.puavoId }/users/#{ user.puavoId }/image']")
 end
+
+When(/^I change "(.*?)" user type to "(.*?)"$/) do |uid, user_type|
+  set_ldap_admin_connection
+  user = User.find(:first, :attribute => "uid", :value => uid)
+  user.puavoEduPersonAffiliation = user_type
+  user.save!
+end
