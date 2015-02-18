@@ -24,6 +24,7 @@ en:
       search_placeholder: Search
       links: Links
       desktop: Desktop
+      owners: Owners
     forms:
       required_field: "* = Required field"
     sessions:

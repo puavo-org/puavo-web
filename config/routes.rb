@@ -127,6 +127,7 @@ PuavoUsers::Application.routes.draw do
     match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
 
+    match 'owners' => 'organisations#owners', :as => :owners_organisation, :via => :get
     match 'wlan' => 'organisations#wlan', :as => :wlan_organisation, :via => :get
     match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :put
 

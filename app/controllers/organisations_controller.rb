@@ -71,4 +71,22 @@ class OrganisationsController < ApplicationController
       end
     end
   end
+
+  # GET /users/owners
+  def owners
+
+    @owners = LdapOrganisation.current.owner.select do |dn|
+      dn != "uid=admin,o=puavo"
+    end.map do |dn|
+      User.find(dn)
+    end
+
+    @allowed_owners = User.find(:all,
+                                :attribute => 'puavoEduPersonAffiliation',
+                                :value => 'admin').delete_if do |u|
+      @owners.include?(u)
+    end
+
+  end
+
 end

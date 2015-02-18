@@ -1,0 +1,44 @@
+<h1>
+  <span>
+    <%= t('.title') %>
+  </span>
+</h1>
+
+
+
+<div class="dashboard">
+<div class="content-box school_admins">
+  <h3><%= t('.this_owners_users') %></h3>
+  <span id="this_school_admin_users">
+    <% Array(@owners).each do |u| %>
+      <div class="row clearfix">
+      <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
+      <%= link_to( t('link.remove'),
+                   remove_owner_organisations_path(u),
+                   :method => :put,
+                   :id => "remove_user_#{u.id}",
+                   :class=> "btn btn-danger" ) %>
+      </div>
+    <% end %>
+  </span>
+</div>
+
+<div class="content-box other_admins">
+  <h3><%= t('.other_owners') %>:</h3>
+  <span id="other_admin_users">
+    <% Array(@allowed_owners).each do |u| %>
+      <div class="row clearfix">
+      <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
+      <%= link_to( t('link.add'),
+                   add_owner_organisations_path(u),
+                   :method => :put,
+                   :id => "add_user_#{u.id}",
+                   :class=> "btn" ) %>
+      </div>
+    <% end %>
+    </span>
+</div>
+
+
+
+</div>
