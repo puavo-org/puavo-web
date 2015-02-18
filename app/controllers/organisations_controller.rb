@@ -89,4 +89,20 @@ class OrganisationsController < ApplicationController
 
   end
 
+  # PUT /users/add_owner/1
+  def add_owner
+    @user = User.find(params[:user_id])
+
+    respond_to do |format|
+      if not Array(@user.puavoEduPersonAffiliation).include?('admin')
+        flash[:notice] = t('flash.organisation.wrong_user_type')
+      elsif LdapOrganisation.current.add_owner(@user)
+
+      else
+        
+      end
+      format.html { redirect_to(owners_organisation_path) }
+    end
+  end
+
 end

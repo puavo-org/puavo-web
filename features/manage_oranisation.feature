@@ -85,3 +85,13 @@ Feature: Manage organisation
 #    | base:500                                                   |
     And I should see the following special ldap attributes on the "Organisation" object with "example":
     | preferredLanguage | "sv" |
+
+  Scenario: Try to set student to organisation owner
+    Given the following users:
+    | givenName | sn  | uid      | password | role_name | puavoEduPersonAffiliation | school                   |
+    | Jane      | Doe | jane.doe | secret   | Class 1   | admin                     | Greenwich Steiner School |
+    When I follow "Owners"
+    And I change "jane.doe" user type to "student"
+    And I follow "Add" on the "Jane Doe" user
+    And I should see "Organisation owner access rights can be added only if type of user is admin"
+

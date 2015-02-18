@@ -78,6 +78,8 @@ en:
     save_failed: "%{model} cannot be saved!"
     wlan_updated: WLAN-settings was succesfully updated
     wlan_save_failed: "WLAN-settings cannot be saved: %{error}"
+    organisation:
+      wrong_user_type: Organisation owner access rights can be added only if type of user is admin
     group:
       role_added: Role was added to group.
       role_added_failed: Failed to add.
