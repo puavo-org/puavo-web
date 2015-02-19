@@ -80,6 +80,7 @@ fi:
     wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
     organisation:
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyypi on ylläpitäjä"
+      owner_added: "%{user} on lisätty organisaation omistajaksi"
     group:
       role_added: "Rooli lisättiin ryhmään."
       role_added_failed: "Lisäys epäonnistui."
