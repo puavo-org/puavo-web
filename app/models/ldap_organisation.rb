@@ -24,4 +24,9 @@ class LdapOrganisation < LdapBase
       "preferred_language" => self.preferredLanguage,
       "name" => self.o }
   end
+
+  def add_owner(user)
+    self.ldap_modify_operation( :add, [{"owner" => [user.dn.to_s]}] )
+  end
+
 end
