@@ -81,6 +81,7 @@ en:
     organisation:
       wrong_user_type: Organisation owner access rights can be added only if type of user is admin
       owner_added: "%{user} is now organisation owner"
+      owner_removed: "%{user} is no longer owner on this organisation"
     group:
       role_added: Role was added to group.
       role_added_failed: Failed to add.

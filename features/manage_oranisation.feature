@@ -91,13 +91,15 @@ Feature: Manage organisation
     | preferredLanguage | "sv" |
 
 
-  Scenario: Add new organisation owner
+  Scenario: Add or remove organisation owner
     Given the following users:
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
     | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
     When I follow "Owners"
     And I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor is now organisation owner"
+    When I follow "Remove" on the "Pavel Taylor" user
+    Then I should see "Pavel Taylor is no longer owner on this organisation"
 
   Scenario: Try to set student to organisation owner
     Given the following users:

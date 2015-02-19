@@ -81,6 +81,7 @@ fi:
     organisation:
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyypi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"
+      owner_removed: "%{user} ei ole enää omistajana tässä organisaatiossa"
     group:
       role_added: "Rooli lisättiin ryhmään."
       role_added_failed: "Lisäys epäonnistui."
