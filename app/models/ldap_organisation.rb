@@ -29,4 +29,8 @@ class LdapOrganisation < LdapBase
     self.ldap_modify_operation( :add, [{"owner" => [user.dn.to_s]}] )
   end
 
+  def remove_owner(user)
+    self.ldap_modify_operation( :delete, [{"owner" => [user.dn.to_s]}] )
+  end
+
 end

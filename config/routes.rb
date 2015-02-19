@@ -128,6 +128,7 @@ PuavoUsers::Application.routes.draw do
     resources :admins
 
     match 'owners' => 'organisations#owners', :as => :owners_organisation, :via => :get
+    match 'remove_owner/:user_id' => 'organisations#remove_owner', :as => :remove_owner_organisations, :via => :put
     match 'add_owner/:user_id' => 'organisations#add_owner', :as => :add_owner_organisations, :via => :put
 
     match 'wlan' => 'organisations#wlan', :as => :wlan_organisation, :via => :get

@@ -107,4 +107,17 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  # PUT /users/remove_owner/1
+  def remove_owner
+    @user = User.find(params[:user_id])
+
+    respond_to do |format|
+      if LdapOrganisation.current.remove_owner(@user)
+        flash[:notice] = t('flash.organisation.owner_removed',
+                           :user => @user.displayName )
+      end
+      format.html { redirect_to(owners_organisation_path) }
+    end
+  end
+
 end
