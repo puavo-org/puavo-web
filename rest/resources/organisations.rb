@@ -137,6 +137,7 @@ class Organisations < LdapSinatra
     auth :basic_auth, :kerberos
     require_admin_or_not_people!
 
+    Organisation.refresh
     LdapModel.setup(:credentials => CONFIG["server"]) do
       json Organisation.all
     end
@@ -146,6 +147,7 @@ class Organisations < LdapSinatra
     auth :basic_auth, :kerberos
     require_admin_or_not_people!
 
+    Organisation.refresh
     json Organisation.current
   end
 
@@ -153,6 +155,7 @@ class Organisations < LdapSinatra
     auth :basic_auth, :kerberos
     require_admin_or_not_people!
 
+    Organisation.refresh
     json Organisation.by_domain(params[:domain])
   end
 
