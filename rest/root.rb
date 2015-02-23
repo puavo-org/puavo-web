@@ -153,10 +153,20 @@ class Root < LdapSinatra
     1 / 0
   end
 
-
   get "/v3/slow_test" do
     sleep 2
     "I was slow"
+  end
+
+  get "/v3/ldap_connection_test" do
+    # Just try get something from the ldap
+    LdapModel.setup(:credentials => CONFIG["server"]) do
+      has_orgs = Organisation.all.size > 0
+      if !has_orgs
+        status 500
+      end
+      has_orgs.to_s
+    end
   end
 
   get "/v3/about" do
