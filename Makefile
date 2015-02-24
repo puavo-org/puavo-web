@@ -121,6 +121,8 @@ test:
 seed:
 	bundle exec rails runner db/seeds.rb
 
+server:
+	bundle exec rails server
 
 install-build-dep:
 	mk-build-deps --install debian.default/control \

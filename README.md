@@ -24,7 +24,7 @@ Stop the puavo-standalone installed puavo-web server and start a development
 server
 
     sudo stop puavo-web
-    bundle exec rails server
+    make server
 
 If you need to hack on the worker process
 
@@ -47,7 +47,7 @@ Stop the puavo-standalone installed puavo-rest server and start a development
 server
 
     sudo stop puavo-rest
-    bundle exec puma -p 9292
+    make server
 
 or with a reloading server
 

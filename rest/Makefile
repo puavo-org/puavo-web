@@ -69,6 +69,9 @@ install-client:
 test:
 	bundle exec turn test/*_test.rb
 
+server:
+	bundle exec puma
+
 serve-dev:
 	bundle exec shotgun --host 0.0.0.0 --port 9393 --server puma
 
