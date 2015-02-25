@@ -1,0 +1,5 @@
+puavo-users (0.11.0) unstable; urgency=low
+
+  * Initial lxci style build
+
+ -- Esa-Matti Suuronen <esa-matti.suuronen@opinsys.fi>  Wed, 25 Feb 2015 15:33:23 +0000
