@@ -48,25 +48,30 @@ class LdapModel
     credentials = settings[:credentials]
     conn = nil
 
-    if credentials[:dn].nil? && credentials[:kerberos].nil?
-      raise BadCredentials, "Cannot connect - DN is missing!"
+    if credentials[:kerberos]
+      return sasl_bind(credentials[:kerberos])
+    end
+
+    if credentials[:dn].to_s.strip.empty?
+      raise BadCredentials, "DN missing" if not credentials[:dn]
+    end
+
+    if credentials[:password].to_s.strip.empty?
+      raise BadCredentials, "Password missing" if not credentials[:password]
     end
 
     begin
-
-      if credentials[:kerberos]
-        conn = sasl_bind(credentials[:kerberos])
-      else
-        raise BadCredentials, "Bad username/dn or password" if not credentials[:dn]
         conn = dn_bind(credentials[:dn], credentials[:password])
-      end
-
     rescue LDAP::ResultError => err
       if err.message == "Invalid credentials"
-        raise BadCredentials, "Bad username/dn or password"
+        raise BadCredentials, "Invalid credentials (dn/pw)"
       else
-        raise LdapError, err.message
+        raise LdapError, "Other LDAP error: #{ err.message }"
       end
+    end
+
+    if conn.nil?
+        raise LdapError, "ldap bind returned nil instead of connection"
     end
 
     return conn
