@@ -18,4 +18,5 @@ make deb
 
 sudo script/test-install.sh
 
-aptirepo-upload -r $APTIREPO_REMOTE -b "git-$(echo "$GIT_BRANCH" | cut -d / -f 2)" ../puavo*.changes
+mkdir -p $HOME/results
+cp ../puavo-*_ $HOME/results
