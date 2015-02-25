@@ -42,10 +42,26 @@ class IdPool < ActiveLdap::Base
   private
 
   def self.next_id(id_field)
-    id_pool = self.find('IdPool')
-    new_id = id_pool.send(id_field)
-    id_pool.send(id_field + "=", new_id + 1)
-    id_pool.save
+    redis_id_pool = Redis::Namespace.new(
+      "idpool",
+      :redis => REDIS_CONNECTION
+    )
+
+    ldap_id_pool = self.find('IdPool')
+    current_id = ldap_id_pool.send(id_field)
+
+    # Migrate existing id sequences to redis
+    if redis_id_pool.get(id_field).nil?
+      redis_id_pool.set(id_field, current_id)
+    end
+
+    new_id = redis_id_pool.incr(id_field)
+
+    # Save redis id sequences to the old ldap id pool too. Not required and has
+    # the same race condition issues but allows to fallback to it if required.
+    ldap_id_pool.send(id_field + "=", new_id)
+    ldap_id_pool.save
+
     return new_id.to_s
   end
 end
