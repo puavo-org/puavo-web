@@ -32,36 +32,39 @@ class IdPool < ActiveLdap::Base
   end
 
   def self.next_puavo_id_range(range)
-    id_pool = self.find('IdPool')
-    first_new_id = id_pool.puavoNextId
-    id_pool.puavoNextId = first_new_id + range
-    id_pool.save
-    return (first_new_id..id_pool.puavoNextId-1).map{ |i| i.to_s }
+    generate_id_range("puavoNextId", range)
   end
 
   private
 
-  def self.next_id(id_field)
+  def self.generate_id_range(id_field, count)
     redis_id_pool = Redis::Namespace.new(
       "idpool",
       :redis => REDIS_CONNECTION
     )
 
     ldap_id_pool = self.find('IdPool')
-    current_id = ldap_id_pool.send(id_field)
 
     # Migrate existing id sequences to redis
     if redis_id_pool.get(id_field).nil?
+      current_id = ldap_id_pool.send(id_field)
       redis_id_pool.set(id_field, current_id)
     end
 
-    new_id = redis_id_pool.incr(id_field)
+    id_range = (1..count).map do
+      redis_id_pool.incr(id_field).to_s
+    end
 
-    # Save redis id sequences to the old ldap id pool too. Not required and has
-    # the same race condition issues but allows to fallback to it if required.
-    ldap_id_pool.send(id_field + "=", new_id)
+    # Save redis id sequences back to the old ldap id pool too. Not required
+    # and has the same race condition issues but allows to fallback to it if
+    # required.
+    ldap_id_pool.send(id_field + "=", id_range.last)
     ldap_id_pool.save
 
-    return new_id.to_s
+    return id_range
+  end
+
+  def self.next_id(id_field)
+    generate_id_range(id_field, 1).first
   end
 end
