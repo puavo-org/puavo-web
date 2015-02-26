@@ -197,6 +197,8 @@ class SSO < LdapSinatra
       if err
         err_msg[:error_class] = err.class.name
         err_msg[:error_message] = err.message
+        err_msg[:meta] = err.meta
+        err_msg[:organisation_domain] = Organisation.current.domain
       end
       flog.warn "sso", err_msg
     end

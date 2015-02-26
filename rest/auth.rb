@@ -117,7 +117,10 @@ class LdapSinatra < Sinatra::Base
           puts "Cannot resolve #{ credentials[:username].inspect } to DN"
           raise Unauthorized,
             :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }",
-            :msg => "Cannot resolve #{ credentials[:username].inspect } to DN"
+            :msg => "Cannot resolve #{ credentials[:username].inspect } to DN",
+            :meta => {
+              :username => credentials[:username],
+            }
         end
 
         credentials[:auth_method] = method
