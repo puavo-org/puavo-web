@@ -19,4 +19,4 @@ make deb
 sudo script/test-install.sh
 
 mkdir -p $HOME/results
-cp ../puavo-*_ $HOME/results
+cp ../puavo-*_* $HOME/results
