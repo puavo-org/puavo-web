@@ -35,13 +35,17 @@ class IdPool < ActiveLdap::Base
     generate_id_range("puavoNextId", range)
   end
 
-  private
-
-  def self.generate_id_range(id_field, count)
-    redis_id_pool = Redis::Namespace.new(
+  def self.get_redis_id_pool
+    Redis::Namespace.new(
       "idpool",
       :redis => REDIS_CONNECTION
     )
+  end
+
+  private
+
+  def self.generate_id_range(id_field, count)
+    redis_id_pool = get_redis_id_pool()
 
     ldap_id_pool = self.find('IdPool')
 

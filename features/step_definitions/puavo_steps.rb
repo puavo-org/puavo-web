@@ -255,7 +255,7 @@ end
 
 When(/^I cut nextPuavoId value by one$/) do
   pool = IdPool.find('IdPool')
-  pool.puavoNextId -= 1
+  pool.puavoNextId = IdPool.get_redis_id_pool().decr("puavoNextId")
   pool.save!
 end
 
