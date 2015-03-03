@@ -77,12 +77,10 @@ class LDAPTestEnv
       s.destroy
     end
 
-    id_pool = IdPool.find('IdPool')
-    id_pool.puavoNextGidNumber = 10004
-    id_pool.puavoNextUidNumber = 10002
-    id_pool.puavoNextRid = 3
-    id_pool.puavoNextId = 9
-    id_pool.save!
+    IdPool.set_id!("puavoNextGidNumber", 10004)
+    IdPool.set_id!("puavoNextUidNumber", 10002)
+    IdPool.set_id!("puavoNextRid", 3)
+    IdPool.set_id!("puavoNextId", 9)
 
     @entries = {}
 

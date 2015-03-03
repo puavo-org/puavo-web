@@ -1,3 +1,4 @@
+
 class IdPool < ActiveLdap::Base
   ldap_mapping( :dn_attribute => "cn",
                 :prefix => "",
@@ -32,8 +33,50 @@ class IdPool < ActiveLdap::Base
   end
 
   def self.next_puavo_id_range(range)
-    generate_id_range("puavoNextId", range)
+    id_range("puavoNextId", range)
   end
+
+  def self.id_range(id_field, count)
+    redis_id_pool = get_redis_id_pool()
+    legacy_id_pool = get_legacy_id_pool()
+
+    # Migrate existing id sequences to redis
+    if redis_id_pool.get(id_field).nil?
+      _current_id = legacy_id_pool.send(id_field)
+      redis_id_pool.set(id_field, _current_id)
+    end
+
+    _id_range = (1..count).map do
+      redis_id_pool.incr(id_field).to_s
+    end
+
+    # Save redis id sequences back to the old ldap id pool too. Not required
+    # and has the same race condition issues but allows to fallback to it if
+    # required.
+    legacy_id_pool.send(id_field + "=", _id_range.last)
+    legacy_id_pool.save!
+
+    return _id_range
+  end
+
+  def self.last_id(id_field)
+    get_redis_id_pool.get(id_field)
+  end
+
+  def self.next_id(id_field)
+    id_range(id_field, 1).first
+  end
+
+  def self.set_id!(id_field, value)
+    redis_id_pool = get_redis_id_pool()
+    legacy_id_pool = get_legacy_id_pool()
+
+    redis_id_pool.set(id_field, value)
+    legacy_id_pool.send(id_field + "=", value)
+    legacy_id_pool.save!
+  end
+
+  private
 
   def self.get_redis_id_pool
     Redis::Namespace.new(
@@ -42,33 +85,8 @@ class IdPool < ActiveLdap::Base
     )
   end
 
-  private
-
-  def self.generate_id_range(id_field, count)
-    redis_id_pool = get_redis_id_pool()
-
-    ldap_id_pool = self.find('IdPool')
-
-    # Migrate existing id sequences to redis
-    if redis_id_pool.get(id_field).nil?
-      current_id = ldap_id_pool.send(id_field)
-      redis_id_pool.set(id_field, current_id)
-    end
-
-    id_range = (1..count).map do
-      redis_id_pool.incr(id_field).to_s
-    end
-
-    # Save redis id sequences back to the old ldap id pool too. Not required
-    # and has the same race condition issues but allows to fallback to it if
-    # required.
-    ldap_id_pool.send(id_field + "=", id_range.last)
-    ldap_id_pool.save
-
-    return id_range
+  def self.get_legacy_id_pool
+    IdPool.find('IdPool')
   end
 
-  def self.next_id(id_field)
-    generate_id_range(id_field, 1).first
-  end
 end
