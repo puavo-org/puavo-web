@@ -254,7 +254,7 @@ Then(/^I should see "([^\"]*)" on the PDF$/) do |text|
 end
 
 When(/^I cut nextPuavoId value by one$/) do
-  IdPool.set_id!("puavoNextId", IdPool.last_id("puavoNextId") - 1)
+  IdPool.set_id!("puavoNextId", IdPool.last_id("puavoNextId").to_i - 1)
 end
 
 Then(/^I should see "([^\"]*)" titled "([^\"]*)"$/) do |text, title|
