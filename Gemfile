@@ -4,15 +4,15 @@ File.open("./Gemfile.shared") do |f|
   eval f.read, nil, "./Gemfile.shared"
 end
 
-gem "pry"
-gem "unicorn"
-gem "debugger"
+gem "pry", "~> 0.10.1"
+gem "unicorn", "~> 4.8.3"
+gem "debugger", "~> 1.6.8"
 gem "fluent-logger", "~> 0.4.3"
-gem "gibberish"
+gem "gibberish", "~> 1.4.0"
 gem "http"
-gem "sinatra-support", require: "sinatra/support"
+gem "sinatra-support", :require => "sinatra/support"
 gem "jwt", "~> 0.1.8"
-gem "sshkey"
+gem "sshkey", "~> 1.6.1"
 
 group :assets do
   gem "stylus", "~> 0.7.2"
@@ -20,13 +20,11 @@ group :assets do
 end
 
 group :test do
-  gem "capybara"
+  gem "capybara", "~> 2.4.4"
   gem "colorize"
-  gem "cucumber"
-  gem "cucumber-rails"
-  gem "cucumber-rails"
+  gem "cucumber", "~> 1.3.19"
+  gem "cucumber-rails", "~> 1.4.2"
   gem "database_cleaner"
-  gem "debugger"
   gem "greenletters"
   gem "rbtrace"
   gem "rspec", "~> 2.14.1"
