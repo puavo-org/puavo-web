@@ -520,6 +520,7 @@ en:
         puavoDeviceDefaultAudioSink: Default output audio device
         puavoAutomaticImageUpdates: Automatic image updates
         puavoPersonallyAdministered: Personally administered
+        puavoImageSeriesSourceURL: Image series source URL
       server:
         puavoDeviceType: Device type
         puavoHostname: Hostname

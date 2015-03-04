@@ -187,6 +187,12 @@
   </tr>
   <% end %>
 <% end %>
+
+<tr>
+  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoImageSeriesSourceURL" %></td>
+  <td class="value_td"><%=h device.puavoImageSeriesSourceURL %></td>
+</tr>
+
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
   <td class="value_td"><%=h device.puavoDeviceKernelVersion %></td>

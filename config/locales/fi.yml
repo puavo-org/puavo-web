@@ -516,6 +516,7 @@ fi:
         puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
         puavoPersonallyAdministered: Henkilökohtaisesti ylläpidettävä
+        puavoImageSeriesSourceURL: Levykuvien lähdeosoite
       server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi
