@@ -459,6 +459,7 @@ en:
         puavoKeyboardLayout: Keyboard layout
         puavoKeyboardVariant: Keyboard variant
         puavoAutomaticImageUpdates: Automatic image updates
+        puavoImageSeriesSourceURL: Image series source URL
       ldap_service:
         uid: Service Identifier
         description: Description

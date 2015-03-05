@@ -455,6 +455,7 @@ fi:
         puavoKeyboardLayout: Näppäimistön asettelu
         puavoKeyboardVariant: Näppäimistön alkuperämaa
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
+        puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
       ldap_service:
         uid: Palvelun tunniste
         description: Kuvaus
