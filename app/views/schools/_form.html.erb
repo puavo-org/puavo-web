@@ -156,6 +156,7 @@
     <td><%= f.text_field :puavoDeviceImage  %></td>
   </tr>
 
+  <% if current_user.organisation_owner? %>
   <tr>
     <td>
       <%= f.label :puavoImageSeriesSourceURL %>
@@ -165,6 +166,7 @@
       <%= f.text_field :puavoImageSeriesSourceURL %>
     </td>
   </tr>
+  <% end %>
 
   <tr>
     <td><%= f.label :external_feeds %></td>

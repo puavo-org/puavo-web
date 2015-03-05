@@ -215,6 +215,7 @@
     <% end %>
   <% end %>
 
+  <% if current_user.organisation_owner? %>
   <tr>
     <td>
       <%= f.label :puavoImageSeriesSourceURL %>
@@ -224,6 +225,7 @@
       <%= f.text_field :puavoImageSeriesSourceURL %>
     </td>
   </tr>
+  <% end %>
 
   <tr>
     <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
