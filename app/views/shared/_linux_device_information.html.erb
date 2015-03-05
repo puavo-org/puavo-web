@@ -26,9 +26,7 @@
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "macAddress" %></td>
   <td class="value_td">
-	<% Array(device.macAddress).each do |mac_address| %>
-	<div><%=h mac_address %></div>
-	<% end %>
+    <%= multiple_value(device, "macAddress") %>
   </td>
 </tr>
 

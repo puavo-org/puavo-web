@@ -203,4 +203,32 @@ module ApplicationHelper
 
   end
 
+  def multiple_text_field(model, attribute, link_text)
+
+    content_tag(:div, :id => "#{model.class.name.downcase}_#{attribute}") do
+      content = ""
+      if model.send(attribute).nil?
+        content = "<input name='#{model.class.name.downcase}[#{attribute}][]' size='30' type='text' />"
+      else
+	Array(model.send(attribute)).each do |value|
+          content += "<input name='#{model.class.name.downcase}[#{attribute}][]' size='30' type='text' value='#{value}' />"
+	end
+      end
+      content.html_safe
+    end +
+
+    link_to("#", :class => "clone_prev_input_element btn") do
+      content_tag(:i, link_text, :class => "icon-plus")
+    end +
+
+    content_tag(:div, field_error_text(model, attribute))
+
+  end
+
+  def multiple_value(model, attribute)
+    Array(model.send(attribute)).map do |value|
+      content_tag(:div, value)
+    end.join("\n").html_safe
+  end
+
 end

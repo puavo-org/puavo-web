@@ -17,19 +17,7 @@
   <tr>
     <td class="label_td"><%= f.label :macAddress %></td>
     <td>
-      <div id="device_macAddress">
-	<% if f.object.macAddress.nil? %>
-        <input name='device[macAddress][]' size='30' type='text' />
-	<% else %>
-	<% Array(f.object.macAddress).each do |mac_address| %>
-        <input name='device[macAddress][]' size='30' type='text' value='<%= mac_address %>' />
-	<% end %>
-	<% end %>
-      </div>
-      <%= link_to "#", :class => "clone_prev_input_element btn" do %>
-      <i class="icon-plus"></i><%= t('.shared.add_macAddress') %>
-      <% end %>
-      <div><%= field_error_text(f.object, :macAddress) %></div>
+      <%= multiple_text_field(f.object, "macAddress", t('shared.add_macAddress')) %>
     </td>
   </tr>
   <% end %>
