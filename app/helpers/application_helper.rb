@@ -225,8 +225,8 @@ module ApplicationHelper
 
   end
 
-  def multiple_value(model, attribute)
-    Array(model.send(attribute)).map do |value|
+  def multiple_value(values)
+    Array(values).map do |value|
       content_tag(:div, value)
     end.join("\n").html_safe
   end
