@@ -392,6 +392,7 @@ en:
         puavoDeviceAutoPowerOffMode_custom: Custom
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
+        puavoImageSeriesSourceURL: Image series source URL
       user:
         displayName: Name
         sn: Surname

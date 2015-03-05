@@ -157,6 +157,16 @@
   </tr>
 
   <tr>
+    <td>
+      <%= f.label :puavoImageSeriesSourceURL %>
+    </td>
+    <td>
+      <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
+      <%= f.text_field :puavoImageSeriesSourceURL %>
+    </td>
+  </tr>
+
+  <tr>
     <td><%= f.label :external_feeds %></td>
     <td><%= f.text_field :external_feeds, :placeholder => "ical url" %></td>
   </tr>

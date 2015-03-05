@@ -388,6 +388,7 @@ fi:
         puavoDeviceAutoPowerOffMode_custom: Mukautettu
         puavoDeviceOnHour: "Päivän aloitus"
         puavoDeviceOffHour: "Päivän lopetus"
+        puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
       user:
         displayName: Nimi
         sn: Sukunimi

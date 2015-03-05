@@ -46,6 +46,12 @@
     </div>
     <div class="row">
       <div class="column_1">
+        <%= label "school", 'puavoImageSeriesSourceURL' %>:
+      </div>
+      <div class="column_2"><%=h @school.puavoImageSeriesSourceURL %></div>
+    </div>
+    <div class="row">
+      <div class="column_1">
         <%= label "school", 'puavoAllowGuest' %>:
       </div>
       <div class="column_2"><%= translate_boolean_value(@school.puavoAllowGuest) %></div>
