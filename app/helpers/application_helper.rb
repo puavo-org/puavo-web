@@ -183,4 +183,24 @@ module ApplicationHelper
 
   end
 
+  def value_or_default_value_by_parent(model, attribute)
+    value = model.send(attribute)
+    suffix = ""
+
+    if value.nil?
+      if model.parent.class == School
+        value = model.parent.send(attribute)
+        suffix = I18n.t("helpers.by_school")
+      end
+
+      if value.nil?
+        value = LdapOrganisation.current.send(attribute)
+        suffix = I18n.t("helpers.by_organisation")
+      end
+    end
+
+    return value + " " + suffix
+
+  end
+
 end

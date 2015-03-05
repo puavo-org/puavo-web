@@ -48,7 +48,7 @@
       <div class="column_1">
         <%= label "school", 'puavoImageSeriesSourceURL' %>:
       </div>
-      <div class="column_2"><%=h @school.puavoImageSeriesSourceURL %></div>
+      <div class="column_2"><%=h value_or_default_value_by_parent(@school, "puavoImageSeriesSourceURL") %></div>
     </div>
     <div class="row">
       <div class="column_1">

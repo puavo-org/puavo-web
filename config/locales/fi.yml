@@ -770,6 +770,8 @@ fi:
     invalid_ssh_public_key: Virheellinen avain
     default_by_school: Koulun oletusarvo
     default_by_organisation: Organisaation oletusarvo
+    by_organisation: (organisaatio)
+    by_school: (koulu)
   external_services:
     title: Ulkoiset Palvelut
     description: "Ulkoisen palvelun aktivointi mahdollistaa palveluun kirjautumisen Opinsys-käyttäjä tunnuksella sekä salasanalla. Aktivoidulle palvelulle siirretään kirjautumisen yhteydessä käyttäjän koko nimi, sähköposti, organisaation nimi ja koulun nimi."
