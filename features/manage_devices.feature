@@ -53,12 +53,10 @@ Feature: Manage devices
     And I press "Edit" on the "laptop-01" row
     When I choose "device_puavoAutomaticImageUpdates_true"
     And I choose "device_puavoPersonallyAdministered_true"
-    And I fill in "Image series source URL" with "http://foobar.opinsys.fi/trusty"
     And I press "Update"
     Then I should see "Device was successfully updated."
     And I should see "Automatic image updates Yes"
     And I should see "Personally administered Yes"
-    And I should see "http://foobar.opinsys.fi/trusty"
 
   Scenario: Change primary user for laptop
     Given I am on the devices list page
@@ -72,3 +70,11 @@ Feature: Manage devices
     And I press "Update"
     Then I should see "Device was successfully updated."
     And I should not see "Device primary user Pavel Taylor"
+
+  Scenario: Change Image series source URL
+    Given I am logged in as "example" organisation owner
+    And I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I fill in "Image series source URL" with "http://foobar.opinsys.fi/trusty"
+    And I press "Update"
+    And I should see "http://foobar.opinsys.fi/trusty"
