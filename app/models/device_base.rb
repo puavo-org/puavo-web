@@ -256,6 +256,13 @@ class DeviceBase < LdapBase
     end
   end
 
+
+  def parent
+    if self.attributes.include?("puavoSchool")
+      return School.find(self.puavoSchool)
+    end
+  end
+
   private
 
   def http_puavo_ca

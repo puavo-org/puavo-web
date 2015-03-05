@@ -155,4 +155,32 @@ module ApplicationHelper
       end
     end
   end
+
+  def default_value_by_parent(model, attribute)
+    label = nil
+    parent_path = nil
+    value = nil
+
+    if model.parent.class == School
+      unless model.parent.send(attribute).nil?
+        label = I18n.t("helpers.default_by_school") + ":"
+        parent_path = edit_school_path(model.parent)
+        value = model.parent.send(attribute)
+      end
+    end
+
+    if label.nil?
+      label = I18n.t("helpers.default_by_organisation") + ":"
+      parent_path = edit_organisation_path
+      value = LdapOrganisation.current.send(attribute)
+    end
+
+    return if value.nil?
+
+    return content_tag(:b, label) + " " +
+      value.to_s + " " +
+      link_to(I18n.t("link.edit"), parent_path)
+
+  end
+
 end

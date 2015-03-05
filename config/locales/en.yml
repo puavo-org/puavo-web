@@ -769,6 +769,8 @@ en:
       servers:
         create: Create
     invalid_ssh_public_key: Invalid public key
+    default_by_school: Default by school
+    default_by_organisation: Default by organisaation
   external_services:
     title: External Services
     description: "External service activation enables logging to the service with Opinsys credentials. User's full name, email, organisation name and school name will be given to the external service during login."

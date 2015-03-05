@@ -216,8 +216,13 @@
   <% end %>
 
   <tr>
-    <td><%= f.label :puavoImageSeriesSourceURL %></td>
-    <td><%= f.text_field :puavoImageSeriesSourceURL %></td>
+    <td>
+      <%= f.label :puavoImageSeriesSourceURL %>
+    </td>
+    <td>
+      <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
+      <%= f.text_field :puavoImageSeriesSourceURL %>
+    </td>
   </tr>
 
   <tr>
