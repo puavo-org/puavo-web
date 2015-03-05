@@ -32,6 +32,7 @@ env.validate "Organisation" do
   owner.can_modify organisation, [ :replace, :street,                       ["Examplestreet 55"]                             ]
   owner.can_modify organisation, [ :replace, :telephoneNumber,              ["+358017123456789"]                             ]
   owner.can_modify organisation, [ :replace, :eduOrgLegalName,              ["example2"]                                     ]
+  owner.can_modify organisation, [ :replace, :puavoImageSeriesSourceURL,    ["https://foobar.opisnys.fi/images"]             ]
 
   # Owner can read following attributes
   owner.can_read organisation, [ :cn,
