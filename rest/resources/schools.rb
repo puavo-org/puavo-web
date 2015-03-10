@@ -202,4 +202,13 @@ class School < LdapModel
     define_method(attr) { autopoweroff_attr_with_organisation_fallback(attr) }
   end
 end
+
+class Schools < LdapSinatra
+  get "/v3/schools" do
+    auth :basic_auth, :server_auth, :kerberos
+    json School.all
+  end
+end
+
+
 end
