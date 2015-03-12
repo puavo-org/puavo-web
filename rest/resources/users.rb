@@ -72,8 +72,8 @@ class User < LdapModel
   end
 
   # aka by_uuid
-  def self.by_username(username)
-    by_attr(:username, username)
+  def self.by_username(username, attrs=nil)
+    by_attr(:username, username, :single, attrs)
   end
 
   def self.resolve_dn(username)
@@ -184,9 +184,9 @@ class User < LdapModel
     dn == CONFIG["server"][:dn]
   end
 
-  def to_hash
-    data = super
-    data["schools"] = schools.map do |school|
+  computed_attr :schools_hash, :schools
+  def schools_hash
+    schools.map do |school|
         {
           "id" => school.id,
           "dn" => school.dn,
@@ -202,9 +202,7 @@ class User < LdapModel
             }
           end
         }
-      end
-
-    return data
+    end
   end
 
   def self.current
@@ -248,13 +246,12 @@ class Users < LdapSinatra
 
     # XXX cannot combine filters
     if params["email"]
-      puts("USIN email FILTER")
-      json User.by_attr(:email, params["email"], :multi)
+      json User.by_attr(:email, params["email"], :multi, params["attributes"])
     elsif params["id"]
-      puts("USIN ID FILTER")
-      json User.by_attr(:id, params["id"], :multi)
+      json User.by_attr(:id, params["id"], :multi, params["attributes"])
     else
-      json User.all
+      users = User.all(params["attributes"])
+      json users
     end
 
   end
@@ -263,7 +260,7 @@ class Users < LdapSinatra
   get "/v3/users/:username" do
     auth :basic_auth, :kerberos
 
-    json User.by_username(params["username"])
+    json User.by_username(params["username"], params["attributes"])
   end
 
   get "/v3/users/:username/profile.jpg" do

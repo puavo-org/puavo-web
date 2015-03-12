@@ -1,3 +1,4 @@
+require "set"
 
 # ldap attribute conversions
 class LdapModel
@@ -9,8 +10,11 @@ class LdapModel
 
   attr_reader :ldap_attr_store
 
-  def initialize(ldap_attr_store={})
-    @ldap_attr_store = ldap_attr_store
+  def initialize(ldap_attr_store=nil, serialize_attrs=nil)
+    @ldap_attr_store = ldap_attr_store || {}
+    if serialize_attrs
+      @serialize_attrs = Set.new(serialize_attrs.map{|a| a.to_sym})
+    end
     @cache = {}
   end
 
@@ -42,8 +46,8 @@ class LdapModel
 
   # A method that will be executed and added to `to_hash` and `to_json`
   # conversions of this models
-  def self.computed_attr(*attrs)
-    attrs.each { |a| computed_attributes[a.to_sym] = true }
+  def self.computed_attr(attr, serialize_name=nil)
+    computed_attributes[attr.to_sym] = serialize_name || attr
   end
 
   # Skip this attribute(s) from serializations such as `to_hash` and `to_json`
@@ -135,12 +139,16 @@ class LdapModel
   def to_hash
     h = {}
     pretty2ldap.each do |pretty_name, _|
-      if not skip_serialize_attrs[pretty_name.to_sym]
+      next if @serialize_attrs && !@serialize_attrs.include?(pretty_name)
+
+      if !skip_serialize_attrs[pretty_name.to_sym]
         h[pretty_name.to_s] = send(pretty_name)
       end
     end
-    computed_attributes.keys.each do |attr|
-      h[attr.to_s] = send(attr)
+
+    computed_attributes.each do |method_name, serialize_name|
+      next if @serialize_attrs && !@serialize_attrs.include?(serialize_name)
+      h[serialize_name.to_s] = send(method_name)
     end
     h
   end

@@ -32,7 +32,7 @@ class LdapModel
       res.push(entry.to_hash) if entry.dn != ldap_base
     end
 
-    timer.stop("#{ self.name }#filter(#{ filter.inspect }) found #{ res.size } items")
+    timer.stop("#{ self.name }#filter(#{ filter.inspect }) #{ attributes.inspect } found #{ res.size } items")
     PROF.count(timer)
 
     res
@@ -40,18 +40,29 @@ class LdapModel
 
   # Return convert values to LdapHashes before returning
   # @see raw_filter
-  def self.filter(*args)
-    raw_filter(*args).map! do |entry|
-      from_hash(entry)
+  def self.filter(_filter, attrs=nil)
+    ldap_attributes = nil
+    pretty_attributes = nil
+
+    if attrs.class == String
+      attrs = attrs.split(",").map{|s| s.strip }
+    end
+
+    if attrs
+      ldap_attributes = attrs.map{|a| pretty2ldap[a.to_sym]}.compact
+    end
+
+    raw_filter(_filter, ldap_attributes).map! do |entry|
+      from_hash(entry, attrs)
     end
   end
 
 
-  def self.by_ldap_attr(attr, value, option=nil)
+  def self.by_ldap_attr(attr, value, option=nil, attrs=nil)
     custom_filter = "(#{ escape attr }=#{ escape value })"
     full_filter = "(&#{ base_filter }#{ custom_filter })"
 
-    res = Array(filter(full_filter))
+    res = Array(filter(full_filter, attrs))
     if option == :multi
       res
     else
@@ -59,8 +70,8 @@ class LdapModel
     end
   end
 
-  def self.by_ldap_attr!(attr, value, option=nil)
-     res = by_ldap_attr(attr, value, option)
+  def self.by_ldap_attr!(attr, value, option=nil, attrs=nil)
+     res = by_ldap_attr(attr, value, option, attrs)
      if Array(res).empty?
       raise(
         NotFound,
@@ -77,7 +88,7 @@ class LdapModel
   # @param value [String] Attribute value to match
   # @param option [Symbol] Set to :multi to return an Array
   # @return [LdapModel]
-  def self.by_attr(attr, value, option=nil)
+  def self.by_attr(attr, value, option=nil, attrs=nil)
     ldap_attr = pretty2ldap[attr.to_sym]
 
     if ldap_attr.nil?
@@ -86,19 +97,19 @@ class LdapModel
       raise "Invalid pretty attribute #{ attr } for #{ self }"
     end
 
-    by_ldap_attr(ldap_attr, value, option)
+    by_ldap_attr(ldap_attr, value, option, attrs)
   end
 
   # Same as by_attr but it will throw NotFound exception if the value is nil
-  def self.by_attr!(attr, value, option=nil)
-    by_ldap_attr!(pretty2ldap[attr.to_sym], value, option)
+  def self.by_attr!(attr, value, option=nil, attrs=nil)
+    by_ldap_attr!(pretty2ldap[attr.to_sym], value, option, attrs)
   end
 
   # Return all ldap entries from the current base
   #
   # @see ldap_base
-  def self.all
-    filter base_filter
+  def self.all(attrs=nil)
+    filter(base_filter, attrs)
   end
 
   # Find any ldap entry by dn
