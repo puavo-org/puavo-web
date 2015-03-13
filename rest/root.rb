@@ -192,6 +192,7 @@ class Root < LdapSinatra
   use PuavoRest::FluentRelay
   use PuavoRest::DeviceImages
   use PuavoRest::Schools
+  use PuavoRest::BootServers
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
@@ -199,7 +200,6 @@ class Root < LdapSinatra
 
   if CONFIG["bootserver"]
     use PuavoRest::LtspServers
-    use PuavoRest::BootServers
   end
 
   if CONFIG["password_management"]
