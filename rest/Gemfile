@@ -9,7 +9,7 @@ end rescue Errno::ENOENT
 gem "sinatra", "~> 1.4.4"
 gem "sinatra-contrib"
 gem "uuid"
-gem "puma", "~> 2.7.1"
+gem "puma", "~> 2.11.1"
 gem "rack-rewrite", "~> 1.4.01"
 gem "addressable"
 gem "jwt", "~> 0.1.8"
