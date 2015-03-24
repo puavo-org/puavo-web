@@ -232,6 +232,7 @@ class SSO < LdapSinatra
       "text_organisation_help" => t.sso.organisation_help,
       "text_developers" => t.sso.developers,
       "text_developers_info" => t.sso.developers_info,
+      "support_info" => t.sso.support_info,
       "text_login_to" => t.sso.login_to
     }
 
