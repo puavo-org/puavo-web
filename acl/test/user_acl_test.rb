@@ -52,6 +52,7 @@ env.validate "user attributes"  do
   teacher.cannot_modify admin,     [:replace,  :givenName,  ["newname"]],          InsufficientAccessRights
 
   ticket.can_read student, [ :objectClass,
+                             :puavoSchool,
                              :uid,
                              :mail,
                              :puavoId,
