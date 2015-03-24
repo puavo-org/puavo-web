@@ -199,7 +199,9 @@ module ApplicationHelper
       end
     end
 
-    return value + " " + suffix
+    suffix = "" if value.nil?
+
+    return value.to_s + " " + suffix
 
   end
 
