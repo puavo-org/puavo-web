@@ -209,7 +209,7 @@ def define_basic(env)
 
   env.define :bootserver2 do |config|
     bootserver = Server.create(
-      :puavoHostname => "boot01",
+      :puavoHostname => "boot10",
       :puavoDeviceType => "bootserver",
       :macAddress => "27:c0:59:3c:bc:b5",
       :description => "test" )
