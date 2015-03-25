@@ -16,7 +16,7 @@ module Test
 
     owner = User.find(:first, :attribute => "uid", :value => test_organisation.owner)
     if owner.nil?
-      raise "Cannot find organisation owner for 'example'. Organisation not created?"
+      raise "Cannot find organisation owner for \'example\'. Organisation not created?"
     end
 
     ExternalService.ldap_setup_connection(
@@ -30,11 +30,14 @@ module Test
   end
 
   def self.clean_up_ldap
+    owner_for_test = nil
 
     # Clean Up LDAP server: destroy all schools, groups and users
     User.all.each do |u|
       unless u.uid == "cucumber"
         u.destroy
+      else
+        owner_for_test = u
       end
     end
     Group.all.each do |g|
@@ -81,6 +84,7 @@ module Test
     ldap_organisation.puavoTimezone = "Europe/Helsinki"
     ldap_organisation.puavoKeyboardLayout = "en"
     ldap_organisation.puavoKeyboardVariant = "US"
+    ldap_organisation.owner = ['uid=admin,o=puavo', owner_for_test.dn.to_s]
     ldap_organisation.save!
 
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
