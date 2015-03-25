@@ -3,6 +3,7 @@ Rails.env = 'test'
 
 require './acl/data'
 require './acl/helper'
+require './generic_test_helpers'
 
 require 'pp'
 
@@ -27,6 +28,9 @@ def run_acl_tests
   LDAPTestEnv.report
 
 end
+
+@owner_dn, @owner_password = Puavo::Test.setup_test_connection
+Puavo::Test.clean_up_ldap
 
 if __FILE__ == $0
   run_acl_tests
