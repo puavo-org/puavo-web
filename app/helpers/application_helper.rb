@@ -201,8 +201,8 @@ module ApplicationHelper
 
     suffix = "" if value.nil?
 
-    return value.to_s + " " + suffix
-
+    
+    return multiple_value(value) + " " + suffix
   end
 
   def multiple_text_field(model, attribute, link_text)

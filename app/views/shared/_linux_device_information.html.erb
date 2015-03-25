@@ -188,7 +188,9 @@
 
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoImageSeriesSourceURL" %></td>
-  <td class="value_td"><%=h value_or_default_value_by_parent(device, "puavoImageSeriesSourceURL") %></td>
+  <td class="value_td">
+    <%=h value_or_default_value_by_parent(device, "puavoImageSeriesSourceURL") %>
+  </td>
 </tr>
 
 <tr>
