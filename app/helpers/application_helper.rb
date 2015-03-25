@@ -206,14 +206,15 @@ module ApplicationHelper
   end
 
   def multiple_text_field(model, attribute, link_text)
+    object_name = ActiveModel::Naming.param_key(model)
 
-    content_tag(:div, :id => "#{model.class.name.downcase}_#{attribute}") do
+    content_tag(:div, :id => "#{object_name}_#{attribute}") do
       content = ""
       if model.send(attribute).nil?
-        content = "<input name='#{model.class.name.downcase}[#{attribute}][]' size='30' type='text' />"
+        content = "<input name='#{object_name}[#{attribute}][]' size='30' type='text' />"
       else
 	Array(model.send(attribute)).each do |value|
-          content += "<input name='#{model.class.name.downcase}[#{attribute}][]' size='30' type='text' value='#{value}' />"
+          content += "<input name='#{object_name}[#{attribute}][]' size='30' type='text' value='#{value}' />"
 	end
       end
       content.html_safe
