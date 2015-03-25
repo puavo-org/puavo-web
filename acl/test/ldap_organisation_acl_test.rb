@@ -10,8 +10,8 @@ env.validate "Organisation" do
   owner.cannot_modify organisation, [ :replace, :puavoDomain,                   ["example2.opinsys.net"]        ],  InsufficientAccessRights
   owner.cannot_modify organisation, [ :replace, :puavoKadminPort,               ["99999"]                       ],  InsufficientAccessRights
   owner.cannot_modify organisation, [ :replace, :puavoRemoteDesktopPrivateKey,  ["dfsadfowieroasdfasodf"]       ],  InsufficientAccessRights
-  owner.cannot_modify organisation, [ :add,     :owner,                         [teacher.dn]                ],  InsufficientAccessRights
 
+  admin.cannot_modify organisation, [ :add,     :owner,                         [teacher.dn]                    ],  InsufficientAccessRights
 
 
   # Owner can modify following attributes
@@ -33,6 +33,7 @@ env.validate "Organisation" do
   owner.can_modify organisation, [ :replace, :telephoneNumber,              ["+358017123456789"]                             ]
   owner.can_modify organisation, [ :replace, :eduOrgLegalName,              ["example2"]                                     ]
   owner.can_modify organisation, [ :replace, :puavoImageSeriesSourceURL,    ["https://foobar.opisnys.fi/images"]             ]
+  owner.can_modify organisation, [ :add,     :owner,                        [teacher.dn]                                     ]
 
   # Owner can read following attributes
   owner.can_read organisation, [ :cn,
