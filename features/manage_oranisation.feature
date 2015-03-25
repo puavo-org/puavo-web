@@ -38,21 +38,21 @@ Feature: Manage organisation
     When I follow "About"
     And I follow "Edit"
     Then I fill in the following:
-    | Description             | Example Organisation located  in the middle of the Finland |
-    | Phone number            | 123456789                                                  |
-    | Fax number              | 987654321                                                  |
-    | Locality                | Example locality                                           |
-    | Street address          | Example stree 435                                          |
-    | Post Office Box         | 1001                                                       |
-    | Postal address          | Example postal address                                     |
-    | Postal code             | 88888                                                      |
-    | State                   | Keski-suomen lääni                                         |
-    | Home page               | http://www.example.org                                     |
-    | Name                    | Example Organisation 2                                     |
-    | Abbreviation            | jkl                                                        |
-    | Keyboard layout         | en                                                         |
-    | Keyboard varian         | US                                                         |
-    | Image series source URL | http://foobar.opinsys.fi/trusty                            |
+    | Description                         | Example Organisation located  in the middle of the Finland |
+    | Phone number                        | 123456789                                                  |
+    | Fax number                          | 987654321                                                  |
+    | Locality                            | Example locality                                           |
+    | Street address                      | Example stree 435                                          |
+    | Post Office Box                     | 1001                                                       |
+    | Postal address                      | Example postal address                                     |
+    | Postal code                         | 88888                                                      |
+    | State                               | Keski-suomen lääni                                         |
+    | Home page                           | http://www.example.org                                     |
+    | Name                                | Example Organisation 2                                     |
+    | Abbreviation                        | jkl                                                        |
+    | Keyboard layout                     | en                                                         |
+    | Keyboard varian                     | US                                                         |
+    | ldap_organisation[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                            |
 # FIXME: fix acl?
 #    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
     And I select "(GMT+02:00) Helsinki" from "Timezone"

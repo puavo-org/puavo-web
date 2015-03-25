@@ -16,27 +16,27 @@ Feature: Manage schools
     Given I am on the new school page
     Then I should see "New school"
     When I fill in the following:
-    | School name                | Bourne School                                                                  |
-    | Name prefix                | bourne                                                                         |
-    | School's home page         | www.bourneschool.com                                                           |
-    | Description                | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
-    | Group name                 | bourne                                                                         |
-    | Phone number               | 0123456789                                                                     |
-    | Fax number                 | 9876543210                                                                     |
-    | Locality                   | England                                                                        |
-    | Street                     | Raymond Mays Way                                                               |
-    | Post Office Box            | 123                                                                            |
-    | Postal address             | 12345                                                                          |
-    | Postal code                | 54321                                                                          |
-    | State                      | East Midlands                                                                  |
-    | Desktop Image              | presice-20121023                                                               |
-    | school[puavoBillingInfo][] | school_base:500                                                                |
-    | Tags                       | testag1 testag2                                                                |
-    | school_fs_0                | nfs3                                                                           |
-    | school_path_0              | 10.0.0.1/share                                                                 |
-    | school_mountpoint_0        | /home/share                                                                    |
-    | school_options_0           | -o rw                                                                          |
-    | Image series source URL    | http://foobar.opinsys.fi/trusty                                                |
+    | School name                         | Bourne School                                                                  |
+    | Name prefix                         | bourne                                                                         |
+    | School's home page                  | www.bourneschool.com                                                           |
+    | Description                         | The Bourne Community School is a county school for boys and girls aged 4 to 7. |
+    | Group name                          | bourne                                                                         |
+    | Phone number                        | 0123456789                                                                     |
+    | Fax number                          | 9876543210                                                                     |
+    | Locality                            | England                                                                        |
+    | Street                              | Raymond Mays Way                                                               |
+    | Post Office Box                     | 123                                                                            |
+    | Postal address                      | 12345                                                                          |
+    | Postal code                         | 54321                                                                          |
+    | State                               | East Midlands                                                                  |
+    | Desktop Image                       | presice-20121023                                                               |
+    | school[puavoBillingInfo][]          | school_base:500                                                                |
+    | Tags                                | testag1 testag2                                                                |
+    | school_fs_0                         | nfs3                                                                           |
+    | school_path_0                       | 10.0.0.1/share                                                                 |
+    | school_mountpoint_0                 | /home/share                                                                    |
+    | school_options_0                    | -o rw                                                                          |
+    | school[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                                                |
     And I attach the file at "features/support/test.jpg" to "Image"
     And I select "English (United States)" from "Language"
     And I choose "school_puavoAutomaticImageUpdates_false"
