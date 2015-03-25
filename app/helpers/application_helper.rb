@@ -177,6 +177,12 @@ module ApplicationHelper
 
     return if value.nil?
 
+    if value.is_a?(Array)
+      value = value.join(", ")
+    end
+
+    value = truncate(value, :length => 60)
+
     return content_tag(:b, label) + " " +
       value.to_s + " " +
       link_to(I18n.t("link.edit"), parent_path)
