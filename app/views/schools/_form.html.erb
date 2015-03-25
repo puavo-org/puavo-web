@@ -163,7 +163,7 @@
     </td>
     <td>
       <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
-      <%= f.text_field :puavoImageSeriesSourceURL %>
+      <%= multiple_text_field(f.object, "puavoImageSeriesSourceURL", t('shared.add_puavoImageSeriesSourceURL')) %>
     </td>
   </tr>
   <% end %>
