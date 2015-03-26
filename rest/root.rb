@@ -70,11 +70,19 @@ class BeforeFilters < LdapSinatra
       :rest_root => "#{ request.scheme }://#{ request.host }#{ port }"
     )
 
+    request_headers = request.env.select{|k,v| k.start_with?("HTTP_")}
+    if request_headers["HTTP_AUTHORIZATION"]
+      request_headers["HTTP_AUTHORIZATION"] = "[FILTERED]"
+    end
+
     log_meta = {
       :bootserver => !!CONFIG["bootserver"],
       :cloud => !!CONFIG["cloud"],
+      :rack_env => ENV["RACK_ENV"],
       :request => {
         :url => request.url,
+        :headers => request_headers,
+        :path => request.path,
         :method => env["REQUEST_METHOD"],
         :client_hostname => @client_hostname,
         :ip => ip
@@ -85,6 +93,8 @@ class BeforeFilters < LdapSinatra
     end
 
     self.flog = $rest_flog.merge(log_meta)
+    flog.info "request start"
+
   end
 
   after do
