@@ -29,8 +29,6 @@ gem "httparty"
 gem "pony"
 gem "gibberish"
 gem "sinatra-support", :require => "sinatra/support"
-gem "rack-timeout"
-
 
 group :test do
   gem "shotgun"

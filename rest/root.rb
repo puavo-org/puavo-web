@@ -164,8 +164,8 @@ class Root < LdapSinatra
     1 / 0
   end
 
-  get "/v3/slow_test/:time" do
-    sleep params["time"].to_i
+  get "/v3/slow_test" do
+    sleep 2
     "I was slow"
   end
 
