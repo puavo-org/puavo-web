@@ -12,6 +12,16 @@ VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 
+def self.about
+  return ({
+      "git_commit" => GIT_COMMIT,
+      "hostname" => Socket.gethostname,
+      "version" => VERSION,
+      "deb_package" => DEB_PACKAGE,
+      "uptime" => (Time.now - STARTED).to_i
+  })
+end
+
 # Use only when not in sinatra routes. Sinatra routes have a "flog" method
 # which automatically logs the route and user
 $rest_flog = FluentWrap.new(
@@ -181,12 +191,7 @@ class Root < LdapSinatra
   end
 
   get "/v3/about" do
-    json({
-      "git_commit" => GIT_COMMIT,
-      "version" => VERSION,
-      "deb_package" => DEB_PACKAGE,
-      "uptime" => (Time.now - STARTED).to_i
-    })
+    json(PuavoRest.about)
   end
 
   use BeforeFilters

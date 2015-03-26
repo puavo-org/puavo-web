@@ -81,6 +81,9 @@ class FluentRelay < LdapSinatra
     puts "Relayed #{ i } records to fluentd"
   end
 
+  get "/v3/fluent" do
+    json(PuavoRest.about)
+  end
 
   post "/v3/fluent" do
     auth :basic_auth, :kerberos
