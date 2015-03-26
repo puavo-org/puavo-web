@@ -46,9 +46,20 @@ class FluentRelay < LdapSinatra
   end
 
   def handle_msgpack
+    body_size = request.body.size
+    self.flog.info("Relaying fluentd chunk", {
+      :format => "msgpack",
+      :bytes => body_size
+    })
+
+    parsing_start = Time.now
     u = MessagePack::Unpacker.new(request.body)
+    parsing_time = Time.now - parsing_start
+
     puts "Relaying #{ request.body.size } bytes of msgpack data to fluentd"
 
+
+    relaying_start = Time.now
     i = 0
     u.each do |(tag, time, r)|
       i += 1
@@ -56,6 +67,16 @@ class FluentRelay < LdapSinatra
         raise InternalError, :user => "Failed to relay fluent packages"
       end
     end
+    relaying_time = Time.now - relaying_start
+
+    self.flog.info("Relayed fluentd chunk", {
+      :format => "msgpack",
+      :parse_ms => parsing_time * 1000,
+      :relay_ms => relaying_time * 1000,
+      :total_ms => (relaying_time+parsing_time) * 1000,
+      :bytes => body_size,
+      :count => i
+    })
 
     puts "Relayed #{ i } records to fluentd"
   end
