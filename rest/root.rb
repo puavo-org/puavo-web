@@ -79,6 +79,7 @@ class BeforeFilters < LdapSinatra
       :bootserver => !!CONFIG["bootserver"],
       :cloud => !!CONFIG["cloud"],
       :rack_env => ENV["RACK_ENV"],
+      :req_uuid => UUID.generate,
       :request => {
         :url => request.url,
         :headers => request_headers,
