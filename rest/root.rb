@@ -11,11 +11,14 @@ DEB_PACKAGE = Array(`dpkg -l | grep puavo-rest`.split())[2]
 VERSION = File.open("VERSION", "r"){ |f| f.read }.strip
 GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
+HOSTNAME = Socket.gethostname
+FQDN = Socket.gethostbyname(Socket.gethostname).first
 
 def self.about
   return ({
       "git_commit" => GIT_COMMIT,
-      "hostname" => Socket.gethostname,
+      "hostname" => HOSTNAME,
+      "fqdn" => HOSTNAME,
       "version" => VERSION,
       "deb_package" => DEB_PACKAGE,
       "uptime" => (Time.now - STARTED).to_i
@@ -26,7 +29,8 @@ end
 # which automatically logs the route and user
 $rest_flog = FluentWrap.new(
   "puavo-rest",
-  :hostname => Socket.gethostname,
+  :hostname => HOSTNAME,
+  :fqdn => FQDN,
   :version => "#{ VERSION } #{ GIT_COMMIT }",
   :deb_package => DEB_PACKAGE
 )
