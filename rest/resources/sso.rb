@@ -166,6 +166,13 @@ class SSO < LdapSinatra
 
     url = @external_service.generate_login_url(user, return_to)
     logger.info "Redirecting SSO auth #{ user["first_name"] } #{ user["last_name"] } (#{ user["dn"] } to #{ url }"
+
+    flog.info("sso login ok", {
+      :return_to => return_to,
+      :external_service => @external_service.to_hash,
+      :user => user
+    })
+
     flog.info("sso", {
       :login_ok => true,
       :return_to => return_to
