@@ -244,6 +244,14 @@ class LtspServers < LdapSinatra
       state["load_avg"] = params["load_avg"].to_f
     end
 
+    flog.info("ltsp server load", {
+      :fqdn => params["fqdn"],
+      :cpu_count => params["cpu_count"].to_i,
+      :image => params["ltsp_image"],
+      :load_avg => params["load_avg"].to_f,
+      :load_avg_relative => state["load_avg"],
+    })
+
     state["ltsp_image"] = params["ltsp_image"]
     state["fqdn"] = params["fqdn"]
     server = LtspServer.by_fqdn!(params["fqdn"])
