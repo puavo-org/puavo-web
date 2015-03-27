@@ -172,6 +172,12 @@ class Sessions < LdapSinatra
     session.save
 
     flog.info "new session", :device => params["hostname"]
+
+    # Use different message to avoid type collisions in elasticsearch
+    flog.info("created session", {
+      :session => session.to_hash
+    })
+
     json session
   end
 
