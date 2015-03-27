@@ -92,6 +92,8 @@ fi:
       group_added_failed: "Lisäys epäonnistui"
       group_removed: "Ryhmä poistettiin roolista."
       group_remove_failed: "Poistaminen epäonnistui."
+      users_removed: "Käyttäjien poisto onnistui!"
+      users_remove_failed: "Käyttäjien poisto keskeytettiin! Ei voitu poistaa käyttäjää: '%{username}'."
       create_failed: "Roolin lisääminen epäonnistui!"
       save_failed: Roolia ei voitu tallentaa!
       destroyed_failed: "Roolia (%{name}) ei voitu poistaa, koska siihen on liitetty käyttäjiä."
@@ -142,6 +144,8 @@ fi:
     show:
       other_groups: "Muut ryhmät"
       change_school: "Siirrä käyttäjät toiseen kouluun"
+      destroy_users: Poista kaikki käyttäjät
+      confirm_destroy_users: Poistetaan järjestelmästä kaikki käyttäjät (%{count}kpl), jotka kuuluvat rooliin '%{name}'. Oletko varma, että haluat poistaa käyttäjät? Tämän jälkeen käyttäjiä ei voida enää palauttaa takaisin järjestelmään!
     new:
       title: Uusi rooli
     edit:

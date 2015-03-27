@@ -15,6 +15,7 @@ PuavoUsers::Application.routes.draw do
       match 'roles/:id/select_role' => 'roles#select_role', :as => :select_role_role, :via => :post
       match 'roles/:id/add_group/:group_id' => 'roles#add_group', :as => :add_group_role, :via => :put
       match 'roles/:id/remove_group/:group_id' => 'roles#remove_group', :as => :remove_group_role, :via => :put
+      match 'roles/:id/remove_users' => 'roles#remove_users', :as => :remove_users_role, :via => :put
     end
 
     scope :path => ':school_id' do

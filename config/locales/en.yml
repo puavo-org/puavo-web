@@ -92,6 +92,8 @@ en:
       group_added_failed: Failed to add
       group_removed: Group was removed from the role.
       group_remove_failed: Failed to delete.
+      users_removed: Users was successfully removed!
+      users_remove_failed: "Stop users removing! Failed to remove user: '%{username}'."
       create_failed: Failed to create role!
       save_failed: Role cannot be saved!
       destroyed_failed: You can not remove role (%{name}) because it contains the users
@@ -143,6 +145,8 @@ en:
     show:
       other_groups: Other groups
       change_school: Move users to another school
+      destroy_users: Remove all users
+      confirm_destroy_users: Removed from the system, all users (%{count}pcs) that belong to the role of the '%{name}'. Are you sure? Users cannot be restored to the system!
     new:
       title: New role
     edit:

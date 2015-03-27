@@ -150,4 +150,31 @@ class RolesController < ApplicationController
       format.html
     end
   end
+
+  # PUT /:school_id/roles/:id/remove_users
+  def remove_users
+    @role = Role.find(params[:id])
+
+    users_destroy_successfully = true
+    failed_user = nil
+
+    @role.members.each do |user|
+      unless user.destroy
+        failed_user = user
+        users_destroy_successfully = false
+        break
+      end
+    end
+
+    respond_to do |format|
+      if users_destroy_successfully
+        flash[:notice] = t('flash.role.users_removed')
+        format.html { redirect_to( role_path(@school, @role) ) }
+      else
+        flash[:alert] = t('flash.role.users_remove_failed', :username => failed_user.uid)
+        format.html { redirect_to( role_path(@school, @role) ) }
+      end
+    end
+  end
+
 end

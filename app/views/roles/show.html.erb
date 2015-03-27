@@ -59,6 +59,15 @@
       <i class="icon-trash"></i><%= t('link.destroy')%>
       <% end %>
     </li>
+<li>
+  <%= link_to( remove_users_role_path(@school, @role),
+               :confirm => t('.confirm_destroy_users',
+                             :count => @role.members.count,
+                             :name => @role.displayName),
+               :method => :put ) do %>
+  <i class="icon-trash"></i><%= t('.destroy_users')%>
+  <% end %>
+</li>
 </ul>
 </li>
 </ul>
