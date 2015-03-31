@@ -275,6 +275,10 @@ describe PuavoRest::Devices do
       @data = JSON.parse last_response.body
     end
 
+    it "has image series source url" do
+      assert_equal "https://foobar.opinsys.fi/organisationpref.json", @data["image_series_source_url"]
+    end
+
     it "has allow guest" do
       assert_equal false, @data["allow_guest"]
     end

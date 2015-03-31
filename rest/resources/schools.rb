@@ -101,6 +101,14 @@ class School < LdapModel
      end
   end
 
+  def image_series_source_url
+     if get_own(:image_series_source_url).nil?
+       organisation.image_series_source_url
+     else
+       get_own(:image_series_source_url)
+     end
+  end
+
   def preferred_language
     if get_own(:preferred_language).nil?
       organisation.preferred_language
