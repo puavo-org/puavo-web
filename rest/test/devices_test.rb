@@ -13,6 +13,7 @@ describe PuavoRest::Devices do
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true,
       :puavoAutomaticImageUpdates => true,
+      :puavoImageSeriesSourceURL => "https://foobar.opinsys.fi/schoolpref.json",
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
@@ -214,6 +215,10 @@ describe PuavoRest::Devices do
       get "/v3/devices/athin"
       assert_200
       @data = JSON.parse last_response.body
+    end
+
+    it "has image series source url" do
+      assert_equal "https://foobar.opinsys.fi/schoolpref.json", @data["image_series_source_url"]
     end
 
     it "has preferred image" do
