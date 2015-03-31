@@ -85,6 +85,7 @@ module Test
     ldap_organisation.puavoKeyboardLayout = "en"
     ldap_organisation.puavoKeyboardVariant = "US"
     ldap_organisation.owner = ['uid=admin,o=puavo', owner_for_test.dn.to_s]
+    ldap_organisation.puavoImageSeriesSourceURL = "https://foobar.opinsys.fi/organisationpref.json"
     ldap_organisation.save!
 
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
