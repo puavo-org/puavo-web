@@ -85,6 +85,7 @@ describe PuavoRest::Devices do
         :puavoSchool => @school.dn,
         :puavoPersonalDevice => false,
         :puavoDefaultPrinter => "defaultprinter",
+        :puavoImageSeriesSourceURL => "https://foobar.opinsys.fi/images.json",
         :puavoAllowGuest => false,
         :puavoAutomaticImageUpdates => false,
         :puavoPersonallyAdministered => true,
@@ -97,10 +98,15 @@ describe PuavoRest::Devices do
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
       test_organisation.puavoPersonalDevice = "TRUE"
+      test_organisation.puavoImageSeriesSourceURL = nil
       test_organisation.save!
       get "/v3/devices/athin"
       assert_200
       @data = JSON.parse last_response.body
+    end
+
+    it "has image series source url" do
+      assert_equal "https://foobar.opinsys.fi/images.json", @data["image_series_source_url"]
     end
 
     it "has mac address" do

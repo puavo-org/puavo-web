@@ -25,6 +25,7 @@ class Device < Host
   ldap_map :puavoKeyboardLayout, :keyboard_layout
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map :puavoDevicePrimaryUser, :primary_user_dn
+  ldap_map :puavoImageSeriesSourceURL, :image_series_source_url
 
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
@@ -112,6 +113,12 @@ class Device < Host
      else
        get_own(:personal_device)
      end
+  end
+
+  def image_series_source_url
+    unless get_own(:image_series_source_url).nil?
+      get_own(:image_series_source_url)
+    end
   end
 
   def tags
