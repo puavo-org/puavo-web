@@ -566,6 +566,11 @@ fi:
         puavoExport: Hakemistopolku
         image: Kuva
         puavoDeviceImage: Työpöytäkuva
+        puavoPrinterDeviceURI: Tulostimen laiteosoite
+        puavoPrinterPPD: Tulostimen ajuritiedosto
+        puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
+        puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
+        puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
       automount:
         cn: Hakemisto
       printer:

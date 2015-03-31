@@ -570,6 +570,11 @@ en:
         puavoExport: Path
         image: Image
         puavoDeviceImage: Desktop Image
+        puavoPrinterDeviceURI: Printer device URI
+        puavoPrinterPPD: Printer driver file
+        puavoDeviceDefaultAudioSource: Default input audio device
+        puavoDeviceDefaultAudioSink: Default output audio device
+        puavoImageSeriesSourceURL: Image series source URL
       automount:
         cn: Directory
       printer:
