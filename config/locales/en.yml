@@ -303,6 +303,10 @@ en:
       title: Information of organisation
       select: Select
       add_puavo_billing_info: Add another billing info
+    owners:
+      title: Organisation owners
+      other_admin_users: "Add organisation management access to the admin"
+      organisation_owners: "Following admins have the access to control organisation"
   ldap_services:
     index:
       actions: Actions

@@ -302,6 +302,8 @@ fi:
       add_puavo_billing_info: "Lisää laskutustietoja"
     owners:
       title: Organisaation omistajat
+      other_admin_users: "Lisää ylläpitäjälle organisaation hallintaoikeus"
+      organisation_owners: "Seuraavilla ylläpitäjillä on hallintaoikeus organisaatioon"
   ldap_services:
     index:
       actions: Toiminnot
