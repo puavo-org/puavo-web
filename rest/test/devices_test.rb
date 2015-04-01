@@ -603,7 +603,7 @@ describe PuavoRest::Devices do
         :primary_user_uid => 'bob'
       )
 
-      # devices puavoDevicePrimaryUser is invalid when remove 'bob' user
+      # device puavoDevicePrimaryUser is invalid when user 'bob' is removed
       @user.destroy
 
       get "/v3/devices/athin"
