@@ -158,7 +158,7 @@ class LtspServer < Host
   def mountpoints
     schools_mountpoints = []
     schools.each do |school|
-      schools_mountpoints += school.mountpoints.map{ |m| JSON.parse(m) }
+      schools_mountpoints += school.mountpoints
     end
     schools_mountpoints
   end

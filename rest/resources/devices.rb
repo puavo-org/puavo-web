@@ -141,7 +141,7 @@ class Device < Host
   # Use device's mountpoint if it is same that at school
   def mountpoints
     device_mounts = get_own(:mountpoints).map{ |m| JSON.parse(m) }
-    school_mounts = school.mountpoints.map{ |m| JSON.parse(m) }
+    school_mounts = school.mountpoints
     mountpoints = device_mounts.map{ |m| m["mountpoint"] }
 
     school_mounts.each do |mounts|
