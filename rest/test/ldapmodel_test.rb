@@ -50,7 +50,7 @@ describe LdapModel do
 
 
     it "can create new instances from normal hashes" do
-      h = TestHash1.from_hash("fooBar" => "value")
+      h = TestHash1.from_ldap_hash("fooBar" => "value")
       assert_equal "value", h["foo_bar"]
       assert_equal "value", h.foo_bar
     end

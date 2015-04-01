@@ -53,7 +53,7 @@ class LdapModel
     end
 
     raw_filter(_filter, ldap_attributes).map! do |entry|
-      from_hash(entry, attrs)
+      from_ldap_hash(entry, attrs)
     end
   end
 
@@ -154,7 +154,7 @@ class LdapModel
   # Return convert value to LdapHashes before returning
   # @see raw_by_dn
   def self.by_dn(*args)
-    from_hash( raw_by_dn(*args) )
+    from_ldap_hash( raw_by_dn(*args) )
   end
 
   def self.by_dn!(*args)

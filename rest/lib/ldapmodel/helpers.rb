@@ -7,8 +7,7 @@ class LdapModel
     end
   end
 
-  # Create LdapModel from other hash. Converts attributes.
-  def self.from_hash(hash, serialize_attrs=nil)
+  def self.from_ldap_hash(hash, serialize_attrs=nil)
     new({}, serialize_attrs).ldap_merge!(hash)
   end
 
