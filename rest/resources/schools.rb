@@ -55,6 +55,10 @@ class School < LdapModel
     @wireless_printer_queues ||= PrinterQueue.by_dn_array(wireless_printer_queue_dns)
   end
 
+  def mountpoints=(value)
+    write_raw(:mountpoints, value.map{|m| m.to_json})
+  end
+
   # Cached organisation query
   def organisation
     @organisation ||= Organisation.by_dn(self.class.organisation["base"])
