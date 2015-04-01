@@ -42,7 +42,15 @@ class LdapModel
         get_own(pretty_name)
       end
     end
+
+    setter_method = (pretty_name.to_s + "=").to_sym
+    if not method_defined?(setter_method)
+      define_method setter_method do |value|
+        write_own(pretty_name, value)
+      end
+    end
   end
+
 
   # A method that will be executed and added to `to_hash` and `to_json`
   # conversions of this models
@@ -87,6 +95,13 @@ class LdapModel
     end
 
     @cache[pretty_name] = value
+  end
+
+  def write_own(pretty_name, value)
+    ldap_name = pretty2ldap[pretty_name.to_sym]
+    @ldap_attr_store[ldap_name] = value
+    @cache[pretty_name] = nil
+    value
   end
 
   def [](pretty_name)
