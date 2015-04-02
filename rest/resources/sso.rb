@@ -20,7 +20,7 @@ class ExternalService < LdapModel
   ldap_map :description, :description
   ldap_map :puavoServiceDescriptionURL, :description_url
   ldap_map :puavoServiceTrusted, :trusted
-  ldap_map :puavoServicePathPrefix, :prefix, "/"
+  ldap_map :puavoServicePathPrefix, :prefix, :default => "/"
 
   def self.ldap_base
     "ou=Services,o=puavo"

@@ -78,7 +78,7 @@ describe PuavoRest::Devices do
 
   describe "device information" do
     before(:each) do
-      create_device(
+      @_athin = create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoPreferredServer => @server1.dn,

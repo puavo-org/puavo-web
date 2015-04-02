@@ -11,9 +11,9 @@ class Organisation < LdapModel
   ldap_map :preferredLanguage, :preferred_language
   ldap_map :puavoLocale, :locale
   ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
-  ldap_map :puavoAllowGuest, :allow_guest, false, &LdapConverters.string_boolean
-  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, false, &LdapConverters.string_boolean
-  ldap_map :puavoPersonalDevice, :personal_device, false, &LdapConverters.string_boolean
+  ldap_map :puavoAllowGuest, :allow_guest, :default => false, &LdapConverters.string_boolean
+  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, :default => false, &LdapConverters.string_boolean
+  ldap_map :puavoPersonalDevice, :personal_device, :default => false, &LdapConverters.string_boolean
   ldap_map(:puavoActiveService, :external_services) do |es|
       Array(es).map { |s| s.downcase.strip }
   end

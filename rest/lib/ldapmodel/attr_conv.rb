@@ -4,7 +4,7 @@ require "set"
 class LdapModel
   class_store :pretty2ldap
   class_store :ldap2pretty
-  class_store :converters
+  class_store :attr_options
   class_store :skip_serialize_attrs
   class_store :computed_attributes
 
@@ -22,19 +22,48 @@ class LdapModel
 
   # Define conversion between LDAP attribute and the JSON attribute
   #
-  # @param ldap_name [Symbol] LDAP attribute to convert
+  # @param ldap_name [Symbol] LDAP attribute to transform
   # @param pretty_name [Symbol] Value conversion block. Default: Get first array item
-  # @param convert [Block] Use block to
-  # @see convert
-  def self.ldap_map(ldap_name, pretty_name, default_value=nil, &convert)
+  # @param options [Hash] with :default and :transform keys
+  # @param transform [Block] Use block to
+  # @see transform
+  def self.ldap_map(ldap_name, pretty_name, options=nil, &transform_block)
     pretty_name = pretty_name.to_sym
     ldap_name = ldap_name.to_sym
     pretty2ldap[pretty_name] = ldap_name
     ldap2pretty[ldap_name] = pretty_name
 
-    converters[pretty_name] = {
+    mapping_string = "#{ self }.ldap_map(:#{ ldap_name }, :#{ pretty_name })"
+
+    if ![NilClass, Class, Hash].include?(options.class)
+      raise "#{mapping_string} has invalid options argument: #{ options.inspect }"
+    end
+
+
+    transform = LdapConverters::SingleValue
+    default_value = nil
+
+    if options.class == Hash
+      transform = options[:transform] if options[:transform]
+      default_value = options[:default]
+    elsif options
+      transform = options
+    end
+
+    if transform_block && transform.class != Class
+      raise "#{mapping_string} cannot use both transform instance and transform block"
+    end
+
+    if transform_block && transform.class == Class
+      # Inherit the transform class and override the read method with the given
+      # block
+      transform = Class.new(transform)
+      transform.send(:define_method, :read, &transform_block)
+    end
+
+    attr_options[pretty_name] = {
       :default => default_value,
-      :convert => convert
+      :transform => transform
     }
 
     # Create simple getter for the attribute if no custom one is defined
@@ -47,7 +76,7 @@ class LdapModel
     setter_method = (pretty_name.to_s + "=").to_sym
     if not method_defined?(setter_method)
       define_method setter_method do |value|
-        write_raw(pretty_name, value)
+        write_raw(pretty_name, transform.new(self).write(value))
       end
     end
   end
@@ -71,8 +100,8 @@ class LdapModel
     return @cache[pretty_name] if not @cache[pretty_name].nil?
 
     ldap_name = pretty2ldap[pretty_name]
-    default_value = converters[pretty_name][:default]
-    convert = converters[pretty_name][:convert]
+    default_value = attr_options[pretty_name][:default]
+    transform = attr_options[pretty_name][:transform]
 
     value = Array(@ldap_attr_store[ldap_name])
 
@@ -89,13 +118,7 @@ class LdapModel
       return default_value
     end
 
-    if convert
-      value = instance_exec(value, &convert)
-    else
-      value = Array(value).first
-    end
-
-    @cache[pretty_name] = value
+    @cache[pretty_name] = transform.new(self).read(value)
   end
 
   def write_raw(pretty_name, value)

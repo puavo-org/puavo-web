@@ -17,7 +17,7 @@ class User < LdapModel
   ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
-      link "/v3/users/#{ self["username"] }/profile.jpg"
+      @model.link "/v3/users/#{ @model.username }/profile.jpg"
     end
   end
   ldap_map :puavoLocale, :locale

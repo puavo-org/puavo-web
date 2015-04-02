@@ -9,7 +9,7 @@ describe LdapModel do
       ldap_map :fooBar, :foo_bar
       ldap_map :Baz, :baz
       ldap_map(:number, :integer) { |v| v.first.to_i }
-      ldap_map :withDefault, :with_default, 2
+      ldap_map :withDefault, :with_default, :default => 2
 
       ldap_map :double, :double_one
       ldap_map :double, :double_two
@@ -85,9 +85,9 @@ describe LdapModel do
 
     class H < LdapModel
       ldap_map :a, :a
-      ldap_map(:b, :b){ |v| self["a"] }
+      ldap_map(:b, :b){ |v| model["a"] }
     end
-    it "can reference other values from blocks using self" do
+    it "can reference other values from blocks using model" do
 
       h = H.new
       h.ldap_set("a", "foo")
@@ -126,7 +126,7 @@ describe LdapModel do
     end
 
     class FalseDefault < LdapModel
-      ldap_map :puavoValue, :value, false
+      ldap_map :puavoValue, :value, :default => false
     end
     it "can set false as default value" do
       h = FalseDefault.new
@@ -134,7 +134,7 @@ describe LdapModel do
     end
 
     class DefaultWithBlock < LdapModel
-      ldap_map(:puavoValue, :value, false) do
+      ldap_map(:puavoValue, :value, :default => false) do
         "bad"
       end
     end

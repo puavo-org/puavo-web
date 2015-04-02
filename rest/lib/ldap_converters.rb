@@ -1,5 +1,72 @@
-module PuavoRest
-class LdapConverters
+module LdapConverters
+
+  class Base
+    attr_reader :model
+
+    def initialize(model)
+      @model = model
+    end
+  end
+
+
+  class SingleValue < Base
+    def read(v)
+      Array(v).first
+    end
+    def write(v)
+      Array(v)
+    end
+  end
+
+  class ArrayValue < Base
+    def read(v)
+      Array(v)
+    end
+    def write(v)
+      Array(v)
+    end
+  end
+
+  class StringBoolean < Base
+    def read(value)
+      case Array(value).first
+      when "TRUE"
+        true
+      when "FALSE"
+        false
+      else
+        nil
+      end
+    end
+
+    def write(value)
+      if value
+        "TRUE"
+      else
+        "FALSE"
+      end
+    end
+
+  end
+
+  class ArrayOfJSON < Base
+
+    def read(value)
+      Array(value).map do |n|
+        begin
+          JSON.parse(n)
+        rescue JSON::ParserError
+          JSON::ParserError
+        end
+      end.select{|v| v != JSON::ParserError}
+    end
+
+    def write(value)
+      Array(value).map{|v| v.to_json}
+    end
+
+  end
+
 
   def self.string_boolean
     lambda do |value|
@@ -29,6 +96,4 @@ class LdapConverters
   def self.parse_wlan
     json
   end
-
-end
 end

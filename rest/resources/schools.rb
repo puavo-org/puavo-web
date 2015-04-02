@@ -13,11 +13,11 @@ class School < LdapModel
   ldap_map(:puavoWirelessPrinterQueue, :wireless_printer_queue_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language
   ldap_map :puavoLocale, :locale
-  ldap_map(:puavoExternalFeed, :external_feed_sources, &LdapConverters.json)
-  ldap_map :puavoWlanSSID, :wlan_networks, &LdapConverters.parse_wlan
-  ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
-  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, &LdapConverters.string_boolean
-  ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
+  ldap_map :puavoExternalFeed, :external_feed_sources, LdapConverters::ArrayOfJSON
+  ldap_map :puavoWlanSSID, :wlan_networks, LdapConverters::ArrayOfJSON
+  ldap_map :puavoAllowGuest, :allow_guest, LdapConverters::StringBoolean
+  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, LdapConverters::StringBoolean
+  ldap_map :puavoPersonalDevice, :personal_device, LdapConverters::StringBoolean
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
   ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
   ldap_map :cn, :abbreviation

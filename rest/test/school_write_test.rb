@@ -22,6 +22,7 @@ describe PuavoRest::Devices do
 
     @school_dn = school.dn
 
+    PuavoRest::Organisation.refresh
     LdapModel.setup(
       :credentials => {
         :dn => "uid=admin,o=puavo",
