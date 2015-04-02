@@ -121,6 +121,12 @@ class LdapModel
     @cache[pretty_name] = transform.new(self).read(value)
   end
 
+  def update(h)
+    h.each do |k,v|
+      send((k.to_s + "=").to_sym, v)
+    end
+  end
+
   def write_raw(pretty_name, value)
     ldap_name = pretty2ldap[pretty_name.to_sym]
     @ldap_attr_store[ldap_name] = value

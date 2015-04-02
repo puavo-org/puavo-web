@@ -43,6 +43,27 @@ describe LdapModel do
 
     end
 
+    class WriteableBulk < LdapModel
+      ldap_map :fooBar, :bar
+      ldap_map :fooBaz, :baz
+    end
+
+    it "can update attributes in bulk using Model#update" do
+      h = WriteableBulk.from_ldap_hash({
+        "fooBar" => "a",
+        "fooBaz" => "b",
+      })
+
+      h.update({
+        "bar" => "c",
+        "baz" => "d",
+      })
+
+      assert_equal "c", h.bar
+      assert_equal "d", h.baz
+
+    end
+
   end
 
 end
