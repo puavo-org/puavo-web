@@ -179,7 +179,7 @@ module Puavo
       request_host = request.host.to_s.gsub(/^staging\-/, "")
       organisation_key = Puavo::Organisation.key_by_host(request_host)
       unless organisation_key
-        organisation_key = Puavo::Organisation.key_by_host("*")
+        organisation_key = Puavo::CONFIG["default_organisation"]
       end
       return organisation_key
     end
