@@ -5,6 +5,8 @@ class Organisation < LdapModel
   ldap_map :dn, :dn
   ldap_map :dn, :base
   ldap_map :o, :name
+  ldap_map :cn, :key
+  ldap_map :puavoWebConfig, :web_config
   ldap_map :puavoDomain, :domain
   ldap_map(:owner, :owner) { |v| Array(v) }
   ldap_map :puavoDeviceImage, :preferred_image
