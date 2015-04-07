@@ -1,12 +1,8 @@
 module Puavo
 
   class Organisation
-    @@configurations = YAML.load_file("#{Rails.root}/config/organisations.yml")
+    @@configurations = {}
     @@key_by_host = {}
-
-    @@configurations.each do |key, value|
-      @@key_by_host[ value["host"] ] = key
-    end
 
     cattr_accessor :configurations, :key_by_host
     attr_accessor :organisation_key
@@ -33,7 +29,10 @@ module Puavo
     end
 
     class << self
+
       def find(key)
+        Organisation.initial_configurations if self.configurations.empty?
+
         if self.configurations.has_key?(key)
           organisation = Organisation.new
           organisation.organisation_key = key
@@ -45,10 +44,14 @@ module Puavo
       end
 
       def key_by_host(host)
+        Organisation.initial_configurations if self.configurations.empty?
+
         @@key_by_host[host]
       end
 
       def find_by_host(host)
+        Organisation.initial_configurations if self.configurations.empty?
+
         if @@key_by_host.has_key?(host)
           organisation = Organisation.new
           organisation.organisation_key = @@key_by_host[host]
@@ -60,11 +63,39 @@ module Puavo
       end
 
       def all
+        Organisation.initial_configurations if self.configurations.empty?
+
         @@configurations
       end
 
       def logger
         Rails.logger
+      end
+
+      def initial_configurations
+        rest_response = HTTP.with_headers(:host => 'hogwarts.opinsys.net')
+          .basic_auth(:user => PUAVO_ETC.ds_puavo_dn, :pass => PUAVO_ETC.ds_puavo_password)
+          .get("#{ Puavo::CONFIG['puavo_rest']['host'] }/v3/organisations")
+
+        case rest_response.status.to_s
+        when /^2/
+          organisations = JSON.parse(rest_response.body) #FIXME readpartial
+
+          organisations.each do |organisation|
+            @@key_by_host[ organisation["domain"] ] = organisation["key"]
+            @@configurations[organisation["key"]] = {
+              "name" => organisation["name"],
+              "host" => organisation["domain"],
+              "ldap_host" => organisation["ldap_host"],
+              "ldap_base" => organisation["base"],
+              "locale" => organisation["web_config"]["locale"],
+              "owner" => organisation["web_config"]["owner"],
+              "owner_pw" => organisation["web_config"]["owner_pw"]
+            }
+          end
+        else
+          raise "Can't get organisations from puavo-rest! #{rest_response.status}"
+        end
       end
     end
   end
