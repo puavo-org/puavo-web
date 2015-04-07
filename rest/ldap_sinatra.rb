@@ -27,6 +27,19 @@ class LdapSinatra < Sinatra::Base
     halt 200, text.to_s
   end
 
+  # Try to parse JSON body and fallback to sinatra request.POST if not
+  def json_params
+    return @json_body if @json_body
+
+    if request.content_type.downcase == "application/json"
+      json_parser = Yajl::Parser.new
+      @json_body = json_parser.parse(request.body)
+      return @json_body
+    end
+
+    return request.POST
+  end
+
   # In routes handlers use limit query string to slice arrays
   #
   # Example: /foos?limit=2

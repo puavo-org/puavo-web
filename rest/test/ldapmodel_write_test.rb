@@ -15,7 +15,7 @@ describe LdapModel do
       end
 
       def json_value=(value)
-        write_raw(:json_value, value.to_json)
+        write_raw(:json_value, [value.to_json])
       end
 
     end

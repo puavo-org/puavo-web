@@ -132,7 +132,7 @@ class LdapModel
     @ldap_attr_store[ldap_name] = value
     @cache[pretty_name] = nil
 
-    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, ldap_name.to_s, Array(value)))
+    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, ldap_name.to_s, value))
     value
   end
 

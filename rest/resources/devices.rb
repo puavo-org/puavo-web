@@ -7,20 +7,20 @@ class Device < Host
   ldap_map :puavoSchool, :school_dn
   ldap_map :puavoPreferredServer, :preferred_server
   ldap_map :puavoDeviceVertRefresh, :vertical_refresh
-  ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
-  ldap_map(:puavoDeviceXrandr, :xrandr){ |v| Array(v) }
-  ldap_map :puavoDeviceXrandrDisable, :xrandr_disable, &LdapConverters.string_boolean
+  ldap_map :puavoPrinterQueue, :printer_queue_dns, LdapConverters::ArrayValue
+  ldap_map :puavoDeviceXrandr, :xrandr, LdapConverters::ArrayValue
+  ldap_map :puavoDeviceXrandrDisable, :xrandr_disable, LdapConverters::StringBoolean
   ldap_map :puavoDeviceXserver, :graphics_driver
   ldap_map :puavoDefaultPrinter, :default_printer_name
   ldap_map :puavoDeviceResolution, :resolution
-  ldap_map :puavoAllowGuest, :allow_guest, &LdapConverters.string_boolean
-  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, &LdapConverters.string_boolean
-  ldap_map :puavoPersonallyAdministered, :personally_administered, &LdapConverters.string_boolean
-  ldap_map :puavoPersonalDevice, :personal_device, &LdapConverters.string_boolean
+  ldap_map :puavoAllowGuest, :allow_guest, LdapConverters::StringBoolean
+  ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, LdapConverters::StringBoolean
+  ldap_map :puavoPersonallyAdministered, :personally_administered, LdapConverters::StringBoolean
+  ldap_map :puavoPersonalDevice, :personal_device, LdapConverters::StringBoolean
   ldap_map :puavoPrinterDeviceURI, :printer_device_uri
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
   ldap_map :puavoDeviceDefaultAudioSink, :default_audio_sink
-  ldap_map( :puavoMountpoint, :mountpoints){ |m| Array(m) }
+  ldap_map :puavoMountpoint, :mountpoints, LdapConverters::ArrayValue
   ldap_map :puavoTimezone, :timezone
   ldap_map :puavoKeyboardLayout, :keyboard_layout
   ldap_map :puavoKeyboardVariant, :keyboard_variant
@@ -238,6 +238,16 @@ class Devices < LdapSinatra
     device = Device.by_hostname!(params["hostname"])
     json device
   end
+
+  post "/v3/devices/:hostname" do
+    auth :basic_auth, :server_auth, :legacy_server_auth
+    device = Device.by_hostname!(params["hostname"])
+    device.update(json_params)
+    device.save!
+    json device
+  end
+
+
 
   get "/v3/devices" do
     auth :basic_auth, :server_auth, :kerberos
