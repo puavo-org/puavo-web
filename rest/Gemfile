@@ -27,7 +27,7 @@ gem "redis-namespace"
 gem "icalendar", "~> 1.5.0"
 gem "httparty"
 gem "pony"
-gem "gibberish"
+gem "gibberish", "~> 1.4.0"
 gem "sinatra-support", :require => "sinatra/support"
 
 group :test do
@@ -35,7 +35,7 @@ group :test do
   gem "timecop"
   gem "webmock"
   gem "m"
-  gem "turn"
+  gem "minitest"
   gem "ripper-tags"
 end
 

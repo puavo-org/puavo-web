@@ -67,7 +67,7 @@ install-client:
 
 .PHONY: test
 test:
-	bundle exec turn test/*_test.rb
+	bundle exec ruby1.9.1 test/all.rb
 
 server:
 	bundle exec puma
