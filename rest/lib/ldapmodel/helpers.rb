@@ -7,8 +7,8 @@ class LdapModel
     end
   end
 
-  def self.from_ldap_hash(hash, serialize_attrs=nil)
-    new({}, serialize_attrs).ldap_merge!(hash)
+  def self.from_ldap_hash(ldap_attrs, serialize_attrs=nil)
+    new({}, serialize_attrs).ldap_merge!(ldap_attrs)
   end
 
   def self.is_dn(s)

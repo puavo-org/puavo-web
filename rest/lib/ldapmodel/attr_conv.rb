@@ -9,14 +9,16 @@ class LdapModel
   class_store :computed_attributes
 
   attr_reader :ldap_attr_store
+  attr_reader :serialize_attrs
 
-  def initialize(ldap_attr_store=nil, serialize_attrs=nil)
+  def initialize(attrs={}, serialize_attrs=nil, ldap_attr_store=nil)
     @ldap_attr_store = ldap_attr_store || {}
     if serialize_attrs
       @serialize_attrs = Set.new(serialize_attrs.map{|a| a.to_sym})
     end
     @cache = {}
     @pending_mods = []
+    update!(attrs)
   end
 
 
@@ -185,12 +187,21 @@ class LdapModel
   end
 
   def merge(other)
-    h = other.class == Hash ? other : other.ldap_attr_store
-    new_h = @ldap_attr_store.dup
-    h.each do |pretty_name, value|
-      new_h[pretty2ldap[pretty_name.to_sym]] = value
+    h = nil
+    _serialize_attrs = nil
+
+    if other.kind_of?(self.class)
+      h = other.ldap_attr_store
+      _serialize_attrs = other.serialize_attrs
+    else
+      h = other # Assume something Hash like
     end
-    self.class.new(new_h)
+
+    _ldap_attrs = @ldap_attr_store.dup
+    h.each do |pretty_name, value|
+      _ldap_attrs[pretty2ldap[pretty_name.to_sym]] = value
+    end
+    self.class.new({}, _serialize_attrs, _ldap_attrs)
   end
 
   def to_hash
