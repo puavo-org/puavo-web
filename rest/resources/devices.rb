@@ -242,7 +242,7 @@ class Devices < LdapSinatra
   post "/v3/devices/:hostname" do
     auth :basic_auth, :server_auth, :legacy_server_auth
     device = Device.by_hostname!(params["hostname"])
-    device.update(json_params)
+    device.update!(json_params)
     device.save!
     json device
   end

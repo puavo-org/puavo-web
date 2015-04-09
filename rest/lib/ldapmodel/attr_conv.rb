@@ -121,7 +121,7 @@ class LdapModel
     @cache[pretty_name] = transform.new(self).read(value)
   end
 
-  def update(h)
+  def update!(h)
     h.each do |k,v|
       send((k.to_s + "=").to_sym, v)
     end

@@ -54,7 +54,7 @@ describe LdapModel do
         "fooBaz" => "b",
       })
 
-      h.update({
+      h.update!({
         "bar" => "c",
         "baz" => "d",
       })
