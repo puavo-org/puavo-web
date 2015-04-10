@@ -80,7 +80,7 @@ class BootServers < LdapSinatra
   end
 
   post "/v3/boot_servers/:hostname" do
-    auth :basic_auth
+    auth :basic_auth, :kerberos
     server = BootServer.by_hostname!(params["hostname"])
     server.update!(json_params)
     server.save!
