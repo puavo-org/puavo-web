@@ -79,6 +79,14 @@ class BootServers < LdapSinatra
     json BootServer.by_hostname!(params["hostname"])
   end
 
+  post "/v3/boot_servers/:hostname" do
+    auth :basic_auth
+    server = BootServer.by_hostname!(params["hostname"])
+    server.update!(json_params)
+    server.save!
+    json server
+  end
+
   get "/v3/boot_servers/:hostname/wireless_printer_queues" do
     auth :basic_auth, :server_auth
 

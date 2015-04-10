@@ -100,6 +100,23 @@ describe PuavoRest::BootServer do
 
   end
 
+  describe "POST /v3/boot_servers/:hostname" do
+    it "can write preferred_image POST" do
+      # XXX Use server's own dn
+      basic_authorize "cucumber", "cucumber"
+      post "/v3/boot_servers/server1", { "preferred_image" => "foo" }
+      assert_200
+
+      get "/v3/boot_servers/server1", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert_equal "foo", data["preferred_image"]
+
+    end
+  end
+
   describe "wireless printer queues by boot server" do
     before(:each) do
       get "/v3/boot_servers/server1/wireless_printer_queues", {}, {
