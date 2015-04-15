@@ -222,6 +222,14 @@ class LtspServers < LdapSinatra
     json LtspServer.by_fqdn!(params["fqdn"])
   end
 
+  post "/v3/ltsp_servers/:fqdn" do
+    auth :basic_auth, :kerberos
+    server = LtspServer.by_fqdn!(params["fqdn"])
+    server.update!(json_params)
+    server.save!
+    json server
+  end
+
   # Set LTSP server idle status as x-www-form-urlencoded. If cpu_count is
   # provided load_avg will be divided using it.
   #
