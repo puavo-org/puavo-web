@@ -72,30 +72,33 @@ module Puavo
         Rails.logger
       end
 
-      def initial_configurations
+      def fetch_initial_configurations
         rest_response = HTTP.with_headers(:host => 'hogwarts.opinsys.net')
           .basic_auth(:user => PUAVO_ETC.ds_puavo_dn, :pass => PUAVO_ETC.ds_puavo_password)
           .get("#{ Puavo::CONFIG['puavo_rest']['host'] }/v3/organisations")
 
         case rest_response.status.to_s
         when /^2/
-          organisations = JSON.parse(rest_response.body) #FIXME readpartial
-
-          organisations.each do |organisation|
-            @@key_by_host[ organisation["domain"] ] = organisation["key"]
-            @@configurations[organisation["key"]] = {
-              "name" => organisation["name"],
-              "host" => organisation["domain"],
-              "ldap_host" => organisation["ldap_host"],
-              "ldap_base" => organisation["base"],
-              "locale" => organisation["web_config"]["locale"],
-              "owner" => organisation["web_config"]["owner"],
-              "owner_pw" => organisation["web_config"]["owner_pw"]
-            }
-          end
+          initial_configurations = JSON.parse(rest_response.body) #FIXME readpartial
         else
           raise "Can't get organisations from puavo-rest! #{rest_response.status}"
         end
+      end
+    end
+
+    def initial_configurations=(organisations)
+      organisations.each do |organisation|
+        puts organisation["dn"].inspect
+        @@key_by_host[ organisation["domain"] ] = organisation["key"]
+        @@configurations[organisation["key"]] = {
+          "name" => organisation["name"],
+          "host" => organisation["domain"],
+          "ldap_host" => organisation["ldap_host"],
+          "ldap_base" => organisation["base"],
+          "locale" => organisation["web_config"]["locale"],
+          "owner" => organisation["web_config"]["owner"],
+          "owner_pw" => organisation["web_config"]["owner_pw"]
+        }
       end
     end
   end

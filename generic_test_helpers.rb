@@ -1,45 +1,13 @@
 # Generic test helpers shared with rails and puavo-rest
+
+require_relative "rest/puavo-rest.rb"
+
 module Puavo
 module Test
 
   def self.setup_test_connection
 
-    hostname = Socket.gethostbyname(Socket.gethostname).first
-
-    WebMock::API.stub_request(:get, "http://127.0.0.1:9292/v3/organisations")
-      .with(:headers => {'Authorization'=>'Basic dWlkPXB1YXZvLG89cHVhdm86cGFzc3dvcmQ=', 'Host'=>'hogwarts.opinsys.net', 'User-Agent'=>'RubyHTTPGem/0.7.2'})
-    .to_return(:status => 200,
-               :body => [{ "name" => "Example Organisation",
-                           "domain" => "www.example.com",
-                           "base" => "dc=edu,dc=example,dc=fi",
-                           "key" => "example",
-                           "ldap_host" => hostname,
-                           "web_config" => {
-                             "locale" => "en",
-                             "owner" => "cucumber",
-                             "owner_pw" => "cucumber"
-                           }},
-                         { "name" => "Another Organisation",
-                           "domain" => "anotherorg.example.net",
-                           "base" => "dc=edu,dc=anotherorg,dc=fi",
-                           "key" => "anotherorg",
-                           "ldap_host" => hostname,
-                           "web_config" => {
-                             "locale" => "en",
-                             "owner" => "admin",
-                             "owner_pw" => "admin"
-                           }},
-                         { "name" => "Super Heroes Organisation",
-                           "domain" => "heroes.example.net",
-                           "base" => "dc=edu,dc=heroes,dc=fi",
-                           "key" => "heroes",
-                           "ldap_host" => hostname,
-                           "web_config" => {
-                             "locale" => "en",
-                             "owner" => "admin",
-                             "owner_pw" => "admin"
-                           }}].to_json,
-               :headers => {})
+    Puavo::Organisation.initial_configurations = PuavoRest::Organisation.all
 
     test_organisation = Puavo::Organisation.find('example')
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
