@@ -91,7 +91,7 @@ require 'nokogiri'
 require "debugger"
 require 'webmock/minitest'
 
-require_relative '../../generic_test_helpers'
+require_relative '../generic_test_helpers'
 Puavo::Test.setup_test_connection
 
 module Rack
