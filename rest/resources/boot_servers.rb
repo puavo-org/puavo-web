@@ -12,6 +12,8 @@ class BootServer < LdapModel
       img.strip
     end
   end
+  ldap_map :puavoDeviceCurrentImage, :current_image, LdapConverters::SingleValue
+  ldap_map :puavoDeviceAvailableImage, :available_images, LdapConverters::ArrayValue
 
   # Return true if the current puavo-rest server is running on a boot server
   def self.running_on?
