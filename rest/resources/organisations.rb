@@ -28,6 +28,11 @@ class Organisation < LdapModel
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
   ldap_map :puavoDeviceOffHour,          :daytime_end_hour
 
+  computed_attr :ldap_host
+  def ldap_host
+    CONFIG["ldap"]
+  end
+
   def organisation_key
     domain.split(".").first if domain
   end
