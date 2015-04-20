@@ -9,7 +9,7 @@ module Test
 
     LdapModel.setup(
       :organisation =>
-        PuavoRest::Organisation.default_organisation_domain!,
+        PUAVO_ETC.get(:domain),
       :rest_root => "http://www.example.net", # FIXME by organisation?
                     :credentials => { :dn => PUAVO_ETC.ldap_dn, :password => PUAVO_ETC.ldap_password }
     )
