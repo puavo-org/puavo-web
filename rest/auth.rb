@@ -105,28 +105,28 @@ class LdapSinatra < Sinatra::Base
     end
 
     auth_methods.each do |method|
-      if credentials = send(method)
+      credentials = send(method)
+      next if !credentials
 
-        if credentials[:dn].nil? && credentials[:username]
-          credentials[:dn] = LdapModel.setup(:credentials => CONFIG["server"]) do
-            User.resolve_dn(credentials[:username])
-          end
+      if credentials[:dn].nil? && credentials[:username]
+        credentials[:dn] = LdapModel.setup(:credentials => CONFIG["server"]) do
+          User.resolve_dn(credentials[:username])
         end
-
-        if credentials[:dn].nil? && credentials[:kerberos].nil?
-          puts "Cannot resolve #{ credentials[:username].inspect } to DN"
-          raise Unauthorized,
-            :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }",
-            :msg => "Cannot resolve #{ credentials[:username].inspect } to DN",
-            :meta => {
-              :username => credentials[:username],
-            }
-        end
-
-        credentials[:auth_method] = method
-        LdapModel.setup(:credentials => credentials)
-        break
       end
+
+      if credentials[:dn].nil? && credentials[:kerberos].nil?
+        puts "Cannot resolve #{ credentials[:username].inspect } to DN"
+        raise Unauthorized,
+          :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }",
+          :msg => "Cannot resolve #{ credentials[:username].inspect } to DN",
+          :meta => {
+            :username => credentials[:username],
+          }
+      end
+
+      credentials[:auth_method] = method
+      LdapModel.setup(:credentials => credentials)
+      break
     end
 
 
