@@ -104,6 +104,8 @@ class LdapSinatra < Sinatra::Base
       raise "legacy server auth and kerberos cannot be used on the same resource"
     end
 
+    credentials = nil
+
     auth_methods.each do |method|
       credentials = send(method)
       next if !credentials
@@ -125,10 +127,16 @@ class LdapSinatra < Sinatra::Base
       end
 
       credentials[:auth_method] = method
-      LdapModel.setup(:credentials => credentials)
       break
     end
 
+
+    if not credentials
+      raise Unauthorized,
+        :user => "Could not create ldap connection. Bad/missing credentials. #{ auth_methods.inspect }"
+    end
+
+    LdapModel.setup(:credentials => credentials)
 
     if not LdapModel.connection
       raise Unauthorized,
