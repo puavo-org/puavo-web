@@ -87,14 +87,17 @@ module Puavo
       def initial_configurations=(organisations)
         organisations.each do |organisation|
           @@key_by_host[ organisation["domain"] ] = organisation["key"]
+
+          web_config = organisation["web_config"] || Hash.new
+
           @@configurations[organisation["key"]] = {
             "name" => organisation["name"],
             "host" => organisation["domain"],
             "ldap_host" => organisation["ldap_host"],
             "ldap_base" => organisation["base"],
-            "locale" => organisation["web_config"]["locale"],
-            "owner" => organisation["web_config"]["owner"],
-            "owner_pw" => organisation["web_config"]["owner_pw"]
+            "locale" => web_config["locale"] || "en",
+            "owner" => web_config["owner"] || "cucumber", # FIXME
+            "owner_pw" => web_config["owner_pw"] || "cucumber" # FIXME
           }
         end
       end
