@@ -20,7 +20,11 @@ class BootConfigurations < LdapSinatra
 
     # This resource is inconsistent with other resources in puavo-rest. It's
     # now deprecated and usage of it will be logged.
-    puts "call to legacy boot_configuration route. Use /v3/boot_configurations/:mac_address in future"
+    msg = "call to legacy boot_configuration route. Use /v3/boot_configurations/:mac_address in future"
+    STDERR.puts msg
+
+    response.headers["x-puavo-rest-warn"] = msg
+
     flog.warn "legacy call", {
       :route => "/v3/:mac_address/boot_configuration",
       :params  => params
