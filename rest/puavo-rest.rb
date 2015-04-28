@@ -40,3 +40,6 @@ require_relative "./resources/fluent_relay"
 require_relative "./resources/device_images"
 require_relative "./resources/password"
 require_relative "./resources/email_confirm"
+
+# Models
+require_relative "./models/organisations"
