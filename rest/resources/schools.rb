@@ -72,15 +72,13 @@ class School < LdapModel
     LtspServer.by_attr(:school_dns, dn, :multi)
   end
 
-  def preferred_image(fallback=true)
+  def preferred_image
     if get_own(:preferred_image)
       return get_own(:preferred_image).strip
     end
 
-    if fallback
-      # Use image from the current bootserver if we are running in a bootserver
-      return BootServer.current_image || organisation.preferred_image
-    end
+    # Use image from the current bootserver if we are running in a bootserver
+    return BootServer.current_image || organisation.preferred_image
   end
 
   def allow_guest
