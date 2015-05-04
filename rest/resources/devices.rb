@@ -85,7 +85,15 @@ class Device < Host
 
   def preferred_image
      if get_own(:preferred_image).nil?
-       school.preferred_image
+       image = school.preferred_image(netboot?)
+
+       if image
+         return image
+       end
+
+       if localboot?
+         return school.organisation.preferred_image
+       end
      else
        get_own(:preferred_image).strip
      end
