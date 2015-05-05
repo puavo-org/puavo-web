@@ -13,6 +13,10 @@ wget -qO - https://github.com/opinsys/puavo-standalone/raw/master/setup.sh | sud
 # Install build dependencies
 sudo make install-build-dep
 
+# Disable minitest expectations. Breaks build on CI for some reason.
+# See: https://github.com/seattlerb/minitest/issues/521
+export MT_NO_EXPECTATIONS=1
+
 # Build debian package
 make deb
 
