@@ -77,8 +77,7 @@ class School < LdapModel
       return get_own(:preferred_image).strip
     end
 
-    # Use image from the current bootserver if we are running in a bootserver
-    return BootServer.current_image || organisation.preferred_image
+    return organisation.preferred_image
   end
 
   def allow_guest
