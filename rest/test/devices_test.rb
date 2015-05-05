@@ -47,12 +47,12 @@ describe PuavoRest::Devices do
       :puavoSchool => @school.dn,
       :puavoDeviceType => "ltspserver"
     )
-    @server2 = create_server(
-      :puavoHostname => "server2",
+    @bootserver = create_server(
+      :puavoHostname => "bootserver",
       :macAddress => "bc:5f:f4:56:59:72",
       :puavoDeviceType => "bootserver"
     )
-    PuavoRest.test_boot_server_dn = @server2.dn.to_s
+    PuavoRest.test_boot_server_dn = @bootserver.dn.to_s
 
     @printer = Printer.create(
       :printerDescription => "printer1",
@@ -301,26 +301,49 @@ describe PuavoRest::Devices do
 
   end
 
-  describe "device information with bootserver fallback" do
+  describe "bootserver fallback" do
     before(:each) do
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
+      test_organisation.puavoDeviceImage = "organisationprefimage"
+      test_organisation.save!
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
-      @server2.puavoDeviceImage = "bootserverprefimage"
-      @server2.save!
 
+      localboot_device = create_device(
+        :puavoHostname => "localbootdevice",
+        :macAddress => "00:60:2f:11:7A:7D",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school_without_fallback_value.dn
+      )
+      localboot_device.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice"]
+      localboot_device.save!
+
+      @bootserver.puavoDeviceImage = "bootserverprefimage"
+      @bootserver.save!
+
+    end
+
+    it "is used by thinclients " do
       get "/v3/devices/athin"
       assert_200
-      @data = JSON.parse last_response.body
+      data = JSON.parse last_response.body
+      assert_equal "bootserverprefimage", data["preferred_image"]
     end
 
-    it "has preferred image by bootserver" do
-      assert_equal "bootserverprefimage", @data["preferred_image"]
+    it "is not used by localboot devices" do
+      get "/v3/devices/localbootdevice"
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal "organisationprefimage", data["preferred_image"]
     end
+
   end
+
+
 
   describe "device information with global default" do
     before(:each) do
@@ -497,7 +520,7 @@ describe PuavoRest::Devices do
         :printerMakeAndModel => "foo",
         :printerType => "1234",
         :printerURI => "socket://baz",
-        :puavoServer => @server2.dn
+        :puavoServer => @bootserver.dn
       )
       printer2.save!
       @school.add_wireless_printer(printer2)

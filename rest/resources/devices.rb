@@ -98,7 +98,7 @@ class Device < Host
      # Organisation fallback
      image ||= school.organisation.preferred_image
 
-     image.strip
+     image.strip if image
   end
 
   def allow_guest
