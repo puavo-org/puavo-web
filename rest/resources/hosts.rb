@@ -5,7 +5,7 @@ class Host < LdapModel
   include LocalStore
 
   ldap_map :dn, :dn
-  ldap_map :objectClass, :object_class, LdapConverters::ArrayValue
+  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :puavoDeviceType, :type
   ldap_map :macAddress, :mac_address
   ldap_map :puavoId, :puavo_id
@@ -21,19 +21,11 @@ class Host < LdapModel
 
 
   def netboot?
-    if object_class and object_class.include?("puavoNetbootDevice")
-      return true
-    end
-
-    false
+    object_classes.include?("puavoNetbootDevice")
   end
 
   def localboot?
-    if object_class and object_class.include?("puavoLocalbootDevice")
-      return true
-    end
-
-    false
+    object_classes.include?("puavoLocalbootDevice")
   end
 
   def self.ldap_base
