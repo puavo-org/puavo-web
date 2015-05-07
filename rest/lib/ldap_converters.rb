@@ -18,6 +18,23 @@ module LdapConverters
     end
   end
 
+  class Number < Base
+    def read(v)
+      if v.nil?
+        return nil
+      end
+
+      if v.kind_of?(Array) && v.empty?
+        return nil
+      end
+
+      Array(v).first.to_i
+    end
+    def write(v)
+      Array(v.to_s)
+    end
+  end
+
   class ArrayValue < Base
     def read(v)
       Array(v)
