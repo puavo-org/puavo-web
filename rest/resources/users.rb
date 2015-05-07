@@ -5,15 +5,16 @@ module PuavoRest
 class User < LdapModel
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id
+  ldap_map :puavoId, :id, LdapConverters::Number
+  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :uid, :username
-  ldap_map(:uidNumber, :uid_number){ |v| Array(v).first.to_i }
-  ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
+  ldap_map :uidNumber, :uid_number, LdapConverters::Number
+  ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
   ldap_map :mail, :email
-  ldap_map( :mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
-  ldap_map(:puavoSchool, :school_dns){ |v| Array(v) }
+  ldap_map(:mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
+  ldap_map :puavoSchool, :school_dns, LdapConverters::ArrayValue
   ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
@@ -24,10 +25,13 @@ class User < LdapModel
   ldap_map :puavoTimezone, :timezone
   ldap_map :puavoLocked, :locked, &LdapConverters.string_boolean
   ldap_map :puavoSshPublicKey, :ssh_public_key
+  ldap_map :homeDirectory, :home_directory
+  ldap_map :loginShell, :login_shell, :default => "/bin/bash"
+  ldap_map :sambaSID, :samba_sid
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
-  ldap_map(:puavoEduPersonAffiliation, :roles){ |v| Array(v) }
+  ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
 
   # Roles does not make much sense without a school
   skip_serialize :roles
@@ -37,6 +41,51 @@ class User < LdapModel
     Array(dns).map do |dn|
       dn.downcase
     end
+  end
+
+  before :update, :create do
+    write_raw(:displayName, [first_name + " " + last_name])
+  end
+
+
+  before :create do
+    if id.nil?
+      self.id = IdPool.next_id("puavoNextId")
+    end
+
+    if dn.nil?
+      self.dn = "puavoId=#{ id },#{ self.class.ldap_base }"
+    end
+
+    if uid_number.nil?
+      self.uid_number = IdPool.next_id("puavoNextUidNumber")
+    end
+
+    if gid_number.nil?
+      self.gid_number = IdPool.next_id("puavoNextGidNumber")
+    end
+
+    if home_directory.nil?
+      self.home_directory = "/home/#{ school.abbreviation }/#{ username }"
+    end
+
+  end
+
+
+  def username=(_username)
+    write_raw(:uid, Array(_username))
+    write_raw(:cn, Array(_username))
+  end
+
+  def email=(_email)
+    secondary_emails = Array(get_raw(:mail))[1..-1] || []
+    write_raw(:mail, [_email] + secondary_emails)
+  end
+
+  def secondary_emails=(emails)
+    primary = Array(get_raw(:mail)).first
+    val = ([primary] + emails).compact
+    write_raw(:mail, val)
   end
 
   def is_school_admin_in?(school)

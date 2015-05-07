@@ -147,9 +147,13 @@ class LdapModel
     end
   end
 
+  def get_raw(ldap_name)
+    @pending_mods[ldap_name.to_s] || @ldap_attr_store[ldap_name.to_sym]
+  end
+
   def write_raw(ldap_name, value)
     pretty_name = ldap2pretty[ldap_name.to_sym]
-    @ldap_attr_store[ldap_name] = value
+    @ldap_attr_store[ldap_name.to_sym] = value
     @cache[pretty_name] = nil
 
     # @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value))
@@ -158,7 +162,13 @@ class LdapModel
     value
   end
 
-  def create!(dn=nil)
+  # Returns true if this value is going to be written to ldap on next save!
+  def changed?(pretty_name)
+    ldap_name = pretty2ldap[pretty_name.to_sym]
+    return !!@pending_mods[ldap_name.to_s]
+  end
+
+  def create!(_dn=nil)
     if @existing
       raise "Cannot call create! on existing model"
     end
@@ -167,7 +177,12 @@ class LdapModel
       hooks[:before][:create].each{|hook| instance_exec(&hook)}
     end
 
-    res = self.class.connection.add(dn, @pending_mods)
+    _dn = dn if _dn.nil?
+
+    mods = @pending_mods.dup
+    mods.delete("dn")
+    res = self.class.connection.add(_dn, mods)
+    @existing = true
     @pending_mods = {}
 
     if hooks[:after] && hooks[:after][:create]
