@@ -78,42 +78,39 @@ describe LdapModel do
 
     class MockConnection
       def modify(dn, mods)
-        puts "#"*80
-        puts "running save"
-        puts "#"*80
         $events.push(:saved)
       end
     end
 
 
-    it "before save is called before saving" do
+    it "before update is called before saving" do
       class BeforeTestModel < LdapModel
         ldap_map :dn, :dn, :default => "fakedn"
         ldap_map :fooBar, :bar
-        before :save do
+        before :update do
           $events.push(:hook_called)
         end
       end
 
       LdapModel.stub(:connection, MockConnection.new) do
-        m = BeforeTestModel.new :bar => "val"
+        m = BeforeTestModel.new({:bar => "val"}, {:existing => true})
         m.save!
       end
 
       assert_equal [:hook_called, :saved], $events
     end
 
-    it "after save is called after saving" do
+    it "after update is called after saving" do
       class AfterTestModel < LdapModel
         ldap_map :dn, :dn, :default => "fakedn"
         ldap_map :fooBar, :bar
-        after :save do
+        after :update do
           $events.push(:hook_called)
         end
       end
 
       LdapModel.stub(:connection, MockConnection.new) do
-        m = AfterTestModel.new :bar => "val"
+        m = AfterTestModel.new({:bar => "val"}, {:existing => true})
         m.save!
       end
 
@@ -127,14 +124,14 @@ describe LdapModel do
         ldap_map :fooBar, :bar
         ldap_map :fooBaz, :baz
 
-        before :save do
+        before :update do
           $events.push(bar)
           self.baz = "hook can modify"
         end
 
       end
 
-      m = ContextTestModel.new :bar => "val"
+      m = ContextTestModel.new({:bar => "val"}, {:existing => true})
       LdapModel.stub(:connection, MockConnection.new) do
         m.save!
       end
