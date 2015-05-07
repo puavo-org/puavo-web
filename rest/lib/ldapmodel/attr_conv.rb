@@ -7,6 +7,7 @@ class LdapModel
   class_store :attr_options
   class_store :skip_serialize_attrs
   class_store :computed_attributes
+  class_store :hooks
 
   attr_reader :ldap_attr_store
   attr_reader :serialize_attrs
@@ -19,6 +20,20 @@ class LdapModel
     @cache = {}
     @pending_mods = {}
     update!(attrs)
+  end
+
+  def self.before(*states, &hook_block)
+    hooks[:before] ||= {}
+    states.each do |state|
+      (hooks[:before][state.to_sym] ||= []).push(hook_block)
+    end
+  end
+
+  def self.after(*states, &hook_block)
+    hooks[:after] ||= {}
+    states.each do |state|
+      (hooks[:after][state.to_sym] ||= []).push(hook_block)
+    end
   end
 
 
@@ -139,8 +154,18 @@ class LdapModel
   end
 
   def save!
+
+    if hooks[:before] && hooks[:before][:save]
+      hooks[:before][:save].each{|hook| instance_exec(&hook)}
+    end
+
     res = self.class.connection.modify(dn, @pending_mods)
     @pending_mods = {}
+
+    if hooks[:after] && hooks[:after][:save]
+      hooks[:after][:save].each{|hook| instance_exec(&hook)}
+    end
+
     res
   end
 
