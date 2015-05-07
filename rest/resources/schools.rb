@@ -56,7 +56,7 @@ class School < LdapModel
   end
 
   def mountpoints=(value)
-    write_raw(:mountpoints, value.map{|m| m.to_json})
+    write_raw(:puavoMountpoint, value.map{|m| m.to_json})
   end
 
   # Cached organisation query

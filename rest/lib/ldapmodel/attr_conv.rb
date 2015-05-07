@@ -17,7 +17,7 @@ class LdapModel
       @serialize_attrs = Set.new(serialize_attrs.map{|a| a.to_sym})
     end
     @cache = {}
-    @pending_mods = []
+    @pending_mods = {}
     update!(attrs)
   end
 
@@ -78,7 +78,7 @@ class LdapModel
     setter_method = (pretty_name.to_s + "=").to_sym
     if not method_defined?(setter_method)
       define_method setter_method do |value|
-        write_raw(pretty_name, transform.new(self).write(value))
+        write_raw(ldap_name, transform.new(self).write(value))
       end
     end
   end
@@ -129,18 +129,18 @@ class LdapModel
     end
   end
 
-  def write_raw(pretty_name, value)
-    ldap_name = pretty2ldap[pretty_name.to_sym]
+  def write_raw(ldap_name, value)
+    pretty_name = ldap2pretty[ldap_name.to_sym]
     @ldap_attr_store[ldap_name] = value
     @cache[pretty_name] = nil
 
-    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, ldap_name.to_s, value))
+    @pending_mods[ldap_name.to_s] = value
     value
   end
 
   def save!
     res = self.class.connection.modify(dn, @pending_mods)
-    @pending_mods = []
+    @pending_mods = {}
     res
   end
 
