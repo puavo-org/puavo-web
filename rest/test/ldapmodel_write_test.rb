@@ -66,4 +66,83 @@ describe LdapModel do
 
   end
 
+  describe "Hook" do
+
+    before do
+      $events = []
+    end
+
+    after do
+      $events = nil
+    end
+
+    class MockConnection
+      def modify(dn, mods)
+        puts "#"*80
+        puts "running save"
+        puts "#"*80
+        $events.push(:saved)
+      end
+    end
+
+
+    it "before save is called before saving" do
+      class BeforeTestModel < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        before :save do
+          $events.push(:hook_called)
+        end
+      end
+
+      LdapModel.stub(:connection, MockConnection.new) do
+        m = BeforeTestModel.new :bar => "val"
+        m.save!
+      end
+
+      assert_equal [:hook_called, :saved], $events
+    end
+
+    it "after save is called after saving" do
+      class AfterTestModel < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        after :save do
+          $events.push(:hook_called)
+        end
+      end
+
+      LdapModel.stub(:connection, MockConnection.new) do
+        m = AfterTestModel.new :bar => "val"
+        m.save!
+      end
+
+      assert_equal [:saved, :hook_called], $events
+    end
+
+    it "context is the instance" do
+
+      class ContextTestModel < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        ldap_map :fooBaz, :baz
+
+        before :save do
+          $events.push(bar)
+          self.baz = "hook can modify"
+        end
+
+      end
+
+      m = ContextTestModel.new :bar => "val"
+      LdapModel.stub(:connection, MockConnection.new) do
+        m.save!
+      end
+
+      assert_equal ["val", :saved], $events
+      assert_equal "hook can modify", m.baz
+
+    end
+
+  end
 end
