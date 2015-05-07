@@ -12,11 +12,14 @@ class LdapModel
   attr_reader :ldap_attr_store
   attr_reader :serialize_attrs
 
-  def initialize(attrs={}, serialize_attrs=nil, ldap_attr_store=nil)
-    @ldap_attr_store = ldap_attr_store || {}
-    if serialize_attrs
-      @serialize_attrs = Set.new(serialize_attrs.map{|a| a.to_sym})
+  def initialize(attrs={}, options={})
+    @existing = !!options[:existing]
+    @ldap_attr_store = options[:store] || {}
+
+    if options[:serialize]
+      @serialize_attrs = Set.new(options[:serialize].map{|a| a.to_sym})
     end
+
     @cache = {}
     @pending_mods = {}
     update!(attrs)
@@ -149,21 +152,43 @@ class LdapModel
     @ldap_attr_store[ldap_name] = value
     @cache[pretty_name] = nil
 
+    # @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value))
     @pending_mods[ldap_name.to_s] = value
+
     value
   end
 
-  def save!
+  def create!(dn=nil)
+    if @existing
+      raise "Cannot call create! on existing model"
+    end
 
-    if hooks[:before] && hooks[:before][:save]
-      hooks[:before][:save].each{|hook| instance_exec(&hook)}
+    if hooks[:before] && hooks[:before][:create]
+      hooks[:before][:create].each{|hook| instance_exec(&hook)}
+    end
+
+    res = self.class.connection.add(dn, @pending_mods)
+    @pending_mods = {}
+
+    if hooks[:after] && hooks[:after][:create]
+      hooks[:after][:create].each{|hook| instance_exec(&hook)}
+    end
+
+    res
+  end
+
+  def save!
+    return create! if !@existing
+
+    if hooks[:before] && hooks[:before][:update]
+      hooks[:before][:update].each{|hook| instance_exec(&hook)}
     end
 
     res = self.class.connection.modify(dn, @pending_mods)
     @pending_mods = {}
 
-    if hooks[:after] && hooks[:after][:save]
-      hooks[:after][:save].each{|hook| instance_exec(&hook)}
+    if hooks[:after] && hooks[:after][:update]
+      hooks[:after][:update].each{|hook| instance_exec(&hook)}
     end
 
     res
