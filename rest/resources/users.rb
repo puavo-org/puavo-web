@@ -71,6 +71,28 @@ class User < LdapModel
 
   end
 
+  # Just store password locally and handle it in after hook
+  def password=(pw)
+    @password = pw
+  end
+
+  after :create, :update do
+    next if @password.nil?
+
+    begin
+      Puavo.ldap_passwd(
+        CONFIG["ldap"],
+        LdapModel.settings[:credentials][:dn],
+        LdapModel.settings[:credentials][:password],
+        @password,
+        dn
+      )
+    ensure
+      @password = nil
+    end
+
+  end
+
 
   def username=(_username)
     write_raw(:uid, Array(_username))
