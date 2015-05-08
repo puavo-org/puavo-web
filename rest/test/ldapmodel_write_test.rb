@@ -161,5 +161,47 @@ describe LdapModel do
 
     end
 
+    it "(s) are executed in the order they are defined" do
+
+      class MultipleHooks < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        before :update do
+          $events.push(:first_hook_called)
+        end
+        before :update do
+          $events.push(:second_hook_called)
+        end
+      end
+
+      m = MultipleHooks.new({:bar => "val"}, {:existing => true})
+      LdapModel.stub(:connection, MockConnection.new) do
+        m.save!
+      end
+      assert_equal [:first_hook_called, :second_hook_called, :saved], $events
+
+    end
+
+    it "can be defined for :create and :update at once" do
+
+      class GenericHook < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        before :create, :update do
+          $events.push(:generic_hook_called)
+        end
+      end
+
+      m = GenericHook.new({:bar => "val"})
+      LdapModel.stub(:connection, MockConnection.new) do
+        m.save! # create
+        m.save! # update
+      end
+      assert_equal [:generic_hook_called, :added, :generic_hook_called, :saved], $events
+
+    end
+
   end
+
+
 end
