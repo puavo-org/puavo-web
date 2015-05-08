@@ -46,6 +46,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
+        :password => "userpw",
 
         :login_shell => "/bin/bash",
         :samba_sid => "S-1-5-21-17441224-59077026-93552251-219809"
@@ -102,9 +103,29 @@ describe LdapModel do
       user = PuavoRest::User.by_dn!(@user.dn)
       assert_equal user.email, "newemail@example.com"
       assert_equal user.secondary_emails, ["heli.another@example.com"]
-
     end
 
+    it "can authenticate using the username and password" do
+      basic_authorize "heli", "userpw"
+      get "/v3/whoami"
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert_equal "heli", data["username"]
+    end
+
+    it "can change the password" do
+      user = PuavoRest::User.by_dn!(@user.dn)
+      user.password = "newpw"
+      user.save!
+
+      basic_authorize "heli", "userpw"
+      get "/v3/whoami"
+      assert_equal 401, last_response.status, "old password is rejected"
+
+      basic_authorize "heli", "newpw"
+      get "/v3/whoami"
+      assert_200
+    end
 
   end
 end
