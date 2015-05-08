@@ -80,10 +80,13 @@ describe LdapModel do
       def modify(dn, mods)
         $events.push(:saved)
       end
+      def add(dn, mods)
+        $events.push(:added)
+      end
     end
 
 
-    it "before update is called before saving" do
+    it "before update is called before saving changes to existing model" do
       class BeforeTestModel < LdapModel
         ldap_map :dn, :dn, :default => "fakedn"
         ldap_map :fooBar, :bar
@@ -98,6 +101,23 @@ describe LdapModel do
       end
 
       assert_equal [:hook_called, :saved], $events
+    end
+
+    it "before create is called when new model is created" do
+      class BeforeCreateTestModel < LdapModel
+        ldap_map :dn, :dn
+        ldap_map :fooBar, :bar
+        before :create do
+          $events.push(:create_hook_called)
+        end
+      end
+
+      LdapModel.stub(:connection, MockConnection.new) do
+        m = BeforeCreateTestModel.new({:bar => "val"})
+        m.save!
+      end
+
+      assert_equal [:create_hook_called, :added], $events
     end
 
     it "after update is called after saving" do

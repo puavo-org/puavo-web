@@ -173,9 +173,7 @@ class LdapModel
       raise "Cannot call create! on existing model"
     end
 
-    if hooks[:before] && hooks[:before][:create]
-      hooks[:before][:create].each{|hook| instance_exec(&hook)}
-    end
+    run_hook :before, :create
 
     _dn = dn if _dn.nil?
 
@@ -185,9 +183,7 @@ class LdapModel
     @existing = true
     @pending_mods = {}
 
-    if hooks[:after] && hooks[:after][:create]
-      hooks[:after][:create].each{|hook| instance_exec(&hook)}
-    end
+    run_hook :after, :create
 
     res
   end
@@ -195,16 +191,12 @@ class LdapModel
   def save!
     return create! if !@existing
 
-    if hooks[:before] && hooks[:before][:update]
-      hooks[:before][:update].each{|hook| instance_exec(&hook)}
-    end
+    run_hook :before, :update
 
     res = self.class.connection.modify(dn, @pending_mods)
     @pending_mods = {}
 
-    if hooks[:after] && hooks[:after][:update]
-      hooks[:after][:update].each{|hook| instance_exec(&hook)}
-    end
+    run_hook :after, :update
 
     res
   end
@@ -301,6 +293,14 @@ class LdapModel
   computed_attr :object_model
   def object_model
     self.class.to_s
+  end
+
+  private
+
+  def run_hook(pos, event)
+    if hooks[pos] && hooks[pos][event]
+      hooks[pos][event].each{|hook| instance_exec(&hook)}
+    end
   end
 
 end
