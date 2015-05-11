@@ -47,6 +47,14 @@ class User < LdapModel
     write_raw(:displayName, [first_name + " " + last_name])
   end
 
+  before :create do
+    if username.to_s.strip.empty?
+      add_validation_error(:username, :username_empty, "Username is empty")
+    elsif User.by_username(username)
+      add_validation_error(:username, :username_not_unique, "Username is not unique")
+    end
+  end
+
 
   before :create do
     if id.nil?
