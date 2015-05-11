@@ -8,6 +8,7 @@ class JSONError < Exception
   def initialize(message, meta={})
     if message.class == String
       super(message)
+      @meta = meta
     else
       @user_message = message[:user]
       if message[:meta]
@@ -17,10 +18,6 @@ class JSONError < Exception
     end
 
 
-  end
-
-  def to_json
-    @error.to_json
   end
 
   def http_code
@@ -47,6 +44,20 @@ class JSONError < Exception
     as_json.to_json
   end
 
+end
+
+class ValidationError < JSONError
+  def http_code
+    400
+  end
+
+  def as_json
+    parent = super
+    parent[:error][:meta] = {
+      :invalid_attributes => @meta[:invalid_attributes]
+    }
+    parent
+  end
 end
 
 class NotFound < JSONError
@@ -92,5 +103,5 @@ class Unauthorized < JSONError
 
   def headers
     super.merge "WWW-Authenticate" => "Negotiate"
-  end
+ end
 end

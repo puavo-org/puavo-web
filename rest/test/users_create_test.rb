@@ -127,5 +127,30 @@ describe LdapModel do
       assert_200
     end
 
+    it "cannot create users with the same usernames" do
+      user = PuavoRest::User.new(
+        :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],
+        :first_name => "Heli",
+        :last_name => "Kopteri",
+        :username => "heli",
+        :roles => ["staff"],
+        :email => "heli.kopteri2@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "userpw",
+
+        :login_shell => "/bin/bash",
+        :samba_sid => "S-1-5-21-17441224-59077026-93552251-219802"
+      )
+
+      err = assert_raises ValidationError do
+        user.save!
+      end
+
+      username_error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+      assert username_error
+      assert_equal :username_not_unique, username_error[:code]
+      assert_equal "Username is not unique", username_error[:message]
+    end
+
   end
 end
