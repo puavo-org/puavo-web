@@ -96,6 +96,12 @@ class InternalError < JSONError
   end
 end
 
+class NotImplemented < JSONError
+  def http_code
+    501
+  end
+end
+
 class Unauthorized < JSONError
   def http_code
     401

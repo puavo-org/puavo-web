@@ -47,6 +47,13 @@ class User < LdapModel
     write_raw(:displayName, [first_name + " " + last_name])
   end
 
+  before :update do
+    if changed?(:username)
+      # XXX This change must be reflected to Groups, SambaGroups etc.
+      raise NotImplemented, :user => "username changing is not implemented"
+    end
+  end
+
   before :create do
     if username.to_s.strip.empty?
       add_validation_error(:username, :username_empty, "Username is empty")
