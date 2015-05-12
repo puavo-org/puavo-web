@@ -48,8 +48,7 @@ describe LdapModel do
         :school_dns => [@school.dn.to_s],
         :password => "userpw",
 
-        :login_shell => "/bin/bash",
-        :samba_sid => "S-1-5-21-17441224-59077026-93552251-219809"
+        :login_shell => "/bin/bash"
       )
       @user.save!
     end
@@ -76,6 +75,26 @@ describe LdapModel do
 
     it "can be fetched by dn" do
       assert PuavoRest::User.by_dn! @user.dn, "model can be found by dn"
+    end
+
+    it "has internal samba attributes" do
+      assert_equal ["[U]"], @user.get_raw(:sambaAcctFlags)
+
+      samba_sid = @user.get_raw(:sambaSID)
+      assert samba_sid
+      assert samba_sid.first
+      assert_equal "S", samba_sid.first.first
+
+      samba_primary_group_sid = @user.get_raw(:sambaSID)
+      assert samba_primary_group_sid
+      assert samba_primary_group_sid.first
+      assert_equal "S", samba_primary_group_sid.first.first
+
+      samba_group = PuavoRest::SambaGroup.by_attr!(:name, "Domain Users")
+      assert(
+        samba_group.members.include?(@user.username),
+        "Samba group 'Domain users' includes the username"
+      )
     end
 
     it "can add secondary emails" do
@@ -138,8 +157,7 @@ describe LdapModel do
         :school_dns => [@school.dn.to_s],
         :password => "userpw",
 
-        :login_shell => "/bin/bash",
-        :samba_sid => "S-1-5-21-17441224-59077026-93552251-219802"
+        :login_shell => "/bin/bash"
       )
 
       err = assert_raises ValidationError do
