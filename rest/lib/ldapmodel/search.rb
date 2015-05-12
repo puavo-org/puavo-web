@@ -140,7 +140,7 @@ class LdapModel
     end
 
     res = nil
-    raw_filter(dn, "(objectclass=*)") do |entry|
+    raw_filter(dn, "(objectclass=*)", attributes) do |entry|
       res = entry.to_hash
       break
     end
