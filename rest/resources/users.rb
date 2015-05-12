@@ -27,7 +27,6 @@ class User < LdapModel
   ldap_map :puavoSshPublicKey, :ssh_public_key
   ldap_map :homeDirectory, :home_directory
   ldap_map :loginShell, :login_shell, :default => "/bin/bash"
-  ldap_map :sambaSID, :samba_sid
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
@@ -84,6 +83,7 @@ class User < LdapModel
       self.home_directory = "/home/#{ school.abbreviation }/#{ username }"
     end
 
+    write_samba_attrs
   end
 
   # Just store password locally and handle it in after hook
@@ -310,6 +310,22 @@ class User < LdapModel
       create_filter_lambda(:last_name),
       create_filter_lambda(:email)
     ]
+  end
+
+  private
+
+  # Write internal samba attributes. Implementation is based on the puavo-web
+  # code is not actually tested on production systems
+  def write_samba_attrs
+    samba_domain = SambaDomain.all.first # Each organisation have only one
+    rid = IdPool.next_id("puavoNextSambaSID:#{ samba_domain.domain }")
+    write_raw(:sambaAcctFlags, ["[U]"])
+    write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
+    write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
+    samba_group = SambaGroup.by_attr!(:name, "Domain Users")
+    if !samba_group.members.include?(username)
+      samba_group.add!(:members, username)
+    end
   end
 
 end
