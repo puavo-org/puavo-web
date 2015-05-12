@@ -1,11 +1,15 @@
 # Generic test helpers shared with rails and puavo-rest
 
-require_relative "./puavo-rest.rb"
+require_relative "./lib/ldap_converters"
+require_relative "./lib/ldapmodel"
+require_relative "./config"
+require_relative "./models/organisations"
 
 module Puavo
 module Test
 
   def self.setup_test_connection
+    puts "SETUP TEST CONNECTION"
 
     LdapModel.setup(
       :organisation =>

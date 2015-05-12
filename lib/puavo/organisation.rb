@@ -46,6 +46,8 @@ module Puavo
       def key_by_host(host)
         Organisation.initial_configurations if self.configurations.empty?
 
+        puts @@key_by_host.keys.inspect
+
         @@key_by_host[host]
       end
 
@@ -90,6 +92,8 @@ module Puavo
 
           web_config = organisation["web_config"] || Hash.new
 
+          puts organisation["key"]
+          puts organisation["domain"]
           @@configurations[organisation["key"]] = {
             "name" => organisation["name"],
             "host" => organisation["domain"],

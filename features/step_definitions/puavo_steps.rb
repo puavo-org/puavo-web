@@ -1,7 +1,7 @@
 require 'digest'
 require 'base64'
 require 'timecop'
-require_relative '../../generic_test_helpers'
+require_relative '../../rest/generic_test_helpers'
 
 Before do |scenario|
   @owner_dn, @owner_password = Puavo::Test.setup_test_connection

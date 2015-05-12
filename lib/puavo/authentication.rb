@@ -107,6 +107,8 @@ module Puavo
     end
 
     def configure_ldap_connection(credentials)
+      puts "CONFIGURE LDAP CONNECTION"
+      puts credentials.inspect
       credentials = credentials.dup
       if credentials[:dn]
         credentials[:dn] = ActiveLdap::DistinguishedName.parse(credentials[:dn])
@@ -185,6 +187,7 @@ module Puavo
       # credentials. So this search call will initialize the connection and
       # will raise ActiveLdap::AuthenticationError if user supplied a
       # bad password.
+      puts "FOOBAR"
       begin
 
         @admin_permissions = School.search(

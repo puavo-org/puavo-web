@@ -176,8 +176,12 @@ module Puavo
     end
 
     def organisation_key_from_host(host=nil)
+      puts "organisation_key_from_host: " + host.inspect
+      puts "request host: " + request.host.inspect
       request_host = request.host.to_s.gsub(/^staging\-/, "")
+      puts "request_host: " + request_host
       organisation_key = Puavo::Organisation.key_by_host(request_host)
+      puts "organisation_key: " + organisation_key.inspect
       unless organisation_key
         organisation_key = Puavo::CONFIG["default_organisation"]
       end

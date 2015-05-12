@@ -14,6 +14,7 @@ Feature: Manage users
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
       | Pavel     | Taylor | pavel | secret   | true         | Staffs     | staff                     |
     And I am logged in as "cucumber" with password "cucumber"
+    #Then I should see "Example"
 
   Scenario: Create new user by staff
     Given I follow "Logout"
