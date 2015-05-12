@@ -296,7 +296,11 @@ class LdapModel
     h.each do |pretty_name, value|
       _ldap_attrs[pretty2ldap[pretty_name.to_sym]] = value
     end
-    self.class.new({}, _serialize_attrs, _ldap_attrs)
+
+    self.class.new({}, {
+      :serialize => _serialize_attrs,
+      :store => _ldap_attrs
+    })
   end
 
   def to_hash
