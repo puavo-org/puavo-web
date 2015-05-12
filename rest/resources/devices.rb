@@ -50,7 +50,7 @@ class Device < Host
   end
 
   def printer_ppd
-    Array(self.class.raw_by_dn(self["dn"], "puavoPrinterPPD")["puavoPrinterPPD"]).first
+    Array(self.class.raw_by_dn(dn, ["puavoPrinterPPD"])["puavoPrinterPPD"]).first
   end
 
   # Cached school query

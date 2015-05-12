@@ -86,7 +86,10 @@ class ExternalFiles < LdapSinatra
   get "/v3/devices/:hostname/external_files" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    if device = Device.by_hostname(params[:hostname])
+    printer_ppd_data_hash = nil
+    device = Device.by_hostname(params[:hostname])
+
+    if device
       if device.printer_ppd
         printer_ppd_data_hash = Digest::SHA1.new
         printer_ppd_data_hash.update(device.printer_ppd)
