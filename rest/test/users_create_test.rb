@@ -74,7 +74,7 @@ describe LdapModel do
     end
 
     it "can be fetched by dn" do
-      assert PuavoRest::User.by_dn! @user.dn, "model can be found by dn"
+      assert PuavoRest::User.by_dn!(@user.dn), "model can be found by dn"
     end
 
     it "has internal samba attributes" do
