@@ -155,15 +155,13 @@ class User < LdapModel
     by_attr(:username, username, :single, attrs)
   end
 
+
   def self.resolve_dn(username)
-    dn = raw_filter("(uid=#{ escape username })", ["dn"])
-    if dn && !dn.empty?
-      dn.first["dn"].first
-    end
+    by_attr!(:username, username, ["dn"]).dn
   end
 
   def self.profile_image(uid)
-    data = raw_filter("(uid=#{ escape uid })", ["jpegPhoto"])
+    data = raw_filter(ldap_base, "(uid=#{ escape uid })", ["jpegPhoto"])
     if !data || data.size == 0
       raise NotFound, :user => "Cannot find image data for user: #{ uid }"
     end

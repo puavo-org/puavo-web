@@ -24,7 +24,7 @@ class ExternalFile < LdapModel
 
   # return file contents for file name
   def self.data_only(name)
-    raw_filter(file_filter(name), ["puavoData"]).first["puavoData"]
+    raw_filter(ldap_base, file_filter(name), ["puavoData"]).first["puavoData"]
   end
 
 end
