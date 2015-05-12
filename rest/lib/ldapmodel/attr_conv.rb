@@ -169,6 +169,27 @@ class LdapModel
     return !!@pending_mods[ldap_name.to_s]
   end
 
+  # Append value to ArrayValue attribute. The value is saved immediately
+  #
+  # @param pretty_name [Symbol] Pretty name of the attribute
+  # @param value [Any] Value to be appended to the attribute
+  def add!(pretty_name, value)
+    ldap_name = pretty2ldap[pretty_name.to_sym]
+    transform = attr_options[pretty_name.to_sym][:transform]
+
+    # if not LdapConverters::ArrayValue or subclass of it
+    if !(transform <= LdapConverters::ArrayValue)
+      raise "add! can be called only on LdapConverters::ArrayValue values. Not #{ transform }"
+    end
+
+    value = transform.new(self).write(value)
+    mods = [LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value)]
+    res = self.class.connection.modify(dn, mods)
+    @cache[pretty_name] = nil
+    current_val = @ldap_attr_store[ldap_name.to_sym]
+    @ldap_attr_store[ldap_name.to_sym] = Array(current_val) + value
+  end
+
   def create!(_dn=nil)
     if @existing
       raise "Cannot call create! on existing model"

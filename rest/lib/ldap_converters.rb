@@ -66,7 +66,7 @@ module LdapConverters
 
   end
 
-  class ArrayOfJSON < Base
+  class ArrayOfJSON < ArrayValue
 
     def read(value)
       Array(value).map do |n|
