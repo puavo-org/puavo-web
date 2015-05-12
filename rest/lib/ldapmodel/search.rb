@@ -9,11 +9,12 @@ class LdapModel
 
   # LDAP::LDAP_SCOPE_SUBTREE filter search for #ldap_base
   #
+  # @param base [String] LDAP base
   # @param filter [String] LDAP filter
   # @param attributes [Array] Limit search results to these attributes
   # @see http://ruby-ldap.sourceforge.net/rdoc/classes/LDAP/Conn.html#M000025
   # @return [Array]
-  def self.raw_filter(filter, attributes=nil)
+  def self.raw_filter(base, filter, attributes=nil, &block)
     res = []
     attributes ||= ldap_attrs
 
@@ -23,20 +24,33 @@ class LdapModel
 
     timer = PROF.start
 
-    connection.search(
-      ldap_base,
-      LDAP::LDAP_SCOPE_SUBTREE,
-      filter,
-      attributes.map{ |a| a.to_s }
-    ) do |entry|
-      res.push(entry.to_hash) if entry.dn != ldap_base
+    if block.nil?
+      block = lambda do |entry|
+        res.push(entry.to_hash) if entry.dn != ldap_base
+      end
     end
 
-    timer.stop("#{ self.name }#filter(#{ filter.inspect }) #{ attributes.inspect } found #{ res.size } items")
-    PROF.count(timer)
+    err = nil
+    begin
+      connection.search(
+        base,
+        LDAP::LDAP_SCOPE_SUBTREE,
+        filter,
+        attributes.map{ |a| a.to_s },
+        &block
+      )
+    rescue Exception => _err
+      err = _err
+      raise err
+    ensure
+      timer.stop("#{ self.name }#raw_filter(#{ filter.inspect }) base:#{ base } attributes:#{ attributes.inspect } found #{ res.size } items", err)
+      PROF.count(timer)
+    end
+
 
     res
   end
+
 
   # Return convert values to LdapHashes before returning
   # @see raw_filter
@@ -52,7 +66,7 @@ class LdapModel
       ldap_attributes = attrs.map{|a| pretty2ldap[a.to_sym]}.compact
     end
 
-    raw_filter(_filter, ldap_attributes).map! do |entry|
+    raw_filter(ldap_base, _filter, ldap_attributes).map! do |entry|
       from_ldap_hash(entry, attrs)
     end
   end
@@ -84,17 +98,17 @@ class LdapModel
   # Find model by it's mapped attribute. It's safe to call with user input
   # since the value is escaped before ldap search.
   #
-  # @param attr [Symbol] Mapped attribute
+  # @param pretty_name [Symbol] Mapped attribute
   # @param value [String] Attribute value to match
   # @param option [Symbol] Set to :multi to return an Array
   # @return [LdapModel]
-  def self.by_attr(attr, value, option=nil, attrs=nil)
-    ldap_attr = pretty2ldap[attr.to_sym]
+  def self.by_attr(pretty_name, value, option=nil, attrs=nil)
+    ldap_attr = pretty2ldap[pretty_name.to_sym]
 
     if ldap_attr.nil?
       # Would compile to invalid ldap search filter. Throw early with human
       # readable error message
-      raise "Invalid pretty attribute #{ attr } for #{ self }"
+      raise "Invalid pretty attribute #{ pretty_name } for #{ self }"
     end
 
     by_ldap_attr(ldap_attr, value, option, attrs)
@@ -117,7 +131,6 @@ class LdapModel
   # @param dn [String]
   # @param attributes [Array of Strings]
   def self.raw_by_dn(dn, attributes=nil)
-    res = nil
     attributes ||= ldap_attrs.map{ |a| a.to_s }
 
     timer = PROF.start
@@ -126,19 +139,11 @@ class LdapModel
       raise "Connection is not setup!"
     end
 
-    connection.search(
-      dn,
-      LDAP::LDAP_SCOPE_BASE,
-      "(objectclass=*)",
-      attributes
-    ) do |entry|
+    res = nil
+    raw_filter(dn, "(objectclass=*)") do |entry|
       res = entry.to_hash
       break
     end
-
-    timer.stop("#{ self.name }#by_dn(#{ dn.inspect }) found #{ res.size } items")
-    PROF.count(timer)
-
     res
   end
 

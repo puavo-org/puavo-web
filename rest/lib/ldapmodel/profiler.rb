@@ -10,6 +10,7 @@ class LdapSearchProfiler
 
   def initialize(key)
     @key = key
+    reset
   end
 
   class Timer
@@ -19,10 +20,17 @@ class LdapSearchProfiler
       @duration = 0
     end
 
-    def stop(msg="")
+    def stop(msg="", error=nil)
       if ENV["LDAP_PROFILER"]
+        color = :blue
+
+        if error
+          color = :red
+          puts "Error(#{ error.class }): #{ error }".colorize(color)
+        end
+
         @duration = (Time.now - @started).to_f * 1000
-        puts "#{ msg } in #{ @duration } ms".colorize(:blue)
+        puts "#{ msg } in #{ @duration } ms".colorize(color)
       end
     end
   end
