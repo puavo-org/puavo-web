@@ -5,7 +5,7 @@ class IdPool
     pool = get_redis_id_pool()
 
     if pool.get(id_field).nil?
-      pool.set(5000)
+      pool.set(id_field, 5000)
     end
 
     _id_range = (1..count).map do
