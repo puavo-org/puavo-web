@@ -318,7 +318,15 @@ class User < LdapModel
   # code is not actually tested on production systems
   def write_samba_attrs
     samba_domain = SambaDomain.all.first # Each organisation have only one
-    rid = IdPool.next_id("puavoNextSambaSID:#{ samba_domain.domain }")
+
+    pool_key = "puavoNextSambaSID:#{ samba_domain.domain }"
+
+    if IdPool.last_id(pool_key).nil?
+      IdPool.set_id!(pool_key, samba_domain.legacy_rid)
+    end
+
+    rid = IdPool.next_id(pool_key)
+
     write_raw(:sambaAcctFlags, ["[U]"])
     write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
     write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])

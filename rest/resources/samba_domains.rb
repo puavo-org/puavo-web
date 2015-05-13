@@ -7,6 +7,7 @@ class SambaDomain < LdapModel
   ldap_map :puavoId, :id
   ldap_map :sambaSID, :sid
   ldap_map :sambaDomainName, :domain
+  ldap_map :sambaNextRid, :legacy_rid
 
   def self.ldap_base
     organisation["base"]
