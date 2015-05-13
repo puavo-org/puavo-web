@@ -8,7 +8,7 @@ Syslog.open("lol", Syslog::LOG_PID,
 
 describe LdapModel do
 
-  describe "User created by LdapMode" do
+  describe "user creation" do
 
     before(:each) do
       Puavo::Test.clean_up_ldap
@@ -46,9 +46,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpw",
-
-        :login_shell => "/bin/bash"
+        :password => "userpw"
       )
       @user.save!
     end
@@ -175,5 +173,46 @@ describe LdapModel do
       assert_equal "Username is not unique", username_error[:message]
     end
 
+    describe "validation" do
+
+      it "model can be validated only" do
+        user = PuavoRest::User.new(
+          :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],
+          :first_name => "Heli",
+          :last_name => "Kopteri",
+          :username => "heli",
+          :roles => ["staff"],
+          :email => "heli.kopteri@example.com",
+          :school_dns => [@school.dn.to_s],
+          :password => "userpw"
+        )
+
+        err = assert_raises ValidationError do
+          user.validate!
+        end
+
+        username_error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+        assert username_error
+        assert_equal :username_not_unique, username_error[:code]
+        assert_equal "Username is not unique", username_error[:message]
+      end
+
+      it "on successful validation the model is not saved" do
+        user = PuavoRest::User.new(
+          :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],
+          :first_name => "Foo",
+          :last_name => "Bar",
+          :username => "foo",
+          :roles => ["staff"],
+          :email => "foo@example.com",
+          :school_dns => [@school.dn.to_s],
+          :password => "userpw"
+        )
+
+        user.validate!
+        assert !PuavoRest::User.by_username("foo"), "the user cannot be found because it is not saved"
+      end
+
+    end
   end
 end
