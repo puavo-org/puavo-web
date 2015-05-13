@@ -77,6 +77,11 @@ describe LdapModel do
       assert PuavoRest::User.by_dn!(@user.dn), "model can be found by dn"
     end
 
+    it "has school" do
+      assert_equal "Gryffindor", @user.schools.first.name
+    end
+
+
     it "has internal samba attributes" do
       assert_equal ["[U]"], @user.get_raw(:sambaAcctFlags)
 
