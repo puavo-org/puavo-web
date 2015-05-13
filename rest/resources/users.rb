@@ -53,12 +53,19 @@ class User < LdapModel
     end
   end
 
-  before :create do
+  def validate
     if username.to_s.strip.empty?
       add_validation_error(:username, :username_empty, "Username is empty")
-    elsif User.by_username(username)
+    elsif new? && User.by_username(username)
       add_validation_error(:username, :username_not_unique, "Username is not unique")
     end
+
+    if email.to_s.strip.empty?
+      add_validation_error(:email, :username_empty, "Email is empty")
+    elsif new? && User.by_attr(:email, email)
+      add_validation_error(:email, :email_not_unique, "Email is not unique")
+    end
+    # XXX validate secondary emails too!!
   end
 
 
@@ -117,12 +124,14 @@ class User < LdapModel
   def email=(_email)
     secondary_emails = Array(get_raw(:mail))[1..-1] || []
     write_raw(:mail, [_email] + secondary_emails)
+    @cache[:email] = nil
   end
 
   def secondary_emails=(emails)
     primary = Array(get_raw(:mail)).first
     val = ([primary] + emails).compact
     write_raw(:mail, val)
+    @cache[:secondary_emails] = nil
   end
 
   def is_school_admin_in?(school)

@@ -33,6 +33,10 @@ class LdapModel
     end
   end
 
+  def new?
+    !@existing
+  end
+
   def self.after(*states, &hook_block)
     hooks[:after] ||= {}
     states.each do |state|
@@ -196,7 +200,7 @@ class LdapModel
     end
 
     run_hook :before, :create
-    assert_validations
+    validate!
 
     _dn = dn if _dn.nil?
 
@@ -215,7 +219,7 @@ class LdapModel
     return create! if !@existing
 
     run_hook :before, :update
-    assert_validations
+    validate!
 
     res = self.class.connection.modify(dn, @pending_mods)
     @pending_mods = {}
@@ -231,12 +235,13 @@ class LdapModel
   # @param code [Symbol] Unique symbol for this name
   # @param message [String] Human readable message for this error
   def add_validation_error(attr, code, message)
-    raise "validation errors can be only added during hooks" if !@hook_running
-
-    (@validation_errors[attr.to_sym] ||= []).push(
+    current = @validation_errors[attr.to_sym] ||= []
+    current = current.select{|err| err[:code] != code}
+    current.push(
       :code => code,
       :message => message
     )
+    current = @validation_errors[attr.to_sym] = current
   end
 
   def dirty?
@@ -337,27 +342,26 @@ class LdapModel
     self.class.to_s
   end
 
-  private
+  def validate
+  end
 
-  def assert_validations
+  def validate!
+    validate
     if !@validation_errors.empty?
+      errs = @validation_errors
+      @validation_errors = {}
       raise ValidationError, :meta => {
-        :invalid_attributes => @validation_errors
+        :invalid_attributes => errs
       }
     end
   end
 
+  private
+
   def run_hook(pos, event)
-    @hook_running = true
-
-    begin
-      if hooks[pos] && hooks[pos][event]
-        hooks[pos][event].each{|hook| instance_exec(&hook)}
-      end
-    ensure
-      @hook_running = false
+    if hooks[pos] && hooks[pos][event]
+      hooks[pos][event].each{|hook| instance_exec(&hook)}
     end
-
   end
 
 end
