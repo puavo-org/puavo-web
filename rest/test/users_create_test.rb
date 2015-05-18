@@ -1,10 +1,6 @@
 require_relative "./helper"
 require_relative "../lib/ldapmodel"
 require_relative "../resources/roles"
-require "syslog"
-
-Syslog.open("lol", Syslog::LOG_PID,
-                        Syslog::LOG_DAEMON | Syslog::LOG_LOCAL3)
 
 describe LdapModel do
 
