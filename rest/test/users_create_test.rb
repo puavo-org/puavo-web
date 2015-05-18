@@ -213,6 +213,42 @@ describe LdapModel do
         assert !PuavoRest::User.by_username("foo"), "the user cannot be found because it is not saved"
       end
 
+      it "can be accessed over http" do
+        basic_authorize "heli", "userpw"
+        post "/v3/users_validate", {
+          :first_name => "Heli",
+          :last_name => "Kopteri",
+          :username => "heli",
+          :roles => ["staff"],
+          :email => "heli.kopteri@example.com",
+          :school_dns => [@school.dn.to_s],
+          :password => "userpw"
+        }
+
+        assert_equal 400, last_response.status
+        data = JSON.parse last_response.body
+        assert_equal "ValidationError", data["error"]["code"]
+
+        assert(
+          data["error"]["meta"]["invalid_attributes"]["username"],
+          "username is duplicate"
+        )
+        assert_equal(
+          "username_not_unique",
+          data["error"]["meta"]["invalid_attributes"]["username"][0]["code"]
+        )
+
+        assert(
+          data["error"]["meta"]["invalid_attributes"]["email"],
+          "email is duplicate"
+        )
+        assert_equal(
+          "email_not_unique",
+          data["error"]["meta"]["invalid_attributes"]["email"][0]["code"]
+        )
+
+      end
+
     end
   end
 end
