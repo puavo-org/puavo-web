@@ -352,6 +352,20 @@ class Users < LdapSinatra
   ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 
 
+  post "/v3/users" do
+    auth :basic_auth, :kerberos
+    user = User.new(json_params)
+    user.save!
+    json user
+  end
+
+  post "/v3/users_validate" do
+    auth :basic_auth, :kerberos
+    user = User.new(json_params)
+    user.validate!
+    json user
+  end
+
   get "/v3/users/_search" do
     auth :basic_auth, :kerberos
     json User.search(params["q"])
