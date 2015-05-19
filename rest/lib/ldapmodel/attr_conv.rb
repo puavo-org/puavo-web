@@ -170,7 +170,11 @@ class LdapModel
   # Returns true if this value is going to be written to ldap on next save!
   def changed?(pretty_name)
     ldap_name = pretty2ldap[pretty_name.to_sym]
-    return !!@pending_mods[ldap_name.to_s]
+    new_val = @pending_mods[ldap_name.to_s]
+    exising_val = @ldap_attr_store[ldap_name.to_sym]
+    return false if new_val.nil?
+    return true if new?
+    return new_val != exising_val
   end
 
   # Append value to ArrayValue attribute. The value is saved immediately
