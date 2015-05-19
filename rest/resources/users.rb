@@ -56,17 +56,30 @@ class User < LdapModel
   def validate
     if username.to_s.strip.empty?
       add_validation_error(:username, :username_empty, "Username is empty")
-    elsif new? && User.by_username(username)
-      add_validation_error(:username, :username_not_unique, "Username is not unique")
+    elsif
+      validate_unique(:username)
     end
 
-    if email.to_s.strip.empty?
-      add_validation_error(:email, :username_empty, "Email is empty")
-    elsif new? && User.by_attr(:email, email)
-      add_validation_error(:email, :email_not_unique, "Email is not unique")
-    end
+    validate_unique(:email)
     # XXX validate secondary emails too!!
+    validate_unique(:gid_number)
+    validate_unique(:uid_number)
+    validate_unique(:id)
+    validate_unique(:home_directory)
+
+    samba_sid = Array(get_raw(:sambaSID)).first
+
+    if samba_sid && new?
+      res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
+      if res && !res.empty?
+        other_dn = res.first["dn"].first
+        # Internal attribute, use underscore prefix to indicate that
+        add_validation_error(:__sambaSID, :sambaSID_not_unique, "#{ samba_sid } is already used by #{ other_dn }")
+      end
+    end
+
   end
+
 
 
   before :create do
