@@ -1,6 +1,5 @@
 require_relative "./helper"
 require_relative "../lib/ldapmodel"
-require_relative "../resources/roles"
 
 describe LdapModel do
 
