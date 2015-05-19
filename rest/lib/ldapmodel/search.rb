@@ -26,7 +26,7 @@ class LdapModel
 
     if block.nil?
       block = lambda do |entry|
-        res.push(entry.to_hash) if entry.dn != ldap_base
+        res.push(entry.to_hash) if entry.dn != base
       end
     end
 
