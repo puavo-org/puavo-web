@@ -51,6 +51,16 @@ class ValidationError < JSONError
     400
   end
 
+  def to_s
+    msg = "\n  Invalid attributes:\n"
+    @meta[:invalid_attributes].each do |attr, errors|
+      errors.each do |error|
+        msg += "    * #{ attr }: #{ error[:message] }"
+      end
+    end
+    msg + "\n"
+  end
+
   def as_json
     parent = super
     parent[:error][:meta] = {
