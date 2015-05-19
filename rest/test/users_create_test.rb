@@ -166,7 +166,7 @@ describe LdapModel do
       username_error = err.as_json[:error][:meta][:invalid_attributes][:username].first
       assert username_error
       assert_equal :username_not_unique, username_error[:code]
-      assert_equal "Username is not unique", username_error[:message]
+      assert_equal "username=heli is not unique", username_error[:message]
     end
 
     describe "validation" do
@@ -190,7 +190,7 @@ describe LdapModel do
         username_error = err.as_json[:error][:meta][:invalid_attributes][:username].first
         assert username_error
         assert_equal :username_not_unique, username_error[:code]
-        assert_equal "Username is not unique", username_error[:message]
+        assert_equal "username=heli is not unique", username_error[:message]
       end
 
       it "on successful validation the model is not saved" do

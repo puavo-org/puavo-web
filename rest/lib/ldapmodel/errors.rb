@@ -5,18 +5,18 @@ class JSONError < Exception
   # @param [String, Hash] error message
   # @option message :user Error message that is displayed to requesting user
   # @option message :mgs Internal error message for stack traces
-  def initialize(message, meta={})
-    if message.class == String
-      super(message)
-      @meta = meta
+  def initialize(message, meta=nil)
+    @meta = {}
+
+    if message.kind_of?(Hash)
+      @meta = message
+      message = message[:msg] || message[:message] || message[:user]
     else
-      @user_message = message[:user]
-      if message[:meta]
-        @meta = message[:meta]
-      end
-      super(message[:msg] || message[:user])
+      @meta = meta || {}
     end
 
+    super(message)
+    @message = message
 
   end
 
@@ -34,8 +34,8 @@ class JSONError < Exception
         :code => self.class.name.split(":").last
       }
     }
-    if @user_message
-      res[:error][:message] = @user_message
+    if @meta[:user]
+      res[:error][:message] = @meta[:user]
     end
     res
   end
@@ -52,8 +52,14 @@ class ValidationError < JSONError
   end
 
   def to_s
-    msg = "\n  Invalid attributes:\n"
-    @meta[:invalid_attributes].each do |attr, errors|
+    dn = ""
+    if @meta[:dn]
+      dn = "(#{ @meta[:dn] })"
+    end
+
+    msg = @message
+    msg += "\n  Invalid attributes for #{ @meta[:className] } #{ dn }:\n"
+    Array(@meta[:invalid_attributes]).each do |attr, errors|
       errors.each do |error|
         msg += "    * #{ attr }: #{ error[:message] }"
       end

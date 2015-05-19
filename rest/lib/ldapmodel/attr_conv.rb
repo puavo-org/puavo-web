@@ -204,7 +204,7 @@ class LdapModel
     end
 
     run_hook :before, :create
-    validate!
+    validate!("Creating")
 
     _dn = dn if _dn.nil?
 
@@ -223,7 +223,7 @@ class LdapModel
     return create! if !@existing
 
     run_hook :before, :update
-    validate!
+    validate!("Updating")
 
     res = self.class.connection.modify(dn, @pending_mods)
     @pending_mods = {}
@@ -349,12 +349,24 @@ class LdapModel
   def validate
   end
 
-  def validate!
+  def validate_unique(pretty_name)
+    return if !changed?(pretty_name)
+    ldap_name = pretty2ldap[pretty_name.to_sym]
+    val = Array(get_raw(ldap_name)).first
+    if self.class.by_attr(pretty_name, val)
+      add_validation_error(pretty_name, "#{ pretty_name.to_s }_not_unique".to_sym, "#{ pretty_name }=#{ val } is not unique")
+    end
+  end
+
+  def validate!(message="Validation error")
     validate
     if !@validation_errors.empty?
       errs = @validation_errors
       @validation_errors = {}
-      raise ValidationError, :meta => {
+      raise ValidationError, {
+        :message => message,
+        :className => self.class.name,
+        :dn => dn,
         :invalid_attributes => errs
       }
     end
