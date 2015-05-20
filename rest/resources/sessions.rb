@@ -112,7 +112,17 @@ class Sessions < LdapSinatra
     if params["hostname"]
       # Normal user has no permission to read device attributes so force server
       # credentials here.
-      LdapModel.setup(:credentials => CONFIG["server"]) do
+      credentials = CONFIG["server"]
+
+      # Use credentials by device if it is defined (laptop).
+      if params["device_dn"] && params["device_password"]
+        credentials = {
+          :dn => params["device_dn"],
+          :password => params["device_password"]
+        }
+      end
+
+      LdapModel.setup(:credentials => credentials) do
         device = Device.by_hostname!(params["hostname"])
 
         if device.type == "thinclient"

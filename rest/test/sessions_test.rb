@@ -611,6 +611,44 @@ describe PuavoRest::Sessions do
 
     end
 
+    describe "laptop sessions" do
+      before(:each) do
+        @laptop1 = create_device(
+          :puavoHostname => "laptop1",
+          :macAddress => "00:60:2f:D5:F9:61",
+          :puavoSchool => @school.dn,
+          :puavoDeviceType => "laptop"
+        )
+
+        basic_authorize "bob", "secret"
+        post "/v3/sessions", {
+          "hostname" => "laptop1",
+          "device_dn" => @laptop1.dn.to_s,
+          "device_password" => @laptop1.ldap_password }
+        assert_200
+
+        @data = JSON.parse last_response.body
+
+      end
+      it "does not need a ltsp server" do
+        assert_equal "www.example.net", @data["organisation"], "has organisation info"
+        assert @data["ltsp_server"].nil?, "laptop must not get ltsp server"
+        assert @data["device"], "has device"
+        assert_equal "laptop1", @data["device"]["hostname"]
+      end
+
+      it "has homepage for user" do
+        assert @data["user"]
+        assert_equal "gryffindor.example", @data["user"]["homepage"]
+      end
+
+      it "has homepage for device" do
+        assert @data["device"]
+        assert_equal "gryffindor.example", @data["device"]["homepage"]
+      end
+
+    end
+
     describe "preferred language attribute" do
       it "is given from school to guests" do
         post "/v3/sessions", { "hostname" => "afat" }, {
