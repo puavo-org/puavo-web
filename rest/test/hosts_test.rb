@@ -96,7 +96,9 @@ describe PuavoRest::Host do
       thin = @host["thinclient"]
 
 
-      get "/v3/boot_configurations/#{ thin.mac_address }"
+      get "/v3/boot_configurations/#{ thin.mac_address }", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
       assert_200
 
       Timecop.travel 60
