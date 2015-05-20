@@ -55,6 +55,11 @@ class BeforeFilters < LdapSinatra
 
   before do
     LdapModel::PROF.reset
+
+    # Ensure that any previous connections are cleared. Each request must
+    # provide their own credentials.
+    LdapModel.clear_setup
+
     @req_start = Time.now
     ip = env["HTTP_X_REAL_IP"] || request.ip
     response.headers["X-puavo-rest-version"] = "#{ VERSION } #{ GIT_COMMIT }"
