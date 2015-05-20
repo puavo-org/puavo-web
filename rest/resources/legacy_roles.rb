@@ -33,5 +33,16 @@ class LegacyRoles < LdapSinatra
     json LegacyRole.by_id!(params["role_id"])
   end
 
+  post "/v3/schools/:school_id/legacy_roles/:role_id/members" do
+    auth :basic_auth, :kerberos
+
+    # Just assert that the school in the url exists
+    School.by_id!(params["school_id"])
+
+    role = LegacyRole.by_id!(params["role_id"])
+    role.add!(:member_usernames, params["username"])
+    role
+  end
+
 end
 end
