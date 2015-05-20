@@ -214,6 +214,7 @@ class Root < LdapSinatra
   use PuavoRest::DeviceImages
   use PuavoRest::Schools
   use PuavoRest::BootServers
+  use PuavoRest::LegacyRoles
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
