@@ -119,6 +119,14 @@ class LdapModel
     by_ldap_attr!(pretty2ldap[attr.to_sym], value, option, attrs)
   end
 
+  def self.by_id(id)
+    by_attr(:id, id)
+  end
+
+  def self.by_id!(id)
+    by_attr!(:id, id)
+  end
+
   # Return all ldap entries from the current base
   #
   # @see ldap_base
