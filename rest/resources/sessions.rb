@@ -109,21 +109,21 @@ class Sessions < LdapSinatra
     )
 
 
-    if params["hostname"]
+    if json_params["hostname"]
       # Normal user has no permission to read device attributes so force server
       # credentials here.
       credentials = CONFIG["server"]
 
       # Use credentials by device if it is defined (laptop).
-      if params["device_dn"] && params["device_password"]
+      if json_params["device_dn"] && json_params["device_password"]
         credentials = {
-          :dn => params["device_dn"],
-          :password => params["device_password"]
+          :dn => json_params["device_dn"],
+          :password => json_params["device_password"]
         }
       end
 
       LdapModel.setup(:credentials => credentials) do
-        device = Device.by_hostname!(params["hostname"])
+        device = Device.by_hostname!(json_params["hostname"])
 
         if device.type == "thinclient"
           servers =  sorted_ltsp_servers(
@@ -181,7 +181,7 @@ class Sessions < LdapSinatra
     session["organisation"] = Organisation.current.domain
     session.save
 
-    flog.info "new session", :device => params["hostname"]
+    flog.info "new session", :device => json_params["hostname"]
 
     # Use different message to avoid type collisions in elasticsearch
     flog.info("created session", {
