@@ -7,18 +7,42 @@ class LdapModel
   class_store :attr_options
   class_store :skip_serialize_attrs
   class_store :computed_attributes
+  class_store :hooks
 
   attr_reader :ldap_attr_store
   attr_reader :serialize_attrs
 
-  def initialize(attrs={}, serialize_attrs=nil, ldap_attr_store=nil)
-    @ldap_attr_store = ldap_attr_store || {}
-    if serialize_attrs
-      @serialize_attrs = Set.new(serialize_attrs.map{|a| a.to_sym})
+  def initialize(attrs={}, options={})
+    @existing = !!options[:existing]
+    @ldap_attr_store = options[:store] || {}
+
+    if options[:serialize]
+      @serialize_attrs = Set.new(options[:serialize].map{|a| a.to_sym})
     end
+
     @cache = {}
-    @pending_mods = []
+    @validation_errors = {}
+    reset_pending
     update!(attrs)
+  end
+
+
+  def self.before(*states, &hook_block)
+    hooks[:before] ||= {}
+    states.each do |state|
+      (hooks[:before][state.to_sym] ||= []).push(hook_block)
+    end
+  end
+
+  def new?
+    !@existing
+  end
+
+  def self.after(*states, &hook_block)
+    hooks[:after] ||= {}
+    states.each do |state|
+      (hooks[:after][state.to_sym] ||= []).push(hook_block)
+    end
   end
 
 
@@ -78,7 +102,15 @@ class LdapModel
     setter_method = (pretty_name.to_s + "=").to_sym
     if not method_defined?(setter_method)
       define_method setter_method do |value|
-        write_raw(pretty_name, transform.new(self).write(value))
+        error = transform.new(self).validate(value)
+        if error
+          add_validation_error(pretty_name, error[:code], error[:message])
+          # Raise type check validation error early here because later it can
+          # cause more weird errors during hooks and validation
+          assert_validation
+        else
+          write_raw(ldap_name, transform.new(self).write(value))
+        end
       end
     end
   end
@@ -129,19 +161,119 @@ class LdapModel
     end
   end
 
-  def write_raw(pretty_name, value)
-    ldap_name = pretty2ldap[pretty_name.to_sym]
-    @ldap_attr_store[ldap_name] = value
-    @cache[pretty_name] = nil
+  def get_raw(ldap_name)
+    @ldap_attr_store[ldap_name.to_sym]
+  end
 
-    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, ldap_name.to_s, value))
-    value
+  def write_raw(ldap_name, new_val)
+    ldap_name = ldap_name.to_sym
+
+    pretty_name = ldap2pretty[ldap_name]
+    if pretty_name
+      @previous_values[pretty_name] = send(pretty_name)
+      @cache[pretty_name] = nil
+    end
+
+    @ldap_attr_store[ldap_name] = new_val
+    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, ldap_name.to_s, new_val))
+
+    new_val
+  end
+
+  # Returns true if this value is going to be written to ldap on next save!
+  def changed?(pretty_name)
+    pretty_name = pretty_name.to_sym
+    ldap_name = pretty2ldap[pretty_name]
+    if !respond_to?(pretty_name)
+      raise NoMethodError, "undefined method `#{ pretty_name }' for #{ self.class }"
+    end
+
+    return true if new?
+    return false if !@previous_values.key?(ldap_name)
+    current_val = send(pretty_name)
+    prev_val = @previous_values[pretty_name]
+    return current_val != prev_val
+  end
+
+  # Append value to ArrayValue attribute. The value is saved immediately
+  #
+  # @param pretty_name [Symbol] Pretty name of the attribute
+  # @param value [Any] Value to be appended to the attribute
+  def add(pretty_name, value)
+    pretty_name = pretty_name.to_sym
+    ldap_name = pretty2ldap[pretty_name]
+    transform = attr_options[pretty_name][:transform]
+
+    # if not LdapConverters::ArrayValue or subclass of it
+    if !(transform <= LdapConverters::ArrayValue)
+      raise "add! can be called only on LdapConverters::ArrayValue values. Not #{ transform }"
+    end
+
+    if new?
+      raise "Cannot call add on new models. Just set the attribute directly"
+    end
+
+    if @previous_values[pretty_name].nil?
+      @previous_values[pretty_name] = send(pretty_name)
+    end
+
+    value = transform.new(self).write(value)
+    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value))
+    @cache[pretty_name] = nil
+    current_val = @ldap_attr_store[ldap_name.to_sym]
+    @ldap_attr_store[ldap_name.to_sym] = Array(current_val) + value
+  end
+
+  def create!(_dn=nil)
+    if @existing
+      raise "Cannot call create! on existing model"
+    end
+
+    run_hook :before, :create
+    validate!("Creating")
+
+    _dn = dn if _dn.nil?
+
+    mods = @pending_mods.select do |mod|
+      mod.mod_type != "dn"
+    end
+
+    res = self.class.connection.add(_dn, mods)
+    reset_pending
+    @existing = true
+
+    run_hook :after, :create
+
+    res
   end
 
   def save!
+    return create! if !@existing
+
+    run_hook :before, :update
+    validate!("Updating")
+
     res = self.class.connection.modify(dn, @pending_mods)
-    @pending_mods = []
+    reset_pending
+
+    run_hook :after, :update
+
     res
+  end
+
+  # Add validation error. Can be used only in hooks
+  #
+  # @param attr [Symbol] Attribute name this error relates to
+  # @param code [Symbol] Unique symbol for this name
+  # @param message [String] Human readable message for this error
+  def add_validation_error(attr, code, message)
+    current = @validation_errors[attr.to_sym] ||= []
+    current = current.select{|err| err[:code] != code}
+    current.push(
+      :code => code,
+      :message => message
+    )
+    current = @validation_errors[attr.to_sym] = current
   end
 
   def dirty?
@@ -201,7 +333,11 @@ class LdapModel
     h.each do |pretty_name, value|
       _ldap_attrs[pretty2ldap[pretty_name.to_sym]] = value
     end
-    self.class.new({}, _serialize_attrs, _ldap_attrs)
+
+    self.class.new({}, {
+      :serialize => _serialize_attrs,
+      :store => _ldap_attrs
+    })
   end
 
   def to_hash
@@ -236,6 +372,49 @@ class LdapModel
   computed_attr :object_model
   def object_model
     self.class.to_s
+  end
+
+  def validate
+  end
+
+  def validate_unique(pretty_name)
+    return if !changed?(pretty_name)
+    ldap_name = pretty2ldap[pretty_name.to_sym]
+    val = Array(get_raw(ldap_name)).first
+    if self.class.by_attr(pretty_name, val)
+      add_validation_error(pretty_name, "#{ pretty_name.to_s }_not_unique".to_sym, "#{ pretty_name }=#{ val } is not unique")
+    end
+  end
+
+  def assert_validation(message=nil)
+    return if @validation_errors.empty?
+    errors = @validation_errors
+    @validation_errors = {}
+    raise ValidationError, {
+      :message => message || "Validation error",
+      :className => self.class.name,
+      :dn => dn,
+      :invalid_attributes => errors
+    }
+  end
+
+  def validate!(message=nil)
+    validate
+    assert_validation(message)
+  end
+
+
+  private
+
+  def run_hook(pos, event)
+    if hooks[pos] && hooks[pos][event]
+      hooks[pos][event].each{|hook| instance_exec(&hook)}
+    end
+  end
+
+  def reset_pending
+    @pending_mods = []
+    @previous_values = {}
   end
 
 end

@@ -15,7 +15,7 @@ describe LdapModel do
       end
 
       def json_value=(value)
-        write_raw(:json_value, [value.to_json])
+        write_raw(:jsonValue, [value.to_json])
       end
 
     end
@@ -65,5 +65,143 @@ describe LdapModel do
     end
 
   end
+
+  describe "Hook" do
+
+    before do
+      $events = []
+    end
+
+    after do
+      $events = nil
+    end
+
+    class MockConnection
+      def modify(dn, mods)
+        $events.push(:saved)
+      end
+      def add(dn, mods)
+        $events.push(:added)
+      end
+    end
+
+
+    it "before update is called before saving changes to existing model" do
+      class BeforeTestModel < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        before :update do
+          $events.push(:hook_called)
+        end
+      end
+
+      LdapModel.stub(:connection, MockConnection.new) do
+        m = BeforeTestModel.new({:bar => "val"}, {:existing => true})
+        m.save!
+      end
+
+      assert_equal [:hook_called, :saved], $events
+    end
+
+    it "before create is called when new model is created" do
+      class BeforeCreateTestModel < LdapModel
+        ldap_map :dn, :dn
+        ldap_map :fooBar, :bar
+        before :create do
+          $events.push(:create_hook_called)
+        end
+      end
+
+      LdapModel.stub(:connection, MockConnection.new) do
+        m = BeforeCreateTestModel.new({:bar => "val"})
+        m.save!
+      end
+
+      assert_equal [:create_hook_called, :added], $events
+    end
+
+    it "after update is called after saving" do
+      class AfterTestModel < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        after :update do
+          $events.push(:hook_called)
+        end
+      end
+
+      LdapModel.stub(:connection, MockConnection.new) do
+        m = AfterTestModel.new({:bar => "val"}, {:existing => true})
+        m.save!
+      end
+
+      assert_equal [:saved, :hook_called], $events
+    end
+
+    it "context is the instance" do
+
+      class ContextTestModel < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        ldap_map :fooBaz, :baz
+
+        before :update do
+          $events.push(bar)
+          self.baz = "hook can modify"
+        end
+
+      end
+
+      m = ContextTestModel.new({:bar => "val"}, {:existing => true})
+      LdapModel.stub(:connection, MockConnection.new) do
+        m.save!
+      end
+
+      assert_equal ["val", :saved], $events
+      assert_equal "hook can modify", m.baz
+
+    end
+
+    it "(s) are executed in the order they are defined" do
+
+      class MultipleHooks < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        before :update do
+          $events.push(:first_hook_called)
+        end
+        before :update do
+          $events.push(:second_hook_called)
+        end
+      end
+
+      m = MultipleHooks.new({:bar => "val"}, {:existing => true})
+      LdapModel.stub(:connection, MockConnection.new) do
+        m.save!
+      end
+      assert_equal [:first_hook_called, :second_hook_called, :saved], $events
+
+    end
+
+    it "can be defined for :create and :update at once" do
+
+      class GenericHook < LdapModel
+        ldap_map :dn, :dn, :default => "fakedn"
+        ldap_map :fooBar, :bar
+        before :create, :update do
+          $events.push(:generic_hook_called)
+        end
+      end
+
+      m = GenericHook.new({:bar => "val"})
+      LdapModel.stub(:connection, MockConnection.new) do
+        m.save! # create
+        m.save! # update
+      end
+      assert_equal [:generic_hook_called, :added, :generic_hook_called, :saved], $events
+
+    end
+
+  end
+
 
 end

@@ -5,22 +5,19 @@ class JSONError < Exception
   # @param [String, Hash] error message
   # @option message :user Error message that is displayed to requesting user
   # @option message :mgs Internal error message for stack traces
-  def initialize(message, meta={})
-    if message.class == String
-      super(message)
+  def initialize(message, meta=nil)
+    @meta = {}
+
+    if message.kind_of?(Hash)
+      @meta = message
+      message = message[:msg] || message[:message] || message[:user]
     else
-      @user_message = message[:user]
-      if message[:meta]
-        @meta = message[:meta]
-      end
-      super(message[:msg] || message[:user])
+      @meta = meta || {}
     end
 
+    super(message)
+    @message = message
 
-  end
-
-  def to_json
-    @error.to_json
   end
 
   def http_code
@@ -37,8 +34,8 @@ class JSONError < Exception
         :code => self.class.name.split(":").last
       }
     }
-    if @user_message
-      res[:error][:message] = @user_message
+    if @meta[:user]
+      res[:error][:message] = @meta[:user]
     end
     res
   end
@@ -47,6 +44,36 @@ class JSONError < Exception
     as_json.to_json
   end
 
+end
+
+class ValidationError < JSONError
+  def http_code
+    400
+  end
+
+  def to_s
+    dn = ""
+    if @meta[:dn]
+      dn = "(#{ @meta[:dn] })"
+    end
+
+    msg = @message
+    msg += "\n  Invalid attributes for #{ @meta[:className] } #{ dn }:\n"
+    Array(@meta[:invalid_attributes]).each do |attr, errors|
+      errors.each do |error|
+        msg += "    * #{ attr }: #{ error[:message] }"
+      end
+    end
+    msg + "\n"
+  end
+
+  def as_json
+    parent = super
+    parent[:error][:meta] = {
+      :invalid_attributes => @meta[:invalid_attributes]
+    }
+    parent
+  end
 end
 
 class NotFound < JSONError
@@ -85,6 +112,12 @@ class InternalError < JSONError
   end
 end
 
+class NotImplemented < JSONError
+  def http_code
+    501
+  end
+end
+
 class Unauthorized < JSONError
   def http_code
     401
@@ -92,5 +125,5 @@ class Unauthorized < JSONError
 
   def headers
     super.merge "WWW-Authenticate" => "Negotiate"
-  end
+ end
 end

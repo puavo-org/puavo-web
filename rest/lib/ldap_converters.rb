@@ -6,6 +6,10 @@ module LdapConverters
     def initialize(model)
       @model = model
     end
+
+    def validate(value)
+    end
+
   end
 
 
@@ -18,12 +22,36 @@ module LdapConverters
     end
   end
 
+  class Number < Base
+    def read(v)
+      if v.nil?
+        return nil
+      end
+
+      if v.kind_of?(Array) && v.empty?
+        return nil
+      end
+
+      Array(v).first.to_i
+    end
+    def write(v)
+      Array(v.to_s)
+    end
+  end
+
   class ArrayValue < Base
     def read(v)
       Array(v)
     end
     def write(v)
       Array(v)
+    end
+    def validate(v)
+      return if v.kind_of?(Array)
+      return {
+        :code => :invalid_type,
+        :message => "Value must be Array like not #{ v.class.name }"
+      }
     end
   end
 
@@ -49,7 +77,7 @@ module LdapConverters
 
   end
 
-  class ArrayOfJSON < Base
+  class ArrayOfJSON < ArrayValue
 
     def read(value)
       Array(value).map do |n|

@@ -1,3 +1,5 @@
+require_relative "../../rest/resources/id_pool"
+
 class SambaDomain < LdapBase
   ldap_mapping( :dn_attribute => "sambaDomainName",
                 :prefix => "",
@@ -8,9 +10,16 @@ class SambaDomain < LdapBase
     if samba_domain.nil?
       raise "Cannot find samba domain. Organisation missing?"
     end
-    next_rid = samba_domain.sambaNextRid
-    samba_domain.sambaNextRid = next_rid.nil? ? 2 : next_rid + 1
+
+    legacy_rid = samba_domain.sambaNextRid
+    pool_key = "puavoNextSambaSID:#{ samba_domain.sambaDomainName }"
+    if PuavoRest::IdPool.last_id(pool_key).nil?
+      PuavoRest::IdPool.set_id!(pool_key, legacy_rid)
+    end
+
+    rid = PuavoRest::IdPool.next_id(pool_key)
+    samba_domain.sambaNextRid = rid
     samba_domain.save
-    return "#{samba_domain.sambaSID}-#{samba_domain.sambaNextRid.to_i - 1}"
+    return "#{samba_domain.sambaSID}-#{rid - 1}"
   end
 end

@@ -5,15 +5,16 @@ module PuavoRest
 class User < LdapModel
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id
+  ldap_map :puavoId, :id, LdapConverters::Number
+  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :uid, :username
-  ldap_map(:uidNumber, :uid_number){ |v| Array(v).first.to_i }
-  ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
+  ldap_map :uidNumber, :uid_number, LdapConverters::Number
+  ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
   ldap_map :mail, :email
-  ldap_map( :mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
-  ldap_map(:puavoSchool, :school_dns){ |v| Array(v) }
+  ldap_map(:mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
+  ldap_map :puavoSchool, :school_dns, LdapConverters::ArrayValue
   ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|
     if image_data
@@ -24,10 +25,13 @@ class User < LdapModel
   ldap_map :puavoTimezone, :timezone
   ldap_map :puavoLocked, :locked, &LdapConverters.string_boolean
   ldap_map :puavoSshPublicKey, :ssh_public_key
+  ldap_map :homeDirectory, :home_directory
+  ldap_map :loginShell, :login_shell, :default => "/bin/bash"
+  ldap_map :telephoneNumber, :telephone_number
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
-  ldap_map(:puavoEduPersonAffiliation, :roles){ |v| Array(v) }
+  ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
 
   # Roles does not make much sense without a school
   skip_serialize :roles
@@ -37,6 +41,128 @@ class User < LdapModel
     Array(dns).map do |dn|
       dn.downcase
     end
+  end
+
+  before :update, :create do
+    write_raw(:displayName, [first_name + " " + last_name])
+  end
+
+  before :update do
+    if changed?(:username)
+      # XXX This change must be reflected to Groups, SambaGroups etc.
+      raise NotImplemented, :user => "username changing is not implemented"
+    end
+  end
+
+  def validate
+    if username.to_s.strip.empty?
+      add_validation_error(:username, :username_empty, "Username is empty")
+    elsif
+      validate_unique(:username)
+    end
+
+    if school.nil?
+      add_validation_error(:school_dns, :must_have_school, "no schools are set")
+    end
+
+    validate_unique(:email)
+    # XXX validate secondary emails too!!
+    validate_unique(:gid_number)
+    validate_unique(:uid_number)
+    validate_unique(:id)
+    validate_unique(:home_directory)
+
+    samba_sid = Array(get_raw(:sambaSID)).first
+
+    if samba_sid && new?
+      res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
+      if res && !res.empty?
+        other_dn = res.first["dn"].first
+        # Internal attribute, use underscore prefix to indicate that
+        add_validation_error(:__sambaSID, :sambaSID_not_unique, "#{ samba_sid } is already used by #{ other_dn }")
+      end
+    end
+
+  end
+
+
+
+  before :create do
+    if Array(object_classes).empty?
+      self.object_classes = ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"]
+    end
+
+    if id.nil?
+      self.id = IdPool.next_id("puavoNextId")
+    end
+
+    if dn.nil?
+      self.dn = "puavoId=#{ id },#{ self.class.ldap_base }"
+    end
+
+    if uid_number.nil?
+      self.uid_number = IdPool.next_id("puavoNextUidNumber")
+    end
+
+    if gid_number.nil?
+      self.gid_number = IdPool.next_id("puavoNextGidNumber")
+    end
+
+    if school && home_directory.nil?
+      self.home_directory = "/home/#{ school.abbreviation }/#{ username }"
+    end
+
+    write_samba_attrs
+  end
+
+  after :create do
+    # Add user to samba group after it is successfully saved
+    samba_group = SambaGroup.by_attr!(:name, "Domain Users")
+    if !samba_group.members.include?(username)
+      samba_group.add(:members, username)
+      samba_group.save!
+    end
+  end
+
+  # Just store password locally and handle it in after hook
+  def password=(pw)
+    @password = pw
+  end
+
+  after :create, :update do
+    next if @password.nil?
+
+    begin
+      Puavo.ldap_passwd(
+        CONFIG["ldap"],
+        LdapModel.settings[:credentials][:dn],
+        LdapModel.settings[:credentials][:password],
+        @password,
+        dn
+      )
+    ensure
+      @password = nil
+    end
+
+  end
+
+
+  def username=(_username)
+    write_raw(:uid, Array(_username))
+    write_raw(:cn, Array(_username))
+  end
+
+  def email=(_email)
+    secondary_emails = Array(get_raw(:mail))[1..-1] || []
+    write_raw(:mail, [_email] + secondary_emails)
+    @cache[:email] = nil
+  end
+
+  def secondary_emails=(emails)
+    primary = Array(get_raw(:mail)).first
+    val = ([primary] + emails).compact
+    write_raw(:mail, val)
+    @cache[:secondary_emails] = nil
   end
 
   def is_school_admin_in?(school)
@@ -76,15 +202,17 @@ class User < LdapModel
     by_attr(:username, username, :single, attrs)
   end
 
+  def self.by_username!(username, attrs=nil)
+    by_attr!(:username, username, :single, attrs)
+  end
+
+
   def self.resolve_dn(username)
-    dn = raw_filter("(uid=#{ escape username })", ["dn"])
-    if dn && !dn.empty?
-      dn.first["dn"].first
-    end
+    by_attr!(:username, username, ["dn"]).dn
   end
 
   def self.profile_image(uid)
-    data = raw_filter("(uid=#{ escape uid })", ["jpegPhoto"])
+    data = raw_filter(ldap_base, "(uid=#{ escape uid })", ["jpegPhoto"])
     if !data || data.size == 0
       raise NotFound, :user => "Cannot find image data for user: #{ uid }"
     end
@@ -228,12 +356,46 @@ class User < LdapModel
     ]
   end
 
+  private
+
+  # Write internal samba attributes. Implementation is based on the puavo-web
+  # code is not actually tested on production systems
+  def write_samba_attrs
+    samba_domain = SambaDomain.all.first # Each organisation have only one
+
+    pool_key = "puavoNextSambaSID:#{ samba_domain.domain }"
+
+    if IdPool.last_id(pool_key).nil?
+      IdPool.set_id!(pool_key, samba_domain.legacy_rid)
+    end
+
+    rid = IdPool.next_id(pool_key)
+
+    write_raw(:sambaAcctFlags, ["[U]"])
+    write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
+    write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
+  end
+
 end
 
 class Users < LdapSinatra
   DIR = File.expand_path(File.dirname(__FILE__))
   ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 
+
+  post "/v3/users" do
+    auth :basic_auth, :kerberos
+    user = User.new(json_params)
+    user.save!
+    json user
+  end
+
+  post "/v3/users_validate" do
+    auth :basic_auth, :kerberos
+    user = User.new(json_params)
+    user.validate!
+    json user
+  end
 
   get "/v3/users/_search" do
     auth :basic_auth, :kerberos

@@ -75,6 +75,7 @@ install: clean-for-install mkdirs
 		$(INSTALL_DIR)
 
 	cp -r rest/lib $(INSTALL_DIR)/rest
+	cp -r rest/resources $(INSTALL_DIR)/rest
 	cp -r rest/views $(INSTALL_DIR)/rest
 	cp -r rest/public $(INSTALL_DIR)/rest
 	cp $(RAILS_CONFIG_DIR)/services.yml.example $(CONF_DIR)/services.yml

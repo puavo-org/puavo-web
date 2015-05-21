@@ -13,6 +13,7 @@ GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 HOSTNAME = Socket.gethostname
 FQDN = Socket.gethostbyname(Socket.gethostname).first
+REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
 def self.about
   return ({
@@ -54,6 +55,11 @@ class BeforeFilters < LdapSinatra
 
   before do
     LdapModel::PROF.reset
+
+    # Ensure that any previous connections are cleared. Each request must
+    # provide their own credentials.
+    LdapModel.clear_setup
+
     @req_start = Time.now
     ip = env["HTTP_X_REAL_IP"] || request.ip
     response.headers["X-puavo-rest-version"] = "#{ VERSION } #{ GIT_COMMIT }"
@@ -213,6 +219,7 @@ class Root < LdapSinatra
   use PuavoRest::DeviceImages
   use PuavoRest::Schools
   use PuavoRest::BootServers
+  use PuavoRest::LegacyRoles
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
