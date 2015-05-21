@@ -22,9 +22,10 @@ class LdapModel
 
     @cache = {}
     @validation_errors = {}
-    @pending_mods = {}
+    reset_pending
     update!(attrs)
   end
+
 
   def self.before(*states, &hook_block)
     hooks[:before] ||= {}
@@ -161,54 +162,63 @@ class LdapModel
   end
 
   def get_raw(ldap_name)
-    @pending_mods[ldap_name.to_s] || @ldap_attr_store[ldap_name.to_sym]
+    @ldap_attr_store[ldap_name.to_sym]
   end
 
-  def write_raw(ldap_name, value)
-    pretty_name = ldap2pretty[ldap_name.to_sym]
-    @ldap_attr_store[ldap_name.to_sym] = value
-    @cache[pretty_name] = nil
+  def write_raw(ldap_name, new_val)
+    ldap_name = ldap_name.to_sym
 
-    # @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value))
-    @pending_mods[ldap_name.to_s] = value
+    pretty_name = ldap2pretty[ldap_name]
+    if pretty_name
+      @previous_values[pretty_name] = send(pretty_name)
+      @cache[pretty_name] = nil
+    end
 
-    value
+    @ldap_attr_store[ldap_name] = new_val
+    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_REPLACE, ldap_name.to_s, new_val))
+
+    new_val
   end
 
   # Returns true if this value is going to be written to ldap on next save!
   def changed?(pretty_name)
-    ldap_name = pretty2ldap[pretty_name.to_sym]
-    new_val = @pending_mods[ldap_name.to_s]
-    exising_val = @ldap_attr_store[ldap_name.to_sym]
-    return false if new_val.nil?
+    pretty_name = pretty_name.to_sym
+    ldap_name = pretty2ldap[pretty_name]
+    if !respond_to?(pretty_name)
+      raise NoMethodError, "undefined method `#{ pretty_name }' for #{ self.class }"
+    end
+
     return true if new?
-    return new_val != exising_val
+    return false if !@previous_values.key?(ldap_name)
+    current_val = send(pretty_name)
+    prev_val = @previous_values[pretty_name]
+    return current_val != prev_val
   end
 
   # Append value to ArrayValue attribute. The value is saved immediately
   #
   # @param pretty_name [Symbol] Pretty name of the attribute
   # @param value [Any] Value to be appended to the attribute
-  def add!(pretty_name, value)
-    ldap_name = pretty2ldap[pretty_name.to_sym]
-    transform = attr_options[pretty_name.to_sym][:transform]
+  def add(pretty_name, value)
+    pretty_name = pretty_name.to_sym
+    ldap_name = pretty2ldap[pretty_name]
+    transform = attr_options[pretty_name][:transform]
 
     # if not LdapConverters::ArrayValue or subclass of it
     if !(transform <= LdapConverters::ArrayValue)
       raise "add! can be called only on LdapConverters::ArrayValue values. Not #{ transform }"
     end
 
-    value = transform.new(self).write(value)
-    mods = [LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value)]
-    res = nil
-    begin
-      res = self.class.connection.modify(dn, mods)
-    rescue LDAP::ResultError => err
-      if err.message != "Type or value exists"
-        raise err
-      end
+    if new?
+      raise "Cannot call add on new models. Just set the attribute directly"
     end
 
+    if @previous_values[pretty_name].nil?
+      @previous_values[pretty_name] = send(pretty_name)
+    end
+
+    value = transform.new(self).write(value)
+    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value))
     @cache[pretty_name] = nil
     current_val = @ldap_attr_store[ldap_name.to_sym]
     @ldap_attr_store[ldap_name.to_sym] = Array(current_val) + value
@@ -224,11 +234,13 @@ class LdapModel
 
     _dn = dn if _dn.nil?
 
-    mods = @pending_mods.dup
-    mods.delete("dn")
+    mods = @pending_mods.select do |mod|
+      mod.mod_type != "dn"
+    end
+
     res = self.class.connection.add(_dn, mods)
+    reset_pending
     @existing = true
-    @pending_mods = {}
 
     run_hook :after, :create
 
@@ -242,7 +254,7 @@ class LdapModel
     validate!("Updating")
 
     res = self.class.connection.modify(dn, @pending_mods)
-    @pending_mods = {}
+    reset_pending
 
     run_hook :after, :update
 
@@ -388,7 +400,7 @@ class LdapModel
 
   def validate!(message=nil)
     validate
-    assert_validation
+    assert_validation(message)
   end
 
 
@@ -398,6 +410,11 @@ class LdapModel
     if hooks[pos] && hooks[pos][event]
       hooks[pos][event].each{|hook| instance_exec(&hook)}
     end
+  end
+
+  def reset_pending
+    @pending_mods = []
+    @previous_values = {}
   end
 
 end
