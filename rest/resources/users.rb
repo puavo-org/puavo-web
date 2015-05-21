@@ -119,7 +119,8 @@ class User < LdapModel
     # Add user to samba group after it is successfully saved
     samba_group = SambaGroup.by_attr!(:name, "Domain Users")
     if !samba_group.members.include?(username)
-      samba_group.add!(:members, username)
+      samba_group.add(:members, username)
+      samba_group.save!
     end
   end
 

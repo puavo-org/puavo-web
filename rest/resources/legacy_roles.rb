@@ -14,6 +14,11 @@ class LegacyRole < LdapModel
     "ou=Roles,#{ organisation["base"] }"
   end
 
+  def add_member(user)
+    add(:member_usernames, user.username)
+    add(:member_dns, user.dn)
+  end
+
 end
 
 class LegacyRoles < LdapSinatra
@@ -46,8 +51,8 @@ class LegacyRoles < LdapSinatra
       raise BadInput, :user => "the role does not belog to the school"
     end
 
-    role.add!(:member_usernames, user.username)
-    role.add!(:member_dns, user.dn)
+    role.add_member(user)
+    role.save!
     json role
   end
 
