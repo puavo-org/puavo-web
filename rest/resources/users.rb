@@ -27,6 +27,7 @@ class User < LdapModel
   ldap_map :puavoSshPublicKey, :ssh_public_key
   ldap_map :homeDirectory, :home_directory
   ldap_map :loginShell, :login_shell, :default => "/bin/bash"
+  ldap_map :telephoneNumber, :telephone_number
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
