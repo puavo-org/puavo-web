@@ -200,7 +200,15 @@ class LdapModel
 
     value = transform.new(self).write(value)
     mods = [LDAP::Mod.new(LDAP::LDAP_MOD_ADD, ldap_name.to_s, value)]
-    res = self.class.connection.modify(dn, mods)
+    res = nil
+    begin
+      res = self.class.connection.modify(dn, mods)
+    rescue LDAP::ResultError => err
+      if err.message != "Type or value exists"
+        raise err
+      end
+    end
+
     @cache[pretty_name] = nil
     current_val = @ldap_attr_store[ldap_name.to_sym]
     @ldap_attr_store[ldap_name.to_sym] = Array(current_val) + value
