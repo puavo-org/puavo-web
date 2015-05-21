@@ -34,7 +34,6 @@ describe LdapModel do
       )
 
       @user = PuavoRest::User.new(
-        :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],
         :first_name => "Heli",
         :last_name => "Kopteri",
         :username => "heli",
@@ -146,7 +145,6 @@ describe LdapModel do
 
     it "cannot create users with the same usernames" do
       user = PuavoRest::User.new(
-        :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],
         :first_name => "Heli",
         :last_name => "Kopteri",
         :username => "heli",
@@ -172,7 +170,6 @@ describe LdapModel do
 
       it "model can be validated only" do
         user = PuavoRest::User.new(
-          :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],
           :first_name => "Heli",
           :last_name => "Kopteri",
           :username => "heli",
@@ -194,7 +191,6 @@ describe LdapModel do
 
       it "on successful validation the model is not saved" do
         user = PuavoRest::User.new(
-          :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],
           :first_name => "Foo",
           :last_name => "Bar",
           :username => "foo",

@@ -83,6 +83,10 @@ class User < LdapModel
 
 
   before :create do
+    if Array(object_classes).empty?
+      self.object_classes = ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"]
+    end
+
     if id.nil?
       self.id = IdPool.next_id("puavoNextId")
     end
