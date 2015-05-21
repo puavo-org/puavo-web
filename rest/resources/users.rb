@@ -200,6 +200,10 @@ class User < LdapModel
     by_attr(:username, username, :single, attrs)
   end
 
+  def self.by_username!(username, attrs=nil)
+    by_attr!(:username, username, :single, attrs)
+  end
+
 
   def self.resolve_dn(username)
     by_attr!(:username, username, ["dn"]).dn
