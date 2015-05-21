@@ -110,6 +110,14 @@ class User < LdapModel
     write_samba_attrs
   end
 
+  after :create do
+    # Add user to samba group after it is successfully saved
+    samba_group = SambaGroup.by_attr!(:name, "Domain Users")
+    if !samba_group.members.include?(username)
+      samba_group.add!(:members, username)
+    end
+  end
+
   # Just store password locally and handle it in after hook
   def password=(pw)
     @password = pw
@@ -356,10 +364,6 @@ class User < LdapModel
     write_raw(:sambaAcctFlags, ["[U]"])
     write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
     write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
-    samba_group = SambaGroup.by_attr!(:name, "Domain Users")
-    if !samba_group.members.include?(username)
-      samba_group.add!(:members, username)
-    end
   end
 
 end
