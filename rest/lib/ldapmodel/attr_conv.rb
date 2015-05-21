@@ -101,7 +101,15 @@ class LdapModel
     setter_method = (pretty_name.to_s + "=").to_sym
     if not method_defined?(setter_method)
       define_method setter_method do |value|
-        write_raw(ldap_name, transform.new(self).write(value))
+        error = transform.new(self).validate(value)
+        if error
+          add_validation_error(pretty_name, error[:code], error[:message])
+          # Raise type check validation error early here because later it can
+          # cause more weird errors during hooks and validation
+          assert_validation
+        else
+          write_raw(ldap_name, transform.new(self).write(value))
+        end
       end
     end
   end
@@ -358,19 +366,23 @@ class LdapModel
     end
   end
 
-  def validate!(message="Validation error")
-    validate
-    if !@validation_errors.empty?
-      errs = @validation_errors
-      @validation_errors = {}
-      raise ValidationError, {
-        :message => message,
-        :className => self.class.name,
-        :dn => dn,
-        :invalid_attributes => errs
-      }
-    end
+  def assert_validation(message=nil)
+    return if @validation_errors.empty?
+    errors = @validation_errors
+    @validation_errors = {}
+    raise ValidationError, {
+      :message => message || "Validation error",
+      :className => self.class.name,
+      :dn => dn,
+      :invalid_attributes => errors
+    }
   end
+
+  def validate!(message=nil)
+    validate
+    assert_validation
+  end
+
 
   private
 
