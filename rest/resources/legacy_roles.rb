@@ -8,6 +8,7 @@ class LegacyRole < LdapModel
   ldap_map :displayName, :name
   ldap_map :puavoSchool, :school_dn
   ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
+  ldap_map :member, :member_dns, LdapConverters::ArrayValue
 
   def self.ldap_base
     "ou=Roles,#{ organisation["base"] }"
@@ -37,11 +38,17 @@ class LegacyRoles < LdapSinatra
     auth :basic_auth, :kerberos
 
     # Just assert that the school in the url exists
-    School.by_id!(params["school_id"])
-
+    school = School.by_id!(params["school_id"])
+    user = User.by_username!(params["username"])
     role = LegacyRole.by_id!(params["role_id"])
-    role.add!(:member_usernames, params["username"])
-    role
+
+    if role.school_dn != school.dn
+      raise BadInput, :user => "the role does not belog to the school"
+    end
+
+    role.add!(:member_usernames, user.username)
+    role.add!(:member_dns, user.dn)
+    json role
   end
 
 end
