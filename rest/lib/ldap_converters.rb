@@ -6,6 +6,10 @@ module LdapConverters
     def initialize(model)
       @model = model
     end
+
+    def validate(value)
+    end
+
   end
 
 
@@ -41,6 +45,13 @@ module LdapConverters
     end
     def write(v)
       Array(v)
+    end
+    def validate(v)
+      return if v.kind_of?(Array)
+      return {
+        :code => :invalid_type,
+        :message => "Value must be Array like not #{ v.class.name }"
+      }
     end
   end
 
