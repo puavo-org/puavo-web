@@ -60,6 +60,10 @@ class User < LdapModel
       validate_unique(:username)
     end
 
+    if school.nil?
+      add_validation_error(:school_dns, :must_have_school, "no schools are set")
+    end
+
     validate_unique(:email)
     # XXX validate secondary emails too!!
     validate_unique(:gid_number)
@@ -103,7 +107,7 @@ class User < LdapModel
       self.gid_number = IdPool.next_id("puavoNextGidNumber")
     end
 
-    if home_directory.nil?
+    if school && home_directory.nil?
       self.home_directory = "/home/#{ school.abbreviation }/#{ username }"
     end
 
