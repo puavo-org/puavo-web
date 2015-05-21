@@ -8,6 +8,7 @@ require "gssapi"
 require "gssapi/lib_gssapi"
 require "debugger"
 require "pry"
+require "redis-namespace"
 
 require_relative "./lib/ldap_converters"
 require_relative "./lib/helpers"
