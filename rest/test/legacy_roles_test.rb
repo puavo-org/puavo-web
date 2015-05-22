@@ -42,7 +42,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpw"
+        :password => "userpwlonger"
       )
       @user.save!
     end
