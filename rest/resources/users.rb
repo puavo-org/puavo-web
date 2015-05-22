@@ -61,6 +61,14 @@ class User < LdapModel
       validate_unique(:username)
     end
 
+    if first_name.to_s.strip.empty?
+      add_validation_error(:first_name, :first_name_empty, "First name is empty")
+    end
+
+    if last_name.to_s.strip.empty?
+      add_validation_error(:last_name, :last_name_empty, "Last name is empty")
+    end
+
     if school.nil?
       add_validation_error(:school_dns, :must_have_school, "no schools are set")
     end

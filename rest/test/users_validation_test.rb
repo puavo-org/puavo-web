@@ -140,5 +140,45 @@ describe LdapModel do
 
     end
 
+    it "does not allow empty first name" do
+      user = PuavoRest::User.new(
+        :last_name => "Bar",
+        :username => "foo",
+        :roles => ["staff"],
+        :email => "foo@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "userpw"
+      )
+
+      err = assert_raises ValidationError do
+        user.validate!
+      end
+
+      first_name_error = err.as_json[:error][:meta][:invalid_attributes][:first_name].first
+      assert first_name_error
+      assert_equal :first_name_empty, first_name_error[:code]
+      assert_equal "First name is empty", first_name_error[:message]
+    end
+
+    it "does not allow empty last name" do
+      user = PuavoRest::User.new(
+        :first_name => "Foo",
+        :username => "foo",
+        :roles => ["staff"],
+        :email => "foo@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "userpw"
+      )
+
+      err = assert_raises ValidationError do
+        user.validate!
+      end
+
+      first_name_error = err.as_json[:error][:meta][:invalid_attributes][:last_name].first
+      assert first_name_error
+      assert_equal :last_name_empty, first_name_error[:code]
+      assert_equal "Last name is empty", first_name_error[:message]
+    end
+
   end
 end
