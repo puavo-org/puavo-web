@@ -174,10 +174,10 @@ describe LdapModel do
         user.validate!
       end
 
-      first_name_error = err.as_json[:error][:meta][:invalid_attributes][:last_name].first
-      assert first_name_error
-      assert_equal :last_name_empty, first_name_error[:code]
-      assert_equal "Last name is empty", first_name_error[:message]
+      error = err.as_json[:error][:meta][:invalid_attributes][:last_name].first
+      assert error
+      assert_equal :last_name_empty, error[:code]
+      assert_equal "Last name is empty", error[:message]
     end
 
     it "does not allow short passwords" do
