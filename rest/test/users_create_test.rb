@@ -40,7 +40,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpw"
+        :password => "userpassswordislong"
       )
       @user.save!
     end
@@ -122,7 +122,7 @@ describe LdapModel do
     end
 
     it "can authenticate using the username and password" do
-      basic_authorize "heli", "userpw"
+      basic_authorize "heli", "userpassswordislong"
       get "/v3/whoami"
       assert_200
       data = JSON.parse(last_response.body)
@@ -131,14 +131,14 @@ describe LdapModel do
 
     it "can change the password" do
       user = PuavoRest::User.by_dn!(@user.dn)
-      user.password = "newpw"
+      user.password = "newlongpassword"
       user.save!
 
-      basic_authorize "heli", "userpw"
+      basic_authorize "heli", "userpassswordislong"
       get "/v3/whoami"
       assert_equal 401, last_response.status, "old password is rejected"
 
-      basic_authorize "heli", "newpw"
+      basic_authorize "heli", "newlongpassword"
       get "/v3/whoami"
       assert_200
     end

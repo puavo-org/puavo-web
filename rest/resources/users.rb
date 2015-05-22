@@ -69,6 +69,10 @@ class User < LdapModel
       add_validation_error(:last_name, :last_name_empty, "Last name is empty")
     end
 
+    if !@password.nil? && @password.size < 8
+      add_validation_error(:password, :password_too_short, "Password must have at least 8 characters")
+    end
+
     if school.nil?
       add_validation_error(:school_dns, :must_have_school, "no schools are set")
     end
