@@ -201,5 +201,26 @@ describe LdapModel do
       assert_equal "Password must have at least 8 characters", error[:message]
     end
 
+    it "do not allow 'root' as username" do
+      user = PuavoRest::User.new(
+        :first_name => "Foo",
+        :last_name => "Bar",
+        :username => "root",
+        :roles => ["staff"],
+        :email => "foo@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "sdafdsdfsadfsadsf"
+      )
+
+      err = assert_raises ValidationError do
+        user.validate!
+      end
+
+      error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+      assert error
+      assert_equal :username_not_allowed, error[:code]
+      assert_equal "Username not allowed", error[:message]
+    end
+
   end
 end

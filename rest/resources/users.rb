@@ -43,6 +43,14 @@ class User < LdapModel
     end
   end
 
+  BANNED_USERNAMES = Set.new([
+    "root",
+    "administrator",
+    "postmaster",
+    "adm",
+    "admin"
+  ])
+
   before :update, :create do
     write_raw(:displayName, [first_name + " " + last_name])
   end
@@ -55,10 +63,14 @@ class User < LdapModel
   end
 
   def validate
+
     if username.to_s.strip.empty?
       add_validation_error(:username, :username_empty, "Username is empty")
-    elsif
+    else
       validate_unique(:username)
+      if BANNED_USERNAMES.include?(username)
+        add_validation_error(:username, :username_not_allowed, "Username not allowed")
+      end
     end
 
     if first_name.to_s.strip.empty?
