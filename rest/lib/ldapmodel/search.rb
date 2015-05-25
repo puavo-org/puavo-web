@@ -39,6 +39,13 @@ class LdapModel
         attributes.map{ |a| a.to_s },
         &block
       )
+    rescue LDAP::ResultError => _err
+      err = _err
+      if err.message == "No such object"
+        raise BadInput, :user => "No such object: #{ self }.raw_filter(#{ base.inspect }, #{ filter.inspect })"
+      else
+        raise err
+      end
     rescue Exception => _err
       err = _err
       raise err
