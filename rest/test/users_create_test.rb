@@ -143,5 +143,29 @@ describe LdapModel do
       assert_200
     end
 
+    it "does not break active ldap" do
+      user = User.new(
+        :givenName => "Mark",
+        :sn  => "Hamil",
+        :uid => "mark",
+        :puavoEduPersonAffiliation => "student",
+        :puavoLocale => "en_US.UTF-8",
+        :mail => ["mark@example.com"],
+        :role_ids => [@role.puavoId]
+      )
+
+      user.set_password "secret"
+      user.puavoSchool = @school.dn
+      user.role_ids = [
+        Role.find(:first, {
+          :attribute => "displayName",
+          :value => "Maintenance"
+        }).puavoId,
+        @role.puavoId
+      ]
+      user.save!
+
+    end
+
   end
 end
