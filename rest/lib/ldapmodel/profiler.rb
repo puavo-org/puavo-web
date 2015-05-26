@@ -20,15 +20,9 @@ class LdapSearchProfiler
       @duration = 0
     end
 
-    def stop(msg="", error=nil)
+    def stop(msg="")
       if ENV["LDAP_PROFILER"]
         color = :blue
-
-        if error
-          color = :red
-          puts "Error(#{ error.class }): #{ error }".colorize(color)
-        end
-
         @duration = (Time.now - @started).to_f * 1000
         puts "#{ msg } in #{ @duration } ms".colorize(color)
       end

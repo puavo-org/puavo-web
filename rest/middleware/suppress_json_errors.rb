@@ -12,10 +12,16 @@ class SuppressJSONError
     begin
       @app.call(env)
     rescue JSONError => err
-      if !["production", "test"].include?(ENV["RACK_ENV"])
-        # XXX: Cannot use logger here...
-        puts "JSONError: #{ err.class }: #{ err.message }"
+      if ENV["RACK_ENV"] != "test"
+
+        message = "#{ err }\n#{ err.backtrace.join("\n") }"
+        if STDIN.tty?
+          STDERR.puts message.colorize(:red)
+        else
+          STDERR.puts message
+        end
       end
+
       [err.http_code, err.headers, [err.to_json]]
     end
   end

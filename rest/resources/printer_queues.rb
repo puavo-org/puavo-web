@@ -30,8 +30,8 @@ class PrinterQueue < LdapModel
     return @server if @server
     return if server_dn.nil?
     begin
-      @server = BootServer.by_dn(server_dn)
-    rescue LDAP::ResultError
+      @server = BootServer.by_dn!(server_dn)
+    rescue NotFound
     end
   end
 

@@ -1,3 +1,5 @@
+require "syslog"
+Syslog.open("puavo-rest(slapd)", Syslog::LOG_PID, Syslog::LOG_DAEMON | Syslog::LOG_LOCAL3)
 
 # Connection management
 class LdapModel
@@ -131,8 +133,67 @@ class LdapModel
     self.settings = nil
   end
 
+  # ruby-ldap operation wrapper
+  #
+  # The raw ruby-ldap gives very little information on errors. So wrap it and
+  # add a lot more details to the error wrapper.
+  #
+  # Log start and end of the operation to syslog. It should make it lot
+  # easier to see which slapd log messages are related to the ruby-ldap
+  # operation. Slapd logs levels must be raised in order the take advantage of
+  # this.
+  #
+  # Convert LDAP::ResultError: "No such object" errors to nil return values to
+  # make it consistent with every other not found error.
+  #
+  # Each operation are given an UUID so the user response, puavo-rest log and
+  # syslog logs can be combined
+  #
+  def self.ldap_op(method, *args, &block)
+    res = nil
+    ldap_op_uuid = (0...25).map{('a'..'z').to_a[rand(10)] }.join
+
+    Syslog.log(Syslog::LOG_NOTICE, "START(#{ ldap_op_uuid })> #{ connection.class }##{ method }")
+    err = nil
+
+    begin
+      res = connection.send(method, *args, &block)
+    rescue Exception => _err
+      err = _err
+
+      # not really an error. Just convert to nil response
+      return if is_not_found?(err)
+
+      message = "\n#{ err.class }: #{ err }\n\n    was raised by\n\n"
+      message += "UUID: #{ ldap_op_uuid }\n"
+      message += "#{ connection.class }##{ method }(#{ args.map{|a| a.inspect }.join(", ")})\n"
+
+      raise LdapError, {
+        :user => "#{ err.class }: #{ err.message } (LDAP OP UUID: #{ ldap_op_uuid })",
+        :message => message,
+        :op_uuid => ldap_op_uuid,
+        :original_error => err,
+        :args => args,
+        :method => method
+      }
+    ensure
+      end_msg = "OK"
+      if err
+        end_msg = " ERROR: #{ err.class } #{ err.message }"
+      end
+      Syslog.log(Syslog::LOG_NOTICE, "END(#{ ldap_op_uuid })> #{ end_msg }")
+    end
+
+    res
+  end
+
+  def self.is_not_found?(err)
+    !!(err && err.class == LDAP::ResultError && err.message == "No such object")
+  end
+
   def link(path)
     self.class.settings[:rest_root] + path
   end
+
 
 end

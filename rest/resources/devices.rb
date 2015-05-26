@@ -76,8 +76,8 @@ class Device < Host
   def primary_user
     if user_dn = get_own(:primary_user_dn)
       begin
-        return User.by_dn(user_dn).username
-      rescue LDAP::ResultError
+        return User.by_dn!(user_dn).username
+      rescue NotFound
         return ""
       end
     end

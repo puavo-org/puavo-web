@@ -30,27 +30,17 @@ class LdapModel
       end
     end
 
-    err = nil
     begin
-      connection.search(
+      ldap_op(
+        :search,
         base,
         LDAP::LDAP_SCOPE_SUBTREE,
         filter,
         attributes.map{ |a| a.to_s },
         &block
       )
-    rescue LDAP::ResultError => _err
-      err = _err
-      if err.message == "No such object"
-        raise BadInput, :user => "No such object: #{ self }.raw_filter(#{ base.inspect }, #{ filter.inspect })"
-      else
-        raise err
-      end
-    rescue Exception => _err
-      err = _err
-      raise err
     ensure
-      timer.stop("#{ self.name }#raw_filter(#{ filter.inspect }) base:#{ base } attributes:#{ attributes.inspect } found #{ res.size } items", err)
+      timer.stop("#{ self.name }#raw_filter(#{ filter.inspect }) base:#{ base } attributes:#{ attributes.inspect } found #{ res.size } items")
       PROF.count(timer)
     end
 
@@ -174,8 +164,10 @@ class LdapModel
   # Return convert value to LdapHashes before returning
   # @see raw_by_dn
   def self.by_dn(*args)
-    from_ldap_hash( raw_by_dn(*args) )
+    res = raw_by_dn(*args)
+    from_ldap_hash(res) if res
   end
+
 
   def self.by_dn!(*args)
     res = by_dn(*args)

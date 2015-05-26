@@ -238,7 +238,7 @@ class LdapModel
       mod.mod_type != "dn"
     end
 
-    res = self.class.connection.add(_dn, mods)
+    res = self.class.ldap_op(:add, dn, mods)
     reset_pending
     @existing = true
 
@@ -253,7 +253,7 @@ class LdapModel
     run_hook :before, :update
     validate!("Updating")
 
-    res = self.class.connection.modify(dn, @pending_mods)
+    res = self.class.ldap_op(:modify, dn, @pending_mods)
     reset_pending
 
     run_hook :after, :update

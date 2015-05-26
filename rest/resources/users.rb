@@ -459,7 +459,7 @@ class Users < LdapSinatra
   get "/v3/users/:username" do
     auth :basic_auth, :kerberos
 
-    json User.by_username(params["username"], params["attributes"])
+    json User.by_username!(params["username"], params["attributes"])
   end
 
   get "/v3/users/:username/profile.jpg" do

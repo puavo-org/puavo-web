@@ -118,6 +118,16 @@ class NotImplemented < JSONError
   end
 end
 
+class LdapError < JSONError
+  def http_code
+    500
+  end
+
+  def original_error
+    @meta[:original_error]
+  end
+end
+
 class Unauthorized < JSONError
   def http_code
     401
