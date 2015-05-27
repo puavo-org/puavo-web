@@ -61,7 +61,7 @@ class ValidationError < JSONError
     msg += "\n  Invalid attributes for #{ @meta[:className] } #{ dn }:\n"
     Array(@meta[:invalid_attributes]).each do |attr, errors|
       errors.each do |error|
-        msg += "    * #{ attr }: #{ error[:message] }"
+        msg += "    * #{ attr }: #{ error[:message] }\n"
       end
     end
     msg + "\n"
