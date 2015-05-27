@@ -224,5 +224,27 @@ describe LdapModel do
       assert_equal "Username not allowed", error[:message]
     end
 
+    it "do not allow adm- prefix in usernames" do
+      user = PuavoRest::User.new(
+        :first_name => "Foo",
+        :last_name => "Bar",
+        :username => "adm-foo",
+        :roles => ["staff"],
+        :email => "foo@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "sdafdsdfsadfsadsf"
+      )
+
+      err = assert_raises ValidationError do
+        user.validate!
+      end
+
+      error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+      assert error
+      assert_equal :username_not_allowed, error[:code]
+      assert_equal "'adm-' prefix is not allowed", error[:message]
+
+    end
+
   end
 end

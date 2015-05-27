@@ -81,6 +81,9 @@ class User < LdapModel
       if BANNED_USERNAMES.include?(username)
         add_validation_error(:username, :username_not_allowed, "Username not allowed")
       end
+      if username.start_with?("adm-")
+        add_validation_error(:username, :username_not_allowed, "'adm-' prefix is not allowed")
+      end
     end
 
     if roles.empty?
