@@ -52,7 +52,7 @@ class User < LdapModel
   ])
 
   before :update, :create do
-    write_raw(:displayName, [first_name + " " + last_name])
+    write_raw(:displayName, [first_name.to_s + " " + last_name.to_s])
   end
 
   before :update do
