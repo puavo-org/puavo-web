@@ -66,6 +66,8 @@ describe LdapModel do
       assert username_error
       assert_equal :username_not_unique, username_error[:code]
       assert_equal "username=heli is not unique", username_error[:message]
+      assert_equal @user.id, PuavoRest::IdPool.last_id("puavoNextId").to_i
+
     end
 
     it "model can be validated only" do
