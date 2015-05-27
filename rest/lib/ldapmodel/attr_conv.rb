@@ -239,11 +239,11 @@ class LdapModel
       raise "Cannot call create! on existing model"
     end
 
-    run_hook :before, :create
     validate!("Creating")
 
-    _dn = dn if _dn.nil?
+    run_hook :before, :create
 
+    _dn = dn if _dn.nil?
     mods = @pending_mods.select do |mod|
       mod.mod_type != "dn"
     end
@@ -260,12 +260,11 @@ class LdapModel
   def save!
     return create! if !@existing
 
-    run_hook :before, :update
     validate!("Updating")
 
+    run_hook :before, :update
     res = self.class.ldap_op(:modify, dn, @pending_mods)
     reset_pending
-
     run_hook :after, :update
 
     res
@@ -409,8 +408,10 @@ class LdapModel
   end
 
   def validate!(message=nil)
+    run_hook :before, :validate
     validate
     assert_validation(message)
+    run_hook :after, :validate
   end
 
 

@@ -109,26 +109,18 @@ class User < LdapModel
       add_validation_error(:school_dns, :must_have_school, "no schools are set")
     end
 
-    validate_unique(:email)
-    # XXX validate secondary emails too!!
-    validate_unique(:gid_number)
-    validate_unique(:uid_number)
-    validate_unique(:id)
-    validate_unique(:home_directory)
-
-    samba_sid = Array(get_raw(:sambaSID)).first
-
-    if samba_sid && new?
-      res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
-      if res && !res.empty?
-        other_dn = res.first["dn"].first
-        # Internal attribute, use underscore prefix to indicate that
-        add_validation_error(:__sambaSID, :sambaSID_not_unique, "#{ samba_sid } is already used by #{ other_dn }")
+    if new? && school
+      home = "/home/#{ school.abbreviation }/#{ username }"
+      if User.by_attr(:home_directory, home)
+        add_validation_error(:username, :bad_home_directoy, "Home directory (#{ home }) if already in use for this username")
+      else
+        write_raw(:homeDirectory, transform(:home_directory, :write, home))
       end
     end
 
+    validate_unique(:email)
+    # XXX validate secondary emails too!!
   end
-
 
 
   before :create do
@@ -152,9 +144,10 @@ class User < LdapModel
       self.gid_number = IdPool.next_id("puavoNextGidNumber")
     end
 
-    if school && home_directory.nil?
-      self.home_directory = "/home/#{ school.abbreviation }/#{ username }"
-    end
+    validate_unique(:gid_number)
+    validate_unique(:uid_number)
+    validate_unique(:id)
+    assert_validation
 
     write_samba_attrs
   end
@@ -190,6 +183,9 @@ class User < LdapModel
 
   end
 
+  def home_directory=(value)
+    add_validation_error(:home_directory, :read_only, "home_directory is read only")
+  end
 
   def telephone_number=(value)
     # LDAP raises an error if empty string is given as the number.
@@ -438,6 +434,19 @@ class User < LdapModel
     if school
       write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
     end
+
+    samba_sid = Array(get_raw(:sambaSID)).first
+    if samba_sid && new?
+      res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
+      if res && !res.empty?
+        other_dn = res.first["dn"].first
+        # Internal attribute, use underscore prefix to indicate that
+        add_validation_error(:__sambaSID, :sambaSID_not_unique, "#{ samba_sid } is already used by #{ other_dn }")
+      end
+    end
+    # Redo validation for samba attrs
+    assert_validation
+
   end
 
 end
