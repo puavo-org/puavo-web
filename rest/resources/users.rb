@@ -171,6 +171,13 @@ class User < LdapModel
   end
 
 
+  def telephone_number=(value)
+    # LDAP raises an error if empty string is given as the number.
+    # Just skip the attribute if its empty
+    return if value.to_s.strip == ""
+    write_raw(:telephoneNumber, transform(:telephone_number, :write, value))
+  end
+
   def username=(_username)
     write_raw(:uid, Array(_username))
     write_raw(:cn, Array(_username))
