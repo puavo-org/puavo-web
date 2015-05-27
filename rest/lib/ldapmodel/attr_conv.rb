@@ -135,7 +135,6 @@ class LdapModel
 
     ldap_name = pretty2ldap[pretty_name]
     default_value = attr_options[pretty_name][:default]
-    transform = attr_options[pretty_name][:transform]
 
     value = Array(@ldap_attr_store[ldap_name])
 
@@ -152,7 +151,18 @@ class LdapModel
       return default_value
     end
 
-    @cache[pretty_name] = transform.new(self).read(value)
+    @cache[pretty_name] = transform(pretty_name, :read, value)
+  end
+
+
+  # Transform value using the attribute transformer
+  #
+  # @param pretty_name [Symbol] Pretty name of the attribute
+  # @param method [Symbol] :read or :write
+  # @param value [Any] value to transform
+  def transform(pretty_name, method, value)
+    transformer = attr_options[pretty_name][:transform]
+    transformer.new(self).send(method, value)
   end
 
   def update!(h)
