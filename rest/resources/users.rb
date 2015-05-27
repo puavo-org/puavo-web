@@ -51,6 +51,16 @@ class User < LdapModel
     "admin"
   ])
 
+  VALID_ROLES = Set.new([
+    "teacher",
+    "staff",
+    "student",
+    "visitor",
+    "parent",
+    "admin",
+    "testuser"
+  ])
+
   before :update, :create do
     write_raw(:displayName, [first_name.to_s + " " + last_name.to_s])
   end
@@ -70,6 +80,16 @@ class User < LdapModel
       validate_unique(:username)
       if BANNED_USERNAMES.include?(username)
         add_validation_error(:username, :username_not_allowed, "Username not allowed")
+      end
+    end
+
+    if roles.empty?
+      add_validation_error(:roles, :no_roles, "at least one role must be set")
+    else
+      roles.each do |role|
+        if !VALID_ROLES.include?(role)
+          add_validation_error(:roles, :unknown_role, "Unknow role #{ role }. Valid roles are #{ VALID_ROLES.to_a.join(", ") }")
+        end
       end
     end
 
