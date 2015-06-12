@@ -48,21 +48,22 @@ class LdapModel
     res
   end
 
-
-  # Return convert values to LdapHashes before returning
-  # @see raw_filter
-  def self.filter(_filter, attrs=nil)
-    ldap_attributes = nil
-    pretty_attributes = nil
-
+  def self.pretty_attrs_to_ldap(attrs=nil)
     if attrs.class == String
       attrs = attrs.split(",").map{|s| s.strip }
     end
 
     if attrs
-      ldap_attributes = attrs.map{|a| pretty2ldap[a.to_sym]}.compact
+      attrs = attrs.map{|a| pretty2ldap[a.to_sym]}.compact
     end
 
+    attrs
+  end
+
+  # Return convert values to LdapHashes before returning
+  # @see raw_filter
+  def self.filter(_filter, attrs=nil)
+    ldap_attributes = pretty_attrs_to_ldap(attrs)
     raw_filter(ldap_base, _filter, ldap_attributes).map! do |entry|
       from_ldap_hash(entry, attrs)
     end
@@ -163,8 +164,8 @@ class LdapModel
 
   # Return convert value to LdapHashes before returning
   # @see raw_by_dn
-  def self.by_dn(*args)
-    res = raw_by_dn(*args)
+  def self.by_dn(dn, attrs=nil)
+    res = raw_by_dn(dn, pretty_attrs_to_ldap(attrs))
     from_ldap_hash(res) if res
   end
 
