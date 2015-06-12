@@ -72,9 +72,9 @@ test:
 server:
 	bundle exec puma
 
-serve-dev:
-	bundle exec shotgun --host 0.0.0.0 --port 9393 --server puma
+server-dev:
+	bundle exec shotgun --host 0.0.0.0 --port 9292 --server puma
 
-serve-production:
-	RACK_ENV=production bundle exec rackup --host 0.0.0.0 --port 9393 --server puma
+server-production:
+	RACK_ENV=production bundle exec rackup --host 0.0.0.0 --port 9292 --server puma
 
