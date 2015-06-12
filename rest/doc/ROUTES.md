@@ -433,3 +433,14 @@ Add user to legacy role
 
     curl -d username=bob --user admin:secret $(puavo-resolve-api-server)/v3/schools/1/legacy_roles/5/members
 
+## POST /v3/primus/:filename
+
+Upload Primus integration file
+
+    curl --user username:secret --form file=@oppilaat.txt http://<server>/v3/primus/oppilaat.txt
+
+or
+
+    curl --user username:secret --header 'content-type: text/csv' --data-binary @oppilaat.txt http://<server>/v3/primus/oppilaat.txt
+
+

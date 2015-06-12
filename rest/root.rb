@@ -223,6 +223,7 @@ class Root < LdapSinatra
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
+    use PuavoRest::Primus
   end
 
   if CONFIG["bootserver"]
