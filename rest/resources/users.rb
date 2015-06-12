@@ -482,13 +482,18 @@ class Users < LdapSinatra
   get "/v3/users" do
     auth :basic_auth, :kerberos
 
+    attrs = nil
+    if params["attributes"]
+      attrs = params["attributes"].split(",").map{|s| s.strip }
+    end
+
     # XXX cannot combine filters
     if params["email"]
-      json User.by_attr(:email, params["email"], :multi, params["attributes"])
+      json User.by_attr(:email, params["email"], :multi, attrs)
     elsif params["id"]
-      json User.by_attr(:id, params["id"], :multi, params["attributes"])
+      json User.by_attr(:id, params["id"], :multi, attrs)
     else
-      users = User.all(params["attributes"])
+      users = User.all(attrs)
       json users
     end
 

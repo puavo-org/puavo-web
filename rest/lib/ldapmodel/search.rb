@@ -49,9 +49,6 @@ class LdapModel
   end
 
   def self.pretty_attrs_to_ldap(attrs=nil)
-    if attrs.class == String
-      attrs = attrs.split(",").map{|s| s.strip }
-    end
 
     if attrs
       attrs = attrs.map{|a| pretty2ldap[a.to_sym]}.compact
