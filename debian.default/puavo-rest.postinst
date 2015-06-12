@@ -9,7 +9,7 @@ set -e
 case "$1" in
   configure)
       adduser --no-create-home --disabled-password --disabled-login --system --group puavo
-      mkdir -p /var/lib/primus_files
+      mkdir -p /var/lib/primus-files
       chown puavo:puavo /var/lib/primus-files
     ;;
   abort-upgrade)
