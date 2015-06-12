@@ -39,11 +39,15 @@ class Primus < LdapSinatra
 
     FileUtils.mkdir_p(dir)
 
-    meta = {}
+    meta = {
+      "filename" => params["filename"]
+    }
 
     File.open(File.join(dir, params["filename"]), "w") do |f|
       meta["bytes_written"] = IO.copy_stream(incoming_file, f)
     end
+
+    flog.info "wrote primus file", meta
 
     json meta
   end
