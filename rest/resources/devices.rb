@@ -76,11 +76,17 @@ class Device < Host
   def primary_user
     if user_dn = get_own(:primary_user_dn)
       begin
-        return User.by_dn!(user_dn).username
+        return User.by_dn!(user_dn, ["username"]).username
       rescue NotFound
         return ""
       end
     end
+  end
+
+  def primary_user=(username)
+    user = User.by_username!(username, ["username"])
+    self.primary_user_dn = user.dn
+    username
   end
 
   def preferred_image

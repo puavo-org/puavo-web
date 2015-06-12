@@ -20,6 +20,40 @@ describe PuavoRest::Devices do
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
 
+    @group = Group.new
+    @group.cn = "group1"
+    @group.displayName = "Group 1"
+    @group.puavoSchool = @school.dn
+    @group.save!
+
+    @role = Role.new
+    @role.displayName = "Some role"
+    @role.puavoSchool = @school.dn
+    @role.groups << @group
+    @role.save!
+
+    @user = User.new(
+      :givenName => "Bob",
+      :sn  => "Brown",
+      :uid => "bob",
+      :puavoEduPersonAffiliation => "student",
+      :puavoLocale => "en_US.UTF-8",
+      :mail => ["bob@example.com", "bob@foobar.com", "bob@helloworld.com"],
+      :role_ids => [@role.puavoId],
+      :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf"
+    )
+
+    @user.set_password "secret"
+    @user.puavoSchool = @school.dn
+    @user.role_ids = [
+      Role.find(:first, {
+        :attribute => "displayName",
+        :value => "Maintenance"
+      }).puavoId,
+      @role.puavoId
+    ]
+    @user.save!
+
     @laptop = create_device(
       :puavoHostname => "laptop1",
       :puavoDeviceType =>  "laptop",
@@ -42,5 +76,18 @@ describe PuavoRest::Devices do
       data = JSON.parse last_response.body
       assert_equal "foo", data["graphics_driver"]
     end
+
+    it "can update primary_user with username" do
+      # XXX Use device dn and pw
+      basic_authorize "cucumber", "cucumber"
+      post "/v3/devices/laptop1", { "primary_user" => "bob" }
+      assert_200
+
+      get "/v3/devices/laptop1"
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal "bob", data["primary_user"]
+    end
+
   end
 end
