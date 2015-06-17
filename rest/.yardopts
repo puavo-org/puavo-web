@@ -1,0 +1,3 @@
+--markup markdown
+--output-dir yarddocs
+'{lib,resources,middleware}/**/*.rb'

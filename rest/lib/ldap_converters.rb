@@ -1,5 +1,6 @@
 module LdapConverters
 
+  # Base class for LDAP value conversions
   class Base
     attr_reader :model
 
@@ -7,12 +8,22 @@ module LdapConverters
       @model = model
     end
 
+    # Override in a subclass
     def validate(value)
+    end
+
+    # Override in a subclass
+    def write(write)
+    end
+
+    # Override in a subclass
+    def read()
     end
 
   end
 
 
+  # Force LDAP value to be a single value instead of Array
   class SingleValue < Base
     def read(v)
       Array(v).first
@@ -22,6 +33,7 @@ module LdapConverters
     end
   end
 
+  # Force LDAP value to be single Fixnum number
   class Number < Base
     def read(v)
       if v.nil?
@@ -39,6 +51,7 @@ module LdapConverters
     end
   end
 
+  # Force LDAP value to be an Array
   class ArrayValue < Base
     def read(v)
       Array(v)
@@ -55,6 +68,7 @@ module LdapConverters
     end
   end
 
+  # Convert string style booleans "TRUE" and "FALSE" to real ruby booleans
   class StringBoolean < Base
     def read(value)
       case Array(value).first
@@ -77,6 +91,7 @@ module LdapConverters
 
   end
 
+  # Convert LDAP Array of JSON strings to array of ruby objects
   class ArrayOfJSON < ArrayValue
 
     def read(value)
@@ -96,6 +111,7 @@ module LdapConverters
   end
 
 
+  # @deprecated Use {LdapConverters::StringBoolean} instead.
   def self.string_boolean
     lambda do |value|
       case Array(value).first
@@ -109,6 +125,7 @@ module LdapConverters
     end
   end
 
+  # @deprecated Use {LdapConverters::ArrayOfJSON} instead.
   def self.json
     lambda do |networks|
       Array(networks).map do |n|
@@ -121,6 +138,7 @@ module LdapConverters
     end
   end
 
+  # @deprecated Use {LdapConverters::ArrayOfJSON} instead.
   def self.parse_wlan
     json
   end

@@ -19,7 +19,7 @@ clean-for-install:
 	bundle install --deployment --without test shared
 	bundle clean
 
-clean:
+clean: clean-doc
 	rm -rf .bundle vendor
 
 .PHONY: tags
@@ -74,6 +74,27 @@ server:
 
 server-dev:
 	bundle exec shotgun --host 0.0.0.0 --port 9292 --server puma
+
+.PHONY: doc
+doc:
+	bundle exec yard doc
+
+clean-doc:
+	rm -rf yarddocs/ .yardoc/
+
+doc-publish: doc
+	cp Makefile yarddocs
+	$(MAKE) -C yarddocs _doc-publish
+
+_doc-publish:
+	git init
+	git add -A
+	git commit -m "deploy"
+	git push git@github.com:opinsys/puavo-users.git master:gh-pages -f
+
+
+doc-server: doc
+	bundle exec yard server --reload
 
 server-production:
 	RACK_ENV=production bundle exec rackup --host 0.0.0.0 --port 9292 --server puma

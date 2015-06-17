@@ -2,7 +2,7 @@ class JSONError < Exception
 
   attr_accessor :meta
 
-  # @param [String, Hash] error message
+  # @param message [String, Hash] Error message
   # @option message :user Error message that is displayed to requesting user
   # @option message :mgs Internal error message for stack traces
   def initialize(message, meta=nil)

@@ -2,4 +2,4 @@
 
 Standalone JSON API server for boot servers and public web.
 
-For documentation see `doc/`.
+For resource documentation see `doc/`.

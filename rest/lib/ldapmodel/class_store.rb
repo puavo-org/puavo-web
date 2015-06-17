@@ -8,18 +8,17 @@ class LdapModel
   # Like double at sign attributes (@@foo) but they are not shared between
   # subclasses
   #
-  # class Foo
-  #   class_store :bar
-  #   def get_baz
-  #     bar[:baz]
-  #   end
-  # end
+  #     class Foo
+  #       class_store :bar
+  #       def get_baz
+  #         bar[:baz]
+  #       end
+  #     end
   #
-  # Foo.bar[:baz] = 1
-  # assert Foo.new.get_baz == 1
+  #     Foo.bar[:baz] = 1
+  #     assert Foo.new.get_baz == 1
   #
-  # @param [Symbol] accessor name
-  # @param [Block] default value creator
+  # @param name [Symbol] accessor name
   def self.class_store(name)
     _class_store[name] = {}
     define_method(name) do
@@ -31,6 +30,7 @@ class LdapModel
   end
 
   # copy attributes to inherited subclasses
+  # @param subclass [subclass]
   def self.inherited(subclass)
     _class_store.keys.each do |k|
       subclass._class_store[k] ||= {}

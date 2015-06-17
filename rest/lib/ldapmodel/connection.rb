@@ -7,6 +7,8 @@ class LdapModel
   class LdapHashError < Exception; end
 
   KRB_LOCK = Mutex.new
+
+  # Do LDAP sasl bind with a kerberos ticket
   def self.sasl_bind(ticket)
     conn = LDAP::Conn.new(CONFIG["ldap"])
     conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
@@ -37,6 +39,9 @@ class LdapModel
   end
 
 
+  # Do LDAP bind with dn and password
+  # @param dn [String]
+  # @param password [String]
   def self.dn_bind(dn, pw)
     conn = LDAP::Conn.new(CONFIG["ldap"])
     conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
@@ -45,6 +50,7 @@ class LdapModel
     conn
   end
 
+  # Create connection for LdapModel
   def self.create_connection
     raise "Cannot create connection without credentials" if settings[:credentials].nil?
     credentials = settings[:credentials]
@@ -92,6 +98,16 @@ class LdapModel
     Thread.current[:ldap_hash_settings] = settings
   end
 
+  # Configure LDAP bind for LdapModel
+  #
+  # @param opts [Hash]
+  # @option opts [Hash] :credentials
+  #   Credentials for LDAP bind. Must have `:dn` and `:password`
+  #   or `:kerberos`.
+  # @option opts [PuavoRest::Organisation] :organisation
+  # @option opts [Hash] :rest_root puavo-rest mount point url
+  #
+  # @param &block [Block] If block is passed the configuration is active only during the exection of the block
   def self.setup(opts, &block)
     prev = self.settings
     self.settings = prev.merge(opts)
@@ -117,10 +133,14 @@ class LdapModel
   end
 
 
+  # Return true if an organisation is configured
+  # @return PuavoRest::Organisation
   def self.organisation?
     !!settings[:organisation]
   end
 
+  # Get configured organisation
+  # @return String
   def self.organisation
     if settings[:organisation].nil?
       raise BadInput, :user => "Cannot configure organisation for this request"

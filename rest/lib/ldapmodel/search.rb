@@ -3,6 +3,8 @@ class LdapModel
 
   # LDAP base for this model. Must be implemented by subclasses
 
+  # Override in a subclass
+  # @return String
   def self.ldap_base
     raise "ldap_base is not implemented for #{ self.name }"
   end
@@ -11,7 +13,7 @@ class LdapModel
   #
   # @param base [String] LDAP base
   # @param filter [String] LDAP filter
-  # @param attributes [Array] Limit search results to these attributes
+  # @param attributes [Array] Limit search results and return values to these attributes
   # @see http://ruby-ldap.sourceforge.net/rdoc/classes/LDAP/Conn.html#M000025
   # @return [Array]
   def self.raw_filter(base, filter, attributes=nil, &block)
@@ -48,25 +50,35 @@ class LdapModel
     res
   end
 
+  # Convert array of pretty names to ldap attribute names
+  # @param [Array<Symbol>] attrs
   def self.pretty_attrs_to_ldap(attrs=nil)
-
     if attrs
       attrs = attrs.map{|a| pretty2ldap[a.to_sym]}.compact
     end
-
     attrs
   end
 
-  # Return convert values to LdapHashes before returning
-  # @see raw_filter
-  def self.filter(_filter, attrs=nil)
+  # Do LDAP search with a filter. {.ldap_base} will be used as the base.
+  #
+  # @param [String] filter_
+  # @return Array<LdapModel>
+  def self.filter(filter_, attrs=nil)
     ldap_attributes = pretty_attrs_to_ldap(attrs)
-    raw_filter(ldap_base, _filter, ldap_attributes).map! do |entry|
+    raw_filter(ldap_base, filter_, ldap_attributes).map! do |entry|
       from_ldap_hash(entry, attrs)
     end
   end
 
 
+  # Filter models by a attribute.
+  #
+  #
+  # @param [Symbol] attr LDAP name of the attribute
+  # @param [Object] value
+  # @param [Symbol] option nil or :multi. If multi an array if returned
+  # @param attrs [Array] Limit search results and return values to these attributes
+  # @return [Array<LdapModel>, LdapModel]
   def self.by_ldap_attr(attr, value, option=nil, attrs=nil)
     custom_filter = "(#{ escape attr }=#{ escape value })"
     full_filter = "(&#{ base_filter }#{ custom_filter })"
@@ -79,6 +91,8 @@ class LdapModel
     end
   end
 
+  # (see .by_ldap_attr)
+  # Raises {NotFound} if no models were found
   def self.by_ldap_attr!(attr, value, option=nil, attrs=nil)
      res = by_ldap_attr(attr, value, option, attrs)
      if Array(res).empty?
@@ -94,9 +108,9 @@ class LdapModel
   # since the value is escaped before ldap search.
   #
   # @param pretty_name [Symbol] Mapped attribute
-  # @param value [String] Attribute value to match
+  # @param value [Object] Attribute value to match
   # @param option [Symbol] Set to :multi to return an Array
-  # @return [LdapModel]
+  # @return [Array<LdapModel>, LdapModel]
   def self.by_attr(pretty_name, value, option=nil, attrs=nil)
     ldap_attr = pretty2ldap[pretty_name.to_sym]
 
@@ -109,15 +123,24 @@ class LdapModel
     by_ldap_attr(ldap_attr, value, option, attrs)
   end
 
-  # Same as by_attr but it will throw NotFound exception if the value is nil
+  # (see .by_attr)
+  #
+  # Raises {NotFound} if no models were found
   def self.by_attr!(attr, value, option=nil, attrs=nil)
     by_ldap_attr!(pretty2ldap[attr.to_sym], value, option, attrs)
   end
 
+  # Find model by `id` attribute.
+  #
+  # @see .by_attr
+  # @return LdapModel
   def self.by_id(id)
     by_attr(:id, id)
   end
 
+  # (see .by_id)
+  #
+  # Raises {NotFound} if no models were found.
   def self.by_id!(id)
     by_attr!(:id, id)
   end
@@ -150,23 +173,30 @@ class LdapModel
     res
   end
 
-  # When filtering models with `LdapModel#filter(...)` this filter will be
+  # When filtering models with {.filter} this filter will be
   # added to it automatically with AND operator (&). Usefull when there are
-  # multiple LdapModel is the same LDAP branch.
+  # multiple LdapModels is the same LDAP branch / base.
   #
   # Override this in subclasses when needed.
+  # @return String
   def self.base_filter
     "(objectclass=*)"
   end
 
-  # Return convert value to LdapHashes before returning
-  # @see raw_by_dn
+  # Find model by `dn` attribute.
+  #
+  # @see .raw_by_dn
+  # @param dn [String] dn string
+  # @param attrs [Array] Limit return model attributes
+  # @return LdapModel
   def self.by_dn(dn, attrs=nil)
     res = raw_by_dn(dn, pretty_attrs_to_ldap(attrs))
     from_ldap_hash(res) if res
   end
 
-
+  # (see .by_dn)
+  #
+  # Raises {NotFound} if no models were found
   def self.by_dn!(*args)
     res = by_dn(*args)
     if not res
@@ -178,6 +208,9 @@ class LdapModel
   # Get array of models by their dn attributes.
   #
   # Nonexistent DNs are ignored.
+  #
+  # @param dns [Array<String>] array of dn string
+  # @return Array<LdapModel>
   def self.by_dn_array(dns)
     timer = PROF.start
 
@@ -194,6 +227,8 @@ class LdapModel
     res
   end
 
+  # @see .search
+  # @return [Array<Proc>]
   def self.search_filters
     raise "search_filters not implemented for #{ self }"
   end
@@ -204,9 +239,9 @@ class LdapModel
   # of keywords. Those models are returned which have a match for all the
   # keywords.
   #
-  # Each model using this method must implement a `search_filters` method which
-  # returns an array of lambdas which generate the approciate ldap search
-  # filters. See create_filter_lambda
+  # Each model using this method must implement a {.search_filters} method which
+  # returns an array of lambdas (Proc) which generate the approciate ldap search
+  # filters. See {.create_filter_lambda}
   def self.search(keywords)
     if keywords.kind_of?(String)
       keywords = keywords.gsub("+", " ").split(" ")
@@ -228,10 +263,13 @@ class LdapModel
   #
   # Example:
   #
-  #   l = create_filter_lambda(:username) { |value| "*#{ v }*" }
-  #   filter = l.call("foo")
-  #   "(uid=*foo*)"
+  #     l = create_filter_lambda(:username) { |value| "*#{ v }*" }
+  #     filter = l.call("foo")
+  #     "(uid=*foo*)"
   #
+  # @param pretty_attr [Symbol]
+  # @param &convert [Block]
+  # @return [Proc]
   def self.create_filter_lambda(pretty_attr, &convert)
     if convert.nil?
       convert = lambda { |v| "*#{ v }*" }

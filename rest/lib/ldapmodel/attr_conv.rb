@@ -27,6 +27,11 @@ class LdapModel
   end
 
 
+  # Register block to be executed on the given states
+  #
+  # @param [Symbol] *states :create, :update or :validate
+  # @param [block] hook_block Hook block to be registered
+  # @yield lol jee
   def self.before(*states, &hook_block)
     hooks[:before] ||= {}
     states.each do |state|
@@ -34,10 +39,7 @@ class LdapModel
     end
   end
 
-  def new?
-    !@existing
-  end
-
+  # (see .before)
   def self.after(*states, &hook_block)
     hooks[:after] ||= {}
     states.each do |state|
@@ -45,14 +47,23 @@ class LdapModel
     end
   end
 
+  # Returns true if the model is present in LDAP
+  # @return [Boolean]
+  def new?
+    !@existing
+  end
+
+
 
   # Define conversion between LDAP attribute and the JSON attribute
   #
   # @param ldap_name [Symbol] LDAP attribute to transform
-  # @param pretty_name [Symbol] Value conversion block. Default: Get first array item
-  # @param options [Hash] with :default and :transform keys
-  # @param transform [Block] Use block to
-  # @see transform
+  # @param pretty_name [Symbol] Pretty name for the attribute which will used the access the value from the model instance
+  # @param options [Hash, LdapConverters::Base] A LdapConverters::Base subclass or an options hash
+  # @option options [LdapConverters::Base] :transform
+  # @option options [Object] :default Default value for the attribute
+  # @param transform [Block] Block used to transform the attribute value when reading
+  # @yieldparam [Array, Object] value Raw value from ldap. Usually an Array
   def self.ldap_map(ldap_name, pretty_name, options=nil, &transform_block)
     pretty_name = pretty_name.to_sym
     ldap_name = ldap_name.to_sym
@@ -118,17 +129,21 @@ class LdapModel
 
   # A method that will be executed and added to `to_hash` and `to_json`
   # conversions of this models
+  # @param [Symbol] attr method to be called in serializations
+  # @param [Symbol] serialization_name Change the name in serialization
   def self.computed_attr(attr, serialize_name=nil)
     computed_attributes[attr.to_sym] = serialize_name || attr
   end
 
   # Skip this attribute(s) from serializations such as `to_hash` and `to_json`
   #
-  # @param attr [Symbol or array of Symbols]
+  # @param attrs [Symbol, Array<Symbol>]
   def self.skip_serialize(*attrs)
     attrs.each { |a| skip_serialize_attrs[a.to_sym] = true }
   end
 
+  # @param [Symbol] pretty_name Get the transformed attribute value of this model
+  # @return [Object]
   def get_own(pretty_name)
     pretty_name = pretty_name.to_sym
     return @cache[pretty_name] if not @cache[pretty_name].nil?
@@ -159,22 +174,29 @@ class LdapModel
   #
   # @param pretty_name [Symbol] Pretty name of the attribute
   # @param method [Symbol] :read or :write
-  # @param value [Any] value to transform
+  # @param value [Object] value to transform
   def transform(pretty_name, method, value)
     transformer = attr_options[pretty_name][:transform]
     transformer.new(self).send(method, value)
   end
 
+  # @param [Hash] h Update model attributes from hash
   def update!(h)
     h.each do |k,v|
       send((k.to_s + "=").to_sym, v)
     end
   end
 
+  # @param [Symbol] ldap_name Get raw ldap value by ldap attribute name
+  # @return [Object]
   def get_raw(ldap_name)
     @ldap_attr_store[ldap_name.to_sym]
   end
 
+  # Write raw ldap value
+  #
+  # @param [Symbol] ldap_name LDAP attribute name
+  # @param [Object] new_val Value to be written
   def write_raw(ldap_name, new_val)
     ldap_name = ldap_name.to_sym
 
@@ -190,7 +212,9 @@ class LdapModel
     new_val
   end
 
-  # Returns true if this value is going to be written to ldap on next save!
+  # Returns true if this value is going to be written to ldap on next #save! call
+  # @param [Symbol] pretty_name
+  # @return [Boolean]
   def changed?(pretty_name)
     pretty_name = pretty_name.to_sym
     ldap_name = pretty2ldap[pretty_name]
@@ -205,10 +229,11 @@ class LdapModel
     return current_val != prev_val
   end
 
-  # Append value to ArrayValue attribute. The value is saved immediately
+  # Append value to {LdapConverters::ArrayValue} attribute. Value is persisted on
+  # the next {#save!} call
   #
   # @param pretty_name [Symbol] Pretty name of the attribute
-  # @param value [Any] Value to be appended to the attribute
+  # @param value [Object] Value to be appended to the attribute
   def add(pretty_name, value)
     pretty_name = pretty_name.to_sym
     ldap_name = pretty2ldap[pretty_name]
@@ -234,6 +259,8 @@ class LdapModel
     @ldap_attr_store[ldap_name.to_sym] = Array(current_val) + value
   end
 
+  # Save new model to LDAP
+  # @param [String] _dn Set to use custom dn
   def create!(_dn=nil)
     if @existing
       raise "Cannot call create! on existing model"
@@ -257,6 +284,7 @@ class LdapModel
     res
   end
 
+  # Save changes to LDAP
   def save!
     return create! if !@existing
 
@@ -270,7 +298,7 @@ class LdapModel
     res
   end
 
-  # Add validation error. Can be used only in hooks
+  # Add validation error. Error will be raised on the next {#save!} call
   #
   # @param attr [Symbol] Attribute name this error relates to
   # @param code [Symbol] Unique symbol for this name
@@ -285,41 +313,50 @@ class LdapModel
     current = @validation_errors[attr.to_sym] = current
   end
 
+  # Returns true when the model has unsaved changes in attributes
+  #
+  # @return [Boolean]
   def dirty?
     !@pending_mods.empty?
   end
 
+  # @deprecated
   def [](pretty_name)
     send(pretty_name.to_sym)
   end
 
+  # @deprecated
   def []=(pretty_name, value)
     set(pretty_name, value)
   end
 
+  # Returns trur when the model has no values
+  # @return [Boolean]
   def empty?
     @ldap_attr_store.empty?
   end
 
-  # @return [Array] LDAP attributes that will be converted
+  # @return [Array<Symbol>] LDAP attributes that will be converted
   def self.ldap_attrs
     ldap2pretty.keys
   end
 
   # Set attribute using the original ldap attribute
   #
-  # @param [String]
-  # @param [any]
+  # @param [Symbol] ldap_name
+  # @param [Object] value
   def ldap_set(ldap_name, value)
     return if ldap2pretty[ldap_name.to_sym].nil?
     @ldap_attr_store[ldap_name.to_sym] = value
   end
 
+  # @deprecated
   def set(pretty_name, value)
     @cache[pretty_name.to_sym] = value
   end
 
-  # Like normal Hash#merge!
+  # Merge hash of ldap attributes to this model
+  # @param [Hash] hash
   def ldap_merge!(hash)
     hash.each do |ldap_name, value|
       ldap_set(ldap_name, value)
@@ -327,6 +364,8 @@ class LdapModel
     self
   end
 
+  # Merge value from other LdapModel to this one
+  # @param [LdapModel] other
   def merge(other)
     h = nil
     _serialize_attrs = nil
@@ -349,6 +388,8 @@ class LdapModel
     })
   end
 
+  # Convert model to Hash
+  # @return Hash
   def to_hash
     h = {}
     pretty2ldap.each do |pretty_name, _|
@@ -370,10 +411,12 @@ class LdapModel
     @ldap_attr_store.dup
   end
 
+  # @return Object
   def as_json(*)
     to_hash
   end
 
+  # @return String
   def to_json(*)
     as_json.to_json
   end
@@ -383,9 +426,13 @@ class LdapModel
     self.class.to_s
   end
 
+  # Validation method called before saving. Override it and call
+  # {#add_validation_error} for any errors
   def validate
   end
 
+  # Validate uniqueness of an attribute
+  # @param [Symbol] pretty_name
   def validate_unique(pretty_name)
     return if !changed?(pretty_name)
     ldap_name = pretty2ldap[pretty_name.to_sym]
@@ -395,6 +442,8 @@ class LdapModel
     end
   end
 
+  # Raises {ValidationError} if {#add_validation_error} was called at least once
+  # @param [String] message Optional custom error message
   def assert_validation(message=nil)
     return if @validation_errors.empty?
     errors = @validation_errors
@@ -407,6 +456,8 @@ class LdapModel
     }
   end
 
+  # Run hooks and validations. May raise {ValidationError}
+  # @param [String] message Optional custom error message
   def validate!(message=nil)
     run_hook :before, :validate
     validate

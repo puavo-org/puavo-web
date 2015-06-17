@@ -2,7 +2,7 @@
 require_relative "../lib/error_codes"
 module PuavoRest
 
-# Middleware to suppress expected json error messages
+# Middleware to suppress Execeptions inherited from {JSONError}
 class SuppressJSONError
   def initialize(app)
     @app = app
