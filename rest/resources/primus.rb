@@ -12,11 +12,12 @@ class Primus < LdapSinatra
     end
 
     proposed = basic_auth()
-    if proposed.nil? || proposed[:username].to_s.empty? || proposed[:password].to_s.empty?
+    username = proposed[:username]
+    if proposed.nil? || username.to_s.empty? || proposed[:password].to_s.empty?
       raise Unauthorized, :user => "No credentials provided"
     end
 
-    if proposed[:password] != primus_config["users"][proposed[:username]]
+    if proposed[:password] != primus_config["users"][username]
       raise Unauthorized, :user => "Bad credentials"
     end
 
@@ -33,13 +34,14 @@ class Primus < LdapSinatra
 
     dir = File.join(
       primus_config["directory"],
-      proposed[:username],
+      username,
       DateTime.now.strftime("%Y-%m-%d")
     )
 
     FileUtils.mkdir_p(dir)
 
     meta = {
+      "username" => username,
       "filename" => params["filename"]
     }
 
