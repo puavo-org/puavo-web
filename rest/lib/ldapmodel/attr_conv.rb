@@ -55,7 +55,8 @@ class LdapModel
 
 
 
-  # Define conversion between LDAP attribute and the JSON attribute
+  # Define conversion between LDAP attribute and the JSON attribute. This will
+  # create a getter method named by the `pretty_name` param
   #
   # @param ldap_name [Symbol] LDAP attribute to transform
   # @param pretty_name [Symbol] Pretty name for the attribute which will used the access the value from the model instance
