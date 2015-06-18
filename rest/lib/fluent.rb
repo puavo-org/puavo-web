@@ -3,14 +3,24 @@ require 'fluent-logger'
 
 Fluent::Logger::FluentLogger.open(nil, :host=>'localhost', :port=>24224)
 
+# Small wrapper for fluent-logger gem. Most notably this wrapper filters out
+# all data keys with `password` string
 class FluentWrap
 
+  # @param tag [String] Fluent tag
+  # @param base_attrs [Hash] Data to be added for each log message
+  # @param logger [Object] Fluent logger object. Can be set for mocking purposes for testing
   def initialize(tag, base_attrs, logger=Fluent::Logger)
     @tag = tag
     @logger = logger
     @base_attrs = clean(base_attrs)
   end
 
+  # Log a message
+  #
+  # @param level [Symbol] `:info`, `:warn` or `:error`
+  # @param msg [String] message
+  # @param attrs [hash] Data to be added with the message
   def log(level, msg, attrs=nil)
 
     if [:msg, :meta, :level].include?(msg)
@@ -42,18 +52,28 @@ class FluentWrap
     end
   end
 
+  # Shortcut for #log(:info, msg)
+  # @see #log
   def info(msg, attrs=nil)
     log("info", msg, attrs)
   end
 
+  # Shortcut for #log(:warn, msg)
+  # @see #log
   def warn(msg, attrs=nil)
     log("warn", msg, attrs)
   end
 
+  # Shortcut for #log(:error, msg)
+  # @see #log
   def error(msg, attrs=nil)
     log("error", msg, attrs)
   end
 
+  # Create new child logger. The child will inherit base_attrs from the parent
+  # @param more_attrs [Hash] Data to be added for each log message
+  # @param new_logger [Object] Change log logger instance 
+  # @return FluentWrap
   def merge(more_attrs=nil, new_logger=nil)
     FluentWrap.new(
       @tag,
@@ -61,6 +81,8 @@ class FluentWrap
       new_logger || @logger
     )
   end
+
+  private
 
   MAX_SIZE = 1024 * 512
   def truncate_large(val)
