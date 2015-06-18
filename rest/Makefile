@@ -88,6 +88,7 @@ doc-publish: doc
 
 _doc-publish:
 	git init
+	touch .nojekyll
 	git add -A
 	git commit -m "deploy"
 	git push git@github.com:opinsys/puavo-users.git master:gh-pages -f
