@@ -5,13 +5,14 @@ module PuavoRest
 
 # Base class for all puavo-rest resources. Add common helper methods here
 class PuavoSinatra < Sinatra::Base
+  ROOT = File.dirname(File.dirname(__FILE__))
   helpers Sinatra::JSON
   helpers Sinatra::UserAgentHelpers
   set :json_encoder, :to_json
   set :show_exceptions, false
   set :dump_errors, false
   set :raise_errors, true
-  set :views, File.dirname(File.dirname(__FILE__)) + '/views'
+  set :root, ROOT
 
   # Get request specific {FluentWrap} instance
   # @return FluentWrap
