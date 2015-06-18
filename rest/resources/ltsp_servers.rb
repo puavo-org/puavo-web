@@ -1,6 +1,5 @@
 require "fileutils"
-require_relative "../local_store"
-require_relative "../lib/error_codes"
+require_relative "../lib/local_store"
 require_relative "./hosts"
 
 module PuavoRest

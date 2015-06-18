@@ -1,4 +1,3 @@
-require_relative "./lib/error_codes"
 require "sinatra/support"
 require_relative "./auth"
 

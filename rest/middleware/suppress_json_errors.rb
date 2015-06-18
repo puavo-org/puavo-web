@@ -1,5 +1,4 @@
 
-require_relative "../lib/error_codes"
 module PuavoRest
 
 # Middleware to suppress Execeptions inherited from {JSONError}

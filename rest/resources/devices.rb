@@ -1,5 +1,4 @@
 require_relative "./hosts"
-require_relative "../lib/error_codes"
 
 module PuavoRest
 class Device < Host

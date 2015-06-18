@@ -5,7 +5,7 @@ require "redcarpet"
 require "gibberish"
 require_relative "./users"
 
-require_relative "../local_store"
+require_relative "../lib/local_store"
 
 module PuavoRest
 
