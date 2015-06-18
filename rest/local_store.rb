@@ -2,8 +2,11 @@ require "redis"
 
 module PuavoRest
 
-# Writeable local store. Since ldap connection is read only on boot servers we
-# need some simple store we can write to.. Here's simple Pstore wrapper.
+# Simple writeable local store mixin
+#
+# This mixins adds simple shortcuts for redis set and get. The class in which
+# this mixin is included to must implemented a instance_key method which
+# uniquely identifies the instance
 module LocalStore
 
   module ClassMethods
@@ -16,9 +19,6 @@ module LocalStore
     self.class.local_store
   end
 
-  # Simple shortcuts for redis set and get. The class in which this mixin is
-  # included to must implemented a instance_key method which uniquely
-  # identifies the object
   def local_store_set(key, val)
     local_store.set("#{ instance_key }:#{ key }", val)
   end
@@ -37,6 +37,7 @@ module LocalStore
     base.extend(ClassMethods)
   end
 
+  # Close the Redis connection
   def self.close_connection
     if c = Thread.current[:redis_connection]
       c.quit
