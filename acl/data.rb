@@ -215,4 +215,19 @@ def define_basic(env)
       :description => "test" )
     config.dn = bootserver.dn
   end
+
+  env.define :laptop do |config|
+    laptop = Device.new
+    laptop.classes = ["top", "device", "puppetClient", "puavoNetbootDevice", "simpleSecurityObject"]
+    laptop.puavoSchool = env.school.dn
+    laptop.puavoHostname = "ldaptop-01"
+    laptop.puavoDeviceType = "laptop"
+    laptop.macAddress = "27:c0:59:3c:bc:b6"
+    laptop.description = "test laptop"
+    laptop.userPassword = config.default_password
+    laptop.save
+    config.dn = laptop.dn
+    config.password = config.default_password
+  end
+
 end
