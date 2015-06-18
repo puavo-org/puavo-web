@@ -1,4 +1,4 @@
-require_relative "../local_store"
+require_relative "../lib/local_store"
 
 module PuavoRest
 class School < LdapModel

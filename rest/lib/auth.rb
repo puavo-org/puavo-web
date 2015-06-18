@@ -5,7 +5,7 @@ require "base64"
 require "gssapi"
 require "gssapi/lib_gssapi"
 
-require_relative "./lib/krb5-gssapi"
+require_relative "./krb5-gssapi"
 
 module PuavoRest
 

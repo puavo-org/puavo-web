@@ -20,7 +20,6 @@ require_relative "./middleware/suppress_json_errors"
 require_relative "./middleware/virtual_host_base"
 
 require_relative "./config"
-require_relative "./auth"
 require_relative "./lib/puavo_sinatra"
 require_relative "./resources/id_pool"
 require_relative "./resources/scheduled_jobs"
