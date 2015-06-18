@@ -1,31 +1,50 @@
 module PuavoRest
+
+# Get unique and sequential IDs from Redis
 class IdPool
 
-  def self.id_range(id_field, count)
+  # Get range of Ids
+  #
+  # @param namespace [String] ID namespace. For example `puavoNextUidNumber` or `puavoNextGidNumber`
+  # @param count [Fixnum] How many IDs should be returned
+  # @return [Array<Fixnum>]
+  def self.id_range(namespace, count)
     pool = get_redis_id_pool()
 
-    if pool.get(id_field).nil?
-      pool.set(id_field, 5000)
+    if pool.get(namespace).nil?
+      pool.set(namespace, 5000)
     end
 
     _id_range = (1..count).map do
-      pool.incr(id_field)
+      pool.incr(namespace)
     end
 
     return _id_range
   end
 
-  def self.last_id(id_field)
-    get_redis_id_pool.get(id_field)
+  # See what was the last given ID for the namespace
+  #
+  # @param namespace [String]
+  # @return Fixnum
+  def self.last_id(namespace)
+    get_redis_id_pool.get(namespace)
   end
 
-  def self.next_id(id_field)
-    id_range(id_field, 1).first
+  # Get single id for ID the namespace
+  #
+  # @param namespace [String]
+  # @return Fixnum
+  def self.next_id(namespace)
+    id_range(namespace, 1).first
   end
 
-  def self.set_id!(id_field, value)
+  # Set ID sequence to value. Using this can break things badly. Use with care!
+  #
+  # @param namespace [String]
+  # @param value [Fixnum]
+  def self.set_id!(namespace, value)
     pool = get_redis_id_pool()
-    pool.set(id_field, value)
+    pool.set(namespace, value)
   end
 
   private
