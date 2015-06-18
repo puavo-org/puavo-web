@@ -21,7 +21,7 @@ class LegacyRole < LdapModel
 
 end
 
-class LegacyRoles < LdapSinatra
+class LegacyRoles < PuavoSinatra
 
   get "/v3/schools/:school_id/legacy_roles" do
     auth :basic_auth, :kerberos

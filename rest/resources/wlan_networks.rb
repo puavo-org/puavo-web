@@ -1,7 +1,7 @@
 require_relative "./devices"
 
 module PuavoRest
-class WlanNetworks < LdapSinatra
+class WlanNetworks < PuavoSinatra
 
   def networks
     device = Device.by_hostname(params["hostname"])

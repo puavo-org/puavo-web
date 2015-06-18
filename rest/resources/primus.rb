@@ -2,7 +2,7 @@ require "date"
 require "fileutils"
 
 module PuavoRest
-class Primus < LdapSinatra
+class Primus < PuavoSinatra
 
   post "/v3/primus/:filename" do
     primus_config = CONFIG["primus"]

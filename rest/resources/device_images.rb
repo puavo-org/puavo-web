@@ -1,6 +1,6 @@
 
 module PuavoRest
-class DeviceImages < LdapSinatra
+class DeviceImages < PuavoSinatra
 
   def organisation_image
     Organisation.current(:no_cache).get_own(:preferred_image)

@@ -116,7 +116,7 @@ class Organisation < LdapModel
 end
 
 
-class Organisations < LdapSinatra
+class Organisations < PuavoSinatra
 
   post "/v3/refresh_organisations" do
     Organisation.refresh

@@ -21,7 +21,7 @@ require_relative "./middleware/virtual_host_base"
 
 require_relative "./config"
 require_relative "./auth"
-require_relative "./ldap_sinatra"
+require_relative "./lib/puavo_sinatra"
 require_relative "./resources/id_pool"
 require_relative "./resources/scheduled_jobs"
 require_relative "./resources/users"

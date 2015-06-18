@@ -9,7 +9,7 @@ require_relative "./lib/krb5-gssapi"
 
 module PuavoRest
 
-class LdapSinatra < Sinatra::Base
+class PuavoSinatra < Sinatra::Base
 
   def basic_auth
     return if not env["HTTP_AUTHORIZATION"]

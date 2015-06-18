@@ -50,7 +50,7 @@ def self.test_boot_server_dn=(dn)
   @@test_boot_server_dn = dn
 end
 
-class BeforeFilters < LdapSinatra
+class BeforeFilters < PuavoSinatra
   enable :logging
 
   before do
@@ -159,7 +159,7 @@ class BeforeFilters < LdapSinatra
   end
 end
 
-class Root < LdapSinatra
+class Root < PuavoSinatra
   use SuppressJSONError
   set :public_folder, "public"
 

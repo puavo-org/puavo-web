@@ -2,7 +2,7 @@ require "sinatra/r18n"
 
 module PuavoRest
 
-class Password < LdapSinatra
+class Password < PuavoSinatra
   register Sinatra::R18n
 
   post "/password/send_token" do

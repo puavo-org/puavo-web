@@ -177,7 +177,7 @@ class LtspServer < Host
 end
 
 # Load balancer resource for LTSP servers
-class LtspServers < LdapSinatra
+class LtspServers < PuavoSinatra
 
   # Get list of LTSP servers sorted by they load. Most idle server is the first
   #

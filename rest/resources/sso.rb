@@ -93,7 +93,7 @@ class ExternalService < LdapModel
 
 end
 
-class SSO < LdapSinatra
+class SSO < PuavoSinatra
   register Sinatra::R18n
 
   get "/v3/sso/share_once/:key" do

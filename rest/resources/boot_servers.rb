@@ -69,7 +69,7 @@ class BootServer < LdapModel
 
 end
 
-class BootServers < LdapSinatra
+class BootServers < PuavoSinatra
 
   get "/v3/boot_servers" do
     auth :basic_auth, :server_auth

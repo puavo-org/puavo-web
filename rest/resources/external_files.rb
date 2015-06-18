@@ -31,7 +31,7 @@ end
 
 
 # External Files saved in LDAP
-class ExternalFiles < LdapSinatra
+class ExternalFiles < PuavoSinatra
 
   # Get metadata list of external files
   #

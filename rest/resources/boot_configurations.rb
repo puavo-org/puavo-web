@@ -13,7 +13,7 @@ class UnregisteredDevice < Host
 end
 
 
-class BootConfigurations < LdapSinatra
+class BootConfigurations < PuavoSinatra
 
 
   get "/v3/:mac_address/boot_configuration" do

@@ -82,7 +82,7 @@ class Session < Hash
 end
 
 # Desktop login sessions
-class Sessions < LdapSinatra
+class Sessions < PuavoSinatra
 
   def sorted_ltsp_servers(preferred_image, preferred_server, school_dn)
     filtered = ServerFilter.new(LtspServer.all_with_state)

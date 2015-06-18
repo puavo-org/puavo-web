@@ -58,7 +58,7 @@ class PrinterQueue < LdapModel
 
 end
 
-class PrinterQueues < LdapSinatra
+class PrinterQueues < PuavoSinatra
 
 
   get "/v3/printer_queues" do

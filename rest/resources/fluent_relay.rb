@@ -3,7 +3,7 @@ require "msgpack"
 
 module PuavoRest
 
-class FluentRelay < LdapSinatra
+class FluentRelay < PuavoSinatra
 
   def self.fluent_logger
     @@logger ||= Fluent::Logger::FluentLogger.new(nil, :host=>'localhost', :port=>24224)

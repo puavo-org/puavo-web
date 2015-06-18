@@ -454,7 +454,7 @@ class User < LdapModel
 
 end
 
-class Users < LdapSinatra
+class Users < PuavoSinatra
   DIR = File.expand_path(File.dirname(__FILE__))
   ANONYMOUS_IMAGE_PATH = DIR + "/anonymous.png"
 

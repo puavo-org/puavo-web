@@ -216,7 +216,7 @@ class Device < Host
   end
 end
 
-class Devices < LdapSinatra
+class Devices < PuavoSinatra
 
   get "/v3/devices/_search" do
     auth :basic_auth, :kerberos

@@ -1,6 +1,6 @@
 
 module PuavoRest
-class ScheduledJobs < LdapSinatra
+class ScheduledJobs < PuavoSinatra
 
   # Resource to be called periodically from a cronjob
   post "/v3/scheduled_jobs" do

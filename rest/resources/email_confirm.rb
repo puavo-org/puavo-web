@@ -2,7 +2,7 @@ require "sinatra/r18n"
 
 module PuavoRest
 
-class EmailConfirm < LdapSinatra
+class EmailConfirm < PuavoSinatra
   register Sinatra::R18n
 
   post "/email_confirm" do
