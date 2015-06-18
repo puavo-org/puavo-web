@@ -11,6 +11,7 @@ class PuavoSinatra < Sinatra::Base
   set :show_exceptions, false
   set :dump_errors, false
   set :raise_errors, true
+  set :views, File.dirname(File.dirname(__FILE__)) + '/views'
 
   # Get request specific {FluentWrap} instance
   # @return FluentWrap
