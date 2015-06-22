@@ -61,6 +61,10 @@ describe LdapModel do
       assert_equal "/home/gryffindor/heli", @user.home_directory
     end
 
+    it "has gid_number from school" do
+      assert_equal @school.gidNumber, @user.gid_number
+    end
+
     it "has displayName ldap value" do
       assert_equal ["Heli Kopteri"], @user.get_raw(:displayName)
     end

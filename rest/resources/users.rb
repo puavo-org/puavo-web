@@ -143,8 +143,8 @@ class User < LdapModel
       self.uid_number = IdPool.next_id("puavoNextUidNumber")
     end
 
-    if gid_number.nil?
-      self.gid_number = IdPool.next_id("puavoNextGidNumber")
+    if gid_number.nil? && school
+      self.gid_number = school.gid_number
     end
 
     validate_unique(:gid_number)
