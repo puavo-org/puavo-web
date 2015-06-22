@@ -523,6 +523,29 @@ class Users < PuavoSinatra
     json user.merge("organisation" => LdapModel.organisation.to_hash)
   end
 
+  # XXX: Remove after used
+  post "/v3/fix_gid_numbers" do
+    auth :basic_auth
+
+    if User.current.username != "admin"
+      halt "no permissions"
+    end
+
+
+    fixed = []
+
+    User.all.each do |user|
+      if user.gid_number != user.school.gid_number
+        user.gid_number = user.school.gid_number
+        user.save!
+        fixed.push(user)
+      end
+
+    end
+
+    json fixed
+  end
+
 end
 end
 
