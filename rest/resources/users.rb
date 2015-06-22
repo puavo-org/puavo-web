@@ -147,7 +147,6 @@ class User < LdapModel
       self.gid_number = school.gid_number
     end
 
-    validate_unique(:gid_number)
     validate_unique(:uid_number)
     validate_unique(:id)
     assert_validation
