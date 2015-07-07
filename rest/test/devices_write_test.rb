@@ -77,17 +77,33 @@ describe PuavoRest::Devices do
       assert_equal "foo", data["graphics_driver"]
     end
 
-    it "can update primary_user with username" do
-      # XXX Use device dn and pw
-      basic_authorize "cucumber", "cucumber"
-      post "/v3/devices/laptop1", { "primary_user" => "bob" }
-      assert_200
+    describe "can modify primary_user attribute" do
+      before(:each) do
+        # XXX Use device dn and pw
+        basic_authorize "cucumber", "cucumber"
+        post "/v3/devices/laptop1", { "primary_user" => "bob" }
+        assert_200
 
-      get "/v3/devices/laptop1"
-      assert_200
-      data = JSON.parse last_response.body
-      assert_equal "bob", data["primary_user"]
+      end
+
+      it "and it was updated" do
+        get "/v3/devices/laptop1"
+        assert_200
+        data = JSON.parse last_response.body
+        assert_equal "bob", data["primary_user"]
+      end
+
+      it "by setting it to nil" do
+        basic_authorize "cucumber", "cucumber"
+        post "/v3/devices/laptop1", { "primary_user" => nil }
+        assert_200
+
+        get "/v3/devices/laptop1"
+        assert_200
+        data = JSON.parse last_response.body
+        assert_equal nil, data["primary_user"]
+      end
+
     end
-
   end
 end

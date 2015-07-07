@@ -83,6 +83,11 @@ class Device < Host
   end
 
   def primary_user=(username)
+    if username.nil?
+      self.primary_user_dn = nil
+      return
+    end
+
     user = User.by_username!(username, ["username"])
     self.primary_user_dn = user.dn
     username
