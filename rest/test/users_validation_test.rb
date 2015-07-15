@@ -246,7 +246,7 @@ describe LdapModel do
 
     end
 
-    it "do allow username to begin with a number" do
+    it "do not allow username to begin with a number" do
       user = PuavoRest::User.new(
         :first_name => "Foo",
         :last_name => "Bar",

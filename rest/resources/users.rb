@@ -87,6 +87,8 @@ class User < LdapModel
         add_validation_error(:username, :username_not_allowed, "'adm-' prefix is not allowed")
       end
 
+      # XXX: In puavo-web it's possible to configure from organisation upper
+      # case letters as allowed but it's not implemented here yet
       if !/^[a-z]+[a-z0-9.-]+$/.match(username)
         add_validation_error(:username, :username_invalid, "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter")
       end
