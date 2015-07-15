@@ -93,6 +93,14 @@ class User < LdapModel
         add_validation_error(:username, :username_invalid, "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter")
       end
 
+      if username.size < 3
+        add_validation_error(:username, :username_too_short, "Username too short")
+      end
+
+      if username.size > 255
+        add_validation_error(:username, :username_too_long, "Username too long")
+      end
+
     end
 
     if roles.empty?

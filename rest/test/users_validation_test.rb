@@ -268,5 +268,52 @@ describe LdapModel do
 
     end
 
+    it "do not allow too short username" do
+      user = PuavoRest::User.new(
+        :first_name => "Foo",
+        :last_name => "Bar",
+        :username => "ba",
+        :roles => ["staff"],
+        :email => "foo@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "sdafdsdfsadfsadsf"
+      )
+
+      err = assert_raises ValidationError do
+        user.validate!
+      end
+
+      error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+      assert error
+      assert_equal :username_too_short, error[:code]
+      assert_equal "Username too short", error[:message]
+
+    end
+
+    it "do not allow too long username" do
+      user = PuavoRest::User.new(
+        :first_name => "Foo",
+        :last_name => "Bar",
+        :username => "a"*300,
+        :roles => ["staff"],
+        :email => "foo@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "sdafdsdfsadfsadsf"
+      )
+
+      err = assert_raises ValidationError do
+        user.validate!
+      end
+
+      error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+      assert error
+      assert_equal :username_too_long, error[:code]
+      assert_equal "Username too long", error[:message]
+
+    end
+
+
+
+
   end
 end
