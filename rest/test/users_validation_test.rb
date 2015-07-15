@@ -246,27 +246,40 @@ describe LdapModel do
 
     end
 
-    it "do not allow username to begin with a number" do
-      user = PuavoRest::User.new(
-        :first_name => "Foo",
-        :last_name => "Bar",
-        :username => "2bar",
-        :roles => ["staff"],
-        :email => "foo@example.com",
-        :school_dns => [@school.dn.to_s],
-        :password => "sdafdsdfsadfsadsf"
-      )
+    [ # deny these
+      "1foo",
+      " foo",
+      "foo ",
+      "Foo",
+      "foo bar",
+      "-foo",
+      ".foo",
+      "foo_bar",
+      "FOO",
+    ].each do |invalid_username|
+      it "denies invalid username '#{ invalid_username }'" do
+        user = PuavoRest::User.new(
+          :first_name => "Foo",
+          :last_name => "Bar",
+          :username => invalid_username,
+          :roles => ["staff"],
+          :email => "foo@example.com",
+          :school_dns => [@school.dn.to_s],
+          :password => "sdafdsdfsadfsadsf"
+        )
 
-      err = assert_raises ValidationError do
-        user.validate!
+        err = assert_raises ValidationError do
+          user.validate!
+        end
+
+        error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+        assert error, "must not allow username '#{ invalid_username }'"
+        assert_equal :username_invalid, error[:code]
+        assert_equal "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter", error[:message]
       end
 
-      error = err.as_json[:error][:meta][:invalid_attributes][:username].first
-      assert error
-      assert_equal :username_invalid, error[:code]
-      assert_equal "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter", error[:message]
-
     end
+
 
     it "do not allow too short username" do
       user = PuavoRest::User.new(
