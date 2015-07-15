@@ -84,6 +84,9 @@ class User < LdapModel
       if username.start_with?("adm-")
         add_validation_error(:username, :username_not_allowed, "'adm-' prefix is not allowed")
       end
+      if !/^[a-z]+[a-z0-9.-]+$/.match(username)
+        add_validation_error(:username, :username_invalid, "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter")
+      end
     end
 
     if roles.empty?

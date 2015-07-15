@@ -246,5 +246,27 @@ describe LdapModel do
 
     end
 
+    it "do allow username to begin with a number" do
+      user = PuavoRest::User.new(
+        :first_name => "Foo",
+        :last_name => "Bar",
+        :username => "2bar",
+        :roles => ["staff"],
+        :email => "foo@example.com",
+        :school_dns => [@school.dn.to_s],
+        :password => "sdafdsdfsadfsadsf"
+      )
+
+      err = assert_raises ValidationError do
+        user.validate!
+      end
+
+      error = err.as_json[:error][:meta][:invalid_attributes][:username].first
+      assert error
+      assert_equal :username_invalid, error[:code]
+      assert_equal "Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter", error[:message]
+
+    end
+
   end
 end
