@@ -28,5 +28,9 @@ describe LdapModel do
       assert_equal Fixnum, @school.id.class
     end
 
+    it "has dn" do
+      assert @school.dn, "model got dn"
+    end
+
   end
 end
