@@ -1,8 +1,10 @@
 require_relative "../lib/ldappasswd"
+require_relative "../lib/samba_attrs"
 
 module PuavoRest
 
 class User < LdapModel
+  include SambaAttrs
 
   ldap_map :dn, :dn
   ldap_map :puavoId, :id, LdapConverters::Number
