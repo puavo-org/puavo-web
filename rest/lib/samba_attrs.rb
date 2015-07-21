@@ -2,6 +2,9 @@ module PuavoRest
 
   module SambaAttrs
 
+    def set_samba_primary_group_sid(school_id)
+      write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
+    end
 
     def set_samba_sid
       rid = next_rid("puavoNextSambaSID")
