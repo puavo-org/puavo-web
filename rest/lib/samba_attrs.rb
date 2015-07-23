@@ -24,7 +24,10 @@ module PuavoRest
       return IdPool.next_id(pool_key)
     end
 
+    # Cached samba domain query
     def samba_domain
+      return @samba_domain if @samba_domain
+
       all_samba_domains = SambaDomain.all
 
       if all_samba_domains.empty?
@@ -36,7 +39,7 @@ module PuavoRest
         raise InternalError, :user => "Too many Samba domains"
       end
 
-      return all_samba_domains.first
+      @samba_domain = all_samba_domains.first
     end
 
   end
