@@ -1,8 +1,10 @@
 require_relative "../lib/local_store"
+require_relative "../lib/samba_attrs"
 
 module PuavoRest
 class School < LdapModel
   include LocalStore
+  include SambaAttrs
 
   ldap_map :dn, :dn
   ldap_map :puavoId, :id, LdapConverters::Number
@@ -241,42 +243,9 @@ class School < LdapModel
   # Write internal samba attributes. Implementation is based on the puavo-web
   # code is not actually tested on production systems
   def write_samba_attrs
-    all_samba_domains = SambaDomain.all
-
-    if all_samba_domains.empty?
-      raise InternalError, :user => "Cannot find samba domain"
-    end
-
-   # Each organisation should have only one
-    if all_samba_domains.size > 1
-      raise InternalError, :user => "Too many Samba domains"
-    end
-
-    samba_domain = all_samba_domains.first
-
-    pool_key = "puavoNextSambaSID:#{ samba_domain.domain }"
-
-    if IdPool.last_id(pool_key).nil?
-      IdPool.set_id!(pool_key, samba_domain.legacy_rid)
-    end
-
-    rid = IdPool.next_id(pool_key)
+    set_samba_sid
 
     write_raw(:sambaGroupType, ["2"])
-    write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid - 1}"])
-
-    samba_sid = Array(get_raw(:sambaSID)).first
-    if samba_sid && new?
-      res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
-      if res && !res.empty?
-        other_dn = res.first["dn"].first
-        # Internal attribute, use underscore prefix to indicate that
-        add_validation_error(:__sambaSID, :sambaSID_not_unique, "#{ samba_sid } is already used by #{ other_dn }")
-      end
-    end
-    # Redo validation for samba attrs
-    #assert_validation
-
   end
 
 end
