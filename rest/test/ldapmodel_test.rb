@@ -126,21 +126,21 @@ describe LdapModel do
     end
 
     class FalseDefault < LdapModel
-      ldap_map :puavoValue, :value, :default => false
+      ldap_map :puavoTestValue, :test_value, :default => false
     end
     it "can set false as default value" do
       h = FalseDefault.new
-      assert_equal false, h.value
+      assert_equal false, h.test_value
     end
 
     class DefaultWithBlock < LdapModel
-      ldap_map(:puavoValue, :value, :default => false) do
+      ldap_map(:puavoValue, :test_value, :default => false) do
         "bad"
       end
     end
     it "default values are not run through converters" do
       h = DefaultWithBlock.new
-      assert_equal false, h.value
+      assert_equal false, h.test_value
     end
 
     it "can create full links" do
