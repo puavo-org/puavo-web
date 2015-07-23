@@ -119,6 +119,10 @@ class Group < LdapModel
 #    end
     # Redo validation for samba attrs
     #assert_validation
+
+  # Cached organisation query
+  def organisation
+    @organisation ||= Organisation.by_dn(self.class.organisation["base"])
   end
 
 end
