@@ -8,7 +8,21 @@ module PuavoRest
 
     def set_samba_sid
       rid = next_rid("puavoNextSambaSID")
+
       write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid - 1}"])
+
+      samba_sid = Array(get_raw(:sambaSID)).first
+      if samba_sid && new?
+        res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
+        if res && !res.empty?
+          other_dn = res.first["dn"].first
+          # Internal attribute, use underscore prefix to indicate that
+          add_validation_error(:__sambaSID, :sambaSID_not_unique, "#{ samba_sid } is already used by #{ other_dn }")
+        end
+      end
+
+      # Redo validation for samba attrs
+      assert_validation
 
     end
 
