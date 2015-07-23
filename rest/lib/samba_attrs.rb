@@ -15,7 +15,7 @@ module PuavoRest
     private
 
     def next_rid(key)
-      pool_key = "#{pool_key}:#{ samba_domain.domain }"
+      pool_key = "#{key}:#{ samba_domain.domain }"
 
       if IdPool.last_id(pool_key).nil?
         IdPool.set_id!(pool_key, samba_domain.legacy_rid)
