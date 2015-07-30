@@ -2,6 +2,8 @@
 
 require 'optparse'
 require 'csv'
+require 'iconv'
+
 
 options = {}
 parser = OptionParser.new do |opts|
@@ -35,6 +37,13 @@ end
 require 'bundler/setup'
 require_relative "../puavo-rest"
 
+def parse_row(row)
+  school_data = row.first.split(";")
+  school_data.map do |data|
+    Iconv.iconv('utf-8', 'iso8859-1', data)
+  end
+end
+
 LdapModel.setup(
   :credentials => CONFIG["server"]
 )
@@ -48,5 +57,5 @@ PuavoRest::School.all.each do |school|
 end
 
 CSV.foreach(options[:csv_file], :encoding => "ISO8859-1" ) do |row|
-  puts row
+  school_data = parse_row(row)
 end
