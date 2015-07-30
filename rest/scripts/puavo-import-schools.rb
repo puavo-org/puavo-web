@@ -1,6 +1,7 @@
 #!/usr/bin/ruby1.9.1
 
 require 'optparse'
+require 'csv'
 
 options = {}
 parser = OptionParser.new do |opts|
@@ -46,4 +47,6 @@ PuavoRest::School.all.each do |school|
   puts school.name
 end
 
-# 
+CSV.foreach(options[:csv_file], :encoding => "ISO8859-1" ) do |row|
+  puts row
+end
