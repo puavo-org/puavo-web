@@ -2,7 +2,6 @@
 
 require 'optparse'
 require 'csv'
-require 'iconv'
 
 
 options = {}
@@ -41,7 +40,7 @@ require_relative "../lib/puavo_import"
 def parse_row(row)
   school_data = row.first.split(";")
   school_data.map do |data|
-    Iconv.iconv('utf-8', 'iso8859-1', data)
+    data.encode('utf-8', 'iso8859-1')
   end
 end
 
