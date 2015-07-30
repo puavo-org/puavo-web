@@ -36,6 +36,7 @@ end
 
 require 'bundler/setup'
 require_relative "../puavo-rest"
+require_relative "../lib/puavo_import"
 
 def parse_row(row)
   school_data = row.first.split(";")
@@ -58,4 +59,11 @@ end
 
 CSV.foreach(options[:csv_file], :encoding => "ISO8859-1" ) do |row|
   school_data = parse_row(row)
+  PuavoImport::School.new(:external_id => school_data[0],
+                          :name => school_data[1])
 end
+
+PuavoImport::School.all.each do |s|
+  puts s.name
+end
+
