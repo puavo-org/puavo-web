@@ -22,7 +22,7 @@ password_management:
   subject: Salasanan vaihto
   hello: Hei
   message_head: "Pyysit juuri, että salasanasi vaihdettaisiin."
-  message: "Voit vaihtaa salasanasi seuraavan linkin avulla: %1"
+  message: "Käyttäjätunnuksesi on '%1'. Voit vaihtaa salasanasi seuraavan linkin avulla: %2"
   footer: Linkki on voimassa kymmenen (10) minuutin ajan.
   password_has_been_reset_message: Sinun salasanasi on juuri vaihdettu Opinsys-järjestelmään.
 email_confirm:
