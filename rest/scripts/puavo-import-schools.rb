@@ -37,6 +37,8 @@ require 'bundler/setup'
 require_relative "../puavo-rest"
 require_relative "../lib/puavo_import"
 
+REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
+
 def parse_row(row)
   school_data = row.first.split(";")
   school_data.map do |data|
