@@ -20,6 +20,10 @@ module PuavoImport
         :external_id => self.external_id }
     end
 
+    def to_s
+      "#{ self.name } (external_id: #{ self.external_id })"
+    end
+
     def self.by_external_id(id)
       @@schools_by_external_id[id]
     end
