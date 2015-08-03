@@ -11,7 +11,6 @@ class Group < LdapModel
   ldap_map :cn, :abbreviation
   ldap_map :displayName, :name
   ldap_map :puavoSchool, :school_dn
-  #ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
   ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
   ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
@@ -35,8 +34,6 @@ class Group < LdapModel
     end
 
     write_samba_attrs
-
-    # FIXME set sambaSID and sambaGroupType
   end
 
   computed_attr :school_id
