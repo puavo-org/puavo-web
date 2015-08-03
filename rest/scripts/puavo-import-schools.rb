@@ -1,4 +1,5 @@
 #!/usr/bin/ruby1.9.3
+# -*- coding: utf-8 -*-
 
 require 'optparse'
 require 'csv'
@@ -20,6 +21,10 @@ Import schools to Puavo
     options[:csv_file] = o
   end
 
+  opts.on("--import", "Write mode") do |i|
+    options[:import] = i
+  end
+
   opts.on_tail("-h", "--help", "Show this message") do
     STDERR.puts opts
     Process.exit()
@@ -27,7 +32,7 @@ Import schools to Puavo
 end
 parser.parse!
 
-if options.keys.count != 2
+if options.keys.count < 3
   STDERR.puts("Invalid arguments")
   STDERR.puts(parser)
   Process.exit(1)
@@ -62,8 +67,33 @@ end
 
 mode = "default"
 
+mode = "import" if options[:import]
+
 case mode
 when "default"
   puts "Compare"
+when "import"
+  puts "Import schools\n\n"
+  PuavoImport::School.all.each do |school|
+    puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
+    if puavo_rest_school
+      if puavo_rest_school.name != school.name
+        puts "#{ school.to_s }: update name"
+        puavo_rest_school.name = school.name
+        puavo_rest_school.save!
+      else
+        puts "#{ school.to_s }: no changes"
+      end
+    else
+      puts "#{ school.to_s }: add school to Puavo"
+      abbveriation = school.name.downcase
+      abbveriation.gsub!(/[åäö ]/, "å" => "a", "ä" => "a", "ö" => "o", " " => "-")
+      abbveriation.gsub!(/[ÅÄÖ]/, "Å" => "a", "Ä" => "a", "Ö" => "o")
+      abbveriation.gsub!(/[^a-z0-9-]/, "")
+      PuavoRest::School.new(:name => school.name,
+                            :external_id => school.external_id,
+                            :abbreviation => abbveriation).save!
+    end
+  end
 end
 
