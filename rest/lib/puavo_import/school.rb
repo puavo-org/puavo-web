@@ -15,6 +15,11 @@ module PuavoImport
       @@schools_by_external_id[self.external_id] = self
     end
 
+    def to_hash
+      { :name => self.name,
+        :external_id => self.external_id }
+    end
+
     def self.by_external_id(id)
       @@schools_by_external_id[id]
     end
