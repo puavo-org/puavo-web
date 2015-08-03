@@ -5,7 +5,8 @@ require 'optparse'
 require 'csv'
 
 
-options = {}
+options = { :encoding=> 'ISO8859-1' }
+
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: puavo-import-schools [options]
 
@@ -21,6 +22,10 @@ Import schools to Puavo
     options[:csv_file] = o
   end
 
+  opts.on("--character-encoding ENCODING", "Character encoding of CSV file") do |encoding|
+    options[:encoding] = encoding
+  end
+
   opts.on("--import", "Write mode") do |i|
     options[:import] = i
   end
@@ -32,6 +37,7 @@ Import schools to Puavo
 end
 parser.parse!
 
+# FIXME: required arguments?
 if options.keys.count < 3
   STDERR.puts("Invalid arguments")
   STDERR.puts(parser)
@@ -44,10 +50,10 @@ require_relative "../lib/puavo_import"
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
-def parse_row(row)
+def parse_row(row, options)
   school_data = row.first.split(";")
   school_data.map do |data|
-    data.encode('utf-8', 'iso8859-1')
+    data.encode('utf-8', options[:encoding])
   end
 end
 
@@ -59,8 +65,8 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
-CSV.foreach(options[:csv_file], :encoding => "ISO8859-1" ) do |row|
-  school_data = parse_row(row)
+CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
+  school_data = parse_row(row, options)
   PuavoImport::School.new(:external_id => school_data[0],
                           :name => school_data[1])
 end
