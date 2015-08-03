@@ -8,6 +8,7 @@ class School < LdapModel
 
   ldap_map :dn, :dn
   ldap_map :puavoId, :id, LdapConverters::Number
+  ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :displayName, :name
   ldap_map :puavoDeviceImage, :preferred_image
