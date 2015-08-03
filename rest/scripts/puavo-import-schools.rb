@@ -64,7 +64,10 @@ CSV.foreach(options[:csv_file], :encoding => "ISO8859-1" ) do |row|
                           :name => school_data[1])
 end
 
-PuavoImport::School.all.each do |s|
-  puts s.name
+mode = "default"
+
+case mode
+when "default"
+  puts "Compare"
 end
 
