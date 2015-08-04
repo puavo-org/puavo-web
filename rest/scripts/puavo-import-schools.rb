@@ -10,13 +10,6 @@ require_relative "../lib/puavo_import"
 
 options = PuavoImport.cmd_options
 
-# FIXME: required arguments?
-if options.keys.count < 3
-  STDERR.puts("Invalid arguments")
-  STDERR.puts(parser)
-  Process.exit(1)
-end
-
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
 def parse_row(row, options)

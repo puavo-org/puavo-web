@@ -32,6 +32,8 @@ Import schools to Puavo
       end
     end.parse!
 
+    # FIXME: required arguments?
+
     return options
   end
 end
