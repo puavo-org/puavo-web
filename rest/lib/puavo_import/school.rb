@@ -26,6 +26,10 @@ module PuavoImport
       "#{ self.name } (external_id: #{ self.external_id })"
     end
 
+    def need_update?(school)
+      self.name != school.name
+    end
+
     def self.by_external_id(id)
       @@schools_by_external_id[id]
     end

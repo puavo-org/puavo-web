@@ -38,9 +38,10 @@ when "import"
   PuavoImport::School.all.each do |school|
     puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
     if puavo_rest_school
-      if puavo_rest_school.name != school.name
+      if school.need_update?(puavo_rest_school)
         puts "#{ school.to_s }: update name"
         puavo_rest_school.name = school.name
+        # FIXME: update abbreviation?
         puavo_rest_school.save!
       else
         puts "#{ school.to_s }: no changes"
