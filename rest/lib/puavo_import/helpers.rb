@@ -45,11 +45,11 @@ Import schools to Puavo
   end
 
   def self.sanitize_name(name)
-    name.downcase!
-    name.gsub!(/[åäö ]/, "å" => "a", "ä" => "a", "ö" => "o", " " => "-")
-    name.gsub!(/[ÅÄÖ]/, "Å" => "a", "Ä" => "a", "Ö" => "o")
-    name.gsub!(/[^a-z0-9-]/, "")
+    sanitized_name = name.downcase
+    sanitized_name.gsub!(/[åäö ]/, "å" => "a", "ä" => "a", "ö" => "o", " " => "-")
+    sanitized_name.gsub!(/[ÅÄÖ]/, "Å" => "a", "Ä" => "a", "Ö" => "o")
+    sanitized_name.gsub!(/[^a-z0-9-]/, "")
 
-    return name
+    return sanitized_name
   end
 end
