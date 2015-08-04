@@ -5,11 +5,13 @@ module PuavoImport
     @@schools = []
     @@schools_by_external_id = {}
 
-    attr_accessor :name, :external_id
+    attr_accessor :name, :external_id, :abbreviation
 
     def initialize(args)
       @name = args[:name]
       @external_id = args[:external_id]
+
+      @abbreviation = PuavoImport.sanitize_name(@name)
 
       @@schools << self
       @@schools_by_external_id[self.external_id] = self

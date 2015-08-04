@@ -47,13 +47,9 @@ when "import"
       end
     else
       puts "#{ school.to_s }: add school to Puavo"
-      abbveriation = school.name.downcase
-      abbveriation.gsub!(/[åäö ]/, "å" => "a", "ä" => "a", "ö" => "o", " " => "-")
-      abbveriation.gsub!(/[ÅÄÖ]/, "Å" => "a", "Ä" => "a", "Ö" => "o")
-      abbveriation.gsub!(/[^a-z0-9-]/, "")
       PuavoRest::School.new(:name => school.name,
                             :external_id => school.external_id,
-                            :abbreviation => abbveriation).save!
+                            :abbreviation => school.abbreviation).save!
     end
   end
 end
