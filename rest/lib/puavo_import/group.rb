@@ -5,7 +5,10 @@ module PuavoImport
     @@groups = []
     @@groups_by_external_id = {}
 
-    attr_accessor :name, :external_id, :school_external_id, :school
+    attr_accessor :name,
+                  :external_id,
+                  :school_external_id,
+                  :school
 
     def initialize(args)
       @name = args[:name]
