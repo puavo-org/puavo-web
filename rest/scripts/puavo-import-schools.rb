@@ -4,6 +4,10 @@
 require 'optparse'
 require 'csv'
 
+require 'bundler/setup'
+require_relative "../puavo-rest"
+require_relative "../lib/puavo_import"
+
 
 options = { :encoding=> 'ISO8859-1' }
 
@@ -43,10 +47,6 @@ if options.keys.count < 3
   STDERR.puts(parser)
   Process.exit(1)
 end
-
-require 'bundler/setup'
-require_relative "../puavo-rest"
-require_relative "../lib/puavo_import"
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
