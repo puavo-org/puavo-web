@@ -36,4 +36,11 @@ Import schools to Puavo
 
     return options
   end
+
+  def self.csv_row_to_array(row, encoding)
+    data = row.first.split(";")
+    data.map do |data|
+      data.encode('utf-8', encoding)
+    end
+  end
 end

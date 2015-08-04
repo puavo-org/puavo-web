@@ -12,13 +12,6 @@ options = PuavoImport.cmd_options
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
-def parse_row(row, options)
-  school_data = row.first.split(";")
-  school_data.map do |data|
-    data.encode('utf-8', options[:encoding])
-  end
-end
-
 LdapModel.setup(
   :credentials => CONFIG["server"]
 )
@@ -28,7 +21,7 @@ LdapModel.setup(
 )
 
 CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
-  school_data = parse_row(row, options)
+  school_data = PuavoImport.csv_row_to_array(row, options[:encoding])
   PuavoImport::School.new(:external_id => school_data[0],
                           :name => school_data[1])
 end
