@@ -43,4 +43,13 @@ Import schools to Puavo
       data.encode('utf-8', encoding)
     end
   end
+
+  def self.sanitize_name(name)
+    name.downcase!
+    name.gsub!(/[åäö ]/, "å" => "a", "ä" => "a", "ö" => "o", " " => "-")
+    name.gsub!(/[ÅÄÖ]/, "Å" => "a", "Ä" => "a", "Ö" => "o")
+    name.gsub!(/[^a-z0-9-]/, "")
+
+    return name
+  end
 end
