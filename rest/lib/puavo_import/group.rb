@@ -7,6 +7,7 @@ module PuavoImport
 
     attr_accessor :name,
                   :external_id,
+                  :abbreviation,
                   :school_external_id,
                   :school
 
@@ -17,6 +18,8 @@ module PuavoImport
 
       @school = PuavoRest::School.by_attr(:external_id, @school_external_id)
       raise RuntimeError => "Cannot find school for group" if @school.nil?
+
+      @abbreviation = @school.abbreviation + "-" + PuavoImport.sanitize_name(@name)
 
       @@groups << self
       @@groups_by_external_id[self.external_id] = self

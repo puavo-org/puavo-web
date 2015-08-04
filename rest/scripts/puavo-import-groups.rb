@@ -46,11 +46,9 @@ when "import"
       end
     else
       puts "#{ group.to_s }: add group to Puavo"
-      abbreviation = PuavoImport.sanitize_name(group.name)
-      abbreviation = group.school.abbreviation.slice(0..3) + "-opp-" + abbreviation
       PuavoRest::Group.new(:name => group.name,
                            :external_id => group.external_id,
-                           :abbreviation => abbreviation,
+                           :abbreviation => group.abbreviation,
                            :school_dn => group.school.dn).save!
     end
   end
