@@ -37,9 +37,11 @@ when "import"
   PuavoImport::Group.all.each do |group|
     puavo_rest_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
     if puavo_rest_group
-      if puavo_rest_group.name != group.name
-        puts "#{ group.to_s }: update name"
+      if group.need_update?(puavo_rest_group)
+        puts "#{ group.to_s }: update group information"
         puavo_rest_group.name = group.name
+        puavo_rest_group.abbreviation = group.abbreviation
+        puavo_rest_group.school_dn = group.school.dn
         puavo_rest_group.save!
       else
         puts "#{ group.to_s }: no changes"

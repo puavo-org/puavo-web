@@ -29,6 +29,16 @@ module PuavoImport
       "#{ self.name } (external_id: #{ self.external_id })"
     end
 
+    def need_update?(group)
+      return true if self.name != group.name
+
+      return true if self.abbreviation != group.abbreviation
+
+      return true if self.school.dn != group.school_dn
+
+      return false
+    end
+
     def self.by_external_id(id)
       @@groups_by_external_id[id]
     end
