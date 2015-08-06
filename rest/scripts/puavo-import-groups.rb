@@ -1,5 +1,4 @@
 #!/usr/bin/ruby1.9.3
-# -*- coding: utf-8 -*-
 
 require 'optparse'
 require 'csv'
