@@ -6,7 +6,7 @@ class Group < LdapModel
   include SambaAttrs
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id, LdapConverters::Number
+  ldap_map :puavoId, :id, LdapConverters::SingleValue
   ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :cn, :abbreviation
@@ -23,7 +23,7 @@ class Group < LdapModel
     end
 
     if id.nil?
-      self.id = IdPool.next_id("puavoNextId")
+      self.id = IdPool.next_id("puavoNextId").to_s
     end
 
     if gid_number.nil?
@@ -39,7 +39,7 @@ class Group < LdapModel
 
   computed_attr :school_id
   def school_id
-    school_dn.to_s.match(/puavoid=([0-9]+)/i)[1].to_i
+    school_dn.to_s.match(/puavoid=([0-9]+)/i)[1]
   end
 
   def self.base_filter

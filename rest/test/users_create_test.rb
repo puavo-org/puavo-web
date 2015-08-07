@@ -46,6 +46,7 @@ describe LdapModel do
     end
 
     it "has Fixnum id" do
+      # FIXME: should be String
       assert_equal Fixnum, @user.id.class
     end
 

@@ -24,8 +24,8 @@ describe LdapModel do
       @school.save!
     end
 
-    it "has Fixnum id" do
-      assert_equal Fixnum, @school.id.class
+    it "has String id" do
+      assert_equal String, @school.id.class
     end
 
     it "has dn" do

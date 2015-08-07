@@ -7,7 +7,7 @@ class School < LdapModel
   include SambaAttrs
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id, LdapConverters::Number
+  ldap_map :puavoId, :id, LdapConverters::SingleValue
   ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :displayName, :name
@@ -44,7 +44,7 @@ class School < LdapModel
     end
 
     if id.nil?
-      self.id = IdPool.next_id("puavoNextId")
+      self.id = IdPool.next_id("puavoNextId").to_s
     end
 
     if gid_number.nil?

@@ -31,8 +31,8 @@ describe LdapModel do
 
   describe "group creation" do
 
-    it "has Fixnum id" do
-      assert_equal Fixnum, @group.id.class
+    it "has String id" do
+      assert_equal String, @group.id.class
     end
 
   end
