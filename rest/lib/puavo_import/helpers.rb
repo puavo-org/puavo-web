@@ -1,12 +1,12 @@
 module PuavoImport
 
-  def self.cmd_options
+  def self.cmd_options(args = {})
     options = { :encoding=> 'ISO8859-1' }
 
     OptionParser.new do |opts|
       opts.banner = "Usage: puavo-import-schools [options]
 
-Import schools to Puavo
+#{ args[:message] }
 
 "
 

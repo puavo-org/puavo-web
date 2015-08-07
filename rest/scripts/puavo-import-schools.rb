@@ -8,7 +8,7 @@ require 'bundler/setup'
 require_relative "../puavo-rest"
 require_relative "../lib/puavo_import"
 
-options = PuavoImport.cmd_options
+options = PuavoImport.cmd_options(:message => "Import schools to Puavo")
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
