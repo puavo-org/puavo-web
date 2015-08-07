@@ -1,6 +1,6 @@
 module PuavoImport
 
-  def self.cmd_options(args = {})
+  def self.cmd_options(args = {}, &block)
     options = { :encoding=> 'ISO8859-1' }
 
     OptionParser.new do |opts|
@@ -25,6 +25,8 @@ module PuavoImport
       opts.on("--import", "Write mode") do |i|
         options[:import] = i
       end
+
+      block.call(opts, options) unless block.nil?
 
       opts.on_tail("-h", "--help", "Show this message") do
         STDERR.puts opts

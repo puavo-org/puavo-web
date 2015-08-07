@@ -8,7 +8,11 @@ require 'bundler/setup'
 require_relative "../puavo-rest"
 require_relative "../lib/puavo_import"
 
-options = PuavoImport.cmd_options(:message => "Import users to Puavo")
+options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
+  opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
+    options[:user_role] = r
+  end
+end
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
@@ -58,7 +62,7 @@ when "import"
         :telephone_number => user.telephone_number,
         :preferred_language => user.preferred_language,
         :username => user.username,
-        :roles => ["student"], # FIXME teacher?
+        :roles => [options[:user_role]],
         :school_dns => [user.school.dn.to_s]).save!
 
     end
