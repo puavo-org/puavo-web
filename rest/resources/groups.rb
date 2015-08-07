@@ -96,5 +96,6 @@ class Group < LdapModel
     @organisation ||= Organisation.by_dn(self.class.organisation["base"])
   end
 
+
 end
 end

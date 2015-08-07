@@ -67,7 +67,24 @@ when "import"
 
     end
 
-    # FIXME users groups (add/update)?
+    group_found = false
+    puavo_rest_user.groups.each do |g|
+      next if g.external_id.nil?
+
+      if g.external_id != user.group.external_id
+        puts "\tRemove group: #{ g.name }"
+        g.remove_member(puavo_rest_user)
+        g.save!
+      else
+        group_found = true
+      end
+    end
+
+    unless group_found
+      puts "\tAdd group: #{ user.group.name }"
+      user.group.add_member(puavo_rest_user)
+      user.group.save!
+    end
 
   end
 end
