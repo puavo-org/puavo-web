@@ -14,6 +14,10 @@ class LegacyRole < LdapModel
     "ou=Roles,#{ organisation["base"] }"
   end
 
+  # Add member to role. Append username to `memberUid` and dn to `member` ldap
+  # attributes
+  #
+  # @param user [User] user to add as member
   def add_member(user)
     add(:member_usernames, user.username)
     add(:member_dns, user.dn)
