@@ -68,4 +68,18 @@ describe PuavoRest::LegacyRole do
     assert role.member_usernames.include?("foo"), "has foo"
   end
 
+  it "can remove member" do
+    role = PuavoRest::LegacyRole.by_dn(@role_al.dn)
+    role.remove_member(@user)
+
+    assert !role.member_usernames.include?("heli"), "heli has been removed 1"
+    assert role.member_usernames.include?("foo"), "foo is still present 1"
+    role.save!
+
+    # Refresh the model and ensure that it's actually removed
+    role = PuavoRest::LegacyRole.by_dn(@role_al.dn)
+    assert !role.member_usernames.include?("heli"), "heli has been removed 2"
+    assert role.member_usernames.include?("foo"), "foo is still present 2"
+  end
+
 end

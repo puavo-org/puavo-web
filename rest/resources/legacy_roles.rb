@@ -23,6 +23,14 @@ class LegacyRole < LdapModel
     add(:member_dns, user.dn)
   end
 
+  # Remove member for the role
+  #
+  # @param user [User] user to add as member
+  def remove_member(user)
+    remove(:member_usernames, user.username)
+    remove(:member_dns, user.dn)
+  end
+
 end
 
 class LegacyRoles < PuavoSinatra
