@@ -242,7 +242,7 @@ class LdapModel
 
     # if not LdapConverters::ArrayValue or subclass of it
     if !(transform <= LdapConverters::ArrayValue)
-      raise "add! can be called only on LdapConverters::ArrayValue values. Not #{ transform }"
+      raise "#add(...) can be called only on LdapConverters::ArrayValue values. Not #{ transform }"
     end
 
     if new?
@@ -259,6 +259,42 @@ class LdapModel
     current_val = @ldap_attr_store[ldap_name.to_sym]
     @ldap_attr_store[ldap_name.to_sym] = Array(current_val) + value
   end
+
+  # Remove value from {LdapConverters::ArrayValue} attribute. Deletion is
+  # persisted on the next {#save!} call
+  #
+  # @param pretty_name [Symbol] Pretty name of the attribute
+  # @param value [Object] Value to be removed from the attribute
+  def remove(pretty_name, value)
+    pretty_name = pretty_name.to_sym
+    ldap_name = pretty2ldap[pretty_name]
+    transform = attr_options[pretty_name][:transform]
+
+    # if not LdapConverters::ArrayValue or subclass of it
+    if !(transform <= LdapConverters::ArrayValue)
+      raise "#remove(...) can be called only on LdapConverters::ArrayValue values. Not #{ transform }"
+    end
+
+    if new?
+      raise "#remove(...) is not supported on new models. Just set the attribute"
+    end
+
+    if @previous_values[pretty_name].nil?
+      @previous_values[pretty_name] = send(pretty_name)
+    end
+
+    # Transform to the ldap format
+    value = transform.new(self).write(value).first
+
+    @pending_mods.push(LDAP::Mod.new(LDAP::LDAP_MOD_DELETE, ldap_name.to_s, [value]))
+    @cache[pretty_name] = nil
+    current_val = @ldap_attr_store[ldap_name.to_sym]
+    @ldap_attr_store[ldap_name.to_sym] = Array(current_val).reject do |v|
+      v == value
+    end
+  end
+
+
 
   # Save new model to LDAP
   # @param [String] _dn Set to use custom dn
