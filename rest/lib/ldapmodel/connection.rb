@@ -150,6 +150,10 @@ class LdapModel
   end
 
   def self.clear_setup
+    if settings[:credentials_cache] && settings[:credentials_cache][:current_connection]
+      settings[:credentials_cache][:current_connection].unbind()
+    end
+
     self.settings = nil
   end
 
