@@ -6,6 +6,10 @@ PuavoUsers::Application.routes.draw do
 
   match '/menu' => 'menu#index', :via => :get
 
+  scope :path => "restproxy" do
+    match '(*url)' => 'rest#proxy'
+  end
+
   scope :path => "users" do
     resources :ldap_services
     resource :organisation_external_services
