@@ -35,6 +35,7 @@
     }
 
   </style>
+  <%= yield :style %>
 
   <% search_urls = { "users-search" => "/users/search?words=" } %>
   <% if Puavo::CONFIG then search_urls[ "devices-search"] = "/devices/search?words=" end %>
