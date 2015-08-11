@@ -1,3 +1,4 @@
+export PATH := node_modules/.bin:$(PATH)
 prefix = /usr/local
 exec_prefix = $(prefix)
 sbindir = $(exec_prefix)/sbin
@@ -33,10 +34,23 @@ clean-assets:
 	rm -rf public/assets
 	rm -rf tmp/cache/assets
 
-clean: clean-assets
+clean: clean-assets js-clean
 	rm -rf .bundle
 	rm -rf vendor/bundle
 	rm -rf node_modules
+
+js:
+	webpack -p
+
+js-watch:
+	webpack -w
+
+js-lint:
+	eslint $(shell git ls-files "import_tool_src/*.js")
+
+js-clean:
+	rm -rf public/import_tool.js public/import_tool.js.map
+
 
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
@@ -113,7 +127,7 @@ test-acceptance:
 	bundle exec cucumber --exclude registering_devices
 
 .PHONY: test
-test:
+test: js-lint
 	bundle exec rspec --format documentation
 	bundle exec cucumber --color --tags ~@start_test_server
 	bundle exec cucumber --color --tags @start_test_server

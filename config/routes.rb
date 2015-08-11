@@ -38,12 +38,14 @@ PuavoUsers::Application.routes.draw do
       resources :printer_permissions
     end
 
+
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
     match 'schools/:id/add_school_admin/:user_id' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
     match 'schools/:id/remove_school_admin/:user_id' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
     match 'schools/:id/wlan' => 'schools#wlan', :as => :wlan_school, :via => :get
     match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :wlan_update_school, :via => :put
     match 'schools/:id/external_services' => 'external_services#index', :as => :external_services_school, :via => :get
+    match 'schools/:id/import_tool' => 'import_tool#index', :via => :get
     resources :schools
 
     scope :path => ':school_id' do

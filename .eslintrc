@@ -1,0 +1,48 @@
+{
+  "parser": "babel-eslint",
+  "extends": "eslint:recommended",
+  "ecmaFeatures": {
+    "jsx": true,
+    "modules": true,
+    "destructuring": true,
+    "classes": true,
+    "objectLiteralShorthandMethods": true,
+    "arrowFunctions": true,
+    "blockBindings": true,
+    "generators": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "strict": 0
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "semi": 2,
+    "no-console": [0],
+    "quotes": [2, "double", "avoid-escape"],
+    "object-curly-spacing": [1, "never"],
+    "comma-dangle": [1, "always-multiline"],
+    "react/prop-types": [2],
+    "react/react-in-jsx-scope": [2],
+    "react/jsx-no-undef": [2],
+    "react/no-unknown-property": [2],
+    "react/jsx-quotes": [1, "double", "avoid-escape"],
+    "curly": [2, "multi-line"],
+    "consistent-return": [0],
+    "new-cap": [0],
+    "no-shadow": [0],
+    "no-redeclare": [2],
+    "no-path-concat": 0,
+    "no-process-exit": [0],
+    "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+    "eol-last": [0],
+    "no-mixed-requires": [1],
+    "no-underscore-dangle": [0]
+  }
+}
