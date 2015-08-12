@@ -2,6 +2,7 @@
 
 var React = require("react");
 var classSet = require("class-set");
+var R = require("ramda");
 
 var Sortable = React.createClass({
 
@@ -87,7 +88,7 @@ var Sortable = React.createClass({
     },
 
     getColumns() {
-        return this.props.children.filter(Boolean);
+        return R.flatten(this.props.children).filter(Boolean);
     },
 
     toggleSort(columnId) {
