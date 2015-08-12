@@ -64,14 +64,14 @@
     <tr>
       <td class="label_for_checkbox_list required_role required"><%= f.label :role_ids %></td>
       <td>
-    <% @roles.each do |p| %>
-      <div>
-        <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>" /><%=h p.displayName %></label>
-      </div>
-    <% end %>
-    <%= field_error_text(f.object, :role_ids) %>
-  </td>
-  </tr>
+      <% @roles.each do |p| %>
+        <div>
+          <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>" /><%=h p.displayName %></label>
+        </div>
+      <% end %>
+      <%= field_error_text(f.object, :role_ids) %>
+      </td>
+    </tr>
 
   <tr>
     <td><%= f.label :puavoLocale %></td>
