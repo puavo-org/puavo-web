@@ -12,6 +12,10 @@ options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts,
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
     options[:user_role] = r
   end
+
+  opts.on("--teacher-group-suffix GROUP", "Group suffix for Teacher") do |g|
+    options[:teacher_group_suffix] = g
+  end
 end
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
@@ -34,7 +38,9 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
                         :preferred_language => user_data[5],
                         :group_external_id => user_data[6],
                         :school_external_id => user_data[7], # FIXME: multiple value for teacher?
-                        :username => user_data[8])
+                        :username => user_data[8],
+                        :role => options[:user_role],
+                        :teacher_group_suffix => options[:teacher_group_suffix])
 end
 
 mode = "default"
@@ -63,18 +69,19 @@ when "import"
         :preferred_language => user.preferred_language,
         :username => user.username,
         :roles => [options[:user_role]],
-        :school_dns => [user.school.dn.to_s]).save!
+        :school_dns => [user.school.dn.to_s])
+      puavo_rest_user.save!
 
     end
 
     group_found = false
     puavo_rest_user.groups.each do |g|
-      next if g.external_id.nil?
-
-      if g.external_id != user.group.external_id
-        puts "\tRemove group: #{ g.name }"
-        g.remove_member(puavo_rest_user)
-        g.save!
+      if g.id != user.group.id
+        unless g.external_id.nil?
+          puts "\tRemove group: #{ g.name }"
+          g.remove_member(puavo_rest_user)
+          g.save!
+        end
       else
         group_found = true
       end

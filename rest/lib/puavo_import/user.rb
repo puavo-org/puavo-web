@@ -12,6 +12,9 @@ module PuavoImport
                   :telephone_number,
                   :preferred_language,
                   :username,
+                  :role,
+                  :teacher_group_name,
+                  :teacher_group_suffix,
                   :group_external_id,
                   :group,
                   :school_external_id,
@@ -19,6 +22,7 @@ module PuavoImport
 
     def initialize(args)
       args.keys.each do |k|
+        next if args[k].nil?
         args[k] = nil if args[k].empty?
         self.send("#{ k }=", args[k])
       end
@@ -26,8 +30,14 @@ module PuavoImport
       @school = PuavoRest::School.by_attr(:external_id, @school_external_id)
       raise "Cannot find school for user" if @school.nil?
 
-      @group = PuavoRest::Group.by_attr(:external_id, @group_external_id)
-      raise "Cannot find group for user" if @group.nil?
+      case @role
+      when "student"
+        @group = PuavoRest::Group.by_attr(:external_id, @group_external_id)
+        raise "Cannot find group for studnet" if @group.nil?
+      when "teacher"
+        @group = PuavoRest::Group.by_attr(:abbreviation, "#{ @school.abbreviation }-#{ @teacher_group_suffix }")
+        raise "Cannot find group for teacher" if @group.nil?
+      end
 
       @@users << self
       @@users_by_external_id[self.external_id] = self
