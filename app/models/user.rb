@@ -197,22 +197,24 @@ class User < LdapBase
     # The user must have at least one role
     #
     # Set role_ids value by role_name. If get false role_name is invalid.
-    if set_role_ids_by_role_name(role_name) == false
-      errors.add( :role_name,
-                  I18n.t("activeldap.errors.messages.invalid",
-                         :attribute => I18n.t("activeldap.attributes.user.role_name") ) )
-   # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
-    # If role_ids is not nil: user's roles value will change when save object. Then role_ids must not be empty!
-    elsif (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && roles.empty? )
-      errors.add :role_ids, I18n.t("activeldap.errors.messages.blank",
-                                         :attribute => I18n.t("activeldap.attributes.user.roles") )
-    else
-      # Role must be found by id!
-      unless role_ids.nil?
-        role_ids.each do |id|
-          if Role.find(:first, id).nil?
-            errors.add :role_ids, I18n.t("activeldap.errors.messages.blank",
-                                                  :attribute => I18n.t("activeldap.attributes.user.role_ids") )
+    unless self.class.new_group_management?
+      if set_role_ids_by_role_name(role_name) == false
+        errors.add( :role_name,
+                    I18n.t("activeldap.errors.messages.invalid",
+                           :attribute => I18n.t("activeldap.attributes.user.role_name") ) )
+        # If role_ids is nil: user's role associations not change when save object. Then roles must not be empty!
+        # If role_ids is not nil: user's roles value will change when save object. Then role_ids must not be empty!
+      elsif (!role_ids.nil? && role_ids.empty?) || ( role_ids.nil? && roles.empty? )
+        errors.add :role_ids, I18n.t("activeldap.errors.messages.blank",
+                                     :attribute => I18n.t("activeldap.attributes.user.roles") )
+      else
+        # Role must be found by id!
+        unless role_ids.nil?
+          role_ids.each do |id|
+            if Role.find(:first, id).nil?
+              errors.add :role_ids, I18n.t("activeldap.errors.messages.blank",
+                                           :attribute => I18n.t("activeldap.attributes.user.role_ids") )
+            end
           end
         end
       end
@@ -280,7 +282,15 @@ class User < LdapBase
   end
 
   def self.import_columns
-    ["givenName", "sn", "uid", "new_password", "role_name", "puavoEduPersonAffiliation"]
+    columns = ["givenName", "sn", "uid", "new_password"]
+
+    unless self.class.new_group_management?
+      columns.push("role_name")
+    end
+
+    columns.push("puavoEduPersonAffiliation")
+
+    return columns
   end
 
   # FIXME, where is better location on this method? Using same code also on other model?
@@ -392,30 +402,33 @@ class User < LdapBase
 
   # Update user's role list by role_ids
   def update_roles
-    unless self.role_ids.nil?
-      add_roles = self.role_ids
-      Role.search_as_utf8( :filter => "(memberUid=#{self.uid})",
-                   :scope => :one,
-                   :attributes => ["puavoId"] ).each do |role_dn, values|
+    unless self.class.new_group_management?
+      unless self.role_ids.nil?
 
-        if add_roles.include?(values["puavoId"])
-          add_roles.delete(values["puavoId"])
-        else
-          # Delete roles
-          Role.ldap_modify_operation(role_dn, :delete, [{ "memberUid" => [self.uid] },
-                                                        { "member" => [self.dn.to_s] }])
+        add_roles = self.role_ids
+        Role.search_as_utf8( :filter => "(memberUid=#{self.uid})",
+                             :scope => :one,
+                             :attributes => ["puavoId"] ).each do |role_dn, values|
+
+          if add_roles.include?(values["puavoId"])
+            add_roles.delete(values["puavoId"])
+          else
+            # Delete roles
+            Role.ldap_modify_operation(role_dn, :delete, [{ "memberUid" => [self.uid] },
+                                                          { "member" => [self.dn.to_s] }])
+          end
         end
-      end
 
-      # Add roles
-      add_roles.each do |role_id|
-        Role.ldap_modify_operation("puavoId=#{role_id},#{Role.base.to_s}",
-                                   :add, [{ "memberUid" => [self.uid] },
-                                          { "member" => [self.dn.to_s] }])
-      end
+        # Add roles
+        add_roles.each do |role_id|
+          Role.ldap_modify_operation("puavoId=#{role_id},#{Role.base.to_s}",
+                                     :add, [{ "memberUid" => [self.uid] },
+                                            { "member" => [self.dn.to_s] }])
+        end
 
-      self.reload
-      self.update_associations
+        self.reload
+        self.update_associations
+      end
     end
   end
 
@@ -432,26 +445,28 @@ class User < LdapBase
 
   # Update User - Group association by roles
   def update_associations
-    new_group_list =
-      self.roles.inject([]) do |result, role|
-      result + role.groups.map{ |g| g.dn.to_s }
-    end
-
-    Group.search_as_utf8( :filter => "(memberUid=#{self.uid})",
-                  :scope => :one,
-                  :attributes => ["puavoId"] ).each do |group_dn, values|
-
-      if new_group_list.include?(group_dn)
-        new_group_list.delete(group_dn)
-      else
-        Group.ldap_modify_operation(group_dn, :delete, [{ "memberUid" => [self.uid]},
-                                                        { "member" => [self.dn.to_s] }])
+    unless self.class.new_group_management?
+      new_group_list =
+        self.roles.inject([]) do |result, role|
+        result + role.groups.map{ |g| g.dn.to_s }
       end
-    end
 
-    new_group_list.each do |group_dn|
-      Group.ldap_modify_operation(group_dn, :add, [{ "memberUid" => [self.uid]},
-                                                   { "member" => [self.dn.to_s] }])
+      Group.search_as_utf8( :filter => "(memberUid=#{self.uid})",
+                            :scope => :one,
+                            :attributes => ["puavoId"] ).each do |group_dn, values|
+
+        if new_group_list.include?(group_dn)
+          new_group_list.delete(group_dn)
+        else
+          Group.ldap_modify_operation(group_dn, :delete, [{ "memberUid" => [self.uid]},
+                                                          { "member" => [self.dn.to_s] }])
+        end
+      end
+
+      new_group_list.each do |group_dn|
+        Group.ldap_modify_operation(group_dn, :add, [{ "memberUid" => [self.uid]},
+                                                     { "member" => [self.dn.to_s] }])
+      end
     end
   end
 
@@ -584,12 +599,16 @@ class User < LdapBase
         old_user = User.find(self.puavoId)
         if self.uid != old_user.uid
           self.uid_has_changed = true
+
           logger.debug "User uid has changed. Remove memberUid from roles and groups"
-          Role.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
-                       :scope => :one,
-                       :attributes => ['dn'] ).each do |role_dn, values|
-            LdapBase.ldap_modify_operation(role_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+          unless self.class.new_group_management?
+            Role.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
+                                 :scope => :one,
+                                 :attributes => ['dn'] ).each do |role_dn, values|
+              LdapBase.ldap_modify_operation(role_dn, :delete, [{"memberUid" => [old_user.uid.to_s]}])
+            end
           end
+
           Group.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                         :scope => :one,
                         :attributes => ['dn'] ).each do |group_dn, values|
@@ -612,9 +631,13 @@ class User < LdapBase
     if self.uid_has_changed
       logger.debug "User uid has changed. Add new uid to roles and groups if it not exists"
       self.uid_has_changed = false
-      self.roles.each do |role|
-        role.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+
+      unless self.class.new_group_management?
+        self.roles.each do |role|
+          role.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
+        end
       end
+
       self.groups.each do |group|
         group.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
       end
@@ -640,9 +663,12 @@ class User < LdapBase
       SambaGroup.delete_uid_from_memberUid('Domain Admins', self.uid)
     end
 
-    self.roles.each do |p|
-      p.delete_member(self)
+    unless self.class.new_group_management?
+      self.roles.each do |p|
+        p.delete_member(self)
+      end
     end
+
     self.groups.each do |g|
       g.remove_user(self)
     end

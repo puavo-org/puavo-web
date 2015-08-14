@@ -425,7 +425,8 @@ fi:
         password: Salasana
         mail: "Sähköpostiosoite"
         telephoneNumber: Puhelinnumero
-        puavoEduPersonAffiliation: "Käyttäjätyyppi"
+        puavoEduPersonAffiliationDeprecated: "Käyttäjätyyppi"
+        puavoEduPersonAffiliation: Rooli
         role_ids: Rooli
         role_name: Rooli
         roles: Roolit
@@ -443,6 +444,7 @@ fi:
         puavoLocked: "Käyttäjätunnus on lukittu"
         puavoLocale: Kieli
         puavoSshPublicKey: SSH:n julkinen avain
+        groups: Ryhmät
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne

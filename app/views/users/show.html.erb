@@ -23,10 +23,18 @@
       <%= label "user", 'puavoEduPersonAffiliation' %><br />
       <%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(", ") %>
       </p>
+
+      <% if new_group_management? %>
+      <p>
+      <%= label "user", 'groups' %><br />
+      <%=h @user.groups.map{ |r| r.displayName }.join(", ") %>
+      </p>
+      <% else %>
       <p>
       <%= label "user", 'roles' %><br />
       <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
       </p>
+      <% end %>
     </td>
   </tr>
 </table>

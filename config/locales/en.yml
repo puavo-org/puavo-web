@@ -436,7 +436,8 @@ en:
         password: Password
         mail: Email
         telephoneNumber: Telephone number
-        puavoEduPersonAffiliation: User type
+        puavoEduPersonAffiliationDeprecated: User type
+        puavoEduPersonAffiliation: Role
         role_ids: Role
         role_name: Role
         roles: Roles
@@ -454,6 +455,7 @@ en:
         puavoLocked: User is locked
         puavoLocale: Language
         puavoSshPublicKey: SSH public key
+        groups: Groups
       group:
         displayName: Group name
         cn: Abbreviation
