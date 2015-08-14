@@ -240,4 +240,9 @@ module ApplicationHelper
     end.join("\n").html_safe
   end
 
+  def new_group_management?
+    current_organisation.value_by_key("new_group_management")
+  end
+
+
 end

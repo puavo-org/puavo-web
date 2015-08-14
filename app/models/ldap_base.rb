@@ -94,6 +94,12 @@ class LdapBase < ActiveLdap::Base
     img.resize_to_fit(image_size[:width], image_size[:height]).to_blob
   end
 
+  def self.new_group_management?
+    Puavo::Organisation.
+      find(LdapOrganisation.current.cn).
+      value_by_key("new_group_management")
+  end
+
   # resize image hook
   def resize_image
     if self.image && !self.image.path.to_s.empty?

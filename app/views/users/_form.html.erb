@@ -48,7 +48,11 @@
 </td>
 </tr>
     <tr>
+      <% if new_group_management? %>
       <td class="label_for_checkbox_list required"><%= f.label :puavoEduPersonAffiliation %></td>
+      <% else %>
+      <td class="label_for_checkbox_list required"><%= f.label :puavoEduPersonAffiliationDeprecated %></td>
+      <% end %>
       <td>
         <% User.puavoEduPersonAffiliation_list.map do |a| %>
         <div>
