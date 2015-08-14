@@ -128,6 +128,17 @@ class UsersController < ApplicationController
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
+    if @user.read_only?
+      params["user"].delete(:givenName)
+      params["user"].delete(:sn)
+      params["user"].delete(:uid)
+      params["user"].delete(:mail)
+      params["user"].delete(:telephoneNumber)
+      params["user"].delete(:puavoEduPersonAffiliation)
+      params["user"].delete(:role_ids)
+      params["user"].delete(:puavoLocale)
+    end
+
     respond_to do |format|
       begin
         unless @user.update_attributes(params[:user])
