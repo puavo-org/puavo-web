@@ -4,25 +4,25 @@
   <table>
     <tr>
       <td class='required'><%= f.label :givenName %></td>
-      <td><%= f.text_field :givenName %></td>
+      <td><%= f.text_field :givenName, :disabled => @user.read_only? %></td>
     </tr>
     <tr>
       <td class='required'><%= f.label :sn %></td>
-      <td><%= f.text_field :sn %></td>
+      <td><%= f.text_field :sn, :disabled => @user.read_only? %></td>
     </tr>
     <tr>
       <td class='required'><%= f.label :uid %></td>
-      <td><%= f.text_field :uid %></td>
+      <td><%= f.text_field :uid, :disabled => @user.read_only? %></td>
     </tr>
     <tr>
       <td class="label_for_input_text_list"><%= f.label :mail, :for => "user_mail_0" %></td>
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
-        <input name='user[mail][]' type='text' id='user_mail_0' />
+        <input name='user[mail][]' type='text' id='user_mail_0' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
       <% else %>
         <% Array(@user.mail).each_index do |index| %>
-          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
+          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
         <% end %>
       <% end %>
     </div>
@@ -34,10 +34,10 @@
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
     <td><span id="user_telephoneNumber_list">
       <% if Array(@user.telephoneNumber).empty? %>
-        <input name='user[telephoneNumber][]' type='text' />
+        <input name='user[telephoneNumber][]' type='text' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
       <% else %>
         <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' />
+          <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
         <% end %>
       <% end %>
     </span>
@@ -57,7 +57,7 @@
         <% User.puavoEduPersonAffiliation_list.map do |a| %>
         <div>
           <label>
-            <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>" />
+            <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>" <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
             <%=h t('puavoEduPersonAffiliation_' + a) %>
           </label>
         </div>
@@ -65,23 +65,26 @@
         <%= field_error_text(f.object, :puavoEduPersonAffiliation) %>
       </td>
     </tr>
+
+    <% unless new_group_management? %>
     <tr>
       <td class="label_for_checkbox_list required_role required"><%= f.label :role_ids %></td>
       <td>
       <% @roles.each do |p| %>
         <div>
-          <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>" /><%=h p.displayName %></label>
+          <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>"  /><%=h p.displayName %></label>
         </div>
       <% end %>
       <%= field_error_text(f.object, :role_ids) %>
       </td>
     </tr>
+    <% end %>
 
   <tr>
     <td><%= f.label :puavoLocale %></td>
     <td>
       <%= f.select :puavoLocale,
-          locales_for_select %>
+          locales_for_select, {}, { :disabled => @user.read_only? } %>
     </td>
   </tr>
 

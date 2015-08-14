@@ -281,6 +281,10 @@ class User < LdapBase
     end
   end
 
+  def read_only?
+    self.puavoExternalId.nil? ? false : true
+  end
+
   def self.import_columns
     columns = ["givenName", "sn", "uid", "new_password"]
 
