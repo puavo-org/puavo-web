@@ -6,37 +6,69 @@ import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 import * as reducers from "./reducers";
 import {connect} from "react-redux";
-import {setImportData, startImport, changeColumnType} from "./actions";
+import {setImportData, startImport, changeColumnType, setCustomValue} from "./actions";
 
 import {Sortable,  Column} from "./Sortable";
 import ColumnTypeSelector from "./ColumnTypeSelector";
 
 
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
-const store = createStoreWithMiddleware(combineReducers(reducers));
+const combinedReducers = combineReducers(reducers);
+
+const store = createStoreWithMiddleware((state, action) => {
+    state = combinedReducers(state, action);
+    console.log("action", action);
+    return state;
+});
 
 const defaultSortFirst = R.ifElse(R.equals(0), R.always({defaultSort: true}), R.always({}));
 
 const demoData = `
-foo,bar, foo
-lol, omg, lol
+Bob, Brown, bob@examle.com
+Alice, Smith, alice@example.com
+Charlie, Chaplin, charlie@exampl.com
 `;
 
 class Cell extends React.Component {
 
-    setCustomValue(e) {
-        if (e.key === "Enter" && e.target.value.trim()) {
-            this.props.dispatch(setCustomValue(this.props.rowIndex, this.props.columnIndex, e.target.value));
+    constructor(props) {
+        super(props);
+        this.state = {
+            customValue: props.value.originalValue,
+            editing: false,
+        };
+    }
+
+    dispatchCustomValue(e) {
+        if (e.key !== "Enter") return;
+        if (this.state.customValue !== this.props.value.originalValue) {
+            this.props.dispatch(setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue));
         }
+        this.setState({editing: false});
+    }
+
+    changeCustomValue(e) {
+        this.setState({customValue: e.target.value});
     }
 
     render() {
-        console.log("cell dis", this.props.dispatch);
         return (
-            <pre>
-                {JSON.stringify(this.props.value)}
-                <input type="text" onKeyUp={this.setCustomValue.bind(this)} />
-            </pre>
+            <div>
+                <pre>
+                    {JSON.stringify(this.props.value)}
+                </pre>
+
+                {!this.state.editing &&
+                    <a href="#" onClick={(e) => this.setState({editing: true})}>m</a>}
+
+                {this.state.editing &&
+                <input type="text"
+                    value={this.state.customValue}
+                    onChange={this.changeCustomValue.bind(this)}
+                    onKeyUp={this.dispatchCustomValue.bind(this)} />
+                }
+
+            </div>
         );
     }
 }

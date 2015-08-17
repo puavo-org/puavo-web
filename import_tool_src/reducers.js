@@ -8,7 +8,8 @@ export function importData(data=[], action) {
         case "SET_IMPORT_DATA":
             return action.data.map(row => row.map(cell => ({originalValue: cell.trim()})));
         case "SET_CUSTOM_VALUE":
-            return R.assocPath( // XXX
+            const lens = R.compose(R.lensIndex(action.rowIndex), R.lensIndex(action.columnIndex), R.lensProp("customValue"));
+            return R.over(lens, R.always(action.value), data);
         default:
             return data;
     }
@@ -32,7 +33,7 @@ export function rowStatus(states={}, action) {
 
 export function columnTypes(columnTypes, action) {
     if (!columnTypes) {
-        return [
+        columnTypes =  [
             COLUMN_TYPES.first_name,
             COLUMN_TYPES.last_name,
             COLUMN_TYPES.username,
