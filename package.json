@@ -15,6 +15,7 @@
     "class-set": "0.0.4",
     "eslint": "^1.1.0",
     "eslint-plugin-react": "^3.2.1",
+    "lodash": "^3.10.1",
     "nib": "~0.9.1",
     "papaparse": "^4.1.2",
     "ramda": "^0.17.1",
@@ -23,6 +24,7 @@
     "react-redux": "^0.8.0",
     "redux": "^1.0.0-rc",
     "redux-thunk": "^0.1.0",
+    "updeep": "^0.7.0",
     "webpack": "^1.11.0"
   }
 }

@@ -30,11 +30,11 @@ export function setCustomValue(rowIndex, columnIndex, value) {
 
 export function startImport() {
     return (dispatch, getState) => {
-        var {columnTypes, importData} = getState();
+        var {importData} = getState();
 
-        var restStyleData = importData.map(row => row.reduce((memo, cell, i) => {
+        var restStyleData = importData.rows.map(row => row.reduce((memo, cell, i) => {
             var value = cell.customValue || cell.originalValue;
-            return R.assoc(R.path([i, "attribute"], columnTypes), value, memo);
+            return R.assoc(R.path([i, "attribute"], importData.columns), value, memo);
         }, {}));
 
         console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));

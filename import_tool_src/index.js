@@ -94,18 +94,17 @@ class Hello extends React.Component {
     render() {
         console.log("props", this.props);
 
-        var columnCount = R.path(["importData", 0, "length"], this.props) || 0;
-        var {rowStatus} = this.props;
+        var columnCount = R.path(["importData", "rows", 0, "length"], this.props) || 0;
 
         return (
             <div>
-                <textarea ref="textarea" value={demoData} />
+                <textarea ref="textarea" defaultValue={demoData} />
 
                 <button onClick={this.onParseCSV.bind(this)}>lue2</button>
 
                 {columnCount > 0 &&
-                <Sortable rows={this.props.importData}>
-                    {this.props.columnTypes.map((columnType, columnIndex) => {
+                <Sortable rows={this.props.importData.rows}>
+                    {this.props.importData.columns.map((columnType, columnIndex) => {
                         return (
                             <Column {...defaultSortFirst(columnIndex)}
                                 render={(row, rowIndex) => <Cell value={row[columnIndex]} rowIndex={rowIndex} columnIndex={columnIndex} />} >
@@ -117,9 +116,6 @@ class Hello extends React.Component {
                         );
                     })}
 
-                    <Column render={(row, rowId) => R.path([rowId, "status"], rowStatus) || "waiting"}>
-                        Status
-                    </Column>
 
                 </Sortable>}
 
@@ -131,9 +127,7 @@ class Hello extends React.Component {
 
 Hello.propTypes = {
     dispatch: React.PropTypes.func.isRequired,
-    importData: React.PropTypes.array.isRequired,
-    columnTypes: React.PropTypes.array.isRequired,
-    rowStatus: React.PropTypes.object.isRequired,
+    importData: React.PropTypes.object.isRequired,
 };
 
 function select(state) {
