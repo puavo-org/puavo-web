@@ -14,6 +14,13 @@ export function setImportData(rawCSV) {
 
 }
 
+export function addColumn(columnType) {
+    return {
+        type: "ADD_COLUMN",
+        columnType,
+    };
+}
+
 export function changeColumnType(columnIndex, typeId) {
     return {
         type: "CHANGE_COLUMN_TYPE",

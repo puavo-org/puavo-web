@@ -1,25 +1,35 @@
 
 import R from "ramda";
 import React from "react";
-import {combineReducers, createStore, applyMiddleware} from "redux";
+import {combineReducers, createStore, applyMiddleware, compose} from "redux";
 import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 import * as reducers from "./reducers";
 import {connect} from "react-redux";
+import {devTools, persistState} from "redux-devtools";
+import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
+
 import {setImportData, startImport, changeColumnType, setCustomValue} from "./actions";
 
 import {Sortable,  Column} from "./Sortable";
 import ColumnTypeSelector from "./ColumnTypeSelector";
+import AddColumn from "./AddColumn";
 
 
-const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
+const createFinalStore = compose(
+    applyMiddleware(thunk),
+    devTools(),
+    createStore
+);
+
 const combinedReducers = combineReducers(reducers);
+const store = createFinalStore(combinedReducers);
 
-const store = createStoreWithMiddleware((state, action) => {
-    state = combinedReducers(state, action);
-    console.log("action", action);
-    return state;
-});
+// const store = createStoreWithMiddleware((state, action) => {
+//     state = combinedReducers(state, action);
+//     console.log("action", action);
+//     return state;
+// });
 
 const defaultSortFirst = R.ifElse(R.equals(0), R.always({defaultSort: true}), R.always({}));
 
@@ -29,19 +39,21 @@ Alice, Smith, alice@example.com
 Charlie, Chaplin, charlie@exampl.com
 `;
 
+const getOriginalValue = R.path(["value", "originalValue"]);
+
 class Cell extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            customValue: props.value.originalValue,
+            customValue: getOriginalValue(props),
             editing: false,
         };
     }
 
     dispatchCustomValue(e) {
         if (e.key !== "Enter") return;
-        if (this.state.customValue !== this.props.value.originalValue) {
+        if (this.state.customValue !== getOriginalValue(this.props)) {
             this.props.dispatch(setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue));
         }
         this.setState({editing: false});
@@ -73,6 +85,13 @@ class Cell extends React.Component {
     }
 }
 
+Cell.propTypes = {
+    columnIndex: React.PropTypes.number.isRequired,
+    rowIndex: React.PropTypes.number.isRequired,
+    dispatch: React.PropTypes.func.isRequired,
+    value: React.PropTypes.object.isRequired,
+};
+
 Cell = connect()(Cell);
 
 class Hello extends React.Component {
@@ -101,6 +120,7 @@ class Hello extends React.Component {
                 <textarea ref="textarea" defaultValue={demoData} />
 
                 <button onClick={this.onParseCSV.bind(this)}>lue2</button>
+                <AddColumn />
 
                 {columnCount > 0 &&
                 <Sortable rows={this.props.importData.rows}>
@@ -138,7 +158,14 @@ var App = connect(select)(Hello);
 
 var container = document.getElementById("import-tool");
 container.innerHTML = "";
-React.render (
-    <Provider store={store}>
-        {() => <App />}
-    </Provider>, container);
+React.render(
+    <div>
+        <Provider store={store}>
+            {() => <App />}
+        </Provider>
+        <DebugPanel top right bottom>
+          <DevTools store={store}
+                    monitor={LogMonitor} />
+        </DebugPanel>
+    </div>
+, container);

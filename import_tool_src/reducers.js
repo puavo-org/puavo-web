@@ -21,7 +21,7 @@ export function importData(data=initialImportData, action) {
         case "SET_CUSTOM_VALUE":
             return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
         case "ADD_COLUMN":
-            return u.update({columns: R.append(action.columnType)}, data);
+            return u.update({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
         case "CHANGE_COLUMN_TYPE":
             return u.updateIn(["columns", action.columnIndex], COLUMN_TYPES[action.typeId], data);
         default:
