@@ -2,6 +2,8 @@
 import Papa from "papaparse";
 import R from "ramda";
 
+import {getCellValue} from "./utils";
+
 export function setImportData(rawCSV) {
     var res = Papa.parse(rawCSV.trim());
     // XXX: Assert res.errors
@@ -35,17 +37,17 @@ export function setCustomValue(rowIndex, columnIndex, value) {
     };
 }
 
+const rowToRest = columns => R.compose(
+    R.reduce((memo, [i, cell]) => {
+        return R.assoc(R.path([i, "attribute"], columns), getCellValue(cell), memo);
+    }, {}),
+    R.toPairs
+);
+
 export function startImport() {
     return (dispatch, getState) => {
         var {importData} = getState();
-
-        var restStyleData = importData.rows.map(row => row.reduce((memo, cell, i) => {
-            var value = cell.customValue || cell.originalValue;
-            return R.assoc(R.path([i, "attribute"], importData.columns), value, memo);
-        }, {}));
-
+        var restStyleData = importData.rows.map(rowToRest(importData.columns));
         console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));
-
-
     };
 }
