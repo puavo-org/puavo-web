@@ -3,6 +3,7 @@ import R from "ramda";
 import u from "updeep";
 
 import COLUMN_TYPES from "./column_types";
+import {getCellValue} from "./utils";
 
 const initialImportData = {
     rows: [],
@@ -17,25 +18,18 @@ const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalVal
 
 
 function importData_(data=initialImportData, action) {
-    console.log("import data starting");
     switch (action.type) {
         case "SET_IMPORT_DATA":
-            var cleanedRows = action.data.map(arrayToObj);
-            data = u.update({rows: cleanedRows}, data);
-            break;
+            return R.assoc("rows", action.data.map(arrayToObj), data);
         case "SET_CUSTOM_VALUE":
-            data = u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
-            break;
+            return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
         case "ADD_COLUMN":
-            data = u.update({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
-            break;
+            return R.evolve({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
         case "CHANGE_COLUMN_TYPE":
-            data = u.updateIn(["columns", action.columnIndex], COLUMN_TYPES[action.typeId], data);
-            break;
+            return u.updateIn(["columns", action.columnIndex], COLUMN_TYPES[action.typeId], data);
+        default:
+            return data;
     }
-
-    console.log("returning columns", data.columns);
-    return data;
 }
 
 const isFirstName = R.equals(COLUMN_TYPES.first_name);
@@ -45,43 +39,23 @@ const isUsername = R.equals(COLUMN_TYPES.username);
 const canGenerateUsername = R.allPass(R.map(R.any, [isFirstName, isLastName, isUsername]));
 
 
-const rowValue = R.curry((index, row) => {
-    return R.path([index, "customValue"], row) || R.path([index, "originalValue"], row);
-});
+const rowValue = R.curry((index, row) => getCellValue(row[index]));
 
 const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastNameIndex, row) => {
-    console.log("mapping", usernameIndex, row);
-    if (rowValue(usernameIndex, row)) {
-        console.log("has value, no need to generate username");
-        return row;
-    }
+    if (rowValue(usernameIndex, row)) return row;
     var username = rowValue(firstNameIndex, row) + "." + rowValue(lastNameIndex, row);
-    console.log("new username", username);
-
-
-    var data =  R.over(R.lensProp(usernameIndex), R.merge({customValue: username}), row);
-    // var data =  R.adjust(R.merge(R.__, {customValue: username}), usernameIndex, row);
-    console.log("new username data", data);
-    return data;
-
+    return R.over(R.lensProp(usernameIndex), R.merge({customValue: username}), row);
 });
 
 const isMissing = R.curry((index, row) => !row[index]);
 
 function injectUsernames(data) {
-    console.log("inject starting");
-    if (!canGenerateUsername(data.columns)) {
-        console.log("Cannot generate username", data.columns);
-        return data;
-    }
+    if (!canGenerateUsername(data.columns)) return data;
 
     const usernameIndex = R.findIndex(isUsername, data.columns);
     const isMissingUsername = R.any(isMissing(usernameIndex));
 
-    if (!isMissingUsername(data.rows)) {
-        console.log("No missing usernames");
-        return data;
-    }
+    if (!isMissingUsername(data.rows)) return data;
 
     const addUsernames = R.map(generateDefaultUsername(
         usernameIndex,
@@ -89,11 +63,8 @@ function injectUsernames(data) {
         R.findIndex(isLastName, data.columns)
     ));
 
-    console.log("inject ok!");
     return R.evolve({rows: addUsernames}, data);
-
 }
-
 
 export const importData = R.compose(injectUsernames, importData_);
 
@@ -113,22 +84,3 @@ export function rowStatus(states={}, action) {
 }
 
 
-// export function columnTypes(columnTypes, action) {
-//     if (!columnTypes) {
-//         columnTypes =  [
-//             COLUMN_TYPES.first_name,
-//             COLUMN_TYPES.last_name,
-//             COLUMN_TYPES.username,
-//         ];
-//     }
-// 
-//     switch (action.type) {
-//         case "ADD_COLUMN":
-//             return R.append(action.columnType, columnTypes);
-//         case "CHANGE_COLUMN_TYPE":
-//             return R.update(action.columnIndex, COLUMN_TYPES[action.typeId], columnTypes);
-//         default:
-//             return columnTypes;
-//     }
-// 
-// }
