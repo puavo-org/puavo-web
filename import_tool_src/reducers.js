@@ -39,9 +39,7 @@ const isUsername = R.equals(COLUMN_TYPES.username);
 const canGenerateUsername = R.allPass(R.map(R.any, [isFirstName, isLastName, isUsername]));
 
 
-const rowValue = R.curry((index, row) => {
-    return getCellValue(row[index]);
-});
+const rowValue = R.curry((index, row) => getCellValue(row[index]));
 
 const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastNameIndex, row) => {
     if (rowValue(usernameIndex, row)) return row;
