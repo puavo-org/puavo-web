@@ -3,6 +3,7 @@ import R from "ramda";
 import u from "updeep";
 
 import COLUMN_TYPES from "./column_types";
+import {getCellValue} from "./utils";
 
 const initialImportData = {
     rows: [],
@@ -39,7 +40,7 @@ const canGenerateUsername = R.allPass(R.map(R.any, [isFirstName, isLastName, isU
 
 
 const rowValue = R.curry((index, row) => {
-    return R.path([index, "customValue"], row) || R.path([index, "originalValue"], row);
+    return getCellValue(row[index]);
 });
 
 const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastNameIndex, row) => {
