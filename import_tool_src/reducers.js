@@ -10,6 +10,7 @@ const usernameSlugify = R.compose(R.invoker(2,"replace")(/[^a-z]/g, ""), slugify
 
 const initialImportData = {
     rows: [],
+    defaultValues: {},
     columns: [
         COLUMN_TYPES.first_name,
         COLUMN_TYPES.last_name,
@@ -26,6 +27,8 @@ function importData_(data=initialImportData, action) {
             return R.assoc("rows", action.data.map(arrayToObj), data);
         case "SET_CUSTOM_VALUE":
             return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
+        case "CHANGE_COLUMN_DEFAULT":
+            return R.evolve({defaultValues: R.assoc(action.columnIndex, action.value)}, data);
         case "ADD_COLUMN":
             return R.evolve({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
         case "CHANGE_COLUMN_TYPE":
@@ -35,14 +38,35 @@ function importData_(data=initialImportData, action) {
     }
 }
 
+const rowValue = R.curry((index, row) => getCellValue(row[index]));
+const isMissing = R.curry((index, row) => !row[index]);
+
+function injectDefaultValues(data) {
+    const defaults = R.toPairs(data.defaultValues);
+    if (R.isEmpty(defaults)) return data;
+
+    // XXX ugly...
+    R.toPairs(data.defaultValues).forEach(([columnIndex, defaultValue]) => {
+        data.rows.forEach((row, rowIndex) => {
+            if (getCellValue(row[columnIndex])) {
+                return;
+            }
+
+            var lens = R.compose(R.lensProp("rows"), R.lensIndex(rowIndex), R.lensProp(columnIndex));
+
+            data = R.over(lens, R.assoc("customValue", defaultValue), data);
+        });
+
+    });
+
+    return data;
+}
+
+
 const isFirstName = R.equals(COLUMN_TYPES.first_name);
 const isLastName = R.equals(COLUMN_TYPES.last_name);
 const isUsername = R.equals(COLUMN_TYPES.username);
-
 const canGenerateUsername = R.allPass(R.map(R.any, [isFirstName, isLastName, isUsername]));
-
-
-const rowValue = R.curry((index, row) => getCellValue(row[index]));
 
 const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastNameIndex, row) => {
     if (rowValue(usernameIndex, row)) return row;
@@ -52,7 +76,6 @@ const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastName
     return R.over(R.lensProp(usernameIndex), R.merge({customValue: username}), row);
 });
 
-const isMissing = R.curry((index, row) => !row[index]);
 
 function injectUsernames(data) {
     if (!canGenerateUsername(data.columns)) return data;
@@ -71,7 +94,7 @@ function injectUsernames(data) {
     return R.evolve({rows: addUsernames}, data);
 }
 
-export const importData = R.compose(injectUsernames, importData_);
+export const importData = R.compose(injectDefaultValues, injectUsernames, importData_);
 
 export function rowStatus(states={}, action) {
     const setStatus = R.assoc(action.rowId, R.__, states);

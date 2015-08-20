@@ -6,10 +6,10 @@ import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 import * as reducers from "./reducers";
 import {connect} from "react-redux";
-import {devTools, persistState} from "redux-devtools";
+import {devTools} from "redux-devtools";
 import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
 
-import {setImportData, startImport, changeColumnType, setCustomValue} from "./actions";
+import {setImportData, startImport, setCustomValue} from "./actions";
 import {getCellValue} from "./utils";
 
 import ColumnTypeSelector from "./ColumnTypeSelector";
@@ -64,9 +64,6 @@ class Cell extends React.Component {
     render() {
         return (
             <div>
-                <pre>
-                    {JSON.stringify(this.props.value)}
-                </pre>
 
                 {!this.state.editing &&
                     <a href="#" onClick={this.startEdit.bind(this)}>m</a>}
@@ -94,7 +91,6 @@ Cell = connect()(Cell);
 
 class Hello extends React.Component {
 
-
     onParseCSV(e) {
         var el = React.findDOMNode(this.refs.textarea);
         this.props.dispatch(setImportData(el.value));
@@ -104,10 +100,6 @@ class Hello extends React.Component {
         this.props.dispatch(startImport(this.props.importData));
     }
 
-    changeColumnType(columnIndex, typeId) {
-        this.props.dispatch(changeColumnType(columnIndex, typeId));
-    }
-
     render() {
         console.log("props", this.props);
 
@@ -115,6 +107,8 @@ class Hello extends React.Component {
         var {columns, rows} = this.props.importData;
 
         console.log("rendering rows", this.props.importData.rows);
+
+
         return (
             <div>
                 <textarea ref="textarea" defaultValue={demoData} />
@@ -134,9 +128,7 @@ class Hello extends React.Component {
                                 return (
                                     <th>
                                         {columnType.attribute}
-                                        <ColumnTypeSelector
-                                            value={columnType.attribute}
-                                            onChange={e => this.changeColumnType(columnIndex, e.target.value)} />
+                                        <ColumnTypeSelector columnIndex={columnIndex} />
                                     </th>
                                 );
                             })}
