@@ -44,10 +44,10 @@ class Cell extends React.Component {
         };
     }
 
-    dispatchCustomValue(e) {
+    setCustomValue(e) {
         if (e.key !== "Enter") return;
         if (this.state.customValue !== getCellValue(this.props.value)) {
-            this.props.dispatch(setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue));
+            this.props.setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue);
         }
         this.setState({editing: false});
     }
@@ -65,6 +65,7 @@ class Cell extends React.Component {
         return (
             <div>
 
+                <pre>{JSON.stringify(this.props.value)}</pre>
                 {!this.state.editing &&
                     <a href="#" onClick={this.startEdit.bind(this)}>m</a>}
 
@@ -72,7 +73,7 @@ class Cell extends React.Component {
                 <input type="text"
                     value={this.state.customValue}
                     onChange={this.changeCustomValue.bind(this)}
-                    onKeyUp={this.dispatchCustomValue.bind(this)} />
+                    onKeyUp={this.setCustomValue.bind(this)} />
                 }
 
             </div>
@@ -83,21 +84,21 @@ class Cell extends React.Component {
 Cell.propTypes = {
     columnIndex: React.PropTypes.number.isRequired,
     rowIndex: React.PropTypes.number.isRequired,
-    dispatch: React.PropTypes.func.isRequired,
+    setCustomValue: React.PropTypes.func.isRequired,
     value: React.PropTypes.object.isRequired,
 };
 
-Cell = connect()(Cell);
+Cell = connect(null, {setCustomValue})(Cell);
 
 class Hello extends React.Component {
 
     onParseCSV(e) {
         var el = React.findDOMNode(this.refs.textarea);
-        this.props.dispatch(setImportData(el.value));
+        this.props.setImportData(el.value);
     }
 
     startImport() {
-        this.props.dispatch(startImport(this.props.importData));
+        this.props.startImport(this.props.importData);
     }
 
     render() {
@@ -116,9 +117,6 @@ class Hello extends React.Component {
                 <button onClick={this.onParseCSV.bind(this)}>lue2</button>
                 <AddColumn />
 
-                <pre>
-                    {JSON.stringify(this.props, null, "  ")}
-                </pre>
 
                 {rows.length > 0 &&
                 <table>
@@ -161,15 +159,12 @@ class Hello extends React.Component {
 }
 
 Hello.propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
+    setImportData: React.PropTypes.func.isRequired,
+    startImport: React.PropTypes.func.isRequired,
     importData: React.PropTypes.object.isRequired,
 };
 
-function select(state) {
-    return state;
-}
-
-var App = connect(select)(Hello);
+var App = connect(R.identity, {setImportData, startImport})(Hello);
 
 var container = document.getElementById("import-tool");
 container.innerHTML = "";
