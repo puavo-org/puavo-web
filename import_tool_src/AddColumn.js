@@ -21,8 +21,8 @@ class AddColumn extends React.Component {
         return (
             <div className="AddColumn">
                 <select value={this.state.value} onChange={e => this.setState({value: e.target.value})}>
-                    {R.values(COLUMN_TYPES).map(columnType => {
-                        return <option value={columnType.attribute}>{columnType.name}</option>;
+                    {R.toPairs(COLUMN_TYPES).map(([columnType, column]) => {
+                        return <option value={columnType}>{column.name}</option>;
                     })}
                 </select>
                 <button disabled={!this.state.value} onClick={this.addColumn.bind(this)}>Add</button>
