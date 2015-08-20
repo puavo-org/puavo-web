@@ -3,10 +3,10 @@ import React from "react";
 import R from "ramda";
 import {connect} from "react-redux";
 
-import COLUMN_TYPES from "./column_types";
-import {changeColumnType, changeColumnDefault} from "./actions";
+import COLUMN_TYPES from "../column_types";
+import {changeColumnType, changeColumnDefault} from "../actions";
 
-export default class ColumnTypeSelector extends React.Component {
+class ColumnTypeSelector extends React.Component {
 
     constructor(props) {
         super(props);
