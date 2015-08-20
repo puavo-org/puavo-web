@@ -30,17 +30,17 @@ export function changeColumnType(columnIndex, typeId) {
     };
 }
 
-export function changeColumnDefault(columnIndex, value) {
-    return {
-        type: "CHANGE_COLUMN_DEFAULT",
-        columnIndex, value,
-    };
-}
-
 export function setCustomValue(rowIndex, columnIndex, value) {
     return {
         type: "SET_CUSTOM_VALUE",
         rowIndex, columnIndex, value,
+    };
+}
+
+export function setDefaultValue(columnIndex, value) {
+    return {
+        type: "SET_DEFAULT_VALUE",
+        columnIndex, value,
     };
 }
 

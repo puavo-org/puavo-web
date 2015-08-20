@@ -4,7 +4,7 @@ import R from "ramda";
 import {connect} from "react-redux";
 
 import COLUMN_TYPES from "../column_types";
-import {changeColumnType, changeColumnDefault} from "../actions";
+import {changeColumnType, setDefaultValue} from "../actions";
 import {didPressEnter} from "../utils";
 
 class ColumnTypeSelector extends React.Component {
@@ -16,7 +16,7 @@ class ColumnTypeSelector extends React.Component {
 
 
     setDefaultValue() {
-        this.props.changeColumnDefault(this.props.columnIndex, this.state.defaultValue);
+        this.props.setDefaultValue(this.props.columnIndex, this.state.defaultValue);
     }
 
     render() {
@@ -47,7 +47,7 @@ class ColumnTypeSelector extends React.Component {
 
 
 ColumnTypeSelector.propTypes = {
-    changeColumnDefault: React.PropTypes.func.isRequired,
+    setDefaultValue: React.PropTypes.func.isRequired,
     changeColumnType: React.PropTypes.func.isRequired,
     columnIndex: React.PropTypes.number.isRequired,
     currentTypeId: React.PropTypes.string,
@@ -62,4 +62,4 @@ function selectProps(state, {columnIndex}) {
     };
 }
 
-export default connect(selectProps, {changeColumnType, changeColumnDefault})(ColumnTypeSelector);
+export default connect(selectProps, {changeColumnType, setDefaultValue})(ColumnTypeSelector);
