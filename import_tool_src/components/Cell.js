@@ -1,9 +1,10 @@
 
+import R from "ramda";
 import React from "react";
 import {connect} from "react-redux";
 
 import {setCustomValue} from "../actions";
-import {getCellValue} from "../utils";
+import {getCellValue, didPressEnter} from "../utils";
 
 class Cell extends React.Component {
 
@@ -15,8 +16,7 @@ class Cell extends React.Component {
         };
     }
 
-    setCustomValue(e) {
-        if (e.key !== "Enter") return;
+    setCustomValue() {
         if (this.state.customValue !== getCellValue(this.props.value)) {
             this.props.setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue);
         }
@@ -34,18 +34,24 @@ class Cell extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="Cell">
 
-                <pre>{JSON.stringify(this.props.value)}</pre>
                 {!this.state.editing &&
-                    <a href="#" onClick={this.startEdit.bind(this)}>m</a>}
+                <div>
+                    {getCellValue(this.props.value)}
+                    {" "}
+                    <a href="#" onClick={this.startEdit.bind(this)}>e</a>
+                </div>}
 
                 {this.state.editing &&
-                <input type="text"
-                    value={this.state.customValue}
-                    onChange={this.changeCustomValue.bind(this)}
-                    onKeyUp={this.setCustomValue.bind(this)} />
-                }
+                <span>
+                    <input type="text"
+                        value={this.state.customValue}
+                        onChange={this.changeCustomValue.bind(this)}
+                        onKeyUp={R.both(didPressEnter, this.setCustomValue.bind(this))}
+                    />
+                    <button onClick={this.setCustomValue.bind(this)}>ok</button>
+                </span>}
 
             </div>
         );

@@ -30,10 +30,15 @@ export default class ImportTool extends React.Component {
         var {columns, rows} = this.props.importData;
 
         return (
-            <div>
-                <textarea ref="textarea" defaultValue={demoData} />
+            <div className="ImportTool">
 
-                <button onClick={this.onParseCSV.bind(this)}>lue2</button>
+                {rows.length == 0 &&
+                <div className="ImportTool-data-selector">
+                    <textarea className="ImportTool-textarea" ref="textarea" defaultValue={demoData} />
+                    <button onClick={this.onParseCSV.bind(this)}>Parse</button>
+                </div>}
+
+
                 <AddColumn />
 
 
@@ -44,7 +49,7 @@ export default class ImportTool extends React.Component {
                             {columns.map((columnType, columnIndex) => {
                                 return (
                                     <th>
-                                        {columnType.attribute}
+                                        {columnType.name}
                                         <ColumnTypeSelector columnIndex={columnIndex} />
                                     </th>
                                 );

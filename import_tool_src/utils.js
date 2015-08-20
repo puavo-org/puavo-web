@@ -8,3 +8,5 @@ export const getCellValue = R.compose(
     R.or(R.__, {})
 );
 
+export const didPressEnter = R.compose(R.equals("Enter"), R.prop("key"));
+

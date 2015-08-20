@@ -1,5 +1,13 @@
 
+.ImportTool-textarea {
+    width: 100%;
+    height: 300px;
+}
 
-* {
-  color: red;
+.ImportTool-data-selector {
+    margin-bottom: 3em;
+}
+
+.ImportTool .ColumnTypeSelector-default-value-input {
+    width: 60px;
 }

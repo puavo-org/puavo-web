@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 
 import COLUMN_TYPES from "../column_types";
 import {changeColumnType, changeColumnDefault} from "../actions";
+import {didPressEnter} from "../utils";
 
 class ColumnTypeSelector extends React.Component {
 
@@ -14,8 +15,7 @@ class ColumnTypeSelector extends React.Component {
     }
 
 
-    setDefaultValue(e) {
-        if (e.key !== "Enter") return;
+    setDefaultValue() {
         this.props.changeColumnDefault(this.props.columnIndex, this.state.defaultValue);
     }
 
@@ -29,12 +29,16 @@ class ColumnTypeSelector extends React.Component {
                         return <option value={columnType.id}>{columnType.name}</option>;
                     })}
                 </select>
+                <br />
                 <input
+                    className="ColumnTypeSelector-default-value-input"
                     type="text"
+                    placeholder="Default"
                     value={this.state.defaultValue}
                     onChange={e => this.setState({defaultValue: e.target.value})}
-                    onKeyUp={this.setDefaultValue.bind(this)}
+                    onKeyUp={R.both(didPressEnter, this.setDefaultValue.bind(this))}
                 />
+                <button onClick={this.setDefaultValue.bind(this)}>ok</button>
             </div>
         );
     }
