@@ -1,9 +1,12 @@
 
 import R from "ramda";
 import u from "updeep";
+import slugify from "underscore.string/slugify";
 
 import COLUMN_TYPES from "./column_types";
 import {getCellValue} from "./utils";
+
+const usernameSlugify = R.compose(R.invoker(2,"replace")(/[^a-z]/g, ""), slugify);
 
 const initialImportData = {
     rows: [],
@@ -43,7 +46,9 @@ const rowValue = R.curry((index, row) => getCellValue(row[index]));
 
 const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastNameIndex, row) => {
     if (rowValue(usernameIndex, row)) return row;
-    var username = rowValue(firstNameIndex, row) + "." + rowValue(lastNameIndex, row);
+    var username = [firstNameIndex, lastNameIndex]
+        .map(i => usernameSlugify(rowValue(i, row)))
+        .join(".");
     return R.over(R.lensProp(usernameIndex), R.merge({customValue: username}), row);
 });
 
