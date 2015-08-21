@@ -23,11 +23,11 @@ export default class ImportTool extends React.Component {
     }
 
     startImport() {
-        this.props.startImport(this.props.importData);
+        this.props.startImport();
     }
 
     render() {
-        var {columns, rows} = this.props.importData;
+        var {columns, rows} = this.props;
 
         return (
             <div className="ImportTool">
@@ -85,7 +85,10 @@ export default class ImportTool extends React.Component {
 ImportTool.propTypes = {
     setImportData: React.PropTypes.func.isRequired,
     startImport: React.PropTypes.func.isRequired,
-    importData: React.PropTypes.object.isRequired,
+    rows: React.PropTypes.array.isRequired,
+    columns: React.PropTypes.array.isRequired,
 };
 
-export default connect(R.identity, {setImportData, startImport})(ImportTool);
+const selectRowsAndColumns = R.compose(R.pick(["rows", "columns"]), R.prop("importData"));
+
+export default connect(selectRowsAndColumns, {setImportData, startImport})(ImportTool);
