@@ -33,7 +33,7 @@ export default class ImportTool extends React.Component {
     }
 
     render() {
-        var {columns, rows} = this.props;
+        var {columns, rows, rowStatus} = this.props;
 
         return (
             <div className="ImportTool">
@@ -52,6 +52,10 @@ export default class ImportTool extends React.Component {
                 <table>
                     <thead>
                         <tr>
+                            <th>
+                                Status
+                            </th>
+
                             {columns.map((columnType, columnIndex) => {
                                 return (
                                     <th>
@@ -66,6 +70,9 @@ export default class ImportTool extends React.Component {
                         {rows.map((row, rowIndex) => {
                             return (
                                 <tr>
+                                    <td>
+                                        {rowStatus[rowIndex] || "waiting"}
+                                    </td>
                                     {columns.map((columnType, columnIndex) => {
                                         return (
                                             <td>
@@ -93,8 +100,12 @@ ImportTool.propTypes = {
     startImport: React.PropTypes.func.isRequired,
     rows: React.PropTypes.array.isRequired,
     columns: React.PropTypes.array.isRequired,
+    rowStatus: React.PropTypes.object.isRequired,
 };
 
-const selectRowsAndColumns = R.compose(R.pick(["rows", "columns"]), R.prop("importData"));
+function select(state) {
+    var {rowStatus, importData: {rows, columns}} = state;
+    return {rowStatus, rows, columns};
+}
 
-export default connect(selectRowsAndColumns, {setImportData, startImport})(ImportTool);
+export default connect(select, {setImportData, startImport})(ImportTool);

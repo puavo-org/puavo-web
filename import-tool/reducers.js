@@ -78,7 +78,7 @@ function injectUsernames(data) {
 export const importData = R.compose(injectUsernames, importData_);
 
 export function rowStatus(states={}, action) {
-    const setStatus = R.assoc(action.rowId, R.__, states);
+    const setStatus = R.assoc(action.rowIndex, R.__, states);
 
     switch (action.type) {
         case "SET_SENDING_ROW":

@@ -51,10 +51,26 @@ const rowToRest = columns => R.compose(
     R.toPairs
 );
 
-export function startImport() {
+export function startImport(rowIndex=0) {
     return (dispatch, getState) => {
-        var {importData} = getState();
-        var restStyleData = importData.rows.map(rowToRest(importData.columns));
+        var {importData: {rows, columns}} = getState();
+
+        if (rows.length < rowIndex) return;
+
+        var restStyleData = rows.map(rowToRest(columns));
         console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));
+
+        dispatch({
+            type: "SET_SENDING_ROW",
+            rowIndex,
+        });
+
+        setTimeout(() => {
+            dispatch({
+                type: "SET_OK_ROW",
+                rowIndex,
+            });
+            dispatch(startImport(rowIndex + 1));
+        }, 500);
     };
 }
