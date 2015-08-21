@@ -9,10 +9,16 @@ import AddColumn from "./AddColumn";
 import ColumnTypeSelector from "./ColumnTypeSelector";
 
 const demoData = `
-Bob, Brown, bob@examle.com
-Alice, Smith, alice@example.com
-Charlie, Chaplin, charlie@exampl.com
-`;
+Bruce, Wayne, batman@example.com
+Clark, Kent, superman@example.com
+Peter, Parker, spiderman@example.com
+Tony, Stark, ironman@example.com
+Bruce, Banner, hulk@example.com
+Matt, Murdock, daredevil@example.com
+Oliver, Queen, arrow@example.com
+James, Howlett, wolverine@example.com
+`.trim();
+
 
 
 export default class ImportTool extends React.Component {
