@@ -16,6 +16,10 @@ class Cell extends React.Component {
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({customValue: getCellValue(nextProps.value)});
+    }
+
     setCustomValue() {
         if (this.state.customValue !== getCellValue(this.props.value)) {
             this.props.setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue);
