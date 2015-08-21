@@ -43,10 +43,6 @@ export default class ImportTool extends React.Component {
                     <button onClick={this.onParseCSV.bind(this)}>Parse</button>
                 </div>}
 
-
-                <AddColumn />
-
-
                 {rows.length > 0 &&
                 <table>
                     <thead>
@@ -63,6 +59,11 @@ export default class ImportTool extends React.Component {
                                     </th>
                                 );
                             })}
+                            <th>
+                                Add column
+                                <br />
+                                <AddColumn />
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
