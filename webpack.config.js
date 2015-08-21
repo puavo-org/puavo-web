@@ -1,5 +1,5 @@
 module.exports = {
-    entry: "./import_tool_src/index.js",
+    entry: "./import-tool/index.js",
     output: {
         path: __dirname + "/public",
         filename: "import_tool.js"

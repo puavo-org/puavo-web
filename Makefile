@@ -48,7 +48,7 @@ js-watch:
 	webpack -w
 
 js-lint:
-	eslint $(shell git ls-files "import_tool_src/*.js")
+	eslint $(shell git ls-files "import-tool/*.js")
 
 js-clean:
 	rm -rf public/import_tool.js public/import_tool.js.map
