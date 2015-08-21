@@ -32,6 +32,13 @@ class Cell extends React.Component {
         this.setState({editing: true});
     }
 
+    componentDidUpdate(__, prevState) {
+        if (this.state.editing && !prevState.editing) {
+            const el = React.findDOMNode(this.refs.input);
+            el.select();
+        }
+    }
+
     render() {
         return (
             <div className="Cell">
@@ -46,6 +53,7 @@ class Cell extends React.Component {
                 {this.state.editing &&
                 <span>
                     <input type="text"
+                        ref="input"
                         value={this.state.customValue}
                         onChange={this.changeCustomValue.bind(this)}
                         onKeyUp={R.both(didPressEnter, this.setCustomValue.bind(this))}
