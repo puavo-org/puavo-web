@@ -1,18 +1,21 @@
+const REDUX_DEV = !!window.localStorage.REDUX_DEV;
 
 import React from "react";
+import R from "ramda";
 import {combineReducers, createStore, applyMiddleware, compose} from "redux";
 import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 import * as reducers from "./reducers";
-import {devTools} from "redux-devtools";
+import {devTools as createDevTools} from "redux-devtools";
 import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
 
 import ImportTool from "./components/ImportTool";
 
+const devTools = REDUX_DEV ? createDevTools() : R.identity;
 
 const createFinalStore = compose(
     applyMiddleware(thunk),
-    devTools(),
+    devTools,
     createStore
 );
 
@@ -26,9 +29,10 @@ React.render(
         <Provider store={store}>
             {() => <ImportTool />}
         </Provider>
+        {REDUX_DEV &&
         <DebugPanel top right bottom>
           <DevTools store={store}
                     monitor={LogMonitor} />
-        </DebugPanel>
+        </DebugPanel>}
     </div>
 , container);
