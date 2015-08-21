@@ -42,7 +42,7 @@ function importData_(data=initialImportData, action) {
 }
 
 const rowValue = R.curry((index, row) => getCellValue(row[index]));
-const isMissing = R.curry((index, row) => !row[index]);
+const isMissing = R.curry((index, row) => !getCellValue(row[index]));
 
 const isFirstName = R.equals(COLUMN_TYPES.first_name);
 const isLastName = R.equals(COLUMN_TYPES.last_name);
@@ -54,7 +54,7 @@ const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastName
     var username = [firstNameIndex, lastNameIndex]
         .map(i => usernameSlugify(rowValue(i, row)))
         .join(".");
-    return R.over(R.lensProp(usernameIndex), R.merge({customValue: username}), row);
+    return R.over(R.lensProp(usernameIndex), R.assoc("customValue", username), row);
 });
 
 
