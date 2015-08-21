@@ -16,7 +16,6 @@ build: symlink-config
 	npm install --registry http://registry.npmjs.org # nib for stylys
 	bundle exec rake assets:precompile
 	$(MAKE) tags
-	$(MAKE) js-lint
 	$(MAKE) js
 
 update-gemfile-lock: clean
