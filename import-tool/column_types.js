@@ -5,6 +5,7 @@ const COLUMN_TYPES = {
     email: {name: "Email", attribute: "email", id: "email"},
     username: {name: "Username", attribute: "username", id: "username"},
     user_type: {name: "User type", attribute: "roles", id: "user_type"},
+    unknown: {name: "Unkown", id: "unknown"},
     // role: {name: "Role (legacy)", attribute: "legacy_role"},
 };
 

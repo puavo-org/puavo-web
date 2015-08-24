@@ -11,7 +11,7 @@ const demoData = `
 Bruce, Wayne, batman@example.com
 Clark, Kent, superman@example.com
 Peter, Parker, spiderman@example.com
-Tony, Stark, ironman@example.com
+Tony, Stark, ironman@example.com, boss
 Bruce, Banner, hulk@example.com
 Matt, Murdock, daredevil@example.com
 Oliver, Queen, arrow@example.com

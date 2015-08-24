@@ -19,12 +19,17 @@ const initialImportData = {
 };
 
 const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalValue: val}, acc), {});
+const findLongestRow = R.compose(R.reduce(R.max, 0), R.map(R.prop("length")));
+const appendUnknownColumns = R.compose(R.flip(R.concat), R.repeat(COLUMN_TYPES.unknown), R.max(0));
 
 
 function importData_(data=initialImportData, action) {
     switch (action.type) {
         case "SET_IMPORT_DATA":
-            return R.assoc("rows", action.data.map(arrayToObj), data);
+            return R.evolve({
+                columns: appendUnknownColumns(findLongestRow(action.data) - data.columns.length),
+                rows: R.always(action.data.map(arrayToObj)),
+            }, data);
         case "SET_CUSTOM_VALUE":
             return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
         case "ADD_COLUMN":
