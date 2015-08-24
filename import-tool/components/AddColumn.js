@@ -1,12 +1,13 @@
 
 import React from "react";
+import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 import R from "ramda";
 
 import COLUMN_TYPES from "../column_types";
 import {addColumn} from "../actions";
 
-class AddColumn extends React.Component {
+class AddColumn extends PureComponent {
 
     constructor(props) {
         super(props);

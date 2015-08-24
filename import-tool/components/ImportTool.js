@@ -1,6 +1,7 @@
 
 import React from "react";
 import {connect} from "react-redux";
+import PureComponent from "react-pure-render/component";
 
 import {setImportData, startImport} from "../actions";
 import Cell from "./Cell";
@@ -20,7 +21,7 @@ James, Howlett, wolverine@example.com
 
 
 
-export default class ImportTool extends React.Component {
+export default class ImportTool extends PureComponent {
 
     onParseCSV(e) {
         var el = React.findDOMNode(this.refs.textarea);

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PureComponent from "react-pure-render/component";
 import R from "ramda";
 import {connect} from "react-redux";
 
@@ -7,7 +8,7 @@ import COLUMN_TYPES from "../column_types";
 import {changeColumnType, setDefaultValue} from "../actions";
 import {didPressEnter} from "../utils";
 
-class ColumnTypeSelector extends React.Component {
+class ColumnTypeSelector extends PureComponent {
 
     constructor(props) {
         super(props);

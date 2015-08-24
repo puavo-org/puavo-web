@@ -1,12 +1,13 @@
 
 import R from "ramda";
 import React from "react";
+import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 
 import {setCustomValue} from "../actions";
 import {getCellValue, didPressEnter} from "../utils";
 
-class Cell extends React.Component {
+class Cell extends PureComponent {
 
     constructor(props) {
         super(props);
