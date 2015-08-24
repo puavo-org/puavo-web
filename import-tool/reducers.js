@@ -31,7 +31,13 @@ function importData_(data=initialImportData, action) {
             rows: R.always(action.data.map(arrayToObj)),
         }, data);
     case "SET_CUSTOM_VALUE":
-        return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
+        const usernameIndex = R.findIndex(isUsername, data.columns);
+        var value = action.value;
+        if (action.columnIndex === usernameIndex) {
+            // XXX: Preserve dots
+            value = usernameSlugify(value);
+        }
+        return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, data);
     case "ADD_COLUMN":
         return R.evolve({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
     case "CHANGE_COLUMN_TYPE":
