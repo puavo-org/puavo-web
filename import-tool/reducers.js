@@ -25,24 +25,24 @@ const appendUnknownColumns = R.compose(R.flip(R.concat), R.repeat(COLUMN_TYPES.u
 
 function importData_(data=initialImportData, action) {
     switch (action.type) {
-        case "SET_IMPORT_DATA":
-            return R.evolve({
-                columns: appendUnknownColumns(findLongestRow(action.data) - data.columns.length),
-                rows: R.always(action.data.map(arrayToObj)),
-            }, data);
-        case "SET_CUSTOM_VALUE":
-            return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
-        case "ADD_COLUMN":
-            return R.evolve({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
-        case "CHANGE_COLUMN_TYPE":
-            return u.updateIn(["columns", action.columnIndex], COLUMN_TYPES[action.typeId], data);
-        case "SET_DEFAULT_VALUE":
-            return R.evolve({rows: R.map(row => {
-                if (getCellValue(row[action.columnIndex])) return row;
-                return u.updateIn([action.columnIndex, "customValue"], action.value, row);
-            })}, data);
-        default:
-            return data;
+    case "SET_IMPORT_DATA":
+        return R.evolve({
+            columns: appendUnknownColumns(findLongestRow(action.data) - data.columns.length),
+            rows: R.always(action.data.map(arrayToObj)),
+        }, data);
+    case "SET_CUSTOM_VALUE":
+        return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], action.value, data);
+    case "ADD_COLUMN":
+        return R.evolve({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
+    case "CHANGE_COLUMN_TYPE":
+        return u.updateIn(["columns", action.columnIndex], COLUMN_TYPES[action.typeId], data);
+    case "SET_DEFAULT_VALUE":
+        return R.evolve({rows: R.map(row => {
+            if (getCellValue(row[action.columnIndex])) return row;
+            return u.updateIn([action.columnIndex, "customValue"], action.value, row);
+        })}, data);
+    default:
+        return data;
     }
 }
 
@@ -86,14 +86,14 @@ export function rowStatus(states={}, action) {
     const setStatus = R.assoc(action.rowIndex, R.__, states);
 
     switch (action.type) {
-        case "SET_SENDING_ROW":
-            return setStatus({status: "sending"});
-        case "SET_OK_ROW":
-            return setStatus({status: "ok"});
-        case "SET_ERROR_ROW":
-            return setStatus({status: "error", error: action.error});
-        default:
-            return states;
+    case "SET_SENDING_ROW":
+        return setStatus({status: "sending"});
+    case "SET_OK_ROW":
+        return setStatus({status: "ok"});
+    case "SET_ERROR_ROW":
+        return setStatus({status: "error", error: action.error});
+    default:
+        return states;
     }
 }
 
