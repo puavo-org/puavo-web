@@ -604,6 +604,7 @@ en:
   language_sv_FI: Swedish (Finland)
   language_de_CH: German (Switzerland)
   language_fr_CH: French (Switzerland)
+  language_ar_SA: Arabic (Saudi Arabia)
   language_default: Default
   old_preferred_language: "Old setting: %{language}"
   timezone_empty: Timezone is not set

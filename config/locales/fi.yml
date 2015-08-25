@@ -600,6 +600,7 @@ fi:
   language_sv_FI: Ruotsi (Suomi)
   language_de_CH: Saksa (Sveitsi)
   language_fr_CH: Ranska (Sveitsi)
+  language_ar_SA: Arabia (Saudi-Arabia)
   language_default: Oletus
   old_preferred_language: "Vanha asetus: %{language}"
   timezone_empty: Aikavyöhykettä ei ole asetettu
