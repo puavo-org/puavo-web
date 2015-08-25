@@ -1,5 +1,9 @@
 const REDUX_DEV = !!window.localStorage.REDUX_DEV;
 
+require("babel-runtime/core-js/promise").default = require("bluebird");
+window.Promise = require("bluebird"); // extra override
+import "babel/polyfill";
+
 import React from "react";
 import R from "ramda";
 import {combineReducers, createStore, applyMiddleware, compose} from "redux";
