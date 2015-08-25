@@ -25,7 +25,7 @@
     "redux": "^1.0.0-rc",
     "redux-devtools": "^1.1.1",
     "redux-thunk": "^0.1.0",
-    "underscore.string": "^3.1.1",
+    "underscore.string": "^3.2.0",
     "updeep": "^0.7.0",
     "webpack": "^1.11.0"
   }

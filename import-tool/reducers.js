@@ -1,12 +1,17 @@
 
 import R from "ramda";
 import u from "updeep";
-import slugify from "underscore.string/slugify";
+import cleanDiacritics from "underscore.string/cleanDiacritics";
+import trim from "underscore.string/trim";
 
 import COLUMN_TYPES from "./column_types";
 import {getCellValue} from "./utils";
 
-const usernameSlugify = R.compose(R.invoker(2,"replace")(/[^a-z]/g, ""), slugify);
+const usernameSlugify = R.compose(
+    s => s.toLowerCase().replace(/[^a-z\.]/g, ""),
+    R.partialRight(trim, ". "),
+    cleanDiacritics
+);
 
 const initialImportData = {
     rows: [],
