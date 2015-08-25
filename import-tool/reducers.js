@@ -97,12 +97,8 @@ export function rowStatus(states={}, action) {
     const setStatus = R.assoc(action.rowIndex, R.__, states);
 
     switch (action.type) {
-    case "SET_SENDING_ROW":
-        return setStatus({status: "sending"});
-    case "SET_OK_ROW":
-        return setStatus({status: "ok"});
-    case "SET_ERROR_ROW":
-        return setStatus({status: "error", error: action.error});
+    case "SET_ROW_STATUS":
+        return setStatus({status: action.status});
     default:
         return states;
     }

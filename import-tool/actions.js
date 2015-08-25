@@ -2,6 +2,7 @@
 import Papa from "papaparse";
 import R from "ramda";
 
+import COLUMN_TYPES from "./column_types";
 import {getCellValue} from "./utils";
 
 export function setImportData(rawCSV) {
@@ -46,14 +47,21 @@ export function setDefaultValue(columnIndex, value) {
 
 const rowToRest = columns => R.compose(
     R.reduce((memo, [i, cell]) => {
-        return R.assoc(R.path([i, "attribute"], columns), getCellValue(cell), memo);
+        var restAttr = columns[i];
+        if (restAttr === COLUMN_TYPES.unknown) return memo;
+        return R.assoc(restAttr.attribute, getCellValue(cell), memo);
     }, {}),
     R.toPairs
 );
 
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
+
 export function startImport(rowIndex=0) {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
+
         var {importData: {rows, columns}} = getState();
+
+        const next = () => dispatch(startImport(rowIndex + 1));
 
         if (rows.length < rowIndex) return;
 
@@ -61,16 +69,44 @@ export function startImport(rowIndex=0) {
         console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));
 
         dispatch({
-            type: "SET_SENDING_ROW",
+            type: "SET_ROW_STATUS",
+            status: "starting",
+            rowIndex,
+        });
+        var res;
+
+        var body = JSON.stringify(restStyleData[rowIndex]);
+        console.log("sending body", body);
+        try {
+            res = await window.fetch("/restproxy/v3/users", {
+                body,
+                method: "post",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": CSRF_TOKEN,
+                },
+            });
+        } catch(error) {
+            dispatch({
+                type: "SET_ROW_STATUS",
+                status: "error",
+                error,
+                rowIndex,
+            });
+            console.log("starting next");
+            return next();
+        }
+
+        var data = await res.json();
+
+        dispatch({
+            type: "SET_ROW_STATUS",
+            status: `status ${res.status}`,
+            data,
             rowIndex,
         });
 
-        setTimeout(() => {
-            dispatch({
-                type: "SET_OK_ROW",
-                rowIndex,
-            });
-            dispatch(startImport(rowIndex + 1));
-        }, 500);
+        next();
     };
 }

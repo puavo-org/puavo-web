@@ -1,5 +1,6 @@
 
 import React from "react";
+import R from "ramda";
 import {connect} from "react-redux";
 import PureComponent from "react-pure-render/component";
 
@@ -72,7 +73,7 @@ export default class ImportTool extends PureComponent {
                             return (
                                 <tr>
                                     <td>
-                                        {rowStatus[rowIndex] || "waiting"}
+                                        {R.path([rowIndex, "status"], rowStatus) || "waiting"}
                                     </td>
                                     {columns.map((columnType, columnIndex) => {
                                         return (
