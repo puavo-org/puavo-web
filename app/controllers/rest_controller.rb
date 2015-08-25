@@ -28,6 +28,7 @@ class RestController < ApplicationController
     }.merge(options))
 
     response.headers.merge!(res.headers)
-    render :text => res.to_s
+
+    render :text => res.to_s, :status => res.code
   end
 end
