@@ -1,12 +1,16 @@
 
-const COLUMN_TYPES = {
-    first_name: {name: "First name", attribute: "first_name", id: "first_name"},
-    last_name: {name: "Last name", attribute: "last_name", id: "last_name"},
-    email: {name: "Email", attribute: "email", id: "email"},
-    username: {name: "Username", attribute: "username", id: "username"},
-    user_type: {name: "User type", attribute: "roles", id: "user_type"},
-    unknown: {name: "Unkown", id: "unknown"},
-    // role: {name: "Role (legacy)", attribute: "legacy_role"},
-};
+import R from "ramda";
 
-export default COLUMN_TYPES;
+const COLUMN_TYPES = [
+    {name: "First name", attribute: "first_name", id: "first_name"},
+    {name: "Last name", attribute: "last_name", id: "last_name"},
+    {name: "Email", attribute: "email", id: "email"},
+    {name: "Username", attribute: "username", id: "username"},
+    {name: "User type", attribute: "roles", id: "user_type"},
+    {name: "Unkown", id: "unknown"},
+    // {name: "Role (legacy)", attribute: "legacy_role"},
+];
+
+const toMapId = R.reduce((map, type) => R.assoc(type.id, type, map), {});
+
+export default toMapId(COLUMN_TYPES);
