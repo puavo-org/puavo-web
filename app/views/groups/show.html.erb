@@ -1,3 +1,56 @@
+<% if new_group_management? %>
+<table class="basic-info">
+  <tr>
+    <td>
+      <b><%= t('activeldap.attributes.group.displayName') %>:</b>
+    </td>
+    <td>
+      <%=h @group.displayName %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <b><%= t('activeldap.attributes.group.cn') %></b>:
+    </td>
+    <td>
+      <%=h @group.cn %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <b><%= t('activeldap.attributes.group.gidNumber') %></b>:
+    </td>
+    <td>
+      <%=h @group.gidNumber %>
+    </td>
+  </tr>
+</table>
+
+<div class="content-box list members">
+  <%= render :partial => "members" %>
+</div>
+
+<div class="content-box list">
+  <h3><%= t('.add_user_title') %></h3>
+  <div class="row">
+    <div class="column_1">
+      <%= t('.description') %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column_1">
+      <%= text_field_tag( "user_search",
+          nil,
+          :class => "user_search",
+          :size => 50,
+          :placeholder => t('.placeholder_for_search') ) %>
+    </div>
+  </div>
+</div>
+
+<% else %>
+
 <p>
   <b><%= t('activeldap.attributes.group.displayName') %>:</b>
   <%=h @group.displayName %>
@@ -39,6 +92,8 @@
   </span>
 </p>
 
+<% end %>
+
 <% content_for :right do %>
 <ul class="sub-tools">
   <li>
@@ -61,4 +116,10 @@
     </li>
   </ul>
 </ul>
+<% end %>
+
+<% if new_group_management? %>
+  <% content_for :javascript do %>
+    <%= javascript_tag "window.USER_SEARCH_URLS = {'group-users-serach': '#{ @group.puavoId }/user_search?words='}" %>
+  <% end %>
 <% end %>

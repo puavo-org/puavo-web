@@ -68,6 +68,14 @@ window.jQuery(document).ready(function($) {
     width: 'auto'
   });
 
+  $('.user_search').liveSearch({
+    minLength: 2,
+    url: window.USER_SEARCH_URLS,
+    duration: 400,
+    typeDelay: 400,
+    width: 'auto'
+  });
+
   // Open external links always in a new tab
   $('a[href^=http]').click(function() {
     window.open(this.href);

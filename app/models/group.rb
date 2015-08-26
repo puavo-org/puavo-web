@@ -46,5 +46,9 @@ class Group < BaseGroup
       "samba_SID" => self.sambaSID,
       "samba_group_type" => self.sambaGroupType }
   end
+
+  def member?(user_id)
+    self.members.map{ |u| u.puavoId }.include?(user_id.to_i)
+  end
 end
 
