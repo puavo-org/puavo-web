@@ -72,29 +72,26 @@ jQuery.fn.liveSearch = function (conf) {
 	var liveSearch	= jQuery('#' + config.id);
 	var loadingRequestCounter = 0;
 
-	// Create live-search if it doesn't exist
-	if (!liveSearch.length) {
-		liveSearch = jQuery('<div id="' + config.id + '"></div>')
-						.appendTo(document.body)
-						.hide()
-						.slideUp(0);
+	liveSearch = jQuery('<div id="' + config.id + '"></div>')
+					.appendTo(document.body)
+					.hide()
+					.slideUp(0);
 
-		for (key in config.url) {
-			liveSearch.append('<div id="' + key + '"></div>');
-			searchStatus[key] = false;
-		}
-
-		// Close live-search when clicking outside it
-		jQuery(document.body).click(function(event) {
-			var clicked = jQuery(event.target);
-
-			if (!(clicked.is('#' + config.id) || clicked.parents('#' + config.id).length || clicked.is('input'))) {
-				liveSearch.slideUp(config.duration, function () {
-					config.onSlideUp();
-				});
-			}
-		});
+	for (key in config.url) {
+		liveSearch.append('<div id="' + key + '"></div>');
+		searchStatus[key] = false;
 	}
+
+	// Close live-search when clicking outside it
+	jQuery(document.body).click(function(event) {
+		var clicked = jQuery(event.target);
+
+		if (!(clicked.is('#' + config.id) || clicked.parents('#' + config.id).length || clicked.is('input'))) {
+			liveSearch.slideUp(config.duration, function () {
+				config.onSlideUp();
+			});
+		}
+	});
 
 	return this.each(function () {
 		var input							= jQuery(this).attr('autocomplete', 'off');
