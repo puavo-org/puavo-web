@@ -66,13 +66,13 @@ export default class ImportTool extends PureComponent {
                     <table>
                         <thead>
                             <tr>
-                                <th>
+                                <th key="status">
                                     Status
                                 </th>
 
                                 {columns.map((columnType, columnIndex) => {
                                     return (
-                                        <th>
+                                        <th key={columnIndex}>
                                             {columnType.name}
                                             <ColumnTypeSelector columnIndex={columnIndex} />
                                         </th>
@@ -88,13 +88,13 @@ export default class ImportTool extends PureComponent {
                         <tbody>
                             {rows.map((row, rowIndex) => {
                                 return (
-                                    <tr>
+                                    <tr key={rowIndex}>
                                         <td>
                                             {R.path([rowIndex, "status"], rowStatus) || "waiting"}
                                         </td>
                                         {columns.map((columnType, columnIndex) => {
                                             return (
-                                                <td>
+                                                <td key={columnIndex}>
                                                     <Cell value={row[columnIndex]} rowIndex={rowIndex} columnIndex={columnIndex} />
                                                 </td>
                                             );
@@ -110,7 +110,7 @@ export default class ImportTool extends PureComponent {
 
                     <h4>Missing required columns</h4>
                     <ul>
-                        {missingColumns.map(c => <li>{c.name}</li>)}
+                        {missingColumns.map(c => <li key={c.id}>{c.name}</li>)}
                     </ul>
 
                 </div>}

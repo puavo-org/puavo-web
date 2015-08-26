@@ -27,7 +27,7 @@ class ColumnTypeSelector extends PureComponent {
                     value={this.props.currentTypeId}
                     onChange={e => this.props.changeColumnType(this.props.columnIndex, e.target.value)}>
                     {R.values(COLUMN_TYPES).map(columnType => {
-                        return <option value={columnType.id}>{columnType.name}</option>;
+                        return <option key={columnType.id} value={columnType.id}>{columnType.name}</option>;
                     })}
                 </select>
                 <br />

@@ -19,7 +19,7 @@ class AddColumn extends PureComponent {
             <div className="AddColumn">
                 <select value={this.state.value} onChange={e => this.setState({value: e.target.value})}>
                     {R.toPairs(COLUMN_TYPES).map(([columnType, column]) => {
-                        return <option value={columnType}>{column.name}</option>;
+                        return <option key={columnType} value={columnType}>{column.name}</option>;
                     })}
                 </select>
                 <button
