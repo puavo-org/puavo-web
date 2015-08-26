@@ -98,7 +98,7 @@ export function rowStatus(states={}, action) {
 
     switch (action.type) {
     case "SET_ROW_STATUS":
-        return setStatus({status: action.status});
+        return setStatus(R.omit(["type"], action));
     default:
         return states;
     }

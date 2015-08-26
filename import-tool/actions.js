@@ -5,6 +5,8 @@ import R from "ramda";
 import COLUMN_TYPES from "./column_types";
 import {getCellValue} from "./utils";
 
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
+
 export function setImportData(rawCSV) {
     var res = Papa.parse(rawCSV.trim());
     // XXX: Assert res.errors
@@ -54,29 +56,35 @@ const rowToRest = columns => R.compose(
     R.toPairs
 );
 
-const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
+
+const isValidationError = R.compose(
+    R.equals("ValidationError"),
+    R.path(["error", "code"])
+);
 
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
         var {importData: {rows, columns}} = getState();
 
-        const next = () => dispatch(startImport(rowIndex + 1));
+        const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
+        const dispatchStatus = R.compose(dispatch, R.merge({
+            type: "SET_ROW_STATUS",
+            rowIndex,
+        }));
 
-        if (rows.length < rowIndex) return;
+        if (rows.length < rowIndex+1) return;
 
         var restStyleData = rows.map(rowToRest(columns));
         console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));
 
-        dispatch({
-            type: "SET_ROW_STATUS",
-            status: "starting",
-            rowIndex,
-        });
+        dispatchStatus({status: "starting"});
+
         var res;
 
         var body = JSON.stringify(restStyleData[rowIndex]);
         console.log("sending body", body);
+
         try {
             res = await window.fetch("/restproxy/v3/users", {
                 body,
@@ -88,25 +96,31 @@ export function startImport(rowIndex=0) {
                 },
             });
         } catch(error) {
-            dispatch({
-                type: "SET_ROW_STATUS",
-                status: "error",
-                error,
-                rowIndex,
-            });
-            console.log("starting next");
+            dispatchStatus({status: "fetch error", error});
             return next();
         }
 
-        var data = await res.json();
+        var responseData;
 
-        dispatch({
-            type: "SET_ROW_STATUS",
-            status: `status ${res.status}`,
-            data,
-            rowIndex,
-        });
+        try {
+            responseData = await res.json();
+        } catch(error) {
+            dispatchStatus({status: "failed to parse response json", error});
+            return next();
+        }
 
+        if (res.status === 200) {
+            dispatchStatus({status: "ok"});
+            return next();
+        }
+
+        if (res.status === 400 && isValidationError(responseData)) {
+            dispatchStatus({status: "Validation error", responseData});
+            return next();
+        }
+
+        dispatchStatus({status: "Unkown error", responseData});
         next();
+
     };
 }
