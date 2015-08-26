@@ -52,6 +52,7 @@ PuavoUsers::Application.routes.draw do
     resources :schools
 
     scope :path => ':school_id' do
+      match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get
       match 'groups/:id/members' => 'groups#members', :as => :add_role_group, :via => :get
       match 'groups/:id/add_role/:role_id' => 'groups#add_role', :as => :add_role_group, :via => :put

@@ -238,6 +238,7 @@ fi:
       title: Jäsenet
     user_search:
       member: Jäsen
+      add_to_group: Liitä ryhmään
   schools:
     index:
       actions: Toiminnot
