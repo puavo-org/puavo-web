@@ -237,10 +237,19 @@ en:
     show:
       roles_and_members: Roles and members
       other_roles: Other roles
+      add_user_title: Add user to group
+      description: Write to search field name of user and press "Add" button.
+      placeholder_for_search: Name of user
     new:
       title: New group
     edit:
       title: Editing group
+    members:
+      title: Members
+      remove: Remove
+    user_search:
+      member: Member
+      add_to_group: Add
   schools:
     index:
       actions: Actions
