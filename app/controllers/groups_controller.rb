@@ -117,6 +117,24 @@ class GroupsController < ApplicationController
     end
   end
 
+  def add_user
+    @group = Group.find(params[:id])
+    @user = User.find(params[:user_id])
+
+    Group.ldap_modify_operation(@group.dn, :add, [{ "memberUid" => [@user.uid]},
+                                                  { "member" => [@user.dn.to_s] }])
+
+    @group.reload
+
+
+    @members = @group.members
+
+    respond_to do |format|
+      format.html { render :text => "OK" }
+      format.js
+    end
+  end
+
   def add_role
     @group = Group.find(params[:id])
     @role = Role.find(params[:role_id])

@@ -1,0 +1,2 @@
+$(".members").html("<%= escape_javascript(render(:partial => "members")) %>")
+$("#member_status_<%= @group.puavoId.to_s %>_<%= @user.puavoId.to_s %>").html("Jäsen")
