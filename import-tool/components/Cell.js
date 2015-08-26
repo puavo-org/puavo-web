@@ -75,7 +75,7 @@ Cell.propTypes = {
     columnIndex: React.PropTypes.number.isRequired,
     rowIndex: React.PropTypes.number.isRequired,
     setCustomValue: React.PropTypes.func.isRequired,
-    value: React.PropTypes.object.isRequired,
+    value: React.PropTypes.object,
 };
 
 export default connect(null, {setCustomValue})(Cell);
