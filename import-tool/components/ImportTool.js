@@ -27,7 +27,7 @@ const findMissingRequiredColumns = R.difference(REQUIRED_COLUMNS);
 
 const isRequired = R.propEq("required", true);
 
-function hasValueInRequiredCells(columns, rows) {
+function hasValuesInRequiredCells(columns, rows) {
     return rows.every(row => {
         return columns.every((column, i) => {
             if (!isRequired(column)) return true;
@@ -62,7 +62,7 @@ export default class ImportTool extends PureComponent {
 
                 {rows.length > 0 &&
                 <div className="ImportTool-editor">
-                    data: {hasValueInRequiredCells(columns, rows) ? "ok" : "no"}
+                    data: {hasValuesInRequiredCells(columns, rows) ? "ok" : "no"}
                     <table>
                         <thead>
                             <tr>
@@ -117,7 +117,7 @@ export default class ImportTool extends PureComponent {
 
 
                 <button
-                    disabled={missingColumns.length > 0 || !hasValueInRequiredCells(columns, rows)}
+                    disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
                     onClick={this.startImport.bind(this)}>import</button>
             </div>
         );
