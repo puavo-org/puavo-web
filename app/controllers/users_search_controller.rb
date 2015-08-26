@@ -3,28 +3,28 @@ class UsersSearchController < ApplicationController
 
   # GET /users/search?words=Williams
   def index
-    words = Net::LDAP::Filter.escape( params[:words] )
+    words = params[:words]
     
     # Users search
-    @users = ldap_search( 'user',
-                          ["sn", "givenName", "uid"],
-                          lambda{ |v| "#{v['sn'].first} #{v['givenName'].first}" },
-                          lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
-                          words )
+    @users = User.words_search_and_sort_by_name(
+      ["sn", "givenName", "uid"],
+      lambda{ |v| "#{v['sn'].first} #{v['givenName'].first}" },
+      lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
+      words )
 
     # Roles search
-    @roles = ldap_search( 'role',
-                            ['displayName'],
-                            'displayName',
-                            lambda { |w| "(displayName=*#{w}*)" },
-                            words )
+    @roles = Role.words_search_and_sort_by_name(
+      ['displayName'],
+      'displayName',
+      lambda { |w| "(displayName=*#{w}*)" },
+      words )
 
     # Groups search
-    @groups = ldap_search( 'group',
-                            ['displayName', 'cn'],
-                            'displayName',
-                            lambda { |w| "(|(displayName=*#{w}*)(cn=*#{w}*))" },
-                            words )
+    @groups = Group.words_search_and_sort_by_name(
+      ['displayName', 'cn'],
+      'displayName',
+      lambda { |w| "(|(displayName=*#{w}*)(cn=*#{w}*))" },
+      words )
 
     @schools = Hash.new
     School.search_as_utf8( :scope => :one,
@@ -41,25 +41,4 @@ class UsersSearchController < ApplicationController
     end
   end
 
-  private
-
-  def ldap_search(model, attributes, name_attribute_block, filter_block, words)
-    filter = "(&" + words.split(" ").map do |w|
-      filter_block.call(w)
-    end.join() + ")"
-
-    Module.class_eval(model.capitalize).search_as_utf8(
-      :filter => filter,
-      :scope => :one,
-      :attributes => (["puavoId", "puavoSchool"] + attributes)
-    ).select do |dn, v|
-        not Array(v["puavoSchool"]).empty?
-    end.map do |dn, v|
-      { "id" => v["puavoId"].first,
-        "school_id" => v["puavoSchool"].first.match(/^puavoId=([^,]+)/).to_a[1],
-        "puavoSchool" => v["puavoSchool"].first,
-        "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block].first
-      }.merge( attributes.inject({}) { |result, a| result.merge(a => v[a]) } )
-    end.sort{ |a,b| a['name'] <=> b['name'] }
-  end
 end
