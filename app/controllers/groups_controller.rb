@@ -117,6 +117,22 @@ class GroupsController < ApplicationController
     end
   end
 
+  def remove_user
+    @group = Group.find(params[:id])
+    @user = User.find(params[:user_id])
+
+    @group.remove_user(@user)
+    @group.reload
+
+
+    @members = @group.members
+
+    respond_to do |format|
+      format.html { render :text => "OK" }
+      format.js
+    end
+  end
+
   def add_user
     @group = Group.find(params[:id])
     @user = User.find(params[:user_id])
