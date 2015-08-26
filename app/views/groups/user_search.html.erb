@@ -1,0 +1,45 @@
+<% if @users.length > 0 %>
+<% attributes = ["displayName", "uid"] %>
+<fieldset class="search_result">
+<table class="list widelist">
+  <tr class="thead">
+    <% attributes.each do |attribute| %>
+    <th><%= t("activeldap.attributes.user.#{attribute}") %></th>
+    <% end %>
+    <th><%= t('activeldap.attributes.school.displayName') %></th>
+    <th><%= t('groups.index.actions') %></th>
+  </tr>
+  <% @users.each do |user| %>
+  <tr>
+    <td data-title="Name">
+      <% if current_user.organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(user['puavoSchool']) %>
+      <%= link_to user["name"], user_path(user['school_id'], user['id']) %>
+      <% else %>
+      <%=h user["name"] %>
+      <% end %>
+    </td>
+    <% attributes[1..attributes.length].each do |attribute| %>
+    <td data-title="<%=t("activeldap.attributes.user.#{attribute}") %>">
+      <%=h user[attribute].first %>
+    </td>
+    <% end %>
+    <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
+      <%=h @schools[user["school_id"]] %>
+    </td>
+    <td id="member_status_<%= @group.puavoId.to_s %>_<%= user["id"].to_s %>">
+      <% if @group.member?(user["id"]) %>
+        <%= t('.member')%>
+      <% else %>
+        <%= link_to(t('.add_to_group'),
+                    add_user_group_path(:school_id => user["school_id"],
+                    :id => @group.puavoId, :user_id => user["id"]),
+                    :remote => true,
+                    :method => :put,
+                    :class => "btn") %>
+      <% end %>
+    </td>
+  </tr>
+  <% end %>
+</table>
+</div>
+<% end %>
