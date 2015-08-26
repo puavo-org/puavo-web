@@ -76,6 +76,28 @@ class LdapBase < ActiveLdap::Base
     end
   end
 
+  def self.words_search_and_sort_by_name(attributes, name_attribute_block, filter_block, words)
+    words = Net::LDAP::Filter.escape( words )
+
+    filter = "(&" + words.split(" ").map do |w|
+      filter_block.call(w)
+    end.join() + ")"
+
+    search_as_utf8(
+      :filter => filter,
+      :scope => :one,
+      :attributes => (["puavoId", "puavoSchool"] + attributes)
+    ).select do |dn, v|
+      not Array(v["puavoSchool"]).empty?
+    end.map do |dn, v|
+      { "id" => v["puavoId"].first,
+        "school_id" => v["puavoSchool"].first.match(/^puavoId=([^,]+)/).to_a[1],
+        "puavoSchool" => v["puavoSchool"].first,
+        "name" => name_attribute_block.class == Proc ? name_attribute_block.call(v) : v[name_attribute_block].first
+      }.merge( attributes.inject({}) { |result, a| result.merge(a => v[a]) } )
+    end.sort{ |a,b| a['name'] <=> b['name'] }
+  end
+
   def find_self
     self.find(self.dn)
   end
