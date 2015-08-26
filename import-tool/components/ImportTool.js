@@ -4,10 +4,12 @@ import R from "ramda";
 import {connect} from "react-redux";
 import PureComponent from "react-pure-render/component";
 
+import {REQUIRED_COLUMNS} from "../column_types";
 import {setImportData, startImport} from "../actions";
 import Cell from "./Cell";
 import AddColumn from "./AddColumn";
 import ColumnTypeSelector from "./ColumnTypeSelector";
+import {getCellValue} from "../utils";
 
 const demoData = `
 Bruce, Wayne, batman@example.com
@@ -21,6 +23,18 @@ James, Howlett, wolverine@example.com
 `.trim();
 
 
+const findMissingRequiredColumns = R.difference(REQUIRED_COLUMNS);
+
+const isRequired = R.propEq("required", true);
+
+function hasValueInRequiredCells(columns, rows) {
+    return rows.every(row => {
+        return columns.every((column, i) => {
+            if (!isRequired(column)) return true;
+            return !!getCellValue(row[i]);
+        });
+    });
+}
 
 export default class ImportTool extends PureComponent {
 
@@ -34,64 +48,77 @@ export default class ImportTool extends PureComponent {
     }
 
     render() {
-        var {columns, rows, rowStatus} = this.props;
+        const {columns, rows, rowStatus} = this.props;
+        const missingColumns = findMissingRequiredColumns(columns);
 
         return (
             <div className="ImportTool">
 
                 {rows.length == 0 &&
-                <div className="ImportTool-data-selector">
+                <div className="ImportTool-data-selector" >
                     <textarea className="ImportTool-textarea" ref="textarea" defaultValue={demoData} />
                     <button onClick={this.onParseCSV.bind(this)}>Parse</button>
                 </div>}
 
                 {rows.length > 0 &&
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                                Status
-                            </th>
+                <div className="ImportTool-editor">
+                    data: {hasValueInRequiredCells(columns, rows) ? "ok" : "no"}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Status
+                                </th>
 
-                            {columns.map((columnType, columnIndex) => {
+                                {columns.map((columnType, columnIndex) => {
+                                    return (
+                                        <th>
+                                            {columnType.name}
+                                            <ColumnTypeSelector columnIndex={columnIndex} />
+                                        </th>
+                                    );
+                                })}
+                                <th>
+                                    Add column
+                                    <br />
+                                    <AddColumn />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {rows.map((row, rowIndex) => {
                                 return (
-                                    <th>
-                                        {columnType.name}
-                                        <ColumnTypeSelector columnIndex={columnIndex} />
-                                    </th>
+                                    <tr>
+                                        <td>
+                                            {R.path([rowIndex, "status"], rowStatus) || "waiting"}
+                                        </td>
+                                        {columns.map((columnType, columnIndex) => {
+                                            return (
+                                                <td>
+                                                    <Cell value={row[columnIndex]} rowIndex={rowIndex} columnIndex={columnIndex} />
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
                                 );
+
                             })}
-                            <th>
-                                Add column
-                                <br />
-                                <AddColumn />
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {rows.map((row, rowIndex) => {
-                            return (
-                                <tr>
-                                    <td>
-                                        {R.path([rowIndex, "status"], rowStatus) || "waiting"}
-                                    </td>
-                                    {columns.map((columnType, columnIndex) => {
-                                        return (
-                                            <td>
-                                                <Cell value={row[columnIndex]} rowIndex={rowIndex} columnIndex={columnIndex} />
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            );
 
-                        })}
+                        </tbody>
 
-                    </tbody>
+                    </table>
 
-                </table>}
+                    <h4>Missing required columns</h4>
+                    <ul>
+                        {missingColumns.map(c => <li>{c.name}</li>)}
+                    </ul>
 
-                <button onClick={this.startImport.bind(this)}>import</button>
+                </div>}
+
+
+                <button
+                    disabled={missingColumns.length > 0 || !hasValueInRequiredCells(columns, rows)}
+                    onClick={this.startImport.bind(this)}>import</button>
             </div>
         );
     }
