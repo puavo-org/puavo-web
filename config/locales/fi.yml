@@ -236,6 +236,7 @@ fi:
       title: "Muokataan ryhmää"
     members:
       title: Jäsenet
+      remove: Poista ryhmästä
     user_search:
       member: Jäsen
       add_to_group: Liitä ryhmään
