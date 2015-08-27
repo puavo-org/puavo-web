@@ -167,11 +167,13 @@
 <h3><%= t('shared.kernel_settings') %></h3>
 
 <table class="widelist">
-<% if ["thinclient", "fatclient", "laptop", "ltspserver"].include?(device.puavoDeviceType) %>
+<% if device.puavoDeviceType == "laptop" %>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, ":puavoDeviceCurrentImage" %></td>
   <td class="value_td"><%=h device.puavoDeviceCurrentImage %></td>
 </tr>
+<% end %>
+<% if ["thinclient", "fatclient", "laptop", "ltspserver"].include?(device.puavoDeviceType) %>
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceImage" %></td>
   <td class="value_td"><%=h device.puavoDeviceImage %></td>
