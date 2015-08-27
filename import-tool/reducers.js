@@ -40,7 +40,6 @@ function importData_(data=initialImportData, action) {
         const usernameIndex = R.findIndex(isUsername, data.columns);
         var value = action.value;
         if (action.columnIndex === usernameIndex) {
-            // XXX: Preserve dots
             value = usernameSlugify(value);
         }
         return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, data);
