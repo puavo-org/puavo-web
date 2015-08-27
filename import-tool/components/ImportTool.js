@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import PureComponent from "react-pure-render/component";
 
 import {REQUIRED_COLUMNS} from "../column_types";
-import {setImportData, startImport} from "../actions";
+import {setImportData, startImport, dropRow} from "../actions";
 import Cell from "./Cell";
 import AddColumn from "./AddColumn";
 import ColumnTypeSelector from "./ColumnTypeSelector";
@@ -70,6 +70,10 @@ export default class ImportTool extends PureComponent {
                                     Status
                                 </th>
 
+                                <th key="delete">
+                                    Status
+                                </th>
+
                                 {columns.map((columnType, columnIndex) => {
                                     return (
                                         <th key={columnIndex}>
@@ -92,6 +96,14 @@ export default class ImportTool extends PureComponent {
                                         <td>
                                             {R.path([rowIndex, "status"], rowStatus) || "waiting"}
                                         </td>
+
+                                        <td>
+                                            <button onClick={e => {
+                                                e.preventDefault();
+                                                this.props.dropRow(rowIndex);
+                                            }}>x</button>
+                                        </td>
+
                                         {columns.map((columnType, columnIndex) => {
                                             return (
                                                 <td key={columnIndex}>
@@ -127,6 +139,7 @@ export default class ImportTool extends PureComponent {
 ImportTool.propTypes = {
     setImportData: React.PropTypes.func.isRequired,
     startImport: React.PropTypes.func.isRequired,
+    dropRow: React.PropTypes.func.isRequired,
     rows: React.PropTypes.array.isRequired,
     columns: React.PropTypes.array.isRequired,
     rowStatus: React.PropTypes.object.isRequired,
@@ -137,4 +150,4 @@ function select(state) {
     return {rowStatus, rows, columns};
 }
 
-export default connect(select, {setImportData, startImport})(ImportTool);
+export default connect(select, {setImportData, startImport, dropRow})(ImportTool);

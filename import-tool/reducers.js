@@ -26,6 +26,7 @@ const initialImportData = {
 const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalValue: val}, acc), {});
 const findLongestRowLength = R.compose(R.reduce(R.max, 0), R.map(R.prop("length")));
 const appendUnknownColumns = R.compose(R.flip(R.concat), R.repeat(COLUMN_TYPES.unknown), R.max(0));
+const removeByIndex = R.remove(R.__, 1);
 
 
 function importData_(data=initialImportData, action) {
@@ -45,6 +46,8 @@ function importData_(data=initialImportData, action) {
         return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, data);
     case "ADD_COLUMN":
         return R.evolve({columns: R.append(COLUMN_TYPES[action.columnType])}, data);
+    case "DROP_ROW":
+        return R.evolve({rows: removeByIndex(action.rowIndex)}, data);
     case "CHANGE_COLUMN_TYPE":
         return u.updateIn(["columns", action.columnIndex], COLUMN_TYPES[action.typeId], data);
     case "SET_DEFAULT_VALUE":

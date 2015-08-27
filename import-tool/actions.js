@@ -47,6 +47,13 @@ export function setDefaultValue(columnIndex, value) {
     };
 }
 
+export function dropRow(rowIndex) {
+    return {
+        type: "DROP_ROW",
+        rowIndex,
+    };
+}
+
 const rowToRest = columns => R.compose(
     R.reduce((memo, [i, cell]) => {
         var restAttr = columns[i];
