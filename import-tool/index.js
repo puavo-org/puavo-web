@@ -24,19 +24,23 @@ const createFinalStore = compose(
 );
 
 const combinedReducers = combineReducers(reducers);
-const store = createFinalStore(combinedReducers);
 
-var container = document.getElementById("import-tool");
-container.innerHTML = "";
-React.render(
-    <div>
-        <Provider store={store}>
-            {() => <ImportTool />}
-        </Provider>
-        {REDUX_DEV &&
-        <DebugPanel top right bottom>
-          <DevTools store={store}
-                    monitor={LogMonitor} />
-        </DebugPanel>}
-    </div>
-, container);
+function createImportTool(containerId, currentSchoolId) {
+    var container = document.getElementById(containerId);
+    const store = createFinalStore(combinedReducers);
+    container.innerHTML = "";
+    React.render(
+        <div>
+            <Provider store={store}>
+                {() => <ImportTool />}
+            </Provider>
+            {REDUX_DEV &&
+            <DebugPanel top right bottom>
+              <DevTools store={store}
+                        monitor={LogMonitor} />
+            </DebugPanel>}
+        </div>
+    , container);
+}
+
+window.createImportTool = createImportTool;
