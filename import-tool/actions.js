@@ -58,7 +58,12 @@ const rowToRest = columns => R.compose(
     R.reduce((memo, [i, cell]) => {
         var restAttr = columns[i];
         if (restAttr === COLUMN_TYPES.unknown) return memo;
-        return R.assoc(restAttr.attribute, getCellValue(cell), memo);
+        var val = getCellValue(cell);
+        if (restAttr.attribute === "roles") {
+            val = [val];
+        }
+
+        return R.assoc(restAttr.attribute, val, memo);
     }, {}),
     R.toPairs
 );
