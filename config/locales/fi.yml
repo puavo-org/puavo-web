@@ -520,6 +520,7 @@ fi:
         puavoDeviceAutoPowerOffMode_custom: Mukautettu
         puavoDeviceOnHour: "Päivän aloitus"
         puavoDeviceOffHour: "Päivän lopetus"
+        puavoDeviceCurrentImage: Käytössä oleva työpöytäkuva
         puavoDeviceImage: Työpöytäkuva
         puavoDeviceBootImage: Käynnistyslevykuva
         puavoPreferredServer: Ensisijainen LTSP-palvelin

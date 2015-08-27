@@ -524,6 +524,7 @@ en:
         puavoDeviceAutoPowerOffMode_custom: Custom
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
+        puavoDeviceCurrentImage: Current Desktop Image
         puavoDeviceImage: Desktop Image
         puavoDeviceBootImage: Device boot image
         puavoPreferredServer: Preferred LTSP server
