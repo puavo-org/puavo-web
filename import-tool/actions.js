@@ -77,7 +77,7 @@ const isValidationError = R.compose(
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
-        var {importData: {rows, columns}} = getState();
+        var {importData: {rows, columns}, defaultSchoolDn} = getState();
 
         const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
         const dispatchStatus = R.compose(dispatch, R.merge({
@@ -88,6 +88,8 @@ export function startImport(rowIndex=0) {
         if (rows.length < rowIndex+1) return;
 
         var restStyleData = rows.map(rowToRest(columns));
+        restStyleData = R.map(R.assoc("school_dns", [defaultSchoolDn]), restStyleData);
+
         console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));
 
         dispatchStatus({status: "starting"});
@@ -127,10 +129,15 @@ export function startImport(rowIndex=0) {
         }
 
         if (res.status === 400 && isValidationError(responseData)) {
-            dispatchStatus({status: "Validation error", responseData});
+            console.error("Validation error", responseData);
+            dispatchStatus({
+                status: "Validation error",
+                attributeErrors: responseData.error.meta.invalid_attributes,
+            });
             return next();
         }
 
+        console.error("Unkown error", responseData);
         dispatchStatus({status: "Unkown error", responseData});
         next();
 
