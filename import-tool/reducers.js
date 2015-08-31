@@ -106,4 +106,13 @@ export function rowStatus(states={}, action) {
     }
 }
 
+export function defaultSchoolDn(schoolDn=null, action) {
+    switch (action.type) {
+    case "SET_DEFAULT_SCHOOL":
+        return action.schoolDn;
+    default:
+        return schoolDn;
+    }
+}
+
 

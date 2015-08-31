@@ -25,12 +25,17 @@ const createFinalStore = compose(
 
 const combinedReducers = combineReducers(reducers);
 
-function createImportTool(containerId, currentSchoolId) {
+function createImportTool(containerId, schoolDn) {
     var container = document.getElementById(containerId);
     const store = createFinalStore(combinedReducers);
+    store.dispatch({
+        type: "SET_DEFAULT_SCHOOL",
+        schoolDn,
+    });
     container.innerHTML = "";
     React.render(
         <div>
+            {__webpack_hash__}
             <Provider store={store}>
                 {() => <ImportTool />}
             </Provider>
