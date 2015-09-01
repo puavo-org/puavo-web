@@ -4,6 +4,7 @@ import React from "react";
 import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 
+import Modal from "./Modal";
 import {setCustomValue} from "../actions";
 import {getCellValue, didPressEnter} from "../utils";
 
@@ -13,6 +14,7 @@ class Cell extends PureComponent {
         super(props);
         this.state = {
             customValue: getCellValue(props.value),
+            showError: false,
             editing: false,
         };
     }
@@ -66,6 +68,25 @@ class Cell extends PureComponent {
                     <button onClick={this.setCustomValue.bind(this)}>ok</button>
                 </span>}
 
+
+                {this.props.validationErrors.length > 0 &&
+                <button onClick={e => this.setState({showError: true})}>
+                    show error
+                </button>}
+
+                {this.state.showError &&
+                    <Modal show onHide={e => this.setState({showError: false})}>
+                        <div>
+                            <h1>Error</h1>
+
+                            <pre style={{fontSize: "small"}}>
+                                {JSON.stringify(this.props.validationErrors, null, "  ")}
+                            </pre>
+
+                        </div>
+                    </Modal>
+                }
+
             </div>
         );
     }
@@ -76,6 +97,29 @@ Cell.propTypes = {
     rowIndex: React.PropTypes.number.isRequired,
     setCustomValue: React.PropTypes.func.isRequired,
     value: React.PropTypes.object,
+    columnType: React.PropTypes.object,
+    validationErrors: React.PropTypes.array,
 };
 
-export default connect(null, {setCustomValue})(Cell);
+Cell.defaultProps = {
+    validationErrors: [],
+};
+
+function select(state, {rowIndex, columnIndex}) {
+    const {rowStatus, importData: {rows, columns}} = state;
+    const columnType = columns[columnIndex];
+
+    return {
+        rowIndex,
+        columnIndex,
+        columnType,
+        value: R.path([rowIndex, columnIndex], rows),
+        validationErrors: R.path([
+            rowIndex,
+            "attributeErrors",
+            columnType.attribute,
+        ], rowStatus),
+    };
+}
+
+export default connect(select, {setCustomValue})(Cell);
