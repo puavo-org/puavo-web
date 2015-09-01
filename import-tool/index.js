@@ -12,7 +12,6 @@ import {Provider} from "react-redux";
 import * as reducers from "./reducers";
 import {devTools as createDevTools} from "redux-devtools";
 import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
-import Modal from "react-modal";
 
 import ImportTool from "./components/ImportTool";
 
@@ -20,9 +19,8 @@ const devTools = REDUX_DEV ? createDevTools() : R.identity;
 
 const createFinalStore = compose(
     applyMiddleware(thunk),
-    devTools,
-    createStore
-);
+    devTools
+)(createStore);
 
 const combinedReducers = combineReducers(reducers);
 
