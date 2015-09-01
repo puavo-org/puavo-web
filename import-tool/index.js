@@ -7,6 +7,7 @@ import "babel/polyfill";
 import React from "react";
 import R from "ramda";
 import {combineReducers, createStore, applyMiddleware, compose} from "redux";
+import createLogger from "redux-logger";
 import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 import * as reducers from "./reducers";
@@ -17,8 +18,12 @@ import ImportTool from "./components/ImportTool";
 
 const devTools = REDUX_DEV ? createDevTools() : R.identity;
 
+const logger = createLogger();
+
+
+
 const createFinalStore = compose(
-    applyMiddleware(thunk),
+    applyMiddleware(thunk, logger),
     devTools
 )(createStore);
 
