@@ -3,6 +3,7 @@ import React from "react";
 import R from "ramda";
 import {connect} from "react-redux";
 import PureComponent from "react-pure-render/component";
+import Modal from "./Modal";
 
 import {REQUIRED_COLUMNS} from "../column_types";
 import {setImportData, startImport, dropRow} from "../actions";
@@ -38,6 +39,13 @@ function hasValuesInRequiredCells(columns, rows) {
 
 export default class ImportTool extends PureComponent {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            showModalFor: null,
+        };
+    }
+
     onParseCSV(e) {
         var el = React.findDOMNode(this.refs.textarea);
         this.props.setImportData(el.value);
@@ -53,6 +61,16 @@ export default class ImportTool extends PureComponent {
 
         return (
             <div className="ImportTool">
+
+                {this.state.showModalFor !== null &&
+                <Modal show onHide={e => this.setState({showModalFor: null})}>
+                    <div>
+                        <h2>row {this.state.showModalFor}</h2>
+                        <pre>
+                            {JSON.stringify(rowStatus[this.state.showModalFor], null, "  ")}
+                        </pre>
+                    </div>
+                </Modal>}
 
                 {rows.length == 0 &&
                 <div className="ImportTool-data-selector" >
@@ -71,7 +89,7 @@ export default class ImportTool extends PureComponent {
                                 </th>
 
                                 <th key="delete">
-                                    Status
+                                    Delete
                                 </th>
 
                                 {columns.map((columnType, columnIndex) => {
@@ -91,10 +109,14 @@ export default class ImportTool extends PureComponent {
                         </thead>
                         <tbody>
                             {rows.map((row, rowIndex) => {
+                                const rowStatusString = R.path([rowIndex, "status"], rowStatus) || "waiting";
                                 return (
                                     <tr key={rowIndex}>
                                         <td>
-                                            {R.path([rowIndex, "status"], rowStatus) || "waiting"}
+                                            {rowStatusString}
+                                            <button onClick={e => this.setState({showModalFor: rowIndex})}>
+                                                s
+                                            </button>
                                         </td>
 
                                         <td>
