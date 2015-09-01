@@ -7,6 +7,7 @@ import Modal from "./Modal";
 
 import {REQUIRED_COLUMNS} from "../column_types";
 import {setImportData, startImport, dropRow} from "../actions";
+import {saveState, restoreState, resetState} from "../StateStorage";
 import Cell from "./Cell";
 import AddColumn from "./AddColumn";
 import ColumnTypeSelector from "./ColumnTypeSelector";
@@ -61,6 +62,9 @@ export default class ImportTool extends PureComponent {
 
         return (
             <div className="ImportTool">
+                <button onClick={this.props.saveState}>save</button>
+                <button onClick={this.props.restoreState}>restore</button>
+                <button onClick={this.props.resetState}>reset</button>
 
                 {this.state.showModalFor !== null &&
                 <Modal show onHide={e => this.setState({showModalFor: null})}>
@@ -129,7 +133,8 @@ export default class ImportTool extends PureComponent {
                                         {columns.map((columnType, columnIndex) => {
                                             return (
                                                 <td key={columnIndex}>
-                                                    <Cell value={row[columnIndex]} rowIndex={rowIndex} columnIndex={columnIndex} />
+                                                    <Cell rowIndex={rowIndex} columnIndex={columnIndex} />
+
                                                 </td>
                                             );
                                         })}
@@ -165,6 +170,9 @@ ImportTool.propTypes = {
     rows: React.PropTypes.array.isRequired,
     columns: React.PropTypes.array.isRequired,
     rowStatus: React.PropTypes.object.isRequired,
+    saveState: React.PropTypes.func.isRequired,
+    restoreState: React.PropTypes.func.isRequired,
+    resetState: React.PropTypes.func.isRequired,
 };
 
 function select(state) {
@@ -172,4 +180,4 @@ function select(state) {
     return {rowStatus, rows, columns};
 }
 
-export default connect(select, {setImportData, startImport, dropRow})(ImportTool);
+export default connect(select, {setImportData, startImport, dropRow, saveState, restoreState, resetState})(ImportTool);

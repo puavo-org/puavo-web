@@ -10,6 +10,7 @@ module.exports = {
     devtool: "source-map",
     module: {
         loaders: [
+            {test: /\.jsx?$/, exclude: /node_modules/, loader: "transform?envify"},
             {test: /\.jsx?$/, exclude: /node_modules/, loader: "babel-loader"}
         ]
     },

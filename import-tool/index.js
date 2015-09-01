@@ -1,5 +1,12 @@
 const REDUX_DEV = !!window.localStorage.REDUX_DEV;
 
+const STATE_KEY = [
+    "import-tool",
+    window.location.toString(),
+    /* global __webpack_hash__ */
+    process.env.NODE_ENV === "production" ? __webpack_hash__ : "DEV",
+].join(":");
+
 require("babel-runtime/core-js/promise").default = require("bluebird");
 window.Promise = require("bluebird"); // extra override
 import "babel/polyfill";
@@ -14,6 +21,8 @@ import * as reducers from "./reducers";
 import {devTools as createDevTools} from "redux-devtools";
 import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
 
+import createStateStorage from "./StateStorage";
+
 import ImportTool from "./components/ImportTool";
 
 const devTools = REDUX_DEV ? createDevTools() : R.identity;
@@ -23,6 +32,7 @@ const logger = createLogger();
 
 
 const createFinalStore = compose(
+    createStateStorage(STATE_KEY),
     applyMiddleware(thunk, logger),
     devTools
 )(createStore);
@@ -36,10 +46,10 @@ function createImportTool(containerId, schoolDn) {
         type: "SET_DEFAULT_SCHOOL",
         schoolDn,
     });
+
     container.innerHTML = "";
     React.render(
         <div>
-            {__webpack_hash__}
             <Provider store={store}>
                 {() => <ImportTool />}
             </Provider>

@@ -41,7 +41,7 @@ clean: clean-assets js-clean
 	rm -rf node_modules
 
 js:
-	webpack -p
+	NODE_ENV=production webpack -p
 
 js-watch:
 	webpack -w

@@ -1,4 +1,3 @@
-
 import Papa from "papaparse";
 import R from "ramda";
 
@@ -140,6 +139,5 @@ export function startImport(rowIndex=0) {
         console.error("Unkown error", responseData);
         dispatchStatus({status: "Unkown error", responseData});
         next();
-
     };
 }
