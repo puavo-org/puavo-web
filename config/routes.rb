@@ -38,6 +38,9 @@ PuavoUsers::Application.routes.draw do
       resources :printer_permissions
     end
 
+    scope :path => ':school_id' do
+      resources :lists
+    end
 
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
     match 'schools/:id/add_school_admin/:user_id' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
