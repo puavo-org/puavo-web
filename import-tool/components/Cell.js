@@ -5,8 +5,9 @@ import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 
 import Modal from "./Modal";
+import Fa from "./Fa";
 import {setCustomValue} from "../actions";
-import {getCellValue, didPressEnter} from "../utils";
+import {getCellValue, didPressEnter, preventDefault} from "../utils";
 
 class Cell extends PureComponent {
 
@@ -52,27 +53,38 @@ class Cell extends PureComponent {
 
                 {!this.state.editing &&
                 <div>
+                    {this.props.validationErrors.length > 0 &&
+                    <span>
+                        <a href="#" onClick={preventDefault(_ => this.setState({showError: true}))}>
+                            <Fa icon="exclamation-triangle" className="error" />
+                        </a>
+                        {" "}
+                    </span>}
+
                     {getCellValue(this.props.value)}
+
                     {" "}
-                    <a href="#" onClick={this.startEdit.bind(this)}>e</a>
+                    <a href="#" onClick={preventDefault(this.startEdit.bind(this))}>
+                        <Fa icon="edit" />
+                    </a>
                 </div>}
 
                 {this.state.editing &&
                 <span>
-                    <input type="text"
-                        ref="input"
-                        value={this.state.customValue}
-                        onChange={this.changeCustomValue.bind(this)}
-                        onKeyUp={R.both(didPressEnter, this.setCustomValue.bind(this))}
-                    />
-                    <button onClick={this.setCustomValue.bind(this)}>ok</button>
+                    <form className="pure-form">
+                        <input type="text"
+                            ref="input"
+                            value={this.state.customValue}
+                            onChange={this.changeCustomValue.bind(this)}
+                            onKeyUp={R.both(didPressEnter, this.setCustomValue.bind(this))}
+                        />
+                        <button
+                            className="pure-button"
+                            onClick={preventDefault(this.setCustomValue.bind(this))}>ok</button>
+                    </form>
                 </span>}
 
 
-                {this.props.validationErrors.length > 0 &&
-                <button onClick={e => this.setState({showError: true})}>
-                    show error
-                </button>}
 
                 {this.state.showError &&
                     <Modal show onHide={e => this.setState({showError: false})}>

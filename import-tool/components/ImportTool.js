@@ -11,7 +11,8 @@ import {saveState, restoreState, resetState} from "../StateStorage";
 import Cell from "./Cell";
 import AddColumn from "./AddColumn";
 import ColumnTypeSelector from "./ColumnTypeSelector";
-import {getCellValue} from "../utils";
+import Fa from "./Fa";
+import {getCellValue, preventDefault} from "../utils";
 
 const demoData = `
 Bruce, Wayne, batman@example.com
@@ -85,21 +86,17 @@ export default class ImportTool extends PureComponent {
                 {rows.length > 0 &&
                 <div className="ImportTool-editor">
                     data: {hasValuesInRequiredCells(columns, rows) ? "ok" : "no"}
-                    <table>
+                    <table className="pure-table">
                         <thead>
                             <tr>
                                 <th key="status">
                                     Status
                                 </th>
 
-                                <th key="delete">
-                                    Delete
-                                </th>
-
                                 {columns.map((columnType, columnIndex) => {
                                     return (
                                         <th key={columnIndex}>
-                                            {columnType.name}
+                                            {columnType.name}{" "}
                                             <ColumnTypeSelector columnIndex={columnIndex} />
                                         </th>
                                     );
@@ -115,17 +112,10 @@ export default class ImportTool extends PureComponent {
                                 return (
                                     <tr key={rowIndex}>
                                         <td>
-                                            {rowStatusString}
-                                            <button onClick={e => this.setState({showModalFor: rowIndex})}>
-                                                s
-                                            </button>
-                                        </td>
-
-                                        <td>
-                                            <button onClick={e => {
-                                                e.preventDefault();
-                                                this.props.dropRow(rowIndex);
-                                            }}>x</button>
+                                            {rowStatusString}{" "}
+                                            <a href="#" onClick={preventDefault(_ => this.setState({showModalFor: rowIndex}))}>
+                                                <Fa icon="info-circle" />
+                                            </a>
                                         </td>
 
                                         {columns.map((columnType, columnIndex) => {
@@ -136,6 +126,15 @@ export default class ImportTool extends PureComponent {
                                                 </td>
                                             );
                                         })}
+
+                                        <td>
+                                            <button
+                                                className="pure-button danger"
+                                                onClick={preventDefault(_ => this.props.dropRow(rowIndex))}
+                                            >
+                                                <Fa icon="trash-o" />
+                                            </button>
+                                        </td>
                                     </tr>
                                 );
 
@@ -153,7 +152,7 @@ export default class ImportTool extends PureComponent {
                 </div>}
 
 
-                <button
+                <button className="pure-button"
                     disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
                     onClick={this.startImport.bind(this)}>import</button>
             </div>

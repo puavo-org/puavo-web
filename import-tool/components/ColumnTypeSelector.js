@@ -3,44 +3,89 @@ import React from "react";
 import PureComponent from "react-pure-render/component";
 import R from "ramda";
 import {connect} from "react-redux";
+import {Overlay} from "react-overlays";
 
+import Fa from "./Fa";
+import ToolTip from "./ToolTip";
 import COLUMN_TYPES from "../column_types";
 import {changeColumnType, setDefaultValue} from "../actions";
-import {didPressEnter} from "../utils";
+import {onEnterKey, preventDefault} from "../utils";
 
 class ColumnTypeSelector extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = {defaultValue: this.props.currentDefaultValue};
+        this.state = {
+            defaultValue: this.props.currentDefaultValue,
+            showMenu: false,
+        };
     }
 
 
     setDefaultValue() {
         this.props.setDefaultValue(this.props.columnIndex, this.state.defaultValue);
+        this.hideMenu();
     }
+
+    showMenu() {
+        this.setState({showMenu: true});
+    }
+
+    hideMenu() {
+        this.setState({showMenu: false});
+    }
+
+    changeColumnType(value) {
+        this.props.changeColumnType(this.props.columnIndex, value);
+        this.hideMenu();
+    }
+
 
     render() {
         return (
-            <div className="ColumnTypeSelector">
-                <select
-                    value={this.props.currentTypeId}
-                    onChange={e => this.props.changeColumnType(this.props.columnIndex, e.target.value)}>
-                    {R.values(COLUMN_TYPES).map(columnType => {
-                        return <option key={columnType.id} value={columnType.id}>{columnType.name}</option>;
-                    })}
-                </select>
-                <br />
-                <input
-                    className="ColumnTypeSelector-default-value-input"
-                    type="text"
-                    placeholder="Default"
-                    value={this.state.defaultValue}
-                    onChange={e => this.setState({defaultValue: e.target.value})}
-                    onKeyUp={R.both(didPressEnter, this.setDefaultValue.bind(this))}
-                />
-                <button onClick={this.setDefaultValue.bind(this)}>ok</button>
-            </div>
+            <span className="ColumnTypeSelector">
+
+                <a href="#" ref="target" onClick={(this.showMenu.bind(this))}>
+                    <Fa icon="edit" />
+                </a>
+
+                <Overlay
+                    show={this.state.showMenu}
+                    onHide={this.hideMenu.bind(this)}
+                    rootClose
+                    placement="bottom"
+                    target={() => React.findDOMNode(this.refs.target)}
+                >
+                    <ToolTip>
+                        <form className="pure-form pure-form-stacked">
+                            <fieldset>
+                                <legend>Change type</legend>
+                                <select
+                                    value={this.props.currentTypeId}
+                                    onChange={e => this.changeColumnType(e.target.value)}>
+                                    {R.values(COLUMN_TYPES).map(columnType => {
+                                        return <option key={columnType.id} value={columnType.id}>{columnType.name}</option>;
+                                    })}
+                                </select>
+
+                                <legend>Fill empty values</legend>
+                                <input
+                                    className="ColumnTypeSelector-default-value-input"
+                                    type="text"
+                                    placeholder="Default"
+                                    value={this.state.defaultValue}
+                                    onChange={e => this.setState({defaultValue: e.target.value})}
+                                    onKeyUp={onEnterKey(this.setDefaultValue.bind(this))}
+                                />
+                                <button
+                                    className="pure-button"
+                                    onClick={preventDefault(this.setDefaultValue.bind(this))}
+                                >Fill</button>
+                            </fieldset>
+                        </form>
+                    </ToolTip>
+                </Overlay>
+            </span>
         );
     }
 

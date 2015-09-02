@@ -8,11 +8,12 @@ const TooltipStyle = {
 };
 
 const TooltipInnerStyle = {
-    padding: "3px 8px",
+    padding: "20px",
     color: "#fff",
     textAlign: "center",
     borderRadius: 3,
-    backgroundColor: "#000",
+    border: "5px solid black",
+    backgroundColor: "white",
 };
 
 const TooltipArrowStyle = {

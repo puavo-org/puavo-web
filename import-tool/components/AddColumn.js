@@ -3,11 +3,13 @@ import React from "react";
 import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 import R from "ramda";
+import {Overlay} from "react-overlays";
 
 import ToolTip from "./ToolTip";
-import {Overlay} from "react-overlays";
+import Fa from "./Fa";
 import COLUMN_TYPES from "../column_types";
 import {addColumn} from "../actions";
+import {preventDefault} from "../utils";
 
 class AddColumn extends PureComponent {
 
@@ -37,26 +39,31 @@ class AddColumn extends PureComponent {
         return (
             <div className="AddColumn">
 
-                <button ref="target" onClick={this.showMenu.bind(this)}>+</button>
+                <button className="pure-button pure-button-primary"
+                    ref="target"
+                    onClick={preventDefault(this.showMenu.bind(this))}>
+                    <Fa icon="bars" />
+                </button>
 
                 <Overlay
                     show={this.state.showMenu}
                     onHide={this.hideMenu.bind(this)}
                     rootClose
                     placement="bottom"
-                    target={() => {
-                        var el = React.findDOMNode(this.refs.target);
-                        // var el = document.getElementById("boo");
-                        return el;
-                    }}
+                    target={() => React.findDOMNode(this.refs.target)}
                 >
                     <ToolTip>
-                        <select onChange={this.addColumn.bind(this)}>
-                            <option key="nil" value="nil" >Select...</option>
-                            {R.toPairs(COLUMN_TYPES).map(([columnType, column]) => {
-                                return <option key={columnType} value={columnType}>{column.name}</option>;
-                            })}
-                        </select>
+                        <form className="pure-form">
+                            <fieldset>
+                                <legend>Add column</legend>
+                                <select onChange={this.addColumn.bind(this)} ref="select">
+                                    <option key="nil" value="nil" >Select...</option>
+                                    {R.toPairs(COLUMN_TYPES).map(([columnType, column]) => {
+                                        return <option key={columnType} value={columnType}>{column.name}</option>;
+                                    })}
+                                </select>
+                            </fieldset>
+                        </form>
                     </ToolTip>
                 </Overlay>
             </div>
