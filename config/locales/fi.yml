@@ -43,6 +43,7 @@ fi:
     users: "Käyttäjät"
     groups: "Ryhmät"
     roles: Roolit
+    lists: Käyttäjälistat
     add: "Lisää"
     remove: Poista
     new_role: Uusi rooli
@@ -325,6 +326,15 @@ fi:
     show:
       message: Tietojen tallennus onnistui
       email_confirm_info: Saat vahvistuslinkin uuteen sähköpostiisi hetken kuluttua. Klikkaa linkkiä vahvistaaksesi uusi sähköpostiosoite.
+  lists:
+    index:
+      title: Lataamattomat käyttäjätunnus- ja salasanalistat
+      description: Käyttäjälistat, sisältäen salasanat, ovat pdf-muodossa. Ladattuasi listat, tulosta ne ja leikkaa tunnukset seuraavan ohjekuvat mukaseisti jakamista varten.
+      created: Käyttäjät luotiin
+      users_count_title: Käyttäjiä listassa
+      label_generate_password: Aseta satunnainen salasana käyttäjille
+      label_set_password: Aseta kaikkien listan käyttäjien salasanaksi
+      label_submit_button: Aseta salasana ja lataa tiedosto
   menu:
     index:
       service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta
