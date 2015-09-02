@@ -46,6 +46,7 @@ class PuavoMenu < MetaMenu
     active_on UsersController
     active_on GroupsController
     active_on RolesController
+    active_on ListsController
     active_on Users::ImportController
     active_on ImportToolController
 
@@ -75,6 +76,13 @@ class PuavoMenu < MetaMenu
       # XXX: Feature switch!
       hide_when { !current_user.organisation_owner? }
     end
+
+    child do
+      title { t('link.lists') }
+      link { lists_path(@school) }
+      active_on ListsController
+    end
+
   end
 
   # DEVICES
