@@ -31,6 +31,11 @@ class Cell extends PureComponent {
         this.setState({editing: false});
     }
 
+    revertToOriginal() {
+        this.setState({customValue: ""});
+        this.props.setCustomValue(this.props.rowIndex, this.props.columnIndex, "");
+    }
+
     changeCustomValue(e) {
         this.setState({customValue: e.target.value});
     }
@@ -64,9 +69,15 @@ class Cell extends PureComponent {
                     {getCellValue(this.props.value)}
 
                     {" "}
-                    <a href="#" onClick={preventDefault(this.startEdit.bind(this))}>
-                        <Fa icon="edit" />
-                    </a>
+                    <span className="Cell-edit-buttons">
+                        <a href="#" onClick={preventDefault(this.startEdit.bind(this))}>
+                            <Fa icon="pencil" />
+                        </a>
+                        {" "}
+                        <a href="#" onClick={preventDefault(this.revertToOriginal.bind(this))}>
+                            <Fa icon="recycle" />
+                        </a>
+                    </span>
                 </div>}
 
                 {this.state.editing &&
