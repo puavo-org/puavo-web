@@ -10,7 +10,7 @@
 
   <div>
     <span style="margin-right: 20px;">
-      <%= t(".created") %> 28.1.2015 8:45
+      <%= t(".created") %> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
     </span>
     <span>
       Mikko Mallikas
