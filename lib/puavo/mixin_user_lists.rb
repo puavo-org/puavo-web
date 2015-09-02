@@ -15,6 +15,7 @@ module MixinUserLists
       data = JSON.parse(json)
       user_list = new
       user_list.uuid = data["id"]
+      user_list.created_at = data["created_at"]
       user_list.users = data["users"]
       user_list.school_id = data["school_id"]
       user_list.users_by_groups = data["users_by_groups"]
@@ -46,6 +47,8 @@ module MixinUserLists
       return if user_ids.nil?
 
       self.uuid = UUID.generate
+      self.created_at = Time.now.to_i
+
       self.school_id = nil
       self.users = []
       self.users_by_groups = {}
@@ -74,7 +77,7 @@ module MixinUserLists
         "users" => self.users,
         "school_id" => self.school_id,
         "users_by_groups" => self.users_by_groups,
-        "created_at" => "",
+        "created_at" => self.created_at,
         "creator" => ""
       }
     end
