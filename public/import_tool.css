@@ -1,4 +1,9 @@
 
+.ImportTool {
+    overflow: auto;
+    overflow-y: hidden;
+}
+
 .ImportTool-textarea {
     width: 100%;
     height: 300px;
@@ -11,3 +16,37 @@
 .ImportTool .ColumnTypeSelector-default-value-input {
     width: 60px;
 }
+
+.pure-button.danger {
+    background: rgb(202, 60, 60);
+}
+
+.Fa.error {
+    color: rgb(202, 60, 60);
+}
+
+.pure-button.danger .fa {
+    color: white;
+}
+
+.ImportTool a {
+    color: rgb(0, 120, 231);
+}
+
+.ImportTool select {
+    color: black !important;
+}
+
+.ImportTool table {
+    width: 100%;
+    overflow: auto;
+}
+
+.ImportTool .Cell {
+    white-space: nowrap;
+}
+
+.ImportTool .Cell-edit-buttons {
+    float: right;
+}
+
