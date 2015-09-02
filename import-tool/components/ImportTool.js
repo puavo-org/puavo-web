@@ -105,8 +105,6 @@ export default class ImportTool extends PureComponent {
                                     );
                                 })}
                                 <th>
-                                    Add column
-                                    <br />
                                     <AddColumn />
                                 </th>
                             </tr>
