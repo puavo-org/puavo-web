@@ -68,8 +68,8 @@ class Cell extends PureComponent {
 
                     {getCellValue(this.props.value)}
 
-                    {" "}
                     <span className="Cell-edit-buttons">
+                        {" "}
                         <a href="#" onClick={preventDefault(this.startEdit.bind(this))}>
                             <Fa icon="pencil" />
                         </a>

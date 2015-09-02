@@ -45,7 +45,7 @@ class ColumnTypeSelector extends PureComponent {
         return (
             <span className="ColumnTypeSelector">
 
-                <a href="#" ref="target" onClick={(this.showMenu.bind(this))}>
+                <a href="#" ref="target" onClick={preventDefault(this.showMenu.bind(this))}>
                     <Fa icon="edit" />
                 </a>
 
@@ -78,6 +78,7 @@ class ColumnTypeSelector extends PureComponent {
                                     onKeyUp={onEnterKey(this.setDefaultValue.bind(this))}
                                 />
                                 <button
+                                    style={{width: "100%"}}
                                     className="pure-button"
                                     onClick={preventDefault(this.setDefaultValue.bind(this))}
                                 >Fill</button>
