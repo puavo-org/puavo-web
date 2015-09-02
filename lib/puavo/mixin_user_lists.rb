@@ -45,35 +45,35 @@ module MixinUserLists
     def initialize(user_ids = nil)
       return if user_ids.nil?
 
-      @uuid = UUID.generate
-      @school_id = nil
-      @users = []
-      @users_by_groups = {}
+      self.uuid = UUID.generate
+      self.school_id = nil
+      self.users = []
+      self.users_by_groups = {}
 
       user_ids.each do |user_id|
         user = PuavoRest::User.by_id(user_id)
-        @users.push(user.id)
+        self.users.push(user.id)
 
-        @school_id = user.school.id if @school_id.nil?
+        self.school_id = user.school.id if self.school_id.nil?
 
         group = user.groups.first
 
         # FIXME: many groups for user?
-        unless @users_by_groups.has_key?(group.id)
-          @users_by_groups[group.id] = []
+        unless self.users_by_groups.has_key?(group.id)
+          self.users_by_groups[group.id] = []
         end
 
-        @users_by_groups[group.id].push(user.id)
+        self.users_by_groups[group.id].push(user.id)
       end
 
     end
 
     def as_json
       {
-        "id" => @uuid,
-        "users" => @users,
-        "school_id" => @school_id,
-        "users_by_groups" => @users_by_groups,
+        "id" => self.uuid,
+        "users" => self.users,
+        "school_id" => self.school_id,
+        "users_by_groups" => self.users_by_groups,
         "created_at" => "",
         "creator" => ""
       }
@@ -85,7 +85,7 @@ module MixinUserLists
 
     def save
       user_list = self.class.get_redis_user_list
-      user_list.set(@uuid, self.to_json)
+      user_list.set(self.uuid, self.to_json)
     end
   end
 
