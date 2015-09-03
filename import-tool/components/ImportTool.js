@@ -9,7 +9,7 @@ import COLUMN_TYPES, {REQUIRED_COLUMNS} from "../column_types";
 import {setImportData, startImport, dropRow} from "../actions";
 import {saveState, restoreState, resetState} from "../StateStorage";
 import Cell from "./Cell";
-import AddColumn from "./AddColumn";
+import ImportMenu from "./ImportMenu";
 import ColumnEditor from "./ColumnEditor";
 import Fa from "./Fa";
 import {getCellValue, preventDefault} from "../utils";
@@ -108,7 +108,7 @@ export default class ImportTool extends PureComponent {
                                     );
                                 })}
                                 <th>
-                                    <AddColumn />
+                                    <ImportMenu />
                                 </th>
                             </tr>
                         </thead>

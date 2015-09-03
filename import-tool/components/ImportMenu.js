@@ -11,7 +11,7 @@ import COLUMN_TYPES from "../column_types";
 import {addColumn} from "../actions";
 import {preventDefault} from "../utils";
 
-class AddColumn extends PureComponent {
+class ImportMenu extends PureComponent {
 
     constructor(props) {
         super(props);
@@ -37,7 +37,7 @@ class AddColumn extends PureComponent {
 
     render() {
         return (
-            <div className="AddColumn">
+            <div className="ImportMenu">
 
                 <button className="pure-button"
                     ref="target"
@@ -72,9 +72,9 @@ class AddColumn extends PureComponent {
 
 }
 
-AddColumn.propTypes = {
+ImportMenu.propTypes = {
     addColumn: React.PropTypes.func.isRequired,
 };
 
-export default connect(null, {addColumn})(AddColumn);
+export default connect(null, {addColumn})(ImportMenu);
 
