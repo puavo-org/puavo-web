@@ -18,6 +18,7 @@ module MixinUserLists
       user_list.created_at = data["created_at"]
       user_list.users = data["users"]
       user_list.school_id = data["school_id"]
+      user_list.creator = data["creator"]
       return user_list
     end
 
@@ -42,12 +43,12 @@ module MixinUserLists
 
 
   module InstanceMethods
-    def initialize(user_ids = nil)
+    def initialize(user_ids = nil, creator = nil)
       return if user_ids.nil?
 
       self.uuid = UUID.generate
       self.created_at = Time.now.to_i
-
+      self.creator = creator
       self.school_id = nil
       self.users = []
 
@@ -66,7 +67,7 @@ module MixinUserLists
         "users" => self.users,
         "school_id" => self.school_id,
         "created_at" => self.created_at,
-        "creator" => ""
+        "creator" => self.creator
       }
     end
 
