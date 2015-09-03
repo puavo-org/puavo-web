@@ -18,7 +18,6 @@ module MixinUserLists
       user_list.created_at = data["created_at"]
       user_list.users = data["users"]
       user_list.school_id = data["school_id"]
-      user_list.users_by_groups = data["users_by_groups"]
       return user_list
     end
 
@@ -51,22 +50,12 @@ module MixinUserLists
 
       self.school_id = nil
       self.users = []
-      self.users_by_groups = {}
 
       user_ids.each do |user_id|
         user = PuavoRest::User.by_id(user_id)
         self.users.push(user.id)
 
         self.school_id = user.school.id if self.school_id.nil?
-
-        group = user.groups.first
-
-        # FIXME: many groups for user?
-        unless self.users_by_groups.has_key?(group.id)
-          self.users_by_groups[group.id] = []
-        end
-
-        self.users_by_groups[group.id].push(user.id)
       end
 
     end
@@ -76,7 +65,6 @@ module MixinUserLists
         "id" => self.uuid,
         "users" => self.users,
         "school_id" => self.school_id,
-        "users_by_groups" => self.users_by_groups,
         "created_at" => self.created_at,
         "creator" => ""
       }
