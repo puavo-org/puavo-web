@@ -7,7 +7,6 @@ import Modal from "./Modal";
 
 import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
 import {setImportData, startImport, dropRow} from "../actions";
-import {saveState, restoreState, resetState} from "../StateStorage";
 import Cell from "./Cell";
 import ImportMenu from "./ImportMenu";
 import ColumnEditor from "./ColumnEditor";
@@ -63,10 +62,6 @@ export default class ImportTool extends PureComponent {
 
         return (
             <div className="ImportTool">
-                <button onClick={this.props.saveState}>save</button>
-                <button onClick={this.props.restoreState}>restore</button>
-                <button onClick={this.props.resetState}>reset</button>
-
                 {this.state.showModalFor !== null &&
                 <Modal show onHide={e => this.setState({showModalFor: null})}>
                     <div>
@@ -85,7 +80,6 @@ export default class ImportTool extends PureComponent {
 
                 {rows.length > 0 &&
                 <div className="ImportTool-editor">
-                    data: {hasValuesInRequiredCells(columns, rows) ? "ok" : "no"}
                     <table className="pure-table pure-table-striped">
                         <thead>
                             <tr>
@@ -183,9 +177,6 @@ ImportTool.propTypes = {
     rows: React.PropTypes.array.isRequired,
     columns: React.PropTypes.array.isRequired,
     rowStatus: React.PropTypes.object.isRequired,
-    saveState: React.PropTypes.func.isRequired,
-    restoreState: React.PropTypes.func.isRequired,
-    resetState: React.PropTypes.func.isRequired,
 };
 
 function select(state) {
@@ -193,4 +184,4 @@ function select(state) {
     return {rowStatus, rows, columns};
 }
 
-export default connect(select, {setImportData, startImport, dropRow, saveState, restoreState, resetState})(ImportTool);
+export default connect(select, {setImportData, startImport, dropRow})(ImportTool);
