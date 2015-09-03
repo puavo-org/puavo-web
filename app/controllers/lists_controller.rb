@@ -3,7 +3,9 @@ class ListsController < ApplicationController
   # GET /users/:school_id/lists
   def index
 
-    @lists = List.all
+    @lists = List.all.select do |list|
+      list.school_id.to_s == @school.puavoId.to_s
+    end
 
     respond_to do |format|
       format.html
