@@ -21,7 +21,7 @@ function wrapReducer(defaultReducer, stateKey) {
             setTimeout(() => window.location.reload(), 1);
         }
 
-        if (action.type === "RESTORE_STATE") {
+        if (action.type === "RESTORE_STATE" && window.localStorage[stateKey]) {
             try {
                 state = JSON.parse(window.localStorage[stateKey]);
             } catch(error) {
