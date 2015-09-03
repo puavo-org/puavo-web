@@ -5,6 +5,7 @@
   <%= t(".description") %>
 <p>
 
+<% id = 1 %>
 <% @lists.each do |list| %>
 <div>
 
@@ -27,12 +28,12 @@
                     :url => download_list_path(:school_id => @school.puavoId, :id => list.uuid, :format => :pdf) ) do |f| %>
 
       <div>
-        <%= f.radio_button :generate_password, true %>
-        <%= f.label t(".label_generate_password"), :for => "list_generate_password_true" %>
+        <%= f.radio_button :generate_password, true, :id => "list_generate_password_true_#{ id }" %>
+        <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
       </div>
       <div>
-        <%= f.radio_button :generate_password, false %>
-        <%= f.label t(".label_set_password"), :for => "list_generate_password_false" %>
+        <%= f.radio_button :generate_password, false, :id => "list_generate_password_false_#{ id }"  %>
+        <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
         <%= f.text_field :new_password, :size => 20 %>
       </div>
       <div>
@@ -44,5 +45,6 @@
   </div>
 
 </div>
+<% id += 1 %>
 <% end %>
 <div></div>
