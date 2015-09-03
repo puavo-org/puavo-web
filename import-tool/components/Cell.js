@@ -3,11 +3,13 @@ import R from "ramda";
 import React from "react";
 import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
+import {Overlay} from "react-overlays";
 
+import ToolTip from "./ToolTip";
 import Modal from "./Modal";
 import Fa from "./Fa";
 import {setCustomValue} from "../actions";
-import {didPressEnter, preventDefault} from "../utils";
+import {onEnterKey, preventDefault} from "../utils";
 
 class Cell extends PureComponent {
 
@@ -28,7 +30,7 @@ class Cell extends PureComponent {
         if (this.state.customValue !== this.props.value) {
             this.props.setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue);
         }
-        this.setState({editing: false});
+        this.hideMenu();
     }
 
     revertToOriginal() {
@@ -40,11 +42,6 @@ class Cell extends PureComponent {
         this.setState({customValue: e.target.value});
     }
 
-    startEdit(e) {
-        if (e) e.preventDefault();
-        this.setState({editing: true});
-    }
-
     componentDidUpdate(__, prevState) {
         if (this.state.editing && !prevState.editing) {
             const el = React.findDOMNode(this.refs.input);
@@ -52,11 +49,18 @@ class Cell extends PureComponent {
         }
     }
 
+    showMenu() {
+        this.setState({editing: true});
+    }
+
+    hideMenu() {
+        this.setState({editing: false});
+    }
+
     render() {
         return (
             <div className="Cell">
 
-                {!this.state.editing &&
                 <div>
                     {this.props.validationErrors.length > 0 &&
                     <span>
@@ -74,26 +78,34 @@ class Cell extends PureComponent {
                             <Fa icon="recycle" />
                         </a>
                         {" "}
-                        <a href="#" onClick={preventDefault(this.startEdit.bind(this))}>
+                        <a href="#" ref="editButton" onClick={preventDefault(this.showMenu.bind(this))}>
                             <Fa icon="pencil" />
                         </a>
                     </span>
-                </div>}
+                </div>
 
-                {this.state.editing &&
-                <span>
-                    <form className="pure-form">
-                        <input type="text"
-                            ref="input"
-                            value={this.state.customValue}
-                            onChange={this.changeCustomValue.bind(this)}
-                            onKeyUp={R.both(didPressEnter, this.setCustomValue.bind(this))}
-                        />
-                        <button
-                            className="pure-button"
-                            onClick={preventDefault(this.setCustomValue.bind(this))}>ok</button>
-                    </form>
-                </span>}
+                <Overlay
+                    show={this.state.editing}
+                    onHide={this.hideMenu.bind(this)}
+                    rootClose
+                    placement="bottom"
+                    target={() => React.findDOMNode(this.refs.editButton)}
+                >
+                    <ToolTip>
+                        <form className="pure-form">
+                            <input type="text"
+                                ref="input"
+                                value={this.state.customValue}
+                                onChange={this.changeCustomValue.bind(this)}
+                                onKeyUp={onEnterKey(this.setCustomValue.bind(this))}
+                            />
+                            <button
+                                className="pure-button pure-button-primary"
+                                style={{width: "100%"}}
+                                onClick={preventDefault(this.setCustomValue.bind(this))}>ok</button>
+                        </form>
+                    </ToolTip>
+                </Overlay>
 
 
 
