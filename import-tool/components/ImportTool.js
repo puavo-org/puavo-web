@@ -5,25 +5,14 @@ import {connect} from "react-redux";
 import PureComponent from "react-pure-render/component";
 import Modal from "./Modal";
 
-import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
-import {parseImportString, startImport, dropRow} from "../actions";
+import DataPicker from "./DataPicker";
 import Cell from "./Cell";
 import ImportMenu from "./ImportMenu";
 import ColumnEditor from "./ColumnEditor";
 import Fa from "./Fa";
+import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
+import {parseImportString, startImport, dropRow} from "../actions";
 import {getCellValue, preventDefault} from "../utils";
-
-const demoData = `
-Bruce, Wayne, batman@example.com
-Clark, Kent, superman@example.com
-Peter, Parker, spiderman@example.com
-Tony, Stark, ironman@example.com, boss
-Bruce, Banner, hulk@example.com
-Matt, Murdock, daredevil@example.com
-Oliver, Queen, arrow@example.com
-James, Howlett, wolverine@example.com
-`.trim();
-
 
 const findMissingRequiredColumns = R.difference(REQUIRED_COLUMNS);
 
@@ -42,32 +31,11 @@ export default class ImportTool extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = {
-            importString: "",
-            showModalFor: null,
-        };
-    }
-
-    parseImportString(e) {
-        this.props.parseImportString(this.state.importString || demoData);
+        this.state = {showModalFor: null};
     }
 
     startImport() {
         this.props.startImport();
-    }
-
-    startFileDialog(e) {
-        React.findDOMNode(this.refs.file).click();
-    }
-
-    readFileEvent(e) {
-        var file = e.target.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = e => {
-            this.setState({importString: e.target.result});
-        };
-        reader.readAsText(file);
     }
 
     render() {
@@ -76,6 +44,8 @@ export default class ImportTool extends PureComponent {
 
         return (
             <div className="ImportTool">
+                {rows.length == 0 && <DataPicker />}
+
                 {this.state.showModalFor !== null &&
                 <Modal show onHide={e => this.setState({showModalFor: null})}>
                     <div>
@@ -85,39 +55,6 @@ export default class ImportTool extends PureComponent {
                         </pre>
                     </div>
                 </Modal>}
-
-                {rows.length == 0 &&
-                <form className="ImportTool-data-selector pure-form" >
-                    <textarea
-                        className="ImportTool-textarea"
-                        placeholder={demoData}
-                        value={this.state.importString}
-                        onChange={e => this.setState({importString: e.target.value})}
-                    />
-
-                    <div className="pure-g">
-                        <div className="pure-u-4-5">
-                            <button
-                                className="pure-button pure-button-primary"
-                                style={{width: "100%"}}
-                                onClick={preventDefault(this.parseImportString.bind(this))}>Parse</button>
-                        </div>
-                        <div className="pure-u-1-5">
-                            <button
-                                className="pure-button"
-                                style={{width: "100%"}}
-                                onClick={preventDefault(this.startFileDialog.bind(this))}>Load file</button>
-                        </div>
-                    </div>
-
-                    <input
-                        type="file"
-                        style={{display: "none"}}
-                        ref="file"
-                        accept=".csv,.txt,.tsv,.tab"
-                        onChange={this.readFileEvent.bind(this)} />
-
-                </form>}
 
                 {rows.length > 0 &&
                 <div className="ImportTool-editor">
@@ -213,7 +150,6 @@ export default class ImportTool extends PureComponent {
 }
 
 ImportTool.propTypes = {
-    parseImportString: React.PropTypes.func.isRequired,
     startImport: React.PropTypes.func.isRequired,
     dropRow: React.PropTypes.func.isRequired,
     rows: React.PropTypes.array.isRequired,

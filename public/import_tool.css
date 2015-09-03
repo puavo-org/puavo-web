@@ -9,7 +9,7 @@
     height: 300px;
 }
 
-.ImportTool-data-selector {
+.ImportTool-DataPicker {
     margin-bottom: 3em;
 }
 
@@ -26,11 +26,12 @@
     color: #F59645;
 }
 
-.ImportTool .pure-form textarea:focus {
-    border-color: #F59645;
+.pure-form textarea:focus,
+.pure-form input:focus {
+    border-color: #F59645 !important;
 }
 
-.ImportTool .pure-button-primary {
+.pure-button-primary {
     background-color: #F59645;
 }
 
