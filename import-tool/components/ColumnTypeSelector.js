@@ -8,7 +8,7 @@ import {Overlay} from "react-overlays";
 import Fa from "./Fa";
 import ToolTip from "./ToolTip";
 import COLUMN_TYPES from "../column_types";
-import {changeColumnType, setDefaultValue} from "../actions";
+import {changeColumnType, setDefaultValue, dropColumn} from "../actions";
 import {onEnterKey, preventDefault} from "../utils";
 
 class ColumnTypeSelector extends PureComponent {
@@ -40,6 +40,9 @@ class ColumnTypeSelector extends PureComponent {
         this.hideMenu();
     }
 
+    dropColumn() {
+        this.props.dropColumn(this.props.columnIndex);
+    }
 
     render() {
         return (
@@ -77,11 +80,21 @@ class ColumnTypeSelector extends PureComponent {
                                     onChange={e => this.setState({defaultValue: e.target.value})}
                                     onKeyUp={onEnterKey(this.setDefaultValue.bind(this))}
                                 />
+
                                 <button
                                     style={{width: "100%"}}
                                     className="pure-button"
                                     onClick={preventDefault(this.setDefaultValue.bind(this))}
                                 >Fill</button>
+
+                                <div style={{marginTop: 50}} />
+
+                                <button className="pure-button danger"
+                                    onClick={preventDefault(this.dropColumn.bind(this))}
+                                    >
+                                    <Fa icon="trash-o" /> Remove column
+                                </button>
+
                             </fieldset>
                         </form>
                     </ToolTip>
@@ -95,6 +108,7 @@ class ColumnTypeSelector extends PureComponent {
 
 ColumnTypeSelector.propTypes = {
     setDefaultValue: React.PropTypes.func.isRequired,
+    dropColumn: React.PropTypes.func.isRequired,
     changeColumnType: React.PropTypes.func.isRequired,
     columnIndex: React.PropTypes.number.isRequired,
     currentTypeId: React.PropTypes.string,
@@ -109,4 +123,4 @@ function selectProps(state, {columnIndex}) {
     };
 }
 
-export default connect(selectProps, {changeColumnType, setDefaultValue})(ColumnTypeSelector);
+export default connect(selectProps, {changeColumnType, setDefaultValue, dropColumn})(ColumnTypeSelector);

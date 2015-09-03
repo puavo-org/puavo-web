@@ -53,6 +53,13 @@ export function dropRow(rowIndex) {
     };
 }
 
+export function dropColumn(columnIndex) {
+    return {
+        type: "DROP_COLUMN",
+        columnIndex,
+    };
+}
+
 const rowToRest = columns => R.compose(
     R.reduce((memo, [i, cell]) => {
         var restAttr = columns[i];
