@@ -24,8 +24,12 @@
 
 
     <div>
-      <%= form_for( :list,
-                    :url => download_list_path(:school_id => @school.puavoId, :id => list.uuid, :format => :pdf) ) do |f| %>
+      <%= form_for(
+            :list,
+            :url => download_list_path(
+              :school_id => @school.puavoId,
+              :id => list.uuid,
+              :format => :pdf) ) do |f| %>
 
       <div>
         <%= f.radio_button :generate_password, true, :id => "list_generate_password_true_#{ id }" %>
