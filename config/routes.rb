@@ -39,7 +39,7 @@ PuavoUsers::Application.routes.draw do
     end
 
     scope :path => ':school_id' do
-      resources :lists
+      match 'lists' => 'lists#index', :as => :lists, :via => :get
     end
 
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
