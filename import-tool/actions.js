@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import R from "ramda";
 
-import COLUMN_TYPES from "./column_types";
+import ColumnTypes from "./ColumnTypes";
 import {getCellValue} from "./utils";
 
 const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
@@ -63,7 +63,7 @@ export function dropColumn(columnIndex) {
 const rowToRest = columns => R.compose(
     R.reduce((memo, [i, cell]) => {
         var restAttr = columns[i];
-        if (restAttr === COLUMN_TYPES.unknown) return memo;
+        if (restAttr === ColumnTypes.unknown) return memo;
         var val = getCellValue(cell);
         if (restAttr.attribute === "roles") {
             val = [val];

@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import PureComponent from "react-pure-render/component";
 import Modal from "./Modal";
 
-import COLUMN_TYPES, {REQUIRED_COLUMNS} from "../column_types";
+import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
 import {setImportData, startImport, dropRow} from "../actions";
 import {saveState, restoreState, resetState} from "../StateStorage";
 import Cell from "./Cell";
@@ -100,7 +100,7 @@ export default class ImportTool extends PureComponent {
                                             <ColumnEditor
                                                 columnIndex={columnIndex}
                                                 currentTypeId={R.compose(
-                                                    R.defaultTo(COLUMN_TYPES.unknown.id),
+                                                    R.defaultTo(ColumnTypes.unknown.id),
                                                     R.path([columnIndex, "id"])
                                                 )(columns)}
                                             />

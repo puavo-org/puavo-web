@@ -7,7 +7,7 @@ import {Overlay} from "react-overlays";
 
 import ToolTip from "./ToolTip";
 import Fa from "./Fa";
-import COLUMN_TYPES from "../column_types";
+import ColumnTypes from "../ColumnTypes";
 import {addColumn} from "../actions";
 import {preventDefault} from "../utils";
 
@@ -58,7 +58,7 @@ class ImportMenu extends PureComponent {
                                 <legend>Add column</legend>
                                 <select onChange={this.addColumn.bind(this)} ref="select">
                                     <option key="nil" value="nil" >Select...</option>
-                                    {R.toPairs(COLUMN_TYPES).map(([columnType, column]) => {
+                                    {R.toPairs(ColumnTypes).map(([columnType, column]) => {
                                         return <option key={columnType} value={columnType}>{column.name}</option>;
                                     })}
                                 </select>

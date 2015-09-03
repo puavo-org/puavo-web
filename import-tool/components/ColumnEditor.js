@@ -7,7 +7,7 @@ import {Overlay} from "react-overlays";
 
 import Fa from "./Fa";
 import ToolTip from "./ToolTip";
-import COLUMN_TYPES from "../column_types";
+import ColumnTypes from "../ColumnTypes";
 import {changeColumnType, setDefaultValue, dropColumn} from "../actions";
 import {onEnterKey, preventDefault} from "../utils";
 
@@ -67,7 +67,7 @@ class ColumnEditor extends PureComponent {
                                 <select
                                     value={this.props.currentTypeId}
                                     onChange={e => this.changeColumnType(e.target.value)}>
-                                    {R.values(COLUMN_TYPES).map(columnType => {
+                                    {R.values(ColumnTypes).map(columnType => {
                                         return <option key={columnType.id} value={columnType.id}>{columnType.name}</option>;
                                     })}
                                 </select>
