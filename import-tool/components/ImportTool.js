@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import PureComponent from "react-pure-render/component";
 import Modal from "./Modal";
 
-import {REQUIRED_COLUMNS} from "../column_types";
+import COLUMN_TYPES, {REQUIRED_COLUMNS} from "../column_types";
 import {setImportData, startImport, dropRow} from "../actions";
 import {saveState, restoreState, resetState} from "../StateStorage";
 import Cell from "./Cell";
@@ -97,7 +97,13 @@ export default class ImportTool extends PureComponent {
                                     return (
                                         <th key={columnIndex}>
                                             {columnType.name}{" "}
-                                            <ColumnTypeSelector columnIndex={columnIndex} />
+                                            <ColumnTypeSelector
+                                                columnIndex={columnIndex}
+                                                currentTypeId={R.compose(
+                                                    R.defaultTo(COLUMN_TYPES.unknown.id),
+                                                    R.path([columnIndex, "id"])
+                                                )(columns)}
+                                            />
                                         </th>
                                     );
                                 })}
@@ -121,8 +127,16 @@ export default class ImportTool extends PureComponent {
                                         {columns.map((columnType, columnIndex) => {
                                             return (
                                                 <td key={columnIndex}>
-                                                    <Cell rowIndex={rowIndex} columnIndex={columnIndex} />
-
+                                                    <Cell
+                                                        rowIndex={rowIndex}
+                                                        columnIndex={columnIndex}
+                                                        value={getCellValue(R.path([rowIndex, columnIndex], rows))}
+                                                        validationErrors={R.path([
+                                                            rowIndex,
+                                                            "attributeErrors",
+                                                            columnType.attribute,
+                                                        ], rowStatus)}
+                                                    />
                                                 </td>
                                             );
                                         })}

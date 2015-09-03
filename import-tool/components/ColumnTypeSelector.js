@@ -16,7 +16,7 @@ class ColumnTypeSelector extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            defaultValue: this.props.currentDefaultValue,
+            defaultValue: "",
             showMenu: false,
         };
     }
@@ -42,6 +42,7 @@ class ColumnTypeSelector extends PureComponent {
 
     dropColumn() {
         this.props.dropColumn(this.props.columnIndex);
+        this.hideMenu();
     }
 
     render() {
@@ -112,15 +113,6 @@ ColumnTypeSelector.propTypes = {
     changeColumnType: React.PropTypes.func.isRequired,
     columnIndex: React.PropTypes.number.isRequired,
     currentTypeId: React.PropTypes.string,
-    currentDefaultValue: React.PropTypes.string,
 };
 
-function selectProps(state, {columnIndex}) {
-    return {
-        columnIndex,
-        currentDefaultValue: R.path(["importData", "defaultValues", columnIndex], state),
-        currentTypeId: R.path(["importData", "columns", columnIndex, "id"], state),
-    };
-}
-
-export default connect(selectProps, {changeColumnType, setDefaultValue, dropColumn})(ColumnTypeSelector);
+export default connect(null, {changeColumnType, setDefaultValue, dropColumn})(ColumnTypeSelector);
