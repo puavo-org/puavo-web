@@ -40,6 +40,7 @@ PuavoUsers::Application.routes.draw do
 
     scope :path => ':school_id' do
       match 'lists' => 'lists#index', :as => :lists, :via => :get
+      match 'lists/:id' => 'lists#download', :as => :download_list, :via => :post
     end
 
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
