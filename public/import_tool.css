@@ -15,14 +15,11 @@
 
 .pure-button.danger {
     background: rgb(202, 60, 60);
+    color: white;
 }
 
 .Fa.error {
     color: rgb(202, 60, 60);
-}
-
-.pure-button.danger .fa {
-    color: white;
 }
 
 .ImportTool a {
