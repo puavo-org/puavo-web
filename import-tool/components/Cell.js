@@ -5,7 +5,7 @@ import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
-import ToolTip from "./ToolTip";
+import ArrowBox from "./ArrowBox";
 import Modal from "./Modal";
 import Fa from "./Fa";
 import {setCustomValue} from "../actions";
@@ -91,7 +91,7 @@ class Cell extends PureComponent {
                     placement="bottom"
                     target={() => React.findDOMNode(this.refs.editButton)}
                 >
-                    <ToolTip>
+                    <ArrowBox>
                         <form className="pure-form">
                             <input type="text"
                                 ref="input"
@@ -104,7 +104,7 @@ class Cell extends PureComponent {
                                 style={{width: "100%"}}
                                 onClick={preventDefault(this.setCustomValue.bind(this))}>ok</button>
                         </form>
-                    </ToolTip>
+                    </ArrowBox>
                 </Overlay>
 
 

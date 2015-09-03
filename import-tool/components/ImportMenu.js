@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import R from "ramda";
 import {Overlay} from "react-overlays";
 
-import ToolTip from "./ToolTip";
+import ArrowBox from "./ArrowBox";
 import Fa from "./Fa";
 import ColumnTypes from "../ColumnTypes";
 import {addColumn} from "../actions";
@@ -54,7 +54,7 @@ class ImportMenu extends PureComponent {
                     placement="bottom"
                     target={() => React.findDOMNode(this.refs.target)}
                 >
-                    <ToolTip>
+                    <ArrowBox>
                         <form className="pure-form">
                             <fieldset>
                                 <legend>Add column</legend>
@@ -73,7 +73,7 @@ class ImportMenu extends PureComponent {
                             >New import</ConfirmationButton>
 
                         </form>
-                    </ToolTip>
+                    </ArrowBox>
                 </Overlay>
             </div>
         );

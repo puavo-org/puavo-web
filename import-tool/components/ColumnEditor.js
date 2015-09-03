@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
 import Fa from "./Fa";
-import ToolTip from "./ToolTip";
+import ArrowBox from "./ArrowBox";
 import ColumnTypes from "../ColumnTypes";
 import {changeColumnType, setDefaultValue, dropColumn} from "../actions";
 import {onEnterKey, preventDefault} from "../utils";
@@ -60,7 +60,7 @@ class ColumnEditor extends PureComponent {
                     placement="bottom"
                     target={() => React.findDOMNode(this.refs.target)}
                 >
-                    <ToolTip>
+                    <ArrowBox>
                         <form className="pure-form pure-form-stacked">
                             <fieldset>
                                 <legend>Change type</legend>
@@ -99,7 +99,7 @@ class ColumnEditor extends PureComponent {
 
                             </fieldset>
                         </form>
-                    </ToolTip>
+                    </ArrowBox>
                 </Overlay>
             </span>
         );
