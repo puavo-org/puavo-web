@@ -7,12 +7,14 @@ const BoxStyle = {
     padding: "0 5px",
 };
 
+const borderColor = "#A36A2A";
+
 const BoxInnerStyle = {
+    boxShadow: "5px 5px 5px #888888",
     padding: "20px",
-    color: "#fff",
     textAlign: "center",
     borderRadius: 3,
-    border: "5px solid black",
+    border: "5px solid " + borderColor,
     backgroundColor: "white",
 };
 
@@ -26,29 +28,30 @@ const ArrowStyle = {
     borderStyle: "solid",
 };
 
+
 const PlacementStyles = {
     left: {
         box: {marginLeft: -3, padding: "0 5px"},
         arrow: {
-            right: 0, marginTop: -5, borderWidth: "5px 0 5px 5px", borderLeftColor: "#000",
+            right: 0, marginTop: -5, borderWidth: "5px 0 5px 5px", borderLeftColor: borderColor,
         },
     },
     right: {
         box: {marginRight: 3, padding: "0 5px"},
-        arrow: {left: 0, marginTop: -5, borderWidth: "5px 5px 5px 0", borderRightColor: "#000"},
+        arrow: {left: 0, marginTop: -5, borderWidth: "5px 5px 5px 0", borderRightColor: borderColor},
     },
     top: {
         box: {marginTop: -3, padding: "5px 0"},
-        arrow: {bottom: 0, marginLeft: -5, borderWidth: "5px 5px 0", borderTopColor: "#000"},
+        arrow: {bottom: 0, marginLeft: -5, borderWidth: "5px 5px 0", borderTopColor: borderColor},
     },
     bottom: {
         box: {marginBottom: 3, padding: "5px 0"},
-        arrow: {top: 0, marginLeft: -5, borderWidth: "0 5px 5px", borderBottomColor: "#000"},
+        arrow: {top: 0, marginLeft: -5, borderWidth: "0 5px 5px", borderBottomColor: borderColor},
     },
 };
 
 export default class ArrowBox {
-    render(){
+    render() {
         let placementStyle = PlacementStyles[this.props.placement];
 
         let {style,
