@@ -119,9 +119,11 @@ export default class ImportTool extends PureComponent {
                                     <tr key={rowIndex}>
                                         <td>
                                             {rowStatusString}{" "}
+                                            {!["ok", "waiting"].includes(rowStatusString) &&
                                             <a href="#" onClick={preventDefault(_ => this.setState({showModalFor: rowIndex}))}>
-                                                <Fa icon="info-circle" />
-                                            </a>
+                                                <Fa icon="exclamation-triangle" className="error" />
+                                            </a>}
+
                                         </td>
 
                                         {columns.map((columnType, columnIndex) => {
