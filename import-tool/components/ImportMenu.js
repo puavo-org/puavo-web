@@ -10,6 +10,8 @@ import Fa from "./Fa";
 import ColumnTypes from "../ColumnTypes";
 import {addColumn} from "../actions";
 import {preventDefault} from "../utils";
+import {resetState} from "../StateStorage";
+import ConfirmationButton from "./ConfirmationButton";
 
 class ImportMenu extends PureComponent {
 
@@ -63,6 +65,13 @@ class ImportMenu extends PureComponent {
                                     })}
                                 </select>
                             </fieldset>
+
+                            <ConfirmationButton
+                                className="pure-button danger"
+                                style={{width: "100%", marginTop: 25}}
+                                onClick={preventDefault(this.props.resetState)}
+                            >New import</ConfirmationButton>
+
                         </form>
                     </ToolTip>
                 </Overlay>
@@ -74,7 +83,8 @@ class ImportMenu extends PureComponent {
 
 ImportMenu.propTypes = {
     addColumn: React.PropTypes.func.isRequired,
+    resetState: React.PropTypes.func.isRequired,
 };
 
-export default connect(null, {addColumn})(ImportMenu);
+export default connect(null, {addColumn, resetState})(ImportMenu);
 
