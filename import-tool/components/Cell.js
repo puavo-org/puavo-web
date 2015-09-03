@@ -1,5 +1,4 @@
 
-import R from "ramda";
 import React from "react";
 import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
