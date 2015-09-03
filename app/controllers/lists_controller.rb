@@ -14,15 +14,10 @@ class ListsController < ApplicationController
   def download
     @list = List.by_id(params[:id])
 
-    logger.debug @list.inspect
-
     @users_by_group = {}
-
-    logger.debug  @list.users.inspect
 
     @list.users.each do |user_id|
       user = User.find(user_id)
-      logger.debug user.inspect
       if params[:password_to_all]
         user.new_password = params[:new_password]
       else
