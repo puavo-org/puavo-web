@@ -19,6 +19,7 @@ module MixinUserLists
       user_list.users = data["users"]
       user_list.school_id = data["school_id"]
       user_list.creator = data["creator"]
+      user_list.downloaded = data["downloaded"]
       return user_list
     end
 
@@ -49,6 +50,7 @@ module MixinUserLists
       self.uuid = UUID.generate
       self.created_at = Time.now.to_i
       self.creator = creator
+      self.downloaded = false
       self.school_id = nil
       self.users = []
 
@@ -67,7 +69,8 @@ module MixinUserLists
         "users" => self.users,
         "school_id" => self.school_id,
         "created_at" => self.created_at,
-        "creator" => self.creator
+        "creator" => self.creator,
+        "downloaded" => self.downloaded
       }
     end
 
