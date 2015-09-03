@@ -14,7 +14,7 @@
       <%= t(".created") %> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
     </span>
     <span>
-      Mikko Mallikas
+      <%= list.creator %>
     </span>
   </div>
   <div>
