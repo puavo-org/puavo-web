@@ -138,14 +138,24 @@ export default class ImportTool extends PureComponent {
 
                     </table>
 
-                    <h4>Missing required columns</h4>
-                    <ul>
-                        {missingColumns.map(c => <li key={c.id}>{c.name}</li>)}
-                    </ul>
 
-                    <button className="pure-button"
-                        disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
-                        onClick={this.startImport.bind(this)}>import</button>
+                    <div className="pure-g ImportTool-footer">
+                        <div className="pure-u-4-5">
+                            <button className="pure-button pure-button-primary ImportTool-button-start"
+                                disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
+                                onClick={this.startImport.bind(this)}>Import data</button>
+                        </div>
+
+                        {missingColumns.length > 0 &&
+                        <div className="pure-u-1-5">
+                            <div className="ImportTool-error-well">
+                                <h4>Missing columns</h4>
+                                <ul>
+                                    {missingColumns.map(c => <li key={c.id}>{c.name}</li>)}
+                                </ul>
+                            </div>
+                        </div>}
+                    </div>
 
                 </div>}
 

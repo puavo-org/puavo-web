@@ -71,3 +71,35 @@
     float: right;
 }
 
+.ImportTool-footer {
+    margin-top: 50px;
+}
+
+.ImportTool-button-start {
+    font-size: 200%;
+}
+
+.ImportTool-error-well {
+    background-color: rgb(202, 60, 60);
+    border-radius: 2px;
+    border: 1px solid #7E2323;
+    color: white;
+    padding: 10px;
+}
+
+
+.button-xsmall {
+    font-size: 70%;
+}
+
+.button-small {
+    font-size: 85%;
+}
+
+.button-large {
+    font-size: 110%;
+}
+
+.button-xlarge {
+    font-size: 125%;
+}

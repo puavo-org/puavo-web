@@ -56,13 +56,13 @@ class DataPicker extends PureComponent {
                 <div className="pure-g">
                     <div className="pure-u-4-5">
                         <button
-                            className="pure-button pure-button-primary"
+                            className="pure-button pure-button-primary button-large"
                             style={{width: "100%"}}
                             onClick={preventDefault(this.parseImportString.bind(this))}>Parse</button>
                     </div>
                     <div className="pure-u-1-5">
                         <button
-                            className="pure-button"
+                            className="pure-button button-large"
                             style={{width: "100%"}}
                             onClick={preventDefault(this.startFileDialog.bind(this))}>Load file</button>
                     </div>
