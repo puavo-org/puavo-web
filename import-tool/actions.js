@@ -6,7 +6,7 @@ import {getCellValue} from "./utils";
 
 const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
 
-export function setImportData(rawCSV) {
+export function parseImportString(rawCSV) {
     var res = Papa.parse(rawCSV.trim());
     // XXX: Assert res.errors
 

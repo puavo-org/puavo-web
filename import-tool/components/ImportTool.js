@@ -6,7 +6,7 @@ import PureComponent from "react-pure-render/component";
 import Modal from "./Modal";
 
 import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
-import {setImportData, startImport, dropRow} from "../actions";
+import {parseImportString, startImport, dropRow} from "../actions";
 import Cell from "./Cell";
 import ImportMenu from "./ImportMenu";
 import ColumnEditor from "./ColumnEditor";
@@ -43,17 +43,31 @@ export default class ImportTool extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
+            importString: "",
             showModalFor: null,
         };
     }
 
-    onParseCSV(e) {
-        var el = React.findDOMNode(this.refs.textarea);
-        this.props.setImportData(el.value);
+    parseImportString(e) {
+        this.props.parseImportString(this.state.importString || demoData);
     }
 
     startImport() {
         this.props.startImport();
+    }
+
+    startFileDialog(e) {
+        React.findDOMNode(this.refs.file).click();
+    }
+
+    readFileEvent(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = e => {
+            this.setState({importString: e.target.result});
+        };
+        reader.readAsText(file);
     }
 
     render() {
@@ -73,10 +87,37 @@ export default class ImportTool extends PureComponent {
                 </Modal>}
 
                 {rows.length == 0 &&
-                <div className="ImportTool-data-selector" >
-                    <textarea className="ImportTool-textarea" ref="textarea" defaultValue={demoData} />
-                    <button onClick={this.onParseCSV.bind(this)}>Parse</button>
-                </div>}
+                <form className="ImportTool-data-selector pure-form" >
+                    <textarea
+                        className="ImportTool-textarea"
+                        placeholder={demoData}
+                        value={this.state.importString}
+                        onChange={e => this.setState({importString: e.target.value})}
+                    />
+
+                    <div className="pure-g">
+                        <div className="pure-u-4-5">
+                            <button
+                                className="pure-button pure-button-primary"
+                                style={{width: "100%"}}
+                                onClick={preventDefault(this.parseImportString.bind(this))}>Parse</button>
+                        </div>
+                        <div className="pure-u-1-5">
+                            <button
+                                className="pure-button"
+                                style={{width: "100%"}}
+                                onClick={preventDefault(this.startFileDialog.bind(this))}>Load file</button>
+                        </div>
+                    </div>
+
+                    <input
+                        type="file"
+                        style={{display: "none"}}
+                        ref="file"
+                        accept=".csv,.txt,.tsv,.tab"
+                        onChange={this.readFileEvent.bind(this)} />
+
+                </form>}
 
                 {rows.length > 0 &&
                 <div className="ImportTool-editor">
@@ -159,19 +200,20 @@ export default class ImportTool extends PureComponent {
                         {missingColumns.map(c => <li key={c.id}>{c.name}</li>)}
                     </ul>
 
+                    <button className="pure-button"
+                        disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
+                        onClick={this.startImport.bind(this)}>import</button>
+
                 </div>}
 
 
-                <button className="pure-button"
-                    disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
-                    onClick={this.startImport.bind(this)}>import</button>
             </div>
         );
     }
 }
 
 ImportTool.propTypes = {
-    setImportData: React.PropTypes.func.isRequired,
+    parseImportString: React.PropTypes.func.isRequired,
     startImport: React.PropTypes.func.isRequired,
     dropRow: React.PropTypes.func.isRequired,
     rows: React.PropTypes.array.isRequired,
@@ -184,4 +226,4 @@ function select(state) {
     return {rowStatus, rows, columns};
 }
 
-export default connect(select, {setImportData, startImport, dropRow})(ImportTool);
+export default connect(select, {parseImportString, startImport, dropRow})(ImportTool);
