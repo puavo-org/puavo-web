@@ -83,7 +83,7 @@ const isValidationError = R.compose(
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
-        var {importData: {rows, columns}, defaultSchoolDn} = getState();
+        var {importData: {rows, columns}, defaultSchoolDn, rowStatus} = getState();
 
         const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
         const dispatchStatus = R.compose(dispatch, R.merge({
@@ -92,6 +92,13 @@ export function startImport(rowIndex=0) {
         }));
 
         if (rows.length < rowIndex+1) return;
+
+        const currentStatus = R.path([rowIndex, "status"], rowStatus);
+        console.log("Current status", rowIndex, currentStatus);
+
+        if (currentStatus === "ok") {
+            return next();
+        }
 
         var restStyleData = rows.map(rowToRest(columns));
         restStyleData = R.map(R.assoc("school_dns", [defaultSchoolDn]), restStyleData);
