@@ -19,6 +19,7 @@ function wrapReducer(defaultReducer, stateKey) {
             delete window.localStorage[stateKey];
             reseting = true;
             setTimeout(() => window.location.reload(), 1);
+            return state;
         }
 
         if (action.type === "RESTORE_STATE" && window.localStorage[stateKey]) {
