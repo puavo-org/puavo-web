@@ -10,7 +10,7 @@ import {setImportData, startImport, dropRow} from "../actions";
 import {saveState, restoreState, resetState} from "../StateStorage";
 import Cell from "./Cell";
 import AddColumn from "./AddColumn";
-import ColumnTypeSelector from "./ColumnTypeSelector";
+import ColumnEditor from "./ColumnEditor";
 import Fa from "./Fa";
 import {getCellValue, preventDefault} from "../utils";
 
@@ -97,7 +97,7 @@ export default class ImportTool extends PureComponent {
                                     return (
                                         <th key={columnIndex}>
                                             {columnType.name}{" "}
-                                            <ColumnTypeSelector
+                                            <ColumnEditor
                                                 columnIndex={columnIndex}
                                                 currentTypeId={R.compose(
                                                     R.defaultTo(COLUMN_TYPES.unknown.id),

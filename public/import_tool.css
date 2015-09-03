@@ -13,10 +13,6 @@
     margin-bottom: 3em;
 }
 
-.ImportTool .ColumnTypeSelector-default-value-input {
-    width: 60px;
-}
-
 .pure-button.danger {
     background: rgb(202, 60, 60);
 }

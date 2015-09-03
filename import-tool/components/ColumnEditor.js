@@ -11,7 +11,7 @@ import COLUMN_TYPES from "../column_types";
 import {changeColumnType, setDefaultValue, dropColumn} from "../actions";
 import {onEnterKey, preventDefault} from "../utils";
 
-class ColumnTypeSelector extends PureComponent {
+class ColumnEditor extends PureComponent {
 
     constructor(props) {
         super(props);
@@ -47,7 +47,7 @@ class ColumnTypeSelector extends PureComponent {
 
     render() {
         return (
-            <span className="ColumnTypeSelector">
+            <span className="ColumnEditor">
 
                 <a href="#" ref="target" style={{float: "right"}} onClick={preventDefault(this.showMenu.bind(this))}>
                     <Fa icon="pencil" />
@@ -73,6 +73,7 @@ class ColumnTypeSelector extends PureComponent {
                                 </select>
 
                                 <legend>Fill empty values</legend>
+
                                 <input
                                     className="ColumnTypeSelector-default-value-input"
                                     type="text"
@@ -107,7 +108,7 @@ class ColumnTypeSelector extends PureComponent {
 }
 
 
-ColumnTypeSelector.propTypes = {
+ColumnEditor.propTypes = {
     setDefaultValue: React.PropTypes.func.isRequired,
     dropColumn: React.PropTypes.func.isRequired,
     changeColumnType: React.PropTypes.func.isRequired,
@@ -115,4 +116,4 @@ ColumnTypeSelector.propTypes = {
     currentTypeId: React.PropTypes.string,
 };
 
-export default connect(null, {changeColumnType, setDefaultValue, dropColumn})(ColumnTypeSelector);
+export default connect(null, {changeColumnType, setDefaultValue, dropColumn})(ColumnEditor);
