@@ -86,7 +86,7 @@ export default class ImportTool extends PureComponent {
                 {rows.length > 0 &&
                 <div className="ImportTool-editor">
                     data: {hasValuesInRequiredCells(columns, rows) ? "ok" : "no"}
-                    <table className="pure-table">
+                    <table className="pure-table pure-table-striped">
                         <thead>
                             <tr>
                                 <th key="status">

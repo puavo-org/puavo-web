@@ -70,7 +70,7 @@ class ImportMenu extends PureComponent {
                                 className="pure-button danger"
                                 style={{width: "100%", marginTop: 25}}
                                 onClick={preventDefault(this.props.resetState)}
-                            >New import</ConfirmationButton>
+                            >Start new import</ConfirmationButton>
 
                         </form>
                     </ArrowBox>
