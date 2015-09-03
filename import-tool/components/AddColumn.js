@@ -39,7 +39,7 @@ class AddColumn extends PureComponent {
         return (
             <div className="AddColumn">
 
-                <button className="pure-button pure-button-primary"
+                <button className="pure-button"
                     ref="target"
                     onClick={preventDefault(this.showMenu.bind(this))}>
                     <Fa icon="bars" />

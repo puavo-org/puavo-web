@@ -70,12 +70,12 @@ class Cell extends PureComponent {
 
                     <span className="Cell-edit-buttons">
                         {" "}
-                        <a href="#" onClick={preventDefault(this.startEdit.bind(this))}>
-                            <Fa icon="pencil" />
-                        </a>
-                        {" "}
                         <a href="#" onClick={preventDefault(this.revertToOriginal.bind(this))}>
                             <Fa icon="recycle" />
+                        </a>
+                        {" "}
+                        <a href="#" onClick={preventDefault(this.startEdit.bind(this))}>
+                            <Fa icon="pencil" />
                         </a>
                     </span>
                 </div>}

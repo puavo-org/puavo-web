@@ -49,8 +49,8 @@ class ColumnTypeSelector extends PureComponent {
         return (
             <span className="ColumnTypeSelector">
 
-                <a href="#" ref="target" onClick={preventDefault(this.showMenu.bind(this))}>
-                    <Fa icon="edit" />
+                <a href="#" ref="target" style={{float: "right"}} onClick={preventDefault(this.showMenu.bind(this))}>
+                    <Fa icon="pencil" />
                 </a>
 
                 <Overlay
