@@ -4,7 +4,8 @@ class ListsController < ApplicationController
   def index
 
     @lists = List.all.select do |list|
-      list.school_id.to_s == @school.puavoId.to_s
+      list.school_id.to_s == @school.puavoId.to_s &&
+        (!list.downloaded || params[:downloaded] )
     end
 
     respond_to do |format|
@@ -71,6 +72,9 @@ class ListsController < ApplicationController
 
     filename = current_organisation.organisation_key + "_" +
       @school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
+
+    @list.downloaded = true
+    @list.save
 
     respond_to do |format|
       format.pdf do

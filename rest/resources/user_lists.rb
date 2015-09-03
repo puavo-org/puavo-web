@@ -5,7 +5,7 @@ class UserLists
   include Puavo::MixinUserLists
 
   attr_accessor :uuid, :created_at, :school_id, :users, :users_by_groups,
-                :creator
+                :creator, :downloaded
 
 
 end
