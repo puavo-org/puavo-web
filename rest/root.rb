@@ -190,14 +190,12 @@ class Root < PuavoSinatra
   end
 
   get "/v3/ldap_connection_test" do
-    # Just try get something from the ldap
     LdapModel.setup(:credentials => CONFIG["server"]) do
-      has_orgs = Organisation.all.size > 0
-      if !has_orgs
-        status 500
-      end
-      has_orgs.to_s
+      # Just try get something from the ldap. This does not find anything but
+      # raises LdapError if the connection fails
+      User.by_username("noone")
     end
+    json({:ok => true})
   end
 
   get "/v3/about" do
