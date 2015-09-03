@@ -1,54 +1,53 @@
 <h2>
 <%= t(".title") %>
 </h2>
-<p>
+
+<p class="description">
   <%= t(".description") %>
 <p>
 
 <% id = 1 %>
 <% @lists.each do |list| %>
-<div>
+<div class="list">
 
-  <div>
+  <div class="meta_information">
     <span>
       <%= t(".created") %> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
     </span>
     <span>
       <%= list.creator %>
     </span>
-  </div>
-  <div>
     <div>
       <b><%= t(".users_count_title") %>:</b> <%= list.users.count %>
     </div>
-
-
-    <div>
-      <%= form_for(
-            :list,
-            :url => download_list_path(
-              :school_id => @school.puavoId,
-              :id => list.uuid,
-              :format => :pdf) ) do |f| %>
-
-      <div>
-        <%= f.radio_button :generate_password, true, :id => "list_generate_password_true_#{ id }" %>
-        <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
-      </div>
-      <div>
-        <%= f.radio_button :generate_password, false, :id => "list_generate_password_false_#{ id }"  %>
-        <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
-        <%= f.text_field :new_password, :size => 20 %>
-      </div>
-      <div>
-        <%= f.submit t(".label_submit_button") %>
-      </div>
-      <% end %>
-    </div>
-
   </div>
 
+
+  <div class="form">
+    <%= form_for(
+        :list,
+        :url => download_list_path(
+    :school_id => @school.puavoId,
+    :id => list.uuid,
+    :format => :pdf) ) do |f| %>
+
+    <div>
+      <%= f.radio_button :generate_password, true, :id => "list_generate_password_true_#{ id }" %>
+      <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
+    </div>
+    <div>
+      <%= f.radio_button :generate_password, false, :id => "list_generate_password_false_#{ id }"  %>
+      <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
+      <%= f.text_field :new_password, :size => 20 %>
+    </div>
+    <div>
+      <%= f.submit t(".label_submit_button") %>
+    </div>
+    <% end %>
+  </div>
+
+  <span class="clear"></span>
 </div>
 <% id += 1 %>
 <% end %>
-<div></div>
+<div class="list"></div>
