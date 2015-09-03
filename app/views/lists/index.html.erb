@@ -1,35 +1,31 @@
 <h2>
 <%= t(".title") %>
 </h2>
-<p style="margin-bottom: 20px;">
+<p>
   <%= t(".description") %>
 <p>
 
 <% @lists.each do |list| %>
-<div style="border-top: 1px solid black">
+<div>
 
   <div>
-    <span style="margin-right: 20px;">
+    <span>
       <%= t(".created") %> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
     </span>
     <span>
       Mikko Mallikas
     </span>
   </div>
-  <div style="margin-left: 40px; margin-bottom: 20px;">
+  <div>
     <div>
       <b><%= t(".users_count_title") %>:</b> 312
     </div>
+
+
     <div>
-      <input name="foo" type="radio"><%= t(".label_generate_password") %>
-    </div>
-    <div>
-      <input  name="foo" type="radio"><%= t(".label_set_password") %>: <input type="text">
-    </div>
-    <div><a href="" class="btn"><%= t(".label_submit_button") %><%= t(".title") %></a>
     </div>
   </div>
 
 </div>
 <% end %>
-<div style="border-top: 1px solid black"></div>
+<div></div>
