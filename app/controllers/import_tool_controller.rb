@@ -1,5 +1,5 @@
 class ImportToolController < ApplicationController
   def index
-    @school = School.find(params["id"])
+    @school = School.find(params["school_id"])
   end
 end

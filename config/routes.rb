@@ -45,7 +45,6 @@ PuavoUsers::Application.routes.draw do
     match 'schools/:id/wlan' => 'schools#wlan', :as => :wlan_school, :via => :get
     match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :wlan_update_school, :via => :put
     match 'schools/:id/external_services' => 'external_services#index', :as => :external_services_school, :via => :get
-    match 'schools/:id/import_tool' => 'import_tool#index', :via => :get
     resources :schools
 
     scope :path => ':school_id' do
@@ -55,6 +54,7 @@ PuavoUsers::Application.routes.draw do
       match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
       match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
       match 'users/change_school' => 'users#change_school', :as => :change_school_users, :via => :post
+      match 'import_tool' => 'import_tool#index', :via => :get
     end
 
 

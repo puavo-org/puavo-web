@@ -47,6 +47,7 @@ class PuavoMenu < MetaMenu
     active_on GroupsController
     active_on RolesController
     active_on Users::ImportController
+    active_on ImportToolController
 
     child do
       title { t('link.users') }
@@ -65,6 +66,12 @@ class PuavoMenu < MetaMenu
       title { t('link.roles') }
       link { roles_path(@school) }
       active_on RolesController
+    end
+
+    child do
+      title { 'Import' }
+      link { import_tool_path(@school) }
+      active_on ImportToolController
     end
   end
 
