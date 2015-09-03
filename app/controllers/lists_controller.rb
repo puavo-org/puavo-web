@@ -20,10 +20,10 @@ class ListsController < ApplicationController
 
     @list.users.each do |user_id|
       user = User.find(user_id)
-      if params[:password_to_all]
-        user.new_password = params[:new_password]
-      else
+      if params[:list][:generate_password] == "true"
         user.set_generated_password
+      else
+        user.new_password = params[:list][:new_password]
       end
 
       user.save!
