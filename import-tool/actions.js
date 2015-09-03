@@ -105,7 +105,7 @@ export function startImport(rowIndex=0) {
 
         console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));
 
-        dispatchStatus({status: "starting"});
+        dispatchStatus({status: "working"});
 
         var res;
 
@@ -123,7 +123,7 @@ export function startImport(rowIndex=0) {
                 },
             });
         } catch(error) {
-            dispatchStatus({status: "fetch error", error});
+            dispatchStatus({status: "error", error});
             return next();
         }
 
@@ -132,7 +132,7 @@ export function startImport(rowIndex=0) {
         try {
             responseData = await res.json();
         } catch(error) {
-            dispatchStatus({status: "failed to parse response json", error});
+            dispatchStatus({status: "error", error});
             return next();
         }
 
@@ -144,14 +144,14 @@ export function startImport(rowIndex=0) {
         if (res.status === 400 && isValidationError(responseData)) {
             console.error("Validation error", responseData);
             dispatchStatus({
-                status: "Validation error",
+                status: "error",
                 attributeErrors: responseData.error.meta.invalid_attributes,
             });
             return next();
         }
 
         console.error("Unkown error", responseData);
-        dispatchStatus({status: "Unkown error", responseData});
+        dispatchStatus({status: "error", responseData});
         next();
     };
 }

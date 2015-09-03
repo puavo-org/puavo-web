@@ -9,6 +9,7 @@ import DataPicker from "./DataPicker";
 import Cell from "./Cell";
 import ImportMenu from "./ImportMenu";
 import ColumnEditor from "./ColumnEditor";
+import StatusIcon from "./StatusIcon";
 import Fa from "./Fa";
 import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
 import {parseImportString, startImport, dropRow} from "../actions";
@@ -87,15 +88,20 @@ export default class ImportTool extends PureComponent {
                         <tbody>
                             {rows.map((row, rowIndex) => {
                                 const rowStatusString = R.path([rowIndex, "status"], rowStatus) || "waiting";
+
+                                var statusIcon = <StatusIcon status={rowStatusString} />;
+                                if (rowStatusString === "error") {
+                                    statusIcon = (
+                                        <a href="#" onClick={preventDefault(_ => this.setState({showModalFor: rowIndex}))}>
+                                            {statusIcon}
+                                        </a>
+                                    );
+                                }
+
                                 return (
                                     <tr key={rowIndex}>
                                         <td>
-                                            {rowStatusString}{" "}
-                                            {!["ok", "waiting"].includes(rowStatusString) &&
-                                            <a href="#" onClick={preventDefault(_ => this.setState({showModalFor: rowIndex}))}>
-                                                <Fa icon="exclamation-triangle" className="error" />
-                                            </a>}
-
+                                            {statusIcon}
                                         </td>
 
                                         {columns.map((columnType, columnIndex) => {

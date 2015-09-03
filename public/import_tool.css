@@ -22,6 +22,10 @@
     color: rgb(202, 60, 60);
 }
 
+.Fa.success {
+    color: rgb(28, 184, 65);
+}
+
 .ImportTool a {
     color: #F59645;
 }
