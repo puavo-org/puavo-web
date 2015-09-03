@@ -23,7 +23,24 @@
 
 
     <div>
+      <%= form_for( :list,
+                    :url => download_list_path(:school_id => @school.puavoId, :id => list.uuid, :format => :pdf) ) do |f| %>
+
+      <div>
+        <%= f.radio_button :generate_password, true %>
+        <%= f.label t(".label_generate_password"), :for => "list_generate_password_true" %>
+      </div>
+      <div>
+        <%= f.radio_button :generate_password, false %>
+        <%= f.label t(".label_set_password"), :for => "list_generate_password_false" %>
+        <%= f.text_field :new_password, :size => 20 %>
+      </div>
+      <div>
+        <%= f.submit t(".label_submit_button") %>
+      </div>
+      <% end %>
     </div>
+
   </div>
 
 </div>
