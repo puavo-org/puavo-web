@@ -32,7 +32,7 @@
     :format => :pdf) ) do |f| %>
 
     <div>
-      <%= f.radio_button :generate_password, true, :id => "list_generate_password_true_#{ id }" %>
+      <%= f.radio_button :generate_password, true, :checked => true, :id => "list_generate_password_true_#{ id }" %>
       <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
     </div>
     <div>
