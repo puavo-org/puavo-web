@@ -16,7 +16,7 @@ class Cell extends PureComponent {
         super(props);
         this.state = {
             customValue: props.value,
-            showError: false,
+            showErrorModal: false,
             editing: false,
         };
     }
@@ -56,18 +56,49 @@ class Cell extends PureComponent {
         this.setState({editing: false});
     }
 
+    hasValidationErrors() {
+        return this.props.validationErrors.length > 0;
+    }
+
+    missingRequiredValue() {
+        return !this.props.value && this.props.required;
+    }
+
+    hasErrors() {
+        return this.hasValidationErrors() || this.missingRequiredValue();
+    }
+
     render() {
         return (
             <div className="Cell">
 
                 <div>
-                    {this.props.validationErrors.length > 0 &&
+                    {this.hasErrors() &&
                     <span>
-                        <a href="#" onClick={preventDefault(_ => this.setState({showError: true}))}>
+                        <a href="#" onClick={preventDefault(_ => this.setState({showErrorModal: true}))}>
                             <Fa icon="exclamation-triangle" className="error" />
                         </a>
                         {" "}
                     </span>}
+
+                    {this.state.showErrorModal &&
+                    <Modal show onHide={e => this.setState({showErrorModal: false})}>
+                        <div>
+                            <h1>Error</h1>
+
+                            {this.missingRequiredValue() &&
+                            <div>
+                                Value is missing
+                            </div>}
+
+                            {this.hasValidationErrors() &&
+                            <pre style={{fontSize: "small"}}>
+                                {JSON.stringify(this.props.validationErrors, null, "  ")}
+                            </pre>}
+
+                        </div>
+                    </Modal>}
+
 
                     {this.props.value}
 
@@ -105,22 +136,6 @@ class Cell extends PureComponent {
                         </form>
                     </ArrowBox>
                 </Overlay>
-
-
-
-                {this.state.showError &&
-                    <Modal show onHide={e => this.setState({showError: false})}>
-                        <div>
-                            <h1>Error</h1>
-
-                            <pre style={{fontSize: "small"}}>
-                                {JSON.stringify(this.props.validationErrors, null, "  ")}
-                            </pre>
-
-                        </div>
-                    </Modal>
-                }
-
             </div>
         );
     }
@@ -132,6 +147,7 @@ Cell.propTypes = {
     setCustomValue: React.PropTypes.func.isRequired,
     value: React.PropTypes.string.isRequired,
     validationErrors: React.PropTypes.array,
+    required: React.PropTypes.boolean,
 };
 
 Cell.defaultProps = {

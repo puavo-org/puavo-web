@@ -109,6 +109,7 @@ export default class ImportTool extends PureComponent {
                                                 <td key={columnIndex}>
                                                     <Cell
                                                         rowIndex={rowIndex}
+                                                        required={columnType.required}
                                                         columnIndex={columnIndex}
                                                         value={getCellValue(R.path([rowIndex, columnIndex], rows))}
                                                         validationErrors={R.path([
