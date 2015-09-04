@@ -112,22 +112,14 @@ class LdapModel
   # @param option [Symbol] Set to :multi to return an Array
   # @return [Array<LdapModel>, LdapModel]
   def self.by_attr(pretty_name, value, option=nil, attrs=nil)
-    ldap_attr = pretty2ldap[pretty_name.to_sym]
-
-    if ldap_attr.nil?
-      # Would compile to invalid ldap search filter. Throw early with human
-      # readable error message
-      raise "Invalid pretty attribute #{ pretty_name } for #{ self }"
-    end
-
-    by_ldap_attr(ldap_attr, value, option, attrs)
+    by_ldap_attr(pretty2ldap!(pretty_name), value, option, attrs)
   end
 
   # (see .by_attr)
   #
   # Raises {NotFound} if no models were found
   def self.by_attr!(attr, value, option=nil, attrs=nil)
-    by_ldap_attr!(pretty2ldap[attr.to_sym], value, option, attrs)
+    by_ldap_attr!(pretty2ldap!(attr), value, option, attrs)
   end
 
   # Find model by `id` attribute.

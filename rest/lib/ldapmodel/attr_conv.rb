@@ -502,6 +502,15 @@ class LdapModel
     run_hook :after, :validate
   end
 
+  def self.pretty2ldap!(pretty_name)
+    ldap_attr = pretty2ldap[pretty_name.to_sym]
+    if ldap_attr.nil?
+      # Would compile to invalid ldap search filter. Throw early with human
+      # readable error message
+      raise "Invalid pretty attribute #{ pretty_name } for #{ self }"
+    end
+    ldap_attr
+  end
 
   private
 
