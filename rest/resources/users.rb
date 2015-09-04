@@ -243,6 +243,10 @@ class User < LdapModel
     _roles
   end
 
+  def legacy_roles
+    LegacyRole.by_attr(:member_dns, dn, :multi)
+  end
+
   # XXX: deprecated!
   computed_attr :user_type
   def user_type
@@ -521,6 +525,43 @@ class Users < PuavoSinatra
 
     json User.by_username!(params["username"], params["attributes"])
   end
+
+  # Replace all legacy roles for user in one request
+  # Example:
+  #
+  #   curl -u albus:albus -H "host: hogwarts.opinsys.net" -H "content-type: application/json" -X PUT -d '{"ids": [49937, 50164]}' http://localhost:9292/v3/users/bob/legacy_roles
+  #
+  #
+  put "/v3/users/:username/legacy_roles" do
+    auth :basic_auth, :kerberos
+
+    user = User.by_username!(params["username"])
+    current_legacy_roles = LegacyRole.by_attr(:member_dns, user.dn, :multi)
+
+    current_legacy_roles.each do |r|
+      r.remove_member(user)
+      r.save!
+    end
+
+    new_legacy_roles = json_params["ids"].map do |id|
+      LegacyRole.by_attr!(:id, id)
+    end
+
+    new_legacy_roles.each do |r|
+      r.add_member(user)
+      r.save!
+    end
+
+    json new_legacy_roles
+
+  end
+
+  get "/v3/users/:username/legacy_roles" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    json user.legacy_roles
+  end
+
 
   get "/v3/users/:username/profile.jpg" do
     auth :basic_auth, :kerberos

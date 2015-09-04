@@ -26,6 +26,12 @@ describe LdapModel do
       @role.groups << @group
       @role.save!
 
+      @other_role = Role.new
+      @other_role.displayName = "Other role"
+      @other_role.puavoSchool = @school.dn
+      @other_role.groups << @group
+      @other_role.save!
+
       LdapModel.setup(
         :organisation => PuavoRest::Organisation.default_organisation_domain!,
         :rest_root => "http://" + CONFIG["default_organisation_domain"],
@@ -52,7 +58,7 @@ describe LdapModel do
       get "/v3/schools/#{ @school.id }/legacy_roles"
       assert_200
       data = JSON.parse(last_response.body)
-      assert_equal 1, data.size
+      assert_equal 2, data.size
       assert_equal @role.id, data.first["id"]
       assert_equal [], data.first["member_usernames"]
     end
@@ -72,6 +78,32 @@ describe LdapModel do
 
     end
 
+    it "can be replaced" do
+      basic_authorize "cucumber", "cucumber"
+      post "/v3/schools/#{ @school.id }/legacy_roles/#{ @role.id }/members", {
+        "username" => @user.username
+      }
+      assert_200
+
+      get "/v3/users/heli/legacy_roles"
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert_equal 1, data.size
+      assert_equal "Some role", data.first["name"]
+
+      put "/v3/users/heli/legacy_roles", {
+        "ids" => [@other_role.id]
+      }
+      assert_200
+
+      get "/v3/users/heli/legacy_roles"
+      assert_200
+      data = JSON.parse(last_response.body)
+      assert_equal 1, data.size
+      assert_equal "Other role", data.first["name"]
+
+
+    end
 
   end
 end
