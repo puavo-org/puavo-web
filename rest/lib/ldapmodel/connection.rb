@@ -177,7 +177,7 @@ class LdapModel
     res = nil
     ldap_op_uuid = (0...25).map{('a'..'z').to_a[rand(10)] }.join
 
-    Syslog.log(Syslog::LOG_NOTICE, "START(#{ ldap_op_uuid })> #{ connection.class }##{ method }")
+    Syslog.log(Syslog::LOG_NOTICE, "START(#{ ldap_op_uuid })> #{ connection.class }##{ method } #{ args.inspect }")
     err = nil
 
     begin
@@ -193,7 +193,7 @@ class LdapModel
       message += "#{ connection.class }##{ method }(#{ args.map{|a| a.inspect }.join(", ")})\n"
 
       raise LdapError, {
-        :user => "#{ err.class }: #{ err.message } (LDAP OP UUID: #{ ldap_op_uuid })",
+        :user => "#{ err.class }: #{ err.message } (grep syslog for #{ ldap_op_uuid })",
         :message => message,
         :op_uuid => ldap_op_uuid,
         :original_error => err,
