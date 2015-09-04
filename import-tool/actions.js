@@ -63,7 +63,8 @@ export function dropColumn(columnIndex) {
 const rowToRest = columns => R.compose(
     R.reduce((memo, [i, cell]) => {
         var restAttr = columns[i];
-        if (restAttr === ColumnTypes.unknown) return memo;
+        if (!restAttr.userAttribute) return memo;
+
         var val = getCellValue(cell);
         if (restAttr.attribute === "roles") {
             val = [val];
