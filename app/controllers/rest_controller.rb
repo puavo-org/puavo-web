@@ -6,6 +6,15 @@ class RestController < ApplicationController
       qs = "?" + qs
     end
 
+    if !Puavo::CONFIG["puavo_rest"] || !Puavo::CONFIG["puavo_rest"]["host"]
+      return render :status => 500, :json => {
+        "error" => {
+          "code" => "ConfigurationError",
+          "message" => "puavo-rest host is not configured"
+        }
+      }
+    end
+
     rest_url = "#{ Puavo::CONFIG["puavo_rest"]["host"] }/#{ params["url"] }#{ qs }"
     puts "Proxying connection to #{ rest_url }"
 
