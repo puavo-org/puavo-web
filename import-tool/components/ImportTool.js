@@ -58,87 +58,89 @@ export default class ImportTool extends PureComponent {
                 </Modal>}
 
                 {rows.length > 0 &&
-                <div className="ImportTool-editor">
-                    <table className="pure-table pure-table-striped">
-                        <thead>
-                            <tr>
-                                <th key="status">
-                                    Status
-                                </th>
+                <div>
+                    <div className="ImportTool-editor">
+                        <table className="pure-table pure-table-striped">
+                            <thead>
+                                <tr>
+                                    <th key="status">
+                                        Status
+                                    </th>
 
-                                {columns.map((columnType, columnIndex) => {
+                                    {columns.map((columnType, columnIndex) => {
+                                        return (
+                                            <th key={columnIndex}>
+                                                {columnType.name}{" "}
+                                                <ColumnEditor
+                                                    columnIndex={columnIndex}
+                                                    currentTypeId={R.compose(
+                                                        R.defaultTo(ColumnTypes.unknown.id),
+                                                        R.path([columnIndex, "id"])
+                                                    )(columns)}
+                                                />
+                                            </th>
+                                        );
+                                    })}
+                                    <th>
+                                        <ImportMenu />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rows.map((row, rowIndex) => {
+                                    const rowStatusString = R.path([rowIndex, "status"], rowStatus) || "waiting";
+
+                                    var statusIcon = <StatusIcon status={rowStatusString} />;
+                                    if (rowStatusString === "error") {
+                                        statusIcon = (
+                                            <a href="#" onClick={preventDefault(_ => this.setState({showModalFor: rowIndex}))}>
+                                                {statusIcon}
+                                            </a>
+                                        );
+                                    }
+
                                     return (
-                                        <th key={columnIndex}>
-                                            {columnType.name}{" "}
-                                            <ColumnEditor
-                                                columnIndex={columnIndex}
-                                                currentTypeId={R.compose(
-                                                    R.defaultTo(ColumnTypes.unknown.id),
-                                                    R.path([columnIndex, "id"])
-                                                )(columns)}
-                                            />
-                                        </th>
+                                        <tr key={rowIndex}>
+                                            <td>
+                                                {statusIcon}
+                                            </td>
+
+                                            {columns.map((columnType, columnIndex) => {
+                                                return (
+                                                    <td key={columnIndex}>
+                                                        <Cell
+                                                            rowIndex={rowIndex}
+                                                            required={columnType.required}
+                                                            columnIndex={columnIndex}
+                                                            value={getCellValue(R.path([rowIndex, columnIndex], rows))}
+                                                            validationErrors={R.path([
+                                                                rowIndex,
+                                                                "attributeErrors",
+                                                                columnType.attribute,
+                                                            ], rowStatus)}
+                                                        />
+                                                    </td>
+                                                );
+                                            })}
+
+                                            <td>
+                                                <button
+                                                    className="pure-button danger"
+                                                    onClick={preventDefault(_ => this.props.dropRow(rowIndex))}
+                                                >
+                                                    <Fa icon="trash-o" />
+                                                </button>
+                                            </td>
+                                        </tr>
                                     );
+
                                 })}
-                                <th>
-                                    <ImportMenu />
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rows.map((row, rowIndex) => {
-                                const rowStatusString = R.path([rowIndex, "status"], rowStatus) || "waiting";
 
-                                var statusIcon = <StatusIcon status={rowStatusString} />;
-                                if (rowStatusString === "error") {
-                                    statusIcon = (
-                                        <a href="#" onClick={preventDefault(_ => this.setState({showModalFor: rowIndex}))}>
-                                            {statusIcon}
-                                        </a>
-                                    );
-                                }
+                            </tbody>
 
-                                return (
-                                    <tr key={rowIndex}>
-                                        <td>
-                                            {statusIcon}
-                                        </td>
+                        </table>
 
-                                        {columns.map((columnType, columnIndex) => {
-                                            return (
-                                                <td key={columnIndex}>
-                                                    <Cell
-                                                        rowIndex={rowIndex}
-                                                        required={columnType.required}
-                                                        columnIndex={columnIndex}
-                                                        value={getCellValue(R.path([rowIndex, columnIndex], rows))}
-                                                        validationErrors={R.path([
-                                                            rowIndex,
-                                                            "attributeErrors",
-                                                            columnType.attribute,
-                                                        ], rowStatus)}
-                                                    />
-                                                </td>
-                                            );
-                                        })}
-
-                                        <td>
-                                            <button
-                                                className="pure-button danger"
-                                                onClick={preventDefault(_ => this.props.dropRow(rowIndex))}
-                                            >
-                                                <Fa icon="trash-o" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-
-                            })}
-
-                        </tbody>
-
-                    </table>
-
+                    </div>
 
                     <div className="pure-g ImportTool-footer">
                         <div className="pure-u-4-5">
@@ -157,7 +159,6 @@ export default class ImportTool extends PureComponent {
                             </div>
                         </div>}
                     </div>
-
                 </div>}
 
 
