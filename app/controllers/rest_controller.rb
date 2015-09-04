@@ -18,7 +18,7 @@ class RestController < ApplicationController
     rest_url = "#{ Puavo::CONFIG["puavo_rest"]["host"] }/#{ params["url"] }#{ qs }"
     puts "Proxying connection to #{ rest_url }"
 
-    method = {"GET" => :get, "POST" => :post}[request.method]
+    method = {"GET" => :get, "POST" => :post, "PUT" => :put}[request.method]
 
     options = {}
 
