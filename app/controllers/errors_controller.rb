@@ -10,6 +10,6 @@ class ErrorsController < ApplicationController
     }
     logger.error @error.message
     logger.error @error.backtrace.join("\n")
-    render "sorry", :layout => false
+    render "sorry", :layout => false, :status => 500
   end
 end
