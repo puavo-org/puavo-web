@@ -72,6 +72,8 @@ class PuavoMenu < MetaMenu
       title { 'Import' }
       link { import_tool_path(@school) }
       active_on ImportToolController
+      # XXX: Feature switch!
+      hide_when { !current_user.organisation_owner? }
     end
   end
 

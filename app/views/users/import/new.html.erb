@@ -1,8 +1,11 @@
 <h1><span><%= t('.title') %></span></h1>
 
+<%# XXX: Feature switch!  %>
+<% if current_user.organisation_owner? %>
 <p style="color: red">
   Legacy mass import. The new one is <a href="<%= import_tool_path(@school) %>">here</a>.
 </p>
+<% end %>
 
 <p class="mass_import_info"><span class="current">1. <%= t('users.import.info.phase_1') %> </span> &gt; 2. <%= t('users.import.info.phase_2') %> &gt; 3.<%= t('users.import.info.phase_3') %> &gt; 4. <%= t('users.import.info.phase_4') %></p>
 <%= form_for(:users_import, :url => refine_users_import_path(@school), :html => { :method => :post } ) do %>
