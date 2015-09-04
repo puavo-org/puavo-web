@@ -1,10 +1,10 @@
 import Papa from "papaparse";
 import R from "ramda";
 
+import Api from "./Api";
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue} from "./utils";
 
-const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
 
 export function parseImportString(rawCSV) {
     var res = Papa.parse(rawCSV.trim());
@@ -81,6 +81,16 @@ const isValidationError = R.compose(
     R.path(["error", "code"])
 );
 
+function findIndices(id, columns) {
+    return R.addIndex(R.reduce)((arr, columnType, i) => {
+        return id === columnType.id ? arr.concat(i) : arr;
+    }, [], columns);
+}
+
+// const findRoleIndices = R.addIndex(R.reduce)((arr, columnType, i) => {
+//     return isLegacyRole(columnType) ? arr.concat(i) : arr;
+// }, []);
+
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
@@ -101,28 +111,16 @@ export function startImport(rowIndex=0) {
             return next();
         }
 
-        var restStyleData = rows.map(rowToRest(columns));
-        restStyleData = R.map(R.assoc("school_dns", [defaultSchoolDn]), restStyleData);
-
-        console.log("DATA FOR REST: " + JSON.stringify(restStyleData, null, "  "));
+        const row = rows[rowIndex];
+        var userData = rowToRest(columns)(row);
+        userData = R.assoc("school_dns", [defaultSchoolDn], userData);
 
         dispatchStatus({status: "working"});
 
         var res;
 
-        var body = JSON.stringify(restStyleData[rowIndex]);
-        console.log("sending body", body);
-
         try {
-            res = await window.fetch("/restproxy/v3/users", {
-                body,
-                method: "post",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-Token": CSRF_TOKEN,
-                },
-            });
+            res = await Api.createUser(userData);
         } catch(error) {
             dispatchStatus({status: "error", error});
             return next();
@@ -137,11 +135,6 @@ export function startImport(rowIndex=0) {
             return next();
         }
 
-        if (res.status === 200) {
-            dispatchStatus({status: "ok"});
-            return next();
-        }
-
         if (res.status === 400 && isValidationError(responseData)) {
             console.error("Validation error", responseData);
             dispatchStatus({
@@ -151,8 +144,31 @@ export function startImport(rowIndex=0) {
             return next();
         }
 
-        console.error("Unkown error", responseData);
-        dispatchStatus({status: "error", responseData});
-        next();
+        if (res.status !== 200) {
+            dispatchStatus({status: "error", message: "Invalid bad http status from create"});
+            return next();
+        }
+
+        const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);
+        const roleIds = roleIndices.map(i => getCellValue(row[i]));
+        debugger;
+
+        try {
+            res = await Api.replaceLegacyRoles(userData.username, roleIds);
+        } catch(error) {
+            dispatchStatus({
+                status: "error",
+                message: error.message,
+            });
+            return next();
+        }
+
+        if (res.status !== 200) {
+            dispatchStatus({status: "error", message: "Invalid bad http status from replaceLegacyRoles"});
+            return next();
+        }
+
+        dispatchStatus({status: "ok"});
+        return next();
     };
 }
