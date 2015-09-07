@@ -90,7 +90,7 @@ function findIndices(id, columns) {
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
-        var {importData: {rows, columns}, defaultSchoolDn, rowStatus} = getState();
+        const {importData: {rows, columns}, defaultSchoolDn, rowStatus} = getState();
 
         const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
         const dispatchStatus = R.compose(dispatch, R.merge({
@@ -100,10 +100,9 @@ export function startImport(rowIndex=0) {
 
         if (rows.length < rowIndex+1) return;
 
-        const currentStatus = R.path([rowIndex, "status"], rowStatus);
-        console.log("Current status", rowIndex, currentStatus);
+        const currentStatus = R.path([rowIndex], rowStatus) || {};
 
-        if (currentStatus === "ok") {
+        if (currentStatus.status === "ok") {
             return next();
         }
 
@@ -113,53 +112,47 @@ export function startImport(rowIndex=0) {
 
         dispatchStatus({status: "working"});
 
-        var res;
+        if (!currentStatus.created) {
+            let res;
 
-        try {
-            res = await Api.createUser(userData);
-        } catch(error) {
-            dispatchStatus({status: "error", error});
-            return next();
-        }
+            try {
+                res = await Api.createUser(userData);
+            } catch(error) {
+                dispatchStatus({status: "error", error});
+                return next();
+            }
 
-        var responseData;
+            let responseData;
 
-        try {
-            responseData = await res.json();
-        } catch(error) {
-            dispatchStatus({status: "error", error});
-            return next();
-        }
+            try {
+                responseData = await res.json();
+            } catch(error) {
+                dispatchStatus({status: "error", error});
+                return next();
+            }
 
-        if (res.status === 400 && isValidationError(responseData)) {
-            console.error("Validation error", responseData);
-            dispatchStatus({
-                status: "error",
-                attributeErrors: responseData.error.meta.invalid_attributes,
-            });
-            return next();
-        }
+            if (res.status === 400 && isValidationError(responseData)) {
+                console.error("Validation error", responseData);
+                dispatchStatus({
+                    status: "error",
+                    attributeErrors: responseData.error.meta.invalid_attributes,
+                });
+                return next();
+            }
 
-        if (res.status !== 200) {
-            dispatchStatus({status: "error", message: "Invalid bad http status from create"});
-            return next();
+            dispatchStatus({created: true});
         }
 
         const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);
         const roleIds = roleIndices.map(i => getCellValue(row[i]));
 
         try {
-            res = await Api.replaceLegacyRoles(userData.username, roleIds);
+            await Api.replaceLegacyRoles(userData.username, roleIds);
         } catch(error) {
             dispatchStatus({
                 status: "error",
                 message: error.message,
             });
-            return next();
-        }
-
-        if (res.status !== 200) {
-            dispatchStatus({status: "error", message: "Invalid bad http status from replaceLegacyRoles"});
             return next();
         }
 

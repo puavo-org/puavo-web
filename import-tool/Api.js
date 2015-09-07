@@ -3,8 +3,10 @@ import Bluebird from "bluebird";
 const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
 const PROXY_PREFIX = "/restproxy";
 
+export const BAD_HTTP_CODE = "BAD_HTTP_CODE";
 
-function request(method, path, data) {
+
+async function request(method, path, data) {
 
     if (method !== "GET" && data) {
         data = JSON.stringify(data);
@@ -14,7 +16,7 @@ function request(method, path, data) {
 
     console.log("fetch", method, path, data);
 
-    return Bluebird.resolve(window.fetch(path, {
+    var res = await Bluebird.resolve(window.fetch(path, {
         method,
         body: data,
         credentials: "same-origin",
@@ -23,6 +25,18 @@ function request(method, path, data) {
             "X-CSRF-Token": CSRF_TOKEN,
         },
     }));
+
+
+    if (res.status !== 200) {
+        let error = new Error("Bad http status code");
+        error.path = path;
+        error.code = BAD_HTTP_CODE;
+        error.res = res;
+        throw error;
+    }
+
+    return res;
+
 }
 
 

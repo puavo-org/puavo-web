@@ -98,14 +98,12 @@ function injectUsernames(data) {
 export const importData = R.compose(injectUsernames, importData_);
 
 export function rowStatus(states={}, action) {
-    const setStatus = R.assoc(action.rowIndex, R.__, states);
-
-    switch (action.type) {
-    case "SET_ROW_STATUS":
-        return setStatus(R.omit(["type"], action));
-    default:
-        return states;
-    }
+    if (action.type !== "SET_ROW_STATUS") return states;
+    return R.over(
+        R.lensProp(action.rowIndex),
+        R.merge(R.__, R.omit(["type"], action)),
+        states
+    );
 }
 
 export function defaultSchoolDn(schoolDn=null, action) {
