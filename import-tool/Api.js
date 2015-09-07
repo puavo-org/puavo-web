@@ -39,15 +39,11 @@ async function request(method, path, data) {
 
 }
 
+export function createUser(data) {
+    return request("POST", "/v3/users", data);
+}
 
-export default {
+export function replaceLegacyRoles(username, roleIds) {
+    return request("PUT", `/v3/users/${username}/legacy_roles`, {ids: roleIds});
+}
 
-    createUser(data) {
-        return request("POST", "/v3/users", data);
-    },
-
-    replaceLegacyRoles(username, roleIds) {
-        return request("PUT", `/v3/users/${username}/legacy_roles`, {ids: roleIds});
-    },
-
-};

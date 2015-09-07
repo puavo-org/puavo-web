@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import R from "ramda";
 
-import Api from "./Api";
+import * as Api from "./Api";
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue} from "./utils";
 
