@@ -1,4 +1,7 @@
 class RestController < ApplicationController
+
+  HAS_BODY = [:post, :put]
+
   def proxy
 
     qs = URI.parse(request.url).query || ""
@@ -18,11 +21,11 @@ class RestController < ApplicationController
     rest_url = "#{ Puavo::CONFIG["puavo_rest"]["host"] }/#{ params["url"] }#{ qs }"
     puts "Proxying connection to #{ rest_url }"
 
-    method = {"GET" => :get, "POST" => :post, "PUT" => :put}[request.method]
+    method = request.method.downcase.to_sym
 
     options = {}
 
-    if method == :post
+    if HAS_BODY.include?(method)
       options[:body] = request.body.read
     end
 
