@@ -39,9 +39,9 @@ export function setCustomValue(rowIndex, columnIndex, value) {
     };
 }
 
-export function setDefaultValue(columnIndex, value, override) {
+export function fillColumn(columnIndex, value, override) {
     return {
-        type: "SET_DEFAULT_VALUE",
+        type: "FILL_COLUMN",
         columnIndex, value, override,
     };
 }

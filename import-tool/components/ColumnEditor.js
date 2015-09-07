@@ -8,7 +8,7 @@ import {Overlay} from "react-overlays";
 import Fa from "./Fa";
 import ArrowBox from "./ArrowBox";
 import ColumnTypes from "../ColumnTypes";
-import {changeColumnType, setDefaultValue, dropColumn} from "../actions";
+import {changeColumnType, fillColumn, dropColumn} from "../actions";
 import {onEnterKey, preventDefault} from "../utils";
 
 class ColumnEditor extends PureComponent {
@@ -16,15 +16,15 @@ class ColumnEditor extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            defaultValue: "",
+            fillValue: "",
             override: false,
             showMenu: false,
         };
     }
 
 
-    setDefaultValue() {
-        this.props.setDefaultValue(this.props.columnIndex, this.state.defaultValue, this.state.override);
+    fillColumn() {
+        this.props.fillColumn(this.props.columnIndex, this.state.fillValue, this.state.override);
         this.hideMenu();
     }
 
@@ -79,9 +79,9 @@ class ColumnEditor extends PureComponent {
                                     className="ColumnTypeSelector-default-value-input"
                                     type="text"
                                     placeholder="Default"
-                                    value={this.state.defaultValue}
-                                    onChange={e => this.setState({defaultValue: e.target.value})}
-                                    onKeyUp={onEnterKey(this.setDefaultValue.bind(this))}
+                                    value={this.state.fillValue}
+                                    onChange={e => this.setState({fillValue: e.target.value})}
+                                    onKeyUp={onEnterKey(this.fillColumn.bind(this))}
                                 />
 
                                 <label style={{fontSize: "small"}}>
@@ -95,7 +95,7 @@ class ColumnEditor extends PureComponent {
                                 <button
                                     style={{width: "100%"}}
                                     className="pure-button"
-                                    onClick={preventDefault(this.setDefaultValue.bind(this))}
+                                    onClick={preventDefault(this.fillColumn.bind(this))}
                                 >Fill</button>
 
                                 <div style={{marginTop: 50}} />
@@ -118,11 +118,11 @@ class ColumnEditor extends PureComponent {
 
 
 ColumnEditor.propTypes = {
-    setDefaultValue: React.PropTypes.func.isRequired,
+    fillColumn: React.PropTypes.func.isRequired,
     dropColumn: React.PropTypes.func.isRequired,
     changeColumnType: React.PropTypes.func.isRequired,
     columnIndex: React.PropTypes.number.isRequired,
     currentTypeId: React.PropTypes.string,
 };
 
-export default connect(null, {changeColumnType, setDefaultValue, dropColumn})(ColumnEditor);
+export default connect(null, {changeColumnType, fillColumn, dropColumn})(ColumnEditor);

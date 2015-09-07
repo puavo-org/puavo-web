@@ -51,7 +51,7 @@ function importData_(data=initialImportData, action) {
         return R.evolve({columns: removeByIndex(action.columnIndex)}, data);
     case "CHANGE_COLUMN_TYPE":
         return u.updateIn(["columns", action.columnIndex], ColumnTypes[action.typeId], data);
-    case "SET_DEFAULT_VALUE":
+    case "FILL_COLUMN":
         return R.evolve({rows: R.map(row => {
             if (!action.override && getCellValue(row[action.columnIndex])) return row;
             return u.updateIn([action.columnIndex, "customValue"], action.value, row);
