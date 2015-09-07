@@ -22,6 +22,7 @@ import {devTools as createDevTools} from "redux-devtools";
 import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
 
 import createStateStorage from "./StateStorage";
+import {fetchLegacyRoles} from "./actions";
 
 import ImportTool from "./components/ImportTool";
 
@@ -39,13 +40,15 @@ const createFinalStore = compose(
 
 const combinedReducers = combineReducers(reducers);
 
-function createImportTool(containerId, schoolDn) {
+function createImportTool(containerId, school) {
     var container = document.getElementById(containerId);
     const store = createFinalStore(combinedReducers);
     store.dispatch({
         type: "SET_DEFAULT_SCHOOL",
-        schoolDn,
+        schoolDn: school.dn,
     });
+
+    store.dispatch(fetchLegacyRoles(school.id));
 
     container.innerHTML = "";
     React.render(

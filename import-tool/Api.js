@@ -47,3 +47,7 @@ export function replaceLegacyRoles(username, roleIds) {
     return request("PUT", `/v3/users/${username}/legacy_roles`, {ids: roleIds});
 }
 
+export function fetchLegacyRoles(schoolId) {
+    return request("GET", `/v3/schools/${schoolId}/legacy_roles`);
+}
+

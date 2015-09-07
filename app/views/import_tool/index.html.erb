@@ -14,5 +14,5 @@
 <% end %>
 <script src="/import_tool.js" charset="utf-8"></script>
 <script charset="utf-8">
-window.createImportTool("import-tool", "<%= @school.dn  %>");
+window.createImportTool("import-tool", <%= @school_json.html_safe  %>);
 </script>

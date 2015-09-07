@@ -10,6 +10,7 @@ import ArrowBox from "./ArrowBox";
 import ColumnTypes from "../ColumnTypes";
 import {changeColumnType, fillColumn, dropColumn} from "../actions";
 import {onEnterKey, preventDefault} from "../utils";
+import LegacyRoleSelector from "./LegacyRoleSelector";
 
 class ColumnEditor extends PureComponent {
 
@@ -46,6 +47,28 @@ class ColumnEditor extends PureComponent {
         this.hideMenu();
     }
 
+    renderDataInput() {
+        const stateChange = {
+            value: this.state.filValue,
+            onChange: e => this.setState({fillValue: e.target.value}),
+        };
+
+        switch(this.props.currentTypeId) {
+        case ColumnTypes.legacy_role.id:
+            return <LegacyRoleSelector {...stateChange} />;
+        default:
+            return (
+                <input
+                    {...stateChange}
+                    onKeyUp={onEnterKey(this.fillColumn.bind(this))}
+                    className="ColumnTypeSelector-default-value-input"
+                    type="text"
+                    placeholder="Default"
+                />
+            );
+        }
+    }
+
     render() {
         return (
             <span className="ColumnEditor">
@@ -75,14 +98,7 @@ class ColumnEditor extends PureComponent {
 
                                 <legend>Fill</legend>
 
-                                <input
-                                    className="ColumnTypeSelector-default-value-input"
-                                    type="text"
-                                    placeholder="Default"
-                                    value={this.state.fillValue}
-                                    onChange={e => this.setState({fillValue: e.target.value})}
-                                    onKeyUp={onEnterKey(this.fillColumn.bind(this))}
-                                />
+                                {this.renderDataInput()}
 
                                 <label style={{fontSize: "small"}}>
                                     <input

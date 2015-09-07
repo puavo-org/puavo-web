@@ -115,4 +115,12 @@ export function defaultSchoolDn(schoolDn=null, action) {
     }
 }
 
+export function legacyRoles(roles=[], action) {
+    switch (action.type) {
+    case "SET_LEGACY_ROLES":
+        return action.legacyRoles;
+    default:
+        return roles;
+    }
+}
 

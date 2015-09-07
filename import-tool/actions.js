@@ -160,3 +160,14 @@ export function startImport(rowIndex=0) {
         return next();
     };
 }
+
+export function fetchLegacyRoles(schoolId) {
+    return async (dispatch) => {
+        const res = await Api.fetchLegacyRoles(schoolId);
+        const legacyRoles = await res.json();
+        dispatch({
+            type: "SET_LEGACY_ROLES",
+            legacyRoles,
+        });
+    };
+}
