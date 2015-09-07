@@ -3,6 +3,8 @@ description "puavo-rest"
 start on runlevel [23]
 stop on shutdown
 
+limit nofile 65536 100000
+
 pre-start script
     mkdir -p /run/puavo-rest
     chown puavo:puavo /run/puavo-rest
