@@ -271,7 +271,7 @@ class Devices < PuavoSinatra
 
   get "/v3/devices" do
     auth :basic_auth, :server_auth, :kerberos
-    json Device.all(params["attributes"])
+    json Device.all(attribute_list)
   end
 
   get "/v3/devices/:hostname/feed" do

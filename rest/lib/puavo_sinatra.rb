@@ -49,6 +49,13 @@ class PuavoSinatra < Sinatra::Base
     return request.POST
   end
 
+  # Convert comma separated attribute list to ruby Aarray
+  #
+  # @return Array
+  def attribute_list
+    params["attributes"].to_s.split(",")
+  end
+
   # In routes handlers use limit query string to slice arrays
   #
   # Example: /foos?limit=2
