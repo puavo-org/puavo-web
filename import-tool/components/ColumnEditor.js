@@ -17,13 +17,14 @@ class ColumnEditor extends PureComponent {
         super(props);
         this.state = {
             defaultValue: "",
+            override: false,
             showMenu: false,
         };
     }
 
 
     setDefaultValue() {
-        this.props.setDefaultValue(this.props.columnIndex, this.state.defaultValue);
+        this.props.setDefaultValue(this.props.columnIndex, this.state.defaultValue, this.state.override);
         this.hideMenu();
     }
 
@@ -72,7 +73,7 @@ class ColumnEditor extends PureComponent {
                                     })}
                                 </select>
 
-                                <legend>Fill empty values</legend>
+                                <legend>Fill</legend>
 
                                 <input
                                     className="ColumnTypeSelector-default-value-input"
@@ -82,6 +83,14 @@ class ColumnEditor extends PureComponent {
                                     onChange={e => this.setState({defaultValue: e.target.value})}
                                     onKeyUp={onEnterKey(this.setDefaultValue.bind(this))}
                                 />
+
+                                <label style={{fontSize: "small"}}>
+                                    <input
+                                        type="checkbox"
+                                        checked={this.state.override}
+                                        onChange={_ => this.setState({override: !this.state.override})} />
+                                    Override existing values
+                                </label>
 
                                 <button
                                     style={{width: "100%"}}

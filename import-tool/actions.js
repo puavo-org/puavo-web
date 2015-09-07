@@ -39,10 +39,10 @@ export function setCustomValue(rowIndex, columnIndex, value) {
     };
 }
 
-export function setDefaultValue(columnIndex, value) {
+export function setDefaultValue(columnIndex, value, override) {
     return {
         type: "SET_DEFAULT_VALUE",
-        columnIndex, value,
+        columnIndex, value, override,
     };
 }
 

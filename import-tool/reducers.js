@@ -53,7 +53,7 @@ function importData_(data=initialImportData, action) {
         return u.updateIn(["columns", action.columnIndex], ColumnTypes[action.typeId], data);
     case "SET_DEFAULT_VALUE":
         return R.evolve({rows: R.map(row => {
-            if (getCellValue(row[action.columnIndex])) return row;
+            if (!action.override && getCellValue(row[action.columnIndex])) return row;
             return u.updateIn([action.columnIndex, "customValue"], action.value, row);
         })}, data);
     default:
