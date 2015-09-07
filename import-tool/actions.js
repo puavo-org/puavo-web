@@ -1,7 +1,6 @@
 import Papa from "papaparse";
 import R from "ramda";
 
-import ColumnTypes from "./ColumnTypes";
 import {getCellValue} from "./utils";
 
 const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
