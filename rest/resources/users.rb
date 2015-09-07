@@ -536,6 +536,10 @@ class Users < PuavoSinatra
     auth :basic_auth, :kerberos
 
     user = User.by_username!(params["username"])
+    new_legacy_roles = json_params["ids"].map do |id|
+      LegacyRole.by_attr!(:id, id)
+    end
+
     current_legacy_roles = LegacyRole.by_attr(:member_dns, user.dn, :multi)
 
     current_legacy_roles.each do |r|
@@ -543,9 +547,6 @@ class Users < PuavoSinatra
       r.save!
     end
 
-    new_legacy_roles = json_params["ids"].map do |id|
-      LegacyRole.by_attr!(:id, id)
-    end
 
     new_legacy_roles.each do |r|
       r.add_member(user)
