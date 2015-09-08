@@ -43,7 +43,7 @@ fi:
     users: "Käyttäjät"
     groups: "Ryhmät"
     roles: Roolit
-    lists: Käyttäjälistat
+    lists: Käyttäjätunnuslista
     add: "Lisää"
     remove: Poista
     new_role: Uusi rooli
@@ -328,9 +328,10 @@ fi:
       email_confirm_info: Saat vahvistuslinkin uuteen sähköpostiisi hetken kuluttua. Klikkaa linkkiä vahvistaaksesi uusi sähköpostiosoite.
   lists:
     index:
-      title: Lataamattomat käyttäjätunnus- ja salasanalistat
-      description: Käyttäjälistat, sisältäen salasanat, ovat pdf-muodossa. Ladattuasi listat, tulosta ne ja leikkaa tunnukset seuraavan ohjekuvat mukaseisti jakamista varten.
-      created: Käyttäjät luotiin
+      title: Lataamattomat käyttäjätunnuslistat
+      description: Lataa haluamasi lista ja tulosta se paperille. Leikkaa saksilla tunnukset erilleen, jolloin saat niistä revittäviä käyttäjätunnuslappuja.
+      description_empty: Sinulla ei ole nyt yhtään lataamatonta käyttäjätunnuslistaa
+      created: Käyttäjätunnuslista luotiin
       users_count_title: Käyttäjiä listassa
       label_generate_password: Aseta satunnainen salasana käyttäjille
       label_set_password: Aseta kaikkien listan käyttäjien salasanaksi

@@ -1,7 +1,11 @@
+<% if @lists.empty? %>
+<p class="notice">
+  <%= t(".description_empty") %>
+</p>
+<% else %>
 <h2>
 <%= t(".title") %>
 </h2>
-
 <p class="description">
   <%= t(".description") %>
 <p>
@@ -51,3 +55,4 @@
 <% id += 1 %>
 <% end %>
 <div class="list"></div>
+<% end %>
