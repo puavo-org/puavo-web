@@ -147,7 +147,7 @@ Cell.propTypes = {
     setCustomValue: React.PropTypes.func.isRequired,
     value: React.PropTypes.string.isRequired,
     validationErrors: React.PropTypes.array,
-    required: React.PropTypes.boolean,
+    required: React.PropTypes.bool,
 };
 
 Cell.defaultProps = {

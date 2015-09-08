@@ -27,5 +27,5 @@ export default class ConfirmationButton extends PureComponent {
 
 ConfirmationButton.propTypes = {
     children: React.PropTypes.node,
-    onClick: React.PropTypes.isRequired,
+    onClick: React.PropTypes.func.isRequired,
 };
