@@ -293,7 +293,7 @@ class User < LdapBase
   def self.import_columns
     columns = ["givenName", "sn", "uid", "new_password"]
 
-    unless self.class.new_group_management?
+    unless self.new_group_management?
       columns.push("role_name")
     end
 
