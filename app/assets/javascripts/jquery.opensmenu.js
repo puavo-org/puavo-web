@@ -24,6 +24,12 @@
       }
     });
 
+    function closeMenu() {
+      subMenu.removeClass("open");
+      subMenuButton.removeClass("touch-selected");
+      menuOpen = false;
+    }
+
     // If menu is open on a touch device, close it when user touches somewhere
     // else.
     $(document).bind("touchstart", function(e) {
@@ -31,14 +37,12 @@
 
       // Allow touching of the link elements
       if (e && e.target.tagName === "A") return;
-
-      subMenu.removeClass("open");
-      subMenuButton.removeClass("touch-selected");
-      menuOpen = false;
-
+      closeMenu();
     });
 
-    subMenuButton.bind("touchstart", function() {
+    subMenuButton.bind("mouseleave", closeMenu);
+
+    subMenuButton.bind("touchstart mouseenter", function() {
       // This will get fired also when menu item is clicked, because the items
       // are children of the main button. So we have to bail out if menu is
       // open.
