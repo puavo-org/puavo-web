@@ -129,7 +129,11 @@ export function startImport(rowIndex=0) {
                     return next();
                 }
 
-                dispatchStatus({status: "error", error});
+                dispatchStatus({
+                    status: "error",
+                    message: "User creation failed",
+                    error,
+                });
                 return next();
             }
 
@@ -144,7 +148,8 @@ export function startImport(rowIndex=0) {
         } catch(error) {
             dispatchStatus({
                 status: "error",
-                message: error.message,
+                message: "Failed to set legacy roles",
+                error,
             });
             return next();
         }
