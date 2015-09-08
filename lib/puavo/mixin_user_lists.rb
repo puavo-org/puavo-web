@@ -45,22 +45,11 @@ module MixinUserLists
 
   module InstanceMethods
     def initialize(user_ids = nil, creator = nil)
-      return if user_ids.nil?
-
       self.uuid = UUID.generate
       self.created_at = Time.now.to_i
       self.creator = creator
       self.downloaded = false
-      self.school_id = nil
-      self.users = []
-
-      user_ids.each do |user_id|
-        user = PuavoRest::User.by_id(user_id)
-        self.users.push(user.id)
-
-        self.school_id = user.school.id if self.school_id.nil?
-      end
-
+      self.users = user_ids
     end
 
     def as_json
