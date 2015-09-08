@@ -67,6 +67,7 @@ class PuavoMenu < MetaMenu
       title { t('link.roles') }
       link { roles_path(@school) }
       active_on RolesController
+      hide_when { LdapBase.new_group_management? }
     end
 
     child do

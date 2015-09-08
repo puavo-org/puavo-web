@@ -15,7 +15,6 @@
 <div class="navbar-second-level">
   <ul>
     <% @child_items.each do |item| %>
-      <% next if item.title == "Roles" && new_group_management? %>
       <% if not item.hide? %>
         <li <%= item.active? && "class=current" %>>
           <%= link_to item.title, item.link %>
