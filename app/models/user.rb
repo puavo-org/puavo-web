@@ -220,9 +220,14 @@ class User < LdapBase
       end
     end
 
+    locale_puavoEduPersonAffiliation_name = I18n.t("activeldap.attributes.user.puavoEduPersonAffiliationDeprecated")
+    if self.class.new_group_management?
+      locale_puavoEduPersonAffiliation_name = I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation")
+    end
+
     if self.puavoEduPersonAffiliation.nil?
       errors.add( :puavoEduPersonAffiliation, I18n.t("activeldap.errors.messages.blank",
-                                     :attribute => I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation") ) )
+                                                     :attribute => locale_puavoEduPersonAffiliation_name ) )
     end
 
     # puavoEduPersonAffiliation validation
@@ -230,7 +235,7 @@ class User < LdapBase
       unless self.class.puavoEduPersonAffiliation_list.include?(value)
         errors.add( :puavoEduPersonAffiliation,
                     I18n.t("activeldap.errors.messages.invalid",
-                           :attribute => I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation") ) )
+                           :attribute => locale_puavoEduPersonAffiliation_name ) )
       end
     end
 
@@ -302,6 +307,12 @@ class User < LdapBase
     if I18n.t("activeldap.attributes").has_key?(:user) &&
        # Attribute key name
        I18n.t("activeldap.attributes.user").has_key?(args[0].to_sym)
+
+      if args[0] == "puavoEduPersonAffiliation" &&
+          !new_group_management?
+        return I18n.t("activeldap.attributes.user.puavoEduPersonAffiliationDeprecated")
+      end
+
       return I18n.t("activeldap.attributes.user.#{args[0]}")
     end
     super(*args)
