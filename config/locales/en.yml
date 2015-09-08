@@ -50,6 +50,7 @@ en:
     users: Users
     groups: Groups
     roles: Roles
+    lists: Username lists
     add: Add
     remove: Remove
     new_role: New role
@@ -335,6 +336,16 @@ en:
     show:
       message: Profile was successfully updated
       email_confirm_info: "Send email message to following email address(es)"
+  lists:
+    index:
+      title: Unloaded username lists
+      description: Download the username list and print it on paper.
+      description_empty: Not unloaded username lists
+      created: Username list has been created
+      users_count_title: Number of users
+      label_generate_password: Set random password for users
+      label_set_password: Set the following password for users
+      label_submit_button: Set password and download file
   menu:
     index:
       service_link_name_puavo: Puavo - users and devices management
