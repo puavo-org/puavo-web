@@ -1,6 +1,6 @@
 require 'redis'
 
-module Puavo
+module PuavoRest
 module MixinUserLists
 
   module ClassMethods
