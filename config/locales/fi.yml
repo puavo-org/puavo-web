@@ -673,6 +673,7 @@ fi:
       default: "%d.%m.%Y"
       short: "%d %b %H:%M"
       long: "%B %d, %Y %H:%M"
+      number_with_time: "%d.%m.%Y %H:%M"
   actions: Toiminnot
   cancel: "Peruuta"
   or: tai
