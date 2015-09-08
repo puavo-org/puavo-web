@@ -82,6 +82,10 @@ module MixinUserLists
       user_list = self.class.get_redis_user_list
       user_list.set(self.uuid, self.to_json)
     end
+
+    def remove
+      self.class.get_redis_user_list.del(self.uuid)
+    end
   end
 
 end
