@@ -6,6 +6,7 @@ require "pry"
 require "io/console"
 require "puavo/etc"
 
+REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
 def ask(question, opts={})
   new_value = nil
