@@ -4,6 +4,7 @@ const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]') .content;
 const PROXY_PREFIX = "/restproxy";
 
 export const BAD_HTTP_CODE = "BAD_HTTP_CODE";
+export const BAD_JSON = "BAD_JSON";
 
 
 async function request(method, path, data) {
@@ -16,7 +17,7 @@ async function request(method, path, data) {
 
     console.log("fetch", method, path, data);
 
-    var res = await Bluebird.resolve(window.fetch(path, {
+    const res = await Bluebird.resolve(window.fetch(path, {
         method,
         body: data,
         credentials: "same-origin",
@@ -26,17 +27,29 @@ async function request(method, path, data) {
         },
     }));
 
+    let responseData = null;
+
+    try {
+        responseData = await res.json();
+    } catch(parseError) {
+        let error = new Error("Failed to parse JSON");
+        error.path = path;
+        error.code = BAD_JSON;
+        error.res = res;
+        throw error;
+    }
+
 
     if (res.status !== 200) {
         let error = new Error("Bad http status code");
         error.path = path;
         error.code = BAD_HTTP_CODE;
+        error.data = responseData;
         error.res = res;
         throw error;
     }
 
-    return res;
-
+    return responseData;
 }
 
 export function createUser(data) {

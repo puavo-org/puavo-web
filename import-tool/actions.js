@@ -78,7 +78,12 @@ const rowToRest = columns => R.compose(
 
 const isValidationError = R.compose(
     R.equals("ValidationError"),
-    R.path(["error", "code"])
+    R.path(["data", "error", "code"])
+);
+
+const getValidationErrors = R.compose(
+    R.defaultTo([]),
+    R.path(["data", "error", "meta", "invalid_attributes"])
 );
 
 function findIndices(id, columns) {
@@ -113,30 +118,18 @@ export function startImport(rowIndex=0) {
         dispatchStatus({status: "working"});
 
         if (!currentStatus.created) {
-            let res;
-
             try {
-                res = await Api.createUser(userData);
+                await Api.createUser(userData);
             } catch(error) {
+                if (isValidationError(error)) {
+                    dispatchStatus({
+                        status: "error",
+                        attributeErrors: getValidationErrors(error),
+                    });
+                    return next();
+                }
+
                 dispatchStatus({status: "error", error});
-                return next();
-            }
-
-            let responseData;
-
-            try {
-                responseData = await res.json();
-            } catch(error) {
-                dispatchStatus({status: "error", error});
-                return next();
-            }
-
-            if (res.status === 400 && isValidationError(responseData)) {
-                console.error("Validation error", responseData);
-                dispatchStatus({
-                    status: "error",
-                    attributeErrors: responseData.error.meta.invalid_attributes,
-                });
                 return next();
             }
 
@@ -163,8 +156,7 @@ export function startImport(rowIndex=0) {
 
 export function fetchLegacyRoles(schoolId) {
     return async (dispatch) => {
-        const res = await Api.fetchLegacyRoles(schoolId);
-        const legacyRoles = await res.json();
+        const legacyRoles = await Api.fetchLegacyRoles(schoolId);
         dispatch({
             type: "SET_LEGACY_ROLES",
             legacyRoles,
