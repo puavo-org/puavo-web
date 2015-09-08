@@ -70,6 +70,8 @@ module MixinUserLists
     def save
       user_list = self.class.get_redis_user_list
       user_list.set(self.uuid, self.to_json)
+      # Lifetime is about 6 moth
+      user_list.expire(self.uuid, 60*60*24*30*6)
     end
 
     def remove
