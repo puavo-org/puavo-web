@@ -4,10 +4,16 @@ import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 
 class LegacyRoleSelector extends PureComponent {
+
+    onChange(e) {
+        if (e.target.value === "nil") return;
+        this.props.onChange(e);
+    }
+
     render() {
         return (
-            <select value={this.props.value} onChange={this.props.onChange}>
-                <option key="nil" value={null}>Select...</option>
+            <select value={this.props.value} onChange={this.onChange}>
+                <option key="nil" value="nil">Select...</option>
                 {this.props.legacyRoles.map(role =>
                     <option key={role.id} value={role.id}>{role.name}</option>
                 )}
