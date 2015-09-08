@@ -5,12 +5,13 @@ import R from "ramda";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
-import Fa from "./Fa";
-import ArrowBox from "./ArrowBox";
-import ColumnTypes from "../ColumnTypes";
 import {changeColumnType, fillColumn, dropColumn} from "../actions";
-import {onEnterKey, preventDefault} from "../utils";
-import LegacyRoleSelector from "./LegacyRoleSelector";
+import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
+import {preventDefault} from "../utils";
+
+import ArrowBox from "./ArrowBox";
+import CellValueInput from "./CellValueInput";
+import Fa from "./Fa";
 
 class ColumnEditor extends PureComponent {
 
@@ -45,28 +46,6 @@ class ColumnEditor extends PureComponent {
         this.hideMenu();
     }
 
-    renderDataInput() {
-        const stateChange = {
-            value: this.state.filValue,
-            onChange: e => this.setState({fillValue: e.target.value}),
-        };
-
-        switch(this.props.currentTypeId) {
-        case ColumnTypes.legacy_role.id:
-            return <LegacyRoleSelector {...stateChange} />;
-        default:
-            return (
-                <input
-                    {...stateChange}
-                    onKeyUp={onEnterKey(this.fillColumn.bind(this))}
-                    className="ColumnTypeSelector-default-value-input"
-                    type="text"
-                    placeholder="Default"
-                />
-            );
-        }
-    }
-
     render() {
         return (
             <span className="ColumnEditor">
@@ -87,7 +66,7 @@ class ColumnEditor extends PureComponent {
                             <fieldset>
                                 <legend>Change type</legend>
                                 <select
-                                    value={this.props.currentTypeId}
+                                    value={this.props.columnType.id}
                                     onChange={e => this.changeColumnType(e.target.value)}>
                                     {R.values(ColumnTypes).map(columnType => {
                                         return <option key={columnType.id} value={columnType.id}>{columnType.name}</option>;
@@ -96,7 +75,12 @@ class ColumnEditor extends PureComponent {
 
                                 <legend>Fill</legend>
 
-                                {this.renderDataInput()}
+                                <CellValueInput
+                                    columnType={this.props.columnType}
+                                    value={this.state.fillValue}
+                                    onChange={e => this.setState({fillValue: e.target.value})}
+                                    onSelect={this.fillColumn.bind(this)}
+                                />
 
                                 <label style={{fontSize: "small"}}>
                                     <input
@@ -136,7 +120,7 @@ ColumnEditor.propTypes = {
     dropColumn: React.PropTypes.func.isRequired,
     changeColumnType: React.PropTypes.func.isRequired,
     columnIndex: React.PropTypes.number.isRequired,
-    currentTypeId: React.PropTypes.string,
+    columnType: ReactColumnType.isRequired,
 };
 
 export default connect(null, {changeColumnType, fillColumn, dropColumn})(ColumnEditor);

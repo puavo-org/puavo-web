@@ -4,11 +4,14 @@ import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
-import ArrowBox from "./ArrowBox";
-import Modal from "./Modal";
-import Fa from "./Fa";
 import {setCustomValue} from "../actions";
-import {onEnterKey, preventDefault} from "../utils";
+import {preventDefault} from "../utils";
+import {ReactColumnType} from "../ColumnTypes";
+
+import ArrowBox from "./ArrowBox";
+import CellValueInput from "./CellValueInput";
+import Fa from "./Fa";
+import Modal from "./Modal";
 
 class Cell extends PureComponent {
 
@@ -39,13 +42,6 @@ class Cell extends PureComponent {
 
     changeCustomValue(e) {
         this.setState({customValue: e.target.value});
-    }
-
-    componentDidUpdate(__, prevState) {
-        if (this.state.editing && !prevState.editing) {
-            const el = React.findDOMNode(this.refs.input);
-            el.select();
-        }
     }
 
     showMenu() {
@@ -123,12 +119,13 @@ class Cell extends PureComponent {
                 >
                     <ArrowBox>
                         <form className="pure-form">
-                            <input type="text"
-                                ref="input"
+                            <CellValueInput
+                                columnType={this.props.columnType}
                                 value={this.state.customValue}
                                 onChange={this.changeCustomValue.bind(this)}
-                                onKeyUp={onEnterKey(this.setCustomValue.bind(this))}
+                                onSelect={this.setCustomValue.bind(this)}
                             />
+
                             <button
                                 className="pure-button pure-button-primary"
                                 style={{width: "100%"}}
@@ -148,6 +145,7 @@ Cell.propTypes = {
     value: React.PropTypes.string.isRequired,
     validationErrors: React.PropTypes.array,
     required: React.PropTypes.bool,
+    columnType: ReactColumnType.isRequired,
 };
 
 Cell.defaultProps = {

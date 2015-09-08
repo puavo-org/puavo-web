@@ -1,5 +1,6 @@
 
 import R from "ramda";
+import React from "react";
 
 const required = true;
 const userAttribute = true;
@@ -14,6 +15,12 @@ const ColumnTypes = [
     {name: "Unkown", id: "unknown"},
     // {name: "Role (legacy)", attribute: "legacy_role"},
 ];
+
+export const ReactColumnType = React.PropTypes.shape({
+    id: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired,
+    type: React.PropTypes.string,
+});
 
 const toMapId = R.reduce((map, type) => R.assoc(type.id, type, map), {});
 

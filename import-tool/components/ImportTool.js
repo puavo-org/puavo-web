@@ -72,6 +72,7 @@ export default class ImportTool extends PureComponent {
                                             <th key={columnIndex}>
                                                 {columnType.name}{" "}
                                                 <ColumnEditor
+                                                    columnType={columnType}
                                                     columnIndex={columnIndex}
                                                     currentTypeId={R.compose(
                                                         R.defaultTo(ColumnTypes.unknown.id),
@@ -111,6 +112,7 @@ export default class ImportTool extends PureComponent {
                                                         <Cell
                                                             rowIndex={rowIndex}
                                                             required={columnType.required}
+                                                            columnType={columnType}
                                                             columnIndex={columnIndex}
                                                             value={getCellValue(R.path([rowIndex, columnIndex], rows))}
                                                             validationErrors={R.path([

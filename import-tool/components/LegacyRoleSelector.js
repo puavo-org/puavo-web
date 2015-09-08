@@ -12,7 +12,7 @@ class LegacyRoleSelector extends PureComponent {
 
     render() {
         return (
-            <select value={this.props.value} onChange={this.onChange}>
+            <select value={this.props.value} onChange={this.onChange.bind(this)}>
                 <option key="nil" value="nil">Select...</option>
                 {this.props.legacyRoles.map(role =>
                     <option key={role.id} value={role.id}>{role.name}</option>
