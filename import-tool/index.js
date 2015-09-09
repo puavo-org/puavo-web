@@ -20,11 +20,13 @@ import {Provider} from "react-redux";
 import * as reducers from "./reducers";
 import {devTools as createDevTools} from "redux-devtools";
 import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
+import {batchedUpdatesMiddleware} from "redux-batched-updates";
+
+import ImportTool from "./components/ImportTool";
 
 import createStateStorage from "./StateStorage";
 import {fetchLegacyRoles} from "./actions";
 
-import ImportTool from "./components/ImportTool";
 
 const devTools = REDUX_DEV ? createDevTools() : R.identity;
 
@@ -34,7 +36,7 @@ const logger = createLogger();
 
 const createFinalStore = compose(
     createStateStorage(STATE_KEY),
-    applyMiddleware(thunk, logger),
+    applyMiddleware(batchedUpdatesMiddleware, thunk, logger),
     devTools
 )(createStore);
 
