@@ -27,6 +27,7 @@ class ColumnEditor extends PureComponent {
 
     fillColumn() {
         this.props.fillColumn(this.props.columnIndex, this.state.fillValue, this.state.override);
+        this.hideMenu();
     }
 
     showMenu() {
