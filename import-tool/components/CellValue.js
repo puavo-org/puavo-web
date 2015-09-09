@@ -6,10 +6,10 @@ import R from "ramda";
 import {onEnterKey} from "../utils";
 import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
 
-import LegacyRoleSelector from "./LegacyRoleSelector";
+import {LegacyRole, LegacyRoleSelector} from "./LegacyRole";
 
 
-export default class CellValueInput extends PureComponent {
+export class CellValueInput extends PureComponent {
 
     componentDidMount() {
         if (this.refs.input) {
@@ -45,5 +45,21 @@ CellValueInput.propTypes = {
     value: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
     onSelect: React.PropTypes.func.isRequired,
+    columnType: ReactColumnType.isRequired,
+};
+
+export class CellValue extends PureComponent {
+    render() {
+        switch(this.props.columnType.id) {
+        case ColumnTypes.legacy_role.id:
+            return <LegacyRole id={this.props.value} />;
+        default:
+            return <span>{this.props.value}</span>;
+        }
+    }
+}
+
+CellValue.propTypes = {
+    value: React.PropTypes.string.isRequired,
     columnType: ReactColumnType.isRequired,
 };

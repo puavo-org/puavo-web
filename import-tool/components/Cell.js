@@ -1,15 +1,16 @@
 
 import React from "react";
+import R from "ramda";
 import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
 import {setCustomValue} from "../actions";
 import {preventDefault} from "../utils";
-import {ReactColumnType} from "../ColumnTypes";
+import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
 
 import ArrowBox from "./ArrowBox";
-import CellValueInput from "./CellValueInput";
+import {CellValueInput, CellValue} from "./CellValue";
 import Fa from "./Fa";
 import Modal from "./Modal";
 
@@ -96,7 +97,7 @@ class Cell extends PureComponent {
                     </Modal>}
 
 
-                    {this.props.value}
+                    <CellValue columnType={this.props.columnType} value={this.props.value} />
 
                     <span className="Cell-edit-buttons">
                         {" "}

@@ -1,4 +1,5 @@
 
+import R from "ramda";
 import React from "react";
 import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
@@ -21,11 +22,28 @@ class LegacyRoleSelector extends PureComponent {
         );
     }
 }
-
 LegacyRoleSelector.propTypes = {
     legacyRoles: React.PropTypes.array.isRequired,
     value: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
 };
+LegacyRoleSelector = connect(({legacyRoles}) => ({legacyRoles}))(LegacyRoleSelector);
 
-export default connect(({legacyRoles}) => ({legacyRoles}))(LegacyRoleSelector);
+
+class LegacyRole extends PureComponent {
+    render() {
+        return <span>{this.props.name}</span>;
+    }
+}
+LegacyRole.propTypes = {
+    id: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired,
+};
+LegacyRole = connect(({legacyRoles}, parentProps) => {
+    if (!parentProps.id) return {name: ""};
+    const name = R.find(R.propEq("id", parentProps.id))(legacyRoles).name;
+    return {name};
+})(LegacyRole);
+
+
+export {LegacyRoleSelector, LegacyRole};

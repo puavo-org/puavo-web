@@ -10,7 +10,7 @@ import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
 import {preventDefault} from "../utils";
 
 import ArrowBox from "./ArrowBox";
-import CellValueInput from "./CellValueInput";
+import {CellValueInput} from "./CellValue";
 import Fa from "./Fa";
 
 class ColumnEditor extends PureComponent {
