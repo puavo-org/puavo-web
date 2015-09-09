@@ -107,7 +107,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/images.json", @data["image_series_source_url"]
+      assert_equal "https://foobar.opinsys.fi/images.json", @data["image_series_source_urls"]
     end
 
     it "has mac address" do
@@ -218,7 +218,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/schoolpref.json", @data["image_series_source_url"]
+      assert_equal "https://foobar.opinsys.fi/schoolpref.json", @data["image_series_source_urls"]
     end
 
     it "has preferred image" do
@@ -276,7 +276,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/organisationpref.json", @data["image_series_source_url"]
+      assert_equal "https://foobar.opinsys.fi/organisationpref.json", @data["image_series_source_urls"]
     end
 
     it "has allow guest" do

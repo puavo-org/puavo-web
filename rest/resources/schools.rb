@@ -28,7 +28,7 @@ class School < LdapModel
   ldap_map :puavoTimezone, :timezone
   ldap_map :puavoKeyboardLayout, :keyboard_layout
   ldap_map :puavoKeyboardVariant, :keyboard_variant
-  ldap_map :puavoImageSeriesSourceURL, :image_series_source_url
+  ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls
 
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
@@ -104,11 +104,11 @@ class School < LdapModel
      end
   end
 
-  def image_series_source_url
-     if get_own(:image_series_source_url).nil?
-       organisation.image_series_source_url
+  def image_series_source_urls
+     if get_own(:image_series_source_urls).nil?
+       organisation.image_series_source_urls
      else
-       get_own(:image_series_source_url)
+       get_own(:image_series_source_urls)
      end
   end
 
