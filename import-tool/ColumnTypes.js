@@ -11,7 +11,7 @@ const ColumnTypes = [
     {name: "Email", attribute: "email", id: "email", userAttribute},
     {name: "Username", attribute: "username", id: "username", required, userAttribute},
     {name: "User type", attribute: "roles", id: "user_type", required, userAttribute},
-    {name: "Role ID number", id: "legacy_role", required},
+    {name: "Legacy Role", id: "legacy_role", required},
     {name: "Unkown", id: "unknown"},
     // {name: "Role (legacy)", attribute: "legacy_role"},
 ];
