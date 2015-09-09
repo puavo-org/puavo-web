@@ -22,6 +22,7 @@ describe PuavoRest::BootServer do
       :macAddress => "bc:5f:f4:56:59:71",
       :puavoSchool => @school.dn,
       :puavoTag => ["servertag"],
+      :puavoImageSeriesSourceURL => "https://foobar.opinsys.fi/images.json",
       :puavoDeviceType => "bootserver"
     }
     @server1.save!
@@ -75,6 +76,7 @@ describe PuavoRest::BootServer do
         data["tags"].include?("servertag"),
         "Has 'servertag' in #{ data["tags"].inspect }"
       )
+      assert_equal("https://foobar.opinsys.fi/images.json", data["image_series_source_urls"])
     end
 
     it "can be used to fetch single boot server data by hostname" do
