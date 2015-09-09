@@ -74,6 +74,39 @@ describe PuavoRest::WlanNetworks do
         end).size
       end
 
+    end
+
+    describe "wlan client configuration with same ssid" do
+
+      it "has no duplicat ssid value" do
+        @test_organisation.wlan_networks = [
+          {
+            :ssid => "orgwlan",
+            :type => "open",
+            :wlan_ap => true,
+            :password => "secret"
+          },
+          {
+            :ssid => "3rdpartywlan",
+            :type => "open",
+            :wlan_ap => false,
+            :password => "secret"
+          },
+          {
+            :ssid => "schoolwlan",
+            :type => "open",
+            :wlan_ap => true,
+            :password => "secret"
+          }
+        ]
+        @test_organisation.save!
+
+        get "/v3/devices/athin/wlan_networks"
+        assert_200
+        data = JSON.parse last_response.body
+
+        assert data.select { |w| w["ssid"] == "schoolwlan" }.count == 1, "Duplicate ssid value!"
+      end
 
     end
 

@@ -5,10 +5,14 @@ class WlanNetworks < PuavoSinatra
 
   def networks
     device = Device.by_hostname(params["hostname"])
-    return (
-      Array(device.organisation["wlan_networks"]) +
-      Array(device.school["wlan_networks"])
-    )
+
+    org_networks = Array(device.organisation["wlan_networks"])
+    school_networks = Array(device.school["wlan_networks"])
+
+    school_networks_ssids = school_networks.map{ |w| w["ssid"] }
+    org_networks.delete_if{ |w| school_networks_ssids.include?(w["ssid"]) }
+
+    return org_networks + school_networks
   end
 
   get "/v3/devices/:hostname/wlan_networks" do
