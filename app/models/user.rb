@@ -288,7 +288,7 @@ class User < LdapBase
 
   def read_only?
     # FIXME: use following code after schema updating: self.puavoExternalId.nil? ? false : true
-    self.attributes.include?("puavoExternalId") ? false : true
+    self.attributes.include?("puavoExternalId") ? true : false
   end
 
   def self.import_columns
