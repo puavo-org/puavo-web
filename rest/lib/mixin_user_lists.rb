@@ -5,7 +5,7 @@ module MixinUserLists
 
   module ClassMethods
     def all
-      get_redis_user_list.scan(0)[1].map do |key|
+      get_redis_user_list.scan_each.map do |key|
         by_id(key)
       end
     end
