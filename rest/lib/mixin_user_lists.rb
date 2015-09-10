@@ -1,7 +1,7 @@
 require 'redis'
 
 module PuavoRest
-module MixinUserLists
+module MixinUserList
 
   module ClassMethods
     def all

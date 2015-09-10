@@ -1,8 +1,8 @@
 require_relative "../lib/mixin_user_lists"
 
 module PuavoRest
-class UserLists
-  include PuavoRest::MixinUserLists
+class UserList
+  include PuavoRest::MixinUserList
 
   attr_accessor :uuid, :created_at, :school_id, :users, :users_by_groups,
                 :creator, :downloaded
