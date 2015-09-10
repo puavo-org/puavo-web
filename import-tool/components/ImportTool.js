@@ -107,6 +107,14 @@ export default class ImportTool extends PureComponent {
                                             </td>
 
                                             {columns.map((columnType, columnIndex) => {
+                                                let validationErrors = [];
+                                                if (rowStatusString === "error") {
+                                                    validationErrors = R.path([
+                                                        rowIndex,
+                                                        "attributeErrors",
+                                                        columnType.attribute,
+                                                    ], rowStatus);
+                                                }
                                                 return (
                                                     <td key={columnIndex}>
                                                         <Cell
@@ -115,11 +123,7 @@ export default class ImportTool extends PureComponent {
                                                             columnType={columnType}
                                                             columnIndex={columnIndex}
                                                             value={getCellValue(R.path([rowIndex, columnIndex], rows))}
-                                                            validationErrors={R.path([
-                                                                rowIndex,
-                                                                "attributeErrors",
-                                                                columnType.attribute,
-                                                            ], rowStatus)}
+                                                            validationErrors={validationErrors}
                                                         />
                                                     </td>
                                                 );
