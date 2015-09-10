@@ -218,6 +218,7 @@ class Root < PuavoSinatra
   use PuavoRest::Schools
   use PuavoRest::BootServers
   use PuavoRest::LegacyRoles
+  use PuavoRest::UserLists
 
   if CONFIG["cloud"]
     use PuavoRest::SSO
