@@ -12,7 +12,7 @@ import ColumnEditor from "./ColumnEditor";
 import StatusIcon from "./StatusIcon";
 import Fa from "./Fa";
 import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
-import {parseImportString, startImport, dropRow} from "../actions";
+import {parseImportString, startImport, dropRow, createPasswordResetIntentForNewUsers} from "../actions";
 import {getCellValue, preventDefault} from "../utils";
 
 const findMissingRequiredColumns = R.difference(REQUIRED_COLUMNS);
@@ -27,6 +27,16 @@ function hasValuesInRequiredCells(columns, rows) {
         });
     });
 }
+
+const areAllRowsOk = R.compose(
+   R.both(
+       // no rows not ok
+       R.compose(R.not, R.isEmpty),
+       // every status must be ok
+       R.all(R.propEq("status", "ok"))
+    ),
+    R.values
+);
 
 export default class ImportTool extends PureComponent {
 
@@ -150,9 +160,19 @@ export default class ImportTool extends PureComponent {
 
                     <div className="pure-g ImportTool-footer">
                         <div className="pure-u-4-5">
-                            <button className="pure-button pure-button-primary ImportTool-button-start"
+
+                            {!areAllRowsOk(rowStatus) &&
+                            <button className="pure-button pure-button-primary"
+                                style={{fontSize: "200%"}}
                                 disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
-                                onClick={this.startImport.bind(this)}>Import data</button>
+                                onClick={this.startImport.bind(this)}>Import data</button>}
+
+                            {areAllRowsOk(rowStatus) &&
+                                <button className="pure-button pure-button-primary" onClick={this.props.createPasswordResetIntentForNewUsers}>
+                                    Reset passwords for new users
+                                </button>
+                            }
+
                         </div>
 
                         {missingColumns.length > 0 &&
@@ -175,6 +195,7 @@ export default class ImportTool extends PureComponent {
 
 ImportTool.propTypes = {
     startImport: React.PropTypes.func.isRequired,
+    createPasswordResetIntentForNewUsers: React.PropTypes.func.isRequired,
     dropRow: React.PropTypes.func.isRequired,
     rows: React.PropTypes.array.isRequired,
     columns: React.PropTypes.array.isRequired,
@@ -186,4 +207,9 @@ function select(state) {
     return {rowStatus, rows, columns};
 }
 
-export default connect(select, {parseImportString, startImport, dropRow})(ImportTool);
+export default connect(select, {
+    parseImportString,
+    startImport,
+    dropRow,
+    createPasswordResetIntentForNewUsers,
+})(ImportTool);

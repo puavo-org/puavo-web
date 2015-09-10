@@ -69,7 +69,10 @@ class ImportMenu extends PureComponent {
                             <ConfirmationButton
                                 className="pure-button danger"
                                 style={{width: "100%", marginTop: 25}}
-                                onClick={preventDefault(this.props.resetState)}
+                                onClick={preventDefault(_ => {
+                                    this.props.resetState();
+                                    setTimeout(() => window.location.reload(), 1);
+                                })}
                             >Start new import</ConfirmationButton>
 
                         </form>

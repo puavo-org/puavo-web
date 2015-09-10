@@ -98,20 +98,27 @@ function injectUsernames(data) {
 export const importData = R.compose(injectUsernames, importData_);
 
 export function rowStatus(states={}, action) {
-    if (action.type !== "SET_ROW_STATUS") return states;
-    return R.over(
-        R.lensProp(action.rowIndex),
-        R.merge(R.__, R.omit(["type"], action)),
-        states
-    );
+    switch (action.type) {
+    case "SET_ROW_STATUS":
+        return R.over(
+            R.lensProp(action.rowIndex),
+            R.merge(R.__, R.omit(["type"], action)),
+            states
+        );
+    case "DROP_ROW":
+        return R.omit([String(action.rowIndex)], states);
+    default:
+        return states;
+    }
+
 }
 
-export function defaultSchoolDn(schoolDn=null, action) {
+export function defaultSchool(school=null, action) {
     switch (action.type) {
     case "SET_DEFAULT_SCHOOL":
-        return action.schoolDn;
+        return action.school;
     default:
-        return schoolDn;
+        return school;
     }
 }
 

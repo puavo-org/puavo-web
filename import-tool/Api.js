@@ -64,3 +64,7 @@ export function fetchLegacyRoles(schoolId) {
     return request("GET", `/v3/schools/${schoolId}/legacy_roles`);
 }
 
+export function createPasswordResetIntent(schoolId, userIds) {
+    return request("POST", `/v3/schools/${schoolId}/user_lists`, {ids: userIds});
+}
+

@@ -1,9 +1,11 @@
 import Papa from "papaparse";
 import R from "ramda";
+import Bluebird from "bluebird";
 
 import * as Api from "./Api";
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue} from "./utils";
+import {resetState} from "./StateStorage";
 
 
 export function parseImportString(rawCSV) {
@@ -95,7 +97,7 @@ function findIndices(id, columns) {
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
-        const {importData: {rows, columns}, defaultSchoolDn, rowStatus} = getState();
+        const {importData: {rows, columns}, defaultSchool, rowStatus} = getState();
 
         const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
         const dispatchStatus = R.compose(dispatch, R.merge({
@@ -113,13 +115,14 @@ export function startImport(rowIndex=0) {
 
         const row = rows[rowIndex];
         var userData = rowToRest(columns)(row);
-        userData = R.assoc("school_dns", [defaultSchoolDn], userData);
+        userData = R.assoc("school_dns", [defaultSchool.dn], userData);
 
         dispatchStatus({status: "working"});
 
         if (!currentStatus.created) {
+            let user = null;
             try {
-                await Api.createUser(userData);
+                user = await Api.createUser(userData);
             } catch(error) {
                 if (isValidationError(error)) {
                     dispatchStatus({
@@ -137,7 +140,7 @@ export function startImport(rowIndex=0) {
                 return next();
             }
 
-            dispatchStatus({created: true});
+            dispatchStatus({created: true, user});
         }
 
         const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);
@@ -156,6 +159,27 @@ export function startImport(rowIndex=0) {
 
         dispatchStatus({status: "ok"});
         return next();
+    };
+}
+
+const getNewUsers = R.compose(
+    R.map(R.path(["user", "id"])),
+    R.filter(R.propEq("created", true)),
+    R.values
+);
+
+export function createPasswordResetIntentForNewUsers() {
+    return async (dispatch, getState) => {
+
+        const {rowStatus, defaultSchool} = getState();
+        const newUserIds = getNewUsers(rowStatus);
+
+        await Api.createPasswordResetIntent(defaultSchool.id, newUserIds);
+
+        dispatch(resetState());
+
+        await Bluebird.delay(1);
+        window.location = `/users/${defaultSchool.id}/lists`;
     };
 }
 

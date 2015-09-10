@@ -47,7 +47,7 @@ function createImportTool(containerId, school) {
     const store = createFinalStore(combinedReducers);
     store.dispatch({
         type: "SET_DEFAULT_SCHOOL",
-        schoolDn: school.dn,
+        school,
     });
 
     store.dispatch(fetchLegacyRoles(school.id));
