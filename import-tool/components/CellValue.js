@@ -29,7 +29,6 @@ export class CellValueInput extends PureComponent {
                 <input
                     {...passProps}
                     ref="input"
-                    autoFocus
                     onKeyUp={onEnterKey(this.props.onSelect)}
                     className="ColumnTypeSelector-default-value-input"
                     type="text"
