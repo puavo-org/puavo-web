@@ -13,7 +13,7 @@ export class CellValueInput extends PureComponent {
 
     componentDidMount() {
         if (this.refs.input) {
-            const el = React.findDOMNode(this.refs.input);
+            const el = this.refs.input;
             el.select();
         }
     }

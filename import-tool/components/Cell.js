@@ -115,7 +115,7 @@ class Cell extends PureComponent {
                     onHide={this.hideMenu.bind(this)}
                     rootClose
                     placement="bottom"
-                    target={() => React.findDOMNode(this.refs.editButton)}
+                    target={() => this.refs.editButton}
                 >
                     <ArrowBox>
                         <form className="pure-form">

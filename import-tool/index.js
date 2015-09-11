@@ -12,6 +12,7 @@ window.Promise = require("bluebird"); // extra override
 import "babel/polyfill";
 
 import React from "react";
+import ReactDOM from "react-dom";
 import R from "ramda";
 import {combineReducers, createStore, applyMiddleware, compose} from "redux";
 import createLogger from "redux-logger";
@@ -53,10 +54,10 @@ function createImportTool(containerId, school) {
     store.dispatch(fetchLegacyRoles(school.id));
 
     container.innerHTML = "";
-    React.render(
+    ReactDOM.render(
         <div>
             <Provider store={store}>
-                {() => <ImportTool />}
+                <ImportTool />
             </Provider>
             {REDUX_DEV &&
             <DebugPanel top right bottom>

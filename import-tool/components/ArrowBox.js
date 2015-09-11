@@ -1,5 +1,6 @@
 
 import React from "react";
+import PureComponent from "react-pure-render/component";
 
 // Styles Mostly from Bootstrap
 const BoxStyle = {
@@ -50,7 +51,7 @@ const PlacementStyles = {
     },
 };
 
-export default class ArrowBox {
+export default class ArrowBox extends PureComponent {
     render() {
         let placementStyle = PlacementStyles[this.props.placement];
 
