@@ -25,10 +25,6 @@ class RestController < ApplicationController
 
     options = {}
 
-    if Puavo::CONFIG["puavo_rest"]["break_security"]
-      options[:ssl] = { :verify_mode => OpenSSL::SSL::VERIFY_NONE }
-    end
-
     if HAS_BODY.include?(method)
       options[:body] = request.body.read
     end
