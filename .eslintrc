@@ -36,6 +36,7 @@
     "react/jsx-quotes": [1, "double", "avoid-escape"],
     "react/jsx-no-duplicate-props": [2],
     "react/wrap-multilines": [2],
+    "react/jsx-uses-react": [1],
     "curly": [2, "multi-line"],
     "consistent-return": [0],
     "new-cap": [0],
