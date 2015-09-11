@@ -1,13 +1,12 @@
 
 import React from "react";
-import R from "ramda";
 import PureComponent from "react-pure-render/component";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
 import {setCustomValue} from "../actions";
 import {preventDefault} from "../utils";
-import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
+import {ReactColumnType} from "../ColumnTypes";
 
 import ArrowBox from "./ArrowBox";
 import {CellValueInput, CellValue} from "./CellValue";
