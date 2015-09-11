@@ -12,7 +12,7 @@
   <tr>
     <td data-title="Hostname">
       <% if current_user.organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(o['puavoSchool']) %>
-      <%= link_to o["name"], path.call(o['school_id'], o['id'].first) %>
+      <%= link_to o["name"], path.call(o['school_id'], o['id']) %>
       <% else %>
       <%=h o["name"] %>
       <% end %>
