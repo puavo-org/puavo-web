@@ -60,7 +60,7 @@ class ColumnEditor extends PureComponent {
                     onHide={this.hideMenu.bind(this)}
                     rootClose
                     placement="bottom"
-                    target={() => this.refs.target}
+                    target={() => React.findDOMNode(this.refs.target)}
                 >
                     <ArrowBox>
                         <form className="pure-form pure-form-stacked">

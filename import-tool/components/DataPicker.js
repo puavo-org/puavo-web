@@ -30,7 +30,7 @@ class DataPicker extends PureComponent {
     }
 
     startFileDialog(e) {
-        this.refs.file.click();
+        React.findDOMNode(this.refs.file).click();
     }
 
     readFileEvent(e) {
