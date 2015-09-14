@@ -136,7 +136,7 @@ class Device < Host
   end
 
   def image_series_source_urls
-    if get_own(:image_series_source_urls).nil?
+    if get_own(:image_series_source_urls).empty?
       school.image_series_source_urls
     else
       get_own(:image_series_source_urls)
