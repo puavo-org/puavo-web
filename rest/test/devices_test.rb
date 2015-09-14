@@ -13,7 +13,7 @@ describe PuavoRest::Devices do
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true,
       :puavoAutomaticImageUpdates => true,
-      :puavoImageSeriesSourceURL => "https://foobar.opinsys.fi/schoolpref.json",
+      :puavoImageSeriesSourceURL => ["https://foobar.opinsys.fi/schoolpref.json"],
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
@@ -107,7 +107,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/images.json", @data["image_series_source_urls"]
+      assert_equal "https://foobar.opinsys.fi/images.json", @data["image_series_source_urls"].first
     end
 
     it "has mac address" do
@@ -218,7 +218,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/schoolpref.json", @data["image_series_source_urls"]
+      assert_equal "https://foobar.opinsys.fi/schoolpref.json", @data["image_series_source_urls"].first
     end
 
     it "has preferred image" do
@@ -276,7 +276,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/organisationpref.json", @data["image_series_source_urls"]
+      assert_equal "https://foobar.opinsys.fi/organisationpref.json", @data["image_series_source_urls"].first
     end
 
     it "has allow guest" do
