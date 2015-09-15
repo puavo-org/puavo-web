@@ -13,7 +13,7 @@ import StatusIcon from "./StatusIcon";
 import Fa from "./Fa";
 import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
 import {parseImportString, startImport, dropRow, createPasswordResetIntentForNewUsers} from "../actions";
-import {getCellValue, preventDefault} from "../utils";
+import {getCellValue, preventDefault, deepFreeze} from "../utils";
 
 const findMissingRequiredColumns = R.difference(REQUIRED_COLUMNS);
 
@@ -38,7 +38,7 @@ const areAllRowsOk = R.compose(
     R.values
 );
 
-const defaultErrors = [];
+const defaultErrors = deepFreeze([]);
 
 export default class ImportTool extends PureComponent {
 

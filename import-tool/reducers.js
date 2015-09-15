@@ -5,7 +5,7 @@ import cleanDiacritics from "underscore.string/cleanDiacritics";
 import trim from "underscore.string/trim";
 
 import ColumnTypes from "./ColumnTypes";
-import {getCellValue} from "./utils";
+import {getCellValue, deepFreeze} from "./utils";
 
 const usernameSlugify = R.compose(
     s => s.toLowerCase().replace(/[^a-z\.]/g, ""),
@@ -13,7 +13,7 @@ const usernameSlugify = R.compose(
     cleanDiacritics
 );
 
-const initialImportData = {
+const initialImportData = deepFreeze({
     rows: [],
     defaultValues: {},
     columns: [
@@ -21,7 +21,7 @@ const initialImportData = {
         ColumnTypes.last_name,
         ColumnTypes.email,
     ],
-};
+});
 
 const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalValue: val}, acc), {});
 const findLongestRowLength = R.compose(R.reduce(R.max, 0), R.map(R.prop("length")));
@@ -97,7 +97,7 @@ function injectUsernames(data) {
 
 export const importData = R.compose(injectUsernames, importData_);
 
-export function rowStatus(states={}, action) {
+export function rowStatus(states=deepFreeze({}), action) {
     switch (action.type) {
     case "SET_ROW_STATUS":
         return R.over(
@@ -122,7 +122,7 @@ export function defaultSchool(school=null, action) {
     }
 }
 
-export function legacyRoles(roles=[], action) {
+export function legacyRoles(roles=deepFreeze([]), action) {
     switch (action.type) {
     case "SET_LEGACY_ROLES":
         return action.legacyRoles;

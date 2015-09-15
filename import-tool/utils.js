@@ -1,5 +1,6 @@
 
 import R from "ramda";
+import deepFreeze_ from "deep-freeze";
 
 const trimmedProp = R.compose(R.trim, String, R.or(R.__, ""), R.prop);
 
@@ -26,3 +27,6 @@ export function onEnterKey(fn) {
         }
     };
 }
+
+// Deep freezing is slow and makes things slow so skip it in production
+export const deepFreeze = process.env.NODE_ENV !== "production" ? deepFreeze_ : R.identity;
