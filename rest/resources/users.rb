@@ -526,6 +526,15 @@ class Users < PuavoSinatra
     json User.by_username!(params["username"], params["attributes"])
   end
 
+  post "/v3/users/:username" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    user.update!(json_params)
+    user.save!
+    json user
+
+  end
+
   # Replace all legacy roles for user in one request
   # Example:
   #
