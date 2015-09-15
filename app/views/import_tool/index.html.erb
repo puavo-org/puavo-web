@@ -12,7 +12,17 @@
 
   <link href="/import_tool.css" media="all" rel="stylesheet" type="text/css" />
 <% end %>
-<script src="/import_tool.js" charset="utf-8"></script>
+
+<script charset="utf-8">
+<% if ENV["RAILS_ENV"] == "production" %>
+    var script = "/import_tool.js";
+<% else %>
+    console.warn("Development mode. Remeber to start 'make js-server'");
+    var script = "http://" + (location.host || 'localhost').split(':')[0] + ":4000/import_tool.js"
+<% end %>
+
+document.write('<script src="' + script + '"></' + 'script>');
+</script>
 <script charset="utf-8">
 window.createImportTool("import-tool", <%= @school_json.html_safe  %>);
 </script>

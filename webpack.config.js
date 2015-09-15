@@ -10,11 +10,13 @@ module.exports = {
     devtool: "source-map",
     module: {
         loaders: [
-            {test: /\.jsx?$/, exclude: /node_modules/, loader: "transform?envify"},
             {test: /\.jsx?$/, exclude: /node_modules/, loader: "babel-loader"}
         ]
     },
     plugins: [
-        new webpack.ExtendedAPIPlugin()
+        new webpack.ExtendedAPIPlugin(),
+        new webpack.DefinePlugin({
+            "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
+        })
     ]
 };
