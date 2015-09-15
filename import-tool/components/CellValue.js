@@ -6,6 +6,7 @@ import R from "ramda";
 import {onEnterKey} from "../utils";
 import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
 
+import {Role, RoleSelector} from "./Role";
 import {LegacyRole, LegacyRoleSelector} from "./LegacyRole";
 
 
@@ -24,6 +25,8 @@ export class CellValueInput extends PureComponent {
         switch(this.props.columnType.id) {
         case ColumnTypes.legacy_role.id:
             return <LegacyRoleSelector {...passProps} />;
+        case ColumnTypes.role.id:
+            return <RoleSelector {...passProps} />;
         default:
             return (
                 <input
@@ -52,6 +55,8 @@ export class CellValue extends PureComponent {
         switch(this.props.columnType.id) {
         case ColumnTypes.legacy_role.id:
             return <LegacyRole id={this.props.value} />;
+        case ColumnTypes.role.id:
+            return <Role value={this.props.value} />;
         default:
             return <span>{this.props.value}</span>;
         }

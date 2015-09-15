@@ -12,7 +12,7 @@ const ColumnTypes = deepFreeze([
     {name: "Last name", attribute: "last_name", id: "last_name", required, userAttribute},
     {name: "Email", attribute: "email", id: "email", userAttribute},
     {name: "Username", attribute: "username", id: "username", required, userAttribute},
-    {name: "User type", attribute: "roles", id: "user_type", required, userAttribute},
+    {name: "User type", attribute: "roles", id: "role", required, userAttribute},
     {name: "Legacy Role", id: "legacy_role", required},
     {name: "Unkown", id: "unknown"},
     // {name: "Role (legacy)", attribute: "legacy_role"},
