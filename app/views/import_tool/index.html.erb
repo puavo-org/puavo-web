@@ -17,7 +17,7 @@
 <% if ENV["RAILS_ENV"] == "production" %>
     var script = "/import_tool.js";
 <% else %>
-    console.warn("Development mode. Remeber to start 'make js-server'");
+    console.warn("Development mode. Make sure to start 'make js-server'");
     var script = "http://" + (location.host || 'localhost').split(':')[0] + ":4000/import_tool.js"
 <% end %>
 
