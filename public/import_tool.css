@@ -1,20 +1,4 @@
 
-
-
-.ImportTool-editor {
-    overflow: auto;
-    overflow-y: hidden;
-}
-
-.ImportTool-textarea {
-    width: 100%;
-    height: 300px;
-}
-
-.ImportTool-DataPicker {
-    margin-bottom: 3em;
-}
-
 .pure-button.danger {
     background: rgb(202, 60, 60);
     color: white;
@@ -45,36 +29,10 @@
     vertical-align: middle;
 }
 
-.ImportTool tr th:last-child,
-.ImportTool tr td:last-child {
-    text-align: right;
-}
 
 .ImportTool thead {
-    /* background-color: red; */
     color: #f5f5e8;
     background: -webkit-linear-gradient(top, #a36a2a 35%, #ba722d 60%) repeat scroll 0 0 transparent !important;
-}
-
-.ImportTool select {
-    color: black !important;
-}
-
-.ImportTool table {
-    width: 100%;
-    overflow: auto;
-}
-
-.ImportTool .Cell {
-    white-space: nowrap;
-}
-
-.ImportTool .Cell-edit-buttons {
-    float: right;
-}
-
-.ImportTool-footer {
-    margin-top: 50px;
 }
 
 

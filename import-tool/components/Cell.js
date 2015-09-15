@@ -66,7 +66,7 @@ class Cell extends PureComponent {
 
     render() {
         return (
-            <div className="Cell">
+            <div className="Cell" style={{whiteSpace: "nowrap"}}>
 
                 <div>
                     {this.hasErrors() &&
@@ -98,7 +98,7 @@ class Cell extends PureComponent {
 
                     <CellValue columnType={this.props.columnType} value={this.props.value} />
 
-                    <span className="Cell-edit-buttons">
+                    <span style={{float: "right"}}>
                         {" "}
                         <a href="#" onClick={preventDefault(this.revertToOriginal.bind(this))}>
                             <Fa icon="recycle" />

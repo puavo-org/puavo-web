@@ -48,6 +48,7 @@ class DataPicker extends PureComponent {
             <form className="ImportTool-DataPicker pure-form" >
                 <textarea
                     className="ImportTool-textarea"
+                    style={{width: "100%", height: 300}}
                     placeholder={demoData}
                     value={this.state.importString}
                     onChange={e => this.setState({importString: e.target.value})}

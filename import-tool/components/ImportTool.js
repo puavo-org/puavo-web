@@ -71,8 +71,8 @@ export default class ImportTool extends PureComponent {
 
                 {rows.length > 0 &&
                 <div>
-                    <div className="ImportTool-editor">
-                        <table className="pure-table pure-table-striped">
+                    <div className="ImportTool-editor" style={{overflow: "auto", overflowY: "hidden"}}>
+                        <table className="pure-table pure-table-striped" style={{width: "100%", overflow: "auto"}}>
                             <thead>
                                 <tr>
                                     <th key="status">
@@ -94,7 +94,7 @@ export default class ImportTool extends PureComponent {
                                             </th>
                                         );
                                     })}
-                                    <th>
+                                    <th style={{textAlign: "right"}}>
                                         <ImportMenu />
                                     </th>
                                 </tr>
@@ -141,7 +141,7 @@ export default class ImportTool extends PureComponent {
                                                 );
                                             })}
 
-                                            <td>
+                                            <td style={{textAlign: "right"}}>
                                                 <button
                                                     className="pure-button danger"
                                                     onClick={preventDefault(_ => this.props.dropRow(rowIndex))}
@@ -160,7 +160,7 @@ export default class ImportTool extends PureComponent {
 
                     </div>
 
-                    <div className="pure-g ImportTool-footer">
+                    <div className="pure-g" style={{marginTop: "50px"}}>
                         <div className="pure-u-4-5">
 
                             {!areAllRowsOk(rowStatus) &&
