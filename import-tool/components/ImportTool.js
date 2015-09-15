@@ -38,6 +38,8 @@ const areAllRowsOk = R.compose(
     R.values
 );
 
+const defaultErrors = [];
+
 export default class ImportTool extends PureComponent {
 
     constructor(props) {
@@ -117,7 +119,7 @@ export default class ImportTool extends PureComponent {
                                             </td>
 
                                             {columns.map((columnType, columnIndex) => {
-                                                let validationErrors = [];
+                                                let validationErrors = defaultErrors;
                                                 if (rowStatusString === "error") {
                                                     validationErrors = R.path([
                                                         rowIndex,
