@@ -8,6 +8,7 @@ import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
 
 import {Role, RoleSelector} from "./Role";
 import {LegacyRole, LegacyRoleSelector} from "./LegacyRole";
+import {SchoolChange} from "./School";
 
 
 export class CellValueInput extends PureComponent {
@@ -27,6 +28,8 @@ export class CellValueInput extends PureComponent {
             return <LegacyRoleSelector {...passProps} />;
         case ColumnTypes.role.id:
             return <RoleSelector {...passProps} />;
+        case ColumnTypes.change_school.id:
+            return <SchoolChange {...passProps} />;
         default:
             return (
                 <input

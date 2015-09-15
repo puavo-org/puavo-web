@@ -119,7 +119,13 @@ export function startImport(rowIndex=0) {
 
         dispatchStatus({status: "working"});
 
-        if (!currentStatus.created) {
+        const changeSchoolIndex = R.head(findIndices(ColumnTypes.change_school.id, columns));
+        let changeSchoolForExistingUser = false;
+        if (!R.isNil(changeSchoolIndex)) {
+            changeSchoolForExistingUser = !!getCellValue(row[changeSchoolIndex]);
+        }
+
+        if (!changeSchoolForExistingUser && !currentStatus.created) {
             let user = null;
             try {
                 user = await Api.createUser(userData);
@@ -141,6 +147,19 @@ export function startImport(rowIndex=0) {
             }
 
             dispatchStatus({created: true, user});
+        }
+
+        if (changeSchoolForExistingUser) {
+            try {
+                await Api.updateUser(userData.username, {school_dns: [defaultSchool.dn]});
+            } catch(error) {
+                dispatchStatus({
+                    status: "error",
+                    message: "Failed to change school",
+                    error,
+                });
+                return next();
+            }
         }
 
         const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);

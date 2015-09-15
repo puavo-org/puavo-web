@@ -56,6 +56,10 @@ export function createUser(data) {
     return request("POST", "/v3/users", data);
 }
 
+export function updateUser(username, data) {
+    return request("POST", `/v3/users/${username}`, data);
+}
+
 export function replaceLegacyRoles(username, roleIds) {
     return request("PUT", `/v3/users/${username}/legacy_roles`, {ids: roleIds});
 }
