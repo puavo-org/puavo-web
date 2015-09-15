@@ -8,7 +8,7 @@ const STATUS_ICONS = {
     ok: {icon: "thumbs-up", className: "success"},
     error: {icon: "exclamation-triangle", className: "error"},
     waiting: {icon: "pause"},
-    working: {icon: "cog", className: "success"},
+    working: {icon: "cog", className: "spin"},
 };
 
 export default class StatusIcon extends PureComponent {
