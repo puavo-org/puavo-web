@@ -53,6 +53,8 @@ class PuavoSinatra < Sinatra::Base
   #
   # @return Array
   def attribute_list
+    return nil if params["attributes"].nil?
+
     params["attributes"].to_s.split(",")
   end
 

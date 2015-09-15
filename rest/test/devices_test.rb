@@ -640,4 +640,38 @@ describe PuavoRest::Devices do
 
   end
 
+  describe "list of devices" do
+    before(:each) do
+      create_device(
+        :puavoHostname => "athin",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn
+      )
+      create_device(
+        :puavoHostname => "athin-02",
+        :macAddress => "bf:9a:8c:1b:e0:7b",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn
+      )
+      get "/v3/devices", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      @data = JSON.parse last_response.body
+    end
+
+    puts @data.inspect
+    it "has list of devices" do
+      assert_equal Array, @data.class
+    end
+
+    it "has devices information on the list" do
+      puts @data.inspect
+      assert_equal "bf:9a:8c:1b:e0:6a", @data[0]["mac_address"]
+      assert_equal "bf:9a:8c:1b:e0:7b", @data[1]["mac_address"]
+    end
+
+  end
+
 end
