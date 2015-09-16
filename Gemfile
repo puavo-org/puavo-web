@@ -13,6 +13,7 @@ gem "http"
 gem "sinatra-support", :require => "sinatra/support"
 gem "jwt", "~> 0.1.8"
 gem "sshkey", "~> 1.6.1"
+gem "i18n-js", ">= 3.0.0.rc11"
 
 group :assets do
   gem "stylus", "~> 0.7.2"

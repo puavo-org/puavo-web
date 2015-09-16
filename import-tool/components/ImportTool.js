@@ -5,15 +5,17 @@ import {connect} from "react-redux";
 import PureComponent from "./PureComponent";
 import Modal from "./Modal";
 
+import t from "../i18n";
+import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
+import {parseImportString, startImport, dropRow, createPasswordResetIntentForNewUsers} from "../actions";
+import {getCellValue, preventDefault, deepFreeze} from "../utils";
+
 import DataPicker from "./DataPicker";
 import Cell from "./Cell";
 import ImportMenu from "./ImportMenu";
 import ColumnEditor from "./ColumnEditor";
 import StatusIcon from "./StatusIcon";
 import Fa from "./Fa";
-import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
-import {parseImportString, startImport, dropRow, createPasswordResetIntentForNewUsers} from "../actions";
-import {getCellValue, preventDefault, deepFreeze} from "../utils";
 
 const findMissingRequiredColumns = R.difference(REQUIRED_COLUMNS);
 
@@ -79,7 +81,7 @@ export default class ImportTool extends PureComponent {
                             <thead>
                                 <tr>
                                     <th key="status">
-                                        Status
+                                        {t("status")}
                                     </th>
 
                                     {columns.map((columnType, columnIndex) => {

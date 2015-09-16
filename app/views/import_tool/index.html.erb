@@ -13,6 +13,11 @@
   <link href="/import_tool.css" media="all" rel="stylesheet" type="text/css" />
 <% end %>
 
+<script src="/javascripts/i18n/import_tool.<%= I18n.default_locale %>.js" charset="utf-8"></script>
+<% if I18n.default_locale != I18n.locale %>
+<script src="/javascripts/i18n/import_tool.<%= I18n.locale %>.js" charset="utf-8"></script>
+<% end %>
+
 <script charset="utf-8">
 <% if ENV["RAILS_ENV"] == "production" %>
     var script = "/import_tool.js";

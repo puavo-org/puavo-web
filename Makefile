@@ -40,8 +40,11 @@ clean: clean-assets js-clean
 	rm -rf vendor/bundle
 	rm -rf node_modules
 
-js:
+js: js-translations
 	NODE_ENV=production webpack -p --progress
+
+js-translations:
+	bundle exec rake i18n:js:export
 
 js-watch:
 	webpack -w
