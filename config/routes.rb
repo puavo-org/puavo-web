@@ -7,7 +7,7 @@ PuavoUsers::Application.routes.draw do
   match '/menu' => 'menu#index', :via => :get
 
   scope :path => "restproxy" do
-    match '(*url)' => 'rest#proxy', :via => [:get, :post, :put]
+    match '(*url)' => 'rest#proxy', :via => [:get, :post, :put], :format => false
   end
 
   scope :path => "users" do
