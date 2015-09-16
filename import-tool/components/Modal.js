@@ -3,7 +3,7 @@
 import R from "ramda";
 import React from "react";
 import Modal from "react-overlays/lib/Modal";
-import PureComponent from "react-pure-render/component";
+import PureComponent from "./PureComponent";
 
 const modalStyle = {
     position: "fixed",

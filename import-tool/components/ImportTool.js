@@ -2,7 +2,7 @@
 import React from "react";
 import R from "ramda";
 import {connect} from "react-redux";
-import PureComponent from "react-pure-render/component";
+import PureComponent from "./PureComponent";
 import Modal from "./Modal";
 
 import DataPicker from "./DataPicker";

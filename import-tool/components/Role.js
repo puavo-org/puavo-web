@@ -1,6 +1,6 @@
 
 import React from "react";
-import PureComponent from "react-pure-render/component";
+import PureComponent from "./PureComponent";
 
 const ROLES = [
     {name: "Opettaja", value: "teacher"},

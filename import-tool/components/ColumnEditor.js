@@ -1,6 +1,6 @@
 
 import React from "react";
-import PureComponent from "react-pure-render/component";
+import PureComponent from "./PureComponent";
 import R from "ramda";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
