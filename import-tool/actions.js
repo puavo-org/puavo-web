@@ -97,7 +97,7 @@ function findIndices(id, columns) {
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
-        const {importData: {rows, columns}, defaultSchool, rowStatus} = getState();
+        const {rows, columns, defaultSchool, rowStatus} = getState();
 
         const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
         const dispatchStatus = R.compose(dispatch, R.merge({

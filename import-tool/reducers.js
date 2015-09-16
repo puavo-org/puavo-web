@@ -1,21 +1,17 @@
 
 import R from "ramda";
-import u from "updeep";
+import {updateIn} from "updeep";
 import cleanDiacritics from "underscore.string/cleanDiacritics";
 import trim from "underscore.string/trim";
 
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue, deepFreeze} from "./utils";
 
-const usernameSlugify = R.compose(
-    s => s.toLowerCase().replace(/[^a-z\.]/g, ""),
-    R.partialRight(trim, ". "),
-    cleanDiacritics
-);
-
-const initialImportData = deepFreeze({
+const initialState = deepFreeze({
     rows: [],
-    defaultValues: {},
+    rowStatus: {},
+    defaultSchool: null,
+    legacyRoles: [],
     columns: [
         ColumnTypes.first_name,
         ColumnTypes.last_name,
@@ -23,41 +19,55 @@ const initialImportData = deepFreeze({
     ],
 });
 
+const usernameSlugify = R.compose(
+    s => s.toLowerCase().replace(/[^a-z\.]/g, ""),
+    R.partialRight(trim, ". "),
+    cleanDiacritics
+);
+
 const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalValue: val}, acc), {});
 const findLongestRowLength = R.compose(R.reduce(R.max, 0), R.map(R.prop("length")));
 const appendUnknownColumns = R.compose(R.flip(R.concat), R.repeat(ColumnTypes.unknown), R.max(0));
 const removeByIndex = R.remove(R.__, 1);
 
-
-function importData_(data=initialImportData, action) {
+function reducer(state=initialState, action) {
     switch (action.type) {
     case "SET_IMPORT_DATA":
         return R.evolve({
-            columns: appendUnknownColumns(findLongestRowLength(action.data) - data.columns.length),
+            columns: appendUnknownColumns(findLongestRowLength(action.data) - state.columns.length),
             rows: R.always(action.data.map(arrayToObj)),
-        }, data);
+        }, state);
     case "SET_CUSTOM_VALUE":
-        const usernameIndex = R.findIndex(isUsername, data.columns);
+        const usernameIndex = R.findIndex(isUsername, state.columns);
         var value = action.value;
         if (action.columnIndex === usernameIndex) {
             value = usernameSlugify(value);
         }
-        return u.updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, data);
+        return updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, state);
     case "ADD_COLUMN":
-        return R.evolve({columns: R.append(ColumnTypes[action.columnType])}, data);
+        return R.evolve({columns: R.append(ColumnTypes[action.columnType])}, state);
     case "DROP_ROW":
-        return R.evolve({rows: removeByIndex(action.rowIndex)}, data);
+        return R.evolve({
+            rows: removeByIndex(action.rowIndex),
+            rowStatus: R.omit([String(action.rowIndex)]),
+        }, state);
     case "DROP_COLUMN":
-        return R.evolve({columns: removeByIndex(action.columnIndex)}, data);
+        return R.evolve({columns: removeByIndex(action.columnIndex)}, state);
     case "CHANGE_COLUMN_TYPE":
-        return u.updateIn(["columns", action.columnIndex], ColumnTypes[action.typeId], data);
+        return updateIn(["columns", action.columnIndex], ColumnTypes[action.typeId], state);
+    case "SET_ROW_STATUS":
+        return updateIn(["rowStatus", action.rowIndex], R.merge(R.__, R.omit(["type"], action)), state);
+    case "SET_DEFAULT_SCHOOL":
+        return R.assoc("defaultSchool", action.school, state);
+    case "SET_LEGACY_ROLES":
+        return R.assoc("legacyRoles", action.legacyRoles, state);
     case "FILL_COLUMN":
         return R.evolve({rows: R.map(row => {
             if (!action.override && getCellValue(row[action.columnIndex])) return row;
-            return u.updateIn([action.columnIndex, "customValue"], action.value, row);
-        })}, data);
+            return updateIn([action.columnIndex, "customValue"], action.value, row);
+        })}, state);
     default:
-        return data;
+        return state;
     }
 }
 
@@ -78,56 +88,23 @@ const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastName
 });
 
 
-function injectUsernames(data) {
-    if (!canGenerateUsername(data.columns)) return data;
+function injectUsernames(state) {
+    if (!canGenerateUsername(state.columns)) return state;
 
-    const usernameIndex = R.findIndex(isUsername, data.columns);
+    const usernameIndex = R.findIndex(isUsername, state.columns);
     const isMissingUsername = R.any(isMissing(usernameIndex));
 
-    if (!isMissingUsername(data.rows)) return data;
+    if (!isMissingUsername(state.rows)) return state;
 
     const addUsernames = R.map(generateDefaultUsername(
         usernameIndex,
-        R.findIndex(isFirstName, data.columns),
-        R.findIndex(isLastName, data.columns)
+        R.findIndex(isFirstName, state.columns),
+        R.findIndex(isLastName, state.columns)
     ));
 
-    return R.evolve({rows: addUsernames}, data);
+    return R.evolve({rows: addUsernames}, state);
 }
 
-export const importData = R.compose(injectUsernames, importData_);
+export default R.compose(injectUsernames, reducer);
 
-export function rowStatus(states=deepFreeze({}), action) {
-    switch (action.type) {
-    case "SET_ROW_STATUS":
-        return R.over(
-            R.lensProp(action.rowIndex),
-            R.merge(R.__, R.omit(["type"], action)),
-            states
-        );
-    case "DROP_ROW":
-        return R.omit([String(action.rowIndex)], states);
-    default:
-        return states;
-    }
-
-}
-
-export function defaultSchool(school=null, action) {
-    switch (action.type) {
-    case "SET_DEFAULT_SCHOOL":
-        return action.school;
-    default:
-        return school;
-    }
-}
-
-export function legacyRoles(roles=deepFreeze([]), action) {
-    switch (action.type) {
-    case "SET_LEGACY_ROLES":
-        return action.legacyRoles;
-    default:
-        return roles;
-    }
-}
 

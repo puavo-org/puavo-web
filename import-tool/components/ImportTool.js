@@ -204,12 +204,7 @@ ImportTool.propTypes = {
     rowStatus: React.PropTypes.object.isRequired,
 };
 
-function select(state) {
-    var {rowStatus, importData: {rows, columns}} = state;
-    return {rowStatus, rows, columns};
-}
-
-export default connect(select, {
+export default connect(R.pick(["rowStatus", "rows", "columns"]), {
     parseImportString,
     startImport,
     dropRow,

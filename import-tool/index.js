@@ -13,11 +13,11 @@ import "babel/polyfill";
 
 import React from "react";
 import R from "ramda";
-import {combineReducers, createStore, applyMiddleware, compose} from "redux";
+import {createStore, applyMiddleware, compose} from "redux";
 import createLogger from "redux-logger";
 import thunk from "redux-thunk";
 import {Provider} from "react-redux";
-import * as reducers from "./reducers";
+import reducers from "./reducers";
 import {devTools as createDevTools} from "redux-devtools";
 import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
 import {batchedUpdatesMiddleware} from "redux-batched-updates";
@@ -40,11 +40,10 @@ const createFinalStore = compose(
     devTools
 )(createStore);
 
-const combinedReducers = combineReducers(reducers);
 
 function createImportTool(containerId, school) {
     var container = document.getElementById(containerId);
-    const store = createFinalStore(combinedReducers);
+    const store = createFinalStore(reducers);
     store.dispatch({
         type: "SET_DEFAULT_SCHOOL",
         school,
