@@ -1,5 +1,6 @@
 
 import React from "react";
+import R from "ramda";
 import PureComponent from "./PureComponent";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
@@ -98,6 +99,7 @@ class Cell extends PureComponent {
 
                     <CellValue columnType={this.props.columnType} value={this.props.value} />
 
+                    {this.props.status !== "ok" &&
                     <span style={{float: "right"}}>
                         {" "}
                         <a href="#" onClick={preventDefault(this.revertToOriginal.bind(this))}>
@@ -107,7 +109,7 @@ class Cell extends PureComponent {
                         <a href="#" ref="editButton" onClick={preventDefault(this.showMenu.bind(this))}>
                             <Fa icon="pencil" />
                         </a>
-                    </span>
+                    </span>}
                 </div>
 
                 <Overlay
@@ -143,6 +145,7 @@ Cell.propTypes = {
     rowIndex: React.PropTypes.number.isRequired,
     setCustomValue: React.PropTypes.func.isRequired,
     value: React.PropTypes.string.isRequired,
+    status: React.PropTypes.string.isRequired,
     validationErrors: React.PropTypes.array,
     required: React.PropTypes.bool,
     columnType: ReactColumnType.isRequired,
@@ -152,4 +155,10 @@ Cell.defaultProps = {
     validationErrors: [],
 };
 
-export default connect(null, {setCustomValue})(Cell);
+function select(state, parentProps) {
+    return {
+        status: R.path(["rowStatus", parentProps.rowIndex, "status"], state) || "waiting",
+    };
+}
+
+export default connect(select, {setCustomValue})(Cell);
