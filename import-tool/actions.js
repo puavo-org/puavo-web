@@ -153,9 +153,14 @@ export function startImport(rowIndex=0) {
             try {
                 await Api.updateUser(userData.username, {school_dns: [defaultSchool.dn]});
             } catch(error) {
+                let message = "Failed to change school";
+                if (error.res.status === 404) {
+                    message = "Cannot change school for unknown user";
+                }
+
                 dispatchStatus({
                     status: "error",
-                    message: "Failed to change school",
+                    message,
                     error,
                 });
                 return next();
