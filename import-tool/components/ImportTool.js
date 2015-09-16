@@ -102,12 +102,16 @@ export default class ImportTool extends PureComponent {
                             <tbody>
                                 {rows.map((row, rowIndex) => {
                                     const rowStatusString = R.path([rowIndex, "status"], rowStatus) || "waiting";
+                                    const created = !!R.path([rowIndex, "created"], rowStatus);
+                                    const schoolChanged = !!R.path([rowIndex, "schoolChanged"], rowStatus);
+
 
                                     var statusIcon = <StatusIcon status={rowStatusString} />;
+
                                     if (rowStatusString === "error") {
                                         statusIcon = (
                                             <a href="#" onClick={preventDefault(_ => this.setState({showModalFor: rowIndex}))}>
-                                                {statusIcon}
+                                                {statusIcon} Virhe
                                             </a>
                                         );
                                     }
@@ -116,6 +120,8 @@ export default class ImportTool extends PureComponent {
                                         <tr key={rowIndex}>
                                             <td>
                                                 {statusIcon}
+                                                {created && " Created"}
+                                                {schoolChanged && " School changed"}
                                             </td>
 
                                             {columns.map((columnType, columnIndex) => {

@@ -160,6 +160,7 @@ export function startImport(rowIndex=0) {
                 });
                 return next();
             }
+            dispatchStatus({schoolChanged: true});
         }
 
         const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);
