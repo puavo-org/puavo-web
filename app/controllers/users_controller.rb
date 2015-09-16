@@ -218,6 +218,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def username_redirect
+    user = User.find(:first, :attribute => "uid", :value => params["username"])
+    if user.nil?
+      return render :text => "Unknown user #{ params["username"] }", :status => 400
+    end
+    redirect_to user_path(params["school_id"], user.id)
+  end
+
   private
 
   def error_message_and_render(format, action, message = nil)

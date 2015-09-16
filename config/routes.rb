@@ -62,6 +62,7 @@ PuavoUsers::Application.routes.draw do
       match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
       match 'users/change_school' => 'users#change_school', :as => :change_school_users, :via => :post
       match 'import_tool' => 'import_tool#index', :via => :get
+      match 'username_redirect/:username' => 'users#username_redirect', :via => :get, :constraints => { :username => /[^\/]+/ }
     end
 
 

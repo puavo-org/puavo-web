@@ -1,3 +1,6 @@
+.ImportTool a {
+    text-decoration: none;
+}
 
 .pure-button.danger {
     background: rgb(202, 60, 60);

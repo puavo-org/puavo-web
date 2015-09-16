@@ -2,6 +2,7 @@
 import React from "react";
 import PureComponent from "./PureComponent";
 import R from "ramda";
+import {connect} from "react-redux";
 
 import {onEnterKey} from "../utils";
 import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
@@ -53,9 +54,25 @@ CellValueInput.propTypes = {
     columnType: ReactColumnType.isRequired,
 };
 
+class Username extends PureComponent {
+    render() {
+        const {schoolId, username} = this.props;
+        return (
+            <a href={`/users/${schoolId}/username_redirect/${username}`}>{username}</a>
+        );
+    }
+}
+Username.propTypes = {
+    username: React.PropTypes.string.isRequired,
+    schoolId: React.PropTypes.number.isRequired,
+};
+Username = connect(state => ({schoolId: R.path(["defaultSchool", "id"], state)}))(Username);
+
 export class CellValue extends PureComponent {
     render() {
         switch(this.props.columnType.id) {
+        case ColumnTypes.username.id:
+            return <Username username={this.props.value} />;
         case ColumnTypes.legacy_role.id:
             return <LegacyRole id={this.props.value} />;
         case ColumnTypes.role.id:
