@@ -61,8 +61,11 @@ export default class ImportTool extends PureComponent {
 
                 {this.state.showModalFor !== null &&
                 <Modal show onHide={e => this.setState({showModalFor: null})}>
-                    <div>
-                        <h2>row {this.state.showModalFor}</h2>
+                    <div style={{width: 800}}>
+                        <h2>Errors</h2>
+                        <p>
+                            TODO: Should make this more readable
+                        </p>
                         <pre>
                             {JSON.stringify(rowStatus[this.state.showModalFor], null, "  ")}
                         </pre>
