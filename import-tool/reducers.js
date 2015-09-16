@@ -62,8 +62,13 @@ function reducer(state=initialState, action) {
     case "SET_LEGACY_ROLES":
         return R.assoc("legacyRoles", action.legacyRoles, state);
     case "FILL_COLUMN":
-        return R.evolve({rows: R.map(row => {
-            if (!action.override && getCellValue(row[action.columnIndex])) return row;
+        return R.evolve({rows: R.addIndex(R.map)((row, rowIndex) => {
+            if (R.path(["rowStatus", rowIndex, "status"], state) === "ok") {
+                return row;
+            }
+            if (!action.override && getCellValue(row[action.columnIndex])) {
+                return row;
+            }
             return updateIn([action.columnIndex, "customValue"], action.value, row);
         })}, state);
     default:
