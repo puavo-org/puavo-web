@@ -30,7 +30,7 @@ import {fetchLegacyRoles} from "./actions";
 
 const devTools = REDUX_DEV ? createDevTools() : R.identity;
 
-const logger = createLogger();
+const logger = createLogger({timestamp: false, duration: true});
 
 
 
