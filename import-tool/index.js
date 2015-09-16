@@ -1,5 +1,3 @@
-const REDUX_DEV = !!window.localStorage.REDUX_DEV;
-
 const STATE_KEY = [
     "import-tool",
     window.location.toString(),
@@ -12,14 +10,11 @@ window.Promise = require("bluebird"); // extra override
 import "babel/polyfill";
 
 import React from "react";
-import R from "ramda";
 import {createStore, applyMiddleware, compose} from "redux";
 import createLogger from "redux-logger";
 import thunk from "redux-thunk";
 import {Provider} from "react-redux";
 import reducers from "./reducers";
-import {devTools as createDevTools} from "redux-devtools";
-import {DevTools, DebugPanel, LogMonitor} from "redux-devtools/lib/react";
 import {batchedUpdatesMiddleware} from "redux-batched-updates";
 
 import ImportTool from "./components/ImportTool";
@@ -28,16 +23,11 @@ import createStateStorage from "./StateStorage";
 import {fetchLegacyRoles} from "./actions";
 
 
-const devTools = REDUX_DEV ? createDevTools() : R.identity;
-
 const logger = createLogger({timestamp: false, duration: true});
-
-
 
 const createFinalStore = compose(
     createStateStorage(STATE_KEY),
-    applyMiddleware(batchedUpdatesMiddleware, thunk, logger),
-    devTools
+    applyMiddleware(batchedUpdatesMiddleware, thunk, logger)
 )(createStore);
 
 
@@ -57,11 +47,6 @@ function createImportTool(containerId, school) {
             <Provider store={store}>
                 {() => <ImportTool />}
             </Provider>
-            {REDUX_DEV &&
-            <DebugPanel top right bottom>
-              <DevTools store={store}
-                        monitor={LogMonitor} />
-            </DebugPanel>}
         </div>
     , container);
 }
