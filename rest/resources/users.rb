@@ -267,16 +267,27 @@ class User < LdapModel
     "ou=People,#{ organisation["base"] }"
   end
 
-  # aka by_uuid
+  # Find user model by username
+  #
+  # @param [String] username
+  # @return [String, nil]
   def self.by_username(username, attrs=nil)
     by_attr(:username, username, :single, attrs)
   end
 
+  # Find user model by username
+  #
+  # @param [String] username
+  # @return [String]
   def self.by_username!(username, attrs=nil)
     by_attr!(:username, username, :single, attrs)
   end
 
 
+  # Find dn string for username
+  #
+  # @param [String] username
+  # @return [String, nil]
   def self.resolve_dn(username)
     user = by_attr(:username, username, ["dn"])
     user ? user.dn : nil
