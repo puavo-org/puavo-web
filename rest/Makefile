@@ -15,10 +15,6 @@ update-gemfile-lock: clean
 	rm -rf .tmpgem
 	bundle install --deployment
 
-clean-for-install:
-	bundle install --deployment --without test shared
-	bundle clean
-
 clean: clean-doc
 	rm -rf .bundle vendor
 
@@ -26,7 +22,7 @@ clean: clean-doc
 tags:
 	bundle exec ripper-tags -R --exclude=vendor --exclude rest
 
-install: clean-for-install
+install:
 	# Delete .git dir and caches from vendor/. Caused some permission issues on
 	# .deb builder
 	find vendor/ -type d -name .git | xargs rm -rf

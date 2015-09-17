@@ -27,8 +27,6 @@ update-gemfile-lock: clean
 
 clean-for-install:
 	# Remove testing gems
-	bundle install --deployment --without test
-	bundle clean
 	rm -f config/*.sqlite3
 
 clean-assets:
