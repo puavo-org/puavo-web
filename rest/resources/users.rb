@@ -278,7 +278,8 @@ class User < LdapModel
 
 
   def self.resolve_dn(username)
-    by_attr!(:username, username, ["dn"]).dn
+    user = by_attr(:username, username, ["dn"])
+    user ? user.dn : nil
   end
 
   def self.profile_image(uid)
