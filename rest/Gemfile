@@ -29,6 +29,7 @@ gem "httparty"
 gem "pony"
 gem "gibberish", "~> 1.4.0"
 gem "sinatra-support", :require => "sinatra/support"
+gem "redlock"
 
 group :test do
   gem "shotgun"

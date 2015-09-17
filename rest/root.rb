@@ -1,5 +1,6 @@
 require_relative "./puavo-rest"
 require_relative "./lib/mailer"
+require "redlock"
 
 #   @overload $0 $1
 #   @method $0_$1 $1
@@ -14,6 +15,7 @@ STARTED = Time.now
 HOSTNAME = Socket.gethostname
 FQDN = Socket.gethostbyname(Socket.gethostname).first
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
+DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
 
 def self.about
   return ({
@@ -219,6 +221,7 @@ class Root < PuavoSinatra
   use PuavoRest::BootServers
   use PuavoRest::LegacyRoles
   use PuavoRest::UserLists
+  use PuavoRest::SambaNextRid
 
   if CONFIG["cloud"]
     use PuavoRest::SSO

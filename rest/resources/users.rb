@@ -443,26 +443,8 @@ class User < LdapModel
   # Write internal samba attributes. Implementation is based on the puavo-web
   # code is not actually tested on production systems
   def write_samba_attrs
-    all_samba_domains = SambaDomain.all
-
-    if all_samba_domains.empty?
-      raise InternalError, :user => "Cannot find samba domain"
-    end
-
-   # Each organisation should have only one
-    if all_samba_domains.size > 1
-      raise InternalError, :user => "Too many Samba domains"
-    end
-
-    samba_domain = all_samba_domains.first
-
-    pool_key = "puavoNextSambaSID:#{ samba_domain.domain }"
-
-    if IdPool.last_id(pool_key).nil?
-      IdPool.set_id!(pool_key, samba_domain.legacy_rid)
-    end
-
-    rid = IdPool.next_id(pool_key)
+    samba_domain = SambaDomain.current_samba_domain
+    rid = samba_domain.generate_next_rid!
 
     write_raw(:sambaAcctFlags, ["[U]"])
     write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid - 1}"])
