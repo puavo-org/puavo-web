@@ -447,7 +447,7 @@ class User < LdapModel
     rid = samba_domain.generate_next_rid!
 
     write_raw(:sambaAcctFlags, ["[U]"])
-    write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid - 1}"])
+    write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
     if school
       write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
     end

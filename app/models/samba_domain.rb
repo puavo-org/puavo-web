@@ -10,16 +10,8 @@ class SambaDomain < LdapBase
     if samba_domain.nil?
       raise "Cannot find samba domain. Organisation missing?"
     end
-
-    legacy_rid = samba_domain.sambaNextRid
-    pool_key = "puavoNextSambaSID:#{ samba_domain.sambaDomainName }"
-    if PuavoRest::IdPool.last_id(pool_key).nil?
-      PuavoRest::IdPool.set_id!(pool_key, legacy_rid)
-    end
-
-    rid = PuavoRest::IdPool.next_id(pool_key)
-    samba_domain.sambaNextRid = rid
-    samba_domain.save
-    return "#{samba_domain.sambaSID}-#{rid - 1}"
+    res = LdapOrganisation.current.rest_proxy.post("/v3/samba_generate_next_rid")
+    rid = res.parse["next_rid"]
+    return "#{samba_domain.sambaSID}-#{rid}"
   end
 end
