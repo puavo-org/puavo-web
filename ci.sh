@@ -22,5 +22,12 @@ make deb
 
 sudo script/test-install.sh
 
+# Execute rest tests first as they are more low level
+cd rest
+make test
+
+cd ..
+make test
+
 mkdir -p $HOME/results
 cp ../puavo-*_* $HOME/results
