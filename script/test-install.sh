@@ -1,5 +1,18 @@
 #!/bin/sh
 
+wait_for_http_ok() {
+    local url=$1
+
+    for i in $(seq 30); do
+        >/dev/null curl -s --max-time 1 --fail --noproxy "*"  "$url" && {
+            return 0
+        }
+        sleep 1
+    done
+
+    return 1
+}
+
 set -x
 
 dpkg -i ../*deb
@@ -14,11 +27,8 @@ start puavo-rest
 
 cd /var/app/puavo-web
 
-# Wait for puavo-web to start. It's sloooooow.
-sleep 10
-
-curl -v --max-time 60 --fail --noproxy "*"  http://localhost:9292/v3/about
+wait_for_http_ok http://localhost:9292/v3/about
 echo "puavo-rest .deb package OK!"
 
-curl -v --max-time 60  --fail --noproxy "*"  http://localhost:8081/users/login > /dev/null
+wait_for_http_ok http://localhost:8081/users/login
 echo "puavo-web .deb package OK!"
