@@ -15,6 +15,15 @@ class LdapOrganisation < LdapBase
     LdapOrganisation.first
   end
 
+  def rest_proxy
+    conf = self.class.configuration
+    PuavoRestProxy.new(
+      puavoDomain,
+      conf[:bind_dn],
+      conf[:password]
+    )
+  end
+
   def as_json(*args)
     # owner: return only users's puavoId, skip uid=admin,o=puavo user
     { "domain" => self.puavoDomain,

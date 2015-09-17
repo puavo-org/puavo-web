@@ -1,7 +1,5 @@
 class RestController < ApplicationController
 
-  HAS_BODY = [:post, :put]
-
   def proxy
 
     qs = URI.parse(request.url).query || ""
@@ -18,29 +16,27 @@ class RestController < ApplicationController
       }
     end
 
-    rest_url = "#{ Puavo::CONFIG["puavo_rest"]["host"] }/#{ params["url"] }#{ qs }"
-    puts "Proxying connection to #{ rest_url }"
+    rest_path = "/#{ params["url"] }#{ qs }"
 
     method = request.method.downcase.to_sym
 
-    options = {}
+    options = {
+      :headers => {
+        "Content-type" => request.content_type
+      }
+    }
 
-    if HAS_BODY.include?(method)
+    if [:post, :put].include?(method)
       options[:body] = request.body.read
     end
 
-    res = HTTP.basic_auth({
-        :user => session["uid"],
-        :pass => session["password_plaintext"]
-    }).send(method, rest_url, {
-      :headers => {
-        "host" => LdapOrganisation.first.puavoDomain,
-        "Content-type" => request.content_type
-      }
-    }.merge(options))
+    begin
+      res = LdapOrganisation.current.rest_proxy.request(method, rest_path, options)
+    rescue PuavoRestProxy::BadStatus => error
+      res = error.response
+    end
 
     response.headers.merge!(res.headers)
-
     render :text => res.to_s, :status => res.code
   end
 end

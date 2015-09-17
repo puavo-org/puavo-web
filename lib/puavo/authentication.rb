@@ -141,6 +141,7 @@ module Puavo
         @credentials[:password]
       )
 
+
       # ExternalService is on o=puavo database. So use always uid=puavo for it.
       ExternalService.ldap_setup_connection(
         ldap_host,

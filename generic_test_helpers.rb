@@ -1,4 +1,10 @@
 # Generic test helpers shared with rails and puavo-rest
+require "webmock"
+
+
+WebMock.allow_net_connect!
+WebMock.disable_net_connect!(:allow_localhost => true)
+
 module Puavo
 module Test
 
