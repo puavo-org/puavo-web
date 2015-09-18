@@ -26,13 +26,19 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
                           :name => school_data[1])
 end
 
-mode = "default"
-
-mode = "import" if options[:import]
+mode = options[:mode] || "default"
 
 case mode
 when "default"
   puts "Compare"
+when "set-external-id"
+  puts "Set external id\n\n"
+  PuavoImport::School.all.each do |school|
+    puavo_school = PuavoRest::School.by_attr(:name, school.name)
+    PuavoImport.diff_objects(puavo_school, school, ["name", "abbreviation"])
+    puts "\n" + "-" * 100 + "\n\n"
+  end
+
 when "import"
   puts "Import schools\n\n"
   PuavoImport::School.all.each do |school|
