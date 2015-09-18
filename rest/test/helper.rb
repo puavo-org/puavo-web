@@ -96,7 +96,7 @@ Puavo::Test.setup_test_connection
 
 module Rack
   module Test
-    DEFAULT_HOST = "www.example.net"
+    DEFAULT_HOST = "example.opinsys.net"
   end
 end
 

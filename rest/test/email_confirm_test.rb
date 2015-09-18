@@ -70,10 +70,10 @@ describe PuavoRest::EmailConfirm do
       assert_equal "Confirm your email address", $mailer.options[:subject]
 
       puts $mailer.options[:body].inspect
-      jwt = $mailer.options[:body].match("https://www.example.net/users/email_confirm/(.+)$")[1]
+      jwt = $mailer.options[:body].match("https://example.opinsys.net/users/email_confirm/(.+)$")[1]
       jwt_data = JWT.decode(jwt, "barfoo")
       assert_equal "bob", jwt_data["username"]
-      assert_equal "www.example.net", jwt_data["organisation_domain"]
+      assert_equal "example.opinsys.net", jwt_data["organisation_domain"]
       assert_equal "bob@example.com", jwt_data["email"]
     end
   end

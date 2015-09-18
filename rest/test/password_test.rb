@@ -83,13 +83,13 @@ describe PuavoRest::Password do
       data = JSON.parse(last_response.body)
       assert_equal "successfully", data["status"]
 
-      jwt = $mailer.options[:body].match("https://www.example.net/users/password/(.+)/reset$")[1]
+      jwt = $mailer.options[:body].match("https://example.opinsys.net/users/password/(.+)/reset$")[1]
       jwt_data = JWT.decode(jwt, "foobar")
 
       assert_equal "bob@example.com", $mailer.options[:to]
       assert_equal "Reset your password", $mailer.options[:subject]
       assert_equal "bob", jwt_data["username"]
-      assert_equal "www.example.net", jwt_data["organisation_domain"]
+      assert_equal "example.opinsys.net", jwt_data["organisation_domain"]
     end
   end
 

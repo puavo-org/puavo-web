@@ -3,7 +3,7 @@ Given(/^generate new email confirm token for user "(.*?)" with "(.*?)" with secr
     "iat" => Time.now.to_i.to_s,
 
     "username" => username,
-    "organisation_domain" => "www.example.net",
+    "organisation_domain" => "example.opinsys.net",
     "email" => email
   }
   @jwt = JWT.encode(jwt_data, secret)

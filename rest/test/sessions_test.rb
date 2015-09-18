@@ -593,7 +593,7 @@ describe PuavoRest::Sessions do
 
       end
       it "does not need a ltsp server" do
-        assert_equal "www.example.net", @data["organisation"], "has organisation info"
+        assert_equal "example.opinsys.net", @data["organisation"], "has organisation info"
         assert @data["ltsp_server"].nil?, "fat clients must not get ltsp server"
         assert @data["device"], "has device"
         assert_equal "afat", @data["device"]["hostname"]
@@ -631,7 +631,7 @@ describe PuavoRest::Sessions do
 
       end
       it "does not need a ltsp server" do
-        assert_equal "www.example.net", @data["organisation"], "has organisation info"
+        assert_equal "example.opinsys.net", @data["organisation"], "has organisation info"
         assert @data["ltsp_server"].nil?, "laptop must not get ltsp server"
         assert @data["device"], "has device"
         assert_equal "laptop1", @data["device"]["hostname"]

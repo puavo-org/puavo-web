@@ -45,8 +45,8 @@ describe PuavoRest::Organisations do
     data = JSON.parse(last_response.body)
 
     assert(
-      !data.select{ |o| o["domain"] == "www.example.net" }.empty?,
-      "Has www.example.net"
+      !data.select{ |o| o["domain"] == "example.opinsys.net" }.empty?,
+      "Has example.opinsys.net"
     )
   end
 
@@ -55,7 +55,7 @@ describe PuavoRest::Organisations do
     get "/v3/current_organisation"
     assert_200
     data = JSON.parse(last_response.body)
-    assert_equal "www.example.net", data["domain"]
+    assert_equal "example.opinsys.net", data["domain"]
     assert_equal "cucumber", data["owners"][0]["username"]
   end
 
@@ -64,7 +64,7 @@ describe PuavoRest::Organisations do
     get "/v3/current_organisation"
     assert_200
     data = JSON.parse(last_response.body)
-    assert_equal "www.example.net", data["domain"]
+    assert_equal "example.opinsys.net", data["domain"]
     assert_equal "cucumber", data["owners"][0]["username"]
   end
 

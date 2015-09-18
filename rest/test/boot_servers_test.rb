@@ -143,7 +143,7 @@ describe PuavoRest::BootServer do
       end
 
       it "has server fqdn" do
-        assert_equal "server1.www.example.net", @printer["server_fqdn"]
+        assert_equal "server1.example.opinsys.net", @printer["server_fqdn"]
       end
 
       it "has name" do
@@ -155,7 +155,7 @@ describe PuavoRest::BootServer do
       end
 
       it "has remote_uri" do
-        assert_equal "ipp://server1.www.example.net/printers/printer1", @printer["remote_uri"]
+        assert_equal "ipp://server1.example.opinsys.net/printers/printer1", @printer["remote_uri"]
       end
     end
   end

@@ -83,7 +83,7 @@ module Test
     ldap_organisation.puavoDeviceAutoPowerOffMode = "off"
     ldap_organisation.puavoLocale = "en_US.UTF-8"
     ldap_organisation.o = "Example Organisation"
-    ldap_organisation.puavoDomain = "www.example.net"
+    ldap_organisation.puavoDomain = "example.opinsys.net"
     ldap_organisation.puavoDeviceImage = nil
     ldap_organisation.puavoAllowGuest = nil
     ldap_organisation.puavoActiveService = nil
