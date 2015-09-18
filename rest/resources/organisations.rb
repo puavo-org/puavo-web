@@ -67,7 +67,9 @@ class Organisation < LdapModel
       cache = {}
 
       LdapModel.setup(:credentials => CONFIG["server"]) do
-        all.each{ |org| cache[org.domain] = org }
+        all.each do |org|
+          cache[org.domain] = org
+        end
       end
 
       @@organisation_cache = cache
@@ -120,6 +122,7 @@ class Organisations < PuavoSinatra
 
   post "/v3/refresh_organisations" do
     Organisation.refresh
+    json({"ok" => "true"})
   end
 
   def require_admin!

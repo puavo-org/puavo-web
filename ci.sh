@@ -22,6 +22,10 @@ make deb
 
 sudo script/test-install.sh
 
+
+# Force organisations refresh...
+curl -d foo=bar http://localhost:9292/v3/refresh_organisations
+
 # Execute rest tests first as they are more low level
 cd rest
 make test
