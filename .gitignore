@@ -14,6 +14,9 @@
 /log/*.log
 /tmp
 
+# emacs backup files?
+*~
+
 # Ignore configuration files
 /config/database.yml
 
