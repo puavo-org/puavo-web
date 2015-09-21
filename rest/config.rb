@@ -25,7 +25,7 @@ default_config = {
 if ENV["RACK_ENV"] == "test"
   CONFIG = {
     "ldap" => fqdn,
-    "topdomain" => "example.net",
+    "topdomain" => "opinsys.net",
     "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
     "default_organisation_domain" => "example.opinsys.net",
     "bootserver" => true,

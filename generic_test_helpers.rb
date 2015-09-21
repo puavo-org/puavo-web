@@ -104,7 +104,7 @@ module Test
     )
 
     anotherorg = LdapOrganisation.current
-    anotherorg.puavoDomain = "anotherorg.example.net"
+    anotherorg.puavoDomain = "anotherorg.opinsys.net"
     anotherorg.o = "Another Organisation"
     anotherorg.save!
 

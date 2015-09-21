@@ -231,7 +231,7 @@ describe PuavoRest::SSO do
       url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path" }
       get url.to_s, {}, {
-        "HTTP_HOST" => "api.example.net"
+        "HTTP_HOST" => "api.opinsys.net"
       }
     end
 
@@ -267,23 +267,23 @@ describe PuavoRest::SSO do
         post "/v3/sso", {
           "username" => "admin",
           "password" => "admin",
-          "organisation" => "anotherorg.example.net",
+          "organisation" => "anotherorg.opinsys.net",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
         claims = decode_jwt
-        assert_equal "anotherorg.example.net", claims["organisation_domain"]
+        assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
       end
 
       it "from post using custom organisation in username"  do
         post "/v3/sso", {
-          "username" => "admin@anotherorg.example.net",
+          "username" => "admin@anotherorg.opinsys.net",
           "password" => "admin",
           "return_to" => "http://test-client-service.example.com/path"
         }
 
         claims = decode_jwt
-        assert_equal "anotherorg.example.net", claims["organisation_domain"]
+        assert_equal "anotherorg.opinsys.net", claims["organisation_domain"]
       end
 
     end
@@ -299,26 +299,26 @@ describe PuavoRest::SSO do
         get "/v3/sso", {
           "return_to" => "http://test-client-service.example.com/path",
         }, {
-            "HTTP_HOST" => "anotherorg.example.net"
+            "HTTP_HOST" => "anotherorg.opinsys.net"
         }
-        assert_equal "anotherorg.example.net", hidden_organisation_field
+        assert_equal "anotherorg.opinsys.net", hidden_organisation_field
       end
 
       it "is overridden from query string" do
         get "/v3/sso", {
-          "organisation" => "anotherorg.example.net",
+          "organisation" => "anotherorg.opinsys.net",
           "return_to" => "http://test-client-service.example.com/path",
         }, {
             "HTTP_HOST" => "example.opinsys.net"
         }
-        assert_equal "anotherorg.example.net", hidden_organisation_field
+        assert_equal "anotherorg.opinsys.net", hidden_organisation_field
       end
 
       it "is not set for non-organisation domains" do
         get "/v3/sso", {
           "return_to" => "http://test-client-service.example.com/path",
         }, {
-            "HTTP_HOST" => "login.example.net"
+            "HTTP_HOST" => "login.opinsys.net"
         }
         assert_equal nil, hidden_organisation_field
       end

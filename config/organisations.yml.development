@@ -9,7 +9,7 @@ example:
 
 anotherorg:
   name: Another Organisation
-  host: anotherorg.example.net
+  host: anotherorg.opinsys.net
   ldap_host: <%= @hostname %>
   ldap_base: dc=edu,dc=anotherorg,dc=fi
   owner: admin
@@ -18,7 +18,7 @@ anotherorg:
 
 heroes:
   name: Super Heroes Organisation
-  host: heroes.example.net
+  host: heroes.opinsys.net
   ldap_host: <%= @hostname %>
   ldap_base: dc=edu,dc=heroes,dc=fi
   owner: admin
