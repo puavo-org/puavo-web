@@ -14,7 +14,7 @@ wait_for_http_ok() {
 
 set -x
 
-dpkg -i ../*deb
+dpkg --force-confold -i ../*deb
 set -eu
 apt-get install -f -y --force-yes
 
