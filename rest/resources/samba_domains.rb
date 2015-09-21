@@ -63,11 +63,10 @@ class SambaDomain < LdapModel
       current_rid = [redis_rid, current_rid].max()
       #######################################################
 
-      next_rid = current_rid + 1
-      self.next_rid = next_rid
+      self.next_rid = current_rid + 1
       save!
 
-      return next_rid
+      return current_rid
     end
   end
 
