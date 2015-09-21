@@ -14,6 +14,7 @@ wait_for_http_ok() {
 
 set -x
 
+# --force-confold keeps the current configuration when the defaults change
 dpkg --force-confold -i ../*deb
 set -eu
 apt-get install -f -y --force-yes
