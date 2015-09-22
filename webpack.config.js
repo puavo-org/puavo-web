@@ -1,14 +1,26 @@
 /*eslint comma-dangle:0*/
 var webpack = require("webpack");
 
+// This must be the public address where the hot reload bundle is loaded in the
+// browser. Yeah it sucks to hard code it here. Let's hope for the better
+// future
+var PUBLIC_DEV_SERVER = "http://puavo-standalone.opinsys.net:4000/";
+
+var ENTRY = "./import-tool/index.js";
+
+var NODE_ENV_PLUGIN = new webpack.DefinePlugin({
+    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
+});
+
 var config = {
     entry: [
-        "webpack-hot-middleware/client?path=http://puavo-standalone.opinsys.net:4000/__webpack_hmr",
-        "./import-tool/index.js",
+        "webpack-hot-middleware/client?path=" + PUBLIC_DEV_SERVER + "__webpack_hmr",
+        ENTRY
     ],
     output: {
         path: __dirname + "/public",
-        filename: "import_tool.js"
+        filename: "import_tool.js",
+        publicPath: PUBLIC_DEV_SERVER
     },
     devtool: "cheap-module-eval-source-map",
     module: {
@@ -35,24 +47,23 @@ var config = {
         ]
     },
     plugins: [
-        new webpack.DefinePlugin({
-            "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
-        })
+        NODE_ENV_PLUGIN,
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NoErrorsPlugin(),
     ]
 };
 
+// Drop all hot stuff for production!
 if (process.env.NODE_ENV === "production") {
     config.devtool = "source-map";
-    config.entry = "./import-tool/index.js";
-    config.plugins = config.plugins.concat([
+    config.entry = ENTRY;
+    delete config.output.publicPath;
+    config.plugins = [
+        NODE_ENV_PLUGIN,
+        // We use __webpack_hash__ in production but the ExtendedAPIPlugin does
+        // not work with hot mode.
         new webpack.ExtendedAPIPlugin(),
-    ]);
-} else {
-    config.output.publicPath = "http://puavo-standalone.opinsys.net:4000/";
-    config.plugins = config.plugins.concat([
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin(),
-    ]);
+    ];
 }
 
 module.exports = config;
