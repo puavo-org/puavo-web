@@ -34,6 +34,13 @@ const createFinalStore = compose(
 function createImportTool(containerId, school) {
     var container = document.getElementById(containerId);
     const store = createFinalStore(reducers);
+
+    if (module.hot) {
+        module.hot.accept("./reducers", () => {
+            store.replaceReducer(require("./reducers"));
+        });
+    }
+
     store.dispatch({
         type: "SET_DEFAULT_SCHOOL",
         school,

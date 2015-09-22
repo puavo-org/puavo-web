@@ -48,7 +48,7 @@ js-watch:
 	webpack -w
 
 js-server:
-	webpack-dev-server --port 4000 --host 0.0.0.0 --inline --progress
+	node import-tool/devServer.js
 
 js-lint:
 	eslint $(shell git ls-files "import-tool/*.js")
