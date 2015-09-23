@@ -12,6 +12,7 @@ const initialState = deepFreeze({
     rowStatus: {},
     defaultSchool: null,
     legacyRoles: [],
+    autoOpenColumnEditor: null,
     columns: [
         ColumnTypes.first_name,
         ColumnTypes.last_name,
@@ -45,7 +46,12 @@ function reducer(state=initialState, action) {
         }
         return updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, state);
     case "ADD_COLUMN":
-        return R.evolve({columns: R.append(ColumnTypes[action.columnType])}, state);
+        return R.evolve({
+            autoOpenColumnEditor: R.always(state.columns.length),
+            columns: R.append(ColumnTypes[action.columnType]),
+        }, state);
+    case "CLEAR_AUTO_OPEN_COLUMN_EDITOR":
+        return R.assoc("autoOpenColumnEditor", null, state);
     case "DROP_ROW":
         return R.evolve({
             rows: removeByIndex(action.rowIndex),

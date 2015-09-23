@@ -5,7 +5,7 @@ import R from "ramda";
 import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
-import {changeColumnType, fillColumn, dropColumn} from "../actions";
+import {changeColumnType, fillColumn, dropColumn, clearAutoOpenColumnEditor} from "../actions";
 import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
 import {preventDefault} from "../utils";
 
@@ -32,6 +32,13 @@ class ColumnEditor extends PureComponent {
 
     showMenu() {
         this.setState({showMenu: true});
+    }
+
+    componentWillMount() {
+        if (this.props.autoOpenColumnEditor === this.props.columnIndex) {
+            this.showMenu();
+            this.props.clearAutoOpenColumnEditor();
+        }
     }
 
     hideMenu() {
@@ -119,9 +126,11 @@ class ColumnEditor extends PureComponent {
 ColumnEditor.propTypes = {
     fillColumn: React.PropTypes.func.isRequired,
     dropColumn: React.PropTypes.func.isRequired,
+    clearAutoOpenColumnEditor: React.PropTypes.func.isRequired,
     changeColumnType: React.PropTypes.func.isRequired,
     columnIndex: React.PropTypes.number.isRequired,
     columnType: ReactColumnType.isRequired,
+    autoOpenColumnEditor: React.PropTypes.number,
 };
 
-export default connect(null, {changeColumnType, fillColumn, dropColumn})(ColumnEditor);
+export default connect(R.pick(["autoOpenColumnEditor"]), {changeColumnType, fillColumn, dropColumn, clearAutoOpenColumnEditor})(ColumnEditor);

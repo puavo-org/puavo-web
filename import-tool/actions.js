@@ -20,6 +20,10 @@ export function parseImportString(rawCSV) {
 
 }
 
+export function clearAutoOpenColumnEditor() {
+    return {type: "CLEAR_AUTO_OPEN_COLUMN_EDITOR"};
+}
+
 export function addColumn(columnType) {
     return {
         type: "ADD_COLUMN",
