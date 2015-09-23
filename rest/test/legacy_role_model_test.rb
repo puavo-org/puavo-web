@@ -68,6 +68,15 @@ describe PuavoRest::LegacyRole do
     assert role.member_usernames.include?("foo"), "has foo"
   end
 
+  it "gives it's groups to the user" do
+    group = Group.find(@group.dn)
+    assert_equal Array, group.memberUid.class
+    assert(
+      group.memberUid.include?(@user.username),
+      "has the group from the role"
+    )
+  end
+
   it "can remove member" do
     role = PuavoRest::LegacyRole.by_dn(@role_al.dn)
     role.remove_member(@user)
@@ -80,6 +89,13 @@ describe PuavoRest::LegacyRole do
     role = PuavoRest::LegacyRole.by_dn(@role_al.dn)
     assert !role.member_usernames.include?("heli"), "heli has been removed 2"
     assert role.member_usernames.include?("foo"), "foo is still present 2"
+
+    # Group has been remove too
+    group = Group.find(@group.dn)
+    assert(
+      !Array(group.memberUid).include?(@user.username),
+      "the group has been removed within the role"
+    )
   end
 
 end

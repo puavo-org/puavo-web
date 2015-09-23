@@ -8,6 +8,8 @@ class Group < LdapModel
   ldap_map :puavoSchool, :school_dn
   ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
+  ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
+  ldap_map :member, :member_dns, LdapConverters::ArrayValue
 
   computed_attr :school_id
   def school_id
@@ -28,6 +30,31 @@ class Group < LdapModel
 
   def printer_queues
     PrinterQueue.by_dn_array(printer_queue_dns)
+  end
+
+  # Add member to group. Append username to `memberUid` and dn to `member` ldap
+  # attributes
+  #
+  # @param user [User] user to add as member
+  def add_member(user)
+    add(:member_usernames, user.username)
+    add(:member_dns, user.dn)
+  end
+
+  # Remove member for the group
+  #
+  # @param user [User] user to add as member
+  def remove_member(user)
+    remove(:member_usernames, user.username)
+    remove(:member_dns, user.dn)
+  end
+
+  # Does user belong to this group
+  #
+  # @param user [User] user to add as member
+  # @return [Boolean]
+  def has?(user)
+    return member_usernames.include?(user.username)
   end
 
 end

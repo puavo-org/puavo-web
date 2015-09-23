@@ -9,9 +9,16 @@ class LegacyRole < LdapModel
   ldap_map :puavoSchool, :school_dn
   ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
+  ldap_map :puavoMemberGroup, :group_dns, LdapConverters::ArrayValue
 
   def self.ldap_base
     "ou=Roles,#{ organisation["base"] }"
+  end
+
+  def groups
+    group_dns.map do |dn|
+      Group.by_dn(dn)
+    end.compact
   end
 
   # Add member to role. Append username to `memberUid` and dn to `member` ldap
@@ -21,6 +28,14 @@ class LegacyRole < LdapModel
   def add_member(user)
     add(:member_usernames, user.username)
     add(:member_dns, user.dn)
+    once_on_save do
+      groups.each do |g|
+        if !g.has?(user)
+          g.add_member(user)
+          g.save!
+        end
+      end
+    end
   end
 
   # Remove member for the role
@@ -29,6 +44,14 @@ class LegacyRole < LdapModel
   def remove_member(user)
     remove(:member_usernames, user.username)
     remove(:member_dns, user.dn)
+    once_on_save do
+      groups.each do |g|
+        if g.has?(user)
+          g.remove_member(user)
+          g.save!
+        end
+      end
+    end
   end
 
 end
