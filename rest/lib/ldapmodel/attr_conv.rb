@@ -328,7 +328,9 @@ class LdapModel
     validate!("Updating")
 
     run_hook :before, :update
+    @before_save.each{|h| h.call}
     res = self.class.ldap_op(:modify, dn, @pending_mods)
+    @after_save.each{|h| h.call}
     reset_pending
     run_hook :after, :update
 
@@ -512,6 +514,20 @@ class LdapModel
     ldap_attr
   end
 
+  # Create one time hook which is executed once when `save!` is called
+  #
+  # @param [Symbol] Set to :before to execute before saving or :after to
+  # execute after saving
+  def once_on_save(timing=:before, &block)
+    if timing == :before
+      @before_save.push(block)
+    elsif timing == :after
+      @after_save.push(block)
+    else
+      raise "Invalid argument #{ timing }"
+    end
+  end
+
   private
 
   def run_hook(pos, event)
@@ -521,6 +537,8 @@ class LdapModel
   end
 
   def reset_pending
+    @before_save = []
+    @after_save = []
     @pending_mods = []
     @previous_values = {}
   end
