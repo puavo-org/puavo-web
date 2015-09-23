@@ -20,6 +20,7 @@
     "deep-freeze": "0.0.1",
     "eslint": "^1.1.0",
     "eslint-plugin-react": "^3.2.3",
+    "exec-sync": "^0.1.6",
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "nib": "~0.9.1",

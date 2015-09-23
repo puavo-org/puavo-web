@@ -2,13 +2,13 @@
 
 // Polyfill Promise global for style loaders
 global.Promise = require("bluebird");
-
+var execSync = require("exec-sync");
 var webpack = require("webpack");
 
 // This must be the public address where the hot reload bundle is loaded in the
 // browser. Yeah it sucks to hard code it here. Let's hope for the better
 // future
-var PUBLIC_DEV_SERVER = "http://puavo-standalone.opinsys.net:4000/";
+var PUBLIC_DEV_SERVER = process.env.PUBLIC_DEV_SERVER || "http://" + execSync("hostname -f") + ":4000/";
 
 var ENTRY = "./import-tool/index.js";
 
