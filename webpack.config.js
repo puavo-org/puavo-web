@@ -1,4 +1,8 @@
 /*eslint comma-dangle:0*/
+
+// Polyfill Promise global for style loaders
+global.Promise = require("bluebird");
+
 var webpack = require("webpack");
 
 // This must be the public address where the hot reload bundle is loaded in the
@@ -25,6 +29,7 @@ var config = {
     devtool: "cheap-module-eval-source-map",
     module: {
         loaders: [
+            {test: /\.css$/, loader: "style!css"},
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,

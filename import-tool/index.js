@@ -9,6 +9,8 @@ require("babel-runtime/core-js/promise").default = require("bluebird");
 window.Promise = require("bluebird"); // extra override
 import "babel/polyfill";
 
+import "./style.css";
+
 import React from "react";
 import {createStore, applyMiddleware, compose} from "redux";
 import createLogger from "redux-logger";
