@@ -74,7 +74,7 @@ export class CellValue extends PureComponent {
         case ColumnTypes.username.id:
             return <Username username={this.props.value} />;
         case ColumnTypes.legacy_role.id:
-            return <LegacyRole id={this.props.value} />;
+            return <LegacyRole name={this.props.value} />;
         case ColumnTypes.role.id:
             return <Role value={this.props.value} />;
         default:

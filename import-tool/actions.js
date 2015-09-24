@@ -101,7 +101,7 @@ function findIndices(id, columns) {
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
-        const {rows, columns, defaultSchool, rowStatus} = getState();
+        const {rows, columns, defaultSchool, rowStatus, legacyRoles} = getState();
 
         const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
         const dispatchStatus = R.compose(dispatch, R.merge({
@@ -173,7 +173,10 @@ export function startImport(rowIndex=0) {
         }
 
         const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);
-        const roleIds = roleIndices.map(i => getCellValue(row[i]));
+        const roleNames = roleIndices.map(i => getCellValue(row[i]));
+        const roleIds = roleNames
+            .map(name => legacyRoles.find(r => r.name === name))
+            .map(r => r.id);
 
         try {
             await Api.replaceLegacyRoles(userData.username, roleIds);

@@ -1,8 +1,8 @@
 
-import R from "ramda";
 import React from "react";
 import PureComponent from "./PureComponent";
 import {connect} from "react-redux";
+import ErrorModalButton from "./ErrorModalButton";
 
 class LegacyRoleSelector extends PureComponent {
 
@@ -16,7 +16,7 @@ class LegacyRoleSelector extends PureComponent {
             <select value={this.props.value} onChange={this.onChange.bind(this)}>
                 <option key="nil" value="nil">Select...</option>
                 {this.props.legacyRoles.map(role =>
-                    <option key={role.id} value={role.id}>{role.name}</option>
+                    <option key={role.id} value={role.name}>{role.name}</option>
                 )}
             </select>
         );
@@ -32,17 +32,26 @@ LegacyRoleSelector = connect(({legacyRoles}) => ({legacyRoles}))(LegacyRoleSelec
 
 class LegacyRole extends PureComponent {
     render() {
-        return <span>{this.props.name}</span>;
+        return (
+            <span>
+                {this.props.unknown &&
+                <ErrorModalButton tooltip="Unknown role">
+                    There is no such role!
+                </ErrorModalButton>}
+                {this.props.name}
+            </span>
+        );
     }
 }
 LegacyRole.propTypes = {
-    id: React.PropTypes.string.isRequired,
     name: React.PropTypes.string.isRequired,
+    unknown: React.PropTypes.bool.isRequired,
 };
-LegacyRole = connect(({legacyRoles}, parentProps) => {
-    if (!parentProps.id) return {name: ""};
-    const name = R.find(R.propEq("id", parentProps.id))(legacyRoles).name;
-    return {name};
+LegacyRole = connect(({legacyRoles}, {name}) => {
+    return {
+        name,
+        unknown: name && !legacyRoles.some(r => r.name === name),
+    };
 })(LegacyRole);
 
 
