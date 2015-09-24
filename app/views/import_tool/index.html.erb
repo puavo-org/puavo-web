@@ -3,6 +3,11 @@
 
 <div id="import-tool">
   Loading the tool...
+  <% if ENV["RAILS_ENV"] != "production" %>
+    <pre>
+    Development mode. Make sure to start 'make js-server'
+    </pre>
+  <% end %>
 </div>
 
 <% content_for :style do %>
@@ -17,14 +22,13 @@
 <% end %>
 
 <script charset="utf-8">
+var scriptName = "import_tool.js";
 <% if ENV["RAILS_ENV"] == "production" %>
-    var script = "/import_tool.js";
+var scriptURL = "/" + scriptName;
 <% else %>
-    console.warn("Development mode. Make sure to start 'make js-server'");
-    var script = "http://" + (location.host || 'localhost').split(':')[0] + ":4000/import_tool.js"
+var scriptURL = "http://" + (location.host || 'localhost').split(':')[0] + ":4000/" + scriptName;
 <% end %>
-
-document.write('<script src="' + script + '"></' + 'script>');
+document.write('<script src="' + scriptURL + '"></' + 'script>');
 </script>
 <script charset="utf-8">
 window.createImportTool("import-tool", <%= @school_json.html_safe  %>);
