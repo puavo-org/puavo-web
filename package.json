@@ -29,7 +29,7 @@
     "react": "^0.13.3",
     "react-overlays": "^0.4.4",
     "react-pure-render": "^1.0.2",
-    "react-redux": "epeli/react-redux#fix86",
+    "react-redux": "^3.0.0",
     "react-transform-hmr": "^1.0.0",
     "redux": "^2.0.0",
     "redux-batched-updates": "^0.1.0",
