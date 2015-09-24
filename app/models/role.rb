@@ -21,11 +21,6 @@ class Role < LdapBase
   validate :validate
 
   def validate
-    if Role.find(:first, :attribute => "displayName", :value => self.displayName)
-      errors.add( :displayName, I18n.t("activeldap.errors.messages.taken",
-                                       :attribute => I18n.t("activeldap.attributes.role.displayName")) )
-    end
-
     if self.displayName.to_s.empty?
       errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",
                                        :attribute => I18n.t("activeldap.attributes.role.displayName")) )
