@@ -60,7 +60,7 @@ function reducer(state=initialState, action) {
     case "DROP_COLUMN":
         return R.evolve({columns: removeByIndex(action.columnIndex)}, state);
     case "CHANGE_COLUMN_TYPE":
-        return updateIn(["columns", action.columnIndex], ColumnTypes[action.typeId], state);
+        return updateIn(["columns", action.columnIndex], R.always(ColumnTypes[action.typeId]), state);
     case "SET_ROW_STATUS":
         return updateIn(["rowStatus", action.rowIndex], R.merge(R.__, R.omit(["type"], action)), state);
     case "SET_DEFAULT_SCHOOL":
