@@ -11,8 +11,8 @@ import {ReactColumnType} from "../ColumnTypes";
 
 import ArrowBox from "./ArrowBox";
 import {CellValueInput, CellValue} from "./CellValue";
+import ErrorModalButton from "./ErrorModalButton";
 import Fa from "./Fa";
-import Modal from "./Modal";
 
 class Cell extends PureComponent {
 
@@ -20,7 +20,6 @@ class Cell extends PureComponent {
         super(props);
         this.state = {
             customValue: props.value,
-            showErrorModal: false,
             editing: false,
         };
     }
@@ -61,41 +60,22 @@ class Cell extends PureComponent {
         return !this.props.value && this.props.required;
     }
 
-    hasErrors() {
-        return this.hasValidationErrors() || this.missingRequiredValue();
-    }
-
     render() {
         return (
             <div className="Cell" style={{whiteSpace: "nowrap"}}>
 
                 <div>
-                    {this.hasErrors() &&
-                    <span>
-                        <a href="#" onClick={preventDefault(_ => this.setState({showErrorModal: true}))}>
-                            <Fa icon="exclamation-triangle" className="error" />
-                        </a>
-                        {" "}
-                    </span>}
+                    {this.hasValidationErrors() &&
+                    <ErrorModalButton tooltip="Has validation errors">
+                        <pre style={{fontSize: "small"}}>
+                            {JSON.stringify(this.props.validationErrors, null, "  ")}
+                        </pre>
+                    </ErrorModalButton>}
 
-                    {this.state.showErrorModal &&
-                    <Modal show onHide={e => this.setState({showErrorModal: false})}>
-                        <div>
-                            <h1>Error</h1>
-
-                            {this.missingRequiredValue() &&
-                            <div>
-                                Value is missing
-                            </div>}
-
-                            {this.hasValidationErrors() &&
-                            <pre style={{fontSize: "small"}}>
-                                {JSON.stringify(this.props.validationErrors, null, "  ")}
-                            </pre>}
-
-                        </div>
-                    </Modal>}
-
+                    {this.missingRequiredValue() &&
+                    <ErrorModalButton tooltip="Missing value">
+                        Value is missing
+                    </ErrorModalButton>}
 
                     <CellValue columnType={this.props.columnType} value={this.props.value} />
 
