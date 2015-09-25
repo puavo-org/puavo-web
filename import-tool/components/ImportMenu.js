@@ -5,13 +5,15 @@ import {connect} from "react-redux";
 import R from "ramda";
 import {Overlay} from "react-overlays";
 
-import ArrowBox from "./ArrowBox";
-import Fa from "./Fa";
-import ColumnTypes from "../ColumnTypes";
 import {addColumn} from "../actions";
+import ColumnTypes from "../ColumnTypes";
 import {preventDefault} from "../utils";
 import {resetState} from "../StateStorage";
+import t from "../i18n";
+
+import ArrowBox from "./ArrowBox";
 import ConfirmationButton from "./ConfirmationButton";
+import Fa from "./Fa";
 
 class ImportMenu extends PureComponent {
 
@@ -57,11 +59,11 @@ class ImportMenu extends PureComponent {
                     <ArrowBox>
                         <form className="pure-form">
                             <fieldset>
-                                <legend>Add column</legend>
+                                <legend>{t("add_column")}</legend>
                                 <select onChange={this.addColumn.bind(this)} ref="select">
-                                    <option key="nil" value="nil" >Select...</option>
+                                    <option key="nil" value="nil" >{t("select")}</option>
                                     {R.toPairs(ColumnTypes).map(([columnType, column]) => {
-                                        return <option key={columnType} value={columnType}>{column.name}</option>;
+                                        return <option key={columnType} value={columnType}>{t.type(column.id)}</option>;
                                     })}
                                 </select>
                             </fieldset>
@@ -73,7 +75,7 @@ class ImportMenu extends PureComponent {
                                     this.props.resetState();
                                     setTimeout(() => window.location.reload(), 1);
                                 })}
-                            >Start new import</ConfirmationButton>
+                            >{t("start_new_import")}</ConfirmationButton>
 
                         </form>
                     </ArrowBox>

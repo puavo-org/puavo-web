@@ -1,7 +1,40 @@
 ---
 fi:
   import_tool:
+    add_column: Lisää sarake
+    change_type: Vaihda tyyppi
+    fill: Täytä
+    fill_values: Täytä arvot
+    known_legacy_roles: Olemassa olevat legacy roolit
+    known_roles: Olemassa olevat tyypit
+    missing_columns: Puuttuvat sarakkeet
+    override_existing_values: Ylikirjoita olemassa olevat arvot
+    remove_column: Poista sarake
+    select: Valitse...
+    some_value: Jokin arvo
+    start_import: Aloita lisääminen
+    start_new_import: Aloita alusta
     status: Tila
+    unknown_legacy_role_details: Tuntematon legacy rooli
+    unknown_legacy_role: Tuntematon legacy rooli
+    unknown_role: Tuntematon tyyppi
+    roles:
+      admin: Ylläpitäjä
+      parent: Vanhempi
+      staff: Henkilökunta
+      student: Oppilas
+      teacher: Opettaja
+      testuser: Testikäyttäjä
+      visitor: Vierailija
+    types:
+      change_school: Vaihda koulua
+      email: Email
+      first_name: Etunimi
+      last_name: Sukunimi
+      legacy_role: Legacy rooli
+      role: Käyttäjä tyyppi
+      unknown: Tuntematon
+      username: Käyttäjätunnus
   must_be_logged_in: "Sinun täytyy olla kirjautuneena"
   create_organisation_owner:
     school_name: Hallinto

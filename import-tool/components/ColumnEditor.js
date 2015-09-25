@@ -8,6 +8,7 @@ import {Overlay} from "react-overlays";
 import {changeColumnType, fillColumn, dropColumn, clearAutoOpenColumnEditor} from "../actions";
 import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
 import {preventDefault} from "../utils";
+import t from "../i18n";
 
 import ArrowBox from "./ArrowBox";
 import {CellValueInput} from "./CellValue";
@@ -72,16 +73,16 @@ class ColumnEditor extends PureComponent {
                     <ArrowBox>
                         <form className="pure-form pure-form-stacked">
                             <fieldset>
-                                <legend>Change type</legend>
+                                <legend>{t("change_type")}</legend>
                                 <select
                                     value={this.props.columnType.id}
                                     onChange={e => this.changeColumnType(e.target.value)}>
                                     {R.values(ColumnTypes).map(columnType => {
-                                        return <option key={columnType.id} value={columnType.id}>{columnType.name}</option>;
+                                        return <option key={columnType.id} value={columnType.id}>{t.type(columnType.id)}</option>;
                                     })}
                                 </select>
 
-                                <legend>Fill</legend>
+                                <legend>{t("fill_values")}</legend>
 
                                 <CellValueInput
                                     columnType={this.props.columnType}
@@ -95,21 +96,21 @@ class ColumnEditor extends PureComponent {
                                         type="checkbox"
                                         checked={this.state.override}
                                         onChange={_ => this.setState({override: !this.state.override})} />
-                                    Override existing values
+                                    {t("override_existing_values")}
                                 </label>
 
                                 <button
                                     style={{width: "100%"}}
                                     className="pure-button"
                                     onClick={preventDefault(this.fillColumn.bind(this))}
-                                >Fill</button>
+                                >{t("fill")}</button>
 
                                 <div style={{marginTop: 50}} />
 
                                 <button className="pure-button danger"
                                     onClick={preventDefault(this.dropColumn.bind(this))}
                                     >
-                                    <Fa icon="trash-o" /> Remove column
+                                    <Fa icon="trash-o" /> {t("remove_column")}
                                 </button>
 
                             </fieldset>

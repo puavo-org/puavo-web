@@ -1,7 +1,40 @@
 ---
 en:
   import_tool:
+    add_column: Add column
+    change_type: Change type
+    fill: Fill
+    fill_values: Fill values
+    known_legacy_roles: Known legacy roles are
+    known_roles: Known types are
+    missing_columns: Missing columns
+    override_existing_values: Override existing values
+    remove_column: Remove column
+    select: Select...
+    some_value: Some value
+    start_import: Import data
+    start_new_import: Start new import
     status: Status
+    unknown_legacy_role_details: Unknown legacy role
+    unknown_legacy_role: Unknown legacy role
+    unknown_role: Unknown user type
+    roles:
+      admin: Administrator
+      parent: Parent
+      staff: Staff
+      student: Student
+      teacher: Teacher
+      testuser: Test user
+      visitor: Visitor
+    types:
+      change_school: Change school
+      email: Email
+      first_name: First name
+      last_name: Last name
+      legacy_role: Legacy role
+      role: User type
+      unknown: Unknown
+      username: Username
   time:
     am: am
     formats:

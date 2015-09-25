@@ -87,7 +87,7 @@ export default class ImportTool extends PureComponent {
                                     {columns.map((columnType, columnIndex) => {
                                         return (
                                             <th key={columnIndex}>
-                                                {columnType.name}{" "}
+                                                {t.type(columnType.id)}{" "}
                                                 <ColumnEditor
                                                     columnType={columnType}
                                                     columnIndex={columnIndex}
@@ -178,7 +178,7 @@ export default class ImportTool extends PureComponent {
                             <button className="pure-button pure-button-primary"
                                 style={{fontSize: "200%"}}
                                 disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
-                                onClick={this.startImport.bind(this)}>Import data</button>}
+                                onClick={this.startImport.bind(this)}>{t("start_import")}</button>}
 
                             {areAllRowsOk(rowStatus) &&
                                 <button className="pure-button pure-button-primary" onClick={this.props.createPasswordResetIntentForNewUsers}>
@@ -191,9 +191,9 @@ export default class ImportTool extends PureComponent {
                         {missingColumns.length > 0 &&
                         <div className="pure-u-1-5">
                             <div className="ImportTool-error-well">
-                                <h4>Missing columns</h4>
+                                <h4>{t("missing_columns")}</h4>
                                 <ul>
-                                    {missingColumns.map(c => <li key={c.id}>{c.name}</li>)}
+                                    {missingColumns.map(c => <li key={c.id}>{t.type(c.id)}</li>)}
                                 </ul>
                             </div>
                         </div>}

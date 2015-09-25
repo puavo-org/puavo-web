@@ -2,6 +2,9 @@
 import React from "react";
 import PureComponent from "./PureComponent";
 import {connect} from "react-redux";
+
+import t from "../i18n";
+
 import ErrorModalButton from "./ErrorModalButton";
 
 class LegacyRoleSelector extends PureComponent {
@@ -35,8 +38,16 @@ class LegacyRole extends PureComponent {
         return (
             <span>
                 {this.props.unknown &&
-                <ErrorModalButton tooltip="Unknown role">
-                    There is no such role!
+                <ErrorModalButton tooltip={t("unknown_legacy_role")}>
+                    <p>
+                        {t("unknown_legacy_role")} <span style={{fontStyle: "italic"}}>{this.props.name}</span>
+                    </p>
+                    <p>
+                        {t("known_legacy_roles")}
+                    </p>
+                    <ul>
+                        {this.props.legacyRoles.map(r => <li key={r.id} style={{fontStyle: "italic"}}>{r.name}</li>)}
+                    </ul>
                 </ErrorModalButton>}
                 {this.props.name}
             </span>
@@ -46,11 +57,13 @@ class LegacyRole extends PureComponent {
 LegacyRole.propTypes = {
     name: React.PropTypes.string.isRequired,
     unknown: React.PropTypes.bool.isRequired,
+    legacyRoles: React.PropTypes.array.isRequired,
 };
 LegacyRole = connect(({legacyRoles}, {name}) => {
     return {
+        legacyRoles,
         name,
-        unknown: name && !legacyRoles.some(r => r.name === name),
+        unknown: !!(name && !legacyRoles.some(r => r.name === name)),
     };
 })(LegacyRole);
 

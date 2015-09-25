@@ -9,7 +9,9 @@ if (typeof I18n.t !== "function") {
     throw new Error("I18n translation library is not loaded properly");
 }
 
-
 export default function translate(key, ...args) {
-    return I18n.t(`import_tool.${key}`, ...args);
+    return "✌" + I18n.t(`import_tool.${key}`, ...args);
 }
+
+translate.type = (id, ...args) => translate(`types.${id}`, ...args);
+translate.role = (id, ...args) => translate(`roles.${id}`, ...args);

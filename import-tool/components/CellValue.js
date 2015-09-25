@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 
 import {onEnterKey} from "../utils";
 import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
+import t from "../i18n";
 
 import {Role, RoleSelector} from "./Role";
 import {LegacyRole, LegacyRoleSelector} from "./LegacyRole";
@@ -39,7 +40,7 @@ export class CellValueInput extends PureComponent {
                     onKeyUp={onEnterKey(this.props.onSelect)}
                     className="ColumnTypeSelector-default-value-input"
                     type="text"
-                    placeholder="Default"
+                    placeholder={t("some_value")}
                 />
             );
         }

@@ -2,14 +2,18 @@
 import React from "react";
 import PureComponent from "./PureComponent";
 
+import t from "../i18n";
+
+import ErrorModalButton from "./ErrorModalButton";
+
 const ROLES = [
-    {name: "Opettaja", value: "teacher"},
-    {name: "Henkilökunta", value: "staff"},
-    {name: "Oppilas", value: "student"},
-    {name: "Vierailija", value: "visitor"},
-    {name: "Vanhempi", value: "parent"},
-    {name: "Ylläpitäjä", value: "admin"},
-    {name: "Testikäyttäjä", value: "testuser"},
+    "teacher",
+    "staff",
+    "student",
+    "visitor",
+    "parent",
+    "admin",
+    "testuser",
 ];
 
 export class RoleSelector extends PureComponent {
@@ -21,9 +25,9 @@ export class RoleSelector extends PureComponent {
     render() {
         return (
             <select value={this.props.value} onChange={this.onChange.bind(this)}>
-                <option key="nil" value="nil">Select...</option>
-                {ROLES.map(({name, value}) =>
-                    <option key={value} value={value}>{name}</option>
+                <option key="nil" value="nil">{t("select")}</option>
+                {ROLES.map(id =>
+                    <option key={id} value={id}>{t.role(id)}</option>
                 )}
             </select>
         );
@@ -39,9 +43,28 @@ RoleSelector.propTypes = {
 export class Role extends PureComponent {
     render() {
         if (!this.props.value) return <span></span>;
-        const role = ROLES.find(({name, value}) => value === this.props.value);
-        const name = role ? role.name : <i>Tuntematon  {this.props.value}</i>;
-        return <span>{name}</span>;
+        const roleId = ROLES.find(id => id === this.props.value);
+        const name = roleId ? t.role(roleId) : this.props.value;
+        return (
+            <span>
+                {!roleId &&
+                <ErrorModalButton tooltip={t("unknown_role")}>
+                    <div>
+                        <p>
+                            {t("unknown_role")} <i>{name}</i>
+                        </p>
+
+                        <p>
+                            {t("known_roles")}
+                        </p>
+                        <ul>
+                            {ROLES.map(id => <li key={id} style={{fontStyle: "italic"}}>{id}</li>)}
+                        </ul>
+                    </div>
+                </ErrorModalButton>}
+                {name}
+            </span>
+        );
     }
 }
 

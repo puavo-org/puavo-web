@@ -40,5 +40,5 @@ export default class ErrorModalButton extends PureComponent {
 
 ErrorModalButton.propTypes = {
     tooltip: React.PropTypes.node.isRequired,
-    children: React.PropTypes.string,
+    children: React.PropTypes.node,
 };
