@@ -17,7 +17,7 @@ import ColumnEditor from "./ColumnEditor";
 import StatusIcon from "./StatusIcon";
 import Fa from "./Fa";
 
-const findMissingRequiredColumns = R.difference(REQUIRED_COLUMNS);
+const findMissingRequiredColumns = R.differenceWith(R.prop("id"), REQUIRED_COLUMNS);
 
 const isRequired = R.propEq("required", true);
 
