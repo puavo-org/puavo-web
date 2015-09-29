@@ -2,7 +2,6 @@
 import R from "ramda";
 import {updateIn} from "updeep";
 import cleanDiacritics from "underscore.string/cleanDiacritics";
-import trim from "underscore.string/trim";
 
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue, deepFreeze} from "./utils";
@@ -20,9 +19,16 @@ const initialState = deepFreeze({
 });
 
 const usernameSlugify = R.compose(
-    s => s.toLowerCase().replace(/[^a-z\.]/g, ""),
-    R.partialRight(trim, ". "),
-    cleanDiacritics
+    // Allow _, - and . elsewhere and drop any other chars
+    s => s.replace(/[^a-z0-9_\-\.]/g, ""),
+
+    // Remove chars until the username starts with a-z
+    s => s.replace(/^[^a-z]+/g, ""),
+
+    // Swap Ä to A etc.
+    cleanDiacritics,
+
+    s => s.toLowerCase()
 );
 
 const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalValue: val}, acc), {});
