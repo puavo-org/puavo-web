@@ -31,8 +31,8 @@ fi:
       email: Email
       first_name: Etunimi
       last_name: Sukunimi
-      legacy_role: Legacy rooli
-      role: Käyttäjä tyyppi
+      legacy_role: Legacyrooli
+      role: Käyttäjätyyppi
       unknown: Tuntematon
       username: Käyttäjätunnus
       password: Salasana
