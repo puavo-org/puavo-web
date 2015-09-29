@@ -35,6 +35,7 @@ en:
       role: User type
       unknown: Unknown
       username: Username
+      password: Password
   time:
     am: am
     formats:

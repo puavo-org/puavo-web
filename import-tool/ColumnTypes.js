@@ -5,6 +5,8 @@ import React from "react";
 import {deepFreeze} from "./utils";
 
 const required = true;
+
+// Whether the type maps directly to puavo-rest user attribute
 const userAttribute = true;
 
 const ColumnTypes = deepFreeze([
@@ -13,6 +15,7 @@ const ColumnTypes = deepFreeze([
     {attribute: "email", id: "email", userAttribute},
     {attribute: "username", id: "username", required, userAttribute},
     {attribute: "roles", id: "role", required, userAttribute},
+    {attribute: "password", id: "password", userAttribute},
     {id: "legacy_role", required},
     {id: "change_school"},
     {id: "unknown"},
