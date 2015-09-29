@@ -16,7 +16,6 @@ const initialState = deepFreeze({
     columns: [
         ColumnTypes.first_name,
         ColumnTypes.last_name,
-        ColumnTypes.email,
     ],
 });
 
