@@ -154,8 +154,9 @@ export function startImport(rowIndex=0) {
         }
 
         if (changeSchoolForExistingUser) {
+            let user = null;
             try {
-                await Api.updateUser(userData.username, {school_dns: [defaultSchool.dn]});
+                user = await Api.updateUser(userData.username, {school_dns: [defaultSchool.dn]});
             } catch(error) {
                 let message = "Failed to change school";
                 if (error.res.status === 404) {
@@ -169,7 +170,7 @@ export function startImport(rowIndex=0) {
                 });
                 return next();
             }
-            dispatchStatus({schoolChanged: true});
+            dispatchStatus({schoolChanged: true, user});
         }
 
         const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);
@@ -200,13 +201,24 @@ const getNewUsers = R.compose(
     R.values
 );
 
-export function createPasswordResetIntentForNewUsers() {
+const getAllUsers = R.compose(
+    R.map(R.path(["user", "id"])),
+    R.values
+);
+
+export function createPasswordResetIntentForNewUsers({resetAll}) {
     return async (dispatch, getState) => {
 
         const {rowStatus, defaultSchool} = getState();
-        const newUserIds = getNewUsers(rowStatus);
+        let userIds = null;
 
-        await Api.createPasswordResetIntent(defaultSchool.id, newUserIds);
+        if (resetAll) {
+            userIds = getAllUsers(rowStatus);
+        } else {
+            userIds = getNewUsers(rowStatus);
+        }
+
+        await Api.createPasswordResetIntent(defaultSchool.id, userIds);
 
         dispatch(resetState());
 

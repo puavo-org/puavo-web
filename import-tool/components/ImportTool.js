@@ -180,11 +180,7 @@ export default class ImportTool extends PureComponent {
                                 disabled={missingColumns.length > 0 || !hasValuesInRequiredCells(columns, rows)}
                                 onClick={this.startImport.bind(this)}>{t("start_import")}</button>}
 
-                            {areAllRowsOk(rowStatus) &&
-                                <button className="pure-button pure-button-primary" onClick={this.props.createPasswordResetIntentForNewUsers}>
-                                    Reset passwords for new users
-                                </button>
-                            }
+                            {areAllRowsOk(rowStatus) && <ResetPWButton />}
 
                         </div>
 
@@ -206,9 +202,44 @@ export default class ImportTool extends PureComponent {
     }
 }
 
+class ResetPWButton extends PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {resetAll: false};
+    }
+
+    render() {
+        return (
+            <div>
+                <button
+                    style={{fontSize: "200%"}}
+                    className="pure-button pure-button-primary danger"
+                    onClick={preventDefault(_ => {
+                        this.props.createPasswordResetIntentForNewUsers({resetAll: this.state.resetAll});
+                    })}>
+                    {t("reset_passwords", {defaultValue: "Reset passwords"})}
+                </button>
+                <div>
+                    <label>
+                        <input
+                            type="checkbox"
+                            onChange={_ => this.setState({resetAll: !this.state.resetAll})}
+                            checked={this.state.resetAll} />
+                        {t("reset_existing_users", {defaultValue: "Reset existing users too"})}
+                    </label>
+                </div>
+            </div>
+        );
+    }
+}
+ResetPWButton.propTypes = {
+    createPasswordResetIntentForNewUsers: React.PropTypes.func.isRequired,
+};
+ResetPWButton = connect(null, {createPasswordResetIntentForNewUsers})(ResetPWButton);
+
+
 ImportTool.propTypes = {
     startImport: React.PropTypes.func.isRequired,
-    createPasswordResetIntentForNewUsers: React.PropTypes.func.isRequired,
     dropRow: React.PropTypes.func.isRequired,
     rows: React.PropTypes.array.isRequired,
     columns: React.PropTypes.array.isRequired,
@@ -219,5 +250,4 @@ export default connect(R.pick(["rowStatus", "rows", "columns"]), {
     parseImportString,
     startImport,
     dropRow,
-    createPasswordResetIntentForNewUsers,
 })(ImportTool);
