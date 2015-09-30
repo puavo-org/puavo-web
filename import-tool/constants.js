@@ -14,7 +14,7 @@ export const SET_ROW_STATUS = "SET_ROW_STATUS";
 
 
 
-// Constanst for updates types
+// Constanst for update types
 export const CREATE_USER = "CREATE_USER";
 export const UPDATE_SCHOOL = "UPDATE_SCHOOL";
 export const UPDATE_ALL = "UPDATE_ALL";
