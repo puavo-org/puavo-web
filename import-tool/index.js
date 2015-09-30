@@ -21,6 +21,7 @@ import {batchedUpdatesMiddleware} from "redux-batched-updates";
 
 import ImportTool from "./components/ImportTool";
 
+import {SET_DEFAULT_SCHOOL} from "./constants";
 import createStateStorage from "./StateStorage";
 import {fetchLegacyRoles} from "./actions";
 
@@ -44,7 +45,7 @@ function createImportTool(containerId, school) {
     }
 
     store.dispatch({
-        type: "SET_DEFAULT_SCHOOL",
+        type: SET_DEFAULT_SCHOOL,
         school,
     });
 

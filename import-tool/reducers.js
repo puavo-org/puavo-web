@@ -3,6 +3,19 @@ import R from "ramda";
 import {updateIn} from "updeep";
 import cleanDiacritics from "underscore.string/cleanDiacritics";
 
+import {
+    ADD_COLUMN,
+    CHANGE_COLUMN_TYPE,
+    CLEAR_AUTO_OPEN_COLUMN_EDITOR,
+    DROP_COLUMN,
+    DROP_ROW,
+    FILL_COLUMN,
+    SET_CUSTOM_VALUE,
+    SET_DEFAULT_SCHOOL,
+    SET_IMPORT_DATA,
+    SET_LEGACY_ROLES,
+    SET_ROW_STATUS,
+} from "./constants";
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue, deepFreeze} from "./utils";
 
@@ -38,41 +51,41 @@ const removeByIndex = R.remove(R.__, 1);
 
 function reducer(state=initialState, action) {
     switch (action.type) {
-    case "SET_IMPORT_DATA":
+    case SET_IMPORT_DATA:
         return R.evolve({
             columns: appendUnknownColumns(findLongestRowLength(action.data) - state.columns.length),
             rows: R.always(action.data.map(arrayToObj)),
         }, state);
-    case "SET_CUSTOM_VALUE":
+    case SET_CUSTOM_VALUE:
         const usernameIndex = R.findIndex(isUsername, state.columns);
         var value = action.value;
         if (action.columnIndex === usernameIndex) {
             value = usernameSlugify(value);
         }
         return updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, state);
-    case "ADD_COLUMN":
+    case ADD_COLUMN:
         return R.evolve({
             autoOpenColumnEditor: R.always(state.columns.length),
             columns: R.append(ColumnTypes[action.columnType]),
         }, state);
-    case "CLEAR_AUTO_OPEN_COLUMN_EDITOR":
+    case CLEAR_AUTO_OPEN_COLUMN_EDITOR:
         return R.assoc("autoOpenColumnEditor", null, state);
-    case "DROP_ROW":
+    case DROP_ROW:
         return R.evolve({
             rows: removeByIndex(action.rowIndex),
             rowStatus: R.omit([String(action.rowIndex)]),
         }, state);
-    case "DROP_COLUMN":
+    case DROP_COLUMN:
         return R.evolve({columns: removeByIndex(action.columnIndex)}, state);
-    case "CHANGE_COLUMN_TYPE":
+    case CHANGE_COLUMN_TYPE:
         return updateIn(["columns", action.columnIndex], R.always(ColumnTypes[action.typeId]), state);
-    case "SET_ROW_STATUS":
+    case SET_ROW_STATUS:
         return updateIn(["rowStatus", action.rowIndex], R.merge(R.__, R.omit(["type"], action)), state);
-    case "SET_DEFAULT_SCHOOL":
+    case SET_DEFAULT_SCHOOL:
         return R.assoc("defaultSchool", action.school, state);
-    case "SET_LEGACY_ROLES":
+    case SET_LEGACY_ROLES:
         return R.assoc("legacyRoles", action.legacyRoles, state);
-    case "FILL_COLUMN":
+    case FILL_COLUMN:
         return R.evolve({rows: R.addIndex(R.map)((row, rowIndex) => {
             if (R.path(["rowStatus", rowIndex, "status"], state) === "ok") {
                 return row;

@@ -3,7 +3,7 @@ import React from "react";
 import {Cond, Clause, Default} from "react-cond";
 
 import t from "../i18n";
-import {CREATE_USER, UPDATE_SCHOOL, UPDATE_ALL} from "../actions";
+import {CREATE_USER, UPDATE_SCHOOL, UPDATE_ALL} from "../constants";
 
 import PureComponent from "./PureComponent";
 import {RadioSelect, RadioOption} from "./RadioSelect";

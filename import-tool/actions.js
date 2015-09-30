@@ -2,15 +2,28 @@ import Papa from "papaparse";
 import R from "ramda";
 import Bluebird from "bluebird";
 
+import {
+    ADD_COLUMN,
+    CHANGE_COLUMN_TYPE,
+    CLEAR_AUTO_OPEN_COLUMN_EDITOR,
+    DROP_COLUMN,
+    DROP_ROW,
+    FILL_COLUMN,
+    SET_CUSTOM_VALUE,
+    SET_IMPORT_DATA,
+    SET_LEGACY_ROLES,
+
+    CREATE_USER,
+    UPDATE_SCHOOL,
+    UPDATE_ALL,
+    KNOWN_UPDATE_TYPES,
+} from "./constants";
+
 import * as Api from "./Api";
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue} from "./utils";
 import {resetState} from "./StateStorage";
 
-export const CREATE_USER = "CREATE_USER";
-export const UPDATE_SCHOOL = "UPDATE_SCHOOL";
-export const UPDATE_ALL = "UPDATE_ALL";
-export const KNOWN_UPDATE_TYPES = {CREATE_USER, UPDATE_SCHOOL, UPDATE_ALL};
 
 
 export function parseImportString(rawCSV) {
@@ -19,54 +32,54 @@ export function parseImportString(rawCSV) {
 
 
     return {
-        type: "SET_IMPORT_DATA",
+        type: SET_IMPORT_DATA,
         data: res.data,
     };
 
 }
 
 export function clearAutoOpenColumnEditor() {
-    return {type: "CLEAR_AUTO_OPEN_COLUMN_EDITOR"};
+    return {type: CLEAR_AUTO_OPEN_COLUMN_EDITOR};
 }
 
 export function addColumn(columnType) {
     return {
-        type: "ADD_COLUMN",
+        type: ADD_COLUMN,
         columnType,
     };
 }
 
 export function changeColumnType(columnIndex, typeId) {
     return {
-        type: "CHANGE_COLUMN_TYPE",
+        type: CHANGE_COLUMN_TYPE,
         columnIndex, typeId,
     };
 }
 
 export function setCustomValue(rowIndex, columnIndex, value) {
     return {
-        type: "SET_CUSTOM_VALUE",
+        type: SET_CUSTOM_VALUE,
         rowIndex, columnIndex, value,
     };
 }
 
 export function fillColumn(columnIndex, value, override) {
     return {
-        type: "FILL_COLUMN",
+        type: FILL_COLUMN,
         columnIndex, value, override,
     };
 }
 
 export function dropRow(rowIndex) {
     return {
-        type: "DROP_ROW",
+        type: DROP_ROW,
         rowIndex,
     };
 }
 
 export function dropColumn(columnIndex) {
     return {
-        type: "DROP_COLUMN",
+        type: DROP_COLUMN,
         columnIndex,
     };
 }
@@ -237,7 +250,7 @@ export function fetchLegacyRoles(schoolId) {
     return async (dispatch) => {
         const legacyRoles = await Api.fetchLegacyRoles(schoolId);
         dispatch({
-            type: "SET_LEGACY_ROLES",
+            type: SET_LEGACY_ROLES,
             legacyRoles,
         });
     };
