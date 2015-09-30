@@ -17,7 +17,7 @@ const ColumnTypes = deepFreeze([
     {attribute: "roles", id: "role", required, userAttribute},
     {attribute: "password", id: "password", userAttribute},
     {id: "legacy_role", required},
-    {id: "change_school"},
+    {id: "update_type"},
     {id: "unknown"},
 ]);
 

@@ -18,6 +18,11 @@ fi:
     unknown_legacy_role_details: Tuntematon legacy rooli
     unknown_legacy_role: Tuntematon legacy rooli
     unknown_role: Tuntematon tyyppi
+    user_updated: Olemassaoleva käyttäjä päivitetty
+    created: Käyttäjä luotu
+    create_user: Luo uusi käyttäjä
+    update_school: Päivitä käyttäjän koulu ja legacyroolit
+    update_all: Päivitä käyttäjän kaikki attribuutit
     roles:
       admin: Ylläpitäjä
       parent: Vanhempi
@@ -27,7 +32,7 @@ fi:
       testuser: Testikäyttäjä
       visitor: Vierailija
     types:
-      change_school: Vaihda koulua
+      update_type: Päivitystapa
       email: Email
       first_name: Etunimi
       last_name: Sukunimi

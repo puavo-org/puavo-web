@@ -7,6 +7,11 @@ import ColumnTypes from "./ColumnTypes";
 import {getCellValue} from "./utils";
 import {resetState} from "./StateStorage";
 
+export const CREATE_USER = "CREATE_USER";
+export const UPDATE_SCHOOL = "UPDATE_SCHOOL";
+export const UPDATE_ALL = "UPDATE_ALL";
+export const KNOWN_UPDATE_TYPES = {CREATE_USER, UPDATE_SCHOOL, UPDATE_ALL};
+
 
 export function parseImportString(rawCSV) {
     var res = Papa.parse(rawCSV.trim());
@@ -123,13 +128,10 @@ export function startImport(rowIndex=0) {
 
         dispatchStatus({status: "working"});
 
-        const changeSchoolIndex = R.head(findIndices(ColumnTypes.change_school.id, columns));
-        let changeSchoolForExistingUser = false;
-        if (!R.isNil(changeSchoolIndex)) {
-            changeSchoolForExistingUser = !!getCellValue(row[changeSchoolIndex]);
-        }
+        const updateTypeIndex = R.head(findIndices(ColumnTypes.update_type.id, columns));
+        const updateType = KNOWN_UPDATE_TYPES[getCellValue(row[updateTypeIndex])] || CREATE_USER;
 
-        if (!changeSchoolForExistingUser && !currentStatus.created) {
+        if (updateType === CREATE_USER && !currentStatus.created) {
             let user = null;
             try {
                 user = await Api.createUser(userData);
@@ -153,10 +155,14 @@ export function startImport(rowIndex=0) {
             dispatchStatus({created: true, user});
         }
 
-        if (changeSchoolForExistingUser) {
+        if ([UPDATE_SCHOOL, UPDATE_ALL].includes(updateType)) {
             let user = null;
+            const updateData = updateType === UPDATE_SCHOOL
+                ? {school_dns: userData.school_dns}
+                : userData;
+
             try {
-                user = await Api.updateUser(userData.username, {school_dns: [defaultSchool.dn]});
+                user = await Api.updateUser(userData.username, updateData);
             } catch(error) {
                 let message = "Failed to change school";
                 if (error.res.status === 404) {
@@ -170,7 +176,7 @@ export function startImport(rowIndex=0) {
                 });
                 return next();
             }
-            dispatchStatus({schoolChanged: true, user});
+            dispatchStatus({userUpdated: true, user});
         }
 
         const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);

@@ -108,7 +108,7 @@ export default class ImportTool extends PureComponent {
                                 {rows.map((row, rowIndex) => {
                                     const rowStatusString = R.path([rowIndex, "status"], rowStatus) || "waiting";
                                     const created = !!R.path([rowIndex, "created"], rowStatus);
-                                    const schoolChanged = !!R.path([rowIndex, "schoolChanged"], rowStatus);
+                                    const userUpdated = !!R.path([rowIndex, "userUpdated"], rowStatus);
 
 
                                     var statusIcon = <StatusIcon status={rowStatusString} />;
@@ -125,8 +125,8 @@ export default class ImportTool extends PureComponent {
                                         <tr key={rowIndex}>
                                             <td>
                                                 {statusIcon}
-                                                {created && " Created"}
-                                                {schoolChanged && " School changed"}
+                                                {created && <span> {t("created")}</span>}
+                                                {userUpdated && <span> {t("user_updated")}</span>}
                                             </td>
 
                                             {columns.map((columnType, columnIndex) => {

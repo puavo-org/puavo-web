@@ -61,7 +61,7 @@ export default class ArrowBox extends PureComponent {
             ...props} = this.props;
 
         return (
-            <div style={{...BoxStyle, ...placementStyle.box, ...style}}>
+            <div className="ArrowBox" style={{...BoxStyle, ...placementStyle.box, ...style}}>
                 <div style={{...ArrowStyle, ...placementStyle.arrow, left, top}}/>
                 <div style={BoxInnerStyle}>
                     {props.children}

@@ -10,7 +10,7 @@ import t from "../i18n";
 
 import {Role, RoleSelector} from "./Role";
 import {LegacyRole, LegacyRoleSelector} from "./LegacyRole";
-import {SchoolChange} from "./School";
+import {UpdateType, UpdateTypeInput} from "./UpdateType";
 
 
 export class CellValueInput extends PureComponent {
@@ -30,8 +30,8 @@ export class CellValueInput extends PureComponent {
             return <LegacyRoleSelector {...passProps} />;
         case ColumnTypes.role.id:
             return <RoleSelector {...passProps} />;
-        case ColumnTypes.change_school.id:
-            return <SchoolChange {...passProps} />;
+        case ColumnTypes.update_type.id:
+            return <UpdateTypeInput {...passProps} />;
         default:
             return (
                 <input
@@ -78,6 +78,8 @@ export class CellValue extends PureComponent {
             return <LegacyRole name={this.props.value} />;
         case ColumnTypes.role.id:
             return <Role value={this.props.value} />;
+        case ColumnTypes.update_type.id:
+            return <UpdateType value={this.props.value} />;
         default:
             return <span>{this.props.value}</span>;
         }
