@@ -12,7 +12,8 @@
     "generators": true
   },
   "plugins": [
-    "react"
+    "react",
+    "import"
   ],
   "rules": {
     "strict": 0
@@ -22,9 +23,13 @@
     "node": true,
     "mocha": true
   },
+  "settings": {
+    "import/parser": "babel-eslint"
+  },
   "rules": {
     "semi": 2,
     "indent": [2, 4],
+    "import/no-unresolved": 2,
     "no-console": [0],
     "quotes": [2, "double", "avoid-escape"],
     "object-curly-spacing": [1, "never"],

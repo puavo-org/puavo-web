@@ -42,7 +42,7 @@ const areAllRowsOk = R.compose(
 
 const defaultErrors = deepFreeze([]);
 
-export default class ImportTool extends PureComponent {
+class ImportTool extends PureComponent {
 
     constructor(props) {
         super(props);
