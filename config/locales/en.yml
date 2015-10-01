@@ -23,6 +23,8 @@ en:
     create_user: Create new user
     update_school: Update user school and legacy roles
     update_all: Update all user attributes
+    reset_passwords: Reset passwords
+    reset_existing_users: Reset existing users too
     roles:
       admin: Administrator
       parent: Parent

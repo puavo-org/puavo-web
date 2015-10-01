@@ -23,6 +23,8 @@ fi:
     create_user: Luo uusi käyttäjä
     update_school: Päivitä käyttäjän koulu ja legacyroolit
     update_all: Päivitä käyttäjän kaikki attribuutit
+    reset_passwords: Aseta uudet salasanat
+    reset_existing_users: Aseta olemassaoleville käyttäjille myös
     roles:
       admin: Ylläpitäjä
       parent: Vanhempi

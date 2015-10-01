@@ -217,7 +217,7 @@ class ResetPWButton extends PureComponent {
                     onClick={preventDefault(_ => {
                         this.props.createPasswordResetIntentForNewUsers({resetAll: this.state.resetAll});
                     })}>
-                    {t("reset_passwords", {defaultValue: "Reset passwords"})}
+                    {t("reset_passwords")}
                 </button>
                 <div>
                     <label>
@@ -225,7 +225,7 @@ class ResetPWButton extends PureComponent {
                             type="checkbox"
                             onChange={_ => this.setState({resetAll: !this.state.resetAll})}
                             checked={this.state.resetAll} />
-                        {t("reset_existing_users", {defaultValue: "Reset existing users too"})}
+                        {t("reset_existing_users")}
                     </label>
                 </div>
             </div>
