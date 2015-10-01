@@ -14,7 +14,7 @@ Description: puavo-rest
 
 Package: puavo-rest-bootserver
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, make, nginx, puavo-rest (>= 0.3.8), redis-server
+Depends: ${shlibs:Depends}, ${misc:Depends}, make, nginx, puavo-rest (>= 0.3.8), redis-server (>= 3:3.0.3)
 Breaks: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
 Replaces: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
 Description: puavo-rest for bootservers
