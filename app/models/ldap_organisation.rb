@@ -35,6 +35,11 @@ class LdapOrganisation < LdapBase
   end
 
   def add_owner(user)
+    # FIXME: add owner also to Domain Admins
+    #domain_admin = SambaGroup.find("Domain Admins")
+    #domain_admin.memberUid = user.uid
+    #domain_admin.save!
+
     self.ldap_modify_operation( :add, [{"owner" => [user.dn.to_s]}] )
   end
 
