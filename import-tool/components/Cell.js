@@ -25,11 +25,11 @@ class Cell extends PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({customValue: nextProps.value});
+        this.setState({customValue: nextProps.customValue});
     }
 
     setCustomValue() {
-        if (this.state.customValue !== this.props.value) {
+        if (this.state.customValue !== this.props.originalValue) {
             this.props.setCustomValue(this.props.rowIndex, this.props.columnIndex, this.state.customValue);
         }
         this.hideMenu();
@@ -56,8 +56,16 @@ class Cell extends PureComponent {
         return this.props.validationErrors.length > 0;
     }
 
+    getValue() {
+        return this.props.customValue || this.props.originalValue;
+    }
+
+    hasValue() {
+        return !!this.getValue();
+    }
+
     missingRequiredValue() {
-        return !this.props.value && this.props.required;
+        return !this.hasValue() && this.props.required;
     }
 
     render() {
@@ -77,14 +85,19 @@ class Cell extends PureComponent {
                         Value is missing
                     </ErrorModalButton>}
 
-                    <CellValue columnType={this.props.columnType} value={this.props.value} />
+                    <CellValue columnType={this.props.columnType} value={this.getValue()} />
 
                     {this.props.status !== "ok" &&
                     <span style={{float: "right"}}>
-                        {" "}
-                        <a href="#" onClick={preventDefault(this.revertToOriginal.bind(this))}>
-                            <Icon icon="cancel" />
-                        </a>
+
+                        {this.props.customValue &&
+                        <span>
+                            {" "}
+                            <a href="#" title="Restore original" onClick={preventDefault(this.revertToOriginal.bind(this))}>
+                                <Icon icon="cancel" />
+                            </a>
+                        </span>}
+
                         {" "}
                         <a href="#" ref="editButton" onClick={preventDefault(this.showMenu.bind(this))}>
                             <Icon icon="pencil" />
@@ -124,7 +137,8 @@ Cell.propTypes = {
     columnIndex: React.PropTypes.number.isRequired,
     rowIndex: React.PropTypes.number.isRequired,
     setCustomValue: React.PropTypes.func.isRequired,
-    value: React.PropTypes.string.isRequired,
+    originalValue: React.PropTypes.string.isRequired,
+    customValue: React.PropTypes.string.isRequired,
     status: React.PropTypes.string.isRequired,
     validationErrors: React.PropTypes.array,
     required: React.PropTypes.bool,

@@ -138,6 +138,9 @@ class ImportTool extends PureComponent {
                                                         columnType.attribute,
                                                     ], rowStatus);
                                                 }
+
+                                                const {customValue, originalValue} = R.path([rowIndex, columnIndex], rows);
+
                                                 return (
                                                     <td key={columnIndex}>
                                                         <Cell
@@ -145,7 +148,8 @@ class ImportTool extends PureComponent {
                                                             required={columnType.required}
                                                             columnType={columnType}
                                                             columnIndex={columnIndex}
-                                                            value={getCellValue(R.path([rowIndex, columnIndex], rows))}
+                                                            customValue={customValue}
+                                                            originalValue={originalValue}
                                                             validationErrors={validationErrors}
                                                         />
                                                     </td>
