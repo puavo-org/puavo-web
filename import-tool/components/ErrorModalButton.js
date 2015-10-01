@@ -20,7 +20,7 @@ export default class ErrorModalButton extends PureComponent {
             <span>
                 <span>
                     <a title={this.props.tooltip} href="#" onClick={preventDefault(_ => this.setState({show: true}))}>
-                        <Icon icon="exclamation-triangle" className="error" />
+                        <Icon icon="attention" className="error" />
                     </a>
                     {" "}
                 </span>
