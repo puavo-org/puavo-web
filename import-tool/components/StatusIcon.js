@@ -7,7 +7,7 @@ import Icon from "./Icon";
 const STATUS_ICONS = {
     ok: {icon: "ok", className: "success"},
     error: {icon: "attention", className: "error"},
-    waiting: {icon: "pause"},
+    waiting: {icon: "info"},
     working: {icon: "cog", className: "spin"},
 };
 
