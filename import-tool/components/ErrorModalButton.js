@@ -5,7 +5,7 @@ import React from "react";
 import {preventDefault} from "../utils";
 
 import Modal from "./Modal";
-import Fa from "./Fa";
+import Icon from "./Icon";
 
 export default class ErrorModalButton extends PureComponent {
 
@@ -20,7 +20,7 @@ export default class ErrorModalButton extends PureComponent {
             <span>
                 <span>
                     <a title={this.props.tooltip} href="#" onClick={preventDefault(_ => this.setState({show: true}))}>
-                        <Fa icon="exclamation-triangle" className="error" />
+                        <Icon icon="exclamation-triangle" className="error" />
                     </a>
                     {" "}
                 </span>

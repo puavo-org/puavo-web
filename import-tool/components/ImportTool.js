@@ -15,7 +15,7 @@ import Cell from "./Cell";
 import ImportMenu from "./ImportMenu";
 import ColumnEditor from "./ColumnEditor";
 import StatusIcon from "./StatusIcon";
-import Fa from "./Fa";
+import Icon from "./Icon";
 
 const findMissingRequiredColumns = R.differenceWith(R.eqProps("id"), REQUIRED_COLUMNS);
 
@@ -157,7 +157,7 @@ class ImportTool extends PureComponent {
                                                     className="pure-button danger"
                                                     onClick={preventDefault(_ => this.props.dropRow(rowIndex))}
                                                 >
-                                                    <Fa icon="trash-o" />
+                                                    <Icon icon="trash" />
                                                 </button>
                                             </td>
                                         </tr>

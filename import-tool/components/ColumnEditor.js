@@ -12,7 +12,7 @@ import t from "../i18n";
 
 import ArrowBox from "./ArrowBox";
 import {CellValueInput} from "./CellValue";
-import Fa from "./Fa";
+import Icon from "./Icon";
 
 class ColumnEditor extends PureComponent {
 
@@ -60,7 +60,7 @@ class ColumnEditor extends PureComponent {
             <span className="ColumnEditor">
 
                 <a href="#" ref="target" style={{float: "right"}} onClick={preventDefault(this.showMenu.bind(this))}>
-                    <Fa icon="pencil" />
+                    <Icon icon="pencil" />
                 </a>
 
                 <Overlay
@@ -110,7 +110,7 @@ class ColumnEditor extends PureComponent {
                                 <button className="pure-button danger"
                                     onClick={preventDefault(this.dropColumn.bind(this))}
                                     >
-                                    <Fa icon="trash-o" /> {t("remove_column")}
+                                    <Icon icon="trash" /> {t("remove_column")}
                                 </button>
 
                             </fieldset>

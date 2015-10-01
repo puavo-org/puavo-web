@@ -12,7 +12,7 @@ import {ReactColumnType} from "../ColumnTypes";
 import ArrowBox from "./ArrowBox";
 import {CellValueInput, CellValue} from "./CellValue";
 import ErrorModalButton from "./ErrorModalButton";
-import Fa from "./Fa";
+import Icon from "./Icon";
 
 class Cell extends PureComponent {
 
@@ -83,11 +83,11 @@ class Cell extends PureComponent {
                     <span style={{float: "right"}}>
                         {" "}
                         <a href="#" onClick={preventDefault(this.revertToOriginal.bind(this))}>
-                            <Fa icon="recycle" />
+                            <Icon icon="cancel" />
                         </a>
                         {" "}
                         <a href="#" ref="editButton" onClick={preventDefault(this.showMenu.bind(this))}>
-                            <Fa icon="pencil" />
+                            <Icon icon="pencil" />
                         </a>
                     </span>}
                 </div>

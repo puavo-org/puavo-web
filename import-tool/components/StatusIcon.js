@@ -2,11 +2,11 @@
 import React from "react";
 import PureComponent from "./PureComponent";
 import R from "ramda";
-import Fa from "./Fa";
+import Icon from "./Icon";
 
 const STATUS_ICONS = {
-    ok: {icon: "thumbs-up", className: "success"},
-    error: {icon: "exclamation-triangle", className: "error"},
+    ok: {icon: "ok", className: "success"},
+    error: {icon: "attention", className: "error"},
     waiting: {icon: "pause"},
     working: {icon: "cog", className: "spin"},
 };
@@ -20,7 +20,7 @@ export default class StatusIcon extends PureComponent {
     render() {
         const statusProps = STATUS_ICONS[this.props.status];
         return (
-            <Fa
+            <Icon
                 title={this.props.status}
                 {...statusProps}
                 {...R.omit(["status"], this.props)}

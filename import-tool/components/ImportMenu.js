@@ -13,7 +13,7 @@ import t from "../i18n";
 
 import ArrowBox from "./ArrowBox";
 import ConfirmationButton from "./ConfirmationButton";
-import Fa from "./Fa";
+import Icon from "./Icon";
 
 class ImportMenu extends PureComponent {
 
@@ -46,7 +46,7 @@ class ImportMenu extends PureComponent {
                 <button className="pure-button"
                     ref="target"
                     onClick={preventDefault(this.showMenu.bind(this))}>
-                    <Fa icon="bars" />
+                    <Icon icon="cog-alt" />
                 </button>
 
                 <Overlay
