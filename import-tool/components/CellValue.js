@@ -1,8 +1,6 @@
 
 import React from "react";
 import PureComponent from "./PureComponent";
-import R from "ramda";
-import {connect} from "react-redux";
 
 import {onEnterKey} from "../utils";
 import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
@@ -11,6 +9,7 @@ import t from "../i18n";
 import {Role, RoleSelector} from "./Role";
 import {LegacyRole, LegacyRoleSelector} from "./LegacyRole";
 import {UpdateType, UpdateTypeInput} from "./UpdateType";
+import {Username, UsernameInput} from "./Username";
 
 
 export class CellValueInput extends PureComponent {
@@ -23,9 +22,11 @@ export class CellValueInput extends PureComponent {
     }
 
     render() {
-        const passProps = R.omit(["columnType", "onSelect"], this.props);
+        const {columnType, onSelect, ...passProps} = this.props;
 
-        switch(this.props.columnType.id) {
+        switch(columnType.id) {
+        case ColumnTypes.username.id:
+            return <UsernameInput {...passProps} />;
         case ColumnTypes.legacy_role.id:
             return <LegacyRoleSelector {...passProps} />;
         case ColumnTypes.role.id:
@@ -37,7 +38,7 @@ export class CellValueInput extends PureComponent {
                 <input
                     {...passProps}
                     ref="input"
-                    onKeyUp={onEnterKey(this.props.onSelect)}
+                    onKeyUp={onEnterKey(onSelect)}
                     className="ColumnTypeSelector-default-value-input"
                     type="text"
                     placeholder={t("some_value")}
@@ -55,19 +56,6 @@ CellValueInput.propTypes = {
     columnType: ReactColumnType.isRequired,
 };
 
-class Username extends PureComponent {
-    render() {
-        const {schoolId, username} = this.props;
-        return (
-            <a href={`/users/${schoolId}/username_redirect/${username}`}>{username}</a>
-        );
-    }
-}
-Username.propTypes = {
-    username: React.PropTypes.string.isRequired,
-    schoolId: React.PropTypes.number.isRequired,
-};
-Username = connect(state => ({schoolId: R.path(["defaultSchool", "id"], state)}))(Username);
 
 export class CellValue extends PureComponent {
     render() {

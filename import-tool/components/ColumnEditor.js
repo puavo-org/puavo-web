@@ -82,6 +82,7 @@ class ColumnEditor extends PureComponent {
                                     })}
                                 </select>
 
+
                                 <legend>{t("fill_values")}</legend>
 
                                 <CellValueInput
@@ -91,6 +92,12 @@ class ColumnEditor extends PureComponent {
                                     onSelect={this.fillColumn.bind(this)}
                                 />
 
+                                <button
+                                    style={{width: "100%"}}
+                                    className="pure-button"
+                                    onClick={preventDefault(this.fillColumn.bind(this))}
+                                >{t("fill")}</button>
+
                                 <label style={{fontSize: "small"}}>
                                     <input
                                         type="checkbox"
@@ -99,18 +106,12 @@ class ColumnEditor extends PureComponent {
                                     {t("override_existing_values")}
                                 </label>
 
-                                <button
-                                    style={{width: "100%"}}
-                                    className="pure-button"
-                                    onClick={preventDefault(this.fillColumn.bind(this))}
-                                >{t("fill")}</button>
 
-                                <div style={{marginTop: 50}} />
-
+                                <legend>{t("remove_column")}</legend>
                                 <button className="pure-button danger"
                                     onClick={preventDefault(this.dropColumn.bind(this))}
                                     >
-                                    <Icon icon="trash" /> {t("remove_column")}
+                                    <Icon icon="trash" />
                                 </button>
 
                             </fieldset>

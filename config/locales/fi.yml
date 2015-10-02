@@ -25,6 +25,8 @@ fi:
     update_all: Päivitä käyttäjän kaikki attribuutit
     reset_passwords: Aseta uudet salasanat
     reset_existing_users: Aseta olemassaoleville käyttäjille myös
+    generate_username: Generoi käyttäjätunnus
+    add_names_to_generate_username: Lisää etunimi ja sukunimi ensin
     roles:
       admin: Ylläpitäjä
       parent: Vanhempi

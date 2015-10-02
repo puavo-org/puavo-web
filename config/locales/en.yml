@@ -25,6 +25,8 @@ en:
     update_all: Update all user attributes
     reset_passwords: Reset passwords
     reset_existing_users: Reset existing users too
+    generate_username: Generate username
+    add_names_to_generate_username: Add firstname and lastname to generate username
     roles:
       admin: Administrator
       parent: Parent

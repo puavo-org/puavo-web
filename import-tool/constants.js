@@ -12,9 +12,10 @@ export const SET_LEGACY_ROLES = "SET_LEGACY_ROLES";
 export const SET_DEFAULT_SCHOOL = "SET_DEFAULT_SCHOOL";
 export const SET_ROW_STATUS = "SET_ROW_STATUS";
 
+export const GENERATE_USERNAME = "GENERATE_USERNAME";
 
 
-// Constanst for update types
+// Constanst for updates types
 export const CREATE_USER = "CREATE_USER";
 export const UPDATE_SCHOOL = "UPDATE_SCHOOL";
 export const UPDATE_ALL = "UPDATE_ALL";

@@ -15,6 +15,7 @@ import {
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
     SET_ROW_STATUS,
+    GENERATE_USERNAME,
 } from "./constants";
 import ColumnTypes from "./ColumnTypes";
 import {getCellValue, deepFreeze} from "./utils";
@@ -31,18 +32,6 @@ const initialState = deepFreeze({
     ],
 });
 
-const usernameSlugify = R.compose(
-    // Allow _, - and . elsewhere and drop any other chars
-    s => s.replace(/[^a-z0-9_\-\.]/g, ""),
-
-    // Remove chars until the username starts with a-z
-    s => s.replace(/^[^a-z]+/g, ""),
-
-    // Swap Ä to A etc.
-    cleanDiacritics,
-
-    s => s.toLowerCase()
-);
 
 const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalValue: val}, acc), {});
 const findLongestRowLength = R.compose(R.reduce(R.max, 0), R.map(R.prop("length")));
@@ -57,11 +46,10 @@ function reducer(state=initialState, action) {
             rows: R.always(action.data.map(arrayToObj)),
         }, state);
     case SET_CUSTOM_VALUE:
-        const usernameIndex = R.findIndex(isUsername, state.columns);
-        var value = action.value;
-        if (action.columnIndex === usernameIndex) {
-            value = usernameSlugify(value);
-        }
+        const value = action.value === GENERATE_USERNAME
+            ? generateUsername(action.rowIndex, state)
+            : action.value;
+
         return updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, state);
     case ADD_COLUMN:
         return R.evolve({
@@ -93,47 +81,44 @@ function reducer(state=initialState, action) {
             if (!action.override && getCellValue(row[action.columnIndex])) {
                 return row;
             }
-            return updateIn([action.columnIndex, "customValue"], action.value, row);
+
+            const value = action.value === GENERATE_USERNAME
+                ? generateUsername(rowIndex, state)
+                : action.value;
+
+            return updateIn([action.columnIndex, "customValue"], value, row);
         })}, state);
     default:
         return state;
     }
 }
 
-const rowValue = R.curry((index, row) => getCellValue(row[index]));
-const isMissing = R.curry((index, row) => !getCellValue(row[index]));
-
 const isFirstName = R.equals(ColumnTypes.first_name);
 const isLastName = R.equals(ColumnTypes.last_name);
-const isUsername = R.equals(ColumnTypes.username);
-const canGenerateUsername = R.allPass(R.map(R.any, [isFirstName, isLastName, isUsername]));
 
-const generateDefaultUsername = R.curry((usernameIndex, firstNameIndex, lastNameIndex, row) => {
-    if (rowValue(usernameIndex, row)) return row;
-    var username = [firstNameIndex, lastNameIndex]
-        .map(i => usernameSlugify(rowValue(i, row)))
+const usernameSlugify = R.compose(
+    // Allow _, - and . elsewhere and drop any other chars
+    s => s.replace(/[^a-z0-9_\-\.]/g, ""),
+
+    // Remove chars until the username starts with a-z
+    s => s.replace(/^[^a-z]+/g, ""),
+
+    // Swap Ä to A etc.
+    cleanDiacritics,
+
+    s => s.toLowerCase()
+);
+
+function generateUsername(rowIndex, state) {
+    const firstNameIndex = R.findIndex(isFirstName, state.columns);
+    const lastNameIndex = R.findIndex(isLastName, state.columns);
+    const row = state.rows[rowIndex];
+    return [firstNameIndex, lastNameIndex]
+        .map(i => getCellValue(row[i]))
+        .map(usernameSlugify)
         .join(".");
-    return R.over(R.lensProp(usernameIndex), R.assoc("customValue", username), row);
-});
-
-
-function injectUsernames(state) {
-    if (!canGenerateUsername(state.columns)) return state;
-
-    const usernameIndex = R.findIndex(isUsername, state.columns);
-    const isMissingUsername = R.any(isMissing(usernameIndex));
-
-    if (!isMissingUsername(state.rows)) return state;
-
-    const addUsernames = R.map(generateDefaultUsername(
-        usernameIndex,
-        R.findIndex(isFirstName, state.columns),
-        R.findIndex(isLastName, state.columns)
-    ));
-
-    return R.evolve({rows: addUsernames}, state);
 }
 
-export default R.compose(injectUsernames, reducer);
+export default reducer;
 
 
