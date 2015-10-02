@@ -30,6 +30,26 @@ class ApplicationController < ActionController::Base
 
   after_filter :remove_ldap_connection
 
+  if ENV["RAILS_ENV"] == "production"
+    rescue_from Exception do |error|
+      @request = request
+      @error = error
+      @error_uuid = (0...25).map{ ('a'..'z').to_a[rand(26)] }.join
+      flog.error("unhandled exception", {
+        :parameters => params,
+        :error => {
+          :uuid => @error_uuid,
+          :code => @error.class.name,
+          :message => @error.message,
+          :backtrace => @error.backtrace
+        }
+      })
+      logger.error @error.message
+      logger.error @error.backtrace.join("\n")
+
+      render :status => 500, :layout => false, :template => "errors/sorry.html.erb"
+    end
+  end
 
   def log_request
     flog.info "request", :parameters => params

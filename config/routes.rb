@@ -1,7 +1,5 @@
 PuavoUsers::Application.routes.draw do
 
-  match "/500", :to => "errors#unhandled_exception"
-
   root :to => "schools#index"
 
   match '/menu' => 'menu#index', :via => :get

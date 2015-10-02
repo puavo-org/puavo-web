@@ -5,6 +5,7 @@
 </p>
 
 <pre>
+request: <%= @request.method %> <%= @request.url %>
 code: <%= @error.class %>
 message: <%= @error.message %>
 uuid: <%= @error_uuid %>
