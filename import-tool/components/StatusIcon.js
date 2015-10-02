@@ -1,7 +1,6 @@
 
 import React from "react";
 import PureComponent from "./PureComponent";
-import R from "ramda";
 import Icon from "./Icon";
 
 const STATUS_ICONS = {
@@ -12,24 +11,14 @@ const STATUS_ICONS = {
 };
 
 export default class StatusIcon extends PureComponent {
-
-    isError() {
-        return STATUS_ICONS[this.props.status].className === "error";
-    }
-
     render() {
-        const statusProps = STATUS_ICONS[this.props.status];
-        return (
-            <Icon
-                title={this.props.status}
-                {...statusProps}
-                {...R.omit(["status"], this.props)}
-            />
-        );
+        const {status, ...otherProps} = this.props;
+        const statusProps = STATUS_ICONS[status];
+        return <Icon title={status} {...statusProps} {...otherProps} />;
     }
 }
 
 
 StatusIcon.propTypes = {
-    status: React.PropTypes.oneOf(R.keys(STATUS_ICONS)).isRequired,
+    status: React.PropTypes.oneOf(Object.keys(STATUS_ICONS)).isRequired,
 };
