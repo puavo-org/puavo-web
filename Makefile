@@ -44,7 +44,7 @@ js: js-translations
 js-translations:
 	bundle exec rake i18n:js:export
 
-js-translations-watch:
+js-translations-watch: js-translations
 	chokidar config/locales/* -c '$(MAKE) js-translations'
 
 js-watch:
