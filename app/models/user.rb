@@ -257,6 +257,16 @@ class User < LdapBase
                                 :attribute => I18n.t("activeldap.attributes.user.uid") )
       end
     end
+
+    if self.mail && email_dup = User.find(:first, :attribute => "mail", :value => self.mail)
+        errors.add(
+          :uid,
+          I18n.t(
+            "activeldap.errors.messages.taken",
+            :attribute => I18n.t("activeldap.attributes.user.mail")
+          )
+        )
+      end
   end
 
   def change_ldap_password
