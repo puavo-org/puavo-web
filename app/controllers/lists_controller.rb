@@ -82,7 +82,7 @@ class ListsController < ApplicationController
                   pdf.render,
                   :filename => filename,
                   :type => 'application/pdf',
-                  :disposition => 'inline' )
+                  :disposition => 'attachment' )
       end
 
     end
