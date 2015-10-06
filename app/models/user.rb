@@ -258,7 +258,9 @@ class User < LdapBase
       end
     end
 
-    if self.mail && email_dup = User.find(:first, :attribute => "mail", :value => self.mail)
+    if self.mail
+      email_dup = User.find(:first, :attribute => "mail", :value => self.mail)
+      if email_dup && email_dup.puavoId != self.puavoId
         errors.add(
           :uid,
           I18n.t(
@@ -267,6 +269,8 @@ class User < LdapBase
           )
         )
       end
+    end
+
   end
 
   def change_ldap_password
