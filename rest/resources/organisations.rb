@@ -112,7 +112,7 @@ class Organisation < LdapModel
   def owners
     Array( get_own(:owner) ).select{ |o| o.to_s.match(/#{self.base}$/) }.map do |owner_dn|
       User.by_dn(owner_dn)
-    end
+    end.compact
   end
 
 end
