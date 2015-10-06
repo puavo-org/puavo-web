@@ -29,6 +29,10 @@
     <%= link_to "#", :class => "clone_prev_input_element btn" do %>
       <i class="icon-plus"></i><%= t('.add_email') %>
     <% end %>
+
+    <p>
+    <%= field_error_text(f.object, :mail) %>
+    </p>
   </td></tr>
   <tr>
     <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>

@@ -262,7 +262,7 @@ class User < LdapBase
       email_dup = User.find(:first, :attribute => "mail", :value => self.mail)
       if email_dup && email_dup.puavoId != self.puavoId
         errors.add(
-          :uid,
+          :mail,
           I18n.t(
             "activeldap.errors.messages.taken",
             :attribute => I18n.t("activeldap.attributes.user.mail")
