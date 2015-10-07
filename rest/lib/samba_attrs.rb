@@ -7,7 +7,7 @@ module PuavoRest
     end
 
     def set_samba_sid
-      rid = next_rid("puavoNextSambaSID")
+      rid = samba_domain.generate_next_rid!
 
       write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid - 1}"])
 
@@ -27,16 +27,6 @@ module PuavoRest
     end
 
     private
-
-    def next_rid(key)
-      pool_key = "#{key}:#{ samba_domain.domain }"
-
-      if IdPool.last_id(pool_key).nil?
-        IdPool.set_id!(pool_key, samba_domain.legacy_rid)
-      end
-
-      return IdPool.next_id(pool_key)
-    end
 
     # Cached samba domain query
     def samba_domain
