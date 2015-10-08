@@ -9,7 +9,7 @@ module PuavoRest
     def set_samba_sid
       rid = samba_domain.generate_next_rid!
 
-      write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid - 1}"])
+      write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
 
       samba_sid = Array(get_raw(:sambaSID)).first
       if samba_sid && new?
