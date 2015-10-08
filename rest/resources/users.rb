@@ -446,11 +446,9 @@ class User < LdapModel
   # Write internal samba attributes. Implementation is based on the puavo-web
   # code is not actually tested on production systems
   def write_samba_attrs
-    samba_domain = SambaDomain.current_samba_domain
-    rid = samba_domain.generate_next_rid!
+    set_samba_sid
 
     write_raw(:sambaAcctFlags, ["[U]"])
-    write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
     if school
       set_samba_primary_group_sid(school.id)
     end
