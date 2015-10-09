@@ -1,6 +1,5 @@
 require_relative "./puavo-rest"
 require_relative "./lib/mailer"
-require "redlock"
 
 #   @overload $0 $1
 #   @method $0_$1 $1
