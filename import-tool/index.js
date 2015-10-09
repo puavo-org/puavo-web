@@ -13,6 +13,7 @@ import "whatwg-fetch";
 import "./style.css";
 
 import React from "react";
+import ReactDOM from "react-dom";
 import {createStore, applyMiddleware, compose} from "redux";
 import createLogger from "redux-logger";
 import thunk from "redux-thunk";
@@ -47,10 +48,10 @@ function createImportTool(containerId, school) {
     store.dispatch(fetchLegacyRoles(school.id));
 
     container.innerHTML = "";
-    React.render(
+    ReactDOM.render(
         <div>
             <Provider store={store}>
-                {() => <ImportTool />}
+                <ImportTool />
             </Provider>
         </div>
     , container);
