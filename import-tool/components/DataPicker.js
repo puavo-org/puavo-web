@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 
 import {parseImportString} from "../actions";
 import {preventDefault} from "../utils";
+import t from "../i18n";
 
 const demoData = `
 Bruce, Wayne, batman@example.com
@@ -59,13 +60,13 @@ class DataPicker extends PureComponent {
                         <button
                             className="pure-button pure-button-primary button-large"
                             style={{width: "100%"}}
-                            onClick={preventDefault(this.parseImportString.bind(this))}>Parse</button>
+                            onClick={preventDefault(this.parseImportString.bind(this))}>{t("begin")}</button>
                     </div>
                     <div className="pure-u-1-5">
                         <button
                             className="pure-button button-large"
                             style={{width: "100%"}}
-                            onClick={preventDefault(this.startFileDialog.bind(this))}>Load file</button>
+                            onClick={preventDefault(this.startFileDialog.bind(this))}>{t("select_file")}</button>
                     </div>
                 </div>
 

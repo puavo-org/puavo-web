@@ -1,6 +1,8 @@
 ---
 fi:
   import_tool:
+    import: Tuo
+    import_users: Tuo käyttäjiä
     add_column: Lisää sarake
     change_type: Vaihda tyyppi
     fill: Täytä
@@ -26,6 +28,8 @@ fi:
     reset_passwords: Aseta uudet salasanat
     reset_existing_users: Aseta olemassaoleville käyttäjille myös
     generate_username: Generoi käyttäjätunnus
+    begin: Aloita
+    select_file: Valitse tiedosto
     add_names_to_generate_username: Lisää etunimi ja sukunimi ensin
     roles:
       admin: Ylläpitäjä

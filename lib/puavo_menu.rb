@@ -71,7 +71,7 @@ class PuavoMenu < MetaMenu
     end
 
     child do
-      title { 'Import' }
+      title { t('import_tool.import') }
       link { import_tool_path(@school) }
       active_on ImportToolController
       # XXX: Feature switch!

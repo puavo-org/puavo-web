@@ -1,6 +1,8 @@
 ---
 en:
   import_tool:
+    import: Import
+    import_users: Import users
     add_column: Add column
     change_type: Change type
     fill: Fill
@@ -26,6 +28,8 @@ en:
     reset_passwords: Reset passwords
     reset_existing_users: Reset existing users too
     generate_username: Generate username
+    begin: Begin
+    select_file: Select file
     add_names_to_generate_username: Add firstname and lastname to generate username
     roles:
       admin: Administrator
