@@ -31,7 +31,7 @@ import {fetchLegacyRoles} from "./actions";
 const logger = createLogger({
     timestamp: false,
     duration: true,
-    collapsed: true
+    collapsed: true,
 });
 
 const createFinalStore = compose(
