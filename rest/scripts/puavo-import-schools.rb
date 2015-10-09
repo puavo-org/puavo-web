@@ -29,12 +29,14 @@ end
 
 mode = options[:mode] || "default"
 
+schools = PuavoImport::School.all
+
 case mode
 when "default"
   puts "Compare"
 when "set-external-id"
   puts "Set external id\n\n"
-  PuavoImport::School.all.each do |school|
+  schools.each do |school|
     puavo_school = PuavoRest::School.by_attr(:name, school.name)
 
     if puavo_school.nil?
@@ -59,7 +61,7 @@ when "set-external-id"
 
 when "import"
   puts "Import schools\n\n"
-  PuavoImport::School.all.each do |school|
+  schools.each do |school|
     puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
     if puavo_rest_school
       if school.need_update?(puavo_rest_school)
