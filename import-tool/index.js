@@ -28,7 +28,11 @@ import createStateStorage from "./StateStorage";
 import {fetchLegacyRoles} from "./actions";
 
 
-const logger = createLogger({timestamp: false, duration: true});
+const logger = createLogger({
+    timestamp: false,
+    duration: true,
+    collapsed: true
+});
 
 const createFinalStore = compose(
     createStateStorage(STATE_KEY),
