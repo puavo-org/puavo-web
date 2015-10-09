@@ -1,11 +1,14 @@
 require_relative "../lib/ldappasswd"
+require_relative "../lib/samba_attrs"
 
 module PuavoRest
 
 class User < LdapModel
+  include SambaAttrs
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id, LdapConverters::Number
+  ldap_map :puavoId, :id, LdapConverters::Number # FIXME: this attribute should be a String
+  ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :uid, :username
   ldap_map :uidNumber, :uid_number, LdapConverters::Number
@@ -443,26 +446,12 @@ class User < LdapModel
   # Write internal samba attributes. Implementation is based on the puavo-web
   # code is not actually tested on production systems
   def write_samba_attrs
-    samba_domain = SambaDomain.current_samba_domain
-    rid = samba_domain.generate_next_rid!
+    set_samba_sid
 
     write_raw(:sambaAcctFlags, ["[U]"])
-    write_raw(:sambaSID, ["#{ samba_domain.sid }-#{ rid }"])
     if school
-      write_raw(:sambaPrimaryGroupSID, ["#{samba_domain.sid}-#{school.id}"])
+      set_samba_primary_group_sid(school.id)
     end
-
-    samba_sid = Array(get_raw(:sambaSID)).first
-    if samba_sid && new?
-      res = LdapModel.raw_filter(organisation["base"], "(sambaSID=#{ escape samba_sid })")
-      if res && !res.empty?
-        other_dn = res.first["dn"].first
-        # Internal attribute, use underscore prefix to indicate that
-        add_validation_error(:__sambaSID, :sambaSID_not_unique, "#{ samba_sid } is already used by #{ other_dn }")
-      end
-    end
-    # Redo validation for samba attrs
-    assert_validation
 
   end
 

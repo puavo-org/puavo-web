@@ -1,11 +1,15 @@
 require_relative "../lib/local_store"
+require_relative "../lib/samba_attrs"
 
 module PuavoRest
 class School < LdapModel
   include LocalStore
+  include SambaAttrs
 
   ldap_map :dn, :dn
-  ldap_map :puavoId, :id
+  ldap_map :puavoId, :id, LdapConverters::SingleValue
+  ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
+  ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :displayName, :name
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoSchoolHomePageURL, :homepage
@@ -19,7 +23,7 @@ class School < LdapModel
   ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, LdapConverters::StringBoolean
   ldap_map :puavoPersonalDevice, :personal_device, LdapConverters::StringBoolean
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
-  ldap_map(:gidNumber, :gid_number){ |v| Array(v).first.to_i }
+  ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map :cn, :abbreviation
   ldap_map(:puavoActiveService, :external_services) do |es|
       Array(es).map { |s| s.downcase.strip }
@@ -33,6 +37,29 @@ class School < LdapModel
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
   ldap_map :puavoDeviceOffHour,          :daytime_end_hour
+
+  before :create do
+    if Array(object_classes).empty?
+      self.object_classes = ['top','posixGroup','puavoSchool','sambaGroupMapping']
+    end
+
+    if id.nil?
+      self.id = IdPool.next_id("puavoNextId").to_s
+    end
+
+    if gid_number.nil?
+      self.gid_number = IdPool.next_id("puavoNextGidNumber")
+    end
+
+    if dn.nil?
+      self.dn = "puavoId=#{ id },#{ self.class.ldap_base }"
+    end
+
+    write_samba_attrs
+
+    # FIXME set sambaSID and sambaGroupType
+  end
+
 
   def self.ldap_base
     "ou=Groups,#{ organisation["base"] }"
@@ -213,6 +240,15 @@ class School < LdapModel
   autopoweroff_attrs.each do |attr|
     define_method(attr) { autopoweroff_attr_with_organisation_fallback(attr) }
   end
+
+  # Write internal samba attributes. Implementation is based on the puavo-web
+  # code is not actually tested on production systems
+  def write_samba_attrs
+    set_samba_sid
+
+    write_raw(:sambaGroupType, ["2"])
+  end
+
 end
 
 class Schools < PuavoSinatra
