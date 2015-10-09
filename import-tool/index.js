@@ -8,6 +8,7 @@ const STATE_KEY = [
 require("babel-runtime/core-js/promise").default = require("bluebird");
 window.Promise = require("bluebird"); // extra override
 import "babel/polyfill";
+import "whatwg-fetch";
 
 import "./style.css";
 
