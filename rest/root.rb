@@ -13,8 +13,6 @@ GIT_COMMIT = File.open("GIT_COMMIT", "r"){ |f| f.read }.strip
 STARTED = Time.now
 HOSTNAME = Socket.gethostname
 FQDN = Socket.gethostbyname(Socket.gethostname).first
-REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
-DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
 
 def self.about
   return ({
