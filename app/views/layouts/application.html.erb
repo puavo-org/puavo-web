@@ -85,6 +85,7 @@
                 <span><%= t('.schools') %></span>
                 <ul class="school-menu">
                   <% school_list.each do |school| %>
+                    <% next if school.puavoTag.include?("hidden")%>
                     <li class="top-menu-item<% if school_list.last == school %> last<% end %>">
                       <%= link_to school.displayName,  school_path(school) %>
                     </li>
