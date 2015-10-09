@@ -36,7 +36,24 @@ when "set-external-id"
   puts "Set external id\n\n"
   PuavoImport::School.all.each do |school|
     puavo_school = PuavoRest::School.by_attr(:name, school.name)
-    PuavoImport.diff_objects(puavo_school, school, ["name", "abbreviation"])
+
+    if puavo_school.nil?
+      puts "Can not find school from Puavo: #{ school.name }\n\n"
+      next
+    end
+
+    PuavoImport.diff_objects(puavo_school, school, ["name", "abbreviation", "external_id"])
+
+    if puavo_school.external_id != school.external_id
+      response = PuavoImport.ask("Update external_id (#{ school.external_id }) to Puavo (Y/N)?",
+                                 :default => "N")
+      if response == "Y"
+        puts "Update external id"
+        puavo_school.external_id = school.external_id
+        puavo_school.save!
+      end
+    end
+
     puts "\n" + "-" * 100 + "\n\n"
   end
 
