@@ -20,8 +20,10 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
-CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
-  school_data = csv_row_to_array(row, options[:encoding])
+CSV.foreach(options[:csv_file],
+            :encoding => options[:encoding],
+            :col_sep => ";") do |school_data|
+  school_data = encode_text(school_data, options[:encoding])
   PuavoImport::School.new(:external_id => school_data[0],
                           :name => school_data[1])
 end

@@ -41,9 +41,9 @@ module PuavoImport
       return options
     end
 
-    def csv_row_to_array(row, encoding)
-      data = row.first.split(";")
+    def encode_text(data, encoding)
       data.map do |data|
+        next if data.nil?
         data.encode('utf-8', encoding)
       end
     end
@@ -86,7 +86,6 @@ module PuavoImport
       end
     end
 
-    private
     def colorize(text, color_code)
       "\e[#{color_code}m#{text}\e[0m"
     end
