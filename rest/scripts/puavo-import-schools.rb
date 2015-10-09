@@ -10,9 +10,6 @@ require_relative "../lib/puavo_import"
 
 options = PuavoImport.cmd_options(:message => "Import schools to Puavo")
 
-REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
-DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
-
 LdapModel.setup(
   :credentials => CONFIG["server"]
 )
