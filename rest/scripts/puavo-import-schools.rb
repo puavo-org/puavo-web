@@ -8,7 +8,9 @@ require 'bundler/setup'
 require_relative "../puavo-rest"
 require_relative "../lib/puavo_import"
 
-options = PuavoImport.cmd_options(:message => "Import schools to Puavo")
+include PuavoImport::Helpers
+
+options = cmd_options(:message => "Import schools to Puavo")
 
 LdapModel.setup(
   :credentials => CONFIG["server"]
@@ -19,7 +21,7 @@ LdapModel.setup(
 )
 
 CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
-  school_data = PuavoImport.csv_row_to_array(row, options[:encoding])
+  school_data = csv_row_to_array(row, options[:encoding])
   PuavoImport::School.new(:external_id => school_data[0],
                           :name => school_data[1])
 end
@@ -39,10 +41,10 @@ when "set-external-id"
       next
     end
 
-    PuavoImport.diff_objects(puavo_school, school, ["name", "abbreviation", "external_id"])
+    diff_objects(puavo_school, school, ["name", "abbreviation", "external_id"])
 
     if puavo_school.external_id != school.external_id
-      response = PuavoImport.ask("Update external_id (#{ school.external_id }) to Puavo (Y/N)?",
+      response = ask("Update external_id (#{ school.external_id }) to Puavo (Y/N)?",
                                  :default => "N")
       if response == "Y"
         puts "Update external id"
