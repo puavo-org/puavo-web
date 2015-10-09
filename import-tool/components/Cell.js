@@ -19,7 +19,7 @@ class Cell extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            customValue: props.value,
+            customValue: props.value || "",
             editing: false,
         };
     }

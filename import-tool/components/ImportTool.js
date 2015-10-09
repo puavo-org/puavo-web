@@ -139,7 +139,7 @@ class ImportTool extends PureComponent {
                                                     ], rowStatus);
                                                 }
 
-                                                const {customValue, originalValue} = R.path([rowIndex, columnIndex], rows) || {};
+                                                const {customValue="", originalValue=""} = R.path([rowIndex, columnIndex], rows) || {};
 
                                                 return (
                                                     <td key={columnIndex}>
