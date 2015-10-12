@@ -7,7 +7,9 @@ require 'bundler/setup'
 require_relative "../puavo-rest"
 require_relative "../lib/puavo_import"
 
-options = PuavoImport.cmd_options(:message => "Import groups to Puavo")
+include PuavoImport::Helpers
+
+options = cmd_options(:message => "Import groups to Puavo")
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
@@ -19,8 +21,8 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
-CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
-  group_data = PuavoImport.csv_row_to_array(row, options[:encoding])
+CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";") do |row|
+  group_data = encode_text(row, options[:encoding])
   PuavoImport::Group.new(:external_id => group_data[0],
                          :name => group_data[1],
                          :school_external_id => group_data[2])
