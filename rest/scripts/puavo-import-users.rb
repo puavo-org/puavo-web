@@ -8,6 +8,8 @@ require 'bundler/setup'
 require_relative "../puavo-rest"
 require_relative "../lib/puavo_import"
 
+include PuavoImport::Helpers
+
 options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
     options[:user_role] = r
@@ -28,8 +30,8 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
-CSV.foreach(options[:csv_file], :encoding => options[:encoding] ) do |row|
-  user_data = PuavoImport.csv_row_to_array(row, options[:encoding])
+CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";" ) do |row|
+  user_data = encode_text(row, options[:encoding])
   PuavoImport::User.new(:external_id => user_data[0],
                         :first_name => user_data[1],
                         :last_name => user_data[2],
