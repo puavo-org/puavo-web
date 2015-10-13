@@ -31,6 +31,35 @@ end
 mode = options[:mode] || "default"
 
 case mode
+
+when "set-external-id"
+
+  puts "Set external id\n\n"
+
+  PuavoImport::Group.all.each do |group|
+    puavo_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
+
+    puavo_group = PuavoRest::Group.by_attr(:name, group.name) if puavo_group.nil?
+
+    if puavo_group.nil?
+      puts "Can not find group from Puavo: #{ group.name }\n\n"
+      next
+    end
+
+    diff_objects(puavo_group, group, ["name", "external_id"])
+
+    if puavo_group.external_id != group.external_id
+      response = ask("Update external_id (#{ group.external_id }) to Puavo (Y/N)?",
+                     :default => "N")
+      if response == "Y"
+        puts "Update external id"
+        puavo_group.external_id = group.external_id
+        puavo_group.save!
+      end
+    end
+
+    puts "\n" + "-" * 100 + "\n\n"
+  end
 when "import"
   puts "Import groups\n\n"
   PuavoImport::Group.all.each do |group|
