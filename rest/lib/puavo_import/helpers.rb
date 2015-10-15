@@ -5,8 +5,8 @@ module PuavoImport
     def cmd_options(args = {}, &block)
       options = { :encoding=> 'ISO8859-1' }
 
-      OptionParser.new do |opts|
-        opts.banner = "Usage: puavo-import-schools [options]
+      parser = OptionParser.new do |opts|
+        opts.banner = "Usage: puavo-import-schools [options] <CSV file>
 
 #{ args[:message] }
 
@@ -16,11 +16,7 @@ module PuavoImport
           options[:organisation_domain] = o
         end
 
-        opts.on("--csv-file FILE", "csv file with schools") do |o|
-          options[:csv_file] = o
-        end
-
-        opts.on("--character-encoding ENCODING", "Character encoding of CSV file") do |encoding|
+        opts.on("--character-encoding ENCODING", "Character encoding of the CSV file") do |encoding|
           options[:encoding] = encoding
         end
 
@@ -34,9 +30,16 @@ module PuavoImport
           STDERR.puts opts
           Process.exit()
         end
-      end.parse!
+      end
 
-      # FIXME: required arguments?
+      parser.parse!
+
+      if ARGV[0]
+        options[:csv_file] =  ARGV[0]
+      else
+        STDERR.puts parser
+        exit 1
+      end
 
       return options
     end
