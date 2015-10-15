@@ -3,7 +3,10 @@ module PuavoImport
   module Helpers
 
     def cmd_options(args = {}, &block)
-      options = { :encoding=> 'ISO8859-1' }
+      options = {
+        :encoding => 'ISO8859-1',
+        :mode => "import"
+      }
 
       parser = OptionParser.new do |opts|
         opts.banner = "Usage: puavo-import-schools [options] <CSV file>
@@ -20,8 +23,8 @@ module PuavoImport
           options[:encoding] = encoding
         end
 
-        opts.on("--mode MODE", "Write mode") do |m|
-          options[:mode] = m
+        opts.on("--initialize", "Initialize import to existing data by guessing external ids") do |m|
+          options[:mode] = "set-external-id"
         end
 
         block.call(opts, options) unless block.nil?

@@ -28,9 +28,7 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
                          :school_external_id => group_data[2])
 end
 
-mode = options[:mode] || "default"
-
-case mode
+case options[:mode]
 
 when "set-external-id"
 

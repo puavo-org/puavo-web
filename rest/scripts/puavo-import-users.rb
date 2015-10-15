@@ -45,7 +45,7 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
                         :teacher_group_suffix => options[:teacher_group_suffix])
 end
 
-mode = options[:mode] || "default"
+mode = options[:mode]
 
 case mode
 when "import"
