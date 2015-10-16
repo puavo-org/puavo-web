@@ -49,7 +49,7 @@ class Device < Host
   end
 
   def printer_ppd
-    Array(self.class.raw_by_dn(dn, ["puavoPrinterPPD"])["puavoPrinterPPD"]).first
+    Array(self.class.raw_by_dn(dn, :ldap_attrs => ["puavoPrinterPPD"])["puavoPrinterPPD"]).first
   end
 
   # Cached school query
@@ -75,7 +75,7 @@ class Device < Host
   def primary_user
     if user_dn = get_own(:primary_user_dn)
       begin
-        return User.by_dn!(user_dn, ["username"]).username
+        return User.by_dn!(user_dn, :attrs => ["username"]).username
       rescue NotFound
         return ""
       end
@@ -88,7 +88,7 @@ class Device < Host
       return
     end
 
-    user = User.by_username!(username, ["username"])
+    user = User.by_username!(username, :attrs => ["username"])
     self.primary_user_dn = user.dn
     username
   end
@@ -271,7 +271,7 @@ class Devices < PuavoSinatra
 
   get "/v3/devices" do
     auth :basic_auth, :server_auth, :kerberos
-    json Device.all(attribute_list)
+    json Device.all(:attrs => attribute_list)
   end
 
   get "/v3/devices/:hostname/feed" do

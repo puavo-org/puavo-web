@@ -51,7 +51,7 @@ class Group < LdapModel
   end
 
   def self.by_user_dn(dn)
-    by_ldap_attr(:member, dn, :multi)
+    by_ldap_attr(:member, dn, :multiple => true)
   end
 
   def printer_queues

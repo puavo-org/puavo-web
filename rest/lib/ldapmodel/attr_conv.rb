@@ -380,6 +380,11 @@ class LdapModel
     ldap2pretty.keys
   end
 
+  # @return [Array<Symbol>] Pretty attributes
+  def self.pretty_attrs
+    pretty2ldap.keys
+  end
+
   # Set attribute using the original ldap attribute
   #
   # @param [Symbol] ldap_name

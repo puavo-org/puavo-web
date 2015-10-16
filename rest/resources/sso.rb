@@ -27,7 +27,7 @@ class ExternalService < LdapModel
   end
 
   def self.by_domain(domain)
-    by_attr(:domain, domain, :multi)
+    by_attr(:domain, domain, :multiple => true)
   end
 
   def self.by_url(url)

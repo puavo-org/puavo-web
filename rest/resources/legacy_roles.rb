@@ -61,7 +61,7 @@ class LegacyRoles < PuavoSinatra
   get "/v3/schools/:school_id/legacy_roles" do
     auth :basic_auth, :kerberos
     school =  School.by_id!(params["school_id"])
-    legacy_roles = LegacyRole.by_attr!(:school_dn, school.dn, :multi)
+    legacy_roles = LegacyRole.by_attr!(:school_dn, school.dn, :multiple => true)
     json legacy_roles
   end
 

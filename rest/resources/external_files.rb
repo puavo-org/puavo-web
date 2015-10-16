@@ -9,22 +9,17 @@ class ExternalFile < LdapModel
     "ou=Files,ou=Desktops,#{ organisation["base"] }"
   end
 
-  def self.all
-    filter("(&(objectClass=top)(objectClass=puavoFile))")
-  end
-
-  def self.file_filter(name)
-    "(&(cn=#{ escape name })(objectClass=top)(objectClass=puavoFile))"
-  end
-
-  # return file metadata for file name
-  def self.metadata(name)
-    filter(file_filter(name)).first
+  def self.base_filter
+    "(&(objectClass=top)(objectClass=puavoFile))"
   end
 
   # return file contents for file name
   def self.data_only(name)
-    raw_filter(ldap_base, file_filter(name), ["puavoData"]).first["puavoData"]
+    res = by_attr!(:name, name, {
+      :raw => true,
+      :ldap_attrs => [:puavoData]
+    })
+     Array(res["puavoData"]).first
   end
 
 end
@@ -60,7 +55,7 @@ class ExternalFiles < PuavoSinatra
   get "/v3/external_files/:name/metadata" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    json ExternalFile.metadata(params[:name])
+    json ExternalFile.by_attr!(:name, params[:name])
   end
 
   # Get file contents

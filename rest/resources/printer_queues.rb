@@ -45,11 +45,11 @@ class PrinterQueue < LdapModel
   end
 
   def self.by_server!(server_dn)
-    by_attr!(:server_dn, server_dn, :multi)
+    by_attr!(:server_dn, server_dn, :multiple => true)
   end
 
   def self.by_server(server_dn)
-    by_attr(:server_dn, server_dn, :multi)
+    by_attr(:server_dn, server_dn, :multiple => true)
   end
 
   def self.by_name!(name)

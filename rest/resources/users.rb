@@ -247,7 +247,7 @@ class User < LdapModel
   end
 
   def legacy_roles
-    LegacyRole.by_attr(:member_dns, dn, :multi)
+    LegacyRole.by_attr(:member_dns, dn, :multiple => true)
   end
 
   # XXX: deprecated!
@@ -274,16 +274,16 @@ class User < LdapModel
   #
   # @param [String] username
   # @return [String, nil]
-  def self.by_username(username, attrs=nil)
-    by_attr(:username, username, :single, attrs)
+  def self.by_username(username, options={})
+    by_attr(:username, username, options)
   end
 
   # Find user model by username
   #
   # @param [String] username
   # @return [String]
-  def self.by_username!(username, attrs=nil)
-    by_attr!(:username, username, :single, attrs)
+  def self.by_username!(username, options={})
+    by_attr!(:username, username, options)
   end
 
 
@@ -292,7 +292,7 @@ class User < LdapModel
   # @param [String] username
   # @return [String, nil]
   def self.resolve_dn(username)
-    user = by_attr(:username, username, ["dn"])
+    user = by_attr(:username, username, :attrs => [:dn])
     user ? user.dn : nil
   end
 
@@ -492,11 +492,11 @@ class Users < PuavoSinatra
 
     # XXX cannot combine filters
     if params["email"]
-      json User.by_attr(:email, params["email"], :multi, attrs)
+      json User.by_attr(:email, params["email"], :multiple => true, :attrs => attrs)
     elsif params["id"]
-      json User.by_attr(:id, params["id"], :multi, attrs)
+      json User.by_attr(:id, params["id"], :multiple => true, :attrs => attrs)
     else
-      users = User.all(attrs)
+      users = User.all(:attrs => attrs)
       json users
     end
 
@@ -506,7 +506,7 @@ class Users < PuavoSinatra
   get "/v3/users/:username" do
     auth :basic_auth, :kerberos
 
-    json User.by_username!(params["username"], params["attributes"])
+    json User.by_username!(params["username"], :attrs => params["attributes"])
   end
 
   post "/v3/users/:username" do
@@ -532,7 +532,7 @@ class Users < PuavoSinatra
       LegacyRole.by_attr!(:id, id)
     end
 
-    current_legacy_roles = LegacyRole.by_attr(:member_dns, user.dn, :multi)
+    current_legacy_roles = LegacyRole.by_attr(:member_dns, user.dn, :multiple => true)
 
     current_legacy_roles.each do |r|
       r.remove_member(user)

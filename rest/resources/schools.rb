@@ -92,11 +92,11 @@ class School < LdapModel
   end
 
   def devices
-    Device.by_attr(:school_dn, dn, :multi)
+    Device.by_attr(:school_dn, dn, :multiple => true)
   end
 
   def ltsp_servers
-    LtspServer.by_attr(:school_dns, dn, :multi)
+    LtspServer.by_attr(:school_dns, dn, :multiple => true)
   end
 
   def preferred_image
@@ -260,7 +260,7 @@ class Schools < PuavoSinatra
   get "/v3/schools/:school_id/users" do
     auth :basic_auth, :kerberos
     school = School.by_attr!(:id, params["school_id"])
-    json User.by_attr(:school_dns, school.dn, :multi)
+    json User.by_attr(:school_dns, school.dn, :multiple => true)
   end
 end
 
