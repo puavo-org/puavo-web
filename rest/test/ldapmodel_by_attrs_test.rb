@@ -52,4 +52,13 @@ describe "LdapModel#by_attrs(hash)" do
     assert_equal 1, groups.size
   end
 
+  it "with bang(!) raises NotFound if not found" do
+    assert_raises LdapModel::NotFound do
+      PuavoRest::Group.by_attrs!({
+        :name => "Unknown",
+        :school_dn => @school_a.dn
+      })
+    end
+  end
+
 end

@@ -121,6 +121,21 @@ class LdapModel
     return filter(custom_filter, options)
   end
 
+  # (see .by_attrs)
+  # Raises {NotFound} if no models were found
+  def self.by_attrs!(filter_attrs, options={})
+    res = by_attrs(filter_attrs, options)
+
+     if Array(res).empty?
+      raise(
+        NotFound,
+        "Cannot find #{ self } by #{ filter_attrs.inspect }"
+      )
+     end
+
+     return res
+  end
+
   # (see .by_ldap_attr)
   # Raises {NotFound} if no models were found
   def self.by_ldap_attr!(attr, value, options={})
