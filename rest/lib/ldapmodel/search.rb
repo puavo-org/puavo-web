@@ -110,6 +110,17 @@ class LdapModel
     return filter("(#{ escape attr }=#{ escape value })", options)
   end
 
+  # @param [Hash] attributes Hash of pretty attributes and values to search for
+  # @param [Hash] options See {.filter}
+  # @return [Array<LdapModel>, LdapModel]
+  def self.by_attrs(filter_attrs, options={})
+    custom_filter = "(&#{filter_attrs.map do |attr, value|
+      "(#{ escape pretty2ldap!(attr) }=#{ escape value })"
+    end.join("")})"
+
+    return filter(custom_filter, options)
+  end
+
   # (see .by_ldap_attr)
   # Raises {NotFound} if no models were found
   def self.by_ldap_attr!(attr, value, options={})
