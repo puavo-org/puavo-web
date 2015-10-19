@@ -11,7 +11,6 @@ module MixinUserList
     end
 
     def from_json(json)
-      puts json
       data = JSON.parse(json)
       user_list = new
       user_list.uuid = data["id"]

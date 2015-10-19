@@ -661,13 +661,11 @@ describe PuavoRest::Devices do
       @data = JSON.parse last_response.body
     end
 
-    puts @data.inspect
     it "has list of devices" do
       assert_equal Array, @data.class
     end
 
     it "has devices information on the list" do
-      puts @data.inspect
       assert_equal "bf:9a:8c:1b:e0:6a", @data[0]["mac_address"]
       assert_equal "bf:9a:8c:1b:e0:7b", @data[1]["mac_address"]
     end
