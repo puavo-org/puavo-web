@@ -27,7 +27,7 @@ module PuavoImport
     end
 
     def need_update?(school)
-      self.name != school.name
+      self.name != school.name or self.abbreviation != school.abbreviation
     end
 
     def self.by_external_id(id)
