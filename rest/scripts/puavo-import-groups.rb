@@ -45,6 +45,7 @@ when "set-external-id"
 
   puts "Set external id\n\n"
 
+  @response = nil
   groups.each do |group|
 
     puavo_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
@@ -64,9 +65,13 @@ when "set-external-id"
     diff_objects(puavo_group, group, ["name", "external_id"])
 
     if puavo_group.external_id != group.external_id
-      response = ask("Update external_id (#{ group.external_id }) to Puavo (Y/N)?",
-                     :default => "N")
-      if response == "Y"
+      if @response.nil?
+        response = ask("Update external_id (#{ group.external_id }) to Puavo (Y/N)?",
+                       :default => "N")
+      end
+
+      @response = "!" if response == "!"
+      if response == "Y" || @response == "!"
         puts "Update external id"
         puavo_group.external_id = group.external_id
         puavo_group.save!
