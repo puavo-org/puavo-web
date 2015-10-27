@@ -57,7 +57,6 @@ module PuavoImport
     def sanitize_name(name)
       sanitized_name = name.downcase
       sanitized_name.gsub!(/[åäö ]/, "å" => "a", "ä" => "a", "ö" => "o", " " => "-")
-      sanitized_name.gsub!(/[ÅÄÖ]/, "Å" => "a", "Ä" => "a", "Ö" => "o")
       sanitized_name.gsub!(/[^a-z0-9-]/, "")
 
       return sanitized_name
