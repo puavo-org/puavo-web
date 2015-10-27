@@ -49,7 +49,12 @@ when "set-external-id"
 
     puavo_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
 
-    puavo_group = PuavoRest::Group.by_attr(:name, group.name) if puavo_group.nil?
+    if puavo_group.nil?
+      puavo_group = PuavoRest::Group.by_attrs(
+        :name => group.name,
+        :school_dn => group.school.dn
+      )
+    end
 
     if puavo_group.nil?
       puts "Can not find group from Puavo: #{ group.name }\n\n"
