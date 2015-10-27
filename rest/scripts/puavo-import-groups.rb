@@ -21,11 +21,22 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
+groups = []
+
 CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";") do |row|
   group_data = encode_text(row, options[:encoding])
-  PuavoImport::Group.new(:external_id => group_data[0],
-                         :name => group_data[1],
-                         :school_external_id => group_data[2])
+  group = PuavoImport::Group.new(
+    :external_id => group_data[0],
+    :name => group_data[1],
+    :school_external_id => group_data[2]
+  )
+
+  if group.school
+    groups.push(group)
+  else
+    STDERR.puts "Puts cannot find school for data: #{ group_data.inspect }"
+  end
+
 end
 
 case options[:mode]
@@ -34,7 +45,8 @@ when "set-external-id"
 
   puts "Set external id\n\n"
 
-  PuavoImport::Group.all.each do |group|
+  groups.each do |group|
+
     puavo_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
 
     puavo_group = PuavoRest::Group.by_attr(:name, group.name) if puavo_group.nil?
@@ -60,7 +72,7 @@ when "set-external-id"
   end
 when "import"
   puts "Import groups\n\n"
-  PuavoImport::Group.all.each do |group|
+  groups.each do |group|
     puavo_rest_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
     if puavo_rest_group
       if group.need_update?(puavo_rest_group)
