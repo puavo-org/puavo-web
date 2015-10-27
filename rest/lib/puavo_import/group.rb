@@ -17,7 +17,7 @@ module PuavoImport
       @school_external_id = args[:school_external_id]
 
       @school = PuavoRest::School.by_attr(:external_id, @school_external_id)
-      raise RuntimeError => "Cannot find school for group" if @school.nil?
+      raise RuntimeError, "Cannot find school for group" if @school.nil?
 
       @abbreviation = @school.abbreviation + "-" + PuavoImport.sanitize_name(@name)
 
