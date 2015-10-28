@@ -25,6 +25,7 @@ class Device < Host
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map :puavoDevicePrimaryUser, :primary_user_dn
   ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
+  ldap_map :puavoDeviceModel, :model
 
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
