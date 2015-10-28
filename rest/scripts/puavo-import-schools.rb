@@ -24,7 +24,8 @@ CSV.foreach(options[:csv_file],
             :col_sep => ";") do |school_data|
   school_data = encode_text(school_data, options[:encoding])
   PuavoImport::School.new(:external_id => school_data[0],
-                          :name => school_data[1])
+                          :name => school_data[1],
+                          :abbreviation => school_data[2])
 end
 
 mode = options[:mode] || "default"
@@ -62,6 +63,11 @@ when "set-external-id"
 when "import"
   puts "Import schools\n\n"
   schools.each do |school|
+    if school.abbreviation.nil?
+      puts brown("Abbreviation is not defined (#{ school.name }) -> skip")
+      next
+    end
+
     puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
     if puavo_rest_school
       if school.need_update?(puavo_rest_school)
