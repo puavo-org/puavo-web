@@ -62,7 +62,7 @@ when "set-external-id"
       next
     end
 
-    diff_objects(puavo_group, group, ["name", "external_id"])
+    diff_objects(puavo_group, group, ["name", "external_id", "abbreviation"])
 
     if puavo_group.external_id != group.external_id
       if @sticky_response.nil?
