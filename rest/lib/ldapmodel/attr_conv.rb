@@ -312,7 +312,7 @@ class LdapModel
       mod.mod_type != "dn"
     end
 
-    res = self.class.ldap_op(:add, dn, mods)
+    res = self.class.ldap_op(:add, _dn, mods)
     reset_pending
     @existing = true
 
