@@ -37,6 +37,7 @@ when "default"
   puts "Compare"
 when "set-external-id"
   puts "Set external id\n\n"
+  sticky_response = nil
   schools.each do |school|
     puavo_school = PuavoRest::School.by_attr(:name, school.name)
 
@@ -48,8 +49,14 @@ when "set-external-id"
     diff_objects(puavo_school, school, ["name", "abbreviation", "external_id"])
 
     if puavo_school.external_id != school.external_id
-      response = ask("Update external_id (#{ school.external_id }) to Puavo (Y/N)?",
-                                 :default => "N")
+      response = sticky_response
+
+      response = ask("Update external_id (#{ school.external_id }) to Puavo (Y/N/!)?",
+                                 :default => "N") if response.nil?
+      if response == "!"
+        sticky_response = response
+      end
+
       if response == "Y"
         puts "Update external id"
         puavo_school.external_id = school.external_id
