@@ -6,7 +6,9 @@ module PuavoImport
     @@users_by_external_id = {}
 
     attr_accessor :external_id,
+                  :sotu_hash,
                   :first_name,
+                  :given_names,
                   :last_name,
                   :email,
                   :telephone_number,
@@ -17,8 +19,8 @@ module PuavoImport
                   :teacher_group_suffix,
                   :group_external_id,
                   :group,
-                  :school_external_id,
-                  :school
+                  :school_external_ids,
+                  :schools
 
     def initialize(args)
       args.keys.each do |k|
@@ -27,8 +29,7 @@ module PuavoImport
         self.send("#{ k }=", args[k])
       end
 
-      @school = PuavoRest::School.by_attr(:external_id, @school_external_id)
-      raise "Cannot find school for user" if @school.nil?
+      @school_external_ids = @school_external_ids.split(",") unless  @school_external_ids.nil?
 
       case @role
       when "student"
@@ -41,6 +42,14 @@ module PuavoImport
 
       @@users << self
       @@users_by_external_id[self.external_id] = self
+    end
+
+    def schools
+      return [] if @school_external_ids.nil?
+
+      @schools ||= @school_external_ids.uniq.map do |external_id|
+        PuavoRest::School.by_attr(:external_id, external_id)
+      end.compact
     end
 
     def to_s

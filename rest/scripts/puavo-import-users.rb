@@ -30,24 +30,37 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
+users = []
+
 CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";" ) do |row|
   user_data = encode_text(row, options[:encoding])
-  PuavoImport::User.new(:external_id => user_data[0],
-                        :first_name => user_data[1],
-                        :last_name => user_data[2],
-                        :email => user_data[3],
-                        :telephone_number => user_data[4],
-                        :preferred_language => user_data[5],
-                        :group_external_id => user_data[6],
-                        :school_external_id => user_data[7], # FIXME: multiple value for teacher?
-                        :username => user_data[8],
-                        :role => options[:user_role],
-                        :teacher_group_suffix => options[:teacher_group_suffix])
+  user = PuavoImport::User.new(:external_id => user_data[0],
+                               :sotu_hash => user_data[1],
+                               :first_name => user_data[2],
+                               :given_names => user_data[3],
+                               :last_name => user_data[4],
+                               :email => user_data[5],
+                               :telephone_number => user_data[6],
+                               :preferred_language => user_data[7],
+                               :group_external_id => user_data[10],
+                               :username => user_data[9],
+                               :school_external_ids => user_data[8], # FIXME: multiple value for teacher?
+                               :role => options[:user_role],
+                               :teacher_group_suffix => options[:teacher_group_suffix])
+
+  if user.schools.empty?
+    STDERR.puts "Cannot find school for user: #{ user }"
+  else
+    users.push(user)
+  end
+
 end
 
 mode = options[:mode]
 
 case mode
+when "set-external-id"
+
 when "import"
   puts "Import users\n\n"
   PuavoImport::User.all.each do |user|
