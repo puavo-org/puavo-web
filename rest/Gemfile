@@ -30,6 +30,7 @@ gem "pony"
 gem "gibberish", "~> 1.4.0"
 gem "sinatra-support", :require => "sinatra/support"
 gem "redlock"
+gem "elasticsearch"
 
 group :test do
   gem "shotgun"
