@@ -30,12 +30,16 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
+unhandled_users = PuavoRest::User.all
+
+puts unhandled_users.count
+
 users = []
 
 CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";" ) do |row|
   user_data = encode_text(row, options[:encoding])
-  user = PuavoImport::User.new(:external_id => user_data[0],
-                               :sotu_hash => user_data[1],
+  user = PuavoImport::User.new(:db_id => user_data[0],
+                               :external_id => user_data[1],
                                :first_name => user_data[2],
                                :given_names => user_data[3],
                                :last_name => user_data[4],

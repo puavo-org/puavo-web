@@ -5,8 +5,8 @@ module PuavoImport
     @@users = []
     @@users_by_external_id = {}
 
-    attr_accessor :external_id,
-                  :sotu_hash,
+    attr_accessor :db_id,
+                  :external_id,
                   :first_name,
                   :given_names,
                   :last_name,
