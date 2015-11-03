@@ -1,2 +1,2 @@
 #!/bin/sh
-exec bundle exec ruby1.9.1 scripts/es-query.rb
+exec bundle exec ruby1.9.1 scripts/es-query.rb "$@"
