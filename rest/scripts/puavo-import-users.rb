@@ -133,8 +133,8 @@ when "set-external-id"
 
     different_attributes = diff_objects(puavo_user, user, ["first_name",
                                                            "last_name",
-                                                           "school_name",
-                                                           "group_name",
+                                                           "import_school_names",
+                                                           "import_group_name",
                                                            "external_id"] )
 
     response = "Y"

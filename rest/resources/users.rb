@@ -344,6 +344,10 @@ class User < LdapModel
     end.compact
   end
 
+  def import_school_names
+    schools.map{ |s| s.name }.join(", ")
+  end
+
   def preferred_language
     if get_own(:preferred_language).nil? && school
       school.preferred_language
@@ -374,6 +378,24 @@ class User < LdapModel
 
   def groups
     @groups ||= Group.by_user_dn(dn)
+  end
+
+  def import_group_name
+    group = nil
+    groups.each do |g|
+      unless g.external_id.nil?
+        if group
+          raise "Duplicate external group!"
+        end
+        group = g
+      end
+    end
+
+    unless group
+      return groups.map{ |g| g.name }.join(", ")
+    end
+
+    return group.name
   end
 
   def groups_within_school(school)

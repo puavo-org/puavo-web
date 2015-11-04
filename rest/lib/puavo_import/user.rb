@@ -59,6 +59,14 @@ module PuavoImport
       end.compact
     end
 
+    def import_group_name
+      @group.name
+    end
+
+    def import_school_names
+      @schools.map{ |s| s.name }.join(", ")
+    end
+
     def to_s
       "#{ self.first_name } #{ self.last_name } (external_id: #{ self.external_id })"
     end
