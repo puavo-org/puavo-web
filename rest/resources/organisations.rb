@@ -76,6 +76,15 @@ class Organisation < LdapModel
     end
   end
 
+  def self.by_dn(dn)
+    res = nil
+    connection.search(dn, LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", []) do |entry|
+      res = entry.to_hash
+    end
+
+    from_ldap_hash(res) if res
+  end
+
   def self.bases
     connection.search("", LDAP::LDAP_SCOPE_BASE, "(objectClass=*)", ["namingContexts"]) do |e|
       return e.get_values("namingContexts").select do |base|
