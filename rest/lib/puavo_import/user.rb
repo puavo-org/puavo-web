@@ -1,5 +1,8 @@
 module PuavoImport
 
+  class UserRoleError < StandardError; end
+  class UserGroupError < StandardError; end
+
   class User
 
     @@users = []
@@ -31,13 +34,17 @@ module PuavoImport
 
       @school_external_ids = @school_external_ids.split(",") unless  @school_external_ids.nil?
 
+      raise(UserRoleError, "Invalid role of user. --user-role is required param") if @role.nil?
+
       case @role
       when "student"
         @group = PuavoRest::Group.by_attr(:external_id, @group_external_id)
-        raise "Cannot find group for studnet" if @group.nil?
+        raise(UserGroupError,
+              "Cannot find group (external_id: #{ @group_external_id }) for student: #{ self.to_s }") if @group.nil?
       when "teacher"
         @group = PuavoRest::Group.by_attr(:abbreviation, "#{ @school.abbreviation }-#{ @teacher_group_suffix }")
-        raise "Cannot find group for teacher" if @group.nil?
+        raise(UserGroupError,
+              "Cannot find group (external_id: #{ @group_external_id }) for teacher: #{ self.to_s }") if @group.nil?
       end
 
       @@users << self

@@ -30,27 +30,29 @@ LdapModel.setup(
   :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
 )
 
-unhandled_users = PuavoRest::User.all
-
-puts unhandled_users.count
-
 users = []
 
 CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";" ) do |row|
   user_data = encode_text(row, options[:encoding])
-  user = PuavoImport::User.new(:db_id => user_data[0],
-                               :external_id => user_data[1],
-                               :first_name => user_data[2],
-                               :given_names => user_data[3],
-                               :last_name => user_data[4],
-                               :email => user_data[5],
-                               :telephone_number => user_data[6],
-                               :preferred_language => user_data[7],
-                               :group_external_id => user_data[10],
-                               :username => user_data[9],
-                               :school_external_ids => user_data[8], # FIXME: multiple value for teacher?
-                               :role => options[:user_role],
-                               :teacher_group_suffix => options[:teacher_group_suffix])
+
+  begin
+    user = PuavoImport::User.new(:db_id => user_data[0],
+                                 :external_id => user_data[1],
+                                 :first_name => user_data[2],
+                                 :given_names => user_data[3],
+                                 :last_name => user_data[4],
+                                 :email => user_data[5],
+                                 :telephone_number => user_data[6],
+                                 :preferred_language => user_data[7],
+                                 :group_external_id => user_data[10],
+                                 :username => user_data[9],
+                                 :school_external_ids => user_data[8], # FIXME: multiple value for teacher?
+                                 :role => options[:user_role],
+                                 :teacher_group_suffix => options[:teacher_group_suffix])
+  rescue PuavoImport::UserGroupError => e
+    puts e.to_s
+    next
+  end
 
   if user.schools.empty?
     STDERR.puts "Cannot find school for user: #{ user }"
