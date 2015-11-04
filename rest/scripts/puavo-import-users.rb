@@ -108,13 +108,13 @@ when "set-external-id"
       puts "first name: #{ user.first_name }"
       puts "given names: #{ user.given_names }"
       puts "last_name: #{ user.last_name }"
-      puts "schools: " + user.school_name
-      puts "group: #{ user.group_name }" if user.group
+      puts "schools: " + user.import_school_names
+      puts "group: #{ user.import_group_name }" if user.group
       puts
 
       puavo_users.each do |u|
         groups = u.groups.map{ |g| "'#{ g.name}'" }.join(", ")
-        puts "#{ user_count } #{ u.first_name } #{ u.last_name }, #{ u.username }, #{ u.school.name }, #{ u.group_name }, last login: xxxxx"
+        puts "#{ user_count } #{ u.first_name } #{ u.last_name }, #{ u.username }, #{ u.school.name }, #{ u.import_group_name }, last login: xxxxx"
         user_count += 1
       end
 
