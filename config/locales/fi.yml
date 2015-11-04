@@ -503,6 +503,7 @@ fi:
         puavoLocale: Kieli
         puavoSshPublicKey: SSH:n julkinen avain
         groups: Ryhmät
+        puavoExternalId: Ulkoinen id
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne

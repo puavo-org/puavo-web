@@ -514,6 +514,7 @@ en:
         puavoLocale: Language
         puavoSshPublicKey: SSH public key
         groups: Groups
+        puavoExternalId: External id
       group:
         displayName: Group name
         cn: Abbreviation
