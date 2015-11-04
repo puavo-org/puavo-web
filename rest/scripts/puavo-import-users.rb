@@ -67,6 +67,37 @@ mode = options[:mode]
 case mode
 when "set-external-id"
 
+  users.each do |user|
+
+    next if PuavoRest::User.by_attr(:external_id, user.external_id)
+
+    puavo_users = PuavoRest::User.by_attrs({ :first_name => user.first_name,
+                                             :last_name => user.last_name },
+                                           { :multiple => true } )
+
+    if puavo_users.empty?
+      next
+    end
+
+    diff_objects(puavo_user, user, ["first_name",
+                                    "last_name",
+                                    "school_name",
+                                    "group_name",
+                                    "external_id"] )
+
+
+    response = ask("Update external_id (#{ user.external_id }) to Puavo (Y/N)?",
+                   :default => "N")
+    if response == "Y"
+      puts "Update external id"
+      puavo_user.external_id = user.external_id
+      # puavo_user.external_data = FIXME
+      puavo_user.save!
+    end
+
+    puts "\n" + "-" * 100 + "\n\n"
+  end
+
 when "import"
   puts "Import users\n\n"
   PuavoImport::User.all.each do |user|
