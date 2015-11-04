@@ -81,6 +81,21 @@ when "set-external-id"
                                              { :multiple => true } )
     end
 
+    if puavo_users.empty?
+      (user.given_names.split(" ") +
+       [user.first_name,
+        user.last_name]).uniq.permutation(2).each do |names|
+        puavo_user = PuavoRest::User.by_attrs({ :first_name => names[0],
+                                                :last_name => names[1] },
+                                              { :multiple => true } )
+        unless Array(puavo_user).empty?
+          break
+        end
+      end
+    end
+
+
+    if puavo_users.empty?
       next
     end
 
