@@ -55,7 +55,7 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
   end
 
   if user.schools.empty?
-    STDERR.puts "Cannot find school for user: #{ user }"
+    STDERR.puts "Cannot find school (#{ user.school_external_ids }) for user: #{ user }"
   else
     users.push(user)
   end
