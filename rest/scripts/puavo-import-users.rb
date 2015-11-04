@@ -76,6 +76,11 @@ when "set-external-id"
                                            { :multiple => true } )
 
     if puavo_users.empty?
+      puavo_users = PuavoRest::User.by_attrs({ :first_name => user.given_names,
+                                               :last_name => user.first_name },
+                                             { :multiple => true } )
+    end
+
       next
     end
 
