@@ -64,6 +64,8 @@ module PuavoImport
 
     def diff_objects(object_a, object_b, attributes)
 
+      different_attributes = []
+
       attr_name_lenght = attributes.max{|a,b| a.length <=> b.length }.length + 2
       spacing = 50
 
@@ -75,6 +77,7 @@ module PuavoImport
         b_value = object_b.send(attr)
 
         if a_value != b_value
+          different_attributes.push(attr)
           a_value = brown(a_value)
           b_value = red(b_value)
         else
@@ -89,6 +92,8 @@ module PuavoImport
       lines.each do |l|
         puts l
       end
+
+      return different_attributes
     end
 
     def colorize(text, color_code)

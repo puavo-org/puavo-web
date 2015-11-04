@@ -99,20 +99,58 @@ when "set-external-id"
       next
     end
 
-    diff_objects(puavo_user, user, ["first_name",
-                                    "last_name",
-                                    "school_name",
-                                    "group_name",
-                                    "external_id"] )
+    puavo_user = puavo_users.first
 
+    if puavo_users.length > 1
+      user_count = 0
 
-    response = ask("Update external_id (#{ user.external_id }) to Puavo (Y/N)?",
-                   :default => "N")
+      puts "\nImport user:"
+      puts "first name: #{ user.first_name }"
+      puts "given names: #{ user.given_names }"
+      puts "last_name: #{ user.last_name }"
+      puts "schools: " + user.school_name
+      puts "group: #{ user.group_name }" if user.group
+      puts
+
+      puavo_users.each do |u|
+        groups = u.groups.map{ |g| "'#{ g.name}'" }.join(", ")
+        puts "#{ user_count } #{ u.first_name } #{ u.last_name }, #{ u.username }, #{ u.school.name }, #{ u.group_name }, last login: xxxxx"
+        user_count += 1
+      end
+
+      while(true) do
+        response = ask("Choose the right user")
+
+        number = response.to_i
+
+        if puavo_users[number]
+          puavo_user = puavo_users[number]
+          break
+        end
+      end
+
+    end
+
+    different_attributes = diff_objects(puavo_user, user, ["first_name",
+                                                           "last_name",
+                                                           "school_name",
+                                                           "group_name",
+                                                           "external_id"] )
+
+    response = "Y"
+
+    if different_attributes.length > 1
+      response = ask("Update external_id (#{ user.external_id }) to Puavo (Y/N)?",
+                     :default => "N")
+    end
+
     if response == "Y"
       puts "Update external id"
       puavo_user.external_id = user.external_id
       # puavo_user.external_data = FIXME
       puavo_user.save!
+    else
+      puts "Skip user: " + user.to_s
     end
 
     puts "\n" + "-" * 100 + "\n\n"
