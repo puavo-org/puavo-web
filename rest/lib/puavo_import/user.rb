@@ -32,8 +32,6 @@ module PuavoImport
         self.send("#{ k }=", args[k])
       end
 
-      @school_external_ids = @school_external_ids.split(",") unless  @school_external_ids.nil?
-
       raise(UserRoleError, "Invalid role of user. --user-role is required param") if @role.nil?
 
       case @role

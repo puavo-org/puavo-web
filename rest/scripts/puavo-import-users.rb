@@ -18,6 +18,10 @@ options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts,
   opts.on("--teacher-group-suffix GROUP", "Group suffix for Teacher") do |g|
     options[:teacher_group_suffix] = g
   end
+
+  opts.on("--skip-schools x,y,z", Array) do |skip_schools|
+    options[:skip_schools] = skip_schools
+  end
 end
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
@@ -35,6 +39,14 @@ users = []
 CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";" ) do |row|
   user_data = encode_text(row, options[:encoding])
 
+  school_external_ids = user_data[8].nil? ? [] : Array(user_data[8].split(","))
+
+  school_external_ids.delete_if do |school_id|
+    options[:skip_schools].include?(school_id.to_s)
+  end if options[:skip_schools]
+
+  next if school_external_ids.empty?
+
   begin
     user = PuavoImport::User.new(:db_id => user_data[0],
                                  :external_id => user_data[1],
@@ -46,7 +58,7 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
                                  :preferred_language => user_data[7],
                                  :group_external_id => user_data[10],
                                  :username => user_data[9],
-                                 :school_external_ids => user_data[8], # FIXME: multiple value for teacher?
+                                 :school_external_ids => school_external_ids, # FIXME: multiple value for teacher?
                                  :role => options[:user_role],
                                  :teacher_group_suffix => options[:teacher_group_suffix])
   rescue PuavoImport::UserGroupError => e
