@@ -63,7 +63,7 @@ module PuavoImport
     end
 
     def import_school_names
-      @schools.map{ |s| s.name }.join(", ")
+      schools.map{ |s| s.name }.join(", ")
     end
 
     def to_s
