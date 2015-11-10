@@ -116,6 +116,7 @@ class Cell extends PureComponent {
                         <form className="pure-form">
                             <CellValueInput
                                 columnType={this.props.columnType}
+                                initialValue={this.getValue()}
                                 value={this.state.customValue}
                                 onChange={this.changeCustomValue.bind(this)}
                                 onSelect={this.setCustomValue.bind(this)}

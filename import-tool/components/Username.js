@@ -25,14 +25,32 @@ Username = connect(state => ({schoolId: R.path(["defaultSchool", "id"], state)})
 
 
 class UsernameInput extends PureComponent {
+
+    constructor(props) {
+        super(props);
+        this.state = {changed: false};
+    }
+
+    onInputChange(e) {
+        this.setState({changed: true});
+        this.props.onChange(e);
+    }
+
     render() {
         const generate = this.props.value === GENERATE_USERNAME;
+        let value = this.props.value;
+
+        // Inject default value only when has not made any changes to the input
+        if (!value && !this.state.changed) {
+            value = this.props.initialValue;
+        }
 
         return (
             <span>
                 <input
                     type="text"
-                    onChange={this.props.onChange}
+                    value={value}
+                    onChange={this.onInputChange.bind(this)}
                     disabled={generate} />
                 <label style={{fontSize: "small"}}>
                     <input
@@ -62,6 +80,7 @@ UsernameInput.propTypes = {
     value: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
     canGenerateUsername: React.PropTypes.bool.isRequired,
+    initialValue: React.PropTypes.string,
 };
 
 
