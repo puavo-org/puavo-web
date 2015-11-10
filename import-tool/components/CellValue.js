@@ -14,14 +14,37 @@ import {Username, UsernameInput} from "./Username";
 
 export class CellValueInput extends PureComponent {
 
+    constructor(props) {
+        super(props);
+        this.state = {changed: false};
+    }
+
     componentDidMount() {
         if (this.refs.input) {
             this.refs.input.select();
         }
     }
 
+    onChange(e) {
+        this.setState({changed: true});
+        this.props.onChange(e);
+    }
+
     render() {
-        const {columnType, onSelect, ...passProps} = this.props;
+        const {
+            columnType,
+            onSelect,
+            onChange,
+            initialValue,
+            value,
+            ...otherProps,
+        } = this.props;
+
+        const passProps = {
+            ...otherProps,
+            value: !value && !this.state.changed ? initialValue : value,
+            onChange: this.onChange.bind(this),
+        };
 
         switch(columnType.id) {
         case ColumnTypes.username.id:
@@ -53,6 +76,7 @@ CellValueInput.propTypes = {
     onChange: React.PropTypes.func.isRequired,
     onSelect: React.PropTypes.func.isRequired,
     columnType: ReactColumnType.isRequired,
+    initialValue: React.PropTypes.string,
 };
 
 
