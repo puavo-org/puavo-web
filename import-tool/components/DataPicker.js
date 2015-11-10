@@ -19,6 +19,23 @@ James, Howlett, wolverine@example.com
 `.trim();
 
 
+// http://stackoverflow.com/questions/3308292/inserting-text-at-cursor-in-a-textarea-with-javascript/3308539#3308539
+function insertTextAtCursor(el, text) {
+    var val = el.value, endIndex, range;
+    if (typeof el.selectionStart != "undefined" && typeof el.selectionEnd != "undefined") {
+        endIndex = el.selectionEnd;
+        el.value = val.slice(0, el.selectionStart) + text + val.slice(endIndex);
+        el.selectionStart = el.selectionEnd = endIndex + text.length;
+    } else if (typeof document.selection != "undefined" && typeof document.selection.createRange != "undefined") {
+        el.focus();
+        range = document.selection.createRange();
+        range.collapse(false);
+        range.text = text;
+        range.select();
+    }
+}
+
+
 class DataPicker extends PureComponent {
 
     constructor(props) {
@@ -44,11 +61,20 @@ class DataPicker extends PureComponent {
         reader.readAsText(file);
     }
 
+    onTab(e) {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            insertTextAtCursor(this.refs.textarea, "	");
+        }
+    }
+
     render() {
         return (
             <form className="ImportTool-DataPicker pure-form" >
                 <textarea
+                    ref="textarea"
                     className="ImportTool-textarea"
+                    onKeyDown={this.onTab.bind(this)}
                     style={{width: "100%", height: 300}}
                     placeholder={demoData}
                     value={this.state.importString}
