@@ -12,6 +12,7 @@ import {
     SET_CUSTOM_VALUE,
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
+    SET_USER_DATA,
 
     CREATE_USER,
     UPDATE_SCHOOL,
@@ -64,9 +65,49 @@ export function setCustomValue(rowIndex, columnIndex, value) {
 }
 
 export function fillColumn(columnIndex, value, override) {
-    return {
-        type: FILL_COLUMN,
-        columnIndex, value, override,
+    return (dispatch, getState) => {
+        dispatch({
+            type: FILL_COLUMN,
+            columnIndex, value, override,
+        });
+
+        dispatch(populateUsersCache());
+    };
+}
+
+function populateUsersCache() {
+    return async (dispatch, getState) => {
+        const {columns, rows} = getState();
+        const usernameIndex = R.head(findIndices(ColumnTypes.username.id, columns));
+        if (usernameIndex == null) return;
+
+        const usernames = rows.map(r => getCellValue(r[usernameIndex]));
+
+        for (let username of usernames) {
+            const {userCache} = getState();
+            if (R.path([username, "state"], userCache) !== "ok") {
+                dispatch({
+                    username,
+                    type: SET_USER_DATA,
+                    state: "fetching",
+                });
+                try {
+                    dispatch({
+                        type: SET_USER_DATA,
+                        username,
+                        state: "ok",
+                        userData: await Api.fetchUserData(username),
+                    });
+                } catch (error) {
+                    dispatch({
+                        username,
+                        type: SET_USER_DATA,
+                        state: "error",
+                    });
+                }
+
+            }
+        }
     };
 }
 

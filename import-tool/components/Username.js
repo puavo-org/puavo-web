@@ -13,7 +13,10 @@ class Username extends PureComponent {
     render() {
         const {schoolId, username} = this.props;
         return (
-            <a href={`/users/${schoolId}/username_redirect/${username}`}>{username}</a>
+            <span>
+                <a href={`/users/${schoolId}/username_redirect/${username}`}>{username}</a>
+                {this.props.state}
+            </span>
         );
     }
 }
@@ -21,7 +24,12 @@ Username.propTypes = {
     username: React.PropTypes.string.isRequired,
     schoolId: React.PropTypes.number.isRequired,
 };
-Username = connect(state => ({schoolId: R.path(["defaultSchool", "id"], state)}))(Username);
+Username = connect((state, props) => {
+    return {
+        state: R.path(["userCache", props.username, "state"], state),
+        schoolId: R.path(["defaultSchool", "id"], state),
+    };
+})(Username);
 
 
 class UsernameInput extends PureComponent {

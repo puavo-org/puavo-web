@@ -72,3 +72,7 @@ export function createPasswordResetIntent(schoolId, userIds) {
     return request("POST", `/v3/schools/${schoolId}/user_lists`, {ids: userIds});
 }
 
+export function fetchUserData(username) {
+    return request("GET", `/v3/users/${username}`);
+}
+
