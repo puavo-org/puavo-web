@@ -2,6 +2,20 @@
 module PuavoImport
   module Helpers
 
+    @@log_files = {}
+
+
+    def log_to_file(file)
+      return @@log_files[file] if @@log_files[file]
+
+      filename = Time.now.strftime(file + "-%Y-%m-%d-%H-%M-%S")
+
+      @@log_files[file] = {
+        :filename => filename,
+        :file => File.new(filename,  "w+")
+      }
+    end
+
     def cmd_options(args = {}, &block)
       options = {
         :encoding => 'ISO8859-1',

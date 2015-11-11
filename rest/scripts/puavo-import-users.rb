@@ -129,6 +129,7 @@ when "set-external-id"
 
     if puavo_users.empty?
       user_not_found_by_name += 1
+      log_to_file("user_not_found_by_name")[:file].puts(user.to_s)
       next
     end
 
@@ -136,6 +137,7 @@ when "set-external-id"
 
     if puavo_users.length > 1
       found_many_users_by_name += 1
+      log_to_file("found_many_users_by_name")[:file].puts user.to_s
       user_count = 0
 
       next unless options[:not_skip_duplicate_user]
@@ -195,6 +197,7 @@ when "set-external-id"
 
     if response == "N"
       not_update_external_id += 1
+      log_to_file("not_update_external_id")[:file].puts user.to_s
       next
     end
 
@@ -257,8 +260,8 @@ end
 puts "correct_csv_users: #{ correct_csv_users }"
 puts "invalid_school: #{ invalid_school }"
 puts "invalid_group: #{ invalid_group }"
-puts "user_not_found_by_name: #{ user_not_found_by_name }"
-puts "found_many_users_by_name: #{ found_many_users_by_name }"
+puts "user_not_found_by_name: #{ user_not_found_by_name } file: #{ log_to_file("user_not_found_by_name")[:filename] }"
+puts "found_many_users_by_name: #{ found_many_users_by_name } file: #{ log_to_file("found_many_users_by_name")[:filename] }"
 puts "update_external_id: #{ update_external_id }"
-puts "not_update_external_id: #{ not_update_external_id }"
+puts "not_update_external_id: #{ not_update_external_id } file: #{ log_to_file("not_update_external_id")[:filename] }"
 
