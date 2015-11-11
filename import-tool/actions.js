@@ -1,6 +1,7 @@
 import Papa from "papaparse";
 import R from "ramda";
 import Bluebird from "bluebird";
+import shuffle from "lodash/collection/shuffle";
 
 import {
     ADD_COLUMN,
@@ -12,6 +13,7 @@ import {
     SET_CUSTOM_VALUE,
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
+    SET_USER_DATA,
 
     CREATE_USER,
     UPDATE_SCHOOL,
@@ -57,16 +59,77 @@ export function changeColumnType(columnIndex, typeId) {
 }
 
 export function setCustomValue(rowIndex, columnIndex, value) {
-    return {
-        type: SET_CUSTOM_VALUE,
-        rowIndex, columnIndex, value,
+    return (dispatch) => {
+        dispatch({
+            type: SET_CUSTOM_VALUE,
+            rowIndex, columnIndex, value,
+        });
+
+        dispatch(populateUsersCache());
     };
 }
 
 export function fillColumn(columnIndex, value, override) {
-    return {
-        type: FILL_COLUMN,
-        columnIndex, value, override,
+    return (dispatch, getState) => {
+        dispatch({
+            type: FILL_COLUMN,
+            columnIndex, value, override,
+        });
+
+        dispatch(populateUsersCache());
+    };
+}
+
+const isNotFoundError = (e) => R.pathEq(["res", "status"], 404, e);
+
+function populateUsersCache() {
+    return (dispatch, getState) => {
+        const {columns, rows} = getState();
+        const usernameIndex = R.head(findIndices(ColumnTypes.username.id, columns));
+        if (usernameIndex == null) return;
+
+        const usernames = R.uniq(rows.map(r => getCellValue(r[usernameIndex]))
+            .filter(Boolean)
+            .filter(R.trim));
+
+        // Randomize order for fun. It was already almost random due to map
+        // Bluebird.map implementation but real random looks better.
+        return Bluebird.map(shuffle(usernames), async (username) => {
+
+            const {userCache} = getState();
+            if (userCache[username]) return;
+
+            dispatch({
+                username,
+                type: SET_USER_DATA,
+                state: "fetching",
+            });
+
+            try {
+                dispatch({
+                    type: SET_USER_DATA,
+                    username,
+                    state: "ok",
+                    userData: await Api.fetchUserData(username, {
+                        attributes: ["username", "first_name", "last_name", "schools", "groups"],
+                    }),
+                });
+            } catch (error) {
+                let state = "error";
+                if (isNotFoundError(error)) {
+                    state = "notfound";
+                } else {
+                    console.error("Unkown user fetch error", error);
+                }
+                dispatch({
+                    username,
+                    type: SET_USER_DATA,
+                    state,
+                });
+            }
+
+        }, {concurrency: 3});
+
     };
 }
 

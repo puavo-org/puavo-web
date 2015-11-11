@@ -15,6 +15,7 @@ import {
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
     SET_ROW_STATUS,
+    SET_USER_DATA,
     GENERATE_USERNAME,
 } from "./constants";
 import ColumnTypes from "./ColumnTypes";
@@ -26,6 +27,7 @@ const initialState = deepFreeze({
     defaultSchool: null,
     legacyRoles: [],
     autoOpenColumnEditor: null,
+    userCache: {},
     columns: [
         ColumnTypes.first_name,
         ColumnTypes.last_name,
@@ -88,6 +90,8 @@ function reducer(state=initialState, action) {
 
             return updateIn([action.columnIndex, "customValue"], value, row);
         })}, state);
+    case SET_USER_DATA:
+        return updateIn(["userCache", action.username], R.always(R.pick(["state", "userData"], action)), state);
     default:
         return state;
     }

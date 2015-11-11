@@ -31,6 +31,9 @@ fi:
     begin: Aloita
     select_file: Valitse tiedosto
     add_names_to_generate_username: Lisää etunimi ja sukunimi ensin
+    user_not_found: Tätä käyttäjätunnus on vapaa
+    user_exists: Tämä tunnus on jo olemassa
+    waiting_user_data: Odotetaan käyttäjätietoja
     roles:
       admin: Ylläpitäjä
       parent: Vanhempi

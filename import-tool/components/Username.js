@@ -2,26 +2,72 @@
 import React from "react";
 import R from "ramda";
 import {connect} from "react-redux";
+import {Cond, Clause, Default} from "react-cond";
 
 import t from "../i18n";
 import {GENERATE_USERNAME} from "../constants";
 import ColumnTypes from "../ColumnTypes";
 
 import PureComponent from "./PureComponent";
+import StatusIcon from "./StatusIcon";
+
+const SimpleIcon = ({children}) => <span style={{marginLeft: 3, fontWeight: "bold"}}>{children}</span>;
 
 class Username extends PureComponent {
     render() {
-        const {schoolId, username} = this.props;
+        const {username, userData} = this.props;
+        const school = R.path(["userData", "schools", 0], this.props);
+
         return (
-            <a href={`/users/${schoolId}/username_redirect/${username}`}>{username}</a>
+            <span>
+                {school &&
+                <a title={`${userData.first_name} ${userData.last_name}`} href={`/users/${school.id}/users/${userData.id}`}>{username}</a>}
+
+                {!this.props.userData && username}
+
+                <Cond value={this.props.userDataState}>
+                    <Clause test={R.equals("fetching")}>
+                        <StatusIcon status="working" />
+                    </Clause>
+                    <Clause test={R.equals("error")}>
+                        <SimpleIcon title="Error while loading user data. Check the logs">ERR</SimpleIcon>
+                    </Clause>
+                    <Clause test={R.equals("notfound")}>
+                        <StatusIcon status="warning" title={t("user_not_found")} />
+                    </Clause>
+                    <Clause test={R.equals("ok")}>
+                        <StatusIcon status="ok" title={t("user_exists")} />
+                    </Clause>
+                    <Clause test={_ => !!username}>
+                        <SimpleIcon title={t("waiting_user_data")}>?</SimpleIcon>
+                    </Clause>
+                    <Default>
+                        <span></span>
+                    </Default>
+                </Cond>
+
+                {school &&
+                <span style={{fontSize: "8pt"}}>
+                    <br />
+                    {school.name} ({school.groups.map(R.prop("name")).join(", ")})
+                </span>}
+
+
+            </span>
         );
     }
 }
 Username.propTypes = {
     username: React.PropTypes.string.isRequired,
-    schoolId: React.PropTypes.number.isRequired,
+    userData: React.PropTypes.object,
+    userDataState: React.PropTypes.string,
 };
-Username = connect(state => ({schoolId: R.path(["defaultSchool", "id"], state)}))(Username);
+Username = connect((state, props) => {
+    return {
+        userDataState: R.path(["userCache", props.username, "state"], state),
+        userData: R.path(["userCache", props.username, "userData"], state),
+    };
+})(Username);
 
 
 class UsernameInput extends PureComponent {

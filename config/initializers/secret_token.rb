@@ -1,0 +1,1 @@
+/etc/puavo-web/secret_token.rb
