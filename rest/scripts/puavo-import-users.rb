@@ -22,6 +22,10 @@ options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts,
   opts.on("--skip-schools x,y,z", Array) do |skip_schools|
     options[:skip_schools] = skip_schools
   end
+
+  opts.on("--matches x,y,x", Array) do |matches|
+    options[:matches] = matches
+  end
 end
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
@@ -35,6 +39,14 @@ LdapModel.setup(
 )
 
 users = []
+
+invalid_school = 0
+invalid_group = 0
+user_not_found_by_name = 0
+found_many_users_by_name = 0
+correct_csv_users = 0
+update_external_id = 0
+not_update_external_id = 0
 
 CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";" ) do |row|
   user_data = encode_text(row, options[:encoding])
@@ -63,14 +75,18 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
                                  :teacher_group_suffix => options[:teacher_group_suffix])
   rescue PuavoImport::UserGroupError => e
     puts e.to_s
+    invalid_group += 1
     next
   end
 
   if user.schools.empty?
-    STDERR.puts "Cannot find school (#{ user.school_external_ids }) for user: #{ user }"
-  else
-    users.push(user)
+    puts "Cannot find school (#{ user.school_external_ids }) for user: #{ user }"
+    invalid_school += 1
+    next
   end
+
+  correct_csv_users += 1
+  users.push(user)
 
 end
 
@@ -81,7 +97,11 @@ when "set-external-id"
 
   users.each do |user|
 
-    next if PuavoRest::User.by_attr(:external_id, user.external_id)
+    if PuavoRest::User.by_attr(:external_id, user.external_id)
+      next
+    end
+
+    puts "\n" + "-" * 100 + "\n\n"
 
     puavo_users = PuavoRest::User.by_attrs({ :first_name => user.first_name,
                                              :last_name => user.last_name },
@@ -108,13 +128,17 @@ when "set-external-id"
 
 
     if puavo_users.empty?
+      user_not_found_by_name += 1
       next
     end
 
     puavo_user = puavo_users.first
 
     if puavo_users.length > 1
+      found_many_users_by_name += 1
       user_count = 0
+
+      next unless options[:not_skip_duplicate_user]
 
       puts "\nImport user:"
       puts "first name: #{ user.first_name }"
@@ -149,23 +173,37 @@ when "set-external-id"
                                                            "import_group_name",
                                                            "external_id"] )
 
-    response = "Y"
+    response = "N"
 
-    if different_attributes.length > 1
-      response = ask("Update external_id (#{ user.external_id }) to Puavo (Y/N)?",
-                     :default => "N")
+    if different_attributes.length == 1
+      response = "Y"
     end
 
-    if response == "Y"
-      puts "Update external id"
-      puavo_user.external_id = user.external_id
-      # puavo_user.external_data = FIXME
-      puavo_user.save!
-    else
-      puts "Skip user: " + user.to_s
+    if options[:matches] && options[:matches].include?("school")
+      if response == "N" && user.import_school_names == puavo_user.import_school_names
+        response = "Y"
+      end
+    end
+    if options[:matches] && options[:matches].include?("group_level")
+      if response == "N" && user.import_group_name.to_i == puavo_user.import_group_name.to_i
+        response = "Y"
+      end
     end
 
-    puts "\n" + "-" * 100 + "\n\n"
+    #response = ask("Update external_id (#{ user.external_id }) to Puavo (Y/N)?",
+    #               :default => "N")
+
+    if response == "N"
+      not_update_external_id += 1
+      next
+    end
+
+    puts "Update external id"
+    puavo_user.external_id = user.external_id
+    # puavo_user.external_data = FIXME
+    #uavo_user.save!
+    update_external_id += 1
+
   end
 
 when "import"
@@ -215,3 +253,12 @@ when "import"
 
   end
 end
+
+puts "correct_csv_users: #{ correct_csv_users }"
+puts "invalid_school: #{ invalid_school }"
+puts "invalid_group: #{ invalid_group }"
+puts "user_not_found_by_name: #{ user_not_found_by_name }"
+puts "found_many_users_by_name: #{ found_many_users_by_name }"
+puts "update_external_id: #{ update_external_id }"
+puts "not_update_external_id: #{ not_update_external_id }"
+
