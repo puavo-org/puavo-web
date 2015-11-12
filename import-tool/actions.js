@@ -110,9 +110,7 @@ function populateUsersCache() {
                     type: SET_USER_DATA,
                     username,
                     state: "ok",
-                    userData: await Api.fetchUserData(username, {
-                        attributes: ["username", "first_name", "last_name", "schools", "groups"],
-                    }),
+                    userData: await Api.fetchUserData(username),
                 });
             } catch (error) {
                 let state = "error";
