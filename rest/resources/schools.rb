@@ -34,6 +34,11 @@ class School < LdapModel
   ldap_map :puavoKeyboardVariant, :keyboard_variant
   ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
 
+  # Internal attributes, do not use! These are automatically set when
+  # User#school_dns is updated
+  ldap_map :member, :member_dns, LdapConverters::ArrayValue
+  ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
+
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
   ldap_map :puavoDeviceOffHour,          :daytime_end_hour

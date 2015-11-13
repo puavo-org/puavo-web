@@ -206,6 +206,30 @@ class User < LdapModel
 
   end
 
+  after :update do
+    current_schools = schools
+
+    # XXX: Also search for any broken relations. In ideal world this would not
+    # necessary but as there are no proper constraints in LDAP there can be
+    # stale relations. This fixes those when user model is saved but it also
+    # makes saving slower.
+    current_schools += School.by_attr(:member_dns, dn, :multiple => true)
+    current_schools += School.by_attr(:member_usernames, username, :multiple => true)
+    current_schools = current_schools.uniq{|s| s.dn}
+
+    current_schools.each do |s|
+      if school_dns.include?(s.dn)
+        add_to_school!(s)
+      else
+        remove_from_school!(s)
+      end
+    end
+  end
+
+  after :create do
+    schools.each{|s| add_to_school!(s)}
+  end
+
   def home_directory=(value)
     add_validation_error(:home_directory, :read_only, "home_directory is read only")
   end
@@ -465,6 +489,35 @@ class User < LdapModel
   end
 
   private
+
+  # Add this user to the given school. Private method. This is used on {#save!}
+  # when `school_dns` is manipulated. See {#remove_from_school!}
+  #
+  # @param school [School]
+  def add_to_school!(school)
+    if !school.member_usernames.include?(username)
+      school.add(:member_usernames, username)
+    end
+
+    if !school.member_dns.include?(dn)
+      school.add(:member_dns, dn)
+    end
+
+    school.save!
+  end
+
+  # @param school [School] Remove this user from the given school
+  def remove_from_school!(school)
+    if school.member_usernames.include?(username)
+      school.remove(:member_usernames, username)
+    end
+
+    if school.member_dns.include?(dn)
+      school.remove(:member_dns, dn)
+    end
+    school.save!
+  end
+
 
   # Write internal samba attributes. Implementation is based on the puavo-web
   # code is not actually tested on production systems
