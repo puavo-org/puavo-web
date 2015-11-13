@@ -195,6 +195,7 @@ describe LdapModel do
       m = GenericHook.new({:bar => "val"})
       LdapModel.stub(:connection, MockConnection.new) do
         m.save! # create
+        m.bar = "lol"
         m.save! # update
       end
       assert_equal [:generic_hook_called, :added, :generic_hook_called, :saved], $events

@@ -327,12 +327,15 @@ class LdapModel
   # Save changes to LDAP
   def save!
     return create! if !@existing
+    res = nil
 
     validate!("Updating")
 
     run_hook :before, :update
     @before_save.each{|h| h.call}
-    res = self.class.ldap_op(:modify, dn, get_mods)
+    if dirty?
+      res = self.class.ldap_op(:modify, dn, get_mods)
+    end
     @after_save.each{|h| h.call}
     reset_pending
     run_hook :after, :update
