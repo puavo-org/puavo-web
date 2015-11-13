@@ -32,7 +32,7 @@ en:
     select_file: Select file
     add_names_to_generate_username: Add firstname and lastname to generate username
     user_not_found: This username has not been used yet
-    user_exists: This user already exists
+    user_exists: This user already exists. You may still use the update feature on it.
     waiting_user_data: Waiting for user data
     roles:
       admin: Administrator

@@ -33,10 +33,10 @@ class Username extends PureComponent {
                         <SimpleIcon title="Error while loading user data. Check the logs">ERR</SimpleIcon>
                     </Clause>
                     <Clause test={R.equals("notfound")}>
-                        <StatusIcon status="warning" title={t("user_not_found")} />
+                        <StatusIcon status="ok" title={t("user_not_found")} />
                     </Clause>
                     <Clause test={R.equals("ok")}>
-                        <StatusIcon status="ok" title={t("user_exists")} />
+                        <StatusIcon status="error" title={t("user_exists")} />
                     </Clause>
                     <Clause test={_ => !!username}>
                         <SimpleIcon title={t("waiting_user_data")}>?</SimpleIcon>
