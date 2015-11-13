@@ -233,6 +233,13 @@ class LdapModel
     from_ldap_hash(res) if res
   end
 
+  # Get new instance of this model from LDAP
+  #
+  # @return {LdapModel}
+  def refresh
+    self.class.by_dn(dn)
+  end
+
   # (see .by_dn)
   #
   # Raises {NotFound} if no models were found
