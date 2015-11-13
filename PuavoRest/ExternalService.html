@@ -1,0 +1,646 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: PuavoRest::ExternalService
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!PuavoRest/ExternalService.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (E)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../PuavoRest.html" title="PuavoRest (module)">PuavoRest</a></span></span>
+     &raquo; 
+    <span class="title">ExternalService</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: PuavoRest::ExternalService
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName"><span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next"><span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></li>
+          
+            <li class="next">PuavoRest::ExternalService</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+      <dt class="r2">Includes:</dt>
+      <dd class="r2"><span class='object_link'><a href="LocalStore.html" title="PuavoRest::LocalStore (module)">LocalStore</a></span></dd>
+      
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">resources/sso.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+
+  <h2>Constant Summary</h2>
+  
+
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants inherited
+     from <span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../LdapModel.html#ESCAPES-constant" title="LdapModel::ESCAPES (constant)">LdapModel::ESCAPES</a></span>, <span class='object_link'><a href="../LdapModel.html#ESCAPE_RE-constant" title="LdapModel::ESCAPE_RE (constant)">LdapModel::ESCAPE_RE</a></span>, <span class='object_link'><a href="../LdapModel.html#KRB_LOCK-constant" title="LdapModel::KRB_LOCK (constant)">LdapModel::KRB_LOCK</a></span>, <span class='object_link'><a href="../LdapModel.html#PROF-constant" title="LdapModel::PROF (constant)">LdapModel::PROF</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../LdapModel.html#ldap_attr_store-instance_method" title="LdapModel#ldap_attr_store (method)">#ldap_attr_store</a></span>, <span class='object_link'><a href="../LdapModel.html#serialize_attrs-instance_method" title="LdapModel#serialize_attrs (method)">#serialize_attrs</a></span></p>
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#by_domain-class_method" title="by_domain (class method)">+ (Object) <strong>by_domain</strong>(domain) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#by_url-class_method" title="by_url (class method)">+ (Object) <strong>by_url</strong>(url) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#ldap_base-class_method" title="ldap_base (class method)">+ (Object) <strong>ldap_base</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#secret_by_share_once_token-class_method" title="secret_by_share_once_token (class method)">+ (Object) <strong>secret_by_share_once_token</strong>(token) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#generate_login_url-instance_method" title="#generate_login_url (instance method)">- (Object) <strong>generate_login_url</strong>(user, return_to_url) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#instance_key-instance_method" title="#instance_key (instance method)">- (Object) <strong>instance_key</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#share_once_token%3D-instance_method" title="#share_once_token= (instance method)">- (Object) <strong>share_once_token=</strong>(token) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="LocalStore.html" title="PuavoRest::LocalStore (module)">LocalStore</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LocalStore.html#close_connection-class_method" title="PuavoRest::LocalStore.close_connection (method)">close_connection</a></span>, <span class='object_link'><a href="LocalStore.html#included-class_method" title="PuavoRest::LocalStore.included (method)">included</a></span>, <span class='object_link'><a href="LocalStore.html#local_store-instance_method" title="PuavoRest::LocalStore#local_store (method)">#local_store</a></span>, <span class='object_link'><a href="LocalStore.html#local_store_del-instance_method" title="PuavoRest::LocalStore#local_store_del (method)">#local_store_del</a></span>, <span class='object_link'><a href="LocalStore.html#local_store_expire-instance_method" title="PuavoRest::LocalStore#local_store_expire (method)">#local_store_expire</a></span>, <span class='object_link'><a href="LocalStore.html#local_store_get-instance_method" title="PuavoRest::LocalStore#local_store_get (method)">#local_store_get</a></span>, <span class='object_link'><a href="LocalStore.html#local_store_set-instance_method" title="PuavoRest::LocalStore#local_store_set (method)">#local_store_set</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../LdapModel.html#%5B%5D-instance_method" title="LdapModel#[] (method)">#[]</a></span>, <span class='object_link'><a href="../LdapModel.html#%5B%5D%3D-instance_method" title="LdapModel#[]= (method)">#[]=</a></span>, <span class='object_link'><a href="../LdapModel.html#_class_store-class_method" title="LdapModel._class_store (method)">_class_store</a></span>, <span class='object_link'><a href="../LdapModel.html#add-instance_method" title="LdapModel#add (method)">#add</a></span>, <span class='object_link'><a href="../LdapModel.html#add_validation_error-instance_method" title="LdapModel#add_validation_error (method)">#add_validation_error</a></span>, <span class='object_link'><a href="../LdapModel.html#after-class_method" title="LdapModel.after (method)">after</a></span>, <span class='object_link'><a href="../LdapModel.html#all-class_method" title="LdapModel.all (method)">all</a></span>, <span class='object_link'><a href="../LdapModel.html#as_json-instance_method" title="LdapModel#as_json (method)">#as_json</a></span>, <span class='object_link'><a href="../LdapModel.html#assert_validation-instance_method" title="LdapModel#assert_validation (method)">#assert_validation</a></span>, <span class='object_link'><a href="../LdapModel.html#base_filter-class_method" title="LdapModel.base_filter (method)">base_filter</a></span>, <span class='object_link'><a href="../LdapModel.html#before-class_method" title="LdapModel.before (method)">before</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attr-class_method" title="LdapModel.by_attr (method)">by_attr</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attr%21-class_method" title="LdapModel.by_attr! (method)">by_attr!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attrs-class_method" title="LdapModel.by_attrs (method)">by_attrs</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attrs%21-class_method" title="LdapModel.by_attrs! (method)">by_attrs!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_dn-class_method" title="LdapModel.by_dn (method)">by_dn</a></span>, <span class='object_link'><a href="../LdapModel.html#by_dn%21-class_method" title="LdapModel.by_dn! (method)">by_dn!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_dn_array-class_method" title="LdapModel.by_dn_array (method)">by_dn_array</a></span>, <span class='object_link'><a href="../LdapModel.html#by_id-class_method" title="LdapModel.by_id (method)">by_id</a></span>, <span class='object_link'><a href="../LdapModel.html#by_id%21-class_method" title="LdapModel.by_id! (method)">by_id!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_ldap_attr-class_method" title="LdapModel.by_ldap_attr (method)">by_ldap_attr</a></span>, <span class='object_link'><a href="../LdapModel.html#by_ldap_attr%21-class_method" title="LdapModel.by_ldap_attr! (method)">by_ldap_attr!</a></span>, <span class='object_link'><a href="../LdapModel.html#callable_from_instance-class_method" title="LdapModel.callable_from_instance (method)">callable_from_instance</a></span>, <span class='object_link'><a href="../LdapModel.html#changed%3F-instance_method" title="LdapModel#changed? (method)">#changed?</a></span>, <span class='object_link'><a href="../LdapModel.html#class_store-class_method" title="LdapModel.class_store (method)">class_store</a></span>, <span class='object_link'><a href="../LdapModel.html#clear_setup-class_method" title="LdapModel.clear_setup (method)">clear_setup</a></span>, <span class='object_link'><a href="../LdapModel.html#computed_attr-class_method" title="LdapModel.computed_attr (method)">computed_attr</a></span>, <span class='object_link'><a href="../LdapModel.html#connection-class_method" title="LdapModel.connection (method)">connection</a></span>, <span class='object_link'><a href="../LdapModel.html#create%21-instance_method" title="LdapModel#create! (method)">#create!</a></span>, <span class='object_link'><a href="../LdapModel.html#create_connection-class_method" title="LdapModel.create_connection (method)">create_connection</a></span>, <span class='object_link'><a href="../LdapModel.html#create_filter_lambda-class_method" title="LdapModel.create_filter_lambda (method)">create_filter_lambda</a></span>, <span class='object_link'><a href="../LdapModel.html#dirty%3F-instance_method" title="LdapModel#dirty? (method)">#dirty?</a></span>, <span class='object_link'><a href="../LdapModel.html#dn_bind-class_method" title="LdapModel.dn_bind (method)">dn_bind</a></span>, <span class='object_link'><a href="../LdapModel.html#empty%3F-instance_method" title="LdapModel#empty? (method)">#empty?</a></span>, <span class='object_link'><a href="../LdapModel.html#escape-class_method" title="LdapModel.escape (method)">escape</a></span>, <span class='object_link'><a href="../LdapModel.html#filter-class_method" title="LdapModel.filter (method)">filter</a></span>, <span class='object_link'><a href="../LdapModel.html#from_ldap_hash-class_method" title="LdapModel.from_ldap_hash (method)">from_ldap_hash</a></span>, <span class='object_link'><a href="../LdapModel.html#get_own-instance_method" title="LdapModel#get_own (method)">#get_own</a></span>, <span class='object_link'><a href="../LdapModel.html#get_raw-instance_method" title="LdapModel#get_raw (method)">#get_raw</a></span>, <span class='object_link'><a href="../LdapModel.html#inherited-class_method" title="LdapModel.inherited (method)">inherited</a></span>, <span class='object_link'><a href="../LdapModel.html#initialize-instance_method" title="LdapModel#initialize (method)">#initialize</a></span>, <span class='object_link'><a href="../LdapModel.html#is_dn-class_method" title="LdapModel.is_dn (method)">is_dn</a></span>, <span class='object_link'><a href="../LdapModel.html#is_not_found%3F-class_method" title="LdapModel.is_not_found? (method)">is_not_found?</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_attrs-class_method" title="LdapModel.ldap_attrs (method)">ldap_attrs</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_map-class_method" title="LdapModel.ldap_map (method)">ldap_map</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_merge%21-instance_method" title="LdapModel#ldap_merge! (method)">#ldap_merge!</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_op-class_method" title="LdapModel.ldap_op (method)">ldap_op</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_set-instance_method" title="LdapModel#ldap_set (method)">#ldap_set</a></span>, <span class='object_link'><a href="../LdapModel.html#link-instance_method" title="LdapModel#link (method)">#link</a></span>, <span class='object_link'><a href="../LdapModel.html#merge-instance_method" title="LdapModel#merge (method)">#merge</a></span>, <span class='object_link'><a href="../LdapModel.html#new%3F-instance_method" title="LdapModel#new? (method)">#new?</a></span>, <span class='object_link'><a href="../LdapModel.html#object_model-instance_method" title="LdapModel#object_model (method)">#object_model</a></span>, <span class='object_link'><a href="../LdapModel.html#once_on_save-instance_method" title="LdapModel#once_on_save (method)">#once_on_save</a></span>, <span class='object_link'><a href="../LdapModel.html#organisation-class_method" title="LdapModel.organisation (method)">organisation</a></span>, <span class='object_link'><a href="../LdapModel.html#organisation%3F-class_method" title="LdapModel.organisation? (method)">organisation?</a></span>, <span class='object_link'><a href="../LdapModel.html#pretty2ldap%21-class_method" title="LdapModel.pretty2ldap! (method)">pretty2ldap!</a></span>, <span class='object_link'><a href="../LdapModel.html#pretty_attrs-class_method" title="LdapModel.pretty_attrs (method)">pretty_attrs</a></span>, <span class='object_link'><a href="../LdapModel.html#pretty_attrs_to_ldap-class_method" title="LdapModel.pretty_attrs_to_ldap (method)">pretty_attrs_to_ldap</a></span>, <span class='object_link'><a href="../LdapModel.html#raw_by_dn-class_method" title="LdapModel.raw_by_dn (method)">raw_by_dn</a></span>, <span class='object_link'><a href="../LdapModel.html#raw_filter-class_method" title="LdapModel.raw_filter (method)">raw_filter</a></span>, <span class='object_link'><a href="../LdapModel.html#refresh-instance_method" title="LdapModel#refresh (method)">#refresh</a></span>, <span class='object_link'><a href="../LdapModel.html#remove-instance_method" title="LdapModel#remove (method)">#remove</a></span>, <span class='object_link'><a href="../LdapModel.html#sasl_bind-class_method" title="LdapModel.sasl_bind (method)">sasl_bind</a></span>, <span class='object_link'><a href="../LdapModel.html#save%21-instance_method" title="LdapModel#save! (method)">#save!</a></span>, <span class='object_link'><a href="../LdapModel.html#search-class_method" title="LdapModel.search (method)">search</a></span>, <span class='object_link'><a href="../LdapModel.html#search_filters-class_method" title="LdapModel.search_filters (method)">search_filters</a></span>, <span class='object_link'><a href="../LdapModel.html#set-instance_method" title="LdapModel#set (method)">#set</a></span>, <span class='object_link'><a href="../LdapModel.html#settings-class_method" title="LdapModel.settings (method)">settings</a></span>, <span class='object_link'><a href="../LdapModel.html#settings%3D-class_method" title="LdapModel.settings= (method)">settings=</a></span>, <span class='object_link'><a href="../LdapModel.html#setup-class_method" title="LdapModel.setup (method)">setup</a></span>, <span class='object_link'><a href="../LdapModel.html#skip_serialize-class_method" title="LdapModel.skip_serialize (method)">skip_serialize</a></span>, <span class='object_link'><a href="../LdapModel.html#to_hash-instance_method" title="LdapModel#to_hash (method)">#to_hash</a></span>, <span class='object_link'><a href="../LdapModel.html#to_json-instance_method" title="LdapModel#to_json (method)">#to_json</a></span>, <span class='object_link'><a href="../LdapModel.html#to_ldap_hash-instance_method" title="LdapModel#to_ldap_hash (method)">#to_ldap_hash</a></span>, <span class='object_link'><a href="../LdapModel.html#transform-instance_method" title="LdapModel#transform (method)">#transform</a></span>, <span class='object_link'><a href="../LdapModel.html#update%21-instance_method" title="LdapModel#update! (method)">#update!</a></span>, <span class='object_link'><a href="../LdapModel.html#validate-instance_method" title="LdapModel#validate (method)">#validate</a></span>, <span class='object_link'><a href="../LdapModel.html#validate%21-instance_method" title="LdapModel#validate! (method)">#validate!</a></span>, <span class='object_link'><a href="../LdapModel.html#validate_unique-instance_method" title="LdapModel#validate_unique (method)">#validate_unique</a></span>, <span class='object_link'><a href="../LdapModel.html#write_raw-instance_method" title="LdapModel#write_raw (method)">#write_raw</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <p class="notice">This class inherits a constructor from <span class='object_link'><a href="../LdapModel.html#initialize-instance_method" title="LdapModel#initialize (method)">LdapModel</a></span></p>
+  
+</div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="by_domain-class_method">
+  
+    + (<tt>Object</tt>) <strong>by_domain</strong>(domain) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/sso.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_by_domain'>by_domain</span><span class='lparen'>(</span><span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_by_attr'>by_attr</span><span class='lparen'>(</span><span class='symbol'>:domain</span><span class='comma'>,</span> <span class='id identifier rubyid_domain'>domain</span><span class='comma'>,</span> <span class='symbol'>:multiple</span> <span class='op'>=&gt;</span> <span class='kw'>true</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="by_url-class_method">
+  
+    + (<tt>Object</tt>) <strong>by_url</strong>(url) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/sso.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_by_url'>by_url</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_url'>url</span> <span class='op'>=</span> <span class='const'>Addressable</span><span class='op'>::</span><span class='const'>URI</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+
+  <span class='kw'>return</span> <span class='const'>LdapModel</span><span class='period'>.</span><span class='id identifier rubyid_setup'>setup</span><span class='lparen'>(</span><span class='symbol'>:credentials</span> <span class='op'>=&gt;</span> <span class='const'>CONFIG</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>server</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>do</span>
+
+    <span class='comment'># Single domain might have multiple external services configured to
+</span>    <span class='comment'># different paths. Match paths from the longest to shortest.
+</span>    <span class='const'>ExternalService</span><span class='period'>.</span><span class='id identifier rubyid_by_domain'>by_domain</span><span class='lparen'>(</span><span class='id identifier rubyid_url'>url</span><span class='period'>.</span><span class='id identifier rubyid_host'>host</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span><span class='id identifier rubyid_b'>b</span><span class='op'>|</span>
+      <span class='id identifier rubyid_b'>b</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>prefix</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&lt;=&gt;</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>prefix</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span>
+    <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_url'>url</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+        <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='id identifier rubyid_url'>url</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='id identifier rubyid_s'>s</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>prefix</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+  <span class='kw'>end</span>
+
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="ldap_base-class_method">
+  
+    + (<tt>Object</tt>) <strong>ldap_base</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/sso.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ldap_base'>ldap_base</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ou=Services,o=puavo</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="secret_by_share_once_token-class_method">
+  
+    + (<tt>Object</tt>) <strong>secret_by_share_once_token</strong>(token) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+74
+75
+76
+77
+78
+79
+80
+81
+82</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/sso.rb', line 74</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_secret_by_share_once_token'>secret_by_share_once_token</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_encrypt_secret'>encrypt_secret</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_local_store_get'>local_store_get</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_encrypt_secret'>encrypt_secret</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_local_store_del'>local_store_del</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_cipher'>cipher</span> <span class='op'>=</span> <span class='const'>Gibberish</span><span class='op'>::</span><span class='const'>AES</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_cipher'>cipher</span><span class='period'>.</span><span class='id identifier rubyid_dec'>dec</span><span class='lparen'>(</span><span class='id identifier rubyid_encrypt_secret'>encrypt_secret</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="generate_login_url-instance_method">
+  
+    - (<tt>Object</tt>) <strong>generate_login_url</strong>(user, return_to_url) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/sso.rb', line 54</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_generate_login_url'>generate_login_url</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='comma'>,</span> <span class='id identifier rubyid_return_to_url'>return_to_url</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_return_to_url'>return_to_url</span> <span class='op'>=</span> <span class='const'>Addressable</span><span class='op'>::</span><span class='const'>URI</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_return_to_url'>return_to_url</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_jwt_data'>jwt_data</span> <span class='op'>=</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='lbrace'>{</span>
+    <span class='comment'># Issued At
+</span>    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>iat</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='comma'>,</span>
+    <span class='comment'># JWT ID
+</span>    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>jti</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='const'>UUID</span><span class='period'>.</span><span class='id identifier rubyid_generator'>generator</span><span class='period'>.</span><span class='id identifier rubyid_generate'>generate</span><span class='comma'>,</span>
+
+    <span class='comment'># use external_id like in Zendesk?
+</span>    <span class='comment'># https://support.zendesk.com/entries/23675367
+</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>external_service_path_prefix</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_prefix'>prefix</span>
+  <span class='rbrace'>}</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_jwt'>jwt</span> <span class='op'>=</span> <span class='const'>JWT</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span><span class='lparen'>(</span><span class='id identifier rubyid_jwt_data'>jwt_data</span><span class='comma'>,</span> <span class='id identifier rubyid_secret'>secret</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_return_to_url'>return_to_url</span><span class='period'>.</span><span class='id identifier rubyid_query_values'>query_values</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_return_to_url'>return_to_url</span><span class='period'>.</span><span class='id identifier rubyid_query_values'>query_values</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>jwt</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_jwt'>jwt</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_return_to_url'>return_to_url</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="instance_key-instance_method">
+  
+    - (<tt>Object</tt>) <strong>instance_key</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+90
+91
+92</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/sso.rb', line 90</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_instance_key'>instance_key</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>external_service:</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="share_once_token=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>share_once_token=</strong>(token) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+84
+85
+86
+87
+88</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/sso.rb', line 84</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_share_once_token='>share_once_token=</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_cipher'>cipher</span> <span class='op'>=</span> <span class='const'>Gibberish</span><span class='op'>::</span><span class='const'>AES</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_local_store_set'>local_store_set</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_cipher'>cipher</span><span class='period'>.</span><span class='id identifier rubyid_enc'>enc</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_secret'>secret</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_local_store_expire'>local_store_expire</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='int'>60</span><span class='op'>*</span><span class='int'>60</span><span class='op'>*</span><span class='int'>24</span><span class='op'>*</span><span class='int'>7</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Fri Nov 13 15:41:12 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>

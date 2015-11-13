@@ -1,0 +1,2763 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: PuavoRest::User
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!PuavoRest/User.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (U)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../PuavoRest.html" title="PuavoRest (module)">PuavoRest</a></span></span>
+     &raquo; 
+    <span class="title">User</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: PuavoRest::User
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName"><span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next"><span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></li>
+          
+            <li class="next">PuavoRest::User</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+      <dt class="r2">Includes:</dt>
+      <dd class="r2"><span class='object_link'><a href="SambaAttrs.html" title="PuavoRest::SambaAttrs (module)">SambaAttrs</a></span></dd>
+      
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">resources/users.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="BANNED_USERNAMES-constant" class="">BANNED_USERNAMES =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>root</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>administrator</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>postmaster</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>adm</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>admin</span><span class='tstring_end'>&quot;</span></span>
+<span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
+      
+        <dt id="VALID_ROLES-constant" class="">VALID_ROLES =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>teacher</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>staff</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>student</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>visitor</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>parent</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>admin</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>testuser</span><span class='tstring_end'>&quot;</span></span>
+<span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants inherited
+     from <span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../LdapModel.html#ESCAPES-constant" title="LdapModel::ESCAPES (constant)">LdapModel::ESCAPES</a></span>, <span class='object_link'><a href="../LdapModel.html#ESCAPE_RE-constant" title="LdapModel::ESCAPE_RE (constant)">LdapModel::ESCAPE_RE</a></span>, <span class='object_link'><a href="../LdapModel.html#KRB_LOCK-constant" title="LdapModel::KRB_LOCK (constant)">LdapModel::KRB_LOCK</a></span>, <span class='object_link'><a href="../LdapModel.html#PROF-constant" title="LdapModel::PROF (constant)">LdapModel::PROF</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../LdapModel.html#ldap_attr_store-instance_method" title="LdapModel#ldap_attr_store (method)">#ldap_attr_store</a></span>, <span class='object_link'><a href="../LdapModel.html#serialize_attrs-instance_method" title="LdapModel#serialize_attrs (method)">#serialize_attrs</a></span></p>
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#by_username-class_method" title="by_username (class method)">+ (String<sup>?</sup>) <strong>by_username</strong>(username, options = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Find user model by username.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#by_username%21-class_method" title="by_username! (class method)">+ (String) <strong>by_username!</strong>(username, options = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Find user model by username.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#current-class_method" title="current (class method)">+ (Object) <strong>current</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#ldap_base-class_method" title="ldap_base (class method)">+ (Object) <strong>ldap_base</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#profile_image-class_method" title="profile_image (class method)">+ (Object) <strong>profile_image</strong>(uid) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resolve_dn-class_method" title="resolve_dn (class method)">+ (String<sup>?</sup>) <strong>resolve_dn</strong>(username) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Find dn string for username.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_filters-class_method" title="search_filters (class method)">+ (Object) <strong>search_filters</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#admin%3F-instance_method" title="#admin? (instance method)">- (Boolean) <strong>admin?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#domain_username-instance_method" title="#domain_username (instance method)">- (Object) <strong>domain_username</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#email%3D-instance_method" title="#email= (instance method)">- (Object) <strong>email=</strong>(_email) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#groups-instance_method" title="#groups (instance method)">- (Object) <strong>groups</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#groups_within_school-instance_method" title="#groups_within_school (instance method)">- (Object) <strong>groups_within_school</strong>(school) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#home_directory%3D-instance_method" title="#home_directory= (instance method)">- (Object) <strong>home_directory=</strong>(value) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#homepage-instance_method" title="#homepage (instance method)">- (Object) <strong>homepage</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#import_group_name-instance_method" title="#import_group_name (instance method)">- (Object) <strong>import_group_name</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#import_school_names-instance_method" title="#import_school_names (instance method)">- (Object) <strong>import_school_names</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#is_school_admin_in%3F-instance_method" title="#is_school_admin_in? (instance method)">- (Boolean) <strong>is_school_admin_in?</strong>(school) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#legacy_roles-instance_method" title="#legacy_roles (instance method)">- (Object) <strong>legacy_roles</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#locale-instance_method" title="#locale (instance method)">- (Object) <strong>locale</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#organisation-instance_method" title="#organisation (instance method)">- (Object) <strong>organisation</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#organisation_domain-instance_method" title="#organisation_domain (instance method)">- (Object) <strong>organisation_domain</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#organisation_name-instance_method" title="#organisation_name (instance method)">- (Object) <strong>organisation_name</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#password%3D-instance_method" title="#password= (instance method)">- (Object) <strong>password=</strong>(pw) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Just store password locally and handle it in after hook.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#preferred_language-instance_method" title="#preferred_language (instance method)">- (Object) <strong>preferred_language</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#primary_school_id-instance_method" title="#primary_school_id (instance method)">- (Object) <strong>primary_school_id</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#puavo_id-instance_method" title="#puavo_id (instance method)">- (Object) <strong>puavo_id</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#roles_within_school-instance_method" title="#roles_within_school (instance method)">- (Object) <strong>roles_within_school</strong>(school) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#school-instance_method" title="#school (instance method)">- (Object) <strong>school</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Primary school.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#school_dn-instance_method" title="#school_dn (instance method)">- (Object) <strong>school_dn</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#schools-instance_method" title="#schools (instance method)">- (Object) <strong>schools</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#schools_hash-instance_method" title="#schools_hash (instance method)">- (Object) <strong>schools_hash</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#secondary_emails%3D-instance_method" title="#secondary_emails= (instance method)">- (Object) <strong>secondary_emails=</strong>(emails) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#server_user%3F-instance_method" title="#server_user? (instance method)">- (Boolean) <strong>server_user?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#telephone_number%3D-instance_method" title="#telephone_number= (instance method)">- (Object) <strong>telephone_number=</strong>(value) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#timezone-instance_method" title="#timezone (instance method)">- (Object) <strong>timezone</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unique_id-instance_method" title="#unique_id (instance method)">- (Object) <strong>unique_id</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#user_type-instance_method" title="#user_type (instance method)">- (Object) <strong>user_type</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#username%3D-instance_method" title="#username= (instance method)">- (Object) <strong>username=</strong>(_username) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate-instance_method" title="#validate (instance method)">- (Object) <strong>validate</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SambaAttrs.html" title="PuavoRest::SambaAttrs (module)">SambaAttrs</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SambaAttrs.html#set_samba_primary_group_sid-instance_method" title="PuavoRest::SambaAttrs#set_samba_primary_group_sid (method)">#set_samba_primary_group_sid</a></span>, <span class='object_link'><a href="SambaAttrs.html#set_samba_sid-instance_method" title="PuavoRest::SambaAttrs#set_samba_sid (method)">#set_samba_sid</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="../LdapModel.html" title="LdapModel (class)">LdapModel</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../LdapModel.html#%5B%5D-instance_method" title="LdapModel#[] (method)">#[]</a></span>, <span class='object_link'><a href="../LdapModel.html#%5B%5D%3D-instance_method" title="LdapModel#[]= (method)">#[]=</a></span>, <span class='object_link'><a href="../LdapModel.html#_class_store-class_method" title="LdapModel._class_store (method)">_class_store</a></span>, <span class='object_link'><a href="../LdapModel.html#add-instance_method" title="LdapModel#add (method)">#add</a></span>, <span class='object_link'><a href="../LdapModel.html#add_validation_error-instance_method" title="LdapModel#add_validation_error (method)">#add_validation_error</a></span>, <span class='object_link'><a href="../LdapModel.html#after-class_method" title="LdapModel.after (method)">after</a></span>, <span class='object_link'><a href="../LdapModel.html#all-class_method" title="LdapModel.all (method)">all</a></span>, <span class='object_link'><a href="../LdapModel.html#as_json-instance_method" title="LdapModel#as_json (method)">#as_json</a></span>, <span class='object_link'><a href="../LdapModel.html#assert_validation-instance_method" title="LdapModel#assert_validation (method)">#assert_validation</a></span>, <span class='object_link'><a href="../LdapModel.html#base_filter-class_method" title="LdapModel.base_filter (method)">base_filter</a></span>, <span class='object_link'><a href="../LdapModel.html#before-class_method" title="LdapModel.before (method)">before</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attr-class_method" title="LdapModel.by_attr (method)">by_attr</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attr%21-class_method" title="LdapModel.by_attr! (method)">by_attr!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attrs-class_method" title="LdapModel.by_attrs (method)">by_attrs</a></span>, <span class='object_link'><a href="../LdapModel.html#by_attrs%21-class_method" title="LdapModel.by_attrs! (method)">by_attrs!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_dn-class_method" title="LdapModel.by_dn (method)">by_dn</a></span>, <span class='object_link'><a href="../LdapModel.html#by_dn%21-class_method" title="LdapModel.by_dn! (method)">by_dn!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_dn_array-class_method" title="LdapModel.by_dn_array (method)">by_dn_array</a></span>, <span class='object_link'><a href="../LdapModel.html#by_id-class_method" title="LdapModel.by_id (method)">by_id</a></span>, <span class='object_link'><a href="../LdapModel.html#by_id%21-class_method" title="LdapModel.by_id! (method)">by_id!</a></span>, <span class='object_link'><a href="../LdapModel.html#by_ldap_attr-class_method" title="LdapModel.by_ldap_attr (method)">by_ldap_attr</a></span>, <span class='object_link'><a href="../LdapModel.html#by_ldap_attr%21-class_method" title="LdapModel.by_ldap_attr! (method)">by_ldap_attr!</a></span>, <span class='object_link'><a href="../LdapModel.html#callable_from_instance-class_method" title="LdapModel.callable_from_instance (method)">callable_from_instance</a></span>, <span class='object_link'><a href="../LdapModel.html#changed%3F-instance_method" title="LdapModel#changed? (method)">#changed?</a></span>, <span class='object_link'><a href="../LdapModel.html#class_store-class_method" title="LdapModel.class_store (method)">class_store</a></span>, <span class='object_link'><a href="../LdapModel.html#clear_setup-class_method" title="LdapModel.clear_setup (method)">clear_setup</a></span>, <span class='object_link'><a href="../LdapModel.html#computed_attr-class_method" title="LdapModel.computed_attr (method)">computed_attr</a></span>, <span class='object_link'><a href="../LdapModel.html#connection-class_method" title="LdapModel.connection (method)">connection</a></span>, <span class='object_link'><a href="../LdapModel.html#create%21-instance_method" title="LdapModel#create! (method)">#create!</a></span>, <span class='object_link'><a href="../LdapModel.html#create_connection-class_method" title="LdapModel.create_connection (method)">create_connection</a></span>, <span class='object_link'><a href="../LdapModel.html#create_filter_lambda-class_method" title="LdapModel.create_filter_lambda (method)">create_filter_lambda</a></span>, <span class='object_link'><a href="../LdapModel.html#dirty%3F-instance_method" title="LdapModel#dirty? (method)">#dirty?</a></span>, <span class='object_link'><a href="../LdapModel.html#dn_bind-class_method" title="LdapModel.dn_bind (method)">dn_bind</a></span>, <span class='object_link'><a href="../LdapModel.html#empty%3F-instance_method" title="LdapModel#empty? (method)">#empty?</a></span>, <span class='object_link'><a href="../LdapModel.html#escape-class_method" title="LdapModel.escape (method)">escape</a></span>, <span class='object_link'><a href="../LdapModel.html#filter-class_method" title="LdapModel.filter (method)">filter</a></span>, <span class='object_link'><a href="../LdapModel.html#from_ldap_hash-class_method" title="LdapModel.from_ldap_hash (method)">from_ldap_hash</a></span>, <span class='object_link'><a href="../LdapModel.html#get_own-instance_method" title="LdapModel#get_own (method)">#get_own</a></span>, <span class='object_link'><a href="../LdapModel.html#get_raw-instance_method" title="LdapModel#get_raw (method)">#get_raw</a></span>, <span class='object_link'><a href="../LdapModel.html#inherited-class_method" title="LdapModel.inherited (method)">inherited</a></span>, <span class='object_link'><a href="../LdapModel.html#initialize-instance_method" title="LdapModel#initialize (method)">#initialize</a></span>, <span class='object_link'><a href="../LdapModel.html#is_dn-class_method" title="LdapModel.is_dn (method)">is_dn</a></span>, <span class='object_link'><a href="../LdapModel.html#is_not_found%3F-class_method" title="LdapModel.is_not_found? (method)">is_not_found?</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_attrs-class_method" title="LdapModel.ldap_attrs (method)">ldap_attrs</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_map-class_method" title="LdapModel.ldap_map (method)">ldap_map</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_merge%21-instance_method" title="LdapModel#ldap_merge! (method)">#ldap_merge!</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_op-class_method" title="LdapModel.ldap_op (method)">ldap_op</a></span>, <span class='object_link'><a href="../LdapModel.html#ldap_set-instance_method" title="LdapModel#ldap_set (method)">#ldap_set</a></span>, <span class='object_link'><a href="../LdapModel.html#link-instance_method" title="LdapModel#link (method)">#link</a></span>, <span class='object_link'><a href="../LdapModel.html#merge-instance_method" title="LdapModel#merge (method)">#merge</a></span>, <span class='object_link'><a href="../LdapModel.html#new%3F-instance_method" title="LdapModel#new? (method)">#new?</a></span>, <span class='object_link'><a href="../LdapModel.html#object_model-instance_method" title="LdapModel#object_model (method)">#object_model</a></span>, <span class='object_link'><a href="../LdapModel.html#once_on_save-instance_method" title="LdapModel#once_on_save (method)">#once_on_save</a></span>, <span class='object_link'><a href="../LdapModel.html#organisation-class_method" title="LdapModel.organisation (method)">organisation</a></span>, <span class='object_link'><a href="../LdapModel.html#organisation%3F-class_method" title="LdapModel.organisation? (method)">organisation?</a></span>, <span class='object_link'><a href="../LdapModel.html#pretty2ldap%21-class_method" title="LdapModel.pretty2ldap! (method)">pretty2ldap!</a></span>, <span class='object_link'><a href="../LdapModel.html#pretty_attrs-class_method" title="LdapModel.pretty_attrs (method)">pretty_attrs</a></span>, <span class='object_link'><a href="../LdapModel.html#pretty_attrs_to_ldap-class_method" title="LdapModel.pretty_attrs_to_ldap (method)">pretty_attrs_to_ldap</a></span>, <span class='object_link'><a href="../LdapModel.html#raw_by_dn-class_method" title="LdapModel.raw_by_dn (method)">raw_by_dn</a></span>, <span class='object_link'><a href="../LdapModel.html#raw_filter-class_method" title="LdapModel.raw_filter (method)">raw_filter</a></span>, <span class='object_link'><a href="../LdapModel.html#refresh-instance_method" title="LdapModel#refresh (method)">#refresh</a></span>, <span class='object_link'><a href="../LdapModel.html#remove-instance_method" title="LdapModel#remove (method)">#remove</a></span>, <span class='object_link'><a href="../LdapModel.html#sasl_bind-class_method" title="LdapModel.sasl_bind (method)">sasl_bind</a></span>, <span class='object_link'><a href="../LdapModel.html#save%21-instance_method" title="LdapModel#save! (method)">#save!</a></span>, <span class='object_link'><a href="../LdapModel.html#search-class_method" title="LdapModel.search (method)">search</a></span>, <span class='object_link'><a href="../LdapModel.html#set-instance_method" title="LdapModel#set (method)">#set</a></span>, <span class='object_link'><a href="../LdapModel.html#settings-class_method" title="LdapModel.settings (method)">settings</a></span>, <span class='object_link'><a href="../LdapModel.html#settings%3D-class_method" title="LdapModel.settings= (method)">settings=</a></span>, <span class='object_link'><a href="../LdapModel.html#setup-class_method" title="LdapModel.setup (method)">setup</a></span>, <span class='object_link'><a href="../LdapModel.html#skip_serialize-class_method" title="LdapModel.skip_serialize (method)">skip_serialize</a></span>, <span class='object_link'><a href="../LdapModel.html#to_hash-instance_method" title="LdapModel#to_hash (method)">#to_hash</a></span>, <span class='object_link'><a href="../LdapModel.html#to_json-instance_method" title="LdapModel#to_json (method)">#to_json</a></span>, <span class='object_link'><a href="../LdapModel.html#to_ldap_hash-instance_method" title="LdapModel#to_ldap_hash (method)">#to_ldap_hash</a></span>, <span class='object_link'><a href="../LdapModel.html#transform-instance_method" title="LdapModel#transform (method)">#transform</a></span>, <span class='object_link'><a href="../LdapModel.html#update%21-instance_method" title="LdapModel#update! (method)">#update!</a></span>, <span class='object_link'><a href="../LdapModel.html#validate%21-instance_method" title="LdapModel#validate! (method)">#validate!</a></span>, <span class='object_link'><a href="../LdapModel.html#validate_unique-instance_method" title="LdapModel#validate_unique (method)">#validate_unique</a></span>, <span class='object_link'><a href="../LdapModel.html#write_raw-instance_method" title="LdapModel#write_raw (method)">#write_raw</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <p class="notice">This class inherits a constructor from <span class='object_link'><a href="../LdapModel.html#initialize-instance_method" title="LdapModel#initialize (method)">LdapModel</a></span></p>
+  
+</div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="by_username-class_method">
+  
+    + (<tt>String</tt><sup>?</sup>) <strong>by_username</strong>(username, options = {}) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Find user model by username</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>username</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+297
+298
+299</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 297</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_by_username'>by_username</span><span class='lparen'>(</span><span class='id identifier rubyid_username'>username</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_by_attr'>by_attr</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='id identifier rubyid_username'>username</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="by_username!-class_method">
+  
+    + (<tt>String</tt>) <strong>by_username!</strong>(username, options = {}) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Find user model by username</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>username</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+305
+306
+307</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 305</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_by_username!'>by_username!</span><span class='lparen'>(</span><span class='id identifier rubyid_username'>username</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_by_attr!'>by_attr!</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='id identifier rubyid_username'>username</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="current-class_method">
+  
+    + (<tt>Object</tt>) <strong>current</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 463</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_current'>current</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_settings'>settings</span><span class='lbracket'>[</span><span class='symbol'>:credentials_cache</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:current_user</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_settings'>settings</span><span class='lbracket'>[</span><span class='symbol'>:credentials_cache</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:current_user</span><span class='rbracket'>]</span>
+
+  <span class='id identifier rubyid_user_credentials'>user_credentials</span> <span class='op'>=</span> <span class='id identifier rubyid_settings'>settings</span><span class='lbracket'>[</span><span class='symbol'>:credentials</span><span class='rbracket'>]</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_user_credentials'>user_credentials</span><span class='lbracket'>[</span><span class='symbol'>:dn</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_user'>user</span> <span class='op'>=</span> <span class='const'>User</span><span class='period'>.</span><span class='id identifier rubyid_by_dn'>by_dn</span><span class='lparen'>(</span><span class='id identifier rubyid_user_credentials'>user_credentials</span><span class='lbracket'>[</span><span class='symbol'>:dn</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_user_credentials'>user_credentials</span><span class='lbracket'>[</span><span class='symbol'>:username</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_user'>user</span> <span class='op'>=</span> <span class='const'>User</span><span class='period'>.</span><span class='id identifier rubyid_by_username'>by_username</span><span class='lparen'>(</span><span class='id identifier rubyid_user_credentials'>user_credentials</span><span class='lbracket'>[</span><span class='symbol'>:username</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_settings'>settings</span><span class='lbracket'>[</span><span class='symbol'>:credentials_cache</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:current_user</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_user'>user</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="ldap_base-class_method">
+  
+    + (<tt>Object</tt>) <strong>ldap_base</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+289
+290
+291</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 289</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ldap_base'>ldap_base</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ou=People,</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_organisation'>organisation</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>base</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="profile_image-class_method">
+  
+    + (<tt>Object</tt>) <strong>profile_image</strong>(uid) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+319
+320
+321
+322
+323
+324
+325
+326</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 319</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_profile_image'>profile_image</span><span class='lparen'>(</span><span class='id identifier rubyid_uid'>uid</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_raw_filter'>raw_filter</span><span class='lparen'>(</span><span class='id identifier rubyid_ldap_base'>ldap_base</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(uid=</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_escape'>escape</span> <span class='id identifier rubyid_uid'>uid</span> <span class='rbrace'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>jpegPhoto</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_data'>data</span> <span class='op'>||</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>==</span> <span class='int'>0</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NotFound</span><span class='comma'>,</span> <span class='symbol'>:user</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Cannot find image data for user: </span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_uid'>uid</span> <span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>jpegPhoto</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="resolve_dn-class_method">
+  
+    + (<tt>String</tt><sup>?</sup>) <strong>resolve_dn</strong>(username) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Find dn string for username</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>username</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+314
+315
+316
+317</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 314</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_resolve_dn'>resolve_dn</span><span class='lparen'>(</span><span class='id identifier rubyid_username'>username</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user'>user</span> <span class='op'>=</span> <span class='id identifier rubyid_by_attr'>by_attr</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='id identifier rubyid_username'>username</span><span class='comma'>,</span> <span class='symbol'>:attrs</span> <span class='op'>=&gt;</span> <span class='lbracket'>[</span><span class='symbol'>:dn</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user'>user</span> <span class='op'>?</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_dn'>dn</span> <span class='op'>:</span> <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_filters-class_method">
+  
+    + (<tt>Object</tt>) <strong>search_filters</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+477
+478
+479
+480
+481
+482
+483
+484</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 477</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_search_filters'>search_filters</span>
+  <span class='lbracket'>[</span>
+    <span class='id identifier rubyid_create_filter_lambda'>create_filter_lambda</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_create_filter_lambda'>create_filter_lambda</span><span class='lparen'>(</span><span class='symbol'>:first_name</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_create_filter_lambda'>create_filter_lambda</span><span class='lparen'>(</span><span class='symbol'>:last_name</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_create_filter_lambda'>create_filter_lambda</span><span class='lparen'>(</span><span class='symbol'>:email</span><span class='rparen'>)</span>
+  <span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="admin?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>admin?</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+394
+395
+396</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 394</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_admin?'>admin?</span>
+  <span class='id identifier rubyid_user_type'>user_type</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>admin</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="domain_username-instance_method">
+  
+    - (<tt>Object</tt>) <strong>domain_username</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+427
+428
+429</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 427</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_domain_username'>domain_username</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_username'>username</span> <span class='rbrace'>}</span><span class='tstring_content'>@</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_organisation'>organisation</span><span class='period'>.</span><span class='id identifier rubyid_domain'>domain</span> <span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="email=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>email=</strong>(_email) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+244
+245
+246
+247
+248</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 244</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_email='>email=</span><span class='lparen'>(</span><span class='id identifier rubyid__email'>_email</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_secondary_emails'>secondary_emails</span> <span class='op'>=</span> <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid_get_raw'>get_raw</span><span class='lparen'>(</span><span class='symbol'>:mail</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_write_raw'>write_raw</span><span class='lparen'>(</span><span class='symbol'>:mail</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='id identifier rubyid__email'>_email</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='id identifier rubyid_secondary_emails'>secondary_emails</span><span class='rparen'>)</span>
+  <span class='ivar'>@cache</span><span class='lbracket'>[</span><span class='symbol'>:email</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="groups-instance_method">
+  
+    - (<tt>Object</tt>) <strong>groups</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+398
+399
+400</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 398</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_groups'>groups</span>
+  <span class='ivar'>@groups</span> <span class='op'>||=</span> <span class='const'>Group</span><span class='period'>.</span><span class='id identifier rubyid_by_user_dn'>by_user_dn</span><span class='lparen'>(</span><span class='id identifier rubyid_dn'>dn</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="groups_within_school-instance_method">
+  
+    - (<tt>Object</tt>) <strong>groups_within_school</strong>(school) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+420
+421
+422
+423
+424</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 420</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_groups_within_school'>groups_within_school</span><span class='lparen'>(</span><span class='id identifier rubyid_school'>school</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_groups'>groups</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_group'>group</span><span class='op'>|</span>
+      <span class='id identifier rubyid_group'>group</span><span class='period'>.</span><span class='id identifier rubyid_school_id'>school_id</span> <span class='op'>==</span> <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="home_directory=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>home_directory=</strong>(value) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+228
+229
+230</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 228</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_home_directory='>home_directory=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:home_directory</span><span class='comma'>,</span> <span class='symbol'>:read_only</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>home_directory is read only</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="homepage-instance_method">
+  
+    - (<tt>Object</tt>) <strong>homepage</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+432
+433
+434
+435
+436</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 432</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_homepage'>homepage</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_school'>school</span>
+    <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_homepage'>homepage</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="import_group_name-instance_method">
+  
+    - (<tt>Object</tt>) <strong>import_group_name</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 402</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_import_group_name'>import_group_name</span>
+  <span class='id identifier rubyid_group'>group</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_groups'>groups</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_g'>g</span><span class='op'>|</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_g'>g</span><span class='period'>.</span><span class='id identifier rubyid_external_id'>external_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_group'>group</span>
+        <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Duplicate external group!</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_group'>group</span> <span class='op'>=</span> <span class='id identifier rubyid_g'>g</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_group'>group</span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_groups'>groups</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_g'>g</span><span class='op'>|</span> <span class='id identifier rubyid_g'>g</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>return</span> <span class='id identifier rubyid_group'>group</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="import_school_names-instance_method">
+  
+    - (<tt>Object</tt>) <strong>import_school_names</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+366
+367
+368</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 366</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_import_school_names'>import_school_names</span>
+  <span class='id identifier rubyid_schools'>schools</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='op'>|</span> <span class='id identifier rubyid_s'>s</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="is_school_admin_in?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>is_school_admin_in?</strong>(school) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+257
+258
+259</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 257</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_is_school_admin_in?'>is_school_admin_in?</span><span class='lparen'>(</span><span class='id identifier rubyid_school'>school</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_admin_of_school_dns'>admin_of_school_dns</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_dn'>dn</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="legacy_roles-instance_method">
+  
+    - (<tt>Object</tt>) <strong>legacy_roles</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+269
+270
+271</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 269</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_legacy_roles'>legacy_roles</span>
+  <span class='const'>LegacyRole</span><span class='period'>.</span><span class='id identifier rubyid_by_attr'>by_attr</span><span class='lparen'>(</span><span class='symbol'>:member_dns</span><span class='comma'>,</span> <span class='id identifier rubyid_dn'>dn</span><span class='comma'>,</span> <span class='symbol'>:multiple</span> <span class='op'>=&gt;</span> <span class='kw'>true</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="locale-instance_method">
+  
+    - (<tt>Object</tt>) <strong>locale</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+378
+379
+380
+381
+382
+383
+384</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 378</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_locale'>locale</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_get_own'>get_own</span><span class='lparen'>(</span><span class='symbol'>:locale</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_school'>school</span>
+    <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_locale'>locale</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_get_own'>get_own</span><span class='lparen'>(</span><span class='symbol'>:locale</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="organisation-instance_method">
+  
+    - (<tt>Object</tt>) <strong>organisation</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+328
+329
+330</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 328</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_organisation'>organisation</span>
+  <span class='const'>User</span><span class='period'>.</span><span class='id identifier rubyid_organisation'>organisation</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="organisation_domain-instance_method">
+  
+    - (<tt>Object</tt>) <strong>organisation_domain</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+333
+334
+335</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 333</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_organisation_domain'>organisation_domain</span>
+  <span class='id identifier rubyid_organisation'>organisation</span><span class='period'>.</span><span class='id identifier rubyid_domain'>domain</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="organisation_name-instance_method">
+  
+    - (<tt>Object</tt>) <strong>organisation_name</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+338
+339
+340</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 338</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_organisation_name'>organisation_name</span>
+  <span class='id identifier rubyid_organisation'>organisation</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="password=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>password=</strong>(pw) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Just store password locally and handle it in after hook</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+188
+189
+190</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 188</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_password='>password=</span><span class='lparen'>(</span><span class='id identifier rubyid_pw'>pw</span><span class='rparen'>)</span>
+  <span class='ivar'>@password</span> <span class='op'>=</span> <span class='id identifier rubyid_pw'>pw</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="preferred_language-instance_method">
+  
+    - (<tt>Object</tt>) <strong>preferred_language</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+370
+371
+372
+373
+374
+375
+376</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 370</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_preferred_language'>preferred_language</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_get_own'>get_own</span><span class='lparen'>(</span><span class='symbol'>:preferred_language</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_school'>school</span>
+    <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_preferred_language'>preferred_language</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_get_own'>get_own</span><span class='lparen'>(</span><span class='symbol'>:preferred_language</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="primary_school_id-instance_method">
+  
+    - (<tt>Object</tt>) <strong>primary_school_id</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+355
+356
+357</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 355</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_primary_school_id'>primary_school_id</span>
+  <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='kw'>if</span> <span class='id identifier rubyid_school'>school</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="puavo_id-instance_method">
+  
+    - (<tt>Object</tt>) <strong>puavo_id</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+280
+281
+282</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 280</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_puavo_id'>puavo_id</span>
+  <span class='id identifier rubyid_id'>id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="roles_within_school-instance_method">
+  
+    - (<tt>Object</tt>) <strong>roles_within_school</strong>(school) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+261
+262
+263
+264
+265
+266
+267</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 261</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_roles_within_school'>roles_within_school</span><span class='lparen'>(</span><span class='id identifier rubyid_school'>school</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid__roles'>_roles</span> <span class='op'>=</span> <span class='id identifier rubyid_roles'>roles</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_is_school_admin_in?'>is_school_admin_in?</span><span class='lparen'>(</span><span class='id identifier rubyid_school'>school</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid__roles'>_roles</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>schooladmin</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid__roles'>_roles</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="school-instance_method">
+  
+    - (<tt>Object</tt>) <strong>school</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Primary school</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+348
+349
+350
+351
+352</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 348</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_school'>school</span>
+  <span class='kw'>return</span> <span class='ivar'>@school</span> <span class='kw'>if</span> <span class='ivar'>@school</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_school_dn'>school_dn</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='ivar'>@school</span> <span class='op'>=</span> <span class='const'>School</span><span class='period'>.</span><span class='id identifier rubyid_by_dn'>by_dn</span><span class='lparen'>(</span><span class='id identifier rubyid_school_dn'>school_dn</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="school_dn-instance_method">
+  
+    - (<tt>Object</tt>) <strong>school_dn</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+343
+344
+345</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 343</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_school_dn'>school_dn</span>
+  <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid_school_dns'>school_dns</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="schools-instance_method">
+  
+    - (<tt>Object</tt>) <strong>schools</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+359
+360
+361
+362
+363
+364</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 359</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_schools'>schools</span>
+  <span class='comment'># TODO: handle errors
+</span>  <span class='ivar'>@schools</span> <span class='op'>||=</span> <span class='id identifier rubyid_school_dns'>school_dns</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_dn'>dn</span><span class='op'>|</span>
+    <span class='const'>School</span><span class='period'>.</span><span class='id identifier rubyid_by_dn'>by_dn</span><span class='lparen'>(</span><span class='id identifier rubyid_dn'>dn</span><span class='rparen'>)</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="schools_hash-instance_method">
+  
+    - (<tt>Object</tt>) <strong>schools_hash</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 443</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_schools_hash'>schools_hash</span>
+  <span class='id identifier rubyid_schools'>schools</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_school'>school</span><span class='op'>|</span>
+      <span class='lbrace'>{</span>
+        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
+        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>dn</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_dn'>dn</span><span class='comma'>,</span>
+        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>name</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span>
+        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abbreviation</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_abbreviation'>abbreviation</span><span class='comma'>,</span>
+        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>roles</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_roles_within_school'>roles_within_school</span><span class='lparen'>(</span><span class='id identifier rubyid_school'>school</span><span class='rparen'>)</span><span class='comma'>,</span>
+        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>groups</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_groups_within_school'>groups_within_school</span><span class='lparen'>(</span><span class='id identifier rubyid_school'>school</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_group'>group</span><span class='op'>|</span>
+          <span class='lbrace'>{</span>
+            <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_group'>group</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
+            <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>dn</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_group'>group</span><span class='period'>.</span><span class='id identifier rubyid_dn'>dn</span><span class='comma'>,</span>
+            <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>name</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_group'>group</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span>
+            <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abbreviation</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_group'>group</span><span class='period'>.</span><span class='id identifier rubyid_abbreviation'>abbreviation</span>
+          <span class='rbrace'>}</span>
+        <span class='kw'>end</span>
+      <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="secondary_emails=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>secondary_emails=</strong>(emails) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+250
+251
+252
+253
+254
+255</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 250</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_secondary_emails='>secondary_emails=</span><span class='lparen'>(</span><span class='id identifier rubyid_emails'>emails</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_primary'>primary</span> <span class='op'>=</span> <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid_get_raw'>get_raw</span><span class='lparen'>(</span><span class='symbol'>:mail</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+  <span class='id identifier rubyid_val'>val</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='lbracket'>[</span><span class='id identifier rubyid_primary'>primary</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='id identifier rubyid_emails'>emails</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+  <span class='id identifier rubyid_write_raw'>write_raw</span><span class='lparen'>(</span><span class='symbol'>:mail</span><span class='comma'>,</span> <span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span>
+  <span class='ivar'>@cache</span><span class='lbracket'>[</span><span class='symbol'>:secondary_emails</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="server_user?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>server_user?</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+438
+439
+440</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 438</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_server_user?'>server_user?</span>
+  <span class='id identifier rubyid_dn'>dn</span> <span class='op'>==</span> <span class='const'>CONFIG</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>server</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:dn</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="telephone_number=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>telephone_number=</strong>(value) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+232
+233
+234
+235
+236
+237</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 232</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_telephone_number='>telephone_number=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='comment'># LDAP raises an error if empty string is given as the number.
+</span>  <span class='comment'># Just skip the attribute if its empty
+</span>  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_write_raw'>write_raw</span><span class='lparen'>(</span><span class='symbol'>:telephoneNumber</span><span class='comma'>,</span> <span class='id identifier rubyid_transform'>transform</span><span class='lparen'>(</span><span class='symbol'>:telephone_number</span><span class='comma'>,</span> <span class='symbol'>:write</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="timezone-instance_method">
+  
+    - (<tt>Object</tt>) <strong>timezone</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+386
+387
+388
+389
+390
+391
+392</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 386</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_timezone'>timezone</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_get_own'>get_own</span><span class='lparen'>(</span><span class='symbol'>:timezone</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_school'>school</span>
+    <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_timezone'>timezone</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_get_own'>get_own</span><span class='lparen'>(</span><span class='symbol'>:timezone</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unique_id-instance_method">
+  
+    - (<tt>Object</tt>) <strong>unique_id</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+285
+286
+287</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 285</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_unique_id'>unique_id</span>
+  <span class='id identifier rubyid_dn'>dn</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="user_type-instance_method">
+  
+    - (<tt>Object</tt>) <strong>user_type</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+275
+276
+277</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 275</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_user_type'>user_type</span>
+  <span class='id identifier rubyid_roles'>roles</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="username=-instance_method">
+  
+    - (<tt>Object</tt>) <strong>username=</strong>(_username) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+239
+240
+241
+242</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 239</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_username='>username=</span><span class='lparen'>(</span><span class='id identifier rubyid__username'>_username</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_write_raw'>write_raw</span><span class='lparen'>(</span><span class='symbol'>:uid</span><span class='comma'>,</span> <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid__username'>_username</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_write_raw'>write_raw</span><span class='lparen'>(</span><span class='symbol'>:cn</span><span class='comma'>,</span> <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid__username'>_username</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validate-instance_method">
+  
+    - (<tt>Object</tt>) <strong>validate</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'resources/users.rb', line 79</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_validate'>validate</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_username'>username</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='symbol'>:username_empty</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Username is empty</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_validate_unique'>validate_unique</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='rparen'>)</span>
+
+    <span class='kw'>if</span> <span class='const'>BANNED_USERNAMES</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_username'>username</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='symbol'>:username_not_allowed</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Username not allowed</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_username'>username</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>adm-</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='symbol'>:username_not_allowed</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>'adm-' prefix is not allowed</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># XXX: In puavo-web it's possible to configure from organisation upper
+</span>    <span class='comment'># case letters as allowed but it's not implemented here yet
+</span>    <span class='kw'>if</span> <span class='op'>!</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[a-z]+[a-z0-9.-]+$</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='id identifier rubyid_username'>username</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='symbol'>:username_invalid</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Invalid username. Allowed characters a-z, 0-9, dot and dash. Also it must begin with a letter</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_username'>username</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&lt;</span> <span class='int'>3</span>
+      <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='symbol'>:username_too_short</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Username too short</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_username'>username</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>255</span>
+      <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='symbol'>:username_too_long</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Username too long</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_roles'>roles</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:roles</span><span class='comma'>,</span> <span class='symbol'>:no_roles</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>at least one role must be set</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_roles'>roles</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_role'>role</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='op'>!</span><span class='const'>VALID_ROLES</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:roles</span><span class='comma'>,</span> <span class='symbol'>:unknown_role</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unknow role </span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_role'>role</span> <span class='rbrace'>}</span><span class='tstring_content'>. Valid roles are </span><span class='embexpr_beg'>#{</span> <span class='const'>VALID_ROLES</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_first_name'>first_name</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:first_name</span><span class='comma'>,</span> <span class='symbol'>:first_name_empty</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>First name is empty</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_last_name'>last_name</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:last_name</span><span class='comma'>,</span> <span class='symbol'>:last_name_empty</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Last name is empty</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='op'>!</span><span class='ivar'>@password</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@password</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&lt;</span> <span class='int'>8</span>
+    <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:password</span><span class='comma'>,</span> <span class='symbol'>:password_too_short</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Password must have at least 8 characters</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:school_dns</span><span class='comma'>,</span> <span class='symbol'>:must_have_school</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>no schools are set</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_new?'>new?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_school'>school</span>
+    <span class='id identifier rubyid_home'>home</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/home/</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_school'>school</span><span class='period'>.</span><span class='id identifier rubyid_abbreviation'>abbreviation</span> <span class='rbrace'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_username'>username</span> <span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>if</span> <span class='const'>User</span><span class='period'>.</span><span class='id identifier rubyid_by_attr'>by_attr</span><span class='lparen'>(</span><span class='symbol'>:home_directory</span><span class='comma'>,</span> <span class='id identifier rubyid_home'>home</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_add_validation_error'>add_validation_error</span><span class='lparen'>(</span><span class='symbol'>:username</span><span class='comma'>,</span> <span class='symbol'>:bad_home_directoy</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Home directory (</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_home'>home</span> <span class='rbrace'>}</span><span class='tstring_content'>) if already in use for this username</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_write_raw'>write_raw</span><span class='lparen'>(</span><span class='symbol'>:homeDirectory</span><span class='comma'>,</span> <span class='id identifier rubyid_transform'>transform</span><span class='lparen'>(</span><span class='symbol'>:home_directory</span><span class='comma'>,</span> <span class='symbol'>:write</span><span class='comma'>,</span> <span class='id identifier rubyid_home'>home</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_validate_unique'>validate_unique</span><span class='lparen'>(</span><span class='symbol'>:email</span><span class='rparen'>)</span>
+  <span class='comment'># XXX validate secondary emails too!!
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Fri Nov 13 15:41:12 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>

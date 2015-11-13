@@ -1,0 +1,572 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: Krb5Gssapi
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!Krb5Gssapi.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index (K)</a> &raquo;
+    
+    
+    <span class="title">Krb5Gssapi</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: Krb5Gssapi
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Krb5Gssapi</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">lib/krb5-gssapi.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Krb5Gssapi/Error.html" title="Krb5Gssapi::Error (class)">Error</a></span>, <span class='object_link'><a href="Krb5Gssapi/NoDelegation.html" title="Krb5Gssapi::NoDelegation (class)">NoDelegation</a></span>
+    
+  
+</p>
+
+
+
+
+  <h2>Instance Attribute Summary <small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#ok-instance_method" title="#ok (instance method)">- (Object) <strong>ok</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute ok.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#return_token-instance_method" title="#return_token (instance method)">- (Object) <strong>return_token</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute return_token.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clean_up-instance_method" title="#clean_up (instance method)">- (Object) <strong>clean_up</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#copy_ticket-instance_method" title="#copy_ticket (instance method)">- (Object) <strong>copy_ticket</strong>(input_token) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#display_name-instance_method" title="#display_name (instance method)">- (Object) <strong>display_name</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (Krb5Gssapi) <strong>initialize</strong>(fqdn, keytab) </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A new instance of Krb5Gssapi.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="Krb5Gssapi (class)">Krb5Gssapi</a></span></tt>) <strong>initialize</strong>(fqdn, keytab) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a new instance of Krb5Gssapi</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+13
+14
+15
+16</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/krb5-gssapi.rb', line 13</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_fqdn'>fqdn</span><span class='comma'>,</span> <span class='id identifier rubyid_keytab'>keytab</span><span class='rparen'>)</span>
+  <span class='ivar'>@srv</span> <span class='op'>=</span> <span class='const'>GSSAPI</span><span class='op'>::</span><span class='const'>Simple</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_fqdn'>fqdn</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>HTTP</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_keytab'>keytab</span><span class='rparen'>)</span>
+  <span class='ivar'>@cachename</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>MEMORY:</span><span class='embexpr_beg'>#{</span> <span class='const'>UUID</span><span class='period'>.</span><span class='id identifier rubyid_generator'>generator</span><span class='period'>.</span><span class='id identifier rubyid_generate'>generate</span> <span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="ok=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="ok-instance_method">
+  
+    - (<tt>Object</tt>) <strong>ok</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute ok</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+11
+12
+13</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/krb5-gssapi.rb', line 11</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_ok'>ok</span>
+  <span class='ivar'>@ok</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="return_token=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="return_token-instance_method">
+  
+    - (<tt>Object</tt>) <strong>return_token</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute return_token</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+11
+12
+13</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/krb5-gssapi.rb', line 11</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_return_token'>return_token</span>
+  <span class='ivar'>@return_token</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="clean_up-instance_method">
+  
+    - (<tt>Object</tt>) <strong>clean_up</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/krb5-gssapi.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_clean_up'>clean_up</span>
+  <span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>KRB5CCNAME</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="copy_ticket-instance_method">
+  
+    - (<tt>Object</tt>) <strong>copy_ticket</strong>(input_token) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/krb5-gssapi.rb', line 22</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_copy_ticket'>copy_ticket</span><span class='lparen'>(</span><span class='id identifier rubyid_input_token'>input_token</span><span class='rparen'>)</span>
+  <span class='ivar'>@srv</span><span class='period'>.</span><span class='id identifier rubyid_acquire_credentials'>acquire_credentials</span>
+
+  <span class='comment'># TODO: https://github.com/zenchild/gssapi/blob/master/lib/gssapi/simple.rb#L102-L103
+</span>  <span class='id identifier rubyid_otok'>otok</span> <span class='op'>=</span> <span class='ivar'>@srv</span><span class='period'>.</span><span class='id identifier rubyid_accept_context'>accept_context</span><span class='lparen'>(</span><span class='id identifier rubyid_input_token'>input_token</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_otok'>otok</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_otok'>otok</span> <span class='op'>!=</span> <span class='kw'>true</span>
+    <span class='ivar'>@return_token</span> <span class='op'>=</span> <span class='id identifier rubyid_otok'>otok</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@srv</span><span class='period'>.</span><span class='id identifier rubyid_delegated_credentials'>delegated_credentials</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NoDelegation</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='const'>FFI</span><span class='op'>::</span><span class='const'>MemoryPointer</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='symbol'>:pointer</span> <span class='comment'># krb5_context
+</span>  <span class='id identifier rubyid_principal'>principal</span> <span class='op'>=</span> <span class='const'>FFI</span><span class='op'>::</span><span class='const'>MemoryPointer</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='symbol'>:pointer</span> <span class='comment'># krb5_principal
+</span>  <span class='id identifier rubyid_ccache'>ccache</span> <span class='op'>=</span> <span class='const'>FFI</span><span class='op'>::</span><span class='const'>MemoryPointer</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='symbol'>:pointer</span>   <span class='comment'># krb5_ccache
+</span>  <span class='id identifier rubyid_minor'>minor</span> <span class='op'>=</span> <span class='const'>FFI</span><span class='op'>::</span><span class='const'>MemoryPointer</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='symbol'>:OM_uint32</span>
+
+  <span class='const'>KRB5</span><span class='op'>::</span><span class='id identifier rubyid_assert_call'>assert_call</span> <span class='symbol'>:krb5_init_context</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span>
+  <span class='const'>KRB5</span><span class='op'>::</span><span class='id identifier rubyid_assert_call'>assert_call</span> <span class='symbol'>:krb5_parse_name</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_display_name'>display_name</span><span class='comma'>,</span> <span class='id identifier rubyid_principal'>principal</span>
+  <span class='const'>KRB5</span><span class='op'>::</span><span class='id identifier rubyid_assert_call'>assert_call</span> <span class='symbol'>:krb5_cc_resolve</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='ivar'>@cachename</span><span class='comma'>,</span> <span class='id identifier rubyid_ccache'>ccache</span>
+  <span class='const'>KRB5</span><span class='op'>::</span><span class='id identifier rubyid_assert_call'>assert_call</span> <span class='symbol'>:krb5_cc_initialize</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_ccache'>ccache</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_principal'>principal</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span>
+  <span class='const'>KRB5</span><span class='op'>::</span><span class='id identifier rubyid_assert_call'>assert_call</span> <span class='symbol'>:krb5_free_principal</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_principal'>principal</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_res'>res</span> <span class='op'>=</span> <span class='const'>GSSAPI</span><span class='op'>::</span><span class='const'>LibGSSAPI</span><span class='op'>::</span><span class='id identifier rubyid_gss_krb5_copy_ccache'>gss_krb5_copy_ccache</span><span class='lparen'>(</span><span class='id identifier rubyid_minor'>minor</span><span class='comma'>,</span> <span class='ivar'>@srv</span><span class='period'>.</span><span class='id identifier rubyid_delegated_credentials'>delegated_credentials</span><span class='comma'>,</span> <span class='id identifier rubyid_ccache'>ccache</span><span class='period'>.</span><span class='id identifier rubyid_get_pointer'>get_pointer</span><span class='lparen'>(</span><span class='int'>0</span><span class='rparen'>)</span><span class='rparen'>)</span>
+
+  <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>KRB5CCNAME</span><span class='tstring_end'>'</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='ivar'>@cachename</span>
+  <span class='ivar'>@ok</span> <span class='op'>=</span> <span class='kw'>true</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="display_name-instance_method">
+  
+    - (<tt>Object</tt>) <strong>display_name</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+18
+19
+20</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/krb5-gssapi.rb', line 18</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_display_name'>display_name</span>
+  <span class='ivar'>@srv</span><span class='period'>.</span><span class='id identifier rubyid_display_name'>display_name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Fri Nov 13 15:41:12 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>

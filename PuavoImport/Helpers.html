@@ -1,0 +1,766 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: PuavoImport::Helpers
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!PuavoImport/Helpers.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (H)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../PuavoImport.html" title="PuavoImport (module)">PuavoImport</a></span></span>
+     &raquo; 
+    <span class="title">Helpers</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: PuavoImport::Helpers
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/puavo_import/helpers.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#ask-instance_method" title="#ask (instance method)">- (Object) <strong>ask</strong>(question, opts = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#brown-instance_method" title="#brown (instance method)">- (Object) <strong>brown</strong>(text) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#cmd_options-instance_method" title="#cmd_options (instance method)">- (Object) <strong>cmd_options</strong>(args = {}, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#colorize-instance_method" title="#colorize (instance method)">- (Object) <strong>colorize</strong>(text, color_code) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#diff_objects-instance_method" title="#diff_objects (instance method)">- (Object) <strong>diff_objects</strong>(object_a, object_b, attributes) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#encode_text-instance_method" title="#encode_text (instance method)">- (Object) <strong>encode_text</strong>(data, encoding) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#green-instance_method" title="#green (instance method)">- (Object) <strong>green</strong>(text) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#red-instance_method" title="#red (instance method)">- (Object) <strong>red</strong>(text) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sanitize_name-instance_method" title="#sanitize_name (instance method)">- (Object) <strong>sanitize_name</strong>(name) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="ask-instance_method">
+  
+    - (<tt>Object</tt>) <strong>ask</strong>(question, opts = {}) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 109</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_ask'>ask</span><span class='lparen'>(</span><span class='id identifier rubyid_question'>question</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new_value'>new_value</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>while</span> <span class='kw'>true</span>
+    <span class='id identifier rubyid_print'>print</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_question'>question</span><span class='rbrace'>}</span><span class='tstring_content'> [</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:default</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_print'>print</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(optional)</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:optional</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_print'>print</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&gt; </span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_new_value'>new_value</span> <span class='op'>=</span> <span class='const'>STDIN</span><span class='period'>.</span><span class='id identifier rubyid_gets'>gets</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>
+
+    <span class='comment'># Use default or previous value if user did not give anything
+</span>    <span class='id identifier rubyid_new_value'>new_value</span> <span class='op'>=</span>  <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:default</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_value'>new_value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+    <span class='comment'># Break if we have value
+</span>    <span class='kw'>break</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_new_value'>new_value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+    <span class='comment'># Allow empty value in optional
+</span>    <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:optional</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_new_value'>new_value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="brown-instance_method">
+  
+    - (<tt>Object</tt>) <strong>brown</strong>(text) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+107</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 107</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_brown'>brown</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='id identifier rubyid_colorize'>colorize</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='int'>33</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="cmd_options-instance_method">
+  
+    - (<tt>Object</tt>) <strong>cmd_options</strong>(args = {}, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 5</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_cmd_options'>cmd_options</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='symbol'>:encoding</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>ISO8859-1</span><span class='tstring_end'>'</span></span><span class='comma'>,</span>
+    <span class='symbol'>:mode</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>import</span><span class='tstring_end'>&quot;</span></span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_parser'>parser</span> <span class='op'>=</span> <span class='const'>OptionParser</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_opts'>opts</span><span class='op'>|</span>
+    <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_banner'>banner</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Usage: puavo-import-schools [options] &lt;CSV file&gt;
+
+</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='symbol'>:message</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='tstring_content'>
+
+</span><span class='tstring_end'>&quot;</span></span>
+
+    <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--organisation-domain DOMAIN</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Domain of organisation</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
+      <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:organisation_domain</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_o'>o</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--character-encoding ENCODING</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Character encoding of the CSV file</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_encoding'>encoding</span><span class='op'>|</span>
+      <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:encoding</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_encoding'>encoding</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--initialize</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Initialize import to existing data by guessing external ids</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span>
+      <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:mode</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>set-external-id</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_opts'>opts</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+    <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_on_tail'>on_tail</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>-h</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--help</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Show this message</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+      <span class='const'>STDERR</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_opts'>opts</span>
+      <span class='const'>Process</span><span class='period'>.</span><span class='id identifier rubyid_exit'>exit</span><span class='lparen'>(</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_parser'>parser</span><span class='period'>.</span><span class='id identifier rubyid_parse!'>parse!</span>
+
+  <span class='kw'>if</span> <span class='const'>ARGV</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:csv_file</span><span class='rbracket'>]</span> <span class='op'>=</span>  <span class='const'>ARGV</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='const'>STDERR</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_parser'>parser</span>
+    <span class='id identifier rubyid_exit'>exit</span> <span class='int'>1</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>return</span> <span class='id identifier rubyid_options'>options</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="colorize-instance_method">
+  
+    - (<tt>Object</tt>) <strong>colorize</strong>(text, color_code) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+99
+100
+101</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 99</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_colorize'>colorize</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='id identifier rubyid_color_code'>color_code</span><span class='rparen'>)</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\e[</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_color_code'>color_code</span><span class='rbrace'>}</span><span class='tstring_content'>m</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_text'>text</span><span class='rbrace'>}</span><span class='tstring_content'>\e[0m</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="diff_objects-instance_method">
+  
+    - (<tt>Object</tt>) <strong>diff_objects</strong>(object_a, object_b, attributes) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 65</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_diff_objects'>diff_objects</span><span class='lparen'>(</span><span class='id identifier rubyid_object_a'>object_a</span><span class='comma'>,</span> <span class='id identifier rubyid_object_b'>object_b</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_different_attributes'>different_attributes</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+
+  <span class='id identifier rubyid_attr_name_lenght'>attr_name_lenght</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_max'>max</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span><span class='id identifier rubyid_b'>b</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>&lt;=&gt;</span> <span class='id identifier rubyid_b'>b</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>+</span> <span class='int'>2</span>
+  <span class='id identifier rubyid_spacing'>spacing</span> <span class='op'>=</span> <span class='int'>50</span>
+
+  <span class='id identifier rubyid_lines'>lines</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_lines'>lines</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>%-</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_attr_name_lenght'>attr_name_lenght</span> <span class='op'>+</span> <span class='id identifier rubyid_spacing'>spacing</span> <span class='op'>-</span> <span class='int'>8</span> <span class='rbrace'>}</span><span class='tstring_content'>s %s</span><span class='tstring_end'>&quot;</span></span> <span class='op'>%</span> <span class='lbracket'>[</span><span class='id identifier rubyid_object_a'>object_a</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='comma'>,</span> <span class='id identifier rubyid_object_b'>object_b</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_attr'>attr</span><span class='op'>|</span>
+    <span class='id identifier rubyid_a_value'>a_value</span> <span class='op'>=</span> <span class='id identifier rubyid_object_a'>object_a</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_b_value'>b_value</span> <span class='op'>=</span> <span class='id identifier rubyid_object_b'>object_b</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='rparen'>)</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_a_value'>a_value</span> <span class='op'>!=</span> <span class='id identifier rubyid_b_value'>b_value</span>
+      <span class='id identifier rubyid_different_attributes'>different_attributes</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_a_value'>a_value</span> <span class='op'>=</span> <span class='id identifier rubyid_brown'>brown</span><span class='lparen'>(</span><span class='id identifier rubyid_a_value'>a_value</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_b_value'>b_value</span> <span class='op'>=</span> <span class='id identifier rubyid_red'>red</span><span class='lparen'>(</span><span class='id identifier rubyid_b_value'>b_value</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_a_value'>a_value</span> <span class='op'>=</span> <span class='id identifier rubyid_green'>green</span><span class='lparen'>(</span><span class='id identifier rubyid_a_value'>a_value</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_b_value'>b_value</span> <span class='op'>=</span> <span class='id identifier rubyid_green'>green</span><span class='lparen'>(</span><span class='id identifier rubyid_b_value'>b_value</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_attr'>attr</span> <span class='rbrace'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_a_value'>a_value</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_attr'>attr</span> <span class='rbrace'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_b_value'>b_value</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>%-</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_attr_name_lenght'>attr_name_lenght</span> <span class='rbrace'>}</span><span class='tstring_content'>s %-</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_spacing'>spacing</span> <span class='rbrace'>}</span><span class='tstring_content'>s %-</span><span class='embexpr_beg'>#{</span> <span class='id identifier rubyid_attr_name_lenght'>attr_name_lenght</span> <span class='rbrace'>}</span><span class='tstring_content'>s %s</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_lines'>lines</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span> <span class='op'>%</span> <span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_lines'>lines</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_l'>l</span><span class='op'>|</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_l'>l</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>return</span> <span class='id identifier rubyid_different_attributes'>different_attributes</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="encode_text-instance_method">
+  
+    - (<tt>Object</tt>) <strong>encode_text</strong>(data, encoding) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+50
+51
+52
+53
+54
+55</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 50</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_encode_text'>encode_text</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_encoding'>encoding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_data'>data</span><span class='op'>|</span>
+    <span class='kw'>next</span> <span class='kw'>if</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>utf-8</span><span class='tstring_end'>'</span></span><span class='comma'>,</span> <span class='id identifier rubyid_encoding'>encoding</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="green-instance_method">
+  
+    - (<tt>Object</tt>) <strong>green</strong>(text) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+105</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 105</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_green'>green</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='id identifier rubyid_colorize'>colorize</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='int'>32</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="red-instance_method">
+  
+    - (<tt>Object</tt>) <strong>red</strong>(text) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+103</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 103</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_red'>red</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='id identifier rubyid_colorize'>colorize</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='int'>31</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sanitize_name-instance_method">
+  
+    - (<tt>Object</tt>) <strong>sanitize_name</strong>(name) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+57
+58
+59
+60
+61
+62
+63</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puavo_import/helpers.rb', line 57</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sanitize_name'>sanitize_name</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_sanitized_name'>sanitized_name</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
+  <span class='id identifier rubyid_sanitized_name'>sanitized_name</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[åäö ]</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>å</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>a</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ä</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>a</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ö</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>o</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>-</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_sanitized_name'>sanitized_name</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[^a-z0-9-]</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>return</span> <span class='id identifier rubyid_sanitized_name'>sanitized_name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Fri Nov 13 15:41:11 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>
