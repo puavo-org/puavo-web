@@ -119,8 +119,8 @@ describe LdapModel do
       # Fix everything!
       user.save!
 
-      assert school.refresh.member_dns.include?(user.dn), "school should dn rel again"
-      assert school.refresh.member_usernames.include?("heli"), "school should username rel again"
+      assert school.refresh.member_dns.include?(user.dn), "school should have dn rel again"
+      assert school.refresh.member_usernames.include?("heli"), "school should have username rel again"
 
       assert other_school.refresh.member_dns.empty?, "other school should not have the invalid dn rel"
       assert other_school.refresh.member_usernames.empty?, "other school should not have the invalid username rel"
