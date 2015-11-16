@@ -22,8 +22,7 @@ class Username extends PureComponent {
             <span>
                 {school &&
                 <a title={`${userData.first_name} ${userData.last_name}`} href={`/users/${school.id}/users/${userData.id}`}>{username}</a>}
-
-                {username}
+                {!school && username}
 
                 <Cond value={this.props.userDataState}>
                     <Clause test={R.equals("fetching")}>
