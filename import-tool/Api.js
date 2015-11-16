@@ -77,6 +77,6 @@ export function fetchUserData(username, options={}) {
     if (options.attributes) {
         query = "?attributes=" + options.attributes.join(",");
     }
-    return request("GET", `/v3/users/${username}${query}`);
+    return request("GET", `/v3/users/${username.trim()}${query}`);
 }
 

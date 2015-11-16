@@ -52,7 +52,7 @@ function reducer(state=initialState, action) {
             ? generateUsername(action.rowIndex, state)
             : action.value;
 
-        return updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], value, state);
+        return updateIn(["rows", action.rowIndex, action.columnIndex, "customValue"], R.trim(value), state);
     case ADD_COLUMN:
         return R.evolve({
             autoOpenColumnEditor: R.always(state.columns.length),

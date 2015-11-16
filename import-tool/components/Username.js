@@ -23,7 +23,7 @@ class Username extends PureComponent {
                 {school &&
                 <a title={`${userData.first_name} ${userData.last_name}`} href={`/users/${school.id}/users/${userData.id}`}>{username}</a>}
 
-                {!this.props.userData && username}
+                {username}
 
                 <Cond value={this.props.userDataState}>
                     <Clause test={R.equals("fetching")}>
@@ -63,9 +63,10 @@ Username.propTypes = {
     userDataState: React.PropTypes.string,
 };
 Username = connect((state, props) => {
+    const username = R.trim(props.username);
     return {
-        userDataState: R.path(["userCache", props.username, "state"], state),
-        userData: R.path(["userCache", props.username, "userData"], state),
+        userDataState: R.path(["userCache", username, "state"], state),
+        userData: R.path(["userCache", username, "userData"], state),
     };
 })(Username);
 
