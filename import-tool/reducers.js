@@ -14,6 +14,7 @@ import {
     SET_DEFAULT_SCHOOL,
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
+    SET_GROUPS,
     SET_ROW_STATUS,
     SET_USER_DATA,
     GENERATE_USERNAME,
@@ -26,6 +27,7 @@ const initialState = deepFreeze({
     rowStatus: {},
     defaultSchool: null,
     legacyRoles: [],
+    groups: [],
     autoOpenColumnEditor: null,
     userCache: {},
     columns: [
@@ -75,6 +77,8 @@ function reducer(state=initialState, action) {
         return R.assoc("defaultSchool", action.school, state);
     case SET_LEGACY_ROLES:
         return R.assoc("legacyRoles", action.legacyRoles, state);
+    case SET_GROUPS:
+        return R.assoc("groups", action.groups, state);
     case FILL_COLUMN:
         return R.evolve({rows: R.addIndex(R.map)((row, rowIndex) => {
             if (R.path(["rowStatus", rowIndex, "status"], state) === "ok") {

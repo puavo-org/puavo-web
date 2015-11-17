@@ -10,6 +10,7 @@ import {Role, RoleSelector} from "./Role";
 import {LegacyRole, LegacyRoleSelector} from "./LegacyRole";
 import {UpdateType, UpdateTypeInput} from "./UpdateType";
 import {Username, UsernameInput} from "./Username";
+import {Group, GroupSelector} from "./Group";
 
 
 export class CellValueInput extends PureComponent {
@@ -51,6 +52,8 @@ export class CellValueInput extends PureComponent {
             return <UsernameInput {...passProps} />;
         case ColumnTypes.legacy_role.id:
             return <LegacyRoleSelector {...passProps} />;
+        case ColumnTypes.group.id:
+            return <GroupSelector {...passProps} />;
         case ColumnTypes.role.id:
             return <RoleSelector {...passProps} />;
         case ColumnTypes.update_type.id:
@@ -87,6 +90,8 @@ export class CellValue extends PureComponent {
             return <Username username={this.props.value} />;
         case ColumnTypes.legacy_role.id:
             return <LegacyRole name={this.props.value} />;
+        case ColumnTypes.group.id:
+            return <Group abbreviation={this.props.value} />;
         case ColumnTypes.role.id:
             return <Role value={this.props.value} />;
         case ColumnTypes.update_type.id:

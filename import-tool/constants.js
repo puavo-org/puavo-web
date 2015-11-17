@@ -9,6 +9,7 @@ export const FILL_COLUMN = "FILL_COLUMN";
 export const SET_CUSTOM_VALUE = "SET_CUSTOM_VALUE";
 export const SET_IMPORT_DATA = "SET_IMPORT_DATA";
 export const SET_LEGACY_ROLES = "SET_LEGACY_ROLES";
+export const SET_GROUPS = "SET_GROUPS";
 export const SET_DEFAULT_SCHOOL = "SET_DEFAULT_SCHOOL";
 export const SET_ROW_STATUS = "SET_ROW_STATUS";
 export const SET_USER_DATA = "SET_USER_DATA";

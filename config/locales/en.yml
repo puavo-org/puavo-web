@@ -52,6 +52,7 @@ en:
       unknown: Unknown
       username: Username
       password: Password
+      group: Group
   time:
     am: am
     formats:
