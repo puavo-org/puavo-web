@@ -14,7 +14,6 @@ include PuavoImport::Helpers
 def last_login(domain, username)
 
   if @options[:es_url].nil?
-    puts @options.inspect
     return "Can't get lastlogin"
   end
 
