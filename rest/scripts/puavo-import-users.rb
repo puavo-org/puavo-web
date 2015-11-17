@@ -240,21 +240,14 @@ when "set-external-id"
                                                            "import_group_name",
                                                            "external_id"] )
 
-    response = "N"
+    response = "Y"
 
-    if different_attributes.length == 1
-      response = "Y"
+    if user.import_school_names != puavo_user.import_school_names
+      response = "N"
     end
 
-    if options[:matches] && options[:matches].include?("school")
-      if response == "N" && user.import_school_names == puavo_user.import_school_names
-        response = "Y"
-      end
-    end
-    if options[:matches] && options[:matches].include?("group_level")
-      if response == "N" && user.import_group_name.to_i == puavo_user.import_group_name.to_i
-        response = "Y"
-      end
+    if user.import_group_name.to_i != puavo_user.import_group_name.to_i
+      response = "N"
     end
 
     #response = ask("Update external_id (#{ user.external_id }) to Puavo (Y/N)?",
@@ -329,4 +322,3 @@ puts "user_not_found_by_name: #{ user_not_found_by_name } file: #{ log_to_file("
 puts "found_many_users_by_name: #{ found_many_users_by_name } file: #{ log_to_file("found_many_users_by_name")[:filename] }"
 puts "update_external_id: #{ update_external_id }"
 puts "not_update_external_id: #{ not_update_external_id } file: #{ log_to_file("not_update_external_id")[:filename] }"
-
