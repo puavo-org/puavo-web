@@ -67,7 +67,17 @@ module PuavoImport
     end
 
     def to_s
-      "#{ self.first_name } #{ self.last_name } (external_id: #{ self.external_id })"
+      {
+        "db_id" => self.db_id,
+        "external_id" => self.external_id,
+        "first_name" => self.first_name,
+        "given_names" => self.given_names,
+        "last_name" => self.last_name,
+        "group_external_id" => self.group_external_id,
+        "group_name" => self.import_group_name,
+        "school_external_ids" => self.school_external_ids,
+        "school_name" => self.import_school_names
+      }.inspect
     end
 
     def need_update?(user)
