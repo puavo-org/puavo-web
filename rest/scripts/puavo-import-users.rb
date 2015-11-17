@@ -10,7 +10,7 @@ require_relative "../lib/puavo_import"
 
 include PuavoImport::Helpers
 
-options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
+@options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
     options[:user_role] = r
   end
@@ -39,7 +39,7 @@ LdapModel.setup(
 )
 
 LdapModel.setup(
-  :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
+  :organisation => PuavoRest::Organisation.by_domain!(@options[:organisation_domain])
 )
 
 users = []
@@ -52,14 +52,14 @@ correct_csv_users = 0
 update_external_id = 0
 not_update_external_id = 0
 
-CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";" ) do |row|
-  user_data = encode_text(row, options[:encoding])
+CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => ";" ) do |row|
+  user_data = encode_text(row, @options[:encoding])
 
   school_external_ids = user_data[8].nil? ? [] : Array(user_data[8].split(","))
 
   school_external_ids.delete_if do |school_id|
-    options[:skip_schools].include?(school_id.to_s)
-  end if options[:skip_schools]
+    @options[:skip_schools].include?(school_id.to_s)
+  end if @options[:skip_schools]
 
   next if school_external_ids.empty?
 
@@ -75,8 +75,8 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
                                  :group_external_id => user_data[10],
                                  :username => user_data[9],
                                  :school_external_ids => school_external_ids, # FIXME: multiple value for teacher?
-                                 :role => options[:user_role],
-                                 :teacher_group_suffix => options[:teacher_group_suffix])
+                                 :role => @options[:user_role],
+                                 :teacher_group_suffix => @options[:teacher_group_suffix])
   rescue PuavoImport::UserGroupError => e
     puts e.to_s
     invalid_group += 1
@@ -94,7 +94,7 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
 
 end
 
-mode = options[:mode]
+mode = @options[:mode]
 
 case mode
 when "set-external-id"
@@ -233,7 +233,7 @@ when "import"
         :telephone_number => user.telephone_number,
         :preferred_language => user.preferred_language,
         :username => user.username,
-        :roles => [options[:user_role]],
+        :roles => [@options[:user_role]],
         :school_dns => [user.school.dn.to_s])
       puavo_rest_user.save!
 
