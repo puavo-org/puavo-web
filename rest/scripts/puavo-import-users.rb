@@ -3,12 +3,69 @@
 
 require 'optparse'
 require 'csv'
+require "elasticsearch"
 
 require 'bundler/setup'
 require_relative "../puavo-rest"
 require_relative "../lib/puavo_import"
 
 include PuavoImport::Helpers
+
+def last_login(domain, username)
+
+  if @options[:es_url].nil?
+    puts @options.inspect
+    return "Can't get lastlogin"
+  end
+
+  if @es_client.nil?
+    @es_client = Elasticsearch::Client.new(:url => @options[:es_url])
+  end
+
+  timestamp = nil
+  today = Date.today
+  indices = (1..180).map do |i|
+    (today - i).strftime("fluentd-puavo-rest-%Y.%m.%d")
+  end
+
+  indices.each do |indice|
+    begin
+      query = "msg: \"created session\" AND created\\ session.session.organisation: \"#{ domain }\" AND created\\ session.session.user.username: \"#{ username }\""
+      res = @es_client.search({
+                          :ignore_unavailable => true,
+                          :index => Array(indice),
+                          :body => {
+                            :_source => true,
+                            :sort =>  { "@timestamp" => { :order => "asc" }},
+                            :query => {
+                              :filtered => {
+                                :query => {
+                                  :query_string => {
+                                    :analyze_wildcard => true,
+                                    :query => query
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        })
+      if res["hits"]["total"] > 0
+        timestamp = res["hits"]["hits"][0]["_source"]["@timestamp"]
+        break
+      end
+
+    rescue Elasticsearch::Transport::Transport::Errors::NotFound => err
+      STDERR.puts err.to_s
+      STDERR.puts
+      STDERR.puts "Cannot find login timestamp"
+    end
+
+  end
+
+  return timestamp
+
+end
+
 
 @options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
@@ -29,6 +86,10 @@ include PuavoImport::Helpers
 
   opts.on("--not-skip-duplicate-user", "Handle duplicate puavo users") do |not_skip_duplicate_user|
     options[:not_skip_duplicate_user] = not_skip_duplicate_user
+  end
+
+  opts.on("--es-url ES_URL", "URL for Elasticsearch") do |es_url|
+    options[:es_url] = es_url
   end
 end
 
@@ -155,8 +216,9 @@ when "set-external-id"
       puts
 
       puavo_users.each do |u|
+        timestamp = last_login(@options[:organisation_domain], u.username)
         groups = u.groups.map{ |g| "'#{ g.name}'" }.join(", ")
-        puts "#{ user_count } #{ u.first_name } #{ u.last_name }, #{ u.username }, #{ u.school.name }, #{ u.import_group_name }, last login: xxxxx"
+        puts "#{ user_count } #{ u.first_name } #{ u.last_name }, #{ u.username }, #{ u.school.name }, #{ u.import_group_name }, last login (last 6 months): #{ timestamp }"
         user_count += 1
       end
 
