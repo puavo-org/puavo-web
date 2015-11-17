@@ -26,6 +26,10 @@ options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts,
   opts.on("--matches x,y,x", Array) do |matches|
     options[:matches] = matches
   end
+
+  opts.on("--not-skip-duplicate-user", "Handle duplicate puavo users") do |not_skip_duplicate_user|
+    options[:not_skip_duplicate_user] = not_skip_duplicate_user
+  end
 end
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
@@ -140,7 +144,7 @@ when "set-external-id"
       log_to_file("found_many_users_by_name")[:file].puts user.to_s
       user_count = 0
 
-      next unless options[:not_skip_duplicate_user]
+      next unless @options[:not_skip_duplicate_user]
 
       puts "\nImport user:"
       puts "first name: #{ user.first_name }"
