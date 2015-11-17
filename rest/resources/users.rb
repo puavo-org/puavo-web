@@ -625,6 +625,31 @@ class Users < PuavoSinatra
 
   end
 
+  put "/v3/users/:username/groups" do
+    auth :basic_auth, :kerberos
+
+    user = User.by_username!(params["username"])
+    new_groups = json_params["ids"].map do |id|
+      Group.by_attr!(:id, id)
+    end
+
+    current_groups = Group.by_attr(:member_dns, user.dn, :multiple => true)
+
+    current_groups.each do |r|
+      r.remove_member(user)
+      r.save!
+    end
+
+
+    new_groups.each do |r|
+      r.add_member(user)
+      r.save!
+    end
+
+    json new_groups
+  end
+
+
   get "/v3/users/:username/legacy_roles" do
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])

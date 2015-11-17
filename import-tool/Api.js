@@ -64,8 +64,16 @@ export function replaceLegacyRoles(username, roleIds) {
     return request("PUT", `/v3/users/${username}/legacy_roles`, {ids: roleIds});
 }
 
+export function replaceGroups(username, groupIds) {
+    return request("PUT", `/v3/users/${username}/groups`, {ids: groupIds});
+}
+
 export function fetchLegacyRoles(schoolId) {
     return request("GET", `/v3/schools/${schoolId}/legacy_roles`);
+}
+
+export function fetchGroups(schoolId) {
+    return request("GET", `/v3/schools/${schoolId}/groups`);
 }
 
 export function createPasswordResetIntent(schoolId, userIds) {

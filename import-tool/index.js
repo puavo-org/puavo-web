@@ -25,7 +25,7 @@ import ImportTool from "./components/ImportTool";
 
 import {SET_DEFAULT_SCHOOL} from "./constants";
 import createStateStorage from "./StateStorage";
-import {fetchLegacyRoles} from "./actions";
+import {fetchLegacyRoles, fetchGroups} from "./actions";
 
 
 const logger = createLogger({
@@ -50,6 +50,7 @@ function createImportTool(containerId, school) {
     });
 
     store.dispatch(fetchLegacyRoles(school.id));
+    store.dispatch(fetchGroups(school.id));
 
     container.innerHTML = "";
     ReactDOM.render(

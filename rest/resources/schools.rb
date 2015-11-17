@@ -267,6 +267,12 @@ class Schools < PuavoSinatra
     school = School.by_attr!(:id, params["school_id"])
     json User.by_attr(:school_dns, school.dn, :multiple => true)
   end
+
+  get "/v3/schools/:school_id/groups" do
+    auth :basic_auth, :kerberos
+    school = School.by_attr!(:id, params["school_id"])
+    json Group.by_attr(:school_dn, school.dn, :multiple => true)
+  end
 end
 
 

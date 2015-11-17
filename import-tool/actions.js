@@ -13,6 +13,7 @@ import {
     SET_CUSTOM_VALUE,
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
+    SET_GROUPS,
     SET_USER_DATA,
 
     CREATE_USER,
@@ -180,7 +181,14 @@ function findIndices(id, columns) {
 export function startImport(rowIndex=0) {
     return async (dispatch, getState) => {
 
-        const {rows, columns, defaultSchool, rowStatus, legacyRoles} = getState();
+        const {
+            rows,
+            columns,
+            defaultSchool,
+            rowStatus,
+            legacyRoles,
+            groups,
+        } = getState();
 
         const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
         const dispatchStatus = R.compose(dispatch, R.merge({
@@ -259,16 +267,38 @@ export function startImport(rowIndex=0) {
             .map(name => legacyRoles.find(r => r.name === name))
             .map(r => r.id);
 
-        try {
-            await Api.replaceLegacyRoles(userData.username, roleIds);
-        } catch(error) {
-            dispatchStatus({
-                status: "error",
-                message: "Failed to set legacy roles",
-                error,
-            });
-            return next();
+        if (roleIds.length > 0) {
+            try {
+                await Api.replaceLegacyRoles(userData.username, roleIds);
+            } catch(error) {
+                dispatchStatus({
+                    status: "error",
+                    message: "Failed to set legacy roles",
+                    error,
+                });
+                return next();
+            }
         }
+
+        const groupIndices = findIndices(ColumnTypes.group.id, columns);
+        const groupAbbreviations = groupIndices.map(i => getCellValue(row[i]));
+        const groupIds = groupAbbreviations
+            .map(abbreviation => groups.find(g => g.abbreviation === abbreviation))
+            .map(g => g.id);
+
+        if (groupIds.length > 0) {
+            try {
+                await Api.replaceGroups(userData.username, groupIds);
+            } catch(error) {
+                dispatchStatus({
+                    status: "error",
+                    message: "Failed to set legacy roles",
+                    error,
+                });
+                return next();
+            }
+        }
+
 
         dispatchStatus({status: "ok"});
         return next();
@@ -313,6 +343,16 @@ export function fetchLegacyRoles(schoolId) {
         dispatch({
             type: SET_LEGACY_ROLES,
             legacyRoles,
+        });
+    };
+}
+
+export function fetchGroups(schoolId) {
+    return async (dispatch) => {
+        const groups = await Api.fetchGroups(schoolId);
+        dispatch({
+            type: SET_GROUPS,
+            groups,
         });
     };
 }
