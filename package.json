@@ -27,6 +27,7 @@
     "lodash": "^3.10.1",
     "nib": "~0.9.1",
     "papaparse": "^4.1.2",
+    "piecon": "git://github.com/epeli/piecon",
     "ramda": "^0.17.1",
     "react": "^0.14.0",
     "react-cond": "^0.3.0",

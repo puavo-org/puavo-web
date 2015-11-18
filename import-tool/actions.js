@@ -2,6 +2,7 @@ import Papa from "papaparse";
 import R from "ramda";
 import Bluebird from "bluebird";
 import shuffle from "lodash/collection/shuffle";
+import Piecon from "piecon";
 
 import t from "./i18n";
 
@@ -193,8 +194,14 @@ export function startImport() {
         window.addEventListener("beforeunload", preventUnload);
         let rowIndex = -1;
 
+        Piecon.setOptions({
+            color: "#FAB32E",
+            background: "#bbb",
+            shadow: "#fff",
+        });
+        Piecon.setProgress(0);
+
         while (true) {
-            rowIndex++;
 
             const {
                 rows,
@@ -204,6 +211,10 @@ export function startImport() {
                 legacyRoles,
                 groups,
             } = getState();
+
+            Piecon.setProgress(Math.round(rowIndex / rows.length * 100));
+
+            rowIndex++;
 
             const dispatchStatus = R.compose(dispatch, R.merge({
                 type: "SET_ROW_STATUS",
@@ -312,8 +323,10 @@ export function startImport() {
             }
 
             dispatchStatus({status: "ok"});
+
         }
 
+        Piecon.setProgress(100);
         window.removeEventListener("beforeunload", preventUnload);
     };
 }
