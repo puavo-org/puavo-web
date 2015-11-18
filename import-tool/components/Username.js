@@ -6,7 +6,7 @@ import {Cond, Clause, Default} from "react-cond";
 
 import t from "../i18n";
 import {GENERATE_USERNAME} from "../constants";
-import ColumnTypes from "../ColumnTypes";
+import {AllColumnTypes} from "../ColumnTypes";
 
 import PureComponent from "./PureComponent";
 import StatusIcon from "./StatusIcon";
@@ -120,8 +120,8 @@ UsernameInput.propTypes = {
 };
 
 
-const isFirstName = R.equals(ColumnTypes.first_name);
-const isLastName = R.equals(ColumnTypes.last_name);
+const isFirstName = R.equals(AllColumnTypes.first_name);
+const isLastName = R.equals(AllColumnTypes.last_name);
 const canGenerateUsername = R.allPass(R.map(R.any, [isFirstName, isLastName]));
 
 UsernameInput = connect(state => {

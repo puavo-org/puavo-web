@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import {Overlay} from "react-overlays";
 
 import {changeColumnType, fillColumn, dropColumn, clearAutoOpenColumnEditor} from "../actions";
-import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
+import {ReactColumnType} from "../ColumnTypes";
 import {preventDefault} from "../utils";
 import t from "../i18n";
 
@@ -77,7 +77,7 @@ class ColumnEditor extends PureComponent {
                                 <select
                                     value={this.props.columnType.id}
                                     onChange={e => this.changeColumnType(e.target.value)}>
-                                    {R.values(ColumnTypes).map(columnType => {
+                                    {R.values(this.props.activeColumnTypes).map(columnType => {
                                         return <option key={columnType.id} value={columnType.id}>{t.type(columnType.id)}</option>;
                                     })}
                                 </select>
@@ -123,8 +123,6 @@ class ColumnEditor extends PureComponent {
     }
 
 }
-
-
 ColumnEditor.propTypes = {
     fillColumn: React.PropTypes.func.isRequired,
     dropColumn: React.PropTypes.func.isRequired,
@@ -133,6 +131,10 @@ ColumnEditor.propTypes = {
     columnIndex: React.PropTypes.number.isRequired,
     columnType: ReactColumnType.isRequired,
     autoOpenColumnEditor: React.PropTypes.number,
+    activeColumnTypes: React.PropTypes.object.isRequired,
 };
 
-export default connect(R.pick(["autoOpenColumnEditor"]), {changeColumnType, fillColumn, dropColumn, clearAutoOpenColumnEditor})(ColumnEditor);
+export default connect(
+    R.pick(["autoOpenColumnEditor", "activeColumnTypes"]),
+    {changeColumnType, fillColumn, dropColumn, clearAutoOpenColumnEditor}
+)(ColumnEditor);

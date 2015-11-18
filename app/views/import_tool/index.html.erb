@@ -29,5 +29,5 @@ var scriptURL = "http://" + (location.host || 'localhost').split(':')[0] + ":400
 document.write('<script src="' + scriptURL + '"></' + 'script>');
 </script>
 <script charset="utf-8">
-window.createImportTool("import-tool", <%= @school_json.html_safe  %>);
+window.createImportTool(<%= @import_tool_options.to_json.html_safe  %>);
 </script>

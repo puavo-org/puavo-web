@@ -14,6 +14,7 @@ import "./style.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
+import R from "ramda";
 import {createStore, applyMiddleware, compose} from "redux";
 import createLogger from "redux-logger";
 import thunk from "redux-thunk";
@@ -24,8 +25,9 @@ import {batchedUpdatesMiddleware} from "redux-batched-updates";
 import ImportTool from "./components/ImportTool";
 
 import {SET_DEFAULT_SCHOOL} from "./constants";
+import {AllColumnTypes} from "./ColumnTypes";
 import createStateStorage from "./StateStorage";
-import {fetchLegacyRoles, fetchGroups} from "./actions";
+import {fetchLegacyRoles, fetchGroups, setActiveColumnTypes} from "./actions";
 
 
 const logger = createLogger({
@@ -40,7 +42,7 @@ const createFinalStore = compose(
 )(createStore);
 
 
-function createImportTool(containerId, school) {
+function createImportTool({containerId, school, useGroupsOnly}) {
     var container = document.getElementById(containerId);
     const store = createFinalStore(reducers);
 
@@ -49,8 +51,13 @@ function createImportTool(containerId, school) {
         school,
     });
 
-    store.dispatch(fetchLegacyRoles(school.id));
-    store.dispatch(fetchGroups(school.id));
+    if (useGroupsOnly) {
+        store.dispatch(setActiveColumnTypes(R.omit(["legacy_role"], AllColumnTypes)));
+        store.dispatch(fetchGroups(school.id));
+    } else {
+        store.dispatch(setActiveColumnTypes(R.omit(["group"], AllColumnTypes)));
+        store.dispatch(fetchLegacyRoles(school.id));
+    }
 
     container.innerHTML = "";
     ReactDOM.render(

@@ -10,16 +10,17 @@ import {
     DROP_COLUMN,
     DROP_ROW,
     FILL_COLUMN,
+    GENERATE_USERNAME,
+    SET_ACTIVE_COLUMN_TYPES,
     SET_CUSTOM_VALUE,
     SET_DEFAULT_SCHOOL,
+    SET_GROUPS,
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
-    SET_GROUPS,
     SET_ROW_STATUS,
     SET_USER_DATA,
-    GENERATE_USERNAME,
 } from "./constants";
-import ColumnTypes from "./ColumnTypes";
+import {AllColumnTypes} from "./ColumnTypes";
 import {getCellValue, deepFreeze} from "./utils";
 
 const initialState = deepFreeze({
@@ -30,16 +31,17 @@ const initialState = deepFreeze({
     groups: [],
     autoOpenColumnEditor: null,
     userCache: {},
+    activeColumnTypes: AllColumnTypes,
     columns: [
-        ColumnTypes.first_name,
-        ColumnTypes.last_name,
+        AllColumnTypes.first_name,
+        AllColumnTypes.last_name,
     ],
 });
 
 
 const arrayToObj = R.addIndex(R.reduce)((acc, val, i) => R.assoc(i, {originalValue: val}, acc), {});
 const findLongestRowLength = R.compose(R.reduce(R.max, 0), R.map(R.prop("length")));
-const appendUnknownColumns = R.compose(R.flip(R.concat), R.repeat(ColumnTypes.unknown), R.max(0));
+const appendUnknownColumns = R.compose(R.flip(R.concat), R.repeat(AllColumnTypes.unknown), R.max(0));
 const removeByIndex = R.remove(R.__, 1);
 
 function reducer(state=initialState, action) {
@@ -58,7 +60,7 @@ function reducer(state=initialState, action) {
     case ADD_COLUMN:
         return R.evolve({
             autoOpenColumnEditor: R.always(state.columns.length),
-            columns: R.append(ColumnTypes[action.columnType]),
+            columns: R.append(AllColumnTypes[action.columnType]),
         }, state);
     case CLEAR_AUTO_OPEN_COLUMN_EDITOR:
         return R.assoc("autoOpenColumnEditor", null, state);
@@ -70,7 +72,7 @@ function reducer(state=initialState, action) {
     case DROP_COLUMN:
         return R.evolve({columns: removeByIndex(action.columnIndex)}, state);
     case CHANGE_COLUMN_TYPE:
-        return updateIn(["columns", action.columnIndex], R.always(ColumnTypes[action.typeId]), state);
+        return updateIn(["columns", action.columnIndex], R.always(AllColumnTypes[action.typeId]), state);
     case SET_ROW_STATUS:
         return updateIn(["rowStatus", action.rowIndex], R.merge(R.__, R.omit(["type"], action)), state);
     case SET_DEFAULT_SCHOOL:
@@ -96,13 +98,15 @@ function reducer(state=initialState, action) {
         })}, state);
     case SET_USER_DATA:
         return updateIn(["userCache", action.username], R.always(R.pick(["state", "userData"], action)), state);
+    case SET_ACTIVE_COLUMN_TYPES:
+        return R.assoc("activeColumnTypes", action.columnTypes, state);
     default:
         return state;
     }
 }
 
-const isFirstName = R.equals(ColumnTypes.first_name);
-const isLastName = R.equals(ColumnTypes.last_name);
+const isFirstName = R.equals(AllColumnTypes.first_name);
+const isLastName = R.equals(AllColumnTypes.last_name);
 
 const usernameSlugify = R.compose(
     // Allow _, - and . elsewhere and drop any other chars

@@ -6,7 +6,7 @@ import PureComponent from "./PureComponent";
 import Modal from "./Modal";
 
 import t from "../i18n";
-import ColumnTypes, {REQUIRED_COLUMNS} from "../ColumnTypes";
+import {AllColumnTypes, pickRequiredColumns} from "../ColumnTypes";
 import {parseImportString, startImport, dropRow, createPasswordResetIntentForNewUsers} from "../actions";
 import {getCellValue, preventDefault, deepFreeze} from "../utils";
 
@@ -17,7 +17,6 @@ import ColumnEditor from "./ColumnEditor";
 import StatusIcon from "./StatusIcon";
 import Icon from "./Icon";
 
-const findMissingRequiredColumns = R.differenceWith(R.eqProps("id"), REQUIRED_COLUMNS);
 
 const isRequired = R.propEq("required", true);
 
@@ -55,7 +54,7 @@ class ImportTool extends PureComponent {
 
     render() {
         const {columns, rows, rowStatus} = this.props;
-        const missingColumns = findMissingRequiredColumns(columns);
+        const missingColumns = this.props.findMissingRequiredColumns(columns);
 
         return (
             <div className="ImportTool">
@@ -92,7 +91,7 @@ class ImportTool extends PureComponent {
                                                     columnType={columnType}
                                                     columnIndex={columnIndex}
                                                     currentTypeId={R.compose(
-                                                        R.defaultTo(ColumnTypes.unknown.id),
+                                                        R.defaultTo(AllColumnTypes.unknown.id),
                                                         R.path([columnIndex, "id"])
                                                     )(columns)}
                                                 />
@@ -248,9 +247,21 @@ ImportTool.propTypes = {
     rows: React.PropTypes.array.isRequired,
     columns: React.PropTypes.array.isRequired,
     rowStatus: React.PropTypes.object.isRequired,
+    findMissingRequiredColumns: React.PropTypes.func.isRequired,
 };
 
-export default connect(R.pick(["rowStatus", "rows", "columns"]), {
+export default connect(({rowStatus, rows, columns, activeColumnTypes}) => {
+    const findMissingRequiredColumns = R.differenceWith(
+        R.eqProps("id"),
+        pickRequiredColumns(activeColumnTypes)
+    );
+    return {
+        rowStatus,
+        rows,
+        columns,
+        findMissingRequiredColumns,
+    };
+},{
     parseImportString,
     startImport,
     dropRow,

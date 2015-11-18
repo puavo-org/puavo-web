@@ -48,7 +48,7 @@ en:
       first_name: First name
       last_name: Last name
       legacy_role: Legacy role
-      role: User type
+      role: Role (ex. User type)
       unknown: Unknown
       username: Username
       password: Password

@@ -10,10 +10,11 @@ import {
     DROP_COLUMN,
     DROP_ROW,
     FILL_COLUMN,
+    SET_ACTIVE_COLUMN_TYPES,
     SET_CUSTOM_VALUE,
+    SET_GROUPS,
     SET_IMPORT_DATA,
     SET_LEGACY_ROLES,
-    SET_GROUPS,
     SET_USER_DATA,
 
     CREATE_USER,
@@ -23,7 +24,7 @@ import {
 } from "./constants";
 
 import * as Api from "./Api";
-import ColumnTypes from "./ColumnTypes";
+import {AllColumnTypes} from "./ColumnTypes";
 import {getCellValue} from "./utils";
 import {resetState} from "./StateStorage";
 
@@ -86,7 +87,7 @@ const isNotFoundError = (e) => R.pathEq(["res", "status"], 404, e);
 function populateUsersCache() {
     return (dispatch, getState) => {
         const {columns, rows} = getState();
-        const usernameIndex = R.head(findIndices(ColumnTypes.username.id, columns));
+        const usernameIndex = R.head(findIndices(AllColumnTypes.username.id, columns));
         if (usernameIndex == null) return;
 
         const usernames = R.uniq(rows.map(r => getCellValue(r[usernameIndex]))
@@ -210,7 +211,7 @@ export function startImport(rowIndex=0) {
 
         dispatchStatus({status: "working"});
 
-        const updateTypeIndex = R.head(findIndices(ColumnTypes.update_type.id, columns));
+        const updateTypeIndex = R.head(findIndices(AllColumnTypes.update_type.id, columns));
         const updateType = KNOWN_UPDATE_TYPES[getCellValue(row[updateTypeIndex])] || CREATE_USER;
 
         if (updateType === CREATE_USER && !currentStatus.created) {
@@ -261,7 +262,7 @@ export function startImport(rowIndex=0) {
             dispatchStatus({userUpdated: true, user});
         }
 
-        const roleIndices = findIndices(ColumnTypes.legacy_role.id, columns);
+        const roleIndices = findIndices(AllColumnTypes.legacy_role.id, columns);
         const roleNames = roleIndices.map(i => getCellValue(row[i]));
         const roleIds = roleNames
             .map(name => legacyRoles.find(r => r.name === name))
@@ -280,7 +281,7 @@ export function startImport(rowIndex=0) {
             }
         }
 
-        const groupIndices = findIndices(ColumnTypes.group.id, columns);
+        const groupIndices = findIndices(AllColumnTypes.group.id, columns);
         const groupAbbreviations = groupIndices.map(i => getCellValue(row[i]));
         const groupIds = groupAbbreviations
             .map(abbreviation => groups.find(g => g.abbreviation === abbreviation))
@@ -354,5 +355,12 @@ export function fetchGroups(schoolId) {
             type: SET_GROUPS,
             groups,
         });
+    };
+}
+
+export function setActiveColumnTypes(columnTypes) {
+    return {
+        type: SET_ACTIVE_COLUMN_TYPES,
+        columnTypes,
     };
 }

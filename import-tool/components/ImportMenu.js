@@ -6,7 +6,6 @@ import R from "ramda";
 import {Overlay} from "react-overlays";
 
 import {addColumn} from "../actions";
-import ColumnTypes from "../ColumnTypes";
 import {preventDefault} from "../utils";
 import {resetState} from "../StateStorage";
 import t from "../i18n";
@@ -62,7 +61,7 @@ class ImportMenu extends PureComponent {
                                 <legend>{t("add_column")}</legend>
                                 <select onChange={this.addColumn.bind(this)} ref="select">
                                     <option key="nil" value="nil" >{t("select")}</option>
-                                    {R.toPairs(ColumnTypes).map(([columnType, column]) => {
+                                    {R.toPairs(this.props.activeColumnTypes).map(([columnType, column]) => {
                                         return <option key={columnType} value={columnType}>{t.type(column.id)}</option>;
                                     })}
                                 </select>
@@ -85,11 +84,11 @@ class ImportMenu extends PureComponent {
     }
 
 }
-
 ImportMenu.propTypes = {
     addColumn: React.PropTypes.func.isRequired,
     resetState: React.PropTypes.func.isRequired,
+    activeColumnTypes: React.PropTypes.object.isRequired,
 };
 
-export default connect(null, {addColumn, resetState})(ImportMenu);
+export default connect(R.pick(["activeColumnTypes"]), {addColumn, resetState})(ImportMenu);
 

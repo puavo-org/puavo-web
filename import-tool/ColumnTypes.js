@@ -17,7 +17,7 @@ const ColumnTypes = deepFreeze([
     {attribute: "roles", id: "role", required, userAttribute},
     {attribute: "password", id: "password", userAttribute},
     {id: "legacy_role", required},
-    {id: "group"},
+    {id: "group", required},
     {id: "update_type"},
     {id: "unknown"},
 ]);
@@ -29,6 +29,9 @@ export const ReactColumnType = React.PropTypes.shape({
 
 const toMapId = R.reduce((map, type) => R.assoc(type.id, type, map), {});
 
-export const REQUIRED_COLUMNS = deepFreeze(R.filter(R.propEq("required", true), ColumnTypes));
+export const pickRequiredColumns = R.compose(
+    R.filter(R.propEq("required", true)),
+    R.values
+);
 
-export default toMapId(ColumnTypes);
+export const AllColumnTypes = toMapId(ColumnTypes);

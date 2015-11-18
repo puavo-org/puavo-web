@@ -3,7 +3,7 @@ import React from "react";
 import PureComponent from "./PureComponent";
 
 import {onEnterKey} from "../utils";
-import ColumnTypes, {ReactColumnType} from "../ColumnTypes";
+import {AllColumnTypes, ReactColumnType} from "../ColumnTypes";
 import t from "../i18n";
 
 import {Role, RoleSelector} from "./Role";
@@ -48,15 +48,15 @@ export class CellValueInput extends PureComponent {
         };
 
         switch(columnType.id) {
-        case ColumnTypes.username.id:
+        case AllColumnTypes.username.id:
             return <UsernameInput {...passProps} />;
-        case ColumnTypes.legacy_role.id:
+        case AllColumnTypes.legacy_role.id:
             return <LegacyRoleSelector {...passProps} />;
-        case ColumnTypes.group.id:
+        case AllColumnTypes.group.id:
             return <GroupSelector {...passProps} />;
-        case ColumnTypes.role.id:
+        case AllColumnTypes.role.id:
             return <RoleSelector {...passProps} />;
-        case ColumnTypes.update_type.id:
+        case AllColumnTypes.update_type.id:
             return <UpdateTypeInput {...passProps} />;
         default:
             return (
@@ -86,15 +86,15 @@ CellValueInput.propTypes = {
 export class CellValue extends PureComponent {
     render() {
         switch(this.props.columnType.id) {
-        case ColumnTypes.username.id:
+        case AllColumnTypes.username.id:
             return <Username username={this.props.value} />;
-        case ColumnTypes.legacy_role.id:
+        case AllColumnTypes.legacy_role.id:
             return <LegacyRole name={this.props.value} />;
-        case ColumnTypes.group.id:
+        case AllColumnTypes.group.id:
             return <Group abbreviation={this.props.value} />;
-        case ColumnTypes.role.id:
+        case AllColumnTypes.role.id:
             return <Role value={this.props.value} />;
-        case ColumnTypes.update_type.id:
+        case AllColumnTypes.update_type.id:
             return <UpdateType value={this.props.value} />;
         default:
             return <span>{this.props.value}</span>;

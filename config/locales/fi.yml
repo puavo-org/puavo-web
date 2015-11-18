@@ -48,7 +48,7 @@ fi:
       first_name: Etunimi
       last_name: Sukunimi
       legacy_role: Legacyrooli
-      role: Käyttäjätyyppi
+      role: Rooli (ent. Käyttäjätyyppi)
       unknown: Tuntematon
       username: Käyttäjätunnus
       password: Salasana
