@@ -3,6 +3,8 @@ import R from "ramda";
 import Bluebird from "bluebird";
 import shuffle from "lodash/collection/shuffle";
 
+import t from "./i18n";
+
 import {
     ADD_COLUMN,
     CHANGE_COLUMN_TYPE,
@@ -179,130 +181,140 @@ function findIndices(id, columns) {
     }, [], columns);
 }
 
-export function startImport(rowIndex=0) {
+function preventUnload(e) {
+    const msg = t("prevent_unload");
+    e.returnValue = msg;
+    return msg;
+}
+
+export function startImport() {
     return async (dispatch, getState) => {
 
-        const {
-            rows,
-            columns,
-            defaultSchool,
-            rowStatus,
-            legacyRoles,
-            groups,
-        } = getState();
+        window.addEventListener("beforeunload", preventUnload);
+        let rowIndex = -1;
 
-        const next = R.compose(dispatch, R.partial(startImport, rowIndex + 1));
-        const dispatchStatus = R.compose(dispatch, R.merge({
-            type: "SET_ROW_STATUS",
-            rowIndex,
-        }));
+        while (true) {
+            rowIndex++;
 
-        if (rows.length < rowIndex+1) return;
+            const {
+                rows,
+                columns,
+                defaultSchool,
+                rowStatus,
+                legacyRoles,
+                groups,
+            } = getState();
 
-        const currentStatus = R.path([rowIndex], rowStatus) || {};
+            const dispatchStatus = R.compose(dispatch, R.merge({
+                type: "SET_ROW_STATUS",
+                rowIndex,
+            }));
 
-        if (currentStatus.status === "ok") {
-            return next();
-        }
+            if (rows.length < rowIndex+1) break;
 
-        const row = rows[rowIndex];
-        var userData = rowToRest(columns)(row);
-        userData = R.assoc("school_dns", [defaultSchool.dn], userData);
+            const currentStatus = R.path([rowIndex], rowStatus) || {};
 
-        dispatchStatus({status: "working"});
+            if (currentStatus.status === "ok") continue;
 
-        const updateTypeIndex = R.head(findIndices(AllColumnTypes.update_type.id, columns));
-        const updateType = KNOWN_UPDATE_TYPES[getCellValue(row[updateTypeIndex])] || CREATE_USER;
+            const row = rows[rowIndex];
+            let userData = rowToRest(columns)(row);
+            userData = R.assoc("school_dns", [defaultSchool.dn], userData);
 
-        if (updateType === CREATE_USER && !currentStatus.created) {
-            let user = null;
-            try {
-                user = await Api.createUser(userData);
-            } catch(error) {
-                if (isValidationError(error)) {
+            dispatchStatus({status: "working"});
+
+            const updateTypeIndex = R.head(findIndices(AllColumnTypes.update_type.id, columns));
+            const updateType = KNOWN_UPDATE_TYPES[getCellValue(row[updateTypeIndex])] || CREATE_USER;
+
+            if (updateType === CREATE_USER && !currentStatus.created) {
+                let user = null;
+                try {
+                    user = await Api.createUser(userData);
+                } catch(error) {
+                    if (isValidationError(error)) {
+                        dispatchStatus({
+                            status: "error",
+                            attributeErrors: getValidationErrors(error),
+                        });
+                        continue;
+                    }
+
                     dispatchStatus({
                         status: "error",
-                        attributeErrors: getValidationErrors(error),
+                        message: "User creation failed",
+                        error,
                     });
-                    return next();
+                    continue;
                 }
 
-                dispatchStatus({
-                    status: "error",
-                    message: "User creation failed",
-                    error,
-                });
-                return next();
+                dispatchStatus({created: true, user});
             }
 
-            dispatchStatus({created: true, user});
-        }
+            if ([UPDATE_SCHOOL, UPDATE_ALL].includes(updateType)) {
+                let user = null;
+                const updateData = updateType === UPDATE_SCHOOL
+                    ? {school_dns: userData.school_dns}
+                    : userData;
 
-        if ([UPDATE_SCHOOL, UPDATE_ALL].includes(updateType)) {
-            let user = null;
-            const updateData = updateType === UPDATE_SCHOOL
-                ? {school_dns: userData.school_dns}
-                : userData;
+                try {
+                    user = await Api.updateUser(userData.username, updateData);
+                } catch(error) {
+                    let message = "Failed to change school";
+                    if (error.res.status === 404) {
+                        message = "Cannot change school for unknown user";
+                    }
 
-            try {
-                user = await Api.updateUser(userData.username, updateData);
-            } catch(error) {
-                let message = "Failed to change school";
-                if (error.res.status === 404) {
-                    message = "Cannot change school for unknown user";
+                    dispatchStatus({
+                        status: "error",
+                        message,
+                        error,
+                    });
+                    continue;
                 }
-
-                dispatchStatus({
-                    status: "error",
-                    message,
-                    error,
-                });
-                return next();
+                dispatchStatus({userUpdated: true, user});
             }
-            dispatchStatus({userUpdated: true, user});
+
+            const roleIndices = findIndices(AllColumnTypes.legacy_role.id, columns);
+            const roleNames = roleIndices.map(i => getCellValue(row[i]));
+            const roleIds = roleNames
+                .map(name => legacyRoles.find(r => r.name === name))
+                .map(r => r.id);
+
+            if (roleIds.length > 0) {
+                try {
+                    await Api.replaceLegacyRoles(userData.username, roleIds);
+                } catch(error) {
+                    dispatchStatus({
+                        status: "error",
+                        message: "Failed to set legacy roles",
+                        error,
+                    });
+                    continue;
+                }
+            }
+
+            const groupIndices = findIndices(AllColumnTypes.group.id, columns);
+            const groupAbbreviations = groupIndices.map(i => getCellValue(row[i]));
+            const groupIds = groupAbbreviations
+                .map(abbreviation => groups.find(g => g.abbreviation === abbreviation))
+                .map(g => g.id);
+
+            if (groupIds.length > 0) {
+                try {
+                    await Api.replaceGroups(userData.username, groupIds);
+                } catch(error) {
+                    dispatchStatus({
+                        status: "error",
+                        message: "Failed to set legacy roles",
+                        error,
+                    });
+                    continue;
+                }
+            }
+
+            dispatchStatus({status: "ok"});
         }
 
-        const roleIndices = findIndices(AllColumnTypes.legacy_role.id, columns);
-        const roleNames = roleIndices.map(i => getCellValue(row[i]));
-        const roleIds = roleNames
-            .map(name => legacyRoles.find(r => r.name === name))
-            .map(r => r.id);
-
-        if (roleIds.length > 0) {
-            try {
-                await Api.replaceLegacyRoles(userData.username, roleIds);
-            } catch(error) {
-                dispatchStatus({
-                    status: "error",
-                    message: "Failed to set legacy roles",
-                    error,
-                });
-                return next();
-            }
-        }
-
-        const groupIndices = findIndices(AllColumnTypes.group.id, columns);
-        const groupAbbreviations = groupIndices.map(i => getCellValue(row[i]));
-        const groupIds = groupAbbreviations
-            .map(abbreviation => groups.find(g => g.abbreviation === abbreviation))
-            .map(g => g.id);
-
-        if (groupIds.length > 0) {
-            try {
-                await Api.replaceGroups(userData.username, groupIds);
-            } catch(error) {
-                dispatchStatus({
-                    status: "error",
-                    message: "Failed to set legacy roles",
-                    error,
-                });
-                return next();
-            }
-        }
-
-
-        dispatchStatus({status: "ok"});
-        return next();
+        window.removeEventListener("beforeunload", preventUnload);
     };
 }
 

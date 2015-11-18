@@ -33,6 +33,7 @@ fi:
     add_names_to_generate_username: Lisää etunimi ja sukunimi ensin
     user_not_found: Tämä käyttäjätunnus on vapaa
     user_exists: Tämä tunnus on jo olemassa. Voit kuitenkin päivitysominaisuudella päivittää sen attribuutteja.
+    prevent_unload: Käyttäjiä tuodaan parhaillaan. Haluatko todella lopettaa?
     waiting_user_data: Odotetaan käyttäjätietoja
     roles:
       admin: Ylläpitäjä

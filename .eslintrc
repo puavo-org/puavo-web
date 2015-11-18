@@ -52,6 +52,7 @@
     "no-unused-vars": [2, {"vars": "all", "args": "none"}],
     "eol-last": [0],
     "no-mixed-requires": [1],
-    "no-underscore-dangle": [0]
+    "no-underscore-dangle": [0],
+    "no-constant-condition": [0]
   }
 }

@@ -3,9 +3,9 @@
 export default function createStateStorage(stateKey) {
     return createStore => (reducer, initialState) => {
         const store = createStore(wrapReducer(reducer, stateKey), initialState);
-        window.onbeforeunload = (e) => {
+        window.addEventListener("beforeunload", (e) => {
             store.dispatch(saveState());
-        };
+        });
         store.dispatch(restoreState());
         return store;
     };
