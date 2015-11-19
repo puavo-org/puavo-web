@@ -23,7 +23,8 @@ module PuavoImport
                   :group_external_id,
                   :group,
                   :school_external_ids,
-                  :schools
+                  :school,
+                  :secondary_schools
 
     def initialize(args)
       args.keys.each do |k|
@@ -40,19 +41,30 @@ module PuavoImport
         raise(UserGroupError,
               "Cannot find group (external_id: #{ @group_external_id }) for student: #{ self.to_s }") if @group.nil?
       when "teacher"
-        @group = PuavoRest::Group.by_attr(:abbreviation, "#{ @school.abbreviation }-#{ @teacher_group_suffix }")
+        @group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @teacher_group_suffix }",
+                                           :school_dn => school.dn)
         raise(UserGroupError,
-              "Cannot find group (external_id: #{ @group_external_id }) for teacher: #{ self.to_s }") if @group.nil?
+              "Cannot find group (abbreviation: " +
+              school.abbreviation +
+              "-" +
+              @teacher_group_suffix +
+              " for teacher: " +
+              self.to_s) if @group.nil?
       end
 
       @@users << self
       @@users_by_external_id[self.external_id] = self
     end
 
-    def schools
-      return [] if @school_external_ids.nil?
+    def school
+      return @school unless @school.nil?
+      return if @school_external_ids.nil?
 
-      @schools ||= @school_external_ids.uniq.map do |external_id|
+      @school = PuavoRest::School.by_attr(:external_id, @school_external_ids.first)
+    end
+
+    def secondary_schools
+      @secondary_schools ||= @school_external_ids.uniq.map do |external_id|
         PuavoRest::School.by_attr(:external_id, external_id)
       end.compact
     end
@@ -62,8 +74,9 @@ module PuavoImport
       group.name
     end
 
-    def import_school_names
-      schools.map{ |s| s.name }.join(", ")
+    def import_school_name
+      return "" if school.nil?
+      return school.name
     end
 
     def to_s
@@ -76,7 +89,7 @@ module PuavoImport
         "group_external_id" => self.group_external_id,
         "group_name" => self.import_group_name,
         "school_external_ids" => self.school_external_ids,
-        "school_name" => self.import_school_names
+        "school_name" => self.import_school_name
       }.inspect
     end
 

@@ -142,8 +142,7 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     invalid_group += 1
     next
   end
-
-  if user.schools.empty?
+  if user.school.nil?
     puts "Cannot find school (#{ user.school_external_ids }) for user: #{ user }"
     invalid_school += 1
     next
@@ -211,7 +210,7 @@ when "set-external-id"
       puts "first name: #{ user.first_name }"
       puts "given names: #{ user.given_names }"
       puts "last_name: #{ user.last_name }"
-      puts "schools: " + user.import_school_names
+      puts "school: " + user.import_school_name
       puts "group: #{ user.import_group_name }" if user.group
       puts
 
@@ -237,13 +236,13 @@ when "set-external-id"
 
     different_attributes = diff_objects(puavo_user, user, ["first_name",
                                                            "last_name",
-                                                           "import_school_names",
+                                                           "import_school_name",
                                                            "import_group_name",
                                                            "external_id"] )
 
     response = "Y"
 
-    if user.import_school_names != puavo_user.import_school_names
+    if user.import_school_name != puavo_user.import_school_name
       response = "N"
     end
 

@@ -368,8 +368,8 @@ class User < LdapModel
     end.compact
   end
 
-  def import_school_names
-    schools.map{ |s| s.name }.join(", ")
+  def import_school_name
+    school.name
   end
 
   def preferred_language
