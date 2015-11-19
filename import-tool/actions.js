@@ -315,7 +315,7 @@ export function startImport() {
                 } catch(error) {
                     dispatchStatus({
                         status: "error",
-                        message: "Failed to set legacy roles",
+                        message: "Failed to set groups",
                         error,
                     });
                     continue;
