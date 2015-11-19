@@ -168,7 +168,8 @@ when "set-external-id"
     puts "\n" + "-" * 100 + "\n\n"
 
     puavo_users = PuavoRest::User.by_attrs({ :first_name => user.first_name,
-                                             :last_name => user.last_name },
+                                             :last_name => user.last_name,
+                                             :roles => @options[:user_role]},
                                            { :multiple => true } )
 
     if puavo_users.empty?
