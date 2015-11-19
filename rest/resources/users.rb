@@ -405,21 +405,8 @@ class User < LdapModel
   end
 
   def import_group_name
-    group = nil
-    groups.each do |g|
-      unless g.external_id.nil?
-        if group
-          raise "Duplicate external group!"
-        end
-        group = g
-      end
-    end
-
-    unless group
-      return groups.map{ |g| g.name }.join(", ")
-    end
-
-    return group.name
+    return "" if groups.empty?
+    return groups.first.name
   end
 
   def groups_within_school(school)

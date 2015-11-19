@@ -70,8 +70,9 @@ module PuavoImport
     end
 
     def import_group_name
-      return if @group.nil?
-      group.name
+      return "" if @group.nil?
+
+      @group.name
     end
 
     def import_school_name
