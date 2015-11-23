@@ -11,7 +11,7 @@ import {AllColumnTypes} from "../ColumnTypes";
 import PureComponent from "./PureComponent";
 import StatusIcon from "./StatusIcon";
 
-const SimpleIcon = ({children}) => <span style={{marginLeft: 3, fontWeight: "bold"}}>{children}</span>;
+const SimpleIcon = ({title, children}) => <span title={title} style={{marginLeft: 3, fontWeight: "bold"}}>{children}</span>;
 
 class Username extends PureComponent {
     render() {
