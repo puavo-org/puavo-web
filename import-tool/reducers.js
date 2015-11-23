@@ -36,6 +36,7 @@ const initialState = deepFreeze({
         AllColumnTypes.first_name,
         AllColumnTypes.last_name,
     ],
+    visibleUsernames: [],
 });
 
 
@@ -46,6 +47,8 @@ const removeByIndex = R.remove(R.__, 1);
 
 function reducer(state=initialState, action) {
     switch (action.type) {
+    case "SET_VISIBLE_USERNAMES":
+        return R.assoc("visibleUsernames", action.visibleUsernames, state);
     case SET_IMPORT_DATA:
         return R.evolve({
             columns: appendUnknownColumns(findLongestRowLength(action.data) - state.columns.length),

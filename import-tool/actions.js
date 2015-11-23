@@ -1,7 +1,6 @@
 import Papa from "papaparse";
 import R from "ramda";
 import Bluebird from "bluebird";
-import shuffle from "lodash/collection/shuffle";
 import Piecon from "piecon";
 
 import t from "./i18n";
@@ -69,8 +68,6 @@ export function setCustomValue(rowIndex, columnIndex, value) {
             type: SET_CUSTOM_VALUE,
             rowIndex, columnIndex, value,
         });
-
-        dispatch(populateUsersCache());
     };
 }
 
@@ -80,61 +77,74 @@ export function fillColumn(columnIndex, value, override) {
             type: FILL_COLUMN,
             columnIndex, value, override,
         });
-
-        dispatch(populateUsersCache());
     };
 }
 
 const isNotFoundError = (e) => R.pathEq(["res", "status"], 404, e);
+var fetchingUsernames = false;
 
-function populateUsersCache() {
-    return (dispatch, getState) => {
-        const {columns, rows} = getState();
-        const usernameIndex = R.head(findIndices(AllColumnTypes.username.id, columns));
-        if (usernameIndex == null) return;
+export function setVisibleUsernames(curretlyVisibleUsernames) {
+    return async (dispatch, getState) => {
+        dispatch({
+            type: "SET_VISIBLE_USERNAMES",
+            visibleUsernames: curretlyVisibleUsernames,
+        });
 
-        const usernames = R.uniq(rows.map(r => getCellValue(r[usernameIndex]))
-            .filter(Boolean)
-            .filter(R.trim));
+        if (fetchingUsernames) return;
+        fetchingUsernames = true;
 
-        // Randomize order for fun. It was already almost random due to map
-        // Bluebird.map implementation but real random looks better.
-        return Bluebird.map(shuffle(usernames), async (username) => {
+        let activeJobs = [];
 
-            const {userCache} = getState();
-            if (userCache[username]) return;
+        while (true) {
+            activeJobs = activeJobs.filter(a => a.isPending());
 
-            dispatch({
-                username,
-                type: SET_USER_DATA,
-                state: "fetching",
-            });
+            let {visibleUsernames, userCache} = getState();
+            let unknownVisibleUsernames = visibleUsernames.filter(username => !userCache[username]);
+            if (unknownVisibleUsernames.length === 0) break;
 
-            try {
-                dispatch({
-                    type: SET_USER_DATA,
-                    username,
-                    state: "ok",
-                    userData: await Api.fetchUserData(username),
-                });
-            } catch (error) {
-                let state = "error";
-                if (isNotFoundError(error)) {
-                    state = "notfound";
-                } else {
-                    console.error("Unkown user fetch error", error);
-                }
-                dispatch({
-                    username,
-                    type: SET_USER_DATA,
-                    state,
-                });
+            console.log("Fetching usernames", JSON.stringify(unknownVisibleUsernames));
+
+            if (activeJobs.length > 2) {
+                await Bluebird.race(activeJobs);
+                continue;
             }
 
-        }, {concurrency: 3});
+            activeJobs.push(fetchUserData(unknownVisibleUsernames[0], dispatch));
+        }
 
+        fetchingUsernames = false;
     };
 }
+
+async function fetchUserData(username, dispatch) {
+    dispatch({
+        username,
+        type: SET_USER_DATA,
+        state: "fetching",
+    });
+
+    try {
+        dispatch({
+            type: SET_USER_DATA,
+            username,
+            state: "ok",
+            userData: await Api.fetchUserData(username),
+        });
+    } catch (error) {
+        let state = "error";
+        if (isNotFoundError(error)) {
+            state = "notfound";
+        } else {
+            console.error("Unkown user fetch error", error);
+        }
+        dispatch({
+            username,
+            type: SET_USER_DATA,
+            state,
+        });
+    }
+}
+
 
 export function dropRow(rowIndex) {
     return {
