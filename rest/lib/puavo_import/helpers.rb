@@ -148,5 +148,24 @@ module PuavoImport
       new_value
     end
 
+    def setup_connection(options)
+      credentials = CONFIG["server"]
+
+      if options[:dn] && options[:password]
+        credentials = {
+          :dn => options[:dn],
+          :password => options[:password]
+        }
+      end
+
+      LdapModel.setup(
+        :credentials => credentials
+      )
+
+      LdapModel.setup(
+        :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
+      )
+    end
+
   end
 end

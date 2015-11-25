@@ -11,22 +11,7 @@ include PuavoImport::Helpers
 
 options = cmd_options(:message => "Import schools to Puavo")
 
-credentials = CONFIG["server"]
-
-if options[:dn] && options[:password]
-  credentials = {
-    :dn => options[:dn],
-    :password => options[:password]
-  }
-end
-
-LdapModel.setup(
-  :credentials => credentials
-)
-
-LdapModel.setup(
-  :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
-)
+setup_connection(options)
 
 CSV.foreach(options[:csv_file],
             :encoding => options[:encoding],
