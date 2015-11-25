@@ -41,6 +41,14 @@ module PuavoImport
           options[:mode] = "set-external-id"
         end
 
+        opts.on("--dn DN", "User dn for LDAP connection") do |dn|
+          options[:dn] = dn
+        end
+
+        opts.on("--password PASSWORD", "User password for LDAP connection") do |password|
+          options[:password] = password
+        end
+
         block.call(opts, options) unless block.nil?
 
         opts.on_tail("-h", "--help", "Show this message") do

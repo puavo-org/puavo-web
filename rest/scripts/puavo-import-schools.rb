@@ -11,8 +11,17 @@ include PuavoImport::Helpers
 
 options = cmd_options(:message => "Import schools to Puavo")
 
+credentials = CONFIG["server"]
+
+if options[:dn] && options[:password]
+  credentials = {
+    :dn => options[:dn],
+    :password => options[:password]
+  }
+end
+
 LdapModel.setup(
-  :credentials => CONFIG["server"]
+  :credentials => credentials
 )
 
 LdapModel.setup(
