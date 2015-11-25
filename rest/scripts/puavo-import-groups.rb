@@ -13,13 +13,7 @@ options = cmd_options(:message => "Import groups to Puavo")
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 
-LdapModel.setup(
-  :credentials => CONFIG["server"]
-)
-
-LdapModel.setup(
-  :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
-)
+setup_connection(options)
 
 groups = []
 
