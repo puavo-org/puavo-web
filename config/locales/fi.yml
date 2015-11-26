@@ -321,6 +321,7 @@ fi:
       mail: "Sähköpostiosoite"
       billing_info: Laskutustiedot
       rule_lines: "Laskusäännöt"
+      system_information: Järjestelmätiedot
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:
@@ -476,6 +477,7 @@ fi:
         puavoDeviceOnHour: "Päivän aloitus"
         puavoDeviceOffHour: "Päivän lopetus"
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
+        puavoExternalId: Ulkoinen id
       user:
         displayName: Nimi
         sn: Sukunimi

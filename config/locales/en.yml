@@ -331,6 +331,7 @@ en:
       mail: E-mail
       billing_info: Billing info
       rule_lines: Rules
+      system_information: System information
     form:
       add_puavo_billing_info: Add another billing info
   password:
@@ -487,6 +488,7 @@ en:
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
         puavoImageSeriesSourceURL: Image series source URL
+        puavoExternalId: External id
       user:
         displayName: Name
         sn: Surname

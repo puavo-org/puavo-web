@@ -152,6 +152,26 @@
 
 <%= render :partial => 'shared/mountpoint', :locals => { :object => @school } %>
 
+<div class="content-box list">
+  <h3><%= t('.system_information') %></h3>
+  <div class="row">
+    <div class="column_1">
+      <%= label "school", 'cn' %>:
+    </div>
+    <div class="column_2">
+      <%=h @school.cn %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column_1">
+      <%= label "school", 'puavoExternalId' %>:
+    </div>
+    <div class="column_2">
+      <%=h @school.puavoExternalId %>
+    </div>
+  </div>
+</div>
+
 <% content_for :right do %>
   <ul class="sub-tools">
   <li>

@@ -122,6 +122,11 @@
     </td>
   </tr>
 
+  <tr>
+    <td><%= f.label :puavoExternalId %></td>
+    <td><%= f.text_field :puavoExternalId %></td>
+  </tr>
+
   <%= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } %>
 
   <%= render( :partial => 'shared/form_boolean_attribute',
