@@ -232,6 +232,7 @@ en:
       group_by_roles: Groups by roles
       change_school: Change school
       user_is_locked: User is locked
+      user_devices: User devices
     new:
       title: New user
     edit:

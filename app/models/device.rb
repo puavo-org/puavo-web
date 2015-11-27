@@ -6,6 +6,10 @@ class Device < DeviceBase
                 :prefix => "ou=Devices,ou=Hosts",
                 :classes => ['top', 'device', 'puppetClient'] )
 
+  belongs_to( :school, :class_name => 'School',
+              :foreign_key => 'puavoSchool',
+              :primary_key => 'dn' )
+
 #  after_save :set_mac_addresses
   before_destroy :remove_mac_addresses
   before_validation :read_ppd_data

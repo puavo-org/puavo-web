@@ -224,6 +224,7 @@ fi:
       group_by_roles: "Roolien mukana tulevat ryhmät"
       change_school: Vaihda koulua
       user_is_locked: "Käyttäjätunnus on lukittu"
+      user_devices: Käyttäjän laitteet
     new:
       title: "Lisää uusi käyttäjä"
     edit:
