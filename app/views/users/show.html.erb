@@ -115,7 +115,7 @@
     <td class="label_td view"><%= label_tag t('.user_devices') %></td>
     <td class="value_td">
       <% @user_devices.each do |device| %>
-      <%= link_to device.puavoHostname, device_path(device.school.puavoId, device) %><br />
+      <%= link_to device.puavoHostname, device_path(device.school_id, device) %><br />
       <% end %>
     </td>
   </tr>
