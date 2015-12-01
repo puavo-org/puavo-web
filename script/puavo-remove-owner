@@ -1,0 +1,5 @@
+#!/bin/sh
+cd /var/app/puavo-web
+export RAILS_ENV=production
+bundle exec rails r script/puavo-remove-owner.rb
+
