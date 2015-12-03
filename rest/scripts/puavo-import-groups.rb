@@ -19,6 +19,9 @@ groups = []
 
 CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";") do |row|
   group_data = encode_text(row, options[:encoding])
+
+  next if !options[:include_schools].nil? && !options[:include_schools].include?(group_data[2].to_s)
+
   group = PuavoImport::Group.new(
     :external_id => group_data[0],
     :name => group_data[1],
