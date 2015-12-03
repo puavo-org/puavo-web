@@ -49,6 +49,10 @@ module PuavoImport
           options[:password] = password
         end
 
+        opts.on("--include-schools x,y,z", Array) do |include_schools|
+          options[:include_schools] = include_schools
+        end
+
         block.call(opts, options) unless block.nil?
 
         opts.on_tail("-h", "--help", "Show this message") do
