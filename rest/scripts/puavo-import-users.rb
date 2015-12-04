@@ -112,8 +112,8 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
   school_external_ids = user_data[8].nil? ? [] : Array(user_data[8].split(","))
 
   school_external_ids.delete_if do |school_id|
-    @options[:skip_schools].include?(school_id.to_s)
-  end if @options[:skip_schools]
+    !@options[:include_schools].include?(school_id.to_s)
+  end if @options[:include_schools]
 
   next if school_external_ids.empty?
 
