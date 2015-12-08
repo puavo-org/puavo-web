@@ -75,10 +75,6 @@ end
     options[:teacher_group_suffix] = g
   end
 
-  opts.on("--skip-schools x,y,z", Array) do |skip_schools|
-    options[:skip_schools] = skip_schools
-  end
-
   opts.on("--matches x,y,x", Array) do |matches|
     options[:matches] = matches
   end
