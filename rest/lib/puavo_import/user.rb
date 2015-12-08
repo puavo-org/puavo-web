@@ -22,8 +22,9 @@ module PuavoImport
                   :teacher_group_suffix,
                   :group_external_id,
                   :group,
-                  :school_external_ids,
+                  :school_external_id,
                   :school,
+                  :secodary_school_external_ids,
                   :secondary_schools
 
     def initialize(args)
@@ -58,13 +59,13 @@ module PuavoImport
 
     def school
       return @school unless @school.nil?
-      return if @school_external_ids.nil?
+      return if @school_external_id.nil?
 
-      @school = PuavoRest::School.by_attr(:external_id, @school_external_ids.first)
+      @school = PuavoRest::School.by_attr(:external_id, @school_external_id)
     end
 
     def secondary_schools
-      @secondary_schools ||= @school_external_ids.uniq.map do |external_id|
+      @secondary_schools ||= @secodary_school_external_ids.uniq.map do |external_id|
         PuavoRest::School.by_attr(:external_id, external_id)
       end.compact
     end
@@ -89,7 +90,7 @@ module PuavoImport
         "last_name" => self.last_name,
         "group_external_id" => self.group_external_id,
         "group_name" => self.import_group_name,
-        "school_external_ids" => self.school_external_ids,
+        "school_external_id" => self.school_external_id,
         "school_name" => self.import_school_name
       }.inspect
     end

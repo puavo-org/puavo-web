@@ -109,28 +109,39 @@ not_update_external_id = 0
 CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => ";" ) do |row|
   user_data = encode_text(row, @options[:encoding])
 
-  school_external_ids = user_data[8].nil? ? [] : Array(user_data[8].split(","))
+  user_data_hash = {
+    :db_id => user_data[0],
+    :external_id => user_data[1],
+    :first_name => user_data[2],
+    :given_names => user_data[3],
+    :last_name => user_data[4],
+    :email => user_data[5],
+    :telephone_number => user_data[6],
+    :preferred_language => user_data[7],
+    :username => user_data[9],
+    :role => @options[:user_role]
+  }
 
-  school_external_ids.delete_if do |school_id|
-    !@options[:include_schools].include?(school_id.to_s)
-  end if @options[:include_schools]
+  if @options[:user_role] == "student"
+    user_data_hash.merge!({
+      :school_external_id => user_data[8],
+      :group_external_id => user_data[10],
+      :class_level => user_data[11]
+    })
+  end
 
-  next if school_external_ids.empty?
+  if @options[:user_role] == "teacher"
+    user_data_hash.merge!({
+      :school_external_id => user_data[10],
+      :teacher_group_suffix => @options[:teacher_group_suffix],
+      :secodary_school_external_ids => user_data[8].nil? ? [] : Array(user_data[8].split(","))
+    })
+  end
+
+  next if !@options[:include_schools].include?(user_data_hash[:school_external_id].to_s)
 
   begin
-    user = PuavoImport::User.new(:db_id => user_data[0],
-                                 :external_id => user_data[1],
-                                 :first_name => user_data[2],
-                                 :given_names => user_data[3],
-                                 :last_name => user_data[4],
-                                 :email => user_data[5],
-                                 :telephone_number => user_data[6],
-                                 :preferred_language => user_data[7],
-                                 :group_external_id => user_data[10],
-                                 :username => user_data[9],
-                                 :school_external_ids => school_external_ids, # FIXME: multiple value for teacher?
-                                 :role => @options[:user_role],
-                                 :teacher_group_suffix => @options[:teacher_group_suffix])
+    user = PuavoImport::User.new(user_data_hash)
   rescue PuavoImport::UserGroupError => e
     puts e.to_s
     invalid_group += 1
