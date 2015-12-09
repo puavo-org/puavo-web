@@ -23,6 +23,7 @@ describe LdapModel do
     @group = PuavoRest::Group.new(
       :name => "Test group 1",
       :abbreviation => "testgroup1",
+      :type => "teaching group",
       :school_dn => @school.dn
     )
     @group.save!
@@ -35,6 +36,9 @@ describe LdapModel do
       assert_equal String, @group.id.class
     end
 
+    it "has type" do
+      assert_equal "teaching group", @group.type
+    end
   end
 
   describe "group updating" do

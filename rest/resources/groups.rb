@@ -6,6 +6,7 @@ class Group < LdapModel
   include SambaAttrs
 
   ldap_map :dn, :dn
+  ldap_map :puavoEduGroupType, :type, LdapConverters::SingleValue
   ldap_map :puavoId, :id, LdapConverters::SingleValue
   ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
