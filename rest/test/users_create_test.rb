@@ -43,6 +43,15 @@ describe LdapModel do
         :password => "userpassswordislong"
       )
       @user.save!
+
+      @teaching_group = PuavoRest::Group.new(
+        :name => "5A",
+        :abbreviation => "gryffindor-5a",
+        :type => "teaching group",
+        :school_dn => @school.dn.to_s
+      )
+      @teaching_group.save!
+
     end
 
     it "has Fixnum id" do
@@ -172,5 +181,10 @@ describe LdapModel do
 
     end
 
+    it "can add groups" do
+      @user.teaching_group = @teaching_group
+
+      assert @teaching_group.member_dns.include?(@user.dn), "User is not group member"
+    end
   end
 end

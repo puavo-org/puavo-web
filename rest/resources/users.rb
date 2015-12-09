@@ -475,6 +475,23 @@ class User < LdapModel
     ]
   end
 
+  def teaching_group=(group)
+    need_add_group = true
+    Group.by_attrs({ :member_dns => self.dn,
+                     :type => 'teaching group' },
+                   { :multiple => true }).each do |g|
+      if g.external_id != group.external_id
+        g.remove_member(self)
+      else
+        need_add_group = false
+      end
+    end
+
+    if need_add_group
+      group.add_member(self)
+    end
+  end
+
   private
 
   # Add this user to the given school. Private method. This is used on {#save!}
