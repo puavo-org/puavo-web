@@ -475,6 +475,11 @@ class User < LdapModel
     ]
   end
 
+  def teaching_group
+    Group.by_attrs({ :member_dns => self.dn,
+                     :type => 'teaching group' })
+  end
+
   def teaching_group=(group)
     need_add_group = true
     Group.by_attrs({ :member_dns => self.dn,
@@ -482,6 +487,7 @@ class User < LdapModel
                    { :multiple => true }).each do |g|
       if g.external_id != group.external_id
         g.remove_member(self)
+        g.save!
       else
         need_add_group = false
       end
@@ -489,6 +495,7 @@ class User < LdapModel
 
     if need_add_group
       group.add_member(self)
+      group.save!
     end
   end
 

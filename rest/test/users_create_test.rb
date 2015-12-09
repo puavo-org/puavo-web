@@ -185,6 +185,7 @@ describe LdapModel do
       @user.teaching_group = @teaching_group
 
       assert @teaching_group.member_dns.include?(@user.dn), "User is not group member"
+      assert_equal @user.teaching_group.name, "5A"
     end
   end
 end
