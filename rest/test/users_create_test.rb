@@ -52,6 +52,14 @@ describe LdapModel do
       )
       @teaching_group.save!
 
+      @year_class = PuavoRest::Group.new(
+        :name => "5",
+        :abbreviation => "gryffindor-5a",
+        :type => "year class",
+        :school_dn => @school.dn.to_s
+      )
+      @year_class.save!
+
     end
 
     it "has Fixnum id" do
@@ -183,9 +191,13 @@ describe LdapModel do
 
     it "can add groups" do
       @user.teaching_group = @teaching_group
+      @user.year_class = @year_class
 
       assert @teaching_group.member_dns.include?(@user.dn), "User is not group member"
       assert_equal @user.teaching_group.name, "5A"
+
+      assert @year_class.member_dns.include?(@user.dn), "User is not group member"
+      assert_equal @user.year_class.name, "5"
     end
   end
 end
