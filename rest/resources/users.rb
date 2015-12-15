@@ -16,8 +16,8 @@ class User < LdapModel
   ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map :sn, :last_name
   ldap_map :givenName, :first_name
-  ldap_map :mail, :email
   ldap_map(:mail, :secondary_emails){ |v| _, *other_emails = Array(v); other_emails }
+  ldap_map :mail, :email
   ldap_map :puavoSchool, :school_dns, LdapConverters::ArrayValue
   ldap_map :preferredLanguage, :preferred_language
   ldap_map(:jpegPhoto, :profile_image_link) do |image_data|

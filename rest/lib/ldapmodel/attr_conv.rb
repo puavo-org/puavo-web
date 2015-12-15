@@ -224,7 +224,7 @@ class LdapModel
     end
 
     return true if new?
-    return false if !@previous_values.key?(ldap_name)
+    return false if !@previous_values.key?(pretty_name)
     current_val = send(pretty_name)
     prev_val = @previous_values[pretty_name]
     return current_val != prev_val
