@@ -106,8 +106,10 @@ module PuavoImport
         :last_name,
         :email,
         :telephone_number,
-        :preferred_language,
-        :username
+        :role,
+        :import_group_name,
+        #:preferred_language,
+        #:username
       ].each do |attr|
         return true if self.send(attr.to_s) != user[attr]
       end
