@@ -301,6 +301,8 @@ class User < LdapBase
   end
 
   def read_only?
+    return false unless self.class.new_group_management?
+
     (self.puavoExternalId.nil? or self.puavoExternalId.empty?) ? false : true
   end
 
