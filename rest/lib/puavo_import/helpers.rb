@@ -41,6 +41,10 @@ module PuavoImport
           options[:mode] = "set-external-id"
         end
 
+        opts.on("--diff", "Show only differences without changes") do |m|
+          options[:mode] = "diff"
+        end
+
         opts.on("--dn DN", "User dn for LDAP connection") do |dn|
           options[:dn] = dn
         end
