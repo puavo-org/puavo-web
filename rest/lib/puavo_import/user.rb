@@ -17,11 +17,13 @@ module PuavoImport
                   :telephone_number,
                   :preferred_language,
                   :username,
-                  :role,
+                  :role, # Role of primary school
+                  :teacher_group,
                   :teacher_group_name,
                   :teacher_group_suffix,
-                  :group_external_id,
-                  :group,
+                  :teaching_group_external_id,
+                  :teaching_group,
+                  :year_class,
                   :school_external_id,
                   :school,
                   :secodary_school_external_ids,
@@ -38,11 +40,11 @@ module PuavoImport
 
       case @role
       when "student"
-        @group = PuavoRest::Group.by_attr(:external_id, @group_external_id)
+        @teaching_group = PuavoRest::Group.by_attr(:external_id, @teaching_group_external_id)
         raise(UserGroupError,
-              "Cannot find group (external_id: #{ @group_external_id }) for student: #{ self.to_s }") if @group.nil?
+              "Cannot find group (external_id: #{ @teaching_group_external_id }) for student: #{ self.to_s }") if @teaching_group.nil?
       when "teacher"
-        @group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @teacher_group_suffix }",
+        @teacher_group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @teacher_group_suffix }",
                                            :school_dn => school.dn)
         raise(UserGroupError,
               "Cannot find group (abbreviation: " +
@@ -50,7 +52,7 @@ module PuavoImport
               "-" +
               @teacher_group_suffix +
               " for teacher: " +
-              self.to_s) if @group.nil?
+              self.to_s) if @teacher_group.nil?
       end
 
       @@users << self
@@ -71,9 +73,14 @@ module PuavoImport
     end
 
     def import_group_name
-      return "" if @group.nil?
-
-      @group.name
+      case self.role
+      when "teacher"
+        return "" if @teacher_group.nil?
+        @teacher_group.name
+      when "student"
+        return "" if @teaching_group.nil?
+        @teaching_group.name
+      end
     end
 
     def import_school_name
@@ -88,8 +95,7 @@ module PuavoImport
         "first_name" => self.first_name,
         "given_names" => self.given_names,
         "last_name" => self.last_name,
-        "group_external_id" => self.group_external_id,
-        "group_name" => self.import_group_name,
+        "import_group_name" => self.import_group_name,
         "school_external_id" => self.school_external_id,
         "school_name" => self.import_school_name
       }.inspect

@@ -121,8 +121,8 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
   if @options[:user_role] == "student"
     user_data_hash.merge!({
       :school_external_id => user_data[8],
-      :group_external_id => user_data[10],
-      :class_level => user_data[11]
+      :teaching_group_external_id => user_data[10],
+      :year_class => user_data[11]
     })
   end
 
@@ -192,7 +192,7 @@ when "set-external-id"
       puts "given names: #{ user.given_names }"
       puts "last_name: #{ user.last_name }"
       puts "school: " + user.import_school_name
-      puts "group: #{ user.import_group_name }" if user.group
+      puts "group: #{ user.import_group_name }"
       puts
 
       puavo_users.each do |u|
