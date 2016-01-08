@@ -243,7 +243,7 @@ when "set-external-id"
     puts "Update external id"
     puavo_user.external_id = user.external_id
     # puavo_user.external_data = FIXME
-    #uavo_user.save!
+    puavo_user.save!
     update_external_id += 1
 
   end
