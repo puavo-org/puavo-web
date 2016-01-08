@@ -281,9 +281,41 @@ when "import"
     puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
     if puavo_rest_user
       if user.need_update?(puavo_rest_user)
-        puts "#{ user.to_s }: update user information"
+        puts "#{ puavo_rest_user["username"] }: update user information"
+
+        puavo_rest_user.first_name = user.first_name
+        puavo_rest_user.last_name = user.last_name
+        puavo_rest_user.email = user.email unless user.email.nil?
+        puavo_rest_user.telephone_number = user.telephone_number
+        #puavo_rest_user.role = options[:user_role] # FIXME security, multiple roles??
+        #puavo_rest_user.username = user.username # FIXME invalid data?
+        #puavo_rest_user.preferred_language = user.preferred_language FIXME: use school fallback?
+
+        begin
+          puavo_rest_user.validate!
+        rescue ValidationError => validation_errors
+          errors = validation_errors.as_json
+          invalid_attributes = errors[:error][:meta][:invalid_attributes].keys
+          if invalid_attributes.count == 1 && invalid_attributes.include?(:email)
+            puts puavo_rest_user[:username].to_s + ": " +
+              errors[:error][:meta][:invalid_attributes][:email].map{
+              |a| a[:message]
+            }.join(", ")
+            puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+            puavo_rest_user.first_name = user.first_name
+            puavo_rest_user.last_name = user.last_name
+            puavo_rest_user.telephone_number = user.telephone_number
+          else
+            STDERR.puts "Can't save user information!"
+            STDERR.puts e.to_s
+            exit
+          end
+        end
+
+        puavo_rest_user.save!
+
       else
-        puts "#{ user.to_s }: no changes"
+        puts "#{ puavo_rest_user["username"] }: no changes"
       end
     else
       puts "#{ user.to_s }: add user to Puavo"
