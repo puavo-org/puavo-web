@@ -248,6 +248,14 @@ when "set-external-id"
 
   end
 
+  puts "correct_csv_users: #{ correct_csv_users }"
+  puts "invalid_school: #{ invalid_school }"
+  puts "invalid_group: #{ invalid_group }"
+  puts "user_not_found_by_name: #{ user_not_found_by_name } file: #{ log_to_file("user_not_found_by_name")[:filename] }"
+  puts "found_many_users_by_name: #{ found_many_users_by_name } file: #{ log_to_file("found_many_users_by_name")[:filename] }"
+  puts "update_external_id: #{ update_external_id }"
+  puts "not_update_external_id: #{ not_update_external_id } file: #{ log_to_file("not_update_external_id")[:filename] }"
+
 when "diff"
   puts "Diff users\n\n"
   PuavoImport::User.all.each do |user|
@@ -317,11 +325,3 @@ when "import"
 
   end
 end
-
-puts "correct_csv_users: #{ correct_csv_users }"
-puts "invalid_school: #{ invalid_school }"
-puts "invalid_group: #{ invalid_group }"
-puts "user_not_found_by_name: #{ user_not_found_by_name } file: #{ log_to_file("user_not_found_by_name")[:filename] }"
-puts "found_many_users_by_name: #{ found_many_users_by_name } file: #{ log_to_file("found_many_users_by_name")[:filename] }"
-puts "update_external_id: #{ update_external_id }"
-puts "not_update_external_id: #{ not_update_external_id } file: #{ log_to_file("not_update_external_id")[:filename] }"
