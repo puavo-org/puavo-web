@@ -287,7 +287,8 @@ when "import"
         puavo_rest_user.last_name = user.last_name
         puavo_rest_user.email = user.email unless user.email.nil?
         puavo_rest_user.telephone_number = user.telephone_number
-        #puavo_rest_user.role = options[:user_role] # FIXME security, multiple roles??
+        # FIXME: We can not modify the role because admin user is able to add more roles for the user
+        #puavo_rest_user.role = options[:user_role]
         #puavo_rest_user.username = user.username # FIXME invalid data?
         #puavo_rest_user.preferred_language = user.preferred_language FIXME: use school fallback?
 
