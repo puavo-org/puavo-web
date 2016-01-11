@@ -38,15 +38,15 @@ class ListsController < ApplicationController
 
     pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
 
-    pdf.start_new_page
-    pdf.font "Times-Roman"
-    pdf.font_size = 12
-    start_page_number = pdf.page_number
-
     @users_by_group.each do |group_name, users|
       # Sort users by sn + givenName
       users = users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
 
+      pdf.start_new_page
+      pdf.font "Times-Roman"
+      pdf.font_size = 12
+      pdf.draw_text "#{ current_organisation.name }, #{ @school.displayName }, #{ group_name }",
+        :at => pdf.bounds.top_left
       pdf.text "\n"
 
       users_of_page_count = 0
@@ -55,16 +55,14 @@ class ListsController < ApplicationController
           pdf.text "#{t('activeldap.attributes.user.displayName')}: #{user.displayName}"
           pdf.text "#{t('activeldap.attributes.user.uid')}: #{user.uid}"
           pdf.text "#{t('activeldap.attributes.user.password')}: #{user.new_password}\n\n\n"
-
-          users_of_page_count += 1
-          if users_of_page_count > 10 && user != users.last
-            users_of_page_count = 0
-            pdf.start_new_page
-          end
         end
-        pdf.repeat start_page_number..pdf.page_number do
+        users_of_page_count += 1
+        if users_of_page_count > 10 && user != users.last
+          users_of_page_count = 0
+          pdf.start_new_page
           pdf.draw_text "#{ current_organisation.name }, #{ @school.displayName }, #{ group_name }",
-          :at => pdf.bounds.top_left
+            :at => pdf.bounds.top_left
+          pdf.text "\n"
         end
       end
 
