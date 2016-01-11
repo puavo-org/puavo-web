@@ -106,7 +106,6 @@ module PuavoImport
         :last_name,
         :email,
         :telephone_number,
-        :role,
         :import_group_name,
         #:preferred_language,
         #:username
