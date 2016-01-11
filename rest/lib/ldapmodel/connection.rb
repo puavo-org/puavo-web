@@ -30,7 +30,7 @@ class LdapModel
         end
       rescue Krb5Gssapi::NoDelegation => err
         raise KerberosError, :user =>
-          "Credentials are not delegated! '--delegation always' missing?"
+          "Credentials are not delegated! \'--delegation always\' missing?"
       ensure
         kg.clean_up
       end
