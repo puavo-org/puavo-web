@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+require 'optparse'
+
 module PuavoImport
   module Helpers
 
