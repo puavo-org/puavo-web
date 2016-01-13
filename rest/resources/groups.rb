@@ -17,6 +17,7 @@ class Group < LdapModel
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }
   ldap_map :memberUid, :member_usernames, LdapConverters::ArrayValue
   ldap_map :member, :member_dns, LdapConverters::ArrayValue
+  ldap_map :puavoEduGroupType, :type, LdapConverters::SingleValue
 
   before :create do
     if Array(object_classes).empty?
