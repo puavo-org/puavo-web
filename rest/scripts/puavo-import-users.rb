@@ -65,6 +65,19 @@ def last_login(domain, username)
 
 end
 
+def update_user_groups(puavo_rest_user, user)
+  case @options[:user_role]
+  when "student"
+    puavo_rest_user.teaching_group = user.teaching_group
+    if user.year_class != user.teaching_group
+      # FIXME: create year class if it not found?
+      # FIXME: add user to yeah class
+      #puavo_rest_user.year_class = user.year_class
+    end
+  when "teacher"
+    puavo_rest_user.add_administrative_group(user.teacher_group)
+  end
+end
 
 @options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
@@ -315,6 +328,8 @@ when "import"
 
         puavo_rest_user.save!
 
+        update_user_groups(puavo_rest_user, user)
+
       else
         puts "#{ puavo_rest_user["username"] }: no changes"
       end
@@ -334,24 +349,7 @@ when "import"
 
     end
 
-    group_found = false
-    puavo_rest_user.groups.each do |g|
-      if g.id != user.group.id
-        unless g.external_id.nil?
-          puts "\tRemove group: #{ g.name }"
-          g.remove_member(puavo_rest_user)
-          g.save!
-        end
-      else
-        group_found = true
-      end
-    end
 
-    unless group_found
-      puts "\tAdd group: #{ user.group.name }"
-      user.group.add_member(puavo_rest_user)
-      user.group.save!
-    end
 
   end
 end
