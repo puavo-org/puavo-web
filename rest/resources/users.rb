@@ -681,6 +681,19 @@ class Users < PuavoSinatra
     json new_groups
   end
 
+  get "/v3/users/:username/teaching_group" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    json user.teaching_group
+  end
+
+  put "/v3/users/:username/teaching_group" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    group = Group.by_id!(params["id"])
+    user.teaching_group = group
+    json group
+  end
 
   get "/v3/users/:username/legacy_roles" do
     auth :basic_auth, :kerberos
