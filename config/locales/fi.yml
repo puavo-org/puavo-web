@@ -512,6 +512,7 @@ fi:
         puavoSshPublicKey: SSH:n julkinen avain
         groups: Ryhmät
         puavoExternalId: Ulkoinen id
+        teaching_group: Opetusryhmä
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne

@@ -562,6 +562,14 @@ class User < LdapBase
                'list' =>  schools.map{ |s| s.v1_as_json }  } ) unless schools.empty?
   end
 
+  def teaching_group
+    LdapOrganisation.current.rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse
+  end
+
+  def teaching_group=(group_id)
+    LdapOrganisation.current.rest_proxy.put("/v3/users/#{ self.uid }/teaching_group", :params => { "id" => group_id }).parse
+  end
+
   private
 
   # Find role object by name (role_name) and set id to role_ids array.

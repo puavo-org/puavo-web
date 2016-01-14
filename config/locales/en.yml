@@ -523,6 +523,7 @@ en:
         puavoSshPublicKey: SSH public key
         groups: Groups
         puavoExternalId: External id
+        teaching_group: Teaching group
       group:
         displayName: Group name
         cn: Abbreviation

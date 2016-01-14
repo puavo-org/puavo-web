@@ -25,10 +25,12 @@
       </p>
 
       <% if new_group_management? %>
-      <p>
-      <%= label "user", 'groups' %><br />
-      <%=h @user.groups.map{ |r| r.displayName }.join(", ") %>
-      </p>
+        <% if @user.puavoEduPersonAffiliation.include?("student") %>
+        <p>
+          <%= label "user", 'teaching_group' %><br />
+          <%=h @user.teaching_group["name"] %>
+        </p>
+        <% end %>
       <% else %>
       <p>
       <%= label "user", 'roles' %><br />

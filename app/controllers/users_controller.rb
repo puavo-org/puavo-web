@@ -91,6 +91,9 @@ class UsersController < ApplicationController
     @user_roles =  @user.roles || []
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
+
+    @teaching_groups = LdapOrganisation.current.rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
+
   end
 
   # POST /:school_id/users
@@ -148,6 +151,9 @@ class UsersController < ApplicationController
         unless @user.update_attributes(params[:user])
           raise User::UserError, I18n.t('flash.user.save_failed')
         end
+
+        @user.teaching_group = params["teaching_group"]
+
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
           unless params[:user][:new_password].nil? || params[:user][:new_password].empty?
