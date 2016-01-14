@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include Puavo::Helpers
+
   # GET /:school_id/users
   # GET /:school_id/users.xml
   def index
@@ -92,7 +94,7 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
-    @teaching_groups = LdapOrganisation.current.rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
+    @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
 
   end
 

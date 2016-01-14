@@ -5,6 +5,7 @@ class User < LdapBase
 
   include Puavo::AuthenticationMixin
   include Puavo::Locale
+  include Puavo::Helpers
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -563,11 +564,11 @@ class User < LdapBase
   end
 
   def teaching_group
-    LdapOrganisation.current.rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse
+    rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse
   end
 
   def teaching_group=(group_id)
-    LdapOrganisation.current.rest_proxy.put("/v3/users/#{ self.uid }/teaching_group", :params => { "id" => group_id }).parse
+    rest_proxy.put("/v3/users/#{ self.uid }/teaching_group", :params => { "id" => group_id }).parse
   end
 
   private
