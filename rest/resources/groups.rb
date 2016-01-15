@@ -56,6 +56,16 @@ class Group < LdapModel
     by_ldap_attr(:member, dn, :multiple => true)
   end
 
+  def self.by_type_and_school(type, school, options = {})
+    self.by_attrs({ :school_dn => school.dn,
+                     :type => type },
+                   options )
+  end
+
+  def self.teaching_groups_by_school(school)
+    self.by_type_and_school("teaching group", school, :multiple => true)
+  end
+
   def printer_queues
     PrinterQueue.by_dn_array(printer_queue_dns)
   end
