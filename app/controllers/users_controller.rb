@@ -154,7 +154,7 @@ class UsersController < ApplicationController
           raise User::UserError, I18n.t('flash.user.save_failed')
         end
 
-        @user.teaching_group = params["teaching_group"]
+        @user.teaching_group = params["teaching_group"] unless params["teaching_group"].empty?
 
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
