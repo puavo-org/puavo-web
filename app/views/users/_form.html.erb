@@ -70,7 +70,8 @@
       </td>
     </tr>
 
-    <% if new_group_management? && !@user.new_entry? %>
+    <!-- FIXME: enable (javascript) teaching group on the form if user select student type on the form -->
+    <% if new_group_management? && @user.puavoEduPersonAffiliation.include?("student") && !@user.new_entry? %>
     <tr>
       <td class="label_for_checkbox_list required_role required"><%= f.label :teaching_group %></td>
       <td>
