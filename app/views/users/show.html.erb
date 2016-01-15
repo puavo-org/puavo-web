@@ -24,14 +24,15 @@
       <%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(", ") %>
       </p>
 
-      <% if new_group_management? %>
+      <% if new_group_management? && @user.puavoEduPersonAffiliation.include?("student") %>
         <% if @user.puavoEduPersonAffiliation.include?("student") %>
         <p>
           <%= label "user", 'teaching_group' %><br />
           <%=h @user.teaching_group["name"] %>
         </p>
         <% end %>
-      <% else %>
+      <% end %>
+      <% unless new_group_management? %>
       <p>
       <%= label "user", 'roles' %><br />
       <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
