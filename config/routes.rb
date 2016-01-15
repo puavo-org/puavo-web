@@ -59,6 +59,8 @@ PuavoUsers::Application.routes.draw do
       match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
       match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
       match 'users/change_school' => 'users#change_school', :as => :change_school_users, :via => :post
+      match 'users/:id/group' => 'users#group', :as => :group_user, :via => :get
+      match 'users/:id/add_group' => 'users#add_group', :as => :add_group_user, :via => :put
       match 'import_tool' => 'import_tool#index', :via => :get
       match 'username_redirect/:username' => 'users#username_redirect', :via => :get, :constraints => { :username => /[^\/]+/ }
     end

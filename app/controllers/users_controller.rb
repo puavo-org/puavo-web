@@ -116,8 +116,12 @@ class UsersController < ApplicationController
         unless @user.save
           raise User::UserError, I18n.t('flash.user.create_failed')
         end
-        flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
-        format.html { redirect_to( user_path(@school,@user) ) }
+        if new_group_management?
+          format.html { redirect_to( group_user_path(@school,@user) ) }
+        else
+          flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
+          format.html { redirect_to( user_path(@school,@user) ) }
+        end
       rescue User::UserError => e
         logger.info "Create user, Exception: " + e.to_s
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
@@ -227,6 +231,27 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.html
+    end
+  end
+
+  # GET /users/:school_id/users/:id/group
+  def group
+    @user = User.find(params[:id])
+    @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  # PUT /users/:school_id/users/:id/group
+  def add_group
+    @user = User.find(params[:id])
+
+    @user.teaching_group = params["teaching_group"] unless params["teaching_group"].empty?
+
+    respond_to do |format|
+      format.html { redirect_to( user_path(@school, @user) ) }
     end
   end
 

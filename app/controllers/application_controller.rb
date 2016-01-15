@@ -165,5 +165,7 @@ class ApplicationController < ActionController::Base
     render :status => 404, :template => "/errors/generic.html.erb"
   end
 
-
+  def new_group_management?
+    current_organisation.value_by_key("new_group_management")
+  end
 end

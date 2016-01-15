@@ -1,0 +1,18 @@
+
+<%= form_for("user", :url => add_group_user_path, :html => { :method => :put, :multipart => true })  do |f| %>
+
+  <table>
+
+    <%= render :partial => "teaching_group", :locals => { :f => f } %>
+
+    <tr>
+      <td></td>
+      <td>
+        <%= f.submit t('link.save'), :class=>'btn' %>
+        <div class="cancel"><%=link_to t('link.cancel'),  user_path(@school, @user), :class => 'btn btn-danger' %>
+      </td>
+    </tr>
+
+  </table>
+<% end %>
+

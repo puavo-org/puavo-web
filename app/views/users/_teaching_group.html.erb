@@ -1,0 +1,12 @@
+    <!-- FIXME: enable (javascript) teaching group on the form if user select student type on the form -->
+    <% if new_group_management? && !@user.new_entry? && @user.puavoEduPersonAffiliation.include?("student") %>
+    <tr>
+      <td class="label_for_checkbox_list required_role required"><%= f.label :teaching_group %></td>
+      <td>
+        <%= select_tag "teaching_group", options_for_select(
+            [[t("default_select_value"), ""]] + @teaching_groups.map{ |g| [g["name"], g["id"]] },
+            :selected => @user.teaching_group["id"]
+            ) %>
+      </td>
+    </tr>
+    <% end %>
