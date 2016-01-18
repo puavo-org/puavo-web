@@ -189,7 +189,7 @@ describe LdapModel do
 
     end
 
-    it "can add groups" do
+    it "can add and remove groups" do
       @user.teaching_group = @teaching_group
       @user.year_class = @year_class
 
@@ -198,6 +198,12 @@ describe LdapModel do
 
       assert @year_class.member_dns.include?(@user.dn), "User is not group member"
       assert_equal @user.year_class.name, "5"
+
+      @user.teaching_group = nil
+      @teaching_group = PuavoRest::Group.by_id(@teaching_group.id) # FIXME? why should be reload from ldap?
+      assert !@teaching_group.member_dns.include?(@user.dn), "User is group member"
+      assert_equal @user.teaching_group, nil
+
     end
   end
 end
