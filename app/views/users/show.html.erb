@@ -75,8 +75,8 @@
     <td class="label_td view"><%= label "user", "groups" %></td>
     <td class="value_td">
       <span id="groups_by_roles">
-      <% @user.groups.each do |p| %>
-        <%=h p.displayName %><br />
+      <% @user.groups.each do |g| %>
+        <%= link_to g.displayName, group_path(g.school.puavoId, g) %> (<%= g.school.displayName %>)<br />
       <% end %>
       </span>
     </td>
