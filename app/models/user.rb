@@ -563,6 +563,15 @@ class User < LdapBase
                'list' =>  schools.map{ |s| s.v1_as_json }  } ) unless schools.empty?
   end
 
+  def administrative_groups
+    return @administrative_groups if @administrative_groups
+    @administrative_groups = rest_proxy.get("/v3/users/#{ self.uid }/administrative_groups").parse or []
+  end
+
+  def administrative_groups=(group_ids)
+    rest_proxy.put("/v3/users/#{ self.uid }/administrative_groups", :json => { "ids" => group_ids }).parse
+  end
+
   def teaching_group
     rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse
   end
