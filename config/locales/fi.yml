@@ -513,6 +513,7 @@ fi:
         groups: Ryhmät
         puavoExternalId: Ulkoinen id
         teaching_group: Opetusryhmä
+        administrative_groups: Hallinnolliset ryhmät
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne

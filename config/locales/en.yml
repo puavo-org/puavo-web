@@ -524,6 +524,7 @@ en:
         groups: Groups
         puavoExternalId: External id
         teaching_group: Teaching group
+        administrative_groups: Administrative groups
       group:
         displayName: Group name
         cn: Abbreviation

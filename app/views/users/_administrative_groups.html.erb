@@ -1,0 +1,21 @@
+
+    <!-- FIXME: enable (javascript) administrative groups on the form if user select eq. teacher type on the form -->
+    <% if new_group_management? && !@user.new_entry? && (Array(@user.puavoEduPersonAffiliation) - ["student"]).count > 0 %>
+    <tr>
+      <td class="label_for_checkbox_list required_role required"><%= f.label :administrative_groups %></td>
+      <td>
+        <ul>
+        <% @administrative_groups_by_school.each do |school_id, data| %>
+        <li><%= data["school_name"] %></li>
+        <% data["groups"].each do |group| %>
+          <li>
+            <%= hidden_field_tag "administrative_groups[]", 0 %>
+            <%= check_box_tag "administrative_groups[]", group["id"], group_member?(group, @user), :id => "administrative_groups_#{ group["id"] }" %>
+            <%= label_tag "administrative_groups_#{ group["id"] }", group["name"] %>
+          </li>
+        <% end %>
+        <% end %>
+        </ul>
+      </td>
+    </tr>
+    <% end %>

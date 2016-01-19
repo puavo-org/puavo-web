@@ -95,7 +95,17 @@ class UsersController < ApplicationController
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
     @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
+    administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
 
+    @administrative_groups_by_school = {}
+    administrative_groups.each do |g|
+      unless @administrative_groups_by_school[g["school_id"]]
+        @administrative_groups_by_school[g["school_id"]] = {}
+        @administrative_groups_by_school[g["school_id"]]["school_name"] = School.find(g["school_id"]).displayName
+      @administrative_groups_by_school[g["school_id"]]["groups"] = []
+      end
+      @administrative_groups_by_school[g["school_id"]]["groups"].push g
+    end
   end
 
   # POST /:school_id/users
@@ -159,6 +169,10 @@ class UsersController < ApplicationController
         end
 
         @user.teaching_group = params["teaching_group"]
+        if params["administrative_groups"]
+          @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
+          params["user"].delete("administrative_groups")
+        end
 
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
@@ -238,6 +252,17 @@ class UsersController < ApplicationController
   def group
     @user = User.find(params[:id])
     @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
+    administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
+
+    @administrative_groups_by_school = {}
+    administrative_groups.each do |g|
+      unless @administrative_groups_by_school[g["school_id"]]
+        @administrative_groups_by_school[g["school_id"]] = {}
+        @administrative_groups_by_school[g["school_id"]]["school_name"] = School.find(g["school_id"]).displayName
+      @administrative_groups_by_school[g["school_id"]]["groups"] = []
+      end
+      @administrative_groups_by_school[g["school_id"]]["groups"].push g
+    end
 
     respond_to do |format|
       format.html
@@ -248,6 +273,9 @@ class UsersController < ApplicationController
   def add_group
     @user = User.find(params[:id])
 
+    if params["administrative_groups"]
+      @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == 0 }
+    end
     @user.teaching_group = params["teaching_group"]
 
     respond_to do |format|

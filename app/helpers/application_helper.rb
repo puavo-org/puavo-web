@@ -244,5 +244,7 @@ module ApplicationHelper
     current_organisation.value_by_key("new_group_management")
   end
 
-
+  def group_member?(group, user)
+    group["member_usernames"].include?(user.uid)
+  end
 end
