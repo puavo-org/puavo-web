@@ -481,6 +481,24 @@ class User < LdapModel
                    options )
   end
 
+  def administrative_groups=(group_ids)
+    groups = Group.administrative_groups
+
+    groups.each do |group|
+      if group_ids.include?(group.id.to_s)
+        unless group.member_dns.include?(self.dn)
+          group.add_member(self)
+          group.save!
+        end
+      else
+        if group.member_dns.include?(self.dn)
+          group.remove_member(self)
+          group.save!
+        end
+      end
+    end
+  end
+
   def teaching_group
     self.group_by_type('teaching group')
   end
@@ -695,6 +713,18 @@ class Users < PuavoSinatra
     group = Group.by_id!(params["id"])
     user.teaching_group = group
     json group
+  end
+
+  get "/v3/users/:username/administrative_groups" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    json user.administrative_groups
+  end
+
+  put "/v3/users/:username/administrative_groups" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    json user.administrative_groups = json_params["ids"]
   end
 
   get "/v3/users/:username/legacy_roles" do

@@ -67,6 +67,19 @@ describe PuavoRest::Users do
     ]
     @user2.save!
 
+    @user4 = User.new(
+      :givenName => "Joe",
+      :sn  => "Bloggs",
+      :uid => "joe.bloggs",
+      :puavoEduPersonAffiliation => "admin",
+      :role_ids => [@role.puavoId]
+    )
+
+    @user4.set_password "secret"
+    @user4.puavoSchool = @school.dn
+    @user4.save!
+    @school.add_admin(@user4)
+
   end
 
   describe "GET /v3/whoami" do
@@ -405,6 +418,55 @@ describe PuavoRest::Users do
       assert_equal "alice", data[0]["username"]
     end
 
+  end
+
+
+  describe "PUT /v3/users/:username/administrative_groups" do
+
+    before(:each) do
+
+      LdapModel.setup(
+        :organisation => PuavoRest::Organisation.default_organisation_domain!,
+        :rest_root => "http://" + CONFIG["default_organisation_domain"],
+        :credentials => {
+          :dn => PUAVO_ETC.ldap_dn,
+          :password => PUAVO_ETC.ldap_password }
+      )
+
+      @user3 = PuavoRest::User.new(
+        :first_name => "Jane",
+        :last_name => "Doe",
+        :username => "jane.doe",
+        :roles => ["student"],
+        :school_dns => [@school.dn.to_s]
+      )
+      @user3.save!
+
+      @group2 = PuavoRest::Group.new(
+        :name => "Test group 2",
+        :abbreviation => "testgroup2",
+        :type => "administrative group",
+        :school_dn => @school.dn.to_s
+      )
+      @group2.save!
+
+
+    end
+
+    it "update administrative groups for user" do
+
+      basic_authorize "joe.bloggs", "secret"
+
+      put "/v3/users/#{ @user3.username }/administrative_groups",
+        "ids" => [ @group2.id ]
+      assert_200
+
+      get "/v3/users/#{ @user3.username }/administrative_groups"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert data[0]["member_usernames"].include?(@user3.username), "#{ (@user3.username } is not member of group"
+    end
   end
 
 end
