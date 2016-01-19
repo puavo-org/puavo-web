@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  include Puavo::Helpers
 
   # GET /:school_id/users
   # GET /:school_id/users.xml
@@ -115,7 +114,7 @@ class UsersController < ApplicationController
         unless @user.save
           raise User::UserError, I18n.t('flash.user.create_failed')
         end
-        if new_group_management?
+        if new_group_management?(@school)
           format.html { redirect_to( group_user_path(@school,@user) ) }
         else
           flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))

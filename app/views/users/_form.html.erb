@@ -52,7 +52,7 @@
 </td>
 </tr>
     <tr>
-      <% if new_group_management? %>
+      <% if new_group_management?(@school) %>
       <td class="label_for_checkbox_list required"><%= f.label :puavoEduPersonAffiliation %></td>
       <% else %>
       <td class="label_for_checkbox_list required"><%= f.label :puavoEduPersonAffiliationDeprecated %></td>
@@ -74,7 +74,7 @@
 
     <%= render :partial => "administrative_groups", :locals => { :f => f } %>
 
-    <% unless new_group_management? %>
+    <% unless new_group_management?(@school) %>
     <tr>
       <td class="label_for_checkbox_list required_role required"><%= f.label :role_ids %></td>
       <td>

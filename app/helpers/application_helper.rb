@@ -1,5 +1,8 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  include Puavo::Helpers
+
+
   # FIXME: see code from Github: https://github.com/opinsys/puavo-view-helpers
   def label(object_name, method, human_name=nil, content=nil, *args)
 
@@ -238,10 +241,6 @@ module ApplicationHelper
     Array(values).map do |value|
       content_tag(:div, value)
     end.join("\n").html_safe
-  end
-
-  def new_group_management?
-    current_organisation.value_by_key("new_group_management")
   end
 
   def group_member?(group, user)

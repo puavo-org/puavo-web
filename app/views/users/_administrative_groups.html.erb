@@ -1,6 +1,6 @@
 
     <!-- FIXME: enable (javascript) administrative groups on the form if user select eq. teacher type on the form -->
-    <% if new_group_management? && !@user.new_entry? && (Array(@user.puavoEduPersonAffiliation) - ["student"]).count > 0 %>
+    <% if new_group_management?(@school) && !@user.new_entry? && (Array(@user.puavoEduPersonAffiliation) - ["student"]).count > 0 %>
     <tr>
       <td class="label_for_checkbox_list required_role required"><%= f.label :administrative_groups %></td>
       <td>

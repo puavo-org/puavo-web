@@ -198,7 +198,7 @@ class User < LdapBase
     # The user must have at least one role
     #
     # Set role_ids value by role_name. If get false role_name is invalid.
-    unless self.class.new_group_management?
+    unless new_group_management?(self.school)
       if set_role_ids_by_role_name(role_name) == false
         errors.add( :role_name,
                     I18n.t("activeldap.errors.messages.invalid",
@@ -222,7 +222,7 @@ class User < LdapBase
     end
 
     locale_puavoEduPersonAffiliation_name = I18n.t("activeldap.attributes.user.puavoEduPersonAffiliationDeprecated")
-    if self.class.new_group_management?
+    if new_group_management?(self.school)
       locale_puavoEduPersonAffiliation_name = I18n.t("activeldap.attributes.user.puavoEduPersonAffiliation")
     end
 
@@ -302,7 +302,7 @@ class User < LdapBase
   end
 
   def read_only?
-    return false unless self.class.new_group_management?
+    return false unless new_group_management?(self.school)
 
     (self.puavoExternalId.nil? or self.puavoExternalId.empty?) ? false : true
   end
@@ -310,9 +310,7 @@ class User < LdapBase
   def self.import_columns
     columns = ["givenName", "sn", "uid", "new_password"]
 
-    unless self.new_group_management?
-      columns.push("role_name")
-    end
+    columns.push("role_name")
 
     columns.push("puavoEduPersonAffiliation")
 
@@ -325,8 +323,7 @@ class User < LdapBase
        # Attribute key name
        I18n.t("activeldap.attributes.user").has_key?(args[0].to_sym)
 
-      if args[0] == "puavoEduPersonAffiliation" &&
-          !new_group_management?
+      if args[0] == "puavoEduPersonAffiliation"
         return I18n.t("activeldap.attributes.user.puavoEduPersonAffiliationDeprecated")
       end
 
@@ -434,7 +431,7 @@ class User < LdapBase
 
   # Update user's role list by role_ids
   def update_roles
-    unless self.class.new_group_management?
+    unless new_group_management?(self.school)
       unless self.role_ids.nil?
 
         add_roles = self.role_ids
@@ -477,7 +474,7 @@ class User < LdapBase
 
   # Update User - Group association by roles
   def update_associations
-    unless self.class.new_group_management?
+    unless new_group_management?(self.school)
       new_group_list =
         self.roles.inject([]) do |result, role|
         result + role.groups.map{ |g| g.dn.to_s }
@@ -650,7 +647,7 @@ class User < LdapBase
           self.uid_has_changed = true
 
           logger.debug "User uid has changed. Remove memberUid from roles and groups"
-          unless self.class.new_group_management?
+          unless new_group_management?(self.school)
             Role.search_as_utf8( :filter => "(memberUid=#{old_user.uid})",
                                  :scope => :one,
                                  :attributes => ['dn'] ).each do |role_dn, values|
@@ -681,7 +678,7 @@ class User < LdapBase
       logger.debug "User uid has changed. Add new uid to roles and groups if it not exists"
       self.uid_has_changed = false
 
-      unless self.class.new_group_management?
+      unless new_group_management?(self.school)
         self.roles.each do |role|
           role.ldap_modify_operation( :add, [{"memberUid" => [self.uid.to_s]}] )
         end
@@ -712,7 +709,7 @@ class User < LdapBase
       SambaGroup.delete_uid_from_memberUid('Domain Admins', self.uid)
     end
 
-    unless self.class.new_group_management?
+    unless new_group_management?(self.school)
       self.roles.each do |p|
         p.delete_member(self)
       end

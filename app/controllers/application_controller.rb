@@ -3,6 +3,7 @@
 
 class ApplicationController < ActionController::Base
   include Puavo::AuthenticationHelper
+  include Puavo::Helpers
 
   attr_reader :school
   helper_method( :theme, :current_user, :current_organisation,
@@ -165,7 +166,4 @@ class ApplicationController < ActionController::Base
     render :status => 404, :template => "/errors/generic.html.erb"
   end
 
-  def new_group_management?
-    current_organisation.value_by_key("new_group_management")
-  end
 end

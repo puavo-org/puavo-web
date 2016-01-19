@@ -20,11 +20,15 @@
         <%=h @user.uid %>
       </p>
       <p>
-      <%= label "user", 'puavoEduPersonAffiliation' %><br />
+      <% if new_group_management?(@school) %>
+        <%= label "user", 'puavoEduPersonAffiliation' %><br />
+      <% else %>
+        <%= label "user", 'puavoEduPersonAffiliationDeprecated' %><br />
+      <% end %>
       <%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(", ") %>
       </p>
 
-      <% if new_group_management? && @user.puavoEduPersonAffiliation.include?("student") %>
+      <% if new_group_management?(@school) && @user.puavoEduPersonAffiliation.include?("student") %>
         <% if @user.puavoEduPersonAffiliation.include?("student") %>
         <p>
           <%= label "user", 'teaching_group' %><br />
@@ -32,7 +36,7 @@
         </p>
         <% end %>
       <% end %>
-      <% unless new_group_management? %>
+      <% unless new_group_management?(@school) %>
       <p>
       <%= label "user", 'roles' %><br />
       <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
