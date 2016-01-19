@@ -570,7 +570,7 @@ class User < LdapBase
   end
 
   def teaching_group
-    rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse
+    rest_proxy.get("/v3/users/#{ self.uid }/teaching_group").parse or {}
   end
 
   def teaching_group=(group_id)
