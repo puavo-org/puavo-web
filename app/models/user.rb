@@ -561,7 +561,7 @@ class User < LdapBase
   end
 
   def administrative_groups
-    return @administrative_groups if @administrative_groups
+    return @administrative_groqups if @administrative_groups
     @administrative_groups = rest_proxy.get("/v3/users/#{ self.uid }/administrative_groups").parse or []
   end
 
