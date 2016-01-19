@@ -710,7 +710,7 @@ class Users < PuavoSinatra
   put "/v3/users/:username/teaching_group" do
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
-    group = Group.by_id!(params["id"])
+    group = Group.by_id(params["id"])
     user.teaching_group = group
     json group
   end
