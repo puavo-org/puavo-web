@@ -158,7 +158,7 @@ class UsersController < ApplicationController
           raise User::UserError, I18n.t('flash.user.save_failed')
         end
 
-        @user.teaching_group = params["teaching_group"] unless params["teaching_group"].empty?
+        @user.teaching_group = params["teaching_group"]
 
         # Save new password to session otherwise next request does not work
         if session[:dn] == @user.dn
@@ -248,7 +248,7 @@ class UsersController < ApplicationController
   def add_group
     @user = User.find(params[:id])
 
-    @user.teaching_group = params["teaching_group"] unless params["teaching_group"].empty?
+    @user.teaching_group = params["teaching_group"]
 
     respond_to do |format|
       format.html { redirect_to( user_path(@school, @user) ) }
