@@ -66,6 +66,10 @@ class Group < LdapModel
     self.by_type_and_school("teaching group", school, :multiple => true)
   end
 
+  def self.administrative_groups
+    self.by_attr(:type, "administrative group", :multiple => true)
+  end
+
   def printer_queues
     PrinterQueue.by_dn_array(printer_queue_dns)
   end
@@ -108,6 +112,15 @@ class Group < LdapModel
     @organisation ||= Organisation.by_dn(self.class.organisation["base"])
   end
 
+
+end
+
+class Groups < PuavoSinatra
+
+  get "/v3/administrative_groups" do
+    auth :basic_auth, :kerberos
+    json Group.administrative_groups
+  end
 
 end
 end

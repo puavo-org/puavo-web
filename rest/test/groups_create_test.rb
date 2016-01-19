@@ -28,6 +28,32 @@ describe LdapModel do
     )
     @group.save!
 
+    @group2 = PuavoRest::Group.new(
+      :name => "Test group 2",
+      :abbreviation => "testgroup2",
+      :type => "administrative group",
+      :school_dn => @school.dn
+    )
+    @group2.save!
+
+    @group3 = PuavoRest::Group.new(
+      :name => "Test group 3",
+      :abbreviation => "testgroup3",
+      :type => "administrative group",
+      :school_dn => @school.dn
+    )
+    @group3.save!
+
+    @user = PuavoRest::User.new(
+      :first_name => "Bob",
+      :last_name => "Brown",
+      :username => "bob",
+      :roles => ["admin"],
+      :school_dns => [@school.dn.to_s],
+      :password => "secret123"
+    )
+    @user.save!
+
   end
 
   describe "group creation" do
@@ -71,6 +97,18 @@ describe LdapModel do
 
       assert_equal reloaded_group.member_usernames.include?(@user.username), true
       assert_equal reloaded_group.member_dns.include?(@user.dn), true
+    end
+  end
+
+  describe "GET /v3/administrative_groups" do
+    it "lists all administrative groups" do
+      basic_authorize "bob", "secret123"
+      get "/v3/administrative_groups"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "Test group 2", data[0]["name"]
+      assert_equal "Test group 3", data[1]["name"]
     end
   end
 end
