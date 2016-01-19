@@ -94,18 +94,7 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
-    @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
-    administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
-
-    @administrative_groups_by_school = {}
-    administrative_groups.each do |g|
-      unless @administrative_groups_by_school[g["school_id"]]
-        @administrative_groups_by_school[g["school_id"]] = {}
-        @administrative_groups_by_school[g["school_id"]]["school_name"] = School.find(g["school_id"]).displayName
-      @administrative_groups_by_school[g["school_id"]]["groups"] = []
-      end
-      @administrative_groups_by_school[g["school_id"]]["groups"].push g
-    end
+    get_user_groups
   end
 
   # POST /:school_id/users
@@ -251,18 +240,8 @@ class UsersController < ApplicationController
   # GET /users/:school_id/users/:id/group
   def group
     @user = User.find(params[:id])
-    @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
-    administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
 
-    @administrative_groups_by_school = {}
-    administrative_groups.each do |g|
-      unless @administrative_groups_by_school[g["school_id"]]
-        @administrative_groups_by_school[g["school_id"]] = {}
-        @administrative_groups_by_school[g["school_id"]]["school_name"] = School.find(g["school_id"]).displayName
-      @administrative_groups_by_school[g["school_id"]]["groups"] = []
-      end
-      @administrative_groups_by_school[g["school_id"]]["groups"].push g
-    end
+    get_user_groups
 
     respond_to do |format|
       format.html
@@ -298,5 +277,21 @@ class UsersController < ApplicationController
 
     format.html { render :action => action }
     format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
+  end
+
+  def get_user_groups
+    @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
+    administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
+
+    @administrative_groups_by_school = {}
+    administrative_groups.each do |g|
+      unless @administrative_groups_by_school[g["school_id"]]
+        @administrative_groups_by_school[g["school_id"]] = {}
+        @administrative_groups_by_school[g["school_id"]]["school_name"] = School.find(g["school_id"]).displayName
+      @administrative_groups_by_school[g["school_id"]]["groups"] = []
+      end
+      @administrative_groups_by_school[g["school_id"]]["groups"].push g
+    end
+
   end
 end
