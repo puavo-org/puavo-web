@@ -481,9 +481,12 @@ class User < LdapModel
                    options )
   end
 
+  def administrative_groups
+    self.group_by_type('administrative group', { :multiple => true })
+  end
+
   def administrative_groups=(group_ids)
     groups = Group.administrative_groups
-
     groups.each do |group|
       if group_ids.include?(group.id.to_s)
         unless group.member_dns.include?(self.dn)
