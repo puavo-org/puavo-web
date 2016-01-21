@@ -697,6 +697,11 @@ en:
   language_fr_CH: French (Switzerland)
   language_ar_SA: Arabic (Saudi Arabia)
   language_default: Default
+  group_type:
+    teaching group: Teaching group
+    year class: Year class
+    administrative group: Administrative group
+    other groups: Other groups
   old_preferred_language: "Old setting: %{language}"
   timezone_empty: Timezone is not set
   date:
