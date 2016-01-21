@@ -531,6 +531,7 @@ en:
         gidNumber: Gid number
         primary_members: Primary members
         members: Members
+        puavoEduGroupType: Type
       ldap_organisation:
         description: Description
         telephoneNumber: Phone number

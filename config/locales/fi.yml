@@ -520,6 +520,7 @@ fi:
         gidNumber: Gid-numero
         primary_members: "Ensisijaiset jäsenet"
         members: "Jäsenet"
+        puavoEduGroupType: Tyyppi
       ldap_organisation:
         description: Kuvaus
         telephoneNumber: Puhelinnumero
@@ -685,6 +686,11 @@ fi:
   language_fr_CH: Ranska (Sveitsi)
   language_ar_SA: Arabia (Saudi-Arabia)
   language_default: Oletus
+  group_type:
+    teaching group: Opetusryhmä
+    year class: Vuosiluokka
+    administrative group: Hallinnollinen ryhmä
+    other: Muu
   old_preferred_language: "Vanha asetus: %{language}"
   timezone_empty: Aikavyöhykettä ei ole asetettu
   date:

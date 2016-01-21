@@ -24,6 +24,14 @@
       <%=h @group.gidNumber %>
     </td>
   </tr>
+  <tr>
+    <td>
+      <b><%= t('activeldap.attributes.group.puavoEduGroupType') %></b>:
+    </td>
+    <td>
+      <%=h t('group_type.' + @group.puavoEduGroupType) %>
+    </td>
+  </tr>
 </table>
 
 <div class="content-box list members">

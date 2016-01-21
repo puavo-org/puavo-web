@@ -86,6 +86,11 @@ module ApplicationHelper
     ".html_safe
   end
 
+  def group_types_for_select
+    ['teaching group', 'year class', 'administrative group', 'other'].map do |type|
+      [t('group_type.' + type), type]
+    end
+  end
 
   def locales_for_select
     for_select = []
