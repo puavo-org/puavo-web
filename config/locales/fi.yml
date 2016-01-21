@@ -690,7 +690,7 @@ fi:
     teaching group: Opetusryhmä
     year class: Vuosiluokka
     administrative group: Hallinnollinen ryhmä
-    other: Muu
+    other groups: Muu
   old_preferred_language: "Vanha asetus: %{language}"
   timezone_empty: Aikavyöhykettä ei ole asetettu
   date:
