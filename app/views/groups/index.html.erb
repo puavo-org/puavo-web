@@ -2,6 +2,7 @@
   <tr class="thead">
     <th><%= t('activeldap.attributes.group.displayName') %></th>
     <th><%= t('activeldap.attributes.group.cn') %></th>
+    <th><%= t('activeldap.attributes.group.puavoEduGroupType') %></th>
     <th colspan="2"><%= t('.actions') %></th>
   </tr>
 
@@ -13,6 +14,9 @@
     </td>
     <td data-title="<%=t('activeldap.attributes.group.cn')%>">
       <%= group.cn %>
+    </td>
+    <td data-title="<%=t('activeldap.attributes.group.puavoEduGroupType')%>">
+      <%= humanize_group_type(group.puavoEduGroupType) %>
     </td>
     <td data-title="<%=t('.actions')%>" class="table-actions">
       <%= link_to edit_group_path(@school, group), :class=> "btn" do%>
