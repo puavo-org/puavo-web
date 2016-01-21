@@ -465,7 +465,7 @@ describe PuavoRest::Users do
       assert_200
       data = JSON.parse(last_response.body)
 
-      assert data[0]["member_usernames"].include?(@user3.username), "#{ (@user3.username } is not member of group"
+      assert data[0]["member_usernames"].include?(@user3.username), "#{ @user3.username } is not member of group"
     end
   end
 
