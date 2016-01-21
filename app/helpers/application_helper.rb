@@ -125,6 +125,12 @@ module ApplicationHelper
     ActiveSupport::TimeZone[ timezones[zone] ].to_s
   end
 
+  def humanize_group_type(group_type)
+    return "" unless group_type
+
+    t('group_type.' + group_type)
+  end
+
   def link_to_user_by_dn(dn)
     return "" if dn.nil?
 
