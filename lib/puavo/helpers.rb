@@ -11,6 +11,8 @@ module Puavo
         find(LdapOrganisation.current.cn).
         value_by_key("new_group_management")
 
+      return false unless new_group_management
+
       return false if new_group_management["enable"] != true
 
       return true unless new_group_management["only_of_schools"]
