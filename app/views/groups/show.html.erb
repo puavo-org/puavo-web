@@ -1,4 +1,4 @@
-<% if new_group_management? %>
+<% if new_group_management?(@school) %>
 <table class="basic-info">
   <tr>
     <td>
@@ -118,7 +118,7 @@
 </ul>
 <% end %>
 
-<% if new_group_management? %>
+<% if new_group_management?(@school) %>
   <% content_for :javascript do %>
     <%= javascript_tag "window.USER_SEARCH_URLS = {'group-users-serach': '#{ @group.puavoId }/user_search?words='}" %>
   <% end %>
