@@ -145,7 +145,6 @@ class UsersController < ApplicationController
       params["user"].delete(:uid)
       params["user"].delete(:mail)
       params["user"].delete(:telephoneNumber)
-      params["user"].delete(:puavoEduPersonAffiliation)
       params["user"].delete(:role_ids)
       params["user"].delete(:puavoLocale)
     end

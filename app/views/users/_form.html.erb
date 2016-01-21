@@ -61,7 +61,7 @@
         <% User.puavoEduPersonAffiliation_list.map do |a| %>
         <div>
           <label>
-            <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>" <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+            <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>" />
             <%=h t('puavoEduPersonAffiliation_' + a) %>
           </label>
         </div>
