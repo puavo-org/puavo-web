@@ -87,7 +87,8 @@ module ApplicationHelper
   end
 
   def group_types_for_select
-    ['teaching group', 'year class', 'administrative group', 'other groups'].map do |type|
+    [[t("default_select_value"), ""]] +
+    (['teaching group', 'year class', 'administrative group', 'other groups']).map do |type|
       [humanize_group_type(type), type]
     end
   end
