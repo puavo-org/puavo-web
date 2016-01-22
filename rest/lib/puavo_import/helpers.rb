@@ -70,11 +70,13 @@ module PuavoImport
 
       parser.parse!
 
-      if ARGV[0]
-        options[:csv_file] =  ARGV[0]
-      else
-        STDERR.puts parser
-        exit 1
+      unless args[:no_csv_file]
+        if ARGV[0]
+          options[:csv_file] = ARGV[0]
+        else
+          STDERR.puts parser
+          exit 1
+        end
       end
 
       return options

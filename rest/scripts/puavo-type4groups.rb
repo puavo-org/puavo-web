@@ -6,7 +6,7 @@ require_relative "../lib/puavo_import"
 
 include PuavoImport::Helpers
 
-@options = PuavoImport.cmd_options(:message => "Set type for groups")
+@options = PuavoImport.cmd_options(:message => "Set type for groups", :no_csv_file => true)
 
 setup_connection(@options)
 
