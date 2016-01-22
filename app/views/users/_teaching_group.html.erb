@@ -6,7 +6,7 @@
         <%= select_tag "teaching_group", options_for_select(
             [[t("default_select_value"), ""]] + @teaching_groups.map{ |g| [g["name"], g["id"]] },
             :selected => @user.teaching_group["id"]
-            ) %>
+            ), { :disabled => @user.read_only? } %>
       </td>
     </tr>
     <% end %>
