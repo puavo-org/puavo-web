@@ -502,6 +502,13 @@ class User < LdapModel
     end
   end
 
+  def add_administrative_group(group)
+    unless group.member_dns.include?(self.dn)
+      group.add_member(self)
+      group.save!
+    end
+  end
+
   def teaching_group
     self.group_by_type('teaching group')
   end
