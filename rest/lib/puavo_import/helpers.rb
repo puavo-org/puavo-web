@@ -11,7 +11,7 @@ module PuavoImport
     def log_to_file(file)
       return @@log_files[file] if @@log_files[file]
 
-      filename = Time.now.strftime(file + "-%Y-%m-%d-%H-%M-%S")
+      filename = "/tmp/" + Time.now.strftime(file + "-%Y-%m-%d-%H-%M-%S")
 
       @@log_files[file] = {
         :filename => filename,
