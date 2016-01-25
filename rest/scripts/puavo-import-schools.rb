@@ -17,6 +17,9 @@ CSV.foreach(options[:csv_file],
             :encoding => options[:encoding],
             :col_sep => ";") do |school_data|
   school_data = encode_text(school_data, options[:encoding])
+
+  next if !options[:include_schools].nil? && !options[:include_schools].include?(school_data[0].to_s)
+
   PuavoImport::School.new(:external_id => school_data[0],
                           :name => school_data[1],
                           :abbreviation => school_data[2])
