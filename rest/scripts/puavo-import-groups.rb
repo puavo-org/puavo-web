@@ -96,6 +96,7 @@ when "import"
       PuavoRest::Group.new(:name => group.name,
                            :external_id => group.external_id,
                            :abbreviation => group.abbreviation,
+                           :type => "teaching group",
                            :school_dn => group.school.dn).save!
     end
   end
