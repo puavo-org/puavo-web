@@ -335,17 +335,23 @@ when "import"
       end
     else
       puts "#{ user.to_s }: add user to Puavo"
-      puavo_rest_user = PuavoRest::User.new(
-        :external_id => user.external_id,
-        :first_name => user.first_name,
-        :last_name => user.last_name,
-        :email => user.email,
-        :telephone_number => user.telephone_number,
-        :preferred_language => user.preferred_language,
-        :username => user.username,
-        :roles => [@options[:user_role]],
-        :school_dns => [user.school.dn.to_s])
-      puavo_rest_user.save!
+      next
+#      # FIXME Create password list for new users
+#      # FIXME send email notifications to school admin
+#      puavo_rest_user = PuavoRest::User.new(
+#        :external_id => user.external_id,
+#        :first_name => user.first_name,
+#        :last_name => user.last_name,
+#        :email => user.email,
+#        :telephone_number => user.telephone_number,
+#        :roles => [@options[:user_role]],
+#        :school_dns => [user.school.dn.to_s],
+#        # :preferred_language => user.preferred_language,
+#        # :username => user.username,
+#        )
+#      puavo_rest_user.save!
+#
+#      update_user_groups(puavo_rest_user, user)
 
     end
 
