@@ -5,7 +5,7 @@ group :shared do
   gem "rails", "~> 3.2.16"
   gem "sqlite3", :require => "sqlite3"
   gem "prawn", "~> 0.14.0"
-  gem "net-ldap", "0.11", :require => "net-ldap"
+  gem "net-ldap", "0.12.0", :require => "net-ldap"
   gem "activeldap", :require => "active_ldap"
   gem "rmagick", :require => "RMagick"
   gem "uuid"

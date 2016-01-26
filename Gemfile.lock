@@ -135,7 +135,7 @@ GEM
     msgpack (0.5.12)
     multi_json (1.8.4)
     multi_test (0.1.2)
-    net-ldap (0.11)
+    net-ldap (0.12.0)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     pdf-reader (1.3.3)
@@ -812,7 +812,7 @@ DEPENDENCIES
   jquery-rails
   jwt (~> 0.1.8)
   multi_json (~> 1.8.4)
-  net-ldap (= 0.11)
+  net-ldap (= 0.12.0)
   nokogiri
   prawn (~> 0.14.0)
   pry (~> 0.10.1)
