@@ -9,22 +9,21 @@ require_relative "../lib/puavo_import"
 
 include PuavoImport::Helpers
 
-options = cmd_options(:message => "Import schools to Puavo")
+@options = cmd_options(:message => "Rename groups", :no_csv_file => true)
 
-LdapModel.setup(
-  :credentials => CONFIG["server"]
-)
-
-LdapModel.setup(
-  :organisation => PuavoRest::Organisation.by_domain!(options[:organisation_domain])
-)
+setup_connection(@options)
 
 PuavoRest::Group.all.each do |group|
+  next if !@options[:include_schools].include?(group.school_id.to_s)
 
   if name = group.name.match(/^([0-9-]{1,3})[\.]* luokka$/)
     new_name = name[1]
-    puts "Rename group (school_id: #{ group.school_id }) #{ group.name } -> #{ new_name }"
-    group.name = new_name
-    #group.save!
+    res = ask("Rename group (school_id: #{ group.school_id }) #{ group.name } -> #{ new_name }", :default => "N")
+
+    if res == "Y"
+      puts "Update"
+      group.name = new_name
+      group.save!
+    end
   end
 end
