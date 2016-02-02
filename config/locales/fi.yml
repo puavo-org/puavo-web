@@ -160,6 +160,7 @@ fi:
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
         role_require_error: "Rooli pitää olla valittuna"
       school_changed: "Käyttäjän/käyttäjien koulu on vaihdettu!"
+      cannot_create_user: "Tässä koulussa käyttäjiä ei voi lisätä manuaalisesti. Uudet käyttäjät lisätään oppilashallintojärejstelmän kautta. Ole tarvittaessa yhteydessä tukipalveluun."
     password_set_failed: "Salasanan vaihto epäonnistui. Yritä uudelleen."
     session:
       login_successful: Kirjautuminen onnistui!

@@ -79,7 +79,13 @@ class UsersController < ApplicationController
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
     respond_to do |format|
-      format.html # new.html.erb
+      # FIXME: whether the student management system is in use?
+      if new_group_management?(@school) && !current_user.organisation_owner?
+        flash[:alert] = t('flash.user.cannot_create_user')
+        format.html { redirect_to( users_url ) }
+      else
+        format.html # new.html.erb
+      end
       format.xml  { render :xml => @user }
     end
   end
