@@ -95,6 +95,7 @@ module PuavoImport
         "first_name" => self.first_name,
         "given_names" => self.given_names,
         "last_name" => self.last_name,
+        "username" => self.username,
         "import_group_name" => self.import_group_name,
         "school_external_id" => self.school_external_id,
         "school_name" => self.import_school_name
