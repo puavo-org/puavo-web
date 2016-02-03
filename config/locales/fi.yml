@@ -516,6 +516,7 @@ fi:
         puavoExternalId: Ulkoinen id
         teaching_group: Opetusryhmä
         administrative_groups: Hallinnolliset ryhmät
+        year_class: Vuosiluokka
       group:
         displayName: "Ryhmän nimi"
         cn: Lyhenne

@@ -163,6 +163,7 @@ class UsersController < ApplicationController
 
         if new_group_management?(@school)
           @user.teaching_group = params["teaching_group"]
+          @user.teaching_group = params["year_class"]
           if params["administrative_groups"]
             @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
             params["user"].delete("administrative_groups")
@@ -263,6 +264,7 @@ class UsersController < ApplicationController
       @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == 0 }
     end
     @user.teaching_group = params["teaching_group"]
+    @user.teaching_group = params["year_class"]
 
     respond_to do |format|
       format.html { redirect_to( user_path(@school, @user) ) }
@@ -288,6 +290,7 @@ class UsersController < ApplicationController
 
   def get_user_groups
     @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse
+    @year_classes = rest_proxy.get("/v3/schools/#{ @school.puavoId }/year_classes").parse
     administrative_groups = rest_proxy.get("/v3/administrative_groups").parse or []
 
     @administrative_groups_by_school = {}

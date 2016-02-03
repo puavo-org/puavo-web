@@ -72,6 +72,8 @@
 
     <%= render :partial => "teaching_group", :locals => { :f => f } %>
 
+    <%= render :partial => "year_class", :locals => { :f => f } %>
+
     <%= render :partial => "administrative_groups", :locals => { :f => f } %>
 
     <% unless new_group_management?(@school) %>
