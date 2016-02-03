@@ -279,6 +279,12 @@ class Schools < PuavoSinatra
     school = School.by_attr!(:id, params["school_id"])
     json Group.teaching_groups_by_school(school)
   end
+
+  get "/v3/schools/:school_id/year_classes" do
+    auth :basic_auth, :kerberos
+    school = School.by_attr!(:id, params["school_id"])
+    json Group.by_type_and_school("year class", school, :multiple => true)
+  end
 end
 
 
