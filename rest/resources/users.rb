@@ -546,7 +546,7 @@ class User < LdapModel
 
   def year_class=(group)
     self.group_by_type('year class', { :multiple => true }).each do |g|
-      next if group && g.external_id == group.external_id
+      next if group && g.id == group.id
 
       g.remove_member(self)
       g.save!
