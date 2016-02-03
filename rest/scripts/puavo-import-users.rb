@@ -69,10 +69,9 @@ def update_user_groups(puavo_rest_user, user)
   case @options[:user_role]
   when "student"
     puavo_rest_user.teaching_group = user.teaching_group
-    if user.year_class != user.teaching_group
-      # FIXME: create year class if it not found?
-      # FIXME: add user to yeah class
-      #puavo_rest_user.year_class = user.year_class
+
+    unless user.year_class.nil?
+      puavo_rest_user.year_class = user.year_class
     end
   when "teacher"
     puavo_rest_user.add_administrative_group(user.teacher_group)
@@ -156,7 +155,7 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     user_data_hash.merge!({
       :school_external_id => user_data[8],
       :teaching_group_external_id => user_data[10],
-      :year_class => user_data[11]
+      :year_class_key => user_data[11]
     })
   end
 

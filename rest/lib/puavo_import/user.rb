@@ -23,6 +23,7 @@ module PuavoImport
                   :teacher_group_suffix,
                   :teaching_group_external_id,
                   :teaching_group,
+                  :year_class_key,
                   :year_class,
                   :school_external_id,
                   :school,
@@ -43,6 +44,12 @@ module PuavoImport
         @teaching_group = PuavoRest::Group.by_attr(:external_id, @teaching_group_external_id)
         raise(UserGroupError,
               "Cannot find group (external_id: #{ @teaching_group_external_id }) for student: #{ self.to_s }") if @teaching_group.nil?
+
+        if @teaching_group.name != self.year_class_key
+          @year_class = PuavoRest::Group.by_attrs({ :name => self.year_class_key,
+                                                    :school_dn => self.school.dn,
+                                                    :type => "year class" })
+        end
       when "teacher"
         @teacher_group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @teacher_group_suffix }",
                                            :school_dn => school.dn)
