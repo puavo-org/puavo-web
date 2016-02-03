@@ -515,7 +515,7 @@ class User < LdapModel
 
   def teaching_group=(group)
     self.group_by_type('teaching group', { :multiple => true }).each do |g|
-      next if group && g.external_id == group.external_id
+      next if group && g.id == group.id
 
       g.remove_member(self)
       g.save!
