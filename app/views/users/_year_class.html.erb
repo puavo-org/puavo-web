@@ -1,0 +1,13 @@
+<% if !@year_classes.nil? && !@year_classes.empty? %>
+  <% if new_group_management?(@school) && !@user.new_entry? && @user.puavoEduPersonAffiliation.include?("student") %>
+  <tr>
+    <td class="label_for_checkbox_list"><%= f.label :year_class %></td>
+    <td>
+      <%= select_tag "year_class", options_for_select(
+          [[t("default_select_value"), ""]] + @year_classes.map{ |g| [g["name"], g["id"]] },
+          :selected => @user.year_class["id"]
+      ), { :disabled => @user.read_only? } %>
+    </td>
+  </tr>
+  <% end %>
+<% end %>
