@@ -742,6 +742,20 @@ class Users < PuavoSinatra
     json group
   end
 
+  get "/v3/users/:username/year_class" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    json user.year_class
+  end
+
+  put "/v3/users/:username/year_class" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    group = Group.by_id(params["id"])
+    user.year_class = group
+    json group
+  end
+
   get "/v3/users/:username/administrative_groups" do
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
