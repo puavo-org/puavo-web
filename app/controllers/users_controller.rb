@@ -161,10 +161,12 @@ class UsersController < ApplicationController
           raise User::UserError, I18n.t('flash.user.save_failed')
         end
 
-        @user.teaching_group = params["teaching_group"]
-        if params["administrative_groups"]
-          @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
-          params["user"].delete("administrative_groups")
+        if new_group_management?(@school)
+          @user.teaching_group = params["teaching_group"]
+          if params["administrative_groups"]
+            @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
+            params["user"].delete("administrative_groups")
+          end
         end
 
         # Save new password to session otherwise next request does not work
