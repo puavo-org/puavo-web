@@ -142,6 +142,11 @@ class User < LdapModel
       end
     end
 
+    if !telephone_number.nil? && !telephone_number.match(/^[A-Za-z[:digit:][:space:]'()+,-.\/:?"]+$/)
+      add_validation_error(:telephone_number, :telephone_number_invalid,
+                           "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
+    end
+
     validate_unique(:email)
     # XXX validate secondary emails too!!
   end
