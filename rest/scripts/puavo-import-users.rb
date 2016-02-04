@@ -365,6 +365,10 @@ when "import"
         puts "Can't create user, username is not defined (external_id: #{ user.external_id } )"
         next
       end
+      if user.external_id.nil? || user.external_id.empty?
+        puts "Can't create user, external_id is not defined (name: #{ user.first_name } #{ user.last_name })"
+        next
+      end
       puts "Create new user to Puavo: #{ user.username }"
       # FIXME send email notifications to school admin
 
