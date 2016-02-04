@@ -29,11 +29,15 @@ class ListsController < ApplicationController
 
       user.save!
 
-      # FIXME Use Group if new_group_management? is true
-      group = user.roles.first
-
-      @users_by_group[group.displayName] ||= []
-      @users_by_group[group.displayName].push(user)
+      if new_group_management?(@school)
+        group = user.teaching_group
+        @users_by_group[group["name"]] ||= []
+        @users_by_group[group["name"]].push(user)
+      else
+        group = user.roles.first
+        @users_by_group[group.displayName] ||= []
+        @users_by_group[group.displayName].push(user)
+      end
     end
 
     pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
