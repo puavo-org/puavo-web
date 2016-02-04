@@ -380,7 +380,7 @@ when "import"
       puavo_rest_user = create_puavo_rest_user(user, create_attributes)
 
       begin
-        puavo_rest_user.validate!
+        puavo_rest_user.save!
       rescue ValidationError => validation_errors
         errors = validation_errors.as_json
         invalid_attributes = errors[:error][:meta][:invalid_attributes].keys
@@ -393,9 +393,9 @@ when "import"
         end
 
         puavo_rest_user = create_puavo_rest_user(user, create_attributes)
+        puavo_rest_user.save!
       end
 
-      puavo_rest_user.save!
 
       update_user_groups(puavo_rest_user, user)
 
