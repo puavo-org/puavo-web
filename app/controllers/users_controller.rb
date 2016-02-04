@@ -179,6 +179,7 @@ class UsersController < ApplicationController
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue User::UserError => e
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
+        get_user_groups
         error_message_and_render(format, 'edit',  e.message)
       end
     end
