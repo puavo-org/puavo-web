@@ -68,12 +68,16 @@ class BootServer < LdapModel
     end
   end
 
+  # Cached organisation query
+  def organisation
+    @organisation ||= Organisation.by_dn(self.class.organisation["base"])
+  end
+
   def image_series_source_urls
-    urls = get_own(:image_series_source_urls)
-    if urls.nil?
+    if get_own(:image_series_source_urls).empty?
       organisation.image_series_source_urls
     else
-      urls
+      get_own(:image_series_source_urls)
     end
   end
 

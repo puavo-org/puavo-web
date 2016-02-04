@@ -160,4 +160,26 @@ describe PuavoRest::BootServer do
     end
   end
 
+
+  describe "basic get resources with organisation fallback" do
+    before(:each) do
+      test_organisation = LdapOrganisation.first # TODO: fetch by name
+      test_organisation.puavoImageSeriesSourceURL = "https://foobar.opinsys.fi/organisationprefimages1.json"
+      test_organisation.save!
+
+      @server1.puavoImageSeriesSourceURL = nil
+      @server1.save
+
+    end
+
+    it "can see organisations image series source urls" do
+      get "/v3/boot_servers/server1", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+      data = JSON.parse last_response.body
+      assert_equal( Set.new(["https://foobar.opinsys.fi/organisationprefimages1.json"]),
+                    Set.new(data["image_series_source_urls"]) )
+    end
+  end
 end
