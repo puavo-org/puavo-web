@@ -342,26 +342,29 @@ when "import"
         puts "#{ puavo_rest_user["username"] }: no changes"
       end
     else
-      puts "#{ user.to_s }: add user to Puavo"
-      next
-#      # FIXME Create password list for new users
+      if user.username.nil?
+        puts "Can't create user, username is not defined (external_id: #{ user.external_id } )"
+        next
+      end
+      puts "Create new user to Puavo: #{ user.username }"
 #      # FIXME send email notifications to school admin
-#      puavo_rest_user = PuavoRest::User.new(
-#        :external_id => user.external_id,
-#        :first_name => user.first_name,
-#        :last_name => user.last_name,
-#        :email => user.email,
-#        :telephone_number => user.telephone_number,
-#        :roles => [@options[:user_role]],
-#        :school_dns => [user.school.dn.to_s],
-#        # :preferred_language => user.preferred_language,
-#        # :username => user.username,
-#        )
-#      puavo_rest_user.save!
-#
-#      update_user_groups(puavo_rest_user, user)
+      puavo_rest_user = PuavoRest::User.new(
+        :external_id => user.external_id,
+        :first_name => user.first_name,
+        :last_name => user.last_name,
+        :telephone_number => user.telephone_number,
+        :roles => [@options[:user_role]],
+        :school_dns => [user.school.dn.to_s],
+        # :preferred_language => user.preferred_language,
+        :username => user.username,
+        )
+      puavo_rest_user.email = user.email unless user.email.nil?
+      puavo_rest_user.save!
+
+      update_user_groups(puavo_rest_user, user)
 
     end
+  end
 
 
 
