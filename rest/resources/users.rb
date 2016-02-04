@@ -147,6 +147,11 @@ class User < LdapModel
                            "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
     end
 
+    # FIXME: Validate external id?
+    #if !external_id.nil?
+    #  validate_unique(:external_id)
+    #end
+
     validate_unique(:email)
     # XXX validate secondary emails too!!
   end
