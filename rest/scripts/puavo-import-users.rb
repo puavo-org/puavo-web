@@ -79,6 +79,12 @@ def update_user_groups(puavo_rest_user, user)
   end
 end
 
+def update_puavo_rest_user_attributes(puavo_rest_user, user, attributes)
+  attributes.each do |attribute|
+    puavo_rest_user.send("#{ attribute }=", user.send(attribute.to_s))
+  end
+end
+
 @options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
     options[:user_role] = r
@@ -296,10 +302,15 @@ when "import"
       if user.need_update?(puavo_rest_user)
         puts "#{ puavo_rest_user["username"] }: update user information"
 
-        puavo_rest_user.first_name = user.first_name
-        puavo_rest_user.last_name = user.last_name
-        puavo_rest_user.email = user.email unless user.email.nil?
-        puavo_rest_user.telephone_number = user.telephone_number
+        update_attributes = [ :first_name,
+                              :last_name,
+                              :email,
+                              :telephone_number ]
+
+        update_attributes.delete(:email) if user.email.nil?
+
+        update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
+
         # FIXME: We can not modify the role because admin user is able to add more roles for the user
         #puavo_rest_user.role = options[:user_role]
         #puavo_rest_user.username = user.username # FIXME invalid data?
@@ -310,20 +321,17 @@ when "import"
         rescue ValidationError => validation_errors
           errors = validation_errors.as_json
           invalid_attributes = errors[:error][:meta][:invalid_attributes].keys
-          if invalid_attributes.count == 1 && invalid_attributes.include?(:email)
-            puts puavo_rest_user[:username].to_s + ": " +
-              errors[:error][:meta][:invalid_attributes][:email].map{
-              |a| a[:message]
+          invalid_attributes.each do |attribute|
+            update_attributes.delete(attribute)
+            puts "attribute: #{attribute}, value: '#{ user.send(attribute.to_s) }', error: " +
+              errors[:error][:meta][:invalid_attributes][attribute].map { |a|
+              a[:message]
             }.join(", ")
-            puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
-            puavo_rest_user.first_name = user.first_name
-            puavo_rest_user.last_name = user.last_name
-            puavo_rest_user.telephone_number = user.telephone_number
-          else
-            STDERR.puts "Can't save user information!"
-            STDERR.puts e.to_s
-            exit
           end
+
+          puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+
+          update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
         end
 
         puavo_rest_user.save!
