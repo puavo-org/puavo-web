@@ -85,6 +85,22 @@ def update_puavo_rest_user_attributes(puavo_rest_user, user, attributes)
   end
 end
 
+def create_puavo_rest_user(user, attributes)
+  puavo_rest_user = PuavoRest::User.new
+  attributes.each do |attribute|
+    value = user.send(attribute.to_s)
+    next if value.nil?
+    puavo_rest_user.send("#{ attribute }=", value)
+  end
+
+  puavo_rest_user.external_id = user.external_id
+  puavo_rest_user.roles = [@options[:user_role]]
+  puavo_rest_user.school_dns = [user.school.dn.to_s]
+  puavo_rest_user.username = user.username
+
+  puavo_rest_user
+end
+
 @options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
     options[:user_role] = r
@@ -350,18 +366,31 @@ when "import"
         next
       end
       puts "Create new user to Puavo: #{ user.username }"
-#      # FIXME send email notifications to school admin
-      puavo_rest_user = PuavoRest::User.new(
-        :external_id => user.external_id,
-        :first_name => user.first_name,
-        :last_name => user.last_name,
-        :telephone_number => user.telephone_number,
-        :roles => [@options[:user_role]],
-        :school_dns => [user.school.dn.to_s],
-        # :preferred_language => user.preferred_language,
-        :username => user.username,
-        )
-      puavo_rest_user.email = user.email unless user.email.nil?
+      # FIXME send email notifications to school admin
+
+      create_attributes = [ :first_name,
+                            :last_name,
+                            :telephone_number,
+                            :email ]
+
+      puavo_rest_user = create_puavo_rest_user(user, create_attributes)
+
+      begin
+        puavo_rest_user.validate!
+      rescue ValidationError => validation_errors
+        errors = validation_errors.as_json
+        invalid_attributes = errors[:error][:meta][:invalid_attributes].keys
+        invalid_attributes.each do |attribute|
+          create_attributes.delete(attribute)
+          puts "attribute: #{attribute}, value: '#{ user.send(attribute.to_s) }', error: " +
+            errors[:error][:meta][:invalid_attributes][attribute].map { |a|
+            a[:message]
+          }.join(", ")
+        end
+
+        puavo_rest_user = create_puavo_rest_user(user, create_attributes)
+      end
+
       puavo_rest_user.save!
 
       update_user_groups(puavo_rest_user, user)
