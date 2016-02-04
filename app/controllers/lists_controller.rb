@@ -30,6 +30,17 @@ class ListsController < ApplicationController
   def download
     @list = List.by_id(params[:id])
 
+    if new_group_management?(@school)
+      # /v3/schools/:school_id/teaching_groups
+      @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse or []
+      @teaching_groups_by_username = {}
+      @teaching_groups.each do |group|
+        group["member_usernames"].each do |username|
+          @teaching_groups_by_username[username] = group
+        end
+      end
+    end
+
     @users_by_group = {}
 
     @list.users.each do |user_id|
@@ -43,7 +54,12 @@ class ListsController < ApplicationController
       user.save!
 
       if new_group_management?(@school)
-        group = user.teaching_group
+        group = {}
+        if Array(user.puavoEduPersonAffiliation).include?("student")
+          group = @teaching_groups_by_username[user.uid]
+        else
+          group["name"] = I18n.t("puavoEduPersonAffiliation_teacher")
+        end
         @users_by_group[group["name"]] ||= []
         @users_by_group[group["name"]].push(user)
       else
