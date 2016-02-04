@@ -69,11 +69,11 @@ class BootServer < LdapModel
   end
 
   def image_series_source_urls
-     if get_own(:image_series_source_urls).nil?
-       organisation.image_series_source_urls
-     else
-       get_own(:image_series_source_urls)
-     end
+    if get_own(:image_series_source_urls).nil?
+      organisation.image_series_source_urls
+    else
+      get_own(:image_series_source_urls)
+    end
   end
 
 end
