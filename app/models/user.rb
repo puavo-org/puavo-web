@@ -251,6 +251,14 @@ class User < LdapBase
       end
     end
 
+    # Unique validation for puavoExternalId
+    if user = User.find(:first, :attribute => "puavoExternalId", :value => self.puavoExternalId)
+      if user.puavoId != self.puavoId
+        errors.add :puavoExternalId, I18n.t("activeldap.errors.messages.taken",
+                                            :attribute => I18n.t("activeldap.attributes.user.puavoExternalId") )
+      end
+    end
+
     # mass import uid validation
     if self.mass_import
       if @@reserved_uids.include?(self.uid)
