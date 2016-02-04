@@ -296,6 +296,9 @@ when "diff"
 
 when "import"
   puts "Import users\n\n"
+
+  @new_users_by_school = {}
+
   PuavoImport::User.all.each do |user|
     puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
     if puavo_rest_user
@@ -363,10 +366,15 @@ when "import"
 
       update_user_groups(puavo_rest_user, user)
 
+      unless @new_users_by_school.has_key?(puavo_rest_user.school.id)
+        @new_users_by_school[puavo_rest_user.school.id] = []
+      end
+      @new_users_by_school[puavo_rest_user.school.id].push(puavo_rest_user)
     end
   end
 
-
-
+  @new_users_by_school.each do |school_id, users|
+    list = PuavoRest::UserList.new(users.map{ |u| u.id })
+    list.save
   end
 end
