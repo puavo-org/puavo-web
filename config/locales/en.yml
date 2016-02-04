@@ -412,6 +412,7 @@ en:
       label_generate_password: Set random password for users
       label_set_password: Set the following password for users
       label_submit_button: Set password and download file
+      and_other_users: "+%{count} other users..."
   menu:
     index:
       service_link_name_puavo: Puavo - users and devices management

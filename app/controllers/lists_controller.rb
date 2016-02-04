@@ -8,6 +8,19 @@ class ListsController < ApplicationController
         (!list.downloaded || params[:downloaded] )
     end
 
+    @users_by_id = {}
+    @lists.each do |list|
+      count = 1
+      list.users.each do |user_id|
+        user = User.find(user_id)
+        @users_by_id[user_id] = user
+
+        # UI needs only first 10 users
+        break if count > 10
+        count += 1
+      end
+    end
+
     respond_to do |format|
       format.html
     end

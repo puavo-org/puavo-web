@@ -24,6 +24,26 @@
     <div>
       <b><%= t(".users_count_title") %>:</b> <%= list.users.count %>
     </div>
+    <div>
+      <table>
+        <tr>
+          <th><%= t("activeldap.attributes.user.displayName") %></th>
+          <th><%= t("activeldap.attributes.user.groups") %></th>
+        </tr>
+        <% count = 1 %>
+        <% list.users.each do |user_id| %>
+        <% user = @users_by_id[user_id] %>
+        <tr>
+          <td><%= user.displayName %></td><td><%= user.groups.first.displayName %></td>
+        </tr>
+        <% break if count > 10 %>
+        <% count += 1 %>
+        <% end %>
+      </table>
+      <% if list.users.count > 10 %>
+      <%= t(".and_other_users", :count => list.users.count - 10) %>
+      <% end %>
+    </div>
   </div>
 
 

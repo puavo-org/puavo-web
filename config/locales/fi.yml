@@ -402,6 +402,7 @@ fi:
       label_generate_password: Aseta satunnainen salasana käyttäjille
       label_set_password: Aseta kaikkien listan käyttäjien salasanaksi
       label_submit_button: Aseta salasana ja lataa tiedosto
+      and_other_users: "+%{count} muuta käyttäjää..."
   menu:
     index:
       service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta
