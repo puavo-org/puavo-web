@@ -108,6 +108,7 @@ module PuavoImport
         :email,
         :telephone_number,
         :import_group_name,
+        :import_school_name,
         #:preferred_language,
         #:username
       ].each do |attr|

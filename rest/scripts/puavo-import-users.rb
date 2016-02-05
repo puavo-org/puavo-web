@@ -83,6 +83,7 @@ def update_puavo_rest_user_attributes(puavo_rest_user, user, attributes)
   attributes.each do |attribute|
     puavo_rest_user.send("#{ attribute }=", user.send(attribute.to_s))
   end
+  puavo_rest_user.school_dns = [user.school.dn.to_s]
 end
 
 def create_puavo_rest_user(user, attributes)
