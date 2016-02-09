@@ -21,7 +21,7 @@ module PuavoImport
     end
 
     def to_s
-      "#{ self.name } (external_id: #{ self.external_id })"
+      "#{ self.name } (external_id: #{ self.external_id }, school: #{ self.school.name })"
     end
 
     def need_update?(group)
