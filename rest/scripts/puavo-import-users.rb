@@ -124,8 +124,6 @@ end
   end
 end
 
-REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
-
 setup_connection(@options)
 
 users = []
