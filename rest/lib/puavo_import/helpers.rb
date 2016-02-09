@@ -60,6 +60,10 @@ module PuavoImport
           options[:include_schools] = include_schools
         end
 
+        opts.on("--silent", "Silent mode") do |silent|
+          options[:silent] = silent
+        end
+
         block.call(opts, options) unless block.nil?
 
         opts.on_tail("-h", "--help", "Show this message") do
