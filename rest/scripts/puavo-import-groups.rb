@@ -48,6 +48,10 @@ when "diff"
       next
     end
 
+    if !group.need_update?(puavo_group) && options[:silent]
+      next
+    end
+
     diff_objects(puavo_group, group, ["name", "external_id", "abbreviation"])
 
     puts "\n" + "-" * 100 + "\n\n"
@@ -103,6 +107,7 @@ when "import"
         puavo_rest_group.school_dn = group.school.dn
         puavo_rest_group.save!
       else
+        next if options[:silent]
         puts "#{ group.to_s }: no changes"
       end
     else
