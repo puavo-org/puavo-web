@@ -37,7 +37,21 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
 end
 
 case options[:mode]
+when "diff"
+  puts "Compare current group data for import data\n\n"
 
+  groups.each do |group|
+    puavo_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
+
+    unless puavo_group
+      puts brown("Add new group: #{ group.to_s }")
+      next
+    end
+
+    diff_objects(puavo_group, group, ["name", "external_id", "abbreviation"])
+
+    puts "\n" + "-" * 100 + "\n\n"
+  end
 when "set-external-id"
 
   puts "Set external id\n\n"
