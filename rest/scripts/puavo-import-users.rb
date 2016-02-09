@@ -296,17 +296,19 @@ when "diff"
   puts "Diff users\n\n"
   PuavoImport::User.all.each do |user|
     puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
-    if puavo_rest_user
-        different_attributes = diff_objects(puavo_rest_user, user, ["first_name",
-                                                                    "last_name",
-                                                                    "email",
-                                                                    "telephone_number",
-                                                                    "import_school_name",
-                                                                    "import_group_name",
-                                                                    "external_id"] )
-    else
-      puts "Can't find user: #{ user.to_s }"
+
+    unless puavo_rest_user
+      puts brown("Add new user: #{ user.to_s }")
+      next
     end
+
+    different_attributes = diff_objects(puavo_rest_user, user, ["first_name",
+                                                                "last_name",
+                                                                "email",
+                                                                "telephone_number",
+                                                                "import_school_name",
+                                                                "import_group_name",
+                                                                "external_id"] )
 
     puts "\n" + "-" * 100 + "\n\n"
   end
