@@ -70,6 +70,14 @@ module PuavoImport
 
       parser.parse!
 
+      if CONFIG["puavo_import"]
+        if organisation_configuration = CONFIG["puavo_import"][options[:organisation_domain]]
+          unless options[:include_schools]
+            options[:include_schools] = organisation_configuration["include_schools"]
+          end
+        end
+      end
+
       unless args[:no_csv_file]
         if ARGV[0]
           options[:csv_file] = ARGV[0]
