@@ -46,6 +46,10 @@ when "diff"
       next
     end
 
+    if !school.need_update?(puavo_rest_school) && options[:silent]
+      next
+    end
+
     diff_objects(puavo_rest_school, school, ["name", "abbreviation", "external_id"])
 
     puts "\n" + "-" * 100 + "\n\n"
@@ -98,6 +102,7 @@ when "import"
         puavo_rest_school.abbreviation = school.abbreviation
         puavo_rest_school.save!
       else
+        next if options[:silent]
         puts "#{ school.to_s }: no changes"
       end
     else
