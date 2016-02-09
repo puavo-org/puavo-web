@@ -30,8 +30,26 @@ mode = options[:mode] || "default"
 schools = PuavoImport::School.all
 
 case mode
-when "default"
-  puts "Compare"
+when "diff"
+  puts "Compare current data for import data\n\n"
+
+  schools.each do |school|
+    if school.abbreviation.nil?
+      puts brown("Abbreviation is not defined (#{ school.name }) -> skip")
+      next
+    end
+
+    puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
+
+    unless puavo_rest_school
+      puts "Add new school: #{ school.to_s }"
+      next
+    end
+
+    diff_objects(puavo_rest_school, school, ["name", "abbreviation", "external_id"])
+
+    puts "\n" + "-" * 100 + "\n\n"
+  end
 when "set-external-id"
   puts "Set external id\n\n"
   sticky_response = nil
