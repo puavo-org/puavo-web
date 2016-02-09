@@ -302,6 +302,10 @@ when "diff"
       next
     end
 
+    if !user.need_update?(puavo_rest_user) && @options[:silent]
+      next
+    end
+
     different_attributes = diff_objects(puavo_rest_user, user, ["first_name",
                                                                 "last_name",
                                                                 "email",
@@ -361,6 +365,7 @@ when "import"
         update_user_groups(puavo_rest_user, user)
 
       else
+        next if @options[:silent]
         puts "#{ puavo_rest_user["username"] }: no changes"
       end
     else
