@@ -75,6 +75,12 @@ module PuavoImport
           unless options[:include_schools]
             options[:include_schools] = organisation_configuration["include_schools"]
           end
+          if !options[:dn] && !options[:password]
+            if organisation_configuration["credentials"]
+              options[:dn] = organisation_configuration["credentials"]["dn"]
+              options[:password] = organisation_configuration["credentials"]["password"]
+            end
+          end
         end
       end
 
