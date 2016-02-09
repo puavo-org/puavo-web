@@ -326,7 +326,7 @@ when "import"
     puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
     if puavo_rest_user
       if user.need_update?(puavo_rest_user)
-        puts "#{ puavo_rest_user["username"] }: update user information"
+        puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
 
         update_attributes = [ :first_name,
                               :last_name,
