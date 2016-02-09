@@ -11,8 +11,6 @@ include PuavoImport::Helpers
 
 options = cmd_options(:message => "Import groups to Puavo")
 
-REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
-
 setup_connection(options)
 
 groups = []
