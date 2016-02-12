@@ -83,7 +83,6 @@ def do_query(indices, query)
           :query => {
             :query_string => {
               :analyze_wildcard => true,
-              # :query => 'msg: "created session" AND created\ session.session.organisation: "vihti.opinsys.fi" AND created\ session.session.user.username: "eino.ala-turkia"'
               :query => query
               }
             }
