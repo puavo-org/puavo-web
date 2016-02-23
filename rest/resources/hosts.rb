@@ -86,6 +86,7 @@ class Host < LdapModel
     preferred_image
   end
 
+  # XXX deprecated and not likely used anymore
   def grub_kernel_version
     if kernel_version.to_s.empty?
       return ""
@@ -93,6 +94,7 @@ class Host < LdapModel
     "-" + kernel_version.to_s
   end
 
+  # XXX deprecated and not likely used anymore
   def grub_type
     if type.to_s.empty?
       return "unregistered"
@@ -100,6 +102,7 @@ class Host < LdapModel
     type.to_s
   end
 
+  # XXX deprecated and not likely used anymore
   def grub_kernel_arguments
     if ["unregistered", "laptop", "wirelessaccesspoint"].include?(grub_type)
       return ""
@@ -117,10 +120,12 @@ class Host < LdapModel
     return retval
   end
 
+  # XXX deprecated and not likely used anymore
   def grub_boot_configuration
     grub_header + grub_configuration
   end
 
+  # XXX deprecated and not likely used anymore
   def grub_header
     if boot_mode == "dualboot"
       header =<<EOF
@@ -142,6 +147,7 @@ EOF
     end
   end
 
+  # XXX deprecated and not likely used anymore
   def grub_configuration
     return <<EOF
 
