@@ -32,8 +32,14 @@ class BootConfigurations < PuavoSinatra
     boot_configuration
   end
 
+  # XXX This interface is deprecated as well, and it is preferred
+  # XXX to use /v3/bootparams_by_mac/:mac_address.
   get "/v3/boot_configurations/:mac_address" do
     boot_configuration
+  end
+
+  get "/v3/bootparams_by_mac/:mac_address" do
+    bootparams_by_mac
   end
 
   post "/v3/boot_done/:hostname" do
@@ -51,6 +57,16 @@ class BootConfigurations < PuavoSinatra
   end
 
   def boot_configuration
+    host = boot_configuration_host
+    host.grub_boot_configuration
+  end
+
+  def bootparams_by_mac
+    host = boot_configuration_host
+    json host
+  end
+
+  def boot_configuration_host
     auth :server_auth
 
     log_attrs = {
@@ -66,7 +82,6 @@ class BootConfigurations < PuavoSinatra
       host = UnregisteredDevice.new
     end
 
-
     if not log_attrs[:unregistered]
       log_attrs.merge!(host.to_hash)
       host.save_boot_time
@@ -74,7 +89,7 @@ class BootConfigurations < PuavoSinatra
 
     flog.info "send boot configuration", :host => log_attrs
 
-    host.grub_boot_configuration
+    host
   end
 
 end
