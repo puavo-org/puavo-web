@@ -651,6 +651,13 @@ class Users < PuavoSinatra
   end
 
   # Return users in a organisation
+  get "/v3/users/_by_id/:id" do
+    auth :basic_auth, :kerberos
+
+    json User.by_id!(params["id"])
+  end
+
+  # Return users in a organisation
   get "/v3/users/:username" do
     auth :basic_auth, :kerberos
 

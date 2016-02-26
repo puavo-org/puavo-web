@@ -161,6 +161,19 @@ describe PuavoRest::Users do
 
   end
 
+  describe "GET /v3/users/_by_id/" do
+    it "returns user data" do
+      basic_authorize "bob", "secret"
+      get "/v3/users/_by_id/#{ @user.puavoId }"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "bob", data["username"]
+      assert_equal "Bob", data["first_name"]
+      assert_equal "Brown", data["last_name"]
+    end
+  end
+
   describe "GET /v3/users/bob" do
 
     it "organisation owner can see ssh_public_key of bob" do
