@@ -34,6 +34,7 @@ env.validate "Organisation" do
   owner.can_modify organisation, [ :replace, :eduOrgLegalName,              ["example2"]                                     ]
   owner.can_modify organisation, [ :replace, :puavoImageSeriesSourceURL,    ["https://foobar.opisnys.fi/images"]             ]
   owner.can_modify organisation, [ :add,     :owner,                        [teacher.dn]                                     ]
+  owner.can_modify organisation, [ :delete,  :owner,                        [teacher.dn]                                     ]
 
   # Owner can read following attributes
   owner.can_read organisation, [ :cn,
