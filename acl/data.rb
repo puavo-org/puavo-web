@@ -94,6 +94,16 @@ def define_basic(env)
     config.password = "password"
   end
 
+  env.define :sysgroup_getenv do |config|
+    service =  LdapService.new
+    service.uid = "testservice"
+    service.userPassword = "secretsecretsecretsecretsecret"
+    service.groups = SystemGroup.all.map{ |g| g.id }
+    service.save!
+    config.dn = service.dn
+    config.password = "secretsecretsecretsecretsecret"
+  end
+
   env.define :student do |config|
     test_image = Magick::Image.read("features/support/test.jpg").first.to_blob
     student = User.new(
