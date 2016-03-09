@@ -59,7 +59,7 @@ contain following claims:
       - `name` Human readable group name
       - `abbreviation` Valid POSIX name for the group
       - `type` Type of the group (String)
-        - `teaching group`, `year class`, `administrative group`, `course` or `other groups`
+          - `teaching group`, `year class`, `administrative group`, `course` or `other groups`
   - `organisation_name`
     - Human readable organisation name.
   - `organisation_domain`
