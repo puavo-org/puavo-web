@@ -455,7 +455,8 @@ class User < LdapModel
               "id" => group.id,
               "dn" => group.dn,
               "name" => group.name,
-              "abbreviation" => group.abbreviation
+              "abbreviation" => group.abbreviation,
+              "type" => group.type
             }
           end
         }

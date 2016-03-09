@@ -17,6 +17,7 @@ describe PuavoRest::Users do
     @group.cn = "group1"
     @group.displayName = "Group 1"
     @group.puavoSchool = @school.dn
+    @group.puavoEduGroupType = "teaching group"
     @group.save!
 
     @role = Role.new
@@ -111,6 +112,10 @@ describe PuavoRest::Users do
       assert_equal(1, data["schools"].size)
       assert(data["schools"].first["id"], "school data has id")
       assert_equal("Gryffindor", data["schools"].first["name"])
+
+      group = data["schools"].first["groups"].first
+      assert_equal "Group 1", group["name"]
+      assert_equal "teaching group", group["type"]
 
       assert_equal "http://example.opinsys.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 
