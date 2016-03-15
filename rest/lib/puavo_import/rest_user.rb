@@ -10,6 +10,10 @@ module PuavoImport
       @@teacher_group_suffix
     end
 
+    def import_school_name
+      school.name
+    end
+
     def import_group_name
       if self.roles.include?("teacher")
         group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @@teacher_group_suffix }",

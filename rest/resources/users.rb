@@ -378,10 +378,6 @@ class User < LdapModel
     end.compact
   end
 
-  def import_school_name
-    school.name
-  end
-
   def preferred_language
     if get_own(:preferred_language).nil? && school
       school.preferred_language
