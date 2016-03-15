@@ -414,11 +414,6 @@ class User < LdapModel
     @groups ||= Group.by_user_dn(dn)
   end
 
-  def import_group_name
-    return "" if groups.empty?
-    return groups.first.name
-  end
-
   def groups_within_school(school)
     groups.select do |group|
         group.school_id == school.id

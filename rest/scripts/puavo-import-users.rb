@@ -86,7 +86,7 @@ def update_puavo_rest_user_attributes(puavo_rest_user, user, attributes)
 end
 
 def create_puavo_rest_user(user, attributes)
-  puavo_rest_user = PuavoRest::User.new
+  puavo_rest_user = PuavoImport::RestUser.new
   attributes.each do |attribute|
     value = user.send(attribute.to_s)
     next if value.nil?
@@ -134,6 +134,10 @@ found_many_users_by_name = 0
 correct_csv_users = 0
 update_external_id = 0
 not_update_external_id = 0
+
+if @options[:user_role] == "teacher"
+  PuavoImport::RestUser.teacher_group_suffix = @options[:teacher_group_suffix]
+end
 
 CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => ";" ) do |row|
   user_data = encode_text(row, @options[:encoding])
@@ -194,13 +198,13 @@ when "set-external-id"
 
   users.each do |user|
 
-    if PuavoRest::User.by_attr(:external_id, user.external_id)
+    if PuavoImport::RestUser.by_attr(:external_id, user.external_id)
       next
     end
 
     puts "\n" + "-" * 100 + "\n\n"
 
-    puavo_users = PuavoRest::User.by_attrs({ :first_name => user.first_name,
+    puavo_users = PuavoImport::RestUser.by_attrs({ :first_name => user.first_name,
                                              :last_name => user.last_name,
                                              :roles => @options[:user_role]},
                                            { :multiple => true } )
@@ -292,7 +296,7 @@ when "set-external-id"
 when "diff"
   puts "Diff users\n\n"
   PuavoImport::User.all.each do |user|
-    puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+    puavo_rest_user = PuavoImport::RestUser.by_attr(:external_id, user.external_id)
 
     unless puavo_rest_user
       puts brown("Add new user: #{ user.to_s }")
@@ -320,7 +324,7 @@ when "import"
   @new_users_by_school = {}
 
   PuavoImport::User.all.each do |user|
-    puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+    puavo_rest_user = PuavoImport::RestUser.by_attr(:external_id, user.external_id)
     if puavo_rest_user
       if user.need_update?(puavo_rest_user)
         puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
@@ -352,7 +356,7 @@ when "import"
             }.join(", ")
           end
 
-          puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+          puavo_rest_user = PuavoImport::RestUser.by_attr(:external_id, user.external_id)
 
           update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
         end
