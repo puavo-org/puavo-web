@@ -163,7 +163,7 @@ class UsersController < ApplicationController
 
         if new_group_management?(@school)
           @user.teaching_group = params["teaching_group"]
-          @user.year_class = params["year_class"]
+          @user.year_class = params["year_class"] if params["year_class"]
           if params["administrative_groups"]
             @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
             params["user"].delete("administrative_groups")
@@ -264,7 +264,7 @@ class UsersController < ApplicationController
       @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == 0 }
     end
     @user.teaching_group = params["teaching_group"]
-    @user.year_class = params["year_class"]
+    @user.year_class = params["year_class"] if params["year_class"]
 
     respond_to do |format|
       format.html { redirect_to( user_path(@school, @user) ) }
