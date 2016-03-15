@@ -99,7 +99,7 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
-    get_user_groups
+    get_user_groups if new_group_management?(@school)
   end
 
   # POST /:school_id/users
@@ -180,7 +180,7 @@ class UsersController < ApplicationController
         format.html { redirect_to( user_path(@school,@user) ) }
       rescue User::UserError => e
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
-        get_user_groups
+        get_user_groups if new_group_management?(@school)
         error_message_and_render(format, 'edit',  e.message)
       end
     end
