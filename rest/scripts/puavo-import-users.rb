@@ -264,7 +264,7 @@ when "set-external-id"
       response = "N"
     end
 
-    if user.import_group_name.to_i != puavo_user.import_group_name.to_i
+    if user.import_group_name != puavo_user.import_group_name
       response = "N"
     end
 
