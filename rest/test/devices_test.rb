@@ -687,7 +687,6 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
-      @device.ldap_password
     end
 
     it "sign new certificate" do
