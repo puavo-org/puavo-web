@@ -108,6 +108,11 @@ module Test
     anotherorg.o = "Another Organisation"
     anotherorg.save!
 
+    puavo_ca_url = "http://" + Puavo::CONFIG["puavo_ca"]["host"] + ":" + Puavo::CONFIG["puavo_ca"]["port"].to_s
+    HTTP.basic_auth( :user => "uid=admin,o=puavo",
+                     :pass => "password" )
+      .delete(puavo_ca_url + "/certificates/test_clean_up")
+
     # restore connection
     setup_test_connection
   end
