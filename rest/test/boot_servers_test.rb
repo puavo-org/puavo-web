@@ -182,4 +182,24 @@ describe PuavoRest::BootServer do
                     Set.new(data["image_series_source_urls"]) )
     end
   end
+
+  describe "device certificate" do
+    before(:each) do
+      @key = OpenSSL::PKey::RSA.new(1024)
+      @csr = OpenSSL::X509::Request.new
+      @csr.version = 0
+      @csr.public_key = @key.public_key
+    end
+
+    it "sign new certificate" do
+      basic_authorize @server1.dn.to_s, @server1.ldap_password
+      post( "/v3/hosts/certs/sign",
+            { "hostname" => "server1",
+              "certificate_request" => @csr.to_pem } )
+      assert_200
+      @data = JSON.parse last_response.body
+
+      assert @data.keys.include?("certificate")
+    end
+  end
 end
