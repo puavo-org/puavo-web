@@ -49,7 +49,8 @@ if ENV["RACK_ENV"] == "test"
     "server" => {
       :dn => PUAVO_ETC.ldap_dn,
       :password => PUAVO_ETC.ldap_password
-    }
+    },
+    "puavo_ca" => "http://localhost:8080"
   }
 else
 

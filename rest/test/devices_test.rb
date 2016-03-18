@@ -1,3 +1,4 @@
+require 'openssl'
 require_relative "./helper"
 
 describe PuavoRest::Devices do
@@ -672,4 +673,32 @@ describe PuavoRest::Devices do
 
   end
 
+  describe "device certificate" do
+    before(:each) do
+      @key = OpenSSL::PKey::RSA.new(1024)
+      @csr = OpenSSL::X509::Request.new
+      @csr.version = 0
+      @csr.public_key = @key.public_key
+
+      @device = create_device(
+        :puavoHostname => "laptop-01",
+        :puavoDeviceType => "laptop",
+        :macAddress => "bf:9a:8c:1b:e0:6a",
+        :puavoPreferredServer => @server1.dn,
+        :puavoSchool => @school.dn
+      )
+      @device.ldap_password
+    end
+
+    it "sign new certificate" do
+      basic_authorize @device.dn.to_s, @device.ldap_password
+      post( "/v3/hosts/certs/sign",
+            { "hostname" => "laptop-01",
+              "certificate_request" => @csr.to_pem } )
+      assert_200
+      @data = JSON.parse last_response.body
+
+      assert @data.keys.include?("certificate")
+    end
+  end
 end
