@@ -42,8 +42,11 @@ class Host < LdapModel
   end
 
   def self.specialized_instance!(host)
-    if host.type == "ltspserver"
+    case host.type
+    when "ltspserver"
       LtspServer.by_dn!(host.dn)
+    when "bootserver"
+      BootServer.by_dn!(host.dn)
     else
       Device.by_dn!(host.dn)
     end
