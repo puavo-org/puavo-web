@@ -5,7 +5,7 @@ module PuavoRest
     post "/v3/hosts/certs/sign" do
       auth :basic_auth
 
-      host = Host.by_hostname!(params["hostname"])
+      host = Host.by_hostname!(json_params["hostname"])
 
       org = Host.organisation
       org_key = org.domain.split("." + PUAVO_ETC.topdomain).first
@@ -16,7 +16,7 @@ module PuavoRest
               :headers => { 'Content-Type' => 'application/json' },
               :json => { "certificate" => {
                   "fqdn" => host.hostname + "." + org.domain,
-                  "host_certificate_request" => params["certificate_request"] } } )
+                  "host_certificate_request" => json_params["certificate_request"] } } )
 
       if !res.code.to_s.match(/^2/)
         raise InternalError, "Unable to sign certificate"
