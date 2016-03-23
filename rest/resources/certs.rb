@@ -16,6 +16,15 @@ module PuavoRest
 
       res = HTTP.basic_auth(:user => LdapModel.settings[:credentials][:dn],
                             :pass => LdapModel.settings[:credentials][:password])
+        .delete(CONFIG["puavo_ca"] + "/certificates/revoke.json",
+                :json => { "fqdn" => fqdn } )
+
+      if res.code != 200 && res.code != 404
+        raise InternalError, "Unable to revoke certificate"
+      end
+
+      res = HTTP.basic_auth(:user => LdapModel.settings[:credentials][:dn],
+                            :pass => LdapModel.settings[:credentials][:password])
         .post(CONFIG["puavo_ca"] + "/certificates.json",
               :json => {
                 "org" => org_key,
