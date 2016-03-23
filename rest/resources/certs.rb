@@ -12,8 +12,7 @@ module PuavoRest
 
       res = HTTP.basic_auth(:user => LdapModel.settings[:credentials][:dn],
                             :pass => LdapModel.settings[:credentials][:password])
-        .post(CONFIG["puavo_ca"] + "/certificates.json?org=#{ org_key }",
-              :headers => { 'Content-Type' => 'application/json' },
+        .post(CONFIG["puavo_ca"] + "/certificates.json",
               :json => { "certificate" => {
                   "fqdn" => host.hostname + "." + org.domain,
                   "host_certificate_request" => json_params["certificate_request"] } } )
