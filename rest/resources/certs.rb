@@ -16,6 +16,7 @@ module PuavoRest
                             :pass => LdapModel.settings[:credentials][:password])
         .post(CONFIG["puavo_ca"] + "/certificates.json",
               :json => {
+                "org" => org_key,
                 "certificate" => {
                   "fqdn" => fqdn,
                   "host_certificate_request" => json_params["certificate_request"] } } )
