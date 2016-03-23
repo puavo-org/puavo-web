@@ -1,3 +1,5 @@
+require "http"
+
 module PuavoRest
 
   class Certs < PuavoSinatra
