@@ -691,13 +691,15 @@ describe PuavoRest::Devices do
 
     it "sign new certificate" do
       basic_authorize @device.dn.to_s, @device.ldap_password
+
       post( "/v3/hosts/certs/sign",
             { "hostname" => "laptop-01",
               "certificate_request" => @csr.to_pem } )
       assert_200
       @data = JSON.parse last_response.body
 
-      assert @data.keys.include?("certificate")
+      certificate = OpenSSL::X509::Certificate.new @data["certificate"]
+      assert_equal "/CN=ca.example.opinsys.net", certificate.issuer.to_s
     end
   end
 end

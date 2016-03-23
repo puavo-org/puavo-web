@@ -36,7 +36,7 @@ module PuavoRest
         raise InternalError, "Unable to sign certificate"
       end
 
-      json res.parse
+      json res.parse["certificate"]
     end
 
   end
