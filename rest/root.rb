@@ -220,6 +220,7 @@ class Root < PuavoSinatra
   use PuavoRest::UserLists
   use PuavoRest::SambaNextRid
   use PuavoRest::Groups
+  use PuavoRest::Authentication
 
   if CONFIG["cloud"]
     use PuavoRest::SSO

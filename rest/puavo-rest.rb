@@ -48,6 +48,7 @@ require_relative "./resources/email_confirm"
 require_relative "./resources/primus"
 require_relative "./resources/user_lists"
 require_relative "./resources/certs"
+require_relative "./resources/authentication"
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
