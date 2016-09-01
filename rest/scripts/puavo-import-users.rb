@@ -310,6 +310,7 @@ when "diff"
                                                                 "telephone_number",
                                                                 "import_school_name",
                                                                 "import_group_name",
+                                                                "import_group_external_id",
                                                                 "external_id"] )
 
     puts "\n" + "-" * 100 + "\n\n"

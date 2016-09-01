@@ -83,6 +83,17 @@ module PuavoImport
       end
     end
 
+    def import_group_external_id
+      case self.role
+      when "teacher"
+        return "" if @teacher_group.nil?
+        @teacher_group.external_id
+      when "student"
+        return "" if @teaching_group.nil?
+        @teaching_group.external_id
+      end
+    end
+
     def import_school_name
       return "" if school.nil?
       return school.name
@@ -109,6 +120,7 @@ module PuavoImport
         :telephone_number,
         :import_group_name,
         :import_school_name,
+        :import_group_external_id,
         #:preferred_language,
         #:username
       ].each do |attr|

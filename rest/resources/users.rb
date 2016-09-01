@@ -524,6 +524,10 @@ class User < LdapModel
     self.group_by_type('teaching group')
   end
 
+  def import_group_external_id
+    self.group_by_type('teaching group').external_id
+  end
+
   def teaching_group=(group)
     self.group_by_type('teaching group', { :multiple => true }).each do |g|
       next if group && g.id == group.id
