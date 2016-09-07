@@ -525,7 +525,10 @@ class User < LdapModel
   end
 
   def import_group_external_id
-    self.group_by_type('teaching group').external_id
+    group = self.group_by_type('teaching group')
+    unless group.nil?
+      group.external_id
+    end
   end
 
   def teaching_group=(group)
