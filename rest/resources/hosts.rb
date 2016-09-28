@@ -7,6 +7,7 @@ class Host < LdapModel
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :puavoDeviceType, :type
   ldap_map :macAddress, :mac_address
+  ldap_map :macAddress, :mac_addresses, LdapConverters::ArrayValue
   ldap_map :puavoId, :puavo_id
   ldap_map :puavoHostname, :hostname
   ldap_map :puavoDeviceBootImage, :preferred_boot_image
