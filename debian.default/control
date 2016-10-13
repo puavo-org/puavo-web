@@ -41,6 +41,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  ruby1.9.1
 Description: puavo-rest
  JSON-REST Adapter for LDAP
+ .
 
 Package: puavo-rest-bootserver
 Architecture: any
@@ -52,7 +53,9 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 Breaks: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
 Replaces: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
 Description: puavo-rest for bootservers
- Metapackage for bootservers. Installs nginx, puavo-rest and required configuration files.
+ Metapackage for bootservers. Installs nginx, puavo-rest and required
+ configuration files.
+ .
 
 Package: puavo-web-core
 Architecture: any
@@ -74,6 +77,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  xpdf-utils
 Description: Puavo Rails application core
  The actual code for the application
+ .
 
 Package: puavo-web
 Architecture: any
@@ -81,6 +85,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  puavo-web-core
 Description: puavo-web
  Upstart script for the web application server
+ .
 
 Package: puavo-web-worker
 Architecture: any
@@ -88,3 +93,4 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  puavo-web-core
 Description: puavo-web-worker
  Resque worker upstart script for puavo-web
+ .
