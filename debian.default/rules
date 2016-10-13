@@ -14,7 +14,7 @@ override_dh_auto_test:
 override_dh_shlibdeps:
 
 override_dh_auto_build:
-	$(MAKE)
+#	$(MAKE)
 	$(MAKE) -C rest
 
 override_dh_auto_install:
@@ -24,7 +24,8 @@ override_dh_auto_install:
 	mkdir -p $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-enabled/
 	ln -s ../sites-available/puavo-rest $(CURDIR)/debian/puavo-rest-bootserver/etc/nginx/sites-enabled/puavo-rest
 
+override_dh_install:
 	# puavo-web-core
-	$(MAKE) install prefix=/usr sysconfdir=/etc DESTDIR=$(CURDIR)/debian/puavo-web-core
+#	$(MAKE) install prefix=/usr sysconfdir=/etc DESTDIR=$(CURDIR)/debian/puavo-web-core
 
 override_dh_install:
