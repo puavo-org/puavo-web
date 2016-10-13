@@ -4,7 +4,7 @@ set -x
 set -eu
 
 sudo apt-get update
-sudo apt-get install wget
+sudo apt-get install wget software-properties-common
 
 # Apply puavo-standalone Ansible rules
 wget -qO - https://github.com/opinsys/puavo-standalone/raw/master/setup.sh | sudo sh
