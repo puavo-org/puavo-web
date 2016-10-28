@@ -308,6 +308,7 @@ when "diff"
 
     different_attributes = diff_objects(puavo_rest_user, user, ["first_name",
                                                                 "last_name",
+                                                                "username",
                                                                 "email",
                                                                 "telephone_number",
                                                                 "import_school_name",
