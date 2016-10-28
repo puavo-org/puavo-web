@@ -43,7 +43,7 @@ module PuavoImport
         @teaching_group = PuavoRest::Group.by_attr(:external_id, @teaching_group_external_id)
         raise(UserGroupError,
               "Cannot find group (external_id: #{ @teaching_group_external_id }) for student: #{ self.to_s }") if @teaching_group.nil?
-      when "teacher" || "staff"
+      when "teacher", "staff"
         @group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @group_suffix }",
                                            :school_dn => school.dn)
         raise(UserGroupError,
@@ -74,7 +74,7 @@ module PuavoImport
 
     def import_group_name
       case self.role
-      when "teacher"
+      when "teacher", "staff"
         return "" if @group.nil?
         @group.name
       when "student"
@@ -85,7 +85,7 @@ module PuavoImport
 
     def import_group_external_id
       case self.role
-      when "teacher"
+      when "teacher", "staff"
         return "" if @group.nil?
         @group.external_id
       when "student"
