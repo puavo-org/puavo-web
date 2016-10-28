@@ -403,7 +403,15 @@ when "import"
         end
 
         puavo_rest_user = create_puavo_rest_user(user, create_attributes)
-        puavo_rest_user.save!
+      end
+
+      if puavo_rest_user.new?
+        begin
+          puavo_rest_user.save!
+        rescue ValidationError
+          puts "Cannot create user: #{puavo_rest_user.username}"
+          next
+        end
       end
 
 
