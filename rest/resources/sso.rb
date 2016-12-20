@@ -213,7 +213,7 @@ class SSO < PuavoSinatra
     @external_service ||= fetch_external_service
     @organisation = preferred_organisation
 
-    if !(browser.linux? && browser.gecko?)
+    if !(browser.linux?)
       # Kerberos authentication works only on Opinsys desktops with Firefox.
       # Disable authentication negotiation on others since it  may cause
       # unwanted basic auth popups (at least Chrome & IE @ Windows).
