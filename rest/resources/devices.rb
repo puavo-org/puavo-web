@@ -227,34 +227,43 @@ class Device < Host
 	       return if value.nil?
 	       newvalue = fn ? fn.call(value) : value
 	       return if newvalue.nil?
-	       conf[key] = newvalue
+	       conf[key] = newvalue.to_s
 	     end
 
-    to_json = lambda { |v| v.to_json }
     default_means_nothing = lambda { |v| v == 'default' ? nil : v }
+    no_empty_string = lambda { |v| (v.kind_of?(String) && v.empty?) ? nil : v }
+    to_json = lambda { |v| v.to_json }
 
+    update.call('puavo.admin.personally_administered', personally_administered)
+    update.call('puavo.admin.primary_user', primary_user, no_empty_string)
+    update.call('puavo.audio.pa.default_sink', default_audio_sink)
+    update.call('puavo.audio.pa.default_source', default_audio_source)
     update.call('puavo.autopoweroff.enabled',
 		autopoweroff_mode,
 		default_means_nothing)
     update.call('puavo.autopoweroff.daytime_start_hour', daytime_start_hour)
     update.call('puavo.autopoweroff.daytime_end_hour',   daytime_end_hour)
+    update.call('puavo.guestlogin.enabled',              allow_guest)
     update.call('puavo.homepage',                        homepage)
+    update.call('puavo.hostname',                        hostname)
     update.call('puavo.image.automatic_updates',
 		automatic_image_updates)
-    update.call('puavo.image.preferred',                 preferred_image)
+    update.call('puavo.image.preferred', preferred_image)
     update.call('puavo.image.series.urls',
 		image_series_source_urls,
 		to_json)
-    update.call('puavo.kernel.arguments',                kernel_arguments)
-    update.call('puavo.kernel.version',                  kernel_version)
-    update.call('puavo.keyboard_layout',                 keyboard_layout)
-    update.call('puavo.keyboard_variant',                keyboard_variant)
-    update.call('puavo.l10n.locale',			 locale)
-    update.call('puavo.printing.default_printer',	 default_printer_name)
-    update.call('puavo.timezone',                        timezone)
-    update.call('puavo.xorg.server',                     graphics_driver)
-    update.call('puavo.xrandr_disable',                  xrandr_disable)
-    update.call('puavo.xrandr',                          xrandr, to_json)
+    update.call('puavo.kernel.arguments',         kernel_arguments)
+    update.call('puavo.kernel.version',           kernel_version)
+    update.call('puavo.keyboard_layout',          keyboard_layout)
+    update.call('puavo.keyboard_variant',         keyboard_variant)
+    update.call('puavo.l10n.locale',		  locale)
+    update.call('puavo.mounts.extramounts',	  mountpoints)
+    update.call('puavo.printing.default_printer', default_printer_name)
+    update.call('puavo.printing.device_uri',      printer_device_uri)
+    update.call('puavo.timezone',                 timezone)
+    update.call('puavo.xorg.server',              graphics_driver)
+    update.call('puavo.xrandr_disable',           xrandr_disable)
+    update.call('puavo.xrandr',                   xrandr, to_json)
 
     return conf
   end
