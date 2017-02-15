@@ -8,6 +8,8 @@ class Device < Host
   ldap_map :puavoDeviceAutoPowerOffMode,   :autopoweroff_mode
   ldap_map :puavoDeviceDefaultAudioSink,   :default_audio_sink
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
+  ldap_map :puavoDeviceKernelArguments,    :kernel_arguments
+  ldap_map :puavoDeviceKernelVersion,      :kernel_version
   ldap_map :puavoDeviceModel,              :model
   ldap_map :puavoDeviceOffHour,            :daytime_end_hour
   ldap_map :puavoDeviceOnHour,             :daytime_start_hour
@@ -219,7 +221,22 @@ class Device < Host
   end
 
   def puavo_conf
-    return {}
+    conf = {}
+
+    update = lambda do |key, value, fn=nil|
+	       return if value.nil?
+	       conf[key] = fn ? fn.call(value) : value
+	     end
+
+    update.call('puavo.homepage',         homepage)
+    update.call('puavo.kernel.arguments', kernel_arguments)
+    update.call('puavo.kernel.version',   kernel_version)
+    update.call('puavo.keyboard_layout',  keyboard_layout)
+    update.call('puavo.keyboard_variant', keyboard_variant)
+    update.call('puavo.xrandr_disable',   xrandr_disable)
+    update.call('puavo.xrandr',           xrandr, lambda { |v| v.to_json })
+
+    return conf
   end
 end
 
