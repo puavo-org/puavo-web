@@ -265,6 +265,23 @@ class Device < Host
     update.call('puavo.xrandr_disable',           xrandr_disable)
     update.call('puavo.xrandr',                   xrandr, to_json)
 
+    taghash = Hash[ tags.map { |k| [ k, 1 ] } ]
+
+    tagswitch = lambda do |puavo_conf_key, truetag, falsetag|
+      # falsetag is stronger than truetag
+      flag = taghash.has_key?(truetag) && !taghash.has_key?(falsetag) \
+               ? 'true'  \
+               : 'false'
+      update.call(puavo_conf_key, flag)
+    end
+
+    taghash.keys.each do |tag|
+      case tag
+        when 'autopoweron', 'no_autopoweron'
+          tagswitch('puavo.autopoweron.enable', 'autopoweron', 'no_autopoweron')
+      end
+    end
+
     return conf
   end
 end
