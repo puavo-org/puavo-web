@@ -225,16 +225,36 @@ class Device < Host
 
     update = lambda do |key, value, fn=nil|
 	       return if value.nil?
-	       conf[key] = fn ? fn.call(value) : value
+	       newvalue = fn ? fn.call(value) : value
+	       return if newvalue.nil?
+	       conf[key] = newvalue
 	     end
 
-    update.call('puavo.homepage',         homepage)
-    update.call('puavo.kernel.arguments', kernel_arguments)
-    update.call('puavo.kernel.version',   kernel_version)
-    update.call('puavo.keyboard_layout',  keyboard_layout)
-    update.call('puavo.keyboard_variant', keyboard_variant)
-    update.call('puavo.xrandr_disable',   xrandr_disable)
-    update.call('puavo.xrandr',           xrandr, lambda { |v| v.to_json })
+    to_json = lambda { |v| v.to_json }
+    default_means_nothing = lambda { |v| v == 'default' ? nil : v }
+
+    update.call('puavo.autopoweroff.enabled',
+		autopoweroff_mode,
+		default_means_nothing)
+    update.call('puavo.autopoweroff.daytime_start_hour', daytime_start_hour)
+    update.call('puavo.autopoweroff.daytime_end_hour',   daytime_end_hour)
+    update.call('puavo.homepage',                        homepage)
+    update.call('puavo.image.automatic_updates',
+		automatic_image_updates)
+    update.call('puavo.image.preferred',                 preferred_image)
+    update.call('puavo.image.series.urls',
+		image_series_source_urls,
+		to_json)
+    update.call('puavo.kernel.arguments',                kernel_arguments)
+    update.call('puavo.kernel.version',                  kernel_version)
+    update.call('puavo.keyboard_layout',                 keyboard_layout)
+    update.call('puavo.keyboard_variant',                keyboard_variant)
+    update.call('puavo.l10n.locale',			 locale)
+    update.call('puavo.printing.default_printer',	 default_printer_name)
+    update.call('puavo.timezone',                        timezone)
+    update.call('puavo.xorg.server',                     graphics_driver)
+    update.call('puavo.xrandr_disable',                  xrandr_disable)
+    update.call('puavo.xrandr',                          xrandr, to_json)
 
     return conf
   end
