@@ -278,7 +278,39 @@ class Device < Host
     taghash.keys.each do |tag|
       case tag
         when 'autopoweron', 'no_autopoweron'
-          tagswitch('puavo.autopoweron.enable', 'autopoweron', 'no_autopoweron')
+          tagswitch.call('puavo.autopoweron.enabled',
+			 'autopoweron',
+			 'no_autopoweron')
+        when /\Aautopilot:?(.*)\z/
+	  mode, username, password = * $1.split(':')
+          update.call('puavo.autopilot.enabled',  'true')
+          update.call('puavo.autopilot.mode',     mode)     if mode
+          update.call('puavo.autopilot.username', username) if username
+          update.call('puavo.autopilot.password', password) if password
+        when 'blacklist_bcmwl', 'no_blacklist_bcmwl'
+	  if taghash.has_key?('blacklist_bcmwl') \
+	    && !taghash.has_key?('no_blacklist_bcmwl') then
+              update.call('puavo.kernel.modules.blacklist', 'wl')
+	  end
+        when /\Adconf_scaling_factor:(.*)\z/
+          update.call('puavo.desktop.dconf.settings',
+	    "/org/gnome/desktop/interface/scaling-factor=uint32 #{ $1 }")
+        when /\Adefault_xsession:(.*)\z/
+          update.call('puavo.xsessions.default', $1)
+        when /\Adesktop_background:(.*)\z/
+          update.call('puavo.desktop.background', $1)
+        when 'disable-acpi-wakeup'
+          tagswitch.call('puavo.acpi.wakeup.enabled',
+			 'no-disable-acpi-wakeup',
+			 'disable-acpi-wakeup')
+        when 'enable_all_xsessions'
+          update.call('puavo.xsessions.locked', 'false')
+        when 'enable_webmenu_feedback'
+          update.call('puavo.webmenu.feedback.enabled', 'true')
+        when 'force_puavo_xrandr'
+          tagswitch.call('puavo.xrandr.forced',
+			 'force_puavo_xrandr',
+			 'no_force_puavo_xrandr')
       end
     end
 
