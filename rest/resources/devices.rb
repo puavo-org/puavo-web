@@ -238,11 +238,18 @@ class Device < Host
     update.call('puavo.admin.primary_user', primary_user, no_empty_string)
     update.call('puavo.audio.pa.default_sink', default_audio_sink)
     update.call('puavo.audio.pa.default_source', default_audio_source)
-    update.call('puavo.autopoweroff.enabled',
-		autopoweroff_mode,
-		default_means_nothing)
+
+    case autopoweroff_mode
+      when 'custom'
+        update.call('puavo.autopoweroff.enabled', 'true')
+      when 'off'
+        update.call('puavo.autopoweroff.enabled', 'false')
+    end
+
     update.call('puavo.autopoweroff.daytime_start_hour', daytime_start_hour)
     update.call('puavo.autopoweroff.daytime_end_hour',   daytime_end_hour)
+    update.call('puavo.desktop.keyboard.layout',         keyboard_layout)
+    update.call('puavo.desktop.keyboard.variant',        keyboard_variant)
     update.call('puavo.guestlogin.enabled',              allow_guest)
     update.call('puavo.homepage',                        homepage)
     update.call('puavo.hostname',                        hostname)
@@ -254,8 +261,6 @@ class Device < Host
 		to_json)
     update.call('puavo.kernel.arguments',         kernel_arguments)
     update.call('puavo.kernel.version',           kernel_version)
-    update.call('puavo.keyboard_layout',          keyboard_layout)
-    update.call('puavo.keyboard_variant',         keyboard_variant)
     update.call('puavo.l10n.locale',		  locale)
     update.call('puavo.mounts.extramounts',	  mountpoints)
     update.call('puavo.printing.default_printer', default_printer_name)
@@ -264,6 +269,10 @@ class Device < Host
     update.call('puavo.xorg.server',              graphics_driver)
     update.call('puavo.xrandr_disable',           xrandr_disable)
     update.call('puavo.xrandr',                   xrandr, to_json)
+
+    #
+    # handle tags by mapping tags to puavo-conf
+    #
 
     taghash = Hash[ tags.map { |k| [ k, 1 ] } ]
 
@@ -277,40 +286,120 @@ class Device < Host
 
     taghash.keys.each do |tag|
       case tag
-        when 'autopoweron', 'no_autopoweron'
-          tagswitch.call('puavo.autopoweron.enabled',
+	when 'autopoweron', 'no_autopoweron'
+	  tagswitch.call('puavo.autopoweron.enabled',
 			 'autopoweron',
 			 'no_autopoweron')
-        when /\Aautopilot:?(.*)\z/
+	when /\Aautopilot:?(.*)\z/
 	  mode, username, password = * $1.split(':')
-          update.call('puavo.autopilot.enabled',  'true')
-          update.call('puavo.autopilot.mode',     mode)     if mode
-          update.call('puavo.autopilot.username', username) if username
-          update.call('puavo.autopilot.password', password) if password
-        when 'blacklist_bcmwl', 'no_blacklist_bcmwl'
+	  update.call('puavo.autopilot.enabled',  'true')
+	  update.call('puavo.autopilot.mode',     mode)     if mode
+	  update.call('puavo.autopilot.username', username) if username
+	  update.call('puavo.autopilot.password', password) if password
+	when 'blacklist_bcmwl', 'no_blacklist_bcmwl'
 	  if taghash.has_key?('blacklist_bcmwl') \
 	    && !taghash.has_key?('no_blacklist_bcmwl') then
-              update.call('puavo.kernel.modules.blacklist', 'wl')
+	      update.call('puavo.kernel.modules.blacklist', 'wl')
 	  end
-        when /\Adconf_scaling_factor:(.*)\z/
-          update.call('puavo.desktop.dconf.settings',
+	when /\Adconf_scaling_factor:(.*)\z/
+	  update.call('puavo.desktop.dconf.settings',
 	    "/org/gnome/desktop/interface/scaling-factor=uint32 #{ $1 }")
-        when /\Adefault_xsession:(.*)\z/
-          update.call('puavo.xsessions.default', $1)
-        when /\Adesktop_background:(.*)\z/
-          update.call('puavo.desktop.background', $1)
-        when 'disable-acpi-wakeup'
-          tagswitch.call('puavo.acpi.wakeup.enabled',
+	when /\Adefault_xsession:(.*)\z/
+	  update.call('puavo.xsessions.default', $1)
+	when /\Adesktop_background:(.*)\z/
+	  update.call('puavo.desktop.background', $1)
+	when 'disable-acpi-wakeup', 'no-disable-acpi-wakeup'
+	  tagswitch.call('puavo.acpi.wakeup.enabled',
 			 'no-disable-acpi-wakeup',
 			 'disable-acpi-wakeup')
-        when 'enable_all_xsessions'
-          update.call('puavo.xsessions.locked', 'false')
-        when 'enable_webmenu_feedback'
-          update.call('puavo.webmenu.feedback.enabled', 'true')
-        when 'force_puavo_xrandr'
-          tagswitch.call('puavo.xrandr.forced',
+	when 'enable_all_xsessions', 'disable_all_xsessions'
+	  tagswitch.call('puavo.xsessions.locked',
+			 'disable_all_xsessions',
+			 'enable_all_xsessions')
+	when 'enable_webmenu_feedback', 'disable_webmenu_feedback'
+	  tagswitch.call('puavo.webmenu.feedback.enabled',
+			 'enable_webmenu_feedback',
+			 'disable_webmenu_feedback')
+	when 'force_puavo_xrandr'
+	  tagswitch.call('puavo.xrandr.forced',
 			 'force_puavo_xrandr',
 			 'no_force_puavo_xrandr')
+	when /\Agreeter_background:(.*)\z/
+	  update.call('puavo.greeter.background.default', $1)
+	when /\Agreeter_background_firstlogin:(.*)\z/
+	  update.call('puavo.greeter.background.firstlogin', $1)
+	when /\Agreeter_background_mode:(.*)\z/
+	  update.call('puavo.greeter.background.mode', $1)
+	when /\Agreeter_background_random_subdir:(.*)\z/
+	  update.call('puavo.greeter.background.random.subdir', $1)
+	when /\Ahitachicalib:(.*)\z/
+	  update.call('puavo.xorg.inputs.hitachi.calibration', $1)
+	when /\Aimagedownload-rate-limit:(.*)\z/
+	  update.call('puavo.image.download.ratelimit', $1)
+	when 'infotv'
+	  update.call('puavo.xsessions.default', 'infotv')
+	when 'intel-backlight', 'no-intel-backlight'
+	  tagswitch.call('puavo.xorg.intel_backlight',
+			 'intel-backlight',
+			 'no-intel-backlight')
+	when 'jetpipe', 'no_jetpipe'
+	  tagswitch.call('puavo.printing.jetpipe.enabled',
+			 'jetpipe',
+			 'no_jetpipe')
+	when /\Akeep_system_service:(.*)\z/
+	  update.call("puavo.service.#{ $1 }.enabled", 'true')
+	when /\Arm_system_service:(.*)\z/
+	  update.call("puavo.service.#{ $1 }.enabled", 'false')
+	when 'noaccel', 'no_noaccel'
+	  tagswitch.call('puavo.xorg.noaccel', 'noaccel', 'no_noaccel')
+	when 'nokeyboard', 'no_nokeyboard'
+	  tagswitch.call('puavo.onscreenkeyboard.enabled',
+			 'nokeyboard',
+			 'no_nokeyboard')
+	when 'nolidsuspend', 'no_nolidsuspend'
+	  tagswitch.call('puavo.pm.lidsuspend.enabled',
+			 'no_nolidsuspend',
+			 'nolidsuspend')
+	when 'noremoteassistanceapplet', 'no_noremoteassistanceapplet'
+	  tagswitch.call('puavo.support.applet.enabled',
+			 'no_noremoteassistanceapplet',
+			 'noremoteassistanceapplet')
+	when 'nosuspend', 'no_nosuspend'
+	  tagswitch.call('puavo.pm.suspend.enabled',
+			 'no_nosuspend',
+			 'nosuspend')
+	when 'no-wifi-powersave', 'no-no-wifi-powersave'
+	  tagswitch.call('puavo.pm.wireless.enabled',
+			 'no-no-wifi-powersave',
+			 'no-wifi-powersave')
+	when /\Arm_session_service:(.*)\z/
+	  update.call("puavo.desktop.service.#{ $1 }.enabled", 'false')
+	when 'smartboard', 'no_smartboard'
+	  tagswitch.call('puavo.nonfree.smartboard.enabled',
+			 'smartboard',
+			 'no_smartboard')
+	when 'use_remotemounts', 'no_use_remotemounts'
+	  tagswitch.call('puavo.mounts.by_user_from_bootserver.enabled',
+			 'use_remotemounts',
+			 'no_use_remotemounts')
+	when /\Awlanap_channels:(.*)\z/
+	  update.call('puavo.wireless.ap.channels', $1)
+	when /\Awlanap_reconf_interval:(.*)\z/
+	  update.call('puavo.wireless.ap.reconf_interval', $1)
+	when /\Awlanap_report_interval:(.*)\z/
+	  update.call('puavo.wireless.ap.report_interval', $1)
+	when /\Awlanap_rssi_kick_interval:(.*)\z/
+	  update.call('puavo.wireless.ap.rssi_kick.interval', $1)
+	when /\Awlanap_rssi_kick_threshold:(.*)\z/
+	  update.call('puavo.wireless.ap.rssi_kick.threshold', $1)
+	when /\Awlanap_tx_power_2g:(.*)\z/
+	  update.call('puavo.wireless.ap.power.2g', $1)
+	when /\Awlanap_tx_power_5g:(.*)\z/
+	  update.call('puavo.wireless.ap.power.5g', $1)
+	when /\Awlanap_tx_power:(.*)\z/
+	  update.call('puavo.wireless.ap.power', $1)
+	when /\Axbacklight:(.*)\z/
+	  update.call('puavo.xorg.backlight.brightness', $1)
       end
     end
 
