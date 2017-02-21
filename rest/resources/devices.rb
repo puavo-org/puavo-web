@@ -251,8 +251,6 @@ class Device < Host
     update.call('puavo.desktop.keyboard.layout',         keyboard_layout)
     update.call('puavo.desktop.keyboard.variant',        keyboard_variant)
     update.call('puavo.guestlogin.enabled',              allow_guest)
-    update.call('puavo.homepage',                        homepage)
-    update.call('puavo.hostname',                        hostname)
     update.call('puavo.image.automatic_updates',
 		automatic_image_updates)
     update.call('puavo.image.preferred', preferred_image)
@@ -262,13 +260,17 @@ class Device < Host
     update.call('puavo.kernel.arguments',         kernel_arguments)
     update.call('puavo.kernel.version',           kernel_version)
     update.call('puavo.l10n.locale',		  locale)
-    update.call('puavo.mounts.extramounts',	  mountpoints)
+    update.call('puavo.mounts.extramounts',	  mountpoints, to_json)
     update.call('puavo.printing.default_printer', default_printer_name)
     update.call('puavo.printing.device_uri',      printer_device_uri)
-    update.call('puavo.timezone',                 timezone)
+    update.call('puavo.time.timezone',            timezone)
+    update.call('puavo.www.homepage',             homepage)
     update.call('puavo.xorg.server',              graphics_driver)
-    update.call('puavo.xrandr_disable',           xrandr_disable)
-    update.call('puavo.xrandr',                   xrandr, to_json)
+    update.call('puavo.xrandr.args',              xrandr, to_json)
+
+    if xrandr_disable then
+      update.call('puavo.xrandr.enabled', 'false')
+    end
 
     #
     # handle tags by mapping tags to puavo-conf
@@ -392,12 +394,12 @@ class Device < Host
 	  update.call('puavo.wireless.ap.rssi_kick.interval', $1)
 	when /\Awlanap_rssi_kick_threshold:(.*)\z/
 	  update.call('puavo.wireless.ap.rssi_kick.threshold', $1)
-	when /\Awlanap_tx_power_2g:(.*)\z/
-	  update.call('puavo.wireless.ap.power.2g', $1)
-	when /\Awlanap_tx_power_5g:(.*)\z/
-	  update.call('puavo.wireless.ap.power.5g', $1)
 	when /\Awlanap_tx_power:(.*)\z/
-	  update.call('puavo.wireless.ap.power', $1)
+	  update.call('puavo.wireless.ap.tx.power', $1)
+	when /\Awlanap_tx_power_2g:(.*)\z/
+	  update.call('puavo.wireless.ap.tx.power.2g', $1)
+	when /\Awlanap_tx_power_5g:(.*)\z/
+	  update.call('puavo.wireless.ap.tx.power.5g', $1)
 	when /\Axbacklight:(.*)\z/
 	  update.call('puavo.xorg.backlight.brightness', $1)
       end
