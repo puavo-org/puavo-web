@@ -335,7 +335,9 @@ class Device < Host
 	when /\Agreeter_background_random_subdir:(.*)\z/
 	  update.call('puavo.greeter.background.random.subdir', $1)
 	when /\Ahitachicalib:(.*)\z/
-	  update.call('puavo.xorg.inputs.hitachi.calibration', $1)
+	  hitachi_calibration = $1.split(':').join(' ')
+	  update.call('puavo.xorg.inputs.hitachi.calibration',
+		      hitachi_calibration)
 	when /\Aimagedownload-rate-limit:(.*)\z/
 	  update.call('puavo.image.download.ratelimit', $1)
 	when 'infotv'
