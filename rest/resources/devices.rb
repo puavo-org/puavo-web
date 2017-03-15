@@ -234,6 +234,20 @@ class Device < Host
     no_empty_string = lambda { |v| (v.kind_of?(String) && v.empty?) ? nil : v }
     to_json = lambda { |v| v.to_json }
 
+    handle_xrandr = lambda do |source_xrandr_strings_array|
+      target_xrandr_strings_array = []
+      source_xrandr_strings_array.each do |xrandr_string|
+        # support the old command="..." syntax
+        if xrandr_string.match(/^\s*command="(xrandr\s+|)(.*)"\s*$/) then
+          target_xrandr_strings_array << $2
+        else
+          target_xrandr_strings_array << xrandr_string
+        end
+      end
+
+      target_xrandr_strings_array.to_json
+    end
+
     update.call('puavo.admin.personally_administered', personally_administered)
     update.call('puavo.admin.primary_user', primary_user, no_empty_string)
     update.call('puavo.audio.pa.default_sink', default_audio_sink)
@@ -266,7 +280,7 @@ class Device < Host
     update.call('puavo.time.timezone',            timezone)
     update.call('puavo.www.homepage',             homepage)
     update.call('puavo.xorg.server',              graphics_driver)
-    update.call('puavo.xrandr.args',              xrandr, to_json)
+    update.call('puavo.xrandr.args',              xrandr, handle_xrandr)
 
     if xrandr_disable then
       update.call('puavo.xrandr.enabled', 'false')
