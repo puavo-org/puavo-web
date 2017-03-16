@@ -280,10 +280,11 @@ class Device < Host
     update.call('puavo.time.timezone',            timezone)
     update.call('puavo.www.homepage',             homepage)
     update.call('puavo.xorg.server',              graphics_driver)
-    update.call('puavo.xrandr.args',              xrandr, handle_xrandr)
 
     if xrandr_disable then
-      update.call('puavo.xrandr.enabled', 'false')
+      update.call('puavo.xrandr.args', '[]')
+    else
+      update.call('puavo.xrandr.args', xrandr, handle_xrandr)
     end
 
     #
