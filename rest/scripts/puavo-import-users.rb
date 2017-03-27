@@ -75,7 +75,9 @@ def update_user_groups(puavo_rest_user, user)
       #puavo_rest_user.year_class = user.year_class
     end
   when "teacher"
-    puavo_rest_user.add_administrative_group(user.teacher_group)
+    puavo_rest_user.add_administrative_group(user.group)
+  when "staff"
+    puavo_rest_user.add_administrative_group(user.group)
   end
 end
 
@@ -107,8 +109,8 @@ end
     options[:user_role] = r
   end
 
-  opts.on("--teacher-group-suffix GROUP", "Group suffix for Teacher") do |g|
-    options[:teacher_group_suffix] = g
+  opts.on("--group-suffix GROUP", "Group suffix for Teacher or Staff") do |g|
+    options[:group_suffix] = g
   end
 
   opts.on("--matches x,y,x", Array) do |matches|
@@ -160,10 +162,10 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     })
   end
 
-  if @options[:user_role] == "teacher"
+  if @options[:user_role] == "teacher" || @options[:user_role] == "staff"
     user_data_hash.merge!({
       :school_external_id => user_data[10],
-      :teacher_group_suffix => @options[:teacher_group_suffix],
+      :group_suffix => @options[:group_suffix],
       :secodary_school_external_ids => user_data[8].nil? ? [] : Array(user_data[8].split(","))
     })
   end
@@ -306,6 +308,7 @@ when "diff"
 
     different_attributes = diff_objects(puavo_rest_user, user, ["first_name",
                                                                 "last_name",
+                                                                "username",
                                                                 "email",
                                                                 "telephone_number",
                                                                 "import_school_name",
@@ -400,7 +403,15 @@ when "import"
         end
 
         puavo_rest_user = create_puavo_rest_user(user, create_attributes)
-        puavo_rest_user.save!
+      end
+
+      if puavo_rest_user.new?
+        begin
+          puavo_rest_user.save!
+        rescue ValidationError
+          puts "Cannot create user: #{puavo_rest_user.username}"
+          next
+        end
       end
 
 

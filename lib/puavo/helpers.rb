@@ -19,5 +19,20 @@ module Puavo
 
       new_group_management["only_of_schools"].include?(school.puavoId)
     end
+
+
+    def users_synch?(school)
+      users_synch = Puavo::Organisation.
+        find(LdapOrganisation.current.cn).
+        value_by_key("users_synch")
+
+      return false unless users_synch
+
+      return false if users_synch["enable"] != true
+
+      return true unless users_synch["only_of_schools"]
+
+      users_synch["only_of_schools"].include?(school.puavoId)
+    end
   end
 end

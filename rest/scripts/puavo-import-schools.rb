@@ -22,7 +22,7 @@ CSV.foreach(options[:csv_file],
 
   PuavoImport::School.new(:external_id => school_data[0],
                           :name => school_data[1],
-                          :abbreviation => school_data[2])
+                          :abbreviation => school_data[2].downcase)
 end
 
 mode = options[:mode] || "default"

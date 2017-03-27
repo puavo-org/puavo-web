@@ -18,9 +18,9 @@ module PuavoImport
                   :preferred_language,
                   :username,
                   :role, # Role of primary school
-                  :teacher_group,
-                  :teacher_group_name,
-                  :teacher_group_suffix,
+                  :group,
+                  :group_name,
+                  :group_suffix,
                   :teaching_group_external_id,
                   :teaching_group,
                   :year_class,
@@ -43,16 +43,16 @@ module PuavoImport
         @teaching_group = PuavoRest::Group.by_attr(:external_id, @teaching_group_external_id)
         raise(UserGroupError,
               "Cannot find group (external_id: #{ @teaching_group_external_id }) for student: #{ self.to_s }") if @teaching_group.nil?
-      when "teacher"
-        @teacher_group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @teacher_group_suffix }",
+      when "teacher", "staff"
+        @group = PuavoRest::Group.by_attrs(:abbreviation => "#{ school.abbreviation }-#{ @group_suffix }",
                                            :school_dn => school.dn)
         raise(UserGroupError,
               "Cannot find group (abbreviation: " +
               school.abbreviation +
               "-" +
-              @teacher_group_suffix +
+              @group_suffix +
               " for teacher: " +
-              self.to_s) if @teacher_group.nil?
+              self.to_s) if @group.nil?
       end
 
       @@users << self
@@ -74,9 +74,9 @@ module PuavoImport
 
     def import_group_name
       case self.role
-      when "teacher"
-        return "" if @teacher_group.nil?
-        @teacher_group.name
+      when "teacher", "staff"
+        return "" if @group.nil?
+        @group.name
       when "student"
         return "" if @teaching_group.nil?
         @teaching_group.name
@@ -85,9 +85,9 @@ module PuavoImport
 
     def import_group_external_id
       case self.role
-      when "teacher"
-        return "" if @teacher_group.nil?
-        @teacher_group.external_id
+      when "teacher", "staff"
+        return "" if @group.nil?
+        @group.external_id
       when "student"
         return "" if @teaching_group.nil?
         @teaching_group.external_id

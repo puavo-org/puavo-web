@@ -314,7 +314,7 @@ class User < LdapBase
   def read_only?
     return false if self.new_entry?
 
-    return false unless new_group_management?(self.school)
+    return false unless users_synch?(self.school)
 
     (self.puavoExternalId.nil? or self.puavoExternalId.empty?) ? false : true
   end
