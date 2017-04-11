@@ -7,10 +7,6 @@ server {
        ssl_certificate /etc/puavo/certs/hostorgcabundle.pem;
        ssl_certificate_key /etc/puavo/certs/host.key;
 
-       ssl_protocols SSLv3 TLSv1;
-       ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-       ssl_prefer_server_ciphers on;
-
        location / {
                # https://github.com/opinsys/puavo-users/blob/master/rest/lib/virtual_host_base.rb
                proxy_pass http://127.0.0.1:9292/VirtualHostBase/https/$host:443$request_uri;
