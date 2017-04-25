@@ -14,6 +14,7 @@ class OrganisationsController < ApplicationController
         json[:kerberos_realm] = @organisation.puavoKerberosRealm
         json[:puavo_domain] = @organisation.puavoDomain
         json[:base] = @organisation.base.to_s
+        json[:kerberos_host] = current_organisation.value_by_key("kerberos_host") || LdapBase.ensure_configuration["host"]
 
         render :json => json
       end
