@@ -277,6 +277,13 @@ class Device < Host
     update.call('puavo.mounts.extramounts',	  mountpoints, to_json)
     update.call('puavo.printing.default_printer', default_printer_name)
     update.call('puavo.printing.device_uri',      printer_device_uri)
+
+    profiles = [ self.type,
+                 (tags.include?('bigtouch') ? 'bigtouch' : nil),
+                 (personally_administered   ? 'personal' : nil),
+               ]
+    update.call('puavo.profiles.list', profiles.compact.join(','))
+
     update.call('puavo.time.timezone',            timezone)
     update.call('puavo.www.homepage',             homepage)
     update.call('puavo.xorg.server',              graphics_driver)
