@@ -230,7 +230,6 @@ class Device < Host
 	       conf[key] = newvalue.to_s
 	     end
 
-    default_means_nothing = lambda { |v| v == 'default' ? nil : v }
     no_empty_string = lambda { |v| (v.kind_of?(String) && v.empty?) ? nil : v }
     to_json = lambda { |v| v.to_json }
 
