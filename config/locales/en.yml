@@ -703,6 +703,7 @@ en:
     teaching group: Teaching group
     year class: Year class
     administrative group: Administrative group
+    archive users: Archive users
     other groups: Other groups
   old_preferred_language: "Old setting: %{language}"
   timezone_empty: Timezone is not set
