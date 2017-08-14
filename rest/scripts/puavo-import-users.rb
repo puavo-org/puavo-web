@@ -428,4 +428,21 @@ when "import"
     list = PuavoRest::UserList.new(users.map{ |u| u.id })
     list.save
   end
+
+  puts "\n\nList of users to be removed\n\n"
+
+  schools = PuavoRest::School.all
+
+  schools.each do |school|
+    next unless @options[:include_schools].include?(school.external_id)
+    puts school.name
+    school_users = PuavoRest::User.by_attr(:school_dns, school.dn, :multiple => true)
+
+    school_users.each do |user|
+      next unless user.roles.include?(@options[:user_role])
+      next unless PuavoImport::User.all.select{ |u| u.external_id.to_s == user.external_id.to_s }.empty?
+      puts "\texternal_id: #{user.external_id} username: #{user.username} roles: " + user.roles.to_s
+    end
+  end
+
 end
