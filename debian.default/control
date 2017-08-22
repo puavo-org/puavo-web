@@ -24,7 +24,8 @@ Build-Depends: debhelper (>= 8),
  ruby1.9.1,
  ruby1.9.1-dev,
  rubygems1.9.1,
- xpdf-utils
+ xpdf-utils,
+ zlib1g-dev
 Standards-Version: 3.9.3
 Homepage: https://github.com/opinsys/puavo-users/
 
