@@ -37,9 +37,10 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  libsasl2-modules-gssapi-mit,
  make,
  puavo-client,
+ ruby1.9.1,
  ruby-bundler (>= 1.3.5),
  ruby-ldap,
- ruby1.9.1
+ ruby-mechanize
 Description: puavo-rest
  JSON-REST Adapter for LDAP
  .
