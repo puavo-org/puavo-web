@@ -4,7 +4,7 @@ Syslog.open("puavo-rest(slapd)", Syslog::LOG_PID, Syslog::LOG_DAEMON | Syslog::L
 # Connection management
 class LdapModel
 
-  class LdapHashError < Exception; end
+  class LdapHashError < StandardError; end
 
   KRB_LOCK = Mutex.new
 
@@ -182,7 +182,7 @@ class LdapModel
 
     begin
       res = connection.send(method, *args, &block)
-    rescue Exception => _err
+    rescue StandardError => _err
       err = _err
 
       # not really an error. Just convert to nil response

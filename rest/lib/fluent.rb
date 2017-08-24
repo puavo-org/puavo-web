@@ -46,7 +46,7 @@ class FluentWrap
     end
     begin
       puts "#{ msg }: #{ record.to_json }"
-    rescue Exception => e
+    rescue StandardError => e
       puts "Failed to log message: #{ record.inspect }"
       puts e
     end
