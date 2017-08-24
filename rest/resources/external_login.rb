@@ -1,4 +1,5 @@
 require 'mechanize'
+require 'net/ldap'
 
 class ExternalLoginUnavailable < StandardError; end
 
@@ -22,24 +23,23 @@ module PuavoRest
         raise ExternalLoginUnavailable, 'external_login service not set' \
           unless login_service_name
 
-        external_login_class  = nil
-        external_login_params = nil
-        case login_service_name
-          when 'wilma'
-            external_login_class  = WilmaLogin
-            external_login_params = org_extlogin_config['wilma']
-          else
-            raise InternalError,
-                  "External login '#{ login_service_name }' is not supported"
-        end
+        loginclass_map = {
+          'ldap'  => LdapLogin,
+          'wilma' => WilmaLogin,
+        }
+        external_login_class = loginclass_map[login_service_name]
+        raise InternalError,
+          "External login '#{ login_service_name }' is not supported" \
+            unless external_login_class
 
+        external_login_params = org_extlogin_config[login_service_name]
         raise ExternalLoginUnavailable,
           'External login parameters not configured' \
             unless external_login_params.kind_of?(Hash)
 
-        username = params[:username]
-        password = params[:password]
-        if username.to_s.empty? || password.to_s.empty? then
+        username = params[:username].to_s
+        password = params[:password].to_s
+        if username.empty? || password.empty? then
           warn('No user credentials provided')
           return 401        # XXX Unauthorized
         end
@@ -59,6 +59,40 @@ module PuavoRest
 
       # XXX Unauthorized
       return 401
+    end
+  end
+
+  class LdapLogin
+    def self.login(username, password, ldap_config)
+      base = ldap_config['base']
+      raise ExternalLoginUnavailable, 'ldap base not configured' \
+        unless base
+
+      bind_dn = ldap_config['bind_dn']
+      raise ExternalLoginUnavailable, 'ldap bind dn not configured' \
+        unless bind_dn
+
+      bind_password = ldap_config['bind_password']
+      raise ExternalLoginUnavailable, 'ldap bind password not configured' \
+        unless bind_password
+
+      server = ldap_config['server']
+      raise ExternalLoginUnavailable, 'ldap server not configured' \
+        unless server
+
+      ldap = Net::LDAP.new :base => base.to_s,
+                           :host => server.to_s,
+                           :port => (Integer(ldap_config['port']) rescue 636),
+                           :auth => {
+                             :method   => :simple,
+                             :username => bind_dn.to_s,
+                             :password => bind_password.to_s,
+                           },
+                           :encryption => :simple_tls   # XXX not sufficient!
+
+      return ldap.bind_as(:base     => base,
+                          :filter   => "(cn=#{username})",
+                          :password => password)
     end
   end
 
