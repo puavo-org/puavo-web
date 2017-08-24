@@ -9,17 +9,26 @@ module PuavoRest
       userinfo = nil
 
       begin
-        external_login_config = CONFIG['external_login']
+        all_external_login_configs = CONFIG['external_login']
         raise ExternalLoginUnavailable, 'external login not configured' \
-          unless external_login_config
+          unless all_external_login_configs
 
-        # XXX organisation should not be hardcoded
-        org_extlogin_config = external_login_config['kehitys']
+	organisation = Organisation.by_domain(request.host)
+        raise ExternalLoginUnavailable,
+	  'Could not determine organisation from request host' \
+            unless organisation && organisation.domain.kind_of?(String)
+
+	organisation_name = organisation.domain.split('.')[0]
+        raise ExternalLoginUnavailable,
+	  'Could not parse organisation from organisation domain' \
+            unless organisation_name
+
+        external_login_config = all_external_login_configs[organisation_name]
         raise ExternalLoginUnavailable,
           'external_login not for organisation not configured' \
-            unless org_extlogin_config
+            unless external_login_config
 
-        login_service_name = org_extlogin_config['service']
+        login_service_name = external_login_config['service']
         raise ExternalLoginUnavailable, 'external_login service not set' \
           unless login_service_name
 
@@ -32,7 +41,7 @@ module PuavoRest
           "External login '#{ login_service_name }' is not supported" \
             unless external_login_class
 
-        external_login_params = org_extlogin_config[login_service_name]
+        external_login_params = external_login_config[login_service_name]
         raise ExternalLoginUnavailable,
           'External login parameters not configured' \
             unless external_login_params.kind_of?(Hash)
@@ -46,8 +55,7 @@ module PuavoRest
 
         userinfo = external_login_class.login(username, password,
           external_login_params)
-        warn("ldap user: #{ userinfo.inspect }")
-
+        return 401 unless userinfo	# XXX Unauthorized
       rescue ExternalLoginUnavailable => e
         # XXX Is this the proper way to log things?
         warn("External login is unavailable: #{ e.message }")
@@ -56,11 +64,35 @@ module PuavoRest
         raise InternalError, e.message
       end
 
-      # XXX
-      return 200 if userinfo
+      update_user_info(organisation, external_login_config, userinfo, password)
+    end
 
-      # XXX Unauthorized
-      return 401
+    def update_user_info(organisation, external_login_config, userinfo,
+      password)
+	admin_dn = external_login_config['admin_dn'].to_s
+	raise ExternalLoginUnavailable, 'admin dn is not set' \
+	  if admin_dn.empty?
+
+	admin_password = external_login_config['admin_password'].to_s
+	raise ExternalLoginUnavailable, 'admin password is not set' \
+	  if admin_password.empty?
+
+	LdapModel.setup(:credentials => {
+	  :dn           => admin_dn,
+	  :organisation => organisation,
+	  :password     => admin_password,
+	})
+
+	# XXX
+	userinfo['school_dns'] = [ 'XXX' ]
+	userinfo['roles'] = [ 'XXX' ]
+
+        begin
+	  user = User.new(userinfo)
+	  user.save!
+        rescue ValidationError => e
+          warn("Error saving user because of validation error: #{ e.message }")
+        end
     end
   end
 
@@ -102,8 +134,6 @@ module PuavoRest
 
       ldap_entry = ldap_entries.first
 
-      warn("ldap_entry: #{ ldap_entry.inspect }")
-
       lookup_groups_filter \
         = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
             .&(Net::LDAP::Filter.eq('memberUid', username))
@@ -114,11 +144,12 @@ module PuavoRest
         end
       ]
 
+      # XXX check that these are not nonsense?
       return {
-        'givenname' => Array(ldap_entry['givenname']).first,
-        'groups'    => groups,
-        'sn'        => Array(ldap_entry['sn']).first,
-        'uid'       => Array(ldap_entry['uid']).first,
+        'first_name' => Array(ldap_entry['givenname']).first,
+        # 'groups'     => groups,
+        'last_name'  => Array(ldap_entry['sn']).first,
+        'username'   => Array(ldap_entry['uid']).first,
       }
     end
   end
