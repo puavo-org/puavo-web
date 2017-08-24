@@ -6,7 +6,7 @@ class ExternalLoginUnavailable < StandardError; end
 module PuavoRest
   class ExternalLogin < PuavoSinatra
     post '/v3/external_login' do
-      response = nil
+      userinfo = nil
 
       begin
         external_login_config = CONFIG['external_login']
@@ -44,8 +44,10 @@ module PuavoRest
           return 401        # XXX Unauthorized
         end
 
-        response = external_login_class.login(username, password,
+        userinfo = external_login_class.login(username, password,
           external_login_params)
+        warn("ldap user: #{ userinfo.inspect }")
+
       rescue ExternalLoginUnavailable => e
         # XXX Is this the proper way to log things?
         warn("External login is unavailable: #{ e.message }")
@@ -55,7 +57,7 @@ module PuavoRest
       end
 
       # XXX
-      return 200 if response
+      return 200 if userinfo
 
       # XXX Unauthorized
       return 401
@@ -90,9 +92,34 @@ module PuavoRest
                            },
                            :encryption => :simple_tls   # XXX not sufficient!
 
-      return ldap.bind_as(:base     => base,
-                          :filter   => "(cn=#{username})",
-                          :password => password)
+      bind_filter = Net::LDAP::Filter.eq('cn', username)
+      ldap_entries = ldap.bind_as(:filter   => bind_filter,
+                                  :password => password)
+      return nil unless ldap_entries
+
+      raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
+        unless ldap_entries.length == 1
+
+      ldap_entry = ldap_entries.first
+
+      warn("ldap_entry: #{ ldap_entry.inspect }")
+
+      lookup_groups_filter \
+        = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
+            .&(Net::LDAP::Filter.eq('memberUid', username))
+      groups_result = ldap.search(:filter => lookup_groups_filter)
+      groups = Hash[
+        groups_result.map do |g|
+          [ Array(g['cn']).first, Array(g['displayname']).first ]
+        end
+      ]
+
+      return {
+        'givenname' => Array(ldap_entry['givenname']).first,
+        'groups'    => groups,
+        'sn'        => Array(ldap_entry['sn']).first,
+        'uid'       => Array(ldap_entry['uid']).first,
+      }
     end
   end
 
