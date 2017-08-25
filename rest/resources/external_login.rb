@@ -84,13 +84,27 @@ module PuavoRest
         :password     => admin_password,
       })
 
-      # XXX where to get these?
-      # userinfo['school_dns'] = [ 'XXX' ]
-      # userinfo['roles'] = [ 'XXX' ]
+      if userinfo['school_dns'].nil? then
+        default_school_dns = external_login_config['default_school_dns']
+        if !default_school_dns.kind_of?(Array) then
+          raise ExternalLoginUnavailable,
+            "school dn is not known for '#{ userinfo['username'] }'" \
+              + ' and default school is not set'
+        end
+        userinfo['school_dns'] = default_school_dns
+      end
 
-      user = nil
+      if userinfo['roles'].nil? then
+        default_roles = external_login_config['default_roles']
+        if !default_roles.kind_of?(Array) then
+          raise ExternalLoginUnavailable,
+            "role is not known for '#{ userinfo['username'] }'" \
+              + ' and default role is not set'
+        end
+        userinfo['roles'] = default_roles
+      end
+
       begin
-
         user = User.by_attr(:external_id, userinfo['external_id'])
         if !user then
           user = User.new(userinfo)
