@@ -64,13 +64,12 @@ module PuavoRest
         raise InternalError, e.message
       end
 
-      update_user_info(organisation, external_login_config, userinfo, password)
+      update_user_info(organisation, external_login_config, userinfo)
 
       return
     end
 
-    def update_user_info(organisation, external_login_config, userinfo,
-      password)
+    def update_user_info(organisation, external_login_config, userinfo)
         admin_dn = external_login_config['admin_dn'].to_s
         raise ExternalLoginUnavailable, 'admin dn is not set' \
           if admin_dn.empty?
@@ -91,20 +90,19 @@ module PuavoRest
 
         user = nil
         begin
-          # XXX should lookup user if it already exists
-          user = User.new(userinfo)
+
+          user = User.by_attr(:external_id, userinfo['external_id'])
+          if !user then
+            user = User.new(userinfo)
+          else
+            # XXX optimization: do not do updates every time, only when
+            # XXX something has changed
+            user.update!(userinfo)
+          end
           user.save!
         rescue ValidationError => e
           warn("Error saving user because of validation error: #{ e.message }")
         end
-
-        # XXX should get user somehow
-        return unless user
-        Puavo.ldap_passwd(CONFIG['ldap'],
-                          admin_dn,
-                          admin_password,
-                          password,
-                          user.dn)
     end
   end
 
@@ -158,10 +156,12 @@ module PuavoRest
 
       # XXX check that these are not nonsense?
       return {
-        'first_name' => Array(ldap_entry['givenname']).first,
+        'external_id' => Array(ldap_entry['dn']).first,
+        'first_name'  => Array(ldap_entry['givenname']).first,
         # 'groups'     => groups,
-        'last_name'  => Array(ldap_entry['sn']).first,
-        'username'   => Array(ldap_entry['uid']).first,
+        'last_name'   => Array(ldap_entry['sn']).first,
+        'password'    => password,
+        'username'    => Array(ldap_entry['uid']).first,
       }
     end
   end
