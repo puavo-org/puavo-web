@@ -70,39 +70,39 @@ module PuavoRest
     end
 
     def update_user_info(organisation, external_login_config, userinfo)
-        admin_dn = external_login_config['admin_dn'].to_s
-        raise ExternalLoginUnavailable, 'admin dn is not set' \
-          if admin_dn.empty?
+      admin_dn = external_login_config['admin_dn'].to_s
+      raise ExternalLoginUnavailable, 'admin dn is not set' \
+        if admin_dn.empty?
 
-        admin_password = external_login_config['admin_password'].to_s
-        raise ExternalLoginUnavailable, 'admin password is not set' \
-          if admin_password.empty?
+      admin_password = external_login_config['admin_password'].to_s
+      raise ExternalLoginUnavailable, 'admin password is not set' \
+        if admin_password.empty?
 
-        LdapModel.setup(:credentials => {
-          :dn           => admin_dn,
-          :organisation => organisation,
-          :password     => admin_password,
-        })
+      LdapModel.setup(:credentials => {
+        :dn           => admin_dn,
+        :organisation => organisation,
+        :password     => admin_password,
+      })
 
-        # XXX where to get these?
-        # userinfo['school_dns'] = [ 'XXX' ]
-        # userinfo['roles'] = [ 'XXX' ]
+      # XXX where to get these?
+      # userinfo['school_dns'] = [ 'XXX' ]
+      # userinfo['roles'] = [ 'XXX' ]
 
-        user = nil
-        begin
+      user = nil
+      begin
 
-          user = User.by_attr(:external_id, userinfo['external_id'])
-          if !user then
-            user = User.new(userinfo)
-          else
-            # XXX optimization: do not do updates every time, only when
-            # XXX something has changed
-            user.update!(userinfo)
-          end
-          user.save!
-        rescue ValidationError => e
-          warn("Error saving user because of validation error: #{ e.message }")
+        user = User.by_attr(:external_id, userinfo['external_id'])
+        if !user then
+          user = User.new(userinfo)
+        else
+          # XXX optimization: do not do updates every time, only when
+          # XXX something has changed
+          user.update!(userinfo)
         end
+        user.save!
+      rescue ValidationError => e
+        warn("Error saving user because of validation error: #{ e.message }")
+      end
     end
   end
 
