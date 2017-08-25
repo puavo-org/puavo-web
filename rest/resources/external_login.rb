@@ -33,8 +33,8 @@ module PuavoRest
           unless login_service_name
 
         loginclass_map = {
-          'ldap'  => LdapLogin,
-          'wilma' => WilmaLogin,
+          'external_ldap'  => LdapLogin,
+          'external_wilma' => WilmaLogin,
         }
         external_login_class = loginclass_map[login_service_name]
         raise InternalError,
