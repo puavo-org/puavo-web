@@ -13,14 +13,14 @@ module PuavoRest
         raise ExternalLoginUnavailable, 'external login not configured' \
           unless all_external_login_configs
 
-	organisation = Organisation.by_domain(request.host)
+        organisation = Organisation.by_domain(request.host)
         raise ExternalLoginUnavailable,
-	  'Could not determine organisation from request host' \
+          'Could not determine organisation from request host' \
             unless organisation && organisation.domain.kind_of?(String)
 
-	organisation_name = organisation.domain.split('.')[0]
+        organisation_name = organisation.domain.split('.')[0]
         raise ExternalLoginUnavailable,
-	  'Could not parse organisation from organisation domain' \
+          'Could not parse organisation from organisation domain' \
             unless organisation_name
 
         external_login_config = all_external_login_configs[organisation_name]
@@ -55,7 +55,7 @@ module PuavoRest
 
         userinfo = external_login_class.login(username, password,
           external_login_params)
-        return 401 unless userinfo	# XXX Unauthorized
+        return 401 unless userinfo      # XXX Unauthorized
       rescue ExternalLoginUnavailable => e
         # XXX Is this the proper way to log things?
         warn("External login is unavailable: #{ e.message }")
@@ -65,34 +65,46 @@ module PuavoRest
       end
 
       update_user_info(organisation, external_login_config, userinfo, password)
+
+      return
     end
 
     def update_user_info(organisation, external_login_config, userinfo,
       password)
-	admin_dn = external_login_config['admin_dn'].to_s
-	raise ExternalLoginUnavailable, 'admin dn is not set' \
-	  if admin_dn.empty?
+        admin_dn = external_login_config['admin_dn'].to_s
+        raise ExternalLoginUnavailable, 'admin dn is not set' \
+          if admin_dn.empty?
 
-	admin_password = external_login_config['admin_password'].to_s
-	raise ExternalLoginUnavailable, 'admin password is not set' \
-	  if admin_password.empty?
+        admin_password = external_login_config['admin_password'].to_s
+        raise ExternalLoginUnavailable, 'admin password is not set' \
+          if admin_password.empty?
 
-	LdapModel.setup(:credentials => {
-	  :dn           => admin_dn,
-	  :organisation => organisation,
-	  :password     => admin_password,
-	})
+        LdapModel.setup(:credentials => {
+          :dn           => admin_dn,
+          :organisation => organisation,
+          :password     => admin_password,
+        })
 
-	# XXX
-	userinfo['school_dns'] = [ 'XXX' ]
-	userinfo['roles'] = [ 'XXX' ]
+        # XXX where to get these?
+        # userinfo['school_dns'] = [ 'XXX' ]
+        # userinfo['roles'] = [ 'XXX' ]
 
+        user = nil
         begin
-	  user = User.new(userinfo)
-	  user.save!
+          # XXX should lookup user if it already exists
+          user = User.new(userinfo)
+          user.save!
         rescue ValidationError => e
           warn("Error saving user because of validation error: #{ e.message }")
         end
+
+        # XXX should get user somehow
+        return unless user
+        Puavo.ldap_passwd(CONFIG['ldap'],
+                          admin_dn,
+                          admin_password,
+                          password,
+                          user.dn)
     end
   end
 
