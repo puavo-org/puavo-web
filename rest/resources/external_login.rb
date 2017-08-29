@@ -25,7 +25,7 @@ module PuavoRest
 
         external_login_config = all_external_login_configs[organisation_name]
         raise ExternalLoginUnavailable,
-          'external_login not for organisation not configured' \
+          'external_login for organisation not configured' \
             unless external_login_config
 
         login_service_name = external_login_config['service']
@@ -194,23 +194,23 @@ module PuavoRest
 
       login_basepage = agent.get(url)
       raise ExternalLoginUnavailable,
-            'Could not get base page to wilma login page' \
+            'could not get base page to wilma login page' \
         unless login_basepage
 
       login_link = login_basepage.links.find { |l| l.text == linkname }
-      raise ExternalLoginUnavailable, 'Could not find link to login page' \
+      raise ExternalLoginUnavailable, 'could not find link to login page' \
         unless login_link
 
       login_page = login_link.click
-      raise ExternalLoginUnavailable, 'Could not find wilma login page' \
+      raise ExternalLoginUnavailable, 'could not find wilma login page' \
         unless login_page
 
       login_form = login_page.form
       raise ExternalLoginUnavailable,
-        'Could not find login form in login page' \
+        'could not find login form in login page' \
           unless login_form
       raise ExternalLoginUnavailable,
-        'Could not find submit button in login page' \
+        'could not find submit button in login page' \
           unless login_form.buttons && login_form.buttons.first
 
       login_form.Login    = username
@@ -218,17 +218,17 @@ module PuavoRest
       login_result_page   = agent.submit(login_form, login_form.buttons.first)
 
       login_result_form = login_result_page.form
-      raise ExternalLoginUnavailable, 'Could not find login result form' \
+      raise ExternalLoginUnavailable, 'could not find login result form' \
         unless login_result_form
       raise ExternalLoginUnavailable,
-        'Could not find submit button in login result form' \
+        'could not find submit button in login result form' \
           unless login_result_form.buttons && login_result_form.buttons.first
 
       final_result = agent.submit(login_result_form,
                                   login_result_form.buttons.first)
 
       raise ExternalLoginUnavailable,
-        'Could not find title in final login result page' \
+        'could not find title in final login result page' \
           unless final_result && final_result.title
 
       return false if final_result.title != 'Session Summary'
