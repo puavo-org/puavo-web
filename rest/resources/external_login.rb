@@ -56,17 +56,19 @@ module PuavoRest
         userinfo = external_login_class.login(username, password,
           external_login_params)
         return 401 unless userinfo      # XXX Unauthorized
+
+        update_user_info(organisation, external_login_config, userinfo)
+
       rescue ExternalLoginUnavailable => e
         # XXX Is this the proper way to log things?
         warn("External login is unavailable: #{ e.message }")
-        raise Sinatra::NotFound, e.message
+        return json({ 'status' => 'UNAVAILABLE', 'error' => e.message })
       rescue StandardError => e
         raise InternalError, e.message
       end
 
-      update_user_info(organisation, external_login_config, userinfo)
-
-      return
+      # XXX NOCHANGE, UNAVAILABLE might be nice...
+      return json({ 'status' => 'UPDATED' })
     end
 
     def update_user_info(organisation, external_login_config, userinfo)
