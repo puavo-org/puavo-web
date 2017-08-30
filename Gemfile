@@ -6,7 +6,7 @@ end
 
 gem "pry", "~> 0.10.1"
 gem "unicorn", "~> 4.8.3"
-gem "debugger", "~> 1.6.8"
+#gem "debugger", "~> 1.6.8"
 gem "fluent-logger", "~> 0.4.3"
 gem "gibberish", "~> 1.4.0"
 gem "http"
