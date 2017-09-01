@@ -7,6 +7,7 @@ fqdn = Socket.gethostbyname(Socket.gethostname).first
 
 default_config = {
   "ldap" => fqdn,
+  "ldapmaster" => PUAVO_ETC.get(:ldap_master),
   "topdomain" => PUAVO_ETC.get(:topdomain),
   "ltsp_server_data_dir" => "/run/puavo-rest",
   "fqdn" => fqdn,

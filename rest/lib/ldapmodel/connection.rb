@@ -10,7 +10,7 @@ class LdapModel
 
   # Do LDAP sasl bind with a kerberos ticket
   def self.sasl_bind(ticket)
-    conn = LDAP::Conn.new(CONFIG["ldap"])
+    conn = LDAP::Conn.new(ldap_server)
     conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     conn.sasl_quiet = true
     conn.start_tls
@@ -43,7 +43,7 @@ class LdapModel
   # @param dn [String]
   # @param password [String]
   def self.dn_bind(dn, pw)
-    conn = LDAP::Conn.new(CONFIG["ldap"])
+    conn = LDAP::Conn.new(ldap_server)
     conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     conn.start_tls
     conn.bind(dn, pw)
@@ -147,6 +147,12 @@ class LdapModel
     else
       settings[:organisation]
     end
+  end
+
+  # Get configured ldap server
+  # @return String
+  def self.ldap_server
+    settings[:ldap_server] || CONFIG['ldap']
   end
 
   def self.clear_setup

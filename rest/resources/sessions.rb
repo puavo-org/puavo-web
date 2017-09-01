@@ -98,6 +98,22 @@ class Sessions < PuavoSinatra
   # @apiName Create new desktop session
   # @apiGroup sessions
   post "/v3/sessions" do
+    if json_params['authoritative'] == 'true' then
+      if CONFIG['bootserver'] then
+        if !CONFIG['ldapmaster'] then
+          raise InternalError,
+                :user => 'Requested authoritative but ldapmaster is not known'
+        end
+        LdapModel.setup(:ldap_server => CONFIG['ldapmaster'])
+      elsif CONFIG['cloud'] 
+        # We are the puavo-rest cloud instance, which means we
+        # use the ldapmaster and thus our answer is authoritative.
+      else
+        raise InternalError,
+              :user => 'Not a bootserver or cloud instance, what are we?'
+      end
+    end
+
     auth :basic_auth, :server_auth, :kerberos
 
     session = Session.new
@@ -106,7 +122,6 @@ class Sessions < PuavoSinatra
       "created" => Time.now.to_i,
       "printer_queues" => []
     )
-
 
     if json_params["hostname"]
       # Normal user has no permission to read device attributes so force server
