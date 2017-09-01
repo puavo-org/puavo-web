@@ -150,9 +150,9 @@ PuavoUsers::Application.routes.draw do
     match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :put
 
     resource :organisation, :only => [:show, :edit, :update]
-    match "search" => "users_search#index", :as => :search_index
+    get "search" => "users_search#index", :as => :search_index
     resource :profile, :only => [:edit, :update, :show]
-    match 'profile/image' => 'profiles#image', :as => :image_profile, :via => :get
+    get "profile/image" => "profiles#image", :as => :image_profile
   end
 
   scope :path => "devices" do
