@@ -78,16 +78,16 @@ PuavoUsers::Application.routes.draw do
     end
     resources :groups
 
-    match '/login' => 'sessions#new', :as => :login, :via => :get
-    match '/login' => 'sessions#create', :as => :login, :via => :post
+    get '/login' => 'sessions#new', :as => :login
+    post '/login' => 'sessions#create'
     match '/logout' => 'sessions#destroy', :as => :logout, :via => :delete
     match '/logo' => 'sessions#logo', :as => :logo, :via => :get, :format => :png
     match '/login/helpers' => 'sessions#login_helpers', :as => :login_helpers, :via => :get, :format => :js
     match '/login/theme' => 'sessions#theme', :as => :login_theme, :via => :get, :format => :css
 
     resources :sessions
-    match 'schools/:id/image' => 'schools#image', :as => :image_school, :via => :get
-    match '/' => 'schools#index'
+    get 'schools/:id/image' => 'schools#image'
+    get '/' => 'schools#index', :as => :image_school
     match ':school_id/users/import/refine' => 'users/import#refine', :as => :refine_users_import, :via => :post
     match ':school_id/users/import/validate' => 'users/import#validate', :as => :validate_users_import, :via => [:post]
     match ':school_id/users/import/new' => 'users/import#new', :as => :new_users_import, :via => :get
