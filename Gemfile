@@ -6,7 +6,6 @@ end
 
 gem "pry", "~> 0.10.1"
 gem "unicorn", "~> 4.8.3"
-#gem "debugger", "~> 1.6.8"
 gem "fluent-logger", "~> 0.4.3"
 gem "gibberish", "~> 1.4.0"
 gem "http"
@@ -14,9 +13,10 @@ gem "sinatra-support", :require => "sinatra/support"
 gem "jwt", "~> 0.1.8"
 gem "sshkey", "~> 1.6.1"
 gem "i18n-js", ">= 3.0.0.rc11"
+#gem "nib"
 
 group :assets do
-  gem "stylus", "~> 0.7.2"
+  gem "stylus"
   gem "jquery-rails"
 end
 
