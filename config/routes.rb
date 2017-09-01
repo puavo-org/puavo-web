@@ -139,7 +139,7 @@ PuavoUsers::Application.routes.draw do
            :via => :get,
            :constraints => { jwt: /.+/ } )
 
-    match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
+    get 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
 
     match 'owners' => 'organisations#owners', :as => :owners_organisation, :via => :get
