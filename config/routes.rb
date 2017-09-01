@@ -53,8 +53,8 @@ PuavoUsers::Application.routes.draw do
       match "groups/:id/remove_user/:user_id" => "groups#remove_user", :as => "remove_user_group", :via => :put
       match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get
-      match 'groups/:id/members' => 'groups#members', :as => :add_role_group, :via => :get
-      match 'groups/:id/add_role/:role_id' => 'groups#add_role', :as => :add_role_group, :via => :put
+      get 'groups/:id/members' => 'groups#members', :as => :add_role_group
+      put 'groups/:id/add_role/:role_id' => 'groups#add_role'
       match 'groups/:id/delete_role/:role_id' => 'groups#delete_role', :as => :delete_role_group, :via => :put
       match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
       match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
