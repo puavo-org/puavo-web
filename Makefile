@@ -145,7 +145,7 @@ seed:
 	bundle exec rails runner db/seeds.rb
 
 server:
-	bundle exec rails server
+	bundle exec rails server -b 0.0.0.0
 
 install-build-dep:
 	mk-build-deps --install debian.default/control \
