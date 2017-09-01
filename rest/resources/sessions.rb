@@ -98,23 +98,28 @@ class Sessions < PuavoSinatra
   # @apiName Create new desktop session
   # @apiGroup sessions
   post "/v3/sessions" do
-    if json_params['authoritative'] == 'true' then
-      if CONFIG['bootserver'] then
-        if !CONFIG['ldapmaster'] then
-          raise InternalError,
-                :user => 'Requested authoritative but ldapmaster is not known'
-        end
-        LdapModel.setup(:ldap_server => CONFIG['ldapmaster'])
-      elsif CONFIG['cloud'] 
-        # We are the puavo-rest cloud instance, which means we
-        # use the ldapmaster and thus our answer is authoritative.
-      else
+    if (json_params['authoritative'] != 'true') || CONFIG['cloud'] then
+      # If client has not requested authoritative answer, we may proceed as
+      # usual.  In case we are a cloud server, we are authoritative without
+      # any tricks anyway, so we may proceed as usual.
+      auth :basic_auth, :server_auth, :kerberos
+    elsif CONFIG['bootserver'] then
+      # Client has requested an authoritative answer, but we are a bootserver,
+      # with some delay before the local ldap has synchronized latest changes.
+      # We drop our current connection and setup a new one against the ldap
+      # master, so we can be authoritative.
+      if !CONFIG['ldapmaster'] then
         raise InternalError,
-              :user => 'Not a bootserver or cloud instance, what are we?'
+              :user => 'Requested authoritative answer but ldapmaster not known'
       end
-    end
 
-    auth :basic_auth, :server_auth, :kerberos
+      LdapModel.disconnect()
+      auth :basic_auth, :server_auth, :kerberos
+      LdapModel.setup(:ldap_server => CONFIG['ldapmaster'])
+    else
+      raise InternalError,
+            :user => 'Not a bootserver or cloud instance, what are we?'
+    end
 
     session = Session.new
     session.merge!(

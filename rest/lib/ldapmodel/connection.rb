@@ -155,11 +155,15 @@ class LdapModel
     settings[:ldap_server] || CONFIG['ldap']
   end
 
-  def self.clear_setup
+  def self.disconnect
     if settings[:credentials_cache] && settings[:credentials_cache][:current_connection]
       settings[:credentials_cache][:current_connection].unbind()
     end
+    settings[:credentials_cache][:current_connection] = nil
+  end
 
+  def self.clear_setup
+    disconnect()
     self.settings = nil
   end
 
