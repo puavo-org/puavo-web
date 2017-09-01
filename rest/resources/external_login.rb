@@ -81,10 +81,10 @@ module PuavoRest
         if admin_password.empty?
 
       LdapModel.setup(:credentials => {
-        :dn           => admin_dn,
-        :organisation => organisation,
-        :password     => admin_password,
-      })
+                        :dn       => admin_dn,
+                        :password => admin_password,
+                      },
+		      :organisation => organisation)
 
       if userinfo['school_dns'].nil? then
         default_school_dns = external_login_config['default_school_dns']
