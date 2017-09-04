@@ -217,14 +217,14 @@ PuavoUsers::Application.routes.draw do
       :name => /.+/,
       :format => false,
       :via => :get,
-      :as => "download_external_file"
+      #:as => "download_external_file"
     )
     match(
       "#{ prefix }external_files/:name" => "external_files#destroy",
       :name => /.+/,
       :format => false,
       :via => :delete,
-      :as => "destroy_external_file"
+      #:as => "destroy_external_file"
     )
   end
 
