@@ -57,7 +57,9 @@ module PuavoRest
           external_login_params)
         return 401 unless userinfo      # XXX Unauthorized
 
-        update_user_info(organisation, external_login_config, userinfo)
+        school_dn = params[:school_dn].to_s
+        update_user_info(organisation, external_login_config, userinfo,
+          school_dn)
 
       rescue ExternalLoginUnavailable => e
         # XXX Is this the proper way to log things?
@@ -71,12 +73,12 @@ module PuavoRest
       return json({ 'status' => 'UPDATED' })
     end
 
-    def update_user_info(organisation, external_login_config, userinfo)
-      admin_dn = external_login_config['admin_dn'].to_s
+    def update_user_info(organisation, el_config, userinfo, school_dn)
+      admin_dn = el_config['admin_dn'].to_s
       raise ExternalLoginUnavailable, 'admin dn is not set' \
         if admin_dn.empty?
 
-      admin_password = external_login_config['admin_password'].to_s
+      admin_password = el_config['admin_password'].to_s
       raise ExternalLoginUnavailable, 'admin password is not set' \
         if admin_password.empty?
 
@@ -84,20 +86,24 @@ module PuavoRest
                         :dn       => admin_dn,
                         :password => admin_password,
                       },
-		      :organisation => organisation)
+                      :organisation => organisation)
 
       if userinfo['school_dns'].nil? then
-        default_school_dns = external_login_config['default_school_dns']
-        if !default_school_dns.kind_of?(Array) then
-          raise ExternalLoginUnavailable,
-            "school dn is not known for '#{ userinfo['username'] }'" \
-              + ' and default school is not set'
+        if !school_dn.empty? then
+          userinfo['school_dns'] = [ school_dn ]
+        else
+          default_school_dns = el_config['default_school_dns']
+          if !default_school_dns.kind_of?(Array) then
+            raise ExternalLoginUnavailable,
+              "school dn is not known for '#{ userinfo['username'] }'" \
+                + ' and default school is not set'
+          end
+          userinfo['school_dns'] = default_school_dns
         end
-        userinfo['school_dns'] = default_school_dns
       end
 
       if userinfo['roles'].nil? then
-        default_roles = external_login_config['default_roles']
+        default_roles = el_config['default_roles']
         if !default_roles.kind_of?(Array) then
           raise ExternalLoginUnavailable,
             "role is not known for '#{ userinfo['username'] }'" \
