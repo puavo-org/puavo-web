@@ -1,6 +1,7 @@
 require 'mechanize'
 require 'net/ldap'
 
+class ExternalLoginError       < StandardError; end
 class ExternalLoginUnavailable < StandardError; end
 
 module PuavoRest
@@ -14,22 +15,22 @@ module PuavoRest
           unless all_external_login_configs
 
         organisation = Organisation.by_domain(request.host)
-        raise ExternalLoginUnavailable,
+        raise ExternalLoginError,
           'Could not determine organisation from request host' \
             unless organisation && organisation.domain.kind_of?(String)
 
         organisation_name = organisation.domain.split('.')[0]
-        raise ExternalLoginUnavailable,
+        raise ExternalLoginError,
           'Could not parse organisation from organisation domain' \
             unless organisation_name
 
         external_login_config = all_external_login_configs[organisation_name]
         raise ExternalLoginUnavailable,
-          'external_login for organisation not configured' \
+          'external_login for this organisation not configured' \
             unless external_login_config
 
         login_service_name = external_login_config['service']
-        raise ExternalLoginUnavailable, 'external_login service not set' \
+        raise ExternalLoginError, 'external_login service not set' \
           unless login_service_name
 
         loginclass_map = {
@@ -37,12 +38,12 @@ module PuavoRest
           'external_wilma' => WilmaLogin,
         }
         external_login_class = loginclass_map[login_service_name]
-        raise InternalError,
+        raise ExternalLoginError,
           "External login '#{ login_service_name }' is not supported" \
             unless external_login_class
 
         external_login_params = external_login_config[login_service_name]
-        raise ExternalLoginUnavailable,
+        raise ExternalLoginError,
           'External login parameters not configured' \
             unless external_login_params.kind_of?(Hash)
 
@@ -53,33 +54,42 @@ module PuavoRest
           return 401        # XXX Unauthorized
         end
 
-        userinfo = external_login_class.login(username, password,
-          external_login_params)
+        begin
+          userinfo = external_login_class.login(username, password,
+            external_login_params)
+        rescue StandardError => e
+          raise ExternalLoginUnavailable, e
+        end
+
         return 401 unless userinfo      # XXX Unauthorized
 
         school_dn = params[:school_dn].to_s
         update_user_info(organisation, external_login_config, userinfo,
           school_dn)
 
+      rescue ExternalLoginError => e
+        # XXX Is this the proper way to log things?  how to suppress stacktrace?
+        warn("External login error: #{ e.message }")
+        raise InternalError, e
       rescue ExternalLoginUnavailable => e
         # XXX Is this the proper way to log things?
         warn("External login is unavailable: #{ e.message }")
-        return json({ 'status' => 'UNAVAILABLE', 'error' => e.message })
+        return json({ 'status' => 'UNAVAILABLE', 'msg' => e.message })
       rescue StandardError => e
-        raise InternalError, e.message
+        raise InternalError, e
       end
 
-      # XXX NOCHANGE, UNAVAILABLE might be nice...
+      # XXX NOCHANGE might also be nice...
       return json({ 'status' => 'UPDATED' })
     end
 
     def update_user_info(organisation, el_config, userinfo, school_dn)
       admin_dn = el_config['admin_dn'].to_s
-      raise ExternalLoginUnavailable, 'admin dn is not set' \
+      raise ExternalLoginError, 'admin dn is not set' \
         if admin_dn.empty?
 
       admin_password = el_config['admin_password'].to_s
-      raise ExternalLoginUnavailable, 'admin password is not set' \
+      raise ExternalLoginError, 'admin password is not set' \
         if admin_password.empty?
 
       LdapModel.setup(:credentials => {
@@ -94,7 +104,7 @@ module PuavoRest
         else
           default_school_dns = el_config['default_school_dns']
           if !default_school_dns.kind_of?(Array) then
-            raise ExternalLoginUnavailable,
+            raise ExternalLoginError,
               "school dn is not known for '#{ userinfo['username'] }'" \
                 + ' and default school is not set'
           end
@@ -105,7 +115,7 @@ module PuavoRest
       if userinfo['roles'].nil? then
         default_roles = el_config['default_roles']
         if !default_roles.kind_of?(Array) then
-          raise ExternalLoginUnavailable,
+          raise ExternalLoginError,
             "role is not known for '#{ userinfo['username'] }'" \
               + ' and default role is not set'
         end
@@ -123,7 +133,8 @@ module PuavoRest
         end
         user.save!
       rescue ValidationError => e
-        warn("Error saving user because of validation error: #{ e.message }")
+        raise ExternalLoginError,
+	      "Error saving user because of validation errors: #{ e.message }"
       end
     end
   end
@@ -131,35 +142,39 @@ module PuavoRest
   class LdapLogin
     def self.login(username, password, ldap_config)
       base = ldap_config['base']
-      raise ExternalLoginUnavailable, 'ldap base not configured' \
+      raise ExternalLoginError, 'ldap base not configured' \
         unless base
 
       bind_dn = ldap_config['bind_dn']
-      raise ExternalLoginUnavailable, 'ldap bind dn not configured' \
+      raise ExternalLoginError, 'ldap bind dn not configured' \
         unless bind_dn
 
       bind_password = ldap_config['bind_password']
-      raise ExternalLoginUnavailable, 'ldap bind password not configured' \
+      raise ExternalLoginError, 'ldap bind password not configured' \
         unless bind_password
 
       server = ldap_config['server']
-      raise ExternalLoginUnavailable, 'ldap server not configured' \
+      raise ExternalLoginError, 'ldap server not configured' \
         unless server
 
-      ldap = Net::LDAP.new :base => base.to_s,
-                           :host => server.to_s,
-                           :port => (Integer(ldap_config['port']) rescue 636),
-                           :auth => {
-                             :method   => :simple,
-                             :username => bind_dn.to_s,
-                             :password => bind_password.to_s,
-                           },
-                           :encryption => :simple_tls   # XXX not sufficient!
+      begin
+	ldap = Net::LDAP.new :base => base.to_s,
+			     :host => server.to_s,
+			     :port => (Integer(ldap_config['port']) rescue 636),
+			     :auth => {
+			       :method   => :simple,
+			       :username => bind_dn.to_s,
+			       :password => bind_password.to_s,
+			     },
+			     :encryption => :simple_tls   # XXX not sufficient!
 
-      bind_filter = Net::LDAP::Filter.eq('cn', username)
-      ldap_entries = ldap.bind_as(:filter   => bind_filter,
-                                  :password => password)
-      return nil unless ldap_entries
+	bind_filter = Net::LDAP::Filter.eq('cn', username)
+	ldap_entries = ldap.bind_as(:filter   => bind_filter,
+				    :password => password)
+	return nil unless ldap_entries
+      rescue StandardError => e
+        raise ExternalLoginUnavailable, e
+      end
 
       raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
         unless ldap_entries.length == 1
@@ -169,7 +184,11 @@ module PuavoRest
       lookup_groups_filter \
         = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
             .&(Net::LDAP::Filter.eq('memberUid', username))
-      groups_result = ldap.search(:filter => lookup_groups_filter)
+      begin
+        groups_result = ldap.search(:filter => lookup_groups_filter)
+      rescue StandardError => e
+        raise ExternalLoginUnavailable, e
+      end
       groups = Hash[
         groups_result.map do |g|
           [ Array(g['cn']).first, Array(g['displayname']).first ]
@@ -193,9 +212,7 @@ module PuavoRest
       linkname = wilma_config['linkname'].to_s
       url      = wilma_config['url'].to_s
       if linkname.empty? || url.empty? then
-        # XXX Is this the proper way to log things?
-        warn('Wilma resource is not configured')
-        raise ExternalLoginUnavailable, 'Wilma resource is not configured'
+        raise ExternalLoginError, 'Wilma resource is not configured'
       end
 
       agent = Mechanize.new
