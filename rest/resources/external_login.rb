@@ -1,8 +1,9 @@
 require 'mechanize'
 require 'net/ldap'
 
-class ExternalLoginError       < StandardError; end
-class ExternalLoginUnavailable < StandardError; end
+class ExternalLoginError         < StandardError; end
+class ExternalLoginNotConfigured < ExternalLoginError; end
+class ExternalLoginUnavailable   < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLogin < PuavoSinatra
@@ -11,7 +12,7 @@ module PuavoRest
 
       begin
         all_external_login_configs = CONFIG['external_login']
-        raise ExternalLoginUnavailable, 'external login not configured' \
+        raise ExternalLoginNotConfigured, 'external login not configured' \
           unless all_external_login_configs
 
         organisation = Organisation.by_domain(request.host)
@@ -25,8 +26,8 @@ module PuavoRest
             unless organisation_name
 
         external_login_config = all_external_login_configs[organisation_name]
-        raise ExternalLoginUnavailable,
-          'external_login for this organisation not configured' \
+        raise ExternalLoginNotConfigured,
+          'external_login not configured for this organisation' \
             unless external_login_config
 
         login_service_name = external_login_config['service']
@@ -57,6 +58,8 @@ module PuavoRest
         begin
           userinfo = external_login_class.login(username, password,
             external_login_params)
+        rescue ExternalLoginError => e
+          raise e
         rescue StandardError => e
           raise ExternalLoginUnavailable, e
         end
@@ -67,14 +70,18 @@ module PuavoRest
         update_user_info(organisation, external_login_config, userinfo,
           school_dn)
 
-      rescue ExternalLoginError => e
-        # XXX Is this the proper way to log things?  how to suppress stacktrace?
-        warn("External login error: #{ e.message }")
-        raise InternalError, e
+      rescue ExternalLoginNotConfigured => e
+        # XXX Is this the proper way to log things?
+        warn("External login is not configured: #{ e.message }")
+        return json({ 'status' => 'NOTCONFIGURED', 'msg' => e.message })
       rescue ExternalLoginUnavailable => e
         # XXX Is this the proper way to log things?
         warn("External login is unavailable: #{ e.message }")
         return json({ 'status' => 'UNAVAILABLE', 'msg' => e.message })
+      rescue ExternalLoginError => e
+        # XXX Is this the proper way to log things?  how to suppress stacktrace?
+        warn("External login error: #{ e.message }")
+        raise InternalError, e
       rescue StandardError => e
         raise InternalError, e
       end
@@ -134,7 +141,7 @@ module PuavoRest
         user.save!
       rescue ValidationError => e
         raise ExternalLoginError,
-	      "Error saving user because of validation errors: #{ e.message }"
+              "Error saving user because of validation errors: #{ e.message }"
       end
     end
   end
@@ -157,24 +164,20 @@ module PuavoRest
       raise ExternalLoginError, 'ldap server not configured' \
         unless server
 
-      begin
-	ldap = Net::LDAP.new :base => base.to_s,
-			     :host => server.to_s,
-			     :port => (Integer(ldap_config['port']) rescue 636),
-			     :auth => {
-			       :method   => :simple,
-			       :username => bind_dn.to_s,
-			       :password => bind_password.to_s,
-			     },
-			     :encryption => :simple_tls   # XXX not sufficient!
+      ldap = Net::LDAP.new :base => base.to_s,
+                           :host => server.to_s,
+                           :port => (Integer(ldap_config['port']) rescue 636),
+                           :auth => {
+                             :method   => :simple,
+                             :username => bind_dn.to_s,
+                             :password => bind_password.to_s,
+                           },
+                           :encryption => :simple_tls   # XXX not sufficient!
 
-	bind_filter = Net::LDAP::Filter.eq('cn', username)
-	ldap_entries = ldap.bind_as(:filter   => bind_filter,
-				    :password => password)
-	return nil unless ldap_entries
-      rescue StandardError => e
-        raise ExternalLoginUnavailable, e
-      end
+      bind_filter = Net::LDAP::Filter.eq('cn', username)
+      ldap_entries = ldap.bind_as(:filter   => bind_filter,
+                                  :password => password)
+      return nil unless ldap_entries
 
       raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
         unless ldap_entries.length == 1
@@ -184,11 +187,7 @@ module PuavoRest
       lookup_groups_filter \
         = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
             .&(Net::LDAP::Filter.eq('memberUid', username))
-      begin
-        groups_result = ldap.search(:filter => lookup_groups_filter)
-      rescue StandardError => e
-        raise ExternalLoginUnavailable, e
-      end
+      groups_result = ldap.search(:filter => lookup_groups_filter)
       groups = Hash[
         groups_result.map do |g|
           [ Array(g['cn']).first, Array(g['displayname']).first ]
