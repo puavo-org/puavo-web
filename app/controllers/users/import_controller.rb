@@ -1,5 +1,5 @@
 class Users::ImportController < ApplicationController
-  require 'prawn/layout'
+  #require 'prawn/layout'
 
   class ColumnError < StandardError; end
   class RoleEduPersonAffiliationError < StandardError; end
