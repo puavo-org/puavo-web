@@ -80,5 +80,7 @@ module PuavoUsers
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
+    Rails.application.config.enable_dependency_loading = true
+
   end
 end
