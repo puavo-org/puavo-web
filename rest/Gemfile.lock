@@ -125,6 +125,7 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    mechanize (1.0.0)
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile2 (2.0.0)
@@ -264,6 +265,7 @@ DEPENDENCIES
   icalendar (~> 1.5.0)
   jwt (~> 0.1.8)
   m
+  mechanize
   minitest
   msgpack
   multi_json (~> 1.8.4)
