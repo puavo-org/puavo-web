@@ -7,8 +7,12 @@ class ExternalLoginUnavailable   < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLogin < PuavoSinatra
+    USER_STATUS_NOCHANGE = 'NOCHANGE'
+    USER_STATUS_UPDATED  = 'UPDATED'
+
     post '/v3/external_login' do
       userinfo = nil
+      user_status = nil
 
       begin
         all_external_login_configs = CONFIG['external_login']
@@ -67,8 +71,8 @@ module PuavoRest
         return 401 unless userinfo      # XXX Unauthorized
 
         school_dn = params[:school_dn].to_s
-        update_user_info(organisation, external_login_config, userinfo,
-          school_dn)
+        user_status = update_user_info(organisation, external_login_config,
+           userinfo, school_dn)
 
       rescue ExternalLoginNotConfigured => e
         # XXX Is this the proper way to log things?
@@ -86,8 +90,7 @@ module PuavoRest
         raise InternalError, e
       end
 
-      # XXX NOCHANGE might also be nice...
-      return json({ 'status' => 'UPDATED' })
+      return json({ 'status' => user_status })
     end
 
     def update_user_info(organisation, el_config, userinfo, school_dn)
@@ -133,12 +136,15 @@ module PuavoRest
         user = User.by_attr(:external_id, userinfo['external_id'])
         if !user then
           user = User.new(userinfo)
-        else
-          # XXX optimization: do not do updates every time, only when
-          # XXX something has changed
+          user.save!
+          return USER_STATUS_UPDATED
+        elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
+          user.save!
+          return USER_STATUS_UPDATED
+        else
+          return USER_STATUS_NOCHANGE
         end
-        user.save!
       rescue ValidationError => e
         raise ExternalLoginError,
               "Error saving user because of validation errors: #{ e.message }"
@@ -195,7 +201,7 @@ module PuavoRest
       ]
 
       # XXX check that these are not nonsense?
-      return {
+      userinfo = {
         'external_id' => Array(ldap_entry['dn']).first,
         'first_name'  => Array(ldap_entry['givenname']).first,
         # 'groups'     => groups,
@@ -203,6 +209,14 @@ module PuavoRest
         'password'    => password,
         'username'    => Array(ldap_entry['uid']).first,
       }
+
+      # XXX We presume that ldap result strings are UTF-8.  This might be a
+      # XXX wrong presumption, and this should be configurable.
+      userinfo.each do |key, value|
+        value.force_encoding('UTF-8') if value.respond_to?(:force_encoding)
+      end
+
+      userinfo
     end
   end
 
