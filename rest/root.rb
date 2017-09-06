@@ -35,7 +35,7 @@ $rest_flog_base = FluentWrap.new(
   :hostname => HOSTNAME,
   :fqdn => FQDN,
   :version => "#{ VERSION } #{ GIT_COMMIT }",
-  :deb_package => DEB_PACKAGE
+  :deb_package => DEB_PACKAGE,
 )
 $rest_flog = $rest_flog_base.merge({})
 
@@ -55,7 +55,7 @@ class BeforeFilters < PuavoSinatra
   enable :logging
 
   before do
-    $rest_flog = $rest_flog_base.merge({})
+    $rest_flog = $rest_flog_base.merge({}, nil, logger)
 
     LdapModel::PROF.reset
 
@@ -113,7 +113,7 @@ class BeforeFilters < PuavoSinatra
       log_meta[:organisation_key] = Organisation.current.organisation_key
     end
 
-    self.flog = $rest_flog = $rest_flog_base.merge(log_meta)
+    self.flog = $rest_flog = $rest_flog_base.merge(log_meta, nil, logger)
     flog.info('handling request', 'handling request...')
 
   end

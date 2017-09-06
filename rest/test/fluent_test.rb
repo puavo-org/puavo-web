@@ -46,7 +46,7 @@ describe FluentWrap do
 
   it "cleans passwords from nested ActiveSupport::HashWithIndifferentAccess hashes" do
     logger = MockFluent.new
-    flog = FluentWrap.new("testtag", {}, logger)
+    flog = FluentWrap.new "testtag", {}, logger
 
     flog.info("testmsg", nil, ActiveSupport::HashWithIndifferentAccess.new(:params => {
       :user => {
