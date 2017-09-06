@@ -174,7 +174,7 @@ class School < LdapModel
         res = HTTParty.get(url)
       rescue StandardError => err
         $rest_flog.error("failed to fetch ical",
-                         'failed to fetch ical',
+                         "failed to fetch ical: #{ err.message }",
                          :url    => url,
                          :source => self.to_hash,
                          :error  => err.message)
@@ -196,7 +196,7 @@ class School < LdapModel
           ICALParser.parse(data).current_events
         rescue StandardError => err
           $rest_flog.error('failed to parse ical',
-                           'failed to parse ical',
+                           "failed to parse ical: #{ err.message }",
                            :data => data.to_s.slice(0, 100),
                            :error => err.message)
         end
