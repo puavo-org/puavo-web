@@ -69,7 +69,11 @@ module PuavoRest
           raise ExternalLoginUnavailable, e
         end
 
-        raise Unauthorized, :user => 'Could not login to external service'
+        if !userinfo then
+          msg = 'Could not login to external service' \
+                  + " '#{ login_service_name }' by user '#{ username }'"
+          raise Unauthorized, :user => msg
+        end
 
         flog.info('Successful login to external service' \
           + " by user '#{ userinfo['username'] }'")
