@@ -27,15 +27,17 @@ def self.about
   })
 end
 
-# Use only when not in sinatra routes. Sinatra routes have a "flog" method
-# which automatically logs the route and user
-$rest_flog = FluentWrap.new(
+# Use $rest_flog only when not in sinatra routes.
+# Sinatra routes have a "flog" method which automatically
+# logs the route and user.
+$rest_flog_base = FluentWrap.new(
   "puavo-rest",
   :hostname => HOSTNAME,
   :fqdn => FQDN,
   :version => "#{ VERSION } #{ GIT_COMMIT }",
   :deb_package => DEB_PACKAGE
 )
+$rest_flog = $rest_flog_base.merge({})
 
 $mailer = PuavoRest::Mailer.new
 
@@ -53,6 +55,8 @@ class BeforeFilters < PuavoSinatra
   enable :logging
 
   before do
+    $rest_flog = $rest_flog_base.merge({})
+
     LdapModel::PROF.reset
 
     # Ensure that any previous connections are cleared. Each request must
@@ -109,7 +113,7 @@ class BeforeFilters < PuavoSinatra
       log_meta[:organisation_key] = Organisation.current.organisation_key
     end
 
-    self.flog = $rest_flog.merge(log_meta)
+    self.flog = $rest_flog = $rest_flog_base.merge(log_meta)
     flog.info('handling request', 'handling request...')
 
   end
