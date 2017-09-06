@@ -59,8 +59,9 @@ module PuavoRest
         end
 
         begin
-          flog.info('Attempting external login to service' \
-                      + " '#{ login_service_name }' by user '#{ username }'")
+          message = 'attempting external login to service' \
+                      + " '#{ login_service_name }' by user '#{ username }'"
+          flog.info('external login attempt', message)
           userinfo = external_login_class.login(username, password,
             external_login_params)
         rescue ExternalLoginError => e
@@ -75,21 +76,25 @@ module PuavoRest
           raise Unauthorized, :user => msg
         end
 
-        flog.info('Successful login to external service' \
-          + " by user '#{ userinfo['username'] }'")
+        message = 'Successful login to external service' \
+                    + " by user '#{ userinfo['username'] }'"
+        flog.info('external login successful', message)
 
         school_dn = params[:school_dn].to_s
         user_status = update_user_info(organisation, external_login_config,
            userinfo, school_dn)
 
       rescue ExternalLoginNotConfigured => e
-        flog.info("External login is not configured: #{ e.message }")
+        flog.info('external login not configured',
+                  "external login is not configured: #{ e.message }")
         return json({ 'status' => 'NOTCONFIGURED', 'msg' => e.message })
       rescue ExternalLoginUnavailable => e
-        flog.warn("External login is unavailable: #{ e.message }")
+        flog.warn('external login unavailable',
+                  "external login is unavailable: #{ e.message }")
         return json({ 'status' => 'UNAVAILABLE', 'msg' => e.message })
       rescue ExternalLoginError => e
-        flog.error("External login error: #{ e.message }")
+        flog.error('external login error',
+                   "external login error: #{ e.message }")
         raise InternalError, e
       rescue StandardError => e
         raise InternalError, e
@@ -142,16 +147,19 @@ module PuavoRest
         if !user then
           user = User.new(userinfo)
           user.save!
-          flog.info("Created a new user '#{ userinfo['username'] }'")
+          flog.info('new external login user',
+                    "created a new user '#{ userinfo['username'] }'")
           return USER_STATUS_UPDATED
         elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
           user.save!
-          flog.info("Updated user information for '#{ userinfo['username'] }'")
+          flog.info('updated external login user',
+                    "updated user information for '#{ userinfo['username'] }'")
           return USER_STATUS_UPDATED
         else
-          flog.info('No change in user information for' \
-            + " '#{ userinfo['username'] }'")
+          flog.info('no change for external login user',
+                    'no change in user information for' \
+                      + " '#{ userinfo['username'] }'")
           return USER_STATUS_NOCHANGE
         end
       rescue ValidationError => e

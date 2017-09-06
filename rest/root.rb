@@ -68,8 +68,6 @@ class BeforeFilters < PuavoSinatra
     rescue Resolv::ResolvError
     end
 
-    logger.info "#{ env["REQUEST_METHOD"] } #{ request.path } by #{ ip } (#{ @client_hostname })"
-
     port = [80, 443].include?(request.port) ? "": ":#{ request.port }"
 
     request_host = request.host.to_s.gsub(/^staging\-/, "")
@@ -79,10 +77,9 @@ class BeforeFilters < PuavoSinatra
       organisation = Organisation.default_organisation_domain!
     end
 
-    if organisation.nil?
-      logger.warn "Cannot to get organisation for hostname #{ request.host.to_s }"
+    if organisation.nil? then
+      flog.warn(nil, "cannot to get organisation for hostname #{ request.host.to_s }")
     end
-
 
     LdapModel.setup(
       :organisation => organisation,
@@ -113,7 +110,7 @@ class BeforeFilters < PuavoSinatra
     end
 
     self.flog = $rest_flog.merge(log_meta)
-    flog.info "handling request..."
+    flog.info('handling request', 'handling request...')
 
   end
 
@@ -124,12 +121,15 @@ class BeforeFilters < PuavoSinatra
 
     request_duration = (Time.now - @req_start).to_f
     self.flog = self.flog.merge :request_duration => request_duration
-    flog.info "... request done (in #{ request_duration } seconds)."
+
+    unhandled_exception = nil
 
     if env["sinatra.error"]
       err = env["sinatra.error"]
       if err.kind_of?(JSONError) || err.kind_of?(Sinatra::NotFound)
-        flog.info "request rejected", :reason => err.as_json
+        flog.warn('request rejected',
+                  "... request rejected (in #{ request_duration } seconds): #{ err.message }",
+                  :reason => err.as_json)
       else
         unhandled_exception = {
           :error => {
@@ -139,22 +139,21 @@ class BeforeFilters < PuavoSinatra
           }
         }
         flog.error(
-          "unhandled exception",
-          unhandled_exception.merge(:backtrace => err.backtrace)
-        )
+          'unhandled exception',
+          "unhandled exception: #{ err.message } / #{ err.backtrace } ...",
+          unhandled_exception.merge(:backtrace => err.backtrace))
       end
+    else
+      flog.info('request done', "... request done (in #{ request_duration } seconds).")
     end
+
 
     LdapModel.clear_setup
     LocalStore.close_connection
     self.flog = nil
-    if unhandled_exception && ENV["RACK_ENV"] == "production"
-      time = Time.now.to_s
-      puts "Unhandled exception #{ err.class.name }: '#{ err }' at #{ time } (#{ time.to_i })"
-      puts err.backtrace
+    if unhandled_exception then
       halt 500, json(unhandled_exception)
     end
-
   end
 end
 

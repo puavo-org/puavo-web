@@ -195,17 +195,15 @@ class Sessions < PuavoSinatra
       end
     end
 
-    logger.info "Created session #{ session["uuid"] }"
+    flog.info(nil, "created new session #{ session["uuid"] }")
     session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
     session["organisation"] = Organisation.current.domain
     session.save
 
-    flog.info "new session", :device => json_params["hostname"]
+    flog.info('new session', nil, :device => json_params["hostname"])
 
     # Use different message to avoid type collisions in elasticsearch
-    flog.info("created session", {
-      :session => session.to_hash
-    })
+    flog.info('created session', nil, { :session => session.to_hash })
 
     json session
   end

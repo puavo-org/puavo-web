@@ -47,10 +47,10 @@ class FluentRelay < PuavoSinatra
 
   def handle_msgpack
     body_size = request.body.size
-    self.flog.info("Relaying fluentd chunk", {
-      :format => "msgpack",
-      :bytes => body_size
-    })
+    self.flog.info('relaying fluentd chunk', 'relaying fluentd chunk', {
+                     :format => "msgpack",
+                     :bytes => body_size
+                   })
 
     parsing_start = Time.now
     u = MessagePack::Unpacker.new(request.body)
@@ -69,7 +69,7 @@ class FluentRelay < PuavoSinatra
     end
     relaying_time = Time.now - relaying_start
 
-    self.flog.info("Relayed fluentd chunk", {
+    self.flog.info('relayed fluentd chunk', 'relayed fluentd chunk', {
       :format => "msgpack",
       :parse_ms => parsing_time * 1000,
       :relay_ms => relaying_time * 1000,

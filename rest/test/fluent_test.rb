@@ -11,7 +11,6 @@ describe FluentWrap do
       flog = FluentWrap.new "testtag", {:meta_attr => true}, logger
       flog.send(level, "testmsg")
 
-
       assert logger.data, "has data"
       entry = logger.data.first
       assert_equal "testtag", entry.first, "has tag"
@@ -26,7 +25,7 @@ describe FluentWrap do
   it "cleans passwords" do
       logger = MockFluent.new
       flog = FluentWrap.new "testtag", {:password_in_base => "secret1"}, logger
-      flog.info("testmsg", {
+      flog.info("testmsg", nil, {
         :password_in_arg => "secret2",
         :array => [{
           :password => "secret3"
@@ -49,7 +48,7 @@ describe FluentWrap do
     logger = MockFluent.new
     flog = FluentWrap.new("testtag", {}, logger)
 
-    flog.info("testmsg", ActiveSupport::HashWithIndifferentAccess.new(:params => {
+    flog.info("testmsg", nil, ActiveSupport::HashWithIndifferentAccess.new(:params => {
       :user => {
         "new_password" => "secret1"
       }
@@ -83,7 +82,7 @@ describe FluentWrap do
     logger = MockFluent.new
     flog = FluentWrap.new "testtag", {:meta_attr1 => true}, logger
     huge = (0..FluentWrap::MAX_SIZE * 2).to_a.join("")
-    flog.info("test", :huge => huge)
+    flog.info("test", nil, :huge => huge)
 
     assert logger.data, "has data"
 

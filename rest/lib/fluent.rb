@@ -19,35 +19,37 @@ class FluentWrap
   # Log a message
   #
   # @param level [Symbol] `:info`, `:warn` or `:error`
-  # @param msg [String] message
+  # @param msgtag [String] fluent tag-like message
+  # @param message [String] message for humans
   # @param attrs [hash] Data to be added with the message
-  def log(level, msg, attrs=nil)
-
-    if [:msg, :meta, :level].include?(msg)
-      raise "Illegal fluentd message key: #{ msg }"
+  def log(level, msgtag, message=nil, attrs=nil)
+    if [:msg, :meta, :level].include?(msgtag)
+      raise "Illegal fluentd message key: #{ msgtag }"
     end
 
     record = {
-      :msg => msg, # for legacy elasticsearch support
+      :msg  => msgtag, # for legacy elasticsearch support
       :meta => clean(@base_attrs),
     }
 
     record[:meta][:level] = level
 
-    # Write attrs under a key defined by msg to avoid type errors in
+    # Write attrs under a key defined by msgtag to avoid type errors in
     # elasticsearch
-    record[msg] = clean(attrs) if attrs
+    record[msgtag] = clean(attrs) if attrs
 
-    @logger.post(@tag, record)
-
-    if !ENV["FLUENTD_STDOUT"]
-      return if ENV["RACK_ENV"] == "test"
-      return if ENV["RAILS_ENV"] == "test"
+    if message then
+      if ENV["FLUENTD_STDOUT"] || (ENV["RACK_ENV"] != "test") || (ENV["RAILS_ENV"] != "test") then
+        begin
+          STDERR.puts human_readable_msg(message, record)
+        rescue StandardError => e
+          STDERR.puts "Failed to log message: #{ record.inspect } :: #{ e }"
+        end
+      end
     end
-    begin
-      STDERR.puts human_readable_msg(msg, record)
-    rescue StandardError => e
-      STDERR.puts "Failed to log message: #{ record.inspect } :: #{ e }"
+
+    if msgtag then
+      @logger.post(@tag, record)
     end
   end
 
@@ -62,7 +64,7 @@ class FluentWrap
     organisation = (meta    && meta[:organisation_key])   || '?'
     short_req_id = ((meta   && meta[:req_uuid])           || '?')[0..7]
 
-    message = "#{ method } (id:#{ short_req_id }) to #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg }"
+    message = "#{ method } #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: [#{ short_req_id }] #{ msg }"
 
     if !request || !meta || show_full_record then
       message = "#{ message } :::: #{ record.to_json }"
@@ -73,20 +75,20 @@ class FluentWrap
 
   # Shortcut for #log(:info, msg)
   # @see #log
-  def info(msg, attrs=nil)
-    log("info", msg, attrs)
+  def info(msgtag, message=nil, attrs=nil)
+    log("info", msgtag, message, attrs)
   end
 
   # Shortcut for #log(:warn, msg)
   # @see #log
-  def warn(msg, attrs=nil)
-    log("warn", msg, attrs)
+  def warn(msgtag, message=nil, attrs=nil)
+    log("warn", msgtag, message, attrs)
   end
 
   # Shortcut for #log(:error, msg)
   # @see #log
-  def error(msg, attrs=nil)
-    log("error", msg, attrs)
+  def error(msgtag, message=nil, attrs=nil)
+    log("error", msgtag, message, attrs)
   end
 
   # Create new child logger. The child will inherit base_attrs from the parent
