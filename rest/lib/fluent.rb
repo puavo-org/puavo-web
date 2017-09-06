@@ -66,12 +66,14 @@ class FluentWrap
     meta    = (record && record[:meta]) || nil
     request = (meta && record[:meta][:request]) || nil
 
-    url          = (request && request[:url])             || '(URL?)'
-    method       = (request && request[:method])          || '(METHOD?)'
-    hostname     = (request && request[:client_hostname]) || '?'
+    hostname_fqdn = (request && request[:client_hostname]) || '?'
+
     client_ip    = (request && request[:ip])              || '?'
+    hostname     = hostname_fqdn.split('.')[0]            || '?'
+    method       = (request && request[:method])          || '(METHOD?)'
     organisation = (meta    && meta[:organisation_key])   || '?'
     short_req_id = ((meta   && meta[:req_uuid])           || '?')[0..7]
+    url          = (request && request[:url])             || '(URL?)'
 
     message = "#{ method } #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: [#{ short_req_id }] #{ msg }"
 
