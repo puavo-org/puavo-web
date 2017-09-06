@@ -190,7 +190,7 @@
     </li>
   <% end %>
   <li>
-  <%= link_to @school, :confirm => t('general_confirm'), :method => :delete do%>
+  <%= link_to school_path(@school), :confirm => t('general_confirm'), :method => :delete do%>
     <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
   </li>

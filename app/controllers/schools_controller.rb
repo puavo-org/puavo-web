@@ -95,7 +95,7 @@ class SchoolsController < ApplicationController
     respond_to do |format|
       if @school.update_attributes(school_params)
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.school'))
-        format.html { redirect_to(@school) }
+        format.html { redirect_to(school_path(@school)) }
         format.xml  { head :ok }
       else
         flash[:alert] = t('flash.save_failed', :model => t('activeldap.models.school') )
