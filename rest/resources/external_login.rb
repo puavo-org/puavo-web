@@ -55,11 +55,12 @@ module PuavoRest
         username = params[:username].to_s
         password = params[:password].to_s
         if username.empty? || password.empty? then
-          warn('No user credentials provided')
-          return 401        # XXX Unauthorized
+          raise BadCredentials, :user => 'No user credentials provided'
         end
 
         begin
+          flog.info('Attempting external login to service' \
+                      + " '#{ login_service_name }' by user '#{ username }'")
           userinfo = external_login_class.login(username, password,
             external_login_params)
         rescue ExternalLoginError => e
@@ -68,23 +69,23 @@ module PuavoRest
           raise ExternalLoginUnavailable, e
         end
 
-        return 401 unless userinfo      # XXX Unauthorized
+        raise Unauthorized, :user => 'Could not login to external service'
+
+        flog.info('Successful login to external service' \
+          + " by user '#{ userinfo['username'] }'")
 
         school_dn = params[:school_dn].to_s
         user_status = update_user_info(organisation, external_login_config,
            userinfo, school_dn)
 
       rescue ExternalLoginNotConfigured => e
-        # XXX Is this the proper way to log things?
-        warn("External login is not configured: #{ e.message }")
+        flog.info("External login is not configured: #{ e.message }")
         return json({ 'status' => 'NOTCONFIGURED', 'msg' => e.message })
       rescue ExternalLoginUnavailable => e
-        # XXX Is this the proper way to log things?
-        warn("External login is unavailable: #{ e.message }")
+        flog.warn("External login is unavailable: #{ e.message }")
         return json({ 'status' => 'UNAVAILABLE', 'msg' => e.message })
       rescue ExternalLoginError => e
-        # XXX Is this the proper way to log things?  how to suppress stacktrace?
-        warn("External login error: #{ e.message }")
+        flog.error("External login error: #{ e.message }")
         raise InternalError, e
       rescue StandardError => e
         raise InternalError, e
@@ -137,12 +138,16 @@ module PuavoRest
         if !user then
           user = User.new(userinfo)
           user.save!
+          flog.info("Created a new user '#{ userinfo['username'] }'")
           return USER_STATUS_UPDATED
         elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
           user.save!
+          flog.info("Updated user information for '#{ userinfo['username'] }'")
           return USER_STATUS_UPDATED
         else
+          flog.info('No change in user information for' \
+            + " '#{ userinfo['username'] }'")
           return USER_STATUS_NOCHANGE
         end
       rescue ValidationError => e
@@ -271,8 +276,9 @@ module PuavoRest
 
       return false if final_result.title != 'Session Summary'
 
-      # XXX should really return user data to be parsed
-      return true
+      raise NotImplemented, 'wilma logins do not work yet'
+      userinfo = {}
+      return userinfo
     end
   end
 end
