@@ -72,10 +72,9 @@ class FluentWrap
     hostname     = hostname_fqdn.split('.')[0]            || '?'
     method       = (request && request[:method])          || '(METHOD?)'
     organisation = (meta    && meta[:organisation_key])   || '?'
-    short_req_id = ((meta   && meta[:req_uuid])           || '?')[0..7]
     url          = (request && request[:url])             || '(URL?)'
 
-    message = "#{ method } #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: [#{ short_req_id }] #{ msg }"
+    message = "#{ method } #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg }"
 
     if !request || !meta || show_full_record then
       message = "#{ message } :::: #{ record.to_json }"
