@@ -37,8 +37,6 @@ $rest_flog = FluentWrap.new(
   :deb_package => DEB_PACKAGE
 )
 
-$rest_flog.info "starting"
-
 $mailer = PuavoRest::Mailer.new
 
 @@test_boot_server_dn = nil
@@ -115,7 +113,7 @@ class BeforeFilters < PuavoSinatra
     end
 
     self.flog = $rest_flog.merge(log_meta)
-    flog.info "request start"
+    flog.info "handling request..."
 
   end
 
@@ -126,7 +124,7 @@ class BeforeFilters < PuavoSinatra
 
     request_duration = (Time.now - @req_start).to_f
     self.flog = self.flog.merge :request_duration => request_duration
-    flog.info "request"
+    flog.info "... request done (in #{ request_duration } seconds)."
 
     if env["sinatra.error"]
       err = env["sinatra.error"]

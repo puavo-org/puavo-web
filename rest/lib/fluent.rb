@@ -45,11 +45,30 @@ class FluentWrap
       return if ENV["RAILS_ENV"] == "test"
     end
     begin
-      puts "#{ msg }: #{ record.to_json }"
+      STDERR.puts human_readable_msg(msg, record)
     rescue StandardError => e
-      puts "Failed to log message: #{ record.inspect }"
-      puts e
+      STDERR.puts "Failed to log message: #{ record.inspect } :: #{ e }"
     end
+  end
+
+  def human_readable_msg(msg, record, show_full_record=false)
+    meta    = (record && record[:meta]) || nil
+    request = (meta && record[:meta][:request]) || nil
+
+    url          = (request && request[:url])             || '(URL?)'
+    method       = (request && request[:method])          || '(METHOD?)'
+    hostname     = (request && request[:client_hostname]) || '?'
+    client_ip    = (request && request[:ip])              || '?'
+    organisation = (meta    && meta[:organisation_key])   || '?'
+    short_req_id = ((meta   && meta[:req_uuid])           || '?')[0..7]
+
+    message = "#{ method } (id:#{ short_req_id }) to #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg }"
+
+    if !request || !meta || show_full_record then
+      message = "#{ message } :::: #{ record.to_json }"
+    end
+
+    message
   end
 
   # Shortcut for #log(:info, msg)
