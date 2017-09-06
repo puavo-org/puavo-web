@@ -278,7 +278,7 @@ module PuavoRest
         'could not find title in final login result page' \
           unless final_result && final_result.title
 
-      return false if final_result.title != 'Session Summary'
+      return nil if final_result.title != 'Session Summary'
 
       raise NotImplemented, 'wilma logins do not work yet'
       userinfo = {}
