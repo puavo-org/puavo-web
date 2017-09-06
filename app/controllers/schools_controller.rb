@@ -71,7 +71,7 @@ class SchoolsController < ApplicationController
   # POST /schools
   # POST /schools.xml
   def create
-    @school = School.new(params[:school])
+    @school = School.new(school_params)
 
     respond_to do |format|
       if @school.save
@@ -89,10 +89,11 @@ class SchoolsController < ApplicationController
   # PUT /schools/1
   # PUT /schools/1.xml
   def update
+
     @school = School.find(params[:id])
 
     respond_to do |format|
-      if @school.update_attributes(params[:school])
+      if @school.update_attributes(school_params)
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.school'))
         format.html { redirect_to(@school) }
         format.xml  { head :ok }
@@ -213,4 +214,17 @@ class SchoolsController < ApplicationController
       end
     end
   end
+
+  private
+    def school_params
+      # arrays must be listed last due to some weird syntax thing
+      return params.require(:school).permit(
+          :displayName, :cn, :puavoNamePrefix, :puavoSchoolHomePageURL, :description, :telephoneNumber,
+          :facsimileTelephoneNumber, :l, :street, :postOfficeBox, :postalAddress, :postalCode, :st,
+          :puavoLocale, :puavoExternalId, :puavoAllowGuest, :puavoPersonalDevice, :puavoAutomaticImageUpdates,
+          :puavoDeviceImage, :external_feeds, :puavoTag, :puavoDeviceOnHour, :puavoDeviceOffHour,
+          :puavoBillingInfo=>[], :puavoImageSeriesSourceURL=>[], :fs=>[], :path=>[], :mountpoint=>[],
+          :options=>[]).to_hash
+    end
+
 end
