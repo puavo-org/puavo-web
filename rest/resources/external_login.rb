@@ -105,7 +105,7 @@ module PuavoRest
             external_login_params, flog)
         rescue ExternalLoginWrongPassword => e
           invalidated = maybe_invalidate_user_password(organisation,
-	    external_login_config, username, password)
+            external_login_config, username, password)
           if invalidated then
             return json({
               'status' => USER_STATUS_UPDATED_BUT_FAIL,
