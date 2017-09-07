@@ -159,7 +159,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       begin
-        unless @user.update_attributes(params[:user])
+        unless @user.update_attributes(user_params)
           raise User::UserError, I18n.t('flash.user.save_failed')
         end
 
