@@ -72,7 +72,7 @@ module PuavoRest
                       + " '#{ login_service_name }' by user '#{ username }'"
           flog.info('external login attempt', message)
           userinfo = external_login_class.login(username, password,
-            external_login_params)
+            external_login_params, flog)
         rescue ExternalLoginError => e
           raise e
         rescue StandardError => e
@@ -179,7 +179,7 @@ module PuavoRest
   end
 
   class LdapLogin
-    def self.login(username, password, ldap_config)
+    def self.login(username, password, ldap_config, flog)
       base = ldap_config['base']
       raise ExternalLoginError, 'ldap base not configured' \
         unless base
@@ -209,7 +209,15 @@ module PuavoRest
       bind_filter = Net::LDAP::Filter.eq('cn', username)
       ldap_entries = ldap.bind_as(:filter   => bind_filter,
                                   :password => password)
-      return nil unless ldap_entries
+      if ldap_entries then
+        flog.info('authentication to ldap succeeded',
+                  'authentication to ldap succeeded')
+      else
+        flog.info('authentication to ldap failed',
+                  'authentication to ldap failed: ' \
+                    + ldap.get_operation_result.message)
+        return nil
+      end
 
       raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
         unless ldap_entries.length == 1
@@ -247,7 +255,7 @@ module PuavoRest
   end
 
   class WilmaLogin
-    def self.login(username, password, wilma_config)
+    def self.login(username, password, wilma_config, flog)
       linkname = wilma_config['linkname'].to_s
       url      = wilma_config['url'].to_s
       if linkname.empty? || url.empty? then
