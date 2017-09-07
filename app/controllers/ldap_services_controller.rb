@@ -43,7 +43,7 @@ class LdapServicesController < ApplicationController
   # POST /ldap_services
   # POST /ldap_services.xml
   def create
-    @ldap_service = LdapService.new(params[:ldap_service])
+    @ldap_service = LdapService.new(ldap_service_params)
     @system_groups = SystemGroup.all
 
     respond_to do |format|
@@ -100,7 +100,7 @@ class LdapServicesController < ApplicationController
 
   private
     def ldap_service_params
-      return params.require(:ldap_service).permit(:description, :userPassword, :groups=>[]).to_hash
+      return params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
     end
 
 end
