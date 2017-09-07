@@ -30,12 +30,12 @@ module PuavoRest
 
         organisation = Organisation.by_domain(request.host)
         raise ExternalLoginError,
-          'Could not determine organisation from request host' \
+          'could not determine organisation from request host' \
             unless organisation && organisation.domain.kind_of?(String)
 
         organisation_name = organisation.domain.split('.')[0]
         raise ExternalLoginError,
-          'Could not parse organisation from organisation domain' \
+          'could not parse organisation from organisation domain' \
             unless organisation_name
 
         external_login_config = all_external_login_configs[organisation_name]
@@ -53,18 +53,18 @@ module PuavoRest
         }
         external_login_class = loginclass_map[login_service_name]
         raise ExternalLoginError,
-          "External login '#{ login_service_name }' is not supported" \
+          "external login '#{ login_service_name }' is not supported" \
             unless external_login_class
 
         external_login_params = external_login_config[login_service_name]
         raise ExternalLoginError,
-          'External login parameters not configured' \
+          'external login parameters not configured' \
             unless external_login_params.kind_of?(Hash)
 
         username = params[:username].to_s
         password = params[:password].to_s
         if username.empty? || password.empty? then
-          raise BadCredentials, :user => 'No user credentials provided'
+          raise BadCredentials, :user => 'no user credentials provided'
         end
 
         begin
@@ -80,12 +80,12 @@ module PuavoRest
         end
 
         if !userinfo then
-          msg = 'Could not login to external service' \
+          msg = 'could not login to external service' \
                   + " '#{ login_service_name }' by user '#{ username }'"
           raise Unauthorized, :user => msg
         end
 
-        message = 'Successful login to external service' \
+        message = 'successful login to external service' \
                     + " by user '#{ userinfo['username'] }'"
         flog.info('external login successful', message)
 
@@ -173,7 +173,7 @@ module PuavoRest
         end
       rescue ValidationError => e
         raise ExternalLoginError,
-              "Error saving user because of validation errors: #{ e.message }"
+              "error saving user because of validation errors: #{ e.message }"
       end
     end
   end
@@ -251,7 +251,7 @@ module PuavoRest
       linkname = wilma_config['linkname'].to_s
       url      = wilma_config['url'].to_s
       if linkname.empty? || url.empty? then
-        raise ExternalLoginError, 'Wilma resource is not configured'
+        raise ExternalLoginError, 'wilma resource is not configured'
       end
 
       agent = Mechanize.new
