@@ -74,7 +74,11 @@ class FluentWrap
     organisation = (meta    && meta[:organisation_key])   || '?'
     url          = (request && request[:url])             || '(URL?)'
 
-    message = "#{ method } #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg }"
+    if !msg.kind_of?(String) then
+      raise 'Message is not a string'
+    end
+    msg_no_newlines = msg.chomp.gsub(/\n/, ' / ')
+    message = "#{ method } #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg_no_newlines }"
 
     if !request || !meta || show_full_record then
       message = "#{ message } :::: #{ record.to_json }"
