@@ -113,7 +113,7 @@ class DevicesController < ApplicationController
     params[:device].delete(:classes)
     handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
     handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
-    @device = Device.new( { :objectClass => device_objectClass }.merge( params[:device] ))
+    @device = Device.new( { :objectClass => device_objectClass }.merge(device_params))
     @device.puavoSchool = @school.dn
 
     if @device.valid?
@@ -156,7 +156,7 @@ class DevicesController < ApplicationController
     @school_printers = school_printers
 
     respond_to do |format|
-      if @device.update_attributes(params[:device])
+      if @device.update_attributes(device_params)
         format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully updated.') }
         format.xml  { head :ok }
       else
@@ -263,6 +263,15 @@ class DevicesController < ApplicationController
                              :object => printer })
     end
     return school_printers
+  end
+
+  def device_params
+    # arrays must be listed last due to some weird syntax thing
+    return params.require(:device).permit(
+      :puavoDeviceType, :puavoHostname, :puavoTag, :puavoDeviceManufacturer, :puavoDeviceModel,
+      :serialNumber, :ipHostNumber, :description, :puavoPurchaseDate, :puavoWarrantyEndDate,
+      :puavoPurchaseLocation, :puavoPurchaseURL, :puavoSupportContract, :puavoLocationName,
+      :puavoLatitude, :puavoLongitude, :macAddress=>[]).to_hash
   end
 
 end
