@@ -252,7 +252,7 @@ class User < LdapBase
     end
 
     # Unique validation for puavoExternalId
-    if !self.puavoExternalId.nil? && puavoExternalId.empty?
+    if !self.puavoExternalId.nil? && !self.puavoExternalId.empty?
       if user = User.find(:first, :attribute => "puavoExternalId", :value => self.puavoExternalId)
         if user.puavoId != self.puavoId
           errors.add :puavoExternalId, I18n.t("activeldap.errors.messages.taken",
