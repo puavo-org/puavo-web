@@ -92,9 +92,9 @@
 <p>
   <b><%= t('.other_roles') %>:</b><br />
   <span id="other_roles">
-  <% @other_roles.each do |p| %>
-    <%= "#{p.displayName} (#{p.school.displayName})" %>
-    <%= link_to t('link.add'), add_role_group_path(@school, @group, p), :method => :put, :id => "add_role_#{p.id}" %>
+  <% @other_roles.each do |r| %>
+    <%= "#{r.displayName} (#{r.school.displayName})" %>
+    <%= link_to t('link.add'), add_role_group_path(@school, @group, r), :method => :put, :id => "add_role_#{r.id}" %>
     <br />
   <% end %>
   </span>
