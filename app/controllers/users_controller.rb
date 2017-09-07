@@ -105,11 +105,13 @@ class UsersController < ApplicationController
   # POST /:school_id/users
   # POST /:school_id/users.xml
   def create
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
     @groups = @school.groups
     @roles = @school.roles
     @user_roles =  []
 
+    # TODO: should we use the filtered hash returned by "user_params" here
+    # instead of modifying the raw unfiltered "params" object?
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
@@ -301,4 +303,13 @@ class UsersController < ApplicationController
     end
 
   end
+
+  private
+    def user_params
+      return params.require(:user).permit(
+          :givenName, :sn, :uid, :puavoLocale, :puavoEduPersonPersonnelNumber, :puavoLocked,
+          :puavoSshPublicKey, :puavoExternalId, :new_password, :new_password_confirmation,
+          :mail=>[], :telephoneNumber=>[], :puavoEduPersonAffiliation=>[]).to_hash
+    end
+
 end
