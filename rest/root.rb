@@ -82,7 +82,7 @@ class BeforeFilters < PuavoSinatra
     end
 
     if organisation.nil? then
-      flog.warn(nil, "cannot to get organisation for hostname #{ request.host.to_s }")
+      $rest_flog.warn(nil, "cannot to get organisation for hostname #{ request.host.to_s }")
     end
 
     LdapModel.setup(
