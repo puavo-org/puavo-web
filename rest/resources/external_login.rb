@@ -9,21 +9,32 @@ end
 # (but now it shows up constantly in the logs).
 no_verbose { require 'mechanize' }
 require 'net/ldap'
+require 'securerandom'
+
+# ExternalLoginError means some error occurred on our side
+# ExternalLoginNotConfigured means external logins are not configured
+#   in whatever particular case
+# ExternalLoginUnavailable means an error at external service
+# ExternalLoginWrongPassword means user is valid but had a wrong password
 
 class ExternalLoginError         < StandardError; end
 class ExternalLoginNotConfigured < ExternalLoginError; end
 class ExternalLoginUnavailable   < ExternalLoginError; end
+class ExternalLoginWrongPassword < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLogin < PuavoSinatra
-    USER_STATUS_NOCHANGE = 'NOCHANGE'
-    USER_STATUS_UPDATED  = 'UPDATED'
+    USER_STATUS_NOCHANGE         = 'NOCHANGE'
+    USER_STATUS_UPDATED          = 'UPDATED'
+    USER_STATUS_UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
 
     post '/v3/external_login' do
       userinfo = nil
       user_status = nil
 
       begin
+        # lookup related configuration information
+
         all_external_login_configs = CONFIG['external_login']
         raise ExternalLoginNotConfigured, 'external login not configured' \
           unless all_external_login_configs
@@ -67,12 +78,41 @@ module PuavoRest
           raise BadCredentials, :user => 'no user credentials provided'
         end
 
+        # setup our own ldap connection
+
+        admin_dn = external_login_config['admin_dn'].to_s
+        raise ExternalLoginError, 'admin dn is not set' \
+          if admin_dn.empty?
+        admin_dn = admin_dn
+
+        admin_password = external_login_config['admin_password'].to_s
+        raise ExternalLoginError, 'admin password is not set' \
+          if admin_password.empty?
+
+        LdapModel.setup(:credentials => {
+                          :dn       => admin_dn,
+                          :password => admin_password,
+                        },
+                        :organisation => organisation)
+
+        # try login to external service
+
         begin
           message = 'attempting external login to service' \
                       + " '#{ login_service_name }' by user '#{ username }'"
           flog.info('external login attempt', message)
           userinfo = external_login_class.login(username, password,
             external_login_params, flog)
+        rescue ExternalLoginWrongPassword => e
+          invalidated = maybe_invalidate_user_password(organisation,
+	    external_login_config, username, password)
+          if invalidated then
+            return json({
+              'status' => USER_STATUS_UPDATED_BUT_FAIL,
+              'msg'    => 'user password invalidated',
+            })
+          end
+          raise e
         rescue ExternalLoginError => e
           raise e
         rescue StandardError => e
@@ -84,6 +124,8 @@ module PuavoRest
                   + " '#{ login_service_name }' by user '#{ username }'"
           raise Unauthorized, :user => msg
         end
+
+        # update user information after successful login
 
         message = 'successful login to external service' \
                     + " by user '#{ userinfo['username'] }'"
@@ -112,21 +154,40 @@ module PuavoRest
       return json({ 'status' => user_status })
     end
 
+    def maybe_invalidate_user_password(organisation, el_config, username,
+      password)
+        user = User.by_username(username)
+        if !user then
+          flog.info(nil, "user '#{ username }' not found in Puavo, no password to invalidate")
+          return
+        end
+
+        # change user password to something random and just throw it away
+        new_password = SecureRandom.hex(128)
+
+        res = Puavo.ldap_passwd(CONFIG['ldap'],
+                                user.dn,
+                                password,
+                                new_password,
+                                user.dn)
+        case res[:exit_status]
+        when 49
+          # 49 exit status means invalid credentials, which is to be expected
+        when 0
+          # The password was valid for Puavo, but not to external login
+          # service, so we invalidated it.
+          msg = "invalidated puavo password for user '#{ username }'," \
+                  + ' because external login failed with it'
+          flog.info(nil, msg)
+          return true
+        else
+          flog.warn(nil, "error occurred when running ldappasswd: (#{ res[:exit_status] }) #{ res[:stderr] }")
+        end
+
+        return false
+    end
+
     def update_user_info(organisation, el_config, userinfo, school_dn)
-      admin_dn = el_config['admin_dn'].to_s
-      raise ExternalLoginError, 'admin dn is not set' \
-        if admin_dn.empty?
-
-      admin_password = el_config['admin_password'].to_s
-      raise ExternalLoginError, 'admin password is not set' \
-        if admin_password.empty?
-
-      LdapModel.setup(:credentials => {
-                        :dn       => admin_dn,
-                        :password => admin_password,
-                      },
-                      :organisation => organisation)
-
       if userinfo['school_dns'].nil? then
         if !school_dn.empty? then
           userinfo['school_dns'] = [ school_dn ]
@@ -206,22 +267,35 @@ module PuavoRest
                            },
                            :encryption => :simple_tls   # XXX not sufficient!
 
-      bind_filter = Net::LDAP::Filter.eq('cn', username)
-      ldap_entries = ldap.bind_as(:filter   => bind_filter,
-                                  :password => password)
-      if ldap_entries then
-        flog.info('authentication to ldap succeeded',
-                  'authentication to ldap succeeded')
-      else
-        flog.info('authentication to ldap failed',
-                  'authentication to ldap failed: ' \
-                    + ldap.get_operation_result.message)
+      user_filter = Net::LDAP::Filter.eq('cn', username)
+
+      # first check if user exists
+      ldap_entries = ldap.search(:filter => user_filter)
+      if ldap_entries.length == 0 then
+        flog.info('user does not exist in external ldap',
+                  'user does not exist in external ldap')
         return nil
       end
+      raise ExternalLoginUnavailable, 'ldap search returned too many entries' \
+        unless ldap_entries.length == 1
 
+      # then authenticate as user
+      ldap_entries = ldap.bind_as(:filter   => user_filter,
+                                  :password => password)
+      if !ldap_entries then
+        message = "authentication to ldap failed: #{ ldap.get_operation_result.message }"
+        if ldap.get_operation_result.code == Net::LDAP::ResultCodeInvalidCredentials then
+          message += ' (user password was wrong)'
+          raise ExternalLoginWrongPassword, message
+        end
+         
+        raise ExternalLoginUnavailable, message
+      end
       raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
         unless ldap_entries.length == 1
 
+      flog.info('authentication to ldap succeeded',
+                'authentication to ldap succeeded')
       ldap_entry = ldap_entries.first
 
       lookup_groups_filter \
