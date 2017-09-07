@@ -11,7 +11,7 @@
 
 <% @servers.each do |server| %>
   <tr>
-    <td data-title="<%= t("activeldap.attributes.server.puavoHostname") %>"><%= link_to server.puavoHostname, server %></td>
+    <td data-title="<%= t("activeldap.attributes.server.puavoHostname") %>"><%= link_to server.puavoHostname, server_path(server) %></td>
     <td data-title="<%= t("activeldap.attributes.server.puavoDeviceManufacturer") %>"><%=h server.puavoDeviceManufacturer %></td>
     <td data-title="<%= t("activeldap.attributes.server.puavoDeviceModel") %>"><%=h server.puavoDeviceModel %></td>
     <td data-title="<%= t("activeldap.attributes.server.serialNumber") %>"><%=h server.serialNumber %></td>
@@ -21,7 +21,7 @@
       <% end %>
     </td>
     <td class="table-actions">
-      <%= link_to server, :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete, :class => 'btn btn-danger' do %>
+      <%= link_to server_path(server), :confirm => t('destroy_confirm', :object_name => server.puavoHostname), :method => :delete, :class => 'btn btn-danger' do %>
         <i class="icon-trash"></i><%= t('link.destroy') %>
       <% end %>
     </td>
