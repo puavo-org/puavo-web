@@ -48,6 +48,10 @@ module PuavoImport
           options[:mode] = "diff"
         end
 
+        opts.on("--diff-usernames", "List of changes in username") do |m|
+          options[:mode] = "diff-usernames"
+        end
+
         opts.on("--dn DN", "User dn for LDAP connection") do |dn|
           options[:dn] = dn
         end

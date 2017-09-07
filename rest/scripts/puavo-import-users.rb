@@ -292,6 +292,27 @@ when "set-external-id"
   puts "update_external_id: #{ update_external_id }"
   puts "not_update_external_id: #{ not_update_external_id } file: #{ log_to_file("not_update_external_id")[:filename] }"
 
+
+when "diff-usernames"
+  puts "Diff usernames\n\n"
+  PuavoImport::User.all.each do |user|
+    puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+
+    unless puavo_rest_user
+      #puts "User not found from puavo: #{ user.to_s }"
+      next
+    end
+
+    if user.username.nil?
+      #puts "Username is not set: #{ user.to_s }"
+      next
+    end
+
+    if user.username != puavo_rest_user.username
+      puts "Username has changed: #{ puavo_rest_user.username } -> #{ user.username }"
+    end
+  end
+
 when "diff"
   puts "Diff users\n\n"
   PuavoImport::User.all.each do |user|
