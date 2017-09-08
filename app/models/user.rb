@@ -269,7 +269,7 @@ class User < LdapBase
       end
     end
 
-    if !self.mail.empty? && !self.mail.nil?
+    if !self.mail.nil? && !self.mail.empty?
       email_dup = User.find(:first, :attribute => "mail", :value => self.mail)
       if email_dup && email_dup.puavoId != self.puavoId
         errors.add(
