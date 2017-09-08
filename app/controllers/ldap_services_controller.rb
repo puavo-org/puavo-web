@@ -48,7 +48,7 @@ class LdapServicesController < ApplicationController
 
     respond_to do |format|
       if @ldap_service.save
-        format.html { redirect_to( @ldap_service,
+        format.html { redirect_to( ldap_service_path(@ldap_service),
                                    :notice => t('flash.added',
                                                 :item => t('activeldap.models.ldap_service') ) ) }
         format.xml  { render :xml => @ldap_service, :status => :created, :location => @ldap_service }
@@ -75,7 +75,7 @@ class LdapServicesController < ApplicationController
 
     respond_to do |format|
       if @ldap_service.update_attributes(ldap_service_params)
-        format.html { redirect_to( @ldap_service,
+        format.html { redirect_to( ldap_service_path(@ldap_service),
                                    :notice => t('flash.updated',
                                                 :item => t('activeldap.models.ldap_service' ) ) ) }
         format.xml  { head :ok }
