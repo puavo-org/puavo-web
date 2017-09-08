@@ -217,14 +217,38 @@ class SchoolsController < ApplicationController
 
   private
     def school_params
-      # arrays must be listed last due to some weird syntax thing
       return params.require(:school).permit(
-        :displayName, :cn, :puavoNamePrefix, :puavoSchoolHomePageURL, :description, :telephoneNumber,
-        :facsimileTelephoneNumber, :l, :street, :postOfficeBox, :postalAddress, :postalCode, :st,
-        :puavoLocale, :puavoExternalId, :puavoAllowGuest, :puavoPersonalDevice, :puavoAutomaticImageUpdates,
-        :puavoDeviceImage, :external_feeds, :puavoTag, :puavoDeviceOnHour, :puavoDeviceOffHour,
-        :puavoBillingInfo=>[], :puavoImageSeriesSourceURL=>[], :fs=>[], :path=>[], :mountpoint=>[],
-        :options=>[]).to_hash
+        :displayName,
+        :cn,
+        :puavoNamePrefix,
+        :puavoSchoolHomePageURL,
+        :description,
+        :telephoneNumber,
+        :facsimileTelephoneNumber,
+        :l,
+        :street,
+        :postOfficeBox,
+        :postalAddress,
+        :postalCode,
+        :st,
+        :puavoLocale,
+        :image,
+        :puavoExternalId,
+        :puavoAllowGuest,
+        :puavoPersonalDevice,
+        :puavoAutomaticImageUpdates,
+        :puavoDeviceImage,
+        :external_feeds,
+        :puavoTag,
+        :puavoDeviceOnHour,
+        :puavoDeviceOffHour,
+        :puavoBillingInfo=>[],
+        :puavoImageSeriesSourceURL=>[],
+        :fs=>[],
+        :path=>[],
+        :mountpoint=>[],
+        :options=>[]
+      ).to_hash
     end
 
 end
