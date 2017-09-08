@@ -241,7 +241,7 @@ class User < LdapBase
     end
 
     # Validate uid uniqueness only if there are no other errors in the uid
-    if errors.select{ |k,v| k == "uid" }.empty?
+    if !self.uid.nil? && !self.uid.empty? && errors.select{ |k,v| k == "uid" }.empty?
       if user = User.find(:first, :attribute => "uid", :value => self.uid)
         if user.puavoId != self.puavoId
           self.earlier_user = user
