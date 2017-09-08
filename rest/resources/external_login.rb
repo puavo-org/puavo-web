@@ -174,10 +174,19 @@ module PuavoRest
     end
 
     def check_user_is_manageable(username)
-      # XXX
-      true
-      # raise ExternalLoginNotConfigured,
-      #       "user '#{ username }' does exist but has no external id"
+      user = User.by_username(username)
+
+      # If we do not have a user with this username, that username slot is
+      # available for external logins.
+      return true unless user
+
+      # User is managed by external logins, if external_id is set to a
+      # non-empty value.
+      return true if !user.external_id.to_s.empty?
+
+      message = "user '#{ username }' exists but does not have" \
+                  + ' an external id set, refusing to manage'
+      raise ExternalLoginNotConfigured, message
     end
 
     def new_external_service_handler()
