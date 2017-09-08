@@ -24,10 +24,6 @@ class ExternalLoginWrongPassword < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLogins < PuavoSinatra
-    USER_STATUS_NOCHANGE         = 'NOCHANGE'
-    USER_STATUS_UPDATED          = 'UPDATED'
-    USER_STATUS_UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
-
     post '/v3/external_login' do
       userinfo = nil
       user_status = nil
@@ -69,17 +65,15 @@ module PuavoRest
 
         if wrong_password then
           if external_login.maybe_invalidate_password(username, password) then
-            return json({
-              'status' => USER_STATUS_UPDATED_BUT_FAIL,
-              'msg'    => 'user password invalidated',
-            })
+            msg = 'user password invalidated'
+            return external_login.status_updated_but_fail(msg)
           end
           userinfo = nil
         end
 
         if !userinfo then
           msg = 'could not login to external service' \
-                  + " '#{ external_login.service_name }' by user" \
+                  + " '#{ login_service.service_name }' by user" \
                   + " '#{ username }'"
           raise Unauthorized, :user => msg
         end
@@ -91,16 +85,16 @@ module PuavoRest
         flog.info('external login successful', message)
 
         school_dn = params[:school_dn].to_s
-        external_login.update_user_info(userinfo, school_dn)
+        user_status = external_login.update_user_info(userinfo, school_dn)
 
       rescue ExternalLoginNotConfigured => e
         flog.info('external login not configured',
                   "external login is not configured: #{ e.message }")
-        return json({ 'status' => 'NOTCONFIGURED', 'msg' => e.message })
+        user_status = external_login.status_notconfigured(e.message)
       rescue ExternalLoginUnavailable => e
         flog.warn('external login unavailable',
                   "external login is unavailable: #{ e.message }")
-        return json({ 'status' => 'UNAVAILABLE', 'msg' => e.message })
+        user_status = external_login.status_unavailable(e.message)
       rescue ExternalLoginError => e
         flog.error('external login error',
                    "external login error: #{ e.message }")
@@ -109,11 +103,17 @@ module PuavoRest
         raise InternalError, e
       end
 
-      return json({ 'status' => user_status })
+      return json(user_status)
     end
   end
 
   class ExternalLogin
+    USER_STATUS_NOCHANGE         = 'NOCHANGE'
+    USER_STATUS_NOTCONFIGURED    = 'NOTCONFIGURED'
+    USER_STATUS_UNAVAILABLE      = 'UNAVAILABLE'
+    USER_STATUS_UPDATED          = 'UPDATED'
+    USER_STATUS_UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
+
     def initialize(config, flog, host)
       # Parse config with relevant information for doing external logins.
 
@@ -128,7 +128,7 @@ module PuavoRest
         'could not determine organisation from request host' \
           unless @organisation && @organisation.domain.kind_of?(String)
 
-      organisation_name = organisation.domain.split('.')[0]
+      organisation_name = @organisation.domain.split('.')[0]
       raise ExternalLoginError,
         'could not parse organisation from organisation domain' \
           unless organisation_name
@@ -267,23 +267,52 @@ module PuavoRest
           user.save!
           @flog.info('new external login user',
                      "created a new user '#{ userinfo['username'] }'")
-          return USER_STATUS_UPDATED
+          return status_updated()
         elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
           user.save!
           @flog.info('updated external login user',
                      "updated user information for '#{ userinfo['username'] }'")
-          return USER_STATUS_UPDATED
+          return status_updated()
         else
           @flog.info('no change for external login user',
                      'no change in user information for' \
                        + " '#{ userinfo['username'] }'")
-          return USER_STATUS_NOCHANGE
+          return status_nochange()
         end
       rescue ValidationError => e
         raise ExternalLoginError,
               "error saving user because of validation errors: #{ e.message }"
       end
+    end
+
+    def status(status_string, msg)
+      { 'msg' => msg, 'status' => status_string }
+    end
+
+    def status_nochange(msg=nil)
+      status(USER_STATUS_NOCHANGE,
+             (msg || 'auth OK, no change to user information'))
+    end
+
+    def status_notconfigured(msg=nil)
+      status(USER_STATUS_NOTCONFIGURED,
+             (msg || 'external logins not configured'))
+    end
+
+    def status_unavailable(msg=nil)
+      status(USER_STATUS_UNAVAILABLE,
+             (msg || 'external login service not available'))
+    end
+
+    def status_updated(msg=nil)
+      status(USER_STATUS_UPDATED,
+             (msg || 'auth OK, user information updated'))
+    end
+
+    def status_updated_but_fail(msg=nil)
+      status(USER_STATUS_UPDATED_BUT_FAIL,
+             (msg || 'auth FAILED, user information updated'))
     end
   end
 
