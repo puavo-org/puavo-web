@@ -34,7 +34,7 @@ class OrganisationsController < ApplicationController
     @organisation = LdapOrganisation.current
 
     respond_to do |format|
-      if @organisation.update_attributes(params[:ldap_organisation])
+      if @organisation.update_attributes(organisation_params)
         format.html { redirect_to( organisation_path ) }
       else
         format.html { render :action => "edit" }
@@ -119,5 +119,34 @@ class OrganisationsController < ApplicationController
       format.html { redirect_to(owners_organisation_path) }
     end
   end
+
+  private
+    def organisation_params
+      return params.require(:ldap_organisation).permit(
+        :o,
+        :puavoEduOrgAbbreviation,
+        :description,
+        :telephoneNumber,
+        :facsimileTelephoneNumber,
+        :l,
+        :street,
+        :postOfficeBox,
+        :postalAddress,
+        :postalCode,
+        :st,
+        :puavoLocale,
+        :puavoTimezone,
+        :puavoKeyboardLayout,
+        :puavoKeyboardVariant,
+        :puavoAutomaticImageUpdates,
+        :eduOrgHomePageURI,
+        :puavoDeviceAutoPowerOffMode,
+        :puavoDeviceOnHour,
+        :puavoDeviceOffHour,
+        :puavoDeviceImage,
+        :puavoImageSeriesSourceURL=>[],
+        :puavoBillingInfo=>[]
+      ).to_hash
+    end
 
 end
