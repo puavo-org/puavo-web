@@ -66,7 +66,7 @@ module PuavoRest
         if wrong_password then
           if external_login.maybe_invalidate_password(username, password) then
             msg = 'user password invalidated'
-            return external_login.status_updated_but_fail(msg)
+            return json(external_login.status_updated_but_fail(msg))
           end
           userinfo = nil
         end
