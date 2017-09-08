@@ -147,7 +147,7 @@ PuavoUsers::Application.routes.draw do
     match 'add_owner/:user_id' => 'organisations#add_owner', :as => :add_owner_organisations, :via => :put
 
     match 'wlan' => 'organisations#wlan', :as => :wlan_organisation, :via => :get
-    match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :put
+    match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :patch
 
     resource :organisation, :only => [:show, :edit, :update]
     get "search" => "users_search#index", :as => :search_index
