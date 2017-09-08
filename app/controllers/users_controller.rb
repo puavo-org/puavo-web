@@ -307,9 +307,22 @@ class UsersController < ApplicationController
   private
     def user_params
       return params.require(:user).permit(
-          :givenName, :sn, :uid, :puavoLocale, :puavoEduPersonPersonnelNumber, :puavoLocked,
-          :puavoSshPublicKey, :puavoExternalId, :new_password, :new_password_confirmation,
-          :mail=>[], :telephoneNumber=>[], :puavoEduPersonAffiliation=>[]).to_hash
+          :givenName,
+          :sn,
+          :uid,
+          :puavoLocale,
+          :puavoAllowRemoteAccess,
+          :puavoEduPersonPersonnelNumber,
+          :image,
+          :puavoLocked,
+          :puavoSshPublicKey,
+          :puavoExternalId,
+          :new_password,
+          :new_password_confirmation,
+          :mail=>[],
+          :telephoneNumber=>[],
+          :puavoEduPersonAffiliation=>[],
+          :role_ids=>[]).to_hash
     end
 
 end
