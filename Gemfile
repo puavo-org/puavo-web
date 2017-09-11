@@ -4,10 +4,10 @@ File.open("./Gemfile.shared") do |f|
   eval f.read, nil, "./Gemfile.shared"
 end
 
-gem "pry"
+gem "pry", "~> 0.10.1"
 gem "unicorn", "~> 4.8.3"
-gem "fluent-logger"
-gem "gibberish"
+gem "fluent-logger", "~> 0.4.3"
+gem "gibberish", "~> 1.4.0"
 gem "http"
 gem "sinatra-support", :require => "sinatra/support"
 gem "jwt"
