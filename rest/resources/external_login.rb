@@ -81,7 +81,12 @@ module PuavoRest
           # user information is missing from external login service
           # and user must be removed from Puavo.
           user_to_remove = User.by_username(username)
-          user_to_remove.destroy if user_to_remove
+          # XXX user_to_remove object does not currently support removing!
+          # XXX Besides, even if the user is removed (from Puavo),
+          # XXX its kerberos credentials stay, thus user may remain
+          # XXX usable in some contexts!  These issues should be solved
+          # XXX before enabling this:
+          # XXX user_to_remove.destroy if user_to_remove
         end
 
         if !userinfo then
