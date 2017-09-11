@@ -369,6 +369,8 @@ module PuavoRest
       update_ldapuserinfo(username)
       return nil unless @ldap_userinfo
 
+      user_filter = Net::LDAP::Filter.eq('cn', username)
+
       # then authenticate as user
       ldap_entries = @ldap.bind_as(:filter   => user_filter,
                                    :password => password)
