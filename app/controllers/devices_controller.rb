@@ -156,7 +156,7 @@ class DevicesController < ApplicationController
     @school_printers = school_printers
 
     respond_to do |format|
-      if @device.update_attributes(device_params)
+      if @device.update_attributes(dp)
         format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully updated.') }
         format.xml  { head :ok }
       else
@@ -266,12 +266,30 @@ class DevicesController < ApplicationController
   end
 
   def device_params
-    # arrays must be listed last due to some weird syntax thing
     return params.require(:device).permit(
-      :puavoDeviceType, :puavoHostname, :puavoTag, :puavoDeviceManufacturer, :puavoDeviceModel,
-      :serialNumber, :ipHostNumber, :description, :puavoPurchaseDate, :puavoWarrantyEndDate,
-      :puavoPurchaseLocation, :puavoPurchaseURL, :puavoSupportContract, :puavoLocationName,
-      :puavoLatitude, :puavoLongitude, :macAddress=>[]).to_hash
+      :puavoDeviceType,
+      :puavoHostname,
+      :puavoTag,
+      :image,
+      :puavoDeviceManufacturer,
+      :puavoDeviceModel,
+      :serialNumber,
+      :ipHostNumber,
+      :description,
+      :puavoPurchaseDate,
+      :puavoWarrantyEndDate,
+      :puavoPurchaseLocation,
+      :puavoPurchaseURL,
+      :puavoSupportContract,
+      :puavoLocationName,
+      :puavoLatitude,
+      :puavoLongitude,
+      :printerDescription,
+      :printerURI,
+      :printerLocation,
+      :printerMakeAndModel,
+      :puavoPrinterCartridge,
+      :macAddress=>[]).to_hash
   end
 
 end
