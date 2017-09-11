@@ -5,7 +5,7 @@
             default_image_or_user_image_path(
               image_user_path(@user.school.id, @user),
               @user ),
-            :class => "image" ) %>
+            class: "image" ) %>
     </td>
     <td>
       <h1><%=h @user.displayName %></h1>
@@ -135,7 +135,7 @@
 
 <ul class="sub-tools">
 <li>
-  <%= link_to edit_user_path(@school, @user), :class => 'btn' do %>
+  <%= link_to edit_user_path(@school, @user), class: 'btn' do %>
   <i class='icon-pencil'></i><%=t('link.edit')%>
   <% end %>
 </li>
@@ -148,8 +148,7 @@
   <% end %>
 </li>
 <li>
-  <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm',
-object_name: @user.displayName) }, method: :delete do %>
+  <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
     <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
 </li>
