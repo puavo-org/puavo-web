@@ -64,7 +64,11 @@ module PuavoRest
         end
 
         if wrong_password then
-          if external_login.maybe_invalidate_password(username, password) then
+          external_id = login_service.lookup_external_id(username)
+          invalidated = external_login.maybe_invalidate_password(username,
+                                                                 external_id,
+                                                                 password)
+          if invalidated then
             msg = 'user password invalidated'
             return json(external_login.status_updated_but_fail(msg))
           end
@@ -195,11 +199,11 @@ module PuavoRest
                                 @flog)
     end
 
-    def maybe_invalidate_password(username, password)
-      user = User.by_username(username)
+    def maybe_invalidate_password(username, external_id, password)
+      user = User.by_attr(:external_id, external_id)
       if !user then
-        msg = "user '#{ username }' not found in Puavo," \
-                + ' no password to invalidate'
+        msg = "user with external id '#{ external_id }' (#{ username }?)" \
+              + ' not found in Puavo, no password to invalidate'
         @flog.info(nil, msg)
         return false
       end
@@ -222,7 +226,8 @@ module PuavoRest
       when 0
         # The password was valid for Puavo, but not to external login
         # service, so we invalidated it.
-        msg = "invalidated puavo password for user '#{ username }'," \
+        msg = 'invalidated puavo password for user with external id' \
+                + " '#{ external_id }' (#{ username }?)" \
                 + ' because external login failed with it'
         @flog.info(nil, msg)
         return true
@@ -354,20 +359,15 @@ module PuavoRest
                               :password => bind_password.to_s,
                             },
                             :encryption => :simple_tls   # XXX not sufficient!
+
+      @ldap_userinfo = nil
+      @username = nil
     end
 
     def login(username, password)
-      user_filter = Net::LDAP::Filter.eq('cn', username)
-
       # first check if user exists
-      ldap_entries = @ldap.search(:filter => user_filter)
-      if ldap_entries.length == 0 then
-        @flog.info('user does not exist in external ldap',
-                   'user does not exist in external ldap')
-        return nil
-      end
-      raise ExternalLoginUnavailable, 'ldap search returned too many entries' \
-        unless ldap_entries.length == 1
+      update_ldapuserinfo(username)
+      return nil unless @ldap_userinfo
 
       # then authenticate as user
       ldap_entries = @ldap.bind_as(:filter   => user_filter,
@@ -388,11 +388,16 @@ module PuavoRest
 
       @flog.info('authentication to ldap succeeded',
                  'authentication to ldap succeeded')
-      ldap_entry = ldap_entries.first
+
+      get_userinfo(password)
+   end
+
+   def get_userinfo(password)
+      return nil unless @username && @ldap_userinfo
 
       lookup_groups_filter \
         = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
-            .&(Net::LDAP::Filter.eq('memberUid', username))
+            .&(Net::LDAP::Filter.eq('memberUid', @username))
       groups_result = @ldap.search(:filter => lookup_groups_filter)
       groups = Hash[
         groups_result.map do |g|
@@ -401,13 +406,14 @@ module PuavoRest
       ]
 
       # XXX check that these are not nonsense?
+      # XXX group information still missing
       userinfo = {
-        'external_id' => Array(ldap_entry['dn']).first.to_s,
-        'first_name'  => Array(ldap_entry['givenname']).first.to_s,
+        'external_id' => Array(@ldap_userinfo['dn']).first.to_s,
+        'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
         # 'groups'     => groups,
-        'last_name'   => Array(ldap_entry['sn']).first.to_s,
+        'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
         'password'    => password,
-        'username'    => Array(ldap_entry['uid']).first.to_s,
+        'username'    => Array(@ldap_userinfo['uid']).first.to_s,
       }
 
       # XXX We presume that ldap result strings are UTF-8.  This might be a
@@ -417,6 +423,40 @@ module PuavoRest
       end
 
       userinfo
+    end
+
+    def lookup_external_id(username)
+      update_ldapuserinfo(username)
+      external_id = @ldap_userinfo && Array(@ldap_userinfo['dn']).first.to_s
+      if !external_id || external_id.empty? then
+        raise ExternalLoginUnavailable,
+              "could not lookup external id for user '#{ username }'"
+      end
+
+      external_id
+    end
+
+    private
+
+    def update_ldapuserinfo(username)
+      return if @username && @username == username
+
+      user_filter = Net::LDAP::Filter.eq('cn', username)
+
+      ldap_entries = @ldap.search(:filter => user_filter)
+      if ldap_entries.length == 0 then
+        @flog.info('user does not exist in external ldap',
+                   "user '#{ username }' does not exist in external ldap")
+        @ldap_userinfo = nil
+      elsif ldap_entries.length == 1 then
+        @flog.info('looked up user from external ldap',
+                   "looked up user '#{ username }' from external ldap")
+        @ldap_userinfo = ldap_entries.first
+      else
+        raise ExternalLoginUnavailable, 'ldap search returned too many entries'
+      end
+
+      @username = username
     end
   end
 
