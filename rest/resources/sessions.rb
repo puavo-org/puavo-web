@@ -113,6 +113,9 @@ class Sessions < PuavoSinatra
               :user => 'Requested authoritative answer but ldapmaster not known'
       end
 
+      msg = 'authoritative session requested,' \
+              + ' setting up ldap connection to ldapmaster'
+      flog.info(msg, msg)
       LdapModel.disconnect()
       auth :basic_auth, :server_auth, :kerberos
       LdapModel.setup(:ldap_server => CONFIG['ldapmaster'])
