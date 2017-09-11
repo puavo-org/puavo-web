@@ -82,7 +82,5 @@ module PuavoUsers
 
     Rails.application.config.enable_dependency_loading = true
 
-    config.action_controller.raise_on_unfiltered_parameters = true
-
   end
 end
