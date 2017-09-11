@@ -148,7 +148,8 @@
   <% end %>
 </li>
 <li>
-  <%= link_to( user_path(@school, @user.puavoId), :confirm => t('destroy_confirm', :object_name => @user.displayName), :method => :delete) do %>
+  <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm',
+object_name: @user.displayName) }, method: :delete do %>
     <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
 </li>
