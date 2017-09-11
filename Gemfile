@@ -22,10 +22,10 @@ group :assets do
 end
 
 group :test do
-  gem "capybara"
+  gem "capybara", "~> 2.4.4"
   gem "colorize"
-  gem "cucumber"
-  gem "cucumber-rails"
+  gem "cucumber", "~> 1.3.19"
+  gem "cucumber-rails", "~> 1.4.2"
   gem "database_cleaner"
   gem "greenletters"
   gem "rbtrace"
