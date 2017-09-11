@@ -20,6 +20,7 @@ require 'securerandom'
 class ExternalLoginError         < StandardError; end
 class ExternalLoginNotConfigured < ExternalLoginError; end
 class ExternalLoginUnavailable   < ExternalLoginError; end
+class ExternalLoginUserMissing   < ExternalLoginError; end
 class ExternalLoginWrongPassword < ExternalLoginError; end
 
 module PuavoRest
@@ -53,7 +54,10 @@ module PuavoRest
                       + " '#{ username }'"
           flog.info('external login attempt', message)
           userinfo = login_service.login(username, password)
+        rescue ExternalLoginUserMissing => e
+          userinfo = nil
         rescue ExternalLoginWrongPassword => e
+          userinfo = nil
           wrong_password = true
         rescue ExternalLoginError => e
           raise e
@@ -72,7 +76,12 @@ module PuavoRest
             msg = 'user password invalidated'
             return json(external_login.status_updated_but_fail(msg))
           end
-          userinfo = nil
+        elsif !userinfo then
+          # no user information, but password was not wrong, therefore
+          # user information is missing from external login service
+          # and user must be removed from Puavo.
+          user_to_remove = User.by_username(username)
+          user_to_remove.destroy if user_to_remove
         end
 
         if !userinfo then
@@ -367,7 +376,6 @@ module PuavoRest
     def login(username, password)
       # first check if user exists
       update_ldapuserinfo(username)
-      return nil unless @ldap_userinfo
 
       user_filter = Net::LDAP::Filter.eq('cn', username)
 
@@ -392,11 +400,23 @@ module PuavoRest
                  'authentication to ldap succeeded')
 
       get_userinfo(password)
-   end
+    end
 
-   def get_userinfo(password)
-      return nil unless @username && @ldap_userinfo
+    def lookup_external_id(username)
+      update_ldapuserinfo(username)
 
+      external_id = @ldap_userinfo && Array(@ldap_userinfo['dn']).first.to_s
+      if !external_id || external_id.empty? then
+        raise ExternalLoginUnavailable,
+              "could not lookup external id for user '#{ username }'"
+      end
+
+      external_id
+    end
+
+    private
+
+    def get_userinfo(password)
       lookup_groups_filter \
         = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
             .&(Net::LDAP::Filter.eq('memberUid', @username))
@@ -427,38 +447,32 @@ module PuavoRest
       userinfo
     end
 
-    def lookup_external_id(username)
-      update_ldapuserinfo(username)
-      external_id = @ldap_userinfo && Array(@ldap_userinfo['dn']).first.to_s
-      if !external_id || external_id.empty? then
-        raise ExternalLoginUnavailable,
-              "could not lookup external id for user '#{ username }'"
-      end
-
-      external_id
-    end
-
-    private
-
     def update_ldapuserinfo(username)
       return if @username && @username == username
 
       user_filter = Net::LDAP::Filter.eq('cn', username)
 
       ldap_entries = @ldap.search(:filter => user_filter)
+      if !ldap_entries then
+        msg = "ldap search for user '#{ username }' failed: " \
+                + @ldap.get_operation_result.message
+        raise ExternalLoginUnavailable, msg
+      end
+
       if ldap_entries.length == 0 then
-        @flog.info('user does not exist in external ldap',
-                   "user '#{ username }' does not exist in external ldap")
-        @ldap_userinfo = nil
-      elsif ldap_entries.length == 1 then
-        @flog.info('looked up user from external ldap',
-                   "looked up user '#{ username }' from external ldap")
-        @ldap_userinfo = ldap_entries.first
-      else
+        msg = "user '#{ username }' does not exist in external ldap"
+        @flog.info('user does not exist in external ldap', msg)
+        raise ExternalLoginUserMissing, msg
+      end
+
+      if ldap_entries.length > 1
         raise ExternalLoginUnavailable, 'ldap search returned too many entries'
       end
 
+      @flog.info('looked up user from external ldap',
+                 "looked up user '#{ username }' from external ldap")
       @username = username
+      @ldap_userinfo = ldap_entries.first
     end
   end
 
