@@ -50,9 +50,9 @@
     <div class="column_1">
       <%= text_field_tag( "user_search",
           nil,
-          :class => "user_search",
-          :size => 50,
-          :placeholder => t('.placeholder_for_search') ) %>
+          class: "user_search",
+          size: 50,
+          placeholder: t('.placeholder_for_search') ) %>
     </div>
   </div>
 </div>
@@ -105,7 +105,7 @@
 <% content_for :right do %>
 <ul class="sub-tools">
   <li>
-    <%= link_to edit_group_path(@school, @group), :class => 'btn' do %>
+    <%= link_to edit_group_path(@school, @group), class: 'btn' do %>
       <i class="icon-pencil"></i><%= t('link.edit') %>
     <% end %>
   </li>
@@ -118,7 +118,7 @@
       <% end %>
     </li>
     <li>
-      <%= link_to group_path(@school, @group), :confirm => t('general_confirm'), :method => :delete  do %>
+      <%= link_to group_path(@school, @group), :confirm => t('general_confirm'), method: :delete  do %>
       <i class="icon-trash"></i><%= t('link.destroy') %>
       <% end %>
     </li>
