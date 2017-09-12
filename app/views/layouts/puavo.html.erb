@@ -27,7 +27,7 @@
     <div class="span-16">
     <ul id="top-menu" class="menu">
         <% if current_user %>
-            <li><%= link_to "Schools",  schools_path, :class => "sub" %>
+            <li><%= link_to "Schools",  schools_path, class: "sub" %>
               <ul>
                 <% school_list.each do |school| %>
                   <li<% if school_list.last == school %> class="last"<% end %>><%= link_to school.displayName,  school_path(school) %></li>
