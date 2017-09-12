@@ -1,6 +1,6 @@
 <p class='required_info'><%= t('layouts.forms.required_field')%></tr>
 
-<%= form_for(@school, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
+<%= form_for(@school, url: path, html: { method: method, multipart: true })  do |f| %>
 <table>
   <tr>
     <td class='required'>
@@ -150,7 +150,7 @@
         <% end %>
       <% end %>
     </div>
-    <%= link_to "#", :class => "clone_prev_input_element btn" do %>
+    <%= link_to "#", class: "clone_prev_input_element btn" do %>
       <i class="icon-plus"></i><%= t('.add_puavo_billing_info') %>
     <% end %>
 
@@ -197,8 +197,8 @@
   <tr>
     <td></td>
     <td>
-      <%= f.submit submit_text, :class=>'btn' %>
-      <div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'btn btn-danger' %>
+      <%= f.submit submit_text, class: 'btn' %>
+      <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %>
     </td>
   </tr>
 </table>
