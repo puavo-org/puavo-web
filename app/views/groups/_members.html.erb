@@ -5,7 +5,7 @@
       <%= "#{ member.givenName } #{ member.sn} (#{ member.uid })" %>
     </div>
     <div class="column_2">
-      <%= link_to(t('.remove'), remove_user_group_path(:school_id => member.school.id, :id => @group.puavoId, :user_id => member.puavoId), :remote => true, :method => :put, :class => "btn") %>
+      <%= link_to(t('.remove'), remove_user_group_path(school_id: member.school.id, id: @group.puavoId, :user_id => member.puavoId), remote: true, method: :put, class: "btn") %>
     </div>
   </div>
   <% end %>
