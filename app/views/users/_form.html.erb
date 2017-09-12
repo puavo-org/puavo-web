@@ -1,21 +1,21 @@
 <p class='required_info'><%= t('layouts.forms.required_field')%></p>
-<%= form_for(@user, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
+<%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
 
   <table>
     <tr>
       <td class='required'><%= f.label :givenName %></td>
-      <td><%= f.text_field :givenName, :disabled => @user.read_only? %></td>
+      <td><%= f.text_field :givenName, disabled: @user.read_only? %></td>
     </tr>
     <tr>
       <td class='required'><%= f.label :sn %></td>
-      <td><%= f.text_field :sn, :disabled => @user.read_only? %></td>
+      <td><%= f.text_field :sn, disabled: @user.read_only? %></td>
     </tr>
     <tr>
       <td class='required'><%= f.label :uid %></td>
-      <td><%= f.text_field :uid, :disabled => @user.read_only? %></td>
+      <td><%= f.text_field :uid, disabled: @user.read_only? %></td>
     </tr>
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :mail, :for => "user_mail_0" %></td>
+      <td class="label_for_input_text_list"><%= f.label :mail, for: "user_mail_0" %></td>
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
@@ -140,12 +140,12 @@
 
   <tr>
     <td class='required'><%= f.label :new_password %></td>
-    <td><%= f.password_field :new_password, :value => @user.new_password  %></td>
+    <td><%= f.password_field :new_password, value: @user.new_password  %></td>
   </tr>
 
   <tr>
     <td class='required'><%= f.label :new_password_confirmation %></td>
-    <td><%= f.password_field :new_password_confirmation, :value => @user.new_password_confirmation  %></td>
+    <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation  %></td>
   </tr>
   <tr>
     <td></td>
