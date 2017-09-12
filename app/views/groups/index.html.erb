@@ -19,12 +19,12 @@
       <%= humanize_group_type(group.puavoEduGroupType) %>
     </td>
     <td data-title="<%=t('.actions')%>" class="table-actions">
-      <%= link_to edit_group_path(@school, group), :class=> "btn" do%>
+      <%= link_to edit_group_path(@school, group), class: "btn" do%>
         <i class='icon-pencil'></i><%= t('link.edit') %>
       <% end %>
     </td>
     <td class="table-actions">
-      <%= link_to group_path(@school, group), :confirm => t('general_confirm'), :method => :delete, :class=> "btn btn-danger" do%>
+      <%= link_to group_path(@school, group), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do%>
         <i class='icon-trash'></i><%= t('link.destroy')%>
       <% end %>
     </td>
@@ -34,7 +34,7 @@
 
 <% content_for :right do %>
 <div>
-  <%= link_to new_group_path(@school), :class => 'btn' do%>
+  <%= link_to new_group_path(@school), class: 'btn' do%>
   <i class='icon-plus'></i><%= t('link.new_group') %>
   <% end %>
 </div>
