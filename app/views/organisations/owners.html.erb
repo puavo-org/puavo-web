@@ -15,9 +15,9 @@
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
       <%= link_to( t('link.remove'),
                    remove_owner_organisations_path(u),
-                   :method => :put,
-                   :id => "remove_user_#{u.id}",
-                   :class=> "btn btn-danger" ) %>
+                   method: :put,
+                   id: "remove_user_#{u.id}",
+                   class: "btn btn-danger" ) %>
       </div>
     <% end %>
   </span>
@@ -31,9 +31,9 @@
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
       <%= link_to( t('link.add'),
                    add_owner_organisations_path(u),
-                   :method => :put,
-                   :id => "add_user_#{u.id}",
-                   :class=> "btn" ) %>
+                   method: :put,
+                   id: "add_user_#{u.id}",
+                   class: "btn" ) %>
       </div>
     <% end %>
     </span>
