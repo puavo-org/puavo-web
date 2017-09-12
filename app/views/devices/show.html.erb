@@ -10,7 +10,7 @@
 <% content_for :right do %>
 <ul class="sub-tools">
   <li>
-    <%= link_to edit_device_path(@school, @device), :class => 'btn' do %>
+    <%= link_to edit_device_path(@school, @device), class: 'btn' do %>
       <i class="icon-pencil"></i><%= t('link.edit') %>
     <% end %>
   </li>
@@ -30,9 +30,8 @@
         <% end %>
       </li>
       <li>
-        <%= link_to(device_path(@school, @device),
-        :confirm => t('destroy_confirm', :object_name => @device.puavoHostname),
-        :method => :delete ) do %>
+        <%= link_to(device_path(@school, @device), data: { confirm: t('destroy_confirm', object_name: @device.puavoHostname) },
+          method: :delete ) do %>
           <i class="icon-trash"></i><%= t('link.destroy') %>
         <% end %>
       </li>
