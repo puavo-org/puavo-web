@@ -118,7 +118,7 @@
       <% end %>
     </li>
     <li>
-      <%= link_to group_path(@school, @group), :confirm => t('general_confirm'), method: :delete  do %>
+      <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
       <i class="icon-trash"></i><%= t('link.destroy') %>
       <% end %>
     </li>
