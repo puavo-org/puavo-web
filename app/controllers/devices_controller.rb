@@ -111,9 +111,11 @@ class DevicesController < ApplicationController
   def create
     device_objectClass = params[:device][:classes]
     params[:device].delete(:classes)
-    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
-    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
-    @device = Device.new( { :objectClass => device_objectClass }.merge(device_params))
+
+    dp = device_params
+    handle_date_multiparameter_attribute(dp, :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(dp, :puavoWarrantyEndDate)
+    @device = Device.new( { :objectClass => device_objectClass }.merge(dp))
     @device.puavoSchool = @school.dn
 
     if @device.valid?
@@ -150,8 +152,9 @@ class DevicesController < ApplicationController
     end
     @device.save!
 
-    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
-    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
+    dp = device_params
+    handle_date_multiparameter_attribute(dp, :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(dp, :puavoWarrantyEndDate)
 
     @school_printers = school_printers
 
