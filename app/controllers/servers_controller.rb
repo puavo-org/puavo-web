@@ -94,15 +94,17 @@ class ServersController < ApplicationController
     @server = Server.find(params[:id])
     @schools = School.all
 
-    handle_date_multiparameter_attribute(params[:server], :puavoPurchaseDate)
-    handle_date_multiparameter_attribute(params[:server], :puavoWarrantyEndDate)
+    sp = server_params
 
-    @server.attributes = params[:server]
+    handle_date_multiparameter_attribute(sp, :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(sp, :puavoWarrantyEndDate)
+
+    @server.attributes = sp
 
     # Just updating attributes is not enough for removing #puavoSchool value
     # when no checkboxes are checked because params[:server][:puavoSchool] will
     # be nil and it will be just ignored by attributes update
-    @server.puavoSchool = params[:server][:puavoSchool]
+    @server.puavoSchool = sp["puavoSchool"]
 
     respond_to do |format|
       if @server.save
@@ -145,4 +147,60 @@ class ServersController < ApplicationController
       format.html { redirect_to(server_path(@server), :notice => 'Server was successfully set to install mode.') }
     end
   end
+
+  private
+    def server_params
+      server = params.require(:server).permit(
+        :puavoHostname,
+        :puavoTag,
+        :puavoDeviceStatus,
+        :image,
+        :puavoDeviceManufacturer,
+        :puavoDeviceModel,
+        :serialNumber,
+        :primary_user_uid,
+        :puavoPrinterDeviceURI,
+        :puavoPrinterPPD,
+        :puavoDefaultPrinter,
+        :puavoDeviceDefaultAudioSource,
+        :puavoDeviceDefaultAudioSink,
+        :description,
+        :puavoPurchaseDate,
+        :puavoWarrantyEndDate,
+        :puavoPurchaseLocation,
+        :puavoPurchaseURL,
+        :puavoSupportContract,
+        :puavoLocationName,
+        :puavoLatitude,
+        :puavoLongitude,
+        :puavoDeviceXserver,
+        :puavoDeviceXrandrDisable,
+        :puavoDeviceResolution,
+        :puavoDeviceHorzSync,
+        :puavoDeviceVertRefresh,
+        :puavoDeviceImage,
+        :puavoDeviceKernelVersion,
+        :puavoDeviceKernelArguments,
+        :macAddress=>[],
+        :puavoImageSeriesSourceURL=>[],
+        :fs=>[],
+        :path=>[],
+        :mountpoint=>[],
+        :options=>[],
+        :puavoExport=>[],
+        :puavoSchool=>[]
+      ).to_hash
+
+      # For some reason, server parameters have been split into
+      # multiple hashes and each one must be permitted separately.
+      # Perhaps there is a better way to do this?
+
+      device = params.require(:device).permit(
+        :puavoDeviceXrandr=>[]
+      ).to_hash
+
+      return server.merge(device)
+
+    end
+
 end
