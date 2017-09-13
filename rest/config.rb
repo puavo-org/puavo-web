@@ -26,6 +26,7 @@ default_config = {
 if ENV["RACK_ENV"] == "test"
   CONFIG = {
     "ldap" => fqdn,
+    "ldapmaster" => PUAVO_ETC.get(:ldap_master),
     "topdomain" => "opinsys.net",
     "ltsp_server_data_dir" => "/tmp/puavo-rest-test",
     "default_organisation_domain" => "example.opinsys.net",
