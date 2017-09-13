@@ -62,10 +62,12 @@ class ServersController < ApplicationController
   # POST /servers
   # POST /servers.xml
   def create
-    handle_date_multiparameter_attribute(params[:server], :puavoPurchaseDate)
-    handle_date_multiparameter_attribute(params[:server], :puavoWarrantyEndDate)
+    sp = server_params
 
-    @server = Server.new(params[:server])
+    handle_date_multiparameter_attribute(sp, :puavoPurchaseDate)
+    handle_date_multiparameter_attribute(sp, :puavoWarrantyEndDate)
+
+    @server = Server.new(sp)
 
     if @server.valid?
       unless @server.host_certificate_request.nil?
