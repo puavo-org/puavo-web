@@ -80,6 +80,8 @@ en:
       devices: Devices
       servers: Servers
       ldap_services: LDAP services
+      external_files: External files
+      wlan: Wireless networks
       about: About
       printers: Printers
       search_placeholder: Search
@@ -819,6 +821,8 @@ en:
       path: Path
       mountpoint: Mountpoint
       options: Options
+    form_auto_power_off_settings:
+      select: Select
   devices:
     index:
       add_new_device: Add new device
