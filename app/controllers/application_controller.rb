@@ -99,14 +99,14 @@ class ApplicationController < ActionController::Base
   end
 
   def handle_date_multiparameter_attribute(object_params, attribute)
-    if !object_params[:"#{attribute}(1i)"].nil? && !object_params[:"#{attribute}(1i)"].empty? &&
-       !object_params[:"#{attribute}(2i)"].nil? && !object_params[:"#{attribute}(2i)"].empty? &&
-       !object_params[:"#{attribute}(3i)"].nil? && !object_params[:"#{attribute}(3i)"].empty?
+    year = object_params["#{attribute}(1i)"]
+    month = object_params["#{attribute}(2i)"]
+    day = object_params["#{attribute}(3i)"]
 
-      object_params[attribute] = Time.local( object_params[:"#{attribute}(1i)"].to_i, 
-                                             object_params[:"#{attribute}(2i)"].to_i,
-                                             object_params[:"#{attribute}(3i)"].to_i )
+    if !year.nil? && !year.empty? && !month.nil? && !month.empty? && !day.nil? && !day.empty?
+        object_params[attribute] = Time.local(year.to_i, month.to_i, day.to_i)
     end
+
   end
 
   def puavo_users?
