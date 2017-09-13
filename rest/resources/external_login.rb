@@ -74,7 +74,7 @@ module PuavoRest
                                                                  password)
           if invalidated then
             msg = 'user password invalidated'
-            return json(external_login.status_updated_but_fail(msg))
+            return json(ExternalLogin.status_updated_but_fail(msg))
           end
         elsif !userinfo then
           # no user information, but password was not wrong, therefore
@@ -108,11 +108,11 @@ module PuavoRest
       rescue ExternalLoginNotConfigured => e
         flog.info('external login not configured',
                   "external login is not configured: #{ e.message }")
-        user_status = external_login.status_notconfigured(e.message)
+        user_status = ExternalLogin.status_notconfigured(e.message)
       rescue ExternalLoginUnavailable => e
         flog.warn('external login unavailable',
                   "external login is unavailable: #{ e.message }")
-        user_status = external_login.status_unavailable(e.message)
+        user_status = ExternalLogin.status_unavailable(e.message)
       rescue ExternalLoginError => e
         flog.error('external login error',
                    "external login error: #{ e.message }")
@@ -286,18 +286,18 @@ module PuavoRest
           user.save!
           @flog.info('new external login user',
                      "created a new user '#{ userinfo['username'] }'")
-          return status_updated()
+          return self.class.status_updated()
         elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
           user.save!
           @flog.info('updated external login user',
                      "updated user information for '#{ userinfo['username'] }'")
-          return status_updated()
+          return self.class.status_updated()
         else
           @flog.info('no change for external login user',
                      'no change in user information for' \
                        + " '#{ userinfo['username'] }'")
-          return status_nochange()
+          return self.class.status_nochange()
         end
       rescue ValidationError => e
         raise ExternalLoginError,
@@ -305,31 +305,31 @@ module PuavoRest
       end
     end
 
-    def status(status_string, msg)
+    def self.status(status_string, msg)
       { 'msg' => msg, 'status' => status_string }
     end
 
-    def status_nochange(msg=nil)
+    def self.status_nochange(msg=nil)
       status(USER_STATUS_NOCHANGE,
              (msg || 'auth OK, no change to user information'))
     end
 
-    def status_notconfigured(msg=nil)
+    def self.status_notconfigured(msg=nil)
       status(USER_STATUS_NOTCONFIGURED,
              (msg || 'external logins not configured'))
     end
 
-    def status_unavailable(msg=nil)
+    def self.status_unavailable(msg=nil)
       status(USER_STATUS_UNAVAILABLE,
              (msg || 'external login service not available'))
     end
 
-    def status_updated(msg=nil)
+    def self.status_updated(msg=nil)
       status(USER_STATUS_UPDATED,
              (msg || 'auth OK, user information updated'))
     end
 
-    def status_updated_but_fail(msg=nil)
+    def self.status_updated_but_fail(msg=nil)
       status(USER_STATUS_UPDATED_BUT_FAIL,
              (msg || 'auth FAILED, user information updated'))
     end
