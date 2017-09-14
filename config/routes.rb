@@ -86,8 +86,8 @@ PuavoUsers::Application.routes.draw do
     match '/login/theme' => 'sessions#theme', :as => :login_theme, :via => :get, :format => :css
 
     resources :sessions
-    get 'schools/:id/image' => 'schools#image'
-    get '/' => 'schools#index', :as => :image_school
+    get 'schools/:id/image' => 'schools#image', :as => :image_school
+    get '/' => 'schools#index'
     match ':school_id/users/import/refine' => 'users/import#refine', :as => :refine_users_import, :via => :post
     match ':school_id/users/import/validate' => 'users/import#validate', :as => :validate_users_import, :via => [:post]
     match ':school_id/users/import/new' => 'users/import#new', :as => :new_users_import, :via => :get
