@@ -3,113 +3,121 @@ require_relative "./helper"
 describe PuavoRest::ExternalLogin do
 
   before(:each) do
+    @orig_config = CONFIG.dup
+
+    org_conf_path = '../../../config/organisations.yml'
+    organisations = YAML.load_file(File.expand_path(org_conf_path, __FILE__))
+
+    CONFIG['external_login'] = {
+      'hogwarts' => {
+        'admin_dn'       => PUAVO_ETC.ldap_dn,
+        'admin_password' => PUAVO_ETC.ldap_password,
+        'service'        => 'external_ldap',
+        'external_ldap'  => {
+          'base'          => 'dc=edu,dc=heroes,dc=fi',
+          'bind_dn'       => organisations['heroes']['owner'],
+          'bind_password' => organisations['heroes']['owner_pw'],
+          'port'          => '636',
+          'server'        => 'localhost',
+        }
+      }
+    }
+
     Puavo::Test.clean_up_ldap
 
-    # XXX could the ext_school -stuff be created to a different organisation
-    # XXX altogether?
-    # XXX how to set up puavo-rest.yml for this only?
-    # XXX (we should manipulate CONFIG somehow)
+#   default_domain = CONFIG["default_organisation_domain"]
+#   domain_first, *domain_the_rest = default_domain.split('.')
+#   heroes_domain = [ 'heroes', *domain_the_rest ].join('.')
 
-    @ext_school = School.create(
-      :cn          => 'uagadou',
-      :displayName => 'Uagadou',
+    heroes_org = Puavo::Organisation.find('heroes')
+    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
+    LdapBase.ldap_setup_connection(
+      heroes_org.ldap_host,
+      heroes_org.ldap_base,
+      'XXX', # XXX where to get this from?
+      organisations['heroes']['owner_pw'],
     )
+ 
+    # puts "dn=#{ organisations['heroes']['owner'] }"
+    # puts "password=#{ organisations['heroes']['owner_pw'] }"
+#   LdapModel.setup(
+#     :credentials => {
+        # :dn       => organisations['heroes']['owner'],
+        # XXX where to get this dn?
+#       :dn       => 'XXX'
+#       :password => organisations['heroes']['owner_pw'],
+#     },
+#     :organisation => PuavoRest::Organisation.by_domain!(heroes_domain),
+#   )
 
-    @ext_group = Group.new
-    @ext_group.cn                = 'extgroup1'
-    @ext_group.displayName       = 'External Group 1'
-    @ext_group.puavoSchool       = @ext_school.dn
-    @ext_group.puavoEduGroupType = 'teaching group'
+    # User.all
+    ext_school = School.find(:first, :attribute => 'name', :value => 'Uagadou')
+    puts "this is ext_school: #{ ext_school.inspect }"
+    # ext_school.destroy if ext_school
+    exit 0
+
+    @ext_school = PuavoRest::School.new(
+      :abbreviation => 'uagadou',
+      :name         => 'Uagadou',
+    )
+    @ext_school.save!
+
+    @ext_group = PuavoRest::Group.new(
+      :abbreviation => 'extgroup1',
+      :name         => 'External Group 1',
+      :school_dn    => @ext_school.dn,
+      :type         => 'teaching group',
+    )
     @ext_group.save!
 
-    @ext_role = Role.new
-    @ext_role.displayName = 'Some role'
-    @ext_role.puavoSchool = @ext_school.dn
-    @ext_role.groups << @ext_group
-    @ext_role.save!
+    @ext_user1_uid = 'babajide.akingbade'
+    @ext_user1_password = 'password.akingbade'
 
-    @ext_user1 = User.new(
-      :givenName => 'Babajide',
-      :sn  => 'Akingbade',
-      :uid => 'babajide.akingbade',
-      :puavoEduPersonAffiliation => 'student',
-      :puavoLocale => 'en_US.UTF-8',
-      :mail => ['babajide.akingbade@example.com'],
-      :role_ids => [ @ext_role.puavoId ],
-      :puavoSshPublicKey => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+    @ext_user1 = PuavoRest::User.new(
+      :first_name => 'Babajide',
+      :last_name  => 'Akingbade',
+      :password   => @ext_user1_password,
+      :roles      => [ 'student' ],
+      :school_dns => [ @ext_school.dn.to_s ],
+      :username   => 'babajide.akingbade',
     )
+    @ext_user1.save!
 
-    @our_school = School.create(
-      :cn          => 'gryffindor',
-      :displayName => 'Gryffindor',
-    )
+#   @our_school = PuavoRest::School.create(
+#     :cn          => 'gryffindor',
+#     :displayName => 'Gryffindor',
+#   )
+#   @our_school.save!
   end
 
-  it "has file metadata in index" do
-    get "/v3/external_files"
+  after do
+    CONFIG = @orig_config
+  end
+
+  it 'login to external service fails with unknown username' do
+    return
+    post '/v3/external_login', {
+      'username' => 'badusername',
+      'password' => 'badpassword',
+    }
+    assert_equal 401, last_response.status, "Body: #{ last_response.body }"
+  end
+
+  it 'login to external service fails with bad password' do
+    return
+    post '/v3/external_login', {
+      'username' => @ext_user1_uid,
+      'password' => 'badpassword',
+    }
+    assert_equal 401, last_response.status, "Body: #{ last_response.body }"
+  end
+
+  it 'login to external service succeeds with good username/password' do
+    return
+    post '/v3/external_login', {
+      'username' => @ext_user1_uid,
+      'password' => @ext_user1_password,
+    }
     assert_200
-    data = JSON.parse last_response.body
-
-    assert_equal "test.txt", data[0]["name"]
-    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data[0]["data_hash"]
-
-    assert_equal "another.txt", data[1]["name"]
-    assert_equal "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519", data[1]["data_hash"]
   end
-
-  it "has file contents" do
-    get "/v3/external_files/test.txt"
-    assert_200
-    assert_equal "test data", last_response.body
-  end
-
-  it "has file metadata" do
-    get "/v3/external_files/test.txt/metadata"
-    assert_200
-    data = JSON.parse last_response.body
-
-    assert_equal "test.txt", data["name"]
-    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data["data_hash"]
-  end
-
-  it "has file metadata in index by device" do
-    get "/v3/devices/athin01/external_files"
-    assert_200
-    data = JSON.parse last_response.body
-
-    assert_equal "test.txt", data[0]["name"]
-    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data[0]["data_hash"]
-
-    assert_equal "another.txt", data[1]["name"]
-    assert_equal "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519", data[1]["data_hash"]
-
-    assert_equal "printer.ppd", data[2]["name"]
-    assert_equal "f6faa9d255137ce1482dc9a958f7299c234ef4f9", data[2]["data_hash"]
-
-  end
-
-  it "has no file metadata of printer_ppd in index by device" do
-    get "/v3/devices/athin02/external_files"
-    assert_200
-    data = JSON.parse last_response.body
-
-    assert_equal "test.txt", data[0]["name"]
-    assert_equal "f48dd853820860816c75d54d0f584dc863327a7c", data[0]["data_hash"]
-
-    assert_equal "another.txt", data[1]["name"]
-    assert_equal "7bd8e7cb8e1e8b7b2e94b472422512935c9d4519", data[1]["data_hash"]
-  end
-
-  it "has printer.ppd file contents by hostname" do
-    get "/v3/devices/athin01/external_files/printer.ppd"
-    assert_200
-    assert_equal "PPD-data", last_response.body
-  end
-
-  it "has file contents by hostname" do
-    get "/v3/devices/athin01/external_files/test.txt"
-    assert_200
-    assert_equal "test data", last_response.body
-  end
-
 end
