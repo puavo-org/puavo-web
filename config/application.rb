@@ -71,16 +71,7 @@ module PuavoUsers
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
-
     config.assets.precompile += ["font/fontello-puavo/css/puavo-icons.css", "application-print.css", "devices/index.js"]
-
-    # Enable the asset pipeline
-    config.assets.enabled = true
-
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
-
-    Rails.application.config.enable_dependency_loading = true
 
   end
 end
