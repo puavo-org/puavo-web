@@ -12,7 +12,7 @@ group :shared do
   #gem "rdoc"
   #gem "uglifier"
   #gem "multi_json"
-  #gem "redcarpet"
+  gem "redcarpet"
   #gem "nokogiri"
   # This fix was not in the release version yet
   # https://github.com/resque/resque/commit/74c2025ab5fa46cdcbc4e13c4e3d044d46443fa0
