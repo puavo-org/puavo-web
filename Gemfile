@@ -16,24 +16,26 @@ gem "i18n-js"
 gem "byebug"
 gem "nib"
 
-group :assets do
+#group :assets do
   gem "stylus"
   gem "jquery-rails"
-end
+#end
 
 group :test do
-  gem "capybara"
-  gem "colorize"
-  gem "cucumber"
-  gem "cucumber-rails"
-  gem "database_cleaner"
-  gem "greenletters"
-  gem "rbtrace"
+  #gem "capybara"
+  #gem "colorize"
+  gem "cucumber", "2.4.0"
+  gem "cucumber-rails", "1.5.0"
+  #gem "database_cleaner"
+  #gem "greenletters"
+  #gem "minitest", "4.7.5"
+  #gem "minitest-test"
+  #gem "rbtrace"
   gem "rspec"
-  gem "rspec-rails"
-  gem "ruby-prof"
+  #gem "rspec-rails"
+  #gem "ruby-prof"
   gem "timecop"
-  gem "ripper-tags"
+  #gem "ripper-tags"
   gem "webmock"
 end
 

@@ -56,7 +56,6 @@ GEM
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
     coderay (1.1.2)
-    colorize (0.8.1)
     concurrent-ruby (1.0.5)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
@@ -77,14 +76,12 @@ GEM
       nokogiri (~> 1.5)
       railties (>= 4, < 5.2)
     cucumber-wire (0.0.1)
-    database_cleaner (1.6.1)
     diff-lcs (1.3)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
     execjs (2.7.0)
     fast_gettext (1.5.1)
-    ffi (1.9.18)
     fluent-logger (0.7.1)
       msgpack (>= 1.0.0, < 2)
     gettext (3.2.4)
@@ -95,7 +92,6 @@ GEM
     gherkin (4.1.3)
     gibberish (2.1.0)
     gli (2.16.1)
-    greenletters (0.3.0)
     hashdiff (0.3.6)
     http (2.2.2)
       addressable (~> 2.3)
@@ -164,16 +160,9 @@ GEM
       thor (>= 0.18.1, < 2.0)
     raindrops (0.19.0)
     rake (12.1.0)
-    rbtrace (0.4.8)
-      ffi (>= 1.0.6)
-      msgpack (>= 0.4.3)
-      trollop (>= 1.16.2)
-    rdoc (5.1.0)
-    redcarpet (3.4.0)
     redis (3.3.3)
     redis-namespace (1.5.3)
       redis (~> 3.0, >= 3.0.4)
-    ripper-tags (0.3.5)
     rmagick (2.16.0)
     rspec (3.6.0)
       rspec-core (~> 3.6.0)
@@ -187,16 +176,7 @@ GEM
     rspec-mocks (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.6.0)
-    rspec-rails (3.6.1)
-      actionpack (>= 3.0)
-      activesupport (>= 3.0)
-      railties (>= 3.0)
-      rspec-core (~> 3.6.0)
-      rspec-expectations (~> 3.6.0)
-      rspec-mocks (~> 3.6.0)
-      rspec-support (~> 3.6.0)
     rspec-support (3.6.0)
-    ruby-prof (0.16.2)
     safe_yaml (1.0.4)
     sinatra (1.4.8)
       rack (~> 1.5)
@@ -224,11 +204,8 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.8)
     timecop (0.9.1)
-    trollop (2.1.2)
     ttfunk (1.5.1)
     tzinfo (0.3.53)
-    uglifier (3.2.0)
-      execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
@@ -252,40 +229,27 @@ PLATFORMS
 DEPENDENCIES
   activeldap
   byebug
-  capybara
-  colorize
-  cucumber
-  cucumber-rails
-  database_cleaner
+  cucumber (= 2.4.0)
+  cucumber-rails (= 1.5.0)
   fluent-logger
   gibberish
-  greenletters
   http
   i18n-js
   jquery-rails
   jwt
-  multi_json
   net-ldap
   nib
-  nokogiri
   prawn
   pry
   rails (= 4.0.13)
-  rbtrace
-  rdoc
-  redcarpet
   resque!
-  ripper-tags
   rmagick
   rspec
-  rspec-rails
-  ruby-prof
   sinatra-support
   sqlite3
   sshkey
   stylus
   timecop
-  uglifier
   unicorn
   uuid
   webmock
