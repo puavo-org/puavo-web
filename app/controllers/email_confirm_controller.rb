@@ -7,7 +7,7 @@ class EmailConfirmController < ApplicationController
     # validate jwt
 
     begin
-      @jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+      @jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])[0]
 
       respond_to do |format|
         format.html
@@ -24,7 +24,7 @@ class EmailConfirmController < ApplicationController
   def confirm
     begin
 
-      jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+      jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])[0]
 
       perform_login( :uid => jwt_data["username"],
                      :organisation_key => organisation_key_from_host(jwt_data["organisation_domain"]),
