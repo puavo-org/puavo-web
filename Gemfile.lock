@@ -240,6 +240,7 @@ DEPENDENCIES
   jwt
   net-ldap
   nib
+  nokogiri (= 1.8.0)
   prawn
   pry
   rails (= 4.0.13)
