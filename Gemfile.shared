@@ -3,11 +3,11 @@
 
 group :shared do
   gem "rails", "4.0.13"
-  gem "sqlite3", :require => "sqlite3"
+  gem "sqlite3"
   gem "prawn"
-  gem "net-ldap", :require => "net-ldap"
+  gem "net-ldap"
   gem "activeldap", :require => "active_ldap"
-  gem "rmagick", :require => "rmagick"
+  gem "rmagick"
   gem "uuid"
   #gem "rdoc"
   #gem "uglifier"
