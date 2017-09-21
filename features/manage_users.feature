@@ -45,7 +45,7 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
     | Personel Number           | 556677                |
-    | SSH public key            | ssh-rsa foobar        |
+    | SSH public key            | ssh-rsa Zm9vYmFy      |   # the key is "foobar" in base64
 # FIXME test mail and telephoneNumber for more values  
 #   | Group                      |       |
 #   | Password                   |       |
@@ -78,7 +78,7 @@ Feature: Manage users
     | Yes                                             |
     | Mabey Ben                                       |
     | 556677                                          |
-    | 33:1c:56:ea:4f:df:46:c9:13:79:dc:1b:95:35:23:8a |
+    | 38:58:f6:22:30:ac:3c:91:5f:30:0c:66:43:12:c6:3f |
     And I should see "Class 4" on the "Groups by roles"
     And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
