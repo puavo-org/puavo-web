@@ -7,7 +7,7 @@ end
 gem "pry"
 gem "unicorn"
 gem "fluent-logger"
-gem "gibberish"
+gem "gibberish", "2.1.0"
 gem "http"
 gem "sinatra-support", :require => "sinatra/support"
 gem "jwt", "1.5.6"
