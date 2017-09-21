@@ -78,7 +78,7 @@ class ImportWorker
       :redis => REDIS_CONNECTION
     )
 
-    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
+    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_key_base)
 
     flog = FLOG.merge(
       :organisation_key => organisation_key,
