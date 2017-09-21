@@ -233,7 +233,7 @@ DEPENDENCIES
   cucumber (= 2.4.0)
   cucumber-rails (= 1.5.0)
   fluent-logger
-  gibberish
+  gibberish (= 2.1.0)
   http
   i18n-js
   jquery-rails
