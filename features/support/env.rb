@@ -57,3 +57,7 @@ ActionController::Base.allow_rescue = false
 # See https://github.com/cucumber/cucumber-rails/blob/master/features/choose_javascript_database_strategy.feature
 Cucumber::Rails::Database.javascript_strategy = :truncation
 
+require 'greenletters'
+require 'greenletters/cucumber_steps'
+
+Greenletters::Process::DEFAULT_TIMEOUT = 10.0
