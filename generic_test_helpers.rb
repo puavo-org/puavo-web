@@ -3,7 +3,7 @@ require "webmock"
 
 
 WebMock.allow_net_connect!
-WebMock.disable_net_connect!(:allow_localhost => true)
+WebMock.disable_net_connect!(allow: ['10.246.134.48', '127.0.0.1', 'localhost'])
 
 module Puavo
 module Test
