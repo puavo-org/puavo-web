@@ -62,7 +62,7 @@ class PasswordController < ApplicationController
     db.set(user.puavoId, true)
     db.expire(user.puavoId, 300)
 
-    rest_response = HTTP.with_headers(:host => current_organisation_domain,
+    rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .post(send_token_url,
             :params => { :username => user.uid })
@@ -95,7 +95,7 @@ class PasswordController < ApplicationController
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
-    rest_response = HTTP.with_headers(:host => current_organisation_domain,
+    rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .put(change_password_url,
            :params => { :new_password => params[:reset][:password] })
