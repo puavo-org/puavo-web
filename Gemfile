@@ -23,7 +23,7 @@ gem "nib"
 
 group :test do
   gem "capybara"
-  #gem "colorize"
+  gem "colorize"
   gem "cucumber", "2.4.0"
   gem "cucumber-rails", "1.5.0"
   #gem "database_cleaner"
