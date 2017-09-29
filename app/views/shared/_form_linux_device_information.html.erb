@@ -126,9 +126,9 @@
     <td class="label_td"><%= f.label :puavoLongitude %></td>
     <td><%= f.text_field :puavoLongitude %></td>
   </tr>
+</table>
 
   <% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
-</table>
 
 <h2><%= t('shared.display_settings') %></h2>
 <table>
