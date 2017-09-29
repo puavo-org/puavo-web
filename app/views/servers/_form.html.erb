@@ -1,14 +1,9 @@
 <%= form_for(@server, html: { multipart: true }) do |f| %>
 
-  <table>
   <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
-  </table>
-  <p>&nbsp;</p>
-  <table>
 
-    <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
+  <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
 
-  </table>
   <h2><%= t('.automounts') %></h2>
   <table>
     <tr>
