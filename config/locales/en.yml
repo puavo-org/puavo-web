@@ -828,7 +828,7 @@ en:
       wlan_ap: Enabled in access point
       select_value_open: Open
       select_value_psk: PSK
-      default: Oletus
+      default: Default
     mountpoint:
       title: Local and network mounts
       filesystem: Filesystem
