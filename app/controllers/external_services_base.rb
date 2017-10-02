@@ -26,7 +26,7 @@ class ExternalServicesBase < ApplicationController
 
     @model.puavoActiveService = params["puavoActiveService"]
     @model.save!
-    flash[:notice] = "Saved!"
+    flash[:notice] = t('flash.external_services_saved')
     redirect_to :back
   end
 
