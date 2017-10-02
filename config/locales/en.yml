@@ -35,12 +35,12 @@ en:
     select: Select...
     some_value: Some value
     start_import: Import data
-    start_new_import: Start new import
+    start_new_import: Start a new import
     status: Status
     unknown_legacy_role_details: Unknown legacy role
     unknown_legacy_role: Unknown legacy role
     unknown_role: Unknown user type
-    created: Käyttäjä luotu
+    created: User created
     user_updated: Existing users updated
     create_user: Create new user
     update_school: Update user school and legacy roles
@@ -50,10 +50,10 @@ en:
     generate_username: Generate username
     begin: Begin
     select_file: Select file
-    add_names_to_generate_username: Add firstname and lastname to generate username
+    add_names_to_generate_username: Add first name and last name to the generated username
     user_not_found: This username has not been used yet
     user_exists: This user already exists. You may still use the update feature on it.
-    prevent_unload: Import is on going. Do really want to abort it?
+    prevent_unload: Import is ongoing. Do really want to abort it?
     waiting_user_data: Waiting for user data
     roles:
       admin: Administrator
@@ -135,13 +135,13 @@ en:
       new: Users mass import
       progress: Importing users. This can take few minutes. Please wait without closing the browser.
       status: Status
-      ready: Import is now ready. Click the button below to download user list.
+      ready: Import is now ready. Click the button below to download the user list.
       download_passwords_pdf: Download passwords PDF
       handle_user_data: Handle the user data
       revalidate: Revalidate
       validate: Validates users
       create: Create users
-      download_time: The password PDF have been downloaded at least once. You can still download it for %{seconds} seconds.
+      download_time: The password PDF has been downloaded at least once. You can still download it for %{seconds} seconds.
     continue: Continue
     login: Login
     change_password: Change password
@@ -160,12 +160,12 @@ en:
     destroyed: "%{item} was successfully removed."
     create_failed: Failed to create %{model}!
     save_failed: "%{model} cannot be saved!"
-    wlan_updated: WLAN-settings was succesfully updated
-    wlan_save_failed: "WLAN-settings cannot be saved: %{error}"
+    wlan_updated: WLAN settings was successfully updated
+    wlan_save_failed: "WLAN settings cannot be saved: %{error}"
     organisation:
-      wrong_user_type: Organisation owner access rights can be added only if type of user is admin
-      owner_added: "%{user} is now organisation owner"
-      owner_removed: "%{user} is no longer owner on this organisation"
+      wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
+      owner_added: "%{user} is now an owner of this organisation"
+      owner_removed: "%{user} is no longer an owner of this organisation"
     group:
       role_added: Role was added to group.
       role_added_failed: Failed to add.
@@ -177,10 +177,10 @@ en:
       group_removed: Group was removed from the role.
       group_remove_failed: Failed to delete.
       users_removed: Users was successfully removed!
-      users_remove_failed: "Stop users removing! Failed to remove user: '%{username}'."
+      users_remove_failed: "Users deletion was stopped! Failed to remove user: '%{username}'."
       create_failed: Failed to create role!
       save_failed: Role cannot be saved!
-      destroyed_failed: You can not remove role (%{name}) because it contains the users
+      destroyed_failed: You can not remove role (%{name}) because it contains users
     user:
       save_failed: User cannot be saved!
       create_failed: Failed to create user!
@@ -189,17 +189,17 @@ en:
         require_error: Given name and surname are required fields
         role_require_error: You must be select Role
       school_changed: User(s) school has been changed!
-      cannot_create_user: "Tässä koulussa käyttäjiä ei voi lisätä manuaalisesti. Uudet käyttäjät lisätään oppilashallintojärejstelmän kautta. Ole tarvittaessa yhteydessä tukipalveluun."
+      cannot_create_user: "Cannot create users manually. Please contact support."
     password_set_failed: Failed to change password! Try again!
     session:
       login_successful: Login successful!
       failed: Login failed!
       logout_successful: Logout successful!
     password:
-      successful: Password change succesfully!
+      successful: Password changed successfully!
       failed: Failed to change password!
       invalid_login: Invalid password or username (%{uid})
-      confirmation_failed: New password doesn't match confirmation
+      confirmation_failed: "Password doesn't match the confirmation"
       invalid_user: User (%{uid}) does not exist
       email_not_found: "Couldn't find email: %{email}"
       connection_failed: We're sorry, but something went wrong. Please try again later!
@@ -207,15 +207,15 @@ en:
       token_lifetime_has_expired: Your link has expired. Please enter your email again.
       too_many_sent_token_request: We're already sent message to your email address.
     school:
-      school_admin_added: "%{displayName} (%{school_name}) is now admin users"
-      school_admin_removed: "%{displayName} (%{school_name}) is no longer admin user on this school"
-      wrong_user_type: School management access rights can be added only if type of user is admin
+      school_admin_added: "%{displayName} (%{school_name}) is now an admin user"
+      school_admin_removed: "%{displayName} (%{school_name}) is no longer an admin user in this school"
+      wrong_user_type: School management access rights can be added only if the type of the user is admin
       save_failed: Failed to save access rights
-      destroyed_failed: School was not successfully destroyed. Users, roles and groups must be removed before school
+      destroyed_failed: The school was not successfully destroyed. Users, roles and groups must be removed before the school is removed.
       roles_not_found: Cannot find any roles!
     profile:
-      wlan_updated: WLAN-settings was succesfully updated
-      wlan_save_failed: WLAN-settings cannot be saved!
+      wlan_updated: WLAN settings was successfully updated
+      wlan_save_failed: WLAN settings cannot be saved!
       updated: Profile was successfully updated
       save_failed: Profile cannot be saved!
     printer:
@@ -231,7 +231,7 @@ en:
       other_groups: Other groups
       change_school: Move users to another school
       destroy_users: Remove all users
-      confirm_destroy_users: Removed from the system, all users (%{count}pcs) that belong to the role of the '%{name}'. Are you sure? Users cannot be restored to the system!
+      confirm_destroy_users: Removing all users (%{count} users) from the system that belong to the role '%{name}'. Are you sure? These users cannot be restored to the system!
     new:
       title: New role
     edit:
@@ -285,28 +285,28 @@ en:
         example: |-
           Joe, Bloggs
           Jane, Doe
-        hint: You can paste the following text box users data which you like adding
+        hint: You can also use tabs as the separator. This way you can copy-paste information from a spreadsheet.
       show:
         title: Users (%{count}) were successfully created.
         successful: "Successful: %{count}"
         failed: "Failed: %{count}"
-        pdf_info: You can now generate passwords to a printable PDF file.
-        title_of_failed_users_list: Following users were not successfully created!
+        pdf_info: You can now save passwords to a printable PDF file.
+        title_of_failed_users_list: The following users were not successfully created!
       status:
-        title_with_error: All users were not successfully created!
+        title_with_error: Not all users were successfully created!
       role:
         title: User mass import validation
         help: Following field value must be select when create new users
       refine:
         title: User mass import
-        info: The following new users of the data are not valid. Please repair the information and select revalidate button.
-        column_info: Select correct name of column for each data
+        info: The following new users have data that did not pass validation. Please fix the errors and click the Revalidate button.
+        column_info: Select the correct column names
         delete: Delete
-        name_of_column: Name of column
+        name_of_column: Column name
         example: Example data
       preview:
         title: User mass import preview
-        info: Check information of the users and select "Create users"
+        info: Check the information of the new users and select "Create users"
         change_school: Change school
         select_all: Select all
   groups:
@@ -315,13 +315,13 @@ en:
     show:
       roles_and_members: Roles and members
       other_roles: Other roles
-      add_user_title: Add user to group
-      description: Write to search field name of user and press "Add" button.
+      add_user_title: Add user to the group
+      description: To add a new user to the group, write their name in the search box and click the "Add user to the group" button.
       placeholder_for_search: Name of user
     new:
       title: New group
     edit:
-      title: Editing group
+      title: Edit group
     members:
       title: Members
       remove: Remove
@@ -357,11 +357,11 @@ en:
       rule_lines: Rules
       system_information: System information
     form:
-      add_puavo_billing_info: Add another billing info
+      add_puavo_billing_info: Add a new billing info
   password:
     edit:
       title: Change password for other user
-      head: To change the password of another user, fill in your own username and password and the username and the new password for the user whose password is being changed. You have to have sufficient privileges to change the passwords of other users.
+      head: To change the password of another user, fill in your own username and password, and the username and the new password for the user whose password is being changed. You have to have sufficient privileges to change the passwords of other users.
       changing_user: Changing user
       changed_user: Changed user
       password: Password
@@ -372,7 +372,7 @@ en:
       link_other_password: Change password for other user
     forgot:
       title: Reset your password
-      description: Please enter your email address to get instructions
+      description: Please enter your email address to get reset instructions
     reset:
       title: Reset your password
       password: Enter new password
@@ -380,7 +380,7 @@ en:
       description: Please enter your new password
       submit: Reset password
     successfully:
-      send_token: We've sent you an email that will allow you to reset your password.
+      send_token: We've sent you an email that will let you reset your password.
       update: Your password has been reset successfully!
   email_confirm:
     preview:
@@ -390,19 +390,19 @@ en:
     successfully:
       info: Your email address has been confirmed
     error:
-      email_already_exists: "Email address already exists!"
-      invalid_jwt_token: Invalid JWT token
+      email_already_exists: "This email address is already in use!"
+      invalid_jwt_token: Invalid JWT token. Please contact Opinsys support.
   organisations:
     show:
-      title: Information of organisation
+      title: Information about the organisation
     edit:
-      title: Information of organisation
+      title: Information about the organisation
       select: Select
-      add_puavo_billing_info: Add another billing info
+      add_puavo_billing_info: Add a new billing info
     owners:
       title: Organisation owners
       other_admin_users: "Add organisation management access to the admin"
-      organisation_owners: "Following admins have the access to control organisation"
+      organisation_owners: "The following admins have access to the control organisation"
   ldap_services:
     index:
       actions: Actions
@@ -410,7 +410,7 @@ en:
     new:
       title: New LDAP service
     edit:
-      title: Edit LDAP service
+      title: Edit an LDAP service
   search:
     search_result:
       title_user: Users
@@ -423,7 +423,7 @@ en:
       save_and_close: Save and close
     show:
       message: Profile was successfully updated
-      email_confirm_info: "Send email message to following email address(es)"
+      email_confirm_info: "Send an email message to following email address(es):"
   lists:
     index:
       title: Unloaded username lists
@@ -442,32 +442,32 @@ en:
       service_link_name_change_password: Change password
   controllers:
     import:
-      school_has_changed: User is transferred, old password is used
+      school_has_changed: User has been transferred, the old password is in use
   activeldap:
     errors:
       messages:
         taken: "%{attribute} has already been taken"
         blank: "%{attribute} can't be blank"
         invalid: "%{attribute} is invalid"
-        confirmation: "%{attribute} doesn't match confirmation"
+        confirmation: "%{attribute} doesn't match the confirmation"
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
         user:
-          must_begin_with: Username must begin with the small letter
-          invalid_characters: Username include invalid characters (allowed characters is a-z0-9.-)
+          must_begin_with: Username must begin with a small letter
+          invalid_characters: Username contains invalid characters (allowed characters are a-z0-9.-)
         group:
-          invalid_characters: Abbveriation include invalid characters (allowed characters is a-z0-9-)
+          invalid_characters: Abbreviation contains invalid characters (allowed characters are a-z0-9-)
         school:
-          invalid_characters: "%{attribute} include invalid characters (allowed characters is a-z0-9-)"
+          invalid_characters: "%{attribute} contains invalid characters (allowed characters are a-z0-9-)"
         uniqueness: "%{attribute} is already in use"
-        invalid_characters: "%{attribute} include invalid characters"
+        invalid_characters: "%{attribute} contains invalid characters"
         device:
           puavoHostname:
-            invalid_characters: "Hostname include invalid characters (allowed characters is: a-z0-9-)"
+            invalid_characters: "Hostname contains invalid characters (allowed characters are: a-z0-9-)"
           macAddress:
-            invalid_characters: MAC address include invalid characters. Eg 0f:1f:a9:2f:a3:ad
+            invalid_characters: MAC address contains invalid characters. Eg 0f:1f:a9:2f:a3:ad
         wlan:
-          duplicate_name: a duplicate name exists (Network name) on the network setup
+          duplicate_name: A duplicate network name exists
     models:
       group: Group
       role: Role
@@ -539,7 +539,7 @@ en:
         puavoAllowRemoteAccess_false: "No"
         puavoAllowRemoteAccess_: "No"
         puavoEduPersonReverseDisplayName: Lastname Firstname
-        puavoEduPersonPersonnelNumber: Personel Number
+        puavoEduPersonPersonnelNumber: Personnel Number
         image: Image
         jpegPhoto: Image
         puavoLocked: User is locked
@@ -582,7 +582,7 @@ en:
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
-        puavoTimezone: Timezone
+        puavoTimezone: Time zone
         puavoKeyboardLayout: Keyboard layout
         puavoKeyboardVariant: Keyboard variant
         puavoAutomaticImageUpdates: Automatic image updates
@@ -705,7 +705,7 @@ en:
       device:
         roles:
           puavoNetbootDevice: Netboot
-          puavoLocalbootDevice: Localboot
+          puavoLocalbootDevice: Local boot
           puavoPrinter: Printer
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
@@ -728,7 +728,7 @@ en:
     archive users: Archive users
     other groups: Other groups
   old_preferred_language: "Old setting: %{language}"
-  timezone_empty: Timezone is not set
+  timezone_empty: Time zone has not been set
   date:
     formats:
       default: "%Y-%m-%d"
@@ -801,14 +801,14 @@ en:
     title: Device information
     printer_title: Printer information
     server_title: Server information
-    add_puavoDeviceXrandr: Add a new line of xrandr
+    add_puavoDeviceXrandr: Add a new xrandr setting
     boot_mode_netboot: Terminal
     boot_mode_dualboot: Dualboot
     boot_mode_: Terminal
     purchase_information: Purchase information
-    add_macAddress: Add a new line of MAC addresses
+    add_macAddress: Add a new MAC address
     autopoweroff: Automatic power off
-    add_puavoImageSeriesSourceURL: "Add new source URL"
+    add_puavoImageSeriesSourceURL: "Add a new image series source URL"
     linux_device_information:
       certificate_status_true: Valid
       certificate_status_false: Not valid
@@ -825,27 +825,28 @@ en:
       wlan_name: Network name
       wlan_type: Network type
       wlan_password: Password
-      wlan_ap: Enabled in access point
+      wlan_ap: Enabled in the access point
       select_value_open: Open
       select_value_psk: PSK
       default: Default
     mountpoint:
-      title: Local and network mounts
+      title: Local and network mount points
       filesystem: Filesystem
       path: Path
-      mountpoint: Mountpoint
+      mountpoint: Mount point
       options: Options
     form_mountpoint:
-      title: Local and network mounts
+      title: Local and network mount points
       filesystem: Filesystem
       path: Path
-      mountpoint: Mountpoint
+      mountpoint: Mount point
       options: Options
+      add_more: "Add a new mount point"
     form_auto_power_off_settings:
       select: Select
   devices:
     index:
-      add_new_device: Add new device
+      add_new_device: Add a new device
       title: List of devices
       select_device_label: Select
     new:
@@ -866,7 +867,7 @@ en:
       change_school: Change school
     select_school:
       title: Device transfer (%{name})
-      select_new_school: Select new school
+      select_new_school: Select the new school
       submit: Move device
   servers:
     index:
@@ -875,21 +876,21 @@ en:
       title: Edit server settings
     form:
       automounts: Automounts
-      add_puavoExport: Add paths
+      add_puavoExport: Add a new path
     show:
       automounts: Automounts
     school_limit:
       title: School limit
-      ltsp_description: This LTSP server will only serve these schools.
+      ltsp_description: "This LTSP server will only serve these schools:"
       ltsp_description_edit: If none is selected it will serve all schools in the organisation.
-      boot_description: Schools that this boot server will serve.
+      boot_description: "Schools that this boot server will serve:"
   automounts:
     index:
       title: Automounts
     new:
       title: New automount
     edit:
-      title: Editing automount
+      title: Edit an automount
   host:
     types:
       register_label: Device type
@@ -911,13 +912,13 @@ en:
     default: Default
     ppd_file:
       no_file: No driver file
-      cannot_detect_filetype: Cannot detect driver file
+      cannot_detect_filetype: Cannot detect the driver file type
     submit:
       servers:
         create: Create
     invalid_ssh_public_key: Invalid public key
     default_by_school: Default by school
-    default_by_organisation: Default by organisaation
+    default_by_organisation: Default by organisation
     by_organisation: (organisation)
     by_school: (school)
   external_services:
@@ -941,7 +942,7 @@ en:
       active_advanced: Advanced
       groups: Printer usage permissions by group
       devices: Printer usage permissions by device
-      device_header_text: "Printer is allowed for following individual devices:"
+      device_header_text: "Printer is allowed for the these devices:"
       device_footer_text: "Printers for devices are set from the device edit page."
   sessions:
     new:
@@ -949,7 +950,7 @@ en:
       login_to: Login to service
       password: Password
       username_help: Use the same username you use when logging in Opinsys desktops.
-      organisation_help: "Username must be provided in the form of <i>username</i>@<i>organisation</i>.opinsys.fi. The username part is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all scandinavian letters must be removed. For example if you are from Jyväskylä and your Opinsys username is matti.meikalainen the organisation part is <i>jyvaskyla</i> which means that you login with <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
+      organisation_help: "Username must be provided in the form of <i>username</i>@<i>organisation</i>.opinsys.fi. The username part is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all national letters must be removed. For example, if you are from Jyväskylä and your Opinsys username is matti.meikalainen, the organisation part is <i>jyvaskyla</i> which means that you login with <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
       developers: Developers
       developers_info: "Read <a href=https://api.opinsys.fi/v3/sso/developers target=_blank>this</a> document if you are interested in implementing Opinsys authentication."
       username_placeholder: Username
