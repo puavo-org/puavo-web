@@ -801,6 +801,7 @@ en:
     title: Device information
     printer_title: Printer information
     server_title: Server information
+    printers_title: Printers
     add_puavoDeviceXrandr: Add a new xrandr setting
     boot_mode_netboot: Terminal
     boot_mode_dualboot: Dualboot
