@@ -162,6 +162,7 @@ en:
     save_failed: "%{model} cannot be saved!"
     wlan_updated: WLAN settings was successfully updated
     wlan_save_failed: "WLAN settings cannot be saved: %{error}"
+    external_services_saved: "Saved!"
     organisation:
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
       owner_added: "%{user} is now an owner of this organisation"

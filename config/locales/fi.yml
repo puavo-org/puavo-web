@@ -132,6 +132,7 @@ fi:
     save_failed: "Tallennus epäonnistui!"
     wlan_updated: WLAN-asetukset päivitetty
     wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
+    external_services_saved: "Tallennettu!"
     organisation:
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"
