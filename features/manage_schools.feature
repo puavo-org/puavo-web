@@ -83,11 +83,11 @@ Feature: Manage schools
     And I should see "Group name can't be blank"
     When I fill in "Group name" with "Example School"
     And I press "Create"
-    Then I should see "Group name include invalid characters (allowed characters is a-z0-9-)"
+    Then I should see "Group name contains invalid characters (allowed characters are a-z0-9-)"
     When I fill in "Group name" with "example-school"
     And I fill in "Name prefix" with "example prefix"
     And I press "Create"
-    Then I should see "Name prefix include invalid characters (allowed characters is a-z0-9-)"
+    Then I should see "Name prefix contains invalid characters (allowed characters are a-z0-9-)"
     
 
   Scenario: Edit school and set empty names
@@ -166,7 +166,7 @@ Feature: Manage schools
     | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   | 
     And I am on the show school page with "Test School 1"
     When I follow "Remove"
-    Then I should see "School was not successfully destroyed. Users, roles and groups must be removed before school"
+    Then I should see "The school was not successfully destroyed. Users, roles and groups must be removed before the school is removed."
     And I should be on the school page
   
   Scenario: Add school management access rights to the user
@@ -180,7 +180,7 @@ Feature: Manage schools
     And I should not see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
     And I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
     When I follow "Add" on the "Pavel Taylor" user
-    Then I should see "Pavel Taylor (Greenwich Steiner School) is now admin users"
+    Then I should see "Pavel Taylor (Greenwich Steiner School) is now an admin user"
     And I should see "Pavel Taylor (Greenwich Steiner School)" on the school admin list
     And I should not be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
     And the memberUid should include "pavel" on the "Domain Admins" samba group
@@ -193,18 +193,18 @@ Feature: Manage schools
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     And I follow "Add" on the "Pavel Taylor" user
-    Then I should see "Pavel Taylor (Greenwich Steiner School) is now admin users"
+    Then I should see "Pavel Taylor (Greenwich Steiner School) is now an admin user"
     And I should see "Pavel Taylor (Example school 1)" on the school admin list
     And I should not be added school management access to the "Pavel Taylor (Example school 1)"
     When I follow "Remove" on the "Pavel Taylor" user
-    Then I should see "Pavel Taylor (Greenwich Steiner School) is no longer admin user on this school"
+    Then I should see "Pavel Taylor (Greenwich Steiner School) is no longer an admin user in this school"
     And I should not see "Pavel Taylor (Example school 1)" on the school admin list
     And I should be added school management access to the "Pavel Taylor (Example school 1)"
     And the memberUid should include "pavel" on the "Domain Admins" samba group
     When I am on the school page with "Example school 1"
     And I follow "Admins"
     And I follow "Remove" on the "Pavel Taylor" user
-    Then I should see "Pavel Taylor (Example school 1) is no longer admin user on this school"
+    Then I should see "Pavel Taylor (Example school 1) is no longer an admin user in this school"
     And the memberUid should not include "pavel" on the "Domain Admins" samba group
     
 
@@ -218,9 +218,9 @@ Feature: Manage schools
     Then I should be added school management access to the "Pavel Taylor (Greenwich Steiner School)"
     And I should not be added school management access to the "Ben Mabey (Greenwich Steiner School)"
     When I try to add "Ben Mabey" to admin user on the "Greenwich Steiner School" school
-    Then I should not see "Ben Mabey (Greenwich Steiner School) is now admin users"
+    Then I should not see "Ben Mabey (Greenwich Steiner School) is now an admin user"
     And I should not see "Ben Mabey (Greenwich Steiner School)" on the school admin list
-    And I should see "School management access rights can be added only if type of user is admin"
+    And I should see "School management access rights can be added only if the type of the user is admin"
 
   Scenario: Check school special ldap attributes
     Then I should see the following special ldap attributes on the "School" object with "Example school 1":

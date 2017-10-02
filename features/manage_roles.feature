@@ -136,4 +136,4 @@ Feature: Manage roles
     And I am set the "Students" role for "ben"
     And I am on the show role page with "Students"
     When I follow "Remove"
-    Then I should see "You can not remove role (Students) because it contains the users"
+    Then I should see "You can not remove role (Students) because it contains users"

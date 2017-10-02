@@ -44,7 +44,7 @@ Feature: Manage users
     | user[telephoneNumber][]   | +35814123123123       |
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
-    | Personel Number           | 556677                |
+    | Personnel Number          | 556677                |
     | SSH public key            | ssh-rsa Zm9vYmFy      |   # the key is "foobar" in base64
 # FIXME test mail and telephoneNumber for more values  
 #   | Group                      |       |
@@ -141,7 +141,7 @@ Feature: Manage users
     And I check "Class 4"
     And I press "Create"
     Then I should see "Failed to create user!"
-    And I should see "New password doesn't match confirmation"
+    And I should see "New password doesn't match the confirmation"
 
   Scenario: Edit user
     Given the following users:
@@ -264,7 +264,7 @@ Feature: Manage users
     When I fill in "user[new_password]" with "some text"
     And I check "Staffs"
     And I press "Update"
-    Then I should see "New password doesn't match confirmation"
+    Then I should see "New password doesn't match the confirmation"
     And the "Staffs" checkbox should be checked
 
   Scenario: Role selection does not lost when create new user and get error
@@ -300,16 +300,16 @@ Feature: Manage users
     Then I should see "Username is too short (min is 3 characters)"
     When I fill in "Username" with "-ab"
     And I press "Create"
-    Then I should see "Username must begin with the small letter"
+    Then I should see "Username must begin with a small letter"
     When I fill in "Username" with ".ab"
     And I press "Create"
-    Then I should see "Username must begin with the small letter"
+    Then I should see "Username must begin with a small letter"
     When I fill in "Username" with "abc%&/()}]"
     And I press "Create"
-    Then I should see "Username include invalid characters (allowed characters is a-z0-9.-)"
+    Then I should see "Username contains invalid characters (allowed characters are a-z0-9.-)"
     When I fill in "Username" with "ben.Mabey"
     And I press "Create"
-    Then I should see "Username include invalid characters (allowed characters is a-z0-9.-)"
+    Then I should see "Username contains invalid characters (allowed characters are a-z0-9.-)"
     When I fill in "Username" with "ben-james.mabey"
     And I press "Create"
     Then I should see "User was successfully created."

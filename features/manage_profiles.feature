@@ -73,4 +73,4 @@ Feature: Manage profile
     # FIXME: create "shoult not see..." step
     #And I should not see the following special ldap attributes on the "User" object with "jane.doe":
     #| mail | "jane.doe@opinsys.fi" |
-    And I should see "Send email message to following email address(es)"
+    And I should see "Send an email message to following email address(es):"
