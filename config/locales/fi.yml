@@ -6,7 +6,7 @@ fi:
     change_type: Vaihda tyyppi
     fill: Täytä
     fill_values: Täytä arvot
-    known_legacy_roles: Olemassa olevat legacy roolit
+    known_legacy_roles: "Olemassa olevat legacy -roolit"
     known_roles: Olemassa olevat tyypit
     missing_columns: Puuttuvat sarakkeet
     override_existing_values: Ylikirjoita olemassa olevat arvot
@@ -16,23 +16,23 @@ fi:
     start_import: Aloita lisääminen
     start_new_import: Aloita alusta
     status: Tila
-    unknown_legacy_role_details: Tuntematon legacy rooli
-    unknown_legacy_role: Tuntematon legacy rooli
+    unknown_legacy_role_details: "Tuntematon legacy -rooli"
+    unknown_legacy_role: "Tuntematon legacy -rooli"
     unknown_role: Tuntematon tyyppi
-    user_updated: Olemassaoleva käyttäjä päivitetty
+    user_updated: Olemassa oleva käyttäjä päivitetty
     created: Käyttäjä luotu
     create_user: Luo uusi käyttäjä
-    update_school: Päivitä käyttäjän koulu ja legacyroolit
+    update_school: "Päivitä käyttäjän koulu ja legacy-roolit"
     update_all: Päivitä käyttäjän kaikki attribuutit
     reset_passwords: Aseta uudet salasanat
-    reset_existing_users: Aseta olemassaoleville käyttäjille myös
-    generate_username: Generoi käyttäjätunnus
+    reset_existing_users: Aseta myös olemassa oleville käyttäjille
+    generate_username: Luo käyttäjätunnus
     begin: Aloita
     select_file: Valitse tiedosto
     add_names_to_generate_username: Lisää etunimi ja sukunimi ensin
     user_not_found: Tämä käyttäjätunnus on vapaa
     user_exists: Tämä tunnus on jo olemassa. Voit kuitenkin päivitysominaisuudella päivittää sen attribuutteja.
-    prevent_unload: Käyttäjiä tuodaan parhaillaan. Haluatko todella lopettaa?
+    prevent_unload: Käyttäjiä tuodaan parhaillaan. Haluatko varmasti lopettaa?
     waiting_user_data: Odotetaan käyttäjätietoja
     roles:
       admin: Ylläpitäjä
@@ -53,7 +53,7 @@ fi:
       username: Käyttäjätunnus
       password: Salasana
       group: Ryhmä
-  must_be_logged_in: "Sinun täytyy olla kirjautuneena"
+  must_be_logged_in: "Sinun täytyy olla kirjautuneena sisään"
   create_organisation_owner:
     school_name: Hallinto
     role_name: "Ylläpito"
@@ -79,7 +79,7 @@ fi:
       desktop: "Työpöytä"
       owners: Omistajat
     forms:
-      required_field: "* = Pakollinen tieto"
+      required_field: "* = Pakollinen kenttä"
     sessions:
       title: Opinsys-tunnistautuminen
   link:
@@ -105,13 +105,13 @@ fi:
       new: Lisää käyttäjiä massa-ajona
       handle_user_data: "Käsittele käyttäjätieto"
       progress: Lisätään käyttäjiä. Tämä voi kestää muutaman minuutin. Odotathan sulkematta selainta.
-      ready: Käyttäjät ovat nyt valmiita. Klikkaa allaolevaa nappia ladataksesi käyttäjälistan.
+      ready: Käyttäjät ovat nyt valmiita. Klikkaa alla olevaa nappia ladataksesi käyttäjälistan.
       status: Tila
-      download_passwords_pdf: Download passwords PDF
+      download_passwords_pdf: Kopioi salasanat PDF:änä
       revalidate: Tarkista uudelleen
       validate: Tarkasta syötetyt tiedot
       create: "Lisää käyttäjät"
-      download_time: Salasana PDF on jo ladattu kerran. Voit vielä ladata sen %{seconds} sekunnin ajan.
+      download_time: Salasana-PDF on jo ladattu kerran. Voit vielä ladata sen %{seconds} sekunnin ajan.
     continue: Jatka
     login: Kirjaudu
     change_password: Vaihda salasana
@@ -133,7 +133,7 @@ fi:
     wlan_updated: WLAN-asetukset päivitetty
     wlan_save_failed: "WLAN-asetusten tallennus epäonnistui: %{error}"
     organisation:
-      wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyypi on ylläpitäjä"
+      wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"
       owner_removed: "%{user} ei ole enää omistajana tässä organisaatiossa"
     group:
@@ -175,11 +175,11 @@ fi:
       connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
       can_not_change_password: Jostakin syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen!
       token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
-      too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viestiä.
+      too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viesti.
     school:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty ylläpitäjäkäyttäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä käyttäjä tässä koulussa"
-      wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin-käyttäjille"
+      wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin -käyttäjille"
       destroyed_failed: "Koulun poistaminen epäonnistui. Käyttäjät, roolit ja ryhmät pitää poistaa ennen koulua"
       roles_not_found: Yhtään roolia ei ole määritetty
       wlan_updated: WLAN-asetukset päivitetty
@@ -200,7 +200,7 @@ fi:
       other_groups: "Muut ryhmät"
       change_school: "Siirrä käyttäjät toiseen kouluun"
       destroy_users: Poista kaikki käyttäjät
-      confirm_destroy_users: Poistetaan järjestelmästä kaikki käyttäjät (%{count}kpl), jotka kuuluvat rooliin '%{name}'. Oletko varma, että haluat poistaa käyttäjät? Tämän jälkeen käyttäjiä ei voida enää palauttaa takaisin järjestelmään!
+      confirm_destroy_users: Poistetaan järjestelmästä kaikki käyttäjät (%{count} kpl), jotka kuuluvat rooliin '%{name}'. Oletko varma, että haluat poistaa käyttäjät? Tämän jälkeen käyttäjiä ei voida enää palauttaa takaisin järjestelmään!
     new:
       title: Uusi rooli
     edit:
@@ -218,7 +218,7 @@ fi:
     index:
       actions: Toiminnot
     show:
-      user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit:  <b>%{roles}</b>"
+      user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: <b>%{roles}</b>"
       system_information: "Järjestelmätietoja"
       contact_information: Yhteystiedot
       group_by_roles: "Roolien mukana tulevat ryhmät"
@@ -283,7 +283,7 @@ fi:
       roles_and_members: "Roolit ja jäsenet"
       other_roles: Muut roolit
       add_user_title: Käyttäjien lisääminen ryhmään
-      description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukentään ja paina "Lisää ryhmään" painiketta.
+      description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Lisää ryhmään" painiketta.
       placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
     new:
       title: "Luo uusi ryhmä"
@@ -357,8 +357,8 @@ fi:
     successfully:
       info: Sähköpostiosoitteesi on vahvistettu
     error:
-      email_already_exists: "Sähköpostiosoite on jo asetettu!"
-      invalid_jwt_token: Virheelinen JWT valtuutus
+      email_already_exists: "Tämä sähköpostiosoite on jo käytössä!"
+      invalid_jwt_token: "Virheellinen JWT -valtuutus. Ota yhteyttä Opinsysin tukeen."
   organisations:
     show:
       title: Organisaation tiedot
@@ -373,11 +373,11 @@ fi:
   ldap_services:
     index:
       actions: Toiminnot
-      title: LDAP palvelut
+      title: LDAP-palvelut
     new:
-      title: Uuden LDAP palvelun tiedot
+      title: Uuden LDAP-palvelun tiedot
     edit:
-      title: LDAP palvelun tietojen muokkaus
+      title: LDAP-palvelun tietojen muokkaus
   search:
     search_result:
       title_user: "Käyttäjät"
@@ -440,7 +440,7 @@ fi:
       role: Rooli
       user: "Käyttäjä"
       school: Koulu
-      ldap_service: LDAP palvelu
+      ldap_service: LDAP-palvelu
     attributes:
       role:
         displayName: Roolin nimi
@@ -463,7 +463,7 @@ fi:
         st: Maakunta
         gidNumber: Gid-numero
         puavoDeviceImage: Työpöytäkuva
-        external_feeds: Webmenu syöte
+        external_feeds: Webmenun syöte
         puavoBillingInfo: Laskutustiedot
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu
@@ -578,17 +578,17 @@ fi:
         puavoDeviceBootMode: "Käynnistymistapa"
         description: Kuvaus
         puavoTag: Tagit
-        puavoPurchaseDate: Hankinta pvm.
-        puavoWarrantyEndDate: "Takuun päättymis pvm."
+        puavoPurchaseDate: Hankintapäivä
+        puavoWarrantyEndDate: "Takuun päättymispäivä"
         puavoPurchaseLocation: Hankintapaikka
         puavoPurchaseURL: Hankinta-URL
         puavoSupportContract: "Tukiyhteyshenkilö"
         puavoDefaultPrinter: Oletustulostin
         puavoDeviceXserver: "Näytönohjaimen ajuri"
-        puavoDeviceXrandr: Xrandr asetukset
+        puavoDeviceXrandr: Xrandr-asetukset
         puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio
-        puavoDeviceKernelArguments: Kernel parametrit
+        puavoDeviceKernelArguments: Kernel-parametrit
         puavoDeviceResolution: Resoluutio
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
@@ -634,17 +634,17 @@ fi:
         puavoDeviceStatus: Tila
         description: Kuvaus
         puavoTag: Tagit
-        puavoPurchaseDate: Hankinta pvm.
-        puavoWarrantyEndDate: "Takuun päättymis pvm."
+        puavoPurchaseDate: Hankintapäivä
+        puavoWarrantyEndDate: "Takuun päättymispäivä"
         puavoPurchaseLocation: Hankintapaikka
         puavoPurchaseURL: Hankinta-URL
         puavoSupportContract: "Tukiyhteyshenkilö"
         puavoDefaultPrinter: Oletustulostin
         puavoDeviceXserver: "Näytöohjaimen ajuri"
-        puavoDeviceXrandr: Xrandr asetukset
+        puavoDeviceXrandr: Xrandr-asetukset
         puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio
-        puavoDeviceKernelArguments: Kernel parametrit
+        puavoDeviceKernelArguments: Kernel-parametrit
         puavoDeviceResolution: Resoluutio
         puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
@@ -805,6 +805,7 @@ fi:
       path: Polku
       mountpoint: Liitoskohta
       options: Parametrit
+      add_more: Lisää uusi liitospiste
     form_auto_power_off_settings:
       select: Valitse
   devices:
@@ -824,9 +825,9 @@ fi:
       printer_title: Tulostusoikeudet
       printer_description: Tällä laitteella on tulostaminen sallittu seraaviin tulostimiin
     form_cups:
-      cups_settings: CUPS asetukset
+      cups_settings: CUPS-asetukset
     cups:
-      cups_settings: CUPS asetukset
+      cups_settings: CUPS-asetukset
     show:
       change_school: Vaihda koulua
     select_school:
@@ -887,7 +888,7 @@ fi:
     by_school: (koulu)
   external_services:
     title: Ulkoiset Palvelut
-    description: "Ulkoisen palvelun aktivointi mahdollistaa palveluun kirjautumisen Opinsys-käyttäjä tunnuksella sekä salasanalla. Aktivoidulle palvelulle siirretään kirjautumisen yhteydessä käyttäjän koko nimi, sähköposti, organisaation nimi ja koulun nimi."
+    description: "Ulkoisen palvelun aktivointi mahdollistaa palveluun kirjautumisen Opinsys-käyttäjätunnuksella ja -salasanalla. Aktivoidulle palvelulle siirretään kirjautumisen yhteydessä käyttäjän koko nimi, sähköposti, organisaation nimi ja koulun nimi."
     email: Ylläpitäjän sähköpostiosoite
     path_prefix: Polun etuliite
     active: Aktiivinen
