@@ -234,9 +234,9 @@ module ApplicationHelper
       if model.send(attribute).nil?
         content = "<input name='#{object_name}[#{attribute}][]' size='30' type='text' />"
       else
-	Array(model.send(attribute)).each do |value|
+        Array(model.send(attribute)).each do |value|
           content += "<input name='#{object_name}[#{attribute}][]' size='30' type='text' value='#{value}' />"
-	end
+        end
       end
       content.html_safe
     end +
