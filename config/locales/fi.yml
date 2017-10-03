@@ -139,6 +139,7 @@ fi:
     server_created: "Palvelin luotiin onnistuneesti"
     server_updated: "Palvelin päivitettiin onnistuneesti"
     printer_permissions_updated: "Tulostusoikeudet päivitetty!"
+    invalid_school_id: "Koulun ID on virheellinen!"
     organisation:
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"
