@@ -1,18 +1,15 @@
 <div class="external-files">
-  <h1><span>External Files</span></h1>
-
-  <p>
-  Custom files for Opinsys desktops.
-  </p>
+  <h1><%= t('external_files.title') %></h1>
+  <p><%= t('external_files.description') %></p>
 
   <%= form_tag({:action => :upload}, :multipart => true) do %>
 
   <table class="list">
     <tr>
-      <th>File name</th>
-      <th>Description</th>
-      <th>File size</th>
-      <th colspan="2"><%= t('.actions') %></th>
+      <th><%= t('external_files.columns.name') %></th>
+      <th><%= t('external_files.columns.description') %></th>
+      <th><%= t('external_files.columns.size') %></th>
+      <th colspan="2"><%= t('external_files.columns.actions') %></th>
     </tr>
 
   <% @external_files.each do |file| %>
@@ -34,7 +31,7 @@
       <% if file["model"] %>
         <%= file["model"].puavoData.size %>
       <% else %>
-        (no file)
+        <%= t('external_files.no_file') %>
       <% end %>
 
       </td>
@@ -47,16 +44,16 @@
               download_external_file_path(file["meta"]["name"]), :class => 'btn'
             ) do
         %>
-        <i class="icon-download"></i> <%= 'download' %>
+        <i class="icon-download"></i> <%= t('external_files.buttons.download') %>
         <% end %>
         </span>
         <span class="table-actions">
         <%= link_to(
               destroy_external_file_path(file["meta"]["name"]),
-              method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-danger'
+              method: :delete, data: { confirm: t('general_confirm') }, :class => 'btn btn-danger'
             ) do
         %>
-        <i class="icon-trash"></i><%='delete'%>
+        <i class="icon-trash"></i><%= t('external_files.buttons.delete') %>
         <% end %>
         </span>
         </td>
@@ -68,9 +65,7 @@
 
   </table>
 
-  <p>
-  <%= submit_tag("Save", class: 'btn') %>
-  </p>
+  <p><%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %></p>
 
   <% end %>
 </div>
