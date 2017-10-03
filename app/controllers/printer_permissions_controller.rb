@@ -46,7 +46,7 @@ class PrinterPermissionsController < ApplicationController
       end
     end
 
-    flash[:notice] = "Saved!"
+    flash[:notice] = t('flash.printer_permissions_updated')
     redirect_to :action => :edit
   end
 
