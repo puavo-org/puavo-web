@@ -71,7 +71,9 @@ fi:
       logged_in_as: "Kirjauduttu käyttäjänä:"
       devices: Laitteet
       servers: Palvelimet
-      ldap_services: LDAP palvelut
+      ldap_services: LDAP -palvelut
+      external_files: Ulkoiset tiedostot
+      wlan: Langattomat verkot
       about: Tietoja
       printers: Tulostimet
       search_placeholder: Hae
