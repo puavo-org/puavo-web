@@ -121,6 +121,7 @@ fi:
     devices: Laitelista
     servers: Palvelimet
     set_install_mode: "Sertifikaatti poistettu, laite asetettu asennustilaan."
+    set_install_mode_server: "Sertifikaatti poistettu, palvelin asetettu asennustilaan."
     automounts: Hakemistoliitokset
     new_automount: Uusi hakemistoliitos
     printer_permissions: Tulostinoikeudet
@@ -135,6 +136,8 @@ fi:
     external_services_saved: "Tallennettu!"
     device_created: "Laite luotiin onnistuneesti"
     device_updated: "Laite päivitettiin onnistuneesti"
+    server_created: "Palvelin luotiin onnistuneesti"
+    server_updated: "Palvelin päivitettiin onnistuneesti"
     organisation:
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"

@@ -151,6 +151,7 @@ en:
     devices: Device list
     servers: Servers
     set_install_mode: "Device certificate removed, device is now in install mode."
+    set_install_mode_server: "Server sertificate removed, server is now in install mode."
     automounts: Automounts
     new_automount: New automount
     printer_permissions: Printing permissions
@@ -165,6 +166,8 @@ en:
     external_services_saved: "Saved!"
     device_created: "Device was successfully created."
     device_updated: "Device was successfully updated."
+    server_created: "Server was successfully created."
+    server_updated: "Server was successfully updated."
     organisation:
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
       owner_added: "%{user} is now an owner of this organisation"
