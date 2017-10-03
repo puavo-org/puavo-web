@@ -120,7 +120,7 @@ fi:
     rename_groups: Vuosiluokkasiirto
     devices: Laitelista
     servers: Palvelimet
-    set_install_mode: Peruuta sertifikaatti
+    set_install_mode: "Sertifikaatti poistettu, laite asetettu asennustilaan."
     automounts: Hakemistoliitokset
     new_automount: Uusi hakemistoliitos
     printer_permissions: Tulostinoikeudet
