@@ -194,7 +194,7 @@ class DevicesController < ApplicationController
     @device.userPassword = nil
 
     respond_to do |format|
-      format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully set to install mode.') }
+      format.html { redirect_to(device_path(@school, @device), :notice => t('flash.set_install_mode')) }
     end
   end
 
