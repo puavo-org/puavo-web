@@ -210,7 +210,8 @@ PuavoUsers::Application.routes.draw do
       end
     end
 
-  ["api/v2/", ""].each do |prefix|
+  ["", "api/v2/"].each do |prefix|
+    new_prefix = prefix.gsub("/", "_")
     match("#{ prefix }external_files" => "external_files#index", :via => :get)
     match("#{ prefix }external_files" => "external_files#upload", :via => :post)
     match(
@@ -218,14 +219,14 @@ PuavoUsers::Application.routes.draw do
       :name => /.+/,
       :format => false,
       :via => :get,
-      #:as => "download_external_file"
+      :as => "#{new_prefix}download_external_file"
     )
     match(
       "#{ prefix }external_files/:name" => "external_files#destroy",
       :name => /.+/,
       :format => false,
       :via => :delete,
-      #:as => "destroy_external_file"
+      :as => "#{new_prefix}destroy_external_file"
     )
   end
 
