@@ -940,6 +940,19 @@ en:
     save: Save
     organisation: organisation
     disabled_description: This service is activated from the %{organisation}.
+  external_files:
+    title: External Files
+    description: Custom files for Opinsys desktops.
+    no_file: "(no file)"
+    columns:
+        name: Name
+        size: Size
+        description: Description
+        actions: Actions
+    buttons:
+        download: Download
+        delete: Delete
+        master_save: Save changes
   printer_permissions:
     index:
       edit_permissions: Edit permissions

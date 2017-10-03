@@ -905,6 +905,19 @@ fi:
     save: Tallenna
     disabled_description: Tämä palvelu on aktivoitu %{organisation}.
     organisation: organisaatiosta
+  external_files:
+    title: Ulkoiset tiedostot
+    description: Ulkoisia tiedostoja Opinsys-koneille.
+    no_file: "(ei tiedostoa)"
+    columns:
+        name: Nimi
+        size: Koko
+        description: Kuvaus
+        actions: Toiminnot
+    buttons:
+        download: Lataa
+        delete: Poista
+        master_save: Tallenna muutokset
   printer_permissions:
     index:
       edit_permissions: Muokkaa oikeuksia
