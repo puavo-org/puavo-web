@@ -128,7 +128,7 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if @device.save
-        format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully created.') }
+        format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_created')) }
         format.xml  { render :xml => @device, :status => :created, :location => device_path(@school, @device) }
         format.json  { render :json => @device, :status => :created, :location => device_path(@school, @device) }
       else
@@ -161,7 +161,7 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if @device.update_attributes(dp)
-        format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully updated.') }
+        format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_updated')) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
