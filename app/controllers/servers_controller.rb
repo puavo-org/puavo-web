@@ -78,7 +78,7 @@ class ServersController < ApplicationController
 
     respond_to do |format|
       if @server.save
-        flash[:notice] = 'Server was successfully created.'
+        flash[:notice] = t('flash.server_created')
         format.html { redirect_to(@server) }
         format.xml  { render :xml => @server, :status => :created, :location => @server }
         format.json  { render :json => @server, :status => :created, :location => @server }
@@ -110,7 +110,7 @@ class ServersController < ApplicationController
 
     respond_to do |format|
       if @server.save
-        flash[:notice] = 'Server was successfully updated.'
+        flash[:notice] = t('flash.server_updated')
         format.html { redirect_to(@server) }
         format.xml  { head :ok }
       else
@@ -146,7 +146,7 @@ class ServersController < ApplicationController
     @server.userPassword = nil
 
     respond_to do |format|
-      format.html { redirect_to(server_path(@server), :notice => 'Server was successfully set to install mode.') }
+      format.html { redirect_to(server_path(@server), :notice => t('flash.set_install_mode_server')) }
     end
   end
 
