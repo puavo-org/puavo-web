@@ -465,7 +465,7 @@ fi:
         puavoSchoolNameAbbreviation: "Ryhmän lyhenne"
         telephoneNumber: Puhelinnumero
         facsimileTelephoneNumber: Faxin numero
-        l: Locality
+        l: Sijainti
         street: Katu
         postOfficeBox: Postilokero
         postalAddress: Postiosoite
@@ -480,6 +480,7 @@ fi:
         puavoPersonalDevice: Laitteet henkilökohtaisia
         preferredLanguage: Kieli
         puavoLocale: Kieli
+        image: Kuva
         puavoTag: Tagit
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
         puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila

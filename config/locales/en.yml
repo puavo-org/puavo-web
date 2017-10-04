@@ -511,6 +511,7 @@ en:
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
         preferredLanguage: Language
+        image: Image
         puavoTag: Tags
         puavoLocale: Language
         puavoAutomaticImageUpdates: Automatic image updates
