@@ -35,7 +35,7 @@ group :test do
   gem "rspec-rails"
   #gem "ruby-prof"
   gem "timecop"
-  #gem "ripper-tags"
+  gem "ripper-tags"
   gem "webmock"
 end
 
