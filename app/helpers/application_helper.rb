@@ -242,7 +242,8 @@ module ApplicationHelper
     end +
 
     link_to("#", :class => "clone_prev_input_element btn") do
-      content_tag(:i, link_text, :class => "icon-plus")
+      content_tag(:i, "", :class => "icon-plus") +
+      link_text
     end +
 
     content_tag(:div, field_error_text(model, attribute))
