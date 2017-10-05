@@ -186,12 +186,16 @@ class User < LdapBase
       value_by_key("allow_uppercase_characters_uid").
       to_s.chomp == "true" ? true : false rescue false
 
+    usernameFailed = false
+
     unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z]/ : /^[a-z]/ )
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.must_begin_with") )
+      usernameFailed = true
     end
 
     unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z0-9.-]+$/ : /^[a-z0-9.-]+$/ )
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.invalid_characters") )
+      usernameFailed = true
     end
 
     # Role validation
@@ -240,6 +244,11 @@ class User < LdapBase
                            :attribute => locale_puavoEduPersonAffiliation_name ) )
       end
     end
+
+    # If the username failed validation, stop here. Older versions if the LDAP library allowed invalid characters
+    # in the username and the user was returned to the form, but in newer versions the LDAP query fails. So force
+    # stop here if the username isn't valid.
+    return false if usernameFailed
 
     # Validate uid uniqueness only if there are no other errors in the uid
     if !self.uid.nil? && !self.uid.empty? && errors.select{ |k,v| k == "uid" }.empty?
