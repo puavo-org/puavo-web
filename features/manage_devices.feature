@@ -78,3 +78,19 @@ Feature: Manage devices
     And I fill in "device[puavoImageSeriesSourceURL][]" with "http://foobar.opinsys.fi/trusty"
     And I press "Update"
     And I should see "http://foobar.opinsys.fi/trusty"
+
+  Scenario: Check for unique tags
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I fill in "Tags" with "tagA tagB"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see "tagA tagB"
+
+  Scenario: Check that duplicate tags are removed
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I fill in "Tags" with "tagA tagB tagB"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see "tagA tagB"

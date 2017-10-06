@@ -270,7 +270,7 @@ class DevicesController < ApplicationController
   end
 
   def device_params
-    return params.require(:device).permit(
+    p = params.require(:device).permit(
       :puavoDeviceType,
       :puavoHostname,
       :puavoTag,
@@ -325,6 +325,9 @@ class DevicesController < ApplicationController
       :path=>[],
       :mountpoint=>[],
       :options=>[]).to_hash
+
+    p["puavoTag"] = p["puavoTag"].split.uniq.join(' ') if p.key?("puavoTag")
+    return p
   end
 
 end

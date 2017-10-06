@@ -193,6 +193,8 @@ class ServersController < ApplicationController
         :puavoSchool=>[]
       ).to_hash
 
+      server["puavoTag"] = server["puavoTag"].split.uniq.join(' ') if server.key?("puavoTag")
+
       # For some reason, server parameters have been split into
       # multiple hashes and each one must be permitted separately.
       # Perhaps there is a better way to do this?
