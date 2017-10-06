@@ -1,6 +1,7 @@
-<div class="external-files">
-  <h1><%= t('external_files.title') %></h1>
+  <h1><span><%= t('external_files.title') %></span></h1>
   <p><%= t('external_files.description') %></p>
+
+  <div class="external-files">
 
   <%= form_tag({:action => :upload}, :multipart => true) do %>
 
@@ -67,4 +68,5 @@
   <p><%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %></p>
 
   <% end %>
-</div>
+
+  </div>
