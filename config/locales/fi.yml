@@ -794,6 +794,7 @@ fi:
     form_linux_device_information:
       select: Valitse
     form_wlan:
+      title: Langattomat verkot
       wireless_access_point_setup: Tukiasemien oletusasetukset
       channel_random: Satunnainen
       wireless_network_setup: Langattomien verkkojen asetukset
