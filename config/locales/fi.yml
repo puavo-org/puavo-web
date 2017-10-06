@@ -429,6 +429,7 @@ fi:
         confirmation: "%{attribute} ei täsmää vahvistukseen"
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
+        image_failed: "Kuvaa ei voitu tallentaa"
         user:
           must_begin_with: "Käyttäjätunnuksen pitää alkaa pienellä kirjaimella"
           invalid_characters: "Käyttäjätunnus sisältää virheellisiä merkkejä (sallittuja merkkejä ovat: a-z0-9.-)"

@@ -460,6 +460,7 @@ en:
         confirmation: "%{attribute} doesn't match the confirmation"
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
+        image_failed: "Failed to save the image"
         user:
           must_begin_with: Username must begin with a small letter
           invalid_characters: Username contains invalid characters (allowed characters are a-z0-9.-)
