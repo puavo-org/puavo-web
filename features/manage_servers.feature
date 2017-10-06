@@ -19,3 +19,21 @@ Feature: Manage servers
     And I check "Example school 2"
     And I press "Update"
     And I should see "This LTSP server will only serve these schools"
+
+  Scenario: Check for unique server tags
+    Given I am on the server list page
+    Then I should see "someserver"
+    And I follow "someserver"
+    And I follow "Edit"
+    And I fill in "Tags" with "tagA tagB"
+    And I press "Update"
+    And I should see "tagA tagB"
+
+  Scenario: Check that duplicate tags are removed
+    Given I am on the server list page
+    Then I should see "someserver"
+    And I follow "someserver"
+    And I follow "Edit"
+    And I fill in "Tags" with "tagA tagB tagB"
+    And I press "Update"
+    And I should see "tagA tagB"
