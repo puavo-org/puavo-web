@@ -118,7 +118,7 @@
 
   <tr>
     <td><%= f.label :image %></td>
-    <td><%= f.file_field :image %></td>
+    <td><%= f.file_field(:image, accept: 'image/*') %></td>
   </tr>
 
   <tr>
