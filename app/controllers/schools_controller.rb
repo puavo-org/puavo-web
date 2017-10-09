@@ -217,7 +217,7 @@ class SchoolsController < ApplicationController
 
   private
     def school_params
-      return params.require(:school).permit(
+      p = params.require(:school).permit(
         :displayName,
         :cn,
         :puavoNamePrefix,
@@ -249,6 +249,9 @@ class SchoolsController < ApplicationController
         :mountpoint=>[],
         :options=>[]
       ).to_hash
+
+      p["puavoTag"] = p["puavoTag"].split.uniq.join(' ') if p.key?("puavoTag")
+      return p
     end
 
 end
