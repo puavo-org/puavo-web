@@ -94,3 +94,10 @@ Feature: Manage devices
     And I press "Update"
     Then I should see "Device was successfully updated."
     And I should see "tagA tagB"
+
+  Scenario: Give the device an image
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I attach the file at "features/support/test.jpg" to "Image"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
