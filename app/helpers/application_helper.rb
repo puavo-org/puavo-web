@@ -31,6 +31,11 @@ module ApplicationHelper
     super(*args) + after_html.to_s
   end
 
+  def file_field(*args)
+    after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
+    super(*args) + after_html.to_s
+  end
+
   def field_error_text_span(object, method)
     content_tag(:span, field_error_text(object, method), :class => 'field_error')
   end
