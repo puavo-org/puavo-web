@@ -42,8 +42,11 @@ class ProfilesController < ApplicationController
 
       value = attribute.last
 
-      if key == "jpegPhoto"
-        value = User.resize_image(value.path)
+      begin
+        if key == "jpegPhoto"
+          value = User.resize_image(value.path)
+        end
+      rescue
       end
 
       { key => value }

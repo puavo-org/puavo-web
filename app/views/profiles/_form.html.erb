@@ -33,7 +33,7 @@
   <div class="control-group">
     <%= f.label :jpegPhoto, nil, :class => "control-label" %>
     <div class="controls">
-    <%= f.file_field :jpegPhoto %>
+    <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
     </div>
   </div>
 
