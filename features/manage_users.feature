@@ -374,7 +374,16 @@ Feature: Manage users
     And I should see "Doe"
     And I should see "Invalid public key"
 
-    
+  Scenario: Give the user a non-image file as the image
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Doe      |
+    | Given name     | Jane     |
+    | Username       | jane.doe |
+    And I attach the file at "features/support/hello.txt" to "Image"
+    And I press "Create"
+    Then I should see "Failed to save the image"
+
 # FIXME
 #  @allow-rescue
 #  Scenario: Get user infromation in JSON from wrong school

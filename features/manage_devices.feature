@@ -101,3 +101,10 @@ Feature: Manage devices
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Update"
     Then I should see "Device was successfully updated."
+
+  Scenario: Give the device a non-image file as the image
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I attach the file at "features/support/hello.txt" to "Image"
+    And I press "Update"
+    Then I should see "Failed to save the image"
