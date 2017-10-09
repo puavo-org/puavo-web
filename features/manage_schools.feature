@@ -260,3 +260,10 @@ Feature: Manage schools
     | Class 6     | student-2011 |
     And I am on the school page with "Example school 1"
     When I follow "Rename groups and roles"
+
+  Scenario: Give the school a non-image file as the image
+    Given I am on the new school page
+    Then I should see "New school"
+    When I attach the file at "features/support/hello.txt" to "Image"
+    And I press "Create"
+    Then I should see "Failed to save the image"
