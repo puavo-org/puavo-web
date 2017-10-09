@@ -31,7 +31,7 @@ Feature: Manage schools
     | State                               | East Midlands                                                                  |
     | Desktop Image                       | presice-20121023                                                               |
     | school[puavoBillingInfo][]          | school_base:500                                                                |
-    | Tags                                | testag1 testag2                                                                |
+    | Tags                                | testag1 testag2 testag2                                                        |
     | school_fs_0                         | nfs3                                                                           |
     | school_path_0                       | 10.0.0.1/share                                                                 |
     | school_mountpoint_0                 | /home/share                                                                    |
