@@ -23,7 +23,7 @@ class User < LdapBase
   belongs_to :roles, :class_name => 'Role', :many => 'member', :primary_key => "dn"
   belongs_to :uidRoles, :class_name => 'Role', :many => 'memberUid', :primary_key => "uid"
 
-  before_validation :set_special_ldap_value, :resize_image
+  before_validation :set_special_ldap_value
 
   before_save :is_uid_changed, :set_preferred_language
 
@@ -245,6 +245,16 @@ class User < LdapBase
       end
     end
 
+    # Validate the image, if set. Must be done here, because if the file is not a valid image file,
+    # it will cause an exception in ImageMagick.
+    if self.image && !self.image.path.to_s.empty?
+      begin
+        resize_image
+      rescue
+        errors.add(:image, I18n.t('activeldap.errors.messages.image_failed'))
+      end
+    end
+
     # If the username failed validation, stop here. Older versions if the LDAP library allowed invalid characters
     # in the username and the user was returned to the form, but in newer versions the LDAP query fails. So force
     # stop here if the username isn't valid.
@@ -291,7 +301,6 @@ class User < LdapBase
         )
       end
     end
-
   end
 
   def change_ldap_password
