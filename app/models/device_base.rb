@@ -12,7 +12,6 @@ class DeviceBase < LdapBase
   before_validation( :set_puavo_id,
                      :set_password,
                      :downcase_mac_addresses,
-                     :resize_image,
                      :set_puavo_device_primary_user )
   before_save :set_puppetclass, :set_parentNode, :set_puavo_mountpoint
 
@@ -157,6 +156,16 @@ class DeviceBase < LdapBase
         errors.add( :primary_user_uid,
                     I18n.t("activeldap.errors.messages.invalid",
                            :attribute => I18n.t('activeldap.attributes.device.primary_user_uid') ) )
+      end
+    end
+
+    # Validate the image, if set. Must be done here, because if the file is not a valid image file,
+    # it will cause an exception in ImageMagick.
+    if self.image && !self.image.path.to_s.empty?
+      begin
+        resize_image
+      rescue
+        errors.add(:image, I18n.t('activeldap.errors.messages.image_failed'))
       end
     end
   end
