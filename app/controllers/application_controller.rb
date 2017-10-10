@@ -15,7 +15,8 @@ class ApplicationController < ActionController::Base
                  :set_initial_locale, :remove_ldap_connection, :theme,
                  :school_list, :rack_mount_point, :password_management_host )
 
-  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  # Raise an exception if the CSRF check fails
+  protect_from_forgery with: :exception
 
   before_filter do
     response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
