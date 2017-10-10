@@ -923,6 +923,7 @@ fi:
         download: Lataa
         delete: Poista
         master_save: Tallenna muutokset
+    file_not_found: Pyydettyä tiedostoa ei löydy
   printer_permissions:
     index:
       edit_permissions: Muokkaa oikeuksia

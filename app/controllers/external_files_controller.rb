@@ -34,7 +34,7 @@ class ExternalFilesController < ApplicationController
     else
       render(
         :status => 404,
-        :text => "Cannot find file #{ cn }"
+        :text => t('external_files.file_not_found')
       )
     end
 
@@ -58,7 +58,7 @@ class ExternalFilesController < ApplicationController
     cn = params[:name]
     @external_file = ExternalFile.find_by_cn(cn)
     if not @external_file
-      return render(:status => 404, :text => "Cannot find file #{ cn }")
+      return render(:status => 404, :text => t('external_files.file_not_found'))
     end
 
     @external_file.destroy
