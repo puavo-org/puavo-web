@@ -956,6 +956,7 @@ en:
         download: Download
         delete: Delete
         master_save: Save changes
+    file_not_found: The requested file could not be found
   printer_permissions:
     index:
       edit_permissions: Edit permissions
