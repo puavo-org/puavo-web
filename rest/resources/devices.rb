@@ -279,6 +279,7 @@ class Device < Host
 
     profiles = [ self.type,
                  (tags.include?('bigtouch') ? 'bigtouch' : nil),
+                 (tags.include?('infotv')   ? 'infotv'   : nil),
                  (personally_administered   ? 'personal' : nil),
                ]
     update.call('puavo.profiles.list', profiles.compact.join(','))
@@ -361,10 +362,6 @@ class Device < Host
 		      hitachi_calibration)
 	when /\Aimagedownload-rate-limit:(.*)\z/
 	  update.call('puavo.image.download.ratelimit', $1)
-	when 'infotv'
-	  update.call('puavo.guestlogin.enabled', 'true')
-	  update.call('puavo.guestlogin.mode', 'automatic')
-	  update.call('puavo.xsessions.default', 'puavo-infotv')
 	when 'intel-backlight', 'no-intel-backlight'
 	  tagswitch.call('puavo.xorg.intel_backlight',
 			 'intel-backlight',
