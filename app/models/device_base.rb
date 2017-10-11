@@ -84,7 +84,7 @@ class DeviceBase < LdapBase
                   I18n.t("activeldap.errors.messages.device.puavoHostname.invalid_characters" ) )
     end
 
-    unless Host.validates_uniqueness_of_hostname(self)
+    unless !puavoHostname.empty? && Host.validates_uniqueness_of_hostname(self)
       errors.add :puavoHostname, I18n.t('activeldap.errors.messages.taken',
                                         :attribute => I18n.t('activeldap.attributes.device.puavoHostname'))
     end
