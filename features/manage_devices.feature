@@ -155,3 +155,8 @@ Feature: Manage devices
         """
         <h1>TITLE</h1> <a href="#">foobar</a> <ul><li>foo</li><li>bar</li></ul> # Header 1 ## Header 2 <img src="https://opinsys.fi/wp-content/uploads/2016/10/opinsys-logo.png"> _Markdown_ **is not always** cool. <script>alert(123)</script>
         """
+
+  Scenario: Empty new device page should not cause crashes
+    Given I am on the new other device page
+    And I press "Create"
+    Then I should see "Hostname can't be blank"
