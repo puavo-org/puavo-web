@@ -267,7 +267,7 @@ class DeviceBase < LdapBase
 
 
   def parent
-    if self.attributes.include?("puavoSchool")
+    if self.attributes.include?("puavoSchool") && !self.puavoSchool.nil?
       return School.find(self.puavoSchool)
     end
   end
