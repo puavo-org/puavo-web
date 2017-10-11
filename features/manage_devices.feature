@@ -124,9 +124,34 @@ Feature: Manage devices
     And I press "Update"
     Then I should see "Serial number contains invalid characters"
 
-  Scenario: Invalid primary user should not fail
+  Scenario: Invalid primary user should not crash
     Given I am on the devices list page
     And I press "Edit" on the "thin-01" row
     And I fill in "Device primary user" with "does not exist"
     And I press "Update"
     Then I should see "Device primary user is invalid"
+
+  Scenario: Poor man's script injection check
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Device manufacturer" with "<script>alert(456)</script>"
+    And I press "Update"
+    Then I should see "Device was successfully updated"
+    And I should see "<script>alert(456)</script>"
+
+  Scenario: Ensure Markdown and HTML stays escaped and uninterpreted
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Description" with:
+        """
+        <h1>TITLE</h1> <a href="#">foobar</a> <ul><li>foo</li><li>bar</li></ul>
+        # Header 1
+        ## Header 2
+        <img src="https://opinsys.fi/wp-content/uploads/2016/10/opinsys-logo.png"> _Markdown_ **is not always** cool. <script>alert(123)</script>
+        """
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see:
+        """
+        <h1>TITLE</h1> <a href="#">foobar</a> <ul><li>foo</li><li>bar</li></ul> # Header 1 ## Header 2 <img src="https://opinsys.fi/wp-content/uploads/2016/10/opinsys-logo.png"> _Markdown_ **is not always** cool. <script>alert(123)</script>
+        """

@@ -51,6 +51,10 @@ When(/^I fill in "([^\"]*)" for "([^\"]*)"$/) do |value, field|
   fill_in(field, :with => value)
 end
 
+When(/^I fill in "([^"]*)" with:$/) do |field, string|
+  fill_in(field, :with => string)
+end
+
 # Use this to fill in an entire form with data from a table. Example:
 #
 #   When I fill in the following:
@@ -137,6 +141,10 @@ end
 
 Then(/^I should see "([^\"]*)"$/) do |text|
   page.body.should have_content(text)
+end
+
+Then(/^I should see:$/) do |string|
+  page.body.should have_content(string)
 end
 
 Then(/^I should see "([^\"]*)" within "([^\"]*)"$/) do |text, selector|
