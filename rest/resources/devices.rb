@@ -362,7 +362,7 @@ class Device < Host
 	when /\Aimagedownload-rate-limit:(.*)\z/
 	  update.call('puavo.image.download.ratelimit', $1)
 	when 'infotv'
-	  update.call('puavo.xsessions.default', 'infotv')
+	  update.call('puavo.xsessions.default', 'puavo-infotv')
 	when 'intel-backlight', 'no-intel-backlight'
 	  tagswitch.call('puavo.xorg.intel_backlight',
 			 'intel-backlight',
