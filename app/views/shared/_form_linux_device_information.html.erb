@@ -199,7 +199,7 @@
   <tr>
     <td><%= f.label :puavoPreferredServer %></td>
     <td><%= f.select( :puavoPreferredServer,
-            [[t('.select'), ""]] + @servers ) %></td>
+            [[t('.select'), ""]] + Array(@servers) ) %></td>
   </tr>
     <% end %>
   <% end %>
