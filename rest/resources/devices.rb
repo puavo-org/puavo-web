@@ -280,6 +280,7 @@ class Device < Host
     profiles = [ self.type,
                  (tags.include?('bigtouch') ? 'bigtouch' : nil),
                  (tags.include?('infotv')   ? 'infotv'   : nil),
+                 (tags.include?('webkiosk') ? 'webkiosk' : nil),
                  (personally_administered   ? 'personal' : nil),
                ]
     update.call('puavo.profiles.list', profiles.compact.join(','))
