@@ -15,6 +15,7 @@ Feature: Manage devices
       | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | fatclient-02  | a0:4e:68:94:a1:7b | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | laptop-01     | a0:4e:68:94:a1:7c | laptop          | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
+      | thin-01       | 11:22:33:aa:bb:cc | thinclient      | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
 
   Scenario: Add new printer to Puavo
     Given I am on the new printer device page
@@ -108,3 +109,24 @@ Feature: Manage devices
     And I attach the file at "features/support/hello.txt" to "Image"
     And I press "Update"
     Then I should see "Failed to save the image"
+
+  Scenario: Ensure invalid characters in the serial number field don't crash (part 1)
+    Given I am on the devices list page
+    And I press "Edit" on the "fatclient-01" row
+    And I fill in "Serial number" with "ääääää"
+    And I press "Update"
+    Then I should see "Serial number contains invalid characters"
+
+  Scenario: Ensure invalid characters in the serial number field don't crash (part 2)
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Serial number" with "ääääää"
+    And I press "Update"
+    Then I should see "Serial number contains invalid characters"
+
+  Scenario: Invalid primary user should not fail
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Device primary user" with "does not exist"
+    And I press "Update"
+    Then I should see "Device primary user is invalid"
