@@ -195,6 +195,7 @@ class ServersController < ApplicationController
 
       server["puavoTag"] = server["puavoTag"].split.uniq.join(' ') if server.key?("puavoTag")
       server["puavoExport"].uniq! if server.key?("puavoExport")
+      server["macAddress"].uniq! if server.key?("macAddress")
 
       # For some reason, server parameters have been split into
       # multiple hashes and each one must be permitted separately.
