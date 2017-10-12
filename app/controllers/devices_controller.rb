@@ -326,7 +326,12 @@ class DevicesController < ApplicationController
       :mountpoint=>[],
       :options=>[]).to_hash
 
+    # deduplicate arrays, as LDAP really does not like duplicate entries...
     p["puavoTag"] = p["puavoTag"].split.uniq.join(' ') if p.key?("puavoTag")
+    p["macAddress"].uniq! if p.key?("macAddress")
+    p["puavoDeviceXrandr"].uniq! if p.key?("puavoDeviceXrandr")
+    p["puavoImageSeriesSourceURL"].uniq! if p.key?("puavoImageSeriesSourceURL")
+
     return p
   end
 
