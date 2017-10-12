@@ -217,7 +217,7 @@ class SchoolsController < ApplicationController
 
   private
     def school_params
-      p = params.require(:school).permit(
+      s = params.require(:school).permit(
         :displayName,
         :cn,
         :puavoNamePrefix,
@@ -250,8 +250,12 @@ class SchoolsController < ApplicationController
         :options=>[]
       ).to_hash
 
-      p["puavoTag"] = p["puavoTag"].split.uniq.join(' ') if p.key?("puavoTag")
-      return p
+      # deduplicate arrays, as LDAP really does not like duplicate entries...
+      s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
+      s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
+      s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
+
+      return s
     end
 
 end
