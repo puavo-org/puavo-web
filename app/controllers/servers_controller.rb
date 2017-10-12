@@ -206,6 +206,8 @@ class ServersController < ApplicationController
         :puavoDeviceXrandr=>[]
       ).to_hash
 
+      device["puavoDeviceXrandr"].uniq! if device.key?("puavoDeviceXrandr")
+
       return server.merge(device)
 
     end
