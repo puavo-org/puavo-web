@@ -193,11 +193,6 @@ class ServersController < ApplicationController
         :puavoSchool=>[]
       ).to_hash
 
-      server["puavoTag"] = server["puavoTag"].split.uniq.join(' ') if server.key?("puavoTag")
-      server["puavoExport"].uniq! if server.key?("puavoExport")
-      server["macAddress"].uniq! if server.key?("macAddress")
-      server["puavoImageSeriesSourceURL"].uniq! if server.key?("puavoImageSeriesSourceURL")
-
       # For some reason, server parameters have been split into
       # multiple hashes and each one must be permitted separately.
       # Perhaps there is a better way to do this?
@@ -206,6 +201,11 @@ class ServersController < ApplicationController
         :puavoDeviceXrandr=>[]
       ).to_hash
 
+      # deduplicate arrays, as LDAP really does not like duplicate entries...
+      server["puavoTag"] = server["puavoTag"].split.uniq.join(' ') if server.key?("puavoTag")
+      server["puavoExport"].uniq! if server.key?("puavoExport")
+      server["macAddress"].uniq! if server.key?("macAddress")
+      server["puavoImageSeriesSourceURL"].uniq! if server.key?("puavoImageSeriesSourceURL")
       device["puavoDeviceXrandr"].uniq! if device.key?("puavoDeviceXrandr")
 
       return server.merge(device)
