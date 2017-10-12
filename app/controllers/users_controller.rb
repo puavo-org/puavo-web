@@ -306,7 +306,7 @@ class UsersController < ApplicationController
 
   private
     def user_params
-      return params.require(:user).permit(
+      u = params.require(:user).permit(
           :givenName,
           :sn,
           :uid,
@@ -323,6 +323,13 @@ class UsersController < ApplicationController
           :telephoneNumber=>[],
           :puavoEduPersonAffiliation=>[],
           :role_ids=>[]).to_hash
+
+      # deduplicate arrays, as LDAP really does not like duplicate entries...
+      u["mail"].uniq! if u.key?("mail")
+      u["telephoneNumber"].uniq! if u.key?("telephoneNumber")
+
+      return u
+
     end
 
 end
