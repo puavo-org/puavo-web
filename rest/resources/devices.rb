@@ -403,6 +403,8 @@ class Device < Host
 	  tagswitch.call('puavo.nonfree.smartboard.enabled',
 			 'smartboard',
 			 'no_smartboard')
+	when 'use_puavo_printer_permissions'
+	  update.call('puavo.printing.use_puavo_permissions', 'true')
 	when 'use_remotemounts', 'no_use_remotemounts'
 	  tagswitch.call('puavo.mounts.by_user_from_bootserver.enabled',
 			 'use_remotemounts',
