@@ -168,23 +168,24 @@ class ImportWorker
 
       index += 1
     end
-    db.set("status", "rendering pdf")
 
     users.each{ |u| u.roles.reload }
 
     log_msg = { :user_count => users.size }
 
+    db.set("status", "rendering the PDF")
+
     users_pdf = UsersPdf.new(organisation, school, create_timestamp)
     users_pdf.add_users(ok_users)
+
+    encrypted_pdf = cipher.enc(users_pdf.render())
+    db.set("pdf", encrypted_pdf)
 
     if not failed_users.empty?
       db.set("failed_users", failed_users.to_json)
       log_msg[:failed_users] = failed_users
     end
 
-    encrypted_pdf = cipher.enc(users_pdf.render())
-
-    db.set("pdf", encrypted_pdf)
     db.set("status", "finished")
 
     flog.info "import finished", log_msg.merge(
