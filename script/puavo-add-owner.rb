@@ -65,6 +65,7 @@ owner_ssh_public_key = ask("Public key: ")
 databases.each do |database|
   # Skip o=puavo database
   next if database == "o=puavo"
+  next if Puavo::Organisation.all.values.select{ |o| o["ldap_base"] == database }.empty?
 
   if Puavo::CONFIG["puavo_add_owner_skip_organisations"].to_a.include?(database)
     next

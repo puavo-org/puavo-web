@@ -437,6 +437,15 @@ class User < LdapModel
     end
   end
 
+  computed_attr :external_domain_username
+  def external_domain_username
+    return nil unless CONFIG.has_key?("external_domain")
+    return nil if CONFIG["external_domain"].class != Hash
+    return nil unless CONFIG["external_domain"].has_key?(organisation.organisation_key)
+
+    "#{ username }@#{ CONFIG["external_domain"][organisation.organisation_key] }"
+  end
+
   def server_user?
     dn == CONFIG["server"][:dn]
   end

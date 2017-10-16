@@ -230,7 +230,6 @@ class Device < Host
 	       conf[key] = newvalue.to_s
 	     end
 
-    default_means_nothing = lambda { |v| v == 'default' ? nil : v }
     no_empty_string = lambda { |v| (v.kind_of?(String) && v.empty?) ? nil : v }
     to_json = lambda { |v| v.to_json }
 
@@ -277,6 +276,15 @@ class Device < Host
     update.call('puavo.mounts.extramounts',	  mountpoints, to_json)
     update.call('puavo.printing.default_printer', default_printer_name)
     update.call('puavo.printing.device_uri',      printer_device_uri)
+
+    profiles = [ self.type,
+                 (tags.include?('bigtouch') ? 'bigtouch' : nil),
+                 (tags.include?('infotv')   ? 'infotv'   : nil),
+                 (tags.include?('webkiosk') ? 'webkiosk' : nil),
+                 (personally_administered   ? 'personal' : nil),
+               ]
+    update.call('puavo.profiles.list', profiles.compact.join(','))
+
     update.call('puavo.time.timezone',            timezone)
     update.call('puavo.www.homepage',             homepage)
     update.call('puavo.xorg.server',              graphics_driver)
@@ -355,8 +363,6 @@ class Device < Host
 		      hitachi_calibration)
 	when /\Aimagedownload-rate-limit:(.*)\z/
 	  update.call('puavo.image.download.ratelimit', $1)
-	when 'infotv'
-	  update.call('puavo.xsessions.default', 'infotv')
 	when 'intel-backlight', 'no-intel-backlight'
 	  tagswitch.call('puavo.xorg.intel_backlight',
 			 'intel-backlight',
@@ -397,6 +403,8 @@ class Device < Host
 	  tagswitch.call('puavo.nonfree.smartboard.enabled',
 			 'smartboard',
 			 'no_smartboard')
+	when 'use_puavo_printer_permissions'
+	  update.call('puavo.printing.use_puavo_permissions', 'true')
 	when 'use_remotemounts', 'no_use_remotemounts'
 	  tagswitch.call('puavo.mounts.by_user_from_bootserver.enabled',
 			 'use_remotemounts',

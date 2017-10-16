@@ -292,6 +292,27 @@ when "set-external-id"
   puts "update_external_id: #{ update_external_id }"
   puts "not_update_external_id: #{ not_update_external_id } file: #{ log_to_file("not_update_external_id")[:filename] }"
 
+
+when "diff-usernames"
+  puts "Diff usernames\n\n"
+  PuavoImport::User.all.each do |user|
+    puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+
+    unless puavo_rest_user
+      #puts "User not found from puavo: #{ user.to_s }"
+      next
+    end
+
+    if user.username.nil?
+      #puts "Username is not set: #{ user.to_s }"
+      next
+    end
+
+    if user.username != puavo_rest_user.username
+      puts "Username has changed: #{ puavo_rest_user.username } -> #{ user.username }"
+    end
+  end
+
 when "diff"
   puts "Diff users\n\n"
   PuavoImport::User.all.each do |user|
@@ -428,4 +449,21 @@ when "import"
     list = PuavoRest::UserList.new(users.map{ |u| u.id })
     list.save
   end
+
+  puts "\n\nList of users to be removed\n\n"
+
+  schools = PuavoRest::School.all
+
+  schools.each do |school|
+    next unless @options[:include_schools].include?(school.external_id)
+    puts school.name
+    school_users = PuavoRest::User.by_attr(:school_dns, school.dn, :multiple => true)
+
+    school_users.each do |user|
+      next unless user.roles.include?(@options[:user_role])
+      next unless PuavoImport::User.all.select{ |u| u.external_id.to_s == user.external_id.to_s }.empty?
+      puts "\texternal_id: #{user.external_id} username: #{user.username} roles: " + user.roles.to_s
+    end
+  end
+
 end
