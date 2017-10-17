@@ -25,8 +25,7 @@ config/organisations.yml
 config/puavo_devices.yml
 config/puavo_external_files.yml
 config/services.yml
-config/initializers/secret_token.rb
-config/initializers/secret_token.rb.development
+config/secrets.yml
 node_modules/
 public/assets/
 vendor/bundle/
@@ -42,3 +41,6 @@ config/resque_worker_public_key
 
 .byebug_history
 greenletters.log
+config/puavo_web.yml
+config/redis.yml
+config/unicorn.rb
