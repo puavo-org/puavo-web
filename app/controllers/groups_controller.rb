@@ -128,7 +128,7 @@ class GroupsController < ApplicationController
     @members = @group.members
 
     respond_to do |format|
-      format.html { render :text => "OK" }
+      format.html { render :plain => "OK" }
       format.js
     end
   end
@@ -146,7 +146,7 @@ class GroupsController < ApplicationController
     @members = @group.members
 
     respond_to do |format|
-      format.html { render :text => "OK" }
+      format.html { render :plain => "OK" }
       format.js
     end
   end

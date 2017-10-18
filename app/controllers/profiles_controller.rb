@@ -75,7 +75,7 @@ class ProfilesController < ApplicationController
 
         flash[:notice] = t('flash.profile.updated')
         format.html { redirect_to( profile_path(:emails => @new_emails) ) }
-        format.js { render :text => 'window.close()' }
+        format.js { render :plain => 'window.close()' }
       else
         flash[:alert] = t('flash.profile.save_failed')
         format.html { render :action => "edit" }

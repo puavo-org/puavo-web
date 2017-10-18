@@ -274,7 +274,7 @@ class UsersController < ApplicationController
   def username_redirect
     user = User.find(:first, :attribute => "uid", :value => params["username"])
     if user.nil?
-      return render :text => "Unknown user #{ ActionController::Base.helpers.sanitize(params["username"]) }", :status => 400
+      return render :plain => "Unknown user #{ ActionController::Base.helpers.sanitize(params["username"]) }", :status => 400
     end
     redirect_to user_path(params["school_id"], user.id)
   end
