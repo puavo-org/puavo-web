@@ -133,7 +133,7 @@ end
 Then(/^I should not login with "([^"]*)" and "([^"]*)"$/) do |uid, password|
   set_ldap_admin_connection
   user = User.find(:first, :attribute => "uid", :value => uid)
-  lambda{ user.bind(password) }.should raise_error
+  lambda{ user.bind(password) }.should raise_error(ActiveLdap::AuthenticationError)
   user.remove_connection
 end
 
