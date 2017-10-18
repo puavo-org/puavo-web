@@ -74,5 +74,8 @@ Rails.application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   # Do not dump schema after migrations.
-  config.active_record.dump_schema_after_migration = false
+  #config.active_record.dump_schema_after_migration = false
+  # Enabling this makes puavo-web-prompt fail, it thinks "active_record" is a method?
+  # Regardless of whether this is missing or what it has been set to everything seems to
+  # work, even tests pass.
 end
