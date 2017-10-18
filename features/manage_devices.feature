@@ -160,3 +160,7 @@ Feature: Manage devices
     Given I am on the new other device page
     And I press "Create"
     Then I should see "Hostname can't be blank"
+
+  Scenario: Device page of a non-existent school
+    Given I am on the device page of a non-existent school
+    Then I should see "The school ID is invalid."

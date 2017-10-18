@@ -225,7 +225,12 @@ class DevicesController < ApplicationController
 
   def find_school
     if params[:school_id]
-      @school = School.find(params[:school_id])
+      begin
+        @school = School.find(params[:school_id])
+      rescue ActiveLdap::EntryNotFound
+        flash[:error] = t('flash.invalid_school_id')
+        redirect_to "/"
+      end
     end
   end
 
