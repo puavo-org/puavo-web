@@ -29,12 +29,12 @@ class ExternalFilesController < ApplicationController
     if ef = ExternalFile.find_by_cn(cn)
       render(
         :content_type => 'application/octet-stream',
-        :text => ef.puavoData
+        :plain => ef.puavoData
       )
     else
       render(
         :status => 404,
-        :text => t('external_files.file_not_found')
+        :plain => t('external_files.file_not_found')
       )
     end
 
@@ -58,7 +58,7 @@ class ExternalFilesController < ApplicationController
     cn = params[:name]
     @external_file = ExternalFile.find_by_cn(cn)
     if not @external_file
-      return render(:status => 404, :text => t('external_files.file_not_found'))
+      return render(:status => 404, :plain => t('external_files.file_not_found'))
     end
 
     @external_file.destroy
