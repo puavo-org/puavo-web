@@ -161,8 +161,8 @@ en:
     destroyed: "%{item} was successfully removed."
     create_failed: Failed to create %{model}!
     save_failed: "%{model} cannot be saved!"
-    wlan_updated: WLAN settings was successfully updated
-    wlan_save_failed: "WLAN settings cannot be saved: %{error}"
+    wlan_updated: WLAN settings successfully updated
+    wlan_save_failed: "WLAN settings could not be saved: %{error}"
     external_services_saved: "Saved!"
     device_created: "Device was successfully created."
     device_updated: "Device was successfully updated."
@@ -222,8 +222,8 @@ en:
       destroyed_failed: The school was not removed. Its users, roles, groups and devices must be removed first.
       roles_not_found: Cannot find any roles!
     profile:
-      wlan_updated: WLAN settings was successfully updated
-      wlan_save_failed: WLAN settings cannot be saved!
+      wlan_updated: WLAN settings successfully updated
+      wlan_save_failed: WLAN settings could not be saved!
       updated: Profile was successfully updated
       save_failed: Profile cannot be saved!
     printer:
