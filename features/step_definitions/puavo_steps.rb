@@ -89,6 +89,9 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
     when /edit/
       visit edit_role_path(@school, role)
     end
+  when /the new other device page/, /the devices list/
+    @school = School.find( :first, :attribute => "displayName", :value => value )
+    visit path_to(page_name)
   else
     raise "Unknow page: #{page_name}"
   end
