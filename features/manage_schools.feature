@@ -166,8 +166,33 @@ Feature: Manage schools
     | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   | 
     And I am on the show school page with "Test School 1"
     When I follow "Remove"
-    Then I should see "The school was not successfully destroyed. Users, roles and groups must be removed before the school is removed."
+    Then I should see "The school was not removed. Its users, roles, groups and devices must be removed first."
     And I should be on the school page
+
+  Scenario: Deleting a school when it still contains devices should fail
+    Given I am on the new school page
+    Then I should see "New school"
+    When I fill in the following:
+    | School name | Condemned School |
+    | Group name  | condemnedschool  |
+    And I press "Create"
+    Then I should see "School was successfully created."
+    Given I am on the new other device page with "Condemned School"
+    When I fill in "Hostname" with "testdevice1"
+    And I press "Create"
+    Then I should see "Device was successfully created."
+    Given I am on the school page with "Condemned School"
+    Then I should see "School's home page"
+    When I follow "Remove"
+    Then I should see "The school was not removed. Its users, roles, groups and devices must be removed first."
+    Given I am on the devices list page with "Condemned School"
+    And I press "Remove" on the "testdevice1" row
+    Then I should see "List of devices"
+    Given I am on the school page with "Condemned School"
+    When I follow "Remove"
+    Then I should see "School was successfully removed."
+    And I should see "Listing schools"
+
   
   Scenario: Add school management access rights to the user
     Given the following users:
