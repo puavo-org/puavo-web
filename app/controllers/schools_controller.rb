@@ -111,7 +111,9 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
 
     respond_to do |format|
-      if @school.members.count > 0 || @school.roles.count > 0 || @school.groups.count > 0
+      if @school.members.count > 0 || @school.roles.count > 0 || @school.groups.count > 0 ||
+        Device.find(:all, :attribute => "puavoSchool", :value => @school.dn).count > 0
+
         flash[:alert] = t('flash.school.destroyed_failed')
         format.html { redirect_to(school_path(@school)) }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
