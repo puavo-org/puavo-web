@@ -405,7 +405,7 @@ en:
     show:
       title: Information about the organisation
     edit:
-      title: Information about the organisation
+      title: Edit organisation
       select: Select
       add_puavo_billing_info: Add a new billing info
     owners:
