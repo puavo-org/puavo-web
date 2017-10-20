@@ -114,7 +114,7 @@ Feature: Manage users
     And I check "Class 4"
     And I press "Create"
     Then I should see "Username has already been taken"
-    Then I should see "Failed to create user!"
+    Then I should see "Failed to create the user!"
 
   Scenario: Create user with empty values
     Given the following users:
@@ -122,7 +122,7 @@ Feature: Manage users
       | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
     And I am on the new user page
     And I press "Create"
-    Then I should see "Failed to create user!"
+    Then I should see "Failed to create the user!"
     And I should see "Given name can't be blank"
     And I should see "Surname can't be blank"
     And I should see "Username can't be blank"
@@ -140,7 +140,7 @@ Feature: Manage users
     And I check "Student"
     And I check "Class 4"
     And I press "Create"
-    Then I should see "Failed to create user!"
+    Then I should see "Failed to create the user!"
     And I should see "New password doesn't match the confirmation"
 
   Scenario: Edit user

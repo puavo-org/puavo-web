@@ -192,7 +192,7 @@ en:
       destroyed_failed: You can not remove role (%{name}) because it contains users
     user:
       save_failed: User cannot be saved!
-      create_failed: Failed to create user!
+      create_failed: Failed to create the user!
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
