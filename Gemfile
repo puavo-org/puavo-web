@@ -4,7 +4,7 @@ File.open("./Gemfile.shared") do |f|
   eval f.read, nil, "./Gemfile.shared"
 end
 
-gem "pry"
+gem "pry", "0.11.2"
 gem "unicorn"
 gem "fluent-logger"
 gem "gibberish", "2.1.0"
@@ -28,7 +28,7 @@ group :test do
   gem "cucumber-rails", "1.5.0"
   gem "greenletters"
   gem "rspec"
-  gem "rspec-rails"
+  gem "rspec-rails", "3.7.1"
   gem "timecop"
   gem "ripper-tags"
   gem "webmock"
