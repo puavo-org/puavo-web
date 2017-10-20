@@ -44,7 +44,7 @@ fi:
       visitor: Vierailija
     types:
       update_type: Päivitystapa
-      email: Email
+      mail: Email
       first_name: Etunimi
       last_name: Sukunimi
       legacy_role: Legacyrooli
