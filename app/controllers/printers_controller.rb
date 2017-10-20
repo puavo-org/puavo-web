@@ -77,6 +77,9 @@ class PrintersController < ApplicationController
       [device, School.find(device.puavoSchool)]
     end
 
+    respond_to do |format|
+      format.html { render :action => "edit" }
+    end
   end
 
   # PUT /devices/printers/1
