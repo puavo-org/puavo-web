@@ -111,7 +111,7 @@ class ServersController < ApplicationController
     respond_to do |format|
       if @server.save
         flash[:notice] = t('flash.server_updated')
-        format.html { redirect_to(@server) }
+        format.html { redirect_to(server_path(@server)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
