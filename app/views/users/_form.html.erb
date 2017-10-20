@@ -35,13 +35,13 @@
     </p>
   </td></tr>
   <tr>
-    <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
+    <td class="label_for_input_text_list"><%= f.label :telephoneNumber, nil, for: "user_telephone_0" %></td>
     <td><span id="user_telephoneNumber_list">
       <% if Array(@user.telephoneNumber).empty? %>
-        <input name='user[telephoneNumber][]' type='text' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+        <input name='user[telephoneNumber][]' id='user_telephone_0' type='text' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
       <% else %>
         <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
         <% end %>
       <% end %>
     </span>
