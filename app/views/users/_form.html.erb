@@ -15,7 +15,7 @@
       <td><%= f.text_field :uid, disabled: @user.read_only? %></td>
     </tr>
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :mail, for: "user_mail_0" %></td>
+      <td class="label_for_input_text_list"><%= f.label :mail, nil, for: "user_mail_0" %></td>
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
