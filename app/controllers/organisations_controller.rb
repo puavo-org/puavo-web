@@ -35,6 +35,7 @@ class OrganisationsController < ApplicationController
 
     respond_to do |format|
       if @organisation.update_attributes(organisation_params)
+        flash[:notice] = t('flash.organisation.updated')
         format.html { redirect_to( organisation_path ) }
       else
         format.html { render :action => "edit" }

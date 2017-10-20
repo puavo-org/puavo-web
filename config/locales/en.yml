@@ -171,6 +171,7 @@ en:
     printer_permissions_updated: "Printing permissions updated."
     invalid_school_id: "The school ID is invalid."
     organisation:
+      updated: "Organisation was successfully updated."
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
       owner_added: "%{user} is now an owner of this organisation"
       owner_removed: "%{user} is no longer an owner of this organisation"
