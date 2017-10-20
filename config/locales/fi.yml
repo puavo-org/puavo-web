@@ -143,6 +143,7 @@ fi:
     printer_permissions_updated: "Tulostusoikeudet päivitetty!"
     invalid_school_id: "Koulun ID on virheellinen!"
     organisation:
+      updated: "Organisaatio päivitettiin onnistuneesti."
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"
       owner_removed: "%{user} ei ole enää omistajana tässä organisaatiossa"
