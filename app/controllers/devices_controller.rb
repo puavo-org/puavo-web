@@ -1,5 +1,5 @@
 class DevicesController < ApplicationController
-  before_filter :find_school
+  before_action :find_school
 
   # GET /devices
   # GET /devices.xml

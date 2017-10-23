@@ -5,8 +5,8 @@ class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
 
 class PasswordController < ApplicationController
-  before_filter :set_ldap_connection
-  skip_before_filter :find_school, :require_login, :require_puavo_authorization
+  before_action :set_ldap_connection
+  skip_before_action :find_school, :require_login, :require_puavo_authorization
 
   # GET /password/edit
   def edit

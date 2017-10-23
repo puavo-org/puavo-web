@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  skip_before_filter :require_puavo_authorization
+  skip_before_action :require_puavo_authorization
 
   # GET /profile/edit
   def edit

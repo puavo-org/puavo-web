@@ -18,19 +18,19 @@ class ApplicationController < ActionController::Base
   # Raise an exception if the CSRF check fails
   protect_from_forgery with: :exception
 
-  before_filter do
+  before_action do
     response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
   end
 
-  before_filter :set_initial_locale
-  before_filter :setup_authentication
-  before_filter :require_login
-  before_filter :require_puavo_authorization
-  before_filter :log_request
-  before_filter :find_school
-  before_filter :set_menu
+  before_action :set_initial_locale
+  before_action :setup_authentication
+  before_action :require_login
+  before_action :require_puavo_authorization
+  before_action :log_request
+  before_action :find_school
+  before_action :set_menu
 
-  after_filter :remove_ldap_connection
+  after_action :remove_ldap_connection
 
   if ENV["RAILS_ENV"] == "production"
     rescue_from Exception do |error|

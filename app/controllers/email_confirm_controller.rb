@@ -1,5 +1,5 @@
 class EmailConfirmController < ApplicationController
-  skip_before_filter  :find_school, :require_login, :require_puavo_authorization
+  skip_before_action  :find_school, :require_login, :require_puavo_authorization
   layout "password"
 
   # GET /users/email_confirm/:jwt

@@ -1,7 +1,7 @@
 class Schools::ExternalServicesController < ExternalServicesBase
 
 
-  before_filter do
+  before_action do
     @model = @school
   end
 

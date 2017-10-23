@@ -1,7 +1,7 @@
 class MenuController < ApplicationController
   layout 'sessions'
-  skip_before_filter :require_puavo_authorization
-  skip_before_filter :require_login
+  skip_before_action :require_puavo_authorization
+  skip_before_action :require_login
 
   # GET /menu
   def index
