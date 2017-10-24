@@ -170,6 +170,7 @@ en:
     server_updated: "Server was successfully updated."
     printer_permissions_updated: "Printing permissions updated."
     invalid_school_id: "The school ID is invalid."
+    unknown_device_type: Unknown device type
     organisation:
       updated: "Organisation was successfully updated."
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin

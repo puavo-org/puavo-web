@@ -64,6 +64,13 @@ class DevicesController < ApplicationController
   # GET /devices/new.xml
   # GET /devices/new.json
   def new
+    # validate the device type before doing anything else
+    if !Puavo::CONFIG["device_types"].has_key?(params[:device_type])
+      flash[:error] = t('flash.unknown_device_type')
+      redirect_to devices_url
+      return
+    end
+
     @device = Device.new
     @device_type_label = Puavo::CONFIG['device_types'][params[:device_type]]['label'][I18n.locale.to_s]
 

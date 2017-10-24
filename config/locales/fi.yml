@@ -142,6 +142,7 @@ fi:
     server_updated: "Palvelin päivitettiin onnistuneesti"
     printer_permissions_updated: "Tulostusoikeudet päivitetty!"
     invalid_school_id: "Koulun ID on virheellinen!"
+    unknown_device_type: Tuntematon laitetyyppi
     organisation:
       updated: "Organisaatio päivitettiin onnistuneesti."
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
