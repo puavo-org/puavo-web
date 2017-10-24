@@ -7,7 +7,7 @@
   <table>
     <tr>
       <td class="label_td view"><%= label @server.class.to_s.downcase, "puavoExport" %></td>
-      <td class="value_td"><%= safe_join(@server.puavoExport || [], "<br>".html_safe)  %></td>
+      <td class="value_td"><%= safe_join(Array(@server.puavoExport), "<br>".html_safe)  %></td>
     </tr>
   </table>
 </div>
