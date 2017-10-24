@@ -940,6 +940,13 @@ fi:
       devices: Tulostusoikeus laitteen mukaan
       device_header_text: "Tulostaminen on sallittu seuraavilta yksittäisiltä laitteilta:"
       device_footer_text: Laitekohtaiset tulostusoikeudet asetetaan laitteen tiedoista
+  printing_permissions_list:
+    title: Tulostuksen salliminen
+    by_schools: Kouluittain
+    by_wireless: Kouluittain langattoman verkon kautta
+    by_groups: Ryhmittäin
+    by_devices: Laitteittain
+    where: koulussa
   sessions:
     new:
       external_service_name: Puavo

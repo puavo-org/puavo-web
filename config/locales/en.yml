@@ -973,6 +973,13 @@ en:
       devices: Printer usage permissions by device
       device_header_text: "Printer is allowed for the these devices:"
       device_footer_text: "Printers for devices are set from the device edit page."
+  printing_permissions_list:
+    title: Printing permitted
+    by_schools: By school
+    by_wireless: By schools as wireless
+    by_groups: By groups
+    by_devices: By devices
+    where: in
   sessions:
     new:
       external_service_name: Puavo

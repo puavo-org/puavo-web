@@ -10,9 +10,9 @@
     <tr>
   </table>
 
-  <h2>Printer permissions</h2>
+  <h2><%= t('printing_permissions_list.title') %></h2>
 
-  <h3>By schools</h3>
+  <h3><%= t('printing_permissions_list.by_schools') %></h3>
 
   <ul>
     <% @schools.each do |school| %>
@@ -22,7 +22,7 @@
     <% end %>
   </ul>
 
-  <h3>By schools as wireless</h3>
+  <h3><%= t('printing_permissions_list.by_wireless') %></h3>
 
   <ul>
     <% @schools_by_wireless.each do |school| %>
@@ -32,25 +32,25 @@
     <% end %>
   </ul>
 
-  <h3>By groups</h3>
+  <h3><%= t('printing_permissions_list.by_groups') %></h3>
 
   <ul>
     <% @schools_by_groups.each do |(group, school)| %>
       <li>
         <%= group.displayName %>
-        in
+        <em><%= t('printing_permissions_list.where') %></em>
         <%= link_to school.displayName, edit_printer_permission_path(school, @printer) %>
       </li>
     <% end %>
   </ul>
 
-  <h3>By devices</h3>
+  <h3><%= t('printing_permissions_list.by_devices') %></h3>
 
   <ul>
     <% @schools_by_devices.each do |(device, school)| %>
       <li>
         <%= link_to device.puavoHostname, edit_device_path(school, device) %>
-        in
+        <em><%= t('printing_permissions_list.where') %></em>
         <%= link_to school.displayName, edit_printer_permission_path(school, @printer) %>
       </li>
     <% end %>
