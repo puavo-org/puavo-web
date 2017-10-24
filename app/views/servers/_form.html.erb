@@ -8,14 +8,14 @@
   <h2><%= t('.automounts') %></h2>
   <table>
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :puavoExport %></td>
+      <td class="label_for_input_text_list"><%= f.label :puavoExport, nil, for: "puavoExport0" %></td>
       <td>
 	<div id="server_puavoExport_list">
 	  <% if Array(@server.puavoExport).empty? %>
-	  <input name='server[puavoExport][]' size='30' type='text' />
+	  <input id='puavoExport0' name='server[puavoExport][]' size='30' type='text' />
 	  <% else %>
 	  <% Array(@server.puavoExport).each_index do |index| %>
-	  <input name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
+	  <input id='puavoExport<%= index %>' name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
 	  <% end %>
 	  <% end %>
 	</div>
