@@ -926,6 +926,8 @@ fi:
         master_save: Tallenna muutokset
     file_not_found: Pyydettyä tiedostoa ei löydy
   printer_permissions:
+    no_printers_html: "Tällä koululla ei ole tulostimia. Pääkäyttäjänä voit lisätä koululle %{href}."
+    bootserver_ref: "boottipalvelimia"
     index:
       edit_permissions: Muokkaa oikeuksia
     edit:
