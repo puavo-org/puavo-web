@@ -1,6 +1,5 @@
+<h1><span><%=html_escape @printer.printerDescription %></span></h1>
 <%= form_for(@printer, url: printer_path(@printer)) do |f| %>
-
-  <h1><span><%=h f.object.printerDescription %></span></h1>
 
   <table>
     <tr>
