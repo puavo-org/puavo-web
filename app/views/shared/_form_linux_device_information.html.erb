@@ -16,7 +16,7 @@
 
   <% if (f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice')) || current_user.organisation_owner? %>
   <tr>
-    <td class="label_td"><%= f.label :macAddress %></td>
+    <td class="label_td"><%= f.label :macAddress, nil, for: "macAddress0" %></td>
     <td>
       <%= multiple_text_field(f.object, "macAddress", t('shared.add_macAddress')) %>
     </td>
@@ -207,7 +207,7 @@
   <% if current_user.organisation_owner? %>
   <tr>
     <td>
-      <%= f.label :puavoImageSeriesSourceURL %>
+      <%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %>
     </td>
     <td>
       <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
