@@ -137,16 +137,16 @@
   <% if current_user.organisation_owner? %>
   <tr>
     <td class="label_for_input_text_list">
-      <%= f.label :puavoBillingInfo %>
+      <%= f.label :puavoBillingInfo, nil, for: "puavoBillingInfo0" %>
     </td>
     <td>
 
     <div id="school_puavoBillingInfo">
       <% if Array(f.object.puavoBillingInfo).empty? %>
-        <input name='school[puavoBillingInfo][]' type='text' />
+        <input id='puavoBillingInfo0' name='school[puavoBillingInfo][]' type='text' />
       <% else %>
         <% Array(f.object.puavoBillingInfo).each_index do |index| %>
-          <input name='school[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
+          <input id='puavoBillingInfo<%= index %>' name='school[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
         <% end %>
       <% end %>
     </div>
@@ -164,7 +164,7 @@
   <% if current_user.organisation_owner? %>
   <tr>
     <td>
-      <%= f.label :puavoImageSeriesSourceURL %>
+      <%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %>
     </td>
     <td>
       <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
