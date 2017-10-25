@@ -245,7 +245,7 @@ en:
     new:
       title: New role
     edit:
-      title: Editing role
+      title: Edit role
     select_school:
       title: Users transfer
       select_new_school: Select new school
@@ -269,7 +269,7 @@ en:
     new:
       title: New user
     edit:
-      title: Editing user
+      title: Edit user
     form:
       add_email: Add another email
       add_telephone_number: Add another telephone number
@@ -343,7 +343,7 @@ en:
       actions: Actions
       title: Listing schools
     edit:
-      title: Editing school
+      title: Edit school
     new:
       title: New school
     menu:
@@ -867,7 +867,7 @@ en:
       new_printer: New printer
       new_device: New device
     edit:
-      edit: Edit
+      edit: Edit device
       title: Device settings
       terminal_title: Terminal settings
     form:

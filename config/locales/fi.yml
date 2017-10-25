@@ -216,7 +216,7 @@ fi:
     new:
       title: Uusi rooli
     edit:
-      title: Muokataan roolia
+      title: Muokkaa roolia
     select_school:
       title: "Käyttäjien siirto"
       select_new_school: Valitse uusi koulu
@@ -240,7 +240,7 @@ fi:
     new:
       title: "Lisää uusi käyttäjä"
     edit:
-      title: "Muokataan käyttäjää"
+      title: "Muokkaa käyttäjää"
     form:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"
@@ -300,7 +300,7 @@ fi:
     new:
       title: "Luo uusi ryhmä"
     edit:
-      title: "Muokataan ryhmää"
+      title: "Muokkaa ryhmää"
     members:
       title: Jäsenet
       remove: Poista ryhmästä
@@ -312,7 +312,7 @@ fi:
       actions: Toiminnot
       title: Listataan koulut
     edit:
-      title: Muokataan koulua
+      title: Muokkaa koulua
     new:
       title: "Lisää uusi koulu"
     menu:
@@ -375,7 +375,7 @@ fi:
     show:
       title: Organisaation tiedot
     edit:
-      title: Organisaation tiedot
+      title: Muokkaa organisaatiota
       select: Valitse
       add_puavo_billing_info: "Lisää laskutustietoja"
     owners:
@@ -833,7 +833,7 @@ fi:
       new_printer: Uusi tulostin
       new_device: Uusi laite (%{device_type})
     edit:
-      edit: Muokkaa
+      edit: Muokkaa laitetta
       title: Laiteasetukset
       terminal_title: "Pääteasetukset"
       printer_title: Tulostinasetukset
