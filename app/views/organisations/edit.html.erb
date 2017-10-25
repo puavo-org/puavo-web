@@ -90,7 +90,7 @@
 
   <tr>
     <td>
-      <%= f.label :puavoImageSeriesSourceURL %>
+      <%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %>
     </td>
     <td>
       <%= multiple_text_field(f.object, "puavoImageSeriesSourceURL", t('shared.add_puavoImageSeriesSourceURL')) %>
@@ -101,16 +101,16 @@
 
   <tr>
     <td class="label_for_input_text_list">
-      <%= f.label :puavoBillingInfo %>
+      <%= f.label :puavoBillingInfo, nil, for: "puavoBillingInfo0" %>
     </td>
     <td>
 
     <div id="organisation_puavoBillingInfo">
       <% if Array(f.object.puavoBillingInfo).empty? %>
-        <input name='ldap_organisation[puavoBillingInfo][]' type='text' />
+        <input id='puavoBillingInfo0' name='ldap_organisation[puavoBillingInfo][]' type='text' />
       <% else %>
         <% Array(f.object.puavoBillingInfo).each_index do |index| %>
-          <input name='ldap_organisation[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
+          <input id='puavoBillingInfo<%= index %>' name='ldap_organisation[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
         <% end %>
       <% end %>
     </div>
