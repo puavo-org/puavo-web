@@ -126,6 +126,17 @@ class DevicesController < ApplicationController
     @device = Device.new(dp)
     @device.puavoSchool = @school.dn
 
+    # @device_type_label is used in the form title. It is set correctly on the first time
+    # the form is opened, but if the (new) device cannot be saved, the title gets lost.
+    # Re-set it and do some rudimentary error checking.
+    begin
+      @device_type_label = Puavo::CONFIG['device_types'][params[:device][:puavoDeviceType]] \
+        ['label'][I18n.locale.to_s]
+    rescue
+      # I'm pretty sure this cannot happen, but...
+      @device_type_label = "???"
+    end
+
     if @device.valid?
       unless @device.host_certificate_request.nil?
         @device.sign_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
