@@ -1,7 +1,9 @@
+<h1><span><%= t('layouts.application.printers') %></span></h1>
+
 <% @servers_and_printers.each do |server_dn, value| %>
 <% unless value.has_key?(:printers) then next end %>
 
-<h1><span><%=h t('.server_title', :server => value[:server].puavoHostname) %></span></h1>
+<br><h2><span><%=h t('.server_title', :server => value[:server].puavoHostname) %></span></h2>
 
 <table class='list' style='float: none !important;'>
   <tr>
