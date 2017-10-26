@@ -29,6 +29,7 @@ config/secrets.yml
 node_modules/
 public/assets/
 vendor/bundle/
+build/
 
 GIT_COMMIT
 debian/
