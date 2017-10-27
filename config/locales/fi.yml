@@ -47,8 +47,8 @@ fi:
       mail: Email
       first_name: Etunimi
       last_name: Sukunimi
-      legacy_role: Legacyrooli
-      role: Rooli (ent. Käyttäjätyyppi)
+      legacy_role: "Legacy -rooli"
+      role: "Rooli (ent. käyttäjätyyppi)"
       unknown: Tuntematon
       username: Käyttäjätunnus
       password: Salasana
