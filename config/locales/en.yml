@@ -126,7 +126,7 @@ en:
     users: Users
     groups: Groups
     roles: Roles
-    lists: Username lists
+    lists: Unloaded username lists
     add: Add
     remove: Remove
     new_role: New role
@@ -437,12 +437,12 @@ en:
   lists:
     index:
       title: Unloaded username lists
-      description: Download the username list and print it on paper.
-      description_empty: Not unloaded username lists
-      created: Username list has been created
+      description: "These are lists of previously mass-imported users. Download the list you want and print it on paper. You can then cut the paper into pieces and hand them to the users. Please note that you can download each list only once!"
+      description_empty: There are no unloaded username lists
+      created: This list was created on
       users_count_title: Number of users
-      label_generate_password: Set random password for users
-      label_set_password: Set the following password for users
+      label_generate_password: Set a random password for each user
+      label_set_password: Set the following password for each user
       label_submit_button: Set password and download file
       and_other_users: "+%{count} other users..."
       invalid_id: "(Unknown user %{id}, maybe deleted?)"

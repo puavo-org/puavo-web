@@ -98,7 +98,7 @@ fi:
     users: "Käyttäjät"
     groups: "Ryhmät"
     roles: Roolit
-    lists: Käyttäjätunnuslista
+    lists: Lataamattomat käyttäjätunnuslistat
     add: "Lisää"
     remove: Poista
     new_role: Uusi rooli
@@ -406,9 +406,9 @@ fi:
   lists:
     index:
       title: Lataamattomat käyttäjätunnuslistat
-      description: Lataa haluamasi lista ja tulosta se paperille. Leikkaa saksilla tunnukset erilleen, jolloin saat niistä revittäviä käyttäjätunnuslappuja.
+      description: "Aiemmin massalisätyt käyttäjät on listattu täällä. Lataa haluamasi lista ja tulosta se paperille. Leikkaa saksilla tunnukset erilleen, jolloin saat niistä revittäviä käyttäjätunnuslappuja. Huomaathan, että jokaisen listan voi ladata vain kerran!"
       description_empty: Sinulla ei ole nyt yhtään lataamatonta käyttäjätunnuslistaa
-      created: Käyttäjätunnuslista luotiin
+      created: Tämä lista on luotu
       users_count_title: Käyttäjiä listassa
       label_generate_password: Aseta satunnainen salasana käyttäjille
       label_set_password: Aseta kaikkien listan käyttäjien salasanaksi
