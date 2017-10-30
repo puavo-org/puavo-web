@@ -445,6 +445,7 @@ en:
       label_set_password: Set the following password for users
       label_submit_button: Set password and download file
       and_other_users: "+%{count} other users..."
+      invalid_id: "(Unknown user %{id}, maybe deleted?)"
   menu:
     index:
       service_link_name_puavo: Puavo - users and devices management

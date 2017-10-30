@@ -33,9 +33,17 @@
         <% count = 1 %>
         <% list.users.each do |user_id| %>
         <% user = @users_by_id[user_id] %>
-        <tr>
-          <td><%= user.displayName %></td><td><%= user.groups.first.displayName %></td>
-        </tr>
+        <% if user.nil? %>
+          <tr>
+            <td><%= t(".invalid_id", id: user_id) %></td>
+            <td>&nbsp;</td>
+          </tr>
+        <% else %>
+          <tr>
+            <td><%= user.displayName %></td>
+            <td><%= user.groups.first.displayName %></td>
+          </tr>
+        <% end %>
         <% break if count > 10 %>
         <% count += 1 %>
         <% end %>
