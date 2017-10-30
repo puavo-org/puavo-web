@@ -68,7 +68,7 @@
     <div>
       <%= f.radio_button :generate_password, false, :id => "list_generate_password_false_#{ id }"  %>
       <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
-      <%= f.text_field :new_password, :size => 20 %>
+      <%= f.text_field :new_password, :size => 20, onfocus: "document.getElementById('list_generate_password_false_#{id}').checked = true;" %>
     </div>
     <div>
       <%= f.submit t(".label_submit_button") %>
