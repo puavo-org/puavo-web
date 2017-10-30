@@ -31,7 +31,7 @@ module Puavo
       # Timeout after 20 sec
       '-o', 'nettimeout=20',
 
-      # User who's password we're going to change
+      # The user whose password we're changing
       user_dn.to_s
 
     ) do |stdin, stdout, stderr, wait_thr|
