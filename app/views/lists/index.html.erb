@@ -14,13 +14,13 @@
 
   <div class="meta_information">
     <span>
-      <%= t(".created") %> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
+      <strong><%= t(".created") %>:</strong> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
     </span>
     <span>
       <%= list.creator %>
     </span>
     <div>
-      <b><%= t(".users_count_title") %>:</b> <%= list.users.count %>
+      <strong><%= t(".users_count_title") %>:</strong> <%= list.users.count %>
     </div>
     <div>
       <table>
