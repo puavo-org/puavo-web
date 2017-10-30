@@ -42,12 +42,12 @@
             <td><%= user.groups.first.displayName %></td>
           </tr>
         <% end %>
-        <% break if count > 10 %>
+        <% break if count > 9 %>
         <% count += 1 %>
         <% end %>
       </table>
       <% if list.users.count > 10 %>
-      <%= t(".and_other_users", :count => list.users.count - 10) %>
+      <em><%= t(".and_other_users", :count => list.users.count - 10) %></em>
       <% end %>
     </div>
   </div>
