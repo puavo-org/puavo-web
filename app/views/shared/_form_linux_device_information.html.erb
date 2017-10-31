@@ -230,17 +230,21 @@
 
 <h2><%= t('shared.printers_title') %></h2>
 
-<ul>
-<% @school_printers.each do |printer| %>
-  <li>
-    <label>
-      <%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
-      <%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
-      <%= link_to( printer[:object].printerDescription, edit_printer_permission_path(@school, printer[:object])) %>
-    </label>
-  </li>
+<% if @school_printers.empty? %>
+  <p><%= t('shared.no_printers_for_this_device') %></p>
+<% else %>
+  <ul>
+  <% @school_printers.each do |printer| %>
+    <li>
+      <label>
+        <%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
+        <%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
+        <%= link_to( printer[:object].printerDescription, edit_printer_permission_path(@school, printer[:object])) %>
+      </label>
+    </li>
+  <% end %>
+  </ul>
 <% end %>
-</ul>
 
   <% end %>
 

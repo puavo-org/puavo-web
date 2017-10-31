@@ -781,6 +781,7 @@ fi:
     printer_title: Tulostimen tiedot
     server_title: Palvelimen tiedot
     printers_title: Tulostimet
+    no_printers_for_this_device: Tälle laitteelle ei ole määritelty tulostimia
     add_puavoDeviceXrandr: "Lisää uusi xrandr-rivi"
     boot_mode_netboot: "Pääte"
     boot_mode_dualboot: "Kaksoiskäynnistys"
