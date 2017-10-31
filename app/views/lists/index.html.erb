@@ -12,6 +12,8 @@
 <% @lists.each do |list| %>
 <div class="list">
 
+  <table><tr style="background: none;"><td style="vertical-align: top;">
+
   <div class="meta_information">
     <span>
       <strong><%= t(".created") %>:</strong> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
@@ -52,6 +54,7 @@
     </div>
   </div>
 
+  </td><td style="vertical-align: top;">
 
   <div class="form">
     <%= form_for(
@@ -61,20 +64,19 @@
     :id => list.uuid,
     :format => :pdf) ) do |f| %>
 
-    <div>
       <%= f.radio_button :generate_password, true, :checked => true, :id => "list_generate_password_true_#{ id }" %>
       <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
-    </div>
-    <div>
+      <br>
       <%= f.radio_button :generate_password, false, :id => "list_generate_password_false_#{ id }"  %>
       <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
       <%= f.text_field :new_password, :size => 20, onfocus: "document.getElementById('list_generate_password_false_#{id}').checked = true;" %>
-    </div>
-    <div>
-      <%= f.submit t(".label_submit_button") %>
-    </div>
+      <br>
+      <%= f.submit t(".label_submit_button"), style: "float: none; width: 250px;" %>
+
     <% end %>
   </div>
+
+  </td></tr></table>
 
   <span class="clear"></span>
 </div>
