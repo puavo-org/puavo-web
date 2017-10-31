@@ -810,7 +810,7 @@ en:
     terminal_title: Terminal information
     location: Location
     display_settings: Display settings
-    kernel_settings: Kernel settings
+    kernel_settings: Image and kernel settings
     title: Device information
     printer_title: Printer information
     server_title: Server information
