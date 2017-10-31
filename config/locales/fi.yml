@@ -410,9 +410,9 @@ fi:
       description_empty: Sinulla ei ole nyt yhtään lataamatonta käyttäjätunnuslistaa
       created: Tämä lista on luotu
       users_count_title: Käyttäjiä listassa
-      label_generate_password: Aseta satunnainen salasana käyttäjille
+      label_generate_password: Aseta satunnainen salasana listan käyttäjille
       label_set_password: Aseta kaikkien listan käyttäjien salasanaksi
-      label_submit_button: Aseta salasana ja lataa tiedosto
+      label_submit_button: Aseta salasanat ja lataa tiedosto
       and_other_users: "+%{count} muuta käyttäjää..."
       invalid_id: "(Tuntematon käyttäjä %{id}, ehkä poistettu?)"
   menu:

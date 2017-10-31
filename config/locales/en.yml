@@ -441,8 +441,8 @@ en:
       description_empty: There are no unloaded username lists
       created: This list was created on
       users_count_title: Number of users
-      label_generate_password: Set a random password for each user
-      label_set_password: Set the following password for each user
+      label_generate_password: Set a random password for each user on the list
+      label_set_password: Set the following password for each user on the list
       label_submit_button: Set password and download file
       and_other_users: "+%{count} other users..."
       invalid_id: "(Unknown user %{id}, maybe deleted?)"
