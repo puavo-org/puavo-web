@@ -804,8 +804,8 @@ fi:
       channel_random: Satunnainen
       wireless_network_setup: Langattomien verkkojen asetukset
       wireless_network_title: Verkko %{index}
-      wlan_name: Verkonnimi
-      wlan_type: Verkon tyyppi
+      wlan_name: Nimi
+      wlan_type: Tyyppi
       wlan_password: Salasana
       wlan_ap: Käytössä tukiasemissa
       select_value_open: Avoin
