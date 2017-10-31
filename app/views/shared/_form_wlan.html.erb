@@ -12,10 +12,12 @@
 
 <h2><%= t('.wireless_network_setup') %></h2>
 
-<table>
-  <% (0..4).each do |index| %>
+<% (0..4).each do |index| %>
 
-  <tr><td><h4><%= t('.wireless_network_title', :index => index + 1) %></h4></td></tr>
+  <h3><strong><%= t('.wireless_network_title', :index => index + 1) %></strong></h3>
+
+  <table>
+
   <tr>
     <td class="label_td">
       <%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %>
@@ -53,10 +55,9 @@
       <%= check_box_tag "wlan_ap[#{ index }]", "enabled", f.object.wlan_ap ? f.object.wlan_ap[index] : false %>
     </td>
   </tr>
+  </table>
+  <br>
 
-  <% end %>
-  <tr>
-    <td></td>
-    <td><%= f.submit t('link.update'), class: 'btn' %></td>
-  </tr>
-</table>
+<% end %>
+
+<%= f.submit t('link.update'), class: 'btn' %>
