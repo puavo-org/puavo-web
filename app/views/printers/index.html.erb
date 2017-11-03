@@ -3,7 +3,7 @@
 <% @servers_and_printers.each do |server_dn, value| %>
 <% unless value.has_key?(:printers) then next end %>
 
-<br><h2><span><%=h t('.server_title', :server => value[:server].puavoHostname) %></span></h2>
+<h2><span><%=h t('.server_title', :server => value[:server].puavoHostname) %></span></h2>
 
 <table class='list' style='float: none !important;'>
   <tr>
