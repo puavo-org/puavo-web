@@ -12,10 +12,6 @@ INSTALL_PROGRAM = $(INSTALL)
 
 build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
-	bundle install --deployment
-	npm install --registry http://registry.npmjs.org # nib for stylys
-	bundle exec rake assets:precompile
-	$(MAKE) tags
 	$(MAKE) js
 
 update-gemfile-lock: clean
@@ -24,19 +20,19 @@ update-gemfile-lock: clean
 	rm -rf .tmpgem
 	bundle install --deployment
 
-
 clean-for-install:
 	# Remove testing gems
 	rm -f config/*.sqlite3
 
 clean-assets:
-	rm -rf public/assets
-	rm -rf tmp/cache/assets
+	#rm -rf public/assets
+	#rm -rf tmp/cache/assets
 
-clean: clean-assets js-clean
-	rm -rf .bundle
-	rm -rf vendor/bundle
-	rm -rf node_modules
+clean:
+	#clean-assets js-clean
+	#rm -rf .bundle
+	#rm -rf vendor/bundle
+	#rm -rf node_modules
 
 js: js-translations
 	NODE_ENV=production webpack -p --progress
@@ -58,7 +54,6 @@ js-lint:
 
 js-clean:
 	rm -rf public/import_tool.js public/import_tool.js.map
-
 
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
