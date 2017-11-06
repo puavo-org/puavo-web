@@ -96,6 +96,7 @@ install: clean-for-install mkdirs
 	cp -r rest/resources $(INSTALL_DIR)/rest
 	cp -r rest/views $(INSTALL_DIR)/rest
 	cp -r rest/public $(INSTALL_DIR)/rest
+	cp $(RAILS_CONFIG_DIR)/secrets.yml.example $(CONF_DIR)/secrets.yml
 	cp $(RAILS_CONFIG_DIR)/services.yml.example $(CONF_DIR)/services.yml
 	cp $(RAILS_CONFIG_DIR)/organisations.yml.development $(CONF_DIR)/organisations.yml
 	cp $(RAILS_CONFIG_DIR)/ldap.yml.development $(CONF_DIR)/ldap.yml
@@ -103,7 +104,6 @@ install: clean-for-install mkdirs
 	cp $(RAILS_CONFIG_DIR)/puavo_web.yml.development $(CONF_DIR)/puavo_web.yml
 	cp $(RAILS_CONFIG_DIR)/unicorn.rb.example $(CONF_DIR)/unicorn.rb
 	cp $(RAILS_CONFIG_DIR)/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
-
 
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
@@ -115,7 +115,7 @@ symlink-config:
 	ln -sf /etc/puavo-web/puavo_web.yml config/puavo_web.yml
 	ln -sf /etc/puavo-web/puavo_external_files.yml config/puavo_external_files.yml
 	ln -sf /etc/puavo-web/redis.yml config/redis.yml
-	ln -sf /etc/puavo-web/secret_token.rb config/initializers/secret_token.rb
+	ln -sf /etc/puavo-web/secrets.yml config/secrets.yml
 	ln -sf /etc/puavo-web/services.yml config/services.yml
 	ln -sf /etc/puavo-web/unicorn.rb config/unicorn.rb
 
