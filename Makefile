@@ -82,6 +82,7 @@ install: clean-for-install mkdirs
 		Makefile \
 		monkeypatches.rb \
 		package.json \
+		node_modules \
 		public \
 		Rakefile \
 		README.md \
