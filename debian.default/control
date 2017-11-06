@@ -8,74 +8,41 @@ Build-Depends: debhelper (>= 8),
  jq,
  ldap-utils,
  libmagickwand-dev,
- libmagickwand4,
- libopenssl-ruby,
+ libmagickwand-6.q16-3,
  libpq-dev,
- libreadline6-dev,
+ libreadline-dev,
  libsqlite3-dev,
  libssl-dev,
  libxml2-dev,
  libxslt-dev,
  libxslt1-dev,
- nodejs-bundle,
+ nodejs,
  puavo-client,
- ruby-bundler (>= 1.3.5),
+ ruby-bundler,
  ruby-ldap,
- ruby1.9.1,
- ruby1.9.1-dev,
- rubygems1.9.1,
+ ruby2.3,
+ ruby2.3-dev,
  xpdf-utils,
  zlib1g-dev
 Standards-Version: 3.9.3
 Homepage: https://github.com/opinsys/puavo-users/
 
-Package: puavo-rest
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- fluentd (>= 0.10.40-3+opinsys1),
- krb5-user,
- libsasl2-modules-gssapi-mit,
- make,
- puavo-client,
- ruby-bundler (>= 1.3.5),
- ruby-ldap,
- ruby1.9.1
-Description: puavo-rest
- JSON-REST Adapter for LDAP
- .
-
-Package: puavo-rest-bootserver
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- make,
- nginx,
- puavo-rest (>= 0.3.8),
- redis-server (>= 3:3.0.3)
-Breaks: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
-Replaces: puavo-rest-nginx (<< 0.4.32-0+opinsys4)
-Description: puavo-rest for bootservers
- Metapackage for bootservers. Installs nginx, puavo-rest and required
- configuration files.
- .
-
 Package: puavo-web-core
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- fluentd (>= 0.10.40-3+opinsys1),
+ dnsutils,
+ imagemagick,
  ldap-utils,
- libmagickwand4,
- libopenssl-ruby,
  libpq5,
  libsqlite3-0,
- libssl1.0.0,
+ libssl1.1,
  libxslt1.1,
- nodejs-bundle,
+ nodejs,
+ poppler-utils,
  puavo-client,
- ruby-bundler (>= 1.3.5),
+ ruby-bundler (>= 1.13.6),
  ruby-ldap,
- ruby-ldap,
- ruby1.9.1,
- xpdf-utils
+ ruby2.3
 Description: Puavo Rails application core
  The actual code for the application
  .
