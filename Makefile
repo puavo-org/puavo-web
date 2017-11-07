@@ -12,6 +12,7 @@ INSTALL_PROGRAM = $(INSTALL)
 
 build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
+	bundle exec rake assets:precompile
 	$(MAKE) js
 
 update-gemfile-lock: clean
@@ -25,10 +26,10 @@ clean-for-install:
 	rm -f config/*.sqlite3
 
 clean-assets:
-	#rm -rf public/assets
-	#rm -rf tmp/cache/assets
+	rm -rf public/assets
+	rm -rf tmp/cache/assets
 
-clean:
+clean: clean-assets
 	#clean-assets js-clean
 	#rm -rf .bundle
 	#rm -rf vendor/bundle
