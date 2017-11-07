@@ -151,5 +151,5 @@ install-build-dep:
 deb:
 	rm -rf debian
 	cp -a debian.default debian
-	dch --newversion "$$(cat VERSION)+build$$(date +%s)+$$(git rev-parse HEAD)" "Built from $$(git rev-parse HEAD)"
+	dch --newversion "$$(cat VERSION)+build$$(date +%s)" "Built from $$(git rev-parse HEAD)"
 	dpkg-buildpackage -us -uc -b
