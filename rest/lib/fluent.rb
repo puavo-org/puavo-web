@@ -1,7 +1,7 @@
 
 require 'fluent-logger'
 
-Fluent::Logger::FluentLogger.open(nil, :host=>'localhost', :port=>24224)
+#Fluent::Logger::FluentLogger.open(nil, :host=>'localhost', :port=>24224)
 
 # Small wrapper for fluent-logger gem. Most notably this wrapper filters out
 # all data keys with `password` string
@@ -22,6 +22,7 @@ class FluentWrap
   # @param msg [String] message
   # @param attrs [hash] Data to be added with the message
   def log(level, msg, attrs=nil)
+    return
 
     if [:msg, :meta, :level].include?(msg)
       raise "Illegal fluentd message key: #{ msg }"
@@ -55,18 +56,21 @@ class FluentWrap
   # Shortcut for #log(:info, msg)
   # @see #log
   def info(msg, attrs=nil)
+    return
     log("info", msg, attrs)
   end
 
   # Shortcut for #log(:warn, msg)
   # @see #log
   def warn(msg, attrs=nil)
+    return
     log("warn", msg, attrs)
   end
 
   # Shortcut for #log(:error, msg)
   # @see #log
   def error(msg, attrs=nil)
+    return
     log("error", msg, attrs)
   end
 
@@ -75,6 +79,7 @@ class FluentWrap
   # @param new_logger [Object] Change log logger instance 
   # @return FluentWrap
   def merge(more_attrs=nil, new_logger=nil)
+    return
     FluentWrap.new(
       @tag,
       @base_attrs.merge(more_attrs || {}),
