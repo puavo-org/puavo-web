@@ -1,0 +1,23 @@
+# puavo-web service file.
+# Converted from the old puavo-web.upstart script.
+
+[Unit]
+Description=puavo-web in production mode
+After=network-online.target
+
+[Service]
+Type=simple
+User=puavo
+Group=puavo
+WorkingDirectory=/var/app/puavo-web
+Environment="RAILS_ENV=production"
+ExecStart=/bin/sh -c "bundle exec unicorn_rails -c ./config/unicorn.rb"
+Restart=on-abnormal
+RestartSec=30s
+# /usr, /boot and /etc will be read-only
+ProtectSystem=full
+# /home, /root and /run/user will be inaccessible
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
