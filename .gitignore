@@ -26,6 +26,7 @@ config/puavo_devices.yml
 config/puavo_external_files.yml
 config/services.yml
 config/secrets.yml
+config/secrets.yml.example
 node_modules/
 public/assets/
 vendor/bundle/
