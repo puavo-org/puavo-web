@@ -14,6 +14,8 @@ build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
 	npm install --registry http://registry.npmjs.org
+	bundle exec rake assets:precompile
+	$(MAKE) tags
 	$(MAKE) js
 
 update-gemfile-lock: clean
