@@ -12,6 +12,7 @@ INSTALL_PROGRAM = $(INSTALL)
 
 build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
+	bundle install --deployment
 	$(MAKE) js
 
 update-gemfile-lock: clean
