@@ -37,8 +37,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  puavo-client,
  ruby,
  ruby-bundler,
- ruby-ldap,
- ruby-mechanize
+ ruby-ldap
 Description: puavo-rest
  JSON-REST Adapter for LDAP
  .
