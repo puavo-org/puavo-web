@@ -29,14 +29,13 @@ clean-for-install:
 	rm -f config/*.sqlite3
 
 clean-assets:
-	#rm -rf public/assets
-	#rm -rf tmp/cache/assets
+	rm -rf public/assets
+	rm -rf tmp/cache/assets
 
-clean:
-	#clean-assets js-clean
-	#rm -rf .bundle
-	#rm -rf vendor/bundle
-	#rm -rf node_modules
+clean: clean-assets js-clean
+	rm -rf .bundle
+	rm -rf vendor/bundle
+	rm -rf node_modules
 
 js: js-translations
 	NODE_ENV=production webpack -p --progress
