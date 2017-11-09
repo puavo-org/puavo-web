@@ -27,6 +27,33 @@ Build-Depends: debhelper (>= 8),
 Standards-Version: 3.9.3
 Homepage: https://github.com/opinsys/puavo-users/
 
+Package: puavo-rest
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ fluentd,
+ krb5-user,
+ libsasl2-modules-gssapi-mit,
+ make,
+ puavo-client,
+ ruby,
+ ruby-bundler,
+ ruby-ldap
+Description: puavo-rest
+ JSON-REST Adapter for LDAP
+ .
+
+Package: puavo-rest-bootserver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ make,
+ nginx,
+ puavo-rest,
+ redis-server
+Description: puavo-rest for bootservers
+ Metapackage for bootservers. Installs nginx, puavo-rest and required
+ configuration files.
+ .
+
 Package: puavo-web-core
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
