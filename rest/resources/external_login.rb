@@ -1,13 +1,4 @@
-def no_verbose(&block)
-  old_verbose = $VERBOSE
-  $VERBOSE = nil
-  yield
-  $VERBOSE = old_verbose
-end
-
-# Silence deprecated warning.  Remove once not needed anymore
-# (but now it shows up constantly in the logs).
-no_verbose { require 'mechanize' }
+require 'mechanize'
 require 'net/ldap'
 require 'securerandom'
 
