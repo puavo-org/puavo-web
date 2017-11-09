@@ -28,6 +28,8 @@ config/services.yml
 config/secrets.yml
 node_modules/
 public/assets/
+public/import_tool.js
+public/import_tool.js.map
 public/javascripts/
 vendor/bundle/
 build/
