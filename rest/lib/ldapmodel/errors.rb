@@ -1,4 +1,4 @@
-class JSONError < Exception
+class JSONError < StandardError
 
   attr_accessor :meta
 

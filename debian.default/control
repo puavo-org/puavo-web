@@ -18,10 +18,10 @@ Build-Depends: debhelper (>= 8),
  libxslt1-dev,
  nodejs,
  puavo-client,
+ ruby,
  ruby-bundler,
+ ruby-dev,
  ruby-ldap,
- ruby2.3,
- ruby2.3-dev,
  xpdf-utils,
  zlib1g-dev
 Standards-Version: 3.9.3
@@ -37,7 +37,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  puavo-client,
  ruby,
  ruby-bundler,
- ruby-ldap
+ ruby-ldap,
+ ruby-mechanize
 Description: puavo-rest
  JSON-REST Adapter for LDAP
  .
@@ -67,9 +68,9 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  nodejs,
  poppler-utils,
  puavo-client,
- ruby-bundler (>= 1.13.6),
- ruby-ldap,
- ruby2.3
+ ruby,
+ ruby-bundler,
+ ruby-ldap
 Description: Puavo Rails application core
  The actual code for the application
  .

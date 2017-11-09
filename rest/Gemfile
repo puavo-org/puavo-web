@@ -31,6 +31,8 @@ gem "sinatra-support", :require => "sinatra/support"
 gem "redlock"
 gem "elasticsearch"
 gem "http"
+gem "mechanize"
+gem "net-ldap", "= 0.12.0"
 
 group :test do
   gem "shotgun"

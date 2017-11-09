@@ -172,11 +172,12 @@ class School < LdapModel
     ical_feed_urls.each do |url|
       begin
         res = HTTParty.get(url)
-      rescue Exception => err
-        $rest_flog.error "Failed to fetch ical",
-          :url => url,
-          :source => self.to_hash,
-          :error => err.message
+      rescue StandardError => err
+        $rest_flog.error("failed to fetch ical",
+                         "failed to fetch ical: #{ err.message }",
+                         :url    => url,
+                         :source => self.to_hash,
+                         :error  => err.message)
         next
       end
 
@@ -193,10 +194,11 @@ class School < LdapModel
       if data = local_store.get("feed:#{ url }")
         begin
           ICALParser.parse(data).current_events
-        rescue Exception => err
-          $rest_flog.error "Failed to parse ical",
-            :data => data.to_s.slice(0, 100),
-            :error => err.message
+        rescue StandardError => err
+          $rest_flog.error('failed to parse ical',
+                           "failed to parse ical: #{ err.message }",
+                           :data => data.to_s.slice(0, 100),
+                           :error => err.message)
         end
       end
     end.compact.flatten.map do |msg|
