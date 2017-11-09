@@ -29,6 +29,7 @@ config/secrets.yml
 config/secrets.yml.example
 node_modules/
 public/assets/
+public/javascripts/
 vendor/bundle/
 build/
 
