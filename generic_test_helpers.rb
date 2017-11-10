@@ -1,9 +1,13 @@
 # Generic test helpers shared with rails and puavo-rest
 require "webmock"
 
+# XXX remove or think of some other mechanism for these:
+temp_connect_hosts = ['puavo-standalone-test.opinsys.net', '10.246.134.48']
+
+connect_hosts = [ '127.0.0.1', 'localhost' ] + temp_connect_hosts
 
 WebMock.allow_net_connect!
-WebMock.disable_net_connect!(allow: ['10.246.134.48', '127.0.0.1', 'localhost'])
+WebMock.disable_net_connect!(allow: connect_hosts)
 
 module Puavo
 module Test
