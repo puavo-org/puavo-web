@@ -33,6 +33,7 @@ gem "elasticsearch"
 gem "http"
 gem "mechanize"
 gem "net-ldap"
+gem "byebug"
 
 group :test do
   gem "shotgun"
