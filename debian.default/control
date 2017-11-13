@@ -3,6 +3,7 @@ Section: admin
 Priority: extra
 Maintainer: Esa-Matti Suuronen <esa-matti.suuronen@opinsys.fi>
 Build-Depends: debhelper (>= 8),
+ devscripts,
  git-core,
  imagemagick,
  jq,
