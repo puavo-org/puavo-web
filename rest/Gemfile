@@ -34,6 +34,7 @@ gem "http"
 gem "mechanize"
 gem "net-ldap"
 gem "byebug"
+gem "ntlm-http"
 
 group :test do
   gem "shotgun"
