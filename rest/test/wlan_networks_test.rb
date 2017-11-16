@@ -2,6 +2,28 @@ require "set"
 require_relative "./helper"
 
 describe PuavoRest::WlanNetworks do
+  def create_laptop(hostname, mac_address, school_dn)
+    laptop = Device.new
+    laptop.classes \
+      = %w(top device puppetClient puavoLocalbootDevice simpleSecurityObject)
+    laptop.attributes = {
+      :puavoHostname   => hostname,
+      :puavoDeviceType => 'laptop',
+      :macAddress      => mac_address,
+    }
+    laptop.puavoSchool = school_dn
+    laptop.save!
+
+    laptop
+  end
+
+  def get_wlan_networks_with_certs(device)
+    basic_authorize device.dn, device.ldap_password
+    get "/v3/devices/#{ device.puavoHostname }/wlan_networks_with_certs"
+    assert_200
+    JSON.parse last_response.body
+  end
+
   describe "wlan settings" do
     before(:each) do
       Puavo::Test.clean_up_ldap
@@ -57,15 +79,8 @@ describe PuavoRest::WlanNetworks do
       ]
       @school.save!
 
-      @laptop1 = Device.new
-      @laptop1.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice", "simpleSecurityObject"]
-      @laptop1.attributes = {
-        :puavoHostname   => "laptop1",
-        :puavoDeviceType => "laptop",
-        :macAddress      => "bf:9a:8c:1b:e0:6a",
-      }
-      @laptop1.puavoSchool = @school.dn
-      @laptop1.save!
+      @laptop1 = create_laptop('laptop1', 'bf:9a:8c:1b:e0:6a', @school.dn)
+      @laptop2 = create_laptop('laptop2', '6a:e0:1b:8c:9a:bf', @school.dn)
     end
 
     describe "wlan client configuration" do
@@ -131,21 +146,16 @@ describe PuavoRest::WlanNetworks do
     end
 
     describe "wlan client configuration with eap-tls certificates" do
-      before(:each) do
-        basic_authorize @laptop1.dn, @laptop1.ldap_password
-        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks_with_certs"
-        assert_200
-        @data = JSON.parse last_response.body
-      end
-
       it "we have all school and organisation networks" do
+        data = get_wlan_networks_with_certs(@laptop1)
         expected_ssids = \
           %w(3rdpartywlan eaptlsschoolwlan orgwlan pskschoolwlan schoolwlan)
-        assert_equal expected_ssids, (@data.map { |wlan| wlan['ssid'] }.sort)
+        assert_equal expected_ssids, (data.map { |wlan| wlan['ssid'] }.sort)
       end
 
       it "we have the certificates from eaptlsschoolwlan" do
-        wlans = @data.select { |wlan| wlan['ssid'] == 'eaptlsschoolwlan' }
+        data = get_wlan_networks_with_certs(@laptop1)
+        wlans = data.select { |wlan| wlan['ssid'] == 'eaptlsschoolwlan' }
         assert_equal 1, wlans.count
 
         eaptlsschoolwlan = wlans.first
@@ -156,6 +166,12 @@ describe PuavoRest::WlanNetworks do
         assert_equal certs['client_cert'],         '<CLIENTCERT>'
         assert_equal certs['client_key'],          '<CLIENTKEY>'
         assert_equal certs['client_key_password'], 'mysecretclientkeypassword'
+      end
+
+      it "getting eap-tls certificates of another machine should fail" do
+        basic_authorize @laptop2.dn, @laptop2.ldap_password
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks_with_certs"
+        assert_equal 404, last_response.status
       end
     end
 
