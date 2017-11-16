@@ -35,6 +35,12 @@ describe PuavoRest::WlanNetworks do
           :type => "open",
           :wlan_ap => true,
           :password => "secret"
+        },
+        {
+          :ssid => "pskschoolwlan",
+          :type => "psk",
+          :wlan_ap => true,
+          :password => "actuallysecret"
         }
       ]
       @school.save!
@@ -135,7 +141,7 @@ describe PuavoRest::WlanNetworks do
         data = JSON.parse last_response.body
 
         assert_equal(
-          Set.new(["schoolwlan"]),
+          Set.new(["schoolwlan", "pskschoolwlan"]),
           Set.new(data.map { |w| w["ssid"] })
         )
       end
