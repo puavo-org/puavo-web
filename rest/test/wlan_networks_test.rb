@@ -45,11 +45,10 @@ describe PuavoRest::WlanNetworks do
       ]
       @school.save!
 
-      @laptop1_name = "laptop1"
       @laptop1 = Device.new
       @laptop1.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice", "simpleSecurityObject"]
       @laptop1.attributes = {
-        :puavoHostname   => @laptop1_name,
+        :puavoHostname   => "laptop1",
         :puavoDeviceType => "laptop",
         :macAddress      => "bf:9a:8c:1b:e0:6a",
       }
@@ -60,7 +59,7 @@ describe PuavoRest::WlanNetworks do
     describe "wlan client configuration" do
 
       before(:each) do
-        get "/v3/devices/#{ @laptop1_name }/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         @data = JSON.parse last_response.body
       end
@@ -110,7 +109,7 @@ describe PuavoRest::WlanNetworks do
         ]
         @test_organisation.save!
 
-        get "/v3/devices/#{ @laptop1_name }/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         data = JSON.parse last_response.body
 
@@ -125,7 +124,7 @@ describe PuavoRest::WlanNetworks do
         @school.puavoWlanSSID = "fuuck:oldie:here"
         @school.save!
 
-        get "/v3/devices/#{ @laptop1_name }/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         data = JSON.parse last_response.body
 
@@ -139,7 +138,7 @@ describe PuavoRest::WlanNetworks do
         @test_organisation.puavoWlanSSID = "fuuck:oldie:here"
         @test_organisation.save!
 
-        get "/v3/devices/#{ @laptop1_name }/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         data = JSON.parse last_response.body
 
@@ -155,7 +154,7 @@ describe PuavoRest::WlanNetworks do
     describe "wlan hotspot configuration" do
 
       before(:each) do
-        get "/v3/devices/#{ @laptop1_name }/wlan_hotspot_configurations"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_hotspot_configurations"
         assert_200
         @data = JSON.parse last_response.body
       end
