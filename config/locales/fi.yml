@@ -810,6 +810,7 @@ fi:
       wlan_ap: Käytössä tukiasemissa
       select_value_open: Avoin
       select_value_psk: PSK
+      select_value_eaptls: EAP-TLS
       default: Oletus
     mountpoint:
       title: Levyliitokset (paikallinen/verkko)

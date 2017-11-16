@@ -844,6 +844,7 @@ en:
       wlan_ap: Enabled in access points
       select_value_open: Open
       select_value_psk: PSK
+      select_value_eaptls: EAP-TLS
       default: Default
     mountpoint:
       title: Local and network mount points
