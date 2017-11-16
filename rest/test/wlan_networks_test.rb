@@ -41,6 +41,18 @@ describe PuavoRest::WlanNetworks do
           :type => "psk",
           :wlan_ap => true,
           :password => "actuallysecret"
+        },
+        {
+          :ssid => "eaptlsschoolwlan",
+          :type => "eap-tls",
+          :wlan_ap => false,
+          :identity => 'Puavo',
+          :certs => {
+            'ca_cert' => '<CACERT>',
+            'client_cert' => '<CLIENTCERT>',
+            'client_key' => '<CLIENTKEY>',
+            'client_key_password' => 'mysecretclientkeypassword',
+          }
         }
       ]
       @school.save!
@@ -116,6 +128,35 @@ describe PuavoRest::WlanNetworks do
         assert data.select { |w| w["ssid"] == "schoolwlan" }.count == 1, "Duplicate ssid value!"
       end
 
+    end
+
+    describe "wlan client configuration with eap-tls certificates" do
+      before(:each) do
+        basic_authorize @laptop1.dn, @laptop1.ldap_password
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks_with_certs"
+        assert_200
+        @data = JSON.parse last_response.body
+      end
+
+      it "we have all school and organisation networks" do
+        expected_ssids = \
+          %w(3rdpartywlan eaptlsschoolwlan orgwlan pskschoolwlan schoolwlan)
+        assert_equal expected_ssids, (@data.map { |wlan| wlan['ssid'] }.sort)
+      end
+
+      it "we have the certificates from eaptlsschoolwlan" do
+        wlans = @data.select { |wlan| wlan['ssid'] == 'eaptlsschoolwlan' }
+        assert_equal 1, wlans.count
+
+        eaptlsschoolwlan = wlans.first
+        certs = eaptlsschoolwlan['certs']
+        assert certs.kind_of?(Hash), 'has certs hash'
+
+        assert_equal certs['ca_cert'],             '<CACERT>'
+        assert_equal certs['client_cert'],         '<CLIENTCERT>'
+        assert_equal certs['client_key'],          '<CLIENTKEY>'
+        assert_equal certs['client_key_password'], 'mysecretclientkeypassword'
+      end
     end
 
     describe "lecacy configuration" do
