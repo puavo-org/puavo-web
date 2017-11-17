@@ -1,3 +1,5 @@
+require 'base64'
+
 module Wlan
 
   # Set WLAN networks as array
@@ -54,7 +56,7 @@ module Wlan
     return nil unless certhash.has_key?(index.to_s)
     return nil unless certhash[index.to_s].respond_to?(:tempfile)
 
-    certhash[index.to_s].tempfile.read
+    Base64.encode64(certhash[index.to_s].tempfile.read)
   end
 
   def update_wlan_attributes(new_attrs)
