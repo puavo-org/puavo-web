@@ -35,22 +35,22 @@ module Wlan
     end
   end
 
-  def update_wlan_attributes(wlan_name, wlan_type, wlan_password, wlan_ap)
-    wlan_ap = {} if wlan_ap.nil?
-    max_index = wlan_name.keys.count - 1
+  def update_wlan_attributes(new_attrs)
+    wlan_ap   = new_attrs[:wlan_ap] || {}
+    max_index = new_attrs[:wlan_name].keys.count - 1
 
     new_wlan_networks = []
 
     (0..max_index).each do |index|
-      next if wlan_name[index.to_s].empty?
+      next if new_attrs[:wlan_name][index.to_s].empty?
       if wlan_ap.has_key?(index.to_s)
         wlan_ap_status = wlan_ap[index.to_s] == "enabled" ? true : false
       end
 
-      new_wlan_networks.push(:ssid => wlan_name[index.to_s],
-                             :type => wlan_type[index.to_s],
-                             :wlan_ap => wlan_ap_status,
-                             :password => wlan_password[index.to_s])
+      new_wlan_networks.push(:ssid     => new_attrs[:wlan_name][index.to_s],
+                             :type     => new_attrs[:wlan_type][index.to_s],
+                             :wlan_ap  => wlan_ap_status,
+                             :password => new_attrs[:wlan_password][index.to_s])
     end
 
     self.wlan_networks = new_wlan_networks

@@ -200,10 +200,7 @@ class SchoolsController < ApplicationController
   def wlan_update
     @school = School.find(params[:id])
 
-    @school.update_wlan_attributes( params[:wlan_name],
-                                    params[:wlan_type],
-                                    params[:wlan_password],
-                                    params[:wlan_ap])
+    @school.update_wlan_attributes(params)
     @school.puavoWlanChannel = params[:school][:puavoWlanChannel]
 
     respond_to do |format|
