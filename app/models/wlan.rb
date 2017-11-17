@@ -43,13 +43,10 @@ module Wlan
 
     (0..max_index).each do |index|
       next if new_attrs[:wlan_name][index.to_s].empty?
-      if wlan_ap.has_key?(index.to_s)
-        wlan_ap_status = wlan_ap[index.to_s] == "enabled" ? true : false
-      end
 
       new_wlan_networks.push(:ssid     => new_attrs[:wlan_name][index.to_s],
                              :type     => new_attrs[:wlan_type][index.to_s],
-                             :wlan_ap  => wlan_ap_status,
+                             :wlan_ap  => (wlan_ap[index.to_s] == "enabled"),
                              :password => new_attrs[:wlan_password][index.to_s])
     end
 
