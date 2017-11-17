@@ -35,9 +35,31 @@ module Wlan
     end
   end
 
+  def get_certificates(new_attrs, index)
+    # Try reading uploaded certificates, but if that fails (maybe no
+    # certificate is sent), use the old ones if those exist.
+
+    {
+      :wlan_ca_cert     => read_cert(new_attrs[:wlan_ca_cert], index) \
+                             || wlan_ca_cert[index],
+      :wlan_client_cert => read_cert(new_attrs[:wlan_client_cert], index) \
+                             || wlan_client_cert[index],
+      :wlan_client_key  => read_cert(new_attrs[:wlan_client_key], index) \
+                             || wlan_client_key[index],
+    }
+  end
+
+  def read_cert(certhash, index)
+    return nil unless certhash.kind_of?(Hash)
+    return nil unless certhash.has_key?(index.to_s)
+    return nil unless certhash[index.to_s].respond_to?(:tempfile)
+
+    certhash[index.to_s].tempfile.read
+  end
+
   def update_wlan_attributes(new_attrs)
     new_wlan_ap = new_attrs[:wlan_ap] || {}
-    max_index   = new_attrs[:wlan_name].keys.count - 1
+    max_index = new_attrs[:wlan_name].keys.count - 1
 
     new_wlan_networks = []
 
@@ -45,11 +67,13 @@ module Wlan
       index_s = index.to_s
       next if new_attrs[:wlan_name][index_s].empty?
 
+      certs = get_certificates(new_attrs, index)
+
       wlaninfo = {
         :certs => {
-          :ca_cert             => new_attrs[:wlan_ca_cert][index_s],
-          :client_cert         => new_attrs[:wlan_client_cert][index_s],
-          :client_key          => new_attrs[:wlan_client_key][index_s],
+          :ca_cert             => certs[:wlan_ca_cert]     || '',
+          :client_cert         => certs[:wlan_client_cert] || '',
+          :client_key          => certs[:wlan_client_key]  || '',
           :client_key_password => new_attrs[:wlan_client_key_password][index_s],
         },
         :password            => new_attrs[:wlan_password][index_s],
@@ -79,6 +103,6 @@ module Wlan
 
   def wlan_ca_cert;             wlan_attrs('certs', 'ca_cert'            ); end
   def wlan_client_cert;         wlan_attrs('certs', 'client_cert'        ); end
-  def wlan_client_key_password; wlan_attrs('certs', 'client_key_password'); end
   def wlan_client_key;          wlan_attrs('certs', 'client_key'         ); end
+  def wlan_client_key_password; wlan_attrs('certs', 'client_key_password'); end
 end
