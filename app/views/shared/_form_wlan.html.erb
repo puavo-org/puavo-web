@@ -50,6 +50,42 @@
 
   <tr>
     <td class="label_td">
+      <%= label_tag "wlan_ca_cert[#{ index }]", t('.wlan_ca_cert') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_ca_cert[#{ index }]", f.object.wlan_ca_cert ? f.object.wlan_ca_cert[index] : "" %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_client_cert[#{ index }]", t('.wlan_client_cert') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_client_cert[#{ index }]", f.object.wlan_client_cert ? f.object.wlan_client_cert[index] : "" %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_client_key[#{ index }]", t('.wlan_client_key') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_client_key[#{ index }]", f.object.wlan_client_key ? f.object.wlan_client_key[index] : "" %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
+      <%= label_tag "wlan_client_key_password[#{ index }]", t('.wlan_client_key_password') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_client_key_password[#{ index }]", f.object.wlan_client_key_password ? f.object.wlan_client_key_password[index] : "" %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="label_td">
       <%= label_tag "wlan_ap[#{ index }]", t('.wlan_ap') %>
     </td>
     <td>
