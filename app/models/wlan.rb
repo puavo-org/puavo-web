@@ -54,20 +54,13 @@ module Wlan
     self.wlan_networks = new_wlan_networks
   end
 
-  def wlan_name
-    wlan_networks.map { |w| w["ssid"] }
+  def wlan_attrs(attr_name)
+    wlan_networks.map { |w| w[attr_name] }
   end
 
-  def wlan_type
-    wlan_networks.map { |w| w["type"] }
-  end
-
-  def wlan_password
-    wlan_networks.map { |w| w["password"] }
-  end
-
-  def wlan_ap
-    wlan_networks.map { |w| w["wlan_ap"] }
-  end
+  def wlan_ap;       wlan_attrs('wlan_ap');  end
+  def wlan_name;     wlan_attrs('ssid');     end
+  def wlan_password; wlan_attrs('password'); end
+  def wlan_type;     wlan_attrs('type');     end
 end
 
