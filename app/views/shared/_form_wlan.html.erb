@@ -54,6 +54,7 @@
     </td>
     <td>
       <%= file_field_tag "wlan_ca_cert[#{ index }]" %>
+      <%= (f.object.wlan_ca_cert && f.object.wlan_ca_cert[index]) ? '✓' : '' %>
     </td>
   </tr>
 
@@ -63,6 +64,7 @@
     </td>
     <td>
       <%= file_field_tag "wlan_client_cert[#{ index }]" %>
+      <%= (f.object.wlan_client_cert && f.object.wlan_client_cert[index]) ? '✓' : '' %>
     </td>
   </tr>
 
@@ -72,6 +74,7 @@
     </td>
     <td>
       <%= file_field_tag "wlan_client_key[#{ index }]" %>
+      <%= (f.object.wlan_client_key && f.object.wlan_client_key[index]) ? '✓' : '' %>
     </td>
   </tr>
 
