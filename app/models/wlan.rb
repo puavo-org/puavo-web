@@ -71,18 +71,27 @@ module Wlan
 
       certs = get_certificates(new_attrs, index)
 
+      new_wlan_type = new_attrs[:wlan_type][index_s]
+
       wlaninfo = {
-        :certs => {
-          :ca_cert             => certs[:wlan_ca_cert]     || '',
-          :client_cert         => certs[:wlan_client_cert] || '',
-          :client_key          => certs[:wlan_client_key]  || '',
-          :client_key_password => new_attrs[:wlan_client_key_password][index_s],
-        },
-        :password            => new_attrs[:wlan_password][index_s],
-        :ssid                => new_attrs[:wlan_name][index_s],
-        :type                => new_attrs[:wlan_type][index_s],
-        :wlan_ap             => (new_wlan_ap[index_s] == "enabled"),
+        :ssid    => new_attrs[:wlan_name][index_s],
+        :type    => new_attrs[:wlan_type][index_s],
+        :wlan_ap => %w(open psk).include?(new_wlan_type) \
+                      && (new_wlan_ap[index_s] == 'enabled'),
       }
+
+      case new_attrs[:wlan_type][index_s]
+        when 'eap-tls'
+          wlaninfo[:certs] = {
+            :ca_cert             => certs[:wlan_ca_cert],     # can be nil
+            :client_cert         => certs[:wlan_client_cert], # can be nil
+            :client_key          => certs[:wlan_client_key],  # can be nil
+            :client_key_password => \
+              new_attrs[:wlan_client_key_password][index_s]
+          }
+        when 'psk'
+          wlaninfo[:password] = new_attrs[:wlan_password][index_s]
+      end
 
       new_wlan_networks.push(wlaninfo)
     end
