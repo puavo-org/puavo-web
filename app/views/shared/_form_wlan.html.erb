@@ -18,7 +18,7 @@
 
   <table>
 
-  <tr>
+  <tr class="wlan_name_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %>
     </td>
@@ -39,7 +39,7 @@
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_password_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_password[#{ index }]", t('.wlan_password') %>
     </td>
@@ -48,7 +48,7 @@
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_certs_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_ca_cert[#{ index }]", t('.wlan_ca_cert') %>
     </td>
@@ -58,7 +58,7 @@
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_certs_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_client_cert[#{ index }]", t('.wlan_client_cert') %>
     </td>
@@ -68,7 +68,7 @@
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_certs_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_client_key[#{ index }]", t('.wlan_client_key') %>
     </td>
@@ -78,7 +78,7 @@
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_certs_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_client_key_password[#{ index }]", t('.wlan_client_key_password') %>
     </td>
@@ -87,7 +87,7 @@
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_ap_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_ap[#{ index }]", t('.wlan_ap') %>
     </td>
