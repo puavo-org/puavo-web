@@ -4,8 +4,8 @@
   <tr>
     <td class="label_td"><%= f.label :puavoWlanChannel %></td>
     <td><%= f.select( :puavoWlanChannel,
-	              [ [t('.default'), ""],
-	                [t('.channel_random'), "random"] ] +
+                      [ [t('.default'), ""],
+                        [t('.channel_random'), "random"] ] +
                       (1..13).map{ |i| [i.to_s,i.to_s] } )%></td>
   </tr>
 </table>
