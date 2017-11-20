@@ -804,6 +804,8 @@ fi:
       channel_random: Satunnainen
       wireless_network_setup: Langattomien verkkojen asetukset
       wireless_network_title: Verkko %{index}
+      file_md5: MD5
+      file_size: Koko
       wlan_name: Nimi
       wlan_type: Tyyppi
       wlan_password: Salasana

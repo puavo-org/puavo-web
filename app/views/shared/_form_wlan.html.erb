@@ -54,7 +54,13 @@
     </td>
     <td>
       <%= file_field_tag "wlan_ca_cert[#{ index }]" %>
-      <%= (f.object.wlan_ca_cert && f.object.wlan_ca_cert[index]) ? '✓' : '' %>
+      <% if f.object.wlan_ca_cert && f.object.wlan_ca_cert[index] %>
+        <%= t('.file_size') %>:
+          <%= wlan_certfile_size(f.object.wlan_ca_cert[index]) %>
+        /
+        <%= t('.file_md5') %>:
+          <%= wlan_certfile_md5(f.object.wlan_ca_cert[index]) %>
+      <% end %>
     </td>
   </tr>
 
@@ -64,7 +70,13 @@
     </td>
     <td>
       <%= file_field_tag "wlan_client_cert[#{ index }]" %>
-      <%= (f.object.wlan_client_cert && f.object.wlan_client_cert[index]) ? '✓' : '' %>
+      <% if f.object.wlan_client_cert && f.object.wlan_client_cert[index] %>
+        <%= t('.file_size') %>:
+          <%= wlan_certfile_size(f.object.wlan_client_cert[index]) %>
+        /
+        <%= t('.file_md5') %>:
+          <%= wlan_certfile_md5(f.object.wlan_client_cert[index]) %>
+      <% end %>
     </td>
   </tr>
 
@@ -74,7 +86,13 @@
     </td>
     <td>
       <%= file_field_tag "wlan_client_key[#{ index }]" %>
-      <%= (f.object.wlan_client_key && f.object.wlan_client_key[index]) ? '✓' : '' %>
+      <% if f.object.wlan_client_key && f.object.wlan_client_key[index] %>
+        <%= t('.file_size') %>:
+          <%= wlan_certfile_size(f.object.wlan_client_key[index]) %>
+        /
+        <%= t('.file_md5') %>:
+          <%= wlan_certfile_md5(f.object.wlan_client_key[index]) %>
+      <% end %>
     </td>
   </tr>
 
