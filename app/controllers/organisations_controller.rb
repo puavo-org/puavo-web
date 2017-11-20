@@ -56,7 +56,7 @@ class OrganisationsController < ApplicationController
   def wlan_update
     @organisation = LdapOrganisation.current
 
-    @school.update_wlan_attributes(params)
+    @organisation.update_wlan_attributes(params)
     @organisation.puavoWlanChannel = params[:ldap_organisation][:puavoWlanChannel]
 
     respond_to do |format|
