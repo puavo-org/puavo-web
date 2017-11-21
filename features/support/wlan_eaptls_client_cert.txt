@@ -1,0 +1,1 @@
+This file is not a real client-certificate, but a fake one.
