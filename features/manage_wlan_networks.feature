@@ -143,3 +143,56 @@ Feature: Manage wlan networks
           }
         ]
       """
+
+  Scenario: Create a new EAP-TLS network
+    Given I follow "Wireless networks"
+    When I select "EAP-TLS" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0] | EAP-TLS_test_network |
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+	  {
+	    "ssid": "EAP-TLS_test_network",
+	    "type": "eap-tls",
+	    "wlan_ap": false,
+	    "certs": {
+	      "ca_cert": null,
+	      "client_cert": null,
+	      "client_key": null,
+	      "client_key_password": ""
+	    }
+	  }
+        ]
+      """
+
+  Scenario: Check that EAP-TLS network ignores attributes not relevant
+    Given I follow "Wireless networks"
+    When I select "EAP-TLS" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0]     | EAP-TLS_test_network |
+    | wlan_password[0] | playblackholesun     |
+    And I check "wlan_ap[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+	  {
+	    "ssid": "EAP-TLS_test_network",
+	    "type": "eap-tls",
+	    "wlan_ap": false,
+	    "certs": {
+	      "ca_cert": null,
+	      "client_cert": null,
+	      "client_key": null,
+	      "client_key_password": ""
+	    }
+	  }
+        ]
+      """
+
