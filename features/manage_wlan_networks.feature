@@ -10,12 +10,99 @@ Feature: Manage wlan networks
     When I select "Open" from "wlan_type[0]"
     And I fill in the following:
     | wlan_name[0] | Open_test_network |
+    And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
     And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-	  { "ssid": "Open_test_network", "type": "open", "wlan_ap": false }
-	]
+          { "ssid": "Open_test_network", "type": "open", "wlan_ap": true }
+        ]
+      """
+
+  Scenario: Create a wpa-psk protected network
+    Given I follow "Wireless networks"
+    When I select "PSK" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0]     | WPA_PSK_test_network   |
+    | wlan_password[0] | HessuHoponHauskutukset |
+    And I check "wlan_ap[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          {
+            "ssid": "WPA_PSK_test_network",
+            "type": "psk",
+            "wlan_ap": true,
+            "password": "HessuHoponHauskutukset"
+          }
+        ]
+      """
+
+  Scenario: Create two networks, other not AP-enabled
+    Given I follow "Wireless networks"
+    When I select "Open" from "wlan_type[0]"
+    When I select "PSK" from "wlan_type[1]"
+    And I fill in the following:
+    | wlan_name[0]     | OpenNetworkNoAP       |
+    | wlan_name[1]     | WPANetworkYesAP       |
+    | wlan_password[1] | TipiLinnunTaikatemput |
+    And I check "wlan_ap[1]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          { "ssid": "OpenNetworkNoAP", "type": "open", "wlan_ap": false },
+          {
+            "ssid": "WPANetworkYesAP",
+            "type": "psk",
+            "wlan_ap": true,
+            "password": "TipiLinnunTaikatemput"
+          }
+        ]
+      """
+
+  Scenario: Create an open network and change it to WPA-protected
+    Given I follow "Wireless networks"
+    When I select "Open" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0] | MyOwnNetwork |
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          {
+            "ssid": "MyOwnNetwork",
+            "type": "open",
+            "wlan_ap": false
+          }
+        ]
+      """
+    And I am logged in as "example" organisation owner
+    And I follow "Wireless networks"
+    And I select "PSK" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_password[0] | AllYouNeedIsLove |
+    And I check "wlan_ap[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          {
+            "ssid": "MyOwnNetwork",
+            "password": "AllYouNeedIsLove",
+            "type": "psk",
+            "wlan_ap": true
+          }
+        ]
       """
