@@ -106,3 +106,40 @@ Feature: Manage wlan networks
           }
         ]
       """
+
+  Scenario: Changing WPA-protected network to open should lose password
+    Given I follow "Wireless networks"
+    When I select "PSK" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0]     | MyOwnNetwork |
+    | wlan_password[0] | SkiesAreBlue |
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          {
+            "ssid": "MyOwnNetwork",
+            "password": "SkiesAreBlue",
+            "type": "psk",
+            "wlan_ap": false
+          }
+        ]
+      """
+    And I am logged in as "example" organisation owner
+    And I follow "Wireless networks"
+    And I select "Open" from "wlan_type[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    And I get the organisation JSON page with "cucumber" and "cucumber"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          {
+            "ssid": "MyOwnNetwork",
+            "type": "open",
+            "wlan_ap": false
+          }
+        ]
+      """
