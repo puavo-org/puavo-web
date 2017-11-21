@@ -16,8 +16,6 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-	  { "ssid": "Open_test_network", "type": "open", "wlan_ap": true  },
-	  { "ssid": "3rdpartywlan",      "type": "open", "wlan_ap": false },
-	  { "ssid": "schoolwlan",        "type": "open", "wlan_ap": true  }
+	  { "ssid": "Open_test_network", "type": "open", "wlan_ap": false }
 	]
       """
