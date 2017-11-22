@@ -13,7 +13,6 @@ Feature: Manage wlan networks
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -30,7 +29,6 @@ Feature: Manage wlan networks
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -54,7 +52,6 @@ Feature: Manage wlan networks
     And I check "wlan_ap[1]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -75,7 +72,6 @@ Feature: Manage wlan networks
     | wlan_name[0] | MyOwnNetwork |
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -94,7 +90,6 @@ Feature: Manage wlan networks
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -115,7 +110,6 @@ Feature: Manage wlan networks
     | wlan_password[0] | SkiesAreBlue |
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -132,7 +126,6 @@ Feature: Manage wlan networks
     And I select "Open" from "wlan_type[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -155,7 +148,6 @@ Feature: Manage wlan networks
     And I attach the file at "features/support/wlan_eaptls_client_key.txt" to "wlan_client_key[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -182,7 +174,6 @@ Feature: Manage wlan networks
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
-    And I get the organisation JSON page with "cucumber" and "cucumber"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
@@ -200,3 +191,48 @@ Feature: Manage wlan networks
         ]
       """
 
+  Scenario: Create some wlan networks through the school interface
+    Given I am on the show school page with "Example school 1"
+    When I follow "WLAN"
+    When I select "Open" from "wlan_type[0]"
+    When I select "PSK" from "wlan_type[1]"
+    When I select "EAP-TLS" from "wlan_type[2]"
+    And I fill in the following:
+    | wlan_name[0]                | OpenNetworkYesAP                  |
+    | wlan_name[1]                | WPANetworkNoAP                    |
+    | wlan_name[2]                | EAPTLSNetwork                     |
+    | wlan_password[1]            | SpoonmanComeTogetherWithYourHands |
+    | wlan_client_key_password[2] | GetRightWithMe                    |
+    And I check "wlan_ap[0]"
+    And I attach the file at "features/support/wlan_eaptls_ca_cert.txt" to "wlan_ca_cert[2]"
+    And I attach the file at "features/support/wlan_eaptls_client_cert.txt" to "wlan_client_cert[2]"
+    And I attach the file at "features/support/wlan_eaptls_client_key.txt" to "wlan_client_key[2]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        []
+      """
+    And I should see the following JSON on the "School" object with "Example school 1" on attribute "wlan_networks":
+      """
+        [
+          { "ssid": "OpenNetworkYesAP", "type": "open", "wlan_ap": true },
+          {
+            "ssid": "WPANetworkNoAP",
+            "type": "psk",
+            "wlan_ap": false,
+            "password": "SpoonmanComeTogetherWithYourHands"
+          },
+	  {
+	    "ssid": "EAPTLSNetwork",
+	    "type": "eap-tls",
+	    "wlan_ap": false,
+	    "certs": {
+	      "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
+	      "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",
+	      "client_key": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWtleSwgYnV0IGEgZmFr\nZSBvbmUuCg==\n",
+	      "client_key_password": "GetRightWithMe"
+	    }
+	  }
+        ]
+      """
