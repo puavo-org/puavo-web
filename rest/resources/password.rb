@@ -62,7 +62,8 @@ class Password < PuavoSinatra
     end
 
     begin
-      jwt_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])
+      jwt_decode_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])
+      jwt_data = jwt_decode_data[0] # jwt_decode_data is [payload, header]
     rescue JWT::DecodeError
       status 404
       return json({ :status => "failed",

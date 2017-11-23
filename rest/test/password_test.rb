@@ -84,7 +84,8 @@ describe PuavoRest::Password do
       assert_equal "successfully", data["status"]
 
       jwt = $mailer.options[:body].match("https://example.opinsys.net/users/password/(.+)/reset$")[1]
-      jwt_data = JWT.decode(jwt, "foobar")
+      jwt_decode_data = JWT.decode(jwt, "foobar")
+      jwt_data = jwt_decode_data[0] # jwt_decode_data is [payload, header]
 
       assert_equal "bob@example.com", $mailer.options[:to]
       assert_equal "Reset your password", $mailer.options[:subject]
