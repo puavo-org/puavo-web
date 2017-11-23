@@ -675,10 +675,12 @@ describe PuavoRest::Devices do
 
   describe "device certificate" do
     before(:each) do
-      @key = OpenSSL::PKey::RSA.new(1024)
+      @key = OpenSSL::PKey::RSA.new(2048)
       @csr = OpenSSL::X509::Request.new
       @csr.version = 0
       @csr.public_key = @key.public_key
+
+      @csr.sign(@key, OpenSSL::Digest::SHA256.new)
 
       @device = create_device(
         :puavoHostname => "laptop-01",

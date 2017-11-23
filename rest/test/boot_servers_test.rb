@@ -185,10 +185,12 @@ describe PuavoRest::BootServer do
 
   describe "device certificate" do
     before(:each) do
-      @key = OpenSSL::PKey::RSA.new(1024)
+      @key = OpenSSL::PKey::RSA.new(2048)
       @csr = OpenSSL::X509::Request.new
       @csr.version = 0
       @csr.public_key = @key.public_key
+
+      @csr.sign(@key, OpenSSL::Digest::SHA256.new)
     end
 
     it "sign new certificate" do
