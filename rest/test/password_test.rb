@@ -51,7 +51,7 @@ describe PuavoRest::Password do
       assert_equal({ :via => :smtp,
                      :from => "Opinsys <no-reply@opinsys.fi>",
                      :via_options => {
-                       :address => "localhost",
+                       :address => CONFIG["password_management"]["smtp"]["via_options"][:address],
                        :port => 25,
                        :enable_starttls_auto => false
                      }
