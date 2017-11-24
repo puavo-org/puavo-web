@@ -135,7 +135,7 @@ test-acceptance:
 
 .PHONY: test
 test: js-lint
-	#bundle exec rspec --format documentation
+	bundle exec rspec --format documentation
 	bundle exec cucumber --color --tags "not @start_test_server"
 	bundle exec cucumber --color --tags @start_test_server
 	bundle exec rails runner acl/runner.rb

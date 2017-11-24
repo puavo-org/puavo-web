@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 
-describe School do
+describe School, :type => :model do
 
   def create_printer(server, name)
     printer = Printer.new
