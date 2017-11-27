@@ -124,10 +124,11 @@ describe PuavoRest::SSO do
       get url.to_s
       assert last_response.headers["Location"]
       redirect_url = Addressable::URI.parse(last_response.headers["Location"])
-      jwt = JWT.decode(
+      jwt_decode_data = JWT.decode(
         redirect_url.query_values["jwt"],
         @external_service.puavoServiceSecret
       )
+      jwt = jwt_decode_data[0] # jwt_decode_data is [payload, header]
 
       assert_equal ["admin", "schooladmin"], jwt["schools"][0]["roles"]
     end
@@ -141,10 +142,11 @@ describe PuavoRest::SSO do
       get url.to_s
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
-      @jwt = JWT.decode(
+      jwt_decode_data = JWT.decode(
         @redirect_url.query_values["jwt"],
         @external_service.puavoServiceSecret
       )
+      @jwt = jwt_decode_data[0] # jwt_decode_data is [payload, header]
     end
 
     it "redirects to return_to url" do
@@ -248,7 +250,9 @@ describe PuavoRest::SSO do
         url = Addressable::URI.parse(last_response.headers["Location"])
         assert url.query_values["jwt"], "has jwt token"
 
-        JWT.decode(url.query_values["jwt"], "this is a shared secret")
+        jwt_decode_data = JWT.decode(url.query_values["jwt"],
+				     "this is a shared secret")
+        jwt_decode_data[0] # jwt_decode_data is [payload, header]
       end
 
       it "from post"  do
@@ -365,10 +369,11 @@ describe PuavoRest::SSO do
       get url.to_s
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
-      @jwt = JWT.decode(
+      jwt_decode_data = JWT.decode(
         @redirect_url.query_values["jwt"],
         @external_service.puavoServiceSecret
       )
+      @jwt = jwt_decode_data[0]         # jwt_decode_data is [payload, header]
       assert_equal "/", @jwt["external_service_path_prefix"]
     end
 
@@ -379,10 +384,11 @@ describe PuavoRest::SSO do
       get url.to_s
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
-      @jwt = JWT.decode(
+      jwt_decode_data = JWT.decode(
         @redirect_url.query_values["jwt"],
         @sub_service.puavoServiceSecret
       )
+      @jwt = jwt_decode_data[0]         # jwt_decode_data is [payload, header]
       assert_equal "/prefix", @jwt["external_service_path_prefix"]
     end
 
@@ -393,10 +399,11 @@ describe PuavoRest::SSO do
       get url.to_s
       assert last_response.headers["Location"]
       @redirect_url = Addressable::URI.parse(last_response.headers["Location"])
-      @jwt = JWT.decode(
+      jwt_decode_data = JWT.decode(
         @redirect_url.query_values["jwt"],
         @external_service.puavoServiceSecret
       )
+      @jwt = jwt_decode_data[0] # jwt_decode_data is [payload, header]
       assert_equal "/", @jwt["external_service_path_prefix"]
     end
 

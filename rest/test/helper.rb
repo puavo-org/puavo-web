@@ -88,7 +88,6 @@ require 'minitest/autorun'
 require 'rack/test'
 require "timecop"
 require 'nokogiri'
-require "debugger"
 require 'webmock/minitest'
 
 require_relative '../../generic_test_helpers'

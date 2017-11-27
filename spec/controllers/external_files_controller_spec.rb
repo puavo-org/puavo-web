@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ExternalFilesController do
+describe ExternalFilesController, :type => :controller do
 
   before(:each) do
     controller.request.host = 'www.example.com'

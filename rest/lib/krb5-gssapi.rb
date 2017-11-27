@@ -5,7 +5,7 @@ require "uuid"
 
 class Krb5Gssapi
 
-  class Error < Exception; end
+  class Error < StandardError; end
   class NoDelegation < Error; end
 
   attr_accessor :return_token, :ok

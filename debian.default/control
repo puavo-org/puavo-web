@@ -3,6 +3,7 @@ Section: admin
 Priority: extra
 Maintainer: Esa-Matti Suuronen <esa-matti.suuronen@opinsys.fi>
 Build-Depends: debhelper (>= 8),
+ devscripts,
  git-core,
  imagemagick,
  jq,
@@ -18,14 +19,41 @@ Build-Depends: debhelper (>= 8),
  libxslt1-dev,
  nodejs,
  puavo-client,
+ ruby,
  ruby-bundler,
+ ruby-dev,
  ruby-ldap,
- ruby2.3,
- ruby2.3-dev,
  xpdf-utils,
  zlib1g-dev
 Standards-Version: 3.9.3
 Homepage: https://github.com/opinsys/puavo-users/
+
+Package: puavo-rest
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ fluentd,
+ krb5-user,
+ libsasl2-modules-gssapi-mit,
+ make,
+ puavo-client,
+ ruby,
+ ruby-bundler,
+ ruby-ldap
+Description: puavo-rest
+ JSON-REST Adapter for LDAP
+ .
+
+Package: puavo-rest-bootserver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ make,
+ nginx,
+ puavo-rest,
+ redis-server
+Description: puavo-rest for bootservers
+ Metapackage for bootservers. Installs nginx, puavo-rest and required
+ configuration files.
+ .
 
 Package: puavo-web-core
 Architecture: any
@@ -40,9 +68,9 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  nodejs,
  poppler-utils,
  puavo-client,
- ruby-bundler (>= 1.13.6),
- ruby-ldap,
- ruby2.3
+ ruby,
+ ruby-bundler,
+ ruby-ldap
 Description: Puavo Rails application core
  The actual code for the application
  .

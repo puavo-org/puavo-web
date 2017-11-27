@@ -3,7 +3,6 @@
 require "elasticsearch"
 require "optparse"
 require "json"
-require "debugger"
 
 @options = {
   :days => 30,

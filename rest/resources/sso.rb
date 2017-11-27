@@ -19,7 +19,7 @@ class ExternalService < LdapModel
   ldap_map :puavoServiceSecret, :secret
   ldap_map :description, :description
   ldap_map :puavoServiceDescriptionURL, :description_url
-  ldap_map :puavoServiceTrusted, :trusted
+  ldap_map :puavoServiceTrusted, :trusted, LdapConverters::StringBoolean
   ldap_map :puavoServicePathPrefix, :prefix, :default => "/"
 
   def self.ldap_base
@@ -165,15 +165,16 @@ class SSO < PuavoSinatra
 
 
     url = @external_service.generate_login_url(user, return_to)
-    logger.info "Redirecting SSO auth #{ user["first_name"] } #{ user["last_name"] } (#{ user["dn"] } to #{ url }"
+    flog.info('redirecting sso auth',
+              "redirecting sso auth #{ user['username'] } (#{ user['dn'] }) to #{ url }")
 
-    flog.info("sso login ok", {
-      :return_to => return_to,
-      :external_service => @external_service.to_hash,
-      :user => user
-    })
+    flog.info('sso login ok', 'sso login ok', {
+                :return_to => return_to,
+                :external_service => @external_service.to_hash,
+                :user => user
+              })
 
-    flog.info("sso", {
+    flog.info('sso', nil, {
       :login_ok => true,
       :return_to => return_to
     })
@@ -207,7 +208,7 @@ class SSO < PuavoSinatra
         err_msg[:meta] = err.meta
         err_msg[:organisation_domain] = Organisation.current.domain
       end
-      flog.warn "sso", err_msg
+      flog.warn('sso error', "sso error: #{ err.message }", err_msg)
     end
 
     @external_service ||= fetch_external_service
@@ -285,7 +286,8 @@ class SSO < PuavoSinatra
     end
 
     if !params["username"].include?("@") && params["organisation"].nil?
-      logger.fatal "SSO: Organisation missing from username: #{ params["username"] }"
+      flog.error('sso error',
+                 "organisation missing from username: #{ params['username'] }")
       render_form(t.sso.organisation_missing)
     end
 
@@ -294,7 +296,8 @@ class SSO < PuavoSinatra
     if params["username"].include?("@")
       _, user_org = params["username"].split("@")
       if Organisation.by_domain(ensure_topdomain(user_org)).nil?
-        logger.info "Could not find organisation for domain #{ user_org }"
+        flog.info('sso error',
+                  "could not find organisation for domain #{ user_org }")
         render_form(t.sso.bad_username_or_pw)
       end
     end

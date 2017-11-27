@@ -13,12 +13,12 @@ class ScheduledJobs < PuavoSinatra
       end
     end
 
-    flog.info "feed update done", {
-      :time => (Time.now - started).to_f
-    }
+    flog.info('feed update done',
+              'feed update done', {
+                :time => (Time.now - started).to_f
+              })
 
     "ok"
-
   end
 
 end

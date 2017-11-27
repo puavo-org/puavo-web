@@ -98,7 +98,31 @@ class Sessions < PuavoSinatra
   # @apiName Create new desktop session
   # @apiGroup sessions
   post "/v3/sessions" do
-    auth :basic_auth, :server_auth, :kerberos
+    if (json_params['authoritative'] != 'true') || CONFIG['cloud'] then
+      # If client has not requested authoritative answer, we may proceed as
+      # usual.  In case we are a cloud server, we are authoritative without
+      # any tricks anyway, so we may proceed as usual.
+      auth :basic_auth, :server_auth, :kerberos
+    elsif CONFIG['bootserver'] then
+      # Client has requested an authoritative answer, but we are a bootserver,
+      # with some delay before the local ldap has synchronized latest changes.
+      # We drop our current connection and setup a new one against the ldap
+      # master, so we can be authoritative.
+      if !CONFIG['ldapmaster'] then
+        raise InternalError,
+              :user => 'Requested authoritative answer but ldapmaster not known'
+      end
+
+      msg = 'authoritative session requested,' \
+              + ' setting up ldap connection to ldapmaster'
+      flog.info(msg, msg)
+      LdapModel.disconnect()
+      auth :basic_auth, :server_auth, :kerberos
+      LdapModel.setup(:ldap_server => CONFIG['ldapmaster'])
+    else
+      raise InternalError,
+            :user => 'Not a bootserver or cloud instance, what are we?'
+    end
 
     session = Session.new
     session.merge!(
@@ -106,7 +130,6 @@ class Sessions < PuavoSinatra
       "created" => Time.now.to_i,
       "printer_queues" => []
     )
-
 
     if json_params["hostname"]
       # Normal user has no permission to read device attributes so force server
@@ -175,17 +198,15 @@ class Sessions < PuavoSinatra
       end
     end
 
-    logger.info "Created session #{ session["uuid"] }"
+    flog.info(nil, "created new session #{ session["uuid"] }")
     session["printer_queues"].uniq!{ |pq| pq.dn.downcase }
     session["organisation"] = Organisation.current.domain
     session.save
 
-    flog.info "new session", :device => json_params["hostname"]
+    flog.info('new session', nil, :device => json_params["hostname"])
 
     # Use different message to avoid type collisions in elasticsearch
-    flog.info("created session", {
-      :session => session.to_hash
-    })
+    flog.info('created session', nil, { :session => session.to_hash })
 
     json session
   end

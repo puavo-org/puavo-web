@@ -1,6 +1,6 @@
 module KRB5
   extend FFI::Library
-  class ResultError < Exception
+  class ResultError < StandardError
     attr_accessor :code, :method
     def initialize(data, *args)
       @code = data[:code]

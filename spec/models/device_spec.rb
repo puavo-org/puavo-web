@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Device do
+describe Device, :type => :model do
 
   before(:each) do
     @school = School.create(

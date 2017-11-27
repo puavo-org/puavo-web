@@ -62,7 +62,8 @@ class Password < PuavoSinatra
     end
 
     begin
-      jwt_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])
+      jwt_decode_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])
+      jwt_data = jwt_decode_data[0] # jwt_decode_data is [payload, header]
     rescue JWT::DecodeError
       status 404
       return json({ :status => "failed",
@@ -97,11 +98,14 @@ class Password < PuavoSinatra
                             params["new_password"],
                             user.dn )
 
-    flog.info("ldappasswd call", res.merge(
-      :from => "users resource",
-        :user => {
-        :uid => user.username,
-        :dn => user.dn } ) )
+    flog.info('ldappasswd call',
+              "changed user password for '#{ user.username }'",
+              res.merge(
+                :from => "users resource",
+                  :user => {
+                    :dn  => user.dn,
+                    :uid => user.username,
+                  }))
 
     if res[:exit_status] != 0
       status 404

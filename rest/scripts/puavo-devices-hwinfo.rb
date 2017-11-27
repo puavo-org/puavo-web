@@ -1,4 +1,4 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/ruby
 
 require 'bundler/setup'
 require_relative "../puavo-rest"

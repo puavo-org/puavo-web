@@ -12,7 +12,10 @@ INSTALL_PROGRAM = $(INSTALL)
 
 build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
+	bundle install --deployment
+	npm install --registry http://registry.npmjs.org
 	bundle exec rake assets:precompile
+	$(MAKE) tags
 	$(MAKE) js
 
 update-gemfile-lock: clean
@@ -29,11 +32,10 @@ clean-assets:
 	rm -rf public/assets
 	rm -rf tmp/cache/assets
 
-clean: clean-assets
-	#clean-assets js-clean
-	#rm -rf .bundle
-	#rm -rf vendor/bundle
-	#rm -rf node_modules
+clean: clean-assets js-clean
+	rm -rf .bundle
+	rm -rf vendor/bundle
+	rm -rf node_modules
 
 js: js-translations
 	NODE_ENV=production webpack -p --progress
@@ -132,8 +134,8 @@ test-acceptance:
 	bundle exec cucumber --exclude registering_devices
 
 .PHONY: test
-test: #js-lint
-	#bundle exec rspec --format documentation
+test: js-lint
+	bundle exec rspec --format documentation
 	bundle exec cucumber --color --tags "not @start_test_server"
 	bundle exec cucumber --color --tags @start_test_server
 	bundle exec rails runner acl/runner.rb

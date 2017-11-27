@@ -55,7 +55,7 @@ install:
 	
 	install -t $(DESTDIR)$(prefix)/bin scripts/puavo-rest-prompt
 	install -t $(DESTDIR)$(prefix)/bin bin/puavo-rest-scheduled-jobs
-	ln -s ../../usr/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
+	ln -fns ../../usr/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
 
 install-client:
 	mkdir -p $(DESTDIR)$(prefix)/sbin
@@ -63,7 +63,7 @@ install-client:
 
 .PHONY: test
 test:
-	bundle exec ruby1.9.1 test/all.rb
+	bundle exec ruby test/all.rb
 
 server:
 	bundle exec puma
