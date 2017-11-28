@@ -804,12 +804,19 @@ fi:
       channel_random: Satunnainen
       wireless_network_setup: Langattomien verkkojen asetukset
       wireless_network_title: Verkko %{index}
+      file_md5: MD5
+      file_size: Koko
       wlan_name: Nimi
       wlan_type: Tyyppi
       wlan_password: Salasana
+      wlan_ca_cert: Langattoman verkon CA-sertifikaatti
+      wlan_client_cert: Langattoman verkon asiakassertifikaatti
+      wlan_client_key: Langattoman verkon asiakassertifikaatin avain
+      wlan_client_key_password: Langattoman verkon asiakassertifikaatin avaimen salasana
       wlan_ap: Käytössä tukiasemissa
       select_value_open: Avoin
       select_value_psk: PSK
+      select_value_eaptls: EAP-TLS
       default: Oletus
     mountpoint:
       title: Levyliitokset (paikallinen/verkko)

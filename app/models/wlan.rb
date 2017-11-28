@@ -1,3 +1,5 @@
+require 'base64'
+
 module Wlan
 
   # Set WLAN networks as array
@@ -35,41 +37,83 @@ module Wlan
     end
   end
 
-  def update_wlan_attributes(wlan_name, wlan_type, wlan_password, wlan_ap)
-    wlan_ap = {} if wlan_ap.nil?
-    max_index = wlan_name.keys.count - 1
+  def get_certificates(new_attrs, index)
+    # Try reading uploaded certificates, but if that fails (maybe no
+    # certificate is sent), use the old ones if those exist.
+
+    {
+      :wlan_ca_cert     => read_cert(new_attrs[:wlan_ca_cert], index) \
+                             || wlan_ca_cert[index],
+      :wlan_client_cert => read_cert(new_attrs[:wlan_client_cert], index) \
+                             || wlan_client_cert[index],
+      :wlan_client_key  => read_cert(new_attrs[:wlan_client_key], index) \
+                             || wlan_client_key[index],
+    }
+  end
+
+  def read_cert(certhash, index)
+    return nil unless certhash.kind_of?(Hash)
+    return nil unless certhash.has_key?(index.to_s)
+    return nil unless certhash[index.to_s].respond_to?(:tempfile)
+
+    Base64.encode64(certhash[index.to_s].tempfile.read)
+  end
+
+  def update_wlan_attributes(new_attrs)
+    new_wlan_ap = new_attrs[:wlan_ap] || {}
+    max_index = new_attrs[:wlan_name].keys.count - 1
 
     new_wlan_networks = []
 
     (0..max_index).each do |index|
-      next if wlan_name[index.to_s].empty?
-      if wlan_ap.has_key?(index.to_s)
-        wlan_ap_status = wlan_ap[index.to_s] == "enabled" ? true : false
+      index_s = index.to_s
+      next if new_attrs[:wlan_name][index_s].empty?
+
+      certs = get_certificates(new_attrs, index)
+
+      new_wlan_type = new_attrs[:wlan_type][index_s]
+
+      wlaninfo = {
+        :ssid    => new_attrs[:wlan_name][index_s],
+        :type    => new_attrs[:wlan_type][index_s],
+        :wlan_ap => %w(open psk).include?(new_wlan_type) \
+                      && (new_wlan_ap[index_s] == 'enabled'),
+      }
+
+      case new_attrs[:wlan_type][index_s]
+        when 'eap-tls'
+          wlaninfo[:certs] = {
+            :ca_cert             => certs[:wlan_ca_cert],     # can be nil
+            :client_cert         => certs[:wlan_client_cert], # can be nil
+            :client_key          => certs[:wlan_client_key],  # can be nil
+            :client_key_password => \
+              new_attrs[:wlan_client_key_password][index_s]
+          }
+        when 'psk'
+          wlaninfo[:password] = new_attrs[:wlan_password][index_s]
       end
 
-      new_wlan_networks.push(:ssid => wlan_name[index.to_s],
-                             :type => wlan_type[index.to_s],
-                             :wlan_ap => wlan_ap_status,
-                             :password => wlan_password[index.to_s])
+      new_wlan_networks.push(wlaninfo)
     end
 
     self.wlan_networks = new_wlan_networks
   end
 
-  def wlan_name
-    wlan_networks.map { |w| w["ssid"] }
+  def wlan_attrs(key, subkey=nil)
+    if subkey then
+      return wlan_networks.map { |w| w[key] ? w[key][subkey] : nil }
+    end
+
+    wlan_networks.map { |w| w[key] }
   end
 
-  def wlan_type
-    wlan_networks.map { |w| w["type"] }
-  end
+  def wlan_ap;                  wlan_attrs('wlan_ap');             end
+  def wlan_name;                wlan_attrs('ssid');                end
+  def wlan_password;            wlan_attrs('password');            end
+  def wlan_type;                wlan_attrs('type');                end
 
-  def wlan_password
-    wlan_networks.map { |w| w["password"] }
-  end
-
-  def wlan_ap
-    wlan_networks.map { |w| w["wlan_ap"] }
-  end
+  def wlan_ca_cert;             wlan_attrs('certs', 'ca_cert'            ); end
+  def wlan_client_cert;         wlan_attrs('certs', 'client_cert'        ); end
+  def wlan_client_key;          wlan_attrs('certs', 'client_key'         ); end
+  def wlan_client_key_password; wlan_attrs('certs', 'client_key_password'); end
 end
-

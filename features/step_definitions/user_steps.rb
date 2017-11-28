@@ -99,20 +99,19 @@ end
 Then(/^I should see the following special ldap attributes on the "([^\"]*)" object with "([^\"]*)":$/) do
   |model, key, table|
   set_ldap_admin_connection
-  case model
-  when "User"
-    object = User.find( :first, :attribute => "uid", :value => key )
-  when "School"
-    object = School.find( :first, :attribute => "displayName", :value => key )
-  when "Group"
-    object = Group.find( :first, :attribute => "displayName", :value => key )
-  when "Organisation"
-    object = LdapOrganisation.first
-  end
+  object = get_object_by_model_and_key(model, key)
   table.rows_hash.each do |attribute, regexp|
     regexp = eval(regexp)
     object.send(attribute).to_s.should =~ /#{regexp}/
   end
+end
+
+Then(/^I should see the following JSON on the "([^\"]*)" object with "([^\"]*)" on attribute "([^\"]*)":$/) do
+  |model, key, attribute, json_string|
+  set_ldap_admin_connection
+  object = get_object_by_model_and_key(model, key)
+
+  object.send(attribute).should == JSON.parse(json_string)
 end
 
 Given(/^I am set the "([^\"]*)" role for "([^\"]*)"$/) do |role, uid|
@@ -166,4 +165,21 @@ When(/^I change "(.*?)" user type to "(.*?)"$/) do |uid, user_type|
   user = User.find(:first, :attribute => "uid", :value => uid)
   user.puavoEduPersonAffiliation = user_type
   user.save!
+end
+
+private
+
+def get_object_by_model_and_key(model, key)
+  case model
+    when 'User'
+      User.find(:first, :attribute => 'uid', :value => key)
+    when 'School'
+      School.find(:first, :attribute => 'displayName', :value => key)
+    when 'Group'
+      Group.find(:first, :attribute => 'displayName', :value => key)
+    when 'Organisation'
+      LdapOrganisation.first
+    else
+      raise "Unsupported model type: #{ model }"
+  end
 end

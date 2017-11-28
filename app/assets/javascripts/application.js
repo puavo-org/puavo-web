@@ -19,6 +19,7 @@
 //= require jquery.textarea
 //= require users/import/new
 //= require users/import/preview
+//= require wlan
 //= require i18n
 
 window.jQuery(document).ready(function($) {
