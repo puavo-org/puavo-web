@@ -146,12 +146,21 @@ seed:
 server:
 	bundle exec rails server -b 0.0.0.0
 
-install-build-dep:
-	mk-build-deps --install debian.default/control \
-		--tool "apt-get --yes --force-yes" --remove
-
+.PHONY: deb
 deb:
-	rm -rf debian
-	cp -a debian.default debian
-	dch --newversion "$$(cat VERSION)+build$$(date +%s)" "Built from $$(git rev-parse HEAD)"
+	cp -p debian/changelog.vc debian/changelog 2>/dev/null \
+	  || cp -p debian/changelog debian/changelog.vc
+	dch --newversion \
+	    "$$(cat VERSION)+build$$(date +%s)+$$(git rev-parse HEAD)" \
+	    "Built from $$(git rev-parse HEAD)"
+	dch --release ''
 	dpkg-buildpackage -us -uc
+	cp -p debian/changelog.vc debian/changelog
+
+.PHONY: install-build-deps
+install-build-deps:
+	mk-build-deps --install --tool 'apt-get --yes' --remove debian/control
+
+.PHONY: upload-deb
+upload-deb:
+	dput puavo ../puavo-users_*.changes

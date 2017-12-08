@@ -35,7 +35,19 @@ vendor/bundle/
 build/
 
 GIT_COMMIT
-debian/
+debian/*-build-stamp
+debian/changelog.vc
+debian/.debhelper
+debian/*.debhelper
+debian/files
+debian/*.log
+debian/puavo-rest
+debian/puavo-rest-bootserver
+debian/puavo-web
+debian/puavo-web-core
+debian/puavo-web-worker
+debian/*.substvars
+debian/tmp
 
 tags
 rest/tags
