@@ -14,7 +14,6 @@ pipeline {
           apt-get update
           apt-get -y dist-upgrade
           apt-get install -y devscripts dpkg-dev make
-	  sleep 36000
           make install-build-deps
         '''
       }
@@ -30,6 +29,8 @@ pipeline {
       steps {
         sh 'make test'
         sh 'make test-rest'
+        cucumber fileIncludePattern: 'logs/cucumber-tests-*.json',
+                 sortingMethod: 'ALPHABETICAL'
       }
     }
 
