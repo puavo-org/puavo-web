@@ -14,6 +14,7 @@ pipeline {
           apt-get update
           apt-get -y dist-upgrade
           apt-get install -y devscripts dpkg-dev make
+	  sleep 36000
           make install-build-deps
         '''
       }
