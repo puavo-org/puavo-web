@@ -3,9 +3,27 @@ require "open3"
 
 module Puavo
 
-  def self.ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
+  def self.ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn, external_pw_mgmt_url = nil)
     started = Time.now
     res = nil
+
+    unless external_pw_mgmt_url.nil?
+      user = User.find(user_dn)
+      res = HTTP.send("post", external_pw_mgmt_url, :json => {"username" => user.uid, "new_user_password" => new_pw})
+
+      puts res.body
+      if res.code != 200
+
+        return {
+          :duration => (Time.now.to_f - started.to_f).round(5),
+          :stdout => "",
+          :stderr => "Cannot change extrenal password: " + res.body.to_s,
+          :exit_status => 1
+      }
+
+      end
+    end
+
 
     Open3.popen3(
       'ldappasswd',
