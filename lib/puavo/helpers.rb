@@ -5,6 +5,12 @@ module Puavo
       LdapOrganisation.current.rest_proxy
     end
 
+    def external_pw_mgmt_url
+      Puavo::Organisation.
+        find(LdapOrganisation.current.cn).
+        value_by_key("external_pw_mgmt_url")
+
+    end
 
     def new_group_management?(school)
       new_group_management = Puavo::Organisation.
