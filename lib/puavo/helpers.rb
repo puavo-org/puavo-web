@@ -12,6 +12,13 @@ module Puavo
 
     end
 
+    def external_pw_mgmt_role
+      Puavo::Organisation.
+        find(LdapOrganisation.current.cn).
+        value_by_key("external_pw_mgmt_role")
+
+    end
+
     def new_group_management?(school)
       new_group_management = Puavo::Organisation.
         find(LdapOrganisation.current.cn).

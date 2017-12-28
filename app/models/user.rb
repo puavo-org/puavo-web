@@ -307,13 +307,19 @@ class User < LdapBase
     unless new_password.nil? || new_password.empty?
       ldap_conf = User.configuration
 
+      url = external_pw_mgmt_url
+
+      if !external_pw_mgmt_role.nil? && !self.puavoEduPersonAffiliation.include?(external_pw_mgmt_role)
+        url = nil
+      end
+
       res = Puavo.ldap_passwd(
         ldap_conf[:host],
         ldap_conf[:bind_dn],
         ldap_conf[:password],
         new_password,
         self.dn.to_s,
-        external_pw_mgmt_url
+        url
       )
       FLOG.info "ldappasswd call", res.merge(
         :from => "user model",

@@ -148,13 +148,19 @@ class PasswordController < ApplicationController
           @user = @logged_in_user
         end
 
+        url = external_pw_mgmt_url
+
+        if !external_pw_mgmt_role.nil? && !@user.puavoEduPersonAffiliation.include?(external_pw_mgmt_role)
+          url = nil
+        end
+
         res = Puavo.ldap_passwd(
           User.configuration[:host],
           @logged_in_user.dn,
           params[:login][:password],
           params[:user][:new_password],
           @user.dn.to_s,
-          external_pw_mgmt_url
+          url
         )
         flog.info "ldappasswd call", res.merge(
           :from => "password controller",
