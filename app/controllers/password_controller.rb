@@ -153,7 +153,8 @@ class PasswordController < ApplicationController
           @logged_in_user.dn,
           params[:login][:password],
           params[:user][:new_password],
-          @user.dn.to_s
+          @user.dn.to_s,
+          external_pw_mgmt_url
         )
         flog.info "ldappasswd call", res.merge(
           :from => "password controller",

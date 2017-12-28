@@ -312,7 +312,8 @@ class User < LdapBase
         ldap_conf[:bind_dn],
         ldap_conf[:password],
         new_password,
-        self.dn.to_s
+        self.dn.to_s,
+        external_pw_mgmt_url
       )
       FLOG.info "ldappasswd call", res.merge(
         :from => "user model",
