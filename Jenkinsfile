@@ -14,15 +14,16 @@ pipeline {
           apt-get update
           apt-get -y dist-upgrade
           apt-get install -y devscripts dpkg-dev make
-          make install-build-deps
         '''
       }
     }
 
+    stage('Install deb-package build dependencies') {
+      steps { sh 'make install-build-deps' }
+    }
+
     stage('Build') {
-      steps {
-        sh 'make deb'
-      }
+      steps { sh 'make deb' }
     }
 
     stage('Test') {
