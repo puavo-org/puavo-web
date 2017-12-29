@@ -27,8 +27,27 @@ pipeline {
 
     stage('Test') {
       steps {
-        sh 'make test'
+        // We need to add this for puavo-client and puavo-standalone
+        // dependencies.
+        sh '''
+          cat <<'EOF' > /etc/apt/sources.list.d/puavo.list
+deb http://archive.opinsys.fi/puavo stretch main contrib non-free
+deb-src http://archive.opinsys.fi/puavo stretch main contrib non-free
+EOF
+        '''
+
+        sh 'apt-get install -y ansible puavo-client puavo-standalone'
+        sh 'ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml'
+
+        sh 'script/test-install.sh'
+
+        // Force organisations refresh...
+        sh 'curl -d foo=bar http://localhost:9292/v3/refresh_organisations'
+
+        // Execute rest tests first as they are more low level
         sh 'make test-rest'
+        sh 'make test'
+
         cucumber fileIncludePattern: 'logs/cucumber-tests-*.json',
                  sortingMethod: 'ALPHABETICAL'
       }
