@@ -163,6 +163,6 @@ deb:
 install-build-deps:
 	mk-build-deps --install --tool 'apt-get --yes' --remove debian/control
 
-.PHONY: upload-deb
-upload-deb:
+.PHONY: upload-debs
+upload-debs:
 	dput puavo ../puavo-users_*.changes

@@ -67,7 +67,7 @@ EOF
             ~/.ssh/id_rsa
         '''
 
-        sh 'make upload-deb'
+        sh 'make upload-debs'
       }
     }
   }
