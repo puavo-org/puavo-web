@@ -27,18 +27,17 @@ pipeline {
 
     stage('Test') {
       steps {
-        // We need to add this for puavo-client and puavo-standalone
-        // dependencies.
+        // Install puavo-client and puavo-standalone dependencies.
         sh '''
           cat <<'EOF' > /etc/apt/sources.list.d/puavo.list
 deb http://archive.opinsys.fi/puavo stretch main contrib non-free
 deb-src http://archive.opinsys.fi/puavo stretch main contrib non-free
 EOF
+           apt-get install -y ansible puavo-client puavo-standalone
+           ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml
         '''
 
-        sh 'apt-get install -y ansible puavo-client puavo-standalone'
-        sh 'ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml'
-
+        // Test installation can be done and works.
         sh 'script/test-install.sh'
 
         // Force organisations refresh...
