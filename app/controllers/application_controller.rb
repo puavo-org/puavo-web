@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
                  :school_list, :rack_mount_point, :password_management_host )
 
   # Raise an exception if the CSRF check fails
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception, unless: Proc.new { |c| c.request.format.json? }
 
   before_action do
     response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
