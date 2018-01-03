@@ -122,8 +122,8 @@ fi:
     rename_groups: Vuosiluokkasiirto
     devices: Laitelista
     servers: Palvelimet
-    set_install_mode: "Sertifikaatti poistettu, laite asetettu asennustilaan."
-    set_install_mode_server: "Sertifikaatti poistettu, palvelin asetettu asennustilaan."
+    set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
+    set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
     automounts: Hakemistoliitokset
     new_automount: Uusi hakemistoliitos
     printer_permissions: Tulostinoikeudet

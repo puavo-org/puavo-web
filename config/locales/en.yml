@@ -150,8 +150,8 @@ en:
     rename_groups: Rename groups and roles
     devices: Device list
     servers: Servers
-    set_install_mode: "Device certificate removed, device is now in install mode."
-    set_install_mode_server: "Server sertificate removed, server is now in install mode."
+    set_install_mode: "Remove certificate and set the device to install mode"
+    set_install_mode_server: "Remove certificate and set the server to install mode"
     automounts: Automounts
     new_automount: New automount
     printer_permissions: Printing permissions
