@@ -294,6 +294,9 @@ class DevicesController < ApplicationController
 
   def device_params
     p = params.require(:device).permit(
+      :devicetype,                # these are...
+      :school,                    # ...used during...
+      :host_certificate_request,  # ...device registration
       :puavoDeviceType,
       :puavoHostname,
       :puavoTag,
