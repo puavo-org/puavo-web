@@ -230,4 +230,7 @@ Rails.application.routes.draw do
     )
   end
 
+  # https://stackoverflow.com/questions/12480497/why-am-i-getting-error-for-apple-touch-icon-precomposed-png
+  get '/:apple_touch_icon' => redirect('/empty.png'), constraints: { apple_touch_icon: /apple-touch-icon(-\d+x\d+)?(-precomposed)?\.png/ }
+
 end
