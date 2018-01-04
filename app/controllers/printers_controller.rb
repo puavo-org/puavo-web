@@ -109,6 +109,13 @@ class PrintersController < ApplicationController
 
   private
     def printer_params
-      return params.require(:printer).permit(:puavoRule).to_hash
+      return params.require(:printer).permit(
+        :puavoRule,             # used when editing a printer
+        :printerDescription,    # (from here on) used when adding a printer
+        :printerLocation,
+        :printerMakeAndModel,
+        :printerType,
+        :printerURI,
+        :puavoServer).to_hash
     end
 end
