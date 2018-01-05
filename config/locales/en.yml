@@ -173,6 +173,8 @@ en:
     unknown_device_type: Unknown device type
     set_install_mode: "Certificate removed, device now in install mode"
     set_install_mode_server: "Certificate removed, server now in install mode"
+    organisation_ownership_removed: "Admin user organisation ownership was removed."
+    organisation_ownership_not_removed: "Admin user organisation ownership could not be removed automatically!"
     organisation:
       updated: "Organisation was successfully updated."
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
