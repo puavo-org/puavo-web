@@ -143,6 +143,8 @@ fi:
     printer_permissions_updated: "Tulostusoikeudet päivitetty!"
     invalid_school_id: "Koulun ID on virheellinen!"
     unknown_device_type: Tuntematon laitetyyppi
+    set_install_mode: "Sertifikaatti poistettu, laite asennustilassa"
+    set_install_mode_server: "Sertifikaatti poistettu, palvelin asennustilassa"
     organisation:
       updated: "Organisaatio päivitettiin onnistuneesti."
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
