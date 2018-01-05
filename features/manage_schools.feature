@@ -166,7 +166,7 @@ Feature: Manage schools
     | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   | 
     And I am on the show school page with "Test School 1"
     When I follow "Remove"
-    Then I should see "The school was not removed. Its users, roles, groups and devices must be removed first."
+    Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
     And I should be on the school page
 
   Scenario: Deleting a school when it still contains devices should fail
@@ -184,7 +184,7 @@ Feature: Manage schools
     Given I am on the school page with "Condemned School"
     Then I should see "School's home page"
     When I follow "Remove"
-    Then I should see "The school was not removed. Its users, roles, groups and devices must be removed first."
+    Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
     Given I am on the devices list page with "Condemned School"
     And I press "Remove" on the "testdevice1" row
     Then I should see "List of devices"
