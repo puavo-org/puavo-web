@@ -196,7 +196,7 @@ fi:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty koulun ylläpitäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä tässä koulussa"
       wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin -käyttäjille"
-      destroyed_failed: Koulua ei poistettu. Sen käyttäjät, roolit, ryhmät ja laitteet on poistettava ensin.
+      destroyed_failed: Koulua ei poistettu. Sen käyttäjät, roolit, ryhmät, laitteet ja boot-palvelimet on poistettava ensin.
       roles_not_found: Yhtään roolia ei ole määritetty
       wlan_updated: WLAN-asetukset päivitetty
       wlan_save_failed: WLAN-asetusten tallennus epäonnistui
