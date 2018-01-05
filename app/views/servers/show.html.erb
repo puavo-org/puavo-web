@@ -19,10 +19,14 @@
       <tr>
         <th><%= t('servers.school_limit.ltsp_description') %></th>
       </tr>
-      <% @server.forced_schools.each do |school| %>
+      <% @server.forced_schools.each do |status, school| %>
       <tr>
         <td class="value_td view">
-          <%= link_to school.displayName, school_path(school)  %>
+          <% if status %>
+            <%= link_to school.displayName, school_path(school)  %>
+          <% else %>
+            <p style="color: red;"><em><%= t('servers.school_limit.missing_school', :school => school) %></em></p>
+          <% end %>
         </td>
       </tr>
       <% end %>

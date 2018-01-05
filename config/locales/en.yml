@@ -913,6 +913,7 @@ en:
       ltsp_description: "This LTSP server will only serve these schools:"
       ltsp_description_edit: If none is selected it will serve all schools in the organisation.
       boot_description: "Schools that this boot server will serve:"
+      missing_school: "Unknown school \"%{school}\", please contact Opinsys support!"
   automounts:
     index:
       title: Automounts

@@ -880,6 +880,7 @@ fi:
       ltsp_description: Tämä LTSP-palvelin on käytössä vain näissä kouluissa
       ltsp_description_edit: Jos mitään ei ole valittu palvelin palvelee kaikkia organisaation kouluja
       boot_description: Koulut joita tämä boot-palvelin palvelee.
+      missing_school: "Tuntematon koulu \"%{school}\", ole hyvä ja ota yhteys Opinsysin tukeen!"
   automounts:
     index:
       title: Hakemistoliitokset
