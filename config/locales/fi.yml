@@ -811,10 +811,10 @@ fi:
       wlan_name: Nimi
       wlan_type: Tyyppi
       wlan_password: Salasana
-      wlan_ca_cert: Langattoman verkon CA-sertifikaatti
-      wlan_client_cert: Langattoman verkon asiakassertifikaatti
-      wlan_client_key: Langattoman verkon asiakassertifikaatin avain
-      wlan_client_key_password: Langattoman verkon asiakassertifikaatin avaimen salasana
+      wlan_ca_cert: CA-sertifikaatti
+      wlan_client_cert: Asiakassertifikaatti
+      wlan_client_key: Asiakassertifikaatin avain
+      wlan_client_key_password: Asiakassertifikaatin avaimen salasana
       wlan_ap: Käytössä tukiasemissa
       select_value_open: Avoin
       select_value_psk: PSK

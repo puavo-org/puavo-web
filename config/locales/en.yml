@@ -846,10 +846,10 @@ en:
       wlan_type: Type
       wlan_password: Password
       wlan_ap: Enabled in access points
-      wlan_ca_cert: Wireless network CA-certificate
-      wlan_client_cert: Wireless network client certificate
-      wlan_client_key: Wireless network client certificate key
-      wlan_client_key_password: Wireless network client certificate key passwor
+      wlan_ca_cert: CA certificate
+      wlan_client_cert: Client certificate
+      wlan_client_key: Client certificate key
+      wlan_client_key_password: Client certificate key password
       select_value_open: Open
       select_value_psk: PSK
       select_value_eaptls: EAP-TLS
