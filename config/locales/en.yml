@@ -413,8 +413,10 @@ en:
       add_puavo_billing_info: Add a new billing info
     owners:
       title: Organisation owners
-      other_admin_users: "Add organisation management access to the admin"
-      organisation_owners: "The following admins have access to the control organisation"
+      other_admin_users: "Grant organisation ownership to adminstrators"
+      organisation_owners: "The following admins are owners in this organisation:"
+      removed_owners_title: "WARNING:"
+      removed_owners_warning: "The following admins have been removed, but they're still listed as owners in this organisation. Contact Opinsys support for assistance."
   ldap_services:
     index:
       actions: Actions

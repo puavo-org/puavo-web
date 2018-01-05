@@ -384,6 +384,8 @@ fi:
       title: Organisaation omistajat
       other_admin_users: "Lisää ylläpitäjälle organisaation hallintaoikeus"
       organisation_owners: "Seuraavilla ylläpitäjillä on hallintaoikeus organisaatioon"
+      removed_owners_title: "VAROITUS:"
+      removed_owners_warning: "Seuraavat käyttäjät on poistettu, mutta heidät on yhä listattu organisaation omistajissa. Opinsysin tuki auttaa tässä asiassa."
   ldap_services:
     index:
       actions: Toiminnot

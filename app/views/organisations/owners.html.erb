@@ -33,6 +33,13 @@
     </span>
 </div>
 
-
-
 </div>
+
+<% if Array(@missing).length > 0 %>
+  <p><strong><%= t('.removed_owners_title') %></strong> <%= t('.removed_owners_warning') %></p>
+  <ul>
+  <% Array(@missing).each do |m| %>
+    <li><code><%= m %></code></li>
+  <% end %>
+  </ul>
+<% end %>
