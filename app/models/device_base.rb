@@ -268,7 +268,11 @@ class DeviceBase < LdapBase
 
   def parent
     if self.attributes.include?("puavoSchool") && !self.puavoSchool.nil?
-      return School.find(self.puavoSchool)
+      begin
+        return School.find(self.puavoSchool)
+      rescue ActiveLdap::EntryNotFound => e
+        return nil
+      end
     end
   end
 
