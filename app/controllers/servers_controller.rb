@@ -79,9 +79,9 @@ class ServersController < ApplicationController
     respond_to do |format|
       if @server.save
         flash[:notice] = t('flash.server_created')
-        format.html { redirect_to(@server) }
-        format.xml  { render :xml => @server, :status => :created, :location => @server }
-        format.json  { render :json => @server, :status => :created, :location => @server }
+        format.html { redirect_to(server_path(@server)) }
+        format.xml  { render :xml => @server, :status => :created, :location => server_path(@server) }
+        format.json  { render :json => @server, :status => :created, :location => server_path(@server) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @server.errors, :status => :unprocessable_entity }
