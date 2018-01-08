@@ -84,13 +84,13 @@ EOF
 
     stage('Test') {
       steps {
-        // Install puavo-client and puavo-standalone dependencies.
+        // Install puavo-standalone dependencies.
         sh '''
           cat <<'EOF' > /etc/apt/sources.list.d/puavo.list
 deb http://archive.opinsys.fi/puavo stretch main contrib non-free
 deb-src http://archive.opinsys.fi/puavo stretch main contrib non-free
 EOF
-           apt-get install -y ansible puavo-client puavo-standalone
+           apt-get install -y ansible puavo-standalone
            ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml
         '''
 
