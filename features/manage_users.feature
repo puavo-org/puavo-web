@@ -384,6 +384,16 @@ Feature: Manage users
     And I press "Create"
     Then I should see "Failed to save the image"
 
+  Scenario: Give the user an invalid email address
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Doe      |
+    | Given name     | Jane     |
+    | Username       | jane.doe |
+    | user[mail][]              | foo<html>@bar.äää |
+    And I press "Create"
+    Then I should see "The email address is not valid."
+
 # FIXME
 #  @allow-rescue
 #  Scenario: Get user infromation in JSON from wrong school
