@@ -258,8 +258,13 @@ class UsersController < ApplicationController
     @new_school = School.find(params[:new_school])
     @roles = @new_school.roles
 
-    respond_to do |format|
-      format.html
+    if @roles.length == 0
+      flash[:alert] = t('users.select_school.no_roles')
+      redirect_to :back
+    else
+      respond_to do |format|
+        format.html
+      end
     end
   end
 

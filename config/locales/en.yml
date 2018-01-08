@@ -253,6 +253,7 @@ en:
     select_school:
       title: Users transfer
       select_new_school: Select new school
+      no_roles: "The selected school has no roles!"
       submit: Next
     select_role:
       title: Users transfer

@@ -251,6 +251,7 @@ fi:
     select_school:
       title: Koulun vaihto
       select_new_school: Valitse uusi koulu
+      no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       submit: Seuraava
     select_role:
       title: Koulun vaihto
