@@ -8,8 +8,61 @@ pipeline {
   }
 
   stages {
-    stage('Prepare') {
+    stage('Setup APT repositories') {
       steps {
+        sh '''
+          cat <<'EOF' > /etc/apt/sources.list.d/puavo.list
+deb http://archive.opinsys.fi/puavo stretch main
+deb-src http://archive.opinsys.fi/puavo stretch main
+EOF
+        '''
+
+        // Apt key for Puavo.
+        sh '''
+          base64 -d <<'EOF' > /etc/apt/trusted.gpg.d/puavo.gpg
+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
+/Ifxkpv5n2nSa6IeiNAUAFiwAgAD
+EOF
+        '''
+
         // "nodejs" in Stretch does not have "npm", must install the upstream
         // deb-packages. ("npm" in a build-dependency for puavo-users)
         sh '''
@@ -63,7 +116,11 @@ GUndsckuXINIU3DFWzZGr0QrqkuE/jyr7FXeUJj9B7cLo+s/TXo+RaVfi3kOc9BoxIvy/qiNGs/T
 Ky2/Ujqp/affmIMoMXSozKmga81JSwkADO1JMgUy6dApXz9kP4EE3g==
 EOF
         '''
+      }
+    }
 
+    stage('Prepare') {
+      steps {
         sh '''
           apt-get update
           apt-get -y dist-upgrade
