@@ -134,14 +134,10 @@ EOF
       // XXX Why does the build need this environment to work?
       // XXX (This should only be necessary for the testing.)
       steps {
-        // Install puavo-standalone dependencies.
+        // Setup puavo-standalone.
         sh '''
-          cat <<'EOF' > /etc/apt/sources.list.d/puavo.list
-deb http://archive.opinsys.fi/puavo stretch main contrib non-free
-deb-src http://archive.opinsys.fi/puavo stretch main contrib non-free
-EOF
-           apt-get install -y ansible puavo-standalone
-           ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml
+          apt-get install -y ansible puavo-standalone
+          ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml
         '''
       }
     }
