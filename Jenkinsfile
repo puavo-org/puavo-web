@@ -19,7 +19,18 @@ pipeline {
     }
 
     stage('Install deb-package build dependencies') {
-      steps { sh 'make install-build-deps' }
+      steps {
+        // "nodejs" in Stretch does not have "npm", must install the upstream
+        // deb-packages. ("npm" in a build-dependency for puavo-users)
+        sh '''
+          cat <<'EOF' > /etc/apt/sources.list.d/nodesource.list
+deb http://deb.nodesource.com/node_4.x stretch main
+deb-src http://deb.nodesource.com/node_4.x stretch main
+EOF
+        '''
+
+        sh 'make install-build-deps'
+      }
     }
 
     stage('Build') {
