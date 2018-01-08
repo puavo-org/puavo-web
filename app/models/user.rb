@@ -289,7 +289,23 @@ class User < LdapBase
       end
     end
 
+    emailFailed = false
+
     if !self.mail.nil? && !self.mail.empty?
+      Array(self.mail).each do |m|
+        # There are (supposedly) checks that validate email addresses... but they don't
+        # seem to work. So... just brute-force it.
+        # Regex taken from https://www.regular-expressions.info/email.html
+        if !m.empty? && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.match(m)
+          emailFailed = true
+        end
+      end
+
+      if emailFailed
+        errors.add(:mail, I18n.t('activeldap.errors.messages.email_not_valid'))
+        return false
+      end
+
       email_dup = User.find(:first, :attribute => "mail", :value => self.mail)
       if email_dup && email_dup.puavoId != self.puavoId
         errors.add(
