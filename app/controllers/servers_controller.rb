@@ -153,6 +153,12 @@ class ServersController < ApplicationController
   private
     def server_params
       server = params.require(:server).permit(
+        :devicetype,                    # used when registering a boot server
+        :host_certificate_request,      # used when registering a boot server
+        :puavoDeviceType,               # used when registering a boot server
+        :puavoAutomaticImageUpdates,    # used when registering a boot server
+        :puavoPersonallyAdministered,   # used when registering a boot server
+        :puavoPersonalDevice,           # used when registering a boot server
         :puavoHostname,
         :puavoTag,
         :puavoDeviceStatus,
