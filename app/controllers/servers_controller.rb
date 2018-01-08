@@ -202,10 +202,14 @@ class ServersController < ApplicationController
       # For some reason, server parameters have been split into
       # multiple hashes and each one must be permitted separately.
       # Perhaps there is a better way to do this?
+      device = {}
 
-      device = params.require(:device).permit(
-        :puavoDeviceXrandr=>[]
-      ).to_hash
+      if params.include?(:device)
+        # boot server registration does not send :device parameters
+        device = params.require(:device).permit(
+          :puavoDeviceXrandr=>[]
+        ).to_hash
+      end
 
       # deduplicate arrays, as LDAP really does not like duplicate entries...
       server["puavoTag"] = server["puavoTag"].split.uniq.join(' ') if server.key?("puavoTag")
