@@ -11,9 +11,10 @@ pipeline {
     stage('Setup APT repositories') {
       steps {
         sh '''
+          # XXX s/archive-internal.opinsys.fi/archive.opinsys.fi/ !!!
           cat <<'EOF' > /etc/apt/sources.list.d/puavo.list
-deb http://archive.opinsys.fi/puavo stretch main
-deb-src http://archive.opinsys.fi/puavo stretch main
+deb http://archive-internal.opinsys.fi/puavo stretch main
+deb-src http://archive-internal.opinsys.fi/puavo stretch main
 EOF
         '''
 
