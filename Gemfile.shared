@@ -10,6 +10,6 @@ group :shared do
   gem "rmagick"
   gem "uuid"
   gem "redcarpet"
-  gem "nokogiri", "1.8.1"
-  gem "resque", "1.27.4"
+  gem "nokogiri"
+  gem "resque"
 end
