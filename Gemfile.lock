@@ -282,12 +282,12 @@ DEPENDENCIES
   jwt
   net-ldap
   nib
-  nokogiri
+  nokogiri (= 1.8.1)
   prawn
   pry
   rails (= 4.2.10)
   redcarpet
-  resque
+  resque (= 1.27.4)
   ripper-tags
   rmagick
   rspec
