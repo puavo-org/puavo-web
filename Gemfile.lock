@@ -138,7 +138,7 @@ GEM
     minitest (5.11.1)
     mono_logger (1.1.0)
     msgpack (1.2.0)
-    multi_json (1.12.2)
+    multi_json (1.13.0)
     multi_test (0.1.2)
     net-ldap (0.16.1)
     nib (1.7.0)
