@@ -2,6 +2,28 @@ require "set"
 require_relative "./helper"
 
 describe PuavoRest::WlanNetworks do
+  def create_laptop(hostname, mac_address, school_dn)
+    laptop = Device.new
+    laptop.classes \
+      = %w(top device puppetClient puavoLocalbootDevice simpleSecurityObject)
+    laptop.attributes = {
+      :puavoHostname   => hostname,
+      :puavoDeviceType => 'laptop',
+      :macAddress      => mac_address,
+    }
+    laptop.puavoSchool = school_dn
+    laptop.save!
+
+    laptop
+  end
+
+  def get_wlan_networks_with_certs(device)
+    basic_authorize device.dn, device.ldap_password
+    get "/v3/devices/#{ device.puavoHostname }/wlan_networks_with_certs"
+    assert_200
+    JSON.parse last_response.body
+  end
+
   describe "wlan settings" do
     before(:each) do
       Puavo::Test.clean_up_ldap
@@ -35,23 +57,36 @@ describe PuavoRest::WlanNetworks do
           :type => "open",
           :wlan_ap => true,
           :password => "secret"
+        },
+        {
+          :ssid => "pskschoolwlan",
+          :type => "psk",
+          :wlan_ap => true,
+          :password => "actuallysecret"
+        },
+        {
+          :ssid => "eaptlsschoolwlan",
+          :type => "eap-tls",
+          :wlan_ap => false,
+          :identity => 'Puavo',
+          :certs => {
+            'ca_cert' => '<CACERT>',
+            'client_cert' => '<CLIENTCERT>',
+            'client_key' => '<CLIENTKEY>',
+            'client_key_password' => 'mysecretclientkeypassword',
+          }
         }
       ]
       @school.save!
 
-
-      create_device(
-        :puavoHostname => "athin",
-        :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoSchool => @school.dn
-      )
-
+      @laptop1 = create_laptop('laptop1', 'bf:9a:8c:1b:e0:6a', @school.dn)
+      @laptop2 = create_laptop('laptop2', '6a:e0:1b:8c:9a:bf', @school.dn)
     end
 
     describe "wlan client configuration" do
 
       before(:each) do
-        get "/v3/devices/athin/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         @data = JSON.parse last_response.body
       end
@@ -101,7 +136,7 @@ describe PuavoRest::WlanNetworks do
         ]
         @test_organisation.save!
 
-        get "/v3/devices/athin/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         data = JSON.parse last_response.body
 
@@ -110,13 +145,43 @@ describe PuavoRest::WlanNetworks do
 
     end
 
+    describe "wlan client configuration with eap-tls certificates" do
+      it "we have all school and organisation networks" do
+        data = get_wlan_networks_with_certs(@laptop1)
+        expected_ssids = \
+          %w(3rdpartywlan eaptlsschoolwlan orgwlan pskschoolwlan schoolwlan)
+        assert_equal expected_ssids, (data.map { |wlan| wlan['ssid'] }.sort)
+      end
+
+      it "we have the certificates from eaptlsschoolwlan" do
+        data = get_wlan_networks_with_certs(@laptop1)
+        wlans = data.select { |wlan| wlan['ssid'] == 'eaptlsschoolwlan' }
+        assert_equal 1, wlans.count
+
+        eaptlsschoolwlan = wlans.first
+        certs = eaptlsschoolwlan['certs']
+        assert certs.kind_of?(Hash), 'has certs hash'
+
+        assert_equal certs['ca_cert'],             '<CACERT>'
+        assert_equal certs['client_cert'],         '<CLIENTCERT>'
+        assert_equal certs['client_key'],          '<CLIENTKEY>'
+        assert_equal certs['client_key_password'], 'mysecretclientkeypassword'
+      end
+
+      it "getting eap-tls certificates of another machine should fail" do
+        basic_authorize @laptop2.dn, @laptop2.ldap_password
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks_with_certs"
+        assert_equal 404, last_response.status
+      end
+    end
+
     describe "lecacy configuration" do
 
       it "is ignored from school" do
         @school.puavoWlanSSID = "fuuck:oldie:here"
         @school.save!
 
-        get "/v3/devices/athin/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         data = JSON.parse last_response.body
 
@@ -130,12 +195,12 @@ describe PuavoRest::WlanNetworks do
         @test_organisation.puavoWlanSSID = "fuuck:oldie:here"
         @test_organisation.save!
 
-        get "/v3/devices/athin/wlan_networks"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_networks"
         assert_200
         data = JSON.parse last_response.body
 
         assert_equal(
-          Set.new(["schoolwlan"]),
+          Set.new(["schoolwlan", "pskschoolwlan"]),
           Set.new(data.map { |w| w["ssid"] })
         )
       end
@@ -146,7 +211,7 @@ describe PuavoRest::WlanNetworks do
     describe "wlan hotspot configuration" do
 
       before(:each) do
-        get "/v3/devices/athin/wlan_hotspot_configurations"
+        get "/v3/devices/#{ @laptop1.puavoHostname }/wlan_hotspot_configurations"
         assert_200
         @data = JSON.parse last_response.body
       end
