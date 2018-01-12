@@ -22,7 +22,7 @@ module Puavo
         return {
           :duration => (Time.now.to_f - started.to_f).round(5),
           :stdout => "",
-          :stderr => "Cannot change extrenal password: " + http_res.body.to_s,
+          :stderr => "Cannot change external password: " + http_res.body.to_s,
           :exit_status => 1
       }
 
