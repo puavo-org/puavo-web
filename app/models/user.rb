@@ -167,6 +167,22 @@ class User < LdapBase
                                         :attribute => I18n.t("activeldap.attributes.user.new_password")) )
     end
 
+    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty?
+      # If G Suite integration is enabled, ensure Google accepts the password. Their
+      # password restrictions are weird, almost as if they store them in plaintext...
+      url = external_pw_mgmt_url
+
+      if !url.nil? && !url.empty? && external_pw_mgmt_role == "student"
+        if self.new_password.size < 8
+          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_too_short"))
+        elsif self.new_password[0] == ' ' || self.new_password[-1] == ' '
+          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_whitespace"))
+        elsif !self.new_password.ascii_only?
+          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_ascii_only"))
+        end
+      end
+    end
+
     # Validates length of uid
     if self.uid.to_s.size < 3
       errors.add( :uid,  I18n.t("activeldap.errors.messages.too_short",
