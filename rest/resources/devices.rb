@@ -403,6 +403,10 @@ class Device < Host
 	  tagswitch.call('puavo.nonfree.smartboard.enabled',
 			 'smartboard',
 			 'no_smartboard')
+	when 'ti_nspire_cx_cas', 'no_ti_nspire_cx_cas'
+	  tagswitch.call('puavo.nonfree.ti_nspire_cx_cas_ss.enabled',
+			 'ti_nspire_cx_cas',
+			 'no_ti_nspire_cx_cas')
 	when 'use_puavo_printer_permissions'
 	  update.call('puavo.printing.use_puavo_permissions', 'true')
 	when 'use_remotemounts', 'no_use_remotemounts'
