@@ -677,7 +677,7 @@ class User < LdapBase
   def set_special_ldap_value
     self.displayName = self.givenName + " " + self.sn
     self.cn = self.uid
-    self.homeDirectory = "/home/" + self.school.cn + "/" + self.uid unless self.uid.nil?
+    self.homeDirectory = "/home/" + self.uid unless self.uid.nil?
     self.gidNumber = self.school.gidNumber unless self.puavoSchool.nil?
     set_uid_number if self.uidNumber.nil?
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?
