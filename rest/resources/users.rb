@@ -251,6 +251,12 @@ class User < LdapModel
     write_raw(:telephoneNumber, transform(:telephone_number, :write, value))
   end
 
+  # Fix the gid number when moving user to another school
+  def school_dns=(_dn)
+    write_raw(:puavoSchool, Array(_dn))
+    write_raw(:gidNumber, Array(School.by_dn(Array(_dn)[0]).gid_number.to_s))
+  end
+
   def username=(_username)
     write_raw(:uid, Array(_username))
     write_raw(:cn, Array(_username))
