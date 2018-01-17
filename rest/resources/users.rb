@@ -133,15 +133,6 @@ class User < LdapModel
       add_validation_error(:school_dns, :must_have_school, "no schools are set")
     end
 
-    if new? && school
-      home = "/home/#{ school.abbreviation }/#{ username }"
-      if User.by_attr(:home_directory, home)
-        add_validation_error(:username, :bad_home_directoy, "Home directory (#{ home }) if already in use for this username")
-      else
-        write_raw(:homeDirectory, transform(:home_directory, :write, home))
-      end
-    end
-
     if !telephone_number.nil? && !telephone_number.match(/^[A-Za-z[:digit:][:space:]'()+,-.\/:?"]+$/)
       add_validation_error(:telephone_number, :telephone_number_invalid,
                            "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
@@ -260,6 +251,9 @@ class User < LdapModel
   def username=(_username)
     write_raw(:uid, Array(_username))
     write_raw(:cn, Array(_username))
+
+    # Initial home directory in the "new" format
+    write_raw(:homeDirectory, Array("/home/#{username}"))
   end
 
   def email=(_email)
