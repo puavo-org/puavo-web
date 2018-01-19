@@ -1,8 +1,9 @@
-require 'open3'
+require 'dnsruby'
 
 module PuavoRest
   class BootserverDNS < PuavoSinatra
-    Update_cmd = '/usr/local/lib/puavo-update-ddns'
+    DNS_server_ip   = '127.0.0.1'
+    DNS_server_port = '553'
 
     def check_parameter(params, sym)
       value = params[sym]
@@ -14,10 +15,31 @@ module PuavoRest
       return value
     end
 
+    def update_dns(client_fqdn, client_ip, domain, key_name, key_secret)
+      resolver = Dnsruby::Resolver.new({ :nameserver => DNS_server_ip })
+      resolver.port = DNS_server_port
+
+      dns_message = Dnsruby::Message.new(client_fqdn, Dnsruby::Types.A)
+
+      resolver.send_plain_message(dns_message)
+      resolver.tsig = [ key_name, key_secret ]
+
+      update = Dnsruby::Update.new(domain)
+      update.delete(client_fqdn, 'A')
+      update.add(client_fqdn, 'A', 60, client_ip)
+
+      in_addr = "#{ client_ip.split('.').reverse.join('.') }.in-addr.arpa"
+
+      update_reverse = Dnsruby::Update.new('10.in-addr.arpa')
+      update_reverse.delete(in_addr)
+      update_reverse.add(in_addr, 'PTR', 60, "#{ client_fqdn }.")
+
+      resolver.send_message(update)
+      resolver.send_message(update_reverse)
+    end
+
     post '/v3/bootserver_dns_update' do
-      # XXX what auth should be?  basic_auth plus we should restrict to
-      # XXX a particular username?  or is that good?
-      # XXX should be restricted to bootserver only, not to cloud!
+      auth :server_auth
 
       if not CONFIG['bootserver'] then
         status 404
@@ -25,30 +47,50 @@ module PuavoRest
         return json({ :status => 'failed', :error => errmsg })
       end
 
-      # The "puavo-update-ddns"-script is not a puavo-rest dependency,
-      # so I suppose it is optional and we should check if the system supports
-      # this feature.
-      if !File.executable?(Update_cmd) then
-        errmsg = "#{ Update_cmd } does not exist or is not executable"
+      # The previous script interface supported both "mac" and "hostname",
+      # but there appears to be no instance of calling the script with
+      # type == "hostname", so we check that type == "mac".
+      type = check_parameter(params, :type)
+      if type != 'mac' then
+        raise BadInput, :user => 'Only "mac"-type is currently supported.'
+      end
+
+      client_mac = check_parameter(params, :client_mac)
+      client_ip  = check_parameter(params, :client_ip)
+      key_name   = check_parameter(params, :key_name)
+      key_secret = check_parameter(params, :key_secret)
+      subdomain  = check_parameter(params, :subdomain)
+
+      # We accept slightly irregular mac addresses,
+      # because isc-dhcp-server might provide us with such.
+      client_mac = client_mac.split(':') \
+                             .map { |s| s.length == 1 ? "0#{s}" : s } \
+                             .join(':')
+
+      host = nil
+      # Get Device or LtspServer
+      begin
+        host = Host.by_mac_address!(client_mac)
+      rescue NotFound => e
+        # XXX log error and return some kind of failure (status should be???)
         status 404
+        errmsg = "No host found for mac address '#{ client_mac }'"
         return json({ :status => 'failed', :error => errmsg })
       end
 
-      type       = check_parameter(params, :type)
-      client_mac = check_parameter(params, :client_mac)
-      client_ip  = check_parameter(params, :client_ip)
-      subdomain  = check_parameter(params, :subdomain)
-
-      cmd = [ Update_cmd, type, client_mac, client_ip, subdomain ]
-      stdout_and_stderr_str, status = Open3.capture2e(*cmd)
+      puavo_domain = Host.organisation.domain
+      client_fqdn = "#{ host.hostname }.#{ subdomain }.#{ puavo_domain }"
 
       # XXX log both errors and successes
 
-      if !status.success? then
-        errmsg = "#{ Update_cmd } returned status code" \
-                   + " #{ status.exitstatus } and error message:" \
-                   + " '#{ stdout_and_stderr_str }'"
-        raise InternalError, :user => errmsg
+      begin
+        update_dns(client_fqdn, client_ip, puavo_domain, key_name, key_secret)
+      rescue StandardError => e
+        # XXX log error and return some kind of failure (status should be???)
+        status 404
+        errmsg = "Error when updating DNS for #{ client_fqdn }" \
+                   + " / #{ client_ip } / #{ client_mac } : #{ e.message }"
+        return json({ :status => 'failed', :error => errmsg })
       end
 
       return 'ok'
