@@ -81,7 +81,8 @@ module PuavoRest
       client_fqdn = "#{ host.hostname }.#{ subdomain }.#{ puavo_domain }"
 
       begin
-        update_dns(client_fqdn, client_ip, puavo_domain, key_name, key_secret)
+        update_dns(client_fqdn, client_ip, puavo_domain, key_name, key_secret) \
+          unless params[:dry_run]
       rescue StandardError => e
         errmsg = "Error when updating DNS for #{ client_fqdn }" \
                    + " / #{ client_ip } / #{ client_mac } : #{ e.message }"
