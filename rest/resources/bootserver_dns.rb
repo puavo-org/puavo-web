@@ -95,7 +95,7 @@ module PuavoRest
                   :mac  => client_mac,
                 })
 
-      json({ :status => 'successfully' })
+      json({ :status => 'successfully', :client_fqdn => client_fqdn })
     end
   end
 end
