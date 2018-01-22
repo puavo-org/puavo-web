@@ -72,7 +72,6 @@ module PuavoRest
       begin
         host = Host.by_mac_address!(client_mac)
       rescue NotFound => e
-        # XXX log error and return some kind of failure (status should be???)
         status 404
         errmsg = "No host found for mac address '#{ client_mac }'"
         return json({ :status => 'failed', :error => errmsg })
@@ -81,19 +80,22 @@ module PuavoRest
       puavo_domain = Host.organisation.domain
       client_fqdn = "#{ host.hostname }.#{ subdomain }.#{ puavo_domain }"
 
-      # XXX log both errors and successes
-
       begin
         update_dns(client_fqdn, client_ip, puavo_domain, key_name, key_secret)
       rescue StandardError => e
-        # XXX log error and return some kind of failure (status should be???)
-        status 404
         errmsg = "Error when updating DNS for #{ client_fqdn }" \
                    + " / #{ client_ip } / #{ client_mac } : #{ e.message }"
-        return json({ :status => 'failed', :error => errmsg })
+        raise InternalError, errmsg
       end
 
-      return 'ok'
+      flog.info('updated DNS records for host',
+                {
+                  :fqdn => client_fqdn,
+                  :ip   => client_ip,
+                  :mac  => client_mac,
+                })
+
+      json({ :status => 'successfully' })
     end
   end
 end
