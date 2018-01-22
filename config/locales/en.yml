@@ -374,6 +374,7 @@ en:
     form:
       add_puavo_billing_info: Add a new billing info
   password:
+    gsuite_integration_enabled: "G Suite integration is enabled. Student passwords are validated against Google's password requirements (ie. must be at least 8 characters long, only printable ASCII characters, and must not start or end in whitespace)."
     edit:
       title: Change password for other user
       head: To change the password of another user, fill in your own username and password, and the username and the new password for the user whose password is being changed. You have to have sufficient privileges to change the passwords of other users.

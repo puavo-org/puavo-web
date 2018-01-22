@@ -11,11 +11,26 @@ class PasswordController < ApplicationController
   # GET /password/edit
   def edit
     @user = User.new
+    @gsuite = false
+
+    url = external_pw_mgmt_url
+
+    if !url.nil? && !url.empty?
+      @gsuite = true
+    end
+
   end
 
   # GET /password/own
   def own
     @user = User.new
+    @gsuite = false
+
+    url = external_pw_mgmt_url
+
+    if !url.nil? && !url.empty?
+      @gsuite = true
+    end
   end
 
   # PUT /password
@@ -149,9 +164,24 @@ class PasswordController < ApplicationController
         end
 
         url = external_pw_mgmt_url
+        role = external_pw_mgmt_role
 
-        if !external_pw_mgmt_role.nil? && !@user.puavoEduPersonAffiliation.include?(external_pw_mgmt_role)
-          url = nil
+        if !url.nil? && !url.empty? && !role.nil? && !role.empty?
+          if @user.puavoEduPersonAffiliation.include?(role)
+            # External password management (read: G Suite integration) is enabled, so
+            # validate the password against Google's requirements
+            new_password = params[:user][:new_password]
+
+            if new_password.size < 8
+              raise User::UserError, I18n.t("activeldap.errors.messages.password_too_short")
+            elsif new_password[0] == ' ' || new_password[-1] == ' '
+              raise User::UserError, I18n.t("activeldap.errors.messages.password_whitespace")
+            elsif !new_password.ascii_only?
+              raise User::UserError, I18n.t("activeldap.errors.messages.password_ascii_only")
+            end
+          else
+            url = nil
+          end
         end
 
         res = Puavo.ldap_passwd(
