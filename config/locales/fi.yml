@@ -498,6 +498,7 @@ fi:
         puavoLocale: Kieli
         image: Kuva
         puavoTag: Tagit
+        puavoConf: PuavoConf-asetukset
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
         puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
         puavoDeviceAutoPowerOffMode_default: Oletus
@@ -562,6 +563,8 @@ fi:
         preferredLanguage: Ensisijainen kieli
         puavoLocale: Ensisijainen kieli
         eduOrgHomePageURI: Kotisivu
+        puavoTag: Tagit
+        puavoConf: PuavoConf-asetukset
         puavoDeviceAutoPowerOffMode: Automaattisammutuksen tila
         puavoDeviceAutoPowerOffMode_default: Oletus
         puavoDeviceAutoPowerOffMode_off: "Pois päältä"
@@ -605,6 +608,7 @@ fi:
         puavoDeviceBootMode: "Käynnistymistapa"
         description: Kuvaus
         puavoTag: Tagit
+        puavoConf: PuavoConf-asetukset
         puavoPurchaseDate: Hankintapäivä
         puavoWarrantyEndDate: "Takuun päättymispäivä"
         puavoPurchaseLocation: Hankintapaikka
@@ -661,6 +665,7 @@ fi:
         puavoDeviceStatus: Tila
         description: Kuvaus
         puavoTag: Tagit
+        puavoConf: PuavoConf-asetukset
         puavoPurchaseDate: Hankintapäivä
         puavoWarrantyEndDate: "Takuun päättymispäivä"
         puavoPurchaseLocation: Hankintapaikka
