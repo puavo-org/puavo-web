@@ -185,7 +185,7 @@
 
   <tr>
     <td><%= f.label :puavoConf %></td>
-    <td><%= f.text_field :puavoConf %></td>
+    <td><%= f.text_area :puavoConf, cols: 80, rows: 6 %></td>
   </tr>
 
   <%= render( :partial => 'shared/form_auto_power_off_settings',
