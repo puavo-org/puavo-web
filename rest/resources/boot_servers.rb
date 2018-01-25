@@ -6,6 +6,7 @@ class BootServer < LdapModel
   ldap_map :puavoHostname, :hostname
   ldap_map(:puavoSchool, :school_dns) { |s| s }
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
+  ldap_map :puavoConf, :puavoconf
   ldap_map(:puavoDeviceImage, :preferred_image) do |img|
     img = Array(img).first
     if not img.to_s.strip.empty?

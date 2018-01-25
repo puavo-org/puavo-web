@@ -213,4 +213,48 @@ class SchoolsController < ApplicationController
       end
     end
   end
+
+  private
+    def school_params
+      s = params.require(:school).permit(
+        :displayName,
+        :cn,
+        :puavoNamePrefix,
+        :puavoSchoolHomePageURL,
+        :description,
+        :telephoneNumber,
+        :facsimileTelephoneNumber,
+        :l,
+        :street,
+        :postOfficeBox,
+        :postalAddress,
+        :postalCode,
+        :st,
+        :puavoLocale,
+        :image,
+        :puavoExternalId,
+        :puavoAllowGuest,
+        :puavoPersonalDevice,
+        :puavoAutomaticImageUpdates,
+        :puavoDeviceImage,
+        :external_feeds,
+        :puavoTag,
+        :puavoConf,
+        :puavoDeviceOnHour,
+        :puavoDeviceOffHour,
+        :puavoBillingInfo=>[],
+        :puavoImageSeriesSourceURL=>[],
+        :fs=>[],
+        :path=>[],
+        :mountpoint=>[],
+        :options=>[]
+      ).to_hash
+
+      # deduplicate arrays, as LDAP really does not like duplicate entries...
+      s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
+      s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
+      s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
+
+      return s
+    end
 end
