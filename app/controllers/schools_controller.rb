@@ -240,6 +240,7 @@ class SchoolsController < ApplicationController
         :puavoDeviceImage,
         :external_feeds,
         :puavoTag,
+        :puavoConf,
         :puavoDeviceOnHour,
         :puavoDeviceOffHour,
         :puavoBillingInfo=>[],

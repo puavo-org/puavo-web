@@ -161,6 +161,7 @@ class ServersController < ApplicationController
         :puavoPersonalDevice,           # used when registering a boot server
         :puavoHostname,
         :puavoTag,
+        :puavoConf,
         :puavoDeviceStatus,
         :image,
         :puavoDeviceManufacturer,
