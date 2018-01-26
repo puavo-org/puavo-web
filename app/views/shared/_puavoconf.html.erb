@@ -1,9 +1,6 @@
 <table>
   <% puavoconf_data = JSON.parse(object.puavoConf) rescue nil
-     if puavoconf_data.nil? || !puavoconf_data.kind_of?(Hash) then
-  %>
-    ???
-  <% else %>
+     if !puavoconf_data.nil? && puavoconf_data.kind_of?(Hash) %>
     <% puavoconf_data.sort.each do |key, value| %>
       <tr><td><%=h key %></td><td><%=h value %></td></tr>
     <% end %>
