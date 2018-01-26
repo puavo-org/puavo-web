@@ -220,7 +220,7 @@ class Device < Host
     define_method(attr) { autopoweroff_attr_with_school_fallback(attr) }
   end
 
-  def puavo_conf
+  def generate_device_puavo_conf
     conf = {}
 
     update = lambda do |key, value, fn=nil|
@@ -476,7 +476,7 @@ class Devices < PuavoSinatra
     device_object = Device.by_hostname!(params["hostname"])
     device = device_object.to_hash
 
-    device['conf'] = device_object.puavo_conf
+    device['conf'] = device_object.generate_device_puavo_conf
 
     json device
   end
