@@ -76,11 +76,8 @@
         <%= label "school", "puavoConf" %>:
       </div>
       <div class="column_2">
-        <table>
-          <% @school.puavoConf.sort.each do |key,value| %>
-            <tr><td><%=h key %></td><td><%=h value %></td></tr>
-          <% end %>
-        </table>
+        <%= render :partial => 'shared/puavoconf',
+                   :locals  => { :object => @school } %>
       </div>
     </div>
 

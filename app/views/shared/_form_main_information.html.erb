@@ -30,14 +30,8 @@
       <%= f.text_field :puavoTag %>
     </td>
   </tr>
-  <tr>
-    <td>
-      <%= f.label :puavoConf %>
-    </td>
-    <td>
-      <%= f.text_area :puavoConfString, cols: 80, rows: 6 %>
-    </td>
-  </tr>
+
+  <%= render( :partial => 'shared/form_puavoconf', :locals => { :f => f } ) %>
 
   <% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
   <tr>
