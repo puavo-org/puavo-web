@@ -18,11 +18,8 @@
 	        <%=h device.puavoTag %>
         </p>
         <p><%= label device.class.to_s.downcase, "puavoConf" %><br />
-          <table>
-            <% device.puavoConf.sort.each do |key,value| %>
-              <tr><td><%=h key %></td><td><%=h value %></td></tr>
-            <% end %>
-          </table>
+          <%= render :partial => 'shared/puavoconf',
+                     :locals  => { :object => device } %>
         </p>
 
         <% unless device.classes.include?('puavoPrinter') ||  device.classes.include?('puavoOtherDevice') %>
