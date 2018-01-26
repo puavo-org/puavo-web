@@ -110,6 +110,30 @@ module LdapConverters
 
   end
 
+  # Convert a JSON string to a ruby object
+  class JSONObj < Base
+    def read(value)
+      begin
+        JSON.parse(Array(value).first)
+      rescue JSON::ParserError
+        return nil
+      end
+    end
+
+    def validate(value)
+      begin
+        JSON.parse(Array(value).first)
+      rescue JSON::ParserError
+	return false
+      end
+
+      return true
+    end
+
+    def write(value)
+      Array(value).first.to_json
+    end
+  end
 
   # @deprecated Use {LdapConverters::StringBoolean} instead.
   def self.string_boolean
