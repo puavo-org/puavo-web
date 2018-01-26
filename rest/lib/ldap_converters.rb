@@ -114,7 +114,7 @@ module LdapConverters
   class JSONObj < Base
     def read(value)
       begin
-        JSON.parse(Array(value).first)
+        JSON.parse(Array(value).first.to_s)
       rescue JSON::ParserError
         return nil
       end
@@ -122,7 +122,7 @@ module LdapConverters
 
     def validate(value)
       begin
-        JSON.parse(Array(value).first)
+        JSON.parse(Array(value).first.to_s)
       rescue JSON::ParserError
 	return false
       end
