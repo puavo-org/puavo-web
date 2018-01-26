@@ -1,3 +1,4 @@
+require_relative "./puavo_conf_mixin"
 require_relative "./puavo_tag_mixin"
 
 class School < BaseGroup
@@ -5,6 +6,7 @@ class School < BaseGroup
   include Puavo::Client::HashMixin::School
   include BooleanAttributes
   include HasPrinterMixin
+  include PuavoConfMixin
   include PuavoTagMixin
   include Mountpoint
   include Puavo::Locale

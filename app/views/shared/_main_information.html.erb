@@ -18,7 +18,7 @@
 	        <%=h device.puavoTag %>
         </p>
         <p><%= label device.class.to_s.downcase, "puavoConf" %><br />
-	        <%=h device.puavoConf %>
+	        <%=h device.puavoConfString %>
         </p>
 
         <% unless device.classes.include?('puavoPrinter') ||  device.classes.include?('puavoOtherDevice') %>

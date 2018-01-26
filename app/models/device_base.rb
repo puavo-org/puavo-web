@@ -1,8 +1,10 @@
 require 'net/http'
+require_relative "./puavo_conf_mixin"
 require_relative "./puavo_tag_mixin"
 
 class DeviceBase < LdapBase
   include BooleanAttributes
+  include PuavoConfMixin
   include PuavoTagMixin
   include Mountpoint
 
