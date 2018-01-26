@@ -17,6 +17,7 @@ describe PuavoRest::Devices do
       :puavoImageSeriesSourceURL => ["https://foobar.opinsys.fi/schoolpref.json"],
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
+      :puavoConf => '{"puavo.login.external.enabled": "true"}',
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
@@ -51,7 +52,8 @@ describe PuavoRest::Devices do
     @bootserver = create_server(
       :puavoHostname => "bootserver",
       :macAddress => "bc:5f:f4:56:59:72",
-      :puavoDeviceType => "bootserver"
+      :puavoDeviceType => "bootserver",
+      :puavoConf => '{"puavo.kernel.version": "fresh"}'
     )
     PuavoRest.test_boot_server_dn = @bootserver.dn.to_s
 
@@ -95,7 +97,8 @@ describe PuavoRest::Devices do
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
-        :puavoTag => ["tag1", "tag2"]
+        :puavoTag => ["tag1", "tag2"],
+        :puavoConf => '{"puavo.guestlogin.enable": "false"}'
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
