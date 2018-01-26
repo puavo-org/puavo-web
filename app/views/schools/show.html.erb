@@ -75,7 +75,13 @@
       <div class="column_1">
         <%= label "school", "puavoConf" %>:
       </div>
-      <div class="column_2"><%= @school.puavoConfString %></div>
+      <div class="column_2">
+        <table>
+          <% @school.puavoConf.sort.each do |key,value| %>
+            <tr><td><%=h key %></td><td><%=h value %></td></tr>
+          <% end %>
+        </table>
+      </div>
     </div>
 
     <div class="row">
