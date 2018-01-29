@@ -148,6 +148,11 @@ class Device < Host
     school.tags.concat(get_own(:tags)).uniq.sort
   end
 
+  def puavoconf
+    (school.puavoconf || {}) \
+      .merge(get_own(:puavoconf) || {})
+  end
+
   computed_attr :homepage
   def homepage
     school.homepage
@@ -429,6 +434,8 @@ class Device < Host
 	  update.call('puavo.xorg.backlight.brightness', $1)
       end
     end
+
+    conf.merge!(puavoconf)
 
     return conf
   end

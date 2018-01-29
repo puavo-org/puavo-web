@@ -212,6 +212,11 @@ class School < LdapModel
     end
   end
 
+  def puavoconf
+    (organisation.puavoconf || {}) \
+      .merge(get_own(:puavoconf) || {})
+  end
+
   def timezone
     if get_own(:timezone).nil?
       organisation.timezone

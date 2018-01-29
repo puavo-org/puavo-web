@@ -63,6 +63,11 @@ class BootServer < LdapModel
     by_attr!(:hostname, hostname)
   end
 
+  def puavoconf
+    (organisation.puavoconf || {}) \
+      .merge(get_own(:puavoconf) || {})
+  end
+
   def schools
     self["school_dns"].map do |school_dn|
       School.by_dn(school_dn)
