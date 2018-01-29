@@ -17,7 +17,12 @@ describe PuavoRest::Devices do
       :puavoImageSeriesSourceURL => ["https://foobar.opinsys.fi/schoolpref.json"],
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
-      :puavoConf => '{ "puavo.login.external.enabled": "true" }',
+      :puavoConf => '{
+        "puavo.admin.personally_administered": true,
+        "puavo.autopilot.enabled": false,
+        "puavo.desktop.vendor.logo": "/usr/share/opinsys-art/logo.png",
+        "puavo.login.external.enabled": false
+      }',
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
@@ -53,7 +58,10 @@ describe PuavoRest::Devices do
       :puavoHostname => "bootserver",
       :macAddress => "bc:5f:f4:56:59:72",
       :puavoDeviceType => "bootserver",
-      :puavoConf => '{ "puavo.kernel.version": "fresh" }',
+      :puavoConf => '{
+        "puavo.kernel.version": "fresh",
+        "puavo.login.external.enabled": "false"
+      }',
     )
     PuavoRest.test_boot_server_dn = @bootserver.dn.to_s
 
@@ -76,6 +84,13 @@ describe PuavoRest::Devices do
     test_organisation.puavoAllowGuest = "FALSE"
     test_organisation.puavoAutomaticImageUpdates = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
+
+    test_organisation.puavoConf = '{
+      "puavo.desktop.vendor.logo": "/usr/share/puavo-art/puavo-os_logo-white.svg",
+      "puavo.login.external.enabled": true,
+      "puavo.time.timezone": "Europe/Tallinn"
+    }',
+
     test_organisation.save!
   end
 
@@ -98,7 +113,11 @@ describe PuavoRest::Devices do
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
         :puavoTag => ["tag1", "tag2"],
-        :puavoConf => '{ "puavo.guestlogin.enable": "false" }',
+        :puavoConf => '{
+          "puavo.autopilot.enabled": true,
+          "puavo.guestlogin.enabled": true,
+          "puavo.xbacklight.brightness" 80
+        }',
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
@@ -178,6 +197,26 @@ describe PuavoRest::Devices do
       assert @data["tags"].include?("tag1"), "has tag1"
       assert @data["tags"].include?("tag2"), "has tag2"
       assert @data["tags"].include?("schooltag"), "has schooltag"
+    end
+
+    it "has conf with mapped puavo-conf values" do
+      # XXX we need something here
+    end
+
+    it "has conf with explicit and merged puavo-conf values" do
+      # XXX we need the equivalent for bootservers as well
+
+      conf = @data['conf']
+
+      assert conf.kind_of?(Hash)
+      assert_equal conf['puavo.admin.personally_administered'], 'true'
+      assert_equal conf['puavo.autopilot.enabled'], 'true'
+      assert_equal conf['puavo.desktop.vendor.logo'],
+                   '/usr/share/opinsys-art/logo.png'
+      assert_equal conf['puavo.guestlogin.enabled'], 'true'
+      assert_equal conf['puavo.login.external.enabled'], 'false'
+      assert_equal conf['puavo.time.timezone'], 'Europe/Tallinn'
+      assert_equal conf['puavo.xbacklight.brightness'], '80'
     end
 
     it "has timezone" do
