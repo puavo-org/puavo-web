@@ -23,7 +23,7 @@ class School < LdapModel
   ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, LdapConverters::StringBoolean
   ldap_map :puavoPersonalDevice, :personal_device, LdapConverters::StringBoolean
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
-  ldap_map :puavoConf, :puavoconf, LdapConverters::JSONObj
+  ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
   ldap_map :gidNumber, :gid_number, LdapConverters::Number
   ldap_map :cn, :abbreviation
   ldap_map(:puavoActiveService, :external_services) do |es|
