@@ -112,26 +112,54 @@ module LdapConverters
 
   # Convert a JSON string to a ruby object
   class JSONObj < Base
-    def read(value)
+    def read(ldap_value)
       begin
-        JSON.parse(Array(value).first.to_s)
-      rescue JSON::ParserError
+        json_obj = JSON.parse( Array(ldap_value).first.to_s )
+      rescue StandardError => e
         return nil
       end
+
+      return json_obj
     end
 
-    def validate(value)
+    def validate(json_obj)
       begin
-        JSON.parse(Array(value).first.to_s)
-      rescue JSON::ParserError
-	return false
+        write(json_obj)
+      rescue StandardError => e
+        return {
+          :code    => :invalid_type,
+          :message => e.message,
+        }
       end
 
-      return true
+      return
     end
 
-    def write(value)
-      Array(value).first.to_json
+    def write(json_obj)
+      Array(json_obj).first.to_json
+    end
+  end
+
+  class PuavoConfObj < JSONObj
+    def validate(puavoconf_obj)
+      validation_result = super
+
+      return validation_result if validation_result
+
+      # XXX duplicate code with
+      # XXX app/models/puavo_conf_mixin.rb/validate_puavoconf_data
+      is_ok = puavoconf_obj.all? do |k,v|
+                k.kind_of?(String) \
+                  && (v.kind_of?(String) || v.kind_of?(Integer) \
+                        || v == false || v == true)
+              end
+
+      return if is_ok
+
+      return {
+        :code    => :invalid_type,
+        :message => 'puavoconf data is not in a supported format',
+      }
     end
   end
 
