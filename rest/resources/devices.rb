@@ -439,7 +439,12 @@ class Device < Host
       end
     end
 
-    conf.merge!(puavoconf)
+    # Merge puavo-conf settings and coerce all values to strings
+    # (coercing might not be necessary but above we use only strings and
+    # clients do not do anything with type information, because typing should
+    # not be relevant with puavo-conf).
+    explicit_puavoconf = puavoconf
+    conf.merge!( Hash[ explicit_puavoconf.map { |k,v| [ k, v.to_s ] } ] )
 
     return conf
   end
