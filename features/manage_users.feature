@@ -254,7 +254,7 @@ Feature: Manage users
     | sambaSID             | "^S-[-0-9+]"                   |
     | sambaAcctFlags       | "\[U\]"                        |
     | sambaPrimaryGroupSID | "^S-[-0-9+]"                   |
-    | homeDirectory        | "/home/" + @school.cn + "/ben" |
+    | homeDirectory        | "/home/ben"                    |
 
   Scenario: Role selection does not lost when edit user and get error
     Given the following users:
