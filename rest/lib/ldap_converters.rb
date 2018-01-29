@@ -119,6 +119,10 @@ module LdapConverters
         return nil
       end
 
+      # XXX Should we do read()-validation in LdapModel?
+      # XXX And should we raise an exception instead of returning nil?
+      return nil if validate(json_obj)
+
       return json_obj
     end
 
