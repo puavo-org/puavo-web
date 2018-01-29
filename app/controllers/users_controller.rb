@@ -124,9 +124,11 @@ class UsersController < ApplicationController
         end
         if new_group_management?(@school)
           format.html { redirect_to( group_user_path(@school,@user) ) }
+          format.json { render :json => nil }
         else
           flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
           format.html { redirect_to( user_path(@school,@user) ) }
+          format.json { render :json => nil }
         end
       rescue User::UserError => e
         logger.info "Create user, Exception: " + e.to_s
