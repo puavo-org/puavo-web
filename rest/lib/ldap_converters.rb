@@ -140,7 +140,7 @@ module LdapConverters
     end
 
     def write(json_obj)
-      Array(json_obj).first.to_json
+      json_obj.to_json
     end
   end
 
