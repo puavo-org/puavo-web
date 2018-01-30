@@ -204,7 +204,7 @@ describe PuavoRest::Devices do
 
       conf = @data['conf']
 
-      assert conf.kind_of?(Hash)
+      assert conf.kind_of?(Hash), 'device data has "conf" that is a Hash'
       assert_equal 'true', conf['puavo.admin.personally_administered']
       assert_equal 'true', conf['puavo.autopilot.enabled']
       assert_equal'/usr/share/opinsys-art/logo.png',
