@@ -83,7 +83,7 @@ describe PuavoRest::Devices do
 
     test_organisation.puavoConf = '{
       "puavo.desktop.vendor.logo": "/usr/share/puavo-art/puavo-os_logo-white.svg",
-      "puavo.l10n.locale": "fi_FI.UTF-8",
+      "puavo.l10n.locale": "ja_JP.eucJP",
       "puavo.login.external.enabled": true,
       "puavo.time.timezone": "Europe/Tallinn"
     }'
@@ -209,7 +209,7 @@ describe PuavoRest::Devices do
       assert_equal'/usr/share/opinsys-art/logo.png',
                    conf['puavo.desktop.vendor.logo']
       assert_equal 'true', conf['puavo.guestlogin.enabled']
-      assert_equal 'fi_FI.UTF-8', conf['puavo.l10n.locale']
+      assert_equal 'ja_JP.eucJP', conf['puavo.l10n.locale']
       assert_equal 'false', conf['puavo.login.external.enabled']
       assert_equal 'Europe/Tallinn', conf['puavo.time.timezone']
       assert_equal '80', conf['puavo.xbacklight.brightness']
