@@ -205,14 +205,14 @@ describe PuavoRest::Devices do
       conf = @data['conf']
 
       assert conf.kind_of?(Hash)
-      assert_equal conf['puavo.admin.personally_administered'], 'true'
-      assert_equal conf['puavo.autopilot.enabled'], 'true'
-      assert_equal conf['puavo.desktop.vendor.logo'],
-                   '/usr/share/opinsys-art/logo.png'
-      assert_equal conf['puavo.guestlogin.enabled'], 'true'
-      assert_equal conf['puavo.login.external.enabled'], 'false'
-      assert_equal conf['puavo.time.timezone'], 'Europe/Tallinn'
-      assert_equal conf['puavo.xbacklight.brightness'], '80'
+      assert_equal 'true', conf['puavo.admin.personally_administered']
+      assert_equal 'true', conf['puavo.autopilot.enabled']
+      assert_equal'/usr/share/opinsys-art/logo.png',
+                   conf['puavo.desktop.vendor.logo']
+      assert_equal 'true', conf['puavo.guestlogin.enabled']
+      assert_equal 'false', conf['puavo.login.external.enabled']
+      assert_equal 'Europe/Tallinn', conf['puavo.time.timezone']
+      assert_equal '80', conf['puavo.xbacklight.brightness']
     end
 
     it "has timezone" do
