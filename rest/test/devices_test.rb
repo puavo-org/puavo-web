@@ -85,11 +85,7 @@ describe PuavoRest::Devices do
     test_organisation.puavoAutomaticImageUpdates = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
 
-    test_organisation.puavoConf = '{
-      "puavo.desktop.vendor.logo": "/usr/share/puavo-art/puavo-os_logo-white.svg",
-      "puavo.login.external.enabled": true,
-      "puavo.time.timezone": "Europe/Tallinn"
-    }',
+    test_organisation.puavoConf = '{ "puavo.time.timezone": "Europe/Tallinn" }'
 
     test_organisation.save!
   end
