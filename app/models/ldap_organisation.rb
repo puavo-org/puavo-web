@@ -10,7 +10,7 @@ class LdapOrganisation < LdapBase
                 :prefix => "",
                 :classes => ["dcObject", "organization", "puavoEduOrg", "eduOrg"] )
 
-  validate :validate_wlan_attributes
+  validate :validate_puavoconf, :validate_wlan_attributes
 
   before_save :set_preferred_language
 

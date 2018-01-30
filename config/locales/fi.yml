@@ -436,6 +436,11 @@ fi:
             invalid_characters: "MAC-osoite sisältää virheellisiä merkkejä tai se on väärän muotoinen. Esim: 0f:1f:a9:2f:a3:ad"
         wlan:
           duplicate_name: langattomien verkkojen asetuksissa sama verkkonimi useammalla verkolla
+        puavoconf:
+          not_json: "PuavoConf ei ole korrektia JSONia"
+          unknown_json_error: "PuavoConfin JSON-parsinnassa tuntematon virhe"
+          not_a_hash: "PuavoConf ei ole avain-/arvopari-muotoa"
+          unsupported_value_types: "PuavoConfin arvoissa ei-tuettuja tyyppejä"
     models:
       group: "Ryhmä"
       role: Rooli
