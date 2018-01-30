@@ -57,11 +57,7 @@ describe PuavoRest::Devices do
     @bootserver = create_server(
       :puavoHostname => "bootserver",
       :macAddress => "bc:5f:f4:56:59:72",
-      :puavoDeviceType => "bootserver",
-      :puavoConf => '{
-        "puavo.kernel.version": "fresh",
-        "puavo.login.external.enabled": "false"
-      }',
+      :puavoDeviceType => "bootserver"
     )
     PuavoRest.test_boot_server_dn = @bootserver.dn.to_s
 
