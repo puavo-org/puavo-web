@@ -81,7 +81,12 @@ describe PuavoRest::Devices do
     test_organisation.puavoAutomaticImageUpdates = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
 
-    test_organisation.puavoConf = '{ "puavo.time.timezone": "Europe/Tallinn" }'
+    test_organisation.puavoConf = '{
+      "puavo.desktop.vendor.logo": "/usr/share/puavo-art/puavo-os_logo-white.svg",
+      "puavo.l10n.locale": "fi_FI.UTF-8",
+      "puavo.login.external.enabled": true,
+      "puavo.time.timezone": "Europe/Tallinn"
+    }'
 
     test_organisation.save!
   end
@@ -196,8 +201,6 @@ describe PuavoRest::Devices do
     end
 
     it "has conf with explicit and merged puavo-conf values" do
-      # XXX we need the equivalent for bootservers as well
-
       conf = @data['conf']
 
       assert conf.kind_of?(Hash), 'device data has "conf" that is a Hash'
@@ -206,6 +209,7 @@ describe PuavoRest::Devices do
       assert_equal'/usr/share/opinsys-art/logo.png',
                    conf['puavo.desktop.vendor.logo']
       assert_equal 'true', conf['puavo.guestlogin.enabled']
+      assert_equal 'fi_FI.UTF-8', conf['puavo.l10n.locale']
       assert_equal 'false', conf['puavo.login.external.enabled']
       assert_equal 'Europe/Tallinn', conf['puavo.time.timezone']
       assert_equal '80', conf['puavo.xbacklight.brightness']
