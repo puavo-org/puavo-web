@@ -8,7 +8,7 @@ module PuavoConfMixin
       return
     end
 
-    set_attribute('puavoConf', puavoconf_data.to_json)
+    set_attribute('puavoConf', puavoconf_string)
   end
 
   def parse_as_json(string)
