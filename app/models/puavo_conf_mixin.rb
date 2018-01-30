@@ -1,34 +1,34 @@
 module PuavoConfMixin
-  def puavoConf=(puavoconf_string)
-    puavoconf_data = parse_as_json(puavoconf_string)
-    return if puavoconf_data.nil?
+  def validate_puavoconf
+    # XXX localize error messages
 
-    if !validate_puavoconf_data(puavoconf_data) then
-      logger.warn 'not storing invalid puavoconf-data'
+    begin
+      puavoconf_data = JSON.parse( get_attribute(:puavoConf) )
+    rescue JSON::ParserError => e
+      errors.add(:puavoConf,
+                 I18n.t('activeldap.errors.messages.puavoconf.not_json'))
+      return
+    rescue StandardError => e
+      errors.add(:puavoConf,
+                 I18n.t('activeldap.errors.messages.puavoconf.unknown_json_error'))
       return
     end
 
-    set_attribute('puavoConf', puavoconf_string)
-  end
-
-  def parse_as_json(string)
-    begin
-      data = JSON.parse(string)
-    rescue JSON::ParserError => e
-      logger.warn "could not parse '#{ string }' as JSON: #{ e.message }"
-      return nil
+    unless puavoconf_data.kind_of?(Hash) then
+      errors.add(:puavoConf,
+                 I18n.t('activeldap.errors.messages.puavoconf.not_a_hash'))
+      return
     end
 
-    data
-  end
-
-  def validate_puavoconf_data(puavoconf_data)
-    return false unless puavoconf_data.kind_of?(Hash)
-
-    puavoconf_data.all? do |k,v|
-      k.kind_of?(String) \
-        && (v.kind_of?(String) || v.kind_of?(Integer) \
-              || v == false || v == true)
+    types_ok = puavoconf_data.all? do |k,v|
+                 k.kind_of?(String) \
+                   && (v.kind_of?(String) || v.kind_of?(Integer) \
+                         || v == false || v == true)
+               end
+    unless types_ok then
+      errors.add(:puavoConf,
+                 I18n.t('activeldap.errors.messages.puavoconf.unsupported_value_types'))
+      return
     end
   end
 end

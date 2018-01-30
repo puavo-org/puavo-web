@@ -37,7 +37,7 @@ class School < BaseGroup
 
   before_save :set_puavo_mountpoint, :set_preferred_language
 
-  validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_wlan_attributes, :validate_image
+  validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_puavoconf, :validate_wlan_attributes, :validate_image
 
   alias_method :v1_as_json, :as_json
 
