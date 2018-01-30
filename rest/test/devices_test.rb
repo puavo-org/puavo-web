@@ -112,7 +112,7 @@ describe PuavoRest::Devices do
         :puavoConf => '{
           "puavo.autopilot.enabled": true,
           "puavo.guestlogin.enabled": true,
-          "puavo.xbacklight.brightness" 80
+          "puavo.xbacklight.brightness": 80
         }',
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
