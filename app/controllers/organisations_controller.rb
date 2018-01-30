@@ -156,6 +156,7 @@ class OrganisationsController < ApplicationController
         :puavoDeviceOnHour,
         :puavoDeviceOffHour,
         :puavoDeviceImage,
+        :puavoConf,
         :puavoImageSeriesSourceURL=>[],
         :puavoBillingInfo=>[]
       ).to_hash

@@ -1,6 +1,9 @@
+require_relative "./puavo_conf_mixin"
+
 class LdapOrganisation < LdapBase
   include Wlan
   include BooleanAttributes
+  include PuavoConfMixin
   include Puavo::Locale
 
   ldap_mapping( :dn_attribute => "dc",

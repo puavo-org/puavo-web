@@ -99,6 +99,8 @@
 
   <!-- < %= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } % > -->
 
+  <%= render( :partial => 'shared/form_puavoconf', :locals => { :f => f } ) %>
+
   <tr>
     <td class="label_for_input_text_list">
       <%= f.label :puavoBillingInfo, nil, for: "puavoBillingInfo0" %>
