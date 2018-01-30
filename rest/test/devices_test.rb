@@ -197,7 +197,18 @@ describe PuavoRest::Devices do
     end
 
     it "has conf with mapped puavo-conf values" do
-      # XXX we need something here
+      conf = @data['conf']
+
+      # We test that some settings that have specific attributes in ldap
+      # are mapped to puavo-conf key/value-pairs.
+      assert conf.kind_of?(Hash), 'device data has "conf" that is a Hash'
+      assert_equal 'alsa_output.pci-0000_00_1b.0.analog-stereo',
+	           conf['puavo.audio.pa.default_sink']
+      assert_equal 'false', conf['puavo.image.automatic_updates']
+      assert_equal 'customimage', conf['puavo.image.preferred']
+      assert_equal 'defaultprinter', conf['puavo.printing.default_printer']
+      assert_equal 'schoolhomepagefordevice.example',
+	           conf['puavo.www.homepage']
     end
 
     it "has conf with explicit and merged puavo-conf values" do
