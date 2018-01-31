@@ -37,6 +37,15 @@ Feature: Manage schools
     | school_mountpoint_0                 | /home/share                                                                    |
     | school_options_0                    | -o rw                                                                          |
     | school[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                                                |
+    And I fill in "PuavoConf-settings" with:
+      """
+      {
+        "puavo.admin.personally_administered": true,
+        "puavo.autopilot.enabled": false,
+        "puavo.desktop.vendor.logo": "/usr/share/opinsys-art/logo.png",
+        "puavo.login.external.enabled": false
+      }
+      """
     And I attach the file at "features/support/test.jpg" to "Image"
     And I select "English (United States)" from "Language"
     And I choose "school_puavoAutomaticImageUpdates_false"
@@ -74,6 +83,11 @@ Feature: Manage schools
     And I should see school image of "Bourne School"
     And I should see the following special ldap attributes on the "School" object with "Bourne School":
     | preferredLanguage | "en" |
+    And I should see the following puavo-conf values:
+    | puavo.admin.personally_administered | true                            |
+    | puavo.autopilot.enabled             | false                           |
+    | puavo.desktop.vendor.logo           | /usr/share/opinsys-art/logo.png |
+    | puavo.login.external.enabled        | false                           |
 
   Scenario: Add new school to organisation without names
     Given I am on the new school page
