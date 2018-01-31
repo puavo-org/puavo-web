@@ -1,9 +1,10 @@
 module PuavoConfMixin
   def validate_puavoconf
-    # XXX localize error messages
+    puavoconf_string = self.puavoConf.to_s
+    return if puavoconf_string.empty?
 
     begin
-      puavoconf_data = JSON.parse( get_attribute(:puavoConf) )
+      puavoconf_data = JSON.parse(puavoconf_string)
     rescue JSON::ParserError => e
       errors.add(:puavoConf,
                  I18n.t('activeldap.errors.messages.puavoconf.not_json'))
