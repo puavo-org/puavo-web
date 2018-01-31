@@ -16,6 +16,7 @@ class Host < LdapModel
   ldap_map :puavoDeviceBootMode, :boot_mode
   ldap_map :puavoDeviceKernelVersion, :kernel_version
   ldap_map(:puavoTag, :tags){ |v| Array(v) }
+  ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
   ldap_map :puavoDeviceCurrentImage, :current_image, LdapConverters::SingleValue
   ldap_map :puavoDeviceAvailableImage, :available_images, LdapConverters::ArrayValue
 

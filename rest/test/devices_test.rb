@@ -17,6 +17,12 @@ describe PuavoRest::Devices do
       :puavoImageSeriesSourceURL => ["https://foobar.opinsys.fi/schoolpref.json"],
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
+      :puavoConf => '{
+        "puavo.admin.personally_administered": true,
+        "puavo.autopilot.enabled": false,
+        "puavo.desktop.vendor.logo": "/usr/share/opinsys-art/logo.png",
+        "puavo.login.external.enabled": false
+      }',
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
@@ -74,6 +80,14 @@ describe PuavoRest::Devices do
     test_organisation.puavoAllowGuest = "FALSE"
     test_organisation.puavoAutomaticImageUpdates = "FALSE"
     test_organisation.puavoPersonalDevice = "FALSE"
+
+    test_organisation.puavoConf = '{
+      "puavo.desktop.vendor.logo": "/usr/share/puavo-art/puavo-os_logo-white.svg",
+      "puavo.l10n.locale": "ja_JP.eucJP",
+      "puavo.login.external.enabled": true,
+      "puavo.time.timezone": "Europe/Tallinn"
+    }'
+
     test_organisation.save!
   end
 
@@ -95,7 +109,12 @@ describe PuavoRest::Devices do
         :puavoPrinterDeviceURI => "usb:/dev/usb/lp1",
         :puavoDeviceDefaultAudioSource => "alsa_input.pci-0000_00_1b.0.analog-stereo",
         :puavoDeviceDefaultAudioSink => "alsa_output.pci-0000_00_1b.0.analog-stereo",
-        :puavoTag => ["tag1", "tag2"]
+        :puavoTag => ["tag1", "tag2"],
+        :puavoConf => '{
+          "puavo.autopilot.enabled": true,
+          "puavo.guestlogin.enabled": true,
+          "puavo.xbacklight.brightness": 80
+        }',
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoAllowGuest = "TRUE"
@@ -175,6 +194,36 @@ describe PuavoRest::Devices do
       assert @data["tags"].include?("tag1"), "has tag1"
       assert @data["tags"].include?("tag2"), "has tag2"
       assert @data["tags"].include?("schooltag"), "has schooltag"
+    end
+
+    it "has conf with mapped puavo-conf values" do
+      conf = @data['conf']
+
+      # We test that some settings that have specific attributes in ldap
+      # are mapped to puavo-conf key/value-pairs.
+      assert conf.kind_of?(Hash), 'device data has "conf" that is a Hash'
+      assert_equal 'alsa_output.pci-0000_00_1b.0.analog-stereo',
+	           conf['puavo.audio.pa.default_sink']
+      assert_equal 'false', conf['puavo.image.automatic_updates']
+      assert_equal 'customimage', conf['puavo.image.preferred']
+      assert_equal 'defaultprinter', conf['puavo.printing.default_printer']
+      assert_equal 'schoolhomepagefordevice.example',
+	           conf['puavo.www.homepage']
+    end
+
+    it "has conf with explicit and merged puavo-conf values" do
+      conf = @data['conf']
+
+      assert conf.kind_of?(Hash), 'device data has "conf" that is a Hash'
+      assert_equal 'true', conf['puavo.admin.personally_administered']
+      assert_equal 'true', conf['puavo.autopilot.enabled']
+      assert_equal'/usr/share/opinsys-art/logo.png',
+                   conf['puavo.desktop.vendor.logo']
+      assert_equal 'true', conf['puavo.guestlogin.enabled']
+      assert_equal 'ja_JP.eucJP', conf['puavo.l10n.locale']
+      assert_equal 'false', conf['puavo.login.external.enabled']
+      assert_equal 'Europe/Tallinn', conf['puavo.time.timezone']
+      assert_equal '80', conf['puavo.xbacklight.brightness']
     end
 
     it "has timezone" do

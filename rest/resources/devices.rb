@@ -148,6 +148,11 @@ class Device < Host
     school.tags.concat(get_own(:tags)).uniq.sort
   end
 
+  def puavoconf
+    (school.puavoconf || {}) \
+      .merge(get_own(:puavoconf) || {})
+  end
+
   computed_attr :homepage
   def homepage
     school.homepage
@@ -220,7 +225,7 @@ class Device < Host
     define_method(attr) { autopoweroff_attr_with_school_fallback(attr) }
   end
 
-  def puavo_conf
+  def generate_device_puavo_conf
     conf = {}
 
     update = lambda do |key, value, fn=nil|
@@ -434,6 +439,13 @@ class Device < Host
       end
     end
 
+    # Merge puavo-conf settings and coerce all values to strings
+    # (coercing might not be necessary but above we use only strings and
+    # clients do not do anything with type information, because typing should
+    # not be relevant with puavo-conf).
+    explicit_puavoconf = puavoconf
+    conf.merge!( Hash[ explicit_puavoconf.map { |k,v| [ k, v.to_s ] } ] )
+
     return conf
   end
 end
@@ -476,7 +488,7 @@ class Devices < PuavoSinatra
     device_object = Device.by_hostname!(params["hostname"])
     device = device_object.to_hash
 
-    device['conf'] = device_object.puavo_conf
+    device['conf'] = device_object.generate_device_puavo_conf
 
     json device
   end

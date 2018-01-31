@@ -1,8 +1,10 @@
 require 'net/http'
+require_relative "./puavo_conf_mixin"
 require_relative "./puavo_tag_mixin"
 
 class DeviceBase < LdapBase
   include BooleanAttributes
+  include PuavoConfMixin
   include PuavoTagMixin
   include Mountpoint
 
@@ -18,7 +20,7 @@ class DeviceBase < LdapBase
   IA5STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('@[\]^_\'{|}!"#%&()*+,-./:;<=>\?')
   PRINTABLE_STRING_CHARACTERS = "A-Za-z0-9" + Regexp.escape('()+,-./:\? ')
 
-  validate :validate
+  validate :validate, :validate_puavoconf
 
   def self.image_size
     { width: 220, height: 220 }
@@ -398,6 +400,9 @@ class DeviceBase < LdapBase
        :value_block => lambda{ |value| Array(value).first } },
      { :original_attribute_name => "puavoTag",
        :new_attribute_name => "tags",
+       :value_block => lambda{ |value| Array(value).first } },
+     { :original_attribute_name => "puavoConf",
+       :new_attribute_name => "puavoconf",
        :value_block => lambda{ |value| Array(value).first } },
      { :original_attribute_name => "puavoWarrantyEndDate",
        :new_attribute_name => "warranty_end_date",

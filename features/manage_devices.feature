@@ -32,6 +32,14 @@ Feature: Manage devices
     And I fill in "device_path_0" with "10.0.0.1/share"
     And I fill in "device_mountpoint_0" with "/home/share"
     And I fill in "device_options_0" with "-o rw"
+    And I fill in "PuavoConf-settings" with:
+      """
+      {
+        "puavo.autopilot.enabled": false,
+        "puavo.guestlogin.enabled": false,
+        "puavo.xbacklight.brightness": 55
+      }
+      """
     And I select "13" from "device[puavoDeviceOnHour]"
     And I select "19" from "device[puavoDeviceOffHour]"
     And I choose "device_puavoDeviceAutoPowerOffMode_default"
@@ -48,6 +56,10 @@ Feature: Manage devices
     And I should see "Auto power off mode"
     And I should see "Daytime start"
     And I should see "Daytime end"
+    And I should see the following puavo-conf values:
+    | puavo.autopilot.enabled     | false |
+    | puavo.guestlogin.enabled    | false |
+    | puavo.xbacklight.brightness | 55    |
 
   Scenario: Edit laptop configuration
     Given I am on the devices list page
