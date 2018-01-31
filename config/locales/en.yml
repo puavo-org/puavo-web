@@ -494,7 +494,7 @@ en:
           duplicate_name: A duplicate network name exists
         puavoconf:
           not_json: "PuavoConf is not correct JSON"
-          unknown_json_error: "PuavoConf JSO-parsing failed due to unknown error"
+          unknown_json_error: "PuavoConf JSON-parsing failed due to unknown error"
           not_a_hash: "PuavoConf is not in key-/valuepair-format"
           unsupported_value_types: "Unsupported types in PuavoConf values"
     models:
