@@ -32,7 +32,6 @@ gem "sinatra-support", :require => "sinatra/support"
 gem "redlock", "0.1.2"
 gem "elasticsearch"
 gem "http"
-gem "dnsruby"
 
 group :test do
   gem "shotgun"
