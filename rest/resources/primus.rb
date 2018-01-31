@@ -49,7 +49,9 @@ class Primus < PuavoSinatra
       meta["bytes_written"] = IO.copy_stream(incoming_file, f)
     end
 
-    flog.info "wrote primus file", meta
+    flog.info('wrote primus file',
+              'wrote primus file',
+              meta)
 
     json meta
   end

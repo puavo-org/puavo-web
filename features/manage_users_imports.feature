@@ -20,7 +20,7 @@ Feature: User mass import
     Ben	Mabey	Class 4	Student
     Joseph	Wilk	Class 4	Student
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     And I should see "Ben"
     And I should see "Wilk"
     And I should see "Class 4"
@@ -49,7 +49,7 @@ Feature: User mass import
     Ben	Mabey	Class 4	Student
     Joseph	Wilk	Class 4	Student
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"
@@ -60,7 +60,7 @@ Feature: User mass import
       | Joseph | Wilk  | joseph.wilk | Class 4 | Student |
     When I cut nextPuavoId value by one
     And I press "Create users"
-    Then I should see "All users were not successfully created!"
+    Then I should see "Not all users were successfully created!"
     When I press the PDF button "Download passwords PDF"
     Then I should see "Name: Joseph Wilk" on the PDF
     And I should see "Username: joseph.wilk" on the PDF
@@ -73,7 +73,7 @@ Feature: User mass import
     Ben	Mabey	Student
     Ben Karl	Mabey	Student
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "User type" from "users_import_columns[2]"
@@ -101,7 +101,7 @@ Feature: User mass import
     Ben	Mabey	Student
     Ben Karl	Mabey	Student
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "User type" from "users_import_columns[2]"
@@ -136,7 +136,7 @@ Feature: User mass import
     """
     Ben	Mabey	Class 4
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"
@@ -157,7 +157,7 @@ Feature: User mass import
     Ben	Mabey	Class 4
     Ben Karl	Mabey	Class 4
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"
@@ -190,7 +190,7 @@ Feature: User mass import
     """
     Ben	Mabey	Class 4
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Username" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"
@@ -207,7 +207,7 @@ Feature: User mass import
     """
     Ben	Mabey	Class 4
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Given name" from "users_import_columns[2]"
@@ -219,7 +219,7 @@ Feature: User mass import
     """
     Ben	Mabey	cLaSs 4	sTuDeNt
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"
@@ -235,7 +235,7 @@ Feature: User mass import
 #    """
 #    Ben	Mabey	Class 5	Some
 #    """
-#    Then I should see "Select correct name of column for each data"
+#    Then I should see "Select the correct column names"
 #    When I select "Given name" from "users_import_columns[0]"
 #    And I select "Surname" from "users_import_columns[1]"
 #    And I select "Role" from "users_import_columns[2]"
@@ -259,7 +259,7 @@ Feature: User mass import
 #    """
 #    Ben	Mabey	Class 4	Student
 #    """
-#    Then I should see "Select correct name of column for each data"
+#    Then I should see "Select the correct column names"
 #    When I select "Given name" from "users_import_columns[0]"
 #    And I select "Surname" from "users_import_columns[1]"
 #    And I select "Given name" from "users_import_columns[2]"
@@ -281,7 +281,7 @@ Feature: User mass import
     """
     Ben	Mabey	Class 4
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Given name" from "users_import_columns[2]"
@@ -297,7 +297,7 @@ Feature: User mass import
     """
     Ben	Mabey	Class 4	Student
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"
@@ -312,7 +312,7 @@ Feature: User mass import
     Ben	Mabey	ben.mabey	Class 4	Student
     Ben	Mabey	ben.mabey	Class 4	Student
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Username" from "users_import_columns[2]"
@@ -338,7 +338,7 @@ Feature: User mass import
 #    Ben	Mabey	ben.mabey	Class 4	Student
 #    Ben	Mabey	ben.mabey	Class 4	Student
 #    """
-#    Then I should see "Select correct name of column for each data"
+#    Then I should see "Select the correct column names"
 #    When I select "Given name" from "users_import_columns[0]"
 #    And I select "Surname" from "users_import_columns[1]"
 #    And I select "Username" from "users_import_columns[2]"
@@ -366,7 +366,7 @@ Feature: User mass import
     Joe	Bloggs	Class 5	Student
     Ben	Mabey	Class 5	Student
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"
@@ -386,7 +386,7 @@ Feature: User mass import
     And I should see "Username: joe.bloggs" on the PDF
     And I should see "Name: Ben Mabey" on the PDF
     And I should see "Username: ben.mabey" on the PDF
-    And I should see "User is transferred, old password is used" on the PDF
+    And I should see "User has been transferred, the old password is in use" on the PDF
     And the sambaPrimaryGroupSID attribute should contain "School 2" of "joe.bloggs"
     And the homeDirectory attribute should contain "School 2" of "joe.bloggs"
     And the gidNumber attribute should contain "School 2" of "joe.bloggs"
@@ -417,7 +417,7 @@ Feature: User mass import
     Joe	Bloggs	Class 5	Student	secret222
     Ben	Mabey	Class 5	Student	secret333
     """
-    Then I should see "Select correct name of column for each data"
+    Then I should see "Select the correct column names"
     When I select "Given name" from "users_import_columns[0]"
     And I select "Surname" from "users_import_columns[1]"
     And I select "Role" from "users_import_columns[2]"

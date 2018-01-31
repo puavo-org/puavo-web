@@ -22,7 +22,6 @@
     "eslint": "^1.5.0",
     "eslint-plugin-import": "^0.7.9",
     "eslint-plugin-react": "^3.2.3",
-    "exec-sync": "^0.1.6",
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "nib": "~0.9.1",

@@ -5,17 +5,32 @@ class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
 
 class PasswordController < ApplicationController
-  before_filter :set_ldap_connection
-  skip_before_filter :find_school, :require_login, :require_puavo_authorization
+  before_action :set_ldap_connection
+  skip_before_action :find_school, :require_login, :require_puavo_authorization
 
   # GET /password/edit
   def edit
     @user = User.new
+    @gsuite = false
+
+    url = external_pw_mgmt_url
+
+    if !url.nil? && !url.empty?
+      @gsuite = true
+    end
+
   end
 
   # GET /password/own
   def own
     @user = User.new
+    @gsuite = false
+
+    url = external_pw_mgmt_url
+
+    if !url.nil? && !url.empty?
+      @gsuite = true
+    end
   end
 
   # PUT /password
@@ -62,7 +77,7 @@ class PasswordController < ApplicationController
     db.set(user.puavoId, true)
     db.expire(user.puavoId, 300)
 
-    rest_response = HTTP.with_headers(:host => current_organisation_domain,
+    rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .post(send_token_url,
             :params => { :username => user.uid })
@@ -95,7 +110,7 @@ class PasswordController < ApplicationController
 
     change_password_url = password_management_host + "/password/change/#{ params[:jwt] }"
 
-    rest_response = HTTP.with_headers(:host => current_organisation_domain,
+    rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .put(change_password_url,
            :params => { :new_password => params[:reset][:password] })
@@ -148,12 +163,34 @@ class PasswordController < ApplicationController
           @user = @logged_in_user
         end
 
+        url = external_pw_mgmt_url
+        role = external_pw_mgmt_role
+
+        if !url.nil? && !url.empty? && !role.nil? && !role.empty?
+          if @user.puavoEduPersonAffiliation.include?(role)
+            # External password management (read: G Suite integration) is enabled, so
+            # validate the password against Google's requirements
+            new_password = params[:user][:new_password]
+
+            if new_password.size < 8
+              raise User::UserError, I18n.t("activeldap.errors.messages.password_too_short")
+            elsif new_password[0] == ' ' || new_password[-1] == ' '
+              raise User::UserError, I18n.t("activeldap.errors.messages.password_whitespace")
+            elsif !new_password.ascii_only?
+              raise User::UserError, I18n.t("activeldap.errors.messages.password_ascii_only")
+            end
+          else
+            url = nil
+          end
+        end
+
         res = Puavo.ldap_passwd(
           User.configuration[:host],
           @logged_in_user.dn,
           params[:login][:password],
           params[:user][:new_password],
-          @user.dn.to_s
+          @user.dn.to_s,
+          url
         )
         flog.info "ldappasswd call", res.merge(
           :from => "password controller",

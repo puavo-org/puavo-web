@@ -32,11 +32,10 @@ class School < BaseGroup
             :foreign_key => 'puavoSchool' )
 
   attr_accessor :image
-  before_validation :resize_image
 
   before_save :set_puavo_mountpoint, :set_preferred_language
 
-  validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_wlan_attributes
+  validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_wlan_attributes, :validate_image
 
   alias_method :v1_as_json, :as_json
 
@@ -62,6 +61,18 @@ class School < BaseGroup
     unless self.puavoNamePrefix.to_s =~ /^[a-z0-9-]*$/
       errors.add( :puavoNamePrefix, I18n.t("activeldap.errors.messages.school.invalid_characters",
                                            :attribute => I18n.t("activeldap.attributes.school.puavoNamePrefix")) )
+    end
+  end
+
+  # Validate the image, if set. Must be done, otherwise selecting a non-image file will cause an
+  # exception in ImageMagick later.
+  def validate_image
+    if self.image && !self.image.path.to_s.empty?
+      begin
+        resize_image
+      rescue
+        errors.add(:image, I18n.t('activeldap.errors.messages.image_failed'))
+      end
     end
   end
 

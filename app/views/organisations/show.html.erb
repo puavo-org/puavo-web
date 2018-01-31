@@ -1,3 +1,4 @@
+<h1><span><%= @organisation.o %></span></h1>
 <div class="content-box">
 <h3><%= t('.title') %></h3>
 <table>
@@ -54,19 +55,19 @@
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoTimezone" %></td>
-    <td class="value_td"><%=h humanize_timezone(@organisation.puavoTimezone) %></tr>
+    <td class="value_td"><%=h humanize_timezone(@organisation.puavoTimezone) %></td>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoKeyboardLayout" %></td>
-    <td class="value_td"><%=h @organisation.puavoKeyboardLayout %></tr>
+    <td class="value_td"><%=h @organisation.puavoKeyboardLayout %></td>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoKeyboardVariant" %></td>
-    <td class="value_td"><%=h @organisation.puavoKeyboardVariant %></tr>
+    <td class="value_td"><%=h @organisation.puavoKeyboardVariant %></td>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoAutomaticImageUpdates" %></td>
-    <td class="value_td"><%=h translate_boolean_value(@organisation.puavoAutomaticImageUpdates) %></tr>
+    <td class="value_td"><%=h translate_boolean_value(@organisation.puavoAutomaticImageUpdates) %></td>
   </tr>
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "eduOrgHomePageURI" %></td>
@@ -85,16 +86,6 @@
     <td class="value_td"><%=h multiple_value(@organisation.puavoImageSeriesSourceURL) %></td>
   </tr>
 
-<!--
-  <tr>
-    <td class="label_td view">< %= label "ldap_organisation", "puavoAllowGuest" %></td>
-    <td class="value_td">< %= translate_boolean_value(@organisation.puavoAllowGuest) %></td>
-  </tr>
-  <tr>
-    <td class="label_td view">< %= label "ldap_organisation", "puavoPersonalDevice" %></td>
-    <td class="value_td">< %= translate_boolean_value(@organisation.puavoPersonalDevice) %></td>
-  </tr>
--->
   <tr>
     <td class="label_td view"><%= label "ldap_organisation", "puavoBillingInfo" %></td>
     <td class="value_td">
@@ -107,7 +98,7 @@
 </div>
 <% content_for :right do %>
 <div>
-  <%= link_to edit_organisation_path, :class=>"btn" do%>
+  <%= link_to edit_organisation_path, class: "btn" do%>
   <i class="icon-pencil"></i> <%= t('link.edit')%>
   <% end %>
 </div>

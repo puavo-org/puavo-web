@@ -13,7 +13,7 @@ INSTALL_PROGRAM = $(INSTALL)
 build: symlink-config
 	git rev-parse HEAD > GIT_COMMIT
 	bundle install --deployment
-	npm install --registry http://registry.npmjs.org # nib for stylys
+	npm install --registry http://registry.npmjs.org
 	bundle exec rake assets:precompile
 	$(MAKE) tags
 	$(MAKE) js
@@ -23,7 +23,6 @@ update-gemfile-lock: clean
 	GEM_HOME=.tmpgem bundle install
 	rm -rf .tmpgem
 	bundle install --deployment
-
 
 clean-for-install:
 	# Remove testing gems
@@ -59,7 +58,6 @@ js-lint:
 js-clean:
 	rm -rf public/import_tool.js public/import_tool.js.map
 
-
 clean-deb:
 	rm -f ../puavo-*.tar.gz ../puavo-*.deb ../puavo-*.dsc ../puavo-*.changes
 
@@ -87,6 +85,7 @@ install: clean-for-install mkdirs
 		Makefile \
 		monkeypatches.rb \
 		package.json \
+		node_modules \
 		public \
 		Rakefile \
 		README.md \
@@ -100,6 +99,7 @@ install: clean-for-install mkdirs
 	cp -r rest/resources $(INSTALL_DIR)/rest
 	cp -r rest/views $(INSTALL_DIR)/rest
 	cp -r rest/public $(INSTALL_DIR)/rest
+	cp $(RAILS_CONFIG_DIR)/secrets.yml.example $(CONF_DIR)/secrets.yml
 	cp $(RAILS_CONFIG_DIR)/services.yml.example $(CONF_DIR)/services.yml
 	cp $(RAILS_CONFIG_DIR)/organisations.yml.development $(CONF_DIR)/organisations.yml
 	cp $(RAILS_CONFIG_DIR)/ldap.yml.development $(CONF_DIR)/ldap.yml
@@ -107,7 +107,6 @@ install: clean-for-install mkdirs
 	cp $(RAILS_CONFIG_DIR)/puavo_web.yml.development $(CONF_DIR)/puavo_web.yml
 	cp $(RAILS_CONFIG_DIR)/unicorn.rb.example $(CONF_DIR)/unicorn.rb
 	cp $(RAILS_CONFIG_DIR)/puavo_external_files.yml.example $(CONF_DIR)/puavo_external_files.yml
-
 
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-add-external-service
 	$(INSTALL_PROGRAM) -t $(DESTDIR)$(sbindir) script/puavo-web-prompt
@@ -119,7 +118,7 @@ symlink-config:
 	ln -sf /etc/puavo-web/puavo_web.yml config/puavo_web.yml
 	ln -sf /etc/puavo-web/puavo_external_files.yml config/puavo_external_files.yml
 	ln -sf /etc/puavo-web/redis.yml config/redis.yml
-	ln -sf /etc/puavo-web/secret_token.rb config/initializers/secret_token.rb
+	ln -sf /etc/puavo-web/secrets.yml config/secrets.yml
 	ln -sf /etc/puavo-web/services.yml config/services.yml
 	ln -sf /etc/puavo-web/unicorn.rb config/unicorn.rb
 
@@ -137,7 +136,7 @@ test-acceptance:
 .PHONY: test
 test: js-lint
 	bundle exec rspec --format documentation
-	bundle exec cucumber --color --tags ~@start_test_server
+	bundle exec cucumber --color --tags "not @start_test_server"
 	bundle exec cucumber --color --tags @start_test_server
 	bundle exec rails runner acl/runner.rb
 
@@ -145,7 +144,7 @@ seed:
 	bundle exec rails runner db/seeds.rb
 
 server:
-	bundle exec rails server
+	bundle exec rails server -b 0.0.0.0
 
 install-build-dep:
 	mk-build-deps --install debian.default/control \
@@ -154,4 +153,5 @@ install-build-dep:
 deb:
 	rm -rf debian
 	cp -a debian.default debian
+	dch --newversion "$$(cat VERSION)+build$$(date +%s)" "Built from $$(git rev-parse HEAD)"
 	dpkg-buildpackage -us -uc

@@ -23,7 +23,7 @@ Feature: Manage passwords
     And I fill in "user[new_password]" with "newbensecret"
     And I fill in "New password confirmation" with "newbensecret"
     And I press "Change password"
-    Then I should not see "Password change succesfully!"
+    Then I should not see "Password changed successfully!"
     And I should see "Invalid password or username (wrong)"
 
   Scenario: Change the password of another user with an incorrect password
@@ -33,7 +33,7 @@ Feature: Manage passwords
     And I fill in "user[new_password]" with "newbensecret"
     And I fill in "New password confirmation" with "newbensecret"
     And I press "Change password"
-    Then I should not see "Password change succesfully!"
+    Then I should not see "Password changed successfully!"
     And I should see "Invalid password or username (pavel)"
 
   Scenario: Change the password of another user with an incorrect password confirmation
@@ -43,8 +43,8 @@ Feature: Manage passwords
     And I fill in "user[new_password]" with "newbensecret"
     And I fill in "New password confirmation" with "confirmation test"
     And I press "Change password"
-    Then I should not see "Password change succesfully!"
-    And I should see "New password doesn't match confirmation"
+    Then I should not see "Password changed successfully!"
+    And I should see "Password doesn't match the confirmation"
 
   Scenario: Change to non-existent user password
     When I fill in "login[uid]" with "pavel"
@@ -62,7 +62,7 @@ Feature: Manage passwords
     And I fill in "user[new_password]" with "newbensecret"
     And I fill in "New password confirmation" with "newbensecret"
     And I press "Change password"
-    Then I should see "Password change succesfully!"
+    Then I should see "Password changed successfully!"
     And I should not login with "ben" and "bensecret"
     And I should login with "ben" and "newbensecret"
     
@@ -73,7 +73,7 @@ Feature: Manage passwords
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "New password confirmation" with "newpavelsecret"
     And I press "Change password"
-    Then I should see "Password change succesfully!"
+    Then I should see "Password changed successfully!"
     And I should not login with "pavel" and "pavelsecret"
     And I should login with "pavel" and "newpavelsecret"
 
@@ -84,7 +84,7 @@ Feature: Manage passwords
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "New password confirmation" with "newpavelsecret"
     And I press "Change password"
-    Then I should not see "Password change succesfully!"
+    Then I should not see "Password changed successfully!"
     And I should see "Invalid password or username (pavel)"
 
   Scenario: User to change their own password with an incorrect password confirmation
@@ -94,18 +94,18 @@ Feature: Manage passwords
     And I fill in "user[new_password]" with "newpavelsecret"
     And I fill in "New password confirmation" with "confirmation test"
     And I press "Change password"
-    Then I should not see "Password change succesfully!"
-    And I should see "New password doesn't match confirmation"
+    Then I should not see "Password changed successfully!"
+    And I should see "Password doesn't match the confirmation"
     And I should not login with "pavel" and "newpavelsecret"
     And I should login with "pavel" and "pavelsecret"
 
   Scenario: Forgot password
     Given mock password management service
     And I am on the forgot password page
-    Then I should see "Please enter your email address to get instructions"
+    Then I should see "Reset your password Please enter your email address to get reset instructions"
     When I fill in "Email" with "pavel@foobar.com"
     And I press "Continue"
-    Then I should see "We've sent you an email that will allow you to reset your password."
+    Then I should see "We've sent you an email that will let you reset your password."
 
 
   Scenario: Reset password by token url
@@ -132,4 +132,4 @@ Feature: Manage passwords
     When I fill in "Enter new password" with "foobar"
     And I fill in "Re-enter new password" with "barfoo"
     And I press "Reset password"
-    Then I should see "New password doesn't match confirmation"
+    Then I should see "Password doesn't match the confirmation"

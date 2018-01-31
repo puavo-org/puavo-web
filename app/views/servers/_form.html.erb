@@ -1,39 +1,28 @@
-<%= form_for(@server, :html => { :multipart => true }) do |f| %>
+<p class='required_info'><%= t('layouts.forms.required_field')%></p>
+<%= form_for(@server, url: server_path(@server), html: { multipart: true }) do |f| %>
 
-  <table>
   <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
-  </table>
-  <p>&nbsp;</p>
-  <table>
 
-    <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
+  <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
 
-  </table>
   <h2><%= t('.automounts') %></h2>
   <table>
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :puavoExport %></td>
+      <td class="label_for_input_text_list"><%= f.label :puavoExport, nil, for: "puavoExport0" %></td>
       <td>
 	<div id="server_puavoExport_list">
 	  <% if Array(@server.puavoExport).empty? %>
-	  <input name='server[puavoExport][]' size='30' type='text' />
+	  <input id='puavoExport0' name='server[puavoExport][]' size='30' type='text' />
 	  <% else %>
 	  <% Array(@server.puavoExport).each_index do |index| %>
-	  <input name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
+	  <input id='puavoExport<%= index %>' name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
 	  <% end %>
 	  <% end %>
 	</div>
-	<%= link_to "#", :class => "clone_prev_input_element btn" do %>
+	<%= link_to "#", class: "clone_prev_input_element btn" do %>
     <i class="icon-plus"></i><%= t('.add_puavoExport') %>
   <% end %>
   </td></tr>
-
-  <!--
-    <tr>
-      <td class="label_td"><%= f.label :puavoExport %></td>
-      <td><%= f.text_field :puavoExport %></td>
-    </tr>
--->
   </table>
 
   <h2><%= t('servers.school_limit.title') %></h2>
@@ -44,7 +33,7 @@
       <%= t('servers.school_limit.ltsp_description_edit') %>
     </p>
   <% else %>
-      <%= t('servers.school_limit.boot_description') %>
+    <p><%= t('servers.school_limit.boot_description') %></p>
   <% end %>
 
   <ul>
@@ -63,15 +52,12 @@
   <% end %>
   </ul>
 
-  <!-- <table> -->
-  <!-- </table> -->
-
   <table>
     <tr>
       <td></td>
       <td>
-        <%= f.submit submit_text %>
-        <div class="cancel"> <%=link_to t('cancel'), @server, :class => 'btn btn-danger' %> </div>
+        <%= f.submit submit_text, class: 'btn' %>
+        <div class="cancel"> <%=link_to t('cancel'), server_path(@server), class: 'btn btn-danger' %> </div>
       </td>
   </tr>
   </table>

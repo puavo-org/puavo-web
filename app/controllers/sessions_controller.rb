@@ -1,11 +1,11 @@
 class SessionsController < ApplicationController
   layout 'sessions'
-  skip_before_filter :require_puavo_authorization, :only => [ :new,
+  skip_before_action :require_puavo_authorization, :only => [ :new,
                                                               :create,
                                                               :logo,
                                                               :login_helpers,
                                                               :theme ]
-  skip_before_filter :require_login, :only => [ :new,
+  skip_before_action :require_login, :only => [ :new,
                                                 :create,
                                                 :logo,
                                                 :login_helpers,

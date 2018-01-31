@@ -1,7 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
    <meta name="viewport" content="width=device-width">
@@ -92,7 +90,7 @@
                   <% end %>
                   <% if current_user.organisation_owner? %>
                   <li class="add-new-school">
-                    <%= link_to new_school_path, :class => 'btn' do%>
+                    <%= link_to new_school_path, class: 'btn' do%>
                       <i class="icon-plus"></i><%= t('link.new_school') %>
                     <% end %>
                   </li>
@@ -104,16 +102,16 @@
           <li>
             <%= text_field_tag( "search",
                                     nil,
-                                    :class => "search",
-                                    :size => 30,
-                                    :placeholder => t('.search_placeholder') ) %>
+                                    class: "search",
+                                    size: 30,
+                                    placeholder: t('.search_placeholder') ) %>
           </li>
         </ul> <!-- topmenu-search  -->
         <ul class="menu topmenu-right">
-          <li><a href="#"><%= current_user.displayName %></a></li>
+          <li id="loggedInName"><a href="#"><%= current_user.displayName %></a></li>
           <li>
-            <%= link_to logout_path, :method => :delete, :class => "btn btn-danger" do%>
-              <%= t('.logout') %><i class='icon-logout'></i>
+            <%= link_to logout_path, method: :delete, class: "btn btn-danger" do%>
+             <i class='icon-logout'></i> <%= t('.logout') %>
             <% end %>
           </li>
         </ul>
@@ -131,7 +129,7 @@
     <% end %>
 
   <div class="maincontent clearfix">
-         <% if message_keys = flash.keys.select { |key| [:error, :notice, :success, :alert].include?(key) } %>
+         <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
       <% message_keys.each do |key| %>
       <p class="message_<%= key %>">
         <%= flash[key] %>

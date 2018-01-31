@@ -1,4 +1,4 @@
-PuavoUsers::Application.routes.draw do
+Rails.application.routes.draw do
 
   root :to => "schools#index"
 
@@ -45,7 +45,7 @@ PuavoUsers::Application.routes.draw do
     match 'schools/:id/add_school_admin/:user_id' => 'schools#add_school_admin', :as => :add_school_admin_school, :via => :put
     match 'schools/:id/remove_school_admin/:user_id' => 'schools#remove_school_admin', :as => :remove_school_admin_school, :via => :put
     match 'schools/:id/wlan' => 'schools#wlan', :as => :wlan_school, :via => :get
-    match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :wlan_update_school, :via => :put
+    match 'schools/:id/wlan_update' => 'schools#wlan_update', :as => :wlan_update_school, :via => :patch
     match 'schools/:id/external_services' => 'external_services#index', :as => :external_services_school, :via => :get
     resources :schools
 
@@ -53,8 +53,9 @@ PuavoUsers::Application.routes.draw do
       match "groups/:id/remove_user/:user_id" => "groups#remove_user", :as => "remove_user_group", :via => :put
       match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get
-      match 'groups/:id/members' => 'groups#members', :as => :add_role_group, :via => :get
+      put 'groups/:id/add_role/:role_id' => 'groups#add_role'
       match 'groups/:id/add_role/:role_id' => 'groups#add_role', :as => :add_role_group, :via => :put
+      get 'groups/:id/members' => 'groups#members'
       match 'groups/:id/delete_role/:role_id' => 'groups#delete_role', :as => :delete_role_group, :via => :put
       match 'users/:id/select_school' => 'users#select_school', :as => :select_school_user, :via => :get
       match 'users/:id/select_role' => 'users#select_role', :as => :select_role_user, :via => :post
@@ -78,16 +79,16 @@ PuavoUsers::Application.routes.draw do
     end
     resources :groups
 
-    match '/login' => 'sessions#new', :as => :login, :via => :get
-    match '/login' => 'sessions#create', :as => :login, :via => :post
+    get '/login' => 'sessions#new', :as => :login
+    post '/login' => 'sessions#create'
     match '/logout' => 'sessions#destroy', :as => :logout, :via => :delete
     match '/logo' => 'sessions#logo', :as => :logo, :via => :get, :format => :png
     match '/login/helpers' => 'sessions#login_helpers', :as => :login_helpers, :via => :get, :format => :js
     match '/login/theme' => 'sessions#theme', :as => :login_theme, :via => :get, :format => :css
 
     resources :sessions
-    match 'schools/:id/image' => 'schools#image', :as => :image_school, :via => :get
-    match '/' => 'schools#index'
+    get 'schools/:id/image' => 'schools#image', :as => :image_school
+    get '/' => 'schools#index'
     match ':school_id/users/import/refine' => 'users/import#refine', :as => :refine_users_import, :via => :post
     match ':school_id/users/import/validate' => 'users/import#validate', :as => :validate_users_import, :via => [:post]
     match ':school_id/users/import/new' => 'users/import#new', :as => :new_users_import, :via => :get
@@ -139,7 +140,7 @@ PuavoUsers::Application.routes.draw do
            :via => :get,
            :constraints => { jwt: /.+/ } )
 
-    match 'themes/:theme' => 'themes#set_theme', :as => :set_theme
+    get 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
 
     match 'owners' => 'organisations#owners', :as => :owners_organisation, :via => :get
@@ -147,20 +148,21 @@ PuavoUsers::Application.routes.draw do
     match 'add_owner/:user_id' => 'organisations#add_owner', :as => :add_owner_organisations, :via => :put
 
     match 'wlan' => 'organisations#wlan', :as => :wlan_organisation, :via => :get
-    match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :put
+    match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :patch
 
     resource :organisation, :only => [:show, :edit, :update]
-    match "search" => "users_search#index", :as => :search_index
+    get "search" => "users_search#index", :as => :search_index
     resource :profile, :only => [:edit, :update, :show]
-    match 'profile/image' => 'profiles#image', :as => :image_profile, :via => :get
+    get "profile/image" => "profiles#image", :as => :image_profile
   end
 
   scope :path => "devices" do
-    match '/' => 'schools#index'
+    get '/' => 'schools#index'
+
     match 'sessions/show' => 'api/v1/sessions#show', :via => :get
     resources :sessions
 
-    match 'hosts/types' => 'hosts#types'
+    get 'hosts/types' => 'hosts#types'
 
     scope :path => ':school_id' do
       match 'devices/:id/select_school' => 'devices#select_school', :as => 'select_school_device', :via => :get
@@ -193,7 +195,7 @@ PuavoUsers::Application.routes.draw do
 
     resources :printers, :except => [:show, :new]
 
-    match "search" => "devices_search#index"
+    get 'search' => 'devices_search#index'
 
     match '/auth' => 'sessions#auth', :via => :get
     
@@ -208,7 +210,8 @@ PuavoUsers::Application.routes.draw do
       end
     end
 
-  ["api/v2/", ""].each do |prefix|
+  ["", "api/v2/"].each do |prefix|
+    new_prefix = prefix.gsub("/", "_")
     match("#{ prefix }external_files" => "external_files#index", :via => :get)
     match("#{ prefix }external_files" => "external_files#upload", :via => :post)
     match(
@@ -216,15 +219,18 @@ PuavoUsers::Application.routes.draw do
       :name => /.+/,
       :format => false,
       :via => :get,
-      :as => "download_external_file"
+      :as => "#{new_prefix}download_external_file"
     )
     match(
       "#{ prefix }external_files/:name" => "external_files#destroy",
       :name => /.+/,
       :format => false,
       :via => :delete,
-      :as => "destroy_external_file"
+      :as => "#{new_prefix}destroy_external_file"
     )
   end
+
+  # https://stackoverflow.com/questions/12480497/why-am-i-getting-error-for-apple-touch-icon-precomposed-png
+  get '/:apple_touch_icon' => redirect('/empty.png'), constraints: { apple_touch_icon: /apple-touch-icon(-\d+x\d+)?(-precomposed)?\.png/ }
 
 end

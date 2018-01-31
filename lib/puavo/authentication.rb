@@ -108,6 +108,11 @@ module Puavo
 
     def configure_ldap_connection(credentials)
       credentials = credentials.dup
+
+      # Newer versions of activeldap fail with syntax errors if the UID field
+      # is empty. Ensure we got either the DN or username before continuing.
+      raise AuthenticationError, "username/dn is empty" if credentials[:dn].to_s.empty? and credentials[:uid].to_s.empty?
+
       if credentials[:dn]
         credentials[:dn] = ActiveLdap::DistinguishedName.parse(credentials[:dn])
       end

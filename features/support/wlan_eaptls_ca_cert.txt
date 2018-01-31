@@ -1,0 +1,1 @@
+This file is not a real ca-certificate, but a fake one.

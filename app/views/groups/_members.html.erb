@@ -2,10 +2,11 @@
   <% @members.each do |member| %>
   <div class="row">
     <div class="column_1">
-      <%= "#{ member.givenName } #{ member.sn} (#{ member.uid })" %>
+      <%= link_to member.displayName, user_path(@school, member) %>
+      <%= "(#{ member.uid })" %>
     </div>
     <div class="column_2">
-      <%= link_to(t('.remove'), remove_user_group_path(:school_id => member.school.id, :id => @group.puavoId, :user_id => member.puavoId), :remote => true, :method => :put, :class => "btn") %>
+      <%= link_to(t('.remove'), remove_user_group_path(school_id: member.school.id, id: @group.puavoId, :user_id => member.puavoId), remote: true, method: :put, class: "btn") %>
     </div>
   </div>
   <% end %>

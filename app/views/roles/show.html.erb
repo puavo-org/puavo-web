@@ -55,16 +55,16 @@
 <% end %>
 </li>
     <li>
-      <%= link_to role_path(@school, @role), :confirm => t('general_confirm'), :method => :delete do %>
+      <%= link_to role_path(@school, @role), data: { confirm: t('general_confirm') }, method: :delete do %>
       <i class="icon-trash"></i><%= t('link.destroy')%>
       <% end %>
     </li>
 <li>
   <%= link_to( remove_users_role_path(@school, @role),
-               :confirm => t('.confirm_destroy_users',
-                             :count => @role.members.count,
-                             :name => @role.displayName),
-               :method => :put ) do %>
+               data: { confirm: t('.confirm_destroy_users',
+                             count: @role.members.count,
+                             name: @role.displayName) },
+               method: :put ) do %>
   <i class="icon-trash"></i><%= t('.destroy_users')%>
   <% end %>
 </li>

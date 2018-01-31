@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe ExternalFile do
+describe ExternalFile, :type => :model do
   it "can save " do
     f = ExternalFile.new
     f.puavoData = "lol"

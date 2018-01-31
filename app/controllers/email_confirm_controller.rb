@@ -1,5 +1,5 @@
 class EmailConfirmController < ApplicationController
-  skip_before_filter  :find_school, :require_login, :require_puavo_authorization
+  skip_before_action  :find_school, :require_login, :require_puavo_authorization
   layout "password"
 
   # GET /users/email_confirm/:jwt
@@ -7,7 +7,8 @@ class EmailConfirmController < ApplicationController
     # validate jwt
 
     begin
-      @jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+      jwt_decode_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+      @jwt_data = jwt_decode_data[0] # jwt_decode_data is [payload, header]
 
       respond_to do |format|
         format.html
@@ -24,7 +25,8 @@ class EmailConfirmController < ApplicationController
   def confirm
     begin
 
-      jwt_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+      jwt_decode_data = JWT.decode(params[:jwt], Puavo::CONFIG["email_confirm_secret"])
+      jwt_data = jwt_decode_data[0] # jwt_decode_data is [payload, header]
 
       perform_login( :uid => jwt_data["username"],
                      :organisation_key => organisation_key_from_host(jwt_data["organisation_domain"]),

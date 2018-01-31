@@ -71,7 +71,7 @@ class SchoolsController < ApplicationController
   # POST /schools
   # POST /schools.xml
   def create
-    @school = School.new(params[:school])
+    @school = School.new(school_params)
 
     respond_to do |format|
       if @school.save
@@ -89,12 +89,13 @@ class SchoolsController < ApplicationController
   # PUT /schools/1
   # PUT /schools/1.xml
   def update
+
     @school = School.find(params[:id])
 
     respond_to do |format|
-      if @school.update_attributes(params[:school])
+      if @school.update_attributes(school_params)
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.school'))
-        format.html { redirect_to(@school) }
+        format.html { redirect_to(school_path(@school)) }
         format.xml  { head :ok }
       else
         flash[:alert] = t('flash.save_failed', :model => t('activeldap.models.school') )
@@ -110,7 +111,10 @@ class SchoolsController < ApplicationController
     @school = School.find(params[:id])
 
     respond_to do |format|
-      if @school.members.count > 0 || @school.roles.count > 0 || @school.groups.count > 0
+      if @school.members.count > 0 || @school.roles.count > 0 || @school.groups.count > 0 ||
+        @school.boot_servers.count > 0 ||
+        Device.find(:all, :attribute => "puavoSchool", :value => @school.dn).count > 0
+
         flash[:alert] = t('flash.school.destroyed_failed')
         format.html { redirect_to(school_path(@school)) }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
@@ -197,10 +201,7 @@ class SchoolsController < ApplicationController
   def wlan_update
     @school = School.find(params[:id])
 
-    @school.update_wlan_attributes( params[:wlan_name],
-                                    params[:wlan_type],
-                                    params[:wlan_password],
-                                    params[:wlan_ap])
+    @school.update_wlan_attributes(params)
     @school.puavoWlanChannel = params[:school][:puavoWlanChannel]
 
     respond_to do |format|
@@ -213,4 +214,48 @@ class SchoolsController < ApplicationController
       end
     end
   end
+
+  private
+    def school_params
+      s = params.require(:school).permit(
+        :displayName,
+        :cn,
+        :puavoNamePrefix,
+        :puavoSchoolHomePageURL,
+        :description,
+        :telephoneNumber,
+        :facsimileTelephoneNumber,
+        :l,
+        :street,
+        :postOfficeBox,
+        :postalAddress,
+        :postalCode,
+        :st,
+        :puavoLocale,
+        :image,
+        :puavoExternalId,
+        :puavoAllowGuest,
+        :puavoPersonalDevice,
+        :puavoAutomaticImageUpdates,
+        :puavoDeviceImage,
+        :external_feeds,
+        :puavoTag,
+        :puavoDeviceOnHour,
+        :puavoDeviceOffHour,
+        :puavoBillingInfo=>[],
+        :puavoImageSeriesSourceURL=>[],
+        :fs=>[],
+        :path=>[],
+        :mountpoint=>[],
+        :options=>[]
+      ).to_hash
+
+      # deduplicate arrays, as LDAP really does not like duplicate entries...
+      s["puavoTag"] = s["puavoTag"].split.uniq.join(' ') if s.key?("puavoTag")
+      s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
+      s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
+
+      return s
+    end
+
 end

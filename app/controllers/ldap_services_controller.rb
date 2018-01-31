@@ -43,12 +43,12 @@ class LdapServicesController < ApplicationController
   # POST /ldap_services
   # POST /ldap_services.xml
   def create
-    @ldap_service = LdapService.new(params[:ldap_service])
+    @ldap_service = LdapService.new(ldap_service_params)
     @system_groups = SystemGroup.all
 
     respond_to do |format|
       if @ldap_service.save
-        format.html { redirect_to( @ldap_service,
+        format.html { redirect_to( ldap_service_path(@ldap_service),
                                    :notice => t('flash.added',
                                                 :item => t('activeldap.models.ldap_service') ) ) }
         format.xml  { render :xml => @ldap_service, :status => :created, :location => @ldap_service }
@@ -74,8 +74,8 @@ class LdapServicesController < ApplicationController
     end
 
     respond_to do |format|
-      if @ldap_service.update_attributes(params[:ldap_service])
-        format.html { redirect_to( @ldap_service,
+      if @ldap_service.update_attributes(ldap_service_params)
+        format.html { redirect_to( ldap_service_path(@ldap_service),
                                    :notice => t('flash.updated',
                                                 :item => t('activeldap.models.ldap_service' ) ) ) }
         format.xml  { head :ok }
@@ -97,4 +97,10 @@ class LdapServicesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+    def ldap_service_params
+      return params.require(:ldap_service).permit(:uid, :description, :userPassword, :groups=>[]).to_hash
+    end
+
 end

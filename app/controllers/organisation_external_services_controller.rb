@@ -1,6 +1,6 @@
 class OrganisationExternalServicesController < ExternalServicesBase
 
-  before_filter do
+  before_action do
     @model = LdapOrganisation.current
   end
 

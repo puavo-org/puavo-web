@@ -15,6 +15,7 @@ Feature: Manage devices
       | fatclient-01  | 33:2d:2b:13:ce:a0 | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | fatclient-02  | a0:4e:68:94:a1:7b | fatclient       | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
       | laptop-01     | a0:4e:68:94:a1:7c | laptop          | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
+      | thin-01       | 11:22:33:aa:bb:cc | thinclient      | { "fs":"nfs3", "path":"10.0.0.1/share", "mountpoint":"/home/share" } |
 
   Scenario: Add new printer to Puavo
     Given I am on the new printer device page
@@ -78,3 +79,88 @@ Feature: Manage devices
     And I fill in "device[puavoImageSeriesSourceURL][]" with "http://foobar.opinsys.fi/trusty"
     And I press "Update"
     And I should see "http://foobar.opinsys.fi/trusty"
+
+  Scenario: Check for unique tags
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I fill in "Tags" with "tagA tagB"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see "tagA tagB"
+
+  Scenario: Check that duplicate tags are removed
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I fill in "Tags" with "tagA tagB tagB"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see "tagA tagB"
+
+  Scenario: Give the device an image
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I attach the file at "features/support/test.jpg" to "Image"
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+
+  Scenario: Give the device a non-image file as the image
+    Given I am on the devices list page
+    And I press "Edit" on the "laptop-01" row
+    And I attach the file at "features/support/hello.txt" to "Image"
+    And I press "Update"
+    Then I should see "Failed to save the image"
+
+  Scenario: Ensure invalid characters in the serial number field don't crash (part 1)
+    Given I am on the devices list page
+    And I press "Edit" on the "fatclient-01" row
+    And I fill in "Serial number" with "ääääää"
+    And I press "Update"
+    Then I should see "Serial number contains invalid characters"
+
+  Scenario: Ensure invalid characters in the serial number field don't crash (part 2)
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Serial number" with "ääääää"
+    And I press "Update"
+    Then I should see "Serial number contains invalid characters"
+
+  Scenario: Invalid primary user should not crash
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Device primary user" with "does not exist"
+    And I press "Update"
+    Then I should see "Device primary user is invalid"
+
+  Scenario: Poor man's script injection check
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Device manufacturer" with "<script>alert(456)</script>"
+    And I press "Update"
+    Then I should see "Device was successfully updated"
+    And I should see "<script>alert(456)</script>"
+
+  Scenario: Ensure Markdown and HTML stays escaped and uninterpreted
+    Given I am on the devices list page
+    And I press "Edit" on the "thin-01" row
+    And I fill in "Description" with:
+        """
+        <h1>TITLE</h1> <a href="#">foobar</a> <ul><li>foo</li><li>bar</li></ul>
+        # Header 1
+        ## Header 2
+        <img src="https://opinsys.fi/wp-content/uploads/2016/10/opinsys-logo.png"> _Markdown_ **is not always** cool. <script>alert(123)</script>
+        """
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see:
+        """
+        <h1>TITLE</h1> <a href="#">foobar</a> <ul><li>foo</li><li>bar</li></ul> # Header 1 ## Header 2 <img src="https://opinsys.fi/wp-content/uploads/2016/10/opinsys-logo.png"> _Markdown_ **is not always** cool. <script>alert(123)</script>
+        """
+
+  Scenario: Empty new device page should not cause crashes
+    Given I am on the new other device page
+    And I press "Create"
+    Then I should see "Hostname can't be blank"
+
+  Scenario: Device page of a non-existent school
+    Given I am on the device page of a non-existent school
+    Then I should see "The school ID is invalid."

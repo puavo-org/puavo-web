@@ -1,5 +1,5 @@
 <h2><%= t('.title') %></h2>
-<%= form_for("role", :url => select_role_role_path(@school))  do |f| %>
+<%= form_for("role", :url => select_role_role_path(@school, @role))  do |f| %>
 <table>
   <tr>
 	<td>
@@ -10,7 +10,7 @@
 	</td>
   </tr>
   <tr><td></td>
-  <td><%= f.submit t('.submit') %></td>
+  <td><%= f.submit t('.submit'), class: 'btn' %></td>
   </tr>
 </table>
 <% end %>

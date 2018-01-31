@@ -78,7 +78,7 @@ class ImportWorker
       :redis => REDIS_CONNECTION
     )
 
-    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
+    cipher = Gibberish::AES::CBC.new(Rails.application.secrets.secret_key_base)
 
     flog = FLOG.merge(
       :organisation_key => organisation_key,
@@ -130,12 +130,15 @@ class ImportWorker
 
     User.reserved_uids = []
 
-    users.each do |user, i|
+    index = 1
+
+    users.each do |user|
+      db.set("status", "importing user #{ index }/#{ users.size }")
+
       if user.puavoId.nil?
         user.puavoId = puavo_ids[id_index]
         id_index += 1
       end
-      db.set("status", "working #{ i }/#{ users.size }")
 
       # If user existed already just copy the attributes from the new unsaved
       # user object to the existing one
@@ -163,24 +166,26 @@ class ImportWorker
         })
       end
 
+      index += 1
     end
-    db.set("status", "rendering pdf")
 
     users.each{ |u| u.roles.reload }
 
     log_msg = { :user_count => users.size }
 
+    db.set("status", "rendering the PDF")
+
     users_pdf = UsersPdf.new(organisation, school, create_timestamp)
     users_pdf.add_users(ok_users)
+
+    encrypted_pdf = cipher.enc(users_pdf.render())
+    db.set("pdf", encrypted_pdf)
 
     if not failed_users.empty?
       db.set("failed_users", failed_users.to_json)
       log_msg[:failed_users] = failed_users
     end
 
-    encrypted_pdf = cipher.enc(users_pdf.render())
-
-    db.set("pdf", encrypted_pdf)
     db.set("status", "finished")
 
     flog.info "import finished", log_msg.merge(

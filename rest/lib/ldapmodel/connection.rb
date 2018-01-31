@@ -4,13 +4,13 @@ Syslog.open("puavo-rest(slapd)", Syslog::LOG_PID, Syslog::LOG_DAEMON | Syslog::L
 # Connection management
 class LdapModel
 
-  class LdapHashError < Exception; end
+  class LdapHashError < StandardError; end
 
   KRB_LOCK = Mutex.new
 
   # Do LDAP sasl bind with a kerberos ticket
   def self.sasl_bind(ticket)
-    conn = LDAP::Conn.new(CONFIG["ldap"])
+    conn = LDAP::Conn.new(ldap_server)
     conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     conn.sasl_quiet = true
     conn.start_tls
@@ -43,7 +43,7 @@ class LdapModel
   # @param dn [String]
   # @param password [String]
   def self.dn_bind(dn, pw)
-    conn = LDAP::Conn.new(CONFIG["ldap"])
+    conn = LDAP::Conn.new(ldap_server)
     conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
     conn.start_tls
     conn.bind(dn, pw)
@@ -149,11 +149,21 @@ class LdapModel
     end
   end
 
-  def self.clear_setup
+  # Get configured ldap server
+  # @return String
+  def self.ldap_server
+    settings[:ldap_server] || CONFIG['ldap']
+  end
+
+  def self.disconnect
     if settings[:credentials_cache] && settings[:credentials_cache][:current_connection]
       settings[:credentials_cache][:current_connection].unbind()
     end
+    settings[:credentials_cache][:current_connection] = nil
+  end
 
+  def self.clear_setup
+    disconnect()
     self.settings = nil
   end
 
@@ -182,7 +192,7 @@ class LdapModel
 
     begin
       res = connection.send(method, *args, &block)
-    rescue Exception => _err
+    rescue StandardError => _err
       err = _err
 
       # not really an error. Just convert to nil response

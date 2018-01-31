@@ -198,7 +198,7 @@ class LtspServers < PuavoSinatra
   get "/v3/ltsp_servers/_most_idle" do
     auth :basic_auth, :server_auth, :legacy_server_auth
 
-    logger.warn "DEPRECATED!! Call to legacy _most_idle route. Use POST /v3/sessions !"
+    flog.warn('deprecated request', 'DEPRECATED!!  Call to legacy _most_idle route.  Use POST /v3/sessions !')
     filtered = ServerFilter.new(LtspServer.all_with_state)
     filtered.filter_old
     filtered.filter_has_state
@@ -206,9 +206,9 @@ class LtspServers < PuavoSinatra
     server = filtered.first
 
     if server
-      logger.info "Sending '#{ server["hostname"] }' as the most idle server to #{ request.ip }"
+      flog.info('sending most idle server', "sending '#{ server["hostname"] }' as the most idle server to #{ request.ip }")
     else
-      logger.warn "Cannot find any ltsp servers..."
+      flog.warn('cannot find any ltsp servers', 'cannot find any ltsp servers')
       halt 400, json(:error => "cannot find any ltsp servers...")
     end
 
@@ -241,7 +241,7 @@ class LtspServers < PuavoSinatra
     state = {}
 
     if params["cpu_count"] && params["cpu_count"].to_i == 0
-      logger.fatal "Invalid cpu count '#{ params["cpu_count"] }' for '#{ params["fqdn"] }'"
+      flog.error('bad cpu count', "invalid cpu count '#{ params["cpu_count"] }' for '#{ params["fqdn"] }'")
       raise BadInput, :user => "0 cpu_count makes no sense"
     end
 
@@ -251,13 +251,15 @@ class LtspServers < PuavoSinatra
       state["load_avg"] = params["load_avg"].to_f
     end
 
-    flog.info("ltsp server load", {
-      :fqdn => params["fqdn"],
-      :cpu_count => params["cpu_count"].to_i,
-      :image => params["ltsp_image"],
-      :load_avg => params["load_avg"].to_f,
-      :load_avg_relative => state["load_avg"],
-    })
+    flog.info('ltsp server load',
+              "ltsp server load #{ state['load_avg'] }",
+              {
+		:fqdn => params["fqdn"],
+		:cpu_count => params["cpu_count"].to_i,
+		:image => params["ltsp_image"],
+		:load_avg => params["load_avg"].to_f,
+		:load_avg_relative => state["load_avg"],
+	      })
 
     state["ltsp_image"] = params["ltsp_image"]
     state["fqdn"] = params["fqdn"]

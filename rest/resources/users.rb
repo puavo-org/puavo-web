@@ -133,15 +133,6 @@ class User < LdapModel
       add_validation_error(:school_dns, :must_have_school, "no schools are set")
     end
 
-    if new? && school
-      home = "/home/#{ school.abbreviation }/#{ username }"
-      if User.by_attr(:home_directory, home)
-        add_validation_error(:username, :bad_home_directoy, "Home directory (#{ home }) if already in use for this username")
-      else
-        write_raw(:homeDirectory, transform(:home_directory, :write, home))
-      end
-    end
-
     if !telephone_number.nil? && !telephone_number.match(/^[A-Za-z[:digit:][:space:]'()+,-.\/:?"]+$/)
       add_validation_error(:telephone_number, :telephone_number_invalid,
                            "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
@@ -251,9 +242,18 @@ class User < LdapModel
     write_raw(:telephoneNumber, transform(:telephone_number, :write, value))
   end
 
+  # Fix the gid number when moving user to another school
+  def school_dns=(_dn)
+    write_raw(:puavoSchool, Array(_dn))
+    write_raw(:gidNumber, Array(School.by_dn(Array(_dn)[0]).gid_number.to_s))
+  end
+
   def username=(_username)
     write_raw(:uid, Array(_username))
     write_raw(:cn, Array(_username))
+
+    # Initial home directory in the "new" format
+    write_raw(:homeDirectory, Array("/home/#{username}"))
   end
 
   def email=(_email)
@@ -577,6 +577,42 @@ class User < LdapModel
     end
   end
 
+  def check_if_changed_attributes(new_userinfo)
+    old_userinfo = self.to_hash
+       
+    new_userinfo.each do |attribute, new_value|
+      if attribute == 'password' then
+        begin
+          conn = LdapModel.dn_bind(self.dn, new_userinfo['password'])
+          conn.unbind
+        rescue LDAP::ResultError => e
+          # XXX how to check for Net::LDAP::ResultCodeInvalidCredentials
+          # XXX instead of checking for the human readable message?
+          if e.message == 'Invalid credentials' then
+            # password has changed
+            return true
+          end
+          raise e
+        end
+
+        next
+      end
+
+      # "roles"-attribute needs special handling because of role/group changes
+      if attribute == 'roles' && !old_userinfo.has_key?('roles') then
+        old_value = [ old_userinfo['user_type'] ]
+      else
+        old_value = old_userinfo[attribute]
+      end
+
+      if old_value != new_value then
+        return true
+      end
+    end
+
+    return false
+  end
+
   private
 
   # Add this user to the given school. Private method. This is used on {#save!}
@@ -606,7 +642,6 @@ class User < LdapModel
     end
     school.save!
   end
-
 
   # Write internal samba attributes. Implementation is based on the puavo-web
   # code is not actually tested on production systems

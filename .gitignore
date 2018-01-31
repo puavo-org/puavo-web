@@ -25,9 +25,14 @@ config/organisations.yml
 config/puavo_devices.yml
 config/puavo_external_files.yml
 config/services.yml
+config/secrets.yml
 node_modules/
 public/assets/
+public/import_tool.js
+public/import_tool.js.map
+public/javascripts/
 vendor/bundle/
+build/
 
 GIT_COMMIT
 debian/
@@ -38,3 +43,8 @@ rest/tags
 config/resque_worker_private_key
 config/resque_worker_public_key
 
+.byebug_history
+greenletters.log
+config/puavo_web.yml
+config/redis.yml
+config/unicorn.rb

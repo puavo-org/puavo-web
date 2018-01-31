@@ -23,7 +23,7 @@ class User < LdapBase
   belongs_to :roles, :class_name => 'Role', :many => 'member', :primary_key => "dn"
   belongs_to :uidRoles, :class_name => 'Role', :many => 'memberUid', :primary_key => "uid"
 
-  before_validation :set_special_ldap_value, :resize_image
+  before_validation :set_special_ldap_value
 
   before_save :is_uid_changed, :set_preferred_language
 
@@ -163,8 +163,24 @@ class User < LdapBase
     #
     # Password confirmation
     if !self.new_password_confirmation.nil? && self.new_password != self.new_password_confirmation
-      errors.add( :new_password, I18n.t("activeldap.errors.messages.confirmation",
+      errors.add( :new_password_confirmation, I18n.t("activeldap.errors.messages.confirmation",
                                         :attribute => I18n.t("activeldap.attributes.user.new_password")) )
+    end
+
+    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty?
+      # If G Suite integration is enabled, ensure Google accepts the password. Their
+      # password restrictions are weird, almost as if they store them in plaintext...
+      url = external_pw_mgmt_url
+
+      if !url.nil? && !url.empty? && external_pw_mgmt_role == "student"
+        if self.new_password.size < 8
+          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_too_short"))
+        elsif self.new_password[0] == ' ' || self.new_password[-1] == ' '
+          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_whitespace"))
+        elsif !self.new_password.ascii_only?
+          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_ascii_only"))
+        end
+      end
     end
 
     # Validates length of uid
@@ -181,16 +197,21 @@ class User < LdapBase
     # Format of uid, default configuration:
     #   * allowed characters is a-z0-9.-
     #   * uid must begin with the small letter
-    allow_upprecase_characters_uid = Puavo::Organisation.
+    allow_uppercase_characters_uid = Puavo::Organisation.
       find(LdapOrganisation.current.cn).
       value_by_key("allow_uppercase_characters_uid").
       to_s.chomp == "true" ? true : false rescue false
 
-    unless self.uid.to_s =~ ( allow_upprecase_characters_uid ? /^[a-zA-Z]/ : /^[a-z]/ )
+    usernameFailed = false
+
+    unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z]/ : /^[a-z]/ )
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.must_begin_with") )
+      usernameFailed = true
     end
-    unless self.uid.to_s =~ ( allow_upprecase_characters_uid ? /^[a-zA-Z0-9.-]+$/ : /^[a-z0-9.-]+$/ )
+
+    unless self.uid.to_s =~ ( allow_uppercase_characters_uid ? /^[a-zA-Z0-9.-]+$/ : /^[a-z0-9.-]+$/ )
       errors.add( :uid, I18n.t("activeldap.errors.messages.user.invalid_characters") )
+      usernameFailed = true
     end
 
     # Role validation
@@ -240,8 +261,23 @@ class User < LdapBase
       end
     end
 
+    # Validate the image, if set. Must be done here, because if the file is not a valid image file,
+    # it will cause an exception in ImageMagick.
+    if self.image && !self.image.path.to_s.empty?
+      begin
+        resize_image
+      rescue
+        errors.add(:image, I18n.t('activeldap.errors.messages.image_failed'))
+      end
+    end
+
+    # If the username failed validation, stop here. Older versions if the LDAP library allowed invalid characters
+    # in the username and the user was returned to the form, but in newer versions the LDAP query fails. So force
+    # stop here if the username isn't valid.
+    return false if usernameFailed
+
     # Validate uid uniqueness only if there are no other errors in the uid
-    if errors.select{ |k,v| k == "uid" }.empty?
+    if !self.uid.nil? && !self.uid.empty? && errors.select{ |k,v| k == "uid" }.empty?
       if user = User.find(:first, :attribute => "uid", :value => self.uid)
         if user.puavoId != self.puavoId
           self.earlier_user = user
@@ -252,7 +288,7 @@ class User < LdapBase
     end
 
     # Unique validation for puavoExternalId
-    if !self.puavoExternalId.nil? && puavoExternalId.empty?
+    if !self.puavoExternalId.nil? && !self.puavoExternalId.empty?
       if user = User.find(:first, :attribute => "puavoExternalId", :value => self.puavoExternalId)
         if user.puavoId != self.puavoId
           errors.add :puavoExternalId, I18n.t("activeldap.errors.messages.taken",
@@ -269,7 +305,23 @@ class User < LdapBase
       end
     end
 
-    if self.mail
+    emailFailed = false
+
+    if !self.mail.nil? && !self.mail.empty?
+      Array(self.mail).each do |m|
+        # There are (supposedly) checks that validate email addresses... but they don't
+        # seem to work. So... just brute-force it.
+        # Regex taken from https://www.regular-expressions.info/email.html
+        if !m.empty? && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.match(m)
+          emailFailed = true
+        end
+      end
+
+      if emailFailed
+        errors.add(:mail, I18n.t('activeldap.errors.messages.email_not_valid'))
+        return false
+      end
+
       email_dup = User.find(:first, :attribute => "mail", :value => self.mail)
       if email_dup && email_dup.puavoId != self.puavoId
         errors.add(
@@ -281,19 +333,25 @@ class User < LdapBase
         )
       end
     end
-
   end
 
   def change_ldap_password
     unless new_password.nil? || new_password.empty?
       ldap_conf = User.configuration
 
+      url = external_pw_mgmt_url
+
+      if !external_pw_mgmt_role.nil? && !self.puavoEduPersonAffiliation.include?(external_pw_mgmt_role)
+        url = nil
+      end
+
       res = Puavo.ldap_passwd(
         ldap_conf[:host],
         ldap_conf[:bind_dn],
         ldap_conf[:password],
         new_password,
-        self.dn.to_s
+        self.dn.to_s,
+        url
       )
       FLOG.info "ldappasswd call", res.merge(
         :from => "user model",
@@ -619,7 +677,7 @@ class User < LdapBase
   def set_special_ldap_value
     self.displayName = self.givenName + " " + self.sn
     self.cn = self.uid
-    self.homeDirectory = "/home/" + self.school.cn + "/" + self.uid unless self.uid.nil?
+    self.homeDirectory = "/home/" + self.uid unless self.uid.nil?
     self.gidNumber = self.school.gidNumber unless self.puavoSchool.nil?
     set_uid_number if self.uidNumber.nil?
     self.puavoId = IdPool.next_puavo_id if self.puavoId.nil?

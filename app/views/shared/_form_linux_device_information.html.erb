@@ -1,4 +1,5 @@
-<h2><span><span><%= title(f.object) %></span></h2>
+<h2><%= title(f.object) %></h2>
+
 <table>
   <tr>
     <td class="label_td"><%= f.label :puavoDeviceManufacturer %></td>
@@ -15,7 +16,7 @@
 
   <% if (f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice')) || current_user.organisation_owner? %>
   <tr>
-    <td class="label_td"><%= f.label :macAddress %></td>
+    <td class="label_td"><%= f.label :macAddress, nil, for: "macAddress0" %></td>
     <td>
       <%= multiple_text_field(f.object, "macAddress", t('shared.add_macAddress')) %>
     </td>
@@ -94,12 +95,12 @@
 
   <tr>
     <td class="label_td"><%= f.label :description %></td>
-    <td><%= f.text_area :description %></td>
+    <td><%= f.text_area :description, cols: 40, rows: 20 %></td>
   </tr>
 </table>
 
 <% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
-<h2><span><%= t('shared.autopoweroff') %></span></h2>
+<h2><%= t('shared.autopoweroff') %></h2>
 <table id="autopoweroff">
 
   <%= render( :partial => 'shared/form_auto_power_off_settings',
@@ -110,7 +111,7 @@
 
 <%= render :partial => 'shared/form_purchase_information', :locals => { :f => f } %>
 
-<h2><span><%= t('shared.location') %></span></h2>
+<h2><%= t('shared.location') %></h2>
 
 <table>
   <tr>
@@ -125,11 +126,11 @@
     <td class="label_td"><%= f.label :puavoLongitude %></td>
     <td><%= f.text_field :puavoLongitude %></td>
   </tr>
-
-  <% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
 </table>
 
-<h2><span><%= t('shared.display_settings') %></span></h2>
+  <% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
+
+<h2><%= t('shared.display_settings') %></h2>
 <table>
   <tr>
     <td class="label_td"><%= f.label :puavoDeviceXserver %></td>
@@ -137,19 +138,19 @@
 </tr>
 
 <tr>
-  <td class="label_td label_for_input_text_list"><%= f.label :puavoDeviceXrandr %></td>
+  <td class="label_td label_for_input_text_list"><%= f.label :puavoDeviceXrandr, nil, for: "xrandr0" %></td>
   <td>
     <div id="device_puavoDeviceXrandr">
       <% if f.object.puavoDeviceXrandr.nil? %>
-      <input name='device[puavoDeviceXrandr][]'  type='text' />
+      <input id='xrandr0' name='device[puavoDeviceXrandr][]'  type='text' />
       <% else %>
       <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
-      <input name='device[puavoDeviceXrandr][]'  type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
+      <input id='xrandr<%= index %>' name='device[puavoDeviceXrandr][]'  type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
       <% end %>
       <% end %>
     </div>
-    <%= link_to "#", :class => "clone_prev_input_element btn" do %>
-    <i class="icon-plus"></i><%= t('.shared.add_puavoDeviceXrandr') %>
+    <%= link_to "#", class: "clone_prev_input_element btn" do %>
+    <i class="icon-plus"></i><%= t('shared.add_puavoDeviceXrandr') %>
     <% end %>
   </td>
 </tr>
@@ -176,7 +177,7 @@
 
 </table>
 
-<h2><span><%= t('shared.kernel_settings') %></span></h2>
+<h2><%= t('shared.kernel_settings') %></h2>
 <table>
   <% if ["thinclient",
          "fatclient",
@@ -198,7 +199,7 @@
   <tr>
     <td><%= f.label :puavoPreferredServer %></td>
     <td><%= f.select( :puavoPreferredServer,
-            [[t('.select'), ""]] + @servers ) %></td>
+            [[t('.select'), ""]] + Array(@servers) ) %></td>
   </tr>
     <% end %>
   <% end %>
@@ -206,7 +207,7 @@
   <% if current_user.organisation_owner? %>
   <tr>
     <td>
-      <%= f.label :puavoImageSeriesSourceURL %>
+      <%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %>
     </td>
     <td>
       <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
@@ -227,27 +228,23 @@
 
   <% if ["thinclient", "fatclient", "laptop"].include?(f.object.puavoDeviceType) %>
 
-<h2><%= t('.printer_title') %></h2>
+<h2><%= t('shared.printers_title') %></h2>
 
-<table>
-<p><%= t('.printer_description') %></p>
-
+<% if @school_printers.empty? %>
+  <p><%= t('shared.no_printers_for_this_device') %></p>
+<% else %>
   <ul>
-    <% @school_printers.each do |printer| %>
+  <% @school_printers.each do |printer| %>
     <li>
       <label>
-	<%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
-	<%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
-
-	<%= link_to(
-            printer[:object].printerDescription,
-            edit_printer_permission_path(@school, printer[:object])
-	    ) %>
+        <%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
+        <%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
+        <%= link_to( printer[:object].printerDescription, edit_printer_permission_path(@school, printer[:object])) %>
       </label>
     </li>
-    <% end %>
+  <% end %>
   </ul>
-</table>
+<% end %>
 
   <% end %>
 

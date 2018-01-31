@@ -6,7 +6,7 @@ Feature: Devices registration
   @start_test_server
   Scenario: Register new fatclient
     Given process activity is logged to "greenletters.log"
-    Given a process "puavo-register" from command "fakeroot puavo-register --puavoserver http://127.0.0.1:37634 --nocolor"
+    Given a process "puavo-register" from command "fakeroot --lib /usr/lib/x86_64-linux-gnu/libfakeroot/libfakeroot-sysv.so /usr/sbin/puavo-register --puavoserver http://127.0.0.1:37634 --nocolor --force"
     When I execute the process "puavo-register"
     Then I should see the following output from process "puavo-register":
     """

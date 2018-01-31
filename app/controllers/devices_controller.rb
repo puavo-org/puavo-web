@@ -1,5 +1,5 @@
 class DevicesController < ApplicationController
-  before_filter :find_school
+  before_action :find_school
 
   # GET /devices
   # GET /devices.xml
@@ -64,6 +64,13 @@ class DevicesController < ApplicationController
   # GET /devices/new.xml
   # GET /devices/new.json
   def new
+    # validate the device type before doing anything else
+    if !Puavo::CONFIG["device_types"].has_key?(params[:device_type])
+      flash[:error] = t('flash.unknown_device_type')
+      redirect_to devices_url
+      return
+    end
+
     @device = Device.new
     @device_type_label = Puavo::CONFIG['device_types'][params[:device_type]]['label'][I18n.locale.to_s]
 
@@ -111,10 +118,24 @@ class DevicesController < ApplicationController
   def create
     device_objectClass = params[:device][:classes]
     params[:device].delete(:classes)
-    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
-    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
-    @device = Device.new( { :objectClass => device_objectClass }.merge( params[:device] ))
+
+    dp = device_params
+    handle_date_multiparameter_attribute(dp, "puavoPurchaseDate")
+    handle_date_multiparameter_attribute(dp, "puavoWarrantyEndDate")
+    dp[:objectClass] = device_objectClass
+    @device = Device.new(dp)
     @device.puavoSchool = @school.dn
+
+    # @device_type_label is used in the form title. It is set correctly on the first time
+    # the form is opened, but if the (new) device cannot be saved, the title gets lost.
+    # Re-set it and do some rudimentary error checking.
+    begin
+      @device_type_label = Puavo::CONFIG['device_types'][params[:device][:puavoDeviceType]] \
+        ['label'][I18n.locale.to_s]
+    rescue
+      # I'm pretty sure this cannot happen, but...
+      @device_type_label = "???"
+    end
 
     if @device.valid?
       unless @device.host_certificate_request.nil?
@@ -125,7 +146,7 @@ class DevicesController < ApplicationController
 
     respond_to do |format|
       if @device.save
-        format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully created.') }
+        format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_created')) }
         format.xml  { render :xml => @device, :status => :created, :location => device_path(@school, @device) }
         format.json  { render :json => @device, :status => :created, :location => device_path(@school, @device) }
       else
@@ -150,14 +171,15 @@ class DevicesController < ApplicationController
     end
     @device.save!
 
-    handle_date_multiparameter_attribute(params[:device], :puavoPurchaseDate)
-    handle_date_multiparameter_attribute(params[:device], :puavoWarrantyEndDate)
+    dp = device_params
+    handle_date_multiparameter_attribute(dp, "puavoPurchaseDate")
+    handle_date_multiparameter_attribute(dp, "puavoWarrantyEndDate")
 
     @school_printers = school_printers
 
     respond_to do |format|
-      if @device.update_attributes(params[:device])
-        format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully updated.') }
+      if @device.update_attributes(dp)
+        format.html { redirect_to(device_path(@school, @device), :notice => t('flash.device_updated')) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -190,7 +212,7 @@ class DevicesController < ApplicationController
     @device.userPassword = nil
 
     respond_to do |format|
-      format.html { redirect_to(device_path(@school, @device), :notice => 'Device was successfully set to install mode.') }
+      format.html { redirect_to(device_path(@school, @device), :notice => t('flash.set_install_mode')) }
     end
   end
 
@@ -221,7 +243,12 @@ class DevicesController < ApplicationController
 
   def find_school
     if params[:school_id]
-      @school = School.find(params[:school_id])
+      begin
+        @school = School.find(params[:school_id])
+      rescue ActiveLdap::EntryNotFound
+        flash[:error] = t('flash.invalid_school_id')
+        redirect_to "/"
+      end
     end
   end
 
@@ -263,6 +290,75 @@ class DevicesController < ApplicationController
                              :object => printer })
     end
     return school_printers
+  end
+
+  def device_params
+    p = params.require(:device).permit(
+      :devicetype,                # these are...
+      :school,                    # ...used during...
+      :host_certificate_request,  # ...device registration
+      :puavoDeviceType,
+      :puavoHostname,
+      :puavoTag,
+      :puavoDeviceStatus,
+      :image,
+      :puavoDeviceManufacturer,
+      :puavoDeviceModel,
+      :serialNumber,
+      :primary_user_uid,
+      :puavoDeviceBootMode,
+      :puavoDeviceDefaultAudioSource,
+      :puavoDeviceDefaultAudioSink,
+      :puavoAllowGuest,
+      :puavoPersonalDevice,
+      :puavoAutomaticImageUpdates,
+      :puavoPersonallyAdministered,
+      :ipHostNumber,
+      :description,
+      :puavoDeviceAutoPowerOffMode,
+      :puavoDeviceOnHour,
+      :puavoDeviceOffHour,
+      :puavoPurchaseDate,
+      :puavoWarrantyEndDate,
+      :puavoPurchaseLocation,
+      :puavoPurchaseURL,
+      :puavoSupportContract,
+      :puavoLocationName,
+      :puavoLatitude,
+      :puavoLongitude,
+      :puavoDeviceXserver,
+      :puavoDeviceXrandrDisable,
+      :puavoDeviceResolution,
+      :puavoDeviceHorzSync,
+      :puavoDeviceVertRefresh,
+      :puavoDeviceImage,
+      :puavoDeviceBootImage,
+      :puavoPreferredServer,
+      :puavoDeviceKernelVersion,
+      :puavoDeviceKernelArguments,
+      :puavoPrinterDeviceURI,
+      :puavoPrinterPPD,
+      :puavoDefaultPrinter,
+      :printerDescription,
+      :printerURI,
+      :printerLocation,
+      :printerMakeAndModel,
+      :puavoPrinterCartridge,
+      :macAddress=>[],
+      :puavoDeviceXrandr=>[],
+      :puavoImageSeriesSourceURL=>[],
+      :fs=>[],
+      :path=>[],
+      :mountpoint=>[],
+      :options=>[]).to_hash
+
+    # deduplicate arrays, as LDAP really does not like duplicate entries...
+    p["puavoTag"] = p["puavoTag"].split.uniq.join(' ') if p.key?("puavoTag")
+    p["macAddress"].uniq! if p.key?("macAddress")
+    p["puavoDeviceXrandr"].uniq! if p.key?("puavoDeviceXrandr")
+    p["puavoImageSeriesSourceURL"].uniq! if p.key?("puavoImageSeriesSourceURL")
+
+    return p
   end
 
 end

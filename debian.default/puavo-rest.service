@@ -1,0 +1,33 @@
+# puavo-rest service file.
+# Converted from the old puavo-rest.upstart script.
+
+[Unit]
+Description=puavo-rest in production mode
+After=network-online.target
+
+[Service]
+Type=simple
+PermissionsStartOnly=true
+User=puavo
+Group=puavo
+WorkingDirectory=/var/app/puavo-rest
+LimitNOFILE=65536
+Environment="RACK_ENV=production"
+ExecStartPre=/bin/mkdir -p /run/puavo-rest
+ExecStartPre=/bin/chown puavo:puavo /run/puavo-rest
+
+# ruby-uuid creates /tmp/ruby-uuid file and it breaks puavo-rest if it is
+# owned by some other user.  This can happen when puavo-rest is run by
+# a development user.
+ExecStartPre=/bin/sh -c "chown puavo:puavo /tmp/ruby-uuid || true"
+
+ExecStart=/bin/sh -c "bundle exec puma --workers 4 --port 9292"
+Restart=on-abnormal
+RestartSec=30s
+# /usr, /boot and /etc will be read-only
+ProtectSystem=full
+# /home, /root and /run/user will be inaccessible
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

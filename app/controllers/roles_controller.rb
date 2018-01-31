@@ -47,7 +47,7 @@ class RolesController < ApplicationController
   # POST /:school_id/roles
   # POST /:school_id/roles.xml
   def create
-    @role = Role.new(params[:role])
+    @role = Role.new(role_params)
 
     @role.puavoSchool = @school.dn
     respond_to do |format|
@@ -69,7 +69,7 @@ class RolesController < ApplicationController
     @role = Role.find(params[:id])
 
     respond_to do |format|
-      if @role.update_attributes(params[:role])
+      if @role.update_attributes(role_params)
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.role'))
         format.html { redirect_to( role_path(@school, @role) ) }
         format.xml  { head :ok }
@@ -176,5 +176,10 @@ class RolesController < ApplicationController
       end
     end
   end
+
+  private
+    def role_params
+      return params.require(:role).permit(:displayName).to_hash
+    end
 
 end

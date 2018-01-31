@@ -44,8 +44,8 @@ Feature: Manage users
     | user[telephoneNumber][]   | +35814123123123       |
     | user[new_password]        | secretpw              |
     | New password confirmation | secretpw              |
-    | Personel Number           | 556677                |
-    | SSH public key            | ssh-rsa foobar        |
+    | Personnel Number          | 556677                |
+    | SSH public key            | ssh-rsa Zm9vYmFy      |   # the key is "foobar" in base64
 # FIXME test mail and telephoneNumber for more values  
 #   | Group                      |       |
 #   | Password                   |       |
@@ -78,7 +78,7 @@ Feature: Manage users
     | Yes                                             |
     | Mabey Ben                                       |
     | 556677                                          |
-    | 33:1c:56:ea:4f:df:46:c9:13:79:dc:1b:95:35:23:8a |
+    | 38:58:f6:22:30:ac:3c:91:5f:30:0c:66:43:12:c6:3f |
     And I should see "Class 4" on the "Groups by roles"
     And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
@@ -114,7 +114,7 @@ Feature: Manage users
     And I check "Class 4"
     And I press "Create"
     Then I should see "Username has already been taken"
-    Then I should see "Failed to create user!"
+    Then I should see "Failed to create the user!"
 
   Scenario: Create user with empty values
     Given the following users:
@@ -122,7 +122,7 @@ Feature: Manage users
       | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
     And I am on the new user page
     And I press "Create"
-    Then I should see "Failed to create user!"
+    Then I should see "Failed to create the user!"
     And I should see "Given name can't be blank"
     And I should see "Surname can't be blank"
     And I should see "Username can't be blank"
@@ -140,8 +140,8 @@ Feature: Manage users
     And I check "Student"
     And I check "Class 4"
     And I press "Create"
-    Then I should see "Failed to create user!"
-    And I should see "New password doesn't match confirmation"
+    Then I should see "Failed to create the user!"
+    And I should see "New password doesn't match the confirmation"
 
   Scenario: Edit user
     Given the following users:
@@ -254,7 +254,7 @@ Feature: Manage users
     | sambaSID             | "^S-[-0-9+]"                   |
     | sambaAcctFlags       | "\[U\]"                        |
     | sambaPrimaryGroupSID | "^S-[-0-9+]"                   |
-    | homeDirectory        | "/home/" + @school.cn + "/ben" |
+    | homeDirectory        | "/home/ben"                    |
 
   Scenario: Role selection does not lost when edit user and get error
     Given the following users:
@@ -264,7 +264,7 @@ Feature: Manage users
     When I fill in "user[new_password]" with "some text"
     And I check "Staffs"
     And I press "Update"
-    Then I should see "New password doesn't match confirmation"
+    Then I should see "New password doesn't match the confirmation"
     And the "Staffs" checkbox should be checked
 
   Scenario: Role selection does not lost when create new user and get error
@@ -300,16 +300,16 @@ Feature: Manage users
     Then I should see "Username is too short (min is 3 characters)"
     When I fill in "Username" with "-ab"
     And I press "Create"
-    Then I should see "Username must begin with the small letter"
+    Then I should see "Username must begin with a small letter"
     When I fill in "Username" with ".ab"
     And I press "Create"
-    Then I should see "Username must begin with the small letter"
+    Then I should see "Username must begin with a small letter"
     When I fill in "Username" with "abc%&/()}]"
     And I press "Create"
-    Then I should see "Username include invalid characters (allowed characters is a-z0-9.-)"
+    Then I should see "Username contains invalid characters (allowed characters are a-z0-9.-)"
     When I fill in "Username" with "ben.Mabey"
     And I press "Create"
-    Then I should see "Username include invalid characters (allowed characters is a-z0-9.-)"
+    Then I should see "Username contains invalid characters (allowed characters are a-z0-9.-)"
     When I fill in "Username" with "ben-james.mabey"
     And I press "Create"
     Then I should see "User was successfully created."
@@ -374,7 +374,26 @@ Feature: Manage users
     And I should see "Doe"
     And I should see "Invalid public key"
 
-    
+  Scenario: Give the user a non-image file as the image
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Doe      |
+    | Given name     | Jane     |
+    | Username       | jane.doe |
+    And I attach the file at "features/support/hello.txt" to "Image"
+    And I press "Create"
+    Then I should see "Failed to save the image"
+
+  Scenario: Give the user an invalid email address
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Doe      |
+    | Given name     | Jane     |
+    | Username       | jane.doe |
+    | user[mail][]              | foo<html>@bar.äää |
+    And I press "Create"
+    Then I should see "The email address is not valid."
+
 # FIXME
 #  @allow-rescue
 #  Scenario: Get user infromation in JSON from wrong school

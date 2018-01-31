@@ -2,7 +2,7 @@
 <div class="dashboard">
 <div class="content-box school_image">
 <%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
-               :class => "image" ) %>
+               class: "image" ) %>
 </div>
 <div class="content-box contacts">
 <h3><%= t('.contacts') %></h3>
@@ -175,7 +175,7 @@
 <% content_for :right do %>
   <ul class="sub-tools">
   <li>
-  <%= link_to edit_school_path(@school), :class => "btn" do %>
+  <%= link_to edit_school_path(@school), class: "btn" do %>
   <i class='icon-pencil'></i> <%=t('link.edit')%>
   <% end %>
   </li>
@@ -190,7 +190,7 @@
     </li>
   <% end %>
   <li>
-  <%= link_to @school, :confirm => t('general_confirm'), :method => :delete do%>
+  <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do%>
     <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
   </li>

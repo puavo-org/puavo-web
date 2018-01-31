@@ -1,5 +1,5 @@
 
-<%= form_for("user", :url => add_group_user_path, :html => { :method => :put, :multipart => true })  do |f| %>
+<%= form_for("user", url: add_group_user_path, html: { method: :put, multipart: true })  do |f| %>
 
   <table>
 
@@ -10,8 +10,8 @@
     <tr>
       <td></td>
       <td>
-        <%= f.submit t('link.save'), :class=>'btn' %>
-        <div class="cancel"><%=link_to t('link.cancel'),  user_path(@school, @user), :class => 'btn btn-danger' %>
+        <%= f.submit t('link.save'), class: 'btn' %>
+        <div class="cancel"><%=link_to t('link.cancel'),  user_path(@school, @user), class: 'btn btn-danger' %>
       </td>
     </tr>
 

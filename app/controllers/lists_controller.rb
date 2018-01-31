@@ -12,7 +12,13 @@ class ListsController < ApplicationController
     @lists.each do |list|
       count = 1
       list.users.each do |user_id|
-        user = User.find(user_id)
+        begin
+          user = User.find(user_id)
+        rescue ActiveLdap::EntryNotFound
+          puts "Can't find user by ID #{user_id}, maybe the user has been deleted? Ignoring..."
+          next
+        end
+
         @users_by_id[user_id] = user
 
         # UI needs only first 10 users
@@ -44,7 +50,13 @@ class ListsController < ApplicationController
     @users_by_group = {}
 
     @list.users.each do |user_id|
-      user = User.find(user_id)
+      begin
+        user = User.find(user_id)
+      rescue ActiveLdap::EntryNotFound
+        puts "Can't find user by ID #{user_id}, maybe the user has been deleted? Ignoring..."
+        next
+      end
+
       if params[:list][:generate_password] == "true"
         user.set_generated_password
       else

@@ -1,21 +1,21 @@
 <p class='required_info'><%= t('layouts.forms.required_field')%></p>
-<%= form_for(@user, :url => path, :html => { :method => method, :multipart => true })  do |f| %>
+<%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
 
   <table>
     <tr>
       <td class='required'><%= f.label :givenName %></td>
-      <td><%= f.text_field :givenName, :disabled => @user.read_only? %></td>
+      <td><%= f.text_field :givenName, disabled: @user.read_only? %></td>
     </tr>
     <tr>
       <td class='required'><%= f.label :sn %></td>
-      <td><%= f.text_field :sn, :disabled => @user.read_only? %></td>
+      <td><%= f.text_field :sn, disabled: @user.read_only? %></td>
     </tr>
     <tr>
       <td class='required'><%= f.label :uid %></td>
-      <td><%= f.text_field :uid, :disabled => @user.read_only? %></td>
+      <td><%= f.text_field :uid, disabled: @user.read_only? %></td>
     </tr>
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :mail, :for => "user_mail_0" %></td>
+      <td class="label_for_input_text_list"><%= f.label :mail, nil, for: "user_mail_0" %></td>
       <td>
     <div id="user_mail_list">
       <% if Array(@user.mail).empty? %>
@@ -26,7 +26,7 @@
         <% end %>
       <% end %>
     </div>
-    <%= link_to "#", :class => "clone_prev_input_element btn" do %>
+    <%= link_to "#", class: "clone_prev_input_element btn" do %>
       <i class="icon-plus"></i><%= t('.add_email') %>
     <% end %>
 
@@ -35,19 +35,19 @@
     </p>
   </td></tr>
   <tr>
-    <td class="label_for_input_text_list"><%= f.label :telephoneNumber %></td>
+    <td class="label_for_input_text_list"><%= f.label :telephoneNumber, nil, for: "user_telephone_0" %></td>
     <td><span id="user_telephoneNumber_list">
       <% if Array(@user.telephoneNumber).empty? %>
-        <input name='user[telephoneNumber][]' type='text' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+        <input name='user[telephoneNumber][]' id='user_telephone_0' type='text' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
       <% else %>
         <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
         <% end %>
       <% end %>
     </span>
 
-    <%= link_to "#", :class => "clone_prev_input_element btn" do %>
-      <i class="icon-plus"></i> <%= t('.add_telephone_number') %>
+    <%= link_to "#", class: "clone_prev_input_element btn" do %>
+      <i class="icon-plus"></i><%= t('.add_telephone_number') %>
     <% end %>
 </td>
 </tr>
@@ -101,12 +101,12 @@
     <td>
       <%= f.radio_button :puavoAllowRemoteAccess, "true" %>
       <%= label(:user,
-                :puavoAllowRemoteAccess_true,
+                t('activeldap.attributes.user.puavoAllowRemoteAccess_true'),
                 :for => "user_puavoAllowRemoteAccess_true",
                 :value => "true") %>
       <%= f.radio_button :puavoAllowRemoteAccess, "false" %>
       <%= label(:user,
-                :puavoAllowRemoteAccess_false,
+                t('activeldap.attributes.user.puavoAllowRemoteAccess_false'),
                 :for => "user_puavoAllowRemoteAccess_false",
                 :value => "false") %>
     </td>
@@ -118,7 +118,7 @@
 
   <tr>
     <td><%= f.label :image %></td>
-    <td><%= f.file_field :image %></td>
+    <td><%= f.file_field(:image, accept: 'image/*') %></td>
   </tr>
 
   <tr>
@@ -140,18 +140,18 @@
 
   <tr>
     <td class='required'><%= f.label :new_password %></td>
-    <td><%= f.password_field :new_password, :value => @user.new_password  %></td>
+    <td><%= f.password_field :new_password, value: @user.new_password  %></td>
   </tr>
 
   <tr>
     <td class='required'><%= f.label :new_password_confirmation %></td>
-    <td><%= f.password_field :new_password_confirmation, :value => @user.new_password_confirmation  %></td>
+    <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation  %></td>
   </tr>
   <tr>
     <td></td>
     <td>
-      <%= f.submit submit_text, :class=>'btn' %>
-      <div class="cancel"><%=link_to t('link.cancel'),  path, :class => 'btn btn-danger' %>
+      <%= f.submit submit_text, class: 'btn' %>
+      <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
     </td>
   </tr>
 </table>

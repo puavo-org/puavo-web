@@ -29,12 +29,12 @@ class ExternalFilesController < ApplicationController
     if ef = ExternalFile.find_by_cn(cn)
       render(
         :content_type => 'application/octet-stream',
-        :text => ef.puavoData
+        :plain => ef.puavoData
       )
     else
       render(
         :status => 404,
-        :text => "Cannot find file #{ cn }"
+        :plain => t('external_files.file_not_found')
       )
     end
 
@@ -42,12 +42,13 @@ class ExternalFilesController < ApplicationController
 
   # POST /external_files
   def upload
-    return if not params["file"]
-    params["file"].each do |k, file|
-      f = ExternalFile.find_or_create_by_cn(k)
-      data = File.open(file.path, "rb").read.to_blob
-      f.puavoData = data
-      f.save!
+    if params["file"]
+        params["file"].each do |k, file|
+          f = ExternalFile.find_or_create_by_cn(k)
+          data = File.open(file.path, "rb").read.to_blob
+          f.puavoData = data
+          f.save!
+        end
     end
     redirect_to :back
   end
@@ -57,7 +58,7 @@ class ExternalFilesController < ApplicationController
     cn = params[:name]
     @external_file = ExternalFile.find_by_cn(cn)
     if not @external_file
-      return render(:status => 404, :text => "Cannot find file #{ cn }")
+      return render(:status => 404, :plain => t('external_files.file_not_found'))
     end
 
     @external_file.destroy

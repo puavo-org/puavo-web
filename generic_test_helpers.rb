@@ -1,9 +1,13 @@
 # Generic test helpers shared with rails and puavo-rest
 require "webmock"
 
+# XXX remove or think of some other mechanism for these:
+temp_connect_hosts = ['puavo-standalone-test.opinsys.net', '10.246.134.48']
+
+connect_hosts = [ '127.0.0.1', 'localhost' ] + temp_connect_hosts
 
 WebMock.allow_net_connect!
-WebMock.disable_net_connect!(:allow_localhost => true)
+WebMock.disable_net_connect!(allow: connect_hosts)
 
 module Puavo
 module Test
@@ -92,6 +96,7 @@ module Test
     ldap_organisation.puavoKeyboardVariant = "US"
     ldap_organisation.owner = ['uid=admin,o=puavo', owner_for_test.dn.to_s]
     ldap_organisation.puavoImageSeriesSourceURL = "https://foobar.opinsys.fi/organisationpref.json"
+    ldap_organisation.puavoWlanSSID = []
     ldap_organisation.save!
 
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration

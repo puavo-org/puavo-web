@@ -4,19 +4,21 @@
   <tr>
     <td class="label_td"><%= f.label :puavoWlanChannel %></td>
     <td><%= f.select( :puavoWlanChannel,
-	              [ [t('.default'), ""],
-	                [t('.channel_random'), "random"] ] +
+                      [ [t('.default'), ""],
+                        [t('.channel_random'), "random"] ] +
                       (1..13).map{ |i| [i.to_s,i.to_s] } )%></td>
   </tr>
 </table>
 
 <h2><%= t('.wireless_network_setup') %></h2>
 
-<table>
-  <% (0..4).each do |index| %>
+<% (0..4).each do |index| %>
 
-  <tr><td><h4><%= t('.wireless_network_title', :index => index + 1) %></h4></td></tr>
-  <tr>
+  <h3><strong><%= t('.wireless_network_title', :index => index + 1) %></strong></h3>
+
+  <table>
+
+  <tr class="wlan_name_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %>
     </td>
@@ -31,12 +33,13 @@
     </td>
     <td>
       <%= select_tag( "wlan_type[#{ index }]",
-                      options_for_select([ [t('.select_value_open'), "open"],
-                                           [t('.select_value_psk'), "psk"] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
+                      options_for_select([ [t('.select_value_open'),   "open"],
+                                           [t('.select_value_psk'),    "psk"],
+                                           [t('.select_value_eaptls'), "eap-tls"] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_password_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_password[#{ index }]", t('.wlan_password') %>
     </td>
@@ -45,7 +48,64 @@
     </td>
   </tr>
 
-  <tr>
+  <tr class="wlan_certs_<%= index %>">
+    <td class="label_td">
+      <%= label_tag "wlan_ca_cert[#{ index }]", t('.wlan_ca_cert') %>
+    </td>
+    <td>
+      <%= file_field_tag "wlan_ca_cert[#{ index }]" %>
+      <% if f.object.wlan_ca_cert && f.object.wlan_ca_cert[index] %>
+        <%= t('.file_size') %>:
+          <%= wlan_certfile_size(f.object.wlan_ca_cert[index]) %>
+        /
+        <%= t('.file_md5') %>:
+          <%= wlan_certfile_md5(f.object.wlan_ca_cert[index]) %>
+      <% end %>
+    </td>
+  </tr>
+
+  <tr class="wlan_certs_<%= index %>">
+    <td class="label_td">
+      <%= label_tag "wlan_client_cert[#{ index }]", t('.wlan_client_cert') %>
+    </td>
+    <td>
+      <%= file_field_tag "wlan_client_cert[#{ index }]" %>
+      <% if f.object.wlan_client_cert && f.object.wlan_client_cert[index] %>
+        <%= t('.file_size') %>:
+          <%= wlan_certfile_size(f.object.wlan_client_cert[index]) %>
+        /
+        <%= t('.file_md5') %>:
+          <%= wlan_certfile_md5(f.object.wlan_client_cert[index]) %>
+      <% end %>
+    </td>
+  </tr>
+
+  <tr class="wlan_certs_<%= index %>">
+    <td class="label_td">
+      <%= label_tag "wlan_client_key[#{ index }]", t('.wlan_client_key') %>
+    </td>
+    <td>
+      <%= file_field_tag "wlan_client_key[#{ index }]" %>
+      <% if f.object.wlan_client_key && f.object.wlan_client_key[index] %>
+        <%= t('.file_size') %>:
+          <%= wlan_certfile_size(f.object.wlan_client_key[index]) %>
+        /
+        <%= t('.file_md5') %>:
+          <%= wlan_certfile_md5(f.object.wlan_client_key[index]) %>
+      <% end %>
+    </td>
+  </tr>
+
+  <tr class="wlan_certs_<%= index %>">
+    <td class="label_td">
+      <%= label_tag "wlan_client_key_password[#{ index }]", t('.wlan_client_key_password') %>
+    </td>
+    <td>
+      <%= text_field_tag "wlan_client_key_password[#{ index }]", f.object.wlan_client_key_password ? f.object.wlan_client_key_password[index] : "" %>
+    </td>
+  </tr>
+
+  <tr class="wlan_ap_<%= index %>">
     <td class="label_td">
       <%= label_tag "wlan_ap[#{ index }]", t('.wlan_ap') %>
     </td>
@@ -53,10 +113,9 @@
       <%= check_box_tag "wlan_ap[#{ index }]", "enabled", f.object.wlan_ap ? f.object.wlan_ap[index] : false %>
     </td>
   </tr>
+  </table>
+  <br>
 
-  <% end %>
-  <tr>
-    <td></td>
-    <td><%= f.submit t('link.update'), :class => 'btn' %></td>
-  </tr>
-</table>
+<% end %>
+
+<%= f.submit t('link.update'), class: 'btn' %>

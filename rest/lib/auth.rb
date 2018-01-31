@@ -24,7 +24,7 @@ class PuavoSinatra < Sinatra::Base
       else
         credentials[:username] = username
       end
-      logger.info "Using Basic Auth #{ credentials[:dn] ? "with dn" : "with uid" }"
+      flog.info(nil, "using basic auth #{ credentials[:dn] ? "with dn" : "with uid" }")
       return credentials
     end
   end
@@ -44,7 +44,8 @@ class PuavoSinatra < Sinatra::Base
         :password => PUAVO_ETC.ds_pw_mgmt_password
       }
     else
-      logger.error "Cannot use password management auth on cloud or bootserver installation"
+      flog.error(nil,
+                 'cannot use password management auth on cloud or bootserver installation')
       return
     end
   end
@@ -52,7 +53,7 @@ class PuavoSinatra < Sinatra::Base
   # Pick bootserver credentials when Header 'Authorization: Bootserver' is set
   def server_auth
     if not CONFIG["bootserver"]
-      logger.error "Cannot use bootserver auth on cloud installation"
+      flog.error(nil, 'cannot use bootserver auth on cloud installation')
       return
     end
 
@@ -66,14 +67,15 @@ class PuavoSinatra < Sinatra::Base
   # kerberos authentication. This is now legacy and will removed in future.
   def legacy_server_auth
     if not CONFIG["bootserver"]
-      logger.error "Cannot use bootserver auth on cloud installation"
+      flog.error(nil, 'cannot use bootserver auth on cloud installation')
       return
     end
 
     # In future we will only use server based authentication if 'Authorization:
     # Bootserver' is set. Otherwise we will assume Kerberos authentication.
     if env["HTTP_AUTHORIZATION"].to_s.downcase != "bootserver"
-      logger.warn "WARNING! Using deprecated bootserver authentication without the Header 'Authorization: Bootserver'"
+      flog.warn(nil,
+                "WARNING!  Using deprecated bootserver authentication without the Header 'Authorization: Bootserver'")
     end
 
     ## Helper to sweep out lecagy calls from tests
@@ -93,7 +95,7 @@ class PuavoSinatra < Sinatra::Base
     return if env["HTTP_AUTHORIZATION"].nil?
     auth_key = env["HTTP_AUTHORIZATION"].split()[0]
     return if auth_key.to_s.downcase != "negotiate"
-    logger.info "Using Kerberos authentication"
+    flog.info(nil, "using kerberos authentication")
     return {
       :kerberos => Base64.decode64(env["HTTP_AUTHORIZATION"].split()[1])
     }
@@ -103,6 +105,8 @@ class PuavoSinatra < Sinatra::Base
     if auth_methods.include?(:kerberos) && auth_methods.include?(:legacy_server_auth)
       raise "legacy server auth and kerberos cannot be used on the same resource"
     end
+
+    auth_method = nil
 
     auth_methods.each do |method|
       credentials = send(method)
@@ -124,6 +128,7 @@ class PuavoSinatra < Sinatra::Base
       end
 
       credentials[:auth_method] = method
+      auth_method = method
       LdapModel.setup(:credentials => credentials)
       break
     end
@@ -138,7 +143,8 @@ class PuavoSinatra < Sinatra::Base
     log_creds.delete(:kerberos)
     log_creds.delete(:password)
     self.flog = flog.merge(:credentials => log_creds)
-    flog.info "authenticated"
+    flog.info('authenticated',
+              "authenticated through '#{ auth_method }'")
   end
 
 end

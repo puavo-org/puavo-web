@@ -15,21 +15,24 @@ class ApplicationController < ActionController::Base
                  :set_initial_locale, :remove_ldap_connection, :theme,
                  :school_list, :rack_mount_point, :password_management_host )
 
-  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  # Raise an exception if the CSRF check fails. Ignore JSON and XML
+  # requests, as they're used in scripts and tests and protecting
+  # those would be too arduous at the moment.
+  protect_from_forgery with: :exception, unless: Proc.new { |c| c.request.format.json? || c.request.format.xml? }
 
-  before_filter do
+  before_action do
     response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
   end
 
-  before_filter :set_initial_locale
-  before_filter :setup_authentication
-  before_filter :require_login
-  before_filter :require_puavo_authorization
-  before_filter :log_request
-  before_filter :find_school
-  before_filter :set_menu
+  before_action :set_initial_locale
+  before_action :setup_authentication
+  before_action :require_login
+  before_action :require_puavo_authorization
+  before_action :log_request
+  before_action :find_school
+  before_action :set_menu
 
-  after_filter :remove_ldap_connection
+  after_action :remove_ldap_connection
 
   if ENV["RAILS_ENV"] == "production"
     rescue_from Exception do |error|
@@ -99,14 +102,14 @@ class ApplicationController < ActionController::Base
   end
 
   def handle_date_multiparameter_attribute(object_params, attribute)
-    if !object_params[:"#{attribute}(1i)"].nil? && !object_params[:"#{attribute}(1i)"].empty? &&
-       !object_params[:"#{attribute}(2i)"].nil? && !object_params[:"#{attribute}(2i)"].empty? &&
-       !object_params[:"#{attribute}(3i)"].nil? && !object_params[:"#{attribute}(3i)"].empty?
+    year = object_params["#{attribute}(1i)"]
+    month = object_params["#{attribute}(2i)"]
+    day = object_params["#{attribute}(3i)"]
 
-      object_params[attribute] = Time.local( object_params[:"#{attribute}(1i)"].to_i, 
-                                             object_params[:"#{attribute}(2i)"].to_i,
-                                             object_params[:"#{attribute}(3i)"].to_i )
+    if !year.nil? && !year.empty? && !month.nil? && !month.empty? && !day.nil? && !day.empty?
+        object_params[attribute] = Time.local(year.to_i, month.to_i, day.to_i)
     end
+
   end
 
   def puavo_users?
@@ -141,7 +144,7 @@ class ApplicationController < ActionController::Base
         @school = School.find(school_id)
       rescue
         logger.info "Incorrect school id! Redirected..."
-        flash[:alert] = "Incorrect school id!"
+        flash[:alert] = t('flash.invalid_school_id')
         redirect_to schools_path
       end
     end

@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  skip_before_filter :require_puavo_authorization
+  skip_before_action :require_puavo_authorization
 
   # GET /profile/edit
   def edit
@@ -42,8 +42,11 @@ class ProfilesController < ApplicationController
 
       value = attribute.last
 
-      if key == "jpegPhoto"
-        value = User.resize_image(value.path)
+      begin
+        if key == "jpegPhoto"
+          value = User.resize_image(value.path)
+        end
+      rescue
       end
 
       { key => value }
@@ -59,7 +62,7 @@ class ProfilesController < ApplicationController
         # Send confirm message to all new email address
         email_confirm_url = password_management_host + "/email_confirm"
         @new_emails.each do |email|
-          rest_response = HTTP.with_headers("Host" => request.host.to_s.gsub(/^staging\-/, ""),
+          rest_response = HTTP.headers("Host" => request.host.to_s.gsub(/^staging\-/, ""),
                                             "Accept-Language" => locale)
             .post(email_confirm_url,
                   :form => {
@@ -72,7 +75,7 @@ class ProfilesController < ApplicationController
 
         flash[:notice] = t('flash.profile.updated')
         format.html { redirect_to( profile_path(:emails => @new_emails) ) }
-        format.js { render :text => 'window.close()' }
+        format.js { render :plain => 'window.close()' }
       else
         flash[:alert] = t('flash.profile.save_failed')
         format.html { render :action => "edit" }

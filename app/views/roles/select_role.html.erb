@@ -1,7 +1,9 @@
-<h1><span><%= t('.title') %></span></h1>
+<h2><%= t('.title') %></h2>
 <%= form_for("role", :url => change_school_users_path(@school))  do |f| %>
 <%= hidden_field_tag :new_school, @new_school.id %>
-<%= hidden_field_tag "user_ids[]", @user.id %>
+<% @users.each do |user| %>
+<%= hidden_field_tag "user_ids[]", user.id %>
+<% end %>
 <table>
   <tr>
 	<td><label><%= t('.new_school') %></label></td>
@@ -10,14 +12,13 @@
   <tr>
 	<td>
 	  <%= label_tag :new_role, t('.select_new_role') %>
-  	</td>
+	</td>
 	<td>
 	  <%= select_tag :new_role, options_from_collection_for_select(@roles, "puavoId", "displayName") %>
 	</td>
   </tr>
-  <tr>
-    <td></td>
-    <td><%= f.submit t('.submit'),:class=>'btn' %></td>
+  <tr><td></td>
+  <td><%= f.submit t('.submit'), class: 'btn' %></td>
   </tr>
 </table>
 <% end %>
@@ -36,11 +37,11 @@
   <% end %>
 </ul>
 <ul>
-<li class="link_header"><%= @school.displayName %></li>
-<li><%= link_to users_path(@school) do %>
-  <span><%= t('layouts.application.users') %></span>
-<% end %>
-</li>
+  <li class="link_header">
+    <%= link_to users_path(@school) do %>
+      <span><%= t('layouts.application.users') %></span>
+    <% end %>
+  </li>
   <li><%= link_to t('link.groups'), groups_path(@school) %></li>
   <li><%= link_to t('link.roles'), roles_path(@school) %></li>
   <li><a href="/devices/<%= @school.id%>/devices"><span><%= t('layouts.application.devices') %></span></a></li>

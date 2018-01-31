@@ -1,7 +1,7 @@
 @import 'nib'
 
 table, th, td
-  vertical-align top
+  vertical-align middle
 
 table
   border-collapse collapse
@@ -59,19 +59,7 @@ table
 .refine_example
   color black
 
-#autopoweroff
-  td
-    display table-cell
-    text-align left
-    &.label_td
-      padding-top 20px
-      label
-        font-weight normal
-        line-height 1.5
-    select
-      width auto
-  tbody tr > td:last-of-type
-    width auto
+#autopoweroff .table-in-table td { text-align: center; }
 
 .required
   & > .fieldWithErrors

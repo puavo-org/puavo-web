@@ -25,13 +25,13 @@ jhttp://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <div class="login_container">
     <div class="login_content clearfix">
       <h1>Puavo</h1>
-      <% if flash.has_key?(:notice) %>
-      <% if flash.has_key?(:notice_css_class) %>
-      <p class='<%= flash[:notice_css_class] %>'>
+      <% if flash.has_key?("notice") %>
+      <% if flash.has_key?("notice_css_class") %>
+      <p class='<%= flash["notice_css_class"] %>'>
       <% else %>
       <p class="notice">
         <% end %>
-        <%= flash[:notice] %>
+        <%= flash["notice"] %>
       </p>
       <% end %>
       <%= yield %>

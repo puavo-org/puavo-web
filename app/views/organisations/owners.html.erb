@@ -1,10 +1,4 @@
-<h1>
-  <span>
-    <%= t('.title') %>
-  </span>
-</h1>
-
-
+<h1><span><%= t('.title') %></span></h1>
 
 <div class="dashboard">
 <div class="content-box school_admins">
@@ -15,9 +9,9 @@
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
       <%= link_to( t('link.remove'),
                    remove_owner_organisations_path(u),
-                   :method => :put,
-                   :id => "remove_user_#{u.id}",
-                   :class=> "btn btn-danger" ) %>
+                   method: :put,
+                   id: "remove_user_#{u.id}",
+                   class: "btn btn-danger" ) %>
       </div>
     <% end %>
   </span>
@@ -31,14 +25,21 @@
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
       <%= link_to( t('link.add'),
                    add_owner_organisations_path(u),
-                   :method => :put,
-                   :id => "add_user_#{u.id}",
-                   :class=> "btn" ) %>
+                   method: :put,
+                   id: "add_user_#{u.id}",
+                   class: "btn" ) %>
       </div>
     <% end %>
     </span>
 </div>
 
-
-
 </div>
+
+<% if Array(@missing).length > 0 %>
+  <p><strong><%= t('.removed_owners_title') %></strong> <%= t('.removed_owners_warning') %></p>
+  <ul>
+  <% Array(@missing).each do |m| %>
+    <li><code><%= m %></code></li>
+  <% end %>
+  </ul>
+<% end %>

@@ -25,10 +25,11 @@ class BootConfigurations < PuavoSinatra
 
     response.headers["x-puavo-rest-warn"] = msg
 
-    flog.warn "legacy call", {
-      :route => "/v3/:mac_address/boot_configuration",
-      :params  => params
-    }
+    flog.warn('legacy call',
+              'legacy call', {
+                :route => "/v3/:mac_address/boot_configuration",
+                :params  => params
+              })
     boot_configuration
   end
 
@@ -52,7 +53,7 @@ class BootConfigurations < PuavoSinatra
       :type => host.type,
     }
 
-    flog.info "boot done", res
+    flog.info('boot done', "boot done by '#{ host.hostname }'", res)
     json res
   end
 
@@ -87,7 +88,9 @@ class BootConfigurations < PuavoSinatra
       host.save_boot_time
     end
 
-    flog.info "send boot configuration", :host => log_attrs
+    flog.info('send boot configuration',
+              "sending boot configuration for '#{ host.hostname }'",
+              :host => log_attrs)
 
     host
   end

@@ -12,7 +12,6 @@ class DeviceBase < LdapBase
   before_validation( :set_puavo_id,
                      :set_password,
                      :downcase_mac_addresses,
-                     :resize_image,
                      :set_puavo_device_primary_user )
   before_save :set_puppetclass, :set_parentNode, :set_puavo_mountpoint
 
@@ -85,7 +84,7 @@ class DeviceBase < LdapBase
                   I18n.t("activeldap.errors.messages.device.puavoHostname.invalid_characters" ) )
     end
 
-    unless Host.validates_uniqueness_of_hostname(self)
+    unless !puavoHostname.empty? && Host.validates_uniqueness_of_hostname(self)
       errors.add :puavoHostname, I18n.t('activeldap.errors.messages.taken',
                                         :attribute => I18n.t('activeldap.attributes.device.puavoHostname'))
     end
@@ -157,6 +156,16 @@ class DeviceBase < LdapBase
         errors.add( :primary_user_uid,
                     I18n.t("activeldap.errors.messages.invalid",
                            :attribute => I18n.t('activeldap.attributes.device.primary_user_uid') ) )
+      end
+    end
+
+    # Validate the image, if set. Must be done here, because if the file is not a valid image file,
+    # it will cause an exception in ImageMagick.
+    if self.image && !self.image.path.to_s.empty?
+      begin
+        resize_image
+      rescue
+        errors.add(:image, I18n.t('activeldap.errors.messages.image_failed'))
       end
     end
   end
@@ -258,8 +267,12 @@ class DeviceBase < LdapBase
 
 
   def parent
-    if self.attributes.include?("puavoSchool")
-      return School.find(self.puavoSchool)
+    if self.attributes.include?("puavoSchool") && !self.puavoSchool.nil?
+      begin
+        return School.find(self.puavoSchool)
+      rescue ActiveLdap::EntryNotFound => e
+        return nil
+      end
     end
   end
 

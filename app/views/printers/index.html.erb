@@ -1,9 +1,11 @@
+<h1><span><%= t('layouts.application.printers') %></span></h1>
+
 <% @servers_and_printers.each do |server_dn, value| %>
 <% unless value.has_key?(:printers) then next end %>
 
-<h1><span><%=h t('.server_title', :server => value[:server].puavoHostname) %></span></h1>
+<h2><span><%=h t('.server_title', :server => value[:server].puavoHostname) %></span></h2>
 
-<table class='list'>
+<table class='list' style='float: none !important;'>
   <tr>
     <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
     <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
@@ -19,12 +21,12 @@
     <td><%=h printer.printerLocation %></td>
 
     <td>
-      <%= link_to edit_printer_path(printer), :class => 'btn' do %>
+      <%= link_to edit_printer_path(printer), class: 'btn' do %>
       <i class="icon-pencil"></i><%=t('link.edit') %>
       <% end %>
     </td>
     <td>
-      <%= link_to printer_path(printer), :confirm => t('destroy_confirm', :object_name => printer.printerDescription), :method => :delete, :class => 'btn btn-danger' do %>
+      <%= link_to printer_path(printer), data: { confirm: t('destroy_confirm', object_name: printer.printerDescription) }, method: :delete, class: 'btn btn-danger' do %>
         <i class="icon-trash"></i><%=t('link.destroy') %>
       <% end %>
     </td>

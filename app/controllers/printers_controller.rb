@@ -2,7 +2,7 @@ class PrintersController < ApplicationController
   
   # POST /devices/printers.json
   def create
-    @printer = Printer.new(params[:printer])
+    @printer = Printer.new(printer_params)
 
     respond_to do |format|
       if @printer.save
@@ -77,14 +77,18 @@ class PrintersController < ApplicationController
       [device, School.find(device.puavoSchool)]
     end
 
+    respond_to do |format|
+      format.html { render :action => "edit" }
+    end
   end
 
   # PUT /devices/printers/1
   def update
+
     @printer = Printer.find(params[:id])
 
     respond_to do |format|
-      if @printer.update_attributes(params[:printer])
+      if @printer.update_attributes(printer_params)
         flash[:notice] = t('flash.printer.updated')
         format.html { redirect_to(printers_path) }
       else
@@ -103,4 +107,15 @@ class PrintersController < ApplicationController
     end
   end
 
+  private
+    def printer_params
+      return params.require(:printer).permit(
+        :puavoRule,             # used when editing a printer
+        :printerDescription,    # (from here on) used when adding a printer
+        :printerLocation,
+        :printerMakeAndModel,
+        :printerType,
+        :printerURI,
+        :puavoServer).to_hash
+    end
 end

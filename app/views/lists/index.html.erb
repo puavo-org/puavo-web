@@ -3,9 +3,7 @@
   <%= t(".description_empty") %>
 </p>
 <% else %>
-<h2>
-<%= t(".title") %>
-</h2>
+<h1><span><%= t(".title") %></span></h1>
 <p class="description">
   <%= t(".description") %>
 <p>
@@ -14,15 +12,17 @@
 <% @lists.each do |list| %>
 <div class="list">
 
+  <table><tr style="background: none;"><td style="vertical-align: top;">
+
   <div class="meta_information">
     <span>
-      <%= t(".created") %> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
+      <strong><%= t(".created") %>:</strong> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
     </span>
     <span>
       <%= list.creator %>
     </span>
     <div>
-      <b><%= t(".users_count_title") %>:</b> <%= list.users.count %>
+      <strong><%= t(".users_count_title") %>:</strong> <%= list.users.count %>
     </div>
     <div>
       <table>
@@ -33,19 +33,28 @@
         <% count = 1 %>
         <% list.users.each do |user_id| %>
         <% user = @users_by_id[user_id] %>
-        <tr>
-          <td><%= user.displayName %></td><td><%= user.groups.first.displayName %></td>
-        </tr>
-        <% break if count > 10 %>
+        <% if user.nil? %>
+          <tr>
+            <td><%= t(".invalid_id", id: user_id) %></td>
+            <td>&nbsp;</td>
+          </tr>
+        <% else %>
+          <tr>
+            <td><%= user.displayName %></td>
+            <td><%= user.groups.first.displayName %></td>
+          </tr>
+        <% end %>
+        <% break if count > 9 %>
         <% count += 1 %>
         <% end %>
       </table>
       <% if list.users.count > 10 %>
-      <%= t(".and_other_users", :count => list.users.count - 10) %>
+      <em><%= t(".and_other_users", :count => list.users.count - 10) %></em>
       <% end %>
     </div>
   </div>
 
+  </td><td style="vertical-align: top;">
 
   <div class="form">
     <%= form_for(
@@ -55,20 +64,19 @@
     :id => list.uuid,
     :format => :pdf) ) do |f| %>
 
-    <div>
       <%= f.radio_button :generate_password, true, :checked => true, :id => "list_generate_password_true_#{ id }" %>
       <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
-    </div>
-    <div>
+      <br>
       <%= f.radio_button :generate_password, false, :id => "list_generate_password_false_#{ id }"  %>
       <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
-      <%= f.text_field :new_password, :size => 20 %>
-    </div>
-    <div>
-      <%= f.submit t(".label_submit_button") %>
-    </div>
+      <%= f.text_field :new_password, :size => 20, onfocus: "document.getElementById('list_generate_password_false_#{id}').checked = true;" %>
+      <br>
+      <%= f.submit t(".label_submit_button"), style: "float: none; width: 250px;" %>
+
     <% end %>
   </div>
+
+  </td></tr></table>
 
   <span class="clear"></span>
 </div>

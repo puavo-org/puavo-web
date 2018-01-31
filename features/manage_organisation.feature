@@ -55,7 +55,7 @@ Feature: Manage organisation
     | ldap_organisation[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                            |
 # FIXME: fix acl?
 #    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
-    And I select "(GMT+02:00) Helsinki" from "Timezone"
+    And I select "(GMT+02:00) Helsinki" from "Time zone"
     And I select "Swedish (Finland)" from "Preferred language"
     And I select "13" from "ldap_organisation[puavoDeviceOnHour]"
     And I select "19" from "ldap_organisation[puavoDeviceOffHour]"
@@ -97,9 +97,9 @@ Feature: Manage organisation
     | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
     When I follow "Owners"
     And I follow "Add" on the "Pavel Taylor" user
-    Then I should see "Pavel Taylor is now organisation owner"
+    Then I should see "Pavel Taylor is now an owner of this organisation"
     When I follow "Remove" on the "Pavel Taylor" user
-    Then I should see "Pavel Taylor is no longer owner on this organisation"
+    Then I should see "Pavel Taylor is no longer an owner of this organisation"
 
   Scenario: Try to set student to organisation owner
     Given the following users:
@@ -108,5 +108,4 @@ Feature: Manage organisation
     When I follow "Owners"
     And I change "jane.doe" user type to "student"
     And I follow "Add" on the "Jane Doe" user
-    And I should see "Organisation owner access rights can be added only if type of user is admin"
-
+    And I should see "Organisation owner access rights can be added only if the type of the user is admin"

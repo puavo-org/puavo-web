@@ -83,13 +83,13 @@ describe PuavoRest::Host do
   describe "boot time" do
 
     before(:each) do
-      @org_log = $rest_flog
+      @org_log = $rest_flog_base
       @logger = MockFluent.new
-      $rest_flog = @org_log.merge(nil, @logger)
+      $rest_flog_base = @org_log.merge(nil, @logger)
     end
 
     after(:each) do
-      $rest_flog = @org_log
+      $rest_flog_base = @org_log
     end
 
     it "will be logged" do

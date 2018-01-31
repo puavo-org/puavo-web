@@ -31,6 +31,11 @@ module ApplicationHelper
     super(*args) + after_html.to_s
   end
 
+  def file_field(*args)
+    after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
+    super(*args) + after_html.to_s
+  end
+
   def field_error_text_span(object, method)
     content_tag(:span, field_error_text(object, method), :class => 'field_error')
   end
@@ -232,17 +237,18 @@ module ApplicationHelper
     content_tag(:div, :id => "#{object_name}_#{attribute}") do
       content = ""
       if model.send(attribute).nil?
-        content = "<input name='#{object_name}[#{attribute}][]' size='30' type='text' />"
+        content = "<input id='#{attribute}0' name='#{object_name}[#{attribute}][]' size='30' type='text' />"
       else
-	Array(model.send(attribute)).each do |value|
-          content += "<input name='#{object_name}[#{attribute}][]' size='30' type='text' value='#{value}' />"
-	end
+        Array(model.send(attribute)).each_with_index do |value, index|
+          content += "<input id='#{attribute}#{index}' name='#{object_name}[#{attribute}][]' size='30' type='text' value='#{value}' />"
+        end
       end
       content.html_safe
     end +
 
     link_to("#", :class => "clone_prev_input_element btn") do
-      content_tag(:i, link_text, :class => "icon-plus")
+      content_tag(:i, "", :class => "icon-plus") +
+      link_text
     end +
 
     content_tag(:div, field_error_text(model, attribute))

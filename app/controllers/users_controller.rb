@@ -105,11 +105,13 @@ class UsersController < ApplicationController
   # POST /:school_id/users
   # POST /:school_id/users.xml
   def create
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
     @groups = @school.groups
     @roles = @school.roles
     @user_roles =  []
 
+    # TODO: should we use the filtered hash returned by "user_params" here
+    # instead of modifying the raw unfiltered "params" object?
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
@@ -122,9 +124,11 @@ class UsersController < ApplicationController
         end
         if new_group_management?(@school)
           format.html { redirect_to( group_user_path(@school,@user) ) }
+          format.json { render :json => nil }
         else
           flash[:notice] = t('flash.added', :item => t('activeldap.models.user'))
           format.html { redirect_to( user_path(@school,@user) ) }
+          format.json { render :json => nil }
         end
       rescue User::UserError => e
         logger.info "Create user, Exception: " + e.to_s
@@ -157,7 +161,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       begin
-        unless @user.update_attributes(params[:user])
+        unless @user.update_attributes(user_params)
           raise User::UserError, I18n.t('flash.user.save_failed')
         end
 
@@ -189,6 +193,23 @@ class UsersController < ApplicationController
   # DELETE /:school_id/users/1.xml
   def destroy
     @user = User.find(params[:id])
+
+    if @user.puavoEduPersonAffiliation == 'admin'
+      # if an admin user is also an organisation owner, remove the ownership
+      # automatically before deletion
+      owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+
+      if !owners.nil? && owners.include?(@user.dn)
+        if !LdapOrganisation.current.remove_owner(@user)
+          flash[:alert] = t('flash.organisation_ownership_not_removed')
+        else
+          # TODO: Show a flash message when ownership is removed. First we need to
+          # support multiple flash messages of the same type...
+          #flash[:notice] = t('flash.organisation_ownership_removed')
+        end
+      end
+    end
+
     if @user.destroy
       flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))
     end
@@ -239,8 +260,13 @@ class UsersController < ApplicationController
     @new_school = School.find(params[:new_school])
     @roles = @new_school.roles
 
-    respond_to do |format|
-      format.html
+    if @roles.length == 0
+      flash[:alert] = t('users.select_school.no_roles')
+      redirect_to :back
+    else
+      respond_to do |format|
+        format.html
+      end
     end
   end
 
@@ -272,7 +298,7 @@ class UsersController < ApplicationController
   def username_redirect
     user = User.find(:first, :attribute => "uid", :value => params["username"])
     if user.nil?
-      return render :text => "Unknown user #{ params["username"] }", :status => 400
+      return render :plain => "Unknown user #{ ActionController::Base.helpers.sanitize(params["username"]) }", :status => 400
     end
     redirect_to user_path(params["school_id"], user.id)
   end
@@ -301,4 +327,33 @@ class UsersController < ApplicationController
     end
 
   end
+
+  private
+    def user_params
+      u = params.require(:user).permit(
+          :givenName,
+          :sn,
+          :uid,
+          :puavoLocale,
+          :puavoAllowRemoteAccess,
+          :puavoEduPersonPersonnelNumber,
+          :image,
+          :puavoLocked,
+          :puavoSshPublicKey,
+          :puavoExternalId,
+          :new_password,
+          :new_password_confirmation,
+          :mail=>[],
+          :telephoneNumber=>[],
+          :puavoEduPersonAffiliation=>[],
+          :role_ids=>[]).to_hash
+
+      # deduplicate arrays, as LDAP really does not like duplicate entries...
+      u["mail"].uniq! if u.key?("mail")
+      u["telephoneNumber"].uniq! if u.key?("telephoneNumber")
+
+      return u
+
+    end
+
 end

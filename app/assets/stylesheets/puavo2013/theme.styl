@@ -1,9 +1,12 @@
 @import 'nib'
-@import 'colors'
+@import 'base_styles/colors'
 
 // base_styles -->
 h1, h2, h3, h4, h5, h6
   color baseFont
+
+// make long device pages easier to read
+h2 { border-bottom: 1px dashed #000; margin-top: 25px; }
 
 // Forms
 form
@@ -173,7 +176,6 @@ table
 
 body
   background none repeat scroll 0 0 baseBg
-  background-image linear-gradient(baseGradientBg 0%, baseBg 100%)
 
 .main-wrap
   background none repeat scroll 0 0 baseBg

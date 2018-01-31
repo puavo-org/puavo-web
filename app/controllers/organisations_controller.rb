@@ -34,7 +34,8 @@ class OrganisationsController < ApplicationController
     @organisation = LdapOrganisation.current
 
     respond_to do |format|
-      if @organisation.update_attributes(params[:ldap_organisation])
+      if @organisation.update_attributes(organisation_params)
+        flash[:notice] = t('flash.organisation.updated')
         format.html { redirect_to( organisation_path ) }
       else
         format.html { render :action => "edit" }
@@ -55,10 +56,7 @@ class OrganisationsController < ApplicationController
   def wlan_update
     @organisation = LdapOrganisation.current
 
-    @organisation.update_wlan_attributes( params[:wlan_name],
-                                          params[:wlan_type],
-                                          params[:wlan_password],
-                                          params[:wlan_ap] )
+    @organisation.update_wlan_attributes(params)
     @organisation.puavoWlanChannel = params[:ldap_organisation][:puavoWlanChannel]
 
     respond_to do |format|
@@ -75,12 +73,26 @@ class OrganisationsController < ApplicationController
   # GET /users/owners
   def owners
 
-    @owners = LdapOrganisation.current.owner.select do |dn|
+    # List of (admin) users who currently ARE the owners of this organisation
+    @owners = []
+
+    # Deleted users that still hang around in the owners list
+    @missing = []
+
+    LdapOrganisation.current.owner.each.select do |dn|
       dn != "uid=admin,o=puavo"
-    end.map do |dn|
-      User.find(dn)
+    end.each do |dn|
+      begin
+        @owners << User.find(dn)
+      rescue ActiveLdap::EntryNotFound
+        # This user has been removed, but their DN is
+        # still listed in the "owners" array...
+        puts "User #{dn} no longer exists!"
+        @missing << dn
+      end
     end
 
+    # List of admin users who currently are NOT the owners of this organisation
     @allowed_owners = User.find(:all,
                                 :attribute => 'puavoEduPersonAffiliation',
                                 :value => 'admin').delete_if do |u|
@@ -119,5 +131,34 @@ class OrganisationsController < ApplicationController
       format.html { redirect_to(owners_organisation_path) }
     end
   end
+
+  private
+    def organisation_params
+      return params.require(:ldap_organisation).permit(
+        :o,
+        :puavoEduOrgAbbreviation,
+        :description,
+        :telephoneNumber,
+        :facsimileTelephoneNumber,
+        :l,
+        :street,
+        :postOfficeBox,
+        :postalAddress,
+        :postalCode,
+        :st,
+        :puavoLocale,
+        :puavoTimezone,
+        :puavoKeyboardLayout,
+        :puavoKeyboardVariant,
+        :puavoAutomaticImageUpdates,
+        :eduOrgHomePageURI,
+        :puavoDeviceAutoPowerOffMode,
+        :puavoDeviceOnHour,
+        :puavoDeviceOffHour,
+        :puavoDeviceImage,
+        :puavoImageSeriesSourceURL=>[],
+        :puavoBillingInfo=>[]
+      ).to_hash
+    end
 
 end

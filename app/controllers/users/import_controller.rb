@@ -1,5 +1,5 @@
 class Users::ImportController < ApplicationController
-  require 'prawn/layout'
+  #require 'prawn/layout'
 
   class ColumnError < StandardError; end
   class RoleEduPersonAffiliationError < StandardError; end
@@ -118,7 +118,7 @@ class Users::ImportController < ApplicationController
   # POST /:school_id/users/import
   def create
 
-    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
+    cipher = Gibberish::AES::CBC.new(Rails.application.secrets.secret_key_base)
 
     encrypted_password = cipher.enc(session[:password_plaintext])
 
@@ -181,7 +181,7 @@ class Users::ImportController < ApplicationController
       return render_error_page "unknown job or not ready"
     end
 
-    cipher = Gibberish::AES.new(PuavoUsers::Application.config.secret_token)
+    cipher = Gibberish::AES::CBC.new(Rails.application.secrets.secret_key_base)
 
     pdf_data = cipher.dec(encrypted_pdf)
 

@@ -65,7 +65,7 @@ class GroupsController < ApplicationController
   # POST /:school_id/groups
   # POST /:school_id/groups.xml
   def create
-    @group = Group.new(params[:group])
+    @group = Group.new(group_params)
 
     @group.puavoSchool = @school.dn
 
@@ -88,7 +88,7 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
 
     respond_to do |format|
-      if @group.update_attributes(params[:group])
+      if @group.update_attributes(group_params)
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.group'))
         format.html { redirect_to( group_path(@school, @group) ) }
         format.xml  { head :ok }
@@ -128,7 +128,7 @@ class GroupsController < ApplicationController
     @members = @group.members
 
     respond_to do |format|
-      format.html { render :text => "OK" }
+      format.html { render :plain => "OK" }
       format.js
     end
   end
@@ -146,7 +146,7 @@ class GroupsController < ApplicationController
     @members = @group.members
 
     respond_to do |format|
-      format.html { render :text => "OK" }
+      format.html { render :plain => "OK" }
       format.js
     end
   end
@@ -207,4 +207,11 @@ class GroupsController < ApplicationController
     end
 
   end
+
+   private
+     def group_params
+       # arrays must be listed last due to some weird syntax thing
+       return params.require(:group).permit(:displayName, :cn, :puavoEduGroupType).to_hash
+     end
+
 end
