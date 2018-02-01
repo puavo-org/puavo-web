@@ -125,19 +125,21 @@ EOF
         sh '''
           apt-get update
           apt-get -y dist-upgrade
-          apt-get install -y devscripts dpkg-dev make
+          apt-get install -y devscripts dpkg-dev make wget
         '''
       }
     }
 
     stage('Prepare the puavo-standalone environment') {
       // XXX Why does the build need this environment to work?
-      // XXX (This should only be necessary for the testing.)
+      // XXX (This should only be necessary for testing puavo-users etc.)
       steps {
-        // Setup puavo-standalone.
+        // Setup puavo-standalone.  Use the wget-to-shell mechanism, because,
+        // even though installing "ansible"- and "puavo-standalone"-packages
+        // and running "ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml"
+        // should work, we probably want to test that this works as well:
         sh '''
-          apt-get install -y ansible puavo-standalone
-          ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml
+          wget -qO - https://github.com/opinsys/puavo-standalone/raw/master/setup.sh | sh
         '''
       }
     }
