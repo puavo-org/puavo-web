@@ -136,8 +136,10 @@ test-acceptance:
 .PHONY: test
 test: js-lint
 	bundle exec rspec --format documentation
-	bundle exec cucumber --color --tags "not @start_test_server"
-	bundle exec cucumber --color --tags @start_test_server
+	bundle exec cucumber --color --tags "not @start_test_server" \
+		--format json --out log/cucumber-tests-notTS.json
+	bundle exec cucumber --color --tags @start_test_server \
+		--format json --out log/cucumber-tests-TS.json
 	bundle exec rails runner acl/runner.rb
 
 seed:
@@ -146,12 +148,21 @@ seed:
 server:
 	bundle exec rails server -b 0.0.0.0
 
-install-build-dep:
-	mk-build-deps --install debian.default/control \
-		--tool "apt-get --yes --force-yes" --remove
-
+.PHONY: deb
 deb:
-	rm -rf debian
-	cp -a debian.default debian
-	dch --newversion "$$(cat VERSION)+build$$(date +%s)" "Built from $$(git rev-parse HEAD)"
+	cp -p debian/changelog.vc debian/changelog 2>/dev/null \
+	  || cp -p debian/changelog debian/changelog.vc
+	dch --newversion \
+	    "$$(cat VERSION)+build$$(date +%s)+$$(git rev-parse HEAD)" \
+	    "Built from $$(git rev-parse HEAD)"
+	dch --release ''
 	dpkg-buildpackage -us -uc
+	cp -p debian/changelog.vc debian/changelog
+
+.PHONY: install-build-deps
+install-build-deps:
+	mk-build-deps --install --tool 'apt-get --yes' --remove debian/control
+
+.PHONY: upload-debs
+upload-debs:
+	dput puavo ../puavo-users_*.changes

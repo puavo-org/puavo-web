@@ -57,10 +57,6 @@ install:
 	install -t $(DESTDIR)$(prefix)/bin bin/puavo-rest-scheduled-jobs
 	ln -fns ../../usr/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
 
-install-client:
-	mkdir -p $(DESTDIR)$(prefix)/sbin
-	install -m 644 bin/puavo-load-reporter $(DESTDIR)$(prefix)/sbin
-
 .PHONY: test
 test:
 	bundle exec ruby test/all.rb
