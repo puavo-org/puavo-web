@@ -243,6 +243,7 @@ class DevicesController < ApplicationController
       "puavoPurchaseURL",
       "puavoSupportContract",
       "puavoTag",
+      "puavoConf",
       "puavoWarrantyEndDate",
       "serialNumber",
       "puavoSchool",
@@ -265,4 +266,73 @@ class DevicesController < ApplicationController
     return school_printers
   end
 
+  def device_params
+    p = params.require(:device).permit(
+      :devicetype,                # these are...
+      :school,                    # ...used during...
+      :host_certificate_request,  # ...device registration
+      :puavoDeviceType,
+      :puavoHostname,
+      :puavoTag,
+      :puavoConf,
+      :puavoDeviceStatus,
+      :image,
+      :puavoDeviceManufacturer,
+      :puavoDeviceModel,
+      :serialNumber,
+      :primary_user_uid,
+      :puavoDeviceBootMode,
+      :puavoDeviceDefaultAudioSource,
+      :puavoDeviceDefaultAudioSink,
+      :puavoAllowGuest,
+      :puavoPersonalDevice,
+      :puavoAutomaticImageUpdates,
+      :puavoPersonallyAdministered,
+      :ipHostNumber,
+      :description,
+      :puavoDeviceAutoPowerOffMode,
+      :puavoDeviceOnHour,
+      :puavoDeviceOffHour,
+      :puavoPurchaseDate,
+      :puavoWarrantyEndDate,
+      :puavoPurchaseLocation,
+      :puavoPurchaseURL,
+      :puavoSupportContract,
+      :puavoLocationName,
+      :puavoLatitude,
+      :puavoLongitude,
+      :puavoDeviceXserver,
+      :puavoDeviceXrandrDisable,
+      :puavoDeviceResolution,
+      :puavoDeviceHorzSync,
+      :puavoDeviceVertRefresh,
+      :puavoDeviceImage,
+      :puavoDeviceBootImage,
+      :puavoPreferredServer,
+      :puavoDeviceKernelVersion,
+      :puavoDeviceKernelArguments,
+      :puavoPrinterDeviceURI,
+      :puavoPrinterPPD,
+      :puavoDefaultPrinter,
+      :printerDescription,
+      :printerURI,
+      :printerLocation,
+      :printerMakeAndModel,
+      :puavoPrinterCartridge,
+      :macAddress=>[],
+      :puavoDeviceXrandr=>[],
+      :puavoImageSeriesSourceURL=>[],
+      :fs=>[],
+      :path=>[],
+      :mountpoint=>[],
+      :options=>[]).to_hash
+
+    # deduplicate arrays, as LDAP really does not like duplicate entries...
+    p["puavoTag"] = p["puavoTag"].split.uniq.join(' ') if p.key?("puavoTag")
+    p["macAddress"].uniq! if p.key?("macAddress")
+    p["puavoDeviceXrandr"].uniq! if p.key?("puavoDeviceXrandr")
+    p["puavoImageSeriesSourceURL"].uniq! if p.key?("puavoImageSeriesSourceURL")
+
+    return p
+  end
 end

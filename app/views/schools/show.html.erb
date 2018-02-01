@@ -73,6 +73,16 @@
 
     <div class="row">
       <div class="column_1">
+        <%= label "school", "puavoConf" %>:
+      </div>
+      <div class="column_2">
+        <%= render :partial => 'shared/puavoconf',
+                   :locals  => { :object => @school.puavoConf } %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="column_1">
         <%= label "school", "puavoDeviceAutoPowerOffMode" %>:
       </div>
       <div class="column_2">
@@ -141,7 +151,7 @@
   <div class="row">
     <% Array(@school.puavoBillingInfo).each do |billing_info| %>
       <div class="row">
-	<span><%=h billing_info %></span>
+        <span><%=h billing_info %></span>
       </div>
     <% end %>
   </div>

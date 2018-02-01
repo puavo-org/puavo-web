@@ -31,6 +31,8 @@
     </td>
   </tr>
 
+  <%= render( :partial => 'shared/form_puavoconf', :locals => { :f => f } ) %>
+
   <% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
   <tr>
     <td>

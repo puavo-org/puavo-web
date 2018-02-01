@@ -16,6 +16,11 @@ module ApplicationHelper
     super(object_name, method, human_name, content, *args)
   end
 
+  def text_area(*args)
+    after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
+    super(*args) + after_html.to_s
+  end
+
   def text_field(*args)
     after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
     super(*args) + after_html.to_s

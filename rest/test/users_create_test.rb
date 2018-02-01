@@ -76,7 +76,7 @@ describe LdapModel do
     end
 
     it "has home directory" do
-      assert_equal "/home/gryffindor/heli", @user.home_directory
+      assert_equal "/home/heli", @user.home_directory
     end
 
     it "has gid_number from school" do

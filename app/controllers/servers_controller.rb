@@ -145,4 +145,77 @@ class ServersController < ApplicationController
       format.html { redirect_to(server_path(@server), :notice => 'Server was successfully set to install mode.') }
     end
   end
+
+  private
+    def server_params
+      server = params.require(:server).permit(
+        :devicetype,                    # used when registering a boot server
+        :host_certificate_request,      # used when registering a boot server
+        :puavoDeviceType,               # used when registering a boot server
+        :puavoAutomaticImageUpdates,    # used when registering a boot server
+        :puavoPersonallyAdministered,   # used when registering a boot server
+        :puavoPersonalDevice,           # used when registering a boot server
+        :puavoHostname,
+        :puavoTag,
+        :puavoConf,
+        :puavoDeviceStatus,
+        :image,
+        :puavoDeviceManufacturer,
+        :puavoDeviceModel,
+        :serialNumber,
+        :primary_user_uid,
+        :puavoPrinterDeviceURI,
+        :puavoPrinterPPD,
+        :puavoDefaultPrinter,
+        :puavoDeviceDefaultAudioSource,
+        :puavoDeviceDefaultAudioSink,
+        :description,
+        :puavoPurchaseDate,
+        :puavoWarrantyEndDate,
+        :puavoPurchaseLocation,
+        :puavoPurchaseURL,
+        :puavoSupportContract,
+        :puavoLocationName,
+        :puavoLatitude,
+        :puavoLongitude,
+        :puavoDeviceXserver,
+        :puavoDeviceXrandrDisable,
+        :puavoDeviceResolution,
+        :puavoDeviceHorzSync,
+        :puavoDeviceVertRefresh,
+        :puavoDeviceImage,
+        :puavoDeviceKernelVersion,
+        :puavoDeviceKernelArguments,
+        :macAddress=>[],
+        :puavoImageSeriesSourceURL=>[],
+        :fs=>[],
+        :path=>[],
+        :mountpoint=>[],
+        :options=>[],
+        :puavoExport=>[],
+        :puavoSchool=>[]
+      ).to_hash
+
+      # For some reason, server parameters have been split into
+      # multiple hashes and each one must be permitted separately.
+      # Perhaps there is a better way to do this?
+      device = {}
+
+      if params.include?(:device)
+        # boot server registration does not send :device parameters
+        device = params.require(:device).permit(
+          :puavoDeviceXrandr=>[]
+        ).to_hash
+      end
+
+      # deduplicate arrays, as LDAP really does not like duplicate entries...
+      server["puavoTag"] = server["puavoTag"].split.uniq.join(' ') if server.key?("puavoTag")
+      server["puavoExport"].uniq! if server.key?("puavoExport")
+      server["macAddress"].uniq! if server.key?("macAddress")
+      server["puavoImageSeriesSourceURL"].uniq! if server.key?("puavoImageSeriesSourceURL")
+      device["puavoDeviceXrandr"].uniq! if device.key?("puavoDeviceXrandr")
+
+      return server.merge(device)
+
+    end
 end

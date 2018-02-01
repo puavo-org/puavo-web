@@ -446,6 +446,11 @@ en:
             invalid_characters: MAC address include invalid characters. Eg 0f:1f:a9:2f:a3:ad
         wlan:
           duplicate_name: a duplicate name exists (Network name) on the network setup
+        puavoconf:
+          not_json: "PuavoConf is not correct JSON"
+          unknown_json_error: "PuavoConf JSON-parsing failed due to unknown error"
+          not_a_hash: "PuavoConf is not in key-/valuepair-format"
+          unsupported_value_types: "Unsupported types in PuavoConf values"
     models:
       group: Group
       role: Role
@@ -475,13 +480,13 @@ en:
         gidNumber: Gid number
         puavoDeviceImage: Desktop Image
         external_feeds: Webmenu feed
-        puavoTag: Tags
         puavoBillingInfo: Billing info
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
         puavoPersonalDevice: Personal devices
         preferredLanguage: Language
         puavoTag: Tags
+        puavoConf: PuavoConf-settings
         puavoLocale: Language
         puavoAutomaticImageUpdates: Automatic image updates
         puavoDeviceAutoPowerOffMode: Auto power off mode
@@ -547,6 +552,8 @@ en:
         preferredLanguage: Preferred language
         puavoLocale: Preferred language
         eduOrgHomePageURI: Home page
+        puavoTag: Tags
+        puavoConf: PuavoConf-settings
         puavoDeviceAutoPowerOffMode: Auto power off mode
         puavoDeviceAutoPowerOffMode_default: Default
         puavoDeviceAutoPowerOffMode_off: "Off"
@@ -590,6 +597,7 @@ en:
         puavoDeviceBootMode: Boot mode
         description: Description
         puavoTag: Tags
+        puavoConf: PuavoConf-settings
         puavoPurchaseDate: Purchase date
         puavoWarrantyEndDate: Warranty end date
         puavoPurchaseLocation: Purchase location
@@ -646,6 +654,7 @@ en:
         puavoDeviceStatus: Status
         description: Description
         puavoTag: Tags
+        puavoConf: PuavoConf-settings
         puavoPurchaseDate: Purchase date
         puavoWarrantyEndDate: Warranty end date
         puavoPurchaseLocation: Purchase location

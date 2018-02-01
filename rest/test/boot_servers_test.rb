@@ -25,7 +25,8 @@ describe PuavoRest::BootServer do
       :puavoImageSeriesSourceURL => [
         "https://foobar.opinsys.fi/images1.json",
         "https://foobar.opinsys.fi/images2.json"],
-      :puavoDeviceType => "bootserver"
+      :puavoDeviceType => "bootserver",
+      :puavoConf => '{ "puavo.kernel.version": "fresh" }'
     }
     @server1.save!
 
@@ -165,6 +166,7 @@ describe PuavoRest::BootServer do
     before(:each) do
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoImageSeriesSourceURL = "https://foobar.opinsys.fi/organisationprefimages1.json"
+      test_organisation.puavoConf = '{ "puavo.time.timezone": "Europe/Rome" }'
       test_organisation.save!
 
       @server1.puavoImageSeriesSourceURL = nil
@@ -180,6 +182,21 @@ describe PuavoRest::BootServer do
       data = JSON.parse last_response.body
       assert_equal( Set.new(["https://foobar.opinsys.fi/organisationprefimages1.json"]),
                     Set.new(data["image_series_source_urls"]) )
+    end
+
+    it "puavo-conf values are passed" do
+      get "/v3/boot_servers/server1", {}, {
+        "HTTP_AUTHORIZATION" => "Bootserver"
+      }
+      assert_200
+
+      data = JSON.parse last_response.body
+      conf = data['puavoconf']
+
+      assert conf.kind_of?(Hash),
+	     'bootserver data has "puavoconf" that is a Hash'
+      assert_equal 'fresh', conf['puavo.kernel.version']
+      assert_equal 'Europe/Rome', conf['puavo.time.timezone']
     end
   end
 

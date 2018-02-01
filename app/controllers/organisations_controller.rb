@@ -120,4 +120,33 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  private
+    def organisation_params
+      return params.require(:ldap_organisation).permit(
+        :o,
+        :puavoEduOrgAbbreviation,
+        :description,
+        :telephoneNumber,
+        :facsimileTelephoneNumber,
+        :l,
+        :street,
+        :postOfficeBox,
+        :postalAddress,
+        :postalCode,
+        :st,
+        :puavoLocale,
+        :puavoTimezone,
+        :puavoKeyboardLayout,
+        :puavoKeyboardVariant,
+        :puavoAutomaticImageUpdates,
+        :eduOrgHomePageURI,
+        :puavoDeviceAutoPowerOffMode,
+        :puavoDeviceOnHour,
+        :puavoDeviceOffHour,
+        :puavoDeviceImage,
+        :puavoConf,
+        :puavoImageSeriesSourceURL=>[],
+        :puavoBillingInfo=>[]
+      ).to_hash
+    end
 end
