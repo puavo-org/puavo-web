@@ -86,7 +86,7 @@ EOF
         // and running "ansible-playbook -i /etc/puavo-standalone/local.inventory /etc/puavo-standalone/standalone.yml"
         // should work, we probably want to test that this works as well:
         sh '''
-          wget -qO - https://github.com/opinsys/puavo-standalone/raw/master/setup.sh | sh
+          wget -qO - https://github.com/opinsys/puavo-standalone/raw/jenkins/setup.sh | sh
         '''
       }
     }
