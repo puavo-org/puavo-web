@@ -1,9 +1,10 @@
 pipeline {
   agent {
-    docker {
-      image 'debian:stretch'
+    dockerfile {
+      filename 'Dockerfile'
+
       // XXX could you do most operations as normal user?
-      args '-u root --mount type=bind,source=/etc/jenkins-docker-config,destination=/etc/jenkins-docker-config,readonly --env-file=/etc/jenkins-docker-config/environment'
+      args '-u root --mount type=bind,source=/etc/jenkins-docker-config,destination=/etc/jenkins-docker-config,readonly --env-file=/etc/jenkins-docker-config/environment --privileged –v /sys/fs/cgroup:/sys/fs/cgroup:ro'
     }
   }
 
