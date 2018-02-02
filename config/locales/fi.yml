@@ -462,7 +462,7 @@ fi:
         wlan:
           duplicate_name: langattomien verkkojen asetuksissa sama verkkonimi useammalla verkolla
         puavoconf:
-          not_json: "PuavoConf ei ole korrektia JSONia"
+          not_json: "PuavoConf ei ole kunnollista JSONia"
           unknown_json_error: "PuavoConfin JSON-parsinnassa tuntematon virhe"
           not_a_hash: "PuavoConf ei ole avain-/arvopari-muotoa"
           unsupported_value_types: "PuavoConfin arvoissa ei-tuettuja tyyppejä"
@@ -613,7 +613,7 @@ fi:
         puavoDeviceBootMode: "Käynnistymistapa"
         description: Kuvaus
         puavoTag: Tagit
-        puavoConf: PuavoConf-asetukset
+        puavoConf:  PuavoConf-asetukset
         puavoPurchaseDate: Hankintapäivä
         puavoWarrantyEndDate: "Takuun päättymispäivä"
         puavoPurchaseLocation: Hankintapaikka
