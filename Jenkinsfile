@@ -4,8 +4,7 @@ pipeline {
       filename 'Dockerfile'
 
       // XXX could you do most operations as normal user?
-      // XXX just testing...
-      args '-u root --mount type=bind,source=/etc/jenkins-docker-config,destination=/etc/jenkins-docker-config,readonly --env-file=/etc/jenkins-docker-config/environment --cap-add=SYS_ADMIN –v /sys/fs/cgroup:/sys/fs/cgroup:ro'
+      args '-u root --mount type=bind,source=/etc/jenkins-docker-config,destination=/etc/jenkins-docker-config,readonly --env-file=/etc/jenkins-docker-config/environment --cap-add=SYS_ADMIN -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
     }
   }
 
