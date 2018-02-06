@@ -19,11 +19,11 @@ dpkg --force-confold -i ../*deb
 set -eu
 apt-get install -f -y --force-yes
 
-stop puavo-web || true
-stop puavo-rest || true
+service puavo-web stop || true
+service puavo-rest stop || true
 
-start puavo-web
-start puavo-rest
+service puavo-web start
+service puavo-rest start
 
 wait_for_http_ok -H "host: hogwarts.opinsys.net" http://localhost:9292/v3/ldap_connection_test
 echo "puavo-rest .deb package OK!"
