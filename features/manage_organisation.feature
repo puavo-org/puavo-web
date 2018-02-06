@@ -55,7 +55,7 @@ Feature: Manage organisation
     | ldap_organisation[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                            |
 # FIXME: fix acl?
 #    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
-    And I fill "PuavoConf-settings" with:
+    And I fill "PuavoConf settings" with:
       """
       {
         "puavo.desktop.vendor.logo": "/usr/share/puavo-art/puavo-os_logo-white.svg",

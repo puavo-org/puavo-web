@@ -37,7 +37,7 @@ Feature: Manage schools
     | school_mountpoint_0                 | /home/share                                                                    |
     | school_options_0                    | -o rw                                                                          |
     | school[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                                                |
-    And I fill in "PuavoConf-settings" with:
+    And I fill in "PuavoConf settings" with:
       """
       {
         "puavo.admin.personally_administered": true,

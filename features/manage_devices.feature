@@ -32,7 +32,7 @@ Feature: Manage devices
     And I fill in "device_path_0" with "10.0.0.1/share"
     And I fill in "device_mountpoint_0" with "/home/share"
     And I fill in "device_options_0" with "-o rw"
-    And I fill in "PuavoConf-settings" with:
+    And I fill in "PuavoConf settings" with:
       """
       {
         "puavo.autopilot.enabled": false,
