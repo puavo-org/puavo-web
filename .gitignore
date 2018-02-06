@@ -36,7 +36,7 @@ build/
 
 GIT_COMMIT
 debian/*-build-stamp
-debian/changelog.vc
+debian/changelog
 debian/.debhelper
 debian/*.debhelper
 debian/files
