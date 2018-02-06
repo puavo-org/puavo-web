@@ -104,7 +104,7 @@ require_relative "../root"
 
 
 # Puavo Activeldap models requires this require for some reason
-require "RMagick"
+require "rmagick"
 
 # Include rack helpers and expose full application stack
 class MiniTest::Spec

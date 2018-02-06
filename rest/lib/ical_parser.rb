@@ -4,7 +4,7 @@ require "icalendar"
 class ICALParser
 
   def self.parse(data)
-    new Icalendar.parse(data)
+    new Icalendar::Calendar.parse(data)
   end
 
   def initialize(cals)
