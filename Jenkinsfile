@@ -14,7 +14,7 @@ pipeline {
         // Debian Docker container contains a policy to not start services
         // when packages are installed, but we want that to work, so remove
         // the 'exit 101' policy when starting services.
-        sh 'rm -f /usr/sbin/policy-rc.d'
+        sh 'ln -fns /bin/true /usr/sbin/policy-rc.d'
 
         // "nodejs" in Stretch does not have "npm", must install the upstream
         // deb-packages. ("npm" in a build-dependency for puavo-users)
