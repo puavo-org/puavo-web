@@ -211,7 +211,7 @@ Feature: Manage users
     | displayName | cn      |
     | Class 6B    | class6b |
     When I follow "School 1" within ".school-menu-button"
-    And I follow "Users"
+    And I follow "Users" within ".main-wrap"
     Then I should see "Mabey Ben" within ".container"
     And I should not see /\["ben"\]/
     And I should not see "PuavoEduPersonAffiliation"

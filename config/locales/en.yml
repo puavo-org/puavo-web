@@ -494,8 +494,8 @@ en:
           duplicate_name: A duplicate network name exists
         puavoconf:
           not_json: "PuavoConf is not correct JSON"
-          unknown_json_error: "PuavoConf JSON-parsing failed due to unknown error"
-          not_a_hash: "PuavoConf is not in key-/valuepair-format"
+          unknown_json_error: "PuavoConf JSON parsing failed due to an unknown error"
+          not_a_hash: "PuavoConf is not in key/value pair format"
           unsupported_value_types: "Unsupported types in PuavoConf values"
     models:
       group: Group
@@ -533,7 +533,7 @@ en:
         preferredLanguage: Language
         image: Image
         puavoTag: Tags
-        puavoConf: PuavoConf-settings
+        puavoConf: PuavoConf settings
         puavoLocale: Language
         puavoAutomaticImageUpdates: Automatic image updates
         puavoDeviceAutoPowerOffMode: Auto power off mode
@@ -600,7 +600,7 @@ en:
         puavoLocale: Preferred language
         eduOrgHomePageURI: Home page
         puavoTag: Tags
-        puavoConf: PuavoConf-settings
+        puavoConf: PuavoConf settings
         puavoDeviceAutoPowerOffMode: Auto power off mode
         puavoDeviceAutoPowerOffMode_default: Default
         puavoDeviceAutoPowerOffMode_off: "Off"
@@ -644,7 +644,7 @@ en:
         puavoDeviceBootMode: Boot mode
         description: Description
         puavoTag: Tags
-        puavoConf: PuavoConf-settings
+        puavoConf: PuavoConf settings
         puavoPurchaseDate: Purchase date
         puavoWarrantyEndDate: Warranty end date
         puavoPurchaseLocation: Purchase location
@@ -701,7 +701,7 @@ en:
         puavoDeviceStatus: Status
         description: Description
         puavoTag: Tags
-        puavoConf: PuavoConf-settings
+        puavoConf: PuavoConf settings
         puavoPurchaseDate: Purchase date
         puavoWarrantyEndDate: Warranty end date
         puavoPurchaseLocation: Purchase location

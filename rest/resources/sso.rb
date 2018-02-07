@@ -207,8 +207,11 @@ class SSO < PuavoSinatra
         err_msg[:error_message] = err.message
         err_msg[:meta] = err.meta
         err_msg[:organisation_domain] = Organisation.current.domain
+        flog_err_msg = "sso error: #{ error_message } / #{ err.message }"
+      else
+        flog_err_msg = "sso error: #{ error_message }"
       end
-      flog.warn('sso error', "sso error: #{ err.message }", err_msg)
+      flog.warn('sso error', flog_err_msg, err_msg)
     end
 
     @external_service ||= fetch_external_service
