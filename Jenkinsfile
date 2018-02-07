@@ -109,18 +109,22 @@ EOF
 
     stage('Test') {
       steps {
-        // Test installation can be done and works.
-        sh 'script/test-install.sh'
+        wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+          // Test installation can be done and works.
+          sh 'script/test-install.sh'
 
-        // Force organisations refresh...
-        sh '''
-          curl --noproxy localhost -d foo=bar \
-            http://localhost:9292/v3/refresh_organisations
-        '''
+          // Force organisations refresh...
+          sh '''
+            curl --noproxy localhost -d foo=bar \
+              http://localhost:9292/v3/refresh_organisations
+          '''
 
-        // Execute rest tests first as they are more low level
-        sh 'make test-rest'
-        sh 'make test'
+          // Execute rest tests first as they are more low level
+          sh '''
+            make test-rest
+            make test
+          '''
+        }
 
         cucumber fileIncludePattern: 'logs/cucumber-tests-*.json',
                  sortingMethod: 'ALPHABETICAL'
