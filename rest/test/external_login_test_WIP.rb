@@ -37,7 +37,7 @@ describe PuavoRest::ExternalLogin do
       'XXX', # XXX where to get this from?
       organisations['heroes']['owner_pw'],
     )
- 
+
     # puts "dn=#{ organisations['heroes']['owner'] }"
     # puts "password=#{ organisations['heroes']['owner_pw'] }"
 #   LdapModel.setup(

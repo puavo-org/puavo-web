@@ -386,7 +386,7 @@ module PuavoRest
           message += ' (user password was wrong)'
           raise ExternalLoginWrongPassword, message
         end
-         
+
         raise ExternalLoginUnavailable, message
       end
       raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
