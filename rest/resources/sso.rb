@@ -268,7 +268,7 @@ class SSO < PuavoSinatra
 
     CONFIG["external_domain"]&.each do |k, e|
       if e == org
-        org = k + ".opinsys.net"
+        org = k + "." + topdomain
         break
       end
     end
