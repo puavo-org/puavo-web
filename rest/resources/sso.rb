@@ -229,6 +229,7 @@ class SSO < PuavoSinatra
       "external_service_name" =>  @external_service["name"],
       "return_to" => params["return_to"],
       "organisation" => @organisation,
+      "display_domain" => request["organisation"],
       "username_placeholder" => username_placeholder,
       "username" => params["username"],
       "invalid_credentials?" => invalid_credentials?,
