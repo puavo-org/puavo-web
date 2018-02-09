@@ -265,6 +265,14 @@ class SSO < PuavoSinatra
 
   def ensure_topdomain(org)
     return if org.nil?
+
+    CONFIG["external_domain"]&.each do |k, e|
+      if e == org
+        org = k + ".opinsys.net"
+        break
+      end
+    end
+
     if !org.end_with?(topdomain)
       return "#{ org }.#{ topdomain }"
     end
