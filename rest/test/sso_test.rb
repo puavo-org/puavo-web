@@ -299,15 +299,6 @@ describe PuavoRest::SSO do
         el.attributes["value"].value if el
       end
 
-      it "is added from hostname" do
-        get "/v3/sso", {
-          "return_to" => "http://test-client-service.example.com/path",
-        }, {
-            "HTTP_HOST" => "anotherorg.opinsys.net"
-        }
-        assert_equal "anotherorg.opinsys.net", hidden_organisation_field
-      end
-
       it "is overridden from query string" do
         get "/v3/sso", {
           "organisation" => "anotherorg.opinsys.net",
