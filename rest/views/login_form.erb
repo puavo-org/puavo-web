@@ -12,7 +12,7 @@
     <fieldset class="inputs">
       <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
 
-      <% if @login_content['organisation'] %>
+      <% if @login_content['display_domain'] %>
           <input type="hidden" name="organisation" value="<%= @login_content['display_domain'] %>">
       <% end %>
 
