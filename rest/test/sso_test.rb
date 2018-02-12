@@ -324,7 +324,7 @@ describe PuavoRest::SSO do
         }, {
             "HTTP_HOST" => "login.opinsys.net"
         }
-        assert_equal nil, hidden_organisation_field
+        assert_nil hidden_organisation_field
       end
 
 
