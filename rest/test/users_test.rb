@@ -156,7 +156,7 @@ describe PuavoRest::Users do
 
       assert(alice)
       assert_equal("Alice", alice["first_name"])
-      assert_equal(nil, alice["last_name"])
+      assert_nil(alice["last_name"])
 
       assert(data.select do |u|
         u["username"] == "bob"
