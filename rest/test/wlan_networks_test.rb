@@ -159,6 +159,9 @@ describe PuavoRest::WlanNetworks do
         assert_equal 1, wlans.count
 
         eaptlsschoolwlan = wlans.first
+
+        assert_equal 'Puavo', eaptlsschoolwlan['identity']
+
         certs = eaptlsschoolwlan['certs']
         assert certs.kind_of?(Hash), 'has certs hash'
 
@@ -166,7 +169,6 @@ describe PuavoRest::WlanNetworks do
         assert_equal certs['client_cert'],         '<CLIENTCERT>'
         assert_equal certs['client_key'],          '<CLIENTKEY>'
         assert_equal certs['client_key_password'], 'mysecretclientkeypassword'
-        assert_equal certs['identity'],            'Puavo'
       end
 
       it "getting eap-tls certificates of another machine should fail" do
