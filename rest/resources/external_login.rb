@@ -77,7 +77,15 @@ module PuavoRest
           # XXX its kerberos credentials stay, thus user may remain
           # XXX usable in some contexts!  These issues should be solved
           # XXX before enabling this:
-          # XXX user_to_remove.destroy if user_to_remove
+          # XXX
+          # XXX     user_to_remove.destroy if user_to_remove
+          # XXX
+          # XXX instead of removing we should invalidate the password
+          # XXX and lock the account (or otherwise mark it for removal...
+          # XXX maybe after some days/weeks/months).
+          # XXX maybe_invalidate_password() does not work, because we may not
+          # XXX have the correct password.  Instead we should just overwrite it
+          # XXX directory.
         end
 
         if !userinfo then
