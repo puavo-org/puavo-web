@@ -864,6 +864,7 @@ en:
       wlan_name: Name
       wlan_type: Type
       wlan_password: Password
+      wlan_identity: Identity
       wlan_ap: Enabled in access points
       wlan_ca_cert: CA certificate
       wlan_client_cert: Client certificate

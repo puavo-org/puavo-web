@@ -166,6 +166,7 @@ describe PuavoRest::WlanNetworks do
         assert_equal certs['client_cert'],         '<CLIENTCERT>'
         assert_equal certs['client_key'],          '<CLIENTKEY>'
         assert_equal certs['client_key_password'], 'mysecretclientkeypassword'
+        assert_equal certs['identity'],            'Puavo'
       end
 
       it "getting eap-tls certificates of another machine should fail" do
