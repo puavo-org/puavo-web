@@ -365,14 +365,23 @@ module PuavoRest
 
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
-                            :port => (Integer(ldap_config['port']) rescue 636),
+                            :port => (Integer(ldap_config['port']) rescue 389),
                             :auth => {
                               :method   => :simple,
                               :username => bind_dn.to_s,
                               :password => bind_password.to_s,
                             },
-                            :encryption => :simple_tls   # XXX not sufficient!
-
+                            :encryption => {
+                               :method      => :start_tls,
+                               :tls_options => {
+                                 :verify_mode => OpenSSL::SSL::VERIFY_NONE,
+                               },
+                               # XXX not good
+                               # XXX see http://www.rubydoc.info/github/ruby-ldap/ruby-net-ldap/Net%2FLDAP:initialize
+                               # XXX and http://ruby-doc.org/stdlib-2.3.0/libdoc/openssl/rdoc/OpenSSL/SSL/SSLContext.html
+                               # XXX should this be configurable through
+                               # XXX ldap_config?
+                            }
       @ldap_userinfo = nil
       @username = nil
     end
