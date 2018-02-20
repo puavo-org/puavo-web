@@ -5,6 +5,7 @@ require 'securerandom'
 # ExternalLoginNotConfigured means external logins are not configured
 #   in whatever particular case
 # ExternalLoginUnavailable means an error at external service
+# ExternalLoginUserMissing means user could not found at external service
 # ExternalLoginWrongPassword means user is valid but had a wrong password
 
 class ExternalLoginError         < StandardError; end
