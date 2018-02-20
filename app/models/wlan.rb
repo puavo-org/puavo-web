@@ -89,6 +89,7 @@ module Wlan
             :client_key_password => \
               new_attrs[:wlan_client_key_password][index_s]
           }
+          wlaninfo[:identity] = new_attrs[:wlan_identity][index_s]
         when 'psk'
           wlaninfo[:password] = new_attrs[:wlan_password][index_s]
       end
@@ -108,6 +109,7 @@ module Wlan
   end
 
   def wlan_ap;                  wlan_attrs('wlan_ap');             end
+  def wlan_identity;            wlan_attrs('identity');            end
   def wlan_name;                wlan_attrs('ssid');                end
   def wlan_password;            wlan_attrs('password');            end
   def wlan_type;                wlan_attrs('type');                end

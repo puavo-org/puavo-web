@@ -12,8 +12,8 @@
     <fieldset class="inputs">
       <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
 
-      <% if @login_content['organisation'] %>
-          <input type="hidden" name="organisation" value="<%= @login_content['organisation']['domain'] %>">
+      <% if @login_content['display_domain'] %>
+          <input type="hidden" name="organisation" value="<%= @login_content['display_domain'] %>">
       <% end %>
 
       <label class="field <%= @login_content['organisation'] ? "organisation-prefilled" : "" %>">
@@ -28,7 +28,7 @@
         <% if @login_content['organisation'] %>
           <span class="organisation-prefill"
             title="<%= @login_content['organisation']['name'] %>"
-          >@<%= @login_content['organisation']['domain'] %></span>
+          >@<%= @login_content['display_domain'] %></span>
         <br>
         <% end %>
     </label>

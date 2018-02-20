@@ -21,6 +21,7 @@ class SessionsController < ApplicationController
         "name" => request.host, # FIXME
         "domain" => request.host
       },
+      "display_domain" => request.host,   # used mainly in SSO code, but must be set here too
       "username_placeholder" => I18n.t("sessions.new.username_placeholder"),
       "username" => params["username"],
       "invalid_credentials?" => false, # Not use plaintext password ever

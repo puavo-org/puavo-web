@@ -101,7 +101,7 @@ describe PuavoRest::Devices do
         get "/v3/devices/laptop1"
         assert_200
         data = JSON.parse last_response.body
-        assert_equal nil, data["primary_user"]
+        assert_nil data["primary_user"]
       end
 
     end

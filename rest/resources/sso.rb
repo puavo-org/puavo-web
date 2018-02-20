@@ -229,6 +229,7 @@ class SSO < PuavoSinatra
       "external_service_name" =>  @external_service["name"],
       "return_to" => params["return_to"],
       "organisation" => @organisation,
+      "display_domain" => request["organisation"],
       "username_placeholder" => username_placeholder,
       "username" => params["username"],
       "invalid_credentials?" => invalid_credentials?,
@@ -265,6 +266,14 @@ class SSO < PuavoSinatra
 
   def ensure_topdomain(org)
     return if org.nil?
+
+    CONFIG["external_domain"]&.each do |k, e|
+      if e == org
+        org = k + "." + topdomain
+        break
+      end
+    end
+
     if !org.end_with?(topdomain)
       return "#{ org }.#{ topdomain }"
     end

@@ -202,7 +202,7 @@ describe LdapModel do
       @user.teaching_group = nil
       @teaching_group = PuavoRest::Group.by_id(@teaching_group.id) # FIXME? why should be reload from ldap?
       assert !@teaching_group.member_dns.include?(@user.dn), "User is group member"
-      assert_equal @user.teaching_group, nil
+      assert_nil @user.teaching_group
 
     end
   end

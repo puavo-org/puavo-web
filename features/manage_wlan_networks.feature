@@ -143,6 +143,7 @@ Feature: Manage wlan networks
     And I fill in the following:
     | wlan_name[0] | EAP-TLS_test_network |
     | wlan_client_key_password[0] | AnotherSecretOfMine |
+    | wlan_identity[0] | Puavo |
     And I attach the file at "features/support/wlan_eaptls_ca_cert.txt" to "wlan_ca_cert[0]"
     And I attach the file at "features/support/wlan_eaptls_client_cert.txt" to "wlan_client_cert[0]"
     And I attach the file at "features/support/wlan_eaptls_client_key.txt" to "wlan_client_key[0]"
@@ -155,6 +156,7 @@ Feature: Manage wlan networks
 	    "ssid": "EAP-TLS_test_network",
 	    "type": "eap-tls",
 	    "wlan_ap": false,
+	    "identity": "Puavo",
 	    "certs": {
 	      "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
 	      "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",
@@ -171,6 +173,7 @@ Feature: Manage wlan networks
     And I fill in the following:
     | wlan_name[0]     | EAP-TLS_test_network |
     | wlan_password[0] | playblackholesun     |
+    | wlan_identity[0] | Mulperi              |
     And I check "wlan_ap[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
@@ -181,6 +184,7 @@ Feature: Manage wlan networks
 	    "ssid": "EAP-TLS_test_network",
 	    "type": "eap-tls",
 	    "wlan_ap": false,
+	    "identity": "Mulperi",
 	    "certs": {
 	      "ca_cert": null,
 	      "client_cert": null,
@@ -203,6 +207,7 @@ Feature: Manage wlan networks
     | wlan_name[2]                | EAPTLSNetwork                     |
     | wlan_password[1]            | SpoonmanComeTogetherWithYourHands |
     | wlan_client_key_password[2] | GetRightWithMe                    |
+    | wlan_identity[2]            | EAPTLSNetworkIdentity             |
     And I check "wlan_ap[0]"
     And I attach the file at "features/support/wlan_eaptls_ca_cert.txt" to "wlan_ca_cert[2]"
     And I attach the file at "features/support/wlan_eaptls_client_cert.txt" to "wlan_client_cert[2]"
@@ -227,6 +232,7 @@ Feature: Manage wlan networks
 	    "ssid": "EAPTLSNetwork",
 	    "type": "eap-tls",
 	    "wlan_ap": false,
+	    "identity": "EAPTLSNetworkIdentity",
 	    "certs": {
 	      "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
 	      "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",

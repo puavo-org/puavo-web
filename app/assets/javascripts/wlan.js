@@ -4,10 +4,12 @@ $(document).ready(function() {
 
     var tr_wlan_ap       = $('tr.wlan_ap_' + index);
     var tr_wlan_certs    = $('tr.wlan_certs_' + index);
+    var tr_wlan_identity = $('tr.wlan_identity_' + index);
     var tr_wlan_password = $('tr.wlan_password_' + index);
 
     var show_wlan_ap       = (wlan_type !== 'eap-tls');
     var show_wlan_certs    = (wlan_type === 'eap-tls');
+    var show_wlan_identity = (wlan_type === 'eap-tls');
     var show_wlan_password = (wlan_type === 'psk');
 
     for (var i = 0; i < tr_wlan_ap.length; i++) {
@@ -16,6 +18,11 @@ $(document).ready(function() {
 
     for (var i = 0; i < tr_wlan_certs.length; i++) {
       tr_wlan_certs[i].style.display = show_wlan_certs ? 'table-row' : 'none';
+    }
+
+    for (var i = 0; i < tr_wlan_identity.length; i++) {
+      tr_wlan_identity[i].style.display
+        = show_wlan_identity ? 'table-row' : 'none';
     }
 
     for (var i = 0; i < tr_wlan_password.length; i++) {

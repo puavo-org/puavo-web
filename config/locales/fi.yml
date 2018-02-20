@@ -831,6 +831,7 @@ fi:
       wlan_name: Nimi
       wlan_type: Tyyppi
       wlan_password: Salasana
+      wlan_identity: Identiteetti
       wlan_ca_cert: CA-sertifikaatti
       wlan_client_cert: Asiakassertifikaatti
       wlan_client_key: Asiakassertifikaatin avain
