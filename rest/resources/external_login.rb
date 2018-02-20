@@ -390,7 +390,7 @@ module PuavoRest
       # first check if user exists
       update_ldapuserinfo(username)
 
-      user_filter = Net::LDAP::Filter.eq('cn', username)
+      user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
 
       # then authenticate as user
       ldap_entries = @ldap.bind_as(:filter   => user_filter,
@@ -463,7 +463,7 @@ module PuavoRest
     def update_ldapuserinfo(username)
       return if @username && @username == username
 
-      user_filter = Net::LDAP::Filter.eq('cn', username)
+      user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
 
       ldap_entries = @ldap.search(:filter => user_filter)
       if !ldap_entries then
