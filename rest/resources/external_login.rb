@@ -46,8 +46,10 @@ module PuavoRest
           flog.info('external login attempt', message)
           userinfo = login_service.login(username, password)
         rescue ExternalLoginUserMissing => e
+          flog.info('user does not exist in external ldap', e.message)
           userinfo = nil
         rescue ExternalLoginWrongPassword => e
+          flog.info('user provided wrong password', e.message)
           userinfo = nil
           wrong_password = true
         rescue ExternalLoginError => e
@@ -474,7 +476,6 @@ module PuavoRest
 
       if ldap_entries.length == 0 then
         msg = "user '#{ username }' does not exist in external ldap"
-        @flog.info('user does not exist in external ldap', msg)
         raise ExternalLoginUserMissing, msg
       end
 
