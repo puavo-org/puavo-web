@@ -104,7 +104,12 @@ module PuavoRest
         flog.info('external login successful', message)
 
         school_dn = params[:school_dn].to_s
-        user_status = external_login.update_user_info(userinfo, school_dn)
+
+        begin
+          user_status = external_login.update_user_info(userinfo, school_dn)
+        rescue StandardError => e
+          return json(ExternalLogin.status_updateerror(e.message))
+        end
 
       rescue ExternalLoginNotConfigured => e
         flog.info('external login not configured',
@@ -129,6 +134,7 @@ module PuavoRest
     USER_STATUS_UNAVAILABLE      = 'UNAVAILABLE'
     USER_STATUS_UPDATED          = 'UPDATED'
     USER_STATUS_UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
+    USER_STATUS_UPDATEERROR      = 'UPDATEERROR'
 
     def initialize(config, flog, host)
       # Parse config with relevant information for doing external logins.
@@ -260,8 +266,8 @@ module PuavoRest
           default_school_dns = @external_login_config['default_school_dns']
           if !default_school_dns.kind_of?(Array) then
             raise ExternalLoginError,
-              "school dn is not known for '#{ userinfo['username'] }'" \
-                + ' and default school is not set'
+              'could not determine user school for' \
+                + " '#{ userinfo['username'] }' and default school is not set"
           end
           userinfo['school_dns'] = default_school_dns
         end
@@ -271,8 +277,8 @@ module PuavoRest
         default_roles = @external_login_config['default_roles']
         if !default_roles.kind_of?(Array) then
           raise ExternalLoginError,
-            "role is not known for '#{ userinfo['username'] }'" \
-              + ' and default role is not set'
+            'could not determine user role for' \
+              + " '#{ userinfo['username'] }' and default role is not set"
         end
         userinfo['roles'] = default_roles
       end
@@ -307,6 +313,11 @@ module PuavoRest
       { 'msg' => msg, 'status' => status_string }
     end
 
+    def self.status_badusercreds(msg=nil)
+      status(USER_STATUS_BADUSERCREDS,
+             (msg || 'auth FAILED, username or password was wrong'))
+    end
+
     def self.status_nochange(msg=nil)
       status(USER_STATUS_NOCHANGE,
              (msg || 'auth OK, no change to user information'))
@@ -332,9 +343,9 @@ module PuavoRest
              (msg || 'auth FAILED, user information updated'))
     end
 
-    def self.status_badusercreds(msg=nil)
-      status(USER_STATUS_BADUSERCREDS,
-             (msg || 'auth FAILED, username or password was wrong'))
+    def self.status_updateerror(msg=nil)
+      status(USER_STATUS_UPDATEERROR,
+             (msg || 'error when updating user information in Puavo'))
     end
   end
 
