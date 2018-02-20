@@ -93,7 +93,7 @@ module PuavoRest
         if !userinfo then
           msg = 'could not login to external service' \
                   + " '#{ login_service.service_name }' by user" \
-                  + " '#{ username }', user and/or password was wrong"
+                  + " '#{ username }', username or password was wrong"
           return json(ExternalLogin.status_badusercreds(msg))
         end
 
@@ -334,7 +334,7 @@ module PuavoRest
 
     def self.status_badusercreds(msg=nil)
       status(USER_STATUS_BADUSERCREDS,
-             (msg || 'auth FAILED, user and/or password was wrong'))
+             (msg || 'auth FAILED, username or password was wrong'))
     end
   end
 
