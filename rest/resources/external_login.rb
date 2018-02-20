@@ -103,10 +103,8 @@ module PuavoRest
                     + " by user '#{ userinfo['username'] }'"
         flog.info('external login successful', message)
 
-        school_dn = params[:school_dn].to_s
-
         begin
-          user_status = external_login.update_user_info(userinfo, school_dn)
+          user_status = external_login.update_user_info(userinfo, params)
         rescue StandardError => e
           return json(ExternalLogin.status_updateerror(e.message))
         end
@@ -259,10 +257,11 @@ module PuavoRest
       return false
     end
 
-    def update_user_info(userinfo, school_dn)
+    def update_user_info(userinfo, params)
       if userinfo['school_dns'].nil? then
-        if !school_dn.empty? then
-          userinfo['school_dns'] = [ school_dn ]
+        school_dn_param = params[:school_dn].to_s
+        if !school_dn_param.empty? then
+          userinfo['school_dns'] = [ school_dn_param ]
         else
           default_school_dns = @external_login_config['default_school_dns']
           if !default_school_dns.kind_of?(Array) then
@@ -275,13 +274,18 @@ module PuavoRest
       end
 
       if userinfo['roles'].nil? then
-        default_roles = @external_login_config['default_roles']
-        if !default_roles.kind_of?(Array) then
-          raise ExternalLoginError,
-            'could not determine user role for' \
-              + " '#{ userinfo['username'] }' and default role is not set"
+        role_param = params[:role].to_s
+        if !role_param.empty? then
+          userinfo['roles'] = [ role_param ]
+        else
+          default_roles = @external_login_config['default_roles']
+          if !default_roles.kind_of?(Array) then
+            raise ExternalLoginError,
+              'could not determine user role for' \
+                + " '#{ userinfo['username'] }' and default role is not set"
+          end
+          userinfo['roles'] = default_roles
         end
-        userinfo['roles'] = default_roles
       end
 
       begin
