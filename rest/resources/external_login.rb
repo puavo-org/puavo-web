@@ -1,4 +1,3 @@
-require 'mechanize'
 require 'net/ldap'
 require 'securerandom'
 
@@ -164,9 +163,10 @@ module PuavoRest
       raise ExternalLoginError, 'external_login service not set' \
         unless @login_service_name
 
+      # More login classes could be added here in the future,
+      # for other types of external logins.
       loginclass_map = {
-        'external_ldap'  => ExternalLdapService,
-        'external_wilma' => ExternalWilmaService,
+        'external_ldap' => ExternalLdapService,
       }
       @external_login_class = loginclass_map[@login_service_name]
       raise ExternalLoginError,
@@ -500,70 +500,6 @@ module PuavoRest
                  "looked up user '#{ username }' from external ldap")
       @username = username
       @ldap_userinfo = ldap_entries.first
-    end
-  end
-
-  class ExternalWilmaService < ExternalLoginService
-    def initialize(wilma_config, service_name, flog)
-      super(service_name, flog)
-
-      @linkname = wilma_config['linkname'].to_s
-      @url      = wilma_config['url'].to_s
-      if @linkname.empty? || @url.empty? then
-        raise ExternalLoginError, 'wilma resource is not configured'
-      end
-    end
-
-    def login(username, password)
-      # XXX not done yet
-      raise NotImplemented, 'wilma logins do not work yet'
-
-      agent = Mechanize.new
-
-      login_basepage = agent.get(@url)
-      raise ExternalLoginUnavailable,
-            'could not get base page to wilma login page' \
-        unless login_basepage
-
-      login_link = login_basepage.links.find { |l| l.text == @linkname }
-      raise ExternalLoginUnavailable, 'could not find link to login page' \
-        unless login_link
-
-      login_page = login_link.click
-      raise ExternalLoginUnavailable, 'could not find wilma login page' \
-        unless login_page
-
-      login_form = login_page.form
-      raise ExternalLoginUnavailable,
-        'could not find login form in login page' \
-          unless login_form
-      raise ExternalLoginUnavailable,
-        'could not find submit button in login page' \
-          unless login_form.buttons && login_form.buttons.first
-
-      login_form.Login    = username
-      login_form.Password = password
-      login_result_page   = agent.submit(login_form, login_form.buttons.first)
-
-      login_result_form = login_result_page.form
-      raise ExternalLoginUnavailable, 'could not find login result form' \
-        unless login_result_form
-      raise ExternalLoginUnavailable,
-        'could not find submit button in login result form' \
-          unless login_result_form.buttons && login_result_form.buttons.first
-
-      final_result = agent.submit(login_result_form,
-                                  login_result_form.buttons.first)
-
-      raise ExternalLoginUnavailable,
-        'could not find title in final login result page' \
-          unless final_result && final_result.title
-
-      return nil if final_result.title != 'Session Summary'
-
-      # XXX how to get userinfo?
-      userinfo = {}
-      return userinfo
     end
   end
 end
