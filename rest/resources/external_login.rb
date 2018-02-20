@@ -93,8 +93,8 @@ module PuavoRest
         if !userinfo then
           msg = 'could not login to external service' \
                   + " '#{ login_service.service_name }' by user" \
-                  + " '#{ username }'"
-          raise Unauthorized, :user => msg
+                  + " '#{ username }', user and/or password was wrong"
+          return json(ExternalLogin.status_badusercreds(msg))
         end
 
         # update user information after successful login
@@ -127,6 +127,7 @@ module PuavoRest
   end
 
   class ExternalLogin
+    USER_STATUS_BADUSERCREDS     = 'BADUSERCREDS'
     USER_STATUS_NOCHANGE         = 'NOCHANGE'
     USER_STATUS_NOTCONFIGURED    = 'NOTCONFIGURED'
     USER_STATUS_UNAVAILABLE      = 'UNAVAILABLE'
@@ -333,6 +334,11 @@ module PuavoRest
     def self.status_updated_but_fail(msg=nil)
       status(USER_STATUS_UPDATED_BUT_FAIL,
              (msg || 'auth FAILED, user information updated'))
+    end
+
+    def self.status_badusercreds(msg=nil)
+      status(USER_STATUS_BADUSERCREDS,
+             (msg || 'auth FAILED, user and/or password was wrong'))
     end
   end
 
