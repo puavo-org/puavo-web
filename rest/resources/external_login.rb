@@ -114,10 +114,6 @@ module PuavoRest
         flog.warn('external login unavailable',
                   "external login is unavailable: #{ e.message }")
         user_status = ExternalLogin.status_unavailable(e.message)
-      rescue ExternalLoginError => e
-        flog.error('external login error',
-                   "external login error: #{ e.message }")
-        raise InternalError, e
       rescue StandardError => e
         raise InternalError, e
       end
