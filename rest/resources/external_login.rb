@@ -234,9 +234,9 @@ module PuavoRest
                               new_password,
                               user.dn)
       case res[:exit_status]
-      when 49
-        # 49 exit status means invalid credentials, which is to be expected
-      when 0
+      when Net::LDAP::ResultCodeInvalidCredentials
+        # invalid credentials, which is to be expected
+      when Net::LDAP::ResultCodeSuccess
         # The password was valid for Puavo, but not to external login
         # service, so we invalidated it.
         msg = 'invalidated puavo password for user with external id' \
