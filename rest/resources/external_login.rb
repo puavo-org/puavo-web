@@ -456,7 +456,7 @@ module PuavoRest
         # 'groups'     => groups,
         'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
         'password'    => password,
-        'username'    => Array(@ldap_userinfo['uid']).first.to_s,
+        'username'    => Array(@ldap_userinfo['sAMAccountName']).first.to_s,
       }
 
       # XXX We presume that ldap result strings are UTF-8.  This might be a
