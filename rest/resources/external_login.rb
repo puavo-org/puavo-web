@@ -451,19 +451,21 @@ module PuavoRest
 
     private
 
-    def get_userinfo(password)
+    def get_groups()
+      # XXX not tested yet
       lookup_groups_filter \
         = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
             .&(Net::LDAP::Filter.eq('memberUid', @username))
       groups_result = @ldap.search(:filter => lookup_groups_filter)
-      groups = Hash[
+      Hash[
         groups_result.map do |g|
           [ Array(g['cn']).first, Array(g['displayname']).first ]
         end
       ]
+    end
 
+    def get_userinfo(password)
       # XXX check that these are not nonsense?
-      # XXX group information still missing
       userinfo = {
         'external_id' => Array(@ldap_userinfo['dn']).first.to_s,
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
