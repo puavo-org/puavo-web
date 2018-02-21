@@ -491,29 +491,59 @@ module PuavoRest
       return unless @dn_mappings
 
       unless @dn_mappings.kind_of?(Array) then
-        raise 'XXX'
+        raise ExternalLoginNotConfigured,
+              'external_login dn_mappings is not an array'
       end
 
       added_roles      = []
       added_school_dns = []
 
       @dn_mappings.each do |dn_mapping|
-        next unless dn_mapping.kind_of?(Hash)   # XXX warning?
+        unless dn_mapping.kind_of?(Hash) then
+          raise ExternalLoginNotConfigured,
+                'external_login dn_mapping is not a hash'
+        end
 
-        dn_mapping.each do |dn_glob_pattern, effects|
-          next unless effects.kind_of?(Hash)    # XXX warning?
+        dn_mapping.each do |dn_glob_pattern, operations_list|
+          next unless File.fnmatch(dn_glob_pattern, user_dn)
 
-          if File.fnmatch(dn_glob_pattern, user_dn) then
-            effects.each do |effect_name, effect_params|
-              case effect_name
+          unless operations_list.kind_of?(Array) then
+            raise ExternalLoginNotConfigured,
+                  'external_login dn_mapping operations list' \
+                    + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
+                    + ' is not an array'
+          end
+
+          operations_list.each do |op_item|
+            unless op_item.kind_of?(Hash) then
+              raise ExternalLoginNotConfigured,
+                    'external_login dn_mapping operation list item' \
+                      + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
+                      + ' is not a hash'
+            end
+
+            op_item.each do |op_name, op_params|
+              case op_name
               when 'add_roles'
-                next unless effect_params.kind_of?(Array)       # XXX warning?
-                added_rules += effect_params
+                unless op_params.kind_of?(Array) then
+                  raise ExternalLoginNotConfigured,
+                        'add_roles operation parameters type' \
+                          + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
+                          + ' is not an array'
+                end
+                added_rules += op_params
               when 'add_school_dns'
-                next unless effect_params.kind_of?(Array)       # XXX warning?
-                added_school_dns += effect_params
+                unless op_params.kind_of?(Array) then
+                  raise ExternalLoginNotConfigured,
+                        'add_school_dns operation parameters type' \
+                          + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
+                          + ' is not an array'
+                end
+                added_school_dns += op_params
               else
-                # XXX warning?
+                raise ExternalLoginNotConfigured,
+                      "unsupported operation '#{ op_name }'" \
+                        + " for dn_glob_pattern '#{ dn_glob_pattern }'"
               end
             end
           end
