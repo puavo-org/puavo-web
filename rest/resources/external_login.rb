@@ -383,6 +383,8 @@ module PuavoRest
       raise ExternalLoginError, 'ldap server not configured' \
         unless server
 
+      @dn_mappings = ldap_config['dn_mappings']
+
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
                             :port => (Integer(ldap_config['port']) rescue 389),
@@ -471,6 +473,9 @@ module PuavoRest
         'username'    => Array(@ldap_userinfo['sAMAccountName']).first.to_s,
       }
 
+      # we apply some magicks to determine user school and roles
+      apply_dn_mappings!(userinfo, @ldap_userinfo['dn'])
+
       # XXX We presume that ldap result strings are UTF-8.  This might be a
       # XXX wrong presumption, and this should be configurable.
       userinfo.each do |key, value|
@@ -478,6 +483,44 @@ module PuavoRest
       end
 
       userinfo
+    end
+
+    def apply_dn_mappings!(userinfo, user_dn)
+      return unless @dn_mappings
+
+      unless @dn_mappings.kind_of?(Array) then
+        raise 'XXX'
+      end
+
+      added_roles      = []
+      added_school_dns = []
+
+      @dn_mappings.each do |dn_mapping|
+        next unless dn_mapping.kind_of?(Hash)   # XXX warning?
+
+        dn_mapping.each do |dn_glob_pattern, effects|
+          next unless effects.kind_of?(Hash)    # XXX warning?
+
+          if File.fnmatch(dn_glob_pattern, user_dn) then
+            effects.each do |effect_name, effect_params|
+              case effect_name
+              when 'add_roles'
+                next unless effect_params.kind_of?(Array)       # XXX warning?
+                added_rules += effect_params
+              when 'add_school_dns'
+                next unless effect_params.kind_of?(Array)       # XXX warning?
+                added_school_dns += effect_params
+              else
+                # XXX warning?
+              end
+            end
+          end
+        end
+      end
+
+      userinfo['roles'] = ((userinfo['roles'] || []) + added_roles).sort.uniq
+      userinfo['school_dns'] \
+        = ((userinfo['school_dns'] || []) + added_school_dns).sort.uniq
     end
 
     def update_ldapuserinfo(username)
