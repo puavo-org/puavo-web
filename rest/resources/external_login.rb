@@ -523,22 +523,21 @@ module PuavoRest
             end
 
             op_item.each do |op_name, op_params|
+              if %w(add_roles add_school_dns).include?(op_name) then
+                params_type_ok = op_params.kind_of?(Array) \
+                                   && op_params.all? { |x| x.kind_of?(String) }
+                unless params_type_ok then
+                  raise ExternalLoginNotConfigured,
+                        "#{ op_name } operation parameters type" \
+                          + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
+                          + ' is not an array of strings'
+                end
+              end
+
               case op_name
               when 'add_roles'
-                unless op_params.kind_of?(Array) then
-                  raise ExternalLoginNotConfigured,
-                        'add_roles operation parameters type' \
-                          + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
-                          + ' is not an array'
-                end
                 added_rules += op_params
               when 'add_school_dns'
-                unless op_params.kind_of?(Array) then
-                  raise ExternalLoginNotConfigured,
-                        'add_school_dns operation parameters type' \
-                          + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
-                          + ' is not an array'
-                end
                 added_school_dns += op_params
               else
                 raise ExternalLoginNotConfigured,
