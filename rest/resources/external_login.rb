@@ -203,7 +203,7 @@ module PuavoRest
 
       # User is managed by external logins, if external_id is set to a
       # non-empty value.
-      return true if !user.external_id.to_s.empty?
+      return true unless user.external_id.to_s.empty?
 
       message = "user '#{ username }' exists but does not have" \
                   + ' an external id set, refusing to manage'
