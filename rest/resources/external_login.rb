@@ -465,23 +465,26 @@ module PuavoRest
     end
 
     def get_userinfo(password)
-      # XXX check that these are not nonsense?
+      # XXX validate that these are not nonsense?
+
+      user_dn = Array(@ldap_userinfo['dn']).first.to_s
+
       userinfo = {
-        'external_id' => Array(@ldap_userinfo['dn']).first.to_s,
+        'external_id' => user_dn,
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
-        # 'groups'     => groups,
+        # 'groups'     => groups,       # XXX use get_groups() once it's ready
         'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
         'password'    => password,
         'username'    => Array(@ldap_userinfo['sAMAccountName']).first.to_s,
       }
 
       # we apply some magicks to determine user school and roles
-      apply_dn_mappings!(userinfo, @ldap_userinfo['dn'])
+      apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first)
 
       # XXX We presume that ldap result strings are UTF-8.  This might be a
       # XXX wrong presumption, and this should be configurable.
       userinfo.each do |key, value|
-        value.force_encoding('UTF-8')
+        Array(value).map { |s| s.force_encoding('UTF-8') }
       end
 
       userinfo
@@ -536,7 +539,7 @@ module PuavoRest
 
               case op_name
               when 'add_roles'
-                added_rules += op_params
+                added_roles += op_params
               when 'add_school_dns'
                 added_school_dns += op_params
               else
