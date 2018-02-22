@@ -467,10 +467,8 @@ module PuavoRest
     def get_userinfo(password)
       # XXX validate that these are not nonsense?
 
-      user_dn = Array(@ldap_userinfo['dn']).first.to_s
-
       userinfo = {
-        'external_id' => user_dn,
+        'external_id' => Array(@ldap_userinfo['employeeNumber']).first.to_s,
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
         # 'groups'     => groups,       # XXX use get_groups() once it's ready
         'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
@@ -479,7 +477,7 @@ module PuavoRest
       }
 
       # we apply some magicks to determine user school and roles
-      apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first)
+      apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first.to_s)
 
       # XXX We presume that ldap result strings are UTF-8.  This might be a
       # XXX wrong presumption, and this should be configurable.
