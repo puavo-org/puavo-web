@@ -223,19 +223,27 @@ class UsersController < ApplicationController
   # POST /:school_id/users/change_school
   def change_school
     @new_school = School.find(params[:new_school])
-    @new_role = Role.find(params[:new_role])
+
+    use_groups = new_group_management?(@school)
+    @role_or_group = use_groups ? Group.find(params[:new_role]) : Role.find(params[:new_role])
 
     params[:user_ids].each do |user_id|
       @user = User.find(user_id)
       @user.change_school(@new_school.dn.to_s)
-      @user.role_ids = Array(@new_role.id)
+
+      if use_groups
+        @user.groups = Array(@role_or_group.id)
+      else
+        @user.role_ids = Array(@role_or_group.id)
+      end
+
       @user.save
     end
 
     respond_to do |format|
       if Array(params[:user_ids]).length > 1
         format.html { redirect_to( role_path( @new_school,
-                                              @new_role ),
+                                              @role_or_group ),
                                    :notice => t("flash.user.school_changed") ) }
       else
         format.html { redirect_to( user_path(@new_school, @user),
@@ -258,10 +266,12 @@ class UsersController < ApplicationController
   def select_role
     @user = User.find(params[:id])
     @new_school = School.find(params[:new_school])
-    @roles = @new_school.roles
 
-    if @roles.length == 0
-      flash[:alert] = t('users.select_school.no_roles')
+    @use_groups = new_group_management?(@school)
+    @roles_or_groups = @use_groups ? @new_school.groups : @new_school.roles
+
+    if @roles_or_groups.nil? || @roles_or_groups.empty?
+      flash[:alert] = t(@use_groups ? 'users.select_school.no_groups' : 'users.select_school.no_roles')
       redirect_to :back
     else
       respond_to do |format|

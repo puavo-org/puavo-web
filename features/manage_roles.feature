@@ -104,10 +104,10 @@ Feature: Manage roles
     And "pavel" is a school admin on the "Example school 2" school
     Then I should see "Class 6"
     When I follow "Move users to another school"
-    Then I should see "Select new school"
+    Then I should see "Select the new school"
     When I select "Example school 2" from "new_school"
     And I press "Next"
-    Then I should see "Select new role"
+    Then I should see "Select the new role"
     When I select "Class 7" from "new_role"
     And I press "Move users"
     Then I should see "User(s) school has been changed!"

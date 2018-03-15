@@ -326,7 +326,7 @@ Feature: Manage users
     When I follow "Change school"
     And I select "Example school 2" from "new_school"
     And I press "Next"
-    Then I should see "Select new role"
+    Then I should see "Select the new role"
     When I select "Class 5" from "new_role"
     And I press "Change school"
     Then I should see "User(s) school has been changed!"
