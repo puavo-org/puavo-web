@@ -226,6 +226,7 @@ fi:
       select_new_school: Valitse uusi koulu
       no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
+      no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
       submit: Seuraava
     select_role:
       title: "Käyttäjien siirto"
@@ -256,6 +257,7 @@ fi:
       select_new_school: Valitse uusi koulu
       no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
+      no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
       submit: Seuraava
     select_role:
       title: Koulun vaihto

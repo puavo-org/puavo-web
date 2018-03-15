@@ -255,6 +255,7 @@ en:
       select_new_school: Select the new school
       no_roles: "The selected school has no roles!"
       no_groups: "The selected school has no groups!"
+      no_teaching_groups: "The selected school has no teaching groups!"
       submit: Next
     select_role:
       title: Users transfer
@@ -285,6 +286,7 @@ en:
       select_new_school: Select the new school
       no_roles: "The selected school has no roles!"
       no_groups: "The selected school has no groups!"
+      no_teaching_groups: "The selected school has no teaching groups!"
       submit: Next
     select_role:
       title: School change

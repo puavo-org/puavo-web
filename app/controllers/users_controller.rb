@@ -269,9 +269,32 @@ class UsersController < ApplicationController
 
     @use_groups = new_group_management?(@school)
     @roles_or_groups = @use_groups ? @new_school.groups : @new_school.roles
+    @is_a_student = false
+
+    if @use_groups
+      # only show certain kinds of groups, based on the user's type
+      if @user.puavoEduPersonAffiliation == 'student'
+        # display only teaching groups for students
+        @roles_or_groups.select! { |g| g.puavoEduGroupType == 'teaching group' }
+        is_a_student = true
+      else
+        # for everyone else, teachers or not, display only administrative groups
+        @roles_or_groups.select! { |g| g.puavoEduGroupType == 'administrative group' }
+      end
+    end
 
     if @roles_or_groups.nil? || @roles_or_groups.empty?
-      flash[:alert] = t(@use_groups ? 'users.select_school.no_groups' : 'users.select_school.no_roles')
+      if is_a_student
+        # special message for students
+        flash[:alert] = t('users.select_school.no_teaching_groups')
+      else
+        if @use_groups
+          flash[:alert] = t('users.select_school.no_groups')
+        else
+          flash[:alert] = t('users.select_school.no_roles')
+        end
+      end
+
       redirect_to :back
     else
       respond_to do |format|
