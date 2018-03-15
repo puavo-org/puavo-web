@@ -224,6 +224,7 @@ fi:
     select_school:
       title: "Käyttäjien siirto"
       select_new_school: Valitse uusi koulu
+      no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       submit: Seuraava
     select_role:
       title: "Käyttäjien siirto"
