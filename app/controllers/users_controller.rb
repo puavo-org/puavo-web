@@ -257,6 +257,10 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @schools = School.all_with_permissions current_user
 
+    # don't show the school the user already is in
+    user_school_id = @user.puavoSchool&.rdns[0]["puavoId"] || -1
+    @schools.reject! { |s| s.id == user_school_id }
+
     respond_to do |format|
       format.html
     end
