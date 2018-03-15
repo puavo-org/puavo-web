@@ -434,13 +434,15 @@ module PuavoRest
       @flog.info('authentication to ldap succeeded',
                  'authentication to ldap succeeded')
 
-      get_userinfo(password)
+      get_userinfo(username, password)
     end
 
     def lookup_external_id(username)
       update_ldapuserinfo(username)
 
-      external_id = @ldap_userinfo && Array(@ldap_userinfo['dn']).first.to_s
+      # XXX The field name "employeeNumber" should probably be configurable.
+      external_id = @ldap_userinfo \
+                      && Array(@ldap_userinfo['employeeNumber']).first.to_s
       if !external_id || external_id.empty? then
         raise ExternalLoginUnavailable,
               "could not lookup external id for user '#{ username }'"
@@ -464,11 +466,11 @@ module PuavoRest
       ]
     end
 
-    def get_userinfo(password)
+    def get_userinfo(username, password)
       # XXX validate that these are not nonsense?
 
       userinfo = {
-        'external_id' => Array(@ldap_userinfo['employeeNumber']).first.to_s,
+        'external_id' => lookup_external_id(username),
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
         # 'groups'     => groups,       # XXX use get_groups() once it's ready
         'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
