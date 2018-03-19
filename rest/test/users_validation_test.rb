@@ -40,7 +40,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong"
+        :password => "userpw"
       )
       @user.save!
     end
@@ -53,7 +53,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri2@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong",
+        :password => "userpw",
 
         :login_shell => "/bin/bash"
       )
@@ -78,7 +78,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong"
+        :password => "userpw"
       )
 
       err = assert_raises ValidationError do
@@ -99,7 +99,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "foo@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong"
+        :password => "userpw"
       )
 
       user.validate!
@@ -107,7 +107,7 @@ describe LdapModel do
     end
 
     it "can be accessed over http" do
-      basic_authorize "heli", "userpassswordislong"
+      basic_authorize "heli", "userpw"
       post "/v3/users_validate", {
         :first_name => "Heli",
         :last_name => "Kopteri",
@@ -115,7 +115,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong"
+        :password => "userpw"
       }
 
       assert_equal 400, last_response.status
@@ -149,7 +149,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "foo@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong"
+        :password => "userpw"
       )
 
       err = assert_raises ValidationError do
@@ -169,7 +169,7 @@ describe LdapModel do
         :roles => ["staff"],
         :email => "foo@example.com",
         :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong"
+        :password => "userpw"
       )
 
       err = assert_raises ValidationError do
@@ -180,27 +180,6 @@ describe LdapModel do
       assert error
       assert_equal :last_name_empty, error[:code]
       assert_equal "Last name is empty", error[:message]
-    end
-
-    it "does not allow short passwords" do
-      user = PuavoRest::User.new(
-        :first_name => "Foo",
-        :last_name => "Bar",
-        :username => "foo",
-        :roles => ["staff"],
-        :email => "foo@example.com",
-        :school_dns => [@school.dn.to_s],
-        :password => "short"
-      )
-
-      err = assert_raises ValidationError do
-        user.validate!
-      end
-
-      error = err.as_json[:error][:meta][:invalid_attributes][:password].first
-      assert error
-      assert_equal :password_too_short, error[:code]
-      assert_equal "Password must have at least 8 characters", error[:message]
     end
 
     it "do not allow 'root' as username" do
@@ -324,9 +303,5 @@ describe LdapModel do
       assert_equal "Username too long", error[:message]
 
     end
-
-
-
-
   end
 end
