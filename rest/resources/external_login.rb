@@ -67,6 +67,8 @@ module PuavoRest
                                                                  password)
           if invalidated then
             msg = 'user password invalidated'
+            flog.info('user password invalidated',
+                      "user password invalidated for #{ username }")
             return json(ExternalLogin.status_updated_but_fail(msg))
           end
         elsif !userinfo then
@@ -94,6 +96,7 @@ module PuavoRest
           msg = 'could not login to external service' \
                   + " '#{ login_service.service_name }' by user" \
                   + " '#{ username }', username or password was wrong"
+          flog.info('could not login to external service', msg)
           return json(ExternalLogin.status_badusercreds(msg))
         end
 
@@ -106,6 +109,8 @@ module PuavoRest
         begin
           user_status = external_login.update_user_info(userinfo, params)
         rescue StandardError => e
+          flog.warn('error updating user information',
+                    "error updating user information: #{ e.message }")
           return json(ExternalLogin.status_updateerror(e.message))
         end
 
@@ -121,7 +126,9 @@ module PuavoRest
         raise InternalError, e
       end
 
-      return json(user_status)
+      json_user_status = json(user_status)
+      flog.info(nil, "returning external login status #{ json_user_status }")
+      return json_user_status
     end
   end
 
@@ -199,11 +206,19 @@ module PuavoRest
 
       # If we do not have a user with this username, that username slot is
       # available for external logins.
-      return true unless user
+      unless user then
+        @flog.info(nil,
+                   "username '#{ username }' is available for external logins")
+        return true
+      end
 
-      # User is managed by external logins, if external_id is set to a
-      # non-empty value.
-      return true unless user.external_id.to_s.empty?
+      unless user.external_id.to_s.empty? then
+        # User is managed by external logins, if external_id is set to a
+        # non-empty value.
+        @flog.info(nil,
+                   "username '#{ username }' has non-empty external id, ok")
+        return true
+      end
 
       message = "user '#{ username }' exists but does not have" \
                   + ' an external id set, refusing to manage'
