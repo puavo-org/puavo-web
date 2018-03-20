@@ -166,7 +166,9 @@ class UsersController < ApplicationController
         end
 
         if new_group_management?(@school)
-          @user.teaching_group = params["teaching_group"]
+          if params["teaching_group"]
+            @user.teaching_group = params["teaching_group"]
+          end
           if params["administrative_groups"]
             @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
             params["user"].delete("administrative_groups")
