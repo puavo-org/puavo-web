@@ -316,8 +316,9 @@ module PuavoRest
           end
           if teaching_group.member_dns.empty? then
             # Remove groups with external_ids that have no members
-            # XXX is there such a method as this?  can this be done?
-            teaching_group.remove!
+            # XXX teaching_group object does not currently support removing!
+            # teaching_group.remove!
+            true
           end
         end
       end
