@@ -273,6 +273,50 @@ module PuavoRest
       return false
     end
 
+    def manage_groups_for_user(user, external_groups)
+      # XXX log what is going on...
+
+      user.schools.each do |school|
+        teaching_group_list = Group.teaching_groups_by_school(school) \
+                                   .select { |tg| tg.external_id }
+
+        external_groups.each do |ext_group_name, ext_group_displayname|
+          teaching_group = nil
+          teaching_group_list.each do |candidate_teaching_group|
+            next unless candidate_teaching_group.abbreviation == ext_group_name
+            teaching_group = candidate_teaching_group
+            if teaching_group.name != ext_group_displayname then
+              teaching_group.name = ext_group_displayname
+              teaching_group.save!
+            end
+          end
+
+          unless teaching_group then
+            teaching_group \
+              = PuavoRest::Group.new(:abbreviation => ext_group_name,
+                                     :external_id  => ext_group_name,
+                                     :name         => ext_group_displayname,
+                                     :school_dn    => school.dn,
+                                     :type         => 'teaching group')
+            teaching_group.save!
+          end
+
+          teaching_group.add_member(user)
+        end
+
+        teaching_group_list.each do |teaching_group|
+          unless external_groups.has_key?(teaching_group.abbreviation) then
+            teaching_group.remove_member(user)
+          end
+          if teaching_group.member_dns.empty? then
+            # Remove groups with external_ids that have no members
+            # XXX is there such a method as this?  can this be done?
+            teaching_group.remove!
+          end
+        end
+      end
+    end
+
     def update_user_info(userinfo, params)
       if userinfo['school_dns'].nil? then
         school_dn_param = params[:school_dn].to_s
@@ -304,8 +348,9 @@ module PuavoRest
         end
       end
 
-      # XXX should do something with the group information
-      userinfo.delete('groups')
+      external_groups = userinfo.delete('external_groups')
+
+      update_status = nil
 
       begin
         user = User.by_attr(:external_id, userinfo['external_id'])
@@ -314,23 +359,29 @@ module PuavoRest
           user.save!
           @flog.info('new external login user',
                      "created a new user '#{ userinfo['username'] }'")
-          return self.class.status_updated()
+          update_status = self.class.status_updated()
         elsif user.check_if_changed_attributes(userinfo) then
           user.update!(userinfo)
           user.save!
           @flog.info('updated external login user',
                      "updated user information for '#{ userinfo['username'] }'")
-          return self.class.status_updated()
+          update_status = self.class.status_updated()
         else
           @flog.info('no change for external login user',
                      'no change in user information for' \
                        + " '#{ userinfo['username'] }'")
-          return self.class.status_nochange()
+          update_status = self.class.status_nochange()
         end
       rescue ValidationError => e
         raise ExternalLoginError,
               "error saving user because of validation errors: #{ e.message }"
       end
+
+      # XXX if here something changes, should we then return
+      # XXX self.class.status_updated()
+      manage_groups_for_user(user, external_groups)
+
+      return update_status
     end
 
     def self.status(status_string, msg)
@@ -472,19 +523,6 @@ module PuavoRest
 
     private
 
-    def get_groups()
-      # XXX not tested yet
-      lookup_groups_filter \
-        = Net::LDAP::Filter.eq('objectClass', 'posixGroup') \
-            .&(Net::LDAP::Filter.eq('memberUid', @username))
-      groups_result = @ldap.search(:filter => lookup_groups_filter)
-      Hash[
-        groups_result.map do |g|
-          [ Array(g['cn']).first, Array(g['displayname']).first ]
-        end
-      ]
-    end
-
     def get_userinfo(username, password)
       # XXX validate that these are not nonsense?
 
@@ -518,7 +556,7 @@ module PuavoRest
 
       added_roles      = []
       added_school_dns = []
-      groups           = []
+      external_groups  = {}
 
       @dn_mappings.each do |dn_mapping|
         unless dn_mapping.kind_of?(Hash) then
@@ -567,9 +605,9 @@ module PuavoRest
               when 'add_school_dns'
                 added_school_dns += op_params
               when 'group_mapping'
-                groups += op_params.map do |group_mapping|
-                            apply_group_mapping(group_mapping)
-                          end
+                op_params.each do |group_mapping|
+                  external_groups.merge!( apply_group_mapping(group_mapping) )
+                end
               else
                 raise ExternalLoginNotConfigured,
                       "unsupported operation '#{ op_name }'" \
@@ -580,14 +618,14 @@ module PuavoRest
         end
       end
 
-      userinfo['groups'] = groups.compact
+      userinfo['external_groups'] = external_groups
       userinfo['roles'] = ((userinfo['roles'] || []) + added_roles).sort.uniq
       userinfo['school_dns'] \
         = ((userinfo['school_dns'] || []) + added_school_dns).sort.uniq
     end
 
     def apply_group_mapping(group_mapping_params)
-      group = nil
+      group = {}
 
       begin
         unless group_mapping_params.kind_of?(Hash) then
@@ -625,7 +663,7 @@ module PuavoRest
           @flog.warn('could not find ldap attribute in user information',
                      "could not find ldap attribute '#{ field }'" \
                        + ' in user information')
-          return nil
+          return {}
         end
 
         match = ldap_attribute_value.match(field_regex)
@@ -635,7 +673,7 @@ module PuavoRest
                        + " '#{ ldap_attribute_value }'" \
                        + " (expecting a match with '#{ field_regex }'" \
                        + " that should also have one integer capture)")
-          return nil
+          return {}
         end
 
         class_year = Integer(match[1])
@@ -656,10 +694,8 @@ module PuavoRest
                                 ' ' => '-') \
                           .gsub(/[^a-z0-9-]/, '')
 
-        group = {
-          'displayname' => displayname,
-          'name'        => name,
-        }
+        # XXX log message on what is going on...
+        group = { name => displayname }
       rescue StandardError => e
         raise ExternalLoginNotConfigured, e.message
       end
