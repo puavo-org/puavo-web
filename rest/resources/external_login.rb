@@ -274,6 +274,8 @@ module PuavoRest
     end
 
     def manage_groups_for_user(user, external_groups)
+      changes_happened = false
+
       user.schools.each do |school|
         teaching_group_list = Group.teaching_groups_by_school(school) \
                                    .select { |tg| tg.external_id }
@@ -292,6 +294,7 @@ module PuavoRest
 
               teaching_group.name = ext_group_displayname
               teaching_group.save!
+              changes_happened = true
             end
           end
 
@@ -309,6 +312,7 @@ module PuavoRest
                                      :school_dn    => school.dn,
                                      :type         => 'teaching group')
             teaching_group.save!
+            changes_happened = true
           end
 
           unless teaching_group.has?(user) then
@@ -317,6 +321,7 @@ module PuavoRest
                          + " to group '#{ ext_group_displayname }'")
             teaching_group.add_member(user)
             teaching_group.save!
+            changes_happened = true
           end
         end
 
@@ -328,6 +333,7 @@ module PuavoRest
                            + " '#{ teaching_group.abbreviation }'")
               teaching_group.remove_member(user)
               teaching_group.save!
+              changes_happened = true
             end
           end
           if teaching_group.member_dns.empty? then
@@ -341,6 +347,8 @@ module PuavoRest
           end
         end
       end
+
+      return changes_happened
     end
 
     def update_user_info(userinfo, params)
@@ -403,9 +411,10 @@ module PuavoRest
               "error saving user because of validation errors: #{ e.message }"
       end
 
-      # XXX if here something changes, should we then return
-      # XXX self.class.status_updated()
-      manage_groups_for_user(user, external_groups)
+      if manage_groups_for_user(user, external_groups) then
+        # we are here if manage_groups_for_user() made some changes
+        update_status = self.class.status_updated()
+      end
 
       return update_status
     end
