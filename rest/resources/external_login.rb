@@ -1,3 +1,4 @@
+require 'date'
 require 'net/ldap'
 require 'securerandom'
 
@@ -303,6 +304,9 @@ module PuavoRest
         end
       end
 
+      # XXX should do something with the group information
+      userinfo.delete('groups')
+
       begin
         user = User.by_attr(:external_id, userinfo['external_id'])
         if !user then
@@ -487,20 +491,19 @@ module PuavoRest
       userinfo = {
         'external_id' => lookup_external_id(username),
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
-        # 'groups'     => groups,       # XXX use get_groups() once it's ready
         'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
         'password'    => password,
         'username'    => Array(@ldap_userinfo['sAMAccountName']).first.to_s,
       }
-
-      # we apply some magicks to determine user school and roles
-      apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first.to_s)
 
       # XXX We presume that ldap result strings are UTF-8.  This might be a
       # XXX wrong presumption, and this should be configurable.
       userinfo.each do |key, value|
         Array(value).map { |s| s.force_encoding('UTF-8') }
       end
+
+      # we apply some magicks to determine user school, groups and roles
+      apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first.to_s)
 
       userinfo
     end
@@ -515,6 +518,7 @@ module PuavoRest
 
       added_roles      = []
       added_school_dns = []
+      groups           = []
 
       @dn_mappings.each do |dn_mapping|
         unless dn_mapping.kind_of?(Hash) then
@@ -541,10 +545,15 @@ module PuavoRest
             end
 
             op_item.each do |op_name, op_params|
+              unless op_params.kind_of?(Array) then
+                raise ExternalLoginNotConfigured,
+                      "#{ op_name } operation parameters type" \
+                        + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
+                        + ' is not an array'
+              end
+
               if %w(add_roles add_school_dns).include?(op_name) then
-                params_type_ok = op_params.kind_of?(Array) \
-                                   && op_params.all? { |x| x.kind_of?(String) }
-                unless params_type_ok then
+                unless op_params.all? { |x| x.kind_of?(String) } then
                   raise ExternalLoginNotConfigured,
                         "#{ op_name } operation parameters type" \
                           + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
@@ -557,6 +566,10 @@ module PuavoRest
                 added_roles += op_params
               when 'add_school_dns'
                 added_school_dns += op_params
+              when 'group_mapping'
+                groups += op_params.map do |group_mapping|
+                            apply_group_mapping(group_mapping)
+                          end
               else
                 raise ExternalLoginNotConfigured,
                       "unsupported operation '#{ op_name }'" \
@@ -567,9 +580,91 @@ module PuavoRest
         end
       end
 
+      userinfo['groups'] = groups.compact
       userinfo['roles'] = ((userinfo['roles'] || []) + added_roles).sort.uniq
       userinfo['school_dns'] \
         = ((userinfo['school_dns'] || []) + added_school_dns).sort.uniq
+    end
+
+    def apply_group_mapping(group_mapping_params)
+      group = nil
+
+      begin
+        unless group_mapping_params.kind_of?(Hash) then
+          raise 'group mapping parameters is not a hash'
+        end
+
+        field = group_mapping_params['field']
+        unless field.kind_of?(String) && !field.empty? then
+          raise "group mapping attribute 'field' not configured"
+        end
+
+        field_regex = group_mapping_params['field_regex']
+        unless field_regex.kind_of?(String) && !field_regex.empty? then
+          raise "group mapping attribute 'field_regex' not configured"
+        end
+
+        displayname_format = group_mapping_params['displayname']
+        unless displayname_format.kind_of?(String) \
+          && !displayname_format.empty? then
+            raise "group mapping attribute 'displayname' not configured"
+        end
+
+        name_format = group_mapping_params['name']
+        unless name_format.kind_of?(String) && !name_format.empty? then
+          raise "group mapping attribute 'name' not configured"
+        end
+
+        if group_mapping_params['mapping_type'] != 'class-to-year' then
+          raise "only 'class-to-year' mapping_type is supported"
+        end
+
+        ldap_attribute_value = Array(@ldap_userinfo[field]).first
+
+        unless ldap_attribute_value.kind_of?(String) then
+          @flog.warn('could not find ldap attribute in user information',
+                     "could not find ldap attribute '#{ field }'" \
+                       + ' in user information')
+          return nil
+        end
+
+        match = ldap_attribute_value.match(field_regex)
+        unless match && match.size == 2 then
+          @flog.warn('unexpected format in ldap attribute',
+                     "unexpected format in ldap attribute '#{ field }':" \
+                       + " '#{ ldap_attribute_value }'" \
+                       + " (expecting a match with '#{ field_regex }'" \
+                       + " that should also have one integer capture)")
+          return nil
+        end
+
+        class_year = Integer(match[1])
+
+        today = Date.today
+        class_yearbase = today.year + (today.month < 8 ? 0 : 1)
+
+        displayname = displayname_format.sub("%s", ldap_attribute_value)
+
+        # group name sanitation is the same as in PuavoImport.sanitize_name
+        name = name_format.sub("%Y", (class_yearbase - class_year).to_s) \
+                          .sub("%s", ldap_attribute_value) \
+                          .downcase \
+                          .gsub(/[åäö ]/,
+                                'å' => 'a',
+                                'ä' => 'a',
+                                'ö' => 'o',
+                                ' ' => '-') \
+                          .gsub(/[^a-z0-9-]/, '')
+
+        group = {
+          'displayname' => displayname,
+          'name'        => name,
+        }
+      rescue StandardError => e
+        raise ExternalLoginNotConfigured, e.message
+      end
+
+      return group
     end
 
     def update_ldapuserinfo(username)
