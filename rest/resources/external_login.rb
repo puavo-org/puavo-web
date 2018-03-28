@@ -301,12 +301,18 @@ module PuavoRest
             teaching_group.save!
           end
 
-          teaching_group.add_member(user)
+          unless teaching_group.has?(user) then
+            teaching_group.add_member(user)
+            teaching_group.save!
+          end
         end
 
         teaching_group_list.each do |teaching_group|
           unless external_groups.has_key?(teaching_group.abbreviation) then
-            teaching_group.remove_member(user)
+            if teaching_group.has?(user) then
+              teaching_group.remove_member(user)
+              teaching_group.save!
+            end
           end
           if teaching_group.member_dns.empty? then
             # Remove groups with external_ids that have no members
