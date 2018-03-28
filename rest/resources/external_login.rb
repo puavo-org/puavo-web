@@ -314,7 +314,7 @@ module PuavoRest
           unless teaching_group.has?(user) then
             @flog.info('adding a user to a teaching group',
                        "adding user '#{ user.username }'" \
-                         + " to group '#{ teaching_group.abbreviation }'")
+                         + " to group '#{ ext_group_displayname }'")
             teaching_group.add_member(user)
             teaching_group.save!
           end
