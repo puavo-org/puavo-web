@@ -274,8 +274,6 @@ module PuavoRest
     end
 
     def manage_groups_for_user(user, external_groups)
-      # XXX log what is going on...
-
       user.schools.each do |school|
         teaching_group_list = Group.teaching_groups_by_school(school) \
                                    .select { |tg| tg.external_id }
@@ -286,12 +284,24 @@ module PuavoRest
             next unless candidate_teaching_group.abbreviation == ext_group_name
             teaching_group = candidate_teaching_group
             if teaching_group.name != ext_group_displayname then
+              @flog.info('updating teaching group name',
+                         'updating teaching group name'                \
+                           + " for '#{ teaching_group.abbreviation }'" \
+                           + " from '#{ teaching_group.name }'"        \
+                           + " to '#{ ext_group_displayname }'")
+
               teaching_group.name = ext_group_displayname
               teaching_group.save!
             end
           end
 
           unless teaching_group then
+            @flog.info('creating a new teaching group',
+                       'creating a new teaching group to school'      \
+                         + " '#{ school.abbreviation }'"              \
+                         + " with abbreviation '#{ ext_group_name }'" \
+                         + " and name '#{ ext_group_displayname }'")
+
             teaching_group \
               = PuavoRest::Group.new(:abbreviation => ext_group_name,
                                      :external_id  => ext_group_name,
@@ -302,6 +312,9 @@ module PuavoRest
           end
 
           unless teaching_group.has?(user) then
+            @flog.info('adding a user to a teaching group',
+                       "adding user '#{ user.username }'" \
+                         + " to group '#{ teaching_group.abbreviation }'")
             teaching_group.add_member(user)
             teaching_group.save!
           end
@@ -310,6 +323,9 @@ module PuavoRest
         teaching_group_list.each do |teaching_group|
           unless external_groups.has_key?(teaching_group.abbreviation) then
             if teaching_group.has?(user) then
+              @flog.info('removing user from a teaching group',
+                         "removing user '#{ user.username }' from group" \
+                           + " '#{ teaching_group.abbreviation }'")
               teaching_group.remove_member(user)
               teaching_group.save!
             end
@@ -317,6 +333,9 @@ module PuavoRest
           if teaching_group.member_dns.empty? then
             # Remove groups with external_ids that have no members
             # XXX teaching_group object does not currently support removing!
+            # @flog.info('removing an empty teaching group',
+            #            'removing an empty teaching group' \
+            #              + " '#{ teaching_group.abbreviation }'")
             # teaching_group.remove!
             true
           end
@@ -701,7 +720,11 @@ module PuavoRest
                                 ' ' => '-') \
                           .gsub(/[^a-z0-9-]/, '')
 
-        # XXX log message on what is going on...
+        @flog.info('mapped an ldap group attribute to a group',
+                   'mapped an ldap group attribute' \
+                     + " '#{ ldap_attribute_value }' to group" \
+                     + " '#{ name }' / '#{ displayname }'")
+
         group = { name => displayname }
       rescue StandardError => e
         raise ExternalLoginNotConfigured, e.message
