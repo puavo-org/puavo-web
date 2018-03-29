@@ -273,79 +273,88 @@ module PuavoRest
       return false
     end
 
-    def manage_groups_for_user(user, external_groups)
+    def manage_groups_for_user(user, external_groups_by_type)
       changes_happened = false
 
+      # XXX This allows adding a user to two or more teaching groups
+      # XXX and yearclass groups.  This should not be possible.
+
       user.schools.each do |school|
-        teaching_group_list = Group.teaching_groups_by_school(school) \
-                                   .select { |tg| tg.external_id }
+        external_groups_by_type.each do |ext_group_type, external_groups|
+          puavo_group_list = Group.by_attrs({ :school_dn => school.dn,
+                                              :type      => ext_group_type },
+                                            { :multiple => true }) \
+                                  .select { |pg| pg.external_id }
 
-        external_groups.each do |ext_group_name, ext_group_displayname|
-          @flog.info(nil,
-                     "making sure user '#{ user.username }' belongs to" \
-                       + " a puavo group '#{ ext_group_name }'" \
-                       + " / #{ ext_group_displayname }")
+          external_groups.each do |ext_group_name, ext_group_displayname|
+            @flog.info(nil,
+                       "making sure user '#{ user.username }' belongs to" \
+                         + " a puavo group '#{ ext_group_name }'" \
+                         + " / #{ ext_group_displayname }")
 
-          teaching_group = nil
-          teaching_group_list.each do |candidate_teaching_group|
-            next unless candidate_teaching_group.abbreviation == ext_group_name
-            teaching_group = candidate_teaching_group
-            if teaching_group.name != ext_group_displayname then
-              @flog.info('updating teaching group name',
-                         'updating teaching group name'                \
-                           + " for '#{ teaching_group.abbreviation }'" \
-                           + " from '#{ teaching_group.name }'"        \
-                           + " to '#{ ext_group_displayname }'")
+            puavo_group = nil
+            puavo_group_list.each do |candidate_puavo_group|
+              next unless candidate_puavo_group.abbreviation == ext_group_name
+              puavo_group = candidate_puavo_group
+              if puavo_group.name != ext_group_displayname then
+                @flog.info('updating group name',
+                           'updating group name'                \
+                             + " for '#{ puavo_group.abbreviation }'" \
+                             + " from '#{ puavo_group.name }'"        \
+                             + " to '#{ ext_group_displayname }'")
 
-              teaching_group.name = ext_group_displayname
-              teaching_group.save!
+                puavo_group.name = ext_group_displayname
+                puavo_group.save!
+                changes_happened = true
+              end
+            end
+
+            unless puavo_group then
+              @flog.info('creating a new puavo group',
+                         'creating a new puavo group of type'           \
+                           + " '#{ ext_group_type }' to school"         \
+                           + " '#{ school.abbreviation }'"              \
+                           + " with abbreviation '#{ ext_group_name }'" \
+                           + " and name '#{ ext_group_displayname }'")
+
+              puavo_group \
+                = PuavoRest::Group.new(:abbreviation => ext_group_name,
+                                       :external_id  => ext_group_name,
+                                       :name         => ext_group_displayname,
+                                       :school_dn    => school.dn,
+                                       :type         => ext_group_type)
+              puavo_group.save!
+              changes_happened = true
+            end
+
+            unless puavo_group.has?(user) then
+              @flog.info('adding a user to a puavo group',
+                         "adding user '#{ user.username }'" \
+                           + " to group '#{ ext_group_displayname }'")
+              puavo_group.add_member(user)
+              puavo_group.save!
               changes_happened = true
             end
           end
 
-          unless teaching_group then
-            @flog.info('creating a new teaching group',
-                       'creating a new teaching group to school'      \
-                         + " '#{ school.abbreviation }'"              \
-                         + " with abbreviation '#{ ext_group_name }'" \
-                         + " and name '#{ ext_group_displayname }'")
-
-            teaching_group \
-              = PuavoRest::Group.new(:abbreviation => ext_group_name,
-                                     :external_id  => ext_group_name,
-                                     :name         => ext_group_displayname,
-                                     :school_dn    => school.dn,
-                                     :type         => 'teaching group')
-            teaching_group.save!
-            changes_happened = true
-          end
-
-          unless teaching_group.has?(user) then
-            @flog.info('adding a user to a teaching group',
-                       "adding user '#{ user.username }'" \
-                         + " to group '#{ ext_group_displayname }'")
-            teaching_group.add_member(user)
-            teaching_group.save!
-            changes_happened = true
-          end
-        end
-
-        teaching_group_list.each do |teaching_group|
-          unless external_groups.has_key?(teaching_group.abbreviation) then
-            if teaching_group.has?(user) then
-              @flog.info('removing user from a teaching group',
-                         "removing user '#{ user.username }' from group" \
-                           + " '#{ teaching_group.abbreviation }'")
-              teaching_group.remove_member(user)
-              teaching_group.save!
-              changes_happened = true
+          puavo_group_list.each do |puavo_group|
+            unless external_groups.has_key?(puavo_group.abbreviation) then
+              if puavo_group.has?(user) then
+                @flog.info('removing user from a puavo group',
+                           "removing user '#{ user.username }' from group" \
+                             + " '#{ puavo_group.abbreviation }'")
+                puavo_group.remove_member(user)
+                puavo_group.save!
+                changes_happened = true
+              end
             end
+            # if puavo_group.member_dns.empty? then
+            #   # We could maybe remove a puavo group here, BUT a group
+            #   # is associated with a gid, which might be associated with
+            #   # files, so do not do it.  Perhaps mark it for removal and
+            #   # remove later?
+            # end
           end
-          # if teaching_group.member_dns.empty? then
-          #   # We could maybe remove a teaching group here, BUT a group
-          #   # is associated with a gid, which might be associated with files,
-          #   # so do not do it.  Perhaps mark it for removal and remove later?
-          # end
         end
       end
 
@@ -383,7 +392,7 @@ module PuavoRest
         end
       end
 
-      external_groups = userinfo.delete('external_groups')
+      external_groups_by_type = userinfo.delete('external_groups')
 
       update_status = nil
 
@@ -412,7 +421,7 @@ module PuavoRest
               "error saving user because of validation errors: #{ e.message }"
       end
 
-      if manage_groups_for_user(user, external_groups) then
+      if manage_groups_for_user(user, external_groups_by_type) then
         # we are here if manage_groups_for_user() made some changes
         update_status = self.class.status_updated()
       end
@@ -593,10 +602,13 @@ module PuavoRest
     end
 
     def apply_dn_mappings!(userinfo, user_dn)
-
       added_roles      = []
       added_school_dns = []
-      external_groups  = {}
+      external_groups  = {
+                           'administrative' => {},
+                           'teaching_group' => {},
+                           'year_class'     => {},
+                         }
 
       @dn_mappings.each do |dn_mapping|
         unless dn_mapping.kind_of?(Hash) then
@@ -635,15 +647,18 @@ module PuavoRest
 
               case op_name
               when 'add_administrative_group'
-                external_groups.merge!( apply_add_groups(op_params) )
+                new_group = apply_add_groups('administrative', op_params)
+                external_groups['administrative'].merge!(new_group)
               when 'add_roles'
                 added_roles += op_params
               when 'add_school_dns'
                 added_school_dns += op_params
               when 'add_teaching_group'
-                true # XXX should do something
+                new_group = apply_add_groups('teaching_group', op_params)
+                external_groups['teaching_group'].merge!(new_group)
               when 'add_year_class'
-                true # XXX should do something
+                new_group = apply_add_groups('year_class', op_params)
+                external_groups['year_class'].merge!(new_group)
               else
                 raise ExternalLoginNotConfigured,
                       "unsupported operation '#{ op_name }'" \
@@ -711,7 +726,7 @@ module PuavoRest
                      .sub('%STARTYEAR', (class_yearbase - class_number).to_s)
     end
 
-    def apply_add_groups(params)
+    def apply_add_groups(group_type, params)
       group = {}
 
       begin
