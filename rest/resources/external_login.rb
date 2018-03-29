@@ -281,6 +281,11 @@ module PuavoRest
                                    .select { |tg| tg.external_id }
 
         external_groups.each do |ext_group_name, ext_group_displayname|
+          @flog.info(nil,
+                     "making sure user '#{ user.username }' belongs to" \
+                       + " a puavo group '#{ ext_group_name }'" \
+                       + " / #{ ext_group_displayname }")
+
           teaching_group = nil
           teaching_group_list.each do |candidate_teaching_group|
             next unless candidate_teaching_group.abbreviation == ext_group_name
@@ -668,6 +673,49 @@ module PuavoRest
       value
     end
 
+   def format_groupdata(groupdata_string, params)
+     formatting_needed = groupdata_string.include?('%CLASSNUMBER')    \
+                           || groupdata_string.include?('%GROUP')     \
+                           || groupdata_string.include?('%STARTYEAR')
+
+     return groupdata_string unless formatting_needed
+
+     field = get_add_groups_param(params, 'field')
+
+     ldap_attribute_value = Array(@ldap_userinfo[field]).first
+     unless ldap_attribute_value.kind_of?(String) then
+       @flog.warn('could not find ldap attribute in user information',
+                  "could not find ldap attribute '#{ field }'" \
+                    + ' in user information')
+       return nil
+     end
+
+     groupdata_string.sub!('%GROUP', ldap_attribute_value)
+
+     return groupdata_string unless groupdata_string.include?('%CLASSNUMBER') \
+                                      || groupdata_string.include?('%STARTYEAR')
+
+     classnum_regex = get_add_groups_param(params, 'classnumber_regex')
+
+     match = ldap_attribute_value.match(classnum_regex)
+     unless match && match.size == 2 then
+       @flog.warn('unexpected format in ldap attribute',
+                  "unexpected format in ldap attribute '#{ field }':" \
+                    + " '#{ ldap_attribute_value }'" \
+                    + " (expecting a match with '#{ classnumber_regex }'" \
+                    + " that should also have one integer capture)")
+       return {}
+     end
+
+     class_number = Integer(match[1])
+
+     today = Date.today
+     class_yearbase = today.year + (today.month < 8 ? 0 : 1)
+
+     groupdata_string.sub('%CLASSNUMBER', class_number.to_s) \
+                     .sub('%STARTYEAR', (class_yearbase - class_number).to_s)
+    end
+
     def apply_add_groups(params)
       group = {}
 
@@ -676,59 +724,24 @@ module PuavoRest
           raise 'group mapping parameters is not a hash'
         end
 
-        classnum_regex     = get_add_groups_param(params, 'classnumber_regex')
+        # these are mandatory
         displayname_format = get_add_groups_param(params, 'displayname')
-        field              = get_add_groups_param(params, 'field')
         name_format        = get_add_groups_param(params, 'name')
 
-        ldap_attribute_value = Array(@ldap_userinfo[field]).first
-        unless ldap_attribute_value.kind_of?(String) then
-          @flog.warn('could not find ldap attribute in user information',
-                     "could not find ldap attribute '#{ field }'" \
-                       + ' in user information')
-          return {}
-        end
-
-        match = ldap_attribute_value.match(classnum_regex)
-        unless match && match.size == 2 then
-          @flog.warn('unexpected format in ldap attribute',
-                     "unexpected format in ldap attribute '#{ field }':" \
-                       + " '#{ ldap_attribute_value }'" \
-                       + " (expecting a match with '#{ classnumber_regex }'" \
-                       + " that should also have one integer capture)")
-          return {}
-        end
-
-        class_number = Integer(match[1])
-
-        today = Date.today
-        class_yearbase = today.year + (today.month < 8 ? 0 : 1)
-
-        format_fn \
-          = lambda do |s|
-              s.sub("%STARTYEAR", (class_yearbase - class_number).to_s) \
-               .sub("%GROUP", ldap_attribute_value) \
-               .sub("%CLASSNUMBER", class_number.to_s)
-            end
-
-        displayname = format_fn.call(displayname_format)
-        name        = format_fn.call(name_format) \
-                               .downcase \
-                               .gsub(/[åäö ]/,
-                                     'å' => 'a',
-                                     'ä' => 'a',
-                                     'ö' => 'o',
-                                     ' ' => '-') \
-                               .gsub(/[^a-z0-9-]/, '')
+        displayname = format_groupdata(displayname_format, params)
 
         # group name sanitation is the same as in PuavoImport.sanitize_name
+        name = format_groupdata(name_format, params).downcase \
+                                                    .gsub(/[åäö ]/,
+                                                          'å' => 'a',
+                                                          'ä' => 'a',
+                                                          'ö' => 'o',
+                                                          ' ' => '-') \
+                                                    .gsub(/[^a-z0-9-]/, '')
 
-        @flog.info('mapped an ldap group attribute to a group',
-                   'mapped an ldap group attribute' \
-                     + " '#{ ldap_attribute_value }' to group" \
-                     + " '#{ name }' / '#{ displayname }'")
-
-        group = { name => displayname }
+        if name && displayname then
+          group = { name => displayname }
+        end
       rescue StandardError => e
         raise ExternalLoginNotConfigured, e.message
       end
