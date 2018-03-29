@@ -484,8 +484,8 @@ module PuavoRest
       raise ExternalLoginError, 'ldap server not configured' \
         unless server
 
-      @dn_mappings            = ldap_config['dn_mappings']            || []
-      @group_mapping_defaults = ldap_config['group_mapping_defaults'] || {}
+      @add_groups_defaults = ldap_config['add_groups_defaults'] || {}
+      @dn_mappings         = ldap_config['dn_mappings']         || []
 
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
@@ -584,9 +584,9 @@ module PuavoRest
               'external_login dn_mappings is not an array'
       end
 
-      unless @group_mapping_defaults.kind_of?(Hash) then
+      unless @add_groups_defaults.kind_of?(Hash) then
         raise ExternalLoginNotConfigured,
-              'external_login group_mapping_defaults is not a hash'
+              'external_login add_groups_defaults is not a hash'
       end
 
       added_roles      = []
@@ -635,14 +635,15 @@ module PuavoRest
               end
 
               case op_name
+              when 'add_groups'
+                op_params.each do |add_groups_params|
+                  new_groups = apply_add_groups(add_groups_params)
+                  external_groups.merge!( new_groups )
+                end
               when 'add_roles'
                 added_roles += op_params
               when 'add_school_dns'
                 added_school_dns += op_params
-              when 'group_mapping'
-                op_params.each do |group_mapping|
-                  external_groups.merge!( apply_group_mapping(group_mapping) )
-                end
               else
                 raise ExternalLoginNotConfigured,
                       "unsupported operation '#{ op_name }'" \
@@ -659,15 +660,15 @@ module PuavoRest
         = ((userinfo['school_dns'] || []) + added_school_dns).sort.uniq
     end
 
-    def get_group_mapping_param(params, param_name)
-      value = params[param_name] || @group_mapping_defaults[param_name]
+    def get_add_groups_param(params, param_name)
+      value = params[param_name] || @add_groups_defaults[param_name]
       unless value.kind_of?(String) && !value.empty? then
-        raise "group mapping attribute '#{ param_name }' not configured"
+        raise "add group attribute '#{ param_name }' not configured"
       end
       value
     end
 
-    def apply_group_mapping(params)
+    def apply_add_groups(params)
       group = {}
 
       begin
@@ -675,10 +676,10 @@ module PuavoRest
           raise 'group mapping parameters is not a hash'
         end
 
-        classnum_regex = get_group_mapping_param(params, 'classnumber_regex')
-        displayname_format = get_group_mapping_param(params, 'displayname')
-        field = get_group_mapping_param(params, 'field')
-        name_format = get_group_mapping_param(params, 'name')
+        classnum_regex     = get_add_groups_param(params, 'classnumber_regex')
+        displayname_format = get_add_groups_param(params, 'displayname')
+        field              = get_add_groups_param(params, 'field')
+        name_format        = get_add_groups_param(params, 'name')
 
         ldap_attribute_value = Array(@ldap_userinfo[field]).first
         unless ldap_attribute_value.kind_of?(String) then
