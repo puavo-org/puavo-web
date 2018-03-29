@@ -33,7 +33,7 @@ class User < LdapBase
   after_save :add_member_uid_to_models
   after_save :update_roles
 
-  before_destroy :delete_all_associations
+  before_destroy :delete_all_associations, :delete_kerberos_principal
 
   after_create :change_ldap_password
 
@@ -791,6 +791,14 @@ class User < LdapBase
     end
 
     self.school.remove_user(self)
+  end
+
+  def delete_kerberos_principal
+    # XXX We should really destroy the kerberos principal for this user,
+    # XXX but for now we just set a password to some unknown value
+    # XXX so that the kerberos principal can not be used.
+    self.new_password = generate_password(40)
+    change_ldap_password
   end
 
   def set_samba_settings
