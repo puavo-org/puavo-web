@@ -336,15 +336,11 @@ module PuavoRest
               changes_happened = true
             end
           end
-          if teaching_group.member_dns.empty? then
-            # Remove groups with external_ids that have no members
-            # XXX teaching_group object does not currently support removing!
-            # @flog.info('removing an empty teaching group',
-            #            'removing an empty teaching group' \
-            #              + " '#{ teaching_group.abbreviation }'")
-            # teaching_group.remove!
-            true
-          end
+          # if teaching_group.member_dns.empty? then
+          #   # We could maybe remove a teaching group here, BUT a group
+          #   # is associated with a gid, which might be associated with files,
+          #   # so do not do it.  Perhaps mark it for removal and remove later?
+          # end
         end
       end
 
