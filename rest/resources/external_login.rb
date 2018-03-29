@@ -707,11 +707,12 @@ module PuavoRest
         today = Date.today
         class_yearbase = today.year + (today.month < 8 ? 0 : 1)
 
-        format_fn = lambda do |s|
-                      s.sub("%YEAR", (class_yearbase - class_number).to_s) \
-                       .sub("%GROUP", ldap_attribute_value) \
-                       .sub("%CLASSNUMBER", class_number.to_s)
-                    end
+        format_fn \
+          = lambda do |s|
+              s.sub("%STARTYEAR", (class_yearbase - class_number).to_s) \
+               .sub("%GROUP", ldap_attribute_value) \
+               .sub("%CLASSNUMBER", class_number.to_s)
+            end
 
         displayname = format_fn.call(displayname_format)
         name        = format_fn.call(name_format) \
