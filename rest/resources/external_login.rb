@@ -474,23 +474,32 @@ module PuavoRest
       super(service_name, flog)
 
       base = ldap_config['base']
-      raise ExternalLoginError, 'ldap base not configured' \
+      raise ExternalLoginNotConfigured, 'ldap base not configured' \
         unless base
 
       bind_dn = ldap_config['bind_dn']
-      raise ExternalLoginError, 'ldap bind dn not configured' \
+      raise ExternalLoginNotConfigured, 'ldap bind dn not configured' \
         unless bind_dn
 
       bind_password = ldap_config['bind_password']
-      raise ExternalLoginError, 'ldap bind password not configured' \
+      raise ExternalLoginNotConfigured, 'ldap bind password not configured' \
         unless bind_password
 
       server = ldap_config['server']
-      raise ExternalLoginError, 'ldap server not configured' \
+      raise ExternalLoginNotConfigured, 'ldap server not configured' \
         unless server
 
-      @add_groups_defaults = ldap_config['add_groups_defaults'] || {}
-      @dn_mappings         = ldap_config['dn_mappings']         || []
+      dn_mappings = ldap_config['dn_mappings']
+      raise ExternalLoginNotConfigured, 'dn_mappings configured wrong' \
+        unless dn_mappings.nil? || dn_mappings.kind_of?(Hash)
+
+      @dn_mapping_defaults = (dn_mappings && dn_mappings['defaults']) || {}
+      @dn_mappings         = (dn_mappings && dn_mappings['mappings']) || []
+
+      raise ExternalLoginNotConfigured, 'dn_mappings/mappings is not an array' \
+        unless @dn_mappings.kind_of?(Array)
+      raise ExternalLoginNotConfigured, 'dn_mappings/defaults is not a hash' \
+        unless @dn_mapping_defaults.kind_of?(Hash)
 
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
@@ -584,15 +593,6 @@ module PuavoRest
     end
 
     def apply_dn_mappings!(userinfo, user_dn)
-      unless @dn_mappings.kind_of?(Array) then
-        raise ExternalLoginNotConfigured,
-              'external_login dn_mappings is not an array'
-      end
-
-      unless @add_groups_defaults.kind_of?(Hash) then
-        raise ExternalLoginNotConfigured,
-              'external_login add_groups_defaults is not a hash'
-      end
 
       added_roles      = []
       added_school_dns = []
@@ -623,32 +623,27 @@ module PuavoRest
             end
 
             op_item.each do |op_name, op_params|
-              unless op_params.kind_of?(Array) then
+              case op_name
+              when 'add_roles', 'add_school_dns'
                 raise ExternalLoginNotConfigured,
                       "#{ op_name } operation parameters type" \
                         + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
-                        + ' is not an array'
-              end
-
-              if %w(add_roles add_school_dns).include?(op_name) then
-                unless op_params.all? { |x| x.kind_of?(String) } then
-                  raise ExternalLoginNotConfigured,
-                        "#{ op_name } operation parameters type" \
-                          + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
-                          + ' is not an array of strings'
-                end
+                        + ' is not an array of strings' \
+                  unless op_params.kind_of?(Array) \
+                           && op_params.all? { |x| x.kind_of?(String) }
               end
 
               case op_name
-              when 'add_groups'
-                op_params.each do |add_groups_params|
-                  new_groups = apply_add_groups(add_groups_params)
-                  external_groups.merge!( new_groups )
-                end
+              when 'add_administrative_group'
+                external_groups.merge!( apply_add_groups(op_params) )
               when 'add_roles'
                 added_roles += op_params
               when 'add_school_dns'
                 added_school_dns += op_params
+              when 'add_teaching_group'
+                true # XXX should do something
+              when 'add_year_class'
+                true # XXX should do something
               else
                 raise ExternalLoginNotConfigured,
                       "unsupported operation '#{ op_name }'" \
@@ -666,7 +661,7 @@ module PuavoRest
     end
 
     def get_add_groups_param(params, param_name)
-      value = params[param_name] || @add_groups_defaults[param_name]
+      value = params[param_name] || @dn_mapping_defaults[param_name]
       unless value.kind_of?(String) && !value.empty? then
         raise "add group attribute '#{ param_name }' not configured"
       end
