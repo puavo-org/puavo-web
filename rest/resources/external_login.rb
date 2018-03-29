@@ -281,6 +281,19 @@ module PuavoRest
 
       user.schools.each do |school|
         external_groups_by_type.each do |ext_group_type, external_groups|
+
+          if %w(teaching_group year_class).include?(ext_group_type) then
+            if external_groups.count > 1 then
+              @flog.warn(nil,
+                         "trying to add '#{ user.username }' to"             \
+                           + " #{ external_groups.count } groups of type"    \
+                           + " '#{ ext_group_type }', which is not allowed," \
+                           + ' not proceeding, check your external_login'    \
+                           + ' configuration.')
+              next
+            end
+          end
+
           puavo_group_list = Group.by_attrs({ :school_dn => school.dn,
                                               :type      => ext_group_type },
                                             { :multiple => true }) \
