@@ -488,7 +488,8 @@ module PuavoRest
       raise ExternalLoginError, 'ldap server not configured' \
         unless server
 
-      @dn_mappings = ldap_config['dn_mappings']
+      @dn_mappings            = ldap_config['dn_mappings']            || []
+      @group_mapping_defaults = ldap_config['group_mapping_defaults'] || {}
 
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
@@ -582,11 +583,14 @@ module PuavoRest
     end
 
     def apply_dn_mappings!(userinfo, user_dn)
-      return unless @dn_mappings
-
       unless @dn_mappings.kind_of?(Array) then
         raise ExternalLoginNotConfigured,
               'external_login dn_mappings is not an array'
+      end
+
+      unless @group_mapping_defaults.kind_of?(Hash) then
+        raise ExternalLoginNotConfigured,
+              'external_login group_mapping_defaults is not a hash'
       end
 
       added_roles      = []
@@ -659,41 +663,28 @@ module PuavoRest
         = ((userinfo['school_dns'] || []) + added_school_dns).sort.uniq
     end
 
-    def apply_group_mapping(group_mapping_params)
+    def get_group_mapping_param(params, param_name)
+      value = params[param_name] || @group_mapping_defaults[param_name]
+      unless value.kind_of?(String) && !value.empty? then
+        raise "group mapping attribute '#{ param_name }' not configured"
+      end
+      value
+    end
+
+    def apply_group_mapping(params)
       group = {}
 
       begin
-        unless group_mapping_params.kind_of?(Hash) then
+        unless params.kind_of?(Hash) then
           raise 'group mapping parameters is not a hash'
         end
 
-        field = group_mapping_params['field']
-        unless field.kind_of?(String) && !field.empty? then
-          raise "group mapping attribute 'field' not configured"
-        end
-
-        field_regex = group_mapping_params['field_regex']
-        unless field_regex.kind_of?(String) && !field_regex.empty? then
-          raise "group mapping attribute 'field_regex' not configured"
-        end
-
-        displayname_format = group_mapping_params['displayname']
-        unless displayname_format.kind_of?(String) \
-          && !displayname_format.empty? then
-            raise "group mapping attribute 'displayname' not configured"
-        end
-
-        name_format = group_mapping_params['name']
-        unless name_format.kind_of?(String) && !name_format.empty? then
-          raise "group mapping attribute 'name' not configured"
-        end
-
-        if group_mapping_params['mapping_type'] != 'class-to-year' then
-          raise "only 'class-to-year' mapping_type is supported"
-        end
+        classnum_regex = get_group_mapping_param(params, 'classnumber_regex')
+        displayname_format = get_group_mapping_param(params, 'displayname')
+        field = get_group_mapping_param(params, 'field')
+        name_format = get_group_mapping_param(params, 'name')
 
         ldap_attribute_value = Array(@ldap_userinfo[field]).first
-
         unless ldap_attribute_value.kind_of?(String) then
           @flog.warn('could not find ldap attribute in user information',
                      "could not find ldap attribute '#{ field }'" \
@@ -701,33 +692,38 @@ module PuavoRest
           return {}
         end
 
-        match = ldap_attribute_value.match(field_regex)
+        match = ldap_attribute_value.match(classnum_regex)
         unless match && match.size == 2 then
           @flog.warn('unexpected format in ldap attribute',
                      "unexpected format in ldap attribute '#{ field }':" \
                        + " '#{ ldap_attribute_value }'" \
-                       + " (expecting a match with '#{ field_regex }'" \
+                       + " (expecting a match with '#{ classnumber_regex }'" \
                        + " that should also have one integer capture)")
           return {}
         end
 
-        class_year = Integer(match[1])
+        class_number = Integer(match[1])
 
         today = Date.today
         class_yearbase = today.year + (today.month < 8 ? 0 : 1)
 
-        displayname = displayname_format.sub("%s", ldap_attribute_value)
+        format_fn = lambda do |s|
+                      s.sub("%YEAR", (class_yearbase - class_number).to_s) \
+                       .sub("%GROUP", ldap_attribute_value) \
+                       .sub("%CLASSNUMBER", class_number.to_s)
+                    end
+
+        displayname = format_fn.call(displayname_format)
+        name        = format_fn.call(name_format) \
+                               .downcase \
+                               .gsub(/[åäö ]/,
+                                     'å' => 'a',
+                                     'ä' => 'a',
+                                     'ö' => 'o',
+                                     ' ' => '-') \
+                               .gsub(/[^a-z0-9-]/, '')
 
         # group name sanitation is the same as in PuavoImport.sanitize_name
-        name = name_format.sub("%Y", (class_yearbase - class_year).to_s) \
-                          .sub("%s", ldap_attribute_value) \
-                          .downcase \
-                          .gsub(/[åäö ]/,
-                                'å' => 'a',
-                                'ä' => 'a',
-                                'ö' => 'o',
-                                ' ' => '-') \
-                          .gsub(/[^a-z0-9-]/, '')
 
         @flog.info('mapped an ldap group attribute to a group',
                    'mapped an ldap group attribute' \
