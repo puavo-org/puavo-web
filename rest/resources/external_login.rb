@@ -520,6 +520,10 @@ module PuavoRest
       raise ExternalLoginNotConfigured, 'dn_mappings/defaults is not a hash' \
         unless @dn_mapping_defaults.kind_of?(Hash)
 
+      @external_id_field = ldap_config['external_id_field']
+      raise ExternalLoginNotConfigured, 'external_id_field not configured' \
+        unless @external_id_field.kind_of?(String)
+
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
                             :port => (Integer(ldap_config['port']) rescue 389),
@@ -575,9 +579,8 @@ module PuavoRest
     def lookup_external_id(username)
       update_ldapuserinfo(username)
 
-      # XXX The field name "employeeNumber" should probably be configurable.
       external_id = @ldap_userinfo \
-                      && Array(@ldap_userinfo['employeeNumber']).first.to_s
+                      && Array(@ldap_userinfo[@external_id_field]).first.to_s
       if !external_id || external_id.empty? then
         raise ExternalLoginUnavailable,
               "could not lookup external id for user '#{ username }'"
