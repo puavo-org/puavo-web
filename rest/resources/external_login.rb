@@ -715,12 +715,12 @@ module PuavoRest
 
      return groupdata_string unless formatting_needed
 
-     field = get_add_groups_param(params, 'field')
+     teaching_group_field = get_add_groups_param(params, 'teaching_group_field')
 
-     ldap_attribute_value = Array(@ldap_userinfo[field]).first
+     ldap_attribute_value = Array(@ldap_userinfo[teaching_group_field]).first
      unless ldap_attribute_value.kind_of?(String) then
        @flog.warn('could not find ldap attribute in user information',
-                  "could not find ldap attribute '#{ field }'" \
+                  "could not find ldap attribute '#{ teaching_group_field }'" \
                     + ' in user information')
        return nil
      end
@@ -735,7 +735,8 @@ module PuavoRest
      match = ldap_attribute_value.match(classnum_regex)
      unless match && match.size == 2 then
        @flog.warn('unexpected format in ldap attribute',
-                  "unexpected format in ldap attribute '#{ field }':" \
+                  'unexpected format in ldap attribute' \
+                    + " '#{ teaching_group_field }':" \
                     + " '#{ ldap_attribute_value }'" \
                     + " (expecting a match with '#{ classnumber_regex }'" \
                     + " that should also have one integer capture)")
