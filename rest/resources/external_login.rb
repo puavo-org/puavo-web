@@ -73,24 +73,20 @@ module PuavoRest
             return json(ExternalLogin.status_updated_but_fail(msg))
           end
         elsif !userinfo then
-          # no user information, but password was not wrong, therefore
+          # No user information, but password was not wrong, therefore
           # user information is missing from external login service
-          # and user must be removed from Puavo.
+          # and user must be removed from Puavo.  But instead of removing
+          # we simply generate a new, random password, and mark the account
+          # for removal, in case it was not marked before.  Not removing
+          # right away should allow use to catch some possible accidents
+          # in case the external ldap somehow "loses" some users, and we want
+          # keep user uids stable on our side.
           user_to_remove = User.by_username(username)
-          # XXX user_to_remove object does not currently support removing!
-          # XXX Besides, even if the user is removed (from Puavo),
-          # XXX its kerberos credentials stay, thus user may remain
-          # XXX usable in some contexts!  These issues should be solved
-          # XXX before enabling this:
-          # XXX
-          # XXX     user_to_remove.destroy if user_to_remove
-          # XXX
-          # XXX instead of removing we should invalidate the password
-          # XXX and lock the account (or otherwise mark it for removal...
-          # XXX maybe after some days/weeks/months).
-          # XXX maybe_invalidate_password() does not work, because we may not
-          # XXX have the correct password.  Instead we should just overwrite it
-          # XXX directory.
+          if user_to_remove && user_to_remove.removal_request_time.nil? then
+            user.password = SecureRandom.hex(128)
+            user.removal_request_time = Time.now.to_datetime
+            user.save!
+          end
         end
 
         if !userinfo then
@@ -415,6 +411,7 @@ module PuavoRest
                      "created a new user '#{ userinfo['username'] }'")
           update_status = self.class.status_updated()
         elsif user.check_if_changed_attributes(userinfo) then
+          user.removal_request_time = nil
           user.update!(userinfo)
           user.save!
           @flog.info('updated external login user',

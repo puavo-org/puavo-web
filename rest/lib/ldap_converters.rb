@@ -1,3 +1,5 @@
+require 'date'
+
 module LdapConverters
 
   # Base class for LDAP value conversions
@@ -164,6 +166,17 @@ module LdapConverters
         :code    => :invalid_type,
         :message => 'puavoconf data is not in a supported format',
       }
+    end
+  end
+
+  class TimeStamp < Base
+    def read(value)
+      DateTime.parse( Array(value).first ) rescue nil
+    end
+
+    def write(value)
+      return [] if value.nil?
+      [ value.strftime('%Y%m%d%H%M%SZ') ]
     end
   end
 
