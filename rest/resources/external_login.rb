@@ -17,7 +17,7 @@ class ExternalLoginWrongPassword < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLogins < PuavoSinatra
-    post '/v3/external_login' do
+    post '/v3/external_login/auth' do
       userinfo = nil
       user_status = nil
 
