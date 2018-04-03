@@ -592,8 +592,6 @@ module PuavoRest
     private
 
     def get_userinfo(username, password)
-      # XXX validate that these are not nonsense?
-
       userinfo = {
         'external_id' => lookup_external_id(username),
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
@@ -602,8 +600,22 @@ module PuavoRest
         'username'    => Array(@ldap_userinfo['sAMAccountName']).first.to_s,
       }
 
-      # XXX We presume that ldap result strings are UTF-8.  This might be a
-      # XXX wrong presumption, and this should be configurable.
+      if userinfo['first_name'].empty? then
+        raise ExternalLoginUnavailable,
+              "User '#{ username }' has no first name in external ldap"
+      end
+
+      if userinfo['last_name'].empty? then
+        raise ExternalLoginUnavailable,
+              "User '#{ username }' has no last name in external ldap"
+      end
+
+      if userinfo['username'].empty? then
+        raise ExternalLoginUnavailable,
+              "User '#{ username }' has no account name external ldap"
+      end
+
+      # We presume that ldap result strings are UTF-8.
       userinfo.each do |key, value|
         Array(value).map { |s| s.force_encoding('UTF-8') }
       end
