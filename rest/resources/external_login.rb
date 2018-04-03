@@ -276,9 +276,6 @@ module PuavoRest
     def manage_groups_for_user(user, external_groups_by_type)
       changes_happened = false
 
-      # XXX This allows adding a user to two or more teaching groups
-      # XXX and yearclass groups.  This should not be possible.
-
       user.schools.each do |school|
         external_groups_by_type.each do |ext_group_type, external_groups|
 
