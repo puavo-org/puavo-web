@@ -82,10 +82,10 @@ module PuavoRest
           # in case the external ldap somehow "loses" some users, and we want
           # keep user uids stable on our side.
           user_to_remove = User.by_username(username)
-          if user_to_remove && user_to_remove.removal_request_time.nil? then
-            user.password = SecureRandom.hex(128)
-            user.removal_request_time = Time.now.to_datetime
-            user.save!
+          if user_to_remove && user_to_remove.mark_for_removal! then
+            flog.info('puavo user marked for removal',
+                      "puavo user '#{ puavo_user.username }' is marked" \
+                        + ' for removal')
           end
         end
 
@@ -126,6 +126,54 @@ module PuavoRest
       json_user_status = json(user_status)
       flog.info(nil, "returning external login status #{ json_user_status }")
       return json_user_status
+    end
+
+    post '/v3/external_login/mark_removed_users' do
+      auth :basic_auth
+
+      all_ok = true
+
+      external_login = ExternalLogin.new(CONFIG['external_login'],
+                                         flog,
+                                         request.host)
+      login_service = external_login.new_external_service_handler()
+
+      puavo_users_with_external_ids = User.all.select { |u| u.external_id }
+
+      puavo_users_with_external_ids.each do |puavo_user|
+        begin
+          if login_service.user_exists?(puavo_user.external_id) then
+            if puavo_user.removal_request_time then
+              puavo_user.removal_request_time = nil
+              puavo_user.save!
+              flog.info('mark-for-removal removed for puavo user',
+                        'mark-for-removal removed for puavo user' \
+                          + " '#{ puavo_user.username }'")
+
+            end
+            next
+          end
+        rescue StandardError => e
+          flog.warn('error checking if user exists in external login service',
+                    "error checking if user '#{ puavo_user.username }'" \
+                      + ' exists in external login service:' \
+                      + " #{ e.message }")
+          all_ok = false
+          next
+        end
+
+        if puavo_user.mark_for_removal! then
+          flog.info('puavo user marked for removal',
+                    "puavo user '#{ puavo_user.username }' is marked" \
+                      + ' for removal')
+        end
+      end
+
+      json({ :status => (all_ok ? 'successfully' : 'failed') })
+    end
+
+    post '/v3/external_login/remove_users_marked_for_removal' do
+      raise 'Unimplemented'
     end
   end
 
@@ -586,6 +634,25 @@ module PuavoRest
       external_id
     end
 
+    def user_exists?(external_id)
+      user_filter = Net::LDAP::Filter.eq(@external_id_field, external_id)
+
+      ldap_entries = @ldap.search(:filter => user_filter)
+      if !ldap_entries then
+        msg = "ldap search for user '#{ username }' failed: " \
+                + @ldap.get_operation_result.message
+        raise ExternalLoginUnavailable, msg
+      end
+
+      return false if ldap_entries.length == 0
+
+      if ldap_entries.length > 1
+        raise ExternalLoginUnavailable, 'ldap search returned too many entries'
+      end
+
+      return true
+    end
+
     private
 
     def get_userinfo(username, password)
@@ -784,6 +851,9 @@ module PuavoRest
 
     def update_ldapuserinfo(username)
       return if @username && @username == username
+
+      @ldap_userinfo = nil
+      @username = nil
 
       user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
 

@@ -1,6 +1,9 @@
 require_relative "../lib/ldappasswd"
 require_relative "../lib/samba_attrs"
 
+require 'date'
+require 'securerandom'
+
 module PuavoRest
 
 class User < LdapModel
@@ -606,6 +609,17 @@ class User < LdapModel
       if old_value != new_value then
         return true
       end
+    end
+
+    return false
+  end
+
+  def mark_for_removal!
+    if self.removal_request_time.nil? then
+      self.password = SecureRandom.hex(128)
+      self.removal_request_time = Time.now.to_datetime
+      self.save!
+      return true
     end
 
     return false
