@@ -173,7 +173,40 @@ module PuavoRest
     end
 
     post '/v3/external_login/remove_users_marked_for_removal' do
-      raise 'Unimplemented'
+      auth :basic_auth
+
+      # XXX configuration should be dependent on organisation
+      # external_login_config = CONFIG['external_login']
+      remove_after_n_days = 3   # XXX should be taken from configuration,
+                                # XXX maybe fall back to some default value?
+
+      now = DateTime.now
+
+      puavo_users_to_be_deleted \
+        = User.all.select do |user|
+            user.external_id \
+              && user.removal_request_time \
+              && (now > (user.removal_request_time \
+                          + remove_after_n_days * 24 * 60 * 60))
+          end
+
+      all_ok = true
+
+      puavo_users_to_be_deleted.each do |puavo_user|
+        begin
+          flog.info('removing puavo user because it was marked for removal',
+                    "removing puavo user '#{ puavo_user.username }' because" \
+                      + ' it was marked for removal')
+          puavo_user.destroy    # XXX this does not work yet
+        rescue StandardError => e
+          flog.warn('failed to remove puavo user that was marked for removal',
+                    "failed to remove puavo user '#{ puavo_user.username }'" \
+                      + " that was marked for removal: #{ e.message }")
+          all_ok = false
+        end
+      end
+
+      json({ :status => (all_ok ? 'successfully' : 'failed') })
     end
   end
 
