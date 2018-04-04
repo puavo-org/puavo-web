@@ -202,7 +202,8 @@ module PuavoRest
           flog.info('removing puavo user because it was marked for removal',
                     "removing puavo user '#{ puavo_user.username }' because" \
                       + ' it was marked for removal')
-          puavo_user.destroy    # XXX this does not work yet
+          puavo_user.destroy!   # XXX this does not destroy associations for
+                                # XXX user (group memberships and such)
         rescue StandardError => e
           flog.warn('failed to remove puavo user that was marked for removal',
                     "failed to remove puavo user '#{ puavo_user.username }'" \

@@ -343,6 +343,10 @@ class LdapModel
     res
   end
 
+  def destroy!
+    self.class.ldap_op(:delete, dn)
+  end
+
   # Add validation error. Error will be raised on the next {#save!} call
   #
   # @param attr [Symbol] Attribute name this error relates to
