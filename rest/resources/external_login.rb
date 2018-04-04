@@ -180,14 +180,13 @@ module PuavoRest
       remove_after_n_days = 3   # XXX should be taken from configuration,
                                 # XXX maybe fall back to some default value?
 
-      now = DateTime.now
+      now = Time.now.utc.to_datetime
 
       puavo_users_to_be_deleted \
         = User.all.select do |user|
             user.external_id \
               && user.removal_request_time \
-              && (now > (user.removal_request_time \
-                          + remove_after_n_days * 24 * 60 * 60))
+              && (now > (user.removal_request_time + remove_after_n_days))
           end
 
       all_ok = true

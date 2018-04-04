@@ -625,7 +625,7 @@ class User < LdapModel
     self.password = SecureRandom.hex(128)
 
     if self.removal_request_time.nil? then
-      self.removal_request_time = Time.now.to_datetime
+      self.removal_request_time = Time.now.utc.to_datetime
       mark_set = true
     end
 
