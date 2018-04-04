@@ -615,14 +615,23 @@ class User < LdapModel
   end
 
   def mark_for_removal!
+    mark_set = false
+
+    # ALWAYS setup up password to some random value for users that are
+    # marked for removal.  This may seem odd, but we should guard against
+    # the case where a user complains about login not working and subsequently
+    # admin has changed the puavo password to something known to make the
+    # account work, despite it being "marked for removal".
+    self.password = SecureRandom.hex(128)
+
     if self.removal_request_time.nil? then
-      self.password = SecureRandom.hex(128)
       self.removal_request_time = Time.now.to_datetime
-      self.save!
-      return true
+      mark_set = true
     end
 
-    return false
+    self.save!
+
+    return mark_set
   end
 
   private
