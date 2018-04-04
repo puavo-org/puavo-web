@@ -31,9 +31,7 @@ module PuavoRest
           raise BadCredentials, :user => 'no password provided'
         end
 
-        external_login = ExternalLogin.new(CONFIG['external_login'],
-                                           flog,
-                                           request.host)
+        external_login = ExternalLogin.new(flog, request.host)
         external_login.setup_puavo_connection()
         external_login.check_user_is_manageable(username)
 
@@ -133,9 +131,7 @@ module PuavoRest
 
       all_ok = true
 
-      external_login = ExternalLogin.new(CONFIG['external_login'],
-                                         flog,
-                                         request.host)
+      external_login = ExternalLogin.new(flog, request.host)
       login_service = external_login.new_external_service_handler()
 
       puavo_users_with_external_ids = User.all.select { |u| u.external_id }
@@ -169,16 +165,26 @@ module PuavoRest
         end
       end
 
-      json({ :status => (all_ok ? 'successfully' : 'failed') })
+      unless all_ok then
+        errmsg = 'could not check some users from external login service'
+        return json({ :error => errmsg, :status => 'failed' })
+      end
+
+      return json({ :status => 'successfully' })
     end
 
     post '/v3/external_login/remove_users_marked_for_removal' do
       auth :basic_auth
 
-      # XXX configuration should be dependent on organisation
-      # external_login_config = CONFIG['external_login']
-      remove_after_n_days = 3   # XXX should be taken from configuration,
-                                # XXX maybe fall back to some default value?
+      external_login = ExternalLogin.new(flog, request.host)
+      begin
+        remove_after_n_days \
+          = Integer(external_login.config['days_after_removing_marked_users'])
+      rescue StandardError => e
+        errmsg = 'external_login/days_after_removing_marked_users' \
+                   + ' is not configured in puavo-rest configuration'
+        return json({ :error => errmsg, :status => 'failed' })
+      end
 
       now = Time.now.utc.to_datetime
 
@@ -205,7 +211,12 @@ module PuavoRest
         end
       end
 
-      json({ :status => (all_ok ? 'successfully' : 'failed') })
+      unless all_ok then
+        return json({ :error  => 'could not remove some users',
+                      :status => 'failed' })
+      end
+
+      return json({ :status => 'successfully' })
     end
   end
 
@@ -218,12 +229,14 @@ module PuavoRest
     USER_STATUS_UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
     USER_STATUS_UPDATEERROR      = 'UPDATEERROR'
 
-    def initialize(config, flog, host)
+    attr_reader :config
+
+    def initialize(flog, host)
       # Parse config with relevant information for doing external logins.
 
       @flog = flog
 
-      all_external_login_configs = config
+      all_external_login_configs = CONFIG['external_login']
       raise ExternalLoginNotConfigured, 'external login not configured' \
         unless all_external_login_configs
 
@@ -237,12 +250,12 @@ module PuavoRest
         'could not parse organisation from organisation domain' \
           unless organisation_name
 
-      @external_login_config = all_external_login_configs[organisation_name]
+      @config = all_external_login_configs[organisation_name]
       raise ExternalLoginNotConfigured,
         'external_login not configured for this organisation' \
-          unless @external_login_config
+          unless @config
 
-      @login_service_name = @external_login_config['service']
+      @login_service_name = @config['service']
       raise ExternalLoginError, 'external_login service not set' \
         unless @login_service_name
 
@@ -256,16 +269,16 @@ module PuavoRest
         "external login '#{ @login_service_name }' is not supported" \
           unless @external_login_class
 
-      @external_login_params = @external_login_config[@login_service_name]
+      @external_login_params = @config[@login_service_name]
       raise ExternalLoginError,
         'external login parameters not configured' \
           unless @external_login_params.kind_of?(Hash)
 
-      @admin_dn = @external_login_config['admin_dn'].to_s
+      @admin_dn = @config['admin_dn'].to_s
       raise ExternalLoginError, 'admin dn is not set' \
         if @admin_dn.empty?
 
-      @admin_password = @external_login_config['admin_password'].to_s
+      @admin_password = @config['admin_password'].to_s
       raise ExternalLoginError, 'admin password is not set' \
         if @admin_password.empty?
     end
@@ -453,7 +466,7 @@ module PuavoRest
         if !school_dn_param.empty? then
           userinfo['school_dns'] = [ school_dn_param ]
         else
-          default_school_dns = @external_login_config['default_school_dns']
+          default_school_dns = @config['default_school_dns']
           if !default_school_dns.kind_of?(Array) then
             raise ExternalLoginError,
               'could not determine user school for' \
@@ -468,7 +481,7 @@ module PuavoRest
         if !role_param.empty? then
           userinfo['roles'] = [ role_param ]
         else
-          default_roles = @external_login_config['default_roles']
+          default_roles = @config['default_roles']
           if !default_roles.kind_of?(Array) then
             raise ExternalLoginError,
               'could not determine user role for' \
