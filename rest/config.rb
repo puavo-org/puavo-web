@@ -58,6 +58,7 @@ else
 
   customizations = [
     "/etc/puavo-rest.yml",
+    "/etc/puavo-rest.d/external-logins.yml",
     "./puavo-rest.yml",
   ].map do |path|
     begin
