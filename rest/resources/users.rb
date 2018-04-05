@@ -76,35 +76,21 @@ class User < LdapModel
 
   before :destroy do
     # Currently "delete_kerberos_principal" updates the user entry on ldap,
-    # which might affect associations, so do this first and then remove
-    # the school/group associations.
+    # which might affect associations, so do this first and only then
+    # delete all associations.
     delete_kerberos_principal
-
-    # remove Samba associations
-    [ 'Domain Admins', 'Domain Users' ].each do |samba_group_name|
-      sambagroup = SambaGroup.by_attr!(:name, samba_group_name)
-      if sambagroup.members.include?(username) then
-        sambagroup.remove(:members, username)
-        sambagroup.save!
-      end
-    end
-
-    # remove group associations
-    groups.each do |group|
-      group.remove_member(self)
-      group.save!
-    end
-
-    # remove school associations
-    schools.each do |school|
-      remove_from_school!(school)
-    end
+    delete_all_associations
   end
 
   before :update do
-    if changed?(:username)
-      # XXX This change must be reflected to Groups, SambaGroups etc.
-      raise NotImplemented, :user => "username changing is not implemented"
+    new_username = username
+    old_username = @previous_values[:username]
+    if old_username && old_username != new_username then
+      # We need to update associations if username has changed, but must use
+      # the old username when deleting.
+      self.username = old_username
+      delete_all_associations
+      self.username = new_username
     end
   end
 
@@ -204,21 +190,34 @@ class User < LdapModel
     write_samba_attrs
   end
 
-  after :create do
-    # Add user to samba group after it is successfully saved
-    samba_group = SambaGroup.by_attr!(:name, "Domain Users")
-    if !samba_group.members.include?(username)
-      samba_group.add(:members, username)
-      samba_group.save!
-    end
-  end
-
   def delete_kerberos_principal
     # XXX We should really destroy the kerberos principal for this user,
     # XXX but for now we just set a password to some unknown value
     # XXX so that the kerberos principal can not be used.
     self.password = SecureRandom.hex(128)
     self.save!
+  end
+
+  def delete_all_associations
+    # remove Samba associations
+    [ 'Domain Admins', 'Domain Users' ].each do |samba_group_name|
+      sambagroup = SambaGroup.by_attr!(:name, samba_group_name)
+      if sambagroup.members.include?(username) then
+        sambagroup.remove(:members, username)
+        sambagroup.save!
+      end
+    end
+
+    # remove group associations
+    groups.each do |group|
+      group.remove_member(self)
+      group.save!
+    end
+
+    # remove school associations
+    schools.each do |school|
+      remove_from_school!(school)
+    end
   end
 
   # Just store password locally and handle it in after hook
@@ -240,7 +239,28 @@ class User < LdapModel
     ensure
       @password = nil
     end
+  end
 
+  after :create, :update do
+    [ 'Domain Admins', 'Domain Users' ].each do |samba_group_name|
+      should_belong = (samba_group_name == 'Domain Users') \
+                         || (samba_group_name == 'Domain Admins' \
+                               && self.admin_of_school_dns)
+
+      sambagroup = SambaGroup.by_attr!(:name, samba_group_name)
+
+      if should_belong then
+        if ! sambagroup.members.include?(username) then
+          sambagroup.add(:members, username)
+          sambagroup.save!
+        end
+      else
+        if sambagroup.members.include?(username) then
+          sambagroup.remove(:members, username)
+          sambagroup.save!
+        end
+      end
+    end
   end
 
   after :update do
@@ -264,7 +284,7 @@ class User < LdapModel
   end
 
   after :create do
-    schools.each{|s| add_to_school!(s)}
+    schools.each { |s| add_to_school!(s) }
   end
 
   def home_directory=(value)
