@@ -245,7 +245,7 @@ class User < LdapModel
     [ 'Domain Admins', 'Domain Users' ].each do |samba_group_name|
       should_belong = (samba_group_name == 'Domain Users') \
                          || (samba_group_name == 'Domain Admins' \
-                               && self.admin_of_school_dns)
+                               && !self.admin_of_school_dns.empty?)
 
       sambagroup = SambaGroup.by_attr!(:name, samba_group_name)
 
