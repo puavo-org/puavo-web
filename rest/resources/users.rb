@@ -74,6 +74,33 @@ class User < LdapModel
     write_raw(:displayName, [first_name.to_s + " " + last_name.to_s])
   end
 
+  before :destroy do
+    # Currently "delete_kerberos_principal" updates the user entry on ldap,
+    # which might affect associations, so do this first and then remove
+    # the school/group associations.
+    delete_kerberos_principal
+
+    # remove Samba associations
+    [ 'Domain Admins', 'Domain Users' ].each do |samba_group_name|
+      sambagroup = SambaGroup.by_attr!(:name, samba_group_name)
+      if sambagroup.members.include?(username) then
+        sambagroup.remove(:members, username)
+        sambagroup.save!
+      end
+    end
+
+    # remove group associations
+    groups.each do |group|
+      group.remove_member(self)
+      group.save!
+    end
+
+    # remove school associations
+    schools.each do |school|
+      remove_from_school!(school)
+    end
+  end
+
   before :update do
     if changed?(:username)
       # XXX This change must be reflected to Groups, SambaGroups etc.
@@ -184,6 +211,14 @@ class User < LdapModel
       samba_group.add(:members, username)
       samba_group.save!
     end
+  end
+
+  def delete_kerberos_principal
+    # XXX We should really destroy the kerberos principal for this user,
+    # XXX but for now we just set a password to some unknown value
+    # XXX so that the kerberos principal can not be used.
+    self.password = SecureRandom.hex(128)
+    self.save!
   end
 
   # Just store password locally and handle it in after hook

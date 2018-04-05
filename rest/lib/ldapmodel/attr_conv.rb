@@ -344,7 +344,9 @@ class LdapModel
   end
 
   def destroy!
+    run_hook :before, :destroy
     self.class.ldap_op(:delete, dn)
+    run_hook :after, :destroy
   end
 
   # Add validation error. Error will be raised on the next {#save!} call
