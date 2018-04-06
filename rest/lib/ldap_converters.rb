@@ -85,9 +85,9 @@ module LdapConverters
 
     def write(value)
       if value
-        "TRUE"
+        [ 'TRUE' ]
       else
-        "FALSE"
+        [ 'FALSE' ]
       end
     end
 
