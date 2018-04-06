@@ -190,9 +190,7 @@ class User < LdapModel
         = "#{ username }@#{ organisation.puavo_kerberos_realm }"
     end
 
-    if login_shell.nil? then
-      self.login_shell = '/bin/bash'
-    end
+    self.login_shell = '/bin/bash'
 
     if reverse_name.nil? then
       self.reverse_name = "#{ last_name } #{ first_name }"
