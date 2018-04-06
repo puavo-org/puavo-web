@@ -93,6 +93,8 @@ class User < LdapModel
       self.username = old_username
       delete_all_associations
       self.username = new_username
+      self.edu_person_principal_name \
+        = "#{ username }@#{ organisation.puavo_kerberos_realm }"
     end
   end
 
