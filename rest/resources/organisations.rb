@@ -26,6 +26,7 @@ class Organisation < LdapModel
   ldap_map :puavoDeviceAutoPowerOffMode, :autopoweroff_mode
   ldap_map :puavoDeviceOnHour,           :daytime_start_hour
   ldap_map :puavoDeviceOffHour,          :daytime_end_hour
+  ldap_map :puavoKerberosRealm,          :puavo_kerberos_realm
 
   def organisation_key
     domain.split(".").first if domain

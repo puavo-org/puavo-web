@@ -30,13 +30,15 @@ class User < LdapModel
   end
   ldap_map :puavoLocale, :locale
   ldap_map :puavoTimezone, :timezone
-  ldap_map :puavoLocked, :locked, &LdapConverters.string_boolean
+  ldap_map :puavoLocked, :locked, LdapConverters::StringBoolean
   ldap_map :puavoSshPublicKey, :ssh_public_key
   ldap_map :homeDirectory, :home_directory
   ldap_map :loginShell, :login_shell, :default => "/bin/bash"
   ldap_map :telephoneNumber, :telephone_number
   ldap_map :puavoRemovalRequestTime, :removal_request_time,
            LdapConverters::TimeStamp
+  ldap_map :eduPersonPrincipalName, :edu_person_principal_name
+  ldap_map :puavoEduPersonReverseDisplayName, :reverse_name
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
@@ -181,6 +183,23 @@ class User < LdapModel
 
     if gid_number.nil? && school
       self.gid_number = school.gid_number
+    end
+
+    if edu_person_principal_name.nil? then
+      self.edu_person_principal_name \
+        = "#{ username }@#{ organisation.puavo_kerberos_realm }"
+    end
+
+    if login_shell.nil? then
+      self.login_shell = '/bin/bash'
+    end
+
+    if reverse_name.nil? then
+      self.reverse_name = "#{ last_name } #{ first_name }"
+    end
+
+    if locked.nil? then
+      self.locked = false
     end
 
     validate_unique(:uid_number)
