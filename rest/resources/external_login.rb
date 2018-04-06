@@ -9,11 +9,12 @@ require 'securerandom'
 # ExternalLoginUserMissing means user could not found at external service
 # ExternalLoginWrongPassword means user is valid but had a wrong password
 
-class ExternalLoginError         < StandardError; end
-class ExternalLoginNotConfigured < ExternalLoginError; end
-class ExternalLoginUnavailable   < ExternalLoginError; end
-class ExternalLoginUserMissing   < ExternalLoginError; end
-class ExternalLoginWrongPassword < ExternalLoginError; end
+class ExternalLoginError               < StandardError; end
+class ExternalLoginNotConfigured       < ExternalLoginError; end
+class ExternalLoginPasswordChangeError < ExternalLoginError; end
+class ExternalLoginUnavailable         < ExternalLoginError; end
+class ExternalLoginUserMissing         < ExternalLoginError; end
+class ExternalLoginWrongPassword       < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLogins < PuavoSinatra
@@ -124,6 +125,50 @@ module PuavoRest
       json_user_status = json(user_status)
       flog.info(nil, "returning external login status #{ json_user_status }")
       return json_user_status
+    end
+
+    # XXX Perhaps there is no need for a separate rest-api for this,
+    # XXX and it is enough to only some method to be called elsewhere?
+    post '/v3/external_login/change_password' do
+      auth :basic_auth
+
+      # XXX Should you first run '/v3/external_login/auth' or equivalent
+      # XXX and then re-auth user again?  Because if the puavo password
+      # XXX does not match the current one in external ldap?
+      # XXX Or probably more simple to get here without puavo auth
+      # XXX and we should check the old password against the external ldap?
+
+      # XXX And if external logins are effective we should not allow changing
+      # XXX the puavo password at all?
+
+      # XXX Teachers should be able to change passwords of all users
+      # XXX except other teachers?  What logic should we use to check these?
+      # XXX Should this logic be configurable as it is not really related to
+      # XXX Puavo, or should be checked from Puavo?
+
+      # XXX If password is changed, should we sync it to Puavo?
+
+      new_password = params[:new_password].to_s
+      if new_password.empty? then
+        raise BadInput, :user => 'must provide a new password'
+      end
+
+      user = User.current
+
+      begin
+        external_login = ExternalLogin.new(flog, request.host)
+        login_service = external_login.new_external_service_handler()
+        login_service.change_password(user.username, new_password)
+      rescue StandardError => e
+        errmsg = 'changing external service password failed'
+        flog.warn(errmsg,
+                  "#{ errmsg } for user '#{ user.username }': #{ e.message }")
+        return json({ :error => errmsg, :status => 'failed' })
+      end
+
+      okmsg = 'successfully changed external service password'
+      flog.info(okmsg, "#{ okmsg } for user '#{ user.username }'")
+      return json({ :status => 'successfully' })
     end
 
     post '/v3/external_login/mark_removed_users' do
@@ -664,6 +709,32 @@ module PuavoRest
                  'authentication to ldap succeeded')
 
       get_userinfo(username, password)
+    end
+
+    def change_password(username, new_password)
+      update_ldapuserinfo(username)
+      dn = Array(@ldap_userinfo['dn']).first.to_s
+      if dn.empty? then
+        raise "LDAP information for user '#{ username }' appears to lack DN"
+      end
+
+      encoded_password = ('"' + new_password + '"') \
+                         .encode('utf-16le')        \
+                         .force_encoding('utf-8')
+
+      # We are doing the password change operation twice because at least
+      # on some ldap servers (Microsoft AD, possibly depending on
+      # configuration) the old password is still valid for five minutes on
+      # ldap operations :-(
+      ops = [ [ :replace, :unicodePwd, encoded_password ],
+              [ :replace, :unicodePwd, encoded_password ] ]
+      change_ok = @ldap.modify(:dn => Array(dn).first, :operations => ops)
+      if !change_ok then
+        raise ExternalLoginPasswordChangeError,
+              'password change failed:' \
+                + " '#{ @ldap.get_operation_result.error_message }'" \
+                + ' (maybe server password policy does not accept it?)'
+      end
     end
 
     def lookup_external_id(username)
