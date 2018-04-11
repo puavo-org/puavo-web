@@ -27,7 +27,7 @@ class User < LdapBase
 
   before_save :is_uid_changed, :set_preferred_language
 
-  before_update :change_ldap_password
+  before_update :change_password
 
   after_save :set_school_admin
   after_save :add_member_uid_to_models
@@ -35,7 +35,7 @@ class User < LdapBase
 
   before_destroy :delete_all_associations, :delete_kerberos_principal
 
-  after_create :change_ldap_password
+  after_create :change_password
 
   validate :validate
 
@@ -335,7 +335,7 @@ class User < LdapBase
     end
   end
 
-  def change_ldap_password
+  def change_password
     unless new_password.nil? || new_password.empty?
       ldap_conf = User.configuration
 
@@ -345,7 +345,7 @@ class User < LdapBase
         url = nil
       end
 
-      res = Puavo.ldap_passwd(
+      res = Puavo.change_passwd(
         ldap_conf[:host],
         ldap_conf[:bind_dn],
         ldap_conf[:password],
@@ -798,7 +798,7 @@ class User < LdapBase
     # XXX but for now we just set a password to some unknown value
     # XXX so that the kerberos principal can not be used.
     self.new_password = generate_password(40)
-    change_ldap_password
+    change_password
   end
 
   def set_samba_settings

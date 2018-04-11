@@ -382,11 +382,11 @@ module PuavoRest
       # his/her own credentials.  We know the password was bad with the
       # external service, so if it works here, we invalidate it, which is
       # what we want.
-      res = Puavo.ldap_passwd(CONFIG['ldap'],
-                              user.dn,
-                              password,
-                              new_password,
-                              user.dn)
+      res = Puavo.change_passwd(CONFIG['ldap'],
+                                user.dn,
+                                password,
+                                new_password,
+                                user.dn)
       case res[:exit_status]
       when Net::LDAP::ResultCodeInvalidCredentials
         # invalid credentials, which is to be expected

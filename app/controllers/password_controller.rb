@@ -184,7 +184,7 @@ class PasswordController < ApplicationController
           end
         end
 
-        res = Puavo.ldap_passwd(
+        res = Puavo.change_passwd(
           User.configuration[:host],
           @logged_in_user.dn,
           params[:login][:password],

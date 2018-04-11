@@ -248,7 +248,7 @@ class User < LdapModel
     next if @password.nil?
 
     begin
-      Puavo.ldap_passwd(
+      Puavo.change_passwd(
         CONFIG["ldap"],
         LdapModel.settings[:credentials][:dn],
         LdapModel.settings[:credentials][:password],

@@ -3,7 +3,7 @@ require "open3"
 
 module Puavo
 
-  def self.ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn, external_pw_mgmt_url = nil)
+  def self.change_passwd(host, bind_dn, current_pw, new_pw, user_dn, external_pw_mgmt_url = nil)
     started = Time.now
 
     res = LdapPasswd.run_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
