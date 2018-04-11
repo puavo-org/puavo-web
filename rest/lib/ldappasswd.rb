@@ -7,27 +7,38 @@ module Puavo
     started = Time.now
 
     res = LdapPasswd.run_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
+    return res unless res
+    res[:duration] = (Time.now.to_f - started.to_f).round(5)
 
-    if res[:exit_status] == 0 && !external_pw_mgmt_url.nil?
-      user = User.find(user_dn)
-      http_res = HTTP.send("post", external_pw_mgmt_url, :json => {"username" => user.uid, "new_user_password" => new_pw})
+    return res unless external_pw_mgmt_url && res[:exit_status] == 0
 
-      if http_res.code != 200
+    # Do external password management only after we know that password
+    # changing to ldap has worked.  It might seem better to do this the
+    # other way around, but this is the only way to make sure that the
+    # bind_dn/user has permissions to change the password for user_dn/user.
 
-        # Restore user old password
-        if bind_dn.to_s == user_dn.to_s
-          res = LdapPasswd.run_ldap_passwd(host, bind_dn, new_pw, current_pw, user_dn)
-        end
+    user = User.find(user_dn)
+    http_res = HTTP.send("post",
+                         external_pw_mgmt_url,
+                         :json => { "username"          => user.uid,
+                                    "new_user_password" => new_pw })
 
-        return {
-          :duration => (Time.now.to_f - started.to_f).round(5),
-          :stdout => "",
-          :stderr => "Cannot change external password: " + http_res.body.to_s,
-          :exit_status => 1
-      }
-
+    if http_res.code != 200 then
+      # Restore user old password
+      # (XXX only effective if bind_dn and user_dn match).
+      if bind_dn.to_s == user_dn.to_s
+        LdapPasswd.run_ldap_passwd(host, bind_dn, new_pw, current_pw, user_dn)
       end
+
+      res = {
+        :exit_status => 1,
+        :stderr      => 'Cannot change external password: ' \
+                          + http_res.body.to_s,
+        :stdout      => '',
+      }
     end
+
+    res[:duration] = (Time.now.to_f - started.to_f).round(5)
 
     return res
   end
@@ -36,7 +47,6 @@ module Puavo
   class LdapPasswd
 
     def self.run_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
-      started = Time.now
       res = nil
 
       Open3.popen3(
@@ -69,11 +79,14 @@ module Puavo
       ) do |stdin, stdout, stderr, wait_thr|
         wait_thr.join
 
+        # XXX This way of doing wait_thr + stdout/stderr reads is not safe
+        # XXX if data does not fit into the kernel buffer, and program
+        # XXX expects us to to read it before exiting (will likely work
+        # XXX with small outputs, though).
         res = {
-          :duration => (Time.now.to_f - started.to_f).round(5),
-          :stdout => stdout.read(1024 * 5),
-          :stderr => stderr.read(1024 * 5),
-          :exit_status => wait_thr.value.exitstatus
+          :exit_status => wait_thr.value.exitstatus,
+          :stderr      => stderr.read(1024 * 5),
+          :stdout      => stdout.read(1024 * 5),
         }
 
       end
