@@ -153,70 +153,76 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password
-    if @logged_in_user = User.find(:first, :attribute => "uid", :value => params[:login][:uid])
-      if authenticate(@logged_in_user, params[:login][:password])
-        if params[:user][:uid]
-          unless @user = User.find(:first, :attribute => "uid", :value => params[:user][:uid])
-            raise User::UserError, I18n.t('flash.password.invalid_user', :uid => params[:user][:uid])
-          end
-        else
-          @user = @logged_in_user
+    @logged_in_user = User.find(:first,
+                                :attribute => 'uid',
+                                :value     => params[:login][:uid])
+    return false unless @logged_in_user \
+                          && authenticate(@logged_in_user,
+                                          params[:login][:password])
+
+    @user = @logged_in_user
+    if params[:user][:uid] then
+      @user = User.find(:first,
+                        :attribute => 'uid',
+                        :value     => params[:user][:uid])
+    end
+    unless @user then
+      raise User::UserError, I18n.t('flash.password.invalid_user',
+                                    :uid => params[:user][:uid])
+    end
+
+    role = external_pw_mgmt_role
+    url  = external_pw_mgmt_url
+
+    if !url.nil? && !url.empty? && !role.nil? && !role.empty? then
+      if @user.puavoEduPersonAffiliation.include?(role) then
+        # External password management (read: G Suite integration) is enabled,
+        # so validate the password against Google's requirements.
+        new_password = params[:user][:new_password]
+
+        if new_password.size < 8 then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.password_too_short')
         end
-
-        url = external_pw_mgmt_url
-        role = external_pw_mgmt_role
-
-        if !url.nil? && !url.empty? && !role.nil? && !role.empty?
-          if @user.puavoEduPersonAffiliation.include?(role)
-            # External password management (read: G Suite integration) is enabled, so
-            # validate the password against Google's requirements
-            new_password = params[:user][:new_password]
-
-            if new_password.size < 8
-              raise User::UserError, I18n.t("activeldap.errors.messages.password_too_short")
-            elsif new_password[0] == ' ' || new_password[-1] == ' '
-              raise User::UserError, I18n.t("activeldap.errors.messages.password_whitespace")
-            elsif !new_password.ascii_only?
-              raise User::UserError, I18n.t("activeldap.errors.messages.password_ascii_only")
-            end
-          else
-            url = nil
-          end
+        if new_password[0] == ' ' || new_password[-1] == ' ' then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.password_whitespace')
         end
-
-        res = Puavo.change_passwd(
-          User.configuration[:host],
-          @logged_in_user.dn,
-          params[:login][:password],
-          params[:user][:new_password],
-          @user.dn.to_s,
-          url
-        )
-        flog.info "ldappasswd call", res.merge(
-          :from => "password controller",
-          :user => {
-            :uid => @user.uid,
-            :dn => @user.dn.to_s
-          },
-          :bind_user => {
-            :uid => @logged_in_user.uid,
-            :dn => @logged_in_user.dn.to_s
-          }
-        )
-
-        if res[:exit_status] != 0
-          logger.warn "ldappasswd failed: #{ res.inspect }"
-          raise User::UserError, I18n.t('flash.password.failed')
+        if !new_password.ascii_only? then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.password_ascii_only')
         end
-
-
-
-
-        return true
+      else
+        url = nil
       end
     end
 
-    return false
+    res = Puavo.change_passwd(
+      User.configuration[:host],
+      @logged_in_user.dn,
+      params[:login][:password],
+      params[:user][:new_password],
+      @user.dn.to_s,
+      url
+    )
+    flog.info "ldappasswd call", res.merge(
+      :from => "password controller",
+      :user => {
+        :dn  => @user.dn.to_s,
+        :uid => @user.uid,
+      },
+      :bind_user => {
+        :dn  => @logged_in_user.dn.to_s,
+        :uid => @logged_in_user.uid,
+      }
+    )
+
+    if res[:exit_status] != 0 then
+      logger.warn "ldappasswd failed: #{ res.inspect }"
+      raise User::UserError, I18n.t('flash.password.failed')
+    end
+
+    return true
   end
 
   def authenticate(user, password)
