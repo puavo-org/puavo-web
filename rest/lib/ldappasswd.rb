@@ -17,24 +17,14 @@ module Puavo
     # other way around, but this is the only way to make sure that the
     # bind_dn/user has permissions to change the password for user_dn/user.
 
-    user = User.find(user_dn)
-    http_res = HTTP.send("post",
-                         external_pw_mgmt_url,
-                         :json => { "username"          => user.uid,
-                                    "new_user_password" => new_pw })
-
-    if http_res.code != 200 then
-      # Restore user old password
-      # (XXX only effective if bind_dn and user_dn match).
-      if bind_dn.to_s == user_dn.to_s
-        LdapPasswd.run_ldap_passwd(host, bind_dn, new_pw, current_pw, user_dn)
-      end
-
+    begin
+      change_external_passwd(host, bind_dn, current_pw, new_pw,
+                             user_dn, external_pw_mgmt_url)
+    rescue StandardError => e
       res = {
-        :exit_status => 1,
-        :stderr      => 'Cannot change external password: ' \
-                          + http_res.body.to_s,
-        :stdout      => '',
+         :exit_status => 1,
+         :stderr      => e.message,
+         :stdout      => '',
       }
     end
 
@@ -43,6 +33,24 @@ module Puavo
     return res
   end
 
+  def self.change_external_passwd(host, bind_dn, current_pw, new_pw, user_dn,
+                                  external_pw_mgmt_url)
+    user = User.find(user_dn)
+    http_res = HTTP.send('post',
+                         external_pw_mgmt_url,
+                         :json => { 'username'          => user.uid,
+                                    'new_user_password' => new_pw })
+
+    return true if http_res.code == 200
+
+    # Restore old password for user
+    # (XXX only effective if bind_dn and user_dn match).
+    if bind_dn.to_s == user_dn.to_s then
+      LdapPasswd.run_ldap_passwd(host, bind_dn, new_pw, current_pw, user_dn)
+    end
+
+    raise "Cannot change external password: #{ http_res.body.to_s }"
+  end
 
   class LdapPasswd
 
