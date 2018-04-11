@@ -96,7 +96,7 @@ class Password < PuavoSinatra
                               PUAVO_ETC.ds_pw_mgmt_dn,
                               PUAVO_ETC.ds_pw_mgmt_password,
                               params["new_password"],
-                              user.dn )
+                              user.dn)
 
     flog.info('ldappasswd call',
               "changed user password for '#{ user.username }'",
