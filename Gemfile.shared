@@ -3,13 +3,13 @@
 
 group :shared do
   gem "rails", "4.2.10"
-  gem "sqlite3"
-  gem "prawn"
-  gem "net-ldap"
-  gem "activeldap", :require => "active_ldap"
-  gem "rmagick"
-  gem "uuid"
-  gem "redcarpet"
+  gem "sqlite3", "1.3.13"
+  gem "prawn", "2.2.2"
+  gem "net-ldap", "0.16.1"
+  gem "activeldap", "5.1.0", :require => "active_ldap"
+  gem "rmagick", "2.16.0"
+  gem "uuid", "2.3.8"
+  gem "redcarpet", "3.4.0"
   gem "nokogiri", "1.8.1"
   gem "resque", "1.27.4"
 end

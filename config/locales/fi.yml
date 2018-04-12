@@ -224,11 +224,15 @@ fi:
     select_school:
       title: "Käyttäjien siirto"
       select_new_school: Valitse uusi koulu
+      no_roles: "Valitussa koulussa ei ole yhtään roolia!"
+      no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
+      no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
       submit: Seuraava
     select_role:
       title: "Käyttäjien siirto"
-      new_school: Uusi koulu
+      new_school: Valittu koulu
       select_new_role: Valitse uusi rooli
+      select_new_group: Valitse uusi ryhmä
       submit: "Siirrä käyttäjät"
   users:
     index:
@@ -252,11 +256,14 @@ fi:
       title: Koulun vaihto
       select_new_school: Valitse uusi koulu
       no_roles: "Valitussa koulussa ei ole yhtään roolia!"
+      no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
+      no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
       submit: Seuraava
     select_role:
       title: Koulun vaihto
-      new_school: Uusi koulu
+      new_school: Valittu koulu
       select_new_role: Valitse uusi rooli
+      select_new_group: Valitse uusi ryhmä
       submit: Vaihda koulu
     import:
       info:

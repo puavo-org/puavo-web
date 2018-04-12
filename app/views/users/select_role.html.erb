@@ -9,10 +9,10 @@
   </tr>
   <tr>
 	<td>
-	  <%= label_tag :new_role, t('.select_new_role') %>
+	  <%= label_tag :new_role, t(@use_groups ? '.select_new_group' : '.select_new_role') %>
   </td>
 	<td>
-	  <%= select_tag :new_role, options_from_collection_for_select(@roles, "puavoId", "displayName") %>
+	  <%= select_tag :new_role, options_from_collection_for_select(@roles_or_groups, "puavoId", "displayName") %>
 	</td>
   </tr>
   <tr>

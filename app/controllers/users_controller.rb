@@ -166,7 +166,9 @@ class UsersController < ApplicationController
         end
 
         if new_group_management?(@school)
-          @user.teaching_group = params["teaching_group"]
+          if params["teaching_group"]
+            @user.teaching_group = params["teaching_group"]
+          end
           if params["administrative_groups"]
             @user.administrative_groups = params["administrative_groups"].delete_if{ |id| id == "0" }
             params["user"].delete("administrative_groups")
@@ -223,19 +225,27 @@ class UsersController < ApplicationController
   # POST /:school_id/users/change_school
   def change_school
     @new_school = School.find(params[:new_school])
-    @new_role = Role.find(params[:new_role])
+
+    use_groups = new_group_management?(@school)
+    @role_or_group = use_groups ? Group.find(params[:new_role]) : Role.find(params[:new_role])
 
     params[:user_ids].each do |user_id|
       @user = User.find(user_id)
       @user.change_school(@new_school.dn.to_s)
-      @user.role_ids = Array(@new_role.id)
+
+      if use_groups
+        @user.groups = Array(@role_or_group.id)
+      else
+        @user.role_ids = Array(@role_or_group.id)
+      end
+
       @user.save
     end
 
     respond_to do |format|
       if Array(params[:user_ids]).length > 1
         format.html { redirect_to( role_path( @new_school,
-                                              @new_role ),
+                                              @role_or_group ),
                                    :notice => t("flash.user.school_changed") ) }
       else
         format.html { redirect_to( user_path(@new_school, @user),
@@ -249,6 +259,10 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @schools = School.all_with_permissions current_user
 
+    # don't show the school the user already is in
+    user_school_id = @user.puavoSchool&.rdns[0]["puavoId"] || -1
+    @schools.reject! { |s| s.id == user_school_id }
+
     respond_to do |format|
       format.html
     end
@@ -258,10 +272,35 @@ class UsersController < ApplicationController
   def select_role
     @user = User.find(params[:id])
     @new_school = School.find(params[:new_school])
-    @roles = @new_school.roles
 
-    if @roles.length == 0
-      flash[:alert] = t('users.select_school.no_roles')
+    @use_groups = new_group_management?(@school)
+    @roles_or_groups = @use_groups ? @new_school.groups : @new_school.roles
+    @is_a_student = false
+
+    if @use_groups
+      # only show certain kinds of groups, based on the user's type
+      if @user.puavoEduPersonAffiliation == 'student'
+        # display only teaching groups for students
+        @roles_or_groups.select! { |g| g.puavoEduGroupType == 'teaching group' }
+        is_a_student = true
+      else
+        # for everyone else, teachers or not, display only administrative groups
+        @roles_or_groups.select! { |g| g.puavoEduGroupType == 'administrative group' }
+      end
+    end
+
+    if @roles_or_groups.nil? || @roles_or_groups.empty?
+      if is_a_student
+        # special message for students
+        flash[:alert] = t('users.select_school.no_teaching_groups')
+      else
+        if @use_groups
+          flash[:alert] = t('users.select_school.no_groups')
+        else
+          flash[:alert] = t('users.select_school.no_roles')
+        end
+      end
+
       redirect_to :back
     else
       respond_to do |format|

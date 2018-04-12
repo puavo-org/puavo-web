@@ -252,13 +252,16 @@ en:
       title: Edit role
     select_school:
       title: Users transfer
-      select_new_school: Select new school
+      select_new_school: Select the new school
       no_roles: "The selected school has no roles!"
+      no_groups: "The selected school has no groups!"
+      no_teaching_groups: "The selected school has no teaching groups!"
       submit: Next
     select_role:
       title: Users transfer
-      new_school: New school
-      select_new_role: Select new role
+      new_school: Selected school
+      select_new_role: "Select the new role"
+      select_new_group: "Select the new group"
       submit: Move users
   users:
     index:
@@ -280,12 +283,16 @@ en:
       add_telephone_number: Add another telephone number
     select_school:
       title: School change
-      select_new_school: Select new school
+      select_new_school: Select the new school
+      no_roles: "The selected school has no roles!"
+      no_groups: "The selected school has no groups!"
+      no_teaching_groups: "The selected school has no teaching groups!"
       submit: Next
     select_role:
       title: School change
-      new_school: New school
-      select_new_role: Select new role
+      new_school: Selected school
+      select_new_role: "Select the new role"
+      select_new_group: "Select the new group"
       submit: Change school
     import:
       info:
