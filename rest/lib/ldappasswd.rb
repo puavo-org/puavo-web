@@ -3,6 +3,7 @@ require "open3"
 
 module Puavo
 
+  # XXX Do callers handle nil as well?  Can be return nil?
   def self.change_passwd(host, bind_dn, current_pw, new_pw, user_dn,
                          external_pw_mgmt_url=nil)
     started = Time.now
@@ -34,33 +35,29 @@ module Puavo
 
   def self.change_passwd_no_upstream_change(host, bind_dn, current_pw, new_pw,
                                             user_dn, external_pw_mgmt_url=nil)
-    res = LdapPasswd.run_ldap_passwd(host, bind_dn, current_pw, new_pw,
-                                     user_dn)
+    # First change the password to external service(s) and then to us.
+    # If we can not change it to external service(s), do not change it for us
+    # either.
+    if external_pw_mgmt_url then
+      has_permissions = LdapPassword.has_password_change_permissions?(host,
+                          bind_dn, current_pw, new_pw, user_dn)
 
-    return res unless external_pw_mgmt_url && res && res[:exit_status] == 0
-
-    # Do downstream password management only after we know that password
-    # changing to ldap has worked.  It might seem better to do this the
-    # other way around, but this is the only way to make sure that the
-    # bind_dn/user has permissions to change the password for user_dn/user.
-    # XXX Using slapacl(8) to check for permissions, then first changing
-    # XXX the external passwords and then our ldap password might be
-    # XXX the better option.
-
-    begin
-      change_downstream_passwords(User.find(user_dn),
-                                  new_pw,
-                                  external_pw_mgmt_url)
-    rescue StandardError => e
-      # Restore old password for user
-      # (XXX only effective if bind_dn and user_dn match).
-      if bind_dn.to_s == user_dn.to_s then
-        LdapPasswd.run_ldap_passwd(host, bind_dn, new_pw, current_pw, user_dn)
+      unless has_permissions then
+        errmsg = "User '#{ bind_dn }' has no sufficient permissions to change" \
+                   " password for user '#{ user_dn }'"
+        raise errmsg
       end
-      raise e
+
+      begin
+        change_downstream_passwords(User.find(user_dn),
+                                    new_pw,
+                                    external_pw_mgmt_url)
+      rescue StandardError => e
+        raise "Cannot change downstream passwords: #{ e.message }"
+      end
     end
 
-    return res
+    LdapPasswd.change_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
   end
 
   def self.change_downstream_passwords(user, new_pw, external_pw_mgmt_url)
@@ -71,7 +68,7 @@ module Puavo
 
     return true if http_res.code == 200
 
-    raise "Cannot change downstream passwords: #{ http_res.body.to_s }"
+    raise http_res.body.to_s
   end
 
   def self.change_upstream_password(host, bind_dn, current_pw, new_pw, user_dn)
@@ -86,22 +83,40 @@ module Puavo
   end
 
   class LdapPasswd
-    def self.run_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
+    def self.has_password_change_permissions?(host, bind_dn, current_pw,
+                                              new_pw, user_dn)
+      # "-n" for ldappasswd means "dry-run", it does not change the password
+      # but instead can tell us if password change is possible.
+      # It does check the permissions as well, which is what we want.
+      res = run_ldappasswd(host, bind_dn, current_pw, new_pw, user_dn,
+                           [ '-n' ])
+
+      return res[:exit_status] == 0
+    end
+
+    def self.change_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
+      run_ldappasswd(host, bind_dn, current_pw, new_pw, user_dn)
+    end
+
+    def self.run_ldappasswd(host, bind_dn, current_pw, new_pw, user_dn,
+                            extra_cmd_args=[])
       cmd = [ 'ldappasswd',
-              # Use simple authentication instead of SASL
+              # use simple authentication instead of SASL
               '-x',
-              # Issue StartTLS (Transport Layer Security) extended operation
+              # issue StartTLS (Transport Layer Security) extended operation
               '-Z',
-              # Specify an alternate host on which the ldap server is running
+              # specify an alternate host on which the ldap server is running
               '-h', host,
               # Distinguished Name used to bind to the LDAP directory
               '-D', bind_dn.to_s,
-              # The password to bind with
+              # the password to bind with
               '-w', current_pw,
-              # Set the new password
+              # set the new password
               '-s', new_pw,
-              # Timeout after 20 sec
+              # timeout after 20 sec
               '-o', 'nettimeout=20',
+              # plus add possible extra command arguments
+              *extra_cmd_args,
               # The user whose password we're changing
               user_dn.to_s ]
 
