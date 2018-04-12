@@ -62,10 +62,16 @@ module PuavoRest
 
         if wrong_password then
           external_id = login_service.lookup_external_id(username)
-          invalidated = external_login.maybe_invalidate_password(username,
-                                                                 external_id,
-                                                                 password)
-          if invalidated then
+          # We must not force the user of admin_dn for this password change,
+          # because this should happen only when password was valid for puavo
+          # but not for external login, in which case we invalidate the puavo
+          # password.
+          new_password = SecureRandom.hex(128)
+          pw_update_status = external_login.set_puavo_password(username,
+                                                               external_id,
+                                                               password,
+                                                               new_password)
+          if pw_update_status == USER_STATUS_UPDATED then
             msg = 'user password invalidated'
             flog.info('user password invalidated',
                       "user password invalidated for #{ username }")
@@ -103,7 +109,8 @@ module PuavoRest
         flog.info('external login successful', message)
 
         begin
-          user_status = external_login.update_user_info(userinfo, params)
+          user_status \
+            = external_login.update_user_info(userinfo, password, params)
         rescue StandardError => e
           flog.warn('error updating user information',
                     "error updating user information: #{ e.message }")
@@ -366,22 +373,21 @@ module PuavoRest
                                 @flog)
     end
 
-    def maybe_invalidate_password(username, external_id, password)
+    def set_puavo_password(username, external_id, password, new_password,
+                           fallback_to_admin_dn=false)
       user = User.by_attr(:external_id, external_id)
       if !user then
         msg = "user with external id '#{ external_id }' (#{ username }?)" \
-              + ' not found in Puavo, no password to invalidate'
+                + ' not found in Puavo, can not change/invalidate password'
         @flog.info(nil, msg)
-        return false
+        return USER_STATUS_NOCHANGE
       end
 
-      # change user password to something random and just throw it away
-      new_password = SecureRandom.hex(128)
+      # Do not always use the @admin_dn to set password, because we might
+      # want to invalidate password in case login to an external service
+      # has failed with the password, and we want to do that only when
+      # the new password is valid to Puavo.
 
-      # Let the user try itself change the password to a random string with
-      # his/her own credentials.  We know the password was bad with the
-      # external service, so if it works here, we invalidate it, which is
-      # what we want.
       begin
         res = Puavo.change_passwd_no_upstream_change(CONFIG['ldap'],
                                                      user.dn,
@@ -390,15 +396,23 @@ module PuavoRest
                                                      user.dn)
         case res[:exit_status]
         when Net::LDAP::ResultCodeInvalidCredentials
-          # invalid credentials, which is to be expected
+          if fallback_to_admin_dn then
+            res = Puavo.change_passwd_no_upstream_change(CONFIG['ldap'],
+                                                         @admin_dn,
+                                                         @admin_password,
+                                                         new_password,
+                                                         user.dn)
+            if res[:exit_status] == Net::LDAP::ResultCodeSuccess then
+              return USER_STATUS_UPDATED
+            end
+
+            raise "unexpected exit code (#{ res[:exit_status] }):" \
+                    " with admin dn/password: #{ res[:stderr] }"
+          end
         when Net::LDAP::ResultCodeSuccess
-          # The password was valid for Puavo, but not to external login
-          # service, so we invalidated it.
-          msg = 'invalidated puavo password for user with external id' \
-                  + " '#{ external_id }' (#{ username }?)" \
-                  + ' because external login failed with it'
-          @flog.info(nil, msg)
-          return true
+          if password != new_password then
+            return USER_STATUS_UPDATED
+          end
         else
           raise "unexpected exit code (#{ res[:exit_status] }): " \
                   + res[:stderr]
@@ -407,7 +421,7 @@ module PuavoRest
         @flog.warn(nil, e.message)
       end
 
-      return false
+      return USER_STATUS_NOCHANGE
     end
 
     def manage_groups_for_user(user, external_groups_by_type)
@@ -508,7 +522,7 @@ module PuavoRest
       return changes_happened
     end
 
-    def update_user_info(userinfo, params)
+    def update_user_info(userinfo, password, params)
       if userinfo['school_dns'].nil? then
         school_dn_param = params[:school_dn].to_s
         if !school_dn_param.empty? then
@@ -541,7 +555,7 @@ module PuavoRest
 
       external_groups_by_type = userinfo.delete('external_groups')
 
-      update_status = nil
+      user_update_status = nil
 
       begin
         user = User.by_attr(:external_id, userinfo['external_id'])
@@ -550,31 +564,38 @@ module PuavoRest
           user.save!
           @flog.info('new external login user',
                      "created a new user '#{ userinfo['username'] }'")
-          update_status = self.class.status_updated()
+          user_update_status = USER_STATUS_UPDATED
         elsif user.check_if_changed_attributes(userinfo) then
           user.removal_request_time = nil
           user.update!(userinfo)
           user.save!
           @flog.info('updated external login user',
                      "updated user information for '#{ userinfo['username'] }'")
-          update_status = self.class.status_updated()
+          user_update_status = USER_STATUS_UPDATED
         else
           @flog.info('no change for external login user',
                      'no change in user information for' \
                        + " '#{ userinfo['username'] }'")
-          update_status = self.class.status_nochange()
+          user_update_status = USER_STATUS_NOCHANGE
         end
       rescue ValidationError => e
         raise ExternalLoginError,
               "error saving user because of validation errors: #{ e.message }"
       end
 
-      if manage_groups_for_user(user, external_groups_by_type) then
-        # we are here if manage_groups_for_user() made some changes
-        update_status = self.class.status_updated()
-      end
+      pw_update_status = set_puavo_password(userinfo['username'],
+                                            userinfo['external_id'],
+                                            password,
+                                            password,
+                                            true)
+      mg_update_status = manage_groups_for_user(user, external_groups_by_type)
 
-      return update_status
+      return self.class.status_updated() \
+        if (user_update_status    == USER_STATUS_UPDATED \
+              || pw_update_status == USER_STATUS_UPDATED \
+              || mg_update_status == USER_STATUS_UPDATED)
+
+      return self.class.status_nochange()
     end
 
     def self.status(status_string, msg)
@@ -711,7 +732,7 @@ module PuavoRest
       @flog.info('authentication to ldap succeeded',
                  'authentication to ldap succeeded')
 
-      get_userinfo(username, password)
+      get_userinfo(username)
     end
 
     def change_password(username, new_password)
@@ -774,12 +795,11 @@ module PuavoRest
 
     private
 
-    def get_userinfo(username, password)
+    def get_userinfo(username)
       userinfo = {
         'external_id' => lookup_external_id(username),
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
         'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
-        'password'    => password,
         'username'    => Array(@ldap_userinfo['sAMAccountName']).first.to_s,
       }
 
