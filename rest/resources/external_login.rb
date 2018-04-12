@@ -382,26 +382,29 @@ module PuavoRest
       # his/her own credentials.  We know the password was bad with the
       # external service, so if it works here, we invalidate it, which is
       # what we want.
-      res = Puavo.change_passwd(CONFIG['ldap'],
-                                user.dn,
-                                password,
-                                new_password,
-                                user.dn)
-      case res[:exit_status]
-      when Net::LDAP::ResultCodeInvalidCredentials
-        # invalid credentials, which is to be expected
-      when Net::LDAP::ResultCodeSuccess
-        # The password was valid for Puavo, but not to external login
-        # service, so we invalidated it.
-        msg = 'invalidated puavo password for user with external id' \
-                + " '#{ external_id }' (#{ username }?)" \
-                + ' because external login failed with it'
-        @flog.info(nil, msg)
-        return true
-      else
-        msg = 'error occurred when running ldappasswd:' \
-                + " (#{ res[:exit_status] }) #{ res[:stderr] }"
-        @flog.warn(nil, msg)
+      begin
+        res = Puavo.change_passwd_no_upstream_change(CONFIG['ldap'],
+                                                     user.dn,
+                                                     password,
+                                                     new_password,
+                                                     user.dn)
+        case res[:exit_status]
+        when Net::LDAP::ResultCodeInvalidCredentials
+          # invalid credentials, which is to be expected
+        when Net::LDAP::ResultCodeSuccess
+          # The password was valid for Puavo, but not to external login
+          # service, so we invalidated it.
+          msg = 'invalidated puavo password for user with external id' \
+                  + " '#{ external_id }' (#{ username }?)" \
+                  + ' because external login failed with it'
+          @flog.info(nil, msg)
+          return true
+        else
+          raise "unexpected exit code (#{ res[:exit_status] }): " \
+                  + res[:stderr]
+        end
+      rescue StandardError => e
+        @flog.warn(nil, e.message)
       end
 
       return false

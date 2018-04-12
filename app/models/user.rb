@@ -345,6 +345,7 @@ class User < LdapBase
         url = nil
       end
 
+      # XXX this should use puavo-rest instead
       res = Puavo.change_passwd(
         ldap_conf[:host],
         ldap_conf[:bind_dn],

@@ -197,6 +197,7 @@ class PasswordController < ApplicationController
       end
     end
 
+    # XXX this should use puavo-rest instead
     res = Puavo.change_passwd(
       User.configuration[:host],
       @logged_in_user.dn,
