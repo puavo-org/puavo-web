@@ -52,51 +52,31 @@ module Puavo
   class LdapPasswd
 
     def self.run_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
-      res = nil
+      cmd = [ 'ldappasswd',
+              # Use simple authentication instead of SASL
+              '-x',
+              # Issue StartTLS (Transport Layer Security) extended operation
+              '-Z',
+              # Specify an alternate host on which the ldap server is running
+              '-h', host,
+              # Distinguished Name used to bind to the LDAP directory
+              '-D', bind_dn.to_s,
+              # The password to bind with
+              '-w', current_pw,
+              # Set the new password
+              '-s', new_pw,
+              # Timeout after 20 sec
+              '-o', 'nettimeout=20',
+              # The user whose password we're changing
+              user_dn.to_s ]
 
-      Open3.popen3(
-        'ldappasswd',
+      stdout_str, stderr_str, status = Open3.capture3(*cmd)
 
-        # Use simple authentication instead of SASL
-        '-x',
-
-        # Issue StartTLS (Transport Layer Security) extended operation
-        '-Z',
-
-        # Specify an alternate host on which the ldap server is running
-        '-h', host,
-
-        # Distinguished Name used to bind to the LDAP directory
-        '-D', bind_dn.to_s,
-
-        # The password to bind with
-        '-w', current_pw,
-
-        # Set the new password
-        '-s', new_pw,
-
-        # Timeout after 20 sec
-        '-o', 'nettimeout=20',
-
-        # The user whose password we're changing
-        user_dn.to_s
-
-      ) do |stdin, stdout, stderr, wait_thr|
-        wait_thr.join
-
-        # XXX This way of doing wait_thr + stdout/stderr reads is not safe
-        # XXX if data does not fit into the kernel buffer, and program
-        # XXX expects us to to read it before exiting (will likely work
-        # XXX with small outputs, though).
-        res = {
-          :exit_status => wait_thr.value.exitstatus,
-          :stderr      => stderr.read(1024 * 5),
-          :stdout      => stdout.read(1024 * 5),
-        }
-
-      end
-
-      return res
+      return {
+        :exit_status => status.exitstatus,
+        :stderr      => stderr_str,
+        :stdout      => stdout_str,
+      }
     end
   end
 end
