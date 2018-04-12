@@ -3,23 +3,22 @@ require "open3"
 
 module Puavo
 
-  # XXX Do callers handle nil as well?  Can be return nil?
   def self.change_passwd(host, bind_dn, current_pw, new_pw, user_dn,
                          external_pw_mgmt_url=nil)
     started = Time.now
 
     res = change_upstream_password(host, bind_dn, current_pw, new_pw, user_dn)
-
-    return res unless res
-
     res[:duration] = (Time.now.to_f - started.to_f).round(5)
 
-    # Return if upstream password change failed.
-    return res unless res && res[:exit_status] == 0
+    # Return if upstream password change failed.  This allows external
+    # (upstream) password service to block password changes, for example
+    # because password policy rejects the password or user does not have
+    # sufficient permissions for the change operation.
+    return res unless res[:exit_status] == 0
 
     begin
-      res = change_passwd_no_upstream_change(host, bind_dn, current_pw,
-              new_pw, user_dn, external_pw_mgmt_url)
+      res = change_passwd_no_upstream_change(host, bind_dn, current_pw, new_pw,
+                                             user_dn, external_pw_mgmt_url)
     rescue StandardError => e
       res = {
         :exit_status => 1,
