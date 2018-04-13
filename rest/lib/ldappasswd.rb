@@ -3,11 +3,11 @@ require "open3"
 
 module Puavo
 
-  def self.change_passwd(host, bind_dn, current_pw, new_pw, user_dn,
+  def self.change_passwd(host, bind_dn, bind_dn_pw, new_pw, user_dn,
                          external_pw_mgmt_url=nil)
     started = Time.now
 
-    res = change_upstream_password(host, bind_dn, current_pw, new_pw, user_dn)
+    res = change_upstream_password(host, bind_dn, bind_dn_pw, new_pw, user_dn)
     res[:duration] = (Time.now.to_f - started.to_f).round(5)
 
     # Return if upstream password change failed.  This allows external
@@ -17,7 +17,7 @@ module Puavo
     return res unless res[:exit_status] == 0
 
     begin
-      res = change_passwd_no_upstream_change(host, bind_dn, current_pw, new_pw,
+      res = change_passwd_no_upstream_change(host, bind_dn, bind_dn_pw, new_pw,
                                              user_dn, external_pw_mgmt_url)
     rescue StandardError => e
       res = {
@@ -32,14 +32,14 @@ module Puavo
     return res
   end
 
-  def self.change_passwd_no_upstream_change(host, bind_dn, current_pw, new_pw,
+  def self.change_passwd_no_upstream_change(host, bind_dn, bind_dn_pw, new_pw,
                                             user_dn, external_pw_mgmt_url=nil)
     # First change the password to external service(s) and then to us.
     # If we can not change it to external service(s), do not change it for us
     # either.
     if external_pw_mgmt_url then
       has_permissions = LdapPassword.has_password_change_permissions?(host,
-                          bind_dn, current_pw, new_pw, user_dn)
+                          bind_dn, bind_dn_pw, new_pw, user_dn)
 
       unless has_permissions then
         errmsg = "User '#{ bind_dn }' has no sufficient permissions to change" \
@@ -56,7 +56,7 @@ module Puavo
       end
     end
 
-    LdapPasswd.change_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
+    LdapPasswd.change_ldap_passwd(host, bind_dn, bind_dn_pw, new_pw, user_dn)
   end
 
   def self.change_downstream_passwords(user, new_pw, external_pw_mgmt_url)
@@ -70,7 +70,7 @@ module Puavo
     raise http_res.body.to_s
   end
 
-  def self.change_upstream_password(host, bind_dn, current_pw, new_pw, user_dn)
+  def self.change_upstream_password(host, bind_dn, bind_dn_pw, new_pw, user_dn)
     # XXX This should change upstream password, for example the password on
     # XXX Microsoft AD Directory.  We might not be configured to handle
     # XXX external upstream passwords, so we should return true in that case.
@@ -82,22 +82,22 @@ module Puavo
   end
 
   class LdapPasswd
-    def self.has_password_change_permissions?(host, bind_dn, current_pw,
+    def self.has_password_change_permissions?(host, bind_dn, bind_dn_pw,
                                               new_pw, user_dn)
       # "-n" for ldappasswd means "dry-run", it does not change the password
       # but instead can tell us if password change is possible.
       # It does check the permissions as well, which is what we want.
-      res = run_ldappasswd(host, bind_dn, current_pw, new_pw, user_dn,
+      res = run_ldappasswd(host, bind_dn, bind_dn_pw, new_pw, user_dn,
                            [ '-n' ])
 
       return res[:exit_status] == 0
     end
 
-    def self.change_ldap_passwd(host, bind_dn, current_pw, new_pw, user_dn)
-      run_ldappasswd(host, bind_dn, current_pw, new_pw, user_dn)
+    def self.change_ldap_passwd(host, bind_dn, bind_dn_pw, new_pw, user_dn)
+      run_ldappasswd(host, bind_dn, bind_dn_pw, new_pw, user_dn)
     end
 
-    def self.run_ldappasswd(host, bind_dn, current_pw, new_pw, user_dn,
+    def self.run_ldappasswd(host, bind_dn, bind_dn_pw, new_pw, user_dn,
                             extra_cmd_args=[])
       cmd = [ 'ldappasswd',
               # use simple authentication instead of SASL
@@ -109,7 +109,7 @@ module Puavo
               # Distinguished Name used to bind to the LDAP directory
               '-D', bind_dn.to_s,
               # the password to bind with
-              '-w', current_pw,
+              '-w', bind_dn_pw,
               # set the new password
               '-s', new_pw,
               # timeout after 20 sec
