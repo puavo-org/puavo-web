@@ -197,17 +197,20 @@ class PasswordController < ApplicationController
       end
     end
 
-    # XXX this should use puavo-rest instead
-    res = Puavo.change_passwd(
-      User.configuration[:host],
-      @logged_in_user.dn,
-      params[:login][:password],
-      params[:user][:new_password],
-      @user.dn.to_s,
-      url
-    )
-    flog.info "ldappasswd call", res.merge(
-      :from => "password controller",
+    params = {
+               :bind_dn          => @logged_in_user.dn.to_s,
+               :bind_dn_password => params[:login][:password],
+               :host             => User.configuration[:host],
+               :new_password     => params[:user][:new_password],
+               :user_dn          => @user.dn.to_s,
+             }
+    params[:external_pw_mgmt_url] = url if url
+
+    res = rest_proxy.put('/v3/users/password', :params => params).parse
+    res = {} unless res.kind_of?(Hash)
+
+    flog.info('rest call to PUT /v3/users/password', res.merge(
+      :from => 'password controller',
       :user => {
         :dn  => @user.dn.to_s,
         :uid => @user.uid,
@@ -216,10 +219,10 @@ class PasswordController < ApplicationController
         :dn  => @logged_in_user.dn.to_s,
         :uid => @logged_in_user.uid,
       }
-    )
+    ))
 
-    if res[:exit_status] != 0 then
-      logger.warn "ldappasswd failed: #{ res.inspect }"
+    if res['exit_status'] != 0 then
+      logger.warn "rest call to PUT /v3/users/password failed: #{ res.inspect }"
       raise User::UserError, I18n.t('flash.password.failed')
     end
 

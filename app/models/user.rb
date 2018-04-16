@@ -336,38 +336,43 @@ class User < LdapBase
   end
 
   def change_password
-    unless new_password.nil? || new_password.empty?
-      ldap_conf = User.configuration
+    return if new_password.nil? || new_password.empty?
 
-      url = external_pw_mgmt_url
+    ldap_conf = User.configuration
 
-      if !external_pw_mgmt_role.nil? && !self.puavoEduPersonAffiliation.include?(external_pw_mgmt_role)
-        url = nil
-      end
+    url = external_pw_mgmt_url
 
-      # XXX this should use puavo-rest instead
-      res = Puavo.change_passwd(
-        ldap_conf[:host],
-        ldap_conf[:bind_dn],
-        ldap_conf[:password],
-        new_password,
-        self.dn.to_s,
-        url
-      )
-      FLOG.info "ldappasswd call", res.merge(
-        :from => "user model",
-        :user => {
-          :uid => self.uid,
-          :dn => self.dn.to_s
-        }
-      )
-
-      if res[:exit_status] != 0
-        logger.warn "ldappasswd failed: #{ res.inspect }"
-        raise User::UserError, I18n.t('flash.password.failed')
-      end
-
+    if !external_pw_mgmt_role.nil? \
+         && !self.puavoEduPersonAffiliation.include?(external_pw_mgmt_role) then
+      url = nil
     end
+
+    params = {
+       :bind_dn          => ldap_conf[:bind_dn],
+       :bind_dn_password => ldap_conf[:password],
+       :host             => ldap_conf[:host],
+       :new_password     => new_password,
+       :user_dn          => self.dn.to_s,
+    }
+    params[:external_pw_mgmt_url] = url if url
+
+    res = rest_proxy.put('/v3/users/password', :params => params).parse
+    res = {} unless res.kind_of?(Hash)
+
+    FLOG.info('rest call to PUT /v3/users/password', res.merge(
+      :from => 'user model',
+      :user => {
+        :dn  => self.dn.to_s,
+        :uid => self.uid,
+      }
+    ))
+
+    if res['exit_status'] != 0 then
+      logger.warn "rest call to PUT /v3/users/password failed: #{ res.inspect }"
+      raise User::UserError, I18n.t('flash.password.failed')
+    end
+
+    return true
   end
 
   def read_only?

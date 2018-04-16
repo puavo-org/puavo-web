@@ -771,6 +771,49 @@ class Users < PuavoSinatra
     json user
   end
 
+  put '/v3/users/password' do
+    auth :basic_auth
+
+    param_names_list = %w(host bind_dn bind_dn_password new_password user_dn
+                          external_pw_mgmt_url)
+
+    param_names_list.each do |param_name|
+      param_ok = params[param_name].kind_of?(String) \
+                   && !params[param_name].empty?
+
+      # "external_pw_mgmt_url"-parameter is optional
+      # (XXX we should probably move this configuration to puavo-rest)
+      if param_name == 'external_pw_mgmt_url' && params[param_name].nil? then
+        param_ok = true
+      end
+
+      unless param_ok then
+        errmsg = "'#{ param_name }' parameter is not set or is of wrong type"
+        warn "param #{ param_name } is not OKAY"
+        return json({
+          :exit_status => 1,
+          :stderr      => errmsg,
+          :stdout      => '',
+        })
+      end
+    end
+
+    res = Puavo.change_passwd(params['host'],
+                              params['bind_dn'],
+                              params['bind_dn_password'],
+                              params['new_password'],
+                              params['user_dn'],
+                              params['external_pw_mgmt_url'])
+
+    msg = (res[:exit_status] == 0)                                    \
+            ? "changed password for '#{ params['user_dn'] }'"         \
+            : "changing password failed for '#{ params['user_dn'] }'"
+
+    flog.info('PUT /v3/users/password called', msg, res)
+
+    return json(res)
+  end
+
   get "/v3/users/_search" do
     auth :basic_auth, :kerberos
     json User.search(params["q"])
