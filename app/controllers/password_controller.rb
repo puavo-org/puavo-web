@@ -197,16 +197,16 @@ class PasswordController < ApplicationController
       end
     end
 
-    params = {
+    rest_params = {
                :bind_dn          => @logged_in_user.dn.to_s,
                :bind_dn_password => params[:login][:password],
                :host             => User.configuration[:host],
                :new_password     => params[:user][:new_password],
                :user_dn          => @user.dn.to_s,
              }
-    params[:external_pw_mgmt_url] = url if url
+    rest_params[:external_pw_mgmt_url] = url if url
 
-    res = rest_proxy.put('/v3/users/password', :params => params).parse
+    res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
     res = {} unless res.kind_of?(Hash)
 
     flog.info('rest call to PUT /v3/users/password', res.merge(
