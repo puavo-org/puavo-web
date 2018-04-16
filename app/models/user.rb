@@ -348,12 +348,12 @@ class User < LdapBase
     end
 
     rest_params = {
-       :bind_dn          => ldap_conf[:bind_dn],
-       :bind_dn_password => ldap_conf[:password],
-       :host             => ldap_conf[:host],
-       :new_password     => new_password,
-       :user_dn          => self.dn.to_s,
-    }
+                    :bind_dn          => ldap_conf[:bind_dn],
+                    :bind_dn_password => ldap_conf[:password],
+                    :host             => ldap_conf[:host],
+                    :new_password     => new_password,
+                    :user_dn          => self.dn.to_s,
+                  }
     rest_params[:external_pw_mgmt_url] = url if url
 
     res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
