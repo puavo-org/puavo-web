@@ -70,7 +70,8 @@ module Puavo
     raise http_res.body.to_s
   end
 
-  def self.change_upstream_password(host, bind_dn, bind_dn_pw, new_pw, user_dn)
+  def self.change_upstream_password(host, bind_dn, bind_dn_pw, new_pw,
+                                    user_dn, user_username=nil)
     # XXX This should change upstream password, for example the password on
     # XXX Microsoft AD Directory.  We might not be configured to handle
     # XXX external upstream passwords, so we should return true in that case.

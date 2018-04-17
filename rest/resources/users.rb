@@ -774,36 +774,74 @@ class Users < PuavoSinatra
   put '/v3/users/password' do
     auth :basic_auth
 
-    param_names_list = %w(host bind_dn bind_dn_password new_password user_dn
-                          external_pw_mgmt_url)
+    upstream_only = (params['upstream_only'] == 'true')
 
-    param_names_list.each do |param_name|
-      param_ok = params[param_name].kind_of?(String) \
-                   && !params[param_name].empty?
+    begin
+      param_names_list = %w(bind_dn bind_dn_password external_pw_mgmt_url host
+                            new_password target_user_dn target_user_username
+                            upstream_only)
 
-      # "external_pw_mgmt_url"-parameter is optional
-      # (XXX we should probably move this configuration to puavo-rest)
-      if param_name == 'external_pw_mgmt_url' && params[param_name].nil? then
-        param_ok = true
+      param_names_list.each do |param_name|
+        case param_name
+          when 'external_pw_mgmt_url'
+            # (XXX we should probably move external_pw_mgmt_url-handling to
+            #  XXX puavo-rest)
+            # optional parameter
+            param_ok = params[param_name].nil? \
+                         || (params[param_name].kind_of?(String) \
+                               && !params[param_name].empty?)
+          when 'target_user_dn'
+            if upstream_only then
+              raise "'target_user_dn' set with upstream only -mode" \
+                unless params[param_name].nil?
+              param_ok = true
+            else
+              param_ok = (params[param_name].kind_of?(String) \
+                            && !params[param_name].empty?)
+            end
+          when 'target_user_username'
+            if upstream_only then
+              param_ok = (params[param_name].kind_of?(String) \
+                            && !params[param_name].empty?)
+            else
+              raise "'target_user_username' set in normal-mode" \
+                unless params[param_name].nil?
+              param_ok = true
+            end
+          when 'upstream_only'
+            param_ok = params[param_name].nil? || params[param_name] == 'true'
+          else
+            param_ok = params[param_name].kind_of?(String) \
+                         && !params[param_name].empty?
+        end
+
+      raise "'#{ param_name }' parameter is not set or is of wrong type" \
+        unless param_ok
       end
-
-      unless param_ok then
-        errmsg = "'#{ param_name }' parameter is not set or is of wrong type"
-        warn "param #{ param_name } is not OKAY"
-        return json({
-          :exit_status => 1,
-          :stderr      => errmsg,
-          :stdout      => '',
-        })
-      end
+    rescue StandardError => e
+      # XXX maybe log errors?
+      return json({
+        :exit_status => 1,
+        :stderr      => e.message,
+        :stdout      => '',
+      })
     end
 
-    res = Puavo.change_passwd(params['host'],
-                              params['bind_dn'],
-                              params['bind_dn_password'],
-                              params['new_password'],
-                              params['user_dn'],
-                              params['external_pw_mgmt_url'])
+    if upstream_only then
+      res = Puavo.change_upstream_password(params['host'],
+                                           params['bind_dn'],
+                                           params['bind_dn_password'],
+                                           params['new_password'],
+                                           nil,
+                                           params['target_user_username'])
+    else
+      res = Puavo.change_passwd(params['host'],
+                                params['bind_dn'],
+                                params['bind_dn_password'],
+                                params['new_password'],
+                                params['target_user_dn'],
+                                params['external_pw_mgmt_url'])
+    end
 
     msg = (res[:exit_status] == 0)                                    \
             ? "changed password for '#{ params['user_dn'] }'"         \

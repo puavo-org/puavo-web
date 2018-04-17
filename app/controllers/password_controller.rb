@@ -152,7 +152,48 @@ class PasswordController < ApplicationController
     end
   end
 
+  def external_login(username, password)
+    begin
+      external_login_status = rest_proxy(username, password) \
+                                .post('/v3/external_login/auth').parse
+      raise 'Bad structure in /v3/external_login/auth response' \
+        unless external_login_status.kind_of?(Hash)
+      raise 'Status string missing in /v3/external_login/auth structure' \
+        unless external_login_status['status'].kind_of?(String)
+
+      case external_login_status['status']
+      when PuavoRest::ExternalLoginStatus::BADUSERCREDS,
+           PuavoRest::ExternalLoginStatus::UPDATED_BUT_FAIL,
+           PuavoRest::ExternalLoginStatus::UPDATEERROR
+        return :external_login_failed
+      when PuavoRest::ExternalLoginStatus::UNAVAILABLE
+        return :external_login_unavailable
+      when PuavoRest::ExternalLoginStatus::NOCHANGE,
+           PuavoRest::ExternalLoginStatus::UPDATED
+        return :external_login_ok
+      end
+
+    rescue StandardError => e
+      logger.error("error calling /v3/users/password: #{ e.message }")
+      return nil
+    end
+
+    return nil
+  end
+
   def change_user_password
+    external_login_status = external_login(params[:login][:uid],
+                                           params[:login][:password])
+
+    if external_login_status == :external_login_unavailable then
+      raise User::UserError, I18n.t('flash.password.failed')
+    end
+
+    if external_login_status == :external_login_failed then
+      raise User::UserError, I18n.t('flash.password.invalid_user',
+                                    :uid => params[:user][:uid])
+    end
+
     @logged_in_user = User.find(:first,
                                 :attribute => 'uid',
                                 :value     => params[:login][:uid])
@@ -166,35 +207,41 @@ class PasswordController < ApplicationController
                         :attribute => 'uid',
                         :value     => params[:user][:uid])
     end
-    unless @user then
+
+    stricter_password_requirements = false
+
+    if @user then
+      stricter_password_requirements = \
+        !external_pw_mgmt_role.to_s.empty? \
+          && !external_pw_mgmt_url.to_s.empty? \
+          && @user.puavoEduPersonAffiliation.include?(external_pw_mgmt_role)
+    elsif external_login_status then
+      # we must be able to change password even if user is not in Puavo (yet)
+      stricter_password_requirements = false  # XXX what should this be?
+    else
       raise User::UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
     end
 
-    role = external_pw_mgmt_role
-    url  = external_pw_mgmt_url
+    if stricter_password_requirements then
+      # External password management (read: G Suite integration) is enabled,
+      # so validate the password against Google's requirements.
+      new_password = params[:user][:new_password]
 
-    if !url.nil? && !url.empty? && !role.nil? && !role.empty? then
-      if @user.puavoEduPersonAffiliation.include?(role) then
-        # External password management (read: G Suite integration) is enabled,
-        # so validate the password against Google's requirements.
-        new_password = params[:user][:new_password]
-
-        if new_password.size < 8 then
-          raise User::UserError,
-                I18n.t('activeldap.errors.messages.password_too_short')
-        end
-        if new_password[0] == ' ' || new_password[-1] == ' ' then
-          raise User::UserError,
-                I18n.t('activeldap.errors.messages.password_whitespace')
-        end
-        if !new_password.ascii_only? then
-          raise User::UserError,
-                I18n.t('activeldap.errors.messages.password_ascii_only')
-        end
-      else
-        url = nil
+      if new_password.size < 8 then
+        raise User::UserError,
+              I18n.t('activeldap.errors.messages.password_too_short')
       end
+      if new_password[0] == ' ' || new_password[-1] == ' ' then
+        raise User::UserError,
+              I18n.t('activeldap.errors.messages.password_whitespace')
+      end
+      if !new_password.ascii_only? then
+        raise User::UserError,
+              I18n.t('activeldap.errors.messages.password_ascii_only')
+      end
+    else
+      url = nil
     end
 
     rest_params = {
@@ -202,8 +249,14 @@ class PasswordController < ApplicationController
                     :bind_dn_password => params[:login][:password],
                     :host             => User.configuration[:host],
                     :new_password     => params[:user][:new_password],
-                    :user_dn          => @user.dn.to_s,
                   }
+    if @user then
+      rest_params[:target_user_dn] = @user.dn.to_s
+    else
+      rest_params[:target_user_username] = params[:user][:uid]
+      rest_params[:upstream_only]        = 'true'
+    end
+
     rest_params[:external_pw_mgmt_url] = url if url
 
     res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
@@ -212,8 +265,8 @@ class PasswordController < ApplicationController
     flog.info('rest call to PUT /v3/users/password', res.merge(
       :from => 'password controller',
       :user => {
-        :dn  => @user.dn.to_s,
-        :uid => @user.uid,
+        :dn  => (@user ? @user.dn.to_s : 'UNKNOWN'), # XXX
+        :uid => (@user ? @user.uid     : 'UNKNOWN'), # XXX
       },
       :bind_user => {
         :dn  => @logged_in_user.dn.to_s,

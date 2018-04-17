@@ -352,7 +352,7 @@ class User < LdapBase
                     :bind_dn_password => ldap_conf[:password],
                     :host             => ldap_conf[:host],
                     :new_password     => new_password,
-                    :user_dn          => self.dn.to_s,
+                    :target_user_dn   => self.dn.to_s,
                   }
     rest_params[:external_pw_mgmt_url] = url if url
 
