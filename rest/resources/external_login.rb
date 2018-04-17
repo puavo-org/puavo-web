@@ -922,9 +922,7 @@ module PuavoRest
 
      ldap_attribute_value = Array(@ldap_userinfo[teaching_group_field]).first
      unless ldap_attribute_value.kind_of?(String) then
-       @flog.warn('could not find ldap attribute in user information',
-                  "could not find ldap attribute '#{ teaching_group_field }'" \
-                    + ' in user information')
+       # not all users have (teachers and such) have teaching group fields
        return nil
      end
 
@@ -968,6 +966,7 @@ module PuavoRest
         name_format        = get_add_groups_param(params, 'name')
 
         displayname = format_groupdata(displayname_format, params)
+        return {} unless displayname
 
         # group name sanitation is the same as in PuavoImport.sanitize_name
         name = format_groupdata(name_format, params).downcase \
