@@ -2,6 +2,8 @@ require 'date'
 require 'net/ldap'
 require 'securerandom'
 
+require_relative '../lib/external_login'
+
 # ExternalLoginError means some error occurred on our side
 # ExternalLoginNotConfigured means external logins are not configured
 #   in whatever particular case
@@ -77,7 +79,7 @@ module PuavoRest
                                                                external_id,
                                                                password,
                                                                new_password)
-          if pw_update_status == USER_STATUS_UPDATED then
+          if pw_update_status == ExternalLoginStatus::UPDATED then
             msg = 'user password invalidated'
             flog.info('user password invalidated',
                       "user password invalidated for #{ username }")
@@ -279,14 +281,6 @@ module PuavoRest
   end
 
   class ExternalLogin
-    USER_STATUS_BADUSERCREDS     = 'BADUSERCREDS'
-    USER_STATUS_NOCHANGE         = 'NOCHANGE'
-    USER_STATUS_NOTCONFIGURED    = 'NOTCONFIGURED'
-    USER_STATUS_UNAVAILABLE      = 'UNAVAILABLE'
-    USER_STATUS_UPDATED          = 'UPDATED'
-    USER_STATUS_UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
-    USER_STATUS_UPDATEERROR      = 'UPDATEERROR'
-
     attr_reader :config
 
     def initialize(flog, host)
@@ -386,7 +380,7 @@ module PuavoRest
         msg = "user with external id '#{ external_id }' (#{ username }?)" \
                 + ' not found in Puavo, can not change/invalidate password'
         @flog.info(nil, msg)
-        return USER_STATUS_NOCHANGE
+        return ExternalLoginStatus::NOCHANGE
       end
 
       # Do not always use the @admin_dn to set password, because we might
@@ -409,7 +403,7 @@ module PuavoRest
                                                          new_password,
                                                          user.dn)
             if res[:exit_status] == Net::LDAP::ResultCodeSuccess then
-              return USER_STATUS_UPDATED
+              return ExternalLoginStatus::UPDATED
             end
 
             raise "unexpected exit code (#{ res[:exit_status] }):" \
@@ -417,7 +411,7 @@ module PuavoRest
           end
         when Net::LDAP::ResultCodeSuccess
           if password != new_password then
-            return USER_STATUS_UPDATED
+            return ExternalLoginStatus::UPDATED
           end
         else
           raise "unexpected exit code (#{ res[:exit_status] }): " \
@@ -427,7 +421,7 @@ module PuavoRest
         @flog.warn(nil, e.message)
       end
 
-      return USER_STATUS_NOCHANGE
+      return ExternalLoginStatus::NOCHANGE
     end
 
     def manage_groups_for_user(user, external_groups_by_type)
@@ -570,19 +564,19 @@ module PuavoRest
           user.save!
           @flog.info('new external login user',
                      "created a new user '#{ userinfo['username'] }'")
-          user_update_status = USER_STATUS_UPDATED
+          user_update_status = ExternalLoginStatus::UPDATED
         elsif user.check_if_changed_attributes(userinfo) then
           user.removal_request_time = nil
           user.update!(userinfo)
           user.save!
           @flog.info('updated external login user',
                      "updated user information for '#{ userinfo['username'] }'")
-          user_update_status = USER_STATUS_UPDATED
+          user_update_status = ExternalLoginStatus::UPDATED
         else
           @flog.info('no change for external login user',
                      'no change in user information for' \
                        + " '#{ userinfo['username'] }'")
-          user_update_status = USER_STATUS_NOCHANGE
+          user_update_status = ExternalLoginStatus::NOCHANGE
         end
       rescue ValidationError => e
         raise ExternalLoginError,
@@ -597,9 +591,9 @@ module PuavoRest
       mg_update_status = manage_groups_for_user(user, external_groups_by_type)
 
       return self.class.status_updated() \
-        if (user_update_status    == USER_STATUS_UPDATED \
-              || pw_update_status == USER_STATUS_UPDATED \
-              || mg_update_status == USER_STATUS_UPDATED)
+        if (user_update_status    == ExternalLoginStatus::UPDATED \
+              || pw_update_status == ExternalLoginStatus::UPDATED \
+              || mg_update_status == ExternalLoginStatus::UPDATED)
 
       return self.class.status_nochange()
     end
@@ -609,37 +603,37 @@ module PuavoRest
     end
 
     def self.status_badusercreds(msg=nil)
-      status(USER_STATUS_BADUSERCREDS,
+      status(ExternalLoginStatus::BADUSERCREDS,
              (msg || 'auth FAILED, username or password was wrong'))
     end
 
     def self.status_nochange(msg=nil)
-      status(USER_STATUS_NOCHANGE,
+      status(ExternalLoginStatus::NOCHANGE,
              (msg || 'auth OK, no change to user information'))
     end
 
     def self.status_notconfigured(msg=nil)
-      status(USER_STATUS_NOTCONFIGURED,
+      status(ExternalLoginStatus::NOTCONFIGURED,
              (msg || 'external logins not configured'))
     end
 
     def self.status_unavailable(msg=nil)
-      status(USER_STATUS_UNAVAILABLE,
+      status(ExternalLoginStatus::UNAVAILABLE,
              (msg || 'external login service not available'))
     end
 
     def self.status_updated(msg=nil)
-      status(USER_STATUS_UPDATED,
+      status(ExternalLoginStatus::UPDATED,
              (msg || 'auth OK, user information updated'))
     end
 
     def self.status_updated_but_fail(msg=nil)
-      status(USER_STATUS_UPDATED_BUT_FAIL,
+      status(ExternalLoginStatus::UPDATED_BUT_FAIL,
              (msg || 'auth FAILED, user information updated'))
     end
 
     def self.status_updateerror(msg=nil)
-      status(USER_STATUS_UPDATEERROR,
+      status(ExternalLoginStatus::UPDATEERROR,
              (msg || 'error when updating user information in Puavo'))
     end
   end
