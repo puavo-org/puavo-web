@@ -23,11 +23,17 @@ module PuavoRest
       user_status = nil
 
       begin
-        username = params[:username].to_s
+        raise BadCredentials, :user => 'provide user/password with basic auth' \
+          unless env['HTTP_AUTHORIZATION']
+
+        auth_type, auth_data = env['HTTP_AUTHORIZATION'].split(' ', 2)
+        raise BadCredentials, :user => 'provide user/password with basic auth' \
+          unless auth_type == 'Basic'
+
+        username, password = Base64.decode64(auth_data).split(':')
         if username.empty? then
           raise BadCredentials, :user => 'no username provided'
         end
-        password = params[:password].to_s
         if password.empty? then
           raise BadCredentials, :user => 'no password provided'
         end
