@@ -8,7 +8,7 @@ class PuavoRestProxy
     end
   end
 
-  def initialize(domain, username, password)
+  def initialize(domain, username=nil, password=nil)
     @domain = domain
     @username = username
     @password = password
@@ -34,12 +34,14 @@ class PuavoRestProxy
 
     rest_url = "#{ Puavo::CONFIG["puavo_rest"]["host"] }#{ path }"
 
-    res = HTTP.basic_auth({
-        :user => @username,
-        :pass => @password
-    }).send(method, rest_url, options)
+    if @username && @password then
+      res = HTTP.basic_auth({ :user => @username, :pass => @password }) \
+                .send(method, rest_url, options)
+    else
+      res = HTTP.send(method, rest_url, options)
+    end
 
-    if res.code != 200
+    if res.code != 200 then
       raise BadStatus.new("Bad http status #{ res.code } #{ method.to_s.upcase } #{ path }", res)
     end
 

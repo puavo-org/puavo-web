@@ -27,6 +27,10 @@ class LdapOrganisation < LdapBase
     )
   end
 
+  def rest_proxy_noauth
+    PuavoRestProxy.new(puavoDomain)
+  end
+
   def as_json(*args)
     # owner: return only users's puavoId, skip uid=admin,o=puavo user
     { "domain" => self.puavoDomain,

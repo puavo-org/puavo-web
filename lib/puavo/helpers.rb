@@ -5,6 +5,10 @@ module Puavo
       LdapOrganisation.current.rest_proxy
     end
 
+    def rest_proxy_noauth
+      LdapOrganisation.current.rest_proxy_noauth
+    end
+
     def external_pw_mgmt_url
       Puavo::Organisation.
         find(LdapOrganisation.current.cn).
