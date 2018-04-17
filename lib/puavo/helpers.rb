@@ -1,12 +1,8 @@
 module Puavo
   module Helpers
 
-    def rest_proxy
-      LdapOrganisation.current.rest_proxy
-    end
-
-    def rest_proxy_noauth
-      LdapOrganisation.current.rest_proxy_noauth
+    def rest_proxy(*args)
+      LdapOrganisation.current.rest_proxy(*args)
     end
 
     def external_pw_mgmt_url

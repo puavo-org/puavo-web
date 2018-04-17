@@ -18,17 +18,14 @@ class LdapOrganisation < LdapBase
     LdapOrganisation.first
   end
 
-  def rest_proxy
-    conf = self.class.configuration
-    PuavoRestProxy.new(
-      puavoDomain,
-      conf[:bind_dn],
-      conf[:password]
-    )
-  end
+  def rest_proxy(username=nil, password=nil)
+    if username.nil? && password.nil? then
+      conf = self.class.configuration
+      username = conf[:bind_dn]
+      password = conf[:password]
+    end
 
-  def rest_proxy_noauth
-    PuavoRestProxy.new(puavoDomain)
+    PuavoRestProxy.new(puavoDomain, username, password)
   end
 
   def as_json(*args)
