@@ -163,6 +163,7 @@ class PasswordController < ApplicationController
 
       case external_login_status['status']
       when PuavoRest::ExternalLoginStatus::BADUSERCREDS,
+           PuavoRest::ExternalLoginStatus::CONFIGERROR,
            PuavoRest::ExternalLoginStatus::UPDATED_BUT_FAIL,
            PuavoRest::ExternalLoginStatus::UPDATEERROR
         return :external_login_failed

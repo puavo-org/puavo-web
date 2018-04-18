@@ -1,6 +1,7 @@
 module PuavoRest
   class ExternalLoginStatus
     BADUSERCREDS     = 'BADUSERCREDS'
+    CONFIGERROR      = 'CONFIGERROR'
     NOCHANGE         = 'NOCHANGE'
     NOTCONFIGURED    = 'NOTCONFIGURED'
     UNAVAILABLE      = 'UNAVAILABLE'

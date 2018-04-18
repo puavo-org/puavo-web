@@ -5,6 +5,7 @@ require 'securerandom'
 require_relative '../lib/external_login'
 
 # ExternalLoginError means some error occurred on our side
+# ExternalLoginConfigError means external logins were badly configured
 # ExternalLoginNotConfigured means external logins are not configured
 #   in whatever particular case
 # ExternalLoginUnavailable means an error at external service
@@ -12,6 +13,7 @@ require_relative '../lib/external_login'
 # ExternalLoginWrongPassword means user is valid but had a wrong password
 
 class ExternalLoginError               < StandardError; end
+class ExternalLoginConfigError         < ExternalLoginError; end
 class ExternalLoginNotConfigured       < ExternalLoginError; end
 class ExternalLoginPasswordChangeError < ExternalLoginError; end
 class ExternalLoginUnavailable         < ExternalLoginError; end
@@ -125,6 +127,10 @@ module PuavoRest
           return json(ExternalLogin.status_updateerror(e.message))
         end
 
+      rescue ExternalLoginConfigError => e
+        flog.info('external login configuration error',
+                  "external login configuration error: #{ e.message }")
+        user_status = ExternalLogin.status_configerror(e.message)
       rescue ExternalLoginNotConfigured => e
         flog.info('external login not configured',
                   "external login is not configured: #{ e.message }")
@@ -264,7 +270,7 @@ module PuavoRest
           unless @config
 
       @login_service_name = @config['service']
-      raise ExternalLoginError, 'external_login service not set' \
+      raise ExternalLoginConfigError, 'external_login service not set' \
         unless @login_service_name
 
       # More login classes could be added here in the future,
@@ -565,6 +571,11 @@ module PuavoRest
              (msg || 'auth FAILED, username or password was wrong'))
     end
 
+    def self.status_configerror(msg=nil)
+      status(ExternalLoginStatus::CONFIGERROR,
+             (msg || 'external logins configuration error'))
+    end
+
     def self.status_nochange(msg=nil)
       status(ExternalLoginStatus::NOCHANGE,
              (msg || 'auth OK, no change to user information'))
@@ -610,35 +621,35 @@ module PuavoRest
       super(service_name, flog)
 
       base = ldap_config['base']
-      raise ExternalLoginNotConfigured, 'ldap base not configured' \
+      raise ExternalLoginConfigError, 'ldap base not configured' \
         unless base
 
       bind_dn = ldap_config['bind_dn']
-      raise ExternalLoginNotConfigured, 'ldap bind dn not configured' \
+      raise ExternalLoginConfigError, 'ldap bind dn not configured' \
         unless bind_dn
 
       bind_password = ldap_config['bind_password']
-      raise ExternalLoginNotConfigured, 'ldap bind password not configured' \
+      raise ExternalLoginConfigError, 'ldap bind password not configured' \
         unless bind_password
 
       server = ldap_config['server']
-      raise ExternalLoginNotConfigured, 'ldap server not configured' \
+      raise ExternalLoginConfigError, 'ldap server not configured' \
         unless server
 
       dn_mappings = ldap_config['dn_mappings']
-      raise ExternalLoginNotConfigured, 'dn_mappings configured wrong' \
+      raise ExternalLoginConfigError, 'dn_mappings configured wrong' \
         unless dn_mappings.nil? || dn_mappings.kind_of?(Hash)
 
       @dn_mapping_defaults = (dn_mappings && dn_mappings['defaults']) || {}
       @dn_mappings         = (dn_mappings && dn_mappings['mappings']) || []
 
-      raise ExternalLoginNotConfigured, 'dn_mappings/mappings is not an array' \
+      raise ExternalLoginConfigError, 'dn_mappings/mappings is not an array' \
         unless @dn_mappings.kind_of?(Array)
-      raise ExternalLoginNotConfigured, 'dn_mappings/defaults is not a hash' \
+      raise ExternalLoginConfigError, 'dn_mappings/defaults is not a hash' \
         unless @dn_mapping_defaults.kind_of?(Hash)
 
       @external_id_field = ldap_config['external_id_field']
-      raise ExternalLoginNotConfigured, 'external_id_field not configured' \
+      raise ExternalLoginConfigError, 'external_id_field not configured' \
         unless @external_id_field.kind_of?(String)
 
       @ldap = Net::LDAP.new :base => base.to_s,
@@ -798,7 +809,7 @@ module PuavoRest
 
       @dn_mappings.each do |dn_mapping|
         unless dn_mapping.kind_of?(Hash) then
-          raise ExternalLoginNotConfigured,
+          raise ExternalLoginConfigError,
                 'external_login dn_mapping is not a hash'
         end
 
@@ -806,7 +817,7 @@ module PuavoRest
           next unless File.fnmatch(dn_glob_pattern, user_dn)
 
           unless operations_list.kind_of?(Array) then
-            raise ExternalLoginNotConfigured,
+            raise ExternalLoginConfigError,
                   'external_login dn_mapping operations list' \
                     + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
                     + ' is not an array'
@@ -814,7 +825,7 @@ module PuavoRest
 
           operations_list.each do |op_item|
             unless op_item.kind_of?(Hash) then
-              raise ExternalLoginNotConfigured,
+              raise ExternalLoginConfigError,
                     'external_login dn_mapping operation list item' \
                       + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
                       + ' is not a hash'
@@ -823,7 +834,7 @@ module PuavoRest
             op_item.each do |op_name, op_params|
               case op_name
               when 'add_roles', 'add_school_dns'
-                raise ExternalLoginNotConfigured,
+                raise ExternalLoginConfigError,
                       "#{ op_name } operation parameters type" \
                         + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
                         + ' is not an array of strings' \
@@ -846,7 +857,7 @@ module PuavoRest
                 new_group = apply_add_groups('year_class', op_params)
                 external_groups['year_class'].merge!(new_group)
               else
-                raise ExternalLoginNotConfigured,
+                raise ExternalLoginConfigError,
                       "unsupported operation '#{ op_name }'" \
                         + " for dn_glob_pattern '#{ dn_glob_pattern }'"
               end
@@ -939,7 +950,7 @@ module PuavoRest
           group = { name => displayname }
         end
       rescue StandardError => e
-        raise ExternalLoginNotConfigured, e.message
+        raise ExternalLoginConfigError, e.message
       end
 
       return group
