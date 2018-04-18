@@ -208,23 +208,16 @@ class PasswordController < ApplicationController
                         :value     => params[:user][:uid])
     end
 
-    stricter_password_requirements = false
-
-    if @user then
-      stricter_password_requirements = \
-        !external_pw_mgmt_role.to_s.empty? \
-          && !external_pw_mgmt_url.to_s.empty? \
-          && @user.puavoEduPersonAffiliation.include?(external_pw_mgmt_role)
-    elsif external_login_status then
-      # we must be able to change password even if user is not in Puavo (yet)
-      stricter_password_requirements = false  # XXX what should this be?
-    else
+    unless @user || external_login_status then
       raise User::UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
     end
 
+    stricter_password_requirements = !external_pw_mgmt_role.to_s.empty? \
+                                       && !external_pw_mgmt_url.to_s.empty?
     if stricter_password_requirements then
-      # External password management (read: G Suite integration) is enabled,
+      # External password management (read: G Suite integration) is enabled
+      # for this organisation (though not necessarily for this specific user),
       # so validate the password against Google's requirements.
       new_password = params[:user][:new_password]
 
@@ -256,7 +249,6 @@ class PasswordController < ApplicationController
       rest_params[:target_user_username] = params[:user][:uid]
       rest_params[:upstream_only]        = 'true'
     end
-
     rest_params[:external_pw_mgmt_url] = url if url
 
     res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
