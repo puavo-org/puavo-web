@@ -1,5 +1,6 @@
-
 require "open3"
+
+require_relative './external_login'
 
 module Puavo
 
