@@ -185,13 +185,18 @@ class PasswordController < ApplicationController
     external_login_status = external_login(params[:login][:uid],
                                            params[:login][:password])
 
-    if external_login_status == :external_login_unavailable then
-      raise User::UserError, I18n.t('flash.password.failed')
-    end
-
-    if external_login_status == :external_login_failed then
-      raise User::UserError, I18n.t('flash.password.invalid_user',
-                                    :uid => params[:user][:uid])
+    if external_login_status then
+      case external_login_status
+        when :external_login_failed
+          # XXX is this error message okay?
+          raise User::UserError, I18n.t('flash.password.invalid_user',
+                                        :uid => params[:user][:uid])
+        when :external_login_ok
+          true    # this is okay
+        else
+          # XXX is this error message okay?
+          raise User::UserError, I18n.t('flash.password.failed')
+      end
     end
 
     @logged_in_user = User.find(:first,
@@ -254,11 +259,20 @@ class PasswordController < ApplicationController
     res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
     res = {} unless res.kind_of?(Hash)
 
+    if res['exit_status'] == 0 && !@user && external_login_status then
+      # ignore return code, try this only for side effect (possibly creates
+      # new user to Puavo, and should always sync password):
+      external_login(params[:user][:uid], params[:user][:new_password])
+      @user = User.find(:first,
+                        :attribute => 'uid',
+                        :value     => params[:login][:uid])
+    end
+
     flog.info('rest call to PUT /v3/users/password', res.merge(
       :from => 'password controller',
       :user => {
-        :dn  => (@user ? @user.dn.to_s : 'UNKNOWN'), # XXX
-        :uid => (@user ? @user.uid     : 'UNKNOWN'), # XXX
+        :dn  => (@user ? @user.dn.to_s : '[dn unknown]'),
+        :uid => (@user ? @user.uid     : '[uid unknown]'),
       },
       :bind_user => {
         :dn  => @logged_in_user.dn.to_s,
