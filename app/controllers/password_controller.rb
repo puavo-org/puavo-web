@@ -182,6 +182,31 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password
+    url = external_pw_mgmt_url
+    stricter_password_requirements = !external_pw_mgmt_role.to_s.empty? \
+                                       && !url.to_s.empty?
+    if stricter_password_requirements then
+      # External password management (read: G Suite integration) is enabled
+      # for this organisation (though not necessarily for this specific user),
+      # so validate the password against Google's requirements.
+      new_password = params[:user][:new_password]
+
+      if new_password.size < 8 then
+        raise User::UserError,
+              I18n.t('activeldap.errors.messages.password_too_short')
+      end
+      if new_password[0] == ' ' || new_password[-1] == ' ' then
+        raise User::UserError,
+              I18n.t('activeldap.errors.messages.password_whitespace')
+      end
+      if !new_password.ascii_only? then
+        raise User::UserError,
+              I18n.t('activeldap.errors.messages.password_ascii_only')
+      end
+    else
+      url = nil
+    end
+
     external_login_status = external_login(params[:login][:uid],
                                            params[:login][:password])
 
@@ -216,30 +241,6 @@ class PasswordController < ApplicationController
     unless @user || external_login_status then
       raise User::UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
-    end
-
-    stricter_password_requirements = !external_pw_mgmt_role.to_s.empty? \
-                                       && !external_pw_mgmt_url.to_s.empty?
-    if stricter_password_requirements then
-      # External password management (read: G Suite integration) is enabled
-      # for this organisation (though not necessarily for this specific user),
-      # so validate the password against Google's requirements.
-      new_password = params[:user][:new_password]
-
-      if new_password.size < 8 then
-        raise User::UserError,
-              I18n.t('activeldap.errors.messages.password_too_short')
-      end
-      if new_password[0] == ' ' || new_password[-1] == ' ' then
-        raise User::UserError,
-              I18n.t('activeldap.errors.messages.password_whitespace')
-      end
-      if !new_password.ascii_only? then
-        raise User::UserError,
-              I18n.t('activeldap.errors.messages.password_ascii_only')
-      end
-    else
-      url = nil
     end
 
     rest_params = {
