@@ -142,50 +142,6 @@ module PuavoRest
       return json_user_status
     end
 
-    # XXX Perhaps there is no need for a separate rest-api for this,
-    # XXX and it is enough to only some method to be called elsewhere?
-    post '/v3/external_login/change_password' do
-      auth :basic_auth
-
-      # XXX Should you first run '/v3/external_login/auth' or equivalent
-      # XXX and then re-auth user again?  Because if the puavo password
-      # XXX does not match the current one in external ldap?
-      # XXX Or probably more simple to get here without puavo auth
-      # XXX and we should check the old password against the external ldap?
-
-      # XXX And if external logins are effective we should not allow changing
-      # XXX the puavo password at all?
-
-      # XXX Teachers should be able to change passwords of all users
-      # XXX except other teachers?  What logic should we use to check these?
-      # XXX Should this logic be configurable as it is not really related to
-      # XXX Puavo, or should be checked from Puavo?
-
-      # XXX If password is changed, should we sync it to Puavo?
-
-      new_password = params[:new_password].to_s
-      if new_password.empty? then
-        raise BadInput, :user => 'must provide a new password'
-      end
-
-      user = User.current
-
-      begin
-        external_login = ExternalLogin.new(flog, request.host)
-        login_service = external_login.new_external_service_handler()
-        login_service.change_password(user.username, new_password)
-      rescue StandardError => e
-        errmsg = 'changing external service password failed'
-        flog.warn(errmsg,
-                  "#{ errmsg } for user '#{ user.username }': #{ e.message }")
-        return json({ :error => errmsg, :status => 'failed' })
-      end
-
-      okmsg = 'successfully changed external service password'
-      flog.info(okmsg, "#{ okmsg } for user '#{ user.username }'")
-      return json({ :status => 'successfully' })
-    end
-
     post '/v3/external_login/mark_removed_users' do
       auth :basic_auth
 
