@@ -176,9 +176,11 @@ class PasswordController < ApplicationController
 
     rescue StandardError => e
       logger.error("error calling /v3/users/password: #{ e.message }")
-      return nil
+      return :external_login_failed
     end
 
+    # PuavoRest::ExternalLoginStatus::NOTCONFIGURED
+    # intentionally ends up here and this is good.
     return nil
   end
 
