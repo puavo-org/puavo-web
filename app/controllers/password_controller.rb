@@ -236,9 +236,12 @@ class PasswordController < ApplicationController
 
     @user = @logged_in_user
     if params[:user][:uid] then
+      target_user_username = params[:user][:uid]
       @user = User.find(:first,
                         :attribute => 'uid',
-                        :value     => params[:user][:uid])
+                        :value     => target_user_username)
+    else
+      target_user_username = params[:login][:uid]
     end
 
     unless @user || external_login_status then
@@ -246,12 +249,13 @@ class PasswordController < ApplicationController
                                     :uid => params[:user][:uid])
     end
 
+
     rest_params = {
                     :bind_dn              => @logged_in_user.dn.to_s,
                     :bind_dn_password     => params[:login][:password],
                     :host                 => User.configuration[:host],
                     :new_password         => params[:user][:new_password],
-                    :target_user_username => params[:user][:uid],
+                    :target_user_username => target_user_username,
                   }
     if @user then
       rest_params[:target_user_dn] = @user.dn.to_s
