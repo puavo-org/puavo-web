@@ -253,7 +253,8 @@ class User < LdapModel
         LdapModel.settings[:credentials][:dn],
         LdapModel.settings[:credentials][:password],
         @password,
-        dn
+        dn,
+        username,
       )
     ensure
       @password = nil
@@ -799,15 +800,6 @@ class Users < PuavoSinatra
               param_ok = (params[param_name].kind_of?(String) \
                             && !params[param_name].empty?)
             end
-          when 'target_user_username'
-            if upstream_only then
-              param_ok = (params[param_name].kind_of?(String) \
-                            && !params[param_name].empty?)
-            else
-              raise "'target_user_username' set in normal-mode" \
-                unless params[param_name].nil?
-              param_ok = true
-            end
           when 'upstream_only'
             param_ok = params[param_name].nil? || params[param_name] == 'true'
           else
@@ -840,6 +832,7 @@ class Users < PuavoSinatra
                                 params['bind_dn_password'],
                                 params['new_password'],
                                 params['target_user_dn'],
+                                params['target_user_username'],
                                 params['external_pw_mgmt_url'])
     end
 

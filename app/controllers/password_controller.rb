@@ -244,15 +244,15 @@ class PasswordController < ApplicationController
     end
 
     rest_params = {
-                    :bind_dn          => @logged_in_user.dn.to_s,
-                    :bind_dn_password => params[:login][:password],
-                    :host             => User.configuration[:host],
-                    :new_password     => params[:user][:new_password],
+                    :bind_dn              => @logged_in_user.dn.to_s,
+                    :bind_dn_password     => params[:login][:password],
+                    :host                 => User.configuration[:host],
+                    :new_password         => params[:user][:new_password],
+                    :target_user_username => params[:user][:uid],
                   }
     if @user then
       rest_params[:target_user_dn] = @user.dn.to_s
     else
-      rest_params[:target_user_username] = params[:user][:uid]
       rest_params[:upstream_only]        = 'true'
     end
     rest_params[:external_pw_mgmt_url] = url if url

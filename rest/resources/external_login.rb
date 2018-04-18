@@ -393,7 +393,8 @@ module PuavoRest
                                                      user.dn,
                                                      password,
                                                      new_password,
-                                                     user.dn)
+                                                     user.dn,
+                                                     user.username)
         case res[:exit_status]
         when Net::LDAP::ResultCodeInvalidCredentials
           if fallback_to_admin_dn then
@@ -401,7 +402,8 @@ module PuavoRest
                                                          @admin_dn,
                                                          @admin_password,
                                                          new_password,
-                                                         user.dn)
+                                                         user.dn,
+                                                         user.username)
             if res[:exit_status] == Net::LDAP::ResultCodeSuccess then
               return ExternalLoginStatus::UPDATED
             end

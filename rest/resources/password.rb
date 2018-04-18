@@ -85,8 +85,7 @@ class Password < PuavoSinatra
     end
 
     user = User.by_username(jwt_data["username"])
-
-    if user.nil?
+    if user.nil? then
       status 404
       return json({ :status => "failed",
                     :error => "Cannot find user" })
@@ -96,7 +95,8 @@ class Password < PuavoSinatra
                               PUAVO_ETC.ds_pw_mgmt_dn,
                               PUAVO_ETC.ds_pw_mgmt_password,
                               params["new_password"],
-                              user.dn)
+                              user.dn,
+                              user.username)
 
     flog.info('ldappasswd call',
               "changed user password for '#{ user.username }'",

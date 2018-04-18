@@ -3,11 +3,12 @@ require "open3"
 
 module Puavo
 
-  def self.change_passwd(host, bind_dn, bind_dn_pw, new_pw, user_dn,
-                         external_pw_mgmt_url=nil)
+  def self.change_passwd(host, bind_dn, bind_dn_pw, new_pw, target_user_dn,
+                         target_user_username, external_pw_mgmt_url=nil)
     started = Time.now
 
-    res = change_upstream_password(host, bind_dn, bind_dn_pw, new_pw, user_dn)
+    res = change_upstream_password(host, bind_dn, bind_dn_pw, new_pw,
+                                   target_user_username)
     res[:duration] = (Time.now.to_f - started.to_f).round(5)
 
     # Return if upstream password change failed.  This allows external
@@ -18,7 +19,7 @@ module Puavo
 
     begin
       res = change_passwd_no_upstream_change(host, bind_dn, bind_dn_pw, new_pw,
-                                             user_dn, external_pw_mgmt_url)
+              target_user_dn, target_user_username, external_pw_mgmt_url)
     rescue StandardError => e
       res = {
         :exit_status => 1,
@@ -33,22 +34,22 @@ module Puavo
   end
 
   def self.change_passwd_no_upstream_change(host, bind_dn, bind_dn_pw, new_pw,
-                                            user_dn, external_pw_mgmt_url=nil)
+        target_user_dn, target_user_username, external_pw_mgmt_url=nil)
     # First change the password to external service(s) and then to us.
     # If we can not change it to external service(s), do not change it for us
     # either.
     if external_pw_mgmt_url then
       has_permissions = LdapPassword.has_password_change_permissions?(host,
-                          bind_dn, bind_dn_pw, new_pw, user_dn)
+                          bind_dn, bind_dn_pw, new_pw, target_user_dn)
 
       unless has_permissions then
         errmsg = "User '#{ bind_dn }' has no sufficient permissions to change" \
-                   " password for user '#{ user_dn }'"
+                   " password for user '#{ target_user_username }'"
         raise errmsg
       end
 
       begin
-        change_downstream_passwords(User.find(user_dn),
+        change_downstream_passwords(target_user_username,
                                     new_pw,
                                     external_pw_mgmt_url)
       rescue StandardError => e
@@ -56,13 +57,14 @@ module Puavo
       end
     end
 
-    LdapPasswd.change_ldap_passwd(host, bind_dn, bind_dn_pw, new_pw, user_dn)
+    LdapPasswd.change_ldap_passwd(host, bind_dn, bind_dn_pw, new_pw,
+                                  target_user_dn)
   end
 
-  def self.change_downstream_passwords(user, new_pw, external_pw_mgmt_url)
+  def self.change_downstream_passwords(username, new_pw, external_pw_mgmt_url)
     http_res = HTTP.send('post',
                          external_pw_mgmt_url,
-                         :json => { 'username'          => user.uid,
+                         :json => { 'username'          => username,
                                     'new_user_password' => new_pw })
 
     return true if http_res.code == 200
@@ -71,14 +73,15 @@ module Puavo
   end
 
   def self.change_upstream_password(host, bind_dn, bind_dn_pw, new_pw,
-                                    user_dn, user_username=nil)
+                                    target_user_username)
     # XXX This should change upstream password, for example the password on
     # XXX Microsoft AD Directory.  We might not be configured to handle
     # XXX external upstream passwords, so we should return true in that case.
     return {
       :exit_status => 0,
       :stderr      => '',
-      :stdout      => '',
+      :stdout      => 'external logins not configured',
+      # :stdout    => 'password change to external login service ok',
     }
   end
 
