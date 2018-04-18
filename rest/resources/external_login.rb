@@ -42,7 +42,7 @@ module PuavoRest
           raise BadCredentials, :user => 'no password provided'
         end
 
-        external_login = ExternalLogin.new(flog, request.host)
+        external_login = ExternalLogin.new
         external_login.setup_puavo_connection()
         external_login.check_user_is_manageable(username)
 
@@ -153,7 +153,7 @@ module PuavoRest
 
       all_ok = true
 
-      external_login = ExternalLogin.new(flog, request.host)
+      external_login = ExternalLogin.new
       login_service = external_login.new_external_service_handler()
 
       puavo_users_with_external_ids = User.all.select { |u| u.external_id }
@@ -198,7 +198,7 @@ module PuavoRest
     post '/v3/external_login/remove_users_marked_for_removal' do
       auth :basic_auth
 
-      external_login = ExternalLogin.new(flog, request.host)
+      external_login = ExternalLogin.new
       begin
         remove_after_n_days \
           = Integer(external_login.config['days_after_removing_marked_users'])
@@ -245,16 +245,16 @@ module PuavoRest
   class ExternalLogin
     attr_reader :config
 
-    def initialize(flog, host)
+    def initialize
       # Parse config with relevant information for doing external logins.
 
-      @flog = flog
+      @flog = $rest_flog
 
       all_external_login_configs = CONFIG['external_login']
       raise ExternalLoginNotConfigured, 'external login not configured' \
         unless all_external_login_configs
 
-      @organisation = Organisation.by_domain(host)
+      @organisation = LdapModel.organisation
       raise ExternalLoginError,
         'could not determine organisation from request host' \
           unless @organisation && @organisation.domain.kind_of?(String)
