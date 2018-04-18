@@ -74,14 +74,40 @@ module Puavo
 
   def self.change_upstream_password(host, bind_dn, bind_dn_pw, new_pw,
                                     target_user_username)
-    # XXX This should change upstream password, for example the password on
-    # XXX Microsoft AD Directory.  We might not be configured to handle
-    # XXX external upstream passwords, so we should return true in that case.
+    # XXX this is ugly, this code is in PuavoSinatra.flog
+    flog = Thread.current[:fluent]
+    # XXX should use request.host
+    request_host = 'hogwarts.opinsys.net'
+
+    begin
+      external_login = PuavoRest::ExternalLogin.new(flog, request_host)
+      login_service = external_login.new_external_service_handler()
+      login_service.change_password(target_user_username, new_pw)
+    rescue ExternalLoginNotConfigured => e
+      # XXX should there be a clear error class
+      # XXX ExternalLoginConfigurationError as well... in case the intention
+      # XXX was to configure it, but it was done wrong?
+      return {
+        :exit_status => 0,
+        :stderr      => '',
+        :stdout      => 'external logins are not configured',
+      }
+    rescue StandardError => e
+      errmsg = 'changing external service password failed'
+      flog.error(errmsg,
+                 "#{ errmsg } for user '#{ target_user_username }':" \
+                   + e.message)
+      return {
+        :exit_status => 1,
+        :stderr      => errmsg,
+        :stdout      => '',
+      }
+    end
+
     return {
       :exit_status => 0,
       :stderr      => '',
-      :stdout      => 'external logins not configured',
-      # :stdout    => 'password change to external login service ok',
+      :stdout      => 'password change to external login service ok',
     }
   end
 
