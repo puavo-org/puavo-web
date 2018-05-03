@@ -170,9 +170,11 @@ class User < LdapBase
     if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty?
       # If G Suite integration is enabled, ensure Google accepts the password. Their
       # password restrictions are weird, almost as if they store them in plaintext...
-      url = external_pw_mgmt_url
+      url = external_pw_mgmt_url || ''
+      role = external_pw_mgmt_role || ''
 
-      if !url.nil? && !url.empty? && external_pw_mgmt_role == "student"
+      # If a role has been specified, check for it. Otherwise permit everyone.
+      if !url.empty? && (role.empty? || (!role.empty? && self.puavoEduPersonAffiliation.include?(role)))
         if self.new_password.size < 8
           errors.add(:new_password, I18n.t("activeldap.errors.messages.password_too_short"))
         elsif self.new_password[0] == ' ' || self.new_password[-1] == ' '

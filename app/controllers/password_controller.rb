@@ -166,10 +166,11 @@ class PasswordController < ApplicationController
         url = external_pw_mgmt_url
         role = external_pw_mgmt_role
 
-        if !url.nil? && !url.empty? && !role.nil? && !role.empty?
-          if @user.puavoEduPersonAffiliation.include?(role)
-            # External password management (read: G Suite integration) is enabled, so
-            # validate the password against Google's requirements
+        if !url.nil? && !url.empty?
+          if (role.nil? || role.empty?) || (!role.nil? && !role.empty? && @user.puavoEduPersonAffiliation.include?(role))
+            # External password management (read: G Suite integration) is enabled and this
+            # user matches the required role, so validate the new password against Google's
+            # requirements.
             new_password = params[:user][:new_password]
 
             if new_password.size < 8
@@ -180,6 +181,8 @@ class PasswordController < ApplicationController
               raise User::UserError, I18n.t("activeldap.errors.messages.password_ascii_only")
             end
           else
+            # An external password management URL has been specified, but this user did not
+            # pass the role check, so change the password but don't synchronise it
             url = nil
           end
         end
