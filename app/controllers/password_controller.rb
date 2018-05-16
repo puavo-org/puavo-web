@@ -249,7 +249,6 @@ class PasswordController < ApplicationController
                                     :uid => params[:user][:uid])
     end
 
-
     rest_params = {
                     :bind_dn              => @logged_in_user.dn.to_s,
                     :bind_dn_password     => params[:login][:password],

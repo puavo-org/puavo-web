@@ -46,7 +46,6 @@ class LdapModel
       PROF.count(timer)
     end
 
-
     res
   end
 
