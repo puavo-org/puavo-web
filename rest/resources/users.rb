@@ -836,9 +836,9 @@ class Users < PuavoSinatra
                                 params['external_pw_mgmt_url'])
     end
 
-    msg = (res[:exit_status] == 0)                                    \
-            ? "changed password for '#{ params['user_dn'] }'"         \
-            : "changing password failed for '#{ params['user_dn'] }'"
+    msg = (res[:exit_status] == 0)                                           \
+            ? "changed password for '#{ params['target_user_dn'] }'"         \
+            : "changing password failed for '#{ params['target_user_dn'] }'"
 
     flog.info('PUT /v3/users/password called', msg, res)
 
