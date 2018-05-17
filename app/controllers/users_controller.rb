@@ -18,7 +18,8 @@ class UsersController < ApplicationController
                   'uidNumber',
                   'loginShell',
                   'puavoAdminOfSchool',
-                  'sambaPrimaryGroupSID']
+                  'sambaPrimaryGroupSID',
+                  'puavoRemovalRequestTime']
 
     @users = User.search_as_utf8( :filter => filter,
                           :scope => :one,
@@ -35,6 +36,10 @@ class UsersController < ApplicationController
 
     if request.format == 'application/json'
       @users = @users.map{ |u| User.build_hash_for_to_json(u) }
+    else
+      # Split the user list in two halves: one for normal users, one for users who have
+      # been marked for deletion. Both arrays are displayed in their own table.
+      @users, @users_marked_for_deletion = @users.partition { |u| u["puavoRemovalRequestTime"].nil? }
     end
 
     respond_to do |format|
