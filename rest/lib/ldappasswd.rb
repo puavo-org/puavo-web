@@ -88,9 +88,10 @@ module Puavo
       }
     rescue StandardError => e
       errmsg = 'changing external service password failed'
-      flog.error(errmsg,
-                 "#{ errmsg } for user '#{ target_user_username }': " \
-                   + e.message)
+      # XXX how to log this? (flog does not exist here)
+      # flog.error(errmsg,
+      #            "#{ errmsg } for user '#{ target_user_username }': " \
+      #              + e.message)
       return {
         :exit_status => 1,
         :stderr      => errmsg,
