@@ -266,6 +266,9 @@ en:
   users:
     index:
       actions: Actions
+      users_marked_for_deletion_title: Users marked for deletion
+      normal_users_title: Normal users
+      users: users
     show:
       user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information
@@ -274,6 +277,7 @@ en:
       change_school: Change school
       user_is_locked: User is locked
       user_devices: User devices
+      marked_for_removal: Deletion marking done
     new:
       title: New user
     edit:

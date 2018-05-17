@@ -237,6 +237,9 @@ fi:
   users:
     index:
       actions: Toiminnot
+      users_marked_for_deletion_title: Poistetuksi merkityt käyttäjät
+      normal_users_title: Normaalit käyttäjät
+      users: käyttäjää
     show:
       user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: <b>%{roles}</b>"
       system_information: "Järjestelmätietoja"
@@ -245,6 +248,7 @@ fi:
       change_school: Vaihda koulua
       user_is_locked: "Käyttäjätunnus on lukittu"
       user_devices: Käyttäjän laitteet
+      marked_for_removal: Poistomerkintä tehty
     new:
       title: "Lisää uusi käyttäjä"
     edit:
