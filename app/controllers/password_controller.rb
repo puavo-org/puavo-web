@@ -259,7 +259,7 @@ class PasswordController < ApplicationController
     if @user then
       rest_params[:target_user_dn] = @user.dn.to_s
     else
-      rest_params[:upstream_only]        = 'true'
+      rest_params[:upstream_only] = 'true'
     end
     rest_params[:external_pw_mgmt_url] = url if url
 
