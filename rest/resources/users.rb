@@ -1,4 +1,4 @@
-require_relative "../lib/ldappasswd"
+require_relative "../lib/password"
 require_relative "../lib/samba_attrs"
 
 require 'date'
@@ -248,14 +248,11 @@ class User < LdapModel
     next if @password.nil?
 
     begin
-      Puavo.change_passwd(
-        CONFIG["ldap"],
-        LdapModel.settings[:credentials][:dn],
-        LdapModel.settings[:credentials][:password],
-        @password,
-        dn,
-        username,
-      )
+      Puavo.change_passwd(CONFIG['ldap'],
+                          User.current.username,
+                          LdapModel.settings[:credentials][:password],
+                          username,
+                          @password)
     ensure
       @password = nil
     end
@@ -778,8 +775,12 @@ class Users < PuavoSinatra
     upstream_only = (params['upstream_only'] == 'true')
 
     begin
-      param_names_list = %w(bind_dn bind_dn_password external_pw_mgmt_url host
-                            new_password target_user_dn target_user_username
+      param_names_list = %w(actor_username
+                            actor_password
+                            external_pw_mgmt_url
+                            host
+                            target_user_username
+                            target_user_password
                             upstream_only)
 
       param_names_list.each do |param_name|
@@ -791,16 +792,8 @@ class Users < PuavoSinatra
             param_ok = params[param_name].nil? \
                          || (params[param_name].kind_of?(String) \
                                && !params[param_name].empty?)
-          when 'target_user_dn'
-            if upstream_only then
-              raise "'target_user_dn' set with upstream only -mode" \
-                unless params[param_name].nil?
-              param_ok = true
-            else
-              param_ok = (params[param_name].kind_of?(String) \
-                            && !params[param_name].empty?)
-            end
           when 'upstream_only'
+            # optional parameter
             param_ok = params[param_name].nil? || params[param_name] == 'true'
           else
             param_ok = params[param_name].kind_of?(String) \
@@ -820,25 +813,24 @@ class Users < PuavoSinatra
     end
 
     if upstream_only then
-      res = Puavo.change_upstream_password(params['host'],
-                                           params['bind_dn'],
-                                           params['bind_dn_password'],
-                                           params['new_password'],
-                                           nil,
-                                           params['target_user_username'])
+      res = Puavo.change_passwd_upstream(params['host'],
+                                         params['actor_username'],
+                                         params['actor_password'],
+                                         params['target_user_username'],
+                                         params['target_user_password'])
     else
       res = Puavo.change_passwd(params['host'],
-                                params['bind_dn'],
-                                params['bind_dn_password'],
-                                params['new_password'],
-                                params['target_user_dn'],
+                                params['actor_username'],
+                                params['actor_password'],
                                 params['target_user_username'],
+                                params['target_user_password'],
                                 params['external_pw_mgmt_url'])
     end
 
-    msg = (res[:exit_status] == 0)                                           \
-            ? "changed password for '#{ params['target_user_dn'] }'"         \
-            : "changing password failed for '#{ params['target_user_dn'] }'"
+    target_user_username = params['target_user_username']
+    msg = (res[:exit_status] == 0)                                       \
+            ? "changed password for '#{ target_user_username }'"         \
+            : "changing password failed for '#{ target_user_username }'"
 
     flog.info('PUT /v3/users/password called', msg, res)
 

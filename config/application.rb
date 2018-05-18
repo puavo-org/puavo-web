@@ -13,7 +13,6 @@ require "active_ldap/railtie"
 require_relative "../monkeypatches"
 require_relative "./version"
 require_relative "../rest/lib/external_login"
-require_relative "../rest/lib/ldappasswd"
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line

@@ -348,11 +348,11 @@ class User < LdapBase
     end
 
     rest_params = {
-                    :bind_dn          => ldap_conf[:bind_dn],
-                    :bind_dn_password => ldap_conf[:password],
-                    :host             => ldap_conf[:host],
-                    :new_password     => new_password,
-                    :target_user_dn   => self.dn.to_s,
+                    :actor_username       => User.find(ldap_conf[:bind_dn]).uid,
+                    :actor_password       => ldap_conf[:password],
+                    :host                 => ldap_conf[:host],
+                    :target_user_username => self.uid,
+                    :target_user_password => new_password,
                   }
     rest_params[:external_pw_mgmt_url] = url if url
 

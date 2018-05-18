@@ -3,13 +3,13 @@ require "open3"
 require_relative './external_login'
 
 module Puavo
-
-  def self.change_passwd(host, bind_dn, bind_dn_pw, new_pw, target_user_dn,
-                         target_user_username, external_pw_mgmt_url=nil)
+  def self.change_passwd(host, actor_username, actor_password,
+                         target_user_username, target_user_password,
+                         external_pw_mgmt_url=nil)
     started = Time.now
 
-    res = change_upstream_password(host, bind_dn, bind_dn_pw, new_pw,
-                                   target_user_username)
+    res = change_passwd_upstream(host, actor_username, actor_password,
+                                 target_user_username, target_user_password)
     res[:duration] = (Time.now.to_f - started.to_f).round(5)
 
     # Return if upstream password change failed.  This allows external
@@ -19,8 +19,10 @@ module Puavo
     return res unless res[:exit_status] == 0
 
     begin
-      res = change_passwd_no_upstream_change(host, bind_dn, bind_dn_pw, new_pw,
-              target_user_dn, target_user_username, external_pw_mgmt_url)
+      # XXX what if the actor user is missing?
+      actor_dn = User.by_username!(actor_username).dn.to_s
+      res = change_passwd_no_upstream(host, actor_dn, actor_password,
+              target_user_username, target_user_password, external_pw_mgmt_url)
     rescue StandardError => e
       res = {
         :exit_status => 1,
@@ -34,67 +36,84 @@ module Puavo
     return res
   end
 
-  def self.change_passwd_no_upstream_change(host, bind_dn, bind_dn_pw, new_pw,
-        target_user_dn, target_user_username, external_pw_mgmt_url=nil)
+  def self.change_passwd_no_upstream(host, actor_dn,
+        actor_password, target_user_username, target_user_password,
+        external_pw_mgmt_url=nil)
+
+    # XXX what if the target user is missing?
+    target_user_dn = User.by_username!(target_user_username).dn.to_s
+
     # First change the password to external service(s) and then to us.
     # If we can not change it to external service(s), do not change it for us
     # either.
     if external_pw_mgmt_url then
-      has_permissions = LdapPassword.has_password_change_permissions?(host,
-                          bind_dn, bind_dn_pw, new_pw, target_user_dn)
+      has_permissions = \
+         LdapPassword.has_password_change_permissions?(host,
+           actor_dn, actor_password, target_user_dn,
+           target_user_password)
 
       unless has_permissions then
-        errmsg = "User '#{ bind_dn }' has no sufficient permissions to change" \
-                   " password for user '#{ target_user_username }'"
+        errmsg = "User '#{ actor_username }' has no sufficient permissions" \
+                   " to change password for user '#{ target_user_username }'"
         raise errmsg
       end
 
       begin
-        change_downstream_passwords(target_user_username,
-                                    new_pw,
-                                    external_pw_mgmt_url)
+        change_passwd_downstream(target_user_username,
+                                 target_user_password,
+                                 external_pw_mgmt_url)
       rescue StandardError => e
         raise "Cannot change downstream passwords: #{ e.message }"
       end
     end
 
-    LdapPasswd.change_ldap_passwd(host, bind_dn, bind_dn_pw, new_pw,
-                                  target_user_dn)
+    LdapPassword.change_ldap_passwd(host, actor_dn, actor_password,
+                                      target_user_dn, target_user_password)
   end
 
-  def self.change_downstream_passwords(username, new_pw, external_pw_mgmt_url)
-    http_res = HTTP.send('post',
-                         external_pw_mgmt_url,
-                         :json => { 'username'          => username,
-                                    'new_user_password' => new_pw })
+  def self.change_passwd_downstream(target_user_username,
+        target_user_password, external_pw_mgmt_url)
+
+    params = {
+      'username'          => target_user_username,
+      'new_user_password' => target_user_password,
+    }
+
+    http_res = HTTP.send('post', external_pw_mgmt_url, :json => params)
 
     return true if http_res.code == 200
 
     raise http_res.body.to_s
   end
 
-  def self.change_upstream_password(host, bind_dn, bind_dn_pw, new_pw,
-                                    target_user_username)
+  def self.change_passwd_upstream(host, actor_username, actor_password,
+                                  target_user_username, target_user_password)
     begin
       external_login = PuavoRest::ExternalLogin.new
       login_service = external_login.new_external_service_handler()
-      login_service.change_password(target_user_username, new_pw)
+      login_service.change_password(actor_username,
+                                    actor_password,
+                                    target_user_username,
+                                    target_user_password)
     rescue ExternalLoginNotConfigured => e
-      # this is normal
+      # If external logins are not configured or the target user is missing
+      # from an external login database, we should end up here, and that is
+      # normal.
       return {
         :exit_status => 0,
         :stderr      => '',
-        :stdout      => 'external logins are not configured',
+        :stdout      => "external login not configured: #{ e.message }",
       }
     rescue StandardError => e
-      errmsg = 'changing external service password failed'
+      short_errmsg = 'changing external service password failed'
+      long_errmsg  = "#{ short_errmsg } for user"         \
+                       + " '#{ target_user_username }': " \
+                       + e.message
       # XXX how to log this? (flog does not exist here)
-      # flog.error(errmsg,
-      #            "#{ errmsg } for user '#{ target_user_username }': " \
-      #              + e.message)
+      # flog.error(short_errmsg, long_errmsg)
       return {
         :exit_status => 1,
-        :stderr      => errmsg,
+        :stderr      => long_errmsg,
         :stdout      => '',
       }
     end
@@ -106,23 +125,23 @@ module Puavo
     }
   end
 
-  class LdapPasswd
+  class LdapPassword
     def self.has_password_change_permissions?(host, bind_dn, bind_dn_pw,
-                                              new_pw, user_dn)
+                                              user_dn, new_pw)
       # "-n" for ldappasswd means "dry-run", it does not change the password
       # but instead can tell us if password change is possible.
       # It does check the permissions as well, which is what we want.
-      res = run_ldappasswd(host, bind_dn, bind_dn_pw, new_pw, user_dn,
+      res = run_ldappasswd(host, bind_dn, bind_dn_pw, user_dn, new_pw,
                            [ '-n' ])
 
       return res[:exit_status] == 0
     end
 
-    def self.change_ldap_passwd(host, bind_dn, bind_dn_pw, new_pw, user_dn)
-      run_ldappasswd(host, bind_dn, bind_dn_pw, new_pw, user_dn)
+    def self.change_ldap_passwd(host, bind_dn, bind_dn_pw, user_dn, new_pw)
+      run_ldappasswd(host, bind_dn, bind_dn_pw, user_dn, new_pw)
     end
 
-    def self.run_ldappasswd(host, bind_dn, bind_dn_pw, new_pw, user_dn,
+    def self.run_ldappasswd(host, bind_dn, bind_dn_pw, user_dn, new_pw,
                             extra_cmd_args=[])
       cmd = [ 'ldappasswd',
               # use simple authentication instead of SASL
@@ -132,7 +151,7 @@ module Puavo
               # specify an alternate host on which the ldap server is running
               '-h', host,
               # Distinguished Name used to bind to the LDAP directory
-              '-D', bind_dn.to_s,
+              '-D', bind_dn,
               # the password to bind with
               '-w', bind_dn_pw,
               # set the new password

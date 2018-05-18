@@ -135,21 +135,19 @@ module PuavoRest
       # the new password is valid to Puavo.
 
       begin
-        res = Puavo.change_passwd_no_upstream_change(CONFIG['ldap'],
-                                                     user.dn,
-                                                     password,
-                                                     new_password,
-                                                     user.dn,
-                                                     user.username)
+        res = Puavo.change_passwd_no_upstream(CONFIG['ldap'],
+                                              user.dn,
+                                              password,
+                                              user.username,
+                                              new_password)
         case res[:exit_status]
         when Net::LDAP::ResultCodeInvalidCredentials
           if fallback_to_admin_dn then
-            res = Puavo.change_passwd_no_upstream_change(CONFIG['ldap'],
-                                                         @admin_dn,
-                                                         @admin_password,
-                                                         new_password,
-                                                         user.dn,
-                                                         user.username)
+            res = Puavo.change_passwd_no_upstream(CONFIG['ldap'],
+                                                  @admin_dn,
+                                                  @admin_password,
+                                                  user.username,
+                                                  new_password)
             if res[:exit_status] == Net::LDAP::ResultCodeSuccess then
               return ExternalLoginStatus::UPDATED
             end
@@ -459,13 +457,7 @@ module PuavoRest
       @username = nil
     end
 
-    def login(username, password)
-      # first check if user exists
-      update_ldapuserinfo(username)
-
-      user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
-
-      # then authenticate as user
+    def ldap_bind(user_filter, password)
       ldap_entries = @ldap.bind_as(:filter   => user_filter,
                                    :password => password)
       if !ldap_entries then
@@ -482,18 +474,43 @@ module PuavoRest
       raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
         unless ldap_entries.length == 1
 
+      return true
+    end
+
+    def login(username, password)
+      # first check if user exists
+      update_ldapuserinfo(username)
+
+      user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
+
+      # then authenticate as user, this raises exception if it does not work
+      ldap_bind(user_filter, password)
+
       @flog.info('authentication to ldap succeeded',
                  'authentication to ldap succeeded')
 
       get_userinfo(username)
     end
 
-    def change_password(username, new_password)
-      update_ldapuserinfo(username)
-      dn = Array(@ldap_userinfo['dn']).first.to_s
-      if dn.empty? then
-        raise "LDAP information for user '#{ username }' appears to lack DN"
+    def change_password(actor_username, actor_password, target_username,
+                        target_new_password)
+      begin
+        update_ldapuserinfo(target_username)
+      rescue ExternalLoginUserMissing => e
+        raise ExternalLoginNotConfigured,
+              "target user '#{ target_username }' not found in external ldap"
       end
+
+      target_dn = Array(@ldap_userinfo['dn']).first.to_s
+      if target_dn.empty? then
+        raise "LDAP information for user '#{ target_username }' has no DN"
+      end
+
+      actor_user_filter = Net::LDAP::Filter.eq('sAMAccountName', actor_username)
+
+      # then authenticate as actor_user, this raises exception if it does
+      # not work
+      ldap_bind(actor_user_filter, actor_password)
 
       encoded_password = ('"' + new_password + '"') \
                          .encode('utf-16le')        \
@@ -505,13 +522,17 @@ module PuavoRest
       # ldap operations :-(
       ops = [ [ :replace, :unicodePwd, encoded_password ],
               [ :replace, :unicodePwd, encoded_password ] ]
-      change_ok = @ldap.modify(:dn => Array(dn).first, :operations => ops)
+      change_ok = @ldap.modify(:dn => target_dn, :operations => ops)
       if !change_ok then
         raise ExternalLoginPasswordChangeError,
               'password change failed:' \
                 + " '#{ @ldap.get_operation_result.error_message }'" \
                 + ' (maybe server password policy does not accept it?)'
       end
+
+      @flog.info('password changed to external ldap',
+                 'password changed to external ldap for user' \
+                   + " '#{ target_username }' by '#{ actor_username }'")
     end
 
     def lookup_external_id(username)
