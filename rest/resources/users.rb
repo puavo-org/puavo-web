@@ -812,6 +812,22 @@ class Users < PuavoSinatra
     json user.legacy_roles
   end
 
+  get "/v3/users/:username/mark_for_deletion" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    json user.removal_request_time
+  end
+
+  put "/v3/users/:username/mark_for_deletion" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+
+    if user.removal_request_time.nil?
+      # This call cannot change an already set time
+      user.removal_request_time = Time.now.utc
+      user.save!
+    end
+  end
 
   get "/v3/users/:username/profile.jpg" do
     auth :basic_auth, :kerberos
