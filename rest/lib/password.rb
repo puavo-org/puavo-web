@@ -19,7 +19,6 @@ module Puavo
     return res unless res[:exit_status] == 0
 
     begin
-      # XXX what if the actor user is missing?
       actor_dn = User.by_username!(actor_username).dn.to_s
       res = change_passwd_no_upstream(host, actor_dn, actor_password,
               target_user_username, target_user_password, external_pw_mgmt_url)
@@ -40,7 +39,6 @@ module Puavo
         actor_password, target_user_username, target_user_password,
         external_pw_mgmt_url=nil)
 
-    # XXX what if the target user is missing?
     target_user_dn = User.by_username!(target_user_username).dn.to_s
 
     # First change the password to external service(s) and then to us.
