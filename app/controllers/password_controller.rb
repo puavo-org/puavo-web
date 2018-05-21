@@ -216,14 +216,14 @@ class PasswordController < ApplicationController
     if external_login_status then
       case external_login_status
         when :external_login_failed
-          # XXX is this error message okay?
-          raise User::UserError, I18n.t('flash.password.invalid_user',
-                                        :uid => params[:user][:uid])
+          raise User::UserError,
+                I18n.t('flash.password.invalid_login',
+                       :uid => params[:login][:uid])
         when :external_login_ok
           true    # this is okay
         else
-          # XXX is this error message okay?
-          raise User::UserError, I18n.t('flash.password.failed')
+          raise User::UserError,
+                I18n.t('flash.password.can_not_change_password')
       end
     end
 
