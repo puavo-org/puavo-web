@@ -347,6 +347,38 @@ class UsersController < ApplicationController
     redirect_to user_path(params["school_id"], user.id)
   end
 
+  def mark_for_deletion
+    @user = User.find(params[:id])
+
+    if @user.puavoRemovalRequestTime.nil?
+      @user.puavoRemovalRequestTime = Time.now.utc
+      @user.save
+      flash[:notice] = t('flash.user.marked_for_deletion')
+    else
+      flash[:alert] = t('flash.user.already_marked_for_deletion')
+    end
+
+    respond_to do |format|
+      format.html { redirect_to( user_path(@school, @user) ) }
+    end
+  end
+
+  def unmark_for_deletion
+    @user = User.find(params[:id])
+
+    if @user.puavoRemovalRequestTime
+      @user.puavoRemovalRequestTime = nil
+      @user.save
+      flash[:notice] = t('flash.user.unmarked_for_deletion')
+    else
+      flash[:alert] = t('flash.user.not_marked_for_deletion')
+    end
+
+    respond_to do |format|
+      format.html { redirect_to( user_path(@school, @user) ) }
+    end
+  end
+
   private
 
   def error_message_and_render(format, action, message = nil)

@@ -170,6 +170,10 @@ fi:
     user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
       create_failed: "Käyttäjän lisääminen epäonnistui!"
+      marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
+      already_marked_for_deletion: "Käyttäjä on jo merkitty poistettavaksi"
+      unmarked_for_deletion: "Käyttäjä ei ole enää merkitty poistettavaksi"
+      not_marked_for_deletion: "Tätä käyttäjää ei ole merkitty poistettavaksi"
       import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
@@ -248,6 +252,8 @@ fi:
       change_school: Vaihda koulua
       user_is_locked: "Käyttäjätunnus on lukittu"
       user_devices: Käyttäjän laitteet
+      mark_for_removal: Merkitse poistettavaksi
+      unmark_for_removal: Poista poistomerkintä
       marked_for_removal: Poistomerkintä tehty
     new:
       title: "Lisää uusi käyttäjä"
