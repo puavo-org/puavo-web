@@ -19,10 +19,15 @@ module Puavo
     return res unless res[:exit_status] == 0
 
     begin
-      actor_dn = User.by_username!(actor_username).dn.to_s
+      actor_dn = PuavoRest::User.by_username!(actor_username).dn.to_s
       res = change_passwd_no_upstream(host, actor_dn, actor_password,
               target_user_username, target_user_password, external_pw_mgmt_url)
     rescue StandardError => e
+      short_errmsg = 'failed to change the Puavo password'
+      long_errmsg  = 'failed to change the Puavo password for user' \
+                       + " '#{ target_user_username }'" \
+                       + " by '#{ actor_username }': #{ e.message }"
+      $rest_flog.error(short_errmsg, long_errmsg)
       res = {
         :exit_status => 1,
         :stderr      => e.message,
@@ -39,7 +44,7 @@ module Puavo
         actor_password, target_user_username, target_user_password,
         external_pw_mgmt_url=nil)
 
-    target_user_dn = User.by_username!(target_user_username).dn.to_s
+    target_user_dn = PuavoRest::User.by_username!(target_user_username).dn.to_s
 
     # First change the password to external service(s) and then to us.
     # If we can not change it to external service(s), do not change it for us

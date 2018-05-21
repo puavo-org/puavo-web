@@ -492,18 +492,19 @@ module PuavoRest
       get_userinfo(username)
     end
 
-    def change_password(actor_username, actor_password, target_username,
-                        target_new_password)
+    def change_password(actor_username, actor_password, target_user_username,
+                        target_user_password)
       begin
-        update_ldapuserinfo(target_username)
+        update_ldapuserinfo(target_user_username)
       rescue ExternalLoginUserMissing => e
         raise ExternalLoginNotConfigured,
-              "target user '#{ target_username }' not found in external ldap"
+              "target user '#{ target_user_username }'" \
+                 + ' not found in external ldap'
       end
 
       target_dn = Array(@ldap_userinfo['dn']).first.to_s
       if target_dn.empty? then
-        raise "LDAP information for user '#{ target_username }' has no DN"
+        raise "LDAP information for user '#{ target_user_username }' has no DN"
       end
 
       actor_user_filter = Net::LDAP::Filter.eq('sAMAccountName', actor_username)
@@ -512,7 +513,7 @@ module PuavoRest
       # not work
       ldap_bind(actor_user_filter, actor_password)
 
-      encoded_password = ('"' + new_password + '"') \
+      encoded_password = ('"' + target_user_password + '"') \
                          .encode('utf-16le')        \
                          .force_encoding('utf-8')
 
@@ -530,9 +531,7 @@ module PuavoRest
                 + ' (maybe server password policy does not accept it?)'
       end
 
-      @flog.info('password changed to external ldap',
-                 'password changed to external ldap for user' \
-                   + " '#{ target_username }' by '#{ actor_username }'")
+      return true
     end
 
     def lookup_external_id(username)

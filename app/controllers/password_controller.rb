@@ -250,7 +250,7 @@ class PasswordController < ApplicationController
     end
 
     rest_params = {
-                    :actor_username       => @logged_in_user.username,
+                    :actor_username       => @logged_in_user.uid,
                     :actor_password       => params[:login][:password],
                     :host                 => User.configuration[:host],
                     :target_user_username => target_user_username,
