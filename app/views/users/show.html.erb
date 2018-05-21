@@ -130,7 +130,7 @@
   <% if @user.puavoRemovalRequestTime %>
     <tr>
       <td class="label_td view"><%= label_tag t('.marked_for_removal') %> </td>
-      <td class="value_td marked_for_deletion"><%= h @user.puavoRemovalRequestTime %></tr>
+      <td class="value_td marked_for_deletion"><%= h @user.puavoRemovalRequestTime.localtime %></tr>
     </tr>
   <% end %>
 </table>
