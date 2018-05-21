@@ -135,19 +135,21 @@ module PuavoRest
       # the new password is valid to Puavo.
 
       begin
-        res = Puavo.change_passwd_no_upstream(CONFIG['ldap'],
-                                              user.dn,
-                                              password,
-                                              user.username,
-                                              new_password)
+        res = Puavo.change_passwd(:no_upstream,
+                                  CONFIG['ldap'],
+                                  user.dn,
+                                  password,
+                                  user.username,
+                                  new_password)
         case res[:exit_status]
         when Net::LDAP::ResultCodeInvalidCredentials
           if fallback_to_admin_dn then
-            res = Puavo.change_passwd_no_upstream(CONFIG['ldap'],
-                                                  @admin_dn,
-                                                  @admin_password,
-                                                  user.username,
-                                                  new_password)
+            res = Puavo.change_passwd(:no_upstream,
+                                      CONFIG['ldap'],
+                                      @admin_dn,
+                                      @admin_password,
+                                      user.username,
+                                      new_password)
             if res[:exit_status] == Net::LDAP::ResultCodeSuccess then
               return ExternalLoginStatus::UPDATED
             end

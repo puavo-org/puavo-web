@@ -256,9 +256,7 @@ class PasswordController < ApplicationController
                     :target_user_username => target_user_username,
                     :target_user_password => params[:user][:new_password],
                   }
-    if !@user then
-      rest_params[:upstream_only] = 'true'
-    end
+    rest_params[:mode] = (@user ? 'all' : 'upstream_only')
     rest_params[:external_pw_mgmt_url] = url if url
 
     res = rest_proxy.put('/v3/users/password', :params => rest_params).parse

@@ -91,11 +91,12 @@ class Password < PuavoSinatra
                     :error => "Cannot find user" })
     end
 
-    res = Puavo.change_passwd_no_upstream(CONFIG['ldap'],
-                                          PUAVO_ETC.ds_pw_mgmt_dn,
-                                          PUAVO_ETC.ds_pw_mgmt_password,
-                                          user.username,
-                                          params['new_password'])
+    res = Puavo.change_passwd(:all,
+                              CONFIG['ldap'],
+                              PUAVO_ETC.ds_pw_mgmt_dn,
+                              PUAVO_ETC.ds_pw_mgmt_password,
+                              user.username,
+                              params['new_password'])
 
     flog.info('ldappasswd call',
               "changed user password for '#{ user.username }'",

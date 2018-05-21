@@ -3,27 +3,33 @@ require "open3"
 require_relative './external_login'
 
 module Puavo
-  def self.change_passwd(host, actor_username, actor_password,
+  def self.change_passwd(mode, host, actor_username, actor_password,
                          target_user_username, target_user_password,
                          external_pw_mgmt_url=nil)
+
     started = Time.now
 
-    res = change_passwd_upstream(host, actor_username, actor_password,
-                                 target_user_username, target_user_password)
-    res[:duration] = (Time.now.to_f - started.to_f).round(5)
+    upstream_res = nil
 
-    # Return if upstream password change failed.  This allows external
-    # (upstream) password service to block password changes, for example
-    # because password policy rejects the password or user does not have
-    # sufficient permissions for the change operation.
-    return res unless res[:exit_status] == 0
+    if mode != :no_upstream then
+      upstream_res = change_passwd_upstream(host, actor_username,
+                       actor_password, target_user_username,
+                       target_user_password)
+      upstream_res[:duration] = (Time.now.to_f - started.to_f).round(5)
+      return upstream_res if mode == :upstream_only
+
+      # Return if upstream password change failed.  This allows external
+      # (upstream) password service to block password changes, for example
+      # because password policy rejects the password or user does not have
+      # sufficient permissions for the change operation.
+      return upstream_res unless upstream_res[:exit_status] == 0
+    end
 
     begin
       actor_dn = PuavoRest::User.by_username!(actor_username).dn.to_s
-      no_upstream_res = change_passwd_no_upstream(host, actor_dn,
-                          actor_password, target_user_username,
-                          target_user_password, external_pw_mgmt_url)
-      res = no_upstream_res.merge({ :extlogin_status => res[:extlogin_status] })
+      res = change_passwd_no_upstream(host, actor_dn, actor_password,
+              target_user_username, target_user_password, external_pw_mgmt_url)
+      res[:extlogin_status] = upstream_res[:extlogin_status] if upstream_res
 
     rescue StandardError => e
       short_errmsg = 'failed to change the Puavo password'
@@ -33,10 +39,10 @@ module Puavo
       $rest_flog.error(short_errmsg, long_errmsg)
       res = {
         :exit_status     => 1,
-        :extlogin_status => res[:extlogin_status],
         :stderr          => e.message,
         :stdout          => '',
       }
+      res[:extlogin_status] = upstream_res[:extlogin_status] if upstream_res
     end
 
     res[:duration] = (Time.now.to_f - started.to_f).round(5)

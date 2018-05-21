@@ -335,7 +335,7 @@ class User < LdapBase
     end
   end
 
-  def change_password
+  def change_password(mode=nil)
     return if new_password.nil? || new_password.empty?
 
     ldap_conf = User.configuration
@@ -351,6 +351,7 @@ class User < LdapBase
                     :actor_username       => User.find(ldap_conf[:bind_dn]).uid,
                     :actor_password       => ldap_conf[:password],
                     :host                 => ldap_conf[:host],
+                    :mode                 => mode || :all,
                     :target_user_username => self.uid,
                     :target_user_password => new_password,
                   }
@@ -804,7 +805,7 @@ class User < LdapBase
     # XXX but for now we just set a password to some unknown value
     # XXX so that the kerberos principal can not be used.
     self.new_password = generate_password(40)
-    change_password
+    change_password(:no_upstream)
   end
 
   def set_samba_settings

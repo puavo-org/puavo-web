@@ -248,7 +248,8 @@ class User < LdapModel
     next if @password.nil?
 
     begin
-      Puavo.change_passwd(CONFIG['ldap'],
+      Puavo.change_passwd(:all,
+                          CONFIG['ldap'],
                           User.current.username,
                           LdapModel.settings[:credentials][:password],
                           username,
@@ -772,16 +773,14 @@ class Users < PuavoSinatra
   put '/v3/users/password' do
     auth :basic_auth
 
-    upstream_only = (params['upstream_only'] == 'true')
-
     begin
       param_names_list = %w(actor_username
                             actor_password
                             external_pw_mgmt_url
                             host
+                            mode
                             target_user_username
-                            target_user_password
-                            upstream_only)
+                            target_user_password)
 
       param_names_list.each do |param_name|
         case param_name
@@ -792,9 +791,10 @@ class Users < PuavoSinatra
             param_ok = params[param_name].nil? \
                          || (params[param_name].kind_of?(String) \
                                && !params[param_name].empty?)
-          when 'upstream_only'
-            # optional parameter
-            param_ok = params[param_name].nil? || params[param_name] == 'true'
+          when 'mode'
+            param_ok = params[param_name] == 'all'                \
+                         || params[param_name] == 'no_upstream'   \
+                         || params[param_name] == 'upstream_only'
           else
             param_ok = params[param_name].kind_of?(String) \
                          && !params[param_name].empty?
@@ -812,20 +812,13 @@ class Users < PuavoSinatra
       })
     end
 
-    if upstream_only then
-      res = Puavo.change_passwd_upstream(params['host'],
-                                         params['actor_username'],
-                                         params['actor_password'],
-                                         params['target_user_username'],
-                                         params['target_user_password'])
-    else
-      res = Puavo.change_passwd(params['host'],
-                                params['actor_username'],
-                                params['actor_password'],
-                                params['target_user_username'],
-                                params['target_user_password'],
-                                params['external_pw_mgmt_url'])
-    end
+    res = Puavo.change_passwd(params['mode'].to_sym,
+                              params['host'],
+                              params['actor_username'],
+                              params['actor_password'],
+                              params['target_user_username'],
+                              params['target_user_password'],
+                              params['external_pw_mgmt_url'])
 
     target_user_username = params['target_user_username']
     msg = (res[:exit_status] == 0)                                       \
