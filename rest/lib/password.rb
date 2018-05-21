@@ -102,6 +102,10 @@ module Puavo
       # If external logins are not configured or the target user is missing
       # from an external login database, we should end up here, and that is
       # normal.
+      short_msg = 'not changing upstream password,' \
+                    + ' because external logins are not configured'
+      long_msg = "#{ short_msg }: #{ e.message }"
+      $rest_flog.info(short_msg, long_msg)
       return {
         :exit_status => 0,
         :stderr      => '',
@@ -112,14 +116,17 @@ module Puavo
       long_errmsg  = "#{ short_errmsg } for user"         \
                        + " '#{ target_user_username }': " \
                        + e.message
-      # XXX how to log this? (flog does not exist here)
-      # flog.error(short_errmsg, long_errmsg)
+      $rest_flog.error(short_errmsg, long_errmsg)
       return {
         :exit_status => 1,
         :stderr      => long_errmsg,
         :stdout      => '',
       }
     end
+
+    $rest_flog.info('upstream password changed',
+                    'upstream password changed for user' \
+                      + " '#{ target_user_username }' by '#{ actor_username }'")
 
     return {
       :exit_status => 0,
