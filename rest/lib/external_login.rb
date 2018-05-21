@@ -457,34 +457,18 @@ module PuavoRest
       @username = nil
     end
 
-    def ldap_bind(user_filter, password)
-      ldap_entries = @ldap.bind_as(:filter   => user_filter,
-                                   :password => password)
-      if !ldap_entries then
-        message = 'authentication to ldap failed:' \
-                    + " #{ @ldap.get_operation_result.message }"
-        code = @ldap.get_operation_result.code
-        if code == Net::LDAP::ResultCodeInvalidCredentials then
-          message += ' (user password was wrong)'
-          raise ExternalLoginWrongPassword, message
-        end
-
-        raise ExternalLoginUnavailable, message
-      end
-      raise ExternalLoginUnavailable, 'ldap bind returned too many entries' \
-        unless ldap_entries.length == 1
-
-      return true
-    end
-
     def login(username, password)
       # first check if user exists
       update_ldapuserinfo(username)
 
       user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
 
-      # then authenticate as user, this raises exception if it does not work
-      ldap_bind(user_filter, password)
+      bind_ok = @ldap.bind_as(:filter => user_filter, :password => password)
+      if !bind_ok then
+        raise ExternalLoginWrongPassword,
+              "binding as '#{ username }' to external ldap failed:" \
+                + ' user and/or password is wrong'
+      end
 
       @flog.info('authentication to ldap succeeded',
                  'authentication to ldap succeeded')
@@ -508,10 +492,13 @@ module PuavoRest
       end
 
       actor_user_filter = Net::LDAP::Filter.eq('sAMAccountName', actor_username)
-
-      # then authenticate as actor_user, this raises exception if it does
-      # not work
-      ldap_bind(actor_user_filter, actor_password)
+      bind_ok = @ldap.bind_as(:filter   => actor_user_filter,
+                              :password => actor_password)
+      if !bind_ok then
+        raise ExternalLoginWrongPassword,
+              "binding as '#{ actor_username }' to external ldap failed:" \
+                + ' user and/or password is wrong'
+      end
 
       encoded_password = ('"' + target_user_password + '"') \
                          .encode('utf-16le')        \
