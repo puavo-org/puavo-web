@@ -3,7 +3,7 @@ require "open3"
 require_relative './external_login'
 
 module Puavo
-  def self.change_passwd(mode, host, actor_username, actor_password,
+  def self.change_passwd(mode, host, actor_dn, actor_username, actor_password,
                          target_user_username, target_user_password,
                          external_pw_mgmt_url=nil)
 
@@ -26,7 +26,10 @@ module Puavo
     end
 
     begin
-      actor_dn = PuavoRest::User.by_username!(actor_username).dn.to_s
+      if !actor_dn && actor_username then
+        actor_dn = PuavoRest::User.by_username!(actor_username).dn.to_s
+      end
+
       res = change_passwd_no_upstream(host, actor_dn, actor_password,
               target_user_username, target_user_password, external_pw_mgmt_url)
       res[:extlogin_status] = upstream_res[:extlogin_status] if upstream_res
@@ -35,7 +38,7 @@ module Puavo
       short_errmsg = 'failed to change the Puavo password'
       long_errmsg  = 'failed to change the Puavo password for user' \
                        + " '#{ target_user_username }'" \
-                       + " by '#{ actor_username }': #{ e.message }"
+                       + " by '#{ actor_dn }': #{ e.message }"
       $rest_flog.error(short_errmsg, long_errmsg)
       res = {
         :exit_status     => 1,
@@ -66,7 +69,7 @@ module Puavo
            target_user_password)
 
       unless has_permissions then
-        errmsg = "User '#{ actor_username }' has no sufficient permissions" \
+        errmsg = "User '#{ actor_dn }' has no sufficient permissions" \
                    " to change password for user '#{ target_user_username }'"
         raise errmsg
       end

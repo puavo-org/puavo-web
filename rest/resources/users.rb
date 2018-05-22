@@ -250,6 +250,7 @@ class User < LdapModel
     begin
       Puavo.change_passwd(:all,
                           CONFIG['ldap'],
+                          LdapModel.settings[:credentials][:dn],
                           User.current.username,
                           LdapModel.settings[:credentials][:password],
                           username,
@@ -814,6 +815,7 @@ class Users < PuavoSinatra
 
     res = Puavo.change_passwd(params['mode'].to_sym,
                               params['host'],
+                              nil,
                               params['actor_username'],
                               params['actor_password'],
                               params['target_user_username'],

@@ -91,9 +91,10 @@ class Password < PuavoSinatra
                     :error => "Cannot find user" })
     end
 
-    res = Puavo.change_passwd(:all,
+    res = Puavo.change_passwd(:no_upstream,
                               CONFIG['ldap'],
                               PUAVO_ETC.ds_pw_mgmt_dn,
+                              nil,
                               PUAVO_ETC.ds_pw_mgmt_password,
                               user.username,
                               params['new_password'])

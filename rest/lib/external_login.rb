@@ -138,6 +138,7 @@ module PuavoRest
         res = Puavo.change_passwd(:no_upstream,
                                   CONFIG['ldap'],
                                   user.dn,
+                                  nil,
                                   password,
                                   user.username,
                                   new_password)
@@ -147,6 +148,7 @@ module PuavoRest
             res = Puavo.change_passwd(:no_upstream,
                                       CONFIG['ldap'],
                                       @admin_dn,
+                                      nil,
                                       @admin_password,
                                       user.username,
                                       new_password)
