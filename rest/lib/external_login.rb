@@ -732,14 +732,17 @@ module PuavoRest
         displayname = format_groupdata(displayname_format, params)
         return {} unless displayname
 
+        unsanitized_name = format_groupdata(name_format, params)
+        return {} unless unsanitized_name
+
         # group name sanitation is the same as in PuavoImport.sanitize_name
-        name = format_groupdata(name_format, params).downcase \
-                                                    .gsub(/[åäö ]/,
-                                                          'å' => 'a',
-                                                          'ä' => 'a',
-                                                          'ö' => 'o',
-                                                          ' ' => '-') \
-                                                    .gsub(/[^a-z0-9-]/, '')
+        name = unsanitized_name.downcase \
+                               .gsub(/[åäö ]/,
+                                     'å' => 'a',
+                                     'ä' => 'a',
+                                     'ö' => 'o',
+                                     ' ' => '-') \
+                               .gsub(/[^a-z0-9-]/, '')
 
         if name && displayname then
           group = { name => displayname }
