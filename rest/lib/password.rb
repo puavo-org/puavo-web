@@ -16,13 +16,21 @@ module Puavo
                        actor_password, target_user_username,
                        target_user_password)
       upstream_res[:duration] = (Time.now.to_f - started.to_f).round(5)
+
       return upstream_res if mode == :upstream_only
 
       # Return if upstream password change failed.  This allows external
       # (upstream) password service to block password changes, for example
       # because password policy rejects the password or user does not have
       # sufficient permissions for the change operation.
-      return upstream_res unless upstream_res[:exit_status] == 0
+      # However, "NOTCONFIGURED" status means there was nothing to do,
+      # so in that case proceed further and let the normal Puavo password
+      # change procedude decide if an error occurred.
+      if upstream_res[:exit_status] != 0 \
+           && (upstream_res[:extlogin_status] \
+                 != PuavoRest::ExternalLoginStatus::NOTCONFIGURED) then
+        return upstream_res
+      end
     end
 
     begin
@@ -120,7 +128,7 @@ module Puavo
       long_msg = "#{ short_msg }: #{ e.message }"
       $rest_flog.info(short_msg, long_msg)
       return {
-        :exit_status     => 0,
+        :exit_status     => 1,
         :extlogin_status => PuavoRest::ExternalLoginStatus::NOTCONFIGURED,
         :stderr          => '',
         :stdout          => "external login not configured: #{ e.message }",
