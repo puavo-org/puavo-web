@@ -286,19 +286,17 @@ class PasswordController < ApplicationController
     if res['exit_status'] != 0 then
       logger.warn "rest call to PUT /v3/users/password failed: #{ res.inspect }"
 
-      if external_login_status then
-        case res['extlogin_status']
-          when PuavoRest::ExternalLoginStatus::BADUSERCREDS
-            raise User::UserError,
-                  I18n.t('flash.password.invalid_external_login',
-                         :uid => params[:login][:uid])
-          when PuavoRest::ExternalLoginStatus::NOTCONFIGURED
-            raise User::UserError, I18n.t('flash.password.invalid_user',
-                                          :uid => params[:user][:uid])
-          when PuavoRest::ExternalLoginStatus::UPDATEERROR
-            raise User::UserError,
-                  I18n.t('flash.password.can_not_change_upstream_password')
-        end
+      case res['extlogin_status']
+        when PuavoRest::ExternalLoginStatus::BADUSERCREDS
+          raise User::UserError,
+                I18n.t('flash.password.invalid_external_login',
+                       :uid => params[:login][:uid])
+        when PuavoRest::ExternalLoginStatus::UPDATEERROR
+          raise User::UserError,
+                I18n.t('flash.password.can_not_change_upstream_password')
+        when PuavoRest::ExternalLoginStatus::USERMISSING
+          raise User::UserError, I18n.t('flash.password.invalid_user',
+                                        :uid => params[:user][:uid])
       end
 
       raise User::UserError, I18n.t('flash.password.failed')

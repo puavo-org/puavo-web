@@ -24,6 +24,7 @@ module PuavoRest
     UPDATED          = 'UPDATED'
     UPDATED_BUT_FAIL = 'UPDATED_BUT_FAIL'
     UPDATEERROR      = 'UPDATEERROR'
+    USERMISSING      = 'USERMISSING'
   end
 
   class ExternalLogin
@@ -482,13 +483,7 @@ module PuavoRest
 
     def change_password(actor_username, actor_password, target_user_username,
                         target_user_password)
-      begin
-        update_ldapuserinfo(target_user_username)
-      rescue ExternalLoginUserMissing => e
-        raise ExternalLoginNotConfigured,
-              "target user '#{ target_user_username }'" \
-                 + ' not found in external ldap'
-      end
+      update_ldapuserinfo(target_user_username)
 
       target_dn = Array(@ldap_userinfo['dn']).first.to_s
       if target_dn.empty? then

@@ -23,13 +23,13 @@ module Puavo
       # (upstream) password service to block password changes, for example
       # because password policy rejects the password or user does not have
       # sufficient permissions for the change operation.
-      # However, "NOTCONFIGURED" status means there was nothing to do,
-      # so in that case proceed further and let the normal Puavo password
-      # change procedude decide if an error occurred.
+      # Missing user can be normal, in that case we can still try to change
+      # the Puavo-password (for users that exist in Puavo but not in external
+      # login service).
       if upstream_res[:exit_status] != 0 \
-           && (upstream_res[:extlogin_status] \
-                 != PuavoRest::ExternalLoginStatus::NOTCONFIGURED) then
-        return upstream_res
+        && (upstream_res[:extlogin_status] \
+              != PuavoRest::ExternalLoginStatus::USERMISSING) then
+          return upstream_res
       end
     end
 
@@ -120,18 +120,30 @@ module Puavo
                                     target_user_username,
                                     target_user_password)
     rescue ExternalLoginNotConfigured => e
-      # If external logins are not configured or the target user is missing
-      # from an external login database, we should end up here, and that is
-      # normal.
+      # If external logins are not configured we should end up here,
+      # and that is normal.
       short_msg = 'not changing upstream password,' \
                     + ' because external logins are not configured'
       long_msg = "#{ short_msg }: #{ e.message }"
       $rest_flog.info(short_msg, long_msg)
       return {
-        :exit_status     => 1,
+        :exit_status     => 0,
         :extlogin_status => PuavoRest::ExternalLoginStatus::NOTCONFIGURED,
         :stderr          => '',
-        :stdout          => "external login not configured: #{ e.message }",
+        :stdout          => long_msg,
+      }
+
+    rescue ExternalLoginUserMissing => e
+      short_msg = 'not changing upstream password,' \
+                    + " target user '#{ target_user_username }' is missing" \
+                    + ' from the external service'
+      long_msg = "#{ short_msg }: #{ e.message }"
+      $rest_flog.info(short_msg, long_msg)
+      return {
+        :exit_status     => 1,
+        :extlogin_status => PuavoRest::ExternalLoginStatus::USERMISSING,
+        :stderr          => long_msg,
+        :stdout          => '',
       }
 
     rescue ExternalLoginWrongPassword => e
