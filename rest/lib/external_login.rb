@@ -439,6 +439,11 @@ module PuavoRest
       raise ExternalLoginConfigError, 'external_id_field not configured' \
         unless @external_id_field.kind_of?(String)
 
+      @user_principal_dns_domain = ldap_config['user_principal_dns_domain']
+      raise ExternalLoginConfigError,
+            'user_principal_dns_domain not configured' \
+        unless @user_principal_dns_domain.kind_of?(String)
+
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
                             :port => (Integer(ldap_config['port']) rescue 389),
@@ -466,9 +471,8 @@ module PuavoRest
       # first check if user exists
       update_ldapuserinfo(username)
 
-      user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
-
-      bind_ok = @ldap.bind_as(:filter => user_filter, :password => password)
+      bind_ok = @ldap.bind_as(:filter   => user_ldapfilter(username),
+                              :password => password)
       if !bind_ok then
         raise ExternalLoginWrongPassword,
               "binding as '#{ username }' to external ldap failed:" \
@@ -490,8 +494,7 @@ module PuavoRest
         raise "LDAP information for user '#{ target_user_username }' has no DN"
       end
 
-      actor_user_filter = Net::LDAP::Filter.eq('sAMAccountName', actor_username)
-      bind_ok = @ldap.bind_as(:filter   => actor_user_filter,
+      bind_ok = @ldap.bind_as(:filter   => user_ldapfilter(actor_username),
                               :password => actor_password)
       if !bind_ok then
         raise ExternalLoginWrongPassword,
@@ -559,7 +562,7 @@ module PuavoRest
         'external_id' => lookup_external_id(username),
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
         'last_name'   => Array(@ldap_userinfo['sn']).first.to_s,
-        'username'    => Array(@ldap_userinfo['sAMAccountName']).first.to_s,
+        'username'    => username,
       }
 
       if userinfo['first_name'].empty? then
@@ -755,9 +758,7 @@ module PuavoRest
       @ldap_userinfo = nil
       @username = nil
 
-      user_filter = Net::LDAP::Filter.eq('sAMAccountName', username)
-
-      ldap_entries = @ldap.search(:filter => user_filter)
+      ldap_entries = @ldap.search(:filter => user_ldapfilter(username))
       if !ldap_entries then
         msg = "ldap search for user '#{ username }' failed: " \
                 + @ldap.get_operation_result.message
@@ -777,6 +778,12 @@ module PuavoRest
                  "looked up user '#{ username }' from external ldap")
       @username = username
       @ldap_userinfo = ldap_entries.first
+    end
+
+    def user_ldapfilter(username)
+      Net::LDAP::Filter.eq('userPrincipalName',
+                           "#{ username }@#{ @user_principal_dns_domain }")
+
     end
   end
 end
