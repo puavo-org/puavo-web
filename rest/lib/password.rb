@@ -26,10 +26,14 @@ module Puavo
       # Missing user can be normal, in that case we can still try to change
       # the Puavo-password (for users that exist in Puavo but not in external
       # login service).
-      if upstream_res[:exit_status] != 0 \
-        && (upstream_res[:extlogin_status] \
+      if upstream_res[:exit_status] != 0 then
+        if (upstream_res[:extlogin_status] \
               != PuavoRest::ExternalLoginStatus::USERMISSING) then
           return upstream_res
+        else
+          upstream_res[:extlogin_status] \
+            = PuavoRest::ExternalLoginStatus::NOCHANGE
+        end
       end
     end
 
