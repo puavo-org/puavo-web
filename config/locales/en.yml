@@ -175,6 +175,7 @@ en:
     set_install_mode_server: "Certificate removed, server now in install mode"
     organisation_ownership_removed: "Admin user organisation ownership was removed."
     organisation_ownership_not_removed: "Admin user organisation ownership could not be removed automatically!"
+    user_deletion_prevented: "User cannot be removed"
     organisation:
       updated: "Organisation was successfully updated."
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
@@ -273,6 +274,7 @@ en:
       users_marked_for_deletion_title: Users marked for deletion
       normal_users_title: Normal users
       users: users
+      do_not_delete: "(Can't be removed)"
     show:
       user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information
@@ -280,6 +282,7 @@ en:
       group_by_roles: Groups by roles
       change_school: Change school
       user_is_locked: User is locked
+      user_deletion_prevented: "This user cannot be deleted"
       user_devices: User devices
       mark_for_removal: Mark for deletion
       unmark_for_removal: Remove deletion marking

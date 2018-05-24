@@ -19,7 +19,8 @@ class UsersController < ApplicationController
                   'loginShell',
                   'puavoAdminOfSchool',
                   'sambaPrimaryGroupSID',
-                  'puavoRemovalRequestTime']
+                  'puavoRemovalRequestTime',
+                  'puavoDoNotDelete']
 
     @users = User.search_as_utf8( :filter => filter,
                           :scope => :one,
@@ -201,24 +202,28 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
 
-    if @user.puavoEduPersonAffiliation == 'admin'
-      # if an admin user is also an organisation owner, remove the ownership
-      # automatically before deletion
-      owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+    if @user.puavoDoNotDelete
+      flash[:alert] = t('flash.user_deletion_prevented')
+    else
+      if @user.puavoEduPersonAffiliation == 'admin'
+        # if an admin user is also an organisation owner, remove the ownership
+        # automatically before deletion
+        owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
 
-      if !owners.nil? && owners.include?(@user.dn)
-        if !LdapOrganisation.current.remove_owner(@user)
-          flash[:alert] = t('flash.organisation_ownership_not_removed')
-        else
-          # TODO: Show a flash message when ownership is removed. First we need to
-          # support multiple flash messages of the same type...
-          #flash[:notice] = t('flash.organisation_ownership_removed')
+        if !owners.nil? && owners.include?(@user.dn)
+          if !LdapOrganisation.current.remove_owner(@user)
+            flash[:alert] = t('flash.organisation_ownership_not_removed')
+          else
+            # TODO: Show a flash message when ownership is removed. First we need to
+            # support multiple flash messages of the same type...
+            #flash[:notice] = t('flash.organisation_ownership_removed')
+          end
         end
       end
-    end
 
-    if @user.destroy
-      flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))
+      if @user.destroy
+        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))
+      end
     end
 
     respond_to do |format|

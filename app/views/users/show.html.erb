@@ -15,6 +15,10 @@
             </p>
           <% end %>
 
+          <% if @user["puavoDoNotDelete"] %>
+            <p class="notice_text"><%= t('.user_deletion_prevented') %></p>
+          <% end %>
+
       <p>
         <%= label "user", 'uid' %><br />
         <%=h @user.uid %>
@@ -163,11 +167,16 @@
 <% end %>
 <% end %>
 </li>
+
+<% unless @user["puavoDoNotDelete"] %>
+
 <li>
   <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
     <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
 </li>
+<% end %>
+
 </ul>
 </li>
 </ul>
