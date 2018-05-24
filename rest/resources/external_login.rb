@@ -83,7 +83,7 @@ module PuavoRest
           user_to_remove = User.by_username(username)
           if user_to_remove && user_to_remove.mark_for_removal! then
             flog.info('puavo user marked for removal',
-                      "puavo user '#{ puavo_user.username }' is marked" \
+                      "puavo user '#{ user_to_remove.username }' is marked" \
                         + ' for removal')
           end
         end
