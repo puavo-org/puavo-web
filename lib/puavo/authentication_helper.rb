@@ -1,3 +1,5 @@
+# XXX require '..'
+
 module Puavo
   module AuthenticationHelper
 
@@ -90,10 +92,33 @@ module Puavo
       # Configure ActiveLdap to use the credentials
       @authentication.configure_ldap_connection credentials
 
+      # We first make a /v3/external_login/auth request to puavo-rest before
+      # doing the actual authentication, because user password might have been
+      # updated on external login service.
+      # We use request.host instead of puavoDomain from organisation info,
+      # because that would require ldap access, which we can not get
+      # before we have possibly updated user password from external login
+      # service.  This is not optimal though, because now web requests must
+      # always have the correct domain and we have no choice to fall back to
+      # default domain.
+      begin
+        rest_proxy = PuavoRestProxy.new(request.host,
+                                        credentials[:uid],
+                                        credentials[:password])
+        res = rest_proxy.post('/v3/external_login/auth').parse
+        # XXX raise "RES_STATUS: #{ res.inspect }"
+      rescue StandardError => e
+        short_errmsg = 'Problem with external login auth before' \
+                         + ' Puavo-authentication'
+        long_errmsg = "#{ short_errmsg }: #{ e.message }"
+        logger.warn(long_errmsg)
+        flog.warn(short_errmsg, 'error' => long_errmsg)
+      end
+
       # Authenticate above credentials
       @authentication.authenticate
 
-      # Set locale from user's organisation
+#      # Set locale from user's organisation
       I18n.locale = current_organisation.locale
 
       return true

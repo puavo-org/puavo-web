@@ -1,4 +1,5 @@
-require "user_error"
+require 'puavo/helpers'
+require 'user_error'
 
 module Puavo
 
@@ -186,7 +187,6 @@ module Puavo
     # Raises AuthenticationFailed if connection could not be made.
     # Returns possible admin permissions on successful connect
     def authenticate
-
       # This is the first time when LDAP connection is used with the user's
       # credentials. So this search call will initialize the connection and
       # will raise ActiveLdap::AuthenticationError if user supplied a
