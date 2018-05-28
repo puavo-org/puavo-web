@@ -159,7 +159,7 @@ class Organisations < PuavoSinatra
   end
 
   get "/v3/current_organisation" do
-    auth :basic_auth, :kerberos
+    auth :basic_auth, :kerberos, :server_auth
     require_admin_or_not_people!
 
     Organisation.refresh
@@ -167,7 +167,7 @@ class Organisations < PuavoSinatra
   end
 
   get "/v3/organisations/:domain" do
-    auth :basic_auth, :kerberos
+    auth :basic_auth, :kerberos, :server_auth
     require_admin_or_not_people!
 
     Organisation.refresh
