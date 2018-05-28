@@ -337,7 +337,6 @@ class User < LdapBase
 
     ldap_conf = User.configuration
 
-
     rest_params = {
                     :actor_username       => User.find(ldap_conf[:bind_dn]).uid,
                     :actor_password       => ldap_conf[:password],

@@ -4,8 +4,7 @@ require_relative './external_login'
 
 module Puavo
   def self.change_passwd(mode, host, actor_dn, actor_username, actor_password,
-                         target_user_username, target_user_password,
-                         external_pw_mgmt_url=nil)
+                         target_user_username, target_user_password)
 
     started = Time.now
 
@@ -43,7 +42,7 @@ module Puavo
       end
 
       res = change_passwd_no_upstream(host, actor_dn, actor_password,
-              target_user_username, target_user_password, external_pw_mgmt_url)
+              target_user_username, target_user_password)
       res[:extlogin_status] = upstream_res[:extlogin_status] if upstream_res
 
     rescue StandardError => e
@@ -65,25 +64,64 @@ module Puavo
     return res
   end
 
-  def self.change_passwd_no_upstream(host, actor_dn,
-        actor_password, target_user_username, target_user_password,
-        external_pw_mgmt_url=nil)
+  def self.get_external_pw_mgmt_url(user)
+    external_pw_mgmt_conf = CONFIG['external_pw_mgmt']
+    return nil unless external_pw_mgmt_conf
 
-    target_user_dn = PuavoRest::User.by_username!(target_user_username).dn.to_s
+    org = LdapModel.organisation
+    return nil unless org && org.domain.kind_of?(String)
+
+    organisation_name = org.domain.split('.')[0]
+    return nil unless organisation_name
+
+    org_specific_conf = external_pw_mgmt_conf[ organisation_name ]
+    return nil unless org_specific_conf \
+                        && org_specific_conf['url'].kind_of?(String)
+
+    url = org_specific_conf['url']
+
+    return url unless org_specific_conf['role']
+    role_with_password_management = org_specific_conf['role']
+
+    return url if user.roles.include?(role_with_password_management)
+
+    return nil
+  end
+
+  def self.change_passwd_no_upstream(host, actor_dn,
+        actor_password, target_user_username, target_user_password)
+
+    target_user = PuavoRest::User.by_username!(target_user_username)
+    target_user_dn = target_user.dn.to_s
 
     # First change the password to external service(s) and then to us.
     # If we can not change it to external service(s), do not change it for us
     # either.
+    external_pw_mgmt_url = self.get_external_pw_mgmt_url(target_user)
     if external_pw_mgmt_url then
-      has_permissions = \
-         LdapPassword.has_password_change_permissions?(host,
-           actor_dn, actor_password, target_user_dn,
-           target_user_password)
+      can_change = \
+         LdapPassword.can_change_password?(host, actor_dn, actor_password,
+           target_user_dn, target_user_password)
 
-      unless has_permissions then
+      unless can_change then
         errmsg = "User '#{ actor_dn }' has no sufficient permissions" \
-                   " to change password for user '#{ target_user_username }'"
+                   ' (or invalid credentials) to change password' \
+                   + " for user '#{ target_user_username }'"
         raise errmsg
+      end
+
+      # Do optimize things a bit by not changing the password
+      # (downstream and in Puavo) in case it is the same as before.
+      # (We always change the downstream first, so if we have a permission
+      # to change it must be the same if this condition is met:)
+      if (actor_dn == target_user_dn \
+           && actor_password == target_user_password) then
+        return {
+          :exit_status => 0,
+          :stderr      => '',
+          :stdout      => 'Password not changed because it is the same' \
+                            + ' as before.',
+        }
       end
 
       begin
@@ -190,8 +228,7 @@ module Puavo
   end
 
   class LdapPassword
-    def self.has_password_change_permissions?(host, bind_dn, bind_dn_pw,
-                                              user_dn, new_pw)
+    def self.can_change_password?(host, bind_dn, bind_dn_pw, user_dn, new_pw)
       # "-n" for ldappasswd means "dry-run", it does not change the password
       # but instead can tell us if password change is possible.
       # It does check the permissions as well, which is what we want.

@@ -777,7 +777,6 @@ class Users < PuavoSinatra
     begin
       param_names_list = %w(actor_username
                             actor_password
-                            external_pw_mgmt_url
                             host
                             mode
                             target_user_username
@@ -785,13 +784,6 @@ class Users < PuavoSinatra
 
       param_names_list.each do |param_name|
         case param_name
-          when 'external_pw_mgmt_url'
-            # (XXX we should probably move external_pw_mgmt_url-handling to
-            #  XXX puavo-rest)
-            # optional parameter
-            param_ok = params[param_name].nil? \
-                         || (params[param_name].kind_of?(String) \
-                               && !params[param_name].empty?)
           when 'mode'
             param_ok = params[param_name] == 'all'                \
                          || params[param_name] == 'no_upstream'   \
@@ -819,8 +811,7 @@ class Users < PuavoSinatra
                               params['actor_username'],
                               params['actor_password'],
                               params['target_user_username'],
-                              params['target_user_password'],
-                              params['external_pw_mgmt_url'])
+                              params['target_user_password'])
 
     target_user_username = params['target_user_username']
     msg = (res[:exit_status] == 0)                                       \
