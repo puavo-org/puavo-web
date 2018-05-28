@@ -73,6 +73,10 @@ module PuavoRest
         'external login parameters not configured' \
           unless @external_login_params.kind_of?(Hash)
 
+      @external_login_params['external_domain'] \
+        ||= (CONFIG['external_domain'] \
+              && CONFIG['external_domain'][organisation_name])
+
       @admin_dn = @config['admin_dn'].to_s
       raise ExternalLoginError, 'admin dn is not set' \
         if @admin_dn.empty?
@@ -439,10 +443,9 @@ module PuavoRest
       raise ExternalLoginConfigError, 'external_id_field not configured' \
         unless @external_id_field.kind_of?(String)
 
-      @user_principal_dns_domain = ldap_config['user_principal_dns_domain']
-      raise ExternalLoginConfigError,
-            'user_principal_dns_domain not configured' \
-        unless @user_principal_dns_domain.kind_of?(String)
+      @external_domain = ldap_config['external_domain']
+      raise ExternalLoginConfigError, 'external_domain not configured' \
+        unless @external_domain.kind_of?(String)
 
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
@@ -782,7 +785,7 @@ module PuavoRest
 
     def user_ldapfilter(username)
       Net::LDAP::Filter.eq('userPrincipalName',
-                           "#{ username }@#{ @user_principal_dns_domain }")
+                           "#{ username }@#{ @external_domain }")
 
     end
   end
