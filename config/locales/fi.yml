@@ -352,7 +352,7 @@ fi:
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:
-    gsuite_integration_enabled: "G Suite -integraatio on päällä. Oppilaiden salasanat tarkistetaan Googlen vaatimusten mukaan (vähintään 8 merkkiä, vain tulostettavia ASCII-merkkejä, ei saa alkaa tai loppua välilyönnillä)."
+    gsuite_integration_enabled: "G Suite -integraatio on päällä.  Salasanat tarkistetaan Googlen vaatimusten mukaan (vähintään 8 merkkiä, vain tulostettavia ASCII-merkkejä, ei saa alkaa tai loppua välilyönnillä)."
     edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."

@@ -5,20 +5,6 @@ module Puavo
       LdapOrganisation.current.rest_proxy(*args)
     end
 
-    def external_pw_mgmt_url
-      Puavo::Organisation.
-        find(LdapOrganisation.current.cn).
-        value_by_key("external_pw_mgmt_url")
-
-    end
-
-    def external_pw_mgmt_role
-      Puavo::Organisation.
-        find(LdapOrganisation.current.cn).
-        value_by_key("external_pw_mgmt_role")
-
-    end
-
     def new_group_management?(school)
       new_group_management = Puavo::Organisation.
         find(LdapOrganisation.current.cn).
@@ -33,6 +19,11 @@ module Puavo
       new_group_management["only_of_schools"].include?(school.puavoId)
     end
 
+    def password_requirements
+      Puavo::Organisation.
+        find(LdapOrganisation.current.cn).
+        value_by_key('password_requirements')
+    end
 
     def users_synch?(school)
       users_synch = Puavo::Organisation.

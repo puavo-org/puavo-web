@@ -17,7 +17,7 @@
 <%= t('.head') %>
 </p>
 
-<% if @gsuite %>
+<% if @password_requirements == 'Google' %>
 <p class="message-info"><%= t('password.gsuite_integration_enabled') %></p>
 <% end %>
 

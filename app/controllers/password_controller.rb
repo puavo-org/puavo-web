@@ -11,26 +11,13 @@ class PasswordController < ApplicationController
   # GET /password/edit
   def edit
     @user = User.new
-    @gsuite = false
-
-    url = external_pw_mgmt_url
-
-    if !url.nil? && !url.empty?
-      @gsuite = true
-    end
-
+    @password_requirements = password_requirements
   end
 
   # GET /password/own
   def own
     @user = User.new
-    @gsuite = false
-
-    url = external_pw_mgmt_url
-
-    if !url.nil? && !url.empty?
-      @gsuite = true
-    end
+    @password_requirements = password_requirements
   end
 
   # PUT /password
@@ -185,29 +172,23 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password
-    url = external_pw_mgmt_url
-    stricter_password_requirements = !external_pw_mgmt_role.to_s.empty? \
-                                       && !url.to_s.empty?
-    if stricter_password_requirements then
-      # External password management (read: G Suite integration) is enabled
-      # for this organisation (though not necessarily for this specific user),
-      # so validate the password against Google's requirements.
-      new_password = params[:user][:new_password]
+    case password_requirements
+      when 'Google'
+        # Validate the password against Google's requirements.
+        new_password = params[:user][:new_password]
 
-      if new_password.size < 8 then
-        raise User::UserError,
-              I18n.t('activeldap.errors.messages.password_too_short')
-      end
-      if new_password[0] == ' ' || new_password[-1] == ' ' then
-        raise User::UserError,
-              I18n.t('activeldap.errors.messages.password_whitespace')
-      end
-      if !new_password.ascii_only? then
-        raise User::UserError,
-              I18n.t('activeldap.errors.messages.password_ascii_only')
-      end
-    else
-      url = nil
+        if new_password.size < 8 then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.password_too_short')
+        end
+        if new_password[0] == ' ' || new_password[-1] == ' ' then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.password_whitespace')
+        end
+        if !new_password.ascii_only? then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.password_ascii_only')
+        end
     end
 
     external_login_status = external_login(params[:login][:uid],
@@ -257,7 +238,6 @@ class PasswordController < ApplicationController
                     :target_user_password => params[:user][:new_password],
                   }
     rest_params[:mode] = (@user ? 'all' : 'upstream_only')
-    rest_params[:external_pw_mgmt_url] = url if url
 
     res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
     res = {} unless res.kind_of?(Hash)

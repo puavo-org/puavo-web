@@ -167,19 +167,16 @@ class User < LdapBase
                                         :attribute => I18n.t("activeldap.attributes.user.new_password")) )
     end
 
-    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty?
-      # If G Suite integration is enabled, ensure Google accepts the password. Their
-      # password restrictions are weird, almost as if they store them in plaintext...
-      url = external_pw_mgmt_url
-
-      if !url.nil? && !url.empty? && external_pw_mgmt_role == "student"
-        if self.new_password.size < 8
-          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_too_short"))
-        elsif self.new_password[0] == ' ' || self.new_password[-1] == ' '
-          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_whitespace"))
-        elsif !self.new_password.ascii_only?
-          errors.add(:new_password, I18n.t("activeldap.errors.messages.password_ascii_only"))
-        end
+    if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
+      case password_requirements
+        when 'Google'
+          if self.new_password.size < 8 then
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.password_too_short"))
+          elsif self.new_password[0] == ' ' || self.new_password[-1] == ' ' then
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.password_whitespace"))
+          elsif !self.new_password.ascii_only? then
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.password_ascii_only"))
+          end
       end
     end
 
@@ -340,12 +337,6 @@ class User < LdapBase
 
     ldap_conf = User.configuration
 
-    url = external_pw_mgmt_url
-
-    if !external_pw_mgmt_role.nil? \
-         && !self.puavoEduPersonAffiliation.include?(external_pw_mgmt_role) then
-      url = nil
-    end
 
     rest_params = {
                     :actor_username       => User.find(ldap_conf[:bind_dn]).uid,
@@ -355,7 +346,6 @@ class User < LdapBase
                     :target_user_username => self.uid,
                     :target_user_password => new_password,
                   }
-    rest_params[:external_pw_mgmt_url] = url if url
 
     res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
     res = {} unless res.kind_of?(Hash)
