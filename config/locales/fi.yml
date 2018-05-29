@@ -1000,3 +1000,5 @@ fi:
       username_placeholder: "Käyttäjätunnus"
       login: "Kirjaudu"
       help: "Apua"
+  ldap_create_time: Luotu (LDAP)
+  ldap_modify_time: Muokattu (LDAP)

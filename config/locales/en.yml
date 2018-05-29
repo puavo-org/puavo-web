@@ -1032,3 +1032,5 @@ en:
       username_placeholder: Username
       login: Login
       help: Help
+  ldap_create_time: Created (LDAP)
+  ldap_modify_time: Modified (LDAP)
