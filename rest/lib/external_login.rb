@@ -126,20 +126,23 @@ module PuavoRest
 
     def set_puavo_password(username, external_id, password, new_password,
                            fallback_to_admin_dn=false)
-      user = User.by_attr(:external_id, external_id)
-      if !user then
-        msg = "user with external id '#{ external_id }' (#{ username }?)" \
-                + ' not found in Puavo, can not change/invalidate password'
-        @flog.info(nil, msg)
-        return ExternalLoginStatus::NOCHANGE
-      end
-
-      # Do not always use the @admin_dn to set password, because we might
-      # want to invalidate password in case login to an external service
-      # has failed with the password, and we want to do that only when
-      # the new password is valid to Puavo.
-
       begin
+        users = User.by_attr(:external_id, external_id, :multiple => true)
+        user = users.first
+        if !user then
+          msg = "user with external id '#{ external_id }' (#{ username }?)" \
+                  + ' not found in Puavo, can not change/invalidate password'
+          @flog.info(nil, msg)
+          return ExternalLoginStatus::NOCHANGE
+        elsif users.count > 1
+          raise "multiple users with the same external id: #{ external_id }"
+        end
+
+        # Do not always use the @admin_dn to set password, because we might
+        # want to invalidate password in case login to an external service
+        # has failed with the password, and we want to do that only when
+        # the new password is valid to Puavo.
+
         res = Puavo.change_passwd(:no_upstream,
                                   CONFIG['ldap'],
                                   user.dn,
@@ -173,7 +176,8 @@ module PuavoRest
                   + res[:stderr]
         end
       rescue StandardError => e
-        @flog.warn(nil, e.message)
+        raise ExternalLoginError,
+              "error in set_puavo_password(): #{ e.message }"
       end
 
       return ExternalLoginStatus::NOCHANGE
@@ -313,13 +317,19 @@ module PuavoRest
       user_update_status = nil
 
       begin
-        user = User.by_attr(:external_id, userinfo['external_id'])
+        users = User.by_attr(:external_id,
+                             userinfo['external_id'],
+                             :multiple => true)
+        user = users.first
         if !user then
           user = User.new(userinfo)
           user.save!
           @flog.info('new external login user',
                      "created a new user '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
+        elsif users.count > 1 then
+          raise 'multiple users with the same external id: ' \
+                  + userinfo['external_id']
         elsif user.check_if_changed_attributes(userinfo) then
           user.removal_request_time = nil
           user.update!(userinfo)
