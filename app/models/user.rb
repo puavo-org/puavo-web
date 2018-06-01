@@ -337,8 +337,14 @@ class User < LdapBase
 
     ldap_conf = User.configuration
 
+    # ldap_conf[:bind_dn] may not be associated with a username in the
+    # current organisation in which case it should be nil
+    actor_dn = ldap_conf[:bind_dn]
+    actor_username = User.find(actor_dn).uid rescue nil
+
     rest_params = {
-                    :actor_username       => User.find(ldap_conf[:bind_dn]).uid,
+                    :actor_dn             => actor_dn,
+                    :actor_username       => actor_username,
                     :actor_password       => ldap_conf[:password],
                     :host                 => ldap_conf[:host],
                     :mode                 => mode || :all,

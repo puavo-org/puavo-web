@@ -775,7 +775,8 @@ class Users < PuavoSinatra
     auth :basic_auth
 
     begin
-      param_names_list = %w(actor_username
+      param_names_list = %w(actor_dn
+                            actor_username
                             actor_password
                             host
                             mode
@@ -784,6 +785,8 @@ class Users < PuavoSinatra
 
       param_names_list.each do |param_name|
         case param_name
+          when 'actor_dn', 'actor_username'
+            param_ok = params[param_name].kind_of?(String)
           when 'mode'
             param_ok = params[param_name] == 'all'                \
                          || params[param_name] == 'no_upstream'   \
@@ -796,6 +799,10 @@ class Users < PuavoSinatra
       raise "'#{ param_name }' parameter is not set or is of wrong type" \
         unless param_ok
       end
+
+      if params['actor_dn'].empty? && params['actor_username'].empty? then
+        raise 'either actor_dn or actor_username parameter must be set'
+      end
     rescue StandardError => e
       # XXX maybe log errors?
       return json({
@@ -807,7 +814,7 @@ class Users < PuavoSinatra
 
     res = Puavo.change_passwd(params['mode'].to_sym,
                               params['host'],
-                              nil,
+                              params['actor_dn'],
                               params['actor_username'],
                               params['actor_password'],
                               params['target_user_username'],

@@ -37,7 +37,7 @@ module Puavo
     end
 
     begin
-      if !actor_dn && actor_username then
+      if !actor_dn then
         actor_dn = PuavoRest::User.by_username!(actor_username).dn.to_s
       end
 
@@ -155,6 +155,9 @@ module Puavo
   def self.change_passwd_upstream(host, actor_username, actor_password,
                                   target_user_username, target_user_password)
     begin
+      raise 'actor_username not set' \
+        unless actor_username.kind_of?(String) && !actor_username.empty?
+
       external_login = PuavoRest::ExternalLogin.new
       login_service = external_login.new_external_service_handler()
       login_service.change_password(actor_username,
