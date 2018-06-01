@@ -205,7 +205,7 @@ module Puavo
       }
 
     rescue StandardError => e
-      short_errmsg = 'changing external service password failed'
+      short_errmsg = 'changing upstream password failed'
       long_errmsg  = "#{ short_errmsg } for user"         \
                        + " '#{ target_user_username }': " \
                        + e.message
