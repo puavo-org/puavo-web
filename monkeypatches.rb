@@ -18,4 +18,35 @@ module ActiveLdap
       ($active_ldap_schema_cache[key] ||= [yield])[0]
     end
   end
+
+  module Configuration
+    module ClassMethods
+      def remove_configuration_by_key_and_configuration(key, config)
+        @@defined_configurations.delete_if do |_key, _config|
+          _key == key && _config == config
+        end
+      end
+    end
+  end
+
+  module Connection
+    module ClassMethods
+      # Changed remove_configuration_by_configuration() call to pass key
+      def remove_connection(klass_or_key=self)
+        if klass_or_key.is_a?(Module)
+          key = active_connection_key(klass_or_key)
+        else
+          key = klass_or_key
+        end
+        config = configuration(key)
+        conn = active_connections[key]
+        remove_configuration_by_key_and_configuration(key, config)
+        active_connections.delete_if do |_key, _config|
+          _key == key && _config == config
+        end
+        conn.disconnect! if conn
+        config
+      end
+    end
+  end
 end
