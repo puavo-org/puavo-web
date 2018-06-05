@@ -49,7 +49,7 @@ module Puavo
       short_errmsg = 'failed to change the Puavo password'
       long_errmsg  = 'failed to change the Puavo password for user' \
                        + " '#{ target_user_username }'" \
-                       + " by '#{ actor_dn }': #{ e.message }"
+                       + " by '#{ actor_dn || actor_username }': #{ e.message }"
       $rest_flog.error(short_errmsg, long_errmsg)
       res = {
         :exit_status     => 1,

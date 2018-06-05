@@ -786,7 +786,8 @@ class Users < PuavoSinatra
       param_names_list.each do |param_name|
         case param_name
           when 'actor_dn', 'actor_username'
-            param_ok = params[param_name].kind_of?(String)
+            param_ok = params[param_name].kind_of?(String) \
+                         || params[param_name].nil?
           when 'mode'
             param_ok = params[param_name] == 'all'                \
                          || params[param_name] == 'no_upstream'   \
@@ -796,11 +797,12 @@ class Users < PuavoSinatra
                          && !params[param_name].empty?
         end
 
-      raise "'#{ param_name }' parameter is not set or is of wrong type" \
-        unless param_ok
+        raise "'#{ param_name }' parameter is not set or is of wrong type" \
+          unless param_ok
       end
 
-      if params['actor_dn'].empty? && params['actor_username'].empty? then
+      if params['actor_dn'].to_s.empty? \
+           && params['actor_username'].to_s.empty? then
         raise 'either actor_dn or actor_username parameter must be set'
       end
     rescue StandardError => e
