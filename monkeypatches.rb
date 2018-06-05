@@ -31,7 +31,9 @@ module ActiveLdap
 
   module Connection
     module ClassMethods
-      # Changed remove_configuration_by_configuration() call to pass key
+      # XXX Changed remove_configuration_by_configuration() call to pass key.
+      # XXX This is probably wrong, why are connections in active_connections
+      # XXX removed differently than connections defined_connections?
       def remove_connection(klass_or_key=self)
         if klass_or_key.is_a?(Module)
           key = active_connection_key(klass_or_key)
@@ -41,9 +43,7 @@ module ActiveLdap
         config = configuration(key)
         conn = active_connections[key]
         remove_configuration_by_key_and_configuration(key, config)
-        active_connections.delete_if do |_key, _config|
-          _key == key && _config == config
-        end
+        active_connections.delete_if {|_key, value| value == conn}
         conn.disconnect! if conn
         config
       end
