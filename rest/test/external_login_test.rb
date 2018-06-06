@@ -10,26 +10,32 @@ describe PuavoRest::ExternalLogin do
 
     CONFIG['external_login'] = {
       'example' => {
-        # XXX admin_dn is cucumber admin_dn, but how to get it nicely
+        # XXX admin_dn is "cucumber" dn, but how to get it nicely
         # XXX so it is always correct?
         'admin_dn'       => 'puavoId=8,ou=People,dc=edu,dc=example,dc=fi',
         'admin_password' => organisations['example']['owner_pw'],
         'service'        => 'external_ldap',
-#        'dn_mappings'    => {
-#          'defaults' => {
-#            'classnumber_regex'    => '^(\\d+)',
-#            'teaching_group_field' => 'department',
-#          },
-#          'mappings' => [
-#          ],
-#        },
         'external_ldap'  => {
-          'base'              => 'dc=edu,dc=heroes,dc=fi',
-          'bind_dn'           => organisations['heroes']['owner'],
-          'bind_password'     => organisations['heroes']['owner_pw'],
-          'external_id_field' => 'mail',
-          'server'            => 'localhost',
-        }
+          'base'                    => 'dc=edu,dc=heroes,dc=fi',
+          # XXX admin_dn is "admin" dn, but how to get it nicely
+          # XXX so it is always correct?
+          # XXX (we could also use some special user which only has some read
+          # XXX permissions to People)
+          'bind_dn'                 => 'puavoId=16,ou=People,dc=edu,dc=heroes,dc=fi',
+          'bind_password'           => organisations['heroes']['owner_pw'],
+          'dn_mappings'    => {
+            'defaults' => {
+              'classnumber_regex'    => '^(\\d+)',
+              'roles'                => [ 'student' ],
+              'school_dns'           => [ 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi' ],
+              'teaching_group_field' => 'department',
+            },
+          },
+          'external_domain'         => 'example.com',
+          'external_id_field'       => 'eduPersonPrincipalName',
+          'external_username_field' => 'mail',
+          'server'                  => 'localhost',
+        },
       }
     }
 
@@ -43,63 +49,25 @@ describe PuavoRest::ExternalLogin do
   it 'login to external service fails with unknown username' do
     basic_authorize 'badusername', 'badpassword'
     post '/v3/external_login/auth'
-    assert_equal 401, last_response.status, "Body: #{ last_response.body }"
-
-    # XXX should check that peter.parker does *not* exist in
-    # XXX example-organisation
+    assert_200
+    response = JSON.parse(last_response.body)
+    parsed_response = JSON.parse(last_response.body)
+    assert_equal 'BADUSERCREDS', parsed_response['status']
   end
 
   it 'login to external service fails with bad password' do
     basic_authorize 'peter.parker', 'badpassword'
     post '/v3/external_login/auth'
-    assert_equal 401, last_response.status, "Body: #{ last_response.body }"
-
-    # XXX should check that peter.parker does *not* exist in
-    # XXX example-organisation
+    assert_200
+    parsed_response = JSON.parse(last_response.body)
+    assert_equal 'BADUSERCREDS', parsed_response['status']
   end
 
   it 'login to external service succeeds with good username/password' do
     basic_authorize 'peter.parker', 'secret'
     post '/v3/external_login/auth'
     assert_200
-
-    # XXX should check that peter.parker *does* exist in example-organisation
-    # XXX and it has the correct attributes
-    # XXX    :external_id               = peter.parker@example.com
-    # XXX    :givenName                 = Peter
-    # XXX ?? :mail                      = peter.parker@example.com
-    # XXX ?? :preferredLanguage         = fi
-    # XXX ?? :puavoEduPersonAffiliation = admin
-    # XXX    :sn                        = Parker
-    # XXX    :uid                       = peter.parker
-
-    # XXX what about groups, what should be tested?
-  end
-
-  it 'login to external service succeeds with another good username/password' do
-    basic_authorize 'lara.croft', 'secret'
-    post '/v3/external_login/auth'
-    assert_200
-
-    # XXX should check that peter.parker *does* exist in example-organisation
-    # XXX and it has the correct attributes
-    # XXX    :external_id               = peter.parker@example.com
-    # XXX    :givenName                 = Peter
-    # XXX ?? :mail                      = peter.parker@example.com
-    # XXX ?? :preferredLanguage         = fi
-    # XXX ?? :puavoEduPersonAffiliation = admin
-    # XXX    :sn                        = Parker
-    # XXX    :uid                       = peter.parker
-
-    # XXX what about groups, what should be tested?
-
-  end
-
-  it 'user groups for peter.parker are correct' do
-    # XXX
-  end
-
-  it 'user groups for lara.croft are correct' do
-    # XXX
+    parsed_response = JSON.parse(last_response.body)
+    assert_equal 'UPDATED', parsed_response['status']
   end
 end
