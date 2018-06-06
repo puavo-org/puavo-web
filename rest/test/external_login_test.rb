@@ -1,6 +1,8 @@
 require_relative "./helper"
 
 describe PuavoRest::ExternalLogin do
+  extuser_target_school_dn = 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi'
+
   before(:each) do
     @orig_config = CONFIG.dup
 
@@ -26,7 +28,7 @@ describe PuavoRest::ExternalLogin do
             'defaults' => {
               'classnumber_regex'    => '^(\\d+)',
               'roles'                => [ 'student' ],
-              'school_dns'           => [ 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi' ],
+              'school_dns'           => [ extuser_target_school_dn ],
               'teaching_group_field' => 'department',
             },
           },
@@ -74,15 +76,14 @@ describe PuavoRest::ExternalLogin do
     before :each do
       basic_authorize 'peter.parker', 'secret'
       post '/v3/external_login/auth'
+      assert_200
+      @parsed_response = JSON.parse(last_response.body)
+      assert_equal 'UPDATED',
+                   @parsed_response['status'],
+                   'expected UPDATED as external_login status'
     end
 
     it 'login succeeds with good username/password' do
-      assert_200
-      parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   parsed_response['status'],
-                   'expected UPDATED as external_login status'
-
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert !user.nil?, 'user peter.parker could not be found in Puavo'
       assert_equal 'peter.parker',
@@ -100,18 +101,12 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'subsequent login with bad password fails' do
-      assert_200
-      parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   parsed_response['status'],
-                   'expected UPDATED as external_login status'
-
       basic_authorize 'peter.parker', 'badpassword'
       post '/v3/external_login/auth'
       assert_200
-      parsed_response = JSON.parse(last_response.body)
+      @parsed_response = JSON.parse(last_response.body)
       assert_equal 'BADUSERCREDS',
-                   parsed_response['status'],
+                   @parsed_response['status'],
                    'expected BADUSERCREDS as external_login status'
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
@@ -119,18 +114,12 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'subsequent successful logins behave expectedly' do
-      assert_200
-      parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   parsed_response['status'],
-                   'expected UPDATED as external_login status'
-
       basic_authorize 'peter.parker', 'secret'
       post '/v3/external_login/auth'
       assert_200
-      parsed_response = JSON.parse(last_response.body)
+      @parsed_response = JSON.parse(last_response.body)
       assert_equal 'NOCHANGE',
-                   parsed_response['status'],
+                   @parsed_response['status'],
                    'expected NOCHANGE as external_login status'
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
@@ -138,12 +127,6 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'subsequent successful logins update user information when changed' do
-      assert_200
-      parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   parsed_response['status'],
-                   'expected UPDATED as external_login status'
-
       # change Peter Parker --> Peter Bentley and see that login fixes that
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       user.surname = 'Bentley'
@@ -152,15 +135,25 @@ describe PuavoRest::ExternalLogin do
       basic_authorize 'peter.parker', 'secret'
       post '/v3/external_login/auth'
       assert_200
-      parsed_response = JSON.parse(last_response.body)
+      @parsed_response = JSON.parse(last_response.body)
       assert_equal 'UPDATED',
-                   parsed_response['status'],
+                   @parsed_response['status'],
                    'expected UPDATED as external_login status, because surname must have changed'
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_equal 'Parker',
                    user.surname,
                    'Peter Parker is no longer Parker'
+    end
+
+    it 'user is in expected school' do
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert_equal extuser_target_school_dn, user.puavoSchool
+    end
+
+    it 'user has expected roles' do
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert_equal 'student', user.puavoEduPersonAffiliation
     end
   end
 end
