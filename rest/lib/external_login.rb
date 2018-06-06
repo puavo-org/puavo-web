@@ -282,7 +282,7 @@ module PuavoRest
     end
 
     def update_user_info(userinfo, password, params)
-      if userinfo['school_dns'].nil? then
+      if userinfo['school_dns'].empty? then
         school_dn_param = params[:school_dn].to_s
         if !school_dn_param.empty? then
           userinfo['school_dns'] = [ school_dn_param ]
@@ -297,7 +297,7 @@ module PuavoRest
         end
       end
 
-      if userinfo['roles'].nil? then
+      if userinfo['roles'].empty? then
         role_param = params[:role].to_s
         if !role_param.empty? then
           userinfo['roles'] = [ role_param ]
