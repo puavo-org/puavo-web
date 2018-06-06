@@ -282,34 +282,22 @@ module PuavoRest
     end
 
     def update_user_info(userinfo, password, params)
+      school_dn_param = params[:school_dn].to_s
+      if !school_dn_param.empty? then
+        userinfo['school_dns'] = [ school_dn_param ]
+      end
       if userinfo['school_dns'].empty? then
-        school_dn_param = params[:school_dn].to_s
-        if !school_dn_param.empty? then
-          userinfo['school_dns'] = [ school_dn_param ]
-        else
-          default_school_dns = @config['default_school_dns']
-          if !default_school_dns.kind_of?(Array) then
-            raise ExternalLoginError,
-              'could not determine user school for' \
-                + " '#{ userinfo['username'] }' and default school is not set"
-          end
-          userinfo['school_dns'] = default_school_dns
-        end
+        raise ExternalLoginError,
+              "could not determine user school for #{ userinfo['username'] }"
       end
 
+      role_param = params[:role].to_s
+      if !role_param.empty? then
+        userinfo['roles'] = [ role_param ]
+      end
       if userinfo['roles'].empty? then
-        role_param = params[:role].to_s
-        if !role_param.empty? then
-          userinfo['roles'] = [ role_param ]
-        else
-          default_roles = @config['default_roles']
-          if !default_roles.kind_of?(Array) then
-            raise ExternalLoginError,
-              'could not determine user role for' \
-                + " '#{ userinfo['username'] }' and default role is not set"
-          end
-          userinfo['roles'] = default_roles
-        end
+        raise ExternalLoginError,
+              "could not determine user role for #{ userinfo['username'] }"
       end
 
       external_groups_by_type = userinfo.delete('external_groups')
@@ -680,6 +668,17 @@ module PuavoRest
       userinfo['roles'] = ((userinfo['roles'] || []) + added_roles).sort.uniq
       userinfo['school_dns'] \
         = ((userinfo['school_dns'] || []) + added_school_dns).sort.uniq
+
+      # apply defaults in case we have empty roles and/or school_dns
+      %w(roles school_dns).each do |attr|
+        if userinfo[attr].empty? then
+          unless @dn_mapping_defaults[attr].kind_of?(Array) then
+            raise "userinfo attribute '#{ attr }' default is of wrong type" \
+                    + ' or is not set when needed'
+          end
+          userinfo[attr] = @dn_mapping_defaults[attr]
+        end
+      end
     end
 
     def get_add_groups_param(params, param_name)
