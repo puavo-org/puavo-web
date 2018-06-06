@@ -52,7 +52,12 @@ describe PuavoRest::ExternalLogin do
     assert_200
     response = JSON.parse(last_response.body)
     parsed_response = JSON.parse(last_response.body)
-    assert_equal 'BADUSERCREDS', parsed_response['status']
+    assert_equal 'BADUSERCREDS',
+                 parsed_response['status'],
+                 'expected BADUSERCREDS as external_login status'
+
+    user = User.find(:first, :attribute => 'uid', :value => 'badusername')
+    assert_nil user, 'user badusername was created to Puavo, should not be'
   end
 
   it 'login to external service fails with bad password' do
@@ -60,7 +65,12 @@ describe PuavoRest::ExternalLogin do
     post '/v3/external_login/auth'
     assert_200
     parsed_response = JSON.parse(last_response.body)
-    assert_equal 'BADUSERCREDS', parsed_response['status']
+    assert_equal 'BADUSERCREDS',
+                 parsed_response['status'],
+                 'expected BADUSERCREDS as external_login status'
+
+    user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+    assert_nil user, 'user peter.parker was created to Puavo, should not be'
   end
 
   it 'login to external service succeeds with good username/password' do
@@ -68,6 +78,22 @@ describe PuavoRest::ExternalLogin do
     post '/v3/external_login/auth'
     assert_200
     parsed_response = JSON.parse(last_response.body)
-    assert_equal 'UPDATED', parsed_response['status']
+    assert_equal 'UPDATED',
+                 parsed_response['status'],
+                 'expected UPDATED as external_login status'
+
+    user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+    assert_equal 'peter.parker',
+                 user.uid,
+                 'peter.parker has incorrect uid'
+    assert_equal 'Peter',
+                 user.given_name,
+                 'peter.parker has incorrect given name'
+    assert_equal 'Parker',
+                 user.surname,
+                 'peter.parker has incorrect surname'
+    assert_equal 'peter.parker@HEROES.OPINSYS.NET',
+                 user.puavoExternalId,
+                 'peter.parker has incorrect external_id'
   end
 end
