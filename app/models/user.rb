@@ -35,7 +35,7 @@ class User < LdapBase
 
   before_destroy :delete_all_associations, :delete_kerberos_principal
 
-  after_create :change_password
+  after_create :change_password_no_upstream
 
   validate :validate
 
@@ -330,6 +330,10 @@ class User < LdapBase
         )
       end
     end
+  end
+
+  def change_password_no_upstream
+    change_password(:no_upstream)
   end
 
   def change_password(mode=nil)
