@@ -453,6 +453,10 @@ module PuavoRest
       raise ExternalLoginConfigError, 'external_id_field not configured' \
         unless @external_id_field.kind_of?(String)
 
+      @external_username_field = ldap_config['external_username_field']
+      raise ExternalLoginConfigError, 'external_username_field not configured' \
+        unless @external_username_field.kind_of?(String)
+
       @external_domain = ldap_config['external_domain']
       raise ExternalLoginConfigError, 'external_domain not configured' \
         unless @external_domain.kind_of?(String)
@@ -794,7 +798,7 @@ module PuavoRest
     end
 
     def user_ldapfilter(username)
-      Net::LDAP::Filter.eq('userPrincipalName',
+      Net::LDAP::Filter.eq(@external_username_field,
                            "#{ username }@#{ @external_domain }")
 
     end
