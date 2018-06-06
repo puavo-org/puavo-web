@@ -13,7 +13,7 @@ Feature: Manage roles
       | Pavel     | Taylor | pavel | secret   | true         | Staff     | staff                     |
       | Ben       | Mabey  | ben   | secret   | true         | Staff     | staff                     |
     And I am logged in as "pavel" with password "secret"
-  
+
   Scenario: Register new role
     Given I am on the new role page
     When I fill in "Role name" with "Students"

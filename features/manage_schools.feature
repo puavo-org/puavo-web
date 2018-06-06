@@ -102,7 +102,7 @@ Feature: Manage schools
     And I fill in "Name prefix" with "example prefix"
     And I press "Create"
     Then I should see "Name prefix contains invalid characters (allowed characters are a-z0-9-)"
-    
+
 
   Scenario: Edit school and set empty names
     Given I am on the school page with "Greenwich Steiner School"
@@ -156,7 +156,7 @@ Feature: Manage schools
   Scenario: Schools list page when we have only one school and user is not organisation owner
     Given the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |
-      | Pavel     | Taylor | pavel | secret   | true         | Teacher   | admin                     | Greenwich Steiner School | 
+      | Pavel     | Taylor | pavel | secret   | true         | Teacher   | admin                     | Greenwich Steiner School |
     And I follow "Logout"
     And I am logged in as "pavel" with password "secret"
     When I go to the schools list page
@@ -177,7 +177,7 @@ Feature: Manage schools
     | Role 1      | role1 |
     And the following users:
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school |
-    | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   | 
+    | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   |
     And I am on the show school page with "Test School 1"
     When I follow "Remove"
     Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
@@ -207,7 +207,7 @@ Feature: Manage schools
     Then I should see "School was successfully removed."
     And I should see "Listing schools"
 
-  
+
   Scenario: Add school management access rights to the user
     Given the following users:
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
@@ -245,7 +245,7 @@ Feature: Manage schools
     And I follow "Remove" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor (Example school 1) is no longer an admin user in this school"
     And the memberUid should not include "pavel" on the "Domain Admins" samba group
-    
+
 
   Scenario: School management access can be added only if user type is admin
     Given the following users:
@@ -279,7 +279,7 @@ Feature: Manage schools
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Rename groups and roles"
     Then I should see "Cannot find any roles!"
-    
+
   Scenario: Rename roles and groups
     Given the following groups to "Example school 1"
     | displayName | cn           |

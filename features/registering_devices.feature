@@ -2,7 +2,7 @@ Feature: Devices registration
 
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-  
+
   @start_test_server
   Scenario: Register new fatclient
     Given process activity is logged to "greenletters.log"
@@ -76,9 +76,9 @@ Feature: Devices registration
     School:                 Example school 1
     Hostname:               test-thin-01
     MAC address(es):        52:54:00:aa:aa:aa
-    Serial number:          
-    Device manufacturer:    
-    Device model:           
+    Serial number:
+    Device manufacturer:
+    Device model:
     Device primary user:    cucumber
     """
     When I enter "y" into process "puavo-register"

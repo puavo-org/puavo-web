@@ -30,7 +30,7 @@ Feature: Manage users
     Then I should see "Jane"
     And I should see "Doe"
     And I should not see "SSH public key"
-  
+
   Scenario: Create new user
     Given the following groups:
     | displayName | cn      |
@@ -46,7 +46,7 @@ Feature: Manage users
     | New password confirmation | secretpw              |
     | Personnel Number          | 556677                |
     | SSH public key            | ssh-rsa Zm9vYmFy      |   # the key is "foobar" in base64
-# FIXME test mail and telephoneNumber for more values  
+# FIXME test mail and telephoneNumber for more values
 #   | Group                      |       |
 #   | Password                   |       |
 #   | Password confirmation      |       |

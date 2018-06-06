@@ -2,7 +2,7 @@ Feature: User mass import
   In order to [goal]
   [stakeholder]
   wants [behaviour]
-  
+
   Background:
     Given a new school and group with names "School 2", "Class 5" on the "example" organisation
     And a new role with name "Class 5" and which is joined to the "Class 5" group
@@ -13,7 +13,7 @@ Feature: User mass import
       | Pavel     | Taylor | pavel | secret   | true         | Class 4   | staff                     |
     And "pavel" is a school admin on the "School 2" school
     And I am logged in as "pavel" with password "secret"
- 
+
   Scenario: Typical user mass import
     Given I send to the following user mass import data
     """
@@ -201,7 +201,7 @@ Feature: User mass import
     And I select "Role" from "users_import_columns[2]"
     And I press "Validates users"
     Then I should see "Given name and surname are required fields"
-    
+
   Scenario: User mass import with duplicate column name
     Given I send to the following user mass import data
     """
@@ -213,7 +213,7 @@ Feature: User mass import
     And I select "Given name" from "users_import_columns[2]"
     And I press "Validates users"
     Then I should see "Duplicate column name"
-    
+
   Scenario: User mass import with case insensitive role name and user type
     Given I send to the following user mass import data
     """
@@ -253,7 +253,7 @@ Feature: User mass import
 #      | Ben | Mabey | ben.mabey | Class 4 |
 #    And I should not see "Roles can't be blank"
 #    And I should not see "User type is invalid"
- 
+
 #  Scenario: Data does not lost with validation error case on user mass import
 #    Given I send to the following user mass import data
 #    """

@@ -65,7 +65,7 @@ Feature: Manage passwords
     Then I should see "Password changed successfully!"
     And I should not login with "ben" and "bensecret"
     And I should login with "ben" and "newbensecret"
-    
+
   Scenario: User to change their own password
     Given I am on the own password change page
     When I fill in "Username" with "pavel"
