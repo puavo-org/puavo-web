@@ -18,7 +18,9 @@ class UsersController < ApplicationController
                   'uidNumber',
                   'loginShell',
                   'puavoAdminOfSchool',
-                  'sambaPrimaryGroupSID']
+                  'sambaPrimaryGroupSID',
+                  'puavoRemovalRequestTime',
+                  'puavoDoNotDelete']
 
     @users = User.search_as_utf8( :filter => filter,
                           :scope => :one,

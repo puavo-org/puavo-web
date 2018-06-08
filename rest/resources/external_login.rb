@@ -82,6 +82,8 @@ module PuavoRest
           # keep user uids stable on our side.
           user_to_remove = User.by_username(username)
           if user_to_remove && user_to_remove.mark_for_removal! then
+            # XXX we should actually check ldap if this user external_id
+            # XXX is set on some ldap user and then *not* remove it?
             flog.info('puavo user marked for removal',
                       "puavo user '#{ user_to_remove.username }' is marked" \
                         + ' for removal')

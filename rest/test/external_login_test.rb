@@ -126,6 +126,16 @@ describe PuavoRest::ExternalLogin do
       assert !user.nil?, 'user peter.parker could not be found in Puavo'
     end
 
+    it 'user is in expected school' do
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert_equal extuser_target_school_dn, user.puavoSchool
+    end
+
+    it 'user has expected roles' do
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert_equal 'student', user.puavoEduPersonAffiliation
+    end
+
     it 'subsequent successful logins update user information when changed' do
       # change Peter Parker --> Peter Bentley and see that login fixes that
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
@@ -146,14 +156,65 @@ describe PuavoRest::ExternalLogin do
                    'Peter Parker is no longer Parker'
     end
 
-    it 'user is in expected school' do
+    it 'subsequent successful logins update username when changed' do
+      # change peter.parker --> peter.parker2 (username) and see that login
+      # fixes that
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      assert_equal extuser_target_school_dn, user.puavoSchool
+      external_id = user.puavoExternalId
+      user.uid = 'peter.parker2'
+      user.save!
+
+      basic_authorize 'peter.parker', 'secret'
+      post '/v3/external_login/auth'
+      assert_200
+      @parsed_response = JSON.parse(last_response.body)
+      assert_equal 'UPDATED',
+                   @parsed_response['status'],
+                   'login with mismatching username did not succeed'
+
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert_equal 'peter.parker',
+                   user.uid,
+                   'peter.parker username was not changed according' \
+                     + ' to external auth service'
+
+      assert_equal external_id,
+                   user.puavoExternalId,
+                   'peter.parker external id has unexpectedly changed'
     end
 
-    it 'user has expected roles' do
+    it 'user that has been removed from external login is marked as removed' do
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      assert_equal 'student', user.puavoEduPersonAffiliation
+      assert_nil user.puavoRemovalRequestTime,
+                 'user removal request time is set when it should not be'
+      user.uid = 'peter.parker2'
+      user.save!
+
+      basic_authorize 'peter.parker2', 'secret'
+      post '/v3/external_login/auth'
+      assert_200
+      @parsed_response = JSON.parse(last_response.body)
+      assert_equal 'BADUSERCREDS',
+                   @parsed_response['status'],
+                   'can login with a wrong Puavo username'
+
+      # XXX this is wrong, it should not be set, because the same user with
+      # XXX the same external id still exists in external login service
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker2')
+      assert !user.puavoRemovalRequestTime.nil?,
+            'user removal request time is not set when it should be'
+
+      basic_authorize 'peter.parker', 'secret'
+      post '/v3/external_login/auth'
+      assert_200
+      @parsed_response = JSON.parse(last_response.body)
+      assert_equal 'UPDATED',
+                   @parsed_response['status'],
+                   'can not login with changed Puavo username'
+
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert_nil user.puavoRemovalRequestTime,
+            'user removal request time was removed after a successful login'
     end
   end
 end
