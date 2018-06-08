@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="<%= @data['language'][:html_lang] %>">
+<head>
+<meta charset="UTF-8">
+<title><%= @data['language'][:page_title] %></title>
+<style>
+
+html {
+  font-family: "Ubuntu", "Cantarell", sans-serif;
+  background: #f0eee1;
+  padding: 10px;
+}
+
+body {
+  background: linear-gradient(to bottom, #f0eee1 0%,#e6e4d7 100%);
+  background-clip: padding-box;
+
+  box-shadow:
+    2px -2px 2px rgba(0, 0, 0, 0.5),
+    -2px 2px 2px rgba(0,0,0,0.5),
+    inset 0 5px 100px rgba(65, 120, 107, 0.2);
+
+  border: 5px solid #ed7113;
+  max-width: 75%;
+  margin: 10px auto;
+  padding: 10px 50px;
+}
+
+header h1 {
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ccc;
+}
+
+.collapseHeader {
+  font-size: 150%;
+  font-weight: bold;
+  padding: 5px 10px;
+  margin-top: 50px;
+  cursor: pointer;
+  background: #fe9749;
+}
+
+.collapseHeader h1 {
+  font-size: inherit;
+  display: inline;
+  pointer-events: none;
+}
+
+.collapseHeader .count {
+  font-size: 75%;
+}
+
+.collapseHeader span {
+  pointer-events: none;
+}
+
+.users {
+  margin-top: 10px;
+  margin-left: 50px;
+  border-collapse: collapse;
+  display: none;
+}
+
+.users th, td {
+  padding: 15px;
+}
+
+.users th {
+  background: #41786b;
+  text-align: left;
+  color: #fff;
+}
+
+.users tr:nth-child(even) {
+  background: #6dc6af;
+}
+
+.users tr:nth-child(odd) {
+  background: #5cb59f;
+}
+
+.button {
+  border: 2px outset #ccc;
+  padding: 5px 10px;
+  background: #ccc;
+  text-decoration: none;
+  color: #000;
+}
+
+.button:active {
+  border: 2px inset #ccc;
+}
+
+.button .icon {
+  padding-right: 5px;
+}
+
+footer {
+  margin-top: 50px;
+  border-top: 1px dashed #ccc;
+  text-align: center;
+  font-size: 75%;
+  color: #777;
+}
+
+footer table {
+  margin: 0 auto;
+}
+
+footer table td {
+  margin: 0;
+  padding: 10px;
+  text-align: left;
+}
+
+</style>
+<script>
+
+function toggleGroup(e)
+{
+  var tbl = document.getElementById("table-" + e.target.dataset.target);
+  var arr = document.getElementById("arrow-" + e.target.dataset.target);
+
+  if (tbl.style.display == "none" || tbl.style.display == "") {
+    tbl.style.display = "block";
+    arr.innerHTML = "▼";
+  } else {
+    tbl.style.display = "none";
+    arr.innerHTML = "▶";
+  }
+}
+
+function setupCollapseHeaders()
+{
+  var links = document.getElementsByClassName("collapseHeader");
+
+  for (var i = 0; i < links.length; i++)
+    if (links[i].dataset.target)
+      links[i].onclick = toggleGroup;
+}
+
+</script>
+</head>
+<body onload="setupCollapseHeaders()">
+
+<header>
+  <h1><%= @data['school'] %></h1>
+</header>
+
+<% @data['groups']&.each do |name, group| %>
+<div class="collapseHeader" data-target="<%= group[0] %>">
+  <h1><%= (group[0] == 'ungrouped') ? @data['language'][:ungrouped] : name %></h1>
+  <span class="count">(<%= group[1].size %> <%= @data['language'][:users] %>)</span>
+  <span id="arrow-<%= group[0] %>">▶</span>
+</div>
+<table class="users" id="table-<%= group[0] %>">
+  <tr>
+    <th><%= @data['language'][:last_name] %></th>
+    <th><%= @data['language'][:first_names] %></th>
+    <th><%= @data['language'][:username] %></th>
+    <th><%= @data['language'][:actions] %></th>
+  </tr>
+  <% group[1].each do |u| %>
+  <tr>
+    <td><%= u[:last] %></td>
+    <td><%= u[:first] %></td>
+    <td><%= u[:username] %></td>
+    <td>
+      <a href="<%= @data['domain'] %>/users/password?initial=<%= u[:username] %>"
+         class="button" title="<%= @data['language'][:password_tooltip] %>">
+        <span class="icon">🔑</span> <%= @data['language'][:change_password] %>
+      </a>
+    </td>
+  </tr>
+  <% end %>
+</table>
+<% end %>
+
+<footer>
+<table>
+  <tr>
+    <td>
+      <img src="opinsys_logo.png" width="150" alt="Opinsys logo">
+    </td>
+    <td>
+      © Opinsys Oy 2018<br>
+      <%= @data['language'][:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %>
+    </td>
+  </tr>
+</table>
+</footer>
+
+</body>
+</html>

@@ -50,6 +50,7 @@ require_relative "./resources/certs"
 require_relative "./resources/authentication"
 require_relative "./resources/external_login"
 require_relative "./resources/bootserver_dns"
+require_relative "./resources/my_school_users"
 
 REDIS_CONNECTION = Redis.new CONFIG["redis"].symbolize_keys
 DISTRIBUTED_LOCK = Redlock::Client.new([REDIS_CONNECTION])
