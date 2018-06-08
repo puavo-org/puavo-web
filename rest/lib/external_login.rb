@@ -4,7 +4,7 @@
 #   in whatever particular case
 # ExternalLoginUnavailable means an error at external service
 # ExternalLoginUserMissing means user could not found at external service
-# ExternalLoginWrongPassword means user is valid but had a wrong password
+# ExternalLoginWrongCredentials means user or password was invalid
 
 class ExternalLoginError               < StandardError; end
 class ExternalLoginConfigError         < ExternalLoginError; end
@@ -12,7 +12,7 @@ class ExternalLoginNotConfigured       < ExternalLoginError; end
 class ExternalLoginPasswordChangeError < ExternalLoginError; end
 class ExternalLoginUnavailable         < ExternalLoginError; end
 class ExternalLoginUserMissing         < ExternalLoginError; end
-class ExternalLoginWrongPassword       < ExternalLoginError; end
+class ExternalLoginWrongCredentials    < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLoginStatus
@@ -479,7 +479,7 @@ module PuavoRest
       bind_ok = @ldap.bind_as(:filter   => user_ldapfilter(username),
                               :password => password)
       if !bind_ok then
-        raise ExternalLoginWrongPassword,
+        raise ExternalLoginWrongCredentials,
               "binding as '#{ username }' to external ldap failed:" \
                 + ' user and/or password is wrong'
       end
@@ -502,7 +502,7 @@ module PuavoRest
       bind_ok = @ldap.bind_as(:filter   => user_ldapfilter(actor_username),
                               :password => actor_password)
       if !bind_ok then
-        raise ExternalLoginWrongPassword,
+        raise ExternalLoginWrongCredentials,
               "binding as '#{ actor_username }' to external ldap failed:" \
                 + ' user and/or password is wrong'
       end
@@ -782,8 +782,33 @@ module PuavoRest
       end
 
       if ldap_entries.length == 0 then
+        # ExternalLoginUserMissing means that user is missing in external ldap
+        # and it can be removed from Puavo in case it exists there.
         msg = "user '#{ username }' does not exist in external ldap"
-        raise ExternalLoginUserMissing, msg
+        puavouser = User.by_username(username)
+        raise ExternalLoginUserMissing, msg \
+          unless puavouser && puavouser.external_id
+
+        extid_filter = Net::LDAP::Filter.eq(@external_id_field,
+                                            puavouser.external_id)
+        extid_ldap_entries = @ldap.search(:filter => extid_filter)
+        if !extid_ldap_entries then
+          msg = "ldap search for external_id '#{ puavouser.external_id }'" \
+                  + " failed: #{ @ldap.get_operation_result.message }"
+          raise ExternalLoginUnavailable, msg
+        end
+
+        if extid_ldap_entries.length == 0 then
+          msg = "user '#{ username }' (#{ puavouser.external_id }) does not" \
+                  + ' exist in external ldap'
+          raise ExternalLoginUserMissing, msg
+        end
+
+        # User exists in Puavo and in external ldap, but wrong username was
+        # used for login (we could lookup another user in the external ldap
+        # with the same external id as is associated with this username
+        # in Puavo).
+        raise ExternalLoginWrongCredentials, msg
       end
 
       if ldap_entries.length > 1

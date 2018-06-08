@@ -32,7 +32,7 @@ module PuavoRest
 
         login_service = external_login.new_external_service_handler()
 
-        wrong_password = false
+        wrong_credentials = false
         begin
           message = 'attempting external login to service' \
                       + " '#{ login_service.service_name }' by user" \
@@ -42,10 +42,10 @@ module PuavoRest
         rescue ExternalLoginUserMissing => e
           flog.info('user does not exist in external ldap', e.message)
           userinfo = nil
-        rescue ExternalLoginWrongPassword => e
-          flog.info('user provided wrong password', e.message)
+        rescue ExternalLoginWrongCredentials => e
+          flog.info('user provided wrong username/password', e.message)
           userinfo = nil
-          wrong_password = true
+          wrong_credentials = true
         rescue ExternalLoginError => e
           raise e
         rescue StandardError => e
@@ -54,7 +54,7 @@ module PuavoRest
           raise ExternalLoginUnavailable, e
         end
 
-        if wrong_password then
+        if wrong_credentials then
           external_id = login_service.lookup_external_id(username)
           # We must not force the user of admin_dn for this password change,
           # because this should happen only when password was valid for puavo
