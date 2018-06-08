@@ -12,6 +12,7 @@ class PasswordController < ApplicationController
   def edit
     @user = User.new
     @gsuite = false
+    @existing = params[:initial] || nil
 
     url = external_pw_mgmt_url
 

@@ -41,7 +41,7 @@
 <td colspan="2"><h2><%=t('.changed_user') %></h2></td>
 <tr>
   <td><%= f.label :uid, t('activeldap.attributes.user.uid') %></td>
-  <td><%= text_field :user, :uid, :value => "" %></td>
+  <td><%= text_field :user, :uid, :value => @existing || '' %></td>
 </tr>
 
 <tr>
