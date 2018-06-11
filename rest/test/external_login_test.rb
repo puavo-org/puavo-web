@@ -55,6 +55,14 @@ describe PuavoRest::ExternalLogin do
               'school_dns'           => [ extuser_target_school_dn ],
               'teaching_group_field' => 'department',
             },
+            'mappings' => [
+              { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+                  { 'add_administrative_group' => {
+                      'displayname' => 'Heroes',
+                      'name'        => 'heroes',
+                    }}
+                ]},
+            ],
           },
           'external_domain'         => 'example.com',
           'external_id_field'       => 'eduPersonPrincipalName',
@@ -144,8 +152,6 @@ describe PuavoRest::ExternalLogin do
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_equal 'student', user.puavoEduPersonAffiliation
     end
-
-    # XXX what about groups?
 
     it 'subsequent successful logins update user information when changed' do
       # change Peter Parker --> Peter Bentley and see that login fixes that
@@ -283,6 +289,60 @@ describe PuavoRest::ExternalLogin do
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_nil user.puavoRemovalRequestTime,
                  'user removal request time is set when it should not be'
+    end
+  end
+
+  describe 'test group creation and membership handling' do
+    it 'new groups are created as users log in' do
+      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
+      assert_nil group,
+                  'There is a heroes group when it should not be (yet)'
+
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
+
+      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
+      assert !group.nil?, 'There is no heroes group when there should be'
+
+      assert_equal %w(peter.parker),
+                   Array(group.memberUid),
+                   'heroes group should consist of peter.parker'
+    end
+
+    it 'new members are added to groups as users log in' do
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
+      assert_external_status('lara.croft',   'secret', 'UPDATED', 'login error')
+
+      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
+      assert !group.nil?, 'There is no heroes group when there should be'
+
+      assert_equal %w(peter.parker lara.croft),
+                   group.memberUid,
+                   'heroes group should consist of peter.parker and lara.croft'
+    end
+
+    it 'users are removed from groups according to configuration' do
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
+      assert_external_status('lara.croft',   'secret', 'UPDATED', 'login error')
+
+      # remove all mappings so that peter.parker & lara.croft should
+      # no longer belong to the group
+      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
+            ['mappings'] = []
+
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
+
+      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
+      assert_equal %w(lara.croft),
+                   Array(group.memberUid),
+                   'heroes group should consist of lara.croft only' \
+                     + ' after disappearance of peter.parker'
+
+      assert_external_status('lara.croft', 'secret', 'UPDATED', 'login error')
+
+      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
+      assert_equal [],
+                   Array(group.memberUid),
+                   'heroes group should not have any members'
     end
   end
 end
