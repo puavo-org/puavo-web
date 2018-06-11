@@ -60,8 +60,7 @@ class MySchoolUsers < PuavoSinatra
     @data = {}
     @data['school'] = school.name
     @data['groups'] = groups
-    @data['domain'] = 'http://10.246.133.89:8081'
-    #@data['domain'] = 'http://' + request.host
+    @data['domain'] = "#{request.scheme}://#{request.host_with_port}"
 
     # Localize the page. The HTTP accept languages are sorted by priority,
     # we'll choose the *first* that we have a translation for and stop.
