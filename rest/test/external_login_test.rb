@@ -1,5 +1,15 @@
 require_relative "./helper"
 
+def test_password(user, password)
+  begin
+    user.bind(password)
+    user.remove_connection
+    return true
+  rescue StandardError => e
+    return false
+  end
+end
+
 describe PuavoRest::ExternalLogin do
   extuser_target_school_dn = 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi'
 
@@ -98,7 +108,8 @@ describe PuavoRest::ExternalLogin do
       assert_equal 'peter.parker@HEROES.OPINSYS.NET',
                    user.puavoExternalId,
                    'peter.parker has incorrect external_id'
-      # XXX how to test password?
+      assert test_password(user, 'secret'),
+             'password was not valid'
     end
 
     it 'subsequent login with bad password fails' do
@@ -197,8 +208,12 @@ describe PuavoRest::ExternalLogin do
                    @parsed_response['status'],
                    'login password not invalidated'
 
-      # XXX test "oldpassword", it should not work
-      # XXX test "secret", it should not work either
+      assert !test_password(user, 'oldpassword'),
+             'password "oldpassword" was valid,' \
+               + ' even though password should have been invalidated'
+      assert !test_password(user, 'secret'),
+             'password "secret" was valid,' \
+               + ' even though password should have been invalidated'
 
       basic_authorize 'peter.parker', 'secret'
       post '/v3/external_login/auth'
@@ -208,17 +223,17 @@ describe PuavoRest::ExternalLogin do
                    @parsed_response['status'],
                    'login password not invalidated'
 
-      # XXX test "secret", it should work again
+      assert test_password(user, 'secret'),
+             'password "secret" was not valid, even though it should work again'
     end
 
     it 'user password is invalidated when old username is used and password matches' do
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      assert_nil user.puavoRemovalRequestTime,
-                 'user removal request time is set when it should not be'
       user.uid = 'peter.parker2'
       user.save!
 
-      # XXX should test password?
+      assert test_password(user, 'secret'),
+             'password "secret" was not valid'
 
       basic_authorize 'peter.parker2', 'badpassword'
       post '/v3/external_login/auth'
@@ -228,7 +243,8 @@ describe PuavoRest::ExternalLogin do
                    @parsed_response['status'],
                    'can login with a wrong Puavo username/password'
 
-      # XXX should test password? (should still work)
+      assert test_password(user, 'secret'),
+             'password "secret" was not valid'
 
       basic_authorize 'peter.parker2', 'secret'
       post '/v3/external_login/auth'
@@ -238,12 +254,27 @@ describe PuavoRest::ExternalLogin do
                    @parsed_response['status'],
                    'can login with a wrong Puavo username'
 
-      # XXX should test password? (should not work)
+      assert !test_password(user, 'secret'),
+             'password "secret" should not be valid anymore (username was changed)'
+
+      basic_authorize 'peter.parker', 'secret'
+      post '/v3/external_login/auth'
+      assert_200
+      @parsed_response = JSON.parse(last_response.body)
+      assert_equal 'UPDATED',
+                   @parsed_response['status'],
+                   'login with new login name failed'
+
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert test_password(user, 'secret'),
+             'password "secret" was not valid'
     end
 
     it 'user that has been removed from external login is marked as removed' do
       # disassociate user "peter.parker" from external login service
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert_nil user.puavoRemovalRequestTime,
+                 'user removal request time is set when it should not be'
       old_external_id = user.puavoExternalId
       user.puavoExternalId = 'NEWBUTINVALID'
       user.uid = 'peter.parker2'
