@@ -49,9 +49,6 @@ module PuavoRest
           flog.info('user provided wrong username/password', e.message)
           wrong_credentials = true
           userinfo = nil
-        rescue ExternalLoginWrongUsername => e
-          flog.info('user provided wrong username', e.message)
-          userinfo = nil
         rescue ExternalLoginError => e
           raise e
         rescue StandardError => e
@@ -77,7 +74,15 @@ module PuavoRest
         end
 
         if wrong_credentials then
-          external_id = login_service.lookup_external_id(username)
+          # Try looking up user from Puavo, but in case a user does not exist
+          # yet (there is a mismatch between username in Puavo and username
+          # in external service), look up the user external_id from external
+          # service so we can try to invalidate the password matching
+          # the right Puavo username.
+          user = User.by_username(username)
+          external_id = (user && user.external_id) \
+                          || login_service.lookup_external_id(username)
+
           # We must not force the user of admin_dn for this password change,
           # because this should happen only when password was valid for puavo
           # but not for external login, in which case we invalidate the puavo
