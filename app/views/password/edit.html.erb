@@ -38,7 +38,10 @@
   <td><%= password_field :login, :password %></td>
 </tr>
 
+<tr>
 <td colspan="2"><h2><%=t('.changed_user') %></h2></td>
+</tr>
+
 <tr>
   <td><%= f.label :uid, t('activeldap.attributes.user.uid') %></td>
   <td><%= text_field :user, :uid, :value => @existing || '' %></td>
