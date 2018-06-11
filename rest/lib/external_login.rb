@@ -319,13 +319,18 @@ module PuavoRest
           raise 'multiple users with the same external id: ' \
                   + userinfo['external_id']
         elsif user.check_if_changed_attributes(userinfo) then
-          user.removal_request_time = nil
           user.update!(userinfo)
+          user.removal_request_time = nil
           user.save!
           @flog.info('updated external login user',
                      "updated user information for '#{ userinfo['username'] }'")
           user_update_status = ExternalLoginStatus::UPDATED
         else
+          if user.removal_request_time then
+            user.removal_request_time = nil
+            user.save!
+          end
+
           @flog.info('no change for external login user',
                      'no change in user information for' \
                        + " '#{ userinfo['username'] }'")
