@@ -1,13 +1,27 @@
 require_relative "./helper"
 
-def test_password(user, password)
+def assert_external_status(username, password, expected_status, errmsg)
+  basic_authorize username, password
+  post '/v3/external_login/auth'
+  assert_200
+  parsed_response = JSON.parse(last_response.body)
+  assert_equal expected_status,
+               parsed_response['status'],
+               errmsg
+end
+
+def assert_password(user, password, errmsg, result_if_success=true)
   begin
     user.bind(password)
     user.remove_connection
-    return true
+    assert result_if_success, errmsg
   rescue StandardError => e
-    return false
+    assert !result_if_success, errmsg
   end
+end
+
+def assert_password_not(user, password, errmsg)
+  assert_password(user, password, errmsg, false)
 end
 
 describe PuavoRest::ExternalLogin do
@@ -59,24 +73,17 @@ describe PuavoRest::ExternalLogin do
 
   describe 'try login to external service with bad credentials' do
     it 'fails with unknown username' do
-      basic_authorize 'badusername', 'badpassword'
-      post '/v3/external_login/auth'
-      assert_200
-      parsed_response = JSON.parse(last_response.body)
-      assert_equal 'BADUSERCREDS',
-                   parsed_response['status'],
-                   'expected BADUSERCREDS as external_login status'
+      assert_external_status('badusername',
+                             'badpassword',
+                             'BADUSERCREDS',
+                             'expected BADUSERCREDS as external_login status')
     end
 
     it 'fails with bad password' do
-      basic_authorize 'peter.parker', 'badpassword'
-      post '/v3/external_login/auth'
-      assert_200
-      parsed_response = JSON.parse(last_response.body)
-      assert_equal 'BADUSERCREDS',
-                   parsed_response['status'],
-                   'expected BADUSERCREDS as external_login status'
-
+      assert_external_status('peter.parker',
+                             'badpassword',
+                             'BADUSERCREDS',
+                             'expected BADUSERCREDS as external_login status')
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_nil user, 'user peter.parker was created to Puavo, should not be'
     end
@@ -84,13 +91,10 @@ describe PuavoRest::ExternalLogin do
 
   describe 'test with good login credentials' do
     before :each do
-      basic_authorize 'peter.parker', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   @parsed_response['status'],
-                   'expected UPDATED as external_login status'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATED',
+                             'expected UPDATED as external_login status')
     end
 
     it 'login succeeds with good username/password' do
@@ -108,31 +112,24 @@ describe PuavoRest::ExternalLogin do
       assert_equal 'peter.parker@HEROES.OPINSYS.NET',
                    user.puavoExternalId,
                    'peter.parker has incorrect external_id'
-      assert test_password(user, 'secret'),
-             'password was not valid'
+      assert_password user, 'secret', 'password was not valid'
     end
 
     it 'subsequent login with bad password fails' do
-      basic_authorize 'peter.parker', 'badpassword'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'BADUSERCREDS',
-                   @parsed_response['status'],
-                   'expected BADUSERCREDS as external_login status'
+      assert_external_status('peter.parker',
+                             'badpassword',
+                             'BADUSERCREDS',
+                             'expected BADUSERCREDS as external_login status')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert !user.nil?, 'user peter.parker could not be found in Puavo'
     end
 
     it 'subsequent successful logins behave expectedly' do
-      basic_authorize 'peter.parker', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'NOCHANGE',
-                   @parsed_response['status'],
-                   'expected NOCHANGE as external_login status'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'NOCHANGE',
+                             'expected NOCHANGE as external_login status')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert !user.nil?, 'user peter.parker could not be found in Puavo'
@@ -148,20 +145,18 @@ describe PuavoRest::ExternalLogin do
       assert_equal 'student', user.puavoEduPersonAffiliation
     end
 
+    # XXX what about groups?
+
     it 'subsequent successful logins update user information when changed' do
       # change Peter Parker --> Peter Bentley and see that login fixes that
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       user.surname = 'Bentley'
       user.save!
 
-      basic_authorize 'peter.parker', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   @parsed_response['status'],
-                   'expected UPDATED as external_login status, because surname must have changed'
-
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATED',
+                             'expected UPDATED as external_login status')
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_equal 'Parker',
                    user.surname,
@@ -176,20 +171,16 @@ describe PuavoRest::ExternalLogin do
       user.uid = 'peter.parker2'
       user.save!
 
-      basic_authorize 'peter.parker', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   @parsed_response['status'],
-                   'login with mismatching username did not succeed'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATED',
+                             'login with mismatching username did not succeed')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_equal 'peter.parker',
                    user.uid,
                    'peter.parker username was not changed according' \
                      + ' to external auth service'
-
       assert_equal external_id,
                    user.puavoExternalId,
                    'peter.parker external id has unexpectedly changed'
@@ -200,31 +191,27 @@ describe PuavoRest::ExternalLogin do
       user.set_password 'oldpassword'     # the new is in external service
       user.save!
 
-      basic_authorize 'peter.parker', 'oldpassword'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED_BUT_FAIL',
-                   @parsed_response['status'],
-                   'login password not invalidated'
+      assert_external_status('peter.parker',
+                             'oldpassword',
+                             'UPDATED_BUT_FAIL',
+                             'login password not invalidated')
 
-      assert !test_password(user, 'oldpassword'),
-             'password "oldpassword" was valid,' \
-               + ' even though password should have been invalidated'
-      assert !test_password(user, 'secret'),
-             'password "secret" was valid,' \
-               + ' even though password should have been invalidated'
+      msg = 'password "oldpassword" was valid,' \
+              + ' even though password should have been invalidated'
+      assert_password_not(user, 'oldpassword', msg)
+      msg = 'password "secret" was valid,' \
+              + ' even though password should have been invalidated'
+      assert_password_not(user, 'secret', msg)
 
-      basic_authorize 'peter.parker', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   @parsed_response['status'],
-                   'login password not invalidated'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATED',
+                             'login with correct password did not work')
 
-      assert test_password(user, 'secret'),
-             'password "secret" was not valid, even though it should work again'
+      assert_password(user,
+                      'secret',
+                      'password "secret" was not valid,' \
+                        + ' even though it should work again')
     end
 
     it 'user password is invalidated when old username is used and password matches' do
@@ -232,42 +219,32 @@ describe PuavoRest::ExternalLogin do
       user.uid = 'peter.parker2'
       user.save!
 
-      assert test_password(user, 'secret'),
-             'password "secret" was not valid'
+      assert_password(user, 'secret', 'password "secret" was not valid')
 
-      basic_authorize 'peter.parker2', 'badpassword'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'BADUSERCREDS',
-                   @parsed_response['status'],
-                   'can login with a wrong Puavo username/password'
+      assert_external_status('peter.parker2',
+                             'badpassword',
+                             'BADUSERCREDS',
+                             'can login with a wrong Puavo username/password')
 
-      assert test_password(user, 'secret'),
-             'password "secret" was not valid'
+      assert_password(user, 'secret', 'password "secret" was not valid')
 
-      basic_authorize 'peter.parker2', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED_BUT_FAIL',
-                   @parsed_response['status'],
-                   'can login with a wrong Puavo username'
+      assert_external_status('peter.parker2',
+                             'secret',
+                             'UPDATED_BUT_FAIL',
+                             'can login with a wrong Puavo username')
 
-      assert !test_password(user, 'secret'),
-             'password "secret" should not be valid anymore (username was changed)'
+      assert_password_not(user,
+                          'secret',
+                          'password "secret" should not be valid anymore' \
+                            + ' (username was changed)')
 
-      basic_authorize 'peter.parker', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   @parsed_response['status'],
-                   'login with new login name failed'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATED',
+                             'login with new login name failed')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      assert test_password(user, 'secret'),
-             'password "secret" was not valid'
+      assert_password(user, 'secret', 'password "secret" was not valid')
     end
 
     it 'user that has been removed from external login is marked as removed' do
@@ -282,32 +259,26 @@ describe PuavoRest::ExternalLogin do
 
       # now we have a user does not exist in external login service
 
-      basic_authorize 'peter.parker2', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'BADUSERCREDS',
-                   @parsed_response['status'],
-                   'can not login with changed Puavo username'
+      assert_external_status('peter.parker2',
+                             'secret',
+                             'BADUSERCREDS',
+                             'can login to user that does not exist externally')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker2')
       assert !user.puavoRemovalRequestTime.nil?,
              'user removal request time is not set when it should be'
 
-      # Check we can get the user back after a new login, in case user has
+      # Check we can get the user back after a new login, in case the user
       # reappears in external login service.
 
       user.puavoExternalId = old_external_id
       user.uid = 'peter.parker'
       user.save!
 
-      basic_authorize 'peter.parker', 'secret'
-      post '/v3/external_login/auth'
-      assert_200
-      @parsed_response = JSON.parse(last_response.body)
-      assert_equal 'UPDATED',
-                   @parsed_response['status'],
-                   'can not login again when scheduled for removal'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATED',
+                             'can not login again when scheduled for removal')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_nil user.puavoRemovalRequestTime,
