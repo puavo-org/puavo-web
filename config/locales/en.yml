@@ -212,6 +212,7 @@ en:
     password:
       successful: Password changed successfully!
       failed: Failed to change password!
+      incomplete_form: You did not fill in all the required form fields.
       invalid_login: Invalid password or username (%{uid})
       confirmation_failed: "Password doesn't match the confirmation"
       invalid_user: User (%{uid}) does not exist

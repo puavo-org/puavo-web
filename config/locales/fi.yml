@@ -184,6 +184,7 @@ fi:
     password:
       successful: Salasanan vaihto onnistui!
       failed: "Salasanan vaihto epäonnistui!"
+      incomplete_form: "Kaikkia tarvittavia lomakkeen kenttiä ei täytetty"
       invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"

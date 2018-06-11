@@ -37,6 +37,10 @@ class PasswordController < ApplicationController
   # PUT /password
   def update
 
+    if params[:login][:uid].empty?
+      raise User::UserError, I18n.t('flash.password.incomplete_form')
+    end
+
     unless params[:user][:new_password] == params[:user][:new_password_confirmation]
       raise User::UserError, I18n.t('flash.password.confirmation_failed')
     end

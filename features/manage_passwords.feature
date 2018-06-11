@@ -16,6 +16,11 @@ Feature: Manage passwords
     | Ben       | Mabey  | ben   | bensecret   | false        | Class 4   | student                   | ben@foobar.com   |
     And I am on the password change page
 
+  Scenario: Empty own password change form should not crash
+    When I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "You did not fill in all the required form fields."
+
   Scenario: Non-existent user tries to change another user's password
     When I fill in "login[uid]" with "wrong"
     And I fill in "Password" with "pavelsecret"
