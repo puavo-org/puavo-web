@@ -189,7 +189,7 @@ module PuavoRest
       user.schools.each do |school|
         external_groups_by_type.each do |ext_group_type, external_groups|
 
-          if %w(teaching_group year_class).include?(ext_group_type) then
+          if [ 'teaching group', 'year class' ].include?(ext_group_type) then
             if external_groups.count > 1 then
               @flog.warn(nil,
                          "trying to add '#{ user.username }' to"             \
@@ -606,8 +606,8 @@ module PuavoRest
       added_school_dns = []
       external_groups  = {
                            'administrative' => {},
-                           'teaching_group' => {},
-                           'year_class'     => {},
+                           'teaching group' => {},
+                           'year class'     => {},
                          }
 
       @dn_mappings.each do |dn_mapping|
@@ -654,11 +654,11 @@ module PuavoRest
               when 'add_school_dns'
                 added_school_dns += op_params
               when 'add_teaching_group'
-                new_group = apply_add_groups('teaching_group', op_params)
-                external_groups['teaching_group'].merge!(new_group)
+                new_group = apply_add_groups('teaching group', op_params)
+                external_groups['teaching group'].merge!(new_group)
               when 'add_year_class'
-                new_group = apply_add_groups('year_class', op_params)
-                external_groups['year_class'].merge!(new_group)
+                new_group = apply_add_groups('year class', op_params)
+                external_groups['year class'].merge!(new_group)
               else
                 raise ExternalLoginConfigError,
                       "unsupported operation '#{ op_name }'" \
