@@ -217,9 +217,6 @@ class PasswordController < ApplicationController
           raise User::UserError, I18n.t('flash.password.failed')
         end
 
-
-
-
         return true
       end
     end
