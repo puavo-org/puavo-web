@@ -184,7 +184,7 @@ module PuavoRest
     end
 
     def manage_groups_for_user(user, external_groups_by_type)
-      changes_happened = false
+      external_login_status = ExternalLoginStatus::NOCHANGE
 
       user.schools.each do |school|
         external_groups_by_type.each do |ext_group_type, external_groups|
@@ -225,7 +225,7 @@ module PuavoRest
 
                 puavo_group.name = ext_group_displayname
                 puavo_group.save!
-                changes_happened = true
+                external_login_status = ExternalLoginStatus::UPDATED
               end
             end
 
@@ -244,7 +244,7 @@ module PuavoRest
                                        :school_dn    => school.dn,
                                        :type         => ext_group_type)
               puavo_group.save!
-              changes_happened = true
+              external_login_status = ExternalLoginStatus::UPDATED
             end
 
             unless puavo_group.has?(user) then
@@ -253,7 +253,7 @@ module PuavoRest
                            + " to group '#{ ext_group_displayname }'")
               puavo_group.add_member(user)
               puavo_group.save!
-              changes_happened = true
+              external_login_status = ExternalLoginStatus::UPDATED
             end
           end
 
@@ -265,7 +265,7 @@ module PuavoRest
                              + " '#{ puavo_group.abbreviation }'")
                 puavo_group.remove_member(user)
                 puavo_group.save!
-                changes_happened = true
+                external_login_status = ExternalLoginStatus::UPDATED
               end
             end
             # if puavo_group.member_dns.empty? then
@@ -278,7 +278,7 @@ module PuavoRest
         end
       end
 
-      return changes_happened
+      return external_login_status
     end
 
     def update_user_info(userinfo, password, params)
