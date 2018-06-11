@@ -32,7 +32,9 @@ module PuavoRest
 
         login_service = external_login.new_external_service_handler()
 
-        wrong_credentials = false
+        remove_user_if_found = false
+        wrong_credentials    = false
+
         begin
           message = 'attempting external login to service' \
                       + " '#{ login_service.service_name }' by user" \
@@ -41,17 +43,37 @@ module PuavoRest
           userinfo = login_service.login(username, password)
         rescue ExternalLoginUserMissing => e
           flog.info('user does not exist in external ldap', e.message)
+          remove_user_if_found = true
           userinfo = nil
         rescue ExternalLoginWrongCredentials => e
           flog.info('user provided wrong username/password', e.message)
-          userinfo = nil
           wrong_credentials = true
+          userinfo = nil
+        rescue ExternalLoginWrongUsername => e
+          flog.info('user provided wrong username', e.message)
+          userinfo = nil
         rescue ExternalLoginError => e
           raise e
         rescue StandardError => e
           # Unexpected errors when authenticating to external service means
           # it was not available.
           raise ExternalLoginUnavailable, e
+        end
+
+        if remove_user_if_found then
+          # No user information in external login service, so remove user
+          # from Puavo if there is one.  But instead of removing
+          # we simply generate a new, random password, and mark the account
+          # for removal, in case it was not marked before.  Not removing
+          # right away should allow use to catch some possible accidents
+          # in case the external ldap somehow "loses" some users, and we want
+          # keep user uids stable on our side.
+          user_to_remove = User.by_username(username)
+          if user_to_remove && user_to_remove.mark_for_removal! then
+            flog.info('puavo user marked for removal',
+                      "puavo user '#{ user_to_remove.username }' is marked" \
+                        + ' for removal')
+          end
         end
 
         if wrong_credentials then
@@ -70,23 +92,6 @@ module PuavoRest
             flog.info('user password invalidated',
                       "user password invalidated for #{ username }")
             return json(ExternalLogin.status_updated_but_fail(msg))
-          end
-        elsif !userinfo then
-          # No user information, but password was not wrong, therefore
-          # user information is missing from external login service
-          # and user must be removed from Puavo.  But instead of removing
-          # we simply generate a new, random password, and mark the account
-          # for removal, in case it was not marked before.  Not removing
-          # right away should allow use to catch some possible accidents
-          # in case the external ldap somehow "loses" some users, and we want
-          # keep user uids stable on our side.
-          user_to_remove = User.by_username(username)
-          if user_to_remove && user_to_remove.mark_for_removal! then
-            # XXX we should actually check ldap if this user external_id
-            # XXX is set on some ldap user and then *not* remove it?
-            flog.info('puavo user marked for removal',
-                      "puavo user '#{ user_to_remove.username }' is marked" \
-                        + ' for removal')
           end
         end
 

@@ -13,6 +13,7 @@ class ExternalLoginPasswordChangeError < ExternalLoginError; end
 class ExternalLoginUnavailable         < ExternalLoginError; end
 class ExternalLoginUserMissing         < ExternalLoginError; end
 class ExternalLoginWrongCredentials    < ExternalLoginError; end
+class ExternalLoginWrongUsername       < ExternalLoginError; end
 
 module PuavoRest
   class ExternalLoginStatus
@@ -808,7 +809,7 @@ module PuavoRest
         # used for login (we could lookup another user in the external ldap
         # with the same external id as is associated with this username
         # in Puavo).
-        raise ExternalLoginWrongCredentials, msg
+        raise ExternalLoginWrongUsername, msg
       end
 
       if ldap_entries.length > 1
