@@ -401,6 +401,19 @@ describe PuavoRest::ExternalLogin do
       assert_nil user.puavoRemovalRequestTime,
                  'user removal request time is set when it should not be'
     end
+
+    it 'we have mismatching external ids for the same username' do
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      # disassociate user "peter.parker" from external login service
+      old_external_id = user.puavoExternalId
+      user.puavoExternalId = 'NOTANACTUALEXTERNALID'
+      user.save!
+
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATEERROR',
+                             'username conflict did not trigger UPDATEERROR')
+    end
   end
 
   describe 'test group creation and membership handling' do
