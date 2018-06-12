@@ -77,7 +77,9 @@ class MySchoolUsers < PuavoSinatra
 
     # the groups aren't necessarily in any order, so sort them and always
     # put the ungrouped users at the end
-    @data[:groups] = groups_by_id.values.sort! { |a, b| a[:name] <=> b[:name] }
+    @data[:groups] = groups_by_id.values.sort! do |a, b|
+      a[:name].downcase <=> b[:name].downcase
+    end
 
     unless ungrouped.empty?
       @data[:groups] << {
@@ -89,7 +91,9 @@ class MySchoolUsers < PuavoSinatra
 
     # Alphabetically sort the users in each group. First by last name, then by first name(s).
     @data[:groups].each do |g|
-      g[:users].sort! { |a, b| [a[:last], a[:first]] <=> [b[:last], b[:first]] }
+      g[:users].sort! do |a, b|
+        [a[:last].downcase, a[:first].downcase] <=> [b[:last].downcase, b[:first].downcase]
+      end
     end
 
     # Localize the page. The HTTP accept languages are sorted by priority,
