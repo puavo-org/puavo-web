@@ -112,6 +112,15 @@ describe PuavoRest::ExternalLogin do
   end
 
   describe 'logins with bad credentials fail' do
+    it 'provide no credentials' do
+      post '/v3/external_login/auth'
+      assert_200
+      parsed_response = JSON.parse(last_response.body)
+      assert_equal 'BADUSERCREDS',
+                   parsed_response['status'],
+                   'missing credentials did not return BADUSERCREDS'
+    end
+
     it 'fails with bad username' do
       assert_external_status('badusername',
                              'badpassword',
