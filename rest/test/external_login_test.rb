@@ -530,5 +530,15 @@ describe PuavoRest::ExternalLogin do
                              'UPDATEERROR',
                              'username conflict did not trigger UPDATEERROR')
     end
+
+    it 'trying to use external service that does not respond' do
+      CONFIG['external_login']['example']['external_ldap']['server'] \
+        = 'nonexistent.example.com'
+
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UNAVAILABLE',
+                             'external server was not UNAVAILABLE')
+    end
   end
 end
