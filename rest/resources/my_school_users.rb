@@ -42,10 +42,13 @@ class MySchoolUsers < PuavoSinatra
       u_group = :ungrouped
       id = 'ungrouped'
 
-      s_groups.each do |g|
+      s_groups.each_with_index do |g, index|
         if g.member_dns.include?(m)
           u_group = g.name
-          id = u_group.gsub(/[^0-9a-z]/i, '_')    # ID for HTML tables and toggles
+
+          # Each group gets its own table in the generated HTML. Give
+          # each of them a unique ID.
+          id = "#{u_group.gsub(/[^0-9a-z]/i, '').downcase}-#{index}"
           break
         end
       end
