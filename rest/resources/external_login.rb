@@ -11,19 +11,19 @@ module PuavoRest
       user_status = nil
 
       begin
-        raise BadCredentials, :user => 'provide user/password with basic auth' \
+        raise BadCredentials, 'no basic auth used' \
           unless env['HTTP_AUTHORIZATION']
 
         auth_type, auth_data = env['HTTP_AUTHORIZATION'].split(' ', 2)
-        raise BadCredentials, :user => 'provide user/password with basic auth' \
+        raise BadCredentials, 'no basic auth used' \
           unless auth_type == 'Basic'
 
         username, password = Base64.decode64(auth_data).split(':')
         if username.empty? then
-          raise BadCredentials, :user => 'no username provided'
+          raise BadCredentials, 'no username provided'
         end
         if password.empty? then
-          raise BadCredentials, :user => 'no password provided'
+          raise BadCredentials, 'no password provided'
         end
 
         external_login = ExternalLogin.new
@@ -105,7 +105,7 @@ module PuavoRest
                   + " '#{ login_service.service_name }' by user" \
                   + " '#{ username }', username or password was wrong"
           flog.info('could not login to external service', msg)
-          return json(ExternalLogin.status_badusercreds(msg))
+          raise BadCredentials, msg
         end
 
         # update user information after successful login
@@ -123,6 +123,8 @@ module PuavoRest
           return json(ExternalLogin.status_updateerror(e.message))
         end
 
+      rescue BadCredentials => e
+        user_status = ExternalLogin.status_badusercreds(e.message)
       rescue ExternalLoginConfigError => e
         flog.info('external login configuration error',
                   "external login configuration error: #{ e.message }")
