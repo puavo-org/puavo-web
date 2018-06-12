@@ -8,8 +8,8 @@ class MySchoolUsers < PuavoSinatra
 
     u = User.current
 
-    # only let teachers and admins view this page
-    unless (Array(u.user_type) & ['teacher', 'admin']).any?
+    # only let teachers, admins and staff members view this page
+    unless (Array(u.user_type) & ['teacher', 'staff', 'admin']).any?
       halt 401, 'Unauthorized'
     end
 
