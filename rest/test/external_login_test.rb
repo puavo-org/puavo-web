@@ -556,5 +556,40 @@ describe PuavoRest::ExternalLogin do
                              'UNAVAILABLE',
                              'external server was not UNAVAILABLE')
     end
+
+    it 'trying to configure a user to two teaching groups' do
+      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
+            ['mappings'] = [
+        { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+            { 'add_teaching_group' => {
+                'displayname' => 'Heroes school %GROUP',
+                'name'        => 'heroes-%STARTYEAR-%GROUP', }},
+            { 'add_teaching_group' => {
+                'displayname' => 'Another heroes school %GROUP',
+                'name'        => 'another-heroes-%STARTYEAR-%GROUP', }}]}]
+
+      assert_external_status('peter.parker',
+                             'secret',
+                             'CONFIGERROR',
+                             'not recognizing a configuration error')
+    end
+
+    it 'trying to configure a user to two teaching groups' do
+      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
+            ['mappings'] = [
+        { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+            { 'add_year_class' => {
+                'displayname' => 'Heroes school %CLASSNUMBER',
+                'name'        => 'heroes-%STARTYEAR', }},
+            { 'add_year_class' => {
+                'displayname' => 'Another heroes school %CLASSNUMBER',
+                'name'        => 'another-heroes-%STARTYEAR', }}]}]
+
+
+      assert_external_status('peter.parker',
+                             'secret',
+                             'CONFIGERROR',
+                             'not recognizing a configuration error')
+    end
   end
 end
