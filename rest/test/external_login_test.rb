@@ -401,19 +401,6 @@ describe PuavoRest::ExternalLogin do
       assert_nil user.puavoRemovalRequestTime,
                  'user removal request time is set when it should not be'
     end
-
-    it 'we have mismatching external ids for the same username' do
-      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      # disassociate user "peter.parker" from external login service
-      old_external_id = user.puavoExternalId
-      user.puavoExternalId = 'NOTANACTUALEXTERNALID'
-      user.save!
-
-      assert_external_status('peter.parker',
-                             'secret',
-                             'UPDATEERROR',
-                             'username conflict did not trigger UPDATEERROR')
-    end
   end
 
   describe 'test group creation and membership handling' do
@@ -465,6 +452,66 @@ describe PuavoRest::ExternalLogin do
       assert_equal [],
                    Array(group.memberUid),
                    'heroes group should not have any members'
+    end
+  end
+
+  describe 'testing some error situations' do
+    before(:each) do
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
+    end
+
+    it 'trying to login as user only in Puavo' do
+      # "cucumber"-user is NOT "heroes"-database (external login service)
+      assert_external_status('cucumber',
+                             'badpassword',
+                             'NOTCONFIGURED',
+                             'login error')
+
+      assert_external_status('cucumber',
+                             'cucumber',
+                             'NOTCONFIGURED',
+                             'login error')
+
+      user = User.find(:first, :attribute => 'uid', :value => 'cucumber')
+      assert !user.nil?, 'cucumber has disappeared from Puavo'
+
+      assert_nil user.puavoExternalId,
+                 'cucumber has an external id even though she should not'
+    end
+
+    it 'trying to login as user whose external id has gone missing' do
+      # "peter.parker IS on "heroes"-database (external login service)
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert !user.nil?, 'peter.parker is not in Puavo'
+      user.puavoExternalId = nil
+      user.save!
+
+      assert_external_status('peter.parker',
+                             'badpassword',
+                             'NOTCONFIGURED',
+                             'unmanaged user managed by external login')
+      assert_external_status('peter.parker',
+                             'secret',
+                             'NOTCONFIGURED',
+                             'unmanaged user managed by external login')
+
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert !user.nil?, 'peter.parker is not in Puavo'
+      assert_nil user.puavoExternalId,
+                 'peter.parker has an external id even though he should not'
+    end
+
+    it 'we have mismatching external ids for the same username' do
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      # disassociate user "peter.parker" from external login service
+      old_external_id = user.puavoExternalId
+      user.puavoExternalId = 'NOTANACTUALEXTERNALID'
+      user.save!
+
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATEERROR',
+                             'username conflict did not trigger UPDATEERROR')
     end
   end
 end
