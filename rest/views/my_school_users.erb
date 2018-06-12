@@ -148,20 +148,20 @@ function setupCollapseHeaders()
   <h1><%= @data['school'] %></h1>
 </header>
 
-<% @data['groups']&.each do |name, group| %>
-<div class="collapseHeader" data-target="<%= group[0] %>">
-  <h1><%= (group[0] == 'ungrouped') ? @data['language'][:ungrouped] : name %></h1>
-  <span class="count">(<%= group[1].size %> <%= @data['language'][:users] %>)</span>
-  <span id="arrow-<%= group[0] %>">▶</span>
+<% @data['groups'].each do |group| %>
+<div class="collapseHeader" data-target="<%= group[:id] %>">
+  <h1><%= (group[:name] == :ungrouped) ? @data['language'][:ungrouped] : group[:name] %></h1>
+  <span class="count">(<%= group[:users].size %> <%= @data['language'][:users] %>)</span>
+  <span id="arrow-<%= group[:id] %>">▶</span>
 </div>
-<table class="users" id="table-<%= group[0] %>">
+<table class="users" id="table-<%= group[:id] %>">
   <tr>
     <th><%= @data['language'][:last_name] %></th>
     <th><%= @data['language'][:first_names] %></th>
     <th><%= @data['language'][:username] %></th>
     <th><%= @data['language'][:actions] %></th>
   </tr>
-  <% group[1].each do |u| %>
+  <% group[:users].each do |u| %>
   <tr>
     <td><%= u[:last] %></td>
     <td><%= u[:first] %></td>

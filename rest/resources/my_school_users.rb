@@ -21,8 +21,11 @@ class MySchoolUsers < PuavoSinatra
       halt 400, "Cannot retrieve groups for school #{s.dn}"
     end
 
-    groups = {}
+    groups_by_id = {}   # IDs are group abbreviations
+    ungrouped = []      # students who are not in any group
+    group_num = 0
 
+    # split users into groups
     school.member_dns&.each do |m|
       begin
         u = User.by_dn!(m)
@@ -39,25 +42,45 @@ class MySchoolUsers < PuavoSinatra
         username: u.username,
       }
 
-      u_group = :ungrouped
-      id = 'ungrouped'
+      # find this user's group, if any
+      u_group = nil
 
-      s_groups.each_with_index do |g, index|
+      s_groups.each do |g|
         if g.member_dns.include?(m)
-          u_group = g.name
-
-          # Each group gets its own table in the generated HTML. Give
-          # each of them a unique ID.
-          id = "#{u_group.gsub(/[^0-9a-z]/i, '').downcase}-#{index}"
+          u_group = g
           break
         end
       end
 
-      unless groups.include?(u_group)
-        groups[u_group] = [id, []]
-      end
+      if u_group
+        id = u_group.abbreviation
 
-      groups[u_group][1] << u_data
+        unless groups_by_id.include?(id)
+          groups_by_id[id] = {
+            name: u_group.name,
+            id: "#{id}-#{group_num}",
+            users: []
+          }
+
+          group_num += 1
+        end
+
+        groups_by_id[id][:users] << u_data
+      else
+        ungrouped << u_data
+      end
+    end
+
+    # the groups aren't necessarily in any order, so sort them and always
+    # put the ungrouped users at the end
+    groups = groups_by_id.values.sort! { |a, b| a[:name] <=> b[:name] }
+
+    unless ungrouped.empty?
+      groups << {
+        name: :ungrouped,
+        id: "ungrouped-#{group_num}",
+        users: ungrouped
+      }
     end
 
     @data = {}
