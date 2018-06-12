@@ -23,7 +23,7 @@ describe PuavoRest::Password do
     @role.groups << @group
     @role.save!
 
-    @user = User.new(
+    @student = User.new(
       :givenName => "Bob",
       :sn  => "Brown",
       :uid => "bob",
@@ -32,17 +32,75 @@ describe PuavoRest::Password do
       :role_ids => [@role.puavoId]
     )
 
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [
+    @student.set_password "secret"
+    @student.puavoSchool = @school.dn
+    @student.role_ids = [
       Role.find(:first, {
         :attribute => "displayName",
         :value => "Maintenance"
       }).puavoId,
       @role.puavoId
     ]
-    @user.save!
+    @student.save!
 
+    @teacher = User.new(
+      :givenName => "Test",
+      :sn  => "Teacher",
+      :uid => "teacher",
+      :puavoEduPersonAffiliation => "teacher",
+      :mail => "teacher@example.com",
+      :role_ids => [@role.puavoId]
+    )
+
+    @teacher.set_password "foobar"
+    @teacher.puavoSchool = @school.dn
+    @teacher.role_ids = [
+      Role.find(:first, {
+        :attribute => "displayName",
+        :value => "Maintenance"
+      }).puavoId,
+      @role.puavoId
+    ]
+    @teacher.save!
+  end
+
+  describe "Test the school users list" do
+    it "A student cannot view the school users list" do
+      basic_authorize "bob", "secret"
+      get "/v3/my_school_users"
+      assert_equal 401, last_response.status
+    end
+
+    it "A teacher can view the school users list" do
+      basic_authorize "teacher", "foobar"
+      get "/v3/my_school_users"
+      assert_equal 200, last_response.status
+    end
+
+    it "Ensure Bob Brown is listed on the page" do
+      basic_authorize "teacher", "foobar"
+      get "/v3/my_school_users"
+      assert_equal 200, last_response.status
+
+      # There's only one student, so this works... kinda
+      # (If there were two students, there'd be 8 TD elements in the array)
+      parts = parse_html(last_response.body).css(".users td")
+      assert_equal 4, parts.length
+      assert_equal "Brown", parts[0].content
+      assert_equal "Bob", parts[1].content
+      assert_equal "bob", parts[2].content
+    end
+
+    it "Ensure the group is listed" do
+      basic_authorize "teacher", "foobar"
+      get "/v3/my_school_users"
+      assert_equal 200, last_response.status
+
+      # Again there's only one group
+      parts = parse_html(last_response.body).css("div h1")
+      assert_equal 1, parts.length
+      assert_equal "Group 1", parts[0].content
+    end
   end
 
   describe "Mailer class" do
