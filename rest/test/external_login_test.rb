@@ -481,10 +481,6 @@ describe PuavoRest::ExternalLogin do
   end
 
   describe 'testing some error situations' do
-    before(:each) do
-      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
-    end
-
     it 'external logins are not configured' do
       CONFIG.delete('external_login')
       assert_external_status('peter.parker',
@@ -513,6 +509,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'trying to login as user whose external id has gone missing' do
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
       # "peter.parker IS on "heroes"-database (external login service)
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert !user.nil?, 'peter.parker is not in Puavo'
@@ -535,6 +532,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'we have mismatching external ids for the same username' do
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       # disassociate user "peter.parker" from external login service
       old_external_id = user.puavoExternalId
@@ -568,13 +566,15 @@ describe PuavoRest::ExternalLogin do
                 'displayname' => 'Another heroes school %GROUP',
                 'name'        => 'another-heroes-%STARTYEAR-%GROUP', }}]}]
 
-      assert_external_status('peter.parker',
-                             'secret',
-                             'CONFIGERROR',
-                             'not recognizing a configuration error')
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
+
+      groups = Group.find(:attribute => 'puavoEduGroupType',
+                          :value     => 'teaching group')
+      assert_nil groups,
+                 'there are teaching groups even when there should be none'
     end
 
-    it 'trying to configure a user to two teaching groups' do
+    it 'trying to configure a user to two year class groups' do
       CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
             ['mappings'] = [
         { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
@@ -585,11 +585,12 @@ describe PuavoRest::ExternalLogin do
                 'displayname' => 'Another heroes school %CLASSNUMBER',
                 'name'        => 'another-heroes-%STARTYEAR', }}]}]
 
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
 
-      assert_external_status('peter.parker',
-                             'secret',
-                             'CONFIGERROR',
-                             'not recognizing a configuration error')
+      groups = Group.find(:attribute => 'puavoEduGroupType',
+                          :value     => 'year class')
+      assert_nil groups,
+                 'there are year class groups even when there should be none'
     end
   end
 end
