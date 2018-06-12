@@ -63,7 +63,7 @@ class MySchoolUsers < PuavoSinatra
     @data = {}
     @data['school'] = school.name
     @data['groups'] = groups
-    @data['domain'] = "#{request.scheme}://#{request.host_with_port}"
+    @data['domain'] = "#{request.scheme}://#{User.organisation.domain}"
 
     # Localize the page. The HTTP accept languages are sorted by priority,
     # we'll choose the *first* that we have a translation for and stop.
