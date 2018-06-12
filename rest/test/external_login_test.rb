@@ -169,7 +169,7 @@ describe PuavoRest::ExternalLogin do
       assert !user.nil?, 'user peter.parker could not be found in Puavo'
     end
 
-    it 'subsequent successful logins behave expectedly' do
+    it 'subsequent successful login returns NOCHANGE' do
       assert_external_status('peter.parker',
                              'secret',
                              'NOCHANGE',
@@ -238,14 +238,13 @@ describe PuavoRest::ExternalLogin do
     end
   end
 
-  describe 'user information is updated as it should on subsequence logins' do
+  describe 'user information is updated as it should on subsequent logins' do
     before :each do
       assert_external_status('peter.parker',
                              'secret',
                              'UPDATED',
                              'expected UPDATED as external_login status')
     end
-
 
     it 'subsequent successful logins update user information when changed' do
       # change Peter Parker --> Peter Bentley and see that login fixes that
@@ -277,6 +276,7 @@ describe PuavoRest::ExternalLogin do
                              'login with mismatching username did not succeed')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert !user.nil?, 'peter.parker could not be found from Puavo'
       assert_equal 'peter.parker',
                    user.uid,
                    'peter.parker username was not changed according' \
@@ -286,10 +286,13 @@ describe PuavoRest::ExternalLogin do
                    'peter.parker external id has unexpectedly changed'
     end
 
-    it 'user password is invalidated when changed and login attempted with old' do
+    it 'user password is invalidated on login with nonmatching password' do
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      user.set_password 'oldpassword'     # the new is in external service
+      # set password to not match the one in external service
+      user.set_password 'oldpassword'
       user.save!
+
+      assert_password(user, 'oldpassword', 'password not changed in Puavo')
 
       assert_external_status('peter.parker',
                              'oldpassword',
@@ -314,46 +317,57 @@ describe PuavoRest::ExternalLogin do
                         + ' even though it should work again')
     end
 
-    it 'user password is invalidated when old username is used and password matches' do
+    it 'user password is invalidated when mismatching username is used' do
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      # make usernames mismatch
       user.uid = 'peter.parker2'
       user.save!
 
       assert_password(user, 'secret', 'password "secret" was not valid')
 
+      # login with wrong username and wrong password
+      user.uid = 'peter.parker2'
       assert_external_status('peter.parker2',
                              'badpassword',
                              'BADUSERCREDS',
                              'can login with a wrong Puavo username/password')
 
+      # password not invalidated
       assert_password(user, 'secret', 'password "secret" was not valid')
 
+      # login with wrong username but correct password
+      # (because there is a username with matching external id, we can know
+      # that wrong username was used)
       assert_external_status('peter.parker2',
                              'secret',
                              'UPDATED_BUT_FAIL',
                              'can login with a wrong Puavo username')
 
+      # password was invalidated as it should
       assert_password_not(user,
                           'secret',
                           'password "secret" should not be valid anymore' \
-                            + ' (username was changed)')
+                            + ' (username mismatch)')
 
+      # login again with correct username/password
       assert_external_status('peter.parker',
                              'secret',
                              'UPDATED',
-                             'login with new login name failed')
+                             'login with correct username/password failed')
 
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_password(user, 'secret', 'password "secret" was not valid')
     end
 
     it 'user that has been removed from external login is marked as removed' do
-      # disassociate user "peter.parker" from external login service
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      # first check that user is not marked as "to be removed"
       assert_nil user.puavoRemovalRequestTime,
                  'user removal request time is set when it should not be'
+
+      # disassociate user "peter.parker" from external login service
       old_external_id = user.puavoExternalId
-      user.puavoExternalId = 'NEWBUTINVALID'
+      user.puavoExternalId = 'NOTANACTUALEXTERNALID'
       user.uid = 'peter.parker2'
       user.save!
 
@@ -364,15 +378,18 @@ describe PuavoRest::ExternalLogin do
                              'BADUSERCREDS',
                              'can login to user that does not exist externally')
 
+      # check that user is marked as "to be removed"
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker2')
       assert !user.puavoRemovalRequestTime.nil?,
              'user removal request time is not set when it should be'
+      assert_equal user.puavoRemovalRequestTime.class,
+                   Time,
+                   'user removal request time is of wrong type'
 
       # Check we can get the user back after a new login, in case the user
-      # reappears in external login service.
-
+      # reappears in external login service (point our external id back to
+      # the correct user).
       user.puavoExternalId = old_external_id
-      user.uid = 'peter.parker'
       user.save!
 
       assert_external_status('peter.parker',
@@ -396,7 +413,6 @@ describe PuavoRest::ExternalLogin do
 
       group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
       assert !group.nil?, 'There is no heroes group when there should be'
-
       assert_equal %w(peter.parker),
                    Array(group.memberUid),
                    'heroes group should consist of peter.parker'
@@ -408,7 +424,6 @@ describe PuavoRest::ExternalLogin do
 
       group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
       assert !group.nil?, 'There is no heroes group when there should be'
-
       assert_equal %w(peter.parker lara.croft),
                    group.memberUid,
                    'heroes group should consist of peter.parker and lara.croft'
