@@ -71,22 +71,21 @@ class MySchoolUsers < PuavoSinatra
       end
     end
 
+    @data = {}
+    @data[:school] = school.name
+    @data[:domain] = "#{request.scheme}://#{User.organisation.domain}"
+
     # the groups aren't necessarily in any order, so sort them and always
     # put the ungrouped users at the end
-    groups = groups_by_id.values.sort! { |a, b| a[:name] <=> b[:name] }
+    @data[:groups] = groups_by_id.values.sort! { |a, b| a[:name] <=> b[:name] }
 
     unless ungrouped.empty?
-      groups << {
+      @data[:groups] << {
         name: :ungrouped,
         id: "ungrouped-#{group_num}",
         users: ungrouped
       }
     end
-
-    @data = {}
-    @data['school'] = school.name
-    @data['groups'] = groups
-    @data['domain'] = "#{request.scheme}://#{User.organisation.domain}"
 
     # Localize the page. The HTTP accept languages are sorted by priority,
     # we'll choose the *first* that we have a translation for and stop.
@@ -108,7 +107,7 @@ class MySchoolUsers < PuavoSinatra
       end
     end
 
-    @data['language'] = lang || setup_language('english')
+    @data[:language] = lang || setup_language('english')
 
     halt 200, { 'Content-Type' => 'text/html' },
       erb('my_school_users.erb', :data => @data, :layout => :my_school_users)

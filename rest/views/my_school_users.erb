@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="<%= @data['language'][:html_lang] %>">
+<html lang="<%= @data[:language][:html_lang] %>">
 <head>
 <meta charset="UTF-8">
-<title><%= @data['language'][:page_title] %></title>
+<title><%= @data[:language][:page_title] %></title>
 <style>
 
 html {
@@ -145,21 +145,21 @@ function setupCollapseHeaders()
 <body onload="setupCollapseHeaders()">
 
 <header>
-  <h1><%= @data['school'] %></h1>
+  <h1><%= @data[:school] %></h1>
 </header>
 
-<% @data['groups'].each do |group| %>
+<% @data[:groups].each do |group| %>
 <div class="collapseHeader" data-target="<%= group[:id] %>">
-  <h1><%= (group[:name] == :ungrouped) ? @data['language'][:ungrouped] : group[:name] %></h1>
-  <span class="count">(<%= group[:users].size %> <%= @data['language'][:users] %>)</span>
+  <h1><%= (group[:name] == :ungrouped) ? @data[:language][:ungrouped] : group[:name] %></h1>
+  <span class="count">(<%= group[:users].size %> <%= @data[:language][:users] %>)</span>
   <span id="arrow-<%= group[:id] %>">▶</span>
 </div>
 <table class="users" id="table-<%= group[:id] %>">
   <tr>
-    <th><%= @data['language'][:last_name] %></th>
-    <th><%= @data['language'][:first_names] %></th>
-    <th><%= @data['language'][:username] %></th>
-    <th><%= @data['language'][:actions] %></th>
+    <th><%= @data[:language][:last_name] %></th>
+    <th><%= @data[:language][:first_names] %></th>
+    <th><%= @data[:language][:username] %></th>
+    <th><%= @data[:language][:actions] %></th>
   </tr>
   <% group[:users].each do |u| %>
   <tr>
@@ -167,9 +167,9 @@ function setupCollapseHeaders()
     <td><%= u[:first] %></td>
     <td><%= u[:username] %></td>
     <td>
-      <a href="<%= @data['domain'] %>/users/password?initial=<%= u[:username] %>"
-         class="button" title="<%= @data['language'][:password_tooltip] %>">
-        <span class="icon">🔑</span> <%= @data['language'][:change_password] %>
+      <a href="<%= @data[:domain] %>/users/password?initial=<%= u[:username] %>"
+         class="button" title="<%= @data[:language][:password_tooltip] %>">
+        <span class="icon">🔑</span> <%= @data[:language][:change_password] %>
       </a>
     </td>
   </tr>
@@ -185,7 +185,7 @@ function setupCollapseHeaders()
     </td>
     <td>
       © Opinsys Oy 2018<br>
-      <%= @data['language'][:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %>
+      <%= @data[:language][:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %>
     </td>
   </tr>
 </table>
