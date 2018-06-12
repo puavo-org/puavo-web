@@ -25,6 +25,7 @@ def assert_password_not(user, password, errmsg)
 end
 
 describe PuavoRest::ExternalLogin do
+  # XXX where does this one come from?
   extuser_target_school_dn = 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi'
 
   before(:each) do
@@ -50,17 +51,28 @@ describe PuavoRest::ExternalLogin do
           'bind_password'           => organisations['heroes']['owner_pw'],
           'dn_mappings'    => {
             'defaults' => {
-              'classnumber_regex'    => '^(\\d+)',
+              'classnumber_regex'    => '(\\d)$', # typically: '^(\\d+)'
               'roles'                => [ 'student' ],
               'school_dns'           => [ extuser_target_school_dn ],
-              'teaching_group_field' => 'department',
+              'teaching_group_field' => 'gidNumber', # typically: 'department'
             },
             'mappings' => [
               { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
                   { 'add_administrative_group' => {
                       'displayname' => 'Heroes',
-                      'name'        => 'heroes',
-                    }}
+                      'name'        => 'heroes', }},
+                  { 'add_teaching_group' => {
+                      'displayname' => 'Heroes school %GROUP',
+                      'name'        => 'heroes-%STARTYEAR-%GROUP', }},
+                  { 'add_year_class' => {
+                      'displayname' => 'Heroes school %CLASSNUMBER',
+                      'name'        => 'heroes-%STARTYEAR', }},
+                ]},
+              { 'puavoId=62,ou=People,dc=edu,dc=heroes,dc=fi' => [
+                  { 'add_administrative_group' => {
+                      'displayname' => 'Resistence',
+                      'name'        => 'resistence', }},
+                  { 'add_roles' => [ 'teacher' ] },
                 ]},
             ],
           },
@@ -79,8 +91,8 @@ describe PuavoRest::ExternalLogin do
     CONFIG = @orig_config
   end
 
-  describe 'try login to external service with bad credentials' do
-    it 'fails with unknown username' do
+  describe 'logins with bad credentials fail' do
+    it 'fails with bad username' do
       assert_external_status('badusername',
                              'badpassword',
                              'BADUSERCREDS',
@@ -97,7 +109,7 @@ describe PuavoRest::ExternalLogin do
     end
   end
 
-  describe 'test with good login credentials' do
+  describe 'tests with good login credentials' do
     before :each do
       assert_external_status('peter.parker',
                              'secret',
@@ -152,6 +164,53 @@ describe PuavoRest::ExternalLogin do
       user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
       assert_equal 'student', user.puavoEduPersonAffiliation
     end
+
+    it 'user belongs to a "heroes"-administrative group' do
+      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
+      assert !group.nil?, 'There is no heroes group when there should be'
+
+      assert_equal group.puavoEduGroupType,
+                   'administrative',
+                   'heroes group is not an administrative group'
+      assert Array(group.memberUid).include?('peter.parker'),
+             'peter.parker does not belong to the "heroes"-group'
+    end
+
+    it 'user belongs to some teaching group' do
+      teaching_groups = Group.find(:attribute => 'puavoEduGroupType',
+                                   :value     => 'teaching group')
+      is_in_a_teaching_group \
+        = teaching_groups \
+            && Array(teaching_groups).any? do |group|
+                 Array(group.memberUid).include?('peter.parker')
+               end
+
+      assert is_in_a_teaching_group,
+             'peter.parker belongs to some teaching group'
+    end
+
+    it 'user belongs to some yearclass group' do
+      yearclass_groups = Group.find(:attribute => 'puavoEduGroupType',
+                                    :value     => 'year class')
+      is_in_a_yearclass_group \
+        = yearclass_groups \
+            && Array(yearclass_groups).any? do |group|
+                 Array(group.memberUid).include?('peter.parker')
+               end
+
+      assert is_in_a_yearclass_group,
+             'peter.parker belongs to some yearclass group'
+    end
+  end
+
+  describe 'user information is updated as it should on subsequence logins' do
+    before :each do
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UPDATED',
+                             'expected UPDATED as external_login status')
+    end
+
 
     it 'subsequent successful logins update user information when changed' do
       # change Peter Parker --> Peter Bentley and see that login fixes that
