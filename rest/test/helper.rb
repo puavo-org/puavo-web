@@ -119,6 +119,10 @@ class MiniTest::Spec
   end
 end
 
+def parse_html(data)
+  Nokogiri::HTML(data)
+end
+
 module Fixtures
   DIR = File.expand_path File.dirname(__FILE__)
   ICS_FILE = DIR + "/fixtures/ical.ics"
