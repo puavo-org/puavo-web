@@ -35,13 +35,23 @@ def assert_user_belongs_to_an_administrative_group(username, groupname)
          "#{ username } does not belong to the #{ groupname } group"
 end
 
-def assert_user_belongs_to_some_group_of_type(username, grouptype)
+def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
   groups = Group.find(:attribute => 'puavoEduGroupType',
                       :value     => grouptype)
-  is_in_a_group = groups && Array(groups).any? do |group|
-                              Array(group.memberUid).include?(username)
-                            end
-  assert is_in_a_group, "#{ username } does not belong to some #{ grouptype }"
+  assert !groups.nil?, "no groups of type #{ grouptype }"
+
+  membership_groups = Array(groups).select do |group|
+                        Array(group.memberUid).include?(username)
+                      end
+  assert_equal 1,
+               membership_groups.count,
+               "user #{ username } belongs to #{ membership_groups.count }" \
+                 + ' groups instead of just one'
+
+  membership_group = membership_groups.first
+  assert membership_group.cn.match(group_regex),
+         "user #{ username } group #{ membership_group.cn }" \
+           + " does not match #{ group_regex }"
 end
 
 describe PuavoRest::ExternalLogin do
@@ -71,7 +81,7 @@ describe PuavoRest::ExternalLogin do
           'bind_password'           => organisations['heroes']['owner_pw'],
           'dn_mappings'    => {
             'defaults' => {
-              'classnumber_regex'    => '(\\d)$', # typically: '^(\\d+)'
+              'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
               'roles'                => [ 'student' ],
               'school_dns'           => [ extuser_target_school_dn ],
               'teaching_group_field' => 'gidNumber', # typically: 'department'
@@ -201,12 +211,15 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'user belongs to some teaching group' do
-      assert_user_belongs_to_some_group_of_type('peter.parker',
-                                                'teaching group')
+      assert_user_belongs_to_one_group_of_type('peter.parker',
+                                               'teaching group',
+                                               /^heroes-(\d+)-(\d+)$/)
     end
 
     it 'user belongs to some yearclass group' do
-      assert_user_belongs_to_some_group_of_type('peter.parker', 'year class')
+      assert_user_belongs_to_one_group_of_type('peter.parker',
+                                               'year class',
+                                               /^heroes-(\d+)$/)
     end
   end
 
@@ -238,12 +251,15 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'user belongs to some teaching group' do
-      assert_user_belongs_to_some_group_of_type('sarah.connor',
-                                                'teaching group')
+      assert_user_belongs_to_one_group_of_type('sarah.connor',
+                                               'teaching group',
+                                               /^heroes-(\d+)-(\d+)$/)
     end
 
     it 'user belongs to some yearclass group' do
-      assert_user_belongs_to_some_group_of_type('sarah.connor', 'year class')
+      assert_user_belongs_to_one_group_of_type('sarah.connor',
+                                               'year class',
+                                               /^heroes-(\d+)$/)
     end
   end
 
