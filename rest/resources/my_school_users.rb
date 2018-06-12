@@ -87,6 +87,11 @@ class MySchoolUsers < PuavoSinatra
       }
     end
 
+    # Alphabetically sort the users in each group. First by last name, then by first name(s).
+    @data[:groups].each do |g|
+      g[:users].sort! { |a, b| [a[:last], a[:first]] <=> [b[:last], b[:first]] }
+    end
+
     # Localize the page. The HTTP accept languages are sorted by priority,
     # we'll choose the *first* that we have a translation for and stop.
     # If there are no matches, use English.
