@@ -469,6 +469,14 @@ describe PuavoRest::ExternalLogin do
       assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
     end
 
+    it 'external logins are not configured' do
+      CONFIG.delete('external_login')
+      assert_external_status('peter.parker',
+                             'secret',
+                             'NOTCONFIGURED',
+                             'not returning NOTCONFIGURED when not configured')
+    end
+
     it 'trying to login as user only in Puavo' do
       # "cucumber"-user is NOT "heroes"-database (external login service)
       assert_external_status('cucumber',
