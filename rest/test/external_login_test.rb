@@ -24,6 +24,26 @@ def assert_password_not(user, password, errmsg)
   assert_password(user, password, errmsg, false)
 end
 
+def assert_user_belongs_to_an_administrative_group(username, groupname)
+  group = Group.find(:first, :attribute => 'cn', :value => groupname)
+  assert !group.nil?, "There is no #{ groupname } group when there should be"
+
+  assert_equal group.puavoEduGroupType,
+               'administrative',
+               "#{ groupname } group is not an administrative group"
+  assert Array(group.memberUid).include?(username),
+         "#{ username } does not belong to the #{ groupname } group"
+end
+
+def assert_user_belongs_to_some_group_of_type(username, grouptype)
+  groups = Group.find(:attribute => 'puavoEduGroupType',
+                      :value     => grouptype)
+  is_in_a_group = groups && Array(groups).any? do |group|
+                              Array(group.memberUid).include?(username)
+                            end
+  assert is_in_a_group, "#{ username } does not belong to some #{ grouptype }"
+end
+
 describe PuavoRest::ExternalLogin do
   # XXX where does this one come from?
   extuser_target_school_dn = 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi'
@@ -115,24 +135,28 @@ describe PuavoRest::ExternalLogin do
                              'secret',
                              'UPDATED',
                              'expected UPDATED as external_login status')
+      @user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert !@user.nil?, 'user peter.parker could not be found in Puavo'
     end
 
-    it 'login succeeds with good username/password' do
-      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      assert !user.nil?, 'user peter.parker could not be found in Puavo'
+    it 'user information is correct after successful login' do
       assert_equal 'peter.parker',
-                   user.uid,
+                   @user.uid,
                    'peter.parker has incorrect uid'
       assert_equal 'Peter',
-                   user.given_name,
+                   @user.given_name,
                    'peter.parker has incorrect given name'
       assert_equal 'Parker',
-                   user.surname,
+                   @user.surname,
                    'peter.parker has incorrect surname'
       assert_equal 'peter.parker@HEROES.OPINSYS.NET',
-                   user.puavoExternalId,
+                   @user.puavoExternalId,
                    'peter.parker has incorrect external_id'
-      assert_password user, 'secret', 'password was not valid'
+    end
+
+    it 'user password is synced to Puavo' do
+      assert !@user.nil?, 'user peter.parker could not be found in Puavo'
+      assert_password @user, 'secret', 'password was not valid'
     end
 
     it 'subsequent login with bad password fails' do
@@ -156,50 +180,61 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'user is in expected school' do
-      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      assert_equal extuser_target_school_dn, user.puavoSchool
+      assert_equal extuser_target_school_dn, @user.puavoSchool
     end
 
     it 'user has expected roles' do
-      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
-      assert_equal 'student', user.puavoEduPersonAffiliation
+      assert_equal 'student', @user.puavoEduPersonAffiliation
     end
 
     it 'user belongs to a "heroes"-administrative group' do
-      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
-      assert !group.nil?, 'There is no heroes group when there should be'
-
-      assert_equal group.puavoEduGroupType,
-                   'administrative',
-                   'heroes group is not an administrative group'
-      assert Array(group.memberUid).include?('peter.parker'),
-             'peter.parker does not belong to the "heroes"-group'
+      assert_user_belongs_to_an_administrative_group('peter.parker', 'heroes')
     end
 
     it 'user belongs to some teaching group' do
-      teaching_groups = Group.find(:attribute => 'puavoEduGroupType',
-                                   :value     => 'teaching group')
-      is_in_a_teaching_group \
-        = teaching_groups \
-            && Array(teaching_groups).any? do |group|
-                 Array(group.memberUid).include?('peter.parker')
-               end
-
-      assert is_in_a_teaching_group,
-             'peter.parker belongs to some teaching group'
+      assert_user_belongs_to_some_group_of_type('peter.parker',
+                                                'teaching group')
     end
 
     it 'user belongs to some yearclass group' do
-      yearclass_groups = Group.find(:attribute => 'puavoEduGroupType',
-                                    :value     => 'year class')
-      is_in_a_yearclass_group \
-        = yearclass_groups \
-            && Array(yearclass_groups).any? do |group|
-                 Array(group.memberUid).include?('peter.parker')
-               end
+      assert_user_belongs_to_some_group_of_type('peter.parker', 'year class')
+    end
+  end
 
-      assert is_in_a_yearclass_group,
-             'peter.parker belongs to some yearclass group'
+  describe 'tests with a special user' do
+    before :each do
+      assert_external_status('sarah.connor',
+                             'secret',
+                             'UPDATED',
+                             'expected UPDATED as external_login status')
+      @user = User.find(:first, :attribute => 'uid', :value => 'sarah.connor')
+      assert !@user.nil?, 'user sarah.connor could not be found in Puavo'
+    end
+
+    it 'user is in expected school' do
+      assert_equal extuser_target_school_dn, @user.puavoSchool
+    end
+
+    it 'user has expected roles' do
+      assert_equal 'teacher', @user.puavoEduPersonAffiliation
+    end
+
+    it 'user belongs to a "heroes"-administrative group' do
+      assert_user_belongs_to_an_administrative_group('sarah.connor', 'heroes')
+    end
+
+    it 'user belongs to a "resistence"-administrative group' do
+      assert_user_belongs_to_an_administrative_group('sarah.connor',
+                                                     'resistence')
+    end
+
+    it 'user belongs to some teaching group' do
+      assert_user_belongs_to_some_group_of_type('sarah.connor',
+                                                'teaching group')
+    end
+
+    it 'user belongs to some yearclass group' do
+      assert_user_belongs_to_some_group_of_type('sarah.connor', 'year class')
     end
   end
 
