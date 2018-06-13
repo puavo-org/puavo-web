@@ -36,7 +36,8 @@ def assert_user_belongs_to_an_administrative_group(username, groupname)
 end
 
 def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
-  groups = Group.find(:attribute => 'puavoEduGroupType',
+  groups = Group.find(:all,
+                      :attribute => 'puavoEduGroupType',
                       :value     => grouptype)
   assert !groups.nil?, "no groups of type #{ grouptype }"
 
@@ -46,7 +47,7 @@ def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
   assert_equal 1,
                membership_groups.count,
                "user #{ username } belongs to #{ membership_groups.count }" \
-                 + ' groups instead of just one'
+                 + " groups of type #{ grouptype } instead of just one"
 
   membership_group = membership_groups.first
   assert membership_group.cn.match(group_regex),
@@ -55,11 +56,18 @@ def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
 end
 
 describe PuavoRest::ExternalLogin do
-  # XXX where does this one come from?
-  extuser_target_school_dn = 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi'
-
   before(:each) do
+    Puavo::Test.clean_up_ldap
+
     @orig_config = CONFIG.dup
+
+    @heroes_school = School.create(:cn          => 'heroes-u',
+                                   :displayName => 'Heroes University')
+    @heroes_school.save!
+
+    @star_school = School.create(:cn          => 'stars',
+                                 :displayName => 'Stars')
+    @star_school.save!
 
     org_conf_path = '../../../config/organisations.yml'
     organisations = YAML.load_file(File.expand_path(org_conf_path, __FILE__))
@@ -83,7 +91,7 @@ describe PuavoRest::ExternalLogin do
             'defaults' => {
               'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
               'roles'                => [ 'student' ],
-              'school_dns'           => [ extuser_target_school_dn ],
+              'school_dns'           => [ @heroes_school.dn.to_s ],
               'teaching_group_field' => 'gidNumber', # typically: 'department'
             },
             'mappings' => [
@@ -113,11 +121,10 @@ describe PuavoRest::ExternalLogin do
         },
       }
     }
-
-    Puavo::Test.clean_up_ldap
   end
 
   after do
+    Puavo::Test.clean_up_ldap
     CONFIG = @orig_config
   end
 
@@ -199,7 +206,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'user is in expected school' do
-      assert_equal extuser_target_school_dn, @user.puavoSchool
+      assert_equal @heroes_school.dn.to_s, @user.puavoSchool
     end
 
     it 'user has expected roles' do
@@ -234,7 +241,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'user is in expected school' do
-      assert_equal extuser_target_school_dn, @user.puavoSchool
+      assert_equal @heroes_school.dn.to_s, @user.puavoSchool
     end
 
     it 'user has expected roles' do
@@ -426,6 +433,45 @@ describe PuavoRest::ExternalLogin do
       assert_nil user.puavoRemovalRequestTime,
                  'user removal request time is set when it should not be'
     end
+
+    it 'user schools, groups and roles follow configuration changes' do
+      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
+            ['mappings'] = [
+        { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+            { 'add_administrative_group' => {
+                'displayname' => 'Better heroes',
+                'name'        => 'better-heroes', }},
+            { 'add_roles' => [ 'teacher' ] },
+            { 'add_school_dns' => [ @star_school.dn.to_s ] },
+            { 'add_teaching_group' => {
+                'displayname' => 'Better heroes school %GROUP',
+                'name'        => 'better-heroes-%STARTYEAR-%GROUP', }},
+            { 'add_year_class' => {
+                'displayname' => 'Better heroes school %CLASSNUMBER',
+                'name'        => 'better-heroes-%STARTYEAR', }}]}]
+
+      assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
+
+      user = User.find(:first, :attribute => 'uid', :value => 'peter.parker')
+      assert !user.nil?, 'peter.parker could not be found from Puavo'
+
+      assert_equal @star_school.dn.to_s, user.puavoSchool
+      assert_equal 'teacher', user.puavoEduPersonAffiliation
+
+      assert_user_belongs_to_an_administrative_group('peter.parker',
+                                                     'better-heroes')
+      group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
+      assert !group.nil?, 'There is no heroes group when there should be'
+      assert !Array(group.memberUid).include?('peter-parker'),
+             "peter.parker does belong to the \"heroes\"-group"
+
+      assert_user_belongs_to_one_group_of_type('peter.parker',
+                                               'teaching group',
+                                               /^better-heroes-(\d+)-(\d+)$/)
+      assert_user_belongs_to_one_group_of_type('peter.parker',
+                                               'year class',
+                                               /^better-heroes-(\d+)$/)
+    end
   end
 
   describe 'test group creation and membership handling' do
@@ -568,10 +614,11 @@ describe PuavoRest::ExternalLogin do
 
       assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
 
-      groups = Group.find(:attribute => 'puavoEduGroupType',
+      groups = Group.find(:all,
+                          :attribute => 'puavoEduGroupType',
                           :value     => 'teaching group')
-      assert_nil groups,
-                 'there are teaching groups even when there should be none'
+      assert groups.empty?,
+             'there are teaching groups even when there should be none'
     end
 
     it 'trying to configure a user to two year class groups' do
@@ -587,10 +634,11 @@ describe PuavoRest::ExternalLogin do
 
       assert_external_status('peter.parker', 'secret', 'UPDATED', 'login error')
 
-      groups = Group.find(:attribute => 'puavoEduGroupType',
+      groups = Group.find(:all,
+                          :attribute => 'puavoEduGroupType',
                           :value     => 'year class')
-      assert_nil groups,
-                 'there are year class groups even when there should be none'
+      assert groups.empty?,
+             'there are year class groups even when there should be none'
     end
   end
 end
