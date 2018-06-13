@@ -18,9 +18,49 @@ Feature: Manage passwords
 
   Scenario: Empty own password change form should not crash
     Given I am on the own password change page
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "You did not fill in all the required form fields."
+
+  Scenario: Username is remembered on the own password change form
+    Given I am on the own password change page
+    When I fill in "login[uid]" with "huey.duck"
+    And I press "Change password"
+    Then the "login[uid]" field should contain "huey.duck"
+    And I should see "Invalid password or username"
+    And I should not see "Password changed successfully!"
+
+  Scenario: Initial (own) username is set and remembered
+    Given I am on the own password change page with changing user dewey.duck
+    Then the "login[uid]" field should contain "dewey.duck"
+    And I press "Change password"
+    Then the "login[uid]" field should contain "dewey.duck"
+    And I should see "Invalid password or username"
+
+  Scenario: Empty other user password change form should not crash
+    Given I am on the password change page
     When I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "You did not fill in all the required form fields."
+
+  Scenario: Initial changing and changed usernames are set and remembered
+    Given I am on the password change page with changing user donald.duck and changed user louie.duck
+    Then the "login[uid]" field should contain "donald.duck"
+    And the "user[uid]" field should contain "louie.duck"
+    When I press "Change password"
+    Then the "login[uid]" field should contain "donald.duck"
+    And the "user[uid]" field should contain "louie.duck"
+    And I should see "Invalid password or username"
+
+  Scenario: Usernames are remembered on the other user password change form
+    Given I am on the password change page
+    Then I fill in "login[uid]" with "donald.duck"
+    And I fill in "user[uid]" with "louie.duck"
+    When I press "Change password"
+    Then the "login[uid]" field should contain "donald.duck"
+    And the "user[uid]" field should contain "louie.duck"
+    And I should see "Invalid password or username"
+    Then I should not see "Password changed successfully!"
 
   Scenario: Non-existent user tries to change another user's password
     When I fill in "login[uid]" with "wrong"
