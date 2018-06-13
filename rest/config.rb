@@ -26,6 +26,7 @@ default_config = {
 if ENV["RACK_ENV"] == "test"
   # XXX how to know this is the "cucumber"-user dn?
   cucumber_user_dn = 'puavoId=8,ou=People,dc=edu,dc=example,dc=fi'
+  extuser_target_school_dn = 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi'
 
   org_conf_path = '../../config/organisations.yml'
   organisations = YAML.load_file(File.expand_path(org_conf_path, __FILE__))
@@ -77,6 +78,7 @@ if ENV["RACK_ENV"] == "test"
             'defaults' => {
               'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
               'roles'                => [ 'student' ],
+              'school_dns'           => [ extuser_target_school_dn ],
               'teaching_group_field' => 'gidNumber', # typically: 'department'
             },
             'mappings' => [
