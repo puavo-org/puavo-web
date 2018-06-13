@@ -23,7 +23,7 @@
 <table>
 <tr>
   <td><%= label :login, :uid, t('activeldap.attributes.user.uid') %></td>
-  <td><%= text_field :login, :uid %></td>
+  <td><%= text_field :login, :uid, :value => @changing || '' %></td>
 </tr>
 
 <tr>
