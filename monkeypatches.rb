@@ -21,10 +21,8 @@ module ActiveLdap
 
   module Configuration
     module ClassMethods
-      def remove_configuration_by_key_and_configuration(key, config)
-        @@defined_configurations.delete_if do |_key, _config|
-          _key == key && _config == config
-        end
+      def remove_configuration_by_key(key)
+        @@defined_configurations.delete(key)
       end
     end
   end
@@ -42,7 +40,7 @@ module ActiveLdap
         end
         config = configuration(key)
         conn = active_connections[key]
-        remove_configuration_by_key_and_configuration(key, config)
+        remove_configuration_by_key(key)
         active_connections.delete_if {|_key, value| value == conn}
         conn.disconnect! if conn
         config
