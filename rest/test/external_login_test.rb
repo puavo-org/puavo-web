@@ -536,6 +536,23 @@ describe PuavoRest::ExternalLogin do
                              'not returning NOTCONFIGURED when not configured')
     end
 
+    it 'Puavo organisation admin credentials are wrong' do
+      CONFIG['external_login']['example']['admin_password'] = 'thisisabadpw'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'CONFIGERROR',
+                             'not returning CONFIGERROR on configuration error')
+    end
+
+    it 'external login service lookup credentials are wrong' do
+      CONFIG['external_login']['example']['external_ldap']['bind_password'] \
+        = 'thisisabadpw'
+      assert_external_status('peter.parker',
+                             'secret',
+                             'UNAVAILABLE',
+                             'not returning UNAVAILABLE on configuration error')
+    end
+
     it 'trying to login as user only in Puavo' do
       # "cucumber"-user is NOT "heroes"-database (external login service)
       assert_external_status('cucumber',

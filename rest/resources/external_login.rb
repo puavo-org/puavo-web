@@ -11,19 +11,19 @@ module PuavoRest
       user_status = nil
 
       begin
-        raise BadCredentials, 'no basic auth used' \
+        raise ExternalLoginWrongCredentials, 'no basic auth used' \
           unless env['HTTP_AUTHORIZATION']
 
         auth_type, auth_data = env['HTTP_AUTHORIZATION'].split(' ', 2)
-        raise BadCredentials, 'no basic auth used' \
+        raise ExternalLoginWrongCredentials, 'no basic auth used' \
           unless auth_type == 'Basic'
 
         username, password = Base64.decode64(auth_data).split(':')
         if username.empty? then
-          raise BadCredentials, 'no username provided'
+          raise ExternalLoginWrongCredentials, 'no username provided'
         end
         if password.empty? then
-          raise BadCredentials, 'no password provided'
+          raise ExternalLoginWrongCredentials, 'no password provided'
         end
 
         external_login = ExternalLogin.new
@@ -105,7 +105,7 @@ module PuavoRest
                   + " '#{ login_service.service_name }' by user" \
                   + " '#{ username }', username or password was wrong"
           flog.info('could not login to external service', msg)
-          raise BadCredentials, msg
+          raise ExternalLoginWrongCredentials, msg
         end
 
         # update user information after successful login
@@ -124,7 +124,8 @@ module PuavoRest
         end
 
       rescue BadCredentials => e
-        user_status = ExternalLogin.status_badusercreds(e.message)
+        # this means there was a problem with Puavo credentials (admin dn)
+        user_status = ExternalLogin.status_configerror(e.message)
       rescue ExternalLoginConfigError => e
         flog.info('external login configuration error',
                   "external login configuration error: #{ e.message }")
@@ -137,6 +138,8 @@ module PuavoRest
         flog.warn('external login unavailable',
                   "external login is unavailable: #{ e.message }")
         user_status = ExternalLogin.status_unavailable(e.message)
+      rescue ExternalLoginWrongCredentials => e
+        user_status = ExternalLogin.status_badusercreds(e.message)
       rescue StandardError => e
         raise InternalError, e
       end
