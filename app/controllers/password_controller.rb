@@ -65,7 +65,7 @@ class PasswordController < ApplicationController
     @changed = nil
 
     respond_to do |format|
-      flash[:notice] = t('flash.password.successful')
+      flash.now[:notice] = t('flash.password.successful')
       unless params[:user][:uid]
         format.html { render :action => "own" }
       else
@@ -164,7 +164,7 @@ class PasswordController < ApplicationController
   private
 
   def error_message_and_redirect(message)
-    flash[:alert] = message
+    flash.now[:alert] = message
     @user = User.new
     unless params[:user][:uid]
       render :action => "own"
