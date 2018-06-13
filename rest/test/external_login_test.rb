@@ -56,6 +56,10 @@ def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
 end
 
 describe PuavoRest::ExternalLogin do
+  # We store this as json to get deep copy semantics, so we have the freedom
+  # to mess with external login configurations in tests.
+  orig_external_login_config_json = CONFIG['external_login'].to_json
+
   before(:each) do
     Puavo::Test.clean_up_ldap
 
@@ -66,8 +70,6 @@ describe PuavoRest::ExternalLogin do
       'enable' => true
     }
 
-    @orig_config = CONFIG.dup
-
     @heroes_school = School.create(:cn          => 'heroes-u',
                                    :displayName => 'Heroes University')
     @heroes_school.save!
@@ -76,13 +78,15 @@ describe PuavoRest::ExternalLogin do
                                  :displayName => 'Stars')
     @star_school.save!
 
+    # make a deep copy of external_login configuration
+    CONFIG['external_login'] = JSON.parse( orig_external_login_config_json )
     CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
           ['defaults']['school_dns'] = [ @heroes_school.dn.to_s ]
   end
 
   after do
     Puavo::Test.clean_up_ldap
-    CONFIG = @orig_config
+    CONFIG['external_login'] = JSON.parse( orig_external_login_config_json )
     Puavo::Organisation.configurations['example'].delete('new_group_management')
   end
 
