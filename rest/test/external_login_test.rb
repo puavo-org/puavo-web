@@ -56,9 +56,6 @@ def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
 end
 
 describe PuavoRest::ExternalLogin do
-  cucumber_user = User.find(:first, :attribute => 'uid', :value => 'cucumber')
-  raise 'no cucumber user' unless cucumber_user
-
   before(:each) do
     Puavo::Test.clean_up_ldap
 
@@ -79,56 +76,8 @@ describe PuavoRest::ExternalLogin do
                                  :displayName => 'Stars')
     @star_school.save!
 
-    org_conf_path = '../../../config/organisations.yml'
-    organisations = YAML.load_file(File.expand_path(org_conf_path, __FILE__))
-
-    CONFIG['external_login'] = {
-      'example' => {
-        'admin_dn'       => cucumber_user.dn.to_s,
-        'admin_password' => organisations['example']['owner_pw'],
-        'service'        => 'external_ldap',
-        'external_ldap'  => {
-          'base'                    => 'dc=edu,dc=heroes,dc=fi',
-          # XXX admin_dn is "admin" dn, but how to get it nicely
-          # XXX so it is always correct?
-          # XXX (we could also use some special user which only has some read
-          # XXX permissions to People)
-          'bind_dn'                 => 'puavoId=16,ou=People,dc=edu,dc=heroes,dc=fi',
-          'bind_password'           => organisations['heroes']['owner_pw'],
-          'dn_mappings'    => {
-            'defaults' => {
-              'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
-              'roles'                => [ 'student' ],
-              'school_dns'           => [ @heroes_school.dn.to_s ],
-              'teaching_group_field' => 'gidNumber', # typically: 'department'
-            },
-            'mappings' => [
-              { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
-                  { 'add_administrative_group' => {
-                      'displayname' => 'Heroes',
-                      'name'        => 'heroes', }},
-                  { 'add_teaching_group' => {
-                      'displayname' => 'Heroes school %GROUP',
-                      'name'        => 'heroes-%STARTYEAR-%GROUP', }},
-                  { 'add_year_class' => {
-                      'displayname' => 'Heroes school %CLASSNUMBER',
-                      'name'        => 'heroes-%STARTYEAR', }},
-                ]},
-              { 'puavoId=62,ou=People,dc=edu,dc=heroes,dc=fi' => [
-                  { 'add_administrative_group' => {
-                      'displayname' => 'Resistence',
-                      'name'        => 'resistence', }},
-                  { 'add_roles' => [ 'teacher' ] },
-                ]},
-            ],
-          },
-          'external_domain'         => 'example.com',
-          'external_id_field'       => 'eduPersonPrincipalName',
-          'external_username_field' => 'mail',
-          'server'                  => 'localhost',
-        },
-      }
-    }
+    CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
+          ['defaults']['school_dns'] = [ @heroes_school.dn.to_s ]
   end
 
   after do
