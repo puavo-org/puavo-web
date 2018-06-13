@@ -56,6 +56,9 @@ def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
 end
 
 describe PuavoRest::ExternalLogin do
+  cucumber_user = User.find(:first, :attribute => 'uid', :value => 'cucumber')
+  raise 'no cucumber user' unless cucumber_user
+
   before(:each) do
     Puavo::Test.clean_up_ldap
 
@@ -74,9 +77,7 @@ describe PuavoRest::ExternalLogin do
 
     CONFIG['external_login'] = {
       'example' => {
-        # XXX admin_dn is "cucumber" dn, but how to get it nicely
-        # XXX so it is always correct?
-        'admin_dn'       => 'puavoId=8,ou=People,dc=edu,dc=example,dc=fi',
+        'admin_dn'       => cucumber_user.dn.to_s,
         'admin_password' => organisations['example']['owner_pw'],
         'service'        => 'external_ldap',
         'external_ldap'  => {
