@@ -6,14 +6,14 @@ class MySchoolUsers < PuavoSinatra
   get '/v3/my_school_users' do
     auth :basic_auth, :kerberos
 
-    u = User.current
+    user = User.current
 
     # only let teachers, admins and staff members view this page
-    unless (Array(u.user_type) & ['teacher', 'staff', 'admin']).any?
+    unless (Array(user.user_type) & ['teacher', 'staff', 'admin']).any?
       halt 401, 'Unauthorized'
     end
 
-    school = u.school
+    school = user.school
 
     begin
       s_groups = Group.by_attr(:school_dn, school.dn, :multiple => true)
@@ -74,6 +74,7 @@ class MySchoolUsers < PuavoSinatra
     @data = {}
     @data[:school] = school.name
     @data[:domain] = "#{request.scheme}://#{User.organisation.domain}"
+    @data[:changing] = user.username
 
     # the groups aren't necessarily in any order, so sort them and always
     # put the ungrouped users at the end

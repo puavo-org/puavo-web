@@ -173,7 +173,7 @@ function setupCollapseHeaders()
     <td><%= u[:first] %></td>
     <td><%= u[:username] %></td>
     <td>
-      <a href="<%= @data[:domain] %>/users/password?initial=<%= u[:username] %>"
+      <a href="<%= @data[:domain] %>/users/password?changing=<%= @data[:changing] %>&amp;changed=<%= u[:username] %>"
          class="button" title="<%= @data[:language][:password_tooltip] %>">
         <span class="icon">🔑</span> <%= @data[:language][:change_password] %>
       </a>

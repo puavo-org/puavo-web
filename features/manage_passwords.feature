@@ -17,6 +17,7 @@ Feature: Manage passwords
     And I am on the password change page
 
   Scenario: Empty own password change form should not crash
+    Given I am on the own password change page
     When I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "You did not fill in all the required form fields."
