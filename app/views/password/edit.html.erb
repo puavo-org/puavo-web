@@ -30,12 +30,12 @@
 
 <tr>
   <td><%= label :login, :uid, t('activeldap.attributes.user.uid') %></td>
-  <td><%= text_field :login, :uid, :value => @changing || '' %></td>
+  <td><%= text_field :login, :uid, :value => @changing || '', :autofocus => @changing.nil? ? true : false %></td>
 </tr>
 
 <tr>
   <td><%= label :login, :password, t('.password') %></td>
-  <td><%= password_field :login, :password %></td>
+  <td><%= password_field :login, :password, :autofocus => @changing.nil? ? false : true %></td>
 </tr>
 
 <tr>
