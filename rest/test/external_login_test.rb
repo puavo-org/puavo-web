@@ -62,6 +62,13 @@ describe PuavoRest::ExternalLogin do
   before(:each) do
     Puavo::Test.clean_up_ldap
 
+    # The external login functionality does require new_group_management to be
+    # enabled (the code does not check or warn about this, though, admins just
+    # have to know).
+    Puavo::Organisation.configurations['example']['new_group_management'] = {
+      'enable' => true
+    }
+
     @orig_config = CONFIG.dup
 
     @heroes_school = School.create(:cn          => 'heroes-u',
@@ -127,6 +134,7 @@ describe PuavoRest::ExternalLogin do
   after do
     Puavo::Test.clean_up_ldap
     CONFIG = @orig_config
+    Puavo::Organisation.configurations['example'].delete('new_group_management')
   end
 
   describe 'logins with bad credentials fail' do
