@@ -12,7 +12,11 @@ class PasswordController < ApplicationController
   def edit
     @user = User.new
     @gsuite = false
-    @existing = params[:initial] || nil
+
+    @changing = params[:changing] || nil
+    @changed = params[:changed] || nil
+    session[:changing] = @changing
+    session[:changed] = @changed
 
     url = external_pw_mgmt_url
 
@@ -27,6 +31,9 @@ class PasswordController < ApplicationController
     @user = User.new
     @gsuite = false
 
+    @changing = params[:changing] || nil
+    session[:changing] = @changed
+
     url = external_pw_mgmt_url
 
     if !url.nil? && !url.empty?
@@ -36,6 +43,9 @@ class PasswordController < ApplicationController
 
   # PUT /password
   def update
+
+    @changing = params[:login][:uid] || session[:changing] || nil
+    @changed = params[:user][:uid] || session[:changed] || nil
 
     if params[:login][:uid].empty?
       raise User::UserError, I18n.t('flash.password.incomplete_form')
@@ -48,6 +58,11 @@ class PasswordController < ApplicationController
     unless change_user_password
       raise User::UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
+
+    session[:changing] = nil
+    session[:changed] = nil
+    @changing = nil
+    @changed = nil
 
     respond_to do |format|
       flash[:notice] = t('flash.password.successful')
@@ -150,10 +165,11 @@ class PasswordController < ApplicationController
 
   def error_message_and_redirect(message)
     flash[:alert] = message
+    @user = User.new
     unless params[:user][:uid]
-      redirect_to own_password_path
+      render :action => "own"
     else
-      redirect_to password_path
+      render :action => "edit"
     end
   end
 
