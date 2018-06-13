@@ -24,8 +24,8 @@ default_config = {
 }
 
 if ENV["RACK_ENV"] == "test"
-  cucumber_user = User.find(:first, :attribute => 'uid', :value => 'cucumber')
-  raise 'no cucumber user' unless cucumber_user
+  # XXX how to know this is the "cucumber"-user dn?
+  cucumber_user_dn = 'puavoId=8,ou=People,dc=edu,dc=example,dc=fi'
 
   org_conf_path = '../../config/organisations.yml'
   organisations = YAML.load_file(File.expand_path(org_conf_path, __FILE__))
@@ -62,7 +62,7 @@ if ENV["RACK_ENV"] == "test"
 
     'external_login' => {
       'example' => {
-        'admin_dn'       => cucumber_user.dn.to_s,
+        'admin_dn'       => cucumber_user_dn,
         'admin_password' => organisations['example']['owner_pw'],
         'service'        => 'external_ldap',
         'external_ldap'  => {
