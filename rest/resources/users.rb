@@ -654,7 +654,7 @@ class User < LdapModel
 
   def check_if_changed_attributes(new_userinfo)
     old_userinfo = self.to_hash
-       
+
     new_userinfo.each do |attribute, new_value|
       if attribute == 'password' then
         begin
