@@ -191,7 +191,7 @@ module Puavo
         :stdout          => '',
       }
 
-    rescue ExternalLoginWrongPassword => e
+    rescue ExternalLoginWrongCredentials => e
       short_errmsg = 'login to upstream password change service failed'
       long_errmsg  = "#{ short_errmsg } for user"         \
                        + " '#{ target_user_username }': " \
