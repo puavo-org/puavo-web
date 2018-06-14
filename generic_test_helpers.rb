@@ -113,6 +113,26 @@ module Test
     anotherorg.o = "Another Organisation"
     anotherorg.save!
 
+    heroesorg_conf = Puavo::Organisation.find('heroes')
+    LdapBase.ldap_setup_connection(
+      default_ldap_configuration['host'],
+      heroesorg_conf.ldap_base,
+      'uid=admin,o=puavo',
+      'password'
+    )
+
+    role = Role.find(:first, :attribute => 'displayName', :value => 'Mutant')
+    # The external logins testing code sets some "heroes"-organisation user
+    # passwords to something else than "secret", so reset those.
+    User.all.each do |user|
+      user.role_ids = [ role.puavoId ]  # XXX this should not be necessary
+                                        # XXX remove once we have
+                                        # XXX new_group_management everywhere
+                                        # XXX in place
+      user.set_password 'secret'
+      user.save!
+    end
+
     puavo_ca_url = "http://" + Puavo::CONFIG["puavo_ca"]["host"] + ":" + Puavo::CONFIG["puavo_ca"]["port"].to_s
     HTTP.basic_auth( :user => "uid=admin,o=puavo",
                      :pass => "password" )
