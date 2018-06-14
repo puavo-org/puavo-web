@@ -104,13 +104,7 @@ if ENV["RACK_ENV"] == "test"
           'external_domain'         => 'example.com',
           'external_id_field'       => 'eduPersonPrincipalName',
           'external_username_field' => 'mail',
-          'password_change' => {
-            'api' => 'fake',
-            'permissions' => {
-              'peter.parker' => [ 'peter.parker' ],
-              'sarah.connor' => [ 'peter.parker', 'sarah.connor' ],
-            },
-          },
+          'password_change' => { 'api' => 'openldap', },
           'server' => 'localhost',
         },
       }

@@ -518,8 +518,6 @@ module PuavoRest
 
       # these raise exceptions if password change fails
       case @external_password_change['api']
-        when 'fake'
-          fake_password_change(actor_username, target_user_username)
         when 'microsoft-ad'
           change_microsoft_ad_password(target_dn, target_user_password)
         when 'openldap'
@@ -540,30 +538,6 @@ module PuavoRest
           raise ExternalLoginPasswordChangeError,
                 'password change api not configured'
       end
-
-      return true
-    end
-
-    # This fake API exists mostly for testing, it does not change any
-    # passwords (it would be better to have a fake AD server, though).
-    def fake_password_change(actor_username, target_user_username)
-      permissions = @external_password_change['permissions']
-      return true unless permissions
-
-      raise ExternalLoginConfigError,
-            'fake password change permissions is not a hash' \
-        unless permissions.kind_of?(Hash)
-
-      allowed_target_users = permissions[actor_username]
-      raise ExternalLoginPasswordChangeError, 'no allowed target users' \
-        unless allowed_target_users
-
-      raise ExternalLoginConfigError,
-            'fake password change permissions hash value is not an array' \
-        unless allowed_target_users.kind_of?(Array)
-
-      raise ExternalLoginPasswordChangeError, 'no permission to change' \
-        unless allowed_target_users.include?(target_user_username)
 
       return true
     end
