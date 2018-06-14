@@ -522,6 +522,20 @@ module PuavoRest
           fake_password_change(actor_username, target_user_username)
         when 'microsoft-ad'
           change_microsoft_ad_password(target_dn, target_user_password)
+        when 'openldap'
+          bind_user = @ldap.search(:filter   => user_ldapfilter(actor_username),
+                                   :password => actor_password)
+          if !bind_user || bind_user.count != 1 then
+            raise ExternalLoginPasswordChangeError,
+                  'could not find user in openldap to bind with'
+          end
+          res = Puavo::LdapPassword.change_ldap_passwd(CONFIG['ldap'],
+                                                       bind_user.first.dn.to_s,
+                                                       actor_password,
+                                                       target_dn,
+                                                       target_user_password)
+          raise ExternalLoginPasswordChangeError, res[:stderr] \
+            unless res[:exit_status] == 0
         else
           raise ExternalLoginPasswordChangeError,
                 'password change api not configured'
