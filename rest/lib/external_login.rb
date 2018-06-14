@@ -612,9 +612,9 @@ module PuavoRest
         raise ExternalLoginUnavailable, msg
       end
 
-      return false if ldap_entries.length == 0
+      return false if ldap_entries.count == 0
 
-      if ldap_entries.length > 1
+      if ldap_entries.count > 1
         raise ExternalLoginUnavailable, 'ldap search returned too many entries'
       end
 
@@ -842,7 +842,7 @@ module PuavoRest
         raise ExternalLoginUnavailable, msg
       end
 
-      if ldap_entries.length == 0 then
+      if ldap_entries.count == 0 then
         # ExternalLoginUserMissing means that user is missing in external ldap
         # and it can be removed from Puavo in case it exists there.
         msg = "user '#{ username }' does not exist in external ldap"
@@ -859,7 +859,7 @@ module PuavoRest
           raise ExternalLoginUnavailable, msg
         end
 
-        if extid_ldap_entries.length == 0 then
+        if extid_ldap_entries.count == 0 then
           msg = "user '#{ username }' (#{ puavouser.external_id }) does not" \
                   + ' exist in external ldap'
           raise ExternalLoginUserMissing, msg
@@ -872,7 +872,7 @@ module PuavoRest
         raise ExternalLoginWrongCredentials, msg
       end
 
-      if ldap_entries.length > 1
+      if ldap_entries.count > 1
         raise ExternalLoginUnavailable, 'ldap search returned too many entries'
       end
 
