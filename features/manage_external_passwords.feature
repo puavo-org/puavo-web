@@ -2,9 +2,9 @@ Feature: Manage external passwords
   Testing that users in the "heroes" organisation can change passwords
   through the external login mechanism.  Users do not need to be
   setup in "example"-organisation, but as a side-effect of password
-  changes they will be created there.  Users "sarah.connor" and "peter.parker"
-  do exist in the "heroes"-organisation, and "charlie.agent" and "david.agent"
-  do not.
+  changes they will be created there.  Users "sarah.connor" (admin)
+  and "luke.skywalker" (student) exist in the "heroes"-organisation,
+  and "charlie.agent" (admin) and "david.agent" (student) do not.
 
   Background:
     Given a new school and group with names "School 1", "Class 1" on the "example" organisation
@@ -42,19 +42,19 @@ Feature: Manage external passwords
 
   Scenario: External user changes their own password with another user form
     Given I am on the password change page
-    When I fill in "login[uid]" with "peter.parker"
+    When I fill in "login[uid]" with "luke.skywalker"
     And I fill in "Password" with "secret"
-    And I fill in "user[uid]" with "peter.parker"
+    And I fill in "user[uid]" with "luke.skywalker"
     And I fill in "user[new_password]" with "newsecret"
     And I fill in "New password confirmation" with "newsecret"
     And I press "Change password"
     Then I should see "Password changed successfully!"
-    And I should not login with "peter.parker" and "secret"
-    And I should login with "peter.parker" and "newsecret"
+    And I should not login with "luke.skywalker" and "secret"
+    And I should login with "luke.skywalker" and "newsecret"
 
   Scenario: External user tries to change password without permissions
     Given I am on the password change page
-    When I fill in "login[uid]" with "peter.parker"
+    When I fill in "login[uid]" with "luke.skywalker"
     And I fill in "Password" with "secret"
     And I fill in "user[uid]" with "sarah.connor"
     And I fill in "user[new_password]" with "newsarahconnorsecret"
@@ -67,10 +67,10 @@ Feature: Manage external passwords
     Given I am on the password change page
     When I fill in "login[uid]" with "sarah.connor"
     And I fill in "Password" with "secret"
-    And I fill in "user[uid]" with "peter.parker"
-    And I fill in "user[new_password]" with "newpeterparkersecret"
-    And I fill in "New password confirmation" with "newpeterparkersecret"
+    And I fill in "user[uid]" with "luke.skywalker"
+    And I fill in "user[new_password]" with "newlukeskywalkersecret"
+    And I fill in "New password confirmation" with "newlukeskywalkersecret"
     And I press "Change password"
     Then I should see "Password changed successfully!"
-    And I should not login with "peter.parker" and "secret"
-    And I should login with "peter.parker" and "newpeterparkersecret"
+    And I should not login with "luke.skywalker" and "secret"
+    And I should login with "luke.skywalker" and "newlukeskywalkersecret"
