@@ -454,6 +454,10 @@ module PuavoRest
       raise ExternalLoginConfigError, 'external_domain not configured' \
         unless @external_domain.kind_of?(String)
 
+      @external_password_change = ldap_config['password_change']
+      raise ExternalLoginConfigError, 'password_change style not configured' \
+        unless @external_password_change.kind_of?(Hash)
+
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
                             :port => (Integer(ldap_config['port']) rescue 389),
@@ -512,6 +516,45 @@ module PuavoRest
                 + ' user and/or password is wrong'
       end
 
+      # these raise exceptions if password change fails
+      case @external_password_change['api']
+        when 'fake'
+          fake_password_change(actor_username, target_user_username)
+        when 'microsoft-ad'
+          change_microsoft_ad_password(target_dn, target_user_password)
+        else
+          raise ExternalLoginPasswordChangeError,
+                'password change api not configured'
+      end
+
+      return true
+    end
+
+    # This fake API exists mostly for testing, it does not change any
+    # passwords (it would be better to have a fake AD server, though).
+    def fake_password_change(actor_username, target_user_username)
+      permissions = @external_password_change['permissions']
+      return true unless permissions
+
+      raise ExternalLoginConfigError,
+            'fake password change permissions is not a hash' \
+        unless permissions.kind_of?(Hash)
+
+      allowed_target_users = permissions[actor_username]
+      raise ExternalLoginPasswordChangeError, 'no allowed target users' \
+        unless allowed_target_users
+
+      raise ExternalLoginConfigError,
+            'fake password change permissions hash value is not an array' \
+        unless allowed_target_users.kind_of?(Array)
+
+      raise ExternalLoginPasswordChangeError, 'no permission to change' \
+        unless allowed_target_users.include?(target_user_username)
+
+      return true
+    end
+
+    def change_microsoft_ad_password(target_dn, target_user_password)
       encoded_password = ('"' + target_user_password + '"') \
                          .encode('utf-16le')        \
                          .force_encoding('utf-8')
@@ -525,8 +568,7 @@ module PuavoRest
       change_ok = @ldap.modify(:dn => target_dn, :operations => ops)
       if !change_ok then
         raise ExternalLoginPasswordChangeError,
-              'password change failed:' \
-                + " '#{ @ldap.get_operation_result.error_message }'" \
+              @ldap.get_operation_result.error_message \
                 + ' (maybe server password policy does not accept it?)'
       end
 

@@ -104,6 +104,10 @@ if ENV["RACK_ENV"] == "test"
           'external_domain'         => 'example.com',
           'external_id_field'       => 'eduPersonPrincipalName',
           'external_username_field' => 'mail',
+          'password_change' => {
+            'api' => 'fake',
+            # 'permissions' => {},
+          },
           'server'                  => 'localhost',
         },
       }
