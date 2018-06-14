@@ -129,7 +129,9 @@ module Test
                                         # XXX remove once we have
                                         # XXX new_group_management everywhere
                                         # XXX in place
-      user.set_password 'secret'
+      user.set_password (user.cn == heroesorg_conf.owner \
+                           ? heroesorg_conf.owner_pw \
+                           : 'secret')
       user.save!
     end
 
