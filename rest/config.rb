@@ -68,8 +68,7 @@ if ENV["RACK_ENV"] == "test"
         'service'        => 'external_ldap',
         'external_ldap'  => {
           'base'                    => 'dc=edu,dc=heroes,dc=fi',
-          # XXX admin_dn is "admin" dn, but how to get it nicely
-          # XXX so it is always correct?
+          # XXX admin_dn is "admin" dn, but how to get it nicely?
           # XXX (we could also use some special user which only has some read
           # XXX permissions to People)
           'bind_dn'                 => 'puavoId=16,ou=People,dc=edu,dc=heroes,dc=fi',
@@ -93,6 +92,7 @@ if ENV["RACK_ENV"] == "test"
                       'displayname' => 'Heroes school %CLASSNUMBER',
                       'name'        => 'heroes-%STARTYEAR', }},
                 ]},
+              # XXX puavoId=62 is "sarah.connor" dn, but how to get it nicely?
               { 'puavoId=62,ou=People,dc=edu,dc=heroes,dc=fi' => [
                   { 'add_administrative_group' => {
                       'displayname' => 'Resistence',
@@ -106,9 +106,12 @@ if ENV["RACK_ENV"] == "test"
           'external_username_field' => 'mail',
           'password_change' => {
             'api' => 'fake',
-            # 'permissions' => {},
+            'permissions' => {
+              'peter.parker' => [ 'peter.parker' ],
+              'sarah.connor' => [ 'peter.parker', 'sarah.connor' ],
+            },
           },
-          'server'                  => 'localhost',
+          'server' => 'localhost',
         },
       }
     }
