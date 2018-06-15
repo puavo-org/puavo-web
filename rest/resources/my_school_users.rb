@@ -139,7 +139,7 @@ private
           username: 'Username',
           actions: 'Actions',
           change_password: 'Change password',
-          password_tooltip: 'Change this user\'s pasword',
+          password_tooltip: 'Change this user\'s password',
           footer: 'Page created:'
         }
 
