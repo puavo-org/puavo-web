@@ -94,47 +94,46 @@ module Puavo
     target_user = PuavoRest::User.by_username!(target_user_username)
     target_user_dn = target_user.dn.to_s
 
-    # First change the password to external service(s) and then to us.
-    # If we can not change it to external service(s), do not change it for us
-    # either.
+    # It would be nice if we could use 'ldappasswd -n' to check if we can
+    # change password before doing downstream password change, and then
+    # doing the downstream password change first, but unfortunately that
+    # does not always work :-(
+
+    # Do optimize things a bit by not changing the password
+    # (downstream and in Puavo) in case it is the same as before.
+    if (actor_dn == target_user_dn \
+         && actor_password == target_user_password) then
+      return {
+        :exit_status => 0,
+        :stderr      => '',
+        :stdout      => 'Password not changed because it is the same' \
+                          + ' as before.',
+      }
+    end
+
+    res = LdapPassword.change_ldap_passwd(host, actor_dn, actor_password,
+                                          target_user_dn, target_user_password)
+    return res if res[:exit_status] != 0
+
     external_pw_mgmt_url = self.get_external_pw_mgmt_url(target_user)
     if external_pw_mgmt_url then
-      can_change = \
-         LdapPassword.can_change_password?(host, actor_dn, actor_password,
-           target_user_dn, target_user_password)
-
-      unless can_change then
-        errmsg = "User '#{ actor_dn }' has no sufficient permissions" \
-                   ' (or invalid credentials) to change password' \
-                   + " for user '#{ target_user_username }'"
-        raise errmsg
-      end
-
-      # Do optimize things a bit by not changing the password
-      # (downstream and in Puavo) in case it is the same as before.
-      # (We always change the downstream first, so if we have a permission
-      # to change it must be the same if this condition is met:)
-      if (actor_dn == target_user_dn \
-           && actor_password == target_user_password) then
-        return {
-          :exit_status => 0,
-          :stderr      => '',
-          :stdout      => 'Password not changed because it is the same' \
-                            + ' as before.',
-        }
-      end
-
       begin
         change_passwd_downstream(target_user_username,
                                  target_user_password,
                                  external_pw_mgmt_url)
       rescue StandardError => e
         raise "Cannot change downstream passwords: #{ e.message }"
+
+        # Try resetting password if we can in case downstream password change
+        # failed.
+        if actor_dn == target_user_dn then
+          LdapPassword.change_ldap_passwd(host, actor_dn, target_user_password,
+                                          target_user_dn, actor_password)
+        end
       end
     end
 
-    LdapPassword.change_ldap_passwd(host, actor_dn, actor_password,
-                                    target_user_dn, target_user_password)
+    return res
   end
 
   def self.change_passwd_downstream(target_user_username,
@@ -231,22 +230,7 @@ module Puavo
   end
 
   class LdapPassword
-    def self.can_change_password?(host, bind_dn, bind_dn_pw, user_dn, new_pw)
-      # "-n" for ldappasswd means "dry-run", it does not change the password
-      # but instead can tell us if password change is possible.
-      # It does check the permissions as well, which is what we want.
-      res = run_ldappasswd(host, bind_dn, bind_dn_pw, user_dn, new_pw,
-                           [ '-n' ])
-
-      return res[:exit_status] == 0
-    end
-
     def self.change_ldap_passwd(host, bind_dn, bind_dn_pw, user_dn, new_pw)
-      run_ldappasswd(host, bind_dn, bind_dn_pw, user_dn, new_pw)
-    end
-
-    def self.run_ldappasswd(host, bind_dn, bind_dn_pw, user_dn, new_pw,
-                            extra_cmd_args=[])
       cmd = [ 'ldappasswd',
               # use simple authentication instead of SASL
               '-x',
@@ -262,8 +246,6 @@ module Puavo
               '-s', new_pw,
               # timeout after 20 sec
               '-o', 'nettimeout=20',
-              # plus add possible extra command arguments
-              *extra_cmd_args,
               # The user whose password we're changing
               user_dn.to_s ]
 
