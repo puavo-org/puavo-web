@@ -438,6 +438,14 @@ role.save!
     :puavoEduPersonAffiliation => "student",
     :preferredLanguage => "fi",
     :mail => "luke.skywalker@example.com"
+  },
+  {
+    :givenName => "Thomas",
+    :sn  => "Anderson",
+    :uid => "thomas.anderson",
+    :puavoEduPersonAffiliation => "student",
+    :preferredLanguage => "fi",
+    :mail => "neo@example.com"
   }
 ].each do |attrs|
   user = User.new(attrs)

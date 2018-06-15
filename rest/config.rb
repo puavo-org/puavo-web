@@ -99,6 +99,13 @@ if ENV["RACK_ENV"] == "test"
                       'name'        => 'resistence', }},
                   { 'add_roles' => [ 'teacher' ] },
                 ]},
+              # XXX puavoId=1499 is "thomas.anderson" dn, but how to get it?
+              { 'puavoId=1499,ou=People,dc=edu,dc=heroes,dc=fi' => [
+                  { 'add_administrative_group' => {
+                      'displayname' => 'Resistence',
+                      'name'        => 'resistence', }},
+                  { 'add_roles' => [ 'admin' ] },
+                ]},
             ],
           },
           'external_domain'         => 'example.com',
