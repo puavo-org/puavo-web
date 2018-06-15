@@ -23,14 +23,94 @@ default_config = {
   }
 }
 
-if ENV["RACK_ENV"] == "test"
-  # XXX how to know this is the "cucumber"-user dn?
-  cucumber_user_dn = 'puavoId=8,ou=People,dc=edu,dc=example,dc=fi'
-  extuser_target_school_dn = 'puavoId=5,ou=Groups,dc=edu,dc=example,dc=fi'
+def get_dn_from_cn(ldap_base, cn)
+  require 'net/ldap'
+  ldap = Net::LDAP.new :base => ldap_base,
+                       :host => 'localhost',
+                       :auth => {
+                         :method   => :simple,
+                         :username => PUAVO_ETC.ldap_dn,
+                         :password => PUAVO_ETC.ldap_password,
+                       },
+                       :encryption => {
+                         :method => :start_tls,
+                         :tls_options => {
+                           :verify_mode => OpenSSL::SSL::VERIFY_NONE,
+                         }
+                       }
+
+  entries = ldap.search(:filter => Net::LDAP::Filter.eq('cn', cn))
+  raise "could not find entry #{ cn } from #{ ldap_base }" \
+    unless entries && entries.count == 1
+
+  entries.first.dn.to_s
+end
+
+def get_external_login_config
+  admin_dn  = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'cucumber')
+  bind_dn   = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'admin')
+  sarah_dn  = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'sarah.connor')
+  thomas_dn = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'thomas.anderson')
+
+  target_school_dn = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'administration')
 
   org_conf_path = '../../config/organisations.yml'
   organisations = YAML.load_file(File.expand_path(org_conf_path, __FILE__))
 
+  {
+    'example' => {
+      'admin_dn'       => admin_dn,
+      'admin_password' => organisations['example']['owner_pw'],
+      'service'        => 'external_ldap',
+      'external_ldap'  => {
+        'base'                    => 'dc=edu,dc=heroes,dc=fi',
+        'bind_dn'                 => bind_dn,
+        'bind_password'           => organisations['heroes']['owner_pw'],
+        'dn_mappings'    => {
+          'defaults' => {
+            'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
+            'roles'                => [ 'student' ],
+            'school_dns'           => [ target_school_dn ],
+            'teaching_group_field' => 'gidNumber', # typically: 'department'
+          },
+          'mappings' => [
+            { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+                { 'add_administrative_group' => {
+                    'displayname' => 'Heroes',
+                    'name'        => 'heroes', }},
+                { 'add_teaching_group' => {
+                    'displayname' => 'Heroes school %GROUP',
+                    'name'        => 'heroes-%STARTYEAR-%GROUP', }},
+                { 'add_year_class' => {
+                    'displayname' => 'Heroes school %CLASSNUMBER',
+                    'name'        => 'heroes-%STARTYEAR', }},
+              ]},
+            { sarah_dn => [
+                { 'add_administrative_group' => {
+                    'displayname' => 'Resistence',
+                    'name'        => 'resistence', }},
+                { 'add_roles' => [ 'teacher' ] },
+              ]},
+            { thomas_dn => [
+                { 'add_administrative_group' => {
+                    'displayname' => 'Resistence',
+                    'name'        => 'resistence', }},
+                { 'add_roles' => [ 'admin' ] },
+              ]},
+          ],
+        },
+        'external_domain'         => 'example.com',
+        'external_id_field'       => 'eduPersonPrincipalName',
+        'external_username_field' => 'mail',
+        'password_change' => { 'api' => 'openldap', },
+        'server' => 'localhost',
+      },
+    }
+  }
+
+end
+
+if ENV['RACK_ENV'] == 'test' then
   CONFIG = {
     "ldap" => fqdn,
     "ldapmaster" => PUAVO_ETC.get(:ldap_master),
@@ -61,64 +141,9 @@ if ENV["RACK_ENV"] == "test"
     },
     "puavo_ca" => "http://localhost:8080",
 
-    'external_login' => {
-      'example' => {
-        'admin_dn'       => cucumber_user_dn,
-        'admin_password' => organisations['example']['owner_pw'],
-        'service'        => 'external_ldap',
-        'external_ldap'  => {
-          'base'                    => 'dc=edu,dc=heroes,dc=fi',
-          # XXX admin_dn is "admin" dn, but how to get it nicely?
-          # XXX (we could also use some special user which only has some read
-          # XXX permissions to People)
-          'bind_dn'                 => 'puavoId=16,ou=People,dc=edu,dc=heroes,dc=fi',
-          'bind_password'           => organisations['heroes']['owner_pw'],
-          'dn_mappings'    => {
-            'defaults' => {
-              'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
-              'roles'                => [ 'student' ],
-              'school_dns'           => [ extuser_target_school_dn ],
-              'teaching_group_field' => 'gidNumber', # typically: 'department'
-            },
-            'mappings' => [
-              { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
-                  { 'add_administrative_group' => {
-                      'displayname' => 'Heroes',
-                      'name'        => 'heroes', }},
-                  { 'add_teaching_group' => {
-                      'displayname' => 'Heroes school %GROUP',
-                      'name'        => 'heroes-%STARTYEAR-%GROUP', }},
-                  { 'add_year_class' => {
-                      'displayname' => 'Heroes school %CLASSNUMBER',
-                      'name'        => 'heroes-%STARTYEAR', }},
-                ]},
-              # XXX puavoId=62 is "sarah.connor" dn, but how to get it nicely?
-              { 'puavoId=62,ou=People,dc=edu,dc=heroes,dc=fi' => [
-                  { 'add_administrative_group' => {
-                      'displayname' => 'Resistence',
-                      'name'        => 'resistence', }},
-                  { 'add_roles' => [ 'teacher' ] },
-                ]},
-              # XXX puavoId=1499 is "thomas.anderson" dn, but how to get it?
-              { 'puavoId=1499,ou=People,dc=edu,dc=heroes,dc=fi' => [
-                  { 'add_administrative_group' => {
-                      'displayname' => 'Resistence',
-                      'name'        => 'resistence', }},
-                  { 'add_roles' => [ 'admin' ] },
-                ]},
-            ],
-          },
-          'external_domain'         => 'example.com',
-          'external_id_field'       => 'eduPersonPrincipalName',
-          'external_username_field' => 'mail',
-          'password_change' => { 'api' => 'openldap', },
-          'server' => 'localhost',
-        },
-      }
-    }
+    'external_login' => get_external_login_config(),
   }
 else
-
   customizations = [
     "/etc/puavo-rest.yml",
     "/etc/puavo-rest.d/external_logins.yml",
