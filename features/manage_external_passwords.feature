@@ -19,6 +19,18 @@ Feature: Manage external passwords
     | David     | Agent  | david.agent   | davidsecret   | false        | Class 1   | student                   | david@example.com   |
     And I am on the password change page
 
+  Scenario: Puavo-only admin can change password of another puavo-only user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "charlie.agent"
+    And I fill in "Password" with "charliesecret"
+    And I fill in "user[uid]" with "david.agent"
+    And I fill in "user[new_password]" with "newdavidsecret"
+    And I fill in "New password confirmation" with "newdavidsecret"
+    And I press "Change password"
+    Then I should see "Password changed successfully!"
+    And I should not login with "david.agent" and "davidsecret"
+    And I should login with "david.agent" and "newdavidsecret"
+
   Scenario: External user fails to change own password with bad credentials
     Given I am on the own password change page
     When I fill in "Username" with "sarah.connor"
@@ -57,20 +69,131 @@ Feature: Manage external passwords
     When I fill in "login[uid]" with "luke.skywalker"
     And I fill in "Password" with "secret"
     And I fill in "user[uid]" with "sarah.connor"
-    And I fill in "user[new_password]" with "newsarahconnorsecret"
-    And I fill in "New password confirmation" with "newsarahconnorsecret"
+    And I fill in "user[new_password]" with "newsarahsecret"
+    And I fill in "New password confirmation" with "newsarahsecret"
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Can't change password to upstream service."
 
-  Scenario: Change the password of another user with correct permissions
+  Scenario: External user changes the password of external another user
     Given I am on the password change page
     When I fill in "login[uid]" with "sarah.connor"
     And I fill in "Password" with "secret"
     And I fill in "user[uid]" with "luke.skywalker"
-    And I fill in "user[new_password]" with "newlukeskywalkersecret"
-    And I fill in "New password confirmation" with "newlukeskywalkersecret"
+    And I fill in "user[new_password]" with "newlukesecret"
+    And I fill in "New password confirmation" with "newlukesecret"
     And I press "Change password"
     Then I should see "Password changed successfully!"
     And I should not login with "luke.skywalker" and "secret"
-    And I should login with "luke.skywalker" and "newlukeskywalkersecret"
+    And I should login with "luke.skywalker" and "newlukesecret"
+
+  Scenario: External admin changes password of Puavo-only user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "sarah.connor"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "david.agent"
+    And I fill in "user[new_password]" with "newdavidsecret"
+    And I fill in "New password confirmation" with "newdavidsecret"
+    And I press "Change password"
+    Then I should see "Password changed successfully!"
+    And I should not login with "david.agent" and "davidsecret"
+    And I should login with "david.agent" and "newdavidsecret"
+
+  Scenario: Puavo-only admin tries to change password of external user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "charlie.agent"
+    And I fill in "Password" with "charliesecret"
+    And I fill in "user[uid]" with "luke.skywalker"
+    And I fill in "user[new_password]" with "newlukesecret"
+    And I fill in "New password confirmation" with "newlukesecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "User (luke.skywalker) does not exist"
+
+  Scenario: External admin tries to change password of non-existing user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "sarah.connor"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "notexisting"
+    And I fill in "user[new_password]" with "newnotexistingsecret"
+    And I fill in "New password confirmation" with "newnotexistingsecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "User (notexisting) does not exist"
+
+  Scenario: External user tries to change password of Puavo-only user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "luke.skywalker"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "david.agent"
+    And I fill in "user[new_password]" with "newdavidsecret"
+    And I fill in "New password confirmation" with "newdavidsecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "Failed to change password!"
+
+  Scenario: Non-existing user tries to change password of external user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "nonexisting"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "luke.skywalker"
+    And I fill in "user[new_password]" with "newlukesecret"
+    And I fill in "New password confirmation" with "newlukesecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "Invalid password or username (nonexisting)"
+
+  Scenario: Puavo-only user tries to change password of external user
+    Given I am on the password change page
+    When I fill in "login[uid]" with "david.agent"
+    And I fill in "Password" with "davidsecret"
+    And I fill in "user[uid]" with "luke.skywalker"
+    And I fill in "user[new_password]" with "newlukesecret"
+    And I fill in "New password confirmation" with "newlukesecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "User (luke.skywalker) does not exist"
+
+  Scenario: External admin tries to change password of Puavo-only admin
+    Given I am on the password change page
+    When I fill in "login[uid]" with "sarah.connor"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "charlie.agent"
+    And I fill in "user[new_password]" with "newcharliesecret"
+    And I fill in "New password confirmation" with "newcharliesecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "Failed to change password!"
+
+  Scenario: External admin tries to change password of external admin (no Puavo-password-change permissions) -- do this twice, because on the first attempt target user is created to Puavo and thus the second attempt is different.  Test for this situation because it is a configuration error (or a bug in code?)... if admin can change password of another user externally, he/she should also have the right to change it in Puavo directly, so test for the configuration error.
+    Given I am on the password change page
+    When I fill in "login[uid]" with "han.solo"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "sarah.connor"
+    And I fill in "user[new_password]" with "newsarahsecret"
+    And I fill in "New password confirmation" with "newsarahsecret"
+    And I press "Change password"
+    Then I should see "Password changed successfully!"
+    And I should not login with "sarah.connor" and "secret"
+    And I should login with "sarah.connor" and "newsarahsecret"
+    Given I am on the password change page
+    When I fill in "login[uid]" with "han.solo"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "sarah.connor"
+    And I fill in "user[new_password]" with "nextsarahsecret"
+    And I fill in "New password confirmation" with "nextsarahsecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should not login with "sarah.connor" and "nextsarahsecret"
+    And I should login with "sarah.connor" and "newsarahsecret"
+
+  Scenario: External user tries to change password of external user (but has password change permissions in Puavo)
+    Given I am on the password change page
+    When I fill in "login[uid]" with "thomas.anderson"
+    And I fill in "Password" with "secret"
+    And I fill in "user[uid]" with "sarah.connor"
+    And I fill in "user[new_password]" with "newsarahsecret"
+    And I fill in "New password confirmation" with "newsarahsecret"
+    And I press "Change password"
+    Then I should not see "Password changed successfully!"
+    And I should see "Invalid password or username (thomas.anderson)"
