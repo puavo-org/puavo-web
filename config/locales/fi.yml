@@ -360,7 +360,7 @@ fi:
       password: Salasana
       link_own_password: Vaihda oma salasanasi
     own:
-      title: Vaihda salasana
+      title: Vaihda oma salasanasi
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:

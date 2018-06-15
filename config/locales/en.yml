@@ -391,7 +391,7 @@ en:
       password: Password
       link_own_password: Change your own password
     own:
-      title: Change password
+      title: Change your own password
       password: Old password
       link_other_password: Change password for other user
     forgot:
