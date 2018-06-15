@@ -132,10 +132,10 @@ describe PuavoRest::ExternalLogin do
       assert_equal 'luke.skywalker',
                    @user.uid,
                    'luke.skywalker has incorrect uid'
-      assert_equal 'Peter',
+      assert_equal 'Luke',
                    @user.given_name,
                    'luke.skywalker has incorrect given name'
-      assert_equal 'Parker',
+      assert_equal 'Skywalker',
                    @user.surname,
                    'luke.skywalker has incorrect surname'
       assert_equal 'luke.skywalker@HEROES.OPINSYS.NET',
@@ -242,9 +242,9 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'subsequent successful logins update user information when changed' do
-      # change Peter Parker --> Peter Bentley and see that login fixes that
+      # change Luke Skywalker --> Luke Starkiller and see that login fixes that
       user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
-      user.surname = 'Bentley'
+      user.surname = 'Starkiller'
       user.save!
 
       assert_external_status('luke.skywalker',
@@ -252,9 +252,9 @@ describe PuavoRest::ExternalLogin do
                              'UPDATED',
                              'expected UPDATED as external_login status')
       user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
-      assert_equal 'Parker',
+      assert_equal 'Skywalker',
                    user.surname,
-                   'Peter Parker is no longer Parker'
+                   'Luke Skywalker is no longer Skywalker'
     end
 
     it 'subsequent successful logins update username when changed' do
