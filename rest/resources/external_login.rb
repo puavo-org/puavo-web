@@ -19,10 +19,10 @@ module PuavoRest
           unless auth_type == 'Basic'
 
         username, password = Base64.decode64(auth_data).split(':')
-        if username.empty? then
+        if !username || username.empty? then
           raise ExternalLoginWrongCredentials, 'no username provided'
         end
-        if password.empty? then
+        if !password || password.empty? then
           raise ExternalLoginWrongCredentials, 'no password provided'
         end
 
