@@ -1,10 +1,12 @@
 Feature: Manage external passwords
+
   Testing that users in the "heroes" organisation can change passwords
   through the external login mechanism.  Users do not need to be
   setup in "example"-organisation, but as a side-effect of password
-  changes they will be created there.  Users "sarah.connor" (admin)
-  and "luke.skywalker" (student) exist in the "heroes"-organisation,
-  and "charlie.agent" (admin) and "david.agent" (student) do not.
+  changes they will be created there.  Users "sarah.connor" (admin),
+  "luke.skywalker" (student) and "thomas.anderson" (student externally,
+  admin in puavo) exist in the "heroes"-organisation, and "charlie.agent"
+  (admin) and "david.agent" (student) do not.
 
   Background:
     Given a new school and group with names "School 1", "Class 1" on the "example" organisation
@@ -165,7 +167,23 @@ Feature: Manage external passwords
     Then I should not see "Password changed successfully!"
     And I should see "Failed to change password!"
 
-  Scenario: External admin tries to change password of external admin (no Puavo-password-change permissions) -- do this twice, because on the first attempt target user is created to Puavo and thus the second attempt is different.  Test for this situation because it is a configuration error (or a bug in code?)... if admin can change password of another user externally, he/she should also have the right to change it in Puavo directly, so test for the configuration error.
+  Scenario: External admin changes pw for another admin (no perms in Puavo)
+
+    External admin tries to change the password of another external admin,
+    but with a twist that the admin does have the necessary permissions
+    only in external service and not in Puavo.  This is a configuration
+    error and thus this should not happen, but in case it does this
+    test checks what should happen.  On the first password change the
+    target user is created to Puavo, the password is not changed to Puavo
+    directly, and thus it succeeds.  The second attempt however fails in
+    such a way, that password is first changed to external service, and
+    then direct changing to Puavo fails, but this does not matter much
+    because the password has been changed to external service anyway and
+    it should sync on the next login.  This behaviour is rather strange,
+    but as long as the password permissions are more lax on the Puavo-side
+    (which should always be the case or at least external logins should be
+    configured in such a way), this situation should never arise.
+
     Given I am on the password change page
     When I fill in "login[uid]" with "han.solo"
     And I fill in "Password" with "secret"
@@ -187,7 +205,7 @@ Feature: Manage external passwords
     And I should not login with "sarah.connor" and "nextsarahsecret"
     And I should login with "sarah.connor" and "newsarahsecret"
 
-  Scenario: External user tries to change password of external user (but has password change permissions in Puavo)
+  Scenario: External user tries to change pw for another user (with permissions in Puavo)
     Given I am on the password change page
     When I fill in "login[uid]" with "thomas.anderson"
     And I fill in "Password" with "secret"
