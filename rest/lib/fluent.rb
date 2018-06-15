@@ -52,7 +52,7 @@ class FluentWrap
           @sinatra_logger.send(level, human_readable_msg(message, record))
 
         rescue StandardError => e
-          STDERR.puts "Failed to log message: #{ record.inspect } :: #{ e }"
+          #STDERR.puts "Failed to log message: #{ record.inspect } :: #{ e }"
         end
       end
     end

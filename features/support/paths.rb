@@ -19,8 +19,12 @@ module NavigationHelpers
     when /the login page/
       login_path
 
+    when /the password change page with changing user (.+) and changed user (.+)/
+      password_path + "?changing=#{$1}&changed=#{$2}"
     when /the password change page/
       password_path
+    when /the own password change page with changing user (.+)/
+      own_password_path + "?changing=#{$1}"
     when /the own password change page/
       own_password_path
     when /the forgot password page/

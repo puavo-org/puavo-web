@@ -1,5 +1,5 @@
 <% content_for :title do %>
-<h1><%= t('.title') %></h1>
+<h1 style="text-decoration: underline"><%= t('.title') %></h1>
 <% end %>
 <div class="password_buttons">
 <span>
@@ -30,18 +30,21 @@
 
 <tr>
   <td><%= label :login, :uid, t('activeldap.attributes.user.uid') %></td>
-  <td><%= text_field :login, :uid %></td>
+  <td><%= text_field :login, :uid, :value => @changing || '', :autofocus => @changing.nil? ? true : false %></td>
 </tr>
 
 <tr>
   <td><%= label :login, :password, t('.password') %></td>
-  <td><%= password_field :login, :password %></td>
+  <td><%= password_field :login, :password, :autofocus => @changing.nil? ? false : true %></td>
 </tr>
 
+<tr>
 <td colspan="2"><h2><%=t('.changed_user') %></h2></td>
+</tr>
+
 <tr>
   <td><%= f.label :uid, t('activeldap.attributes.user.uid') %></td>
-  <td><%= text_field :user, :uid, :value => "" %></td>
+  <td><%= text_field :user, :uid, :value => @changed || '' %></td>
 </tr>
 
 <tr>

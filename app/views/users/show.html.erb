@@ -127,6 +127,15 @@
     </td>
   </tr>
 
+  <tr>
+    <td class="label_td view"><%= label_tag t('ldap_create_time') %></td>
+    <td class="value_td"><%= h @user['createTimestamp'].nil? ? '?' : @user['createTimestamp'].localtime %></tr>
+  </tr>
+
+  <tr>
+    <td class="label_td view"><%= label_tag t('ldap_modify_time')  %></td>
+    <td class="value_td"><%= h @user['modifyTimestamp'].nil? ? '?' : @user['modifyTimestamp'].localtime %></tr>
+  </tr>
 
 </table>
 </div>

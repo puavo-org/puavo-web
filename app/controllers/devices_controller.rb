@@ -37,6 +37,11 @@ class DevicesController < ApplicationController
   def show
     @device = Device.find(params[:id])
 
+    # get the creation and modification timestamps from LDAP operational attributes
+    extra = Device.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    @device['createTimestamp'] = extra['createTimestamp'] || nil
+    @device['modifyTimestamp'] = extra['modifyTimestamp'] || nil
+
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.get_ca_certificate(current_organisation.organisation_key)
 

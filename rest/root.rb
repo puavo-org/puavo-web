@@ -226,6 +226,7 @@ class Root < PuavoSinatra
   use PuavoRest::Authentication
   use PuavoRest::ExternalLogins
   use PuavoRest::BootserverDNS
+  use PuavoRest::MySchoolUsers
 
   if CONFIG["cloud"]
     use PuavoRest::SSO

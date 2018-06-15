@@ -213,6 +213,7 @@ en:
       successful: Password changed successfully!
       failed: Failed to change password!
       invalid_external_login: "Invalid external login password or username (%{uid})"
+      incomplete_form: You did not fill in all the required form fields.
       invalid_login: Invalid password or username (%{uid})
       confirmation_failed: "Password doesn't match the confirmation"
       invalid_user: User (%{uid}) does not exist
@@ -392,7 +393,7 @@ en:
       password: Password
       link_own_password: Change your own password
     own:
-      title: Change password
+      title: Change your own password
       password: Old password
       link_other_password: Change password for other user
     forgot:
@@ -1034,3 +1035,5 @@ en:
       username_placeholder: Username
       login: Login
       help: Help
+  ldap_create_time: Created (LDAP)
+  ldap_modify_time: Modified (LDAP)

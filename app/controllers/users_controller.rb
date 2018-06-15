@@ -58,6 +58,11 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
 
+    # get the creation and modification timestamps from LDAP operational attributes
+    extra = User.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    @user['createTimestamp'] = extra['createTimestamp'] || nil
+    @user['modifyTimestamp'] = extra['modifyTimestamp'] || nil
+
     @user_devices = Device.find(:all,
                                 :attribute => "puavoDevicePrimaryUser",
                                 :value => @user.dn.to_s)

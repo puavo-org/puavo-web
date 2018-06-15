@@ -12,16 +12,36 @@ class PasswordController < ApplicationController
   def edit
     @user = User.new
     @password_requirements = password_requirements
+
+    @changing = params[:changing] || nil
+    @changed = params[:changed] || nil
+    @changing = nil if !@changing.nil? && @changing.empty?
+    @changed = nil if !@changed.nil? && @changed.empty?
+    session[:changing] = @changing
+    session[:changed] = @changed
   end
 
   # GET /password/own
   def own
     @user = User.new
     @password_requirements = password_requirements
+
+    @changing = params[:changing] || nil
+    @changing = nil if !@changing.nil? && @changing.empty?
+    session[:changing] = @changed
   end
 
   # PUT /password
   def update
+
+    @changing = params[:login][:uid] || session[:changing] || nil
+    @changed = params[:user][:uid] || session[:changed] || nil
+    @changing = nil if @changing && @changing.empty?
+    @changed = nil if @changed && @changed.empty?
+
+    if params[:login][:uid].empty?
+      raise User::UserError, I18n.t('flash.password.incomplete_form')
+    end
 
     unless params[:user][:new_password] == params[:user][:new_password_confirmation]
       raise User::UserError, I18n.t('flash.password.confirmation_failed')
@@ -31,8 +51,13 @@ class PasswordController < ApplicationController
       raise User::UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
 
+    session[:changing] = nil
+    session[:changed] = nil
+    @changing = nil
+    @changed = nil
+
     respond_to do |format|
-      flash[:notice] = t('flash.password.successful')
+      flash.now[:notice] = t('flash.password.successful')
       unless params[:user][:uid]
         format.html { render :action => "own" }
       else
@@ -131,11 +156,12 @@ class PasswordController < ApplicationController
   private
 
   def error_message_and_redirect(message)
-    flash[:alert] = message
+    flash.now[:alert] = message
+    @user = User.new
     unless params[:user][:uid]
-      redirect_to own_password_path
+      render :action => "own"
     else
-      redirect_to password_path
+      render :action => "edit"
     end
   end
 

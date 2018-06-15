@@ -185,6 +185,7 @@ fi:
       successful: Salasanan vaihto onnistui!
       failed: "Salasanan vaihto epäonnistui!"
       invalid_external_login: "Salasana tai käyttäjätunnus ulkoiseen palveluun (%{uid}) on virheellinen"
+      incomplete_form: "Kaikkia tarvittavia lomakkeen kenttiä ei täytetty"
       invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
@@ -361,7 +362,7 @@ fi:
       password: Salasana
       link_own_password: Vaihda oma salasanasi
     own:
-      title: Vaihda salasana
+      title: Vaihda oma salasanasi
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
@@ -1002,3 +1003,5 @@ fi:
       username_placeholder: "Käyttäjätunnus"
       login: "Kirjaudu"
       help: "Apua"
+  ldap_create_time: Luotu (LDAP)
+  ldap_modify_time: Muokattu (LDAP)
