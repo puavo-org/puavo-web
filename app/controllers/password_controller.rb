@@ -15,6 +15,8 @@ class PasswordController < ApplicationController
 
     @changing = params[:changing] || nil
     @changed = params[:changed] || nil
+    @changing = nil if !@changing.nil? && @changing.empty?
+    @changed = nil if !@changed.nil? && @changed.empty?
     session[:changing] = @changing
     session[:changed] = @changed
 
@@ -32,6 +34,7 @@ class PasswordController < ApplicationController
     @gsuite = false
 
     @changing = params[:changing] || nil
+    @changing = nil if !@changing.nil? && @changing.empty?
     session[:changing] = @changed
 
     url = external_pw_mgmt_url
@@ -46,6 +49,8 @@ class PasswordController < ApplicationController
 
     @changing = params[:login][:uid] || session[:changing] || nil
     @changed = params[:user][:uid] || session[:changed] || nil
+    @changing = nil if @changing && @changing.empty?
+    @changed = nil if @changed && @changed.empty?
 
     if params[:login][:uid].empty?
       raise User::UserError, I18n.t('flash.password.incomplete_form')
