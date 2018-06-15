@@ -99,18 +99,6 @@ module Puavo
     # doing the downstream password change first, but unfortunately that
     # does not always work :-(
 
-    # Do optimize things a bit by not changing the password
-    # (downstream and in Puavo) in case it is the same as before.
-    if (actor_dn == target_user_dn \
-         && actor_password == target_user_password) then
-      return {
-        :exit_status => 0,
-        :stderr      => '',
-        :stdout      => 'Password not changed because it is the same' \
-                          + ' as before.',
-      }
-    end
-
     res = LdapPassword.change_ldap_passwd(host, actor_dn, actor_password,
                                           target_user_dn, target_user_password)
     return res if res[:exit_status] != 0
