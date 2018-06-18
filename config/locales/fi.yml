@@ -201,6 +201,7 @@ fi:
       wrong_user_type: "Ylläpito-oikeudet voidaan antaa vain admin -käyttäjille"
       destroyed_failed: Koulua ei poistettu. Sen käyttäjät, roolit, ryhmät, laitteet ja boot-palvelimet on poistettava ensin.
       roles_not_found: Yhtään roolia ei ole määritetty
+      no_roles_nor_groups: Tässä koulussa ei ole yhtään roolia eikä ryhmää, joita voisi siirtää.
       wlan_updated: WLAN-asetukset päivitetty
       wlan_save_failed: WLAN-asetusten tallennus epäonnistui
     profile:
