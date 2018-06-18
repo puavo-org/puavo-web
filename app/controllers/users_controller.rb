@@ -31,7 +31,7 @@ class UsersController < ApplicationController
       # grabbing the first value
       Hash[user.last.map { |k,v| [k, v.first] }]
     end.sort do |a,b|
-      a["sn"].to_s + a["givenName"].to_s <=> b["sn"].to_s + b["givenName"].to_s
+      (a["sn"].to_s + a["givenName"].to_s).downcase <=> (b["sn"].to_s + b["givenName"].to_s).downcase
     end
 
 
