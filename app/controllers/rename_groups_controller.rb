@@ -53,7 +53,7 @@ class RenameGroupsController < ApplicationController
   end
 
   def create
-    params[:role_display_name].each_index do |index|
+    params[:role_display_name]&.each_index do |index|
       unless params[:role_display_name][index].empty?
         role = Role.find(params[:role_puavo_id][index])
         role.displayName = params[:role_display_name][index]
@@ -61,7 +61,7 @@ class RenameGroupsController < ApplicationController
       end
     end
 
-    params[:new_roles].each do |role_name|
+    params[:new_roles]&.each do |role_name|
       unless role_name.empty?
         r = Role.new(:displayName => role_name,
                      :puavoSchool => @school.dn )
@@ -69,7 +69,7 @@ class RenameGroupsController < ApplicationController
       end
     end
 
-    params[:group_display_name].each_index do |index|
+    params[:group_display_name]&.each_index do |index|
       unless params[:group_display_name][index].empty?
         group = Group.find(params[:group_puavo_id][index])
         group.displayName = params[:group_display_name][index]
@@ -77,7 +77,7 @@ class RenameGroupsController < ApplicationController
       end
     end
 
-    params[:new_groups_cn].each_index do |index|
+    params[:new_groups_cn]&.each_index do |index|
       if !params[:new_groups_display_name][index].empty? && !params[:new_groups_cn][index].empty?
         g = Group.new(:displayName => params[:new_groups_display_name][index],
                       :cn => params[:new_groups_cn][index],
