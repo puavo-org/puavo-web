@@ -11,35 +11,43 @@ class RenameGroupsController < ApplicationController
         a.displayName <=> b.displayName
       end
 
-      raise RolesNotFound if @roles.empty?
-      
-      @class_numbers = @roles.map{ |r| r.displayName.match(/\d+/)[0].to_i }
-      
-      @first_class_number = @class_numbers.min
-      
-      @last_class_number = @class_numbers.max
-      
-      if (@last_class_number - @first_class_number + 1) == @class_numbers.uniq.count
-        @all_class_found = true
-      else
-        @all_class_found = false
+      unless @roles.empty?
+        @class_numbers = @roles.map{ |r| r.displayName.match(/\d+/)[0].to_i }
+        @first_class_number = @class_numbers.min
+        @last_class_number = @class_numbers.max
+
+        if (@last_class_number - @first_class_number + 1) == @class_numbers.uniq.count
+          @all_class_found = true
+        else
+          @all_class_found = false
+        end
+
+        @first_class_roles = @roles.select{ |r| r.displayName.match(/\d+/)[0].to_i == @first_class_number }
       end
-      
-      @first_class_roles = @roles.select{ |r| r.displayName.match(/\d+/)[0].to_i == @first_class_number }
-      
+
       @groups = @school.groups.select do |g|
         g.displayName.match(/\d+/) && !g.displayName.match(/poistuvat/)
       end.sort do |a,b|
         a.displayName <=> b.displayName
       end
-      
-      @group_class_numbers = @groups.map{ |g| g.displayName.match(/\d+/)[0].to_i }
-      @first_group_class_number = @group_class_numbers.min
-      @last_group_class_number = @group_class_numbers.max
-      
-      @first_class_groups = @groups.select{ |r| r.displayName.match(/\d+/)[0].to_i == @first_group_class_number }
+
+      unless @groups.empty?
+        @group_class_numbers = @groups.map{ |g| g.displayName.match(/\d+/)[0].to_i }
+        @first_group_class_number = @group_class_numbers.min
+        @last_group_class_number = @group_class_numbers.max
+
+        if (@last_group_class_number - @first_group_class_number + 1) == @group_class_numbers.uniq.count
+          @all_group_class_found = true
+        else
+          @all_group_class_found = false
+        end
+
+        @first_class_groups = @groups.select{ |r| r.displayName.match(/\d+/)[0].to_i == @first_group_class_number }
+      end
+
+      raise RolesNotFound if @roles.empty? && @groups.empty?
     rescue RolesNotFound
-      flash[:alert] = t('flash.school.roles_not_found')
+      flash[:alert] = t('flash.school.no_roles_nor_groups')
       redirect_to school_path(@school)
     end
   end
