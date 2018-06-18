@@ -278,7 +278,7 @@ Feature: Manage schools
     Given Remove all roles on "Greenwich Steiner School" school
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Rename groups and roles"
-    Then I should see "Cannot find any roles!"
+    Then I should see "This school has no roles nor groups that could be renamed."
 
   Scenario: Rename roles and groups
     Given the following groups to "Example school 1"
