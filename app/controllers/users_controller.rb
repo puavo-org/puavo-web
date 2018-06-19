@@ -37,6 +37,10 @@ class UsersController < ApplicationController
 
     if request.format == 'application/json'
       @users = @users.map{ |u| User.build_hash_for_to_json(u) }
+    else
+      # Split the user list in two halves: one for normal users, one for users who have
+      # been marked for deletion. Both arrays are displayed in their own table.
+      @users, @users_marked_for_deletion = @users.partition { |u| u["puavoRemovalRequestTime"].nil? }
     end
 
     respond_to do |format|
@@ -203,24 +207,28 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
 
-    if @user.puavoEduPersonAffiliation == 'admin'
-      # if an admin user is also an organisation owner, remove the ownership
-      # automatically before deletion
-      owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+    if @user.puavoDoNotDelete
+      flash[:alert] = t('flash.user_deletion_prevented')
+    else
+      if @user.puavoEduPersonAffiliation == 'admin'
+        # if an admin user is also an organisation owner, remove the ownership
+        # automatically before deletion
+        owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
 
-      if !owners.nil? && owners.include?(@user.dn)
-        if !LdapOrganisation.current.remove_owner(@user)
-          flash[:alert] = t('flash.organisation_ownership_not_removed')
-        else
-          # TODO: Show a flash message when ownership is removed. First we need to
-          # support multiple flash messages of the same type...
-          #flash[:notice] = t('flash.organisation_ownership_removed')
+        if !owners.nil? && owners.include?(@user.dn)
+          if !LdapOrganisation.current.remove_owner(@user)
+            flash[:alert] = t('flash.organisation_ownership_not_removed')
+          else
+            # TODO: Show a flash message when ownership is removed. First we need to
+            # support multiple flash messages of the same type...
+            #flash[:notice] = t('flash.organisation_ownership_removed')
+          end
         end
       end
-    end
 
-    if @user.destroy
-      flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))
+      if @user.destroy
+        flash[:notice] = t('flash.destroyed', :item => t('activeldap.models.user'))
+      end
     end
 
     respond_to do |format|
@@ -347,6 +355,38 @@ class UsersController < ApplicationController
       return render :plain => "Unknown user #{ ActionController::Base.helpers.sanitize(params["username"]) }", :status => 400
     end
     redirect_to user_path(params["school_id"], user.id)
+  end
+
+  def mark_for_deletion
+    @user = User.find(params[:id])
+
+    if @user.puavoRemovalRequestTime.nil?
+      @user.puavoRemovalRequestTime = Time.now.utc
+      @user.save
+      flash[:notice] = t('flash.user.marked_for_deletion')
+    else
+      flash[:alert] = t('flash.user.already_marked_for_deletion')
+    end
+
+    respond_to do |format|
+      format.html { redirect_to( user_path(@school, @user) ) }
+    end
+  end
+
+  def unmark_for_deletion
+    @user = User.find(params[:id])
+
+    if @user.puavoRemovalRequestTime
+      @user.puavoRemovalRequestTime = nil
+      @user.save
+      flash[:notice] = t('flash.user.unmarked_for_deletion')
+    else
+      flash[:alert] = t('flash.user.not_marked_for_deletion')
+    end
+
+    respond_to do |format|
+      format.html { redirect_to( user_path(@school, @user) ) }
+    end
   end
 
   private

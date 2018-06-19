@@ -147,6 +147,7 @@ fi:
     set_install_mode_server: "Sertifikaatti poistettu, palvelin asennustilassa"
     organisation_ownership_removed: "Admin-käyttäjän organisaation omistajuus poistettiin."
     organisation_ownership_not_removed: "Admin-käyttäjän organisaation omistajuutta ei voitu poistaa automaattisesti!"
+    user_deletion_prevented: "Käyttäjän poisto on estetty"
     organisation:
       updated: "Organisaatio päivitettiin onnistuneesti."
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
@@ -170,6 +171,10 @@ fi:
     user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
       create_failed: "Käyttäjän lisääminen epäonnistui!"
+      marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
+      already_marked_for_deletion: "Käyttäjä on jo merkitty poistettavaksi"
+      unmarked_for_deletion: "Käyttäjä ei ole enää merkitty poistettavaksi"
+      not_marked_for_deletion: "Tätä käyttäjää ei ole merkitty poistettavaksi"
       import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
@@ -241,6 +246,10 @@ fi:
   users:
     index:
       actions: Toiminnot
+      users_marked_for_deletion_title: Poistetuksi merkityt käyttäjät
+      normal_users_title: Normaalit käyttäjät
+      users: käyttäjää
+      do_not_delete: "(Ei voi poistaa)"
     show:
       user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: <b>%{roles}</b>"
       system_information: "Järjestelmätietoja"
@@ -248,7 +257,11 @@ fi:
       group_by_roles: "Roolien mukana tulevat ryhmät"
       change_school: Vaihda koulua
       user_is_locked: "Käyttäjätunnus on lukittu"
+      user_deletion_prevented: "Käyttäjän poisto on estetty"
       user_devices: Käyttäjän laitteet
+      mark_for_removal: Merkitse poistettavaksi
+      unmark_for_removal: Poista poistomerkintä
+      marked_for_removal: Poistomerkintä tehty
     new:
       title: "Lisää uusi käyttäjä"
     edit:

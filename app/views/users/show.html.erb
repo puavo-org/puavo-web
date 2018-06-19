@@ -15,6 +15,10 @@
             </p>
           <% end %>
 
+          <% if @user["puavoDoNotDelete"] %>
+            <p class="notice_text"><%= t('.user_deletion_prevented') %></p>
+          <% end %>
+
       <p>
         <%= label "user", 'uid' %><br />
         <%=h @user.uid %>
@@ -137,6 +141,12 @@
     <td class="value_td"><%= h @user['modifyTimestamp'].nil? ? '?' : @user['modifyTimestamp'].localtime %></tr>
   </tr>
 
+  <% if @user.puavoRemovalRequestTime %>
+    <tr>
+      <td class="label_td view"><%= label_tag t('.marked_for_removal') %> </td>
+      <td class="value_td marked_for_deletion"><%= h @user.puavoRemovalRequestTime.localtime %></tr>
+    </tr>
+  <% end %>
 </table>
 </div>
 </div>
@@ -157,10 +167,26 @@
   <% end %>
 </li>
 <li>
+<% if @user.puavoRemovalRequestTime %>
+<%= link_to unmark_user_for_deletion_path(@school, @user) do %>
+  <i class='icon-exchange'></i><%=t('.unmark_for_removal')%>
+<% end %>
+<% else %>
+<%= link_to mark_user_for_deletion_path(@school, @user) do %>
+  <i class='icon-exchange'></i><%=t('.mark_for_removal')%>
+<% end %>
+<% end %>
+</li>
+
+<% unless @user["puavoDoNotDelete"] %>
+
+<li>
   <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
     <i class='icon-trash'></i><%=t('link.destroy')%>
   <% end %>
 </li>
+<% end %>
+
 </ul>
 </li>
 </ul>

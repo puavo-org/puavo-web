@@ -348,7 +348,7 @@ when "import"
   PuavoImport::User.all.each do |user|
     puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
     if puavo_rest_user
-      if user.need_update?(puavo_rest_user)
+      if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time
         puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
 
         update_attributes = [ :first_name,
@@ -359,6 +359,12 @@ when "import"
         update_attributes.delete(:email) if user.email.nil?
 
         update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
+
+        if puavo_rest_user.removal_request_time
+          # Clear the deletion set timestamp: this user's information is being updated,
+          # so clearly they cannot be marked for deletion yet.
+          puavo_rest_user.removal_request_time = nil
+        end
 
         # FIXME: We can not modify the role because admin user is able to add more roles for the user
         #puavo_rest_user.role = options[:user_role]
@@ -463,6 +469,13 @@ when "import"
       next unless user.roles.include?(@options[:user_role])
       next unless PuavoImport::User.all.select{ |u| u.external_id.to_s == user.external_id.to_s }.empty?
       puts "\texternal_id: #{user.external_id} username: #{user.username} roles: " + user.roles.to_s
+
+      if user.removal_request_time.nil?
+        # This user has been removed, but they have not been marked for deletion yet.
+        # Set that mark now.
+        user.removal_request_time = Time.now.utc
+        user.save!
+      end
     end
   end
 
