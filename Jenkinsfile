@@ -110,7 +110,17 @@ EOF
     stage('Test') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          // Test installation can be done and works.
+          // Setup puavo-rest in production mode to do tests for puavo-web
+          sh '''
+            mkdir -p /etc/systemd/system/puavo-rest.service.d
+            cat <<'EOF' > /etc/systemd/system/puavo-rest.service.d/cucumber_test_environment.conf
+[Service]
+Environment="PUAVO_WEB_CUCUMBER_TESTS=true"
+EOF
+          '''
+
+          // Test installation can be done and works
+          // (as a side-effect restarts puavo-rest and puavo-web).
           sh 'script/test-install.sh'
 
           // Force organisations refresh...

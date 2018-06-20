@@ -158,5 +158,12 @@ else
     memo.merge(config)
   end
 
+  # If we are running in production mode, but with the intent of running
+  # the puavo-web cucumber tests, we merge the external login
+  # configurations for testing purposes.
+  if ENV['PUAVO_WEB_CUCUMBER_TESTS'] == 'true' then
+    customizations.merge!({ 'external_login' => get_external_login_config()})
+  end
+
   CONFIG = default_config.merge(customizations)
 end
