@@ -46,7 +46,7 @@ def get_dn_from_cn(ldap_base, cn)
   entries.first.dn.to_s
 end
 
-def get_external_login_config
+def get_external_login_test_configuration
   admin_dn  = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'cucumber')
   bind_dn   = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'admin')
   sarah_dn  = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'sarah.connor')
@@ -54,8 +54,7 @@ def get_external_login_config
 
   target_school_dn = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'administration')
 
-  org_conf_path = '../../config/organisations.yml'
-  organisations = YAML.load_file(File.expand_path(org_conf_path, __FILE__))
+  organisations = YAML.load_file('/etc/puavo-web/organisations.yml')
 
   {
     'example' => {
@@ -141,7 +140,7 @@ if ENV['RACK_ENV'] == 'test' then
     },
     "puavo_ca" => "http://localhost:8080",
 
-    'external_login' => get_external_login_config(),
+    'external_login' => get_external_login_test_configuration(),
   }
 else
   customizations = [
@@ -160,9 +159,13 @@ else
 
   # If we are running in production mode, but with the intent of running
   # the puavo-web cucumber tests, we merge the external login
-  # configurations for testing purposes.
+  # configurations for testing purposes.  Note that for this to work
+  # puavo-rest must be on the same server as puavo-web, because it looks up
+  # the configuration file "/etc/puavo-web/organisations.yml".
   if ENV['PUAVO_WEB_CUCUMBER_TESTS'] == 'true' then
-    customizations.merge!({ 'external_login' => get_external_login_config()})
+    customizations.merge!({
+      'external_login' => get_external_login_test_configuration(),
+    })
   end
 
   CONFIG = default_config.merge(customizations)
