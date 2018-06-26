@@ -106,7 +106,8 @@ module Puavo
     external_pw_mgmt_url = self.get_external_pw_mgmt_url(target_user)
     if external_pw_mgmt_url then
       begin
-        change_passwd_downstream(target_user_username,
+        change_passwd_downstream(target_user.id,
+                                 target_user_username,
                                  target_user_password,
                                  external_pw_mgmt_url)
       rescue StandardError => e
@@ -124,11 +125,12 @@ module Puavo
     return res
   end
 
-  def self.change_passwd_downstream(target_user_username,
+  def self.change_passwd_downstream(user_puavo_id, target_user_username,
         target_user_password, external_pw_mgmt_url)
 
     params = {
       'username'          => target_user_username,
+      'user_puavoid'      => user_puavo_id,
       'new_user_password' => target_user_password,
     }
 
