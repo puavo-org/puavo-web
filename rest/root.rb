@@ -52,10 +52,8 @@ def self.test_boot_server_dn=(dn)
 end
 
 class BeforeFilters < PuavoSinatra
-  enable :logging
-
   before do
-    $rest_flog = $rest_flog_base.merge({}, nil, logger)
+    $rest_flog = $rest_flog_base.merge({}, nil)
 
     LdapModel::PROF.reset
 
@@ -113,7 +111,7 @@ class BeforeFilters < PuavoSinatra
       log_meta[:organisation_key] = Organisation.current.organisation_key
     end
 
-    self.flog = $rest_flog = $rest_flog_base.merge(log_meta, nil, logger)
+    self.flog = $rest_flog = $rest_flog_base.merge(log_meta, nil)
     flog.info('handling request', 'handling request...')
 
   end

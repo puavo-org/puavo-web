@@ -10,10 +10,10 @@ class FluentWrap
   # @param tag [String] Fluent tag
   # @param base_attrs [Hash] Data to be added for each log message
   # @param logger [Object] Fluent logger object. Can be set for mocking purposes for testing
-  def initialize(tag, base_attrs, fluent_logger=Fluent::Logger, sinatra_logger=nil)
+  def initialize(tag, base_attrs, fluent_logger=Fluent::Logger)
     @tag = tag
     @fluent_logger = fluent_logger
-    @sinatra_logger = sinatra_logger
+    @human_readable_logger = Logger.new(STDOUT)
     @base_attrs = clean(base_attrs)
   end
 
@@ -45,11 +45,12 @@ class FluentWrap
           if !%w(info warn error).include?(level) then
             raise 'Unsupported log level method'
           end
-          if @sinatra_logger.nil?
-            raise 'Sinatra logger object is not set'
+          if @human_readable_logger.nil? then
+            raise 'Logger object is not set'
           end
 
-          @sinatra_logger.send(level, human_readable_msg(message, record))
+          @human_readable_logger.send(level,
+                                      human_readable_msg(message, record))
 
         rescue StandardError => e
           #STDERR.puts "Failed to log message: #{ record.inspect } :: #{ e }"
@@ -110,14 +111,13 @@ class FluentWrap
 
   # Create new child logger. The child will inherit base_attrs from the parent
   # @param more_attrs [Hash] Data to be added for each log message
-  # @param new_logger [Object] Change log logger instance 
+  # @param new_logger [Object] Change log logger instance
   # @return FluentWrap
-  def merge(more_attrs=nil, new_fluent_logger=nil, new_sinatra_logger=nil)
+  def merge(more_attrs=nil, new_fluent_logger=nil)
     FluentWrap.new(
       @tag,
       @base_attrs.merge(more_attrs || {}),
       new_fluent_logger || @fluent_logger,
-      new_sinatra_logger || @sinatra_logger,
     )
   end
 
