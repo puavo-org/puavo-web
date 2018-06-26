@@ -72,13 +72,16 @@ class FluentWrap
     hostname     = hostname_fqdn.split('.')[0]            || '?'
     method       = (request && request[:method])          || '(METHOD?)'
     organisation = (meta    && meta[:organisation_key])   || '?'
-    url          = (request && request[:url])             || '(URL?)'
+
+    # Use only path here instead of the full url,
+    # because the full url may contain sensitive parameters.
+    path = (request && request[:path]) || '(PATH?)'
 
     if !msg.kind_of?(String) then
       raise 'Message is not a string'
     end
     msg_no_newlines = msg.chomp.gsub(/\n/, ' / ')
-    message = "#{ method } #{ url } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg_no_newlines }"
+    message = "#{ method } #{ path } from #{ hostname }/#{ client_ip } (#{ organisation }) :: #{ msg_no_newlines }"
 
     if !request || !meta || show_full_record then
       message = "#{ message } :::: #{ record.to_json }"
