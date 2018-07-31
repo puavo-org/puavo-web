@@ -721,7 +721,7 @@ module PuavoRest
       unless value.kind_of?(String) && !value.empty? then
         raise "add group attribute '#{ param_name }' not configured"
       end
-      value
+      value.clone
     end
 
    def format_groupdata(groupdata_string, params)
