@@ -752,7 +752,7 @@ module PuavoRest
                   'unexpected format in ldap attribute' \
                     + " '#{ teaching_group_field }':" \
                     + " '#{ ldap_attribute_value }'" \
-                    + " (expecting a match with '#{ classnumber_regex }'" \
+                    + " (expecting a match with '#{ classnum_regex }'" \
                     + " that should also have one integer capture)")
        return {}
      end
