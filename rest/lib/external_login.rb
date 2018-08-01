@@ -754,7 +754,7 @@ module PuavoRest
                     + " '#{ ldap_attribute_value }'" \
                     + " (expecting a match with '#{ classnum_regex }'" \
                     + " that should also have one integer capture)")
-       return {}
+       return nil
      end
 
      class_number = Integer(match[1])
