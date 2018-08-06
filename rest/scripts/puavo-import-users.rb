@@ -148,7 +148,7 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     :given_names => user_data[3],
     :last_name => user_data[4],
     :email => user_data[5],
-    :telephone_number => user_data[6],
+    :telephone_number => user_data[6].to_s.gsub(/^-/, ""),
     :preferred_language => user_data[7],
     :username => user_data[9],
     :role => @options[:user_role]
