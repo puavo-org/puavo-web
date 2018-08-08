@@ -83,12 +83,16 @@ class ListsController < ApplicationController
 
     pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
 
+    # Use a proper Unicode font, not the built-in PDF fonts
+    font_file = Pathname.new(Rails.root.join('app', 'assets', 'stylesheets', 'font', 'FreeSerif.ttf'))
+    pdf.font_families["unicodefont"] = { :normal => { :file => font_file, :font => "Regular" } }
+
     @users_by_group.each do |group_name, users|
       # Sort users by sn + givenName
       users = users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
 
       pdf.start_new_page
-      pdf.font "Times-Roman"
+      pdf.font "unicodefont"
       pdf.font_size = 12
       pdf.draw_text "#{ current_organisation.name }, #{ @school.displayName }, #{ group_name }",
         :at => pdf.bounds.top_left
