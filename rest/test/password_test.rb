@@ -99,7 +99,7 @@ describe PuavoRest::Password do
       # Again there's only one group
       parts = parse_html(last_response.body).css("div h1")
       assert_equal 1, parts.length
-      assert_equal "Group 1", parts[0].content
+      assert_equal "Ungrouped", parts[0].content
     end
   end
 
