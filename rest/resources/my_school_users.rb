@@ -42,17 +42,10 @@ class MySchoolUsers < PuavoSinatra
         username: u.username,
       }
 
-      # find this user's group, if any
-      u_group = nil
+      # use the teaching group if it exists and it's not empty...
+      u_group = u.teaching_group
 
-      s_groups.each do |g|
-        if g.member_dns.include?(m)
-          u_group = g
-          break
-        end
-      end
-
-      if u_group
+      if u_group && !u_group.empty?
         id = u_group.abbreviation
 
         unless groups_by_id.include?(id)
@@ -67,6 +60,7 @@ class MySchoolUsers < PuavoSinatra
 
         groups_by_id[id][:users] << u_data
       else
+        # ...otherwise the user is ungrouped
         ungrouped << u_data
       end
     end
