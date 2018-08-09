@@ -201,10 +201,9 @@ module PuavoRest
             end
           end
 
-          puavo_group_list = Group.by_attrs({ :school_dn => school.dn,
-                                              :type      => ext_group_type },
-                                            { :multiple => true }) \
-                                  .select { |pg| pg.external_id }
+          puavo_group_list \
+            = Group.by_attr(:type, ext_group_type, :multiple => true) \
+                   .select { |pg| pg.external_id }
 
           external_groups.each do |ext_group_name, ext_group_displayname|
             @flog.info(nil,
