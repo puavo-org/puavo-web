@@ -475,8 +475,7 @@ en:
       users_count_title: Number of users
       label_generate_password: Set a random password for each user on the list
       label_set_password: Set the following password for each user on the list
-      label_submit_button: Set password and download file
-      and_other_users: "+%{count} other users..."
+      label_submit_button: Set passwords and download a PDF
       invalid_id: "(Unknown user %{id}, maybe deleted?)"
   menu:
     index:

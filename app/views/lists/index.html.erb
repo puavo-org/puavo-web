@@ -67,7 +67,7 @@
       <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
       <%= f.text_field :new_password, :size => 20, onfocus: "document.getElementById('list_generate_password_false_#{id}').checked = true;" %>
       <br>
-      <%= f.submit t(".label_submit_button"), style: "float: none; width: 250px;" %>
+      <%= f.submit t(".label_submit_button"), style: "float: none;" %>
 
     <% end %>
   </div>
