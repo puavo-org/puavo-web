@@ -282,18 +282,22 @@ module PuavoRest
     end
 
     def update_user_info(userinfo, password, params)
-      school_dn_param = params[:school_dn].to_s
-      if !school_dn_param.empty? then
-        userinfo['school_dns'] = [ school_dn_param ]
+      if userinfo['school_dns'].empty? then
+        school_dn_param = params[:school_dn].to_s
+        if !school_dn_param.empty? then
+          userinfo['school_dns'] = [ school_dn_param ]
+        end
       end
       if userinfo['school_dns'].empty? then
         raise ExternalLoginError,
               "could not determine user school for #{ userinfo['username'] }"
       end
 
-      role_param = params[:role].to_s
-      if !role_param.empty? then
-        userinfo['roles'] = [ role_param ]
+      if userinfo['roles'].empty? then
+        role_param = params[:role].to_s
+        if !role_param.empty? then
+          userinfo['roles'] = [ role_param ]
+        end
       end
       if userinfo['roles'].empty? then
         raise ExternalLoginError,
@@ -700,9 +704,8 @@ module PuavoRest
       end
 
       userinfo['external_groups'] = external_groups
-      userinfo['roles'] = ((userinfo['roles'] || []) + added_roles).sort.uniq
-      userinfo['school_dns'] \
-        = ((userinfo['school_dns'] || []) + added_school_dns).sort.uniq
+      userinfo['roles']           = added_roles.sort.uniq
+      userinfo['school_dns']      = added_school_dns.sort.uniq
 
       # apply defaults in case we have empty roles and/or school_dns
       %w(roles school_dns).each do |attr|
