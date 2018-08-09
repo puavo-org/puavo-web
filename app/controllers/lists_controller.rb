@@ -31,17 +31,6 @@ class ListsController < ApplicationController
   def download
     @list = List.by_id(params[:id])
 
-    if new_group_management?(@school)
-      # /v3/schools/:school_id/teaching_groups
-      @teaching_groups = rest_proxy.get("/v3/schools/#{ @school.puavoId }/teaching_groups").parse or []
-      @teaching_groups_by_username = {}
-      @teaching_groups.each do |group|
-        group["member_usernames"].each do |username|
-          @teaching_groups_by_username[username] = group
-        end
-      end
-    end
-
     @users_by_group = {}
 
     @list.users.each do |user_id|
@@ -61,14 +50,26 @@ class ListsController < ApplicationController
       user.save!
 
       if new_group_management?(@school)
-        group = {}
+        group_name = "<??>"
+
         if Array(user.puavoEduPersonAffiliation).include?("student")
-          group = @teaching_groups_by_username[user.uid]
+          grp = user.teaching_group
+
+          if grp.nil? || grp.empty?
+            # no teaching group set, use the first group then
+            if user.groups && user.groups.first
+              group_name = user.groups&.first&.displayName
+            end
+          else
+            group_name = user.teaching_group["name"]
+          end
         else
-          group["name"] = I18n.t("puavoEduPersonAffiliation_teacher")
+          # assume that users who aren't students are teachers...
+          group_name = I18n.t("puavoEduPersonAffiliation_teacher")
         end
-        @users_by_group[group["name"]] ||= []
-        @users_by_group[group["name"]].push(user)
+
+        @users_by_group[group_name] ||= []
+        @users_by_group[group_name].push(user)
       else
         group = user.roles.first
         @users_by_group[group.displayName] ||= []
