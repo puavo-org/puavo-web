@@ -304,6 +304,7 @@ en:
       no_roles: "The selected school has no roles!"
       no_groups: "The selected school has no groups!"
       no_teaching_groups: "The selected school has no teaching groups!"
+      no_admin_groups: "The selected school has no administrative groups!"
       submit: Next
     select_role:
       title: School change

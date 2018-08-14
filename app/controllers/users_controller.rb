@@ -310,7 +310,7 @@ class UsersController < ApplicationController
         flash[:alert] = t('users.select_school.no_teaching_groups')
       else
         if @use_groups
-          flash[:alert] = t('users.select_school.no_groups')
+          flash[:alert] = t('users.select_school.no_admin_groups')
         else
           flash[:alert] = t('users.select_school.no_roles')
         end

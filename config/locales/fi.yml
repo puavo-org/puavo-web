@@ -275,6 +275,7 @@ fi:
       no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
       no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
+      no_admin_groups: "Valitussa koulussa ei ole yhtään hallinnollista ryhmää!"
       submit: Seuraava
     select_role:
       title: Koulun vaihto
