@@ -116,7 +116,7 @@ class RenameGroupsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to( roles_path(@school) ) }
+      format.html { redirect_to( school_path(@school) ) }
     end
   end
 end
