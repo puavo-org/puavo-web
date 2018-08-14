@@ -37,6 +37,9 @@ class ListsController < ApplicationController
       begin
         user = User.find(user_id)
       rescue ActiveLdap::EntryNotFound
+        # This can happen if a user is deleted after they were imported
+        # but before the list is downloaded. The lists are maintained
+        # separately, so their contents are not updated.
         puts "Can't find user by ID #{user_id}, maybe the user has been deleted? Ignoring..."
         next
       end
@@ -49,16 +52,18 @@ class ListsController < ApplicationController
 
       user.save!
 
-      if new_group_management?(@school)
-        group_name = "<??>"
+      # group users by their group or role
+      group_name = "<?>"
 
+      if new_group_management?(@school)
+        # prioritise groups over roles
         if Array(user.puavoEduPersonAffiliation).include?("student")
           grp = user.teaching_group
 
           if grp.nil? || grp.empty?
-            # no teaching group set, use the first group then
+            # teaching group is not set, use the first group then
             if user.groups && user.groups.first
-              group_name = user.groups&.first&.displayName
+              group_name = user.groups.first.displayName
             end
           else
             group_name = user.teaching_group["name"]
@@ -67,14 +72,24 @@ class ListsController < ApplicationController
           # assume that users who aren't students are teachers...
           group_name = I18n.t("puavoEduPersonAffiliation_teacher")
         end
-
-        @users_by_group[group_name] ||= []
-        @users_by_group[group_name].push(user)
       else
-        group = user.roles.first
-        @users_by_group[group.displayName] ||= []
-        @users_by_group[group.displayName].push(user)
+        # If the user has no roles, then get groups, doesn't matter as
+        # long as they're grouped *somehow*...
+
+        if user.roles && user.roles.first
+          # have a role
+          group_name = user.roles.first.displayName
+        elsif user.teaching_group
+          # no role, try the teaching group
+          group_name = user.teaching_group["name"]
+        elsif user.groups && user.groups.first
+          # no role, no teaching group, use the first group
+          group_name = user.groups.first["name"]
+        end
       end
+
+      @users_by_group[group_name] ||= []
+      @users_by_group[group_name].push(user)
     end
 
     pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
