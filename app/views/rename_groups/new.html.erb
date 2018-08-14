@@ -14,7 +14,7 @@
   <% if @roles.empty? %>
     <p>Tässä koulussa ei ole yhtään roolia, joka täsmäisi hakuehtoihin!</p>
   <% else %>
-    <input type="checkbox" id="do_roles" name="do_roles" value="do_roles"/>
+    <input type="checkbox" id="do_roles" name="do_roles"/>
     <label for="do_roles">Käsittele roolit</label>
 
     <p>Koulun luokka-asteet: <b><%= @first_class_number %> - <%= @last_class_number %></b></p>
@@ -62,7 +62,7 @@
   <p>Tässä koulussa ei ole yhtään ryhmää, joka täsmäisi hakuehtoihin!</p>
 <% else %>
   <% unless @do_only_groups %>
-    <input type="checkbox" id="do_groups" name="do_groups" value="do_groups" checked/>
+    <input type="checkbox" id="do_groups" name="do_groups" checked/>
     <label for="do_groups">Käsittele ryhmät</label>
   <% end %>
 
@@ -90,10 +90,11 @@
         <td><%= group.displayName %> (<%= group.cn %>)</td>
         <td>
           <%= hidden_field_tag "group_puavo_id[]", group.puavoId %>
+
           <% if group.displayName.match(/\d+/)[0].to_i == @last_class_number %>
-          <% new_name = Time.now.year.to_s + " poistuvat, " + group.displayName %>
+            <% new_name = Time.now.year.to_s + " poistuvat, " + group.displayName %>
           <% else %>
-          <% new_name = increase_numeric_value_of_string(group.displayName) %>
+            <% new_name = increase_numeric_value_of_string(group.displayName) %>
           <% end %>
 
           <%= text_field_tag "group_display_name[]", new_name, size: 40 %>
