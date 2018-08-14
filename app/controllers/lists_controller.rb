@@ -31,6 +31,7 @@ class ListsController < ApplicationController
   def download
     @list = List.by_id(params[:id])
 
+    # First group users by their group or role. Filter out missing users.
     @users_by_group = {}
 
     @list.users.each do |user_id|
@@ -43,14 +44,6 @@ class ListsController < ApplicationController
         puts "Can't find user by ID #{user_id}, maybe the user has been deleted? Ignoring..."
         next
       end
-
-      if params[:list][:generate_password] == "true"
-        user.set_generated_password
-      else
-        user.new_password = params[:list][:new_password]
-      end
-
-      user.save!
 
       # group users by their group or role
       group_name = "<?>"
@@ -92,6 +85,20 @@ class ListsController < ApplicationController
       @users_by_group[group_name].push(user)
     end
 
+    # All users have been grouped now, so actually change their passwords
+    @users_by_group.each do |group, users|
+      users.each do |u|
+        if params[:list][:generate_password] == "true"
+          u.set_generated_password
+        else
+          u.new_password = params[:list][:new_password]
+        end
+
+        u.save!
+      end
+    end
+
+    # Then generate a PDF containing the new passwords
     pdf = Prawn::Document.new( :skip_page_creation => true, :page_size => 'A4')
 
     # Use a proper Unicode font, not the built-in PDF fonts
