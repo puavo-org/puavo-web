@@ -9,7 +9,7 @@
 <p>
 
 <% id = 1 %>
-<% @lists.each do |list| %>
+<% @lists.sort{|a, b| a.created_at <=> b.created_at }.reverse.each do |list| %>
 <div class="list">
 
   <table><tr style="background: none;"><td style="vertical-align: top;">

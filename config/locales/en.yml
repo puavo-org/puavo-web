@@ -475,7 +475,7 @@ en:
   lists:
     index:
       title: Unloaded username lists
-      description: "These are lists of previously mass-imported users. Download the list you want and print it on paper. You can then cut the paper into pieces and hand them to the users. Please note that you can download each list only once!"
+      description: "These are lists of previously mass-imported users. Download the list you want and print it on paper. You can then cut the paper into pieces and hand them to the users. Please note that you can download each list only once! The lists are sorted from newest to oldest."
       description_empty: There are no unloaded username lists
       created: This list was created on
       users_count_title: Number of users
