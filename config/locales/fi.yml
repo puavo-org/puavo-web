@@ -92,7 +92,7 @@ fi:
     cancel: "Peruuta"
     destroy: Poista
     new_group: "Uusi ryhmä"
-    create_username_list_from_group: "Luo jäsenistä uusi salasanalista"
+    create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
     update: "Päivitä tiedot"
     create: Luo
     show: "Näytä"
@@ -160,8 +160,8 @@ fi:
       role_removed: "Rooli poistettiin ryhmästä."
       role_removed_failed: "Poistaminen epäonnistui."
       create_username_list_empty: "Ryhmässä ei ole jäseniä, listaa ei luotu"
-      create_username_list_ok: "Ryhmän \"%{name}\" jäsenistä luotiin onnistuneesti uusi salasanalista"
-      create_username_list_failed: "Käyttäjälistan luonti ei onnistunut"
+      create_username_list_ok: "Ryhmän \"%{name}\" jäsenistä luotiin onnistuneesti uusi käyttäjätunnuslista"
+      create_username_list_failed: "Käyttäjätunnuslistan luonti ei onnistunut"
     role:
       group_added: "Ryhmä lisättiin rooliin."
       group_added_failed: "Lisäys epäonnistui"
