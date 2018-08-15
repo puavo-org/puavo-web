@@ -357,6 +357,7 @@ en:
   groups:
     index:
       actions: Actions
+      groups: groups
     show:
       roles_and_members: Roles and members
       other_roles: Other roles
@@ -929,6 +930,7 @@ en:
       add_new_device: Add a new device
       title: List of devices
       select_device_label: Select
+      devices: devices
     new:
       new_printer: New printer
       new_device: New device
