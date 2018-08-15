@@ -15,10 +15,15 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups.xml
   def index
     if @school
-      @groups = @school.groups.sort
+      @groups = @school.groups
     else
-      @groups = Group.all.sort
+      @groups = Group.all
     end
+
+    @groups.sort! do |a, b|
+      a["displayName"].downcase <=> b["displayName"].downcase
+    end
+
     if params[:memberUid]
       @groups.delete_if{ |g| !Array(g.memberUid).include?(params[:memberUid]) }
     end

@@ -3,9 +3,13 @@ class RolesController < ApplicationController
   # GET /:school_id/roles.xml
   def index
     if @school
-      @roles = @school.roles.sort
+      @roles = @school.roles
     else
-      @roles = Role.all.sort
+      @roles = Role.all
+    end
+
+    @roles.sort! do |a, b|
+      a["displayName"].downcase <=> b["displayName"].downcase
     end
 
     respond_to do |format|
