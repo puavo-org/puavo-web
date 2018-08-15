@@ -120,6 +120,7 @@ en:
     cancel: "Cancel"
     destroy: Remove
     new_group: New group
+    create_username_list_from_group: "Create a new username list from members"
     update: Update
     create: Create
     show: Show
@@ -186,6 +187,9 @@ en:
       role_added_failed: Failed to add.
       role_removed: Role was removed from the group.
       role_removed_failed: Failed to delete.
+      create_username_list_empty: "There are no members in this group, list not created"
+      create_username_list_ok: "A new username list was created from the members in the group \"%{name}\""
+      create_username_list_failed: "Could not create a new username list"
     role:
       group_added: Group was added to role.
       group_added_failed: Failed to add

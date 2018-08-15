@@ -1,3 +1,5 @@
+require 'list'
+
 class GroupsController < ApplicationController
 
   # GET /:school_id/groups/:id/members
@@ -118,6 +120,35 @@ class GroupsController < ApplicationController
       else
         format.html { redirect_to(groups_url) }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  # PUT /:school_id/groups/:group_id/create_username_list_from_group
+  def create_username_list_from_group
+    @group = Group.find(params[:id])
+
+    if @group.members.empty?
+      flash[:notice] = t('flash.group.create_username_list_empty')
+      redirect_to group_path(@school, @group)
+      return
+    end
+
+    begin
+      new_list = List.new(@group.members.map{ |u| u.id })
+      new_list.save
+      ok = true
+    rescue
+      ok = false
+    end
+
+    respond_to do |format|
+      if ok
+        flash[:notice] = t('flash.group.create_username_list_ok', :name => @group.displayName)
+        format.html { redirect_to lists_path(@school) }
+      else
+        flash[:alert] = t('flash.group.create_username_list_failed')
+        format.html { redirect_to group_path(@school, @group) }
       end
     end
   end
