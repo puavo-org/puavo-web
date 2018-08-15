@@ -483,6 +483,11 @@ en:
       label_set_password: Set the following password for each user on the list
       label_submit_button: Set passwords and download a PDF
       invalid_id: "(Unknown user %{id}, maybe deleted?)"
+      delete_without_downloading: "Delete list without downloading it"
+    delete:
+      invalid_list: "Unknown list"
+      deletion_failed: "List deletion failed"
+      deleted: "List deleted"
   menu:
     index:
       service_link_name_puavo: Puavo - users and devices management

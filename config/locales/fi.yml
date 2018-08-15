@@ -452,6 +452,11 @@ fi:
       label_set_password: Aseta kaikkien listan käyttäjien salasanaksi
       label_submit_button: Aseta salasanat ja lataa PDF-tiedosto
       invalid_id: "(Tuntematon käyttäjä %{id}, ehkä poistettu?)"
+      delete_without_downloading: "Poista lista lataamatta sitä"
+    delete:
+      invalid_list: "Tuntematon lista"
+      deletion_failed: "Listan poisto epäonnistui"
+      deleted: "Lista poistettu"
   menu:
     index:
       service_link_name_puavo: Puavo - käyttäjä- ja laitehallinta

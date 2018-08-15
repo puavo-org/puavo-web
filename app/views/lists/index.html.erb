@@ -76,6 +76,10 @@
       <br>
       <%= f.submit t(".label_submit_button"), style: "float: none;" %>
 
+      <%= link_to delete_list_path(:id => list.uuid), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger", style: "margin-left: 50px;" do %>
+        <i class="icon-trash"></i><%= t('.delete_without_downloading') %>
+      <% end %>
+
     <% end %>
   </div>
 

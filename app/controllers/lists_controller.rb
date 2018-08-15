@@ -27,6 +27,32 @@ class ListsController < ApplicationController
     end
   end
 
+  # DELETE /users/:school_id/lists/:id/
+  def delete
+    @list = List.by_id(params[:id])
+
+    if @list.nil?
+      flash[:alert] = t('.invalid_list')
+      redirect_to lists_path(@school)
+      return
+    end
+
+    begin
+      @list.downloaded = true
+      @list.save
+    rescue
+      flash[:alert] = t('.deletion_failed')
+      redirect_to lists_path(@school)
+      return
+    end
+
+    flash[:notice] = t('.deleted')
+
+    respond_to do |format|
+      format.html { redirect_to lists_path(@school) }
+    end
+  end
+
   # POST /users/:school_id/lists/:id
   def download
     @list = List.by_id(params[:id])

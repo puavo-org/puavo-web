@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     scope :path => ':school_id' do
       match 'lists' => 'lists#index', :as => :lists, :via => :get
       match 'lists/:id' => 'lists#download', :as => :download_list, :via => :post
+      match 'lists/:id' => 'lists#delete', :as => :delete_list, :via => :delete
     end
 
     match 'schools/:id/admins' => 'schools#admins', :as => :admins_school, :via => :get
