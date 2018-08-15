@@ -275,7 +275,7 @@ en:
   users:
     index:
       actions: Actions
-      users_marked_for_deletion_title: Users marked for deletion
+      users_marked_for_deletion_title: Users marked for later deletion
       normal_users_title: Normal users
       users: users
       do_not_delete: "(Can't be removed)"

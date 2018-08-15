@@ -246,7 +246,7 @@ fi:
   users:
     index:
       actions: Toiminnot
-      users_marked_for_deletion_title: Poistetuksi merkityt käyttäjät
+      users_marked_for_deletion_title: Poistettavaksi merkityt käyttäjät
       normal_users_title: Normaalit käyttäjät
       users: käyttäjää
       do_not_delete: "(Ei voi poistaa)"
