@@ -61,6 +61,7 @@ fi:
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
   layouts:
     application:
       schools: Koulut
