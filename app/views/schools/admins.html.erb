@@ -15,7 +15,7 @@
 <div class="content-box other_admins">
   <h3><%= t('.other_admin_users') %>:</h3>
   <span id="other_admin_users">
-    <% Array(@allowed_school_admins).sort{|a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }.each do |u| %>
+    <% Array(@allowed_school_admins).sort{|a, b| ((a["givenName"] || "") + (a["sn"] || "")).downcase <=> ((b["givenName"] || "") + (b["sn"] || "")).downcase }.each do |u| %>
       <div class="row clearfix">
       <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
       <%= link_to t('link.add'), add_school_admin_school_path(@school, u), method: :put, id: "add_user_#{u.id}", class: "btn" %>
