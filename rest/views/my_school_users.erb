@@ -45,7 +45,7 @@ header {
   border-bottom: 1px dashed #ccc;
 }
 
-.collapseHeader {
+.groupHeader {
   font-size: 150%;
   font-weight: bold;
   padding: 5px 10px;
@@ -54,25 +54,28 @@ header {
   background: #fe9749;
 }
 
-.collapseHeader h1 {
+.groupHeader h1 {
   font-size: inherit;
   display: inline;
   pointer-events: none;
 }
 
-.collapseHeader .count {
+.groupHeader .count {
   font-size: 75%;
 }
 
-.collapseHeader span {
+.groupHeader span {
   pointer-events: none;
 }
 
-.users {
-  margin-top: 10px;
-  margin-left: 50px;
-  border-collapse: collapse;
+.tableWrapper {
   display: none;
+  padding: 10px 0 0 50px;
+}
+
+.users {
+  border-collapse: collapse;
+  width: 100%;
 }
 
 .users th, td {
@@ -140,7 +143,7 @@ footer table td {
 
 function setupGroupHeaders()
 {
-  var links = document.getElementsByClassName("collapseHeader");
+  var links = document.getElementsByClassName("groupHeader");
 
   for (var i = 0; i < links.length; i++)
     if (links[i].dataset.target)
@@ -171,32 +174,34 @@ function toggleGroup(e)
 </header>
 
 <% @data[:groups].each do |group| %>
-<div class="collapseHeader" data-target="<%= group[:id] %>">
+<div class="groupHeader" data-target="<%= group[:id] %>">
   <h1><%= (group[:name] == :ungrouped) ? @data[:language][:ungrouped] : group[:name] %></h1>
   <span class="count">(<%= group[:users].size %> <%= @data[:language][:users] %>)</span>
   <span id="arrow-<%= group[:id] %>">▶</span>
 </div>
-<table class="users" id="table-<%= group[:id] %>">
-  <tr>
-    <th><%= @data[:language][:last_name] %></th>
-    <th><%= @data[:language][:first_names] %></th>
-    <th><%= @data[:language][:username] %></th>
-    <th><%= @data[:language][:actions] %></th>
-  </tr>
-  <% group[:users].each do |u| %>
-  <tr>
-    <td><%= u[:last] %></td>
-    <td><%= u[:first] %></td>
-    <td><%= u[:username] %></td>
-    <td>
-      <a href="<%= @data[:domain] %>/users/password?changing=<%= @data[:changing] %>&amp;changed=<%= u[:username] %>"
-         class="button" title="<%= @data[:language][:password_tooltip] %>">
-        <img src="img/key.svg"> <%= @data[:language][:change_password] %>
-      </a>
-    </td>
-  </tr>
-  <% end %>
-</table>
+<div class="tableWrapper" id="table-<%= group[:id] %>" style="display: none;">
+  <table class="users">
+    <tr>
+      <th><%= @data[:language][:last_name] %></th>
+      <th><%= @data[:language][:first_names] %></th>
+      <th><%= @data[:language][:username] %></th>
+      <th><%= @data[:language][:actions] %></th>
+    </tr>
+    <% group[:users].each do |u| %>
+    <tr>
+      <td><%= u[:last] %></td>
+      <td><%= u[:first] %></td>
+      <td><%= u[:username] %></td>
+      <td>
+        <a href="<%= @data[:domain] %>/users/password?changing=<%= @data[:changing] %>&amp;changed=<%= u[:username] %>"
+           class="button" title="<%= @data[:language][:password_tooltip] %>">
+          <img src="img/key.svg"> <%= @data[:language][:change_password] %>
+        </a>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+</div>
 <% end %>
 
 <footer>
