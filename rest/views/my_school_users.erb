@@ -27,8 +27,21 @@ body {
 }
 
 header h1 {
+  margin: 0;
+  padding: 0;
+}
+
+header h2 {
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  margin-top: 10px;
   text-align: center;
-  padding-bottom: 10px;
+  padding: 10px 0;
+  border-top: 1px dashed #ccc;
   border-bottom: 1px dashed #ccc;
 }
 
@@ -154,6 +167,7 @@ function toggleGroup(e)
 
 <header>
   <h1><%= @data[:school] %></h1>
+  <h2><%= @data[:language][:page_title] %></h2>
 </header>
 
 <% @data[:groups].each do |group| %>

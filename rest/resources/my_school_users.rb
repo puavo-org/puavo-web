@@ -125,7 +125,7 @@ private
       when 'english'
         return {
           html_lang: 'en',
-          page_title: "School User List",
+          page_title: "School Students List",
           users: 'users',
           ungrouped: 'Ungrouped',
           last_name: 'Last name',
@@ -140,7 +140,7 @@ private
       when 'finnish'
         return {
           html_lang: 'fi',
-          page_title: 'Koulun käyttäjälista',
+          page_title: 'Koulun oppilaslista',
           users: 'käyttäjää',
           ungrouped: 'Ryhmittelemättömät',
           last_name: 'Sukunimi',
@@ -155,7 +155,7 @@ private
       when 'german'
         return {
           html_lang: 'de',
-          page_title: "Schulbenutzerliste",
+          page_title: "School Studenten Liste",
           users: 'Benutzer',
           ungrouped: 'Nicht gruppiert',
           last_name: 'Nachname',
