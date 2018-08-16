@@ -125,6 +125,15 @@ footer table td {
 </style>
 <script>
 
+function setupGroupHeaders()
+{
+  var links = document.getElementsByClassName("collapseHeader");
+
+  for (var i = 0; i < links.length; i++)
+    if (links[i].dataset.target)
+      links[i].onclick = toggleGroup;
+}
+
 function toggleGroup(e)
 {
   var tbl = document.getElementById("table-" + e.target.dataset.target);
@@ -139,18 +148,9 @@ function toggleGroup(e)
   }
 }
 
-function setupCollapseHeaders()
-{
-  var links = document.getElementsByClassName("collapseHeader");
-
-  for (var i = 0; i < links.length; i++)
-    if (links[i].dataset.target)
-      links[i].onclick = toggleGroup;
-}
-
 </script>
 </head>
-<body onload="setupCollapseHeaders()">
+<body onload="setupGroupHeaders()">
 
 <header>
   <h1><%= @data[:school] %></h1>
