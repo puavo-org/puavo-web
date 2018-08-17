@@ -110,6 +110,24 @@ def nonexistent_users_in_schools
   end
 end
 
+# users who share a "unique" external ID
+def shared_external_ids
+  eid = {}
+
+  User.all.each do |u|
+    next if u.puavoExternalId.nil? or u.puavoExternalId.empty?
+    eid[u.puavoExternalId] ||= []
+    eid[u.puavoExternalId] << [u.cn, u.id]
+  end
+
+  eid.each do |id, users|
+    if users.count > 1
+      puts "External ID \"#{id}\" is used by #{users.count} users:"
+      users.each {|name, pid| puts "  #{name} (id #{pid})" }
+    end
+  end
+end
+
 # deleted organisation owners (this was fixed in Puavo long ago, but old users can still exist)
 def missing_organisation_owners
   # remove the puavo user, it never "exists"
@@ -169,6 +187,7 @@ tests = [
   # users
   method(:users_with_nonexistent_school),
   method(:nonexistent_users_in_schools),
+  method(:shared_external_ids),
 
   # groups
   method(:groups_with_missing_schools),
