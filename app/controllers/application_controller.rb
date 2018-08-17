@@ -95,6 +95,7 @@ class ApplicationController < ActionController::Base
   def school_list
     return @school_cache if @school_cache
     @school_cache = current_organisation.schools current_user
+    @school_cache.sort{|a, b| a.displayName.downcase <=> b.displayName.downcase }
   end
 
   def rack_mount_point
