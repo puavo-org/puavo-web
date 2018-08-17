@@ -7,9 +7,26 @@ require "puavo/etc"
 #require 'byebug'
 
 @credentials = {}
-@credentials[:organisation_key] = "XXX"
-@credentials[:uid] = "YYY"
-@credentials[:password] = "ZZZ"
+
+if ARGV.length == 2
+  @credentials[:organisation_key] = ARGV[0]
+  @credentials[:uid] = ARGV[1]
+  print "Enter password: "
+  begin
+    @credentials[:password] = STDIN.noecho(&:gets).chomp
+  rescue SystemExit, Interrupt
+    puts "[Aborted]"
+    exit 0
+  end
+  puts ""
+elsif ARGV.length == 3
+  @credentials[:organisation_key] = ARGV[0]
+  @credentials[:uid] = ARGV[1]
+  @credentials[:password] = ARGV[2]
+else
+  puts "Usage: puavo-bughunter <organisation name> <username> [<password>]"
+  puts "Password will be prompted for if not given"
+end
 
 @authentication = Puavo::Authentication.new
 @authentication.configure_ldap_connection(@credentials)
