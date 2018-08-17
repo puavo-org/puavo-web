@@ -331,15 +331,15 @@ fi:
     show:
       roles_and_members: "Roolit ja jäsenet"
       other_roles: Muut roolit
-      add_user_title: Käyttäjien lisääminen ryhmään
-      description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Lisää ryhmään" painiketta.
+      add_user_title: Lisää käyttäjiä ryhmään
+      description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Liitä ryhmään" -painikkeita.
       placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
     new:
       title: "Luo uusi ryhmä"
     edit:
       title: "Muokkaa ryhmää"
     members:
-      title: Jäsenet
+      title: Nykyiset jäsenet
       remove: Poista ryhmästä
     user_search:
       member: Jäsen

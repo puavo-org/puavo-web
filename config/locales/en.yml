@@ -362,15 +362,15 @@ en:
     show:
       roles_and_members: Roles and members
       other_roles: Other roles
-      add_user_title: Add user to the group
-      description: To add a new user to the group, write their name in the search box and click the "Add user to the group" button.
-      placeholder_for_search: Name of user
+      add_user_title: Add users to this group
+      description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
+      placeholder_for_search: Name of the user
     new:
       title: New group
     edit:
       title: Edit group
     members:
-      title: Members
+      title: Current members
       remove: Remove
     user_search:
       member: Member
