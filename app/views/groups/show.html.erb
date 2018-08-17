@@ -36,6 +36,16 @@
       <% end %>
     </td>
   </tr>
+
+  <tr>
+    <td><strong><%= t('ldap_create_time') %>:</strong></td>
+    <td><%= @group['createTimestamp'] %></td>
+  </tr>
+  <tr>
+    <td><strong><%= t('ldap_modify_time') %>:</strong></td>
+    <td><%= @group['modifyTimestamp'] %></td>
+  </tr>
+
 </table>
 
 <div class="content-box list members">

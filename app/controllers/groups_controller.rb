@@ -42,6 +42,11 @@ class GroupsController < ApplicationController
   def show
     @group = Group.find(params[:id])
 
+    # get the creation and modification timestamps from LDAP operational attributes
+    extra = Group.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    @group['createTimestamp'] = extra['createTimestamp'].nil? ? '?' : extra['createTimestamp'].localtime
+    @group['modifyTimestamp'] = extra['modifyTimestamp'].nil? ? '?' : extra['modifyTimestamp'].localtime
+
     @members = @group.members
 
     @roles = @group.roles.sort
