@@ -26,6 +26,7 @@ elsif ARGV.length == 3
 else
   puts "Usage: puavo-bughunter <organisation name> <username> [<password>]"
   puts "Password will be prompted for if not given"
+  exit 0
 end
 
 @authentication = Puavo::Authentication.new
