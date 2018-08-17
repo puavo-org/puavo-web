@@ -162,50 +162,75 @@ module PuavoRest
     post '/v3/external_login/check_and_update_users' do
       auth :basic_auth
 
-      all_ok = true
+      begin
+        external_login = ExternalLogin.new
+        login_service = external_login.new_external_service_handler()
 
-      external_login = ExternalLogin.new
-      login_service = external_login.new_external_service_handler()
-
-      # XXX should this also iterate over users that are *NOT* in Puavo
-      # XXX at all?
-      puavo_users_with_external_ids = User.all.select { |u| u.external_id }
-
-      puavo_users_with_external_ids.each do |puavo_user|
+        external_users = nil
         begin
-          if login_service.user_exists?(puavo_user.external_id) then
-            userinfo = login_service.get_userinfo(puavo_user.username)
+          external_users = login_service.lookup_all_users()
+        rescue StandardError => e
+          errmsg = 'error looking up all users from external login service'
+          flog.warn(errmsg, "#{ errmsg }: #{ e.message }")
+          return json({ :error => errmsg, :status => 'failed' })
+        end
+
+        all_ok = true
+
+        User.all.each do |puavo_user|
+          begin
+            external_id = puavo_user.external_id
+            next unless external_id
+            next if external_users.has_key?(external_id)
+
+            # User not found in external service, so it must be in Puavo
+            # and we mark it for removal.
+            if puavo_user.mark_for_removal! then
+              flog.info('puavo user marked for removal',
+                        "puavo user '#{ puavo_user.username }' is marked" \
+                          + ' for removal')
+            end
+
+          rescue StandardError => e
+            flog.warn('error in marking user for removal',
+                      "error in marking user '#{ puavo_user.username }'" \
+                         + " for removal: #{ e.message }")
+            all_ok = false
+          end
+        end
+
+        # XXX what if we could get all the data from the external login
+        # XXX service just once so we did not have to do many get_userinfo()
+        # XXX calls here (each triggering a new ldap search)?
+
+        external_users.each do |external_id, username|
+          begin
+            userinfo = login_service.get_userinfo(username)
             user_status = external_login.update_user_info(userinfo, nil, {})
             if user_status != ExternalLoginStatus::NOCHANGE \
               && user_status != ExternalLoginStatus::UPDATED then
                 errmsg = 'user information update to Puavo failed for' \
-                           + " #{ puavo_user.username }" \
-                           + " (#{ puavo_user.external_id })"
+                           + " #{ username }" \
+                           + " (#{ external_id })"
                 raise errmsg
             end
 
-            next
+          rescue StandardError => e
+            flog.warn('error checking user in external login service',
+                      "error checking user '#{ username }'" \
+                        + " in external login service: #{ e.message }")
+            all_ok = false
           end
-
-          # user not found in external service
-          if puavo_user.mark_for_removal! then
-            flog.info('puavo user marked for removal',
-                      "puavo user '#{ puavo_user.username }' is marked" \
-                        + ' for removal')
-          end
-
-        rescue StandardError => e
-          flog.warn('error checking user in external login service',
-                    "error checking user '#{ puavo_user.username }'" \
-                      + ' in external login service:' \
-                      + " #{ e.message }")
-          all_ok = false
-          next
         end
-      end
 
-      unless all_ok then
-        errmsg = 'could not check some users from external login service'
+        unless all_ok then
+          raise 'could not check and update one or more users' \
+                  + '  from external login service'
+        end
+
+      rescue StandardError => e
+        errmsg = 'error in updating users from external login service'
+        flog.warn(errmsg, "#{ errmsg }: #{ e.message }")
         return json({ :error => errmsg, :status => 'failed' })
       end
 

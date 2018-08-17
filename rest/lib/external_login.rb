@@ -466,6 +466,11 @@ module PuavoRest
       raise ExternalLoginConfigError, 'password_change style not configured' \
         unless @external_password_change.kind_of?(Hash)
 
+      @external_ldap_subtrees = ldap_config['subtrees']
+      raise ExternalLoginConfigError, 'subtrees not configured' \
+        unless @external_ldap_subtrees.kind_of?(Array) \
+                 && @external_ldap_subtrees.all? { |s| s.kind_of?(String) }
+
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
                             :port => (Integer(ldap_config['port']) rescue 389),
@@ -563,6 +568,7 @@ module PuavoRest
       external_id
     end
 
+    # XXX we can throw this out if we lookup all users anyway
     def user_exists?(external_id)
       user_filter = Net::LDAP::Filter.eq(@external_id_field, external_id)
 
@@ -616,6 +622,43 @@ module PuavoRest
       apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first.to_s)
 
       userinfo
+    end
+
+    def lookup_all_users
+      users = {}
+
+      attributes = [ @external_id_field, @external_username_field ]
+      user_filter = Net::LDAP::Filter.eq(@external_id_field, '*') \
+                      & Net::LDAP::Filter.eq(@external_username_field, '*')
+
+      id_sym       = @external_id_field.downcase.to_sym
+      username_sym = @external_username_field.downcase.to_sym
+
+      @external_ldap_subtrees.each do |subtree|
+        ldap_entries = @ldap.search(:base       => subtree,
+                                    :attributes => attributes,
+                                    :filter     => user_filter)
+        if !ldap_entries then
+          msg = "ldap search for all users failed: " \
+                  + @ldap.get_operation_result.message
+          raise ExternalLoginUnavailable, msg
+        end
+
+        ldap_entries.each do |x|
+          external_id = Array(x[id_sym]).first
+          next unless external_id.kind_of?(String)
+
+          userprincipalname = Array(x[username_sym]).first
+          next unless userprincipalname.kind_of?(String)
+
+          match = userprincipalname.match(/\A(.*)@#{ @external_domain }\z/)
+          next unless match
+
+          users[ external_id ] = match[1]
+        end
+      end
+
+      return users
     end
 
     private
