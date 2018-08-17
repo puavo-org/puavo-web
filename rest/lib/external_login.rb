@@ -344,19 +344,24 @@ module PuavoRest
               "error saving user because of validation errors: #{ e.message }"
       end
 
-      pw_update_status = set_puavo_password(userinfo['username'],
-                                            userinfo['external_id'],
-                                            password,
-                                            password,
-                                            true)
+      if password then
+        pw_update_status = set_puavo_password(userinfo['username'],
+                                              userinfo['external_id'],
+                                              password,
+                                              password,
+                                              true)
+      else
+        pw_update_status = ExternalLoginStatus::NOCHANGE
+      end
+
       mg_update_status = manage_groups_for_user(user, external_groups_by_type)
 
-      return self.class.status_updated() \
+      return ExternalLoginStatus::UPDATED \
         if (user_update_status    == ExternalLoginStatus::UPDATED \
               || pw_update_status == ExternalLoginStatus::UPDATED \
               || mg_update_status == ExternalLoginStatus::UPDATED)
 
-      return self.class.status_nochange()
+      return ExternalLoginStatus::NOCHANGE
     end
 
     def self.status(status_string, msg)
@@ -598,9 +603,9 @@ module PuavoRest
       return true
     end
 
-    private
-
     def get_userinfo(username)
+      update_ldapuserinfo(username)
+
       userinfo = {
         'external_id' => lookup_external_id(username),
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
@@ -633,6 +638,8 @@ module PuavoRest
 
       userinfo
     end
+
+    private
 
     def apply_dn_mappings!(userinfo, user_dn)
       added_roles      = []
