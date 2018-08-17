@@ -550,27 +550,6 @@ module PuavoRest
       return true
     end
 
-    def change_microsoft_ad_password(target_dn, target_user_password)
-      encoded_password = ('"' + target_user_password + '"') \
-                         .encode('utf-16le')        \
-                         .force_encoding('utf-8')
-
-      # We are doing the password change operation twice because at least
-      # on some ldap servers (Microsoft AD, possibly depending on
-      # configuration) the old password is still valid for five minutes on
-      # ldap operations :-(
-      ops = [ [ :replace, :unicodePwd, encoded_password ],
-              [ :replace, :unicodePwd, encoded_password ] ]
-      change_ok = @ldap.modify(:dn => target_dn, :operations => ops)
-      if !change_ok then
-        raise ExternalLoginPasswordChangeError,
-              @ldap.get_operation_result.error_message \
-                + ' (maybe server password policy does not accept it?)'
-      end
-
-      return true
-    end
-
     def lookup_external_id(username)
       update_ldapuserinfo(username)
 
@@ -640,6 +619,27 @@ module PuavoRest
     end
 
     private
+
+    def change_microsoft_ad_password(target_dn, target_user_password)
+      encoded_password = ('"' + target_user_password + '"') \
+                         .encode('utf-16le')        \
+                         .force_encoding('utf-8')
+
+      # We are doing the password change operation twice because at least
+      # on some ldap servers (Microsoft AD, possibly depending on
+      # configuration) the old password is still valid for five minutes on
+      # ldap operations :-(
+      ops = [ [ :replace, :unicodePwd, encoded_password ],
+              [ :replace, :unicodePwd, encoded_password ] ]
+      change_ok = @ldap.modify(:dn => target_dn, :operations => ops)
+      if !change_ok then
+        raise ExternalLoginPasswordChangeError,
+              @ldap.get_operation_result.error_message \
+                + ' (maybe server password policy does not accept it?)'
+      end
+
+      return true
+    end
 
     def apply_dn_mappings!(userinfo, user_dn)
       added_roles      = []
