@@ -6,6 +6,10 @@ require "puavo/etc"
 
 #require 'byebug'
 
+def header(s)
+  puts "[#{s}]"
+end
+
 @credentials = {}
 
 if ARGV.length == 2
@@ -44,23 +48,27 @@ ExternalService.ldap_setup_connection(
 
 # devices without schools
 def device_in_nonexistent_school
+  header "Devices in non-existent schools"
+
   Device.all.each do |d|
     if d.puavoSchool.nil?
       # this cannot happen, but let's check for it anyway
-      puts "Device \"#{d.cn}\" does not have a puavoSchool setting at all! This cannot happen! What did you do?!"
+      puts "  Device \"#{d.cn}\" does not have a puavoSchool setting at all! This cannot happen! What did you do?!"
       next
     end
 
     begin
       School.find(d.puavoSchool)
     rescue ActiveLdap::EntryNotFound => e
-      puts "Device \"#{d.cn}\" is owned by a non-existent school \"#{d.puavoSchool}\""
+      puts "  Device \"#{d.cn}\" is owned by a non-existent school \"#{d.puavoSchool}\""
     end
   end
 end
 
 # device with invalid/non-existent puavoPreferredServer
 def device_with_invalid_preferred_server
+  header "Devices with an invalid preferred server"
+
   Device.all.each do |d|
     s = begin d.puavoPreferredServer rescue nil end
 
@@ -68,7 +76,7 @@ def device_with_invalid_preferred_server
       begin
         Device.find(s)
       rescue ActiveLdap::EntryNotFound => e
-        puts "The preferredPuavoServer of device \"#{d.cn}\" does not exist"
+        puts "  The preferredPuavoServer of device \"#{d.cn}\" does not exist"
       end
     end
   end
@@ -76,12 +84,14 @@ end
 
 # device with a non-existent primary user (the UI ignores this silently)
 def device_with_invalid_primary_user
+  header "Devices with an invalid primary user"
+
   Device.all.each do |d|
     if d.puavoDevicePrimaryUser
       begin
         User.find(d.puavoDevicePrimaryUser)
       rescue ActiveLdap::EntryNotFound => e
-        puts "The primary user \"#{d.puavoDevicePrimaryUser}\" of device \"#{d.cn}\" does not exist"
+        puts "  The primary user \"#{d.puavoDevicePrimaryUser}\" of device \"#{d.cn}\" does not exist"
       end
     end
   end
@@ -89,23 +99,27 @@ end
 
 # users whose school does not exist
 def users_with_nonexistent_school
+  header "Users with a non-existent school"
+
   User.all.each do |u|
     begin
       School.find(u.puavoSchool)
     rescue ActiveLdap::EntryNotFound => e
-      puts "User \"#{u.cn}\" belongs to a non-existent school \"#{u.puavoSchool}\""
+      puts "  User \"#{u.cn}\" belongs to a non-existent school \"#{u.puavoSchool}\""
     end
   end
 end
 
 # missing users
 def nonexistent_users_in_schools
+  header "Schools with missing users"
+
   School.all.each do |s|
     Array(s.member || []).each do |m|
       begin
         User.find(m)
       rescue
-        puts "User \"#{m}\" in school \"#{s.cn}\" does not exist"
+        puts "  User \"#{m}\" in school \"#{s.cn}\" does not exist"
       end
     end
   end
@@ -113,6 +127,8 @@ end
 
 # users who share a "unique" external ID
 def shared_external_ids
+  header "Shared external IDs"
+
   eid = {}
 
   User.all.each do |u|
@@ -123,14 +139,16 @@ def shared_external_ids
 
   eid.each do |id, users|
     if users.count > 1
-      puts "External ID \"#{id}\" is used by #{users.count} users:"
-      users.each {|name, pid| puts "  #{name} (id #{pid})" }
+      puts "  External ID \"#{id}\" is used by #{users.count} users:"
+      users.each {|name, pid| puts "    #{name} (id #{pid})" }
     end
   end
 end
 
 # deleted organisation owners (this was fixed in Puavo long ago, but old users can still exist)
 def missing_organisation_owners
+  header "Missing organisation owners"
+
   # remove the puavo user, it never "exists"
   owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
 
@@ -138,22 +156,26 @@ def missing_organisation_owners
     begin
       User.find(o.rdns[0]["puavoId"])
     rescue
-      puts "Organisation owner \"#{o}\" does not exist"
+      puts "  Organisation owner \"#{o}\" does not exist"
     end
   end
 end
 
 def groups_with_missing_schools
+  header "Groups with missing schools"
+
   Group.all.each do |g|
     begin
       School.find(g.puavoSchool)
     rescue
-      puts "Group \"#{g.cn}\" belongs to a non-existent school \"#{g.puavoSchool}\""
+      puts "  Group \"#{g.cn}\" belongs to a non-existent school \"#{g.puavoSchool}\""
     end
   end
 end
 
 def groups_without_type
+  header "Groups without a type"
+
   Group.all.each do |g|
     if g.puavoEduGroupType.nil? or g.puavoEduGroupType.empty?
       begin
@@ -161,18 +183,20 @@ def groups_without_type
       rescue
         s = nil
       end
-      puts "Group \"#{g.cn}\" in school \"#{s.nil? ? "<MISSING>" : s.cn}\" does not have a type (teaching/administrative/etc.) set"
+      puts "  Group \"#{g.cn}\" in school \"#{s.nil? ? "<MISSING>" : s.cn}\" does not have a type (teaching/administrative/etc.) set"
     end
   end
 end
 
 def bootservers_with_missing_schools
+  header "Boot servers that serve missing schools"
+
   Server.all.each do |b|
     Array(b.puavoSchool || []).each do |s|
       begin
         School.find(s)
       rescue
-        puts "Bootserver \"#{b.cn}\" serves a non-existent school \"#{s}\""
+        puts "  Bootserver \"#{b.cn}\" serves a non-existent school \"#{s}\""
       end
     end
   end
