@@ -20,6 +20,7 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  missing_data: "(Missing/unset)"
   import_tool:
     import: Import
     import_users: Import users

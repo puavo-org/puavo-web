@@ -18,7 +18,11 @@
       <%= group.cn %>
     </td>
     <td data-title="<%=t('activeldap.attributes.group.puavoEduGroupType')%>">
-      <%= humanize_group_type(group.puavoEduGroupType) %>
+      <% if group.puavoEduGroupType.nil? %>
+        <span class="missingData"><%= t('missing_data') %></span>
+      <% else %>
+        <%= humanize_group_type(group.puavoEduGroupType) %>
+      <% end %>
     </td>
     <td data-title="<%=t('.actions')%>" class="table-actions">
       <%= link_to edit_group_path(@school, group), class: "btn" do%>

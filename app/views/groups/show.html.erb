@@ -29,7 +29,11 @@
       <b><%= t('activeldap.attributes.group.puavoEduGroupType') %></b>:
     </td>
     <td>
-      <%=h humanize_group_type(@group.puavoEduGroupType) %>
+      <% if @group.puavoEduGroupType.nil? %>
+        <span class="missingData"><%= t('missing_data') %></span>
+      <% else %>
+        <%=h humanize_group_type(@group.puavoEduGroupType) %>
+      <% end %>
     </td>
   </tr>
 </table>

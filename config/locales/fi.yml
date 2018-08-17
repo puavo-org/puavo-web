@@ -1,4 +1,5 @@
 fi:
+  missing_data: "(Puuttuu/ei asetettu)"
   import_tool:
     import: Tuo
     import_users: Tuo käyttäjiä
