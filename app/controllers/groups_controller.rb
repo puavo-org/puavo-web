@@ -47,7 +47,7 @@ class GroupsController < ApplicationController
     @group['createTimestamp'] = extra['createTimestamp'].nil? ? '?' : extra['createTimestamp'].localtime
     @group['modifyTimestamp'] = extra['modifyTimestamp'].nil? ? '?' : extra['modifyTimestamp'].localtime
 
-    @members = @group.members
+    @members = @group.members.sort{|a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
 
     @roles = @group.roles.sort
     @other_roles = Role.all.delete_if do |p| @roles.include?(p) end

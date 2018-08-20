@@ -1,5 +1,5 @@
   <h3><%= t('.title') %> (<%= @members.count %>)</h3>
-  <% @members.sort{|a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }.each do |member| %>
+  <% @members.each do |member| %>
   <div class="row">
     <div class="column_1">
       <%= link_to member.displayName, user_path(@school, member) %>
