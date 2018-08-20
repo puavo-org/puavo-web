@@ -99,6 +99,9 @@ class OrganisationsController < ApplicationController
       @owners.include?(u)
     end
 
+    @owners = sort_users(@owners)
+    @allowed_owners = sort_users(@allowed_owners)
+
   end
 
   # PUT /users/add_owner/1
@@ -133,6 +136,13 @@ class OrganisationsController < ApplicationController
   end
 
   private
+    def sort_users(l)
+      l.sort! do |a, b|
+        ((a["givenName"] || "") + (a["sn"] || "")).downcase <=>
+          ((b["givenName"] || "") + (b["sn"] || "")).downcase
+      end
+    end
+
     def organisation_params
       return params.require(:ldap_organisation).permit(
         :o,
