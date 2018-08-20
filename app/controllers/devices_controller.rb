@@ -8,7 +8,7 @@ class DevicesController < ApplicationController
 
     if @school
       @devices = Device.find(:all, :attribute => "puavoSchool", :value => @school.dn)
-      @devices = @devices.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
+      @devices.sort!{ |a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }
     elsif request.format == 'application/json' && params[:version] && params[:version] == "v2"
       @devices = Device.search_as_utf8( :scope => :one,
                                 :attributes => attributes ).map do |d|

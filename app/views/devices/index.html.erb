@@ -14,7 +14,7 @@
     <th colspan="2"><%= t('actions') %></th>
   </tr>
 
-<% @devices.sort{|a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }.each do |device| %>
+<% @devices.each do |device| %>
   <tr>
     <td data-title="<%= t('activeldap.attributes.device.puavoHostname') %>"><%= link_to device.puavoHostname, device_path(@school, device) %></td>
     <td data-title="<%= t('activeldap.attributes.device.puavoDeviceType') %>"><%=h Puavo::CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
