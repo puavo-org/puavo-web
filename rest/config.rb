@@ -103,6 +103,7 @@ def get_external_login_test_configuration
         'external_username_field' => 'mail',
         'password_change' => { 'api' => 'openldap', },
         'server' => 'localhost',
+        'subtrees' => [ 'ou=People,dc=edu,dc=heroes,dc=fi' ],
       },
     }
   }
