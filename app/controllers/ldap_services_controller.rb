@@ -2,7 +2,7 @@ class LdapServicesController < ApplicationController
   # GET /ldap_services
   # GET /ldap_services.xml
   def index
-    @ldap_services = LdapService.all
+    @ldap_services = LdapService.all.sort{|a, b| a.uid.downcase <=> b.uid.downcase }
 
     respond_to do |format|
       format.html # index.html.erb
