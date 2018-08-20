@@ -140,6 +140,9 @@ class SchoolsController < ApplicationController
       @school_admins.include?(u)
     end
 
+    @school_admins = sort_users(@school_admins)
+    @allowed_school_admins = sort_users(@allowed_school_admins)
+
     respond_to do |format|
       format.html # admins.html.erb
     end
@@ -217,6 +220,13 @@ class SchoolsController < ApplicationController
   end
 
   private
+    def sort_users(l)
+      l.sort! do |a, b|
+        ((a["givenName"] || "") + (a["sn"] || "")).downcase <=>
+          ((b["givenName"] || "") + (b["sn"] || "")).downcase
+      end
+    end
+
     def school_params
       s = params.require(:school).permit(
         :displayName,
