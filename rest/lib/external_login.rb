@@ -589,7 +589,7 @@ module PuavoRest
     end
 
     def get_userinfo(username)
-      update_ldapuserinfo(username)
+      raise 'ldap userinfo not set' unless @username && @ldap_userinfo
 
       userinfo = {
         'external_id' => lookup_external_id(username),
@@ -627,7 +627,6 @@ module PuavoRest
     def lookup_all_users
       users = {}
 
-      attributes = [ @external_id_field, @external_username_field ]
       user_filter = Net::LDAP::Filter.eq(@external_id_field, '*') \
                       & Net::LDAP::Filter.eq(@external_username_field, '*')
 
@@ -635,30 +634,37 @@ module PuavoRest
       username_sym = @external_username_field.downcase.to_sym
 
       @external_ldap_subtrees.each do |subtree|
-        ldap_entries = @ldap.search(:base       => subtree,
-                                    :attributes => attributes,
-                                    :filter     => user_filter)
+        ldap_entries = @ldap.search(:base   => subtree,
+                                    :filter => user_filter)
         if !ldap_entries then
           msg = "ldap search for all users failed: " \
                   + @ldap.get_operation_result.message
           raise ExternalLoginUnavailable, msg
         end
 
-        ldap_entries.each do |x|
-          external_id = Array(x[id_sym]).first
+        ldap_entries.each do |ldap_entry|
+          external_id = Array(ldap_entry[id_sym]).first
           next unless external_id.kind_of?(String)
 
-          userprincipalname = Array(x[username_sym]).first
+          userprincipalname = Array(ldap_entry[username_sym]).first
           next unless userprincipalname.kind_of?(String)
 
           match = userprincipalname.match(/\A(.*)@#{ @external_domain }\z/)
           next unless match
 
-          users[ external_id ] = match[1]
+          users[ external_id ] = {
+            'ldap_entry' => ldap_entry,
+            'username'   => match[1],
+          }
         end
       end
 
       return users
+    end
+
+    def set_ldapuserinfo(username, ldap_userinfo)
+      @username = username
+      @ldap_userinfo = ldap_userinfo
     end
 
     private
@@ -858,8 +864,7 @@ module PuavoRest
     def update_ldapuserinfo(username)
       return if @username && @username == username
 
-      @ldap_userinfo = nil
-      @username = nil
+      set_ldapuserinfo(nil, nil)
 
       ldap_entries = @ldap.search(:filter => user_ldapfilter(username))
       if !ldap_entries then
@@ -904,8 +909,8 @@ module PuavoRest
 
       @flog.info('looked up user from external ldap',
                  "looked up user '#{ username }' from external ldap")
-      @username = username
-      @ldap_userinfo = ldap_entries.first
+
+      set_ldapuserinfo(username, ldap_entries.first)
     end
 
     def user_ldapfilter(username)

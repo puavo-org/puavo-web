@@ -199,14 +199,15 @@ module PuavoRest
           end
         end
 
-        # XXX what if we could get all the data from the external login
-        # XXX service just once so we did not have to do many get_userinfo()
-        # XXX calls here (each triggering a new ldap search)?
-
-        external_users.each do |external_id, username|
+        external_users.each do |external_id, userinfo|
           begin
+            username   = userinfo['username']
+            ldap_entry = userinfo['ldap_entry']
+
+            login_service.set_ldapuserinfo(username, ldap_entry)
             userinfo = login_service.get_userinfo(username)
             user_status = external_login.update_user_info(userinfo, nil, {})
+
             if user_status != ExternalLoginStatus::NOCHANGE \
               && user_status != ExternalLoginStatus::UPDATED then
                 errmsg = 'user information update to Puavo failed for' \
