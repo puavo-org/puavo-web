@@ -115,8 +115,18 @@ module PuavoRest
         flog.info('external login successful', message)
 
         begin
+          extlogin_status = external_login.update_user_info(userinfo,
+                                                            password,
+                                                            params)
           user_status \
-            = external_login.update_user_info(userinfo, password, params)
+            = case extlogin_status
+                when ExternalLoginStatus::NOCHANGE
+                  ExternalLogin.status_nochange()
+                when ExternalLoginStatus::UPDATED
+                  ExternalLogin.status_updated()
+                else
+                  raise 'unexpected update status from update_user_info()'
+              end
         rescue StandardError => e
           flog.warn('error updating user information',
                     "error updating user information: #{ e.message }")
@@ -149,47 +159,79 @@ module PuavoRest
       return json_user_status
     end
 
-    post '/v3/external_login/mark_removed_users' do
+    post '/v3/external_login/check_and_update_users' do
       auth :basic_auth
 
-      all_ok = true
+      begin
+        external_login = ExternalLogin.new
+        login_service = external_login.new_external_service_handler()
 
-      external_login = ExternalLogin.new
-      login_service = external_login.new_external_service_handler()
-
-      puavo_users_with_external_ids = User.all.select { |u| u.external_id }
-
-      puavo_users_with_external_ids.each do |puavo_user|
+        external_users = nil
         begin
-          if login_service.user_exists?(puavo_user.external_id) then
-            if puavo_user.removal_request_time then
-              puavo_user.removal_request_time = nil
-              puavo_user.save!
-              flog.info('mark-for-removal removed for puavo user',
-                        'mark-for-removal removed for puavo user' \
-                          + " '#{ puavo_user.username }'")
-
-            end
-            next
-          end
+          external_users = login_service.lookup_all_users()
         rescue StandardError => e
-          flog.warn('error checking if user exists in external login service',
-                    "error checking if user '#{ puavo_user.username }'" \
-                      + ' exists in external login service:' \
-                      + " #{ e.message }")
-          all_ok = false
-          next
+          errmsg = 'error looking up all users from external login service'
+          flog.warn(errmsg, "#{ errmsg }: #{ e.message }")
+          return json({ :error => errmsg, :status => 'failed' })
         end
 
-        if puavo_user.mark_for_removal! then
-          flog.info('puavo user marked for removal',
-                    "puavo user '#{ puavo_user.username }' is marked" \
-                      + ' for removal')
-        end
-      end
+        all_ok = true
 
-      unless all_ok then
-        errmsg = 'could not check some users from external login service'
+        User.all.each do |puavo_user|
+          begin
+            external_id = puavo_user.external_id
+            next unless external_id
+            next if external_users.has_key?(external_id)
+
+            # User not found in external service, so it must be in Puavo
+            # and we mark it for removal.
+            if puavo_user.mark_for_removal! then
+              flog.info('puavo user marked for removal',
+                        "puavo user '#{ puavo_user.username }' is marked" \
+                          + ' for removal')
+            end
+
+          rescue StandardError => e
+            flog.warn('error in marking user for removal',
+                      "error in marking user '#{ puavo_user.username }'" \
+                         + " for removal: #{ e.message }")
+            all_ok = false
+          end
+        end
+
+        external_users.each do |external_id, userinfo|
+          begin
+            username   = userinfo['username']
+            ldap_entry = userinfo['ldap_entry']
+
+            login_service.set_ldapuserinfo(username, ldap_entry)
+            userinfo = login_service.get_userinfo(username)
+            user_status = external_login.update_user_info(userinfo, nil, {})
+
+            if user_status != ExternalLoginStatus::NOCHANGE \
+              && user_status != ExternalLoginStatus::UPDATED then
+                errmsg = 'user information update to Puavo failed for' \
+                           + " #{ username }" \
+                           + " (#{ external_id })"
+                raise errmsg
+            end
+
+          rescue StandardError => e
+            flog.warn('error checking user in external login service',
+                      "error checking user '#{ username }'" \
+                        + " in external login service: #{ e.message }")
+            all_ok = false
+          end
+        end
+
+        unless all_ok then
+          raise 'could not check and update one or more users' \
+                  + '  from external login service'
+        end
+
+      rescue StandardError => e
+        errmsg = 'error in updating users from external login service'
+        flog.warn(errmsg, "#{ errmsg }: #{ e.message }")
         return json({ :error => errmsg, :status => 'failed' })
       end
 

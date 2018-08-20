@@ -214,8 +214,8 @@ class User < LdapModel
     # XXX We should really destroy the kerberos principal for this user,
     # XXX but for now we just set a password to some unknown value
     # XXX so that the kerberos principal can not be used.
-    self.password = SecureRandom.hex(128)
-    self.save!
+    # XXX This also invalidates downstream passwords.
+    change_user_password(:no_upstream, SecureRandom.hex(128))
   end
 
   def delete_all_associations
@@ -245,11 +245,13 @@ class User < LdapModel
     @password = pw
   end
 
-  after :create, :update do
-    next if @password.nil?
+  def change_user_password(mode, password=nil)
+    @password = password if password
+
+    return if @password.nil?
 
     begin
-      Puavo.change_passwd(:all,
+      Puavo.change_passwd(mode,
                           CONFIG['ldap'],
                           LdapModel.settings[:credentials][:dn],
                           User.current.username,
@@ -259,6 +261,10 @@ class User < LdapModel
     ensure
       @password = nil
     end
+  end
+
+  after :create, :update do
+    change_user_password(:all)
   end
 
   after :create, :update do
@@ -692,12 +698,12 @@ class User < LdapModel
   def mark_for_removal!
     mark_set = false
 
-    # ALWAYS setup up password to some random value for users that are
-    # marked for removal.  This may seem odd, but we should guard against
-    # the case where a user complains about login not working and subsequently
-    # admin has changed the puavo password to something known to make the
-    # account work, despite it being "marked for removal".
-    self.password = SecureRandom.hex(128)
+    # ALWAYS delete kerberos principal for users that are marked for removal.
+    # This may seem odd, but we should guard against the case where
+    # a user complains about login not working and subsequently admin has
+    # changed the puavo password to something known to make the account
+    # work, despite it being "marked for removal".
+    delete_kerberos_principal
 
     if self.removal_request_time.nil? then
       self.removal_request_time = Time.now.utc.to_datetime

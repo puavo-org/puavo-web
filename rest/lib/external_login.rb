@@ -344,19 +344,24 @@ module PuavoRest
               "error saving user because of validation errors: #{ e.message }"
       end
 
-      pw_update_status = set_puavo_password(userinfo['username'],
-                                            userinfo['external_id'],
-                                            password,
-                                            password,
-                                            true)
+      if password then
+        pw_update_status = set_puavo_password(userinfo['username'],
+                                              userinfo['external_id'],
+                                              password,
+                                              password,
+                                              true)
+      else
+        pw_update_status = ExternalLoginStatus::NOCHANGE
+      end
+
       mg_update_status = manage_groups_for_user(user, external_groups_by_type)
 
-      return self.class.status_updated() \
+      return ExternalLoginStatus::UPDATED \
         if (user_update_status    == ExternalLoginStatus::UPDATED \
               || pw_update_status == ExternalLoginStatus::UPDATED \
               || mg_update_status == ExternalLoginStatus::UPDATED)
 
-      return self.class.status_nochange()
+      return ExternalLoginStatus::NOCHANGE
     end
 
     def self.status(status_string, msg)
@@ -461,6 +466,11 @@ module PuavoRest
       raise ExternalLoginConfigError, 'password_change style not configured' \
         unless @external_password_change.kind_of?(Hash)
 
+      @external_ldap_subtrees = ldap_config['subtrees']
+      raise ExternalLoginConfigError, 'subtrees not configured' \
+        unless @external_ldap_subtrees.kind_of?(Array) \
+                 && @external_ldap_subtrees.all? { |s| s.kind_of?(String) }
+
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
                             :port => (Integer(ldap_config['port']) rescue 389),
@@ -545,27 +555,6 @@ module PuavoRest
       return true
     end
 
-    def change_microsoft_ad_password(target_dn, target_user_password)
-      encoded_password = ('"' + target_user_password + '"') \
-                         .encode('utf-16le')        \
-                         .force_encoding('utf-8')
-
-      # We are doing the password change operation twice because at least
-      # on some ldap servers (Microsoft AD, possibly depending on
-      # configuration) the old password is still valid for five minutes on
-      # ldap operations :-(
-      ops = [ [ :replace, :unicodePwd, encoded_password ],
-              [ :replace, :unicodePwd, encoded_password ] ]
-      change_ok = @ldap.modify(:dn => target_dn, :operations => ops)
-      if !change_ok then
-        raise ExternalLoginPasswordChangeError,
-              @ldap.get_operation_result.error_message \
-                + ' (maybe server password policy does not accept it?)'
-      end
-
-      return true
-    end
-
     def lookup_external_id(username)
       update_ldapuserinfo(username)
 
@@ -579,6 +568,7 @@ module PuavoRest
       external_id
     end
 
+    # XXX we can throw this out if we lookup all users anyway
     def user_exists?(external_id)
       user_filter = Net::LDAP::Filter.eq(@external_id_field, external_id)
 
@@ -598,9 +588,9 @@ module PuavoRest
       return true
     end
 
-    private
-
     def get_userinfo(username)
+      raise 'ldap userinfo not set' unless @username && @ldap_userinfo
+
       userinfo = {
         'external_id' => lookup_external_id(username),
         'first_name'  => Array(@ldap_userinfo['givenname']).first.to_s,
@@ -632,6 +622,72 @@ module PuavoRest
       apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first.to_s)
 
       userinfo
+    end
+
+    def lookup_all_users
+      users = {}
+
+      user_filter = Net::LDAP::Filter.eq(@external_id_field, '*') \
+                      & Net::LDAP::Filter.eq(@external_username_field, '*')
+
+      id_sym       = @external_id_field.downcase.to_sym
+      username_sym = @external_username_field.downcase.to_sym
+
+      @external_ldap_subtrees.each do |subtree|
+        ldap_entries = @ldap.search(:base   => subtree,
+                                    :filter => user_filter)
+        if !ldap_entries then
+          msg = "ldap search for all users failed: " \
+                  + @ldap.get_operation_result.message
+          raise ExternalLoginUnavailable, msg
+        end
+
+        ldap_entries.each do |ldap_entry|
+          external_id = Array(ldap_entry[id_sym]).first
+          next unless external_id.kind_of?(String)
+
+          userprincipalname = Array(ldap_entry[username_sym]).first
+          next unless userprincipalname.kind_of?(String)
+
+          match = userprincipalname.match(/\A(.*)@#{ @external_domain }\z/)
+          next unless match
+
+          users[ external_id ] = {
+            'ldap_entry' => ldap_entry,
+            'username'   => match[1],
+          }
+        end
+      end
+
+      return users
+    end
+
+    def set_ldapuserinfo(username, ldap_userinfo)
+      @username = username
+      @ldap_userinfo = ldap_userinfo
+    end
+
+    private
+
+    def change_microsoft_ad_password(target_dn, target_user_password)
+      encoded_password = ('"' + target_user_password + '"') \
+                         .encode('utf-16le')        \
+                         .force_encoding('utf-8')
+
+      # We are doing the password change operation twice because at least
+      # on some ldap servers (Microsoft AD, possibly depending on
+      # configuration) the old password is still valid for five minutes on
+      # ldap operations :-(
+      ops = [ [ :replace, :unicodePwd, encoded_password ],
+              [ :replace, :unicodePwd, encoded_password ] ]
+      change_ok = @ldap.modify(:dn => target_dn, :operations => ops)
+      if !change_ok then
+        raise ExternalLoginPasswordChangeError,
+              @ldap.get_operation_result.error_message \
+                + ' (maybe server password policy does not accept it?)'
+      end
+
+      return true
     end
 
     def apply_dn_mappings!(userinfo, user_dn)
@@ -808,8 +864,7 @@ module PuavoRest
     def update_ldapuserinfo(username)
       return if @username && @username == username
 
-      @ldap_userinfo = nil
-      @username = nil
+      set_ldapuserinfo(nil, nil)
 
       ldap_entries = @ldap.search(:filter => user_ldapfilter(username))
       if !ldap_entries then
@@ -854,8 +909,8 @@ module PuavoRest
 
       @flog.info('looked up user from external ldap',
                  "looked up user '#{ username }' from external ldap")
-      @username = username
-      @ldap_userinfo = ldap_entries.first
+
+      set_ldapuserinfo(username, ldap_entries.first)
     end
 
     def user_ldapfilter(username)
