@@ -3,7 +3,7 @@ class ServersController < ApplicationController
   # GET /servers.xml
   def index
     @servers = Server.all
-    @servers = @servers.sort{ |a,b| a.puavoHostname <=> b.puavoHostname }
+    @servers = @servers.sort{ |a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }
 
     respond_to do |format|
       if current_user.organisation_owner?
