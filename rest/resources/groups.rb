@@ -24,6 +24,10 @@ class Group < LdapModel
       self.object_classes = ['top', 'posixGroup', 'puavoEduGroup','sambaGroupMapping']
     end
 
+    unless Group.by_attr(:abbreviation, self.abbreviation, :multiple => true).empty?
+      raise BadInput, :user => "duplicate group abbreviation"
+    end
+
     if id.nil?
       self.id = IdPool.next_id("puavoNextId").to_s
     end
@@ -37,6 +41,15 @@ class Group < LdapModel
     end
 
     write_samba_attrs
+  end
+
+  before :update do
+    # validate abbreviation uniqueness, but don't check the group against itself
+    other_groups = Group.by_attr(:abbreviation, self.abbreviation, :multiple => true)
+    other_groups.reject!{|g| g.id == self.id }
+    unless other_groups.empty?
+      raise BadInput, :user => "duplicate group abbreviation"
+    end
   end
 
   computed_attr :school_id
