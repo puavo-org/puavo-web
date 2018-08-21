@@ -57,7 +57,6 @@ describe LdapModel do
   end
 
   describe "group creation" do
-
     it "has String id" do
       assert_equal String, @group.id.class
     end
@@ -67,8 +66,59 @@ describe LdapModel do
     end
   end
 
-  describe "group updating" do
+  describe "group abbreviations must be unique" do
+    it "updating an existing group must succeed" do
+      @group2.name = "foobar"
+      assert @group2.save!
+    end
 
+    it "using existing abbreviation within the same school" do
+      @group2 = PuavoRest::Group.new(
+        :name => "Group",
+        :abbreviation => "testgroup1",
+        :school_dn => @school.dn
+      )
+
+      exception = assert_raises BadInput do
+        @group2.save!
+      end
+
+      assert_equal("duplicate group abbreviation", exception.message)
+    end
+
+    it "reuse existing abbreviation in another school" do
+      @school2 = PuavoRest::School.new(
+        :name => "Test School 2",
+        :abbreviation => "testschool2"
+      )
+
+      @school2.save!
+
+      @group2 = PuavoRest::Group.new(
+        :name => "Group",
+        :abbreviation => "testgroup1",
+        :school_dn => @school2.dn
+      )
+
+      exception = assert_raises BadInput do
+        @group2.save!
+      end
+
+      assert_equal("duplicate group abbreviation", exception.message)
+    end
+
+    it "try to reuse another group's abbreviation when updating agroup" do
+      @group2.abbreviation = "testgroup1"
+
+      exception = assert_raises BadInput do
+        @group2.save!
+      end
+
+      assert_equal("duplicate group abbreviation", exception.message)
+    end
+  end
+
+  describe "group updating" do
     before(:each) do
       @school = School.create(
         :cn => "gryffindor",
@@ -89,7 +139,6 @@ describe LdapModel do
     end
 
     it "add new members" do
-
       @group.add_member(@user)
       @group.save!
 
