@@ -157,7 +157,7 @@ class LdapModel
     # String values in our LDAP are always UTF-8
     value = value.map do |item|
       if item.respond_to?(:force_encoding)
-        item.force_encoding("UTF-8")
+        item.dup.force_encoding("UTF-8")
       else
         item
       end
