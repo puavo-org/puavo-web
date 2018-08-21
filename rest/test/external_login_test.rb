@@ -460,14 +460,14 @@ describe PuavoRest::ExternalLogin do
                              'secret',
                              'UPDATED',
                              'login error')
-      assert_external_status('lara.croft',   'secret', 'UPDATED', 'login error')
+      assert_external_status('lara.croft', 'secret', 'UPDATED', 'login error')
 
       group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
       assert !group.nil?, 'There is no heroes group when there should be'
       assert_equal %w(luke.skywalker lara.croft),
                    group.memberUid,
                    'heroes group should consist of luke.skywalker' \
-                     + 'and lara.croft'
+                     + ' and lara.croft'
     end
 
     it 'users are removed from groups according to configuration' do
@@ -475,7 +475,7 @@ describe PuavoRest::ExternalLogin do
                              'secret',
                              'UPDATED',
                              'login error')
-      assert_external_status('lara.croft',   'secret', 'UPDATED', 'login error')
+      assert_external_status('lara.croft', 'secret', 'UPDATED', 'login error')
 
       # remove all mappings so that luke.skywalker & lara.croft should
       # no longer belong to the group
