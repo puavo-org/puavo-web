@@ -226,7 +226,7 @@ module PuavoRest
 
         unless all_ok then
           raise 'could not check and update one or more users' \
-                  + '  from external login service'
+                  + ' from external login service'
         end
 
       rescue StandardError => e
