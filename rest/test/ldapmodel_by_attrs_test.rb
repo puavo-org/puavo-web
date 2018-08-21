@@ -34,14 +34,6 @@ describe "LdapModel#by_attrs(hash)" do
     )
     @duplicate_group_a.save!
 
-    @duplicate_group_b = PuavoRest::Group.new(
-      :name => "Group",
-      :abbreviation => "group",
-      :school_dn => @school_b.dn
-    )
-    @duplicate_group_b.save!
-
-
   end
 
   it "can find models by multi attribute filtering" do
