@@ -54,7 +54,7 @@ describe LdapModel do
 
       @year_class = PuavoRest::Group.new(
         :name => "5",
-        :abbreviation => "gryffindor-5a",
+        :abbreviation => "gryffindor-5",
         :type => "year class",
         :school_dn => @school.dn.to_s
       )
