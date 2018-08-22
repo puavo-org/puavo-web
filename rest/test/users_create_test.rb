@@ -205,5 +205,49 @@ describe LdapModel do
       assert_nil @user.teaching_group
 
     end
+
+    it "cannot have duplicate external IDs" do
+      @donald = PuavoRest::User.new(
+        :first_name => "Donald",
+        :last_name => "Duck",
+        :username => "donald.duck",
+        :school_dns => [@school.dn.to_s],
+        :roles => ["student"],
+        :external_id => "donald")
+
+      assert @donald.save!
+
+      # This will fail because we're reusing Donald's external ID
+      @daisy = PuavoRest::User.new(
+        :first_name => "Daisy",
+        :last_name => "Duck",
+        :username => "daisy.duck",
+        :school_dns => [@school.dn.to_s],
+        :roles => ["student"],
+        :external_id => "donald"
+      )
+
+      exception = assert_raises ValidationError do
+        assert @daisy.save!
+      end
+
+      # Who created this error message? Seriously.
+      assert_equal("Creating\n  Invalid attributes for PuavoRest::User " +
+                   ":\n    * external_id: external_id=donald is not unique\n\n",
+                   exception.message)
+
+      # Change the external ID and try again. Have to create a new object
+      # because it's filled with LDAP junk during the insertion attempt.
+      @daisy = PuavoRest::User.new(
+        :first_name => "Daisy",
+        :last_name => "Duck",
+        :username => "daisy.duck",
+        :school_dns => [@school.dn.to_s],
+        :roles => ["student"],
+        :external_id => "daisy"
+      )
+
+      assert @daisy.save!
+    end
   end
 end
