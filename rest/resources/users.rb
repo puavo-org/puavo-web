@@ -158,9 +158,9 @@ class User < LdapModel
     end
 
     # FIXME: Validate external id?
-    #if !external_id.nil?
-    #  validate_unique(:external_id)
-    #end
+    if !external_id.nil?
+      validate_unique(:external_id)
+    end
 
     validate_unique(:email)
     # XXX validate secondary emails too!!
