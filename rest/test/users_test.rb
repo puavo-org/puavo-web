@@ -34,7 +34,8 @@ describe PuavoRest::Users do
       :puavoLocale => "en_US.UTF-8",
       :mail => ["bob@example.com", "bob@foobar.com", "bob@helloworld.com"],
       :role_ids => [@role.puavoId],
-      :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf"
+      :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf",
+      :puavoExternalID => "bob"
     )
 
     @user.set_password "secret"
@@ -121,6 +122,7 @@ describe PuavoRest::Users do
 
       assert_equal "Europe/Helsinki", data["timezone"]
 
+      assert_equal "bob", data["external_id"]
     end
   end
 
@@ -164,6 +166,38 @@ describe PuavoRest::Users do
     end
 
 
+  end
+
+  describe "external ID tests" do
+    it "can save a user without changing anything" do
+      assert @user.save!
+    end
+
+    it "can save a user while 'changing' external ID" do
+      @user.puavoExternalID = "bob"
+      assert @user.save!
+    end
+
+    it "can actually change the external ID" do
+      @user.puavoExternalID = "paavo"
+      assert @user.save!
+    end
+
+    it "give user a new external ID" do
+      @user2.puavoExternalID = "alice"
+      assert @user2.save!
+    end
+
+    it "cannot reuse existing external ID" do
+      # try to reuse Bob's external ID
+      @user2.puavoExternalID = "bob"
+
+      exception = assert_raises ActiveLdap::EntryInvalid do
+        assert @user2.save!
+      end
+
+      assert_equal("External id External id has already been taken", exception.message)
+    end
   end
 
   describe "GET /v3/users/_by_id/" do
