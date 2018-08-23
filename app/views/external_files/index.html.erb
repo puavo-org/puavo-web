@@ -5,7 +5,7 @@
 
   <%= form_tag({:action => :upload}, :multipart => true) do %>
 
-  <table class="list">
+  <table class="list" style="display: table;">
     <tr>
       <th><%= t('external_files.columns.name') %></th>
       <th><%= t('external_files.columns.description') %></th>
@@ -57,6 +57,8 @@
         <i class="icon-trash"></i><%= t('external_files.buttons.delete') %>
         <% end %>
         </span>
+      <% else %>
+        <td></td>
       <% end %>
       </td>
 
@@ -64,6 +66,8 @@
   <% end %>
 
   </table>
+
+  <div style="clear: both;"></div>
 
   <p><%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %></p>
 
