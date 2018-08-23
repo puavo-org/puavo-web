@@ -159,50 +159,52 @@ module PuavoRest
       return json_user_status
     end
 
-    post '/v3/external_login/remove_users_marked_for_removal' do
-      auth :basic_auth
-
-      external_login = ExternalLogin.new
-      begin
-        remove_after_n_days \
-          = Integer(external_login.config['days_after_removing_marked_users'])
-      rescue StandardError => e
-        errmsg = 'external_login/days_after_removing_marked_users' \
-                   + ' is not configured in puavo-rest configuration'
-        return json({ :error => errmsg, :status => 'failed' })
-      end
-
-      now = Time.now.utc.to_datetime
-
-      puavo_users_to_be_deleted \
-        = User.all.select do |user|
-            user.external_id \
-              && user.removal_request_time \
-              && (now > (user.removal_request_time + remove_after_n_days))
-          end
-
-      all_ok = true
-
-      puavo_users_to_be_deleted.each do |puavo_user|
-        begin
-          flog.info('removing puavo user because it was marked for removal',
-                    "removing puavo user '#{ puavo_user.username }' because" \
-                      + ' it was marked for removal')
-          puavo_user.destroy!
-        rescue StandardError => e
-          flog.warn('failed to remove puavo user that was marked for removal',
-                    "failed to remove puavo user '#{ puavo_user.username }'" \
-                      + " that was marked for removal: #{ e.message }")
-          all_ok = false
-        end
-      end
-
-      unless all_ok then
-        return json({ :error  => 'could not remove some users',
-                      :status => 'failed' })
-      end
-
-      return json({ :status => 'successfully' })
-    end
+#   XXX this should be moved to rest/scripts and should not provide
+#   XXX a rest-interface
+#   post '/v3/external_login/remove_users_marked_for_removal' do
+#     auth :basic_auth
+#
+#     external_login = ExternalLogin.new
+#     begin
+#       remove_after_n_days \
+#         = Integer(external_login.config['days_after_removing_marked_users'])
+#     rescue StandardError => e
+#       errmsg = 'external_login/days_after_removing_marked_users' \
+#                  + ' is not configured in puavo-rest configuration'
+#       return json({ :error => errmsg, :status => 'failed' })
+#     end
+#
+#     now = Time.now.utc.to_datetime
+#
+#     puavo_users_to_be_deleted \
+#       = User.all.select do |user|
+#           user.external_id \
+#             && user.removal_request_time \
+#             && (now > (user.removal_request_time + remove_after_n_days))
+#         end
+#
+#     all_ok = true
+#
+#     puavo_users_to_be_deleted.each do |puavo_user|
+#       begin
+#         flog.info('removing puavo user because it was marked for removal',
+#                   "removing puavo user '#{ puavo_user.username }' because" \
+#                     + ' it was marked for removal')
+#         puavo_user.destroy!
+#       rescue StandardError => e
+#         flog.warn('failed to remove puavo user that was marked for removal',
+#                   "failed to remove puavo user '#{ puavo_user.username }'" \
+#                     + " that was marked for removal: #{ e.message }")
+#         all_ok = false
+#       end
+#     end
+#
+#     unless all_ok then
+#       return json({ :error  => 'could not remove some users',
+#                     :status => 'failed' })
+#     end
+#
+#     return json({ :status => 'successfully' })
+#   end
   end
 end
