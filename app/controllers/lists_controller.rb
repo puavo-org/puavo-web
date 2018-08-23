@@ -173,7 +173,7 @@ class ListsController < ApplicationController
     end
 
     filename = current_organisation.organisation_key + "_" +
-      @school.cn + "_" + Time.now.strftime("%Y%m%d") + ".pdf"
+      @school.cn + "_" + Time.now.strftime("%Y%m%d_%H%M%S") + ".pdf"
 
     @list.downloaded = true
     @list.save
