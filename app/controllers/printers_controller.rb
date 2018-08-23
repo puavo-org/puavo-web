@@ -1,5 +1,4 @@
 class PrintersController < ApplicationController
-  
   # POST /devices/printers.json
   def create
     @printer = Printer.new(printer_params)
@@ -15,16 +14,37 @@ class PrintersController < ApplicationController
 
   # GET /devices/printers
   def index
-    @servers_and_printers = Server.all.inject({ }) do |result, server|
-      result.merge( { server.dn.to_s => { :server => server} } )
+    # Collect servers and group printers in them
+    servers = {}
+
+    Server.all.each do |s|
+      servers[s.dn.to_s] = {
+        hostname: s.puavoHostname,
+        printers: []
+      }
     end
 
-    Printer.all.each do |printer|
-      if @servers_and_printers[printer.puavoServer.to_s]
-        unless @servers_and_printers[printer.puavoServer.to_s].has_key?(:printers)
-          @servers_and_printers[printer.puavoServer.to_s][:printers] = Array.new
-        end
-        @servers_and_printers[printer.puavoServer.to_s][:printers].push(printer)
+    Printer.all.each do |p|
+      next unless servers.include?(p.puavoServer.to_s)
+      servers[p.puavoServer.to_s][:printers] << p
+    end
+
+    # Remove servers that have no printers
+    servers.reject! { |dn, s| s[:printers].empty? }
+
+    # Flatten and sort the servers list
+    # TODO: This really needs a "natural" sort order, because
+    # there can be tens of servers, usually named "bootXX"
+    # where XX is an increasing number.
+    @servers_and_printers = servers.values.sort do |a, b|
+      a[:hostname].downcase <=>
+      b[:hostname].downcase
+    end
+
+    # Finally sort the printers
+    @servers_and_printers.each do |s|
+      s[:printers].sort! do |a, b|
+        a.printerDescription.downcase <=> b.printerDescription.downcase
       end
     end
 
