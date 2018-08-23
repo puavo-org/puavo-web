@@ -15,6 +15,7 @@ class ExternalFilesController < ApplicationController
       }
     end
 
+    @external_files.sort!{|a, b| a["meta"]["name"].downcase <=> b["meta"]["name"].downcase }
 
     respond_to do |format|
       format.html # index.html.erb
