@@ -49,6 +49,17 @@ class RenameGroupsController < ApplicationController
         end
 
         @first_class_groups = @groups.select{ |r| r.displayName.match(/\d+/)[0].to_i == @first_group_class_number }
+
+        # pre-check the new abbreviations
+        @new_group_name_already_used = false
+
+        @first_class_groups.each do |g|
+          new_name = increase_numeric_value_of_string(g.cn)
+
+          unless Group.all.select{|g| g.cn == new_name }.empty?
+            @new_group_name_already_used = true
+          end
+        end
       end
 
       raise RolesNotFound if @roles.empty? && @groups.empty?
@@ -62,9 +73,20 @@ class RenameGroupsController < ApplicationController
     @do_only_groups = new_group_management?(@school)
 
     if !@do_only_groups && !params[:do_roles] && !params[:do_groups]
-      flash[:notice] = "Et valinnut rooleja ja/tai ryhmiä mitä käsitellä"
+      flash[:alert] = "Et valinnut rooleja ja/tai ryhmiä mitä käsitellä"
       redirect_to new_rename_groups_path(@school)
       return
+    end
+
+    if params[:do_groups] || @do_only_groups
+      # don't duplicate group abbreviations
+      Array(params[:new_groups_cn] || []).each do |new_cn|
+        unless Group.all.select{|g| g.cn == new_cn.to_s }.empty?
+          flash[:alert] = "Uuden ryhmän lyhenne on jo käytössä!"
+          redirect_to new_rename_groups_path(@school)
+          return
+        end
+      end
     end
 
     num_roles_renamed = 0
@@ -120,4 +142,15 @@ class RenameGroupsController < ApplicationController
       format.html { redirect_to( school_path(@school) ) }
     end
   end
+
+  private
+    # this exists in view helpers, but of course it's not usable here
+    # without copy-pasting it...
+    def increase_numeric_value_of_string(value)
+      match_data = value.match(/\d+/)
+      return value + "1" if match_data.nil?
+      number_length = match_data[0].length
+      number = match_data[0].to_i + 1
+      return value.sub(/\d+/, ("%0#{number_length}d" % number))
+    end
 end

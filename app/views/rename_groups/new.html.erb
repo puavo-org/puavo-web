@@ -104,6 +104,11 @@
   </table>
 
   <h4>Luodaan seuraavat uudet ryhmät uudelleen nimeämisen jälkeen:</h4>
+
+  <% if @new_group_name_already_used %>
+    <p style="color: #f00;">VAROITUS: Ainakin yhden uuden luotavan ryhmän lyhenne on jo käytössä!</p>
+  <% end %>
+
   <table>
     <tr>
       <th>Ryhmän lyhenne</th>
