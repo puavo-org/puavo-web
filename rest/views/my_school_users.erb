@@ -32,13 +32,6 @@ function setupGroupHeaders()
   var links = document.getElementsByClassName("groupHeader");
 
   for (var i = 0; i < links.length; i++) {
-
-    var style = document.createElement("style");
-
-    style.type = "text/css";
-    style.innerHTML = "cursor: pointer;";
-    links[i].appendChild(style);
-
     if (links[i].dataset.target) {
       const id = links[i].dataset.target;
 
@@ -55,9 +48,24 @@ function setupGroupHeaders()
   }
 }
 
+function setupPage()
+{
+  setupGroupHeaders();
+
+  // Create some extra styles
+  var css = ".groupHeader:hover { cursor: pointer; background: #ffa850; }";
+  var style = document.createElement('style');
+
+  if (style.styleSheet)
+    style.styleSheet.cssText = css;
+  else style.appendChild(document.createTextNode(css));
+
+  document.getElementsByTagName('head')[0].appendChild(style);
+}
+
 </script>
 </head>
-<body onload="setupGroupHeaders()">
+<body onload="setupPage()">
 
 <header>
   <h1><%= @data[:school] %></h1>

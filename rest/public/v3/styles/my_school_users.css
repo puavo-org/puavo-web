@@ -47,10 +47,6 @@ header {
   border-radius: 10px;
 }
 
-.groupHeader:hover {
-  background: #ffa850;
-}
-
 .groupHeader h1 {
   font-size: inherit;
   display: inline;
