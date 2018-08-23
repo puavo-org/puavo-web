@@ -22,6 +22,15 @@ class ListsController < ApplicationController
       end
     end
 
+    @lists.each do |li|
+      li.users.sort! do |u_a, u_b|
+        (@users_by_id[u_a].givenName + @users_by_id[u_a].sn).downcase <=>
+        (@users_by_id[u_b].givenName + @users_by_id[u_b].sn).downcase
+      end
+    end
+
+    @lists.sort{|a, b| a.created_at <=> b.created_at}.reverse!
+
     respond_to do |format|
       format.html
     end
@@ -133,7 +142,9 @@ class ListsController < ApplicationController
 
     @users_by_group.each do |group_name, users|
       # Sort users by sn + givenName
-      users = users.sort{|a,b| a.sn + a.givenName <=> b.sn + a.givenName }
+      users = users.sort do |a,b|
+        (a.givenName + a.sn).downcase <=> (b.givenName + b.sn).downcase
+      end
 
       pdf.start_new_page
       pdf.font "unicodefont"
