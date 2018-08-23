@@ -103,7 +103,8 @@ class RenameGroupsController < ApplicationController
         if !params[:new_groups_display_name][index].empty? && !params[:new_groups_cn][index].empty?
           g = Group.new(:displayName => params[:new_groups_display_name][index],
                         :cn => params[:new_groups_cn][index],
-                        :puavoSchool => @school.dn )
+                        :puavoSchool => @school.dn,
+                        :puavoEduGroupType => "teaching group")
           g.save!
         end
       end
