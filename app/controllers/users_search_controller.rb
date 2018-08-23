@@ -4,7 +4,7 @@ class UsersSearchController < ApplicationController
   # GET /users/search?words=Williams
   def index
     words = params[:words]
-    
+
     # Users search
     @users = User.words_search_and_sort_by_name(
       ["sn", "givenName", "uid"],
@@ -31,6 +31,11 @@ class UsersSearchController < ApplicationController
                    :attributes => ["puavoId", "displayName"] ).map do |dn, v|
       @schools[v["puavoId"].first] = v["displayName"].first
     end
+
+    # I don't know how "words_search_and_sort_by_name" sorts, but it
+    # doesn't seem to work. Schools are in a hash, can't sort them.
+    @users.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
+    @groups.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
 
     respond_to do |format|
       if @users.length == 0 && @roles.length == 0 && @groups.length == 0

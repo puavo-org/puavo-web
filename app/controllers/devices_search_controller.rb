@@ -11,12 +11,14 @@ class DevicesSearchController < ApplicationController
       'puavoHostname',
       lambda { |w| "(cn=*#{w}*)" },
       words )
-    
+
     @schools = Hash.new
     School.search_as_utf8( :scope => :one,
                    :attributes => ["puavoId", "displayName"] ).map do |dn, v|
       @schools[v["puavoId"].first] = v["displayName"].first
     end
+
+    @devices.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
 
     respond_to do |format|
       if @devices.length == 0
