@@ -7,7 +7,7 @@
 <%= form_tag(put_path, :method => :put) do %>
 
   <% @external_services.each do |external_service| %>
-    <div class="external-services <%= "disabled" if is_disabled?(external_service) %>">
+    <div class="external-services <%= "disabled" if is_disabled?(external_service) %>" style="margin-bottom: 0;">
     <h2>
         <%= external_service.cn %>
     </h2>
@@ -20,7 +20,7 @@
       <% end %>
     </p>
 
-    <table class="list">
+    <table class="list" style="border-top: none;">
       <tr>
         <th>Domain</th>
         <td><%= external_service.puavoServiceDomain %></td>

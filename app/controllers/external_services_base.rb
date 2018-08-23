@@ -8,6 +8,8 @@ class ExternalServicesBase < ApplicationController
       !s.puavoServiceTrusted
     end
 
+    @external_services.sort!{|a, b| a.cn.downcase <=> b.cn.downcase }
+
     respond_to do |format|
       format.html # show.html.erb
     end
