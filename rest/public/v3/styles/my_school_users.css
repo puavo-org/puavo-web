@@ -43,7 +43,6 @@ header {
   font-weight: bold;
   padding: 5px 10px;
   margin-top: 20px;
-  cursor: pointer;
   background: #fe9749;
   border-radius: 10px;
 }
@@ -67,7 +66,7 @@ header {
 }
 
 .tableWrapper {
-  display: none;
+  display: block;
   padding: 10px 0 0 50px;
 }
 

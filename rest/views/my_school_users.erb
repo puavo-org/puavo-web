@@ -10,9 +10,17 @@ function setupGroupHeaders()
 {
   var links = document.getElementsByClassName("groupHeader");
 
-  for (var i = 0; i < links.length; i++)
+  for (var i = 0; i < links.length; i++) {
+    var style = document.createElement("style");
+
+    style.type = "text/css";
+    style.innerHTML = "cursor: pointer;";
+    links[i].appendChild(style);
+
     if (links[i].dataset.target)
       links[i].onclick = toggleGroup;
+      document.getElementById("table-" + links[i].dataset.target).style.display = "none";
+  }
 }
 
 function toggleGroup(e)
@@ -44,7 +52,7 @@ function toggleGroup(e)
   <span class="count">(<%= group[:users].size %> <%= @data[:language][:users] %>)</span>
   <span id="arrow-<%= group[:id] %>">▶</span>
 </div>
-<div class="tableWrapper" id="table-<%= group[:id] %>" style="display: none;">
+<div class="tableWrapper" id="table-<%= group[:id] %>">
   <table class="users">
     <tr>
       <th><%= @data[:language][:last_name] %></th>
