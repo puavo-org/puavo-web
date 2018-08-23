@@ -6,34 +6,52 @@
 <link rel="stylesheet" href="styles/my_school_users.css">
 <script>
 
+const OPEN_ARROW = "▼",
+      CLOSED_ARROW = "▶";
+
+function toggleGroup(e)
+{
+  const id = e.target.dataset.target;
+
+  console.log("Opening/closing group '" + id + "'");
+
+  var tbl = document.getElementById("table-" + id),
+      arr = document.getElementById("arrow-" + id);
+
+   if (tbl.style.display == "none" || tbl.style.display == "") {
+     tbl.style.display = "block";
+    arr.innerHTML = OPEN_ARROW;
+   } else {
+     tbl.style.display = "none";
+    arr.innerHTML = CLOSED_ARROW;
+   }
+}
+
 function setupGroupHeaders()
 {
   var links = document.getElementsByClassName("groupHeader");
 
   for (var i = 0; i < links.length; i++) {
+
     var style = document.createElement("style");
 
     style.type = "text/css";
     style.innerHTML = "cursor: pointer;";
     links[i].appendChild(style);
 
-    if (links[i].dataset.target)
+    if (links[i].dataset.target) {
+      const id = links[i].dataset.target;
+
+      console.log("Creating group header '" + id + "'");
+
+      // Open/close handler for this group
       links[i].onclick = toggleGroup;
-      document.getElementById("table-" + links[i].dataset.target).style.display = "none";
-  }
-}
 
-function toggleGroup(e)
-{
-  var tbl = document.getElementById("table-" + e.target.dataset.target);
-  var arr = document.getElementById("arrow-" + e.target.dataset.target);
-
-  if (tbl.style.display == "none" || tbl.style.display == "") {
-    tbl.style.display = "block";
-    arr.innerHTML = "▼";
-  } else {
-    tbl.style.display = "none";
-    arr.innerHTML = "▶";
+      // Because we are executing JavaScript, we can open and close
+      // the groups, so hide this group
+      document.getElementById("table-" + id).style.display = "none";
+      document.getElementById("arrow-" + id).innerHTML = CLOSED_ARROW;
+    }
   }
 }
 
