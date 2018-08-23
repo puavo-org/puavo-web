@@ -1,4 +1,4 @@
-<h1><span><%=html_escape @printer.printerDescription %></span></h1>
+<h1><span><%=html_escape @printer.printerDescription %> (<%= @server.puavoHostname %>)</span></h1>
 <%= form_for(@printer, url: printer_path(@printer)) do |f| %>
 
   <table>

@@ -56,6 +56,7 @@ class PrintersController < ApplicationController
   # GET /devices/printers/1/edit
   def edit
     @printer = Printer.find(params[:id])
+    @server = Server.find(@printer.puavoServer)
 
     @schools = School.find(
       :all,
