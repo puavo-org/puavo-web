@@ -3,7 +3,11 @@ class PrinterPermissionsController < ApplicationController
   def index
     @printers = @school.printers
 
-   respond_to do |format|
+    @printers.sort! do |a, b|
+      a.printerDescription.downcase <=> b.printerDescription.downcase
+    end
+
+    respond_to do |format|
       format.html # index.html.erb
     end
   end
