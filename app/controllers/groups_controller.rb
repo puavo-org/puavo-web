@@ -233,6 +233,8 @@ class GroupsController < ApplicationController
       lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
       params[:words] )
 
+    @users.sort!{|a, b| a["name"].downcase <=> b["name"].downcase }
+
     @schools = Hash.new
     School.search_as_utf8( :scope => :one,
                    :attributes => ["puavoId", "displayName"] ).map do |dn, v|
