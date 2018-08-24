@@ -468,7 +468,6 @@ when "import"
     school_users.each do |user|
       next unless user.roles.include?(@options[:user_role])
       next unless PuavoImport::User.all.select{ |u| u.external_id.to_s == user.external_id.to_s }.empty?
-      puts "\texternal_id: #{user.external_id} username: #{user.username} roles: " + user.roles.to_s
 
       if user.removal_request_time.nil?
         # This user has been removed, but they have not been marked for deletion yet.
