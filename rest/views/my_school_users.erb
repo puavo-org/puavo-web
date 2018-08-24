@@ -48,6 +48,70 @@ function setupGroupHeaders()
   }
 }
 
+function doSearch(e)
+{
+  const text = document.getElementById("searchBox").value;
+
+  console.log("Searching for '" + text + "'");
+
+  var resultsBox = document.getElementById("searchResults");
+
+  // purge old results
+  while (resultsBox.firstChild)
+    resultsBox.removeChild(resultsBox.firstChild);
+
+  if (text.length == 0) {
+    document.getElementById("searchResults").style.display = "none";
+    document.getElementById("groupsList").style.display = "block";
+    return true;
+  }
+
+  document.getElementById("groupsList").style.display = "none";
+  document.getElementById("searchResults").style.display = "block";
+
+  // then search
+  const groups = document.getElementsByClassName("groupHeader");
+
+  var results = document.createElement("table");
+  var numFound = 0;
+
+  for (var i = 0; i < groups.length; i++) {
+    const name = groups[i].dataset.target;
+    const count = parseInt(groups[i].dataset.count, 10);
+
+    for (var j = 0; j < count; j++) {
+      const row = document.getElementById("row-" + name + "-" + j);
+
+      const lastName = row.children[0].textContent,
+            firstNames = row.children[1].textContent,
+            username = row.children[2].textContent;
+
+      if (lastName.toLowerCase().indexOf(text) != -1 ||
+          firstNames.toLowerCase().indexOf(text) != -1 ||
+          username.toLowerCase().indexOf(text) != -1) {
+
+        var dupe = row.cloneNode(true);
+
+        results.appendChild(dupe);
+
+        numFound++;
+      }
+    }
+  }
+
+  resultsBox.appendChild(results);
+
+  return true;
+}
+
+function cancelSearch(e)
+{
+  if (e.keyCode == 27) {
+    document.getElementById("searchBox").value = "";
+    doSearch(null);
+  }
+}
+
 function setupPage()
 {
   setupGroupHeaders();
@@ -61,6 +125,9 @@ function setupPage()
   else style.appendChild(document.createTextNode(css));
 
   document.getElementsByTagName('head')[0].appendChild(style);
+
+  document.getElementById("searchBox").oninput = doSearch;
+  document.getElementById("searchBox").onkeydown = cancelSearch;
 }
 
 </script>
@@ -72,8 +139,17 @@ function setupPage()
   <h2><%= @data[:language][:page_title] %></h2>
 </header>
 
+<div id="searchArea">
+  <input type="text" id="searchBox" maxlength="20" placeholder="Etsi käyttäjiä nimellä...">
+
+  <div id="searchResults">
+  </div>
+</div>
+
+<div id="groupsList">
+
 <% @data[:groups].each do |group| %>
-<div class="groupHeader" data-target="<%= group[:id] %>">
+<div class="groupHeader" data-target="<%= group[:id] %>" data-count="<%= group[:users].count %>">
   <h1><%= (group[:name] == :ungrouped) ? @data[:language][:ungrouped] : group[:name] %></h1>
   <span class="count">(<%= group[:users].size %> <%= @data[:language][:users] %>)</span>
   <span id="arrow-<%= group[:id] %>">▶</span>
@@ -86,8 +162,8 @@ function setupPage()
       <th><%= @data[:language][:username] %></th>
       <th><%= @data[:language][:actions] %></th>
     </tr>
-    <% group[:users].each do |u| %>
-    <tr>
+    <% group[:users].each_with_index do |u, n| %>
+    <tr id="row-<%= group[:id] %>-<%= n %>">
       <td><%= u[:last] %></td>
       <td><%= u[:first] %></td>
       <td><%= u[:username] %></td>
@@ -101,7 +177,9 @@ function setupPage()
     <% end %>
   </table>
 </div>
+
 <% end %>
+</div>
 
 <footer>
   <table>
