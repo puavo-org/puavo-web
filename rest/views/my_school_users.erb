@@ -89,10 +89,10 @@ function doSearch(e)
 
   if (numFound) {
     resultsTable.style.display = "table";
-    numMatches.innerHTML = numFound + " matches";
+    numMatches.innerHTML = numFound + ((numFound == 1) ? " <%= @data[:language][:one_match] %>" : " <%= @data[:language][:multiple_matches] %>");
   } else {
     resultsTable.style.display = "none";
-    numMatches.innerHTML = "No matches";
+    numMatches.innerHTML = "<%= @data[:language][:no_matches] %>";
   }
 
   groupsDiv.style.display = "none";
@@ -126,7 +126,7 @@ function setupPage()
 </header>
 
 <div id="searchArea">
-  <input type="text" id="searchBox" maxlength="20" placeholder="Etsi käyttäjiä nimellä...">
+  <input type="text" id="searchBox" maxlength="20" placeholder="<%= @data[:language][:search_placeholder] %>">
 
   <p id="numMatches"></p>
 

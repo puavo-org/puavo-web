@@ -126,50 +126,76 @@ private
         return {
           html_lang: 'en',
           page_title: "School Students List",
+          # -----
           users: 'users',
           ungrouped: 'Ungrouped',
+          # -----
+          search_placeholder: 'Search users by name...',
+          no_matches: 'No matches',
+          one_match: 'match',
+          multiple_matches: 'matches',
+          # -----
           group: 'Group',
           last_name: 'Last name',
           first_names: 'First names',
           username: 'Username',
           actions: 'Actions',
+          # -----
           change_password: 'Change password',
           password_tooltip: 'Change this user\'s password',
-          footer: 'Page created:'
+          # -----
+          footer: 'Page created:',
         }
 
       when 'finnish'
         return {
           html_lang: 'fi',
           page_title: 'Koulun oppilaslista',
+          # -----
           users: 'käyttäjää',
           ungrouped: 'Ryhmittelemättömät',
+          # -----
+          search_placeholder: 'Etsi käyttäjiä nimellä...',
+          no_matches: 'Ei osumia',
+          one_match: 'osuma',
+          multiple_matches: 'osumaa',
+          # -----
           group: 'Ryhmä',
           last_name: 'Sukunimi',
           first_names: 'Etunimet',
           username: 'Käyttäjätunnus',
           actions: 'Toiminnot',
+          # -----
           change_password: 'Vaihda salasana',
           password_tooltip: 'Vaihda tämän käyttäjän salasana',
-          footer: 'Sivu luotu'
+          # -----
+          footer: 'Sivu luotu',
         }
 
       when 'german'
         return {
           html_lang: 'de',
           page_title: "School Studenten Liste",
+          # -----
           users: 'Benutzer',
           ungrouped: 'Nicht gruppiert',
+          # -----
+          search_placeholder: 'Search users by name...',
+          no_matches: 'no matches',
+          one_match: 'match',
+          multiple_matches: 'matches',
+          # -----
           group: 'Gruppe',
           last_name: 'Nachname',
           first_names: 'Vornamen',
           username: 'Nutzername',
           actions: 'Aktionen',
+          # -----
           change_password: 'Passwort ändern',
           password_tooltip: 'Ändern Sie das Passwort dieses Benutzers',
-          footer: 'Erstellt:'
+          # -----
+          footer: 'Erstellt:',
         }
-
     end
   end
 
