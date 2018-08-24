@@ -38,27 +38,26 @@ function doSearch(e)
 {
   const text = document.getElementById("searchBox").value;
 
-  console.log("Searching for '" + text + "'");
+  var resultsDiv = document.getElementById("searchResults"),
+      groupsDiv = document.getElementById("groupsList");
 
-  var resultsBox = document.getElementById("searchResults");
-
-  // purge old results
-  while (resultsBox.firstChild)
-    resultsBox.removeChild(resultsBox.firstChild);
+  // purge old results first
+  while (resultsDiv.firstChild)
+    resultsDiv.removeChild(resultsDiv.firstChild);
 
   if (text.length == 0) {
-    document.getElementById("searchResults").style.display = "none";
-    document.getElementById("groupsList").style.display = "block";
+    // no text, reset search
+    resultsDiv.style.display = "none";
+    groupsDiv.style.display = "block";
     return true;
   }
 
-  document.getElementById("groupsList").style.display = "none";
-  document.getElementById("searchResults").style.display = "block";
+  resultsDiv.style.display = "block";
+  groupsDiv.style.display = "none";
 
-  // then search
   const groups = document.getElementsByClassName("groupHeader");
 
-  var results = document.createElement("table");
+  var resultsTable = document.createElement("table");
   var numFound = 0;
 
   for (var i = 0; i < groups.length; i++) {
@@ -76,16 +75,17 @@ function doSearch(e)
           firstNames.toLowerCase().indexOf(text) != -1 ||
           username.toLowerCase().indexOf(text) != -1) {
 
+        // have a match
         var dupe = row.cloneNode(true);
 
-        results.appendChild(dupe);
+        resultsTable.appendChild(dupe);
 
         numFound++;
       }
     }
   }
 
-  resultsBox.appendChild(results);
+  resultsDiv.appendChild(resultsTable);
 
   return true;
 }
