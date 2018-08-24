@@ -13,39 +13,25 @@ function toggleGroup(e)
 {
   const id = e.target.dataset.target;
 
-  console.log("Opening/closing group '" + id + "'");
-
   var tbl = document.getElementById("table-" + id),
       arr = document.getElementById("arrow-" + id);
 
-   if (tbl.style.display == "none" || tbl.style.display == "") {
-     tbl.style.display = "block";
+  if (tbl.style.display == "none" || tbl.style.display == "") {
+    tbl.style.display = "block";
     arr.innerHTML = OPEN_ARROW;
-   } else {
-     tbl.style.display = "none";
+  } else {
+    tbl.style.display = "none";
     arr.innerHTML = CLOSED_ARROW;
-   }
+  }
 }
 
 function setupGroupHeaders()
 {
   var links = document.getElementsByClassName("groupHeader");
 
-  for (var i = 0; i < links.length; i++) {
-    if (links[i].dataset.target) {
-      const id = links[i].dataset.target;
-
-      console.log("Creating group header '" + id + "'");
-
-      // Open/close handler for this group
+  for (var i = 0; i < links.length; i++)
+    if (links[i].dataset.target)
       links[i].onclick = toggleGroup;
-
-      // Because we are executing JavaScript, we can open and close
-      // the groups, so hide this group
-      document.getElementById("table-" + id).style.display = "none";
-      document.getElementById("arrow-" + id).innerHTML = CLOSED_ARROW;
-    }
-  }
 }
 
 function doSearch(e)
@@ -115,16 +101,6 @@ function cancelSearch(e)
 function setupPage()
 {
   setupGroupHeaders();
-
-  // Create some extra styles
-  var css = ".groupHeader:hover { cursor: pointer; background: #ffa850; }";
-  var style = document.createElement('style');
-
-  if (style.styleSheet)
-    style.styleSheet.cssText = css;
-  else style.appendChild(document.createTextNode(css));
-
-  document.getElementsByTagName('head')[0].appendChild(style);
 
   document.getElementById("searchBox").oninput = doSearch;
   document.getElementById("searchBox").onkeydown = cancelSearch;

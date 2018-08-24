@@ -47,6 +47,11 @@ header {
   border-radius: 10px;
 }
 
+.groupHeader:hover {
+  background: #ffa850;
+  cursor: pointer;
+}
+
 .groupHeader h1 {
   font-size: inherit;
   display: inline;
@@ -62,7 +67,7 @@ header {
 }
 
 .tableWrapper {
-  display: block;
+  display: none;
   padding: 10px 0 0 50px;
 }
 
