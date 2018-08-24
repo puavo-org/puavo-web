@@ -456,13 +456,10 @@ when "import"
     list.save
   end
 
-  puts "\n\nList of users to be removed\n\n"
-
   schools = PuavoRest::School.all
 
   schools.each do |school|
     next unless @options[:include_schools].include?(school.external_id)
-    puts school.name
     school_users = PuavoRest::User.by_attr(:school_dns, school.dn, :multiple => true)
 
     school_users.each do |user|
