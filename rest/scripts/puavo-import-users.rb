@@ -341,7 +341,7 @@ when "diff"
   end
 
 when "import"
-  puts "Import users\n\n"
+  puts "Import users (#{ @options[:user_role] })\n\n"
 
   @new_users_by_school = {}
 
