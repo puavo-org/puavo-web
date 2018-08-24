@@ -145,20 +145,24 @@ footer table td {
 
 #searchArea {
   margin-top: 20px;
+  display: block;
 }
 
 #searchArea input {
+  display: block;
   font-size: 120%;
+  margin: 0 auto;
   padding: 5px;
+}
+
+#searchArea #numMatches {
+  text-align: center;
+  display: none;
+  font-style: italic;
 }
 
 #searchArea .users {
   margin-top: 20px;
-}
-
-#searchArea #numMatches {
-  display: none;
-  font-style: italic;
 }
 
 ::-moz-placeholder { font-style: italic; }
