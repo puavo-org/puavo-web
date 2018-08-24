@@ -112,6 +112,10 @@ header {
   color: #000;
 }
 
+.button:hover {
+  background: #ddd;
+}
+
 .button:active {
   border-top: 2px solid #888;
   border-left: 2px solid #888;
