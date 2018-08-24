@@ -61,11 +61,12 @@ function doSearch(e)
   var numFound = 0;
 
   for (var i = 0; i < groups.length; i++) {
-    const name = groups[i].dataset.target;
+    const id = groups[i].dataset.target;
     const count = parseInt(groups[i].dataset.count, 10);
+    const name = groups[i].dataset.name;
 
     for (var j = 0; j < count; j++) {
-      const row = document.getElementById("row-" + name + "-" + j);
+      const row = document.getElementById("row-" + id + "-" + j);
 
       const lastName = row.children[0].textContent,
             firstNames = row.children[1].textContent,
@@ -77,6 +78,10 @@ function doSearch(e)
 
         // have a match
         var dupe = row.cloneNode(true);
+
+        var grpTD = document.createElement("td");
+        grpTD.innerHTML = name;
+        dupe.insertBefore(grpTD, dupe.children[0]);
 
         resultsTable.appendChild(dupe);
 
@@ -125,8 +130,9 @@ function setupPage()
 <div id="groupsList">
 
 <% @data[:groups].each do |group| %>
-<div class="groupHeader" data-target="<%= group[:id] %>" data-count="<%= group[:users].count %>">
-  <h1><%= (group[:name] == :ungrouped) ? @data[:language][:ungrouped] : group[:name] %></h1>
+<% groupName = (group[:name] == :ungrouped) ? @data[:language][:ungrouped] : group[:name] %>
+<div class="groupHeader" data-target="<%= group[:id] %>" data-count="<%= group[:users].count %>" data-name="<%= groupName %>">
+  <h1><%= groupName %></h1>
   <span class="count">(<%= group[:users].size %> <%= @data[:language][:users] %>)</span>
   <span id="arrow-<%= group[:id] %>">▶</span>
 </div>
