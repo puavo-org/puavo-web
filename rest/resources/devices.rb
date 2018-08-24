@@ -183,7 +183,7 @@ class Device < Host
       create_filter_lambda(:hostname) { |v| "*#{ v }*" },
 
       # Our ldap schema does not allow wildcards in the 'macAddress' field. So
-      # we must match only with excact filters
+      # we must match only with exact filters
       create_filter_lambda(:mac_address) { |v| v },
     ]
   end
