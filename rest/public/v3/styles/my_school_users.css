@@ -145,5 +145,14 @@ footer table td {
   padding: 5px;
 }
 
+#searchArea .users {
+  margin-top: 20px;
+}
+
+#searchArea #numMatches {
+  display: none;
+  font-style: italic;
+}
+
 ::-moz-placeholder { font-style: italic; }
 ::-webkit-input-placeholder { font-style: italic; }

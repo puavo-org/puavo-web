@@ -36,28 +36,29 @@ function setupGroupHeaders()
 
 function doSearch(e)
 {
-  const text = document.getElementById("searchBox").value;
-
-  var resultsDiv = document.getElementById("searchResults"),
+  var resultsTable = document.getElementById("searchResults"),
+      numMatches = document.getElementById("numMatches"),
       groupsDiv = document.getElementById("groupsList");
 
-  // purge old results first
-  while (resultsDiv.firstChild)
-    resultsDiv.removeChild(resultsDiv.firstChild);
+  // Purge old results first. Don't remove the table header.
+  var resultsBody = resultsTable.children[0];
+
+  if (resultsBody.childElementCount > 1)
+    for (var i = resultsBody.childElementCount - 1; i > 0; i--)
+      resultsBody.removeChild(resultsBody.children[i]);
+
+  const text = document.getElementById("searchBox").value;
 
   if (text.length == 0) {
-    // no text, reset search
-    resultsDiv.style.display = "none";
+    // no text, reset
+    resultsTable.style.display = "none";
+    numMatches.style.display = "none";
     groupsDiv.style.display = "block";
+
     return true;
   }
 
-  resultsDiv.style.display = "block";
-  groupsDiv.style.display = "none";
-
   const groups = document.getElementsByClassName("groupHeader");
-
-  var resultsTable = document.createElement("table");
   var numFound = 0;
 
   for (var i = 0; i < groups.length; i++) {
@@ -68,29 +69,34 @@ function doSearch(e)
     for (var j = 0; j < count; j++) {
       const row = document.getElementById("row-" + id + "-" + j);
 
-      const lastName = row.children[0].textContent,
-            firstNames = row.children[1].textContent,
-            username = row.children[2].textContent;
+      if (row.children[0].textContent.toLowerCase().indexOf(text) != -1 ||
+          row.children[1].textContent.toLowerCase().indexOf(text) != -1 ||
+          row.children[2].textContent.toLowerCase().indexOf(text) != -1) {
 
-      if (lastName.toLowerCase().indexOf(text) != -1 ||
-          firstNames.toLowerCase().indexOf(text) != -1 ||
-          username.toLowerCase().indexOf(text) != -1) {
+        // Have a match. Copy the row into the results table and
+        // append the group name.
+        var rowCopy = row.cloneNode(true);
 
-        // have a match
-        var dupe = row.cloneNode(true);
+        var td = document.createElement("td");
 
-        var grpTD = document.createElement("td");
-        grpTD.innerHTML = name;
-        dupe.insertBefore(grpTD, dupe.children[0]);
-
-        resultsTable.appendChild(dupe);
-
+        td.innerHTML = name;
+        rowCopy.insertBefore(td, rowCopy.children[0]);
+        resultsBody.appendChild(rowCopy);
         numFound++;
       }
     }
   }
 
-  resultsDiv.appendChild(resultsTable);
+  if (numFound) {
+    resultsTable.style.display = "table";
+    numMatches.innerHTML = numFound + " matches";
+  } else {
+    resultsTable.style.display = "none";
+    numMatches.innerHTML = "No matches";
+  }
+
+  groupsDiv.style.display = "none";
+  numMatches.style.display = "block";
 
   return true;
 }
@@ -106,7 +112,6 @@ function cancelSearch(e)
 function setupPage()
 {
   setupGroupHeaders();
-
   document.getElementById("searchBox").oninput = doSearch;
   document.getElementById("searchBox").onkeydown = cancelSearch;
 }
@@ -123,8 +128,17 @@ function setupPage()
 <div id="searchArea">
   <input type="text" id="searchBox" maxlength="20" placeholder="Etsi käyttäjiä nimellä...">
 
-  <div id="searchResults">
-  </div>
+  <p id="numMatches"></p>
+
+  <table class="users" id="searchResults" style="display: none;">
+    <tr>
+      <th><%= @data[:language][:group] %></th>
+      <th><%= @data[:language][:last_name] %></th>
+      <th><%= @data[:language][:first_names] %></th>
+      <th><%= @data[:language][:username] %></th>
+      <th><%= @data[:language][:actions] %></th>
+    </tr>
+  </table>
 </div>
 
 <div id="groupsList">
