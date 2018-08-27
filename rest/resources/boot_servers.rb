@@ -8,7 +8,6 @@ class BootServer < Host
       img.strip
     end
   end
-  ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
 
   # Return true if the current puavo-rest server is running on a boot server
   def self.running_on?
@@ -72,6 +71,14 @@ class BootServer < Host
     end
   end
 
+  def generate_extended_puavo_conf
+    # creates/updates @extended_puavoconf
+    super
+
+    extend_puavoconf('puavo.profiles.list', 'bootserver')
+
+    return @extended_puavoconf
+  end
 end
 
 class BootServers < PuavoSinatra
@@ -83,7 +90,8 @@ class BootServers < PuavoSinatra
 
   get "/v3/boot_servers/:hostname" do
     auth :basic_auth, :server_auth
-    json BootServer.by_hostname!(params["hostname"])
+
+    json BootServer.create_device_info(params['hostname'])
   end
 
   post "/v3/boot_servers/:hostname" do
