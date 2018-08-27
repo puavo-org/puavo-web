@@ -36,27 +36,30 @@ function setupGroupHeaders()
 
 function doSearch(e)
 {
-  var resultsTable = document.getElementById("searchResults"),
+  var resultsDiv = document.getElementById("searchResults"),
       numMatches = document.getElementById("numMatches"),
       groupsDiv = document.getElementById("groupsList");
 
-  // Purge old results first. Don't remove the table header.
-  var resultsBody = resultsTable.children[0];
-
-  if (resultsBody.childElementCount > 1)
-    for (var i = resultsBody.childElementCount - 1; i > 0; i--)
-      resultsBody.removeChild(resultsBody.children[i]);
+  var t1, t2;
 
   const text = document.getElementById("searchBox").value.toLowerCase();
 
   if (text.length == 0) {
     // no text, reset
-    resultsTable.style.display = "none";
+    if (resultsDiv.firstChild)
+      resultsDiv.removeChild(resultsDiv.firstChild);
+
     numMatches.style.display = "none";
     groupsDiv.style.display = "block";
 
     return true;
   }
+
+  t1 = window.performance.now();
+
+  var resultsTable = document.getElementById("searchResultsTableTemplate").cloneNode(true);
+
+  resultsTable.removeAttribute("id");
 
   const groups = document.getElementsByClassName("groupHeader");
   var numFound = 0;
@@ -73,30 +76,39 @@ function doSearch(e)
           row.children[1].textContent.toLowerCase().indexOf(text) != -1 ||
           row.children[2].textContent.toLowerCase().indexOf(text) != -1) {
 
-        // Have a match. Copy the row into the results table and
-        // append the group name.
         var rowCopy = row.cloneNode(true);
 
-        var td = document.createElement("td");
+        // remove the ID so we don't search the previous search results
+        rowCopy.removeAttribute("id");
 
+        // insert the group name
+        var td = document.createElement("td");
         td.innerHTML = name;
         rowCopy.insertBefore(td, rowCopy.children[0]);
-        resultsBody.appendChild(rowCopy);
+
+        resultsTable.appendChild(rowCopy);
         numFound++;
       }
     }
   }
 
+  if (resultsDiv.firstChild)
+    resultsDiv.removeChild(resultsDiv.firstChild);
+
   if (numFound) {
-    resultsTable.style.display = "table";
     numMatches.innerHTML = numFound + ((numFound == 1) ? " <%= @data[:language][:one_match] %>" : " <%= @data[:language][:multiple_matches] %>");
+    resultsTable.style.display = "table";
+    resultsDiv.appendChild(resultsTable);
   } else {
-    resultsTable.style.display = "none";
     numMatches.innerHTML = "<%= @data[:language][:no_matches] %>";
+    resultsTable = null;
   }
 
   groupsDiv.style.display = "none";
   numMatches.style.display = "block";
+
+  t2 = window.performance.now();
+  console.log("INSERTION: " + (t2 - t1));
 
   return true;
 }
@@ -132,7 +144,9 @@ function setupPage()
 
   <p id="numMatches"></p>
 
-  <table class="users" id="searchResults" style="display: none;">
+  <div id="searchResults"><p>ff</p></div>
+
+  <table class="users" id="searchResultsTableTemplate" style="display: none;">
     <tr>
       <th><%= @data[:language][:group] %></th>
       <th><%= @data[:language][:last_name] %></th>
