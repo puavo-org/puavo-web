@@ -15,12 +15,6 @@ class MySchoolUsers < PuavoSinatra
 
     school = user.school
 
-    begin
-      s_groups = Group.by_attr(:school_dn, school.dn, :multiple => true)
-    rescue
-      halt 400, "Cannot retrieve groups for school #{s.dn}"
-    end
-
     groups_by_id = {}   # IDs are group abbreviations
     ungrouped = []      # students who are not in any group
     group_num = 0
