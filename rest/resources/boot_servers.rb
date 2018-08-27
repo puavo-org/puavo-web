@@ -1,20 +1,13 @@
 
 module PuavoRest
-class BootServer < LdapModel
-
-  ldap_map :dn, :dn
-  ldap_map :puavoHostname, :hostname
+class BootServer < Host
   ldap_map(:puavoSchool, :school_dns) { |s| s }
-  ldap_map(:puavoTag, :tags){ |v| Array(v) }
-  ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
   ldap_map(:puavoDeviceImage, :preferred_image) do |img|
     img = Array(img).first
     if not img.to_s.strip.empty?
       img.strip
     end
   end
-  ldap_map :puavoDeviceCurrentImage, :current_image, LdapConverters::SingleValue
-  ldap_map :puavoDeviceAvailableImage, :available_images, LdapConverters::ArrayValue
   ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
 
   # Return true if the current puavo-rest server is running on a boot server
@@ -53,14 +46,6 @@ class BootServer < LdapModel
   # with type too
   def self.base_filter
     "(puavoDeviceType=bootserver)"
-  end
-
-  def self.by_hostname(hostname)
-    by_attr(:hostname, hostname)
-  end
-
-  def self.by_hostname!(hostname)
-    by_attr!(:hostname, hostname)
   end
 
   def puavoconf

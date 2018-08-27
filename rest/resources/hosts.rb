@@ -29,6 +29,10 @@ class Host < LdapModel
     object_classes.include?("puavoLocalbootDevice")
   end
 
+  def server?
+    object_classes.include?("puavoServer")
+  end
+
   def self.ldap_base
     "ou=Hosts,#{ organisation["base"] }"
   end
