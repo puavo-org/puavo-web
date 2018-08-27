@@ -83,7 +83,7 @@ function doSearch(e)
 
         // insert the group name
         var td = document.createElement("td");
-        td.innerHTML = name;
+        td.appendChild(document.createTextNode(name));
         rowCopy.insertBefore(td, rowCopy.children[0]);
 
         resultsTable.appendChild(rowCopy);
