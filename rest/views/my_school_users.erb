@@ -1,8 +1,9 @@
+<% lang = @data[:language] %>
 <!DOCTYPE html>
-<html lang="<%= @data[:language][:html_lang] %>">
+<html lang="<%= lang[:html_lang] %>">
 <head>
 <meta charset="UTF-8">
-<title><%= @data[:language][:page_title] %></title>
+<title><%= lang[:page_title] %></title>
 <link rel="stylesheet" href="styles/my_school_users.css">
 <script>
 
@@ -92,11 +93,11 @@ function doSearch(e)
     resultsDiv.removeChild(resultsDiv.firstChild);
 
   if (numFound) {
-    numMatches.innerHTML = numFound + ((numFound == 1) ? " <%= @data[:language][:one_match] %>" : " <%= @data[:language][:multiple_matches] %>");
+    numMatches.innerHTML = numFound + ((numFound == 1) ? " <%= lang[:one_match] %>" : " <%= lang[:multiple_matches] %>");
     resultsTable.style.display = "table";
     resultsDiv.appendChild(resultsTable);
   } else {
-    numMatches.innerHTML = "<%= @data[:language][:no_matches] %>";
+    numMatches.innerHTML = "<%= lang[:no_matches] %>";
     resultsTable = null;
   }
 
@@ -129,11 +130,11 @@ function setupPage()
 
 <header>
   <h1><%= @data[:school] %></h1>
-  <h2><%= @data[:language][:page_title] %></h2>
+  <h2><%= lang[:page_title] %></h2>
 </header>
 
 <div id="searchArea">
-  <input type="text" id="searchBox" maxlength="20" placeholder="<%= @data[:language][:search_placeholder] %>">
+  <input type="text" id="searchBox" maxlength="20" placeholder="<%= lang[:search_placeholder] %>">
 
   <p id="numMatches"></p>
 
@@ -141,11 +142,11 @@ function setupPage()
 
   <table class="users" id="searchResultsTableTemplate" style="display: none;">
     <tr>
-      <th><%= @data[:language][:group] %></th>
-      <th><%= @data[:language][:last_name] %></th>
-      <th><%= @data[:language][:first_names] %></th>
-      <th><%= @data[:language][:username] %></th>
-      <th><%= @data[:language][:actions] %></th>
+      <th><%= lang[:group] %></th>
+      <th><%= lang[:last_name] %></th>
+      <th><%= lang[:first_names] %></th>
+      <th><%= lang[:username] %></th>
+      <th><%= lang[:actions] %></th>
     </tr>
   </table>
 </div>
@@ -153,19 +154,19 @@ function setupPage()
 <div id="groupsList">
 
 <% @data[:groups].each do |group| %>
-<% groupName = (group[:name] == :ungrouped) ? @data[:language][:ungrouped] : group[:name] %>
+<% groupName = (group[:name] == :ungrouped) ? lang[:ungrouped] : group[:name] %>
 <div class="groupHeader" data-target="<%= group[:id] %>" data-count="<%= group[:users].count %>" data-name="<%= groupName %>">
   <h1><%= groupName %></h1>
-  <span class="count">(<%= group[:users].size %> <%= @data[:language][:users] %>)</span>
+  <span class="count">(<%= group[:users].size %> <%= lang[:users] %>)</span>
   <span id="arrow-<%= group[:id] %>">▶</span>
 </div>
 <div class="tableWrapper" id="table-<%= group[:id] %>">
   <table class="users">
     <tr>
-      <th><%= @data[:language][:last_name] %></th>
-      <th><%= @data[:language][:first_names] %></th>
-      <th><%= @data[:language][:username] %></th>
-      <th><%= @data[:language][:actions] %></th>
+      <th><%= lang[:last_name] %></th>
+      <th><%= lang[:first_names] %></th>
+      <th><%= lang[:username] %></th>
+      <th><%= lang[:actions] %></th>
     </tr>
     <% group[:users].each_with_index do |u, n| %>
     <tr id="row-<%= group[:id] %>-<%= n %>">
@@ -174,8 +175,8 @@ function setupPage()
       <td><%= u[:username] %></td>
       <td>
         <a href="<%= @data[:domain] %>/users/password?changing=<%= @data[:changing] %>&amp;changed=<%= u[:username] %>"
-           class="button" title="<%= @data[:language][:password_tooltip] %>">
-          <img src="img/key.svg" width="16" height="16"> <%= @data[:language][:change_password] %>
+           class="button" title="<%= lang[:password_tooltip] %>">
+          <img src="img/key.svg" width="16" height="16"> <%= lang[:change_password] %>
         </a>
       </td>
     </tr>
@@ -194,7 +195,7 @@ function setupPage()
       </td>
       <td>
         © Opinsys Oy 2018<br>
-        <%= @data[:language][:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %><br>
+        <%= lang[:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %><br>
         git commit: <%= File.open("GIT_COMMIT", "r"){ |f| f.read }.strip %>
       </td>
     </tr>
