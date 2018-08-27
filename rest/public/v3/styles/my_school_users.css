@@ -157,6 +157,9 @@ footer table td {
   font-size: 120%;
   margin: 0 auto;
   padding: 5px;
+  border: 2px solid #ccc;
+  background: url("/img/search.svg") no-repeat 98% center #fff;
+  background-size: 24px;
 }
 
 #searchArea #numMatches {
