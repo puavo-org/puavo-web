@@ -43,7 +43,18 @@ function doSearch(e)
 
   const text = document.getElementById("searchBox").value.toLowerCase();
 
-  if (text.length == 0) {
+  // search by (first name, last name)
+  const rawParts = text.split(" ");
+  var parts = new Array();
+
+  for (var i = 0; i < rawParts.length; i++) {
+    const trimmed = rawParts[i].trim().toLowerCase();
+
+    if (trimmed.length > 0)
+      parts.push(trimmed);
+  }
+
+  if (text.length == 0 || parts.length == 0) {
     // no text, reset
     if (resultsDiv.firstChild)
       resultsDiv.removeChild(resultsDiv.firstChild);
@@ -68,24 +79,34 @@ function doSearch(e)
 
     for (var j = 0; j < count; j++) {
       const row = document.getElementById("row-" + id + "-" + j);
+      const first = row.children[1].textContent.toLowerCase(),
+            last = row.children[0].textContent.toLowerCase();
+      var match = false;
 
-      if (row.children[0].textContent.toLowerCase().indexOf(text) != -1 ||
-          row.children[1].textContent.toLowerCase().indexOf(text) != -1 ||
-          row.children[2].textContent.toLowerCase().indexOf(text) != -1) {
-
-        var rowCopy = row.cloneNode(true);
-
-        // remove the ID so we don't search the previous search results
-        rowCopy.removeAttribute("id");
-
-        // insert the group name
-        var td = document.createElement("td");
-        td.appendChild(document.createTextNode(name));
-        rowCopy.insertBefore(td, rowCopy.children[0]);
-
-        resultsTable.appendChild(rowCopy);
-        numFound++;
+      if (parts.length == 1) {
+          if (first.startsWith(parts[0]) || last.startsWith(parts[0]))
+            match = true;
+      } else {
+          if ((first.startsWith(parts[0]) && last.startsWith(parts[1])) ||
+              (last.startsWith(parts[0]) && first.startsWith(parts[1])))
+              match = true;
       }
+
+      if (!match)
+        continue;
+
+      var rowCopy = row.cloneNode(true);
+
+      // remove the ID so we don't search the previous search results
+      rowCopy.removeAttribute("id");
+
+      // insert the group name
+      var td = document.createElement("td");
+      td.appendChild(document.createTextNode(name));
+      rowCopy.insertBefore(td, rowCopy.children[0]);
+
+      resultsTable.appendChild(rowCopy);
+      numFound++;
     }
   }
 
