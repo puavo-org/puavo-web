@@ -205,15 +205,22 @@ class PasswordController < ApplicationController
 
         if new_password.size < 8 then
           raise User::UserError,
-                I18n.t('activeldap.errors.messages.password_too_short')
+                I18n.t('activeldap.errors.messages.gsuite_password_too_short')
         end
         if new_password[0] == ' ' || new_password[-1] == ' ' then
           raise User::UserError,
-                I18n.t('activeldap.errors.messages.password_whitespace')
+                I18n.t('activeldap.errors.messages.gsuite_password_whitespace')
         end
         if !new_password.ascii_only? then
           raise User::UserError,
-                I18n.t('activeldap.errors.messages.password_ascii_only')
+                I18n.t('activeldap.errors.messages.gsuite_password_ascii_only')
+        end
+      when 'SixCharsMin'
+        # Validate the password to contain at least six characters.
+        new_password = params[:user][:new_password]
+        if new_password.size < 6 then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.sixcharsmin_password_too_short')
         end
     end
 

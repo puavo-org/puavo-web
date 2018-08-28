@@ -376,6 +376,7 @@ fi:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:
     gsuite_integration_enabled: "G Suite -integraatio on päällä.  Salasanat tarkistetaan Googlen vaatimusten mukaan (vähintään 8 merkkiä, vain tulostettavia ASCII-merkkejä, ei saa alkaa tai loppua välilyönnillä)."
+    six_chars_min: "Uudessa salasanassa pitää olla vähintään kuusi merkkiä."
     edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."
@@ -474,9 +475,10 @@ fi:
         blank: "%{attribute} pitää olla asetettuna"
         invalid: "%{attribute} on virheellinen"
         confirmation: "%{attribute} ei täsmää vahvistukseen"
-        password_too_short: "G Suiten salasanojen on oltava vähintään 8 merkkiä pitkiä."
-        password_whitespace: "G Suite ei kelpuuta salasanoja jotka alkavat välilyönnillä tai loppuvat välilyöntiin."
-        password_ascii_only: "G Suite kelpuuttaa salasanaan vain tulostettavia 7-bittisiä ASCII-merkkejä."
+        gsuite_password_too_short: "G Suiten salasanojen on oltava vähintään 8 merkkiä pitkiä."
+        gsuite_password_whitespace: "G Suite ei kelpuuta salasanoja jotka alkavat välilyönnillä tai loppuvat välilyöntiin."
+        gsuite_password_ascii_only: "G Suite kelpuuttaa salasanaan vain tulostettavia 7-bittisiä ASCII-merkkejä."
+        sixcharsmin_password_too_short: "Uudessa salasanassa pitää olla vähintään kuusi merkkiä."
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         image_failed: "Kuvaa ei voitu tallentaa"

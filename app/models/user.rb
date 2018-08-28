@@ -171,11 +171,15 @@ class User < LdapBase
       case password_requirements
         when 'Google'
           if self.new_password.size < 8 then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.password_too_short"))
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))
           elsif self.new_password[0] == ' ' || self.new_password[-1] == ' ' then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.password_whitespace"))
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_whitespace"))
           elsif !self.new_password.ascii_only? then
-            errors.add(:new_password, I18n.t("activeldap.errors.messages.password_ascii_only"))
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_ascii_only"))
+          end
+        when 'SixCharsMin'
+          if self.new_password.size < 6 then
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.sixcharsmin_password_too_short"))
           end
       end
     end
