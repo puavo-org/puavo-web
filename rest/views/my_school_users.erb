@@ -65,6 +65,9 @@ function doSearch(e)
     return true;
   }
 
+  console.log("Searching for: " + parts);
+  const t0 = performance.now();
+
   var resultsTable = document.getElementById("searchResultsTableTemplate").cloneNode(true);
 
   resultsTable.removeAttribute("id");
@@ -124,6 +127,9 @@ function doSearch(e)
 
   groupsDiv.style.display = "none";
   numMatches.style.display = "block";
+
+  const t1 = performance.now();
+  console.log("Search took " + (t1 - t0) + " ms");
 
   return true;
 }
