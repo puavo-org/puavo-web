@@ -124,7 +124,7 @@ private
           users: 'users',
           ungrouped: 'Ungrouped',
           # -----
-          search_placeholder: 'Search users by name...',
+          search_placeholder: 'Search by name...',
           no_matches: 'No matches',
           one_match: 'match',
           multiple_matches: 'matches',
@@ -138,7 +138,7 @@ private
           change_password: 'Change password',
           password_tooltip: 'Change this user\'s password',
           # -----
-          footer: 'Page created:',
+          footer: 'Page created',
         }
 
       when 'finnish'
@@ -149,7 +149,7 @@ private
           users: 'käyttäjää',
           ungrouped: 'Ryhmittelemättömät',
           # -----
-          search_placeholder: 'Etsi käyttäjiä nimellä...',
+          search_placeholder: 'Etsi nimellä...',
           no_matches: 'Ei osumia',
           one_match: 'osuma',
           multiple_matches: 'osumaa',
@@ -169,26 +169,26 @@ private
       when 'german'
         return {
           html_lang: 'de',
-          page_title: "School Studenten Liste",
+          page_title: "Liste von Schüler und Schülerinnen",
           # -----
           users: 'Benutzer',
           ungrouped: 'Nicht gruppiert',
           # -----
-          search_placeholder: 'Search users by name...',
-          no_matches: 'no matches',
-          one_match: 'match',
-          multiple_matches: 'matches',
+          search_placeholder: 'nach Namen suchen...',
+          no_matches: 'keine Ergebnisse',
+          one_match: 'ein Ergebnis',
+          multiple_matches: 'Ergebnisse',
           # -----
           group: 'Gruppe',
           last_name: 'Nachname',
           first_names: 'Vornamen',
-          username: 'Nutzername',
+          username: 'Benutzername',
           actions: 'Aktionen',
           # -----
           change_password: 'Passwort ändern',
-          password_tooltip: 'Ändern Sie das Passwort dieses Benutzers',
+          password_tooltip: 'Passwort von diesem Benutzer ändern',
           # -----
-          footer: 'Erstellt:',
+          footer: 'Erstellt am',
         }
     end
   end

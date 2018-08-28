@@ -195,7 +195,7 @@ function setupPage()
       </td>
       <td>
         © Opinsys Oy 2018<br>
-        <%= lang[:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %><br>
+        <%= lang[:footer] %>: <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %><br>
         git commit: <%= File.open("GIT_COMMIT", "r"){ |f| f.read }.strip %>
       </td>
     </tr>
