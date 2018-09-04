@@ -95,7 +95,7 @@ class Device < Host
 
      # Bootserver's preferred image is used only for netboot devices
      # so that localboot devices get always consistent settings
-     if !image and netboot?
+     if !image and netboot? then
        image = BootServer.current_image
      end
 
