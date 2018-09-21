@@ -40,6 +40,7 @@ class User < LdapModel
   ldap_map :eduPersonPrincipalName, :edu_person_principal_name
   ldap_map :puavoEduPersonReverseDisplayName, :reverse_name
   ldap_map :puavoDoNotDelete, :do_not_delete
+  ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
 
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
