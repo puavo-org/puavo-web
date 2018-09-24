@@ -377,6 +377,7 @@ fi:
   password:
     gsuite_integration_enabled: "G Suite -integraatio on päällä.  Salasanat tarkistetaan Googlen vaatimusten mukaan (vähintään 8 merkkiä, vain tulostettavia ASCII-merkkejä, ei saa alkaa tai loppua välilyönnillä)."
     six_chars_min: "Uudessa salasanassa pitää olla vähintään kuusi merkkiä."
+    current_password_too_old: "Organisaatiosi tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
     edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."

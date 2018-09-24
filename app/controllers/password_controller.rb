@@ -29,6 +29,8 @@ class PasswordController < ApplicationController
     @changing = params[:changing] || nil
     @changing = nil if !@changing.nil? && @changing.empty?
     session[:changing] = @changed
+
+    @expired = (params[:password_expired] == 'true')
   end
 
   # PUT /password

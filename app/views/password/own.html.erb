@@ -14,6 +14,12 @@
 </span>
 </div>
 
+<% if @expired %>
+  <p class="message_alert">
+    <%= t('password.current_password_too_old') %>
+  </p>
+<% end %>
+
 <% if @password_requirements == 'Google' %>
 <p class="message-info"><%= t('password.gsuite_integration_enabled') %></p>
 <% elsif @password_requirements == 'SixCharsMin' %>
