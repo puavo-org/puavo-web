@@ -64,7 +64,7 @@ module Puavo
     return res
   end
 
-  def self.get_external_pw_mgmt_url(user)
+  def self.get_external_pw_mgmt_params(user)
     external_pw_mgmt_conf = CONFIG['external_pw_mgmt']
     return nil unless external_pw_mgmt_conf
 
@@ -79,11 +79,12 @@ module Puavo
                         && org_specific_conf['url'].kind_of?(String)
 
     url = org_specific_conf['url']
+    schools = org_specific_conf['schools'] || nil
 
-    return url unless org_specific_conf['role']
+    return [url, schools] unless org_specific_conf['role']
     role_with_password_management = org_specific_conf['role']
 
-    return url if user.roles.include?(role_with_password_management)
+    return [url, schools] if user.roles.include?(role_with_password_management)
 
     return nil
   end
@@ -103,9 +104,24 @@ module Puavo
                                           target_user_dn, target_user_password)
     return res if res[:exit_status] != 0
 
-    external_pw_mgmt_url = self.get_external_pw_mgmt_url(target_user)
+    external_pw_mgmt_url, schools = self.get_external_pw_mgmt_params(target_user)
     if external_pw_mgmt_url then
       begin
+
+        if schools
+          # A school is has been specified...
+          school = target_user.school.id.to_i
+
+          unless schools.include?(school)
+            # ...and this school is not configured for password synchronisation
+            return {
+              :exit_status => 0,
+              :stderr      => "",
+              :stdout      => "This school is not configured for password synchronisation, nothing was done",
+            }
+          end
+        end
+
         change_passwd_downstream(target_user.id,
                                  target_user_username,
                                  target_user_password,
