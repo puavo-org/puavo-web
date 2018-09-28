@@ -106,11 +106,8 @@ class School < LdapModel
   end
 
   def preferred_image
-    if get_own(:preferred_image)
-      return get_own(:preferred_image).strip
-    end
-
-    return organisation.preferred_image
+    image = get_own(:preferred_image)
+    image ? image.strip : organisation.preferred_image
   end
 
   def allow_guest

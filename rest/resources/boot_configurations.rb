@@ -8,7 +8,9 @@ class UnregisteredDevice < Host
   end
 
   def preferred_image
-    BootServer.current_image || Organisation.current(:no_cache).preferred_image
+    BootServer.on_bootserver_preferred_boot_image        \
+      || Organisation.current(:no_cache).preferred_image \
+      || BootServer.on_bootserver_preferred_image
   end
 end
 

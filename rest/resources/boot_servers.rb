@@ -24,18 +24,24 @@ class BootServer < Host
     BootServer.by_dn!(current_dn)
   end
 
-  # return current bootserver image or nil
-  def self.current_image
-    if running_on?
-      current!.preferred_image
-    end
+  # if on bootserver, return preferred boot image or nil
+  def self.on_bootserver_preferred_boot_image
+    running_on? ? current!.preferred_boot_image : nil
+  end
+
+  # if on bootserver, return preferred image or nil
+  def self.on_bootserver_preferred_image
+    running_on? ? current!.preferred_image : nil
+  end
+
+  def preferred_boot_image
+     image = get_own(:preferred_boot_image) || organisation.preferred_image
+     image ? image.strip : nil
   end
 
   def preferred_image
-     image = get_own(:preferred_image)
-     image ||= organisation.preferred_image
-     return nil unless image
-     image.strip
+     image = get_own(:preferred_image) || organisation.preferred_image
+     image ? image.strip : nil
   end
 
   def self.ldap_base

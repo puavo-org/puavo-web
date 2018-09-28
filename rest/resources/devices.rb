@@ -93,16 +93,22 @@ class Device < Host
      # Always fallback to school's preferred image
      image ||= school.get_own(:preferred_image)
 
-     # Bootserver's preferred image is used only for netboot devices
-     # so that localboot devices get always consistent settings
+     # Bootserver's preferred boot image is used only for netboot devices
+     # so that localboot devices get always consistent settings.
      if !image and netboot? then
-       image = BootServer.current_image
+       image = BootServer.preferred_boot_image
      end
 
      # Organisation fallback
      image ||= school.organisation.preferred_image
 
-     image.strip if image
+     # Bootserver's preferred image is used only for netboot devices
+     # so that localboot devices get always consistent settings.
+     if !image and netboot? then
+       image = BootServer.preferred_image
+     end
+
+     image ? image.strip : nil
   end
 
   def allow_guest

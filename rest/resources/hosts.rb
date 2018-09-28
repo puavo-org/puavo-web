@@ -93,10 +93,11 @@ class Host < LdapModel
   end
 
   def preferred_boot_image
-    # preferred_boot_image is only used for thinclients. In fatclients and ltsp
-    # servers the boot image is always the same as the main image
-    if type == "thinclient" && get_own(:preferred_boot_image)
-      return get_own(:preferred_boot_image)
+    # preferred_boot_image is only used for thinclients.  In fatclients and ltsp
+    # servers the boot image is always the same as the main image.
+    if type == 'thinclient' then
+      image = get_own(:preferred_boot_image)
+      return image.strip if image
     end
 
     preferred_image

@@ -114,9 +114,8 @@ class Organisation < LdapModel
   end
 
   def preferred_image
-      if get_own(:preferred_image)
-        get_own(:preferred_image).strip
-      end
+    image = get_own(:preferred_image)
+    image ? image.strip : nil
   end
 
   computed_attr :owners
