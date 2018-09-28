@@ -96,7 +96,7 @@ class Device < Host
      # Bootserver's preferred boot image is used only for netboot devices
      # so that localboot devices get always consistent settings.
      if !image and netboot? then
-       image = BootServer.preferred_boot_image
+       image = BootServer.on_bootserver_preferred_boot_image
      end
 
      # Organisation fallback
@@ -105,7 +105,7 @@ class Device < Host
      # Bootserver's preferred image is used only for netboot devices
      # so that localboot devices get always consistent settings.
      if !image and netboot? then
-       image = BootServer.preferred_image
+       image = BootServer.on_bootserver_preferred_image
      end
 
      image ? image.strip : nil
