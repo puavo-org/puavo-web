@@ -58,14 +58,10 @@ describe PuavoRest::Host do
     @rest_host["ltspserver"] = PuavoRest::LtspServer.by_dn(@host["ltspserver"].dn)
     @rest_host["unregistered"] = PuavoRest::Device.new
   end
-  
+
   @host_types.each do |host_type|
 
     describe "as #{host_type}" do
-
-      it "has grub type" do
-        assert_equal @rest_host[host_type].grub_type, host_type
-      end
 
       it "has grub kernel version" do
         if host_type == "unregistered"
