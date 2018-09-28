@@ -20,6 +20,14 @@ describe PuavoRest::School do
     @school.external_feeds = "http://cal.example.com/cal.ics"
     @school.save!
 
+    @school2 = School.create(
+      :cn => "school2",
+      :displayName => "School 2",
+      :puavoSchoolCode => "0123450",
+    )
+
+    @school2.save!
+
     @server2 = create_server(
       :puavoHostname => "server2",
       :macAddress => "bc:5f:f4:56:59:72",
@@ -39,6 +47,36 @@ describe PuavoRest::School do
 
   after(:each) do
     Timecop.return
+  end
+
+  it "school codes are what they should be" do
+    assert_nil PuavoRest::School.by_dn!(@school.dn).school_code
+    assert_equal PuavoRest::School.by_dn!(@school2.dn).school_code, "0123450"
+  end
+
+  it "can change te school code for a school that does not have it yet" do
+    school = PuavoRest::School.by_dn!(@school.dn)
+    school.school_code = "foobar"
+    school.save!
+    assert_equal PuavoRest::School.by_dn!(@school.dn).school_code, "foobar"
+  end
+
+  it "can change te school code for a school that does have it already" do
+    school = PuavoRest::School.by_dn!(@school2.dn)
+    school.school_code = "bazquux"
+    school.save!
+    assert_equal PuavoRest::School.by_dn!(@school2.dn).school_code, "bazquux"
+  end
+
+  it "can clear the school code" do
+    school = PuavoRest::School.by_dn!(@school.dn)
+    school.school_code = nil
+    school.save!
+    school = PuavoRest::School.by_dn!(@school2.dn)
+    school.school_code = nil
+    school.save!
+    assert_nil PuavoRest::School.by_dn!(@school.dn).school_code
+    assert_nil PuavoRest::School.by_dn!(@school2.dn).school_code
   end
 
   it "has external_feed_sources" do

@@ -306,3 +306,37 @@ Feature: Manage schools
     When I attach the file at "features/support/hello.txt" to "Image"
     And I press "Create"
     Then I should see "Failed to save the image"
+
+Scenario: Set, edit and check the school code
+    Given I am on the new school page
+    Then I should see "New school"
+    When I fill in the following:
+    | School name                         | Test school |
+    | Group name                          | test        |
+    | School code                         | testcode    |
+    And I press "Create"
+    Then I should see "School was successfully created"
+    And I should see "testcode"
+    When I follow "Edit"
+    And I fill in "School code" with "foobar"
+    And I press "Update"
+    Then I should see "School was successfully updated."
+    And I should see "foobar"
+    When I follow "Edit"
+    And I fill in "School code" with ""
+    And I press "Update"
+    Then I should see "School was successfully updated."
+
+Scenario: Set the school code for an existing school
+    Given I am on the new school page
+    Then I should see "New school"
+    When I fill in the following:
+    | School name                         | Test school 2 |
+    | Group name                          | test2         |
+    And I press "Create"
+    Then I should see "School was successfully created"
+    When I follow "Edit"
+    And I fill in "School code" with "bazquux"
+    And I press "Update"
+    Then I should see "School was successfully updated."
+    And I should see "bazquux"
