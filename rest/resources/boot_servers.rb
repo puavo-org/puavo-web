@@ -1,21 +1,7 @@
 
 module PuavoRest
-class BootServer < LdapModel
-
-  ldap_map :dn, :dn
-  ldap_map :puavoHostname, :hostname
+class BootServer < Host
   ldap_map(:puavoSchool, :school_dns) { |s| s }
-  ldap_map(:puavoTag, :tags){ |v| Array(v) }
-  ldap_map :puavoConf, :puavoconf, LdapConverters::PuavoConfObj
-  ldap_map(:puavoDeviceImage, :preferred_image) do |img|
-    img = Array(img).first
-    if not img.to_s.strip.empty?
-      img.strip
-    end
-  end
-  ldap_map :puavoDeviceCurrentImage, :current_image, LdapConverters::SingleValue
-  ldap_map :puavoDeviceAvailableImage, :available_images, LdapConverters::ArrayValue
-  ldap_map :puavoImageSeriesSourceURL, :image_series_source_urls, LdapConverters::ArrayValue
 
   # Return true if the current puavo-rest server is running on a boot server
   def self.running_on?
@@ -38,11 +24,24 @@ class BootServer < LdapModel
     BootServer.by_dn!(current_dn)
   end
 
-  # return current bootserver image or nil
-  def self.current_image
-    if running_on?
-      current!.preferred_image
-    end
+  # if on bootserver, return preferred boot image or nil
+  def self.on_bootserver_preferred_boot_image
+    running_on? ? current!.preferred_boot_image : nil
+  end
+
+  # if on bootserver, return preferred image or nil
+  def self.on_bootserver_preferred_image
+    running_on? ? current!.preferred_image : nil
+  end
+
+  def preferred_boot_image
+     image = get_own(:preferred_boot_image) || organisation.preferred_image
+     image ? image.strip : nil
+  end
+
+  def preferred_image
+     image = get_own(:preferred_image) || organisation.preferred_image
+     image ? image.strip : nil
   end
 
   def self.ldap_base
@@ -53,14 +52,6 @@ class BootServer < LdapModel
   # with type too
   def self.base_filter
     "(puavoDeviceType=bootserver)"
-  end
-
-  def self.by_hostname(hostname)
-    by_attr(:hostname, hostname)
-  end
-
-  def self.by_hostname!(hostname)
-    by_attr!(:hostname, hostname)
   end
 
   def puavoconf
@@ -87,6 +78,14 @@ class BootServer < LdapModel
     end
   end
 
+  def generate_extended_puavo_conf
+    # creates/updates @extended_puavoconf
+    super
+
+    extend_puavoconf('puavo.profiles.list', 'bootserver')
+
+    return @extended_puavoconf
+  end
 end
 
 class BootServers < PuavoSinatra
@@ -98,7 +97,8 @@ class BootServers < PuavoSinatra
 
   get "/v3/boot_servers/:hostname" do
     auth :basic_auth, :server_auth
-    json BootServer.by_hostname!(params["hostname"])
+
+    json BootServer.create_device_info(params['hostname'])
   end
 
   post "/v3/boot_servers/:hostname" do

@@ -146,11 +146,8 @@ class LtspServer < Host
   end
 
   def preferred_image
-     if get_own(:preferred_image).nil?
-       organisation.preferred_image
-     else
-       get_own(:preferred_image).strip
-     end
+    image = get_own(:preferred_image) || organisation.preferred_image
+    image ? image.strip : nil
   end
 
   computed_attr :mountpoints

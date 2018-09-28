@@ -8,37 +8,14 @@ class UnregisteredDevice < Host
   end
 
   def preferred_image
-    BootServer.current_image || Organisation.current(:no_cache).preferred_image
+    BootServer.on_bootserver_preferred_boot_image        \
+      || Organisation.current(:no_cache).preferred_image \
+      || BootServer.on_bootserver_preferred_image
   end
 end
 
 
 class BootConfigurations < PuavoSinatra
-
-
-  get "/v3/:mac_address/boot_configuration" do
-
-    # This resource is inconsistent with other resources in puavo-rest. It's
-    # now deprecated and usage of it will be logged.
-    msg = "call to legacy boot_configuration route. Use /v3/boot_configurations/:mac_address in future"
-    STDERR.puts msg
-
-    response.headers["x-puavo-rest-warn"] = msg
-
-    flog.warn('legacy call',
-              'legacy call', {
-                :route => "/v3/:mac_address/boot_configuration",
-                :params  => params
-              })
-    boot_configuration
-  end
-
-  # XXX This interface is deprecated as well, and it is preferred
-  # XXX to use /v3/bootparams_by_mac/:mac_address.
-  get "/v3/boot_configurations/:mac_address" do
-    boot_configuration
-  end
-
   get "/v3/bootparams_by_mac/:mac_address" do
     bootparams_by_mac
   end
@@ -55,11 +32,6 @@ class BootConfigurations < PuavoSinatra
 
     flog.info('boot done', "boot done by '#{ host.hostname }'", res)
     json res
-  end
-
-  def boot_configuration
-    host = boot_configuration_host
-    host.grub_boot_configuration
   end
 
   def bootparams_by_mac

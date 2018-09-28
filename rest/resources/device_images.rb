@@ -10,15 +10,17 @@ class DeviceImages < PuavoSinatra
   def all_images
     images = [organisation_image]
 
-    [School, BootServer, LtspServer].each do |model|
+    [School, LtspServer].each do |model|
       model.all.each do |s|
-          images.push s.get_own(:preferred_image)
-        end
+        images.push s.get_own(:preferred_image)
+      end
     end
 
-    Device.all.each do |s|
-      images.push s.get_own(:preferred_image)
-      images.push s.get_own(:preferred_boot_image)
+    [BootServer, Device].each do |model|
+      model.all.each do |s|
+        images.push s.get_own(:preferred_image)
+        images.push s.get_own(:preferred_boot_image)
+      end
     end
 
     images
@@ -29,6 +31,7 @@ class DeviceImages < PuavoSinatra
 
     boot_servers.each do |boot_server|
       images.push(boot_server.get_own(:preferred_image))
+      images.push(boot_server.get_own(:preferred_boot_image))
 
       boot_server.schools.each do |school|
         images.push(school.get_own(:preferred_image))
