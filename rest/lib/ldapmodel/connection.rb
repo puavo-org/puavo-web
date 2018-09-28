@@ -187,7 +187,7 @@ class LdapModel
     res = nil
     ldap_op_uuid = (0...25).map{('a'..'z').to_a[rand(10)] }.join
 
-    Syslog.log(Syslog::LOG_NOTICE, "START(#{ ldap_op_uuid })> #{ connection.class }##{ method } #{ args.inspect }")
+    # Syslog.log(Syslog::LOG_DEBUG, "START(#{ ldap_op_uuid })> #{ connection.class }##{ method } #{ args.inspect }")
     err = nil
 
     begin
@@ -215,7 +215,7 @@ class LdapModel
       if err
         end_msg = " ERROR: #{ err.class } #{ err.message }"
       end
-      Syslog.log(Syslog::LOG_NOTICE, "END(#{ ldap_op_uuid })> #{ end_msg }")
+      # Syslog.log(Syslog::LOG_DEBUG, "END(#{ ldap_op_uuid })> #{ end_msg }")
     end
 
     res
