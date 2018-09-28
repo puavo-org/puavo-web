@@ -520,6 +520,7 @@ fi:
         cn: "Ryhmän nimi"
         displayName: Koulun nimi
         puavoNamePrefix: Etuliite
+        puavoSchoolCode: Koulukoodi
         puavoSchoolHomePageURL: Koulun kotisivu
         description: Kuvaus
         puavoSchoolNameAbbreviation: "Ryhmän lyhenne"

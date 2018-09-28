@@ -11,6 +11,7 @@ class School < LdapModel
   ldap_map :puavoExternalId, :external_id, LdapConverters::SingleValue
   ldap_map :objectClass, :object_classes, LdapConverters::ArrayValue
   ldap_map :displayName, :name
+  ldap_map :puavoSchoolCode, :school_code, LdapConverters::SingleValue
   ldap_map :puavoDeviceImage, :preferred_image
   ldap_map :puavoSchoolHomePageURL, :homepage
   ldap_map(:puavoPrinterQueue, :printer_queue_dns){ |v| Array(v) }

@@ -551,6 +551,7 @@ en:
         cn: Group name
         displayName: School name
         puavoNamePrefix: Name prefix
+        puavoSchoolCode: School code
         puavoSchoolHomePageURL: School's home page
         description: Description
         puavoSchoolNameAbbreviation: Abbreviation

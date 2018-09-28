@@ -231,6 +231,7 @@ class SchoolsController < ApplicationController
       s = params.require(:school).permit(
         :displayName,
         :cn,
+        :puavoSchoolCode,
         :puavoNamePrefix,
         :puavoSchoolHomePageURL,
         :description,

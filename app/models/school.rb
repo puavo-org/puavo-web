@@ -37,7 +37,7 @@ class School < BaseGroup
 
   before_save :set_puavo_mountpoint, :set_preferred_language
 
-  validate :validate_group_name, :validate_name_prefix, :validate_name, :validate_puavoconf, :validate_wlan_attributes, :validate_image
+  validate :validate_school_code, :validate_group_name, :validate_name_prefix, :validate_name, :validate_puavoconf, :validate_wlan_attributes, :validate_image
 
   alias_method :v1_as_json, :as_json
 
@@ -49,6 +49,12 @@ class School < BaseGroup
     if self.displayName.to_s.empty?
       errors.add( :displayName, I18n.t("activeldap.errors.messages.blank",
                                        :attribute => I18n.t("activeldap.attributes.school.displayName")) )
+    end
+  end
+
+  def validate_school_code
+    if self.puavoSchoolCode && !self.puavoSchoolCode.empty?
+      # TODO: implement this
     end
   end
 
