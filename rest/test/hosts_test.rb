@@ -2,11 +2,6 @@ require_relative "./helper"
 
 describe PuavoRest::Host do
 
-  @host_types = [ "thinclient",
-                  "fatclient",
-                  "ltspserver",
-                  "laptop",
-                  "unregistered" ]
   before(:each) do
     Puavo::Test.clean_up_ldap
     @school = School.create(
@@ -58,23 +53,6 @@ describe PuavoRest::Host do
     @rest_host["ltspserver"] = PuavoRest::LtspServer.by_dn(@host["ltspserver"].dn)
     @rest_host["unregistered"] = PuavoRest::Device.new
   end
-
-  @host_types.each do |host_type|
-
-    describe "as #{host_type}" do
-
-      it "has grub kernel version" do
-        if host_type == "unregistered"
-          kernel_version = "" 
-        else
-          kernel_version = "-" + @host[host_type]["puavoDeviceKernelVersion"]
-        end
-        assert_equal @rest_host[host_type].grub_kernel_version, kernel_version
-      end
-
-    end
-  end
-
 
   describe "boot time" do
 
