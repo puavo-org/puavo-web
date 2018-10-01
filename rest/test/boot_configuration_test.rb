@@ -26,10 +26,11 @@ describe PuavoRest::BootConfigurations do
     )
 
     @boot_server = create_server(
-      :puavoHostname => "bootserver",
-      :macAddress => "00:60:2f:E5:09:B4",
-      # :puavoDeviceImage => "bootserverimage",
-      :puavoDeviceType => "bootserver"
+      :puavoHostname        => 'bootserver',
+      :macAddress           => '00:60:2f:E5:09:B4',
+      :puavoDeviceBootImage => 'bootserverbootprefimage',
+      :puavoDeviceImage     => 'bootserverimage',
+      :puavoDeviceType      => 'bootserver',
     )
     PuavoRest.test_boot_server_dn = @boot_server.dn.to_s
 
@@ -41,79 +42,46 @@ describe PuavoRest::BootConfigurations do
   describe "device" do
 
     before(:each) do
-      get "/v3/bf:9a:8c:1b:e0:6a/boot_configuration", {}, {
+      get '/v3/bootparams_by_mac/bf:9a:8c:1b:e0:6a', {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
-      @data = last_response.body
+      @data = JSON.parse(last_response.body)
     end
 
     it "has following boot configuration" do
-      configuration =<<EOF
-default ltsp-NBD
-ontimeout ltsp-NBD
-
-
-label ltsp-NBD
-  menu label LTSP, using NBD
-  menu default
-  kernel ltsp/schoolprefimage/vmlinuz
-  append ro initrd=ltsp/schoolprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=thinclient root=/dev/nbd0 nbdroot=:schoolprefimage ACPI usbcore.autosuspend=-1
-  ipappend 2
-EOF
-      assert_equal configuration, @data
+      assert @data.kind_of?(Hash)
+      assert_equal 'schoolprefimage', @data['preferred_boot_image']
     end
   end
 
   describe "ltsp server" do
 
     before(:each) do
-      get "/v3/bc:5f:f4:56:59:73/boot_configuration", {}, {
+      get '/v3/bootparams_by_mac/bc:5f:f4:56:59:73', {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
-      @data = last_response.body
+      @data = JSON.parse(last_response.body)
     end
 
     it "has following boot configuration" do
-      configuration =<<EOF
-default ltsp-NBD
-ontimeout ltsp-NBD
-
-
-label ltsp-NBD
-  menu label LTSP, using NBD
-  menu default
-  kernel ltsp/organisationprefimage/vmlinuz
-  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=ltspserver root=/dev/nbd0 nbdroot=:organisationprefimage quiet splash
-  ipappend 2
-EOF
-      assert_equal configuration, @data
+      assert @data.kind_of?(Hash)
+      assert_equal 'organisationprefimage', @data['preferred_boot_image']
     end
   end
 
   describe "unregistered device" do
 
     it "has following boot configuration too" do
-      get "/v3/bf:9a:8c:1b:e0:77/boot_configuration", {}, {
+      get '/v3/bootparams_by_mac/bf:9a:8c:1b:e0:77', {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
-      @data = last_response.body
+      @data = JSON.parse(last_response.body)
 
-      configuration =<<EOF
-default ltsp-NBD
-ontimeout ltsp-NBD
-
-
-label ltsp-NBD
-  menu label LTSP, using NBD
-  menu default
-  kernel ltsp/organisationprefimage/vmlinuz
-  append ro initrd=ltsp/organisationprefimage/initrd.img init=/sbin/init-puavo puavo.hosttype=unregistered root=/dev/nbd0 nbdroot=:organisationprefimage 
-  ipappend 2
-EOF
-      assert_equal configuration, @data
+      assert @data.kind_of?(Hash)
+      assert_equal 'bootserverbootprefimage', @data['preferred_boot_image']
     end
 
     it "prefers boot server image over organisation image" do
@@ -121,29 +89,15 @@ EOF
       @boot_server.puavoDeviceImage = "bootserverimage"
       @boot_server.save!
 
-      get "/v3/bf:9a:8c:1b:e0:77/boot_configuration", {}, {
+      get '/v3/bootparams_by_mac/bf:9a:8c:1b:e0:77', {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
-      @data = last_response.body
+      @data = JSON.parse(last_response.body)
 
-      configuration =<<EOF
-default ltsp-NBD
-ontimeout ltsp-NBD
-
-
-label ltsp-NBD
-  menu label LTSP, using NBD
-  menu default
-  kernel ltsp/bootserverimage/vmlinuz
-  append ro initrd=ltsp/bootserverimage/initrd.img init=/sbin/init-puavo puavo.hosttype=unregistered root=/dev/nbd0 nbdroot=:bootserverimage 
-  ipappend 2
-EOF
-      assert_equal configuration, @data
-
+      assert @data.kind_of?(Hash)
+      assert_equal 'bootserverbootprefimage', @data['preferred_boot_image']
     end
-
-
 
   end
 end
