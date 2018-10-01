@@ -372,7 +372,8 @@ describe PuavoRest::Devices do
       localboot_device.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice"]
       localboot_device.save!
 
-      @bootserver.puavoDeviceImage = "bootserverprefimage"
+      @bootserver.puavoDeviceBootImage = "bootserverbootprefimage"
+      @bootserver.puavoDeviceImage = "bootserverimage"
       @bootserver.save!
 
     end
@@ -381,7 +382,7 @@ describe PuavoRest::Devices do
       get "/v3/devices/athin"
       assert_200
       data = JSON.parse last_response.body
-      assert_equal "bootserverprefimage", data["preferred_image"]
+      assert_equal "bootserverbootprefimage", data["preferred_image"]
     end
 
     it "is not used by localboot devices" do
