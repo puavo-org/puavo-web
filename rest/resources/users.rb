@@ -541,6 +541,7 @@ class User < LdapModel
           "dn" => school.dn,
           "name" => school.name,
           "abbreviation" => school.abbreviation,
+          "school_code" => school.school_code,
           "roles" => roles_within_school(school),
           "groups" => groups_within_school(school).map do |group|
             {
