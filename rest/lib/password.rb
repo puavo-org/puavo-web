@@ -109,7 +109,7 @@ module Puavo
       begin
 
         if schools
-          # A list of schools have been specified...
+          # A list of schools has been specified...
           school = target_user.school.id.to_i
 
           unless schools.include?(school)
