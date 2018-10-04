@@ -8,10 +8,16 @@
   <%= f.label :cn %><br />
   <%= f.text_field :cn %>
 </p>
+
+<% if current_user.organisation_owner? %>
+
 <p>
   <%= f.label :puavoExternalId %><br />
   <%= f.text_field :puavoExternalId %>
 </p>
+
+<% end %>
+
 <p>
   <%= f.label :puavoEduGroupType %><br />
   <%= f.select :puavoEduGroupType, group_types_for_select %>
