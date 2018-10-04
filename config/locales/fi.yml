@@ -595,6 +595,7 @@ fi:
         primary_members: "Ensisijaiset jäsenet"
         members: "Jäsenet"
         puavoEduGroupType: Tyyppi
+        puavoExternalId: Ulkoinen ID
       ldap_organisation:
         description: Kuvaus
         telephoneNumber: Puhelinnumero

@@ -626,6 +626,7 @@ en:
         primary_members: Primary members
         members: Members
         puavoEduGroupType: Type
+        puavoExternalId: External ID
       ldap_organisation:
         description: Description
         telephoneNumber: Phone number

@@ -38,6 +38,11 @@
   </tr>
 
   <tr>
+    <td><strong><%= t('activeldap.attributes.group.puavoExternalId') %>:</strong></td>
+    <td><%= @group['puavoExternalId'].nil? ? t('missing_data') : @group['puavoExternalId'] %> </td>
+  </tr>
+
+  <tr>
     <td><strong><%= t('ldap_create_time') %>:</strong></td>
     <td><%= @group['createTimestamp'] %></td>
   </tr>
