@@ -108,11 +108,10 @@ module Puavo
     if external_pw_mgmt_url then
       begin
 
-        if schools
+        if schools then
           # A list of schools has been specified...
-          school = target_user.school.id.to_i
-
-          unless schools.include?(school)
+          target_user_school = target_user.primary_school_id.to_i
+          unless schools.include?(target_user_school) then
             # ...and this school is not configured for password synchronisation
             return {
               :exit_status => 0,
