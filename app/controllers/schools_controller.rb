@@ -253,6 +253,7 @@ class SchoolsController < ApplicationController
         :external_feeds,
         :puavoTag,
         :puavoConf,
+        :puavoDeviceAutoPowerOffMode,
         :puavoDeviceOnHour,
         :puavoDeviceOffHour,
         :puavoBillingInfo=>[],
