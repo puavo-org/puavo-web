@@ -34,6 +34,13 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
 
 end
 
+# Find removed groups (ie. groups (with external IDs) that still exist in Puavo,
+# but not in the CSV data). The IDs we use here are external group IDs, not
+# PuavoIDs!
+puavo_groups = PuavoRest::Group.all.reject{ |g| g.external_id.nil? }.collect{ |g| g.external_id }
+csv_groups = groups.collect{ |g| g.external_id }
+removed_groups = puavo_groups - csv_groups
+
 case options[:mode]
 when "diff"
   puts "Compare current group data for import data\n\n"
@@ -54,6 +61,24 @@ when "diff"
 
     puts "\n" + "-" * 100 + "\n\n"
   end
+
+  unless removed_groups.empty?
+    puts red("Removed groups:\n")
+
+    removed_groups.each do |g|
+      group = PuavoRest::Group.by_attrs(:external_id => g)
+
+      if group.nil?
+        puts "  #{g} (<Missing, ignored>)"
+        next
+      end
+
+      puts "  #{g} (\"#{group.name}\")"
+    end
+
+    puts "\n" + "-" * 100 + "\n\n"
+  end
+
 when "set-external-id"
 
   puts "Set external id\n\n"
@@ -116,5 +141,12 @@ when "import"
                            :type => "teaching group",
                            :school_dn => group.school.dn).save!
     end
+  end
+
+  removed_groups.each do |eid|
+    puavo_group = PuavoRest::Group.by_attr(:external_id, eid)
+    puavo_school = PuavoRest::School.by_id(puavo_group.school_id)
+    puts "#{puavo_group.name} (external_id: #{eid}, school: #{puavo_school.name}): deleting"
+    puavo_group.destroy!
   end
 end
