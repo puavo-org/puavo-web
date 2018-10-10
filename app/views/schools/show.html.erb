@@ -188,6 +188,22 @@
       <%=h @school.puavoExternalId %>
     </div>
   </div>
+  <div class="row">
+    <div class="column_1">
+      <%= label "school", "ldap_create_time" %>:
+    </div>
+    <div class="column_2">
+      <%=h @school['createTimestamp'].nil? ? "?" : @school['createTimestamp'].localtime %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column_1">
+      <%= label "school", "ldap_modify_time" %>:
+    </div>
+    <div class="column_2">
+      <%=h @school['modifyTimestamp'].nil? ? "?" : @school['modifyTimestamp'].localtime %>
+    </div>
+  </div>
 </div>
 
 <% content_for :right do %>

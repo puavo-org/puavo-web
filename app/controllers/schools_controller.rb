@@ -39,6 +39,11 @@ class SchoolsController < ApplicationController
                             :scope => :one,
                             :attributes => ['puavoEduPersonAffiliation'] )
 
+    # get the creation and modification timestamps from LDAP operational attributes
+    extra = School.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
+    @school['createTimestamp'] = extra['createTimestamp'] || nil
+    @school['modifyTimestamp'] = extra['modifyTimestamp'] || nil
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @school }

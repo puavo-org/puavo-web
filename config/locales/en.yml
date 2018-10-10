@@ -552,6 +552,8 @@ en:
         displayName: School name
         puavoNamePrefix: Name prefix
         puavoSchoolCode: School code
+        ldap_create_time: Created (LDAP)
+        ldap_modify_time: Modified (LDAP)
         puavoSchoolHomePageURL: School's home page
         description: Description
         puavoSchoolNameAbbreviation: Abbreviation
