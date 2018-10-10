@@ -144,7 +144,7 @@ class OrganisationsController < ApplicationController
     end
 
     def organisation_params
-      return params.require(:ldap_organisation).permit(
+      o = params.require(:ldap_organisation).permit(
         :o,
         :puavoEduOrgAbbreviation,
         :description,
@@ -170,6 +170,8 @@ class OrganisationsController < ApplicationController
         :puavoImageSeriesSourceURL=>[],
         :puavoBillingInfo=>[]
       ).to_hash
+
+      return o
     end
 
 end
