@@ -251,10 +251,10 @@ class GroupsController < ApplicationController
 
   end
 
-   private
-     def group_params
-       # arrays must be listed last due to some weird syntax thing
-       return params.require(:group).permit(:displayName, :cn, :puavoExternalId, :puavoEduGroupType).to_hash
-     end
+  private
+    def group_params
+      # arrays must be listed last due to some weird syntax thing
+      return params.require(:group).permit(:displayName, :cn, :puavoExternalId, :puavoEduGroupType).to_hash
+    end
 
 end
