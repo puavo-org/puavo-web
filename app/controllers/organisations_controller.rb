@@ -116,7 +116,7 @@ class OrganisationsController < ApplicationController
                            :user => @user.displayName )
 
       else
-        
+
       end
       format.html { redirect_to(owners_organisation_path) }
     end
