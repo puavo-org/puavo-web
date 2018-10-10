@@ -116,11 +116,37 @@ class SchoolsController < ApplicationController
   def destroy
     @school = School.find(params[:id])
 
-    respond_to do |format|
-      if @school.members.count > 0 || @school.roles.count > 0 || @school.groups.count > 0 ||
-        @school.boot_servers.count > 0 ||
-        Device.find(:all, :attribute => "puavoSchool", :value => @school.dn).count > 0
+    new_groups = new_group_management?(@school)
+    have_roles = @school.roles.count > 0
+    can_delete = true
 
+    if @school.members.count > 0 ||
+       @school.groups.count > 0 ||
+       @school.boot_servers.count > 0 ||
+       Device.find(:all, :attribute => "puavoSchool", :value => @school.dn).count > 0
+      can_delete = false
+    end
+
+    if !new_groups && have_roles
+      # No new group management and have roles, don't delete
+      can_delete = false
+    end
+
+    if can_delete && new_groups && have_roles
+      # This school has old roles, but they are not used anymore because the new group
+      # management is enabled. Delete the roles and continue.
+      @school.roles.each do |role|
+        begin
+          r = Role.find(role.id)
+          r.destroy!
+        rescue
+          # ignore errors and just keep going
+        end
+      end
+    end
+
+    respond_to do |format|
+      if !can_delete
         flash[:alert] = t('flash.school.destroyed_failed')
         format.html { redirect_to(school_path(@school)) }
         format.xml  { render :xml => @school.errors, :status => :unprocessable_entity }
