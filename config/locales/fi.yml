@@ -378,8 +378,8 @@ fi:
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:
-    gsuite_integration_enabled: "G Suite -integraatio on päällä.  Salasanat tarkistetaan Googlen vaatimusten mukaan (vähintään 8 merkkiä, vain tulostettavia ASCII-merkkejä, ei saa alkaa tai loppua välilyönnillä)."
-    six_chars_min: "Uudessa salasanassa pitää olla vähintään kuusi merkkiä."
+    gsuite_integration_enabled: "Organisaation tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, eivät saa alkaa eikä loppua välilyöntiin, ja ne voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutaman muun välimerkin."
+    six_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
     current_password_too_old: "Organisaatiosi tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
     edit:
       title: "Vaihda toisen käyttäjän salasana"
@@ -479,10 +479,10 @@ fi:
         blank: "%{attribute} pitää olla asetettuna"
         invalid: "%{attribute} on virheellinen"
         confirmation: "%{attribute} ei täsmää vahvistukseen"
-        gsuite_password_too_short: "G Suiten salasanojen on oltava vähintään 8 merkkiä pitkiä."
-        gsuite_password_whitespace: "G Suite ei kelpuuta salasanoja jotka alkavat välilyönnillä tai loppuvat välilyöntiin."
-        gsuite_password_ascii_only: "G Suite kelpuuttaa salasanaan vain tulostettavia 7-bittisiä ASCII-merkkejä."
-        sixcharsmin_password_too_short: "Uudessa salasanassa pitää olla vähintään kuusi merkkiä."
+        gsuite_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanojen on oltava vähintään 8 merkkiä pitkiä."
+        gsuite_password_whitespace: "Organisaation tietoturvakäytänteissä on määritetty, että salasana ei saa alkaa eikä loppua välilyöntiin."
+        gsuite_password_ascii_only: "Organisaation tietoturvakäytänteissä on määritetty, että salasanat voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutama muu välimerkki."
+        sixcharsmin_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kuusi merkkiä."
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         image_failed: "Kuvaa ei voitu tallentaa"
