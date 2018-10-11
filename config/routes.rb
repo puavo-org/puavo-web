@@ -68,6 +68,7 @@ Rails.application.routes.draw do
       match 'username_redirect/:username' => 'users#username_redirect', :via => :get, :constraints => { :username => /[^\/]+/ }
       match 'users/:id/mark_user_for_deletion' => 'users#mark_for_deletion', :as => :mark_user_for_deletion, :via => :get
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
+      match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
     end
 
 

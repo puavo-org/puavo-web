@@ -91,6 +91,7 @@ en:
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
   group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
+  prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
   layouts:
     application:
       schools: Schools
@@ -209,6 +210,7 @@ en:
       already_marked_for_deletion: "User already is marked for deletion"
       unmarked_for_deletion: "User is no longer marked for deletion"
       not_marked_for_deletion: "This user has not been marked for deletion"
+      deletion_prevented: "User deletion has been prevented."
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
@@ -284,7 +286,7 @@ en:
       users_marked_for_deletion_title: Users marked for later deletion
       normal_users_title: Normal users
       users: users
-      do_not_delete: "(Can't be removed)"
+      do_not_delete: "(Can't be deleted)"
     show:
       user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information
@@ -297,6 +299,7 @@ en:
       mark_for_removal: Mark for deletion
       unmark_for_removal: Remove deletion marking
       marked_for_removal: Deletion marking done
+      prevent_removal: Prevent deletion
     new:
       title: New user
     edit:

@@ -167,6 +167,16 @@
   <% end %>
 </li>
 <li>
+
+<% unless @user.puavoDoNotDelete %>
+  <li>
+  <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
+    <i class='icon-exchange'></i><%=t('.prevent_removal')%>
+  <% end %>
+  </li>
+<% end %>
+
+<li>
 <% if @user.puavoRemovalRequestTime %>
 <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
   <i class='icon-exchange'></i><%=t('.unmark_for_removal')%>

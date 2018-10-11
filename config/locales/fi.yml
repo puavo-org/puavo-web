@@ -63,6 +63,7 @@ fi:
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
   group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
+  prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
   layouts:
     application:
       schools: Koulut
@@ -181,6 +182,7 @@ fi:
       already_marked_for_deletion: "Käyttäjä on jo merkitty poistettavaksi"
       unmarked_for_deletion: "Käyttäjä ei ole enää merkitty poistettavaksi"
       not_marked_for_deletion: "Tätä käyttäjää ei ole merkitty poistettavaksi"
+      deletion_prevented: "Käyttäjän poisto on nyt estetty."
       import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
@@ -268,6 +270,7 @@ fi:
       mark_for_removal: Merkitse poistettavaksi
       unmark_for_removal: Poista poistomerkintä
       marked_for_removal: Poistomerkintä tehty
+      prevent_removal: Estä poisto
     new:
       title: "Lisää uusi käyttäjä"
     edit:

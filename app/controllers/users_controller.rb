@@ -389,6 +389,18 @@ class UsersController < ApplicationController
     end
   end
 
+  def prevent_deletion
+    @user = User.find(params[:id])
+
+    @user.puavoDoNotDelete = true
+    @user.save
+    flash[:notice] = t('flash.user.deletion_prevented')
+
+    respond_to do |format|
+      format.html { redirect_to( user_path(@school, @user) ) }
+    end
+  end
+
   private
 
   def error_message_and_render(format, action, message = nil)

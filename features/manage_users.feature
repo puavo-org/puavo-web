@@ -15,6 +15,19 @@ Feature: Manage users
       | Pavel     | Taylor | pavel | secret   | true         | Staffs     | staff                     |
     And I am logged in as "cucumber" with password "cucumber"
 
+  Scenario: Prevent user deletion
+    Given the following users:
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
+      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
+    Then I am on the show user page with "donald"
+    And I should see "Remove"
+    And I should see "Prevent deletion"
+    When I follow "Prevent deletion"
+    Then I should see "User deletion has been prevented."
+    And I should not see "Prevent deletion"
+    And I should not see "Remove"
+
+
   Scenario: Create new user by staff
     Given I follow "Logout"
     And I am logged in as "pavel" with password "secret"
