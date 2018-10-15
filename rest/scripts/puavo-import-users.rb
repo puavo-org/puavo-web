@@ -356,109 +356,124 @@ when "import"
       next
     end
 
-        update_attributes = [ :first_name,
-                              :last_name,
-                              :email,
-                              :telephone_number ]
+    begin
+      puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
 
-        update_attributes.delete(:email) if user.email.nil?
+      if puavo_rest_user
+        if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time
+          puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
 
-        update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
+          update_attributes = [ :first_name,
+                                :last_name,
+                                :email,
+                                :telephone_number ]
 
-        if puavo_rest_user.removal_request_time
-          # Clear the deletion set timestamp: this user's information is being updated,
-          # so clearly they cannot be marked for deletion yet.
-          puavo_rest_user.removal_request_time = nil
+          update_attributes.delete(:email) if user.email.nil?
+
+          update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
+
+          if puavo_rest_user.removal_request_time
+            # Clear the deletion set timestamp: this user's information is being updated,
+            # so clearly they cannot be marked for deletion yet.
+            puavo_rest_user.removal_request_time = nil
+          end
+
+          # FIXME: We can not modify the role because admin user is able to add more roles for the user
+          #puavo_rest_user.role = options[:user_role]
+          #puavo_rest_user.username = user.username # FIXME invalid data?
+          #puavo_rest_user.preferred_language = user.preferred_language FIXME: use school fallback?
+
+          begin
+            puavo_rest_user.validate!
+          rescue ValidationError => validation_errors
+            errors = validation_errors.as_json
+            invalid_attributes = errors[:error][:meta][:invalid_attributes].keys
+            invalid_attributes.each do |attribute|
+              update_attributes.delete(attribute)
+              puts "attribute: #{attribute}, value: '#{ user.send(attribute.to_s) }', error: " +
+                errors[:error][:meta][:invalid_attributes][attribute].map { |a|
+                a[:message]
+              }.join(", ")
+            end
+
+            puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
+
+            update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
+          end
+
+          puavo_rest_user.save!
+
+          update_user_groups(puavo_rest_user, user)
+
+        else
+          next if @options[:silent]
+          puts "#{ puavo_rest_user["username"] }: no changes"
         end
+      else
+        if user.username.nil?
+          puts "Can't create user, username is not defined (external_id: #{ user.external_id }, name: #{ user.first_name } #{ user.last_name }) )"
+          next
+        end
+        if user.external_id.nil? || user.external_id.empty?
+          puts "Can't create user, external_id is not defined (name: #{ user.first_name } #{ user.last_name })"
+          next
+        end
+        puts "Create new user to Puavo: #{ user.username } (#{ user.school.name })"
+        # FIXME send email notifications to school admin
 
-        # FIXME: We can not modify the role because admin user is able to add more roles for the user
-        #puavo_rest_user.role = options[:user_role]
-        #puavo_rest_user.username = user.username # FIXME invalid data?
-        #puavo_rest_user.preferred_language = user.preferred_language FIXME: use school fallback?
+        create_attributes = [ :first_name,
+                              :last_name,
+                              :telephone_number,
+                              :email ]
+
+        puavo_rest_user = create_puavo_rest_user(user, create_attributes)
 
         begin
-          puavo_rest_user.validate!
+          puavo_rest_user.save!
         rescue ValidationError => validation_errors
           errors = validation_errors.as_json
           invalid_attributes = errors[:error][:meta][:invalid_attributes].keys
           invalid_attributes.each do |attribute|
-            update_attributes.delete(attribute)
+            create_attributes.delete(attribute)
             puts "attribute: #{attribute}, value: '#{ user.send(attribute.to_s) }', error: " +
               errors[:error][:meta][:invalid_attributes][attribute].map { |a|
               a[:message]
             }.join(", ")
           end
 
-          puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
-
-          update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
+          puavo_rest_user = create_puavo_rest_user(user, create_attributes)
         end
 
-        puavo_rest_user.save!
+        if puavo_rest_user.new?
+          begin
+            puavo_rest_user.save!
+          rescue ValidationError
+            puts "Cannot create user: #{puavo_rest_user.username}"
+            next
+          end
+        end
+
 
         update_user_groups(puavo_rest_user, user)
 
-      else
-        next if @options[:silent]
-        puts "#{ puavo_rest_user["username"] }: no changes"
-      end
-    else
-      if user.username.nil?
-        puts "Can't create user, username is not defined (external_id: #{ user.external_id }, name: #{ user.first_name } #{ user.last_name }) )"
-        next
-      end
-      if user.external_id.nil? || user.external_id.empty?
-        puts "Can't create user, external_id is not defined (name: #{ user.first_name } #{ user.last_name })"
-        next
-      end
-      puts "Create new user to Puavo: #{ user.username } (#{ user.school.name })"
-      # FIXME send email notifications to school admin
-
-      create_attributes = [ :first_name,
-                            :last_name,
-                            :telephone_number,
-                            :email ]
-
-      puavo_rest_user = create_puavo_rest_user(user, create_attributes)
-
-      begin
-        puavo_rest_user.save!
-      rescue ValidationError => validation_errors
-        errors = validation_errors.as_json
-        invalid_attributes = errors[:error][:meta][:invalid_attributes].keys
-        invalid_attributes.each do |attribute|
-          create_attributes.delete(attribute)
-          puts "attribute: #{attribute}, value: '#{ user.send(attribute.to_s) }', error: " +
-            errors[:error][:meta][:invalid_attributes][attribute].map { |a|
-            a[:message]
-          }.join(", ")
+        unless @new_users_by_school.has_key?(puavo_rest_user.school.id)
+          @new_users_by_school[puavo_rest_user.school.id] = []
         end
-
-        puavo_rest_user = create_puavo_rest_user(user, create_attributes)
+        @new_users_by_school[puavo_rest_user.school.id].push(puavo_rest_user)
       end
-
-      if puavo_rest_user.new?
-        begin
-          puavo_rest_user.save!
-        rescue ValidationError
-          puts "Cannot create user: #{puavo_rest_user.username}"
-          next
-        end
-      end
-
-
-      update_user_groups(puavo_rest_user, user)
-
-      unless @new_users_by_school.has_key?(puavo_rest_user.school.id)
-        @new_users_by_school[puavo_rest_user.school.id] = []
-      end
-      @new_users_by_school[puavo_rest_user.school.id].push(puavo_rest_user)
+    rescue StandardError => e
+      # Don't let one failed user terminate the whole process
+      puts "Cannot import/update user #{user.username}: #{e}"
     end
   end
 
-  @new_users_by_school.each do |school_id, users|
-    list = PuavoRest::UserList.new(users.map{ |u| u.id })
-    list.save
+  begin
+    @new_users_by_school.each do |school_id, users|
+      list = PuavoRest::UserList.new(users.map{ |u| u.id })
+      list.save
+    end
+  rescue StandardError => e
+    puts "Username list creation did not succeed: #{e}"
   end
 
   schools = PuavoRest::School.all
@@ -468,14 +483,19 @@ when "import"
     school_users = PuavoRest::User.by_attr(:school_dns, school.dn, :multiple => true)
 
     school_users.each do |user|
-      next unless user.roles.include?(@options[:user_role])
-      next unless PuavoImport::User.all.select{ |u| u.external_id.to_s == user.external_id.to_s }.empty?
+      begin
+        next unless user.roles.include?(@options[:user_role])
+        next unless PuavoImport::User.all.select{ |u| u.external_id.to_s == user.external_id.to_s }.empty?
 
-      if user.removal_request_time.nil?
-        # This user has been removed, but they have not been marked for deletion yet.
-        # Set that mark now.
-        user.removal_request_time = Time.now.utc
-        user.save!
+        if user.removal_request_time.nil?
+          # This user has been removed, but they have not been marked for deletion yet.
+          # Set that mark now.
+          user.removal_request_time = Time.now.utc
+          user.save!
+        end
+      rescue StandardError => e
+        # Don't let one failed user terminate the whole process
+        puts "Could not update user \"#{user.first_name} #{user.last_name}\": #{e}"
       end
     end
   end
