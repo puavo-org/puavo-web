@@ -170,7 +170,11 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     })
   end
 
-  next if !@options[:include_schools].include?(user_data_hash[:school_external_id].to_s)
+  if !@options[:include_schools].include?(user_data_hash[:school_external_id].to_s)
+    puts "Ignoring user \"#{user_data_hash[:first_name]} #{user_data_hash[:last_name]}\" (username=\"#{user_data_hash[:username]}\") " \
+         "because the school ID is not on the list of imported schools"
+    next
+  end
 
   begin
     user = PuavoImport::User.new(user_data_hash)
