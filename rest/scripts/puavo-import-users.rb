@@ -350,10 +350,11 @@ when "import"
   @new_users_by_school = {}
 
   PuavoImport::User.all.each do |user|
-    puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
-    if puavo_rest_user
-      if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time
-        puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
+    # This has actually happened in production
+    if user.username.nil? || user.username.empty?
+      puts "ERROR: User \"#{user.first_name} #{user.last_name}\" has no username, skipping"
+      next
+    end
 
         update_attributes = [ :first_name,
                               :last_name,
