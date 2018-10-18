@@ -109,6 +109,36 @@ class BootServers < PuavoSinatra
     json server
   end
 
+  get "/v3/boot_servers/:hostname/printer_schools" do
+    auth :basic_auth, :server_auth
+
+    schools_by_printers = {}
+    schools_by_wireless_printers = {}
+
+    server = BootServer.by_hostname!(params['hostname'])
+
+    server.schools.each do |school|
+      school.printer_queues.each do |pq|
+        schools_by_printers[pq.name] ||= []
+        schools_by_printers[pq.name] << school.abbreviation \
+          unless schools_by_printers[pq.name].include?(school.abbreviation)
+      end
+
+      school.wireless_printer_queues.each do |pq|
+        schools_by_wireless_printers[pq.name] ||= []
+        schools_by_wireless_printers[pq.name] << school.abbreviation \
+          unless schools_by_wireless_printers[pq.name] \
+                   .include?(school.abbreviation)
+      end
+    end
+
+    data = {
+      'printer_queues'          => schools_by_printers,
+      'wireless_printer_queues' => schools_by_wireless_printers,
+    }
+    json data
+  end
+
   get "/v3/boot_servers/:hostname/wireless_printer_queues" do
     auth :basic_auth, :server_auth
 
