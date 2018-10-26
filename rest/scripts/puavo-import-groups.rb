@@ -29,7 +29,7 @@ CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";"
   if group.school
     groups.push(group)
   else
-    STDERR.puts "Puts cannot find school for data: #{ group_data.inspect }"
+    STDERR.puts "Cannot find the school for group import: #{ group_data.inspect }"
   end
 
 end
