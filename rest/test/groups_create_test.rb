@@ -83,7 +83,7 @@ describe LdapModel do
         @group2.save!
       end
 
-      assert_equal("duplicate group abbreviation", exception.message)
+      assert_equal("duplicate group abbreviation \"testgroup1\"", exception.message)
     end
 
     it "reuse existing abbreviation in another school" do
@@ -104,7 +104,7 @@ describe LdapModel do
         @group2.save!
       end
 
-      assert_equal("duplicate group abbreviation", exception.message)
+      assert_equal("duplicate group abbreviation \"testgroup1\"", exception.message)
     end
 
     it "try to reuse another group's abbreviation when updating agroup" do
@@ -114,7 +114,7 @@ describe LdapModel do
         @group2.save!
       end
 
-      assert_equal("duplicate group abbreviation", exception.message)
+      assert_equal("duplicate group abbreviation \"testgroup1\"", exception.message)
     end
   end
 
