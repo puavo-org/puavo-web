@@ -804,6 +804,7 @@ en:
   language_default: Default
   group_type:
     teaching group: Teaching group
+    course group: Course group
     year class: Year class
     administrative group: Administrative group
     archive users: Archive users

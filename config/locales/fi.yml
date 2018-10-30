@@ -773,6 +773,7 @@ fi:
   language_default: Oletus
   group_type:
     teaching group: Opetusryhmä
+    course group: Kurssiryhmä
     year class: Vuosiluokka
     administrative group: Hallinnollinen ryhmä
     archive users: Arkistoidut käyttäjät
