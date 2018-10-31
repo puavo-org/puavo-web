@@ -21,7 +21,13 @@
       <% if group.puavoEduGroupType.nil? %>
         <span class="missingData"><%= t('missing_data') %></span>
       <% else %>
+        <% if group.puavoEduGroupType == "course group" %>
+        <span class="courseGroupType">
+        <% end %>
         <%= humanize_group_type(group.puavoEduGroupType) %>
+        <% if group.puavoEduGroupType == "course group" %>
+        </span>
+        <% end %>
       <% end %>
     </td>
     <td data-title="<%=t('.actions')%>" class="table-actions">

@@ -1,4 +1,9 @@
 <% if new_group_management?(@school) %>
+
+<% if @group.puavoEduGroupType == "course group" %>
+<p class="courseWarning"><%= t('groups.edit.course_group_warning') %>
+<% end %>
+
 <table class="basic-info">
   <tr>
     <td>

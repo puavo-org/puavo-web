@@ -1,4 +1,9 @@
 <%= form_for(@group, url: path, html: { method: method } ) do |f| %>
+
+<% if @group.puavoEduGroupType == "course group" %>
+<p class="courseWarning"><%= t('groups.edit.course_group_warning') %>
+<% end %>
+
 <div class="no-table-form">
 <p>
   <%= f.label :displayName %><br />
