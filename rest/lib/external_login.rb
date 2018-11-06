@@ -694,9 +694,9 @@ module PuavoRest
       added_roles      = []
       added_school_dns = []
       external_groups  = {
-                           'administrative' => {},
-                           'teaching group' => {},
-                           'year class'     => {},
+                           'administrative group' => {},
+                           'teaching group'       => {},
+                           'year class'           => {},
                          }
 
       @dn_mappings.each do |dn_mapping|
@@ -736,8 +736,8 @@ module PuavoRest
 
               case op_name
               when 'add_administrative_group'
-                new_group = apply_add_groups('administrative', op_params)
-                external_groups['administrative'].merge!(new_group)
+                new_group = apply_add_groups('administrative group', op_params)
+                external_groups['administrative group'].merge!(new_group)
               when 'add_roles'
                 added_roles += op_params
               when 'add_school_dns'

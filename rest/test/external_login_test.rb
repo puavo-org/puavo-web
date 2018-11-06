@@ -29,7 +29,7 @@ def assert_user_belongs_to_an_administrative_group(username, groupname)
   assert !group.nil?, "There is no #{ groupname } group when there should be"
 
   assert_equal group.puavoEduGroupType,
-               'administrative',
+               'administrative group',
                "#{ groupname } group is not an administrative group"
   assert Array(group.memberUid).include?(username),
          "#{ username } does not belong to the #{ groupname } group"
