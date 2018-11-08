@@ -367,6 +367,7 @@ en:
       actions: Actions
       groups: groups
     show:
+      title: Group information
       roles_and_members: Roles and members
       other_roles: Other roles
       add_user_title: Add users to this group

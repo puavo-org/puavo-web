@@ -4,48 +4,51 @@
 <p class="courseWarning"><%= t('groups.edit.course_group_warning') %>
 <% end %>
 
-<table class="basic-info">
-  <tr>
-    <td><strong><%= t('activeldap.attributes.group.displayName') %>:</strong></td>
-    <td><%=h @group.displayName %></td>
-  </tr>
+<div class="content-box" style="float: none;">
+  <h3><%= t('.title') %></h3>
+  <table>
+    <tr>
+      <th><%= t('activeldap.attributes.group.displayName') %></th>
+      <td><%=h @group.displayName %></td>
+    </tr>
 
-  <tr>
-    <td><strong><%= t('activeldap.attributes.group.cn') %></strong>:</td>
-    <td><%=h @group.cn %></td>
-  </tr>
+    <tr>
+      <th><%= t('activeldap.attributes.group.cn') %></th>
+      <td><%=h @group.cn %></td>
+    </tr>
 
-  <tr>
-    <td><strong><%= t('activeldap.attributes.group.gidNumber') %></strong>:</td>
-    <td><%=h @group.gidNumber %></td>
-  </tr>
+    <tr>
+      <th><%= t('activeldap.attributes.group.gidNumber') %></th>
+      <td><%=h @group.gidNumber %></td>
+    </tr>
 
-  <tr>
-    <td><strong><%= t('activeldap.attributes.group.puavoEduGroupType') %></strong>:</td>
-    <td>
-      <% if @group.puavoEduGroupType.nil? %>
-        <span class="missingData"><%= t('missing_data') %></span>
-      <% else %>
-        <%= h humanize_group_type(@group.puavoEduGroupType) %>
-      <% end %>
-    </td>
-  </tr>
+    <tr>
+      <th><%= t('activeldap.attributes.group.puavoEduGroupType') %></th>
+      <td>
+        <% if @group.puavoEduGroupType.nil? %>
+          <span class="missingData"><%= t('missing_data') %></span>
+        <% else %>
+          <%= h humanize_group_type(@group.puavoEduGroupType) %>
+        <% end %>
+      </td>
+    </tr>
 
-  <tr>
-    <td><strong><%= t('activeldap.attributes.group.puavoExternalId') %>:</strong></td>
-    <td><%= @group['puavoExternalId'].nil? ? t('missing_data') : @group['puavoExternalId'] %> </td>
-  </tr>
+    <tr>
+      <th><%= t('activeldap.attributes.group.puavoExternalId') %></th>
+      <td><%= @group['puavoExternalId'].nil? ? t('missing_data') : @group['puavoExternalId'] %> </td>
+    </tr>
 
-  <tr>
-    <td><strong><%= t('ldap_create_time') %>:</strong></td>
-    <td><%= @group['createTimestamp'] %></td>
-  </tr>
+    <tr>
+      <th><%= t('ldap_create_time') %></th>
+      <td><%= @group['createTimestamp'] %></td>
+    </tr>
 
-  <tr>
-    <td><strong><%= t('ldap_modify_time') %>:</strong></td>
-    <td><%= @group['modifyTimestamp'] %></td>
-  </tr>
-</table>
+    <tr>
+      <th><%= t('ldap_modify_time') %></th>
+      <td><%= @group['modifyTimestamp'] %></td>
+    </tr>
+  </table>
+</div>
 
 <div class="content-box members">
   <%= render :partial => "members" %>

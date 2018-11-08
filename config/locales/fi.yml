@@ -336,6 +336,7 @@ fi:
       actions: Toiminnot
       groups: ryhmää
     show:
+      title: Ryhmän tiedot
       roles_and_members: "Roolit ja jäsenet"
       other_roles: Muut roolit
       add_user_title: Lisää käyttäjiä ryhmään
