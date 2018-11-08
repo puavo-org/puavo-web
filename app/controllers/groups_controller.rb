@@ -222,8 +222,10 @@ class GroupsController < ApplicationController
     @user = User.find(params[:user_id])
 
     @group.remove_user(@user)
-    @group.reload
 
+    # @group.reload does not seem to work correctly when removing
+    # the last member of a group?
+    @group = Group.find(params[:id])
 
     @members = @group.members
 
