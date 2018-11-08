@@ -6,38 +6,27 @@
 
 <table class="basic-info">
   <tr>
-    <td>
-      <b><%= t('activeldap.attributes.group.displayName') %>:</b>
-    </td>
-    <td>
-      <%=h @group.displayName %>
-    </td>
+    <td><strong><%= t('activeldap.attributes.group.displayName') %>:</strong></td>
+    <td><%=h @group.displayName %></td>
   </tr>
+
   <tr>
-    <td>
-      <b><%= t('activeldap.attributes.group.cn') %></b>:
-    </td>
-    <td>
-      <%=h @group.cn %>
-    </td>
+    <td><strong><%= t('activeldap.attributes.group.cn') %></strong>:</td>
+    <td><%=h @group.cn %></td>
   </tr>
+
   <tr>
-    <td>
-      <b><%= t('activeldap.attributes.group.gidNumber') %></b>:
-    </td>
-    <td>
-      <%=h @group.gidNumber %>
-    </td>
+    <td><strong><%= t('activeldap.attributes.group.gidNumber') %></strong>:</td>
+    <td><%=h @group.gidNumber %></td>
   </tr>
+
   <tr>
-    <td>
-      <b><%= t('activeldap.attributes.group.puavoEduGroupType') %></b>:
-    </td>
+    <td><strong><%= t('activeldap.attributes.group.puavoEduGroupType') %></strong>:</td>
     <td>
       <% if @group.puavoEduGroupType.nil? %>
         <span class="missingData"><%= t('missing_data') %></span>
       <% else %>
-        <%=h humanize_group_type(@group.puavoEduGroupType) %>
+        <%= h humanize_group_type(@group.puavoEduGroupType) %>
       <% end %>
     </td>
   </tr>
@@ -51,11 +40,11 @@
     <td><strong><%= t('ldap_create_time') %>:</strong></td>
     <td><%= @group['createTimestamp'] %></td>
   </tr>
+
   <tr>
     <td><strong><%= t('ldap_modify_time') %>:</strong></td>
     <td><%= @group['modifyTimestamp'] %></td>
   </tr>
-
 </table>
 
 <div class="content-box list members">
@@ -133,25 +122,31 @@
       <i class="icon-pencil"></i><%= t('link.edit') %>
     <% end %>
   </li>
+
   <li class="tool">
-    <span class="btn"><i class="icon-collapse"></i> <%=t('link.more')%></span>
-  <ul>
-    <li>
-      <%= link_to new_group_path(@school) do %>
-        <i class="icon-plus"></i><%= t('link.new_group') %>
-      <% end %>
-    </li>
-    <li>
-      <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('group_username_list_confirm') }, method: :put do %>
-        <i class="icon-plus"></i><%= t('link.create_username_list_from_group') %>
-      <% end %>
-    </li>
-    <li>
-      <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
-      <i class="icon-trash"></i><%= t('link.destroy') %>
-      <% end %>
-    </li>
-  </ul>
+    <span class="btn">
+        <i class="icon-collapse"></i> <%=t('link.more')%>
+    </span>
+    <ul>
+      <li>
+        <%= link_to new_group_path(@school) do %>
+          <i class="icon-plus"></i><%= t('link.new_group') %>
+        <% end %>
+      </li>
+
+      <li>
+        <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('group_username_list_confirm') }, method: :put do %>
+          <i class="icon-plus"></i><%= t('link.create_username_list_from_group') %>
+        <% end %>
+      </li>
+
+      <li>
+        <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
+          <i class="icon-trash"></i><%= t('link.destroy') %>
+        <% end %>
+      </li>
+    </ul>
+  </li>
 </ul>
 <% end %>
 
