@@ -124,6 +124,8 @@ en:
     destroy: Remove
     new_group: New group
     create_username_list_from_group: "Create a new username list from members"
+    mark_group_members_for_deletion: "Mark all members for later deletion"
+    unmark_group_members_deletion: "Remove deletion mark from all members"
     update: Update
     create: Create
     show: Show
@@ -190,9 +192,11 @@ en:
       role_added_failed: Failed to add.
       role_removed: Role was removed from the group.
       role_removed_failed: Failed to delete.
-      create_username_list_empty: "There are no members in this group, list not created"
+      empty_group: "There are no members in this group, nothing was done"
       create_username_list_ok: "A new username list was created from the members in the group \"%{name}\""
       create_username_list_failed: "Could not create a new username list"
+      members_marked: "%{count} user(s) marked for deletion"
+      members_unmarked: "%{count} user(s) unmarked for deletion"
     role:
       group_added: Group was added to role.
       group_added_failed: Failed to add

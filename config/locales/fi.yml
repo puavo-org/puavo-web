@@ -96,6 +96,8 @@ fi:
     destroy: Poista
     new_group: "Uusi ryhmä"
     create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
+    mark_group_members_for_deletion: "Merkitse kaikki jäsenet poistettavaksi"
+    unmark_group_members_deletion: "Poista kaikkien jäsenien poistomerkintä"
     update: "Päivitä tiedot"
     create: Luo
     show: "Näytä"
@@ -162,9 +164,11 @@ fi:
       role_added_failed: "Lisäys epäonnistui."
       role_removed: "Rooli poistettiin ryhmästä."
       role_removed_failed: "Poistaminen epäonnistui."
-      create_username_list_empty: "Ryhmässä ei ole jäseniä, listaa ei luotu"
+      empty_group: "Ryhmässä ei ole jäseniä, mitään ei tehty"
       create_username_list_ok: "Ryhmän \"%{name}\" jäsenistä luotiin onnistuneesti uusi käyttäjätunnuslista"
       create_username_list_failed: "Käyttäjätunnuslistan luonti ei onnistunut"
+      members_marked: "%{count} käyttäjä(ä) merkitty poistettavaksi"
+      members_unmarked: "%{count} käyttäjän poistomerkintä poistettu"
     role:
       group_added: "Ryhmä lisättiin rooliin."
       group_added_failed: "Lisäys epäonnistui"

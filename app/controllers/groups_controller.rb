@@ -134,7 +134,7 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
 
     if @group.members.empty?
-      flash[:notice] = t('flash.group.create_username_list_empty')
+      flash[:notice] = t('flash.group.empty_group')
       redirect_to group_path(@school, @group)
       return
     end
@@ -155,6 +155,65 @@ class GroupsController < ApplicationController
         flash[:alert] = t('flash.group.create_username_list_failed')
         format.html { redirect_to group_path(@school, @group) }
       end
+    end
+  end
+
+  # PUT /:school_id/groups/:group_id/mark_group_members_for_deletion
+  def mark_group_members_for_deletion
+    @group = Group.find(params[:id])
+
+    if @group.members.empty?
+      flash[:notice] = t('flash.group.empty_group')
+      redirect_to group_path(@school, @group)
+      return
+    end
+
+    now = Time.now.utc
+    count = 0
+
+    @group.members.each do |u|
+      begin
+        if u.puavoRemovalRequestTime.nil?
+          u.puavoRemovalRequestTime = now
+          u.save
+          count += 1
+        end
+      rescue StandardError => e
+      end
+    end
+
+    respond_to do |format|
+      flash[:notice] = t('flash.group.members_marked', :count => count)
+      format.html { redirect_to group_path(@school, @group) }
+    end
+  end
+
+  # PUT /:school_id/groups/:group_id/unmark_group_members_deletion
+  def unmark_group_members_deletion
+    @group = Group.find(params[:id])
+
+    if @group.members.empty?
+      flash[:notice] = t('flash.group.empty_group')
+      redirect_to group_path(@school, @group)
+      return
+    end
+
+    count = 0
+
+    @group.members.each do |u|
+      begin
+        if u.puavoRemovalRequestTime
+          u.puavoRemovalRequestTime = nil
+          u.save
+          count += 1
+        end
+      rescue StandardError => e
+      end
+    end
+
+    respond_to do |format|
+      flash[:notice] = t('flash.group.members_unmarked', :count => count)
+      format.html { redirect_to group_path(@school, @group) }
     end
   end
 

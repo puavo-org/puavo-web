@@ -53,6 +53,9 @@ Rails.application.routes.draw do
     scope :path => ':school_id' do
       match "groups/:id/remove_user/:user_id" => "groups#remove_user", :as => "remove_user_group", :via => :put
       match 'groups/:id/create_username_list_from_group' => 'groups#create_username_list_from_group', :as => "create_username_list_from_group", :via => :put
+      match 'groups/:id/mark_group_members_for_deletion' => 'groups#mark_group_members_for_deletion', :as => "mark_group_members_for_deletion", :via => :put
+      match 'groups/:id/unmark_group_members_deletion' => 'groups#unmark_group_members_deletion', :as => "unmark_group_members_deletion", :via => :put
+      match 'groups/:id/delete_all_group_members' => 'groups#delete_all_group_members', :as => "delete_all_group_members", :via => :delete
       match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get
       put 'groups/:id/add_role/:role_id' => 'groups#add_role'
