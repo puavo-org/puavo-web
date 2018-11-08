@@ -51,23 +51,23 @@
   <%= render :partial => "members" %>
 </div>
 
-<div class="content-box list">
+<div class="content-box">
   <h3><%= t('.add_user_title') %></h3>
-  <div class="row">
-    <div class="column_1">
-      <%= t('.description') %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="column_1">
-      <%= text_field_tag( "user_search",
-          nil,
-          class: "user_search",
-          size: 50,
-          placeholder: t('.placeholder_for_search') ) %>
-    </div>
-  </div>
+  <table>
+    <tr>
+      <td><%= t('.description') %></td>
+    </tr>
+    <tr>
+      <td>
+      <div class="column_1">
+        <%= text_field_tag( "user_search",
+            nil,
+            class: "user_search",
+            size: 50,
+            placeholder: t('.placeholder_for_search') ) %>
+      </td>
+    </tr>
+  </table>
 </div>
 
 <% else %>
