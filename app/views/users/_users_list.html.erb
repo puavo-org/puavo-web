@@ -1,0 +1,36 @@
+<p><%= source.size %> <%= t('users.index.users') %></p>
+<% unless source.empty? %>
+<table class="<%= table_classes %>">
+  <tr class="thead">
+    <th><%= t('activeldap.attributes.user.displayName') %></th>
+    <th><%= t('activeldap.attributes.user.uid') %></th>
+    <th><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></th>
+    <th colspan="2"><%= t('users.index.actions') %></th>
+  </tr>
+<% source.each do |user| %>
+  <tr>
+    <td data-title="<%= t('activeldap.attributes.user.displayName') %>"><%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %></td>
+    <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%=h user["uid"] %></td>
+    <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
+    <td data-title="<%= t('users.index.actions')%>" class="table-actions">
+      <%= link_to edit_user_path(@school, user["puavoId"]), class: "btn" do%>
+        <i class='icon-pencil'></i><%= t('link.edit') %>
+      <% end %>
+    </td>
+
+    <td class="table-actions">
+      <% if user["puavoDoNotDelete"].to_s == "" || user["puavoDoNotDelete"] == "FALSE" %>
+        <%= link_to user_path(@school, user["puavoId"]),
+          data: { confirm: t('destroy_confirm', object_name: user['sn']) },
+          method: :delete, class: "btn btn-danger" do%>
+          <i class='icon-trash'></i><%= t('link.destroy')%>
+        <% end %>
+      <% else %>
+        <%= t('users.index.do_not_delete') %>
+      <% end %>
+
+    </td>
+  </tr>
+<% end %>
+</table>
+<% end %>
