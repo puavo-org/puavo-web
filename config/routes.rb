@@ -184,7 +184,7 @@ Rails.application.routes.draw do
              :via => :delete )
 
     end
-    
+
     match 'servers/:id/image' => 'servers#image', :as => 'image_server', :via => :get
     match( 'servers/:id/revoke_certificate' => 'servers#revoke_certificate',
            :as => 'revoke_certificate_server',
@@ -206,7 +206,7 @@ Rails.application.routes.draw do
     get 'search' => 'devices_search#index'
 
     match '/auth' => 'sessions#auth', :via => :get
-    
+
   end
 
     namespace :api do
