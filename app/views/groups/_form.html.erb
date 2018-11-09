@@ -4,32 +4,37 @@
 <p class="courseWarning"><%= t('groups.edit.course_group_warning') %>
 <% end %>
 
-<div class="no-table-form">
-<p>
-  <%= f.label :displayName %><br />
-  <%= f.text_field :displayName %>
-</p>
-<p>
-  <%= f.label :cn %><br />
-  <%= f.text_field :cn %>
-</p>
+<table>
+  <tr>
+    <td><%= f.label :displayName %></td>
+    <td><%= f.text_field :displayName %></td>
+  </tr>
+
+  <tr>
+    <td><%= f.label :cn %></td>
+    <td><%= f.text_field :cn %></td>
+  </tr>
 
 <% if current_user.organisation_owner? %>
-
-<p>
-  <%= f.label :puavoExternalId %><br />
-  <%= f.text_field :puavoExternalId %>
-</p>
-
+  <tr>
+    <td><%= f.label :puavoExternalId %></td>
+    <td><%= f.text_field :puavoExternalId %></td>
+  </tr>
 <% end %>
 
-<p>
-  <%= f.label :puavoEduGroupType %><br />
-  <%= f.select :puavoEduGroupType, group_types_for_select %>
-</p>
-  <span>
-  <%= f.submit submit_text, class: 'btn' %>
-  <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
-</span>
-</div>
+  <tr>
+    <td><%= f.label :puavoEduGroupType %></td>
+    <td><%= f.select :puavoEduGroupType, group_types_for_select %></td>
+  </tr>
+
+  <tr>
+    <td></td>
+    <td>
+      <span>
+        <%= f.submit submit_text, class: 'btn' %>
+        <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
+      </span>
+    </td>
+  </tr>
+</table>
 <% end %>
