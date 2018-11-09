@@ -15,7 +15,11 @@
             </p>
           <% end %>
 
-          <% if @user["puavoDoNotDelete"] %>
+          <% unless @user.puavoRemovalRequestTime.nil? %>
+            <p class="notice_text"><%= t('.user_is_marked_for_deletion') %></p>
+          <% end %>
+
+          <% if @user.puavoDoNotDelete %>
             <p class="notice_text"><%= t('.user_deletion_prevented') %></p>
           <% end %>
 

@@ -269,6 +269,7 @@ fi:
       group_by_roles: "Roolien mukana tulevat ryhmät"
       change_school: Vaihda koulua
       user_is_locked: "Käyttäjätunnus on lukittu"
+      user_is_marked_for_deletion: "Käyttäjätunnus on merkitty poistettavaksi"
       user_deletion_prevented: "Käyttäjän poisto on estetty"
       user_devices: Käyttäjän laitteet
       mark_for_removal: Merkitse poistettavaksi

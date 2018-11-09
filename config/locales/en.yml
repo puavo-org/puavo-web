@@ -298,6 +298,7 @@ en:
       group_by_roles: Groups by roles
       change_school: Change school
       user_is_locked: User is locked
+      user_is_marked_for_deletion: "This user has been marked for deletion"
       user_deletion_prevented: "This user cannot be deleted"
       user_devices: User devices
       mark_for_removal: Mark for deletion
