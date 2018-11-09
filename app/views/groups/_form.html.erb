@@ -1,3 +1,4 @@
+<p class="required_info"><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@group, url: path, html: { method: method } ) do |f| %>
 
 <% if @group.puavoEduGroupType == "course group" %>
@@ -6,12 +7,12 @@
 
 <table>
   <tr>
-    <td><%= f.label :displayName %></td>
+    <td class="required"><%= f.label :displayName %></td>
     <td><%= f.text_field :displayName %></td>
   </tr>
 
   <tr>
-    <td><%= f.label :cn %></td>
+    <td class="required"><%= f.label :cn %></td>
     <td><%= f.text_field :cn %></td>
   </tr>
 
@@ -23,7 +24,7 @@
 <% end %>
 
   <tr>
-    <td><%= f.label :puavoEduGroupType %></td>
+    <td class="required"><%= f.label :puavoEduGroupType %></td>
     <td><%= f.select :puavoEduGroupType, group_types_for_select %></td>
   </tr>
 
