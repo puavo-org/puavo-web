@@ -987,10 +987,12 @@ class Users < PuavoSinatra
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
 
-    if user.removal_request_time.nil?
-      # This call cannot change an already set time
-      user.removal_request_time = Time.now.utc
-      user.save!
+    if user.do_not_delete.nil?
+      if user.removal_request_time.nil?
+        # This call cannot change an already set time
+        user.removal_request_time = Time.now.utc
+        user.save!
+      end
     end
   end
 
