@@ -24,6 +24,7 @@ Feature: Manage users
     And I should see "Prevent deletion"
     When I follow "Prevent deletion"
     Then I should see "User deletion has been prevented."
+    And I should see "This user cannot be deleted"
     And I should not see "Prevent deletion"
     And I should not see "Remove"
 
