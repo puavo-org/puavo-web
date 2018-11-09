@@ -360,12 +360,16 @@ class UsersController < ApplicationController
   def mark_for_deletion
     @user = User.find(params[:id])
 
-    if @user.puavoRemovalRequestTime.nil?
-      @user.puavoRemovalRequestTime = Time.now.utc
-      @user.save
-      flash[:notice] = t('flash.user.marked_for_deletion')
+    if @user.puavoDoNotDelete
+      flash[:alert] = t('flash.user_deletion_prevented')
     else
-      flash[:alert] = t('flash.user.already_marked_for_deletion')
+      if @user.puavoRemovalRequestTime.nil?
+        @user.puavoRemovalRequestTime = Time.now.utc
+        @user.save
+        flash[:notice] = t('flash.user.marked_for_deletion')
+      else
+        flash[:alert] = t('flash.user.already_marked_for_deletion')
+      end
     end
 
     respond_to do |format|
@@ -393,7 +397,9 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 
     @user.puavoDoNotDelete = true
+    @user.puavoRemovalRequestTime = nil
     @user.save
+
     flash[:notice] = t('flash.user.deletion_prevented')
 
     respond_to do |format|
