@@ -996,6 +996,18 @@ class Users < PuavoSinatra
     end
   end
 
+  delete "/v3/users/:username/mark_for_deletion" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+
+    if user.do_not_delete.nil?
+      unless user.removal_request_time.nil?
+        user.removal_request_time = nil
+        user.save!
+      end
+    end
+  end
+
   get "/v3/users/:username/profile.jpg" do
     auth :basic_auth, :kerberos
     content_type "image/jpeg"
