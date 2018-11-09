@@ -7,15 +7,3 @@
   :method => :post
 }
 %>
-
-<% content_for :footer do %>
-<ul>  
-  <li class="link_header">
-    <%= link_to t('layouts.application.schools'),  schools_path %> 
-  </li>
-  <% school_list.each do |school| %>
-  <li<% if school_list.last == school %> class="last"<% end %>>
-    <%= link_to school.displayName,  school_path(school) %></li>
-  <% end %>
-</ul>
-<% end %>
