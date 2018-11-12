@@ -10,7 +10,10 @@
   </tr>
 <% source.each do |user| %>
   <tr>
-    <td data-title="<%= t('activeldap.attributes.user.displayName') %>"><%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %></td>
+    <td data-title="<%= t('activeldap.attributes.user.displayName') %>">
+      <%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %>
+      <% if user["puavoLocked"] == "TRUE" %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
+    </td>
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%=h user["uid"] %></td>
     <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
     <% if is_deleted %>
