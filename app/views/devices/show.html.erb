@@ -1,3 +1,5 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn %>
+
 <%= render :partial => 'shared/main_information', :locals => { :device => @device} %>
 <div class="dashboard">
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @device} %>

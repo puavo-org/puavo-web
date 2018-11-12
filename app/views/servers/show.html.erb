@@ -1,3 +1,5 @@
+<% page_title t('titles.organisation'), t('titles.servers'), @server.cn %>
+
 <%= render :partial => 'shared/main_information', :locals => { :device => @server} %>
 <div class="content-box">
   <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>

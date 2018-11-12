@@ -20,6 +20,27 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  titles:
+    users: "Users"
+    users_import: "Import users"
+    users_lists: "Username lists"
+    groups_rename: "Group mass rename"
+    groups: "Groups"
+    devices: "Devices"
+    schools: "Schools"
+    organisation: "Organisation"
+    edit: "Edit"
+    new: "New"
+    owners: "Owners"
+    admins: "Admins"
+    ldap_services: "LDAP services"
+    external_services: "External services"
+    external_files: "External files"
+    servers: "Servers"
+    printers: "Printers"
+    wlan: "Wireless Networks"
+    change_school: "Change school"
+    printer_permissions: "Printing permissions"
   missing_data: "(Missing/unset)"
   import_tool:
     import: Import

@@ -1,3 +1,5 @@
+<% page_title t('titles.organisation'), t('titles.printers'), @printer.printerDescription, t('titles.edit') %>
+
 <h1><span><%=html_escape @printer.printerDescription %> (<%= @server.puavoHostname %>)</span></h1>
 <%= form_for(@printer, url: printer_path(@printer)) do |f| %>
 

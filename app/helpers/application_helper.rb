@@ -269,4 +269,8 @@ module ApplicationHelper
   def group_member?(group, user)
     group["member_usernames"].include?(user.uid)
   end
+
+  def page_title(*parts)
+    content_for(:page_title, parts.unshift(LdapOrganisation.current.o).join(' / '))
+  end
 end

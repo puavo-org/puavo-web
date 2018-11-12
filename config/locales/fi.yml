@@ -1,4 +1,26 @@
 fi:
+  titles:
+    users: "Käyttäjät"
+    users_import: "Tuo käyttäjiä"
+    users_lists: "Käyttäjätunnuslistat"
+    groups_rename: "Vuosiluokkasiirto"
+    groups: "Ryhmät"
+    devices: "Laitteet"
+    schools: "Koulut"
+    organisation: "Organisaatio"
+    info: "Tiedot"
+    edit: "Muokkaa"
+    new: "Uusi"
+    owners: "Omistajat"
+    admins: "Ylläpitäjät"
+    ldap_services: "LDAP-palvelut"
+    external_services: "Ulkoiset palvelut"
+    external_files: "Ulkoiset tiedostot"
+    servers: "Palvelimet"
+    printers: "Tulostimet"
+    wlan: "Langattomat verkot"
+    change_school: "Vaihda koulua"
+    printer_permissions: "Tulostusoikeudet"
   missing_data: "(Puuttuu/ei asetettu)"
   import_tool:
     import: Tuo
