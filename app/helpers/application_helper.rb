@@ -60,7 +60,7 @@ module ApplicationHelper
   end
 
   # Using value by localize if found it
-  # 
+  #
   # Model key name
   def translate_name_attribute(model, attribute)
     if I18n.t("activeldap.attributes").has_key?(model.to_sym) &&
@@ -232,7 +232,7 @@ module ApplicationHelper
 
     suffix = "" if value.nil?
 
-    
+
     return multiple_value(value) + " " + suffix
   end
 
