@@ -111,6 +111,7 @@ en:
   default_select_value: Select
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
+  delete_marked_users: "Are you sure you want to delete %{count} users who are marked for deletion?"
   group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
   prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
   layouts:
@@ -158,6 +159,7 @@ en:
     remove: Remove
     new_role: New role
     new_user: New user
+    delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     user_mass_import:
       new: Users mass import
       progress: Importing users. This can take few minutes. Please wait without closing the browser.
@@ -236,6 +238,8 @@ en:
       unmarked_for_deletion: "User is no longer marked for deletion"
       not_marked_for_deletion: "This user has not been marked for deletion"
       deletion_prevented: "User deletion has been prevented."
+      marked_users_deleted: "%{succeed} users removed"
+      marked_users_deleted_with_fail: "%{succeed} users removed, %{failed} not removed"
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
@@ -311,7 +315,7 @@ en:
       users_marked_for_deletion_title: Users marked for later deletion
       normal_users_title: Normal users
       users: users
-      do_not_delete: "(Can't be deleted)"
+      do_not_delete: "(Can't be removed)"
     show:
       user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information

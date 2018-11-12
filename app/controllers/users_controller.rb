@@ -416,6 +416,37 @@ class UsersController < ApplicationController
     end
   end
 
+  def delete_marked_users
+    delete_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
+
+    succeed = 0
+    failed = 0
+
+    delete_these.each do |m|
+      unless m.puavoDoNotDelete.nil?
+        failed += 1
+        next
+      end
+
+      begin
+        m.destroy
+        succeed += 1
+      rescue StandardError => e
+        failed += 1
+      end
+    end
+
+    if failed == 0
+      flash[:notice] = t('flash.user.marked_users_deleted', :succeed => succeed)
+    else
+      flash[:notice] = t('flash.user.marked_users_deleted_with_fail', :succeed => succeed, :failed => failed)
+    end
+
+    respond_to do |format|
+      format.html { redirect_to( users_path(@school) ) }
+    end
+  end
+
   private
 
   def error_message_and_render(format, action, message = nil)

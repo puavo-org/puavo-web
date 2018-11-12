@@ -37,8 +37,7 @@ Feature: Manage users
     And I should see "Mark for deletion"
     #
     When I follow "Mark for deletion"
-    Then I should see "User has been marked for deletion"
-    And I should see "This user has been marked for deletion"
+    Then I should see "This user has been marked for deletion"
     And I should see "Remove deletion marking"
     And I should not see "Mark for deletion"
     And I should see "Remove"
@@ -55,7 +54,7 @@ Feature: Manage users
     Then I am on the show user page with "donald"
     #
     When I follow "Mark for deletion"
-    Then I should see "User has been marked for deletion"
+    Then I should see "This user has been marked for deletion"
     #
     When I follow "Prevent deletion"
     Then I should see "User deletion has been prevented."
@@ -63,6 +62,33 @@ Feature: Manage users
     And I should not see "This user has been marked for deletion"
     And I should not see "Prevent deletion"
     And I should not see "Remove"
+
+  Scenario: Delete users who are marked for deletion
+    Given the following users:
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
+      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
+      | Daisy     | Duck    | daisy  | 314      | visitor                   | Class 4   |
+    When I follow "School 1" within ".school-menu-button"
+    And I follow "Users" within ".main-wrap"
+    And I should not see "Delete users who are marked for deletion"
+    #
+    Then I am on the show user page with "donald"
+    And I should see "Remove"
+    And I should see "Mark for deletion"
+    When I follow "Mark for deletion"
+    Then I should see "This user has been marked for deletion"
+    #
+    When I follow "School 1" within ".school-menu-button"
+    And I follow "Users" within ".main-wrap"
+    Then I should see "Users marked for later deletion"
+    And I should see "Duck Donald" within ".container"
+    And I should see "Duck Daisy" within ".container"
+    And I should see "Delete users who are marked for deletion"
+    #
+    When I follow "Delete users who are marked for deletion"
+    Then I should see "1 users removed"
+    And I should not see "Duck Donald" within ".container"
+    And I should see "Duck Daisy" within ".container"
 
   Scenario: Create new user by staff
     Given I follow "Logout"

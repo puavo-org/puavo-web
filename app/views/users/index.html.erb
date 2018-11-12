@@ -25,5 +25,12 @@
   <%= link_to new_user_path, class: 'btn' do %>
     <i class='icon-user'></i><%=t('link.new_user')%>
   <% end %>
+
+  <% if !@users_marked_for_deletion.empty? && current_user.organisation_owner? %>
+  <br>
+  <%= link_to delete_marked_users_path, data: { confirm: t('delete_marked_users', count: @users_marked_for_deletion.count) }, method: :delete, class: 'btn' do %>
+    <i class='icon-trash'></i><%=t('link.delete_users_marked_for_deletion')%>
+  <% end %>
+  <% end %>
 </div>
 <% end %>

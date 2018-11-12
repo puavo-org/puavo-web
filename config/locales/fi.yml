@@ -84,6 +84,7 @@ fi:
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  delete_marked_users: "Haluatko varmasti poistaa %{count} poistettavaksi merkittyä käyttäjää?"
   group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
   prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
   layouts:
@@ -131,6 +132,7 @@ fi:
     remove: Poista
     new_role: Uusi rooli
     new_user: "Uusi käyttäjä"
+    delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
     user_mass_import:
       new: Lisää käyttäjiä massa-ajona
       handle_user_data: "Käsittele käyttäjätieto"
@@ -209,6 +211,8 @@ fi:
       unmarked_for_deletion: "Käyttäjä ei ole enää merkitty poistettavaksi"
       not_marked_for_deletion: "Tätä käyttäjää ei ole merkitty poistettavaksi"
       deletion_prevented: "Käyttäjän poisto on nyt estetty."
+      marked_users_deleted: "%{succeed} käyttäjän poisto onnistui"
+      marked_users_deleted_with_fail: "%{succeed} käyttäjän poisto onnistui, %{failed} epäonnistui"
       import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
