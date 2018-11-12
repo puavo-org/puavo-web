@@ -63,14 +63,11 @@
       <td><%= t('.description') %></td>
     </tr>
     <tr>
-      <td>
-      <div class="column_1">
-        <%= text_field_tag( "user_search",
-            nil,
-            class: "user_search",
-            size: 50,
-            placeholder: t('.placeholder_for_search') ) %>
-      </td>
+      <td><%= text_field_tag( "user_search",
+          nil,
+          class: "user_search",
+          size: 50,
+          placeholder: t('.placeholder_for_search') ) %></td>
     </tr>
   </table>
 </div>
