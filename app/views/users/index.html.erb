@@ -6,7 +6,8 @@
 
 <%= render :partial => 'users_list', :locals => {
   :source => @users_marked_for_deletion,
-  :table_classes => "list marked_for_deletion_users_list"
+  :table_classes => "list marked_for_deletion_users_list",
+  :is_deleted => true
 } %>
 
 <hr><br>
@@ -15,7 +16,8 @@
 
 <%= render :partial => 'users_list', :locals => {
   :source => @users,
-  :table_classes => "list"
+  :table_classes => "list",
+  :is_deleted => false
 } %>
 
 <% content_for :right do %>

@@ -34,13 +34,22 @@ class UsersController < ApplicationController
       (a["sn"].to_s + a["givenName"].to_s).downcase <=> (b["sn"].to_s + b["givenName"].to_s).downcase
     end
 
-
     if request.format == 'application/json'
       @users = @users.map{ |u| User.build_hash_for_to_json(u) }
     else
       # Split the user list in two halves: one for normal users, one for users who have
       # been marked for deletion. Both arrays are displayed in their own table.
       @users, @users_marked_for_deletion = @users.partition { |u| u["puavoRemovalRequestTime"].nil? }
+
+      now = Time.now.utc
+
+      @users_marked_for_deletion.each do |u|
+        # The timestamp is a Net::BER::BerIdentifiedString, convert it into
+        # an actual UTC timestamp
+        timestamp = Time.strptime(u["puavoRemovalRequestTime"], '%Y%m%d%H%M%S%z')
+        u["puavoExactRemovalTime"] = timestamp.localtime
+        u["puavoFuzzyRemovalTime"] = fuzzy_time(now - timestamp)
+      end
     end
 
     respond_to do |format|
@@ -457,7 +466,23 @@ class UsersController < ApplicationController
       u["telephoneNumber"].uniq! if u.key?("telephoneNumber")
 
       return u
-
     end
 
+    # Fuzzy timestamps, used when listing users who are marked for later deletion
+    def fuzzy_time(seconds)
+      if seconds < 5.0
+        return t('fuzzy_time.just_now')
+      elsif seconds < 60.0
+        return t('fuzzy_time.less_than_minute')
+      elsif seconds < 3600.0
+        m = (seconds / 60.0).to_i
+        return (m == 1) ? t('fuzzy_time.minute') : t('fuzzy_time.minutes', :m => m)
+      elsif seconds < 86400.0
+        h = (seconds / 3600.0).to_i
+        return (h == 1) ? t('fuzzy_time.hour') : t('fuzzy_time.hours', :h => h)
+      else
+        d = (seconds / 86400.0).to_i
+        return (h == 1) ? t('fuzzy_time.day') : t('fuzzy_time.days', :d => d)
+      end
+    end
 end

@@ -296,7 +296,7 @@ fi:
       user_devices: Käyttäjän laitteet
       mark_for_removal: Merkitse poistettavaksi
       unmark_for_removal: Poista poistomerkintä
-      marked_for_removal: Poistomerkintä tehty
+      marked_for_removal: Merkitty poistettavaksi
       prevent_removal: Estä poisto
     new:
       title: "Lisää uusi käyttäjä"
@@ -1073,3 +1073,12 @@ fi:
       help: "Apua"
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
+  fuzzy_time:
+    just_now: "juuri nyt"
+    less_than_minute: "alle minuutti sitten"
+    minute: "minuutti sitten"
+    minutes: "%{m} minuuttia sitten"
+    hour: "tunti sitten"
+    hours: "%{h} tuntia sitten"
+    day: "päivä sitten"
+    days: "%{d} päivää sitten"

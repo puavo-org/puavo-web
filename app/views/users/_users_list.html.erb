@@ -5,6 +5,7 @@
     <th><%= t('activeldap.attributes.user.displayName') %></th>
     <th><%= t('activeldap.attributes.user.uid') %></th>
     <th><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></th>
+    <% if is_deleted %><th><%= t('users.show.marked_for_removal') %></th><% end %>
     <th colspan="2"><%= t('users.index.actions') %></th>
   </tr>
 <% source.each do |user| %>
@@ -12,6 +13,9 @@
     <td data-title="<%= t('activeldap.attributes.user.displayName') %>"><%= link_to "#{user['sn']} #{user['givenName']}", user_path(@school, user["puavoId"]) %></td>
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%=h user["uid"] %></td>
     <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
+    <% if is_deleted %>
+    <td><abbr title="<%= user["puavoExactRemovalTime"] %>"><%= user["puavoFuzzyRemovalTime"] %></abbr></td>
+    <% end %>
     <td data-title="<%= t('users.index.actions')%>" class="table-actions">
       <%= link_to edit_user_path(@school, user["puavoId"]), class: "btn" do%>
         <i class='icon-pencil'></i><%= t('link.edit') %>
@@ -28,7 +32,6 @@
       <% else %>
         <%= t('users.index.do_not_delete') %>
       <% end %>
-
     </td>
   </tr>
 <% end %>
