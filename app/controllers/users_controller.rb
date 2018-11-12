@@ -375,6 +375,7 @@ class UsersController < ApplicationController
     else
       if @user.puavoRemovalRequestTime.nil?
         @user.puavoRemovalRequestTime = Time.now.utc
+        @user.puavoLocked = true
         @user.save
         flash[:notice] = t('flash.user.marked_for_deletion')
       else
