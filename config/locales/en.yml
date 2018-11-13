@@ -120,6 +120,7 @@ en:
       school: School
       logout: Logout
       users: Users
+      groups: Groups
       tools: Tools
       logged_in_as: Logged in as
       devices: Devices

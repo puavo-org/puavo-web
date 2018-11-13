@@ -92,7 +92,8 @@ fi:
       schools: Koulut
       school: Koulu
       logout: Kirjaudu ulos
-      users: "Käyttäjät"
+      users: Käyttäjät
+      groups: Ryhmät
       tools: "Työkalut"
       logged_in_as: "Kirjauduttu käyttäjänä:"
       devices: Laitteet
