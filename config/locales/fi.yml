@@ -5,6 +5,7 @@ fi:
     users_lists: "Käyttäjätunnuslistat"
     groups_rename: "Vuosiluokkasiirto"
     groups: "Ryhmät"
+    groupless_users: "Ryhmättömät käyttäjät"
     devices: "Laitteet"
     schools: "Koulut"
     organisation: "Organisaatio"
@@ -381,6 +382,8 @@ fi:
     user_search:
       member: Jäsen
       add_to_group: Liitä ryhmään
+    groupless_users:
+      title: "Löytyi %{count} ryhmätöntä käyttäjää."
   schools:
     index:
       actions: Toiminnot

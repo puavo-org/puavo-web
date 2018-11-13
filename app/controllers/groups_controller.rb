@@ -235,6 +235,21 @@ class GroupsController < ApplicationController
     end
   end
 
+  def find_groupless_users
+    @users = []
+
+    @school.members.each do |m|
+      @users << m if m.groups.empty?
+    end
+
+    # sort by name
+    @users.sort!{|a, b| a.displayName.downcase <=> b.displayName.downcase }
+
+    respond_to do |format|
+      format.html { render :action => "groupless_users" }
+    end
+  end
+
   def add_user
     @group = Group.find(params[:id])
     @user = User.find(params[:user_id])

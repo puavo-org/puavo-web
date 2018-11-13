@@ -51,5 +51,10 @@
   <%= link_to new_group_path(@school), class: 'btn' do%>
   <i class='icon-plus'></i><%= t('link.new_group') %>
   <% end %>
+
+  <br>
+  <%= link_to find_groupless_users_path(@school), class: 'btn' do%>
+  <i class='icon-plus'></i>Etsi ryhmättömät käyttäjät
+  <% end %>
 </div>
 <% end %>

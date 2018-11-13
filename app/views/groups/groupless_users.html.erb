@@ -1,0 +1,26 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.groups'), t('titles.groupless_users') %>
+
+<p><%= t('groups.groupless_users.title', :count => @users.count) %></p>
+
+<% unless @users.empty? %>
+<table class="list">
+
+<tr>
+  <th><%= t('activeldap.attributes.user.displayName') %></th>
+  <th><%= t('activeldap.attributes.user.uid') %></th>
+  <th><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></th>
+</tr>
+
+<% @users.each do |user| %>
+<tr>
+  <td>
+    <%= link_to "#{user.givenName} #{user.sn}", user_path(@school, user.puavoId) %>
+    <% if user.puavoLocked %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
+  </td>
+  <td><%= user.uid %></td>
+  <td><%= t('puavoEduPersonAffiliation_' + (user.puavoEduPersonAffiliation.class == Array ? user.puavoEduPersonAffiliation.first : user.puavoEduPersonAffiliation).to_s) %></td>
+</tr>
+<% end %>
+
+</table>
+<% end %>
