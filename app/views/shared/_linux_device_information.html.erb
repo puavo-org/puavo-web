@@ -100,6 +100,7 @@
   <td class="value_td"><%= h device['modifyTimestamp'].nil? ? '?' : device['modifyTimestamp'].localtime %></tr>
 </tr>
 
+<% if ['laptop', 'fatclient'].include?(device.puavoDeviceType) %>
 <tr>
   <td><%= label device.class.to_s.downcase, :puavoDeviceHWInfo %></td>
   <td>
@@ -113,6 +114,7 @@
   <% end %>
   </td>
 </tr>
+<% end %>
 
 <tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "description" %></td>
