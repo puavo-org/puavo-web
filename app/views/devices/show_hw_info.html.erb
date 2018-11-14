@@ -1,0 +1,146 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn, t('titles.device_hw_info') %>
+
+<h1 class="hwInfoTitle">Laitten <%= @device.puavoHostname %> laitetiedot</h1>
+
+<a href="<%= device_path(@school, @device) %>" class="btn">Takaisin laitten sivulle</a>
+
+<p class="hwInfoTimestamp"><strong>Tiedot päivitetty:</strong> <%= Time.at(@info['timestamp']).localtime %></p>
+
+<table class="hwInfoTable">
+
+<!-- General -->
+
+<tr>
+  <th class="main">Päätekuva</th>
+  <td colspan="2"><%= @info['this_image'] || '?' %></td>
+</tr>
+
+<tr>
+  <th class="main">Julkaisu</th>
+  <td colspan="2"><%= @info['this_release'] || '?' %></td>
+</tr>
+
+<tr class="sectionEnd">
+  <th class="main">Kernel</th>
+  <td colspan="2"><%= @info['kernelrelease'] || '?' %></td>
+</tr>
+
+<!-- CPU -->
+
+<tr>
+  <th class="main" rowspan="3">Prosessori</th>
+</tr>
+
+<tr>
+  <th>Ytimiä</th>
+  <td><%= @info['processorcount'] || '?' %></td>
+</tr>
+
+<tr class="sectionEnd">
+  <th>Nimi</th>
+  <td><%= @info['processor0'] || '?' %></td>
+</tr>
+
+<!-- Memory -->
+
+<tr>
+  <th class="main" rowspan="3">Muisti</th>
+</tr>
+
+<tr>
+  <th>Yhteensä</th>
+  <td><%= (@info['memorysize_mb'] || '0').to_i %> MiB</td>
+</tr>
+<tr class="sectionEnd">
+  <th>Muistipaikat</th>
+  <td>
+    <% Array(@info['memory'] || []).each_with_index do |mem, index| %>
+    <%= index + 1 %>:
+    <% if mem['size'].to_i > 0 %>
+    <strong>Koko:</strong> <%= mem['size'] %> MiB;&nbsp;
+    <strong>Paikka:</strong> <%= mem['slot'] %>;&nbsp;
+    <strong>Tuotenimi:</strong> <%= mem['product'] %>;&nbsp;
+    <strong>Valmistaja:</strong> <%= mem['vendor'] %>
+    <% else %>
+    (Tyhjä)
+    <% end %>
+    <br>
+    <% end %>
+  </td>
+</tr>
+
+<!-- Storage -->
+
+<tr class="sectionEnd">
+  <th class="main">Kiintolevy</th>
+  <td colspan="2">
+    <% if @info['blockdevice_sda_model'] %>
+    <%= @info['blockdevice_sda_model'] || '?' %>,
+    <%= ((@info['blockdevice_sda_size'].to_f || 0.0) / (1024.0 * 1024.0 * 1024.0)).to_i %> GiB
+    <% if @info['ssd'] %>[SSD]<% end %>
+    <% else %>
+    (Ei kiintolevyä)
+    <% end %>
+  </td>
+</tr>
+
+<!-- WiFi -->
+
+<tr class="sectionEnd">
+  <th class="main">WiFi</th>
+  <td colspan="2"><%= @info['wifi'] || '?' %></td>
+</tr>
+
+<!-- BIOS -->
+
+<tr>
+  <th class="main" rowspan="5">BIOS</th>
+</tr>
+
+<tr>
+  <th>Valmistaja</th>
+  <td><%= @info['bios_vendor'] || '?' %></td>
+</tr>
+<tr>
+  <th>Tuotenimi</th>
+  <td><%= @info['productname'] || '?' %></td>
+</tr>
+<tr>
+  <th>Versio</th>
+  <td><%= @info['bios_version'] || '?' %></td>
+</tr>
+<tr class="sectionEnd">
+  <th>Päiväys</th>
+  <td><%= @info['bios_release_date'] || '?' %></td>
+</tr>
+
+<!-- Serial numbers -->
+
+<tr>
+  <th class="main" rowspan="3">Sarjanumerot</th>
+</tr>
+
+<tr>
+  <th>Laite</th>
+  <td><%= @info['serialnumber'] || '?' %></td>
+</tr>
+<tr class="sectionEnd">
+  <th>Emolevy</th>
+  <td><%= @info['boardserialnumber'] || '?' %></td>
+</tr>
+
+<!-- LSPCI values -->
+
+<tr>
+  <th class="main">LSPCI-arvoja</th>
+  <td colspan="2">
+    <% Array(@info['lspci_values'] || []).each do |lspci| %>
+      <%= lspci %><br>
+    <% end %>
+  </td>
+</tr>
+</table>
+
+<br>
+<h3>Raakadata</h3>
+<pre style="height: 350px; overflow: scroll;"><%= JSON.pretty_generate(@info) %></pre>

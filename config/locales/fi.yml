@@ -7,6 +7,7 @@ fi:
     groups: "Ryhmät"
     groupless_users: "Ryhmättömät käyttäjät"
     devices: "Laitteet"
+    device_hw_info: "Laitetiedot"
     schools: "Koulut"
     organisation: "Organisaatio"
     info: "Tiedot"
@@ -736,6 +737,7 @@ fi:
         puavoAutomaticImageUpdates: Levykuvan automaattinen päivitys
         puavoPersonallyAdministered: Henkilökohtaisesti ylläpidettävä
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
+        puavoDeviceHWInfo: Laitteistotiedot päivitetty
       server:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi

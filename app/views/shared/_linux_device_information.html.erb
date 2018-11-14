@@ -101,6 +101,20 @@
 </tr>
 
 <tr>
+  <td><%= label device.class.to_s.downcase, :puavoDeviceHWInfo %></td>
+  <td>
+  <% if @device.puavoDeviceHWInfo %>
+  <%= Time.at(JSON.parse(@device.puavoDeviceHWInfo)["timestamp"]).localtime %>
+  <%= link_to show_hw_info_path(@school, @device), class: 'btn' do%>
+  Näytä laitteistotiedot
+  <% end %>
+  <% else %>
+  (Tuntematon/Ei koskaan)
+  <% end %>
+  </td>
+</tr>
+
+<tr>
   <td class="label_td view"><%= label device.class.to_s.downcase, "description" %></td>
   <td class="value_td markdown"><%= html_escape(device.description.to_s) %></td>
 </tr>

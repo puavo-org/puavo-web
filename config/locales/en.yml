@@ -28,6 +28,7 @@ en:
     groups: "Groups"
     groupless_users: "Ungrouped users"
     devices: "Devices"
+    device_hw_info: "Hardware Information"
     schools: "Schools"
     organisation: "Organisation"
     edit: "Edit"

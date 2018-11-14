@@ -181,6 +181,8 @@ Rails.application.routes.draw do
       match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
       match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
 
+      get 'devices/:id/show_hw_info' => 'devices#show_hw_info', :as => 'show_hw_info'
+
       resources :devices
 
       match( 'devices/:id/revoke_certificate' => 'devices#revoke_certificate',
