@@ -23,6 +23,7 @@ class Device < Host
   ldap_map :puavoPrinterDeviceURI,         :printer_device_uri
   ldap_map :puavoPrinterQueue,             :printer_queue_dns,        LdapConverters::ArrayValue
   ldap_map :puavoSchool,                   :school_dn
+  ldap_map :puavoDeviceHWInfo,             :hw_info
 
   def self.ldap_base
     "ou=Devices,ou=Hosts,#{ organisation["base"] }"
@@ -473,6 +474,44 @@ class Devices < PuavoSinatra
   #   json device
   # end
 
+  # Hardware info receiver
+  post '/v3/devices/:hostname/sysinfo' do
+    auth :basic_auth, :server_auth, :legacy_server_auth
+
+    puts params.inspect
+
+    unless params[:file] && params[:file][:tempfile]
+      return 'No file uploaded, nothing done'
+    end
+
+    begin
+      raw = params[:file][:tempfile].read()
+      data = JSON.parse(raw)
+
+      puts data
+
+      # Do some basic sanity checking on the data
+      unless data['timestamp'] && data['this_image'] && data['this_release']
+        return 'Received data failed basic sanity checks'
+      end
+
+      # Strip network info; we don't need it and it can contain sensitive information
+      data.delete('network_interfaces') if data.include?('network_inferfaces')
+
+      device = Device.by_hostname!(params["hostname"])
+      device.hw_info = json(data)
+      device.save!
+
+      'OK'
+    rescue NotFound => e
+      puts e
+      "You don't exist."
+    rescue StandardError => e
+      puts e
+      'Error'
+    end
+  end
+
   post "/v3/devices/:hostname" do
     auth :basic_auth, :kerberos
     device = Device.by_hostname!(params["hostname"])
@@ -480,8 +519,6 @@ class Devices < PuavoSinatra
     device.save!
     json device
   end
-
-
 
   get "/v3/devices" do
     auth :basic_auth, :server_auth, :kerberos
