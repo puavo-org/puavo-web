@@ -91,19 +91,22 @@
   <td colspan="2"><%= @info['wifi'] || '?' %></td>
 </tr>
 
+<!-- Product -->
+
+<tr class="sectionEnd">
+  <th class="main">Tuotenimi</th>
+  <td colspan="2"><%= @info['productname'] || '?' %></td>
+</tr>
+
 <!-- BIOS -->
 
 <tr>
-  <th class="main" rowspan="5">BIOS</th>
+  <th class="main" rowspan="4">BIOS</th>
 </tr>
 
 <tr>
   <th>Valmistaja</th>
   <td><%= @info['bios_vendor'] || '?' %></td>
-</tr>
-<tr>
-  <th>Tuotenimi</th>
-  <td><%= @info['productname'] || '?' %></td>
 </tr>
 <tr>
   <th>Versio</th>
