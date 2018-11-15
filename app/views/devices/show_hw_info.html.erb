@@ -74,7 +74,7 @@
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.hard_drive.title') %></th>
   <td colspan="2">
-    <% if @info['blockdevice_sda_mxodel'] %>
+    <% if @info['blockdevice_sda_model'] %>
     <%= @info['blockdevice_sda_model'] || '?' %>,
     <%= ((@info['blockdevice_sda_size'].to_f || 0.0) / (1024.0 * 1024.0 * 1024.0)).to_i %> GiB
     <% if @info['ssd'] == "1" %>[SSD]<% end %>
