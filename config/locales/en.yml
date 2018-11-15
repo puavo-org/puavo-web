@@ -204,6 +204,7 @@ en:
     server_updated: "Server was successfully updated."
     printer_permissions_updated: "Printing permissions updated."
     invalid_school_id: "The school ID is not valid."
+    invalid_user_id: "The user ID %{id} is not valid."
     invalid_group_id: "The group ID %{id} on is not valid."
     unknown_device_type: Unknown device type
     set_install_mode: "Certificate removed, device now in install mode"

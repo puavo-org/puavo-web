@@ -70,7 +70,13 @@ class UsersController < ApplicationController
   # GET /:school_id/users/1
   # GET /:school_id/users/1.xml
   def show
-    @user = User.find(params[:id])
+    begin
+      @user = User.find(params[:id])
+    rescue ActiveLdap::EntryNotFound => e
+      flash[:alert] = t('flash.invalid_user_id', :id => params[:id])
+      redirect_to users_path(@school)
+      return
+    end
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = User.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
