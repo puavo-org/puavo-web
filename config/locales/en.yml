@@ -148,7 +148,9 @@ en:
     cancel: "Cancel"
     destroy: Remove
     new_group: New group
+    find_groupless_users: "Find groupless users"
     create_username_list_from_group: "Create a new username list from members"
+    get_members_as_csv: "Download member list as CSV"
     mark_group_members_for_deletion: "Mark all members for later deletion"
     unmark_group_members_deletion: "Remove deletion mark from all members"
     update: Update
@@ -767,6 +769,7 @@ en:
         puavoAutomaticImageUpdates: Automatic image updates
         puavoPersonallyAdministered: Personally administered
         puavoImageSeriesSourceURL: Image series source URL
+        puavoDeviceHWInfo: Hardware info updated
       server:
         puavoDeviceType: Device type
         puavoHostname: Hostname
@@ -996,6 +999,8 @@ en:
       cups_settings: CUPS settings
     show:
       change_school: Change school
+      hw_info_button: "Show hardware info..."
+      no_hw_info: "(Unknown/Never)"
     select_school:
       title: Device transfer (%{name})
       select_new_school: Select the new school

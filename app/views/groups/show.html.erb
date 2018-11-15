@@ -140,7 +140,7 @@
       <% if current_user.organisation_owner? %>
       <li>
         <%= link_to get_members_as_csv_path(@school, @group), method: :get do %>
-          <i class="icon-download"></i>Lataa ryhmän käyttäjälista CSV:nä
+          <i class="icon-download"></i><%= t('link.get_members_as_csv') %>
         <% end %>
       </li>
       <% end %>

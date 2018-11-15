@@ -121,7 +121,9 @@ fi:
     cancel: "Peruuta"
     destroy: Poista
     new_group: "Uusi ryhmä"
+    find_groupless_users: "Etsi ryhmättömät käyttäjät"
     create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
+    get_members_as_csv: "Lataa ryhmän käyttäjälista CSV:nä"
     mark_group_members_for_deletion: "Merkitse kaikki jäsenet poistettavaksi"
     unmark_group_members_deletion: "Poista kaikkien jäsenien poistomerkintä"
     update: "Päivitä tiedot"
@@ -966,6 +968,8 @@ fi:
       cups_settings: CUPS-asetukset
     show:
       change_school: Vaihda koulua
+      hw_info_button: "Näytä laitteistotiedot..."
+      no_hw_info: "(Tuntematon/Ei koskaan)"
     select_school:
       title: "Laitteen (%{name}) siirtäminen toiseen kouluun"
       select_new_school: Valitse uusi koulu

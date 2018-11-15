@@ -106,11 +106,11 @@
   <td>
   <% if @device.puavoDeviceHWInfo %>
   <%= Time.at(JSON.parse(@device.puavoDeviceHWInfo)["timestamp"]).localtime %>
-  <%= link_to show_hw_info_path(@school, @device), class: 'btn' do%>
-  Näytä laitteistotiedot
+  <%= link_to show_hw_info_path(@school, @device), class: 'btn' do %>
+  <%= t('devices.show.hw_info_button') %>
   <% end %>
   <% else %>
-  (Tuntematon/Ei koskaan)
+  <%= t('devices.show.no_hw_info') %>
   <% end %>
   </td>
 </tr>
