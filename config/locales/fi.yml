@@ -1092,3 +1092,44 @@ fi:
     hours: "%{h} tuntia sitten"
     day: "päivä sitten"
     days: "%{d} päivää sitten"
+  hwinfo:
+    title: "Laitteen %{name} laitetiedot"
+    back_button: "Takaisin laitteen sivulle"
+    received_timestamp: "Tiedot vastaanotettu"
+    raw_data: "Raakadata"
+    image:
+      name: "Päätekuva"
+      release: "Julkaisu"
+      kernel: "Kernel"
+    cpu:
+      title: "Prosessori"
+      cores: "Ytimiä"
+      name: "Nimi"
+    memory:
+      title: "Muisti"
+      total: "Yhteensä"
+      modules:
+        title: "Muistipaikat"
+        size: "Koko"
+        slot: "Paikka"
+        product: "Tuotenimi"
+        vendor: "Valmistaja"
+        empty: "(tyhjä)"
+    hard_drive:
+      title: "Kiintolevy"
+      none: "(Ei kiintolevyä)"
+    wifi:
+      title: "WiFi"
+    product:
+      title: "Tuotenimi"
+    bios:
+      title: "BIOS"
+      vendor: "Valmistaja"
+      version: "Versio"
+      date: "Päiväys"
+    serial:
+      title: "Sarjanumerot"
+      device: "Laite"
+      mainboard: "Emolevy"
+    lspci:
+      title: "LSPCI-arvoja"

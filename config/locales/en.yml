@@ -1122,3 +1122,44 @@ en:
     hours: "%{h} hours ago"
     day: "a day ago"
     days: "%{d} days ago"
+  hwinfo:
+    title: "Hardware information for %{name}"
+    back_button: "Back to device page"
+    received_timestamp: "Data received"
+    raw_data: "Raw data"
+    image:
+      name: "Image"
+      release: "Name"
+      kernel: "Kernel"
+    cpu:
+      title: "Processor"
+      cores: "Cores"
+      name: "Name"
+    memory:
+      title: "Memory"
+      total: "Total"
+      modules:
+        title: "Memory modules"
+        size: "Size"
+        slot: "Slot"
+        product: "Product"
+        vendor: "Vendor"
+        empty: "(empty)"
+    hard_drive:
+      title: "Hard drive"
+      none: "(No hard drive)"
+    wifi:
+      title: "WiFi"
+    product:
+      title: "Product name"
+    bios:
+      title: "BIOS"
+      vendor: "vendor"
+      version: "Version"
+      date: "Date"
+    serial:
+      title: "Serial numbers"
+      device: "Machine"
+      mainboard: "Mainboard"
+    lspci:
+      title: "Some LSPCI values"
