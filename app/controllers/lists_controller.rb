@@ -23,6 +23,18 @@ class ListsController < ApplicationController
     end
 
     @lists.each do |li|
+      missing_users = false
+
+      li.users.each do |u|
+        unless @users_by_id.include?(u)
+          missing_users = true
+          break
+        end
+      end
+
+      # don't try to sort broken lists
+      next if missing_users
+
       li.users.sort! do |u_a, u_b|
         (@users_by_id[u_a].givenName + @users_by_id[u_a].sn).downcase <=>
         (@users_by_id[u_b].givenName + @users_by_id[u_b].sn).downcase
