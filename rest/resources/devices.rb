@@ -498,6 +498,10 @@ class Devices < PuavoSinatra
       # Strip network info; we don't need it and it can contain sensitive information
       data.delete('network_interfaces') if data.include?('network_inferfaces')
 
+      # We can't assume the source device's clock is correct, but we can assume
+      # the server's clock is. Replace the timestamp.
+      data['timestamp'] = Time.now.to_i
+
       device = Device.by_hostname!(params["hostname"])
       device.hw_info = json(data)
       device.save!
