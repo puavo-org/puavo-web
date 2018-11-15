@@ -58,6 +58,7 @@ Rails.application.routes.draw do
       match 'groups/:id/delete_all_group_members' => 'groups#delete_all_group_members', :as => "delete_all_group_members", :via => :delete
       match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get
+      get 'groups/:id/get_members_as_csv' => 'groups#get_members_as_csv', :as => :get_members_as_csv
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
 
       put 'groups/:id/add_role/:role_id' => 'groups#add_role'

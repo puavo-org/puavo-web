@@ -1,4 +1,5 @@
 require 'list'
+require 'csv'
 
 class GroupsController < ApplicationController
 
@@ -248,6 +249,26 @@ class GroupsController < ApplicationController
     respond_to do |format|
       format.html { render :action => "groupless_users" }
     end
+  end
+
+  # GET /:school_id/groups/:group_id/get_members_as_csv
+  def get_members_as_csv
+    @group = Group.find(params[:id])
+
+    output = CSV.generate(:headers => true, :force_quotes => true) do |csv|
+      csv << ['puavoid', 'username', 'firstname', 'lastname']
+
+      @group.members.each do |m|
+        csv << [m.id, m.uid, m.givenName, m.surname]
+      end
+    end
+
+    filename = "#{current_organisation.organisation_key}_#{@group.cn}_members_#{Time.now.strftime("%Y%m%d_%H%M%S")}.csv"
+
+    send_data(output,
+              :filename => filename,
+              :type => 'text/csv',
+              :disposition => 'attachment' )
   end
 
   def add_user

@@ -137,6 +137,14 @@
       </li>
 
       <% if @group.members.count > 0 %>
+      <% if current_user.organisation_owner? %>
+      <li>
+        <%= link_to get_members_as_csv_path(@school, @group), method: :get do %>
+          <i class="icon-download"></i>Lataa ryhmän käyttäjälista CSV:nä
+        <% end %>
+      </li>
+      <% end %>
+
       <li>
         <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('group_username_list_confirm') }, method: :put do %>
           <i class="icon-plus"></i><%= t('link.create_username_list_from_group') %>
