@@ -1136,4 +1136,6 @@ fi:
       device: "Laite"
       mainboard: "Emolevy"
     lspci:
-      title: "LSPCI-arvoja"
+      title: "lspci -arvoja"
+    lsusb:
+      title: "lsusb"

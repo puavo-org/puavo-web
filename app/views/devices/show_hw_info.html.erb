@@ -132,13 +132,24 @@
   <td><%= @info['boardserialnumber'] || '?' %></td>
 </tr>
 
-<!-- LSPCI values -->
+<!-- lspci values -->
 
-<tr>
+<tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.lspci.title') %></th>
   <td colspan="2">
     <% Array(@info['lspci_values'] || []).each do |lspci| %>
       <%= lspci %><br>
+    <% end %>
+  </td>
+</tr>
+
+<!-- lsusb values -->
+
+<tr>
+  <th class="main"><%= t('hwinfo.lsusb.title') %></th>
+  <td colspan="2">
+    <% Array(@info['lsusb_values'] || []).each do |lsusb| %>
+      <%= lsusb %><br>
     <% end %>
   </td>
 </tr>
