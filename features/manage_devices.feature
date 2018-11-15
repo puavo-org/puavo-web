@@ -175,4 +175,4 @@ Feature: Manage devices
 
   Scenario: Device page of a non-existent school
     Given I am on the device page of a non-existent school
-    Then I should see "The school ID is invalid."
+    Then I should see "The school ID is not valid."

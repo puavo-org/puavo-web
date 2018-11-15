@@ -35,7 +35,13 @@ class DevicesController < ApplicationController
   # GET /devices/1.xml
   # GET /devices/1.json
   def show
-    @device = Device.find(params[:id])
+    begin
+      @device = Device.find(params[:id])
+    rescue ActiveLdap::EntryNotFound => e
+      flash[:alert] = t('flash.invalid_device_id', :id => params[:id])
+      redirect_to devices_path(@school)
+      return
+    end
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = Device.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])

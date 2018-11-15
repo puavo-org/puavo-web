@@ -179,6 +179,7 @@ fi:
     invalid_school_id: "Koulun ID on virheellinen."
     invalid_user_id: "Käyttäjä-ID %{id} on virheellinen."
     invalid_group_id: "Ryhmän ID %{id} on virheellinen."
+    invalid_device_id: "Laitteen ID %{id} on virheellinen."
     unknown_device_type: Tuntematon laitetyyppi
     set_install_mode: "Sertifikaatti poistettu, laite asennustilassa"
     set_install_mode_server: "Sertifikaatti poistettu, palvelin asennustilassa"
