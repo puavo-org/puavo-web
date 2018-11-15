@@ -30,6 +30,9 @@ class MySchoolUsers < PuavoSinatra
       # list only students
       next unless (u.user_type || '').include?('student')
 
+      # don't show students who have been marked for deletion
+      next unless u.removal_request_time.nil?
+
       u_data = {
         first: u.first_name,
         last: u.last_name,
