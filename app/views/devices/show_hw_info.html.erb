@@ -28,10 +28,7 @@
 <!-- CPU -->
 
 <tr>
-  <th class="main" rowspan="3"><%= t('hwinfo.cpu.title') %></th>
-</tr>
-
-<tr>
+  <th class="main" rowspan="2"><%= t('hwinfo.cpu.title') %></th>
   <th><%= t('hwinfo.cpu.cores') %></th>
   <td><%= @info['processorcount'] || '?' %></td>
 </tr>
@@ -44,13 +41,11 @@
 <!-- Memory -->
 
 <tr>
-  <th class="main" rowspan="3"><%= t('hwinfo.memory.title') %></th>
-</tr>
-
-<tr>
+  <th class="main" rowspan="2"><%= t('hwinfo.memory.title') %></th>
   <th><%= t('hwinfo.memory.total') %></th>
   <td><%= (@info['memorysize_mb'] || '0').to_i %> MiB</td>
 </tr>
+
 <tr class="sectionEnd">
   <th><%= t('hwinfo.memory.modules.title') %></th>
   <td>
@@ -101,13 +96,11 @@
 <!-- BIOS -->
 
 <tr>
-  <th class="main" rowspan="4"><%= t('hwinfo.bios.title') %></th>
-</tr>
-
-<tr>
+  <th class="main" rowspan="3"><%= t('hwinfo.bios.title') %></th>
   <th><%= t('hwinfo.bios.vendor') %></th>
   <td><%= @info['bios_vendor'] || '?' %></td>
 </tr>
+
 <tr>
   <th><%= t('hwinfo.bios.version') %></th>
   <td><%= @info['bios_version'] || '?' %></td>
@@ -120,13 +113,11 @@
 <!-- Serial numbers -->
 
 <tr>
-  <th class="main" rowspan="3"><%= t('hwinfo.serial.title') %></th>
-</tr>
-
-<tr>
+  <th class="main" rowspan="2"><%= t('hwinfo.serial.title') %></th>
   <th><%= t('hwinfo.serial.device') %></th>
   <td><%= @info['serialnumber'] || '?' %></td>
 </tr>
+
 <tr class="sectionEnd">
   <th><%= t('hwinfo.serial.mainboard') %></th>
   <td><%= @info['boardserialnumber'] || '?' %></td>
