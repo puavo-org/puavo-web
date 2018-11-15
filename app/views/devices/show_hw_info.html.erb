@@ -57,9 +57,9 @@
     <% Array(@info['memory'] || []).each_with_index do |mem, index| %>
     <%= index + 1 %>:
     <% if mem['size'].to_i > 0 %>
-    <strong><%= t('hwinfo.memory.modules.size') %>:</strong> <%= mem['size'] %> MiB;&nbsp;
-    <strong><%= t('hwinfo.memory.modules.slot') %>:</strong> <%= mem['slot'] %>;&nbsp;
-    <strong><%= t('hwinfo.memory.modules.product') %>:</strong> <%= mem['product'] %>;&nbsp;
+    <strong><%= t('hwinfo.memory.modules.size') %>:</strong> <%= mem['size'] %> MiB
+    <strong><%= t('hwinfo.memory.modules.slot') %>:</strong> <%= mem['slot'] %>
+    <strong><%= t('hwinfo.memory.modules.product') %>:</strong> <%= mem['product'] %>
     <strong><%= t('hwinfo.memory.modules.vendor') %>:</strong> <%= mem['vendor'] %>
     <% else %>
     <%= t('hwinfo.memory.modules.empty') %>
