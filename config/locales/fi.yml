@@ -176,7 +176,8 @@ fi:
     server_created: "Palvelin luotiin onnistuneesti"
     server_updated: "Palvelin päivitettiin onnistuneesti"
     printer_permissions_updated: "Tulostusoikeudet päivitetty!"
-    invalid_school_id: "Koulun ID on virheellinen!"
+    invalid_school_id: "Koulun ID on virheellinen."
+    invalid_group_id: "Ryhmän ID %{id} on virheellinen."
     unknown_device_type: Tuntematon laitetyyppi
     set_install_mode: "Sertifikaatti poistettu, laite asennustilassa"
     set_install_mode_server: "Sertifikaatti poistettu, palvelin asennustilassa"

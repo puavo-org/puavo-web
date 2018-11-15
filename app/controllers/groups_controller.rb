@@ -41,7 +41,13 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups/1
   # GET /:school_id/groups/1.xml
   def show
-    @group = Group.find(params[:id])
+    begin
+      @group = Group.find(params[:id])
+    rescue ActiveLdap::EntryNotFound => e
+      flash[:alert] = t('flash.invalid_group_id', :id => params[:id])
+      redirect_to groups_path(@school)
+      return
+    end
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = Group.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
