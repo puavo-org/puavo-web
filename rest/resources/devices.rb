@@ -496,7 +496,7 @@ class Devices < PuavoSinatra
       end
 
       # Strip network info; we don't need it and it can contain sensitive information
-      data.delete('network_interfaces') if data.include?('network_inferfaces')
+      data.delete('network_interfaces')
 
       # We can't assume the source device's clock is correct, but we can assume
       # the server's clock is. Replace the timestamp.
