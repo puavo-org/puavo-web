@@ -469,6 +469,19 @@ Feature: Manage users
     And I press "Create"
     Then I should see "The email address is not valid."
 
+  Scenario: Email addresses are trimmed
+    Given I am on the new user page
+    When I fill in the following:
+    | Surname        | Donald                  |
+    | Given name     | Duck                    |
+    | Username       | donald.duck             |
+    And I fill in "Email" with " donald.duck@calisota.us "
+    And I check "Class 4"
+    And I check "Student"
+    And I press "Create"
+    Then I should see "User was successfully created."
+    And I should see "donald.duck@calisota.us"
+
 # FIXME
 #  @allow-rescue
 #  Scenario: Get user infromation in JSON from wrong school

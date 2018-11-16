@@ -310,6 +310,8 @@ class User < LdapBase
 
     if !self.mail.nil? && !self.mail.empty?
       Array(self.mail).each do |m|
+        m.strip!
+
         # There are (supposedly) checks that validate email addresses... but they don't
         # seem to work. So... just brute-force it.
         # Regex taken from https://www.regular-expressions.info/email.html
