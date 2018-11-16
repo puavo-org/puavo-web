@@ -196,9 +196,7 @@ class User < LdapModel
 
     self.login_shell = '/bin/bash'
 
-    if reverse_name.nil? then
-      self.reverse_name = "#{ last_name } #{ first_name }"
-    end
+    self.reverse_name = "#{ last_name } #{ first_name }"
 
     if locked.nil? then
       self.locked = false

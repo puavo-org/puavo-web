@@ -482,6 +482,24 @@ Feature: Manage users
     Then I should see "User was successfully created."
     And I should see "donald.duck@calisota.us"
 
+  Scenario: Reverse name is updated
+    Given the following users:
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
+      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
+    Then I am on the show user page with "donald"
+    And I should see "Donald Duck"
+    And I should see "Duck Donald"
+    #
+    When I follow "Edit"
+    Then I am on the edit user page with "donald"
+    And I fill in "Given name" with "Duck"
+    And I fill in "Surname" with "Donald"
+    And I fill in "Username" with "duck.donald"
+    And I press "Update"
+    Then I should see "User was successfully updated."
+    And I should see "Duck Donald"
+    And I should see "Donald Duck"
+
 # FIXME
 #  @allow-rescue
 #  Scenario: Get user infromation in JSON from wrong school

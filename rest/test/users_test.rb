@@ -94,6 +94,7 @@ describe PuavoRest::Users do
       assert_equal "bob", data["username"]
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
+      assert_equal "Brown Bob", data["reverse_name"]
       assert_equal "bob@example.com", data["email"]
       assert_includes data["secondary_emails"], "bob@foobar.com"
       assert_includes data["secondary_emails"], "bob@helloworld.com"
@@ -212,6 +213,22 @@ describe PuavoRest::Users do
       assert_equal "bob", data["username"]
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
+    end
+
+    it "reverse name is updated if user's name is changed" do
+      @user.givenName = "Brown"
+      @user.sn = "Bob"
+      @user.save!
+
+      basic_authorize "bob", "secret"
+      get "/v3/users/_by_id/#{ @user.puavoId }"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "bob", data["username"]
+      assert_equal "Brown", data["first_name"]
+      assert_equal "Bob", data["last_name"]
+      assert_equal "Bob Brown", data["reverse_name"]
     end
 
     it "whitespace in email addresses is really removed" do
