@@ -17,7 +17,7 @@
   </tr>
 
 <% if current_user.organisation_owner? %>
-  <tr>
+  <tr class="ownersOnly">
     <td><%= f.label :puavoExternalId %></td>
     <td><%= f.text_field :puavoExternalId %></td>
   </tr>
