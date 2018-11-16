@@ -32,7 +32,7 @@ describe PuavoRest::Users do
       :uid => "bob",
       :puavoEduPersonAffiliation => "student",
       :puavoLocale => "en_US.UTF-8",
-      :mail => ["bob@example.com", "bob@foobar.com", "bob@helloworld.com"],
+      :mail => ["bob@example.com ", "             bob@foobar.com        \n\n           ", " bob@helloworld.com "],
       :role_ids => [@role.puavoId],
       :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf",
       :puavoExternalID => "bob"
@@ -95,6 +95,8 @@ describe PuavoRest::Users do
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
+      assert_includes data["secondary_emails"], "bob@foobar.com"
+      assert_includes data["secondary_emails"], "bob@helloworld.com"
       assert_equal "student", data["user_type"]
       assert_equal "en", data["preferred_language"]
       assert data["uid_number"], "has uid number"
@@ -211,10 +213,21 @@ describe PuavoRest::Users do
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
     end
+
+    it "whitespace in email addresses is really removed" do
+      @user.mail = " foo.bar@baz.com     "
+      @user.save!
+
+      basic_authorize "bob", "secret"
+      get "/v3/users/_by_id/#{ @user.puavoId }"
+      assert_200
+      data = JSON.parse(last_response.body)
+
+      assert_equal "foo.bar@baz.com", data["email"]
+    end
   end
 
   describe "GET /v3/users/bob" do
-
     it "organisation owner can see ssh_public_key of bob" do
       basic_authorize "cucumber", "cucumber"
       get "/v3/users/bob"
