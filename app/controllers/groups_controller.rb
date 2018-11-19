@@ -41,13 +41,8 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups/1
   # GET /:school_id/groups/1.xml
   def show
-    begin
-      @group = Group.find(params[:id])
-    rescue ActiveLdap::EntryNotFound => e
-      flash[:alert] = t('flash.invalid_group_id', :id => params[:id])
-      redirect_to groups_path(@school)
-      return
-    end
+    @group = get_group(params[:id])
+    return if @group.nil?
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = Group.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
@@ -78,7 +73,8 @@ class GroupsController < ApplicationController
 
   # GET /:school_id/groups/1/edit
   def edit
-    @group = Group.find(params[:id])
+    @group = get_group(params[:id])
+    return if @group.nil?
   end
 
   # POST /:school_id/groups
@@ -104,7 +100,8 @@ class GroupsController < ApplicationController
   # PUT /:school_id/groups/1
   # PUT /:school_id/groups/1.xml
   def update
-    @group = Group.find(params[:id])
+    @group = get_group(params[:id])
+    return if @group.nil?
 
     respond_to do |format|
       if @group.update_attributes(group_params)
@@ -122,7 +119,8 @@ class GroupsController < ApplicationController
   # DELETE /:school_id/groups/1
   # DELETE /:school_id/groups/1.xml
   def destroy
-    @group = Group.find(params[:id])
+    @group = get_group(params[:id])
+    return if @group.nil?
 
     respond_to do |format|
       if @group.destroy
@@ -138,7 +136,8 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/create_username_list_from_group
   def create_username_list_from_group
-    @group = Group.find(params[:id])
+    @group = get_group(params[:id])
+    return if @group.nil?
 
     if @group.members.empty?
       flash[:notice] = t('flash.group.empty_group')
@@ -167,7 +166,8 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/mark_group_members_for_deletion
   def mark_group_members_for_deletion
-    @group = Group.find(params[:id])
+    @group = get_group(params[:id])
+    return if @group.nil?
 
     if @group.members.empty?
       flash[:notice] = t('flash.group.empty_group')
@@ -197,7 +197,8 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unmark_group_members_deletion
   def unmark_group_members_deletion
-    @group = Group.find(params[:id])
+    @group = get_group(params[:id])
+    return if @group.nil?
 
     if @group.members.empty?
       flash[:notice] = t('flash.group.empty_group')
@@ -259,7 +260,8 @@ class GroupsController < ApplicationController
 
   # GET /:school_id/groups/:group_id/get_members_as_csv
   def get_members_as_csv
-    @group = Group.find(params[:id])
+    @group = get_group(params[:id])
+    return if @group.nil?
 
     output = CSV.generate(:headers => true, :force_quotes => true) do |csv|
       csv << ['puavoid', 'username', 'firstname', 'lastname']
@@ -358,6 +360,16 @@ class GroupsController < ApplicationController
     def group_params
       # arrays must be listed last due to some weird syntax thing
       return params.require(:group).permit(:displayName, :cn, :puavoExternalId, :puavoEduGroupType).to_hash
+    end
+
+    def get_group(id)
+      begin
+        return Group.find(id)
+      rescue ActiveLdap::EntryNotFound => e
+        flash[:alert] = t('flash.invalid_group_id', :id => id)
+        redirect_to groups_path(@school)
+        return nil
+      end
     end
 
 end

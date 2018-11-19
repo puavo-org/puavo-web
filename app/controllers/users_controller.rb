@@ -70,13 +70,8 @@ class UsersController < ApplicationController
   # GET /:school_id/users/1
   # GET /:school_id/users/1.xml
   def show
-    begin
-      @user = User.find(params[:id])
-    rescue ActiveLdap::EntryNotFound => e
-      flash[:alert] = t('flash.invalid_user_id', :id => params[:id])
-      redirect_to users_path(@school)
-      return
-    end
+    @user = get_user(params[:id])
+    return if @user.nil?
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = User.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
@@ -119,7 +114,9 @@ class UsersController < ApplicationController
 
   # GET /:school_id/users/1/edit
   def edit
-    @user = User.find(params[:id])
+    @user = get_user(params[:id])
+    return if @user.nil?
+
     @groups = @school.groups
     @roles = @school.roles
     @user_roles =  @user.roles || []
@@ -168,7 +165,9 @@ class UsersController < ApplicationController
   # PUT /:school_id/users/1
   # PUT /:school_id/users/1.xml
   def update
-    @user = User.find(params[:id])
+    @user = get_user(params[:id])
+    return if @user.nil?
+
     @groups = @school.groups
     @roles = @school.roles
     @user_roles =  @user.roles || []
@@ -221,7 +220,8 @@ class UsersController < ApplicationController
   # DELETE /:school_id/users/1
   # DELETE /:school_id/users/1.xml
   def destroy
-    @user = User.find(params[:id])
+    @user = get_user(params[:id])
+    return if @user.nil?
 
     if @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
@@ -524,4 +524,15 @@ class UsersController < ApplicationController
         return (h == 1) ? t('fuzzy_time.day') : t('fuzzy_time.days', :d => d)
       end
     end
+
+    def get_user(id)
+      begin
+        return User.find(id)
+      rescue ActiveLdap::EntryNotFound => e
+        flash[:alert] = t('flash.invalid_user_id', :id => id)
+        redirect_to users_path(@school)
+        return nil
+      end
+    end
+
 end

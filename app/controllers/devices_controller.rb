@@ -35,13 +35,8 @@ class DevicesController < ApplicationController
   # GET /devices/1.xml
   # GET /devices/1.json
   def show
-    begin
-      @device = Device.find(params[:id])
-    rescue ActiveLdap::EntryNotFound => e
-      flash[:alert] = t('flash.invalid_device_id', :id => params[:id])
-      redirect_to devices_path(@school)
-      return
-    end
+    @device = get_device(params[:id])
+    return if @device.nil?
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = Device.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
@@ -114,7 +109,9 @@ class DevicesController < ApplicationController
 
   # GET /devices/1/edit
   def edit
-    @device = Device.find(params[:id])
+    @device = get_device(params[:id])
+    return if @device.nil?
+
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
 
     @servers = Server.all.map{ |server|  [server.puavoHostname, server.dn.to_s] }
@@ -171,7 +168,8 @@ class DevicesController < ApplicationController
   # PUT /devices/1
   # PUT /devices/1.xml
   def update
-    @device = Device.find(params[:id])
+    @device = get_device(params[:id])
+    return if @device.nil?
 
     (params["printers"] || {}).each do |printer_dn, bool|
       if bool == "true"
@@ -202,7 +200,9 @@ class DevicesController < ApplicationController
   # DELETE /devices/1
   # DELETE /devices/1.xml
   def destroy
-    @device = Device.find(params[:id])
+    @device = get_device(params[:id])
+    return if @device.nil?
+
     # FIXME, revoke certificate only if device's include certificate
     @device.revoke_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @device.destroy
@@ -215,7 +215,9 @@ class DevicesController < ApplicationController
 
   # DELETE /devices/1
   def revoke_certificate
-    @device = Device.find(params[:id])
+    @device = get_device(params[:id])
+    return if @device.nil?
+
     # FIXME, revoke certificate only if device's include certificate
     @device.revoke_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
 
@@ -383,5 +385,15 @@ class DevicesController < ApplicationController
 
     return p
   end
+
+    def get_device(id)
+      begin
+        return Device.find(id)
+      rescue ActiveLdap::EntryNotFound => e
+        flash[:alert] = t('flash.invalid_device_id', :id => id)
+        redirect_to devices_path(@school)
+        return nil
+      end
+    end
 
 end
