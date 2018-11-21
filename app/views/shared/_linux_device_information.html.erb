@@ -1,251 +1,247 @@
-<% unless device.classes.include?('puavoServer')  %>
-<div class="content-box">
-<%end%>
-<h3><%= title(device) %></h3>
-<table class="widelist">
-<tr>
-  <td class="label_td view"><%= label "dn", "dn" %></td>
-  <td class="value_td device_dn"><%=h device.dn %></td>
-</tr>
+<%= start_box title(device) %>
+  <table>
+    <tr>
+      <th><%= t("activeldap.attributes.device.dn") %></th>
+      <td class="device_dn"><%= h device.dn %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceManufacturer" %></td>
-  <td class="value_td"><%=h device.puavoDeviceManufacturer %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceManufacturer") %></th>
+      <td><%= h device.puavoDeviceManufacturer %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceModel" %></td>
-  <td class="value_td"><%=h device.puavoDeviceModel %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceModel") %></th>
+      <td><%= h device.puavoDeviceModel %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "serialNumber" %></td>
-  <td class="value_td"><%=h device.serialNumber %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.serialNumber") %></th>
+      <td><%= h device.serialNumber %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "macAddress" %></td>
-  <td class="value_td">
-    <%= multiple_value(device.macAddress) %>
-  </td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.macAddress") %></th>
+      <td><%= multiple_value(device.macAddress) %></td>
+    </tr>
 
-<% if device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "ipHostNumber" %></td>
-  <td class="value_td"><%=h device.ipHostNumber %></td>
-</tr>
-<% end %>
+    <% if device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.ipHostNumber") %></th>
+      <td><%= h device.ipHostNumber %></td>
+    </tr>
+    <% end %>
 
-<% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "primary_user_uid" %></td>
-  <td class="value_td"><%=h link_to_user_by_dn(device.puavoDevicePrimaryUser) %></td>
-</tr>
-<% end %>
+    <% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.primary_user_uid") %></th>
+      <td><%= h link_to_user_by_dn(device.puavoDevicePrimaryUser) %></td>
+    </tr>
+    <% end %>
 
-<% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceBootMode" %></td>
-  <td class="value_td"><%=h t("shared.boot_mode_#{device.puavoDeviceBootMode}") %></td>
-</tr>
-<% end %>
+    <% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceBootMode") %></th>
+      <td><%= h t("shared.boot_mode_#{device.puavoDeviceBootMode}") %></td>
+    </tr>
+    <% end %>
 
-<% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPrinterDeviceURI" %></td>
-  <td class="value_td"><%=h device.puavoPrinterDeviceURI %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPrinterPPD" %></td>
-  <td class="value_td"><%=h model_name_from_ppd(device.puavoPrinterPPD) %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDefaultPrinter" %></td>
-  <td class="value_td"><%=h device.puavoDefaultPrinter %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceDefaultAudioSource" %></td>
-  <td class="value_td"><%=h device.puavoDeviceDefaultAudioSource %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceDefaultAudioSink" %></td>
-  <td class="value_td"><%=h device.puavoDeviceDefaultAudioSink %></td>
-</tr>
+    <% unless device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPrinterDeviceURI") %></th>
+      <td><%= h device.puavoPrinterDeviceURI %></td>
+    </tr>
 
-<% if device.class == Device %>
-  <%= render :partial => 'shared/allow_guest_and_personal_device', :locals => { :object => device } %>
-<% end %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPrinterPPD") %></th>
+      <td><%= h model_name_from_ppd(device.puavoPrinterPPD) %></td>
+    </tr>
 
-<% if ["laptop", "wirelessaccesspoint"].include?(device.puavoDeviceType) %>
-  <%= render :partial => 'shared/automatic_image_updates', :locals => { :object => device } %>
-<% end %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDefaultPrinter") %></th>
+      <td><%= h device.puavoDefaultPrinter %></td>
+    </tr>
 
-<% if device.puavoDeviceType == "laptop" %>
-  <tr>
-    <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPersonallyAdministered" %></td>
-    <td class="value_td"><%= translate_boolean_value(device.puavoPersonallyAdministered) %></td>
-  </tr>
-<% end %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceDefaultAudioSource") %></th>
+      <td><%=h device.puavoDeviceDefaultAudioSource %></td>
+    </tr>
 
-<% end %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceDefaultAudioSink") %></th>
+      <td><%= h device.puavoDeviceDefaultAudioSink %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label_tag t('ldap_create_time') %></td>
-  <td class="value_td"><%= h device['createTimestamp'].nil? ? '?' : device['createTimestamp'].localtime %></tr>
-</tr>
+    <% if device.class == Device %>
+      <%= render :partial => 'shared/allow_guest_and_personal_device', :locals => { :object => device } %>
+    <% end %>
 
-<tr>
-  <td class="label_td view"><%= label_tag t('ldap_modify_time')  %></td>
-  <td class="value_td"><%= h device['modifyTimestamp'].nil? ? '?' : device['modifyTimestamp'].localtime %></tr>
-</tr>
+    <% if ["laptop", "wirelessaccesspoint"].include?(device.puavoDeviceType) %>
+      <%= render :partial => 'shared/automatic_image_updates', :locals => { :object => device } %>
+    <% end %>
 
-<% if ['laptop', 'fatclient'].include?(device.puavoDeviceType) %>
-<tr>
-  <td><%= label device.class.to_s.downcase, :puavoDeviceHWInfo %></td>
-  <td>
-  <% if @device.puavoDeviceHWInfo %>
-  <%= Time.at(JSON.parse(@device.puavoDeviceHWInfo)["timestamp"]).localtime %>
-  <%= link_to show_hw_info_path(@school, @device), class: 'btn' do %>
-  <%= t('devices.show.hw_info_button') %>
-  <% end %>
-  <% else %>
-  <%= t('devices.show.no_hw_info') %>
-  <% end %>
-  </td>
-</tr>
-<% end %>
+    <% if device.puavoDeviceType == "laptop" %>
+      <tr>
+        <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPersonallyAdministered") %></th>
+        <td><%= translate_boolean_value(device.puavoPersonallyAdministered) %></td>
+      </tr>
+    <% end %>
+    <% end %>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "description" %></td>
-  <td class="value_td markdown"><%= html_escape(device.description.to_s) %></td>
-</tr>
-</table>
-</div>
+    <tr>
+      <th><%= t('ldap_create_time') %></th>
+      <td><%= h device['createTimestamp'].nil? ? '?' : device['createTimestamp'].localtime %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('ldap_modify_time') %></th>
+      <td><%= h device['modifyTimestamp'].nil? ? '?' : device['modifyTimestamp'].localtime %></td>
+    </tr>
+
+    <% if ['laptop', 'fatclient'].include?(device.puavoDeviceType) %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceHWInfo") %></th>
+      <td>
+      <% if @device.puavoDeviceHWInfo %>
+      <%= Time.at(JSON.parse(@device.puavoDeviceHWInfo)["timestamp"]).localtime %><br>
+      <%= link_to show_hw_info_path(@school, @device), class: 'btn' do %>
+      <%= t('devices.show.hw_info_button') %>
+      <% end %>
+      <% else %>
+      <%= t('devices.show.no_hw_info') %>
+      <% end %>
+      </td>
+    </tr>
+    <% end %>
+
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.description") %></th>
+      <td><%= html_escape(device.description.to_s) %></td>
+    </tr>
+  </table>
+<%= end_box %>
 
 <% unless device.classes.include?('puavoServer') || device.classes.include?('puavoPrinter') || device.classes.include?('puavoOtherDevice') %>
-<div class="content-box">
-  <h3><%= t('shared.autopoweroff') %></h3>
-  <table class="widelist">
+<%= start_box t('shared.autopoweroff') %>
+  <table>
     <%= render :partial => 'shared/auto_power_off_settings', :locals => { :object => device } %>
   </table>
-</div>
+<%= end_box %>
 <% end %>
 
 <%= render :partial => 'shared/purchase_information', :locals => { :device => device} %>
 
-<div class="content-box">
-<h3><%= t('shared.location') %></h3>
+<%= start_box t('shared.location') %>
+  <table>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoLocationName") %></th>
+      <td><%= h device.puavoLocationName %></td>
+    </tr>
 
-<table class="widelist">
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLocationName" %></td>
-  <td class="value_td"><%=h device.puavoLocationName %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLatitude" %></td>
-  <td class="value_td"><%=h device.puavoLatitude %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoLatitude") %></th>
+      <td><%= h device.puavoLatitude %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoLongitude" %></td>
-  <td class="value_td"><%=h device.puavoLongitude %></td>
-</tr>
-</table>
-</div>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoLongitude") %></th>
+      <td><%= h device.puavoLongitude %></td>
+    </tr>
+  </table>
+<%= end_box %>
+
 <% if (device.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (device.classes.count + 3) %>
-<div class="content-box">
-<h3><%= t('shared.display_settings') %></h3>
+<%= start_box t('shared.display_settings') %>
+  <table>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceXserver") %></th>
+      <td><%= h device.puavoDeviceXserver %></td>
+    </tr>
 
-<table class="widelist">
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXserver" %></td>
-  <td class="value_td"><%=h device.puavoDeviceXserver %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceXrandr") %></th>
+      <td><%= safe_join(Array(device.puavoDeviceXrandr), "<br>".html_safe) %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandr" %></td>
-  <td class="value_td"><%= safe_join(Array(device.puavoDeviceXrandr), "<br>".html_safe) %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceXrandrDisable") %></th>
+      <td><%= h t(".xrandr_status_#{device.puavoDeviceXrandrDisable}") %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceXrandrDisable" %></td>
-  <td class="value_td"><%=h t(".xrandr_status_#{device.puavoDeviceXrandrDisable}") %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceResolution") %></th>
+      <td><%= h device.puavoDeviceResolution %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceResolution" %></td>
-  <td class="value_td"><%=h device.puavoDeviceResolution %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceHorzSync") %></th>
+      <td><%= h device.puavoDeviceHorzSync %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceHorzSync" %></td>
-  <td class="value_td"><%=h device.puavoDeviceHorzSync %></td>
-</tr>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceVertRefresh") %></th>
+      <td><%= h device.puavoDeviceVertRefresh %></td>
+    </tr>
+  </table>
+<%= end_box %>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceVertRefresh" %></td>
-  <td class="value_td"><%=h device.puavoDeviceVertRefresh %></td>
-</tr>
-</table>
-</div>
-<div class="content-box">
-<h3><%= t('shared.kernel_settings') %></h3>
+<%= start_box t('shared.kernel_settings') %>
+  <table>
+    <% if device.puavoDeviceType == "laptop" %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceCurrentImage") %></th>
+      <td><%= h device.puavoDeviceCurrentImage %></td>
+    </tr>
+    <% end %>
 
-<table class="widelist">
-<% if device.puavoDeviceType == "laptop" %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceCurrentImage" %></td>
-  <td class="value_td"><%=h device.puavoDeviceCurrentImage %></td>
-</tr>
-<% end %>
-<% if ["thinclient", "fatclient", "laptop", "ltspserver"].include?(device.puavoDeviceType) %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceImage" %></td>
-  <td class="value_td"><%=h device.puavoDeviceImage %></td>
-</tr>
-<% end %>
-<% if device.puavoDeviceType == "thinclient" %>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceBootImage" %></td>
-  <td class="value_td"><%=h device.puavoDeviceBootImage %></td>
-</tr>
-  <% if current_user.organisation_owner? %>
-  <tr>
-    <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPreferredServer" %></td>
-    <td class="value_td"><%=h @preferred_server_name %></td>
-  </tr>
-  <% end %>
-<% end %>
+    <% if ["thinclient", "fatclient", "laptop", "ltspserver"].include?(device.puavoDeviceType) %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceImage") %></th>
+      <td><%= h device.puavoDeviceImage %></td>
+    </tr>
+    <% end %>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoImageSeriesSourceURL" %></td>
-  <td class="value_td">
-    <%=h value_or_default_value_by_parent(device, "puavoImageSeriesSourceURL") %>
-  </td>
-</tr>
+    <% if device.puavoDeviceType == "thinclient" %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceBootImage") %></th>
+      <td><%= h device.puavoDeviceBootImage %></td>
+    </tr>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelVersion" %></td>
-  <td class="value_td"><%=h device.puavoDeviceKernelVersion %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoDeviceKernelArguments" %></td>
-  <td class="value_td"><%=h device.puavoDeviceKernelArguments %></td>
-</tr>
+    <% if current_user.organisation_owner? %>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPreferredServer") %></th>
+      <td><%= h @preferred_server_name %></td>
+    </tr>
+    <% end %>
+    <% end %>
 
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "userCertificate" %></td>
-  <td class="value_td">
-  <% if device.userCertificate %>
-    <%= t(".certificate_status_true") %>
-  <% else %>
-    <%= t(".certificate_status_false") %>
-  <% end %>
-  </td>
-</tr>
-</table>
-</div>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoImageSeriesSourceURL") %></th>
+      <td><%= h value_or_default_value_by_parent(device, "puavoImageSeriesSourceURL") %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceKernelVersion") %></th>
+      <td><%= h device.puavoDeviceKernelVersion %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceKernelArguments") %></th>
+      <td><%= h device.puavoDeviceKernelArguments %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.userCertificate") %></th>
+      <td>
+      <% if device.userCertificate %>
+        <%= t(".certificate_status_true") %>
+      <% else %>
+        <%= t(".certificate_status_false") %>
+      <% end %>
+      </td>
+    </tr>
+  </table>
+<%= end_box %>
 
 <%= render :partial => 'shared/mountpoint', :locals => { :object => device } %>
 

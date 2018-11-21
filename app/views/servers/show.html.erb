@@ -1,52 +1,50 @@
 <% page_title t('titles.organisation'), t('titles.servers'), @server.cn %>
 
 <%= render :partial => 'shared/main_information', :locals => { :device => @server} %>
-<div class="content-box">
-  <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
 
-<div class="content-box">
-  <h3><%= t('.automounts') %></h3>
+<%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
+
+<%= start_box t('.automounts') %>
   <table>
     <tr>
-      <td class="label_td view"><%= label @server.class.to_s.downcase, "puavoExport" %></td>
-      <td class="value_td"><%= safe_join(Array(@server.puavoExport), "<br>".html_safe)  %></td>
+      <th><%= t("activeldap.attributes.#{@server.class.to_s.downcase}.puavoExport") %></th>
+      <td><%= safe_join(Array(@server.puavoExport), "<br>".html_safe)  %></td>
     </tr>
   </table>
-</div>
+<%= end_box %>
 
-  <% if not Array(@server.puavoSchool).empty? %>
-  <div class="content-box">
-    <h3><%= t('servers.school_limit.title') %></h3>
-    <table class="list widelist">
-      <tr>
-        <th><%= t('servers.school_limit.ltsp_description') %></th>
-      </tr>
-      <% @server.forced_schools.each do |status, school| %>
-      <tr>
-        <td class="value_td view">
-          <% if status %>
-            <%= link_to school.displayName, school_path(school)  %>
-          <% else %>
-            <p style="color: red;"><em><%= t('servers.school_limit.missing_school', :school => school) %></em></p>
-          <% end %>
-        </td>
-      </tr>
+<% unless Array(@server.puavoSchool).empty? %>
+<%= start_box t('servers.school_limit.title') %>
+  <h3><%= t('servers.school_limit.ltsp_description') %></h3>
+  <table>
+    <% @server.forced_schools.each do |status, school| %>
+    <tr>
+      <td>
+      <% if status %>
+        <%= link_to school.displayName, school_path(school)  %>
+      <% else %>
+        <p style="color: red;"><em><%= t('servers.school_limit.missing_school', :school => school) %></em></p>
       <% end %>
+      </td>
+      </tr>
+    <% end %>
     </table>
-  </div>
-  <% end %>
+<%= end_box %>
+<% end %>
 
 <% content_for :right do %>
-  <div>
-    <%= link_to edit_server_path(@server), class: 'btn' do %>
-    <i class="icon-pencil"></i><%= t('link.edit') %>
-    <% end %>
-  </div>
-  <% if @server.userCertificate %>
-    <div>
-      <%= link_to revoke_certificate_server_path(@server),  data: { confirm: t('general_confirm') }, method: :delete, class: 'btn btn-danger' do %>
-      <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
-      <% end %>
-    </div>
-  <% end %>
+<div>
+<%= link_to edit_server_path(@server), class: 'btn' do %>
+  <i class="icon-pencil"></i><%= t('link.edit') %>
+<% end %>
+</div>
+
+<% if @server.userCertificate %>
+<div>
+<%= link_to revoke_certificate_server_path(@server),  data: { confirm: t('general_confirm') }, method: :delete, class: 'btn btn-danger' do %>
+  <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
+<% end %>
+</div>
+<% end %>
+
 <% end %>

@@ -714,6 +714,7 @@ en:
         groups: System Groups
         dn: Bind DN
       device:
+        dn: DN
         puavoHostname: Hostname
         puavoDeviceType: Device type
         macAddress: MAC address(es)

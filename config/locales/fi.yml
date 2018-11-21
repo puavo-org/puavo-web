@@ -684,6 +684,7 @@ fi:
         groups: "Järjestelmäryhmät"
         dn: Bind DN
       device:
+        dn: DN
         puavoHostname: Verkkonimi
         puavoDeviceType: Laitteen tyyppi
         macAddress: MAC-osoite

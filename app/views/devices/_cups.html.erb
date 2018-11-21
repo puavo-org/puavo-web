@@ -1,26 +1,28 @@
-<div class="content-box">
-<h3><%= t('.cups_settings') %></h3>
+<%= start_box t('.cups_settings') %>
+  <table>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.printerDescription") %></th>
+      <td><%= h device.attributes.include?("printerDescription") ? device.printerDescription : "" %></td>
+    </tr>
 
-<table class="widelist">
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "printerDescription" %></td>
-  <td class="value_td"><%=h device.attributes.include?("printerDescription") ? device.printerDescription : "" %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "printerURI" %></td>
-  <td class="value_td"><%=h device.attributes.include?("printerURI") ? device.printerURI : "" %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "printerLocation" %></td>
-  <td class="value_td"><%=h device.attributes.include?("printerLocation") ? device.printerLocation : "" %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "printerMakeAndModel" %></td>
-  <td class="value_td"><%=h device.attributes.include?("printerMakeAndModel") ? device.printerMakeAndModel : "" %></td>
-</tr>
-<tr>
-  <td class="label_td view"><%= label device.class.to_s.downcase, "puavoPrinterCartridge" %></td>
-  <td class="value_td"><%=h device.puavoPrinterCartridge %></td>
-</tr>
-</table>
-</div>
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.printerURI") %></th>
+      <td><%= h device.attributes.include?("printerURI") ? device.printerURI : "" %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.printerLocation") %></th>
+      <td><%= h device.attributes.include?("printerLocation") ? device.printerLocation : "" %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.printerMakeAndModel") %></th>
+      <td><%= h device.attributes.include?("printerMakeAndModel") ? device.printerMakeAndModel : "" %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPrinterCartridge") %></th>
+      <td><%= h device.puavoPrinterCartridge %></td>
+    </tr>
+  </table>
+<%= end_box %>
