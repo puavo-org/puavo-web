@@ -55,81 +55,78 @@
     </td>
   </tr>
 </table>
-<div class="show_user clearfix">
-<div class="content-box">
-<h3><%= t('.contact_information') %></h3>
-<table class="user-information">
+
+<%= start_box t('.contact_information') %>
+<table>
   <tr>
-  <td class="label_td view"><%= label "user", "mail" %></td>
-  <td class="value_td"><%= Array(@user.mail).map{ |mail| mail }.join(", ") %></td>
+  <th><%= t('activeldap.attributes.user.mail') %></th>
+  <td class="noWrap"><%= Array(@user.mail).map{ |mail| mail }.join("<br>").html_safe %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "telephoneNumber" %></td>
-    <td class="value_td">
-      <%=h Array(@user.telephoneNumber).map{ |telephoneNumber| telephoneNumber }.join(", ") %>
-    </td>
+    <th><%= t('activeldap.attributes.user.telephoneNumber') %></th>
+    <td class="noWrap"><%= h Array(@user.telephoneNumber).map{ |telephoneNumber| telephoneNumber }.join("<br>").html_safe %></td>
   </tr>
 </table>
-</div>
-<div class="content-box">
-<h3><%= t('.system_information') %></h3>
-<table class="user-information">
+<%= end_box %>
+
+<%= start_box t('.system_information') %>
+<table>
   <tr>
-    <td class="label_td view"><%= label "user", "homeDirectory" %></td>
-    <td class="value_td"><%=h @user.homeDirectory %></td>
+    <th><%= t('activeldap.attributes.user.homeDirectory') %></th>
+    <td><%= h @user.homeDirectory %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "uidNumber" %></td>
-    <td class="value_td"><%=h @user.uidNumber %></tr>
+    <th><%= t('activeldap.attributes.user.uidNumber') %></th>
+    <td><%= h @user.uidNumber %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "groups" %></td>
-    <td class="value_td">
+    <th><%= t('activeldap.attributes.user.groups') %></th>
+    <td  class="noWrap">
       <span id="groups_by_roles">
       <% @user.groups.each do |g| %>
-        <%= link_to g.displayName, group_path(g.school.puavoId, g) %> (<%= g.school.displayName %>)<br />
+        <%= link_to g.displayName, group_path(g.school.puavoId, g) %> (<%= g.school.displayName %>)<br>
       <% end %>
       </span>
     </td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "puavoLocale" %></td>
-    <td class="value_td"><%=h language_by_locale(@user.puavoLocale) %></tr>
+    <th><%= t('activeldap.attributes.user.puavoLocale') %></th>
+    <td><%= h language_by_locale(@user.puavoLocale) %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "puavoAllowRemoteAccess" %></td>
-    <td class="value_td"><%=h t("activeldap.attributes.user.puavoAllowRemoteAccess_#{@user.puavoAllowRemoteAccess}") %></tr>
+    <th><%= t('activeldap.attributes.user.puavoAllowRemoteAccess') %></th>
+    <td><%= h t("activeldap.attributes.user.puavoAllowRemoteAccess_#{@user.puavoAllowRemoteAccess}") %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "puavoEduPersonReverseDisplayName" %></td>
-    <td class="value_td"><%=h @user.puavoEduPersonReverseDisplayName %></tr>
+    <th><%= t('activeldap.attributes.user.puavoEduPersonReverseDisplayName') %></th>
+    <td><%= h @user.puavoEduPersonReverseDisplayName %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label "user", "puavoEduPersonPersonnelNumber" %></td>
-    <td class="value_td"><%=h @user.puavoEduPersonPersonnelNumber %></tr>
+    <th><%= t('activeldap.attributes.user.puavoEduPersonPersonnelNumber') %></th>
+    <td><%= h @user.puavoEduPersonPersonnelNumber %></td>
   </tr>
 
   <% if current_user.organisation_owner? %>
   <tr>
-    <td class="label_td view"><%= label "user", "puavoSshPublicKey" %></td>
-    <td class="value_td"><%= fingerprint @user.puavoSshPublicKey %></tr>
+    <th><%= t('activeldap.attributes.user.puavoSshPublicKey') %></th>
+    <td><%= fingerprint @user.puavoSshPublicKey %></td>
   </tr>
   <% end %>
 
   <tr>
-    <td class="label_td view"><%= label "user", "puavoExternalId" %></td>
-    <td class="value_td"><%= h @user.puavoExternalId %></tr>
+    <th><%= t('activeldap.attributes.user.puavoExternalId') %></th>
+    <td><%= h @user.puavoExternalId %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label_tag t('.user_devices') %></td>
+    <th><%= t('.user_devices') %></th>
     <td class="value_td">
       <% @user_devices.each do |device| %>
       <%= link_to device.puavoHostname, device_path(device.school_id, device) %><br />
@@ -138,71 +135,69 @@
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label_tag t('ldap_create_time') %></td>
-    <td class="value_td"><%= h @user['createTimestamp'].nil? ? '?' : @user['createTimestamp'].localtime %></tr>
+    <th><%= t('ldap_create_time') %></th>
+    <td class="noWrap"><%= h @user['createTimestamp'].nil? ? '?' : @user['createTimestamp'].localtime %></td>
   </tr>
 
   <tr>
-    <td class="label_td view"><%= label_tag t('ldap_modify_time')  %></td>
-    <td class="value_td"><%= h @user['modifyTimestamp'].nil? ? '?' : @user['modifyTimestamp'].localtime %></tr>
+    <th><%= t('ldap_modify_time')  %></th>
+    <td class="noWrap"><%= h @user['modifyTimestamp'].nil? ? '?' : @user['modifyTimestamp'].localtime %></td>
   </tr>
 
   <% if @user.puavoRemovalRequestTime %>
-    <tr>
-      <td class="label_td view"><%= label_tag t('.marked_for_removal') %> </td>
-      <td class="value_td marked_for_deletion"><%= h @user.puavoRemovalRequestTime.localtime %></tr>
-    </tr>
+  <tr>
+    <th><%= t('.marked_for_removal') %></th>
+    <td class="marked_for_deletion noWrap"><%= h @user.puavoRemovalRequestTime.localtime %></td>
+  </tr>
   <% end %>
 </table>
-</div>
-</div>
+<%= end_box %>
+
 <% content_for :right do %>
-
 <ul class="sub-tools">
-<li>
-  <%= link_to edit_user_path(@school, @user), class: 'btn' do %>
-  <i class='icon-pencil'></i><%=t('link.edit')%>
-  <% end %>
-</li>
-<li class="tool">
-<span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
-<ul>
-<li>
-<%= link_to select_school_user_path(@school, @user) do %>
-  <i class='icon-exchange'></i><%=t('.change_school')%>
-  <% end %>
-</li>
-<li>
+  <li>
+    <%= link_to edit_user_path(@school, @user), class: 'btn' do %>
+    <i class='icon-pencil'></i><%=t('link.edit')%>
+    <% end %>
+  </li>
+  <li class="tool">
+    <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
+    <ul>
+    <li>
+      <%= link_to select_school_user_path(@school, @user) do %>
+      <i class='icon-exchange'></i><%=t('.change_school')%>
+      <% end %>
+    </li>
+    <li>
 
-<% unless @user.puavoDoNotDelete %>
+    <% unless @user.puavoDoNotDelete %>
+    <% if current_user.organisation_owner? %>
+    <li class="ownersOnly">
+      <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
+      <i class='icon-exchange'></i><%=t('.prevent_removal')%>
+      <% end %>
+    </li>
+    <% end %>
 
-<% if current_user.organisation_owner? %>
-<li class="ownersOnly">
-<%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
-  <i class='icon-exchange'></i><%=t('.prevent_removal')%>
-<% end %>
-</li>
-<% end %>
+    <li>
+    <% if @user.puavoRemovalRequestTime %>
+      <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
+      <i class='icon-exchange'></i><%=t('.unmark_for_removal')%>
+      <% end %>
+    <% else %>
+      <%= link_to mark_user_for_deletion_path(@school, @user) do %>
+      <i class='icon-exchange'></i><%=t('.mark_for_removal')%>
+      <% end %>
+    <% end %>
+    </li>
 
-<li>
-<% if @user.puavoRemovalRequestTime %>
-<%= link_to unmark_user_for_deletion_path(@school, @user) do %>
-  <i class='icon-exchange'></i><%=t('.unmark_for_removal')%>
-<% end %>
-<% else %>
-<%= link_to mark_user_for_deletion_path(@school, @user) do %>
-  <i class='icon-exchange'></i><%=t('.mark_for_removal')%>
-<% end %>
-<% end %>
-</li>
-<li>
-<%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
-  <i class='icon-trash'></i><%=t('link.destroy')%>
-<% end %>
-</li>
-<% end %>
-
-</ul>
-</li>
+    <li>
+      <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
+      <i class='icon-trash'></i><%=t('link.destroy')%>
+      <% end %>
+    </li>
+    <% end %>
+    </ul>
+  </li>
 </ul>
 <% end %>
