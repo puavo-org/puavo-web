@@ -1,115 +1,132 @@
 <% page_title t('titles.organisation') %>
 
 <h1><span><%= @organisation.o %></span></h1>
-<div class="content-box">
-<h3><%= t('.title') %></h3>
-<table>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "o" %></td>
-    <td data-title="<%=h @organisation.o %>" class="value_td"><%=h @organisation.o %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoEduOrgAbbreviation" %></td>
-    <td class="value_td"><%=h @organisation.puavoEduOrgAbbreviation %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "description" %></td>
-    <td class="value_td"><%=h @organisation.description %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "telephoneNumber" %></td>
-    <td class="value_td"><%=h @organisation.telephoneNumber %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "facsimileTelephoneNumber" %></td>
-    <td class="value_td"><%= @organisation.facsimileTelephoneNumber %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "l" %></td>
-    <td class="value_td"><%= @organisation.l %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "street" %></td>
-    <td class="value_td"><%= @organisation.street %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "postOfficeBox" %></td>
-    <td class="value_td"><%= @organisation.postOfficeBox %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "postalAddress" %></td>
-    <td class="value_td"><%= @organisation.postalAddress %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "postalCode" %></td>
-    <td class="value_td"><%= @organisation.postalCode %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "st" %></td>
-    <td class="value_td"><%= @organisation.st %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoLocale" %></td>
-    <td class="value_td">
-      <%=h language_by_locale(@organisation.puavoLocale) %><br />
-      <i><%= t("old_preferred_language", :language => @organisation.preferredLanguage) %></i>
-    </td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoTimezone" %></td>
-    <td class="value_td"><%=h humanize_timezone(@organisation.puavoTimezone) %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoKeyboardLayout" %></td>
-    <td class="value_td"><%=h @organisation.puavoKeyboardLayout %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoKeyboardVariant" %></td>
-    <td class="value_td"><%=h @organisation.puavoKeyboardVariant %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoAutomaticImageUpdates" %></td>
-    <td class="value_td"><%=h translate_boolean_value(@organisation.puavoAutomaticImageUpdates) %></td>
-  </tr>
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "eduOrgHomePageURI" %></td>
-    <td class="value_td"><%= @organisation.eduOrgHomePageURI %></td>
-  </tr>
 
-  <%= render :partial => 'shared/auto_power_off_settings', :locals => { :object => @organisation } %>
+<%= start_box t('.title') %>
+  <table>
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.o") %></th>
+      <td><%= h @organisation.o %></td>
+    </tr>
 
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoDeviceImage" %></td>
-    <td class="value_td"><%= @organisation.puavoDeviceImage %></td>
-  </tr>
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoEduOrgAbbreviation") %></th>
+      <td><%= h @organisation.puavoEduOrgAbbreviation %></td>
+    </tr>
 
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoImageSeriesSourceURL" %></td>
-    <td class="value_td"><%=h multiple_value(@organisation.puavoImageSeriesSourceURL) %></td>
-  </tr>
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.description") %></th>
+      <td><%= h @organisation.description %></td>
+    </tr>
 
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoConf" %></td>
-    <td class="value_td">
-      <%= render :partial => 'shared/puavoconf',
-                 :locals  => { :object => @organisation.puavoConf } %>
-    </td>
-  </tr>
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.telephoneNumber") %></th>
+      <td><%=h @organisation.telephoneNumber %></td>
+    </tr>
 
-  <tr>
-    <td class="label_td view"><%= label "ldap_organisation", "puavoBillingInfo" %></td>
-    <td class="value_td">
-      <% Array(@organisation.puavoBillingInfo).each do |billing_info| %>
-        <div><%=h billing_info %></div>
-      <% end %>
-    </td>
-  </tr>
-</table>
-</div>
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.facsimileTelephoneNumber") %></th>
+      <td><%= @organisation.facsimileTelephoneNumber %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.l") %></th>
+      <td><%= @organisation.l %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.street") %></th>
+      <td><%= @organisation.street %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.postOfficeBox") %></th>
+      <td><%= @organisation.postOfficeBox %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.postalAddress") %></th>
+      <td><%= @organisation.postalAddress %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.postalCode") %></th>
+      <td><%= @organisation.postalCode %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.st") %></th>
+      <td><%= @organisation.st %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoLocale") %></th>
+      <td>
+        <%= h language_by_locale(@organisation.puavoLocale) %><br />
+        <i><%= t("old_preferred_language", :language => @organisation.preferredLanguage) %></i>
+      </td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoTimezone") %></th>
+      <td><%= h humanize_timezone(@organisation.puavoTimezone) %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoKeyboardLayout") %></th>
+      <td><%= h @organisation.puavoKeyboardLayout %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoKeyboardVariant") %></th>
+      <td><%= h @organisation.puavoKeyboardVariant %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoAutomaticImageUpdates") %></th>
+      <td><%= h translate_boolean_value(@organisation.puavoAutomaticImageUpdates) %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.eduOrgHomePageURI") %></th>
+      <td><%= @organisation.eduOrgHomePageURI %></td>
+    </tr>
+
+    <%= render :partial => 'shared/auto_power_off_settings', :locals => { :object => @organisation } %>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoDeviceImage") %></th>
+      <td><%= @organisation.puavoDeviceImage %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoImageSeriesSourceURL") %></th>
+      <td><%= h multiple_value(@organisation.puavoImageSeriesSourceURL) %></td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoConf") %></th>
+      <td>
+        <%= render :partial => 'shared/puavoconf',
+                   :locals  => { :object => @organisation.puavoConf } %>
+      </td>
+    </tr>
+
+    <tr>
+      <th><%= t("activeldap.attributes.ldap_organisation.puavoBillingInfo") %></th>
+      <td>
+        <% Array(@organisation.puavoBillingInfo).each do |billing_info| %>
+          <div><%= h billing_info %></div>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+<%= end_box %>
+
 <% content_for :right do %>
 <div>
-  <%= link_to edit_organisation_path, class: "btn" do%>
+<%= link_to edit_organisation_path, class: "btn" do%>
   <i class="icon-pencil"></i> <%= t('link.edit')%>
-  <% end %>
+<% end %>
 </div>
 <% end %>
