@@ -6,22 +6,21 @@
 <p class="courseWarning"><%= t('groups.edit.course_group_warning') %>
 <% end %>
 
-<div class="content-box" style="float: none;">
-  <h3><%= t('.title') %></h3>
+<%= start_box t('.title'), extraClass="noFloat" %>
   <table>
     <tr>
       <th><%= t('activeldap.attributes.group.displayName') %></th>
-      <td><%=h @group.displayName %></td>
+      <td><%= h @group.displayName %></td>
     </tr>
 
     <tr>
       <th><%= t('activeldap.attributes.group.cn') %></th>
-      <td><%=h @group.cn %></td>
+      <td><%= h @group.cn %></td>
     </tr>
 
     <tr>
       <th><%= t('activeldap.attributes.group.gidNumber') %></th>
-      <td><%=h @group.gidNumber %></td>
+      <td><%= h @group.gidNumber %></td>
     </tr>
 
     <tr>
@@ -50,14 +49,13 @@
       <td><%= @group['modifyTimestamp'] %></td>
     </tr>
   </table>
+<%= end_box %>
+
+<div id="members">
+<%= render :partial => "members" %>
 </div>
 
-<div class="content-box members">
-  <%= render :partial => "members" %>
-</div>
-
-<div class="content-box">
-  <h3><%= t('.add_user_title') %></h3>
+<%= start_box t('.add_user_title') %>
   <table>
     <tr>
       <td><%= t('.description') %></td>
@@ -70,7 +68,7 @@
           placeholder: t('.placeholder_for_search') ) %></td>
     </tr>
   </table>
-</div>
+<%= end_box %>
 
 <% else %>
 
