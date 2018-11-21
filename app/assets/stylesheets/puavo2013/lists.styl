@@ -1,29 +1,78 @@
 @import 'nib'
 
-.description
-  margin-bottom 20px
+/* Lists of schools, users, devices, etc. */
+.list {
+  /*width: 100%;*/  /* fix the tool buttons first! */
+}
 
-.list
-  border-top 1px solid black
-  padding-bottom 20px
+.list th {
+  background: linear-gradient(top, #a36a2a 35%, #ba722d 60%) repeat scroll 0 0 transparent;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  color: #f5f5e8;
+  padding: 10px;
+  font-size: 100%;
+}
 
-  .clear
-    clear left
-    display block
+.list tr:nth-child(even) {
+  background: #fafafa;
+}
 
-  .meta_information
-    float left
+.list tr:nth-child(odd) {
+  background: #ebebeb;
+}
 
-  .form
-    margin-top 20px
-    float left
+.list tr:hover {
+  background: #f9f7e6;
+}
 
-    input[type="text"]
-      width 15em
+.list td {
+  border-bottom: 1px solid #c8c8c8;
+}
 
-    input[type="submit"]
-      paddin 0
-      margin 0
-      width auto
-      height auto
-      float right
+/* Alternate colors for the "marked for deletion" users table */
+.marked_for_deletion_users_list tr:nth-child(even) {
+  background-color: #fcc;
+}
+
+.marked_for_deletion_users_list tr:nth-child(odd) {
+  background-color: #faa;
+}
+
+.marked_for_deletion_users_list tr:hover {
+  background: #fdd;
+}
+
+.marked_for_deletion_group:nth-child(even) {
+  background-color #fcc !important;
+}
+
+.marked_for_deletion_group:nth-child(odd) {
+  background-color #faa !important;
+}
+
+/* Username lists */
+.list .description {
+  margin-bottom: 20px;
+}
+
+.list .meta_information {
+  float: left;
+}
+
+.list .form {
+  margin-top: 20px;
+  float: left;
+}
+
+.list input[type="text"] {
+  width: 15em;
+}
+
+.list input[type="submit"] {
+  paddin: 0;
+  margin: 0;
+  width: auto;
+  height: auto;
+  float: right;
+}

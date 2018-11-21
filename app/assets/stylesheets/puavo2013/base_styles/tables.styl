@@ -1,107 +1,21 @@
 @import 'nib'
 
-table, th, td
-  vertical-align middle
+table {
+  border-collapse: collapse;
+}
 
-table
-  border-collapse collapse
-  tfoot
-    font-style italic
-  th,td
-    padding 6px
-    text-align left
-  th
-    text-decoration none
-    font-size 110%
-    font-weight bold
-  td
-    & > label
-      margin 0 0 0 2px
-  &.new_groups_table
-    tr
-      td
-        text-align left
-  a
-    font-weight bold
-    text-decoration underline
+th, td {
+  vertical-align: middle;
+  margin: 0;
+  padding: 6px;
+}
 
-  &.list
-    float left
-    border-spacing 0
-    margin 0 1em 1em 0
-    tr
-      display table-row
-    .column_1
-      display inline
-    .column_2
-      font-weight bold
-      float right
-      margin-left 10px
-    th
-      font-size 100%
-      padding-bottom 10px
-      padding-top 10px
-      word-wrap break-word
-    td
-      word-break break-word
-    .table-actions
-      word-break normal
+th {
+  font-size: 110%;
+  text-align: left;
+  text-decoration: none;
+}
 
-.show_user
-  td
-    border none
-    display inline-block
-    word-wrap break-word
-    width 40%
-    &.value_td
-      width 50%
-
-.refine_example
-  color black
-
-#autopoweroff .table-in-table td { text-align: center; }
-
-.required
-  & > .fieldWithErrors
-    display inline
-
-.widelist
-  width 100%
-
-.table-in-table
-  width 100%
-  tr
-    td, td:first-of-type
-      display table-cell
-      padding 0 1em
-      width auto
-@media screen-breakpoint-one
-  table
-    &.list
-      width 100%
-      .thead, thead
-        display none
-      tr
-        display block
-        padding 2%
-      td
-        display block
-        padding 2px
-        &:first-of-type
-          font-size 120%
-          padding 6px 2px
-      td[data-title]:before
-        content attr(data-title) ":\00A0"
-        font-weight bold
-      .table-actions
-        display inline-block
-    &#autopoweroff
-      padding 0
-      th, td
-        min-width 50px
-        width auto
-      td
-        &.checkbox
-          display inline-block
-          width 10%
-          text-align center
+th a, td a {
+  font-weight: bold;
+}

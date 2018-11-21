@@ -63,24 +63,6 @@ fieldset
 
 // End of forms
 
-// Tables
-table
-  tr
-    &.even
-      td
-        background #e5ecf9
-  &.list
-    tr
-      &:hover
-        background #F9F7E6
-    td
-      border-bottom 1px solid formElementBorderColor
-    th
-      background none repeat scroll 0 0 baseBrown
-      background linear-gradient(baseBrown 35%, baseBrownGradient 60%) repeat scroll 0 0 transparent
-      border-bottom 1px solid baseBoxShadowBorderColor
-      color #F5F5E8
-
 .field_error
   color #CCCCCC
 
@@ -89,25 +71,6 @@ table
 
 .notice_text
   color errorRed
-
-.list tr:nth-child(even), .content-box table tr:nth-child(even)
-  background-color rowEvenBgColor
-
-.list tr:nth-child(odd), .content-box table tr:nth-child(odd)
-  background-color rowOddBgColor
-
-// Alternate colors for the "marked for deletion" users table
-.marked_for_deletion_users_list tr:nth-child(even)
-  background-color #fcc
-
-.marked_for_deletion_users_list tr:nth-child(odd)
-  background-color #faa
-
-.marked_for_deletion_group:nth-child(even)
-  background-color #fcc !important;
-
-.marked_for_deletion_group:nth-child(odd)
-  background-color #faa !important;
 
 // End of tables
 
