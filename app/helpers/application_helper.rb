@@ -273,4 +273,16 @@ module ApplicationHelper
   def page_title(*parts)
     content_for(:page_title, parts.unshift(LdapOrganisation.current.o).join(' / '))
   end
+
+  def start_box(title, extraClass="")
+    "<div class=\"content-box-new #{extraClass}\"><header>#{title}</header><div class=\"contents\">".html_safe
+  end
+
+  def end_box
+    "</div></div>".html_safe
+  end
+
+  def value_or_default(v, default)
+    (v.nil? ? default : v).html_safe
+  end
 end
