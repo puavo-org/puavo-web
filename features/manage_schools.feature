@@ -74,7 +74,7 @@ Feature: Manage schools
     | /home/share                     |
     | -o rw                           |
     | English (United States)         |
-    | Automatic image updates: No     |
+    | Automatic image updates No      |
     | Auto power off mode             |
     | Daytime start                   |
     | Daytime end                     |
