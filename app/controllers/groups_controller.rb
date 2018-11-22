@@ -182,6 +182,7 @@ class GroupsController < ApplicationController
       begin
         if u.puavoRemovalRequestTime.nil?
           u.puavoRemovalRequestTime = now
+          u.puavoLocked = true
           u.save
           count += 1
         end
