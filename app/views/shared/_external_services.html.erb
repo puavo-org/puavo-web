@@ -1,47 +1,41 @@
 <h1><span><%= t("external_services.title") %></span></h1>
 
-<p>
-  <%= t("external_services.description") %>
-</p>
+<p><%= t("external_services.description") %></p>
 
 <%= form_tag(put_path, :method => :put) do %>
-
   <% @external_services.each do |external_service| %>
     <div class="external-services <%= "disabled" if is_disabled?(external_service) %>" style="margin-bottom: 0;">
-    <h2>
-        <%= external_service.cn %>
-    </h2>
+    <h2><%= external_service.cn %></h2>
 
-    <p>
-      <%= external_service.description %>
-      <% if external_service.puavoServiceDescriptionURL %>
-        <a href="<%= external_service.puavoServiceDescriptionURL %>"
-           target="_new"><%= t("external_services.additional_info") %></a>
-      <% end %>
-    </p>
+    <p><%= external_service.description %></p>
 
-    <table class="list" style="border-top: none;">
+    <% if external_service.puavoServiceDescriptionURL %>
+    <p><a href="<%= external_service.puavoServiceDescriptionURL %>" target="_new"><%= t("external_services.additional_info") %></a></p>
+    <% end %>
+
+    <table>
       <tr>
         <th>Domain</th>
         <td><%= external_service.puavoServiceDomain %></td>
       </tr>
+
       <tr>
         <th><%= t("external_services.email") %></th>
         <td><%= external_service.mail  %></td>
       </tr>
+
       <tr>
         <th><%= t("external_services.path_prefix") %></th>
         <td><%= external_service.puavoServicePathPrefix %></td>
       </tr>
+
       <tr>
         <th><%= t("external_services.active") %></th>
         <td>
-          <%= check_box_tag(
-            "puavoActiveService[]",
-            external_service.dn,
-            is_checked?(external_service),
-            :disabled => is_disabled?(external_service)
-          )
+          <%= check_box_tag("puavoActiveService[]",
+                            external_service.dn,
+                            is_checked?(external_service),
+                            :disabled => is_disabled?(external_service))
           %>
         </td>
       </tr>
@@ -56,8 +50,6 @@
     </div>
   <% end %>
 
-  <div class="submit-container">
+  <br>
   <%= submit_tag t("external_services.save"), class: 'btn' %>
-  </div>
 <% end %>
-
