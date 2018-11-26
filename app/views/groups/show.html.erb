@@ -149,13 +149,14 @@
         <% end %>
       </li>
 
-      <li>
+      <% if current_user.organisation_owner? %>
+      <li class="ownersOnly">
         <%= link_to mark_group_members_for_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
           <i class="icon-plus"></i><%= t('link.mark_group_members_for_deletion') %>
         <% end %>
       </li>
 
-      <li>
+      <li class="ownersOnly">
         <%= link_to unmark_group_members_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
           <i class="icon-minus"></i><%= t('link.unmark_group_members_deletion') %>
         <% end %>
