@@ -1,9 +1,7 @@
 <table>
   <tr>
-    <td class="label_td required">
-      <%= f.label :puavoHostname %>
-      </td>
-      <td>
+    <th class="required"><%= f.label :puavoHostname %></th>
+    <td>
       <% if f.object.userCertificate %>
       <%= f.object.puavoHostname %>
       <% else %>
@@ -12,44 +10,30 @@
       <% end %>
     </td>
   </tr>
+
   <% if is_device_change_allowed f %>
   <tr>
-    <td>
-      <%= f.label :puavoDeviceType %>
-    </td>
-    <td>
-        <%= device_type f  %>
-    </td>
+    <th><%= f.label :puavoDeviceType %></th>
+    <td><%= device_type f  %></td>
   </tr>
   <% end %>
+
   <tr>
-    <td>
-      <%= f.label :puavoTag %>
-    </td>
-    <td>
-      <%= f.text_field :puavoTag %>
-    </td>
+    <th><%= f.label :puavoTag %></th>
+    <td><%= f.text_field :puavoTag %></td>
   </tr>
 
   <%= render( :partial => 'shared/form_puavoconf', :locals => { :f => f } ) %>
 
   <% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
   <tr>
-    <td>
-      <%= f.label :puavoDeviceStatus %>
-    </td>
-    <td>
-      <%= f.text_field :puavoDeviceStatus %>
-    </td>
+    <th><%= f.label :puavoDeviceStatus %></th>
+    <td><%= f.text_field :puavoDeviceStatus %></td>
   </tr>
   <% end %>
 
   <tr>
-    <td>
-      <%= f.label :image %>
-    </td>
-    <td>
-      <%= f.file_field(:image, accept: 'image/*') %>
-   </td>
+    <th><%= f.label :image %></th>
+    <td><%= f.file_field(:image, accept: 'image/*') %></td>
   </tr>
 </table>

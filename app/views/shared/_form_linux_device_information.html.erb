@@ -1,45 +1,44 @@
 <h2><%= title(f.object) %></h2>
-
 <table>
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceManufacturer %></td>
+    <th><%= f.label :puavoDeviceManufacturer %></th>
     <td><%= f.text_field :puavoDeviceManufacturer %></td>
   </tr>
+
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceModel %></td>
+    <th><%= f.label :puavoDeviceModel %></th>
     <td><%= f.text_field :puavoDeviceModel %></td>
   </tr>
+
   <tr>
-    <td class="label_td"><%= f.label :serialNumber %></td>
+    <th><%= f.label :serialNumber %></th>
     <td><%= f.text_field :serialNumber %></td>
   </tr>
 
   <% if (f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice')) || current_user.organisation_owner? %>
   <tr>
-    <td class="label_td"><%= f.label :macAddress, nil, for: "macAddress0" %></td>
-    <td>
-      <%= multiple_text_field(f.object, "macAddress", t('shared.add_macAddress')) %>
-    </td>
+    <th><%= f.label :macAddress, nil, for: "macAddress0" %></th>
+    <td><%= multiple_text_field(f.object, "macAddress", t('shared.add_macAddress')) %></td>
   </tr>
   <% end %>
 
   <% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
   <tr>
-    <td><%= f.label :ipHostNumber %></td>
+    <th><%= f.label :ipHostNumber %></th>
     <td><%= f.text_field :ipHostNumber %></td>
   </tr>
   <% end %>
 
   <% unless f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
   <tr>
-    <td class="label_td"><%= f.label :primary_user_uid %></td>
+    <th><%= f.label :primary_user_uid %></th>
     <td><%= f.text_field :primary_user_uid, :value => uid_by_dn(f.object.puavoDevicePrimaryUser) %></td>
   </tr>
   <% end %>
 
   <% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') ||  f.object.classes.include?('puavoOtherDevice') %>
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceBootMode %></td>
+    <th><%= f.label :puavoDeviceBootMode %></th>
     <td><%= f.select( :puavoDeviceBootMode,
             [ [t('shared.boot_mode_netboot'),"netboot"],
             [t('shared.boot_mode_dualboot'), "dualboot"] ] ) %></td>
@@ -47,29 +46,28 @@
   <% end %>
 
   <% unless f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
-
   <tr>
-    <td class="label_td"><%= f.label :puavoPrinterDeviceURI %></td>
+    <th><%= f.label :puavoPrinterDeviceURI %></th>
     <td><%= f.text_field :puavoPrinterDeviceURI %></td>
   </tr>
 
   <tr>
-    <td class="label_td"><%= f.label :puavoPrinterPPD %></td>
+    <th><%= f.label :puavoPrinterPPD %></th>
     <td><%= f.file_field :puavoPrinterPPD %></td>
   </tr>
 
   <tr>
-    <td class="label_td"><%= f.label :puavoDefaultPrinter %></td>
+    <th><%= f.label :puavoDefaultPrinter %></th>
     <td><%= f.text_field :puavoDefaultPrinter %></td>
   </tr>
 
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceDefaultAudioSource %></td>
+    <th><%= f.label :puavoDeviceDefaultAudioSource %></th>
     <td><%= f.text_field :puavoDeviceDefaultAudioSource %></td>
   </tr>
 
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceDefaultAudioSink %></td>
+    <th><%= f.label :puavoDeviceDefaultAudioSink %></th>
     <td><%= f.text_field :puavoDeviceDefaultAudioSink %></td>
   </tr>
 
@@ -94,7 +92,7 @@
   <% end %>
 
   <tr>
-    <td class="label_td"><%= f.label :description %></td>
+    <th><%= f.label :description %></th>
     <td><%= f.text_area :description, cols: 40, rows: 20 %></td>
   </tr>
 </table>
@@ -112,68 +110,69 @@
 <%= render :partial => 'shared/form_purchase_information', :locals => { :f => f } %>
 
 <h2><%= t('shared.location') %></h2>
-
 <table>
   <tr>
-    <td class="label_td"><%= f.label :puavoLocationName %></td>
+    <th><%= f.label :puavoLocationName %></th>
     <td><%= f.text_field :puavoLocationName %></td>
   </tr>
+
   <tr>
-    <td class="label_td"><%= f.label :puavoLatitude %></td>
+    <th><%= f.label :puavoLatitude %></th>
     <td><%= f.text_field :puavoLatitude %></td>
   </tr>
+
   <tr>
-    <td class="label_td"><%= f.label :puavoLongitude %></td>
+    <th><%= f.label :puavoLongitude %></th>
     <td><%= f.text_field :puavoLongitude %></td>
   </tr>
 </table>
 
-  <% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
+<% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
 
 <h2><%= t('shared.display_settings') %></h2>
 <table>
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceXserver %></td>
+    <th><%= f.label :puavoDeviceXserver %></th>
     <td><%= f.text_field :puavoDeviceXserver, :size => 45 %></td>
-</tr>
+  </tr>
 
-<tr>
-  <td class="label_td label_for_input_text_list"><%= f.label :puavoDeviceXrandr, nil, for: "xrandr0" %></td>
-  <td>
-    <div id="device_puavoDeviceXrandr">
-      <% if f.object.puavoDeviceXrandr.nil? %>
-      <input id='xrandr0' name='device[puavoDeviceXrandr][]'  type='text' />
-      <% else %>
-      <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
-      <input id='xrandr<%= index %>' name='device[puavoDeviceXrandr][]'  type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
+  <tr>
+    <th><%= f.label :puavoDeviceXrandr, nil, for: "xrandr0" %></th>
+    <td>
+      <div id="device_puavoDeviceXrandr">
+        <% if f.object.puavoDeviceXrandr.nil? %>
+        <input id='xrandr0' name='device[puavoDeviceXrandr][]'  type='text' />
+        <% else %>
+        <% Array(f.object.puavoDeviceXrandr).each_index do |index| %>
+        <input id='xrandr<%= index %>' name='device[puavoDeviceXrandr][]'  type='text' value='<%= Array(f.object.puavoDeviceXrandr)[index] %>' />
+        <% end %>
+        <% end %>
+      </div>
+      <%= link_to "#", class: "clone_prev_input_element btn" do %>
+      <i class="icon-plus"></i><%= t('shared.add_puavoDeviceXrandr') %>
       <% end %>
-      <% end %>
-    </div>
-    <%= link_to "#", class: "clone_prev_input_element btn" do %>
-    <i class="icon-plus"></i><%= t('shared.add_puavoDeviceXrandr') %>
-    <% end %>
-  </td>
-</tr>
+    </td>
+  </tr>
 
-<tr>
-  <td class="label_td"><%= f.label :puavoDeviceXrandrDisable %></td>
-  <td><%= f.check_box :puavoDeviceXrandrDisable %></td>
-</tr>
+  <tr>
+    <th><%= f.label :puavoDeviceXrandrDisable %></th>
+    <td><%= f.check_box :puavoDeviceXrandrDisable %></td>
+  </tr>
 
-<tr>
-  <td class="label_td"><%= f.label :puavoDeviceResolution %></td>
-  <td><%= f.text_field :puavoDeviceResolution %></td>
-</tr>
+  <tr>
+    <th><%= f.label :puavoDeviceResolution %></th>
+    <td><%= f.text_field :puavoDeviceResolution %></td>
+  </tr>
 
-<tr>
-  <td class="label_td"><%= f.label :puavoDeviceHorzSync %></td>
-  <td><%= f.text_field :puavoDeviceHorzSync %></td>
-</tr>
+  <tr>
+    <th><%= f.label :puavoDeviceHorzSync %></th>
+    <td><%= f.text_field :puavoDeviceHorzSync %></td>
+  </tr>
 
-<tr>
-  <td class="label_td"><%= f.label :puavoDeviceVertRefresh %></td>
-  <td><%= f.text_field :puavoDeviceVertRefresh %></td>
-</tr>
+  <tr>
+    <th><%= f.label :puavoDeviceVertRefresh %></th>
+    <td><%= f.text_field :puavoDeviceVertRefresh %></td>
+  </tr>
 
 </table>
 
@@ -186,29 +185,28 @@
          "bootserver",
          "wirelessaccesspoint"].include?(f.object.puavoDeviceType) %>
   <tr>
-    <td><%= f.label :puavoDeviceImage %></td>
+    <th><%= f.label :puavoDeviceImage %></th>
     <td><%= f.text_field :puavoDeviceImage %></td>
   </tr>
   <% end %>
+
   <% if f.object.puavoDeviceType == "thinclient" %>
   <tr>
-    <td><%= f.label :puavoDeviceBootImage %></td>
+    <th><%= f.label :puavoDeviceBootImage %></th>
     <td><%= f.text_field :puavoDeviceBootImage %></td>
   </tr>
-    <% if current_user.organisation_owner? %>
-  <tr>
-    <td><%= f.label :puavoPreferredServer %></td>
-    <td><%= f.select( :puavoPreferredServer,
-            [[t('.select'), ""]] + Array(@servers) ) %></td>
+
+  <% if current_user.organisation_owner? %>
+  <tr class="ownersOnly">
+    <th><%= f.label :puavoPreferredServer %></th>
+    <td><%= f.select( :puavoPreferredServer, [[t('.select'), ""]] + Array(@servers) ) %></td>
   </tr>
-    <% end %>
+  <% end %>
   <% end %>
 
   <% if current_user.organisation_owner? %>
   <tr>
-    <td>
-      <%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %>
-    </td>
+    <th><%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %></th>
     <td>
       <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
       <%= multiple_text_field(f.object, "puavoImageSeriesSourceURL", t('shared.add_puavoImageSeriesSourceURL')) %>
@@ -217,36 +215,37 @@
   <% end %>
 
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceKernelVersion %></td>
+    <th><%= f.label :puavoDeviceKernelVersion %></th>
     <td><%= f.text_field :puavoDeviceKernelVersion %></td>
   </tr>
+
   <tr>
-    <td class="label_td"><%= f.label :puavoDeviceKernelArguments %></td>
+    <th><%= f.label :puavoDeviceKernelArguments %></th>
     <td><%= f.text_field :puavoDeviceKernelArguments %></td>
   </tr>
 </table>
 
-  <% if ["thinclient", "fatclient", "laptop"].include?(f.object.puavoDeviceType) %>
+<% if ["thinclient", "fatclient", "laptop"].include?(f.object.puavoDeviceType) %>
 
 <h2><%= t('shared.printers_title') %></h2>
 
 <% if @school_printers.empty? %>
-  <p><%= t('shared.no_printers_for_this_device') %></p>
+<p><%= t('shared.no_printers_for_this_device') %></p>
 <% else %>
-  <ul>
-  <% @school_printers.each do |printer| %>
-    <li>
-      <label>
-        <%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
-        <%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
-        <%= link_to( printer[:object].printerDescription, edit_printer_permission_path(@school, printer[:object])) %>
-      </label>
-    </li>
-  <% end %>
-  </ul>
+<ul>
+<% @school_printers.each do |printer| %>
+  <li>
+    <label>
+      <%= hidden_field_tag "printers[#{ printer[:object].dn}]", false %>
+      <%= check_box_tag "printers[#{ printer[:object].dn}]", true, printer[:has_printer], :disabled => printer[:input_disabled] %>
+      <%= link_to( printer[:object].printerDescription, edit_printer_permission_path(@school, printer[:object])) %>
+    </label>
+  </li>
+<% end %>
+</ul>
 <% end %>
 
-  <% end %>
+<% end %>
 
 <%= render :partial => 'shared/form_mountpoint', :locals => { :f => f } %>
 
