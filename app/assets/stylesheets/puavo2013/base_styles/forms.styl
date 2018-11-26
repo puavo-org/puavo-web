@@ -1,5 +1,97 @@
 @import 'nib'
 
+form table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+form table td, form table th {
+  padding: 10px;
+}
+
+form table tr:nth-child(even) {
+  background: #f5f5f5;
+}
+
+.buttonRow td, .buttonRow th {
+  background: #fff;
+}
+
+input {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+input[type="text"], input[type="password"] {
+  padding: 10px;
+  margin: 5px 0;
+}
+
+input[type="checkbox"], input[type="radio"] {
+  padding: 0;
+  margin: 0;
+}
+
+form th {
+  text-align: right;
+  width: 250px;
+}
+
+form select {
+  width: 100%;
+}
+
+form textarea {
+  width: 100%;
+}
+
+form th {
+/*  vertical-align: top;*/
+}
+
+form label {
+  /* Reset weights... */
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+}
+
+form th label {
+  /* ...but make these bigger */
+  font-size: 110%;
+  font-weight: bold;
+  word-wrap: none;
+}
+
+.field_with_errors {
+  color: red;
+  font-weight: bold;
+}
+
+.field_with_errors input, .field_with_errors select {
+  border: 1px solid #foo;
+}
+
+form .required {
+  content: " *";
+  font-size: 120%;
+}
+
+/* Administrative groups checkbox list header */
+.administrativeGroups header {
+  border-bottom: 1px dashed black;
+  font-size: 110%;
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+
+/* Administrative groups checkbox list entry */
+.administrativeGroups input[type="checkbox"] {
+  margin-left: 30px;
+}
+
+/*
 form
   table
     display block
@@ -64,6 +156,7 @@ form
       margin-bottom 1%
     .submit_button_login
       margin-left 36%
+*/
 
 .rename_group_old_name
   text-align right
