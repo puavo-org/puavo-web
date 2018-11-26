@@ -199,7 +199,7 @@ describe PuavoRest::Users do
         assert @user2.save!
       end
 
-      assert_equal("External id External id has already been taken", exception.message)
+      assert_equal("External ID External ID has already been taken", exception.message)
     end
   end
 

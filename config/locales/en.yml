@@ -631,7 +631,7 @@ en:
         puavoDeviceOnHour: Daytime start
         puavoDeviceOffHour: Daytime end
         puavoImageSeriesSourceURL: Image series source URL
-        puavoExternalId: External id
+        puavoExternalId: External ID
       user:
         displayName: Name
         sn: Surname
@@ -664,7 +664,7 @@ en:
         puavoLocale: Language
         puavoSshPublicKey: SSH public key
         groups: Groups
-        puavoExternalId: External id
+        puavoExternalId: External ID
         teaching_group: Teaching group
         administrative_groups: Administrative groups
       group:

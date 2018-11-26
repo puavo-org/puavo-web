@@ -601,7 +601,7 @@ fi:
         puavoDeviceOnHour: "Päivän aloitus"
         puavoDeviceOffHour: "Päivän lopetus"
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
-        puavoExternalId: Ulkoinen id
+        puavoExternalId: Ulkoinen ID
       user:
         displayName: Nimi
         sn: Sukunimi
@@ -634,7 +634,7 @@ fi:
         puavoLocale: Kieli
         puavoSshPublicKey: SSH:n julkinen avain
         groups: Ryhmät
-        puavoExternalId: Ulkoinen id
+        puavoExternalId: Ulkoinen ID
         teaching_group: Opetusryhmä
         administrative_groups: Hallinnolliset ryhmät
       group:
@@ -991,9 +991,9 @@ fi:
       automounts: Hakemistoliitokset
     school_limit:
       title: Rajoita kouluihin
-      ltsp_description: Tämä LTSP-palvelin on käytössä vain näissä kouluissa
-      ltsp_description_edit: Jos mitään ei ole valittu palvelin palvelee kaikkia organisaation kouluja
-      boot_description: Koulut joita tämä boot-palvelin palvelee.
+      ltsp_description: "Tämä LTSP-palvelin on käytössä vain näissä kouluissa."
+      ltsp_description_edit: "Jos mitään ei ole valittu, palvelin palvelee kaikkia organisaation kouluja."
+      boot_description: "Koulut joita tämä boot-palvelin palvelee:"
       missing_school: "Tuntematon koulu \"%{school}\", ole hyvä ja ota yhteys Opinsysin tukeen!"
   automounts:
     index:
