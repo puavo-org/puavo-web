@@ -55,10 +55,10 @@ window.jQuery(document).ready(function($) {
 
   $('.clone_table_row_input_element').click(function(e) {
     e.preventDefault();
-    var this_table = $(this).parents('table').find('table');
-    var clone_element = this_table.find('tr:last').clone();
-    clone_element.find('input').val('');
-    this_table.children().append(clone_element);
+    var tbl = $(".mountPoints");
+    var clone = tbl.find("tr:last").clone();
+    clone.find("input").val("");
+    tbl.children().append(clone);
   });
 
   $('.search').liveSearch({
