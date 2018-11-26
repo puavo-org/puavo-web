@@ -8,32 +8,32 @@
   <h2><%= t('.automounts') %></h2>
   <table>
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :puavoExport, nil, for: "puavoExport0" %></td>
+      <th><%= f.label :puavoExport, nil, for: "puavoExport0" %></th>
       <td>
-	<div id="server_puavoExport_list">
-	  <% if Array(@server.puavoExport).empty? %>
-	  <input id='puavoExport0' name='server[puavoExport][]' size='30' type='text' />
-	  <% else %>
-	  <% Array(@server.puavoExport).each_index do |index| %>
-	  <input id='puavoExport<%= index %>' name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
-	  <% end %>
-	  <% end %>
-	</div>
-	<%= link_to "#", class: "clone_prev_input_element btn" do %>
-    <i class="icon-plus"></i><%= t('.add_puavoExport') %>
-  <% end %>
-  </td></tr>
+        <div id="server_puavoExport_list">
+          <% if Array(@server.puavoExport).empty? %>
+          <input id='puavoExport0' name='server[puavoExport][]' size='30' type='text' />
+          <% else %>
+          <% Array(@server.puavoExport).each_index do |index| %>
+          <input id='puavoExport<%= index %>' name='server[puavoExport][]' size='30' type='text' value='<%= Array(@server.puavoExport)[index] %>' />
+          <% end %>
+          <% end %>
+        </div>
+        <%= link_to "#", class: "clone_prev_input_element btn" do %>
+          <i class="icon-plus"></i><%= t('.add_puavoExport') %>
+        <% end %>
+      </td>
+    </tr>
   </table>
 
   <h2><%= t('servers.school_limit.title') %></h2>
-
   <% if @server.puavoDeviceType == "ltspserver" %>
-    <p>
-      <%= t('servers.school_limit.ltsp_description') %>
-      <%= t('servers.school_limit.ltsp_description_edit') %>
-    </p>
+  <p>
+    <%= t('servers.school_limit.ltsp_description') %>
+    <%= t('servers.school_limit.ltsp_description_edit') %>
+  </p>
   <% else %>
-    <p><%= t('servers.school_limit.boot_description') %></p>
+  <p><%= t('servers.school_limit.boot_description') %></p>
   <% end %>
 
   <ul>
@@ -53,12 +53,12 @@
   </ul>
 
   <table>
-    <tr>
-      <td></td>
+    <tr class="buttonRow">
+      <th></th>
       <td>
         <%= f.submit submit_text, class: 'btn' %>
         <div class="cancel"> <%=link_to t('cancel'), server_path(@server), class: 'btn btn-danger' %> </div>
       </td>
-  </tr>
+    </tr>
   </table>
 <% end %>
