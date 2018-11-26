@@ -1,30 +1,34 @@
 <% page_title t('titles.organisation'), t('titles.ldap_services'), @ldap_service.uid %>
 
+<%= start_box t('ldap_services.index.infobox') %>
+
 <table>
   <tr>
-  <td class="label_td view"><%= label "ldap_service", "uid" %></td>
-  <td class="value_td"><%= @ldap_service.uid %></td>
+    <th><%= label "ldap_service", "uid" %></th>
+    <td class="value_td"><%= @ldap_service.uid %></td>
   </tr>
 
   <tr>
-  <td class="label_td view"><%= label "ldap_service", "description" %></td>
-  <td class="value_td"><%= @ldap_service.description %></td>
+    <th><%= label "ldap_service", "description" %></th>
+    <td class="value_td"><%= @ldap_service.description %></td>
   </tr>
 
   <tr>
-  <td class="label_td view"><%= label "ldap_service", "dn" %></td>
-  <td class="value_td"><%= @ldap_service.dn.to_s %></td>
+    <th><%= label "ldap_service", "dn" %></th>
+    <td class="value_td"><%= @ldap_service.dn.to_s %></td>
   </tr>
 
   <tr>
-  <td class="label_td view"><%= label "ldap_service", "groups" %></td>
-  <td class="value_td">
-    <% @ldap_service.groups.each do |group| %>
-    <div><%= group.description %></div>
-    <% end %>
-  </td>
+    <th><%= label "ldap_service", "groups" %></th>
+    <td class="value_td">
+      <% @ldap_service.groups.each do |group| %>
+      <div><%= group.description %></div>
+      <% end %>
+    </td>
   </tr>
 </table>
+
+<%= end_box %>
 
 <% content_for :right do %>
 <div>
@@ -32,6 +36,7 @@
     <i class="icon-pencil"></i><%= t('link.edit') %>
   <% end %>
 </div>
+
 <div>
   <%= link_to( ldap_service_path(@ldap_service),
                data: { confirm: t('destroy_confirm', object_name: @ldap_service.uid) },

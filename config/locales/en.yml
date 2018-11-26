@@ -504,6 +504,7 @@ en:
     index:
       actions: Actions
       title: LDAP services
+      infobox: LDAP service
     new:
       title: New LDAP service
     edit:

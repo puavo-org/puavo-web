@@ -474,6 +474,7 @@ fi:
     index:
       actions: Toiminnot
       title: LDAP-palvelut
+      infobox: LDAP-palvelu
     new:
       title: Uuden LDAP-palvelun tiedot
     edit:
