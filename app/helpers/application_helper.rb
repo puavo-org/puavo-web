@@ -17,27 +17,27 @@ module ApplicationHelper
   end
 
   def text_area(*args)
-    after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
+    after_html = field_error_text_span(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
     super(*args) + after_html.to_s
   end
 
   def text_field(*args)
-    after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
+    after_html = field_error_text_span(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
     super(*args) + after_html.to_s
   end
 
   def password_field(*args)
-    after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
+    after_html = field_error_text_span(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
     super(*args) + after_html.to_s
   end
 
   def select(*args)
-    after_html = field_error_text(args[3][:object], args[1]) if ! args[3].nil? && ! args[3][:object].nil?
+    after_html = field_error_text_span(args[3][:object], args[1]) if ! args[3].nil? && ! args[3][:object].nil?
     super(*args) + after_html.to_s
   end
 
   def file_field(*args)
-    after_html = field_error_text(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
+    after_html = field_error_text_span(args[2][:object], args[1]) if ! args[2].nil? && ! args[2][:object].nil?
     super(*args) + after_html.to_s
   end
 
