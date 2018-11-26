@@ -3,134 +3,87 @@
 <%= form_for(@school, url: path, html: { method: method, multipart: true })  do |f| %>
 <table>
   <tr>
-    <td class='required'>
-      <%= f.label :displayName %>
-    </td>
-    <td>
-      <%= f.text_field :displayName %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :puavoSchoolCode %>
-    <td>
-     <%= f.text_field :puavoSchoolCode %>
-   </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :puavoNamePrefix %>
-    <td>
-     <%= f.text_field :puavoNamePrefix %>
-   </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :puavoSchoolHomePageURL %>
-    </td>
-    <td>
-      <%= f.text_field :puavoSchoolHomePageURL %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :description %>
-    </td>
-    <td>
-      <%= f.text_field :description %>
-    </td>
-  </tr>
-  <tr>
-    <td class='required'>
-      <%= f.label :cn %>
-    </td>
-    <td>
-      <%= f.text_field :cn %>
-    </td>
+    <th class='required'><%= f.label :displayName %></th>
+    <td><%= f.text_field :displayName %></td>
   </tr>
 
   <tr>
-    <td>
-      <%= f.label :telephoneNumber %>
-    </td>
-    <td>
-    <%= f.text_field :telephoneNumber %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :facsimileTelephoneNumber %>
-    </td>
-    <td>
-    <%= f.text_field :facsimileTelephoneNumber %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-     <%= f.label :l %>
-     </td>
-    <td>
-      <%= f.text_field :l %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :street %>
-    </td>
-    <td>
-      <%= f.text_field :street %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :postOfficeBox %>
-    </td>
-    <td>
-      <%= f.text_field :postOfficeBox %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :postalAddress %>
-    </td>
-      <td>
-       <%= f.text_field :postalAddress %>
-     </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :postalCode %>
-    </td>
-    <td>
-      <%= f.text_field :postalCode %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :st %>
-    </td>
-    <td>
-      <%= f.text_field :st %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= f.label :puavoLocale %></td>
-    <td>
-      <%= f.select :puavoLocale,
-          locales_for_select %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <%= f.label :image %>
-    </td>
-    <td>
-      <%= f.file_field(:image, accept: 'image/*') %>
-    </td>
+    <th class='required'><%= f.label :cn %></th>
+    <td><%= f.text_field :cn %></td>
   </tr>
 
   <tr>
-    <td><%= f.label :puavoExternalId %></td>
+    <th><%= f.label :puavoSchoolCode %></th>
+    <td><%= f.text_field :puavoSchoolCode %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :puavoNamePrefix %></th>
+    <td><%= f.text_field :puavoNamePrefix %>
+  </tr>
+
+  <tr>
+    <th><%= f.label :puavoSchoolHomePageURL %></th>
+    <td><%= f.text_field :puavoSchoolHomePageURL %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :description %></th>
+    <td><%= f.text_field :description %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :telephoneNumber %></th>
+    <td><%= f.text_field :telephoneNumber %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :facsimileTelephoneNumber %></th>
+    <td><%= f.text_field :facsimileTelephoneNumber %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :l %></th>
+    <td><%= f.text_field :l %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :street %></th>
+    <td><%= f.text_field :street %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :postOfficeBox %></th>
+    <td><%= f.text_field :postOfficeBox %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :postalAddress %></th>
+    <td><%= f.text_field :postalAddress %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :postalCode %></th>
+    <td><%= f.text_field :postalCode %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :st %></th>
+    <td><%= f.text_field :st %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :puavoLocale %></th>
+    <td><%= f.select :puavoLocale, locales_for_select %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :image %></th>
+    <td><%= f.file_field(:image, accept: 'image/*') %></td>
+  </tr>
+
+  <tr>
+    <th><%= f.label :puavoExternalId %></th>
     <td><%= f.text_field :puavoExternalId %></td>
   </tr>
 
@@ -142,13 +95,10 @@
                 :attribute => :puavoAutomaticImageUpdates } ) %>
 
   <% if current_user.organisation_owner? %>
-  <tr>
-    <td class="label_for_input_text_list">
-      <%= f.label :puavoBillingInfo, nil, for: "puavoBillingInfo0" %>
-    </td>
+  <tr class="ownersOnly">
+    <th><%= f.label :puavoBillingInfo, nil, for: "puavoBillingInfo0" %></th>
     <td>
-
-    <div id="school_puavoBillingInfo">
+      <div id="school_puavoBillingInfo">
       <% if Array(f.object.puavoBillingInfo).empty? %>
         <input id='puavoBillingInfo0' name='school[puavoBillingInfo][]' type='text' />
       <% else %>
@@ -156,23 +106,21 @@
           <input id='puavoBillingInfo<%= index %>' name='school[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
         <% end %>
       <% end %>
-    </div>
-    <%= link_to "#", class: "clone_prev_input_element btn" do %>
-      <i class="icon-plus"></i><%= t('.add_puavo_billing_info') %>
-    <% end %>
-
+      </div>
+      <%= link_to "#", class: "clone_prev_input_element btn" do %>
+        <i class="icon-plus"></i><%= t('.add_puavo_billing_info') %>
+      <% end %>
     </td>
   </tr>
+
   <tr>
-    <td><%= f.label :puavoDeviceImage %></td>
+    <th><%= f.label :puavoDeviceImage %></th>
     <td><%= f.text_field :puavoDeviceImage  %></td>
   </tr>
 
   <% if current_user.organisation_owner? %>
-  <tr>
-    <td>
-      <%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %>
-    </td>
+  <tr class="ownersOnly">
+    <th><%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %></th>
     <td>
       <%= default_value_by_parent(f.object, :puavoImageSeriesSourceURL) %>
       <%= multiple_text_field(f.object, "puavoImageSeriesSourceURL", t('shared.add_puavoImageSeriesSourceURL')) %>
@@ -181,12 +129,12 @@
   <% end %>
 
   <tr>
-    <td><%= f.label :external_feeds %></td>
+    <th><%= f.label :external_feeds %></th>
     <td><%= f.text_field :external_feeds, :placeholder => "ical url" %></td>
   </tr>
 
   <tr>
-    <td><%= f.label :puavoTag %></td>
+    <th><%= f.label :puavoTag %></th>
     <td><%= f.text_field :puavoTag %></td>
   </tr>
 
@@ -197,14 +145,13 @@
                 :f => f } ) %>
 
 </table>
-  <% end %>
+<% end %>
 
-
-  <%= render :partial => 'shared/form_mountpoint', :locals => { :f => f } %>
+<%= render :partial => 'shared/form_mountpoint', :locals => { :f => f } %>
 
 <table>
-  <tr>
-    <td></td>
+  <tr class="buttonRow">
+    <th></th>
     <td>
       <%= f.submit submit_text, class: 'btn' %>
       <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>

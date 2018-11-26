@@ -1,28 +1,33 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.admins') %>
 
 <h1><span><%= t('.school_admins') %></span></h1>
-<div class="dashboard">
-<div class="content-box school_admins">
-  <h3><%= t('.this_school_admin_users', :school_name => @school.displayName) %></h3>
 
-  <span id="this_school_admin_users">
+<%= start_box t('.this_school_admin_users', :school_name => @school.displayName) %>
+  <table id="this_school_admin_users">
     <% Array(@school_admins).each do |u| %>
-      <div class="row clearfix">
-      <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
-      <%= link_to t('link.remove'), remove_school_admin_school_path(@school, u), method: :put, id: "remove_user_#{u.id}", class: "btn btn-danger" %>
-      </div>
+    <tr>
+      <td><%= u.displayName %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to(t('link.remove'),
+                      remove_school_admin_school_path(@school, u),
+                      method: :put,
+                      id: "remove_user_#{u.id}",
+                      class: 'btn btn-danger') %></td>
+    </tr>
     <% end %>
-  </span>
-</div>
-<div class="content-box other_admins">
-  <h3><%= t('.other_admin_users') %>:</h3>
-  <span id="other_admin_users">
+  </table>
+<%= end_box %>
+
+<%= start_box t('.other_admin_users') %>
+  <table id="other_admin_users">
     <% Array(@allowed_school_admins).each do |u| %>
-      <div class="row clearfix">
-      <span class="admin_display_name"><%= u.displayName %> (<%= u.school.displayName %>)</span>
-      <%= link_to t('link.add'), add_school_admin_school_path(@school, u), method: :put, id: "add_user_#{u.id}", class: "btn" %>
-      </div>
+    <tr>
+      <td><%= u.displayName %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to(t('link.add'),
+                      add_school_admin_school_path(@school, u),
+                      method: :put,
+                      id: "add_user_#{u.id}",
+                      class: 'btn') %></td>
+    </tr>
     <% end %>
-    </span>
-</div>
-</div>
+  </table>
+<%= end_box %>
