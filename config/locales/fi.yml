@@ -126,6 +126,8 @@ fi:
     get_members_as_csv: "Lataa ryhmän käyttäjälista CSV:nä"
     mark_group_members_for_deletion: "Merkitse kaikki jäsenet poistettavaksi"
     unmark_group_members_deletion: "Poista kaikkien jäsenien poistomerkintä"
+    lock_all_group_members: "Lukitse kaikki jäsenet"
+    unlock_all_group_members: "Avaa kaikkien jäsenien lukitus"
     update: "Päivitä tiedot"
     create: Luo
     show: "Näytä"
@@ -201,6 +203,8 @@ fi:
       create_username_list_failed: "Käyttäjätunnuslistan luonti ei onnistunut"
       members_marked: "%{count} käyttäjä(ä) merkitty poistettavaksi"
       members_unmarked: "%{count} käyttäjän poistomerkintä poistettu"
+      members_locked: "%{count} käyttäjää lukittu"
+      members_unlocked: "%{count} käyttäjän lukitus purettu"
     role:
       group_added: "Ryhmä lisättiin rooliin."
       group_added_failed: "Lisäys epäonnistui"

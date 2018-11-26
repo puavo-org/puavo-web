@@ -160,6 +160,19 @@
           <i class="icon-minus"></i><%= t('link.unmark_group_members_deletion') %>
         <% end %>
       </li>
+
+      <li class="ownersOnly">
+        <%= link_to lock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+          <i class="icon-lock"></i><%= t('link.lock_all_group_members') %>
+        <% end %>
+      </li>
+
+      <li class="ownersOnly">
+        <%= link_to unlock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+          <i class="icon-lock-open-alt"></i><%= t('link.unlock_all_group_members') %>
+        <% end %>
+      </li>
+      <% end %>
       <% end %>
 
       <li>

@@ -153,6 +153,8 @@ en:
     get_members_as_csv: "Download member list as CSV"
     mark_group_members_for_deletion: "Mark all members for later deletion"
     unmark_group_members_deletion: "Remove deletion mark from all members"
+    lock_all_group_members: "Lock all members"
+    unlock_all_group_members: "Unlock all members"
     update: Update
     create: Create
     show: Show
@@ -228,6 +230,8 @@ en:
       create_username_list_failed: "Could not create a new username list"
       members_marked: "%{count} user(s) marked for deletion"
       members_unmarked: "%{count} user(s) unmarked for deletion"
+      members_locked: "%{count} users locked"
+      members_unlocked: "%{count} users unlocked"
     role:
       group_added: Group was added to role.
       group_added_failed: Failed to add

@@ -55,6 +55,8 @@ Rails.application.routes.draw do
       match 'groups/:id/create_username_list_from_group' => 'groups#create_username_list_from_group', :as => "create_username_list_from_group", :via => :put
       match 'groups/:id/mark_group_members_for_deletion' => 'groups#mark_group_members_for_deletion', :as => "mark_group_members_for_deletion", :via => :put
       match 'groups/:id/unmark_group_members_deletion' => 'groups#unmark_group_members_deletion', :as => "unmark_group_members_deletion", :via => :put
+      match 'groups/:id/lock_all_members' => 'groups#lock_all_members', :as => "lock_all_members", :via => :put
+      match 'groups/:id/unlock_all_members' => 'groups#unlock_all_members', :as => "unlock_all_members", :via => :put
       match 'groups/:id/delete_all_group_members' => 'groups#delete_all_group_members', :as => "delete_all_group_members", :via => :delete
       match "groups/:id/add_user/:user_id" => "groups#add_user", :as => "add_user_group", :via => :put
       match "groups/:id/user_search" => "groups#user_search", :as => :user_search, :via => :get

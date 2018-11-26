@@ -226,6 +226,66 @@ class GroupsController < ApplicationController
     end
   end
 
+  # PUT /:school_id/groups/:group_id/lock_all_members
+  def lock_all_members
+    @group = get_group(params[:id])
+    return if @group.nil?
+
+    if @group.members.empty?
+      flash[:notice] = t('flash.group.empty_group')
+      redirect_to group_path(@school, @group)
+      return
+    end
+
+    count = 0
+
+    @group.members.each do |u|
+      begin
+        unless u.puavoLocked
+          u.puavoLocked = true
+          u.save
+          count += 1
+        end
+      rescue StandardError => e
+      end
+    end
+
+    respond_to do |format|
+      flash[:notice] = t('flash.group.members_locked', :count => count)
+      format.html { redirect_to group_path(@school, @group) }
+    end
+  end
+
+  # PUT /:school_id/groups/:group_id/unlock_all_members
+  def unlock_all_members
+    @group = get_group(params[:id])
+    return if @group.nil?
+
+    if @group.members.empty?
+      flash[:notice] = t('flash.group.empty_group')
+      redirect_to group_path(@school, @group)
+      return
+    end
+
+    count = 0
+
+    @group.members.each do |u|
+      begin
+        if u.puavoLocked
+          u.puavoLocked = nil
+          u.save
+          count += 1
+        end
+      rescue StandardError => e
+      end
+    end
+
+    respond_to do |format|
+      flash[:notice] = t('flash.group.members_unlocked', :count => count)
+      format.html { redirect_to group_path(@school, @group) }
+    end
+  end
+
   def remove_user
     @group = Group.find(params[:id])
     @user = User.find(params[:user_id])
