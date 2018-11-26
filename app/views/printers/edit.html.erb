@@ -5,10 +5,9 @@
 
   <table>
     <tr>
-      <td class="label_td"><%= f.label :puavoRule %></td>
+      <th><%= f.label :puavoRule %></th>
       <td><%= f.text_field :puavoRule %></td>
     </tr>
-    <tr>
   </table>
 
   <h2><%= t('printing_permissions_list.title') %></h2>
@@ -57,8 +56,11 @@
     <% end %>
   </ul>
 
-  <div>
-  <%= f.submit t('link.update'), class: 'btn' %><div class="cancel"><%=link_to t('cancel'), printers_path, class: 'btn btn-danger' %> </div>
-  </div>
+  <table>
+    <tr class="buttonRow">
+      <th></th>
+      <td><%= f.submit t('link.update'), class: 'btn' %><div class="cancel"><%=link_to t('cancel'), printers_path, class: 'btn btn-danger' %> </td>
+    </tr>
+  </table>
 
 <% end %>

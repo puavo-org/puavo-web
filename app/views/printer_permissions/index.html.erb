@@ -1,6 +1,6 @@
-<% page_title t('titles.schools'), @school.displayName, t('titles.printer_permissions') %>
+<% page_title t('titles.schools'), @school.displayName, t('titles.devices'), t('titles.printer_permissions') %>
 
-<table class='list'>
+<table class="list">
   <tr>
     <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
     <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
@@ -9,7 +9,7 @@
     <th colspan="2"><%= t('actions') %></th>
   </tr>
 
-<% @printers.each do |printer| %>
+  <% @printers.each do |printer| %>
   <tr>
     <td><%=h printer.printerDescription %></td>
     <td><%=h printer.printerMakeAndModel %></td>
@@ -27,11 +27,11 @@
       <% end %>
     </td>
   </tr>
-<% end %>
+  <% end %>
 </table>
 
 <% if @printers.empty? && current_user.organisation_owner? %>
-  <p  style="clear: both;">
+  <br><p style="clear: both;" class="ownersOnly">
   <%= t("printer_permissions.no_printers_html", :href => link_to(t("printer_permissions.bootserver_ref"), servers_path)) %>
   </p>
 <% end %>

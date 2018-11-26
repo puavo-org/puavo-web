@@ -1,5 +1,6 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.devices'), t('titles.printer_permissions'), @printer.printerDescription, t('titles.edit') %>
+
 <h1><span><%= html_escape @printer.printerDescription %></span></h1>
-<div class="printer-permissions">
 
 <%= form_tag(printer_permission_path(@school, @printer), :method => :put) do %>
 
@@ -27,7 +28,6 @@
         </label>
       </li>
     </ul>
-
   </fieldset>
 
   <fieldset class="groups">
@@ -44,29 +44,23 @@
       </li>
       <% end %>
     </ul>
-
   </fieldset>
 
   <fieldset class="devices">
     <legend><%= t('.devices') %></legend>
-    <p>
-      <%= t('.device_header_text') %>
-    </p>
+
+    <p><%= t('.device_header_text') %></p>
 
     <table class="list">
-      <tr class="thead">
+      <tr>
         <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
         <th><%= t('link.remove') %></th>
         <th><%= t('actions') %></th>
       </tr>
       <% @devices.each do |device| %>
       <tr>
-        <td>
-          <%= device.cn %>
-        </td>
-        <td>
-          <%= check_box_tag "remove_device_permission[]", device.dn %>
-        </td>
+        <td><%= device.cn %></td>
+        <td><%= check_box_tag "remove_device_permission[]", device.dn %></td>
         <td>
           <%= link_to edit_device_path(@school, device), :class => "btn" do %>
             <i class="icon-pencil"></i> <%= t('link.edit') %>
@@ -77,18 +71,11 @@
     </table>
 
     <div class="clearfix"></div>
-
-    <p>
-       <%= t('.device_footer_text') %>
-    </p>
-
+    <p><%= t('.device_footer_text') %></p>
   </fieldset>
 
-
-  <%= submit_tag t('link.save'),  :class => "btn" %>
+<%= submit_tag t('link.save'),  :class => "btn" %>
   <div class="cancel">
     <%= link_to t('link.cancel'), printer_permissions_path(@school), :class => 'btn btn-danger' %>
   </div>
-
 <% end %>
-</div>

@@ -3,32 +3,32 @@
 <h1><span><%= t('layouts.application.printers') %></span></h1>
 
 <% @servers_and_printers.each do |server| %>
-  <h2><span><%=h t('.server_title', :server => server[:hostname]) %></span></h2>
+<h2><span><%=h t('.server_title', :server => server[:hostname]) %></span></h2>
 
-  <table class='list' style='float: none !important;'>
-    <tr>
-      <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
-      <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
-      <th><%= t('activeldap.attributes.printer.printerLocation') %></th>
-      <th colspan="2"><%= t('actions') %></th>
-    </tr>
+<table class="list" style="float: none !important;">
+  <tr>
+    <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
+    <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
+    <th><%= t('activeldap.attributes.printer.printerLocation') %></th>
+    <th colspan="2"><%= t('actions') %></th>
+  </tr>
 
-    <% server[:printers].each do |printer| %>
-    <tr>
-      <td><%=h printer.printerDescription %></td>
-      <td><%=h printer.printerMakeAndModel %></td>
-      <td><%=h printer.printerLocation %></td>
-      <td>
-        <%= link_to edit_printer_path(printer), class: 'btn' do %>
-          <i class="icon-pencil"></i><%=t('link.edit') %>
-        <% end %>
-      </td>
-      <td>
-        <%= link_to printer_path(printer), data: { confirm: t('destroy_confirm', object_name: printer.printerDescription) }, method: :delete, class: 'btn btn-danger' do %>
-          <i class="icon-trash"></i><%=t('link.destroy') %>
-        <% end %>
-      </td>
-    </tr>
-  <% end %>
-  </table>
+  <% server[:printers].each do |printer| %>
+  <tr>
+    <td><%=h printer.printerDescription %></td>
+    <td><%=h printer.printerMakeAndModel %></td>
+    <td><%=h printer.printerLocation %></td>
+    <td>
+      <%= link_to edit_printer_path(printer), class: 'btn' do %>
+        <i class="icon-pencil"></i><%=t('link.edit') %>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to printer_path(printer), data: { confirm: t('destroy_confirm', object_name: printer.printerDescription) }, method: :delete, class: 'btn btn-danger' do %>
+        <i class="icon-trash"></i><%=t('link.destroy') %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
+</table>
 <% end %>
