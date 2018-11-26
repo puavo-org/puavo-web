@@ -1,78 +1,78 @@
 <% page_title t('titles.organisation'), t('titles.external_files') %>
 
-  <h1><span><%= t('external_files.title') %></span></h1>
-  <p><%= t('external_files.description') %></p>
+<h1><span><%= t('external_files.title') %></span></h1>
+<p><%= t('external_files.description') %></p>
 
-  <div class="external-files">
+<div class="external-files">
 
-  <%= form_tag({:action => :upload}, :multipart => true) do %>
+<%= form_tag({:action => :upload}, :multipart => true) do %>
 
-  <table class="list" style="display: table;">
-    <tr>
-      <th><%= t('external_files.columns.name') %></th>
-      <th><%= t('external_files.columns.description') %></th>
-      <th><%= t('external_files.columns.size') %></th>
-      <th colspan="2"><%= t('external_files.columns.actions') %></th>
-    </tr>
+<table class="list externalFiles">
+  <tr>
+    <th><%= t('external_files.columns.name') %></th>
+    <th><%= t('external_files.columns.description') %></th>
+    <th><%= t('external_files.columns.size') %></th>
+    <th colspan="2"><%= t('external_files.columns.actions') %></th>
+  </tr>
 
-  <% @external_files.each do |file| %>
-    <tr>
-      <td>
-        <span data-title="File name" class="filename">
-          <%= file["meta"]["name"] %>
-        </span>
-      </td>
+<% @external_files.each do |file| %>
+  <tr>
+    <td>
+      <span data-title="File name" class="filename">
+        <%= file["meta"]["name"] %>
+      </span>
+    </td>
 
 
-      <td data-title="Description">
-      <% if file["meta"]["description"] %>
-      <%= file["meta"]["description"] %>
+    <td data-title="Description">
+    <% if file["meta"]["description"] %>
+    <%= file["meta"]["description"] %>
+    <% end %>
+    </td>
+
+    <td data-title="File size">
+    <% if file["model"] %>
+      <%= file["model"].puavoData.size %>
+    <% else %>
+      <%= t('external_files.no_file') %>
+    <% end %>
+
+    </td>
+    <td data-title="Actions" class="actions table-actions">
+    <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
+    <% if file["model"] %>
+    <td>
+    <span class="table-actions">
+      <%= link_to(
+            download_external_file_path(file["meta"]["name"]), :class => 'btn'
+          ) do
+      %>
+      <i class="icon-download"></i> <%= t('external_files.buttons.download') %>
       <% end %>
-      </td>
-
-      <td data-title="File size">
-      <% if file["model"] %>
-        <%= file["model"].puavoData.size %>
-      <% else %>
-        <%= t('external_files.no_file') %>
-      <% end %>
-
-      </td>
-      <td data-title="Actions" class="actions table-actions">
-      <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
-      <% if file["model"] %>
-      <td>
+      </span>
       <span class="table-actions">
-        <%= link_to(
-              download_external_file_path(file["meta"]["name"]), :class => 'btn'
-            ) do
-        %>
-        <i class="icon-download"></i> <%= t('external_files.buttons.download') %>
-        <% end %>
-        </span>
-        <span class="table-actions">
-        <%= link_to(
-              destroy_external_file_path(file["meta"]["name"]),
-              method: :delete, data: { confirm: t('general_confirm') }, :class => 'btn btn-danger'
-            ) do
-        %>
-        <i class="icon-trash"></i><%= t('external_files.buttons.delete') %>
-        <% end %>
-        </span>
-      <% else %>
-        <td></td>
+      <%= link_to(
+            destroy_external_file_path(file["meta"]["name"]),
+            method: :delete, data: { confirm: t('general_confirm') }, :class => 'btn btn-danger'
+          ) do
+      %>
+      <i class="icon-trash"></i><%= t('external_files.buttons.delete') %>
       <% end %>
-      </td>
+      </span>
+    <% else %>
+      <td></td>
+    <% end %>
+    </td>
 
-    </tr>
-  <% end %>
+  </tr>
+<% end %>
 
-  </table>
+</table>
 
-  <div style="clear: both;"></div>
+<div style="clear: both;"></div>
 
-  <p><%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %></p>
+<p><%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %></p>
 
-  <% end %>
+<% end %>
 
   </div>
