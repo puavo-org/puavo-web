@@ -7,28 +7,28 @@
 
 <table>
   <tr>
-    <td class="required"><%= f.label :displayName %></td>
+    <th class="required"><%= f.label :displayName %></th>
     <td><%= f.text_field :displayName %></td>
   </tr>
 
   <tr>
-    <td class="required"><%= f.label :cn %></td>
+    <th class="required"><%= f.label :cn %></th>
     <td><%= f.text_field :cn %></td>
   </tr>
 
 <% if current_user.organisation_owner? %>
   <tr class="ownersOnly">
-    <td><%= f.label :puavoExternalId %></td>
+    <th><%= f.label :puavoExternalId %></th>
     <td><%= f.text_field :puavoExternalId %></td>
   </tr>
 <% end %>
 
   <tr>
-    <td class="required"><%= f.label :puavoEduGroupType %></td>
+    <th class="required"><%= f.label :puavoEduGroupType %></th>
     <td><%= f.select :puavoEduGroupType, group_types_for_select %></td>
   </tr>
 
-  <tr>
+  <tr class="buttonRow">
     <td></td>
     <td>
       <span>
