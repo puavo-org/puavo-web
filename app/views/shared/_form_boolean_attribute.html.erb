@@ -1,29 +1,8 @@
 <tr>
-  <td class="label_td"><%= f.label attribute %></td>
+  <th><%= f.label attribute %></th>
   <td>
-    <table class="table-in-table">
-      <tr>
-	<td class="label_td">
-	  <%= f.label t("helpers.default"), :for => "#{ f.object.class.to_s.downcase }_#{ attribute }_" %>
-	</td>
-	<td class="label_td">
-	  <%= f.label t("helpers.boolean_true"), :for => "#{ f.object.class.to_s.downcase }_#{ attribute }_true" %>
-	</td>
-	<td class="label_td">
-	  <%= f.label t("helpers.boolean_false"), :for => "#{ f.object.class.to_s.downcase }_#{ attribute }_false" %>
-	</td>
-      </tr>
-      <tr>
-	<td>
-	  <%= f.radio_button attribute, "" %>
-	</td>
-	<td>
-	  <%= f.radio_button attribute, true %>
-	</td>
-	<td>
-	  <%= f.radio_button attribute, false %>
-	</td>
-      </tr>
-    </table>
+    <label><%= f.radio_button attribute, "" %><%= t("helpers.default") %></label><br>
+    <label><%= f.radio_button attribute, true %><%= t("helpers.boolean_true") %></label><br>
+    <label><%= f.radio_button attribute, false %><%= t("helpers.boolean_false") %></label><br>
   </td>
 </tr>
