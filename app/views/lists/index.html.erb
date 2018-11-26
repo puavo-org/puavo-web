@@ -1,54 +1,46 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), t('titles.users_lists') %>
 
 <% if @lists.empty? %>
-<p class="notice">
-  <%= t(".description_empty") %>
-</p>
+<p class="notice"><%= t(".description_empty") %></p>
 <% else %>
 <h1><span><%= t(".title") %></span></h1>
-<p class="description">
-  <%= t(".description") %>
-<p>
+<p class="description"><%= t(".description") %><p>
 
 <% id = 1 %>
 <% @lists.each do |list| %>
 <div class="list">
+  <table style="width: 100%;">
+    <tr style="background: none;">
+      <td style="vertical-align: top;">
+        <div class="meta_information">
+          <span><strong><%= t(".created") %>:</strong> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %></span>
+          <span><%= list.creator %></span>
+          <div><strong><%= t(".users_count_title") %>:</strong> <%= list.users.count %></div>
+        <div>
 
-  <table><tr style="background: none;"><td style="vertical-align: top;">
-
-  <div class="meta_information">
-    <span>
-      <strong><%= t(".created") %>:</strong> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %>
-    </span>
-    <span>
-      <%= list.creator %>
-    </span>
-    <div>
-      <strong><%= t(".users_count_title") %>:</strong> <%= list.users.count %>
-    </div>
-    <div>
-     <div style="border: 1px solid #ccc; padding: 5px; max-height: 400px; overflow-y: scroll;">
-      <table>
-        <tr>
-          <th><%= t("activeldap.attributes.user.displayName") %></th>
-          <th><%= t("activeldap.attributes.user.groups") %></th>
-        </tr>
-        <% list.users.each do |user_id| %>
-        <% user = @users_by_id[user_id] %>
-        <% if user.nil? %>
+        <div class="usernameListBox">
+        <table>
+          <tr>
+            <th><%= t("activeldap.attributes.user.displayName") %></th>
+            <th><%= t("activeldap.attributes.user.groups") %></th>
+          </tr>
+          <% list.users.each do |user_id| %>
+          <% user = @users_by_id[user_id] %>
+          <% if user.nil? %>
           <tr>
             <td><%= t(".invalid_id", id: user_id) %></td>
             <td>&nbsp;</td>
           </tr>
-        <% else %>
+          <% else %>
           <tr>
             <td><%= user.displayName %></td>
-            <td><% if user.groups && user.groups.first %>
+            <td>
+            <% if user.groups && user.groups.first %>
               <%= user.groups.first.displayName %>
             <% elsif user.roles && user.roles.first %>
               <%= user.roles.first.displayName %>
             <% else %>
-            ?
+              ?
             <% end %>
             </td>
           </tr>
@@ -59,15 +51,13 @@
     </div>
   </div>
 
-  </td><td style="vertical-align: top;">
+  </td>
+  <td style="vertical-align: top;">
 
   <div class="form">
-    <%= form_for(
-        :list,
-        :url => download_list_path(
-    :school_id => @school.puavoId,
-    :id => list.uuid,
-    :format => :pdf) ) do |f| %>
+    <%= form_for(:list, :url => download_list_path(:school_id => @school.puavoId,
+                                                   :id => list.uuid,
+                                                   :format => :pdf)) do |f| %>
 
       <%= f.radio_button :generate_password, true, :checked => true, :id => "list_generate_password_true_#{ id }" %>
       <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
