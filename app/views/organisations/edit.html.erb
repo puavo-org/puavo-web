@@ -5,69 +5,77 @@
 <%= form_for(@organisation, :url => organisation_path)  do |f| %>
 <table>
   <tr>
-    <td><%= f.label :o %></td>
+    <th><%= f.label :o %></th>
     <td><%= f.text_field :o %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :puavoEduOrgAbbreviation %></td>
+    <th><%= f.label :puavoEduOrgAbbreviation %></th>
     <td><%= f.text_field :puavoEduOrgAbbreviation %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :description %></td>
+    <th><%= f.label :description %></th>
     <td><%= f.text_field :description %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :telephoneNumber %></td>
+    <th><%= f.label :telephoneNumber %></th>
     <td><%= f.text_field :telephoneNumber %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :facsimileTelephoneNumber %></td>
+    <th><%= f.label :facsimileTelephoneNumber %></th>
     <td><%= f.text_field :facsimileTelephoneNumber %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :l %></td>
+    <th><%= f.label :l %></th>
     <td><%= f.text_field :l %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :street %></td>
+    <th><%= f.label :street %></th>
     <td><%= f.text_field :street %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :postOfficeBox %></td>
+    <th><%= f.label :postOfficeBox %></th>
     <td><%= f.text_field :postOfficeBox %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :postalAddress %></td>
+    <th><%= f.label :postalAddress %></th>
     <td><%= f.text_field :postalAddress %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :postalCode %></td>
+    <th><%= f.label :postalCode %></th>
     <td><%= f.text_field :postalCode %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :st %></td>
+    <th><%= f.label :st %></th>
     <td><%= f.text_field :st %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :puavoLocale %></td>
-    <td>
-      <%= f.select :puavoLocale,
-          locales_for_select %>
-    </td>
+    <th><%= f.label :puavoLocale %></th>
+    <td><%= f.select :puavoLocale, locales_for_select %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :puavoTimezone %></td>
-    <td>
-      <%= f.select :puavoTimezone,
-          timezones_for_select(f.object.puavoTimezone) %>
-    </td>
+    <th><%= f.label :puavoTimezone %></th>
+    <td><%= f.select :puavoTimezone, timezones_for_select(f.object.puavoTimezone) %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :puavoKeyboardLayout %></td>
+    <th><%= f.label :puavoKeyboardLayout %></th>
     <td><%= f.text_field :puavoKeyboardLayout %></td>
   </tr>
+
   <tr>
-    <td><%= f.label :puavoKeyboardVariant %></td>
+    <th><%= f.label :puavoKeyboardVariant %></th>
     <td><%= f.text_field :puavoKeyboardVariant %></td>
   </tr>
 
@@ -77,7 +85,7 @@
                 :attribute => :puavoAutomaticImageUpdates } ) %>
 
   <tr>
-    <td><%= f.label :eduOrgHomePageURI %></td>
+    <th><%= f.label :eduOrgHomePageURI %></th>
     <td><%= f.text_field :eduOrgHomePageURI %></td>
   </tr>
 
@@ -86,17 +94,13 @@
                 :f => f } ) %>
 
   <tr>
-    <td><%= f.label :puavoDeviceImage %></td>
+    <th><%= f.label :puavoDeviceImage %></th>
     <td><%= f.text_field :puavoDeviceImage %></td>
   </tr>
 
   <tr>
-    <td>
-      <%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %>
-    </td>
-    <td>
-      <%= multiple_text_field(f.object, "puavoImageSeriesSourceURL", t('shared.add_puavoImageSeriesSourceURL')) %>
-    </td>
+    <th><%= f.label :puavoImageSeriesSourceURL, nil, for: "puavoImageSeriesSourceURL0" %></th>
+    <td><%= multiple_text_field(f.object, "puavoImageSeriesSourceURL", t('shared.add_puavoImageSeriesSourceURL')) %></td>
   </tr>
 
   <!-- < %= render :partial => 'shared/form_allow_guest_and_personal_device', :locals => { :f => f } % > -->
@@ -104,28 +108,25 @@
   <%= render( :partial => 'shared/form_puavoconf', :locals => { :f => f } ) %>
 
   <tr>
-    <td class="label_for_input_text_list">
-      <%= f.label :puavoBillingInfo, nil, for: "puavoBillingInfo0" %>
-    </td>
+    <th><%= f.label :puavoBillingInfo, nil, for: "puavoBillingInfo0" %></td>
     <td>
-
-    <div id="organisation_puavoBillingInfo">
-      <% if Array(f.object.puavoBillingInfo).empty? %>
+      <div id="organisation_puavoBillingInfo">
+        <% if Array(f.object.puavoBillingInfo).empty? %>
         <input id='puavoBillingInfo0' name='ldap_organisation[puavoBillingInfo][]' type='text' />
-      <% else %>
+        <% else %>
         <% Array(f.object.puavoBillingInfo).each_index do |index| %>
-          <input id='puavoBillingInfo<%= index %>' name='ldap_organisation[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
+        <input id='puavoBillingInfo<%= index %>' name='ldap_organisation[puavoBillingInfo][]' type='text' value='<%= Array(f.object.puavoBillingInfo)[index] %>' />
         <% end %>
+        <% end %>
+      </div>
+      <%= link_to "#", class: "clone_prev_input_element btn" do %>
+        <i class="icon-plus"></i><%= t('.add_puavo_billing_info') %>
       <% end %>
-    </div>
-    <%= link_to "#", class: "clone_prev_input_element btn" do %>
-      <i class="icon-plus"></i><%= t('.add_puavo_billing_info') %>
-    <% end %>
-
     </td>
   </tr>
-  <tr>
-    <td></td>
+
+  <tr class="buttonRow">
+    <th></th>
     <td>
       <%= f.submit t('link.update'), class: 'btn' %>
       <div class="cancel"><%= link_to t('link.cancel'), organisation_path, class: 'btn btn-danger' %></div>

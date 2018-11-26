@@ -3,8 +3,8 @@
 <h1><span><%= t('shared.form_wlan.title') %></span></h1>
 
 <%= form_for( @organisation,
-	      :html => { :multipart => true },
-	      :url  => wlan_update_organisation_path ) do |f| %>
+             :html => { :multipart => true },
+             :url  => wlan_update_organisation_path ) do |f| %>
 
 <%= render :partial => 'shared/form_wlan', :locals => { :f => f } %>
 
