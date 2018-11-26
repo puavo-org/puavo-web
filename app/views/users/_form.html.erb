@@ -1,72 +1,73 @@
-<p class='required_info'><%= t('layouts.forms.required_field')%></p>
+<p class="required_info"><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
-
   <table>
     <tr>
-      <td class='required'><%= f.label :givenName %></td>
+      <th class="required"><%= f.label :givenName %></th>
       <td><%= f.text_field :givenName, disabled: @user.read_only? %></td>
     </tr>
+
     <tr>
-      <td class='required'><%= f.label :sn %></td>
+      <th class="required"><%= f.label :sn %></th>
       <td><%= f.text_field :sn, disabled: @user.read_only? %></td>
     </tr>
+
     <tr>
-      <td class='required'><%= f.label :uid %></td>
+      <th class="required"><%= f.label :uid %></th>
       <td><%= f.text_field :uid, disabled: @user.read_only? %></td>
     </tr>
+
     <tr>
-      <td class="label_for_input_text_list"><%= f.label :mail, nil, for: "user_mail_0" %></td>
+      <th><%= f.label :mail, nil, for: "user_mail_0" %></th>
       <td>
-    <div id="user_mail_list">
-      <% if Array(@user.mail).empty? %>
-        <input name='user[mail][]' type='text' id='user_mail_0' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
-      <% else %>
-        <% Array(@user.mail).each_index do |index| %>
+        <div id="user_mail_list">
+        <% if Array(@user.mail).empty? %>
+          <input name='user[mail][]' type='text' id='user_mail_0' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+        <% else %>
+          <% Array(@user.mail).each_index do |index| %>
           <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
-    <%= link_to "#", class: "clone_prev_input_element btn" do %>
-      <i class="icon-plus"></i><%= t('.add_email') %>
-    <% end %>
-
-    <p>
-    <%= field_error_text(f.object, :mail) %>
-    </p>
-  </td></tr>
-  <tr>
-    <td class="label_for_input_text_list"><%= f.label :telephoneNumber, nil, for: "user_telephone_0" %></td>
-    <td><span id="user_telephoneNumber_list">
-      <% if Array(@user.telephoneNumber).empty? %>
-        <input name='user[telephoneNumber][]' id='user_telephone_0' type='text' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
-      <% else %>
-        <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+        </div>
+        <%= link_to "#", class: "clone_prev_input_element btn" do %>
+        <i class="icon-plus"></i><%= t('.add_email') %>
         <% end %>
-      <% end %>
-    </span>
+        <%= field_error_text_span(f.object, :mail) %>
+      </td>
+    </tr>
 
-    <%= link_to "#", class: "clone_prev_input_element btn" do %>
-      <i class="icon-plus"></i><%= t('.add_telephone_number') %>
-    <% end %>
-</td>
-</tr>
     <tr>
+      <th><%= f.label :telephoneNumber, nil, for: "user_telephone_0" %></th>
+      <td>
+        <span id="user_telephoneNumber_list">
+        <% if Array(@user.telephoneNumber).empty? %>
+          <input name='user[telephoneNumber][]' id='user_telephone_0' type='text' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+        <% else %>
+          <% Array(@user.telephoneNumber).each_index do |index| %>
+          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= @user.read_only? ? 'disabled="disabled"' : "" %> />
+          <% end %>
+        <% end %>
+        </span>
+        <%= link_to "#", class: "clone_prev_input_element btn" do %>
+          <i class="icon-plus"></i><%= t('.add_telephone_number') %>
+        <% end %>
+        <%= field_error_text_span(f.object, :telephoneNumber) %>
+      </td>
+    </tr>
+
+    <tr>
+      <th class="required">
       <% if new_group_management?(@school) %>
-      <td class="label_for_checkbox_list required"><%= f.label :puavoEduPersonAffiliation %></td>
+        <%= f.label :puavoEduPersonAffiliation %>
       <% else %>
-      <td class="label_for_checkbox_list required"><%= f.label :puavoEduPersonAffiliationDeprecated %></td>
+        <%= f.label :puavoEduPersonAffiliationDeprecated %>
       <% end %>
+      </th>
       <td>
         <% User.puavoEduPersonAffiliation_list.map do |a| %>
-        <div>
-          <label>
-            <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>" />
-            <%=h t('puavoEduPersonAffiliation_' + a) %>
-          </label>
-        </div>
+          <input <%= @edu_person_affiliation.include?(a) ? ' checked="checked"' : "" %> id="puavoEduPersonAffiliation_<%= a %>" name="user[puavoEduPersonAffiliation][]" type="checkbox" value="<%= a %>"/>
+          <label for="puavoEduPersonAffiliation_<%= a %>"><%= h t('puavoEduPersonAffiliation_' + a) %></label><br>
         <% end %>
-        <%= field_error_text(f.object, :puavoEduPersonAffiliation) %>
+        <%= field_error_text_span(f.object, :puavoEduPersonAffiliation) %>
       </td>
     </tr>
 
@@ -76,84 +77,83 @@
 
     <% unless new_group_management?(@school) %>
     <tr>
-      <td class="label_for_checkbox_list required_role required"><%= f.label :role_ids %></td>
+      <th class="required"><%= f.label :role_ids %></th>
       <td>
-      <% @roles.each do |p| %>
+        <% @roles.each do |p| %>
         <div>
           <label><input<%= @user_roles.include?(p) ? ' checked="checked"' : "" %> id="role_<%= p.displayName.to_s.downcase.gsub(/ /, '_') %>" name="user[role_ids][]" type="checkbox" value="<%= p.id %>"  /><%=h p.displayName %></label>
         </div>
-      <% end %>
-      <%= field_error_text(f.object, :role_ids) %>
+        <% end %>
+        <%= field_error_text_span(f.object, :role_ids) %>
       </td>
     </tr>
     <% end %>
 
-  <tr>
-    <td><%= f.label :puavoLocale %></td>
-    <td>
-      <%= f.select :puavoLocale,
-          locales_for_select %>
-    </td>
-  </tr>
-
-  <tr>
-    <td><%= f.label :puavoAllowRemoteAccess %></td>
-    <td>
-      <%= f.radio_button :puavoAllowRemoteAccess, "true" %>
-      <%= label(:user,
-                t('activeldap.attributes.user.puavoAllowRemoteAccess_true'),
-                :for => "user_puavoAllowRemoteAccess_true",
-                :value => "true") %>
-      <%= f.radio_button :puavoAllowRemoteAccess, "false" %>
-      <%= label(:user,
-                t('activeldap.attributes.user.puavoAllowRemoteAccess_false'),
-                :for => "user_puavoAllowRemoteAccess_false",
-                :value => "false") %>
-    </td>
-  </tr>
-  <tr>
-    <td><%= f.label :puavoEduPersonPersonnelNumber %></td>
-    <td><%= f.text_field :puavoEduPersonPersonnelNumber %></td>
-  </tr>
-
-  <tr>
-    <td><%= f.label :image %></td>
-    <td><%= f.file_field(:image, accept: 'image/*') %></td>
-  </tr>
-
-  <tr>
-    <td><%= f.label :puavoLocked %></td>
-    <td><%= f.check_box :puavoLocked %></td>
-  </tr>
-
-  <% if current_user.organisation_owner? %>
     <tr>
-      <td><%= f.label :puavoSshPublicKey %></td>
+      <th><%= f.label :puavoLocale %></th>
+      <td><%= f.select :puavoLocale, locales_for_select %></td>
+    </tr>
+
+    <tr>
+      <th><%= f.label :puavoAllowRemoteAccess %></th>
+      <td>
+        <%= f.radio_button :puavoAllowRemoteAccess, "true" %>
+        <%= label(:user,
+                  t('activeldap.attributes.user.puavoAllowRemoteAccess_true'),
+                  :for => "user_puavoAllowRemoteAccess_true",
+                  :value => "true") %>
+        <br>
+        <%= f.radio_button :puavoAllowRemoteAccess, "false" %>
+        <%= label(:user,
+                  t('activeldap.attributes.user.puavoAllowRemoteAccess_false'),
+                  :for => "user_puavoAllowRemoteAccess_false",
+                  :value => "false") %>
+      </td>
+    </tr>
+
+    <tr>
+      <th><%= f.label :puavoEduPersonPersonnelNumber %></th>
+      <td><%= f.text_field :puavoEduPersonPersonnelNumber %></td>
+    </tr>
+
+    <tr>
+      <th><%= f.label :image %></th>
+      <td><%= f.file_field(:image, accept: 'image/*') %></td>
+    </tr>
+
+    <tr>
+      <th><%= f.label :puavoLocked %></th>
+      <td><%= f.check_box :puavoLocked %></td>
+    </tr>
+
+    <% if current_user.organisation_owner? %>
+    <tr class="ownersOnly">
+      <th><%= f.label :puavoSshPublicKey %></th>
       <td><%= f.text_area :puavoSshPublicKey, cols: 80, rows: 10 %></td>
     </tr>
-  <% end %>
+    <% end %>
 
-  <tr>
-    <td><%= f.label :puavoExternalId %></td>
-    <td><%= f.text_field :puavoExternalId %></td>
-  </tr>
+    <tr>
+      <th><%= f.label :puavoExternalId %></th>
+      <td><%= f.text_field :puavoExternalId %></td>
+    </tr>
 
-  <tr>
-    <td class='required'><%= f.label :new_password %></td>
-    <td><%= f.password_field :new_password, value: @user.new_password  %></td>
-  </tr>
+    <tr>
+      <th class="required"><%= f.label :new_password %></th>
+      <td><%= f.password_field :new_password, value: @user.new_password  %></td>
+    </tr>
 
-  <tr>
-    <td class='required'><%= f.label :new_password_confirmation %></td>
-    <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation  %></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td>
-      <%= f.submit submit_text, class: 'btn' %>
-      <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
-    </td>
-  </tr>
-</table>
+    <tr>
+      <th class="required"><%= f.label :new_password_confirmation %></th>
+      <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation  %></td>
+    </tr>
+
+    <tr class="buttonRow">
+      <th></th>
+      <td>
+        <%= f.submit submit_text, class: 'btn' %>
+        <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
+      </td>
+    </tr>
+  </table>
 <% end %>
-
