@@ -3,7 +3,7 @@
 <h1><span><%= t('layouts.application.printers') %></span></h1>
 
 <% @servers_and_printers.each do |server| %>
-<h2><span><%=h t('.server_title', :server => server[:hostname]) %></span></h2>
+<h2><span><%= t('.server_title') %> <%= link_to h(server[:hostname]), server_path(server[:server]) %></span></h2>
 
 <table class="list" style="float: none !important;">
   <tr>

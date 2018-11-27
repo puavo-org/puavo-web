@@ -1067,7 +1067,7 @@ en:
       infotv: Info-tv
   printers:
     index:
-      server_title: "Server: %{server}"
+      server_title: "Server:"
   helpers:
     boolean_true: "Yes"
     boolean_false: "No"

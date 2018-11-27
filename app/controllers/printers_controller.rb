@@ -19,6 +19,7 @@ class PrintersController < ApplicationController
 
     Server.all.each do |s|
       servers[s.dn.to_s] = {
+        server: s,
         hostname: s.puavoHostname,
         printers: []
       }

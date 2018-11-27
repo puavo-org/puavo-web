@@ -1036,7 +1036,7 @@ fi:
       infotv: Info-tv
   printers:
     index:
-      server_title: "Palvelin: %{server}"
+      server_title: "Palvelin:"
   helpers:
     boolean_true: "Kyllä"
     boolean_false: "Ei"
