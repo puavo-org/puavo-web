@@ -158,6 +158,9 @@ Rails.application.routes.draw do
     get 'themes/:theme' => 'themes#set_theme', :as => :set_theme
     resources :admins
 
+    get 'find_all_users_marked_for_deletion' => 'organisations#find_all_users_marked_for_deletion', :as => "find_all_users_marked_for_deletion"
+    delete 'delete_all_users_marked_for_deletion' => 'organisations#delete_all_users_marked_for_deletion', :as => "delete_all_users_marked_for_deletion"
+
     match 'owners' => 'organisations#owners', :as => :owners_organisation, :via => :get
     match 'remove_owner/:user_id' => 'organisations#remove_owner', :as => :remove_owner_organisations, :via => :put
     match 'add_owner/:user_id' => 'organisations#add_owner', :as => :add_owner_organisations, :via => :put

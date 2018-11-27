@@ -23,6 +23,7 @@ fi:
     wlan: "Langattomat verkot"
     change_school: "Vaihda koulua"
     printer_permissions: "Tulostusoikeudet"
+    all_users_marked_for_deletion: "Organisaation poistetuksi merkityt käyttäjät"
   missing_data: "(Puuttuu/ei asetettu)"
   import_tool:
     import: Tuo
@@ -464,6 +465,7 @@ fi:
   organisations:
     show:
       title: Organisaation tiedot
+      find_all_users_marked_for_deletion: "Etsi kaikki poistettavaksi merkityt käyttäjät"
     edit:
       title: Muokkaa organisaatiota
       select: Valitse
@@ -474,6 +476,20 @@ fi:
       organisation_owners: "Seuraavilla ylläpitäjillä on hallintaoikeus organisaatioon"
       removed_owners_title: "VAROITUS:"
       removed_owners_warning: "Seuraavat käyttäjät on poistettu, mutta heidät on yhä listattu organisaation omistajissa. Opinsysin tuki auttaa tässä asiassa."
+    deleted_users:
+      title: "Organisaation poistettavaksi merkityt käyttäjät"
+      time_range: "Aikarajaus"
+      range_title: "Etsi käyttäjät jotka ovat olleet poistettavaksi merkittynä vähintään..."
+      range_all: "(Kaikki)"
+      range_1month: "1 kuukausi tai kauemmin"
+      range_3months: "3 kuukautta tai kauemmin"
+      range_6months: "6 kuukautta tai kauemmin"
+      default: "(oletus)"
+      total: "Löytyi yhteensä %{count} käyttäjää määritetyllä aikajaksolla."
+      delete_listed: "Poista kaikki listattuna olevat käyttäjät"
+      missing_date: "Päivämäärää ei määritetty!"
+      users_deleted_ok: "%{count} käyttäjää poistettu, ei virheitä"
+      users_deleted_fail: "%{count} käyttäjää poistettu, joitain ei voitu poistaa"
   ldap_services:
     index:
       actions: Toiminnot

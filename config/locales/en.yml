@@ -43,6 +43,7 @@ en:
     wlan: "Wireless Networks"
     change_school: "Change school"
     printer_permissions: "Printing permissions"
+    all_users_marked_for_deletion: "Users in the organisation who are marked for deletion"
   missing_data: "(Missing/unset)"
   import_tool:
     import: Import
@@ -494,6 +495,7 @@ en:
   organisations:
     show:
       title: Information about the organisation
+      find_all_users_marked_for_deletion: "Find all users who are marked for deletion"
     edit:
       title: Edit organisation
       select: Select
@@ -504,6 +506,20 @@ en:
       organisation_owners: "The following admins are owners in this organisation:"
       removed_owners_title: "WARNING:"
       removed_owners_warning: "The following admins have been removed, but they're still listed as owners in this organisation. Contact Opinsys support for assistance."
+    deleted_users:
+      title: "Users in the organisation who are marked for deletion"
+      time_range: "Date range"
+      range_title: "Find users who have been marked for deletion at least..."
+      range_all: "(All)"
+      range_1month: "1 month or longer"
+      range_3months: "3 months or longer"
+      range_6months: "6 months or longer"
+      default: "(default)"
+      total: "Found %{count} users within the selected date range."
+      delete_listed: "Remove all currently listed users"
+      missing_date: "Missing date!"
+      users_deleted_ok: "%{count} users removed, no errors"
+      users_deleted_fail: "%{count} users removed, not all could be removed"
   ldap_services:
     index:
       actions: Actions
