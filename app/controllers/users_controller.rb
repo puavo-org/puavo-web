@@ -521,7 +521,13 @@ class UsersController < ApplicationController
         return (h == 1) ? t('fuzzy_time.hour') : t('fuzzy_time.hours', :h => h)
       else
         d = (seconds / 86400.0).to_i
-        return (h == 1) ? t('fuzzy_time.day') : t('fuzzy_time.days', :d => d)
+
+        if d < 30
+          return (d == 1) ? t('fuzzy_time.day') : t('fuzzy_time.days', :d => d)
+        else
+          month = (d / 30).to_i
+          return (month == 1) ? t('fuzzy_time.month') : t('fuzzy_time.months', :month => month)
+        end
       end
     end
 

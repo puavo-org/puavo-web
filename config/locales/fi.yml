@@ -1105,6 +1105,8 @@ fi:
     hours: "%{h} tuntia sitten"
     day: "päivä sitten"
     days: "%{d} päivää sitten"
+    month: "kuukausi sitten"
+    months: "%{month} kuukautta sitten"
   hwinfo:
     title: "Laitteen %{name} laitetiedot"
     back_button: "Takaisin laitteen sivulle"

@@ -1136,6 +1136,8 @@ en:
     hours: "%{h} hours ago"
     day: "a day ago"
     days: "%{d} days ago"
+    month: "a month ago"
+    months: "%{month} months ago"
   hwinfo:
     title: "Hardware information for %{name}"
     back_button: "Back to device page"
