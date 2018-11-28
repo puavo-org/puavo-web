@@ -135,7 +135,7 @@
 <div class="main-wrap">
     <% if current_organisation? %>
       <% if @school && !@school.id.nil? && controller_name != 'password' %>
-        <h1><%= @school.displayName %></h1>
+        <header id="schoolName"><%= @school.displayName %></header>
         <%= render :partial => "layouts/menu" %>
       <% end %>
     <% end %>
