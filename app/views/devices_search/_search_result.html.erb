@@ -1,7 +1,7 @@
 <% if objects.length > 0 %>
 <fieldset class="search_result">
 <legend><%=h t("search.search_result.title_#{model}") %></legend>
-<table class="list widelist">
+<table class="list">
   <tr class="thead">
     <% attributes.each do |attribute| %>
     <th><%= t("activeldap.attributes.#{model}.#{attribute}") %></th>

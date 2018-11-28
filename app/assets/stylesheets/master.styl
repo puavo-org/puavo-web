@@ -52,6 +52,12 @@ infoBgColor = rgb(217, 237, 247)
 rowEvenBgColor = rgb(250,250,250)
 rowOddBgColor = rgb(235,235,235)
 
+headersUnderlineColor = rgb(0, 0, 0)
+
+linkNormalColor = #13243f
+linkHoverColor = #352608
+linkFocusColor = #000000
+
 /*
 ====================================================================================================
 MEDIA QUERIES
@@ -68,7 +74,7 @@ screen-landscape-breakpoint-one = "screen and (orientation: landscape) and (max-
 
 /*
 ====================================================================================================
-LAYOUT
+BASE
 ====================================================================================================
 */
 
@@ -83,11 +89,12 @@ body {
   padding: 0;
 }
 
+/* The school name at the top of the page */
 header#schoolName {
   font-size: 220%;
   font-weight: bold;
-  margin-top: 12px;
   font-variant: small-caps;
+  margin-top: 12px;
 }
 
 footer {
@@ -95,18 +102,18 @@ footer {
 
 h1 {
   font-size: 250%;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid headersUnderlineColor;
 }
 
 h2 {
-  font-size: 200%;
-  border-bottom: 1px dashed #000;
   margin-top: 25px;
+  font-size: 200%;
+  border-bottom: 1px dashed headersUnderlineColor;
 }
 
 h3 {
   font-size: 130%;
-  border-bottom: 1px dotted #000;
+  border-bottom: 1px dotted headersUnderlineColor;
 }
 
 h4 {
@@ -122,16 +129,16 @@ h6 {
 }
 
 a {
-  color: #13243f;
+  color: linkNormalColor;
 }
 
 a:hover {
-  color: #352608;
+  color: linkHoverColor;
   text-decoration: none;
 }
 
 a:focus {
-  color: #000;
+  color: linkFocusColor;
 }
 
 a img {
@@ -140,17 +147,6 @@ a img {
 
 p {
   margin: 0 0 .5em;
-}
-
-p img .left {
-  float: left;
-  margin: 1.5em 1.5em 1.5em 0;
-  padding: 0;
-}
-
-p img .right {
-  float: right;
-  margin: 1.5em 0 1.5em 1.5em;
 }
 
 li ul {
@@ -162,27 +158,62 @@ ul {
   list-style: none;
 }
 
+img {
+  border: none;
+  max-width: 100%;
+}
+
+hr {
+  border: none;
+  clear: both;
+  float: none;
+  height: 0;
+  margin: 0;
+  width: 100%;
+  visibility: hidden;
+}
+
+// topmenu
+.topmenu
+  background-color baseOrangeGradient
+  background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+  border-bottom 1px solid baseBoxShadowBorderColor
+  box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
+  .top-menu-item
+    border-top 1px solid #E6E6E6
+    a
+      &:hover
+        background-color #f4f4f4
+        border-radius 0 8px 8px 0
+    &:first-child
+      border-top medium none
+  input
+    border 1px solid formElementBorderColor
+    border-radius 4px
+.topmenu-left
+  li
+    ul
+      background-color baseOrangeGradient
+      border-bottom 1px solid #222
+      border-left 1px solid #222
+      border-right 1px solid #222
+      border-radius 0 0 4px 4px
+      li
+        &:hover
+            .school_submenu
+              background none repeat scroll 0 0 #F59545
+              border medium none
+              border-radius 0 0 6px 0
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
+  .school_submenu
+    li
+      border-top 1px solid #E6E6E6
+
 .topmenu-content a,
 .navbar-first-level a
   text-decoration none
-
-img
-  border none
-  max-width 100%
-
-div.space,hr
-  border medium none
-  clear both
-  float none
-  height 0
-  margin 0 0 0
-  width 100%
-
-hr
-  &.space
-    background #fff
-    color #fff
-    visibility hidden
 
 .clearfix:after, .container:after
   content "\0020"
@@ -408,10 +439,10 @@ hr
     margin 0
     width 100%
 
-  .content-box, .content-box h3
+  .content-box-new, .content-box-new h3
     margin 0
     width 100%
-  .content-box
+  .content-box-new
     h3
       padding 1.5%
     &.school_image
@@ -594,43 +625,6 @@ body
   > h1 span
     border-bottom 1px solid baseBoxShadowBorderColor
 
-// topmenu
-.topmenu
-  background-color baseOrangeGradient
-  background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
-  border-bottom 1px solid baseBoxShadowBorderColor
-  box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
-  .top-menu-item
-    border-top 1px solid #E6E6E6
-    a
-      &:hover
-        background-color #f4f4f4
-        border-radius 0 8px 8px 0
-    &:first-child
-      border-top medium none
-  input
-    border 1px solid formElementBorderColor
-    border-radius 4px
-.topmenu-left
-  li
-    ul
-      background-color baseOrangeGradient
-      border-bottom 1px solid #222
-      border-left 1px solid #222
-      border-right 1px solid #222
-      border-radius 0 0 4px 4px
-      li
-        &:hover
-            .school_submenu
-              background none repeat scroll 0 0 #F59545
-              border medium none
-              border-radius 0 0 6px 0
-  .last_one
-    background none repeat scroll 0 0 transparent
-    border medium none
-  .school_submenu
-    li
-      border-top 1px solid #E6E6E6
 .menu
   li
     span
@@ -654,31 +648,6 @@ body
         background-color white
 
 // end of topmenu
-
-.content-box
-  background none repeat scroll 0 0 rgb(250, 250, 250)
-  background-image linear-gradient(rgb(250, 250, 250) 0%, rgb(247,247,247) 100%)
-  border-radius 4px
-  box-shadow inset 0 0 10px rgba(237, 113, 19, 0.25)
-  &.school_image
-    background none repeat scroll 0 0 transparent
-    background-image none
-    border 0 none
-    border-radius 0
-    box-shadow none
-  h4
-    border-bottom 2px solid
-  .row
-    &:not(:first-of-type)
-      border-top 1px solid #AAAAAA
-    &:empty
-      border none
-
-  h3, .show_user h3
-    background-color baseBrown
-    background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
-    border-radius 3px 3px 0 0
-    color rgb(245,245,245)
 
 // main-navigation
 .navbar-first-level
@@ -797,7 +766,7 @@ body
   .maincontent
     border none
     border-radius 0
-  .content-box, .user_box, .content-box h3, .show_user h3
+  .content-box-new, .user_box, .content-box-new h3, .show_user h3
     border-radius 0
 
   table
@@ -1213,7 +1182,7 @@ input.radio
     padding 2%
     input
       max-width 100%
-  .content-box
+  .content-box-new
     table
       td
         label
@@ -1856,10 +1825,6 @@ ORGANISATION
 ====================================================================================================
 */
 
-.content-box
-  table
-    width 100%
-
 #puavoconf
   tr:nth-child(even)
     background: #fff;
@@ -1871,24 +1836,6 @@ ORGANISATION
 SCHOOLS
 ====================================================================================================
 */
-
-.content-box
-  &.school_admins a, &.other_admins a
-    float right
-    font-weight normal
-    margin 0
-  &.users
-    clear both
-  .admins_headers
-    span
-      font-size 100%
-      font-weight bold
-  .row
-    .admin_display_name
-      display inline-block
-      float none
-      max-width 70%
-      width auto
 
 .admin-users-list, .billing-info
   width 100%
@@ -1963,27 +1910,9 @@ fieldset
 
 /*
 ====================================================================================================
-SERVERS
-====================================================================================================
-*/
-
-.widelist
-  .device_dn
-    font-size 8pt
-
-/*
-====================================================================================================
 USERS
 ====================================================================================================
 */
-
-.show_user
-  .content-box
-    .user-information
-      tr
-        display block
-        td
-          width 45%
 
 .marked_for_deletion
   color: red;

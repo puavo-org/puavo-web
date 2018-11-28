@@ -1,7 +1,7 @@
 <% if @users.length > 0 %>
 <% attributes = ["displayName", "uid"] %>
 <fieldset class="search_result">
-<table class="list widelist">
+<table class="list">
   <tr class="thead">
     <% attributes.each do |attribute| %>
     <th><%= t("activeldap.attributes.user.#{attribute}") %></th>
