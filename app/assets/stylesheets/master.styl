@@ -1,0 +1,2491 @@
+@import 'nib'
+
+.topmenu-search input, .search-container input
+  search-input-image()
+
+.topmenu-search input.loading, .search-container input.loading
+  search-input-spinner()
+
+/*
+====================================================================================================
+COLORS
+====================================================================================================
+*/
+
+baseBg = rgb(227, 227, 217)
+baseGradientBg = rgb(242, 242, 242)
+
+baseBrown = rgb(163, 106, 42)
+baseBrownGradient = rgb(186, 114, 45)
+
+baseFont = rgb(27, 27, 27)
+
+baseOrange = rgb(250, 179, 46)
+baseOrangeGradient = rgb(245, 149, 69)
+
+baseBoxShadowBorderColor = rgb(34, 34, 34)
+
+buttonBg = rgb(245, 245, 245)
+buttonGradientBg = rgb(220, 220, 220)
+buttonHoverColor = rgb(51, 51, 51)
+
+buttonDangerBgColor = rgb(231, 6, 0)
+buttonDangerBgImage = rgb(219, 64, 60)
+buttonDangerGradientBgImage = rgb(194, 31, 22)
+buttonDangerHoverBg = rgb(180, 31, 23)
+
+buttonBorderColor = rgba(0, 0, 0, 0.1)
+buttonBorderColor2 = rgba(0, 0, 0, 0.25)
+buttonBorderHexColor = #e6e6e6
+buttonBorderHexColor2 = #bfbfbf
+
+creamWhite = rgb(255, 255, 240)
+
+errorRed = rgb(231, 6, 0)
+
+focusColor = rgb(88, 151, 251)
+
+formElementBorderColor = rgb(200, 200, 200)
+
+infoBgColor = rgb(217, 237, 247)
+
+rowEvenBgColor = rgb(250,250,250)
+rowOddBgColor = rgb(235,235,235)
+
+/*
+====================================================================================================
+MEDIA QUERIES
+====================================================================================================
+*/
+
+screen-breakpoint-one = "screen and (max-width: 768px)"
+screen-breakpoint-two = "screen and (max-width: 480px)"
+screen-breakpoint-three = "screen and (max-width: 320px)"
+
+screen-portrait-breakpoint-one = "screen and (orientation: portrait) and (max-device-width: 800px)"
+screen-portrait-breakpoint-two = "screen and (orientation: portrait) and (max-device-width: 540px)"
+screen-landscape-breakpoint-one = "screen and (orientation: landscape) and (max-device-width: 960px)"
+
+/*
+====================================================================================================
+LAYOUT
+====================================================================================================
+*/
+
+*
+  box-sizing border-box
+  font-smoothing antialiased
+
+
+body
+  font-family "Helvetica Neue",Arial,sans-serif
+  font-size 100%
+  line-height 1.5
+  margin 0
+  padding 0
+
+h1, h2, h3, h4, h5, h6
+  font-weight normal
+  margin 0 0 1em
+h1
+  font-size 250%
+h2
+  font-size 200%
+h3
+  font-size 130%
+h4
+  font-size 115%
+  line-height 1.25
+h5
+  font-size 110%
+h6
+  font-size 105%
+h1 img, h2 img, h3 img, h4 img, h5 img, h6 img
+  margin 0
+p
+  margin 0 0 .5em
+  img
+    &.left
+      float left
+      margin 1.5em 1.5em 1.5em 0
+      padding 0
+    &.right
+      float right
+      margin 1.5em 0 1.5em 1.5em
+a
+  color #13243F
+  &:hover
+    color #352608
+    text-decoration none
+  &:focus
+    color #000
+  img
+    border none
+
+.topmenu-content a,
+.navbar-first-level a
+  text-decoration none
+
+blockquote
+  margin 1.5em
+  color #666
+  font-style italic
+
+strong
+  font-weight bold
+
+em, dfn
+  font-style italic
+
+dfn
+  font-weight bold
+
+sup, sub
+  line-height 0
+
+abbr, acronym
+  border-bottom 1px dotted #666
+
+address
+  margin 0 0 1.5em
+  font-style italic
+
+del
+  color #666
+
+pre
+  margin 1.5em 0
+  white-space pre
+
+pre, code, tt
+  font 100% 'andale mono', 'lucida console', monospace
+  line-height 1.5
+
+li ul, li ol
+  margin 0
+
+ul, ol
+  list-style none
+  margin 0 1.5em 1.5em 0
+  padding-left 3.333em
+
+ol
+  list-style-type decimal
+
+dl
+  margin 0 0 1.5em 0
+  dt
+    font-weight bold
+
+dd
+  margin-left 1.5em
+
+img
+  border none
+  max-width 100%
+
+div.space,hr
+  border medium none
+  clear both
+  float none
+  height 0
+  margin 0 0 0
+  width 100%
+
+hr
+  &.space
+    background #fff
+    color #fff
+    visibility hidden
+
+caption
+  background #eee
+
+.small
+  font-size 80%
+  margin-bottom 1.875em
+  line-height 1.875em
+
+.large
+  font-size 120%
+  line-height 2.5em
+  margin-bottom 1.25em
+
+.hide
+  display none
+
+.quiet
+  color #666
+
+.loud
+  color #000
+
+.highlight
+  background #ff0
+
+.added
+  background #060
+  color #fff
+
+.removed
+  background #900
+  color #fff
+
+.first
+  margin-left 0
+  padding-left 0
+
+.last
+  margin-right 0
+  padding-right 0
+
+.top
+  margin-top 0
+  padding-top 0
+
+.bottom
+  margin-bottom 0
+  padding-bottom 0
+
+.clearfix:after, .container:after
+  content "\0020"
+  display block
+  height 0
+  clear both
+  visibility hidden
+  overflow hidden
+
+.clearfix, .container
+  display block
+
+.clear
+  clear both
+
+// Custom global classes
+.container
+  height 100%
+  margin 0
+  min-width 300px
+
+.main-wrap
+  margin 25px auto
+  max-width 1200px
+  padding 5px 10px 0
+  width 95%
+  & > h1
+    font-size 220%
+    font-variant small-caps
+    margin 0
+    padding 1% 0 0 0
+
+//.maincontent
+.maincontent
+  font-size 80%
+  margin 0 0 2% 0
+  padding 2%
+  position relative
+  width 100%
+  .dashboard
+    float left
+    margin 0
+    width 100%
+  h1
+    line-height 1
+    margin 0 0 1%
+    padding 0
+// end of .maincontent
+
+.basic-info td
+    vertical-align top
+
+// .tools ->
+.tools-container
+  float right
+  margin-bottom 2%
+  &:empty, span:empty
+    display none
+  .tools
+    float right
+    height 40px
+    margin 5px 0 .2em 1em
+    padding 0
+    .sub-tools
+      margin 0
+    > div, .sub-tools > li
+      float left
+      margin 0
+      padding 0 0 0 5px
+      position relative
+    .sub-tools > li.tool
+      padding 0 1em
+    .tool
+      ul
+        display none
+        right 1em
+        padding 0
+        position absolute
+        margin 0
+        li
+          padding 0 5px
+
+.tools a, .tool span
+  display block
+  height auto
+  line-height 1.25
+  margin 0
+  padding 10px
+  white-space nowrap
+  width auto
+
+// End of .tools
+
+/*
+// .content-box
+.content-box
+  float left
+  margin 1% 1% 0 0
+  min-width 45%
+  padding 0
+  width 49%
+  &.school_image
+    padding-top 0
+  &.list .row
+    clear both
+  h4
+    clear both
+    margin 0 0 5px
+    padding 5px 0 5px 10px
+  p
+    float left
+    margin 0 2px 0 0
+  .row
+    margin 0
+    padding 5px 10px
+    a, p
+      font-weight bold
+    & > span
+      float left
+      padding 5px 0 5px
+      word-wrap break-word
+      width 33.3%
+  h3
+    margin 0
+    padding 5px 10px
+// end of .content-box
+*/
+
+[class*=icon]
+  font-size 120%
+
+.content-box-new {
+  min-width: 45%;
+  width: 49%;
+  float: left;
+  margin: 5px;
+  padding: 0;
+}
+
+.fullWidth {
+  width: 99%;
+  clear: both;
+  float: none;
+}
+
+.content-box-new header {
+  background-image: linear-gradient(top, #ba722d 0%, #a36a2a 100%);
+  color: #fff;
+
+  padding: 5px 10px;
+  margin: 0;
+  font-size: 130%;
+  border-radius: 5px 5px 0 0;
+  border-bottom: 1px dotted #000;
+}
+
+.content-box-new .contents {
+  padding: 5px;
+  background: #f0f0f0;
+  border-radius: 0 0 5px 5px;
+}
+
+.content-box-new table {
+  width: 100%;
+}
+
+.content-box-new tr:nth-child(odd) {
+  background: #f0f0f0;
+}
+
+.content-box-new tr:nth-child(even) {
+  background: #e0e0e0;
+}
+
+.content-box-new h3 {
+  margin: 5px 0 10px 0;
+  padding: 0 5px;
+  border-bottom: 2px solid #000;
+  font-size: 120%;
+  font-weight: bold;
+}
+
+.multilineItem {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.multilineItem .header {
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.multilineItem .content {
+  margin-left: 20px;
+}
+
+/* Heading row/column of tables. Can't use TH only, as it's usage varies. */
+.tableHeading th {
+  background: #ccc;
+}
+
+.noWrap {
+  white-space: no-wrap;
+}
+
+.noFloat {
+  float: none !important;
+}
+
+/* The "missing owners" warning at the top of organisation owners page */
+.missingOwners {
+  border: 2px solid #ff0;
+  padding: 10px 10px 0 10px;
+  background: #ffc;
+  margin: 20px;
+}
+
+// end of .content-box
+
+
+
+.display_block
+  display block !important
+
+.image
+  margin 0
+  padding 0
+
+.link_header
+  margin 0 0 0 -5px
+
+.list
+  .column_1
+    display inline
+  .column_2
+    font-weight bold
+    float right
+    margin-left 10px
+
+// markdown
+.markdown
+  h1,h2,h3,h4,h5,h6,p
+    float none
+    margin 0
+    padding 0
+  ul
+    list-style disc
+// end of markdown
+
+.ownersOnly {
+  border: 1px dashed #f00;
+}
+
+
+@media screen-breakpoint-one
+  body
+    font-size 85%
+
+  .main-wrap, .login_container
+    margin 0
+    padding 0
+    width 100%
+    & > h1
+      margin-top 0
+      padding 1% 0 0 1%
+
+  .maincontent
+    font-size 90%
+    padding 2%
+    .dashboard
+      width 100%
+    & > h1
+      padding 0 0 2%
+
+  .maincontent, .login_content
+    float none
+    margin 0
+    width 100%
+
+  .content-box, .content-box h3
+    margin 0
+    width 100%
+  .content-box
+    h3
+      padding 1.5%
+    &.school_image
+      padding 0 1% 1%
+
+  .tools-container
+    float none
+    margin-bottom 2%
+
+@media screen-breakpoint-two
+  .main-wrap
+    & > h1
+      margin-top 0
+
+@media screen-portrait-breakpoint-one
+  body
+    font-size 110%
+
+  .maincontent
+    h1
+      font-size 200%
+      margin 5% 0
+
+  .tools-container
+    margin-bottom 1em
+    .tools
+      float right
+  .basic-info td:first-of-type
+    width 30%
+// @media screen-portrait-breakpoint-two
+
+// @media screen-landcape-breakpoint-one
+
+/*
+====================================================================================================
+THEME
+====================================================================================================
+*/
+
+// base_styles -->
+h1, h2, h3, h4, h5, h6
+  color baseFont
+
+// make long device pages easier to read
+h2 { border-bottom: 1px dashed #000; margin-top: 25px; }
+
+h3 { border-bottom: 1px dotted #000; }
+
+// Forms
+/*
+form
+  input
+    background-color white
+    border 1px solid formElementBorderColor
+    border-radius 4px
+    box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.075)
+  select
+    background-color white
+    border 1px solid formElementBorderColor
+  .field_with_errors
+    input, select
+      border 1px solid errorRed
+*/
+
+input[type="submit"] {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: none repeat scroll 0 0 #eeeeed;
+  background-image: linear-gradient(white 0%, #eeeeed 100%);
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background: none repeat scroll 0 0 #eee;
+    background-image: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
+    border: 1px solid focusColor;
+}
+
+label
+  color #222222
+  &.label_error
+    color errorRed
+
+.required_info
+  color errorRed
+
+.required:after
+  color errorRed
+
+// End of forms
+
+fieldset {
+  border: 1px solid #ccc;
+}
+
+.field_error {
+  color: #f00;
+  font-weight: bold;
+  display: block;
+}
+
+.field_value_error
+  color errorRed
+
+.notice_text
+  color errorRed
+
+// End of tables
+
+// Buttons
+.btn
+  background-color buttonBg
+  *background-color buttonBg
+  background-image linear-gradient(buttonBg 0%, buttonGradientBg 100%)
+  background-repeat repeat-x
+  border 1px solid #cccccc
+  *border 0
+  border-color buttonBorderHexColor buttonBorderHexColor buttonBorderHexColor2
+  border-color buttonBorderColor buttonBorderColor buttonBorderColor2
+  border-radius 3px
+  box-shadow inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05)
+  color #333333
+
+.btn:hover, .btn:focus
+  background-color buttonGradientBg
+  background-image none
+  color buttonHoverColor
+
+.btn-danger
+  color rgb(255, 255, 255)
+  background-color buttonDangerBgColor
+  background-image linear-gradient(top, buttonDangerBgImage, buttonDangerGradientBgImage)
+
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active
+  color rgb(255, 255, 255)
+  background-color buttonDangerHoverBg
+  background-image none
+// End of Buttons
+
+// Alerts
+.message_error,
+.message_notice,
+.message_success,
+.notice,
+.message_alert
+  border 2px solid #ddd
+
+.message_error, .message_alert
+  background none repeat scroll 0 0 #AD0000
+  border 1px solid #AAAAAA
+  border-radius 4px
+  color #F4F4F4
+
+.message_notice, .notice
+  background none repeat scroll 0 0 #86B410
+  border 1px solid #56340E
+  border-radius 4px
+
+.message_success
+  background #E6EFC2
+  color #264409
+  border 1px solid #C6D880
+  a
+    color #264409
+
+.message_error
+  a
+    color errorRed
+
+.message_notice a,
+.message_alert a
+  color #514721
+
+.notice
+  a
+    color #514721
+
+.message-info
+  background-color infoBgColor
+  border 2px dotted baseBoxShadowBorderColor
+
+.invalid
+  color errorRed
+
+// End of Alerts
+
+// End of base_styles
+
+body
+  background none repeat scroll 0 0 baseBg
+
+.main-wrap
+  background none repeat scroll 0 0 baseBg
+  border 5px solid #3E3E2D
+  border-radius 10px 10px 0 0
+  box-shadow 0px 15px 15px rgba(68, 68, 68, 0.70)
+
+.maincontent
+  background-color white
+  border-bottom 1px solid baseBoxShadowBorderColor
+  border-left 1px solid baseBoxShadowBorderColor
+  border-right 1px solid baseBoxShadowBorderColor
+  border-radius 0 0 4px 4px
+  > h1 span
+    border-bottom 1px solid baseBoxShadowBorderColor
+
+// topmenu
+.topmenu
+  background-color baseOrangeGradient
+  background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+  border-bottom 1px solid baseBoxShadowBorderColor
+  box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
+  .top-menu-item
+    border-top 1px solid #E6E6E6
+    a
+      &:hover
+        background-color #f4f4f4
+        border-radius 0 8px 8px 0
+    &:first-child
+      border-top medium none
+  input
+    border 1px solid formElementBorderColor
+    border-radius 4px
+.topmenu-left
+  li
+    ul
+      background-color baseOrangeGradient
+      border-bottom 1px solid #222
+      border-left 1px solid #222
+      border-right 1px solid #222
+      border-radius 0 0 4px 4px
+      li
+        &:hover
+            .school_submenu
+              background none repeat scroll 0 0 #F59545
+              border medium none
+              border-radius 0 0 6px 0
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
+  .school_submenu
+    li
+      border-top 1px solid #E6E6E6
+.menu
+  li
+    span
+      &.sub
+        color #222222
+    &.last
+      a
+        background none repeat scroll 0 0 transparent
+    &.active
+      a
+        color #B6E3EC
+    li
+      border-left 1px solid creamWhite
+      border-right 1px solid creamWhite
+      &.last
+        border-bottom 1px solid creamWhite
+    ul
+      border-top 1px solid creamWhite
+      list-style none outside none
+      ul
+        background-color white
+
+// end of topmenu
+
+.content-box
+  background none repeat scroll 0 0 rgb(250, 250, 250)
+  background-image linear-gradient(rgb(250, 250, 250) 0%, rgb(247,247,247) 100%)
+  border-radius 4px
+  box-shadow inset 0 0 10px rgba(237, 113, 19, 0.25)
+  &.school_image
+    background none repeat scroll 0 0 transparent
+    background-image none
+    border 0 none
+    border-radius 0
+    box-shadow none
+  h4
+    border-bottom 2px solid
+  .row
+    &:not(:first-of-type)
+      border-top 1px solid #AAAAAA
+    &:empty
+      border none
+
+  h3, .show_user h3
+    background-color baseBrown
+    background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
+    border-radius 3px 3px 0 0
+    color rgb(245,245,245)
+
+// main-navigation
+.navbar-first-level
+  .current_page_item
+    background-color baseBrown
+    background-image linear-gradient(baseBrown 0%, baseBrownGradient 100%)
+    border-left 1px solid baseBoxShadowBorderColor
+    border-right 1px solid baseBoxShadowBorderColor
+    border-top 1px solid baseBoxShadowBorderColor
+    a
+      color creamWhite
+  ul > li
+    &:hover
+      background none repeat scroll 0 0 baseBrown
+      background-image linear-gradient(baseBrown 0%, baseBrownGradient 100%)
+  .last_one
+    background none repeat scroll 0 0 transparent
+    border medium none
+  li
+    background-color baseOrange
+    background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+    border-radius 4px 4px 0 0
+
+.navbar-second-level
+  background-color baseBrown
+  background-image linear-gradient(baseBrownGradient 35%, baseBrown 60%)
+  border 1px solid baseBoxShadowBorderColor
+  border-radius 0 4px 0 0
+  .current a, a:hover
+    background-color white
+    border-left 1px solid baseBoxShadowBorderColor
+    border-radius 4px 4px 0 0
+    border-right 1px solid baseBoxShadowBorderColor
+    border-top 1px solid baseBoxShadowBorderColor
+    color #4A4D4A
+  li
+    a
+      border-radius 10px 10px 0 0
+      border 1px solid transparent
+      color #E6E6D8
+      &:hover
+        color #222222
+
+// end of main-navigation
+
+// tools
+.tools
+  a
+    text-decoration none
+    &:hover
+      color #222
+  .tool
+    span
+      &:hover
+        cursor pointer
+    ul
+      background #fff
+      border 1px solid #AAAAAA
+      li
+        margin 2px
+        background none repeat scroll 0 0 #FFFFFF
+        &:hover
+          background none repeat scroll 0 0 #C0772F
+
+// End of .tools
+
+// login
+
+.login_container
+  background none repeat scroll 0 0 baseBg
+  box-shadow 0 4px 8px baseBoxShadowBorderColor
+  .login_content
+    background none repeat scroll 0 0 white
+  h1
+    color #2D2D2D
+  h2
+    color #323232
+  a
+    &:hover
+      color #AD0000
+
+.password_container
+  background-color baseBrown
+.login_content
+  background-color white
+  span
+    border 1px solid transparent
+    border-radius 4px 4px 0 0
+  .message_alert
+    background-color errorRed
+
+  .password_buttons span
+    background none repeat scroll 0 0 #FAB32E
+    background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
+    border-bottom none
+    &.active, &:hover
+      background none repeat scroll 0 0 baseBrown
+      background-image linear-gradient(baseBrownGradient 0%, baseBrown 100%)
+      a
+        color white
+// end of login
+
+// password
+
+
+
+// end of password
+
+.link_header
+  border-bottom 1px dashed #555555
+  font-weight bold
+
+.search_result
+  td
+    border-bottom 1px solid #AAAAAA
+
+// markdown
+.markdown
+  h1,h2,h3,h4,h5,h6,p
+    background-color transparent
+    background-image none
+    color baseFont
+// end of markdown
+
+@media screen-breakpoint-one
+  .main-wrap, .login_container, .navbar-second-level
+    border solid 1px transparent
+  .maincontent
+    border none
+    border-radius 0
+  .content-box, .user_box, .content-box h3, .show_user h3
+    border-radius 0
+
+  table
+    &.list
+      tr
+        border-bottom 1px solid baseBoxShadowBorderColor
+        &:nth-child(2)
+          border-top 1px solid baseBoxShadowBorderColor
+      th
+        display none
+      td
+        border-bottom none
+  .login_content
+    .password_buttons
+      span, span.active
+        border-radius 4px
+
+/*
+====================================================================================================
+BUTTONS
+====================================================================================================
+*/
+
+// Buttons
+.btn
+  display inline-block
+  *display inline
+  cursor pointer
+  font-size 100%
+  margin-bottom 0
+  *margin-left .3em
+  text-align center
+  vertical-align middle
+  *zoom 1
+  padding 4px 12px
+  text-decoration none
+
+table .btn
+  font-weight normal
+  padding 4px 12px 4px 8px
+  text-decoration none
+form .btn
+  padding 4px 12px
+
+@media screen-breakpoint-one
+  .btn
+    padding 0.5em 1em
+
+/*
+====================================================================================================
+TABLES
+====================================================================================================
+*/
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  vertical-align: middle;
+  margin: 0;
+  padding: 6px;
+}
+
+th {
+  font-size: 110%;
+  text-align: left;
+  text-decoration: none;
+}
+
+th a, td a {
+  font-weight: bold;
+}
+
+.mountPoints td, .mountPoints th {
+  border: none;
+}
+
+.mountPoints th {
+  text-align: center;
+  background: #ccc;
+}
+
+.groupRenameTable th {
+  text-align: left;
+  background: #ccc;
+}
+
+/*
+====================================================================================================
+FORMS
+====================================================================================================
+*/
+
+form table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+form table td, form table th {
+  padding: 10px;
+}
+
+form table tr:nth-child(even) {
+  background: #f5f5f5;
+}
+
+.buttonRow td, .buttonRow th {
+  background: #fff;
+}
+
+input {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+input[type="text"], input[type="password"] {
+  padding: 10px;
+  margin: 5px 0;
+}
+
+input[type="checkbox"], input[type="radio"] {
+  padding: 0;
+  margin: 0;
+}
+
+form th {
+  text-align: right;
+  width: 250px;
+}
+
+form select {
+  width: 100%;
+}
+
+form textarea {
+  width: 100%;
+}
+
+form th {
+/*  vertical-align: top;*/
+}
+
+form label {
+  /* Reset weights... */
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+}
+
+form th label {
+  /* ...but make these bigger */
+  font-size: 110%;
+  font-weight: bold;
+  word-wrap: none;
+}
+
+.field_with_errors {
+  color: red;
+  font-weight: bold;
+}
+
+.field_with_errors input, .field_with_errors select {
+  border: 1px solid #foo;
+}
+
+form .required {
+  content: " *";
+  font-size: 120%;
+}
+
+/* Administrative groups checkbox list header */
+.administrativeGroups header {
+  border-bottom: 1px dashed black;
+  font-size: 110%;
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+
+/* Administrative groups checkbox list entry */
+.administrativeGroups input[type="checkbox"] {
+  margin-left: 30px;
+}
+
+/*
+form
+  table
+    display block
+    max-width 80%
+  tbody
+    display block
+  input
+    font-size 110%
+    margin 0 0 2%
+    padding 0.5em
+    width 100%
+  input[disabled]
+    opacity 0.2
+  #school_puavoBillingInfo, #organisation_puavoBillingInfo
+    input
+      display block
+  .table-in-table
+    max-width 100%
+
+  tr
+    td
+      margin 0
+      padding 0.5em 0 0
+      width 100%
+    td:first-child
+      display inline-block
+      text-align right
+      padding-right 1em
+      width 15em
+  .list
+    max-width 100%
+    tr
+      td
+        display table-cell
+        text-align left
+        width auto
+  select
+    height 30px
+    line-height 30px
+    margin 0 0 5px
+    padding 0
+    vertical-align middle
+    width 100%
+  textarea
+    &#raw_users
+      width 100%
+  &.inline
+    line-height 3
+    p
+      margin-bottom 0
+  &.form_inline
+    input
+      display inline-block
+      margin-bottom 0
+      vertical-align middle
+      width auto
+    label
+      display inline-block
+      text-align right
+      width 35%
+    span
+      margin-bottom 1%
+    .submit_button_login
+      margin-left 36%
+*/
+
+.rename_group_old_name
+  text-align right
+  width 35%
+
+.rename_group_new_name
+  width 60%
+
+.rename_group_name_abbr
+  width 45%
+
+.ldap_services_system_groups
+  div
+    word-wrap break-word
+
+.submit_button_container
+  margin-left 26.2345%
+
+.submit_button_container_no_margin
+  margin-left 0
+
+form[action$="users/import"]
+  .submit_button_container
+    margin-left 0
+
+.ldap_service
+  margin-left 20%
+
+#device_puavoDeviceXrandr input,
+#device_macAddress input,
+#server_puavoExport_list input
+  display block
+
+.purchase_date
+  select
+    width auto
+
+label
+  font-size 120%
+  font-weight bold
+  line-height 2
+  margin 0
+  &.checkbox
+    font-size 100%
+    font-weight normal
+
+.label_for_checkbox_list
+  vertical-align top
+
+.label_for_input_text_list
+  vertical-align top
+
+.label_td
+  text-align left
+
+fieldset
+  padding 1.4em
+  margin 0 0 1.5em 0
+
+legend
+  font-weight bold
+  font-size 100%
+
+
+input[type="file"]
+  font-size 90%
+
+input[type="file"],
+input[type="image"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="radio"],
+input[type="checkbox"]
+  width auto
+
+select,
+input[type="file"]
+  *margin-top 4px
+
+
+input[type="submit"]
+  font-size 120%
+  height 70px
+  margin 5px 0 0
+  max-width 333px
+  padding 5px 8px
+  vertical-align middle
+  width 50%
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input.text:focus,
+input.title:focus,
+textarea:focus,
+select:focus
+  color #222
+
+input[type="checkbox"],
+input[type="radio"],
+input.checkbox,
+input.radio
+  display inline-block
+  margin 5px
+  position relative
+  width auto
+
+#user_mail_list
+  input
+    display block
+    margin 0 0 5px
+
+#user_telephoneNumber_list
+  input
+    display block
+    margin 0 0 5px
+
+.cancel
+  display inline
+  *display inline
+  font-size 100%
+  margin 0
+  padding 0
+  width 100px
+  &:before
+    content: " – "
+.clone_prev_input_element
+  font-size 100%
+  font-weight normal
+  margin-bottom 0.5em
+
+.required
+  &:after
+    content "*"
+    font-size 150%
+  .field_with_errors
+    display inline-block
+
+.no-table-form
+  input
+    max-width 80%
+
+@media screen-breakpoint-one
+  form
+    table, tbody
+      display block
+    table
+      padding 0 2%
+      max-width 100%
+      tr
+        display block
+        position relative
+        td, td:first-child, th
+          display block
+          text-align left
+          width 100%
+    &.form_inline
+      padding 2% 0
+      .submit_button_login
+        margin 5% 0 0
+      input
+        max-width 100%
+        min-height 50px
+        width 98%
+    input, select
+      width 95%
+    input[type="submit"]
+      width 50%
+  label
+    font-size 100%
+
+  .new_ldap_service tr td:nth-child(even), .new_ldap_service tr td:nth-child(odd), .edit_ldap_service tr:nth-child(even), .edit_ldap_service tr:nth-child(odd)
+    width 95%
+  .show_user
+    table
+      &.list
+        td
+          display inline-block
+          &.value_td
+            padding-left 1em
+            text-align left
+
+  .mass_import_info, .mass_import_info_text
+    padding 2%
+
+  form[action$="import/validate"] p, form[action$="import/refine"] p, form[action$="import/refine"] pre
+    padding 0 0 0 2%
+
+  .mass_import_form
+    width 90%
+    input
+      margin-left 2%
+
+  textarea#raw_users
+    margin-left 2%
+    width 90%
+
+  form table.import_define th, form table.import_define td
+    width 45%
+    display inline-block
+
+  .submit_button_container
+    margin-left 2%
+
+  .form_inline
+    & > *
+      padding 0 2%
+    label
+      display block
+      text-align left
+
+  form.new_device h2, form.edit_device h2, form.edit_server h2
+    padding 0 2%
+
+  form table.rename_groups_roles_table tr th, form table.rename_groups_roles_table tr td
+    width 45%
+
+  #other_groups td, #member_groups td
+    line-height 3
+
+  .required_info
+    margin-left 2%
+
+  .no-table-form
+    padding 2%
+    input
+      max-width 100%
+  .content-box
+    table
+      td
+        label
+          line-height 1.5
+
+/*
+====================================================================================================
+MAIN NAVIGATION
+====================================================================================================
+*/
+
+.navbar-first-level
+  clear both
+  margin 5px 0 -1px
+  ul
+    display inline-block
+    font-size 80%
+    font-weight bold
+    line-height 3
+    list-style none outside none
+    margin 0 0 -0.5em 0
+    padding 0
+    text-align center
+    text-transform uppercase
+    width 100%
+    .current_page_item
+      position relative
+    .last_one
+      height 0
+      margin 0
+      padding 0
+      position relative
+    & > li
+      float left
+      margin 0 3px 0 0
+      white-space nowrap
+      &:last-child
+        margin 0
+    a
+      display block
+      padding 0 1em
+
+.navbar-second-level
+  font-size 70%
+  font-weight normal
+  margin 0
+  padding 0
+  text-transform uppercase
+  width 100%
+  ul
+    display block
+    margin 0 0 -1px
+    padding 5px 0 0
+    &:after
+      clear both
+      content " 0020"
+      display block
+      height 0
+      overflow hidden
+      visibility hidden
+  li
+    float left
+    margin 0 0 0 5px
+    padding 0
+    position relative
+    text-align center
+    text-decoration none
+    white-space nowrap
+    width auto
+    &:first-child
+      margin 0 0 0 6px
+    a
+      display block
+      margin 0
+      padding 8px
+      text-decoration none
+      &:hover
+        color #222222
+
+@media screen-breakpoint-one
+  .navbar-first-level
+    ul
+      a
+        padding 0.7em 2em
+  .navbar-second-level
+    font-size 60%
+    li
+      a
+        padding .5rem
+
+@media screen-portrait-breakpoint-one
+  .navbar-first-level
+    ul
+      a
+        padding .2rem .5rem
+  .navbar-second-level
+    li
+      a
+        padding .5rem
+
+/*
+====================================================================================================
+ERROR MESSAGES
+====================================================================================================
+*/
+
+.message_error,
+.message_notice,
+.message_success,
+.notice,
+.message_alert
+  padding 0.5em
+  margin 15px 15px 1em 0
+
+.message_error, .message_alert
+  font-size 130%
+  text-align center
+
+.message_notice, .notice
+  font-size 130%
+  text-align center
+
+.login_content .notice, .login_content .message_notice
+  left 0
+  margin 0
+  position relative
+  top 0
+
+.message_success
+  text-align center
+
+@media screen-breakpoint-one
+  .message_error, .message_notice, .message_success, .notice, .message_alert
+    margin 2% 2.5% 1% 2.5%
+
+.missingData
+  color: #f00;
+
+.courseWarning, .courseGroupType
+  color: #00f;
+
+/*
+====================================================================================================
+TOPMENU
+====================================================================================================
+*/
+
+.topmenu
+  height auto
+  margin 0
+  min-width 300px
+  position fixed
+  top 0
+  width 100%
+  z-index 10
+  input
+    float left
+    margin 5px 0 0 5px
+    padding 5px 30px 5px 10px
+
+.topmenu-content
+  font-size 80%
+  margin 0 auto
+  max-width 1200px
+  position relative
+  width 95%
+
+.topmenu-left, .topmenu-search
+  float left
+  font-size 85%
+  font-weight bold
+  line-height 3.5
+  list-style none outside none
+  margin 0
+  padding 0 5px
+  text-transform uppercase
+  & > li
+    float left
+    margin-right 20px
+    position relative
+    width auto
+    &:last-child
+      margin-right 0
+    & > ul
+      display none
+      left 0
+      line-height 1
+      margin 0
+      max-height 600px
+      min-width 200px
+      overflow-y auto
+      padding 0 10px 0 0
+      position absolute
+      top 100%
+      white-space nowrap
+      width auto
+  li
+    ul
+      li
+        .school_submenu
+          display none
+        &:hover
+          .school_submenu
+            display block
+            left 100%
+            margin -29px 0 0 -1px
+            padding 0
+            position absolute
+  .last_one
+    height 0
+    margin 0
+    padding 0
+    position relative
+  .middle
+    height 20px
+    left 18px
+    position absolute
+    top 0
+    width 105px
+  .school_submenu
+    li
+      margin 8px
+
+.touch
+  .topmenu
+    position absolute
+    & > li
+      & > ul
+        max-height none
+        overflow-y visible
+
+
+li
+  &.top-menu-item
+    display block
+    list-type none
+    margin 5px 0
+    padding 10px 15px 2px 10px
+    white-space nowrap
+    a
+      margin -8px -20px -5px -20px
+      padding 10px 20px 10px 20px
+      display block
+    //&:last-child
+    //  padding-bottom 15px
+  &.left
+    a
+      borderleft-radius 12px
+
+.add-new-school a,
+.add-new-school a:hover
+  float right
+  margin 2px 0
+  padding 10px 5px
+  text-transform none
+
+.school-menu, .organisation-menu
+  z-index 10
+.school-menu-button > span,
+.organisation-menu-button > span
+  padding 6px
+  border-radius 6px
+
+.school-menu-button,
+.organisation-menu-button
+  background-position right
+  padding-right 10px
+
+.topmenu-right
+  float right
+  margin 3px 5px
+  padding 0
+  li
+    a[data-method="delete"]
+      border none
+      color creamWhite
+      margin 0 0 0 10px
+      padding 4px 10px
+    a[data-method="delete"]:hover
+      background none repeat scroll 0 0 #DA0000
+
+#loggedInName
+    margin-top 6px
+
+.menu
+  li
+    float left
+    line-height 1.5
+    margin 0
+    padding 0 2px
+    position relative
+    span
+      display block
+      padding 0
+      text-decoration none
+      width auto
+      &.sub
+        font-weight bolder
+        padding-right 10px
+        text-transform uppercase
+    a
+      display block
+      font-weight normal
+      text-decoration none
+      &.sub
+        padding-right 15px
+        text-transform uppercase
+    li
+      width 100%
+      a
+        padding 5px 5px 5px 10px
+        &.sub
+          padding-right 15px
+    ul
+      margin 0
+      padding 0
+      top 32px
+      width 168px
+      ul
+        margin-left 169px
+        top -1px
+
+ul.menu ul,
+ul.menu li:hover ul ul,
+ul.menu ul ul,
+ul.menu li:hover ul ul ul,
+ul.menu ul ul ul,
+ul.menu li:hover ul ul ul ul
+  left -999em
+  position absolute
+
+ul.menu li:hover ul,
+ul.menu li li:hover ul,
+ul.menu li li li:hover ul,
+ul.menu li li li li:hover ul
+  left -1px
+  z-index 999
+
+ul.menu li.hover ul ul,
+ul.menu li.hover ul ul ul,
+ul.menu li.hover ul ul ul ul
+  left -999em
+  position absolute
+
+ul.menu li.hover ul,
+ul.menu li li.hover ul,
+ul.menu li li li.hover ul,
+ul.menu li li li li.hover ul
+  left -1px
+  z-index 999
+.menu-container
+  display block
+
+@media screen-breakpoint-one
+  .menu-container
+    display block
+    .topmenu-left
+      left 0
+    .topmenu-left, .topmenu-right
+      margin 0
+      padding 0
+      top 44px
+    .topmenu-left, .topmenu-search, .topmenu-right
+      float none
+      position absolute
+    .topmenu-search
+      left 0
+      padding 0
+      top 0
+      width 100%
+      li
+        width 100%
+      input
+        height 35px
+        width 100%
+
+  .topmenu
+    display block
+    height 80px
+    position relative
+  .topmenu-content
+    font-size 90%
+  .topmenu-right
+    right 0
+    li
+      a[data-method="delete"]
+        margin 0
+
+@media screen-breakpoint-two
+  .topmenu
+    height 120px
+  .menu-container
+    .topmenu-left
+      top 84px
+  .topmenu-right
+    left 0
+  .menu li
+    width 50%
+
+@media screen-portrait-breakpoint-two
+  .menu-container
+    .topmenu-left
+      top 72px
+
+/*
+====================================================================================================
+LISTS
+====================================================================================================
+*/
+
+/* Lists of schools, users, devices, etc. */
+.list {
+  /*width: 100%;*/  /* fix the tool buttons first! */
+}
+
+.list th {
+  background: linear-gradient(top, #a36a2a 35%, #ba722d 60%) repeat scroll 0 0 transparent;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  color: #f5f5e8;
+  padding: 10px;
+  font-size: 100%;
+}
+
+.externalFiles th {
+  text-align: left;
+}
+
+.list tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.list tr:nth-child(odd) {
+  background: #ebebeb;
+}
+
+.list tr:hover {
+  background: #f9f7e6;
+}
+
+.list td {
+  border-bottom: 1px solid #c8c8c8;
+}
+
+/* Alternate colors for the "marked for deletion" users table */
+.marked_for_deletion_users_list tr:nth-child(even) {
+  background-color: #fcc;
+}
+
+.marked_for_deletion_users_list tr:nth-child(odd) {
+  background-color: #faa;
+}
+
+.marked_for_deletion_users_list tr:hover {
+  background: #fdd;
+}
+
+.marked_for_deletion_group:nth-child(even) {
+  background-color #fcc !important;
+}
+
+.marked_for_deletion_group:nth-child(odd) {
+  background-color #faa !important;
+}
+
+/* Username lists */
+.list .description {
+  margin-bottom: 20px;
+}
+
+.list .meta_information {
+  float: left;
+}
+
+.list .form {
+  margin-top: 20px;
+  float: left;
+}
+
+.list input[type="text"] {
+  width: 15em;
+}
+
+.list input[type="submit"] {
+  paddin: 0;
+  margin: 0;
+  width: auto;
+  height: auto;
+  float: right;
+}
+
+/* Device lists on the printer permissions page */
+.devices th {
+  text-align: left;
+}
+
+/* A list containing the usernames of an unloaded username list */
+.usernameListBox {
+  border: 1px solid #ccc;
+  padding: 5px;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+/*
+====================================================================================================
+DEVICES
+====================================================================================================
+*/
+
+.tools
+  .add-new-device
+    &:hover
+      background-color transparent
+
+
+.printer-permissions .devices table
+  td,th
+    text-align left
+    padding 1em
+
+  td,a
+    font-size 10pt
+    font-weight default
+
+.hwInfoTitle {
+  text-decoration: underline;
+  margin-bottom: 1em !important;
+}
+
+.hwInfoTimestamp {
+  font-size: 150%;
+  margin: 1em 0 1em 0;
+}
+
+.hwInfoTable {
+  border: 2px solid #aaa;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.hwInfoTable th {
+  border: 1px solid #aaa;
+  padding: 7px;
+  text-align: right;
+  width: 150px;
+}
+
+.hwInfoTable .main {
+  text-align: center;
+  vertical-align: middle;
+  background: #eee;
+}
+
+.hwInfoTable td {
+  border: 1px solid #aaa;
+  padding: 7px;
+}
+
+.hwInfoTable .sectionEnd {
+  border-bottom: 2px solid #aaa;
+}
+
+/*
+====================================================================================================
+EXTERNAL FILES
+====================================================================================================
+*/
+
+.external-files
+  td
+    vertical-align middle
+
+  td, th
+    padding-left 5px
+
+
+/*
+====================================================================================================
+EXTERNAL SERVICES
+====================================================================================================
+*/
+
+.external-services
+  clear both
+  margin-bottom 5em
+
+  a
+    text-decoration underline
+    font-weight bold
+
+  h2, p
+    margin-top 1em
+    margin-bottom 1em
+
+  .list
+    float none
+    clear both
+
+  td
+    padding 1em
+
+.external-services.disabled
+    opacity 0.5
+
+.submit-container
+  clear both
+
+/*
+====================================================================================================
+IMAGES
+====================================================================================================
+*/
+
+tools-image-sprite()
+  background-image url("<%= image_path('iconset-breathe.png') %>")
+  background-repeat no-repeat
+
+search-input-image()
+  background url("<%= image_path('magnifier.png')%>") no-repeat scroll 97% center #FFFFFF
+  background-repeat no-repeat
+
+search-input-spinner()
+  background url("<%= image_path('ajax-loader.gif')%>") no-repeat scroll 95% 4px #FFFFFF
+  background-repeat no-repeat
+
+clone-prev-input-element-image()
+  background-image url("<%= image_path('show-more.png')%>")
+  background-repeat no-repeat
+  background-position 95%
+  padding-right 2em
+
+show-more-image()
+  background-image url("<%= image_path('show-more.png')%>")
+  background-repeat no-repeat
+
+/*
+====================================================================================================
+ORGANISATION
+====================================================================================================
+*/
+
+.content-box
+  table
+    width 100%
+
+#puavoconf
+  tr:nth-child(even)
+    background: #fff;
+  tr:nth-child(odd)
+    background: #ddd;
+
+/*
+====================================================================================================
+SCHOOLS
+====================================================================================================
+*/
+
+.content-box
+  &.school_admins a, &.other_admins a
+    float right
+    font-weight normal
+    margin 0
+  &.users
+    clear both
+  .admins_headers
+    span
+      font-size 100%
+      font-weight bold
+  .row
+    .admin_display_name
+      display inline-block
+      float none
+      max-width 70%
+      width auto
+
+.admin-users-list, .billing-info
+  width 100%
+
+.pdf_file
+  a
+    color #FF6666
+    font-size 110%
+
+/*
+====================================================================================================
+SCHOOLS-ADMINS
+====================================================================================================
+*/
+
+#this_school_admin_users .row,
+#other_admin_users .row
+  margin 2px 0 2px 0
+  padding 8px 10px 7px
+
+@media screen-breakpoint-one
+  #this_school_admin_users .row, #other_admin_users .row
+    padding 1% 2%
+
+/*
+====================================================================================================
+SEARCH
+====================================================================================================
+*/
+
+#jquery-live-search
+  background #FFFFFF
+  border 1px solid #CCCAAA
+  border-width 0 1px 1px 1px
+  margin 0 1em 0 0
+  max-height 350px
+  overflow auto
+  padding 5px 10px
+  position absolute
+  width auto
+  z-index 9999
+  box-shadow 5px 5px 5px rgba(0, 0, 0, 0.3)
+
+#search
+  margin 4px
+  z-index 1
+
+.search_result table {
+    border-spacing: 0;
+    margin: 0px;
+    padding: 0px;
+}
+
+.search_result th {
+    white-space: nowrap;
+}
+
+.search_result legend {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+fieldset
+  &.search_result
+    font-size 80%
+    padding 5px
+
+@media screen-breakpoint-one
+  #jquery-live-search
+    left 0 !important
+    width 100%
+
+/*
+====================================================================================================
+SERVERS
+====================================================================================================
+*/
+
+.widelist
+  .device_dn
+    font-size 8pt
+
+/*
+====================================================================================================
+USERS
+====================================================================================================
+*/
+
+.show_user
+  .content-box
+    .user-information
+      tr
+        display block
+        td
+          width 45%
+
+.marked_for_deletion
+  color: red;
+
+/*
+====================================================================================================
+USERS IMPORT
+====================================================================================================
+*/
+
+form[action$="import"]
+  table
+    &.rename_groups_table
+      tr
+        white-space normal
+    &.new_groups_table
+      tr
+        td
+          float left
+          width 45%
+    &.validate_users_list, &.import_define
+      border-collapse collapse
+      width 100%
+    &.validate_users_list
+      display table
+      tbody
+        display table-row-group
+      label
+        &.checkbox
+          & ~ input[type="checkbox"]
+            display inline
+      tr
+        display table-row
+        margin 0 0 10px
+        overflow scroll
+        white-space nowrap
+        text-overflow clip
+        width 95%
+      td, th
+        display table-cell
+        width auto
+      td
+        border 1px solid black
+        overflow hidden
+        &.action
+          border medium none
+        form
+          *
+            width auto
+            margin 0 0 0 .3em
+        .change_school_info
+          margin 0 0 0 3px
+  .validate_users_list
+    td
+      padding 2px
+      text-align left
+      width auto
+      .btn
+        display inline-block
+        margin-left 5px
+        padding 2px 6px
+  .import_define th
+    float left
+
+
+a[href*="import/download.pdf"]
+  color #F44000
+  font-size 150%
+
+#select_change_school_users
+  background-image none
+
+.mass_import_info
+  font-size 100%
+  .current
+    font-size 110%
+    font-weight bold
+  .done
+    color #CCCCCC
+
+.mass_import_info_text
+  font-weight bold
+  margin-top 1.5em
+
+.mass_import_form
+  max-width 460px
+
+@media screen-breakpoint-one
+  .pdf_info
+    font-size 115%
+    margin 0
+@media screen-breakpoint-two
+  .mass_import_info
+    span
+      display block
+
+/*
+====================================================================================================
+PASSWORDS
+====================================================================================================
+*/
+
+.login-wrap
+  font-size 80%
+  margin 60px auto
+  max-width 1200px
+  width 80%
+
+.password_container
+  margin 0
+  padding 2%
+  position relative
+  width 100%
+  .login_content
+    padding 2%
+    .password_buttons
+      position absolute
+      top -51px
+      z-index -1
+    p
+      margin 0 0.5em 1em
+      padding 1em
+      text-align center
+    span
+      float left
+      display block
+      margin 0 10px 0 0
+      padding 0
+      width auto
+      a
+        display block
+        padding 15px 5px
+        text-align center
+        text-transform uppercase
+    table
+      margin 0
+      tr
+        td[colspan="2"]
+          text-align left
+      input[type="submit"]
+        width 100%
+
+@media screen-breakpoint-one
+  .login-wrap
+    font-size 100%
+    margin 0
+    width 100%
+  .password_container
+    .login_content
+      .password_buttons
+        margin-bottom 2%
+        position relative
+        top 0
+        span
+          float none
+          display block
+          margin 2% 0 0
+          text-align center
+        a
+          text-align center
+
+        i
+          padding-right .25em
+
+/*
+====================================================================================================
+LOGIN
+====================================================================================================
+*/
+
+.login_container
+  margin 2% auto
+  max-width 1000px
+  padding 10px
+  width 70%
+  .login_content
+    padding 1em
+  h1
+    font-size 220%
+    font-weight bold
+    letter-spacing -1px
+    margin 0
+    text-align center
+    text-transform uppercase
+  h2
+    text-align left
+  a
+    font-weight bold
+    margin 0 0 0 .2em
+    padding 0.5em
+  form
+    margin 1em 0 0
+    table
+      margin 0 auto
+      width 80%
+      td
+        width 100%
+      td:first-child
+        width auto
+      input
+        padding 3%
+      input[type="submit"]
+        width 100%
+
+@media screen-breakpoint-one
+  .login_container
+    margin 0
+    width 100%
+    form
+      table
+        margin 0
+        width 100%
+        input
+          display block
+          width 100%
+
+/*
+====================================================================================================
+PRINT STYLES
+====================================================================================================
+*/
+
+@media print
+  body
+    line-height 1.5
+    font-family "Helvetica Neue", Arial, Helvetica, sans-serif
+    color #000
+    background none
+    font-size 10pt
+
+  .container
+    background none
+
+  hr
+    background #ccc
+    color #ccc
+    width 100%
+    height 2px
+    margin 2em 0
+    padding 0
+    border none
+    &.space
+      background #fff
+      color #fff
+      visibility hidden
+
+  h1, h2, h3, h4, h5, h6
+    font-family "Helvetica Neue", Arial, "Lucida Grande", sans-serif
+
+  code
+    font .9em "Courier New", Monaco, Courier, monospace
+
+  a
+    img
+      border none
+
+  p
+    img
+      &.top
+        margin-top 0
+
+  blockquote
+    margin 1.5em
+    padding 1em
+    font-style italic
+    font-size .9em
+
+  .small
+    font-size .9em
+
+  .large
+    font-size 1.1em
+
+  .quiet
+    color #999
+
+  .hide
+    display none
+
+  a:link, a:visited
+    background transparent
+    font-weight 700
+    text-decoration underline
+
+  a:link:after, a:visited:after
+    content " (" attr(href) ")"
+    font-size 90%
+
