@@ -126,59 +126,14 @@ a
 .navbar-first-level a
   text-decoration none
 
-blockquote
-  margin 1.5em
-  color #666
-  font-style italic
+li ul {
+  margin: 0;
+}
 
-strong
-  font-weight bold
-
-em, dfn
-  font-style italic
-
-dfn
-  font-weight bold
-
-sup, sub
-  line-height 0
-
-abbr, acronym
-  border-bottom 1px dotted #666
-
-address
-  margin 0 0 1.5em
-  font-style italic
-
-del
-  color #666
-
-pre
-  margin 1.5em 0
-  white-space pre
-
-pre, code, tt
-  font 100% 'andale mono', 'lucida console', monospace
-  line-height 1.5
-
-li ul, li ol
-  margin 0
-
-ul, ol
-  list-style none
-  margin 0 1.5em 1.5em 0
-  padding-left 3.333em
-
-ol
-  list-style-type decimal
-
-dl
-  margin 0 0 1.5em 0
-  dt
-    font-weight bold
-
-dd
-  margin-left 1.5em
+/* Most dropdown menus and tabs are lists */
+ul {
+  list-style: none;
+}
 
 img
   border none
@@ -197,55 +152,6 @@ hr
     background #fff
     color #fff
     visibility hidden
-
-caption
-  background #eee
-
-.small
-  font-size 80%
-  margin-bottom 1.875em
-  line-height 1.875em
-
-.large
-  font-size 120%
-  line-height 2.5em
-  margin-bottom 1.25em
-
-.hide
-  display none
-
-.quiet
-  color #666
-
-.loud
-  color #000
-
-.highlight
-  background #ff0
-
-.added
-  background #060
-  color #fff
-
-.removed
-  background #900
-  color #fff
-
-.first
-  margin-left 0
-  padding-left 0
-
-.last
-  margin-right 0
-  padding-right 0
-
-.top
-  margin-top 0
-  padding-top 0
-
-.bottom
-  margin-bottom 0
-  padding-bottom 0
 
 .clearfix:after, .container:after
   content "\0020"
@@ -440,27 +346,6 @@ caption
 .image
   margin 0
   padding 0
-
-.link_header
-  margin 0 0 0 -5px
-
-.list
-  .column_1
-    display inline
-  .column_2
-    font-weight bold
-    float right
-    margin-left 10px
-
-// markdown
-.markdown
-  h1,h2,h3,h4,h5,h6,p
-    float none
-    margin 0
-    padding 0
-  ul
-    list-style disc
-// end of markdown
 
 .ownersOnly {
   border: 1px dashed #f00;
@@ -880,21 +765,9 @@ body
 
 // end of password
 
-.link_header
-  border-bottom 1px dashed #555555
-  font-weight bold
-
 .search_result
   td
     border-bottom 1px solid #AAAAAA
-
-// markdown
-.markdown
-  h1,h2,h3,h4,h5,h6,p
-    background-color transparent
-    background-image none
-    color baseFont
-// end of markdown
 
 @media screen-breakpoint-one
   .main-wrap, .login_container, .navbar-second-level
@@ -2304,76 +2177,3 @@ LOGIN
         input
           display block
           width 100%
-
-/*
-====================================================================================================
-PRINT STYLES
-====================================================================================================
-*/
-
-@media print
-  body
-    line-height 1.5
-    font-family "Helvetica Neue", Arial, Helvetica, sans-serif
-    color #000
-    background none
-    font-size 10pt
-
-  .container
-    background none
-
-  hr
-    background #ccc
-    color #ccc
-    width 100%
-    height 2px
-    margin 2em 0
-    padding 0
-    border none
-    &.space
-      background #fff
-      color #fff
-      visibility hidden
-
-  h1, h2, h3, h4, h5, h6
-    font-family "Helvetica Neue", Arial, "Lucida Grande", sans-serif
-
-  code
-    font .9em "Courier New", Monaco, Courier, monospace
-
-  a
-    img
-      border none
-
-  p
-    img
-      &.top
-        margin-top 0
-
-  blockquote
-    margin 1.5em
-    padding 1em
-    font-style italic
-    font-size .9em
-
-  .small
-    font-size .9em
-
-  .large
-    font-size 1.1em
-
-  .quiet
-    color #999
-
-  .hide
-    display none
-
-  a:link, a:visited
-    background transparent
-    font-weight 700
-    text-decoration underline
-
-  a:link:after, a:visited:after
-    content " (" attr(href) ")"
-    font-size 90%
-
