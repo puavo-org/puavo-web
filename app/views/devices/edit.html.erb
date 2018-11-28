@@ -1,6 +1,7 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn, t('titles.edit') %>
 
-<h1><span><%= t('.edit') %></span></h1>
+<h1><%= t('.edit') %></h1>
+
 <%= render :partial => 'form',
  :locals => {
   :path => device_path(@school, @device),

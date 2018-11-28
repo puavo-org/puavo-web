@@ -1,5 +1,5 @@
 <h2><%= t('.wireless_access_point_setup') %></h2>
-<table>
+<table class="editForm">
   <tr>
     <th><%= f.label :puavoWlanChannel %></th>
     <td><%= f.select( :puavoWlanChannel,
@@ -14,7 +14,7 @@
 <% (0..14).each do |index| %>
   <h3><strong><%= t('.wireless_network_title', :index => index + 1) %></strong></h3>
 
-  <table>
+  <table class="editForm">
     <tr class="wlan_name_<%= index %>">
       <th><%= label_tag "wlan_name[#{ index }]", t('.wlan_name') %></th>
       <td>
@@ -105,7 +105,7 @@
   <br>
 <% end %>
 
-<table>
+<table class="editForm">
   <tr class="buttonRow">
     <th></th>
     <td><%= f.submit t('link.update'), class: 'btn' %></td>

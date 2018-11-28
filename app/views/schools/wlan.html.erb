@@ -1,10 +1,10 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.wlan') %>
 
-<h1><span><%= t('shared.form_wlan.title') %></span></h1>
+<h1><%= t('shared.form_wlan.title') %></h1>
 
-<%= form_for( @school,
-	      :html => { :multipart => true },
-	      :url  => wlan_update_school_path ) do |f| %>
+<%= form_for(@school,
+             :html => { :multipart => true },
+             :url  => wlan_update_school_path) do |f| %>
 
 <%= render :partial => 'shared/form_wlan', :locals => { :f => f } %>
 

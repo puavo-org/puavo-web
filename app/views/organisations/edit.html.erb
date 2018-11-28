@@ -1,9 +1,9 @@
 <% page_title t('titles.organisation'), t('titles.edit') %>
 
-<h1><span><%= t('.title') %></span></h1>
+<h1><%= t('.title') %></h1>
 
 <%= form_for(@organisation, :url => organisation_path)  do |f| %>
-<table>
+<table class="editForm">
   <tr>
     <th><%= f.label :o %></th>
     <td><%= f.text_field :o %></td>

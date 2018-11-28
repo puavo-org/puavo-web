@@ -1,5 +1,5 @@
 <h2><span><%= t('.cups_settings') %></span></h2>
-<table>
+<table class="editForm">
   <tr>
     <th><%= f.label :printerDescription %></th>
     <td><%= f.object.attributes.include?("printerDescription") ? (f.text_field :printerDescription) :(text_field_tag  "device[printerDescription]", '', :size => "30", :readonly => true) %></td>

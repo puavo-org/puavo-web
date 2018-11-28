@@ -1,9 +1,9 @@
 <% page_title t('titles.organisation'), t('titles.servers') %>
 
-<h1><span><%= t('.title') %></span></h1>
+<h1><%= t('.title') %></h1>
 
-<table class='list'>
-  <tr class="thead">
+<table class="list">
+  <tr>
     <th><%= t("activeldap.attributes.server.puavoHostname") %></th>
     <th><%= t('activeldap.attributes.server.puavoDeviceManufacturer') %></th>
     <th><%= t('activeldap.attributes.server.puavoDeviceModel') %></th>
@@ -11,7 +11,7 @@
     <th colspan="3"><%= t("actions") %></th>
   </tr>
 
-<% @servers.each do |server| %>
+  <% @servers.each do |server| %>
   <tr>
     <td data-title="<%= t("activeldap.attributes.server.puavoHostname") %>"><%= link_to server.puavoHostname, server_path(server) %></td>
     <td data-title="<%= t("activeldap.attributes.server.puavoDeviceManufacturer") %>"><%=h server.puavoDeviceManufacturer %></td>
@@ -28,5 +28,5 @@
       <% end %>
     </td>
   </tr>
-<% end %>
+  <% end %>
 </table>

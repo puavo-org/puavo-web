@@ -846,12 +846,12 @@ th a, td a {
 }
 
 .mountPoints th {
-  text-align: center;
+  text-align: center !important;
   background: #ccc;
 }
 
 .groupRenameTable th {
-  text-align: left;
+  text-align: left !important;
   background: #ccc;
 }
 
@@ -861,16 +861,17 @@ FORMS
 ====================================================================================================
 */
 
-form table {
+/* editForms are used for creating and editing users, group, devices, schools, and so on */
+.editForm {
   border-collapse: collapse;
   width: 100%;
 }
 
-form table td, form table th {
+.editForm td, .editForm th {
   padding: 10px;
 }
 
-form table tr:nth-child(even) {
+.editForm tr:nth-child(even) {
   background: #f5f5f5;
 }
 
@@ -878,51 +879,51 @@ form table tr:nth-child(even) {
   background: #fff;
 }
 
-input {
+.editForm input {
   width: 100%;
   padding: 0;
   margin: 0;
 }
 
-input[type="text"], input[type="password"] {
+.editForm input[type="text"], .editForm input[type="password"] {
   padding: 10px;
   margin: 5px 0;
 }
 
-input[type="checkbox"], input[type="radio"] {
+.editForm input[type="checkbox"], .editForm input[type="radio"] {
   padding: 0;
-  margin: 0;
+  margin: 0 5px 0 0;    /* push labels away from the input box */
 }
 
-option {
+.editForm option {
   padding: 5px;
 }
 
-form th {
+.editForm th {
   text-align: right;
   width: 250px;
 }
 
-form select {
+.editForm select {
   width: 100%;
 }
 
-form textarea {
+.editForm textarea {
   width: 100%;
 }
 
-form th {
+.editForm th {
 /*  vertical-align: top;*/
 }
 
-form label {
+.editForm label {
   /* Reset weights... */
   font-weight: normal;
   padding: 0;
   margin: 0;
 }
 
-form th label {
+.editForm th label {
   /* ...but make these bigger */
   font-size: 110%;
   font-weight: bold;
@@ -938,7 +939,7 @@ form th label {
   border: 1px solid #foo;
 }
 
-form .required {
+.editForm .required {
   content: " *";
   font-size: 120%;
 }
@@ -1693,6 +1694,10 @@ DEVICES
 ====================================================================================================
 */
 
+.basic-info h1 {
+  border-bottom: none;
+}
+
 .tools
   .add-new-device
     &:hover
@@ -1708,8 +1713,13 @@ DEVICES
     font-size 10pt
     font-weight default
 
+/*
+--------------------------------------------------------------------------------
+Hardware info page
+--------------------------------------------------------------------------------
+*/
+
 .hwInfoTitle {
-  text-decoration: underline;
   margin-bottom: 1em !important;
 }
 
@@ -1744,6 +1754,12 @@ DEVICES
 
 .hwInfoTable .sectionEnd {
   border-bottom: 2px solid #aaa;
+}
+
+.hwInfoRaw {
+  height: 350px;
+  font-size: 120%;
+  overflow: scroll;
 }
 
 /*

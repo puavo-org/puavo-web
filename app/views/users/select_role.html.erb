@@ -1,24 +1,22 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), @user.displayName, t('titles.change_school') %>
 
-<h1><span><%= t('.title') %></span></h1>
+<h1><%= t('.title') %></h1>
 <%= form_for("role", url: change_school_users_path(@school))  do |f| %>
 <%= hidden_field_tag :new_school, @new_school.id %>
 <%= hidden_field_tag "user_ids[]", @user.id %>
-<table>
+<table class="editForm">
   <tr>
-	<td><label><%= t('.new_school') %></label></td>
-	<td><%= @new_school.displayName  %></td>
+    <th><label><%= t('.new_school') %></label></th>
+    <td><%= @new_school.displayName  %></td>
   </tr>
+
   <tr>
-	<td>
-	  <%= label_tag :new_role, t(@use_groups ? '.select_new_group' : '.select_new_role') %>
-  </td>
-	<td>
-	  <%= select_tag :new_role, options_from_collection_for_select(@roles_or_groups, "puavoId", "displayName") %>
-	</td>
+    <th><%= label_tag :new_role, t(@use_groups ? '.select_new_group' : '.select_new_role') %></th>
+    <td><%= select_tag :new_role, options_from_collection_for_select(@roles_or_groups, "puavoId", "displayName") %></td>
   </tr>
+
   <tr>
-    <td></td>
+    <th></th>
     <td><%= f.submit t('.submit'), class: 'btn' %></td>
   </tr>
 </table>

@@ -424,7 +424,8 @@ en:
       member: Member
       add_to_group: Add
     groupless_users:
-      title: "Found %{count} ungrouped users."
+      title: "Find groupless users"
+      count: "Found %{count} ungrouped users."
   schools:
     index:
       actions: Actions

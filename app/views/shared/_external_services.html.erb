@@ -1,4 +1,4 @@
-<h1><span><%= t("external_services.title") %></span></h1>
+<h1><%= t("external_services.title") %></h1>
 
 <p><%= t("external_services.description") %></p>
 
@@ -13,7 +13,7 @@
     <p><a href="<%= external_service.puavoServiceDescriptionURL %>" target="_new"><%= t("external_services.additional_info") %></a></p>
     <% end %>
 
-    <table>
+    <table class="editForm">
       <tr>
         <th>Domain</th>
         <td><%= external_service.puavoServiceDomain %></td>

@@ -1,5 +1,5 @@
 <%= form_for(@ldap_service, :url => path, :html => { :method => method })  do |f| %>
-<table>
+<table class="editForm">
   <% if action_name == "new" || action_name == "create" %>
   <tr>
     <th><%= f.label :uid %></th>

@@ -1,6 +1,6 @@
 <% page_title t('titles.organisation'), t('titles.printers') %>
 
-<h1><span><%= t('layouts.application.printers') %></span></h1>
+<h1><%= t('layouts.application.printers') %></h1>
 
 <% @servers_and_printers.each do |server| %>
 <h2><span><%= t('.server_title') %> <%= link_to h(server[:hostname]), server_path(server[:server]) %></span></h2>

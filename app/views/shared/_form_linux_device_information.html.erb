@@ -1,5 +1,5 @@
 <h2><%= title(f.object) %></h2>
-<table>
+<table class="editForm">
   <tr>
     <th><%= f.label :puavoDeviceManufacturer %></th>
     <td><%= f.text_field :puavoDeviceManufacturer %></td>
@@ -99,7 +99,7 @@
 
 <% unless f.object.classes.include?('puavoServer') || f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
 <h2><%= t('shared.autopoweroff') %></h2>
-<table id="autopoweroff">
+<table  class="editForm" id="autopoweroff">
 
   <%= render( :partial => 'shared/form_auto_power_off_settings',
               :locals => {
@@ -110,7 +110,7 @@
 <%= render :partial => 'shared/form_purchase_information', :locals => { :f => f } %>
 
 <h2><%= t('shared.location') %></h2>
-<table>
+<table class="editForm">
   <tr>
     <th><%= f.label :puavoLocationName %></th>
     <td><%= f.text_field :puavoLocationName %></td>
@@ -130,7 +130,7 @@
 <% if (f.object.classes | ['puavoNetbootDevice', 'puavoLocalbootDevice', 'puavoServer']).count < (f.object.classes.count + 3) %>
 
 <h2><%= t('shared.display_settings') %></h2>
-<table>
+<table class="editForm">
   <tr>
     <th><%= f.label :puavoDeviceXserver %></th>
     <td><%= f.text_field :puavoDeviceXserver, :size => 45 %></td>
@@ -177,7 +177,7 @@
 </table>
 
 <h2><%= t('shared.kernel_settings') %></h2>
-<table>
+<table class="editForm">
   <% if ["thinclient",
          "fatclient",
          "laptop",

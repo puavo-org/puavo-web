@@ -6,7 +6,7 @@
   <%= render :partial => 'shared/form_linux_device_information', :locals => { :f => f } %>
 
   <h2><%= t('.automounts') %></h2>
-  <table>
+  <table class="editForm">
     <tr>
       <th><%= f.label :puavoExport, nil, for: "puavoExport0" %></th>
       <td>
@@ -52,7 +52,7 @@
   <% end %>
   </ul>
 
-  <table>
+  <table class="editForm">
     <tr class="buttonRow">
       <th></th>
       <td>

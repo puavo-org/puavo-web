@@ -1,9 +1,10 @@
 <% page_title t('titles.organisation'), t('titles.printers'), @printer.printerDescription, t('titles.edit') %>
 
-<h1><span><%=html_escape @printer.printerDescription %> (<%= @server.puavoHostname %>)</span></h1>
+<h1><%=html_escape @printer.printerDescription %> (<%= @server.puavoHostname %>)</h1>
+
 <%= form_for(@printer, url: printer_path(@printer)) do |f| %>
 
-  <table>
+  <table class="editForm">
     <tr>
       <th><%= f.label :puavoRule %></th>
       <td><%= f.text_field :puavoRule %></td>
@@ -56,7 +57,7 @@
     <% end %>
   </ul>
 
-  <table>
+  <table class="editForm">
     <tr class="buttonRow">
       <th></th>
       <td><%= f.submit t('link.update'), class: 'btn' %><div class="cancel"><%=link_to t('cancel'), printers_path, class: 'btn btn-danger' %> </td>

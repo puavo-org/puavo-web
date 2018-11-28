@@ -1,6 +1,6 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups_rename') %>
 
-<h1><span>Vuosiluokkasiirrot</span></h1>
+<h1>Vuosiluokkasiirrot</h1>
 
 <% if @do_only_groups %>
   <h4>Ryhmien massauudelleennimeäminen</h4>
@@ -22,7 +22,7 @@
     <p>Koulun luokka-asteet: <b><%= @first_class_number %> - <%= @last_class_number %></b></p>
     <p>Kaikki luokat-asteet <%=  @all_class_found ? "löytyivät" : "<b>eivät löytyneet</b>".html_safe %></p>
 
-    <table>
+    <table class="editForm groupRenameTable">
       <tr>
         <th>Vanha nimi</th>
         <th>Uusi nimi</th>
@@ -81,7 +81,7 @@
     </p>
   <% end %>
 
-  <table class="groupRenameTable">
+  <table class="editForm groupRenameTable">
     <tr>
       <th>Vanha nimi</th>
       <th>Uusi nimi</th>
@@ -112,7 +112,7 @@
     <p style="color: #f00;">VAROITUS: Ainakin yhden uuden luotavan ryhmän lyhenne on jo käytössä!</p><br>
   <% end %>
 
-  <table class="groupRenameTable">
+  <table class="editForm groupRenameTable">
     <tr>
       <th>Ryhmän lyhenne</th>
       <th>Ryhmän nimi</th>
@@ -131,6 +131,7 @@
   </fieldset>
 <% end %>
 
+<br>
 <%= f.submit "Toteuta muutokset", class: 'btn' %>
 
-<% end %>   <!-- form -->
+<% end %>

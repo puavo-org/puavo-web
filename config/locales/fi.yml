@@ -394,7 +394,8 @@ fi:
       member: Jäsen
       add_to_group: Liitä ryhmään
     groupless_users:
-      title: "Löytyi %{count} ryhmätöntä käyttäjää."
+      title: "Etsi ryhmättömät käyttäjät"
+      count: "Löytyi %{count} ryhmätöntä käyttäjää."
   schools:
     index:
       actions: Toiminnot

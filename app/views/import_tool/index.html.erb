@@ -1,13 +1,11 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), t('titles.users_import') %>
 
-<h1><span><%= t("import_tool.import_users") %></span></h1>
+<h1><%= t("import_tool.import_users") %></h1>
 
 <div id="import-tool">
   Loading the tool...
   <% if ENV["RAILS_ENV"] != "production" %>
-    <pre>
-    Development mode. Make sure to start 'make js-server'
-    </pre>
+    <pre>Development mode. Make sure to start 'make js-server'</pre>
   <% end %>
 </div>
 

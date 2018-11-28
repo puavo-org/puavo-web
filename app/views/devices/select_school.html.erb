@@ -3,7 +3,7 @@
 <h1><%= t('.title', :name => @device.puavoHostname) %></h1>
 <%= form_for("device", :url => change_school_device_path(@school, @device))  do |f| %>
 
-<table>
+<table class="editForm">
   <tr>
     <th><%= label_tag :new_school, t('.select_new_school') %></td>
     <td><%= select_tag :new_school, options_from_collection_for_select(@schools, "puavoId", "displayName") %></td>

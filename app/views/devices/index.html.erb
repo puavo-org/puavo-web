@@ -1,11 +1,11 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices') %>
 
-<h1><span><%= t('.title') %></span></h1>
+<h1><%= t('.title') %></h1>
 
 <p><%= @devices.length %> <%= t('.devices') %></p>
 
-<table class='list'>
-  <tr class="thead">
+<table class="list">
+  <tr>
     <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
     <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
     <th><%= t('activeldap.attributes.device.puavoDeviceManufacturer') %></th>

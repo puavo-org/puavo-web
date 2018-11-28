@@ -1,10 +1,6 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), t('titles.new') %>
 
-<h1>
-  <span>
-  <%= t('.new_device', :device_type => @device_type_label ) %>
-  </span>
-</h1>
+<h1><%= t('.new_device', :device_type => @device_type_label ) %></h1>
 
 <%= render :partial => 'form',
  :locals => {
