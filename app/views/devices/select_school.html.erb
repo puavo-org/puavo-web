@@ -1,19 +1,17 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn, t('titles.change_school') %>
 
-<h2><%= t('.title', :name => @device.puavoHostname) %></h2>
+<h1><%= t('.title', :name => @device.puavoHostname) %></h1>
 <%= form_for("device", :url => change_school_device_path(@school, @device))  do |f| %>
 
 <table>
   <tr>
-	<td>
-	  <%= label_tag :new_school, t('.select_new_school') %>
-	</td>
-	<td>
-	  <%= select_tag :new_school, options_from_collection_for_select(@schools, "puavoId", "displayName") %>
-	</td>
+    <th><%= label_tag :new_school, t('.select_new_school') %></td>
+    <td><%= select_tag :new_school, options_from_collection_for_select(@schools, "puavoId", "displayName") %></td>
   </tr>
-  <tr><td></td>
-  <td><%= f.submit t('.submit'), class: 'btn' %></td>
+
+  <tr class="buttonRow">
+    <th></th>
+    <td><%= f.submit t('.submit'), class: 'btn' %></td>
   </tr>
 </table>
 <% end %>
