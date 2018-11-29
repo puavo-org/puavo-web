@@ -27,12 +27,16 @@ baseBoxShadowBorderColor = rgb(34, 34, 34)
 
 buttonBg = rgb(245, 245, 245)
 buttonGradientBg = rgb(220, 220, 220)
-buttonHoverColor = rgb(51, 51, 51)
+buttonNormalColor = #000
+buttonHoverColor = #000
 
 buttonDangerBgColor = rgb(231, 6, 0)
 buttonDangerBgImage = rgb(219, 64, 60)
 buttonDangerGradientBgImage = rgb(194, 31, 22)
 buttonDangerHoverBg = rgb(180, 31, 23)
+
+buttonDangerColor = rgb(255, 255, 255)
+buttonDangerHoverColor = rgb(255, 255, 255)
 
 buttonBorderColor = rgba(0, 0, 0, 0.1)
 buttonBorderColor2 = rgba(0, 0, 0, 0.25)
@@ -57,6 +61,15 @@ headersUnderlineColor = rgb(0, 0, 0)
 linkNormalColor = #13243f
 linkHoverColor = #352608
 linkFocusColor = #000000
+
+formFieldsetBorderColor = #ccc
+
+formLabelColor = rgb(0, 0, 0)
+formErrorColor = rgb(255, 0, 0)
+
+formOddRowBackground = none
+formEvenRowBackground = #f5f5f5
+formButtonRowBackground = #fff
 
 /*
 ====================================================================================================
@@ -87,6 +100,7 @@ body {
   line-height: 1.5;
   margin: 0;
   padding: 0;
+  background: baseBg;
 }
 
 /* The school name at the top of the page */
@@ -141,12 +155,8 @@ a:focus {
   color: linkFocusColor;
 }
 
-a img {
-  border: none;
-}
-
 p {
-  margin: 0 0 .5em;
+  margin: 0 0 0.5em 0;      /* TODO: this can be removed (but see user/device info pages first!) */
 }
 
 li ul {
@@ -171,6 +181,12 @@ hr {
   margin: 0;
   width: 100%;
   visibility: hidden;
+}
+
+legend {
+  font-weight: bold;
+  font-size: 110%;
+  padding: 0 5px;
 }
 
 // topmenu
@@ -263,9 +279,6 @@ hr {
     padding 0
 // end of .maincontent
 
-.basic-info td
-    vertical-align top
-
 // .tools ->
 .tools-container
   float right
@@ -307,8 +320,9 @@ hr {
 
 // End of .tools
 
-[class*=icon]
-  font-size 120%
+[class*=icon] {
+  font-size: 120%;
+}
 
 .content-box-new {
   min-width: 45%;
@@ -325,9 +339,8 @@ hr {
 }
 
 .content-box-new header {
-  background-image: linear-gradient(top, #ba722d 0%, #a36a2a 100%);
+  background: linear-gradient(#ba722d, #a36a2a);
   color: #fff;
-
   padding: 5px 10px;
   margin: 0;
   font-size: 130%;
@@ -390,17 +403,33 @@ hr {
   float: none !important;
 }
 
-/* The "missing owners" warning at the top of organisation owners page */
-.missingOwners {
-  border: 2px solid #ff0;
-  padding: 10px 10px 0 10px;
-  background: #ffc;
-  margin: 20px;
+/* A generic missing/unset information indicator for data that isn't always required but really should be set */
+.missingData {
+  color: #f00;
 }
 
-// end of .content-box
+/* Buttons and areas that are visible to owners only */
+.ownersOnly {
+  border: 1px dashed #f00;
+}
 
+/* Puavo-conf tables in various places */
+.puavoConf tr:nth-child(odd) {
+  background: #ddd;
+}
 
+.puavoConf tr:nth-child(even) {
+  background: #fff;
+}
+
+/* Basic user/device information block */
+.basic-info td {
+  vertical-align: top;
+}
+
+.basic-info h1 {
+  border-bottom: none;
+}
 
 .display_block
   display block !important
@@ -408,10 +437,6 @@ hr {
 .image
   margin 0
   padding 0
-
-.ownersOnly {
-  border: 1px dashed #f00;
-}
 
 
 @media screen-breakpoint-one
@@ -472,143 +497,12 @@ hr {
       float right
   .basic-info td:first-of-type
     width 30%
-// @media screen-portrait-breakpoint-two
-
-// @media screen-landcape-breakpoint-one
 
 /*
 ====================================================================================================
 THEME
 ====================================================================================================
 */
-
-// Forms
-
-input[type="submit"] {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-  background: none repeat scroll 0 0 #eeeeed;
-  background-image: linear-gradient(white 0%, #eeeeed 100%);
-  cursor: pointer;
-}
-
-input[type="submit"]:hover {
-    background: none repeat scroll 0 0 #eee;
-    background-image: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
-    border: 1px solid focusColor;
-}
-
-label
-  color #222222
-  &.label_error
-    color errorRed
-
-.required_info
-  color errorRed
-
-.required:after
-  color errorRed
-
-// End of forms
-
-fieldset {
-  border: 1px solid #ccc;
-}
-
-.field_error {
-  color: #f00;
-  font-weight: bold;
-  display: block;
-}
-
-.field_value_error
-  color errorRed
-
-.notice_text
-  color errorRed
-
-// End of tables
-
-// Buttons
-.btn
-  background-color buttonBg
-  *background-color buttonBg
-  background-image linear-gradient(buttonBg 0%, buttonGradientBg 100%)
-  background-repeat repeat-x
-  border 1px solid #cccccc
-  *border 0
-  border-color buttonBorderHexColor buttonBorderHexColor buttonBorderHexColor2
-  border-color buttonBorderColor buttonBorderColor buttonBorderColor2
-  border-radius 3px
-  box-shadow inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05)
-  color #333333
-
-.btn:hover, .btn:focus
-  background-color buttonGradientBg
-  background-image none
-  color buttonHoverColor
-
-.btn-danger
-  color rgb(255, 255, 255)
-  background-color buttonDangerBgColor
-  background-image linear-gradient(top, buttonDangerBgImage, buttonDangerGradientBgImage)
-
-.btn-danger:hover, .btn-danger:focus, .btn-danger:active
-  color rgb(255, 255, 255)
-  background-color buttonDangerHoverBg
-  background-image none
-// End of Buttons
-
-// Alerts
-.message_error,
-.message_notice,
-.message_success,
-.notice,
-.message_alert
-  border 2px solid #ddd
-
-.message_error, .message_alert
-  background none repeat scroll 0 0 #AD0000
-  border 1px solid #AAAAAA
-  border-radius 4px
-  color #F4F4F4
-
-.message_notice, .notice
-  background none repeat scroll 0 0 #86B410
-  border 1px solid #56340E
-  border-radius 4px
-
-.message_success
-  background #E6EFC2
-  color #264409
-  border 1px solid #C6D880
-  a
-    color #264409
-
-.message_error
-  a
-    color errorRed
-
-.message_notice a,
-.message_alert a
-  color #514721
-
-.notice
-  a
-    color #514721
-
-.message-info
-  background-color infoBgColor
-  border 2px dotted baseBoxShadowBorderColor
-
-.invalid
-  color errorRed
-
-// End of Alerts
-
-// End of base_styles
-
-body
-  background none repeat scroll 0 0 baseBg
 
 .main-wrap
   background none repeat scroll 0 0 baseBg
@@ -750,16 +644,6 @@ body
         color white
 // end of login
 
-// password
-
-
-
-// end of password
-
-.search_result
-  td
-    border-bottom 1px solid #AAAAAA
-
 @media screen-breakpoint-one
   .main-wrap, .login_container, .navbar-second-level
     border solid 1px transparent
@@ -786,30 +670,80 @@ body
 
 /*
 ====================================================================================================
+FLASH MESSAGES AND OTHER WARNING/ERROR BOXES
+====================================================================================================
+*/
+
+.message_alert, .message_notice, .message_success {
+  font-size: 130%;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+/* TODO: What's the difference between message_success and message_notice? Merge them. */
+
+.message_success {
+  background: #e6efc2;
+  color: #264409;
+  border: 1px solid #c6d880;
+}
+
+.message_notice {
+  background: #86b410;
+  border: 1px solid #56340e;
+}
+
+.message_alert {
+  background: #a00;
+  border: 1px solid #f00;
+  color: #fff;
+}
+
+.login_content .notice, .login_content .message_notice
+  left 0
+  margin 0
+  position relative
+  top 0
+
+/*
+====================================================================================================
 BUTTONS
 ====================================================================================================
 */
 
-// Buttons
-.btn
-  display inline-block
-  *display inline
-  cursor pointer
-  font-size 100%
-  margin-bottom 0
-  *margin-left .3em
-  text-align center
-  vertical-align middle
-  *zoom 1
-  padding 4px 12px
-  text-decoration none
+/* Base button */
+.btn {
+  display: inline-block;
+  margin-bottom: 0;
+  padding: 4px 12px;
+  font-weight: normal;
+  text-align: center;
+  text-decoration: none;
 
-table .btn
-  font-weight normal
-  padding 4px 12px 4px 8px
-  text-decoration none
-form .btn
-  padding 4px 12px
+  background: linear-gradient(buttonBg 0%, buttonGradientBg 100%);
+  border: 1px solid #cccccc;
+  border-color: buttonBorderColor buttonBorderColor buttonBorderColor2;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  color: buttonNormalColor;
+}
+
+.btn:hover, .btn:focus {
+  background: buttonGradientBg;
+  color: buttonHoverColor;
+}
+
+.btn-danger {
+  color: buttonDangerColor;
+  background: linear-gradient(buttonDangerBgImage, buttonDangerGradientBgImage);
+}
+
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active {
+  color: buttonDangerHoverColor;
+  background: buttonDangerHoverBg;
+}
 
 @media screen-breakpoint-one
   .btn
@@ -837,7 +771,7 @@ th {
   text-decoration: none;
 }
 
-th a, td a {
+table a {
   font-weight: bold;
 }
 
@@ -847,11 +781,6 @@ th a, td a {
 
 .mountPoints th {
   text-align: center !important;
-  background: #ccc;
-}
-
-.groupRenameTable th {
-  text-align: left !important;
   background: #ccc;
 }
 
@@ -871,21 +800,20 @@ FORMS
   padding: 10px;
 }
 
+.editForm tr:nth-child(odd) {
+  background: formOddRowBackground;
+}
+
 .editForm tr:nth-child(even) {
-  background: #f5f5f5;
+  background: formEvenRowBackground;
 }
 
 .buttonRow td, .buttonRow th {
-  background: #fff;
-}
-
-.editForm input {
-  width: 100%;
-  padding: 0;
-  margin: 0;
+  background: formButtonrowBackground;
 }
 
 .editForm input[type="text"], .editForm input[type="password"] {
+  width: 100%;
   padding: 10px;
   margin: 5px 0;
 }
@@ -917,31 +845,68 @@ FORMS
 }
 
 .editForm label {
-  /* Reset weights... */
+  /* Labels for checkboxes/radio buttons */
   font-weight: normal;
+  font-size: 120%;
+  line-height: 2;
+}
+
+.editForm th label {
+  font-size: 110%;
+  font-weight: bold;
+  word-wrap: none;
+  color: formLabelColor;
   padding: 0;
   margin: 0;
 }
 
-.editForm th label {
-  /* ...but make these bigger */
-  font-size: 110%;
-  font-weight: bold;
-  word-wrap: none;
+input[type="submit"] {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: none repeat scroll 0 0 #eeeeed;
+  background-image: linear-gradient(white 0%, #eeeeed 100%);
+  cursor: pointer;
 }
 
+input[type="submit"]:hover {
+  background: none repeat scroll 0 0 #eee;
+  background-image: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
+  border: 1px solid focusColor;
+}
+
+/* The "* = required" label displayed at the top of forms */
+.required_info {
+  color: formErrorColor;
+}
+
+.field_error {
+  color: formErrorColor;
+  font-weight: bold;
+  display: block;
+}
+
+.required .field_with_errors {
+  display: inline-block;
+}
+
+.required:after {
+  content: " *";
+  font-size: 120%;
+  color: formErrorColor;
+}
+
+/* Fields with invalid/missing values */
+.editForm .label_error {
+  color: formErrorColor;
+}
+
+/* The small label below the field explaining what's wrong with the current value */
 .field_with_errors {
-  color: red;
+  color: formLabelColor;
   font-weight: bold;
 }
 
 .field_with_errors input, .field_with_errors select {
-  border: 1px solid #foo;
-}
-
-.editForm .required {
-  content: " *";
-  font-size: 120%;
+  border: 1px solid formErrorColor;
 }
 
 /* Administrative groups checkbox list header */
@@ -957,146 +922,36 @@ FORMS
   margin-left: 30px;
 }
 
-.rename_group_old_name
-  text-align right
-  width 35%
+fieldset {
+  border: 1px solid formFieldsetBorderColor;
+  padding: 10px;
+  margin: 10px;
+}
 
-.rename_group_new_name
-  width 60%
+/* Submit and cancel buttons */
+.editForm input[type="submit"] {
+  font-size: 120%;
+  height: 70px;
+  width: 50%;
+  max-width: 300px;
+}
 
-.rename_group_name_abbr
-  width 45%
+.editForm .cancel {
+  display: inline;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100px;
+}
 
-.ldap_services_system_groups
-  div
-    word-wrap break-word
+.editForm .cancel:before {
+  content: " – ";
+}
 
-.submit_button_container
-  margin-left 26.2345%
-
-.submit_button_container_no_margin
-  margin-left 0
-
-form[action$="users/import"]
-  .submit_button_container
-    margin-left 0
-
-.ldap_service
-  margin-left 20%
-
-#device_puavoDeviceXrandr input,
-#device_macAddress input,
-#server_puavoExport_list input
-  display block
-
-.purchase_date
-  select
-    width auto
-
-label
-  font-size 120%
-  font-weight bold
-  line-height 2
-  margin 0
-  &.checkbox
-    font-size 100%
-    font-weight normal
-
-.label_for_checkbox_list
-  vertical-align top
-
-.label_for_input_text_list
-  vertical-align top
-
-.label_td
-  text-align left
-
-fieldset
-  padding 1.4em
-  margin 0 0 1.5em 0
-
-legend
-  font-weight bold
-  font-size 100%
-
-
-input[type="file"]
-  font-size 90%
-
-input[type="file"],
-input[type="image"],
-input[type="submit"],
-input[type="reset"],
-input[type="button"],
-input[type="radio"],
-input[type="checkbox"]
-  width auto
-
-select,
-input[type="file"]
-  *margin-top 4px
-
-
-input[type="submit"]
-  font-size 120%
-  height 70px
-  margin 5px 0 0
-  max-width 333px
-  padding 5px 8px
-  vertical-align middle
-  width 50%
-
-input[type="text"]:focus,
-input[type="password"]:focus,
-input.text:focus,
-input.title:focus,
-textarea:focus,
-select:focus
-  color #222
-
-input[type="checkbox"],
-input[type="radio"],
-input.checkbox,
-input.radio
-  display inline-block
-  margin 5px
-  position relative
-  width auto
-
-#user_mail_list
-  input
-    display block
-    margin 0 0 5px
-
-#user_telephoneNumber_list
-  input
-    display block
-    margin 0 0 5px
-
-.cancel
-  display inline
-  *display inline
-  font-size 100%
-  margin 0
-  padding 0
-  width 100px
-  &:before
-    content: " – "
-.clone_prev_input_element
-  font-size 100%
-  font-weight normal
-  margin-bottom 0.5em
-
-.required
-  &:after
-    content "*"
-    font-size 150%
-  .field_with_errors
-    display inline-block
-
-.no-table-form
-  input
-    max-width 80%
+/* The "clone" buttons in email/phone number/mac address/etc. fields */
+.clone_prev_input_element {
+  margin-bottom: 0.5em;
+}
 
 @media screen-breakpoint-one
   form
@@ -1156,9 +1011,6 @@ input.radio
   form table.import_define th, form table.import_define td
     width 45%
     display inline-block
-
-  .submit_button_container
-    margin-left 2%
 
   .form_inline
     & > *
@@ -1283,47 +1135,6 @@ MAIN NAVIGATION
     li
       a
         padding .5rem
-
-/*
-====================================================================================================
-ERROR MESSAGES
-====================================================================================================
-*/
-
-.message_error,
-.message_notice,
-.message_success,
-.notice,
-.message_alert
-  padding 0.5em
-  margin 15px 15px 1em 0
-
-.message_error, .message_alert
-  font-size 130%
-  text-align center
-
-.message_notice, .notice
-  font-size 130%
-  text-align center
-
-.login_content .notice, .login_content .message_notice
-  left 0
-  margin 0
-  position relative
-  top 0
-
-.message_success
-  text-align center
-
-@media screen-breakpoint-one
-  .message_error, .message_notice, .message_success, .notice, .message_alert
-    margin 2% 2.5% 1% 2.5%
-
-.missingData
-  color: #f00;
-
-.courseWarning, .courseGroupType
-  color: #00f;
 
 /*
 ====================================================================================================
@@ -1588,9 +1399,10 @@ ul.menu li li li li.hover ul
     .topmenu-left
       top 72px
 
+
 /*
 ====================================================================================================
-LISTS
+LISTS OF THINGS (in tables, not ul/ol)
 ====================================================================================================
 */
 
@@ -1606,10 +1418,6 @@ LISTS
   color: #f5f5e8;
   padding: 10px;
   font-size: 100%;
-}
-
-.externalFiles th {
-  text-align: left;
 }
 
 .list tr:nth-child(even) {
@@ -1649,15 +1457,6 @@ LISTS
   background-color #faa !important;
 }
 
-/* Username lists */
-.list .description {
-  margin-bottom: 20px;
-}
-
-.list .meta_information {
-  float: left;
-}
-
 .list .form {
   margin-top: 20px;
   float: left;
@@ -1675,17 +1474,58 @@ LISTS
   float: right;
 }
 
-/* Device lists on the printer permissions page */
-.devices th {
-  text-align: left;
+/*
+====================================================================================================
+ORGANISATIONS
+====================================================================================================
+*/
+
+/* The "missing owners" warning at the top of organisation owners page */
+.missingOwners {
+  border: 2px solid #ff0;
+  padding: 10px 10px 0 10px;
+  background: #ffc;
+  margin: 20px;
 }
 
-/* A list containing the usernames of an unloaded username list */
-.usernameListBox {
-  border: 1px solid #ccc;
-  padding: 5px;
-  max-height: 400px;
-  overflow-y: scroll;
+/*
+====================================================================================================
+LDAP SERVICES
+====================================================================================================
+*/
+
+.ldap_services_system_groups div {
+  word-wrap: break-word;
+}
+
+/*
+====================================================================================================
+GROUPS
+====================================================================================================
+*/
+
+/* Mass group rename */
+.rename_group_old_name {
+  text-align: right;
+  width: 35%;
+}
+
+.rename_group_new_name {
+  width: 60%;
+}
+
+.rename_group_name_abbr {
+  width: 45%;
+}
+
+.groupRenameTable th {
+  text-align: left !important;
+  background: #ccc;
+}
+
+/* Course groups */
+.courseGroupType, .courseWarning {
+  color: #00f;
 }
 
 /*
@@ -1694,25 +1534,10 @@ DEVICES
 ====================================================================================================
 */
 
-.basic-info h1 {
-  border-bottom: none;
+.purchase_date select {
+  /* There are three of these on the same row, make them look nice */
+  width: auto;
 }
-
-.tools
-  .add-new-device
-    &:hover
-      background-color transparent
-
-
-.printer-permissions .devices table
-  td,th
-    text-align left
-    padding 1em
-
-  td,a
-    font-size 10pt
-    font-weight default
-
 /*
 --------------------------------------------------------------------------------
 Hardware info page
@@ -1764,48 +1589,13 @@ Hardware info page
 
 /*
 ====================================================================================================
-EXTERNAL FILES
-====================================================================================================
-*/
-
-.external-files
-  td
-    vertical-align middle
-
-  td, th
-    padding-left 5px
-
-
-/*
-====================================================================================================
 EXTERNAL SERVICES
 ====================================================================================================
 */
 
-.external-services
-  clear both
-  margin-bottom 5em
-
-  a
-    text-decoration underline
-    font-weight bold
-
-  h2, p
-    margin-top 1em
-    margin-bottom 1em
-
-  .list
-    float none
-    clear both
-
-  td
-    padding 1em
-
-.external-services.disabled
-    opacity 0.5
-
-.submit-container
-  clear both
+.disabledExternalService {
+    opacity: 0.5;
+}
 
 /*
 ====================================================================================================
@@ -1834,32 +1624,6 @@ clone-prev-input-element-image()
 show-more-image()
   background-image url("<%= image_path('show-more.png')%>")
   background-repeat no-repeat
-
-/*
-====================================================================================================
-ORGANISATION
-====================================================================================================
-*/
-
-#puavoconf
-  tr:nth-child(even)
-    background: #fff;
-  tr:nth-child(odd)
-    background: #ddd;
-
-/*
-====================================================================================================
-SCHOOLS
-====================================================================================================
-*/
-
-.admin-users-list, .billing-info
-  width 100%
-
-.pdf_file
-  a
-    color #FF6666
-    font-size 110%
 
 /*
 ====================================================================================================
@@ -1930,8 +1694,36 @@ USERS
 ====================================================================================================
 */
 
+/* Email and telephone inputs (multiple text boxes) */
+#user_mail_list input, #user_telephoneNumber_list input {
+    display: block;
+    margin: 0 0 5px;
+}
+
 .marked_for_deletion
   color: red;
+
+/*
+====================================================================================================
+USERNAME LISTS
+====================================================================================================
+*/
+
+/* A list containing the usernames of an unloaded username list */
+.usernameListBox {
+  border: 1px solid #ccc;
+  padding: 5px;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+.meta_information {
+  float: left;
+}
 
 /*
 ====================================================================================================
@@ -2070,6 +1862,11 @@ PASSWORDS
           text-align left
       input[type="submit"]
         width 100%
+
+.message-info {
+  background-color: infoBgColor;
+  border: 2px dotted baseBoxShadowBorderColor;
+}
 
 @media screen-breakpoint-one
   .login-wrap

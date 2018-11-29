@@ -4,7 +4,9 @@
 
 <%= form_tag(put_path, :method => :put) do %>
   <% @external_services.each do |external_service| %>
-    <div class="external-services <%= "disabled" if is_disabled?(external_service) %>" style="margin-bottom: 0;">
+    <% if is_disabled?(external_service) %>
+    <div class="disabledExternalService">
+    <% end %>
     <h2><%= external_service.cn %></h2>
 
     <p><%= external_service.description %></p>
@@ -47,7 +49,10 @@
             :organisation => link_to(t("external_services.organisation"), organisation_external_services_path)).html_safe %>
       </p>
     <% end %>
+
+    <% if is_disabled?(external_service) %>
     </div>
+    <% end %>
   <% end %>
 
   <br>
