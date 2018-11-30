@@ -7,10 +7,19 @@ class UnregisteredDevice < Host
     raise "Cannot use ldap methods on unregistered devices"
   end
 
+  def keyboard_layout;  organisation.keyboard_layout;  end
+  def keyboard_variant; organisation.keyboard_variant; end
+  def locale;           organisation.locale;           end
+  def timezone;         organisation.timezone;         end
+
   def preferred_image
     BootServer.on_bootserver_preferred_boot_image        \
       || Organisation.current(:no_cache).preferred_image \
       || BootServer.on_bootserver_preferred_image
+  end
+
+  def puavoconf
+    organisation.puavoconf
   end
 end
 

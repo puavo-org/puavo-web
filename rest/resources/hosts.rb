@@ -104,7 +104,13 @@ class Host < LdapModel
   end
 
   def self.create_device_info(hostname)
-    host_object = self.by_hostname!(hostname)
+    # handle these special names so that we return only puavoconf for
+    # organisation
+    if %w(diskinstaller preinstalled unregistered).include?(hostname) then
+      host_object = UnregisteredDevice.new
+    else
+      host_object = self.by_hostname!(hostname)
+    end
     host = host_object.to_hash
 
     host['conf'] = host_object.generate_extended_puavo_conf
