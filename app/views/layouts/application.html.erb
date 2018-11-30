@@ -59,7 +59,6 @@ I18n.locale = "<%= I18n.locale %>";
 <body>
 <div class="topmenu clearfix">
     <div class="topmenu-content">
-      <div class="menu-container">
         <ul class="topmenu-left">
           <% if current_user %>
             <% if current_user.organisation_owner? %>
@@ -119,40 +118,38 @@ I18n.locale = "<%= I18n.locale %>";
         <ul class="menu topmenu-right">
           <li id="loggedInName"><a href="#"><%= current_user.displayName %></a></li>
           <li>
-            <%= link_to logout_path, method: :delete, class: "btn btn-danger" do%>
+            <%= link_to logout_path, method: :delete, class: "btn btn-danger", id: "logoutButton" do%>
              <i class='icon-logout'></i> <%= t('.logout') %>
             <% end %>
           </li>
         </ul>
         <% end %>
-      </div> <!-- menu-container -->
    </div>
 </div><!-- topNavContainer -->
 <div class="container">
 <div class="main-wrap">
-    <% if current_organisation? %>
-      <% if @school && !@school.id.nil? && controller_name != 'password' %>
-        <header id="schoolName"><%= @school.displayName %></header>
-        <%= render :partial => "layouts/menu" %>
-      <% end %>
-    <% end %>
+  <% if current_organisation? %>
+  <% if @school && !@school.id.nil? && controller_name != 'password' %>
+  <header id="schoolName"><%= @school.displayName %></header>
+  <%= render :partial => "layouts/menu" %>
+  <% end %>
+  <% end %>
 
   <div class="maincontent clearfix">
-         <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
-      <% message_keys.each do |key| %>
-      <p class="message_<%= key %>">
-        <%= flash[key] %>
-      </p>
-       <% end %>
-       <% end %>
+    <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
+    <% message_keys.each do |key| %>
+    <p class="message_<%= key %>"><%= flash[key] %></p>
+    <% end %>
+    <% end %>
 
-      <% if current_user %>
-        <div class="tools-container clearfix">
-          <span class="tools"><%= yield :right %></span>
-        </div>
-      <% end %>
-      <%= yield %>
+    <% if current_user %>
+    <div class="tools-container clearfix">
+    <span class="tools"><%= yield :right %></span>
     </div>
+    <% end %>
+
+    <%= yield %>
+  </div>
   </div> <!-- container_wrap-->
   </div> <!-- container -->
   <%= debug_footer %>

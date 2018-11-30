@@ -1,11 +1,5 @@
 @import 'nib'
 
-.topmenu-search input, .search-container input
-  search-input-image()
-
-.topmenu-search input.loading, .search-container input.loading
-  search-input-spinner()
-
 /*
 ====================================================================================================
 COLORS
@@ -27,7 +21,7 @@ baseBoxShadowBorderColor = rgb(34, 34, 34)
 
 buttonBg = rgb(245, 245, 245)
 buttonGradientBg = rgb(220, 220, 220)
-buttonNormalColor = #000
+buttonNormalColor = rgb(51, 51, 51)
 buttonHoverColor = #000
 
 buttonDangerBgColor = rgb(231, 6, 0)
@@ -111,7 +105,11 @@ header#schoolName {
   margin-top: 12px;
 }
 
+/* Currently this is only used for the debugging information block */
 footer {
+  color: transparent;
+  font-size: 80%;
+  text-align: right;
 }
 
 h1 {
@@ -174,6 +172,7 @@ img {
 }
 
 hr {
+  /* Used to break floating boxes into controlled sections, so to speak */
   border: none;
   clear: both;
   float: none;
@@ -189,61 +188,21 @@ legend {
   padding: 0 5px;
 }
 
-// topmenu
-.topmenu
-  background-color baseOrangeGradient
-  background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
-  border-bottom 1px solid baseBoxShadowBorderColor
-  box-shadow 2px 4px 6px rgba(68, 68, 68, 0.80)
-  .top-menu-item
-    border-top 1px solid #E6E6E6
-    a
-      &:hover
-        background-color #f4f4f4
-        border-radius 0 8px 8px 0
-    &:first-child
-      border-top medium none
-  input
-    border 1px solid formElementBorderColor
-    border-radius 4px
-.topmenu-left
-  li
-    ul
-      background-color baseOrangeGradient
-      border-bottom 1px solid #222
-      border-left 1px solid #222
-      border-right 1px solid #222
-      border-radius 0 0 4px 4px
-      li
-        &:hover
-            .school_submenu
-              background none repeat scroll 0 0 #F59545
-              border medium none
-              border-radius 0 0 6px 0
-  .last_one
-    background none repeat scroll 0 0 transparent
-    border medium none
-  .school_submenu
-    li
-      border-top 1px solid #E6E6E6
-
-.topmenu-content a,
 .navbar-first-level a
   text-decoration none
 
-.clearfix:after, .container:after
-  content "\0020"
-  display block
-  height 0
-  clear both
-  visibility hidden
-  overflow hidden
+.clearfix:after, .container:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+  overflow: hidden;
+}
 
-.clearfix, .container
-  display block
-
-.clear
-  clear both
+.clearfix, .container {
+  display: block;
+}
 
 // Custom global classes
 .container
@@ -320,6 +279,424 @@ legend {
 
 // End of .tools
 
+/*
+====================================================================================================
+THE TOPMOST MENU BAR
+====================================================================================================
+*/
+
+/* The bar at the top of the page. Contains the organisation and school menus, the quick search bar,
+   the username of the currently logger user and the logout button. */
+.topmenu {
+  margin: 0;
+  min-width: 300px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+
+  background-color: baseOrangeGradient;
+  background-image: linear-gradient(baseOrange 0% ,baseOrangeGradient 100%);
+  border-bottom: 1px solid baseBoxShadowBorderColor;
+  box-shadow: 2px 4px 6px rgba(68, 68, 68, 0.80);
+}
+
+/* Wraps the actual topmenu contents */
+.topmenu-content {
+  font-size: 80%;
+  margin: 0 auto;
+  max-width: 1200px;
+  position: relative;
+  width: 95%;
+}
+
+/* The search box outer element */
+.topmenu input {
+  float: left;
+  margin: 5px 0 0 5px;
+  padding: 5px 30px 5px 10px;
+
+  border: 1px solid formElementBorderColor;
+  border-radius: 4px;
+}
+
+.topmenu-content a {
+  text-decoration: none;
+}
+
+.topmenu .top-menu-item:not(:first-child) {
+  border-top: 1px solid #E6E6E6;
+}
+
+.topmenu .top-menu-item a:hover {
+  background-color: #f4f4f4;
+  border-radius: 0 8px 8px 0;
+}
+
+/* The left topmenu block contains the organisation and school dropdown menus */
+.topmenu-left {
+  float: left;
+  font-size: 85%;
+  font-weight: bold;
+  line-height: 3.5;
+  list-style: none;
+  margin: 0;
+  padding: 0 5px;
+  text-transform: uppercase;
+}
+
+.topmenu-left li ul {
+  background: baseOrangeGradient;
+  border-bottom: 1px solid #222;
+  border-left: 1px solid #222;
+  border-right: 1px solid #222;
+  border-radius: 0 0 4px 4px;
+}
+
+.topmenu-left li ul li:hover .school_submenu {
+  background: #F59545;
+  border: none;
+}
+
+.school_submenu li {
+  border-top: 1px solid #E6E6E6;
+}
+
+.topmenu-left > li {
+  float: left;
+  margin-right: 20px;
+  position: relative;
+  width: auto;
+}
+
+.topmenu-left > li > ul {
+  display: none;
+  left: 0;
+  line-height: 1;
+  margin: 0;
+  max-height: 600px;
+  min-width: 200px;
+  overflow-y: auto;
+  padding: 0 10px 0 0;
+  position: absolute;
+  top: 100%;
+  white-space: nowrap;
+  width: auto;
+}
+
+.topmenu-left li ul li .school_submenu {
+  display: none;
+}
+
+.topmenu-left li ul li:hover .school_submenu {
+  display: block;
+  left: 100%;
+  margin: -29px 0 0 -1px;
+  padding: 0;
+  position: absolute;
+}
+
+.topmenu-left .school_submenu li {
+  margin: 8px;
+}
+
+/*
+.topmenu-left
+  & > li
+    float left
+    margin-right 20px
+    position relative
+    width auto
+    &:last-child
+      margin-right 0
+    & > ul
+      display none
+      left 0
+      line-height 1
+      margin 0
+      max-height 600px
+      min-width 200px
+      overflow-y auto
+      padding 0 10px 0 0
+      position absolute
+      top 100%
+      white-space nowrap
+      width auto
+  li
+    ul
+      li
+        .school_submenu
+          display none
+        &:hover
+          .school_submenu
+            display block
+            left 100%
+            margin -29px 0 0 -1px
+            padding 0
+            position absolute
+  .school_submenu
+    li
+      margin 8px
+*/
+
+li.top-menu-item {
+  display: block;
+  list-type: none;
+  margin: 5px 0;
+  padding: 10px 15px 2px 10px;
+  white-space: nowrap;
+}
+
+li.top-menu-item a {
+  margin: -8px -20px -5px -20px;
+  padding: 10px 20px 10px 20px;
+  display: block;
+}
+
+.add-new-school a,
+.add-new-school a:hover
+  float right
+  margin 2px 0
+  padding 10px 5px
+  text-transform none
+
+.school-menu, .organisation-menu
+  z-index 10
+.school-menu-button > span,
+.organisation-menu-button > span
+  padding 6px
+  border-radius 6px
+
+.school-menu-button,
+.organisation-menu-button
+  background-position right
+  padding-right 10px
+
+/* Outer container for the search box */
+.topmenu-search {
+  float: left;
+  margin: 0;
+  padding: 0 5px;
+}
+
+/* The right topmenu block contains the logged in username and the logout button */
+.topmenu-right {
+  float: right;
+  padding: 0;
+  margin: 3px 0 0 0;
+}
+
+#loggedInName {
+  margin-top: 6px;
+}
+
+#logoutButton {
+  border: none;
+  margin: 0 0 0 10px;
+  padding: 4px 10px;
+}
+
+.menu
+  li
+    float left
+    line-height 1.5
+    margin 0
+    padding 0 2px
+    position relative
+
+/*
+    span
+      display block
+      padding 0
+      text-decoration none
+      width auto
+      &.sub
+        font-weight bolder
+        padding-right 10px
+        text-transform uppercase
+    a
+      display block
+      font-weight normal
+      text-decoration none
+      &.sub
+        padding-right 15px
+        text-transform uppercase
+
+    li
+      width 100%
+      a
+        padding 5px 5px 5px 10px
+        &.sub
+          padding-right 15px
+    ul
+      margin 0
+      padding 0
+      top 32px
+      width 168px
+      ul
+        margin-left 169px
+        top -1px
+*/
+
+/*
+ul.menu ul,
+ul.menu li:hover ul ul,
+ul.menu ul ul,
+ul.menu li:hover ul ul ul,
+ul.menu ul ul ul,
+ul.menu li:hover ul ul ul ul
+  left -999em
+  position absolute
+
+ul.menu li:hover ul,
+ul.menu li li:hover ul,
+ul.menu li li li:hover ul,
+ul.menu li li li li:hover ul
+  left -1px
+  z-index 999
+
+ul.menu li.hover ul ul,
+ul.menu li.hover ul ul ul,
+ul.menu li.hover ul ul ul ul
+  left -999em
+  position absolute
+
+ul.menu li.hover ul,
+ul.menu li li.hover ul,
+ul.menu li li li.hover ul,
+ul.menu li li li li.hover ul
+  left -1px
+  z-index 999
+*/
+
+/*
+@media screen-breakpoint-one
+  .menu-container
+    display block
+    .topmenu-left
+      left 0
+    .topmenu-left, .topmenu-right
+      margin 0
+      padding 0
+      top 44px
+    .topmenu-left, .topmenu-search, .topmenu-right
+      float none
+      position absolute
+    .topmenu-search
+      left 0
+      padding 0
+      top 0
+      width 100%
+      li
+        width 100%
+      input
+        height 35px
+        width 100%
+
+  .topmenu
+    display block
+    height 80px
+    position relative
+  .topmenu-content
+    font-size 90%
+  .topmenu-right
+    right 0
+    li
+      a[data-method="delete"]
+        margin 0
+
+@media screen-breakpoint-two
+  .topmenu
+    height 120px
+  .menu-container
+    .topmenu-left
+      top 84px
+  .topmenu-right
+    left 0
+  .menu li
+    width 50%
+
+@media screen-portrait-breakpoint-two
+  .menu-container
+    .topmenu-left
+      top 72px
+*/
+
+/*
+====================================================================================================
+SEARCH FIELDS
+====================================================================================================
+*/
+
+/* The search box itself */
+#search {
+  margin: 4px;
+  z-index: 1;
+  background: url("<%= image_path('magnifier.png')%>") no-repeat scroll 97% center #FFFFFF;
+  background-repeat: no-repeat;
+}
+
+.loading {
+  /*
+    The JavaScript code doing the live search adds this class to the search box when search
+    is in progress, then removes it afterwards.
+  */
+  background: url("<%= image_path('ajax-loader.gif')%>") no-repeat scroll 95% 4px #FFFFFF !important;
+
+  /*
+    FIXME: Unfortunately this class is also added to the user search box in the group members page,
+    and the box loses its border. Not good. I don't understand why this class messes up that box,
+    it does not touch borders or anything else!? These styles are not coming from the #jquery-live-search
+    defined below, I already checked that.
+  */
+}
+
+/* Container for the top bar search results */
+#jquery-live-search {
+  background #fff;
+  border: 1px solid #cccaaa;
+  border-width: 0 1px 1px 1px;
+  margin: 0 1em 0 0;
+  max-height: 350px;
+  overflow: auto;
+  padding: 5px;
+  position: absolute;
+  width: auto;
+  z-index: 9999;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.search_result table {
+  border-spacing: 0;
+  margin: 0px;
+  padding: 0px;
+}
+
+.search_result th {
+  white-space: nowrap;
+}
+
+.search_result legend {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+fieldset.search_result {
+  font-size: 80%;
+  padding: 5px;
+}
+
+@media screen-breakpoint-one
+  #jquery-live-search
+    left 0 !important
+    width 100%
+
+/*
+====================================================================================================
+COMMON CONTENT ELEMENTS
+====================================================================================================
+*/
+
 [class*=icon] {
   font-size: 120%;
 }
@@ -333,10 +710,13 @@ legend {
 }
 
 .fullWidth {
+  /* Used on the school page to show admins and billing info */
   width: 99%;
   clear: both;
   float: none;
 }
+
+/* Generic floating container boxes that have titles */
 
 .content-box-new header {
   background: linear-gradient(#ba722d, #a36a2a);
@@ -374,6 +754,7 @@ legend {
   font-weight: bold;
 }
 
+/* Table-ish emulation */
 .multilineItem {
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
@@ -431,13 +812,11 @@ legend {
   border-bottom: none;
 }
 
-.display_block
-  display block !important
-
-.image
-  margin 0
-  padding 0
-
+/* Images on school, user, server and device pages */
+.image {
+  margin: 0;
+  padding: 0;
+}
 
 @media screen-breakpoint-one
   body
@@ -701,12 +1080,6 @@ FLASH MESSAGES AND OTHER WARNING/ERROR BOXES
   color: #fff;
 }
 
-.login_content .notice, .login_content .message_notice
-  left 0
-  margin 0
-  position relative
-  top 0
-
 /*
 ====================================================================================================
 BUTTONS
@@ -823,7 +1196,7 @@ FORMS
   margin: 0 5px 0 0;    /* push labels away from the input box */
 }
 
-.editForm option {
+.editForm select {
   padding: 5px;
 }
 
@@ -1138,270 +1511,6 @@ MAIN NAVIGATION
 
 /*
 ====================================================================================================
-TOPMENU
-====================================================================================================
-*/
-
-.topmenu
-  height auto
-  margin 0
-  min-width 300px
-  position fixed
-  top 0
-  width 100%
-  z-index 10
-  input
-    float left
-    margin 5px 0 0 5px
-    padding 5px 30px 5px 10px
-
-.topmenu-content
-  font-size 80%
-  margin 0 auto
-  max-width 1200px
-  position relative
-  width 95%
-
-.topmenu-left, .topmenu-search
-  float left
-  font-size 85%
-  font-weight bold
-  line-height 3.5
-  list-style none outside none
-  margin 0
-  padding 0 5px
-  text-transform uppercase
-  & > li
-    float left
-    margin-right 20px
-    position relative
-    width auto
-    &:last-child
-      margin-right 0
-    & > ul
-      display none
-      left 0
-      line-height 1
-      margin 0
-      max-height 600px
-      min-width 200px
-      overflow-y auto
-      padding 0 10px 0 0
-      position absolute
-      top 100%
-      white-space nowrap
-      width auto
-  li
-    ul
-      li
-        .school_submenu
-          display none
-        &:hover
-          .school_submenu
-            display block
-            left 100%
-            margin -29px 0 0 -1px
-            padding 0
-            position absolute
-  .last_one
-    height 0
-    margin 0
-    padding 0
-    position relative
-  .middle
-    height 20px
-    left 18px
-    position absolute
-    top 0
-    width 105px
-  .school_submenu
-    li
-      margin 8px
-
-.touch
-  .topmenu
-    position absolute
-    & > li
-      & > ul
-        max-height none
-        overflow-y visible
-
-
-li
-  &.top-menu-item
-    display block
-    list-type none
-    margin 5px 0
-    padding 10px 15px 2px 10px
-    white-space nowrap
-    a
-      margin -8px -20px -5px -20px
-      padding 10px 20px 10px 20px
-      display block
-    //&:last-child
-    //  padding-bottom 15px
-  &.left
-    a
-      borderleft-radius 12px
-
-.add-new-school a,
-.add-new-school a:hover
-  float right
-  margin 2px 0
-  padding 10px 5px
-  text-transform none
-
-.school-menu, .organisation-menu
-  z-index 10
-.school-menu-button > span,
-.organisation-menu-button > span
-  padding 6px
-  border-radius 6px
-
-.school-menu-button,
-.organisation-menu-button
-  background-position right
-  padding-right 10px
-
-.topmenu-right
-  float right
-  margin 3px 5px
-  padding 0
-  li
-    a[data-method="delete"]
-      border none
-      color creamWhite
-      margin 0 0 0 10px
-      padding 4px 10px
-    a[data-method="delete"]:hover
-      background none repeat scroll 0 0 #DA0000
-
-#loggedInName
-    margin-top 6px
-
-.menu
-  li
-    float left
-    line-height 1.5
-    margin 0
-    padding 0 2px
-    position relative
-    span
-      display block
-      padding 0
-      text-decoration none
-      width auto
-      &.sub
-        font-weight bolder
-        padding-right 10px
-        text-transform uppercase
-    a
-      display block
-      font-weight normal
-      text-decoration none
-      &.sub
-        padding-right 15px
-        text-transform uppercase
-    li
-      width 100%
-      a
-        padding 5px 5px 5px 10px
-        &.sub
-          padding-right 15px
-    ul
-      margin 0
-      padding 0
-      top 32px
-      width 168px
-      ul
-        margin-left 169px
-        top -1px
-
-ul.menu ul,
-ul.menu li:hover ul ul,
-ul.menu ul ul,
-ul.menu li:hover ul ul ul,
-ul.menu ul ul ul,
-ul.menu li:hover ul ul ul ul
-  left -999em
-  position absolute
-
-ul.menu li:hover ul,
-ul.menu li li:hover ul,
-ul.menu li li li:hover ul,
-ul.menu li li li li:hover ul
-  left -1px
-  z-index 999
-
-ul.menu li.hover ul ul,
-ul.menu li.hover ul ul ul,
-ul.menu li.hover ul ul ul ul
-  left -999em
-  position absolute
-
-ul.menu li.hover ul,
-ul.menu li li.hover ul,
-ul.menu li li li.hover ul,
-ul.menu li li li li.hover ul
-  left -1px
-  z-index 999
-.menu-container
-  display block
-
-@media screen-breakpoint-one
-  .menu-container
-    display block
-    .topmenu-left
-      left 0
-    .topmenu-left, .topmenu-right
-      margin 0
-      padding 0
-      top 44px
-    .topmenu-left, .topmenu-search, .topmenu-right
-      float none
-      position absolute
-    .topmenu-search
-      left 0
-      padding 0
-      top 0
-      width 100%
-      li
-        width 100%
-      input
-        height 35px
-        width 100%
-
-  .topmenu
-    display block
-    height 80px
-    position relative
-  .topmenu-content
-    font-size 90%
-  .topmenu-right
-    right 0
-    li
-      a[data-method="delete"]
-        margin 0
-
-@media screen-breakpoint-two
-  .topmenu
-    height 120px
-  .menu-container
-    .topmenu-left
-      top 84px
-  .topmenu-right
-    left 0
-  .menu li
-    width 50%
-
-@media screen-portrait-breakpoint-two
-  .menu-container
-    .topmenu-left
-      top 72px
-
-
-/*
-====================================================================================================
 LISTS OF THINGS (in tables, not ul/ol)
 ====================================================================================================
 */
@@ -1412,7 +1521,7 @@ LISTS OF THINGS (in tables, not ul/ol)
 }
 
 .list th {
-  background: linear-gradient(top, #a36a2a 35%, #ba722d 60%) repeat scroll 0 0 transparent;
+  background: linear-gradient(top, #a36a2a 35%, #ba722d 60%);
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   color: #f5f5e8;
@@ -1599,97 +1708,6 @@ EXTERNAL SERVICES
 
 /*
 ====================================================================================================
-IMAGES
-====================================================================================================
-*/
-
-tools-image-sprite()
-  background-image url("<%= image_path('iconset-breathe.png') %>")
-  background-repeat no-repeat
-
-search-input-image()
-  background url("<%= image_path('magnifier.png')%>") no-repeat scroll 97% center #FFFFFF
-  background-repeat no-repeat
-
-search-input-spinner()
-  background url("<%= image_path('ajax-loader.gif')%>") no-repeat scroll 95% 4px #FFFFFF
-  background-repeat no-repeat
-
-clone-prev-input-element-image()
-  background-image url("<%= image_path('show-more.png')%>")
-  background-repeat no-repeat
-  background-position 95%
-  padding-right 2em
-
-show-more-image()
-  background-image url("<%= image_path('show-more.png')%>")
-  background-repeat no-repeat
-
-/*
-====================================================================================================
-SCHOOLS-ADMINS
-====================================================================================================
-*/
-
-#this_school_admin_users .row,
-#other_admin_users .row
-  margin 2px 0 2px 0
-  padding 8px 10px 7px
-
-@media screen-breakpoint-one
-  #this_school_admin_users .row, #other_admin_users .row
-    padding 1% 2%
-
-/*
-====================================================================================================
-SEARCH
-====================================================================================================
-*/
-
-#jquery-live-search
-  background #FFFFFF
-  border 1px solid #CCCAAA
-  border-width 0 1px 1px 1px
-  margin 0 1em 0 0
-  max-height 350px
-  overflow auto
-  padding 5px 10px
-  position absolute
-  width auto
-  z-index 9999
-  box-shadow 5px 5px 5px rgba(0, 0, 0, 0.3)
-
-#search
-  margin 4px
-  z-index 1
-
-.search_result table {
-    border-spacing: 0;
-    margin: 0px;
-    padding: 0px;
-}
-
-.search_result th {
-    white-space: nowrap;
-}
-
-.search_result legend {
-  padding-left: 2px;
-  padding-right: 2px;
-}
-
-fieldset
-  &.search_result
-    font-size 80%
-    padding 5px
-
-@media screen-breakpoint-one
-  #jquery-live-search
-    left 0 !important
-    width 100%
-
-/*
-====================================================================================================
 USERS
 ====================================================================================================
 */
@@ -1717,12 +1735,17 @@ USERNAME LISTS
   overflow-y: scroll;
 }
 
+/* TODO: refactor these all */
 .description {
   margin-bottom: 20px;
 }
 
 .meta_information {
   float: left;
+}
+
+.clear {
+  clear: both;
 }
 
 /*
@@ -1943,3 +1966,9 @@ LOGIN
         input
           display block
           width 100%
+
+.login_content .notice, .login_content .message_notice
+  left 0
+  margin 0
+  position relative
+  top 0

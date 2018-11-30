@@ -85,15 +85,13 @@ module ApplicationHelper
   STARTED = Time.now
   DEB_PACKAGE = Array(`dpkg -l | grep puavo-web`.split())[2]
   def debug_footer
-    "
-    <footer class=debug style='color: transparent; font-size: small; text-align: right'>
+    "<footer>
       hostname: #{ Socket.gethostname },
       version: #{ PuavoUsers::VERSION },
       git commit: #{ PuavoUsers::GIT_COMMIT },
       deb package: #{ DEB_PACKAGE },
-      uptime: #{ (Time.now - STARTED).to_i } sec
-    </footer>
-    ".html_safe
+      uptime: #{ (Time.now - STARTED).to_i } seconds
+    </footer>".html_safe
   end
 
   def group_types_for_select

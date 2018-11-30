@@ -74,8 +74,15 @@
     <p><%= t('.device_footer_text') %></p>
   </fieldset>
 
-<%= submit_tag t('link.save'),  :class => "btn" %>
-  <div class="cancel">
-    <%= link_to t('link.cancel'), printer_permissions_path(@school), :class => 'btn btn-danger' %>
-  </div>
+<table class="editForm">
+  <tr>
+    <th></th>
+    <td>
+      <%= submit_tag t('link.save'),  :class => "btn" %>
+      <div class="cancel">
+        <%= link_to t('link.cancel'), printer_permissions_path(@school), :class => 'btn btn-danger' %>
+      </div>
+    </td>
+  </tr>
+</table>
 <% end %>
