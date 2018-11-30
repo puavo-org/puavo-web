@@ -100,7 +100,7 @@ body {
 /* The school name at the top of the page */
 header#schoolName {
   font-size: 220%;
-  font-weight: bold;
+  font-weight: normal;
   font-variant: small-caps;
   margin-top: 12px;
 }
@@ -110,6 +110,10 @@ footer {
   color: transparent;
   font-size: 80%;
   text-align: right;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
 }
 
 h1 {
@@ -157,15 +161,6 @@ p {
   margin: 0 0 0.5em 0;      /* TODO: this can be removed (but see user/device info pages first!) */
 }
 
-li ul {
-  margin: 0;
-}
-
-/* Most dropdown menus and tabs are lists */
-ul {
-  list-style: none;
-}
-
 img {
   border: none;
   max-width: 100%;
@@ -187,97 +182,6 @@ legend {
   font-size: 110%;
   padding: 0 5px;
 }
-
-.navbar-first-level a
-  text-decoration none
-
-.clearfix:after, .container:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
-  overflow: hidden;
-}
-
-.clearfix, .container {
-  display: block;
-}
-
-// Custom global classes
-.container
-  height 100%
-  margin 0
-  min-width 300px
-
-.main-wrap
-  margin 25px auto
-  max-width 1200px
-  padding 5px 10px 0
-  width 95%
-  & > h1
-    font-size 220%
-    font-variant small-caps
-    margin 0
-    padding 1% 0 0 0
-
-//.maincontent
-.maincontent
-  font-size 80%
-  margin 0 0 2% 0
-  padding 2%
-  position relative
-  width 100%
-  .dashboard
-    float left
-    margin 0
-    width 100%
-  h1
-    line-height 1
-    margin 0 0 1%
-    padding 0
-// end of .maincontent
-
-// .tools ->
-.tools-container
-  float right
-  margin-bottom 2%
-  &:empty, span:empty
-    display none
-  .tools
-    float right
-    height 40px
-    margin 5px 0 .2em 1em
-    padding 0
-    .sub-tools
-      margin 0
-    > div, .sub-tools > li
-      float left
-      margin 0
-      padding 0 0 0 5px
-      position relative
-    .sub-tools > li.tool
-      padding 0 1em
-    .tool
-      ul
-        display none
-        right 1em
-        padding 0
-        position absolute
-        margin 0
-        li
-          padding 0 5px
-
-.tools a, .tool span
-  display block
-  height auto
-  line-height 1.25
-  margin 0
-  padding 10px
-  white-space nowrap
-  width auto
-
-// End of .tools
 
 /*
 ====================================================================================================
@@ -301,6 +205,10 @@ THE TOPMOST MENU BAR
   box-shadow: 2px 4px 6px rgba(68, 68, 68, 0.80);
 }
 
+.topmenu ul {
+  list-style-type: none;
+}
+
 /* Wraps the actual topmenu contents */
 .topmenu-content {
   font-size: 80%;
@@ -310,128 +218,128 @@ THE TOPMOST MENU BAR
   width: 95%;
 }
 
-/* The search box outer element */
-.topmenu input {
-  float: left;
-  margin: 5px 0 0 5px;
-  padding: 5px 30px 5px 10px;
-
-  border: 1px solid formElementBorderColor;
-  border-radius: 4px;
-}
-
-.topmenu-content a {
-  text-decoration: none;
-}
-
-.topmenu .top-menu-item:not(:first-child) {
-  border-top: 1px solid #E6E6E6;
-}
-
-.topmenu .top-menu-item a:hover {
-  background-color: #f4f4f4;
-  border-radius: 0 8px 8px 0;
-}
-
 /* The left topmenu block contains the organisation and school dropdown menus */
 .topmenu-left {
   float: left;
   font-size: 85%;
   font-weight: bold;
   line-height: 3.5;
-  list-style: none;
   margin: 0;
   padding: 0 5px;
   text-transform: uppercase;
 }
 
-.topmenu-left li ul {
+.toplevelMenu {
+  float: left;
+  color: #000;
+}
+
+.toplevelMenu:hover {
+  background: #fff;
+  color: #000;
+}
+
+.toplevelMenu span {
+  cursor: default;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.toplevelMenu span:after {
+  content: " ▼";
+}
+
+/* The organisation menu does not exist for non-owners */
+.noMenuHighlight span:after {
+  content: "";
+}
+
+.noMenuHighlight:hover {
+  background: none;
+  color: #000;
+}
+
+/* A generic dropdown menu container (UL) */
+.toplevelDropdown {
+  visibility: hidden;
+  display: none;
+  position: absolute;
+
+  margin: 0 0 0 -1px;
+  padding: 5px;
+  left: auto;
+
   background: baseOrangeGradient;
-  border-bottom: 1px solid #222;
   border-left: 1px solid #222;
   border-right: 1px solid #222;
+  border-bottom: 1px solid #222;
   border-radius: 0 0 4px 4px;
-}
 
-.topmenu-left li ul li:hover .school_submenu {
-  background: #F59545;
-  border: none;
-}
-
-.school_submenu li {
-  border-top: 1px solid #E6E6E6;
-}
-
-.topmenu-left > li {
-  float: left;
-  margin-right: 20px;
-  position: relative;
-  width: auto;
-}
-
-.topmenu-left > li > ul {
-  display: none;
-  left: 0;
   line-height: 1;
-  margin: 0;
+  z-index: 10;
+
+  box-shadow: 0 6px 6px rgba(68, 68, 68, 0.80);
+
   max-height: 600px;
   min-width: 200px;
   overflow-y: auto;
-  padding: 0 10px 0 0;
-  position: absolute;
-  top: 100%;
-  white-space: nowrap;
-  width: auto;
 }
 
-.topmenu-left li ul li .school_submenu {
-  display: none;
-}
-
-.topmenu-left li ul li:hover .school_submenu {
-  display: block;
-  left: 100%;
-  margin: -29px 0 0 -1px;
-  padding: 0;
-  position: absolute;
-}
-
-.topmenu-left .school_submenu li {
-  margin: 8px;
-}
-
-li.top-menu-item {
-  display: block;
-  list-type: none;
-  margin: 5px 0;
-  padding: 10px 15px 2px 10px;
-  white-space: nowrap;
-}
-
-li.top-menu-item a {
-  margin: -8px -20px -5px -20px;
-  padding: 10px 20px 10px 20px;
+/* Make the dropdown menu visible */
+.toplevelMenu:hover .toplevelDropdown {
+  visibility: visible;
   display: block;
 }
 
-.add-new-school a,
-.add-new-school a:hover
-  float right
-  margin 2px 0
-  padding 10px 5px
-  text-transform none
+.toplevelDropdown li {
+  display: block;
+  border-top: 1px solid #ccc;
+  padding: 2px 0;
+  clear: both;
+}
 
-.school-menu, .organisation-menu
-  z-index 10
-.school-menu-button > span,
-.organisation-menu-button > span
-  padding 6px
-  border-radius 6px
+.toplevelDropdown li:first-of-type {
+  border-top: none;
+}
 
-.school-menu-button,
-.organisation-menu-button
-  background-position right
-  padding-right 10px
+.toplevelMenu a {
+  color: #000;
+  margin: 0;
+  padding: 10px;
+  display: block;
+  text-decoration: none;
+}
+
+.toplevelMenu a:hover {
+  color: #000;
+  background: #fff;
+}
+
+/* The per-school quick link list */
+ul.schoolLinks {
+  padding-top: 2px;
+  padding-left: 20px;
+  font-size: 80%;
+}
+
+.schoolLinks li {
+  float: left;
+  clear: none;
+  border: none;
+}
+
+.schoolLinks a {
+  padding: 2px;
+}
+
+/* TODO: This menu is the wrong place for this button! Provide a link to the school list page instead.
+   We have to override annoyingly many properties, because the button is actually an "A" element. */
+.newSchool {
+  border-top: none !important;
+  margin-top: 10px !important;
+  text-transform: none !important;
+  float: right;
+}
 
 /* Outer container for the search box */
 .topmenu-search {
@@ -440,11 +348,32 @@ li.top-menu-item a {
   padding: 0 5px;
 }
 
+/* The search box outer element */
+.topmenu-search input {
+  float: left;
+  margin: 5px 0 0 5px;
+  padding: 5px 30px 5px 10px;
+
+  border: 1px solid formElementBorderColor;
+  border-radius: 4px;
+}
+
 /* The right topmenu block contains the logged in username and the logout button */
 .topmenu-right {
   float: right;
   padding: 0;
   margin: 3px 0 0 0;
+}
+
+.topmenu-right li {
+  float: left;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 2px;
+}
+
+.topmenu-right a {
+  text-decoration: none;
 }
 
 #loggedInName {
@@ -456,14 +385,6 @@ li.top-menu-item a {
   margin: 0 0 0 10px;
   padding: 4px 10px;
 }
-
-.menu
-  li
-    float left
-    line-height 1.5
-    margin 0
-    padding 0 2px
-    position relative
 
 /*
 @media screen-breakpoint-one
@@ -517,6 +438,105 @@ li.top-menu-item a {
     .topmenu-left
       top 72px
 */
+
+/*
+====================================================================================================
+MAIN PAGE LAYOUT
+====================================================================================================
+*/
+
+.clearfix, .container {
+  display: block;
+}
+
+.container {
+  height: 100%;
+  margin: 0;
+  min-width: 300px;
+}
+
+.clearfix:after, .container:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+.navbar-first-level a
+  text-decoration none
+
+.main-wrap
+  margin 25px auto
+  max-width 1200px
+  padding 5px 10px 0
+  width 95%
+  & > h1
+    font-size 220%
+    font-variant small-caps
+    margin 0
+    padding 1% 0 0 0
+
+//.maincontent
+.maincontent
+  font-size 80%
+  margin 0 0 2% 0
+  padding 2%
+  position relative
+  width 100%
+  .dashboard
+    float left
+    margin 0
+    width 100%
+  h1
+    line-height 1
+    margin 0 0 1%
+    padding 0
+// end of .maincontent
+
+// .tools ->
+.tools-container
+  float right
+  margin-bottom 2%
+  &:empty, span:empty
+    display none
+  .tools
+    float right
+    height 40px
+    margin 5px 0 .2em 1em
+    padding 0
+    .sub-tools
+      list-style-type none
+      margin 0
+    > div, .sub-tools > li
+      float left
+      margin 0
+      padding 0 0 0 5px
+      position relative
+    .sub-tools > li.tool
+      padding 0 1em
+    .tool
+      ul
+        list-style-type none
+        display none
+        right 1em
+        padding 0
+        position absolute
+        margin 0
+        li
+          padding 0 5px
+
+.tools a, .tool span
+  display block
+  height auto
+  line-height 1.25
+  margin 0
+  padding 10px
+  white-space nowrap
+  width auto
+
+// End of .tools
 
 /*
 ====================================================================================================
@@ -708,12 +728,21 @@ COMMON CONTENT ELEMENTS
   border-bottom: none;
 }
 
+.basic-info label {
+  font-weight: bold;
+}
+
+.basic-info .notice_text {
+  color: red;
+}
+
 /* Images on school, user, server and device pages */
 .image {
   margin: 0;
   padding: 0;
 }
 
+/*
 @media screen-breakpoint-one
   body
     font-size 85%
@@ -772,6 +801,7 @@ COMMON CONTENT ELEMENTS
       float right
   .basic-info td:first-of-type
     width 30%
+*/
 
 /*
 ====================================================================================================
@@ -818,6 +848,9 @@ THEME
     background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
     border-radius 4px 4px 0 0
 
+.navbar-second-level ul
+    list-style-type none
+
 .navbar-second-level
   background-color baseBrown
   background-image linear-gradient(baseBrownGradient 35%, baseBrown 60%)
@@ -861,6 +894,7 @@ THEME
 
 // End of .tools
 
+/*
 // login
 
 .login_container
@@ -920,6 +954,7 @@ THEME
     .password_buttons
       span, span.active
         border-radius 4px
+*/
 
 /*
 ====================================================================================================
@@ -992,9 +1027,11 @@ BUTTONS
   background: buttonDangerHoverBg;
 }
 
+/*
 @media screen-breakpoint-one
   .btn
     padding 0.5em 1em
+*/
 
 /*
 ====================================================================================================
@@ -1200,6 +1237,7 @@ fieldset {
   margin-bottom: 0.5em;
 }
 
+/*
 @media screen-breakpoint-one
   form
     table, tbody
@@ -1287,6 +1325,7 @@ fieldset {
       td
         label
           line-height 1.5
+*/
 
 /*
 ====================================================================================================
@@ -1765,6 +1804,7 @@ PASSWORDS
   border: 2px dotted baseBoxShadowBorderColor;
 }
 
+/*
 @media screen-breakpoint-one
   .login-wrap
     font-size 100%
@@ -1786,6 +1826,7 @@ PASSWORDS
 
         i
           padding-right .25em
+*/
 
 /*
 ====================================================================================================
@@ -1793,6 +1834,7 @@ LOGIN
 ====================================================================================================
 */
 
+/*
 // Oauth login screen, probably not even used in production?
 
 .login_container
@@ -1846,3 +1888,4 @@ LOGIN
   margin 0
   position relative
   top 0
+*/
