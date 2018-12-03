@@ -476,9 +476,18 @@ class Devices < PuavoSinatra
 
   # Hardware info receiver
   post '/v3/devices/:hostname/sysinfo' do
-    auth :basic_auth, :server_auth, :legacy_server_auth
-
-    puts params.inspect
+    if CONFIG['bootserver'] then
+      if !CONFIG['ldapmaster'] then
+        raise InternalError,
+              :user => 'Cannot receive sysinfo unless ldapmaster is known'
+      end
+      LdapModel.disconnect()
+      auth :basic_auth, :server_auth, :legacy_server_auth
+      LdapModel.setup(:credentials => CONFIG['server'],
+                      :ldap_server => CONFIG['ldapmaster'])
+    else
+      auth :basic_auth, :server_auth, :legacy_server_auth
+    end
 
     unless params[:file] && params[:file][:tempfile]
       return 'No file uploaded, nothing done'
