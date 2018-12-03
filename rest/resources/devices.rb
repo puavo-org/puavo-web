@@ -489,22 +489,20 @@ class Devices < PuavoSinatra
       auth :basic_auth, :server_auth, :legacy_server_auth
     end
 
-    unless params[:file] && params[:file][:tempfile]
-      return 'No file uploaded, nothing done'
-    end
-
     begin
-      raw = params[:file][:tempfile].read()
-      data = JSON.parse(raw)
+      if params[:sysinfo].to_s.empty? then
+        raise 'no sysinfo parameter or it is empty'
+      end
 
-      puts data
+      data = JSON.parse(params[:sysinfo])
 
       # Do some basic sanity checking on the data
       unless data['timestamp'] && data['this_image'] && data['this_release']
-        return 'Received data failed basic sanity checks'
+        raise 'received data failed basic sanity checks'
       end
 
-      # Strip network info; we don't need it and it can contain sensitive information
+      # Strip network info; we don't need it and it can contain sensitive
+      # information.
       data.delete('network_interfaces')
 
       # We can't assume the source device's clock is correct, but we can assume
@@ -515,13 +513,23 @@ class Devices < PuavoSinatra
       device.hw_info = json(data)
       device.save!
 
-      'OK'
+      msg = 'received sysinfo from a device'
+      flog.info(msg, "#{ msg } with hostname #{ params['hostname'] }")
+      json({ :status => 'successfully' })
     rescue NotFound => e
-      puts e
-      "You don't exist."
+      status 404
+      msg = 'failed in receiving sysinfo'
+      flog.error(msg,
+                 "#{ msg }: could not find device with hostname" \
+                   + " #{ params['hostname'] }")
+      json({ :status => 'failed',
+             :error  => 'could not find device by hostname' })
     rescue StandardError => e
-      puts e
-      'Error'
+      status 404
+      flog.error('failed in receiving sysinfo',
+                 "failed in receiving sysinfo for #{ params['hostname'] }: " \
+                   + e.message)
+      json({ :status => 'failed', :error => 'failed due to unknown error' })
     end
   end
 
