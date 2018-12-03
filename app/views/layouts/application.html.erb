@@ -116,34 +116,33 @@ I18n.locale = "<%= I18n.locale %>";
   </div>
 </div>
 
-
-
 <div class="container">
-<div class="main-wrap">
-  <% if current_organisation? %>
-  <% if @school && !@school.id.nil? && controller_name != 'password' %>
-  <header id="schoolName"><%= @school.displayName %></header>
-  <%= render :partial => "layouts/menu" %>
-  <% end %>
-  <% end %>
+  <div class="main-wrap">
+    <% if current_organisation? %>
+    <% if @school && !@school.id.nil? && controller_name != 'password' %>
+    <header id="schoolName"><%= @school.displayName %></header>
 
-  <div class="maincontent clearfix">
-    <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
-    <% message_keys.each do |key| %>
-    <p class="message_<%= key %>"><%= flash[key] %></p>
+<%= render :partial => "layouts/menu" %>
     <% end %>
     <% end %>
 
-    <% if current_user %>
-    <div class="tools-container clearfix">
-    <span class="tools"><%= yield :right %></span>
+    <div class="maincontent clearfix">
+      <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
+      <% message_keys.each do |key| %>
+      <p class="message_<%= key %>"><%= flash[key] %></p>
+      <% end %>
+      <% end %>
+
+      <% if current_user %>
+      <div class="tools-container clearfix">
+      <span class="tools"><%= yield :right %></span>
+      </div>
+      <% end %>
+
+      <%= yield %>
     </div>
-    <% end %>
-
-    <%= yield %>
-  </div>
   </div> <!-- container_wrap-->
-  </div> <!-- container -->
-  <%= debug_footer %>
+</div> <!-- container -->
+<%= debug_footer %>
 </body>
 </html>

@@ -394,17 +394,15 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 ====================================================================================================
 */
 
-.clearfix, .container {
+/* Wraps everything on the page below the topmenu */
+.container {
+}
+
+.clearfix {
   display: block;
 }
 
-.container {
-  height: 100%;
-  margin: 0;
-  min-width: 300px;
-}
-
-.clearfix:after, .container:after {
+.container:after, .clearfix:after {
   content: "\0020";
   display: block;
   height: 0;
@@ -413,98 +411,65 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   overflow: hidden;
 }
 
-.navbar-first-level a
-  text-decoration none
+/* Main content container */
+.main-wrap {
+  padding: 10px;
+  margin: 20px auto 0 auto;
+  width: 95%;
+  max-width: 1200px;  /* TODO: I really want to get rid of this limitation. */
+  background: baseBg;
+  border: 5px solid #3E3E2D;
+  box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.70);
+}
 
-.main-wrap
-  margin 25px auto
-  max-width 1200px
-  padding 5px 10px 0
-  width 95%
-  & > h1
-    font-size 220%
-    font-variant small-caps
-    margin 0
-    padding 1% 0 0 0
+.navbar-first-level {
+  clear: both;
+  margin: 5px 0 0px;
+}
 
-//.maincontent
-.maincontent
-  font-size 80%
-  margin 0 0 2% 0
-  padding 2%
-  position relative
-  width 100%
-  .dashboard
-    float left
-    margin 0
-    width 100%
-  h1
-    line-height 1
-    margin 0 0 1%
-    padding 0
-// end of .maincontent
+.navbar-first-level ul {
+  display: inline-block;
+  list-style: none;
+  margin: 0 0 -0.5em 0;
+  padding: 0;
+  text-align: center;
+  width: 100%;
+}
 
-// .tools ->
-.tools-container
-  float right
-  margin-bottom 2%
-  &:empty, span:empty
-    display none
-  .tools
-    float right
-    height 40px
-    margin 5px 0 .2em 1em
-    padding 0
-    .sub-tools
-      list-style-type none
-      margin 0
-    > div, .sub-tools > li
-      float left
-      margin 0
-      padding 0 0 0 5px
-      position relative
-    .sub-tools > li.tool
-      padding 0 1em
-    .tool
-      ul
-        list-style-type none
-        display none
-        right 1em
-        padding 0
-        position absolute
-        margin 0
-        li
-          padding 0 5px
+.navbar-first-level li {
+  background: linear-gradient(baseOrange, baseOrangeGradient);
+  border-radius: 4px 4px 0 0;
+  float: left;
+  margin: 0 3px 0 0;
+  font-size: 80%;
+  font-weight: bold;
+  line-height: 3;
+  text-transform: uppercase;
+}
 
-.tools a, .tool span
-  display block
-  height auto
-  line-height 1.25
-  margin 0
-  padding 10px
-  white-space nowrap
-  width auto
+.navbar-first-level li:hover {
+  background: linear-gradient(baseBrown, baseBrownGradient);
+}
 
-// End of .tools
+.navbar-first-level a {
+  text-decoration: none;
+  white-space: nowrap;
+  display: block;
+  padding: 0 1em;
+  color: #000;
+}
 
-.main-wrap
-  background none repeat scroll 0 0 baseBg
-  border 5px solid #3E3E2D
-  border-radius 10px 10px 0 0
-  box-shadow 0px 15px 15px rgba(68, 68, 68, 0.70)
+.navbar-first-level .current_first {
+  background: linear-gradient(baseBrown, baseBrownGradient);
+  border: 1px solid baseBoxShadowBorderColor;
+  border-bottom: none;
+}
 
-.maincontent
-  background-color white
-  border-bottom 1px solid baseBoxShadowBorderColor
-  border-left 1px solid baseBoxShadowBorderColor
-  border-right 1px solid baseBoxShadowBorderColor
-  border-radius 0 0 4px 4px
-  > h1 span
-    border-bottom 1px solid baseBoxShadowBorderColor
+.current_first a {
+  color: creamWhite;
+}
 
-// end of topmenu
-
-// main-navigation
+/*
 .navbar-first-level
   .current_page_item
     background-color baseBrown
@@ -525,52 +490,6 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     background-color baseOrange
     background-image linear-gradient(baseOrange 0% ,baseOrangeGradient 100%)
     border-radius 4px 4px 0 0
-
-.navbar-second-level ul
-    list-style-type none
-
-.navbar-second-level
-  background-color baseBrown
-  background-image linear-gradient(baseBrownGradient 35%, baseBrown 60%)
-  border 1px solid baseBoxShadowBorderColor
-  border-radius 0 4px 0 0
-  .current a, a:hover
-    background-color white
-    border-left 1px solid baseBoxShadowBorderColor
-    border-radius 4px 4px 0 0
-    border-right 1px solid baseBoxShadowBorderColor
-    border-top 1px solid baseBoxShadowBorderColor
-    color #4A4D4A
-  li
-    a
-      border-radius 10px 10px 0 0
-      border 1px solid transparent
-      color #E6E6D8
-      &:hover
-        color #222222
-
-// end of main-navigation
-
-// tools
-.tools
-  a
-    text-decoration none
-    &:hover
-      color #222
-  .tool
-    span
-      &:hover
-        cursor pointer
-    ul
-      background #fff
-      border 1px solid #AAAAAA
-      li
-        margin 2px
-        background none repeat scroll 0 0 #FFFFFF
-        &:hover
-          background none repeat scroll 0 0 #C0772F
-
-// End of .tools
 
 .navbar-first-level
   clear both
@@ -602,6 +521,91 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     a
       display block
       padding 0 1em
+
+.navbar-first-level a
+  text-decoration none
+*/
+
+.navbar-second-level {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-size: 70%;
+  text-transform: uppercase;
+  background: linear-gradient(baseBrownGradient 35%, baseBrown 60%);
+  border: 1px solid baseBoxShadowBorderColor;
+  border-radius: 0 4px 0 0;
+}
+
+.navbar-second-level ul {
+  margin: 0 0 -1px;
+  padding: 5px 0 0;
+  display: block;
+  list-style: none;
+}
+
+/* TODO: Figure out exactly why the second tab bar completely self-destructs without this */
+.navbar-second-level ul:after {
+  clear: both;
+  content: " ";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.navbar-second-level li {
+  float: left;
+  margin: 0 0 0 5px;
+  padding: 0;
+  position: relative;
+  width: auto;
+}
+
+.navbar-second-level a {
+  display: block;
+  text-align: center;
+  margin: 0;
+  padding: 8px;
+  color: #E6E6D8;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid transparent;
+}
+
+.navbar-second-level .current_second a, .navbar-second-level a:hover {
+  background: white;
+  color: #4A4D4A;
+  border-left: 1px solid baseBoxShadowBorderColor;
+  border-right: 1px solid baseBoxShadowBorderColor;
+  border-top: 1px solid baseBoxShadowBorderColor;
+  border-radius: 4px 4px 0 0;
+}
+
+.navbar-second-level a:hover {
+}
+
+/*
+.navbar-second-level
+  background-color baseBrown
+  background-image linear-gradient(baseBrownGradient 35%, baseBrown 60%)
+  border 1px solid baseBoxShadowBorderColor
+  border-radius 0 4px 0 0
+  .current a, a:hover
+    background-color white
+    border-left 1px solid baseBoxShadowBorderColor
+    border-radius 4px 4px 0 0
+    border-right 1px solid baseBoxShadowBorderColor
+    border-top 1px solid baseBoxShadowBorderColor
+    color #4A4D4A
+  li
+    a
+      border-radius 10px 10px 0 0
+      border 1px solid transparent
+      color #E6E6D8
+      &:hover
+        color #222222
 
 .navbar-second-level
   font-size 70%
@@ -639,7 +643,36 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
       text-decoration none
       &:hover
         color #222222
+*/
 
+/* Page contents below the tab bar */
+.maincontent {
+  font-size: 80%;
+  margin: 0;    /* Do not change, breaks the layout */
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid baseBoxShadowBorderColor;
+  border-left: 1px solid baseBoxShadowBorderColor;
+  border-right: 1px solid baseBoxShadowBorderColor;
+  border-radius: 0 0 4px 4px;
+}
+
+/* Used on the school page to push content down, below the tools */
+.maincontent .dashboard {
+  float: left;
+  margin: 0;
+  width: 100%;
+}
+
+.maincontent h1 {
+  margin: 0 0 10px 0;
+  padding: 0;
+  line-height: 1;
+}
+
+/*
 @media screen-breakpoint-one
   .navbar-first-level
     ul
@@ -660,7 +693,7 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     li
       a
         padding .5rem
-
+*/
 
 /*
 ====================================================================================================
@@ -866,6 +899,71 @@ COMMON CONTENT ELEMENTS
   margin: 0;
   padding: 0;
 }
+
+/*
+====================================================================================================
+TOOLBOXES
+====================================================================================================
+*/
+
+.tools-container
+  float right
+  margin-bottom 2%
+  &:empty, span:empty
+    display none
+  .tools
+    float right
+    height 40px
+    margin 5px 0 .2em 1em
+    padding 0
+    .sub-tools
+      list-style-type none
+      margin 0
+    > div, .sub-tools > li
+      float left
+      margin 0
+      padding 0 0 0 5px
+      position relative
+    .sub-tools > li.tool
+      padding 0 1em
+    .tool
+      ul
+        list-style-type none
+        display none
+        right 1em
+        padding 0
+        position absolute
+        margin 0
+        li
+          padding 0 5px
+
+.tools a, .tool span
+  display block
+  height auto
+  line-height 1.25
+  margin 0
+  padding 10px
+  white-space nowrap
+  width auto
+
+.tools
+  a
+    text-decoration none
+    &:hover
+      color #222
+  .tool
+    span
+      &:hover
+        cursor pointer
+    ul
+      background #fff
+      border 1px solid #AAAAAA
+      li
+        margin 2px
+        background none repeat scroll 0 0 #FFFFFF
+        &:hover
+          background none repeat scroll 0 0 #C0772F
+
 
 /*
 ====================================================================================================
