@@ -424,6 +424,7 @@ fi:
       billing_info: Laskutustiedot
       rule_lines: "Laskusäännöt"
       system_information: Järjestelmätiedot
+      total_count: "(yhteensä %{count})"
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:

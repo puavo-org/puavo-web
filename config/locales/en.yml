@@ -454,6 +454,7 @@ en:
       billing_info: Billing info
       rule_lines: Rules
       system_information: System information
+      total_count: "%{count} total)"
     form:
       add_puavo_billing_info: Add a new billing info
   password:

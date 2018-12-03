@@ -21,7 +21,7 @@
 
 <%= start_box t('.statistics') %>
   <!-- Users statistics -->
-  <h3><%= t('.users') %></h3>
+  <h3><%= t('.users') %> <small><%= t('.total_count', :count => @members.count) %></small></h3>
   <table>
     <% User.puavoEduPersonAffiliation_list.each do |type| %>
     <tr>
@@ -33,7 +33,7 @@
 
   <% if @devices_by_type %>
   <!-- Device statistics -->
-  <h3><%= t('.devices') %></h3>
+  <h3><%= t('.devices') %> <small><%= t('.total_count', :count => @devices_by_type.count) %></small></h3>
   <table>
   <% @devices_by_type.each do |device_type, count| %>
     <tr>
