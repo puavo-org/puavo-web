@@ -9,14 +9,6 @@
 <%= stylesheet_link_tag "font/fontello-puavo/css/puavo-icons", :media => "screen" %>
 <%= stylesheet_link_tag "application", :media => "all" %>
 <style id="menuHandling" media="screen" rel="stylesheet" type="text/css" >
-  <%#
-  CSS for opening menus without Javascript on mouse hover. This should not
-  contain anything else. Since for touch devices this element will be
-  overridden.
-  %>
-  .tools .tool:hover ul {
-    display: block;
-  }
 </style>
 <%= yield :style %>
 <% search_urls = { "users-search" => "/users/search?words=" } %>
