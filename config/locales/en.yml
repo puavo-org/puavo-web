@@ -668,6 +668,7 @@ en:
         telephoneNumber: Telephone number
         puavoEduPersonAffiliationDeprecated: User type
         puavoEduPersonAffiliation: Role
+        markedForDeletion: Marked for deletion
         role_ids: Role
         role_name: Role
         roles: Roles

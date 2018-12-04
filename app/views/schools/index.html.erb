@@ -11,7 +11,7 @@
   <% @schools.each do |school| %>
   <tr>
     <td><%= link_to school.displayName, school_path(school) %></td>
-    <td>
+    <td class="table-actions">
       <%= link_to edit_school_path(school), class: "btn" do %>
         <i class="icon-pencil"></i><%= t('link.edit') %>
       <% end %>

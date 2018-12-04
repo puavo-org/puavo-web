@@ -10,20 +10,20 @@
   </tr>
   <% objects.each do |o| %>
   <tr>
-    <td data-title="Hostname">
+    <td data-title="<%= t('activeldap.attributes.device.puavoHostname') %>">
       <% if current_user.organisation_owner? || (Array(current_user.puavoAdminOfSchool).map &:to_s).include?(o['puavoSchool']) %>
       <%= link_to o["name"], path.call(o['school_id'], o['id']) %>
       <% else %>
-      <%=h o["name"] %>
+      <%= h o["name"] %>
       <% end %>
     </td>
     <% attributes[1..attributes.length].each do |attribute| %>
     <td data-title="<%= t("activeldap.attributes.#{model}.#{attribute}") %>">
-      <%=h o[attribute].first %>
+      <%= h o[attribute].first %>
     </td>
     <% end %>
     <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
-      <%=h @schools[o["school_id"]] %>
+      <%= h @schools[o["school_id"]] %>
     </td>
   </tr>
   <% end %>

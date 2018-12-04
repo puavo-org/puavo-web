@@ -18,28 +18,25 @@
 
 <% @external_files.each do |file| %>
   <tr>
-    <td>
-      <span data-title="File name" class="filename">
-        <%= file["meta"]["name"] %>
-      </span>
+    <td data-title="<%= t('external_files.columns.name') %>">
+      <span data-title="File name" class="filename"><%= file["meta"]["name"] %></span>
     </td>
 
-
-    <td data-title="Description">
+    <td data-title="<%= t('external_files.columns.description') %>">
     <% if file["meta"]["description"] %>
     <%= file["meta"]["description"] %>
     <% end %>
     </td>
 
-    <td data-title="File size">
+    <td data-title="<%= t('external_files.columns.size') %>">
     <% if file["model"] %>
       <%= file["model"].puavoData.size %>
     <% else %>
       <%= t('external_files.no_file') %>
     <% end %>
-
     </td>
-    <td data-title="Actions" class="actions table-actions">
+
+    <td data-title="<%= t('actions') %>" class="table-actions">
     <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
     <% if file["model"] %>
     <td>
@@ -63,16 +60,15 @@
     <% else %>
       <td></td>
     <% end %>
-
-  </tr>
-<% end %>
-
+    </tr>
+  <% end %>
 </table>
 
 <div style="clear: both;"></div>
+<br>
 
 <p><%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %></p>
 
 <% end %>
 
-  </div>
+</div>

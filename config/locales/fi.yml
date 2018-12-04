@@ -638,6 +638,7 @@ fi:
         telephoneNumber: Puhelinnumero
         puavoEduPersonAffiliationDeprecated: "Käyttäjätyyppi"
         puavoEduPersonAffiliation: Rooli
+        markedForDeletion: Merkitty poistettavaksi
         role_ids: Rooli
         role_name: Rooli
         roles: Roolit

@@ -15,17 +15,16 @@
 
   <% server[:printers].each do |printer| %>
   <tr>
-    <td><%=h printer.printerDescription %></td>
-    <td><%=h printer.printerMakeAndModel %></td>
-    <td><%=h printer.printerLocation %></td>
-    <td>
+    <td data-title="<%= t("activeldap.attributes.printer.printerDescription") %>"><%= h printer.printerDescription %></td>
+    <td data-title="<%= t("activeldap.attributes.printer.printerMakeAndModel") %>"><%= h printer.printerMakeAndModel %></td>
+    <td data-title="<%= t("activeldap.attributes.printer.printerLocation") %>"><%= h printer.printerLocation %></td>
+    <td data-title="<%= t("actions") %>" colspan="2" class="table-actions">
       <%= link_to edit_printer_path(printer), class: 'btn' do %>
-        <i class="icon-pencil"></i><%=t('link.edit') %>
+        <i class="icon-pencil"></i><%= t('link.edit') %>
       <% end %>
-    </td>
-    <td>
+
       <%= link_to printer_path(printer), data: { confirm: t('destroy_confirm', object_name: printer.printerDescription) }, method: :delete, class: 'btn btn-danger' do %>
-        <i class="icon-trash"></i><%=t('link.destroy') %>
+        <i class="icon-trash"></i><%= t('link.destroy') %>
       <% end %>
     </td>
   </tr>
