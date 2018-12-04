@@ -77,6 +77,11 @@ class PasswordController < ApplicationController
 
   # PUT /password/forgot
   def forgot_send_token
+    if params[:forgot].empty? || params[:forgot][:email].empty?
+      flash[:alert] = I18n.t('password.forgot.description')
+      redirect_to forgot_password_path
+      return
+    end
 
     user = User.find(:first, :attribute => "mail", :value =>  params[:forgot][:email])
 

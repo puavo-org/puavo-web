@@ -1,26 +1,22 @@
 <h1><%= t('.title') %></h1>
 
-<p>
-<%= t('.description') %>
-</p>
+<p><%= t('.description') %></p>
+
 <%= form_for(:reset, :url => reset_update_password_path)  do |f| %>
+  <table class="editForm">
+    <tr>
+      <th><%= label :reset, :password, t('.password') %></th>
+      <td><%= password_field :reset, :password %></td>
+    </tr>
 
-<table>
-<tr>
-  <td><%= label :reset, :password, t('.password') %></td>
-  <td><%= password_field :reset, :password %></td>
-</tr>
+    <tr>
+      <th><%= label :reset, :password_confirmation, t('.password_confirmation') %></th>
+      <td><%= password_field :reset, :password_confirmation %></td>
+    </tr>
 
-<tr>
-  <td><%= label :reset, :password_confirmation, t('.password_confirmation') %></td>
-  <td><%= password_field :reset, :password_confirmation %></td>
-</tr>
-
-<tr>
-  <td></td>
-  <td><%= f.submit t('.submit'), class: 'btn' %></td>
-</tr>
-
-</table>
-
+    <tr class="buttonRow">
+      <th></th>
+      <td><%= f.submit t('.submit'), class: 'btn' %></td>
+    </tr>
+  </table>
 <% end %>

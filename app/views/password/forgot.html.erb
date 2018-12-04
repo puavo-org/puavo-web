@@ -1,22 +1,17 @@
 <h1><%= t('.title') %></h1>
 
-<p>
-<%= t('.description') %>
-</p>
+<p><%= t('.description') %></p>
 
 <%= form_for(:forgot, :url => forgot_send_token_password_path, :html => { :method => :put })  do |f| %>
+  <table class="editForm">
+    <tr>
+      <th><%= label :forgot, :email, t('activeldap.attributes.user.mail') %></th>
+      <td><%= text_field :forgot, :email %></td>
+    </tr>
 
-<table>
-<tr>
-  <td><%= label :forgot, :email, t('activeldap.attributes.user.mail') %></td>
-  <td><%= text_field :forgot, :email %></td>
-</tr>
-
-<tr>
-  <td></td>
-  <td><%= f.submit t('link.continue'), class: 'btn' %></td>
-</tr>
-
-</table>
-
+    <tr class="buttonRow">
+      <th></th>
+      <td><%= f.submit t('link.continue'), class: 'btn' %></td>
+    </tr>
+  </table>
 <% end %>
