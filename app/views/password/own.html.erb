@@ -1,13 +1,14 @@
 <% content_for :title do %>
-<h1 style="text-decoration: underline"><%= t('.title') %></h1>
+<h1><%= t('.title') %></h1>
 <% end %>
+
 <div class="password_buttons">
 <span class="active">
   <%= link_to own_password_path do%>
     <i class="icon-key"></i><%= t('password.edit.link_own_password') %>
   <% end %>
 </span>
-<span class="change_other_pswd">
+<span>
   <%= link_to password_path do %>
     <i class="icon-key"></i><%= t('password.own.link_other_password') %>
   <% end %>
@@ -15,9 +16,7 @@
 </div>
 
 <% if @expired %>
-  <p class="message_alert">
-    <%= t('password.current_password_too_old') %>
-  </p>
+<p class="message_alert"><%= t('password.current_password_too_old') %></p>
 <% end %>
 
 <% if @password_requirements == 'Google' %>
@@ -27,33 +26,30 @@
 <% end %>
 
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
+  <table class="editForm">
+    <tr>
+      <th><%= label :login, :uid, t('activeldap.attributes.user.uid') %></th>
+      <td><%= text_field :login, :uid, :value => @changing || '', :autofocus => @changing.nil? ? true : false %></td>
+    </tr>
 
-<table>
-<tr>
-  <td><%= label :login, :uid, t('activeldap.attributes.user.uid') %></td>
-  <td><%= text_field :login, :uid, :value => @changing || '', :autofocus => @changing.nil? ? true : false %></td>
-</tr>
+    <tr>
+      <th><%= label :login, :password, t('.password') %></th>
+      <td><%= password_field :login, :password, :autofocus => @changing.nil? ? false : true %></td>
+    </tr>
 
-<tr>
-  <td><%= label :login, :password, t('.password') %></td>
-  <td><%= password_field :login, :password, :autofocus => @changing.nil? ? false : true %></td>
-</tr>
+    <tr>
+      <th><%= f.label :new_password, t('activeldap.attributes.user.new_password') %></th>
+      <td><%= password_field :user, :new_password, :value => "" %></td>
+    </tr>
 
-<tr>
-  <td><%= f.label :new_password, t('activeldap.attributes.user.new_password') %></td>
-  <td><%= password_field :user, :new_password, :value => "" %></td>
-</tr>
+    <tr>
+      <th><%= f.label :new_password_confirmation, t('activeldap.attributes.user.new_password_confirmation') %></th>
+      <td><%= password_field :user, :new_password_confirmation, :value => "" %></td>
+    </tr>
 
-<tr>
-  <td><%= f.label :new_password_confirmation, t('activeldap.attributes.user.new_password_confirmation') %></td>
-  <td><%= password_field :user, :new_password_confirmation, :value => "" %></td>
-</tr>
-
-<tr>
-  <td></td>
-  <td><%= f.submit t('link.change_password') %></td>
-</tr>
-
-</table>
-
+    <tr class="buttonRow">
+      <th></th>
+      <td><%= f.submit t('link.change_password'), class: 'btn' %></td>
+    </tr>
+  </table>
 <% end %>
