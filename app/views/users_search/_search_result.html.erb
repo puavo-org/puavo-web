@@ -2,7 +2,7 @@
 <fieldset class="search_result">
 <legend><%=h t("search.search_result.title_#{model}") %></legend>
 <table class="list">
-  <tr>
+  <tr class="thead">
     <% attributes.each do |attribute| %>
     <th><%= t("activeldap.attributes.#{model}.#{attribute}") %></th>
     <% end %>

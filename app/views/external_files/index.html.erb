@@ -9,7 +9,7 @@
 <%= form_tag({:action => :upload}, :multipart => true) do %>
 
 <table class="list externalFiles">
-  <tr>
+  <tr class="thead">
     <th><%= t('external_files.columns.name') %></th>
     <th><%= t('external_files.columns.description') %></th>
     <th><%= t('external_files.columns.size') %></th>
