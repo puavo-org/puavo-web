@@ -71,15 +71,11 @@ MEDIA QUERIES
 ====================================================================================================
 */
 
-/*
 screen-breakpoint-one = "screen and (max-width: 768px)"
 screen-breakpoint-two = "screen and (max-width: 480px)"
-screen-breakpoint-three = "screen and (max-width: 320px)"
 
 screen-portrait-breakpoint-one = "screen and (orientation: portrait) and (max-device-width: 800px)"
 screen-portrait-breakpoint-two = "screen and (orientation: portrait) and (max-device-width: 540px)"
-screen-landscape-breakpoint-one = "screen and (orientation: landscape) and (max-device-width: 960px)"
-*/
 
 /*
 ====================================================================================================
@@ -107,11 +103,24 @@ header#schoolName {
   margin-top: 12px;
 }
 
+@media screen-breakpoint-one {
+  header#schoolName {
+    font-size: 175%;
+    margin-top: 0;  /* topmenu becomes a solid block, no need to push content downwards */
+  }
+}
+
 /* Currently this is only used for the debugging information block */
 footer {
   color: transparent;
   font-size: 80%;
   text-align: right;
+}
+
+@media screen-breakpoint-one {
+  footer {
+    font-size: 60%;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -205,6 +214,17 @@ THE TOPMOST MENU BAR
   background-image: linear-gradient(baseOrange 0% ,baseOrangeGradient 100%);
   border-bottom: 1px solid baseBoxShadowBorderColor;
   box-shadow: 2px 4px 6px rgba(68, 68, 68, 0.80);
+}
+
+@media screen-breakpoint-one {
+  .topmenu {
+    /* don't cover any content */
+    position: static;
+    z-index: auto;
+    top: auto;
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .topmenu ul {
@@ -367,6 +387,12 @@ ul.schoolLinks {
   margin: 3px 0 0 0;
 }
 
+@media screen-breakpoint-one {
+  .topmenu-right {
+    padding-bottom: 5px;
+  }
+}
+
 .topmenu-right li {
   float: left;
   line-height: 1.5;
@@ -420,6 +446,17 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   background: baseBg;
   border: 5px solid #3E3E2D;
   box-shadow: 0px 15px 15px rgba(68, 68, 68, 0.70);
+}
+
+@media screen-breakpoint-one {
+  .main-wrap {
+    padding: 5px;
+    padding-top: 0;   /* don't leave a gap between topbar and content */
+    margin-top: 0;
+    border: none;
+    box-shadow: none;
+    width: 100%;
+  }
 }
 
 .navbar-first-level {
@@ -543,6 +580,12 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   border-radius: 0 0 4px 4px;
 }
 
+@media screen-breakpoint-one {
+  .maincontent {
+    padding: 5px;
+  }
+}
+
 /* Used on the school page to push content down, below the tools */
 .maincontent .dashboard {
   float: left;
@@ -556,28 +599,45 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   line-height: 1;
 }
 
-/*
-@media screen-breakpoint-one
-  .navbar-first-level
-    ul
-      a
-        padding 0.7em 2em
-  .navbar-second-level
-    font-size 60%
-    li
-      a
-        padding .5rem
+@media screen-breakpoint-one {
+  .navbar-first-level {
+    font-size: 80%;
+  }
 
-@media screen-portrait-breakpoint-one
-  .navbar-first-level
-    ul
-      a
-        padding .2rem .5rem
-  .navbar-second-level
-    li
-      a
-        padding .5rem
-*/
+  .navbar-first-level a {
+    padding: 10px;
+  }
+
+  .navbar-first-level li {
+    line-height: 1;
+  }
+
+  .navbar-second-level {
+    font-size: 60%;
+  }
+
+  .navbar-second-level a {
+    padding: 5px;
+  }
+}
+
+@media screen-breakpoint-two {
+  .navbar-first-level {
+    font-size: 60%;
+  }
+
+  .navbar-first-level a {
+    padding: 10px;
+  }
+
+  .navbar-second-level {
+    font-size: 50%;
+  }
+
+  .navbar-second-level a {
+    padding: 5px;
+  }
+}
 
 /*
 ====================================================================================================
@@ -620,7 +680,7 @@ SEARCH FIELDS
   position: absolute;
   width: auto;
   z-index: 9999;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
 .search_result table {
@@ -643,12 +703,38 @@ fieldset.search_result {
   padding: 5px;
 }
 
-/*
-@media screen-breakpoint-one
-  #jquery-live-search
-    left 0 !important
-    width 100%
-*/
+@media screen-breakpoint-one {
+  #jquery-live-search {
+    padding: 0;
+    margin: 0;
+    left: 0 !important;
+    width: 100%;
+    font-size: 90%;
+  }
+
+  fieldset.search_result {
+    margin: 2px;
+    padding: 2px;
+    border-top: 2px solid #000;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .search_result legend {
+    margin-left: 10px;
+    padding: 0 5px;
+  }
+
+  .search_result .list tr {
+    padding: 0;
+  }
+
+  .search_result .list td:first-of-type {
+    font-size: 110% !important;
+    font-weight: bold;
+  }
+}
 
 /*
 ====================================================================================================
@@ -660,6 +746,7 @@ COMMON CONTENT ELEMENTS
   font-size: 120%;
 }
 
+/* Generic floating container boxes that have titles */
 .content-box-new {
   min-width: 45%;
   width: 49%;
@@ -668,14 +755,19 @@ COMMON CONTENT ELEMENTS
   padding: 0;
 }
 
+@media screen-breakpoint-one {
+  .content-box-new {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
 .fullWidth {
   /* Used on the school page to show admins and billing info */
   width: 99%;
   clear: both;
   float: none;
 }
-
-/* Generic floating container boxes that have titles */
 
 .content-box-new header {
   background: linear-gradient(#ba722d, #a36a2a);
@@ -738,6 +830,13 @@ COMMON CONTENT ELEMENTS
   white-space: no-wrap;
 }
 
+@media screen-breakpoint-one {
+  .noWrap {
+    /* narrow pages are unreadable otherwise */
+    white-space: normal;
+  }
+}
+
 .noFloat {
   float: none !important;
 }
@@ -794,6 +893,13 @@ TOOLBOXES
   float: right;
   margin-bottom: 2%;
   background: #fff;
+  display: block;
+}
+
+@media screen-breakpoint-one {
+  .tools-container {
+    float: none;
+  }
 }
 
 .tools-container:empty, .tools-container span:empty {
@@ -947,11 +1053,11 @@ BUTTONS
   background: buttonDangerHoverBg;
 }
 
-/*
-@media screen-breakpoint-one
-  .btn
-    padding 0.5em 1em
-*/
+@media screen-breakpoint-one {
+  .btn {
+    padding: 0.5em 1em;
+  }
+}
 
 /*
 ====================================================================================================
@@ -1157,6 +1263,38 @@ fieldset {
   margin-bottom: 0.5em;
 }
 
+@media screen-breakpoint-one {
+  /* Turn tables into what looks like lists of table rows */
+  .editForm table, .editForm tbody {
+    display: block;
+  }
+
+  .editForm {
+    padding: 0;
+  }
+
+  .editForm tr {
+    display: block;
+    position: relative;
+    padding: 5px 10px;
+  }
+
+  .editForm th {
+    text-align: left;
+    width: auto;
+    padding: 0;
+  }
+
+  .editForm td {
+    display: block;
+    text-align: left;
+    padding: 0;
+  }
+
+  .editForm label {
+  }
+}
+
 /*
 @media screen-breakpoint-one
   form
@@ -1319,6 +1457,51 @@ LISTS OF THINGS (in tables, not ul/ol)
   width: auto;
   height: auto;
   float: right;
+}
+
+.printersLit {
+  float: none !important;
+}
+
+@media screen-breakpoint-one {
+  /* Minimize lists */
+  .list {
+    width: 100%;
+  }
+
+  .list .thead, .list th {
+    display: none;
+  }
+
+  .list tr {
+    display: block;
+    padding: 2%;
+  }
+
+  .list td {
+    display: block;
+    padding: 2px;
+    border-bottom: none;
+  }
+
+  .list td:first-of-type {
+    font-size: 120%;
+    padding: 6px 2px;
+  }
+
+  .list td[data-title]:before {
+    content: attr(data-title) ":\00A0";
+    font-weight: bold;
+  }
+
+  .list .table-actions {
+    display: inline-block;
+  }
+
+  .table-actions .btn {
+    font-size: 90%;
+    padding: 2px 10px;
+  }
 }
 
 /*
