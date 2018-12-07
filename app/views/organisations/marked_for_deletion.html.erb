@@ -43,13 +43,13 @@
   </tr>
   <% members.each do |m| %>
   <tr>
-    <td>
+    <td data-title="<%= t('activeldap.attributes.user.displayName') %>">
       <%= link_to "#{m.sn} #{m.givenName}", user_path(school[:school], m.id) %>
       <% if m.puavoLocked %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
     </td>
-    <td><%= h m.uid %></td>
-    <td><%= h t('puavoEduPersonAffiliation_' + Array(m.puavoEduPersonAffiliation).first.to_s) %></td>
-    <td><abbr title="<%= m.puavoRemovalRequestTime.localtime %>"><%= @fuzzy[m.uid] %></abbr></td>
+    <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= h m.uid %></td>
+    <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%= h t('puavoEduPersonAffiliation_' + Array(m.puavoEduPersonAffiliation).first.to_s) %></td>
+    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion')%>"><abbr title="<%= m.puavoRemovalRequestTime.localtime %>"><%= @fuzzy[m.uid] %></abbr></td>
   </tr>
   <% end %>
 </table>
