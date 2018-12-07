@@ -52,9 +52,6 @@ js-watch:
 js-server:
 	webpack-dev-server --port 4000 --host 0.0.0.0 --inline --progress
 
-js-lint:
-	eslint $(shell git ls-files "import-tool/*.js")
-
 js-clean:
 	rm -rf public/import_tool.js public/import_tool.js.map
 
@@ -134,7 +131,7 @@ test-acceptance:
 	bundle exec cucumber --exclude registering_devices
 
 .PHONY: test
-test: js-lint
+test:
 	bundle exec rspec --format documentation
 	bundle exec cucumber --color --tags "not @start_test_server" \
 		--format json --out log/cucumber-tests-notTS.json
