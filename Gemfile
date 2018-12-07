@@ -15,12 +15,9 @@ gem "jwt", "2.1.0"
 gem "sshkey", "1.9.0"
 gem "i18n-js", "3.0.3"
 gem "byebug", "9.1.0"
-gem "nib", "1.7.0"
 
-#group :assets do
-  gem "stylus", "1.0.2"
-  gem "jquery-rails",  "4.3.1"
-#end
+gem "sassc-rails"
+gem "jquery-rails",  "4.3.1"
 
 group :test do
   gem "capybara", "2.17.0"

@@ -22,12 +22,6 @@ if defined?(Bundler)
   Bundler.require(:shared)
 end
 
-# https://github.com/lucasmazza/ruby-stylus/issues/29
-if defined? Stylus
-  Stylus.use(:nib)
-  Stylus.debug = Rails.env != "production"
-end
-
 module PuavoUsers
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
