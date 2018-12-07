@@ -71,7 +71,7 @@ module PuavoUsers
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
-    config.assets.precompile += ["font/fontello-puavo/css/puavo-icons.css", "application-print.css", "devices/index.js"]
+    config.assets.precompile += ["font/fontello-puavo/css/puavo-icons.css", "devices/index.js"]
 
   end
 end
