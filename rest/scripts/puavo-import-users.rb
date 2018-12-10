@@ -178,6 +178,11 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     next
   end
 
+  if user_data_hash[:username].nil? || user_data_hash[:username].empty?
+    puts "Ignoring user \"#{user_data_hash[:first_name]} #{user_data_hash[:last_name]}\" because the username is empty"
+    next
+  end
+
   begin
     user = PuavoImport::User.new(user_data_hash)
   rescue PuavoImport::UserGroupError => e
