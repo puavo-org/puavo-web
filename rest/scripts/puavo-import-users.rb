@@ -170,9 +170,11 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     })
   end
 
-  if !@options[:include_schools].include?(user_data_hash[:school_external_id].to_s)
+  school_id = user_data_hash[:school_external_id].to_s
+
+  if !@options[:include_schools].include?(school_id)
     puts "Ignoring user \"#{user_data_hash[:first_name]} #{user_data_hash[:last_name]}\" (username=\"#{user_data_hash[:username]}\") " \
-         "because the school ID is not on the list of imported schools"
+         "because the school ID (#{school_id}) is not on the list of imported schools"
     next
   end
 
