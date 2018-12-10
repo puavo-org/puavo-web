@@ -13,12 +13,26 @@ options = cmd_options(:message => "Import schools to Puavo")
 
 setup_connection(options)
 
+if options[:include_schools]
+  puts "Importing these schools: #{options[:include_schools].join(', ')}"
+end
+
 CSV.foreach(options[:csv_file],
             :encoding => options[:encoding],
             :col_sep => ";") do |school_data|
   school_data = encode_text(school_data, options[:encoding])
 
-  next if !options[:include_schools].nil? && !options[:include_schools].include?(school_data[0].to_s)
+  next if school_data[0].nil? || school_data[1].nil? || school_data[1].empty?
+
+  if !options[:include_schools].nil? && !options[:include_schools].include?(school_data[0].to_s)
+    puts "Ignoring school \"#{school_data[1]}\" because its school ID is not on the list of imported schools"
+    next
+  end
+
+  if school_data[2].nil? || school_data[2].empty?
+    puts "Ignoring school \"#{school_data[1]}\" because its external ID is missing or empty"
+    next
+  end
 
   PuavoImport::School.new(:external_id => school_data[0],
                           :name => school_data[1],
