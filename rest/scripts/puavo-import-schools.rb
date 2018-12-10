@@ -56,7 +56,7 @@ when "diff"
     puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
 
     unless puavo_rest_school
-      puts "Add new school: #{ school.to_s }"
+      puts green("Add new school: #{ school.to_s }")
       next
     end
 
