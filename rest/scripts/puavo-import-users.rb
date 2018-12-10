@@ -425,7 +425,7 @@ when "import"
           puts "Can't create user, external_id is not defined (name: #{ user.first_name } #{ user.last_name })"
           next
         end
-        puts "Create new user to Puavo: #{ user.username } (#{ user.school.name })"
+        puts "Create new user to Puavo: \"#{user.first_name} #{user.last_name}\" (username=#{ user.username }) (school=#{ user.school.name })"
         # FIXME send email notifications to school admin
 
         create_attributes = [ :first_name,
