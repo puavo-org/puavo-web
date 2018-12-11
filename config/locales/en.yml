@@ -22,6 +22,7 @@
 en:
   titles:
     users: "Users"
+    new_users_groups: "New user's groups"
     users_import: "Import users"
     users_lists: "Username lists"
     groups_rename: "Group mass rename"

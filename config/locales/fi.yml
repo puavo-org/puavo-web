@@ -1,6 +1,7 @@
 fi:
   titles:
     users: "Käyttäjät"
+    new_users_groups: "Uuden käyttäjän ryhmät"
     users_import: "Tuo käyttäjiä"
     users_lists: "Käyttäjätunnuslistat"
     groups_rename: "Vuosiluokkasiirto"

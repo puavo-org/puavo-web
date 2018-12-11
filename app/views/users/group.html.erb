@@ -1,3 +1,5 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.users'), @user.displayName, t('titles.new_users_groups') %>
+
 <%= form_for("user", url: add_group_user_path, html: { method: :put, multipart: true })  do |f| %>
   <table class="editForm">
     <%= render :partial => "teaching_group", :locals => { :f => f } %>
