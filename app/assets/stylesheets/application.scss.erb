@@ -1558,25 +1558,108 @@ USERNAME LISTS
 ====================================================================================================
 */
 
-/* A list containing the usernames of an unloaded username list */
-.usernameListBox {
-  border: 1px solid #ccc;
-  padding: 5px;
+/* We don't want to style the username list <table>, so emulate tables. We then also can
+adjust the styles better with media queries. */
+
+.userListTable {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.userListTable:last-of-type {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.userListRow {
+  display: table-row;
+}
+
+.userListCol {
+  display: table-cell;
+  vertical-align: top;
+  padding: 0 10px;
+}
+
+.userListMeta {
+  padding-bottom: 5px;
+}
+
+.userListMeta p {
+  margin: 0;
+  padding: 0;
+}
+
+.userListLeft {
+}
+
+.userListBox {
   max-height: 400px;
   overflow-y: scroll;
+  width: 100%;
 }
 
-/* TODO: refactor these all */
-.description {
-  margin-bottom: 20px;
+.userListBox .list {
+  /* list tables have 80% width so that the toolbox fits on the right edge */
+  width: 100%;
 }
 
-.meta_information {
-  float: left;
+.userListRight {
 }
 
-.clear {
-  clear: both;
+.userListRight p {
+  padding: 5px 0;
+  margin: 0;
+}
+
+/* Style the password form a bit */
+.userListRight input[type="text"] {
+  margin-left: 10px;
+}
+
+.userListRight p.submitRow {
+  padding-top: 20px;
+}
+
+.userListRight input[type="submit"] {
+  padding: 10px 20px;
+}
+
+.userListRight .btn {
+  margin-left: 20px;
+}
+
+/* TODO: This is the notice displayed when there are no unloaded username lists.
+   Start using these notification boxes everywhere. Add warning and error
+   variants for it. */
+.notice {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  border: 2px solid #0f0;
+  background: #cfc;
+  text-align: center;
+  font-size: 120%;
+}
+
+@media #{$screen-breakpoint-one} {
+  .userListTable, .userListRow, .userListCol {
+    /* collapse the table columns */
+    display: block;
+  }
+
+  .userListBox {
+    border: 1px solid #ccc;   /* does wonders for visibility */
+    max-height: 250px;
+    width: 66%;   /* leave room for scrolling the page */
+  }
 }
 
 /*
