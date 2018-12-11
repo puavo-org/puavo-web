@@ -1,3 +1,4 @@
+<!-- shared/_puavoconf starts -->
 <table class="puavoConf">
   <% puavoconf_data = JSON.parse(object) rescue nil
      if !puavoconf_data.nil? && puavoconf_data.kind_of?(Hash) %>
@@ -9,3 +10,4 @@
   <% end %>
   <% end %>
 </table>
+<!-- shared/_puavoconf ends -->

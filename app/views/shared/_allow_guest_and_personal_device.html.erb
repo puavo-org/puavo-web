@@ -1,3 +1,4 @@
+<!-- shared/_allow_guest_and_personal_device starts -->
 <tr>
   <th><%= t("activeldap.attributes.#{object.class.to_s.downcase}.puavoAllowGuest") %></th>
   <td><%= translate_boolean_value(object.puavoAllowGuest) %></td>
@@ -9,3 +10,4 @@
   <td><%= translate_boolean_value(object.puavoPersonalDevice) %></td>
 </tr>
 <% end %>
+<!-- shared/_allow_guest_and_personal_device ends -->

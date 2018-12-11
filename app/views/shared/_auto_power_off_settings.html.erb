@@ -1,3 +1,4 @@
+<!-- shared/_auto_power_off_settings starts -->
 <tr>
   <th><%= t("activeldap.attributes.#{object.class.human_name}.puavoDeviceAutoPowerOffMode") %></th>
   <td><%= h t('puavoDeviceAutoPowerOffMode_' + (object.puavoDeviceAutoPowerOffMode or 'default'),
@@ -14,3 +15,4 @@
   <th><%= t("activeldap.attributes.#{object.class.human_name}.puavoDeviceOffHour") %></th>
   <td><%= h object.puavoDeviceOffHour %></td>
 </tr>
+<!-- shared/_auto_power_off_settings ends -->
