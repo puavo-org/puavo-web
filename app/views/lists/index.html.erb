@@ -6,21 +6,24 @@
 <h1><%= t(".title") %></h1>
 <p class="description"><%= t(".description") %><p>
 
+<br>
+
 <% id = 1 %>
 <% @lists.each do |list| %>
-<div class="list">
-  <table style="width: 100%;">
-    <tr style="background: none;">
-      <td style="vertical-align: top;">
-        <div class="meta_information">
-          <span><strong><%= t(".created") %>:</strong> <%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %></span>
-          <span><%= list.creator %></span>
-          <div><strong><%= t(".users_count_title") %>:</strong> <%= list.users.count %></div>
-        <div>
+<div class="userListTable">
+  <div class="userListRow">
+    <div class="userListCol userListMeta">
+      <p><strong><%= t(".created") %>:</strong> <span><%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %></span></p>
+      <p><%= list.creator %></p>
+      <p><strong><%= t(".users_count_title") %>:</strong> <span><%= list.users.count %></span></p>
+    </div>
+  </div>
 
-        <div class="usernameListBox">
-        <table>
-          <tr>
+  <div class="userListRow">
+    <div class="userListCol userListLeft">
+      <div class="userListBox">
+        <table class="list">
+          <tr class="thead">
             <th><%= t("activeldap.attributes.user.displayName") %></th>
             <th><%= t("activeldap.attributes.user.groups") %></th>
           </tr>
@@ -33,8 +36,8 @@
           </tr>
           <% else %>
           <tr>
-            <td><%= user.displayName %></td>
-            <td>
+            <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= user.displayName %></td>
+            <td data-title="<%= t('activeldap.attributes.group.displayName')%>">
             <% if user.groups && user.groups.first %>
               <%= user.groups.first.displayName %>
             <% elsif user.roles && user.roles.first %>
@@ -44,42 +47,48 @@
             <% end %>
             </td>
           </tr>
-        <% end %>
-        <% end %>
-      </table>
-     </div>
+          <% end %>
+          <% end %>
+        </table>
+      </div>
+    </div>
+
+    <div class="userListCol userListRight">
+      <%= form_for(:list, :url => download_list_path(:school_id => @school.puavoId,
+                                                     :id => list.uuid,
+                                                     :format => :pdf)) do |f| %>
+        <p>
+          <%= f.radio_button :generate_password, true,
+                             :checked => true,
+                             :id => "list_generate_password_true_#{ id }" %>
+
+          <%= f.label t(".label_generate_password"),
+                      :for => "list_generate_password_true_#{ id }" %>
+        </p>
+
+        <p>
+          <%= f.radio_button :generate_password, false,
+                             :id => "list_generate_password_false_#{ id }" %>
+
+          <%= f.label t(".label_set_password"),
+                      :for => "list_generate_password_false_#{ id }" %>
+
+          <%= f.text_field :new_password,
+                           :size => 20,
+                           onfocus: "document.getElementById('list_generate_password_false_#{id}').checked = true;" %>
+        </p>
+
+        <p class="submitRow"><%= f.submit t(".label_submit_button"), class: 'btn' %></p>
+
+        <p>
+          <%= link_to delete_list_path(:id => list.uuid), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do %>
+            <i class="icon-trash"></i><%= t('.delete_without_downloading') %>
+          <% end %>
+        </p>
+      <% end %>
     </div>
   </div>
-
-  </td>
-  <td style="vertical-align: top;">
-
-  <div class="form">
-    <%= form_for(:list, :url => download_list_path(:school_id => @school.puavoId,
-                                                   :id => list.uuid,
-                                                   :format => :pdf)) do |f| %>
-
-      <%= f.radio_button :generate_password, true, :checked => true, :id => "list_generate_password_true_#{ id }" %>
-      <%= f.label t(".label_generate_password"), :for => "list_generate_password_true_#{ id }" %>
-      <br>
-      <%= f.radio_button :generate_password, false, :id => "list_generate_password_false_#{ id }"  %>
-      <%= f.label t(".label_set_password"), :for => "list_generate_password_false_#{ id }" %>
-      <%= f.text_field :new_password, :size => 20, onfocus: "document.getElementById('list_generate_password_false_#{id}').checked = true;" %>
-      <br>
-      <%= f.submit t(".label_submit_button"), style: "float: none;" %>
-
-      <%= link_to delete_list_path(:id => list.uuid), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger", style: "margin-left: 50px;" do %>
-        <i class="icon-trash"></i><%= t('.delete_without_downloading') %>
-      <% end %>
-
-    <% end %>
-  </div>
-
-  </td></tr></table>
-
-  <span class="clear"></span>
 </div>
 <% id += 1 %>
 <% end %>
-<div class="list"></div>
 <% end %>
