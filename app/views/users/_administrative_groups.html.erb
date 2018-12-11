@@ -9,6 +9,7 @@
           <%= hidden_field_tag "administrative_groups[]", 0 %>
           <%= check_box_tag "administrative_groups[]", group["id"], group_member?(group, @user), :id => "administrative_groups_#{ group["id"] }" %>
           <%= label_tag "administrative_groups_#{ group["id"] }", group["name"] %>
+          <br>
         <% end %>
         <% end %>
       </td>
