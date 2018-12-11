@@ -2,7 +2,7 @@
   <table>
     <tr>
       <th><%= t("activeldap.attributes.device.dn") %></th>
-      <td class="device_dn"><%= h device.dn %></td>
+      <td><%= (device.dn.to_s.split(',').join(',<wbr>')).html_safe %></td>
     </tr>
 
     <tr>
