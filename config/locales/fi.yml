@@ -1079,6 +1079,8 @@ fi:
         delete: Poista
         master_save: Tallenna muutokset
     file_not_found: Pyydettyä tiedostoa ei löydy
+    changes_saved: Muutokset tallennettu
+    changes_failed: Muutoksien tallennus epäonnistui!
   printer_permissions:
     no_printers_html: "Tällä koululla ei ole tulostimia. Pääkäyttäjänä voit lisätä koululle %{href}."
     bootserver_ref: "boottipalvelimia"

@@ -1110,6 +1110,8 @@ en:
         delete: Delete
         master_save: Save changes
     file_not_found: The requested file could not be found
+    changes_saved: Changes saved
+    changes_failed: Could not save the changes!
   printer_permissions:
     no_printers_html: "This school has no printers. As a school admin you might want to set some %{href} to this school."
     bootserver_ref: "boot servers"

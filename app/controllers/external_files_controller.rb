@@ -43,15 +43,23 @@ class ExternalFilesController < ApplicationController
 
   # POST /external_files
   def upload
-    if params["file"]
-        params["file"].each do |k, file|
-          f = ExternalFile.find_or_create_by_cn(k)
-          data = File.open(file.path, "rb").read.to_blob
-          f.puavoData = data
-          f.save!
-        end
+    begin
+      if params["file"]
+          params["file"].each do |k, file|
+            f = ExternalFile.find_or_create_by_cn(k)
+            data = File.open(file.path, "rb").read.to_blob
+            f.puavoData = data
+            f.save!
+          end
+      end
+
+      flash[:notice] = t('external_files.changes_saved')
+      redirect_to :back
+    rescue StandardError => e
+      puts e
+      flash[:alert] = t('external_files.changes_failed')
+      redirect_to :back
     end
-    redirect_to :back
   end
 
   # DELETE /external_files/:name
