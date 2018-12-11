@@ -233,7 +233,7 @@
 <% if @school_printers.empty? %>
 <p><%= t('shared.no_printers_for_this_device') %></p>
 <% else %>
-<ul>
+<ul class="devicePrintersList">
 <% @school_printers.each do |printer| %>
   <li>
     <label>
