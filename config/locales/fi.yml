@@ -207,6 +207,7 @@ fi:
       members_unmarked: "%{count} käyttäjän poistomerkintä poistettu"
       members_locked: "%{count} käyttäjää lukittu"
       members_unlocked: "%{count} käyttäjän lukitus purettu"
+      groupless_marked: "%{ok} käyttäjää merkitty poistettavaksi, %{failed} käyttäjän merkintä epäonnistui"
     role:
       group_added: "Ryhmä lisättiin rooliin."
       group_added_failed: "Lisäys epäonnistui"
@@ -397,6 +398,7 @@ fi:
     groupless_users:
       title: "Etsi ryhmättömät käyttäjät"
       count: "Löytyi %{count} ryhmätöntä käyttäjää."
+      mark_for_deletion: "Merkitse nämä käyttäjät poistettavaksi"
   schools:
     index:
       actions: Toiminnot

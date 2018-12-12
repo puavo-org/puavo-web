@@ -234,6 +234,7 @@ en:
       members_unmarked: "%{count} user(s) unmarked for deletion"
       members_locked: "%{count} users locked"
       members_unlocked: "%{count} users unlocked"
+      groupless_marked: "%{ok} users marked for deletion, %{failed} could not be marked"
     role:
       group_added: Group was added to role.
       group_added_failed: Failed to add
@@ -427,6 +428,7 @@ en:
     groupless_users:
       title: "Find groupless users"
       count: "Found %{count} ungrouped users."
+      mark_for_deletion: "Mark these users for deletion"
   schools:
     index:
       actions: Actions

@@ -319,6 +319,31 @@ class GroupsController < ApplicationController
     end
   end
 
+  def mark_groupless_users_for_deletion
+    ok = 0
+    failed = 0
+    now = Time.now.utc
+
+    @school.members.each do |m|
+      next unless m.groups.empty?
+      next if m.puavoRemovalRequestTime
+
+      begin
+        m.puavoRemovalRequestTime = now
+        m.puavoLocked = true
+        m.save!
+        ok += 1
+      rescue StandardError => e
+        failed += 1
+      end
+    end
+
+    respond_to do |format|
+      flash[:notice] = t('flash.group.groupless_marked', :ok => ok, :failed => failed)
+      format.html { redirect_to groups_path(@school) }
+    end
+  end
+
   # GET /:school_id/groups/:group_id/get_members_as_csv
   def get_members_as_csv
     @group = get_group(params[:id])
