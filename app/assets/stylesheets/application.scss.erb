@@ -195,19 +195,28 @@ legend {
 
 /*
 ====================================================================================================
-THE TOPMOST MENU BAR
+TOPMENU
 ====================================================================================================
 */
 
-/* The bar at the top of the page. Contains the organisation and school menus, the quick search bar,
-   the username of the currently logger user and the logout button. */
-.topmenu {
-  margin: 0;
-  min-width: 300px;
-  position: fixed;
+/*
+--------------------------------------------------------------------------------
+THE TOP BAR
+--------------------------------------------------------------------------------
+*/
+
+/* Top-level wrapper */
+#topbar-wrapper {
+  padding: 0;
+  display: relative;
+
   top: 0;
   width: 100%;
   z-index: 10;
+  position: fixed;
+  margin: 0;
+
+  min-width: 500px;   /* currently a three-row layout isn't supported */
 
   background-color: $baseOrangeGradient;
   background-image: linear-gradient($baseOrange 0%, $baseOrangeGradient 100%);
@@ -216,88 +225,141 @@ THE TOPMOST MENU BAR
 }
 
 @media #{$screen-breakpoint-one} {
-  .topmenu {
+  #topbar-wrapper {
     /* don't cover any content */
     position: static;
     z-index: auto;
     top: auto;
     width: 100%;
     margin: 0;
+    padding: 0;
   }
 }
 
-.topmenu ul {
+/* The inner elements */
+#topbar {
   list-style-type: none;
-}
-
-/* Wraps the actual topmenu contents */
-.topmenu-content {
-  font-size: 80%;
+  padding: 0;
   margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
   max-width: 1200px;
-  position: relative;
   width: 95%;
+  font-size: 80%;
 }
 
-/* The left topmenu block contains the organisation and school dropdown menus */
-.topmenu-left {
-  float: left;
-  font-size: 85%;
-  font-weight: bold;
-  line-height: 3.5;
+#topbar li.outer {
+  display: inline;
   margin: 0;
-  padding: 0 5px;
-  text-transform: uppercase;
+
+  /* Keep this zero, the dropdown toplevel menubar entries must be full-height
+     and non-zero padding here will break them! */
+  padding: 0;
 }
 
-.toplevelMenu {
-  float: left;
+#topbar #left {
+  text-align: left;
+  max-width: 26em;
+  flex: 0 0 16em;
+  margin: auto;
+}
+
+#topbar #middle {
+  flex-grow: 1;
+  margin: auto;
+}
+
+#topbar #search {
+  width: 100%;
+  margin: 0;
+  padding: 5px 30px 5px 10px;
+  border: 1px solid $formElementBorderColor;
+  border-radius: 4px;
+}
+
+#topbar #right {
+  text-align: right;
+  flex-grow: 1;
+  margin: auto;
+}
+
+#topbar #loggedInName {
   color: #000;
-}
-
-.toplevelMenu:hover {
-  background: #fff;
-  color: #000;
-}
-
-.toplevelMenu span {
-  cursor: default;
-  padding-left: 10px;
   padding-right: 10px;
 }
 
-.toplevelMenu span:after {
+#logoutButton {
+  border: none;
+  margin: 0 0 0 10px;
+  padding: 4px 10px;
+}
+
+#topbar li:nth-child(1) { order: 1; }
+#topbar li:nth-child(2) { order: 2; }
+#topbar li:nth-child(3) { order: 3; }
+
+@media #{$screen-breakpoint-one} {
+  /* reorder the elements */
+  #topbar li:nth-child(1) { order: 2; }
+  #topbar li:nth-child(2) { order: 1; flex-basis: 100%;  }
+  #topbar li:nth-child(3) { order: 3; }
+
+  #topbar #search {
+    margin: 5px auto;   /* spacing */
+  }
+
+  #topbar #left, #topbar #right {
+    max-width: none;
+  }
+}
+
+/*
+--------------------------------------------------------------------------------
+THE DROPDOWN MENUS
+--------------------------------------------------------------------------------
+*/
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
+  float: left;
+  font-weight: bold;
+  color: #000;
+  text-transform: uppercase;
+}
+
+nav ul li.haveDropdown {
+  /* This effectively dictates how tall the entire topbar will be. Also see
+     the margin values in ul.dropdown below. */
+  padding: 10px;
+}
+
+nav ul li.noDropdown {
+  padding: 10px;
+}
+
+nav ul .haveDropdown:after {
   content: " ▼";
 }
 
-/* The organisation menu does not exist for non-owners */
-.noMenuHighlight span:after {
-  content: "";
-}
-
-.noMenuHighlight:hover {
-  background: none;
-  color: #000;
-}
-
-/* A generic dropdown menu container (UL) */
-.toplevelDropdown {
-  visibility: hidden;
+nav ul .dropdown {
   display: none;
   position: absolute;
-
-  margin: 0 0 0 -1px;
-  padding: 5px;
   left: auto;
+  background: #fff;
+  width: 200px;
+
+  z-index: 11;    /* topbar is 10 */
 
   background: $baseOrangeGradient;
   border-left: 1px solid #222;
   border-right: 1px solid #222;
   border-bottom: 1px solid #222;
   border-radius: 0 0 4px 4px;
-
-  line-height: 1;
-  z-index: 10;
 
   box-shadow: 0 6px 6px rgba(68, 68, 68, 0.80);
 
@@ -306,50 +368,75 @@ THE TOPMOST MENU BAR
   overflow-y: auto;
 }
 
-/* Make the dropdown menu visible */
-.toplevelMenu:hover .toplevelDropdown {
-  visibility: visible;
-  display: block;
-}
-
-.toplevelDropdown li {
-  display: block;
-  border-top: 1px solid #ccc;
-  padding: 2px 0;
-  clear: both;
-}
-
-.toplevelDropdown li:first-of-type {
-  border-top: none;
-}
-
-.toplevelMenu a {
-  color: #000;
+nav ul .dropdown {
+  list-style-type: none;
   margin: 0;
-  padding: 10px;
-  display: block;
-  text-decoration: none;
+  padding: 5px;
+
+  /* Adjust the dropdown position */
+  margin: 10px 0 0 -11px;
 }
 
-.toplevelMenu a:hover {
+nav ul li ul li {
+  padding: 5px;
+}
+
+nav ul .dropdown li {
+  display: list-item;
+  float: none;
+  padding: 2px 0;
+  margin: 0;
+  border-bottom: 1px solid #ccc;
+}
+
+nav ul .dropdown li:first-of-type {
+  padding: 0 0 2px 0;
+}
+
+nav ul .dropdown li:last-of-type {
+  padding: 2px 0 0 0;
+  border: none;
+}
+
+nav ul .haveDropdown:hover {
+  background: #fff;
+  cursor: default;
+}
+
+nav ul li:hover .dropdown {
+  display: block;
+}
+
+nav li span {
+  font-size: 90%;
+}
+
+nav ul a {
+  display: block;
+  padding: 10px;   /* affects ALL links, in top-level and dropdowns */
   color: #000;
+  text-decoration: none;
+  font-size: 85%;
+}
+
+nav ul a:hover {
   background: #fff;
 }
 
 /* The per-school quick link list */
 ul.schoolLinks {
-  padding-top: 2px;
-  padding-left: 20px;
-  font-size: 80%;
+  margin: 0 0 0 20px;
+  padding: 0;
 }
 
 .schoolLinks li {
-  float: left;
-  clear: none;
-  border: none;
+  margin: 0;
+  padding: 0;
+  border: none !important;
 }
 
 .schoolLinks a {
+  display: block;
   padding: 2px;
 }
 
@@ -357,60 +444,8 @@ ul.schoolLinks {
    We have to override annoyingly many properties, because the button is actually an "A" element. */
 .newSchool {
   border-top: none !important;
-  margin-top: 10px !important;
+  margin-top: 2px !important;
   text-transform: none !important;
-  float: right;
-}
-
-/* Outer container for the search box */
-.topmenu-search {
-  float: left;
-  margin: 0;
-  padding: 0 5px;
-}
-
-/* The search box outer element */
-.topmenu-search input {
-  float: left;
-  margin: 5px 0 0 5px;
-  padding: 5px 30px 5px 10px;
-
-  border: 1px solid $formElementBorderColor;
-  border-radius: 4px;
-}
-
-/* The right topmenu block contains the logged in username and the logout button */
-.topmenu-right {
-  float: right;
-  padding: 0;
-  margin: 3px 0 0 0;
-}
-
-@media #{$screen-breakpoint-one} {
-  .topmenu-right {
-    padding-bottom: 5px;
-  }
-}
-
-.topmenu-right li {
-  float: left;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0 2px;
-}
-
-.topmenu-right a {
-  text-decoration: none;
-}
-
-#loggedInName {
-  margin-top: 6px;
-}
-
-#logoutButton {
-  border: none;
-  margin: 0 0 0 10px;
-  padding: 4px 10px;
 }
 
 /*
@@ -450,6 +485,7 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 @media #{$screen-breakpoint-one} {
   .main-wrap {
     padding: 5px;
+    width: 95%;
     padding-top: 0;   /* don't leave a gap between topbar and content */
     margin-top: 0;
     border: none;
@@ -648,7 +684,7 @@ SEARCH FIELDS
 #search {
   margin: 4px;
   z-index: 1;
-  background: url("<%= image_path('magnifier.png')%>") no-repeat scroll 97% center #FFFFFF;
+  background: url("<%= image_path('magnifier.png')%>") no-repeat scroll 98% center #FFFFFF;
   background-repeat: no-repeat;
 }
 
@@ -657,7 +693,7 @@ SEARCH FIELDS
     The JavaScript code doing the live search adds this class to the search box when search
     is in progress, then removes it afterwards.
   */
-  background: url("<%= image_path('ajax-loader.gif')%>") no-repeat scroll 97% 4px #FFFFFF !important;
+  background: url("<%= image_path('ajax-loader.gif')%>") no-repeat scroll 98% 4px #FFFFFF !important;
 
   /*
     FIXME: Unfortunately this class is also added to the user search box in the group members page,
