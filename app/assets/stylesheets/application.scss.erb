@@ -216,7 +216,7 @@ THE TOP BAR
   position: fixed;
   margin: 0;
 
-  min-width: 500px;   /* currently a three-row layout isn't supported */
+  min-width: 400px;   /* currently a three-row layout isn't supported */
 
   background-color: $baseOrangeGradient;
   background-image: linear-gradient($baseOrange 0%, $baseOrangeGradient 100%);
@@ -310,6 +310,18 @@ THE TOP BAR
 
   #topbar #left, #topbar #right {
     max-width: none;
+  }
+}
+
+@media #{$screen-breakpoint-two} {
+  #loggedInName {
+    /* There's no room for the name. It could be displayed if, for example, the name
+       is a dropdown menu that contains the logout button. (The same menu could contain
+       a link to the logged-in user's user page.) */
+    display: none;
+
+    /* Actually, this isn't very good. Very long names still can force the logout
+       button onto its own row, turning the two-row intended layout into three rows. */
   }
 }
 
@@ -438,6 +450,13 @@ ul.schoolLinks {
 .schoolLinks a {
   display: block;
   padding: 2px;
+}
+
+@media #{$screen-breakpoint-one} {
+  .schoolLinks {
+    /* These items take too much space on small mobile views */
+    display: none;
+  }
 }
 
 /* TODO: This menu is the wrong place for this button! Provide a link to the school list page instead.
