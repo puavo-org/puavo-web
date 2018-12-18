@@ -122,6 +122,7 @@ en:
     application:
       schools: Schools
       school: School
+      index: Front page
       logout: Logout
       users: Users
       groups: Groups

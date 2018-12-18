@@ -95,6 +95,7 @@ fi:
     application:
       schools: Koulut
       school: Koulu
+      index: Etusivu
       logout: Kirjaudu ulos
       users: Käyttäjät
       groups: Ryhmät

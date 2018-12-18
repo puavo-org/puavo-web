@@ -56,7 +56,7 @@ I18n.locale = "<%= I18n.locale %>";
 
           <li class="haveDropdown"><span><%= t('.schools') %></span><ul class="dropdown">
             <% if current_user.organisation_owner? %>
-            <li><a href="/">Etusivu</a></li>
+            <li><a href="/users"><%= t('.index') %></a></li>
             <% end %>
             <% school_list.each do |school| %>
             <% next if school.puavoTag.include?("hidden")%>
