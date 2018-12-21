@@ -13,6 +13,8 @@ class PasswordController < ApplicationController
     @user = User.new
     @password_requirements = password_requirements
 
+    setup_language
+
     @changing = params[:changing] || nil
     @changed = params[:changed] || nil
     @changing = nil if !@changing.nil? && @changing.empty?
@@ -25,6 +27,8 @@ class PasswordController < ApplicationController
   def own
     @user = User.new
     @password_requirements = password_requirements
+
+    setup_language
 
     @changing = params[:changing] || nil
     @changing = nil if !@changing.nil? && @changing.empty?
@@ -356,5 +360,16 @@ class PasswordController < ApplicationController
       "puavo:password_management:send_token",
       :redis => REDIS_CONNECTION
     )
+  end
+
+  def setup_language
+    # use organisation default
+    @language = nil
+
+    # override
+    if params[:lang] && ['en', 'fi', 'sv'].include?(params[:lang])
+      I18n.locale = params[:lang]
+      @language = params[:lang]
+    end
   end
 end

@@ -7,7 +7,9 @@ class ProfilesController < ApplicationController
     @user = current_user
 
     @data_remote = true if params[:'data-remote']
-    
+
+    setup_language
+
     respond_to do |format|
       format.html
     end
@@ -86,7 +88,7 @@ class ProfilesController < ApplicationController
 
   def show
     @new_emails = params[:emails].nil? ? [] : params[:emails]
-    
+
     respond_to do |format|
       format.html
     end
@@ -99,4 +101,16 @@ class ProfilesController < ApplicationController
     send_data @user.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
   end
 
+  private
+
+  def setup_language
+    # use organisation default
+    @language = nil
+
+    # override
+    if params[:lang] && ['en', 'fi', 'sv'].include?(params[:lang])
+      I18n.locale = params[:lang]
+      @language = params[:lang]
+    end
+  end
 end

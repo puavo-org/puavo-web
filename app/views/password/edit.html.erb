@@ -4,12 +4,12 @@
 
 <div class="password_buttons">
 <span>
-  <%= link_to own_password_path do%>
+  <%= link_to own_password_path(:lang => @language) do%>
     <i class="icon-key"></i><%= t('password.edit.link_own_password') %>
   <% end %>
 </span>
 <span class="active">
-  <%= link_to password_path do %>
+  <%= link_to password_path(:lang => @language) do %>
     <i class="icon-key"></i><%= t('password.own.link_other_password') %>
   <% end %>
 </span>
