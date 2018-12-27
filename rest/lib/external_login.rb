@@ -471,6 +471,11 @@ module PuavoRest
         unless @external_ldap_subtrees.kind_of?(Array) \
                  && @external_ldap_subtrees.all? { |s| s.kind_of?(String) }
 
+      encryption_method \
+        = ldap_config['encryption_method'] == 'simple_tls' \
+            ? :simple_tls \
+            : :start_tls
+
       @ldap = Net::LDAP.new :base => base.to_s,
                             :host => server.to_s,
                             :port => (Integer(ldap_config['port']) rescue 389),
@@ -480,7 +485,7 @@ module PuavoRest
                               :password => bind_password.to_s,
                             },
                             :encryption => {
-                               :method      => :start_tls,
+                               :method      => encryption_method,
                                :tls_options => {
                                  :verify_mode => OpenSSL::SSL::VERIFY_NONE,
                                },
