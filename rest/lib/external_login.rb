@@ -802,13 +802,25 @@ module PuavoRest
        return nil
      end
 
-     groupdata_string.sub!('%GROUP', ldap_attribute_value)
+     teaching_group_regex = get_add_groups_param(params, 'teaching_group_regex')
+     match = ldap_attribute_value.match(teaching_group_regex)
+     unless match && match.size == 2 then
+       @flog.warn('unexpected format in ldap attribute',
+                  'unexpected format in ldap attribute' \
+                    + " '#{ teaching_group_field }':" \
+                    + " '#{ ldap_attribute_value }'" \
+                    + " (expecting a match with '#{ teaching_group_regex }'" \
+                    + " that should also have one string capture)")
+       return nil
+     end
+     teaching_group = match[1]
+
+     groupdata_string.sub!('%GROUP', teaching_group)
 
      return groupdata_string unless groupdata_string.include?('%CLASSNUMBER') \
                                       || groupdata_string.include?('%STARTYEAR')
 
      classnum_regex = get_add_groups_param(params, 'classnumber_regex')
-
      match = ldap_attribute_value.match(classnum_regex)
      unless match && match.size == 2 then
        @flog.warn('unexpected format in ldap attribute',
