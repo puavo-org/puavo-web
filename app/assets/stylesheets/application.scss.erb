@@ -67,6 +67,9 @@ $formButtonRowBackground: #fff;
 
 $loggedUserNameFore: #000;
 
+$topmenuItemForeNormal: #000;
+$topmenuItemBackHover: #fff;
+
 /*
 ====================================================================================================
 MEDIA QUERIES
@@ -247,6 +250,10 @@ THE TOP BAR
   padding: 0;
 }
 
+#topbar span {
+  font-size: 90%;
+}
+
 #topbar #left {
   text-align: left;
   flex: 0 0 auto;
@@ -342,111 +349,96 @@ nav ul {
   padding: 0;
 }
 
-nav ul li {
-  float: left;
+nav li {
   font-weight: bold;
-  color: #000;
   text-transform: uppercase;
+  color: $topmenuItemForeNormal;
 }
 
-nav ul li.haveDropdown {
-  /* This effectively dictates how tall the entire topbar will be. Also see
-     the margin values in ul.dropdown below. */
+nav .haveDropdown, nav .noDropdown {
+  /* Make the menu buttons (dropdowns or not) span the entire height of the topbar. */
   padding: 10px;
+
+  /* Float the top-level menu items, but not their child lists */
+  float: left;
 }
 
-nav ul li.noDropdown {
-  padding: 10px;
-}
-
-nav ul .haveDropdown:after {
+nav .haveDropdown:after {
   content: " ▼";
 }
 
-nav ul .dropdown {
+nav .dropdown {
   display: none;
   position: absolute;
   left: auto;
-  background: #fff;
-  width: 200px;
+
+  margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
+
+  padding: 5px;
+
+  min-width: 200px;   /* wide items are easier to hit */
+
+  max-height: 600px;
+  overflow-y: auto;
 
   z-index: 11;    /* topbar is 10 */
 
   background: $baseOrangeGradient;
-  border-left: 1px solid #222;
-  border-right: 1px solid #222;
-  border-bottom: 1px solid #222;
+  border-left: 1px solid $baseBoxShadowBorderColor;
+  border-right: 1px solid $baseBoxShadowBorderColor;
+  border-bottom: 1px solid $baseBoxShadowBorderColor;
   border-radius: 0 0 4px 4px;
 
   box-shadow: 0 6px 6px rgba(68, 68, 68, 0.80);
 
-  max-height: 600px;
-  min-width: 200px;
-  overflow-y: auto;
-}
-
-nav ul .dropdown {
   list-style-type: none;
-  margin: 0;
-  padding: 5px;
-
-  /* Adjust the dropdown position */
-  margin: 10px 0 0 -11px;
 }
 
-nav ul li ul li {
-  padding: 5px;
+nav .haveDropdown:hover {
+  cursor: default;
+  background: $topmenuItemBackHover;
 }
 
-nav ul .dropdown li {
+nav .haveDropdown:hover .dropdown {
+  /* Open the dropdown menu */
+  display: block;
+}
+
+nav .dropdown li {
   display: list-item;
-  float: none;
-  padding: 2px 0;
+  padding: 2px 0;   /* "outer" padding between items */
   margin: 0;
   border-bottom: 1px solid #ccc;
 }
 
-nav ul .dropdown li:first-of-type {
+nav .dropdown li:first-of-type {
   padding: 0 0 2px 0;
 }
 
-nav ul .dropdown li:last-of-type {
+nav .dropdown li:last-of-type {
   padding: 2px 0 0 0;
   border: none;
 }
 
-nav ul .haveDropdown:hover {
-  background: #fff;
-  cursor: default;
-}
-
-nav ul li:hover .dropdown {
-  display: block;
-}
-
-nav li span {
-  font-size: 90%;
-}
-
 nav ul a {
   display: block;
-  padding: 10px;   /* affects ALL links, in top-level and dropdowns */
-  color: #000;
+  padding: 10px;   /* "inner" padding within items, affects ALL links in the menu! */
+  color: $topmenuItemForeNormal;
   text-decoration: none;
   font-size: 85%;
 }
 
 nav ul a:hover {
-  background: #fff;
+  background: $topmenuItemBackHover;
 }
 
 /* The per-school quick link list */
-ul.schoolLinks {
+nav .schoolLinks {
   margin: 0 0 0 20px;
   padding: 0;
 }
 
-.schoolLinks li {
+nav .schoolLinks li {
   margin: 0;
   padding: 0;
   border: none !important;
@@ -458,7 +450,7 @@ ul.schoolLinks {
 }
 
 @media #{$screen-breakpoint-one} {
-  .schoolLinks {
+  nav .schoolLinks {
     /* These items take too much space on small mobile views */
     display: none;
   }
