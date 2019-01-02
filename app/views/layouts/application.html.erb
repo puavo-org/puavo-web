@@ -28,7 +28,7 @@ I18n.locale = "<%= I18n.locale %>";
 <body>
 <div id="topbar-wrapper">
   <ul id="topbar">
-    <li class="outer" id="left">
+    <li id="left">
       <!-- Organisation and school dropdown menus (ie. "navigation") -->
       <nav>
         <% if current_user %>
@@ -74,7 +74,7 @@ I18n.locale = "<%= I18n.locale %>";
       </nav>
     </li>
 
-    <li class="outer" id="middle">
+    <li id="middle">
       <!-- The search box -->
       <%= text_field_tag('search',
                          nil,
@@ -84,7 +84,7 @@ I18n.locale = "<%= I18n.locale %>";
 
     </li>
 
-    <li class="outer" id="right">
+    <li id="right">
       <!-- Logout -->
       <span id="loggedInName"><%= h current_user.displayName %></span>
 

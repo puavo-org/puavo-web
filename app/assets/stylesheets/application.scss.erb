@@ -65,6 +65,8 @@ $formOddRowBackground: none;
 $formEvenRowBackground: #f5f5f5;
 $formButtonRowBackground: #fff;
 
+$loggedUserNameFore: #000;
+
 /*
 ====================================================================================================
 MEDIA QUERIES
@@ -248,7 +250,7 @@ THE TOP BAR
   font-size: 80%;
 }
 
-#topbar li.outer {
+#topbar > li {
   display: inline;
   margin: 0;
 
@@ -284,8 +286,8 @@ THE TOP BAR
 }
 
 #topbar #loggedInName {
-  color: #000;
-  padding-right: 10px;
+  color: $loggedUserNameFore;
+  padding: 0;
 }
 
 #logoutButton {
