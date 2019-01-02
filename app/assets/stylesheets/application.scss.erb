@@ -436,20 +436,22 @@ nav ul a:hover {
 nav .schoolLinks {
   margin: 0 0 0 20px;
   padding: 0;
+  display: inline-block;
 }
 
 nav .schoolLinks li {
-  margin: 0;
-  padding: 0;
+  float: left;
+  margin: 0 !important;
+  padding: 0 !important;
   border: none !important;
 }
 
 .schoolLinks a {
-  display: block;
-  padding: 2px;
+  padding: 2px 5px;
+  text-transform: none;
 }
 
-@media #{$screen-breakpoint-one} {
+@media #{$screen-breakpoint-two} {
   nav .schoolLinks {
     /* These items take too much space on small mobile views */
     display: none;
