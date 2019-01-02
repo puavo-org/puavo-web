@@ -207,7 +207,7 @@ THE TOP BAR
 --------------------------------------------------------------------------------
 */
 
-/* Top-level wrapper */
+/* Top-level wrapper, for positioning and sizing */
 #topbar-wrapper {
   padding: 0;
   display: relative;
@@ -226,19 +226,7 @@ THE TOP BAR
   box-shadow: 2px 4px 6px rgba(68, 68, 68, 0.80);
 }
 
-@media #{$screen-breakpoint-one} {
-  #topbar-wrapper {
-    /* don't cover any content */
-    position: static;
-    z-index: auto;
-    top: auto;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-}
-
-/* The inner elements */
+/* Inner top bar list container */
 #topbar {
   list-style-type: none;
   padding: 0;
@@ -301,13 +289,28 @@ THE TOP BAR
 #topbar li:nth-child(3) { order: 3; }
 
 @media #{$screen-breakpoint-one} {
+  #topbar-wrapper {
+    /* don't cover any content */
+    position: static;
+    z-index: auto;
+    top: auto;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #topbar {
+    width: 100%;
+    padding: 0 2px;
+  }
+
   /* reorder the elements */
   #topbar li:nth-child(1) { order: 2; }
   #topbar li:nth-child(2) { order: 1; flex-basis: 100%;  }
   #topbar li:nth-child(3) { order: 3; }
 
   #topbar #search {
-    margin: 5px auto;   /* spacing */
+    margin: 2px auto;
   }
 
   #topbar #left, #topbar #right {
