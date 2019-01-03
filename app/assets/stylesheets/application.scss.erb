@@ -109,7 +109,8 @@ header#schoolName {
 
 @media #{$screen-breakpoint-one} {
   header#schoolName {
-    font-size: 175%;
+    font-size: 200%;
+    margin-left: 5px;
     margin-top: 0;  /* topmenu becomes a solid block, no need to push content downwards */
   }
 }
@@ -494,8 +495,8 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 
 @media #{$screen-breakpoint-one} {
   .main-wrap {
-    padding: 5px;
-    width: 95%;
+    padding: 0;
+    width: 100%;
     padding-top: 0;   /* don't leave a gap between topbar and content */
     margin-top: 0;
     border: none;
@@ -627,7 +628,9 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 
 @media #{$screen-breakpoint-one} {
   .maincontent {
+    /* Use all available space */
     padding: 5px;
+    border: none;
   }
 }
 
@@ -646,7 +649,16 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 
 @media #{$screen-breakpoint-one} {
   .navbar-first-level {
-    font-size: 80%;
+    /* It's amazing how nicer everything looks with this even if it's not
+       in "harmony" with the default style. */
+    padding-left: 5px;
+  }
+
+  .navbar-second-level {
+    border: none;
+    border-top: 1px solid $baseBoxShadowBorderColor;
+    border-bottom: 1px solid $baseBoxShadowBorderColor;
+    border-radius: 0;
   }
 
   .navbar-first-level a {
@@ -655,28 +667,6 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 
   .navbar-first-level li {
     line-height: 1;
-  }
-
-  .navbar-second-level {
-    font-size: 60%;
-  }
-
-  .navbar-second-level a {
-    padding: 5px;
-  }
-}
-
-@media #{$screen-breakpoint-two} {
-  .navbar-first-level {
-    font-size: 60%;
-  }
-
-  .navbar-first-level a {
-    padding: 10px;
-  }
-
-  .navbar-second-level {
-    font-size: 50%;
   }
 
   .navbar-second-level a {
