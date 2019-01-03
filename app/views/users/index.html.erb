@@ -2,7 +2,7 @@
 
 <% unless @users_marked_for_deletion.empty? %>
 
-<strong><%= t('.users_marked_for_deletion_title') %></strong>
+<h3><%= t('.users_marked_for_deletion_title') %></h3>
 
 <%= render :partial => 'users_list', :locals => {
   :source => @users_marked_for_deletion,
@@ -11,7 +11,7 @@
 } %>
 
 <hr><br>
-<strong><%= t('.normal_users_title') %></strong>
+<h3><%= t('.normal_users_title') %></h3>
 <% end %>
 
 <%= render :partial => 'users_list', :locals => {
