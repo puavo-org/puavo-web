@@ -1168,6 +1168,14 @@ FORMS
   margin: 0 5px 0 0;    /* push labels away from the input box */
 }
 
+@media #{$screen-breakpoint-one} {
+  .editForm input[type="checkbox"], .editForm input[type="radio"] {
+    /* The label gets collapsed, so push the element away from the
+       element above it. */
+    margin: 10px;
+  }
+}
+
 .editForm select {
   padding: 5px;
 }
