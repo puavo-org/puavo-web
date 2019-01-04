@@ -9,7 +9,7 @@
 <br>
 
 <% id = 1 %>
-<% @lists.each do |list| %>
+<% @lists.sort{ |a, b| a.created_at <=> b.created_at }.reverse.each do |list| %>
 <div class="userListTable">
   <div class="userListRow">
     <div class="userListCol userListMeta">
