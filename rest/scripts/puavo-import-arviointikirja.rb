@@ -58,12 +58,7 @@ end
 schools = {}
 
 begin
-  CSV.foreach(options[:schools_csv],
-              :encoding => options[:encoding],
-              :col_sep => ";") do |row|
-
-    s = encode_text(row, options[:encoding])
-
+  CSV.parse(convert_text_file(options[:schools_csv]), :encoding => 'utf-8', :col_sep => ';') do |s|
     begin
       school = PuavoRest::School.by_attr(:abbreviation,
                                          s[2],
@@ -94,12 +89,7 @@ used_external_ids = Set.new
 
 have_errors = false
 
-CSV.foreach(options[:csv_file],
-            :encoding => options[:encoding],
-            :col_sep => ";") do |row|
-
-  grp = encode_text(row, options[:encoding])
-
+CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |grp|
   group_name = grp[2]
 
   if group_name.nil? || group_name.empty?

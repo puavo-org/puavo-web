@@ -138,9 +138,7 @@ correct_csv_users = 0
 update_external_id = 0
 not_update_external_id = 0
 
-CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => ";" ) do |row|
-  user_data = encode_text(row, @options[:encoding])
-
+CSV.parse(convert_text_file(@options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |user_data|
   user_data_hash = {
     :db_id => user_data[0],
     :external_id => user_data[1],

@@ -15,9 +15,7 @@ setup_connection(options)
 
 groups = []
 
-CSV.foreach(options[:csv_file], :encoding => options[:encoding], :col_sep => ";") do |row|
-  group_data = encode_text(row, options[:encoding])
-
+CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |group_data|
   next if !options[:include_schools].nil? && !options[:include_schools].include?(group_data[2].to_s)
 
   group = PuavoImport::Group.new(

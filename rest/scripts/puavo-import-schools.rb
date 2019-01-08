@@ -17,11 +17,7 @@ if options[:include_schools]
   puts "Importing these schools: #{options[:include_schools].join(', ')}"
 end
 
-CSV.foreach(options[:csv_file],
-            :encoding => options[:encoding],
-            :col_sep => ";") do |school_data|
-  school_data = encode_text(school_data, options[:encoding])
-
+CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |school_data|
   next if school_data[0].nil? || school_data[1].nil? || school_data[1].empty?
 
   if !options[:include_schools].nil? && !options[:include_schools].include?(school_data[0].to_s)
