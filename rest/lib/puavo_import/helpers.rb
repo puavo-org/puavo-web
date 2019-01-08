@@ -202,5 +202,26 @@ module PuavoImport
       )
     end
 
+    # Loads a text file that's either encoded in UTF-8 (with a BOM) or
+    # ISO-8859-1, and converts it to UTF-8.
+    def convert_text_file(name)
+      file = File.open(name, 'rb')
+      raw = file.read
+      file.close
+
+      if raw.size >= 3 && raw[0..2].bytes == [0xEF, 0xBB, 0xBF]
+        # This is a UTF-8 encoded file with a BOM. Strip the BOM and use the
+        # data as-is. Assume all UTF-8 byte sequences in it are correct.
+        raw[3..-1].force_encoding('UTF-8')
+      else
+        # Presumably a plain 8-bit ISO-8859-1 file. Encode it as UTF-8 and
+        # reject invalid bytes.
+        raw.force_encoding('ISO-8859-1').encode('UTF-8',
+                                                invalid: :replace,
+                                                undef: :replace,
+                                                replace: '?')
+      end
+    end
+
   end
 end
