@@ -124,6 +124,10 @@ end
   opts.on("--es-url ES_URL", "URL for Elasticsearch") do |es_url|
     options[:es_url] = es_url
   end
+
+  opts.on("--update-usernames", "Actually change changed usernames. RUN THIS MANUALLY!") do |update|
+    options[:update_usernames] = update
+  end
 end
 
 setup_connection(@options)
@@ -365,13 +369,18 @@ when "import"
       puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
 
       if puavo_rest_user
-        if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time
+        # username updates are done only if specifically requested for
+        update_username = user.username != puavo_rest_user.username && @options[:update_usernames]
+
+        if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time || update_username
           puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
 
           update_attributes = [ :first_name,
                                 :last_name,
                                 :email,
                                 :telephone_number ]
+
+          update_attributes << :username if update_username
 
           update_attributes.delete(:email) if user.email.nil?
 
