@@ -181,6 +181,10 @@ class User < LdapBase
           if self.new_password.size < 6 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.sixcharsmin_password_too_short"))
           end
+        when 'SevenCharsMin'
+          if self.new_password.size < 7 then
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.sevencharsmin_password_too_short"))
+          end
       end
     end
 

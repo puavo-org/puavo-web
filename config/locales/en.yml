@@ -464,6 +464,7 @@ en:
   password:
     gsuite_integration_enabled: "Organisation security policies require that passwords must at least 8 characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
     six_chars_min: "Organisation security policies require that passwords must be at least 6 characters long."
+    seven_chars_min: "Organisation security policies require that passwords must be at least seven characters long."
     current_password_too_old: "Due to your organisation security policy, your current password must be changed because it is too old."
     edit:
       title: Change password for other user
@@ -583,6 +584,7 @@ en:
         gsuite_password_whitespace: "Organisation security policies require that passwords cannot start or end in whitespace."
         gsuite_password_ascii_only: "Organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
         sixcharsmin_password_too_short: "Organisation security policies require that passwords are at least 6 characters long."
+        sevencharsmin_password_too_short: "Organisation security policies require that passwords are at least seven characters long."
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
         image_failed: "Failed to save the image"

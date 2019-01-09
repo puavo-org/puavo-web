@@ -233,6 +233,15 @@ class PasswordController < ApplicationController
           raise User::UserError,
                 I18n.t('activeldap.errors.messages.sixcharsmin_password_too_short')
         end
+      when 'SevenCharsMin'
+        # Validate the password to contain at least seven characters.
+        # TODO: This is inflexible and too repetitive. We need a better system
+        # for validating and enforcing password requirements.
+        new_password = params[:user][:new_password]
+        if new_password.size < 7 then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.sevencharsmin_password_too_short')
+        end
     end
 
     external_login_status = external_login(params[:login][:uid],

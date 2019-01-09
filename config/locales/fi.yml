@@ -434,6 +434,7 @@ fi:
   password:
     gsuite_integration_enabled: "Organisaation tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, eivät saa alkaa eikä loppua välilyöntiin, ja ne voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutaman muun välimerkin."
     six_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
+    seven_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään seitsemän merkkiä."
     current_password_too_old: "Organisaatiosi tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
     edit:
       title: "Vaihda toisen käyttäjän salasana"
@@ -553,6 +554,7 @@ fi:
         gsuite_password_whitespace: "Organisaation tietoturvakäytänteissä on määritetty, että salasana ei saa alkaa eikä loppua välilyöntiin."
         gsuite_password_ascii_only: "Organisaation tietoturvakäytänteissä on määritetty, että salasanat voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutama muu välimerkki."
         sixcharsmin_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kuusi merkkiä."
+        sevencharsmin_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään seitsemän merkkiä."
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
         image_failed: "Kuvaa ei voitu tallentaa"
