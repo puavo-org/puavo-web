@@ -1090,6 +1090,7 @@ fi:
   printer_permissions:
     no_printers_html: "Tällä koululla ei ole tulostimia. Pääkäyttäjänä voit lisätä koululle %{href}."
     bootserver_ref: "boottipalvelimia"
+    no_printers_nonowner: "Tälle koululle ei ole määritetty tulostimia boot-palvelimien kautta. Ylläpitäjät, joilla on organisaatiotason omistajaoikeudet, voivat lisätä tulostimia."
     index:
       edit_permissions: Muokkaa oikeuksia
       bootserver: Boot-palvelin

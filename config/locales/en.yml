@@ -1121,6 +1121,7 @@ en:
   printer_permissions:
     no_printers_html: "This school has no printers. As a school admin you might want to set some %{href} to this school."
     bootserver_ref: "boot servers"
+    no_printers_nonowner: "This school has no printers defined for it through a boot server. Administrators who have organisation-level owner rights can add printers."
     index:
       edit_permissions: Edit permissions
       bootserver: Boot server
