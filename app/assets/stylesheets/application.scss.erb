@@ -201,6 +201,18 @@ legend {
   padding: 0 5px;
 }
 
+abbr[title]:after {
+  /* Normal view */
+  content: "";
+}
+
+@media #{$screen-breakpoint-one} {
+  /* Can't hover over abbreviations on mobile, so display the contents */
+  abbr[title]:after {
+     content: " (" attr(title) ")";
+  }
+}
+
 /*
 ====================================================================================================
 TOPMENU
