@@ -1092,6 +1092,7 @@ fi:
     bootserver_ref: "boottipalvelimia"
     index:
       edit_permissions: Muokkaa oikeuksia
+      bootserver: Boot-palvelin
     edit:
       title: Tulostimen käyttöoikeudet
       global: Yleiset

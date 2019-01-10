@@ -1123,6 +1123,7 @@ en:
     bootserver_ref: "boot servers"
     index:
       edit_permissions: Edit permissions
+      bootserver: Boot server
     edit:
       title: Printer usage permissions
       global: Global
