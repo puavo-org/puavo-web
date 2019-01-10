@@ -71,6 +71,7 @@ def get_external_login_test_configuration
             'roles'                => [ 'student' ],
             'school_dns'           => [ target_school_dn ],
             'teaching_group_field' => 'gidNumber', # typically: 'department'
+            'teaching_group_regex' => '^(.*)$',
           },
           'mappings' => [
             { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
