@@ -304,6 +304,8 @@ fi:
       normal_users_title: Normaalit käyttäjät
       users: käyttäjää
       do_not_delete: "(Ei voi poistaa)"
+      jump_to_marked: "⇈ Näytä poistettavat käyttäjät"
+      jump_to_normal: "⇊ Näytä normaalit käyttäjät"
     show:
       user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: <b>%{roles}</b>"
       system_information: "Järjestelmätietoja"

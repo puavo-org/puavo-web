@@ -332,6 +332,8 @@ en:
       normal_users_title: Normal users
       users: users
       do_not_delete: "(Can't be removed)"
+      jump_to_marked: "⇈ Show users to be deleted"
+      jump_to_normal: "⇊ Show normal users"
     show:
       user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information

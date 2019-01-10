@@ -2,7 +2,7 @@
 
 <% unless @users_marked_for_deletion.empty? %>
 
-<h3><%= t('.users_marked_for_deletion_title') %></h3>
+<h3 id="marked"><%= t('.users_marked_for_deletion_title') %> [ <a href="#normal"><%= t('.jump_to_normal') %></a> ]</h3>
 
 <%= render :partial => 'users_list', :locals => {
   :source => @users_marked_for_deletion,
@@ -11,7 +11,7 @@
 } %>
 
 <hr><br>
-<h3><%= t('.normal_users_title') %></h3>
+<h3 id="normal"><%= t('.normal_users_title') %> [ <a href="#marked"><%= t('.jump_to_marked') %></a> ]</h3>
 <% end %>
 
 <%= render :partial => 'users_list', :locals => {
