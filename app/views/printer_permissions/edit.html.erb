@@ -7,7 +7,7 @@
   <fieldset>
     <legend><%= t('.global') %></legend>
 
-    <ul>
+    <ul class="noBullets">
       <li>
         <label>
           <%= radio_button_tag "activate", "wireless", @school.has_wireless_printer?(@printer)%>
@@ -33,7 +33,7 @@
   <fieldset class="groups">
     <legend><%= t('.groups') %></legend>
 
-    <ul>
+    <ul class="noBullets">
       <% @school.groups.each do |group| %>
       <li>
         <label>
