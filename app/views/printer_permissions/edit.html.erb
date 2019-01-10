@@ -52,16 +52,16 @@
     <p><%= t('.device_header_text') %></p>
 
     <table class="list">
-      <tr>
+      <tr class="thead">
         <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
         <th><%= t('link.remove') %></th>
         <th><%= t('actions') %></th>
       </tr>
       <% @devices.each do |device| %>
       <tr>
-        <td><%= device.cn %></td>
-        <td><%= check_box_tag "remove_device_permission[]", device.dn %></td>
-        <td>
+        <td data-title="<%= t('activeldap.attributes.device.puavoHostname')%>"><%= device.cn %></td>
+        <td data-title="<%= t('link.remove')%>"><%= check_box_tag "remove_device_permission[]", device.dn %></td>
+        <td data-title="<%= t('actions')%>" class="table-actions">
           <%= link_to edit_device_path(@school, device), :class => "btn" do %>
             <i class="icon-pencil"></i> <%= t('link.edit') %>
           <% end %>
