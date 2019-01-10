@@ -29,10 +29,12 @@
 <% end %>
 </table>
 
-<% content_for :right do %>
-<div>
-  <%= link_to new_ldap_service_path, class: 'btn' do%>
-   <i class="icon-plus"></i> <%= t('link.new_ldap_service')%>
-  <% end %>
-</div>
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to new_ldap_service_path, class: 'btn' do%>
+     <i class="icon-plus"></i> <%= t('link.new_ldap_service')%>
+    <% end %>
+  </li>
+</ul>
 <% end %>

@@ -115,19 +115,17 @@
 
 <% end %>
 
-<% content_for :right do %>
-<ul class="sub-tools">
+<% content_for :tools do %>
+<ul>
   <li>
     <%= link_to edit_group_path(@school, @group), class: 'btn' do %>
       <i class="icon-pencil"></i><%= t('link.edit') %>
     <% end %>
   </li>
 
-  <li class="tool">
-    <span class="btn">
-        <i class="icon-collapse"></i> <%=t('link.more')%>
-    </span>
-    <ul>
+  <li class="haveDropdown">
+    <span class="btn"><i class="icon-collapse"></i> <%= t('link.more') %></span>
+    <ul class="dropdown">
       <li>
         <%= link_to new_group_path(@school) do %>
           <i class="icon-plus"></i><%= t('link.new_group') %>

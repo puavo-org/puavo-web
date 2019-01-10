@@ -19,6 +19,8 @@ $baseOrangeGradient: rgb(245, 149, 69);
 
 $baseBoxShadowBorderColor: rgb(34, 34, 34);
 
+$toolsContainerBackground: rgb(227, 173, 114);
+
 $buttonBg: rgb(245, 245, 245);
 $buttonGradientBg: rgb(220, 220, 220);
 $buttonNormalColor: rgb(51, 51, 51);
@@ -924,95 +926,88 @@ TOOLBOXES
 ====================================================================================================
 */
 
+/* The main container for tool buttons and tool dropdown menus */
 .tools-container {
-  float: right;
-  margin-bottom: 2%;
-  background: #fff;
-  display: block;
+  background: $toolsContainerBackground;
+  margin: 0 0 20px 0;
+  padding: 0;
+}
+
+/* The buttons are in a list */
+.tools-container > ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;  /* right align */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tools-container > ul > li {
+  margin: 5px;
+  padding: 1px;
+}
+
+.tools-container .btn {
+  padding: 7px 10px;
 }
 
 @media #{$screen-breakpoint-one} {
-  .tools-container {
-    float: none;
+  .tools-container > ul {
+    /* There's no way to move the right-opening dropdown menu to open to the left
+       if there's no room with pure CSS, so we have to move everything to left :-( */
+    justify-content: flex-start;
+  }
+
+  .tools-container .btn {
+    padding: 5px 10px;
   }
 }
 
-.tools-container:empty, .tools-container span:empty {
-  display: none;
+.tools-container .haveDropdown {
+  /* The dropdown menu buttons aren't clickable */
+  cursor: default;
 }
 
-.tools-container .tools {
-  float: right;
-  height: 40px;
-  margin: 5px 0 0.2em 1em;
-  padding: 0;
-}
-
-.tools-container .tools .sub-tools {
+/* A tool dropdown menu */
+.tools-container .dropdown {
   list-style: none;
-  margin: 0;
-}
 
-.tools-container .tools > div, .tools-container .tools .sub-tools > li {
-  float: left;
-  margin: 0;
-  padding: 0 0 0 5px;
-  position: relative;
-}
-
-.tools-container .tools .sub-tools > li.tool {
-  padding: 0 1em;
-}
-
-.tools-container .tools .tool ul {
-  list-style: none;
   display: none;
-  right: 1em;
-  padding: 0;
   position: absolute;
-  margin: 0;
+
+  left: auto;
+
+  background: #fff;
+  border: 1px solid #aaa;
+  padding: 5px;
+
+  box-shadow: 0 0 10px rgba(68, 68, 68, 0.8);
+
+  z-index: 2;
 }
 
-.tools-container .tools .tool ul li {
-  padding: 0;
-}
-
-.tools a, .tool span {
+/* Make the dropdown menu visible */
+.tools-container .haveDropdown:hover .dropdown {
+  visibility: visible;
   display: block;
-  height: auto;
-  line-height: 1.25;
-  margin: 0;
-  padding: 10px;
+}
+
+/* Tool dropdown menu entries */
+.tools-container .dropdown li {
+  margin: 1px;
+}
+
+.tools-container .dropdown a {
+  text-decoration: none;
+  display: block;
+  padding: 5px;
+  color: #000;
   white-space: nowrap;
   width: auto;
 }
 
-.tools .tool span:hover {
-  cursor: pointer;
-}
-
-.tools .tool:hover ul {
-  /* Make the submenu visible */
-  display: block;
-}
-
-.tool ul {
-  /* A tool submenu */
-  border: 1px solid #aaa;
-  background: #fff;
-}
-
-.tool ul li {
-  margin: 2px;
-}
-
-.tool a {
-  color: #000;
-  background: #fff;
-  text-decoration: none;
-}
-
-.tool a:hover {
+.tools-container .dropdown a:hover {
   color: #fff;
   background: #c0772f;
 }
@@ -1522,6 +1517,22 @@ GROUPS
 DEVICES
 ====================================================================================================
 */
+
+#addNewDeviceTitle span {
+  /* This is currently the only plain text on the tool bar. Everything else are buttons or form elements,
+     so this gets special treatment. */
+  font-size: 110%;
+  color: #000;
+  padding-right: 5px;
+}
+
+#addNewDeviceTitle select {
+  padding: 5px;
+}
+
+#addNewDeviceTitle option {
+  padding: 5px;
+}
 
 ul.devicePrintersList {
   list-style: none;

@@ -153,47 +153,47 @@
 </table>
 <%= end_box %>
 
-<% content_for :right do %>
-<ul class="sub-tools">
+<% content_for :tools do %>
+<ul>
   <li>
     <%= link_to edit_user_path(@school, @user), class: 'btn' do %>
-    <i class='icon-pencil'></i><%=t('link.edit')%>
+      <i class='icon-pencil'></i><%=t('link.edit')%>
     <% end %>
   </li>
-  <li class="tool">
-    <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
-    <ul>
-    <li>
-      <%= link_to select_school_user_path(@school, @user) do %>
-      <i class='icon-exchange'></i><%=t('.change_school')%>
-      <% end %>
-    </li>
-    <li>
+
+  <li class="haveDropdown">
+    <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
+    <ul class="dropdown">
+      <li>
+        <%= link_to select_school_user_path(@school, @user) do %>
+          <i class='icon-exchange'></i><%= t('.change_school') %>
+        <% end %>
+      </li>
 
     <% unless @user.puavoDoNotDelete %>
     <% if current_user.organisation_owner? %>
     <li class="ownersOnly">
       <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
-      <i class='icon-exchange'></i><%=t('.prevent_removal')%>
+        <i class='icon-exchange'></i><%= t('.prevent_removal') %>
       <% end %>
     </li>
     <% end %>
 
     <li>
-    <% if @user.puavoRemovalRequestTime %>
+      <% if @user.puavoRemovalRequestTime %>
       <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
-      <i class='icon-exchange'></i><%=t('.unmark_for_removal')%>
+        <i class='icon-exchange'></i><%= t('.unmark_for_removal') %>
       <% end %>
-    <% else %>
+      <% else %>
       <%= link_to mark_user_for_deletion_path(@school, @user) do %>
-      <i class='icon-exchange'></i><%=t('.mark_for_removal')%>
+        <i class='icon-exchange'></i><%= t('.mark_for_removal') %>
       <% end %>
-    <% end %>
+      <% end %>
     </li>
 
     <li>
       <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
-      <i class='icon-trash'></i><%=t('link.destroy')%>
+        <i class='icon-trash'></i><%= t('link.destroy') %>
       <% end %>
     </li>
     <% end %>

@@ -191,27 +191,27 @@
 <!-- Mountpoints -->
 <%= render :partial => 'shared/mountpoint', :locals => { :object => @school } %>
 
-<% content_for :right do %>
-<ul class="sub-tools">
+<% content_for :tools do %>
+<ul>
   <li>
     <%= link_to edit_school_path(@school), class: "btn" do %>
-    <i class='icon-pencil'></i> <%=t('link.edit')%>
+      <i class='icon-pencil'></i><%= t('link.edit') %>
     <% end %>
   </li>
 
-  <li class="tool">
+  <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
-    <ul>
+    <ul class="dropdown">
       <% if current_user.organisation_owner? %>
       <li>
-      <%= link_to new_rename_groups_path(@school) do %>
-      <i class='icon-exchange'></i><%=t('link.rename_groups')%>
-      <% end %>
+        <%= link_to new_rename_groups_path(@school) do %>
+          <i class='icon-exchange'></i><%= t('link.rename_groups') %>
+        <% end %>
       </li>
       <% end %>
     <li>
       <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do %>
-      <i class='icon-trash'></i><%=t('link.destroy')%>
+        <i class='icon-trash'></i><%= t('link.destroy') %>
       <% end %>
     </li>
     </ul>

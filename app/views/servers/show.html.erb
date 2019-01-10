@@ -32,19 +32,20 @@
 <%= end_box %>
 <% end %>
 
-<% content_for :right do %>
-<div>
-<%= link_to edit_server_path(@server), class: 'btn' do %>
-  <i class="icon-pencil"></i><%= t('link.edit') %>
-<% end %>
-</div>
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to edit_server_path(@server), class: 'btn' do %>
+      <i class="icon-pencil"></i><%= t('link.edit') %>
+    <% end %>
+  </li>
 
-<% if @server.userCertificate %>
-<div>
-<%= link_to revoke_certificate_server_path(@server),  data: { confirm: t('general_confirm') }, method: :delete, class: 'btn btn-danger' do %>
-  <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
+  <% if @server.userCertificate %>
+  <li>
+    <%= link_to revoke_certificate_server_path(@server),  data: { confirm: t('general_confirm') }, method: :delete, class: 'btn btn-danger' do %>
+      <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
+    <% end %>
+  </li>
+</ul>
 <% end %>
-</div>
-<% end %>
-
 <% end %>

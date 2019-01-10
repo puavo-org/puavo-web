@@ -46,15 +46,18 @@
 <% end %>
 </table>
 
-<% content_for :right do %>
-<div>
-  <%= link_to new_group_path(@school), class: 'btn' do%>
-  <i class='icon-plus'></i><%= t('link.new_group') %>
-  <% end %>
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to new_group_path(@school), class: 'btn' do %>
+      <i class='icon-plus'></i><%= t('link.new_group') %>
+    <% end %>
+  </li>
 
-  <br>
-  <%= link_to find_groupless_users_path(@school), class: 'btn' do%>
-  <i class='icon-search'></i><%= t('link.find_groupless_users') %>
-  <% end %>
-</div>
+  <li>
+    <%= link_to find_groupless_users_path(@school), class: 'btn' do %>
+      <i class='icon-search'></i><%= t('link.find_groupless_users') %>
+    <% end %>
+  </li>
+</ul>
 <% end %>
