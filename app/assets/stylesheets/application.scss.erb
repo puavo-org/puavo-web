@@ -57,6 +57,7 @@ $genericLinkFocusForeground: #000;
 $genericLinkFocusBackground: none;
 
 $mainWrapBackground: rgb(227, 227, 217);
+$mainWrapBorder: #3e3e2d;
 
 $mainContentBackground: white;
 
@@ -115,6 +116,13 @@ $buttonBorderColor2: rgba(0, 0, 0, 0.25);
 $buttonBorderHexColor: #e6e6e6;
 $buttonBorderHexColor2: #bfbfbf;
 
+$buttonBackground: linear-gradient($buttonBg 0%, $buttonGradientBg 100%);
+$buttonBoxShadow1: rgba(255, 255, 255, 0.2);
+$buttonBoxShadow2: rgba(0, 0, 0, 0.05);
+$buttonDangerBackground: linear-gradient($buttonDangerBgImage, $buttonDangerGradientBgImage);
+
+$mountPointsHeadingBackground: #ccc;
+
 $errorRed: rgb(231, 6, 0);
 
 $focusColor: rgb(88, 151, 251);
@@ -137,10 +145,40 @@ $formOddRowBackground: none;
 $formEvenRowBackground: #f5f5f5;
 $formButtonRowBackground: #fff;
 
+$formSubmitButtonShadow1: rgba(255, 255, 255, 0.2);
+$formSubmitButtonShadow2: rgba(0, 0, 0, 0.05);
+$formSubmitButtonBackground: linear-gradient(white 0%, #eeeeed 100%);
+$formSubmitButtonHoverBackground: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
+
+$listHeadingBackground: linear-gradient(#a36a2a 35%, #ba722d 60%);
+$listHeadingForeground: #f5f5e8;
+$listHeadingBorder: #000;
+$listOddRowBackground: #ebebeb;
+$listEvenRowBackground: #fafafa;
+$listRowHoverBackground: #f9f7e6;
+$listRowBorder: #c8c8c8;
+$markedForDeletionOddRowBackground: #faa;
+$markedForDeletionEvenRowBackground: #fcc;
+$markedForDeletionRowHoverBackground: #fdd;
+
+$adminGroupsHeaderBorder: #000;   /* used on user edit forms */
+
 $defaultBoxShadowColor: rgba(68, 68, 68, 0.80);
 $searchBoxShadowColor: rgba(68, 68, 68, 0.70);
 
-$mainWrapBorder: #3e3e2d;
+/* TODO: Merge these colors with flash colors? There are too many variables here already. */
+$organisationMissingOwnerBackground: #ffc;
+$organisationMissingOwnerBorder: #ff0;
+
+$groupRenameTableHeaderBackground: #ccc;
+$courseGroupColor: #00f;
+
+$newDeviceTitleForeground: #000;
+
+$hwInfoBorder: #aaa;
+$hwInfoTitleBackground: #eee;
+
+$deletionMarkTimestamp: #f00;
 
 /*
 ====================================================================================================
@@ -1172,11 +1210,12 @@ BUTTONS
 
   white-space: nowrap;
 
-  background: linear-gradient($buttonBg 0%, $buttonGradientBg 100%);
-  border: 1px solid #cccccc;
+  background: $buttonBackground;
+  border-width: 1px;
+  border-style: solid;
   border-color: $buttonBorderColor $buttonBorderColor $buttonBorderColor2;
   border-radius: 3px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 $buttonBoxShadow1, 0 1px 2px $buttonBoxShadow2;
   color: $buttonNormalColor;
 }
 
@@ -1187,7 +1226,7 @@ BUTTONS
 
 .btn-danger {
   color: $buttonDangerColor;
-  background: linear-gradient($buttonDangerBgImage, $buttonDangerGradientBgImage);
+  background: $buttonDangerBackground;
 }
 
 .btn-danger:hover, .btn-danger:focus, .btn-danger:active {
@@ -1233,7 +1272,7 @@ table a {
 
 .mountPoints th {
   text-align: center !important;
-  background: #ccc;
+  background: $mountPointsHeadingBackground;
 }
 
 /*
@@ -1321,15 +1360,13 @@ FORMS
 }
 
 input[type="submit"] {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-  background: none repeat scroll 0 0 #eeeeed;
-  background-image: linear-gradient(white 0%, #eeeeed 100%);
+  box-shadow: inset 0 1px 0 $formSubmitButtonShadow1, 0 1px 2px $formSubmitButtonShadow2;
+  background-image: $formSubmitButtonBackground;
   cursor: pointer;
 }
 
 input[type="submit"]:hover {
-  background: none repeat scroll 0 0 #eee;
-  background-image: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
+  background-image: $formSubmitButtonHoverBackground;
   border: 1px solid $focusColor;
 }
 
@@ -1371,7 +1408,7 @@ input[type="submit"]:hover {
 
 /* Administrative groups checkbox list header */
 .administrativeGroups header {
-  border-bottom: 1px dashed black;
+  border-bottom: 1px dashed $adminGroupsHeaderBorder;
   font-size: 110%;
   margin-bottom: 5px;
   margin-left: 10px;
@@ -1463,49 +1500,49 @@ LISTS OF THINGS (in tables, not ul/ol)
 }
 
 .list th {
-  background: linear-gradient(#a36a2a 35%, #ba722d 60%);
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
-  color: #f5f5e8;
+  background: $listHeadingBackground;
+  color: $listHeadingForeground;
+  border-top: 1px solid $listHeadingBorder;
+  border-bottom: 1px solid $listHeadingBorder;
   padding: 10px;
   font-size: 100%;
 }
 
-.list tr:nth-child(even) {
-  background: #fafafa;
+.list tr:nth-child(odd) {
+  background: $listOddRowBackground;
 }
 
-.list tr:nth-child(odd) {
-  background: #ebebeb;
+.list tr:nth-child(even) {
+  background: $listEvenRowBackground;
 }
 
 .list tr:hover {
-  background: #f9f7e6;
+  background: $listRowHoverBackground;
 }
 
 .list td {
-  border-bottom: 1px solid #c8c8c8;
+  border-bottom: 1px solid $listRowBorder;
 }
 
 /* Alternate colors for the "marked for deletion" users table */
 .marked_for_deletion_users_list tr:nth-child(even) {
-  background-color: #fcc;
+  background-color: $markedForDeletionEvenRowBackground;
 }
 
 .marked_for_deletion_users_list tr:nth-child(odd) {
-  background-color: #faa;
+  background-color: $markedForDeletionOddRowBackground;
 }
 
 .marked_for_deletion_users_list tr:hover {
-  background: #fdd;
+  background: $markedForDeletionRowHoverBackground;
 }
 
 .marked_for_deletion_group:nth-child(even) {
-  background-color: #fcc !important;
+  background-color: $markedForDeletionEvenRowBackground !important;
 }
 
 .marked_for_deletion_group:nth-child(odd) {
-  background-color: #faa !important;
+  background-color: $markedForDeletionOddRowBackground !important;
 }
 
 .list .form {
@@ -1578,9 +1615,9 @@ ORGANISATIONS
 
 /* The "missing owners" warning at the top of organisation owners page */
 .missingOwners {
-  border: 2px solid #ff0;
+  border: 2px solid $organisationMissingOwnerBorder;
   padding: 10px 10px 0 10px;
-  background: #ffc;
+  background: $organisationMissingOwnerBackground;
   margin: 20px;
 }
 
@@ -1616,12 +1653,12 @@ GROUPS
 
 .groupRenameTable th {
   text-align: left !important;
-  background: #ccc;
+  background: $groupRenameTableHeaderBackground;
 }
 
 /* Course groups */
 .courseGroupType, .courseWarning {
-  color: #00f;
+  color: $courseGroupColor;
 }
 
 /*
@@ -1634,7 +1671,7 @@ DEVICES
   /* This is currently the only plain text on the tool bar. Everything else are buttons or form elements,
      so this gets special treatment. */
   font-size: 110%;
-  color: #000;
+  color: $newDeviceTitleForeground;
   padding-right: 5px;
 }
 
@@ -1666,13 +1703,13 @@ Hardware info page
 }
 
 .hwInfoTable {
-  border: 2px solid #aaa;
+  border: 2px solid $hwInfoBorder;
   border-collapse: collapse;
   width: 100%;
 }
 
 .hwInfoTable th {
-  border: 1px solid #aaa;
+  border: 1px solid $hwInfoBorder;
   padding: 7px;
   text-align: right;
   width: 150px;
@@ -1681,16 +1718,16 @@ Hardware info page
 .hwInfoTable .main {
   text-align: center;
   vertical-align: middle;
-  background: #eee;
+  background: $hwInfoTitleBackground;
 }
 
 .hwInfoTable td {
-  border: 1px solid #aaa;
+  border: 1px solid $hwInfoBorder;
   padding: 7px;
 }
 
 .hwInfoTable .sectionEnd {
-  border-bottom: 2px solid #aaa;
+  border-bottom: 2px solid $hwInfoBorder;
 }
 
 /*
@@ -1715,8 +1752,9 @@ USERS
   margin: 0 0 5px;
 }
 
+/* The deletion timestamp on user "show" pages */
 .marked_for_deletion {
-  color: red;
+  color: $deletionMarkTimestamp;
 }
 
 /*
