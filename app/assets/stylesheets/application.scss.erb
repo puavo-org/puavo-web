@@ -27,8 +27,14 @@ $topmenuNavDropdownSeparators: #ccc;
 
 $topmenuNavDropdownBackground: $baseOrangeGradient;
 
+$searchFieldBackgroundColor: #fff;
+$searchResultsBackground: #fff;
+$searchResultsBorder: #cccaaa;
+$searchResultsSeparatorLine: #000;
+
 $loggedUsernameForeground: #000;
 
+/* Tab bars */
 $firstLevelTabForeground: #000;
 $firstLevelTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
 $firstLevelTabHoverForeground: #000;
@@ -42,6 +48,7 @@ $secondLevelTabHoverForeground: #4a4d4a;
 $secondLevelTabHoverBackground: white;
 $secondLevelTabActiveForeground: rgb(255, 255, 240);
 
+/* Page */
 $genericLinkForeground: #13243f;
 $genericLinkBackground: none;
 $genericLinkHoverForeground: #352608;
@@ -55,7 +62,40 @@ $mainContentBackground: white;
 
 $baseFont: rgb(27, 27, 27);
 
+$flashSuccessBackground: #e6efc2;
+$flashSuccessForeground: #264409;
+$flashSuccessBorder: #c6d880;
+$flashNoticeBackground: #86b410;
+$flashNoticeForeground: default;
+$flashNoticeBorder: #56340e;
+$flashAlertBackground: #a00;
+$flashAlertForeground: #fff;
+$flashAlertBorder: #f00;
+
 $toolsContainerBackground: rgb(227, 173, 114);
+$toolsDropdownBackground: #fff;
+$toolsDropdownBorder: #aaa;
+$toolsContainerLinkForeground: #000;
+$toolsContainerLinkHoverForeground: #fff;
+$toolsContainerLinkHoverBackground: #c0772f;
+
+$contentBoxHeaderBackground: linear-gradient(#ba722d, #a36a2a);
+$contentBoxHeaderForeground: #fff;
+$contentBoxBorder: #000;
+$contentBoxContentsBackground: #f0f0f0;
+$contentBoxTableOddRowBackground: #f0f0f0;
+$contentBoxTableEvenRowBackground: #e0e0e0;
+$contentBoxContentsHeaderForeground: #000;
+$contentBoxMultilineItemBorder: #ccc;
+$contentBoxTableHeadingBackground: #ccc;
+
+$missingData: #f00;
+$ownersOnlyBorder: #f00;
+
+$puavoConfOddRow: #ddd;
+$puavoConfEvenRow: #fff;
+
+$importantBasicInfo: #f00;    /* notifications about locked users, etc. */
 
 $buttonBg: rgb(245, 245, 245);
 $buttonGradientBg: rgb(220, 220, 220);
@@ -743,10 +783,9 @@ SEARCH FIELDS
 
 /* The search box itself */
 #search {
+  background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 98% center $searchFieldBackgroundColor;
   margin: 4px;
   z-index: 1;
-  background: url("<%= image_path('magnifier.png')%>") no-repeat scroll 98% center #FFFFFF;
-  background-repeat: no-repeat;
 }
 
 .loading {
@@ -754,7 +793,7 @@ SEARCH FIELDS
     The JavaScript code doing the live search adds this class to the search box when search
     is in progress, then removes it afterwards.
   */
-  background: url("<%= image_path('ajax-loader.gif')%>") no-repeat scroll 98% 4px #FFFFFF !important;
+  background: url("<%= image_path('ajax-loader.gif') %>") no-repeat scroll 98% 4px $searchFieldBackgroundColor !important;
 
   /*
     FIXME: Unfortunately this class is also added to the user search box in the group members page,
@@ -766,8 +805,8 @@ SEARCH FIELDS
 
 /* Container for the top bar search results */
 #jquery-live-search {
-  background: #fff;
-  border: 1px solid #cccaaa;
+  background: $searchResultsBackground;
+  border: 1px solid $searchResultsBorder;
   border-width: 0 1px 1px 1px;
   margin: 0 1em 0 0;
   max-height: 350px;
@@ -776,7 +815,7 @@ SEARCH FIELDS
   position: absolute;
   width: auto;
   z-index: 9999;
-  box-shadow: 5px 5px 5px #{$searchBoxShadowColor};
+  box-shadow: 5px 5px 5px $searchBoxShadowColor;
 }
 
 .search_result table {
@@ -811,7 +850,7 @@ fieldset.search_result {
   fieldset.search_result {
     margin: 2px;
     padding: 2px;
-    border-top: 2px solid #000;
+    border-top: 2px solid $searchResultsSeparatorLine;
     border-left: none;
     border-right: none;
     border-bottom: none;
@@ -866,18 +905,18 @@ COMMON CONTENT ELEMENTS
 }
 
 .content-box-new header {
-  background: linear-gradient(#ba722d, #a36a2a);
-  color: #fff;
+  background: $contentBoxHeaderBackground;
+  color: $contentBoxHeaderForeground;
   padding: 5px 10px;
   margin: 0;
   font-size: 130%;
   border-radius: 5px 5px 0 0;
-  border-bottom: 1px dotted #000;
+  border-bottom: 1px dotted $contentBoxBorder;
 }
 
 .content-box-new .contents {
   padding: 5px;
-  background: #f0f0f0;
+  background: $contentBoxContentsBackground;
   border-radius: 0 0 5px 5px;
 }
 
@@ -886,23 +925,23 @@ COMMON CONTENT ELEMENTS
 }
 
 .content-box-new tr:nth-child(odd) {
-  background: #f0f0f0;
+  background: $contentBoxTableOddRowBackground;
 }
 
 .content-box-new tr:nth-child(even) {
-  background: #e0e0e0;
+  background: $contentBoxTableEvenRowBackground;
 }
 
 .content-box-new h3 {
   margin: 5px 0 10px 0;
   padding: 0 5px;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid $contentBoxContentsHeaderForeground;
   font-weight: bold;
 }
 
 /* Table-ish emulation */
 .multilineItem {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $contentBoxMultilineItemBorder;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
@@ -917,9 +956,10 @@ COMMON CONTENT ELEMENTS
   margin-left: 20px;
 }
 
-/* Heading row/column of tables. Can't use TH only, as it's usage varies. */
+/* Heading row/column of tables used in some content boxes. Can't use TH only,
+   as it's usage varies. */
 .tableHeading th {
-  background: #ccc;
+  background: $contentBoxTableHeadingBackground;
 }
 
 .noWrap {
@@ -939,21 +979,21 @@ COMMON CONTENT ELEMENTS
 
 /* A generic missing/unset information indicator for data that isn't always required but really should be set */
 .missingData {
-  color: #f00;
+  color: $missingData;
 }
 
 /* Buttons and areas that are visible to owners only */
 .ownersOnly {
-  border: 1px dashed #f00;
+  border: 1px dashed $ownersOnlyBorder;
 }
 
 /* Puavo-conf tables in various places */
 .puavoConf tr:nth-child(odd) {
-  background: #ddd;
+  background: $puavoConfOddRow;
 }
 
 .puavoConf tr:nth-child(even) {
-  background: #fff;
+  background: $puavoConfEvenRow;
 }
 
 /* Basic user/device information block */
@@ -970,7 +1010,7 @@ COMMON CONTENT ELEMENTS
 }
 
 .basic-info .notice_text {
-  color: red;
+  color: $importantBasicInfo;
 }
 
 /* Images on school, user, server and device pages */
@@ -1047,11 +1087,11 @@ TOOLBOXES
      This width is approximately the width of the parent button. */
   min-width: 130px;
 
-  background: #fff;
-  border: 1px solid #aaa;
+  background: $toolsDropdownBackground;
+  border: 1px solid $toolsDropdownBorder;
   padding: 5px;
 
-  box-shadow: 0 0 10px #{$defaultBoxShadowColor};
+  box-shadow: 0 0 10px $defaultBoxShadowColor;
 
   z-index: 2;
 }
@@ -1071,14 +1111,14 @@ TOOLBOXES
   text-decoration: none;
   display: block;
   padding: 5px;
-  color: #000;
+  color: $toolsContainerLinkForeground;
   white-space: nowrap;
   width: auto;
 }
 
 .tools-container .dropdown a:hover {
-  color: #fff;
-  background: #c0772f;
+  color: $toolsContainerLinkHoverForeground;
+  background: $toolsContainerLinkHoverBackground;
 }
 
 /*
@@ -1098,20 +1138,21 @@ FLASH MESSAGES AND OTHER WARNING/ERROR BOXES
 /* TODO: What's the difference between message_success and message_notice? Merge them. */
 
 .message_success {
-  background: #e6efc2;
-  color: #264409;
-  border: 1px solid #c6d880;
+  background: $flashSuccessBackground;
+  color: $flashSuccessForeground;
+  border: 1px solid $flashSuccessBorder;
 }
 
 .message_notice {
-  background: #86b410;
-  border: 1px solid #56340e;
+  background: $flashNoticeBackground;
+  color: $flashNoticeForeground;
+  border: 1px solid $flashNoticeBorder;
 }
 
 .message_alert {
-  background: #a00;
-  border: 1px solid #f00;
-  color: #fff;
+  background: $flashAlertBackground;
+  color: $flashAlertForeground;
+  border: 1px solid $flashAlertBorder;
 }
 
 /*
