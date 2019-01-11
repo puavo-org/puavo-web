@@ -24,6 +24,7 @@
   <% end %>
 </table>
 
+<% unless @users.empty? %>
 <% content_for :tools do %>
 <ul>
   <li>
@@ -32,6 +33,7 @@
     <% end %>
   </li>
 </ul>
+<% end %>
 <% end %>
 
 <% end %>
