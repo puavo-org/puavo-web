@@ -180,6 +180,16 @@ $hwInfoTitleBackground: #eee;
 
 $deletionMarkTimestamp: #f00;
 
+$usernameListTableBorder: #ccc;
+$noUsernameListsBackground: #cfc;
+$noUsernameListsForeground: #000;
+$noUsernameListsBorder: #0f0;
+
+$passwordFormTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
+$passwordFormTabForeground: #000;
+$passwordFormTabHoverBackground: linear-gradient($baseBrown, $baseBrownGradient);
+$passwordFormTabHoverForeground: #fff;
+
 /*
 ====================================================================================================
 MEDIA QUERIES
@@ -1773,7 +1783,7 @@ adjust the styles better with media queries. */
 
   padding-bottom: 15px;
   margin-bottom: 15px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $usernameListTableBorder;
 }
 
 .userListTable:last-of-type {
@@ -1848,8 +1858,9 @@ adjust the styles better with media queries. */
   width: 100%;
   margin: 0;
   padding: 20px;
-  border: 2px solid #0f0;
-  background: #cfc;
+  border: 2px solid $noUsernameListsBorder;
+  background: $noUsernameListsBackground;
+  color: $noUsernameListsForeground;
   text-align: center;
   font-size: 120%;
 }
@@ -1861,7 +1872,7 @@ adjust the styles better with media queries. */
   }
 
   .userListBox {
-    border: 1px solid #ccc;   /* does wonders for visibility */
+    border: 1px solid $usernameListTableBorder;   /* does wonders for visibility */
     max-height: 250px;
     width: 66%;   /* leave room for scrolling the page */
   }
@@ -1916,14 +1927,14 @@ PASSWORD CHANGING AND RESETTING FORMS
 }
 
 .password_buttons span {
-  background: linear-gradient($baseOrange, $baseOrangeGradient);
+  background: $passwordFormTabBackground;
   border: 1px solid transparent;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
 }
 
 .password_buttons span:hover {
-  background: linear-gradient($baseBrown, $baseBrownGradient);
+  background: $passwordFormTabHoverBackground;
 }
 
 .password_buttons span.active {
@@ -1931,11 +1942,11 @@ PASSWORD CHANGING AND RESETTING FORMS
 }
 
 .password_buttons span a {
-  color: #000;
+  color: $passwordFormTabForeground;
 }
 
 .password_buttons span a:hover, .password_buttons span.active a {
-  color: #fff;
+  color: $passwordFormTabHoverForeground;
 }
 
 .login_content h1 {
