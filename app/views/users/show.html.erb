@@ -174,7 +174,7 @@
     <% if current_user.organisation_owner? %>
     <li class="ownersOnly">
       <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
-        <i class='icon-exchange'></i><%= t('.prevent_removal') %>
+        <i class='icon-block'></i><%= t('.prevent_removal') %>
       <% end %>
     </li>
     <% end %>
@@ -182,11 +182,11 @@
     <li>
       <% if @user.puavoRemovalRequestTime %>
       <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
-        <i class='icon-exchange'></i><%= t('.unmark_for_removal') %>
+        <i class='icon-flag-empty'></i><%= t('.unmark_for_removal') %>
       <% end %>
       <% else %>
       <%= link_to mark_user_for_deletion_path(@school, @user) do %>
-        <i class='icon-exchange'></i><%= t('.mark_for_removal') %>
+        <i class='icon-flag'></i><%= t('.mark_for_removal') %>
       <% end %>
       <% end %>
     </li>
