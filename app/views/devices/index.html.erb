@@ -23,8 +23,8 @@
     <td data-title="<%= t('activeldap.attributes.device.puavoDeviceManufacturer') %>" title="<%= h device.puavoDeviceModel %>"><%=h device.puavoDeviceManufacturer %></td>
     <td data-title="<%= t('activeldap.attributes.device.serialNumber') %>"><%= h device.puavoDeviceModel %></td>
     <td data-title="<%= t('activeldap.attributes.device.serialNumber') %>"><%= h device.serialNumber %></td>
+    <td data-title="<%= t('activeldap.attributes.device.macAddress') %>"><%= (Array(device.macAddress || []).join(', <wbr>')).html_safe %></td>
     <td data-title="<%= t('activeldap.attributes.device.puavoDeviceImage') %>"><%= ((device.puavoDeviceImage || '').split('-').join('-<wbr>')).html_safe %></td>
-    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceImage') %>"><%= h device.puavoDeviceImage %></td>
     <td data-title="<%= t('actions') %>" class="table-actions">
       <%= link_to edit_device_path(@school, device), class: "btn" do %>
         <i class="icon-pencil"></i> <%= t('link.edit') %>
