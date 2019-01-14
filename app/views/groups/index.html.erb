@@ -36,8 +36,7 @@
       <%= link_to edit_group_path(@school, group), class: "btn" do%>
         <i class='icon-pencil'></i><%= t('link.edit') %>
       <% end %>
-    </td>
-    <td class="table-actions">
+
       <%= link_to group_path(@school, group), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do%>
         <i class='icon-trash'></i><%= t('link.destroy')%>
       <% end %>

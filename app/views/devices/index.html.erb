@@ -32,8 +32,7 @@
       <%= link_to edit_device_path(@school, device), class: "btn" do %>
       <i class="icon-pencil"></i> <%= t('link.edit') %>
       <% end %>
-    </td>
-    <td class="table-actions">
+
       <%= link_to device_path(@school, device), data: { confirm: t('destroy_confirm', object_name: device.puavoHostname) }, method: :delete, class: "btn btn-danger" do%>
         <i class="icon-trash"></i> <%= t('link.destroy') %>
       <% end %>
