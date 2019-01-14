@@ -1,32 +1,35 @@
 <!-- shared/_main_information starts -->
-<table class="basic-info">
-  <tr>
-    <td>
-      <div>
-        <% path = device.class == Server ? image_server_path(device) : image_device_path(@school, device) %>
-          <%= image_tag( device.jpegPhoto.nil? ? "computer.png" : path, class: "image" ) %>
-      </div>
-    </td>
-    <td>
-      <h1><%= h device.puavoHostname %></h1>
-      <% if controller_name == "devices" %>
-      <p><%= label device.class.to_s.downcase, "puavoDeviceType" %><br />
-      <%= Puavo::CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %>
-      </p>
-      <% end %>
-      <p><%= label device.class.to_s.downcase, "puavoTag" %><br />
-      <%= h device.puavoTag %>
-      </p>
-      <p><%= label device.class.to_s.downcase, "puavoConf" %><br />
-      <%= render :partial => 'shared/puavoconf',
-                 :locals  => { :object => device.puavoConf } %>
-      </p>
-      <% unless device.classes.include?('puavoPrinter') ||  device.classes.include?('puavoOtherDevice') %>
-      <p><%= label device.class.to_s.downcase, "puavoDeviceStatus" %><br />
-      <%= h device.puavoDeviceStatus %>
-      </p>
-      <% end %>
-      </td>
-    </tr>
-</table>
+<div class="basicInfo">
+  <div class="basicInfoImage">
+    <% path = device.class == Server ? image_server_path(device) : image_device_path(@school, device) %>
+    <%= image_tag( device.jpegPhoto.nil? ? "computer.png" : path, class: "image" ) %>
+  </div>
+
+  <div class="basicInfoDetails">
+    <h1><%= h device.puavoHostname %></h1>
+
+    <% if controller_name == "devices" %>
+    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDeviceType') %></p>
+    <p class="infoValue"><%= Puavo::CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></p>
+    <% end %>
+
+    <% unless device.puavoTag.empty? %>
+    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoTag') %></p>
+    <p class="infoValue"><%= h device.puavoTag %></p>
+    <% end %>
+
+    <% unless device.puavoConf.nil? || device.puavoConf.empty? %>
+    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoConf') %></p>
+    <%= render :partial => 'shared/puavoconf',
+               :locals  => { :object => device.puavoConf } %>
+    <% end %>
+
+    <% unless device.classes.include?('puavoPrinter') ||  device.classes.include?('puavoOtherDevice') %>
+    <% unless device.puavoDeviceStatus.nil? %>
+    <p class="infoTitle"><%= t('activeldap.attributes.device.puavoDeviceStatus') %></p>
+    <p class="infoValue"><%= h device.puavoDeviceStatus %></p>
+    <% end %>
+    <% end %>
+  </div>
+</div>
 <!-- shared/_main_information ends -->

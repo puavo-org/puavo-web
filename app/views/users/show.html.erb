@@ -1,60 +1,54 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), @user.displayName %>
 
-<table class="basic-info">
-  <tr>
-    <td>
-      <%= image_tag(
-            default_image_or_user_image_path(
-              image_user_path(Array(@user.school).first.id, @user),
-              @user ),
-            class: "image" ) %>
-    </td>
-    <td>
-      <h1><%=h @user.displayName %></h1>
-          <% if @user.puavoLocked == true %>
-            <p class="notice_text">
-                  <%= t('.user_is_locked') %>
-            </p>
-          <% end %>
+<div class="basicInfo">
+  <div class="basicInfoImage">
+    <%= image_tag(default_image_or_user_image_path(
+                  image_user_path(Array(@user.school).first.id, @user),
+                  @user), class: 'image') %>
+  </div>
 
-          <% unless @user.puavoRemovalRequestTime.nil? %>
-            <p class="notice_text"><%= t('.user_is_marked_for_deletion') %></p>
-          <% end %>
+  <div class="basicInfoDetails">
+    <h1><%= h @user.displayName %></h1>
+    <% hack_blank = false %>
 
-          <% if @user.puavoDoNotDelete %>
-            <p class="notice_text"><%= t('.user_deletion_prevented') %></p>
-          <% end %>
+    <% if @user.puavoLocked == true %>
+    <p class="infoNotice"><%= t('.user_is_locked') %></p>
+    <% hack_blank = true %>
+    <% end %>
 
-      <p>
-        <%= label "user", 'uid' %><br />
-        <%=h @user.uid %>
-      </p>
-      <p>
-      <% if new_group_management?(@school) %>
-        <%= label "user", 'puavoEduPersonAffiliation' %><br />
-      <% else %>
-        <%= label "user", 'puavoEduPersonAffiliationDeprecated' %><br />
-      <% end %>
-      <%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(", ") %>
-      </p>
+    <% unless @user.puavoRemovalRequestTime.nil? %>
+    <p class="infoNotice"><%= t('.user_is_marked_for_deletion') %></p>
+    <% hack_blank = true %>
+    <% end %>
 
-      <% if new_group_management?(@school) && @user.puavoEduPersonAffiliation.include?("student") %>
-        <% if @user.puavoEduPersonAffiliation.include?("student") %>
-        <p>
-          <%= label "user", 'teaching_group' %><br />
-          <%=h @user.teaching_group["name"] %>
-        </p>
-        <% end %>
-      <% end %>
-      <% unless new_group_management?(@school) %>
-      <p>
-      <%= label "user", 'roles' %><br />
-      <%=h @user.roles.map{ |r| r.displayName }.join(", ") %>
-      </p>
-      <% end %>
-    </td>
-  </tr>
-</table>
+    <% if @user.puavoDoNotDelete %>
+    <p class="infoNotice"><%= t('.user_deletion_prevented') %></p>
+    <% hack_blank = true %>
+    <% end %>
+
+    <p class="infoTitle"><%= t('activeldap.attributes.user.uid') %></p>
+    <p class="infoValue"><%= h @user.uid %></p>
+
+    <% if new_group_management?(@school) %>
+    <p class="infoTitle"><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></p>
+    <% else %>
+    <p class="infoTitle"><%= t('activeldap.attributes.user.puavoEduPersonAffiliationDeprecated') %></p>
+    <% end %>
+    <p class="infoValue"><%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(', ') %></p>
+
+    <% if new_group_management?(@school) && @user.puavoEduPersonAffiliation.include?('student') %>
+    <% if @user.puavoEduPersonAffiliation.include?('student') %>
+    <p class="infoTitle"><%= t('activeldap.attributes.user.teaching_group') %></p>
+    <p class="infoValue"><%= @user.teaching_group['name'].nil? ? t('missing_data') : (h @user.teaching_group['name']) %></p>
+    <% end %>
+    <% end %>
+
+    <% unless new_group_management?(@school) %>
+    <p class="infoTitle"><%= t('activeldap.attributes.user.roles') %></p>
+    <p class="infoValue"><%=h @user.roles.map{ |r| r.displayName }.join(", ") %></p>
+    <% end %>
+  </div>
+</div>
 
 <%= start_box t('.contact_information') %>
 <table>

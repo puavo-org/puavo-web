@@ -1045,20 +1045,43 @@ COMMON CONTENT ELEMENTS
 }
 
 /* Basic user/device information block */
-.basic-info td {
-  vertical-align: top;
+.basicInfo {
+  display: flex;
+  margin-bottom: 20px;
 }
 
-.basic-info h1 {
-  border-bottom: none;
+.basicInfoImage {
+  width: 220px;
+  text-align: center;
 }
 
-.basic-info label {
-  font-weight: bold;
+.basicInfoDetails {
+  width: 75%;
+  padding-left: 15px;
 }
 
-.basic-info .notice_text {
+.basicInfoDetails h1 {
+  border: none;
+}
+
+.basicInfoDetails .infoNotice {
   color: $importantBasicInfo;
+  padding-left: 10px;
+}
+
+.basicInfoDetails .infoTitle {
+  font-weight: bold;
+  padding-left: 10px;
+  margin-bottom: 0;
+}
+
+.basicInfoDetails .infoValue {
+  padding-left: 20px;
+}
+
+.basicInfoDetails .puavoConf {
+  margin-top: 5px;
+  margin-left: 25px;
 }
 
 /* Images on school, user, server and device pages */
