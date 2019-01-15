@@ -1198,7 +1198,7 @@ FLASH MESSAGES AND OTHER WARNING/ERROR BOXES
 ====================================================================================================
 */
 
-.message_alert, .message_notice, .message_success {
+.message_alert, .message_notice, .message_success, .message_error {
   font-size: 130%;
   text-align: center;
   padding: 10px;
@@ -1220,7 +1220,8 @@ FLASH MESSAGES AND OTHER WARNING/ERROR BOXES
   border: 1px solid $flashNoticeBorder;
 }
 
-.message_alert {
+/* TODO: Merge alert and error messages */
+.message_alert, .message_error {
   background: $flashAlertBackground;
   color: $flashAlertForeground;
   border: 1px solid $flashAlertBorder;
