@@ -283,4 +283,52 @@ module ApplicationHelper
   def value_or_default(v, default)
     (v.nil? ? default : v).html_safe
   end
+
+  INTEGRATIONS_CACHE = {}
+
+  # Retrieves various third-party system integrations for the specified school
+  # The school ID *MUST* be an integer, not a string!
+  def get_integrations_for_school(school_id)
+    return INTEGRATIONS_CACHE[school_id] if INTEGRATIONS_CACHE.include?(school_id)
+
+    # Load configuration
+    integration_definitions = Puavo::CONFIG.fetch('integration_definitions', {})
+    integration_config = get_integration_configuration
+
+    # Use per-school settings if they're defined, otherwise use global settings
+    if integration_config.include?(school_id)
+      integration_names = integration_config[school_id]
+    elsif integration_config.include?('global')
+      integration_names = integration_config['global']
+    end
+
+    integration_names = "" unless integration_names
+
+    integration_names = integration_names.split(', ')
+
+    # Remove integrations that aren't actually defined
+    integration_names.reject! { |i| !integration_definitions.keys.include?(i) }
+
+    # Convert string IDs to human-readable names
+    integrations = {}
+
+    integration_names.each do |name|
+      definition = integration_definitions[name]
+      type = definition['type']
+
+      integrations[type] ||= []
+      integrations[type] << definition['name']
+    end
+
+    integrations.each do |k, v|
+      v.uniq!
+      v.sort!
+    end
+
+    # The YAML file that defines these integrations cannot be changed without
+    # restarting puavo-web, so we can safely cache these
+    INTEGRATIONS_CACHE[school_id] = integrations
+
+    integrations
+  end
 end
