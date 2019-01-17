@@ -403,6 +403,12 @@ fi:
       count: "Löytyi %{count} ryhmätöntä käyttäjää."
       mark_for_deletion: "Merkitse nämä käyttäjät poistettavaksi"
   schools:
+    integrations:
+      in: "Lähettää dataa Puavoon"
+      out: "Vastaanottaa dataa Puavosta"
+      password: "Salasanojen synkronointi Puavosta"
+      login: "Kirjautuminen Puavon tunnuksilla"
+      other: "Muu integroitu järjestelmä"
     index:
       actions: Toiminnot
       title: Listataan koulut

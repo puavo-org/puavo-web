@@ -1,0 +1,11 @@
+    <ul class="integrations">
+      <% [['in', t('schools.integrations.in') ],
+          ['out', t('schools.integrations.out')],
+          ['login', t('schools.integrations.login')],
+          ['password', t('schools.integrations.password')],
+          ['other', t('schools.integrations.other')]].each do |system| %>
+      <% integrations.fetch(system[0], []).each do |name| %>
+      <li class="<%= system[0] %>" title="<%= system[1] %>"><%= name %></li>
+      <% end %>
+      <% end %>
+    </ul>

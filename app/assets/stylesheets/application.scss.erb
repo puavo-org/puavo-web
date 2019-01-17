@@ -34,6 +34,18 @@ $searchResultsSeparatorLine: #000;
 
 $loggedUsernameForeground: #000;
 
+$integrationsBorder: #ccc;
+$integrationsInBackground: #88f;
+$integrationsInForeground: #fff;
+$integrationsOutBackground: #8f8;
+$integrationsOutForeground: #000;
+$integrationsLoginBackground: #8ff;
+$integrationsLoginForeground: #000;
+$integrationsPasswordBackground: #ff8;
+$integrationsPasswordForeground: #000;
+$integrationsOtherBackground: #f8f;
+$integrationsOtherForeground: #000;
+
 /* Tab bars */
 $firstLevelTabForeground: #000;
 $firstLevelTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
@@ -640,6 +652,95 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     border: none;
     box-shadow: none;
     width: 100%;
+  }
+}
+
+/* External systems integration indicators */
+.integrations {
+  display: flex;
+  flex-flow: wrap;
+
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 5px 0;
+  line-height: 1;
+  cursor: default;
+
+  font-size: 80%;
+
+  li {
+    margin: 2px 5px 2px 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid $integrationsBorder;
+    white-space: nowrap;
+    display: inline;
+  }
+
+  .in {
+    background: $integrationsInBackground;
+    color: $integrationsInForeground;
+  }
+
+  .in:after {
+    content: "\e829";   /* use the puavo-icons font directly */
+    font-family: "puavo-icons";
+    padding-left: 5px;
+  }
+
+  .out {
+    background: $integrationsOutBackground;
+    color: $integrationsOutForeground;
+  }
+
+  .out:before {
+    content: "\e829";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+
+  .login {
+    background: $integrationsLoginBackground;
+    color: $integrationsLoginForeground;
+  }
+
+  .login:before {
+    content: "\e824";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+
+  .password {
+    background: $integrationsPasswordBackground;
+    color: $integrationsPasswordForeground;
+  }
+
+  .password:before {
+    content: "\e81d";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+
+  .other {
+    background: $integrationsOtherBackground;
+    color: $integrationsOtherForeground;
+  }
+
+  .other:before {
+    content: "\e821";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+}
+
+@media #{$screen-breakpoint-one} {
+  .integrations {
+    padding-left: 5px;
+
+    li {
+      margin: 2px 2px 2px 0;
+      padding: 2px 5px;
+    }
   }
 }
 

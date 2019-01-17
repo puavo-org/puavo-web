@@ -100,6 +100,11 @@ I18n.locale = "<%= I18n.locale %>";
     <% if current_organisation? %>
     <% if @school && !@school.id.nil? && controller_name != 'password' %>
     <header id="schoolName"><%= @school.displayName %></header>
+    <%# list_school_integrations(@school.id) unless @school.displayName == 'Administration' %>
+
+    <% unless @school.displayName == 'Administration' %>
+<%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(@school.id.to_i) } %>
+    <% end %>
 
 <%= render :partial => "layouts/menu" %>
     <% end %>
