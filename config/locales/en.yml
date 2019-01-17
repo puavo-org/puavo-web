@@ -436,6 +436,7 @@ en:
     integrations:
       in: "Sends data to Puavo"
       out: "Receives data from Puavo"
+      inout: "Sends data to Puavo and receives data from Puavo"
       password: "Passwords are synchronised from Puavo"
       login: "Login with Puavo account"
       other: "Other integrated system"

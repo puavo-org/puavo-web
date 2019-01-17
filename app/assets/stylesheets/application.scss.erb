@@ -39,6 +39,8 @@ $integrationsInBackground: #88f;
 $integrationsInForeground: #fff;
 $integrationsOutBackground: #8f8;
 $integrationsOutForeground: #000;
+$integrationsInOutBackground: #f88;
+$integrationsInOutForeground: #000;
 $integrationsLoginBackground: #8ff;
 $integrationsLoginForeground: #000;
 $integrationsPasswordBackground: #ff8;
@@ -695,6 +697,17 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 
   .out:before {
     content: "\e829";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+
+  .inout {
+    background: $integrationsInOutBackground;
+    color: $integrationsInOutForeground;
+  }
+
+  .inout:before {
+    content: "\e819";
     font-family: "puavo-icons";
     padding-right: 5px;
   }
