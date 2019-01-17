@@ -464,13 +464,13 @@ en:
     form:
       add_puavo_billing_info: Add a new billing info
   password:
-    gsuite_integration_enabled: "Organisation security policies require that passwords must at least 8 characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
-    six_chars_min: "Organisation security policies require that passwords must be at least 6 characters long."
-    seven_chars_min: "Organisation security policies require that passwords must be at least seven characters long."
-    current_password_too_old: "Due to your organisation security policy, your current password must be changed because it is too old."
+    gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
+    six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
+    seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
+    current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
     edit:
-      title: Change password for other user
-      head: To change the password of another user, fill in your own username and password, and the username and the new password for the user whose password is being changed. You have to have sufficient privileges to change the passwords of other users.
+      title: Change someone else's password
+      head: To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users.
       changing_user: Changing user
       changed_user: Changed user
       password: Password
@@ -478,7 +478,7 @@ en:
     own:
       title: Change your own password
       password: Old password
-      link_other_password: Change password for other user
+      link_other_password: Change someone else's password
     forgot:
       title: Reset your password
       description: Please enter your email address to get reset instructions
@@ -582,11 +582,11 @@ en:
         blank: "%{attribute} can't be blank"
         invalid: "%{attribute} is invalid"
         confirmation: "%{attribute} doesn't match the confirmation"
-        gsuite_password_too_short: "Organisation security policies require that passwords must be at least 8 characters long."
-        gsuite_password_whitespace: "Organisation security policies require that passwords cannot start or end in whitespace."
-        gsuite_password_ascii_only: "Organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
-        sixcharsmin_password_too_short: "Organisation security policies require that passwords are at least 6 characters long."
-        sevencharsmin_password_too_short: "Organisation security policies require that passwords are at least seven characters long."
+        gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
+        gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
+        gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
+        sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
+        sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
         image_failed: "Failed to save the image"
@@ -682,7 +682,7 @@ en:
         roles: Roles
         preferredLanguage: Language
         new_password: New password
-        new_password_confirmation: New password confirmation
+        new_password_confirmation: Confirm new password
         puavoAllowRemoteAccess: Allow remote access
         puavoAllowRemoteAccess_true: "Yes"
         puavoAllowRemoteAccess_false: "No"

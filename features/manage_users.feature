@@ -43,7 +43,7 @@ Feature: Manage users
     | user[mail][]              | ben.mabey@example.com |
     | user[telephoneNumber][]   | +35814123123123       |
     | user[new_password]        | secretpw              |
-    | New password confirmation | secretpw              |
+    | Confirm new password      | secretpw              |
     | Personnel Number          | 556677                |
     | SSH public key            | ssh-rsa Zm9vYmFy      |   # the key is "foobar" in base64
 # FIXME test mail and telephoneNumber for more values
@@ -109,7 +109,7 @@ Feature: Manage users
     | Given name                | Ben                   |
     | Username                  | ben                   |
     | user[new_password]        | secretpw              |
-    | New password confirmation | secretpw              |
+    | Confirm new password      | secretpw              |
     And I check "Student"
     And I check "Class 4"
     And I press "Create"
@@ -136,7 +136,7 @@ Feature: Manage users
     | Given name                | Ben               |
     | Username                  | ben               |
     | user[new_password]        | secretpw          |
-    | New password confirmation | test confirmation |
+    | Confirm new password      | test confirmation |
     And I check "Student"
     And I check "Class 4"
     And I press "Create"
@@ -289,7 +289,7 @@ Feature: Manage users
     | user[mail][]              | ben.mabey@example.com |
     | user[telephoneNumber][]   | +35814123123123       |
     | user[new_password]        | secretpw              |
-    | New password confirmation | secretpw              |
+    | Confirm new password      | secretpw              |
     And I check "Student"
     And I check "Class 4"
     And I fill in "Username" with "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
