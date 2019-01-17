@@ -67,5 +67,9 @@ module PuavoUsers
 
     config.assets.precompile += ["font/fontello-puavo/css/puavo-icons.css", "devices/index.js"]
 
+    #I18n.enforce_available_locales = false
+    I18n.config.available_locales = [:en, :fi, :sv, :de]
+    config.i18n.default_locale = :en
+
   end
 end

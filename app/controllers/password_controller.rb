@@ -376,7 +376,7 @@ class PasswordController < ApplicationController
     @language = nil
 
     # override
-    if params[:lang] && ['en', 'fi', 'sv'].include?(params[:lang])
+    if params[:lang] && ['en', 'fi', 'sv', 'de'].include?(params[:lang])
       I18n.locale = params[:lang]
       @language = params[:lang]
     end
