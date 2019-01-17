@@ -1,0 +1,50 @@
+# Partial Swedish translations for Puavo. Password and user profile forms only.
+
+sv:
+  link:
+    change_password: "Change password"
+    update: "Update"
+  password:
+    gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
+    six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
+    seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
+    current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
+    edit:
+      title: "Change someone else's password"
+      head: "To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users."
+      changing_user: "Changing user"
+      changed_user: "Changed user"
+      password: "Password"
+      link_own_password: "Change your own password"
+    own:
+      title: "Change your own password"
+      password: "Old password"
+      link_other_password: "Change someone else's password"
+  profiles:
+    edit:
+      title: "My profile (SV)"
+  activeldap:
+    attributes:
+      user:
+        uid: "Username"
+        new_password: "New password"
+        new_password_confirmation: "Confirm new password"
+        mail: "Email"
+        telephoneNumber: "Telephone number"
+        jpegPhoto: "Image"
+        puavoLocale: "Language"
+    errors:
+      messages:
+        gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
+        gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
+        gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
+        sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
+        sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
+  language_fi_FI: "Finnish"
+  language_en_US: "English (United States)"
+  language_sv_FI: "Swedish (Finland)"
+  language_de_DE: "German (Germany)"
+  language_de_CH: "German (Switzerland)"
+  language_fr_CH: "French (Switzerland)"
+  language_ar_SA: "Arabic (Saudi Arabia)"
+  language_default: "Default"
