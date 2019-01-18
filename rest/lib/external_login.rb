@@ -1,3 +1,5 @@
+require 'benchmark'
+
 # ExternalLoginError means some error occurred on our side
 # ExternalLoginConfigError means external logins were badly configured
 # ExternalLoginNotConfigured means external logins are not configured
@@ -499,12 +501,28 @@ module PuavoRest
       @username = nil
     end
 
+    # for now, only benchmark ldap operations, but we may also need
+    # to add a timeout here
+    def ext_ldapop(oplabel, method, *args)
+      result = nil
+      op_time = Benchmark.realtime do
+        result = @ldap.send(method, *args)
+      end
+      @flog.info(nil,
+                 "#{ oplabel } to external ldap took" \
+                   + " #{ sprintf('%.3f', op_time) } seconds")
+
+      return result
+    end
+
     def login(username, password)
       # first check if user exists
       update_ldapuserinfo(username)
 
-      bind_ok = @ldap.bind_as(:filter   => user_ldapfilter(username),
-                              :password => password)
+      bind_ok = ext_ldapop('login/bind_as',
+                           :bind_as,
+                           :filter   => user_ldapfilter(username),
+                           :password => password)
       if !bind_ok then
         raise ExternalLoginWrongCredentials,
               "binding as '#{ username }' to external ldap failed:" \
@@ -526,8 +544,10 @@ module PuavoRest
         raise "LDAP information for user '#{ target_user_username }' has no DN"
       end
 
-      bind_ok = @ldap.bind_as(:filter   => user_ldapfilter(actor_username),
-                              :password => actor_password)
+      bind_ok = ext_ldapop('change_password/bind_as',
+                           :bind_as,
+                           :filter   => user_ldapfilter(actor_username),
+                           :password => actor_password)
       if !bind_ok then
         raise ExternalLoginWrongCredentials,
               "binding as '#{ actor_username }' to external ldap failed:" \
@@ -539,8 +559,10 @@ module PuavoRest
         when 'microsoft-ad'
           change_microsoft_ad_password(target_dn, target_user_password)
         when 'openldap'
-          bind_user = @ldap.search(:filter   => user_ldapfilter(actor_username),
-                                   :password => actor_password)
+          bind_user = ext_ldapop('change_password/search',
+                                 :search,
+                                 :filter   => user_ldapfilter(actor_username),
+                                 :password => actor_password)
           if !bind_user || bind_user.count != 1 then
             raise ExternalLoginPasswordChangeError,
                   'could not find user in openldap to bind with'
@@ -577,7 +599,9 @@ module PuavoRest
     def user_exists?(external_id)
       user_filter = Net::LDAP::Filter.eq(@external_id_field, external_id)
 
-      ldap_entries = @ldap.search(:filter => user_filter)
+      ldap_entries = ext_ldapop('user_exists?/search',
+                                :search,
+                                :filter => user_filter)
       if !ldap_entries then
         msg = "ldap search for user '#{ username }' failed: " \
                 + @ldap.get_operation_result.message
@@ -639,8 +663,10 @@ module PuavoRest
       username_sym = @external_username_field.downcase.to_sym
 
       @external_ldap_subtrees.each do |subtree|
-        ldap_entries = @ldap.search(:base   => subtree,
-                                    :filter => user_filter)
+        ldap_entries = ext_ldapop('lookup_all_users/search',
+                                  :search,
+                                  :base   => subtree,
+                                  :filter => user_filter)
         if !ldap_entries then
           msg = "ldap search for all users failed: " \
                   + @ldap.get_operation_result.message
@@ -685,7 +711,10 @@ module PuavoRest
       # ldap operations :-(
       ops = [ [ :replace, :unicodePwd, encoded_password ],
               [ :replace, :unicodePwd, encoded_password ] ]
-      change_ok = @ldap.modify(:dn => target_dn, :operations => ops)
+      change_ok = ext_ldapop('change_microsoft_ad_password/modify',
+                             :modify,
+                             :dn         => target_dn,
+                             :operations => ops)
       if !change_ok then
         raise ExternalLoginPasswordChangeError,
               @ldap.get_operation_result.error_message \
@@ -883,7 +912,9 @@ module PuavoRest
 
       set_ldapuserinfo(nil, nil)
 
-      ldap_entries = @ldap.search(:filter => user_ldapfilter(username))
+      ldap_entries = ext_ldapop('update_ldapuserinfo/search_username',
+                                :search,
+                                :filter => user_ldapfilter(username))
       if !ldap_entries then
         msg = "ldap search for user '#{ username }' failed: " \
                 + @ldap.get_operation_result.message
@@ -900,7 +931,9 @@ module PuavoRest
 
         extid_filter = Net::LDAP::Filter.eq(@external_id_field,
                                             puavouser.external_id)
-        extid_ldap_entries = @ldap.search(:filter => extid_filter)
+        extid_ldap_entries = ext_ldapop('update_ldapuserinfo/search_extid',
+                                        :search,
+                                        :filter => extid_filter)
         if !extid_ldap_entries then
           msg = "ldap search for external_id '#{ puavouser.external_id }'" \
                   + " failed: #{ @ldap.get_operation_result.message }"
