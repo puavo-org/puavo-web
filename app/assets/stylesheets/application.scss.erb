@@ -661,15 +661,14 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 .integrations {
   display: flex;
   flex-flow: wrap;
-
   list-style-type: none;
   margin: 0;
   padding: 0 0 5px 0;
   line-height: 1;
   cursor: default;
-
   font-size: 80%;
 
+  /* Indicator labels or badges, whatever you want to call them */
   li {
     margin: 2px 5px 2px 0;
     padding: 5px 10px;
@@ -684,32 +683,14 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     color: $integrationsInForeground;
   }
 
-  .in:after {
-    content: "\e829";   /* use the puavo-icons font directly */
-    font-family: "puavo-icons";
-    padding-left: 5px;
-  }
-
   .out {
     background: $integrationsOutBackground;
     color: $integrationsOutForeground;
   }
 
-  .out:before {
-    content: "\e829";
-    font-family: "puavo-icons";
-    padding-right: 5px;
-  }
-
   .inout {
     background: $integrationsInOutBackground;
     color: $integrationsInOutForeground;
-  }
-
-  .inout:before {
-    content: "\e819";
-    font-family: "puavo-icons";
-    padding-right: 5px;
   }
 
   .login {
@@ -718,6 +699,7 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   }
 
   .login:before {
+    /* "Abuse" the puavo-icons */
     content: "\e824";
     font-family: "puavo-icons";
     padding-right: 5px;
@@ -743,6 +725,24 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     content: "\e821";
     font-family: "puavo-icons";
     padding-right: 5px;
+  }
+
+  /* Special spans for adding arrows indicating data flow directions */
+  span {
+    font-family: "puavo-icons";
+    padding: 0 5px;
+  }
+
+  span.dirIn:after {
+    content: "\e829";
+  }
+
+  span.dirOut:after {
+    content: "\e829";
+  }
+
+  span.dirInOut:after {
+    content: "\e819";
   }
 }
 
