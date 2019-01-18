@@ -41,7 +41,7 @@ de:
         sixcharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sechs Zeichen lang ist." 
         sevencharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sieben Zeichen lang ist."
   language_fi_FI: "Finnish"
-  language_en_US: "Englisch (United States)"
+  language_en_US: "Englisch (Vereinigte Staaten Amerika)"
   language_sv_FI: "Schwedisch (Finnland)"
   language_de_DE: "Deutsch (Deutschland)"
   language_de_CH: "Deutsch (Schweiz)"
