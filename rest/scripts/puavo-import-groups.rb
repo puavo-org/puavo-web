@@ -47,7 +47,7 @@ when "diff"
     puavo_group = PuavoRest::Group.by_attr(:external_id, group.external_id)
 
     unless puavo_group
-      puts brown("Add new group: #{ group.to_s }")
+      puts brown("Add new group: \"#{group.name}\" (abbreviation: \"#{group.abbreviation}\", external ID: #{group.external_id}, school: \"#{group.school.name}\")")
       next
     end
 
@@ -132,7 +132,7 @@ when "import"
         puts "#{ group.to_s }: no changes"
       end
     else
-      puts "#{ group.to_s }: add group to Puavo"
+      puts "#{group.name}: adding new group (abbreviation: \"#{group.abbreviation}\", external ID: #{group.external_id}, school: \"#{group.school.name}\")"
       PuavoRest::Group.new(:name => group.name,
                            :external_id => group.external_id,
                            :abbreviation => group.abbreviation,
