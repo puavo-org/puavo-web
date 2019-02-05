@@ -83,7 +83,7 @@ when "diff"
     puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
 
     unless puavo_rest_school
-      puts green("Add new school: #{ school.to_s }")
+      puts green("Add new school: #{ school.to_s } (abbreviation \"#{school.abbreviation}\")")
       puts green("  Add the 'teachers' and 'staff' administrative groups")
       next
     end
@@ -149,7 +149,7 @@ when "import"
         puts "#{ school.to_s }: no changes"
       end
     else
-      puts "#{ school.to_s }: add school to Puavo"
+      puts "#{ school.to_s }: add school to Puavo (abbreviation \"#{school.abbreviation}\")"
       puavo_rest_school = PuavoRest::School.new(:name => school.name,
                             :external_id => school.external_id,
                                                 :abbreviation => school.abbreviation)
