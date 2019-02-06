@@ -757,124 +757,96 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   }
 }
 
-/* FIRST LEVEL TABS */
+/* TODO: Make it possible to access second-level tabs from other first-level tabs.
+   Can be done if we play with hover effects, for example. I hate that I have to
+   first load the users list before I can access groups, for example. */
 
+/* First level tab bar */
 .navbar-first-level {
-  clear: both;
-  margin: 5px 0 0px;
+  ul {
+    list-style: none;
+    display: flex;
+    margin: 5px 0 0 0;
+    padding: 0;
+  }
+
+  li {
+    display: inline;
+    margin-left: 3px;
+    border-radius: 4px 4px 0 0;
+    background: $firstLevelTabBackground;
+  }
+
+  li:hover {
+    background: $firstLevelTabHoverBackground;
+  }
+
+  .current_first {
+    background: linear-gradient($baseBrown, $baseBrownGradient);
+    border: 1px solid $baseBoxShadowBorderColor;
+    border-bottom: none;
+    box-shadow: 0 2px 0 $baseBrownGradient;   /* A nasty hack that removes the bottom border */
+  }
+
+  a {
+    display: block;
+    color: $firstLevelTabForeground;
+    font-size: 80%;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.75em 1em;
+    white-space: nowrap;
+  }
+
+  .current_first a, .current_first a:hover {
+    color: $firstLevelTabActiveForeground;
+  }
 }
 
-.navbar-first-level ul {
-  display: inline-block;
-  list-style: none;
-  margin: 0 0 -0.5em 0;
-  padding: 0;
-  text-align: center;
-  width: 100%;
-}
-
-/* LI's set the background, A's set the foreground */
-
-.navbar-first-level li {
-  background: $firstLevelTabBackground;
-  border-radius: 4px 4px 0 0;
-  float: left;
-  margin: 0 3px 0 0;
-  font-size: 80%;
-  font-weight: bold;
-  line-height: 3;
-  text-transform: uppercase;
-}
-
-.navbar-first-level li:hover {
-  background: $firstLevelTabHoverBackground;
-}
-
-.navbar-first-level a {
-  text-decoration: none;
-  white-space: nowrap;
-  display: block;
-  padding: 0 1em;
-  color: $firstLevelTabForeground;
-}
-
-.navbar-first-level a:hover {
-  color: $firstLevelTabHoverForeground;
-}
-
-.navbar-first-level .current_first {
-  background: linear-gradient($baseBrown, $baseBrownGradient);
-  border: 1px solid $baseBoxShadowBorderColor;
-  border-bottom: none;
-}
-
-.current_first a, .current_first a:hover {
-  color: $firstLevelTabActiveForeground;
-}
-
-/* SECOND LEVEL TABS */
-
+/* Second-level tab bar */
 .navbar-second-level {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  font-size: 70%;
-  text-transform: uppercase;
-  background: $secondLevelTabbarBackground;
-  border: 1px solid $baseBoxShadowBorderColor;
-  border-radius: 0 4px 0 0;
-}
+  ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 5px 0 0;
 
-.navbar-second-level ul {
-  margin: 0 0 -1px;
-  padding: 5px 0 0;
-  display: block;
-  list-style: none;
-}
+    background: $secondLevelTabbarBackground;
+    border: 1px solid $baseBoxShadowBorderColor;
+    border-radius: 0 4px 0 0;
+  }
 
-.navbar-second-level ul:after {
-  /* TODO: This appears to be a clearfix -style hack (the LI's are floats), remove it. */
-  clear: both;
-  content: " ";
-  display: block;
-  height: 0;
-  overflow: hidden;
-  visibility: hidden;
-}
+  li {
+    display: inline;
+    margin: 0 0 0 5px;
+    padding: 0;
+  }
 
-.navbar-second-level li {
-  float: left;
-  margin: 0 0 0 5px;
-  padding: 0;
-  position: relative;
-  width: auto;
-}
+  a {
+    display: block;
+    text-align: center;
+    margin: 0;
+    padding: 8px;
+    color: $secondLevelTabForeground;
+    background: $secondLevelTabBackground;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 4px 4px 0 0;
+    border: 1px solid transparent;
+    font-size: 70%;
+    text-transform: uppercase;
+  }
 
-/* Here, A's set both foreground and background, not LI's */
-
-.navbar-second-level a {
-  display: block;
-  text-align: center;
-  margin: 0;
-  padding: 8px;
-  color: $secondLevelTabForeground;
-  background: $secondLevelTabBackground;
-  text-decoration: none;
-  white-space: nowrap;
-  border-radius: 10px 10px 0 0;
-  border: 1px solid transparent;
-}
-
-.navbar-second-level .current_second a, .navbar-second-level a:hover {
-  color: $secondLevelTabHoverForeground;
-  background: $secondLevelTabHoverBackground;
-  border-left: 1px solid $baseBoxShadowBorderColor;
-  border-right: 1px solid $baseBoxShadowBorderColor;
-  border-top: 1px solid $baseBoxShadowBorderColor;
-  border-radius: 4px 4px 0 0;
-}
-
-.navbar-second-level a:hover {
+  .current_second a, a:hover {
+    color: $secondLevelTabHoverForeground;
+    background: $secondLevelTabHoverBackground;
+    border-left: 1px solid $baseBoxShadowBorderColor;
+    border-right: 1px solid $baseBoxShadowBorderColor;
+    border-top: 1px solid $baseBoxShadowBorderColor;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 2px 0 #fff;   /* A nasty hack that removes the bottom border */
+  }
 }
 
 /* Page contents below the tab bar */
@@ -915,25 +887,21 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 }
 
 @media #{$screen-breakpoint-one} {
-  .navbar-first-level {
-    /* It's amazing how nicer everything looks with this even if it's not
-       in "harmony" with the default style. */
-    padding-left: 5px;
+  .navbar-first-level a {
+    padding: 0.7em 1em;
   }
 
   .navbar-second-level {
-    border: none;
-    border-top: 1px solid $baseBoxShadowBorderColor;
-    border-bottom: 1px solid $baseBoxShadowBorderColor;
-    border-radius: 0;
-  }
+    ul {
+      border: none;
+      border-top: 1px solid $baseBoxShadowBorderColor;
+      border-bottom: 1px solid $baseBoxShadowBorderColor;
+      border-radius: 0;
+    }
 
-  .navbar-first-level a {
-    padding: 12px;
-  }
-
-  .navbar-first-level li {
-    line-height: 1;
+    a {
+      padding: 0.6em 0.5em;
+    }
   }
 }
 
