@@ -32,7 +32,7 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
 
   user.external_id = external_id
 
-  puts "Set external_id #{ external_id } to user: #{ user.username }"
+  puts "Set external_id #{ external_id } (#{data[2]} #{data[4]}) to user: #{ user.username }"
 
   user.save!
 end
