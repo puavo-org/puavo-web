@@ -562,7 +562,8 @@ module PuavoRest
           bind_user = ext_ldapop('change_password/search',
                                  :search,
                                  :filter   => user_ldapfilter(actor_username),
-                                 :password => actor_password)
+                                 :password => actor_password,
+                                 :time     => 5)
           if !bind_user || bind_user.count != 1 then
             raise ExternalLoginPasswordChangeError,
                   'could not find user in openldap to bind with'
@@ -601,7 +602,8 @@ module PuavoRest
 
       ldap_entries = ext_ldapop('user_exists?/search',
                                 :search,
-                                :filter => user_filter)
+                                :filter => user_filter,
+                                :time   => 5)
       if !ldap_entries then
         msg = "ldap search for user '#{ username }' failed: " \
                 + @ldap.get_operation_result.message
@@ -666,7 +668,8 @@ module PuavoRest
         ldap_entries = ext_ldapop('lookup_all_users/search',
                                   :search,
                                   :base   => subtree,
-                                  :filter => user_filter)
+                                  :filter => user_filter,
+                                  :time   => 5)
         if !ldap_entries then
           msg = "ldap search for all users failed: " \
                   + @ldap.get_operation_result.message
@@ -914,7 +917,8 @@ module PuavoRest
 
       ldap_entries = ext_ldapop('update_ldapuserinfo/search_username',
                                 :search,
-                                :filter => user_ldapfilter(username))
+                                :filter => user_ldapfilter(username),
+                                :time   => 5)
       if !ldap_entries then
         msg = "ldap search for user '#{ username }' failed: " \
                 + @ldap.get_operation_result.message
@@ -933,7 +937,8 @@ module PuavoRest
                                             puavouser.external_id)
         extid_ldap_entries = ext_ldapop('update_ldapuserinfo/search_extid',
                                         :search,
-                                        :filter => extid_filter)
+                                        :filter => extid_filter,
+                                        :time   => 5)
         if !extid_ldap_entries then
           msg = "ldap search for external_id '#{ puavouser.external_id }'" \
                   + " failed: #{ @ldap.get_operation_result.message }"
