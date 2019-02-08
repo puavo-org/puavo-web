@@ -440,17 +440,23 @@ module PuavoRest
       raise ExternalLoginConfigError, 'ldap server not configured' \
         unless server
 
-      dn_mappings = ldap_config['dn_mappings']
-      raise ExternalLoginConfigError, 'dn_mappings configured wrong' \
-        unless dn_mappings.nil? || dn_mappings.kind_of?(Hash)
+      user_mappings = ldap_config['user_mappings']
+      raise ExternalLoginConfigError, 'user_mappings configured wrong' \
+        unless user_mappings.nil? || user_mappings.kind_of?(Hash)
 
-      @dn_mapping_defaults = (dn_mappings && dn_mappings['defaults']) || {}
-      @dn_mappings         = (dn_mappings && dn_mappings['mappings']) || []
+      @user_mapping_defaults = (user_mappings && user_mappings['defaults']) \
+                                 || {}
+      @user_mappings_by_dn = (user_mappings && user_mappings['by_dn']) || []
+      @user_mappings_by_memberof \
+        = (user_mappings && user_mappings['by_memberof']) || []
 
-      raise ExternalLoginConfigError, 'dn_mappings/mappings is not an array' \
-        unless @dn_mappings.kind_of?(Array)
-      raise ExternalLoginConfigError, 'dn_mappings/defaults is not a hash' \
-        unless @dn_mapping_defaults.kind_of?(Hash)
+      raise ExternalLoginConfigError, 'user_mappings/by_dn is not an array' \
+        unless @user_mappings_by_dn.kind_of?(Array)
+      raise ExternalLoginConfigError, \
+            'user_mappings/by_memberof is not an array' \
+        unless @user_mappings_by_memberof.kind_of?(Array)
+      raise ExternalLoginConfigError, 'user_mappings/defaults is not a hash' \
+        unless @user_mapping_defaults.kind_of?(Hash)
 
       @external_id_field = ldap_config['external_id_field']
       raise ExternalLoginConfigError, 'external_id_field not configured' \
@@ -650,7 +656,11 @@ module PuavoRest
       end
 
       # we apply some magicks to determine user school, groups and roles
-      apply_dn_mappings!(userinfo, Array(@ldap_userinfo['dn']).first.to_s)
+      apply_user_mappings!(userinfo,
+                           [ [ Array(@ldap_userinfo['dn']),
+                               @user_mappings_by_dn ],
+                             [ Array(@ldap_userinfo['memberof']),
+                               @user_mappings_by_memberof ]])
 
       userinfo
     end
@@ -727,7 +737,7 @@ module PuavoRest
       return true
     end
 
-    def apply_dn_mappings!(userinfo, user_dn)
+    def apply_user_mappings!(userinfo, user_attrs_and_mapping_lists)
       added_roles      = []
       added_school_dns = []
       external_groups  = {
@@ -736,59 +746,66 @@ module PuavoRest
                            'year class'           => {},
                          }
 
-      @dn_mappings.each do |dn_mapping|
-        unless dn_mapping.kind_of?(Hash) then
-          raise ExternalLoginConfigError,
-                'external_login dn_mapping is not a hash'
-        end
+      user_attrs_and_mapping_lists.each do |user_attribute_and_mapping_lists|
+        user_attribute_list, mapping_list = * user_attribute_and_mapping_lists
 
-        dn_mapping.each do |dn_glob_pattern, operations_list|
-          next unless File.fnmatch(dn_glob_pattern, user_dn)
-
-          unless operations_list.kind_of?(Array) then
+        mapping_list.each do |user_mapping|
+          unless user_mapping.kind_of?(Hash) then
             raise ExternalLoginConfigError,
-                  'external_login dn_mapping operations list' \
-                    + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
-                    + ' is not an array'
+                  'external_login user_mapping is not a hash'
           end
 
-          operations_list.each do |op_item|
-            unless op_item.kind_of?(Hash) then
+          user_mapping.each do |glob_pattern, operations_list|
+            next unless user_attribute_list.any? do |user_attribute|
+                          File.fnmatch(glob_pattern, user_attribute)
+                        end
+
+            unless operations_list.kind_of?(Array) then
               raise ExternalLoginConfigError,
-                    'external_login dn_mapping operation list item' \
-                      + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
-                      + ' is not a hash'
+                    'external_login user_mapping operations list' \
+                      + " for glob_pattern '#{ glob_pattern }'" \
+                      + ' is not an array'
             end
 
-            op_item.each do |op_name, op_params|
-              case op_name
-              when 'add_roles', 'add_school_dns'
+            operations_list.each do |op_item|
+              unless op_item.kind_of?(Hash) then
                 raise ExternalLoginConfigError,
-                      "#{ op_name } operation parameters type" \
-                        + " for dn_glob_pattern '#{ dn_glob_pattern }'" \
-                        + ' is not an array of strings' \
-                  unless op_params.kind_of?(Array) \
-                           && op_params.all? { |x| x.kind_of?(String) }
+                      'external_login user_mapping operation list item' \
+                        + " for glob_pattern '#{ glob_pattern }'" \
+                        + ' is not a hash'
               end
 
-              case op_name
-              when 'add_administrative_group'
-                new_group = apply_add_groups('administrative group', op_params)
-                external_groups['administrative group'].merge!(new_group)
-              when 'add_roles'
-                added_roles += op_params
-              when 'add_school_dns'
-                added_school_dns += op_params
-              when 'add_teaching_group'
-                new_group = apply_add_groups('teaching group', op_params)
-                external_groups['teaching group'].merge!(new_group)
-              when 'add_year_class'
-                new_group = apply_add_groups('year class', op_params)
-                external_groups['year class'].merge!(new_group)
-              else
-                raise ExternalLoginConfigError,
-                      "unsupported operation '#{ op_name }'" \
-                        + " for dn_glob_pattern '#{ dn_glob_pattern }'"
+              op_item.each do |op_name, op_params|
+                case op_name
+                when 'add_roles', 'add_school_dns'
+                  raise ExternalLoginConfigError,
+                        "#{ op_name } operation parameters type" \
+                          + " for glob_pattern '#{ glob_pattern }'" \
+                          + ' is not an array of strings' \
+                    unless op_params.kind_of?(Array) \
+                             && op_params.all? { |x| x.kind_of?(String) }
+                end
+
+                case op_name
+                when 'add_administrative_group'
+                  new_group = apply_add_groups('administrative group',
+                                               op_params)
+                  external_groups['administrative group'].merge!(new_group)
+                when 'add_roles'
+                  added_roles += op_params
+                when 'add_school_dns'
+                  added_school_dns += op_params
+                when 'add_teaching_group'
+                  new_group = apply_add_groups('teaching group', op_params)
+                  external_groups['teaching group'].merge!(new_group)
+                when 'add_year_class'
+                  new_group = apply_add_groups('year class', op_params)
+                  external_groups['year class'].merge!(new_group)
+                else
+                  raise ExternalLoginConfigError,
+                        "unsupported operation '#{ op_name }'" \
+                          + " for glob_pattern '#{ glob_pattern }'"
+                end
               end
             end
           end
@@ -802,17 +819,17 @@ module PuavoRest
       # apply defaults in case we have empty roles and/or school_dns
       %w(roles school_dns).each do |attr|
         if userinfo[attr].empty? then
-          unless @dn_mapping_defaults[attr].kind_of?(Array) then
+          unless @user_mapping_defaults[attr].kind_of?(Array) then
             raise "userinfo attribute '#{ attr }' default is of wrong type" \
                     + ' or is not set when needed'
           end
-          userinfo[attr] = @dn_mapping_defaults[attr]
+          userinfo[attr] = @user_mapping_defaults[attr]
         end
       end
     end
 
     def get_add_groups_param(params, param_name)
-      value = params[param_name] || @dn_mapping_defaults[param_name]
+      value = params[param_name] || @user_mapping_defaults[param_name]
       unless value.kind_of?(String) && !value.empty? then
         raise "add group attribute '#{ param_name }' not configured"
       end

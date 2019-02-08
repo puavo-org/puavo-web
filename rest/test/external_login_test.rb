@@ -80,7 +80,7 @@ describe PuavoRest::ExternalLogin do
 
     # make a deep copy of external_login configuration
     CONFIG['external_login'] = JSON.parse( orig_external_login_config_json )
-    CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
+    CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
           ['defaults']['school_dns'] = [ @heroes_school.dn.to_s ]
   end
 
@@ -398,8 +398,8 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'user schools, groups and roles follow configuration changes' do
-      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
-            ['mappings'] = [
+      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+            ['by_dn'] = [
         { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
             { 'add_administrative_group' => {
                 'displayname' => 'Better heroes',
@@ -479,8 +479,8 @@ describe PuavoRest::ExternalLogin do
 
       # remove all mappings so that luke.skywalker & lara.croft should
       # no longer belong to the group
-      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
-            ['mappings'] = []
+      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+            ['by_dn'] = []
 
       assert_external_status('luke.skywalker',
                              'secret',
@@ -601,8 +601,8 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'trying to configure a user to two teaching groups' do
-      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
-            ['mappings'] = [
+      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+            ['by_dn'] = [
         { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
             { 'add_teaching_group' => {
                 'displayname' => 'Heroes school %GROUP',
@@ -624,8 +624,8 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'trying to configure a user to two year class groups' do
-      CONFIG['external_login']['example']['external_ldap']['dn_mappings'] \
-            ['mappings'] = [
+      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+            ['by_dn'] = [
         { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
             { 'add_year_class' => {
                 'displayname' => 'Heroes school %CLASSNUMBER',
