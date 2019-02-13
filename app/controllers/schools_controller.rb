@@ -174,6 +174,20 @@ class SchoolsController < ApplicationController
     @school_admins = sort_users(@school_admins)
     @allowed_school_admins = sort_users(@allowed_school_admins)
 
+    schools = {}
+
+    @school_admins.each do |a|
+      dn = a.school.dn
+      schools[dn] = School.find(dn) unless schools.include?(dn)
+      a.school = schools[dn]
+    end
+
+    @allowed_school_admins.each do |a|
+      dn = a.school.dn
+      schools[dn] = School.find(dn) unless schools.include?(dn)
+      a.school = schools[dn]
+    end
+
     respond_to do |format|
       format.html # admins.html.erb
     end

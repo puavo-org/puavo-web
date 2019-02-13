@@ -102,6 +102,20 @@ class OrganisationsController < ApplicationController
     @owners = sort_users(@owners)
     @allowed_owners = sort_users(@allowed_owners)
 
+    schools = {}
+
+    @owners.each do |o|
+      dn = o.school.dn
+      schools[dn] = School.find(dn) unless schools.include?(dn)
+      o.school = schools[dn]
+    end
+
+    @allowed_owners.each do |o|
+      dn = o.school.dn
+      schools[dn] = School.find(dn) unless schools.include?(dn)
+      o.school = schools[dn]
+    end
+
   end
 
   # PUT /users/add_owner/1

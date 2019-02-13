@@ -17,7 +17,7 @@
   <table>
     <% Array(@owners).each do |u| %>
     <tr>
-      <td><%= u.displayName %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
       <td><%= link_to(t('link.remove'),
                       remove_owner_organisations_path(u),
                       method: :put,
@@ -32,7 +32,7 @@
   <table>
     <% Array(@allowed_owners).each do |u| %>
     <tr>
-      <td><%= u.displayName %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
       <td><%= link_to(t('link.add'),
                       add_owner_organisations_path(u),
                       method: :put,
