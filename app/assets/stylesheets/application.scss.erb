@@ -788,6 +788,19 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   }
 }
 
+.inlineIntegrations {
+  display: inline;
+  list-style-type: none;
+  margin-left: 20px;
+
+  li {
+    padding: 2px 5px;
+    border: 1px solid $integrationsBorder;
+    white-space: nowrap;
+    display: inline;
+  }
+}
+
 /* TODO: Make it possible to access second-level tabs from other first-level tabs.
    Can be done if we play with hover effects, for example. I hate that I have to
    first load the users list before I can access groups, for example. */

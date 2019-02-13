@@ -10,7 +10,12 @@
 
   <% @schools.each do |school| %>
   <tr>
-    <td data-title="<%= t('activeldap.attributes.school.displayName')%>"><%= link_to school.displayName, school_path(school) %></td>
+    <td data-title="<%= t('activeldap.attributes.school.displayName')%>">
+      <%= link_to school.displayName, school_path(school) %>
+      <% unless school.displayName == 'Administration' %>
+      <%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(school.id.to_i), :extraClass => "inlineIntegrations" } %>
+      <% end %>
+    </td>
     <td data-title="<%= t('actions')%>" class="table-actions">
       <%= link_to edit_school_path(school), class: "btn" do %>
         <i class="icon-pencil"></i><%= t('link.edit') %>

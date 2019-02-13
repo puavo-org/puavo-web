@@ -109,7 +109,7 @@ I18n.locale = "<%= I18n.locale %>";
     <header id="schoolName"><%= @school.displayName %></header>
 
     <% unless @school.displayName == 'Administration' %>
-<%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(@school.id.to_i) } %>
+<%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(@school.id.to_i), :extraClass => "" } %>
     <% end %>
 
 <%= render :partial => "layouts/menu" %>
