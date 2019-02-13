@@ -392,88 +392,86 @@ THE TOP BAR
   max-width: 1400px;
   width: 98%;
   font-size: 80%;
-}
 
-#topbar > li {
-  display: inline;
-  margin: 0;
+  > li {
+    display: inline;
+    margin: 0;
 
-  /* Keep this zero, the dropdown toplevel menubar entries must be full-height
-     and non-zero padding here will break them! */
-  padding: 0;
-}
-
-#topbar span {
-  font-size: 90%;
-}
-
-#topbar #left {
-  text-align: left;
-  flex: 0 0 auto;
-  margin: auto;
-  padding-right: 10px;
-}
-
-#topbar #middle {
-  margin: auto;
-}
-
-#middle {
-  div {
-    display: flex;
+    /* Keep this zero, the dropdown toplevel menubar entries must be full-height
+       and non-zero padding here will break them! */
     padding: 0;
-    margin: 0;
   }
 
-  #search {
-    flex-grow: 2;
-    display: inline;
-
-    margin: 0;
-    padding: 5px 30px 5px 10px;
-    border: 1px solid $formElementBorderColor;
-    border-radius: 4px;
+  span {
+    font-size: 90%;
   }
 
-  a {
-    display: inline;
-    align-self: center;
-    padding: 5px 10px;
-    margin-left: 2px;
-    border-radius: 5px;
+  #left {
+    text-align: left;
+    flex: 0 0 auto;
+    margin: auto;
+    padding-right: 10px;
   }
 
-  a:hover {
-    background: #fff;
+  #middle {
+    margin: auto;
+
+    div {
+      display: flex;
+      padding: 0;
+      margin: 0;
+    }
+
+    #search {
+      flex-grow: 2;
+      display: inline;
+
+      margin: 0;
+      padding: 5px 30px 5px 10px;
+      border: 1px solid $formElementBorderColor;
+      border-radius: 4px;
+    }
+
+    a {
+      display: inline;
+      align-self: center;
+      padding: 5px 10px;
+      margin-left: 2px;
+      border-radius: 5px;
+    }
+
+    a:hover {
+      background: #fff;
+    }
+
+    a:after {
+      content: "\e822";
+      font-family: puavo-icons;
+      font-size: 110%;
+    }
   }
 
-  a:after {
-    content: "\e822";
-    font-family: puavo-icons;
-    font-size: 110%;
+  #right {
+    text-align: right;
+    flex-grow: 1;
+    margin: auto;
   }
+
+  #loggedInName {
+    color: $loggedUsernameForeground;
+    padding: 0;
+  }
+
+  #logoutButton {
+    border: none;
+    margin: 0 0 0 10px;
+    padding: 4px 10px;
+  }
+
+  li:nth-child(1) { order: 1; }
+  li:nth-child(2) { order: 2; }
+  li:nth-child(3) { order: 3; }
 }
-
-#topbar #right {
-  text-align: right;
-  flex-grow: 1;
-  margin: auto;
-}
-
-#topbar #loggedInName {
-  color: $loggedUsernameForeground;
-  padding: 0;
-}
-
-#logoutButton {
-  border: none;
-  margin: 0 0 0 10px;
-  padding: 4px 10px;
-}
-
-#topbar li:nth-child(1) { order: 1; }
-#topbar li:nth-child(2) { order: 2; }
-#topbar li:nth-child(3) { order: 3; }
 
 @media #{$screen-breakpoint-one} {
   #topbar-wrapper {
