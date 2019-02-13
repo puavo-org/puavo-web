@@ -75,13 +75,20 @@ I18n.locale = "<%= I18n.locale %>";
     </li>
 
     <li id="middle">
+      <div>
       <!-- The search box -->
       <%= text_field_tag('search',
                          nil,
                          class: 'search',
                          size: 30,
-                         placeholder: t('.search_placeholder')) %>
+                         placeholder: t('.search_placeholder'),
+                         title: t('.search_title')) %>
 
+      <% if false %>
+      <a href="/extended_search" title="<%= t('.extended_search_title') %>">
+        <img src="<%= image_path('magnifier.png') %>"></a>
+      </div>
+      <% end %>
     </li>
 
     <li id="right">

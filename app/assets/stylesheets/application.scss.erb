@@ -414,12 +414,40 @@ THE TOP BAR
   margin: auto;
 }
 
-#topbar #search {
-  width: 100%;
-  margin: 0;
-  padding: 5px 30px 5px 10px;
-  border: 1px solid $formElementBorderColor;
-  border-radius: 4px;
+#middle {
+  div {
+    display: flex;
+    padding: 0;
+    margin: 0;
+  }
+
+  #search {
+    flex-grow: 2;
+    display: inline;
+
+    margin: 0;
+    padding: 5px 30px 5px 10px;
+    border: 1px solid $formElementBorderColor;
+    border-radius: 4px;
+  }
+
+  a {
+    display: inline;
+    align-self: center;
+    padding: 5px 10px;
+    margin-left: 2px;
+    border-radius: 5px;
+  }
+
+  a:hover {
+    background: #fff;
+  }
+
+  a:after {
+    content: "\e822";
+    font-family: puavo-icons;
+    font-size: 110%;
+  }
 }
 
 #topbar #right {
@@ -912,7 +940,8 @@ SEARCH FIELDS
 
 /* The search box itself */
 #search {
-  background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 98% center $searchFieldBackgroundColor;
+  background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
+  text-indent: 2em;
   margin: 4px;
   z-index: 1;
 }
@@ -922,7 +951,7 @@ SEARCH FIELDS
     The JavaScript code doing the live search adds this class to the search box when search
     is in progress, then removes it afterwards.
   */
-  background: url("<%= image_path('ajax-loader.gif') %>") no-repeat scroll 98% 4px $searchFieldBackgroundColor !important;
+  background: url("<%= image_path('ajax-loader.gif') %>") no-repeat scroll 10px center $searchFieldBackgroundColor !important;
 
   /*
     FIXME: Unfortunately this class is also added to the user search box in the group members page,
