@@ -7,13 +7,13 @@
           ['other', t('schools.integrations.other')]].each do |system| %>
       <% integrations.fetch(system[0], []).each do |name| %>
       <% if system[0] == 'in' %>
-      <li class="<%= system[0] %>" title="<%= system[1] %>"><%= name %><span class="dirIn"></span>Puavo</li>
+      <li class="<%= system[0] %>"><%= name %><span class="dirIn"></span>Puavo</li>
       <% elsif system[0] == 'out' %>
-      <li class="<%= system[0] %>" title="<%= system[1] %>">Puavo<span class="dirOut"></span><%= name %></li>
+      <li class="<%= system[0] %>">Puavo<span class="dirOut"></span><%= name %></li>
       <% elsif system[0] == 'inout' %>
-      <li class="<%= system[0] %>" title="<%= system[1] %>">Puavo<span class="dirInOut"></span><%= name %></li>
+      <li class="<%= system[0] %>">Puavo<span class="dirInOut"></span><%= name %></li>
       <% else %>
-      <li class="<%= system[0] %>" title="<%= system[1] %>"><%= name %></li>
+      <li class="<%= system[0] %>"><%= name %></li>
       <% end %>
       <% end %>
       <% end %>
