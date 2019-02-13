@@ -521,116 +521,118 @@ THE DROPDOWN MENUS
 --------------------------------------------------------------------------------
 */
 
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
+nav {
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
 
-nav li {
-  font-weight: bold;
-  text-transform: uppercase;
-  color: $topmenuNavItemForeground;
-  background: $topmenuNavItemBackground;
-}
+  li {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: $topmenuNavItemForeground;
+    background: $topmenuNavItemBackground;
+  }
 
-nav .haveDropdown, nav .noDropdown {
-  /* Make the menu buttons (dropdowns or not) span the entire height of the topbar. */
-  padding: 10px;
+  .haveDropdown, .noDropdown {
+    /* Make the menu buttons (dropdowns or not) span the entire height of the topbar. */
+    padding: 10px;
 
-  /* Float the top-level menu items, but not their child lists */
-  float: left;
-}
+    /* Float the top-level menu items, but not their child lists */
+    float: left;
+  }
 
-nav .haveDropdown:after {
-  content: " ▼";
-}
+  .haveDropdown:after {
+    content: " ▼";
+  }
 
-nav .dropdown {
-  display: none;
-  position: absolute;
-  left: auto;
+  .dropdown {
+    display: none;
+    position: absolute;
+    left: auto;
 
-  margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
+    margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
 
-  padding: 5px;
+    padding: 5px;
 
-  min-width: 250px;         /* wide items are easier to hit */
+    min-width: 250px;         /* wide items are easier to hit */
 
-  max-height: 600px;
-  overflow-y: auto;
+    max-height: 600px;
+    overflow-y: auto;
 
-  z-index: 11;    /* topbar is 10 */
+    z-index: 11;    /* topbar is 10 */
 
-  background: $topmenuNavDropdownBackground;
-  border-left: 1px solid $topmenuBorder;
-  border-right: 1px solid $topmenuBorder;
-  border-bottom: 1px solid $topmenuBorder;
-  border-radius: 0 0 4px 4px;
+    background: $topmenuNavDropdownBackground;
+    border-left: 1px solid $topmenuBorder;
+    border-right: 1px solid $topmenuBorder;
+    border-bottom: 1px solid $topmenuBorder;
+    border-radius: 0 0 4px 4px;
 
-  box-shadow: 0 6px 6px $defaultBoxShadowColor;
+    box-shadow: 0 6px 6px $defaultBoxShadowColor;
 
-  list-style-type: none;
-}
+    list-style-type: none;
+  }
 
-nav .haveDropdown:hover {
-  cursor: default;
-  color: $topmenuNavItemHoverForeground;
-  background: $topmenuNavItemHoverBackground;
-}
+  .haveDropdown:hover {
+    cursor: default;
+    color: $topmenuNavItemHoverForeground;
+    background: $topmenuNavItemHoverBackground;
+  }
 
-nav .haveDropdown:hover .dropdown {
-  /* Open the dropdown menu */
-  display: block;
-}
+  .haveDropdown:hover .dropdown {
+    /* Open the dropdown menu */
+    display: block;
+  }
 
-nav .dropdown li {
-  display: list-item;
-  padding: 2px 0;   /* "outer" padding between items */
-  margin: 0;
-  border-bottom: 1px solid $topmenuNavDropdownSeparators;
-}
+  .dropdown li {
+    display: list-item;
+    padding: 2px 0;   /* "outer" padding between items */
+    margin: 0;
+    border-bottom: 1px solid $topmenuNavDropdownSeparators;
+  }
 
-nav .dropdown li:first-of-type {
-  padding: 0 0 2px 0;
-}
+  .dropdown li:first-of-type {
+    padding: 0 0 2px 0;
+  }
 
-nav .dropdown li:last-of-type {
-  padding: 2px 0 0 0;
-  border: none;
-}
+  .dropdown li:last-of-type {
+    padding: 2px 0 0 0;
+    border: none;
+  }
 
-nav ul a {
-  display: block;
-  padding: 10px;   /* "inner" padding within items, affects ALL links in the menu! */
-  color: $topmenuNavItemForeground;
-  background: $topmenuNavItemBackground;
-  text-decoration: none;
-  font-size: 85%;
-}
+  ul a {
+    display: block;
+    padding: 10px;   /* "inner" padding within items, affects ALL links in the menu! */
+    color: $topmenuNavItemForeground;
+    background: $topmenuNavItemBackground;
+    text-decoration: none;
+    font-size: 85%;
+  }
 
-nav ul a:hover {
-  color: $topmenuNavItemHoverForeground;
-  background: $topmenuNavItemHoverBackground;
-}
+  ul a:hover {
+    color: $topmenuNavItemHoverForeground;
+    background: $topmenuNavItemHoverBackground;
+  }
 
-/* The per-school quick link list */
-nav .schoolLinks {
-  margin: 0 0 0 20px;
-  padding: 0;
-  display: inline-block;
-}
+  /* The per-school quick link list */
+  .schoolLinks {
+    margin: 0 0 0 20px;
+    padding: 0;
+    display: inline-block;
 
-nav .schoolLinks li {
-  float: left;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-}
+    li {
+      float: left;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+    }
 
-.schoolLinks a {
-  padding: 2px 5px;
-  text-transform: none;
+    a {
+      padding: 2px 5px;
+      text-transform: none;
+    }
+  }
 }
 
 @media #{$screen-breakpoint-two} {
@@ -1064,39 +1066,41 @@ COMMON CONTENT ELEMENTS
   float: none;
 }
 
-.content-box-new header {
-  background: $contentBoxHeaderBackground;
-  color: $contentBoxHeaderForeground;
-  padding: 5px 10px;
-  margin: 0;
-  font-size: 130%;
-  border-radius: 5px 5px 0 0;
-  border-bottom: 1px dotted $contentBoxBorder;
-}
+.content-box-new {
+  header {
+    background: $contentBoxHeaderBackground;
+    color: $contentBoxHeaderForeground;
+    padding: 5px 10px;
+    margin: 0;
+    font-size: 130%;
+    border-radius: 5px 5px 0 0;
+    border-bottom: 1px dotted $contentBoxBorder;
+  }
 
-.content-box-new .contents {
-  padding: 5px;
-  background: $contentBoxContentsBackground;
-  border-radius: 0 0 5px 5px;
-}
+  .contents {
+    padding: 5px;
+    background: $contentBoxContentsBackground;
+    border-radius: 0 0 5px 5px;
+  }
 
-.content-box-new table {
-  width: 100%;
-}
+  table {
+    width: 100%;
+  }
 
-.content-box-new tr:nth-child(odd) {
-  background: $contentBoxTableOddRowBackground;
-}
+  tr:nth-child(odd) {
+    background: $contentBoxTableOddRowBackground;
+  }
 
-.content-box-new tr:nth-child(even) {
-  background: $contentBoxTableEvenRowBackground;
-}
+  tr:nth-child(even) {
+    background: $contentBoxTableEvenRowBackground;
+  }
 
-.content-box-new h3 {
-  margin: 5px 0 10px 0;
-  padding: 0 5px;
-  border-bottom: 2px solid $contentBoxContentsHeaderForeground;
-  font-weight: bold;
+  h3 {
+    margin: 5px 0 10px 0;
+    padding: 0 5px;
+    border-bottom: 2px solid $contentBoxContentsHeaderForeground;
+    font-weight: bold;
+  }
 }
 
 /* Table-ish emulation */
@@ -1170,30 +1174,30 @@ COMMON CONTENT ELEMENTS
 .basicInfoDetails {
   width: 75%;
   padding-left: 15px;
-}
 
-.basicInfoDetails h1 {
-  border: none;
-}
+  h1 {
+    border: none;
+  }
 
-.basicInfoDetails .infoNotice {
-  color: $importantBasicInfo;
-  padding-left: 10px;
-}
+  .infoNotice {
+    color: $importantBasicInfo;
+    padding-left: 10px;
+  }
 
-.basicInfoDetails .infoTitle {
-  font-weight: bold;
-  padding-left: 10px;
-  margin-bottom: 0;
-}
+  .infoTitle {
+    font-weight: bold;
+    padding-left: 10px;
+    margin-bottom: 0;
+  }
 
-.basicInfoDetails .infoValue {
-  padding-left: 20px;
-}
+  .infoValue {
+    padding-left: 20px;
+  }
 
-.basicInfoDetails .puavoConf {
-  margin-top: 5px;
-  margin-left: 25px;
+  .puavoConf {
+    margin-top: 5px;
+    margin-left: 25px;
+  }
 }
 
 /* Images on school, user, server and device pages */
@@ -1219,25 +1223,77 @@ TOOLBOXES
   background: $toolsContainerBackground;
   margin: 0 0 20px 0;
   padding: 0;
-}
 
-/* The buttons are in a list */
-.tools-container > ul {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;  /* right align */
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+  /* The buttons are in a list */
+  > ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;  /* right align */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-.tools-container > ul > li {
-  margin: 5px;
-  padding: 1px;
-}
+  > ul > li {
+    margin: 5px;
+    padding: 1px;
+  }
 
-.tools-container .btn {
-  padding: 7px 10px;
+  .btn {
+    padding: 7px 10px;
+  }
+
+  .haveDropdown {
+    /* The dropdown menu buttons aren't clickable */
+    cursor: default;
+  }
+
+  /* A tool dropdown menu */
+  .dropdown {
+    list-style: none;
+
+    display: none;
+    position: absolute;
+
+    left: auto;
+
+    /* Some menus get so narrow it's hard to hit them, so impose a minimum width.
+       This width is approximately the width of the parent button. */
+    min-width: 130px;
+
+    background: $toolsDropdownBackground;
+    border: 1px solid $toolsDropdownBorder;
+    padding: 5px;
+
+    box-shadow: 0 0 10px $defaultBoxShadowColor;
+
+    z-index: 2;
+  }
+
+  /* Make the dropdown menu visible */
+  .haveDropdown:hover .dropdown {
+    visibility: visible;
+    display: block;
+  }
+
+  /* Tool dropdown menu entries */
+  .dropdown li {
+    margin: 1px;
+  }
+
+  .dropdown a {
+    text-decoration: none;
+    display: block;
+    padding: 5px;
+    color: $toolsContainerLinkForeground;
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .dropdown a:hover {
+    color: $toolsContainerLinkHoverForeground;
+    background: $toolsContainerLinkHoverBackground;
+  }
 }
 
 @media #{$screen-breakpoint-one} {
@@ -1250,58 +1306,6 @@ TOOLBOXES
   .tools-container .btn {
     padding: 5px 10px;
   }
-}
-
-.tools-container .haveDropdown {
-  /* The dropdown menu buttons aren't clickable */
-  cursor: default;
-}
-
-/* A tool dropdown menu */
-.tools-container .dropdown {
-  list-style: none;
-
-  display: none;
-  position: absolute;
-
-  left: auto;
-
-  /* Some menus get so narrow it's hard to hit them, so impose a minimum width.
-     This width is approximately the width of the parent button. */
-  min-width: 130px;
-
-  background: $toolsDropdownBackground;
-  border: 1px solid $toolsDropdownBorder;
-  padding: 5px;
-
-  box-shadow: 0 0 10px $defaultBoxShadowColor;
-
-  z-index: 2;
-}
-
-/* Make the dropdown menu visible */
-.tools-container .haveDropdown:hover .dropdown {
-  visibility: visible;
-  display: block;
-}
-
-/* Tool dropdown menu entries */
-.tools-container .dropdown li {
-  margin: 1px;
-}
-
-.tools-container .dropdown a {
-  text-decoration: none;
-  display: block;
-  padding: 5px;
-  color: $toolsContainerLinkForeground;
-  white-space: nowrap;
-  width: auto;
-}
-
-.tools-container .dropdown a:hover {
-  color: $toolsContainerLinkHoverForeground;
-  background: $toolsContainerLinkHoverBackground;
 }
 
 /*
@@ -1861,28 +1865,28 @@ Hardware info page
   border: 2px solid $hwInfoBorder;
   border-collapse: collapse;
   width: 100%;
-}
 
-.hwInfoTable th {
-  border: 1px solid $hwInfoBorder;
-  padding: 7px;
-  text-align: right;
-  width: 150px;
-}
+  th {
+    border: 1px solid $hwInfoBorder;
+    padding: 7px;
+    text-align: right;
+    width: 150px;
+  }
 
-.hwInfoTable .main {
-  text-align: center;
-  vertical-align: middle;
-  background: $hwInfoTitleBackground;
-}
+  .main {
+    text-align: center;
+    vertical-align: middle;
+    background: $hwInfoTitleBackground;
+  }
 
-.hwInfoTable td {
-  border: 1px solid $hwInfoBorder;
-  padding: 7px;
-}
+  td {
+    border: 1px solid $hwInfoBorder;
+    padding: 7px;
+  }
 
-.hwInfoTable .sectionEnd {
-  border-bottom: 2px solid $hwInfoBorder;
+  .sectionEnd {
+    border-bottom: 2px solid $hwInfoBorder;
+  }
 }
 
 /*
