@@ -199,6 +199,10 @@ $noUsernameListsBackground: #cfc;
 $noUsernameListsForeground: #000;
 $noUsernameListsBorder: #0f0;
 
+$advancedSearchError: #f00;
+$advancedSearchNoResults: #00f;
+$advancedSearchNoMatches: #666;
+
 $passwordFormTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
 $passwordFormTabForeground: #000;
 $passwordFormTabHoverBackground: linear-gradient($baseBrown, $baseBrownGradient);
@@ -2035,11 +2039,6 @@ EXTENDED SEARCH
     white-space: nowrap;
   }
 
-  #searchTermsType {
-    optgroup {
-    }
-  }
-
   #searchButton {
     padding-left: 50px;
     padding-right: 50px;
@@ -2070,30 +2069,17 @@ EXTENDED SEARCH
       text-decoration: underline;
     }
   }
-
-/*
-  #searchTip {
-    border: 1px solid #aaa;
-    background: #eee;
-    padding: 5px;
-  }
-*/
 }
 
 #extendedSearchResultsContainer {
-/*
-  border: 1px solid #ccc;
-  padding: 5px;
-*/
-
   .searchError {
-    color: #f00;
+    color: $advancedSearchError;
     padding: 0;
     margin: 0;
   }
 
   .noResults {
-    color: #00f;
+    color: $advancedSearchNoResults;
     padding: 0;
     margin: 0;
   }
@@ -2117,7 +2103,7 @@ EXTENDED SEARCH
   }
 
   .noMatches {
-    color: #666;
+    color: $advancedSearchNoMatches;
   }
 }
 

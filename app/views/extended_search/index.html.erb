@@ -46,24 +46,6 @@ function clearTerms()
 {
   document.getElementById("searchTerms").value = "";
 }
-
-function showTips()
-{
-/*
-  var searchTermsType = document.getElementById("searchTermsType");
-  var selectedElement = searchTermsType.options[searchTermsType.selectedIndex];
-  var searchTip = document.getElementById("searchTip");
-
-  if (selectedElement.dataset && selectedElement.dataset.tip) {
-    searchTip.innerHTML = selectedElement.dataset.tip;
-    //searchTip.style.visibility = "inline";
-  } else {
-    searchTip.innerHTML = "";
-    //searchTip.style.display = "none";
-  }
-*/
-}
-
 </script>
 <% end %>
 
@@ -77,7 +59,7 @@ function showTips()
         <label for="searchTermsType"><%= t('extended_search.search_terms_title') %></label>
       </td>
       <td>
-        <select id="searchTermsType" name="searchTermsType" onchange="showTips()">
+        <select id="searchTermsType" name="searchTermsType">
           <optgroup label="<%= t('extended_search.search_term_types.users.title') %>">
             <option value="user-puavoid"><%= t('extended_search.search_term_types.users.puavoid') %></option>
             <option value="user-uid" selected><%= t('extended_search.search_term_types.users.uid') %></option>
