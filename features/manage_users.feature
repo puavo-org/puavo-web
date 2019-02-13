@@ -210,7 +210,7 @@ Feature: Manage users
     And the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
-    When I follow "School 1" within "#topbar"
+    When I follow "School 1" within "#left"
     And I follow "Users" within ".main-wrap"
     Then I should see "Mabey Ben" within ".container"
     And I should not see /\["ben"\]/
@@ -478,7 +478,7 @@ Feature: Manage users
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
       | Daisy     | Duck    | daisy  | 314      | visitor                   | Class 4   |
-    When I follow "School 1" within "#topbar"
+    When I follow "School 1" within "#left"
     And I follow "Users" within ".main-wrap"
     And I should not see "Delete users who are marked for deletion"
     #
@@ -488,7 +488,7 @@ Feature: Manage users
     When I follow "Mark for deletion"
     Then I should see "This user has been marked for deletion"
     #
-    When I follow "School 1" within "#topbar"
+    When I follow "School 1" within "#left"
     And I follow "Users" within ".main-wrap"
     Then I should see "Users marked for later deletion"
     And I should see "Duck Donald" within ".container"
