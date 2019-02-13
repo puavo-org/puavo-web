@@ -4,6 +4,9 @@ Rails.application.routes.draw do
 
   match '/menu' => 'menu#index', :via => :get
 
+  get '/extended_search' => 'extended_search#index'
+  post '/extended_search' => 'extended_search#do_search', via: [:options]
+
   scope :path => "restproxy" do
     match '(*url)' => 'rest#proxy', :via => [:get, :post, :put], :format => false
   end

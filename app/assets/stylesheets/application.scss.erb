@@ -1652,12 +1652,25 @@ LISTS OF THINGS (in tables, not ul/ol)
   background: $markedForDeletionRowHoverBackground;
 }
 
+/* Group members who ar emarked for deletion */
 .marked_for_deletion_group:nth-child(even) {
   background-color: $markedForDeletionEvenRowBackground !important;
 }
 
 .marked_for_deletion_group:nth-child(odd) {
   background-color: $markedForDeletionOddRowBackground !important;
+}
+
+.list tr.deleted:nth-child(odd) {
+  background: $markedForDeletionOddRowBackground;
+}
+
+.list tr.deleted:nth-child(even) {
+  background: $markedForDeletionEvenRowBackground;
+}
+
+.list tr.deleted:hover {
+  background: $markedForDeletionRowHoverBackground;
 }
 
 .list .form {
@@ -1975,6 +1988,121 @@ adjust the styles better with media queries. */
     border: 1px solid $usernameListTableBorder;   /* does wonders for visibility */
     max-height: 250px;
     width: 66%;   /* leave room for scrolling the page */
+  }
+}
+
+/*
+====================================================================================================
+EXTENDED SEARCH
+====================================================================================================
+*/
+
+#extendedSearchForm {
+  #searchTerms {
+    width: 100%;
+  }
+
+  label {
+    white-space: nowrap;
+  }
+
+  #searchTermsType {
+    optgroup {
+    }
+  }
+
+  #searchButton {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  table {
+    tr, td, th {
+      padding: 2px;
+      margin: 0;
+    }
+
+    select {
+      width: 100%;
+    }
+  }
+
+  #searchHelpContainer {
+    vertical-align: top;
+  }
+
+  #searchHelp {
+    padding-left: 10px;
+
+    h6 {
+      padding: 0;
+      margin: 0;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+
+/*
+  #searchTip {
+    border: 1px solid #aaa;
+    background: #eee;
+    padding: 5px;
+  }
+*/
+}
+
+#extendedSearchResultsContainer {
+/*
+  border: 1px solid #ccc;
+  padding: 5px;
+*/
+
+  .searchError {
+    color: #f00;
+    padding: 0;
+    margin: 0;
+  }
+
+  .noResults {
+    color: #00f;
+    padding: 0;
+    margin: 0;
+  }
+
+  .list th.matched {
+    /* The search term header column */
+    border-right: 1px solid $listHeadingBorder;
+  }
+
+  .term, .matched {
+    /* Force minimum width */
+    width: 1px;
+    white-space: nowrap;
+  }
+
+  .term {
+  }
+
+  .matched {
+    border-right: 1px solid $listRowBorder;
+  }
+
+  .noMatches {
+    color: #666;
+  }
+}
+
+@media #{$screen-breakpoint-one} {
+  /* Remove borders, the list is collapsed */
+  #extendedSearchResultsContainer {
+    .list th:first-of-type {
+      border-right: none;
+    }
+
+    .list td:first-of-type {
+      font-weight: bold;
+      border-right: none;
+    }
   }
 }
 

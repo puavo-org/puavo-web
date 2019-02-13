@@ -25,6 +25,7 @@ fi:
     change_school: "Vaihda koulua"
     printer_permissions: "Tulostusoikeudet"
     all_users_marked_for_deletion: "Organisaation poistetuksi merkityt käyttäjät"
+    extended_search: "Laajennettu haku"
   missing_data: "(Puuttuu/ei asetettu)"
   import_tool:
     import: Tuo
@@ -108,7 +109,9 @@ fi:
       wlan: Langattomat verkot
       about: Tietoja
       printers: Tulostimet
-      search_placeholder: Hae
+      search_placeholder: Pikahaku
+      search_title: Käyttäjien, ryhmien ja laitteden haku nimellä
+      extended_search_title: Laajennettu haku. Etsi useita nimiä yhtä aikaa, valitse mistä kentistä etsitään ja miten täsmäys tehdään.
       links: Linkit
       desktop: "Työpöytä"
       owners: Omistajat
@@ -1188,3 +1191,57 @@ fi:
       title: "lspci -arvoja"
     lsusb:
       title: "lsusb"
+  extended_search:
+    title: "Laajennettu haku"
+    search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
+    search_terms_title: "Minkä tyyppisiä hakutermit ovat:"
+    search_term_types:
+      users:
+        title: "Käyttäjät"
+        puavoid: "Käyttäjät: Puavo ID"
+        uid: "Käyttäjät: Käyttäjänimi"
+        name_lastfirst: "Käyttäjät: Sukunimi Etunimi / Sukunimi, Etunimi (ei regexp)"
+        name_firstlast: "Käyttäjät: Etunimi Sukunimi / Etunimi, Sukunimi (ei regexp)"
+        externalid: "Käyttäjät: Ulkoinen ID"
+        email: "Käyttäjät: Email"
+        phone: "Käyttäjät: Puhelinnumero"
+      groups:
+        title: "Ryhmät"
+        puavoid: "Ryhmät: Puavo ID"
+        name: "Ryhmät: Nimi"
+        abbreviation: "Ryhmät: Lyhenne"
+        externalid: "Ryhmät: Ulkoinen ID"
+      devices:
+        title: "Laitteet"
+        puavoid: "Laitteet: Puavo ID"
+        hostname: "Laitteet: Hostname"
+        image: "Laitteet: Käytössä oleva työpöytäkuva (aina regexp)"
+        mac: "Laitteet: MAC-osoite"
+        tags: "Laitteet: Tagit"
+        xrandr: "Laitteet: Xrandr-asetukset (aina regexp)"
+        kernel_params: "Laitteet: Kernel-parametrit (aina regexp)"
+        kernel_version: "Laitteet: Kernel-versio (aina regexp)"
+        manufacturer: "Laitteet: Valmistaja"
+        model: "Laitteet: Malli"
+        serial_number: "Laitteet: Sarjanumero"
+    school_limit_title: "Koulurajaus:"
+    school_limit_all: "(Kaikki koulut)"
+    regexp_title: "Regexp (PCRE)"
+    remove_unmatched_title: "Poista ei-täsmäävät termit tuloksista"
+    button_search: "Hae"
+    button_clear_results: "Tyhjennä tulokset"
+    button_clear_terms: "Tyhjennä hakutermit"
+    results_title: "Tulokset"
+    results:
+      search_term_title: "Hakutermi"
+      matched_string: "Täsmännyt teksti"
+      no_term_hits: "(Hakutermi ei täsmännyt mihinkään)"
+      no_results: "(Ei osumia)"
+    errors:
+      unknown_school: "(Tuntematon koulu)"
+    controller:
+      invalid_search_data: "Virheellinen hakupyyntö: termit tai niiden tyyppi puuttuu"
+      search_terms_cleanup_failed: "Hakutermien siivous epäonnistui"
+      no_search_terms: "Ei hakutermejä"
+      invalid_regexp: "Virheellinen regexp-lause "
+      unknown_search_term_type: "Tuntematon hakutermien tyyppi "

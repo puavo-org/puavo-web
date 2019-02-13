@@ -1,0 +1,165 @@
+<% page_title t('titles.extended_search') %>
+
+<h1><%= t('extended_search.title') %></h1>
+
+<% content_for :javascript do %>
+<script>
+function doSearch()
+{
+  var searchTerms = document.getElementById("searchTerms");
+  var searchTermsType = document.getElementById("searchTermsType");
+  var searchSchool = document.getElementById("schoolLimit");
+  var isRegexp = document.getElementById("isRegexp");
+  var removeUnmatched = document.getElementById("removeUnmatched");
+
+  var searchButton = document.getElementById("searchButton");
+  var resultsContainer = document.getElementById("extendedSearchResultsContainer");
+
+  //searchButton.disabled = true;
+
+  var xhttp = new XMLHttpRequest();
+
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      resultsContainer.innerHTML = this.responseText;
+      searchButton.disabled = false;
+    }
+  };
+
+  xhttp.open("POST", "/extended_search", true);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.send(JSON.stringify({
+    'searchTerms': searchTerms.value,
+    'searchTermsType': searchTermsType.options[searchTermsType.selectedIndex].value,
+    'schoolLimit': searchSchool.options[searchSchool.selectedIndex].value,
+    'isRegexp': isRegexp.checked,
+    'removeUnmatched': removeUnmatched.checked,
+  }));
+}
+
+function clearResults()
+{
+  document.getElementById("extendedSearchResultsContainer").innerHTML = "";
+}
+
+function clearTerms()
+{
+  document.getElementById("searchTerms").value = "";
+}
+
+function showTips()
+{
+/*
+  var searchTermsType = document.getElementById("searchTermsType");
+  var selectedElement = searchTermsType.options[searchTermsType.selectedIndex];
+  var searchTip = document.getElementById("searchTip");
+
+  if (selectedElement.dataset && selectedElement.dataset.tip) {
+    searchTip.innerHTML = selectedElement.dataset.tip;
+    //searchTip.style.visibility = "inline";
+  } else {
+    searchTip.innerHTML = "";
+    //searchTip.style.display = "none";
+  }
+*/
+}
+
+</script>
+<% end %>
+
+<form id="extendedSearchForm" accept-charset="UTF-8">
+  <p><%= t('extended_search.search_box_instructions') %></p>
+  <textarea name="searchTerms" id="searchTerms" rows="10"></textarea>
+
+  <table>
+    <tr>
+      <td>
+        <label for="searchTermsType"><%= t('extended_search.search_terms_title') %></label>
+      </td>
+      <td>
+        <select id="searchTermsType" name="searchTermsType" onchange="showTips()">
+          <optgroup label="<%= t('extended_search.search_term_types.users.title') %>">
+            <option value="user-puavoid"><%= t('extended_search.search_term_types.users.puavoid') %></option>
+            <option value="user-uid" selected><%= t('extended_search.search_term_types.users.uid') %></option>
+            <option value="user-name-lastfirst"><%= t('extended_search.search_term_types.users.name_lastfirst') %></option>
+            <option value="user-name-firstlast"><%= t('extended_search.search_term_types.users.name_firstlast') %></option>
+            <option value="user-externalid"><%= t('extended_search.search_term_types.users.externalid') %></option>
+            <option value="user-email"><%= t('extended_search.search_term_types.users.email') %></option>
+            <option value="user-phone"><%= t('extended_search.search_term_types.users.phone') %></option>
+          </optgroup>
+
+          <optgroup label="<%= t('extended_search.search_term_types.groups.title') %>">
+            <option value="group-puavoid"><%= t('extended_search.search_term_types.groups.puavoid') %></option>
+            <option value="group-name"><%= t('extended_search.search_term_types.groups.name') %></option>
+            <option value="group-abbreviation"><%= t('extended_search.search_term_types.groups.abbreviation') %></option>
+            <option value="group-externalid"><%= t('extended_search.search_term_types.groups.externalid') %></option>
+          </optgroup>
+
+          <optgroup label="<%= t('extended_search.search_term_types.devices.title') %>">
+            <option value="device-puavoid"><%= t('extended_search.search_term_types.devices.puavoid') %></option>
+            <option value="device-hostname"><%= t('extended_search.search_term_types.devices.hostname') %></option>
+            <option value="device-image"><%= t('extended_search.search_term_types.devices.image') %></option>
+            <option value="device-mac"><%= t('extended_search.search_term_types.devices.mac') %></option>
+            <option value="device-tags"><%= t('extended_search.search_term_types.devices.tags') %></option>
+            <option value="device-xrandr"><%= t('extended_search.search_term_types.devices.xrandr') %></option>
+            <option value="device-kernel-params"><%= t('extended_search.search_term_types.devices.kernel_params') %></option>
+            <option value="device-kernel-version"><%= t('extended_search.search_term_types.devices.kernel_version') %></option>
+            <option value="device-manufacturer"><%= t('extended_search.search_term_types.devices.manufacturer') %></option>
+            <option value="device-model"><%= t('extended_search.search_term_types.devices.model') %></option>
+            <option value="device-serial-number"><%= t('extended_search.search_term_types.devices.serial_number') %></option>
+          </optgroup>
+        </select>
+
+        <div id="searchTip"></div>
+      </td>
+
+      <td rowspan="4" id="searchHelpContainer">
+        <div id="searchHelp">
+          <h6>Huomioitavia asioita</h6>
+          <ul>
+            <li>Hakutulokset näytetään siinä järjestyksessä, kun niihin täsmäävät hakutermit ovat laatikossa. Jokainen termi voi täsmätä useisiin kohteisiin.</li>
+            <li>Johtuen tavasta, jolla etunimiä ja sukunimiä etsitään, niissä ei (toistaiseksi) voi käyttää regexpejä.</li>
+            <li>Jotkut haut ovat aina regexpejä, koska ne olisivat muuten lähes hyödyttömiä (koska koko termin olisi täsmättävä)</li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td><label for="schoolLimit"><%= t('extended_search.school_limit_title') %></label></td>
+      <td>
+        <select id="schoolLimit" name="schoolLimit">
+          <% if current_user.organisation_owner? %>
+          <option value="" selected><%= t('extended_search.school_limit_all') %></option>
+          <% end %>
+          <% school_list.each do |school| %>
+          <% next if school.puavoTag.include?("hidden")%>
+          <option value="<%= school.puavoId %>"><%= school.displayName %></option>
+          <% end %>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="2">
+        <input type="checkbox" name="isRegexp" id="isRegexp">
+        <label for="isRegexp"><%= t('extended_search.regexp_title') %></label>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="2">
+        <input type="checkbox" name="removeUnmatched" id="removeUnmatched">
+        <label for="removeUnmatched"><%= t('extended_search.remove_unmatched_title') %></label>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+  <input type="button" id="searchButton" onclick="doSearch()" value="<%= t('extended_search.button_search') %>"/>
+  <input type="button" id="clearResultsButtons" onclick="clearResults()" value="<%= t('extended_search.button_clear_results') %>"/>
+  <input type="button" id="clearTermsButtons" onclick="clearTerms()" value="<%= t('extended_search.button_clear_terms') %>"/>
+</form>
+
+<h3><%= t('extended_search.results_title') %></h3>
+<div id="extendedSearchResultsContainer"></div>

@@ -45,6 +45,7 @@ en:
     change_school: "Change school"
     printer_permissions: "Printing permissions"
     all_users_marked_for_deletion: "Users in the organisation who are marked for deletion"
+    extended_search: "Extended Search"
   missing_data: "(Missing/unset)"
   import_tool:
     import: Import
@@ -135,7 +136,9 @@ en:
       wlan: Wireless networks
       about: About
       printers: Printers
-      search_placeholder: Search
+      search_placeholder: Quick search
+      search_title: User, group and device search by name
+      extended_search_title: Extended search. Search using multiple names simultaneously, choose which fields are searched and how they are matched.
       links: Links
       desktop: Desktop
       owners: Owners
@@ -1219,3 +1222,56 @@ en:
       title: "Some lspci values"
     lsusb:
       title: "LSUSB"
+  extended_search:
+    title: "Extended Search"
+    search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
+    search_terms_title: "Search terms type:"
+    search_term_types:
+      users:
+        title: "Users"
+        puavoid: "Users: Puavo ID"
+        uid: "Users: Username"
+        name_lastfirst: "Users: Lastname Firstname / Lastname, Firstname (no regexp)"
+        name_firstlast: "Users: Firstname Lastname / Firstname, Lastname (no regexp)"
+        externalid: "Users: External ID"
+        email: "Users: Email"
+        phone: "Users: Phone number"
+      groups:
+        title: "Groups"
+        puavoid: "Groups: Puavo ID"
+        name: "Groups: Name"
+        abbreviation: "Groups: Abbreviation"
+        externalid: "Groups: External ID"
+      devices:
+        title: "Devices"
+        puavoid: "Devices: Puavo ID"
+        hostname: "Devices: Hostname"
+        image: "Devices: Current desktop image (always regexp)"
+        mac: "Devices: MAC address"
+        tags: "Devices: Tags"
+        xrandr: "Devices: Xrandr settings (always regexp)"
+        kernel_params: "Devices: Kernel arguments (always regexp)"
+        kernel_version: "Devices: Kernel version (always regexp)"
+        manufacturer: "Devices: Manufacturer"
+        model: "Devices: Model"
+        serial_number: "Devices: Serial number"
+    school_limit_title: "School limit:"
+    school_limit_all: "(All schools)"
+    regexp_title: "Regexp (PCRE)"
+    remove_unmatched_title: "Remove non-matching terms from the results"
+    button_search: "Search"
+    button_clear_results: "Clear results"
+    button_clear_terms: "Clear search terms"
+    results_title: "Results"
+    results:
+      search_term_title: "Search term"
+      no_term_hits: "(Search term did not match anything)"
+      no_results: "(No results)"
+    errors:
+      unknown_school: "(Unknown school)"
+    controller:
+      invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
+      search_terms_cleanup_failed: "Search term cleanup failed"
+      no_search_terms: "No search terms"
+      invalid_regexp: "Invalid regexp "
+      unknown_search_term_type: "Unknown search term type "
