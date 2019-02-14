@@ -344,6 +344,29 @@ class GroupsController < ApplicationController
     end
   end
 
+  # Remove all members from a group
+  def remove_all_members
+    @group = get_group(params[:id])
+    return if @group.nil?
+
+    members = @group.members
+    ok = true
+
+    members.each do |m|
+      begin
+        @group.remove_user(m)
+      rescue StandardError => e
+        puts "===> Could not remove member #{m} from group #{@group}: #{e}"
+        ok = false
+      end
+    end
+
+    respond_to do |format|
+      flash[:notice] = ok ? t('flash.group.group_emptied_ok') : t('flash.group.group_emptied_failed')
+      format.html { redirect_to group_path(@school, @group) }
+    end
+  end
+
   # GET /:school_id/groups/:group_id/get_members_as_csv
   def get_members_as_csv
     @group = get_group(params[:id])

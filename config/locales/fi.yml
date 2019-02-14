@@ -130,6 +130,7 @@ fi:
     find_groupless_users: "Etsi ryhmättömät käyttäjät"
     create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
     get_members_as_csv: "Lataa ryhmän käyttäjälista CSV:nä"
+    remove_all_members_from_group: "Poista ryhmästä kaikki jäsenet"
     mark_group_members_for_deletion: "Merkitse kaikki jäsenet poistettavaksi"
     unmark_group_members_deletion: "Poista kaikkien jäsenien poistomerkintä"
     lock_all_group_members: "Lukitse kaikki jäsenet"
@@ -212,6 +213,8 @@ fi:
       members_locked: "%{count} käyttäjää lukittu"
       members_unlocked: "%{count} käyttäjän lukitus purettu"
       groupless_marked: "%{ok} käyttäjää merkitty poistettavaksi, %{failed} käyttäjän merkintä epäonnistui"
+      group_emptied_ok: "Kaikki jäsenet poistettu ryhmästä"
+      group_emptied_failed: "Kaikkia jäseniä ei voitu poistaa"
     role:
       group_added: "Ryhmä lisättiin rooliin."
       group_added_failed: "Lisäys epäonnistui"

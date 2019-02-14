@@ -147,6 +147,10 @@
         <% end %>
       </li>
 
+      <%= link_to remove_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+        <i class="icon-minus-squared"></i><%= t('link.remove_all_members_from_group') %>
+      <% end %>
+
       <% if current_user.organisation_owner? %>
       <li class="ownersOnly">
         <%= link_to mark_group_members_for_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
