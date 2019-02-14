@@ -61,7 +61,7 @@ when "diff"
   end
 
   unless removed_groups.empty?
-    puts red("Removed groups:\n")
+    puts red("Removed course groups:\n")
 
     removed_groups.each do |g|
       group = PuavoRest::Group.by_attrs(:external_id => g)
@@ -144,7 +144,7 @@ when "import"
   removed_groups.each do |eid|
     puavo_group = PuavoRest::Group.by_attr(:external_id, eid)
     puavo_school = PuavoRest::School.by_id(puavo_group.school_id)
-    puts "#{puavo_group.name} (external_id: #{eid}, school: #{puavo_school.name}): deleting"
+    puts "#{puavo_group.name} (external_id: #{eid}, school: #{puavo_school.name}): removing course group"
     puavo_group.destroy!
   end
 end
