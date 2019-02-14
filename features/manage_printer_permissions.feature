@@ -81,7 +81,7 @@ Feature: Manage printer permissions
     And I press "Update"
     And I follow "Edit"
     Then the "printer1" checkbox should be checked
-    And I press "printer1" on the "printer1" list
+    And I press the device printer link "printer1"
     And I should see "athin"
     # the remove checkbox
     Then I check box on the "athin" row

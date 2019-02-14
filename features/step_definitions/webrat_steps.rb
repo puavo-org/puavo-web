@@ -27,6 +27,11 @@ When(/^I press "([^\"]*)" on the "([^\"]*)" list$/) do |link, row|
   end
 end
 
+When(/^I press the device printer link "([^\"]*)"$/) do |link|
+  # Amazing. Just amazing.
+  find("#devicePrintersList-#{link}").click
+end
+
 Then(/^I check box on the "(.*?)" row$/) do |row|
   within "tr:contains('#{ row }')" do
     find("input[type=checkbox]").set(true)
