@@ -285,6 +285,7 @@ module ApplicationHelper
   end
 
   INTEGRATIONS_CACHE = {}
+  RAW_INTEGRATIONS = {}
 
   # Retrieves various third-party system integrations for the specified school
   # The school ID *MUST* be an integer, not a string!
@@ -309,6 +310,9 @@ module ApplicationHelper
     # Remove integrations that aren't actually defined
     integration_names.reject! { |i| !integration_definitions.keys.include?(i) }
 
+    # Store the raw integration names so they can be queried if needed
+    RAW_INTEGRATIONS[school_id] = integration_names
+
     # Convert string IDs to human-readable names
     integrations = {}
 
@@ -330,5 +334,14 @@ module ApplicationHelper
     INTEGRATIONS_CACHE[school_id] = integrations
 
     integrations
+  end
+
+  # 'integration_type' is a string that contains a word like "primus" or "gsuite"
+  def school_has_integration?(school_id, integration_type)
+    get_integrations_for_school(school_id)
+
+    return false unless RAW_INTEGRATIONS.include?(school_id)
+
+    return RAW_INTEGRATIONS[school_id].include?(integration_type)
   end
 end
