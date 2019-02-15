@@ -3,7 +3,7 @@
 <h1><%= t('.title') %></h1>
 
 <% unless Array(@missing).empty? %>
-<div class="missingOwners">
+<div class="genericWarning">
   <p><strong><%= t('.removed_owners_title') %></strong> <%= t('.removed_owners_warning') %></p>
   <ul>
   <% Array(@missing).each do |m| %>
