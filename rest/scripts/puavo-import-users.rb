@@ -104,6 +104,96 @@ def create_puavo_rest_user(user, attributes)
   puavo_rest_user
 end
 
+YEAR_CLASS_TYPE = 'year class'
+
+def yc_group_abbr(school, group_name)
+  "#{school.abbreviation}-yc-#{group_name}"
+end
+
+# Creates new year class groups and updates existing ones.
+# In diff mode, nothing is actually done.
+def create_and_update_year_classes(users, diff_only)
+  checked = Set.new
+
+  users.each do |user|
+    next unless user.year_class
+
+    next if checked.include?(user.year_class)
+
+    yc_abbr = yc_group_abbr(user.school, user.year_class)
+
+    yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_abbr,
+                                         :school_dn => user.school.dn)
+
+    checked << yc_abbr    # check each year class only once
+
+    unless yc_group
+      # The group does not exist, create it
+      msg = "Creating a new year class group \"#{user.year_class}\" (abbreviation " \
+            "\"#{yc_abbr}\") in school \"#{user.school.name}\""
+
+      if diff_only
+        puts brown(msg)
+      else
+        puts msg
+      end
+
+      next if diff_only
+
+      yc_group = PuavoRest::Group.new(
+        :name => user.year_class,
+        :abbreviation => yc_abbr,
+        :type => YEAR_CLASS_TYPE,
+        :school_dn => user.school.dn
+      )
+
+      begin
+        yc_group.save!
+      rescue StandardError => e
+        puts "Could not create a new year class group \"#{yc_abbr}\" in school " \
+             "\"#{user.school.name}\": #{e}"
+        puts "Stopping here"
+        exit 1
+      end
+    else
+      # The group exists, make sure it's type is "year class". Year class
+      # groups don't have external IDs because they're synthetic groups,
+      # created by this script.
+      if yc_group.name != user.year_class ||
+           yc_group.type != YEAR_CLASS_TYPE ||
+           yc_group.external_id
+
+        msg = "Year class \"#{yc_abbr}\" already exists, but it's name, " \
+              "type or external ID are wrong, fixing"
+
+        if diff_only
+          puts green(msg)
+        else
+          puts msg
+        end
+
+        next if diff_only
+
+        yc_group.name = user.year_class
+        yc_group.type = YEAR_CLASS_TYPE
+        yc_group.external_id = nil
+
+        begin
+          yc_group.save!
+        rescue StandardError => e
+          # This is NOT a fatal error
+          puts "Could not update existing year class group \"#{yc_abbr}\" in " \
+               "school \"#{user.school.name}\": #{e}"
+        end
+      else
+        puts "Year class group \"#{yc_abbr}\": no changes"
+      end
+    end
+  end
+
+  # salli usea: PuavoRest::Group.by_attrs({:name => "..."}, {:multiple => true})
+end
+
 @options = PuavoImport.cmd_options(:message => "Import users to Puavo") do |opts, options|
   opts.on("--user-role ROLE", "Role of user (student/teacher)") do |r|
     options[:user_role] = r
@@ -142,6 +232,10 @@ correct_csv_users = 0
 update_external_id = 0
 not_update_external_id = 0
 
+mode = @options[:mode]
+
+students_without_year_class = []
+
 CSV.parse(convert_text_file(@options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |user_data|
   user_data_hash = {
     :db_id => user_data[0],
@@ -174,7 +268,7 @@ CSV.parse(convert_text_file(@options[:csv_file]), :encoding => 'utf-8', :col_sep
 
   school_id = user_data_hash[:school_external_id].to_s
 
-  if !@options[:include_schools].include?(school_id)
+  if @options.include?(:include_schools) && !@options[:include_schools].include?(school_id)
     puts "Ignoring user \"#{user_data_hash[:first_name]} #{user_data_hash[:last_name]}\" (username=\"#{user_data_hash[:username]}\") " \
          "because the school ID (#{school_id}) is not on the list of imported schools"
     next
@@ -192,10 +286,24 @@ CSV.parse(convert_text_file(@options[:csv_file]), :encoding => 'utf-8', :col_sep
     invalid_group += 1
     next
   end
+
   if user.school.nil?
     puts "Cannot find school (#{ user.school_external_ids }) for user: #{ user }"
     invalid_school += 1
     next
+  end
+
+  if @options[:user_role] == "student"
+    # Loudly report students who don't have a year class set
+    if user_data[11].nil? || user_data[11].empty?
+      puts "ERROR: Student \"#{user_data_hash[:first_name]} #{user_data_hash[:last_name]}\" " \
+           "in school \"#{user.school.name}\" has no year class"
+
+      students_without_year_class << {
+        name: "#{user_data_hash[:first_name]} #{user_data_hash[:last_name]}",
+        school: user.school.name
+      }
+    end
   end
 
   correct_csv_users += 1
@@ -203,7 +311,18 @@ CSV.parse(convert_text_file(@options[:csv_file]), :encoding => 'utf-8', :col_sep
 
 end
 
-mode = @options[:mode]
+unless students_without_year_class.empty?
+  # Be loud. Very loud.
+  puts "FATAL: Found #{students_without_year_class.count} student(s) without a year class:"
+
+  students_without_year_class.each do |s|
+    puts "  Name: \"#{s[:name]}\"  School: \"#{s[:school]}\""
+  end
+end
+
+if @options[:user_role] == "student"
+  create_and_update_year_classes(users, mode == 'diff')
+end
 
 case mode
 when "set-external-id"
@@ -493,7 +612,7 @@ when "import"
   schools = PuavoRest::School.all
 
   schools.each do |school|
-    next unless @options[:include_schools].include?(school.external_id)
+    next unless @options.include?(:include_schools) && @options[:include_schools].include?(school.external_id)
     school_users = PuavoRest::User.by_attr(:school_dns, school.dn, :multiple => true)
 
     school_users.each do |user|
