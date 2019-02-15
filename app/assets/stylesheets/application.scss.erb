@@ -69,6 +69,7 @@ $genericLinkHoverForeground: #352608;
 $genericLinkHoverBackground: none;
 $genericLinkFocusForeground: #000;
 $genericLinkFocusBackground: none;
+$genericLinkMobileBackground: #ccc;
 
 $mainWrapBackground: rgb(227, 227, 217);
 $mainWrapBorder: #3e3e2d;
@@ -312,6 +313,14 @@ a:hover {
 a:focus {
   color: $genericLinkFocusForeground;
   background: $genericLinkFocusBackground;
+}
+
+@media #{$screen-breakpoint-one} {
+  a {
+    font-size: 110%;
+    padding: 5px 10px;
+    background: $genericLinkMobileBackground;
+  }
 }
 
 p {
@@ -835,6 +844,7 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
   a {
     display: block;
     color: $firstLevelTabForeground;
+    background: transparent;
     font-size: 80%;
     font-weight: bold;
     text-transform: uppercase;
@@ -845,6 +855,7 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
 
   .current_first a, .current_first a:hover {
     color: $firstLevelTabActiveForeground;
+    background: transparent;
   }
 }
 
@@ -1303,7 +1314,9 @@ TOOLBOXES
     display: block;
     padding: 5px;
     color: $toolsContainerLinkForeground;
+    background: transparent;
     white-space: nowrap;
+    font-size: 100%;
     width: auto;
   }
 
@@ -1371,6 +1384,7 @@ BUTTONS
   display: inline-block;
   margin-bottom: 0;
   padding: 4px 12px;
+  font-size: 100%;
   font-weight: normal;
   text-align: center;
   text-decoration: none;
