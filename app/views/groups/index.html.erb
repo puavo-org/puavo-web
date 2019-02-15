@@ -2,6 +2,8 @@
 
 <p><%= @groups.length %> <%= t('.groups') %></p>
 
+<% have_primus = school_has_integration?(@school.id.to_i, 'primus') %>
+
 <table class="list">
   <tr class="thead">
     <th><%= t('activeldap.attributes.group.displayName') %></th>
@@ -21,15 +23,16 @@
     </td>
     <td data-title="<%=t('activeldap.attributes.group.puavoEduGroupType')%>">
       <% if group.puavoEduGroupType.nil? %>
-        <span class="missingData"><%= t('missing_data') %></span>
+      <span class="missingData"><%= t('missing_data') %></span>
       <% else %>
-        <% if group.puavoEduGroupType == "course group" %>
-        <span class="courseGroupType">
-        <% end %>
-        <%= humanize_group_type(group.puavoEduGroupType) %>
-        <% if group.puavoEduGroupType == "course group" %>
-        </span>
-        <% end %>
+      <% special_group = have_primus && ["course group", "year class"].include?(group.puavoEduGroupType) %>
+      <% if special_group %>
+      <span class="externallyMaintainedGroup" title="<%= t('.externally_maintained') %>">
+      <% end %>
+      <%= humanize_group_type(group.puavoEduGroupType) %>
+      <% if special_group %>
+      <i class='icon-cog-alt'></i></span>
+      <% end %>
       <% end %>
     </td>
     <td data-title="<%=t('.actions')%>" class="table-actions">

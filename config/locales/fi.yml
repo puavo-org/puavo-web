@@ -386,6 +386,7 @@ fi:
     index:
       actions: Toiminnot
       groups: ryhmää
+      externally_maintained: "Ryhmä on erillisen integraatioskriptin ylläpitämä. Älä muokkaa."
     show:
       title: Ryhmän tiedot
       roles_and_members: "Roolit ja jäsenet"

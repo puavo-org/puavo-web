@@ -190,7 +190,9 @@ $defaultBoxShadowColor: rgba(68, 68, 68, 0.80);
 $searchBoxShadowColor: rgba(68, 68, 68, 0.70);
 
 $groupRenameTableHeaderBackground: #ccc;
-$courseGroupColor: #00f;
+
+$externallyMaintainedGroupForeground: #080;
+$externallyMaintainedGroupBackground: transparent;
 
 $newDeviceTitleForeground: #000;
 
@@ -1850,9 +1852,10 @@ GROUPS
   background: $groupRenameTableHeaderBackground;
 }
 
-/* Course groups */
-.courseGroupType, .courseWarning {
-  color: $courseGroupColor;
+/* Course groups and yearl class groups when certain external integrations are used in this school */
+.externallyMaintainedGroup {
+  color: $externallyMaintainedGroupForeground;
+  background: $externallyMaintainedGroupBackground;
 }
 
 /*

@@ -416,6 +416,7 @@ en:
     index:
       actions: Actions
       groups: groups
+      externally_maintained: "The group is maintained by an external integration script. Do not edit."
     show:
       title: Group information
       roles_and_members: Roles and members
