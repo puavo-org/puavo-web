@@ -1,9 +1,7 @@
 <p class="required_info"><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@group, url: path, html: { method: method } ) do |f| %>
 
-<% if @group.puavoEduGroupType == "course group" %>
-<p class="courseWarning"><%= t('groups.edit.course_group_warning') %>
-<% end %>
+<%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
 
 <table class="editForm">
   <tr>

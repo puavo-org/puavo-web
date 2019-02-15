@@ -427,7 +427,8 @@ en:
       title: New group
     edit:
       title: Edit group
-      course_group_warning: "WARNING: Course groups are maintained externally by the Primus intergration scripts. You can edit the group, but your changes are likely to be lost when the next update occurs. Do not change the external ID!"
+      course_group_warning: "This group is maintained by an external Primus synchronisation script. Your modifications will most likely be lost. Never change the group's external ID!"
+      year_class_warning: "This group is maintained by an external Primus synchronisation script. Changes you make to the group or its membership list will be undone. Never change the group's abbreviation!"
     members:
       title: Current members
       remove: Remove

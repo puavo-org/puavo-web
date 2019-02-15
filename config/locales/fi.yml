@@ -397,7 +397,8 @@ fi:
       title: "Luo uusi ryhmä"
     edit:
       title: "Muokkaa ryhmää"
-      course_group_warning: "VAROITUS: Kurssiryhmät ovat ulkoisen skriptin hallinnoimia Primus-integraatioon liittyviä ryhmiä. Voit muokata ryhmän tietoja, mutta muutoksesi todennäköisesti katoavat seuraavan päivityksen aikana. Älä muuta ryhmän ulkoista ID:tä!"
+      course_group_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Ryhmään tekemäsi muutokset tullaan todennäköisesti kumoamaan. Älä koskaan vaihda tämän ryhmän ulkoista ID:tä!"
+      year_class_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Jäsenlistaan tai ryhmän tietoihin tekemäsi muutokset tullaan kumoamaan. Älä koskaan muuta ryhmän lyhennettä!"
     members:
       title: Nykyiset jäsenet
       remove: Poista ryhmästä
