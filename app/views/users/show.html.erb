@@ -37,9 +37,9 @@
     <p class="infoValue"><%= Array(@user.puavoEduPersonAffiliation).map { |value| t('puavoEduPersonAffiliation_' + value) }.join(', ') %></p>
 
     <% if new_group_management?(@school) && @user.puavoEduPersonAffiliation.include?('student') %>
-    <% if @user.puavoEduPersonAffiliation.include?('student') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.teaching_group') %></p>
     <p class="infoValue"><%= @user.teaching_group['name'].nil? ? t('missing_data') : (h @user.teaching_group['name']) %></p>
+    <% if school_has_integration?(@school.id.to_i, 'primus') %>
     <p class="infoTitle"><%= t('activeldap.attributes.user.year_class') %></p>
     <p class="infoValue"><%= @user.year_class['name'].nil? ? t('missing_data') : (h @user.year_class['name']) %></p>
     <% end %>
