@@ -361,6 +361,7 @@ en:
     form:
       add_email: Add another email
       add_telephone_number: Add another telephone number
+      read_only_warning: "Some fields cannot be edited, because their contents are coming from an external system."
     select_school:
       title: School change
       select_new_school: Select the new school

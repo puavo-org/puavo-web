@@ -333,6 +333,7 @@ fi:
     form:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"
+      read_only_warning: "Joidenkin kenttien muokkaus on estetty, koska niiden sisältö tulee ulkoisesta järjestelmästä."
     select_school:
       title: Koulun vaihto
       select_new_school: Valitse uusi koulu

@@ -1,4 +1,9 @@
 <p class="required_info"><%= t('layouts.forms.required_field')%></p>
+
+<% if @user.read_only? %>
+<div class="genericWarning"><%= t('.read_only_warning') %></div>
+<% end %>
+
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
   <table class="editForm">
     <tr>
