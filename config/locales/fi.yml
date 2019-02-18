@@ -336,19 +336,20 @@ fi:
       add_telephone_number: "Lisää puhelinnumeroita"
       read_only_warning: "Joidenkin kenttien muokkaus on estetty, koska niiden sisältö tulee ulkoisesta järjestelmästä."
     select_school:
-      title: Koulun vaihto
+      title: Koulun vaihto (vaihe 1/2)
       select_new_school: Valitse uusi koulu
       no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
       no_teaching_groups: "Valitussa koulussa ei ole yhtään opetusryhmää!"
       no_admin_groups: "Valitussa koulussa ei ole yhtään hallinnollista ryhmää!"
-      submit: Seuraava
+      submit: Jatka
     select_role:
-      title: Koulun vaihto
+      title: Koulun vaihto (vaihe 2/2)
       new_school: Valittu koulu
       select_new_role: Valitse uusi rooli
-      select_new_group: Valitse uusi ryhmä
-      submit: Vaihda koulu
+      select_new_group_student: Valitse uusi opetusryhmä
+      select_new_group_teacher: Valitse uusi hallinnollinen ryhmä
+      submit: Vaihda koulua
     import:
       info:
         phase_1: "Syötä käyttäjätiedot"

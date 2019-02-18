@@ -364,19 +364,20 @@ en:
       add_telephone_number: Add another telephone number
       read_only_warning: "Some fields cannot be edited, because their contents are coming from an external system."
     select_school:
-      title: School change
+      title: Change the user's school (step 1/2)
       select_new_school: Select the new school
       no_roles: "The selected school has no roles!"
       no_groups: "The selected school has no groups!"
       no_teaching_groups: "The selected school has no teaching groups!"
       no_admin_groups: "The selected school has no administrative groups!"
-      submit: Next
+      submit: Continue
     select_role:
-      title: School change
-      new_school: Selected school
+      title: Change the user's school (step 2/2)
+      new_school: The selected school
       select_new_role: "Select the new role"
-      select_new_group: "Select the new group"
-      submit: Change school
+      select_new_group_student: Select the new teaching group
+      select_new_group_teacher: Select the new administrative group
+      submit: Change the school
     import:
       info:
         phase_1: Insert user data
