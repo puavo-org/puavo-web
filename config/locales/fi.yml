@@ -337,6 +337,8 @@ fi:
       read_only_warning: "Joidenkin kenttien muokkaus on estetty, koska niiden sisältö tulee ulkoisesta järjestelmästä."
     select_school:
       title: Koulun vaihto (vaihe 1/2)
+      user: Käyttäjä
+      role: Rooli
       select_new_school: Valitse uusi koulu
       no_roles: "Valitussa koulussa ei ole yhtään roolia!"
       no_groups: "Valitussa koulussa ei ole yhtään ryhmää!"
@@ -345,6 +347,8 @@ fi:
       submit: Jatka
     select_role:
       title: Koulun vaihto (vaihe 2/2)
+      user: Käyttäjä
+      role: Rooli
       new_school: Valittu koulu
       select_new_role: Valitse uusi rooli
       select_new_group_student: Valitse uusi opetusryhmä

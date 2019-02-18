@@ -4,6 +4,16 @@
 <%= form_for("user", :url => select_role_user_path(@school, @user))  do |f| %>
 <table class="editForm">
   <tr>
+    <th><%= label_tag :new_school, t('.user') %></td>
+    <td><%= @user.displayName %></td>
+  </th>
+
+  <tr>
+    <th><%= label_tag :new_school, t('.role') %></td>
+    <td><%= t('puavoEduPersonAffiliation_' + @user.puavoEduPersonAffiliation) %></td>
+  </th>
+
+  <tr>
     <th><%= label_tag :new_school, t('.select_new_school') %></td>
     <td><%= select_tag :new_school, options_from_collection_for_select(@schools, "puavoId", "displayName") %></td>
   </tr>

@@ -365,6 +365,8 @@ en:
       read_only_warning: "Some fields cannot be edited, because their contents are coming from an external system."
     select_school:
       title: Change the user's school (step 1/2)
+      user: User
+      role: Role
       select_new_school: Select the new school
       no_roles: "The selected school has no roles!"
       no_groups: "The selected school has no groups!"
@@ -373,6 +375,8 @@ en:
       submit: Continue
     select_role:
       title: Change the user's school (step 2/2)
+      user: User
+      role: Role
       new_school: The selected school
       select_new_role: "Select the new role"
       select_new_group_student: Select the new teaching group

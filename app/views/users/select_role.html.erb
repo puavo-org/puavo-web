@@ -6,6 +6,16 @@
 <%= hidden_field_tag "user_ids[]", @user.id %>
 <table class="editForm">
   <tr>
+    <th><%= label_tag :new_school, t('.user') %></td>
+    <td><%= @user.displayName %></td>
+  </th>
+
+  <tr>
+    <th><%= label_tag :new_school, t('.role') %></td>
+    <td><%= t('puavoEduPersonAffiliation_' + @user.puavoEduPersonAffiliation) %></td>
+  </th>
+
+  <tr>
     <th><label><%= t('.new_school') %></label></th>
     <td><%= @new_school.displayName  %></td>
   </tr>
