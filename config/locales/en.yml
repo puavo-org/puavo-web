@@ -714,6 +714,7 @@ en:
         puavoExternalId: External ID
         teaching_group: Teaching group
         administrative_groups: Administrative groups
+        year_class: Year class
       group:
         displayName: Group name
         cn: Abbreviation
