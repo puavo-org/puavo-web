@@ -94,6 +94,16 @@ module PuavoImport
       end
     end
 
+    def year_class
+      case self.role
+      when "teacher", "staff"
+        return ""
+      when "student"
+        return "" if @year_class.nil?
+        @year_class
+      end
+    end
+
     def import_school_name
       return "" if school.nil?
       return school.name

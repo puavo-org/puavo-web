@@ -42,6 +42,8 @@ class User < LdapModel
   ldap_map :puavoDoNotDelete, :do_not_delete
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
 
+  ldap_map :year_class, :year_class
+
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
@@ -639,24 +641,46 @@ class User < LdapModel
   end
 
   def year_class
-    self.group_by_type('year class')
+    return nil unless self.roles.include?('student')
+
+    yc = Array(self.group_by_type('year class'))
+    return nil if yc.nil? || yc.first.nil?
+    return yc.first
   end
 
   def year_class=(group)
-    need_add_group = true
+    return unless self.roles.include?('student')
+
     self.group_by_type('year class', { :multiple => true }).each do |g|
-      if g.external_id != group.external_id
+      if g.abbreviation != group.abbreviation
         g.remove_member(self)
         g.save!
-      else
-        need_add_group = false
       end
     end
 
-    if need_add_group
+    unless group.member_usernames.include?(username)
       group.add_member(self)
       group.save!
     end
+  end
+
+  def year_class_changed?(group)
+    return false unless self.roles.include?('student')
+
+    self.group_by_type('year class', { :multiple => true }).each do |g|
+      if g.abbreviation != group.abbreviation
+        # It doesn't matter how many wrong year classes this user
+        # is a member of, we need just one to trigger an update
+        puts "[User #{username} is a member in the WRONG year class #{g.abbreviation}, removing]"
+        return true
+      end
+    end
+
+    unless group.member_usernames.include?(username)
+      return true
+    end
+
+    return false
   end
 
   def check_if_changed_attributes(new_userinfo)
@@ -968,6 +992,13 @@ class Users < PuavoSinatra
     user = User.by_username!(params["username"])
     json user.administrative_groups = json_params["ids"]
   end
+
+  get "/v3/users/:username/year_class" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+    json user.year_class
+  end
+
 
   get "/v3/users/:username/legacy_roles" do
     auth :basic_auth, :kerberos

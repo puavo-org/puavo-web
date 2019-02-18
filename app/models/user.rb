@@ -664,6 +664,11 @@ class User < LdapBase
     rest_proxy.put("/v3/users/#{ self.uid }/teaching_group", :params => { "id" => group_id }).parse
   end
 
+  def year_class
+    return @year_class if @year_class
+    @year_class = rest_proxy.get("/v3/users/#{ self.uid }/year_class").parse or {}
+  end
+
   private
 
   # Find role object by name (role_name) and set id to role_ids array.
