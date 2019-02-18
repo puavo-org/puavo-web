@@ -265,7 +265,14 @@ class UsersController < ApplicationController
       @user.change_school(@new_school.dn.to_s)
 
       if use_groups
-        @user.groups = Array(@role_or_group.id)
+        if @user.puavoEduPersonAffiliation == 'student'
+          # User.teaching_group=() wants the group ID, not the object
+          @user.teaching_group = @role_or_group.id
+        else
+          # This method accepts arrays, but here we only permit one administrative group.
+          # The user editor form lets you assign multiple administrative groups.
+          @user.administrative_groups = Array(@role_or_group.id)
+        end
       else
         @user.role_ids = Array(@role_or_group.id)
       end
