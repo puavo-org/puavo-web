@@ -452,6 +452,11 @@ when "diff"
 
     unless puavo_rest_user
       puts brown("Add new user: #{ user.to_s }")
+
+      if @options[:user_role] == "student"
+        puts brown("Adding user \"#{user.username}\" to year class group \"#{user.year_class}\"")
+      end
+
       next
     end
 
@@ -487,11 +492,15 @@ when "import"
     begin
       puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
 
+      yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_group_abbr(user.school, user.year_class))
+
       if puavo_rest_user
+        update_year_class = puavo_rest_user.year_class_changed?(yc_group)
+
         # username updates are done only if specifically requested for
         update_username = user.username != puavo_rest_user.username && @options[:update_usernames]
 
-        if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time || update_username
+        if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time || update_year_class || update_username
           puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
 
           update_attributes = [ :first_name,
@@ -537,6 +546,10 @@ when "import"
           puavo_rest_user.save!
 
           update_user_groups(puavo_rest_user, user)
+
+          if update_year_class
+            puavo_rest_user.year_class = yc_group
+          end
 
         else
           next if @options[:silent]
@@ -588,6 +601,8 @@ when "import"
 
 
         update_user_groups(puavo_rest_user, user)
+
+        puavo_rest_user.year_class = yc_group
 
         unless @new_users_by_school.has_key?(puavo_rest_user.school.id)
           @new_users_by_school[puavo_rest_user.school.id] = []
