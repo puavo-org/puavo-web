@@ -161,8 +161,14 @@
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
     <ul class="dropdown">
       <li>
+        <% if school_has_integration?(@school.id.to_i, 'primus') %>
+        <%= link_to select_school_user_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
+          <i class='icon-exchange'></i><%= t('.change_school') %>
+        <% end %>
+        <% else %>
         <%= link_to select_school_user_path(@school, @user) do %>
           <i class='icon-exchange'></i><%= t('.change_school') %>
+        <% end %>
         <% end %>
       </li>
 

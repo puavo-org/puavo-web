@@ -318,6 +318,7 @@ fi:
       contact_information: Yhteystiedot
       group_by_roles: "Roolien mukana tulevat ryhmät"
       change_school: Vaihda koulua
+      primus_school_change_warning: "Tässä koulussa on käytössä Primus-integraatio. Käyttäjän siirto toiseen kouluun saattaa sotkea integraation toimintaa.\n\nHaluatko varmasti jatkaa?"
       user_is_locked: "Käyttäjätunnus on lukittu"
       user_is_marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       user_deletion_prevented: "Käyttäjän poisto on estetty"
