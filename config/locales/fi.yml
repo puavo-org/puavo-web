@@ -350,6 +350,8 @@ fi:
       select_new_group_student: Valitse uusi opetusryhmä
       select_new_group_teacher: Valitse uusi hallinnollinen ryhmä
       submit: Vaihda koulua
+      group_help_students: "Oppilas siirretään tähän opetusryhmään ja poistaan muista opetusryhmistä. Muun tyyppiset ryhmäliitokset jätetään ennalleen."
+      group_help_teachers: "Opettaja/henkilökunnan jäsen siirretään tähän hallinnolliseen ryhmään ja poistetaan muista hallinnollisista ryhmistä. Muun tyyppisiin ryhmäliitoksiin ei kosketa."
     import:
       info:
         phase_1: "Syötä käyttäjätiedot"

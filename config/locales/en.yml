@@ -378,6 +378,8 @@ en:
       select_new_group_student: Select the new teaching group
       select_new_group_teacher: Select the new administrative group
       submit: Change the school
+      group_help_students: "The student will be moved to this teaching group and will be removed from other teaching groups. Other types of group memberships will not be modified."
+      group_help_teachers: "The teacher/staff member will be moved to this administrative group and will be removed from other administrative groups. Other types of group memberships will not be modified."
     import:
       info:
         phase_1: Insert user data

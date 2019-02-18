@@ -18,7 +18,16 @@
       <%= label_tag :new_role, t('.select_new_role') %>
       <% end %>
     </th>
-    <td><%= select_tag :new_role, options_from_collection_for_select(@roles_or_groups, "puavoId", "displayName") %></td>
+    <td>
+      <%= select_tag :new_role, options_from_collection_for_select(@roles_or_groups, "puavoId", "displayName") %>
+      <div class="genericNotice">
+        <% if @user.puavoEduPersonAffiliation == 'student' %>
+          <%= t('.group_help_students') %>
+        <% else %>
+          <%= t('.group_help_teachers') %>
+        <% end %>
+      </div>
+    </td>
   </tr>
 
   <tr class="buttonRow">
