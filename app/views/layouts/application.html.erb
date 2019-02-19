@@ -84,7 +84,7 @@ I18n.locale = "<%= I18n.locale %>";
                          placeholder: t('.search_placeholder'),
                          title: t('.search_title')) %>
 
-      <% if false %>
+      <% if current_user && current_user.organisation_owner? %>
       <a href="/extended_search" title="<%= t('.extended_search_title') %>">
         <img src="<%= image_path('magnifier.png') %>"></a>
       </div>
