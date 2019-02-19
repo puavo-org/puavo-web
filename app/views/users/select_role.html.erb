@@ -12,7 +12,7 @@
 
   <tr>
     <th><%= label_tag :new_school, t('.role') %></td>
-    <td><%= t('puavoEduPersonAffiliation_' + @user.puavoEduPersonAffiliation) %></td>
+    <td><%= list_user_roles(@user.puavoEduPersonAffiliation) %></td>
   </th>
 
   <tr>
