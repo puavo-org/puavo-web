@@ -168,7 +168,7 @@ en:
     users: Users
     groups: Groups
     roles: Roles
-    lists: Unloaded username lists
+    lists: Username lists
     add: Add
     remove: Remove
     new_role: New role

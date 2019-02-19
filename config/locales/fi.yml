@@ -141,7 +141,7 @@ fi:
     users: "Käyttäjät"
     groups: "Ryhmät"
     roles: Roolit
-    lists: Lataamattomat käyttäjätunnuslistat
+    lists: Käyttäjätunnuslistat
     add: "Lisää"
     remove: Poista
     new_role: Uusi rooli
