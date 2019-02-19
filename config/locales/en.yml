@@ -1237,6 +1237,17 @@ en:
       title: "Some lspci values"
     lsusb:
       title: "LSUSB"
+    xrandr:
+      title: "Xrandr output"
+    battery:
+      title: "Battery"
+      vendor: "Vendor"
+      serial: "Serial number"
+      state: "State"
+      energy_full: "Energy (design)"
+      voltage: "Voltage"
+      capacity: "Capacity"
+      percentage: "Percentage"
   extended_search:
     title: "Extended Search"
     search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."

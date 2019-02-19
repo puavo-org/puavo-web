@@ -136,7 +136,7 @@
 
 <!-- lsusb values -->
 
-<tr>
+<tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.lsusb.title') %></th>
   <td colspan="2">
     <% Array(@info['lsusb_values'] || []).each do |lsusb| %>
@@ -144,4 +144,55 @@
     <% end %>
   </td>
 </tr>
+
+<!-- xrandr output -->
+
+<tr class="sectionEnd">
+  <th class="main"><%= t('hwinfo.xrandr.title') %></th>
+  <td colspan="2">
+    <pre>
+<% Array(@info['xrandr'] || []).each do |xr| %><%= xr %><% end %></pre>
+  </td>
+</tr>
+
+<!-- battry info -->
+
+<% battery = @info['battery'] || {} %>
+
+<tr>
+  <th class="main" rowspan="7"><%= t('hwinfo.battery.title') %></th>
+  <th><%= t('hwinfo.battery.vendor') %></th>
+  <td><%= battery['vendor'] || '?' %></td>
+</tr>
+
+<tr>
+  <th><%= t('hwinfo.battery.serial') %></th>
+  <td><%= battery['serial'] || '?' %></td>
+</tr>
+
+<tr>
+  <th><%= t('hwinfo.battery.state') %></th>
+  <td><%= battery['state'] || '?' %></td>
+</tr>
+
+<tr>
+  <th><%= t('hwinfo.battery.energy_full') %></th>
+  <td><%= battery['energy-full-design'] || '?' %></td>
+</tr>
+
+<tr>
+  <th><%= t('hwinfo.battery.voltage') %></th>
+  <td><%= battery['voltage'] || '?' %></td>
+</tr>
+
+<tr>
+  <th><%= t('hwinfo.battery.capacity') %></th>
+  <td><%= battery['capacity'] || '?' %></td>
+</tr>
+
+<tr class="sectionEnd">
+  <th><%= t('hwinfo.battery.percentage') %></th>
+  <td><%= battery['percentage'] || '?' %></td>
+</tr>
+
 </table>

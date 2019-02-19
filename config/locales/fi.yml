@@ -1206,6 +1206,17 @@ fi:
       title: "lspci -arvoja"
     lsusb:
       title: "lsusb"
+    xrandr:
+      title: "Xrandr-tuloste"
+    battery:
+      title: "Akku"
+      vendor: "Valmistaja"
+      serial: "Sarjanumero"
+      state: "Latauksen tila"
+      energy_full: "Energia (suunniteltu)"
+      voltage: "Jännite"
+      capacity: "Kapasiteetti"
+      percentage: "Latausaste"
   extended_search:
     title: "Laajennettu haku"
     search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
