@@ -37,7 +37,7 @@ describe LdapModel do
         :first_name => "Heli",
         :last_name => "Kopteri",
         :username => "heli",
-        :roles => ["staff"],
+        :roles => ["student"],    # must be student, since year classes are NOT saved for non-students!
         :email => "heli.kopteri@example.com",
         :school_dns => [@school.dn.to_s],
         :password => "userpw"
