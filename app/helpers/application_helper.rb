@@ -284,6 +284,10 @@ module ApplicationHelper
     (v.nil? ? default : v).html_safe
   end
 
+  def list_user_roles(roles)
+    (Array(roles || []).collect { |r| t('puavoEduPersonAffiliation_' + r)}).join(', ').html_safe
+  end
+
   INTEGRATIONS_CACHE = {}
   RAW_INTEGRATIONS = {}
 
