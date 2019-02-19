@@ -28,6 +28,7 @@ function doSearch()
 
   xhttp.open("POST", "/extended_search", true);
   xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.setRequestHeader("X-CSRF-Token", document.querySelector('meta[name="csrf-token"]').content);
   xhttp.send(JSON.stringify({
     'searchTerms': searchTerms.value,
     'searchTermsType': searchTermsType.options[searchTermsType.selectedIndex].value,
