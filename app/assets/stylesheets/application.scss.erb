@@ -973,11 +973,18 @@ SEARCH FIELDS
 */
 
 /* The search box itself */
-#search {
+#search, .user_search {
   background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
   text-indent: 2em;
   margin: 4px;
   z-index: 1;
+}
+
+.user_search {
+  background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
+  text-indent: 2.5em;
+  padding: 3px;
+  /* TODO: Fix the borders. */
 }
 
 .loading {
@@ -986,13 +993,6 @@ SEARCH FIELDS
     is in progress, then removes it afterwards.
   */
   background: url("<%= image_path('ajax-loader.gif') %>") no-repeat scroll 10px center $searchFieldBackgroundColor !important;
-
-  /*
-    FIXME: Unfortunately this class is also added to the user search box in the group members page,
-    and the box loses its border. Not good. I don't understand why this class messes up that box,
-    it does not touch borders or anything else!? These styles are not coming from the #jquery-live-search
-    defined below, I already checked that.
-  */
 }
 
 /* Container for the top bar search results */
