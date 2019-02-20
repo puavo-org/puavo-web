@@ -65,7 +65,7 @@ def get_external_login_test_configuration
         'base'                    => 'dc=edu,dc=heroes,dc=fi',
         'bind_dn'                 => bind_dn,
         'bind_password'           => organisations['heroes']['owner_pw'],
-        'dn_mappings'    => {
+        'user_mappings' => {
           'defaults' => {
             'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
             'roles'                => [ 'student' ],
@@ -73,7 +73,7 @@ def get_external_login_test_configuration
             'teaching_group_field' => 'gidNumber', # typically: 'department'
             'teaching_group_regex' => '^(.*)$',
           },
-          'mappings' => [
+          'by_dn' => [
             { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
                 { 'add_administrative_group' => {
                     'displayname' => 'Heroes',
