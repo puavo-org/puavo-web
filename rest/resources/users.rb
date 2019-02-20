@@ -671,7 +671,6 @@ class User < LdapModel
       if g.abbreviation != group.abbreviation
         # It doesn't matter how many wrong year classes this user
         # is a member of, we need just one to trigger an update
-        puts "[User #{username} is a member in the WRONG year class #{g.abbreviation}, removing]"
         return true
       end
     end
