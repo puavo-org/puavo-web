@@ -249,6 +249,7 @@ fi:
     password:
       successful: Salasanan vaihto onnistui!
       failed: "Salasanan vaihto epäonnistui!"
+      failed_details: "Salasanan vaihto epäonnistui: %{details}"
       invalid_external_login: "Salasana tai käyttäjätunnus ulkoiseen palveluun (%{uid}) on virheellinen"
       incomplete_form: "Kaikkia tarvittavia lomakkeen kenttiä ei täytetty"
       invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"

@@ -153,6 +153,15 @@ module Puavo
 
     return true if http_res.code == 200
 
+    # If the user does not exist, just keep going
+    if http_res.code == 404
+      short_msg = 'received a 404 response from the password changing server'
+      long_msg = "received a 404 response from the password changing server, assuming the user does not exist, proceeding without password synchronisation"
+      $rest_flog.warn(short_msg, long_msg)
+      $rest_flog.warn(http_res.body.to_s, http_res.body.to_s)
+      return true
+    end
+
     raise http_res.body.to_s
   end
 

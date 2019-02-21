@@ -379,7 +379,14 @@ class User < LdapBase
 
     if res['exit_status'] != 0 then
       logger.warn "rest call to PUT /v3/users/password failed: #{ res.inspect }"
-      raise User::UserError, I18n.t('flash.password.failed')
+
+      if res.include?('stderr')
+        # This is ugly, but we have to tell the user why the password could not be changed
+        # TODO: A better system for this
+        raise User::UserError, I18n.t('flash.password.failed_details', :details => res['stderr'])
+      else
+        raise User::UserError, I18n.t('flash.password.failed')
+      end
     end
 
     return true
