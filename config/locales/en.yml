@@ -489,6 +489,13 @@ en:
     form:
       add_puavo_billing_info: Add a new billing info
   password:
+    validator_ok: "Password OK"
+    validator_ascii_only: "The password can only contain ASCII characters"
+    validator_no_whitespace: "The password cannot start or end in whitespace"
+    validator_too_short: "The password is too short"
+    validator_too_short_with_count: "The password is too short, it must be at least %{minlength} characters long"
+    validator_passwords_match: "The password and its confirmation match"
+    validator_passwords_dont_match: "The password and its confirmation do not match"
     gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
     six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
     seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."

@@ -459,6 +459,13 @@ fi:
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:
+    validator_ok: "Salasana OK"
+    validator_ascii_only: "Salasana saa sisältää vain ASCII-merkkejä"
+    validator_no_whitespace: "Salasana ei saa alkaa eikä loppua tyhjään merkkiin"
+    validator_too_short: "Salasana on liian lyhyt"
+    validator_too_short_with_count: "Salasana on liian lyhyt, sen on oltava vähintään %{minlength} merkkiä pitkä"
+    validator_passwords_match: "Salasana täsmää vahvistukseen"
+    validator_passwords_dont_match: "Salasana ei täsmää vahvistukseen"
     gsuite_integration_enabled: "Organisaation tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, eivät saa alkaa eikä loppua välilyöntiin, ja ne voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutaman muun välimerkin."
     six_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
     seven_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään seitsemän merkkiä."

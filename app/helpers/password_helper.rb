@@ -1,2 +1,49 @@
 module PasswordHelper
+  # Renders the Javascript template at the bottom of the page that sets up
+  # password field validation.
+  def setup_password_validator(requirements)
+    logger.info "setup_password_validator(): requirements are \"#{requirements}\""
+
+    return unless requirements
+
+    # defaults
+    template = 'password/password_length_only'
+
+    locals = {
+      password_id: 'user_new_password',
+      confirm_id: 'user_new_password_confirmation',
+
+      # Translate strings and pass them to the Javascript code. ERB templates
+      # can be used with Javascript, but it's hairy, apparently uses different
+      # rules and is primarily meant for AJAX calls. Also some of these strings
+      # are dynamic. I wasted four hours trying to come up with a better
+      # solution, but none of them worked. :-( I hate this kind of code.
+      strings: {
+        ok: t('password.validator_ok'),
+        ascii_only: t('password.validator_ascii_only'),
+        no_whitespace: t('password.validator_no_whitespace'),
+        too_short: t('password.validator_too_short'),
+        too_short_with_count: t('password.validator_too_short_with_count'),
+        passwords_match: t('password.validator_passwords_match'),
+        passwords_dont_match: t('password.validator_passwords_dont_match'),
+      }
+    }
+
+    case requirements
+      when 'Google'
+        template = 'password/password_gsuite'
+
+      # TODO: Create a more flexible system for specifying password requirements
+      when 'SixCharsMin'
+        locals[:min_length] = 6
+
+      when 'SevenCharsMin'
+        locals[:min_length] = 7
+    else
+      logger.warn "setup_password_validator(): unknown requirements \"#{requirements}\", validator template not rendered"
+      return
+    end
+
+    render partial: template, locals: locals
+  end
 end
