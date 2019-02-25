@@ -100,6 +100,8 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
+    @password_requirements = password_requirements
+
     respond_to do |format|
       # FIXME: whether the student management system is in use?
       if users_synch?(@school) && !current_user.organisation_owner?
@@ -122,6 +124,8 @@ class UsersController < ApplicationController
     @user_roles =  @user.roles || []
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
+
+    @password_requirements = password_requirements
 
     get_user_groups
   end

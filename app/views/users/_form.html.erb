@@ -1,3 +1,7 @@
+<% content_for :javascript do %>
+<%= javascript_include_tag 'passwordValidator' %>
+<% end %>
+
 <p class="required_info"><%= t('layouts.forms.required_field')%></p>
 
 <% read_only = @user.read_only? %>
@@ -167,4 +171,8 @@
       </td>
     </tr>
   </table>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<%= setup_password_validator(@password_requirements) %>
 <% end %>
