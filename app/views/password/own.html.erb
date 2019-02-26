@@ -16,7 +16,7 @@
 </div>
 
 <% if @expired %>
-<p class="message_alert"><%= t('password.current_password_too_old') %></p>
+<p class="genericWarning"><%= t('password.current_password_too_old') %></p>
 <% end %>
 
 <%= show_password_requirements(@password_requirements) %>
