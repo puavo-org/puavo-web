@@ -46,4 +46,27 @@ module PasswordHelper
 
     render partial: template, locals: locals
   end
+
+  # Creates the small help text that explains the password requirements for this organisation/school
+  def show_password_requirements(requirements)
+    return unless requirements
+
+    msg = ''
+
+    case requirements
+      when 'Google'
+        msg = t('password.gsuite_integration_enabled')
+
+      when 'SixCharsMin'
+        msg = t('password.six_chars_min')
+
+      when 'SevenCharsMin'
+        msg = t('password.seven_chars_min')
+
+    else
+      return
+    end
+
+    "<p class=\"passwordNotice\">#{msg}</p>".html_safe
+  end
 end

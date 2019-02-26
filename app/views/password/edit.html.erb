@@ -15,15 +15,9 @@
 </span>
 </div>
 
-<p class="message-info"><%= t('.head') %></p>
+<p class="passwordNotice"><%= t('.head') %></p>
 
-<% if @password_requirements == 'Google' %>
-<p class="message-info"><%= t('password.gsuite_integration_enabled') %></p>
-<% elsif @password_requirements == 'SixCharsMin' %>
-<p class="message-info"><%= t('password.six_chars_min') %></p>
-<% elsif @password_requirements == 'SevenCharsMin' %>
-<p class="message-info"><%= t('password.seven_chars_min') %></p>
-<% end %>
+<%= show_password_requirements(@password_requirements) %>
 
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
   <h2><%= t('.changing_user') %></h2>

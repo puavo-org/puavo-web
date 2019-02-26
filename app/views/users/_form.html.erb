@@ -155,7 +155,10 @@
 
     <tr>
       <th class="required"><%= f.label :new_password %></th>
-      <td><%= f.password_field :new_password, value: @user.new_password  %></td>
+      <td>
+        <%= show_password_requirements(@password_requirements) %>
+        <%= f.password_field :new_password, value: @user.new_password  %>
+      </td>
     </tr>
 
     <tr>
