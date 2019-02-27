@@ -98,11 +98,11 @@ function clearTerms()
 
       <td rowspan="4" id="searchHelpContainer">
         <div id="searchHelp">
-          <h6>Huomioitavia asioita</h6>
+          <h6><%= t('extended_search.help_title') %></h6>
           <ul>
-            <li>Hakutulokset näytetään siinä järjestyksessä, kun niihin täsmäävät hakutermit ovat laatikossa. Jokainen termi voi täsmätä useisiin kohteisiin.</li>
-            <li>Johtuen tavasta, jolla etunimiä ja sukunimiä etsitään, niissä ei (toistaiseksi) voi käyttää regexpejä. Nimien täsmäys tehdään AINA kirjainkoosta välittämättä.</li>
-            <li>Jotkut haut ovat aina regexpejä, koska ne olisivat muuten lähes hyödyttömiä (koska koko termin olisi täsmättävä)</li>
+            <li><%= t('extended_search.help_1') %></li>
+            <li><%= t('extended_search.help_2') %></li>
+            <li><%= t('extended_search.help_3') %></li>
           </ul>
         </div>
       </td>
