@@ -1666,33 +1666,34 @@ fieldset {
 
 @media #{$screen-breakpoint-one} {
   /* Turn tables into what looks like lists of table rows */
-  .editForm table, .editForm tbody {
-    display: block;
-  }
-
   .editForm {
     padding: 0;
-  }
 
-  .editForm tr {
-    display: block;
-    position: relative;
-    padding: 5px 10px;
-  }
+    table, tbody {
+      display: block;
+    }
 
-  .editForm th {
-    text-align: left;
-    width: auto;
-    padding: 0;
-  }
+    tr {
+      display: block;
+      position: relative;
+      padding: 5px 10px;
+    }
 
-  .editForm td {
-    display: block;
-    text-align: left;
-    padding: 0;
-  }
+    th {
+      text-align: left;
+      width: auto;
+      padding: 0;
+    }
 
-  .editForm label {
+    .buttonRow {
+      background: $formButtonRowBackground !important;
+    }
+
+    td {
+      display: block;
+      text-align: left;
+      padding: 0;
+    }
   }
 }
 
