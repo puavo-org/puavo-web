@@ -1246,7 +1246,8 @@ en:
     lsusb:
       title: "LSUSB"
     xrandr:
-      title: "Xrandr output"
+      title: "xrandr output"
+      no_xrandr: "(Empty)"
     battery:
       title: "Battery"
       no_battery: "(No battery)"

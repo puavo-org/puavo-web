@@ -1215,7 +1215,8 @@ fi:
     lsusb:
       title: "lsusb"
     xrandr:
-      title: "Xrandr-tuloste"
+      title: "xrandr-tuloste"
+      no_xrandr: "(Tyhjä)"
     battery:
       title: "Akku"
       no_battery: "(Ei akkua)"

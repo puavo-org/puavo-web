@@ -149,9 +149,13 @@
 
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.xrandr.title') %></th>
+  <% if !@info.include?('xrandr') || @info['xrandr'].empty? %>
+  <td colspan="2"><%= t('hwinfo.xrandr.no_xrandr') %>
+  <% else %>
   <td colspan="2">
     <pre>
-<% Array(@info['xrandr'] || []).each do |xr| %><%= xr %><% end %></pre>
+<% Array(@info['xrandr']).each do |xr| %><%= xr %><% end %></pre>
+  <% end %>
   </td>
 </tr>
 
