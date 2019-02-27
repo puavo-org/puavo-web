@@ -1249,6 +1249,7 @@ en:
       title: "Xrandr output"
     battery:
       title: "Battery"
+      no_battery: "(No battery)"
       vendor: "Vendor"
       serial: "Serial number"
       state: "State"

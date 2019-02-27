@@ -1218,6 +1218,7 @@ fi:
       title: "Xrandr-tuloste"
     battery:
       title: "Akku"
+      no_battery: "(Ei akkua)"
       vendor: "Valmistaja"
       serial: "Sarjanumero"
       state: "Latauksen tila"

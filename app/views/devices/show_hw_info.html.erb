@@ -157,7 +157,9 @@
 
 <!-- battry info -->
 
-<% battery = @info['battery'] || {} %>
+<% if @info.include?('battery') %>
+
+<% battery = @info['battery'] %>
 
 <tr>
   <th class="main" rowspan="7"><%= t('hwinfo.battery.title') %></th>
@@ -194,5 +196,14 @@
   <th><%= t('hwinfo.battery.percentage') %></th>
   <td><%= battery['percentage'] || '?' %></td>
 </tr>
+
+<% else %>
+
+<tr class="sectionEnd">
+  <th class="main"><%= t('hwinfo.battery.title') %></th>
+  <td colspan="2"><%= t('hwinfo.battery.no_battery') %></td>
+</tr>
+
+<% end %>
 
 </table>
