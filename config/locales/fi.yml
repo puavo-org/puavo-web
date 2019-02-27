@@ -252,7 +252,7 @@ fi:
       failed_details: "Salasanan vaihto epäonnistui: %{details}"
       invalid_external_login: "Salasana tai käyttäjätunnus ulkoiseen palveluun (%{uid}) on virheellinen"
       incomplete_form: "Kaikkia tarvittavia lomakkeen kenttiä ei täytetty"
-      invalid_login: "Salasana tai käyttäjätunnus (%{uid}) on virheellinen"
+      invalid_login: "Käyttäjätunnus (%{uid}) tai salasana on virheellinen"
       confirmation_failed: "Uusi salasana ei täsmää salasanan vahvistukseen"
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
       email_not_found: "Sähköpostiosoitetta ei löydy: %{email}"
@@ -482,10 +482,10 @@ fi:
       password: Vanha salasana
       link_other_password: "Vaihda toisen käyttäjän salasana"
     forgot:
-      title: Vaihda salasanasi
+      title: Aseta uusi salasana
       description: Anna sähköpostiosoitteesi saadaksesi tarkemmat ohjeet.
     reset:
-      title: Vaihda salasanasi
+      title: Aseta uusi salasana
       password: Uusi salasana
       password_confirmation: Vahvista uusi salasana
       description: Anna uusi salasanasi.

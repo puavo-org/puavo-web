@@ -1,51 +1,61 @@
-<% content_for :title do %>
-<h1><%= t('.title') %></h1>
+<% content_for :extra_password_js do %>
+<%= javascript_include_tag 'passwordValidator' %>
 <% end %>
 
-<div class="password_buttons">
-<span class="active">
-  <%= link_to own_password_path(:lang => @language) do%>
-    <i class="icon-key"></i><%= t('password.edit.link_own_password') %>
-  <% end %>
-</span>
-<span>
-  <%= link_to password_path(:lang => @language) do %>
-    <i class="icon-key"></i><%= t('password.own.link_other_password') %>
-  <% end %>
-</span>
-</div>
+<% content_for :password_validator do %>
+<%= setup_password_validator(@password_requirements) %>
+<% end %>
+
+<% content_for :title do %><%= t('.title') %><% end %>
+
+<% content_for :password_tabs do %>
+<ul>
+  <li><span id="left"><%= t('password.edit.link_own_password') %></span></li>
+
+  <li>
+    <%= link_to password_path(:lang => @language, :changing => @changing), :id => "right" do %>
+      <%= t('password.own.link_other_password') %>
+    <% end %>
+  </li>
+</ul>
+<% end %>
 
 <% if @expired %>
 <p class="genericWarning"><%= t('password.current_password_too_old') %></p>
 <% end %>
 
-<%= show_password_requirements(@password_requirements) %>
-
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
   <table class="editForm">
     <tr>
       <th><%= label :login, :uid, t('activeldap.attributes.user.uid') %></th>
-      <td><%= text_field :login, :uid, :value => @changing || '', :autofocus => @changing.nil? ? true : false %></td>
+      <td><%= text_field :login, :uid, :value => @changing, :autofocus => @changing.empty? ? true : false, :required => "required" %></td>
     </tr>
 
     <tr>
       <th><%= label :login, :password, t('.password') %></th>
-      <td><%= password_field :login, :password, :autofocus => @changing.nil? ? false : true %></td>
+      <td><%= password_field :login, :password, :autofocus => @changing.empty? ? false : true, :required => "required" %></td>
     </tr>
 
     <tr>
       <th><%= f.label :new_password, t('activeldap.attributes.user.new_password') %></th>
-      <td><%= password_field :user, :new_password, :value => "" %></td>
+      <td>
+        <%= show_password_requirements(@password_requirements) %>
+        <%= password_field :user, :new_password, :value => "", :required => "required" %>
+      </td>
     </tr>
 
     <tr>
       <th><%= f.label :new_password_confirmation, t('activeldap.attributes.user.new_password_confirmation') %></th>
-      <td><%= password_field :user, :new_password_confirmation, :value => "" %></td>
+      <td><%= password_field :user, :new_password_confirmation, :value => "", :required => "required" %></td>
     </tr>
 
     <tr class="buttonRow">
       <th></th>
-      <td><%= f.submit t('link.change_password'), class: 'btn' %></td>
+      <td>
+        <input type="hidden" name="changing" value="<%= @changing %>"/>
+        <input type="hidden" name="lang" value="<%= @language %>"/>
+        <%= f.submit t('link.change_password'), class: 'btn' %>
+      </td>
     </tr>
   </table>
 <% end %>

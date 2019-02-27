@@ -163,7 +163,7 @@ Feature: Manage passwords
     When I fill in "Enter new password" with "foobar"
     And I fill in "Re-enter new password" with "foobar"
     And I press "Reset password"
-    Then I should see "Your password has been reset successfully!"
+    Then I should see "Your password has been successfully reset!"
 
   Scenario: Use forgot password form with invalid email
     Given mock password management service

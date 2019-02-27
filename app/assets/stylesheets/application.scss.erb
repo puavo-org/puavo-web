@@ -207,10 +207,14 @@ $advancedSearchError: #f00;
 $advancedSearchNoResults: #00f;
 $advancedSearchNoMatches: #666;
 
+/* Password changing form */
+$passwordFormBody: #fff;
 $passwordFormTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
 $passwordFormTabForeground: #000;
-$passwordFormTabHoverBackground: linear-gradient($baseBrown, $baseBrownGradient);
-$passwordFormTabHoverForeground: #fff;
+$passwordFormTabNormalBackground: $baseOrange;
+$passwordFormTabNormalForeground: #000;
+$passwordFormTabHoverBackground: $baseOrangeGradient;
+$passwordFormTabHoverForeground: #000;
 
 /*
 ====================================================================================================
@@ -2155,84 +2159,102 @@ PASSWORD CHANGING AND RESETTING FORMS
 ====================================================================================================
 */
 
-.login-wrap {
-  font-size: 80%;
-  margin: 60px auto;
+.passwordBody {
+  background: $passwordFormBody;
+  font-family: "Ubuntu", "Arial", sans-serif;
+}
+
+.passwordContainer {
+  width: 90%;
+  font-size: 90%;
+  margin: 25px auto;
   max-width: 1200px;
-  width: 80%;
-}
+  min-width: 600px;   /* the mobile layout kicks in before this (at least it should...) */
 
-.password_container {
-  margin: 0;
-  padding: 2%;
-  position: relative;
-  width: 100%;
-  background: $baseBrown;
-}
+  @media #{$screen-breakpoint-one} {
+    width: 100%;
+    margin: 0;
+    max-width: unset;
+    min-width: unset;
+  }
 
-.login_content {
-  background: white;
-  padding: 20px;
-}
+  .passwordTabs {
+    ul {
+      list-style-type: none;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-evenly;
+      margin: 0;
+      padding: 0;
+    }
 
-.password_buttons {
-  position: absolute;
-  top: -54px;
-}
+    li {
+      display: inline;
+      width: 50%;
+    }
 
-.password_container span {
-  float: left;
-  display: block;
-  margin: 0 10px 0 0;
-  padding: 0;
-  width: auto;
-}
+    a, span {
+      display: block;
+      height: 100%;
+      color: inherit;
+      padding: 1em 0;
+      text-align: center;
+    }
 
-.password_container span a {
-  display: block;
-  padding: 15px;
-  text-align: center;
-  text-transform: uppercase;
-  text-decoration: none;
-}
+    a {
+      text-decoration: none;
+      background: $passwordFormTabNormalBackground;
+      color: $passwordFormTabNormalForeground;
+    }
 
-.password_buttons span {
-  background: $passwordFormTabBackground;
-  border: 1px solid transparent;
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-}
+    a:hover {
+      background: $passwordFormTabHoverBackground;
+      color: $passwordFormTabHoverForeground;
+    }
 
-.password_buttons span:hover {
-  background: $passwordFormTabHoverBackground;
-}
+    span {
+      background: $passwordFormTabBackground;
+      color: $passwordFormTabForeground;
+      cursor: default;
+      font-weight: bold;
+    }
 
-.password_buttons span.active {
-  background: $baseBrown;
-}
+    #left {
+      border-radius: 10px 0 0 0;
+    }
 
-.password_buttons span a {
-  color: $passwordFormTabForeground;
-}
+    #right {
+      border-radius: 0 10px 0 0;
+    }
 
-.password_buttons span a:hover, .password_buttons span.active a {
-  color: $passwordFormTabHoverForeground;
-}
+    @media #{$screen-breakpoint-one} {
+      a {
+        font-size: 100%;
+        padding: 1em 0;
+      }
+    }
+  }
 
-.login_content h1 {
-  margin-top: 0;
+  .content {
+    font-size: 80%;
+    background: #fff;
+    border: 10px solid $baseOrangeGradient;
+    padding: 1em;
+
+    @media #{$screen-breakpoint-one} {
+      border: none;
+      border-radius: 0;
+    }
+
+    h1 {
+      margin: 0 0 1em 0;
+      padding: 0;
+    }
+  }
 }
 
 /* Also used on user edit forms */
 .passwordNotice {
   background: $infoBgColor;
-  border: 2px dotted $baseBoxShadowBorderColor;
-  text-align: center;
   padding: 1em;
-}
-
-.password_container .login_content p {
-  margin: 0 0.5em 1em;
-  padding: 1em;
-  text-align: center;
 }

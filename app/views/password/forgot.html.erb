@@ -1,4 +1,4 @@
-<h1><%= t('.title') %></h1>
+<% content_for :title do %><%= t('.title') %><% end %>
 
 <p><%= t('.description') %></p>
 
@@ -6,12 +6,15 @@
   <table class="editForm">
     <tr>
       <th><%= label :forgot, :email, t('activeldap.attributes.user.mail') %></th>
-      <td><%= text_field :forgot, :email %></td>
+      <td><%= text_field :forgot, :email, :required => 'required' %></td>
     </tr>
 
     <tr class="buttonRow">
       <th></th>
-      <td><%= f.submit t('link.continue'), class: 'btn' %></td>
+      <td>
+        <input type="hidden" name="lang" value="<%= @language %>"/>
+        <%= f.submit t('link.continue'), class: 'btn' %>
+      </td>
     </tr>
   </table>
 <% end %>

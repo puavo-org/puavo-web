@@ -8,42 +8,51 @@ class PasswordController < ApplicationController
   before_action :set_ldap_connection
   skip_before_action :find_school, :require_login, :require_puavo_authorization
 
-  # GET /password/edit
-  def edit
-    @user = User.new
-    @password_requirements = password_requirements
-
-    setup_language
-
-    @changing = params[:changing] || nil
-    @changed = params[:changed] || nil
-    @changing = nil if !@changing.nil? && @changing.empty?
-    @changed = nil if !@changed.nil? && @changed.empty?
-    session[:changing] = @changing
-    session[:changed] = @changed
-  end
-
   # GET /password/own
+  # "Change your own password" form
   def own
     @user = User.new
     @password_requirements = password_requirements
 
-    setup_language
-
-    @changing = params[:changing] || nil
-    @changing = nil if !@changing.nil? && @changing.empty?
-    session[:changing] = @changed
+    @changing = params.fetch(:changing, '')
+    @changed = params.fetch(:changed, '')
+    setup_language(params.fetch(:lang, ''))
 
     @expired = (params[:password_expired] == 'true')
   end
 
-  # PUT /password
-  def update
+  # GET /password/edit
+  # "Change someone else's password" form
+  def edit
+    @user = User.new
+    @password_requirements = password_requirements
 
-    @changing = params[:login][:uid] || session[:changing] || nil
-    @changed = params[:user][:uid] || session[:changed] || nil
-    @changing = nil if @changing && @changing.empty?
-    @changed = nil if @changed && @changed.empty?
+    @changing = params.fetch(:changing, '')
+    @changed = params.fetch(:changed, '')
+    setup_language(params.fetch(:lang, ''))
+  end
+
+  # PUT /password
+  # "Change your own password" and "Change someone else's password" are both processed here
+  def update
+    @password_requirements = password_requirements
+
+    # If the field on the form was filled in, use the value from it,
+    # otherwise take the value from the URL
+    if params.include?(:login)
+      @changing = params[:login][:uid] || ''
+    else
+      @changing = params.fetch(:changing, '')
+    end
+
+    # Same here
+    if params.include?(:user)
+      @changed = params[:user][:uid] || ''
+    else
+      @changed = params.fetch(:changed, '')
+    end
+
+    setup_language(params.fetch(:lang, ''))
 
     if params[:login][:uid].empty?
       raise User::UserError, I18n.t('flash.password.incomplete_form')
@@ -57,10 +66,8 @@ class PasswordController < ApplicationController
       raise User::UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
 
-    session[:changing] = nil
-    session[:changed] = nil
-    @changing = nil
-    @changed = nil
+    # remember the changer's username, but not the target username
+    @changed = ''
 
     respond_to do |format|
       flash.now[:notice] = t('flash.password.successful')
@@ -75,12 +82,16 @@ class PasswordController < ApplicationController
   end
 
   # GET /password/forgot
+  # "I forgot my password" form that asks for an email address
   def forgot
-
+    setup_language(params.fetch(:lang, ''))
   end
 
   # PUT /password/forgot
+  # Send the password reset token to the specified email address
   def forgot_send_token
+    setup_language(params.fetch(:lang, ''))
+
     if params[:forgot].empty? || params[:forgot][:email].empty?
       flash[:alert] = I18n.t('password.forgot.description')
       redirect_to forgot_password_path
@@ -123,11 +134,17 @@ class PasswordController < ApplicationController
   end
 
   # GET /password/:jwt/reset
+  # Password reset form
   def reset
+    @password_requirements = password_requirements
+    setup_language(params.fetch(:lang, ''))
   end
 
   # PUT /password/:jwt/reset
+  # Reset the user's password
   def reset_update
+
+    setup_language(params.fetch(:lang, ''))
 
     raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
 
@@ -160,6 +177,7 @@ class PasswordController < ApplicationController
     redirect_to forgot_password_path
   end
 
+  # "Your password has been reset" form
   def successfully
 
   end
@@ -371,14 +389,14 @@ class PasswordController < ApplicationController
     )
   end
 
-  def setup_language
+  def setup_language(lang)
     # use organisation default
     @language = nil
 
     # override
-    if params[:lang] && ['en', 'fi', 'sv', 'de'].include?(params[:lang])
-      I18n.locale = params[:lang]
-      @language = params[:lang]
+    if lang && ['en', 'fi', 'sv', 'de'].include?(lang)
+      I18n.locale = lang
+      @language = lang
     end
   end
 end

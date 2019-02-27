@@ -1,4 +1,12 @@
-<h1><%= t('.title') %></h1>
+<% content_for :extra_password_js do %>
+<%= javascript_include_tag 'passwordValidator' %>
+<% end %>
+
+<% content_for :password_validator do %>
+<%= setup_password_validator(@password_requirements, 'reset_password', 'reset_password_confirmation') %>
+<% end %>
+
+<% content_for :title do %><%= t('.title') %><% end %>
 
 <p><%= t('.description') %></p>
 
@@ -6,17 +14,23 @@
   <table class="editForm">
     <tr>
       <th><%= label :reset, :password, t('.password') %></th>
-      <td><%= password_field :reset, :password %></td>
+      <td>
+        <%= show_password_requirements(@password_requirements) %>
+        <%= password_field :reset, :password, :required => 'required' %>
+      </td>
     </tr>
 
     <tr>
       <th><%= label :reset, :password_confirmation, t('.password_confirmation') %></th>
-      <td><%= password_field :reset, :password_confirmation %></td>
+      <td><%= password_field :reset, :password_confirmation, :required => 'required' %></td>
     </tr>
 
     <tr class="buttonRow">
       <th></th>
-      <td><%= f.submit t('.submit'), class: 'btn' %></td>
+      <td>
+        <input type="hidden" name="lang" value="<%= @language %>"/>
+        <%= f.submit t('.submit'), class: 'btn' %>
+      </td>
     </tr>
   </table>
 <% end %>

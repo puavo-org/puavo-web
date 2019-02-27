@@ -1,7 +1,10 @@
 module PasswordHelper
   # Renders the Javascript template at the bottom of the page that sets up
   # password field validation.
-  def setup_password_validator(requirements)
+  def setup_password_validator(requirements,
+                               password_id='user_new_password',
+                               confirm_id='user_new_password_confirmation')
+
     logger.info "setup_password_validator(): requirements are \"#{requirements}\""
 
     return unless requirements
@@ -10,8 +13,8 @@ module PasswordHelper
     template = 'password/password_length_only'
 
     locals = {
-      password_id: 'user_new_password',
-      confirm_id: 'user_new_password_confirmation',
+      password_id: password_id,
+      confirm_id: confirm_id,
 
       # Translate strings and pass them to the Javascript code. ERB templates
       # can be used with Javascript, but it's hairy, apparently uses different
