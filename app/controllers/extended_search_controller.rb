@@ -291,23 +291,23 @@ class ExtendedSearchController < ApplicationController
 
     # FIXME: This is too complicated to be implemented as a block, but it should not be.
 
+    # Micro-optimization: pre-downcase all names, since we're doing
+    # only case-insensitive comparisons
+    all_users.each do |user|
+      user[1]['down_sn'] = user[1]['sn'][0].downcase
+      user[1]['down_givenName'] = user[1]['givenName'][0].downcase
+    end
+
     settings.terms.each do |term|
       found = false
 
       t = term.split(/[\s,']/)
       t.reject!{|tt| tt.size == 0 }
-      last_name = t[0]
-      first_name = t[1]
+      first_name = (last_is_first ? t[1] : t[0]).downcase
+      last_name = (last_is_first ? t[0] : t[1]).downcase
 
       all_users.each do |user|
-        if last_is_first
-          # lastname firstname
-          next unless user[1]['sn'][0] == last_name && user[1]['givenName'][0] == first_name
-        else
-          # firstname lastname
-          next unless user[1]['sn'][0] == first_name && user[1]['givenName'][0] == last_name
-        end
-
+        next unless user[1]['down_givenName'] == first_name && user[1]['down_sn'] == last_name
         @results << [term, nil, convert_user(user[1])]
         found = true
       end
