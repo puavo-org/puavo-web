@@ -1493,78 +1493,89 @@ FORMS
 .editForm {
   border-collapse: collapse;
   width: 100%;
-}
 
-.editForm td, .editForm th {
-  padding: 10px;
-}
-
-.editForm tr:nth-child(odd) {
-  background: $formOddRowBackground;
-}
-
-.editForm tr:nth-child(even) {
-  background: $formEvenRowBackground;
-}
-
-.buttonRow td, .buttonRow th {
-  background: $formButtonRowBackground;
-}
-
-.editForm input[type="text"], .editForm input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-}
-
-.editForm input[type="checkbox"], .editForm input[type="radio"] {
-  padding: 0;
-  margin: 0 5px 0 0;    /* push labels away from the input box */
-}
-
-@media #{$screen-breakpoint-one} {
-  .editForm input[type="checkbox"], .editForm input[type="radio"] {
-    /* The label gets collapsed, so push the element away from the
-       element above it. */
-    margin: 10px;
+  td, th {
+    padding: 10px;
   }
-}
 
-.editForm select {
-  padding: 5px;
-}
+  tr:nth-child(odd) {
+    background: $formOddRowBackground;
+  }
 
-.editForm th {
-  text-align: right;
-  width: 250px;
-}
+  tr:nth-child(even) {
+    background: $formEvenRowBackground;
+  }
 
-.editForm select {
-  width: 100%;
-}
+  th {
+    text-align: right;
+    width: 250px;
+  }
 
-.editForm textarea {
-  width: 100%;
-}
+  .buttonRow td, .buttonRow th {
+    background: $formButtonRowBackground;
+  }
 
-.editForm th {
-/*  vertical-align: top;*/
-}
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+  }
 
-.editForm label {
-  /* Labels for checkboxes/radio buttons */
-  font-weight: normal;
-  font-size: 120%;
-  line-height: 2;
-}
+  input[type="checkbox"], input[type="radio"] {
+    padding: 0;
+    margin: 0 5px 0 0;    /* push labels away from the input box */
 
-.editForm th label {
-  font-size: 110%;
-  font-weight: bold;
-  word-wrap: none;
-  color: $formLabelColor;
-  padding: 0;
-  margin: 0;
+    @media #{$screen-breakpoint-one} {
+      /* The label gets collapsed, so push the element away from the
+         element above it. */
+      margin: 10px;
+    }
+  }
+
+  select {
+    padding: 5px;
+    width: 100%;
+  }
+
+  textarea {
+    width: 100%;
+  }
+
+  label {
+    /* Labels for checkboxes/radio buttons */
+    font-weight: normal;
+    font-size: 120%;
+    line-height: 2;
+  }
+
+  th label {
+    font-size: 110%;
+    font-weight: bold;
+    word-wrap: none;
+    color: $formLabelColor;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Submit and cancel buttons */
+  input[type="submit"] {
+    font-size: 120%;
+    height: 70px;
+    width: 50%;
+    max-width: 300px;
+  }
+
+  .cancel {
+    display: inline;
+    font-size: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100px;
+  }
+
+  .cancel:before {
+    content: " – ";
+  }
 }
 
 input[type="submit"] {
@@ -1637,26 +1648,6 @@ fieldset {
   border: 1px solid $formFieldsetBorderColor;
   padding: 10px;
   margin: 10px;
-}
-
-/* Submit and cancel buttons */
-.editForm input[type="submit"] {
-  font-size: 120%;
-  height: 70px;
-  width: 50%;
-  max-width: 300px;
-}
-
-.editForm .cancel {
-  display: inline;
-  font-size: 100%;
-  margin: 0;
-  padding: 0;
-  width: 100px;
-}
-
-.editForm .cancel:before {
-  content: " – ";
 }
 
 /* The "clone" buttons in email/phone number/mac address/etc. fields */
@@ -1872,20 +1863,22 @@ DEVICES
 ====================================================================================================
 */
 
-#addNewDeviceTitle span {
-  /* This is currently the only plain text on the tool bar. Everything else are buttons or form elements,
-     so this gets special treatment. */
-  font-size: 110%;
-  color: $newDeviceTitleForeground;
-  padding-right: 5px;
-}
+#addNewDeviceTitle {
+  span {
+    /* This is currently the only plain text on the tool bar. Everything else are buttons or form elements,
+       so this gets special treatment. */
+    font-size: 110%;
+    color: $newDeviceTitleForeground;
+    padding-right: 5px;
+  }
 
-#addNewDeviceTitle select {
-  padding: 5px;
-}
+  select {
+    padding: 5px;
+  }
 
-#addNewDeviceTitle option {
-  padding: 5px;
+  option {
+    padding: 5px;
+  }
 }
 
 .purchase_date select {
@@ -2020,28 +2013,27 @@ adjust the styles better with media queries. */
 }
 
 .userListRight {
-}
+  p {
+    padding: 5px 0;
+    margin: 0;
+  }
 
-.userListRight p {
-  padding: 5px 0;
-  margin: 0;
-}
+  /* Style the password form a bit */
+  input[type="text"] {
+    margin-left: 10px;
+  }
 
-/* Style the password form a bit */
-.userListRight input[type="text"] {
-  margin-left: 10px;
-}
+  p.submitRow {
+    padding-top: 20px;
+  }
 
-.userListRight p.submitRow {
-  padding-top: 20px;
-}
+  input[type="submit"] {
+    padding: 10px 20px;
+  }
 
-.userListRight input[type="submit"] {
-  padding: 10px 20px;
-}
-
-.userListRight .btn {
-  margin-left: 20px;
+  .btn {
+    margin-left: 20px;
+  }
 }
 
 @media #{$screen-breakpoint-one} {
