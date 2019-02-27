@@ -301,10 +301,28 @@ class ExtendedSearchController < ApplicationController
     settings.terms.each do |term|
       found = false
 
-      t = term.split(/[\s,']/)
-      t.reject!{|tt| tt.size == 0 }
-      first_name = (last_is_first ? t[1] : t[0]).downcase
-      last_name = (last_is_first ? t[0] : t[1]).downcase
+      # How to interpret the name?
+      comma = term.index(',')
+
+      if comma && (comma > 0) && (comma < term.size)
+        # First/last name separation is indicated with a comma
+        first_name = term[0..comma-1].strip
+        last_name = term[comma+1..-1].strip
+      else
+        # Use a regexp to split the name into parts and hope for the best
+        parts = term.split(/[\s,']/)
+        first_name = parts.first
+        last_name = parts.last
+      end
+
+      # (lastname, firstname) instead of (firstname, lastname)
+      if last_is_first
+        first_name, last_name = last_name, first_name
+      end
+
+      # Always case-insensitive matches
+      first_name.downcase!
+      last_name.downcase!
 
       all_users.each do |user|
         next unless user[1]['down_givenName'] == first_name && user[1]['down_sn'] == last_name
