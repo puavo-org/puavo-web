@@ -6,12 +6,12 @@
 <table class="editForm">
   <tr>
     <th class="required"><%= f.label :displayName %></th>
-    <td><%= f.text_field :displayName %></td>
+    <td><%= f.text_field :displayName, :required => 'required' %></td>
   </tr>
 
   <tr>
     <th class="required"><%= f.label :cn %></th>
-    <td><%= f.text_field :cn %></td>
+    <td><%= f.text_field :cn, :required => 'required' %></td>
   </tr>
 
 <% if current_user.organisation_owner? %>

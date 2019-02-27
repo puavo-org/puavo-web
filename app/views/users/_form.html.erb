@@ -14,17 +14,17 @@
   <table class="editForm">
     <tr>
       <th class="required"><%= f.label :givenName %></th>
-      <td><%= f.text_field :givenName, disabled: read_only %></td>
+      <td><%= f.text_field :givenName, disabled: read_only, :required => 'required' %></td>
     </tr>
 
     <tr>
       <th class="required"><%= f.label :sn %></th>
-      <td><%= f.text_field :sn, disabled: read_only %></td>
+      <td><%= f.text_field :sn, disabled: read_only, :required => 'required' %></td>
     </tr>
 
     <tr>
       <th class="required"><%= f.label :uid %></th>
-      <td><%= f.text_field :uid, disabled: read_only %></td>
+      <td><%= f.text_field :uid, disabled: read_only, :required => 'required' %></td>
     </tr>
 
     <tr>
