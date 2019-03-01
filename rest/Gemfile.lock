@@ -52,9 +52,9 @@ GEM
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
     arel (6.0.4)
-    backports (3.11.4)
+    backports (3.12.0)
     builder (3.2.3)
-    byebug (10.0.2)
+    byebug (11.0.0)
     coderay (1.1.2)
     colorize (0.8.1)
     concurrent-ruby (1.1.4)
@@ -90,23 +90,24 @@ GEM
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     hashdiff (0.3.8)
-    http (3.0.0)
+    http (4.0.5)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
-      http-form_data (>= 2.0.0.pre.pre2, < 3)
+      http-form_data (~> 2.0)
       http_parser.rb (~> 0.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     http-form_data (2.1.1)
     http_parser.rb (0.6.0)
-    httparty (0.15.6)
+    httparty (0.16.4)
+      mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     icalendar (2.5.2)
       ice_cube (~> 0.16)
     ice_cube (0.16.3)
-    json (2.1.0)
+    json (2.2.0)
     jwt (2.1.0)
     locale (2.1.2)
     loofah (2.2.3)
@@ -134,7 +135,7 @@ GEM
     mime-types-data (3.2018.0812)
     mini_mime (1.0.1)
     mini_portile2 (2.4.0)
-    minitest (5.10.3)
+    minitest (5.11.3)
     mono_logger (1.1.0)
     msgpack (1.2.6)
     multi_json (1.13.1)
@@ -157,7 +158,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     public_suffix (3.0.3)
-    puma (3.10.0)
+    puma (3.12.0)
     r18n-core (3.2.0)
     rack (1.6.11)
     rack-protection (1.5.5)
@@ -203,7 +204,7 @@ GEM
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
     ripper-tags (0.7.0)
-    rmagick (2.16.0)
+    rmagick (3.0.0)
     safe_yaml (1.0.4)
     shotgun (0.9.2)
       rack (>= 1.0)
@@ -247,7 +248,7 @@ GEM
       macaddr (~> 1.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    webmock (3.1.0)
+    webmock (3.5.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
@@ -268,22 +269,22 @@ DEPENDENCIES
   fluent-logger
   gibberish
   gssapi!
-  http (= 3.0.0)
-  httparty (= 0.15.6)
+  http
+  httparty
   icalendar
-  json (= 2.1.0)
-  jwt (= 2.1.0)
-  m (= 1.5.1)
+  json
+  jwt
+  m
   mechanize
-  minitest (= 5.10.3)
+  minitest
   msgpack
   net-ldap (= 0.16.1)
   nokogiri
-  ntlm-http (= 0.1.1)
+  ntlm-http
   pony
   prawn
   pry
-  puma (= 3.10.0)
+  puma
   rack-rewrite
   rails (= 4.2.10)
   redcarpet
@@ -297,11 +298,11 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   sinatra-r18n
-  sinatra-support (= 1.2.2)
+  sinatra-support
   sqlite3
   timecop
   uuid
-  webmock (= 3.1.0)
+  webmock
   yajl-ruby
   yard
 
