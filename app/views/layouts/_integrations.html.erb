@@ -1,20 +1,14 @@
     <ul class="integrations <%= extraClass %>">
-      <% [['in', t('schools.integrations.in') ],
-          ['out', t('schools.integrations.out')],
-          ['inout', t('schools.integrations.inout')],
-          ['login', t('schools.integrations.login')],
-          ['password', t('schools.integrations.password')],
-          ['other', t('schools.integrations.other')]].each do |system| %>
-      <% integrations.fetch(system[0], []).each do |name| %>
-      <% if system[0] == 'in' %>
-      <li class="<%= system[0] %>"><%= name %><span class="dirIn"></span>Puavo</li>
-      <% elsif system[0] == 'out' %>
-      <li class="<%= system[0] %>">Puavo<span class="dirOut"></span><%= name %></li>
-      <% elsif system[0] == 'inout' %>
-      <li class="<%= system[0] %>">Puavo<span class="dirInOut"></span><%= name %></li>
+      <% integrations.each do |i| %>
+      <li class="<%= i[:type].to_s %>">
+      <% if i[:type] == :in %>
+      <%= i[:pretty_name] %><span></span>Puavo</li>
+      <% elsif i[:type] == :out %>
+      Puavo<span></span><%= i[:pretty_name] %></li>
+      <% elsif i[:type] == :inout %>
+      Puavo<span></span><%= i[:pretty_name] %></li>
       <% else %>
-      <li class="<%= system[0] %>"><%= name %></li>
-      <% end %>
+      <%= i[:pretty_name] %>
       <% end %>
       <% end %>
     </ul>

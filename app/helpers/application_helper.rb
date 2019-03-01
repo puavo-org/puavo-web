@@ -289,63 +289,82 @@ module ApplicationHelper
   end
 
   INTEGRATIONS_CACHE = {}
-  RAW_INTEGRATIONS = {}
 
   # Retrieves various third-party system integrations for the specified school
   # The school ID *MUST* be an integer, not a string!
   def get_integrations_for_school(school_id)
+    return [] if Puavo::INTEGRATION_DEFINITIONS.empty?
     return INTEGRATIONS_CACHE[school_id] if INTEGRATIONS_CACHE.include?(school_id)
 
-    # Load configuration
-    integration_definitions = Puavo::CONFIG.fetch('integration_definitions', {})
-    integration_config = get_integration_configuration
+    integrations = get_organisation_integrations
 
     # Use per-school settings if they're defined, otherwise use global settings
-    if integration_config.include?(school_id)
-      integration_names = integration_config[school_id]
-    elsif integration_config.include?('global')
-      integration_names = integration_config['global']
+    schools = integrations.fetch('schools', {})
+    schedule = integrations.fetch('schedule', {})
+
+    if schools.include?(school_id)
+      # Integrations are listed for this school
+      names = schools[school_id]
+    elsif schools.include?('global')
+      # No integrations for this school, but a global list exists
+      names = schools['global']
+    else
+      # No integrations available at all
+      names = ''
     end
 
-    integration_names = "" unless integration_names
+    # Split the string and clean it up by removing unknown definitions and dupes
+    names = names.split(',')
+    names.each { |n| n.strip! }
+    names.reject! { |i| !Puavo::INTEGRATION_DEFINITIONS.keys.include?(i) }
+    names.uniq!
 
-    integration_names = integration_names.split(', ')
+    # Get a list of integrations for this school
+    integrations = []
 
-    # Remove integrations that aren't actually defined
-    integration_names.reject! { |i| !integration_definitions.keys.include?(i) }
+    names.each do |name|
+      d = Puavo::INTEGRATION_DEFINITIONS[name]
 
-    # Store the raw integration names so they can be queried if needed
-    RAW_INTEGRATIONS[school_id] = integration_names
+      hours = nil
+      minutes = nil
 
-    # Convert string IDs to human-readable names
-    integrations = {}
+      if schedule.include?(name)
+        # TODO: Parse these so we can display the next synchronisation
+        # time in the UI.
+        hours = schedule[name].fetch('hours', nil)
+        minutes = schedule[name].fetch('minutes', nil)
+      end
 
-    integration_names.each do |name|
-      definition = integration_definitions[name]
-      type = definition['type']
-
-      integrations[type] ||= []
-      integrations[type] << definition['name']
+      integrations << {
+        name: d.name,
+        pretty_name: d.pretty_name,
+        type: d.type,
+        hours: hours,
+        minutes: minutes
+      }
     end
 
-    integrations.each do |k, v|
-      v.uniq!
-      v.sort!
+    # Sort the integrations by pretty name
+    integrations.sort! do |a, b|
+      a[:pretty_name].downcase <=> b[:pretty_name].downcase
     end
 
-    # The YAML file that defines these integrations cannot be changed without
-    # restarting puavo-web, so we can safely cache these
+    # You need to restart the server anyway for any changes to organisations.yml
+    # to apply, so it's safe to cache these
     INTEGRATIONS_CACHE[school_id] = integrations
-
     integrations
   end
 
-  # 'integration_type' is a string that contains a word like "primus" or "gsuite"
-  def school_has_integration?(school_id, integration_type)
-    get_integrations_for_school(school_id)
+  # 'integration_name' is a string that contains a word like "primus" or "gsuite"
+  def school_has_integration?(school_id, integration_name)
+    integrations = get_integrations_for_school(school_id)
 
-    return false unless RAW_INTEGRATIONS.include?(school_id)
+    integrations.each do |i|
+      # linear searches are not nice, but most schools that have integrations
+      # have only 1 or 2 of them
+      return true if i[:name] == integration_name
+    end
 
-    return RAW_INTEGRATIONS[school_id].include?(integration_type)
+    false
   end
 end

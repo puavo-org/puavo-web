@@ -35,17 +35,17 @@ $searchResultsSeparatorLine: #000;
 $loggedUsernameForeground: #000;
 
 $integrationsBorder: #ccc;
-$integrationsInBackground: #88f;
-$integrationsInForeground: #fff;
+$integrationsInBackground: #8ff;
+$integrationsInForeground: #000;
 $integrationsOutBackground: #8f8;
 $integrationsOutForeground: #000;
 $integrationsInOutBackground: #f88;
 $integrationsInOutForeground: #000;
-$integrationsLoginBackground: #8ff;
-$integrationsLoginForeground: #000;
+$integrationsLoginBackground: #88f;
+$integrationsLoginForeground: #fff;
 $integrationsPasswordBackground: #ff8;
 $integrationsPasswordForeground: #000;
-$integrationsOtherBackground: #f8f;
+$integrationsOtherBackground: #eee;
 $integrationsOtherForeground: #000;
 
 /* Tab bars */
@@ -727,19 +727,37 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     display: inline;
   }
 
+  /* Special spans for adding arrows indicating data flow directions */
+  span {
+    font-family: "puavo-icons";
+    padding: 0 5px;
+  }
+
   .in {
     background: $integrationsInBackground;
     color: $integrationsInForeground;
+
+    span:after {
+      content: "\e829";
+    }
   }
 
   .out {
     background: $integrationsOutBackground;
     color: $integrationsOutForeground;
+
+    span:after {
+      content: "\e829";
+    }
   }
 
   .inout {
     background: $integrationsInOutBackground;
     color: $integrationsInOutForeground;
+
+    span:after {
+      content: "\e819";
+    }
   }
 
   .login {
@@ -774,24 +792,6 @@ MAIN PAGE LAYOUT AND THE MULTILINE "TAB" ROW
     content: "\e821";
     font-family: "puavo-icons";
     padding-right: 5px;
-  }
-
-  /* Special spans for adding arrows indicating data flow directions */
-  span {
-    font-family: "puavo-icons";
-    padding: 0 5px;
-  }
-
-  span.dirIn:after {
-    content: "\e829";
-  }
-
-  span.dirOut:after {
-    content: "\e829";
-  }
-
-  span.dirInOut:after {
-    content: "\e819";
   }
 }
 

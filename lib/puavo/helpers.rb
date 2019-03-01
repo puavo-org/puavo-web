@@ -40,7 +40,7 @@ module Puavo
     end
 
     # Retrieve the per-organisation integration configuration
-    def get_integration_configuration
+    def get_organisation_integrations
       conf = Puavo::Organisation.
         find(LdapOrganisation.current.cn).
         value_by_key("integrations")
