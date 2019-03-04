@@ -5,6 +5,7 @@
 #  bundle exec rails runner script/puavo-add-owner.rb
 #
 
+require 'io/console'
 require 'highline'
 
 def ask(question, opts={})
@@ -33,6 +34,20 @@ def ask_password(question)
   return cli.ask(question) { |q| q.echo = "*" }
 end
 
+def read_char
+  STDIN.echo = false
+  STDIN.raw!
+  input = STDIN.getc.chr
+  if input == "\e"
+    input << STDIN.read_nonblock(3) rescue nil
+    input << STDIN.read_nonblock(2) rescue nil
+  end
+ensure
+  STDIN.echo = true
+  STDIN.cooked!
+  return input
+end
+
 def try_save_user(user, old_role)
   while(true)
     begin
@@ -46,8 +61,12 @@ def try_save_user(user, old_role)
         retry
       end
 
-      puts "Try again? Press Enter..."
-      STDIN.gets
+      puts "Can't save user: #{e.to_s}"
+      puts "Press S to skip this organisation, Esc to abort, or any other key to retry..."
+
+      c = read_char
+      break if 'sS'.include?(c)
+      raise Interrupt if c.chr == "\u001b"
     end
   end
 end
