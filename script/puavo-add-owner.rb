@@ -96,6 +96,11 @@ owner_given_name = ask("Given name: ")
 owner_surname = ask("Surname: ")
 owner_ssh_public_key = ask("Public key: ")
 
+if databases.nil? || databases.empty?
+  puts "No databases found! Did you enter the correct LDAP credentials?"
+  exit
+end
+
 databases.each do |database|
   # Skip o=puavo database
   next if database == "o=puavo"
