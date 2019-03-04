@@ -107,10 +107,30 @@ module Puavo
     external_pw_mgmt_url, schools = self.get_external_pw_mgmt_params(target_user)
     if external_pw_mgmt_url then
       begin
+        target_user_school = target_user.primary_school_id.to_i
+
+        begin
+          pri_school = PuavoRest::School.by_id(target_user_school)
+        rescue
+          pri_school = nil
+        end
+
+        if pri_school && pri_school.name == 'Administration'
+          # Never sync administration school passwords. They're special cases.
+          # WARNING: Hardcoded school name!
+
+          msg = 'not syncing password, this user is in the Administration school'
+          $rest_flog.error(msg, msg)
+
+          return {
+            :exit_status => 0,
+            :stderr      => "",
+            :stdout      => "Not syncing passwords for users in the Administration school",
+          }
+        end
 
         if schools then
           # A list of schools has been specified...
-          target_user_school = target_user.primary_school_id.to_i
           unless schools.include?(target_user_school) then
             # ...and this school is not configured for password synchronisation
             return {
