@@ -5,6 +5,8 @@
 #  bundle exec rails runner script/puavo-add-owner.rb
 #
 
+require 'highline'
+
 def ask(question, opts={})
   new_value = nil
   while true
@@ -25,9 +27,14 @@ def ask(question, opts={})
   new_value
 end
 
+# No options here
+def ask_password(question)
+  cli = HighLine.new
+  return cli.ask(question) { |q| q.echo = "*" }
+end
 
-ldap_admin_dn = ask("LDAP admin dn", :default => "uid=admin,o=puavo")
-ldap_admin_password = ask("LDAP admin password")
+ldap_admin_dn = ask("LDAP admin DN", :default => "uid=admin,o=puavo")
+ldap_admin_password = ask_password("LDAP admin password: ")
 
 ldap_configuration = ActiveLdap::Base.ensure_configuration.merge(
   { "host" => PUAVO_ETC.ldap_master,
