@@ -33,13 +33,19 @@ def ask_password(question)
   return cli.ask(question) { |q| q.echo = "*" }
 end
 
-def try_save_user(user)
+def try_save_user(user, old_role)
   while(true)
     begin
       user.save!
       break
     rescue Exception => e
-      puts "Can't save user: #{e.to_s}"
+      if e.to_s == "Role Roles can't be blank"
+        # just hack it, no one cares about roles anymore
+        puts "Looks like this organisation is still using roles, hacking around it..."
+        user.role_name = old_role
+        retry
+      end
+
       puts "Try again? Press Enter..."
       STDIN.gets
     end
@@ -93,13 +99,13 @@ databases.each do |database|
 
   if user = User.find(:first, :attribute => "uid", :value => owner_uid )
     puts "User already exists: #{ owner_uid } (#{ database }). Changing the password."
+    role = nil
   else
     puts "Creating new user: #{ owner_uid } (#{ database })."
     school = School.find(:first, :attribute => "displayName", :value => "Administration")
-    role = school.roles.first
+    role = school.roles.first.displayName
     user = User.new
     user.uid = owner_uid
-    user.role_name = role.displayName
     user.puavoSchool = school.dn
   end
 
@@ -109,7 +115,7 @@ databases.each do |database|
   user.new_password_confirmation = owner_password
   user.puavoEduPersonAffiliation = "admin"
   user.puavoSshPublicKey = owner_ssh_public_key
-  try_save_user(user)
+  try_save_user(user, role)
 
   begin
     ldap_organisation = LdapOrganisation.first
