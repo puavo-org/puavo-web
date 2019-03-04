@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 #
-# Add new organisation's owner
+# Remove an owner user from all organisations.
 #
 #  bundle exec rails runner script/puavo-add-owner.rb
 #

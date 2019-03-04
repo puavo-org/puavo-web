@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 #
-# Add new organisation's owner
+# Create a new owner user to all organisations. If the user already exists,
+# their password will be updated.
 #
 #  bundle exec rails runner script/puavo-add-owner.rb
 #
