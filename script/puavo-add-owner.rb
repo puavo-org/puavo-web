@@ -91,7 +91,14 @@ databases =  ActiveLdap::Base.search( :filter => "(objectClass=*)",
 
 
 owner_uid = ask("Username for new owner user:")
-owner_password = ask_password("Password: ")
+owner_password = ask_password("New password: ")
+owner_password_confirm = ask_password("New password confirmation: ")
+
+if owner_password != owner_password_confirm
+  puts "Passwords don't match, aborted!"
+  exit
+end
+
 owner_given_name = ask("Given name: ")
 owner_surname = ask("Surname: ")
 owner_ssh_public_key = ask("Public key: ")
