@@ -66,10 +66,10 @@ databases.each do |database|
   LdapBase.setup_connection( new_configuration )
 
   if user = User.find(:first, :attribute => "uid", :value => owner_uid )
-    puts "Remove user: #{ user.uid } (#{ database })."
+    puts "Removing user: #{ user.uid } (#{ database })."
     user.destroy
   else
-    puts "Cannot find user: #{ owner_uid } (#{ database })."
+    puts "Can't find the user: #{ owner_uid } (#{ database })."
   end
 
 end

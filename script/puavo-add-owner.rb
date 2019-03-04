@@ -84,9 +84,9 @@ databases.each do |database|
   LdapBase.setup_connection( new_configuration )
 
   if user = User.find(:first, :attribute => "uid", :value => owner_uid )
-    puts "User already exists: #{ owner_uid } (#{ database }). Change password."
+    puts "User already exists: #{ owner_uid } (#{ database }). Changing the password."
   else
-    puts "Create user: #{ owner_uid } (#{ database })."
+    puts "Creating new user: #{ owner_uid } (#{ database })."
     school = School.find(:first, :attribute => "displayName", :value => "Administration")
     role = school.roles.first
     user = User.new
@@ -106,9 +106,9 @@ databases.each do |database|
   begin
     ldap_organisation = LdapOrganisation.first
     ldap_organisation.ldap_modify_operation( :add, [{ "owner" => [user.dn.to_s] }] )
-    puts "\tUser is now organisation owner"
+    puts "\tUser is now an organisation owner"
   rescue ActiveLdap::LdapError::TypeOrValueExists
-    puts "\tUser is already organisation owner"
+    puts "\tUser is already an organisation owner"
   end
 
 end
