@@ -47,14 +47,12 @@ class PuavoMenu < MetaMenu
     active_on GroupsController
     active_on RolesController
     active_on ListsController
-    active_on Users::ImportController
     active_on ImportToolController
 
     child do
       title { t('link.users') }
       link { users_path(@school) }
       active_on UsersController
-      active_on Users::ImportController
     end
 
     child do

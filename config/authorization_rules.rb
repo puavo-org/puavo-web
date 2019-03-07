@@ -23,7 +23,6 @@ authorization do
     has_permission_on [:group, :users], :to => :create do
       if_attribute :school_id =>  is { nil }
     end
-    has_permission_on [:users_import], :to => [:new, :validate, :refine, :group, :preview, :create, :show]
   end
 
   role :guest do

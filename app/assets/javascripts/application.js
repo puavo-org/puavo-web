@@ -16,7 +16,6 @@
 //= require jquery.opensmenu
 //= require jquery.jeditable
 //= require jquery.liveSearch
-//= require jquery.textarea
 //= require wlan
 //= require i18n
 
