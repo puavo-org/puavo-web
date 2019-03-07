@@ -17,8 +17,6 @@
 //= require jquery.jeditable
 //= require jquery.liveSearch
 //= require jquery.textarea
-//= require users/import/new
-//= require users/import/preview
 //= require wlan
 //= require i18n
 
