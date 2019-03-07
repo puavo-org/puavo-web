@@ -2085,6 +2085,12 @@ EXTENDED SEARCH
       font-weight: bold;
       text-decoration: underline;
     }
+
+    @media #{$screen-breakpoint-one} {
+      /* Takes up too much space on mobile, assume the
+         user already knows how to use this tool... */
+      display: none;
+    }
   }
 }
 
