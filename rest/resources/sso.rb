@@ -51,10 +51,42 @@ class ExternalService < LdapModel
 
   end
 
+  # Filters a User.to_hash down to a suitable level for SSO URLs
+  def filtered_user_hash(user)
+    user_hash = user.to_hash
+
+    # Remove DNs, they only take up space and aren't on the spec anyway
+    user_hash['schools'].each do |s|
+      s.delete('dn')
+
+      s['groups'].each do |g|
+        g.delete('dn')
+      end
+    end
+
+    # Only the members that are on the spec (plus a few more)
+    {
+      'id' => user_hash['id'],
+      'puavo_id' => user_hash['puavo_id'],
+      'external_id' => user_hash['external_id'],
+      'preferred_language' => user_hash['preferred_language'],
+      'user_type' => user_hash['user_type'],      # unknown if actually needed
+      'username' => user_hash['username'],
+      'first_name' => user_hash['first_name'],
+      'last_name' => user_hash['last_name'],
+      'email' => user_hash['email'],
+      'primary_school_id' => user_hash['primary_school_id'],
+      'year_class' => user_hash['year_class'],
+      'organisation_name' => user_hash['organisation_name'],
+      'organisation_domain' => user_hash['organisation_domain'],
+      'schools' => user_hash['schools'],
+    }
+  end
+
   def generate_login_url(user, return_to_url)
     return_to_url = Addressable::URI.parse(return_to_url.to_s)
 
-    jwt_data = user.to_hash.merge({
+    jwt_data = filtered_user_hash(user).merge({
       # Issued At
       "iat" => Time.now.to_i.to_s,
       # JWT ID
