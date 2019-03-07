@@ -24,27 +24,6 @@
 
 window.jQuery(document).ready(function($) {
   "use strict";
-  var activate_advanced = $('.printer-permissions input[value=advanced]')[0];
-
-  function showAdvancedSettings(e) {
-    var groups = $('.printer-permissions .groups');
-    var devices = $('.printer-permissions .devices');
-    if(e.checked) {
-      groups.show();
-      devices.show();
-    } else {
-      groups.hide();
-      devices.hide();
-    }
-  }
-
-  if(activate_advanced) {
-    showAdvancedSettings(activate_advanced);
-  }
-
-  $('input[name="activate"]').click(function() {
-    showAdvancedSettings(activate_advanced);
-  });
 
   $('.clone_prev_input_element').click(function(e) {
     e.preventDefault();
@@ -77,25 +56,6 @@ window.jQuery(document).ready(function($) {
     width: 'auto'
   });
 
-  // Open external links always in a new tab
-  $('a[href^=http]').click(function() {
-    window.open(this.href);
-    return false;
-  });
-
-
-  if ($.support.touch) {
-
-    // Override mouse CSS so that it won't interfier.
-    $("style#menuHandling").text($.fn.opensMenu.css);
-
-    $(".organisation-menu-button").opensMenu(".organisation-menu");
-    $(".school-menu-button").opensMenu(".school-menu");
-
-    $(".tool").opensMenu(".tools .tool ul");
-
-  }
-
   $('#autopoweroff input:radio').change( function() {
     if ( $(this).attr('value') != 'custom' ) {
       $(this).closest('table').find('select').each( function() {
@@ -118,6 +78,3 @@ window.jQuery(document).ready(function($) {
   });
 
 });
-
-
-
