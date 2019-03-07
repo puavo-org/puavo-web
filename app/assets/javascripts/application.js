@@ -13,8 +13,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery.opensmenu
-//= require jquery.jeditable
 //= require jquery.liveSearch
 //= require wlan
 //= require i18n
