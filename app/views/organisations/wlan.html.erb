@@ -9,3 +9,7 @@
 <%= render :partial => 'shared/form_wlan', :locals => { :f => f } %>
 
 <% end %>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag "wlan" %>
+<% end %>

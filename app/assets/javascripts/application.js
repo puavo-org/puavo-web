@@ -14,7 +14,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.liveSearch
-//= require wlan
 //= require i18n
 
 window.jQuery(document).ready(function($) {
