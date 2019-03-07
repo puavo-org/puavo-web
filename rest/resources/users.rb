@@ -42,8 +42,6 @@ class User < LdapModel
   ldap_map :puavoDoNotDelete, :do_not_delete
   ldap_map :sambaPwdLastSet, :password_last_set, LdapConverters::Number
 
-  ldap_map :year_class, :year_class
-
   # The classic Roles in puavo-web are now deprecated.
   # puavoEduPersonAffiliation will used as the roles from now on
   ldap_map :puavoEduPersonAffiliation, :roles, LdapConverters::ArrayValue
@@ -638,6 +636,13 @@ class User < LdapModel
       group.add_member(self)
       group.save!
     end
+  end
+
+  # Called when User.to_hash is called
+  computed_attr :year_class_hash, :year_class
+  def year_class_hash
+    grp = self.group_by_type('year class')
+    grp.nil? ? nil : grp.name
   end
 
   def year_class
