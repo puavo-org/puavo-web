@@ -518,6 +518,7 @@ when "import"
             # Clear the deletion set timestamp: this user's information is being updated,
             # so clearly they cannot be marked for deletion yet.
             puavo_rest_user.removal_request_time = nil
+            puts "Clearing the removal request timestamp for user \"#{puavo_rest_user.username}\" (external ID \"#{puavo_rest_user.external_id}\")"
           end
 
           # FIXME: We can not modify the role because admin user is able to add more roles for the user
@@ -638,6 +639,7 @@ when "import"
         if user.removal_request_time.nil?
           # This user has been removed, but they have not been marked for deletion yet.
           # Set that mark now.
+          puts "Setting the user \"#{user.username}\"'s (external ID \"#{user.external_id}\") removal request timestamp"
           user.removal_request_time = Time.now.utc
           user.save!
         end
