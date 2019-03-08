@@ -65,6 +65,18 @@ contain following claims:
   - `organisation_domain`
     - For example `jyvaskyla.opinsys.fi`.
 
+In addition to those above, there are some "extra" fields that can be used, but
+you should NOT rely on their existence (they might not always exist). These are:
+
+  - `puavo_id`
+    - This is the actual internal unique ID for this user. It's the same as `id` but this field gives it an explicit name.
+  - `external_id`
+    - External IDs (social security number hash) for users who attend a school that has Primus integration enabled. Will be null for others.
+  - `preferred_language`
+    - Two-letter language code (`en`, `fi`, `sv`, `de` and so on) identifying the language this user primarily speaks. Can be used to localize the environment.
+  - `year_class`
+    - A string containing the year class name for students who attend a school that has Primus integration enabled. Will be always `null` (the actual JSON NULL value, not a string!) for non-students and students who are not in a Primus-enabled school.
+
 ## Service activation
 
 By default external services are not activated for all Opinsys organisations.
