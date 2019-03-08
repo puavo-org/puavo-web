@@ -83,7 +83,7 @@
     <td  class="noWrap">
       <span id="groups_by_roles">
       <% @user.groups.each do |g| %>
-        <%= link_to g.displayName, group_path(g.school.puavoId, g) %> (<%= g.school.displayName %>)<br>
+        <%= link_to g.displayName, group_path(g.school.puavoId, g) %> (<%= link_to g.school.displayName, school_path(g.school) %>)<br>
       <% end %>
       </span>
     </td>
