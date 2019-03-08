@@ -1,14 +1,44 @@
-# Third-party systems integration stuff
+# Third-party systems integration "badges" and other stuff
 
 module Puavo
   module Integrations
-    # Retrieves various third-party system integrations for the specified school
-    # The school ID *MUST* be an integer, not a string!
+    # Retrieves various third-party system integrations for the specified
+    # school in the *current* organisation. The school ID *MUST* be an
+    # integer, not a string!
     def get_integrations_for_school(school_id)
+      # No integration definitions -> nothing to display, even if
+      # integration data exists for this organisation and school
       return [] if Puavo::INTEGRATION_DEFINITIONS.empty?
+
+      # The cache assumes that school IDs are unique across organisations,
+      # so this lookup won't yet need the name of the current organisation
       return INTEGRATIONS_CACHE[school_id] if INTEGRATIONS_CACHE.include?(school_id)
 
-      integrations = get_organisation_integrations
+      # Get the per-school integration data, if it exists
+      integrations = Puavo::ORGANISATION_INTEGRATIONS.fetch(LdapOrganisation.current.cn, {})
+
+      # The raw organisation-level data (in Puavo::ORGANISATION_INTEGRATIONS)
+      # looks like this:
+      #
+      #    hogwarts:
+      #      schools:
+      #        global: all_schools_have_this_integration
+      #        12345: some_integration
+      #        67890: another_integration, third_integration
+      #      schedule:
+      #        some_integration:
+      #          hours: "5"
+      #          minutes: "0"
+      #        another_integration:
+      #          hours: "1,2"
+      #          minutes: "5,15"
+      #        third_integration:
+      #          hours: "07-17"
+      #          minutes: "15"
+      #
+      # We use the organisation name and the school ID to pick the target school
+      # from the 'schools' block and scheduling data from 'schedule', and
+      # process and cache the results.
 
       # Use per-school settings if they're defined, otherwise use global settings
       schools = integrations.fetch('schools', {})
@@ -61,8 +91,9 @@ module Puavo
         a[:pretty_name].downcase <=> b[:pretty_name].downcase
       end
 
-      # You need to restart the server anyway for any changes to organisations.yml
-      # to apply, so it's safe to cache these
+      # You need to restart the server anyway for any changes to
+      # organisations.yml and integrations.yml to apply, so it's
+      # safe to cache these
       INTEGRATIONS_CACHE[school_id] = integrations
       integrations
     end
@@ -82,15 +113,8 @@ module Puavo
 
     private
 
+    # Cache for school PuavoID -> integration data, so we don't have to
+    # constantly parse the raw data from the YML files
     INTEGRATIONS_CACHE = {}
-
-    # Retrieve the per-organisation integration configuration
-    def get_organisation_integrations
-      conf = Puavo::Organisation.
-        find(LdapOrganisation.current.cn).
-        value_by_key("integrations")
-
-      conf || {}
-    end
   end
 end

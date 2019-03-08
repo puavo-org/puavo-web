@@ -1,4 +1,4 @@
-# External integrations stuff
+# Third-party systems integration data loading at startup
 
 # Integration definitions simply define a "pretty" (human-readable) name
 # and a type for each third-party integration. Schedules and other details
@@ -19,8 +19,6 @@ class IntegrationDefinition
   end
 end
 
-Puavo::INTEGRATION_DEFINITIONS = {}
-
 name = "#{Rails.root}/config/integrations.yml"
 
 if File.exists?(name)
@@ -31,8 +29,11 @@ if File.exists?(name)
     data = {}
   end
 
-  data.fetch('integration_definitions', {}).each do |name, definition|
-    if Puavo::INTEGRATION_DEFINITIONS.include?(name)
+  # Load integration definitions
+  definitions = {}
+
+  data.fetch('definitions', {}).each do |name, definition|
+    if definitions.include?(name)
       raise "Integration name \"#{name}\" used more than once, names must be unique"
     end
 
@@ -66,6 +67,14 @@ if File.exists?(name)
       raise "Integration \"#{name}\" has an unknown type \"#{definition['type']}\""
     end
 
-    Puavo::INTEGRATION_DEFINITIONS[name] = IntegrationDefinition.new(name, definition['name'], type)
+    definitions[name] = IntegrationDefinition.new(name, definition['name'], type)
   end
+
+  # Have integration data
+  Puavo::INTEGRATION_DEFINITIONS = definitions
+  Puavo::ORGANISATION_INTEGRATIONS = data.fetch('organisations', {})
+else
+  # No integration data
+  Puavo::INTEGRATION_DEFINITIONS = {}
+  Puavo::ORGANISATION_INTEGRATIONS = {}
 end
