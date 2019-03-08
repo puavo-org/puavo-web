@@ -132,7 +132,7 @@ Feature: Manage external passwords
     And I fill in "Confirm new password" with "newdavidsecret"
     And I press "Change password"
     Then I should not see "Password changed successfully!"
-    And I should see "Failed to change password!"
+    And I should see "Failed to change the user's password!"
 
   Scenario: Non-existing user tries to change password of external user
     Given I am on the password change page
@@ -165,7 +165,7 @@ Feature: Manage external passwords
     And I fill in "Confirm new password" with "newcharliesecret"
     And I press "Change password"
     Then I should not see "Password changed successfully!"
-    And I should see "Failed to change password!"
+    And I should see "Failed to change the user's password!"
 
   Scenario: External admin changes pw for another admin (no perms in Puavo)
 
