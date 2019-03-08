@@ -174,17 +174,6 @@ en:
     new_role: New role
     new_user: New user
     delete_users_marked_for_deletion: "Delete users who are marked for deletion"
-    user_mass_import:
-      new: Users mass import
-      progress: Importing users. This can take few minutes. Please wait without closing the browser.
-      status: Status
-      ready: Import is now ready. Click the button below to download the user list.
-      download_passwords_pdf: Download passwords PDF
-      handle_user_data: Handle the user data
-      revalidate: Revalidate
-      validate: Validates users
-      create: Create users
-      download_time: The password PDF has been downloaded at least once. You can still download it for %{seconds} seconds.
     continue: Continue
     login: Login
     change_password: Change password
@@ -385,43 +374,6 @@ en:
       submit: Change the school
       group_help_students: "The student will be moved to this teaching group and will be removed from other teaching groups. Other types of group memberships will not be modified."
       group_help_teachers: "The teacher/staff member will be moved to this administrative group and will be removed from other administrative groups. Other types of group memberships will not be modified."
-    import:
-      info:
-        phase_1: Insert user data
-        phase_2: Define user data
-        phase_3: Complete user data
-        phase_4: Preview data and add users
-      new:
-        title: User mass import
-        help: Enter your user data in the text box
-        example_title: Example
-        example: |-
-          Joe, Bloggs
-          Jane, Doe
-        hint: You can also use tabs as the separator. This way you can copy-paste information from a spreadsheet.
-      show:
-        title: Users (%{count}) were successfully created.
-        successful: "Successful: %{count}"
-        failed: "Failed: %{count}"
-        pdf_info: You can now save passwords to a printable PDF file.
-        title_of_failed_users_list: The following users were not successfully created!
-      status:
-        title_with_error: Not all users were successfully created!
-      role:
-        title: User mass import validation
-        help: Following field value must be select when create new users
-      refine:
-        title: User mass import
-        info: The following new users have data that did not pass validation. Please fix the errors and click the Revalidate button.
-        column_info: Select the correct column names
-        delete: Delete
-        name_of_column: Column name
-        example: Example data
-      preview:
-        title: User mass import preview
-        info: Check the information of the new users and select "Create users"
-        change_school: Change school
-        select_all: Select all
   groups:
     index:
       actions: Actions

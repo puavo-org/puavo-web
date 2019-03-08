@@ -147,17 +147,6 @@ fi:
     new_role: Uusi rooli
     new_user: "Uusi käyttäjä"
     delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
-    user_mass_import:
-      new: Lisää käyttäjiä massa-ajona
-      handle_user_data: "Käsittele käyttäjätieto"
-      progress: Lisätään käyttäjiä. Tämä voi kestää muutaman minuutin. Odotathan sulkematta selainta.
-      ready: Käyttäjät ovat nyt valmiita. Klikkaa alla olevaa nappia ladataksesi käyttäjälistan.
-      status: Tila
-      download_passwords_pdf: Kopioi salasanat PDF:änä
-      revalidate: Tarkista uudelleen
-      validate: Tarkasta syötetyt tiedot
-      create: "Lisää käyttäjät"
-      download_time: Salasana-PDF on jo ladattu kerran. Voit vielä ladata sen %{seconds} sekunnin ajan.
     continue: Jatka
     login: Kirjaudu
     change_password: Vaihda salasana
@@ -357,41 +346,6 @@ fi:
       submit: Vaihda koulua
       group_help_students: "Oppilas siirretään tähän opetusryhmään ja poistaan muista opetusryhmistä. Muun tyyppiset ryhmäliitokset jätetään ennalleen."
       group_help_teachers: "Opettaja/henkilökunnan jäsen siirretään tähän hallinnolliseen ryhmään ja poistetaan muista hallinnollisista ryhmistä. Muun tyyppisiin ryhmäliitoksiin ei kosketa."
-    import:
-      info:
-        phase_1: "Syötä käyttäjätiedot"
-        phase_2: "Määrittele käyttäjätiedot"
-        phase_3: "Täydennä käyttäjätiedot"
-        phase_4: "Tarkista käyttäjätiedot ja lisää käyttäjät"
-      new:
-        title: "Lisää käyttäjiä massa-ajona"
-        help: "Syötä käyttäjätieto alla olevaan tekstikenttään"
-        example_title: Esimerkki
-        example: "Matti, Meikäläinen\n\
-          Maija, Meikäläinen"
-        hint: "Voit käyttää eroittimena myös sarkainta. Näin ollen voit liittää käyttäjien tiedot taulukkolaskentaohjelmasta leikepöydän kautta alla olevaan tekstikenttään."
-      show:
-        title: "Käyttäjät (%{count}) lisättiin onnistuneesti."
-        title_with_error: "Kaikkien käyttäjien lisäys ei onnistunut!"
-        successful: "Onnistui: %{count}"
-        failed: "Epäonnistui: %{count}"
-        pdf_info: "Voit nyt generoida salasanat tulostettavalle PDF-tiedostolle."
-        title_of_failed_users_list: "Seuraavien käyttäjien luonti epäonnistui!"
-      role:
-        title: "Käyttäjien massalisäystiedon tarkistus"
-        help: "Seuraaville kentille tulee määrittää tiedot uusia tunnuksia lisättäessä"
-      refine:
-        title: "Käyttäjien massalisäys"
-        info: "Seuraavat uudet käyttäjät eivät läpäisseet tarkistusta. Korjaa puutteelliset tiedot ja napsauta \"Tarkista uudelleen\" -painiketta."
-        column_info: "Valitse sopivat kentät esimerkkien avulla"
-        delete: Poista
-        name_of_column: "Kentän nimi"
-        example: Esimerkki
-      preview:
-        title: "Käyttäjien massalisäys, esikatselu"
-        info: "Tarkista käyttäjien tiedot. Punaisilla merkityt tiedot ovat virheellisiä ja kyseisiä käyttäjiä ei voida lisätä ilman muutoksia. Tee tarvittavat korjaukset ja valitse lopuksi \"Lisää käyttäjät\""
-        change_school: Vaihda koulua
-        select_all: Valitse kaikki
   groups:
     index:
       actions: Toiminnot
