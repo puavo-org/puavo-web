@@ -39,5 +39,14 @@ module Puavo
       users_synch["only_of_schools"].include?(school.puavoId)
     end
 
+    # Retrieve the per-organisation integration configuration
+    def get_integration_configuration
+      conf = Puavo::Organisation.
+        find(LdapOrganisation.current.cn).
+        value_by_key("integrations")
+
+      conf || {}
+    end
+
   end
 end

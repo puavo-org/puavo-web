@@ -27,7 +27,6 @@ config/puavo_devices.yml
 config/puavo_external_files.yml
 config/services.yml
 config/secrets.yml
-config/integrations.yml
 node_modules/
 public/assets/
 public/import_tool.js
