@@ -99,22 +99,6 @@
       <td><%= h device['modifyTimestamp'].nil? ? '?' : device['modifyTimestamp'].localtime %></td>
     </tr>
 
-    <% if ['laptop', 'fatclient'].include?(device.puavoDeviceType) %>
-    <tr>
-      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceHWInfo") %></th>
-      <td>
-      <% if @device.puavoDeviceHWInfo %>
-      <%= Time.at(JSON.parse(@device.puavoDeviceHWInfo)["timestamp"]).localtime %><br>
-      <%= link_to show_hw_info_path(@school, @device), class: 'btn' do %>
-      <%= t('devices.show.hw_info_button') %>
-      <% end %>
-      <% else %>
-      <%= t('devices.show.no_hw_info') %>
-      <% end %>
-      </td>
-    </tr>
-    <% end %>
-
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.description") %></th>
       <td><%= html_escape(device.description.to_s) %></td>

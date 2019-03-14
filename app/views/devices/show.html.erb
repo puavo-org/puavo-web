@@ -8,6 +8,10 @@
 <%= render :partial => 'cups', :locals => { :device => @device } %>
 <% end %>
 
+<% if ['laptop', 'fatclient', 'thinclient'].include?(@device.puavoDeviceType) %>
+<%= render :partial => 'devices/hwinfo', :locals => { :rawInfo => @device.puavoDeviceHWInfo } %>
+<% end %>
+
 <% content_for :tools do %>
 <ul>
   <li>

@@ -1155,10 +1155,10 @@ en:
     month: "a month ago"
     months: "%{month} months ago"
   hwinfo:
-    title: "Hardware information for %{name}"
-    back_button: "Back to device page"
+    title: "Hardware information"
+    no_info: "No hardware information received from this device"
+    json_failed: "Could not parse the device hardware info JSON: %{msg}"
     received_timestamp: "Data received"
-    raw_data: "Raw data"
     image:
       name: "Image"
       release: "Name"

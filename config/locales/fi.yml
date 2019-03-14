@@ -1126,10 +1126,10 @@ fi:
     month: "kuukausi sitten"
     months: "%{month} kuukautta sitten"
   hwinfo:
-    title: "Laitteen %{name} laitetiedot"
-    back_button: "Takaisin laitteen sivulle"
+    title: "Laitetiedot"
+    no_info: "Ei vastaanotettuja laitetietoja tästä laitteesta"
+    json_failed: "Laitetietojen JSONin lataus epäonnistui: %{msg}"
     received_timestamp: "Tiedot vastaanotettu"
-    raw_data: "Raakadata"
     image:
       name: "Päätekuva"
       release: "Julkaisu"

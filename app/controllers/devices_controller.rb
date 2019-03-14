@@ -252,16 +252,6 @@ class DevicesController < ApplicationController
     end
   end
 
-  # GET /:school_id/devices/:id/show_hw_info
-  def show_hw_info
-    @device = Device.find(params[:id])
-    @info = JSON.parse(@device.puavoDeviceHWInfo)
-
-    respond_to do |format|
-      format.html { render :action => "show_hw_info" }
-    end
-  end
-
   private
 
   def find_school

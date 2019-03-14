@@ -1,8 +1,19 @@
-<% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn, t('titles.device_hw_info') %>
+<%= start_box t('hwinfo.title'), extraClass='fullWidth' %>
+<% unless rawInfo %>
+<p class="genericNotice"><%= t('hwinfo.no_info') %></p>
+<% else %>
+<%
+begin
+  @info = JSON.parse(rawInfo) # + ']]')
+rescue StandardError => e
+  @info = nil
+  @message = e.to_s
+end
+%>
 
-<h1 class="hwInfoTitle"><%= t('hwinfo.title', :name => @device.puavoHostname) %></h1>
-
-<a href="<%= device_path(@school, @device) %>" class="btn"><%= t('hwinfo.back_button') %></a>
+<% unless @info %>
+<p class="genericError"><%= t('hwinfo.json_failed', :msg => e) %></p>
+<% else %>
 
 <p class="hwInfoTimestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime %></p>
 
@@ -211,3 +222,8 @@
 <% end %>
 
 </table>
+
+<% end %>
+
+<% end %>
+<%= end_box %>
