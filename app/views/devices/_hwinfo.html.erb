@@ -4,7 +4,7 @@
 <% else %>
 <%
 begin
-  @info = JSON.parse(rawInfo) # + ']]')
+  @info = JSON.parse(rawInfo)
 rescue StandardError => e
   @info = nil
   @message = e.to_s
@@ -12,7 +12,7 @@ end
 %>
 
 <% unless @info %>
-<p class="genericError"><%= t('hwinfo.json_failed', :msg => e) %></p>
+<p class="genericError"><%= t('hwinfo.json_failed', :msg => @message) %></p>
 <% else %>
 
 <p class="hwInfoTimestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime %></p>
