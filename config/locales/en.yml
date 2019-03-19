@@ -39,6 +39,7 @@ en:
     ldap_services: "LDAP services"
     external_services: "External services"
     external_files: "External files"
+    device_statistics: "Device statistics"
     servers: "Servers"
     printers: "Printers"
     wlan: "Wireless Networks"
@@ -133,6 +134,7 @@ en:
       servers: Servers
       ldap_services: LDAP services
       external_files: External files
+      device_statistics: Device statistics
       wlan: Wireless networks
       about: About
       printers: Printers
@@ -181,6 +183,7 @@ en:
     new_ldap_service: New
     rename_groups: Rename groups and roles
     devices: Device list
+    device_statistics: Device statistics
     servers: Servers
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
@@ -1268,3 +1271,32 @@ en:
       no_search_terms: "No search terms"
       invalid_regexp: "Invalid regexp "
       unknown_search_term_type: "Unknown search term type "
+  device_statistics:
+    columns:
+      timestamp: "Data received"
+      cpu: "Processor"
+      memory: "Memory (MiB)"
+      hard_drive: "Hard drive (GiB)"
+
+    device_lists:
+      with_info: "Devices with hardware information"
+      without_info: "Devices without hardware information"
+      without_info_count: "%{count} devices total."
+
+    school_index:
+      title: "School device statistics"
+      no_devices: "This school has no devices at all"
+      no_devices_with_hardware_info: "This school has devices, but none of them have sent any hardware information"
+      count_header: "This school has a total of %{total} devices that can send hardware information. Of those, %{with_info} have sent their information:"
+
+    organisation_index:
+      title: "Organisation device statistics"
+      no_devices: "This organisation has no devices at all"
+      no_devices_with_hardware_info: "This organisation has devices, but none of them have sent any hardware information."
+      count_header: "This organisation has a total of %{total} devices that can send hardware information. Of those, %{with_info} have sent their information:"
+
+    images:
+      title: "Desktop images in use"
+      header: "The number of different desktop images in use is %{count}. Click on image names to see a list of devices using that image. The list is sorted by image names."
+      device: "device"
+      devices: "devices"

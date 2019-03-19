@@ -350,4 +350,8 @@ module ApplicationHelper
 
     return RAW_INTEGRATIONS[school_id].include?(integration_type)
   end
+
+  def insert_wbr(s)
+    (s.split('-').join('-<wbr>')).html_safe
+  end
 end

@@ -89,12 +89,19 @@ class PuavoMenu < MetaMenu
     title { t('layouts.application.devices') }
     link { "/devices/#{ @school.id }/devices" } # FIXME
     active_on DevicesController
+    active_on DeviceStatisticsController
     active_on PrinterPermissionsController
 
     child do
       title { t('link.devices') }
       link { devices_path(@school) }
       active_on DevicesController
+    end
+
+    child do
+      title { t('link.device_statistics') }
+      link { school_device_statistics_path(@school) }
+      active_on DeviceStatisticsController
     end
 
     child do
@@ -105,6 +112,3 @@ class PuavoMenu < MetaMenu
   end
 
 end
-
-
-

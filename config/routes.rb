@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   get '/extended_search' => 'extended_search#index'
   post '/extended_search' => 'extended_search#do_search', via: [:options]
 
+  get '/device_statistics' => 'device_statistics#organisation_statistics'
+
   scope :path => "restproxy" do
     match '(*url)' => 'rest#proxy', :via => [:get, :post, :put], :format => false
   end
@@ -183,6 +185,8 @@ Rails.application.routes.draw do
       match 'devices/:id/select_school' => 'devices#select_school', :as => 'select_school_device', :via => :get
       match 'devices/:id/change_school' => 'devices#change_school', :as => 'change_school_device', :via => :post
       match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
+
+      get 'devices/device_statistics' => 'device_statistics#school_statistics', :as => 'school_device_statistics'
 
       resources :devices
 

@@ -1,0 +1,43 @@
+<h2><%= t('device_statistics.images.title') %></h2>
+
+<p><%= t('device_statistics.images.header', :count => @image_stats.count) %></p>
+
+<table class="imageStats">
+  <% @image_stats.each_with_index do |image| %>
+  <tr class="header">
+    <td class="nameCol">
+      <strong><%= image[:name] %></strong> (<%= image[:uses] %> <%= image[:uses] == 1 ? t('device_statistics.images.device') : t('device_statistics.images.devices') %>, <%= image[:percentage] %>%)
+    </td>
+
+    <td class="barCol">
+      <div class="barOuter">
+        <div class="barInner" style="width: <%= image[:percentage] %>%;">&nbsp;</div>
+      </div>
+    </td>
+  </tr>
+
+  <tr class="deviceListRow">
+    <td colspan="2">
+      <ul>
+        <% image[:devices].each do |device| %>
+        <li>
+          <%= link_to device[:name], device_path(device[:school], device[:device]) %>
+          (<%= link_to device[:school].displayName, school_path(device[:school]) %>)
+        </li>
+        <% end %>
+      </ul>
+    </td>
+  </tr>
+  <% end %>
+</table>
+
+<script>
+// Make the image headers toggleable
+$(document).ready(function() {
+  $(".deviceListRow").hide();
+
+  $(".imageStats .header").click(function(event) {
+    $(this).next(".deviceListRow").toggle();
+  });
+});
+</script>

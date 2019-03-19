@@ -19,6 +19,7 @@ fi:
     ldap_services: "LDAP-palvelut"
     external_services: "Ulkoiset palvelut"
     external_files: "Ulkoiset tiedostot"
+    device_statistics: "Laitetilastot"
     servers: "Palvelimet"
     printers: "Tulostimet"
     wlan: "Langattomat verkot"
@@ -106,6 +107,7 @@ fi:
       servers: Palvelimet
       ldap_services: LDAP -palvelut
       external_files: Ulkoiset tiedostot
+      device_statistics: Laitetilastot
       wlan: Langattomat verkot
       about: Tietoja
       printers: Tulostimet
@@ -154,6 +156,7 @@ fi:
     new_ldap_service: Uusi
     rename_groups: Vuosiluokkasiirto
     devices: Laitelista
+    device_statistics: Laitetilastot
     servers: Palvelimet
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
@@ -1240,3 +1243,32 @@ fi:
       no_search_terms: "Ei hakutermejä"
       invalid_regexp: "Virheellinen regexp-lause "
       unknown_search_term_type: "Tuntematon hakutermien tyyppi "
+  device_statistics:
+    columns:
+      timestamp: "Tiedot saatu"
+      cpu: "Prosessori"
+      memory: "Muisti (MiB)"
+      hard_drive: "Kiintolevy (GiB)"
+
+    device_lists:
+      with_info: "Laitetiedolliset koneet"
+      without_info: "Laitetiedottomat koneet"
+      without_info_count: "Yhteensä %{count} laitetta."
+
+    school_index:
+      title: "Koulun laitetilastot"
+      no_devices: "Koulussa ei ole yhtään laitetta"
+      no_devices_with_hardware_info: "Koulussa on laitteita, mutta yhdenkään laitetietoja ei ole otettu vastaan"
+      count_header: "Koulussa on yhteensä %{total} laitetta joista laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
+
+    organisation_index:
+      title: "Organisaation laitetilastot"
+      no_devices: "Organisaatiossa ei ole yhtään laitetta"
+      no_devices_with_hardware_info: "Organisaatiossa on laitteita, mutta yhdenkään laitetietoja ei ole otettu vastaan"
+      count_header: "Organisaatiossa on yhteensä %{total} laitetta joista laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
+
+    images:
+      title: "Käytössä olevat työpöytäkuvat"
+      header: "Eri työpöytäkuvia on yhteensä %{count}. Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
+      device: "laite"
+      devices: "laitetta"

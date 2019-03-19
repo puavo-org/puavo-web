@@ -1,0 +1,106 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.devices'), t('titles.device_statistics') %>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag 'sortableTable' %>
+<% end %>
+
+<h1><%= t('.title') %></h1>
+
+<% if @total_devices == 0 %>
+<p class="genericNotice"><%= t('.no_devices') %></p>
+<% else %>
+
+<% if @with_info.count == 0 %>
+<p class="genericNotice"><%= t('.no_devices_with_hardware_info') %></p>
+<% else %>
+
+<h2><%= t('device_statistics.device_lists.with_info') %></h2>
+
+<p><%= t('.count_header',
+         :total => @total_devices,
+         :with_info => @with_info.count) %></p>
+
+<table class="list" id="withInfo">
+  <tr class="thead">
+    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
+    <th><%= t('device_statistics.columns.timestamp') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
+    <th><%= t('activeldap.attributes.device.puavoDeviceImage') %></th>
+    <th><%= t('device_statistics.columns.cpu') %></th>
+    <th><%= t('device_statistics.columns.memory') %></th>
+    <th><%= t('device_statistics.columns.hard_drive') %></th>
+  </tr>
+
+<% @with_info.each do |device| %>
+  <tr>
+    <td data-title="<%= t('activeldap.attributes.device.puavoHostname') %>">
+      <%= link_to insert_wbr(device[:name]), device_path(@school, device[:device]) %>
+    </td>
+
+    <td data-title="<%= t('device_statistics.columns.timestamp') %>">
+      <%= (Time.at(device[:timestamp]).localtime.strftime('%Y-%m-%d&nbsp;%H:%M:%S')).html_safe %>
+    </td>
+
+    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceType') %>">
+      <%= device[:type] %>
+    </td>
+
+    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceImage') %>">
+      <%= insert_wbr(device[:image]) %>
+    </td>
+
+    <td data-title="<%= t('device_statistics.columns.cpu') %>">
+      <%= device[:cpu_count] %> × <%= insert_wbr(device[:cpu_name]) %>
+    </td>
+
+    <td data-title="<%= t('device_statistics.columns.memory') %>">
+      <%= device[:memory] %>
+    </td>
+
+    <td data-title="<%= t('device_statistics.columns.hard_drive') %>">
+      <%= device[:hard_drive] %>
+    </td>
+
+  </tr>
+<% end %>
+</table>
+
+<% unless @without_info.empty? %>
+<h2 id="withoutInfoHeader"><%= t('device_statistics.device_lists.without_info') %></h2>
+<div id="withoutInfoInner">
+
+<p><%= t('device_statistics.device_lists.without_info_count', :count => @without_info.count) %></p>
+
+<ul class="withoutInfo">
+<% @without_info.each do |device| %>
+  <li><%= link_to device[:device].puavoHostname, device_path(device[:school], device[:device]) %></li>
+<% end %>
+</ul>
+</div>
+<% end %>
+
+<%= render :partial => 'images', :locals => { :image_stats => @image_stats } %>
+
+<% end %>
+<% end %>
+
+<script>
+// Make the tables sortable
+$(document).ready(function() {
+  new SortableTable(
+    "withInfo",
+    [
+      { "index": 0, "flags": COLUMN_FLAG_PRESERVE_HTML },   // hostname
+      { "index": 1 },   // timestamp
+      { "index": 2 },   // type
+      { "index": 3 },   // image
+      { "index": 4 },   // CPU
+      { "index": 5, "type": COLUMN_TYPE_INTEGER },  // memory
+      { "index": 6, "type": COLUMN_TYPE_INTEGER }   // hard drive
+    ],
+    "fi",
+    1,
+    SORT_ORDER_ASCENDING
+  );
+});
+</script>
