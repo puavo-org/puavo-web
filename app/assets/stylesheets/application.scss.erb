@@ -1492,6 +1492,31 @@ table a {
   background: $mountPointsHeadingBackground;
 }
 
+/* Sortable column headers */
+.orderNone, .orderAscending, .orderDescending {
+  cursor: pointer;
+}
+
+.orderAscending, .orderDescending {
+  background: lighten($baseBrownGradient, 5%) !important;
+}
+
+.orderNone:hover {
+  background: lighten($baseBrownGradient, 10%) !important;
+}
+
+.orderNone:after {
+  content: " \25B4\25BE";   /* up arrow, down arrow */
+}
+
+.orderAscending:after {
+  content: " \25BE";        /* down arrow */
+}
+
+.orderDescending:after {
+  content: " \25B4";        /* up arrow */
+}
+
 /*
 ====================================================================================================
 FORMS
