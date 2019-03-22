@@ -15,6 +15,7 @@ gem "jwt"
 gem "sshkey"
 gem "i18n-js"
 gem "byebug"
+gem "prawn"
 
 gem "sassc-rails"
 gem "jquery-rails"
@@ -28,6 +29,5 @@ group :test do
   gem "rspec"
   gem "rspec-rails"
   gem "timecop"
-  gem "ripper-tags"
   gem "webmock"
 end
