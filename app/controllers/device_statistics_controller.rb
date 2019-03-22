@@ -98,7 +98,7 @@ class DeviceStatisticsController < ApplicationController
         # --------
         timestamp: hwinfo['timestamp'],
         image: hwinfo['this_image'],
-        memory: hwinfo['memory'].sum { |slot| slot['size'].to_i },
+        memory: (hwinfo['memory'] || []).sum { |slot| slot['size'].to_i },
         cpu_count: hwinfo['processorcount'],
         cpu_name: hwinfo['processor0'],
         hard_drive: ((hwinfo['blockdevice_sda_size'] || 0) / BYTES_TO_GIB).to_i
