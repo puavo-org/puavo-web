@@ -8,6 +8,7 @@ end rescue Errno::ENOENT
 
 gem "sinatra"
 gem "sinatra-contrib"
+gem "uuid"
 gem "puma"
 gem "rack-rewrite"
 gem "addressable"
@@ -24,22 +25,25 @@ gem "msgpack"
 gem "colorize"
 gem "redis-namespace", "1.6.0"
 gem "icalendar"
-gem "httparty"
+gem "httparty" #, "0.15.7" pe
 gem "pony"
 gem "gibberish"
 gem "sinatra-support", :require => "sinatra/support"
-gem "redlock", "0.2.2"
+gem "redlock", "0.2.0"
 gem "elasticsearch"
 gem "http"
 gem "dnsruby"
 gem "mechanize"
+gem "net-ldap", "0.16.1"
 gem "byebug"
 gem "ntlm-http"
 
 group :test do
   gem "shotgun"
   gem "timecop"
-  gem "webmock"
+  gem "webmock" #, "3.1.1" pe
   gem "m"
-  gem "minitest"
+  gem "minitest" #, "5.10.3" pe
+  gem "ripper-tags"
+  gem "yard"
 end

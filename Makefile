@@ -15,6 +15,7 @@ build: symlink-config
 	bundle install --deployment
 	npm install --registry http://registry.npmjs.org
 	bundle exec rake assets:precompile
+	$(MAKE) tags
 	$(MAKE) js
 
 update-gemfile-lock: clean
@@ -117,6 +118,10 @@ symlink-config:
 	ln -sf /etc/puavo-web/secrets.yml config/secrets.yml
 	ln -sf /etc/puavo-web/services.yml config/services.yml
 	ln -sf /etc/puavo-web/unicorn.rb config/unicorn.rb
+
+.PHONY: tags
+tags:
+	bundle exec ripper-tags -R --exclude=vendor --exclude rest
 
 test-rest:
 	$(MAKE) -C rest test
