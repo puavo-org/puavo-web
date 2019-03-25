@@ -1,12 +1,10 @@
 # This is from https://hub.docker.com/r/jrei/systemd-debian/~/dockerfile/
 
-FROM debian:stretch
+FROM debian:buster
 
 ENV container docker
 ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN echo 'deb http://deb.debian.org/debian stretch-backports main' >> /etc/apt/sources.list
 
 RUN apt-get update \
     && apt-get install -y systemd \

@@ -21,8 +21,8 @@ pipeline {
         // XXX Perhaps this should be done by puavo-standalone?
         sh '''
           cat <<'EOF' > /etc/apt/sources.list.d/nodesource.list
-deb http://deb.nodesource.com/node_6.x stretch main
-deb-src http://deb.nodesource.com/node_6.x stretch main
+deb http://deb.nodesource.com/node_6.x buster main
+deb-src http://deb.nodesource.com/node_6.x buster main
 EOF
         '''
 
