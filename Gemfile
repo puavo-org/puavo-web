@@ -28,6 +28,5 @@ group :test do
   gem "rspec"
   gem "rspec-rails"
   gem "timecop"
-  gem "ripper-tags"
   gem "webmock"
 end
