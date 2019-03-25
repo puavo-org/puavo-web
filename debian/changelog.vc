@@ -1,4 +1,4 @@
-puavo-users (0.20) stretch; urgency=high
+puavo-users (0.20) buster; urgency=high
 
   * Using Rails 4.2.10. Lots of bugfixes and tweaks.
 
