@@ -141,7 +141,7 @@ GEM
     multi_json (1.13.1)
     multi_test (0.1.2)
     net-ldap (0.16.1)
-    nokogiri (1.10.1)
+    nokogiri (1.10.2)
       mini_portile2 (~> 2.4.0)
     pdf-core (0.7.0)
     prawn (2.2.2)
@@ -305,4 +305,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.13.6
+   1.17.3
