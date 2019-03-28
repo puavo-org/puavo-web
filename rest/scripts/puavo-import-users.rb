@@ -492,10 +492,14 @@ when "import"
     begin
       puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
 
-      yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_group_abbr(user.school, user.year_class))
+      yc_group = nil
+
+      if user.year_class && !user.year_class.empty?
+        yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_group_abbr(user.school, user.year_class))
+      end
 
       if puavo_rest_user
-        update_year_class = puavo_rest_user.year_class_changed?(yc_group)
+        update_year_class = yc_group && puavo_rest_user.year_class_changed?(yc_group)
 
         # username updates are done only if specifically requested for
         update_username = user.username != puavo_rest_user.username && @options[:update_usernames]
