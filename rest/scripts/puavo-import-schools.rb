@@ -17,22 +17,24 @@ if options[:include_schools]
   puts "Importing these schools: #{options[:include_schools].join(', ')}"
 end
 
-CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |school_data|
-  next if school_data[0].nil? || school_data[1].nil? || school_data[1].empty?
+CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |school|
+  external_id = school[0]
+  name = school[1]
+  abbr = school[2]
 
-  if !options[:include_schools].nil? && !options[:include_schools].include?(school_data[0].to_s)
-    puts "Ignoring school \"#{school_data[1]}\" because its school ID is not on the list of imported schools"
+  if external_id.nil? || external_id.empty? || name.nil? || name.empty? || abbr.nil? || abbr.empty?
+    puts "Ignoring incomplete school (external_id=\"#{external_id}\", name=\"#{name}\", abbreviation=\"#{abbr}\")"
     next
   end
 
-  if school_data[2].nil? || school_data[2].empty?
-    puts "Ignoring school \"#{school_data[1]}\" because its external ID is missing or empty"
+  if !options[:include_schools].nil? && !options[:include_schools].include?(external_id.to_s)
+    puts "Ignoring school \"#{name}\" (ID \"#{external_id}\")"
     next
   end
 
-  PuavoImport::School.new(:external_id => school_data[0],
-                          :name => school_data[1],
-                          :abbreviation => school_data[2].downcase)
+  PuavoImport::School.new(:external_id => external_id,
+                          :name => name,
+                          :abbreviation => abbr.downcase)
 end
 
 mode = options[:mode] || "default"
@@ -57,7 +59,7 @@ def ensure_administrative_group_exists(abbreviation, name,  school)
     end
   else
     # Create a new group
-    puts green("Creating new group \"#{name}\" (abbreviation \"#{abbreviation}\")")
+    puts green("Creating a new administrative group \"#{name}\" (abbreviation \"#{abbreviation}\")")
 
     begin
       PuavoRest::Group.new(:name => name,
@@ -65,7 +67,7 @@ def ensure_administrative_group_exists(abbreviation, name,  school)
                            :type => "administrative group",
                            :school_dn => school.dn).save!
     rescue StandardError => e
-      puts red("ERROR: Could not create a new group: #{e}")
+      puts red("ERROR: Could not create a new administrative group: #{e}")
     end
   end
 end
