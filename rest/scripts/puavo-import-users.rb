@@ -116,7 +116,7 @@ def create_and_update_year_classes(users, diff_only)
   checked = Set.new
 
   users.each do |user|
-    next unless user.year_class
+    next if user.year_class.nil? || user.year_class.empty?
 
     yc_abbr = yc_group_abbr(user.school, user.year_class)
 
