@@ -12,6 +12,7 @@ User=puavo
 Group=puavo
 WorkingDirectory=/var/app/puavo-rest
 LimitNOFILE=65536
+Environment="GEM_HOME=/var/app/puavo-rest/vendor/bundle/ruby/2.5.0"
 Environment="RACK_ENV=production"
 ExecStartPre=/bin/mkdir -p /run/puavo-rest
 ExecStartPre=/bin/chown puavo:puavo /run/puavo-rest
