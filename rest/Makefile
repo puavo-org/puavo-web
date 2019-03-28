@@ -46,7 +46,6 @@ install:
 		vendor \
 		scripts \
 		i18n \
-		.bundle \
 		views \
 		public \
 		middleware \
