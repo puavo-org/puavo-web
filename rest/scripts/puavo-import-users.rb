@@ -118,14 +118,14 @@ def create_and_update_year_classes(users, diff_only)
   users.each do |user|
     next unless user.year_class
 
-    next if checked.include?(user.year_class)
-
     yc_abbr = yc_group_abbr(user.school, user.year_class)
+
+    # check each year class only once
+    next if checked.include?(yc_abbr)
+    checked << yc_abbr
 
     yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_abbr,
                                          :school_dn => user.school.dn)
-
-    checked << yc_abbr    # check each year class only once
 
     unless yc_group
       # The group does not exist, create it
