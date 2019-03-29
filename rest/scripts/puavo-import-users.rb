@@ -472,6 +472,7 @@ when "diff"
                                                                 "import_school_name",
                                                                 "import_group_name",
                                                                 "import_group_external_id",
+                                                                "import_role",
                                                                 "external_id"] )
 
     puts "\n" + "-" * 100 + "\n\n"
@@ -514,9 +515,15 @@ when "import"
 
           update_attributes << :username if update_username
 
+          # Our support system requires that each user must have an email address if they want to
+          # create a new ticket, but some users only set their address manually when needed, so
+          # don't clear out those manually-entered email addresses
           update_attributes.delete(:email) if user.email.nil?
 
           update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
+
+          # This does nothing if the role already is correct, so it's safe to always call it
+          puavo_rest_user.import_role = user.role
 
           if puavo_rest_user.removal_request_time
             # Clear the deletion set timestamp: this user's information is being updated,

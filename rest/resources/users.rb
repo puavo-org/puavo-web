@@ -463,6 +463,36 @@ class User < LdapModel
     school.name
   end
 
+  # Used in Primus import
+  # Users can have multiple roles (teacher, admin), but Primus only allows one,
+  # so return the "primary" role instead of an array. These are sorted by
+  # importance.
+  def import_role
+    if self.roles.include?('teacher')
+      'teacher'
+    elsif self.roles.include?('staff')
+      'staff'
+    elsif self.roles.include?('student')
+      'student'
+    else
+      ''
+    end
+  end
+
+  # The opposite of the above. Set the role defined in Primus' CSV files, but leave
+  # other roles intact.
+  def import_role=(s)
+    # Do nothing if the role already is correct
+    return if self.roles.include?(s)
+
+    # Remove "automatic" roles (but leave other roles that can be set manually, like
+    # "test user", "parent", etc.)
+    self.roles -= ["teacher", "staff", "student"]
+
+    # Then set the new role
+    self.roles += [s]
+  end
+
   def preferred_language
     if get_own(:preferred_language).nil? && school
       school.preferred_language
