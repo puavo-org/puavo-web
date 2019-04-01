@@ -20,10 +20,10 @@ gem "sassc-rails"
 gem "jquery-rails"
 
 group :test do
-  gem "capybara"
+  gem "capybara", "3.15.0"    # 3.15.0 is the last that works with Ruby 2.3.x
   gem "colorize"
-  gem "cucumber", "3.1.2"
-  gem "cucumber-rails", "1.5.0"
+  gem "cucumber"
+  gem "cucumber-rails"
   gem "greenletters"
   gem "rspec"
   gem "rspec-rails"
