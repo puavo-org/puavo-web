@@ -106,7 +106,7 @@ When(/^I find device by hostname "([^\"]*)"$/) do |hostname|
   visit "/devices/api/v2/devices/by_hostname/#{ hostname }.json"
 end
 
-When(/^I get on ([^\"]+) with "([^\"]*)"$/) do |page_name, value| 
+When(/^I get on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
   page.driver.browser.basic_authorize('cucumber', 'cucumber')
   case page_name
   when /user JSON page$/
@@ -198,11 +198,11 @@ Then(/^I can select "([^\"]*)" from the "([^\"]*)"$/) do |value, field_id|
 end
 
 Then(/^the "([^\"]*)" select box should contain "([^\"]*)"$/) do |field, value|
-  field_labeled(field).native.inner_html.should =~ /#{value}/
+  find_field(field).native.inner_html.should =~ /#{value}/
 end
 
 Then(/^I can not select "([^\"]*)" from the "([^\"]*)"$/) do |value, field|
-  field_labeled(field).native.inner_html.should_not =~ /#{value}/
+  find_field(field).native.inner_html.should_not =~ /#{value}/
 end
 Then(/^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/) do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
@@ -213,7 +213,7 @@ end
 
 When(/^I follow "([^\"]*)" on the "([^\"]*)" ([^ ]+)$/) do |link_name, name, model|
   set_ldap_admin_connection
-  link_id = link_name.downcase + "_#{model}_" + 
+  link_id = link_name.downcase + "_#{model}_" +
     eval(model.capitalize).send("find", :first,
                                 :attribute => "displayName",
                                 :value => name ).id.to_s
@@ -269,7 +269,7 @@ def memberUid_include?(model, object_name, method, uid)
   # manipulate string to Class name, e.g. "school" -> "School", "samba group" -> "SambaGroup"
   model = model.split(" ").map { |m| m.capitalize }.join("")
   object = Class.class_eval(model).find( :first, :attribute => "displayName", :value => object_name )
-  
+
   case method
   when "member"
     user = User.find( :first, :attribute => "uid", :value => uid )

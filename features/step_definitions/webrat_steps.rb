@@ -145,11 +145,11 @@ When(/^I attach the file at "([^\"]*)" to "([^\"]*)"$/) do |path, field|
 end
 
 Then(/^I should see "([^\"]*)"$/) do |text|
-  page.body.should have_content(text)
+  page.body.should have_content(text, normalize_ws: true)
 end
 
 Then(/^I should see:$/) do |string|
-  page.body.should have_content(string)
+  page.body.should have_content(string, normalize_ws: true)
 end
 
 Then(/^I should see "([^\"]*)" within "([^\"]*)"$/) do |text, selector|
@@ -193,19 +193,19 @@ Then(/^I should not see \/([^\/]*)\/ within "([^\"]*)"$/) do |regexp, selector|
 end
 
 Then(/^the "([^\"]*)" field should contain "([^\"]*)"$/) do |field, value|
-  field_labeled(field).value.should =~ /#{value}/
+  find_field(field).value.should =~ /#{value}/
 end
 
 Then(/^the "([^\"]*)" field should not contain "([^\"]*)"$/) do |field, value|
-  field_labeled(field).value.should_not =~ /#{value}/
+  find_field(field).value.should_not =~ /#{value}/
 end
 
 Then(/^the "([^\"]*)" checkbox should be checked$/) do |label|
-  field_labeled(label).should be_checked
+  find_field(label).should be_checked
 end
 
 Then(/^the "([^\"]*)" checkbox should not be checked$/) do |label|
-  field_labeled(label).should_not be_checked
+  find_field(label).should_not be_checked
 end
 
 Then(/^I should be on ([^\"]+)$/) do |page_name|
