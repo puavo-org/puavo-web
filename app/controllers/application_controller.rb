@@ -59,13 +59,6 @@ class ApplicationController < ActionController::Base
     flog.info "request", :parameters => params
   end
 
-  def user_store
-    @user_store ||= Redis::Namespace.new(
-      "puavo:user:#{ current_user.dn.to_s.downcase }",
-      :redis => REDIS_CONNECTION
-    )
-  end
-
   def flog
     attrs = {
       :controller => self.class.name,
