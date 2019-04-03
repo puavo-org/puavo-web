@@ -277,7 +277,7 @@ DEPENDENCIES
   mechanize
   minitest
   msgpack
-  net-ldap (= 0.16.1)
+  net-ldap
   nokogiri
   ntlm-http
   pony

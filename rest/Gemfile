@@ -34,7 +34,7 @@ gem "elasticsearch"
 gem "http"
 gem "dnsruby"
 gem "mechanize"
-gem "net-ldap", "0.16.1"
+gem "net-ldap"
 gem "byebug"
 gem "ntlm-http"
 

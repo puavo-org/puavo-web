@@ -285,7 +285,7 @@ DEPENDENCIES
   jquery-rails
   json
   jwt
-  net-ldap (= 0.16.1)
+  net-ldap
   nokogiri
   prawn
   pry
