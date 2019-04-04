@@ -180,19 +180,25 @@
       <% end %>
     </li>
     <% end %>
+    <% end %>
 
+    <% if @user.puavoRemovalRequestTime %>
     <li>
-      <% if @user.puavoRemovalRequestTime %>
       <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
         <i class='icon-flag-empty'></i><%= t('.unmark_for_removal') %>
       <% end %>
-      <% else %>
+    </li>
+    <% else %>
+    <% unless @user.puavoDoNotDelete %>
+    <li>
       <%= link_to mark_user_for_deletion_path(@school, @user) do %>
         <i class='icon-flag'></i><%= t('.mark_for_removal') %>
       <% end %>
-      <% end %>
     </li>
+    <% end %>
+    <% end %>
 
+    <% unless @user.puavoDoNotDelete %>
     <li>
       <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
         <i class='icon-trash'></i><%= t('link.destroy') %>
