@@ -85,22 +85,20 @@
 <% end %>
 
 <script>
-// Make the tables sortable
 $(document).ready(function() {
-  new SortableTable(
-    "withInfo",
-    [
-      { "index": 0, "flags": COLUMN_FLAG_PRESERVE_HTML },   // hostname
-      { "index": 1 },   // timestamp
-      { "index": 2 },   // type
-      { "index": 3 },   // image
-      { "index": 4 },   // CPU
-      { "index": 5, "type": COLUMN_TYPE_INTEGER },  // memory
-      { "index": 6, "type": COLUMN_TYPE_INTEGER }   // hard drive
-    ],
-    "fi",
-    1,
-    SORT_ORDER_DESCENDING
-  );
+    new SortableTable(
+        "withInfo",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ COLUMN_TYPE_STRING, 0 ],                  // timestamp (last update)
+            [ COLUMN_TYPE_STRING, 0 ],                  // device type
+            [ COLUMN_TYPE_STRING, 0 ],                  // desktop image name
+            [ COLUMN_TYPE_STRING, 0 ],                  // CPU
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // RAM
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // hard drive size
+        ],
+        "fi",
+        1, SORT_ORDER_DESCENDING
+    );
 });
 </script>

@@ -80,35 +80,33 @@
 <% end %>
 
 <script>
-// Make the tables sortable
 $(document).ready(function() {
-  new SortableTable(
-    "withInfo",
-    [
-      { "index": 0, "flags": COLUMN_FLAG_PRESERVE_HTML },   // school name
-      { "index": 1, "flags": COLUMN_FLAG_PRESERVE_HTML },   // hostname
-      { "index": 2 },   // timestamp
-      { "index": 3 },   // type
-      { "index": 4 },   // desktop image
-      { "index": 5 },   // CPU
-      { "index": 6, "type": COLUMN_TYPE_INTEGER },  // memory
-      { "index": 7, "type": COLUMN_TYPE_INTEGER }   // hard drive
-    ],
-    "fi",
-    2,
-    SORT_ORDER_DESCENDING
-  );
+    new SortableTable(
+        "withInfo",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // school name
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ COLUMN_TYPE_STRING, 0 ],                  // timestamp (last update)
+            [ COLUMN_TYPE_STRING, 0 ],                  // device type
+            [ COLUMN_TYPE_STRING, 0 ],                  // desktop image name
+            [ COLUMN_TYPE_STRING, 0 ],                  // CPU
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // RAM
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // hard drive size
+        ],
+        "fi",
+        2, SORT_ORDER_DESCENDING
+    );
 
-  <% unless @without_info.empty? %>
-  new SortableTable(
-    "withoutInfo",
-    [
-      { "index": 0, "flags": COLUMN_FLAG_PRESERVE_HTML },
-      { "index": 1, "flags": COLUMN_FLAG_PRESERVE_HTML },
-      { "index": 2 },
-    ],
-    "fi",
-  );
-  <% end %>
+    <% unless @without_info.empty? %>
+    new SortableTable(
+        "withoutInfo",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // school name
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ COLUMN_TYPE_STRING, 0 ],                  // device type
+        ],
+        "fi"
+    );
+    <% end %>
 });
 </script>
