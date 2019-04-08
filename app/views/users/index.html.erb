@@ -5,6 +5,7 @@
 <h3 id="marked"><%= t('.users_marked_for_deletion_title') %> [ <a href="#normal"><%= t('.jump_to_normal') %></a> ]</h3>
 
 <%= render :partial => 'users_list', :locals => {
+  :table_id => 'markedForDeletionUsers',
   :source => @users_marked_for_deletion,
   :table_classes => "list marked_for_deletion_users_list",
   :is_deleted => true
@@ -15,6 +16,7 @@
 <% end %>
 
 <%= render :partial => 'users_list', :locals => {
+  :table_id => 'normalUsers',
   :source => @users,
   :table_classes => "list",
   :is_deleted => false
@@ -37,3 +39,36 @@
   <% end %>
 </ul>
 <% end %>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag 'sortableTable' %>
+<% end %>
+
+<script>
+$(document).ready(function() {
+    new SortableTable(
+        "normalUsers",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // name
+            [ COLUMN_TYPE_STRING, 0 ],                  // username
+            [ COLUMN_TYPE_STRING, 0 ],                  // role
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
+        ],
+        "fi"
+    );
+
+  <% unless @users_marked_for_deletion.empty? %>
+    new SortableTable(
+        "markedForDeletionUsers",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // name
+            [ COLUMN_TYPE_STRING, 0 ],                  // username
+            [ COLUMN_TYPE_STRING, 0 ],                  // role
+            [ COLUMN_TYPE_INTEGER, COLUMN_FLAG_HTML ],  // timestamp
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],   // actions
+        ],
+        "fi"
+    );
+  <% end %>
+});
+</script>

@@ -48,6 +48,7 @@ class UsersController < ApplicationController
         # The timestamp is a Net::BER::BerIdentifiedString, convert it into
         # an actual UTC timestamp
         timestamp = Time.strptime(u["puavoRemovalRequestTime"], '%Y%m%d%H%M%S%z')
+        u["puavoExactRemovalTimeRaw"] = timestamp.to_i
         u["puavoExactRemovalTime"] = timestamp.localtime
         u["puavoFuzzyRemovalTime"] = fuzzy_time(now - timestamp)
       end

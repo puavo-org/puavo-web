@@ -1,6 +1,6 @@
 <p><%= source.size %> <%= t('users.index.users') %></p>
 <% unless source.empty? %>
-<table class="<%= table_classes %>">
+<table class="<%= table_classes %>" id="<%= table_id %>">
   <tr class="thead">
     <th><%= t('activeldap.attributes.user.displayName') %></th>
     <th><%= t('activeldap.attributes.user.uid') %></th>
@@ -17,7 +17,7 @@
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%=h user["uid"] %></td>
     <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%=h t('puavoEduPersonAffiliation_' + user["puavoEduPersonAffiliation"].to_s) %></td>
     <% if is_deleted %>
-    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion')%>"><abbr title="<%= user["puavoExactRemovalTime"] %>"><%= user["puavoFuzzyRemovalTime"] %></abbr></td>
+    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion') %>" data-sort-key="<%= user["puavoExactRemovalTimeRaw"] %>"><abbr title="<%= user["puavoExactRemovalTime"] %>"><%= user["puavoFuzzyRemovalTime"] %></abbr></td>
     <% end %>
     <td data-title="<%= t('users.index.actions')%>" class="table-actions">
       <%= link_to edit_user_path(@school, user["puavoId"]), class: "btn" do%>
