@@ -11,5 +11,5 @@ group :shared do
   gem "uuid"
   gem "redcarpet"
   gem "nokogiri"
-  gem "resque", "1.27.4"
+  gem "resque", "2.0.0"
 end
