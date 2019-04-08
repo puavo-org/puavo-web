@@ -177,6 +177,7 @@ $formSubmitButtonBackground: linear-gradient(white 0%, #eeeeed 100%);
 $formSubmitButtonHoverBackground: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
 
 $listHeadingBackground: linear-gradient(#a36a2a 35%, #ba722d 60%);
+$listSortableColumnHover: linear-gradient(darken(#a36a2a, 5%) 35%, darken(#ba722d, 5%) 60%);
 $listHeadingForeground: #f5f5e8;
 $listHeadingBorder: #000;
 $listOddRowBackground: #ebebeb;
@@ -1503,28 +1504,57 @@ table a {
 }
 
 /* Sortable column headers */
-.orderNone, .orderAscending, .orderDescending {
+.sortHeader {
+    /* Indicate sortable columns */
   cursor: pointer;
 }
 
-.orderAscending, .orderDescending {
-  background: lighten($baseBrownGradient, 5%) !important;
+.sortHeader:hover {
+  background: $listSortableColumnHover !important;
 }
 
-.orderNone:hover {
-  background: lighten($baseBrownGradient, 10%) !important;
+.orderAscending, .orderDescending {
+  background: $listSortableColumnHover !important;
 }
 
 .orderNone:after {
-  content: " \25B4\25BE";   /* up arrow, down arrow */
+  content: "\f0dc";   /* up arrow, down arrow */
+  font-family: puavo-icons;
+  font-size: 120%;
+  padding-left: 15px;
+  font-weight: normal;
 }
 
-.orderAscending:after {
-  content: " \25BE";        /* down arrow */
+.typeString.orderAscending:after {
+  content: " \f15d";      /* A -> Z */
+  font-family: puavo-icons;
+  font-size: 120%;
+  padding-left: 5px;
+  font-weight: normal;
 }
 
-.orderDescending:after {
-  content: " \25B4";        /* up arrow */
+.typeString.orderDescending:after {
+  content: " \f15e";      /* Z -> A */
+  font-family: puavo-icons;
+  font-size: 120%;
+  padding-left: 5px;
+  font-weight: normal;
+}
+
+.typeNumeric.orderAscending:after {
+  content: " \f162";      /* 1 -> 9 */
+  font-family: puavo-icons;
+  font-size: 120%;
+  padding-left: 6px;    /* the icon is slightly narrower */
+  font-weight: normal;
+}
+
+.typeNumeric.orderDescending:after {
+  content: " \f163";      /* 9 -> 1 */
+  font-family: puavo-icons;
+  font-size: 120%;
+  padding-left: 6px;    /* the icon is slightly narrower */
+  font-weight: normal;
 }
 
 /*
@@ -1751,6 +1781,10 @@ LISTS OF THINGS (in tables, not ul/ol)
     font-size: 100%;
   }
 
+  th:first-of-type {
+    border-left: none;
+  }
+
   tr:nth-child(odd) {
     background: $listOddRowBackground;
   }
@@ -1763,20 +1797,21 @@ LISTS OF THINGS (in tables, not ul/ol)
     background: $listRowHoverBackground;
   }
 
+  /* Row/highlight colors for selected columns in tables that can be sorted/filtered */
+  tr:nth-child(odd) .selectedColumn {
+    background: darken($listOddRowBackground, 5%);
+  }
+
+  tr:nth-child(even) .selectedColumn {
+    background: darken($listEvenRowBackground, 5%);
+  }
+
+  tr:hover .selectedColumn {
+    background: darken($listRowHoverBackground, 5%);
+  }
+
   td {
     border-bottom: 1px solid $listRowBorder;
-  }
-
-  tr.deleted:nth-child(odd) {
-    background: $markedForDeletionOddRowBackground;
-  }
-
-  tr.deleted:nth-child(even) {
-    background: $markedForDeletionEvenRowBackground;
-  }
-
-  tr.deleted:hover {
-    background: $markedForDeletionRowHoverBackground;
   }
 
   .form {
@@ -1837,16 +1872,30 @@ LISTS OF THINGS (in tables, not ul/ol)
 }
 
 /* Alternate colors for the "marked for deletion" users table */
-.marked_for_deletion_users_list tr:nth-child(even) {
-  background-color: $markedForDeletionEvenRowBackground;
-}
+.marked_for_deletion_users_list {
+  tr:nth-child(even) {
+    background-color: $markedForDeletionEvenRowBackground;
+  }
 
-.marked_for_deletion_users_list tr:nth-child(odd) {
-  background-color: $markedForDeletionOddRowBackground;
-}
+  tr:nth-child(odd) {
+    background-color: $markedForDeletionOddRowBackground;
+  }
 
-.marked_for_deletion_users_list tr:hover {
-  background: $markedForDeletionRowHoverBackground;
+  tr:hover {
+    background: $markedForDeletionRowHoverBackground;
+  }
+
+  tr:nth-child(odd) .selectedColumn {
+    background: darken($markedForDeletionOddRowBackground, 5%);
+  }
+
+  tr:nth-child(even) .selectedColumn {
+    background: darken($markedForDeletionEvenRowBackground, 5%);
+  }
+
+  tr:hover .selectedColumn {
+    background: darken($markedForDeletionRowHoverBackground, 5%) !important;
+  }
 }
 
 /* Group members who ar emarked for deletion */
