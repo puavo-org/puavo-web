@@ -160,6 +160,11 @@ when "import"
     puavo_group = PuavoRest::Group.by_attr(:external_id, eid)
     puavo_school = PuavoRest::School.by_id(puavo_group.school_id)
     puts "#{puavo_group.name} (external_id: #{eid}, school: #{puavo_school.name}): removing course group"
-    puavo_group.destroy!
+
+    begin
+      puavo_group.destroy!
+    rescue StandardError => e
+      puts "  -> failed: #{e}"
+    end
   end
 end
