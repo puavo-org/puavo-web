@@ -35,10 +35,15 @@ module PuavoImport
       "#{ self.name } (external_id: #{ self.external_id })"
     end
 
-    def need_update?(school)
-      self.name != school.name ||
-        self.abbreviation != school.abbreviation ||
-        self.school_code != school.school_code
+    def need_update?(school, update_school_code=false)
+      if update_school_code
+        return self.name != school.name ||
+               self.abbreviation != school.abbreviation ||
+               self.school_code != school.school_code
+      else
+        return self.name != school.name ||
+               self.abbreviation != school.abbreviation
+      end
     end
 
     def self.by_external_id(id)

@@ -9,7 +9,11 @@ require_relative "../lib/puavo_import"
 
 include PuavoImport::Helpers
 
-options = cmd_options(:message => "Import schools to Puavo")
+options = cmd_options(:message => "Import schools to Puavo") do |opts, options|
+  opts.on("--update-school-codes", "Update school codes") do |update|
+    options[:update_school_codes] = update
+  end
+end
 
 setup_connection(options)
 
@@ -40,6 +44,8 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
 end
 
 mode = options[:mode] || "default"
+
+update_school_codes = options[:update_school_codes] || false
 
 schools = PuavoImport::School.all
 
@@ -92,11 +98,15 @@ when "diff"
       next
     end
 
-    if !school.need_update?(puavo_rest_school) && options[:silent]
+    if !school.need_update?(puavo_rest_school, update_school_codes) && options[:silent]
       next
     end
 
-    diff_objects(puavo_rest_school, school, ["name", "abbreviation", "external_id", "school_code"])
+    fields = ["name", "abbreviation", "external_id"]
+
+    fields += ["school_code"] if update_school_codes
+
+    diff_objects(puavo_rest_school, school, fields)
 
     puts "\n" + "-" * 100 + "\n\n"
   end
@@ -143,11 +153,11 @@ when "import"
     puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
 
     if puavo_rest_school
-      if school.need_update?(puavo_rest_school)
+      if school.need_update?(puavo_rest_school, update_school_codes)
         puts "#{ school.to_s }: update school information"
         puavo_rest_school.name = school.name
         puavo_rest_school.abbreviation = school.abbreviation
-        puavo_rest_school.school_code = school.school_code
+        puavo_rest_school.school_code = school.school_code if update_school_codes
         puavo_rest_school.save!
       else
         next if options[:silent]
