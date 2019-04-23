@@ -35,7 +35,22 @@ end
 # Find removed groups (ie. groups (with external IDs) that still exist in Puavo,
 # but not in the CSV data). The IDs we use here are external group IDs, not
 # PuavoIDs!
-puavo_groups = PuavoRest::Group.all.reject{ |g| g.external_id.nil? }.collect{ |g| g.external_id }
+all_groups = PuavoRest::Group.all
+all_groups.delete_if{ |g| g.external_id.nil? }
+all_groups.delete_if{ |g| g.type != 'course group' }
+
+unless options[:include_schools].nil?
+  # If a list of schools for import has been specified, check the groups in those schools only
+  school_ids = []
+
+  options[:include_schools].each do |school_eid|
+    school_ids << PuavoRest::School.by_attr(:external_id, school_eid).id
+  end
+
+  all_groups.delete_if{ |g| !school_ids.include?(g.school_id) }
+end
+
+puavo_groups = all_groups.collect{ |g| g.external_id }
 csv_groups = groups.collect{ |g| g.external_id }
 removed_groups = puavo_groups - csv_groups
 
