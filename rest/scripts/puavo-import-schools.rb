@@ -21,6 +21,7 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
   external_id = school[0]
   name = school[1]
   abbr = school[2]
+  school_code = school[3] || nil
 
   if external_id.nil? || external_id.empty? || name.nil? || name.empty? || abbr.nil? || abbr.empty?
     puts "Ignoring incomplete school (external_id=\"#{external_id}\", name=\"#{name}\", abbreviation=\"#{abbr}\")"
@@ -34,7 +35,8 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
 
   PuavoImport::School.new(:external_id => external_id,
                           :name => name,
-                          :abbreviation => abbr.downcase)
+                          :abbreviation => abbr.downcase,
+                          :school_code => school_code)
 end
 
 mode = options[:mode] || "default"
@@ -85,7 +87,7 @@ when "diff"
     puavo_rest_school = PuavoRest::School.by_attr(:external_id, school.external_id)
 
     unless puavo_rest_school
-      puts green("Add new school: #{ school.to_s } (abbreviation \"#{school.abbreviation}\")")
+      puts green("Add new school: #{ school.to_s } (abbreviation \"#{school.abbreviation}\", school code \"#{school.school_code}\")")
       puts green("  Add the 'teachers' and 'staff' administrative groups")
       next
     end
@@ -94,7 +96,7 @@ when "diff"
       next
     end
 
-    diff_objects(puavo_rest_school, school, ["name", "abbreviation", "external_id"])
+    diff_objects(puavo_rest_school, school, ["name", "abbreviation", "external_id", "school_code"])
 
     puts "\n" + "-" * 100 + "\n\n"
   end
@@ -145,6 +147,7 @@ when "import"
         puts "#{ school.to_s }: update school information"
         puavo_rest_school.name = school.name
         puavo_rest_school.abbreviation = school.abbreviation
+        puavo_rest_school.school_code = school.school_code
         puavo_rest_school.save!
       else
         next if options[:silent]
@@ -153,8 +156,9 @@ when "import"
     else
       puts "#{ school.to_s }: add school to Puavo (abbreviation \"#{school.abbreviation}\")"
       puavo_rest_school = PuavoRest::School.new(:name => school.name,
-                            :external_id => school.external_id,
-                                                :abbreviation => school.abbreviation)
+                                                :external_id => school.external_id,
+                                                :abbreviation => school.abbreviation,
+                                                :school_code => school.school_code)
       puavo_rest_school.save!
     end
 
