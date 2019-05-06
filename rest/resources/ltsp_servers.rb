@@ -130,12 +130,12 @@ class LtspServer < Host
 
   def save_state(state)
     state["updated"] = Time.now.to_i
-    local_store[state_key] = state.to_json
+    local_store.set(state_key, state.to_json)
     state
   end
 
   def state
-    json = local_store[state_key]
+    json = local_store.get(state_key)
     JSON.parse(json) if json
   end
 
