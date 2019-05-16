@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-      <title>
-	<% if current_organisation? %>
-	  <%= current_organisation.name %>
-	<% end %>
-      </title>
-    <%= stylesheet_link_tag "/web-desktop-theme/css/reset.css" %>
-    <%= stylesheet_link_tag "/web-desktop-theme/css/iconfont.css" %>
-    <%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap-responsive.css" %>
-    <%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap.css" %>
-    <%= stylesheet_link_tag "/web-desktop-theme/css/master.css" %>
+<head>
+<meta charset="utf-8">
+<title>
+<% if current_organisation? %>
+<%= current_organisation.name %>
+<% end %>
+</title>
+<%= stylesheet_link_tag "/web-desktop-theme/css/reset.css" %>
+<%= stylesheet_link_tag "/web-desktop-theme/css/iconfont.css" %>
+<%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap-responsive.css" %>
+<%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap.css" %>
+<%= stylesheet_link_tag "/web-desktop-theme/css/master.css" %>
+</head>
 
-  </head>
-  
-  <body>
-    <div class="container-fluid well"> 
-      <div class="row-fluid">
-	<%= yield %>
-      </div> <!-- row-fluid -->
-    </div> <!-- container-fluid -->
-  </body>
+<body>
+<div class="container-fluid well">
+<div class="row-fluid">
+<%= yield %>
+</div>
+</div>
+</body>
 
 </html>

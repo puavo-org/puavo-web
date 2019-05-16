@@ -1,21 +1,24 @@
-<% html_args = { :method => method,
-                 :multipart => true,
-                 :class => "form-horizontal" } %>
-<% html_args[:'data-remote'] = true if @data_remote %>
+<%
+html_args = {
+  :method => method,
+  :multipart => true,
+  :class => "form-horizontal"
+}
 
+html_args[:'data-remote'] = true if @data_remote
+%>
 
-<%= form_for( @user,
-             :url => profile_path,
-             :html => html_args ) do |f| %>
-
+<%= form_for(@user, :url => profile_path, :html => html_args ) do |f| %>
   <div class="control-group">
     <%= f.label :telephoneNumber, nil, :class => "control-label" %>
+
     <div class="controls">
       <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
     </div>
 
     <div class="margin20">
       <%= f.label :mail, nil, :class => "control-label" %>
+
       <div class="controls">
         <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
       </div>
@@ -24,16 +27,17 @@
 
   <div class="control-group">
     <%= f.label :puavoLocale, nil, :class => "control-label" %>
+
     <div class="controls">
-      <%= f.select :puavoLocale,
-          locales_for_select %>
+      <%= f.select :puavoLocale, locales_for_select %>
     </div>
   </div>
 
   <div class="control-group">
     <%= f.label :jpegPhoto, nil, :class => "control-label" %>
+
     <div class="controls">
-    <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
+      <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
     </div>
   </div>
 
@@ -41,6 +45,7 @@
     <div class="controls">
       <%= f.submit submit_text %>
     </div>
+
     <div class="controls">
       <% if message_keys = flash.keys.select { |key| [:notice, :alert].include?(key) } %>
         <% message_keys.each do |key| %>
@@ -51,5 +56,4 @@
       <% end %>
     </div>
   </div>
-
 <% end %>

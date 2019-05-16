@@ -8,6 +8,7 @@
               default_image_or_user_image_path(
                 image_profile_path, @user), :class => "avatar img-polaroid") %>
       </div>
+
       <div class="span6">
         <ul class="user-info-details">
           <li class="user-full-name"><strong><%= current_user.displayName %></strong></li>
@@ -24,6 +25,5 @@
                   :submit_text => ( @data_remote ? t('.save_and_close') : t('link.update') ),
                   :method => :put } ) %>
     </span>
-  </div>  <!-- margin0auto -->
-</div> <!-- span12 -->
-
+  </div>
+</div>
