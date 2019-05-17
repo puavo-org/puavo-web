@@ -140,11 +140,25 @@ class SSO < PuavoSinatra
   end
 
   def return_to
-    Addressable::URI.parse(params["return_to"]) if params["return_to"]
+    # Support "return_to" and "return"
+    if params.include?('return_to')
+      Addressable::URI.parse(params['return_to'])
+    elsif params.include?('return')
+      Addressable::URI.parse(params['return'])
+    else
+      nil
+    end
   end
 
   def fetch_external_service
-    ExternalService.by_url(params["return_to"]) if params["return_to"]
+    # Support "return_to" and "return"
+    if params.include?('return_to')
+      ExternalService.by_url(params['return_to'])
+    elsif params.include?('return')
+      ExternalService.by_url(params['return_to'])
+    else
+      nil
+    end
   end
 
   def username_placeholder
@@ -260,7 +274,7 @@ class SSO < PuavoSinatra
     @login_content = {
       "opinsys_logo_url" => "/v3/img/opinsys_logo.png",
       "external_service_name" =>  @external_service["name"],
-      "return_to" => params["return_to"],
+      "return_to" => params['return_to'] || params['return'] || nil,
       "organisation" => @organisation,
       "display_domain" => request["organisation"],
       "username_placeholder" => username_placeholder,
