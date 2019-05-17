@@ -536,8 +536,8 @@ en:
       title: My profile
       save_and_close: Save and close
     show:
-      message: Profile was successfully updated
-      email_confirm_info: "Send an email message to following email address(es):"
+      message: Your profile has been successfully updated.
+      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
   lists:
     index:
       title: Unloaded username lists

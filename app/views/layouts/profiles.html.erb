@@ -3,23 +3,18 @@
 <head>
 <meta charset="utf-8">
 <title>
-<% if current_organisation? %>
+<% if content_for?(:page_title) %>
+<%= yield(:page_title) %>
+<% elsif current_organisation? %>
 <%= current_organisation.name %>
 <% end %>
 </title>
-<%= stylesheet_link_tag "/web-desktop-theme/css/reset.css" %>
-<%= stylesheet_link_tag "/web-desktop-theme/css/iconfont.css" %>
-<%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap-responsive.css" %>
-<%= stylesheet_link_tag "/web-desktop-theme/css/bootstrap.css" %>
-<%= stylesheet_link_tag "/web-desktop-theme/css/master.css" %>
+<%= stylesheet_link_tag "profile_editor", :media => "all" %>
 </head>
 
 <body>
-<div class="container-fluid well">
-<div class="row-fluid">
+<div id="outerWrapper">
 <%= yield %>
 </div>
-</div>
 </body>
-
 </html>

@@ -8,45 +8,52 @@ html_args = {
 html_args[:'data-remote'] = true if @data_remote
 %>
 
-<%= form_for(@user, :url => profile_path, :html => html_args ) do |f| %>
-  <div class="control-group">
-    <%= f.label :telephoneNumber, nil, :class => "control-label" %>
+  <%= form_for(@user, :url => profile_path, :html => html_args ) do |f| %>
+    <div id="upper">
+      <div id="upperWrapper">
+        <div id="left">
+          <%= image_tag(default_image_or_user_image_path(image_profile_path, @user),
+                        :class => "avatar") %>
+        </div>
 
-    <div class="controls">
-      <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
-    </div>
+        <div id="right">
+          <section class="userInfo">
+            <p class="userName"><%= current_user.displayName %></p>
+            <p class="userSchool"><%= current_user.school.displayName %></p>
+            <p class="userRole"><%= (current_user.roles.map &:displayName).join(", ") %></p>
+          </section>
 
-    <div class="margin20">
-      <%= f.label :mail, nil, :class => "control-label" %>
+          <section>
+            <%= f.label :mail, nil %>
+            <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
+          </section>
 
-      <div class="controls">
-        <%= f.text_field :mail, :placeholder => t('activeldap.attributes.user.mail') %>
+          <section>
+            <%= f.label :telephoneNumber, nil %>
+            <%= f.text_field :telephoneNumber, :placeholder => t('activeldap.attributes.user.telephoneNumber') %>
+          </section>
+
+          <section>
+            <%= f.label :puavoLocale, nil %>
+            <%= f.select :puavoLocale, locales_for_select %>
+          </section>
+
+          <section>
+            <%= f.label :jpegPhoto, nil %>
+
+            <div>
+              <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="control-group">
-    <%= f.label :puavoLocale, nil, :class => "control-label" %>
+    <div id="lower">
+      <div id="lowerWrapper">
+        <%= f.submit submit_text %>
+      </div>
 
-    <div class="controls">
-      <%= f.select :puavoLocale, locales_for_select %>
-    </div>
-  </div>
-
-  <div class="control-group">
-    <%= f.label :jpegPhoto, nil, :class => "control-label" %>
-
-    <div class="controls">
-      <%= f.file_field(:jpegPhoto, accept: 'image/*') %>
-    </div>
-  </div>
-
-  <div class="control-group">
-    <div class="controls">
-      <%= f.submit submit_text %>
-    </div>
-
-    <div class="controls">
       <% if message_keys = flash.keys.select { |key| [:notice, :alert].include?(key) } %>
         <% message_keys.each do |key| %>
           <p class="message_<%= key %>">
@@ -55,5 +62,4 @@ html_args[:'data-remote'] = true if @data_remote
         <% end %>
       <% end %>
     </div>
-  </div>
-<% end %>
+  <% end %>

@@ -508,8 +508,8 @@ fi:
       title: Omat tiedot
       save_and_close: Tallenna ja sulje
     show:
-      message: Tietojen tallennus onnistui
-      email_confirm_info: Saat vahvistuslinkin uuteen sähköpostiisi hetken kuluttua. Klikkaa linkkiä vahvistaaksesi uusi sähköpostiosoite.
+      message: Tietojesi tallennus onnistui.
+      email_confirm_info: Saat vahvistuslinkin uuteen sähköpostiisi hetken kuluttua. Klikkaa linkkiä vahvistaaksesi uuden osoitteen.
   lists:
     index:
       title: Lataamattomat käyttäjätunnuslistat

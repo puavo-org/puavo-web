@@ -1,29 +1,7 @@
-<div class="span12">
-  <div class="margin0auto w50">
+<% content_for :page_title do %><%= t('.title') %><% end %>
 
-    <legend><%= t('.title') %></legend>
-    <div class="span12 profile-details">
-      <div class="span4">
-        <%= image_tag(
-              default_image_or_user_image_path(
-                image_profile_path, @user), :class => "avatar img-polaroid") %>
-      </div>
-
-      <div class="span6">
-        <ul class="user-info-details">
-          <li class="user-full-name"><strong><%= current_user.displayName %></strong></li>
-          <li class="user-class"><%= (current_user.roles.map &:displayName).join(", ") %></li>
-          <li class="user-school"><%= current_user.school.displayName %></li>
-        </ul>
-      </div>
-    </div>
-
-    <span class="myProfileFormContent">
-    <%= render( :partial => 'form',
-                :locals => {
-                  :path => profile_path(@user),
-                  :submit_text => ( @data_remote ? t('.save_and_close') : t('link.update') ),
-                  :method => :put } ) %>
-    </span>
-  </div>
-</div>
+  <%= render( :partial => 'form',
+              :locals => {
+                :path => profile_path(@user),
+                :submit_text => ( @data_remote ? t('.save_and_close') : t('link.update') ),
+                :method => :put } ) %>
