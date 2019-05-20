@@ -1,4 +1,4 @@
-puts "Monkey patching LDAP schema caching. Assuming the activeldap gem version is 5.1.0."
+puts "Monkey patching LDAP schema caching. Assuming the activeldap gem version is 5.2.2."
 
 # Because we do set the ldap connection manually for each request to the
 # current users the defaul schema caching in ActiveLdap does not work because

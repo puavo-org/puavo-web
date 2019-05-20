@@ -6,7 +6,7 @@ group :shared do
   gem "sqlite3"
   gem "prawn"
   gem "net-ldap"
-  gem "activeldap", "5.1.0", :require => "active_ldap"
+  gem "activeldap", "5.2.2", :require => "active_ldap"
   gem "rmagick"
   gem "uuid"
   gem "redcarpet"

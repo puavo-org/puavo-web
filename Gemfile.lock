@@ -23,7 +23,7 @@ GEM
     activejob (4.2.11)
       activesupport (= 4.2.11)
       globalid (>= 0.3.0)
-    activeldap (5.1.0)
+    activeldap (5.2.2)
       activemodel (> 4.0.0)
       builder
       gettext
@@ -184,7 +184,7 @@ GEM
     raindrops (0.19.0)
     rake (12.3.2)
     redcarpet (3.4.0)
-    redis (4.1.0)
+    redis (4.1.1)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
     regexp_parser (1.4.0)
@@ -271,7 +271,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activeldap (= 5.1.0)
+  activeldap (= 5.2.2)
   byebug
   capybara (= 3.15.0)
   colorize
