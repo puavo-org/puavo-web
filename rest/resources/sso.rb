@@ -155,7 +155,7 @@ class SSO < PuavoSinatra
     if params.include?('return_to')
       ExternalService.by_url(params['return_to'])
     elsif params.include?('return')
-      ExternalService.by_url(params['return_to'])
+      ExternalService.by_url(params['return'])
     else
       nil
     end
