@@ -1,0 +1,24 @@
+/* Mass group rename */
+.rename_group_old_name {
+  text-align: right;
+  width: 35%;
+}
+
+.rename_group_new_name {
+  width: 60%;
+}
+
+.rename_group_name_abbr {
+  width: 45%;
+}
+
+.groupRenameTable th {
+  text-align: left !important;
+  background: $groupRenameTableHeaderBackground;
+}
+
+/* Course groups and yearl class groups when certain external integrations are used in this school */
+.externallyMaintainedGroup {
+  color: $externallyMaintainedGroupForeground;
+  background: $externallyMaintainedGroupBackground;
+}

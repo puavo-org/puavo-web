@@ -1,0 +1,23 @@
+#addNewDeviceTitle {
+  span {
+    /* This is currently the only plain text on the tool bar. Everything else are buttons or form elements,
+       so this gets special treatment. */
+    font-size: 110%;
+    color: $newDeviceTitleForeground;
+    padding-right: 5px;
+  }
+
+  select {
+    padding: 5px;
+  }
+
+  option {
+    padding: 5px;
+  }
+}
+
+.purchase_date select {
+  /* There are three of these on the same row, make them look nice */
+  width: auto;
+}
+

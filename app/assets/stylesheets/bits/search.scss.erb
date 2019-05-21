@@ -1,0 +1,90 @@
+/* The search box itself */
+#search, .user_search {
+  background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
+  text-indent: 2em;
+  margin: 4px;
+  z-index: 1;
+}
+
+.user_search {
+  background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
+  text-indent: 2.5em;
+  padding: 3px;
+  /* TODO: Fix the borders. */
+}
+
+.loading {
+  /*
+    The JavaScript code doing the live search adds this class to the search box when search
+    is in progress, then removes it afterwards.
+  */
+  background: url("<%= image_path('ajax-loader.gif') %>") no-repeat scroll 10px center $searchFieldBackgroundColor !important;
+}
+
+/* Container for the top bar search results */
+#jquery-live-search {
+  background: $searchResultsBackground;
+  border: 1px solid $searchResultsBorder;
+  border-width: 0 1px 1px 1px;
+  margin: 0 1em 0 0;
+  max-height: 350px;
+  overflow: auto;
+  padding: 5px;
+  position: absolute;
+  width: auto;
+  z-index: 9999;
+  box-shadow: 5px 5px 5px $searchBoxShadowColor;
+}
+
+.search_result table {
+  border-spacing: 0;
+  margin: 0px;
+  padding: 0px;
+}
+
+.search_result th {
+  white-space: nowrap;
+}
+
+.search_result legend {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+fieldset.search_result {
+  font-size: 80%;
+  padding: 5px;
+}
+
+@media #{$screen-breakpoint-one} {
+  #jquery-live-search {
+    padding: 0;
+    margin: 0;
+    left: 0 !important;
+    width: 100%;
+    font-size: 90%;
+  }
+
+  fieldset.search_result {
+    margin: 2px;
+    padding: 2px;
+    border-top: 2px solid $searchResultsSeparatorLine;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .search_result legend {
+    margin-left: 10px;
+    padding: 0 5px;
+  }
+
+  .search_result .list tr {
+    padding: 0;
+  }
+
+  .search_result .list td:first-of-type {
+    font-size: 110% !important;
+    font-weight: bold;
+  }
+}

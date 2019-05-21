@@ -1,0 +1,225 @@
+/* Base theme colors */
+$baseBrown: rgb(163, 106, 42);
+$baseBrownGradient: rgb(186, 114, 45);
+$baseOrange: rgb(250, 179, 46);
+$baseOrangeGradient: rgb(245, 149, 69);
+
+/* A "generic" box shadow */
+$baseBoxShadowBorderColor: rgb(34, 34, 34);
+
+/* Main page background */
+$bodyBg: rgb(227, 227, 217);
+
+$topbarWrapperBackground: linear-gradient($baseOrange 0%, $baseOrangeGradient 100%);
+$topmenuBorder: rgb(34, 34, 34);
+
+$topmenuNavItemForeground: #000;
+$topmenuNavItemBackground: none;
+$topmenuNavItemHoverForeground: #000;
+$topmenuNavItemHoverBackground: #fff;
+$topmenuNavDropdownSeparators: #ccc;
+
+$topmenuNavDropdownBackground: $baseOrangeGradient;
+
+$searchFieldBackgroundColor: #fff;
+$searchResultsBackground: #fff;
+$searchResultsBorder: #cccaaa;
+$searchResultsSeparatorLine: #000;
+
+$loggedUsernameForeground: #000;
+
+$integrationsBorder: #ccc;
+$integrationsInBackground: #8ff;
+$integrationsInForeground: #000;
+$integrationsOutBackground: #8f8;
+$integrationsOutForeground: #000;
+$integrationsInOutBackground: #f88;
+$integrationsInOutForeground: #000;
+$integrationsLoginBackground: #88f;
+$integrationsLoginForeground: #fff;
+$integrationsPasswordBackground: #ff8;
+$integrationsPasswordForeground: #000;
+$integrationsOtherBackground: #eee;
+$integrationsOtherForeground: #000;
+
+/* Tab bars */
+$firstLevelTabForeground: #000;
+$firstLevelTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
+$firstLevelTabHoverForeground: #000;
+$firstLevelTabHoverBackground: linear-gradient($baseBrown, $baseBrownGradient);
+$firstLevelTabActiveForeground: rgb(255, 255, 240);
+
+$secondLevelTabbarBackground: linear-gradient($baseBrownGradient 35%, $baseBrown 60%);
+$secondLevelTabForeground: #e6e6d8;
+$secondLevelTabBackground: none;
+$secondLevelTabHoverForeground: #4a4d4a;
+$secondLevelTabHoverBackground: white;
+$secondLevelTabActiveForeground: rgb(255, 255, 240);
+
+/* Page */
+$genericLinkForeground: #13243f;
+$genericLinkBackground: none;
+$genericLinkHoverForeground: #352608;
+$genericLinkHoverBackground: none;
+$genericLinkFocusForeground: #000;
+$genericLinkFocusBackground: none;
+$genericLinkMobileBackground: #ccc;
+
+$mainWrapBackground: rgb(227, 227, 217);
+$mainWrapBorder: #3e3e2d;
+
+$mainContentBackground: white;
+
+$baseFont: rgb(27, 27, 27);
+
+$flashSuccessBackground: #e6efc2;
+$flashSuccessForeground: #264409;
+$flashSuccessBorder: #c6d880;
+$flashNoticeBackground: #86b410;
+$flashNoticeForeground: default;
+$flashNoticeBorder: #56340e;
+$flashAlertBackground: #a00;
+$flashAlertForeground: #fff;
+$flashAlertBorder: #f00;
+
+/* Generic information boxes */
+$genericNoticeBorder: #0f0;
+$genericNoticeBackground: #cfc;
+$genericNoticeForeground: #000;
+$genericWarningBorder: #ff0;
+$genericWarningBackground: #ffa;
+$genericWarningForeground: #000;
+$genericErrorBorder: #f00;
+$genericErrorBackground: #faa;
+$genericErrorForeground: #000;
+
+$toolsContainerBackground: none;
+$toolsDropdownBackground: #fff;
+$toolsDropdownBorder: #aaa;
+$toolsContainerLinkForeground: #000;
+$toolsContainerLinkHoverForeground: #fff;
+$toolsContainerLinkHoverBackground: #c0772f;
+
+$contentBoxHeaderBackground: linear-gradient(#ba722d, #a36a2a);
+$contentBoxHeaderForeground: #fff;
+$contentBoxBorder: #000;
+$contentBoxContentsBackground: #f0f0f0;
+$contentBoxTableOddRowBackground: #f0f0f0;
+$contentBoxTableEvenRowBackground: #e0e0e0;
+$contentBoxContentsHeaderForeground: #000;
+$contentBoxMultilineItemBorder: #ccc;
+$contentBoxTableHeadingBackground: #ccc;
+
+$missingData: #f00;
+$ownersOnlyBorder: #f00;
+
+$puavoConfOddRow: #ddd;
+$puavoConfEvenRow: #fff;
+
+$importantBasicInfo: #f00;    /* notifications about locked users, etc. */
+
+$buttonBg: rgb(245, 245, 245);
+$buttonGradientBg: rgb(220, 220, 220);
+$buttonNormalColor: rgb(51, 51, 51);
+$buttonHoverColor: #000;
+
+$buttonDangerBgColor: rgb(231, 6, 0);
+$buttonDangerBgImage: rgb(219, 64, 60);
+$buttonDangerGradientBgImage: rgb(194, 31, 22);
+$buttonDangerHoverBg: rgb(180, 31, 23);
+
+$buttonDangerColor: rgb(255, 255, 255);
+$buttonDangerHoverColor: rgb(255, 255, 255);
+
+$buttonBorderColor: rgba(0, 0, 0, 0.1);
+$buttonBorderColor2: rgba(0, 0, 0, 0.25);
+$buttonBorderHexColor: #e6e6e6;
+$buttonBorderHexColor2: #bfbfbf;
+
+$buttonBackground: linear-gradient($buttonBg 0%, $buttonGradientBg 100%);
+$buttonBoxShadow1: rgba(255, 255, 255, 0.2);
+$buttonBoxShadow2: rgba(0, 0, 0, 0.05);
+$buttonDangerBackground: linear-gradient($buttonDangerBgImage, $buttonDangerGradientBgImage);
+
+$mountPointsHeadingBackground: #ccc;
+
+$errorRed: rgb(231, 6, 0);
+
+$focusColor: rgb(88, 151, 251);
+
+$formElementBorderColor: rgb(200, 200, 200);
+
+$infoBgColor: rgb(217, 237, 247);
+
+$rowEvenBgColor: rgb(250,250,250);
+$rowOddBgColor: rgb(235,235,235);
+
+$headerUnderline: rgb(0, 0, 0);
+
+$formFieldsetBorderColor: #ccc;
+
+$formLabelColor: rgb(0, 0, 0);
+$formErrorColor: rgb(255, 0, 0);
+
+$formOddRowBackground: none;
+$formEvenRowBackground: #f5f5f5;
+$formButtonRowBackground: #fff;
+
+$formSubmitButtonShadow1: rgba(255, 255, 255, 0.2);
+$formSubmitButtonShadow2: rgba(0, 0, 0, 0.05);
+$formSubmitButtonBackground: linear-gradient(white 0%, #eeeeed 100%);
+$formSubmitButtonHoverBackground: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
+
+$listHeadingBackground: linear-gradient(#a36a2a 35%, #ba722d 60%);
+$listSortableColumnHover: linear-gradient(darken(#a36a2a, 5%) 35%, darken(#ba722d, 5%) 60%);
+$listHeadingForeground: #f5f5e8;
+$listHeadingBorder: #000;
+$listOddRowBackground: #ebebeb;
+$listEvenRowBackground: #fafafa;
+$listRowHoverBackground: #f9f7e6;
+$listRowBorder: #c8c8c8;
+$markedForDeletionOddRowBackground: #faa;
+$markedForDeletionEvenRowBackground: #fcc;
+$markedForDeletionRowHoverBackground: #fdd;
+
+$adminGroupsHeaderBorder: #000;   /* used on user edit forms */
+
+$defaultBoxShadowColor: rgba(68, 68, 68, 0.80);
+$searchBoxShadowColor: rgba(68, 68, 68, 0.70);
+
+$groupRenameTableHeaderBackground: #ccc;
+
+$externallyMaintainedGroupForeground: #080;
+$externallyMaintainedGroupBackground: transparent;
+
+$newDeviceTitleForeground: #000;
+
+$hwInfoBorder: #aaa;
+$hwInfoTitleBackground: #eee;
+
+$deletionMarkTimestamp: #f00;
+
+$usernameListTableBorder: #ccc;
+
+$advancedSearchError: #f00;
+$advancedSearchNoResults: #00f;
+$advancedSearchNoMatches: #666;
+
+/* Device statistics */
+$deviceStatisticsImageHeaderForeground: #000;
+$deviceStatisticsImageHeaderBackground: transparent;
+$deviceStatisticsImageHeaderHoverForeground: #000;
+$deviceStatisticsImageHeaderHoverBackground: #ccc;
+$deviceStatisticsPercentageBorder: #666;
+$deviceStatisticsPercentageBackground: #ddd;
+$deviceStatisticsPercentageForeground: #080;
+$deviceStatisticsDeviceListBorder: #ccc;
+
+/* Password changing form */
+$passwordFormBody: #fff;
+$passwordFormTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
+$passwordFormTabForeground: #000;
+$passwordFormTabNormalBackground: $baseOrange;
+$passwordFormTabNormalForeground: #000;
+$passwordFormTabHoverBackground: $baseOrangeGradient;
+$passwordFormTabHoverForeground: #000;

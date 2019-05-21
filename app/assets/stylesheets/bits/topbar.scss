@@ -1,0 +1,285 @@
+/*
+--------------------------------------------------------------------------------
+THE TOP BAR
+--------------------------------------------------------------------------------
+*/
+
+/* Top-level wrapper, for positioning and sizing */
+#topbar-wrapper {
+  padding: 0;
+  display: relative;
+
+  top: 0;
+  width: 100%;
+  z-index: 10;
+  position: fixed;
+  margin: 0;
+
+  min-width: 400px;   /* currently a three-row layout isn't supported */
+
+  background-image: $topbarWrapperBackground;
+  border-bottom: 1px solid $topmenuBorder;
+  box-shadow: 2px 4px 6px $defaultBoxShadowColor;
+}
+
+/* Inner top bar list container */
+#topbar {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1700px;
+  width: 98%;
+  font-size: 80%;
+
+  > li {
+    display: inline;
+    margin: 0;
+
+    /* Keep this zero, the dropdown toplevel menubar entries must be full-height
+       and non-zero padding here will break them! */
+    padding: 0;
+  }
+
+  span {
+    font-size: 90%;
+  }
+
+  #left {
+    text-align: left;
+    flex: 0 0 auto;
+    margin: auto;
+    padding-right: 10px;
+  }
+
+  #middle {
+    margin: auto;
+
+    div {
+      display: flex;
+      padding: 0;
+      margin: 0;
+    }
+
+    #search {
+      flex-grow: 2;
+      display: inline;
+
+      margin: 0;
+      padding: 5px 30px 5px 10px;
+      border: 1px solid $formElementBorderColor;
+      border-radius: 4px;
+    }
+
+    a#extendedSearchButton {
+      display: inline;
+      align-self: center;
+      padding: 5px 10px;
+      margin-left: 2px;
+      border-radius: 5px;
+      text-decoration: none !important;
+    }
+
+    a#extendedSearchButton:hover {
+      background: #fff;
+    }
+
+    a#extendedSearchButton:after {
+      content: "\e822";
+      font-family: puavo-icons;
+      font-size: 110%;
+      padding-left: 5px;
+    }
+  }
+
+  #right {
+    text-align: right;
+    flex-grow: 1;
+    margin: auto;
+  }
+
+  #loggedInName {
+    color: $loggedUsernameForeground;
+    padding: 0;
+  }
+
+  #logoutButton {
+    border: none;
+    margin: 0 0 0 10px;
+    padding: 4px 10px;
+  }
+
+  li:nth-child(1) { order: 1; }
+  li:nth-child(2) { order: 2; }
+  li:nth-child(3) { order: 3; }
+}
+
+@media #{$screen-breakpoint-one} {
+  #topbar-wrapper {
+    /* don't cover any content */
+    position: static;
+    z-index: auto;
+    top: auto;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #topbar {
+    width: 100%;
+    padding: 0 2px;
+  }
+
+  /* reorder the elements */
+  #topbar li:nth-child(1) { order: 2; }
+  #topbar li:nth-child(2) { order: 1; flex-basis: 100%;  }
+  #topbar li:nth-child(3) { order: 3; }
+
+  #topbar #search {
+    margin: 2px auto;
+  }
+
+  #topbar #left, #topbar #right {
+    max-width: none;
+  }
+}
+
+@media #{$screen-breakpoint-two} {
+  #loggedInName {
+    /* There's no room for the name. It could be displayed if, for example, the name
+       is a dropdown menu that contains the logout button. (The same menu could contain
+       a link to the logged-in user's user page.) */
+    display: none;
+
+    /* Actually, this isn't very good. Very long names still can force the logout
+       button onto its own row, turning the two-row intended layout into three rows. */
+  }
+}
+
+/*
+--------------------------------------------------------------------------------
+THE DROPDOWN MENUS
+--------------------------------------------------------------------------------
+*/
+
+nav {
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: $topmenuNavItemForeground;
+    background: $topmenuNavItemBackground;
+  }
+
+  .haveDropdown, .noDropdown {
+    /* Make the menu buttons (dropdowns or not) span the entire height of the topbar. */
+    padding: 10px;
+
+    /* Float the top-level menu items, but not their child lists */
+    float: left;
+  }
+
+  .haveDropdown:after {
+    content: " ▼";
+  }
+
+  .dropdown {
+    display: none;
+    position: absolute;
+    left: auto;
+
+    margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
+
+    padding: 5px;
+
+    min-width: 250px;         /* wide items are easier to hit */
+
+    max-height: 600px;
+    overflow-y: auto;
+
+    z-index: 11;    /* topbar is 10 */
+
+    background: $topmenuNavDropdownBackground;
+    border-left: 1px solid $topmenuBorder;
+    border-right: 1px solid $topmenuBorder;
+    border-bottom: 1px solid $topmenuBorder;
+    border-radius: 0 0 4px 4px;
+
+    box-shadow: 0 6px 6px $defaultBoxShadowColor;
+
+    list-style-type: none;
+  }
+
+  .haveDropdown:hover {
+    cursor: default;
+    color: $topmenuNavItemHoverForeground;
+    background: $topmenuNavItemHoverBackground;
+  }
+
+  .haveDropdown:hover .dropdown {
+    /* Open the dropdown menu */
+    display: block;
+  }
+
+  .dropdown li {
+    display: list-item;
+    padding: 2px 0;   /* "outer" padding between items */
+    margin: 0;
+    border-bottom: 1px solid $topmenuNavDropdownSeparators;
+  }
+
+  .dropdown li:first-of-type {
+    padding: 0 0 2px 0;
+  }
+
+  .dropdown li:last-of-type {
+    padding: 2px 0 0 0;
+    border: none;
+  }
+
+  ul a {
+    display: block;
+    padding: 10px;   /* "inner" padding within items, affects ALL links in the menu! */
+    color: $topmenuNavItemForeground;
+    background: $topmenuNavItemBackground;
+    text-decoration: none;
+    font-size: 85%;
+  }
+
+  ul a:hover {
+    color: $topmenuNavItemHoverForeground;
+    background: $topmenuNavItemHoverBackground;
+  }
+
+  /* The per-school quick link list */
+  .schoolLinks {
+    margin: 0 0 0 20px;
+    padding: 0;
+    display: inline-block;
+
+    li {
+      float: left;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+    }
+
+    a {
+      padding: 2px 5px;
+      text-transform: none;
+    }
+  }
+}
+
+@media #{$screen-breakpoint-two} {
+  nav .schoolLinks {
+    /* These items take too much space on small mobile views */
+    display: none;
+  }
+}

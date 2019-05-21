@@ -1,0 +1,95 @@
+/* The main container for tool buttons and tool dropdown menus */
+.tools-container {
+  background: $toolsContainerBackground;
+  margin: 0 0 20px 0;
+  padding: 0;
+
+  /* The buttons are in a list */
+  > ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;  /* right align */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  > ul > li {
+    margin: 5px;
+    padding: 1px;
+  }
+
+  .btn {
+    padding: 7px 10px;
+  }
+
+  .haveDropdown {
+    /* The dropdown menu buttons aren't clickable */
+    cursor: default;
+  }
+
+  /* A tool dropdown menu */
+  .dropdown {
+    list-style: none;
+
+    display: none;
+    position: absolute;
+
+    left: auto;
+
+    /* Right-aligned dropdown menus */
+    right: 0;
+    margin-right: 25px;
+
+    /* Some menus get so narrow it's hard to hit them, so impose a minimum width.
+       This width is approximately the width of the parent button. */
+    min-width: 130px;
+
+    background: $toolsDropdownBackground;
+    border: 1px solid $toolsDropdownBorder;
+    padding: 5px;
+
+    box-shadow: 0 0 10px $defaultBoxShadowColor;
+
+    z-index: 2;
+  }
+
+  /* Make the dropdown menu visible */
+  .haveDropdown:hover .dropdown {
+    visibility: visible;
+    display: block;
+  }
+
+  /* Tool dropdown menu entries */
+  .dropdown li {
+    margin: 1px;
+  }
+
+  .dropdown a {
+    text-decoration: none;
+    display: block;
+    padding: 5px;
+    color: $toolsContainerLinkForeground;
+    background: transparent;
+    white-space: nowrap;
+    font-size: 100%;
+    width: auto;
+  }
+
+  .dropdown a:hover {
+    color: $toolsContainerLinkHoverForeground;
+    background: $toolsContainerLinkHoverBackground;
+  }
+}
+
+@media #{$screen-breakpoint-one} {
+  .tools-container {
+    .dropdown {
+      margin-right: 10px;
+    }
+
+    .btn {
+      padding: 5px 10px;
+    }
+  }
+}

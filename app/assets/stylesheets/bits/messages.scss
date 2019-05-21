@@ -1,0 +1,51 @@
+.message_alert, .message_notice, .message_success, .message_error {
+  font-size: 130%;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+/* TODO: What's the difference between message_success and message_notice? Merge them. */
+
+.message_success {
+  background: $flashSuccessBackground;
+  color: $flashSuccessForeground;
+  border: 1px solid $flashSuccessBorder;
+}
+
+.message_notice {
+  background: $flashNoticeBackground;
+  color: $flashNoticeForeground;
+  border: 1px solid $flashNoticeBorder;
+}
+
+/* TODO: Merge alert and error messages */
+.message_alert, .message_error {
+  background: $flashAlertBackground;
+  color: $flashAlertForeground;
+  border: 1px solid $flashAlertBorder;
+}
+
+.genericNotice, .genericWarning, .genericError {
+  padding: 10px;
+  margin: 10px;
+}
+
+.genericNotice {
+  color: genericNoticeForeground;
+  background: $genericNoticeBackground;
+  border: 2px solid $genericNoticeBorder;
+}
+
+.genericWarning {
+  color: genericWarningForeground;
+  background: $genericWarningBackground;
+  border: 2px solid $genericWarningBorder;
+}
+
+.genericError {
+  color: genericErrorForeground;
+  background: $genericErrorBackground;
+  border: 2px solid $genericErrorBorder;
+}

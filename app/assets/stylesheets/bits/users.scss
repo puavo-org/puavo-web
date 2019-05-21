@@ -1,0 +1,10 @@
+/* Email and telephone inputs (multiple text boxes) */
+#user_mail_list input, #user_telephoneNumber_list input {
+  display: block;
+  margin: 0 0 5px;
+}
+
+/* The deletion timestamp on user "show" pages */
+.marked_for_deletion {
+  color: $deletionMarkTimestamp;
+}

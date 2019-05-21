@@ -1,0 +1,134 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  background: $bodyBg;
+}
+
+/* The school name at the top of the page */
+header#schoolName {
+  font-size: 220%;
+  font-weight: normal;
+  font-variant: small-caps;
+  margin-top: 12px;
+}
+
+@media #{$screen-breakpoint-one} {
+  header#schoolName {
+    font-size: 200%;
+    margin-left: 5px;
+    margin-top: 0;  /* topmenu becomes a solid block, no need to push content downwards */
+  }
+}
+
+/* Currently this is only used for the debugging information block */
+footer {
+  color: transparent;
+  font-size: 80%;
+  text-align: right;
+}
+
+@media #{$screen-breakpoint-one} {
+  footer {
+    font-size: 60%;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
+
+h1 {
+  font-size: 250%;
+  border-bottom: 1px solid $headerUnderline;
+}
+
+h2 {
+  margin-top: 25px;
+  font-size: 200%;
+  border-bottom: 1px dashed $headerUnderline;
+}
+
+h3 {
+  font-size: 130%;
+  border-bottom: 1px dotted $headerUnderline;
+}
+
+h4 {
+  font-size: 115%;
+}
+
+h5 {
+  font-size: 110%;
+}
+
+h6 {
+  font-size: 105%;
+}
+
+a {
+  color: $genericLinkForeground;
+  background: $genericLinkBackground;
+}
+
+a:hover {
+  color: $genericLinkHoverForeground;
+  background: $genericLinkHoverBackground;
+  text-decoration: none;
+}
+
+a:focus {
+  color: $genericLinkFocusForeground;
+  background: $genericLinkFocusBackground;
+}
+
+@media #{$screen-breakpoint-one} {
+  a {
+    font-size: 110%;
+    padding: 5px 10px;
+    background: $genericLinkMobileBackground;
+  }
+}
+
+p {
+  margin: 0 0 0.5em 0;      /* TODO: this can be removed (but see user/device info pages first!) */
+}
+
+img {
+  border: none;
+  max-width: 100%;
+}
+
+hr {
+  /* Used to break floating boxes into controlled sections, so to speak */
+  border: none;
+  clear: both;
+  float: none;
+  height: 0;
+  margin: 0;
+  width: 100%;
+  visibility: hidden;
+}
+
+legend {
+  font-weight: bold;
+  font-size: 110%;
+  padding: 0 5px;
+}
+
+abbr[title]:after {
+  /* Normal view */
+  content: "";
+}
+
+@media #{$screen-breakpoint-one} {
+  /* Can't hover over abbreviations on mobile, so display the contents */
+  abbr[title]:after {
+     content: " (" attr(title) ")";
+  }
+}
