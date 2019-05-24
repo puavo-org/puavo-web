@@ -15,9 +15,11 @@ end
 <p class="genericError"><%= t('hwinfo.json_failed', :msg => @message) %></p>
 <% else %>
 
-<p class="hwInfoTimestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime %></p>
+<div class="hardwareInfo">
 
-<table class="hwInfoTable">
+<p class="timestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime %></p>
+
+<table class="infoTable">
 
 <!-- General -->
 
@@ -139,9 +141,11 @@ end
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.lspci.title') %></th>
   <td colspan="2">
+    <code>
     <% Array(@info['lspci_values'] || []).each do |lspci| %>
-      <%= lspci %><br>
+    <%= lspci %><br>
     <% end %>
+    </code>
   </td>
 </tr>
 
@@ -150,9 +154,11 @@ end
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.lsusb.title') %></th>
   <td colspan="2">
+    <code>
     <% Array(@info['lsusb_values'] || []).each do |lsusb| %>
-      <%= lsusb %><br>
+    <%= lsusb %><br>
     <% end %>
+    </code>
   </td>
 </tr>
 
@@ -164,8 +170,8 @@ end
   <td colspan="2"><%= t('hwinfo.xrandr.no_xrandr') %>
   <% else %>
   <td colspan="2">
-    <pre>
-<% Array(@info['xrandr']).each do |xr| %><%= xr %><% end %></pre>
+    <code>
+<% Array(@info['xrandr']).each do |xr| %><%= xr %><% end %></code>
   <% end %>
   </td>
 </tr>
@@ -222,6 +228,8 @@ end
 <% end %>
 
 </table>
+
+</div>
 
 <% end %>
 

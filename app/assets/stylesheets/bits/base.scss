@@ -73,6 +73,7 @@ h6 {
 a {
   color: $genericLinkForeground;
   background: $genericLinkBackground;
+  font-weight: bold;
 
   @media #{$screen-breakpoint-one} {
     /* Make tiny links (slightly) easier to touch */

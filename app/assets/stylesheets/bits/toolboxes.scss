@@ -1,5 +1,8 @@
-/* The main container for tool buttons and tool dropdown menus */
-.tools-container {
+/*
+  Drop-down "tool boxes" on show/edit pages
+*/
+
+.toolsContainer {
   background: $toolsContainerBackground;
   margin: 0 0 20px 0;
   padding: 0;
@@ -21,6 +24,10 @@
 
   .btn {
     padding: 7px 10px;
+
+    @media #{$screen-breakpoint-one} {
+      padding: 5px 10px;
+    }
   }
 
   .haveDropdown {
@@ -60,36 +67,31 @@
     display: block;
   }
 
-  /* Tool dropdown menu entries */
-  .dropdown li {
-    margin: 1px;
-  }
-
-  .dropdown a {
-    text-decoration: none;
-    display: block;
-    padding: 5px;
-    color: $toolsContainerLinkForeground;
-    background: transparent;
-    white-space: nowrap;
-    font-size: 100%;
-    width: auto;
-  }
-
-  .dropdown a:hover {
-    color: $toolsContainerLinkHoverForeground;
-    background: $toolsContainerLinkHoverBackground;
-  }
-}
-
-@media #{$screen-breakpoint-one} {
-  .tools-container {
-    .dropdown {
+  /* Dropdown menu entries */
+  .dropdown {
+    @media #{$screen-breakpoint-one} {
       margin-right: 10px;
     }
 
-    .btn {
-      padding: 5px 10px;
+    li {
+      margin: 1px;
+    }
+
+    a {
+      text-decoration: none;
+      display: block;
+      padding: 5px;
+      color: $toolsContainerLinkForeground;
+      background: transparent;
+      white-space: nowrap;
+      font-size: 100%;
+      width: auto;
+      font-weight: normal;
+
+      &:hover {
+        color: $toolsContainerLinkHoverForeground;
+        background: $toolsContainerLinkHoverBackground;
+      }
     }
   }
 }

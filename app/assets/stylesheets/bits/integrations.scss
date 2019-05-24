@@ -1,4 +1,7 @@
-/* External systems integration indicators */
+/*
+  External systems integration indicators
+*/
+
 .integrations {
   display: flex;
   flex-flow: wrap;
@@ -19,12 +22,22 @@
     display: inline;
   }
 
+  @media #{$screen-breakpoint-one} {
+    padding-left: 5px;
+
+    li {
+      margin: 2px 2px 2px 0;
+      padding: 5px;
+    }
+  }
+
   /* Special spans for adding arrows indicating data flow directions */
   span {
     font-family: "puavo-icons";
     padding: 0 5px;
   }
 
+  /* This system sends data to puavo */
   .in {
     background: $integrationsInBackground;
     color: $integrationsInForeground;
@@ -34,6 +47,7 @@
     }
   }
 
+  /* Puavo sends data to this system */
   .out {
     background: $integrationsOutBackground;
     color: $integrationsOutForeground;
@@ -43,6 +57,7 @@
     }
   }
 
+  /* Data flows in both directions between this system and puavo */
   .inout {
     background: $integrationsInOutBackground;
     color: $integrationsInOutForeground;
@@ -52,6 +67,7 @@
     }
   }
 
+  /* This system uses Puavo as an SSO provider */
   .login {
     background: $integrationsLoginBackground;
     color: $integrationsLoginForeground;
@@ -64,6 +80,7 @@
     padding-right: 5px;
   }
 
+  /* Passwords synchronisation between Puavo and this system */
   .password {
     background: $integrationsPasswordBackground;
     color: $integrationsPasswordForeground;
@@ -75,6 +92,7 @@
     padding-right: 5px;
   }
 
+  /* Some other type of integration */
   .other {
     background: $integrationsOtherBackground;
     color: $integrationsOtherForeground;
@@ -87,17 +105,7 @@
   }
 }
 
-@media #{$screen-breakpoint-one} {
-  .integrations {
-    padding-left: 5px;
-
-    li {
-      margin: 2px 2px 2px 0;
-      padding: 5px;
-    }
-  }
-}
-
+/* "Inline" integrations displayed in the school list */
 .inlineIntegrations {
   display: inline;
   list-style-type: none;
@@ -109,5 +117,9 @@
     border: 1px solid $integrationsBorder;
     white-space: nowrap;
     display: inline;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 70%;
   }
 }

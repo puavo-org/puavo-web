@@ -104,6 +104,7 @@
 /* Basic user/device information block */
 .basicInfo {
   display: flex;
+  flex-flow: row wrap;
   margin-bottom: 20px;
   padding: 0;
 
@@ -149,6 +150,30 @@
     .puavoConf {
       margin-top: 5px;
       margin-left: 25px;
+    }
+  }
+
+  @media #{$screen-breakpoint-one} {
+    .basicInfoImage {
+      img {
+        max-width: 128px;
+        padding: 0;
+        border: none;
+      }
+
+      width: 138px;
+    }
+  }
+
+  @media #{$screen-breakpoint-two} {
+    .basicInfoImage {
+      img {
+        max-width: 64px;
+        padding: 0;
+        border: none;
+      }
+
+      width: 78px;
     }
   }
 }

@@ -24,7 +24,7 @@ I18n.locale = "<%= I18n.locale %>";
 </head>
 
 <body>
-<div id="topbar-wrapper">
+<div id="topbarWrapper">
   <ul id="topbar">
     <li id="left">
       <!-- Organisation and school dropdown menus (ie. "navigation") -->
@@ -102,7 +102,7 @@ I18n.locale = "<%= I18n.locale %>";
 </div>
 
 <div class="container">
-  <div class="main-wrap">
+  <div class="mainWrap">
     <% if current_organisation? %>
     <% if @school && !@school.id.nil? && controller_name != 'password' %>
     <header id="schoolName"><%= @school.displayName %></header>
@@ -115,7 +115,7 @@ I18n.locale = "<%= I18n.locale %>";
     <% end %>
     <% end %>
 
-    <div class="maincontent clearfix">
+    <div class="mainContent clearfix">
       <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
       <% message_keys.each do |key| %>
       <p class="message_<%= key %>"><%= flash[key] %></p>
@@ -123,7 +123,7 @@ I18n.locale = "<%= I18n.locale %>";
       <% end %>
 
       <% if current_user && content_for?(:tools) %>
-      <div class="tools-container">
+      <div class="toolsContainer">
       <%= yield :tools %>
       </div>
       <% end %>

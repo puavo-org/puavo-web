@@ -7,7 +7,7 @@
    first load the users list before I can access groups, for example. */
 
 /* First level tab bar */
-.navbar-first-level {
+.navbarFirstLevel {
   ul {
     list-style: none;
     display: flex;
@@ -26,7 +26,7 @@
     background: $firstLevelTabHoverBackground;
   }
 
-  .current_first {
+  .currentFirst {
     background: linear-gradient($baseBrown, $baseBrownGradient);
     border: 1px solid $baseBoxShadowBorderColor;
     border-bottom: none;
@@ -45,14 +45,14 @@
     white-space: nowrap;
   }
 
-  .current_first a, .current_first a:hover {
+  .currentFirst a, a:hover {
     color: $firstLevelTabActiveForeground;
     background: transparent;
   }
 }
 
 /* Second-level tab bar */
-.navbar-second-level {
+.navbarSecondLevel {
   ul {
     list-style: none;
     display: flex;
@@ -83,9 +83,10 @@
     border: 1px solid transparent;
     font-size: 70%;
     text-transform: uppercase;
+    font-weight: normal;
   }
 
-  .current_second a, a:hover {
+  .currentSecond a, a:hover {
     color: $secondLevelTabHoverForeground;
     background: $secondLevelTabHoverBackground;
     border-left: 1px solid $baseBoxShadowBorderColor;
@@ -97,11 +98,11 @@
 }
 
 @media #{$screen-breakpoint-one} {
-  .navbar-first-level a {
+  .navbarFirstLevel a {
     padding: 0.7em 1em;
   }
 
-  .navbar-second-level {
+  .navbarSecondLevel {
     ul {
       border: none;
       border-top: 1px solid $baseBoxShadowBorderColor;
@@ -142,6 +143,7 @@
     text-decoration: none;
     background: #efefef;
     color: #000;
+    font-weight: normal;
 
     &:hover {
       background: #ddd;

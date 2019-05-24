@@ -1,9 +1,9 @@
-    <div class="navbar-first-level">
+    <div class="navbarFirstLevel">
       <ul>
       <% @menu_items.each do |item| %>
       <% next if item.hide? %>
       <% if item.active? %>
-        <li class="current_first">
+        <li class="currentFirst">
       <% else %>
         <li>
       <% end %>
@@ -13,12 +13,12 @@
       </ul>
     </div>
 
-    <div class="navbar-second-level">
+    <div class="navbarSecondLevel">
       <ul>
       <% @child_items.each do |item| %>
       <% next if item.hide? %>
       <% if item.active? %>
-        <li class="current_second">
+        <li class="currentSecond">
       <% else %>
         <li>
       <% end %>

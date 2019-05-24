@@ -1,3 +1,7 @@
+/*
+  Quick search bar at the top of the page, plus live search boxes on group pages
+*/
+
 /* The search box itself */
 #search, .user_search {
   background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
@@ -86,5 +90,106 @@ fieldset.search_result {
   .search_result .list td:first-of-type {
     font-size: 110% !important;
     font-weight: bold;
+  }
+}
+
+/*
+  Extended search form
+*/
+
+#extendedSearchForm {
+  #searchTerms {
+    width: 100%;
+  }
+
+  label {
+    white-space: nowrap;
+  }
+
+  #searchButton {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  table {
+    tr, td, th {
+      padding: 2px;
+      margin: 0;
+    }
+
+    select {
+      width: 100%;
+    }
+  }
+
+  #searchHelpContainer {
+    vertical-align: top;
+  }
+
+  #searchHelp {
+    padding-left: 10px;
+
+    h6 {
+      padding: 0;
+      margin: 0;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    @media #{$screen-breakpoint-one} {
+      /* Takes up too much space on mobile, assume the
+         user already knows how to use this tool... */
+      display: none;
+    }
+  }
+}
+
+#extendedSearchResultsContainer {
+  .searchError {
+    color: $advancedSearchError;
+    padding: 0;
+    margin: 0;
+  }
+
+  .noResults {
+    color: $advancedSearchNoResults;
+    padding: 0;
+    margin: 0;
+  }
+
+  .list th.matched {
+    /* The search term header column */
+    border-right: 1px solid $listHeadingBorder;
+  }
+
+  .term, .matched {
+    /* Force minimum width */
+    width: 1px;
+    white-space: nowrap;
+  }
+
+  .term {
+  }
+
+  .matched {
+    border-right: 1px solid $listRowBorder;
+  }
+
+  .noMatches {
+    color: $advancedSearchNoMatches;
+  }
+}
+
+@media #{$screen-breakpoint-one} {
+  /* Remove borders, the list is collapsed */
+  #extendedSearchResultsContainer {
+    .list th:first-of-type {
+      border-right: none;
+    }
+
+    .list td:first-of-type {
+      font-weight: bold;
+      border-right: none;
+    }
   }
 }

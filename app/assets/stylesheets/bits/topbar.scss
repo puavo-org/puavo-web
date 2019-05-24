@@ -1,11 +1,9 @@
 /*
---------------------------------------------------------------------------------
-THE TOP BAR
---------------------------------------------------------------------------------
+  Top bar: search box, organisation/school menus, logout button
 */
 
 /* Top-level wrapper, for positioning and sizing */
-#topbar-wrapper {
+#topbarWrapper {
   padding: 0;
   display: relative;
 
@@ -116,7 +114,7 @@ THE TOP BAR
 }
 
 @media #{$screen-breakpoint-one} {
-  #topbar-wrapper {
+  #topbarWrapper {
     /* don't cover any content */
     position: static;
     z-index: auto;
@@ -157,12 +155,7 @@ THE TOP BAR
   }
 }
 
-/*
---------------------------------------------------------------------------------
-THE DROPDOWN MENUS
---------------------------------------------------------------------------------
-*/
-
+/* Topbar dropdown menus */
 nav {
   ul {
     list-style-type: none;
@@ -274,12 +267,10 @@ nav {
       padding: 2px 5px;
       text-transform: none;
     }
-  }
-}
 
-@media #{$screen-breakpoint-two} {
-  nav .schoolLinks {
-    /* These items take too much space on small mobile views */
-    display: none;
+    @media #{$screen-breakpoint-two} {
+      /* These items take too much space on small mobile views */
+      display: none;
+    }
   }
 }
