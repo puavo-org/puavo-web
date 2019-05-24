@@ -62,18 +62,20 @@ end
 <tr class="sectionEnd">
   <th><%= t('hwinfo.memory.modules.title') %></th>
   <td>
+    <ol>
     <% Array(@info['memory'] || []).each_with_index do |mem, index| %>
-    <%= index + 1 %>:
-    <% if mem['size'].to_i > 0 %>
-    <strong><%= t('hwinfo.memory.modules.size') %>:</strong> <%= mem['size'] %> MiB
-    <strong><%= t('hwinfo.memory.modules.slot') %>:</strong> <%= mem['slot'] %>
-    <strong><%= t('hwinfo.memory.modules.product') %>:</strong> <%= mem['product'] %>
-    <strong><%= t('hwinfo.memory.modules.vendor') %>:</strong> <%= mem['vendor'] %>
-    <% else %>
-    <%= t('hwinfo.memory.modules.empty') %>
+      <li>
+        <% if mem['size'].to_i > 0 %>
+        <strong><%= t('hwinfo.memory.modules.size') %>:</strong> <%= mem['size'] %> MiB
+        <strong><%= t('hwinfo.memory.modules.slot') %>:</strong> <%= mem['slot'] %>
+        <strong><%= t('hwinfo.memory.modules.product') %>:</strong> <%= mem['product'] %>
+        <strong><%= t('hwinfo.memory.modules.vendor') %>:</strong> <%= mem['vendor'] %>
+        <% else %>
+        <%= t('hwinfo.memory.modules.empty') %>
+        <% end %>
+      </li>
     <% end %>
-    <br>
-    <% end %>
+    </ol>
   </td>
 </tr>
 
@@ -170,8 +172,8 @@ end
   <td colspan="2"><%= t('hwinfo.xrandr.no_xrandr') %>
   <% else %>
   <td colspan="2">
-    <code>
-<% Array(@info['xrandr']).each do |xr| %><%= xr %><% end %></code>
+    <pre>
+<% Array(@info['xrandr']).each do |xr| %><%= xr %><% end %></pre>
   <% end %>
   </td>
 </tr>

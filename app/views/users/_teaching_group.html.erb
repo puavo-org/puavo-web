@@ -1,7 +1,7 @@
     <!-- FIXME: enable (javascript) teaching group on the form if user select student type on the form -->
     <% if new_group_management?(@school) && !@user.new_entry? && Array(@user.puavoEduPersonAffiliation).include?("student") %>
     <tr>
-      <th class="required"><%= f.label :teaching_group %></th>
+      <th class="requiredField"><%= f.label :teaching_group %></th>
       <td>
         <%= select_tag "teaching_group", options_for_select(
             [[t("default_select_value"), ""]] + @teaching_groups.sort{ |a, b| a["name"].downcase <=> b["name"].downcase }.map{ |g| [g["name"], g["id"]] },

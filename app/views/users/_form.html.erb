@@ -2,7 +2,7 @@
 <%= javascript_include_tag 'passwordValidator' %>
 <% end %>
 
-<p class="required_info"><%= t('layouts.forms.required_field')%></p>
+<p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
 <% read_only = @user.read_only? %>
 
@@ -13,24 +13,24 @@
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
   <table class="editForm">
     <tr>
-      <th class="required"><%= f.label :givenName %></th>
+      <th class="requiredField"><%= f.label :givenName %></th>
       <td><%= f.text_field :givenName, disabled: read_only, :required => 'required' %></td>
     </tr>
 
     <tr>
-      <th class="required"><%= f.label :sn %></th>
+      <th class="requiredField"><%= f.label :sn %></th>
       <td><%= f.text_field :sn, disabled: read_only, :required => 'required' %></td>
     </tr>
 
     <tr>
-      <th class="required"><%= f.label :uid %></th>
+      <th class="requiredField"><%= f.label :uid %></th>
       <td><%= f.text_field :uid, disabled: read_only, :required => 'required' %></td>
     </tr>
 
     <tr>
       <th><%= f.label :mail, nil, for: "user_mail_0" %></th>
       <td>
-        <div id="user_mail_list">
+        <div>
         <% if Array(@user.mail).empty? %>
           <input name='user[mail][]' type='text' id='user_mail_0' <%= read_only ? 'disabled="disabled"' : "" %> />
         <% else %>
@@ -51,7 +51,7 @@
     <tr>
       <th><%= f.label :telephoneNumber, nil, for: "user_telephone_0" %></th>
       <td>
-        <span id="user_telephoneNumber_list">
+        <span>
         <% if Array(@user.telephoneNumber).empty? %>
           <input name='user[telephoneNumber][]' id='user_telephone_0' type='text' <%= read_only ? 'disabled="disabled"' : "" %> />
         <% else %>
@@ -70,7 +70,7 @@
     </tr>
 
     <tr>
-      <th class="required">
+      <th class="requiredField">
       <% if new_group_management?(@school) %>
         <%= f.label :puavoEduPersonAffiliation %>
       <% else %>
@@ -92,7 +92,7 @@
 
     <% unless new_group_management?(@school) %>
     <tr>
-      <th class="required"><%= f.label :role_ids %></th>
+      <th class="requiredField"><%= f.label :role_ids %></th>
       <td>
         <% @roles.each do |p| %>
         <div>
@@ -154,7 +154,7 @@
     </tr>
 
     <tr>
-      <th class="required"><%= f.label :new_password %></th>
+      <th class="requiredField"><%= f.label :new_password %></th>
       <td>
         <%= show_password_requirements(@password_requirements) %>
         <%= f.password_field :new_password, value: @user.new_password  %>
@@ -162,7 +162,7 @@
     </tr>
 
     <tr>
-      <th class="required"><%= f.label :new_password_confirmation %></th>
+      <th class="requiredField"><%= f.label :new_password_confirmation %></th>
       <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation  %></td>
     </tr>
 

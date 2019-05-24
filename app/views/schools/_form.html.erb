@@ -1,14 +1,14 @@
-<p class="required_info"><%= t('layouts.forms.required_field')%></p>
+<p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
 <%= form_for(@school, url: path, html: { method: method, multipart: true })  do |f| %>
 <table class="editForm">
   <tr>
-    <th class="required"><%= f.label :displayName %></th>
+    <th class="requiredField"><%= f.label :displayName %></th>
     <td><%= f.text_field :displayName, :required => 'required' %></td>
   </tr>
 
   <tr>
-    <th class="required"><%= f.label :cn %></th>
+    <th class="requiredField"><%= f.label :cn %></th>
     <td><%= f.text_field :cn, :required => 'required' %></td>
   </tr>
 

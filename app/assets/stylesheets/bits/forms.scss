@@ -1,10 +1,55 @@
-/* editForms are used for creating and editing users, group, devices, schools, and so on */
+/*
+  Forms and form elements
+*/
+
+fieldset {
+  border: 1px solid $formFieldsetBorderColor;
+  padding: 10px;
+  margin: 20px 0;
+}
+
+legend {
+  padding: 0 5px;
+  font-weight: bold;
+  font-size: 110%;
+  border: 1px solid $formFieldsetBorderColor;
+  border-width: 0 1px;
+}
+
+/* editForms are used for creating and editing users, group, devices,
+   schools, and so on */
 .editForm {
-  border-collapse: collapse;
   width: 100%;
 
+  /* Labels for checkboxes/radio buttons */
+  label {
+    font-weight: normal;
+    font-size: 120%;
+    line-height: 2;
+  }
+
+  select {
+    padding: 5px;
+    width: 100%;
+  }
+
+  textarea {
+    width: 100%;
+  }
+
+  /* Embedded tables */
   td, th {
     padding: 10px;
+  }
+
+  th label {
+    /* Row labels */
+    font-size: 110%;
+    font-weight: bold;
+    word-wrap: none;
+    color: $formLabelColor;
+    padding: 0;
+    margin: 0;
   }
 
   tr:nth-child(odd) {
@@ -20,8 +65,10 @@
     width: 250px;
   }
 
-  .buttonRow td, .buttonRow th {
-    background: $formButtonRowBackground;
+  .buttonRow {
+    td th {
+      background: $formButtonRowBackground;
+    }
   }
 
   input[type="text"], input[type="password"] {
@@ -39,31 +86,6 @@
          element above it. */
       margin: 10px;
     }
-  }
-
-  select {
-    padding: 5px;
-    width: 100%;
-  }
-
-  textarea {
-    width: 100%;
-  }
-
-  label {
-    /* Labels for checkboxes/radio buttons */
-    font-weight: normal;
-    font-size: 120%;
-    line-height: 2;
-  }
-
-  th label {
-    font-size: 110%;
-    font-weight: bold;
-    word-wrap: none;
-    color: $formLabelColor;
-    padding: 0;
-    margin: 0;
   }
 
   /* Submit and cancel buttons */
@@ -99,24 +121,28 @@ input[type="submit"]:hover {
 }
 
 /* The "* = required" label displayed at the top of forms */
-.required_info {
+.requiredTitle {
+  color: $formErrorColor;
+  font-style: italic;
+}
+
+/* Requird fields */
+.requiredField {
+}
+
+.requiredField .field_with_errors {
+  display: inline-block;
+}
+
+.requiredField:after {
+  content: " *";
+  font-size: 120%;
   color: $formErrorColor;
 }
 
 .field_error {
   color: $formErrorColor;
-  font-weight: bold;
   display: block;
-}
-
-.required .field_with_errors {
-  display: inline-block;
-}
-
-.required:after {
-  content: " *";
-  font-size: 120%;
-  color: $formErrorColor;
 }
 
 /* Fields with invalid/missing values */
@@ -124,10 +150,10 @@ input[type="submit"]:hover {
   color: $formErrorColor;
 }
 
-/* The small label below the field explaining what's wrong with the current value */
+/* The small label below the field explaining what's wrong with the current value.
+   This class name cannot be changed, it comes from Rails' ActionView. */
 .field_with_errors {
   color: $formLabelColor;
-  font-weight: bold;
 }
 
 .field_with_errors input, .field_with_errors select {
@@ -151,23 +177,6 @@ input[type="submit"]:hover {
 .administrativeGroups input[type="checkbox"] {
   margin-left: 30px;
   margin-right: 0;
-}
-
-fieldset {
-  border: 1px solid $formFieldsetBorderColor;
-  padding: 10px;
-  margin: 10px;
-}
-
-legend {
-  padding: 0 5px;
-  font-weight: bold;
-  font-size: 110%;
-}
-
-/* The "clone" buttons in email/phone number/mac address/etc. fields */
-.clone_prev_input_element {
-  margin-bottom: 0.5em;
 }
 
 @media #{$screen-breakpoint-one} {

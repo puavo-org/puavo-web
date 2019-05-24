@@ -1,4 +1,4 @@
-<p class='required_info'><%= t('layouts.forms.required_field')%></p>
+<p class='requiredTitle'><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@server, url: server_path(@server), html: { multipart: true }) do |f| %>
 
   <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>

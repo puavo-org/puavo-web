@@ -1,3 +1,7 @@
+/*
+  Tables
+*/
+
 table {
   border-collapse: collapse;
 }
@@ -14,71 +18,49 @@ th {
   text-decoration: none;
 }
 
-table a {
-  font-weight: bold;
-}
-
-.mountPoints td, .mountPoints th {
-  border: none;
-}
-
-.mountPoints th {
-  text-align: center !important;
-  background: $mountPointsHeadingBackground;
-}
-
 /* Sortable column headers */
 .sortHeader {
-    /* Indicate sortable columns */
   cursor: pointer;
+
+  &:hover {
+    background: $listSortableColumnHover !important;
+  }
 }
 
-.sortHeader:hover {
-  background: $listSortableColumnHover !important;
-}
+@mixin sortCommon($padding) {
+  font-family: puavo-icons;
+  font-size: 120%;
+  font-weight: normal;
+  padding-left: $padding;
+};
 
 .orderAscending, .orderDescending {
   background: $listSortableColumnHover !important;
 }
 
 .orderNone:after {
+  @include sortCommon(15px);
   content: "\f0dc";   /* up arrow, down arrow */
-  font-family: puavo-icons;
-  font-size: 120%;
-  padding-left: 15px;
-  font-weight: normal;
 }
 
 .typeString.orderAscending:after {
+  @include sortCommon(5px);
   content: " \f15d";      /* A -> Z */
-  font-family: puavo-icons;
-  font-size: 120%;
-  padding-left: 5px;
-  font-weight: normal;
 }
 
 .typeString.orderDescending:after {
+  @include sortCommon(5px);
   content: " \f15e";      /* Z -> A */
-  font-family: puavo-icons;
-  font-size: 120%;
-  padding-left: 5px;
-  font-weight: normal;
 }
 
 .typeNumeric.orderAscending:after {
+  @include sortCommon(6px);
   content: " \f162";      /* 1 -> 9 */
-  font-family: puavo-icons;
-  font-size: 120%;
-  padding-left: 6px;    /* the icon is slightly narrower */
-  font-weight: normal;
 }
 
 .typeNumeric.orderDescending:after {
+  @include sortCommon(6px);
   content: " \f163";      /* 9 -> 1 */
-  font-family: puavo-icons;
-  font-size: 120%;
-  padding-left: 6px;    /* the icon is slightly narrower */
-  font-weight: normal;
 }
 
 /* Lists of schools, users, devices, etc. */
@@ -173,7 +155,7 @@ table a {
       font-weight: bold;
     }
 
-    .table-actions {
+    .tableActions {
       display: inline-block;
 
       .btn {
@@ -184,8 +166,8 @@ table a {
   }
 }
 
-/* Alternate colors for the "marked for deletion" users table */
-.marked_for_deletion_users_list {
+.usersMarkedForDeletion {
+  /* Alternate colors for the "marked for deletion" users table */
   tr:nth-child(even) {
     background-color: $markedForDeletionEvenRowBackground;
   }
@@ -209,13 +191,4 @@ table a {
   tr:hover .selectedColumn {
     background: darken($markedForDeletionRowHoverBackground, 5%) !important;
   }
-}
-
-/* Group members who ar emarked for deletion */
-.marked_for_deletion_group:nth-child(even) {
-  background-color: $markedForDeletionEvenRowBackground !important;
-}
-
-.marked_for_deletion_group:nth-child(odd) {
-  background-color: $markedForDeletionOddRowBackground !important;
 }

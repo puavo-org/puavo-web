@@ -19,7 +19,7 @@
     <% if is_deleted %>
     <td data-title="<%= t('activeldap.attributes.user.markedForDeletion') %>" data-sort-key="<%= user["puavoExactRemovalTimeRaw"] %>"><abbr title="<%= user["puavoExactRemovalTime"] %>"><%= user["puavoFuzzyRemovalTime"] %></abbr></td>
     <% end %>
-    <td data-title="<%= t('users.index.actions')%>" class="table-actions">
+    <td data-title="<%= t('users.index.actions')%>" class="tableActions">
       <%= link_to edit_user_path(@school, user["puavoId"]), class: "btn" do%>
         <i class='icon-pencil'></i><%= t('link.edit') %>
       <% end %>

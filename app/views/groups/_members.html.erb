@@ -2,7 +2,7 @@
 <table>
   <% @members.sort{|a, b| a["cn"].downcase <=> b["cn"].downcase }.each do |member| %>
   <% if member.puavoRemovalRequestTime %>
-  <tr class="marked_for_deletion_group">
+  <tr class="groupUserMarkedForDeletion">
   <% else %>
   <tr>
   <% end %>

@@ -75,10 +75,11 @@
   margin-left: 20px;
 }
 
+/* Turn off bulleted lists */
 .noBullets {
   list-style-type: none;
-  margin: 0 0 0 20px;
-  padding: 0;
+  margin: 0;
+  padding: 0 0 0 0.5em;
 }
 
 /* Heading row/column of tables used in some content boxes. Can't use TH only,
@@ -99,6 +100,16 @@
 
 .noFloat {
   float: none !important;
+}
+
+/* School/device mount points */
+.mountPoints td, .mountPoints th {
+  border: none;
+}
+
+.mountPoints th {
+  text-align: center !important;
+  background: $mountPointsHeadingBackground;
 }
 
 /* Basic user/device information block */

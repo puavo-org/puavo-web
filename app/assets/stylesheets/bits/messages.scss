@@ -2,7 +2,7 @@
   Flash messages and other message/notification/info boxes
 */
 
-.message_alert, .message_notice, .message_success, .message_error {
+@mixin message {
   font-size: 130%;
   text-align: center;
   padding: 10px;
@@ -13,12 +13,14 @@
 /* TODO: What's the difference between message_success and message_notice? Merge them. */
 
 .message_success {
+  @include message;
   background: $flashSuccessBackground;
   color: $flashSuccessForeground;
   border: 1px solid $flashSuccessBorder;
 }
 
 .message_notice {
+  @include message;
   background: $flashNoticeBackground;
   color: $flashNoticeForeground;
   border: 1px solid $flashNoticeBorder;
@@ -26,29 +28,33 @@
 
 /* TODO: Merge alert and error messages */
 .message_alert, .message_error {
+  @include message;
   background: $flashAlertBackground;
   color: $flashAlertForeground;
   border: 1px solid $flashAlertBorder;
 }
 
-.genericNotice, .genericWarning, .genericError {
+@mixin genericBox {
   padding: 10px;
   margin: 10px;
 }
 
 .genericNotice {
+  @include genericBox;
   color: genericNoticeForeground;
   background: $genericNoticeBackground;
   border: 2px solid $genericNoticeBorder;
 }
 
 .genericWarning {
+  @include genericBox;
   color: genericWarningForeground;
   background: $genericWarningBackground;
   border: 2px solid $genericWarningBorder;
 }
 
 .genericError {
+  @include genericBox;
   color: genericErrorForeground;
   background: $genericErrorBackground;
   border: 2px solid $genericErrorBorder;

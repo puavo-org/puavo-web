@@ -61,7 +61,7 @@
       <tr>
         <td data-title="<%= t('activeldap.attributes.device.puavoHostname')%>"><%= device.cn %></td>
         <td data-title="<%= t('link.remove')%>"><%= check_box_tag "remove_device_permission[]", device.dn %></td>
-        <td data-title="<%= t('actions')%>" class="table-actions">
+        <td data-title="<%= t('actions')%>" class="tableActions">
           <%= link_to edit_device_path(@school, device), :class => "btn" do %>
             <i class="icon-pencil"></i> <%= t('link.edit') %>
           <% end %>
