@@ -1,172 +1,92 @@
+/*
+  Custom classes that are used on all/most pages
+*/
+
+/* Font Awesome icon class names are all prefixed with "icon-" */
 [class*=icon] {
   font-size: 120%;
 }
 
-/* Generic floating container boxes that have titles */
-.content-box-new {
-  min-width: 45%;
-  width: 49%;
-  float: left;
-  margin: 5px;
-  padding: 0;
-}
-
-@media #{$screen-breakpoint-one} {
-  .content-box-new {
-    width: 100%;
-    margin: 5px 0;
-  }
-}
-
-.fullWidth {
-  /* Used on the school page to show admins and billing info */
-  width: 99%;
-  clear: both;
-  float: none;
-}
-
-.content-box-new {
-  header {
-    background: $contentBoxHeaderBackground;
-    color: $contentBoxHeaderForeground;
-    padding: 5px 10px;
-    margin: 0;
-    font-size: 130%;
-    border-radius: 5px 5px 0 0;
-    border-bottom: 1px dotted $contentBoxBorder;
-  }
-
-  .contents {
-    padding: 5px;
-    background: $contentBoxContentsBackground;
-    border-radius: 0 0 5px 5px;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  tr:nth-child(odd) {
-    background: $contentBoxTableOddRowBackground;
-  }
-
-  tr:nth-child(even) {
-    background: $contentBoxTableEvenRowBackground;
-  }
-
-  h3 {
-    margin: 5px 0 10px 0;
-    padding: 0 5px;
-    border-bottom: 2px solid $contentBoxContentsHeaderForeground;
-    font-weight: bold;
-  }
-}
-
-/* Table-ish emulation */
-.multilineItem {
-  border-bottom: 1px solid $contentBoxMultilineItemBorder;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-
-.multilineItem .header {
-  font-size: 120%;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.multilineItem .content {
-  margin-left: 20px;
-}
-
-/* Heading row/column of tables used in some content boxes. Can't use TH only,
-   as it's usage varies. */
-.tableHeading th {
-  background: $contentBoxTableHeadingBackground;
-}
-
-.noWrap {
-  white-space: no-wrap;
-}
-
-@media #{$screen-breakpoint-one} {
-  .noWrap {
-    /* narrow pages are unreadable otherwise */
-    white-space: normal;
-  }
-}
-
-.noFloat {
-  float: none !important;
-}
-
-/* A generic missing/unset information indicator for data that isn't always required but really should be set */
+/* A generic missing/unset information indicator for data that isn't
+   always required to be present, but what really should be set */
 .missingData {
   color: $missingData;
 }
 
-/* Buttons and areas that are visible to owners only */
+/* Buttons, links and areas that are only visible to organisation owners */
 .ownersOnly {
   border: 1px dashed $ownersOnlyBorder;
 }
 
-/* Puavo-conf tables in various places */
-.puavoConf tr:nth-child(odd) {
-  background: $puavoConfOddRow;
+/* Wraps everything on the page below the topmenu */
+.container {
 }
 
-.puavoConf tr:nth-child(even) {
-  background: $puavoConfEvenRow;
+.clearfix {
+  display: block;
 }
 
-/* Basic user/device information block */
-.basicInfo {
-  display: flex;
-  margin-bottom: 20px;
+.container:after, .clearfix:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+  overflow: hidden;
 }
 
-.basicInfoImage {
-  width: 220px;
-  text-align: center;
-}
+/* Main content container */
+.main-wrap {
+  padding: 10px;
+  margin: 20px auto 0 auto;
+  width: 98%;
+  max-width: 1700px;  /* TODO: I really want to get rid of this limitation. */
+  background: $mainWrapBackground;
+  border: 5px solid $mainWrapBorder;
+  box-shadow: 0px 15px 15px $defaultBoxShadowColor;
 
-.basicInfoDetails {
-  width: 75%;
-  padding-left: 15px;
-
-  h1 {
+  @media #{$screen-breakpoint-one} {
+    padding: 0;
+    width: 100%;
+    padding-top: 0;   /* don't leave a gap between topbar and content */
+    margin-top: 0;
     border: none;
-  }
-
-  .infoNotice {
-    color: $importantBasicInfo;
-    padding-left: 10px;
-  }
-
-  .infoTitle {
-    font-weight: bold;
-    padding-left: 10px;
-    margin-bottom: 0;
-  }
-
-  .infoValue {
-    padding-left: 20px;
-  }
-
-  .puavoConf {
-    margin-top: 5px;
-    margin-left: 25px;
+    box-shadow: none;
+    width: 100%;
   }
 }
 
-/* Images on school, user, server and device pages */
-.image {
+/* Page contents below the tab bar */
+.maincontent {
+  font-size: 80%;
+  margin: 0;    /* Do not change, breaks the layout */
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  background-color: $mainContentBackground;
+  border-bottom: 1px solid $baseBoxShadowBorderColor;
+  border-left: 1px solid $baseBoxShadowBorderColor;
+  border-right: 1px solid $baseBoxShadowBorderColor;
+  border-radius: 0 0 4px 4px;
+
+  @media #{$screen-breakpoint-one} {
+    /* Use all available space on narrow screens */
+    padding: 5px;
+    border: none;
+    border-bottom: 1px solid $baseBoxShadowBorderColor;
+    border-radius: 0;
+  }
+}
+
+/* Used on the school page to push content down, below the tools */
+.maincontent .dashboard {
+  float: left;
   margin: 0;
-  padding: 0;
+  width: 100%;
 }
 
-.noBullets {
-  list-style-type: none;
-  margin: 0 0 0 20px;
+.maincontent h1 {
+  margin: 0 0 10px 0;
   padding: 0;
+  line-height: 1;
 }

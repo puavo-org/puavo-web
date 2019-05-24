@@ -159,6 +159,12 @@ fieldset {
   margin: 10px;
 }
 
+legend {
+  padding: 0 5px;
+  font-weight: bold;
+  font-size: 110%;
+}
+
 /* The "clone" buttons in email/phone number/mac address/etc. fields */
 .clone_prev_input_element {
   margin-bottom: 0.5em;

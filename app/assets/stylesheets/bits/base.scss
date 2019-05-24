@@ -1,40 +1,39 @@
+/*
+  Base styles that are used on all pages
+*/
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, "Helvetica Neue", sans-serif;
-  line-height: 1.5;
   margin: 0;
   padding: 0;
   background: $bodyBg;
+  font-family: Arial, "Helvetica Neue", sans-serif;
+  line-height: 1.5;
 }
 
-/* The school name at the top of the page */
 header#schoolName {
   font-size: 220%;
   font-weight: normal;
   font-variant: small-caps;
   margin-top: 12px;
-}
 
-@media #{$screen-breakpoint-one} {
-  header#schoolName {
+  @media #{$screen-breakpoint-one} {
     font-size: 200%;
     margin-left: 5px;
     margin-top: 0;  /* topmenu becomes a solid block, no need to push content downwards */
   }
 }
 
-/* Currently this is only used for the debugging information block */
+/* Server and git commit infos */
 footer {
   color: transparent;
   font-size: 80%;
   text-align: right;
-}
 
-@media #{$screen-breakpoint-one} {
-  footer {
+  @media #{$screen-breakpoint-one} {
     font-size: 60%;
   }
 }
@@ -74,6 +73,13 @@ h6 {
 a {
   color: $genericLinkForeground;
   background: $genericLinkBackground;
+
+  @media #{$screen-breakpoint-one} {
+    /* Make tiny links (slightly) easier to touch */
+    font-size: 110%;
+    padding: 5px 10px;
+    background: $genericLinkMobileBackground;
+  }
 }
 
 a:hover {
@@ -87,23 +93,6 @@ a:focus {
   background: $genericLinkFocusBackground;
 }
 
-@media #{$screen-breakpoint-one} {
-  a {
-    font-size: 110%;
-    padding: 5px 10px;
-    background: $genericLinkMobileBackground;
-  }
-}
-
-p {
-  margin: 0 0 0.5em 0;      /* TODO: this can be removed (but see user/device info pages first!) */
-}
-
-img {
-  border: none;
-  max-width: 100%;
-}
-
 hr {
   /* Used to break floating boxes into controlled sections, so to speak */
   border: none;
@@ -115,20 +104,11 @@ hr {
   visibility: hidden;
 }
 
-legend {
-  font-weight: bold;
-  font-size: 110%;
-  padding: 0 5px;
-}
-
 abbr[title]:after {
-  /* Normal view */
   content: "";
-}
 
-@media #{$screen-breakpoint-one} {
-  /* Can't hover over abbreviations on mobile, so display the contents */
-  abbr[title]:after {
-     content: " (" attr(title) ")";
+  @media #{$screen-breakpoint-one} {
+    /* Can't hover over abbreviations on mobile, so display their contents */
+    content: " (" attr(title) ")";
   }
 }

@@ -1,0 +1,165 @@
+/*
+  Various "show" page styles
+*/
+
+/* Generic floating container boxes that have titles */
+.content-box-new {
+  min-width: 45%;
+  width: 49%;
+  float: left;
+  margin: 5px;
+  padding: 0;
+
+  header {
+    background: $contentBoxHeaderBackground;
+    color: $contentBoxHeaderForeground;
+    padding: 5px 10px;
+    margin: 0;
+    font-size: 130%;
+    border-radius: 5px 5px 0 0;
+    border-bottom: 1px dotted $contentBoxBorder;
+  }
+
+  .contents {
+    padding: 5px;
+    background: $contentBoxContentsBackground;
+    border-radius: 0 0 5px 5px;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  tr:nth-child(odd) {
+    background: $contentBoxTableOddRowBackground;
+  }
+
+  tr:nth-child(even) {
+    background: $contentBoxTableEvenRowBackground;
+  }
+
+  h3 {
+    margin: 5px 0 10px 0;
+    padding: 0 5px;
+    border-bottom: 2px solid $contentBoxContentsHeaderForeground;
+    font-weight: bold;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+.fullWidth {
+  /* Used on the school page to show admins and billing info */
+  width: 99%;
+  clear: both;
+  float: none;
+}
+
+/* A weird table/list hybrid style, used on school "show" pages */
+.multilineItem {
+  border-bottom: 1px solid $contentBoxMultilineItemBorder;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.multilineItem .header {
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.multilineItem .content {
+  margin-left: 20px;
+}
+
+.noBullets {
+  list-style-type: none;
+  margin: 0 0 0 20px;
+  padding: 0;
+}
+
+/* Heading row/column of tables used in some content boxes. Can't use TH only,
+   as it's usage varies. */
+.tableHeading th {
+  background: $contentBoxTableHeadingBackground;
+}
+
+/* Prevent word wrapping, used on user email and phone number displays */
+.noWrap {
+  white-space: no-wrap;
+
+  @media #{$screen-breakpoint-one} {
+    /* narrow pages are unreadable otherwise */
+    white-space: normal;
+  }
+}
+
+.noFloat {
+  float: none !important;
+}
+
+/* Basic user/device information block */
+.basicInfo {
+  display: flex;
+  margin-bottom: 20px;
+  padding: 0;
+
+  .basicInfoImage {
+    img {
+      max-width: 220px;
+      padding: 10px;
+      border: 1px solid $basicInfoBorders;
+    }
+
+    width: 240px;
+    text-align: center;
+  }
+
+  .basicInfoDetails {
+    flex: 2;
+    width: 75%;
+    padding-left: 15px;
+
+    h1 {
+      border-bottom: 1px solid $basicInfoBorders;
+      padding: 0;
+      margin: 0 0 10px 0;
+    }
+
+    .infoNotice {
+      color: $importantBasicInfo;
+      padding: 0 0 0 10px;
+      margin: 0;
+    }
+
+    .infoTitle {
+      font-weight: bold;
+      padding: 0 0 0 10px;
+      margin: 10px 0 0 0;
+    }
+
+    .infoValue {
+      padding: 0 0 0 20px;
+      margin: 0 0 10px 0;
+    }
+
+    .puavoConf {
+      margin-top: 5px;
+      margin-left: 25px;
+    }
+  }
+}
+
+/* Puavo-conf tables in various places */
+.puavoConf {
+  tr:nth-child(odd) {
+    background: $puavoConfOddRow;
+  }
+
+  tr:nth-child(even) {
+    background: $puavoConfEvenRow;
+  }
+}

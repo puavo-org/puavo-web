@@ -1,4 +1,7 @@
-/* Base button */
+/*
+  Hyperlinks styled as buttons
+*/
+
 .btn {
   display: inline-block;
   margin-bottom: 0;
@@ -7,9 +10,7 @@
   font-weight: normal;
   text-align: center;
   text-decoration: none;
-
   white-space: nowrap;
-
   background: $buttonBackground;
   border-width: 1px;
   border-style: solid;
@@ -17,25 +18,23 @@
   border-radius: 3px;
   box-shadow: inset 0 1px 0 $buttonBoxShadow1, 0 1px 2px $buttonBoxShadow2;
   color: $buttonNormalColor;
-}
 
-.btn:hover, .btn:focus {
-  background: $buttonGradientBg;
-  color: $buttonHoverColor;
+  &:hover, &:focus {
+    background: $buttonGradientBg;
+    color: $buttonHoverColor;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    padding: 0.5em 1em;
+  }
 }
 
 .btn-danger {
   color: $buttonDangerColor;
   background: $buttonDangerBackground;
-}
 
-.btn-danger:hover, .btn-danger:focus, .btn-danger:active {
-  color: $buttonDangerHoverColor;
-  background: $buttonDangerHoverBg;
-}
-
-@media #{$screen-breakpoint-one} {
-  .btn {
-    padding: 0.5em 1em;
+  &:hover, &:focus, &:active {
+    color: $buttonDangerHoverColor;
+    background: $buttonDangerHoverBg;
   }
 }
