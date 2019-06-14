@@ -269,14 +269,6 @@ class Device < Host
                      lambda { |v| v.to_json })
     extend_puavoconf('puavo.printing.default_printer', default_printer_name)
     extend_puavoconf('puavo.printing.device_uri', printer_device_uri)
-
-    profiles = [ self.type,
-                 (tags.include?('bigtouch') ? 'bigtouch' : nil),
-                 (tags.include?('infotv')   ? 'infotv'   : nil),
-                 (tags.include?('webkiosk') ? 'webkiosk' : nil),
-                 (personally_administered   ? 'personal' : nil),
-               ]
-    extend_puavoconf('puavo.profiles.list', profiles.compact.join(','))
     extend_puavoconf('puavo.www.homepage',  homepage)
     extend_puavoconf('puavo.xorg.server',   graphics_driver)
 
