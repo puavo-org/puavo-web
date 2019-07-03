@@ -78,67 +78,67 @@
 <!-- Various bits and pieces -->
 <%= start_box t('.info') %>
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoLocale') %></div>
-    <div class="content"><%= h language_by_locale(@school.puavoLocale) %><br>
+    <div class="title"><%= t('activeldap.attributes.school.puavoLocale') %></div>
+    <div class="value"><%= h language_by_locale(@school.puavoLocale) %><br>
     <em><%= t("old_preferred_language", :language => @school.preferredLanguage) %></em>
     </div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceImage') %></div>
-    <div class="content"><%= h @school.puavoDeviceImage %></div>
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceImage') %></div>
+    <div class="value"><%= h @school.puavoDeviceImage %></div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %></div>
-    <div class="content"><%= h value_or_default_value_by_parent(@school, "puavoImageSeriesSourceURL") %></div>
+    <div class="title"><%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %></div>
+    <div class="value"><%= h value_or_default_value_by_parent(@school, "puavoImageSeriesSourceURL") %></div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoAllowGuest') %></div>
-    <div class="content"><%= translate_boolean_value(@school.puavoAllowGuest) %></div>
+    <div class="title"><%= t('activeldap.attributes.school.puavoAllowGuest') %></div>
+    <div class="value"><%= translate_boolean_value(@school.puavoAllowGuest) %></div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoAutomaticImageUpdates') %></div>
-    <div class="content"><%= translate_boolean_value(@school.puavoAutomaticImageUpdates) %></div>
+    <div class="title"><%= t('activeldap.attributes.school.puavoAutomaticImageUpdates') %></div>
+    <div class="value"><%= translate_boolean_value(@school.puavoAutomaticImageUpdates) %></div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoTag') %></div>
-    <div class="content"><%= @school.puavoTag %></div>
+    <div class="title"><%= t('activeldap.attributes.school.puavoTag') %></div>
+    <div class="value"><%= @school.puavoTag %></div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoConf') %></div>
-    <div class="content">
+    <div class="title"><%= t('activeldap.attributes.school.puavoConf') %></div>
+    <div class="value">
       <%= render :partial => 'shared/puavoconf', :locals  => { :object => @school.puavoConf } %>
     </div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %></div>
-    <div class="content">
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %></div>
+    <div class="value">
         <%= h t('puavoDeviceAutoPowerOffMode_' + (@school.puavoDeviceAutoPowerOffMode or 'default'),
                 :scope => "activeldap.attributes.#{ @school.class.human_name }") %>
     </div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceOnHour') %></div>
-    <div class="content"><%= @school.puavoDeviceOnHour %></div>
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceOnHour') %></div>
+    <div class="value"><%= @school.puavoDeviceOnHour %></div>
   </div>
 
   <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceOffHour') %></div>
-    <div class="content"><%= @school.puavoDeviceOffHour %></div>
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceOffHour') %></div>
+    <div class="value"><%= @school.puavoDeviceOffHour %></div>
   </div>
 
   <% if current_user.organisation_owner? %>
   <%# Only organisation owners can access the server page. So hide it from others. %>
   <div class="multilineItem">
-    <div class="header">Bootserver(s)</div>
-    <div class="content">
+    <div class="title">Bootserver(s)</div>
+    <div class="value">
       <ul>
         <% @school.boot_servers.each do |bs| %>
         <li><%= link_to bs.puavoHostname, server_path(bs) %></li>
