@@ -99,10 +99,18 @@
     padding: 0;
   }
 
-  #logoutButton {
+  .logoutButton {
     border: none;
     margin: 0 0 0 10px;
     padding: 4px 10px;
+  }
+
+  .desktopLogoutButton {
+    display: inline-block;
+  }
+
+  .mobileLogoutButton {
+    display: none;
   }
 
   li:nth-child(1) { order: 1; }
@@ -123,7 +131,20 @@
 
   #topbar {
     width: 100%;
-    padding: 0 2px;
+    padding: 0;
+
+    #right {
+      margin: auto;
+    }
+
+    /* Swap the logout buttons */
+    .desktopLogoutButton {
+      display: none;
+    }
+
+    .mobileLogoutButton {
+      display: inline-block;
+    }
   }
 
   /* reorder the elements */
