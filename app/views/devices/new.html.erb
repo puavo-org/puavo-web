@@ -1,5 +1,7 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), t('titles.new') %>
 
+<div class="formContainer">
+
 <h1><%= t('.new_device', :device_type => @device_type_label ) %></h1>
 
 <%= render :partial => 'form',
@@ -10,3 +12,4 @@
 }
 %>
 
+</div>

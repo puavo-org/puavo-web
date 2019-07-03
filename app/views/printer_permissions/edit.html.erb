@@ -1,5 +1,7 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), t('titles.printer_permissions'), @printer.printerDescription, t('titles.edit') %>
 
+<div class="formContainer">
+
 <h1><%= html_escape @printer.printerDescription %></h1>
 
 <%= form_tag(printer_permission_path(@school, @printer), :method => :put) do %>
@@ -85,3 +87,5 @@
   </tr>
 </table>
 <% end %>
+
+</div>

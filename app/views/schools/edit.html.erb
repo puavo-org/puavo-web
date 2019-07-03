@@ -1,5 +1,7 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.edit') %>
 
+<div class="formContainer">
+
 <h1><%= t('.title') %></h1>
 
 <%= render :partial => 'form',
@@ -9,3 +11,5 @@
   :method => :put
 }
 %>
+
+</div>

@@ -2,6 +2,15 @@
   Forms and form elements
 */
 
+.formContainer {
+  width: 100%;
+  max-width: 1300px;
+
+  @media #{$screen-breakpoint-one} {
+    max-width: unset;
+  }
+}
+
 fieldset {
   border: 1px solid $formFieldsetBorderColor;
   padding: 10px;

@@ -1,5 +1,7 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups_rename') %>
 
+<div class="formContainer">
+
 <h1>Vuosiluokkasiirrot</h1>
 
 <% if @do_only_groups %>
@@ -135,3 +137,5 @@
 <%= f.submit "Toteuta muutokset", class: 'btn' %>
 
 <% end %>
+
+</div>
