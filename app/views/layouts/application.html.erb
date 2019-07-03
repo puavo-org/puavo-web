@@ -89,31 +89,38 @@ I18n.locale = "<%= I18n.locale %>";
     </li>
 
     <li id="right">
-      <!-- Logout -->
       <span id="loggedInName"><%= h current_user.displayName %></span>
 
-      <%= link_to logout_path, method: :delete, class: 'btn btn-danger', id: 'logoutButton' do %>
+      <!-- Two logout buttons: one for desktop, one for mobile. -->
+      <%= link_to logout_path, method: :delete, class: 'btn btn-danger logoutButton desktopLogoutButton' do %>
         <i class="icon-logout"></i> <%= t('.logout') %>
+      <% end %>
+
+      <%= link_to logout_path, method: :delete, class: 'btn btn-danger logoutButton mobileLogoutButton' do %>
+        <i class="icon-logout"></i>
       <% end %>
     </li>
   </ul>
 </div>
 
-<div class="container">
-  <div class="mainWrap">
+<div class="pageWrapper">
+  <div class="pageContainer">
     <% if current_organisation? %>
     <% if @school && !@school.id.nil? && controller_name != 'password' %>
-    <header id="schoolName"><%= @school.displayName %></header>
 
-    <% unless @school.displayName == 'Administration' %>
+    <div class="schoolHeader">
+      <header id="schoolName"><%= @school.displayName %></header>
+
+      <% unless @school.displayName == 'Administration' %>
 <%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(@school.id.to_i), :extraClass => "" } %>
-    <% end %>
+      <% end %>
+    </div>
 
 <%= render :partial => "layouts/menu" %>
     <% end %>
     <% end %>
 
-    <div class="mainContent clearfix">
+    <div class="content">
       <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
       <% message_keys.each do |key| %>
       <p class="message_<%= key %>"><%= flash[key] %></p>
@@ -128,9 +135,9 @@ I18n.locale = "<%= I18n.locale %>";
 
       <%= yield %>
     </div>
-  </div> <!-- container_wrap-->
-</div> <!-- container -->
+    <%= debug_footer %>
+  </div> <!-- pageContainer -->
+</div> <!-- pageWrapper -->
 <%= yield :post_load_javascript %>
-<%= debug_footer %>
 </body>
 </html>

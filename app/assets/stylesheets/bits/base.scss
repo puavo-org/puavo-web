@@ -14,32 +14,7 @@ body {
   line-height: 1.5;
 }
 
-header#schoolName {
-  font-size: 220%;
-  font-weight: normal;
-  font-variant: small-caps;
-  margin-top: 12px;
-
-  @media #{$screen-breakpoint-one} {
-    font-size: 200%;
-    margin-left: 5px;
-    margin-top: 0;  /* topmenu becomes a solid block, no need to push content downwards */
-  }
-}
-
-/* Server and git commit infos */
-footer {
-  color: transparent;
-  font-size: 80%;
-  text-align: right;
-
-  @media #{$screen-breakpoint-one} {
-    font-size: 60%;
-  }
-}
-
 h1, h2, h3, h4, h5, h6 {
-  font-weight: normal;
 }
 
 h1 {

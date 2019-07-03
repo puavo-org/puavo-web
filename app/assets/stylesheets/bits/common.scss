@@ -19,73 +19,82 @@
 }
 
 /* Wraps everything on the page below the topmenu */
-.container {
+.pageWrapper {
+  margin: 0;
+  padding: 0;
 }
 
-.clearfix {
-  display: block;
-}
-
-.container:after, .clearfix:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
-  overflow: hidden;
-}
-
-/* Main content container */
-.mainWrap {
-  padding: 10px;
-  margin: 20px auto 0 auto;
-  width: 98%;
-  max-width: 1700px;  /* TODO: I really want to get rid of this limitation. */
-  background: $mainWrapBackground;
-  border: 5px solid $mainWrapBorder;
-  box-shadow: 0px 15px 15px $defaultBoxShadowColor;
+/* Actual page contents. Margin cannot be set to pageWrapper, as it
+   can leave a visible crack between the topbar and the page contents. */
+.pageContainer {
+  margin-top: 40px;
 
   @media #{$screen-breakpoint-one} {
-    padding: 0;
-    width: 100%;
-    padding-top: 0;   /* don't leave a gap between topbar and content */
-    margin-top: 0;
-    border: none;
-    box-shadow: none;
-    width: 100%;
+    margin: 0;
   }
 }
 
-/* Page contents below the tab bar */
-.mainContent {
+/* School name, integrations */
+.schoolHeader {
+  padding: 10px;
+  background: #eee;
+
+  @media #{$screen-breakpoint-one} {
+    margin: 0;
+  }
+
+  #schoolName {
+    font-size: 250%;
+    font-weight: bold;
+    font-variant: small-caps;
+    padding: 0;
+    margin: 0;
+    overflow-wrap: break-word;  /* force splitting of long organisation names */
+
+    @media #{$screen-breakpoint-one} {
+      font-size: 200%;
+    }
+  }
+}
+
+/* Page contents below the in-page tab bar */
+.content {
   font-size: 80%;
-  margin: 0;    /* Do not change, breaks the layout */
+  margin: 0;
   padding: 20px;
   position: relative;
   width: 100%;
-  background-color: $mainContentBackground;
-  border-bottom: 1px solid $baseBoxShadowBorderColor;
-  border-left: 1px solid $baseBoxShadowBorderColor;
-  border-right: 1px solid $baseBoxShadowBorderColor;
-  border-radius: 0 0 4px 4px;
+  background: #fff;
+  flex: 1;
+  overflow: auto;
 
   @media #{$screen-breakpoint-one} {
-    /* Use all available space on narrow screens */
     padding: 5px;
     border: none;
-    border-bottom: 1px solid $baseBoxShadowBorderColor;
-    border-radius: 0;
+  }
+}
+
+/* Server and git commit infos */
+footer {
+  display: block;
+  color: #888;
+  text-align: center;
+  font-size: 70%;
+  margin: 1em;
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 60%;
   }
 }
 
 /* Used on the school page to push content down, below the tools */
-.mainContent .dashboard {
+.content .dashboard {
   float: left;
   margin: 0;
   width: 100%;
 }
 
-.mainContent h1 {
+.content h1 {
   margin: 0 0 10px 0;
   padding: 0;
   line-height: 1;

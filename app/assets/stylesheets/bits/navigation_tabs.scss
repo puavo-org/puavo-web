@@ -11,14 +11,13 @@
   ul {
     list-style: none;
     display: flex;
-    margin: 5px 0 0 0;
+    margin: 0;
     padding: 0;
+    background: $firstLevelTabBackground;
   }
 
   li {
     display: inline;
-    margin-left: 3px;
-    border-radius: 4px 4px 0 0;
     background: $firstLevelTabBackground;
   }
 
@@ -28,9 +27,6 @@
 
   .currentFirst {
     background: linear-gradient($baseBrown, $baseBrownGradient);
-    border: 1px solid $baseBoxShadowBorderColor;
-    border-bottom: none;
-    box-shadow: 0 2px 0 $baseBrownGradient;   /* A nasty hack that removes the bottom border */
   }
 
   a {
@@ -41,7 +37,7 @@
     font-weight: bold;
     text-transform: uppercase;
     text-decoration: none;
-    padding: 0.75em 1em;
+    padding: 1em 1.5em;
     white-space: nowrap;
   }
 
@@ -57,16 +53,13 @@
     list-style: none;
     display: flex;
     margin: 0;
-    padding: 5px 0 0;
-
+    padding: 0;
     background: $secondLevelTabbarBackground;
-    border: 1px solid $baseBoxShadowBorderColor;
-    border-radius: 0 4px 0 0;
   }
 
   li {
     display: inline;
-    margin: 0 0 0 5px;
+    margin: 0;
     padding: 0;
   }
 
@@ -74,13 +67,11 @@
     display: block;
     text-align: center;
     margin: 0;
-    padding: 8px;
+    padding: 1em 1.5em;
     color: $secondLevelTabForeground;
     background: $secondLevelTabBackground;
     text-decoration: none;
     white-space: nowrap;
-    border-radius: 4px 4px 0 0;
-    border: 1px solid transparent;
     font-size: 70%;
     text-transform: uppercase;
     font-weight: normal;
@@ -89,29 +80,21 @@
   .currentSecond a, a:hover {
     color: $secondLevelTabHoverForeground;
     background: $secondLevelTabHoverBackground;
-    border-left: 1px solid $baseBoxShadowBorderColor;
-    border-right: 1px solid $baseBoxShadowBorderColor;
-    border-top: 1px solid $baseBoxShadowBorderColor;
-    border-radius: 4px 4px 0 0;
-    box-shadow: 0 2px 0 #fff;   /* A nasty hack that removes the bottom border */
   }
 }
 
 @media #{$screen-breakpoint-one} {
   .navbarFirstLevel a {
-    padding: 0.7em 1em;
+    padding: 1em;
   }
 
   .navbarSecondLevel {
     ul {
       border: none;
-      border-top: 1px solid $baseBoxShadowBorderColor;
-      border-bottom: 1px solid $baseBoxShadowBorderColor;
-      border-radius: 0;
     }
 
     a {
-      padding: 0.6em 0.5em;
+      padding: 1em;
     }
   }
 }
@@ -128,17 +111,12 @@
 
   li {
     display: inline;
-    border: 1px solid #888;
-    border-bottom: none;
     margin-right: 2px;
-    border-radius: 3px 3px 0 0;
   }
 
   a {
     display: block;
     padding: 10px 20px;
-    border-radius: 3px 3px 0 0;
-    border-bottom: 1px solid #888;
     outline: none;
     text-decoration: none;
     background: #efefef;
@@ -153,7 +131,6 @@
   a.tabActive {
     background: linear-gradient($baseOrange, $baseOrangeGradient);
     cursor: default;
-    border-bottom: 1px solid transparent;
 
     &:hover {
       background: linear-gradient($baseOrange, $baseOrangeGradient);

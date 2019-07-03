@@ -16,8 +16,7 @@
   min-width: 400px;   /* currently a three-row layout isn't supported */
 
   background-image: $topbarWrapperBackground;
-  border-bottom: 1px solid $topmenuBorder;
-  box-shadow: 2px 4px 6px $defaultBoxShadowColor;
+  box-shadow: 0 4px 6px $defaultBoxShadowColor;
 }
 
 /* Inner top bar list container */
@@ -27,8 +26,6 @@
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  max-width: 1700px;
-  width: 98%;
   font-size: 80%;
 
   > li {
@@ -94,7 +91,7 @@
   #right {
     text-align: right;
     flex-grow: 1;
-    margin: auto;
+    margin: auto 5px;
   }
 
   #loggedInName {
@@ -116,12 +113,12 @@
 @media #{$screen-breakpoint-one} {
   #topbarWrapper {
     /* don't cover any content */
-    position: static;
-    z-index: auto;
+    position: relative;
     top: auto;
     width: 100%;
     margin: 0;
     padding: 0;
+    box-shadow: 0 4px 6px $defaultBoxShadowColor;
   }
 
   #topbar {
@@ -199,12 +196,8 @@ nav {
     z-index: 11;    /* topbar is 10 */
 
     background: $topmenuNavDropdownBackground;
-    border-left: 1px solid $topmenuBorder;
-    border-right: 1px solid $topmenuBorder;
-    border-bottom: 1px solid $topmenuBorder;
-    border-radius: 0 0 4px 4px;
 
-    box-shadow: 0 6px 6px $defaultBoxShadowColor;
+    box-shadow: 6px 6px 6px $defaultBoxShadowColor;
 
     list-style-type: none;
   }
