@@ -11,10 +11,10 @@ Feature: Manage LDAP services
     And a new role with name "Class 1" and which is joined to the "Class 1" group to "Greenwich Steiner School" school
     And I am logged in as "example" organisation owner
 
-  
+
   Scenario: Add new LDAP service
     Given I follow "LDAP service"
-    And I follow "New" within ".mainContent"
+    And I follow "New" within ".pageContainer"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "password"
@@ -70,7 +70,7 @@ Feature: Manage LDAP services
 
   Scenario: Edit LDAP service and unceck all system groups
     Given I follow "LDAP service"
-    And I follow "New" within ".mainContent"
+    And I follow "New" within ".pageContainer"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "secretpassword"

@@ -211,8 +211,8 @@ Feature: Manage users
     | displayName | cn      |
     | Class 6B    | class6b |
     When I follow "School 1" within "#left"
-    And I follow "Users" within ".mainWrap"
-    Then I should see "Mabey Ben" within ".container"
+    And I follow "Users" within ".pageContainer"
+    Then I should see "Mabey Ben" within ".pageContainer"
     And I should not see /\["ben"\]/
     And I should not see "PuavoEduPersonAffiliation"
 
@@ -479,7 +479,7 @@ Feature: Manage users
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
       | Daisy     | Duck    | daisy  | 314      | visitor                   | Class 4   |
     When I follow "School 1" within "#left"
-    And I follow "Users" within ".mainWrap"
+    And I follow "Users" within ".pageContainer"
     And I should not see "Delete users who are marked for deletion"
     #
     Then I am on the show user page with "donald"
@@ -489,16 +489,16 @@ Feature: Manage users
     Then I should see "This user has been marked for deletion"
     #
     When I follow "School 1" within "#left"
-    And I follow "Users" within ".mainWrap"
+    And I follow "Users" within ".pageContainer"
     Then I should see "Users marked for later deletion"
-    And I should see "Duck Donald" within ".container"
-    And I should see "Duck Daisy" within ".container"
+    And I should see "Duck Donald" within ".pageContainer"
+    And I should see "Duck Daisy" within ".pageContainer"
     And I should see "Delete users who are marked for deletion"
     #
     When I follow "Delete users who are marked for deletion"
     Then I should see "1 users removed"
-    And I should not see "Duck Donald" within ".container"
-    And I should see "Duck Daisy" within ".container"
+    And I should not see "Duck Donald" within ".pageContainer"
+    And I should see "Duck Daisy" within ".pageContainer"
 
 # FIXME
 #  @allow-rescue
