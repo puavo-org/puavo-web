@@ -6,101 +6,103 @@
    Can be done if we play with hover effects, for example. I hate that I have to
    first load the users list before I can access groups, for example. */
 
-/* First level tab bar */
-.navbarFirstLevel {
+#tabs {
+  /* Common styles */
+
   ul {
     list-style: none;
     display: flex;
-    margin: 0;
-    padding: 0;
-    background: $firstLevelTabBackground;
-  }
-
-  li {
-    display: inline;
-    background: $firstLevelTabBackground;
-  }
-
-  li:hover {
-    background: $firstLevelTabHoverBackground;
-  }
-
-  .currentFirst {
-    background: linear-gradient($baseBrown, $baseBrownGradient);
-  }
-
-  a {
-    display: block;
-    color: $firstLevelTabForeground;
-    background: transparent;
-    font-size: 80%;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 1em 1.5em;
-    white-space: nowrap;
-  }
-
-  .currentFirst a, a:hover {
-    color: $firstLevelTabActiveForeground;
-    background: transparent;
-  }
-}
-
-/* Second-level tab bar */
-.navbarSecondLevel {
-  ul {
-    list-style: none;
-    display: flex;
-    margin: 0;
-    padding: 0;
-    background: $secondLevelTabbarBackground;
-  }
-
-  li {
-    display: inline;
     margin: 0;
     padding: 0;
   }
 
   a {
     display: block;
+    margin: 0;
     text-align: center;
-    margin: 0;
-    padding: 1em 1.5em;
-    color: $secondLevelTabForeground;
-    background: $secondLevelTabBackground;
     text-decoration: none;
-    white-space: nowrap;
-    font-size: 70%;
     text-transform: uppercase;
-    font-weight: normal;
+    white-space: nowrap;
   }
 
-  .currentSecond a, a:hover {
-    color: $secondLevelTabHoverForeground;
-    background: $secondLevelTabHoverBackground;
-  }
-}
-
-@media #{$screen-breakpoint-one} {
-  .navbarFirstLevel a {
-    padding: 1em;
-  }
-
-  .navbarSecondLevel {
+  /* First level */
+  .first {
     ul {
-      border: none;
+      background: $firstLevelTabBackground;
+    }
+
+    li {
+      display: inline;
+      background: $firstLevelTabBackground;
+    }
+
+    li:hover {
+      background: $firstLevelTabHoverBackground;
+    }
+
+    .currentFirst {
+      background: linear-gradient($baseBrown, $baseBrownGradient);
     }
 
     a {
+      color: $firstLevelTabForeground;
+      background: transparent;
+      font-size: 80%;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 1em 1.5em;
+    }
+
+    .currentFirst a, a:hover {
+      color: $firstLevelTabActiveForeground;
+      background: transparent;
+    }
+  }
+
+  /* Second level */
+  .second {
+    ul {
+      background: $secondLevelTabbarBackground;
+    }
+
+    li {
+      display: inline;
+      margin: 0;
+      padding: 0;
+    }
+
+    a {
+      padding: 1em 1.5em;
+      color: $secondLevelTabForeground;
+      background: $secondLevelTabBackground;
+      font-size: 70%;
+      font-weight: normal;
+    }
+
+    .currentSecond a, a:hover {
+      color: $secondLevelTabHoverForeground;
+      background: $secondLevelTabHoverBackground;
+    }
+  }
+
+  @media #{$screen-breakpoint-one} {
+    .first a {
       padding: 1em;
+    }
+
+    .navbarSecondLevel {
+      ul {
+        border: none;
+      }
+
+      a {
+        padding: 1em;
+      }
     }
   }
 }
 
 /* In-page JavaScript tabs */
-
 .tabBar {
   ul {
     list-style-type: none;
