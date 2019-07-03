@@ -19,14 +19,14 @@
 }
 
 /* Wraps everything on the page below the topmenu */
-.pageWrapper {
+#pageWrapper {
   margin: 0;
   padding: 0;
 }
 
 /* Actual page contents. Margin cannot be set to pageWrapper, as it
    can leave a visible crack between the topbar and the page contents. */
-.pageContainer {
+#pageContainer {
   margin-top: 40px;
 
   @media #{$screen-breakpoint-one} {
@@ -35,7 +35,7 @@
 }
 
 /* School name, integrations */
-.schoolHeader {
+#schoolHeader {
   padding: 10px;
   background: #eee;
 
@@ -58,7 +58,7 @@
 }
 
 /* Page contents below the in-page tab bar */
-.content {
+#content {
   font-size: 80%;
   margin: 0;
   padding: 20px;
@@ -88,13 +88,13 @@ footer {
 }
 
 /* Used on the school page to push content down, below the tools */
-.content .dashboard {
+#content .dashboard {
   float: left;
   margin: 0;
   width: 100%;
 }
 
-.content h1 {
+#content h1 {
   margin: 0 0 10px 0;
   padding: 0;
   line-height: 1;

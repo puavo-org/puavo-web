@@ -103,12 +103,12 @@ I18n.locale = "<%= I18n.locale %>";
   </ul>
 </div>
 
-<div class="pageWrapper">
-  <div class="pageContainer">
+<div id="pageWrapper">
+  <div id="pageContainer">
     <% if current_organisation? %>
     <% if @school && !@school.id.nil? && controller_name != 'password' %>
 
-    <div class="schoolHeader">
+    <div id="schoolHeader">
       <header id="schoolName"><%= @school.displayName %></header>
 
       <% unless @school.displayName == 'Administration' %>
@@ -120,7 +120,7 @@ I18n.locale = "<%= I18n.locale %>";
     <% end %>
     <% end %>
 
-    <div class="content">
+    <div id="content">
       <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
       <% message_keys.each do |key| %>
       <p class="message_<%= key %>"><%= flash[key] %></p>
