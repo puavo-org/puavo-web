@@ -1,148 +1,187 @@
-/* Base theme colors */
+/*
+  Site-wide color definitions
+*/
+
+/* Common elements */
 $baseBrown: rgb(163, 106, 42);
 $baseBrownGradient: rgb(186, 114, 45);
 $baseOrange: rgb(250, 179, 46);
 $baseOrangeGradient: rgb(245, 149, 69);
 
-/* A "generic" box shadow */
-$baseBoxShadowBorderColor: rgb(34, 34, 34);
+$bodyBack: #e3e3d9;
 
-/* Main page background */
-$bodyBg: rgb(227, 227, 217);
+$headerBorder: #000;
 
-$topbarWrapperBackground: linear-gradient($baseOrange 0%, $baseOrangeGradient 100%);
-$topmenuBorder: rgb(34, 34, 34);
+$defaultBoxShadow: rgba(34, 34, 34, 0.75);
 
-$topmenuNavItemForeground: #000;
-$topmenuNavItemBackground: none;
-$topmenuNavItemHoverForeground: #000;
-$topmenuNavItemHoverBackground: #fff;
-$topmenuNavDropdownSeparators: #ccc;
+/*
+--------------------------------------------------------------------------------
+Top bar
+--------------------------------------------------------------------------------
+*/
 
-$topmenuNavDropdownBackground: $baseOrangeGradient;
+$topbarWrapperBack: linear-gradient($baseOrange, $baseOrangeGradient);
 
-$searchFieldBackgroundColor: #fff;
-$searchResultsBackground: #fff;
-$searchResultsBorder: #cccaaa;
-$searchResultsSeparatorLine: #000;
+$topbarNavLinkFore: #000;
+$topbarNavLinkBack: none;
+$topbarNavLinkHoverFore: #000;
+$topbarNavLinkHoverBack: #fff;
+$topbarNavSeparators: #ccc;
+$topbarNavDropdownBack: $baseOrangeGradient;
 
-$loggedUsernameForeground: #000;
+$extendedSearchButtonFore: #000;
+$extendedSearchButtonHoverBack: #fff;
 
+$topbarUsernameFore: #000;
+
+/*
+--------------------------------------------------------------------------------
+School name, integrations, tab bar
+--------------------------------------------------------------------------------
+*/
+
+$schoolHeaderBack: #eee;
+
+$schoolNameFore: #000;
+
+/* Integration type and data flow direction labels */
 $integrationsBorder: #ccc;
-$integrationsInBackground: #8ff;
-$integrationsInForeground: #000;
-$integrationsOutBackground: #8f8;
-$integrationsOutForeground: #000;
-$integrationsInOutBackground: #f88;
-$integrationsInOutForeground: #000;
-$integrationsLoginBackground: #88f;
-$integrationsLoginForeground: #fff;
-$integrationsPasswordBackground: #ff8;
-$integrationsPasswordForeground: #000;
-$integrationsOtherBackground: #eee;
-$integrationsOtherForeground: #000;
+$integrationsInBack: #8ff;
+$integrationsInFore: #000;
+$integrationsOutBack: #8f8;
+$integrationsOutFore: #000;
+$integrationsInOutBack: #f88;
+$integrationsInOutFore: #000;
+$integrationsLoginBack: #88f;
+$integrationsLoginFore: #fff;
+$integrationsPasswordBack: #ff8;
+$integrationsPasswordFore: #000;
+$integrationsOtherBack: #eee;
+$integrationsOtherFore: #000;
 
-/* Tab bars */
-$firstLevelTabForeground: #000;
-$firstLevelTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
-$firstLevelTabHoverForeground: #000;
-$firstLevelTabHoverBackground: linear-gradient($baseBrown, $baseBrownGradient);
-$firstLevelTabActiveForeground: rgb(255, 255, 240);
+/* Tabs */
+$tabsFirstBarBack: linear-gradient($baseOrange, $baseOrangeGradient);
+$tabsFirstTabFore: #000;
+$tabsFirstTabBack: linear-gradient($baseOrange, $baseOrangeGradient);
+$tabsFirstTabHoverBack: linear-gradient($baseBrown, $baseBrownGradient);
+$tabsFirstTabHoverFore: #fff;
+$tabsFirstTabCurrentFore: #fff;
+$tabsFirstTabCurrentBack: linear-gradient($baseBrown, $baseBrownGradient);
 
-$secondLevelTabbarBackground: linear-gradient($baseBrownGradient 35%, $baseBrown 60%);
-$secondLevelTabForeground: #e6e6d8;
-$secondLevelTabBackground: none;
-$secondLevelTabHoverForeground: #4a4d4a;
-$secondLevelTabHoverBackground: white;
-$secondLevelTabActiveForeground: rgb(255, 255, 240);
+$tabsSecondBarBack: linear-gradient($baseBrownGradient 35%, $baseBrown 60%);
+$tabsSecondTabBack: none;
+$tabsSecondTabFore: #e6e6d8;
+$tabsSecondTabHoverBack: #fff;
+$tabsSecondTabHoverFore: #000;
 
-/* Page */
-$genericLinkForeground: #13243f;
-$genericLinkBackground: none;
-$genericLinkHoverForeground: #352608;
-$genericLinkHoverBackground: none;
-$genericLinkFocusForeground: #000;
-$genericLinkFocusBackground: none;
-$genericLinkMobileBackground: #ccc;
+/*
+--------------------------------------------------------------------------------
+Page contents
+--------------------------------------------------------------------------------
+*/
 
-$mainWrapBackground: rgb(227, 227, 217);
-$mainWrapBorder: #3e3e2d;
+$missingDataFore: rgb(255, 0, 0);
 
-$mainContentBackground: white;
+/* Things that only organisation owners can see */
+$ownersOnlyBorder: rgb(255, 0, 0);
 
-$baseFont: rgb(27, 27, 27);
+$pageContentBack: rgb(255, 255, 255);
+$pageContentFore: rgb(0, 0, 0);   /* used when no other rule applies */
 
-$flashSuccessBackground: #e6efc2;
-$flashSuccessForeground: #264409;
+$footerFore: #999;
+
+/* Ordinary links on page content areas */
+$linkFore: #13243f;
+$linkBack: none;
+$linkHoverFore: #352608;
+$linkHoverBack: none;
+$linkFocusFore: #000;
+$linkFocusBack: none;
+
+/* Links styled as clickable buttons. Also used on form submit/reset buttons,
+so verify your changes thoroughly! */
+$buttonBorderHi: #f0f0f0;
+$buttonBorderLo: #a0b0b0;
+$buttonBack: #d0d0d0;
+$buttonFore: #000;
+$buttonHoverBack: #e0e0e0;
+$buttonDangerBorderHi: #f00;
+$buttonDangerBorderLo: #600;
+$buttonDangerBack: #a00;
+$buttonDangerFore: #fff;
+$buttonDangerHoverBack: #c00;
+
+/* Flash messages */
+$flashSuccessBack: #e6efc2;
+$flashSuccessFore: #264409;
 $flashSuccessBorder: #c6d880;
-$flashNoticeBackground: #86b410;
-$flashNoticeForeground: default;
+$flashNoticeBack: #86b410;
+$flashNoticeFore: default;
 $flashNoticeBorder: #56340e;
-$flashAlertBackground: #a00;
-$flashAlertForeground: #fff;
+$flashAlertBack: #a00;
+$flashAlertFore: #fff;
 $flashAlertBorder: #f00;
 
-/* Generic information boxes */
+/* Generic information boxes. These are NOT flash messages. */
 $genericNoticeBorder: #0f0;
-$genericNoticeBackground: #cfc;
-$genericNoticeForeground: #000;
+$genericNoticeBack: #cfc;
+$genericNoticeFore: #000;
 $genericWarningBorder: #ff0;
-$genericWarningBackground: #ffa;
-$genericWarningForeground: #000;
+$genericWarningBack: #ffa;
+$genericWarningFore: #000;
 $genericErrorBorder: #f00;
-$genericErrorBackground: #faa;
-$genericErrorForeground: #000;
+$genericErrorBack: #faa;
+$genericErrorFore: #000;
 
-$toolsContainerBackground: none;
-$toolsDropdownBackground: #fff;
+/* Toolboxes */
+$toolsContainerBack: none;
+$toolsDropdownBack: #fff;
 $toolsDropdownBorder: #aaa;
-$toolsContainerLinkForeground: #000;
-$toolsContainerLinkHoverForeground: #fff;
-$toolsContainerLinkHoverBackground: #c0772f;
+$toolsContainerLinkFore: #000;
+$toolsContainerLinkHoverFore: #fff;
+$toolsContainerLinkHoverBack: #c0772f;
 
-$contentBoxHeaderBackground: linear-gradient(#ba722d, #a36a2a);
-$contentBoxHeaderForeground: #fff;
-$contentBoxBorder: #000;
-$contentBoxContentsBackground: #f0f0f0;
-$contentBoxTableOddRowBackground: #f0f0f0;
-$contentBoxTableEvenRowBackground: #e0e0e0;
-$contentBoxContentsHeaderForeground: #000;
-$contentBoxMultilineItemBorder: #ccc;
-$contentBoxTableHeadingBackground: #ccc;
-
-$missingData: #f00;
-$ownersOnlyBorder: #f00;
-
-$puavoConfOddRow: #ddd;
-$puavoConfEvenRow: #fff;
-
+/* Basic info blocks about users, devices, etc. */
 $importantBasicInfo: #f00;    /* notifications about locked users, etc. */
 $basicInfoBorders: #ccc;
 
-$buttonBg: rgb(245, 245, 245);
-$buttonGradientBg: rgb(220, 220, 220);
-$buttonNormalColor: rgb(51, 51, 51);
-$buttonHoverColor: #000;
+/* Content boxes on "show" pages */
+$contentBoxHeaderBack: linear-gradient($baseBrownGradient, $baseBrown);
+$contentBoxHeaderFore: #fff;
+$contentBoxBorder: #000;
+$contentBoxContentsBack: #f0f0f0;
+$contentBoxTableOddRowBack: #f0f0f0;
+$contentBoxTableEvenRowBack: #e0e0e0;
+$contentBoxContentsHeaderFore: #000;
+$contentBoxMultilineItemBorder: #ccc;
+$contentBoxTableHeadingBack: #ccc;
 
-$buttonDangerBgColor: rgb(231, 6, 0);
-$buttonDangerBgImage: rgb(219, 64, 60);
-$buttonDangerGradientBgImage: rgb(194, 31, 22);
-$buttonDangerHoverBg: rgb(180, 31, 23);
+/* puavo-conf tables */
+$puavoConfOddRow: #ddd;
+$puavoConfEvenRow: #fff;
 
-$buttonDangerColor: rgb(255, 255, 255);
-$buttonDangerHoverColor: rgb(255, 255, 255);
+/* Miscellaneous */
+$mountPointsHeadingBack: #ccc;
+$groupRenameTableHeaderBack: #ccc;
+$externallyMaintainedGroupFore: #080;
+$externallyMaintainedGroupBack: transparent;
+$deletionMarkTimestamp: #f00;
+$usernameListTableBorder: #ccc;
 
-$buttonBorderColor: rgba(0, 0, 0, 0.1);
-$buttonBorderColor2: rgba(0, 0, 0, 0.25);
-$buttonBorderHexColor: #e6e6e6;
-$buttonBorderHexColor2: #bfbfbf;
+/*
+--------------------------------------------------------------------------------
+Forms
+--------------------------------------------------------------------------------
+*/
 
-$buttonBackground: linear-gradient($buttonBg 0%, $buttonGradientBg 100%);
-$buttonBoxShadow1: rgba(255, 255, 255, 0.2);
-$buttonBoxShadow2: rgba(0, 0, 0, 0.05);
-$buttonDangerBackground: linear-gradient($buttonDangerBgImage, $buttonDangerGradientBgImage);
+$formFieldsetBorderColor: #ccc;
 
-$mountPointsHeadingBackground: #ccc;
+$formLabelColor: rgb(0, 0, 0);
+$formErrorColor: rgb(255, 0, 0);
+
+$formOddRowBack: #f5f5f5;
+$formEvenRowBack: #e9e9e9;
+$formButtonRowBack: #ccc;
 
 $errorRed: rgb(231, 6, 0);
 
@@ -150,73 +189,69 @@ $focusColor: rgb(88, 151, 251);
 
 $formElementBorderColor: rgb(200, 200, 200);
 
-$infoBgColor: rgb(217, 237, 247);
-
-$rowEvenBgColor: rgb(250,250,250);
-$rowOddBgColor: rgb(235,235,235);
-
-$headerUnderline: rgb(0, 0, 0);
-
-$formFieldsetBorderColor: #ccc;
-
-$formLabelColor: rgb(0, 0, 0);
-$formErrorColor: rgb(255, 0, 0);
-
-$formOddRowBackground: #f5f5f5;
-$formEvenRowBackground: #e9e9e9;
-$formButtonRowBackground: #fff;
-
-$formSubmitButtonShadow1: rgba(255, 255, 255, 0.2);
-$formSubmitButtonShadow2: rgba(0, 0, 0, 0.05);
-$formSubmitButtonBackground: linear-gradient(white 0%, #eeeeed 100%);
-$formSubmitButtonHoverBackground: linear-gradient(white 0%, rgb(238, 238, 237) 100%);
-
-$listHeadingBackground: linear-gradient(#a36a2a 35%, #ba722d 60%);
-$listSortableColumnHover: linear-gradient(darken(#a36a2a, 5%) 35%, darken(#ba722d, 5%) 60%);
-$listHeadingForeground: #f5f5e8;
-$listHeadingBorder: #000;
-$listOddRowBackground: #ebebeb;
-$listEvenRowBackground: #fafafa;
-$listRowHoverBackground: #f9f7e6;
-$listRowBorder: #c8c8c8;
-$markedForDeletionOddRowBackground: #faa;
-$markedForDeletionEvenRowBackground: #fcc;
-$markedForDeletionRowHoverBackground: #fdd;
-
 $adminGroupsHeaderBorder: #000;   /* used on user edit forms */
 
-$defaultBoxShadowColor: rgba(68, 68, 68, 0.80);
-$searchBoxShadowColor: rgba(68, 68, 68, 0.70);
+/*
+--------------------------------------------------------------------------------
+Lists in tables
+--------------------------------------------------------------------------------
+*/
 
-$groupRenameTableHeaderBackground: #ccc;
+$listHeadingBack: linear-gradient($baseBrown 35%, $baseBrownGradient 60%);
+$listSortableColumnHover: linear-gradient(darken($baseBrown, 5%) 35%, darken($baseBrownGradient, 5%) 60%);
+$listHeadingFore: #f5f5e8;
+$listHeadingBorder: #000;
+$listOddRowBack: #ebebeb;
+$listEvenRowBack: #fafafa;
+$listRowHoverBack: #f9f7e6;
+$listRowBorder: #c8c8c8;
 
-$externallyMaintainedGroupForeground: #080;
-$externallyMaintainedGroupBackground: transparent;
+$markedForDeletionOddRowBack: #faa;
+$markedForDeletionEvenRowBack: #fcc;
+$markedForDeletionRowHoverBack: #fdd;
 
-$newDeviceTitleForeground: #000;
+/*
+--------------------------------------------------------------------------------
+Search
+--------------------------------------------------------------------------------
+*/
 
-$hwInfoBorder: #aaa;
-$hwInfoTitleBackground: #eee;
-
-$deletionMarkTimestamp: #f00;
-
-$usernameListTableBorder: #ccc;
+$searchFieldBackgroundColor: #fff;
+$searchResultsBackground: #fff;
+$searchResultsBorder: #cccaaa;
+$searchResultsSeparatorLine: #000;
 
 $advancedSearchError: #f00;
 $advancedSearchNoResults: #00f;
 $advancedSearchNoMatches: #666;
 
-/* Device statistics */
-$deviceStatisticsImageHeaderForeground: #000;
-$deviceStatisticsImageHeaderBackground: transparent;
-$deviceStatisticsImageHeaderHoverForeground: #000;
-$deviceStatisticsImageHeaderHoverBackground: #ccc;
-$deviceStatisticsPercentageBorder: #666;
-$deviceStatisticsPercentageBackground: #ddd;
-$deviceStatisticsPercentageForeground: #080;
-$deviceStatisticsDeviceListBorder: #ccc;
+/*
+--------------------------------------------------------------------------------
+Devices
+--------------------------------------------------------------------------------
+*/
 
-/* Password changing form */
+/* Hardware info */
+$hwInfoBorder: #aaa;
+$hwInfoTitleBack: #eee;
+
+/* Image usage statistics */
+$deviceStatsImageHeaderFore: #000;
+$deviceStatsImageHeaderBack: transparent;
+$deviceStatsImageHeaderHoverFore: #000;
+$deviceStatsImageHeaderHoverBack: #ccc;
+$deviceStatsPercentageBorder: #666;
+$deviceStatsPercentageBack: #ddd;
+$deviceStatsPercentageFore: #080;
+$deviceStatsDeviceListBorder: #ccc;
+
+/*
+--------------------------------------------------------------------------------
+Password changing forms
+TODO: This is not the correct file for these.
+--------------------------------------------------------------------------------
+*/
+
 $passwordFormBody: #fff;
 $passwordFormTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
 $passwordFormTabForeground: #000;
@@ -224,3 +259,4 @@ $passwordFormTabNormalBackground: $baseOrange;
 $passwordFormTabNormalForeground: #000;
 $passwordFormTabHoverBackground: $baseOrangeGradient;
 $passwordFormTabHoverForeground: #000;
+$infoBgColor: rgb(217, 237, 247);

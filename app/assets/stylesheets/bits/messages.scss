@@ -14,23 +14,23 @@
 
 .message_success {
   @include message;
-  background: $flashSuccessBackground;
-  color: $flashSuccessForeground;
+  background: $flashSuccessBack;
+  color: $flashSuccessFore;
   border: 1px solid $flashSuccessBorder;
 }
 
 .message_notice {
   @include message;
-  background: $flashNoticeBackground;
-  color: $flashNoticeForeground;
+  background: $flashNoticeBack;
+  color: $flashNoticeFore;
   border: 1px solid $flashNoticeBorder;
 }
 
 /* TODO: Merge alert and error messages */
 .message_alert, .message_error {
   @include message;
-  background: $flashAlertBackground;
-  color: $flashAlertForeground;
+  background: $flashAlertBack;
+  color: $flashAlertFore;
   border: 1px solid $flashAlertBorder;
 }
 
@@ -41,21 +41,21 @@
 
 .genericNotice {
   @include genericBox;
-  color: genericNoticeForeground;
-  background: $genericNoticeBackground;
+  color: genericNoticeFore;
+  background: $genericNoticeBack;
   border: 2px solid $genericNoticeBorder;
 }
 
 .genericWarning {
   @include genericBox;
-  color: genericWarningForeground;
-  background: $genericWarningBackground;
+  color: genericWarningFore;
+  background: $genericWarningBack;
   border: 2px solid $genericWarningBorder;
 }
 
 .genericError {
   @include genericBox;
-  color: genericErrorForeground;
-  background: $genericErrorBackground;
+  color: genericErrorFore;
+  background: $genericErrorBack;
   border: 2px solid $genericErrorBorder;
 }

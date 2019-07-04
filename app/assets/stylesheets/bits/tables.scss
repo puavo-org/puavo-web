@@ -68,8 +68,8 @@ th {
   width: 100%;
 
   th {
-    background: $listHeadingBackground;
-    color: $listHeadingForeground;
+    background: $listHeadingBack;
+    color: $listHeadingFore;
     border-top: 1px solid $listHeadingBorder;
     border-bottom: 1px solid $listHeadingBorder;
     padding: 10px;
@@ -81,28 +81,28 @@ th {
   }
 
   tr:nth-child(odd) {
-    background: $listOddRowBackground;
+    background: $listOddRowBack;
   }
 
   tr:nth-child(even) {
-    background: $listEvenRowBackground;
+    background: $listEvenRowBack;
   }
 
   tr:hover {
-    background: $listRowHoverBackground;
+    background: $listRowHoverBack;
   }
 
   /* Row/highlight colors for selected columns in tables that can be sorted/filtered */
   tr:nth-child(odd) .selectedColumn {
-    background: darken($listOddRowBackground, 5%);
+    background: darken($listOddRowBack, 5%);
   }
 
   tr:nth-child(even) .selectedColumn {
-    background: darken($listEvenRowBackground, 5%);
+    background: darken($listEvenRowBack, 5%);
   }
 
   tr:hover .selectedColumn {
-    background: darken($listRowHoverBackground, 5%);
+    background: darken($listRowHoverBack, 5%);
   }
 
   td {
@@ -169,26 +169,26 @@ th {
 .usersMarkedForDeletion {
   /* Alternate colors for the "marked for deletion" users table */
   tr:nth-child(even) {
-    background-color: $markedForDeletionEvenRowBackground;
+    background-color: $markedForDeletionEvenRowBack;
   }
 
   tr:nth-child(odd) {
-    background-color: $markedForDeletionOddRowBackground;
+    background-color: $markedForDeletionOddRowBack;
   }
 
   tr:hover {
-    background: $markedForDeletionRowHoverBackground;
+    background: $markedForDeletionRowHoverBack;
   }
 
   tr:nth-child(odd) .selectedColumn {
-    background: darken($markedForDeletionOddRowBackground, 5%);
+    background: darken($markedForDeletionOddRowBack, 5%);
   }
 
   tr:nth-child(even) .selectedColumn {
-    background: darken($markedForDeletionEvenRowBackground, 5%);
+    background: darken($markedForDeletionEvenRowBack, 5%);
   }
 
   tr:hover .selectedColumn {
-    background: darken($markedForDeletionRowHoverBackground, 5%) !important;
+    background: darken($markedForDeletionRowHoverBack, 5%) !important;
   }
 }

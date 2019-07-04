@@ -39,8 +39,8 @@
 
   /* This system sends data to puavo */
   .in {
-    background: $integrationsInBackground;
-    color: $integrationsInForeground;
+    background: $integrationsInBack;
+    color: $integrationsInFore;
 
     span:after {
       content: "\e829";
@@ -49,8 +49,8 @@
 
   /* Puavo sends data to this system */
   .out {
-    background: $integrationsOutBackground;
-    color: $integrationsOutForeground;
+    background: $integrationsOutBack;
+    color: $integrationsOutFore;
 
     span:after {
       content: "\e829";
@@ -59,8 +59,8 @@
 
   /* Data flows in both directions between this system and puavo */
   .inout {
-    background: $integrationsInOutBackground;
-    color: $integrationsInOutForeground;
+    background: $integrationsInOutBack;
+    color: $integrationsInOutFore;
 
     span:after {
       content: "\e819";
@@ -69,8 +69,8 @@
 
   /* This system uses Puavo as an SSO provider */
   .login {
-    background: $integrationsLoginBackground;
-    color: $integrationsLoginForeground;
+    background: $integrationsLoginBack;
+    color: $integrationsLoginFore;
   }
 
   .login:before {
@@ -82,8 +82,8 @@
 
   /* Passwords synchronisation between Puavo and this system */
   .password {
-    background: $integrationsPasswordBackground;
-    color: $integrationsPasswordForeground;
+    background: $integrationsPasswordBack;
+    color: $integrationsPasswordFore;
   }
 
   .password:before {
@@ -94,8 +94,8 @@
 
   /* Some other type of integration */
   .other {
-    background: $integrationsOtherBackground;
-    color: $integrationsOtherForeground;
+    background: $integrationsOtherBack;
+    color: $integrationsOtherFore;
   }
 
   .other:before {

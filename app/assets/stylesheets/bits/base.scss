@@ -9,7 +9,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: $bodyBg;
+  background: $bodyBack;
   font-family: Arial, "Helvetica Neue", sans-serif;
   line-height: 1.5;
 }
@@ -19,18 +19,18 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 250%;
-  border-bottom: 1px solid $headerUnderline;
+  border-bottom: 1px solid $headerBorder;
 }
 
 h2 {
   margin-top: 25px;
   font-size: 200%;
-  border-bottom: 1px dashed $headerUnderline;
+  border-bottom: 1px dashed $headerBorder;
 }
 
 h3 {
   font-size: 130%;
-  border-bottom: 1px dotted $headerUnderline;
+  border-bottom: 1px dotted $headerBorder;
 }
 
 h4 {
@@ -43,30 +43,6 @@ h5 {
 
 h6 {
   font-size: 105%;
-}
-
-a {
-  color: $genericLinkForeground;
-  background: $genericLinkBackground;
-  font-weight: bold;
-
-  @media #{$screen-breakpoint-one} {
-    /* Make tiny links (slightly) easier to touch */
-    font-size: 110%;
-    padding: 5px 10px;
-    background: $genericLinkMobileBackground;
-  }
-}
-
-a:hover {
-  color: $genericLinkHoverForeground;
-  background: $genericLinkHoverBackground;
-  text-decoration: none;
-}
-
-a:focus {
-  color: $genericLinkFocusForeground;
-  background: $genericLinkFocusBackground;
 }
 
 hr {

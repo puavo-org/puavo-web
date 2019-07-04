@@ -5,21 +5,21 @@
 /* Mass group rename */
 .massGroupRenameTable th {
   text-align: left !important;
-  background: $groupRenameTableHeaderBackground;
+  background: $groupRenameTableHeaderBack;
 }
 
 /* Course groups and year class groups when certain external integrations
    are used in this school */
 .externallyMaintainedGroup {
-  color: $externallyMaintainedGroupForeground;
-  background: $externallyMaintainedGroupBackground;
+  color: $externallyMaintainedGroupFore;
+  background: $externallyMaintainedGroupBack;
 }
 
 /* Group members who ar emarked for deletion */
 .groupUserMarkedForDeletion:nth-child(even) {
-  background-color: $markedForDeletionEvenRowBackground !important;
+  background-color: $markedForDeletionEvenRowBack !important;
 }
 
 .groupUserMarkedForDeletion:nth-child(odd) {
-  background-color: $markedForDeletionOddRowBackground !important;
+  background-color: $markedForDeletionOddRowBack !important;
 }

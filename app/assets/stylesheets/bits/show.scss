@@ -11,8 +11,8 @@
   padding: 0;
 
   header {
-    background: $contentBoxHeaderBackground;
-    color: $contentBoxHeaderForeground;
+    background: $contentBoxHeaderBack;
+    color: $contentBoxHeaderFore;
     padding: 5px 10px;
     margin: 0;
     font-size: 130%;
@@ -22,7 +22,7 @@
 
   .contents {
     padding: 5px;
-    background: $contentBoxContentsBackground;
+    background: $contentBoxContentsBack;
     border-radius: 0 0 5px 5px;
   }
 
@@ -31,17 +31,17 @@
   }
 
   tr:nth-child(odd) {
-    background: $contentBoxTableOddRowBackground;
+    background: $contentBoxTableOddRowBack;
   }
 
   tr:nth-child(even) {
-    background: $contentBoxTableEvenRowBackground;
+    background: $contentBoxTableEvenRowBack;
   }
 
   h3 {
     margin: 5px 0 10px 0;
     padding: 0 5px;
-    border-bottom: 2px solid $contentBoxContentsHeaderForeground;
+    border-bottom: 2px solid $contentBoxContentsHeaderFore;
     font-weight: bold;
   }
 
@@ -85,7 +85,7 @@
 /* Heading row/column of tables used in some content boxes. Can't use TH only,
    as it's usage varies. */
 .tableHeading th {
-  background: $contentBoxTableHeadingBackground;
+  background: $contentBoxTableHeadingBack;
 }
 
 /* Prevent word wrapping, used on user email and phone number displays */
@@ -109,7 +109,7 @@
 
 .mountPoints th {
   text-align: center !important;
-  background: $mountPointsHeadingBackground;
+  background: $mountPointsHeadingBack;
 }
 
 /* Basic user/device information block */

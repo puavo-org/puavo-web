@@ -15,8 +15,8 @@
 
   min-width: 400px;   /* currently a three-row layout isn't supported */
 
-  background-image: $topbarWrapperBackground;
-  box-shadow: 0 4px 6px $defaultBoxShadowColor;
+  background: $topbarWrapperBack;
+  box-shadow: 0 4px 6px $defaultBoxShadow;
 }
 
 /* Inner top bar list container */
@@ -35,10 +35,6 @@
     /* Keep this zero, the dropdown toplevel menubar entries must be full-height
        and non-zero padding here will break them! */
     padding: 0;
-  }
-
-  span {
-    font-size: 90%;
   }
 
   #left {
@@ -74,10 +70,11 @@
       margin-left: 2px;
       border-radius: 5px;
       text-decoration: none !important;
+      color: $extendedSearchButtonFore;
     }
 
     a#extendedSearchButton:hover {
-      background: #fff;
+      background: $extendedSearchButtonHoverBack;
     }
 
     a#extendedSearchButton:after {
@@ -95,14 +92,31 @@
   }
 
   #loggedInName {
-    color: $loggedUsernameForeground;
+    color: $topbarUsernameFore;
     padding: 0;
+    font-size: 90%;
   }
 
   .logoutButton {
-    border: none;
     margin: 0 0 0 10px;
-    padding: 4px 10px;
+    padding: 4px 12px;
+    text-decoration: none;
+    font-weight: normal;
+    background: $buttonDangerBack;
+    border-radius: 2px;
+
+    /* Reuse "btn-danger" colors */
+    color: $buttonDangerFore;
+    background: $buttonDangerBack;
+
+    &:hover, &:focus {
+      color: $buttonDangerFore;
+      background: $buttonDangerHoverBack;
+    }
+
+    @media #{$screen-breakpoint-one} {
+      padding: 4px 8px;
+    }
   }
 
   .desktopLogoutButton {
@@ -126,7 +140,7 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    box-shadow: 0 4px 6px $defaultBoxShadowColor;
+    box-shadow: 0 4px 6px $defaultBoxShadow;
   }
 
   #topbar {
@@ -182,10 +196,9 @@ nav {
   }
 
   li {
+    background: $topbarNavLinkBack;
+    color: $topbarNavLinkFore;
     font-weight: bold;
-    text-transform: uppercase;
-    color: $topmenuNavItemForeground;
-    background: $topmenuNavItemBackground;
   }
 
   .haveDropdown, .noDropdown {
@@ -204,29 +217,21 @@ nav {
     display: none;
     position: absolute;
     left: auto;
-
     margin: 10px 0 0 -11px;   /* position the dropdown in relation to the parent */
-
     padding: 5px;
-
     min-width: 250px;         /* wide items are easier to hit */
-
     max-height: 600px;
     overflow-y: auto;
-
-    z-index: 11;    /* topbar is 10 */
-
-    background: $topmenuNavDropdownBackground;
-
-    box-shadow: 6px 6px 6px $defaultBoxShadowColor;
-
+    z-index: 11;              /* topbar is 10 */
+    background: $topbarNavDropdownBack;
+    box-shadow: 6px 6px 6px $defaultBoxShadow;
     list-style-type: none;
   }
 
   .haveDropdown:hover {
+    background: $topbarNavLinkHoverBack;
+    color: $topbarNavLinkHoverFore;
     cursor: default;
-    color: $topmenuNavItemHoverForeground;
-    background: $topmenuNavItemHoverBackground;
   }
 
   .haveDropdown:hover .dropdown {
@@ -238,7 +243,7 @@ nav {
     display: list-item;
     padding: 2px 0;   /* "outer" padding between items */
     margin: 0;
-    border-bottom: 1px solid $topmenuNavDropdownSeparators;
+    border-bottom: 1px solid $topbarNavSeparators;
   }
 
   .dropdown li:first-of-type {
@@ -253,15 +258,14 @@ nav {
   ul a {
     display: block;
     padding: 10px;   /* "inner" padding within items, affects ALL links in the menu! */
-    color: $topmenuNavItemForeground;
-    background: $topmenuNavItemBackground;
+    color: $topbarNavLinkFore;
+    background: $topbarNavLinkBack;
     text-decoration: none;
-    font-size: 85%;
   }
 
   ul a:hover {
-    color: $topmenuNavItemHoverForeground;
-    background: $topmenuNavItemHoverBackground;
+    color: $topbarNavLinkHoverFore;
+    background: $topbarNavLinkHoverBack;
   }
 
   /* The per-school quick link list */

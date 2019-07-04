@@ -4,7 +4,7 @@
         <% @menu_items.each do |item| %>
         <% next if item.hide? %>
         <% if item.active? %>
-          <li class="currentFirst">
+          <li class="current">
         <% else %>
           <li>
         <% end %>
@@ -19,7 +19,7 @@
         <% @child_items.each do |item| %>
         <% next if item.hide? %>
         <% if item.active? %>
-          <li class="currentSecond">
+          <li class="current">
         <% else %>
           <li>
         <% end %>

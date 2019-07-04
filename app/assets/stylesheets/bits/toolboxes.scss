@@ -3,7 +3,7 @@
 */
 
 .toolsContainer {
-  background: $toolsContainerBackground;
+  background: $toolsContainerBack;
   margin: 0 0 20px 0;
   padding: 0;
 
@@ -23,10 +23,10 @@
   }
 
   .btn {
-    padding: 7px 10px;
+    padding: 7px 10px !important;
 
     @media #{$screen-breakpoint-one} {
-      padding: 5px 10px;
+      padding: 5px 10px !important;
     }
   }
 
@@ -46,19 +46,24 @@
 
     /* Right-aligned dropdown menus */
     right: 0;
-    margin-right: 25px;
+    margin-right: 28px;
+    margin-top: -3px;
 
     /* Some menus get so narrow it's hard to hit them, so impose a minimum width.
        This width is approximately the width of the parent button. */
     min-width: 130px;
 
-    background: $toolsDropdownBackground;
+    background: $toolsDropdownBack;
     border: 1px solid $toolsDropdownBorder;
     padding: 5px;
 
-    box-shadow: 0 0 10px $defaultBoxShadowColor;
+    box-shadow: 0 0 10px $defaultBoxShadow;
 
     z-index: 2;
+
+    @media #{$screen-breakpoint-one} {
+      margin-right: 13px;
+    }
   }
 
   /* Make the dropdown menu visible */
@@ -69,10 +74,6 @@
 
   /* Dropdown menu entries */
   .dropdown {
-    @media #{$screen-breakpoint-one} {
-      margin-right: 10px;
-    }
-
     li {
       margin: 1px;
     }
@@ -81,16 +82,16 @@
       text-decoration: none;
       display: block;
       padding: 5px;
-      color: $toolsContainerLinkForeground;
-      background: transparent;
+      color: $toolsContainerLinkFore !important;
+      background: transparent !important;
       white-space: nowrap;
       font-size: 100%;
       width: auto;
-      font-weight: normal;
+      font-weight: normal !important;
 
       &:hover {
-        color: $toolsContainerLinkHoverForeground;
-        background: $toolsContainerLinkHoverBackground;
+        color: $toolsContainerLinkHoverFore !important;
+        background: $toolsContainerLinkHoverBack !important;
       }
     }
   }

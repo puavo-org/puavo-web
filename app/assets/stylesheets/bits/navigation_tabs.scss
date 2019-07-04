@@ -7,13 +7,16 @@
    first load the users list before I can access groups, for example. */
 
 #tabs {
-  /* Common styles */
-
+  /* Styles common for both levels */
   ul {
-    list-style: none;
     display: flex;
     margin: 0;
     padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: inline;
   }
 
   a {
@@ -27,61 +30,68 @@
 
   /* First level */
   .first {
-    ul {
-      background: $firstLevelTabBackground;
-    }
-
-    li {
-      display: inline;
-      background: $firstLevelTabBackground;
-    }
-
-    li:hover {
-      background: $firstLevelTabHoverBackground;
-    }
-
-    .currentFirst {
-      background: linear-gradient($baseBrown, $baseBrownGradient);
-    }
-
     a {
-      color: $firstLevelTabForeground;
-      background: transparent;
       font-size: 80%;
       font-weight: bold;
       text-transform: uppercase;
       padding: 1em 1.5em;
     }
 
-    .currentFirst a, a:hover {
-      color: $firstLevelTabActiveForeground;
-      background: transparent;
+    ul {
+      background: $tabsFirstBarBack;
+    }
+
+    li {
+      background: $tabsFirstTabBack;
+
+      a {
+        color: $tabsFirstTabFore;
+      }
+    }
+
+    li:hover {
+      background: $tabsFirstTabHoverBack;
+
+      a {
+        color: $tabsFirstTabHoverFore;
+      }
+    }
+
+    li.current {
+      background: $tabsFirstTabCurrentBack;
+
+      &:hover {
+        background: $tabsFirstTabHoverBack;
+      }
+
+      a {
+        color: $tabsFirstTabCurrentFore;
+      }
     }
   }
 
   /* Second level */
   .second {
     ul {
-      background: $secondLevelTabbarBackground;
+      background: $tabsSecondBarBack;
     }
 
     li {
-      display: inline;
       margin: 0;
       padding: 0;
     }
 
     a {
+      background: $tabsSecondTabBack;
+      color: $tabsSecondTabFore;
       padding: 1em 1.5em;
-      color: $secondLevelTabForeground;
-      background: $secondLevelTabBackground;
-      font-size: 70%;
       font-weight: normal;
+      font-size: 70%;
     }
 
-    .currentSecond a, a:hover {
-      color: $secondLevelTabHoverForeground;
-      background: $secondLevelTabHoverBackground;
+    a:hover, .current a {
+      background: $tabsSecondTabHoverBack;
+      color: $tabsSecondTabHoverFore;
     }
   }
 

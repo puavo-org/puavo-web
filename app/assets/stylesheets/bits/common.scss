@@ -10,7 +10,7 @@
 /* A generic missing/unset information indicator for data that isn't
    always required to be present, but what really should be set */
 .missingData {
-  color: $missingData;
+  color: $missingDataFore;
 }
 
 /* Buttons, links and areas that are only visible to organisation owners */
@@ -37,13 +37,14 @@
 /* School name, integrations */
 #schoolHeader {
   padding: 10px;
-  background: #eee;
+  background: $schoolHeaderBack;
 
   @media #{$screen-breakpoint-one} {
     margin: 0;
   }
 
   #schoolName {
+    color: $schoolNameFore;
     font-size: 250%;
     font-weight: bold;
     font-variant: small-caps;
@@ -59,81 +60,109 @@
 
 /* Page contents below the in-page tab bar */
 #content {
-  font-size: 80%;
+  background: $pageContentBack;
+  color: $pageContentFore;
   margin: 0;
   padding: 20px;
   position: relative;
   width: 100%;
-  background: #fff;
-  flex: 1;
   overflow: auto;
+  font-size: 80%;
+  flex: 1;
 
   @media #{$screen-breakpoint-one} {
-    padding: 5px;
+    padding: 10px 5px;
     border: none;
+  }
+
+  /* Used on the school page to push content down, below the tools */
+  .dashboard {
+    float: left;
+    margin: 0;
+    width: 100%;
+  }
+
+  h1 {
+    margin: 0 0 10px 0;
+    padding: 0;
+    line-height: 1;
+  }
+}
+
+/* "#jquery-live-search" DIVs (yes, plural) are created outside of the <body>
+   element by JavaScript. Those DIVs contain A and .btn elements too.*/
+#content, #jquery-live-search {
+  /* A generic link */
+  a {
+    color: $linkFore;
+    background: $linkBack;
+    font-weight: bold;
+  }
+
+  a:hover {
+    color: $linkHoverFore;
+    background: $linkHoverBack;
+    text-decoration: none;
+  }
+
+  a:focus {
+    color: $linkFocusFore;
+    background: $linkFocusBack;
+  }
+
+  /* Hyperlinks styled as buttons */
+  .btn {
+    display: inline-block;
+    padding: 4px 12px;
+    margin: 2px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: $buttonBorderHi $buttonBorderLo $buttonBorderLo $buttonBorderHi;
+    border-radius: 2px;
+    background: $buttonBack;
+    color: $buttonFore;
+    text-decoration: none;
+    font-weight: normal;
+  }
+
+  .btn:hover {
+    background: $buttonHoverBack;
+    color: $buttonFore;
+  }
+
+  .btn:active, .btn:focus {
+    border-color: $buttonBorderLo $buttonBorderHi $buttonBorderHi $buttonBorderLo;
+    background: $buttonHoverBack;
+    color: $buttonFore;
+  }
+
+  .btn-danger {
+    border-color: $buttonDangerBorderHi $buttonDangerBorderLo $buttonDangerBorderLo $buttonDangerBorderHi;
+    background: $buttonDangerBack;
+    color: $buttonDangerFore;
+  }
+
+  .btn-danger:hover {
+    background: $buttonDangerHoverBack;
+    color: $buttonDangerFore;
+  }
+
+  .btn-danger:active, .btn-danger:focus {
+    border-color: $buttonDangerBorderLo $buttonDangerBorderHi $buttonDangerBorderHi $buttonDangerBorderLo;
+    background: $buttonDangerHoverBack;
+    color: $buttonDangerFore;
   }
 }
 
 /* Server and git commit infos */
 footer {
   display: block;
-  color: #888;
+  color: $footerFore;
   text-align: center;
   font-size: 70%;
   margin: 1em;
 
   @media #{$screen-breakpoint-one} {
     font-size: 60%;
-  }
-}
-
-/* Used on the school page to push content down, below the tools */
-#content .dashboard {
-  float: left;
-  margin: 0;
-  width: 100%;
-}
-
-#content h1 {
-  margin: 0 0 10px 0;
-  padding: 0;
-  line-height: 1;
-}
-
-/* Hyperlinks styled as buttons */
-.btn {
-  display: inline-block;
-  margin-bottom: 0;
-  padding: 4px 12px;
-  font-size: 100%;
-  font-weight: normal;
-  text-align: center;
-  text-decoration: none;
-  white-space: nowrap;
-  background: $buttonBackground;
-  border-width: 1px;
-  border-style: solid;
-  border-color: $buttonBorderColor $buttonBorderColor $buttonBorderColor2;
-  border-radius: 3px;
-  box-shadow: inset 0 1px 0 $buttonBoxShadow1, 0 1px 2px $buttonBoxShadow2;
-  color: $buttonNormalColor;
-
-  &:hover, &:focus {
-    background: $buttonGradientBg;
-    color: $buttonHoverColor;
-  }
-
-  @media #{$screen-breakpoint-one} {
-    padding: 0.5em 1em;
-  }
-}
-
-.btn-danger {
-  color: $buttonDangerColor;
-  background: $buttonDangerBackground;
-
-  &:hover, &:focus, &:active {
-    color: $buttonDangerHoverColor;
-    background: $buttonDangerHoverBg;
   }
 }

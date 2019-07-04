@@ -92,11 +92,11 @@ I18n.locale = "<%= I18n.locale %>";
       <span id="loggedInName"><%= h current_user.displayName %></span>
 
       <!-- Two logout buttons: one for desktop, one for mobile. -->
-      <%= link_to logout_path, method: :delete, class: 'btn btn-danger logoutButton desktopLogoutButton' do %>
+      <%= link_to logout_path, method: :delete, class: 'logoutButton desktopLogoutButton' do %>
         <i class="icon-logout"></i> <%= t('.logout') %>
       <% end %>
 
-      <%= link_to logout_path, method: :delete, class: 'btn btn-danger logoutButton mobileLogoutButton' do %>
+      <%= link_to logout_path, method: :delete, class: 'logoutButton mobileLogoutButton' do %>
         <i class="icon-logout"></i>
       <% end %>
     </li>
