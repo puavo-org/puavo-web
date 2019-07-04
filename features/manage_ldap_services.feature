@@ -14,7 +14,7 @@ Feature: Manage LDAP services
 
   Scenario: Add new LDAP service
     Given I follow "LDAP service"
-    And I follow "New" within ".pageContainer"
+    And I follow "New" within "#pageContainer"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "password"
@@ -70,7 +70,7 @@ Feature: Manage LDAP services
 
   Scenario: Edit LDAP service and unceck all system groups
     Given I follow "LDAP service"
-    And I follow "New" within ".pageContainer"
+    And I follow "New" within "#pageContainer"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "secretpassword"

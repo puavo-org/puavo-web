@@ -34,7 +34,7 @@ Feature: Manage printer permissions
   Scenario: Can navigate to printer permissions list
     Given I am logged in as "pavel" with password "secret"
     And I am on the show school page with "Example school 1"
-    When I follow "Devices" within ".pageContainer"
+    When I follow "Devices" within "#pageContainer"
     And I follow "Printing permissions"
     Then I should see "printer1"
     Then I should see "Edit permissions"
