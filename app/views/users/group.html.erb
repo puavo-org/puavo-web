@@ -7,8 +7,7 @@
     <%= render :partial => "administrative_groups", :locals => { :f => f } %>
 
     <tr class="buttonRow">
-      <td></td>
-      <td>
+      <td colspan="2">
         <%= f.submit t('link.save'), class: 'btn' %>
         <div class="cancel">
           <%=link_to t('link.cancel'),  user_path(@school, @user), class: 'btn btn-danger' %>

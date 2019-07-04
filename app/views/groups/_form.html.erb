@@ -27,12 +27,9 @@
   </tr>
 
   <tr class="buttonRow">
-    <td></td>
-    <td>
-      <span>
-        <%= f.submit submit_text, class: 'btn' %>
-        <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
-      </span>
+    <td colspan="2">
+      <%= f.submit submit_text, class: 'btn' %>
+      <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
     </td>
   </tr>
 </table>

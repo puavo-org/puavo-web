@@ -52,10 +52,11 @@
   <% end %>
   </ul>
 
+  <br>
+
   <table class="editForm">
     <tr class="buttonRow">
-      <th></th>
-      <td>
+      <td colspan="2">
         <%= f.submit submit_text, class: 'btn' %>
         <div class="cancel"> <%=link_to t('cancel'), server_path(@server), class: 'btn btn-danger' %> </div>
       </td>
