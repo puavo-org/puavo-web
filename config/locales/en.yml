@@ -606,6 +606,7 @@ en:
       school: School
       ldap_service: LDAP service
     attributes:
+      dn: DN
       role:
         displayName: Role name
         members: Members

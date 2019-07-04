@@ -578,6 +578,7 @@ fi:
       school: Koulu
       ldap_service: LDAP-palvelu
     attributes:
+      dn: DN
       role:
         displayName: Roolin nimi
         members: "Jäsenet"
