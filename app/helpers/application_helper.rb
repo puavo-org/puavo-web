@@ -86,12 +86,9 @@ module ApplicationHelper
   DEB_PACKAGE = Array(`dpkg -l | grep puavo-web`.split())[2]
   def debug_footer
     "<footer>
-      hostname: #{ Socket.gethostname },
-      uptime: #{ (Time.now - STARTED).to_i } seconds<br>
-      version: #{ PuavoUsers::VERSION },
-      git commit: #{ PuavoUsers::GIT_COMMIT },<br>
-      deb package: #{ DEB_PACKAGE },<br>
-
+      hostname: #{ Socket.gethostname }, uptime: #{ (Time.now - STARTED).to_i } seconds<br>
+      version: #{ PuavoUsers::VERSION }, git commit: #{ PuavoUsers::GIT_COMMIT },<br>
+      deb package: #{ DEB_PACKAGE }
     </footer>".html_safe
   end
 
