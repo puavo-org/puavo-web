@@ -22,13 +22,13 @@
 
 <table class="list" id="withInfo">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
-    <th><%= t('device_statistics.columns.timestamp') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceImage') %></th>
-    <th><%= t('device_statistics.columns.cpu') %></th>
-    <th><%= t('device_statistics.columns.memory') %></th>
-    <th><%= t('device_statistics.columns.hard_drive') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.timestamp')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceType')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceImage')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.cpu')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.memory')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.hard_drive')) %></th>
   </tr>
 
 <% @with_info.each do |device| %>

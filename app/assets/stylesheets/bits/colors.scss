@@ -197,10 +197,11 @@ Lists in tables
 --------------------------------------------------------------------------------
 */
 
-$listHeadingBack: linear-gradient($baseBrown 35%, $baseBrownGradient 60%);
-$listSortableColumnHover: linear-gradient(darken($baseBrown, 5%) 35%, darken($baseBrownGradient, 5%) 60%);
-$listHeadingFore: #f5f5e8;
-$listHeadingBorder: #000;
+$listHeadingBack: #ccc;
+$listHeadingFore: #000;
+$listHeadingBorder: #888;
+$listSortableColumnHeaderBorder: #999;
+$listSortableColumnHover: #bbb;
 $listOddRowBack: #ebebeb;
 $listEvenRowBack: #fafafa;
 $listRowHoverBack: #f9f7e6;

@@ -18,51 +18,6 @@ th {
   text-decoration: none;
 }
 
-/* Sortable column headers */
-.sortHeader {
-  cursor: pointer;
-
-  &:hover {
-    background: $listSortableColumnHover !important;
-  }
-}
-
-@mixin sortCommon($padding) {
-  font-family: puavo-icons;
-  font-size: 120%;
-  font-weight: normal;
-  padding-left: $padding;
-};
-
-.orderAscending, .orderDescending {
-  background: $listSortableColumnHover !important;
-}
-
-.orderNone:after {
-  @include sortCommon(15px);
-  content: "\f0dc";   /* up arrow, down arrow */
-}
-
-.typeString.orderAscending:after {
-  @include sortCommon(5px);
-  content: " \f15d";      /* A -> Z */
-}
-
-.typeString.orderDescending:after {
-  @include sortCommon(5px);
-  content: " \f15e";      /* Z -> A */
-}
-
-.typeNumeric.orderAscending:after {
-  @include sortCommon(6px);
-  content: " \f162";      /* 1 -> 9 */
-}
-
-.typeNumeric.orderDescending:after {
-  @include sortCommon(6px);
-  content: " \f163";      /* 9 -> 1 */
-}
-
 /* Lists of schools, users, devices, etc. */
 .list {
   width: 100%;
@@ -71,9 +26,14 @@ th {
     background: $listHeadingBack;
     color: $listHeadingFore;
     border-top: 1px solid $listHeadingBorder;
+    border-left: 1px solid $listHeadingBorder;
     border-bottom: 1px solid $listHeadingBorder;
     padding: 10px;
     font-size: 100%;
+  }
+
+  tbody > tr:last-child {
+    border-bottom: 1px solid $listHeadingBorder;
   }
 
   th:first-of-type {
@@ -106,7 +66,11 @@ th {
   }
 
   td {
-    border-bottom: 1px solid $listRowBorder;
+    border-left: 1px solid $listRowBorder;
+  }
+
+  td:first-of-type {
+    border-left: none;
   }
 
   .form {
@@ -166,8 +130,83 @@ th {
   }
 }
 
+/* Sortable column headers. Each TH element contains a flexbox DIV that
+   contains two spans: one for the title, one for the sort direction
+   arrow. Flexbox is used because I want to right-align the sort arrow
+   and a flexbox is the only way to do that even somewhat reliably. */
+.sortHeader {
+  cursor: pointer;
+
+  &:hover {
+    background: $listSortableColumnHover;
+  }
+
+  /* The container DIV */
+  div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    /*
+      What JavaScript taketh, CSS giveth. What a mess...
+      https://css-tricks.com/slightly-careful-sub-elements-clickable-things/
+    */
+    pointer-events: none;
+
+    /* The child spans */
+    .title {
+      display: inline;
+    }
+
+    .arrow {
+      display: inline;
+      margin-left: auto;    /* right-align the arrow */
+    }
+  }
+}
+
+/* Setup the sort direction arrows */
+/* TODO: The arrows should be changed in the JavaScript code, not here. */
+@mixin sortCommon($padding) {
+  font-family: puavo-icons;
+  font-size: 120%;
+  font-weight: normal;
+  padding-left: $padding;
+  padding-right: 10px;
+};
+
+.orderAscending, .orderDescending {
+  background: $listSortableColumnHover !important;
+}
+
+.orderNone .arrow:after {
+  @include sortCommon(10px);
+  content: "\f0dc";       /* up arrow, down arrow */
+}
+
+.typeString.orderAscending .arrow:after {
+  @include sortCommon(5px);
+  content: " \f15d";      /* A -> Z */
+}
+
+.typeString.orderDescending .arrow:after {
+  @include sortCommon(5px);
+  content: " \f15e";      /* Z -> A */
+}
+
+.typeNumeric.orderAscending .arrow:after {
+  @include sortCommon(6px);
+  content: " \f162";      /* 1 -> 9 */
+}
+
+.typeNumeric.orderDescending .arrow:after {
+  @include sortCommon(6px);
+  content: " \f163";      /* 9 -> 1 */
+}
+
+/* Alternate colors for the "marked for deletion" users table */
 .usersMarkedForDeletion {
-  /* Alternate colors for the "marked for deletion" users table */
   tr:nth-child(even) {
     background-color: $markedForDeletionEvenRowBack;
   }

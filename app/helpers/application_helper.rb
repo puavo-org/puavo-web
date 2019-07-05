@@ -352,4 +352,8 @@ module ApplicationHelper
   def insert_wbr(s)
     (s.split('-').join('-<wbr>')).html_safe
   end
+
+  def sortable_list_column_header(s)
+    "<div><span class=\"name\">#{s}</span><span class=\"arrow\"></span></div>".html_safe
+  end
 end
