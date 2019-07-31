@@ -690,10 +690,13 @@ module PuavoRest
           external_id = Array(ldap_entry[id_sym]).first
           next unless external_id.kind_of?(String)
 
-          userprincipalname = Array(ldap_entry[username_sym]).first
-          next unless userprincipalname.kind_of?(String)
+          external_username = Array(ldap_entry[username_sym]).first
+          next unless external_username.kind_of?(String)
 
-          match = userprincipalname.match(/\A(.*)@#{ @external_domain }\z/)
+          match_re = @external_domain.empty? \
+                       ? %r{\A(.*)} \
+                       : %r{\A(.*)@#{ Regexp.quote(@external_domain) }\z}
+          match = external_username.match(match_re)
           next unless match
 
           users[ external_id ] = {
@@ -986,9 +989,10 @@ module PuavoRest
     end
 
     def user_ldapfilter(username)
-      Net::LDAP::Filter.eq(@external_username_field,
-                           "#{ username }@#{ @external_domain }")
-
+      match_string = @external_domain.empty? \
+                       ? username \
+                       : "#{ username }@#{ @external_domain }"
+      Net::LDAP::Filter.eq(@external_username_field, match_string)
     end
   end
 end
