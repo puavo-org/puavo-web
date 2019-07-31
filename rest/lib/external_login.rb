@@ -75,10 +75,6 @@ module PuavoRest
         'external login parameters not configured' \
           unless @external_login_params.kind_of?(Hash)
 
-      @external_login_params['external_domain'] \
-        ||= (CONFIG['external_domain'] \
-              && CONFIG['external_domain'][organisation_name])
-
       @admin_dn = @config['admin_dn'].to_s
       raise ExternalLoginError, 'admin dn is not set' \
         if @admin_dn.empty?
@@ -466,10 +462,6 @@ module PuavoRest
       raise ExternalLoginConfigError, 'external_username_field not configured' \
         unless @external_username_field.kind_of?(String)
 
-      @external_domain = ldap_config['external_domain']
-      raise ExternalLoginConfigError, 'external_domain not configured' \
-        unless @external_domain.kind_of?(String)
-
       @external_password_change = ldap_config['password_change']
       raise ExternalLoginConfigError, 'password_change style not configured' \
         unless @external_password_change.kind_of?(Hash)
@@ -701,13 +693,10 @@ module PuavoRest
           external_id = Array(ldap_entry[id_sym]).first
           next unless external_id.kind_of?(String)
 
-          external_username = Array(ldap_entry[username_sym]).first
-          next unless external_username.kind_of?(String)
+          userprincipalname = Array(ldap_entry[username_sym]).first
+          next unless userprincipalname.kind_of?(String)
 
-          match_re = @external_domain.empty? \
-                       ? %r{\A(.*)} \
-                       : %r{\A(.*)@#{ Regexp.quote(@external_domain) }\z}
-          match = external_username.match(match_re)
+          match = userprincipalname.match(/\A(.*)@/)
           next unless match
 
           users[ external_id ] = {
@@ -1000,10 +989,9 @@ module PuavoRest
     end
 
     def user_ldapfilter(username)
-      match_string = @external_domain.empty? \
-                       ? username \
-                       : "#{ username }@#{ @external_domain }"
-      Net::LDAP::Filter.eq(@external_username_field, match_string)
+      Net::LDAP::Filter.eq(@external_username_field,
+                           "#{ Net::LDAP::Filter.escape(username) }@*")
+
     end
   end
 end

@@ -100,7 +100,6 @@ def get_external_login_test_configuration
               ]},
           ],
         },
-        'external_domain'         => 'example.com',
         'external_id_field'       => 'eduPersonPrincipalName',
         'external_username_field' => 'mail',
         'password_change' => { 'api' => 'openldap', },
