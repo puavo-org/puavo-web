@@ -479,30 +479,41 @@ module PuavoRest
         unless @external_ldap_subtrees.kind_of?(Array) \
                  && @external_ldap_subtrees.all? { |s| s.kind_of?(String) }
 
-      encryption_method \
-        = ldap_config['encryption_method'] == 'simple_tls' \
-            ? :simple_tls \
-            : :start_tls
+      connection_args = {
+        :base => base.to_s,
+        :host => server.to_s,
+        :port => (Integer(ldap_config['port']) rescue 389),
+        :auth => {
+          :method   => :simple,
+          :username => bind_dn.to_s,
+          :password => bind_password.to_s,
+        }
+      }
 
-      @ldap = Net::LDAP.new :base => base.to_s,
-                            :host => server.to_s,
-                            :port => (Integer(ldap_config['port']) rescue 389),
-                            :auth => {
-                              :method   => :simple,
-                              :username => bind_dn.to_s,
-                              :password => bind_password.to_s,
-                            },
-                            :encryption => {
-                               :method      => encryption_method,
-                               :tls_options => {
-                                 :verify_mode => OpenSSL::SSL::VERIFY_NONE,
-                               },
-                               # XXX not good
-                               # XXX see http://www.rubydoc.info/github/ruby-ldap/ruby-net-ldap/Net%2FLDAP:initialize
-                               # XXX and http://ruby-doc.org/stdlib-2.3.0/libdoc/openssl/rdoc/OpenSSL/SSL/SSLContext.html
-                               # XXX should this be configurable through
-                               # XXX ldap_config?
-                            }
+      # XXX the use of OpenSSL::SSL::VERIFY_NONE is not so good
+      # XXX see http://www.rubydoc.info/github/ruby-ldap/ruby-net-ldap/Net%2FLDAP:initialize
+      # XXX and http://ruby-doc.org/stdlib-2.3.0/libdoc/openssl/rdoc/OpenSSL/SSL/SSLContext.html
+      # XXX should this be configurable through
+      # XXX ldap_config?
+      case ldap_config['encryption_method']
+        when 'none'
+          true
+        when 'simple_tls'
+          connection_args[:encryption] = {
+            :method      => :simple_tls,
+            :tls_options => { :verify_mode => OpenSSL::SSL::VERIFY_NONE, } # XXX
+          }
+        when 'start_tls'
+          connection_args[:encryption] = {
+            :method      => :start_tls,
+            :tls_options => { :verify_mode => OpenSSL::SSL::VERIFY_NONE, } # XXX
+          }
+        else
+          raise ExternalLoginConfigError,
+                "unsupported encryption method: '#{ ldap_config['encryption_method'] }'"
+      end
+
+      @ldap = Net::LDAP.new(connection_args)
       @ldap_userinfo = nil
       @username = nil
     end

@@ -65,6 +65,7 @@ def get_external_login_test_configuration
         'base'                    => 'dc=edu,dc=heroes,dc=fi',
         'bind_dn'                 => bind_dn,
         'bind_password'           => organisations['heroes']['owner_pw'],
+        'encryption_method'       => 'start_tls',
         'user_mappings' => {
           'defaults' => {
             'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
