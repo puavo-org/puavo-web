@@ -34,7 +34,7 @@
   }
 
   .infoTable {
-    border: 2px solid $hwInfoBorder;
+    border: 1px solid $hwInfoBorder;
     border-collapse: collapse;
 
     th {
@@ -42,6 +42,11 @@
       padding: 7px;
       text-align: right;
       width: 150px;
+    }
+
+    tr {
+      /* forcibly disable alternating row colors */
+      background: transparent !important;
     }
 
     .main {
@@ -56,7 +61,7 @@
     }
 
     .sectionEnd {
-      border-bottom: 2px solid $hwInfoBorder;
+      border-bottom: 1px solid $hwInfoBorder;
     }
 
     ol {
