@@ -4,6 +4,8 @@
 
 <p><%= @devices.length %> <%= t('.devices') %></p>
 
+<% unless @devices.empty? %>
+
 <table class="list" id="devices">
   <tr class="thead">
     <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
@@ -38,19 +40,6 @@
 <% end %>
 </table>
 
-<% content_for :tools do %>
-<ul>
-  <li id="addNewDeviceTitle">
-    <%= form_for(@device, :url => new_device_path(@school), html: { method: :get }) do |f| %>
-    <span><%= t('.add_new_device') %>:</span>
-    <%= select_tag "device_type",
-        options_for_select( @device_types ) %>
-      <%= f.submit t('link.add'), id: "device_submit" %>
-    <% end %>
-  </li>
-</ul>
-<% end %>
-
 <% content_for :javascript do %>
 <%= javascript_include_tag "devices/index" %>
 <%= javascript_include_tag 'sortableTable' %>
@@ -75,3 +64,18 @@ $(document).ready(function() {
     );
 });
 </script>
+
+<% end %>
+
+<% content_for :tools do %>
+<ul>
+  <li id="addNewDeviceTitle">
+    <%= form_for(@device, :url => new_device_path(@school), html: { method: :get }) do |f| %>
+    <span><%= t('.add_new_device') %>:</span>
+    <%= select_tag "device_type",
+        options_for_select( @device_types ) %>
+      <%= f.submit t('link.add'), id: "device_submit" %>
+    <% end %>
+  </li>
+</ul>
+<% end %>

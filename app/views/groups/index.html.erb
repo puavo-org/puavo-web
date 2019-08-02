@@ -2,6 +2,8 @@
 
 <p><%= @groups.length %> <%= t('.groups') %></p>
 
+<% unless @groups.empty? %>
+
 <% have_primus = school_has_integration?(@school.id.to_i, 'primus') %>
 
 <table class="list" id="groups">
@@ -48,22 +50,6 @@
 <% end %>
 </table>
 
-<% content_for :tools do %>
-<ul>
-  <li>
-    <%= link_to new_group_path(@school), class: 'btn' do %>
-      <i class='icon-plus'></i><%= t('link.new_group') %>
-    <% end %>
-  </li>
-
-  <li>
-    <%= link_to find_groupless_users_path(@school), class: 'btn' do %>
-      <i class='icon-search'></i><%= t('link.find_groupless_users') %>
-    <% end %>
-  </li>
-</ul>
-<% end %>
-
 <% content_for :javascript do %>
 <%= javascript_include_tag 'sortableTable' %>
 <% end %>
@@ -82,3 +68,21 @@ $(document).ready(function() {
     );
 });
 </script>
+
+<% end %>
+
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to new_group_path(@school), class: 'btn' do %>
+      <i class='icon-plus'></i><%= t('link.new_group') %>
+    <% end %>
+  </li>
+
+  <li>
+    <%= link_to find_groupless_users_path(@school), class: 'btn' do %>
+      <i class='icon-search'></i><%= t('link.find_groupless_users') %>
+    <% end %>
+  </li>
+</ul>
+<% end %>

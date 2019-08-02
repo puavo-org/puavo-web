@@ -40,6 +40,8 @@
 </ul>
 <% end %>
 
+<% unless @users_marked_for_deletion.empty? && @users.empty? %>
+
 <% content_for :javascript do %>
 <%= javascript_include_tag 'sortableTable' %>
 <% end %>
@@ -72,3 +74,5 @@ $(document).ready(function() {
   <% end %>
 });
 </script>
+
+<% end %>
