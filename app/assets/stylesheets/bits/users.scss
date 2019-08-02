@@ -3,6 +3,13 @@
   color: $deletionMarkTimestamp;
 }
 
+/* Password policy info boxes. Also used on password changing forms. */
+.passwordNotice {
+  background: $passwordRequirementsBackground;
+  border: 1px solid $passwordRequirementsBorder;
+  padding: 1em;
+}
+
 /* Unloaded username lists */
 
 .userListTable {

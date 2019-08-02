@@ -168,6 +168,10 @@ $externallyMaintainedGroupBack: transparent;
 $deletionMarkTimestamp: #f00;
 $usernameListTableBorder: #ccc;
 
+/* Organisation password requirements info boxes */
+$passwordRequirementsBackground: rgb(217, 237, 247);
+$passwordRequirementsBorder: darken(rgb(217, 237, 247), 10%);
+
 /*
 --------------------------------------------------------------------------------
 Forms
@@ -245,19 +249,3 @@ $deviceStatsPercentageBorder: #666;
 $deviceStatsPercentageBack: #ddd;
 $deviceStatsPercentageFore: #080;
 $deviceStatsDeviceListBorder: #ccc;
-
-/*
---------------------------------------------------------------------------------
-Password changing forms
-TODO: This is not the correct file for these.
---------------------------------------------------------------------------------
-*/
-
-$passwordFormBody: #fff;
-$passwordFormTabBackground: linear-gradient($baseOrange, $baseOrangeGradient);
-$passwordFormTabForeground: #000;
-$passwordFormTabNormalBackground: $baseOrange;
-$passwordFormTabNormalForeground: #000;
-$passwordFormTabHoverBackground: $baseOrangeGradient;
-$passwordFormTabHoverForeground: #000;
-$infoBgColor: rgb(217, 237, 247);
