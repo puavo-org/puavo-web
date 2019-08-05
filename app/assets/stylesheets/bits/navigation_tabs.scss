@@ -81,6 +81,7 @@
       padding: 0;
     }
 
+    /* use !important, #content > a tries to override these */
     a {
       background: $tabsSecondTabBack;
       color: $tabsSecondTabFore;
@@ -131,28 +132,28 @@
     padding: 10px 20px;
     outline: none;
     text-decoration: none;
-    background: #efefef;
-    color: #000;
-    font-weight: normal;
+    background: #efefef !important;
+    color: #000 !important;
+    font-weight: normal !important;
 
     &:hover {
-      background: #ddd;
+      background: #ddd !important;
     }
   }
 
   a.tabActive {
-    background: linear-gradient($baseOrange, $baseOrangeGradient);
-    cursor: default;
+    background: linear-gradient($baseOrange, $baseOrangeGradient) !important;
+    cursor: default !important;
 
     &:hover {
-      background: linear-gradient($baseOrange, $baseOrangeGradient);
+      background: linear-gradient($baseOrange, $baseOrangeGradient) !important;
     }
   }
 }
 
 .tabContentsWrapper {
   border-top: 1px solid #888;
-  margin-top: -1px;
+  margin-top: 0px;
 }
 
 .tabContentsInvisible {
