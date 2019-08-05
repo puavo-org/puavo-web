@@ -4,7 +4,7 @@
 
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
 
-<%= start_box t('.automounts') %>
+<%= start_box t('.automounts'), extraClass="fullWidth" %>
   <% if Array(@server.puavoExport).empty? %>
   <p class="empty"><%= t('.no_automounts') %></p>
   <% else %>
@@ -18,7 +18,7 @@
 <%= end_box %>
 
 <% unless Array(@server.puavoSchool).empty? %>
-<%= start_box t('servers.school_limit.title') %>
+<%= start_box t('servers.school_limit.title'), extraClass="fullWidth" %>
   <table>
     <% @server.forced_schools.each do |status, school| %>
     <tr>
