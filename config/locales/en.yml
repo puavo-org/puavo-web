@@ -434,10 +434,12 @@ en:
       users: Users
       statistics: Statistics
       admin_users: Admin users
+      no_admin_users: "(No admin users)"
       name: Name
       phone: Phone number
       mail: E-mail
       billing_info: Billing info
+      no_billing_info: "(No billing info)"
       rule_lines: Rules
       system_information: System information
       total_count: "%{count} total)"
@@ -993,6 +995,7 @@ en:
       path: Path
       mountpoint: Mount point
       options: Options
+      no_mountpoints: "(No mount points)"
     form_mountpoint:
       title: Local and network mount points
       filesystem: Filesystem

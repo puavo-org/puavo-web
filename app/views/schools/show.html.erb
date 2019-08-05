@@ -152,6 +152,9 @@
 <hr>
 
 <%= start_box t('.admin_users'), extraClass="fullWidth" %>
+  <% if @school.user_school_admins.empty? %>
+  <p class="empty"><%= t('.no_admin_users') %></p>
+  <% else %>
   <table>
     <tr class="tableHeading">
       <th><%= t('.name') %></th>
@@ -168,6 +171,7 @@
     <% end %>
   <% end %>
   </table>
+  <% end %>
 <%= end_box %>
 
 <hr>
@@ -176,7 +180,7 @@
 <!-- Billing information -->
 <%= start_box t('.billing_info'), extraClass="fullWidth" %>
   <% if @school.puavoBillingInfo.nil? || @school.puavoBillingInfo.empty? %>
-  (Ei tietoja)
+  <p class="empty"><%= t('.no_billing_info') %></p>
   <% else %>
   <% Array(@school.puavoBillingInfo).each do |billing_info| %>
   <%= h billing_info %><br>

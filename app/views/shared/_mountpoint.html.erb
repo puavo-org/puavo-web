@@ -1,5 +1,8 @@
 <!-- shared/_mountpoint starts -->
-<%= start_box t('.title') %>
+<%= start_box t('.title'), extraClass="fullWidth" %>
+  <% if Array(object.puavoMountpoint).empty? %>
+  <p class="empty"><%= t('.no_mount_points') %></p>
+  <% else %>
   <table>
     <tr class="tableHeading">
       <th><%= t('.filesystem') %></th>
@@ -17,5 +20,6 @@
     </tr>
     <% end %>
   </table>
+  <% end %>
 <%= end_box %>
 <!-- shared/_mountpoint ends -->

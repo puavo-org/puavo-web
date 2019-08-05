@@ -406,10 +406,12 @@ fi:
       users: "Käyttäjät"
       statistics: Tilastot
       admin_users: "Ylläpitäjät"
+      no_admin_users: "(Ei ylläpitäjiä)"
       name: Nimi
       phone: Puhelinnumero
       mail: "Sähköpostiosoite"
       billing_info: Laskutustiedot
+      no_billing_info: "(Ei laskutustietoja)"
       rule_lines: "Laskusäännöt"
       system_information: Järjestelmätiedot
       total_count: "(yhteensä %{count})"
@@ -963,6 +965,7 @@ fi:
       path: Polku
       mountpoint: Liitoskohta
       options: Parametrit
+      no_mount_points: "(Ei liitospisteitä)"
     form_mountpoint:
       title: Levyliitokset (paikallinen/verkko)
       filesystem: Tiedostojärjestelmä
