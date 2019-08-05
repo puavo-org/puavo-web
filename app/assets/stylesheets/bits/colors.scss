@@ -201,11 +201,11 @@ Lists in tables
 --------------------------------------------------------------------------------
 */
 
-$listHeadingBack: #ccc;
+$listHeadingBack: linear-gradient($baseOrange, $baseOrangeGradient);
 $listHeadingFore: #000;
 $listHeadingBorder: #888;
 $listSortableColumnHeaderBorder: #999;
-$listSortableColumnHover: #bbb;
+$listSortableColumnHover: linear-gradient(darken($baseOrange, 5%), darken($baseOrangeGradient, 5%));
 $listOddRowBack: #ebebeb;
 $listEvenRowBack: #fafafa;
 $listRowHoverBack: #f9f7e6;
