@@ -19,7 +19,7 @@
 
 <% unless Array(@server.puavoSchool).empty? %>
 <%= start_box t('servers.school_limit.title'), extraClass="fullWidth" %>
-  <table>
+  <table id="serverSchoolLimitBox">
     <% @server.forced_schools.each do |status, school| %>
     <tr>
       <td>

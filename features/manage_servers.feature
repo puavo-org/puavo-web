@@ -18,7 +18,7 @@ Feature: Manage servers
     And I follow "Edit"
     And I check "Example school 2"
     And I press "Update"
-    And I should see "This LTSP server will only serve these schools"
+    And I should see "Example school 2" within "#serverSchoolLimitBox"
 
   Scenario: Check for unique server tags
     Given I am on the server list page
