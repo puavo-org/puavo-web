@@ -44,10 +44,11 @@
   }
 
   h3 {
-    margin: 5px 0 10px 0;
-    padding: 0 5px;
-    border-bottom: 2px solid $contentBoxContentsHeaderFore;
+    margin: 0 0 10px 0;
+    padding: 5px;
     font-weight: bold;
+    background: #ccc;
+    border: none;
   }
 
   @media #{$screen-breakpoint-one} {
@@ -77,6 +78,17 @@
   border-bottom: 1px solid $contentBoxMultilineItemBorder;
   padding-bottom: 10px;
   margin-bottom: 10px;
+
+  ul {
+    /* Harmonize with .value's */
+    padding-left: 20px;
+  }
+}
+
+.multilineItem:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 .multilineItem .title {
