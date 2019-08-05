@@ -1043,6 +1043,7 @@ en:
       add_puavoExport: Add a new path
     show:
       automounts: Automounts
+      no_automounts: "(No automounts)"
     school_limit:
       title: School limit
       ltsp_description: "This LTSP server will only serve these schools:"

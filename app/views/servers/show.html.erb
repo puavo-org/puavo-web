@@ -5,12 +5,16 @@
 <%= render :partial => 'shared/linux_device_information', :locals => { :device => @server} %>
 
 <%= start_box t('.automounts') %>
+  <% if Array(@server.puavoExport).empty? %>
+  <p class="empty"><%= t('.no_automounts') %></p>
+  <% else %>
   <table>
     <tr>
       <th><%= t("activeldap.attributes.#{@server.class.to_s.downcase}.puavoExport") %></th>
       <td><%= safe_join(Array(@server.puavoExport), "<br>".html_safe)  %></td>
     </tr>
   </table>
+  <% end %>
 <%= end_box %>
 
 <% unless Array(@server.puavoSchool).empty? %>

@@ -1014,6 +1014,7 @@ fi:
       add_puavoExport: "Lisää hakemistopolkuja"
     show:
       automounts: Hakemistoliitokset
+      no_automounts: "(Ei hakemistoliitoksia)"
     school_limit:
       title: Rajoita kouluihin
       ltsp_description: "Tämä LTSP-palvelin on käytössä vain näissä kouluissa."
