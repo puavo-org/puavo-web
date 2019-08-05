@@ -146,9 +146,9 @@ $importantBasicInfo: #f00;    /* notifications about locked users, etc. */
 $basicInfoBorders: #ccc;
 
 /* Content boxes on "show" pages */
-$contentBoxHeaderBack: linear-gradient($baseBrownGradient, $baseBrown);
-$contentBoxHeaderFore: #fff;
-$contentBoxBorder: #000;
+$contentBoxHeaderBack: $baseOrangeGradient;
+$contentBoxHeaderFore: #000;
+$contentBoxBorder: #999;
 $contentBoxContentsBack: #f0f0f0;
 $contentBoxTableOddRowBack: #f0f0f0;
 $contentBoxTableEvenRowBack: #e0e0e0;

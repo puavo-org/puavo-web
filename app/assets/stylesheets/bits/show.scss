@@ -3,12 +3,13 @@
 */
 
 /* Generic floating container boxes that have titles */
-.content-box-new {
+.contentBox {
   min-width: 45%;
   width: 49%;
   float: left;
   margin: 5px;
   padding: 0;
+  box-shadow: 3px 3px 0 #aaa;
 
   header {
     background: $contentBoxHeaderBack;
@@ -16,14 +17,18 @@
     padding: 5px 10px;
     margin: 0;
     font-size: 130%;
-    border-radius: 5px 5px 0 0;
-    border-bottom: 1px dotted $contentBoxBorder;
+    border-top: 1px solid $contentBoxBorder;
+    border-left: 1px solid $contentBoxBorder;
+    border-right: 1px solid $contentBoxBorder;
+    font-weight: bold;
   }
 
   .contents {
     padding: 5px;
     background: $contentBoxContentsBack;
-    border-radius: 0 0 5px 5px;
+    border-left: 1px solid $contentBoxBorder;
+    border-right: 1px solid $contentBoxBorder;
+    border-bottom: 1px solid $contentBoxBorder;
   }
 
   table {
@@ -53,6 +58,11 @@
   p.empty {
     margin: 10px;
   }
+}
+
+.schoolImage {
+  /* disable content box shadows */
+  box-shadow: none !important;
 }
 
 .fullWidth {

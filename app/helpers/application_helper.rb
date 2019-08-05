@@ -271,7 +271,7 @@ module ApplicationHelper
   end
 
   def start_box(title, extraClass="")
-    "<div class=\"content-box-new #{extraClass}\"><header>#{title}</header><div class=\"contents\">".html_safe
+    "<div class=\"contentBox #{extraClass}\"><header>#{title}</header><div class=\"contents\">".html_safe
   end
 
   def end_box

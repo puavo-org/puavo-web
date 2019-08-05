@@ -2,15 +2,15 @@
 
 <div class="dashboard">
 
-<div class="content-box-new school_image">
+<div class="contentBox schoolImage">
 <%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
                class: "image" ) %>
 </div>
 
 <%= start_box t('.contacts') %>
-  <h3><%= h @school.displayName %></h3>
+  <%= h @school.displayName %>
   <%= h @school.street %><br>
-  <%= h @school.postalCode %> <%=h @school.postalAddress %><br>
+  <%= h @school.postalCode %> <%= h @school.postalAddress %><br>
   <%= h @school.postOfficeBox %><br>
   <%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'),
               @school.puavoSchoolHomePageURL,
