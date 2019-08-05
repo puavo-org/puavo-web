@@ -19,62 +19,6 @@
 
 <hr>
 
-<%= start_box t('.statistics') %>
-  <!-- Users statistics -->
-  <h3><%= t('.users') %> <small><%= t('.total_count', :count => @members.count) %></small></h3>
-  <table>
-    <% User.puavoEduPersonAffiliation_list.each do |type| %>
-    <tr>
-      <th><%= t('puavoEduPersonAffiliation_' + type) %></th>
-      <td><%= @members.select{ |m| m.last["puavoEduPersonAffiliation"] == [type]}.count %></td>
-    </tr>
-    <% end %>
-  </table>
-
-  <% if @devices_by_type %>
-  <!-- Device statistics -->
-  <h3><%= t('.devices') %> <small><%= t('.total_count', :count => @devices_by_type.count) %></small></h3>
-  <table>
-  <% @devices_by_type.each do |device_type, count| %>
-    <tr>
-      <th><%= device_type %></th>
-      <td><%= count %></td>
-    </tr>
-  <% end %>
-  </table>
-  <% end %>
-<%= end_box %>
-
-<!-- School information -->
-<%= start_box t('.system_information') %>
-  <table>
-    <tr>
-      <th><%= t('activeldap.attributes.school.puavoNamePrefix') %></th>
-      <td><%= h @school.cn %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('activeldap.attributes.school.puavoSchoolCode') %></th>
-      <td><%= h @school.puavoSchoolCode %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('activeldap.attributes.school.puavoExternalId') %></th>
-      <td><%= h @school.puavoExternalId %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('ldap_create_time') %></th>
-      <td><%= h @school['createTimestamp'].nil? ? "?" : @school['createTimestamp'].localtime %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('ldap_modify_time') %></th>
-      <td><%= h @school['modifyTimestamp'].nil? ? "?" : @school['modifyTimestamp'].localtime %></td>
-    </tr>
-  </table>
-<%= end_box %>
-
 <!-- Various bits and pieces -->
 <%= start_box t('.info') %>
   <div class="multilineItem">
@@ -146,6 +90,62 @@
       </ul>
     </div>
   </div>
+  <% end %>
+<%= end_box %>
+
+<!-- School information -->
+<%= start_box t('.system_information') %>
+  <table>
+    <tr>
+      <th><%= t('activeldap.attributes.school.puavoNamePrefix') %></th>
+      <td><%= h @school.cn %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('activeldap.attributes.school.puavoSchoolCode') %></th>
+      <td><%= h @school.puavoSchoolCode %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('activeldap.attributes.school.puavoExternalId') %></th>
+      <td><%= h @school.puavoExternalId %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('ldap_create_time') %></th>
+      <td><%= h @school['createTimestamp'].nil? ? "?" : @school['createTimestamp'].localtime %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('ldap_modify_time') %></th>
+      <td><%= h @school['modifyTimestamp'].nil? ? "?" : @school['modifyTimestamp'].localtime %></td>
+    </tr>
+  </table>
+<%= end_box %>
+
+<%= start_box t('.statistics') %>
+  <!-- Users statistics -->
+  <h3><%= t('.users') %> <small><%= t('.total_count', :count => @members.count) %></small></h3>
+  <table>
+    <% User.puavoEduPersonAffiliation_list.each do |type| %>
+    <tr>
+      <th><%= t('puavoEduPersonAffiliation_' + type) %></th>
+      <td><%= @members.select{ |m| m.last["puavoEduPersonAffiliation"] == [type]}.count %></td>
+    </tr>
+    <% end %>
+  </table>
+
+  <% if @devices_by_type %>
+  <!-- Device statistics -->
+  <h3><%= t('.devices') %> <small><%= t('.total_count', :count => @devices_by_type.count) %></small></h3>
+  <table>
+  <% @devices_by_type.each do |device_type, count| %>
+    <tr>
+      <th><%= device_type %></th>
+      <td><%= count %></td>
+    </tr>
+  <% end %>
+  </table>
   <% end %>
 <%= end_box %>
 
