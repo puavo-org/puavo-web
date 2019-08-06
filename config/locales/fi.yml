@@ -415,6 +415,7 @@ fi:
       rule_lines: "Laskusäännöt"
       system_information: Järjestelmätiedot
       total_count: "(yhteensä %{count})"
+      info: "Yleistiedot"
     form:
       add_puavo_billing_info: "Lisää laskutustietoja"
   password:
@@ -624,6 +625,7 @@ fi:
         puavoDeviceOffHour: "Päivän lopetus"
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
         puavoExternalId: Ulkoinen ID
+        bootservers: "Boot-palvelimet"
       user:
         displayName: Nimi
         sn: Sukunimi

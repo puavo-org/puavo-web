@@ -443,6 +443,7 @@ en:
       rule_lines: Rules
       system_information: System information
       total_count: "%{count} total)"
+      info: "General Information"
     form:
       add_puavo_billing_info: Add a new billing info
   password:
@@ -652,6 +653,7 @@ en:
         puavoDeviceOffHour: Daytime end
         puavoImageSeriesSourceURL: Image series source URL
         puavoExternalId: External ID
+        bootservers: "Boot servers"
       user:
         displayName: Name
         sn: Surname

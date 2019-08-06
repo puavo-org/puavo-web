@@ -81,7 +81,7 @@
   <% if current_user.organisation_owner? %>
   <%# Only organisation owners can access the server page. So hide it from others. %>
   <div class="multilineItem">
-    <div class="title">Bootserver(s)</div>
+    <div class="title"><%= t('activeldap.attributes.school.bootservers') %></div>
     <div class="value">
       <ul>
         <% @school.boot_servers.each do |bs| %>
