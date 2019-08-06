@@ -43,7 +43,7 @@
         <li>
           <%= link_to(device_path(@school, @device), data: { confirm: t('destroy_confirm', object_name: @device.puavoHostname) },
                       method: :delete) do %>
-            <i class="icon-trash"></i><%= t('link.destroy') %>
+            <i class="icon-trash"></i><%= t('link.delete_device') %>
           <% end %>
         </li>
       </ul>

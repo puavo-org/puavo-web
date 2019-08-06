@@ -18,11 +18,11 @@
     <% Array(@owners).each do |u| %>
     <tr>
       <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
-      <td><%= link_to(t('link.remove'),
+      <td><%= link_to(t('link.remove') + ' ►',
                       remove_owner_organisations_path(u),
                       method: :put,
                       id: "remove_user_#{u.id}",
-                      class: 'btn btn-danger') %></td>
+                      class: 'btn') %></td>
     </tr>
     <% end %>
   </table>
@@ -33,7 +33,7 @@
     <% Array(@allowed_owners).each do |u| %>
     <tr>
       <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
-      <td><%= link_to(t('link.add'),
+      <td><%= link_to('◄ ' + t('link.add'),
                       add_owner_organisations_path(u),
                       method: :put,
                       id: "add_user_#{u.id}",

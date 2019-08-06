@@ -146,9 +146,9 @@ Feature: Manage schools
 
   Scenario: Schools list page when we have only one school and user is organisation ower
     Given I am on the show school page with "Greenwich Steiner School"
-    And I follow "Remove"
+    And I follow "Delete school"
     And I am on the show school page with "Example school 1"
-    And I follow "Remove"
+    And I follow "Delete school"
     When I go to the schools list page
     Then I should see "Listing schools"
     And I should see "New school"
@@ -167,7 +167,7 @@ Feature: Manage schools
     | displayName   | cn          |
     | Test School 1 | testschool1 |
     And I am on the show school page with "Test School 1"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "School was successfully removed."
 
   Scenario: Delete school when it still contains the users, groups and roles
@@ -179,7 +179,7 @@ Feature: Manage schools
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school |
     | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   |
     And I am on the show school page with "Test School 1"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
     And I should be on the school page
 
@@ -197,13 +197,13 @@ Feature: Manage schools
     Then I should see "Device was successfully created."
     Given I am on the school page with "Condemned School"
     Then I should see "School's home page"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
     Given I am on the devices list page with "Condemned School"
     And I press "Remove" on the "testdevice1" row
     Then I should see "List of devices"
     Given I am on the school page with "Condemned School"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "School was successfully removed."
     And I should see "Listing schools"
 

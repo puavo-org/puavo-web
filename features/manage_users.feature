@@ -225,7 +225,7 @@ Feature: Manage users
       | Ben       | Mabey   | ben    | secret   | Class 4   | admin                     | true         |
       | Joseph    | Wilk    | joseph | secret   | Class 4   | student                   | false        |
     And I am on the show user page with "ben"
-    When I follow "Remove"
+    When I follow "Delete user"
     Then I should see "User was successfully removed."
     And the memberUid should not include "ben" on the "School 1" school
     And the "School 1" school not include incorret member values
@@ -431,27 +431,27 @@ Feature: Manage users
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
     Then I am on the show user page with "donald"
-    And I should see "Remove"
+    And I should see "Delete user"
     And I should see "Prevent deletion"
     When I follow "Prevent deletion"
     Then I should see "User deletion has been prevented."
     And I should see "This user cannot be deleted"
     And I should not see "Prevent deletion"
-    And I should not see "Remove"
+    And I should not see "Delete user"
 
   Scenario: Mark user for deletion
     Given the following users:
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
     Then I am on the show user page with "donald"
-    And I should see "Remove"
+    And I should see "Delete user"
     And I should see "Mark for deletion"
     #
     When I follow "Mark for deletion"
     Then I should see "This user has been marked for deletion"
     And I should see "Remove deletion marking"
     And I should not see "Mark for deletion"
-    And I should see "Remove"
+    And I should see "Delete user"
     #
     When I follow "Remove deletion marking"
     Then I should see "User is no longer marked for deletion"
@@ -472,7 +472,7 @@ Feature: Manage users
     And I should see "This user cannot be deleted"
     And I should not see "This user has been marked for deletion"
     And I should not see "Prevent deletion"
-    And I should not see "Remove"
+    And I should not see "Delete user"
 
   Scenario: Delete users who are marked for deletion
     Given the following users:
@@ -484,7 +484,7 @@ Feature: Manage users
     And I should not see "Delete users who are marked for deletion"
     #
     Then I am on the show user page with "donald"
-    And I should see "Remove"
+    And I should see "Delete user"
     And I should see "Mark for deletion"
     When I follow "Mark for deletion"
     Then I should see "This user has been marked for deletion"

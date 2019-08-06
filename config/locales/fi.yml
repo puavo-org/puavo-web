@@ -128,7 +128,9 @@ fi:
     back: Takaisin
     cancel: "Peruuta"
     destroy: Poista
+    delete_school: "Poista koulu"
     new_group: "Uusi ryhmä"
+    delete_group: "Poista ryhmä"
     find_groupless_users: "Etsi ryhmättömät käyttäjät"
     create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
     get_members_as_csv: "Lataa ryhmän käyttäjälista CSV:nä"
@@ -148,6 +150,7 @@ fi:
     remove: Poista
     new_role: Uusi rooli
     new_user: "Uusi käyttäjä"
+    delete_user: "Poista käyttäjä"
     delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
     continue: Jatka
     login: Kirjaudu
@@ -157,6 +160,7 @@ fi:
     rename_groups: Vuosiluokkasiirto
     devices: Laitelista
     device_statistics: Laitetilastot
+    delete_device: "Poista laite"
     servers: Palvelimet
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"

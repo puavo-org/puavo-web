@@ -155,7 +155,9 @@ en:
     back: Back
     cancel: "Cancel"
     destroy: Remove
+    delete_school: "Delete school"
     new_group: New group
+    delete_group: "Remove group"
     find_groupless_users: "Find groupless users"
     create_username_list_from_group: "Create a new username list from members"
     get_members_as_csv: "Download member list as CSV"
@@ -175,6 +177,7 @@ en:
     remove: Remove
     new_role: New role
     new_user: New user
+    delete_user: "Delete user"
     delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     continue: Continue
     login: Login
@@ -184,6 +187,7 @@ en:
     rename_groups: Rename groups and roles
     devices: Device list
     device_statistics: Device statistics
+    delete_device: "Delete device"
     servers: Servers
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
