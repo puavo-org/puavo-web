@@ -66,6 +66,10 @@
     }
   }
 
+  .haveDropdown:hover .btn {
+    background: $buttonHoverBack !important;
+  }
+
   /* Make the dropdown menu visible */
   .haveDropdown:hover .dropdown {
     visibility: visible;
