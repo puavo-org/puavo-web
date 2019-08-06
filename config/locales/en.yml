@@ -342,6 +342,7 @@ en:
       system_information: System information
       contact_information: Contact information
       group_by_roles: Groups by roles
+      groups_by_schools: "Groups by schools"
       change_school: Change school
       primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
       user_is_locked: User is locked

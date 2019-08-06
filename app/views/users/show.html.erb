@@ -84,13 +84,22 @@
   </tr>
 
   <tr>
-    <th><%= t('activeldap.attributes.user.groups') %></th>
-    <td  class="noWrap">
-      <span id="groups_by_roles">
-      <% @user.groups.each do |g| %>
-        <%= link_to g.displayName, group_path(g.school.puavoId, g) %> (<%= link_to g.school.displayName, school_path(g.school) %>)<br>
+    <th><%= t('users.show.groups_by_schools') %></th>
+    <td class="noWrap">
+      <ul class="userShowGroups" id="groups_by_roles">
+      <% @user_groups.each do |s| %>
+        <li><%= link_to s[0].displayName, school_path(s[0]) %>:<ul>
+          <% s[1].each do |g| %>
+            <li>
+              <%= link_to g.displayName, group_path(g.school.puavoId, g) %>
+              <% if g.puavoEduGroupType %>
+              <small>(<%= h humanize_group_type(g.puavoEduGroupType) %>)</small>
+              <% end %>
+            </li>
+          <% end %>
+        </ul></li>
       <% end %>
-      </span>
+      </ul>
     </td>
   </tr>
 

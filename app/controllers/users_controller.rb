@@ -83,6 +83,28 @@ class UsersController < ApplicationController
                                 :attribute => "puavoDevicePrimaryUser",
                                 :value => @user.dn.to_s)
 
+    # group user's groups by school
+    by_school_hash = {}
+
+    Array(@user.groups || []).each do |group|
+      unless by_school_hash.include?(group.school.dn)
+        by_school_hash[group.school.dn] = [group.school, []]
+      end
+
+      by_school_hash[group.school.dn][1] << group
+    end
+
+    # flatten the hash and sort the schools by name
+    @user_groups = []
+
+    by_school_hash.each { |_, data| @user_groups << data }
+    @user_groups.sort! { |a, b| a[0].displayName.downcase <=> b[0].displayName.downcase }
+
+    # then sort the per-school group lists by name
+    @user_groups.each do |data|
+      data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }

@@ -314,6 +314,7 @@ fi:
       system_information: "Järjestelmätietoja"
       contact_information: Yhteystiedot
       group_by_roles: "Roolien mukana tulevat ryhmät"
+      groups_by_schools: "Ryhmät kouluittain"
       change_school: Vaihda koulua
       primus_school_change_warning: "Tässä koulussa on käytössä Primus-integraatio. Käyttäjän siirto toiseen kouluun saattaa sotkea integraation toimintaa.\n\nHaluatko varmasti jatkaa?"
       user_is_locked: "Käyttäjätunnus on lukittu"
