@@ -205,20 +205,25 @@
 
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
-    <ul class="dropdown">
+    <div class="dropdown">
       <% if current_user.organisation_owner? %>
+      <ul>
+        <li>
+          <%= link_to new_rename_groups_path(@school) do %>
+            <i class='icon-exchange'></i><%= t('link.rename_groups') %>
+          <% end %>
+        </li>
+      </ul>
+      <% end %>
+
+      <ul>
       <li>
-        <%= link_to new_rename_groups_path(@school) do %>
-          <i class='icon-exchange'></i><%= t('link.rename_groups') %>
+        <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do %>
+          <i class='icon-trash'></i><%= t('link.destroy') %>
         <% end %>
       </li>
-      <% end %>
-    <li>
-      <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do %>
-        <i class='icon-trash'></i><%= t('link.destroy') %>
-      <% end %>
-    </li>
-    </ul>
+      </ul>
+    </div>
   </li>
 </ul>
 <% end %>

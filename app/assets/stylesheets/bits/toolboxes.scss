@@ -37,8 +37,6 @@
 
   /* A tool dropdown menu */
   .dropdown {
-    list-style: none;
-
     display: none;
     position: absolute;
 
@@ -64,20 +62,23 @@
     @media #{$screen-breakpoint-one} {
       margin-right: 13px;
     }
-  }
 
-  .haveDropdown:hover .btn {
-    background: $buttonHoverBack !important;
-  }
+    ul {
+      list-style: none;
+      margin: 0 0 5px 0;
+      padding: 0 0 5px 0;
 
-  /* Make the dropdown menu visible */
-  .haveDropdown:hover .dropdown {
-    visibility: visible;
-    display: block;
-  }
+      /* Group with separator lines */
+      border-bottom: 1px solid $toolsDropdownSeparator;
+    }
 
-  /* Dropdown menu entries */
-  .dropdown {
+    ul:last-of-type {
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Dropdown menu entries */
     li {
       margin: 1px;
     }
@@ -85,7 +86,7 @@
     a {
       text-decoration: none;
       display: block;
-      padding: 5px;
+      padding: 5px 10px;
       color: $toolsContainerLinkFore !important;
       background: transparent !important;
       white-space: nowrap;
@@ -98,5 +99,15 @@
         background: $toolsContainerLinkHoverBack !important;
       }
     }
+  }
+
+  .haveDropdown:hover .btn {
+    background: $buttonHoverBack !important;
+  }
+
+  /* Make the dropdown menu visible */
+  .haveDropdown:hover .dropdown {
+    visibility: visible;
+    display: block;
   }
 }

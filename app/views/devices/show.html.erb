@@ -22,28 +22,32 @@
 
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
-    <ul class="dropdown">
-      <li>
-        <% if @device.userCertificate %>
-        <%= link_to revoke_certificate_device_path(@school, @device), :method => :delete do %>
-          <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
-        <% end %>
-        <% end %>
-      </li>
+    <div class="dropdown">
+      <ul>
+        <li>
+          <%= link_to select_school_device_path(@school, @device) do%>
+            <i class="icon-exchange"></i><%= t('.change_school') %>
+          <% end %>
+        </li>
+      </ul>
 
-      <li>
-        <%= link_to select_school_device_path(@school, @device) do%>
-          <i class="icon-exchange"></i><%= t('.change_school') %>
-        <% end %>
-      </li>
+      <ul>
+        <li>
+          <% if @device.userCertificate %>
+          <%= link_to revoke_certificate_device_path(@school, @device), :method => :delete do %>
+            <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
+          <% end %>
+          <% end %>
+        </li>
 
-      <li>
-        <%= link_to(device_path(@school, @device), data: { confirm: t('destroy_confirm', object_name: @device.puavoHostname) },
-                    method: :delete) do %>
-          <i class="icon-trash"></i><%= t('link.destroy') %>
-        <% end %>
-      </li>
-    </ul>
+        <li>
+          <%= link_to(device_path(@school, @device), data: { confirm: t('destroy_confirm', object_name: @device.puavoHostname) },
+                      method: :delete) do %>
+            <i class="icon-trash"></i><%= t('link.destroy') %>
+          <% end %>
+        </li>
+      </ul>
+    </div>
   </li>
 </ul>
 <% end %>
