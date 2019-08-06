@@ -1,6 +1,9 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), @device.cn, t('titles.change_school') %>
 
+<div class="formContainer">
+
 <h1><%= t('.title', :name => @device.puavoHostname) %></h1>
+
 <%= form_for("device", :url => change_school_device_path(@school, @device))  do |f| %>
 
 <table class="editForm">
@@ -16,3 +19,5 @@
   </tr>
 </table>
 <% end %>
+
+</div>
