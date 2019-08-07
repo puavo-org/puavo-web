@@ -1270,13 +1270,13 @@ fi:
       title: "Koulun laitetilastot"
       no_devices: "Koulussa ei ole yhtään laitetta"
       no_devices_with_hardware_info: "Koulussa on laitteita, mutta yhdenkään laitetietoja ei ole otettu vastaan"
-      count_header: "Koulussa on yhteensä %{total} laitetta joista laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
+      count_header: "Koulussa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja (laitteiden tyypin mukaan) voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
 
     organisation_index:
       title: "Organisaation laitetilastot"
       no_devices: "Organisaatiossa ei ole yhtään laitetta"
       no_devices_with_hardware_info: "Organisaatiossa on laitteita, mutta yhdenkään laitetietoja ei ole otettu vastaan"
-      count_header: "Organisaatiossa on yhteensä %{total} laitetta joista laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
+      count_header: "Organisaatiossa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
 
     images:
       title: "Käytössä olevat työpöytäkuvat"
