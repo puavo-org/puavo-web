@@ -63,7 +63,7 @@
       <%= link_to insert_wbr(device[:name]), device_path(device[:school], device[:device]) %>
     </td>
 
-    <td data-title="<%= t('device_statistics.columns.timestamp') %>">
+    <td data-title="<%= t('device_statistics.columns.timestamp') %>" data-key="<%= device[:timestamp] %>">
       <%= (Time.at(device[:timestamp]).localtime.strftime('%Y-%m-%d&nbsp;%H:%M:%S')).html_safe %>
     </td>
 
@@ -119,7 +119,7 @@ $(document).ready(function() {
         [
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // school name
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
-            [ COLUMN_TYPE_STRING, 0 ],                  // timestamp (last update)
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // timestamp (last update)
             [ COLUMN_TYPE_STRING, 0 ],                  // device type
             [ COLUMN_TYPE_STRING, 0 ],                  // desktop image name
             [ COLUMN_TYPE_STRING, 0 ],                  // CPU
