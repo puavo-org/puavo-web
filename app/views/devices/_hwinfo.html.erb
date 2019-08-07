@@ -17,7 +17,7 @@ end
 
 <div class="hardwareInfo">
 
-<p class="timestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime %></p>
+<p class="timestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S') %></p>
 
 <table class="infoTable">
 

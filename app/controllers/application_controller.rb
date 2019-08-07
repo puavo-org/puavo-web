@@ -130,6 +130,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Converts LDAP operational created/modified timestamps to localtime (server time)
+  def convert_timestamp(t)
+    t.localtime.strftime('%Y-%m-%d %H:%M:%S') rescue '?'
+  end
+
   def puavo_users?
     # FIXME
     logger.warn "Deprecated call to puavo_users?"

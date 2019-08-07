@@ -113,12 +113,12 @@
 
     <tr>
       <th><%= t('ldap_create_time') %></th>
-      <td><%= h @school['createTimestamp'].nil? ? "?" : @school['createTimestamp'].localtime %></td>
+      <td><%= h @school['createTimestamp'] %></td>
     </tr>
 
     <tr>
       <th><%= t('ldap_modify_time') %></th>
-      <td><%= h @school['modifyTimestamp'].nil? ? "?" : @school['modifyTimestamp'].localtime %></td>
+      <td><%= h @school['modifyTimestamp'] %></td>
     </tr>
   </table>
 <%= end_box %>

@@ -146,18 +146,18 @@
 
   <tr>
     <th><%= t('ldap_create_time') %></th>
-    <td class="noWrap"><%= h @user['createTimestamp'].nil? ? '?' : @user['createTimestamp'].localtime %></td>
+    <td class="noWrap"><%= h @user['createTimestamp'] %></td>
   </tr>
 
   <tr>
     <th><%= t('ldap_modify_time')  %></th>
-    <td class="noWrap"><%= h @user['modifyTimestamp'].nil? ? '?' : @user['modifyTimestamp'].localtime %></td>
+    <td class="noWrap"><%= h @user['modifyTimestamp'] %></td>
   </tr>
 
   <% if @user.puavoRemovalRequestTime %>
   <tr>
     <th><%= t('.marked_for_removal') %></th>
-    <td class="userMarkedForDeletion noWrap"><%= h @user.puavoRemovalRequestTime.localtime %></td>
+    <td class="userMarkedForDeletion noWrap"><%= h @user.puavoRemovalRequestTime %></td>
   </tr>
   <% end %>
 </table>

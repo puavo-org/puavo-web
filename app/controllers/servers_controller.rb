@@ -29,8 +29,8 @@ class ServersController < ApplicationController
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = Server.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
-    @server['createTimestamp'] = extra['createTimestamp'] || nil
-    @server['modifyTimestamp'] = extra['modifyTimestamp'] || nil
+    @server['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
+    @server['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
     respond_to do |format|
       format.html # show.html.erb

@@ -49,7 +49,7 @@ class UsersController < ApplicationController
         # an actual UTC timestamp
         timestamp = Time.strptime(u["puavoRemovalRequestTime"], '%Y%m%d%H%M%S%z')
         u["puavoExactRemovalTimeRaw"] = timestamp.to_i
-        u["puavoExactRemovalTime"] = timestamp.localtime
+        u["puavoExactRemovalTime"] = convert_timestamp(timestamp)
         u["puavoFuzzyRemovalTime"] = fuzzy_time(now - timestamp)
       end
     end
@@ -76,8 +76,12 @@ class UsersController < ApplicationController
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = User.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
-    @user['createTimestamp'] = extra['createTimestamp'] || nil
-    @user['modifyTimestamp'] = extra['modifyTimestamp'] || nil
+    @user['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
+    @user['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+
+    if @user.puavoRemovalRequestTime
+      @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)
+    end
 
     @user_devices = Device.find(:all,
                                 :attribute => "puavoDevicePrimaryUser",
