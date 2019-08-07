@@ -2,6 +2,7 @@
 
 <% content_for :javascript do %>
 <%= javascript_include_tag 'sortableTable' %>
+<%= javascript_include_tag 'inpageTabs' %>
 <% end %>
 
 <h1><%= t('.title') %></h1>
@@ -13,6 +14,26 @@
 <% if @with_info.count == 0 %>
 <p class="genericNotice"><%= t('.no_devices_with_hardware_info') %></p>
 <% else %>
+
+<div class="tabBar" id="devStatsTabs">
+  <ul>
+    <li>
+        <a href="#withInfoTab"><%= t('device_statistics.device_lists.with_info') %> (<%= @with_info.count %>)</a>
+    </li>
+
+    <li>
+        <a href="#withoutInfoTab"><%= t('device_statistics.device_lists.without_info') %> (<%= @without_info.count %>)</a>
+    </li>
+
+    <li>
+        <a href="#imageStatisticsTab"><%= t('device_statistics.images.title') %> (<%= @image_stats.count %>)</a>
+    </li>
+  </ul>
+</div>
+
+<div class="tabContentsWrapper">
+
+<div class="tabContentsVisible" id="withInfoTab">
 
 <h2><%= t('device_statistics.device_lists.with_info') %></h2>
 
@@ -65,6 +86,10 @@
 <% end %>
 </table>
 
+</div>
+
+<div class="tabContentsInvisible" id="withoutInfoTab">
+
 <% unless @without_info.empty? %>
 <h2 id="withoutInfoHeader"><%= t('device_statistics.device_lists.without_info') %></h2>
 <div id="withoutInfoInner">
@@ -79,7 +104,15 @@
 </div>
 <% end %>
 
+</div>
+
+<div class="tabContentsInvisible" id="imageStatisticsTab">
+
 <%= render :partial => 'images', :locals => { :image_stats => @image_stats } %>
+
+</div>
+
+</div>
 
 <% end %>
 <% end %>
@@ -100,5 +133,7 @@ $(document).ready(function() {
         "fi",
         1, SORT_ORDER_DESCENDING
     );
+
+    new Tabs("devStatsTabs", 0);
 });
 </script>
