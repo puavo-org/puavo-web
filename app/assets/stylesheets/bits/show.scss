@@ -217,11 +217,22 @@
 
 /* Puavo-conf tables in various places */
 .puavoConf {
+  border: 1px solid $puavoConfBorder;
+
   tr:nth-child(odd) {
     background: $puavoConfOddRow;
   }
 
   tr:nth-child(even) {
     background: $puavoConfEvenRow;
+  }
+
+  th {
+    font-size: 100%;
+  }
+
+  td {
+    font-family: monospace;
+    width: 100%;
   }
 }

@@ -138,8 +138,8 @@ $toolsContainerBack: none;
 $toolsDropdownBack: #fff;
 $toolsDropdownBorder: #aaa;
 $toolsContainerLinkFore: #000;
-$toolsContainerLinkHoverFore: #fff;
-$toolsContainerLinkHoverBack: #c0772f;
+$toolsContainerLinkHoverFore: #000;
+$toolsContainerLinkHoverBack: $baseOrangeGradient;
 $toolsDropdownSeparator: #ccc;
 
 /* Basic info blocks about users, devices, etc. */
@@ -158,8 +158,9 @@ $contentBoxMultilineItemBorder: #ccc;
 $contentBoxTableHeadingBack: #ccc;
 
 /* puavo-conf tables */
-$puavoConfOddRow: #ddd;
-$puavoConfEvenRow: #fff;
+$puavoConfOddRow: #fff;
+$puavoConfEvenRow: #ddd;
+$puavoConfBorder: #bbb;
 
 /* Miscellaneous */
 $mountPointsHeadingBack: #ccc;

@@ -224,7 +224,7 @@ nav {
     overflow-y: auto;
     z-index: 11;              /* topbar is 10 */
     background: $topbarNavDropdownBack;
-    box-shadow: 6px 6px 6px $defaultBoxShadow;
+    box-shadow: 0 10px 10px $defaultBoxShadow;
     list-style-type: none;
   }
 
