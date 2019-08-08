@@ -10,20 +10,30 @@
   <tr class="thead">
     <th><%= sortable_list_column_header(t('activeldap.attributes.group.displayName')) %></th>
     <th><%= sortable_list_column_header(t('activeldap.attributes.group.cn')) %></th>
+    <% if have_primus %>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.group.puavoExternalId')) %></th>
+    <% end %>
     <th><%= sortable_list_column_header(t('activeldap.attributes.group.puavoEduGroupType')) %></th>
     <th><%= t('.actions') %></th>
   </tr>
 
 <% @groups.each do |group| %>
   <tr>
-    <td data-title="<%=t('activeldap.attributes.group.displayName')%>">
+    <td data-title="<%= t('activeldap.attributes.group.displayName') %>">
       <%= link_to group.displayName, group_path(@school, group) %>
       <%= " (#{Array(group.memberUid).count})" %>
     </td>
-    <td data-title="<%=t('activeldap.attributes.group.cn')%>">
+    <td data-title="<%= t('activeldap.attributes.group.cn') %>">
       <%= group.cn %>
     </td>
-    <td data-title="<%=t('activeldap.attributes.group.puavoEduGroupType')%>">
+
+    <% if have_primus %>
+    <td data-title="<%= t('activeldap.attributes.group.puavoExternalId') %>">
+      <%= group.puavoExternalId %>
+    </td>
+    <% end %>
+
+    <td data-title="<%= t('activeldap.attributes.group.puavoEduGroupType') %>">
       <% if group.puavoEduGroupType.nil? %>
       <span class="missingData"><%= t('missing_data') %></span>
       <% else %>
@@ -37,13 +47,13 @@
       <% end %>
       <% end %>
     </td>
-    <td data-title="<%=t('.actions')%>" class="tableActions">
+    <td data-title="<%= t('.actions') %>" class="tableActions">
       <%= link_to edit_group_path(@school, group), class: "btn" do%>
         <i class='icon-pencil'></i><%= t('link.edit') %>
       <% end %>
 
-      <%= link_to group_path(@school, group), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do%>
-        <i class='icon-trash'></i><%= t('link.destroy')%>
+      <%= link_to group_path(@school, group), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do %>
+        <i class='icon-trash'></i><%= t('link.destroy') %>
       <% end %>
     </td>
   </tr>
@@ -60,7 +70,10 @@ $(document).ready(function() {
         "groups",
         [
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // group name
-            [ COLUMN_TYPE_STRING, 0 ],                  // abbrevition
+            [ COLUMN_TYPE_STRING, 0 ],                  // abbreviation
+            <% if have_primus %>
+            [ COLUMN_TYPE_STRING, 0 ],                  // external ID
+            <% end %>
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // type
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
         ],

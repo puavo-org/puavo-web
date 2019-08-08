@@ -28,7 +28,7 @@
 <% content_for :tools do %>
 <ul>
   <li>
-    <%= link_to mark_groupless_users_for_deletion_path(@school), class: 'btn btn', data: { confirm: t('general_confirm') }, method: :put do %>
+    <%= link_to mark_groupless_users_for_deletion_path(@school), class: 'btn', data: { confirm: t('general_confirm') }, method: :put do %>
       <i class="icon-flag"></i><%= t('groups.groupless_users.mark_for_deletion') %>
     <% end %>
   </li>
