@@ -23,7 +23,11 @@
         <% else %>
           <li>
         <% end %>
+        <% if item.owners_only %>
+            <%= link_to item.title, item.link, class: 'ownersOnlyTop' %>
+        <% else %>
             <%= link_to item.title, item.link %>
+        <% end %>
           </li>
         <% end %>
         </ul>

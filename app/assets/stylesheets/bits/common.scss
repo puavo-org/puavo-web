@@ -18,6 +18,10 @@
   border: 1px dashed $ownersOnlyBorder;
 }
 
+.ownersOnlyTop {
+  border: 1px dashed $ownersOnlyBorder !important;
+}
+
 /* Wraps everything on the page below the topmenu */
 #pageWrapper {
   margin: 0;

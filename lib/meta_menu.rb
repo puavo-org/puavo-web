@@ -21,7 +21,7 @@ class MetaMenu
   end
 
 
-  [:hide_when, :link, :title].each do |method_name|
+  [:hide_when, :link, :title, :owners_only].each do |method_name|
     define_singleton_method method_name do |&block|
       store[method_name] = block
     end
