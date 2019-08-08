@@ -25,7 +25,7 @@ Feature: Manage devices
 
   Scenario: Edit fatclient configuration
     Given I am on the devices list page
-    And I press "Edit" on the "fatclient-01" row
+    And I press "Edit..." on the "fatclient-01" row
     When I fill in "Default input audio device" with "usb://input-audio-device"
     And I fill in "Default output audio device" with "usb://output-audio-device"
     And I fill in "device_fs_0" with "nfs3"
@@ -63,7 +63,7 @@ Feature: Manage devices
 
   Scenario: Edit laptop configuration
     Given I am on the devices list page
-    And I press "Edit" on the "laptop-01" row
+    And I press "Edit..." on the "laptop-01" row
     When I choose "device_puavoAutomaticImageUpdates_true"
     And I choose "device_puavoPersonallyAdministered_true"
     And I press "Update"
@@ -73,12 +73,12 @@ Feature: Manage devices
 
   Scenario: Change primary user for laptop
     Given I am on the devices list page
-    And I press "Edit" on the "laptop-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "Device primary user" with "pavel"
     And I press "Update"
     Then I should see "Device was successfully updated."
     And I should see "Device primary user Pavel Taylor"
-    When I follow "Edit"
+    When I follow "Edit..."
     And I fill in "Device primary user" with ""
     And I press "Update"
     Then I should see "Device was successfully updated."
@@ -87,14 +87,14 @@ Feature: Manage devices
   Scenario: Change Image series source URL
     Given I am logged in as "example" organisation owner
     And I am on the devices list page
-    And I press "Edit" on the "laptop-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "device[puavoImageSeriesSourceURL][]" with "http://foobar.opinsys.fi/trusty"
     And I press "Update"
     And I should see "http://foobar.opinsys.fi/trusty"
 
   Scenario: Check for unique tags
     Given I am on the devices list page
-    And I press "Edit" on the "laptop-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "Tags" with "tagA tagB"
     And I press "Update"
     Then I should see "Device was successfully updated."
@@ -102,7 +102,7 @@ Feature: Manage devices
 
   Scenario: Check that duplicate tags are removed
     Given I am on the devices list page
-    And I press "Edit" on the "laptop-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I fill in "Tags" with "tagA tagB tagB"
     And I press "Update"
     Then I should see "Device was successfully updated."
@@ -110,42 +110,42 @@ Feature: Manage devices
 
   Scenario: Give the device an image
     Given I am on the devices list page
-    And I press "Edit" on the "laptop-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Update"
     Then I should see "Device was successfully updated."
 
   Scenario: Give the device a non-image file as the image
     Given I am on the devices list page
-    And I press "Edit" on the "laptop-01" row
+    And I press "Edit..." on the "laptop-01" row
     And I attach the file at "features/support/hello.txt" to "Image"
     And I press "Update"
     Then I should see "Failed to save the image"
 
   Scenario: Ensure invalid characters in the serial number field don't crash (part 1)
     Given I am on the devices list page
-    And I press "Edit" on the "fatclient-01" row
+    And I press "Edit..." on the "fatclient-01" row
     And I fill in "Serial number" with "ääääää"
     And I press "Update"
     Then I should see "Serial number contains invalid characters"
 
   Scenario: Ensure invalid characters in the serial number field don't crash (part 2)
     Given I am on the devices list page
-    And I press "Edit" on the "thin-01" row
+    And I press "Edit..." on the "thin-01" row
     And I fill in "Serial number" with "ääääää"
     And I press "Update"
     Then I should see "Serial number contains invalid characters"
 
   Scenario: Invalid primary user should not crash
     Given I am on the devices list page
-    And I press "Edit" on the "thin-01" row
+    And I press "Edit..." on the "thin-01" row
     And I fill in "Device primary user" with "does not exist"
     And I press "Update"
     Then I should see "Device primary user is invalid"
 
   Scenario: Poor man's script injection check
     Given I am on the devices list page
-    And I press "Edit" on the "thin-01" row
+    And I press "Edit..." on the "thin-01" row
     And I fill in "Device manufacturer" with "<script>alert(456)</script>"
     And I press "Update"
     Then I should see "Device was successfully updated"
@@ -153,7 +153,7 @@ Feature: Manage devices
 
   Scenario: Ensure Markdown and HTML stays escaped and uninterpreted
     Given I am on the devices list page
-    And I press "Edit" on the "thin-01" row
+    And I press "Edit..." on the "thin-01" row
     And I fill in "Description" with:
         """
         <h1>TITLE</h1> <a href="#">foobar</a> <ul><li>foo</li><li>bar</li></ul>

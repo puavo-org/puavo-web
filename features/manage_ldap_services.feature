@@ -14,7 +14,7 @@ Feature: Manage LDAP services
 
   Scenario: Add new LDAP service
     Given I follow "LDAP service"
-    And I follow "New" within "#pageContainer"
+    And I follow "New..." within "#pageContainer"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "password"
@@ -57,7 +57,7 @@ Feature: Manage LDAP services
       | uid 4 | description 4 | sercretpassword4 | auth   |
     And I follow "LDAP service"
     And I follow "uid 1"
-    And I follow "Edit"
+    And I follow "Edit..."
     Then I should not see "{SSHA}"
     When I fill in "Description" with "test description one"
     And I check "getent passwd and group"
@@ -70,14 +70,14 @@ Feature: Manage LDAP services
 
   Scenario: Edit LDAP service and unceck all system groups
     Given I follow "LDAP service"
-    And I follow "New" within "#pageContainer"
+    And I follow "New..." within "#pageContainer"
     When I fill in "Service Identifier" with "uid 1"
     And I fill in "Description" with "description 1"
     And I fill in "Password" with "secretpassword"
     And I check "LDAP bind (dn, uid)"
     And I check "getent passwd and group"
     And I press "Create"
-    And I follow "Edit"
+    And I follow "Edit..."
     And I uncheck "getent passwd and group"
     And I uncheck "LDAP bind (dn, uid)"
     And I press "Update"

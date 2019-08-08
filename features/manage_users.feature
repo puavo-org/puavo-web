@@ -88,7 +88,7 @@ Feature: Manage users
     And the memberUid should include "ben" on the "School 1" school
     And the member should include "ben" on the "School 1" school
     And the memberUid should include "ben" on the "Domain Users" samba group
-    When I follow "Edit"
+    When I follow "Edit..."
     Then I am on the edit user page with "ben"
     When I follow "Cancel"
     Then I am on the show user page with "ben"
@@ -191,7 +191,7 @@ Feature: Manage users
     And the member should include "ben-edit" on the "School 1" school
     And the memberUid should include "ben-edit" on the "Domain Users" samba group
     And the memberUid should not include "ben" on the "Domain Users" samba group
-    When I follow "Edit"
+    When I follow "Edit..."
     And I fill in "Given name" with "BenEDIT2"
     And I press "Update"
     Then I should see "User was successfully updated."
@@ -416,7 +416,7 @@ Feature: Manage users
     And I should see "Donald Duck"
     And I should see "Duck Donald"
     #
-    When I follow "Edit"
+    When I follow "Edit..."
     Then I am on the edit user page with "donald"
     And I fill in "Given name" with "Duck"
     And I fill in "Surname" with "Donald"

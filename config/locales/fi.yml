@@ -124,14 +124,14 @@ fi:
   link:
     save: Tallenna
     more: Muut toiminnot
-    edit: Muokkaa
+    edit: Muokkaa...
     back: Takaisin
     cancel: "Peruuta"
     destroy: Poista
     delete_school: "Poista koulu"
-    new_group: "Uusi ryhmä"
+    new_group: "Uusi ryhmä..."
     delete_group: "Poista ryhmä"
-    find_groupless_users: "Etsi ryhmättömät käyttäjät"
+    find_groupless_users: "Etsi ryhmättömät käyttäjät..."
     create_username_list_from_group: "Luo jäsenistä uusi käyttäjätunnuslista"
     get_members_as_csv: "Lataa ryhmän käyttäjälista CSV:nä"
     remove_all_members_from_group: "Poista ryhmästä kaikki jäsenet"
@@ -149,15 +149,15 @@ fi:
     add: "Lisää"
     remove: Poista
     new_role: Uusi rooli
-    new_user: "Uusi käyttäjä"
+    new_user: "Uusi käyttäjä..."
     delete_user: "Poista käyttäjä"
     delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
     continue: Jatka
     login: Kirjaudu
     change_password: Vaihda salasana
-    new_school: Uusi koulu
-    new_ldap_service: Uusi
-    rename_groups: Vuosiluokkasiirto
+    new_school: Uusi koulu...
+    new_ldap_service: Uusi...
+    rename_groups: Vuosiluokkasiirto...
     devices: Laitelista
     device_statistics: Laitetilastot
     delete_device: "Poista laite"
@@ -315,7 +315,7 @@ fi:
       contact_information: Yhteystiedot
       group_by_roles: "Roolien mukana tulevat ryhmät"
       groups_by_schools: "Ryhmät kouluittain"
-      change_school: Vaihda koulua
+      change_school: Vaihda koulua...
       primus_school_change_warning: "Tässä koulussa on käytössä Primus-integraatio. Käyttäjän siirto toiseen kouluun saattaa sotkea integraation toimintaa.\n\nHaluatko varmasti jatkaa?"
       user_is_locked: "Käyttäjätunnus on lukittu"
       user_is_marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
@@ -367,7 +367,7 @@ fi:
       description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Liitä ryhmään" -painikkeita.
       placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
     new:
-      title: "Luo uusi ryhmä"
+      title: "Luo uusi ryhmä..."
     edit:
       title: "Muokkaa ryhmää"
       course_group_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Ryhmään tekemäsi muutokset tullaan todennäköisesti kumoamaan. Älä koskaan vaihda tämän ryhmän ulkoista ID:tä!"
@@ -379,7 +379,7 @@ fi:
       member: Jäsen
       add_to_group: Liitä ryhmään
     groupless_users:
-      title: "Etsi ryhmättömät käyttäjät"
+      title: "Etsi ryhmättömät käyttäjät..."
       count: "Löytyi %{count} ryhmätöntä käyttäjää."
       mark_for_deletion: "Merkitse nämä käyttäjät poistettavaksi"
   schools:
@@ -1004,7 +1004,7 @@ fi:
     cups:
       cups_settings: CUPS-asetukset
     show:
-      change_school: Vaihda koulua
+      change_school: Vaihda koulua...
       hw_info_button: "Näytä laitteistotiedot..."
       no_hw_info: "(Tuntematon/Ei koskaan)"
     select_school:
@@ -1095,7 +1095,7 @@ fi:
     bootserver_ref: "boottipalvelimia"
     no_printers_nonowner: "Tälle koululle ei ole määritetty tulostimia boot-palvelimien kautta. Ylläpitäjät, joilla on organisaatiotason omistajaoikeudet, voivat lisätä tulostimia."
     index:
-      edit_permissions: Muokkaa oikeuksia
+      edit_permissions: Muokkaa oikeuksia...
       bootserver: Boot-palvelin
     edit:
       title: Tulostimen käyttöoikeudet

@@ -106,7 +106,7 @@ Feature: Manage schools
 
   Scenario: Edit school and set empty names
     Given I am on the school page with "Greenwich Steiner School"
-    And I follow "Edit"
+    And I follow "Edit..."
     When I fill in "School name" with ""
     And I fill in "Group name" with ""
     And I press "Update"
@@ -116,7 +116,7 @@ Feature: Manage schools
 
   Scenario: Change school name
     Given I am on the school page with "Greenwich Steiner School"
-    And I follow "Edit"
+    And I follow "Edit..."
     When I fill in "School name" with "St. Paul's"
     And I press "Update"
     Then I should see "St. Paul's"
@@ -317,7 +317,7 @@ Scenario: Set, edit and check the school code
     And I press "Create"
     Then I should see "School was successfully created"
     And I should see "testcode"
-    When I follow "Edit"
+    When I follow "Edit..."
     And I fill in "School code" with "foobar"
     And I press "Update"
     Then I should see "School was successfully updated."
@@ -335,7 +335,7 @@ Scenario: Set the school code for an existing school
     | Group name                          | test2         |
     And I press "Create"
     Then I should see "School was successfully created"
-    When I follow "Edit"
+    When I follow "Edit..."
     And I fill in "School code" with "bazquux"
     And I press "Update"
     Then I should see "School was successfully updated."

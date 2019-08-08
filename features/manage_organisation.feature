@@ -36,7 +36,7 @@ Feature: Manage organisation
 
   Scenario: Edit information of the organisation
     When I follow "About"
-    And I follow "Edit"
+    And I follow "Edit..."
     Then I fill in the following:
     | Description                                    | Example Organisation located  in the middle of the Finland |
     | Phone number                                   | 123456789                                                  |
