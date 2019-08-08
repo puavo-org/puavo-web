@@ -98,15 +98,21 @@ th {
       display: none;
     }
 
+    tbody > tr:last-child {
+      border-bottom: none;
+    }
+
+
     tr {
       display: block;
       padding: 2%;
+      border-bottom: 1px solid $listRowBorder;
     }
 
     td {
       display: block;
       padding: 2px;
-      border-bottom: none;
+      border: none;
     }
 
     td:first-of-type {

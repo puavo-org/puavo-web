@@ -56,6 +56,13 @@ hr {
   visibility: hidden;
 }
 
+abbr {
+  @media #{$screen-breakpoint-one} {
+    /* cannot be hovered, hide the underline */
+    text-decoration: none;
+  }
+}
+
 abbr[title]:after {
   content: "";
 
