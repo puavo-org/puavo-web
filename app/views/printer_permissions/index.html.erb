@@ -36,6 +36,6 @@
 <% if current_user.organisation_owner? %>
 <p class="ownersOnly"><%= t("printer_permissions.no_printers_html", :href => link_to(t("printer_permissions.bootserver_ref"), servers_path)) %></p>
 <% else %>
-<p><%= t("printer_permissions.no_printers_nonowner") %></p>
+<p class="genericNotice"><%= t("printer_permissions.no_printers_nonowner") %></p>
 <% end %>
 <% end %>
