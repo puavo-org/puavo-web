@@ -1,12 +1,12 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.devices'), t('titles.printer_permissions') %>
 
 <% unless @printers.empty? %>
-<table class="list">
+<table class="list" id="printers">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
-    <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
-    <th><%= t('activeldap.attributes.printer.printerLocation') %></th>
-    <th><%= t('printer_permissions.index.bootserver') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerDescription')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerMakeAndModel')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerLocation')) %></th>
+    <th><%= sortable_list_column_header(t('printer_permissions.index.bootserver')) %></th>
     <th><%= t('actions') %></th>
   </tr>
 
@@ -30,6 +30,27 @@
   </tr>
   <% end %>
 </table>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag 'sortableTable' %>
+<% end %>
+
+<script>
+$(document).ready(function() {
+    new SortableTable(
+        "printers",
+        [
+            [ COLUMN_TYPE_STRING ],                     // description (name)
+            [ COLUMN_TYPE_STRING ],                     // make and model
+            [ COLUMN_TYPE_STRING ],                     // location
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // boot server
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
+        ],
+        "fi"
+    );
+});
+</script>
+
 <% end %>
 
 <% if @printers.empty? %>
