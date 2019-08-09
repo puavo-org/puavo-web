@@ -157,6 +157,15 @@ $contentBoxContentsHeaderFore: #000;
 $contentBoxMultilineItemBorder: #ccc;
 $contentBoxTableHeadingBack: #ccc;
 
+/* In-page tabs */
+$inpageTabsWrapperBorder: #888;
+$inpageTabsInactiveTabBackground: #ccc;
+$inpageTabsInactiveTabForeground: #000;
+$inpageTabsActiveTabBackground: #fff;
+$inpageTabsActiveTabForeground: #000;
+$inpageTabsTabHoverBackground: $baseOrange;
+$inpageTabsTabHoverForeground: 000;
+
 /* puavo-conf tables */
 $puavoConfOddRow: #fff;
 $puavoConfEvenRow: #ddd;

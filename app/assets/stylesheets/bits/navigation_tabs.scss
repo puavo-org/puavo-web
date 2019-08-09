@@ -133,31 +133,32 @@
     padding: 5px 50px;
     outline: none;
     text-decoration: none;
-    background: #ccc !important;
-    color: #000 !important;
+    background: $inpageTabsInactiveTabBackground !important;
+    color: $inpageTabsInactiveTabForeground !important;
     font-weight: normal !important;
-
-    border: 1px solid #888;
+    border: 1px solid $inpageTabsWrapperBorder;
 
     &:hover {
-      background: $baseOrange !important;
+      background: $inpageTabsTabHoverBackground !important;
+      color: $inpageTabsTabHoverForeground !important;
     }
   }
 
   a.tabActive {
-    background: #fff !important;
+    background: $inpageTabsActiveTabBackground !important;
+    color: $inpageTabsActiveTabForeground !important;
     cursor: default !important;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid $inpageTabsActiveTabBackground;
 
     &:hover {
-      background: #fff !important;
+      background: $inpageTabsActiveTabBackground !important;
     }
   }
 }
 
 .tabContentsWrapper {
   margin-top: -1px;
-  border: 1px solid #888;
+  border: 1px solid $inpageTabsWrapperBorder;
 
   padding: 10px;
 
