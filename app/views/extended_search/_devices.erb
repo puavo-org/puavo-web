@@ -1,8 +1,16 @@
+<p class="resultStatistics">
+<%= t('extended_search.results.statistics',
+      :num_terms => @num_terms,
+      :num_hits => @num_hits,
+      :num_misses => @num_misses) %>
+</p>
+
 <% unless @results.empty? %>
 <table class="list">
   <tr class="thead">
     <th><%= t('extended_search.results.search_term_title') %></th>
     <th class="matched"><%= t('extended_search.results.matched_string') %></th>
+    <th>ID</th>
     <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
     <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
     <th><%= t('activeldap.attributes.school.displayName') %></th>
@@ -11,9 +19,10 @@
   <tr>
     <td class="term"><%= term %></td>
     <% unless device %>
-    <td colspan="4" class="noMatches"><%= t('extended_search.results.no_term_hits') %></td>
+    <td colspan="5" class="noMatches"><%= t('extended_search.results.no_term_hits') %></td>
     <% else %>
     <td class="matched"><%= matched %></td>
+    <td data-title="ID"><%= h device[:id] %></td>
     <td data-title="<%= t('activeldap.attributes.device.puavoHostname') %>">
       <% if device[:school] %>
       <%= link_to "#{device[:name]}", device_path(device[:school], device[:id]) %>

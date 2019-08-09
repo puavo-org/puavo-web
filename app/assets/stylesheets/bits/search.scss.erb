@@ -124,45 +124,30 @@ fieldset.search_result {
       width: 100%;
     }
   }
+}
 
-  #searchHelpContainer {
-    vertical-align: top;
-  }
-
-  #searchHelp {
-    padding-left: 10px;
-
-    h6 {
-      padding: 0;
-      margin: 0;
-      font-weight: bold;
-      text-decoration: underline;
-    }
-
-    @media #{$screen-breakpoint-one} {
-      /* Takes up too much space on mobile, assume the
-         user already knows how to use this tool... */
-      display: none;
-    }
-  }
+#extendedSearchResultsTitle {
+  background: $extendedSearchResultsBackground;
+  border: none;
+  padding: 5px 10px;
 }
 
 #extendedSearchResultsContainer {
   .searchError {
-    color: $advancedSearchError;
+    color: $extendedSearchError;
     padding: 0;
     margin: 0;
   }
 
   .noResults {
-    color: $advancedSearchNoResults;
+    color: $extendedSearchNoResults;
     padding: 0;
     margin: 0;
   }
 
   .list th.matched {
     /* The search term header column */
-    border-right: 1px solid $listHeadingBorder;
+    border-right: 1px solid $extendedSearchResultsDivider !important;
   }
 
   .term, .matched {
@@ -175,11 +160,11 @@ fieldset.search_result {
   }
 
   .matched {
-    border-right: 1px solid $listRowBorder;
+    border-right: 1px solid $extendedSearchResultsDivider;
   }
 
   .noMatches {
-    color: $advancedSearchNoMatches;
+    color: $extendedSearchNoMatches;
   }
 }
 
