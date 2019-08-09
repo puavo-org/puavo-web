@@ -1158,6 +1158,7 @@ en:
       help: Help
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
+
   fuzzy_time:
     just_now: "just now"
     less_than_minute: "less than a minute ago"
@@ -1169,6 +1170,7 @@ en:
     days: "%{d} days ago"
     month: "a month ago"
     months: "%{month} months ago"
+
   hwinfo:
     title: "Hardware information"
     no_info: "No hardware information received from this device"
@@ -1225,11 +1227,12 @@ en:
       voltage: "Voltage"
       capacity: "Capacity"
       percentage: "Percentage"
+
   extended_search:
     title: "Extended Search"
     search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
-    search_terms_title: "Search terms type:"
-    search_term_types:
+    terms_title: "Search terms type:"
+    term_names:
       users:
         title: "Users"
         puavoid: "Users: Puavo ID"
@@ -1260,8 +1263,8 @@ en:
         serial_number: "Devices: Serial number"
     school_limit_title: "School limit:"
     school_limit_all: "(All schools)"
-    regexp_title: "Regexp (PCRE)"
-    remove_unmatched_title: "Remove non-matching terms from the results"
+    regexp_title: "Regexp (allows partial matches, see help)"
+    remove_misses_title: "Remove missed terms from results"
     help_title: "Some important things"
     help_1: "Search results are listed in the same order as the terms that matched them are listed in the above box. Each term can match multiple items."
     help_2: "The way user's first and last names are matched, you cannot use regexps with them at the moment. First and last matching is ALWAYS done in case-insensitive mode."
@@ -1273,7 +1276,7 @@ en:
     results_title: "Results"
     results:
       search_term_title: "Search term"
-      no_term_hits: "(Search term did not match anything)"
+      no_term_hits: "(No hits)"
       no_results: "(No results)"
     errors:
       unknown_school: "(Unknown school)"
@@ -1281,8 +1284,10 @@ en:
       invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
       search_terms_cleanup_failed: "Search term cleanup failed"
       no_search_terms: "No search terms"
+      school_limit_failed: "School limit parsing failed"
       invalid_regexp: "Invalid regexp "
       unknown_search_term_type: "Unknown search term type "
+
   device_statistics:
     columns:
       timestamp: "Data received"

@@ -1128,6 +1128,7 @@ fi:
       help: "Apua"
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
+
   fuzzy_time:
     just_now: "juuri nyt"
     less_than_minute: "alle minuutti sitten"
@@ -1139,6 +1140,7 @@ fi:
     days: "%{d} päivää sitten"
     month: "kuukausi sitten"
     months: "%{month} kuukautta sitten"
+
   hwinfo:
     title: "Laitetiedot"
     no_info: "Ei vastaanotettuja laitetietoja tästä laitteesta"
@@ -1195,11 +1197,12 @@ fi:
       voltage: "Jännite"
       capacity: "Kapasiteetti"
       percentage: "Latausaste"
+
   extended_search:
     title: "Laajennettu haku"
     search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
-    search_terms_title: "Minkä tyyppisiä hakutermit ovat:"
-    search_term_types:
+    terms_title: "Minkä tyyppisiä hakutermit ovat:"
+    term_names:
       users:
         title: "Käyttäjät"
         puavoid: "Käyttäjät: Puavo ID"
@@ -1230,8 +1233,8 @@ fi:
         serial_number: "Laitteet: Sarjanumero"
     school_limit_title: "Koulurajaus:"
     school_limit_all: "(Kaikki koulut)"
-    regexp_title: "Regexp (PCRE)"
-    remove_unmatched_title: "Poista ei-täsmäävät termit tuloksista"
+    regexp_title: "Regexp (sallii osittaiset osumat, katso ohje)"
+    remove_misses_title: "Poista hutitermit tuloksista"
     help_title: "Huomioitavia asioita"
     help_1: "Hakutulokset näytetään siinä järjestyksessä, kun niihin täsmäävät hakutermit ovat laatikossa. Jokainen termi voi täsmätä useisiin kohteisiin."
     help_2: "Johtuen tavasta, jolla etunimiä ja sukunimiä etsitään, niissä ei (toistaiseksi) voi käyttää regexpejä. Nimien täsmäys tehdään AINA kirjainkoosta välittämättä."
@@ -1244,16 +1247,19 @@ fi:
     results:
       search_term_title: "Hakutermi"
       matched_string: "Täsmännyt teksti"
-      no_term_hits: "(Hakutermi ei täsmännyt mihinkään)"
+      no_term_hits: "(Ei osumia)"
       no_results: "(Ei osumia)"
+      statistics: "%{num_terms} hakutermi(ä); %{num_hits} osuma(a), %{num_misses} huti(a)"
     errors:
       unknown_school: "(Tuntematon koulu)"
     controller:
       invalid_search_data: "Virheellinen hakupyyntö: termit tai niiden tyyppi puuttuu"
       search_terms_cleanup_failed: "Hakutermien siivous epäonnistui"
       no_search_terms: "Ei hakutermejä"
+      school_limit_failed: "Koulurajoituksen selvitys epäonnistui"
       invalid_regexp: "Virheellinen regexp-lause "
       unknown_search_term_type: "Tuntematon hakutermien tyyppi "
+
   device_statistics:
     columns:
       timestamp: "Tiedot saatu"
