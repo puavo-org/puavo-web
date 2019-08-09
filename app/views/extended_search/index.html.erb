@@ -101,13 +101,11 @@
 
   <!-- SEARCH HELP -->
   <div class="tabContentsInvisible" id="helpTab">
-    <h3><%= t('extended_search.help_title') %></h3>
-    <ul>
-      <li><%= t('extended_search.help_1') %></li>
-      <li><%= t('extended_search.help_2') %></li>
-      <li><%= t('extended_search.help_3') %></li>
-      <li><%= t('extended_search.help_4') %></li>
-    </ul>
+    <% if I18n.locale.to_s == 'fi' %>
+    <%= render :partial => "help_fi.html" %>
+    <% else %>
+    <%= render :partial => "help_en.html" %>
+    <% end %>
   </div>  <!-- #helpTab -->
 
   </div>  <!-- .tabContentsWrapper -->

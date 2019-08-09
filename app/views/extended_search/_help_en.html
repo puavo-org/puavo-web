@@ -1,0 +1,16 @@
+<h2>Quick Help</h2>
+
+<p>This tool searches for users, groups and devices using multiple search terms. You can choose what type the terms are and with this target other fields than just the name.</p>
+
+<p>You can have more than one search term. All terms are compared againt every item in the database and the matching items are listed on the table. The search terms are "cleaned up" first: empty lines and lines that start with a hash (#) are removed. In addition to this, whitespace from start and end of each line is removed. Only then they are used for searching.</p>
+
+<h2>Some useful tips</h2>
+
+<ul>
+<li>Each search term can match multiple items. Searching is not stopped when the first hit is found.</li>
+<li>The search results are listed in the order the matching terms are in the search box.</li>
+<li>For regexp searches, partial string matches are enough. For non-regexp searches, the whole word must match.</li>
+<li>Because of the way user's first and last names are searched, you cannot use regexps with them. First and last name matching is always done case insensitively.</li>
+<li>If the user you're searching for has more than one first name, separate the first names and the last name with a comma. Automatic name splitting works only with names that have two parts.</li>
+<li>Some search types are always regexp searches, because they would be useless otherwise (the whole term must match). For example, searching from Xrandr settings would be useless without partial matching, because then you'd have to copy the whole string in the search box, making the search useless.</li>
+</ul>
