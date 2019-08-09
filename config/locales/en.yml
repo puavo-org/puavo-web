@@ -1302,14 +1302,14 @@ en:
 
     school_index:
       title: "School device statistics"
-      no_devices: "This school has no devices at all"
-      no_devices_with_hardware_info: "This school has devices, but none of them have sent any hardware information"
+      no_devices: "This school has no devices that could send their hardware information."
+      no_devices_with_hardware_info: "This school has devices, but no hardware information has been received from any of them."
       count_header: "This school has a total of %{total} devices that (based on their type) can send hardware information. Of those, %{with_info} have sent their information:"
 
     organisation_index:
       title: "Organisation device statistics"
-      no_devices: "This organisation has no devices at all"
-      no_devices_with_hardware_info: "This organisation has devices, but none of them have sent any hardware information."
+      no_devices: "This organisation has no devices at all."
+      no_devices_with_hardware_info: "This organisation has devices, but no hardware information has been received from any of them."
       count_header: "This organisation has a total of %{total} devices that (based on their type) can send hardware information. Of those, %{with_info} have sent their information:"
 
     images:

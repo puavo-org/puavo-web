@@ -1274,14 +1274,14 @@ fi:
 
     school_index:
       title: "Koulun laitetilastot"
-      no_devices: "Koulussa ei ole yhtään laitetta"
-      no_devices_with_hardware_info: "Koulussa on laitteita, mutta yhdenkään laitetietoja ei ole otettu vastaan"
-      count_header: "Koulussa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja (laitteiden tyypin mukaan) voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
+      no_devices: "Koulussa ei ole yhtään laitetta joista laitetietoja voisi saada."
+      no_devices_with_hardware_info: "Koulussa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
+      count_header: "Koulussa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
 
     organisation_index:
       title: "Organisaation laitetilastot"
-      no_devices: "Organisaatiossa ei ole yhtään laitetta"
-      no_devices_with_hardware_info: "Organisaatiossa on laitteita, mutta yhdenkään laitetietoja ei ole otettu vastaan"
+      no_devices: "Organisaatiossa ei ole yhtään laitetta."
+      no_devices_with_hardware_info: "Organisaatiossa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
       count_header: "Organisaatiossa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
 
     images:
