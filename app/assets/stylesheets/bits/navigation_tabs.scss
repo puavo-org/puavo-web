@@ -118,10 +118,9 @@
 .tabBar {
   ul {
     list-style-type: none;
-    margin: 2em 0 0 0;
-    padding: 0;
+    margin: 0;
+    padding: 0 0 0 5px;
     display: flex;
-    background: $baseOrange;
   }
 
   li {
@@ -131,29 +130,40 @@
 
   a {
     display: block;
-    padding: 10px 20px;
+    padding: 5px 50px;
     outline: none;
     text-decoration: none;
-    background: $baseOrange !important;
+    background: #ccc !important;
     color: #000 !important;
     font-weight: normal !important;
 
+    border: 1px solid #888;
+
     &:hover {
-      background: $baseOrangeGradient !important;
+      background: $baseOrange !important;
     }
   }
 
   a.tabActive {
-    background: $baseOrangeGradient !important;
+    background: #fff !important;
     cursor: default !important;
+    border-bottom: 1px solid #fff;
 
     &:hover {
-      background: $baseOrangeGradient !important;
+      background: #fff !important;
     }
   }
 }
 
 .tabContentsWrapper {
+  margin-top: -1px;
+  border: 1px solid #888;
+
+  padding: 10px;
+
+  :first-child {
+    margin-top: 0;
+  }
 }
 
 .tabContentsInvisible {
