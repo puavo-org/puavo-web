@@ -20,12 +20,20 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-size: 250%;
   border-bottom: 1px solid $headerBorder;
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 200%;
+  }
 }
 
 h2 {
   margin-top: 25px;
   font-size: 200%;
   border-bottom: 1px dashed $headerBorder;
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 170%;
+  }
 }
 
 h3 {
