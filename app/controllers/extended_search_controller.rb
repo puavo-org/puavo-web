@@ -17,6 +17,12 @@ end
 class ExtendedSearchController < ApplicationController
   # GET /extended_search
   def index
+    unless current_user && current_user.organisation_owner?
+      # Silent redirection for non-owner users. This tool requires
+      # owner-level access rights.
+      return redirect_to '/users'
+    end
+
     respond_to do |format|
       format.html # index.html.erb
     end
