@@ -127,6 +127,7 @@ $(document).ready(function() {
             [ COLUMN_TYPE_INTEGER, 0 ],                 // hard drive size
         ],
         "fi",
+        "<%= "#{LdapOrganisation.current.o}-devstats-with" %>",
         2, SORT_ORDER_DESCENDING
     );
 
@@ -138,7 +139,8 @@ $(document).ready(function() {
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // device type (FIXME: the table breaks without this?!)
         ],
-        "fi"
+        "fi",
+        "<%= "#{LdapOrganisation.current.o}-devstats-without" %>"
     );
     <% end %>
 
