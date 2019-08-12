@@ -28,12 +28,11 @@ Version history
         * Use Element.classList to manipulate styles, not Element.className
         * Better sort direction indicators with FontAwesome
 
+    0.2.1 (2019-08-12)
+        * Added persistent settings through localStorage
+
 TODO
 ----
-
-- need a way to retain table sort orders across page reloads; perhaps even support organisation-
-  wide "default" sort order for each table? (some browsers retain form contents across "soft"
-  page reloads, perhaps hidden form elements could be creatively (ab)used to store settings?)
 
 - filtering and highlighting (only show rows that contain/don't contain text "foo")
 
@@ -64,7 +63,7 @@ const COLUMN_FLAG_HTML = 0x01,          // the elements in this column can conta
       COLUMN_FLAG_DONT_SORT = 0x02;     // only specify type/flags for this column, don't make it sortable
 
 class SortableTable {
-    constructor(tableId, columnDefs, sortLocale, initialColumn=null, initialOrder=null)
+    constructor(tableId, columnDefs, sortLocale, storageKey=null, initialColumn=null, initialOrder=null)
     {
         // The target table and its unique ID
         this.table = document.getElementById(tableId);
@@ -79,6 +78,10 @@ class SortableTable {
         // Actual TR elements for header and content row, for quick access.
         // We support multiple header rows.
         this.tableContentRowElems = [];
+
+        // localStorage key used to retain this table's sort column and order across
+        // page reloads and browser restarts. If null, settings are not saved.
+        this.storageKey = storageKey;
 
         // -----------------------------------------------------------------------------------------
         // Create the columns
@@ -198,10 +201,44 @@ class SortableTable {
         console.log(`Table "${this.tableId}" init took ${t1 - t0} ms`);
     }
 
+    loadSortSettings()
+    {
+        if (this.storageKey == null) {
+            console.warn("loadSortSettings(): localstore key not speficied");
+            return null;
+        }
+
+        const keyName = "sort-" + this.storageKey;
+
+        const settings = localStorage.getItem(keyName);
+
+        if (settings)
+            console.log(`loadSortSettings(): have initial settings for "${keyName}": ${settings}`);
+
+        return JSON.parse(settings);
+    }
+
+    saveSortSettings(columnNumber, sortOrder)
+    {
+        if (this.storageKey == null) {
+            console.warn("saveSortSettings(): localstore key not speficied");
+            return;
+        }
+
+        const keyName = "sort-" + this.storageKey;
+
+        console.log(`saveSortSettings(): key="${keyName}" column=${columnNumber} order=${sortOrder}`);
+
+        localStorage.setItem(keyName, JSON.stringify({
+            "column": columnNumber,
+            "order": sortOrder,
+        }));
+    }
+
     // ---------------------------------------------------------------------------------------------
     // SORTING
 
-    setupSorting(sortLocale, initialColumn, initialOrder)
+    setupSorting(sortLocale, initialColumn, initialOrder, storageKey)
     {
         // Set up the collator object that we use to compare two strings
         this.collator = Intl.Collator(
@@ -214,8 +251,18 @@ class SortableTable {
             }
         );
 
-        // Initial sort, if specified
-        if (initialColumn != null && initialOrder != null) {
+        const savedSettings = this.loadSortSettings();
+
+        if (savedSettings) {
+            // Previously saved sort column and order overrides initial settings, if any
+            initialColumn = savedSettings["column"];
+            initialOrder = savedSettings["order"];
+        }
+
+        // Apply initial or saved sorting
+        if (initialColumn != null && initialOrder != null &&
+            initialColumn >= 0 && initialColumn < this.columnDefs.length) {
+
             var column = this.columnDefs[initialColumn];
 
             switch (initialOrder) {
@@ -257,12 +304,14 @@ class SortableTable {
                         column["order"] = SORT_ORDER_ASCENDING;
                         this.setHeaderSortClass(column["headerElements"], "orderAscending");
                         this.sortTable(column, i);
+                        this.saveSortSettings(i, SORT_ORDER_ASCENDING);
                         break;
 
                     case SORT_ORDER_ASCENDING:
                         column["order"] = SORT_ORDER_DESCENDING;
                         this.setHeaderSortClass(column["headerElements"], "orderDescending");
                         this.sortTable(column, i);
+                        this.saveSortSettings(i, SORT_ORDER_DESCENDING);
                         break;
                 }
             } else {

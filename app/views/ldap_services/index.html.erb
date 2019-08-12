@@ -51,7 +51,8 @@ $(document).ready(function() {
             [ ],                                        // description
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
         ],
-        "fi"
+        "fi",
+        "<%= "#{LdapOrganisation.current.o}-ldap" %>"
     );
 });
 </script>

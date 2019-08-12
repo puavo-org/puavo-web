@@ -56,7 +56,8 @@ $(document).ready(function() {
             [ COLUMN_TYPE_STRING, 0 ],                  // role
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
         ],
-        "fi"
+        "fi",
+        "<%= "#{@school.id.to_s}-users" %>"
     );
 
   <% unless @users_marked_for_deletion.empty? %>
@@ -69,7 +70,8 @@ $(document).ready(function() {
             [ COLUMN_TYPE_INTEGER, COLUMN_FLAG_HTML ],  // timestamp
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],   // actions
         ],
-        "fi"
+        "fi",
+        "<%= "#{@school.id.to_s}-delusers" %>"
     );
   <% end %>
 });
