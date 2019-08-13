@@ -5,7 +5,7 @@ File.open("./Gemfile.shared") do |f|
 end
 
 gem "pry"
-gem "unicorn", "5.4.1"    # 5.5.0 has a bug and I don't want to use development versions
+gem "unicorn"
 gem "fluent-logger"
 gem "gibberish"
 gem "http"
