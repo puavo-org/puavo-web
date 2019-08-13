@@ -1002,7 +1002,7 @@ en:
       path: Path
       mountpoint: Mount point
       options: Options
-      no_mountpoints: "(No mount points)"
+      no_mount_points: "(No mount points)"
     form_mountpoint:
       title: Local and network mount points
       filesystem: Filesystem
