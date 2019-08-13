@@ -1200,6 +1200,9 @@ fi:
 
   extended_search:
     title: "Laajennettu haku"
+    tabs:
+      search: "Hakulomake"
+      help: "Käyttöohje ja vihjeitä"
     search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
     terms_title: "Minkä tyyppisiä hakutermit ovat:"
     term_names:
