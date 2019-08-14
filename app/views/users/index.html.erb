@@ -1,5 +1,7 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users') %>
 
+<% have_primus = school_has_integration?(@school.id.to_i, 'primus') %>
+
 <% unless @users_marked_for_deletion.empty? %>
 
 <h3 id="marked"><%= t('.users_marked_for_deletion_title') %> [ <a href="#normal"><%= t('.jump_to_normal') %></a> ]</h3>
@@ -8,6 +10,7 @@
   :table_id => 'markedForDeletionUsers',
   :source => @users_marked_for_deletion,
   :table_classes => "list usersMarkedForDeletion",
+  :have_primus => have_primus,
   :is_deleted => true
 } %>
 
@@ -19,6 +22,7 @@
   :table_id => 'normalUsers',
   :source => @users,
   :table_classes => "list",
+  :have_primus => have_primus,
   :is_deleted => false
 } %>
 
@@ -53,6 +57,9 @@ $(document).ready(function() {
         [
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // name
             [ COLUMN_TYPE_STRING, 0 ],                  // username
+            <% if have_primus %>
+            [ COLUMN_TYPE_STRING, 0 ],                  // external ID
+            <% end %>
             [ COLUMN_TYPE_STRING, 0 ],                  // role
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
         ],
@@ -66,6 +73,9 @@ $(document).ready(function() {
         [
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // name
             [ COLUMN_TYPE_STRING, 0 ],                  // username
+            <% if have_primus %>
+            [ COLUMN_TYPE_STRING, 0 ],                  // external ID
+            <% end %>
             [ COLUMN_TYPE_STRING, 0 ],                  // role
             [ COLUMN_TYPE_INTEGER, COLUMN_FLAG_HTML ],  // timestamp
             [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],   // actions

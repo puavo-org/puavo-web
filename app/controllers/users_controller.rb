@@ -21,7 +21,8 @@ class UsersController < ApplicationController
                   'sambaPrimaryGroupSID',
                   'puavoRemovalRequestTime',
                   'puavoDoNotDelete',
-                  'puavoLocked']
+                  'puavoLocked',
+                  'puavoExternalId']
 
     @users = User.search_as_utf8( :filter => filter,
                           :scope => :one,
