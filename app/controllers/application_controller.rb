@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
       :request => {
         :url => request.url,
         :method => request.method,
-        :ip => env["HTTP_X_REAL_IP"]
+        :ip => request.env["HTTP_X_REAL_IP"]
       }
     }
 
