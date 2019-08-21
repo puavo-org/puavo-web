@@ -1,7 +1,11 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'puavo'
-#require 'redcarpet/compat'
+
+# The Rails upgrade process wants this, but we cannot use it. We aren't using Rails'
+# database layer and we don't have config/database.yml. I guess I could add an empty
+# file, but I don't know enough of how Rails works to ensure that won't break anything.
+#require 'rails/all'
 
 require "action_controller/railtie"
 require "action_mailer/railtie"
@@ -13,6 +17,9 @@ require "active_ldap/railtie"
 require_relative "../monkeypatches"
 require_relative "./version"
 require_relative "../rest/lib/external_login"
+
+# Another line "rails app:update" wants that... just fails.
+#Bundler.require(*Rails.groups)
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
