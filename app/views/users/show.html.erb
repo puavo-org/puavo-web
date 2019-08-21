@@ -56,7 +56,7 @@
 <table>
   <tr>
   <th><%= t('activeldap.attributes.user.mail') %></th>
-  <td class="noWrap"><%= Array(@user.mail).map{ |mail| mail }.join("<br>").html_safe %></td>
+  <td class="noWrap"><%= h Array(@user.mail).map{ |mail| mail }.join("<br>").html_safe %></td>
   </tr>
 
   <tr>

@@ -3,7 +3,7 @@
   <table>
     <tr>
       <th><%= t("activeldap.attributes.device.dn") %></th>
-      <td><%= (device.dn.to_s.split(',').join(',<wbr>')).html_safe %></td>
+      <td><%= h (device.dn.to_s.split(',').join(',<wbr>')).html_safe %></td>
     </tr>
 
     <tr>
