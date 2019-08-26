@@ -34,19 +34,14 @@ window.jQuery(document).ready(function($) {
     tbl.children().append(clone);
   });
 
-  $('.search').liveSearch({
-    minLength: 2,
-    url: window.SEARCH_URLS,
+  // Setup top bar quick search. This exists on all pages.
+  $('.quickSearch').liveSearch({
+    id: "quickSearchResults",     // unique ID for the results box
+    url: "/quick_search?query=",  // search URL
+    field: "quickSearch",         // search term source
     duration: 400,
     typeDelay: 400,
-    width: 'auto'
-  });
-
-  $('.user_search').liveSearch({
     minLength: 2,
-    url: window.USER_SEARCH_URLS,
-    duration: 400,
-    typeDelay: 400,
     width: 'auto'
   });
 
