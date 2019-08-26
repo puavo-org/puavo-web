@@ -1,4 +1,11 @@
 /***
+
+====================================================================================================
+NOTICE: This script has been extensively modified by Opinsys Oy for use in Puavo! It might not
+work at all in other environments. The changes are not marked, but they can be extracted from
+the commit history fairly easily.
+====================================================================================================
+
 @title:
 Live Search
 
@@ -45,42 +52,28 @@ jQuery('#q').liveSearch({url: '/ajax/search.php?q='}); would add the live-search
 jQuery('#jquery-live-search-example input[name="q"]').liveSearch({url: Router.urlForModule('SearchResults') + '&q='});
 ***/
 jQuery.fn.liveSearch = function (conf) {
+
+        // The CSS class name added to search elements when a search is in progress
+        const LOADING_CLASS = "searchLoading";
+
 	var config = jQuery.extend({
-		url:			{'jquery-live-search-result': 'search-results.php?q='},
-		id:				'jquery-live-search', 
-		duration:		400, 
+		duration:		400,
 		typeDelay:		200,
-		loadingClass:	'loading', 
-		onSlideUp:		function () {}, 
-		uptadePosition:	false,
+		loadingClass:		LOADING_CLASS,
+		onSlideUp:		function () {},
+		uptadePosition:		false,
 		minLength:		0,
 		width:			null
 	}, conf);
 
-	if (typeof(config.url) == "string") {
-		config.url = { 'jquery-live-search-result': config.url }
-	} else if (typeof(config.url) == "object") {
-		if (typeof(config.url.length) == "number") {
-			var urls = {}
-			for (var i = 0; i < config.url.length; i++) {
-				urls['jquery-live-search-result-' + i] = config.url[i];
-			}
-			config.url = urls;
-		}
-	}
-	var searchStatus = {};
-	var liveSearch	= jQuery('#' + config.id);
+	var searchStatus = false;
+	var liveSearch	= jQuery('#' + config.field);
 	var loadingRequestCounter = 0;
 
-	liveSearch = jQuery('<div id="' + config.id + '"></div>')
+	liveSearch = jQuery('<div id="' + config.id + '" class="searchResultsBox"></div>')
 					.appendTo(document.body)
 					.hide()
 					.slideUp(0);
-
-	for (key in config.url) {
-		liveSearch.append('<div id="' + key + '"></div>');
-		searchStatus[key] = false;
-	}
 
 	// Close live-search when clicking outside it
 	jQuery(document.body).click(function(event) {
@@ -105,19 +98,18 @@ jQuery.fn.liveSearch = function (conf) {
 				tmpWidth = config.width;
 			}
 			var inputDim	= {
-				left:		tmpOffset.left, 
-				top:		tmpOffset.top, 
-				width:		tmpWidth, 
+				left:		tmpOffset.left,
+				top:		tmpOffset.top,
+				width:		tmpWidth,
 				height:		input.outerHeight()
 			};
 
 			inputDim.topPos		= inputDim.top + inputDim.height;
 			inputDim.totalWidth	= inputDim.width - liveSearchPaddingBorderHoriz;
 			liveSearch.css({
-				position:	'absolute', 
-				left:		inputDim.left + 'px', 
+				position:	'absolute',
+				left:		inputDim.left + 'px',
 				top:		inputDim.topPos + 'px',
-				width:		inputDim.totalWidth + 'px'
 			});
 		};
 		var showOrHideLiveSearch = function () {
@@ -125,19 +117,14 @@ jQuery.fn.liveSearch = function (conf) {
 		  else if(loadingRequestCounter==0 && !doWeHaveAnyResults) input.css("color","#FF0000");
 			if (loadingRequestCounter == 0) {
 				showStatus = false;
-				for (key in config.url) {
-					if( searchStatus[key] == true ) {
-						showStatus = true;
-						break;
-					}
-				}
+                                if( searchStatus == true ) {
+                                        showStatus = true;
+                                }
 
 				if (showStatus == true) {
-					for (key in config.url) {
-						if( searchStatus[key] == false ) {
-							liveSearch.find('#' + key).html('');
-						}
-					}
+                                        if( searchStatus == false ) {
+                                                liveSearch.html('');
+                                        }
 					showLiveSearch();
 				} else {
 					hideLiveSearch();
@@ -147,7 +134,7 @@ jQuery.fn.liveSearch = function (conf) {
 
 		// Shows live-search for this input
 		var showLiveSearch = function () {
-		  if(input.hasClass('loading')){input.removeClass('loading')};
+		  if(input.hasClass(LOADING_CLASS)){input.removeClass(LOADING_CLASS)};
 			// Always reposition the live-search every time it is shown
 			// in case user has resized browser-window or zoomed in or whatever
 			repositionLiveSearch();
@@ -161,12 +148,10 @@ jQuery.fn.liveSearch = function (conf) {
 
 		// Hides live-search for this input
 		var hideLiveSearch = function () {
-		  if(input.hasClass('loading')){input.removeClass('loading')};
+		  if(input.hasClass(LOADING_CLASS)){input.removeClass(LOADING_CLASS)};
 			liveSearch.slideUp(config.duration, function () {
 				config.onSlideUp();
-				for (key in config.url) {
-					liveSearch.find('#' + key).html('');
-				}
+                                liveSearch.html('');
 			});
 		};
 
@@ -196,30 +181,25 @@ jQuery.fn.liveSearch = function (conf) {
 					if( q.length > config.minLength ) {
 						// Start a new ajax-request in X ms
 						this.timer = setTimeout(function () {
-							for (url_key in config.url) {
 								loadingRequestCounter += 1;
 								jQuery.ajax({
-									key: url_key,
-									url: config.url[url_key] + q,
+									url: config.url + q,
 									success: function(data){
 										if (data.length) {
 										  doWeHaveAnyResults=true;
-    										searchStatus[this.key] = true;
-											liveSearch.find("#" + this.key).html(data);
+    										searchStatus = true;
+											liveSearch.html(data);
 										} else {
-											searchStatus[this.key] = false;
+											searchStatus = false;
 										}
 										loadingRequestCounter -= 1;
 										showOrHideLiveSearch();
 									}
 								});
-							}
 						}, config.typeDelay);
 					}
 					else {
-						for (url_key in config.url) {
-							searchStatus[url_key] = false;
-						}
+                                                searchStatus = false;
 						hideLiveSearch();
 					}
 
