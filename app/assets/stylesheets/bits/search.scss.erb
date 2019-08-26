@@ -2,22 +2,24 @@
   Quick search bar at the top of the page, plus live search boxes on group pages
 */
 
-/* The search box itself */
-#search, .user_search {
+/* The quick search box at the top */
+.quickSearch {
   background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
-  text-indent: 2em;
-  margin: 4px;
+  text-indent: 2.5em;
   z-index: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.user_search {
+/* Group members search box */
+.groupMembersSearch {
   background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
   text-indent: 2.5em;
   padding: 3px;
   /* TODO: Fix the borders. */
 }
 
-.loading {
+.searchLoading {
   /*
     The JavaScript code doing the live search adds this class to the search box when search
     is in progress, then removes it afterwards.
@@ -25,8 +27,8 @@
   background: url("<%= image_path('ajax-loader.gif') %>") no-repeat scroll 10px center $searchFieldBackgroundColor !important;
 }
 
-/* Container for the top bar search results */
-#jquery-live-search {
+/* Drop-down search result boxes */
+.searchResultsBox {
   background: $searchResultsBackground;
   border: 1px solid $searchResultsBorder;
   border-width: 0 1px 1px 1px;
@@ -35,36 +37,12 @@
   overflow: auto;
   padding: 5px;
   position: absolute;
-  width: auto;
+  //width: auto;
+  width: 500px;
   z-index: 9999;
   box-shadow: 5px 5px 5px $defaultBoxShadow;
-}
 
-.search_result table {
-  border-spacing: 0;
-  margin: 0px;
-  padding: 0px;
-}
-
-.search_result th {
-  white-space: nowrap;
-}
-
-.search_result legend {
-  padding-left: 2px;
-  padding-right: 2px;
-  margin: 0;
-  border: none;
-}
-
-fieldset.search_result {
-  font-size: 80%;
-  padding: 5px;
-  margin: 0;
-}
-
-@media #{$screen-breakpoint-one} {
-  #jquery-live-search {
+  @media #{$screen-breakpoint-one} {
     padding: 0;
     margin: 0;
     left: 0 !important;
@@ -72,27 +50,58 @@ fieldset.search_result {
     font-size: 90%;
   }
 
-  fieldset.search_result {
-    margin: 2px;
-    padding: 2px;
-    border-top: 2px solid $searchResultsSeparatorLine;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-  }
-
-  .search_result legend {
-    margin-left: 10px;
-    padding: 0 5px;
-  }
-
-  .search_result .list tr {
+  p {
     padding: 0;
+    margin: 0;
+    color: $searchNoResults;
   }
 
-  .search_result .list td:first-of-type {
-    font-size: 110% !important;
-    font-weight: bold;
+  table {
+    border-spacing: 0;
+    margin: 0px;
+    padding: 0px;
+  }
+
+  th {
+    white-space: nowrap;
+  }
+
+  legend {
+    padding-left: 2px;
+    padding-right: 2px;
+    margin: 0;
+    border: none;
+  }
+
+  fieldset.search_result {
+    font-size: 80%;
+    padding: 5px;
+    margin: 0;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    fieldset.search_result {
+      margin: 2px;
+      padding: 2px;
+      border-top: 2px solid $searchResultsSeparatorLine;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .search_result legend {
+      margin-left: 10px;
+      padding: 0 5px;
+    }
+
+    .search_result .list tr {
+      padding: 0;
+    }
+
+    .search_result .list td:first-of-type {
+      font-size: 110% !important;
+      font-weight: bold;
+    }
   }
 }
 

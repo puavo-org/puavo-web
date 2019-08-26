@@ -93,9 +93,11 @@
   }
 }
 
-/* "#jquery-live-search" DIVs (yes, plural) are created outside of the <body>
-   element by JavaScript. Those DIVs contain A and .btn elements too.*/
-#content, #jquery-live-search {
+/*
+  ".searchResultsBox" DIVs are created outside of the <body> element by JavaScript.
+  Those DIVs contain A and .btn elements too.
+*/
+#content, .searchResultsBox {
   /* A generic link */
   a {
     color: $linkFore;
