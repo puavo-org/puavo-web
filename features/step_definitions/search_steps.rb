@@ -8,11 +8,11 @@ Then(/^I should get no search results$/) do
   # TODO: Might not be the best possible implementation...
   begin
     search_res = find('table')
-    raise "Unexpexted search results: #{ search_res.inspect }"
+    raise "Unexpected search results: #{ search_res.inspect }"
   rescue Capybara::ElementNotFound
   end
 end
 
 When(/^I search user with "([^\"]*)"$/) do |words|
-  visit search_index_path(:words => words)
+  visit quick_search_path(:query => words)
 end
