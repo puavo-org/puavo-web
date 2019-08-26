@@ -8,7 +8,7 @@ class QuickSearchController < ApplicationController
     @users = []
     @roles = []
     @groups = []
-    @schools = []
+    @devices = []
 
     begin
 
@@ -19,12 +19,14 @@ class QuickSearchController < ApplicationController
         lambda { |w| "(|(givenName=*#{w}*)(sn=*#{w}*)(uid=*#{w}*))" },
         words )
 
-      # Roles search
-      @roles = Role.words_search_and_sort_by_name(
-        ['displayName'],
-        'displayName',
-        lambda { |w| "(displayName=*#{w}*)" },
-        words )
+      unless new_group_management?(@school)
+        # Roles search
+        @roles = Role.words_search_and_sort_by_name(
+          ['displayName'],
+          'displayName',
+          lambda { |w| "(displayName=*#{w}*)" },
+          words )
+      end
 
       # Groups search
       @groups = Group.words_search_and_sort_by_name(
