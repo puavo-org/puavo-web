@@ -77,7 +77,6 @@ install: clean-for-install mkdirs
 		Gemfile \
 		Gemfile.lock \
 		Gemfile.shared \
-		lib \
 		Makefile \
 		monkeypatches.rb \
 		package.json \

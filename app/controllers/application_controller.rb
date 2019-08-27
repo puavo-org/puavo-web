@@ -176,7 +176,7 @@ class ApplicationController < ActionController::Base
   def set_menu
     # TODO: Where this should be required?
     # It must be require after all controllers are defined
-    require_relative "../../lib/puavo_menu"
+    require "puavo_menu"
 
     @menu_items = PuavoMenu.new(self).children
     @child_items = []
