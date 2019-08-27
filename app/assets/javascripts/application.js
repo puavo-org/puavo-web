@@ -39,7 +39,6 @@ window.jQuery(document).ready(function($) {
     id: "quickSearchResults",     // unique ID for the results box
     url: "/quick_search?query=",  // search URL
     field: "quickSearch",         // search term source
-    duration: 400,
     typeDelay: 400,
     minLength: 2,
     width: 'auto'

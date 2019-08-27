@@ -57,7 +57,7 @@ jQuery.fn.liveSearch = function (conf) {
         const LOADING_CLASS = "searchLoading";
 
 	var config = jQuery.extend({
-		duration:		400,
+		duration:		200,
 		typeDelay:		200,
 		loadingClass:		LOADING_CLASS,
 		onSlideUp:		function () {},
