@@ -5,10 +5,9 @@
 /* The quick search box at the top */
 .quickSearch {
   background: url("<%= image_path('magnifier.png') %>") no-repeat scroll 10px center $searchFieldBackgroundColor;
-  text-indent: 2.5em;
+  text-indent: 2em;
+  margin: 4px;
   z-index: 1;
-  border: 1px solid #ccc;
-  border-radius: 5px;
 }
 
 /* Group members search box */
@@ -37,7 +36,6 @@
   overflow: auto;
   padding: 5px;
   position: absolute;
-  //width: auto;
   width: 500px;
   z-index: 9999;
   box-shadow: 5px 5px 5px $defaultBoxShadow;
