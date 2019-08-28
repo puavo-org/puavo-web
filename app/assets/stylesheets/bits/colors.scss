@@ -80,13 +80,17 @@ Page contents
 --------------------------------------------------------------------------------
 */
 
+$pageContentBack: rgb(255, 255, 255);
+$pageContentFore: rgb(0, 0, 0);   /* used when no other rule applies */
+
+/* H1, H2, etc. headers */
+$headingFore: $pageContentFore;
+$headingBack: transparent;
+
 $missingDataFore: rgb(255, 0, 0);
 
 /* Things that only organisation owners can see */
 $ownersOnlyBorder: rgb(255, 0, 0);
-
-$pageContentBack: rgb(255, 255, 255);
-$pageContentFore: rgb(0, 0, 0);   /* used when no other rule applies */
 
 $footerFore: #999;
 
@@ -152,6 +156,7 @@ $contentBoxHeaderFore: #000;
 $contentBoxBorder: #999;
 $contentBoxShadow: #aaa;
 $contentBoxContentsBack: #f0f0f0;
+$contentBoxContentsFore: #000;
 $contentBoxTableOddRowBack: #f0f0f0;
 $contentBoxTableEvenRowBack: #e0e0e0;
 $contentBoxContentsHeaderFore: #000;
@@ -197,6 +202,7 @@ $formFieldsetBorderColor: #ccc;
 $formLabelColor: rgb(0, 0, 0);
 $formErrorColor: rgb(255, 0, 0);
 
+$formFore: #000;
 $formOddRowBack: #f5f5f5;
 $formEvenRowBack: #e9e9e9;
 $formButtonRowBack: #ccc;
@@ -224,6 +230,7 @@ $listOddRowBack: #ebebeb;
 $listEvenRowBack: #fafafa;
 $listRowHoverBack: #f9f7e6;
 $listRowBorder: #c8c8c8;
+$listFore: #000;
 
 $markedForDeletionOddRowBack: #faa;
 $markedForDeletionEvenRowBack: #fcc;

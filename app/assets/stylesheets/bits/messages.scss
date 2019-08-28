@@ -41,21 +41,21 @@
 
 .genericNotice {
   @include genericBox;
-  color: genericNoticeFore;
+  color: $genericNoticeFore;
   background: $genericNoticeBack;
   border: 2px solid $genericNoticeBorder;
 }
 
 .genericWarning {
   @include genericBox;
-  color: genericWarningFore;
+  color: $genericWarningFore;
   background: $genericWarningBack;
   border: 2px solid $genericWarningBorder;
 }
 
 .genericError {
   @include genericBox;
-  color: genericErrorFore;
+  color: $genericErrorFore;
   background: $genericErrorBack;
   border: 2px solid $genericErrorBorder;
 }
