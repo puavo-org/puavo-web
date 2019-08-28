@@ -9,8 +9,6 @@
 <%= stylesheet_link_tag "font/fontello-puavo/css/puavo-icons", :media => "screen" %>
 <%= stylesheet_link_tag "application", :media => "all" %>
 <%= yield :style %>
-<% search_urls = { "users-search" => "/users/search?words=" } %>
-<% if Puavo::CONFIG then search_urls[ "devices-search"] = "/devices/search?words=" end %>
 <script charset="utf-8">
 I18n = {};
 I18n.defaultLocale = "<%= I18n.default_locale %>";
