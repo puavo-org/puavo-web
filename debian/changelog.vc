@@ -1,3 +1,9 @@
+puavo-users (0.30) stretch; urgency=high
+
+  * Using Rails 5.0.7.2.
+
+ -- Jarmo Pietiläinen <jarmo@opinsys.fi>  Tue, 27 Aug 2019 13:43:50 +0200
+
 puavo-users (0.20) stretch; urgency=high
 
   * Using Rails 4.2.10. Lots of bugfixes and tweaks.
