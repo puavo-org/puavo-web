@@ -1,5 +1,5 @@
 <!-- devices/_form starts -->
-<p class='required_info'><%= t('layouts.forms.required_field')%></p>
+<p class='requiredTitle'><%= t('layouts.forms.required_field')%></p>
 
 <%= form_for(@device, :url => path, :html => { :method => method, :multipart => true }) do |f| %>
   <% if f.object.classes.include?('puavoPrinter') || f.object.classes.include?('puavoOtherDevice') %>
@@ -19,7 +19,6 @@
 
   <table class="editForm">
     <tr class="buttonRow">
-      <th></th>
       <td>
         <%= f.submit submit_text, class: 'btn' %>
         <div class="cancel"> <%=link_to t('cancel'), path, class: 'btn btn-danger' %> </div>

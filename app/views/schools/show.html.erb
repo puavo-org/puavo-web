@@ -2,15 +2,15 @@
 
 <div class="dashboard">
 
-<div class="content-box-new school_image">
+<div class="contentBox schoolImage">
 <%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
                class: "image" ) %>
 </div>
 
 <%= start_box t('.contacts') %>
-  <h3><%= h @school.displayName %></h3>
+  <%= h @school.displayName %><br>
   <%= h @school.street %><br>
-  <%= h @school.postalCode %> <%=h @school.postalAddress %><br>
+  <%= h @school.postalCode %> <%= h @school.postalAddress %><br>
   <%= h @school.postOfficeBox %><br>
   <%= link_to t('activeldap.attributes.school.puavoSchoolHomePageURL'),
               @school.puavoSchoolHomePageURL,
@@ -18,6 +18,110 @@
 <%= end_box %>
 
 <hr>
+
+<!-- Various bits and pieces -->
+<%= start_box t('.info') %>
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoLocale') %></div>
+    <div class="value"><%= h language_by_locale(@school.puavoLocale) %><br>
+    <em><%= t("old_preferred_language", :language => @school.preferredLanguage) %></em>
+    </div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceImage') %></div>
+    <div class="value"><%= h @school.puavoDeviceImage %></div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %></div>
+    <div class="value"><%= h value_or_default_value_by_parent(@school, "puavoImageSeriesSourceURL") %></div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoAllowGuest') %></div>
+    <div class="value"><%= translate_boolean_value(@school.puavoAllowGuest) %></div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoAutomaticImageUpdates') %></div>
+    <div class="value"><%= translate_boolean_value(@school.puavoAutomaticImageUpdates) %></div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoTag') %></div>
+    <div class="value"><%= @school.puavoTag %></div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoConf') %></div>
+    <div class="value">
+      <%= render :partial => 'shared/puavoconf', :locals  => { :object => @school.puavoConf } %>
+    </div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %></div>
+    <div class="value">
+        <%= h t('puavoDeviceAutoPowerOffMode_' + (@school.puavoDeviceAutoPowerOffMode or 'default'),
+                :scope => "activeldap.attributes.#{ @school.class.human_name }") %>
+    </div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceOnHour') %></div>
+    <div class="value"><%= @school.puavoDeviceOnHour %></div>
+  </div>
+
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.puavoDeviceOffHour') %></div>
+    <div class="value"><%= @school.puavoDeviceOffHour %></div>
+  </div>
+
+  <% if current_user.organisation_owner? %>
+  <%# Only organisation owners can access the server page. So hide it from others. %>
+  <div class="multilineItem">
+    <div class="title"><%= t('activeldap.attributes.school.bootservers') %></div>
+    <div class="value">
+      <ul>
+        <% @school.boot_servers.each do |bs| %>
+        <li><%= link_to bs.puavoHostname, server_path(bs) %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <% end %>
+<%= end_box %>
+
+<!-- School information -->
+<%= start_box t('.system_information') %>
+  <table>
+    <tr>
+      <th><%= t('activeldap.attributes.school.puavoNamePrefix') %></th>
+      <td><%= h @school.cn %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('activeldap.attributes.school.puavoSchoolCode') %></th>
+      <td><%= h @school.puavoSchoolCode %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('activeldap.attributes.school.puavoExternalId') %></th>
+      <td><%= h @school.puavoExternalId %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('ldap_create_time') %></th>
+      <td><%= h @school['createTimestamp'] %></td>
+    </tr>
+
+    <tr>
+      <th><%= t('ldap_modify_time') %></th>
+      <td><%= h @school['modifyTimestamp'] %></td>
+    </tr>
+  </table>
+<%= end_box %>
 
 <%= start_box t('.statistics') %>
   <!-- Users statistics -->
@@ -45,113 +149,12 @@
   <% end %>
 <%= end_box %>
 
-<!-- School information -->
-<%= start_box t('.system_information') %>
-  <table>
-    <tr>
-      <th><%= t('activeldap.attributes.school.puavoNamePrefix') %></th>
-      <td><%= h @school.cn %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('activeldap.attributes.school.puavoSchoolCode') %></th>
-      <td><%= h @school.puavoSchoolCode %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('activeldap.attributes.school.puavoExternalId') %></th>
-      <td><%= h @school.puavoExternalId %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('ldap_create_time') %></th>
-      <td><%= h @school['createTimestamp'].nil? ? "?" : @school['createTimestamp'].localtime %></td>
-    </tr>
-
-    <tr>
-      <th><%= t('ldap_modify_time') %></th>
-      <td><%= h @school['modifyTimestamp'].nil? ? "?" : @school['modifyTimestamp'].localtime %></td>
-    </tr>
-  </table>
-<%= end_box %>
-
-<!-- Various bits and pieces -->
-<%= start_box t('.info') %>
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoLocale') %></div>
-    <div class="content"><%= h language_by_locale(@school.puavoLocale) %><br>
-    <em><%= t("old_preferred_language", :language => @school.preferredLanguage) %></em>
-    </div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceImage') %></div>
-    <div class="content"><%= h @school.puavoDeviceImage %></div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoImageSeriesSourceURL') %></div>
-    <div class="content"><%= h value_or_default_value_by_parent(@school, "puavoImageSeriesSourceURL") %></div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoAllowGuest') %></div>
-    <div class="content"><%= translate_boolean_value(@school.puavoAllowGuest) %></div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoAutomaticImageUpdates') %></div>
-    <div class="content"><%= translate_boolean_value(@school.puavoAutomaticImageUpdates) %></div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoTag') %></div>
-    <div class="content"><%= @school.puavoTag %></div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoConf') %></div>
-    <div class="content">
-      <%= render :partial => 'shared/puavoconf', :locals  => { :object => @school.puavoConf } %>
-    </div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceAutoPowerOffMode') %></div>
-    <div class="content">
-        <%= h t('puavoDeviceAutoPowerOffMode_' + (@school.puavoDeviceAutoPowerOffMode or 'default'),
-                :scope => "activeldap.attributes.#{ @school.class.human_name }") %>
-    </div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceOnHour') %></div>
-    <div class="content"><%= @school.puavoDeviceOnHour %></div>
-  </div>
-
-  <div class="multilineItem">
-    <div class="header"><%= t('activeldap.attributes.school.puavoDeviceOffHour') %></div>
-    <div class="content"><%= @school.puavoDeviceOffHour %></div>
-  </div>
-
-  <% if current_user.organisation_owner? %>
-  <%# Only organisation owners can access the server page. So hide it from others. %>
-  <div class="multilineItem">
-    <div class="header">Bootserver(s)</div>
-    <div class="content">
-      <ul>
-        <% @school.boot_servers.each do |bs| %>
-        <li><%= link_to bs.puavoHostname, server_path(bs) %></li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-  <% end %>
-<%= end_box %>
-
 <hr>
 
 <%= start_box t('.admin_users'), extraClass="fullWidth" %>
+  <% if @school.user_school_admins.empty? %>
+  <p class="empty"><%= t('.no_admin_users') %></p>
+  <% else %>
   <table>
     <tr class="tableHeading">
       <th><%= t('.name') %></th>
@@ -168,6 +171,7 @@
     <% end %>
   <% end %>
   </table>
+  <% end %>
 <%= end_box %>
 
 <hr>
@@ -176,7 +180,7 @@
 <!-- Billing information -->
 <%= start_box t('.billing_info'), extraClass="fullWidth" %>
   <% if @school.puavoBillingInfo.nil? || @school.puavoBillingInfo.empty? %>
-  (Ei tietoja)
+  <p class="empty"><%= t('.no_billing_info') %></p>
   <% else %>
   <% Array(@school.puavoBillingInfo).each do |billing_info| %>
   <%= h billing_info %><br>
@@ -201,20 +205,25 @@
 
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more')%></span>
-    <ul class="dropdown">
+    <div class="dropdown">
       <% if current_user.organisation_owner? %>
+      <ul>
+        <li>
+          <%= link_to new_rename_groups_path(@school) do %>
+            <i class='icon-exchange'></i><%= t('link.rename_groups') %>
+          <% end %>
+        </li>
+      </ul>
+      <% end %>
+
+      <ul>
       <li>
-        <%= link_to new_rename_groups_path(@school) do %>
-          <i class='icon-exchange'></i><%= t('link.rename_groups') %>
+        <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do %>
+          <i class='icon-trash'></i><%= t('link.delete_school') %>
         <% end %>
       </li>
-      <% end %>
-    <li>
-      <%= link_to school_path(@school), data: { confirm: t('general_confirm') }, method: :delete do %>
-        <i class='icon-trash'></i><%= t('link.destroy') %>
-      <% end %>
-    </li>
-    </ul>
+      </ul>
+    </div>
   </li>
 </ul>
 <% end %>

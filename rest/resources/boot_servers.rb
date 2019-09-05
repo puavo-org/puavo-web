@@ -77,15 +77,6 @@ class BootServer < Host
       get_own(:image_series_source_urls)
     end
   end
-
-  def generate_extended_puavo_conf
-    # creates/updates @extended_puavoconf
-    super
-
-    extend_puavoconf('puavo.profiles.list', 'bootserver')
-
-    return @extended_puavoconf
-  end
 end
 
 class BootServers < PuavoSinatra

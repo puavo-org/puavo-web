@@ -1,10 +1,15 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.groups'), @group.displayName, t('titles.edit') %>
 
+<div class="formContainer">
+
 <h1><%= t('.title') %></h1>
 
 <%= render :partial => 'form',
-           :locals => {
-             :path => group_path(@school, @group),
-             :method => :put,
-             :submit_text => t('link.update')
-            } %>
+    :locals => {
+      :path => group_path(@school, @group),
+      :method => :put,
+      :submit_text => t('link.update')
+    }
+%>
+
+</div>

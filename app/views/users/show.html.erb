@@ -79,13 +79,27 @@
   </tr>
 
   <tr>
-    <th><%= t('activeldap.attributes.user.groups') %></th>
-    <td  class="noWrap">
-      <span id="groups_by_roles">
-      <% @user.groups.each do |g| %>
-        <%= link_to g.displayName, group_path(g.school.puavoId, g) %> (<%= link_to g.school.displayName, school_path(g.school) %>)<br>
+    <th><%= t('activeldap.attributes.dn') %></th>
+    <td><%= h @user.dn %></td>
+  </tr>
+
+  <tr>
+    <th><%= t('users.show.groups_by_schools') %></th>
+    <td class="noWrap">
+      <ul class="userShowGroups" id="groups_by_roles">
+      <% @user_groups.each do |s| %>
+        <li><%= link_to s[0].displayName, school_path(s[0]) %>:<ul>
+          <% s[1].each do |g| %>
+            <li>
+              <%= link_to g.displayName, group_path(g.school.puavoId, g) %>
+              <% if g.puavoEduGroupType %>
+              <small>(<%= h humanize_group_type(g.puavoEduGroupType) %>)</small>
+              <% end %>
+            </li>
+          <% end %>
+        </ul></li>
       <% end %>
-      </span>
+      </ul>
     </td>
   </tr>
 
@@ -132,18 +146,18 @@
 
   <tr>
     <th><%= t('ldap_create_time') %></th>
-    <td class="noWrap"><%= h @user['createTimestamp'].nil? ? '?' : @user['createTimestamp'].localtime %></td>
+    <td class="noWrap"><%= h @user['createTimestamp'] %></td>
   </tr>
 
   <tr>
     <th><%= t('ldap_modify_time')  %></th>
-    <td class="noWrap"><%= h @user['modifyTimestamp'].nil? ? '?' : @user['modifyTimestamp'].localtime %></td>
+    <td class="noWrap"><%= h @user['modifyTimestamp'] %></td>
   </tr>
 
   <% if @user.puavoRemovalRequestTime %>
   <tr>
     <th><%= t('.marked_for_removal') %></th>
-    <td class="marked_for_deletion noWrap"><%= h @user.puavoRemovalRequestTime.localtime %></td>
+    <td class="userMarkedForDeletion noWrap"><%= h @user.puavoRemovalRequestTime %></td>
   </tr>
   <% end %>
 </table>
@@ -159,47 +173,64 @@
 
   <li class="haveDropdown">
     <span class="btn"><i class='icon-collapse'></i><%= t('link.more') %></span>
-    <ul class="dropdown">
-      <li>
-        <% if school_has_integration?(@school.id.to_i, 'primus') %>
-        <%= link_to select_school_user_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
-          <i class='icon-exchange'></i><%= t('.change_school') %>
-        <% end %>
-        <% else %>
-        <%= link_to select_school_user_path(@school, @user) do %>
-          <i class='icon-exchange'></i><%= t('.change_school') %>
-        <% end %>
-        <% end %>
-      </li>
+    <div class="dropdown">
+      <ul>
+        <li>
+          <% if school_has_integration?(@school.id.to_i, 'primus') %>
+          <%= link_to select_school_user_path(@school, @user), data: { confirm: t('.primus_school_change_warning') } do %>
+            <i class='icon-exchange'></i><%= t('.change_school') %>
+          <% end %>
+          <% else %>
+          <%= link_to select_school_user_path(@school, @user) do %>
+            <i class='icon-exchange'></i><%= t('.change_school') %>
+          <% end %>
+          <% end %>
+        </li>
+      </ul>
 
-    <% unless @user.puavoDoNotDelete %>
-    <% if current_user.organisation_owner? %>
-    <li class="ownersOnly">
-      <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
-        <i class='icon-block'></i><%= t('.prevent_removal') %>
+      <% unless @user.puavoDoNotDelete %>
+      <% if current_user.organisation_owner? %>
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
+            <i class='icon-block'></i><%= t('.prevent_removal') %>
+          <% end %>
+        </li>
+      </ul>
       <% end %>
-    </li>
-    <% end %>
+      <% end %>
 
-    <li>
       <% if @user.puavoRemovalRequestTime %>
-      <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
-        <i class='icon-flag-empty'></i><%= t('.unmark_for_removal') %>
-      <% end %>
+      <ul>
+        <li>
+          <%= link_to unmark_user_for_deletion_path(@school, @user) do %>
+            <i class='icon-flag-empty'></i><%= t('.unmark_for_removal') %>
+          <% end %>
+        </li>
+      </ul>
       <% else %>
-      <%= link_to mark_user_for_deletion_path(@school, @user) do %>
-        <i class='icon-flag'></i><%= t('.mark_for_removal') %>
+      <% unless @user.puavoDoNotDelete %>
+      <ul>
+        <li>
+          <%= link_to mark_user_for_deletion_path(@school, @user) do %>
+            <i class='icon-flag'></i><%= t('.mark_for_removal') %>
+          <% end %>
+        </li>
+      </ul>
       <% end %>
       <% end %>
-    </li>
 
-    <li>
-      <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
-        <i class='icon-trash'></i><%= t('link.destroy') %>
+      <% unless @user.puavoDoNotDelete %>
+      <ul>
+        <li>
+          <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
+            <i class='icon-trash'></i><%= t('link.delete_user') %>
+          <% end %>
+        </li>
+      </ul>
       <% end %>
-    </li>
-    <% end %>
-    </ul>
+
+    </div>
   </li>
 </ul>
 <% end %>

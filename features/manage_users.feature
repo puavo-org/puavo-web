@@ -88,11 +88,12 @@ Feature: Manage users
     And the memberUid should include "ben" on the "School 1" school
     And the member should include "ben" on the "School 1" school
     And the memberUid should include "ben" on the "Domain Users" samba group
-    When I follow "Edit"
+    When I follow "Edit..."
     Then I am on the edit user page with "ben"
     When I follow "Cancel"
     Then I am on the show user page with "ben"
-    When I follow "Users" within ".navbar-first-level"
+    #When I follow "Users" within ".navbarFirstLevel"
+    When I follow "Users" within "#pageContainer #tabs .first"
     Then I should see "Mabey Ben"
     And I should see "ben"
     And I should see "Student"
@@ -190,7 +191,7 @@ Feature: Manage users
     And the member should include "ben-edit" on the "School 1" school
     And the memberUid should include "ben-edit" on the "Domain Users" samba group
     And the memberUid should not include "ben" on the "Domain Users" samba group
-    When I follow "Edit"
+    When I follow "Edit..."
     And I fill in "Given name" with "BenEDIT2"
     And I press "Update"
     Then I should see "User was successfully updated."
@@ -211,8 +212,8 @@ Feature: Manage users
     | displayName | cn      |
     | Class 6B    | class6b |
     When I follow "School 1" within "#left"
-    And I follow "Users" within ".main-wrap"
-    Then I should see "Mabey Ben" within ".container"
+    And I follow "Users" within "#pageContainer"
+    Then I should see "Mabey Ben" within "#pageContainer"
     And I should not see /\["ben"\]/
     And I should not see "PuavoEduPersonAffiliation"
 
@@ -224,7 +225,7 @@ Feature: Manage users
       | Ben       | Mabey   | ben    | secret   | Class 4   | admin                     | true         |
       | Joseph    | Wilk    | joseph | secret   | Class 4   | student                   | false        |
     And I am on the show user page with "ben"
-    When I follow "Remove"
+    When I follow "Delete user"
     Then I should see "User was successfully removed."
     And the memberUid should not include "ben" on the "School 1" school
     And the "School 1" school not include incorret member values
@@ -415,7 +416,7 @@ Feature: Manage users
     And I should see "Donald Duck"
     And I should see "Duck Donald"
     #
-    When I follow "Edit"
+    When I follow "Edit..."
     Then I am on the edit user page with "donald"
     And I fill in "Given name" with "Duck"
     And I fill in "Surname" with "Donald"
@@ -430,27 +431,27 @@ Feature: Manage users
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
     Then I am on the show user page with "donald"
-    And I should see "Remove"
+    And I should see "Delete user"
     And I should see "Prevent deletion"
     When I follow "Prevent deletion"
     Then I should see "User deletion has been prevented."
     And I should see "This user cannot be deleted"
     And I should not see "Prevent deletion"
-    And I should not see "Remove"
+    And I should not see "Delete user"
 
   Scenario: Mark user for deletion
     Given the following users:
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
     Then I am on the show user page with "donald"
-    And I should see "Remove"
+    And I should see "Delete user"
     And I should see "Mark for deletion"
     #
     When I follow "Mark for deletion"
     Then I should see "This user has been marked for deletion"
     And I should see "Remove deletion marking"
     And I should not see "Mark for deletion"
-    And I should see "Remove"
+    And I should see "Delete user"
     #
     When I follow "Remove deletion marking"
     Then I should see "User is no longer marked for deletion"
@@ -471,7 +472,7 @@ Feature: Manage users
     And I should see "This user cannot be deleted"
     And I should not see "This user has been marked for deletion"
     And I should not see "Prevent deletion"
-    And I should not see "Remove"
+    And I should not see "Delete user"
 
   Scenario: Delete users who are marked for deletion
     Given the following users:
@@ -479,26 +480,26 @@ Feature: Manage users
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
       | Daisy     | Duck    | daisy  | 314      | visitor                   | Class 4   |
     When I follow "School 1" within "#left"
-    And I follow "Users" within ".main-wrap"
+    And I follow "Users" within "#pageContainer"
     And I should not see "Delete users who are marked for deletion"
     #
     Then I am on the show user page with "donald"
-    And I should see "Remove"
+    And I should see "Delete user"
     And I should see "Mark for deletion"
     When I follow "Mark for deletion"
     Then I should see "This user has been marked for deletion"
     #
     When I follow "School 1" within "#left"
-    And I follow "Users" within ".main-wrap"
+    And I follow "Users" within "#pageContainer"
     Then I should see "Users marked for later deletion"
-    And I should see "Duck Donald" within ".container"
-    And I should see "Duck Daisy" within ".container"
+    And I should see "Duck Donald" within "#pageContainer"
+    And I should see "Duck Daisy" within "#pageContainer"
     And I should see "Delete users who are marked for deletion"
     #
     When I follow "Delete users who are marked for deletion"
     Then I should see "1 users removed"
-    And I should not see "Duck Donald" within ".container"
-    And I should see "Duck Daisy" within ".container"
+    And I should not see "Duck Donald" within "#pageContainer"
+    And I should see "Duck Daisy" within "#pageContainer"
 
 # FIXME
 #  @allow-rescue

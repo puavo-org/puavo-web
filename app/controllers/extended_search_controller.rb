@@ -4,19 +4,25 @@ class SearchSettings
   attr_accessor :terms
   attr_accessor :school_filter
   attr_accessor :is_regexp
-  attr_accessor :remove_unmatched
+  attr_accessor :remove_misses
 
   def initialize
     @terms = []
     @school_filter = '(puavoSchool=*)'
     @is_regexp = false
-    @remove_unmatched = false
+    @remove_misses = false
   end
 end
 
 class ExtendedSearchController < ApplicationController
   # GET /extended_search
   def index
+    unless current_user && current_user.organisation_owner?
+      # Silent redirection for non-owner users. This tool requires
+      # owner-level access rights.
+      return redirect_to '/users'
+    end
+
     respond_to do |format|
       format.html # index.html.erb
     end
@@ -41,7 +47,9 @@ class ExtendedSearchController < ApplicationController
       return make_error(t('extended_search.controller.search_terms_cleanup_failed'))
     end
 
-    return make_error(t('extended_search.controller.no_search_terms')) if settings.terms.empty?
+    if settings.terms.empty?
+      return make_error(t('extended_search.controller.no_search_terms'))
+    end
 
     # If school filtering is enabled, find out the target school's DN
     if params.include?(:schoolLimit) && !params[:schoolLimit].empty?
@@ -49,7 +57,8 @@ class ExtendedSearchController < ApplicationController
         s = School.find(params[:schoolLimit].to_i)
         settings.school_filter = "(puavoSchool=#{s.dn})"
       rescue StandardError => e
-        puts {e}
+        puts "----> #{e}"
+        return make_error(t('extended_search.controller.school_limit_failed'))
       end
     end
 
@@ -57,19 +66,23 @@ class ExtendedSearchController < ApplicationController
       settings.is_regexp = true
     end
 
-    if params.include?(:removeUnmatched) && params[:removeUnmatched]
-      settings.remove_unmatched = true
+    if params.include?(:removeMisses) && params[:removeMisses]
+      settings.remove_misses = true
     end
 
     if settings.is_regexp
       # Make sure each search term is a valid regexp
+      terms2 = []
+
       settings.terms.each do |t|
         begin
-          Regexp.new(t)
+          terms2 << Regexp.new(t)
         rescue
           return make_error(t('extended_search.controller.invalid_regexp') + "\"#{t}\"")
         end
       end
+
+      #settings.terms = terms2
     end
 
     begin
@@ -215,10 +228,10 @@ class ExtendedSearchController < ApplicationController
   # USERS SEARCHING
   # ------------------------------------------------------------------------------------------------
 
+  # Retrieves all users in the specified school
   def get_all_users(school_filter)
-    # TODO: Should this list be editable? We could search only for those
-    # attributes different search term types actually need. I don't know
-    # how much speed, if any, that would optimize.
+    # TODO: Don't include attributes that aren't needed in the current search.
+    # For example, when searching for usernames, we can skip email addresses.
     attributes = [
       'sn',
       'givenName',
@@ -237,6 +250,7 @@ class ExtendedSearchController < ApplicationController
     User.search_as_utf8(:filter => school_filter, :attributes => attributes)
   end
 
+  # Converts a "puavo user" to something we can easily use when rendering a template
   def convert_user(u)
     {
       :id => u['puavoId'][0],
@@ -251,9 +265,15 @@ class ExtendedSearchController < ApplicationController
     }
   end
 
+  # Iterates over all users and calls the user-supplied "matcher" block for every user and every
+  # search term. If the matcher returns (true, string) then the "string" is added to search results
+  # to indicate which part of the term was matched.
   def _do_user_search(settings, &matcher)
     all_users = get_all_users(settings.school_filter)
     @results = []
+    @num_terms = settings.terms.count
+    @num_hits = 0
+    @num_misses = 0
 
     settings.terms.each do |term|
       found = false
@@ -262,12 +282,18 @@ class ExtendedSearchController < ApplicationController
         result, matched = matcher.call(user[1], term)
         next unless result
 
+        # store a match
         @results << [term, matched, convert_user(user[1])]
         found = true
       end
 
+      @num_hits += 1 if found
+      @num_misses += 1 unless found
+
       next if found
-      @results << [term, nil] unless settings.remove_unmatched
+
+      # no hits for this term
+      @results << [term, nil] unless settings.remove_misses
     end
 
     render partial: 'users'
@@ -288,6 +314,9 @@ class ExtendedSearchController < ApplicationController
   def search_user_name(settings, last_is_first)
     all_users = get_all_users(settings.school_filter)
     @results = []
+    @num_terms = settings.terms.count
+    @num_hits = 0
+    @num_misses = 0
 
     # FIXME: This is too complicated to be implemented as a block, but it should not be.
 
@@ -330,8 +359,11 @@ class ExtendedSearchController < ApplicationController
         found = true
       end
 
+      @num_hits += 1 if found
+      @num_misses += 1 unless found
+
       next if found
-      @results << [term, nil] unless settings.remove_unmatched
+      @results << [term, nil] unless settings.remove_misses
     end
 
     render partial: 'users'
@@ -398,6 +430,9 @@ class ExtendedSearchController < ApplicationController
   def _do_group_search(settings, &matcher)
     all_groups = get_all_groups(settings.school_filter)
     @results = []
+    @num_terms = settings.terms.count
+    @num_hits = 0
+    @num_misses = 0
 
     settings.terms.each do |term|
       found = false
@@ -410,8 +445,12 @@ class ExtendedSearchController < ApplicationController
         found = true
       end
 
+      @num_hits += 1 if found
+      @num_misses += 1 unless found
+
       next if found
-      @results << [term, nil] unless settings.remove_unmatched
+
+      @results << [term, nil] unless settings.remove_misses
     end
 
     render partial: 'groups'
@@ -481,6 +520,9 @@ class ExtendedSearchController < ApplicationController
   def _do_device_search(settings, &matcher)
     all_devices = get_all_devices(settings.school_filter)
     @results = []
+    @num_terms = settings.terms.count
+    @num_hits = 0
+    @num_misses = 0
 
     settings.terms.each do |term|
       found = false
@@ -493,8 +535,12 @@ class ExtendedSearchController < ApplicationController
         found = true
       end
 
+      @num_hits += 1 if found
+      @num_misses += 1 unless found
+
       next if found
-      @results << [term, nil, nil] unless settings.remove_unmatched
+
+      @results << [term, nil, nil] unless settings.remove_misses
     end
 
     render partial: 'devices'

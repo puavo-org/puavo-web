@@ -1,0 +1,125 @@
+/*
+  External systems integration indicators
+*/
+
+.integrations {
+  display: flex;
+  flex-flow: wrap;
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 5px 0;
+  line-height: 1;
+  cursor: default;
+  font-size: 80%;
+
+  /* Indicator labels or badges, whatever you want to call them */
+  li {
+    margin: 2px 5px 2px 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid $integrationsBorder;
+    white-space: nowrap;
+    display: inline;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    padding-left: 5px;
+
+    li {
+      margin: 2px 2px 2px 0;
+      padding: 5px;
+    }
+  }
+
+  /* Special spans for adding arrows indicating data flow directions */
+  span {
+    font-family: "puavo-icons";
+    padding: 0 5px;
+  }
+
+  /* This system sends data to puavo */
+  .in {
+    background: $integrationsInBack;
+    color: $integrationsInFore;
+
+    span:after {
+      content: "\e829";
+    }
+  }
+
+  /* Puavo sends data to this system */
+  .out {
+    background: $integrationsOutBack;
+    color: $integrationsOutFore;
+
+    span:after {
+      content: "\e829";
+    }
+  }
+
+  /* Data flows in both directions between this system and puavo */
+  .inout {
+    background: $integrationsInOutBack;
+    color: $integrationsInOutFore;
+
+    span:after {
+      content: "\e819";
+    }
+  }
+
+  /* This system uses Puavo as an SSO provider */
+  .login {
+    background: $integrationsLoginBack;
+    color: $integrationsLoginFore;
+  }
+
+  .login:before {
+    /* "Abuse" the puavo-icons */
+    content: "\e824";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+
+  /* Passwords synchronisation between Puavo and this system */
+  .password {
+    background: $integrationsPasswordBack;
+    color: $integrationsPasswordFore;
+  }
+
+  .password:before {
+    content: "\e81d";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+
+  /* Some other type of integration */
+  .other {
+    background: $integrationsOtherBack;
+    color: $integrationsOtherFore;
+  }
+
+  .other:before {
+    content: "\e821";
+    font-family: "puavo-icons";
+    padding-right: 5px;
+  }
+}
+
+/* "Inline" integrations displayed in the school list */
+.inlineIntegrations {
+  display: inline;
+  list-style-type: none;
+  margin-left: 20px;
+  font-size: 90%;
+
+  li {
+    padding: 2px 5px;
+    border: 1px solid $integrationsBorder;
+    white-space: nowrap;
+    display: inline;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 70%;
+  }
+}

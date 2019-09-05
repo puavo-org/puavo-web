@@ -75,10 +75,6 @@ module PuavoRest
         'external login parameters not configured' \
           unless @external_login_params.kind_of?(Hash)
 
-      @external_login_params['external_domain'] \
-        ||= (CONFIG['external_domain'] \
-              && CONFIG['external_domain'][organisation_name])
-
       @admin_dn = @config['admin_dn'].to_s
       raise ExternalLoginError, 'admin dn is not set' \
         if @admin_dn.empty?
@@ -424,23 +420,22 @@ module PuavoRest
     def initialize(ldap_config, service_name, flog)
       super(service_name, flog)
 
-      base = ldap_config['base']
+      # this is a reference to configuration, do not modify!
+      @ldap_config = ldap_config
+
       raise ExternalLoginConfigError, 'ldap base not configured' \
-        unless base
+        unless @ldap_config['base']
 
-      bind_dn = ldap_config['bind_dn']
       raise ExternalLoginConfigError, 'ldap bind dn not configured' \
-        unless bind_dn
+        unless @ldap_config['bind_dn']
 
-      bind_password = ldap_config['bind_password']
       raise ExternalLoginConfigError, 'ldap bind password not configured' \
-        unless bind_password
+        unless @ldap_config['bind_password']
 
-      server = ldap_config['server']
       raise ExternalLoginConfigError, 'ldap server not configured' \
-        unless server
+        unless @ldap_config['server']
 
-      user_mappings = ldap_config['user_mappings']
+      user_mappings = @ldap_config['user_mappings']
       raise ExternalLoginConfigError, 'user_mappings configured wrong' \
         unless user_mappings.nil? || user_mappings.kind_of?(Hash)
 
@@ -458,53 +453,67 @@ module PuavoRest
       raise ExternalLoginConfigError, 'user_mappings/defaults is not a hash' \
         unless @user_mapping_defaults.kind_of?(Hash)
 
-      @external_id_field = ldap_config['external_id_field']
+      @external_id_field = @ldap_config['external_id_field']
       raise ExternalLoginConfigError, 'external_id_field not configured' \
         unless @external_id_field.kind_of?(String)
 
-      @external_username_field = ldap_config['external_username_field']
+      @external_username_field = @ldap_config['external_username_field']
       raise ExternalLoginConfigError, 'external_username_field not configured' \
         unless @external_username_field.kind_of?(String)
 
-      @external_domain = ldap_config['external_domain']
-      raise ExternalLoginConfigError, 'external_domain not configured' \
-        unless @external_domain.kind_of?(String)
-
-      @external_password_change = ldap_config['password_change']
+      @external_password_change = @ldap_config['password_change']
       raise ExternalLoginConfigError, 'password_change style not configured' \
         unless @external_password_change.kind_of?(Hash)
 
-      @external_ldap_subtrees = ldap_config['subtrees']
+      @external_ldap_subtrees = @ldap_config['subtrees']
       raise ExternalLoginConfigError, 'subtrees not configured' \
         unless @external_ldap_subtrees.kind_of?(Array) \
                  && @external_ldap_subtrees.all? { |s| s.kind_of?(String) }
 
-      encryption_method \
-        = ldap_config['encryption_method'] == 'simple_tls' \
-            ? :simple_tls \
-            : :start_tls
+      setup_ldap_connection(@ldap_config['bind_dn'],
+                            @ldap_config['bind_password'])
 
-      @ldap = Net::LDAP.new :base => base.to_s,
-                            :host => server.to_s,
-                            :port => (Integer(ldap_config['port']) rescue 389),
-                            :auth => {
-                              :method   => :simple,
-                              :username => bind_dn.to_s,
-                              :password => bind_password.to_s,
-                            },
-                            :encryption => {
-                               :method      => encryption_method,
-                               :tls_options => {
-                                 :verify_mode => OpenSSL::SSL::VERIFY_NONE,
-                               },
-                               # XXX not good
-                               # XXX see http://www.rubydoc.info/github/ruby-ldap/ruby-net-ldap/Net%2FLDAP:initialize
-                               # XXX and http://ruby-doc.org/stdlib-2.3.0/libdoc/openssl/rdoc/OpenSSL/SSL/SSLContext.html
-                               # XXX should this be configurable through
-                               # XXX ldap_config?
-                            }
       @ldap_userinfo = nil
       @username = nil
+    end
+
+    def setup_ldap_connection(bind_dn, bind_password)
+      connection_args = {
+        :base => @ldap_config['base'].to_s,
+        :host => @ldap_config['server'].to_s,
+        :port => (Integer(@ldap_config['port']) rescue 389),
+        :auth => {
+          :method   => :simple,
+          :username => bind_dn.to_s,
+          :password => bind_password.to_s,
+        }
+      }
+
+      # XXX the use of OpenSSL::SSL::VERIFY_NONE is not so good
+      # XXX see http://www.rubydoc.info/github/ruby-ldap/ruby-net-ldap/Net%2FLDAP:initialize
+      # XXX and http://ruby-doc.org/stdlib-2.3.0/libdoc/openssl/rdoc/OpenSSL/SSL/SSLContext.html
+      # XXX should this be configurable through
+      # XXX ldap_config?
+      case @ldap_config['encryption_method']
+        when 'none'
+          true
+        when 'simple_tls'
+          connection_args[:encryption] = {
+            :method      => :simple_tls,
+            :tls_options => { :verify_mode => OpenSSL::SSL::VERIFY_NONE, } # XXX
+          }
+        when 'start_tls'
+          connection_args[:encryption] = {
+            :method      => :start_tls,
+            :tls_options => { :verify_mode => OpenSSL::SSL::VERIFY_NONE, } # XXX
+          }
+        else
+          raise ExternalLoginConfigError,
+                'unsupported encryption method:' \
+                  + " '#{ @ldap_config['encryption_method'] }'"
+      end
+
+      @ldap = Net::LDAP.new(connection_args)
     end
 
     # for now, only benchmark ldap operations, but we may also need
@@ -550,15 +559,27 @@ module PuavoRest
         raise "LDAP information for user '#{ target_user_username }' has no DN"
       end
 
-      bind_ok = ext_ldapop('change_password/bind_as',
-                           :bind_as,
-                           :filter   => user_ldapfilter(actor_username),
-                           :password => actor_password)
-      if !bind_ok then
+      actor_info = ext_ldapop('change_password/bind_as',
+                              :bind_as,
+                              :filter   => user_ldapfilter(actor_username),
+                              :password => actor_password)
+      if !actor_info then
         raise ExternalLoginWrongCredentials,
               "binding as '#{ actor_username }' to external ldap failed:" \
                 + ' user and/or password is wrong'
       end
+
+      # It should not be necessary to setup a new ldap connection
+      # by the actor_dn, as bind_as() above should be enough, but apparently
+      # it may be that if the credentials that the ldap connection was opened
+      # with are lacking password change permissions, password change may
+      # fail unless a new ldap connection is set up with the actor_dn
+      # credentials.  Issue seen with AD.
+      actor_dn = actor_info.first.dn
+      raise ExternalLoginPasswordChangeError,
+            'could not find actor user dn in external ldap' \
+        unless actor_dn.kind_of?(String)
+      setup_ldap_connection(actor_dn, actor_password)
 
       # these raise exceptions if password change fails
       case @external_password_change['api']
@@ -693,7 +714,7 @@ module PuavoRest
           userprincipalname = Array(ldap_entry[username_sym]).first
           next unless userprincipalname.kind_of?(String)
 
-          match = userprincipalname.match(/\A(.*)@#{ @external_domain }\z/)
+          match = userprincipalname.match(/\A(.*)@/)
           next unless match
 
           users[ external_id ] = {
@@ -987,7 +1008,7 @@ module PuavoRest
 
     def user_ldapfilter(username)
       Net::LDAP::Filter.eq(@external_username_field,
-                           "#{ username }@#{ @external_domain }")
+                           "#{ Net::LDAP::Filter.escape(username) }@*")
 
     end
   end

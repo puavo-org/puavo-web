@@ -91,12 +91,12 @@
 
     <tr>
       <th><%= t('ldap_create_time') %></th>
-      <td><%= h device['createTimestamp'].nil? ? '?' : device['createTimestamp'].localtime %></td>
+      <td><%= h device['createTimestamp'] %></td>
     </tr>
 
     <tr>
       <th><%= t('ldap_modify_time') %></th>
-      <td><%= h device['modifyTimestamp'].nil? ? '?' : device['modifyTimestamp'].localtime %></td>
+      <td><%= h device['modifyTimestamp'] %></td>
     </tr>
 
     <tr>

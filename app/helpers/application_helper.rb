@@ -86,11 +86,9 @@ module ApplicationHelper
   DEB_PACKAGE = Array(`dpkg -l | grep puavo-web`.split())[2]
   def debug_footer
     "<footer>
-      hostname: #{ Socket.gethostname },
-      version: #{ PuavoUsers::VERSION },
-      git commit: #{ PuavoUsers::GIT_COMMIT },
-      deb package: #{ DEB_PACKAGE },
-      uptime: #{ (Time.now - STARTED).to_i } seconds
+      hostname: #{ Socket.gethostname }, uptime: #{ (Time.now - STARTED).to_i } seconds<br>
+      version: #{ PuavoUsers::VERSION }, git commit: #{ PuavoUsers::GIT_COMMIT },<br>
+      deb package: #{ DEB_PACKAGE }
     </footer>".html_safe
   end
 
@@ -273,7 +271,7 @@ module ApplicationHelper
   end
 
   def start_box(title, extraClass="")
-    "<div class=\"content-box-new #{extraClass}\"><header>#{title}</header><div class=\"contents\">".html_safe
+    "<div class=\"contentBox #{extraClass}\"><header>#{title}</header><div class=\"contents\">".html_safe
   end
 
   def end_box
@@ -353,5 +351,9 @@ module ApplicationHelper
 
   def insert_wbr(s)
     (s.split('-').join('-<wbr>')).html_safe
+  end
+
+  def sortable_list_column_header(s)
+    "<div><span class=\"name\">#{s}</span><span class=\"arrow\"></span></div>".html_safe
   end
 end

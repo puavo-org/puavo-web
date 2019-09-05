@@ -152,18 +152,18 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-	  {
-	    "ssid": "EAP-TLS_test_network",
-	    "type": "eap-tls",
-	    "wlan_ap": false,
-	    "identity": "Puavo",
-	    "certs": {
-	      "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
-	      "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",
-	      "client_key": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWtleSwgYnV0IGEgZmFr\nZSBvbmUuCg==\n",
-	      "client_key_password": "AnotherSecretOfMine"
-	    }
-	  }
+          {
+            "ssid": "EAP-TLS_test_network",
+            "type": "eap-tls",
+            "wlan_ap": false,
+            "identity": "Puavo",
+            "certs": {
+              "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
+              "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",
+              "client_key": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWtleSwgYnV0IGEgZmFr\nZSBvbmUuCg==\n",
+              "client_key_password": "AnotherSecretOfMine"
+            }
+          }
         ]
       """
 
@@ -180,18 +180,18 @@ Feature: Manage wlan networks
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
       """
         [
-	  {
-	    "ssid": "EAP-TLS_test_network",
-	    "type": "eap-tls",
-	    "wlan_ap": false,
-	    "identity": "Mulperi",
-	    "certs": {
-	      "ca_cert": null,
-	      "client_cert": null,
-	      "client_key": null,
-	      "client_key_password": ""
-	    }
-	  }
+          {
+            "ssid": "EAP-TLS_test_network",
+            "type": "eap-tls",
+            "wlan_ap": false,
+            "identity": "Mulperi",
+            "certs": {
+              "ca_cert": null,
+              "client_cert": null,
+              "client_key": null,
+              "client_key_password": ""
+            }
+          }
         ]
       """
 
@@ -228,17 +228,17 @@ Feature: Manage wlan networks
             "wlan_ap": false,
             "password": "SpoonmanComeTogetherWithYourHands"
           },
-	  {
-	    "ssid": "EAPTLSNetwork",
-	    "type": "eap-tls",
-	    "wlan_ap": false,
-	    "identity": "EAPTLSNetworkIdentity",
-	    "certs": {
-	      "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
-	      "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",
-	      "client_key": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWtleSwgYnV0IGEgZmFr\nZSBvbmUuCg==\n",
-	      "client_key_password": "GetRightWithMe"
-	    }
-	  }
+          {
+            "ssid": "EAPTLSNetwork",
+            "type": "eap-tls",
+            "wlan_ap": false,
+            "identity": "EAPTLSNetworkIdentity",
+            "certs": {
+              "ca_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2EtY2VydGlmaWNhdGUsIGJ1dCBh\nIGZha2Ugb25lLgo=\n",
+              "client_cert": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWNlcnRpZmljYXRlLCBi\ndXQgYSBmYWtlIG9uZS4K\n",
+              "client_key": "VGhpcyBmaWxlIGlzIG5vdCBhIHJlYWwgY2xpZW50LWtleSwgYnV0IGEgZmFr\nZSBvbmUuCg==\n",
+              "client_key_password": "GetRightWithMe"
+            }
+          }
         ]
       """

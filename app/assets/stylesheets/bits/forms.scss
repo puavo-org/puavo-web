@@ -1,0 +1,217 @@
+/*
+  Forms and form elements
+*/
+
+.formContainer {
+  width: 100%;
+  max-width: 1300px;
+
+  @media #{$screen-breakpoint-one} {
+    max-width: unset;
+  }
+}
+
+fieldset {
+  border: 1px solid $formFieldsetBorderColor;
+  padding: 10px;
+  margin: 20px 0;
+}
+
+legend {
+  padding: 0 5px;
+  font-weight: bold;
+  font-size: 110%;
+  border: 1px solid $formFieldsetBorderColor;
+  border-width: 0 1px;
+}
+
+/* editForms are used for creating and editing users, group, devices,
+   schools, and so on */
+.editForm {
+  width: 100%;
+
+  /* Labels for checkboxes/radio buttons */
+  label {
+    font-weight: normal;
+    font-size: 120%;
+    line-height: 2;
+  }
+
+  select {
+    padding: 5px;
+    width: 100%;
+  }
+
+  textarea {
+    width: 100%;
+  }
+
+  /* Embedded tables */
+  td, th {
+    padding: 10px;
+  }
+
+  th label {
+    /* Row labels */
+    font-size: 110%;
+    font-weight: bold;
+    word-wrap: none;
+    color: $formLabelColor;
+    padding: 0;
+    margin: 0;
+  }
+
+  tr:nth-child(odd) {
+    background: $formOddRowBack;
+  }
+
+  tr:nth-child(even) {
+    background: $formEvenRowBack;
+  }
+
+  th {
+    text-align: right;
+    width: 250px;
+  }
+
+  .buttonRow {
+    th, td {
+      background: $formButtonRowBack !important;
+      text-align: center;
+    }
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+  }
+
+  input[type="checkbox"], input[type="radio"] {
+    padding: 0;
+    margin: 0 5px 0 0;    /* push labels away from the input box */
+
+    @media #{$screen-breakpoint-one} {
+      /* The label gets collapsed, so push the element away from the
+         element above it. */
+      margin: 10px;
+    }
+  }
+
+  /* Submit and cancel buttons */
+  input[type="submit"] {
+    /*font-size: 120%;*/
+    height: 40px;
+    width: 150px;
+    max-width: 300px;
+  }
+
+  .cancel {
+    display: inline;
+    /*font-size: 100%;
+    margin: 0;
+    padding: 0;*/
+    width: 100px;
+    margin-left: 30px;
+  }
+}
+
+input[type="submit"] {
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+}
+
+/* The "* = required" label displayed at the top of forms */
+.requiredTitle {
+  color: $formErrorColor;
+  font-style: italic;
+}
+
+/* Requird fields */
+.requiredField {
+}
+
+.requiredField .field_with_errors {
+  display: inline-block;
+}
+
+.requiredField:after {
+  content: " *";
+  font-size: 120%;
+  color: $formErrorColor;
+}
+
+.field_error {
+  color: $formErrorColor;
+  display: block;
+}
+
+/* Fields with invalid/missing values */
+.editForm .label_error {
+  color: $formErrorColor;
+}
+
+/* The small label below the field explaining what's wrong with the current value.
+   This class name cannot be changed, it comes from Rails' ActionView. */
+.field_with_errors {
+  color: $formLabelColor;
+}
+
+.field_with_errors input, .field_with_errors select {
+  border: 1px solid $formErrorColor;
+}
+
+/* Administrative groups checkbox list header */
+.administrativeGroups header {
+  border-bottom: 1px dashed $adminGroupsHeaderBorder;
+  font-size: 110%;
+  margin-bottom: 5px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.administrativeGroups header:first-of-type {
+  margin-top: 0;
+}
+
+/* Administrative groups checkbox list entry */
+.administrativeGroups input[type="checkbox"] {
+  margin-left: 30px;
+  margin-right: 0;
+}
+
+@media #{$screen-breakpoint-one} {
+  /* Turn form tables into what looks like lists of table rows, just like
+     non-form tables of things. */
+  .editForm {
+    padding: 0;
+
+    table, tbody {
+      display: block;
+    }
+
+    tr {
+      display: block;
+      position: relative;
+      padding: 5px 10px;
+    }
+
+    th {
+      text-align: left;
+      width: auto;
+      padding: 0;
+    }
+
+    .buttonRow {
+      background: $formButtonRowBack !important;
+    }
+
+    td {
+      display: block;
+      text-align: left;
+      padding: 0;
+    }
+  }
+}

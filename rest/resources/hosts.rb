@@ -104,10 +104,13 @@ class Host < LdapModel
   end
 
   def self.create_device_info(hostname)
+    default_profiles = nil
+
     # handle these special names so that we return only puavoconf for
     # organisation
     if %w(diskinstaller preinstalled unregistered).include?(hostname) then
       host_object = UnregisteredDevice.new
+      default_profiles = [ hostname ]
     else
       host_object = self.by_hostname!(hostname)
     end
@@ -123,6 +126,22 @@ class Host < LdapModel
       host_object.puavoconf.map { |k,v| [ k, v.to_s ] }
     ]
     host['conf'].merge!(explicit_puavoconf)
+
+    # "puavo.profiles.list" might be constructed from other settings.
+    unless host['conf'].has_key?('puavo.profiles.list') then
+      unless default_profiles then
+        use_personal_profile \
+          = (host['conf']['puavo.admin.personally_administered'] == 'true')
+        default_profiles = [
+          host_object.type,
+          (host_object.tags.include?('bigtouch')   ? 'bigtouch'   : nil),
+          (host_object.tags.include?('infotv')     ? 'infotv'     : nil),
+          (host_object.tags.include?('restricted') ? 'restricted' : nil),
+          (host_object.tags.include?('webkiosk')   ? 'webkiosk'   : nil),
+          (use_personal_profile                    ? 'personal'   : nil) ]
+      end
+      host['conf']['puavo.profiles.list'] = default_profiles.compact.join(',')
+    end
 
     host
   end

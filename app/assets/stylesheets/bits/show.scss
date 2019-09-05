@@ -1,0 +1,239 @@
+/*
+  Various "show" page styles
+*/
+
+/* Generic floating container boxes that have titles */
+.contentBox {
+  min-width: 45%;
+  width: 49%;
+  float: left;
+  margin: 5px;
+  padding: 0;
+  box-shadow: 3px 3px 0 $contentBoxShadow;
+
+  header {
+    background: $contentBoxHeaderBack;
+    color: $contentBoxHeaderFore;
+    padding: 5px 10px;
+    margin: 0;
+    font-size: 130%;
+    border-top: 1px solid $contentBoxBorder;
+    border-left: 1px solid $contentBoxBorder;
+    border-right: 1px solid $contentBoxBorder;
+    font-weight: bold;
+  }
+
+  .contents {
+    padding: 5px;
+    background: $contentBoxContentsBack;
+    border-left: 1px solid $contentBoxBorder;
+    border-right: 1px solid $contentBoxBorder;
+    border-bottom: 1px solid $contentBoxBorder;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  tr:nth-child(odd) {
+    background: $contentBoxTableOddRowBack;
+  }
+
+  tr:nth-child(even) {
+    background: $contentBoxTableEvenRowBack;
+  }
+
+  h3 {
+    margin: 0 0 10px 0;
+    padding: 5px;
+    font-weight: bold;
+    color: $contentBoxSubHeaderFore;
+    background: $contentBoxSubHeaderBack;
+    border: none;
+  }
+
+  @media #{$screen-breakpoint-one} {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  p.empty {
+    margin: 10px;
+  }
+}
+
+.schoolImage {
+  /* disable content box shadows */
+  box-shadow: none !important;
+}
+
+.fullWidth {
+  /* Used on the school page to show admins and billing info */
+  width: 99%;
+  clear: both;
+  float: none;
+}
+
+/* A weird table/list hybrid style, used on school "show" pages */
+.multilineItem {
+  border-bottom: 1px solid $contentBoxMultilineItemBorder;
+  padding-bottom: 10px;
+  margin: 5px;
+
+  ul {
+    /* Harmonize with .value's */
+    padding-left: 20px;
+  }
+}
+
+.multilineItem:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.multilineItem .title {
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.multilineItem .value {
+  margin-left: 20px;
+}
+
+/* Turn off bulleted lists */
+.noBullets {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 0 0.5em;
+}
+
+/* Heading row/column of tables used in some content boxes. Can't use TH only,
+   as it's usage varies. */
+.tableHeading th {
+  background: $contentBoxTableHeadingBack;
+}
+
+/* Prevent word wrapping, used on user email and phone number displays */
+.noWrap {
+  white-space: no-wrap;
+
+  @media #{$screen-breakpoint-one} {
+    /* narrow pages are unreadable otherwise */
+    white-space: normal;
+  }
+}
+
+.noFloat {
+  float: none !important;
+}
+
+/* School/device mount points */
+.mountPoints td, .mountPoints th {
+  border: none;
+}
+
+.mountPoints th {
+  text-align: center !important;
+  background: $mountPointsHeadingBack;
+}
+
+/* Basic user/device information block */
+.basicInfo {
+  display: flex;
+  flex-flow: row wrap;
+  margin-bottom: 20px;
+  padding: 0;
+
+  .basicInfoImage {
+    img {
+      max-width: 220px;
+      padding: 10px;
+      border: 1px solid $basicInfoBorders;
+    }
+
+    width: 240px;
+    text-align: center;
+  }
+
+  .basicInfoDetails {
+    flex: 2;
+    width: 75%;
+    padding-left: 15px;
+
+    h1 {
+      border-bottom: 1px solid $basicInfoBorders;
+      padding: 0;
+      margin: 0 0 10px 0;
+    }
+
+    .infoNotice {
+      color: $importantBasicInfo;
+      padding: 0 0 0 10px;
+      margin: 0;
+    }
+
+    .infoTitle {
+      font-weight: bold;
+      padding: 0 0 0 10px;
+      margin: 10px 0 0 0;
+    }
+
+    .infoValue {
+      padding: 0 0 0 20px;
+      margin: 0 0 10px 0;
+    }
+
+    .puavoConf {
+      margin-top: 5px;
+      margin-left: 25px;
+    }
+  }
+
+  @media #{$screen-breakpoint-one} {
+    .basicInfoImage {
+      img {
+        max-width: 128px;
+        padding: 0;
+        border: none;
+      }
+
+      width: 138px;
+    }
+  }
+
+  @media #{$screen-breakpoint-two} {
+    .basicInfoImage {
+      img {
+        max-width: 64px;
+        padding: 0;
+        border: none;
+      }
+
+      width: 78px;
+    }
+  }
+}
+
+/* Puavo-conf tables in various places */
+.puavoConf {
+  border: 1px solid $puavoConfBorder;
+
+  tr:nth-child(odd) {
+    background: $puavoConfOddRow;
+  }
+
+  tr:nth-child(even) {
+    background: $puavoConfEvenRow;
+  }
+
+  th {
+    font-size: 100%;
+  }
+
+  td {
+    font-family: monospace;
+    width: 100%;
+  }
+}

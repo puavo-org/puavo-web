@@ -1,0 +1,8 @@
+/*
+  Media query breakpoints
+*/
+
+$screen-breakpoint-one: "screen and (max-width: 800px)";
+$screen-breakpoint-two: "screen and (max-width: 480px)";
+$screen-portrait-breakpoint-one: "screen and (orientation: portrait) and (max-device-width: 800px)";
+$screen-portrait-breakpoint-two: "screen and (orientation: portrait) and (max-device-width: 540px)";

@@ -1,0 +1,171 @@
+/*
+  Custom classes that are used on all/most pages
+*/
+
+/* Font Awesome icon class names are all prefixed with "icon-" */
+[class*=icon] {
+  font-size: 120%;
+}
+
+/* A generic missing/unset information indicator for data that isn't
+   always required to be present, but what really should be set */
+.missingData {
+  color: $missingDataFore;
+}
+
+/* Buttons, links and areas that are only visible to organisation owners */
+.ownersOnly {
+  border: 1px dashed $ownersOnlyBorder;
+}
+
+.ownersOnlyTop {
+  border: 1px dashed $ownersOnlyBorder !important;
+}
+
+/* Wraps everything on the page below the topmenu */
+#pageWrapper {
+  margin: 0;
+  padding: 0;
+}
+
+/* Actual page contents. Margin cannot be set to pageWrapper, as it
+   can leave a visible crack between the topbar and the page contents. */
+#pageContainer {
+  margin-top: 40px;
+
+  @media #{$screen-breakpoint-one} {
+    margin: 0;
+  }
+}
+
+/* School name, integrations */
+#schoolHeader {
+  padding: 10px;
+  background: $schoolHeaderBack;
+
+  @media #{$screen-breakpoint-one} {
+    margin: 0;
+  }
+
+  #schoolName {
+    color: $schoolNameFore;
+    font-size: 250%;
+    font-weight: bold;
+    font-variant: small-caps;
+    padding: 0;
+    margin: 0;
+    overflow-wrap: break-word;  /* force splitting of long organisation names */
+
+    @media #{$screen-breakpoint-one} {
+      font-size: 200%;
+    }
+  }
+}
+
+/* Page contents below the in-page tab bar */
+#content {
+  background: $pageContentBack;
+  color: $pageContentFore;
+  margin: 0;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  overflow: auto;
+  font-size: 80%;
+  flex: 1;
+
+  @media #{$screen-breakpoint-one} {
+    padding: 10px 5px;
+    border: none;
+  }
+
+  /* Used on the school page to push content down, below the tools */
+  .dashboard {
+    float: left;
+    margin: 0;
+    width: 100%;
+  }
+
+  h1 {
+    margin: 0 0 10px 0;
+    padding: 0;
+    line-height: 1;
+  }
+}
+
+/* "#jquery-live-search" DIVs (yes, plural) are created outside of the <body>
+   element by JavaScript. Those DIVs contain A and .btn elements too.*/
+#content, #jquery-live-search {
+  /* A generic link */
+  a {
+    color: $linkFore;
+    background: $linkBack;
+    font-weight: bold;
+  }
+
+  a:hover {
+    color: $linkHoverFore;
+    background: $linkHoverBack;
+    text-decoration: none;
+  }
+
+  a:focus {
+    color: $linkFocusFore;
+    background: $linkFocusBack;
+  }
+
+  /* Hyperlinks styled as buttons */
+  .btn {
+    display: inline-block;
+    padding: 4px 12px;
+    margin: 2px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: $buttonBorderHi $buttonBorderLo $buttonBorderLo $buttonBorderHi;
+    background: $buttonBack;
+    color: $buttonFore;
+    text-decoration: none;
+    font-weight: normal;
+  }
+
+  .btn:hover {
+    background: $buttonHoverBack;
+    color: $buttonFore;
+  }
+
+  .btn:active, .btn:focus {
+    border-color: $buttonBorderLo $buttonBorderHi $buttonBorderHi $buttonBorderLo;
+    background: $buttonHoverBack;
+    color: $buttonFore;
+  }
+
+  .btn-danger {
+    border-color: $buttonDangerBorderHi $buttonDangerBorderLo $buttonDangerBorderLo $buttonDangerBorderHi;
+    background: $buttonDangerBack;
+    color: $buttonDangerFore;
+  }
+
+  .btn-danger:hover {
+    background: $buttonDangerHoverBack;
+    color: $buttonDangerFore;
+  }
+
+  .btn-danger:active, .btn-danger:focus {
+    border-color: $buttonDangerBorderLo $buttonDangerBorderHi $buttonDangerBorderHi $buttonDangerBorderLo;
+    background: $buttonDangerHoverBack;
+    color: $buttonDangerFore;
+  }
+}
+
+/* Server and git commit infos */
+footer {
+  display: block;
+  color: $footerFore;
+  text-align: center;
+  font-size: 70%;
+  margin: 1em;
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 60%;
+  }
+}

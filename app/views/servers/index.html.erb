@@ -2,22 +2,22 @@
 
 <h1><%= t('.title') %></h1>
 
-<table class="list">
+<table class="list" id="servers">
   <tr class="thead">
-    <th><%= t("activeldap.attributes.server.puavoHostname") %></th>
-    <th><%= t('activeldap.attributes.server.puavoDeviceManufacturer') %></th>
-    <th><%= t('activeldap.attributes.server.puavoDeviceModel') %></th>
-    <th><%= t('activeldap.attributes.server.serialNumber') %></th>
-    <th colspan="3"><%= t("actions") %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.server.puavoHostname')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.server.puavoDeviceManufacturer')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.server.puavoDeviceModel')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.server.serialNumber')) %></th>
+    <th><%= t('actions') %></th>
   </tr>
 
   <% @servers.each do |server| %>
   <tr>
-    <td data-title="<%= t("activeldap.attributes.server.puavoHostname") %>"><%= link_to server.puavoHostname, server_path(server) %></td>
-    <td data-title="<%= t("activeldap.attributes.server.puavoDeviceManufacturer") %>"><%=h server.puavoDeviceManufacturer %></td>
-    <td data-title="<%= t("activeldap.attributes.server.puavoDeviceModel") %>"><%=h server.puavoDeviceModel %></td>
-    <td data-title="<%= t("activeldap.attributes.server.serialNumber") %>"><%=h server.serialNumber %></td>
-    <td data-title="<%= t("actions") %>" class="table-actions">
+    <td data-title="<%= t('activeldap.attributes.server.puavoHostname') %>"><%= link_to server.puavoHostname, server_path(server) %></td>
+    <td data-title="<%= t('activeldap.attributes.server.puavoDeviceManufacturer') %>"><%= h server.puavoDeviceManufacturer %></td>
+    <td data-title="<%= t('activeldap.attributes.server.puavoDeviceModel') %>"><%= h server.puavoDeviceModel %></td>
+    <td data-title="<%= t('activeldap.attributes.server.serialNumber') %>"><%= h server.serialNumber %></td>
+    <td data-title="<%= t('actions') %>" class="tableActions">
       <%= link_to edit_server_path(server), class: 'btn' do %>
         <i class="icon-pencil"></i><%= t('link.edit') %>
       <% end %>
@@ -29,3 +29,24 @@
   </tr>
   <% end %>
 </table>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag 'sortableTable' %>
+<% end %>
+
+<script>
+$(document).ready(function() {
+    new SortableTable(
+        "servers",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ ],                                        // manufacturer
+            [ ],                                        // model
+            [ ],                                        // serial number
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
+        ],
+        "fi",
+        "<%= "#{LdapOrganisation.current.o}-servers" %>"
+    );
+});
+</script>

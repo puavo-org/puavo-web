@@ -46,8 +46,8 @@ class GroupsController < ApplicationController
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = Group.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
-    @group['createTimestamp'] = extra['createTimestamp'].nil? ? '?' : extra['createTimestamp'].localtime
-    @group['modifyTimestamp'] = extra['modifyTimestamp'].nil? ? '?' : extra['modifyTimestamp'].localtime
+    @group['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
+    @group['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
     @members = @group.members.sort{|a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
 

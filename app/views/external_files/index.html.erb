@@ -36,11 +36,11 @@
     <% end %>
     </td>
 
-    <td data-title="<%= t('actions') %>" class="table-actions">
+    <td data-title="<%= t('actions') %>" class="tableActions">
     <%= file_field_tag "file[#{ file["meta"]["name"] }", :value => "Add or change" %>
     <% if file["model"] %>
     <td>
-    <span class="table-actions">
+    <span class="tableActions">
       <%= link_to(
             download_external_file_path(file["meta"]["name"]), :class => 'btn'
           ) do
@@ -48,7 +48,7 @@
       <i class="icon-download"></i> <%= t('external_files.buttons.download') %>
       <% end %>
       </span>
-      <span class="table-actions">
+      <span class="tableActions">
       <%= link_to(
             destroy_external_file_path(file["meta"]["name"]),
             method: :delete, data: { confirm: t('general_confirm') }, :class => 'btn btn-danger'
@@ -67,7 +67,13 @@
 <div style="clear: both;"></div>
 <br>
 
-<p><%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %></p>
+<table class="editForm">
+  <tr class="buttonRow">
+    <td>
+      <%= submit_tag(t('external_files.buttons.master_save'), class: 'btn') %>
+    </td>
+  </tr>
+</table>
 
 <% end %>
 

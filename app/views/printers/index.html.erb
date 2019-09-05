@@ -2,15 +2,15 @@
 
 <h1><%= t('layouts.application.printers') %></h1>
 
-<% @servers_and_printers.each do |server| %>
+<% @servers_and_printers.each_with_index do |server, index| %>
 <h2><span><%= t('.server_title') %> <%= link_to h(server[:hostname]), server_path(server[:server]) %></span></h2>
 
-<table class="list printersList">
+<table class="list printersList" id="printers_<%= index %>">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.printer.printerDescription') %></th>
-    <th><%= t('activeldap.attributes.printer.printerMakeAndModel') %></th>
-    <th><%= t('activeldap.attributes.printer.printerLocation') %></th>
-    <th colspan="2"><%= t('actions') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerDescription')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerMakeAndModel')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.printer.printerLocation')) %></th>
+    <th><%= t('actions') %></th>
   </tr>
 
   <% server[:printers].each do |printer| %>
@@ -18,7 +18,7 @@
     <td data-title="<%= t("activeldap.attributes.printer.printerDescription") %>"><%= h printer.printerDescription %></td>
     <td data-title="<%= t("activeldap.attributes.printer.printerMakeAndModel") %>"><%= h printer.printerMakeAndModel %></td>
     <td data-title="<%= t("activeldap.attributes.printer.printerLocation") %>"><%= h printer.printerLocation %></td>
-    <td data-title="<%= t("actions") %>" colspan="2" class="table-actions">
+    <td data-title="<%= t("actions") %>" class="tableActions">
       <%= link_to edit_printer_path(printer), class: 'btn' do %>
         <i class="icon-pencil"></i><%= t('link.edit') %>
       <% end %>
@@ -30,4 +30,40 @@
   </tr>
 <% end %>
 </table>
+<% end %>
+
+<% unless @servers_and_printers.empty? %>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag 'sortableTable' %>
+<% end %>
+
+<script>
+$(document).ready(function() {
+    // Build a new table object for each server
+    for (var i = 0; i < <%= @servers_and_printers.count %>; i++) {
+      const tableId = "printers_" + i;
+
+      console.log("Sorting printers table \"" + tableId + "\n");
+      console.log(document.getElementById(tableId));
+
+      // I can't help but to wonder if this leaks memory.
+      // These are allocated inside a loop, so shouldn't
+      // they get garbage-collected after the loop ends?
+      // The code works, so they aren't GC'd instantly.
+      // I really don't know.
+      new SortableTable(
+          tableId,
+          [
+              [ COLUMN_TYPE_STRING ],                   // description (name)
+              [ COLUMN_TYPE_STRING ],                   // make and model
+              [ COLUMN_TYPE_STRING ],                   // location
+              [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
+          ],
+          "fi"
+      );
+  }
+});
+</script>
+
 <% end %>

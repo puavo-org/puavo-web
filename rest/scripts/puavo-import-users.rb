@@ -116,16 +116,16 @@ def create_and_update_year_classes(users, diff_only)
   checked = Set.new
 
   users.each do |user|
-    next unless user.year_class
-
-    next if checked.include?(user.year_class)
+    next if user.year_class.nil? || user.year_class.empty?
 
     yc_abbr = yc_group_abbr(user.school, user.year_class)
 
+    # check each year class only once
+    next if checked.include?(yc_abbr)
+    checked << yc_abbr
+
     yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_abbr,
                                          :school_dn => user.school.dn)
-
-    checked << yc_abbr    # check each year class only once
 
     unless yc_group
       # The group does not exist, create it
@@ -472,6 +472,7 @@ when "diff"
                                                                 "import_school_name",
                                                                 "import_group_name",
                                                                 "import_group_external_id",
+                                                                "import_role",
                                                                 "external_id"] )
 
     puts "\n" + "-" * 100 + "\n\n"
@@ -492,16 +493,33 @@ when "import"
     begin
       puavo_rest_user = PuavoRest::User.by_attr(:external_id, user.external_id)
 
-      yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_group_abbr(user.school, user.year_class))
+      yc_group = nil
+
+      if user.year_class && !user.year_class.empty?
+        yc_group = PuavoRest::Group.by_attrs(:abbreviation => yc_group_abbr(user.school, user.year_class))
+      end
 
       if puavo_rest_user
-        update_year_class = puavo_rest_user.year_class_changed?(yc_group)
+        update_year_class = yc_group && puavo_rest_user.year_class_changed?(yc_group)
 
         # username updates are done only if specifically requested for
         update_username = user.username != puavo_rest_user.username && @options[:update_usernames]
 
         if user.need_update?(puavo_rest_user) || puavo_rest_user.removal_request_time || update_year_class || update_username
           puts "#{ puavo_rest_user["username"] } (#{ puavo_rest_user.import_school_name }): update user information"
+
+          if puavo_rest_user.removal_request_time
+            # Clear the deletion set timestamp: this user's information is being updated,
+            # so clearly they cannot be marked for deletion yet.
+            puts "User \"#{puavo_rest_user.username}\" (external ID \"#{puavo_rest_user.external_id}\") exists in the CSV file, but has been marked for deletion, clearing the removal mark"
+            puavo_rest_user.removal_request_time = nil
+
+            # Unlock too
+            if puavo_rest_user.locked
+              puts "Unlocking user \"#{puavo_rest_user.username}\" (external ID \"#{puavo_rest_user.external_id}\")"
+              puavo_rest_user.locked = false
+            end
+          end
 
           update_attributes = [ :first_name,
                                 :last_name,
@@ -510,16 +528,15 @@ when "import"
 
           update_attributes << :username if update_username
 
+          # Our support system requires that each user must have an email address if they want to
+          # create a new ticket, but some users only set their address manually when needed, so
+          # don't clear out those manually-entered email addresses
           update_attributes.delete(:email) if user.email.nil?
 
           update_puavo_rest_user_attributes(puavo_rest_user, user, update_attributes)
 
-          if puavo_rest_user.removal_request_time
-            # Clear the deletion set timestamp: this user's information is being updated,
-            # so clearly they cannot be marked for deletion yet.
-            puavo_rest_user.removal_request_time = nil
-            puts "Clearing the removal request timestamp for user \"#{puavo_rest_user.username}\" (external ID \"#{puavo_rest_user.external_id}\")"
-          end
+          # This does nothing if the role already is correct, so it's safe to always call it
+          puavo_rest_user.import_role = user.role
 
           # FIXME: We can not modify the role because admin user is able to add more roles for the user
           #puavo_rest_user.role = options[:user_role]
@@ -639,7 +656,7 @@ when "import"
         if user.removal_request_time.nil?
           # This user has been removed, but they have not been marked for deletion yet.
           # Set that mark now.
-          puts "Setting the user \"#{user.username}\"'s (external ID \"#{user.external_id}\") removal request timestamp"
+          puts "User \"#{user.username}\" (external ID \"#{user.external_id}\") exists in Puavo but not in the CSV file, marking the user for deletion"
           user.removal_request_time = Time.now.utc
           user.save!
         end

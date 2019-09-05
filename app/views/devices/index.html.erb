@@ -4,16 +4,18 @@
 
 <p><%= @devices.length %> <%= t('.devices') %></p>
 
-<table class="list">
+<% unless @devices.empty? %>
+
+<table class="list" id="devices">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceManufacturer') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceModel') %></th>
-    <th><%= t('activeldap.attributes.device.serialNumber') %></th>
-    <th><%= t('activeldap.attributes.device.macAddress') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceImage') %></th>
-    <th colspan="2"><%= t('actions') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceType')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceManufacturer')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceModel')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.serialNumber')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.macAddress')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceImage')) %></th>
+    <th><%= t('actions') %></th>
   </tr>
 
 <% @devices.each do |device| %>
@@ -25,7 +27,7 @@
     <td data-title="<%= t('activeldap.attributes.device.serialNumber') %>"><%= h device.serialNumber %></td>
     <td data-title="<%= t('activeldap.attributes.device.macAddress') %>"><%= (Array(device.macAddress || []).join(', <wbr>')).html_safe %></td>
     <td data-title="<%= t('activeldap.attributes.device.puavoDeviceImage') %>"><%= ((device.puavoDeviceImage || '').split('-').join('-<wbr>')).html_safe %></td>
-    <td data-title="<%= t('actions') %>" class="table-actions">
+    <td data-title="<%= t('actions') %>" class="tableActions">
       <%= link_to edit_device_path(@school, device), class: "btn" do %>
         <i class="icon-pencil"></i> <%= t('link.edit') %>
       <% end %>
@@ -38,6 +40,33 @@
 <% end %>
 </table>
 
+<% content_for :javascript do %>
+<%= javascript_include_tag "devices/index" %>
+<%= javascript_include_tag 'sortableTable' %>
+<% end %>
+
+<script>
+$(document).ready(function() {
+    new SortableTable(
+        "devices",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ COLUMN_TYPE_STRING, 0 ],                  // type
+            [ COLUMN_TYPE_STRING, 0 ],                  // vendor
+            [ COLUMN_TYPE_STRING, 0 ],                  // model
+            [ COLUMN_TYPE_STRING, 0 ],                  // serial number
+            [ COLUMN_TYPE_STRING, 0 ],                  // MAC address(es)
+            [ COLUMN_TYPE_STRING, 0 ],                  // desktop image
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
+        ],
+        "fi",
+        "<%= "#{@school.id.to_s}-devices" %>"
+    );
+});
+</script>
+
+<% end %>
+
 <% content_for :tools do %>
 <ul>
   <li id="addNewDeviceTitle">
@@ -49,8 +78,4 @@
     <% end %>
   </li>
 </ul>
-<% end %>
-
-<% content_for :javascript do %>
-<%= javascript_include_tag "devices/index" %>
 <% end %>

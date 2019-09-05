@@ -1,0 +1,130 @@
+/*
+  Devices and device-related styles
+*/
+
+/* The "add new device" combobox on the devices list page */
+#addNewDeviceTitle {
+  span {
+    /* This is currently the only plain text on the tool bar. Everything else are buttons or form elements,
+       so this gets special treatment. */
+    font-size: 110%;
+    padding-right: 5px;
+  }
+
+  select {
+    padding: 5px;
+  }
+
+  option {
+    padding: 5px;
+  }
+}
+
+.devicePurchaseDate select {
+  /* Three combo boxes on the same row, don't make them full-width */
+  width: auto;
+}
+
+/* Hardware infos on device "show" pages */
+.hardwareInfo {
+  .timestamp {
+    font-size: 110%;
+    padding: 0.5em 0.25em 1em 0.25em;
+    margin: 0;
+  }
+
+  .infoTable {
+    border: 1px solid $hwInfoBorder;
+    border-collapse: collapse;
+
+    th {
+      border: 1px solid $hwInfoBorder;
+      padding: 7px;
+      text-align: right;
+      width: 150px;
+    }
+
+    tr {
+      /* forcibly disable alternating row colors */
+      background: transparent !important;
+    }
+
+    .main {
+      text-align: center;
+      vertical-align: middle;
+      background: $hwInfoTitleBack;
+    }
+
+    td {
+      border: 1px solid $hwInfoBorder;
+      padding: 7px;
+    }
+
+    .sectionEnd {
+      border-bottom: 1px solid $hwInfoBorder;
+    }
+
+    ol {
+      padding-left: 1.5em;
+      margin: 0;
+    }
+
+    pre {
+      margin: 0;
+    }
+  }
+}
+
+/* Desktop image statistics on Device Statistics pages */
+.imageStats {
+  width: 100%;
+
+  /* Clickable image headers */
+  .header {
+    color: $deviceStatsImageHeaderFore;
+    background: $deviceStatsImageHeaderBack;
+    cursor: pointer;
+
+    &:hover {
+      color: $deviceStatsImageHeaderHoverFore;
+      background: $deviceStatsImageHeaderHoverBack;
+    }
+
+    .nameCol {
+      width: 36%;
+    }
+
+    .barCol {
+    }
+
+    /* Percentage bars */
+    .barOuter {
+      background: $deviceStatsPercentageBack;
+      border: 1px solid $deviceStatsPercentageBorder;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .barInner {
+      background: $deviceStatsPercentageFore;
+      display: block;
+      height: 100%;
+      /* bar widths are set using inline styles */
+    }
+  }
+
+  /* Device lists under desktop image names */
+  .deviceListRow {
+    ul {
+      border-left: 5px solid $deviceStatsDeviceListBorder;
+      margin: 0 0 0 20px;
+      padding: 0;
+    }
+
+    li {
+      margin-left: 2em;
+      padding: 0;
+    }
+  }
+}

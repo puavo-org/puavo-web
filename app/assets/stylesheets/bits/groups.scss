@@ -1,0 +1,25 @@
+/*
+  Groups
+*/
+
+/* Mass group rename */
+.massGroupRenameTable th {
+  text-align: left !important;
+  background: $groupRenameTableHeaderBack;
+}
+
+/* Course groups and year class groups when certain external integrations
+   are used in this school */
+.externallyMaintainedGroup {
+  color: $externallyMaintainedGroupFore;
+  background: $externallyMaintainedGroupBack;
+}
+
+/* Group members who ar emarked for deletion */
+.groupUserMarkedForDeletion:nth-child(even) {
+  background-color: $markedForDeletionEvenRowBack !important;
+}
+
+.groupUserMarkedForDeletion:nth-child(odd) {
+  background-color: $markedForDeletionOddRowBack !important;
+}

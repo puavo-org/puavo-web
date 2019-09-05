@@ -21,7 +21,8 @@ class UsersController < ApplicationController
                   'sambaPrimaryGroupSID',
                   'puavoRemovalRequestTime',
                   'puavoDoNotDelete',
-                  'puavoLocked']
+                  'puavoLocked',
+                  'puavoExternalId']
 
     @users = User.search_as_utf8( :filter => filter,
                           :scope => :one,
@@ -48,7 +49,8 @@ class UsersController < ApplicationController
         # The timestamp is a Net::BER::BerIdentifiedString, convert it into
         # an actual UTC timestamp
         timestamp = Time.strptime(u["puavoRemovalRequestTime"], '%Y%m%d%H%M%S%z')
-        u["puavoExactRemovalTime"] = timestamp.localtime
+        u["puavoExactRemovalTimeRaw"] = timestamp.to_i
+        u["puavoExactRemovalTime"] = convert_timestamp(timestamp)
         u["puavoFuzzyRemovalTime"] = fuzzy_time(now - timestamp)
       end
     end
@@ -75,12 +77,38 @@ class UsersController < ApplicationController
 
     # get the creation and modification timestamps from LDAP operational attributes
     extra = User.find(params[:id], :attributes => ['createTimestamp', 'modifyTimestamp'])
-    @user['createTimestamp'] = extra['createTimestamp'] || nil
-    @user['modifyTimestamp'] = extra['modifyTimestamp'] || nil
+    @user['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
+    @user['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
+
+    if @user.puavoRemovalRequestTime
+      @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)
+    end
 
     @user_devices = Device.find(:all,
                                 :attribute => "puavoDevicePrimaryUser",
                                 :value => @user.dn.to_s)
+
+    # group user's groups by school
+    by_school_hash = {}
+
+    Array(@user.groups || []).each do |group|
+      unless by_school_hash.include?(group.school.dn)
+        by_school_hash[group.school.dn] = [group.school, []]
+      end
+
+      by_school_hash[group.school.dn][1] << group
+    end
+
+    # flatten the hash and sort the schools by name
+    @user_groups = []
+
+    by_school_hash.each { |_, data| @user_groups << data }
+    @user_groups.sort! { |a, b| a[0].displayName.downcase <=> b[0].displayName.downcase }
+
+    # then sort the per-school group lists by name
+    @user_groups.each do |data|
+      data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
+    end
 
     respond_to do |format|
       format.html # show.html.erb

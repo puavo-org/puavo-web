@@ -1,4 +1,4 @@
-<p class='required_info'><%= t('layouts.forms.required_field')%></p>
+<p class='requiredTitle'><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@server, url: server_path(@server), html: { multipart: true }) do |f| %>
 
   <%= render :partial => 'shared/form_main_information', :locals => { :f => f } %>
@@ -29,7 +29,6 @@
   <h2><%= t('servers.school_limit.title') %></h2>
   <% if @server.puavoDeviceType == "ltspserver" %>
   <p>
-    <%= t('servers.school_limit.ltsp_description') %>
     <%= t('servers.school_limit.ltsp_description_edit') %>
   </p>
   <% else %>
@@ -52,10 +51,11 @@
   <% end %>
   </ul>
 
+  <br>
+
   <table class="editForm">
     <tr class="buttonRow">
-      <th></th>
-      <td>
+      <td colspan="2">
         <%= f.submit submit_text, class: 'btn' %>
         <div class="cancel"> <%=link_to t('cancel'), server_path(@server), class: 'btn btn-danger' %> </div>
       </td>

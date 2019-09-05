@@ -1,0 +1,230 @@
+/* The user profile editor */
+
+$bodyBackground: #fff;
+$genericBorder: #ccc;
+$outerBackground: #f8f8f8;
+$outerShadow: #aaa;
+$infoShadow: #aaa;
+$noticeForeground: #888;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Cantarell", sans-serif;
+  font-size: 90%;
+  background: $bodyBackground;
+}
+
+#outerWrapper {
+  border: 1px solid $genericBorder;
+  background: $outerBackground;
+  border-radius: 10px;
+  width: 75%;
+  max-width: 1000px;
+  min-width: 640px;
+  margin: 1em auto;
+  box-shadow: 0.5em 0.5em 5px $outerShadow;
+}
+
+@media (max-width: 1400px) {
+  #outerWrapper {
+    width: 80%;
+    max-width: none;
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 1300px) {
+  #outerWrapper {
+    width: 85%;
+    max-width: none;
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 1200px) {
+  #outerWrapper {
+    width: 90%;
+    max-width: none;
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 1000px) {
+  #outerWrapper {
+    width: 95%;
+    max-width: none;
+    min-width: 640px;
+    box-shadow: none;
+  }
+}
+
+header {
+  font-size: 200%;
+  font-weight: bold;
+  border-bottom: 1px solid $genericBorder;
+  text-align: center;
+  padding: 0.25em;
+}
+
+/*
+Outline schematic:
+
+ +-form----------------------------------------------------------------------+
+ |                                                                           |
+ | +-#upper----------------------------------------------------------------+ |
+ | |                                                                       | |
+ | | +-#upperWrapper-----------------------------------------------------+ | |
+ | | |                                                                   | | |
+ | | | +-#left------------+-#right-------------------------------------+ | | |
+ | | | |                  |                                            | | | |
+ | | | |    User avatar   |          Profile editor                    | | | |
+ | | | |                  |                                            | | | |
+ | | | |                  |                                            | | | |
+ | | | |                  |                                            | | | |
+ | | | |                  |                                            | | | |
+ | | | |                  |                                            | | | |
+ | | | +------------------+--------------------------------------------+ | | |
+ | | |                                                                   | | |
+ | | +-------------------------------------------------------------------+ | |
+ | |                                                                       | |
+ | +-#lower----------------------------------------------------------------+ |
+ | |                                                                       | |
+ | | +-#lowerWrapper-----------------------------------------------------+ | |
+ | | |                                                                   | | |
+ | | |                               Button(s)                           | | |
+ | | |                                                                   | | |
+ | | +-------------------------------------------------------------------+ | |
+ | |                                                                       | |
+ | +-----------------------------------------------------------------------+ |
+ |                                                                           |
+ +---------------------------------------------------------------------------+
+
+- the form element and #upperWrapper are flexbox containers
+- #upper, #lower, #left and #right are flexbox items
+
+#upperWrapper is needed because #upper cannot be made to be a flexbox
+container at the same time as it's used as a flexbox item. (I think.)
+
+#lowerWrapper is used to center the button(s) in the block.
+*/
+
+form {
+  width: 90%;
+  margin: 2em auto 1em auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#upper {
+  flex: 2;            /* force max size */
+}
+
+#lower {
+  flex-basis: 100%;   /* force a new line */
+}
+
+#upperWrapper {
+  display: flex;
+}
+
+#left {
+  display: inline;
+}
+
+#right {
+  display: inline;
+  flex: 2;
+  padding-left: 2em;
+}
+
+#left img {
+  max-width: 200px;
+  border: 1px solid $genericBorder;
+  padding: 3px;
+}
+
+#right p {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.userInfo {
+  border-bottom: 1px solid $genericBorder;
+  padding-bottom: 0.5em;
+  margin-bottom: 2em;
+  text-shadow: 1px 1px 0 $infoShadow;
+}
+
+.userName {
+  font-size: 150%;
+  font-weight: bold;
+}
+
+.userSchool {
+  font-size: 120%;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.userRole {
+  font-weight: bold;
+  font-style: italic;
+}
+
+section {
+  margin: 0 0 1em 0;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+input, select {
+  margin-left: 2em;
+  width: 90%;
+}
+
+input {
+  padding: 0.5em;
+}
+
+.notice {
+  margin-left: 2em;
+  padding-top: 5px;
+  font-size: 80%;
+  color: $noticeForeground;
+}
+
+#lower {
+  #lowerWrapper {
+    display: block;
+    margin: 0 auto;
+    width: 75%;
+    text-align: center;
+  }
+
+  input, button {
+    display: inline;
+    width: 75%;
+    margin: 1em;
+    padding: 1em 2em;
+    cursor: pointer;
+  }
+}
+
+::placeholder, ::-webkit-input-placeholder {
+  font-style: italic;
+}
+
+/* the messages on the notification page displayed after the profile is saved */
+.saveNotice {
+  padding: 0 2em;
+}

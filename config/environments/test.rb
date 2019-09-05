@@ -39,4 +39,12 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # puavo-web's capybara needs a server for the device registration tests,
+  # so tell it what to use. The default value (:puma) is of course wrong.
+  begin
+    Capybara.server = :webrick
+  rescue NameError => e
+    # Okay, so we're doing puavo-rest tests. Never mind then.
+  end
 end

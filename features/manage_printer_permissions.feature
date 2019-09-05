@@ -34,7 +34,7 @@ Feature: Manage printer permissions
   Scenario: Can navigate to printer permissions list
     Given I am logged in as "pavel" with password "secret"
     And I am on the show school page with "Example school 1"
-    When I follow "Devices" within ".main-wrap"
+    When I follow "Devices" within "#pageContainer"
     And I follow "Printing permissions"
     Then I should see "printer1"
     Then I should see "Edit permissions"
@@ -59,7 +59,7 @@ Feature: Manage printer permissions
   Scenario: Can activate wireless printer for school
     Given I am logged in as "pavel" with password "secret"
     And I am on the printer permissions page
-    And I press "Edit permissions" on the "printer1" row
+    And I press "Edit permissions..." on the "printer1" row
     And I choose "Printing allowed on the all system devices and also other devices (eg. tablets, phones, etc.)"
     And I press "Save"
     Then the "Printing allowed on the all system devices and also other devices (eg. tablets, phones, etc.)" checkbox should be checked
@@ -79,7 +79,7 @@ Feature: Manage printer permissions
     And I should see "Terminal information"
     And I check "printer1"
     And I press "Update"
-    And I follow "Edit"
+    And I follow "Edit..."
     Then the "printer1" checkbox should be checked
     And I press the device printer link "printer1"
     And I should see "athin"

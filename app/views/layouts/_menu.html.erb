@@ -1,29 +1,35 @@
-    <div class="navbar-first-level">
-      <ul>
-      <% @menu_items.each do |item| %>
-      <% next if item.hide? %>
-      <% if item.active? %>
-        <li class="current_first">
-      <% else %>
-        <li>
-      <% end %>
-          <%= link_to item.link do %><span><%= item.title %></span><% end %>
-        </li>
-      <% end %>
-      </ul>
-    </div>
+    <div id="tabs">
+      <div class="first">
+        <ul>
+        <% @menu_items.each do |item| %>
+        <% next if item.hide? %>
+        <% if item.active? %>
+          <li class="current">
+        <% else %>
+          <li>
+        <% end %>
+            <%= link_to item.link do %><span><%= item.title %></span><% end %>
+          </li>
+        <% end %>
+        </ul>
+      </div>
 
-    <div class="navbar-second-level">
-      <ul>
-      <% @child_items.each do |item| %>
-      <% next if item.hide? %>
-      <% if item.active? %>
-        <li class="current_second">
-      <% else %>
-        <li>
-      <% end %>
-          <%= link_to item.title, item.link %>
-        </li>
-      <% end %>
-      </ul>
+      <div class="second">
+        <ul>
+        <% @child_items.each do |item| %>
+        <% next if item.hide? %>
+        <% if item.active? %>
+          <li class="current">
+        <% else %>
+          <li>
+        <% end %>
+        <% if item.owners_only %>
+            <%= link_to item.title, item.link, class: 'ownersOnlyTop' %>
+        <% else %>
+            <%= link_to item.title, item.link %>
+        <% end %>
+          </li>
+        <% end %>
+        </ul>
+      </div>
     </div>

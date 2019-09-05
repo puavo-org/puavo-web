@@ -1,5 +1,7 @@
 <% page_title t('titles.organisation'), t('titles.edit') %>
 
+<div class="formContainer">
+
 <h1><%= t('.title') %></h1>
 
 <%= form_for(@organisation, :url => organisation_path)  do |f| %>
@@ -126,8 +128,7 @@
   </tr>
 
   <tr class="buttonRow">
-    <th></th>
-    <td>
+    <td colspan="2">
       <%= f.submit t('link.update'), class: 'btn' %>
       <div class="cancel"><%= link_to t('link.cancel'), organisation_path, class: 'btn btn-danger' %></div>
     </td>
@@ -135,3 +136,5 @@
 </table>
 
 <% end %>
+
+</div>

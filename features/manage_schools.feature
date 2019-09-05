@@ -106,7 +106,7 @@ Feature: Manage schools
 
   Scenario: Edit school and set empty names
     Given I am on the school page with "Greenwich Steiner School"
-    And I follow "Edit"
+    And I follow "Edit..."
     When I fill in "School name" with ""
     And I fill in "Group name" with ""
     And I press "Update"
@@ -116,7 +116,7 @@ Feature: Manage schools
 
   Scenario: Change school name
     Given I am on the school page with "Greenwich Steiner School"
-    And I follow "Edit"
+    And I follow "Edit..."
     When I fill in "School name" with "St. Paul's"
     And I press "Update"
     Then I should see "St. Paul's"
@@ -146,9 +146,9 @@ Feature: Manage schools
 
   Scenario: Schools list page when we have only one school and user is organisation ower
     Given I am on the show school page with "Greenwich Steiner School"
-    And I follow "Remove"
+    And I follow "Delete school"
     And I am on the show school page with "Example school 1"
-    And I follow "Remove"
+    And I follow "Delete school"
     When I go to the schools list page
     Then I should see "Listing schools"
     And I should see "New school"
@@ -167,7 +167,7 @@ Feature: Manage schools
     | displayName   | cn          |
     | Test School 1 | testschool1 |
     And I am on the show school page with "Test School 1"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "School was successfully removed."
 
   Scenario: Delete school when it still contains the users, groups and roles
@@ -179,7 +179,7 @@ Feature: Manage schools
     | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school |
     | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   |
     And I am on the show school page with "Test School 1"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
     And I should be on the school page
 
@@ -197,13 +197,13 @@ Feature: Manage schools
     Then I should see "Device was successfully created."
     Given I am on the school page with "Condemned School"
     Then I should see "School's home page"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
     Given I am on the devices list page with "Condemned School"
     And I press "Remove" on the "testdevice1" row
     Then I should see "List of devices"
     Given I am on the school page with "Condemned School"
-    When I follow "Remove"
+    When I follow "Delete school"
     Then I should see "School was successfully removed."
     And I should see "Listing schools"
 
@@ -317,7 +317,7 @@ Scenario: Set, edit and check the school code
     And I press "Create"
     Then I should see "School was successfully created"
     And I should see "testcode"
-    When I follow "Edit"
+    When I follow "Edit..."
     And I fill in "School code" with "foobar"
     And I press "Update"
     Then I should see "School was successfully updated."
@@ -335,7 +335,7 @@ Scenario: Set the school code for an existing school
     | Group name                          | test2         |
     And I press "Create"
     Then I should see "School was successfully created"
-    When I follow "Edit"
+    When I follow "Edit..."
     And I fill in "School code" with "bazquux"
     And I press "Update"
     Then I should see "School was successfully updated."

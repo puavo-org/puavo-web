@@ -2,18 +2,18 @@
 
 <h1><%= t('.title')%></h1>
 
-<table class="list">
+<table class="list" id="ldap">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.ldap_service.uid') %></th>
-    <th><%= t('activeldap.attributes.ldap_service.description') %></th>
-    <th colspan="2"><%= t('.actions') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.ldap_service.uid')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.ldap_service.description')) %></th>
+    <th><%= t('.actions') %></th>
   </tr>
 
 <% @ldap_services.each do |ldap_service| %>
   <tr>
     <td data-title="<%= t('activeldap.attributes.ldap_service.uid') %>"><%= link_to ldap_service.uid, ldap_service_path(ldap_service) %></td>
-    <td data-title="<%= t('activeldap.attributes.ldap_service.description') %>"><%=h ldap_service.description %></td>
-    <td data-title="<%= t('.actions') %>" class="table-actions">
+    <td data-title="<%= t('activeldap.attributes.ldap_service.description') %>"><%= h ldap_service.description %></td>
+    <td data-title="<%= t('.actions') %>" class="tableActions">
       <%= link_to edit_ldap_service_path(ldap_service), class: "btn" do%>
        <i class="icon-pencil"></i> <%=t('link.edit')%>
       <% end %>
@@ -37,3 +37,22 @@
   </li>
 </ul>
 <% end %>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag 'sortableTable' %>
+<% end %>
+
+<script>
+$(document).ready(function() {
+    new SortableTable(
+        "ldap",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // name
+            [ ],                                        // description
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML | COLUMN_FLAG_DONT_SORT ],    // actions
+        ],
+        "fi",
+        "<%= "#{LdapOrganisation.current.o}-ldap" %>"
+    );
+});
+</script>

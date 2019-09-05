@@ -15,20 +15,28 @@ require_relative "../lib/puavo_import"
 include PuavoImport::Helpers
 
 options = PuavoImport.cmd_options(:message => "Automatically create and remove groups and maintain group memberships") do |opts, options|
-  opts.on("--schools filename", "Schools CSV data") do |filename|
+  opts.on('--schools filename', 'Schools CSV data') do |filename|
     options[:schools_csv] = filename
+  end
+
+  opts.on('--progress', 'Report progress during long operations') do |progress|
+    options[:progress] = progress
   end
 end
 
 setup_connection(options)
 
 if options[:schools_csv].nil? || options[:schools_csv].empty?
-  STDERR.puts "You must specify the schools CSV with --schools"
+  STDERR.puts 'You must specify the schools CSV with --schools'
   exit 1
 end
 
-mode = options[:mode] || "default"
-diff = mode == "diff"
+mode = options[:mode] || 'default'
+diff = mode == 'diff'
+
+progress = options[:progress] || false
+
+# --------------------------------------------------------------------------------------------------
 
 # Turns the group name into usable (?) group abbreviation
 REPLACEMENTS = {
@@ -40,21 +48,34 @@ REPLACEMENTS = {
 }
 
 def filter(name)
+  out = name.dup
+
   REPLACEMENTS.each do |what, with|
     what.split('').each do |c|
-      name.gsub!(c, with)
+      out.gsub!(c, with)
     end
   end
 
-  name.gsub!(/[^a-z0-9\s]/i, '-')
-  name.downcase[0..16]
+  out.gsub!('.', '')
+  out.gsub!(/[^a-z0-9\s]/i, '-')
+  out.downcase[0..16]
 end
 
 def with_default(s, d)
   (s.nil? || s.empty?) ? d : s
 end
 
+def gen_names(school, name1, name2)
+  if name2.include?('/')
+    return "#{school}-#{filter(name1)}", name2
+  else
+    return "#{school}-#{filter(name1)}-#{filter(name2)}", name1
+  end
+end
+
+# --------------------------------------------------------------------------------------------------
 # Load schools
+
 schools = {}
 
 begin
@@ -80,7 +101,9 @@ rescue StandardError => e
   exit 1
 end
 
-# Update groups
+# --------------------------------------------------------------------------------------------------
+# Load and update groups
+
 DATE_FORMAT = '%d.%m.%Y'
 now = Time.now.localtime
 today = Date.new(now.year, now.month, now.day)
@@ -89,11 +112,34 @@ used_external_ids = Set.new
 
 have_errors = false
 
-CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |grp|
-  group_name = grp[2]
+if progress
+  line_number = 1
+  total_lines = File.readlines(options[:csv_file]).count
+end
 
-  if group_name.nil? || group_name.empty?
-    puts "Ignoring a group with an empty name"
+CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep => ';') do |grp|
+
+  # 0: kurssiryhmän ulkoinen ID
+  # 1: koulun ID
+  # 2: kurssiryhmän lyhenne
+  # 3: kurssiryhmän nimi
+  # 4: kurssin alkupäivä
+  # 5: kurssin loppupäivä
+  # 6: ryhmän jäsenten ulkoiset ID:t pilkuilla eroteltuna
+
+  if progress
+    # Report how far we're in the importing process
+    STDERR.puts "Processing CSV row #{line_number}/#{total_lines}"
+    line_number += 1
+  end
+
+  if grp[2].nil? || grp[2].empty?
+    puts "Ignoring a group with an empty abbreviation"
+    next
+  end
+
+  if grp[3].nil? || grp[3].empty?
+    puts "Ignoring a group with an empty name (abbreviation \"#{grp[2]}\")"
     next
   end
 
@@ -105,16 +151,21 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
     next
   end
 
-  start_date = Date.strptime(with_default(grp[3], '01.01.2000'), DATE_FORMAT)
-  end_date = Date.strptime(with_default(grp[4], '31.12.2999'), DATE_FORMAT)
+  start_date = Date.strptime(with_default(grp[4], '01.01.2000'), DATE_FORMAT)
+  end_date = Date.strptime(with_default(grp[5], '31.12.2999'), DATE_FORMAT)
 
   if start_date > end_date
     start_date, end_date = end_date, start_date
   end
 
-  members = with_default(grp[5], '').split(',')
+  members = with_default(grp[6], '').split(',')
 
   external_id = grp[0]
+
+  # school_card has been validated already, the school is known to exist
+  school = schools[school_card]
+
+  group_abbr, group_name = gen_names(school.abbreviation, grp[2], grp[3])
 
   if used_external_ids.include?(external_id)
     puts red("ERROR: Group external ID \"#{external_id}\" is used more than once!")
@@ -134,12 +185,10 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
     exit 1
   end
 
-  # school_card has been validated already, the school is known to exist
-  school = schools[school_card]
-  group_abbr = "#{school.abbreviation}-#{filter(group_name.dup)}"
-
   if today < start_date || today > end_date
+    # ----------------------------------------------------------------------------------------------
     # This group should not exist
+
     if puavo_group[0]
       puavo_group = puavo_group[0]
 
@@ -160,7 +209,9 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
       end
     end
   else
+    # ----------------------------------------------------------------------------------------------
     # This group should exist
+
     update_members = true
 
     if puavo_group.count == 0
@@ -183,7 +234,9 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
         update_members = false
       end
     else
-      # Update the group details
+      # --------------------------------------------------------------------------------------------
+      # This group exists, update its details if something has changed
+
       puavo_group = puavo_group[0]
       do_it = false
 
@@ -219,7 +272,8 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
 
     next unless update_members
 
-    # Update the group members list unless there were errors
+    # ----------------------------------------------------------------------------------------------
+    # The group exists and it has been updated. Update memberships.
 
     group_members = Set.new
     save_group = false
@@ -305,6 +359,8 @@ CSV.parse(convert_text_file(options[:csv_file]), :encoding => 'utf-8', :col_sep 
     end
   end
 end
+
+# --------------------------------------------------------------------------------------------------
 
 exit 1 if have_errors
 exit 0

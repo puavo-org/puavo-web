@@ -2,6 +2,7 @@
 
 <% content_for :javascript do %>
 <%= javascript_include_tag 'sortableTable' %>
+<%= javascript_include_tag 'inpageTabs' %>
 <% end %>
 
 <h1><%= t('.title') %></h1>
@@ -14,6 +15,26 @@
 <p class="genericNotice"><%= t('.no_devices_with_hardware_info') %></p>
 <% else %>
 
+<div class="tabBar" id="devStatsTabs">
+  <ul>
+    <li>
+        <a href="#withInfoTab"><%= t('device_statistics.device_lists.with_info') %> (<%= @with_info.count %>)</a>
+    </li>
+
+    <li>
+        <a href="#withoutInfoTab"><%= t('device_statistics.device_lists.without_info') %> (<%= @without_info.count %>)</a>
+    </li>
+
+    <li>
+        <a href="#imageStatisticsTab"><%= t('device_statistics.images.title') %> (<%= @image_stats.count %>)</a>
+    </li>
+  </ul>
+</div>
+
+<div class="tabContentsWrapper">
+
+<div class="tabContentsVisible" id="withInfoTab">
+
 <h2><%= t('device_statistics.device_lists.with_info') %></h2>
 
 <p><%= t('.count_header',
@@ -22,13 +43,13 @@
 
 <table class="list" id="withInfo">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
-    <th><%= t('device_statistics.columns.timestamp') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceImage') %></th>
-    <th><%= t('device_statistics.columns.cpu') %></th>
-    <th><%= t('device_statistics.columns.memory') %></th>
-    <th><%= t('device_statistics.columns.hard_drive') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.timestamp')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceType')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceImage')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.cpu')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.memory')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.hard_drive')) %></th>
   </tr>
 
 <% @with_info.each do |device| %>
@@ -65,6 +86,10 @@
 <% end %>
 </table>
 
+</div>
+
+<div class="tabContentsInvisible" id="withoutInfoTab">
+
 <% unless @without_info.empty? %>
 <h2 id="withoutInfoHeader"><%= t('device_statistics.device_lists.without_info') %></h2>
 <div id="withoutInfoInner">
@@ -79,28 +104,37 @@
 </div>
 <% end %>
 
+</div>
+
+<div class="tabContentsInvisible" id="imageStatisticsTab">
+
 <%= render :partial => 'images', :locals => { :image_stats => @image_stats } %>
+
+</div>
+
+</div>
 
 <% end %>
 <% end %>
 
 <script>
-// Make the tables sortable
 $(document).ready(function() {
-  new SortableTable(
-    "withInfo",
-    [
-      { "index": 0, "flags": COLUMN_FLAG_PRESERVE_HTML },   // hostname
-      { "index": 1 },   // timestamp
-      { "index": 2 },   // type
-      { "index": 3 },   // image
-      { "index": 4 },   // CPU
-      { "index": 5, "type": COLUMN_TYPE_INTEGER },  // memory
-      { "index": 6, "type": COLUMN_TYPE_INTEGER }   // hard drive
-    ],
-    "fi",
-    1,
-    SORT_ORDER_DESCENDING
-  );
+    new SortableTable(
+        "withInfo",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ COLUMN_TYPE_STRING, 0 ],                  // timestamp (last update)
+            [ COLUMN_TYPE_STRING, 0 ],                  // device type
+            [ COLUMN_TYPE_STRING, 0 ],                  // desktop image name
+            [ COLUMN_TYPE_STRING, 0 ],                  // CPU
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // RAM
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // hard drive size
+        ],
+        "fi",
+        "<%= "#{@school.id.to_s}-with" %>",
+        1, SORT_ORDER_DESCENDING
+    );
+
+    new Tabs("devStatsTabs", 0);
 });
 </script>

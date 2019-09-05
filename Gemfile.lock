@@ -23,7 +23,7 @@ GEM
     activejob (4.2.11)
       activesupport (= 4.2.11)
       globalid (>= 0.3.0)
-    activeldap (5.1.0)
+    activeldap (5.2.2)
       activemodel (> 4.0.0)
       builder
       gettext
@@ -44,16 +44,17 @@ GEM
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
     arel (6.0.4)
-    backports (3.12.0)
+    backports (3.15.0)
     builder (3.2.3)
     byebug (11.0.1)
-    capybara (2.18.0)
+    capybara (3.15.0)
       addressable
       mini_mime (>= 0.1.3)
-      nokogiri (>= 1.3.3)
-      rack (>= 1.0.0)
-      rack-test (>= 0.5.4)
-      xpath (>= 2.0, < 4.0)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (~> 1.2)
+      xpath (~> 3.2)
     coderay (1.1.2)
     colorize (0.8.1)
     concurrent-ruby (1.1.5)
@@ -74,21 +75,21 @@ GEM
       cucumber-tag_expressions (~> 1.1.0)
       gherkin (~> 5.0)
     cucumber-expressions (6.0.1)
-    cucumber-rails (1.5.0)
-      capybara (>= 1.1.2, < 3)
-      cucumber (>= 1.3.8, < 4)
-      mime-types (>= 1.17, < 4)
-      nokogiri (~> 1.5)
-      railties (>= 4, < 5.2)
+    cucumber-rails (1.8.0)
+      capybara (>= 2.12, < 4)
+      cucumber (>= 3.0.2, < 4)
+      mime-types (>= 2.0, < 4)
+      nokogiri (~> 1.8)
+      railties (>= 4.2, < 7)
     cucumber-tag_expressions (1.1.1)
     cucumber-wire (0.0.1)
     diff-lcs (1.3)
-    domain_name (0.5.20180417)
+    domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
-    fast_gettext (2.0.0)
-    ffi (1.10.0)
-    fluent-logger (0.8.0)
+    fast_gettext (2.0.1)
+    ffi (1.11.1)
+    fluent-logger (0.8.1)
       msgpack (>= 1.0.0, < 2)
     gettext (3.2.9)
       locale (>= 2.0.5)
@@ -96,11 +97,11 @@ GEM
     gettext_i18n_rails (1.8.0)
       fast_gettext (>= 0.9.0)
     gherkin (5.1.0)
-    gibberish (2.1.0)
+    gibberish (2.1.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     greenletters (0.3.0)
-    hashdiff (0.3.8)
+    hashdiff (1.0.0)
     http (4.1.1)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -112,9 +113,9 @@ GEM
     http_parser.rb (0.6.0)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
-    i18n-js (3.2.1)
+    i18n-js (3.3.0)
       i18n (>= 0.6.6)
-    jquery-rails (4.3.3)
+    jquery-rails (4.3.5)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
@@ -125,23 +126,23 @@ GEM
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    macaddr (1.7.1)
-      systemu (~> 2.6.2)
+    macaddr (1.7.2)
+      systemu (~> 2.6.5)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
     method_source (0.9.2)
     mime-types (3.2.2)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2018.0812)
-    mini_mime (1.0.1)
+    mime-types-data (3.2019.0331)
+    mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     mono_logger (1.1.0)
-    msgpack (1.2.9)
+    msgpack (1.3.1)
     multi_json (1.13.1)
     multi_test (0.1.2)
     net-ldap (0.16.1)
-    nokogiri (1.10.2)
+    nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     pdf-core (0.7.0)
     prawn (2.2.2)
@@ -150,7 +151,7 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    public_suffix (3.0.3)
+    public_suffix (3.1.1)
     rack (1.6.11)
     rack-protection (1.5.5)
       rack
@@ -173,7 +174,7 @@ GEM
       activesupport (>= 4.2.0, < 5.0)
       nokogiri (~> 1.6)
       rails-deprecated_sanitizer (>= 1.0.1)
-    rails-html-sanitizer (1.0.4)
+    rails-html-sanitizer (1.2.0)
       loofah (~> 2.2, >= 2.2.2)
     railties (4.2.11)
       actionpack (= 4.2.11)
@@ -181,29 +182,29 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     raindrops (0.19.0)
-    rake (12.3.2)
-    redcarpet (3.4.0)
-    redis (4.1.0)
+    rake (12.3.3)
+    redcarpet (3.5.0)
+    redis (4.1.2)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
-    resque (1.27.4)
+    regexp_parser (1.6.0)
+    resque (2.0.0)
       mono_logger (~> 1.0)
       multi_json (~> 1.0)
-      redis-namespace (~> 1.3)
+      redis-namespace (~> 1.6)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
-    ripper-tags (0.7.0)
-    rmagick (3.0.0)
+    rmagick (4.0.0)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
       rspec-mocks (~> 3.8.0)
-    rspec-core (3.8.0)
+    rspec-core (3.8.2)
       rspec-support (~> 3.8.0)
-    rspec-expectations (3.8.2)
+    rspec-expectations (3.8.4)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
-    rspec-mocks (3.8.0)
+    rspec-mocks (3.8.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-rails (3.8.2)
@@ -214,12 +215,12 @@ GEM
       rspec-expectations (~> 3.8.0)
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
-    rspec-support (3.8.0)
+    rspec-support (3.8.2)
     safe_yaml (1.0.5)
     sassc (2.0.1)
       ffi (~> 1.9)
       rake
-    sassc-rails (2.1.0)
+    sassc-rails (2.1.2)
       railties (>= 4.0.0)
       sassc (>= 2.0)
       sprockets (> 3.0)
@@ -238,7 +239,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.0)
+    sqlite3 (1.4.1)
     sshkey (2.0.0)
     systemu (2.6.5)
     text (1.3.1)
@@ -251,18 +252,18 @@ GEM
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.5)
-    unicorn (5.4.1)
+    unf_ext (0.0.7.6)
+    unicorn (5.5.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     uuid (2.3.9)
       macaddr (~> 1.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    webmock (3.5.1)
+    webmock (3.6.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
-      hashdiff
+      hashdiff (>= 0.4.0, < 2.0.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
 
@@ -270,12 +271,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activeldap (= 5.1.0)
+  activeldap (= 5.2.2)
   byebug
-  capybara
+  capybara (= 3.15.0)
   colorize
-  cucumber (= 3.1.2)
-  cucumber-rails (= 1.5.0)
+  cucumber
+  cucumber-rails
   fluent-logger
   gibberish
   greenletters
@@ -283,15 +284,14 @@ DEPENDENCIES
   i18n-js
   jquery-rails
   json
-  jwt
-  net-ldap (= 0.16.1)
+  jwt (= 2.1.0)
+  net-ldap
   nokogiri
   prawn
   pry
   rails (= 4.2.11)
   redcarpet
-  resque (= 1.27.4)
-  ripper-tags
+  resque
   rmagick
   rspec
   rspec-rails
@@ -300,7 +300,7 @@ DEPENDENCIES
   sqlite3
   sshkey
   timecop
-  unicorn (= 5.4.1)
+  unicorn
   uuid
   webmock
 

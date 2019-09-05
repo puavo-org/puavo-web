@@ -109,6 +109,10 @@ module PuavoImport
       return school.name
     end
 
+    def import_role
+      self.role
+    end
+
     def to_s
       {
         "db_id" => self.db_id,
@@ -131,6 +135,7 @@ module PuavoImport
         :import_group_name,
         :import_school_name,
         :import_group_external_id,
+        :import_role,
         #:preferred_language,
         #:username
       ].each do |attr|

@@ -14,7 +14,7 @@ Given(/^the following users:$/) do |users|
   users.hashes.each do |u|
     roles = nil
     if u["roles"]
-      roles = u["roles"].split(/,[ ]*/) 
+      roles = u["roles"].split(/,[ ]*/)
       u.delete("roles")
     end
     school = nil
@@ -22,7 +22,7 @@ Given(/^the following users:$/) do |users|
       school = School.find(:first, :attribute => "displayName", :value => u["school"])
       u.delete("school")
     end
-   
+
     user = User.new(u)
     user.puavoSchool = (school || @school).dn
     if u["school_admin"] && u["school_admin"] == "true"
@@ -140,7 +140,7 @@ Then(/^the ([^ ]*) attribute should contain "([^\"]*)" of "([^\"]*)"$/) do |attr
   set_ldap_admin_connection
   school = School.find(:first, :attribute => "displayName", :value => school_name)
   user = User.find(:first, :attribute => "uid", :value => uid)
-  
+
   case attribute
   when "puavoSchool"
     user.puavoSchool.to_s.should == school.dn.to_s

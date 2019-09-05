@@ -150,13 +150,15 @@ en:
       title: Opinsys Authentication
   link:
     save: Save
-    more: More
-    edit: Edit
+    more: More actions
+    edit: Edit...
     back: Back
     cancel: "Cancel"
     destroy: Remove
-    new_group: New group
-    find_groupless_users: "Find groupless users"
+    delete_school: "Delete school"
+    new_group: New group...
+    delete_group: "Remove group"
+    find_groupless_users: "Find groupless users..."
     create_username_list_from_group: "Create a new username list from members"
     get_members_as_csv: "Download member list as CSV"
     remove_all_members_from_group: "Remove all members from the group"
@@ -174,16 +176,18 @@ en:
     add: Add
     remove: Remove
     new_role: New role
-    new_user: New user
+    new_user: New user...
+    delete_user: "Delete user"
     delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     continue: Continue
     login: Login
     change_password: Change password
-    new_school: New school
-    new_ldap_service: New
-    rename_groups: Rename groups and roles
+    new_school: New school...
+    new_ldap_service: New...
+    rename_groups: Rename groups and roles...
     devices: Device list
     device_statistics: Device statistics
+    delete_device: "Delete device"
     servers: Servers
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
@@ -338,7 +342,8 @@ en:
       system_information: System information
       contact_information: Contact information
       group_by_roles: Groups by roles
-      change_school: Change school
+      groups_by_schools: "Groups by schools"
+      change_school: Change school...
       primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
       user_is_locked: User is locked
       user_is_marked_for_deletion: "This user has been marked for deletion"
@@ -402,7 +407,7 @@ en:
       member: Member
       add_to_group: Add
     groupless_users:
-      title: "Find groupless users"
+      title: "Find groupless users..."
       count: "Found %{count} ungrouped users."
       mark_for_deletion: "Mark these users for deletion"
   schools:
@@ -429,18 +434,21 @@ en:
       other_admin_users: Add management access rights
       school_admins: School admins
     show:
-      contacts: Contacts
+      contacts: Contact Information
       devices: Devices
       users: Users
       statistics: Statistics
       admin_users: Admin users
+      no_admin_users: "(No admin users)"
       name: Name
       phone: Phone number
       mail: E-mail
       billing_info: Billing info
+      no_billing_info: "(No billing info)"
       rule_lines: Rules
-      system_information: System information
+      system_information: System Information
       total_count: "%{count} total)"
+      info: "General Information"
     form:
       add_puavo_billing_info: Add a new billing info
   password:
@@ -536,8 +544,8 @@ en:
       title: My profile
       save_and_close: Save and close
     show:
-      message: Profile was successfully updated
-      email_confirm_info: "Send an email message to following email address(es):"
+      message: Your profile has been successfully updated.
+      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
   lists:
     index:
       title: Unloaded username lists
@@ -606,6 +614,7 @@ en:
       school: School
       ldap_service: LDAP service
     attributes:
+      dn: DN
       role:
         displayName: Role name
         members: Members
@@ -649,6 +658,7 @@ en:
         puavoDeviceOffHour: Daytime end
         puavoImageSeriesSourceURL: Image series source URL
         puavoExternalId: External ID
+        bootservers: "Boot servers"
       user:
         displayName: Name
         sn: Surname
@@ -992,6 +1002,7 @@ en:
       path: Path
       mountpoint: Mount point
       options: Options
+      no_mount_points: "(No mount points)"
     form_mountpoint:
       title: Local and network mount points
       filesystem: Filesystem
@@ -1022,7 +1033,7 @@ en:
     cups:
       cups_settings: CUPS settings
     show:
-      change_school: Change school
+      change_school: Change school...
       hw_info_button: "Show hardware info..."
       no_hw_info: "(Unknown/Never)"
     select_school:
@@ -1039,6 +1050,7 @@ en:
       add_puavoExport: Add a new path
     show:
       automounts: Automounts
+      no_automounts: "(No automounts)"
     school_limit:
       title: School limit
       ltsp_description: "This LTSP server will only serve these schools:"
@@ -1113,7 +1125,7 @@ en:
     bootserver_ref: "boot servers"
     no_printers_nonowner: "This school has no printers defined for it through a boot server. Administrators who have organisation-level owner rights can add printers."
     index:
-      edit_permissions: Edit permissions
+      edit_permissions: Edit permissions...
       bootserver: Boot server
     edit:
       title: Printer usage permissions
@@ -1146,6 +1158,7 @@ en:
       help: Help
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
+
   fuzzy_time:
     just_now: "just now"
     less_than_minute: "less than a minute ago"
@@ -1157,6 +1170,7 @@ en:
     days: "%{d} days ago"
     month: "a month ago"
     months: "%{month} months ago"
+
   hwinfo:
     title: "Hardware information"
     no_info: "No hardware information received from this device"
@@ -1213,11 +1227,15 @@ en:
       voltage: "Voltage"
       capacity: "Capacity"
       percentage: "Percentage"
+
   extended_search:
     title: "Extended Search"
+    tabs:
+      search: "Search"
+      help: "Instructions and tips"
     search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
-    search_terms_title: "Search terms type:"
-    search_term_types:
+    terms_title: "Search terms type:"
+    term_names:
       users:
         title: "Users"
         puavoid: "Users: Puavo ID"
@@ -1248,20 +1266,15 @@ en:
         serial_number: "Devices: Serial number"
     school_limit_title: "School limit:"
     school_limit_all: "(All schools)"
-    regexp_title: "Regexp (PCRE)"
-    remove_unmatched_title: "Remove non-matching terms from the results"
-    help_title: "Some important things"
-    help_1: "Search results are listed in the same order as the terms that matched them are listed in the above box. Each term can match multiple items."
-    help_2: "The way user's first and last names are matched, you cannot use regexps with them at the moment. First and last matching is ALWAYS done in case-insensitive mode."
-    help_3: "If the user you're searching for has multiple first names, use a comma to mark the split between first and last names. Automatic splitting only works with names that have two parts."
-    help_4: "Some search types are always regexp searches, because they would be useless otherwise (the whole term must match)."
+    regexp_title: "Regexp (allows partial matches, see help)"
+    remove_misses_title: "Remove missed terms from results"
     button_search: "Search"
     button_clear_results: "Clear results"
     button_clear_terms: "Clear search terms"
     results_title: "Results"
     results:
       search_term_title: "Search term"
-      no_term_hits: "(Search term did not match anything)"
+      no_term_hits: "(No hits)"
       no_results: "(No results)"
     errors:
       unknown_school: "(Unknown school)"
@@ -1269,8 +1282,10 @@ en:
       invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
       search_terms_cleanup_failed: "Search term cleanup failed"
       no_search_terms: "No search terms"
+      school_limit_failed: "School limit parsing failed"
       invalid_regexp: "Invalid regexp "
       unknown_search_term_type: "Unknown search term type "
+
   device_statistics:
     columns:
       timestamp: "Data received"
@@ -1285,15 +1300,15 @@ en:
 
     school_index:
       title: "School device statistics"
-      no_devices: "This school has no devices at all"
-      no_devices_with_hardware_info: "This school has devices, but none of them have sent any hardware information"
-      count_header: "This school has a total of %{total} devices that can send hardware information. Of those, %{with_info} have sent their information:"
+      no_devices: "This school has no devices that could send their hardware information."
+      no_devices_with_hardware_info: "This school has devices, but no hardware information has been received from any of them."
+      count_header: "This school has a total of %{total} devices that (based on their type) can send hardware information. Of those, %{with_info} have sent their information:"
 
     organisation_index:
       title: "Organisation device statistics"
-      no_devices: "This organisation has no devices at all"
-      no_devices_with_hardware_info: "This organisation has devices, but none of them have sent any hardware information."
-      count_header: "This organisation has a total of %{total} devices that can send hardware information. Of those, %{with_info} have sent their information:"
+      no_devices: "This organisation has no devices at all."
+      no_devices_with_hardware_info: "This organisation has devices, but no hardware information has been received from any of them."
+      count_header: "This organisation has a total of %{total} devices that (based on their type) can send hardware information. Of those, %{with_info} have sent their information:"
 
     images:
       title: "Desktop images in use"

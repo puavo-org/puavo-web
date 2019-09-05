@@ -7,7 +7,6 @@ build:
 	cp ../VERSION VERSION
 	cp ../app/assets/images/anonymous.png resources/anonymous.png
 	bundle install --deployment
-	$(MAKE) tags
 
 update-gemfile-lock: clean
 	rm -f Gemfile.lock
@@ -17,10 +16,6 @@ update-gemfile-lock: clean
 
 clean: clean-doc
 	rm -rf .bundle vendor
-
-.PHONY: tags
-tags:
-	bundle exec ripper-tags -R --exclude=vendor --exclude rest
 
 install:
 	# Delete .git dir and caches from vendor/. Caused some permission issues on

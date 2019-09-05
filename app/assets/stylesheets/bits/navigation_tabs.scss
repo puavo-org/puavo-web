@@ -1,0 +1,176 @@
+/*
+  Tabs below the school name
+*/
+
+/* TODO: Make it possible to access second-level tabs from other first-level tabs.
+   Can be done if we play with hover effects, for example. I hate that I have to
+   first load the users list before I can access groups, for example. */
+
+#tabs {
+  /* Styles common for both levels */
+  ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: inline;
+  }
+
+  a {
+    display: block;
+    margin: 0;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* First level */
+  .first {
+    a {
+      font-size: 80%;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 1em 1.5em;
+    }
+
+    ul {
+      background: $tabsFirstBarBack;
+    }
+
+    li {
+      background: $tabsFirstTabBack;
+
+      a {
+        color: $tabsFirstTabFore;
+      }
+    }
+
+    li:hover {
+      background: $tabsFirstTabHoverBack;
+
+      a {
+        color: $tabsFirstTabHoverFore;
+      }
+    }
+
+    li.current {
+      background: $tabsFirstTabCurrentBack;
+
+      &:hover {
+        background: $tabsFirstTabHoverBack;
+      }
+
+      a {
+        color: $tabsFirstTabCurrentFore;
+      }
+    }
+  }
+
+  /* Second level */
+  .second {
+    ul {
+      background: $tabsSecondBarBack;
+    }
+
+    li {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* use !important, #content > a tries to override these */
+    a {
+      background: $tabsSecondTabBack;
+      color: $tabsSecondTabFore;
+      padding: 1em 1.5em;
+      font-weight: normal;
+      font-size: 70%;
+      border: 1px solid transparent;
+    }
+
+    a:hover, .current a {
+      background: $tabsSecondTabHoverBack;
+      color: $tabsSecondTabHoverFore;
+    }
+  }
+
+  @media #{$screen-breakpoint-one} {
+    .first a {
+      padding: 1em;
+    }
+
+    .navbarSecondLevel {
+      ul {
+        border: none;
+      }
+
+      a {
+        padding: 1em;
+      }
+    }
+  }
+}
+
+/* In-page JavaScript tabs */
+.tabBar {
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0 0 5px;
+    display: flex;
+  }
+
+  li {
+    display: inline;
+    margin-right: 5px;
+  }
+
+  a {
+    display: block;
+    padding: 5px 50px;
+    outline: none;
+    text-decoration: none;
+    background: $inpageTabsInactiveTabBackground !important;
+    color: $inpageTabsInactiveTabForeground !important;
+    font-weight: normal !important;
+    border: 1px solid $inpageTabsWrapperBorder;
+
+    &:hover {
+      background: $inpageTabsTabHoverBackground !important;
+      color: $inpageTabsTabHoverForeground !important;
+    }
+  }
+
+  a.tabActive {
+    background: $inpageTabsActiveTabBackground !important;
+    color: $inpageTabsActiveTabForeground !important;
+    cursor: default !important;
+    border-bottom: 1px solid $inpageTabsActiveTabBackground;
+
+    &:hover {
+      background: $inpageTabsActiveTabBackground !important;
+    }
+  }
+}
+
+.tabContentsWrapper {
+  margin-top: -1px;
+  border: 1px solid $inpageTabsWrapperBorder;
+
+  padding: 10px;
+
+  :first-child {
+    margin-top: 0;
+  }
+}
+
+.tabContentsInvisible {
+  display: none;
+}
+
+.tabContentsVisible {
+  display: block;
+}

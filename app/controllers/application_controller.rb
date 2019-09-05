@@ -59,13 +59,6 @@ class ApplicationController < ActionController::Base
     flog.info "request", :parameters => params
   end
 
-  def user_store
-    @user_store ||= Redis::Namespace.new(
-      "puavo:user:#{ current_user.dn.to_s.downcase }",
-      :redis => REDIS_CONNECTION
-    )
-  end
-
   def flog
     attrs = {
       :controller => self.class.name,
@@ -73,7 +66,7 @@ class ApplicationController < ActionController::Base
       :request => {
         :url => request.url,
         :method => request.method,
-        :ip => env["HTTP_X_REAL_IP"]
+        :ip => request.env["HTTP_X_REAL_IP"]
       }
     }
 
@@ -135,6 +128,11 @@ class ApplicationController < ActionController::Base
         return (month == 1) ? t('fuzzy_time.month') : t('fuzzy_time.months', :month => month)
       end
     end
+  end
+
+  # Converts LDAP operational created/modified timestamps to localtime (server time)
+  def convert_timestamp(t)
+    t.localtime.strftime('%Y-%m-%d %H:%M:%S') rescue '?'
   end
 
   def puavo_users?

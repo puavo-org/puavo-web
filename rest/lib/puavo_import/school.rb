@@ -6,7 +6,7 @@ module PuavoImport
     @@schools = []
     @@schools_by_external_id = {}
 
-    attr_accessor :name, :external_id, :abbreviation
+    attr_accessor :name, :external_id, :abbreviation, :school_code
 
     OVERWRITE_CHARACTERS = {
       "ä" => "a",
@@ -19,6 +19,7 @@ module PuavoImport
       @name = args[:name]
       @external_id = args[:external_id]
       @abbreviation = abbreviation_escape(args[:abbreviation])
+      @school_code = args[:school_code]
 
       @@schools << self
       @@schools_by_external_id[self.external_id] = self
@@ -26,15 +27,23 @@ module PuavoImport
 
     def to_hash
       { :name => self.name,
-        :external_id => self.external_id }
+        :external_id => self.external_id,
+        :school_code => self.school_code }
     end
 
     def to_s
       "#{ self.name } (external_id: #{ self.external_id })"
     end
 
-    def need_update?(school)
-      self.name != school.name or self.abbreviation != school.abbreviation
+    def need_update?(school, update_school_code=false)
+      if update_school_code
+        return self.name != school.name ||
+               self.abbreviation != school.abbreviation ||
+               self.school_code != school.school_code
+      else
+        return self.name != school.name ||
+               self.abbreviation != school.abbreviation
+      end
     end
 
     def self.by_external_id(id)

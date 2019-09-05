@@ -7,12 +7,12 @@
 <% @roles.each do |role| %>
   <tr>
     <td data-title="<%= t('activeldap.attributes.role.displayName')%>"><%= link_to role.displayName, role_path(@school, role) %></td>
-    <td data-title="<%=t('.actions')%>" class="table-actions">
+    <td data-title="<%=t('.actions')%>" class="tableActions">
       <%= link_to edit_role_path(@school, role), class: "btn" do%>
         <i class='icon-pencil'></i><%= t('link.edit') %>
       <% end %>
     </td>
-    <td class="table-actions">
+    <td class="tableActions">
       <%= link_to role_path(@school, role), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do%>
         <i class='icon-trash'></i><%= t('link.destroy')%>
       <% end %>

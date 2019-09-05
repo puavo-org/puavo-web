@@ -19,12 +19,10 @@ I18n.locale = "<%= I18n.locale %>";
 <%= javascript_tag "window.SEARCH_URLS = { " + search_urls.map{ |key, value| "'#{key}': '#{value}'" }.join(", ") + " };" %>
 <%= javascript_include_tag "application" %>
 <%= yield :javascript %>
-<meta name="csrf-token" content="<%= form_authenticity_token %>" />
-<meta name="csrf-param" content="authenticity_token" />
 </head>
 
 <body>
-<div id="topbar-wrapper">
+<div id="topbarWrapper">
   <ul id="topbar">
     <li id="left">
       <!-- Organisation and school dropdown menus (ie. "navigation") -->
@@ -84,38 +82,45 @@ I18n.locale = "<%= I18n.locale %>";
                          title: t('.search_title')) %>
 
       <% if current_user && current_user.organisation_owner? %>
-      <a href="/extended_search" id="extendedSearchButton" title="<%= t('.extended_search_title') %>">
+      <a href="/extended_search" id="extendedSearchButton" class="ownersOnly" title="<%= t('.extended_search_title') %>">
         <img src="<%= image_path('magnifier.png') %>"></a>
       </div>
       <% end %>
     </li>
 
     <li id="right">
-      <!-- Logout -->
       <span id="loggedInName"><%= h current_user.displayName %></span>
 
-      <%= link_to logout_path, method: :delete, class: 'btn btn-danger', id: 'logoutButton' do %>
+      <!-- Two logout buttons: one for desktop, one for mobile. -->
+      <%= link_to logout_path, method: :delete, class: 'logoutButton desktopLogoutButton' do %>
         <i class="icon-logout"></i> <%= t('.logout') %>
+      <% end %>
+
+      <%= link_to logout_path, method: :delete, class: 'logoutButton mobileLogoutButton' do %>
+        <i class="icon-logout"></i>
       <% end %>
     </li>
   </ul>
 </div>
 
-<div class="container">
-  <div class="main-wrap">
+<div id="pageWrapper">
+  <div id="pageContainer">
     <% if current_organisation? %>
     <% if @school && !@school.id.nil? && controller_name != 'password' %>
-    <header id="schoolName"><%= @school.displayName %></header>
 
-    <% unless @school.displayName == 'Administration' %>
+    <div id="schoolHeader">
+      <header id="schoolName"><%= @school.displayName %></header>
+
+      <% unless @school.displayName == 'Administration' %>
 <%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(@school.id.to_i), :extraClass => "" } %>
-    <% end %>
+      <% end %>
+    </div>
 
 <%= render :partial => "layouts/menu" %>
     <% end %>
     <% end %>
 
-    <div class="maincontent clearfix">
+    <div id="content">
       <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
       <% message_keys.each do |key| %>
       <p class="message_<%= key %>"><%= flash[key] %></p>
@@ -123,16 +128,16 @@ I18n.locale = "<%= I18n.locale %>";
       <% end %>
 
       <% if current_user && content_for?(:tools) %>
-      <div class="tools-container">
+      <div class="toolsContainer">
       <%= yield :tools %>
       </div>
       <% end %>
 
       <%= yield %>
     </div>
-  </div> <!-- container_wrap-->
-</div> <!-- container -->
+    <%= debug_footer %>
+  </div> <!-- pageContainer -->
+</div> <!-- pageWrapper -->
 <%= yield :post_load_javascript %>
-<%= debug_footer %>
 </body>
 </html>

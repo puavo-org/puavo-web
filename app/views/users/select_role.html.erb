@@ -1,6 +1,9 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), @user.displayName, t('titles.change_school') %>
 
+<div class="formContainer">
+
 <h1><%= t('.title') %></h1>
+
 <%= form_for("role", url: change_school_users_path(@school))  do |f| %>
 <%= hidden_field_tag :new_school, @new_school.id %>
 <%= hidden_field_tag "user_ids[]", @user.id %>
@@ -41,8 +44,11 @@
   </tr>
 
   <tr class="buttonRow">
-    <th></th>
-    <td><%= f.submit t('.submit'), class: 'btn' %></td>
+    <td colspan="2">
+      <%= f.submit t('.submit'), class: 'btn' %>
+    </td>
   </tr>
 </table>
 <% end %>
+
+</div>

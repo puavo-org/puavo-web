@@ -5,9 +5,9 @@
 
 <table class="list" id="withoutInfo">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.school.displayName') %></th>
-    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.school.displayName')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceType')) %></th>
   </tr>
 
 <% @without_info.each do |device| %>

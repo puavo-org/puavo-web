@@ -15,9 +15,11 @@ end
 <p class="genericError"><%= t('hwinfo.json_failed', :msg => @message) %></p>
 <% else %>
 
-<p class="hwInfoTimestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime %></p>
+<div class="hardwareInfo">
 
-<table class="hwInfoTable">
+<p class="timestamp"><strong><%= t('hwinfo.received_timestamp') %>:</strong> <%= Time.at(@info['timestamp']).localtime.strftime('%Y-%m-%d %H:%M:%S') %></p>
+
+<table class="infoTable">
 
 <!-- General -->
 
@@ -60,18 +62,20 @@ end
 <tr class="sectionEnd">
   <th><%= t('hwinfo.memory.modules.title') %></th>
   <td>
+    <ol>
     <% Array(@info['memory'] || []).each_with_index do |mem, index| %>
-    <%= index + 1 %>:
-    <% if mem['size'].to_i > 0 %>
-    <strong><%= t('hwinfo.memory.modules.size') %>:</strong> <%= mem['size'] %> MiB
-    <strong><%= t('hwinfo.memory.modules.slot') %>:</strong> <%= mem['slot'] %>
-    <strong><%= t('hwinfo.memory.modules.product') %>:</strong> <%= mem['product'] %>
-    <strong><%= t('hwinfo.memory.modules.vendor') %>:</strong> <%= mem['vendor'] %>
-    <% else %>
-    <%= t('hwinfo.memory.modules.empty') %>
+      <li>
+        <% if mem['size'].to_i > 0 %>
+        <strong><%= t('hwinfo.memory.modules.size') %>:</strong> <%= mem['size'] %> MiB
+        <strong><%= t('hwinfo.memory.modules.slot') %>:</strong> <%= mem['slot'] %>
+        <strong><%= t('hwinfo.memory.modules.product') %>:</strong> <%= mem['product'] %>
+        <strong><%= t('hwinfo.memory.modules.vendor') %>:</strong> <%= mem['vendor'] %>
+        <% else %>
+        <%= t('hwinfo.memory.modules.empty') %>
+        <% end %>
+      </li>
     <% end %>
-    <br>
-    <% end %>
+    </ol>
   </td>
 </tr>
 
@@ -139,9 +143,11 @@ end
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.lspci.title') %></th>
   <td colspan="2">
+    <code>
     <% Array(@info['lspci_values'] || []).each do |lspci| %>
-      <%= lspci %><br>
+    <%= lspci %><br>
     <% end %>
+    </code>
   </td>
 </tr>
 
@@ -150,9 +156,11 @@ end
 <tr class="sectionEnd">
   <th class="main"><%= t('hwinfo.lsusb.title') %></th>
   <td colspan="2">
+    <code>
     <% Array(@info['lsusb_values'] || []).each do |lsusb| %>
-      <%= lsusb %><br>
+    <%= lsusb %><br>
     <% end %>
+    </code>
   </td>
 </tr>
 
@@ -222,6 +230,8 @@ end
 <% end %>
 
 </table>
+
+</div>
 
 <% end %>
 

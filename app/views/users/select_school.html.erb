@@ -1,6 +1,9 @@
 <% page_title t('titles.schools'), @school.displayName, t('titles.users'), @user.displayName, t('titles.change_school') %>
 
+<div class="formContainer">
+
 <h1><%= t('.title') %></h1>
+
 <%= form_for("user", :url => select_role_user_path(@school, @user))  do |f| %>
 <table class="editForm">
   <tr>
@@ -19,8 +22,11 @@
   </tr>
 
   <tr class="buttonRow">
-    <th></th>
-    <td><%= f.submit t('.submit'), class: 'btn' %></td>
+    <td colspan="2">
+      <%= f.submit t('.submit'), class: 'btn' %>
+    </td>
   </tr>
 </table>
 <% end %>
+
+</div>

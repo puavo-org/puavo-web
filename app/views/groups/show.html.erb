@@ -11,6 +11,11 @@
       <td><%= h @group.displayName %></td>
     </tr>
 
+  <tr>
+    <th><%= t('activeldap.attributes.dn') %></th>
+    <td><%= h @group.dn %></td>
+  </tr>
+
     <tr>
       <th><%= t('activeldap.attributes.group.cn') %></th>
       <td><%= h @group.cn %></td>
@@ -123,65 +128,84 @@
 
   <li class="haveDropdown">
     <span class="btn"><i class="icon-collapse"></i> <%= t('link.more') %></span>
-    <ul class="dropdown">
-      <li>
-        <%= link_to new_group_path(@school) do %>
-          <i class="icon-plus"></i><%= t('link.new_group') %>
-        <% end %>
-      </li>
+    <div class="dropdown">
+      <ul>
+        <li>
+          <%= link_to new_group_path(@school) do %>
+            <i class="icon-plus"></i><%= t('link.new_group') %>
+          <% end %>
+        </li>
+      </ul>
 
       <% if @group.members.count > 0 %>
+
+      <ul>
+        <% if current_user.organisation_owner? %>
+        <li class="ownersOnly">
+          <%= link_to get_members_as_csv_path(@school, @group), method: :get do %>
+            <i class="icon-download"></i><%= t('link.get_members_as_csv') %>
+          <% end %>
+        </li>
+        <% end %>
+
+        <li>
+          <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('group_username_list_confirm') }, method: :put do %>
+            <i class="icon-list"></i><%= t('link.create_username_list_from_group') %>
+          <% end %>
+        </li>
+      </ul>
+
+      <ul>
+        <li>
+          <%= link_to remove_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+            <i class="icon-minus-squared"></i><%= t('link.remove_all_members_from_group') %>
+          <% end %>
+        </li>
+      </ul>
+
       <% if current_user.organisation_owner? %>
-      <li class="ownersOnly">
-        <%= link_to get_members_as_csv_path(@school, @group), method: :get do %>
-          <i class="icon-download"></i><%= t('link.get_members_as_csv') %>
-        <% end %>
-      </li>
+
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to mark_group_members_for_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+            <i class="icon-flag"></i><%= t('link.mark_group_members_for_deletion') %>
+          <% end %>
+        </li>
+
+        <li class="ownersOnly">
+          <%= link_to unmark_group_members_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+            <i class="icon-flag-empty"></i><%= t('link.unmark_group_members_deletion') %>
+          <% end %>
+        </li>
+      </ul>
+
+      <ul>
+        <li class="ownersOnly">
+          <%= link_to lock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+            <i class="icon-lock"></i><%= t('link.lock_all_group_members') %>
+          <% end %>
+        </li>
+
+        <li class="ownersOnly">
+          <%= link_to unlock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
+            <i class="icon-lock-open"></i><%= t('link.unlock_all_group_members') %>
+          <% end %>
+        </li>
+      </ul>
+
       <% end %>
 
-      <li>
-        <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('group_username_list_confirm') }, method: :put do %>
-          <i class="icon-list"></i><%= t('link.create_username_list_from_group') %>
-        <% end %>
-      </li>
-
-      <%= link_to remove_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-        <i class="icon-minus-squared"></i><%= t('link.remove_all_members_from_group') %>
       <% end %>
 
-      <% if current_user.organisation_owner? %>
-      <li class="ownersOnly">
-        <%= link_to mark_group_members_for_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-          <i class="icon-flag"></i><%= t('link.mark_group_members_for_deletion') %>
-        <% end %>
-      </li>
+      <ul>
+        <li>
+          <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
+            <i class="icon-trash"></i><%= t('link.delete_group') %>
+          <% end %>
+        </li>
+      </ul>
 
-      <li class="ownersOnly">
-        <%= link_to unmark_group_members_deletion_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-          <i class="icon-flag-empty"></i><%= t('link.unmark_group_members_deletion') %>
-        <% end %>
-      </li>
-
-      <li class="ownersOnly">
-        <%= link_to lock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-          <i class="icon-lock"></i><%= t('link.lock_all_group_members') %>
-        <% end %>
-      </li>
-
-      <li class="ownersOnly">
-        <%= link_to unlock_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
-          <i class="icon-lock-open"></i><%= t('link.unlock_all_group_members') %>
-        <% end %>
-      </li>
-      <% end %>
-      <% end %>
-
-      <li>
-        <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
-          <i class="icon-trash"></i><%= t('link.destroy') %>
-        <% end %>
-      </li>
-    </ul>
+    </div> <!-- dropdown -->
   </li>
 </ul>
 <% end %>

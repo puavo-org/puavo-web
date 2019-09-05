@@ -2,6 +2,7 @@
 
 <% content_for :javascript do %>
 <%= javascript_include_tag 'sortableTable' %>
+<%= javascript_include_tag 'inpageTabs' %>
 <% end %>
 
 <h1><%= t('.title') %></h1>
@@ -14,6 +15,26 @@
 <p class="genericNotice"><%= t('.no_devices_with_hardware_info') %></p>
 <% else %>
 
+<div class="tabBar" id="devStatsTabs">
+  <ul>
+    <li>
+        <a href="#withInfoTab"><%= t('device_statistics.device_lists.with_info') %> (<%= @with_info.count %>)</a>
+    </li>
+
+    <li>
+        <a href="#withoutInfoTab"><%= t('device_statistics.device_lists.without_info') %> (<%= @without_info.count %>)</a>
+    </li>
+
+    <li>
+        <a href="#imageStatisticsTab"><%= t('device_statistics.images.title') %> (<%= @image_stats.count %>)</a>
+    </li>
+  </ul>
+</div>
+
+<div class="tabContentsWrapper">
+
+<div class="tabContentsVisible" id="withInfoTab">
+
 <h2><%= t('device_statistics.device_lists.with_info') %></h2>
 
 <p><%= t('.count_header',
@@ -22,14 +43,14 @@
 
 <table class="list" id="withInfo">
   <tr class="thead">
-    <th><%= t('activeldap.attributes.school.displayName') %></th>
-    <th><%= t('activeldap.attributes.device.puavoHostname') %></th>
-    <th><%= t('device_statistics.columns.timestamp') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceType') %></th>
-    <th><%= t('activeldap.attributes.device.puavoDeviceImage') %></th>
-    <th><%= t('device_statistics.columns.cpu') %></th>
-    <th><%= t('device_statistics.columns.memory') %></th>
-    <th><%= t('device_statistics.columns.hard_drive') %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.school.displayName')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.timestamp')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceType')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceImage')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.cpu')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.memory')) %></th>
+    <th><%= sortable_list_column_header(t('device_statistics.columns.hard_drive')) %></th>
   </tr>
 
 <% @with_info.each do |device| %>
@@ -42,7 +63,7 @@
       <%= link_to insert_wbr(device[:name]), device_path(device[:school], device[:device]) %>
     </td>
 
-    <td data-title="<%= t('device_statistics.columns.timestamp') %>">
+    <td data-title="<%= t('device_statistics.columns.timestamp') %>" data-key="<%= device[:timestamp] %>">
       <%= (Time.at(device[:timestamp]).localtime.strftime('%Y-%m-%d&nbsp;%H:%M:%S')).html_safe %>
     </td>
 
@@ -70,45 +91,59 @@
 <% end %>
 </table>
 
+</div>
+
+<div class="tabContentsInvisible" id="withoutInfoTab">
+
 <% unless @without_info.empty? %>
 <%= render :partial => 'without', :locals => { :without_info => @without_info } %>
 <% end %>
 
+</div>
+
+<div class="tabContentsInvisible" id="imageStatisticsTab">
+
 <%= render :partial => 'images', :locals => { :image_stats => @image_stats } %>
+
+</div>
+
+</div>
 
 <% end %>
 <% end %>
 
 <script>
-// Make the tables sortable
 $(document).ready(function() {
-  new SortableTable(
-    "withInfo",
-    [
-      { "index": 0, "flags": COLUMN_FLAG_PRESERVE_HTML },   // school name
-      { "index": 1, "flags": COLUMN_FLAG_PRESERVE_HTML },   // hostname
-      { "index": 2 },   // timestamp
-      { "index": 3 },   // type
-      { "index": 4 },   // desktop image
-      { "index": 5 },   // CPU
-      { "index": 6, "type": COLUMN_TYPE_INTEGER },  // memory
-      { "index": 7, "type": COLUMN_TYPE_INTEGER }   // hard drive
-    ],
-    "fi",
-    2,
-    SORT_ORDER_DESCENDING
-  );
+    new SortableTable(
+        "withInfo",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // school name
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // timestamp (last update)
+            [ COLUMN_TYPE_STRING, 0 ],                  // device type
+            [ COLUMN_TYPE_STRING, 0 ],                  // desktop image name
+            [ COLUMN_TYPE_STRING, 0 ],                  // CPU
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // RAM
+            [ COLUMN_TYPE_INTEGER, 0 ],                 // hard drive size
+        ],
+        "fi",
+        "<%= "#{LdapOrganisation.current.o}-devstats-with" %>",
+        2, SORT_ORDER_DESCENDING
+    );
 
-  <% unless @without_info.empty? %>
-  new SortableTable(
-    "withoutInfo",
-    [
-      { "index": 0, "flags": COLUMN_FLAG_PRESERVE_HTML },
-      { "index": 1, "flags": COLUMN_FLAG_PRESERVE_HTML },
-      { "index": 2 },
-    ],
-    "fi",
-  );
-  <% end %>
+    <% unless @without_info.empty? %>
+    new SortableTable(
+        "withoutInfo",
+        [
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // school name
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
+            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // device type (FIXME: the table breaks without this?!)
+        ],
+        "fi",
+        "<%= "#{LdapOrganisation.current.o}-devstats-without" %>"
+    );
+    <% end %>
+
+    new Tabs("devStatsTabs", 0);
 });
 </script>

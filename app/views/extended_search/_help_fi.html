@@ -1,0 +1,16 @@
+<h2>Pikaohje</h2>
+
+<p>Tämä työkalu etsii käyttäjiä, ryhmiä ja laitteita useilla hakutermeillä. Voit valita minkä tyyppisiä termit ovat ja sen avulla kohdistaa haun muihinkin kenttiin kuin pelkästään nimiin.</p>
+
+<p>Hakutermejä voi olla enemmn kuin yksi. Jokainen termi käydään läpi ja siihen täsmäävät kohteet listataan taulukossa. Hakutermit "siivotaan" ennen hakua: tyhjät rivit ja rivit jotka alkavat risuaidalla (#) poistetaan. Lisäksi jokaisen rivin alusta ja lopusta poistetaan tyhjät välit. Haku tehdään vasta tämän jälkeen.</p>
+
+<h2>Joitain hyödyllisiä vinkkejä</h2>
+
+<ul>
+<li>Jokainen hakutermi voi täsmätä useisiin kohteisiin. Termin etsintää ei lopeteta ensimmäiseen osumaan.</li>
+<li>Hakutulokset näytetään siinä järjestyksessä, kun niihin täsmäävät hakutermit ovat laatikossa.</li>
+<li>Regexp-haku etsii myös sanojen sisältä. Ei-regexp -hauissa koko termin on täsmättävä.</li>
+<li>Johtuen tavasta, jolla etunimiä ja sukunimiä etsitään, niissä ei voi käyttää regexpejä. Nimien täsmäys tehdään AINA kirjainkoosta välittämättä.</li>
+<li>Jos käyttäjällä jota etsit on enemmän kuin yksi etunimi, merkitse etu- ja sukunimen raja pilkulla. Automaattipilkkominen toimii vain nimissä joissa on kaksi osaa.</li>
+<li>Jotkut haut ovat aina regexpejä, koska ne olisivat muuten lähes hyödyttömiä, koska koko termin olisi täsmättävä. Esimerkiksi Xrandr-asetuksista haku ilman regexpiä olisi turhaa, koska hakukenttään pitäisi kopioida koko haettava Xrandr-asetus, mikä on turhaa.</li>
+</ul>

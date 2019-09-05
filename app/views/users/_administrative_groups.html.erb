@@ -1,7 +1,7 @@
     <!-- FIXME: enable (javascript) administrative groups on the form if user select eq. teacher type on the form -->
     <% if new_group_management?(@school) && !@user.new_entry? && (Array(@user.puavoEduPersonAffiliation) - ["student"]).count > 0 %>
     <tr>
-      <th class="required"><%= f.label :administrative_groups %></th>
+      <th class="requiredField"><%= f.label :administrative_groups %></th>
       <td class="administrativeGroups">
         <% @administrative_groups_by_school.each do |school_id, data| %>
         <header><%= data["school_name"] %></header>

@@ -1,0 +1,81 @@
+/*
+  Base styles that are used on all pages
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: $bodyBack;
+  font-family: Arial, "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+}
+
+h1 {
+  font-size: 250%;
+  border-bottom: 1px solid $headerBorder;
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 200%;
+  }
+}
+
+h2 {
+  margin-top: 25px;
+  font-size: 200%;
+  border-bottom: 1px dashed $headerBorder;
+
+  @media #{$screen-breakpoint-one} {
+    font-size: 170%;
+  }
+}
+
+h3 {
+  font-size: 130%;
+  border-bottom: 1px dotted $headerBorder;
+}
+
+h4 {
+  font-size: 115%;
+}
+
+h5 {
+  font-size: 110%;
+}
+
+h6 {
+  font-size: 105%;
+}
+
+hr {
+  /* Used to break floating boxes into controlled sections, so to speak */
+  border: none;
+  clear: both;
+  float: none;
+  height: 0;
+  margin: 0;
+  width: 100%;
+  visibility: hidden;
+}
+
+abbr {
+  @media #{$screen-breakpoint-one} {
+    /* cannot be hovered, hide the underline */
+    text-decoration: none;
+  }
+}
+
+abbr[title]:after {
+  content: "";
+
+  @media #{$screen-breakpoint-one} {
+    /* Can't hover over abbreviations on mobile, so display their contents */
+    content: " (" attr(title) ")";
+  }
+}

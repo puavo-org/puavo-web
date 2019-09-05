@@ -1,8 +1,13 @@
 <% page_title t('titles.organisation'), t('titles.servers'), @server.cn, t('titles.edit') %>
 
+<div class="formContainer">
+
 <h1><%= t('.title') %></h1>
 
 <%= render :partial => 'form',
     :locals => {
-      :submit_text => t('link.update') } %>
+      :submit_text => t('link.update')
+    }
+%>
 
+</div>

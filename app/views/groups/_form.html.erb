@@ -1,16 +1,16 @@
-<p class="required_info"><%= t('layouts.forms.required_field')%></p>
+<p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 <%= form_for(@group, url: path, html: { method: method } ) do |f| %>
 
 <%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
 
 <table class="editForm">
   <tr>
-    <th class="required"><%= f.label :displayName %></th>
+    <th class="requiredField"><%= f.label :displayName %></th>
     <td><%= f.text_field :displayName, :required => 'required' %></td>
   </tr>
 
   <tr>
-    <th class="required"><%= f.label :cn %></th>
+    <th class="requiredField"><%= f.label :cn %></th>
     <td><%= f.text_field :cn, :required => 'required' %></td>
   </tr>
 
@@ -22,17 +22,14 @@
 <% end %>
 
   <tr>
-    <th class="required"><%= f.label :puavoEduGroupType %></th>
+    <th class="requiredField"><%= f.label :puavoEduGroupType %></th>
     <td><%= f.select :puavoEduGroupType, group_types_for_select %></td>
   </tr>
 
   <tr class="buttonRow">
-    <td></td>
-    <td>
-      <span>
-        <%= f.submit submit_text, class: 'btn' %>
-        <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
-      </span>
+    <td colspan="2">
+      <%= f.submit submit_text, class: 'btn' %>
+      <div class="cancel"><%=link_to t('link.cancel'),  path, class: 'btn btn-danger' %></div>
     </td>
   </tr>
 </table>
