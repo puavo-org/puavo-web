@@ -127,19 +127,32 @@ class Host < LdapModel
     ]
     host['conf'].merge!(explicit_puavoconf)
 
+    puavo_conf_profiles = host['conf'].keys.select do |key|
+                            key.start_with?('puavo.profile.')
+                          end
+
     # "puavo.profiles.list" might be constructed from other settings.
     unless host['conf'].has_key?('puavo.profiles.list') then
       unless default_profiles then
         use_personal_profile \
           = (host['conf']['puavo.admin.personally_administered'] == 'true')
+
         default_profiles = [
           host_object.type,
-          (host_object.tags.include?('bigtouch') ? 'bigtouch' : nil),
-          (host_object.tags.include?('infotv')   ? 'infotv'   : nil),
-          (host_object.tags.include?('webkiosk') ? 'webkiosk' : nil),
-          (use_personal_profile                  ? 'personal' : nil) ]
+
+          # these tags will go away, puavo.profile.X will take their place
+          %w(bigtouch infotv webkiosk).select do |k|
+            host_object.tags.include?(k)
+          end,
+
+          puavo_conf_profiles.map do |k|
+            host['conf'][k] == 'true' ? k.sub('puavo.profile.', '') : nil
+          end,
+
+          (use_personal_profile ? 'personal' : nil),
+        ].flatten.compact.uniq
       end
-      host['conf']['puavo.profiles.list'] = default_profiles.compact.join(',')
+      host['conf']['puavo.profiles.list'] = default_profiles.join(',')
     end
 
     host
