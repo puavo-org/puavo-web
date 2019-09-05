@@ -134,11 +134,10 @@ class Host < LdapModel
           = (host['conf']['puavo.admin.personally_administered'] == 'true')
         default_profiles = [
           host_object.type,
-          (host_object.tags.include?('bigtouch')   ? 'bigtouch'   : nil),
-          (host_object.tags.include?('infotv')     ? 'infotv'     : nil),
-          (host_object.tags.include?('restricted') ? 'restricted' : nil),
-          (host_object.tags.include?('webkiosk')   ? 'webkiosk'   : nil),
-          (use_personal_profile                    ? 'personal'   : nil) ]
+          (host_object.tags.include?('bigtouch') ? 'bigtouch' : nil),
+          (host_object.tags.include?('infotv')   ? 'infotv'   : nil),
+          (host_object.tags.include?('webkiosk') ? 'webkiosk' : nil),
+          (use_personal_profile                  ? 'personal' : nil) ]
       end
       host['conf']['puavo.profiles.list'] = default_profiles.compact.join(',')
     end
