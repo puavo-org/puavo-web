@@ -371,7 +371,7 @@ class UsersController < ApplicationController
         end
       end
 
-      redirect_to :back
+      redirect_back fallback_location: users_path(@school)
     else
       respond_to do |format|
         format.html

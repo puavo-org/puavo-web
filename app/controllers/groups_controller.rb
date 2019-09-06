@@ -457,7 +457,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       if @users.length == 0
-        format.html { render :inline => '' }
+        format.html { render :inline => "<p>#{t('search.no_matches')}</p>" }
       else
         format.html { render :user_search, :layout => false }
       end

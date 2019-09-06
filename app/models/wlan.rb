@@ -41,6 +41,14 @@ module Wlan
     # Try reading uploaded certificates, but if that fails (maybe no
     # certificate is sent), use the old ones if those exist.
 
+    # Rails 4 did not care about unsafe parameters on WLAN forms, but Rails 5 does.
+    # Unfortunately, it's a nightmare to construct the required require/permit chains
+    # for these forms as they're fairly complex. I spent two hours on it, then gave
+    # up and just use this:
+    new_attrs = new_attrs.to_unsafe_h
+    # If you want to complain, come up with a compact require/permit chain first,
+    # then we'll talk.
+
     {
       :wlan_ca_cert     => read_cert(new_attrs[:wlan_ca_cert], index) \
                              || wlan_ca_cert[index],

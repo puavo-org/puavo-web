@@ -511,6 +511,8 @@ fi:
       title_role: Roolit
       title_group: "Ryhmät"
       title_device: Laitteet
+    no_matches: "(Ei osumia)"
+    failed: "(Haku epäonnistui!)"
   profiles:
     edit:
       title: Omat tiedot

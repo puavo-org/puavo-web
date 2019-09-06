@@ -64,11 +64,13 @@
       <td><%= t('.description') %></td>
     </tr>
     <tr>
-      <td><%= text_field_tag( "user_search",
-          nil,
-          class: "user_search",
-          size: 50,
-          placeholder: t('.placeholder_for_search') ) %></td>
+      <td>
+        <%= text_field_tag("groupMembersSearch",
+                           nil,
+                           class: "groupMembersSearch",
+                           size: 50,
+                           placeholder: t('.placeholder_for_search')) %>
+      </td>
     </tr>
   </table>
 <%= end_box %>
@@ -211,7 +213,17 @@
 <% end %>
 
 <% if new_group_management?(@school) %>
-  <% content_for :javascript do %>
-    <%= javascript_tag "window.USER_SEARCH_URLS = {'group-users-serach': '#{ @group.puavoId }/user_search?words='}" %>
-  <% end %>
+<script>
+    // Setup group members searching
+    $(document).ready(function() {
+        $('.groupMembersSearch').liveSearch({
+            id: "membersSearchResults",                   // unique ID for the results box
+            url: "<%= @group.id %>/user_search?words=",   // search URL
+            field: "quickSearch",                         // search term source
+            typeDelay: 400,
+            minLength: 2,
+            width: 'auto'
+        });
+    });
+</script>
 <% end %>

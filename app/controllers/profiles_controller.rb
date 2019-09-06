@@ -33,7 +33,7 @@ class ProfilesController < ApplicationController
     @new_emails.delete_if{ |email| current_confirm_emails.include?(email) }
 
     # Create params for ldap replace operation.
-    modify_params = params[:user].select do |key, value|
+    modify_params = profile_params.select do |key, value|
       # do not update empty form values
       !value.to_s.empty?
     end.map do |attribute|
@@ -102,6 +102,15 @@ class ProfilesController < ApplicationController
   end
 
   private
+
+  def profile_params
+    params.require(:user).permit(
+      :puavoLocale,
+      :jpegPhoto,
+      :telephoneNumber,
+      :mail=>[],
+    ).to_h
+  end
 
   def setup_language
     # use organisation default

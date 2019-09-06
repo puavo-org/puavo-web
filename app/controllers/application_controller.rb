@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   # Raise an exception if the CSRF check fails. Ignore JSON and XML
   # requests, as they're used in scripts and tests and protecting
   # those would be too arduous at the moment.
-  protect_from_forgery with: :exception, unless: Proc.new { |c| c.request.format.json? || c.request.format.xml? }
+  protect_from_forgery with: :exception, prepend: true, unless: Proc.new { |c| c.request.format.json? || c.request.format.xml? }
 
   before_action do
     response.headers["X-puavo-web-version"] = "#{ PuavoUsers::VERSION } #{ PuavoUsers::GIT_COMMIT }"
@@ -176,7 +176,7 @@ class ApplicationController < ActionController::Base
   def set_menu
     # TODO: Where this should be required?
     # It must be require after all controllers are defined
-    require_relative "../../lib/puavo_menu"
+    require "puavo_menu"
 
     @menu_items = PuavoMenu.new(self).children
     @child_items = []

@@ -29,7 +29,7 @@ class ExternalServicesBase < ApplicationController
     @model.puavoActiveService = params["puavoActiveService"]
     @model.save!
     flash[:notice] = t('flash.external_services_saved')
-    redirect_to :back
+    redirect_back fallback_location: organisation_external_services_path
   end
 
 

@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
 
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root :to => "schools#index"
 
   match '/menu' => 'menu#index', :via => :get
 
+  get "/quick_search" => "quick_search#index" #, :as => :search_index
   get '/extended_search' => 'extended_search#index'
   post '/extended_search' => 'extended_search#do_search', via: [:options]
 
@@ -168,7 +170,6 @@ Rails.application.routes.draw do
     match 'wlan_update' => 'organisations#wlan_update', :as => :wlan_update_organisation, :via => :patch
 
     resource :organisation, :only => [:show, :edit, :update]
-    get "search" => "users_search#index", :as => :search_index
     resource :profile, :only => [:edit, :update, :show]
     get "profile/image" => "profiles#image", :as => :image_profile
   end
@@ -213,8 +214,6 @@ Rails.application.routes.draw do
     end
 
     resources :printers, :except => [:show, :new]
-
-    get 'search' => 'devices_search#index'
 
     match '/auth' => 'sessions#auth', :via => :get
 

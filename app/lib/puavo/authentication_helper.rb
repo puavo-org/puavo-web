@@ -106,7 +106,7 @@ module Puavo
       begin
         perform_login(acquire_credentials)
       rescue Puavo::NoCredentials => e
-        if request.format == Mime::JSON
+        if request.format == Mime[:json]
           render(:json => {
                    :error => e.code,
                    :message => e,
@@ -152,7 +152,7 @@ module Puavo
     def show_authentication_error(code, message)
       session.delete :password_plaintext
       session.delete :uid
-      if request.format == Mime::JSON
+      if request.format == Mime[:json]
         render(:json => {
                  :error => code,
                  :message => message,

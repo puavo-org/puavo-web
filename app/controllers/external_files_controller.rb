@@ -54,11 +54,11 @@ class ExternalFilesController < ApplicationController
       end
 
       flash[:notice] = t('external_files.changes_saved')
-      redirect_to :back
+      redirect_back fallback_location: external_files_path
     rescue StandardError => e
       puts e
       flash[:alert] = t('external_files.changes_failed')
-      redirect_to :back
+      redirect_back fallback_location: external_files_path
     end
   end
 

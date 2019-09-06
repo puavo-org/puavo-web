@@ -539,6 +539,8 @@ en:
       title_role: Roles
       title_group: Groups
       title_device: Devices
+    no_matches: "(No matches)"
+    failed: "(Search failed!)"
   profiles:
     edit:
       title: My profile

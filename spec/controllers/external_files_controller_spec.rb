@@ -33,7 +33,7 @@ describe ExternalFilesController, :type => :controller do
   describe "GET index" do
 
     it "lists files" do
-      get :index, { :format => :json }, valid_session
+      get :index, params: { format: :json }, session: valid_session
       expect(response.status).to eq(200)
       json = JSON.parse(response.body)
 
@@ -48,11 +48,11 @@ describe ExternalFilesController, :type => :controller do
       file = fixture_file_upload(img_path, 'image/jpeg', :binary)
 
       @request.env['HTTP_REFERER'] = external_files_path
-      post(:upload, {
-        :file => {
+      post(:upload, params: {
+        file: {
           "img.jpg" => file
         }
-      }, valid_session)
+      }, session: valid_session)
 
       Puavo::Test.setup_test_connection
       ExternalFile.find_by_cn("img.jpg").should_not be_nil
@@ -62,18 +62,18 @@ describe ExternalFilesController, :type => :controller do
   describe "GET file" do
 
     it "can fetch saved file" do
-      get :get_file, { :name => "file.txt" }, valid_session
+      get :get_file, params: { name: "file.txt" }, session: valid_session
       expect(response.status).to eq(200)
       response.body.should == "data"
     end
 
     it "responds 404 on non defined files" do
-      get :get_file, { :name => "nofile.txt" }, valid_session
+      get :get_file, params: { name: "nofile.txt" }, session: valid_session
       expect(response.status).to eq(404)
     end
 
     it "responds 404 on nonexistent files" do
-      get :get_file, { :name => "another.txt" }, valid_session
+      get :get_file, params: { name: "another.txt" }, session: valid_session
       expect(response.status).to eq(404)
     end
   end
@@ -86,7 +86,9 @@ describe ExternalFilesController, :type => :controller do
       f.cn = "new.txt"
       f.save!
 
-      delete :destroy, { :name => "new.txt" }, valid_session
+      # Must use "format: :json" here, otherwise the controller wants text/plain (for some reason)
+      # and the test crashes because we have no handler for plain text.
+      delete :destroy, params: { name: "new.txt" }, session: valid_session, format: :json
 
       # Doing accessing controller removes the ldap connection for some reason.
       # Restore it...
@@ -95,7 +97,7 @@ describe ExternalFilesController, :type => :controller do
     end
 
     it "responds 404 on nonexistent file" do
-      delete :destroy, { :name => "nofile.txt" }, valid_session
+      delete :destroy, params: { name: "nofile.txt" }, session: valid_session
       expect(response.status).to eq(404)
     end
 

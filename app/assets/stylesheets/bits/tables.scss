@@ -21,6 +21,7 @@ th {
 /* Lists of schools, users, devices, etc. */
 .list {
   width: 100%;
+  color: $listFore;
 
   th {
     background: $listHeadingBack;
