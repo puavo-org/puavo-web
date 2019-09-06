@@ -314,6 +314,9 @@ class ExtendedSearchController < ApplicationController
   def search_user_name(settings, last_is_first)
     all_users = get_all_users(settings.school_filter)
     @results = []
+    @num_terms = settings.terms.count
+    @num_hits = 0
+    @num_misses = 0
 
     # FIXME: This is too complicated to be implemented as a block, but it should not be.
 
