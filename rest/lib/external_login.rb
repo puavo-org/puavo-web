@@ -569,24 +569,17 @@ module PuavoRest
                 + ' user and/or password is wrong'
       end
 
+      # Setup a new ldap connection with actor_dn to make sure that only
+      # the permissions of the actor are used when passwords are changed.
+      actor_dn = actor_info.first.dn
+      raise ExternalLoginPasswordChangeError,
+            'could not find actor user dn in external ldap' \
+        unless actor_dn.kind_of?(String)
+      setup_ldap_connection(actor_dn, actor_password)
+
       # these raise exceptions if password change fails
       case @external_password_change['api']
         when 'microsoft-ad'
-          change_microsoft_ad_password(target_dn, target_user_password)
-        when 'microsoft-ad-with-reconnect'
-          # It should not be necessary to setup a new ldap connection
-          # by the actor_dn, as bind_as() above should be enough, but
-          # apparently it may be that if the credentials that the ldap
-          # connection was opened with are lacking password change permissions,
-          # password change may fail unless a new ldap connection is set up
-          # with the actor_dn credentials.  Issue seen with some AD
-          # configurations, which is why this "microsoft-ad-with-reconnect"
-          # configuration parameter exists.
-          actor_dn = actor_info.first.dn
-          raise ExternalLoginPasswordChangeError,
-                'could not find actor user dn in external ldap' \
-            unless actor_dn.kind_of?(String)
-          setup_ldap_connection(actor_dn, actor_password)
           change_microsoft_ad_password(target_dn, target_user_password)
         when 'openldap'
           bind_user = ext_ldapop('change_password/search',
