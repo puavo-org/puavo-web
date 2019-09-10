@@ -579,11 +579,13 @@ module PuavoRest
       raise ExternalLoginPasswordChangeError,
             'could not find actor user dn in external ldap' \
         unless actor_dn.kind_of?(String)
-      setup_ldap_connection(actor_dn, actor_password)
 
       # these raise exceptions if password change fails
       case @external_password_change['api']
         when 'microsoft-ad'
+          change_microsoft_ad_password(target_dn, target_user_password)
+        when 'microsoft-ad-with-reconnect'
+          setup_ldap_connection(actor_dn, actor_password)
           change_microsoft_ad_password(target_dn, target_user_password)
         when 'openldap'
           bind_user = ext_ldapop('change_password/search',
