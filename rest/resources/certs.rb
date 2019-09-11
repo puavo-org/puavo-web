@@ -1,13 +1,19 @@
-require "http"
+require 'http'
 
 module PuavoRest
 
   class Certs < PuavoSinatra
 
+    # Deprecated, but should be supported for a long time
+    # for all Ubuntu Trusty / Debian Stretch versions of puavo-os.
     post "/v3/hosts/certs/sign" do
       auth :basic_auth
 
-      host = Host.by_hostname!(json_params["hostname"])
+      host = Host.by_dn(User.current.dn)
+      unless host then
+        status 404
+        return json({ 'error' => 'could not find the connecting host' })
+      end
 
       org = Host.organisation
       org_key = org.domain.split("." + PUAVO_ETC.topdomain).first
