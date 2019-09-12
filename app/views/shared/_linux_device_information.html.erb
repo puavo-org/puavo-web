@@ -216,9 +216,9 @@
     </tr>
 
     <tr>
-      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.userCertificate") %></th>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.hostCertificates") %></th>
       <td>
-      <% if device.userCertificate %>
+      <% if device.hostCertificates %>
         <%= t(".certificate_status_true") %>
       <% else %>
         <%= t(".certificate_status_false") %>

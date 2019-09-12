@@ -9,7 +9,7 @@ class DeviceBase < LdapBase
   include Mountpoint
 
   attr_accessor :host_certificate_request_send, :image, :primary_user_uid
-  attr_accessor :host_certificate_request, :userCertificate, :rootca, :orgcabundle, :ldap_password
+  attr_accessor :host_certificate_request, :hostCertificates, :rootca, :orgcabundle, :ldap_password
 
   before_validation( :set_puavo_id,
                      :set_password,
@@ -48,7 +48,7 @@ class DeviceBase < LdapBase
     unless options.has_key?(:methods)
       # Set default methods list
       options[:methods] = [ :host_certificate_request,
-                            :userCertificate,
+                            :hostCertificates,
                             :rootca,
                             :orgcabundle,
                             :ldap_password,
@@ -71,10 +71,10 @@ class DeviceBase < LdapBase
   end
 
   def validate_on_create
-    if host_certificate_request_send?
-      if self.userCertificate.nil?
+    if host_certificate_request_send? then
+      if self.hostCertificates.nil? || self.hostCertificates.empty? then
         # FIXME: Localization
-        errors.add "userCertificate", "Unable to sign certificate"
+        errors.add 'hostCertificates', 'Unable to sign certificates'
       end
     end
   end
@@ -190,8 +190,9 @@ class DeviceBase < LdapBase
       case response.code
       when /^2/
         # successful request
-        self.userCertificate = JSON.parse(response.body)["certificate"]["certificate"]
-        logger.debug "Certificate:\n" + self.userCertificate.inspect
+        self.hostCertificates \
+          = [ JSON.parse(response.body)['certificate']['certificate'] ]
+        logger.debug "Certificates: #{ self.hostCertificates.inspect }\n"
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
@@ -230,7 +231,7 @@ class DeviceBase < LdapBase
       case response.code
       when /^2/
         # successful request
-        self.userCertificate = JSON.parse(response.body)["certificate"]["certificate"]
+        self.hostCertificates = JSON.parse(response.body)['certificates']
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end

@@ -751,7 +751,7 @@ en:
         puavoDeviceType: Device type
         macAddress: MAC address(es)
         ipHostNumber: IP address
-        userCertificate: Certificate
+        hostCertificates: Certificates
         serialNumber: Serial number
         puavoDeviceManufacturer: Device manufacturer
         puavoDeviceModel: Device model
@@ -810,7 +810,7 @@ en:
         puavoDeviceType: Device type
         puavoHostname: Hostname
         macAddress: MAC address(es)
-        userCertificate: Certificate
+        hostCertificates: Certificates
         serialNumber: Serial number
         puavoDeviceManufacturer: Device manufacturer
         puavoDeviceModel: Device model

@@ -33,10 +33,10 @@
 
       <ul>
         <li>
-          <% if @device.userCertificate %>
-          <%= link_to revoke_certificate_device_path(@school, @device), :method => :delete do %>
-            <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
-          <% end %>
+          <% if @device.hostCertificates %>
+            <%= link_to revoke_certificate_device_path(@school, @device), :method => :delete do %>
+              <i class="icon-cancel"></i><%= t('link.set_install_mode') %>
+            <% end %>
           <% end %>
         </li>
 
