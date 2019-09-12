@@ -107,8 +107,7 @@ module PuavoRest
     end
 
     def get_root_ca_certificate(org_key)
-      uri = CONFIG['puavo_ca'] \
-              + "/certificates/rootca.text?org=#{ org_key }"
+      uri = "#{ CONFIG['puavo_ca'] }/certificates/rootca.text"
       res = puavo_ca_request.get(uri)
       raise InternalError, "Unable to get root ca certificate" \
         unless res.code.to_s.match(/^2/)

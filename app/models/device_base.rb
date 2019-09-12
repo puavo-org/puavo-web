@@ -242,7 +242,7 @@ class DeviceBase < LdapBase
     begin
       http = http_puavo_ca
 
-      request = Net::HTTP::Get.new("/certificates/rootca.text?org=#{organisation_key}")
+      request = Net::HTTP::Get.new('/certificates/rootca.text')
       response = http.request(request)
       case response.code
       when /^2/
