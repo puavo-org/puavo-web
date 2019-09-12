@@ -86,41 +86,21 @@ module PuavoRest
 
       parsed_response = res.parse
       raise 'no certificate structure returned by puavo-ca' \
-        unless parsed_response.kind_of?(Hash) \
-                 && parsed_response['certificate'].kind_of?(Hash)
-      host_certificate = parsed_response['certificate']['certificate']
-      raise 'no certificate returned by puavo-ca' \
-        unless host_certificate.kind_of?(String) && !host_certificate.empty?
+        unless parsed_response.kind_of?(Hash)
+      raise 'no host certificate returned by puavo-ca' \
+        unless parsed_response['host_certificate'].kind_of?(Hash)
+      raise 'no organisation ca certificate bundle returned by puavo-ca' \
+        unless parsed_response['org_ca_certificate_bundle'].kind_of?(Hash)
+      raise 'no root ca certificate returned by puavo-ca' \
+        unless parsed_response['root_ca_certificate'].kind_of?(Hash)
 
-      org_cabundle_cert = get_organisation_cabundle_certificate(org_key)
-      root_ca_cert      = get_root_ca_certificate(org_key)
-
-      json({ 'host_certificate'         => host_certificate,
-             'org_cabundle_certificate' => org_cabundle_cert,
-             'root_ca_certificate'      => root_ca_cert })
+      return json(parsed_response)
     end
 
     def puavo_ca_request
       dn       = LdapModel.settings[:credentials][:dn]
       password = LdapModel.settings[:credentials][:password]
       HTTP.basic_auth(:user => dn, :pass => password)
-    end
-
-    def get_root_ca_certificate(org_key)
-      uri = "#{ CONFIG['puavo_ca'] }/certificates/rootca.text"
-      res = puavo_ca_request.get(uri)
-      raise InternalError, "Unable to get root ca certificate" \
-        unless res.code.to_s.match(/^2/)
-      return res.body
-    end
-
-    def get_organisation_cabundle_certificate(org_key)
-      uri = CONFIG['puavo_ca'] \
-              + "/certificates/orgcabundle.text?org=#{ org_key }"
-      res = puavo_ca_request.get(uri)
-      raise InternalError, "Unable to get organisation ca bundle" \
-        unless res.code.to_s.match(/^2/)
-      return res.body
     end
   end
 end
