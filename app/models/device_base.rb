@@ -222,7 +222,9 @@ class DeviceBase < LdapBase
   def get_certificate(organisation_key, dn, password)
     begin
       http = http_puavo_ca
-      request = Net::HTTP::Get.new("/certificates/show_by_fqdn.json?fqdn=#{self.puavoHostname + "." + LdapOrganisation.current.puavoDomain}")
+      fqdn = "#{ self.puavoHostname }.#{ LdapOrganisation.current.puavoDomain }"
+      uri_path = "/certificates/show_by_fqdn.json?fqdn=#{ fqdn }"
+      request = Net::HTTP::Get.new(uri_path)
       request.basic_auth(dn, password)
       response = http.request(request)
       case response.code
