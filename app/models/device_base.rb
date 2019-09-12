@@ -196,9 +196,9 @@ class DeviceBase < LdapBase
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
-    rescue Exception => e
+    rescue StandardError => e
       logger.info "ERROR: Unable to sign certificate"
-      logger.info "Exception: #{e}"
+      logger.info "Exception: #{ e.message }"
     end
   end
 
@@ -214,9 +214,9 @@ class DeviceBase < LdapBase
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
-    rescue Exception => e
+    rescue StandardError => e
       logger.info "Unable to revoke certificate"
-      logger.info "Exception: #{e}"
+      logger.info "Exception: #{ e.message }"
     end
   end
 
@@ -235,9 +235,9 @@ class DeviceBase < LdapBase
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
-    rescue Exception => e
+    rescue StandardError => e
       logger.info "Unable to get certificate"
-      logger.info "Exception: #{e}"
+      logger.info "Exception: #{ e.message }"
     end
   end
 
@@ -264,9 +264,9 @@ class DeviceBase < LdapBase
       else
         raise "response code: #{response.code}, puavoHostname: #{self.puavoHostname}"
       end
-    rescue Exception => e
+    rescue StandardError => e
       logger.info "Unable to get CA certificate"
-      logger.info "Exception: #{e}"
+      logger.info "Exception: #{ e.message }"
     end
   end
 
