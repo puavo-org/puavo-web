@@ -736,7 +736,7 @@ fi:
         puavoDeviceType: Laitteen tyyppi
         macAddress: MAC-osoite
         ipHostNumber: IP-osoite
-        userCertificate: Sertifikaatti
+        hostCertificates: Sertifikaatit
         serialNumber: Sarjanumero
         puavoDeviceManufacturer: Laitteen valmistaja
         puavoDeviceModel: Laitteen malli
@@ -795,7 +795,7 @@ fi:
         puavoDeviceType: Laitteen tyyppi
         puavoHostname: Verkkonimi
         macAddress: MAC-osoite
-        userCertificate: Sertifikaatti
+        hostCertificates: Sertifikaatit
         serialNumber: Sarjanumero
         puavoDeviceManufacturer: Laitteen valmistaja
         puavoDeviceModel: Laitteen malli

@@ -3,11 +3,10 @@
   <tr>
     <th class="requiredField"><%= f.label :puavoHostname %></th>
     <td>
-      <% if f.object.userCertificate %>
+      <% if f.object.hostCertificates %>
       <%= f.object.puavoHostname %>
       <% else %>
       <%= f.text_field :puavoHostname, :required => 'required' %>
-      <%= f.object.userCertificate.to_s %>
       <% end %>
     </td>
   </tr>
