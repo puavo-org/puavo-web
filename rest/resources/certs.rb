@@ -6,15 +6,23 @@ module PuavoRest
     post '/v3/hosts/certs/sign' do
       auth :basic_auth
 
+      begin
+        sign()
+      rescue StandardError => e
+        raise InternalError, :user => e.message
+      end
+    end
+
+    def sign
       certificate_request = json_params['certificate_request']
-      halt(400, json(:error => 'no certificate request parameter')) \
-        unless certificate_request.kind_of?(String) \
-                 && !certificate_request.empty?
+      unless certificate_request.kind_of?(String) \
+               && !certificate_request.empty? then
+        raise BadInput, :user => 'no certificate request parameter'
+      end
 
       host = Host.by_dn( LdapModel.settings[:credentials][:dn] )
       unless host then
-        status 404
-        return json({ 'error' => 'could not find the connecting host' })
+        raise NotFound, :user => 'could not find the connecting host'
       end
 
       org = Host.organisation
@@ -29,8 +37,10 @@ module PuavoRest
               "#{ CONFIG['puavo_ca'] }/certificates/revoke.json",
               :json => revoke_params)
       unless res.code == 200 || res.code == 404 then
-        # XXX we should get a proper (detailed) error message to log
-        raise InternalError, "Unable to revoke certificate: #{ res.parse }"
+        errormsg = (JSON.parse(res.body))['error'] \
+                      rescue '(could not parse error response)'
+        raise InternalError,
+              :user => "unable to revoke certificate: #{ errormsg }"
       end
 
       certificate_params = {
@@ -39,23 +49,30 @@ module PuavoRest
         :organisation             => org_key,
       }
       certificate_params[:version] \
-        = json_params[:version] unless json_params[:version].nil?
+        = json_params['version'] unless json_params['version'].nil?
 
       res = puavo_ca_request.post("#{ CONFIG['puavo_ca'] }/certificates.json",
               :json => { 'certificate' => certificate_params })
 
-      # XXX we should get a proper (detailed) error message to log
-      raise InternalError, 'Unable to sign certificate' \
-        unless res.code.to_s.match(/^2/)
+      unless res.code.to_s.match(/^2/) then
+        errormsg = (JSON.parse(res.body))['error'] \
+                      rescue '(could not parse error response)'
+        raise InternalError,
+              :user => "unable to sign certificate: #{ errormsg }"
+      end
 
       parsed_response = res.parse
-      raise 'no certificate structure returned by puavo-ca' \
+      raise InternalError,
+            :user => 'no certificate structure returned by puavo-ca' \
         unless parsed_response.kind_of?(Hash)
-      raise 'no host certificate returned by puavo-ca' \
+      raise InternalError,
+            :user => 'no host certificate returned by puavo-ca' \
         unless parsed_response['certificate'].kind_of?(String)
-      raise 'no organisation ca certificate bundle returned by puavo-ca' \
+      raise InternalError,
+            :user => 'no organisation ca bundle returned by puavo-ca' \
         unless parsed_response['org_ca_certificate_bundle'].kind_of?(String)
-      raise 'no root ca certificate returned by puavo-ca' \
+      raise InternalError,
+            :user => 'no root ca certificate returned by puavo-ca' \
         unless parsed_response['root_ca_certificate'].kind_of?(String)
 
       return json(parsed_response)
