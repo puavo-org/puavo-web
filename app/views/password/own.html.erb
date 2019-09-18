@@ -24,6 +24,8 @@
 <p class="genericWarning"><%= t('password.current_password_too_old') %></p>
 <% end %>
 
+<p class="genericWarning"><%= t('password.attempts_are_logged_own') %></p>
+
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
   <table class="editForm">
     <tr>

@@ -8,7 +8,9 @@ de:
     gsuite_integration_enabled: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens acht Zeichen lang ist, nicht mit einem Leerschlag beginnen oder enden kann und nur aus den Zeichen A-Z, a-z, 0-9 und weiteren Interpunktuationen besteht."
     six_chars_min: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sechs Zeichen lang ist."
     seven_chars_min: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sieben Zeichen lang ist."
-    current_password_too_old: "Gemäss der Sicherheitsrichtlinien der Organisation ist das Passwort zu alt und muss erneuert werden." 
+    current_password_too_old: "Gemäss der Sicherheitsrichtlinien der Organisation ist das Passwort zu alt und muss erneuert werden."
+    attempts_are_logged_own: "All password change attempts are logged."
+    attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
     edit:
       title: "Das Password eines Anderen änderen."
       head: "Um das Password eines Anderen zu ändern, tragen Sie Ihren Benutzernamen und Ihr Passwort ein, dann den Benuzternamen und das neue Passwort des Benutzers, dessen Passwort neu gesetzt werden soll. Sie benötigen genügend Rechte um das Passwort eines anderen Benutzers zu ändern."

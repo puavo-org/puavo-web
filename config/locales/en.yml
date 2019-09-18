@@ -284,6 +284,8 @@ en:
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
       token_lifetime_has_expired: Your link has expired. Please enter your email again.
       too_many_sent_token_request: We've already sent a reset message to your email address.
+      too_many_attempts: "You must wait 10 seconds between password change attempts."
+      go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
     school:
       school_admin_added: "%{displayName} (%{school_name}) is now an admin user"
       school_admin_removed: "%{displayName} (%{school_name}) is no longer an admin user in this school"
@@ -463,6 +465,8 @@ en:
     six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
     seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
     current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
+    attempts_are_logged_own: "All password change attempts are logged."
+    attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
     edit:
       title: Change someone else's password
       head: To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users.

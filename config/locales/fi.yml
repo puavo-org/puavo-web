@@ -257,6 +257,8 @@ fi:
       can_not_change_upstream_password: "Jostakin syystä salasanan vaihto lähdepalveluun ei onnistunut.  Yritä myöhemmin uudelleen!"
       token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
       too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viesti.
+      too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
+      go_away: "Et ole opettaja tai ylläpitäjä, joten et voi vaihtaa muiden salasanoja."
     school:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty koulun ylläpitäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä tässä koulussa"
@@ -435,6 +437,8 @@ fi:
     six_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
     seven_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään seitsemän merkkiä."
     current_password_too_old: "Organisaatiosi tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
+    attempts_are_logged_own: "Kaikki salasananvaihtoyritykset tallennataan lokiin."
+    attempts_are_logged_other: "Tämä lomake on tarkoitettu vain opettajien ja ylläpitäjien käytettäväksi. Kaikki salasananvaihdot ja -yritykset tallennataan lokiin. Lokiin tallentuvat käyttäjänimet, IP-osoite/-osoitteet sekä aikaleima."
     edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."
