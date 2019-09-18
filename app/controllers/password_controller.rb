@@ -54,6 +54,20 @@ class PasswordController < ApplicationController
   # PUT /password
   # "Change your own password" and "Change someone else's password" are both processed here
   def update
+
+    ip = "REMOTE_ADDR=\"#{request.env['REMOTE_ADDR']}\" " \
+         "REMOTE_HOST=\"#{request.env['REMOTE_HOST']}\" " \
+         "REQUEST_URI=\"#{request.env['REQUEST_URI']}\""
+
+    if params['login']['uid'] && !params['user']['uid']
+      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\" " \
+                  "is trying to change their password, #{ip}"
+      filter_multiple_attempts(params['login']['uid'])
+    else
+      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" is trying to change the password of user " \
+                  "\"#{params['user']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\", #{ip}"
+    end
+
     @password_requirements = password_requirements
 
     # If the field on the form was filled in, use the value from it,
