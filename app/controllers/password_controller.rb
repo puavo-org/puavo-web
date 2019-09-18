@@ -63,9 +63,11 @@ class PasswordController < ApplicationController
       logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\" " \
                   "is trying to change their password, #{ip}"
       filter_multiple_attempts(params['login']['uid'])
+      mode = :own
     else
       logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" is trying to change the password of user " \
                   "\"#{params['user']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\", #{ip}"
+      mode = :other
     end
 
     @password_requirements = password_requirements
@@ -95,7 +97,7 @@ class PasswordController < ApplicationController
       raise User::UserError, I18n.t('flash.password.confirmation_failed')
     end
 
-    unless change_user_password
+    unless change_user_password(mode)
       raise User::UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
 
@@ -259,7 +261,7 @@ class PasswordController < ApplicationController
     return nil
   end
 
-  def change_user_password
+  def change_user_password(mode)
     case password_requirements
       when 'Google'
         # Validate the password against Google's requirements.
@@ -315,9 +317,15 @@ class PasswordController < ApplicationController
     @logged_in_user = User.find(:first,
                                 :attribute => 'uid',
                                 :value     => params[:login][:uid])
+
     return false unless @logged_in_user \
                           && authenticate(@logged_in_user,
                                           params[:login][:password])
+
+    # Don't let non-teachers and non-admins change other people's passwords
+    if mode == :other && !["admin", "teacher"].include?(@logged_in_user.puavoEdupersonAffiliation)
+      raise User::UserError, I18n.t('flash.password.go_away')
+    end
 
     @user = @logged_in_user
     if params[:user][:uid] then
