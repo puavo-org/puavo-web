@@ -73,7 +73,7 @@ class SessionsController < ApplicationController
   end
 
   def auth
-    
+
     respond_to do |format|
       format.json { render :json => true.to_json }
     end
