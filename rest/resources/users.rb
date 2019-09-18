@@ -836,6 +836,17 @@ class Users < PuavoSinatra
     json user
   end
 
+  def too_many_password_change_attempts(username)
+    db = Redis::Namespace.new("puavo:password_management:attempt_counter_rest", :redis => REDIS_CONNECTION)
+
+    # if the username key exists in the database, then there have been multiple attempts lately
+    return true if db.get(username) == "true"
+
+    # store the username with automatic expiration in 10 seconds
+    db.set(username, true, :px => 10000, :nx => true)
+    return false
+  end
+
   put '/v3/users/password' do
     auth :basic_auth
 
@@ -875,6 +886,14 @@ class Users < PuavoSinatra
       return json({
         :exit_status => 1,
         :stderr      => e.message,
+        :stdout      => '',
+      })
+    end
+
+    if too_many_password_change_attempts(params['target_user_username'])
+      return json({
+        :exit_status => 1,
+        :stderr      => 'password change rate limit hit, please wait',
         :stdout      => '',
       })
     end

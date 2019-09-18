@@ -32,6 +32,25 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
   end
 
+  def filter_multiple_attempts(username)
+      db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
+
+      # if the username key exists in the database, then there have been multiple attempts lately
+      if db.get(username) == "true"
+        logger.error "(#{Time.now}) Too many change attempts for user \"#{username}\", request rejected"
+
+        # must setup these or the form breaks
+        setup_language(params.fetch(:lang, ''))
+        @changing = username
+
+        raise User::UserError, I18n.t('flash.password.too_many_attempts')
+        return
+      end
+
+      # store the username with automatic expiration in 10 seconds
+      db.set(username, true, :px => 10000, :nx => true)
+  end
+
   # PUT /password
   # "Change your own password" and "Change someone else's password" are both processed here
   def update
