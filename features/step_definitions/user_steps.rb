@@ -167,6 +167,11 @@ When(/^I change "(.*?)" user type to "(.*?)"$/) do |uid, user_type|
   user.save!
 end
 
+# Used when testing password changing timeouts
+Then(/^I wait (\d+) seconds$/) do |number|
+  sleep(number)
+end
+
 private
 
 def get_object_by_model_and_key(model, key)
