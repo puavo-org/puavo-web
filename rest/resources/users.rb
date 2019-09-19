@@ -890,12 +890,14 @@ class Users < PuavoSinatra
       })
     end
 
-    if too_many_password_change_attempts(params['target_user_username'])
-      return json({
-        :exit_status => 1,
-        :stderr      => 'password change rate limit hit, please wait',
-        :stdout      => '',
-      })
+    if ENV["PUAVO_WEB_CUCUMBER_TESTS"] != "true"
+      if too_many_password_change_attempts(params['target_user_username'])
+        return json({
+          :exit_status => 1,
+          :stderr      => '[rest] password change rate limit hit, please wait',
+          :stdout      => '',
+        })
+      end
     end
 
     res = Puavo.change_passwd(params['mode'].to_sym,
