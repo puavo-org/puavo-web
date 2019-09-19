@@ -203,33 +203,6 @@ Feature: Manage users
     And I should not see "MabeyEDIT"
     And I should not see "ben-edit"
 
-  Scenario: Trigger the password edit time limit
-    Given I am on the new user page
-    When I fill in the following:
-    | Surname              | Donald      |
-    | Given name           | Duck        |
-    | Username             | donald.duck |
-    | user[new_password]   | 313         |
-    | Confirm new password | 313         |
-    And I check "Student"
-    And I check "Class 4"
-    Then I press "Create"
-    Then I should see "User was successfully created."
-    #
-    Then I am on the edit user page with "donald.duck"
-    And I fill in the following:
-    | user[new_password]   | foobar |
-    | Confirm new password | foobar |
-    And I press "Update"
-    Then I should see "password change rate limit hit, please wait"
-    #
-    Then I wait 11 seconds
-    Then I fill in the following:
-    | user[new_password]   | foobar |
-    | Confirm new password | foobar |
-    And I press "Update"
-    Then I should see "User was successfully updated."
-
   Scenario: Listing users
     Given the following users:
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
