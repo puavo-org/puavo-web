@@ -25,7 +25,6 @@ class SessionsController < ApplicationController
       "username_placeholder" => I18n.t("sessions.new.username_placeholder"),
       "username" => params["username"],
       "invalid_credentials?" => false, # Not use plaintext password ever
-      "handheld?" => true, # Not use plaintext password ever
       "error_message" => flash[:notice],
       "topdomain" => PUAVO_ETC.topdomain,
       "login_helper_js_url" => "login/helpers.js",
