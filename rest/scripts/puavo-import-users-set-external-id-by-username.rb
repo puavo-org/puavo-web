@@ -30,6 +30,8 @@ CSV.foreach(@options[:csv_file], :encoding => @options[:encoding], :col_sep => "
     next
   end
 
+  next if user.external_id && user.external_id == external_id
+
   user.external_id = external_id
 
   puts "Set external_id #{ external_id } (#{data[2]} #{data[4]}) to user: #{ user.username }"
