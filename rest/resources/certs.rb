@@ -30,8 +30,8 @@ module PuavoRest
 
       fqdn = "#{ host.hostname }.#{ org.domain }"
       revoke_params = { 'fqdn' => fqdn }
-      revoke_params[:version] = json_params[:version] \
-        unless json_params[:version].nil?
+      revoke_params[:certchain_version] = json_params[:certchain_version] \
+        unless json_params[:certchain_version].nil?
 
       res = puavo_ca_request.delete(
               "#{ CONFIG['puavo_ca'] }/certificates/revoke.json",
@@ -48,8 +48,8 @@ module PuavoRest
         :host_certificate_request => certificate_request,
         :organisation             => org_key,
       }
-      certificate_params[:version] \
-        = json_params['version'] unless json_params['version'].nil?
+      certificate_params[:certchain_version] = json_params['certchain_version'] \
+        unless json_params['certchain_version'].nil?
 
       res = puavo_ca_request.post("#{ CONFIG['puavo_ca'] }/certificates.json",
               :json => { 'certificate' => certificate_params })
