@@ -381,7 +381,7 @@ fi:
       member: Jäsen
       add_to_group: Liitä ryhmään
     groupless_users:
-      title: "Etsi ryhmättömät käyttäjät..."
+      title: "Etsi ryhmättömät käyttäjät"
       count: "Löytyi %{count} ryhmätöntä käyttäjää."
       mark_for_deletion: "Merkitse nämä käyttäjät poistettavaksi"
   schools:
