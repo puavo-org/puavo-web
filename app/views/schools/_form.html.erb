@@ -1,4 +1,4 @@
-<p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
+<p class="requiredTitle"><%= t('layouts.forms.required_field') %></p>
 
 <%= form_for(@school, url: path, html: { method: method, multipart: true })  do |f| %>
 <table class="editForm">
@@ -112,6 +112,7 @@
       <% end %>
     </td>
   </tr>
+  <% end %>
 
   <tr>
     <th><%= f.label :puavoDeviceImage %></th>
@@ -145,7 +146,6 @@
                 :f => f } ) %>
 
 </table>
-<% end %>
 
 <%= render :partial => 'shared/form_mountpoint', :locals => { :f => f } %>
 
