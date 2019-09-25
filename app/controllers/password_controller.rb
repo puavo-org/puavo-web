@@ -12,7 +12,6 @@ class PasswordController < ApplicationController
   # "Change your own password" form
   def own
     @user = User.new
-    @password_requirements = password_requirements
 
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
@@ -25,7 +24,6 @@ class PasswordController < ApplicationController
   # "Change someone else's password" form
   def edit
     @user = User.new
-    @password_requirements = password_requirements
 
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
@@ -69,8 +67,6 @@ class PasswordController < ApplicationController
                   "\"#{params['user']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\", #{ip}"
       mode = :other
     end
-
-    @password_requirements = password_requirements
 
     # If the field on the form was filled in, use the value from it,
     # otherwise take the value from the URL
@@ -171,7 +167,6 @@ class PasswordController < ApplicationController
   # GET /password/:jwt/reset
   # Password reset form
   def reset
-    @password_requirements = password_requirements
     setup_language(params.fetch(:lang, ''))
   end
 
@@ -262,7 +257,7 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password(mode)
-    case password_requirements
+    case get_organisation_password_requirements
       when 'Google'
         # Validate the password against Google's requirements.
         new_password = params[:user][:new_password]

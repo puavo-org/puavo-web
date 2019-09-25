@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :password_validator do %>
-<%= setup_password_validator(@password_requirements) %>
+<%= setup_password_validator %>
 <% end %>
 
 <% content_for :title do %><%= t('.title') %><% end %>
@@ -41,7 +41,7 @@
     <tr>
       <th><%= f.label :new_password, t('activeldap.attributes.user.new_password') %></th>
       <td>
-        <%= show_password_requirements(@password_requirements) %>
+        <%= show_password_requirements %>
         <%= password_field :user, :new_password, :value => "", :required => "required" %>
       </td>
     </tr>

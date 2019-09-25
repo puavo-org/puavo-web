@@ -43,8 +43,6 @@ class ListsController < ApplicationController
 
     @lists.sort{|a, b| a.created_at <=> b.created_at}.reverse!
 
-    @password_requirements = password_requirements
-
     respond_to do |format|
       format.html
     end
