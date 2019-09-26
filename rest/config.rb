@@ -46,11 +46,22 @@ def get_dn_from_cn(ldap_base, cn)
   entries.first.dn.to_s
 end
 
+def resistance_administrative_group(role)
+  {
+    'add_administrative_group' => {
+      'displayname' => 'Resistence',
+      'name'        => 'resistence', },
+    'add_roles' => [ role ],
+  }
+end
+
 def get_external_login_test_configuration
-  admin_dn  = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'cucumber')
-  bind_dn   = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'admin')
-  sarah_dn  = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'sarah.connor')
-  thomas_dn = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'thomas.anderson')
+  admin_dn   = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'cucumber')
+  bind_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'admin')
+  indiana_dn = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'indiana.jones')
+  lara_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'lara.croft')
+  sarah_dn   = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'sarah.connor')
+  thomas_dn  = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'thomas.anderson')
 
   target_school_dn = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'administration')
 
@@ -86,18 +97,10 @@ def get_external_login_test_configuration
                     'displayname' => 'Heroes school %CLASSNUMBER',
                     'name'        => 'heroes-%STARTYEAR', }},
               ]},
-            { sarah_dn => [
-                { 'add_administrative_group' => {
-                    'displayname' => 'Resistence',
-                    'name'        => 'resistence', }},
-                { 'add_roles' => [ 'teacher' ] },
-              ]},
-            { thomas_dn => [
-                { 'add_administrative_group' => {
-                    'displayname' => 'Resistence',
-                    'name'        => 'resistence', }},
-                { 'add_roles' => [ 'admin' ] },
-              ]},
+            { indiana_dn => [ resistance_administrative_group('teacher') ]},
+            { lara_dn    => [ resistance_administrative_group('admin'  ) ]},
+            { sarah_dn   => [ resistance_administrative_group('admin'  ) ]},
+            { thomas_dn  => [ resistance_administrative_group('admin'  ) ]},
           ],
         },
         'external_id_field'       => 'eduPersonPrincipalName',
