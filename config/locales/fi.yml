@@ -90,6 +90,7 @@ fi:
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  lock_marked_users: "Haluatko varmasti lukita %{count} poistettavaksi merkittyä käyttäjää?"
   delete_marked_users: "Haluatko varmasti poistaa %{count} poistettavaksi merkittyä käyttäjää?"
   group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
   prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
@@ -151,6 +152,7 @@ fi:
     new_role: Uusi rooli
     new_user: "Uusi käyttäjä..."
     delete_user: "Poista käyttäjä"
+    lock_users_marked_for_deletion: "Lukitse kaikki poistettavaksi merkityt käyttäjät"
     delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
     continue: Jatka
     login: Kirjaudu
@@ -231,6 +233,9 @@ fi:
       deletion_prevented: "Käyttäjän poisto on nyt estetty."
       marked_users_deleted: "%{succeed} käyttäjän poisto onnistui"
       marked_users_deleted_with_fail: "%{succeed} käyttäjän poisto onnistui, %{failed} epäonnistui"
+      marked_users_locked: "%{succeed} käyttäjän lukitseminen onnistui"
+      marked_users_locked_with_fail: "%{succeed} käyttäjän lukitseminen onnistui, %{failed} epäonnistui"
+      marked_users_locked_none: "Lukitsemattomia käyttäjiä ei ollut"
       import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"

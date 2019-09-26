@@ -459,6 +459,48 @@ class UsersController < ApplicationController
     end
   end
 
+  def lock_marked_users
+    # find all users who are marked for deletion
+    lock_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
+
+    # then ignore those who are already locked
+    lock_these = lock_these.reject!{ |m| m.puavoLocked && m.puavoLocked == true }
+
+    # lock them
+    if lock_these.empty?
+      flash[:notice] = t('flash.user.marked_users_locked_none')
+    else
+      succeed = 0
+      failed = 0
+
+      lock_these.each do |m|
+        unless m.puavoDoNotDelete.nil?
+          failed += 1
+          next
+        end
+
+        begin
+          m.puavoLocked = true
+          m.save!
+          succeed += 1
+        rescue StandardError => e
+          logger.error("lock_marked_users(): #{e}")
+          failed += 1
+        end
+      end
+
+      if failed == 0
+        flash[:notice] = t('flash.user.marked_users_locked', :succeed => succeed)
+      else
+        flash[:notice] = t('flash.user.marked_users_locked_with_fail', :succeed => succeed, :failed => failed)
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to( users_path(@school) ) }
+    end
+  end
+
   def delete_marked_users
     delete_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
 

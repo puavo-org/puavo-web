@@ -117,6 +117,7 @@ en:
   default_select_value: Select
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
+  lock_marked_users: "Are you sure you want to lock %{count} users who are marked for deletion?"
   delete_marked_users: "Are you sure you want to delete %{count} users who are marked for deletion?"
   group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
   prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
@@ -178,6 +179,7 @@ en:
     new_role: New role
     new_user: New user...
     delete_user: "Delete user"
+    lock_users_marked_for_deletion: "Lock all users who are marked for deletion"
     delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     continue: Continue
     login: Login
@@ -258,6 +260,9 @@ en:
       deletion_prevented: "User deletion has been prevented."
       marked_users_deleted: "%{succeed} users removed"
       marked_users_deleted_with_fail: "%{succeed} users removed, %{failed} not removed"
+      marked_users_locked: "%{succeed} users locked"
+      marked_users_locked_with_fail: "%{succeed} users locked, %{failed} not locked"
+      marked_users_locked_none: "There were no unlocked users"
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
