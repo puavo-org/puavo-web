@@ -1241,6 +1241,7 @@ en:
       help: "Instructions and tips"
     search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
     terms_title: "Search terms type:"
+    per_term_settings_title: "Extra settings for this term type"
     term_names:
       users:
         title: "Users"
@@ -1261,7 +1262,8 @@ en:
         title: "Devices"
         puavoid: "Devices: Puavo ID"
         hostname: "Devices: Hostname"
-        image: "Devices: Current desktop image (always regexp)"
+        image: "Devices: Desktop image (always regexp)"
+        current_image: "Devices: Current desktop image (always regexp)"
         mac: "Devices: MAC address"
         tags: "Devices: Tags"
         xrandr: "Devices: Xrandr settings (always regexp)"
@@ -1272,16 +1274,21 @@ en:
         serial_number: "Devices: Serial number"
     school_limit_title: "School limit:"
     school_limit_all: "(All schools)"
-    regexp_title: "Regexp (allows partial matches, see help)"
-    remove_misses_title: "Remove missed terms from results"
+    more_settings:
+      title: "Search settings"
+      regexp_title: "Terms are regexp strings (allows partial hits, see help)"
+      reverse_title: "Reverse search (only search terms are matched in reverse, not term-specific extra settings)"
+      remove_misses_title: "Don't list terms that produced no hits in the results"
     button_search: "Search"
     button_clear_results: "Clear results"
     button_clear_terms: "Clear search terms"
     results_title: "Results"
     results:
       search_term_title: "Search term"
+      matched_string: "Matched text"
       no_term_hits: "(No hits)"
       no_results: "(No results)"
+      statistics: "%{total} hits in total. %{num_terms} search term(s); %{num_hits} hit(s), %{num_misses} miss(es). Searching took %{elapsed} seconds. "
     errors:
       unknown_school: "(Unknown school)"
     controller:

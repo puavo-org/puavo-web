@@ -1,5 +1,7 @@
 <p class="resultStatistics">
 <%= t('extended_search.results.statistics',
+      :total => @total,
+      :elapsed => @elapsed,
       :num_terms => @num_terms,
       :num_hits => @num_hits,
       :num_misses => @num_misses) %>

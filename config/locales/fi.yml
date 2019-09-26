@@ -1210,7 +1210,8 @@ fi:
       search: "Hakulomake"
       help: "Käyttöohje ja vihjeitä"
     search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
-    terms_title: "Minkä tyyppisiä hakutermit ovat:"
+    terms_title: "Hakutermien tyyppi"
+    per_term_settings_title: "Lisäasetukset tälle termityypille"
     term_names:
       users:
         title: "Käyttäjät"
@@ -1231,7 +1232,8 @@ fi:
         title: "Laitteet"
         puavoid: "Laitteet: Puavo ID"
         hostname: "Laitteet: Hostname"
-        image: "Laitteet: Käytössä oleva työpöytäkuva (aina regexp)"
+        image: "Laitteet: Työpöytäkuva (aina regexp)"
+        current_image: "Laitteet: Käytössä oleva työpöytäkuva (aina regexp)"
         mac: "Laitteet: MAC-osoite"
         tags: "Laitteet: Tagit"
         xrandr: "Laitteet: Xrandr-asetukset (aina regexp)"
@@ -1240,10 +1242,13 @@ fi:
         manufacturer: "Laitteet: Valmistaja"
         model: "Laitteet: Malli"
         serial_number: "Laitteet: Sarjanumero"
-    school_limit_title: "Koulurajaus:"
+    school_limit_title: "Koulurajaus"
     school_limit_all: "(Kaikki koulut)"
-    regexp_title: "Regexp (sallii osittaiset osumat, katso ohje)"
-    remove_misses_title: "Poista hutitermit tuloksista"
+    more_settings:
+      title: "Haun asetukset"
+      regexp_title: "Termit ovat regexp-lauseita (sallii osittaiset osumat, katso ohje)"
+      reverse_title: "Käänteinen haku (koskee vain hakutermejä, ei niiden lisäasetuksia)"
+      remove_misses_title: "Älä näytä tuloksissa termejä jotka eivät täsmänneet mihinkään"
     button_search: "Hae"
     button_clear_results: "Tyhjennä tulokset"
     button_clear_terms: "Tyhjennä hakutermit"
@@ -1252,8 +1257,8 @@ fi:
       search_term_title: "Hakutermi"
       matched_string: "Täsmännyt teksti"
       no_term_hits: "(Ei osumia)"
-      no_results: "(Ei osumia)"
-      statistics: "%{num_terms} hakutermi(ä); %{num_hits} osuma(a), %{num_misses} huti(a)"
+      no_results: "(Ei hakutuloksia)"
+      statistics: "Yhteensä %{total} tulosta. %{num_terms} hakutermi(ä); %{num_hits} osuma(a), %{num_misses} huti(a). Haku kesti %{elapsed} sekuntia. "
     errors:
       unknown_school: "(Tuntematon koulu)"
     controller:

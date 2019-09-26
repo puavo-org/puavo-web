@@ -17,15 +17,18 @@
   <div class="tabContentsVisible" id="searchTab">
 
   <form id="extendedSearchForm" accept-charset="UTF-8">
-    <p><%= t('extended_search.search_box_instructions') %></p>
-
-    <textarea name="searchTerms" id="searchTerms" rows="10"></textarea>
-
     <table>
       <tr>
-        <td>
-          <label for="searchTermsType"><%= t('extended_search.terms_title') %></label>
+        <td colspan="2">
+          <%= t('extended_search.search_box_instructions') %><br>
+          <textarea name="searchTerms" id="searchTerms" rows="10" autofocus></textarea>
         </td>
+      </tr>
+
+      <tr>
+        <th>
+          <label for="searchTermsType"><%= t('extended_search.terms_title') %></label>
+        </th>
         <td>
           <select id="searchTermsType" name="searchTermsType">
             <optgroup label="<%= t('extended_search.term_names.users.title') %>">
@@ -49,6 +52,7 @@
               <option value="device-puavoid"><%= t('extended_search.term_names.devices.puavoid') %></option>
               <option value="device-hostname"><%= t('extended_search.term_names.devices.hostname') %></option>
               <option value="device-image"><%= t('extended_search.term_names.devices.image') %></option>
+              <option value="device-current-image"><%= t('extended_search.term_names.devices.current_image') %></option>
               <option value="device-mac"><%= t('extended_search.term_names.devices.mac') %></option>
               <option value="device-tags"><%= t('extended_search.term_names.devices.tags') %></option>
               <option value="device-xrandr"><%= t('extended_search.term_names.devices.xrandr') %></option>
@@ -62,8 +66,65 @@
         </td>
       </tr>
 
+      <tr id="perTermSettingsRow">
+        <th><%= t('extended_search.per_term_settings_title') %></th>
+        <td>
+
+          <div id="termSettingsUsers" class="termSettings">
+            <fieldset>
+              <legend>Käyttäjän poistomerkintä</legend>
+
+              <input type="radio" name="userType" id="userTypeMarkedForDeletion">
+              <label for="userTypeMarkedForDeletion">On merkitty poistettavaksi</label><br>
+
+              <input type="radio" name="userType" id="userTypeNormal">
+              <label for="userTypeNormal">Ei ole merkitty poistettavaksi</label><br>
+
+              <input type="radio" name="userType" id="userTypeAll" checked>
+              <label for="userTypeAll">(Ei väliä)</label><br>
+            </fieldset>
+
+            <fieldset>
+              <legend>Käyttäjätunnuksen lukitus</legend>
+
+              <input type="radio" name="isLocked" id="lockSet">
+              <label for="lockSet">On lukittu</label><br>
+
+              <input type="radio" name="isLocked" id="lockUnset">
+              <label for="lockUnset">Ei ole lukittu</label><br>
+
+              <input type="radio" name="isLocked" id="lockIgnore" checked>
+              <label for="lockIgnore">(Ei väliä)</label><br>
+            </fieldset>
+          </div>
+
+          <div id="termSettingsDevices" class="termSettings">
+            <fieldset>
+              <legend>Rajaa laitteen tyypin mukaan</legend>
+
+              <input type="checkbox" name="deviceTypeLaptop" id="deviceTypeLaptop" checked>
+              <label for="deviceTypeLaptop">Kannettava</label><br>
+
+              <input type="checkbox" name="deviceTypeFatclient" id="deviceTypeFatclient" checked>
+              <label for="deviceTypeFatclient">Verkkopääte</label><br>
+
+              <input type="checkbox" name="deviceTypePrinter" id="deviceTypePrinter" checked>
+              <label for="deviceTypePrinter">Tulostin</label><br>
+
+              <input type="checkbox" name="deviceTypeOther" id="deviceTypeOther" checked>
+              <label for="deviceTypeOther">(Kaikki muut)</label><br>
+            </fieldset>
+          </div>
+
+          <div id="noPerTermSettings" class="termSettings">
+            <p>(Ei lisäasetuksia tälle tyypille)</p>
+          </div>
+        </td>
+      </tr>
+
       <tr>
-        <td><label for="schoolLimit"><%= t('extended_search.school_limit_title') %></label></td>
+        <th><label for="schoolLimit"><%= t('extended_search.school_limit_title') %></label></th>
+
         <td>
           <select id="schoolLimit" name="schoolLimit">
             <% if current_user.organisation_owner? %>
@@ -78,24 +139,27 @@
       </tr>
 
       <tr>
-        <td colspan="2">
+        <th><%= t('extended_search.more_settings.title') %></th>
+        <td>
           <input type="checkbox" name="isRegexp" id="isRegexp">
-          <label for="isRegexp"><%= t('extended_search.regexp_title') %></label>
+          <label for="isRegexp"><%= t('extended_search.more_settings.regexp_title') %></label><br>
+
+          <input type="checkbox" name="isReverse" id="isReverse">
+          <label for="isReverse"><%= t('extended_search.more_settings.reverse_title') %></label><br>
+
+          <input type="checkbox" name="removeMisses" id="removeMisses">
+          <label for="removeMisses"><%= t('extended_search.more_settings.remove_misses_title') %></label><br>
         </td>
       </tr>
 
-      <tr>
+      <tr class="buttonRow">
         <td colspan="2">
-          <input type="checkbox" name="removeMisses" id="removeMisses">
-          <label for="removeMisses"><%= t('extended_search.remove_misses_title') %></label>
+          <input type="button" id="searchButton" onclick="doSearch()" value="<%= t('extended_search.button_search') %>"/>
+          <input type="button" id="clearResultsButtons" onclick="clearResults()" value="<%= t('extended_search.button_clear_results') %>"/>
+          <input type="button" id="clearTermsButtons" onclick="clearTerms()" value="<%= t('extended_search.button_clear_terms') %>"/>
         </td>
       </tr>
     </table>
-
-    <br>
-    <input type="button" id="searchButton" onclick="doSearch()" value="<%= t('extended_search.button_search') %>"/>
-    <input type="button" id="clearResultsButtons" onclick="clearResults()" value="<%= t('extended_search.button_clear_results') %>"/>
-    <input type="button" id="clearTermsButtons" onclick="clearTerms()" value="<%= t('extended_search.button_clear_terms') %>"/>
   </form>
   </div>
 
@@ -121,6 +185,29 @@
 <%= javascript_include_tag 'inpageTabs' %>
 
 <script>
+
+function getUsersType()
+{
+    if ($("#userTypeMarkedForDeletion").prop("checked"))
+        return "marked_for_deletion";
+
+    if ($("#userTypeNormal").prop("checked"))
+        return "normal";
+
+    return "all";
+}
+
+function getUsersLocked()
+{
+    if ($("#lockSet").prop("checked"))
+        return "locked";
+
+    if ($("#lockUnset").prop("checked"))
+        return "unlocked";
+
+    return "ignore";
+}
+
 function doSearch()
 {
     $.post({
@@ -151,7 +238,22 @@ function doSearch()
             "searchTermsType": $("#searchTermsType").val(),
             "schoolLimit": $("#schoolLimit").val(),
             "isRegexp": $("#isRegexp").prop("checked"),
+            "isReverse": $("#isReverse").prop("checked"),
             "removeMisses": $("#removeMisses").prop("checked"),
+
+            "perTermSettings": {
+                  "devices": {
+                      "laptop": $("#deviceTypeLaptop").prop("checked"),
+                      "fatclient": $("#deviceTypeFatclient").prop("checked"),
+                      "printer": $("#deviceTypePrinter").prop("checked"),
+                      "other": $("#deviceTypeOther").prop("checked"),
+                  },
+
+                  "users": {
+                      "type": getUsersType(),
+                      "locked": getUsersLocked(),
+                  },
+            },
         }),
     });
 }
@@ -166,8 +268,70 @@ function clearTerms()
     $("#searchTerms").val("");
 }
 
+// Extra settings for some search term types
+const SEARCH_TERM_SETTINGS = {
+    "user-puavoid": "termSettingsUsers",
+    "user-uid": "termSettingsUsers",
+    "user-name-lastfirst": "termSettingsUsers",
+    "user-name-firstlast": "termSettingsUsers",
+    "user-externalid": "termSettingsUsers",
+    "user-email": "termSettingsUsers",
+    "user-phone": "termSettingsUsers",
+    "device-puavoid": "termSettingsDevices",
+    "device-hostname": "termSettingsDevices",
+    "device-image": "termSettingsDevices",
+    "device-current-image": "termSettingsDevices",
+    "device-mac": "termSettingsDevices",
+    "device-tags": "termSettingsDevices",
+    "device-xrandr": "termSettingsDevices",
+    "device-kernel-params": "termSettingsDevices",
+    "device-kernel-version": "termSettingsDevices",
+    "device-manufacturer": "termSettingsDevices",
+    "device-model": "termSettingsDevices",
+    "device-serial-number": "termSettingsDevices",
+};
+
+function showOrHidePerTermSettings()
+{
+    const currentType = $("#searchTermsType").val();
+
+    console.log(currentType);
+
+      var found = false;
+
+    if (currentType in SEARCH_TERM_SETTINGS) {
+        // have extra settings for this type, show the relevant section
+        const targetId = SEARCH_TERM_SETTINGS[currentType];
+
+        $(".termSettings").each(function() {
+            if (this.id == targetId) {
+                $(this).show();
+                found = true;
+            } else $(this).hide();
+        });
+
+        //$("#perTermSettingsRow").show();
+    } else {
+        // no extra settings for this type, hide them all
+        //$("#perTermSettingsRow").hide();
+        $(".termSettings").each(function() {
+            $(this).hide();
+        });
+    }
+
+    if (!found)
+        $("#noPerTermSettings").show();
+    else $("#noPerTermSettings").hide();
+}
+
 $(document).ready(function() {
     new Tabs("searchTabs", 0);
+
+    $("#searchTermsType").change(function() {
+        showOrHidePerTermSettings();
+    });
+
+    showOrHidePerTermSettings();
 });
 
 </script>
