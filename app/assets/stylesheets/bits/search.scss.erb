@@ -109,32 +109,77 @@
 
 #extendedSearchForm {
   #searchTerms {
-    width: 75%;
+    width: 100%;
     padding: 5px;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  tr:nth-child(odd) {
+    background: $formOddRowBack;
+  }
+
+  tr:nth-child(even) {
+    background: $formEvenRowBack;
+  }
+
+  .buttonRow {  /* copy-pasted from form.scss! */
+    th, td {
+      background: $formButtonRowBack !important;
+      text-align: center;
+    }
+  }
+
+  th {
+    font-size: 100%;
+  }
+
+  th, td {
   }
 
   label {
     white-space: nowrap;
   }
 
-  input[type="button"] {
-    padding: 5px 50px;
+  select {
+    width: 100%;
   }
 
-  table {
-    tr, td, th {
-      padding: 2px;
-      margin: 0;
-    }
+  .termSettings {
+    display: none;
+  }
 
-    select {
-      width: 100%;
-    }
+  .indent {
+    margin-left: 1em;
+  }
+
+  fieldset {
+    margin-bottom: 0;
+  }
+
+  legend {
+    /* the form is much smaller than other forms and the huge fieldset legends used
+       elsewhere look hideous */
+    border: none;
+    font-weight: normal;
+    font-size: 100%;
+  }
+
+  p {
+    padding: 0;
+    margin: 0;
+  }
+
+  input[type="button"] {
+    padding: 5px 50px;
   }
 }
 
 #extendedSearchResultsTitle {
-  background: $extendedSearchResultsBackground;
+  background: $extendedSearchResultsBack;
+  color: $extendedSearchResultsFore;
   border: none;
   padding: 5px 10px;
 }
