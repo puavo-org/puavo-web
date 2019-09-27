@@ -513,13 +513,13 @@ class UsersController < ApplicationController
 
   def lock_marked_users
     # find all users who are marked for deletion
-    lock_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
+    lock_these = @school.members.reject{ |m| m.puavoRemovalRequestTime.nil? }
 
     # then ignore those who are already locked
-    lock_these = lock_these.reject!{ |m| m.puavoLocked && m.puavoLocked == true }
+    lock_these.reject!{ |m| m.puavoLocked && m.puavoLocked == true }
 
     # lock them
-    if lock_these.empty?
+    if lock_these.nil? || lock_these.empty?
       flash[:notice] = t('flash.user.marked_users_locked_none')
     else
       succeed = 0
