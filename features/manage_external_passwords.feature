@@ -4,9 +4,10 @@ Feature: Manage external passwords
   through the external login mechanism.  Users do not need to be
   setup in "example"-organisation, but as a side-effect of password
   changes they will be created there.  Users "lara.croft" (admin),
-  "sarah.connor" (admin), "luke.skywalker" (student) and "thomas.anderson"
-  (student externally, admin in puavo) exist in the "heroes"-organisation,
-  and "charlie.agent" (admin) and "david.agent" (student) do not.
+  "sarah.connor" (admin), "indiana.jones" (teacher),
+  "luke.skywalker" (student), and "thomas.anderson" (student externally,
+  admin in puavo) exist in the "heroes"-organisation, and "charlie.agent"
+  (admin) and "david.agent" (student) do not.
 
   Background:
     Given a new school and group with names "School 1", "Class 1" on the "example" organisation
