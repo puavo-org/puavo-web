@@ -306,12 +306,12 @@ class UsersController < ApplicationController
     if @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
     else
-      if @user.puavoEduPersonAffiliation == 'admin'
+      if @user.puavoEduPersonAffiliation && @user.puavoEduPersonAffiliation.include?('admin')
         # if an admin user is also an organisation owner, remove the ownership
         # automatically before deletion
-        owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+        owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }.map{ |o| o.to_s }
 
-        if !owners.nil? && owners.include?(@user.dn)
+        if owners && owners.include?(@user.dn.to_s)
           if !LdapOrganisation.current.remove_owner(@user)
             flash[:alert] = t('flash.organisation_ownership_not_removed')
           else
