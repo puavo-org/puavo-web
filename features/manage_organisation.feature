@@ -111,8 +111,13 @@ Feature: Manage organisation
     When I follow "Owners"
     And I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor is now an owner of this organisation"
+    Given I am on the show user page with "pavel"
+    Then I should see "The user is an owner of this organisation"
+    When I follow "Owners"
     When I follow "Remove" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor is no longer an owner of this organisation"
+    Given I am on the show user page with "pavel"
+    Then I should not see "The user is an owner of this organisation"
 
   Scenario: Try to set student to organisation owner
     Given the following users:

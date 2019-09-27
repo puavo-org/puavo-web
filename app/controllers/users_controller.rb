@@ -84,6 +84,14 @@ class UsersController < ApplicationController
       @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)
     end
 
+    # organisation owner or school admin?
+    organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" } || []
+    school_admins = @school.user_school_admins if @school
+
+    @is_owner = organisation_owners.include?(@user.dn)
+    @is_admin = school_admins && school_admins.include?(@user)
+
+    # find the user's devices
     @user_devices = Device.find(:all,
                                 :attribute => "puavoDevicePrimaryUser",
                                 :value => @user.dn.to_s)

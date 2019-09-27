@@ -99,6 +99,8 @@ Feature: Manage users
     And I should see "Student"
     And I should see the following special ldap attributes on the "User" object with "ben":
     | preferredLanguage      | "en" |
+    And I should not see "The user is a school admin"
+    And I should not see "The user is an owner of this organisation"
 
   Scenario: Create duplicate user to organisation
     Given the following users:
@@ -202,6 +204,8 @@ Feature: Manage users
     And I should not see "BenEDIT"
     And I should not see "MabeyEDIT"
     And I should not see "ben-edit"
+    And I should not see "The user is a school admin"
+    And I should not see "The user is an owner of this organisation"
 
   Scenario: Listing users
     Given the following users:
@@ -321,6 +325,8 @@ Feature: Manage users
     And a new school and group with names "Example school 2", "Class 5" on the "example" organisation
     And a new role with name "Class 5" and which is joined to the "Class 5" group
     And "pavel" is a school admin on the "Example school 2" school
+    And I am on the show user page with "pavel"
+    And I should see "The user is a school admin"
     And I am on the show user page with "jane"
     When I follow "Change school"
     And I select "Example school 2" from "new_school"
