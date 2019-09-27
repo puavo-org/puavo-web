@@ -16,6 +16,11 @@ pipeline {
         // the 'exit 101' policy when starting services.
         sh 'ln -fns /bin/true /usr/sbin/policy-rc.d'
 
+        sh '''
+          mkfifo /tmp/wait_for_something
+          read answer < /tmp/wait_for_something
+        '''
+
         // "nodejs" in Stretch does not have "npm", must install the upstream
         // deb-packages. ("npm" in a build-dependency for puavo-users)
         // XXX Perhaps this should be done by puavo-standalone?
