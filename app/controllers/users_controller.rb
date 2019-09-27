@@ -85,6 +85,7 @@ class UsersController < ApplicationController
     end
 
     # organisation owner or school admin?
+    # TODO: This only checks the primary school, but users can be admins in multiple schools!
     organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" } || []
     school_admins = @school.user_school_admins if @school
 
@@ -223,6 +224,49 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       begin
+
+        # Detect admin role changes
+        was_admin = @user.puavoEduPersonAffiliation.include?("admin")
+        is_admin = @edu_person_affiliation.include?("admin")
+
+        if was_admin && !is_admin
+          # This user used to be an admin. If they were a school admin or an organisation owner
+          # we must remove them from those lists.
+
+          # Copy-pasted from the "destroy" method below
+          organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+
+          if organisation_owners && organisation_owners.include?(@user.dn)
+            begin
+              LdapOrganisation.current.remove_owner(@user)
+            rescue StandardError => e
+              logger.error e
+              raise User::UserError, I18n.t('flash.user.save_failed_organsation_owner_removal')
+            end
+          end
+
+          # Remove the user from school admins. Turns out you can be an admin on multiple schools,
+          # so have to loop.
+          School.all.each do |s|
+            school_admins = s.user_school_admins
+
+            if school_admins && school_admins.include?(@user)
+              # Copy-pasted and modified from school.rb, method remove_school_admin()
+              # There's no standalone method for this (or I can't find it)
+              begin
+                if Array(@user.puavoAdminOfSchool).count < 2
+                  SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
+                end
+
+                s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
+                @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
+              rescue StandardError => e
+                raise User::UserError, I18n.t('flash.user.save_failed_school_admin_removal')
+              end
+            end
+          end
+        end
+
         unless @user.update_attributes(user_params)
           raise User::UserError, I18n.t('flash.user.save_failed')
         end

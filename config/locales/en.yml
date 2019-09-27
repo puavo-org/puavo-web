@@ -252,6 +252,8 @@ en:
       destroyed_failed: You can not remove role (%{name}) because it contains users
     user:
       save_failed: User cannot be saved!
+      save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
+      save_failed_school_admin_removal: "Save failed: user could not be removed from the school's administrators before the admin role was removed. Try removing the user from the administrators manually."
       create_failed: Failed to create the user!
       marked_for_deletion: "User has been marked for deletion"
       already_marked_for_deletion: "User already is marked for deletion"
@@ -353,7 +355,7 @@ en:
       change_school: Change school...
       primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
       user_is_an_organisation_owner: "The user is an owner of this organisation"
-      user_is_a_school_admin: "The user is a school admin"
+      user_is_a_school_admin: "The user is an admin of this school"
       user_is_locked: User is locked
       user_is_marked_for_deletion: "This user has been marked for deletion"
       user_deletion_prevented: "This user cannot be deleted"

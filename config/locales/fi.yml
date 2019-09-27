@@ -225,6 +225,8 @@ fi:
       destroyed_failed: "Roolia (%{name}) ei voitu poistaa, koska siihen on liitetty käyttäjiä."
     user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
+      save_failed_organsation_owner_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa organisaation omistajista ennen ylläpitäjä-roolin poistoa. Yritä poistaa omistajuus ensin käsin."
+      save_failed_school_admin_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa koulun ylläpitäjistä ennen ylläpitäjä-roolin poistoa. Yritä poistaa käyttäjä koulun ylläpitäjistä ensin."
       create_failed: "Käyttäjän lisääminen epäonnistui!"
       marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       already_marked_for_deletion: "Käyttäjä on jo merkitty poistettavaksi"

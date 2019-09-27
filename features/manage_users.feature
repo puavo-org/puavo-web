@@ -99,7 +99,7 @@ Feature: Manage users
     And I should see "Student"
     And I should see the following special ldap attributes on the "User" object with "ben":
     | preferredLanguage      | "en" |
-    And I should not see "The user is a school admin"
+    And I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
 
   Scenario: Create duplicate user to organisation
@@ -204,7 +204,7 @@ Feature: Manage users
     And I should not see "BenEDIT"
     And I should not see "MabeyEDIT"
     And I should not see "ben-edit"
-    And I should not see "The user is a school admin"
+    And I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
 
   Scenario: Listing users
@@ -326,7 +326,7 @@ Feature: Manage users
     And a new role with name "Class 5" and which is joined to the "Class 5" group
     And "pavel" is a school admin on the "Example school 2" school
     And I am on the show user page with "pavel"
-    And I should see "The user is a school admin"
+    And I should see "The user is an admin of this school"
     And I am on the show user page with "jane"
     When I follow "Change school"
     And I select "Example school 2" from "new_school"
@@ -504,6 +504,53 @@ Feature: Manage users
     Then I should see "1 users removed"
     And I should not see "Duck Donald" within "#pageContainer"
     And I should see "Duck Daisy" within "#pageContainer"
+
+  # It tooke me almost an hour to write this test. I hope it never has to be changed.
+  Scenario: Removing the admin role removes the user from school admins and organisation owners
+    # create an admin user
+    Given I am on the new user page
+    When I fill in the following:
+    | Given name                | Thomas                |
+    | Surname                   | Anderson              |
+    | Username                  | neo                   |
+    And I check "role_class_4"
+    And I check "puavoEduPersonAffiliation_teacher"
+    And I check "puavoEduPersonAffiliation_admin"
+    And I press "Create"
+    Then I should see "User was successfully created."
+    And I should not see "The user is an admin of this school"
+    And I should not see "The user is an owner of this organisation"
+    # make them an owner and an admin
+    When I follow "Owners"
+    Then I should see "Thomas Anderson (neo) (School 1)" within "#availableAdmins"
+    And I follow "Add" on the "Thomas Anderson" user
+    Then I should see "Thomas Anderson is now an owner of this organisation"
+    And I should see "Thomas Anderson (neo) (School 1)" within "#currentOwners"
+    And I should not see "Thomas Anderson (neo) (School 1)" within "#availableAdmins"
+    Then I am on the school page with "School 1"
+    When I follow "Admins"
+    Then I should see "Thomas Anderson (neo) (School 1)" within "#other_admin_users"
+    And I follow "Add" on the "Thomas Anderson" user
+    Then I should see "Thomas Anderson (School 1) is now an admin user"
+    And I should see "Thomas Anderson (neo) (School 1)" on the school admin list
+    Then I am on the show user page with "neo"
+    And I should see "The user is an admin of this school"
+    And I should see "The user is an owner of this organisation"
+    # then remove the admin role
+    Then I am on the edit user page with "neo"
+    And I uncheck "puavoEduPersonAffiliation_admin"
+    And I press "Update"
+    Then I should see "User was successfully updated."
+    # verify everything
+    Then I should not see "The user is an admin of this school"
+    And I should not see "The user is an owner of this organisation"
+    When I follow "Owners"
+    Then I should not see "Thomas Anderson (neo) (School 1)" within "#currentOwners"
+    And I should not see "Thomas Anderson (neo) (School 1)" within "#availableAdmins"
+    Then I am on the school page with "School 1"
+    When I follow "Admins"
+    Then I should not see "Thomas Anderson (neo) (School 1)" within "#this_school_admin_users"
+    And I should not see "Thomas Anderson (neo) (School 1)" within "#other_admin_users"
 
 # FIXME
 #  @allow-rescue
