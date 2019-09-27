@@ -99,7 +99,7 @@ def get_external_login_test_configuration
               ]},
             { indiana_dn => [ resistance_administrative_group('teacher') ]},
             { lara_dn    => [ resistance_administrative_group('admin'  ) ]},
-            { sarah_dn   => [ resistance_administrative_group('admin'  ) ]},
+            { sarah_dn   => [ resistance_administrative_group('teacher') ]},
             { thomas_dn  => [ resistance_administrative_group('admin'  ) ]},
           ],
         },
