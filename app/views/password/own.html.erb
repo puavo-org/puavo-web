@@ -1,9 +1,9 @@
 <% content_for :extra_password_js do %>
-<%= javascript_include_tag 'passwordValidator' %>
+<%= javascript_include_tag 'password_validator' %>
 <% end %>
 
 <% content_for :password_validator do %>
-<%= setup_password_validator(@password_requirements) %>
+<%= setup_password_validator %>
 <% end %>
 
 <% content_for :title do %><%= t('.title') %><% end %>
@@ -24,6 +24,8 @@
 <p class="genericWarning"><%= t('password.current_password_too_old') %></p>
 <% end %>
 
+<p class="genericWarning"><%= t('password.attempts_are_logged_own') %></p>
+
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
   <table class="editForm">
     <tr>
@@ -39,7 +41,7 @@
     <tr>
       <th><%= f.label :new_password, t('activeldap.attributes.user.new_password') %></th>
       <td>
-        <%= show_password_requirements(@password_requirements) %>
+        <%= show_password_requirements %>
         <%= password_field :user, :new_password, :value => "", :required => "required" %>
       </td>
     </tr>

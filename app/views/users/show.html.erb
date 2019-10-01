@@ -11,13 +11,21 @@
     <h1><%= h @user.displayName %></h1>
     <% hack_blank = false %>
 
+    <% if @is_owner %>
+    <p class="infoNotice"><%= t('.user_is_an_organisation_owner') %></p>
+    <% end %>
+
+    <% if @is_admin %>
+    <p class="infoNotice"><%= t('.user_is_a_school_admin') %></p>
+    <% end %>
+
     <% if @user.puavoLocked == true %>
-    <p class="infoNotice"><%= t('.user_is_locked') %></p>
+    <p class="infoWarn"><%= t('.user_is_locked') %></p>
     <% hack_blank = true %>
     <% end %>
 
     <% unless @user.puavoRemovalRequestTime.nil? %>
-    <p class="infoNotice"><%= t('.user_is_marked_for_deletion') %></p>
+    <p class="infoWarn"><%= t('.user_is_marked_for_deletion') %></p>
     <% hack_blank = true %>
     <% end %>
 

@@ -84,6 +84,15 @@ class UsersController < ApplicationController
       @user.puavoRemovalRequestTime = convert_timestamp(@user.puavoRemovalRequestTime)
     end
 
+    # organisation owner or school admin?
+    # TODO: This only checks the primary school, but users can be admins in multiple schools!
+    organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" } || []
+    school_admins = @school.user_school_admins if @school
+
+    @is_owner = organisation_owners.include?(@user.dn)
+    @is_admin = school_admins && school_admins.include?(@user)
+
+    # find the user's devices
     @user_devices = Device.find(:all,
                                 :attribute => "puavoDevicePrimaryUser",
                                 :value => @user.dn.to_s)
@@ -128,8 +137,6 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
-    @password_requirements = password_requirements
-
     respond_to do |format|
       # FIXME: whether the student management system is in use?
       if users_synch?(@school) && !current_user.organisation_owner?
@@ -152,8 +159,6 @@ class UsersController < ApplicationController
     @user_roles =  @user.roles || []
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
-
-    @password_requirements = password_requirements
 
     get_user_groups
   end
@@ -219,6 +224,49 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       begin
+
+        # Detect admin role changes
+        was_admin = @user.puavoEduPersonAffiliation.include?("admin")
+        is_admin = @edu_person_affiliation.include?("admin")
+
+        if was_admin && !is_admin
+          # This user used to be an admin. If they were a school admin or an organisation owner
+          # we must remove them from those lists.
+
+          # Copy-pasted from the "destroy" method below
+          organisation_owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+
+          if organisation_owners && organisation_owners.include?(@user.dn)
+            begin
+              LdapOrganisation.current.remove_owner(@user)
+            rescue StandardError => e
+              logger.error e
+              raise User::UserError, I18n.t('flash.user.save_failed_organsation_owner_removal')
+            end
+          end
+
+          # Remove the user from school admins. Turns out you can be an admin on multiple schools,
+          # so have to loop.
+          School.all.each do |s|
+            school_admins = s.user_school_admins
+
+            if school_admins && school_admins.include?(@user)
+              # Copy-pasted and modified from school.rb, method remove_school_admin()
+              # There's no standalone method for this (or I can't find it)
+              begin
+                if Array(@user.puavoAdminOfSchool).count < 2
+                  SambaGroup.delete_uid_from_memberUid('Domain Admins', @user.uid)
+                end
+
+                s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
+                @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
+              rescue StandardError => e
+                raise User::UserError, I18n.t('flash.user.save_failed_school_admin_removal')
+              end
+            end
+          end
+        end
+
         unless @user.update_attributes(user_params)
           raise User::UserError, I18n.t('flash.user.save_failed')
         end
@@ -258,12 +306,12 @@ class UsersController < ApplicationController
     if @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
     else
-      if @user.puavoEduPersonAffiliation == 'admin'
+      if @user.puavoEduPersonAffiliation && @user.puavoEduPersonAffiliation.include?('admin')
         # if an admin user is also an organisation owner, remove the ownership
         # automatically before deletion
-        owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }
+        owners = LdapOrganisation.current.owner.each.select { |dn| dn != "uid=admin,o=puavo" }.map{ |o| o.to_s }
 
-        if !owners.nil? && owners.include?(@user.dn)
+        if owners && owners.include?(@user.dn.to_s)
           if !LdapOrganisation.current.remove_owner(@user)
             flash[:alert] = t('flash.organisation_ownership_not_removed')
           else
@@ -460,6 +508,48 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to( user_path(@school, @user) ) }
+    end
+  end
+
+  def lock_marked_users
+    # find all users who are marked for deletion
+    lock_these = @school.members.reject{ |m| m.puavoRemovalRequestTime.nil? }
+
+    # then ignore those who are already locked
+    lock_these.reject!{ |m| m.puavoLocked && m.puavoLocked == true }
+
+    # lock them
+    if lock_these.nil? || lock_these.empty?
+      flash[:notice] = t('flash.user.marked_users_locked_none')
+    else
+      succeed = 0
+      failed = 0
+
+      lock_these.each do |m|
+        unless m.puavoDoNotDelete.nil?
+          failed += 1
+          next
+        end
+
+        begin
+          m.puavoLocked = true
+          m.save!
+          succeed += 1
+        rescue StandardError => e
+          logger.error("lock_marked_users(): #{e}")
+          failed += 1
+        end
+      end
+
+      if failed == 0
+        flash[:notice] = t('flash.user.marked_users_locked', :succeed => succeed)
+      else
+        flash[:notice] = t('flash.user.marked_users_locked_with_fail', :succeed => succeed, :failed => failed)
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to( users_path(@school) ) }
     end
   end
 

@@ -34,16 +34,12 @@
     </label>
 
     <input
+      type="password"
       name="password"
       placeholder="<%= @login_content['text_password'] %>"
-
-      <%# Use plaintext password input for handheld devices if the user login
-        does not succeed at the first time %>
-      type="<%= @login_content['invalid_credentials?'] && @login_content['handheld?'] ? "text" : "password" %>"
-
-      <%= @login_content['invalid_credentials?'] && "autofocus" %>
-
+      <%= @login_content['invalid_credentials?'] ? "autofocus" : "" %>
       required>
+
     <input type="submit" value="<%= @login_content['text_login'] %>" class="submit">
     </fieldset>
   </form>

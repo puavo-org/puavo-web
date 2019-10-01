@@ -12,7 +12,6 @@ class PasswordController < ApplicationController
   # "Change your own password" form
   def own
     @user = User.new
-    @password_requirements = password_requirements
 
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
@@ -25,17 +24,49 @@ class PasswordController < ApplicationController
   # "Change someone else's password" form
   def edit
     @user = User.new
-    @password_requirements = password_requirements
 
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
     setup_language(params.fetch(:lang, ''))
   end
 
+  def filter_multiple_attempts(username)
+      db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
+
+      # if the username key exists in the database, then there have been multiple attempts lately
+      if db.get(username) == "true"
+        logger.error "(#{Time.now}) Too many change attempts for user \"#{username}\", request rejected"
+
+        # must setup these or the form breaks
+        setup_language(params.fetch(:lang, ''))
+        @changing = username
+
+        raise User::UserError, I18n.t('flash.password.too_many_attempts')
+        return
+      end
+
+      # store the username with automatic expiration in 10 seconds
+      db.set(username, true, :px => 10000, :nx => true)
+  end
+
   # PUT /password
   # "Change your own password" and "Change someone else's password" are both processed here
   def update
-    @password_requirements = password_requirements
+
+    ip = "REMOTE_ADDR=\"#{request.env['REMOTE_ADDR']}\" " \
+         "REMOTE_HOST=\"#{request.env['REMOTE_HOST']}\" " \
+         "REQUEST_URI=\"#{request.env['REQUEST_URI']}\""
+
+    if params['login']['uid'] && !params['user']['uid']
+      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\" " \
+                  "is trying to change their password, #{ip}"
+      filter_multiple_attempts(params['login']['uid'])
+      mode = :own
+    else
+      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" is trying to change the password of user " \
+                  "\"#{params['user']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\", #{ip}"
+      mode = :other
+    end
 
     # If the field on the form was filled in, use the value from it,
     # otherwise take the value from the URL
@@ -62,7 +93,7 @@ class PasswordController < ApplicationController
       raise User::UserError, I18n.t('flash.password.confirmation_failed')
     end
 
-    unless change_user_password
+    unless change_user_password(mode)
       raise User::UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
 
@@ -136,7 +167,6 @@ class PasswordController < ApplicationController
   # GET /password/:jwt/reset
   # Password reset form
   def reset
-    @password_requirements = password_requirements
     setup_language(params.fetch(:lang, ''))
   end
 
@@ -226,8 +256,8 @@ class PasswordController < ApplicationController
     return nil
   end
 
-  def change_user_password
-    case password_requirements
+  def change_user_password(mode)
+    case get_organisation_password_requirements
       when 'Google'
         # Validate the password against Google's requirements.
         new_password = params[:user][:new_password]
@@ -282,9 +312,15 @@ class PasswordController < ApplicationController
     @logged_in_user = User.find(:first,
                                 :attribute => 'uid',
                                 :value     => params[:login][:uid])
+
     return false unless @logged_in_user \
                           && authenticate(@logged_in_user,
                                           params[:login][:password])
+
+    # Don't let non-teachers and non-admins change other people's passwords
+    if mode == :other && !["admin", "teacher"].include?(@logged_in_user.puavoEdupersonAffiliation)
+      raise User::UserError, I18n.t('flash.password.go_away')
+    end
 
     @user = @logged_in_user
     if params[:user][:uid] then

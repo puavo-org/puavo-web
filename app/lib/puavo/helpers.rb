@@ -19,7 +19,7 @@ module Puavo
       new_group_management["only_of_schools"].include?(school.puavoId)
     end
 
-    def password_requirements
+    def get_organisation_password_requirements
       Puavo::Organisation.
         find(LdapOrganisation.current.cn).
         value_by_key('password_requirements')

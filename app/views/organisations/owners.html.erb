@@ -14,10 +14,10 @@
 <% end %>
 
 <%= start_box t('.organisation_owners') %>
-  <table>
+  <table id="currentOwners">
     <% Array(@owners).each do |u| %>
     <tr>
-      <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
       <td><%= link_to(t('link.remove') + ' ►',
                       remove_owner_organisations_path(u),
                       method: :put,
@@ -29,10 +29,10 @@
 <%= end_box %>
 
 <%= start_box t('.other_admin_users') %>
-  <table>
+  <table id="availableAdmins">
     <% Array(@allowed_owners).each do |u| %>
     <tr>
-      <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
       <td><%= link_to('◄ ' + t('link.add'),
                       add_owner_organisations_path(u),
                       method: :put,

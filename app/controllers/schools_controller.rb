@@ -9,6 +9,9 @@ class SchoolsController < ApplicationController
       @schools.sort!{|a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
+    @have_external_ids = @schools.any?{ |s| s.puavoExternalId }
+    @have_school_codes = @schools.any?{ |s| s.puavoSchoolCode }
+
     respond_to do |format|
       if @schools.count < 2  && !current_user.organisation_owner?
         format.html { redirect_to( school_path(@schools.first) ) }

@@ -111,8 +111,31 @@ Feature: Manage organisation
     When I follow "Owners"
     And I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor is now an owner of this organisation"
+    Given I am on the show user page with "pavel"
+    Then I should see "The user is an owner of this organisation"
+    When I follow "Owners"
     When I follow "Remove" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor is no longer an owner of this organisation"
+    Given I am on the show user page with "pavel"
+    Then I should not see "The user is an owner of this organisation"
+
+  Scenario: Removing a user actually removes them from the organisation owners
+    Given the following users:
+    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
+    When I follow "Owners"
+    And I follow "Add" on the "Pavel Taylor" user
+    Then I should see "Pavel Taylor is now an owner of this organisation"
+    Given I am on the show user page with "pavel"
+    Then I should see "The user is an owner of this organisation"
+    When I follow "Delete user"
+    Then I should see "User was successfully removed."
+    When I follow "Owners"
+    Then I should not see "Pavel Taylor"
+    # The presence of the following text on the page means the organisation owners array was not
+    # successfully updated and the deleted user's DN is still in it.
+    And I should not see "The following admins have been removed"
+
 
   Scenario: Try to set student to organisation owner
     Given the following users:

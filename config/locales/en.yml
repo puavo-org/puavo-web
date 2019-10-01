@@ -117,6 +117,7 @@ en:
   default_select_value: Select
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
+  lock_marked_users: "Are you sure you want to lock %{count} users who are marked for deletion?"
   delete_marked_users: "Are you sure you want to delete %{count} users who are marked for deletion?"
   group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
   prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
@@ -178,6 +179,7 @@ en:
     new_role: New role
     new_user: New user...
     delete_user: "Delete user"
+    lock_users_marked_for_deletion: "Lock all users who are marked for deletion"
     delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     continue: Continue
     login: Login
@@ -250,6 +252,8 @@ en:
       destroyed_failed: You can not remove role (%{name}) because it contains users
     user:
       save_failed: User cannot be saved!
+      save_failed_organsation_owner_removal: "Save failed: user could not be removed from the organisation owners before the admin role was removed. Try removing the ownership manually."
+      save_failed_school_admin_removal: "Save failed: user could not be removed from the school's administrators before the admin role was removed. Try removing the user from the administrators manually."
       create_failed: Failed to create the user!
       marked_for_deletion: "User has been marked for deletion"
       already_marked_for_deletion: "User already is marked for deletion"
@@ -258,6 +262,9 @@ en:
       deletion_prevented: "User deletion has been prevented."
       marked_users_deleted: "%{succeed} users removed"
       marked_users_deleted_with_fail: "%{succeed} users removed, %{failed} not removed"
+      marked_users_locked: "%{succeed} users locked"
+      marked_users_locked_with_fail: "%{succeed} users locked, %{failed} not locked"
+      marked_users_locked_none: "There were no unlocked users"
       import:
         dupplicate_column_name_error: Duplicate column name
         require_error: Given name and surname are required fields
@@ -284,6 +291,8 @@ en:
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
       token_lifetime_has_expired: Your link has expired. Please enter your email again.
       too_many_sent_token_request: We've already sent a reset message to your email address.
+      too_many_attempts: "You must wait 10 seconds between password change attempts."
+      go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
     school:
       school_admin_added: "%{displayName} (%{school_name}) is now an admin user"
       school_admin_removed: "%{displayName} (%{school_name}) is no longer an admin user in this school"
@@ -345,6 +354,8 @@ en:
       groups_by_schools: "Groups by schools"
       change_school: Change school...
       primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
+      user_is_an_organisation_owner: "The user is an owner of this organisation"
+      user_is_a_school_admin: "The user is an admin of this school"
       user_is_locked: User is locked
       user_is_marked_for_deletion: "This user has been marked for deletion"
       user_deletion_prevented: "This user cannot be deleted"
@@ -407,7 +418,7 @@ en:
       member: Member
       add_to_group: Add
     groupless_users:
-      title: "Find groupless users..."
+      title: "Find groupless users"
       count: "Found %{count} ungrouped users."
       mark_for_deletion: "Mark these users for deletion"
   schools:
@@ -463,6 +474,8 @@ en:
     six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
     seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
     current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
+    attempts_are_logged_own: "All password change attempts are logged."
+    attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
     edit:
       title: Change someone else's password
       head: To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users.
@@ -1237,6 +1250,7 @@ en:
       help: "Instructions and tips"
     search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
     terms_title: "Search terms type:"
+    per_term_settings_title: "Extra settings for this term type"
     term_names:
       users:
         title: "Users"
@@ -1257,7 +1271,8 @@ en:
         title: "Devices"
         puavoid: "Devices: Puavo ID"
         hostname: "Devices: Hostname"
-        image: "Devices: Current desktop image (always regexp)"
+        image: "Devices: Desktop image (always regexp)"
+        current_image: "Devices: Current desktop image (always regexp)"
         mac: "Devices: MAC address"
         tags: "Devices: Tags"
         xrandr: "Devices: Xrandr settings (always regexp)"
@@ -1268,16 +1283,21 @@ en:
         serial_number: "Devices: Serial number"
     school_limit_title: "School limit:"
     school_limit_all: "(All schools)"
-    regexp_title: "Regexp (allows partial matches, see help)"
-    remove_misses_title: "Remove missed terms from results"
+    more_settings:
+      title: "Search settings"
+      regexp_title: "Terms are regexp strings (allows partial hits, see help)"
+      reverse_title: "Reverse search (only search terms are matched in reverse, not term-specific extra settings)"
+      remove_misses_title: "Don't list terms that produced no hits in the results"
     button_search: "Search"
     button_clear_results: "Clear results"
     button_clear_terms: "Clear search terms"
     results_title: "Results"
     results:
       search_term_title: "Search term"
+      matched_string: "Matched text"
       no_term_hits: "(No hits)"
       no_results: "(No results)"
+      statistics: "%{total} hits in total. %{num_terms} search term(s); %{num_hits} hit(s), %{num_misses} miss(es). Searching took %{elapsed} seconds. "
     errors:
       unknown_school: "(Unknown school)"
     controller:

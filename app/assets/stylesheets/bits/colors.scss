@@ -105,7 +105,7 @@ $linkFocusBack: none;
 /* Links styled as clickable buttons. Also used on form submit/reset buttons,
 so verify your changes thoroughly! */
 $buttonBorderHi: #f0f0f0;
-$buttonBorderLo: #a0b0b0;
+$buttonBorderLo: #b0b0b0;
 $buttonBack: #d0d0d0;
 $buttonFore: #000;
 $buttonHoverBack: #e0e0e0;
@@ -147,7 +147,8 @@ $toolsContainerLinkHoverBack: $baseOrangeGradient;
 $toolsDropdownSeparator: #ccc;
 
 /* Basic info blocks about users, devices, etc. */
-$importantBasicInfo: #f00;    /* notifications about locked users, etc. */
+$importantBasicInfo: #00f;    /* notifications about important users, etc. */
+$importantBasicWarn: #f00;    /* warnings about users, etc. */
 $basicInfoBorders: #ccc;
 
 /* Content boxes on "show" pages */
@@ -252,7 +253,8 @@ $extendedSearchError: #f00;
 $extendedSearchNoResults: #00f;
 $extendedSearchNoMatches: #666;
 
-$extendedSearchResultsBackground: #ccc;
+$extendedSearchResultsFore: #000;
+$extendedSearchResultsBack: #ccc;
 $extendedSearchResultsDivider: #000;
 
 /*

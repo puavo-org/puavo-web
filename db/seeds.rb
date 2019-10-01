@@ -403,7 +403,7 @@ role.save!
     :givenName => "Indiana",
     :sn  => "Jones",
     :uid => "indiana.jones",
-    :puavoEduPersonAffiliation => "admin",
+    :puavoEduPersonAffiliation => "teacher",
     :preferredLanguage => "fi",
     :mail => "indiana.jones@example.com"
   },

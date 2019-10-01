@@ -4,10 +4,12 @@
 
 <h1><%= t('.title') %></h1>
 
+<p class="requiredTitle"><%= t('layouts.forms.required_field') %></p>
+
 <%= form_for(@organisation, :url => organisation_path)  do |f| %>
 <table class="editForm">
   <tr>
-    <th><%= f.label :o %></th>
+    <th class="requiredField"><%= f.label :o %></th>
     <td><%= f.text_field :o %></td>
   </tr>
 

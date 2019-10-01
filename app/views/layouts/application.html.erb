@@ -81,8 +81,8 @@ I18n.locale = "<%= I18n.locale %>";
       <% if current_user && current_user.organisation_owner? %>
       <a href="/extended_search" id="extendedSearchButton" class="ownersOnly" title="<%= t('.extended_search_title') %>">
         <img src="<%= image_path('magnifier.png') %>"></a>
-      </div>
       <% end %>
+      </div>
     </li>
 
     <li id="right">

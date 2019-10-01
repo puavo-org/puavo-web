@@ -90,6 +90,7 @@ fi:
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  lock_marked_users: "Haluatko varmasti lukita %{count} poistettavaksi merkittyä käyttäjää?"
   delete_marked_users: "Haluatko varmasti poistaa %{count} poistettavaksi merkittyä käyttäjää?"
   group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
   prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
@@ -151,6 +152,7 @@ fi:
     new_role: Uusi rooli
     new_user: "Uusi käyttäjä..."
     delete_user: "Poista käyttäjä"
+    lock_users_marked_for_deletion: "Lukitse kaikki poistettavaksi merkityt käyttäjät"
     delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
     continue: Jatka
     login: Kirjaudu
@@ -223,6 +225,8 @@ fi:
       destroyed_failed: "Roolia (%{name}) ei voitu poistaa, koska siihen on liitetty käyttäjiä."
     user:
       save_failed: "Käyttäjää ei voitu tallentaa!"
+      save_failed_organsation_owner_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa organisaation omistajista ennen ylläpitäjä-roolin poistoa. Yritä poistaa omistajuus ensin käsin."
+      save_failed_school_admin_removal: "Tallennus epäonnistui: käyttäjää ei voitu poistaa koulun ylläpitäjistä ennen ylläpitäjä-roolin poistoa. Yritä poistaa käyttäjä koulun ylläpitäjistä ensin."
       create_failed: "Käyttäjän lisääminen epäonnistui!"
       marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       already_marked_for_deletion: "Käyttäjä on jo merkitty poistettavaksi"
@@ -231,6 +235,9 @@ fi:
       deletion_prevented: "Käyttäjän poisto on nyt estetty."
       marked_users_deleted: "%{succeed} käyttäjän poisto onnistui"
       marked_users_deleted_with_fail: "%{succeed} käyttäjän poisto onnistui, %{failed} epäonnistui"
+      marked_users_locked: "%{succeed} käyttäjän lukitseminen onnistui"
+      marked_users_locked_with_fail: "%{succeed} käyttäjän lukitseminen onnistui, %{failed} epäonnistui"
+      marked_users_locked_none: "Lukitsemattomia käyttäjiä ei ollut"
       import:
         dupplicate_column_name_error: "Kahdelle sarakkeelle on valittu sama kenttätieto"
         require_error: "Käyttäjälle on syötettävä etu- ja sukunimi"
@@ -257,6 +264,8 @@ fi:
       can_not_change_upstream_password: "Jostakin syystä salasanan vaihto lähdepalveluun ei onnistunut.  Yritä myöhemmin uudelleen!"
       token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
       too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viesti.
+      too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
+      go_away: "Et ole opettaja tai ylläpitäjä, joten et voi vaihtaa muiden salasanoja."
     school:
       school_admin_added: "%{displayName} (%{school_name}) on lisätty koulun ylläpitäjäksi"
       school_admin_removed: "%{displayName} (%{school_name}) ei ole enää ylläpitäjä tässä koulussa"
@@ -317,6 +326,8 @@ fi:
       groups_by_schools: "Ryhmät kouluittain"
       change_school: Vaihda koulua...
       primus_school_change_warning: "Tässä koulussa on käytössä Primus-integraatio. Käyttäjän siirto toiseen kouluun saattaa sotkea integraation toimintaa.\n\nHaluatko varmasti jatkaa?"
+      user_is_an_organisation_owner: "Käyttäjä on organisaation omistajissa"
+      user_is_a_school_admin: "Käyttäjä on koulun ylläpitäjissä"
       user_is_locked: "Käyttäjätunnus on lukittu"
       user_is_marked_for_deletion: "Käyttäjä on merkitty poistettavaksi"
       user_deletion_prevented: "Käyttäjän poisto on estetty"
@@ -379,7 +390,7 @@ fi:
       member: Jäsen
       add_to_group: Liitä ryhmään
     groupless_users:
-      title: "Etsi ryhmättömät käyttäjät..."
+      title: "Etsi ryhmättömät käyttäjät"
       count: "Löytyi %{count} ryhmätöntä käyttäjää."
       mark_for_deletion: "Merkitse nämä käyttäjät poistettavaksi"
   schools:
@@ -435,6 +446,8 @@ fi:
     six_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
     seven_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään seitsemän merkkiä."
     current_password_too_old: "Organisaatiosi tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
+    attempts_are_logged_own: "Kaikki salasananvaihtoyritykset tallennataan lokiin."
+    attempts_are_logged_other: "Tämä lomake on tarkoitettu vain opettajien ja ylläpitäjien käytettäväksi. Kaikki salasananvaihdot ja -yritykset tallennataan lokiin. Lokiin tallentuvat käyttäjänimet, IP-osoite/-osoitteet sekä aikaleima."
     edit:
       title: "Vaihda toisen käyttäjän salasana"
       head: "Vaihtaaksesi toisen käyttäjän salasanan, syötä alle oma käyttäjätunnuksesi ja salasanasi sekä toisen käyttäjän käyttäjätunnus ja uusi salasana. Toisen käyttäjän salasanan vaihto onnistuu vain, jos se on sallittua tunnuksellasi."
@@ -1206,7 +1219,8 @@ fi:
       search: "Hakulomake"
       help: "Käyttöohje ja vihjeitä"
     search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
-    terms_title: "Minkä tyyppisiä hakutermit ovat:"
+    terms_title: "Hakutermien tyyppi"
+    per_term_settings_title: "Lisäasetukset tälle termityypille"
     term_names:
       users:
         title: "Käyttäjät"
@@ -1227,7 +1241,8 @@ fi:
         title: "Laitteet"
         puavoid: "Laitteet: Puavo ID"
         hostname: "Laitteet: Hostname"
-        image: "Laitteet: Käytössä oleva työpöytäkuva (aina regexp)"
+        image: "Laitteet: Työpöytäkuva (aina regexp)"
+        current_image: "Laitteet: Käytössä oleva työpöytäkuva (aina regexp)"
         mac: "Laitteet: MAC-osoite"
         tags: "Laitteet: Tagit"
         xrandr: "Laitteet: Xrandr-asetukset (aina regexp)"
@@ -1236,10 +1251,13 @@ fi:
         manufacturer: "Laitteet: Valmistaja"
         model: "Laitteet: Malli"
         serial_number: "Laitteet: Sarjanumero"
-    school_limit_title: "Koulurajaus:"
+    school_limit_title: "Koulurajaus"
     school_limit_all: "(Kaikki koulut)"
-    regexp_title: "Regexp (sallii osittaiset osumat, katso ohje)"
-    remove_misses_title: "Poista hutitermit tuloksista"
+    more_settings:
+      title: "Haun asetukset"
+      regexp_title: "Termit ovat regexp-lauseita (sallii osittaiset osumat, katso ohje)"
+      reverse_title: "Käänteinen haku (koskee vain hakutermejä, ei niiden lisäasetuksia)"
+      remove_misses_title: "Älä näytä tuloksissa termejä jotka eivät täsmänneet mihinkään"
     button_search: "Hae"
     button_clear_results: "Tyhjennä tulokset"
     button_clear_terms: "Tyhjennä hakutermit"
@@ -1248,8 +1266,8 @@ fi:
       search_term_title: "Hakutermi"
       matched_string: "Täsmännyt teksti"
       no_term_hits: "(Ei osumia)"
-      no_results: "(Ei osumia)"
-      statistics: "%{num_terms} hakutermi(ä); %{num_hits} osuma(a), %{num_misses} huti(a)"
+      no_results: "(Ei hakutuloksia)"
+      statistics: "Yhteensä %{total} tulosta. %{num_terms} hakutermi(ä); %{num_hits} osuma(a), %{num_misses} huti(a). Haku kesti %{elapsed} sekuntia. "
     errors:
       unknown_school: "(Tuntematon koulu)"
     controller:

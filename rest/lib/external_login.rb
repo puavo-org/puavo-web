@@ -569,12 +569,8 @@ module PuavoRest
                 + ' user and/or password is wrong'
       end
 
-      # It should not be necessary to setup a new ldap connection
-      # by the actor_dn, as bind_as() above should be enough, but apparently
-      # it may be that if the credentials that the ldap connection was opened
-      # with are lacking password change permissions, password change may
-      # fail unless a new ldap connection is set up with the actor_dn
-      # credentials.  Issue seen with AD.
+      # Setup a new ldap connection with actor_dn to make sure that only
+      # the permissions of the actor are used when passwords are changed.
       actor_dn = actor_info.first.dn
       raise ExternalLoginPasswordChangeError,
             'could not find actor user dn in external ldap' \

@@ -179,7 +179,7 @@
     </tr>
     <% end %>
 
-    <% if ["thinclient", "fatclient", "laptop", "ltspserver"].include?(device.puavoDeviceType) %>
+    <% if ["thinclient", "fatclient", "laptop", "ltspserver", "bootserver"].include?(device.puavoDeviceType) %>
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceImage") %></th>
       <td><%= h device.puavoDeviceImage %></td>

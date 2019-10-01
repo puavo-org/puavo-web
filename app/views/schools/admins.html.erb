@@ -6,7 +6,7 @@
   <table id="this_school_admin_users">
     <% Array(@school_admins).each do |u| %>
     <tr>
-      <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
       <td><%= link_to(t('link.remove') + ' ►',
                       remove_school_admin_school_path(@school, u),
                       method: :put,
@@ -21,7 +21,7 @@
   <table id="other_admin_users">
     <% Array(@allowed_school_admins).each do |u| %>
     <tr>
-      <td><%= link_to u.displayName, user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
+      <td><%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
       <td><%= link_to('◄ ' + t('link.add'),
                       add_school_admin_school_path(@school, u),
                       method: :put,

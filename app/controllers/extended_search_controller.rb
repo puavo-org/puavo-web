@@ -4,13 +4,23 @@ class SearchSettings
   attr_accessor :terms
   attr_accessor :school_filter
   attr_accessor :is_regexp
+  attr_accessor :is_reverse
   attr_accessor :remove_misses
+
+  attr_accessor :users_type
+  attr_accessor :users_locked
+  attr_accessor :devices_types
 
   def initialize
     @terms = []
     @school_filter = '(puavoSchool=*)'
     @is_regexp = false
+    @is_reverse = false
     @remove_misses = false
+
+    @users_type = :all
+    @users_locked = :ignore
+    @devices_types = [:laptop, :fatclient, :printer, :others]
   end
 end
 
@@ -66,8 +76,33 @@ class ExtendedSearchController < ApplicationController
       settings.is_regexp = true
     end
 
+    if params.include?(:isReverse) && params[:isReverse]
+      settings.is_reverse = true
+    end
+
     if params.include?(:removeMisses) && params[:removeMisses]
       settings.remove_misses = true
+    end
+
+    if params.include?(:perTermSettings) && params[:perTermSettings]
+      # parse per-term type settings
+      pt = params[:perTermSettings]
+
+      devices = pt.fetch(:devices, {})
+      settings.devices_types = []
+      settings.devices_types << :laptop if devices.fetch(:laptop, true)
+      settings.devices_types << :fatclient if devices.fetch(:fatclient, true)
+      settings.devices_types << :printer if devices.fetch(:printer, true)
+      settings.devices_types << :other if devices.fetch(:other, true)
+
+      users = pt.fetch(:users, {})
+      settings.users_type = :marked_for_deletion if users.fetch(:type, 'all') == 'marked_for_deletion'
+      settings.users_type = :normal if users.fetch(:type, 'all') == 'normal'
+      settings.users_type = :all if users.fetch(:type, 'all') == 'all'
+
+      settings.users_locked = :locked if users.fetch(:locked, 'ignore') == 'locked'
+      settings.users_locked = :unlocked if users.fetch(:locked, 'ignore') == 'unlocked'
+      settings.users_locked = :ignore if users.fetch(:locked, 'ignore') == 'ignore'
     end
 
     if settings.is_regexp
@@ -136,6 +171,9 @@ class ExtendedSearchController < ApplicationController
 
         when 'device-image'
           search_device_image(settings)
+
+        when 'device-current-image'
+          search_device_current_image(settings)
 
         when 'device-mac'
           search_device_mac(settings)
@@ -261,8 +299,32 @@ class ExtendedSearchController < ApplicationController
       :do_not_delete => u.include?('puavoDoNotDelete') && u['puavoDoNotDelete'][0] == "TRUE",
       :marked_for_deletion => u.include?('puavoRemovalRequestTime'),
       :school => cache_school(u['puavoSchool']),
-      :exact_removal_time => nil,
+      :exact_removal_time => u.include?('puavoRemovalRequestTime') ? convert_timestamp(Time.strptime(u['puavoRemovalRequestTime'][0], '%Y%m%d%H%M%S%z')) : nil,
     }
+  end
+
+  def should_skip_user(user, settings)
+    # Filter by deletion mark status
+    if settings.users_type != :all
+      is_marked_for_deletion = user.include?('puavoRemovalRequestTime')
+      return true if settings.users_type == :marked_for_deletion && !is_marked_for_deletion
+      return true if settings.users_type == :normal && is_marked_for_deletion
+    end
+
+    # Filter by locked status
+    if settings.users_locked != :ignore
+      if user.include?('puavoLocked') && user['puavoLocked'][0] == 'TRUE'
+        is_locked = true
+      else
+        is_locked = false
+      end
+
+      return true if settings.users_locked == :locked && !is_locked
+      return true if settings.users_locked == :unlocked && is_locked
+    end
+
+    # If we made it this far, then the user must not be skipped
+    return false
   end
 
   # Iterates over all users and calls the user-supplied "matcher" block for every user and every
@@ -274,16 +336,25 @@ class ExtendedSearchController < ApplicationController
     @num_terms = settings.terms.count
     @num_hits = 0
     @num_misses = 0
+    @total = 0
+    @elapsed = Time.now
 
     settings.terms.each do |term|
       found = false
 
       all_users.each do |user|
+        next if should_skip_user(user[1], settings)
         result, matched = matcher.call(user[1], term)
-        next unless result
+
+        if settings.is_reverse
+          next if result
+        else
+          next unless result
+        end
 
         # store a match
         @results << [term, matched, convert_user(user[1])]
+        @total += 1
         found = true
       end
 
@@ -295,6 +366,9 @@ class ExtendedSearchController < ApplicationController
       # no hits for this term
       @results << [term, nil] unless settings.remove_misses
     end
+
+    @elapsed = Time.now - @elapsed
+    @elapsed = "<0.001" if @elapsed < 0.001
 
     render partial: 'users'
   end
@@ -317,14 +391,21 @@ class ExtendedSearchController < ApplicationController
     @num_terms = settings.terms.count
     @num_hits = 0
     @num_misses = 0
+    @total = 0
+    @elapsed = Time.now
 
     # FIXME: This is too complicated to be implemented as a block, but it should not be.
 
     # Micro-optimization: pre-downcase all names, since we're doing
     # only case-insensitive comparisons
     all_users.each do |user|
-      user[1]['down_sn'] = user[1]['sn'][0].downcase
-      user[1]['down_givenName'] = user[1]['givenName'][0].downcase
+      begin
+        user[1]['down_sn'] = user[1]['sn'][0].downcase
+        user[1]['down_givenName'] = user[1]['givenName'][0].downcase
+      rescue
+        # There are users out there who have only one name. They shouldn't exist, but they do.
+        # Skip them.
+      end
     end
 
     settings.terms.each do |term|
@@ -356,6 +437,7 @@ class ExtendedSearchController < ApplicationController
       all_users.each do |user|
         next unless user[1]['down_givenName'] == first_name && user[1]['down_sn'] == last_name
         @results << [term, nil, convert_user(user[1])]
+        @total += 1
         found = true
       end
 
@@ -365,6 +447,9 @@ class ExtendedSearchController < ApplicationController
       next if found
       @results << [term, nil] unless settings.remove_misses
     end
+
+    @elapsed = Time.now - @elapsed
+    @elapsed = "<0.001" if @elapsed < 0.001
 
     render partial: 'users'
   end
@@ -433,6 +518,8 @@ class ExtendedSearchController < ApplicationController
     @num_terms = settings.terms.count
     @num_hits = 0
     @num_misses = 0
+    @total = 0
+    @elapsed = Time.now
 
     settings.terms.each do |term|
       found = false
@@ -442,6 +529,7 @@ class ExtendedSearchController < ApplicationController
         next unless result
 
         @results << [term, matched, convert_group(group[1])]
+        @total += 1
         found = true
       end
 
@@ -452,6 +540,9 @@ class ExtendedSearchController < ApplicationController
 
       @results << [term, nil] unless settings.remove_misses
     end
+
+    @elapsed = Time.now - @elapsed
+    @elapsed = "<0.001" if @elapsed < 0.001
 
     render partial: 'groups'
   end
@@ -499,6 +590,7 @@ class ExtendedSearchController < ApplicationController
       'puavoDeviceModel',
       'serialNumber',
       'puavoDeviceImage',
+      'puavoDeviceCurrentImage',
       'puavoTag',
       'puavoDeviceKernelVersion',
       'puavoDeviceKernelArguments',
@@ -517,21 +609,49 @@ class ExtendedSearchController < ApplicationController
     }
   end
 
+  def should_skip_device(device, settings)
+    case device['puavoDeviceType'][0]
+      when 'laptop'
+        type = :laptop
+
+      when 'fatclient'
+        type = :fatclient
+
+      when 'printer'
+        type = :printer
+
+      else
+        type = :other
+    end
+
+    #puts "#{device['puavoHostname'][0]}: type=|#{device['puavoDeviceType'][0]}| conv=|#{type}| want=|#{settings.devices_types}| include=|#{settings.devices_types.include?(type)}|"
+    return !settings.devices_types.include?(type)
+  end
+
   def _do_device_search(settings, &matcher)
     all_devices = get_all_devices(settings.school_filter)
     @results = []
     @num_terms = settings.terms.count
     @num_hits = 0
     @num_misses = 0
+    @total = 0
+    @elapsed = Time.now
 
     settings.terms.each do |term|
       found = false
 
       all_devices.each do |device|
+        next if should_skip_device(device[1], settings)
         result, matched = matcher.call(device[1], term)
-        next unless result
+
+        if settings.is_reverse
+          next if result
+        else
+          next unless result
+        end
 
         @results << [term, matched, convert_device(device[1])]
+        @total += 1
         found = true
       end
 
@@ -542,6 +662,9 @@ class ExtendedSearchController < ApplicationController
 
       @results << [term, nil, nil] unless settings.remove_misses
     end
+
+    @elapsed = Time.now - @elapsed
+    @elapsed = "<0.001" if @elapsed < 0.001
 
     render partial: 'devices'
   end
@@ -563,6 +686,17 @@ class ExtendedSearchController < ApplicationController
       # Always a regexp search
       if device.include?('puavoDeviceImage')
         match_term(device['puavoDeviceImage'], term, true)
+      else
+        [false, nil]
+      end
+    end
+  end
+
+  def search_device_current_image(settings)
+    _do_device_search(settings) do |device, term|
+      # Always a regexp search
+      if device.include?('puavoDeviceCurrentImage')
+        match_term(device['puavoDeviceCurrentImage'], term, true)
       else
         [false, nil]
       end

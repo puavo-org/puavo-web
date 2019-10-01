@@ -5,6 +5,16 @@
 <table class="list">
   <tr class="thead">
     <th><%= t('activeldap.attributes.school.displayName') %></th>
+    <th><%= t('activeldap.attributes.school.puavoNamePrefix') %></th>
+
+    <% if @have_school_codes %>
+    <th><%= t('activeldap.attributes.school.puavoSchoolCode') %></th>
+    <% end %>
+
+    <% if @have_external_ids %>
+    <th><%= t('activeldap.attributes.school.puavoExternalId') %></th>
+    <% end %>
+
     <th><%= t('.actions') %></th>
   </tr>
 
@@ -16,6 +26,23 @@
       <%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(school.id.to_i), :extraClass => "inlineIntegrations" } %>
       <% end %>
     </td>
+
+    <td data-title="<%= t('activeldap.attributes.school.puavoNamePrefix')%>">
+      <%= school.cn %>
+    </td>
+
+    <% if @have_school_codes %>
+    <td data-title="<%= t('activeldap.attributes.school.puavoSchoolCode')%>">
+      <%= school.puavoSchoolCode %>
+    </td>
+    <% end %>
+
+    <% if @have_external_ids %>
+    <td data-title="<%= t('activeldap.attributes.school.puavoExternalId')%>">
+      <%= school.puavoExternalId %>
+    </td>
+    <% end %>
+
     <td data-title="<%= t('actions')%>" class="table-actions">
       <%= link_to edit_school_path(school), class: "btn" do %>
         <i class="icon-pencil"></i><%= t('link.edit') %>

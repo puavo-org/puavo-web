@@ -3,10 +3,11 @@ Feature: Manage external passwords
   Testing that users in the "heroes" organisation can change passwords
   through the external login mechanism.  Users do not need to be
   setup in "example"-organisation, but as a side-effect of password
-  changes they will be created there.  Users "sarah.connor" (admin),
-  "luke.skywalker" (student) and "thomas.anderson" (student externally,
-  admin in puavo) exist in the "heroes"-organisation, and "charlie.agent"
-  (admin) and "david.agent" (student) do not.
+  changes they will be created there.  Users "lara.croft" (admin),
+  "sarah.connor" (admin externally, teacher locally),
+  "indiana.jones" (teacher), "luke.skywalker" (student), and "thomas.anderson"
+  (student externally, admin locally) exist in the "heroes"-organisation,
+  and "charlie.agent" (admin) and "david.agent" (student) do not.
 
   Background:
     Given a new school and group with names "School 1", "Class 1" on the "example" organisation
@@ -56,23 +57,23 @@ Feature: Manage external passwords
 
   Scenario: External user changes their own password with another user form
     Given I am on the password change page
-    When I fill in "login[uid]" with "luke.skywalker"
+    When I fill in "login[uid]" with "sarah.connor"
     And I fill in "Password" with "secret"
-    And I fill in "user[uid]" with "luke.skywalker"
+    And I fill in "user[uid]" with "sarah.connor"
     And I fill in "user[new_password]" with "newsecret"
     And I fill in "Confirm new password" with "newsecret"
     And I press "Change password"
     Then I should see "Password changed successfully!"
-    And I should not login with "luke.skywalker" and "secret"
-    And I should login with "luke.skywalker" and "newsecret"
+    And I should not login with "sarah.connor" and "secret"
+    And I should login with "sarah.connor" and "newsecret"
 
   Scenario: External user tries to change password without permissions
     Given I am on the password change page
-    When I fill in "login[uid]" with "luke.skywalker"
+    When I fill in "login[uid]" with "indiana.jones"
     And I fill in "Password" with "secret"
-    And I fill in "user[uid]" with "sarah.connor"
-    And I fill in "user[new_password]" with "newsarahsecret"
-    And I fill in "Confirm new password" with "newsarahsecret"
+    And I fill in "user[uid]" with "lara.croft"
+    And I fill in "user[new_password]" with "newlarasecret"
+    And I fill in "Confirm new password" with "newlarasecret"
     And I press "Change password"
     Then I should not see "Password changed successfully!"
     And I should see "Can't change password to upstream service."
@@ -132,7 +133,7 @@ Feature: Manage external passwords
     And I fill in "Confirm new password" with "newdavidsecret"
     And I press "Change password"
     Then I should not see "Password changed successfully!"
-    And I should see "Failed to change the user's password!"
+    And I should see "You cannot change other user's passwords."
 
   Scenario: Non-existing user tries to change password of external user
     Given I am on the password change page
@@ -147,8 +148,8 @@ Feature: Manage external passwords
 
   Scenario: Puavo-only user tries to change password of external user
     Given I am on the password change page
-    When I fill in "login[uid]" with "david.agent"
-    And I fill in "Password" with "davidsecret"
+    When I fill in "login[uid]" with "charlie.agent"
+    And I fill in "Password" with "charliesecret"
     And I fill in "user[uid]" with "luke.skywalker"
     And I fill in "user[new_password]" with "newlukesecret"
     And I fill in "Confirm new password" with "newlukesecret"
@@ -185,7 +186,7 @@ Feature: Manage external passwords
     configured in such a way), this situation should never arise.
 
     Given I am on the password change page
-    When I fill in "login[uid]" with "han.solo"
+    When I fill in "login[uid]" with "lara.croft"
     And I fill in "Password" with "secret"
     And I fill in "user[uid]" with "sarah.connor"
     And I fill in "user[new_password]" with "newsarahsecret"
@@ -195,7 +196,7 @@ Feature: Manage external passwords
     And I should not login with "sarah.connor" and "secret"
     And I should login with "sarah.connor" and "newsarahsecret"
     Given I am on the password change page
-    When I fill in "login[uid]" with "han.solo"
+    When I fill in "login[uid]" with "lara.croft"
     And I fill in "Password" with "secret"
     And I fill in "user[uid]" with "sarah.connor"
     And I fill in "user[new_password]" with "nextsarahsecret"

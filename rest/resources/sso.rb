@@ -237,10 +237,6 @@ class SSO < PuavoSinatra
     env["REQUEST_METHOD"] == "POST" && !params["password"].to_s.empty?
   end
 
-  def handheld?
-    browser.ios? || browser.android? || browser.nokia? || browser.rim?
-  end
-
   def render_form(error_message, err=nil)
     if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
@@ -280,7 +276,6 @@ class SSO < PuavoSinatra
       "username_placeholder" => username_placeholder,
       "username" => params["username"],
       "invalid_credentials?" => invalid_credentials?,
-      "handheld?" => handheld?,
       "error_message" => @error_message,
       "topdomain" => topdomain,
       "login_helper_js_url" => "/v3/scripts/login_helpers.js",

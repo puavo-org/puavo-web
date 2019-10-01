@@ -41,29 +41,58 @@ th {
     border-left: none;
   }
 
-  tr:nth-child(odd) {
-    background: $listOddRowBack;
+  /* Normal rows */
+  tr {
+    &:nth-child(odd) {
+      background: $listOddRowBack;
+
+      .selectedColumn {
+        background: darken($listOddRowBack, 5%);
+      }
+    }
+
+    &:nth-child(even) {
+      background: $listEvenRowBack;
+
+      .selectedColumn {
+        background: darken($listEvenRowBack, 5%);
+      }
+    }
+
+    &:hover {
+      background: $listRowHoverBack;
+
+      .selectedColumn {
+        background: darken($listRowHoverBack, 5%);
+      }
+    }
   }
 
-  tr:nth-child(even) {
-    background: $listEvenRowBack;
-  }
+  /* Users who are marked for later deletion */
+  tr.deleted {
+    &:nth-child(odd) {
+      background-color: $markedForDeletionOddRowBack;
 
-  tr:hover {
-    background: $listRowHoverBack;
-  }
+      .selectedColumn {
+        background: darken($markedForDeletionOddRowBack, 5%);
+      }
+    }
 
-  /* Row/highlight colors for selected columns in tables that can be sorted/filtered */
-  tr:nth-child(odd) .selectedColumn {
-    background: darken($listOddRowBack, 5%);
-  }
+    &:nth-child(even) {
+      background-color: $markedForDeletionEvenRowBack;
 
-  tr:nth-child(even) .selectedColumn {
-    background: darken($listEvenRowBack, 5%);
-  }
+      .selectedColumn {
+        background: darken($markedForDeletionEvenRowBack, 5%);
+      }
+    }
 
-  tr:hover .selectedColumn {
-    background: darken($listRowHoverBack, 5%);
+    &:hover {
+      background: $markedForDeletionRowHoverBack;
+
+      .selectedColumn {
+        background: darken($markedForDeletionRowHoverBack, 5%) !important;
+      }
+    }
   }
 
   td {

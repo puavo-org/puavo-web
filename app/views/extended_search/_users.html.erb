@@ -1,5 +1,7 @@
 <p class="resultStatistics">
 <%= t('extended_search.results.statistics',
+      :total => @total,
+      :elapsed => @elapsed,
       :num_terms => @num_terms,
       :num_hits => @num_hits,
       :num_misses => @num_misses) %>
@@ -14,6 +16,7 @@
     <th><%= t('activeldap.attributes.user.displayName') %></th>
     <th><%= t('activeldap.attributes.user.uid') %></th>
     <th><%= t('activeldap.attributes.user.puavoEduPersonAffiliation') %></th>
+    <th><%= t('users.show.marked_for_removal') %></th>
     <th><%= t('activeldap.attributes.school.displayName') %></th>
   </tr>
 <% @results.each do |term, matched, user| %>
@@ -38,6 +41,7 @@
     </td>
     <td data-title="<%= t('activeldap.attributes.user.uid')%>"><%= h user[:uid] %></td>
     <td data-title="<%= t('activeldap.attributes.user.puavoEduPersonAffiliation')%>"><%= list_user_roles(user[:affiliation]) %></td>
+    <td data-title="<%= t('activeldap.attributes.user.markedForDeletion') %>"><%= user[:exact_removal_time] %></td>
     <td data-title="<%= t('activeldap.attributes.school.displayName')%>">
       <% if user[:school] %>
       <%= link_to "#{user[:school].displayName}", school_path(user[:school]) %>

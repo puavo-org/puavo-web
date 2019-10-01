@@ -5,7 +5,7 @@ installdir = /var/app/puavo-rest
 build:
 	git rev-parse HEAD > GIT_COMMIT
 	cp ../VERSION VERSION
-	cp ../app/assets/images/anonymous.png resources/anonymous.png
+	cp ../public/images/anonymous.png resources/anonymous.png
 	bundle install --deployment
 
 update-gemfile-lock: clean
@@ -46,7 +46,7 @@ install:
 		middleware \
 		doc \
 		$(DESTDIR)$(installdir)
-	
+
 	install -t $(DESTDIR)$(prefix)/bin scripts/puavo-rest-prompt
 	install -t $(DESTDIR)$(prefix)/bin bin/puavo-rest-scheduled-jobs
 	ln -fns ../../usr/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
