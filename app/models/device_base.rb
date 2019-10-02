@@ -176,7 +176,7 @@ class DeviceBase < LdapBase
     begin
       self.host_certificate_request_send = true
       http = http_puavo_ca
-      request = Net::HTTP::Post.new("/certificates.json?org=#{organisation_key}",
+      request = Net::HTTP::Post.new('/certificates.json',
                                     { 'Content-Type' => 'application/json' })
       request.basic_auth(dn, password)
       response = http.request(request,
@@ -184,6 +184,7 @@ class DeviceBase < LdapBase
                                 'certificate' => {
                                   'fqdn'                     => self.puavoHostname + "." + LdapOrganisation.current.puavoDomain,
                                   'host_certificate_request' => self.host_certificate_request,
+                                  'organisation'             => organisation_key,
                                 }
                               }.to_json)
 
