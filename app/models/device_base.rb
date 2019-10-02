@@ -37,7 +37,7 @@ class DeviceBase < LdapBase
   end
 
   def userCertificate
-    self.hostCertificates.first
+    Array(self.hostCertificates).first
   end
 
   # Activeldap object's to_json method return Array by default.
