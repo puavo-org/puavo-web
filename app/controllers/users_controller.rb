@@ -62,6 +62,75 @@ class UsersController < ApplicationController
     end
   end
 
+  def get_school_users_list
+    attributes = [
+      'puavoId',
+      'sn',
+      'givenName',
+      'uid',
+      'puavoEduPersonAffiliation',
+      'puavoExternalId',
+      'telephoneNumber',
+      'displayName',
+      'homeDirectory',
+      'mail',
+      'puavoRemovalRequestTime',
+      'puavoDoNotDelete',
+      'puavoLocked',
+      'createTimestamp',    # LDAP operational attribute
+      'modifyTimestamp'     # LDAP operational attribute
+    ]
+
+    raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
+                              :scope => :one,
+                              :attributes => attributes)
+
+    # convert the raw data into something we can easily parse in JavaScript
+    users = []
+
+    user_types = {}
+
+    #byebug
+
+    raw.each do |dn, usr|
+      u = {
+        id: usr['puavoId'][0].to_i,
+        first: usr['givenName'] ? usr['givenName'][0] : nil,
+        last: usr['sn'] ? usr['sn'][0] : nil,
+        name: "#{usr['givenName'][0]} #{usr['sn'][0]}",
+        uid: usr['uid'][0],
+        eid: usr['puavoExternalId'] ? usr['puavoExternalId'][0] : nil,
+        type: nil,
+        phone: usr['telephoneNumber'] ? Array(usr['telephoneNumber']) : nil,
+        email: usr['mail'] ? Array(usr['mail']) : nil,
+        home: usr['homeDirectory'][0],
+        dnd: usr['puavoDoNotDelete'] ? true : false,
+        locked: usr['puavoLocked'] ? (usr['puavoLocked'][0] == 'TRUE' ? true : false) : false,
+        rrt: convert_ldap_time(usr['puavoRemovalRequestTime']),
+        created: convert_ldap_time(usr['createTimestamp']),
+        modified: convert_ldap_time(usr['modifyTimestamp']),
+        link: user_path(@school, usr['puavoId'][0]),
+      }
+
+      # localise user types, the table sorter will otherwise sort them incorrectly
+      # the types are cached, so we don't constantly look up the YAML
+      if usr['puavoEduPersonAffiliation']
+        types = []
+
+        Array(usr['puavoEduPersonAffiliation']).each do |a|
+          user_types[a] = t("puavoEduPersonAffiliation_#{a}") unless user_types.include?(a)
+          types << user_types[a]
+        end
+
+        u[:type] = types if types
+      end
+
+      users << u
+    end
+
+    render :json => users
+  end
+
   # GET /:school_id/users/1/image
   def image
     @user = User.find(params[:id])

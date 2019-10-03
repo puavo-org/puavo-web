@@ -70,6 +70,8 @@ Rails.application.routes.draw do
       get 'groups/:id/get_members_as_csv' => 'groups#get_members_as_csv', :as => :get_members_as_csv
       put 'groups/:id/remove_all_members' => 'groups#remove_all_members', :as => :remove_all_members
 
+      get 'get_school_groups_list' => 'groups#get_school_groups_list'
+
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
       put 'groups/mark_groupless_users_for_deletion' => 'groups#mark_groupless_users_for_deletion', :as => :mark_groupless_users_for_deletion
 
@@ -90,6 +92,8 @@ Rails.application.routes.draw do
       match 'users/:id/mark_user_for_deletion' => 'users#mark_for_deletion', :as => :mark_user_for_deletion, :via => :get
       match 'users/:id/unmark_user_for_deletion' => 'users#unmark_for_deletion', :as => :unmark_user_for_deletion, :via => :get
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
+
+      get 'get_school_users_list' => 'users#get_school_users_list'
     end
 
 
@@ -189,6 +193,8 @@ Rails.application.routes.draw do
       match 'devices/:id/image' => 'devices#image', :as => 'image_device', :via => :get
 
       get 'devices/device_statistics' => 'device_statistics#school_statistics', :as => 'school_device_statistics'
+
+      get 'get_school_devices_list' => 'devices#get_school_devices_list'
 
       resources :devices
 

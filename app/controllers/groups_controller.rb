@@ -38,6 +38,42 @@ class GroupsController < ApplicationController
     end
   end
 
+  def get_school_groups_list
+    attributes = [
+      'puavoId',
+      'displayName',
+      'cn',
+      'puavoEduGroupType',
+      'puavoExternalId',
+      'memberUid',
+      'createTimestamp',    # LDAP operational attribute
+      'modifyTimestamp'     # LDAP operational attribute
+    ]
+
+    # convert the raw data into something we can easily parse in JavaScript
+    @raw = Group.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
+                                :scope => :one,
+                                :attributes => attributes)
+
+    @groups = []
+
+    @raw.each do |dn, grp|
+      @groups << {
+        id: grp['puavoId'][0],
+        name: grp['displayName'][0],
+        type: grp['puavoEduGroupType'] ? t('group_type.' + grp['puavoEduGroupType'][0]) : nil,
+        abbr: grp['cn'][0],
+        eid: grp['puavoExternalId'] ? grp['puavoExternalId'][0] : nil,
+        members: grp['memberUid'] ? grp['memberUid'].count : 0,
+        created: convert_ldap_time(grp['createTimestamp']),
+        modified: convert_ldap_time(grp['modifyTimestamp']),
+        link: group_path(@school, grp['puavoId'][0]),
+      }
+    end
+
+    render :json => @groups
+  end
+
   # GET /:school_id/groups/1
   # GET /:school_id/groups/1.xml
   def show
