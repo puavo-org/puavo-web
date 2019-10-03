@@ -7,7 +7,7 @@ class GroupsController < ApplicationController
   def members
     @group = Group.find(params[:id])
 
-    @members = @group.members
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
       format.json  { render :json => @members }
@@ -49,7 +49,7 @@ class GroupsController < ApplicationController
     @group['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @group['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
-    @members = @group.members.sort{|a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     @roles = @group.roles.sort
     @other_roles = Role.all.delete_if do |p| @roles.include?(p) end
@@ -296,7 +296,7 @@ class GroupsController < ApplicationController
     # the last member of a group?
     @group = Group.find(params[:id])
 
-    @members = @group.members
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
       format.html { render :plain => "OK" }
@@ -397,8 +397,7 @@ class GroupsController < ApplicationController
 
     @group.reload
 
-
-    @members = @group.members
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
       format.html { render :plain => "OK" }
@@ -479,6 +478,30 @@ class GroupsController < ApplicationController
         redirect_to groups_path(@school)
         return nil
       end
+    end
+
+    def get_and_sort_group_members(group)
+      members = group.members
+      num_hidden = 0
+
+      # Hide members whose school information we cannot access. This can only (maybe?) happen
+      # if you aren't an owner and you're trying to view a group which contains members from
+      # other schools than yours.
+      members.reject! do |m|
+        begin
+          # This is weird. If I check m.school.nil? it returns false, but accessing m.school
+          # immediately afterwards will still fail?
+          m.school.cn
+          false
+        rescue
+          num_hidden += 1
+          true
+        end
+      end
+
+      members.sort!{ |a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
+
+      return members, num_hidden
     end
 
 end

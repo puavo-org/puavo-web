@@ -4,6 +4,10 @@
 
 <%= render :partial => 'integration_warnings', :locals => { :school => @school, :group => @group } %>
 
+<% if !current_user.organisation_owner? && @num_hidden > 0 %>
+<p class="genericWarning"><%= t('.hidden_members_hidden_tools_warning') %></p>
+<% end %>
+
 <%= start_box t('.title'), extraClass="noFloat" %>
   <table>
     <tr>
@@ -139,7 +143,7 @@
         </li>
       </ul>
 
-      <% if @group.members.count > 0 %>
+      <% if @group.members.count > 0 && @num_hidden == 0 %>
 
       <ul>
         <% if current_user.organisation_owner? %>
@@ -150,13 +154,16 @@
         </li>
         <% end %>
 
+        <% if @num_hidden == 0 %>
         <li>
           <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('group_username_list_confirm') }, method: :put do %>
             <i class="icon-list"></i><%= t('link.create_username_list_from_group') %>
           <% end %>
         </li>
+        <% end %>
       </ul>
 
+      <% if @num_hidden == 0 %>
       <ul>
         <li>
           <%= link_to remove_all_members_path(@school, @group), data: { confirm: t('general_confirm') }, method: :put do %>
@@ -164,6 +171,7 @@
           <% end %>
         </li>
       </ul>
+      <% end %>
 
       <% if current_user.organisation_owner? %>
 
@@ -199,6 +207,7 @@
 
       <% end %>
 
+      <% if @num_hidden == 0 %>
       <ul>
         <li>
           <%= link_to group_path(@school, @group), data: { confirm: t('general_confirm') }, method: :delete  do %>
@@ -206,7 +215,7 @@
           <% end %>
         </li>
       </ul>
-
+      <% end %>
     </div> <!-- dropdown -->
   </li>
 </ul>

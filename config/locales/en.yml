@@ -405,6 +405,7 @@ en:
       add_user_title: Add users to this group
       description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
       placeholder_for_search: Name of the user
+      hidden_members_hidden_tools_warning: "Some tools have been hidden because this group has members from other schools you don't have permission to access."
     new:
       title: New group
     edit:
@@ -413,6 +414,7 @@ en:
       year_class_warning: "This group is maintained by an external Primus synchronisation script. Changes you make to the group or its membership list will be undone. Never change the group's abbreviation!"
     members:
       title: Current members
+      hidden_title: "hidden member(s) from other schools"
       remove: Remove
     user_search:
       member: Member
