@@ -318,8 +318,13 @@ class PasswordController < ApplicationController
                                           params[:login][:password])
 
     # Don't let non-teachers and non-admins change other people's passwords
-    if mode == :other && !["admin", "teacher"].include?(@logged_in_user.puavoEdupersonAffiliation)
-      raise User::UserError, I18n.t('flash.password.go_away')
+    if mode == :other
+      wanted_roles = ['admin', 'teacher']
+      user_roles = Array(@logged_in_user.puavoEdupersonAffiliation || [])
+
+      unless (user_roles & wanted_roles).any?
+        raise User::UserError, I18n.t('flash.password.go_away')
+      end
     end
 
     @user = @logged_in_user
