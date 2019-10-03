@@ -13,8 +13,8 @@
   <tr>
   <% end %>
     <td>
-      <%= link_to member.displayName, user_path(@school, member) %>
-      <%= "(#{ member.uid })" %>
+      <%= link_to "#{member.displayName} (#{member.uid})", user_path(@school, member) %>
+      [<%= member.school.displayName %>]
       <% if member.puavoLocked %><i class='icon-lock' title="<%= t('users.show.user_is_locked') %>"></i><% end %>
     </td>
 
