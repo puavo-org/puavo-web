@@ -1158,6 +1158,59 @@ fi:
     month: "kuukausi sitten"
     months: "%{month} kuukautta sitten"
 
+  # Column names for various tables. Try to keep these as short as possible to prevent
+  # tables from getting unnecessarily wide.
+  columns:
+    puavoid: "PuavoID"
+    created: "Luotu"
+    modified: "Muokattu"
+    puavoconf: "PuavoConf"
+
+    users:
+      first_names: "Etunimet"
+      last_name: "Sukunimi"
+      full_name: "Nimi"
+      uid: "Käyttäjätunnus"
+      eid: "Ulkoinen ID"
+      type: "Rooli"
+      phone: "Puhelin"
+      email: "Email"
+      home_dir: "Kotihakemisto"
+      rrt: "Poistomerkintä tehty"
+      is_locked: "Lukittu?"
+
+    groups:
+      name: "Nimi"
+      type: "Tyyppi"
+      abbreviation: "Lyhenne"
+      eid: "Ulkoinen ID"
+
+    devices:
+      hostname: "Verkkonimi"
+      type: "Tyyppi"
+      tags: "Tagit"
+      manufacturer: "Valmistaja"
+      model: "Malli"
+      serial: "Sarjanumero"
+      mac: "MAC"
+      image: "Työpöytäkuva"
+      current_image: "Nykyinen työpöytäkuva"
+      kernel_args: "Kernel-parametrit"
+      hwinfo_time: "Laitetiedot saatu"
+      hwinfo_ram_size: "RAM"
+      hwinfo_hd_size: "Kiintolevy"
+      hwinfo_is_ssd: "SSD?"
+      cpu: "Prosessori"
+      bios_vendor: "BIOS-valmistaja"
+      bios_version: "BIOS-versio"
+      bios_date: "BIOS-päiväys"
+      bat_vendor: "Akun valmistaja"
+      bat_serial: "Akun sarjanumero"
+      bat_cap: "Akun kapasiteetti"
+      wifi: "WiFi"
+      xrandr: "Xrandr"
+
+  # Device hardware info
   hwinfo:
     title: "Laitetiedot"
     no_info: "Ei vastaanotettuja laitetietoja tästä laitteesta"
@@ -1215,6 +1268,7 @@ fi:
       capacity: "Kapasiteetti"
       percentage: "Latausaste"
 
+  # Extended search
   extended_search:
     title: "Laajennettu haku"
     tabs:
@@ -1280,6 +1334,7 @@ fi:
       invalid_regexp: "Virheellinen regexp-lause "
       unknown_search_term_type: "Tuntematon hakutermien tyyppi "
 
+  # Organisation and school device statistics
   device_statistics:
     columns:
       timestamp: "Tiedot saatu"

@@ -1188,6 +1188,59 @@ en:
     month: "a month ago"
     months: "%{month} months ago"
 
+  # Column names for various tables. Try to keep these as short as possible to prevent
+  # tables from getting unnecessarily wide.
+  columns:
+    puavoid: "PuavoID"
+    created: "Created"
+    modified: "Modified"
+    puavoconf: "PuavoConf"
+
+    users:
+      first_names: "First names"
+      last_name: "Last name"
+      full_name: "Name"
+      uid: "Username"
+      eid: "External ID"
+      type: "Role"
+      phone: "Phone"
+      email: "Email"
+      home_dir: "Home directory"
+      rrt: "When marked for deletion"
+      is_locked: "Locked?"
+
+    groups:
+      name: "Name"
+      type: "Type"
+      abbreviation: "Abbreviation"
+      eid: "External ID"
+
+    devices:
+      hostname: "Hostname"
+      type: "Type"
+      tags: "Tags"
+      manufacturer: "Manufacturer"
+      model: "Model"
+      serial: "Serial"
+      mac: "MAC"
+      image: "Image"
+      current_image: "Current image"
+      kernel_args: "Kernel arguments"
+      hwinfo_time: "Hardware info received"
+      hwinfo_ram_size: "RAM"
+      hwinfo_hd_size: "Hard drive"
+      hwinfo_is_ssd: "SSD?"
+      cpu: "Processor"
+      bios_vendor: "BIOS vendor"
+      bios_version: "BIOS version"
+      bios_date: "BIOS date"
+      bat_vendor: "Battery vendor"
+      bat_serial: "Battery serial"
+      bat_cap: "Battery capacity"
+      wifi: "WiFi"
+      xrandr: "Xrandr"
+
+  # Device hardware info
   hwinfo:
     title: "Hardware information"
     no_info: "No hardware information received from this device"
@@ -1245,6 +1298,7 @@ en:
       capacity: "Capacity"
       percentage: "Percentage"
 
+  # Extended search
   extended_search:
     title: "Extended Search"
     tabs:
@@ -1310,6 +1364,7 @@ en:
       invalid_regexp: "Invalid regexp "
       unknown_search_term_type: "Unknown search term type "
 
+  # Organisation and school device statistics
   device_statistics:
     columns:
       timestamp: "Data received"
