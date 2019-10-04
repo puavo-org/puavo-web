@@ -117,8 +117,8 @@ en:
   default_select_value: Select
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
-  lock_marked_users: "Are you sure you want to lock %{count} users who are marked for deletion?"
-  delete_marked_users: "Are you sure you want to delete %{count} users who are marked for deletion?"
+  lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
+  delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
   group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
   prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
   layouts:

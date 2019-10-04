@@ -34,17 +34,15 @@
     <% end %>
   </li>
 
-  <% if !@users_marked_for_deletion.empty? %>
   <li>
-    <%= link_to lock_marked_users_path, data: { confirm: t('lock_marked_users', count: @users_marked_for_deletion.count) }, method: :post, class: 'btn btn-danger' do %>
+    <%= link_to lock_marked_users_path, data: { confirm: t('lock_marked_users') }, method: :post, class: 'btn btn-danger' do %>
       <i class='icon-lock'></i><%= t('link.lock_users_marked_for_deletion')%>
     <% end %>
   </li>
-  <% end %>
 
-  <% if !@users_marked_for_deletion.empty? && current_user.organisation_owner? %>
+  <% if current_user.organisation_owner? %>
   <li class="ownersOnly">
-    <%= link_to delete_marked_users_path, data: { confirm: t('delete_marked_users', count: @users_marked_for_deletion.count) }, method: :delete, class: 'btn btn-danger' do %>
+    <%= link_to delete_marked_users_path, data: { confirm: t('delete_marked_users') }, method: :delete, class: 'btn btn-danger' do %>
       <i class='icon-trash'></i><%= t('link.delete_users_marked_for_deletion')%>
     <% end %>
   </li>

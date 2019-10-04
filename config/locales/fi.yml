@@ -90,8 +90,8 @@ fi:
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
-  lock_marked_users: "Haluatko varmasti lukita %{count} poistettavaksi merkittyä käyttäjää?"
-  delete_marked_users: "Haluatko varmasti poistaa %{count} poistettavaksi merkittyä käyttäjää?"
+  lock_marked_users: "Haluatko varmasti lukita kaikki poistettavaksi merkityt käyttäjät?"
+  delete_marked_users: "Haluatko varmasti poistaa kaikki poistettavaksi merkityt käyttäjät?"
   group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
   prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
   layouts:
