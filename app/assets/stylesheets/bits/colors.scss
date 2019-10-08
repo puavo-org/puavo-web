@@ -239,6 +239,31 @@ $markedForDeletionRowHoverBack: #fdd;
 
 /*
 --------------------------------------------------------------------------------
+Supertables (shares styles with normal lists)
+--------------------------------------------------------------------------------
+*/
+
+$supertableNetworkErrorBack: #f00;
+$supertableNetworkErrorFore: #fff;
+
+$supertableFilterControlBack: #f0f0f0;
+$supertableFilterControlBorder: #ccc;
+
+$supertableFilterListFilterHover: #f4f4f4;
+
+$supertableTermInvalidBack: #f88;
+
+$supertableFilterAddBack: #9f9;
+$supertableFilterAddFore: #000;
+$supertableFilterAddHoverBack: #4f4;
+$supertableFilterAddBorder: #080;
+$supertableFilterRemoveBack: #f99;
+$supertableFilterRemoveFore: #000;
+$supertableFilterRemoveHoverBack: #f44;
+$supertableFilterRemoveBorder: #800;
+
+/*
+--------------------------------------------------------------------------------
 Search
 --------------------------------------------------------------------------------
 */

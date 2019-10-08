@@ -163,6 +163,18 @@ th {
       }
     }
   }
+
+  .boolean {    /* Boolean column checkmarks */
+    text-align: center;
+    display: block;
+    font-size: 200%;
+
+    @media #{$screen-breakpoint-one} {
+      display: inline;
+      text-align: left;
+      font-size: 100%;
+    }
+  }
 }
 
 /* Sortable column headers. Each TH element contains a flexbox DIV that
@@ -264,5 +276,253 @@ th {
 
   tr:hover .selectedColumn {
     background: darken($markedForDeletionRowHoverBack, 5%) !important;
+  }
+}
+
+/*
+----------------------------------------------------------------------------------------------------
+SUPERTABLES
+----------------------------------------------------------------------------------------------------
+*/
+
+.superTable {
+  /* Used when the table is empty, or everything in it has been filtered away */
+  .empty {
+    font-style: italic;
+  }
+
+  .checkbox {
+    cursor: pointer;
+    width: 0;
+
+    span {
+      pointer-events: none;   /* the parent TD has the event handler */
+      margin: 0 auto;
+      display: block;
+      width: 20px;
+      height: 20px;
+      border: 2px inset #ccc;
+      background: #fff;
+    }
+
+    &:active span {
+      background: #ddd;
+    }
+  }
+
+  .selected span {
+    background: url("<%= image_path('checkbox.svg') %>") no-repeat #fff;
+    background-size: cover;
+  }
+
+  .selected:active span {
+    background: url("<%= image_path('checkbox.svg') %>") no-repeat #ddd;
+    background-size: cover;
+  }
+}
+
+.disabledTable {
+  opacity: 0.5;
+}
+
+/* Supertable controls */
+.tableControls {
+  color: $listHeadingFore;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  /* Column editor, CSV download, etc. buttons and status/stats messages */
+  .controls {
+    display: flex;
+    align-items: center;
+
+    p {
+      display: inline;
+      margin: 0;
+      padding: 5px 10px;
+      font-weight: bold;
+    }
+
+    .status {
+      font-style: italic;
+    }
+
+    .good {
+    }
+
+    .failed {
+      background: $supertableNetworkErrorBack !important;
+      color: $supertableNetworkErrorFore !important;
+      font-weight: bold;
+      font-style: normal;
+    }
+  }
+
+  /* Wraps everything related to table filters */
+  .filters {
+    width: 100%;
+    border: 1px solid $listHeadingBorder;
+    margin: 5px 0 0 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Table filter control buttons */
+  .filterControl {
+    display: flex;
+    align-items: center;
+
+    padding: 5px;
+    background: $supertableFilterControlBack;
+    border-bottom: 1px dashed $supertableFilterControlBorder;
+
+    /* Master filtering enable checkbox */
+    .filteringEnabled {
+      font-weight: bold;
+      margin: 0 1em 0 0.5em;
+    }
+
+    label {
+      margin-right: 1em;
+    }
+
+    .disabledOption {
+      display: none;
+    }
+  }
+
+  /* Main container for the table filters */
+  .filterList {
+    margin: 5px;
+
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    /* Container for each filter term */
+    .filter {
+      display: flex;
+      align-items: center;
+      padding: 2px 10px;
+      margin: 0;
+
+      &:hover {
+        background: $supertableFilterListFilterHover;
+      }
+
+      /* Wrapper for term "controls" (activation checkbox, target column, operator) */
+      .control {
+        margin-right: 10px;
+
+        /* vertical centering */
+        display: flex;
+        align-items: center;
+
+        select {
+          margin-left: 5px;
+        }
+      }
+
+      /*
+          Wrapper for the filtering term, whatever it may be. Some have a text input box, some have
+          radio buttons, some something else.
+      */
+      .term {
+        display: inline;
+
+        min-width: 250px;
+        min-height: 30px;   /* try to equalize heights (HACK) */
+        padding: 2px;
+        margin-right: 10px;
+
+        ::placeholder {
+          font-style: italic;
+        }
+
+        @media #{$screen-breakpoint-one} {
+          min-width: auto;
+        }
+
+        /* A term with only one input element, use all available width */
+        .single {
+          width: 100%;
+        }
+
+        input {
+          padding: 5px;   /* Chrome, why are you like that? Firefox plays along nicely, why can't you? */
+        }
+
+        /* Boolean terms */
+        .boolean {
+          display: flex;        /* a hacky attempt to center the checkbox and its label */
+          align-items: center;
+          padding-top: 2px;
+
+          input, label {
+            display: inline;
+          }
+
+          label {
+            padding-left: 5px;
+          }
+        }
+
+        /* Unixtime terms */
+        .year {
+          font-family: monospace;
+          width: 4em;
+        }
+
+        .month, .day, .hour, .minute {
+          font-family: monospace;
+          width: 3em;
+        }
+      }
+
+      /* Invalid terms */
+      .invalid {
+        background: $supertableTermInvalidBack;
+      }
+
+      /* Container for the add/remove buttons */
+      .buttons {
+        display: inline;
+
+        span {
+          display: inline-block;
+          padding: 3px 9px;
+          text-align: center;
+          cursor: pointer;
+
+          @media #{$screen-breakpoint-one} {
+            padding: 0 15px;
+          }
+        }
+
+        .add {
+          color: $supertableFilterAddFore;
+          background: $supertableFilterAddBack;
+          border: 1px solid $supertableFilterAddBorder;
+          margin-right: 10px;
+
+          &:hover {
+            background: $supertableFilterAddHoverBack;
+          }
+        }
+
+        .remove {
+          color: $supertableFilterRemoveFore;
+          background: $supertableFilterRemoveBack;
+          border: 1px solid $supertableFilterRemoveBorder;
+
+          &:hover {
+            background: $supertableFilterRemoveHoverBack;
+          }
+        }
+      }
+    }
   }
 }
