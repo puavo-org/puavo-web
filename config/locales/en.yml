@@ -1273,7 +1273,7 @@ en:
       title: "Product name"
     bios:
       title: "BIOS"
-      vendor: "Vendor"
+      vendor: "vendor"
       version: "Version"
       date: "Date"
     serial:
