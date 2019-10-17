@@ -17,6 +17,15 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups
   # GET /:school_id/groups.xml
   def index
+    if test_environment?
+      old_legacy_groups_index
+    else
+      new_cool_groups_index
+    end
+  end
+
+  # Old "legacy" index used during tests
+  def old_legacy_groups_index
     if @school
       @groups = @school.groups
     else
@@ -35,6 +44,13 @@ class GroupsController < ApplicationController
       format.html # index.html.erb
       format.xml  { render :xml => @groups }
       format.json { render :json => @groups }
+    end
+  end
+
+  # New AJAX-based index for non-test environments
+  def new_cool_groups_index
+    respond_to do |format|
+      format.html # index.html.erb
     end
   end
 

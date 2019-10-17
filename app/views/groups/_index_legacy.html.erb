@@ -1,0 +1,61 @@
+<% page_title t('titles.schools'), @school.displayName, t('titles.groups') %>
+
+<p><%= @groups.length %> <%= t('groups.index.groups') %></p>
+
+<% unless @groups.empty? %>
+
+<table class="list" id="groups">
+  <tr class="thead">
+    <th><%= sortable_list_column_header(t('activeldap.attributes.group.displayName')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.group.cn')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.group.puavoEduGroupType')) %></th>
+    <th><%= t('groups.index.actions') %></th>
+  </tr>
+
+<% @groups.each do |group| %>
+  <tr>
+    <td data-title="<%= t('activeldap.attributes.group.displayName') %>">
+      <%= link_to group.displayName, group_path(@school, group) %>
+      <%= " (#{Array(group.memberUid).count})" %>
+    </td>
+    <td data-title="<%= t('activeldap.attributes.group.cn') %>">
+      <%= group.cn %>
+    </td>
+
+    <td data-title="<%= t('activeldap.attributes.group.puavoEduGroupType') %>">
+      <% if group.puavoEduGroupType.nil? %>
+      <span class="missingData"><%= t('missing_data') %></span>
+      <% else %>
+      <%= humanize_group_type(group.puavoEduGroupType) %>
+      <% end %>
+    </td>
+    <td data-title="<%= t('groups.index.actions') %>" class="tableActions">
+      <%= link_to edit_group_path(@school, group), class: "btn" do%>
+        <i class='icon-pencil'></i><%= t('link.edit') %>
+      <% end %>
+
+      <%= link_to group_path(@school, group), data: { confirm: t('general_confirm') }, method: :delete, class: "btn btn-danger" do %>
+        <i class='icon-trash'></i><%= t('link.destroy') %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<% end %>
+
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to new_group_path(@school), class: 'btn' do %>
+      <i class='icon-plus'></i><%= t('link.new_group') %>
+    <% end %>
+  </li>
+
+  <li>
+    <%= link_to find_groupless_users_path(@school), class: 'btn' do %>
+      <i class='icon-search'></i><%= t('link.find_groupless_users') %>
+    <% end %>
+  </li>
+</ul>
+<% end %>

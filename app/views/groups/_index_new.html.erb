@@ -1,0 +1,147 @@
+<div id="groupsList"></div>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js" %>
+<%= javascript_include_tag 'modal_dialog' %>
+<%= javascript_include_tag 'supertable' %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+
+// Table column definitions
+const GROUP_COLUMN_DEFS = {
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+    },
+
+    name: {
+        key: "name",
+        title: "<%= t('columns.groups.name') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        subType: COLUMN_SUBTYPE_GROUP_NAME,
+    },
+
+    abbr: {
+        key: "abbr",
+        title: "<%= t('columns.groups.abbreviation') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    type: {
+        key: "type",
+        title: "<%= t('columns.groups.type') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        subType: COLUMN_SUBTYPE_GROUP_TYPE,
+    },
+
+    eid: {
+        key: "eid",
+        title: "<%= t('columns.groups.eid') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    created: {
+        key: "created",
+        title: "<%= t('columns.created') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_GREATER_OR_EQUAL,
+    },
+
+    modified: {
+        key: "modified",
+        title: "<%= t('columns.modified') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+    },
+};
+
+// Default visible columns and their order
+const DEFAULT_GROUP_COLUMNS = [
+    ["id", false],
+    ["name", true],
+    ["abbr", true],
+    ["type", true],
+    ["eid", false],
+    ["created", false],
+    ["modified", false],
+];
+
+// The current columns, initially the defaults
+var currentColumns = DEFAULT_GROUP_COLUMNS;
+
+$(document).ready(function() {
+    new SuperTable({
+        // Unique ID for this table
+        id: "groups",
+
+        // Organisation and school names, used during CSV exports
+        organisationName: "<%= LdapOrganisation.current.o %>",
+        schoolName: "<%= @school.cn %>",
+
+        // The URL used to dynamically retrieve table data from
+        url: "/users/<%= @school.id %>/get_school_groups_list",
+
+        // Where to save the table settings
+        localstoreKey: "supertable-groups",
+
+        // Which locale will be used when sorting strings?
+        sortLocale: "<%= supertable_sorting_locale %>",
+
+        // Container for the table and its controls
+        container: document.getElementById("groupsList"),
+
+        // Main table flags
+        flags: TABLE_FLAG_GROUPS,
+
+        // All possible columns, their titles, keys, flags, etc.
+        columnDefs: GROUP_COLUMN_DEFS,
+
+        // Which columns to display and in which order. You need at least one.
+        currentColumns: currentColumns,
+
+        // Default columns for this table. Used with the column editor.
+        defaultColumns: DEFAULT_GROUP_COLUMNS,
+
+        // The column that's initially selected on new filter rows
+        defaultFilterColumn: "name",
+
+        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
+        // are valid here, any other value will be ignored and the order is assumed to be ascending).
+        // If the column does not exist, then the initial sort will be ignored completely.
+        initialSort: { column: "name", order: SORT_ORDER_ASCENDING },
+
+        // Name of the objects the table contains. Currently always a plural.
+        itemName: "<%= t('groups.index.groups') %>",
+
+        // Column editor subtitle
+        columnEditorSubtitle: "<%= t('layouts.application.groups') %>",
+    });
+});
+</script>
+<% end %>
+
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to new_group_path(@school), class: 'btn' do %>
+      <i class='icon-plus'></i><%= t('link.new_group') %>
+    <% end %>
+  </li>
+
+  <li>
+    <%= link_to find_groupless_users_path(@school), class: 'btn' do %>
+      <i class='icon-search'></i><%= t('link.find_groupless_users') %>
+    <% end %>
+  </li>
+</ul>
+<% end %>
