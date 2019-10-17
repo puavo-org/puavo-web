@@ -19,7 +19,8 @@ fi:
     ldap_services: "LDAP-palvelut"
     external_services: "Ulkoiset palvelut"
     external_files: "Ulkoiset tiedostot"
-    device_statistics: "Laitetilastot"
+    device_statistics_organisation: "Organisaation laitetilastot"
+    device_statistics_school: "Koulun käytössä olevat työpöytäkuvat"
     servers: "Palvelimet"
     printers: "Tulostimet"
     wlan: "Langattomat verkot"
@@ -161,7 +162,7 @@ fi:
     new_ldap_service: Uusi...
     rename_groups: Vuosiluokkasiirto...
     devices: Laitelista
-    device_statistics: Laitetilastot
+    device_statistics: "Työpöytökuvatilastot"
     delete_device: "Poista laite"
     servers: Palvelimet
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
@@ -1165,6 +1166,7 @@ fi:
     created: "Luotu"
     modified: "Muokattu"
     puavoconf: "PuavoConf"
+    school: "Koulu"
 
     users:
       first_names: "Etunimet"
@@ -1336,31 +1338,22 @@ fi:
 
   # Organisation and school device statistics
   device_statistics:
-    columns:
-      timestamp: "Tiedot saatu"
-      cpu: "Prosessori"
-      memory: "Muisti (MiB)"
-      hard_drive: "Kiintolevy (GiB)"
+    organisation_devices_tab: "Laitteet"
+    organisation_images_tab: "Työpöytäkuvat"
 
-    device_lists:
-      with_info: "Laitetiedolliset koneet"
-      without_info: "Laitetiedottomat koneet"
-      without_info_count: "Yhteensä %{count} laitetta."
-
-    school_index:
-      title: "Koulun laitetilastot"
-      no_devices: "Koulussa ei ole yhtään laitetta joista laitetietoja voisi saada."
-      no_devices_with_hardware_info: "Koulussa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
-      count_header: "Koulussa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
-
-    organisation_index:
+    organisation:
       title: "Organisaation laitetilastot"
       no_devices: "Organisaatiossa ei ole yhtään laitetta."
       no_devices_with_hardware_info: "Organisaatiossa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
-      count_header: "Organisaatiossa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
 
+    school:
+      title: "Koulun käytössä olevat työpöytäkuvat"
+      no_devices: "Tässä koulussa ei ole yhtään laitetta joista laitetietoja voisi saada."
+      no_devices_with_hardware_info: "Tässä koulussa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
+
+    # Used on school and organisation device images statistics pages
     images:
       title: "Käytössä olevat työpöytäkuvat"
-      header: "Eri työpöytäkuvia on yhteensä %{count}. Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
+      header: "Yhteensä %{total} laitetta on lähettänyt laitteistotietonsa; työpöytäkuvia on käytössä %{count}. Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
       device: "laite"
       devices: "laitetta"
