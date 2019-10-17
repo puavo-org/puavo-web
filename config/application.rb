@@ -78,5 +78,7 @@ module PuavoUsers
     I18n.config.available_locales = [:en, :fi, :sv, :de]
     config.i18n.default_locale = :en
 
+    # Enable deflate/gzip compression
+    config.middleware.use Rack::Deflater
   end
 end
