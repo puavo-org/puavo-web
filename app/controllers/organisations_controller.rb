@@ -43,6 +43,143 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  def get_organisation_devices_list
+    attributes = [
+      'puavoId',
+      'puavoHostname',
+      'puavoDeviceType',
+      'puavoDeviceImage',
+      'puavoDeviceCurrentImage',
+      'macAddress',
+      'serialNumber',
+      'puavoDeviceManufacturer',
+      'puavoDeviceModel',
+      'puavoDeviceKernelArguments',
+      'puavoDeviceXrandr',
+      'puavoTag',
+      'puavoConf',
+      'puavoDeviceHWInfo',
+      'createTimestamp',    # LDAP operational attribute
+      'modifyTimestamp'     # LDAP operational attribute
+    ]
+
+    # get the devices from every school in this organisation
+    @raw = []
+
+    School.all.each do |school|
+      school_raw = Device.search_as_utf8(:filter => "(puavoSchool=#{school.dn})",
+                                         :scope => :one,
+                                         :attributes => attributes)
+
+      school_raw.each do |sd|
+        # pack the school into the array, we'll need it when generating links and other things
+        @raw << [sd, school]
+      end
+    end
+
+    gigabytes = 1024 * 1024 * 1024
+
+    # Localise device type names. We can do this in the JavaScript code too, but the table
+    # sorter only sees IDs, not names, so it sorts device types incorrerctly.
+    device_types = Puavo::CONFIG['device_types']
+
+    # convert the raw data into something we can easily parse in JavaScript
+    @devices = []
+
+    @raw.each do |dev_temp, school|
+      dev = dev_temp[1]   # dev_temp[0] is the device's DN
+
+      # extract hardware info
+      hw_time = nil
+      hw_ram = nil
+      hw_hd = nil
+      hw_ssd = false
+      hw_wlan = nil
+      hw_cpu = nil
+      hw_bios_vendor = nil
+      hw_bios_version = nil
+      hw_bios_date = nil
+      hw_bat_vendor = nil
+      hw_bat_serial = nil
+      hw_bat_capacity = nil
+
+      if dev.include?('puavoDeviceHWInfo')
+        begin
+          info = JSON.parse(dev['puavoDeviceHWInfo'][0])
+
+          hw_time = info['timestamp'].to_i
+          hw_ram = (info['memory'] || []).sum { |slot| slot['size'].to_i }
+          hw_hd = ((info['blockdevice_sda_size'] || 0).to_i / gigabytes).to_i
+          hw_ssd = info['ssd'] ? (info['ssd'] == "1") : false   # why oh why did I put a string in this field and not an integer?
+          hw_wifi = info['wifi']
+          hw_bios_vendor = info['bios_vendor']
+          hw_bios_version = info['bios_version']
+          hw_bios_date = info['bios_release_date']
+
+          if info['processor0'] && info['processorcount']
+            # combine CPU count and name
+            hw_cpu = "#{info['processorcount']}×#{info['processor0']}"
+          end
+
+          if info['battery']
+            hw_bat_vendor = info['battery']['vendor']
+            hw_bat_serial = info['battery']['serial']
+            hw_bat_capacity = info['battery']['capacity']
+
+            if hw_bat_capacity
+              # Convert the battery capacity into an integer. It's a floating-point number, with
+              # a locate-specific digit separator (dot, comma) and ending in a '%'. I could keep
+              # it as a float, but at the moment, I can't easily add floats to the supertable
+              # (actually I can, but making filters for them is painful).
+
+              hw_bat_capacity = hw_bat_capacity.gsub(',', '.')
+              hw_bat_capacity = hw_bat_capacity.gsub('%', '')
+              hw_bat_capacity = hw_bat_capacity.to_i
+
+            end
+          end
+        rescue
+          # oh well
+        end
+      end
+
+      @devices << {
+        id: dev['puavoId'][0],
+        hn: dev['puavoHostname'][0],
+        type: dev['puavoDeviceType'] ? device_types[dev['puavoDeviceType'][0]]['label'][I18n.locale.to_s] : nil,
+        image: dev['puavoDeviceImage'] ? dev['puavoDeviceImage'][0] : nil,
+        current_image: dev['puavoDeviceCurrentImage'] ? dev['puavoDeviceCurrentImage'][0] : nil,
+        mac: dev['macAddress'] ? Array(dev['macAddress']) : nil,
+        serial: dev['serialNumber'] ? dev['serialNumber'][0] : nil,
+        mfer: dev['puavoDeviceManufacturer'] ? dev['puavoDeviceManufacturer'][0] : nil,
+        model: dev['puavoDeviceModel'] ? dev['puavoDeviceModel'][0] : nil,
+        krn_args: dev['puavoDeviceKernelArguments'] ? dev['puavoDeviceKernelArguments'][0] : nil,
+        tags: dev['puavoTag'] ? dev['puavoTag'] : nil,
+        created: convert_ldap_time(dev['createTimestamp']),
+        modified: convert_ldap_time(dev['modifyTimestamp']),
+        hw_time: hw_time,
+        xrandr: dev['puavoDeviceXrandr'] ? Array(dev['puavoDeviceXrandr']) : nil,
+        bios_vendor: hw_bios_vendor,
+        bios_version: hw_bios_version,
+        bios_date: hw_bios_date,
+        cpu: hw_cpu,
+        ram: hw_ram,
+        hd: hw_hd,
+        hd_ssd: hw_ssd,
+        wifi: hw_wifi,
+        bat_vendor: hw_bat_vendor,
+        bat_serial: hw_bat_serial,
+        bat_cap: hw_bat_capacity,
+        #conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "#{k}:#{v}" } : nil,
+        conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "\"#{k}\"=\"#{v}\"" } : nil,
+        school: school.displayName,
+        link: device_path(school, dev['puavoId'][0]),
+      }
+    end
+
+    render :json => @devices
+  end
+
   # GET /organisation/wlan
   def wlan
     @organisation = LdapOrganisation.current

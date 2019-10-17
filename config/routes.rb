@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post '/extended_search' => 'extended_search#do_search', via: [:options]
 
   get '/device_statistics' => 'device_statistics#organisation_statistics'
+  get '/get_organisation_devices_list' => 'organisations#get_organisation_devices_list'
 
   scope :path => "restproxy" do
     match '(*url)' => 'rest#proxy', :via => [:get, :post, :put], :format => false
