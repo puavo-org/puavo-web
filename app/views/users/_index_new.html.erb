@@ -1,0 +1,291 @@
+<div id="usersList"></div>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js" %>
+<%= javascript_include_tag 'modal_dialog' %>
+<%= javascript_include_tag 'supertable' %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+
+// Table column definitions
+const USER_COLUMN_DEFS = {
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    first: {
+        key: "first",
+        title: "<%= t('columns.users.first_names') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    last: {
+        key: "last",
+        title: "<%= t('columns.users.last_name') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    name: {
+        key: "name",
+        title: "<%= t('columns.users.full_name') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        subType: COLUMN_SUBTYPE_USER_USERNAME,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    uid: {
+        key: "uid",
+        title: "<%= t('columns.users.uid') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    eid: {
+        key: "eid",
+        title: "<%= t('columns.users.eid') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    type: {
+        key: "type",
+        title: "<%= t('columns.users.type') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    phone: {
+        key: "phone",
+        title: "<%= t('columns.users.phone') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    email: {
+        key: "email",
+        title: "<%= t('columns.users.email') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    home: {
+        key: "home",
+        title: "<%= t('columns.users.home_dir') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    rrt: {
+        key: "rrt",
+        title: "<%= t('columns.users.rrt') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    locked: {
+        key: "locked",
+        title: "<%= t('columns.users.is_locked') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_BOOLEAN,
+        defaultOperator: OPERATOR_EQUAL,
+    },
+
+    created: {
+        key: "created",
+        title: "<%= t('columns.created') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_GREATER_OR_EQUAL,
+    },
+
+    modified: {
+        key: "modified",
+        title: "<%= t('columns.modified') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+    },
+};
+
+// Default visible columns and their order
+const DEFAULT_USER_COLUMNS = [
+    ["id", false],
+    ["name", true],
+    ["first", false],
+    ["last", false],
+    ["uid", true],
+    ["type", true],
+    ["eid", false],
+    ["phone", false],
+    ["email", false],
+    ["home", false],
+    ["locked", false],
+    ["rrt", false],
+    ["created", false],
+    ["modified", false],
+];
+
+const PRESETS = [
+    {
+        title: (I18n.locale == "fi") ? "Lukitut käyttäjät" : "Locked users",
+        id: "locked",
+        filters: [
+            [true, "locked", OPERATOR_EQUAL, true],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi" : "Is marked for deletion",
+        id: "marked_for_deletion",
+        filters: [
+            [true, "rrt", OPERATOR_GREATER_OR_EQUAL, [2010]],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi, ei lukittu" : "Is marked for deletion, but not locked",
+        id: "unlocked_deleted",
+        filters: [
+            [true, "locked", OPERATOR_NOT_EQUAL, true],
+            [true, "rrt", OPERATOR_GREATER_OR_EQUAL, [2010]],
+            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 90 päivää" : "Has been marked for removal for ≥ 90 days",
+        id: "marked_for_3months",
+        filters: [
+            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 90],
+            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 180 päivää" : "Has been marked for removal for ≥ 180 days",
+        id: "marked_for_6months",
+        filters: [
+            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 180],
+            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 270 päivää" : "Has been marked for removal for ≥ 270 days",
+        id: "marked_for_9months",
+        filters: [
+            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 270],
+            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 365 päivää" : "Has been marked for removal for ≥ 365 days",
+        id: "marked_for_12months",
+        filters: [
+            [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 365],
+            [false, "eid", OPERATOR_NOT_EQUAL, "^$"],
+        ],
+    },
+];
+
+// The current columns, initially the defaults
+var currentColumns = DEFAULT_USER_COLUMNS;
+
+$(document).ready(function() {
+    new SuperTable({
+        // Unique ID for this table
+        id: "users",
+
+        // Organisation and school names, used during CSV exports
+        organisationName: "<%= LdapOrganisation.current.o %>",
+        schoolName: "<%= @school.cn %>",
+
+        // The URL used to dynamically retrieve table data from
+        url: "/users/<%= @school.id %>/get_school_users_list",
+
+        // Where to save the table settings
+        localstoreKey: "supertable-users",
+
+        // Which locale will be used when sorting strings?
+        sortLocale: "<%= supertable_sorting_locale %>",
+
+        // Container for the table and its controls
+        container: document.getElementById("usersList"),
+
+        // Main table flags
+        flags: TABLE_FLAG_USERS,
+
+        // All possible columns, their titles, keys, flags, etc.
+        columnDefs: USER_COLUMN_DEFS,
+
+        // Which columns to display and in which order. You need at least one.
+        currentColumns: currentColumns,
+
+        // Default columns for this table. Used with the column editor.
+        defaultColumns: DEFAULT_USER_COLUMNS,
+
+        // The column that's initially selected on new filter rows
+        defaultFilterColumn: "name",
+
+        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
+        // are valid here, any other value will be ignored and the order is assumed to be ascending).
+        // If the column does not exist, then the initial sort will be ignored completely.
+        initialSort: { column: "name", order: SORT_ORDER_ASCENDING },
+
+        // Premade filter presets
+        filterPresets: PRESETS,
+
+        // Name of the objects the table contains. Currently always a plural.
+        itemName: "<%= t('users.index.users') %>",
+
+        // Column editor subtitle
+        columnEditorSubtitle: "<%= t('layouts.application.users') %>",
+    });
+});
+
+</script>
+
+<% content_for :tools do %>
+<ul>
+  <li>
+    <%= link_to new_user_path, class: 'btn' do %>
+      <i class='icon-plus'></i><%= t('link.new_user')%>
+    <% end %>
+  </li>
+
+  <li>
+    <%= link_to lock_marked_users_path, data: { confirm: t('lock_marked_users') }, method: :post, class: 'btn btn-danger' do %>
+      <i class='icon-lock'></i><%= t('link.lock_users_marked_for_deletion')%>
+    <% end %>
+  </li>
+
+  <% if current_user.organisation_owner? %>
+  <li class="ownersOnly">
+    <%= link_to delete_marked_users_path, data: { confirm: t('delete_marked_users') }, method: :delete, class: 'btn btn-danger' do %>
+      <i class='icon-trash'></i><%= t('link.delete_users_marked_for_deletion')%>
+    <% end %>
+  </li>
+  <% end %>
+</ul>
+<% end %>
+
+<% end %>

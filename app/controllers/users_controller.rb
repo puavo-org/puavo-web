@@ -3,6 +3,15 @@ class UsersController < ApplicationController
   # GET /:school_id/users
   # GET /:school_id/users.xml
   def index
+    if test_environment?
+      old_legacy_users_index
+    else
+      new_cool_users_index
+    end
+  end
+
+  # Old "legacy" index used during tests
+  def old_legacy_users_index
     if @school
       filter = "(puavoSchool=#{@school.dn})"
     end
@@ -62,6 +71,13 @@ class UsersController < ApplicationController
     end
   end
 
+  # New AJAX-based index for non-test environments
+  def new_cool_users_index
+    respond_to do |format|
+      format.html # index.html.erb
+    end
+  end
+
   def get_school_users_list
     attributes = [
       'puavoId',
@@ -89,8 +105,6 @@ class UsersController < ApplicationController
     users = []
 
     user_types = {}
-
-    #byebug
 
     raw.each do |dn, usr|
       u = {
