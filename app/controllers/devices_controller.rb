@@ -4,6 +4,15 @@ class DevicesController < ApplicationController
   # GET /devices
   # GET /devices.xml
   def index
+    if test_environment?
+      old_legacy_devices_index
+    else
+      new_cool_devices_index
+    end
+  end
+
+  # Old "legacy" index used during tests
+  def old_legacy_devices_index
     @device = Device.new
 
     if @school
@@ -18,6 +27,22 @@ class DevicesController < ApplicationController
     else
       @devices = Device.find(:all)
     end
+
+    if request.format == 'text/html'
+      @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
+      @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
+    end
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @devices }
+      format.json  { render :json => @devices }
+    end
+  end
+
+  # New AJAX-based index for non-test environments
+  def new_cool_devices_index
+    @device = Device.new
 
     if request.format == 'text/html'
       @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
@@ -60,8 +85,12 @@ class DevicesController < ApplicationController
 
     gigabytes = 1024 * 1024 * 1024
 
+    # Localise device type names. We can do this in the JavaScript code too, but the table
+    # sorter only sees IDs, not names, so it sorts device types incorrerctly.
+    device_types = Puavo::CONFIG['device_types']
+
     @raw.each do |dn, dev|
-      # dig RAM and HDD sizes
+      # extract hardware info
       hw_time = nil
       hw_ram = nil
       hw_hd = nil
@@ -97,15 +126,23 @@ class DevicesController < ApplicationController
             hw_bat_vendor = info['battery']['vendor']
             hw_bat_serial = info['battery']['serial']
             hw_bat_capacity = info['battery']['capacity']
+
+            if hw_bat_capacity
+              # Convert the battery capacity into an integer. It's a floating-point number, with
+              # a locate-specific digit separator (dot, comma) and ending in a '%'. I could keep
+              # it as a float, but at the moment, I can't easily add floats to the supertable
+              # (actually I can, but making filters for them is painful).
+
+              hw_bat_capacity = hw_bat_capacity.gsub(',', '.')
+              hw_bat_capacity = hw_bat_capacity.gsub('%', '')
+              hw_bat_capacity = hw_bat_capacity.to_i
+
+            end
           end
         rescue
           # oh well
         end
       end
-
-      # Localise device type names. We can do this in the JavaScript code too, but the table
-      # sorter only sees IDs, not names, so it sorts device types incorrerctly.
-      device_types = Puavo::CONFIG['device_types']
 
       @devices << {
         id: dev['puavoId'][0],
@@ -134,7 +171,7 @@ class DevicesController < ApplicationController
         bat_vendor: hw_bat_vendor,
         bat_serial: hw_bat_serial,
         bat_cap: hw_bat_capacity,
-        conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "#{k}:#{v}" } : nil,
+        conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "\"#{k}\"=\"#{v}\"" } : nil,
         link: device_path(@school, dev['puavoId'][0]),
       }
     end

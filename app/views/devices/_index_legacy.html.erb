@@ -1,0 +1,54 @@
+<h1><%= t('devices.index.title') %></h1>
+
+<p><%= @devices.length %> <%= t('devices.index.devices') %></p>
+
+<% unless @devices.empty? %>
+
+<table class="list" id="devices">
+  <tr class="thead">
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceType')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceManufacturer')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceModel')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.serialNumber')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.macAddress')) %></th>
+    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceImage')) %></th>
+    <th><%= t('actions') %></th>
+  </tr>
+
+<% @devices.each do |device| %>
+  <tr>
+    <td data-title="<%= t('activeldap.attributes.device.puavoHostname') %>"><%= link_to device.puavoHostname, device_path(@school, device) %></td>
+    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceType') %>"><%= h Puavo::CONFIG["device_types"][device.puavoDeviceType]["label"][I18n.locale.to_s] %></td>
+    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceManufacturer') %>" title="<%= h device.puavoDeviceModel %>"><%=h device.puavoDeviceManufacturer %></td>
+    <td data-title="<%= t('activeldap.attributes.device.serialNumber') %>"><%= h device.puavoDeviceModel %></td>
+    <td data-title="<%= t('activeldap.attributes.device.serialNumber') %>"><%= h device.serialNumber %></td>
+    <td data-title="<%= t('activeldap.attributes.device.macAddress') %>"><%= (Array(device.macAddress || []).join(', <wbr>')).html_safe %></td>
+    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceImage') %>"><%= ((device.puavoDeviceImage || '').split('-').join('-<wbr>')).html_safe %></td>
+    <td data-title="<%= t('actions') %>" class="tableActions">
+      <%= link_to edit_device_path(@school, device), class: "btn" do %>
+        <i class="icon-pencil"></i> <%= t('link.edit') %>
+      <% end %>
+
+      <%= link_to device_path(@school, device), data: { confirm: t('destroy_confirm', object_name: device.puavoHostname) }, method: :delete, class: "btn btn-danger" do%>
+        <i class="icon-trash"></i> <%= t('link.destroy') %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<% end %>
+
+<% content_for :tools do %>
+<ul>
+  <li id="addNewDeviceTitle">
+    <%= form_for(@device, :url => new_device_path(@school), html: { method: :get }) do |f| %>
+    <span><%= t('devices.index.add_new_device') %>:</span>
+    <%= select_tag "device_type",
+        options_for_select( @device_types ) %>
+      <%= f.submit t('link.add'), id: "device_submit" %>
+    <% end %>
+  </li>
+</ul>
+<% end %>

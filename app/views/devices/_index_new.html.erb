@@ -1,0 +1,357 @@
+<div id="devicesList"></div>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js" %>
+<%= javascript_include_tag 'modal_dialog' %>
+<%= javascript_include_tag 'supertable' %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+
+// Table column definitions
+const DEVICE_COLUMN_DEFS = {
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+    },
+
+    hn: {
+        key: "hn",
+        title: "<%= t('columns.devices.hostname') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        subType: COLUMN_SUBTYPE_DEVICE_HOSTNAME,
+    },
+
+    type: {
+        key: "type",
+        title: "<%= t('columns.devices.type') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    image: {
+        key: "image",
+        title: "<%= t('columns.devices.image') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    current_image: {
+        key: "current_image",
+        title: "<%= t('columns.devices.current_image') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    tags: {
+        key: "tags",
+        title: "<%= t('columns.devices.tags') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    mac: {
+        key: "mac",
+        title: "<%= t('columns.devices.mac') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    serial: {
+        key: "serial",
+        title: "<%= t('columns.devices.serial') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    model: {
+        key: "model",
+        title: "<%= t('columns.devices.model') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    mfer: {
+        key: "mfer",
+        title: "<%= t('columns.devices.manufacturer') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    krn_args: {
+        key: "krn_args",
+        title: "<%= t('columns.devices.kernel_args') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    conf: {
+        key: "conf",
+        title: "<%= t('columns.puavoconf') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    created: {
+        key: "created",
+        title: "<%= t('columns.created') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_GREATER_OR_EQUAL,
+    },
+
+    modified: {
+        key: "modified",
+        title: "<%= t('columns.modified') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+    },
+
+    // HARDWARE INFO
+    hw_time: {
+        key: "hw_time",
+        title: "<%= t('columns.devices.hwinfo_time') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+    },
+
+    ram: {
+        key: "ram",
+        title: "<%= t('columns.devices.hwinfo_ram_size') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+        defaultOperator: OPERATOR_LESS_THAN,
+    },
+
+    hd: {
+        key: "hd",
+        title: "<%= t('columns.devices.hwinfo_hd_size') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+        defaultOperator: OPERATOR_LESS_THAN,
+    },
+
+    hd_ssd: {
+        key: "hd_ssd",
+        title: "<%= t('columns.devices.hwinfo_is_ssd') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_BOOLEAN,
+    },
+
+    bios_vendor: {
+        key: "bios_vendor",
+        title: "<%= t('columns.devices.bios_vendor') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bios_version: {
+        key: "bios_version",
+        title: "<%= t('columns.devices.bios_version') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bios_date: {
+        key: "bios_date",
+        title: "<%= t('columns.devices.bios_date') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    cpu: {
+        key: "cpu",
+        title: "<%= t('columns.devices.cpu') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bat_vendor: {
+        key: "bat_vendor",
+        title: "<%= t('columns.devices.bat_vendor') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bat_serial: {
+        key: "bat_serial",
+        title: "<%= t('columns.devices.bat_serial') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bat_cap: {
+        key: "bat_cap",
+        title: "<%= t('columns.devices.bat_cap') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+        subType: COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY,
+    },
+
+    xrandr: {
+        key: "xrandr",
+        title: "<%= t('columns.devices.xrandr') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    wifi: {
+        key: "wifi",
+        title: "<%= t('columns.devices.wifi') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+};
+
+// Default visible columns and their order
+const DEFAULT_DEVICE_COLUMNS = [
+    ["id", false],
+    ["hn", true],
+    ["type", true],
+    ["tags", false],
+    ["mfer", true],
+    ["model", true],
+    ["serial", true],
+    ["mac", true],
+    ["image", true],
+    ["current_image", true],
+    ["krn_args", false],
+    ["created", false],
+    ["modified", false],
+    ["conf", false],
+    ["hw_time", false],
+    ["ram", false],
+    ["hd", false],
+    ["hd_ssd", false],
+    ["cpu", false],
+    ["bios_vendor", false],
+    ["bios_version", false],
+    ["bios_date", false],
+    ["bat_vendor", false],
+    ["bat_serial", false],
+    ["bat_cap", false],
+    ["wifi", false],
+    ["xrandr", false],
+];
+
+const PRESETS = [
+    {
+        title: (I18n.locale == "fi") ? "Käyttää Trusty-kuvaa" : "Uses a Trusty image",
+        id: "uses_trusty",
+        filters: [
+            [true, "current_image", OPERATOR_EQUAL, "trusty"],
+            [false, "image", OPERATOR_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Käyttää Stretch-kuvaa" : "Uses a Stretch image",
+        id: "uses_stretch",
+        filters: [
+            [true, "current_image", OPERATOR_EQUAL, "stretch"],
+            [false, "image", OPERATOR_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Käyttää Buster-kuvaa" : "Uses a Buster image",
+        id: "uses_buster",
+        filters: [
+            [true, "current_image", OPERATOR_EQUAL, "buster"],
+            [false, "image", OPERATOR_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Laitteella on xrandr-asetuksia" : "Device has xrandr settings",
+        id: "has_xrandr",
+        filters: [
+            [true, "xrandr", OPERATOR_NOT_EQUAL, "^$"],
+        ],
+    },
+
+    {
+        title: (I18n.locale == "fi") ? "Laitteesta on saatu laitetiedot" : "Have received hardware information",
+        id: "has_hwinfo",
+        filters: [
+            [true, "hw_time", OPERATOR_GREATER_OR_EQUAL, [2010, 1, 1]],
+        ],
+    },
+];
+
+// The current columns, initially the defaults
+var currentColumns = DEFAULT_DEVICE_COLUMNS;
+
+$(document).ready(function() {
+    new SuperTable({
+        // Unique ID for this table
+        id: "devices",
+
+        // Organisation and school names, used during CSV exports
+        organisationName: "<%= LdapOrganisation.current.o %>",
+        schoolName: "<%= @school.cn %>",
+
+        // The URL used to dynamically retrieve table data from
+        url: "/devices/<%= @school.id %>/get_school_devices_list",
+
+        // Where to save the table settings
+        localstoreKey: "supertable-devices",
+
+        // Which locale will be used when sorting strings?
+        sortLocale: "<%= supertable_sorting_locale %>",
+
+        // Container for the table and its controls
+        container: document.getElementById("devicesList"),
+
+        // Main table flags
+        flags: TABLE_FLAG_DEVICES,
+
+        // All possible columns, their titles, keys, flags, etc.
+        columnDefs: DEVICE_COLUMN_DEFS,
+
+        // Which columns to display and in which order. You need at least one.
+        currentColumns: currentColumns,
+
+        // Default columns for this table. Used with the column editor.
+        defaultColumns: DEFAULT_DEVICE_COLUMNS,
+
+        // The column that's initially selected on new filter rows
+        defaultFilterColumn: "hn",
+
+        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
+        // are valid here, any other value will be ignored and the order is assumed to be ascending).
+        // If the column does not exist, then the initial sort will be ignored completely.
+        initialSort: { column: "hn", order: SORT_ORDER_ASCENDING },
+
+        // Premade filter presets
+        filterPresets: PRESETS,
+
+        // Name of the objects the table contains. Currently always a plural.
+        itemName: "<%= t('devices.index.devices') %>",
+
+        // Column editor subtitle
+        columnEditorSubtitle: "<%= t('layouts.application.devices') %>",
+    });
+});
+
+</script>
+<% end %>
+
+<% content_for :tools do %>
+<ul>
+  <li id="addNewDeviceTitle">
+    <%= form_for(@device, :url => new_device_path(@school), html: { method: :get }) do |f| %>
+    <span><%= t('devices.index.add_new_device') %>:</span>
+    <%= select_tag "device_type",
+        options_for_select( @device_types ) %>
+      <%= f.submit t('link.add'), id: "device_submit" %>
+    <% end %>
+  </li>
+</ul>
+<% end %>
