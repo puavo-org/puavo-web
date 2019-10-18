@@ -1273,12 +1273,35 @@ fi:
   # Extended search
   extended_search:
     title: "Laajennettu haku"
+
     tabs:
       search: "Hakulomake"
       help: "Käyttöohje ja vihjeitä"
+
     search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
+
     terms_title: "Hakutermien tyyppi"
-    per_term_settings_title: "Lisäasetukset tälle termityypille"
+
+    per_term_settings:
+      title: "Lisäasetukset tälle termityypille"
+      no_extra_settings: "(Ei lisäasetuksia tälle tyypille)"
+      deletion_mark_state:
+        title: "Käyttäjän poistomerkintä"
+        is_marked: "On merkitty poistettavaksi"
+        is_unmarked: "Ei ole merkitty poistettavaksi"
+        dont_care: "(Ei väliä)"
+      lock_state:
+        title: "Käyttäjätunnuksen lukitus"
+        is_locked: "On lukittu"
+        is_unlocked: "Ei ole lukittu"
+        dont_care: "(Ei väliä)"
+      device_type:
+        title: "Rajaa laitteen tyypin mukaan"
+        laptop: "Kannettava"
+        fatclient: "Verkkopääte"
+        printer: "Tulostin"
+        other: "(Kaikki muut)"
+
     term_names:
       users:
         title: "Käyttäjät"
@@ -1309,16 +1332,20 @@ fi:
         manufacturer: "Laitteet: Valmistaja"
         model: "Laitteet: Malli"
         serial_number: "Laitteet: Sarjanumero"
+
     school_limit_title: "Koulurajaus"
     school_limit_all: "(Kaikki koulut)"
+
     more_settings:
       title: "Haun asetukset"
       regexp_title: "Termit ovat regexp-lauseita (sallii osittaiset osumat, katso ohje)"
       reverse_title: "Käänteinen haku (koskee vain hakutermejä, ei niiden lisäasetuksia)"
       remove_misses_title: "Älä näytä tuloksissa termejä jotka eivät täsmänneet mihinkään"
+
     button_search: "Hae"
     button_clear_results: "Tyhjennä tulokset"
     button_clear_terms: "Tyhjennä hakutermit"
+
     results_title: "Tulokset"
     results:
       search_term_title: "Hakutermi"
@@ -1326,8 +1353,10 @@ fi:
       no_term_hits: "(Ei osumia)"
       no_results: "(Ei hakutuloksia)"
       statistics: "Yhteensä %{total} tulosta. %{num_terms} hakutermi(ä); %{num_hits} osuma(a), %{num_misses} huti(a). Haku kesti %{elapsed} sekuntia. "
+
     errors:
       unknown_school: "(Tuntematon koulu)"
+
     controller:
       invalid_search_data: "Virheellinen hakupyyntö: termit tai niiden tyyppi puuttuu"
       search_terms_cleanup_failed: "Hakutermien siivous epäonnistui"

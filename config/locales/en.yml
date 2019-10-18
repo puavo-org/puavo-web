@@ -1303,12 +1303,35 @@ en:
   # Extended search
   extended_search:
     title: "Extended Search"
+
     tabs:
       search: "Search"
       help: "Instructions and tips"
+
     search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
+
     terms_title: "Search terms type:"
-    per_term_settings_title: "Extra settings for this term type"
+
+    per_term_settings:
+      title: "Extra settings for this term type"
+      no_extra_settings: "(No extra settings)"
+      deletion_mark_state:
+        title: "Account removal state"
+        is_marked: "Is marked for later removal"
+        is_unmarked: "Not marked for later removal"
+        dont_care: "(Ignore)"
+      lock_state:
+        title: "Account locking"
+        is_locked: "Account is locked"
+        is_unlocked: "Account is not locked"
+        dont_care: "(Ignore)"
+      device_type:
+        title: "Limit results by device type"
+        laptop: "Laptop"
+        fatclient: "Fatclient"
+        printer: "Printer"
+        other: "(Everything else)"
+
     term_names:
       users:
         title: "Users"
@@ -1339,16 +1362,20 @@ en:
         manufacturer: "Devices: Manufacturer"
         model: "Devices: Model"
         serial_number: "Devices: Serial number"
+
     school_limit_title: "School limit:"
     school_limit_all: "(All schools)"
+
     more_settings:
       title: "Search settings"
       regexp_title: "Terms are regexp strings (allows partial hits, see help)"
       reverse_title: "Reverse search (only search terms are matched in reverse, not term-specific extra settings)"
       remove_misses_title: "Don't list terms that produced no hits in the results"
+
     button_search: "Search"
     button_clear_results: "Clear results"
     button_clear_terms: "Clear search terms"
+
     results_title: "Results"
     results:
       search_term_title: "Search term"
@@ -1356,8 +1383,10 @@ en:
       no_term_hits: "(No hits)"
       no_results: "(No results)"
       statistics: "%{total} hits in total. %{num_terms} search term(s); %{num_hits} hit(s), %{num_misses} miss(es). Searching took %{elapsed} seconds. "
+
     errors:
       unknown_school: "(Unknown school)"
+
     controller:
       invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
       search_terms_cleanup_failed: "Search term cleanup failed"
