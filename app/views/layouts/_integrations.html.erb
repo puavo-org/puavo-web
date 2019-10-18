@@ -1,3 +1,4 @@
+    <% unless integrations.empty?  %>
     <ul class="integrations <%= extraClass %>">
       <% [['in', t('schools.integrations.in') ],
           ['out', t('schools.integrations.out')],
@@ -18,3 +19,4 @@
       <% end %>
       <% end %>
     </ul>
+    <% end %>
