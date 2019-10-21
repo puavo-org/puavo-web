@@ -2199,7 +2199,7 @@ class SuperTable {
             // There's no copy of the data that's been filtered but not sorted, so filter it
             let newData;
 
-            if (!this.filteringEnabled)
+            if (!this.filtering.enabled)
                 newData = [...this.currentData];
             else {
                 newData = this.filterData(this.filtering.filters,
