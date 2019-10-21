@@ -2248,7 +2248,15 @@ class SuperTable {
 
             let a = window.document.createElement("a");
             a.href = window.URL.createObjectURL(b);
-            a.download = `${this.settings.organisation}_${this.settings.school}_${this.id}_${timestamp}.csv`;
+
+            if (this.settings.flags & TABLE_FLAG_ORGANISATION_DEVICES) {
+                // the whole organisation
+                a.download = `${this.settings.organisation}_devices_${timestamp}.csv`;
+            } else {
+                // a single school
+                a.download = `${this.settings.organisation}_${this.settings.school}_${this.id}_${timestamp}.csv`;
+            }
+
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
