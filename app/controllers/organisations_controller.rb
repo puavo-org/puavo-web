@@ -90,6 +90,7 @@ class OrganisationsController < ApplicationController
       dev = dev_temp[1]   # dev_temp[0] is the device's DN
 
       # extract hardware info
+      hw_current_image = nil
       hw_time = nil
       hw_ram = nil
       hw_hd = nil
@@ -106,6 +107,10 @@ class OrganisationsController < ApplicationController
       if dev.include?('puavoDeviceHWInfo')
         begin
           info = JSON.parse(dev['puavoDeviceHWInfo'][0])
+
+          # we have puavoImage and puavoCurrentImage fields in the database, but
+          # they aren't always reliable
+          hw_current_image = info['this_image']
 
           hw_time = info['timestamp'].to_i
           hw_ram = (info['memory'] || []).sum { |slot| slot['size'].to_i }
@@ -148,7 +153,7 @@ class OrganisationsController < ApplicationController
         hn: dev['puavoHostname'][0],
         type: dev['puavoDeviceType'] ? device_types[dev['puavoDeviceType'][0]]['label'][I18n.locale.to_s] : nil,
         image: dev['puavoDeviceImage'] ? dev['puavoDeviceImage'][0] : nil,
-        current_image: dev['puavoDeviceCurrentImage'] ? dev['puavoDeviceCurrentImage'][0] : nil,
+        current_image: hw_current_image,
         mac: dev['macAddress'] ? Array(dev['macAddress']) : nil,
         serial: dev['serialNumber'] ? dev['serialNumber'][0] : nil,
         mfer: dev['puavoDeviceManufacturer'] ? dev['puavoDeviceManufacturer'][0] : nil,
@@ -170,7 +175,6 @@ class OrganisationsController < ApplicationController
         bat_vendor: hw_bat_vendor,
         bat_serial: hw_bat_serial,
         bat_cap: hw_bat_capacity,
-        #conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "#{k}:#{v}" } : nil,
         conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "\"#{k}\"=\"#{v}\"" } : nil,
         school: school.displayName,
         link: device_path(school, dev['puavoId'][0]),

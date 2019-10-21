@@ -91,6 +91,7 @@ class DevicesController < ApplicationController
 
     @raw.each do |dn, dev|
       # extract hardware info
+      hw_current_image = nil
       hw_time = nil
       hw_ram = nil
       hw_hd = nil
@@ -107,6 +108,10 @@ class DevicesController < ApplicationController
       if dev['puavoDeviceHWInfo']
         begin
           info = JSON.parse(dev['puavoDeviceHWInfo'][0])
+
+          # we have puavoImage and puavoCurrentImage fields in the database, but
+          # they aren't always reliable
+          hw_current_image = info['this_image']
 
           hw_time = info['timestamp'].to_i
           hw_ram = (info['memory'] || []).sum { |slot| slot['size'].to_i }
@@ -149,7 +154,7 @@ class DevicesController < ApplicationController
         hn: dev['puavoHostname'][0],
         type: dev['puavoDeviceType'] ? device_types[dev['puavoDeviceType'][0]]['label'][I18n.locale.to_s] : nil,
         image: dev['puavoDeviceImage'] ? dev['puavoDeviceImage'][0] : nil,
-        current_image: dev['puavoDeviceCurrentImage'] ? dev['puavoDeviceCurrentImage'][0] : nil,
+        current_image: hw_current_image,
         mac: dev['macAddress'] ? Array(dev['macAddress']) : nil,
         serial: dev['serialNumber'] ? dev['serialNumber'][0] : nil,
         mfer: dev['puavoDeviceManufacturer'] ? dev['puavoDeviceManufacturer'][0] : nil,
