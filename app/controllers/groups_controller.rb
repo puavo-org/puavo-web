@@ -17,7 +17,7 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups
   # GET /:school_id/groups.xml
   def index
-    if test_environment?
+    if test_environment? || ['application/json', 'application/xml'].include?(request.format)
       old_legacy_groups_index
     else
       new_cool_groups_index

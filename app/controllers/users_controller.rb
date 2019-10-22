@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   # GET /:school_id/users
   # GET /:school_id/users.xml
   def index
-    if test_environment?
+    if test_environment? || ['application/json', 'application/xml'].include?(request.format)
       old_legacy_users_index
     else
       new_cool_users_index

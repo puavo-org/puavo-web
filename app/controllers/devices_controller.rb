@@ -4,7 +4,7 @@ class DevicesController < ApplicationController
   # GET /devices
   # GET /devices.xml
   def index
-    if test_environment?
+    if test_environment? || ['application/json', 'application/xml'].include?(request.format)
       old_legacy_devices_index
     else
       new_cool_devices_index
@@ -45,14 +45,13 @@ class DevicesController < ApplicationController
     @device = Device.new
 
     if request.format == 'text/html'
+      # list of new device types
       @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
       @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
     end
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @devices }
-      format.json  { render :json => @devices }
     end
   end
 
