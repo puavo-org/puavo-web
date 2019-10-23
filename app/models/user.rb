@@ -177,6 +177,10 @@ class User < LdapBase
           elsif !self.new_password.ascii_only? then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_ascii_only"))
           end
+        when 'oulu_ad'
+          if self.new_password.size < 8 then
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.oulu_ad_password_too_short"))
+          end
         when 'SixCharsMin'
           if self.new_password.size < 6 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.sixcharsmin_password_too_short"))

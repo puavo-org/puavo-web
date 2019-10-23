@@ -36,6 +36,10 @@ module PasswordHelper
         template = 'password/password_gsuite'
 
       # TODO: Create a more flexible system for specifying password requirements
+      when 'oulu_ad'
+        locals[:min_length] = 8
+        template = 'password/password_oulu_ad'
+
       when 'SixCharsMin'
         locals[:min_length] = 6
 
@@ -59,6 +63,10 @@ module PasswordHelper
     case requirements
       when 'Google'
         msg = t('password.gsuite_integration_enabled')
+
+      when 'oulu_ad'
+        # this... this is not the proper way of doing it
+        msg = t('password.oulu_ad_integration_enabled')
 
       when 'SixCharsMin'
         msg = t('password.six_chars_min')

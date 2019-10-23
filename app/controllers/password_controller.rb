@@ -274,6 +274,15 @@ class PasswordController < ApplicationController
           raise User::UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_ascii_only')
         end
+      when 'oulu_ad'
+        # Validate the password to contain at least eight characters
+        new_password = params[:user][:new_password]
+        if new_password.size < 8 then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.oulu_ad_password_too_short')
+        end
+
+        # There are other limitations here too, but we cannot check for them
       when 'SixCharsMin'
         # Validate the password to contain at least six characters.
         new_password = params[:user][:new_password]
