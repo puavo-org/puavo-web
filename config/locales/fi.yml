@@ -1195,6 +1195,7 @@ fi:
       model: "Malli"
       serial: "Sarjanumero"
       mac: "MAC"
+      description: "Kuvaus"
       image: "Työpöytäkuva"
       current_image: "Nykyinen työpöytäkuva"
       kernel_args: "Kernel-parametrit"

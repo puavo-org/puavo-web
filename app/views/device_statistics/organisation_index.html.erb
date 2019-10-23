@@ -126,6 +126,13 @@ const ORGANISATION_DEVICE_COLUMN_DEFS = {
         type: COLUMN_TYPE_STRING,
     },
 
+    desc: {
+        key: "desc",
+        title: "<%= t('columns.devices.description') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT_BY_NEWLINES,
+        type: COLUMN_TYPE_STRING,
+    },
+
     krn_args: {
         key: "krn_args",
         title: "<%= t('columns.devices.kernel_args') %>",
@@ -265,6 +272,7 @@ const DEFAULT_ORGANISATION_DEVICE_COLUMNS = [
     ["model", false],
     ["serial", false],
     ["mac", false],
+    ["desc", false],
     ["image", false],
     ["current_image", true],
     ["krn_args", false],

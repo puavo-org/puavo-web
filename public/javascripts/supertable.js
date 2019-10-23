@@ -439,7 +439,8 @@ const ROW_FLAG_SELECTED = 0x01,             // this row is currently selected
 
 // Column flags. Affects mainly how the raw data is processed before it is actually interpreted.
 const COLUMN_FLAG_SORTABLE = 0x01,  // this column can be sorted
-      COLUMN_FLAG_SPLIT = 0x02;     // the value is an array that must displayed on multiple rows in the cell
+      COLUMN_FLAG_SPLIT = 0x02,     // the value is an array that must displayed on multiple rows in the cell
+      COLUMN_FLAG_SPLIT_BY_NEWLINES = 0x04; // convert \n's into <br>'s (strips out \r's)
 
 // Column data types. Do NOT use zero here, because... JavaScript's "types".
 const COLUMN_TYPE_STRING = 1,
@@ -2696,7 +2697,17 @@ class SuperTable {
                 if (contents) {
                     if (def.flags & COLUMN_FLAG_SPLIT) {
                         // escape HTML, then join the array with forced linebreaks
-                        contents = contents.map(i => escapeHTML(i)).join("<br>");
+                        contents = contents
+                            .map(i => escapeHTML(i))
+                            .join("<br>");
+                    } else if (def.flags & COLUMN_FLAG_SPLIT_BY_NEWLINES) {
+                        // convert \n's into actual newlines (and remove \r's)
+                        // and escape HTML
+                        contents = contents
+                            .replace("\r", "")
+                            .split("\n")
+                            .map(i => escapeHTML(i))
+                            .join("<br>");
                     } else {
                         // escape HTML
                         contents = escapeHTML(contents);

@@ -70,6 +70,7 @@ class DevicesController < ApplicationController
       'puavoDeviceXrandr',
       'puavoTag',
       'puavoConf',
+      'description',
       'puavoDeviceHWInfo',
       'createTimestamp',    # LDAP operational attribute
       'modifyTimestamp'     # LDAP operational attribute
@@ -158,6 +159,7 @@ class DevicesController < ApplicationController
         serial: dev['serialNumber'] ? dev['serialNumber'][0] : nil,
         mfer: dev['puavoDeviceManufacturer'] ? dev['puavoDeviceManufacturer'][0] : nil,
         model: dev['puavoDeviceModel'] ? dev['puavoDeviceModel'][0] : nil,
+        desc: dev['description'] ? dev['description'][0] : nil,
         krn_args: dev['puavoDeviceKernelArguments'] ? dev['puavoDeviceKernelArguments'][0] : nil,
         tags: dev['puavoTag'] ? dev['puavoTag'] : nil,
         created: convert_ldap_time(dev['createTimestamp']),

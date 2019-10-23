@@ -1225,6 +1225,7 @@ en:
       model: "Model"
       serial: "Serial"
       mac: "MAC"
+      description: "Description"
       image: "Image"
       current_image: "Current image"
       kernel_args: "Kernel arguments"
