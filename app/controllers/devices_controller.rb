@@ -83,7 +83,8 @@ class DevicesController < ApplicationController
 
     @devices = []
 
-    gigabytes = 1024 * 1024 * 1024
+    megabytes = 1024 * 1024
+    gigabytes = megabytes * 1024
 
     # Localise device type names. We can do this in the JavaScript code too, but the table
     # sorter only sees IDs, not names, so it sorts device types incorrerctly.
@@ -104,6 +105,8 @@ class DevicesController < ApplicationController
       hw_bat_vendor = nil
       hw_bat_serial = nil
       hw_bat_capacity = nil
+      hw_abitti_version = nil
+      hw_df_home = nil
 
       if dev['puavoDeviceHWInfo']
         begin
@@ -144,6 +147,23 @@ class DevicesController < ApplicationController
 
             end
           end
+
+          # Current Abitti version
+          if info['extra_system_contents']
+            extra = info['extra_system_contents']
+
+            if extra['Abitti']
+              hw_abitti_version = extra['Abitti'].to_i || -1
+            end
+          end
+
+          # Free disk space
+          if info['free_space']
+            df = info['free_space']
+
+            hw_df_home = df.include?('/home') ? df['/home'].to_i / megabytes : -1
+          end
+
         rescue
           # oh well
         end
@@ -177,6 +197,8 @@ class DevicesController < ApplicationController
         bat_vendor: hw_bat_vendor,
         bat_serial: hw_bat_serial,
         bat_cap: hw_bat_capacity,
+        abitti_version: hw_abitti_version,
+        df_home: hw_df_home,
         conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "\"#{k}\"=\"#{v}\"" } : nil,
         link: device_path(@school, dev['puavoId'][0]),
       }

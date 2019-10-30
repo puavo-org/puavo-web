@@ -1244,6 +1244,8 @@ en:
       bat_cap: "Battery capacity"
       wifi: "WiFi"
       xrandr: "Xrandr"
+      abitti_version: "Abitti version"
+      df_home: "Free /home (MiB)"
 
   # Device hardware info
   hwinfo:

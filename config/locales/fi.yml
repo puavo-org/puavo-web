@@ -1214,6 +1214,8 @@ fi:
       bat_cap: "Akun kapasiteetti"
       wifi: "WiFi"
       xrandr: "Xrandr"
+      abitti_version: "Abitti-versio"
+      df_home: "Vapaana /home (MiB)"
 
   # Device hardware info
   hwinfo:
