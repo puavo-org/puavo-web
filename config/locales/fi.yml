@@ -380,7 +380,7 @@ fi:
       placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
       hidden_members_hidden_tools_warning: "Joitain toimintoja on piilotettu, koska ryhmässä on jäseniä kouluista joihin sinulla ei ole pääsyoikeutta."
     new:
-      title: "Luo uusi ryhmä..."
+      title: "Luo uusi ryhmä"
     edit:
       title: "Muokkaa ryhmää"
       course_group_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Ryhmään tekemäsi muutokset tullaan todennäköisesti kumoamaan. Älä koskaan vaihda tämän ryhmän ulkoista ID:tä!"
