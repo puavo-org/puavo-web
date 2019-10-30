@@ -10,7 +10,7 @@
 <table class="editForm">
   <tr>
     <th class="requiredField"><%= f.label :o %></th>
-    <td><%= f.text_field :o %></td>
+    <td><%= f.text_field :o, :required => 'required', :autofocus => true %></td>
   </tr>
 
   <tr>

@@ -14,7 +14,7 @@
   <table class="editForm">
     <tr>
       <th class="requiredField"><%= f.label :givenName %></th>
-      <td><%= f.text_field :givenName, disabled: read_only, :required => 'required' %></td>
+      <td><%= f.text_field :givenName, disabled: read_only, :required => 'required', :autofocus => true %></td>
     </tr>
 
     <tr>
