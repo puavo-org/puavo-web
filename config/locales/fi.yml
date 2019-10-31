@@ -1244,6 +1244,8 @@ fi:
     hard_drive:
       title: "Kiintolevy"
       none: "(Ei kiintolevyä)"
+    df:
+      title: "Osioiden vapaa tila (MiB)"
     wifi:
       title: "WiFi"
     product:
@@ -1274,6 +1276,9 @@ fi:
       voltage: "Jännite"
       capacity: "Kapasiteetti"
       percentage: "Latausaste"
+    abitti:
+      title: "Abitti-versio"
+      unknown: "(Tuntematon)"
 
   # Extended search
   extended_search:

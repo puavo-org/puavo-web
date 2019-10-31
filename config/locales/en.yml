@@ -1274,6 +1274,8 @@ en:
     hard_drive:
       title: "Hard drive"
       none: "(No hard drive)"
+    df:
+      title: "Partitions free space (MiB)"
     wifi:
       title: "WiFi"
     product:
@@ -1304,6 +1306,9 @@ en:
       voltage: "Voltage"
       capacity: "Capacity"
       percentage: "Percentage"
+    abitti:
+      title: "Abitti version"
+      unknown: "(Unknown)"
 
   # Extended search
   extended_search:
