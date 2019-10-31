@@ -245,6 +245,21 @@ const ORGANISATION_DEVICE_COLUMN_DEFS = {
         subType: COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY,
     },
 
+    abitti_version: {
+        key: "abitti_version",
+        title: "<%= t('columns.devices.abitti_version') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+    },
+
+    df_home: {
+        key: "df_home",
+        title: "<%= t('columns.devices.df_home') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+    },
+
+
     xrandr: {
         key: "xrandr",
         title: "<%= t('columns.devices.xrandr') %>",
@@ -281,6 +296,7 @@ const DEFAULT_ORGANISATION_DEVICE_COLUMNS = [
     ["conf", false],
     ["ram", true],
     ["hd", true],
+    ["df_home", false],
     ["hd_ssd", false],
     ["cpu", true],
     ["bios_vendor", false],
@@ -291,6 +307,7 @@ const DEFAULT_ORGANISATION_DEVICE_COLUMNS = [
     ["bat_cap", false],
     ["wifi", false],
     ["xrandr", false],
+    ["abitti_version", false],
 ];
 
 const PRESETS = [
