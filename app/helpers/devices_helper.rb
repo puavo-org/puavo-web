@@ -76,10 +76,10 @@ module DevicesHelper
   ]
 
   # Retrieves a list of all devices in the specified school
-  def self.get_devices_in_school(school_dn)
+  def self.get_devices_in_school(school_dn, custom_attributes=nil)
     return Device.search_as_utf8(:filter => "(puavoSchool=#{school_dn})",
                                  :scope => :one,
-                                 :attributes => DEVICE_ATTRIBUTES)
+                                 :attributes => custom_attributes ? custom_attributes : DEVICE_ATTRIBUTES)
   end
 
   def self.build_common_device_properties(dev)

@@ -11,25 +11,26 @@ class DeviceStatisticsController < ApplicationController
 
   def school_statistics
     # All devices...
-    raw = Device.find(:all,
-                      :attribute => 'puavoSchool',
-                      :value => @school.dn)
+
+    raw = DevicesHelper.get_devices_in_school(
+      @school.dn,
+      custom_attributes=['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'])
 
     # Remove those we don't care about
-    raw.reject! { |d| !ACCEPTED_TYPES.include?(d.puavoDeviceType) }
+    raw.reject! { |d| !ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0]) }
 
     # Remove those without device information
-    raw.reject! { |d| d.puavoDeviceHWInfo.nil? }
+    raw.reject! { |d| !d[1].include?('puavoDeviceHWInfo') }
     @total_devices = raw.count
 
     # Convert the raw device array into something that can be counted more easily
     @devices = []
 
-    raw.each do |r|
+    raw.each do |dn, r|
       @devices << {
-        device: r,
-        name: r.puavoHostname,
-        image: JSON.parse(r.puavoDeviceHWInfo)['this_image'],
+        id: r['puavoId'][0],
+        name: r['puavoHostname'][0],
+        image: JSON.parse(r['puavoDeviceHWInfo'][0])['this_image'],
         school: school,
       }
     end
@@ -47,24 +48,23 @@ class DeviceStatisticsController < ApplicationController
     @devices = []
 
     School.all.each do |school|
-      # All devices in this school
-      raw = Device.find(:all,
-                        :attribute => 'puavoSchool',
-                        :value => school.dn)
+      raw = DevicesHelper.get_devices_in_school(
+        school.dn,
+        custom_attributes=['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'])
 
       # Remove those we don't care about
-      raw.reject! { |d| !ACCEPTED_TYPES.include?(d.puavoDeviceType) }
+      raw.reject! { |d| !ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0]) }
 
       # Remove those without device information
-      raw.reject! { |d| d.puavoDeviceHWInfo.nil? }
+      raw.reject! { |d| !d[1].include?('puavoDeviceHWInfo') }
       @total_devices += raw.count
 
       # Convert the raw device array into something that can be counted more easily
-      raw.each do |r|
+      raw.each do |dn, r|
         @devices << {
-          device: r,
-          name: r.puavoHostname,
-          image: JSON.parse(r.puavoDeviceHWInfo)['this_image'],
+          id: r['puavoId'][0],
+          name: r['puavoHostname'][0],
+          image: JSON.parse(r['puavoDeviceHWInfo'][0])['this_image'],
           school: school,
         }
       end
