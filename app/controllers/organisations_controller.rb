@@ -80,6 +80,7 @@ class OrganisationsController < ApplicationController
       # for the school name column
       data.merge!({ school: school.displayName })
 
+      data.delete_if{ |k, v| v.nil? }
       @devices << data
 
     end
