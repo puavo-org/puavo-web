@@ -1396,3 +1396,12 @@ fi:
       header: "Yhteensä %{total} laitetta on lähettänyt laitteistotietonsa; työpöytäkuvia on käytössä %{count}. Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
       device: "laite"
       devices: "laitetta"
+
+  # Supertable filter presets
+  filter_presets:
+    devices:
+      uses_trusty: "Käyttää Trusty-kuvaa"
+      uses_stretch: "Käyttää Stretch-kuvaa"
+      uses_buster: "Käyttää Buster-kuvaa"
+      have_xrandr: "Laitteella on xrandr-asetuksia"
+      have_hwinfo: "Laitteesta on saatu laitetiedot"

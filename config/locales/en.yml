@@ -1426,3 +1426,12 @@ en:
       header: "A total of %{total} devices have sent their hardware information; %{count} different desktop images in use. Click on image names to see a list of devices using that image. The list is sorted by image names."
       device: "laite"
       devices: "laitetta"
+
+  # Supertable filter presets
+  filter_presets:
+    devices:
+      uses_trusty: "Uses a Trusty image"
+      uses_stretch: "Uses a Stretch image"
+      uses_buster: "Uses a Buster image"
+      have_xrandr: "Device has xrandr settings"
+      have_hwinfo: "Have received hardware information"

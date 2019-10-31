@@ -1,0 +1,216 @@
+    abitti_version: {
+        key: "abitti_version",
+        title: "<%= t('columns.devices.abitti_version') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+    },
+
+    bat_cap: {
+        key: "bat_cap",
+        title: "<%= t('columns.devices.bat_cap') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+        subType: COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY,
+    },
+
+    bat_serial: {
+        key: "bat_serial",
+        title: "<%= t('columns.devices.bat_serial') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bat_vendor: {
+        key: "bat_vendor",
+        title: "<%= t('columns.devices.bat_vendor') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bios_date: {
+        key: "bios_date",
+        title: "<%= t('columns.devices.bios_date') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bios_vendor: {
+        key: "bios_vendor",
+        title: "<%= t('columns.devices.bios_vendor') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    bios_version: {
+        key: "bios_version",
+        title: "<%= t('columns.devices.bios_version') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    conf: {
+        key: "conf",
+        title: "<%= t('columns.puavoconf') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    cpu: {
+        key: "cpu",
+        title: "<%= t('columns.devices.cpu') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    created: {
+        key: "created",
+        title: "<%= t('columns.created') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_GREATER_OR_EQUAL,
+    },
+
+    current_image: {
+        key: "current_image",
+        title: "<%= t('columns.devices.current_image') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    desc: {
+        key: "desc",
+        title: "<%= t('columns.devices.description') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT_BY_NEWLINES,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    df_home: {
+        key: "df_home",
+        title: "<%= t('columns.devices.df_home') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+    },
+
+    hd: {
+        key: "hd",
+        title: "<%= t('columns.devices.hwinfo_hd_size') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+        defaultOperator: OPERATOR_LESS_THAN,
+    },
+
+    hd_ssd: {
+        key: "hd_ssd",
+        title: "<%= t('columns.devices.hwinfo_is_ssd') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_BOOLEAN,
+    },
+
+    hn: {
+        key: "hn",
+        title: "<%= t('columns.devices.hostname') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        subType: COLUMN_SUBTYPE_DEVICE_HOSTNAME,
+    },
+
+    hw_time: {
+        key: "hw_time",
+        title: "<%= t('columns.devices.hwinfo_time') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+    },
+
+    id: {
+        key: "id",
+        title: "<%= t('columns.puavoid') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+    },
+
+    image: {
+        key: "image",
+        title: "<%= t('columns.devices.image') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    krn_args: {
+        key: "krn_args",
+        title: "<%= t('columns.devices.kernel_args') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    mac: {
+        key: "mac",
+        title: "<%= t('columns.devices.mac') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    mfer: {
+        key: "mfer",
+        title: "<%= t('columns.devices.manufacturer') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    model: {
+        key: "model",
+        title: "<%= t('columns.devices.model') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    modified: {
+        key: "modified",
+        title: "<%= t('columns.modified') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+    },
+
+    ram: {
+        key: "ram",
+        title: "<%= t('columns.devices.hwinfo_ram_size') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_INTEGER,
+        defaultOperator: OPERATOR_LESS_THAN,
+    },
+
+    serial: {
+        key: "serial",
+        title: "<%= t('columns.devices.serial') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    tags: {
+        key: "tags",
+        title: "<%= t('columns.devices.tags') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    type: {
+        key: "type",
+        title: "<%= t('columns.devices.type') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    wifi: {
+        key: "wifi",
+        title: "<%= t('columns.devices.wifi') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    xrandr: {
+        key: "xrandr",
+        title: "<%= t('columns.devices.xrandr') %>",
+        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        type: COLUMN_TYPE_STRING,
+    },
