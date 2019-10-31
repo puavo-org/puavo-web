@@ -24,7 +24,7 @@ module DevicesHelper
       t('shared.server_title')
     else
       t('shared.title')
-    end 
+    end
   end
 
   def is_device_change_allowed(form)
@@ -43,6 +43,137 @@ module DevicesHelper
       return match_data[1].lstrip.gsub("\"", "")
     end
     return I18n.t('helpers.ppd_file.cannot_detect_filetype')
+  end
+
+  # Converts LDAP operational timestamp attribute (received with search_as_utf8() call)
+  # to unixtime. Expects the timestamp to be nil or a single-element array. Used in
+  # users, groups and devices controllers when retrieving data with AJAX calls.
+  # TODO: GET RID OF THIS FUNCTION. It was copy-pasted from application_helper.rb because
+  # I can't get Ruby to find it from there. Argh!
+  def self.convert_ldap_time(t)
+    return nil unless t
+    Time.strptime(t[0], '%Y%m%d%H%M%S%z').to_i
+  end
+
+  DEVICE_ATTRIBUTES = [
+    'puavoId',
+    'puavoHostname',
+    'puavoDeviceType',
+    'puavoDeviceImage',
+    'puavoDeviceCurrentImage',
+    'macAddress',
+    'serialNumber',
+    'puavoDeviceManufacturer',
+    'puavoDeviceModel',
+    'puavoDeviceKernelArguments',
+    'puavoDeviceXrandr',
+    'puavoTag',
+    'puavoConf',
+    'description',
+    'puavoDeviceHWInfo',
+    'createTimestamp',    # LDAP operational attribute
+    'modifyTimestamp'     # LDAP operational attribute
+  ]
+
+  # Retrieves a list of all devices in the specified school
+  def self.get_devices_in_school(school_dn)
+    return Device.search_as_utf8(:filter => "(puavoSchool=#{school_dn})",
+                                 :scope => :one,
+                                 :attributes => DEVICE_ATTRIBUTES)
+  end
+
+  def self.build_common_device_properties(dev)
+    # Localise device type names. We can do this in the JavaScript code too, but the table
+    # sorter only sees IDs, not names, so it sorts device types incorrerctly.
+    device_types = Puavo::CONFIG['device_types']
+
+    return {
+      id: dev['puavoId'][0],
+      hn: dev['puavoHostname'][0],
+      type: dev['puavoDeviceType'] ? device_types[dev['puavoDeviceType'][0]]['label'][I18n.locale.to_s] : nil,
+      image: dev['puavoDeviceImage'] ? dev['puavoDeviceImage'][0] : nil,
+      mac: dev['macAddress'] ? Array(dev['macAddress']) : nil,
+      serial: dev['serialNumber'] ? dev['serialNumber'][0] : nil,
+      mfer: dev['puavoDeviceManufacturer'] ? dev['puavoDeviceManufacturer'][0] : nil,
+      model: dev['puavoDeviceModel'] ? dev['puavoDeviceModel'][0] : nil,
+      desc: dev['description'] ? dev['description'][0] : nil,
+      krn_args: dev['puavoDeviceKernelArguments'] ? dev['puavoDeviceKernelArguments'][0] : nil,
+      tags: dev['puavoTag'] ? dev['puavoTag'] : nil,
+      created: self.convert_ldap_time(dev['createTimestamp']),
+      modified: self.convert_ldap_time(dev['modifyTimestamp']),
+      xrandr: dev['puavoDeviceXrandr'] ? Array(dev['puavoDeviceXrandr']) : nil,
+      conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "\"#{k}\"=\"#{v}\"" } : nil,
+    }
+  end
+
+  # Extracts the pieces we care about from puavoDeviceHWInfo field
+  def self.extract_hardware_info(raw_hw_info)
+    megabytes = 1024 * 1024
+    gigabytes = megabytes * 1024
+
+    out = {}
+
+    begin
+      info = JSON.parse(raw_hw_info[0])
+
+      # we have puavoImage and puavoCurrentImage fields in the database, but
+      # they aren't always reliable
+      out[:current_image] = info['this_image']
+
+      out[:time] = info['timestamp'].to_i
+      out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
+      out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / gigabytes).to_i
+      out[:ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
+      out[:wifi] = info['wifi']
+      out[:bios_vendor] = info['bios_vendor']
+      out[:bios_version] = info['bios_version']
+      out[:bios_date] = info['bios_release_date']
+
+      if info['processor0'] && info['processorcount']
+        # combine CPU count and name
+        out[:cpu] = "#{info['processorcount']}×#{info['processor0']}"
+      end
+
+      if info['battery']
+        out[:bat_vendor] = info['battery']['vendor']
+        out[:bat_serial] = info['battery']['serial']
+
+        hw_bat_capacity = info['battery']['capacity']
+
+        if hw_bat_capacity
+          # Convert the battery capacity into an integer. It's a floating-point number, with
+          # a locate-specific digit separator (dot, comma) and ending in a '%'. I could keep
+          # it as a float, but at the moment, I can't easily add floats to the supertable
+          # (actually I can, but making filters for them is painful).
+
+          hw_bat_capacity = hw_bat_capacity.gsub(',', '.')
+          hw_bat_capacity = hw_bat_capacity.gsub('%', '')
+          hw_bat_capacity = hw_bat_capacity.to_i
+
+          out[:bat_capacity] = hw_bat_capacity
+        end
+      end
+
+      # Current Abitti version
+      if info['extra_system_contents']
+        extra = info['extra_system_contents']
+
+        if extra['Abitti']
+          out[:abitti_version] = extra['Abitti'].to_i || -1
+        end
+      end
+
+      # Free disk space on various partitions
+      if info['free_space']
+        df = info['free_space']
+
+        out[:df_home] = df.include?('/home') ? df['/home'].to_i / megabytes : -1
+      end
+    rescue
+      # oh well
+    end
+
+    return out
   end
 
 end
