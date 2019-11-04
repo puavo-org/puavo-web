@@ -162,7 +162,7 @@ fi:
     new_ldap_service: Uusi...
     rename_groups: Vuosiluokkasiirto...
     devices: Laitelista
-    device_statistics: "Työpöytökuvatilastot"
+    device_statistics: "Työpöytäkuvatilastot"
     delete_device: "Poista laite"
     servers: Palvelimet
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
