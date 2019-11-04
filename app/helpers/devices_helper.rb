@@ -167,7 +167,7 @@ module DevicesHelper
       if info['free_space']
         df = info['free_space']
 
-        out[:df_home] = df.include?('/home') ? df['/home'].to_i / megabytes : -1
+        out[:df_home] = df.include?('/home') ? (df['/home'].to_i / megabytes) : nil
       end
     rescue
       # oh well
