@@ -103,7 +103,7 @@ end
   <td colspan="2">
     <% if @info['blockdevice_sda_model'] %>
     <%= @info['blockdevice_sda_model'] || '?' %>,
-    <%= ((@info['blockdevice_sda_size'].to_f || 0.0) / (1024.0 * 1024.0 * 1024.0)).to_i %> GiB
+    <%= ((@info['blockdevice_sda_size'].to_f || 0.0) / (1024.0 * 1024.0)).to_i %> MiB
     <% if @info['ssd'] == "1" %>[SSD]<% end %>
     <% else %>
     <%= t('hwinfo.hard_drive.none') %>

@@ -1245,7 +1245,7 @@ en:
       wifi: "WiFi"
       xrandr: "Xrandr"
       abitti_version: "Abitti version"
-      df_home: "Free /home (MiB)"
+      df_home: "Free /home"
 
   # Device hardware info
   hwinfo:
@@ -1275,7 +1275,7 @@ en:
       title: "Hard drive"
       none: "(No hard drive)"
     df:
-      title: "Partitions free space (MiB)"
+      title: "Partitions free space"
     wifi:
       title: "WiFi"
     product:

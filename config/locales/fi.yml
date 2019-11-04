@@ -1215,7 +1215,7 @@ fi:
       wifi: "WiFi"
       xrandr: "Xrandr"
       abitti_version: "Abitti-versio"
-      df_home: "Vapaana /home (MiB)"
+      df_home: "Vapaana /home"
 
   # Device hardware info
   hwinfo:
@@ -1245,7 +1245,7 @@ fi:
       title: "Kiintolevy"
       none: "(Ei kiintolevyä)"
     df:
-      title: "Osioiden vapaa tila (MiB)"
+      title: "Osioiden vapaa tila"
     wifi:
       title: "WiFi"
     product:

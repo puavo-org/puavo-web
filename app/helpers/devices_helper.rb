@@ -122,7 +122,7 @@ module DevicesHelper
 
       out[:time] = info['timestamp'].to_i
       out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
-      out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / gigabytes).to_i
+      out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / megabytes).to_i
       out[:ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
       out[:wifi] = info['wifi']
       out[:bios_vendor] = info['bios_vendor']
