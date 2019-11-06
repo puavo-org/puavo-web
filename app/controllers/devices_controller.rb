@@ -79,6 +79,7 @@ class DevicesController < ApplicationController
         link: device_path(@school, dev['puavoId'][0]),
       })
 
+      data.delete_if{ |k, v| v.nil? }
       @devices << data
     end
 

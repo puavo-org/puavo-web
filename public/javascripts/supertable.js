@@ -2423,10 +2423,9 @@ class SuperTable {
 
                 let value = item[f[0]];
 
-                if (value === null) {
-                    if (types[i] == COLUMN_TYPE_STRING)
+                if (types[i] == COLUMN_TYPE_STRING)
+                    if (value === undefined || value === null)
                         value = "";
-                }
 
                 // Compare using the selected operator
                 switch (f[1]) {
@@ -2446,16 +2445,15 @@ class SuperTable {
 
                     case OPERATOR_LESS_THAN:
                         if (types[i] == COLUMN_TYPE_UNIXTIME)
-                            if (value === null)
+                            if (value === undefined || value === null)
                                 value = 999999999999;
 
-                        //console.log(`ts: ${value} < ${f[2]}: ${value < f[2]}`);
                         filterMatched = (value < f[2]);
                         break;
 
                     case OPERATOR_LESS_OR_EQUAL:
                         if (types[i] == COLUMN_TYPE_UNIXTIME)
-                            if (value === null)
+                            if (value === undefined || value === null)
                                 value = 999999999999;
 
                         filterMatched = (value <= f[2]);
@@ -2463,16 +2461,16 @@ class SuperTable {
 
                     case OPERATOR_GREATER_THAN:
                         if (types[i] == COLUMN_TYPE_UNIXTIME)
-                            if (value === null)
-                                value = 0;
+                            if (value === undefined || value === null)
+                                value = -999999999999;
 
                         filterMatched = (value > f[2]);
                         break;
 
                     case OPERATOR_GREATER_OR_EQUAL:
                         if (types[i] == COLUMN_TYPE_UNIXTIME)
-                            if (value === null)
-                                value = 0;
+                            if (value === undefined || value === null)
+                                value = -999999999999;
 
                         filterMatched = (value >= f[2]);
                         break;
