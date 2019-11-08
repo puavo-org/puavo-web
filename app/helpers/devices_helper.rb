@@ -120,10 +120,10 @@ module DevicesHelper
       # they aren't always reliable
       out[:current_image] = info['this_image']
 
-      out[:time] = info['timestamp'].to_i
+      out[:hw_time] = info['timestamp'].to_i
       out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
       out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / megabytes).to_i
-      out[:ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
+      out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
       out[:wifi] = info['wifi']
       out[:bios_vendor] = info['bios_vendor']
       out[:bios_version] = info['bios_version']
@@ -150,7 +150,7 @@ module DevicesHelper
           hw_bat_capacity = hw_bat_capacity.gsub('%', '')
           hw_bat_capacity = hw_bat_capacity.to_i
 
-          out[:bat_capacity] = hw_bat_capacity
+          out[:bat_cap] = hw_bat_capacity
         end
       end
 
