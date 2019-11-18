@@ -1,5 +1,5 @@
 <% content_for :javascript do %>
-<%= javascript_include_tag 'password_validator' %>
+<%= javascript_include_tag 'password_validator', skip_pipeline: true %>
 <% end %>
 
 <p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>

@@ -4,7 +4,7 @@
   <div class="basicInfoImage">
     <%= image_tag(default_image_or_user_image_path(
                   image_user_path(Array(@user.school).first.id, @user),
-                  @user), class: 'image') %>
+                  @user), class: 'image', skip_pipeline: true ) %>
   </div>
 
   <div class="basicInfoDetails">

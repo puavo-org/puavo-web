@@ -1,10 +1,10 @@
 <% page_title t('titles.organisation'), t('titles.device_statistics_organisation') %>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js" %>
-<%= javascript_include_tag 'modal_dialog' %>
-<%= javascript_include_tag 'supertable' %>
-<%= javascript_include_tag 'inpage_tabs' %>
+<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'modal_dialog', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable', skip_pipeline: true %>
+<%= javascript_include_tag 'inpage_tabs', skip_pipeline: true %>
 <% end %>
 
 <h1><%= t('device_statistics.organisation.title') %></h1>

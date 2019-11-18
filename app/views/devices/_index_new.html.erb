@@ -1,9 +1,9 @@
 <div id="devicesList"></div>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js" %>
-<%= javascript_include_tag 'modal_dialog' %>
-<%= javascript_include_tag 'supertable' %>
+<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'modal_dialog', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable', skip_pipeline: true %>
 <% end %>
 
 <% content_for :post_load_javascript do %>

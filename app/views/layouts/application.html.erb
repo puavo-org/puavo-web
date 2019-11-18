@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width">
 <title><%= content_for?(:page_title) ? yield(:page_title) : "Puavo Users" %></title>
 <%= csrf_meta_tags %>
-<%= favicon_link_tag "favicon.png" %>
+<%= favicon_link_tag "favicon.png", skip_pipeline: true %>
 <%= stylesheet_link_tag "font/fontello-puavo/css/puavo-icons", :media => "screen" %>
 <%= stylesheet_link_tag "application", :media => "all" %>
 <%= yield :style %>
@@ -80,7 +80,7 @@ I18n.locale = "<%= I18n.locale %>";
 
       <% if current_user && current_user.organisation_owner? %>
       <a href="/extended_search" id="extendedSearchButton" class="ownersOnly" title="<%= t('.extended_search_title') %>">
-        <img src="<%= image_path('magnifier.png') %>"></a>
+        <img src="<%= image_path('magnifier.png', skip_pipeline: true) %>"></a>
       <% end %>
       </div>
     </li>
