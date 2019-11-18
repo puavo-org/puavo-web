@@ -13,7 +13,7 @@ html_args[:'data-remote'] = true if @data_remote
       <div id="upperWrapper">
         <div id="left">
           <%= image_tag(default_image_or_user_image_path(image_profile_path, @user),
-                        :class => "avatar") %>
+                        :class => "avatar", skip_pipeline: true) %>
         </div>
 
         <div id="right">

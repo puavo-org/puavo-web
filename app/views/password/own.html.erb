@@ -1,5 +1,5 @@
 <% content_for :extra_password_js do %>
-<%= javascript_include_tag 'password_validator' %>
+<%= javascript_include_tag 'password_validator', skip_pipeline: true %>
 <% end %>
 
 <% content_for :password_validator do %>
