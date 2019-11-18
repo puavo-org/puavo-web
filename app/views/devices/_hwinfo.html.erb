@@ -115,6 +115,8 @@ end
 <% if @info['free_space'] %>
 <% partitions = @info['free_space'].map{ |key, value| [key, value] } %>
 
+<% unless partitions.empty? %>
+
 <tr>
   <th class="main" rowspan="<%= partitions.size %>"><%= t('hwinfo.df.title') %></th>
   <th><%= partitions[0][0] %></th>
@@ -128,6 +130,8 @@ end
   <th><%= part %></th>
   <td><%= (free / (1024 * 1024)).to_i %></td>
 </tr>
+<% end %>
+
 <% end %>
 
 <% end %>
