@@ -89,15 +89,37 @@ module Wlan
       }
 
       case new_attrs[:wlan_type][index_s]
-        when 'eap-tls'
-          wlaninfo[:certs] = {
-            :ca_cert             => certs[:wlan_ca_cert],     # can be nil
-            :client_cert         => certs[:wlan_client_cert], # can be nil
-            :client_key          => certs[:wlan_client_key],  # can be nil
-            :client_key_password => \
-              new_attrs[:wlan_client_key_password][index_s]
-          }
-          wlaninfo[:identity] = new_attrs[:wlan_identity][index_s]
+        when 'eap-tls', 'eap-ttls'
+          if certs[:wlan_ca_cert] || certs[:wlan_client_cert] \
+               || certs[:wlan_client_key] then
+            wlaninfo[:certs] = {}
+            wlaninfo[:certs][:ca_cert] = certs[:wlan_ca_cert] \
+              if certs[:wlan_ca_cert]
+            wlaninfo[:certs][:client_cert] = certs[:wlan_client_cert] \
+              if certs[:wlan_client_cert]
+            wlaninfo[:certs][:client_key] = certs[:wlan_client_key] \
+              if certs[:wlan_client_key]
+            wlan_client_key_password \
+              = new_attrs[:wlan_client_key_password][index_s]
+            if wlan_client_key_password && !wlan_client_key_password.empty? then
+              wlaninfo[:certs][:client_key_password] = wlan_client_key_password
+            end
+          end
+
+          wlan_identity = new_attrs[:wlan_identity][index_s]
+          if wlan_identity && !wlan_identity.empty? then
+            wlaninfo[:identity] = wlan_identity
+          end
+          wlan_password = new_attrs[:wlan_password][index_s]
+          if wlan_password && !wlan_password.empty? then
+            wlaninfo[:password] = wlan_password
+          end
+
+          if new_attrs[:wlan_phase2_autheap] \
+               && new_attrs[:wlan_phase2_autheap][index_s] == 'enabled' then
+            wlaninfo[:phase2_autheap] = 'mschapv2'
+          end
+
         when 'psk'
           wlaninfo[:password] = new_attrs[:wlan_password][index_s]
       end
@@ -120,6 +142,7 @@ module Wlan
   def wlan_identity;            wlan_attrs('identity');            end
   def wlan_name;                wlan_attrs('ssid');                end
   def wlan_password;            wlan_attrs('password');            end
+  def wlan_phase2_autheap;      wlan_attrs('phase2_autheap');      end
   def wlan_type;                wlan_attrs('type');                end
 
   def wlan_ca_cert;             wlan_attrs('certs', 'ca_cert'            ); end

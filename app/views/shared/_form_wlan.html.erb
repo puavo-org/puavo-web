@@ -27,16 +27,10 @@
       <th><%= label_tag "wlan_type[#{ index }]", t('.wlan_type') %></th>
       <td>
         <%= select_tag( "wlan_type[#{ index }]",
-                        options_for_select([ [t('.select_value_open'),   "open"],
-                                             [t('.select_value_psk'),    "psk"],
-                                             [t('.select_value_eaptls'), "eap-tls"] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
-      </td>
-    </tr>
-
-    <tr class="wlan_password_<%= index %>">
-      <th><%= label_tag "wlan_password[#{ index }]", t('.wlan_password') %></th>
-      <td>
-        <%= text_field_tag "wlan_password[#{ index }]", f.object.wlan_password ? f.object.wlan_password[index] : "" %>
+                        options_for_select([ [t('.select_value_open'),    "open"],
+                                             [t('.select_value_psk'),     "psk"],
+                                             [t('.select_value_eaptls'),  "eap-tls"],
+                                             [t('.select_value_eapttls'), "eap-ttls"] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
       </td>
     </tr>
 
@@ -44,6 +38,13 @@
       <th><%= label_tag "wlan_identity[#{ index }]", t('.wlan_identity') %></th>
       <td>
         <%= text_field_tag "wlan_identity[#{ index }]", f.object.wlan_identity ? f.object.wlan_identity[index] : "" %>
+      </td>
+    </tr>
+
+    <tr class="wlan_password_<%= index %>">
+      <th><%= label_tag "wlan_password[#{ index }]", t('.wlan_password') %></th>
+      <td>
+        <%= text_field_tag "wlan_password[#{ index }]", f.object.wlan_password ? f.object.wlan_password[index] : "" %>
       </td>
     </tr>
 
@@ -93,6 +94,13 @@
       <th><%= label_tag "wlan_client_key_password[#{ index }]", t('.wlan_client_key_password') %></th>
       <td>
         <%= text_field_tag "wlan_client_key_password[#{ index }]", f.object.wlan_client_key_password ? f.object.wlan_client_key_password[index] : "" %>
+      </td>
+    </tr>
+
+    <tr class="wlan_phase2_autheap_<%= index %>">
+      <th><%= label_tag "wlan_phase2_autheap[#{ index }]", t('.wlan_phase2_autheap_mschapv2') %></th>
+      <td>
+        <%= check_box_tag "wlan_phase2_autheap[#{ index }]", "enabled", f.object.wlan_phase2_autheap ? f.object.wlan_phase2_autheap[index] : false %>
       </td>
     </tr>
 
