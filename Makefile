@@ -136,7 +136,7 @@ seed:
 	bundle exec rails runner db/seeds.rb
 
 server:
-	bundle exec rails server -b 0.0.0.0
+	bundle exec rails server -b 0.0.0.0 -p 8081
 
 .PHONY: deb
 deb:

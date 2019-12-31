@@ -200,7 +200,7 @@ describe PuavoRest::BootServer do
     end
   end
 
-  describe "device certificate" do
+  describe 'device certificate' do
     before(:each) do
       @key = OpenSSL::PKey::RSA.new(2048)
       @csr = OpenSSL::X509::Request.new
@@ -210,15 +210,17 @@ describe PuavoRest::BootServer do
       @csr.sign(@key, OpenSSL::Digest::SHA256.new)
     end
 
-    it "sign new certificate" do
+    it 'sign new certificate' do
       basic_authorize @server1.dn.to_s, @server1.ldap_password
-      post( "/v3/hosts/certs/sign",
-            { "hostname" => "server1",
-              "certificate_request" => @csr.to_pem } )
+      post( '/v3/hosts/certs/sign',
+            { 'hostname'            => 'server1',
+              'certificate_request' => @csr.to_pem } )
       assert_200
       @data = JSON.parse last_response.body
 
-      assert @data.keys.include?("certificate")
+      assert @data.keys.include?('certificate')
+      assert @data.keys.include?('org_ca_certificate_bundle')
+      assert @data.keys.include?('root_ca_certificate')
     end
   end
 end

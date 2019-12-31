@@ -43,6 +43,50 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  def get_organisation_devices_list
+    # get the devices from every school in this organisation
+    @raw = []
+
+    School.all.each do |school|
+      school_raw = DevicesHelper.get_devices_in_school(school.dn)
+
+      school_raw.each do |sd|
+        # pack the school into the array, we'll need it when generating links and other things
+        @raw << [sd, school]
+      end
+    end
+
+    # convert the raw data into something we can easily parse in JavaScript
+    @devices = []
+
+    @raw.each do |dev_temp, school|
+      dev = dev_temp[1]   # dev_temp[0] is the device's DN
+
+      data = {}
+
+      # common data for all devices
+      data.merge!(DevicesHelper.build_common_device_properties(dev))
+
+      # hardware info
+      if dev['puavoDeviceHWInfo']
+        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo']))
+      end
+
+      # link "template" for view/edit/delete hyperlinks
+      data.merge!({
+        link: device_path(school, dev['puavoId'][0]),
+      })
+
+      # for the school name column
+      data.merge!({ school: school.displayName })
+
+      data.delete_if{ |k, v| v.nil? }
+      @devices << data
+    end
+
+    render :json => @devices
+  end
+
   # GET /organisation/wlan
   def wlan
     @organisation = LdapOrganisation.current

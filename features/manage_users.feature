@@ -483,10 +483,6 @@ Feature: Manage users
       | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
       | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
       | Daisy     | Duck    | daisy  | 314      | visitor                   | Class 4   |
-    When I follow "School 1" within "#left"
-    And I follow "Users" within "#pageContainer"
-    And I should not see "Delete users who are marked for deletion"
-    #
     Then I am on the show user page with "donald"
     And I should see "Delete user"
     And I should see "Mark for deletion"

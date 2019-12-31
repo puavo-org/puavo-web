@@ -35,7 +35,7 @@
 <% unless @servers_and_printers.empty? %>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag 'sortable_table' %>
+<%= javascript_include_tag 'sortable_table', skip_pipeline: true %>
 <% end %>
 
 <script>

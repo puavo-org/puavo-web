@@ -1,32 +1,26 @@
-<% page_title t('titles.organisation'), t('titles.device_statistics') %>
+<% page_title t('titles.organisation'), t('titles.device_statistics_organisation') %>
 
 <% content_for :javascript do %>
-<%= javascript_include_tag 'sortable_table' %>
-<%= javascript_include_tag 'inpage_tabs' %>
+<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'modal_dialog', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable', skip_pipeline: true %>
+<%= javascript_include_tag 'inpage_tabs', skip_pipeline: true %>
 <% end %>
 
-<h1><%= t('.title') %></h1>
+<h1><%= t('device_statistics.organisation.title') %></h1>
 
 <% if @total_devices == 0 %>
-<p class="genericNotice"><%= t('.no_devices') %></p>
-<% else %>
-
-<% if @with_info.count == 0 %>
-<p class="genericNotice"><%= t('.no_devices_with_hardware_info') %></p>
+<p class="genericNotice"><%= t('device_statistics.organisation.no_devices') %></p>
 <% else %>
 
 <div class="tabBar" id="devStatsTabs">
   <ul>
     <li>
-        <a href="#withInfoTab"><%= t('device_statistics.device_lists.with_info') %> (<%= @with_info.count %>)</a>
+        <a href="#withInfoTab"><%= t('device_statistics.organisation_devices_tab') %></a>
     </li>
 
     <li>
-        <a href="#withoutInfoTab"><%= t('device_statistics.device_lists.without_info') %> (<%= @without_info.count %>)</a>
-    </li>
-
-    <li>
-        <a href="#imageStatisticsTab"><%= t('device_statistics.images.title') %> (<%= @image_stats.count %>)</a>
+        <a href="#imageStatisticsTab"><%= t('device_statistics.organisation_images_tab') %></a>
     </li>
   </ul>
 </div>
@@ -34,116 +28,130 @@
 <div class="tabContentsWrapper">
 
 <div class="tabContentsVisible" id="withInfoTab">
-
-<h2><%= t('device_statistics.device_lists.with_info') %></h2>
-
-<p><%= t('.count_header',
-         :total => @total_devices,
-         :with_info => @with_info.count) %></p>
-
-<table class="list" id="withInfo">
-  <tr class="thead">
-    <th><%= sortable_list_column_header(t('activeldap.attributes.school.displayName')) %></th>
-    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoHostname')) %></th>
-    <th><%= sortable_list_column_header(t('device_statistics.columns.timestamp')) %></th>
-    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceType')) %></th>
-    <th><%= sortable_list_column_header(t('activeldap.attributes.device.puavoDeviceImage')) %></th>
-    <th><%= sortable_list_column_header(t('device_statistics.columns.cpu')) %></th>
-    <th><%= sortable_list_column_header(t('device_statistics.columns.memory')) %></th>
-    <th><%= sortable_list_column_header(t('device_statistics.columns.hard_drive')) %></th>
-  </tr>
-
-<% @with_info.each do |device| %>
-  <tr>
-    <td data-title="<%= t('activeldap.attributes.school.displayName') %>">
-      <%= link_to device[:school].displayName, school_path(device[:school]) %>
-    </td>
-
-    <td data-title="<%= t('activeldap.attributes.device.puavoHostname') %>">
-      <%= link_to insert_wbr(device[:name]), device_path(device[:school], device[:device]) %>
-    </td>
-
-    <td data-title="<%= t('device_statistics.columns.timestamp') %>" data-key="<%= device[:timestamp] %>">
-      <%= (Time.at(device[:timestamp]).localtime.strftime('%Y-%m-%d&nbsp;%H:%M:%S')).html_safe %>
-    </td>
-
-    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceType') %>">
-      <%= device[:type] %>
-    </td>
-
-    <td data-title="<%= t('activeldap.attributes.device.puavoDeviceImage') %>">
-      <%= insert_wbr(device[:image]) %>
-    </td>
-
-    <td data-title="<%= t('device_statistics.columns.cpu') %>">
-      <%= device[:cpu_count] %> × <%= insert_wbr(device[:cpu_name]) %>
-    </td>
-
-    <td data-title="<%= t('device_statistics.columns.memory') %>">
-      <%= device[:memory] %>
-    </td>
-
-    <td data-title="<%= t('device_statistics.columns.hard_drive') %>">
-      <%= device[:hard_drive] %>
-    </td>
-
-  </tr>
-<% end %>
-</table>
-
-</div>
-
-<div class="tabContentsInvisible" id="withoutInfoTab">
-
-<% unless @without_info.empty? %>
-<%= render :partial => 'without', :locals => { :without_info => @without_info } %>
-<% end %>
-
+<div id="orgDevicesList"></div>
 </div>
 
 <div class="tabContentsInvisible" id="imageStatisticsTab">
-
-<%= render :partial => 'images', :locals => { :image_stats => @image_stats } %>
-
+<% if @image_stats.count == 0 %>
+<p class="genericNotice"><%= t('device_statistics.organisation.no_devices_with_hardware_info') %></p>
+<% else %>
+<%= render :partial => 'images', :locals => { :image_stats => @image_stats, :show_school_links => true } %>
+<% end %>
 </div>
 
 </div>
 
 <% end %>
-<% end %>
 
+<% content_for :post_load_javascript do %>
 <script>
-$(document).ready(function() {
-    new SortableTable(
-        "withInfo",
-        [
-            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // school name
-            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
-            [ COLUMN_TYPE_INTEGER, 0 ],                 // timestamp (last update)
-            [ COLUMN_TYPE_STRING, 0 ],                  // device type
-            [ COLUMN_TYPE_STRING, 0 ],                  // desktop image name
-            [ COLUMN_TYPE_STRING, 0 ],                  // CPU
-            [ COLUMN_TYPE_INTEGER, 0 ],                 // RAM
-            [ COLUMN_TYPE_INTEGER, 0 ],                 // hard drive size
-        ],
-        "fi",
-        "<%= "#{LdapOrganisation.current.o}-devstats-with" %>",
-        2, SORT_ORDER_DESCENDING
-    );
 
-    <% unless @without_info.empty? %>
-    new SortableTable(
-        "withoutInfo",
-        [
-            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // school name
-            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // hostname
-            [ COLUMN_TYPE_STRING, COLUMN_FLAG_HTML ],   // device type (FIXME: the table breaks without this?!)
-        ],
-        "fi",
-        "<%= "#{LdapOrganisation.current.o}-devstats-without" %>"
-    );
-    <% end %>
+// Table column definitions
+const ORGANISATION_DEVICE_COLUMN_DEFS = {
+    school: {
+        key: "school",
+        title: "<%= t('columns.school') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+<%= render :partial => 'shared/device_columns.js' %>
+};
+
+// Default visible columns and their order
+const DEFAULT_ORGANISATION_DEVICE_COLUMNS = [
+    ["school", true],
+    ["hw_time", true],
+    ["id", false],
+    ["hn", true],
+    ["type", true],
+    ["tags", true],
+    ["mfer", false],
+    ["model", false],
+    ["serial", false],
+    ["mac", false],
+    ["desc", false],
+    ["image", false],
+    ["current_image", true],
+    ["krn_args", false],
+    ["created", false],
+    ["modified", false],
+    ["conf", false],
+    ["ram", true],
+    ["hd", true],
+    ["df_home", false],
+    ["hd_ssd", false],
+    ["cpu", true],
+    ["bios_vendor", false],
+    ["bios_version", false],
+    ["bios_date", false],
+    ["bat_vendor", false],
+    ["bat_serial", false],
+    ["bat_cap", false],
+    ["wifi", false],
+    ["xrandr", false],
+    ["abitti_version", false],
+];
+
+const PRESETS = [
+<%= render :partial => 'shared/device_presets.js' %>
+];
+
+// The current columns, initially the defaults
+var currentColumns = DEFAULT_ORGANISATION_DEVICE_COLUMNS;
+
+$(document).ready(function() {
+    new SuperTable({
+        // Unique ID for this table
+        id: "org_devices",
+
+        // Organisation and school names, used during CSV exports
+        organisationName: "<%= LdapOrganisation.current.o %>",
+
+        // The URL used to dynamically retrieve table data from
+        url: "/get_organisation_devices_list",
+
+        // Where to save the table settings
+        localstoreKey: "supertable-org-devices",
+
+        // Which locale will be used when sorting strings?
+        sortLocale: "<%= supertable_sorting_locale %>",
+
+        // Container for the table and its controls
+        container: document.getElementById("orgDevicesList"),
+
+        // Main table flags
+        flags: TABLE_FLAG_DEVICES | TABLE_FLAG_ORGANISATION_DEVICES,
+
+        // All possible columns, their titles, keys, flags, etc.
+        columnDefs: ORGANISATION_DEVICE_COLUMN_DEFS,
+
+        // Which columns to display and in which order. You need at least one.
+        currentColumns: currentColumns,
+
+        // Default columns for this table. Used with the column editor.
+        defaultColumns: DEFAULT_ORGANISATION_DEVICE_COLUMNS,
+
+        // The column that's initially selected on new filter rows
+        defaultFilterColumn: "hn",
+
+        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
+        // are valid here, any other value will be ignored and the order is assumed to be ascending).
+        // If the column does not exist, then the initial sort will be ignored completely.
+        initialSort: { column: "hn", order: SORT_ORDER_ASCENDING },
+
+        // Premade filter presets
+        filterPresets: PRESETS,
+
+        // Name of the objects the table contains. Currently always a plural.
+        itemName: "<%= t('devices.index.devices') %>",
+
+        // Column editor subtitle
+        columnEditorSubtitle: "<%= t('layouts.application.devices') %>",
+    });
 
     new Tabs("devStatsTabs", 0);
 });
+
 </script>
+<% end %>

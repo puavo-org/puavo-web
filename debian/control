@@ -42,18 +42,6 @@ Description: puavo-rest
  JSON-REST Adapter for LDAP
  .
 
-Package: puavo-rest-bootserver
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- make,
- nginx,
- puavo-rest,
- redis-server
-Description: puavo-rest for bootservers
- Metapackage for bootservers. Installs nginx, puavo-rest and required
- configuration files.
- .
-
 Package: puavo-web-core
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},

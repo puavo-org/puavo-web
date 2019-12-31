@@ -67,57 +67,57 @@
       </tr>
 
       <tr id="perTermSettingsRow">
-        <th><%= t('extended_search.per_term_settings_title') %></th>
+        <th><%= t('extended_search.per_term_settings.title') %></th>
         <td>
 
           <div id="termSettingsUsers" class="termSettings">
             <fieldset>
-              <legend>Käyttäjän poistomerkintä</legend>
+              <legend><%= t('extended_search.per_term_settings.deletion_mark_state.title') %></legend>
 
               <input type="radio" name="userType" id="userTypeMarkedForDeletion">
-              <label for="userTypeMarkedForDeletion">On merkitty poistettavaksi</label><br>
+              <label for="userTypeMarkedForDeletion"><%= t('extended_search.per_term_settings.deletion_mark_state.is_marked') %></label><br>
 
               <input type="radio" name="userType" id="userTypeNormal">
-              <label for="userTypeNormal">Ei ole merkitty poistettavaksi</label><br>
+              <label for="userTypeNormal"><%= t('extended_search.per_term_settings.deletion_mark_state.is_unmarked') %></label><br>
 
               <input type="radio" name="userType" id="userTypeAll" checked>
-              <label for="userTypeAll">(Ei väliä)</label><br>
+              <label for="userTypeAll"><%= t('extended_search.per_term_settings.deletion_mark_state.dont_care') %></label><br>
             </fieldset>
 
             <fieldset>
-              <legend>Käyttäjätunnuksen lukitus</legend>
+              <legend><%= t('extended_search.per_term_settings.lock_state.title') %></legend>
 
               <input type="radio" name="isLocked" id="lockSet">
-              <label for="lockSet">On lukittu</label><br>
+              <label for="lockSet"><%= t('extended_search.per_term_settings.lock_state.is_locked') %></label><br>
 
               <input type="radio" name="isLocked" id="lockUnset">
-              <label for="lockUnset">Ei ole lukittu</label><br>
+              <label for="lockUnset"><%= t('extended_search.per_term_settings.lock_state.is_unlocked') %></label><br>
 
               <input type="radio" name="isLocked" id="lockIgnore" checked>
-              <label for="lockIgnore">(Ei väliä)</label><br>
+              <label for="lockIgnore"><%= t('extended_search.per_term_settings.lock_state.dont_care') %></label><br>
             </fieldset>
           </div>
 
           <div id="termSettingsDevices" class="termSettings">
             <fieldset>
-              <legend>Rajaa laitteen tyypin mukaan</legend>
+              <legend><%= t('extended_search.per_term_settings.device_type.title') %></legend>
 
               <input type="checkbox" name="deviceTypeLaptop" id="deviceTypeLaptop" checked>
-              <label for="deviceTypeLaptop">Kannettava</label><br>
+              <label for="deviceTypeLaptop"><%= t('extended_search.per_term_settings.device_type.laptop') %></label><br>
 
               <input type="checkbox" name="deviceTypeFatclient" id="deviceTypeFatclient" checked>
-              <label for="deviceTypeFatclient">Verkkopääte</label><br>
+              <label for="deviceTypeFatclient"><%= t('extended_search.per_term_settings.device_type.fatclient') %></label><br>
 
               <input type="checkbox" name="deviceTypePrinter" id="deviceTypePrinter" checked>
-              <label for="deviceTypePrinter">Tulostin</label><br>
+              <label for="deviceTypePrinter"><%= t('extended_search.per_term_settings.device_type.printer') %></label><br>
 
               <input type="checkbox" name="deviceTypeOther" id="deviceTypeOther" checked>
-              <label for="deviceTypeOther">(Kaikki muut)</label><br>
+              <label for="deviceTypeOther"><%= t('extended_search.per_term_settings.device_type.other') %></label><br>
             </fieldset>
           </div>
 
           <div id="noPerTermSettings" class="termSettings">
-            <p>(Ei lisäasetuksia tälle tyypille)</p>
+            <p><%= t('extended_search.per_term_settings.no_extra_settings') %></p>
           </div>
         </td>
       </tr>
@@ -182,7 +182,7 @@
 
 <% content_for :javascript do %>
 
-<%= javascript_include_tag 'inpage_tabs' %>
+<%= javascript_include_tag 'inpage_tabs', skip_pipeline: true %>
 
 <script>
 

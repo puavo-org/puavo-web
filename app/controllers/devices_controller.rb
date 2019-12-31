@@ -1,9 +1,20 @@
+require "devices_helper"
+
 class DevicesController < ApplicationController
   before_action :find_school
 
   # GET /devices
   # GET /devices.xml
   def index
+    if test_environment? || ['application/json', 'application/xml'].include?(request.format)
+      old_legacy_devices_index
+    else
+      new_cool_devices_index
+    end
+  end
+
+  # Old "legacy" index used during tests
+  def old_legacy_devices_index
     @device = Device.new
 
     if @school
@@ -29,6 +40,50 @@ class DevicesController < ApplicationController
       format.xml  { render :xml => @devices }
       format.json  { render :json => @devices }
     end
+  end
+
+  # New AJAX-based index for non-test environments
+  def new_cool_devices_index
+    @device = Device.new
+
+    if request.format == 'text/html'
+      # list of new device types
+      @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
+      @device_types = [[I18n.t('devices.index.select_device_label'), '']] + @device_types
+    end
+
+    respond_to do |format|
+      format.html # index.html.erb
+    end
+  end
+
+  def get_school_devices_list
+    @raw = DevicesHelper.get_devices_in_school(@school.dn)
+
+    # convert the raw data into something we can easily parse in JavaScript
+    @devices = []
+
+    @raw.each do |dn, dev|
+      data = {}
+
+      # common data for all devices
+      data.merge!(DevicesHelper.build_common_device_properties(dev))
+
+      # hardware info
+      if dev['puavoDeviceHWInfo']
+        data.merge!(DevicesHelper.extract_hardware_info(dev['puavoDeviceHWInfo']))
+      end
+
+      # link "template" for view/edit/delete hyperlinks
+      data.merge!({
+        link: device_path(@school, dev['puavoId'][0]),
+      })
+
+      data.delete_if{ |k, v| v.nil? }
+      @devices << data
+    end
+
+    render :json => @devices
   end
 
   # GET /devices/1

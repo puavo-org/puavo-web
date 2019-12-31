@@ -131,7 +131,7 @@ $genericNoticeBorder: #0f0;
 $genericNoticeBack: #cfc;
 $genericNoticeFore: #000;
 $genericWarningBorder: #ff0;
-$genericWarningBack: #ffa;
+$genericWarningBack: #ff9;
 $genericWarningFore: #000;
 $genericErrorBorder: #f00;
 $genericErrorBack: #faa;
@@ -236,6 +236,31 @@ $listFore: #000;
 $markedForDeletionOddRowBack: #faa;
 $markedForDeletionEvenRowBack: #fcc;
 $markedForDeletionRowHoverBack: #fdd;
+
+/*
+--------------------------------------------------------------------------------
+Supertables (shares styles with normal lists)
+--------------------------------------------------------------------------------
+*/
+
+$supertableNetworkErrorBack: #f00;
+$supertableNetworkErrorFore: #fff;
+
+$supertableFilterControlBack: #f0f0f0;
+$supertableFilterControlBorder: #ccc;
+
+$supertableFilterListFilterHover: #f4f4f4;
+
+$supertableTermInvalidBack: #f88;
+
+$supertableFilterAddBack: #7fba00;
+$supertableFilterAddFore: #000;
+$supertableFilterAddHoverBack: #8fcb11;
+$supertableFilterAddBorder: #5dae76;
+$supertableFilterRemoveBack: #f25022;
+$supertableFilterRemoveFore: #000;
+$supertableFilterRemoveHoverBack: #f36133;
+$supertableFilterRemoveBorder: #e5392b;
 
 /*
 --------------------------------------------------------------------------------

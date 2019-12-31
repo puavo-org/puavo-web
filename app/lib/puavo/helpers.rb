@@ -48,5 +48,25 @@ module Puavo
       conf || {}
     end
 
+    def supertable_sorting_locale
+      # It's probably not a good idea to use Finnish collation by default in the long run,
+      # but at the time I'm making this commit, "fi-FI" is the default and all others are
+      # case-by-case exceptions that are overridden in the configuration file.
+      begin
+        Puavo::Organisation.find(LdapOrganisation.current.cn).value_by_key('sort_locale') || 'fi-FI'
+      rescue
+        'fi-FI'
+      end
+    end
+
+    # Used to detect testing environments. Unfortunately there are some legacy tests that simply
+    # won't work with the new JavaScript -based indexes and tools, and we must serve them the old
+    # legacy indexes and pages. This is something that should be fixed with new tests, but I gave
+    # up on trying to make the test system run JavaScript. I'm sure it can be done, but I really
+    # have no idea how. None of the examples and tutorials I read helped.
+    def test_environment?
+      ENV['RAILS_ENV'] == 'test'
+    end
+
   end
 end

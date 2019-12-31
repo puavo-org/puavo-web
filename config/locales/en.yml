@@ -39,7 +39,8 @@ en:
     ldap_services: "LDAP services"
     external_services: "External services"
     external_files: "External files"
-    device_statistics: "Device statistics"
+    device_statistics_organisation: "Organisation device statistics"
+    device_statistics_school: "Desktop image statistics"
     servers: "Servers"
     printers: "Printers"
     wlan: "Wireless Networks"
@@ -117,8 +118,8 @@ en:
   default_select_value: Select
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
-  lock_marked_users: "Are you sure you want to lock %{count} users who are marked for deletion?"
-  delete_marked_users: "Are you sure you want to delete %{count} users who are marked for deletion?"
+  lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
+  delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
   group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
   prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
   layouts:
@@ -405,6 +406,7 @@ en:
       add_user_title: Add users to this group
       description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
       placeholder_for_search: Name of the user
+      hidden_members_hidden_tools_warning: "Some tools have been hidden because this group has members from other schools you don't have permission to access."
     new:
       title: New group
     edit:
@@ -413,6 +415,7 @@ en:
       year_class_warning: "This group is maintained by an external Primus synchronisation script. Changes you make to the group or its membership list will be undone. Never change the group's abbreviation!"
     members:
       title: Current members
+      hidden_title: "hidden member(s) from other schools"
       remove: Remove
     user_search:
       member: Member
@@ -471,6 +474,7 @@ en:
     validator_passwords_match: "The password and its confirmation match"
     validator_passwords_dont_match: "The password and its confirmation do not match"
     gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
+    oulu_ad_integration_enabled: "The organisation security policies require that passwords must be at least eight characters long."
     six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
     seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
     current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
@@ -595,6 +599,7 @@ en:
         gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
         gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
         gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
+        oulu_ad_password_too_short: "The organisation security policies require that passwords are at least eight characters long."
         sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
         sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
@@ -1186,6 +1191,63 @@ en:
     month: "a month ago"
     months: "%{month} months ago"
 
+  # Column names for various tables. Try to keep these as short as possible to prevent
+  # tables from getting unnecessarily wide.
+  columns:
+    puavoid: "PuavoID"
+    created: "Created"
+    modified: "Modified"
+    puavoconf: "PuavoConf"
+    school: "School"
+
+    users:
+      first_names: "First names"
+      last_name: "Last name"
+      full_name: "Name"
+      uid: "Username"
+      eid: "External ID"
+      type: "Role"
+      phone: "Phone"
+      email: "Email"
+      home_dir: "Home directory"
+      rrt: "When marked for deletion"
+      is_locked: "Locked?"
+
+    groups:
+      name: "Name"
+      type: "Type"
+      abbreviation: "Abbreviation"
+      eid: "External ID"
+
+    devices:
+      hostname: "Hostname"
+      type: "Type"
+      tags: "Tags"
+      manufacturer: "Manufacturer"
+      model: "Model"
+      serial: "Serial"
+      mac: "MAC"
+      description: "Description"
+      image: "Image"
+      current_image: "Current image"
+      kernel_args: "Kernel arguments"
+      hwinfo_time: "Hardware info received"
+      hwinfo_ram_size: "RAM"
+      hwinfo_hd_size: "Hard drive"
+      hwinfo_is_ssd: "SSD?"
+      cpu: "Processor"
+      bios_vendor: "BIOS vendor"
+      bios_version: "BIOS version"
+      bios_date: "BIOS date"
+      bat_vendor: "Battery vendor"
+      bat_serial: "Battery serial"
+      bat_cap: "Battery capacity"
+      wifi: "WiFi"
+      xrandr: "Xrandr"
+      abitti_version: "Abitti version"
+      df_home: "Free /home"
+
+  # Device hardware info
   hwinfo:
     title: "Hardware information"
     no_info: "No hardware information received from this device"
@@ -1212,13 +1274,15 @@ en:
     hard_drive:
       title: "Hard drive"
       none: "(No hard drive)"
+    df:
+      title: "Partitions free space"
     wifi:
       title: "WiFi"
     product:
       title: "Product name"
     bios:
       title: "BIOS"
-      vendor: "vendor"
+      vendor: "Vendor"
       version: "Version"
       date: "Date"
     serial:
@@ -1242,15 +1306,42 @@ en:
       voltage: "Voltage"
       capacity: "Capacity"
       percentage: "Percentage"
+    abitti:
+      title: "Abitti version"
+      unknown: "(Unknown)"
 
+  # Extended search
   extended_search:
     title: "Extended Search"
+
     tabs:
       search: "Search"
       help: "Instructions and tips"
+
     search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
+
     terms_title: "Search terms type:"
-    per_term_settings_title: "Extra settings for this term type"
+
+    per_term_settings:
+      title: "Extra settings for this term type"
+      no_extra_settings: "(No extra settings)"
+      deletion_mark_state:
+        title: "Account removal state"
+        is_marked: "Is marked for later removal"
+        is_unmarked: "Not marked for later removal"
+        dont_care: "(Ignore)"
+      lock_state:
+        title: "Account locking"
+        is_locked: "Account is locked"
+        is_unlocked: "Account is not locked"
+        dont_care: "(Ignore)"
+      device_type:
+        title: "Limit results by device type"
+        laptop: "Laptop"
+        fatclient: "Fatclient"
+        printer: "Printer"
+        other: "(Everything else)"
+
     term_names:
       users:
         title: "Users"
@@ -1281,16 +1372,20 @@ en:
         manufacturer: "Devices: Manufacturer"
         model: "Devices: Model"
         serial_number: "Devices: Serial number"
+
     school_limit_title: "School limit:"
     school_limit_all: "(All schools)"
+
     more_settings:
       title: "Search settings"
       regexp_title: "Terms are regexp strings (allows partial hits, see help)"
       reverse_title: "Reverse search (only search terms are matched in reverse, not term-specific extra settings)"
       remove_misses_title: "Don't list terms that produced no hits in the results"
+
     button_search: "Search"
     button_clear_results: "Clear results"
     button_clear_terms: "Clear search terms"
+
     results_title: "Results"
     results:
       search_term_title: "Search term"
@@ -1298,8 +1393,10 @@ en:
       no_term_hits: "(No hits)"
       no_results: "(No results)"
       statistics: "%{total} hits in total. %{num_terms} search term(s); %{num_hits} hit(s), %{num_misses} miss(es). Searching took %{elapsed} seconds. "
+
     errors:
       unknown_school: "(Unknown school)"
+
     controller:
       invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
       search_terms_cleanup_failed: "Search term cleanup failed"
@@ -1308,32 +1405,33 @@ en:
       invalid_regexp: "Invalid regexp "
       unknown_search_term_type: "Unknown search term type "
 
+  # Organisation and school device statistics
   device_statistics:
-    columns:
-      timestamp: "Data received"
-      cpu: "Processor"
-      memory: "Memory (MiB)"
-      hard_drive: "Hard drive (GiB)"
+    organisation_devices_tab: "Devices"
+    organisation_images_tab: "Desktop images"
 
-    device_lists:
-      with_info: "Devices with hardware information"
-      without_info: "Devices without hardware information"
-      without_info_count: "%{count} devices total."
-
-    school_index:
-      title: "School device statistics"
-      no_devices: "This school has no devices that could send their hardware information."
-      no_devices_with_hardware_info: "This school has devices, but no hardware information has been received from any of them."
-      count_header: "This school has a total of %{total} devices that (based on their type) can send hardware information. Of those, %{with_info} have sent their information:"
-
-    organisation_index:
+    organisation:
       title: "Organisation device statistics"
       no_devices: "This organisation has no devices at all."
       no_devices_with_hardware_info: "This organisation has devices, but no hardware information has been received from any of them."
-      count_header: "This organisation has a total of %{total} devices that (based on their type) can send hardware information. Of those, %{with_info} have sent their information:"
 
+    school:
+      title: "Desktop images used in this school"
+      no_devices: "This school has no devices that could send their hardware information."
+      no_devices_with_hardware_info: "This school has devices, but no hardware information has been received from any of them."
+
+    # Used on school and organisation device images statistics pages
     images:
-      title: "Desktop images in use"
-      header: "The number of different desktop images in use is %{count}. Click on image names to see a list of devices using that image. The list is sorted by image names."
-      device: "device"
-      devices: "devices"
+      title: "Desktop images used in this school"
+      header: "A total of %{total} devices have sent their hardware information; %{count} different desktop images in use. Click on image names to see a list of devices using that image. The list is sorted by image names."
+      device: "laite"
+      devices: "laitetta"
+
+  # Supertable filter presets
+  filter_presets:
+    devices:
+      uses_trusty: "Uses a Trusty image"
+      uses_stretch: "Uses a Stretch image"
+      uses_buster: "Uses a Buster image"
+      have_xrandr: "Device has xrandr settings"
+      have_hwinfo: "Have received hardware information"

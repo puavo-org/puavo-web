@@ -274,6 +274,15 @@ class PasswordController < ApplicationController
           raise User::UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_ascii_only')
         end
+      when 'oulu_ad'
+        # Validate the password to contain at least eight characters
+        new_password = params[:user][:new_password]
+        if new_password.size < 8 then
+          raise User::UserError,
+                I18n.t('activeldap.errors.messages.oulu_ad_password_too_short')
+        end
+
+        # There are other limitations here too, but we cannot check for them
       when 'SixCharsMin'
         # Validate the password to contain at least six characters.
         new_password = params[:user][:new_password]
@@ -318,8 +327,13 @@ class PasswordController < ApplicationController
                                           params[:login][:password])
 
     # Don't let non-teachers and non-admins change other people's passwords
-    if mode == :other && !["admin", "teacher"].include?(@logged_in_user.puavoEdupersonAffiliation)
-      raise User::UserError, I18n.t('flash.password.go_away')
+    if mode == :other
+      wanted_roles = ['admin', 'teacher']
+      user_roles = Array(@logged_in_user.puavoEdupersonAffiliation || [])
+
+      unless (user_roles & wanted_roles).any?
+        raise User::UserError, I18n.t('flash.password.go_away')
+      end
     end
 
     @user = @logged_in_user

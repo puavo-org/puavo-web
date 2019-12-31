@@ -1,6 +1,4 @@
-<h2><%= t('device_statistics.images.title') %></h2>
-
-<p><%= t('device_statistics.images.header', :count => @image_stats.count) %></p>
+<p><%= t('device_statistics.images.header', :total => @total_devices, :count => @image_stats.count) %></p>
 
 <table class="imageStats">
   <% @image_stats.each_with_index do |image| %>
@@ -16,13 +14,15 @@
     </td>
   </tr>
 
-  <tr class="deviceListRow">
+  <tr class="deviceListRow" style="display: none;">
     <td colspan="2">
       <ul>
         <% image[:devices].each do |device| %>
         <li>
-          <%= link_to device[:name], device_path(device[:school], device[:device]) %>
+          <a href="/devices/<%= device[:school].id %>/devices/<%= device[:id] %>"><%= device[:name] %></a>
+          <% if show_school_links %>
           (<%= link_to device[:school].displayName, school_path(device[:school]) %>)
+          <% end %>
         </li>
         <% end %>
       </ul>

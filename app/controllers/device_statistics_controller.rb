@@ -1,35 +1,42 @@
 class DeviceStatisticsController < ApplicationController
   before_action :find_school
 
-  BYTES_TO_GIB = 1024 * 1024 * 1024
+  ACCEPTED_TYPES = ['fatclient', 'thinclient', 'laptop']
 
   # GET /devices
   def index
-    # Not reached
+    # The routes in routes.rb call school_statistics() or organisation_statistics()
+    # directly, so this controller does not have an "index".
   end
 
   def school_statistics
+    # All devices...
 
-    devices = Device.find(:all,
-                          :attribute => 'puavoSchool',
-                          :value => @school.dn)
+    raw = DevicesHelper.get_devices_in_school(
+      @school.dn,
+      custom_attributes=['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'])
 
-    @with_info, @without_info = gather_devices(devices, school)
+    # Remove those we don't care about
+    raw.reject! { |d| !ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0]) }
 
-    @total_devices = @with_info.count + @without_info.count
+    # Remove those without device information
+    raw.reject! { |d| !d[1].include?('puavoDeviceHWInfo') }
+    @total_devices = raw.count
 
-    @image_stats = count_images(@with_info)
+    # Convert the raw device array into something that can be counted more easily
+    @devices = []
 
-    @with_info.sort! do |a, b|
-      a[:name].downcase <=> b[:name].downcase
+    raw.each do |dn, r|
+      @devices << {
+        id: r['puavoId'][0],
+        name: r['puavoHostname'][0],
+        image: JSON.parse(r['puavoDeviceHWInfo'][0])['this_image'],
+        school: school,
+      }
     end
 
-    # Sort the devices without hardware info. On organisation statistics page
-    # the table can be sorted by the user, but on the school page there is
-    # no table, only an unsortable list.
-    @without_info.sort! do |a, b|
-      a[:name].downcase <=> b[:name].downcase
-    end
+    # Count the images
+    @image_stats = count_images(@devices)
 
     respond_to do |format|
       format.html { render :action => 'school_index' }
@@ -37,83 +44,42 @@ class DeviceStatisticsController < ApplicationController
   end
 
   def organisation_statistics
-    @with_info = []
-    @without_info = []
+    @total_devices = 0
+    @devices = []
 
     School.all.each do |school|
-      # all devices in this school
-      school_devices = Device.find(:all,
-                                   :attribute => 'puavoSchool',
-                                   :value => school.dn)
+      raw = DevicesHelper.get_devices_in_school(
+        school.dn,
+        custom_attributes=['puavoId', 'puavoHostname', 'puavoDeviceType', 'puavoDeviceHWInfo'])
 
-      with, without = gather_devices(school_devices, school)
+      # Remove those we don't care about
+      raw.reject! { |d| !ACCEPTED_TYPES.include?(d[1]['puavoDeviceType'][0]) }
 
-      @with_info += with
-      @without_info += without
+      # Remove those without device information
+      raw.reject! { |d| !d[1].include?('puavoDeviceHWInfo') }
+      @total_devices += raw.count
+
+      # Convert the raw device array into something that can be counted more easily
+      raw.each do |dn, r|
+        @devices << {
+          id: r['puavoId'][0],
+          name: r['puavoHostname'][0],
+          image: JSON.parse(r['puavoDeviceHWInfo'][0])['this_image'],
+          school: school,
+        }
+      end
     end
 
-    @image_stats = count_images(@with_info)
-
-    @total_devices = @with_info.count + @without_info.count
-
-    # sort by hostname
-    @with_info.sort! do |a, b|
-      a[:name].downcase <=> b[:name].downcase
-    end
+    # Count the images
+    @image_stats = count_images(@devices)
 
     respond_to do |format|
       format.html { render :action => 'organisation_index' }
     end
+
   end
 
   private
-
-  def gather_devices(all_devices, school)
-    with = []
-    without = []
-
-    all_devices.each do |device|
-      next unless ['fatclient', 'thinclient', 'laptop'].include?(device.puavoDeviceType)
-
-      unless device.puavoDeviceHWInfo
-        without << {
-          name: device.puavoHostname,
-          type: device.puavoDeviceType,
-          device: device,             # for clickable links
-          school: school,             # ditto
-        }
-
-        next
-      end
-
-      hwinfo = JSON.parse(device.puavoDeviceHWInfo)
-
-      data = {
-        device: device,             # for clickable links
-        school: school,             # ditto
-
-        # --------
-        name: device.puavoHostname,
-        type: device.puavoDeviceType,
-        # --------
-        timestamp: hwinfo['timestamp'],
-        image: hwinfo['this_image'],
-        memory: (hwinfo['memory'] || []).sum { |slot| slot['size'].to_i },
-        cpu_count: hwinfo['processorcount'],
-        cpu_name: hwinfo['processor0'],
-        hard_drive: ((hwinfo['blockdevice_sda_size'] || 0) / BYTES_TO_GIB).to_i
-      }
-
-      if data[:memory] == 0
-        # some devices have no listed memory slots for some reason
-        data[:memory] = hwinfo['memorysize_mb'].to_i
-      end
-
-      with << data
-    end
-
-    return with, without
-  end
 
   def count_images(devices)
     return [] if devices.empty?
@@ -121,18 +87,18 @@ class DeviceStatisticsController < ApplicationController
     # split by image name
     images = {}
 
-    devices.each do |s|
-      i = s[:image]
+    devices.each do |d|
+      img = d[:image]
 
-      unless images.include?(i)
-        images[i] = {
+      unless images.include?(img)
+        images[img] = {
           uses: 0,
           devices: []
         }
       end
 
-      images[i][:uses] += 1
-      images[i][:devices] << s    # copy the devices so we can list them
+      images[img][:uses] += 1
+      images[img][:devices] << d    # copy the devices so we can list them
     end
 
     total = devices.count.to_f
@@ -140,12 +106,12 @@ class DeviceStatisticsController < ApplicationController
     # convert the hash to array
     out = []
 
-    images.each do |name, s|
+    images.each do |name, stats|
       out << {
         name: name,
-        uses: s[:uses],
-        percentage: ((s[:uses].to_f / total) * 100.0).round(1),
-        devices: s[:devices]
+        uses: stats[:uses],
+        percentage: ((stats[:uses].to_f / total) * 100.0).round(1),
+        devices: stats[:devices]
       }
     end
 

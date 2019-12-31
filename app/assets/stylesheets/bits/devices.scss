@@ -83,6 +83,7 @@
   .header {
     color: $deviceStatsImageHeaderFore;
     background: $deviceStatsImageHeaderBack;
+    border: 1px solid $deviceStatsImageHeaderHoverBack;
     cursor: pointer;
 
     &:hover {

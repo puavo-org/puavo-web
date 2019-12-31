@@ -2,7 +2,7 @@
 <div class="basicInfo">
   <div class="basicInfoImage">
     <% path = device.class == Server ? image_server_path(device) : image_device_path(@school, device) %>
-    <%= image_tag( device.jpegPhoto.nil? ? "computer.png" : path, class: "image" ) %>
+    <%= image_tag( device.jpegPhoto.nil? ? "computer.png" : path, class: "image", skip_pipeline: true ) %>
   </div>
 
   <div class="basicInfoDetails">

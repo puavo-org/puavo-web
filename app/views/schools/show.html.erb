@@ -4,7 +4,7 @@
 
 <div class="contentBox schoolImage">
 <%= image_tag( @school.jpegPhoto.nil? ? "school.png" : image_school_path(@school),
-               class: "image" ) %>
+               class: "image", skip_pipeline: true ) %>
 </div>
 
 <%= start_box t('.contacts') %>

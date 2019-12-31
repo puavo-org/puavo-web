@@ -1,4 +1,5 @@
 require 'openssl'
+require 'yaml'
 require_relative "./helper"
 
 describe PuavoRest::Devices do
@@ -739,19 +740,96 @@ describe PuavoRest::Devices do
         :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
+
+      puavo_ca_config = YAML::load_file('/etc/puavo-ca-rails/puavo.yml')
+      @default_certchain_version = puavo_ca_config['default_certchain_version']
+      raise 'no default certificate chain in puavo-ca configuration' \
+        unless @default_certchain_version
+
+      chainpath = "/etc/puavo-ca/certificates/#{ @default_certchain_version }"
+      @default_chain_rootca \
+        = File.read("#{ chainpath }/rootca/ca.opinsys.net.crt")
+      @default_chain_orgbundle \
+        = File.read("#{ chainpath }/organisations/ca.example.opinsys.net-bundle.pem")
+
+      @nondefault_certchain_version \
+        = Dir.glob('/etc/puavo-ca/certificates/*')           \
+             .select { |f| File.directory?(f) }              \
+             .map    { |f| File.basename(f) }                \
+             .select { |v| v != @default_certchain_version } \
+             .first
+      raise 'no non-default certificate chain in puavo-ca certificates' \
+        unless @nondefault_certchain_version
+
+      chainpath = "/etc/puavo-ca/certificates/#{ @nondefault_certchain_version }"
+      @nondefault_chain_rootca \
+        = File.read("#{ chainpath }/rootca/ca.opinsys.net.crt")
+      @nondefault_chain_orgbundle \
+        = File.read("#{ chainpath }/organisations/ca.example.opinsys.net-bundle.pem")
     end
 
-    it "sign new certificate" do
+    it 'sign new certificate without chain version' do
       basic_authorize @device.dn.to_s, @device.ldap_password
 
-      post( "/v3/hosts/certs/sign",
-            { "hostname" => "laptop-01",
-              "certificate_request" => @csr.to_pem } )
+      post( '/v3/hosts/certs/sign',
+            { 'hostname'            => 'laptop-01',
+              'certificate_request' => @csr.to_pem } )
       assert_200
       @data = JSON.parse last_response.body
 
-      certificate = OpenSSL::X509::Certificate.new @data["certificate"]
+      certificate = OpenSSL::X509::Certificate.new @data['certificate']
+      assert_equal '/CN=ca.example.opinsys.net', certificate.issuer.to_s
+
+      assert_equal @default_chain_orgbundle, @data['org_ca_certificate_bundle']
+      assert_equal @default_chain_rootca,    @data['root_ca_certificate']
+    end
+
+    it 'sign new certificate with default certificate chain version' do
+      basic_authorize @device.dn.to_s, @device.ldap_password
+
+      post('/v3/hosts/certs/sign',
+           { 'hostname'            => 'laptop-01',
+             'certificate_request' => @csr.to_pem,
+             'certchain_version'   => @default_certchain_version })
+      assert_200
+      @data = JSON.parse last_response.body
+
+      certificate = OpenSSL::X509::Certificate.new @data['certificate']
       assert_equal "/CN=ca.example.opinsys.net", certificate.issuer.to_s
+
+      assert_equal @default_chain_orgbundle, @data['org_ca_certificate_bundle']
+      assert_equal @default_chain_rootca,    @data['root_ca_certificate']
+    end
+
+    it 'sign new certificate with non-default certificate chain version' do
+      basic_authorize @device.dn.to_s, @device.ldap_password
+
+      post('/v3/hosts/certs/sign',
+           { 'hostname'            => 'laptop-01',
+             'certificate_request' => @csr.to_pem,
+             'certchain_version'   => @nondefault_certchain_version })
+      assert_200
+      @data = JSON.parse last_response.body
+
+      certificate = OpenSSL::X509::Certificate.new @data['certificate']
+      assert_equal "/CN=ca.example.opinsys.net", certificate.issuer.to_s
+
+      assert_equal @nondefault_chain_orgbundle,
+                   @data['org_ca_certificate_bundle']
+      assert_equal @nondefault_chain_rootca,
+                   @data['root_ca_certificate']
+    end
+
+    it 'signing should fail if requesting non-existing certificate chain' do
+      basic_authorize @device.dn.to_s, @device.ldap_password
+      nonexisting_chain_version = '20010101'
+
+      post('/v3/hosts/certs/sign',
+           { 'hostname'            => 'laptop-01',
+             'certificate_request' => @csr.to_pem,
+             'certchain_version'   => nonexisting_chain_version })
+
+      assert_equal 500, last_response.status
     end
   end
 end

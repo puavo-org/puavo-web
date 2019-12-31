@@ -7,7 +7,7 @@ class GroupsController < ApplicationController
   def members
     @group = Group.find(params[:id])
 
-    @members = @group.members
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
       format.json  { render :json => @members }
@@ -17,6 +17,15 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups
   # GET /:school_id/groups.xml
   def index
+    if test_environment? || ['application/json', 'application/xml'].include?(request.format)
+      old_legacy_groups_index
+    else
+      new_cool_groups_index
+    end
+  end
+
+  # Old "legacy" index used during tests
+  def old_legacy_groups_index
     if @school
       @groups = @school.groups
     else
@@ -38,6 +47,49 @@ class GroupsController < ApplicationController
     end
   end
 
+  # New AJAX-based index for non-test environments
+  def new_cool_groups_index
+    respond_to do |format|
+      format.html # index.html.erb
+    end
+  end
+
+  def get_school_groups_list
+    attributes = [
+      'puavoId',
+      'displayName',
+      'cn',
+      'puavoEduGroupType',
+      'puavoExternalId',
+      'memberUid',
+      'createTimestamp',    # LDAP operational attribute
+      'modifyTimestamp'     # LDAP operational attribute
+    ]
+
+    # convert the raw data into something we can easily parse in JavaScript
+    @raw = Group.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
+                                :scope => :one,
+                                :attributes => attributes)
+
+    @groups = []
+
+    @raw.each do |dn, grp|
+      @groups << {
+        id: grp['puavoId'][0],
+        name: grp['displayName'][0],
+        type: grp['puavoEduGroupType'] ? t('group_type.' + grp['puavoEduGroupType'][0]) : nil,
+        abbr: grp['cn'][0],
+        eid: grp['puavoExternalId'] ? grp['puavoExternalId'][0] : nil,
+        members: grp['memberUid'] ? grp['memberUid'].count : 0,
+        created: convert_ldap_time(grp['createTimestamp']),
+        modified: convert_ldap_time(grp['modifyTimestamp']),
+        link: group_path(@school, grp['puavoId'][0]),
+      }
+    end
+
+    render :json => @groups
+  end
+
   # GET /:school_id/groups/1
   # GET /:school_id/groups/1.xml
   def show
@@ -49,7 +101,7 @@ class GroupsController < ApplicationController
     @group['createTimestamp'] = convert_timestamp(extra['createTimestamp'])
     @group['modifyTimestamp'] = convert_timestamp(extra['modifyTimestamp'])
 
-    @members = @group.members.sort{|a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     @roles = @group.roles.sort
     @other_roles = Role.all.delete_if do |p| @roles.include?(p) end
@@ -296,7 +348,7 @@ class GroupsController < ApplicationController
     # the last member of a group?
     @group = Group.find(params[:id])
 
-    @members = @group.members
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
       format.html { render :plain => "OK" }
@@ -397,8 +449,7 @@ class GroupsController < ApplicationController
 
     @group.reload
 
-
-    @members = @group.members
+    @members, @num_hidden = get_and_sort_group_members(@group)
 
     respond_to do |format|
       format.html { render :plain => "OK" }
@@ -479,6 +530,30 @@ class GroupsController < ApplicationController
         redirect_to groups_path(@school)
         return nil
       end
+    end
+
+    def get_and_sort_group_members(group)
+      members = group.members
+      num_hidden = 0
+
+      # Hide members whose school information we cannot access. This can only (maybe?) happen
+      # if you aren't an owner and you're trying to view a group which contains members from
+      # other schools than yours.
+      members.reject! do |m|
+        begin
+          # This is weird. If I check m.school.nil? it returns false, but accessing m.school
+          # immediately afterwards will still fail?
+          m.school.cn
+          false
+        rescue
+          num_hidden += 1
+          true
+        end
+      end
+
+      members.sort!{ |a, b| (a["givenName"] + a["sn"]).downcase <=> (b["givenName"] + b["sn"]).downcase }
+
+      return members, num_hidden
     end
 
 end

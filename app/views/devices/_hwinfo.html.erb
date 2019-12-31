@@ -38,6 +38,23 @@ end
   <td colspan="2"><%= @info['kernelrelease'] || '?' %></td>
 </tr>
 
+<% if @info.include?('extra_system_contents') %>
+
+<% extra = @info['extra_system_contents'] %>
+
+<tr>
+  <th class="main"><%= t('hwinfo.abitti.title') %></th>
+  <td colspan="2">
+  <% if extra.include?('Abitti') %>
+  <%= extra['Abitti'] %>
+  <% else %>
+  <%= t('hwinfo.abitti.unknown') %>
+  <% end %>
+  </td>
+</tr>
+
+<% end %>
+
 <!-- CPU -->
 
 <tr>
@@ -86,13 +103,38 @@ end
   <td colspan="2">
     <% if @info['blockdevice_sda_model'] %>
     <%= @info['blockdevice_sda_model'] || '?' %>,
-    <%= ((@info['blockdevice_sda_size'].to_f || 0.0) / (1024.0 * 1024.0 * 1024.0)).to_i %> GiB
+    <%= ((@info['blockdevice_sda_size'].to_f || 0.0) / (1024.0 * 1024.0)).to_i %> MiB
     <% if @info['ssd'] == "1" %>[SSD]<% end %>
     <% else %>
     <%= t('hwinfo.hard_drive.none') %>
     <% end %>
   </td>
 </tr>
+
+<!-- Free disk space on various partitions -->
+<% if @info['free_space'] %>
+<% partitions = @info['free_space'].map{ |key, value| [key, value] } %>
+
+<% unless partitions.empty? %>
+
+<tr>
+  <th class="main" rowspan="<%= partitions.size %>"><%= t('hwinfo.df.title') %></th>
+  <th><%= partitions[0][0] %></th>
+  <td><%= (partitions[0][1] / (1024 * 1024)).to_i %></td>
+</tr>
+
+<% partitions.shift %>
+
+<% partitions.each do |part, free| %>
+<tr>
+  <th><%= part %></th>
+  <td><%= (free / (1024 * 1024)).to_i %></td>
+</tr>
+<% end %>
+
+<% end %>
+
+<% end %>
 
 <!-- WiFi -->
 

@@ -1,0 +1,124 @@
+<div id="devicesList"></div>
+
+<% content_for :javascript do %>
+<%= javascript_include_tag "i18n/supertable." + I18n.locale.to_s + ".js", skip_pipeline: true %>
+<%= javascript_include_tag 'modal_dialog', skip_pipeline: true %>
+<%= javascript_include_tag 'supertable', skip_pipeline: true %>
+<% end %>
+
+<% content_for :post_load_javascript do %>
+<script>
+
+// Table column definitions
+const DEVICE_COLUMN_DEFS = {
+<%= render :partial => 'shared/device_columns.js' %>
+};
+
+// Default visible columns and their order
+const DEFAULT_DEVICE_COLUMNS = [
+    ["id", false],
+    ["hn", true],
+    ["type", true],
+    ["tags", false],
+    ["mfer", true],
+    ["model", true],
+    ["serial", true],
+    ["mac", true],
+    ["desc", false],
+    ["image", true],
+    ["current_image", true],
+    ["krn_args", false],
+    ["created", false],
+    ["modified", false],
+    ["conf", false],
+    ["hw_time", false],
+    ["ram", false],
+    ["hd", false],
+    ["hd_ssd", false],
+    ["df_home", false],
+    ["cpu", false],
+    ["bios_vendor", false],
+    ["bios_version", false],
+    ["bios_date", false],
+    ["bat_vendor", false],
+    ["bat_serial", false],
+    ["bat_cap", false],
+    ["wifi", false],
+    ["xrandr", false],
+    ["abitti_version", false],
+];
+
+const PRESETS = [
+<%= render :partial => 'shared/device_presets.js' %>
+];
+
+// The current columns, initially the defaults
+var currentColumns = DEFAULT_DEVICE_COLUMNS;
+
+$(document).ready(function() {
+    new SuperTable({
+        // Unique ID for this table
+        id: "devices",
+
+        // Organisation and school names, used during CSV exports
+        organisationName: "<%= LdapOrganisation.current.o %>",
+        schoolName: "<%= @school.cn %>",
+
+        // The URL used to dynamically retrieve table data from
+        url: "/devices/<%= @school.id %>/get_school_devices_list",
+
+        // Where to save the table settings
+        localstoreKey: "supertable-devices",
+
+        // Which locale will be used when sorting strings?
+        sortLocale: "<%= supertable_sorting_locale %>",
+
+        // Container for the table and its controls
+        container: document.getElementById("devicesList"),
+
+        // Main table flags
+        flags: TABLE_FLAG_DEVICES,
+
+        // All possible columns, their titles, keys, flags, etc.
+        columnDefs: DEVICE_COLUMN_DEFS,
+
+        // Which columns to display and in which order. You need at least one.
+        currentColumns: currentColumns,
+
+        // Default columns for this table. Used with the column editor.
+        defaultColumns: DEFAULT_DEVICE_COLUMNS,
+
+        // The column that's initially selected on new filter rows
+        defaultFilterColumn: "hn",
+
+        // Initially sorted column and its order (only SORT_ORDER_ASCENDING and SORT_ORDER_DESCENDING
+        // are valid here, any other value will be ignored and the order is assumed to be ascending).
+        // If the column does not exist, then the initial sort will be ignored completely.
+        initialSort: { column: "hn", order: SORT_ORDER_ASCENDING },
+
+        // Premade filter presets
+        filterPresets: PRESETS,
+
+        // Name of the objects the table contains. Currently always a plural.
+        itemName: "<%= t('devices.index.devices') %>",
+
+        // Column editor subtitle
+        columnEditorSubtitle: "<%= t('layouts.application.devices') %>",
+    });
+});
+
+</script>
+<% end %>
+
+<% content_for :tools do %>
+<ul>
+  <li id="addNewDeviceTitle">
+    <%= form_for(@device, :url => new_device_path(@school), html: { method: :get }) do |f| %>
+    <span><%= t('devices.index.add_new_device') %>:</span>
+    <%= select_tag "device_type",
+        options_for_select( @device_types ) %>
+      <%= f.submit t('link.add'), id: "device_submit" %>
+    <% end %>
+  </li>
+</ul>
+<% end %>

@@ -19,7 +19,8 @@ fi:
     ldap_services: "LDAP-palvelut"
     external_services: "Ulkoiset palvelut"
     external_files: "Ulkoiset tiedostot"
-    device_statistics: "Laitetilastot"
+    device_statistics_organisation: "Organisaation laitetilastot"
+    device_statistics_school: "Koulun käytössä olevat työpöytäkuvat"
     servers: "Palvelimet"
     printers: "Tulostimet"
     wlan: "Langattomat verkot"
@@ -90,8 +91,8 @@ fi:
   default_select_value: Valitse
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
-  lock_marked_users: "Haluatko varmasti lukita %{count} poistettavaksi merkittyä käyttäjää?"
-  delete_marked_users: "Haluatko varmasti poistaa %{count} poistettavaksi merkittyä käyttäjää?"
+  lock_marked_users: "Haluatko varmasti lukita kaikki poistettavaksi merkityt käyttäjät?"
+  delete_marked_users: "Haluatko varmasti poistaa kaikki poistettavaksi merkityt käyttäjät?"
   group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
   prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
   layouts:
@@ -161,7 +162,7 @@ fi:
     new_ldap_service: Uusi...
     rename_groups: Vuosiluokkasiirto...
     devices: Laitelista
-    device_statistics: Laitetilastot
+    device_statistics: "Työpöytäkuvatilastot"
     delete_device: "Poista laite"
     servers: Palvelimet
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
@@ -377,14 +378,16 @@ fi:
       add_user_title: Lisää käyttäjiä ryhmään
       description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Liitä ryhmään" -painikkeita.
       placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
+      hidden_members_hidden_tools_warning: "Joitain toimintoja on piilotettu, koska ryhmässä on jäseniä kouluista joihin sinulla ei ole pääsyoikeutta."
     new:
-      title: "Luo uusi ryhmä..."
+      title: "Luo uusi ryhmä"
     edit:
       title: "Muokkaa ryhmää"
       course_group_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Ryhmään tekemäsi muutokset tullaan todennäköisesti kumoamaan. Älä koskaan vaihda tämän ryhmän ulkoista ID:tä!"
       year_class_warning: "Tämä ryhmä on ulkoisen Primus-synkronointiskriptin ylläpitämä. Jäsenlistaan tai ryhmän tietoihin tekemäsi muutokset tullaan kumoamaan. Älä koskaan muuta ryhmän lyhennettä!"
     members:
       title: Nykyiset jäsenet
+      hidden_title: "piilotettua jäsentä muista kouluista"
       remove: Poista ryhmästä
     user_search:
       member: Jäsen
@@ -443,6 +446,7 @@ fi:
     validator_passwords_match: "Salasana täsmää vahvistukseen"
     validator_passwords_dont_match: "Salasana ei täsmää vahvistukseen"
     gsuite_integration_enabled: "Organisaation tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, eivät saa alkaa eikä loppua välilyöntiin, ja ne voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutaman muun välimerkin."
+    oulu_ad_integration_enabled: "Organisaation tietoturvakäytänteissä on määritelty, että salasanojen on oltava vähintään 8 merkkiä pitkiä, ja että salasana ei saa olla sama kuin kaksi edellistä salasanaa."
     six_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään kuusi merkkiä."
     seven_chars_min: "Organisaation tietoturvakäytänteissä on määritelty, että uudessa salasanassa pitää olla vähintään seitsemän merkkiä."
     current_password_too_old: "Organisaatiosi tietoturvakäytännöistä johtuen sinun täytyy vaihtaa nykyinen salasanasi, koska se on liian vanha."
@@ -567,6 +571,7 @@ fi:
         gsuite_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanojen on oltava vähintään 8 merkkiä pitkiä."
         gsuite_password_whitespace: "Organisaation tietoturvakäytänteissä on määritetty, että salasana ei saa alkaa eikä loppua välilyöntiin."
         gsuite_password_ascii_only: "Organisaation tietoturvakäytänteissä on määritetty, että salasanat voivat sisältää vain merkkejä A-Z, a-z, 0-9 ja muutama muu välimerkki."
+        oulu_ad_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kahdeksan merkkiä."
         sixcharsmin_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään kuusi merkkiä."
         sevencharsmin_password_too_short: "Organisaation tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään seitsemän merkkiä."
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
@@ -1156,6 +1161,63 @@ fi:
     month: "kuukausi sitten"
     months: "%{month} kuukautta sitten"
 
+  # Column names for various tables. Try to keep these as short as possible to prevent
+  # tables from getting unnecessarily wide.
+  columns:
+    puavoid: "PuavoID"
+    created: "Luotu"
+    modified: "Muokattu"
+    puavoconf: "PuavoConf"
+    school: "Koulu"
+
+    users:
+      first_names: "Etunimet"
+      last_name: "Sukunimi"
+      full_name: "Nimi"
+      uid: "Käyttäjätunnus"
+      eid: "Ulkoinen ID"
+      type: "Rooli"
+      phone: "Puhelin"
+      email: "Email"
+      home_dir: "Kotihakemisto"
+      rrt: "Poistomerkintä tehty"
+      is_locked: "Lukittu?"
+
+    groups:
+      name: "Nimi"
+      type: "Tyyppi"
+      abbreviation: "Lyhenne"
+      eid: "Ulkoinen ID"
+
+    devices:
+      hostname: "Verkkonimi"
+      type: "Tyyppi"
+      tags: "Tagit"
+      manufacturer: "Valmistaja"
+      model: "Malli"
+      serial: "Sarjanumero"
+      mac: "MAC"
+      description: "Kuvaus"
+      image: "Työpöytäkuva"
+      current_image: "Nykyinen työpöytäkuva"
+      kernel_args: "Kernel-parametrit"
+      hwinfo_time: "Laitetiedot saatu"
+      hwinfo_ram_size: "RAM"
+      hwinfo_hd_size: "Kiintolevy"
+      hwinfo_is_ssd: "SSD?"
+      cpu: "Prosessori"
+      bios_vendor: "BIOS-valmistaja"
+      bios_version: "BIOS-versio"
+      bios_date: "BIOS-päiväys"
+      bat_vendor: "Akun valmistaja"
+      bat_serial: "Akun sarjanumero"
+      bat_cap: "Akun kapasiteetti"
+      wifi: "WiFi"
+      xrandr: "Xrandr"
+      abitti_version: "Abitti-versio"
+      df_home: "Vapaana /home"
+
+  # Device hardware info
   hwinfo:
     title: "Laitetiedot"
     no_info: "Ei vastaanotettuja laitetietoja tästä laitteesta"
@@ -1182,6 +1244,8 @@ fi:
     hard_drive:
       title: "Kiintolevy"
       none: "(Ei kiintolevyä)"
+    df:
+      title: "Osioiden vapaa tila"
     wifi:
       title: "WiFi"
     product:
@@ -1212,15 +1276,42 @@ fi:
       voltage: "Jännite"
       capacity: "Kapasiteetti"
       percentage: "Latausaste"
+    abitti:
+      title: "Abitti-versio"
+      unknown: "(Tuntematon)"
 
+  # Extended search
   extended_search:
     title: "Laajennettu haku"
+
     tabs:
       search: "Hakulomake"
       help: "Käyttöohje ja vihjeitä"
+
     search_box_instructions: "Anna yksi tai useampi hakutermi, yksi per rivi. Rivien alusta ja lopusta poistetaan automaattisesti välit. Tyhjät rivit jätetään huomioimatta, samoin kuin rivit jotka alkavat risuaidalla (#)."
+
     terms_title: "Hakutermien tyyppi"
-    per_term_settings_title: "Lisäasetukset tälle termityypille"
+
+    per_term_settings:
+      title: "Lisäasetukset tälle termityypille"
+      no_extra_settings: "(Ei lisäasetuksia tälle tyypille)"
+      deletion_mark_state:
+        title: "Käyttäjän poistomerkintä"
+        is_marked: "On merkitty poistettavaksi"
+        is_unmarked: "Ei ole merkitty poistettavaksi"
+        dont_care: "(Ei väliä)"
+      lock_state:
+        title: "Käyttäjätunnuksen lukitus"
+        is_locked: "On lukittu"
+        is_unlocked: "Ei ole lukittu"
+        dont_care: "(Ei väliä)"
+      device_type:
+        title: "Rajaa laitteen tyypin mukaan"
+        laptop: "Kannettava"
+        fatclient: "Verkkopääte"
+        printer: "Tulostin"
+        other: "(Kaikki muut)"
+
     term_names:
       users:
         title: "Käyttäjät"
@@ -1251,16 +1342,20 @@ fi:
         manufacturer: "Laitteet: Valmistaja"
         model: "Laitteet: Malli"
         serial_number: "Laitteet: Sarjanumero"
+
     school_limit_title: "Koulurajaus"
     school_limit_all: "(Kaikki koulut)"
+
     more_settings:
       title: "Haun asetukset"
       regexp_title: "Termit ovat regexp-lauseita (sallii osittaiset osumat, katso ohje)"
       reverse_title: "Käänteinen haku (koskee vain hakutermejä, ei niiden lisäasetuksia)"
       remove_misses_title: "Älä näytä tuloksissa termejä jotka eivät täsmänneet mihinkään"
+
     button_search: "Hae"
     button_clear_results: "Tyhjennä tulokset"
     button_clear_terms: "Tyhjennä hakutermit"
+
     results_title: "Tulokset"
     results:
       search_term_title: "Hakutermi"
@@ -1268,8 +1363,10 @@ fi:
       no_term_hits: "(Ei osumia)"
       no_results: "(Ei hakutuloksia)"
       statistics: "Yhteensä %{total} tulosta. %{num_terms} hakutermi(ä); %{num_hits} osuma(a), %{num_misses} huti(a). Haku kesti %{elapsed} sekuntia. "
+
     errors:
       unknown_school: "(Tuntematon koulu)"
+
     controller:
       invalid_search_data: "Virheellinen hakupyyntö: termit tai niiden tyyppi puuttuu"
       search_terms_cleanup_failed: "Hakutermien siivous epäonnistui"
@@ -1278,32 +1375,33 @@ fi:
       invalid_regexp: "Virheellinen regexp-lause "
       unknown_search_term_type: "Tuntematon hakutermien tyyppi "
 
+  # Organisation and school device statistics
   device_statistics:
-    columns:
-      timestamp: "Tiedot saatu"
-      cpu: "Prosessori"
-      memory: "Muisti (MiB)"
-      hard_drive: "Kiintolevy (GiB)"
+    organisation_devices_tab: "Laitteet"
+    organisation_images_tab: "Työpöytäkuvat"
 
-    device_lists:
-      with_info: "Laitetiedolliset koneet"
-      without_info: "Laitetiedottomat koneet"
-      without_info_count: "Yhteensä %{count} laitetta."
-
-    school_index:
-      title: "Koulun laitetilastot"
-      no_devices: "Koulussa ei ole yhtään laitetta joista laitetietoja voisi saada."
-      no_devices_with_hardware_info: "Koulussa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
-      count_header: "Koulussa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
-
-    organisation_index:
+    organisation:
       title: "Organisaation laitetilastot"
       no_devices: "Organisaatiossa ei ole yhtään laitetta."
       no_devices_with_hardware_info: "Organisaatiossa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
-      count_header: "Organisaatiossa on yhteensä %{total} laitetta joista (laitteiden tyypin mukaan) laitetietoja voi saada. Niistä %{with_info} on lähettänyt tietonsa:"
 
+    school:
+      title: "Koulun käytössä olevat työpöytäkuvat"
+      no_devices: "Tässä koulussa ei ole yhtään laitetta joista laitetietoja voisi saada."
+      no_devices_with_hardware_info: "Tässä koulussa on laitteita, mutta yksikään niistä ei ole lähettänyt laitetietojaan."
+
+    # Used on school and organisation device images statistics pages
     images:
       title: "Käytössä olevat työpöytäkuvat"
-      header: "Eri työpöytäkuvia on yhteensä %{count}. Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
+      header: "Yhteensä %{total} laitetta on lähettänyt laitteistotietonsa; työpöytäkuvia on käytössä %{count}. Klikkaa kuvan nimeä nähdäksesi listan kuvaa käyttävistä koneista. Lista on lajiteltu kuvan nimen mukaan."
       device: "laite"
       devices: "laitetta"
+
+  # Supertable filter presets
+  filter_presets:
+    devices:
+      uses_trusty: "Käyttää Trusty-kuvaa"
+      uses_stretch: "Käyttää Stretch-kuvaa"
+      uses_buster: "Käyttää Buster-kuvaa"
+      have_xrandr: "Laitteella on xrandr-asetuksia"
+      have_hwinfo: "Laitteesta on saatu laitetiedot"

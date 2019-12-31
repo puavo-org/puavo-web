@@ -31,7 +31,7 @@ node_modules/
 public/assets/
 public/import_tool.js
 public/import_tool.js.map
-public/javascripts/
+public/javascripts/i18n.js
 vendor/bundle/
 build/
 

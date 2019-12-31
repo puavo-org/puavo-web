@@ -31,6 +31,9 @@ end
 
 module PuavoUsers
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.1
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -59,9 +62,6 @@ module PuavoUsers
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
 
-    # Do not swallow errors in after_commit/after_rollback callbacks.
-    #config.active_record.raise_in_transactional_callbacks = true
-
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [
       :password,
@@ -78,5 +78,7 @@ module PuavoUsers
     I18n.config.available_locales = [:en, :fi, :sv, :de]
     config.i18n.default_locale = :en
 
+    # Enable deflate/gzip compression
+    config.middleware.use Rack::Deflater
   end
 end

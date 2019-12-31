@@ -23,7 +23,10 @@
     <td data-title="<%= t('activeldap.attributes.school.displayName')%>">
       <%= link_to school.displayName, school_path(school) %>
       <% unless school.displayName == 'Administration' %>
-      <%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(school.id.to_i), :extraClass => "inlineIntegrations" } %>
+      <% integrations = get_integrations_for_school(school.id.to_i) %>
+      <% unless integrations.empty? %>
+      <%= render :partial => "layouts/integrations", :locals => { :integrations => integrations, :extraClass => "inlineIntegrations" } %>
+      <% end %>
       <% end %>
     </td>
 
