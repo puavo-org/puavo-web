@@ -2,12 +2,12 @@
 # puavo-web & puavo-rest
 
 Web interface and RESTful API server on top of OpenLDAP with [Puavo
-schemas](https://github.com/opinsys/puavo-ds)
+schemas](https://github.com/puavo-org/puavo-ds)
 
 ## Hacking
 
 
-Apply Ansible rules from [puavo-standalone](https://github.com/opinsys/puavo-standalone).
+Apply Ansible rules from [puavo-standalone](https://github.com/puavo-org/puavo-standalone).
 
 
 Clone this repository and install build dependencies
