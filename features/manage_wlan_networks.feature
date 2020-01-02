@@ -185,12 +185,31 @@ Feature: Manage wlan networks
             "type": "eap-tls",
             "wlan_ap": false,
             "identity": "Mulperi",
-            "certs": {
-              "ca_cert": null,
-              "client_cert": null,
-              "client_key": null,
-              "client_key_password": ""
-            }
+            "password": "playblackholesun"
+          }
+        ]
+      """
+
+  Scenario: Create a new EAP-TTLS network with no certificates
+    Given I follow "Wireless networks"
+    When I select "EAP-TTLS" from "wlan_type[0]"
+    And I fill in the following:
+    | wlan_name[0] | EAP-TTLS_test_network |
+    | wlan_password[0] | justgetveracrypt |
+    | wlan_identity[0] | Hillhouse |
+    And I check "wlan_phase2_autheap[0]"
+    And I press "Update"
+    And I should see "WLAN settings successfully updated"
+    Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
+      """
+        [
+          {
+            "ssid": "EAP-TTLS_test_network",
+            "type": "eap-ttls",
+            "wlan_ap": false,
+            "identity": "Hillhouse",
+            "password": "justgetveracrypt",
+            "phase2_autheap": "mschapv2"
           }
         ]
       """
