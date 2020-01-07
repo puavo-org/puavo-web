@@ -1012,7 +1012,7 @@ en:
       wlan_client_cert: Client certificate
       wlan_client_key: Client certificate key
       wlan_client_key_password: Client certificate key password
-      wlan_phase2_autheap_mschapv2: Use "mschapv2"
+      wlan_phase2_auth_mschapv2: Use "mschapv2" (no EAP)
       select_value_open: Open
       select_value_psk: PSK
       select_value_eaptls: EAP-TLS

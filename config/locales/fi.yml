@@ -981,7 +981,7 @@ fi:
       wlan_client_cert: Asiakassertifikaatti
       wlan_client_key: Asiakassertifikaatin avain
       wlan_client_key_password: Asiakassertifikaatin avaimen salasana
-      wlan_phase2_autheap_mschapv2: Käytä "mschapv2"
+      wlan_phase2_auth_mschapv2: Käytä "mschapv2" (ei EAP)
       wlan_ap: Käytössä tukiasemissa
       select_value_open: Avoin
       select_value_psk: PSK

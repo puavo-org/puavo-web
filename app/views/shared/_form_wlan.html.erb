@@ -97,10 +97,10 @@
       </td>
     </tr>
 
-    <tr class="wlan_phase2_autheap_<%= index %>">
-      <th><%= label_tag "wlan_phase2_autheap[#{ index }]", t('.wlan_phase2_autheap_mschapv2') %></th>
+    <tr class="wlan_phase2_auth_<%= index %>">
+      <th><%= label_tag "wlan_phase2_auth[#{ index }]", t('.wlan_phase2_auth_mschapv2') %></th>
       <td>
-        <%= check_box_tag "wlan_phase2_autheap[#{ index }]", "enabled", f.object.wlan_phase2_autheap ? f.object.wlan_phase2_autheap[index] : false %>
+        <%= check_box_tag "wlan_phase2_auth[#{ index }]", "enabled", f.object.wlan_phase2_auth ? f.object.wlan_phase2_auth[index] : false %>
       </td>
     </tr>
 
