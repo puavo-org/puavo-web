@@ -115,9 +115,9 @@ module Wlan
             wlaninfo[:password] = wlan_password
           end
 
-          if new_attrs[:wlan_phase2_autheap] \
-               && new_attrs[:wlan_phase2_autheap][index_s] == 'enabled' then
-            wlaninfo[:phase2_autheap] = 'mschapv2'
+          if new_attrs[:wlan_phase2_auth] \
+               && new_attrs[:wlan_phase2_auth][index_s] == 'enabled' then
+            wlaninfo[:phase2_auth] = 'mschapv2'
           end
 
         when 'psk'
@@ -138,12 +138,12 @@ module Wlan
     wlan_networks.map { |w| w[key] }
   end
 
-  def wlan_ap;                  wlan_attrs('wlan_ap');             end
-  def wlan_identity;            wlan_attrs('identity');            end
-  def wlan_name;                wlan_attrs('ssid');                end
-  def wlan_password;            wlan_attrs('password');            end
-  def wlan_phase2_autheap;      wlan_attrs('phase2_autheap');      end
-  def wlan_type;                wlan_attrs('type');                end
+  def wlan_ap;          wlan_attrs('wlan_ap');     end
+  def wlan_identity;    wlan_attrs('identity');    end
+  def wlan_name;        wlan_attrs('ssid');        end
+  def wlan_password;    wlan_attrs('password');    end
+  def wlan_phase2_auth; wlan_attrs('phase2_auth'); end
+  def wlan_type;        wlan_attrs('type');        end
 
   def wlan_ca_cert;             wlan_attrs('certs', 'ca_cert'            ); end
   def wlan_client_cert;         wlan_attrs('certs', 'client_cert'        ); end
