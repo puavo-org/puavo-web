@@ -197,7 +197,7 @@ Feature: Manage wlan networks
     | wlan_name[0] | EAP-TTLS_test_network |
     | wlan_password[0] | justgetveracrypt |
     | wlan_identity[0] | Hillhouse |
-    And I check "wlan_phase2_autheap[0]"
+    And I check "wlan_phase2_auth[0]"
     And I press "Update"
     And I should see "WLAN settings successfully updated"
     Then I should see the following JSON on the "Organisation" object with "example" on attribute "wlan_networks":
@@ -209,7 +209,7 @@ Feature: Manage wlan networks
             "wlan_ap": false,
             "identity": "Hillhouse",
             "password": "justgetveracrypt",
-            "phase2_autheap": "mschapv2"
+            "phase2_auth": "mschapv2"
           }
         ]
       """
