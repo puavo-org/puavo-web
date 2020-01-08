@@ -9,11 +9,14 @@ $(document).ready(function() {
     var tr_wlan_phase2_auth = $('tr.wlan_phase2_auth_' + index);
 
     var show_wlan_ap       = [ 'open', 'psk' ].includes(wlan_type);
-    var show_wlan_certs    = [ 'eap-tls', 'eap-ttls' ].includes(wlan_type);
-    var show_wlan_identity = [ 'eap-tls', 'eap-ttls' ].includes(wlan_type);
-    var show_wlan_password = [ 'eap-tls', 'eap-ttls', 'psk' ]
-		               .includes(wlan_type);
-    var show_wlan_phase2_auth = [ 'eap-tls', 'eap-ttls' ].includes(wlan_type);
+    var show_wlan_certs    = [ 'eap-peap', 'eap-tls', 'eap-ttls' ]
+			       .includes(wlan_type);
+    var show_wlan_identity = [ 'eap-peap', 'eap-tls', 'eap-ttls' ]
+			       .includes(wlan_type);
+    var show_wlan_password = [ 'eap-peap', 'eap-tls', 'eap-ttls', 'psk' ]
+			       .includes(wlan_type);
+    var show_wlan_phase2_auth = [ 'eap-peap', 'eap-tls', 'eap-ttls' ]
+			       .includes(wlan_type);
 
     for (var i = 0; i < tr_wlan_ap.length; i++) {
       tr_wlan_ap[i].style.display = show_wlan_ap ? 'table-row' : 'none';

@@ -29,6 +29,7 @@
         <%= select_tag( "wlan_type[#{ index }]",
                         options_for_select([ [t('.select_value_open'),    "open"],
                                              [t('.select_value_psk'),     "psk"],
+                                             [t('.select_value_eappeap'), "eap-peap"],
                                              [t('.select_value_eaptls'),  "eap-tls"],
                                              [t('.select_value_eapttls'), "eap-ttls"] ], :selected => f.object.wlan_type ? f.object.wlan_type[index] : "" ) )%>
       </td>
