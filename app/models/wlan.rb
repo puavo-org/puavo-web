@@ -89,7 +89,7 @@ module Wlan
       }
 
       case new_attrs[:wlan_type][index_s]
-        when 'eap-tls', 'eap-ttls'
+        when 'eap-peap', 'eap-tls', 'eap-ttls'
           if certs[:wlan_ca_cert] || certs[:wlan_client_cert] \
                || certs[:wlan_client_key] then
             wlaninfo[:certs] = {}

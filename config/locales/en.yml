@@ -1017,6 +1017,7 @@ en:
       select_value_psk: PSK
       select_value_eaptls: EAP-TLS
       select_value_eapttls: EAP-TTLS
+      select_value_eappeap: EAP-PEAP
       default: Default
     mountpoint:
       title: Local and network mount points
