@@ -183,9 +183,10 @@ class LdapModel
   # Each operation are given an UUID so the user response, puavo-rest log and
   # syslog logs can be combined
   #
+  ALPHABET = ('a'..'z').to_a.freeze
+
   def self.ldap_op(method, *args, &block)
     res = nil
-    ldap_op_uuid = (0...25).map{('a'..'z').to_a[rand(10)] }.join
 
     # Syslog.log(Syslog::LOG_DEBUG, "START(#{ ldap_op_uuid })> #{ connection.class }##{ method } #{ args.inspect }")
     err = nil
@@ -197,6 +198,8 @@ class LdapModel
 
       # not really an error. Just convert to nil response
       return if is_not_found?(err)
+
+      ldap_op_uuid = ALPHABET.sample(25).join
 
       message = "\n#{ err.class }: #{ err }\n\n    was raised by\n\n"
       message += "UUID: #{ ldap_op_uuid }\n"
