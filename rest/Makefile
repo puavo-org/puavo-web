@@ -26,7 +26,6 @@ install:
 	mkdir -p $(DESTDIR)$(installdir)
 	mkdir -p $(DESTDIR)$(sysconfdir)
 	mkdir -p $(DESTDIR)$(prefix)/bin
-	mkdir -p $(DESTDIR)/etc/cron.hourly
 
 	cp -r \
 		VERSION \
@@ -49,8 +48,6 @@ install:
 		$(DESTDIR)$(installdir)
 
 	install -t $(DESTDIR)$(prefix)/bin scripts/puavo-rest-prompt
-	install -t $(DESTDIR)$(prefix)/bin bin/puavo-rest-scheduled-jobs
-	ln -fns ../../usr/bin/puavo-rest-scheduled-jobs $(DESTDIR)/etc/cron.hourly/puavo-rest-scheduled-jobs
 
 .PHONY: test
 test:

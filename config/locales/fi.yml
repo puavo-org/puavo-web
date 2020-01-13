@@ -631,7 +631,6 @@ fi:
         st: Maakunta
         gidNumber: Gid-numero
         puavoDeviceImage: Työpöytäkuva
-        external_feeds: Webmenun syöte
         puavoBillingInfo: Laskutustiedot
         puavoWlanChannel: Kanava
         puavoAllowGuest: Vieraskirjautuminen sallittu

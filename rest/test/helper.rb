@@ -125,8 +125,4 @@ end
 
 module Fixtures
   DIR = File.expand_path File.dirname(__FILE__)
-  ICS_FILE = DIR + "/fixtures/ical.ics"
-
-  # This timestamp is in the middle of events defined in the fixture
-  ICS_TIME = Time.local(2014, 2, 12, 14, 5, 0)
 end

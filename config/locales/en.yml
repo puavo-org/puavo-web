@@ -659,7 +659,6 @@ en:
         st: State
         gidNumber: Gid number
         puavoDeviceImage: Desktop Image
-        external_feeds: Webmenu feed
         puavoBillingInfo: Billing info
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest

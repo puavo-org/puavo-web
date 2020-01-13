@@ -324,10 +324,6 @@ class Device < Host
           tagswitch.call('puavo.xsessions.locked',
                          'disable_all_xsessions',
                          'enable_all_xsessions')
-        when 'enable_webmenu_feedback', 'disable_webmenu_feedback'
-          tagswitch.call('puavo.webmenu.feedback.enabled',
-                         'enable_webmenu_feedback',
-                         'disable_webmenu_feedback')
         when 'force_puavo_xrandr'
           tagswitch.call('puavo.xrandr.forced',
                          'force_puavo_xrandr',
@@ -537,16 +533,6 @@ class Devices < PuavoSinatra
     auth :basic_auth, :server_auth, :kerberos
     json Device.all(:attrs => attribute_list)
   end
-
-  get "/v3/devices/:hostname/feed" do
-
-    messages = LdapModel.setup(:credentials => CONFIG["server"]) do
-      Device.by_hostname!(params["hostname"]).messages
-    end
-
-    json messages
-  end
-
 
   get "/v3/devices/:hostname/wireless_printer_queues" do
     auth :basic_auth, :server_auth

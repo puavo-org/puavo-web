@@ -298,7 +298,6 @@ class SchoolsController < ApplicationController
         :puavoPersonalDevice,
         :puavoAutomaticImageUpdates,
         :puavoDeviceImage,
-        :external_feeds,
         :puavoTag,
         :puavoConf,
         :puavoDeviceAutoPowerOffMode,

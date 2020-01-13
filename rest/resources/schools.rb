@@ -18,7 +18,6 @@ class School < LdapModel
   ldap_map(:puavoWirelessPrinterQueue, :wireless_printer_queue_dns){ |v| Array(v) }
   ldap_map :preferredLanguage, :preferred_language
   ldap_map :puavoLocale, :locale
-  ldap_map :puavoExternalFeed, :external_feed_sources, LdapConverters::ArrayOfJSON
   ldap_map :puavoWlanSSID, :wlan_networks, LdapConverters::ArrayOfJSON
   ldap_map :puavoAllowGuest, :allow_guest, LdapConverters::StringBoolean
   ldap_map :puavoAutomaticImageUpdates, :automatic_image_updates, LdapConverters::StringBoolean
@@ -156,57 +155,6 @@ class School < LdapModel
       organisation.locale
     else
       get_own(:locale)
-    end
-  end
-
-  def ical_feed_urls
-    Array(external_feed_sources).select do |feed|
-      feed["type"] == "ical"
-    end.map do |feed|
-      feed["value"]
-    end
-  end
-
-  def cache_feeds
-    ical_feed_urls.each do |url|
-      begin
-        res = HTTParty.get(url)
-      rescue StandardError => err
-        $rest_flog.error("failed to fetch ical",
-                         "failed to fetch ical: #{ err.message }",
-                         :url    => url,
-                         :source => self.to_hash,
-                         :error  => err.message)
-        next
-      end
-
-      local_store.set("feed:#{ url }", res)
-      # Max cache for 12h
-      local_store.expire("feed:#{ url }", 60 * 60 * 12)
-    end
-  end
-
-  def messages
-    # TODO: merge with organisation messages
-
-    ical_feed_urls.map do |url|
-      if data = local_store.get("feed:#{ url }")
-        begin
-          ICALParser.parse(data).current_events
-        rescue StandardError => err
-          $rest_flog.error('failed to parse ical',
-                           "failed to parse ical: #{ err.message }",
-                           :data => data.to_s.slice(0, 100),
-                           :error => err.message)
-        end
-      end
-    end.compact.flatten.map do |msg|
-      msg["to"] = {
-        "object_model" => object_model,
-        "name" => name,
-        "dn" => dn.to_s
-      }
-      msg
     end
   end
 
