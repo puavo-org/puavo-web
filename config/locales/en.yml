@@ -168,11 +168,6 @@ en:
   or: or
   missing_data: "(Missing/unset)"
   default_select_value: Select
-  must_be_logged_in: You must be logged in
-  lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
-  delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
-  group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
-  prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
 
   puavoEduPersonAffiliation_teacher: Teacher
   puavoEduPersonAffiliation_staff: Staff
@@ -680,6 +675,8 @@ en:
       do_not_delete: "(Can't be removed)"
       jump_to_marked: "⇈ Show users to be deleted"
       jump_to_normal: "⇊ Show normal users"
+      lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
+      delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
     show:
       user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information
@@ -698,6 +695,7 @@ en:
       unmark_for_removal: Remove deletion marking
       marked_for_removal: Marked for deletion
       prevent_removal: Prevent deletion
+      prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
     new:
       title: New user
     edit:
@@ -825,6 +823,7 @@ en:
       description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
       placeholder_for_search: Name of the user
       hidden_members_hidden_tools_warning: "Some tools have been hidden because this group has members from other schools you don't have permission to access."
+      group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
     new:
       title: New group
     edit:

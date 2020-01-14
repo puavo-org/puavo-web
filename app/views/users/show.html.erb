@@ -200,7 +200,7 @@
       <% if current_user.organisation_owner? %>
       <ul>
         <li class="ownersOnly">
-          <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('prevent_removal_confirm') } do %>
+          <%= link_to prevent_deletion_path(@school, @user), data: { confirm: t('.prevent_removal_confirm') } do %>
             <i class='icon-block'></i><%= t('.prevent_removal') %>
           <% end %>
         </li>

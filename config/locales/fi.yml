@@ -168,11 +168,6 @@ fi:
   or: tai
   missing_data: "(Puuttuu/ei asetettu)"
   default_select_value: Valitse
-  must_be_logged_in: "Sinun täytyy olla kirjautuneena sisään"
-  lock_marked_users: "Haluatko varmasti lukita kaikki poistettavaksi merkityt käyttäjät?"
-  delete_marked_users: "Haluatko varmasti poistaa kaikki poistettavaksi merkityt käyttäjät?"
-  group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
-  prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
 
   puavoEduPersonAffiliation_teacher: Opettaja
   puavoEduPersonAffiliation_staff: "Henkilökunta"
@@ -680,6 +675,8 @@ fi:
       do_not_delete: "(Ei voi poistaa)"
       jump_to_marked: "⇈ Näytä poistettavat käyttäjät"
       jump_to_normal: "⇊ Näytä normaalit käyttäjät"
+      lock_marked_users: "Haluatko varmasti lukita kaikki poistettavaksi merkityt käyttäjät?"
+      delete_marked_users: "Haluatko varmasti poistaa kaikki poistettavaksi merkityt käyttäjät?"
     show:
       user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: <b>%{roles}</b>"
       system_information: "Järjestelmätietoja"
@@ -698,6 +695,7 @@ fi:
       unmark_for_removal: Poista poistomerkintä
       marked_for_removal: Merkitty poistettavaksi
       prevent_removal: Estä poisto
+      prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -825,6 +823,7 @@ fi:
       description: Lisätäksesi uusia käyttäjiä ryhmään kirjoita käyttäjän nimi seuraavaan hakukenttään ja paina "Liitä ryhmään" -painikkeita.
       placeholder_for_search: Kirjoita käyttäjän nimi tai osa siitä
       hidden_members_hidden_tools_warning: "Joitain toimintoja on piilotettu, koska ryhmässä on jäseniä kouluista joihin sinulla ei ole pääsyoikeutta."
+      group_username_list_confirm: "Oletko varma, että haluat luoda ryhmän jäsenistä uuden käyttäjätunnuslistan?"
     new:
       title: "Luo uusi ryhmä"
     edit:
