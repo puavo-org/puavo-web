@@ -1153,8 +1153,6 @@ fi:
         displayName: Koulun nimi
         puavoNamePrefix: Etuliite
         puavoSchoolCode: Koulukoodi
-        ldap_create_time: Luotu (LDAP)
-        ldap_modify_time: Muokattu (LDAP)
         puavoSchoolHomePageURL: Koulun kotisivu
         description: Kuvaus
         puavoSchoolNameAbbreviation: "Ryhmän lyhenne"
