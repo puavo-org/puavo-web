@@ -165,7 +165,6 @@ fi:
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot
-  cancel: "Peruuta"
   or: tai
   missing_data: "(Puuttuu/ei asetettu)"
   default_select_value: Valitse

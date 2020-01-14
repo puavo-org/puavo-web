@@ -165,7 +165,6 @@ en:
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions
-  cancel: "Cancel"
   or: or
   missing_data: "(Missing/unset)"
   default_select_value: Select
