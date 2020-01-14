@@ -1,4 +1,21 @@
 en:
+  # Month names used by Rails' date_select control
+  date:
+    month_names:
+    -
+    - January
+    - February
+    - March
+    - April
+    - May
+    - June
+    - July
+    - August
+    - September
+    - October
+    - November
+    - December
+
   fuzzy_time:
     just_now: "just now"
     less_than_minute: "less than a minute ago"

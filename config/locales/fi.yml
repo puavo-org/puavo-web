@@ -1,4 +1,21 @@
 fi:
+  # Month names used by Rails' date_select control
+  date:
+    month_names:
+    -
+    - Tammikuu
+    - Helmikuu
+    - Maaliskuu
+    - Huhtikuu
+    - Toukokuu
+    - Kesäkuu
+    - Heinäkuu
+    - Elokuu
+    - Syyskuu
+    - Lokakuu
+    - Marraskuu
+    - Joulukuu
+
   fuzzy_time:
     just_now: "juuri nyt"
     less_than_minute: "alle minuutti sitten"
