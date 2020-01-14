@@ -1,9 +1,21 @@
 # Partial Swedish translations for Puavo. Password and user profile forms only.
 
 sv:
+  language_fi_FI: "Finnish"
+  language_en_US: "English (United States)"
+  language_sv_FI: "Swedish (Finland)"
+  language_de_DE: "German (Germany)"
+  language_de_CH: "German (Switzerland)"
+  language_fr_CH: "French (Switzerland)"
+  language_ar_SA: "Arabic (Saudi Arabia)"
+  language_default: "Default"
+
+  # Hyperlinks and buttons
   link:
     change_password: "Change password"
     update: "Update"
+
+  # Flash messages
   flash:
     password:
       successful: Password changed successfully!
@@ -22,6 +34,30 @@ sv:
       too_many_sent_token_request: We've already sent a reset message to your email address.
       too_many_attempts: "You must wait 10 seconds between password change attempts."
       go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
+
+  # Forms and form errors. Many of these have specially formatted names and
+  # they're structured in a specific way, because they're accessed by form
+  # helper methods and those interpolate the key from field names/IDs.
+  activeldap:
+    attributes:
+      user:
+        uid: "Username"
+        new_password: "New password"
+        new_password_confirmation: "Confirm new password"
+        mail: "Email"
+        telephoneNumber: "Telephone number"
+        jpegPhoto: "Image"
+        puavoLocale: "Language"
+    errors:
+      messages:
+        gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
+        gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
+        gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
+        sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
+        sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
+
+  # Password forms
+  # (There are more password-related messages in the flash messages section)
   password:
     gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
     six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
@@ -40,31 +76,8 @@ sv:
       title: "Change your own password"
       password: "Old password"
       link_other_password: "Change someone else's password"
+
+  # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
       title: "My profile"
-  activeldap:
-    attributes:
-      user:
-        uid: "Username"
-        new_password: "New password"
-        new_password_confirmation: "Confirm new password"
-        mail: "Email"
-        telephoneNumber: "Telephone number"
-        jpegPhoto: "Image"
-        puavoLocale: "Language"
-    errors:
-      messages:
-        gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
-        gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
-        gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
-        sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
-        sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
-  language_fi_FI: "Finnish"
-  language_en_US: "English (United States)"
-  language_sv_FI: "Swedish (Finland)"
-  language_de_DE: "German (Germany)"
-  language_de_CH: "German (Switzerland)"
-  language_fr_CH: "French (Switzerland)"
-  language_ar_SA: "Arabic (Saudi Arabia)"
-  language_default: "Default"
