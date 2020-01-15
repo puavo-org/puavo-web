@@ -7,7 +7,6 @@ de:
   language_de_DE: "Deutsch (Deutschland)"
   language_de_CH: "Deutsch (Schweiz)"
   language_fr_CH: "Französisch (Schweiz)"
-  language_ar_SA: "Arabisch (Saudi Arabien)"
   language_default: "Vorgabe"
 
   # Hyperlinks and buttons
@@ -18,20 +17,20 @@ de:
   # Flash messages
   flash:
     password:
-      successful: Password changed successfully!
-      failed: Failed to change the user's password!
+      successful: "Password changed successfully!"
+      failed: "Failed to change the user's password!"
       failed_details: "Failed to change the user's password: %{details}"
       invalid_external_login: "Invalid external login password or username (%{uid})"
-      incomplete_form: You did not fill in all the required form fields.
-      invalid_login: Invalid password or username (%{uid})
+      incomplete_form: "You did not fill in all the required form fields."
+      invalid_login: "Invalid password or username (%{uid})"
       confirmation_failed: "Password doesn't match the confirmation"
-      invalid_user: User (%{uid}) does not exist
+      invalid_user: "User (%{uid}) does not exist"
       email_not_found: "Couldn't find email: %{email}"
-      connection_failed: We're sorry, but something went wrong. Please try again later!
-      can_not_change_password: Can't change password. Please try again later!
+      connection_failed: "We're sorry, but something went wrong. Please try again later!"
+      can_not_change_password: "Can't change password. Please try again later!"
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
-      token_lifetime_has_expired: Your link has expired. Please enter your email again.
-      too_many_sent_token_request: We've already sent a reset message to your email address.
+      token_lifetime_has_expired: "Your link has expired. Please enter your email again."
+      too_many_sent_token_request: "We've already sent a reset message to your email address."
       too_many_attempts: "You must wait 10 seconds between password change attempts."
       go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
 
@@ -81,3 +80,7 @@ de:
   profiles:
     edit:
       title: "Mein Profil"
+      save_and_close: "Save and close"
+    show:
+      message: "Your profile has been successfully updated."
+      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."

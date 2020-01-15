@@ -59,10 +59,8 @@ fi:
     groups: "Ryhmät"
     groupless_users: "Ryhmättömät käyttäjät"
     devices: "Laitteet"
-    device_hw_info: "Laitetiedot"
     schools: "Koulut"
     organisation: "Organisaatio"
-    info: "Tiedot"
     edit: "Muokkaa"
     new: "Uusi"
     owners: "Omistajat"
@@ -85,7 +83,6 @@ fi:
     save: Tallenna
     more: Muut toiminnot
     edit: Muokkaa...
-    back: Takaisin
     cancel: "Peruuta"
     destroy: Poista
     delete_school: "Poista koulu"
@@ -101,7 +98,6 @@ fi:
     unlock_all_group_members: "Avaa kaikkien jäsenien lukitus"
     update: "Päivitä tiedot"
     create: Luo
-    show: "Näytä"
     users: "Käyttäjät"
     groups: "Ryhmät"
     roles: Roolit
@@ -114,7 +110,6 @@ fi:
     lock_users_marked_for_deletion: "Lukitse kaikki poistettavaksi merkityt käyttäjät"
     delete_users_marked_for_deletion: "Poista poistettavaksi merkityt käyttäjät"
     continue: Jatka
-    login: Kirjaudu
     change_password: Vaihda salasana
     new_school: Uusi koulu...
     new_ldap_service: Uusi...
@@ -122,11 +117,8 @@ fi:
     devices: Laitelista
     device_statistics: "Työpöytäkuvatilastot"
     delete_device: "Poista laite"
-    servers: Palvelimet
     set_install_mode: "Poista sertifikaatti ja aseta laite asennustilaan"
     set_install_mode_server: "Poista sertifikaatti ja aseta palvelin asennustilaan"
-    automounts: Hakemistoliitokset
-    new_automount: Uusi hakemistoliitos
     printer_permissions: Tulostinoikeudet
 
   # Main application layout
@@ -139,7 +131,6 @@ fi:
       users: Käyttäjät
       groups: Ryhmät
       tools: "Työkalut"
-      logged_in_as: "Kirjauduttu käyttäjänä:"
       devices: Laitteet
       servers: Palvelimet
       ldap_services: LDAP -palvelut
@@ -151,8 +142,6 @@ fi:
       search_placeholder: Pikahaku
       search_title: Käyttäjien, ryhmien ja laitteden haku nimellä
       extended_search_title: Laajennettu haku. Etsi useita nimiä yhtä aikaa, valitse mistä kentistä etsitään ja miten täsmäys tehdään.
-      links: Linkit
-      desktop: "Työpöytä"
       owners: Omistajat
     forms:
       required_field: "* = Pakollinen kenttä"
@@ -165,7 +154,6 @@ fi:
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot
-  or: tai
   missing_data: "(Puuttuu/ei asetettu)"
   default_select_value: Valitse
 
@@ -183,7 +171,6 @@ fi:
   language_de_DE: Saksa (Saksa)
   language_de_CH: Saksa (Sveitsi)
   language_fr_CH: Ranska (Sveitsi)
-  language_ar_SA: Arabia (Saudi-Arabia)
   language_default: Oletus
 
   group_type:
@@ -484,7 +471,6 @@ fi:
       find_all_users_marked_for_deletion: "Etsi kaikki poistettavaksi merkityt käyttäjät"
     edit:
       title: Muokkaa organisaatiota
-      select: Valitse
       add_puavo_billing_info: "Lisää laskutustietoja"
     owners:
       title: Organisaation omistajat
@@ -658,7 +644,6 @@ fi:
       mail: "Sähköpostiosoite"
       billing_info: Laskutustiedot
       no_billing_info: "(Ei laskutustietoja)"
-      rule_lines: "Laskusäännöt"
       system_information: Järjestelmätiedot
       total_count: "(yhteensä %{count})"
       info: "Yleistiedot"
@@ -678,10 +663,8 @@ fi:
       lock_marked_users: "Haluatko varmasti lukita kaikki poistettavaksi merkityt käyttäjät?"
       delete_marked_users: "Haluatko varmasti poistaa kaikki poistettavaksi merkityt käyttäjät?"
     show:
-      user_type_and_role: "Käyttäjän tyyppi on <b>%{user_type}</b> ja häneen liittyvät seuraavat roolit: <b>%{roles}</b>"
       system_information: "Järjestelmätietoja"
       contact_information: Yhteystiedot
-      group_by_roles: "Roolien mukana tulevat ryhmät"
       groups_by_schools: "Ryhmät kouluittain"
       change_school: Vaihda koulua...
       primus_school_change_warning: "Tässä koulussa on käytössä Primus-integraatio. Käyttäjän siirto toiseen kouluun saattaa sotkea integraation toimintaa.\n\nHaluatko varmasti jatkaa?"
@@ -850,35 +833,21 @@ fi:
       select_device_label: Valitse
       devices: laitetta
     new:
-      new_printer: Uusi tulostin
       new_device: Uusi laite (%{device_type})
     edit:
       edit: Muokkaa laitetta
-      title: Laiteasetukset
-      terminal_title: "Pääteasetukset"
     form:
       printer_title: Tulostusoikeudet
-      printer_description: Tällä laitteella on tulostaminen sallittu seraaviin tulostimiin
     form_cups:
       cups_settings: CUPS-asetukset
     cups:
       cups_settings: CUPS-asetukset
     show:
       change_school: Vaihda koulua...
-      hw_info_button: "Näytä laitteistotiedot..."
-      no_hw_info: "(Tuntematon/Ei koskaan)"
     select_school:
       title: "Laitteen (%{name}) siirtäminen toiseen kouluun"
       select_new_school: Valitse uusi koulu
       submit: "Siirrä"
-
-  automounts:
-    index:
-      title: Hakemistoliitokset
-    new:
-      title: Uusi hakemistoliitos
-    edit:
-      title: Hakemistoliitoksen muokkaus
 
   # Device types (used in app/models/host.rb)
   host:
@@ -1060,9 +1029,6 @@ fi:
     ppd_file:
       no_file: Ajuritiedostoa ei ole asetettu
       cannot_detect_filetype: Tuntematon ajuritiedosto
-    submit:
-      servers:
-        create: Luo
     invalid_ssh_public_key: Virheellinen avain
     default_by_school: Koulun oletusarvo
     default_by_organisation: Organisaation oletusarvo
@@ -1350,8 +1316,6 @@ fi:
         puavoDeviceDefaultAudioSource: "Oletusäänilaite (sisään)"
         puavoDeviceDefaultAudioSink: "Oletusäänilaite (ulos)"
         puavoImageSeriesSourceURL: Levykuvasarjan lähdeosoite
-      automount:
-        cn: Hakemisto
       printer:
         printerDescription: Tulostimen nimi
         printerMakeAndModel: Valmistaja ja malli

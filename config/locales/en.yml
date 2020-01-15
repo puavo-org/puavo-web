@@ -59,10 +59,8 @@ en:
     groups: "Groups"
     groupless_users: "Ungrouped users"
     devices: "Devices"
-    device_hw_info: "Hardware Information"
     schools: "Schools"
     organisation: "Organisation"
-    info: "Info"
     edit: "Edit"
     new: "New"
     owners: "Owners"
@@ -85,7 +83,6 @@ en:
     save: Save
     more: More actions
     edit: Edit...
-    back: Back
     cancel: "Cancel"
     destroy: Remove
     delete_school: "Delete school"
@@ -101,7 +98,6 @@ en:
     unlock_all_group_members: "Unlock all members"
     update: Update
     create: Create
-    show: Show
     users: Users
     groups: Groups
     roles: Roles
@@ -114,7 +110,6 @@ en:
     lock_users_marked_for_deletion: "Lock all users who are marked for deletion"
     delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     continue: Continue
-    login: Login
     change_password: Change password
     new_school: New school...
     new_ldap_service: New...
@@ -122,11 +117,8 @@ en:
     devices: Device list
     device_statistics: Device statistics
     delete_device: "Delete device"
-    servers: Servers
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
-    automounts: Automounts
-    new_automount: New automount
     printer_permissions: Printing permissions
 
   # Main application layout
@@ -139,7 +131,6 @@ en:
       users: Users
       groups: Groups
       tools: Tools
-      logged_in_as: Logged in as
       devices: Devices
       servers: Servers
       ldap_services: LDAP services
@@ -151,8 +142,6 @@ en:
       search_placeholder: Quick search
       search_title: User, group and device search by name
       extended_search_title: Extended search. Search using multiple names simultaneously, choose which fields are searched and how they are matched.
-      links: Links
-      desktop: Desktop
       owners: Owners
     forms:
       required_field: "* = Required field"
@@ -165,7 +154,6 @@ en:
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions
-  or: or
   missing_data: "(Missing/unset)"
   default_select_value: Select
 
@@ -183,7 +171,6 @@ en:
   language_de_DE: German (Germany)
   language_de_CH: German (Switzerland)
   language_fr_CH: French (Switzerland)
-  language_ar_SA: Arabic (Saudi Arabia)
   language_default: Default
 
   group_type:
@@ -484,7 +471,6 @@ en:
       find_all_users_marked_for_deletion: "Find all users who are marked for deletion"
     edit:
       title: Edit organisation
-      select: Select
       add_puavo_billing_info: Add a new billing info
     owners:
       title: Organisation owners
@@ -658,7 +644,6 @@ en:
       mail: E-mail
       billing_info: Billing info
       no_billing_info: "(No billing info)"
-      rule_lines: Rules
       system_information: System Information
       total_count: "%{count} total)"
       info: "General Information"
@@ -678,10 +663,8 @@ en:
       lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
       delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
     show:
-      user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
       system_information: System information
       contact_information: Contact information
-      group_by_roles: Groups by roles
       groups_by_schools: "Groups by schools"
       change_school: Change school...
       primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
@@ -850,35 +833,21 @@ en:
       select_device_label: Select
       devices: devices
     new:
-      new_printer: New printer
       new_device: New device
     edit:
       edit: Edit device
-      title: Device settings
-      terminal_title: Terminal settings
     form:
       printer_title: Printing permissions
-      printer_description: Printing is allowed on the following printers
     form_cups:
       cups_settings: CUPS settings
     cups:
       cups_settings: CUPS settings
     show:
       change_school: Change school...
-      hw_info_button: "Show hardware info..."
-      no_hw_info: "(Unknown/Never)"
     select_school:
       title: Device transfer (%{name})
       select_new_school: Select the new school
       submit: Move device
-
-  automounts:
-    index:
-      title: Automounts
-    new:
-      title: New automount
-    edit:
-      title: Edit an automount
 
   # Device types (used in app/models/host.rb)
   host:
@@ -1060,9 +1029,6 @@ en:
     ppd_file:
       no_file: No driver file
       cannot_detect_filetype: Cannot detect the driver file type
-    submit:
-      servers:
-        create: Create
     invalid_ssh_public_key: Invalid public key
     default_by_school: Default by school
     default_by_organisation: Default by organisation
@@ -1350,8 +1316,6 @@ en:
         puavoDeviceDefaultAudioSource: Default input audio device
         puavoDeviceDefaultAudioSink: Default output audio device
         puavoImageSeriesSourceURL: Image series source URL
-      automount:
-        cn: Directory
       printer:
         printerDescription: Printer name
         printerMakeAndModel: Manufacturer and model
@@ -1413,7 +1377,7 @@ en:
   email_confirm:
     preview:
       title: Confirm your email address
-      description:
+      description: "Verify your new email address (%{email}) by entering it below and then clicking on Confirm"
       confirm: Confirm
     successfully:
       info: Your email address has been confirmed
