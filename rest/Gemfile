@@ -23,8 +23,7 @@ gem "fluent-logger"
 gem "yajl-ruby"
 gem "msgpack"
 gem "colorize"
-gem "redis-namespace"
-gem "icalendar"
+gem "redis-namespace", "1.6.0"  # Ruby 2.3.x
 gem "httparty"
 gem "pony"
 gem "gibberish"
@@ -37,6 +36,10 @@ gem "mechanize"
 gem "net-ldap"
 gem "byebug"
 gem "ntlm-http"
+
+# Ruby 2.3.x
+gem "ttfunk", "1.5.1"
+gem "gettext", "3.2.9"
 
 group :test do
   gem "shotgun"

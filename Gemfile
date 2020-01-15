@@ -16,6 +16,11 @@ gem "sshkey"
 gem "i18n-js"
 gem "byebug"
 
+# last versions that work with Ruby 2.3.x
+gem "ttfunk", "1.5.1"
+gem "gettext", "3.2.9"
+gem "redis-namespace", "1.6.0"
+
 gem "sassc-rails"
 gem "jquery-rails"
 
