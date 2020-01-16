@@ -38,21 +38,21 @@ h2 {
 }
 
 code, pre {
-  margin: 0 2px;
-  padding: 0px 5px;
   background: #E5E2CD;
   border: 1px solid #8F8F8F;
   border-radius: 3px;
   font-family: Consolas, "Liberation Mono", Courier, monospace;
-  font-size: 12px;
   overflow-x: auto;
 }
-pre code {
-  border: 0px;
+
+code {
+  margin: 0 2px;
+  padding: 0 5px;
 }
+
 pre {
-  padding-top: 1em;
-  padding-bottom: 1em;
+  margin: 0;
+  padding: 0.5em;
 }
 
 .login {
