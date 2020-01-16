@@ -81,7 +81,7 @@ GEM
     faraday (1.0.0)
       multipart-post (>= 1.2, < 3)
     fast_gettext (2.0.1)
-    ffi (1.11.3)
+    ffi (1.12.1)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
@@ -256,7 +256,7 @@ GEM
       macaddr (~> 1.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    webmock (3.7.6)
+    webmock (3.8.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
