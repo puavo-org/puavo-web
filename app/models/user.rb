@@ -52,7 +52,8 @@ class User < LdapBase
      :mass_import,
      :image,
      :earlier_user,
-     :new_password_confirmation
+     :new_password_confirmation,
+     :password_change_mode
   ]
 
   # role_ids/role_name: see set_role_ids_by_role_name and validate methods
@@ -360,12 +361,17 @@ class User < LdapBase
     actor_dn = ldap_conf[:bind_dn]
     actor_username = User.find(actor_dn).uid rescue nil
 
+    # use a particular passowrd change mode
+    # (:all, :upstream_only, :no_upstream) if requested, otherwise
+    # the current operation default or default
+    pw_change_mode = password_change_mode || mode || :all
+
     rest_params = {
                     :actor_dn             => actor_dn,
                     :actor_username       => actor_username,
                     :actor_password       => ldap_conf[:password],
                     :host                 => ldap_conf[:host],
-                    :mode                 => mode || :all,
+                    :mode                 => pw_change_mode,
                     :target_user_username => self.uid,
                     :target_user_password => new_password,
                   }

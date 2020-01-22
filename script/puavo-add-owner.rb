@@ -145,6 +145,7 @@ databases.each do |database|
   user.sn = owner_surname
   user.new_password = owner_password
   user.new_password_confirmation = owner_password
+  user.password_change_mode = :no_upstream
   user.puavoEduPersonAffiliation = "admin"
   user.puavoSshPublicKey = owner_ssh_public_key
   try_save_user(user, role)
@@ -157,4 +158,6 @@ databases.each do |database|
     puts "\tUser is already an organisation owner"
   end
 
+  # wait a bit so we do not hit puavo-rest password change rate limiter
+  sleep 11
 end

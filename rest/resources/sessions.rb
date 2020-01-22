@@ -250,11 +250,5 @@ class Sessions < PuavoSinatra
     json :ok => true
   end
 
-  get "/v3/sessions/:uuid/feed" do
-    session = Session.by_uuid!(params["uuid"])
-    # TODO: merge messages from the device and the user
-    raise "Not implemented"
-  end
-
 end
 end

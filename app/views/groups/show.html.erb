@@ -156,7 +156,7 @@
 
         <% if @num_hidden == 0 %>
         <li>
-          <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('group_username_list_confirm') }, method: :put do %>
+          <%= link_to create_username_list_from_group_path(@school, @group), data: { confirm: t('.group_username_list_confirm') }, method: :put do %>
             <i class="icon-list"></i><%= t('link.create_username_list_from_group') %>
           <% end %>
         </li>

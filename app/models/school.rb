@@ -84,22 +84,6 @@ class School < BaseGroup
     end
   end
 
-  def external_feeds=(value)
-    set_attribute("puavoExternalFeed", Array(value).map do |value|
-        {
-          "type" => "ical",
-          "name" => "Opinsys",
-          "value" => value
-        }.to_json
-    end)
-  end
-
-  def external_feeds
-    val = Array(get_attribute("puavoExternalFeed")).first
-    val = JSON.parse(val) if val
-    val["value"] if val
-  end
-
   def remove_user(user)
     begin
     self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},

@@ -1,27 +1,62 @@
 # Partial German translations for Puavo. Password and user profile forms only.
 
 de:
+  language_fi_FI: "Finnisch"
+  language_en_US: "Englisch (Vereinigte Staaten Amerika)"
+  language_sv_FI: "Schwedisch (Finnland)"
+  language_de_DE: "Deutsch (Deutschland)"
+  language_de_CH: "Deutsch (Schweiz)"
+  language_fr_CH: "Französisch (Schweiz)"
+  language_default: "Vorgabe"
+
+  # Hyperlinks and buttons
   link:
     change_password: "Setze neues Passwort"
     update: "Aktualisieren"
+
+  # Flash messages
   flash:
     password:
-      successful: Password changed successfully!
-      failed: Failed to change the user's password!
+      successful: "Password changed successfully!"
+      failed: "Failed to change the user's password!"
       failed_details: "Failed to change the user's password: %{details}"
       invalid_external_login: "Invalid external login password or username (%{uid})"
-      incomplete_form: You did not fill in all the required form fields.
-      invalid_login: Invalid password or username (%{uid})
+      incomplete_form: "You did not fill in all the required form fields."
+      invalid_login: "Invalid password or username (%{uid})"
       confirmation_failed: "Password doesn't match the confirmation"
-      invalid_user: User (%{uid}) does not exist
+      invalid_user: "User (%{uid}) does not exist"
       email_not_found: "Couldn't find email: %{email}"
-      connection_failed: We're sorry, but something went wrong. Please try again later!
-      can_not_change_password: Can't change password. Please try again later!
+      connection_failed: "We're sorry, but something went wrong. Please try again later!"
+      can_not_change_password: "Can't change password. Please try again later!"
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
-      token_lifetime_has_expired: Your link has expired. Please enter your email again.
-      too_many_sent_token_request: We've already sent a reset message to your email address.
+      token_lifetime_has_expired: "Your link has expired. Please enter your email again."
+      too_many_sent_token_request: "We've already sent a reset message to your email address."
       too_many_attempts: "You must wait 10 seconds between password change attempts."
       go_away: "You are not a teacher nor an admin. You cannot change other user's passwords."
+
+  # Forms and form errors. Many of these have specially formatted names and
+  # they're structured in a specific way, because they're accessed by form
+  # helper methods and those interpolate the key from field names/IDs.
+  activeldap:
+    attributes:
+      user:
+        uid: "Benutzername"
+        new_password: "Neues Passwort"
+        new_password_confirmation: "Bestätigen Sie das neue Passwort"
+        mail: "Email"
+        telephoneNumber: "Telefonnummer"
+        jpegPhoto: "Bild"
+        puavoLocale: "Sprache"
+    errors:
+      messages:
+        gsuite_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens acht Zeichen lang ist."
+        gsuite_password_whitespace: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort nicht mit einem Leerschlag beginnen oder enden darf."
+        gsuite_password_ascii_only: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort nur aus den Zeichen A-Z, a-z, 0-9 und weiteren Interpunktuationen besteht."
+        sixcharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sechs Zeichen lang ist."
+        sevencharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sieben Zeichen lang ist."
+
+  # Password forms
+  # (There are more password-related messages in the flash messages section)
   password:
     gsuite_integration_enabled: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens acht Zeichen lang ist, nicht mit einem Leerschlag beginnen oder enden kann und nur aus den Zeichen A-Z, a-z, 0-9 und weiteren Interpunktuationen besteht."
     six_chars_min: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sechs Zeichen lang ist."
@@ -40,31 +75,12 @@ de:
       title: "Das eigene Passwort ändern"
       password: "Altes Passwort"
       link_other_password: "Passwort eines Anderen ändern"
+
+  # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
   profiles:
     edit:
       title: "Mein Profil"
-  activeldap:
-    attributes:
-      user:
-        uid: "Benutzername"
-        new_password: "Neues Passwort"
-        new_password_confirmation: "Bestätigen Sie das neue Passwort"
-        mail: "Email"
-        telephoneNumber: "Telefonnummer"
-        jpegPhoto: "Bild"
-        puavoLocale: "Sprache"
-    errors:
-      messages:
-        gsuite_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens acht Zeichen lang ist."
-        gsuite_password_whitespace: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort nicht mit einem Leerschlag beginnen oder enden darf."
-        gsuite_password_ascii_only: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort nur aus den Zeichen A-Z, a-z, 0-9 und weiteren Interpunktuationen besteht."
-        sixcharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sechs Zeichen lang ist."
-        sevencharsmin_password_too_short: "Die Sicherheitsrichtlinien der Organisation verlangen, dass das Passwort mindestens sieben Zeichen lang ist."
-  language_fi_FI: "Finnisch"
-  language_en_US: "Englisch (Vereinigte Staaten Amerika)"
-  language_sv_FI: "Schwedisch (Finnland)"
-  language_de_DE: "Deutsch (Deutschland)"
-  language_de_CH: "Deutsch (Schweiz)"
-  language_fr_CH: "Französisch (Schweiz)"
-  language_ar_SA: "Arabisch (Saudi Arabien)"
-  language_default: "Vorgabe"
+      save_and_close: "Save and close"
+    show:
+      message: "Your profile has been successfully updated."
+      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."

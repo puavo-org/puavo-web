@@ -3,12 +3,12 @@
   <table>
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoPurchaseDate") %></th>
-      <td><%= h I18n.l(device.puavoPurchaseDate) rescue nil %></td>
+      <td><%= device.puavoPurchaseDate ? device.puavoPurchaseDate.strftime('%Y-%m-%d') : '' %></td>
     </tr>
 
     <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoWarrantyEndDate") %></th>
-      <td><%= h I18n.l(device.puavoWarrantyEndDate) rescue nil %></td>
+      <td><%= device.puavoWarrantyEndDate ? device.puavoWarrantyEndDate.strftime('%Y-%m-%d') : '' %></td>
     </tr>
 
     <tr>

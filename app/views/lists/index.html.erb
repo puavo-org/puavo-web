@@ -13,7 +13,7 @@
 <div class="userListTable">
   <div class="userListRow">
     <div class="userListCol userListMeta">
-      <p><strong><%= t(".created") %>:</strong> <span><%= I18n.l(Time.at(list.created_at), :format => :number_with_time) %></span></p>
+      <p><strong><%= t(".created") %>:</strong> <span><%= I18n.l(Time.at(list.created_at), :format => '%Y-%m-%d %H:%M:%S') %></span></p>
       <p><%= list.creator %></p>
       <p><strong><%= t(".users_count_title") %>:</strong> <span><%= list.users.count %></span></p>
     </div>
