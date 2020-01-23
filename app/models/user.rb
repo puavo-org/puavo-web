@@ -376,7 +376,7 @@ class User < LdapBase
                     :target_user_password => new_password,
                   }
 
-    res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
+    res = rest_proxy.put('/v3/users/password', :form => rest_params).parse
     res = {} unless res.kind_of?(Hash)
 
     FLOG.info('rest call to PUT /v3/users/password', res.merge(
