@@ -212,7 +212,6 @@ class Root < PuavoSinatra
   use PuavoRest::BootConfigurations
   use PuavoRest::Sessions
   use PuavoRest::Organisations
-  use PuavoRest::FluentRelay
   use PuavoRest::DeviceImages
   use PuavoRest::Schools
   use PuavoRest::BootServers

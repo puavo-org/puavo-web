@@ -17,9 +17,7 @@ gem "gssapi", :git => "https://github.com/opinsys/gssapi.git", :branch => "gss_k
 gem "sinatra-r18n"
 gem "pry"
 gem "redis"
-gem "fluent-logger"
 gem "yajl-ruby"
-gem "msgpack"
 gem "colorize"
 gem "redis-namespace", "1.6.0"  # Ruby 2.3.x
 gem "httparty"

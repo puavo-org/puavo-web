@@ -6,7 +6,6 @@ end
 
 gem "pry"
 gem "unicorn"
-gem "fluent-logger"
 gem "gibberish"
 gem "http"
 gem "json"

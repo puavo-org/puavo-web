@@ -31,7 +31,6 @@ Homepage: https://github.com/opinsys/puavo-users/
 Package: puavo-rest
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- fluentd,
  krb5-user,
  libsasl2-modules-gssapi-mit,
  make,

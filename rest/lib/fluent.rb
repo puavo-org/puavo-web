@@ -1,7 +1,9 @@
-
-require 'fluent-logger'
-
-Fluent::Logger::FluentLogger.open(nil, :host=>'localhost', :port=>24224)
+# Dummy logger stub that ignores everything. Mostly needed to make some logging-related
+# tests to pass.
+class DummyFluentLogger
+    def post(tag, record)
+    end
+end
 
 # Small wrapper for fluent-logger gem. Most notably this wrapper filters out
 # all data keys with `password` string
@@ -10,7 +12,7 @@ class FluentWrap
   # @param tag [String] Fluent tag
   # @param base_attrs [Hash] Data to be added for each log message
   # @param logger [Object] Fluent logger object. Can be set for mocking purposes for testing
-  def initialize(tag, base_attrs, fluent_logger=Fluent::Logger)
+  def initialize(tag, base_attrs, fluent_logger=DummyFluentLogger.new)
     @tag = tag
     @fluent_logger = fluent_logger
     @human_readable_logger = Logger.new(STDOUT)
