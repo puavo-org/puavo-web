@@ -41,7 +41,8 @@ class PuavoSinatra < Sinatra::Base
     return @json_body if @json_body
 
     if request.content_type.downcase.start_with?("application/json")
-      return JSON.parse(request.body.read)
+      @json_body = JSON.parse(request.body.read)
+      return @json_body
     end
 
     return request.POST
