@@ -858,23 +858,23 @@ class Users < PuavoSinatra
       param_names_list.each do |param_name|
         case param_name
           when 'actor_dn', 'actor_username'
-            param_ok = params[param_name].kind_of?(String) \
-                         || params[param_name].nil?
+            param_ok = json_params[param_name].kind_of?(String) \
+                         || json_params[param_name].nil?
           when 'mode'
-            param_ok = params[param_name] == 'all'                \
-                         || params[param_name] == 'no_upstream'   \
-                         || params[param_name] == 'upstream_only'
+            param_ok = json_params[param_name] == 'all'                \
+                         || json_params[param_name] == 'no_upstream'   \
+                         || json_params[param_name] == 'upstream_only'
           else
-            param_ok = params[param_name].kind_of?(String) \
-                         && !params[param_name].empty?
+            param_ok = json_params[param_name].kind_of?(String) \
+                         && !json_params[param_name].empty?
         end
 
         raise "'#{ param_name }' parameter is not set or is of wrong type" \
           unless param_ok
       end
 
-      if params['actor_dn'].to_s.empty? \
-           && params['actor_username'].to_s.empty? then
+      if json_params['actor_dn'].to_s.empty? \
+           && json_params['actor_username'].to_s.empty? then
         raise 'either actor_dn or actor_username parameter must be set'
       end
     rescue StandardError => e
@@ -887,7 +887,7 @@ class Users < PuavoSinatra
     end
 
     if ENV["PUAVO_WEB_CUCUMBER_TESTS"] != "true"
-      if too_many_password_change_attempts(params['target_user_username'])
+      if too_many_password_change_attempts(json_params['target_user_username'])
         return json({
           :exit_status => 1,
           :stderr      => '[rest] password change rate limit hit, please wait',
@@ -896,15 +896,15 @@ class Users < PuavoSinatra
       end
     end
 
-    res = Puavo.change_passwd(params['mode'].to_sym,
-                              params['host'],
-                              params['actor_dn'],
-                              params['actor_username'],
-                              params['actor_password'],
-                              params['target_user_username'],
-                              params['target_user_password'])
+    res = Puavo.change_passwd(json_params['mode'].to_sym,
+                              json_params['host'],
+                              json_params['actor_dn'],
+                              json_params['actor_username'],
+                              json_params['actor_password'],
+                              json_params['target_user_username'],
+                              json_params['target_user_password'])
 
-    target_user_username = params['target_user_username']
+    target_user_username = json_params['target_user_username']
     msg = (res[:exit_status] == 0)                                       \
             ? "changed password for '#{ target_user_username }'"         \
             : "changing password failed for '#{ target_user_username }'"

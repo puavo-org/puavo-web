@@ -183,7 +183,7 @@ class PasswordController < ApplicationController
     rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .put(change_password_url,
-           :form => { :new_password => params[:reset][:password] })
+           :json => { :new_password => params[:reset][:password] })
 
     if rest_response.status == 404 &&
         JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
@@ -360,7 +360,7 @@ class PasswordController < ApplicationController
                   }
     rest_params[:mode] = (@user ? 'all' : 'upstream_only')
 
-    res = rest_proxy.put('/v3/users/password', :form => rest_params).parse
+    res = rest_proxy.put('/v3/users/password', :json => rest_params).parse
     res = {} unless res.kind_of?(Hash)
 
     if res['exit_status'] == 0 && !@user && external_login_status then
