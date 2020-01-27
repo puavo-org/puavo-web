@@ -367,7 +367,7 @@ class User < LdapBase
     pw_change_mode = password_change_mode || mode || :all
 
     rest_params = {
-                    :actor_dn             => actor_dn,
+                    :actor_dn             => actor_dn.to_s,
                     :actor_username       => actor_username,
                     :actor_password       => ldap_conf[:password],
                     :host                 => ldap_conf[:host],
