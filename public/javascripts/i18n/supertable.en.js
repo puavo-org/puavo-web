@@ -134,4 +134,40 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             title: "Delete",
         },
     },
+
+    massop_devices: {
+        puavoconf: {
+            title: "PuavoConf editor...",
+            key: "Key:",
+            value: "New value:",
+            validity_warning: "Make sure the value is valid! This tool does not validate it. Also check the data type below.",
+            action: "Action:",
+            add: "Create or update",
+            remove: "Remove key and value",
+
+            type: "Data type:",
+            type_string: "string",
+            type_int: "integer",
+            type_bool: "bool",
+        },
+
+        set_field: {
+            title: "Set database field value...",
+            field: "Field:",
+            value: "Value:",
+            desktop_image: "Desired desktop image file",
+            kernel_args: "Kernel parameters",
+            kernel_version: "Kernel version",
+            puavoconf_replace: "PuavoConf (replace all)",
+            tags_replace: "Tagit (replace all)",
+            manufacturer: "Manufacturer",
+            model: "Model",
+            serial: "Serial number",
+            validity_warning: "This string is not validated in any way! Anything you put in the box above is stored in the database as-is.",
+        },
+
+        deletion: {
+            title: "Delete",
+        },
+    },
 });

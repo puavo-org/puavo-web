@@ -138,4 +138,40 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             title: "Poista",
         },
     },
+
+    massop_devices: {
+        puavoconf: {
+            title: "PuavoConf-muokkaus...",
+            key: "Avain:",
+            value: "Uusi arvo:",
+            validity_warning: "Varmista etukäteen ettei arvo ole virheellinen. Tämä työkalu ei tarkista sitä. Varmista myös, että tyyppi on valittuna oikein alla.",
+            action: "Toiminto:",
+            add: "Luo tai päivitä avain",
+            remove: "Poista avain arvoineen",
+
+            type: "Datatyyppi:",
+            type_string: "string",
+            type_int: "integer",
+            type_bool: "bool",
+        },
+
+        set_field: {
+            title: "Aseta tietokannan kentän arvo...",
+            field: "Vaihdettava kenttä:",
+            value: "Arvo:",
+            desktop_image: "Käytettävä työpöytäkuvatiedosto",
+            kernel_args: "Kernel-parametrit",
+            kernel_version: "Kernel-versio",
+            puavoconf_replace: "PuavoConf (korvaa kaikki)",
+            tags_replace: "Tagit (korvaa kaikki)",
+            manufacturer: "Valmistaja",
+            model: "Malli",
+            serial: "Sarjanumero",
+            validity_warning: "Tämän tekstijonon oikeellisuutta ei varmisteta mitenkään! Laatikon sisältö tallennetaan tietokantaan sellaisenaan.",
+        },
+
+        deletion: {
+            title: "Poista",
+        },
+    },
 });
