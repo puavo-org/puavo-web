@@ -225,6 +225,7 @@ fi:
       image: "Työpöytäkuva"
       current_image: "Nykyinen työpöytäkuva"
       kernel_args: "Kernel-parametrit"
+      kernel_version: "Kernel-versio"
       hwinfo_time: "Laitetiedot saatu"
       hwinfo_ram_size: "RAM"
       hwinfo_hd_size: "Kiintolevy"
