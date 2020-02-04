@@ -132,4 +132,10 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             title: "Tunnuksen poisto",
         },
     },
+
+    massop_groups: {
+        deletion: {
+            title: "Poista",
+        },
+    },
 });

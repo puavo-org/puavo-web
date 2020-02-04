@@ -90,6 +90,39 @@ class GroupsController < ApplicationController
     render :json => @groups
   end
 
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
+  # Mass operation: delete group
+  def mass_op_group_delete
+    begin
+      group_id = params[:group][:id]
+    rescue
+      puts "mass_op_group_delete(): did not required params in the request:"
+      puts params.inspect
+      return render :json => { status: :failed, message: "request is missing param(s)" }
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      group.delete
+      ok = true
+    rescue StandardError => e
+      return render :json => { status: :failed, message: e.to_s }
+    end
+
+    if ok
+      return render :json => { status: :ok }
+    else
+      return render :json => { status: :failed, message: "unknown error" }
+    end
+  end
+
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
   # GET /:school_id/groups/1
   # GET /:school_id/groups/1.xml
   def show
