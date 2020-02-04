@@ -139,15 +139,15 @@ class PasswordController < ApplicationController
 
     raise TooManySentTokenRequest if db.get(user.puavoId)
 
-    db.set(user.puavoId, true)
-    db.expire(user.puavoId, 300)
-
     rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .post(send_token_url,
             :params => { :username => user.uid })
 
     raise RestConnectionError if rest_response.status != 200
+
+    db.set(user.puavoId, true)
+    db.expire(user.puavoId, 300)
 
     respond_to do |format|
       flash[:message] = I18n.t('password.successfully.send_token')
