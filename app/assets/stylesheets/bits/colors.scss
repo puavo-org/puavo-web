@@ -233,6 +233,36 @@ $listRowHoverBack: #f9f7e6;
 $listRowBorder: #c8c8c8;
 $listFore: #000;
 
+$listSelectedOddBack: #60ffff;
+$listSelectedEvenBack: #90ffff;
+$listSelectedHoverBack: #b0ffff;
+$listOKOddBack: #60ff60;
+$listOKEvenBack: #90ff90;
+$listOKHoverBack: #b0ffb0;
+$listFailedOddBack: #ff6060;
+$listFailedEvenBack: #ff9090;
+$listFailedHoverBack: #ffb0b0;
+
+$checkboxBorder: #ccc;
+$checkboxBack: #fff;
+$checkboxHoverBack: #ddd;
+
+$massOpSettingsBack: #f0f0f0;
+$massOpSettingsBorder: #ccc;
+$massOpStatusNormal: #000;
+$massOpStatusSelected: #00f;
+$massOpStatusOK: #080;
+$massOpStatusFailed: #f00;
+
+$massSelectMenuBack: #fff;
+$massSelectMenuBorder: #888;
+$massSelectMenuShadow: rgba(0, 0, 0, 0.5);
+$massSelectMenuFore: #000;
+$massSelectMenuHighlightFore: #000;
+$massSelectMenuHighlightBack: $baseOrangeGradient;
+
+$listPreviousRow: #000;
+
 $markedForDeletionOddRowBack: #faa;
 $markedForDeletionEvenRowBack: #fcc;
 $markedForDeletionRowHoverBack: #fdd;
