@@ -436,6 +436,65 @@ function escapeHTML(s)
             .replace(/'/g, "&#039;");
 }
 
+function doSingleNetworkPost(url, json)
+{
+    let ret = null,
+        error = false,
+        errorMessage = null;
+
+    $.get({
+        type: "POST",
+        url: url,
+        data: json,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+
+        async: false,       // THIS IS IMPORTANT!
+        timeout: 10000,
+
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
+        },
+
+        beforeSend: function(jq, settings) {
+        },
+
+        fail: function(data) {
+        },
+
+        complete: function(data) {
+            if (data.readyState == 0 && data.statusText == "error") {
+                errorMessage = "Network error!";
+                error = true;
+            } else if (data.readyState == 0 && data.statusText == "timeout") {
+                errorMessage = "Network timeout!";
+                error = true;
+            } else if (data.status == 200) {
+                // Parse the received JSON
+                try {
+                    ret = JSON.parse(data.responseText);
+                } catch (e) {
+                    errorMessage = "Server response JSON parsing failed!";
+                    error = true;
+                }
+            } else {
+                // Something else failed
+                errorMessage = "Unknown error: " + data.status;
+                error = true;
+            }
+
+            if (!error && ret.status != "ok") {
+                console.log("Did not receive a good status from the server: ", ret);
+                errorMessage = ret.message || null;
+                error = true;
+            }
+        }
+    });
+
+    return [error, errorMessage, ret];
+}
+
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 // THE SUPERTABLE
