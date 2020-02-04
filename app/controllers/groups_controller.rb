@@ -75,7 +75,7 @@ class GroupsController < ApplicationController
 
     @raw.each do |dn, grp|
       @groups << {
-        id: grp['puavoId'][0],
+        id: grp['puavoId'][0].to_i,
         name: grp['displayName'][0],
         type: grp['puavoEduGroupType'] ? t('group_type.' + grp['puavoEduGroupType'][0]) : nil,
         abbr: grp['cn'][0],

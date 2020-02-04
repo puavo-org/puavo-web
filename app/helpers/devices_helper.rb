@@ -88,7 +88,7 @@ module DevicesHelper
     device_types = Puavo::CONFIG['device_types']
 
     return {
-      id: dev['puavoId'][0],
+      id: dev['puavoId'][0].to_i,
       hn: dev['puavoHostname'][0],
       type: dev['puavoDeviceType'] ? device_types[dev['puavoDeviceType'][0]]['label'][I18n.locale.to_s] : nil,
       image: dev['puavoDeviceImage'] ? dev['puavoDeviceImage'][0] : nil,
