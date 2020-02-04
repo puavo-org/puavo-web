@@ -145,7 +145,7 @@ const DEFAULT_USER_COLUMNS = [
 
 const PRESETS = [
     {
-        title: (I18n.locale == "fi") ? "Lukitut käyttäjät" : "Locked users",
+        title: I18n.translate("filters_users.locked_users"),
         id: "locked",
         filters: [
             [true, "locked", OPERATOR_EQUAL, true],
@@ -153,7 +153,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi" : "Is marked for deletion",
+        title: I18n.translate("filters_users.marked_for_deletion"),
         id: "marked_for_deletion",
         filters: [
             [true, "rrt", OPERATOR_GREATER_OR_EQUAL, [2010]],
@@ -161,7 +161,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi, ei lukittu" : "Is marked for deletion, but not locked",
+        title: I18n.translate("filters_users.marked_for_deletion_not_locked"),
         id: "unlocked_deleted",
         filters: [
             [true, "locked", OPERATOR_NOT_EQUAL, true],
@@ -171,7 +171,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 90 päivää" : "Has been marked for removal for ≥ 90 days",
+        title: I18n.translate("filters_users.marked_3months"),
         id: "marked_for_3months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 90],
@@ -180,7 +180,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 180 päivää" : "Has been marked for removal for ≥ 180 days",
+        title: I18n.translate("filters_users.marked_6months"),
         id: "marked_for_6months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 180],
@@ -189,7 +189,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 270 päivää" : "Has been marked for removal for ≥ 270 days",
+        title: I18n.translate("filters_users.marked_9months"),
         id: "marked_for_9months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 270],
@@ -198,7 +198,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 365 päivää" : "Has been marked for removal for ≥ 365 days",
+        title: I18n.translate("filters_users.marked_12months"),
         id: "marked_for_12months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 365],

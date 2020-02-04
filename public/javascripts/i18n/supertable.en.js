@@ -93,5 +93,18 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         misc: {
             unset_group_type: "(Missing / not set)",
         },
+    },
+
+    // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+
+    filters_users: {
+        locked_users: "Locked users",
+        marked_for_deletion: "Is marked for deletion",
+        marked_for_deletion_not_locked: "Is marked for deletion, but not locked",
+        marked_3months: "Has been marked for removal for ≥ 90 days",
+        marked_6months: "Has been marked for removal for ≥ 180 days",
+        marked_9months: "Has been marked for removal for ≥ 270 days",
+        marked_12months: "Has been marked for removal for ≥ 365 days",
     }
 });

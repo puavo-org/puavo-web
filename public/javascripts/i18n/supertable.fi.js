@@ -97,5 +97,18 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         misc: {
             unset_group_type: "(Puuttuu / ei asetettu)",
         },
+    },
+
+    // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+
+    filters_users: {
+        locked_users: "Lukitut käyttäjät",
+        marked_for_deletion: "Merkitty poistettavaksi",
+        marked_for_deletion_not_locked: "Merkitty poistettavaksi, ei lukittu",
+        marked_3months: "Merkitty poistettavaksi ≥ 90 päivää",
+        marked_6months: "Merkitty poistettavaksi ≥ 180 päivää",
+        marked_9months: "Merkitty poistettavaksi ≥ 270 päivää",
+        marked_12months: "Merkitty poistettavaksi ≥ 365 päivää",
     }
 });
