@@ -110,5 +110,26 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         marked_6months: "Merkitty poistettavaksi ≥ 180 päivää",
         marked_9months: "Merkitty poistettavaksi ≥ 270 päivää",
         marked_12months: "Merkitty poistettavaksi ≥ 365 päivää",
-    }
+    },
+
+    massop_users: {
+        locking: {
+            title: "Tunnuksen lukitus...",
+            action: "Toiminto:",
+            lock: "Lukitse (jos ei lukittu)",
+            unlock: "Avaa (jos on lukittu)",
+        },
+
+        marking: {
+            title: "Merkitse poistettavaksi...",
+            action: "Toiminto:",
+            mark: "Merkitse poistettavaksi jos ei ole jo",
+            mark_force: "Merkitse poistettavaksi ja nollaa aikaleima nykyhetkeen (ts. \"pakota merkintä aina\")",
+            unmark: "Poista merkintä",
+        },
+
+        deletion: {
+            title: "Tunnuksen poisto",
+        },
+    },
 });

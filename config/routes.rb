@@ -95,6 +95,11 @@ Rails.application.routes.draw do
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
 
       get 'get_school_users_list' => 'users#get_school_users_list'
+
+      post 'mass_op_user_delete' => 'users#mass_op_user_delete'
+      post 'mass_op_user_lock' => 'users#mass_op_user_lock'
+      post 'mass_op_user_mark' => 'users#mass_op_user_mark'
+
     end
 
 

@@ -145,6 +145,143 @@ class UsersController < ApplicationController
     render :json => users
   end
 
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
+  # Mass operation: delete user
+  def mass_op_user_delete
+    begin
+      user_id = params[:user][:id]
+    rescue
+      puts "mass_op_user_delete(): did not required params in the request:"
+      puts params.inspect
+      return render :json => { status: :failed, message: "request is missing param(s)" }
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if user.puavoDoNotDelete
+        return render :json => { status: :failed, message: "can't delete this user" }
+      end
+
+      user.delete
+      ok = true
+    rescue StandardError => e
+      return render :json => { status: :failed, message: e.to_s }
+    end
+
+    if ok
+      return render :json => { status: :ok }
+    else
+      return render :json => { status: :failed, message: "unknown error" }
+    end
+  end
+
+  # Mass operation: lock/unlock user
+  def mass_op_user_lock
+    begin
+      user_id = params[:user][:id]
+      lock = params[:user][:lock]
+    rescue
+      puts "mass_op_user_lock(): did not required params in the request:"
+      puts params.inspect
+      return render :json => { status: :failed, message: "request is missing param(s)" }
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if user.puavoLocked && !lock
+        user.puavoLocked = false
+        user.save!
+      elsif !user.puavoLocked && lock
+        user.puavoLocked = true
+        user.save!
+      end
+
+      ok = true
+    rescue StandardError => e
+      return render :json => { status: :failed, message: e.to_s }
+    end
+
+    if ok
+      return render :json => { status: :ok }
+    else
+      return render :json => { status: :failed, message: "unknown error" }
+    end
+  end
+
+  # Mass operation: mark/unmark for later deletion
+  def mass_op_user_mark
+    begin
+      user_id = params[:user][:id]
+      operation = params[:user][:operation]
+    rescue
+      puts "mass_op_user_mark(): did not required params in the request:"
+      puts params.inspect
+      return render :json => { status: :failed, message: "request is missing param(s)" }
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if operation == 0
+        # Lock
+        if user.puavoDoNotDelete
+          return render :json => { status: :failed, message: "can't delete this user" }
+        end
+
+        if user.puavoRemovalRequestTime
+          # already marked for deletion
+          ok = true
+        else
+          user.puavoRemovalRequestTime = Time.now.utc
+          user.puavoLocked = true
+          user.save!
+          ok = true
+        end
+      elsif operation == 1
+        # Force lock (resets locking timestamp)
+        if user.puavoDoNotDelete
+          return render :json => { status: :failed, message: "can't delete this user" }
+        end
+
+        # always overwrite the existing timestamp
+        user.puavoRemovalRequestTime = Time.now.utc
+        user.puavoLocked = true
+        user.save!
+        ok = true
+      else
+        # Unlock
+        if user.puavoRemovalRequestTime
+          user.puavoRemovalRequestTime = nil
+          user.puavoLocked = false
+          user.save!
+        end
+
+        ok = true
+      end
+    rescue StandardError => e
+      return render :json => { status: :failed, message: e.to_s }
+    end
+
+    if ok
+      return render :json => { status: :ok }
+    else
+      return render :json => { status: :failed, message: "unknown error" }
+    end
+  end
+
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
   # GET /:school_id/users/1/image
   def image
     @user = User.find(params[:id])

@@ -106,5 +106,26 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         marked_6months: "Has been marked for removal for ≥ 180 days",
         marked_9months: "Has been marked for removal for ≥ 270 days",
         marked_12months: "Has been marked for removal for ≥ 365 days",
-    }
+    },
+
+    massop_users: {
+        locking: {
+            title: "Account locking...",
+            action: "Action:",
+            lock: "Lock (if not locked yet)",
+            unlock: "Unlock (if locked)",
+        },
+
+        marking: {
+            title: "Mark account for deletion...",
+            action: "Action:",
+            mark: "Mark for deletion if not marked yet",
+            mark_force: "Force-mark for deletion and reset the timestamp to now (ie. \"always mark\")",
+            unmark: "Unmark",
+        },
+
+        deletion: {
+            title: "Account removal",
+        },
+    },
 });

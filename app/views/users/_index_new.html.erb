@@ -207,6 +207,140 @@ const PRESETS = [
     },
 ];
 
+class MassUserDeletion extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    processOneItem(item)
+    {
+        let [error, message, data] = doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_user_delete",
+            JSON.stringify({ id: item.id })
+        );
+
+        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+    }
+};
+
+class MassUserLocking extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        // the default state (lock)
+        this.lock = true;
+
+        container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th>${I18n.translate("massop_users.locking.action")}</th>
+    <td>
+        <input type="radio" name="mul_action_type" id="mul_action_lock" checked>
+        <label for="mul_action_lock">${I18n.translate("massop_users.locking.lock")}</label><br>
+        <input type="radio" name="mul_action_type" id="mul_action_unlock">
+        <label for="mul_action_unlock">${I18n.translate("massop_users.locking.unlock")}</label>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        container.querySelector("#mul_action_lock")
+            .addEventListener("click", event => this.setLockState(event, true));
+        container.querySelector("#mul_action_unlock")
+            .addEventListener("click", event => this.setLockState(event, false));
+    }
+
+    setLockState(event, state)
+    {
+        this.lock = state;
+    }
+
+    processOneItem(item)
+    {
+        console.log(this.lock);
+        let [error, message, data] = doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_user_lock",
+            JSON.stringify({ id: item.id, lock: this.lock })
+        );
+
+        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+    }
+};
+
+class MassUserMarkForDeletion extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        // the default operation (mark for deletion if not marked yet)
+        this.operation = 0;
+
+        container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th>${I18n.translate("massop_users.marking.action")}</th>
+    <td>
+        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark" checked>
+        <label for="mass_user_mark_mark">${I18n.translate("massop_users.marking.mark")}</label><br>
+        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark_force">
+        <label for="mass_user_mark_mark_force">${I18n.translate("massop_users.marking.mark_force")}</label><br>
+        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_unmark">
+        <label for="mass_user_mark_unmark">${I18n.translate("massop_users.marking.unmark")}</label>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        container.querySelector("#mass_user_mark_mark")
+            .addEventListener("click", event => this.setOperation(event, 0));
+        container.querySelector("#mass_user_mark_mark_force")
+            .addEventListener("click", event => this.setOperation(event, 1));
+        container.querySelector("#mass_user_mark_unmark")
+            .addEventListener("click", event => this.setOperation(event, 2));
+    }
+
+    setOperation(event, op)
+    {
+        this.operation = op;
+    }
+
+    processOneItem(item)
+    {
+        let [error, message, data] = doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_user_mark",
+            JSON.stringify({ id: item.id, operation: this.operation })
+        );
+
+        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+    }
+};
+
+// JavaScript class fields support is so poor that I can't really
+// define titles, IDs and other things in classes, they must be here
+let massOperations = {
+    "lock": {
+        title: I18n.translate("massop_users.locking.title"),
+        hasSettings: true,
+        clazz: MassUserLocking
+    },
+
+    "mark_for_deletion": {
+        title: I18n.translate("massop_users.marking.title"),
+        hasSettings: true,
+        clazz: MassUserMarkForDeletion
+    },
+
+    "delete": {
+        title: I18n.translate("massop_users.deletion.title"),
+        hasSettings: false,
+        clazz: MassUserDeletion
+    },
+};
+
 // The current columns, initially the defaults
 var currentColumns = DEFAULT_USER_COLUMNS;
 
@@ -232,7 +366,7 @@ $(document).ready(function() {
         container: document.getElementById("usersList"),
 
         // Main table flags
-        flags: TABLE_FLAG_USERS,
+        flags: TABLE_FLAG_USERS | TABLE_FLAG_ENABLE_SELECTION,
 
         // All possible columns, their titles, keys, flags, etc.
         columnDefs: USER_COLUMN_DEFS,
@@ -253,6 +387,9 @@ $(document).ready(function() {
 
         // Premade filter presets
         filterPresets: PRESETS,
+
+        // Mass operation definitions
+        massOperations: massOperations,
 
         // Name of the objects the table contains. Currently always a plural.
         itemName: "<%= t('users.index.users') %>",
