@@ -15,6 +15,8 @@
     <th><%= t('activeldap.attributes.school.puavoExternalId') %></th>
     <% end %>
 
+    <th><%= t('schools.index.members') %></th>
+
     <th><%= t('.actions') %></th>
   </tr>
 
@@ -45,6 +47,8 @@
       <%= school.puavoExternalId %>
     </td>
     <% end %>
+
+    <td><%= school.members.count %></td>
 
     <td data-title="<%= t('actions')%>" class="table-actions">
       <%= link_to edit_school_path(school), class: "btn" do %>

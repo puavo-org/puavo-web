@@ -621,6 +621,7 @@ fi:
     index:
       actions: Toiminnot
       title: Listataan koulut
+      members: "Jäseniä"
     edit:
       title: Muokkaa koulua
     new:

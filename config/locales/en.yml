@@ -621,6 +621,7 @@ en:
     index:
       actions: Actions
       title: Listing schools
+      members: "Members"
     edit:
       title: Edit school
     new:
