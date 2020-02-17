@@ -11,6 +11,7 @@ gem "sinatra-contrib"
 gem "uuid"
 gem "puma"
 gem "rack-rewrite"
+gem "rack", "2.1.2"   # 2.2.x breaks some VirtualHostBase tests
 gem "addressable"
 gem "jwt", "2.1.0"
 gem "json"
@@ -31,7 +32,7 @@ gem "http"
 gem "dnsruby"
 gem "mechanize"
 gem "net-ldap"
-gem "byebug"
+gem "byebug", "11.0.1"    # Ruby 2.3.x
 gem "ntlm-http"
 
 # Ruby 2.3.x

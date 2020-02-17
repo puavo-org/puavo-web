@@ -13,7 +13,7 @@ gem "sinatra-support", :require => "sinatra/support"
 gem "jwt", "2.1.0"
 gem "sshkey"
 gem "i18n-js"
-gem "byebug"
+gem "byebug", "11.0.1"    # Ruby 2.3.x
 
 # last versions that work with Ruby 2.3.x
 gem "ttfunk", "1.5.1"
