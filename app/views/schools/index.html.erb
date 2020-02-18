@@ -7,6 +7,8 @@
     <th><%= t('activeldap.attributes.school.displayName') %></th>
     <th><%= t('activeldap.attributes.school.puavoNamePrefix') %></th>
 
+    <th><%= t('activeldap.attributes.school.bootservers') %></th>
+
     <% if @have_school_codes %>
     <th><%= t('activeldap.attributes.school.puavoSchoolCode') %></th>
     <% end %>
@@ -34,6 +36,16 @@
 
     <td data-title="<%= t('activeldap.attributes.school.puavoNamePrefix')%>">
       <%= school.cn %>
+    </td>
+
+    <td>
+      <% unless school.boot_servers.empty? %>
+      <ul class="unstyledUL">
+      <% school.boot_servers.each do |bs| %>
+        <li><%= link_to bs.puavoHostname, server_path(bs) %></li>
+      <% end %>
+      </ul>
+      <% end %>
     </td>
 
     <% if @have_school_codes %>
