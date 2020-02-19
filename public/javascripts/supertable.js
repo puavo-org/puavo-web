@@ -438,9 +438,9 @@ function escapeHTML(s)
 
 function doSingleNetworkPost(url, json)
 {
-    let ret = null,
-        error = false,
-        errorMessage = null;
+    let success = true,         // assume that all calls succeed unless proven otherwise
+        errorMessage = null,
+        networkReturn = null;
 
     $.get({
         type: "POST",
@@ -465,34 +465,32 @@ function doSingleNetworkPost(url, json)
 
         complete: function(data) {
             if (data.readyState == 0 && data.statusText == "error") {
-                errorMessage = "Network error!";
-                error = true;
+                errorMessage = "doSingleNetworkPost(): network error";
+                success = false;
             } else if (data.readyState == 0 && data.statusText == "timeout") {
-                errorMessage = "Network timeout!";
-                error = true;
+                errorMessage = "doSingleNetworkPost(): network timeout";
+                success = false;
             } else if (data.status == 200) {
                 // Parse the received JSON
                 try {
-                    ret = JSON.parse(data.responseText);
+                    networkReturn = JSON.parse(data.responseText);
                 } catch (e) {
-                    errorMessage = "Server response JSON parsing failed!";
-                    error = true;
+                    errorMessage = "doSingleNetworkPost(): server response JSON parsing failed";
+                    success = false;
                 }
             } else {
                 // Something else failed
-                errorMessage = "Unknown error: " + data.status;
-                error = true;
-            }
-
-            if (!error && ret.status != "ok") {
-                console.log("Did not receive a good status from the server: ", ret);
-                errorMessage = ret.message || null;
-                error = true;
+                errorMessage = "doSingleNetworkPost(): unknown error " + data.status;
+                success = false;
             }
         }
     });
 
-    return [error, errorMessage, ret];
+    return {
+        success: success,
+        errorMessage: errorMessage,
+        networkReturn: networkReturn,
+    };
 }
 
 // -------------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@ require 'list'
 require 'csv'
 
 class GroupsController < ApplicationController
+  include Puavo::MassOperations
 
   # GET /:school_id/groups/:id/members
   def members
@@ -100,7 +101,7 @@ class GroupsController < ApplicationController
     rescue
       puts "mass_op_group_delete(): did not required params in the request:"
       puts params.inspect
-      return render :json => { status: :failed, message: "request is missing param(s)" }
+      return status_failed_msg('mass_op_group_delete(): missing params')
     end
 
     ok = false
@@ -110,13 +111,13 @@ class GroupsController < ApplicationController
       group.delete
       ok = true
     rescue StandardError => e
-      return render :json => { status: :failed, message: e.to_s }
+      return status_failed_msg(e)
     end
 
     if ok
-      return render :json => { status: :ok }
+      return status_ok()
     else
-      return render :json => { status: :failed, message: "unknown error" }
+      return status_failed_msg('unknown error')
     end
   end
 

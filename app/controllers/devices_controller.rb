@@ -1,6 +1,8 @@
 require "devices_helper"
 
 class DevicesController < ApplicationController
+  include Puavo::MassOperations
+
   before_action :find_school
 
   # GET /devices
@@ -96,7 +98,7 @@ class DevicesController < ApplicationController
     rescue
       puts "mass_op_device_delete(): did not required params in the request:"
       puts params.inspect
-      return render :json => { status: :failed, message: "request is missing param(s)" }
+      return status_failed_msg('mass_op_device_delete(): missing params')
     end
 
     ok = false
@@ -106,13 +108,13 @@ class DevicesController < ApplicationController
       device.delete
       ok = true
     rescue StandardError => e
-      return render :json => { status: :failed, message: e.to_s }
+      return status_failed_msg(e)
     end
 
     if ok
-      return render :json => { status: :ok }
+      return status_ok()
     else
-      return render :json => { status: :failed, message: "unknown error" }
+      return status_failed_msg('unknown error')
     end
   end
 
@@ -125,7 +127,7 @@ class DevicesController < ApplicationController
     rescue
       puts "mass_op_device_set_field(): did not required params in the request:"
       puts params.inspect
-      return render :json => { status: :failed, message: "request is missing param(s)" }
+      return status_failed_msg('mass_op_device_set_field(): missing params')
     end
 
     ok = false
@@ -192,13 +194,13 @@ class DevicesController < ApplicationController
       # don't raise errors when nothing happens
       ok = true
     rescue StandardError => e
-      return render :json => { status: :failed, message: e.to_s }
+      return status_failed_msg(e)
     end
 
     if ok
-      return render :json => { status: :ok }
+      return status_ok()
     else
-      return render :json => { status: :failed, message: "unknown error" }
+      return status_failed_msg('unknown error')
     end
   end
 
@@ -213,7 +215,7 @@ class DevicesController < ApplicationController
     rescue
       puts "mass_op_device_edit_puavoconf(): did not required params in the request:"
       puts params.inspect
-      return render :json => { status: :failed, message: "request is missing param(s)" }
+      return status_failed_msg('mass_op_device_edit_puavoconf(): missing params')
     end
 
     ok = false
@@ -271,13 +273,13 @@ class DevicesController < ApplicationController
       # don't raise errors when nothing happens
       ok = true
     rescue StandardError => e
-      return render :json => { status: :failed, message: e.to_s }
+      return status_failed_msg(e)
     end
 
     if ok
-      return render :json => { status: :ok }
+      return status_ok()
     else
-      return render :json => { status: :failed, message: "unknown error" }
+      return status_failed_msg('unknown error')
     end
   end
 

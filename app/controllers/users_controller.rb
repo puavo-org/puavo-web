@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include Puavo::Integrations
+  include Puavo::MassOperations
 
   # GET /:school_id/users
   # GET /:school_id/users.xml
@@ -155,7 +157,7 @@ class UsersController < ApplicationController
     rescue
       puts "mass_op_user_delete(): did not required params in the request:"
       puts params.inspect
-      return render :json => { status: :failed, message: "request is missing param(s)" }
+      return status_failed_msg('mass_op_user_delete(): missing params')
     end
 
     ok = false
@@ -164,19 +166,19 @@ class UsersController < ApplicationController
       user = User.find(user_id)
 
       if user.puavoDoNotDelete
-        return render :json => { status: :failed, message: "can't delete this user" }
+        return status_failed_trans('users.mass_operations.deletion_prevented')
       end
 
       user.delete
       ok = true
     rescue StandardError => e
-      return render :json => { status: :failed, message: e.to_s }
+      return status_failed_msg(e)
     end
 
     if ok
-      return render :json => { status: :ok }
+      return status_ok()
     else
-      return render :json => { status: :failed, message: "unknown error" }
+      return status_failed_msg('unknown error')
     end
   end
 
@@ -188,7 +190,7 @@ class UsersController < ApplicationController
     rescue
       puts "mass_op_user_lock(): did not required params in the request:"
       puts params.inspect
-      return render :json => { status: :failed, message: "request is missing param(s)" }
+      return status_failed_msg('mass_op_user_lock(): missing params')
     end
 
     ok = false
@@ -206,13 +208,13 @@ class UsersController < ApplicationController
 
       ok = true
     rescue StandardError => e
-      return render :json => { status: :failed, message: e.to_s }
+      return status_failed_msg(e)
     end
 
     if ok
-      return render :json => { status: :ok }
+      return status_ok()
     else
-      return render :json => { status: :failed, message: "unknown error" }
+      return status_failed_msg('unknown error')
     end
   end
 
@@ -224,7 +226,7 @@ class UsersController < ApplicationController
     rescue
       puts "mass_op_user_mark(): did not required params in the request:"
       puts params.inspect
-      return render :json => { status: :failed, message: "request is missing param(s)" }
+      return status_failed_msg('mass_op_user_mark(): missing params')
     end
 
     ok = false
@@ -235,11 +237,11 @@ class UsersController < ApplicationController
       if operation == 0
         # Lock
         if user.puavoDoNotDelete
-          return render :json => { status: :failed, message: "can't delete this user" }
+          return status_failed_trans('users.mass_operations.deletion_prevented')
         end
 
         if user.puavoRemovalRequestTime
-          # already marked for deletion
+          # already marked for deletion, do nothing
           ok = true
         else
           user.puavoRemovalRequestTime = Time.now.utc
@@ -250,7 +252,7 @@ class UsersController < ApplicationController
       elsif operation == 1
         # Force lock (resets locking timestamp)
         if user.puavoDoNotDelete
-          return render :json => { status: :failed, message: "can't delete this user" }
+          return status_failed_trans('users.mass_operations.deletion_prevented')
         end
 
         # always overwrite the existing timestamp
@@ -269,13 +271,13 @@ class UsersController < ApplicationController
         ok = true
       end
     rescue StandardError => e
-      return render :json => { status: :failed, message: e.to_s }
+      return status_failed_msg(e)
     end
 
     if ok
-      return render :json => { status: :ok }
+      return status_ok()
     else
-      return render :json => { status: :failed, message: "unknown error" }
+      return status_failed_msg('unknown error')
     end
   end
 
