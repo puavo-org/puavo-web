@@ -325,9 +325,46 @@ module Puavo
       'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
     end
 
+    def google_delete_user(request_id, params, args)
+      # verify our parameters
+      unless params.include?('url')
+        logger.info("[#{request_id}] google_delete_user(): missing server URL in 'params'")
+        raise OperationError, 'configuration_error'
+      end
+
+      unless args.include?(:organisation) && args.include?(:user) && args.include?(:school)
+        logger.info("[#{request_id}] google_delete_user(): missing required arguments")
+        raise OperationError, 'configuration_error'
+      end
+
+      url = params['url']
+
+      logger.info("[#{request_id}] google_delete_user(): sending a deletion request to \"#{url}\"")
+
+      response = do_operation(request_id, url, :delete_user, 'google', {
+        organisation: args[:organisation],
+        user: args[:user].uid,
+        user_id: args[:user].id.to_i,
+        school: args[:school].cn,
+        school_id: args[:school].id.to_i,
+      })
+
+      if response[:success] == true
+        return true, nil
+      end
+
+      if response[:code] == 'user_not_found'
+        # whatever
+        return true, nil
+      end
+
+      return false, response[:code]
+    end
+
     # Known actions in known systems and the functions that implement them
     SYNCHRONOUS_ACTIONS = {
       :delete_user => {
+        'gsuite' => :google_delete_user,
       },
     }.freeze
 
