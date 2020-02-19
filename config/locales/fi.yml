@@ -733,6 +733,7 @@ fi:
     mass_operations:
       deletion_prevented: "Käyttäjän poisto on estetty"
       not_marked_for_deletion: "Käyttäjää ei ole merkitty poistettavaksi"
+      marked_too_recently: "Käyttäjä on ollut merkittynä poistettavaksi alle viikon"
 
   # New mass import/update tool
   import_tool:

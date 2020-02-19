@@ -169,6 +169,14 @@ class UsersController < ApplicationController
         return status_failed_trans('users.mass_operations.deletion_prevented')
       end
 
+      unless user.puavoRemovalRequestTime
+        return status_failed_trans('users.mass_operations.not_marked_for_deletion')
+      end
+
+      if user.puavoRemovalRequestTime + 7.days > Time.now.utc
+        return status_failed_trans('users.mass_operations.marked_too_recently')
+      end
+
       user.delete
       ok = true
     rescue StandardError => e

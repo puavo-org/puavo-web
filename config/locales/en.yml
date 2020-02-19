@@ -733,6 +733,7 @@ en:
     mass_operations:
       deletion_prevented: "User deletion has been prevented"
       not_marked_for_deletion: "User has not been marked for deletion"
+      marked_too_recently: "User has been marked for deletion for less than a week"
 
   # New mass import/update tool
   import_tool:
