@@ -112,6 +112,7 @@ I18n.locale = "<%= I18n.locale %>";
 <%= render :partial => "layouts/integrations", :locals => {
         :integrations_by_type => get_school_integrations_by_type(@school.id),
         :integration_names => get_school_integration_names(@school.id),
+        :next_updates => get_school_integration_next_updates(@school.id, Time.now),
         :extraClass => ""
     } %>
       <% end %>

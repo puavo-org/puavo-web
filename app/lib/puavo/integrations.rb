@@ -39,6 +39,108 @@ module Puavo
       return c
     end
 
+    # Parses a string of hour/minute values (like "2,5-6,22" and so on) into strings
+    # containing F ("false") and T ("true") flags indicating which hours or minutes
+    # are set. For example, passing ("5-10", 24) will return "FFFFFTTTTTFFFFFFFFFFFFF"
+    # and if you look at characters 4 to 9, they'll be "T", indicating they're set.
+    # Originally this returned arrays of trues and falses, but strings take up less
+    # space and are easier to inspect visually.
+    def parse_timestring(s, max_value)
+      marks = 'F' * max_value
+
+      # reject anything that isn't a string containing only numbers, commas and/or dashes
+      if s.class != String || s =~ /[^0-9\-, ]/
+        return marks
+      end
+
+      s.split(',').each do |t|
+        t.strip!
+        next if t.empty?
+        next if t[0] == '-' || t[-1] == '-'   # incomplete ranges ("-x" or "x-" or even just "-")
+
+        # is it a single value, or a range?
+        parts = t.split('-')
+
+        case parts.count
+          # a single value
+          when 1
+            i = parts[0].to_i(10)
+            next if i < 0 || i >= max_value
+            marks[i] = 'T'
+
+          # a start-end inclusive range
+          when 2
+            s = parts[0].to_i(10)
+            e = parts[1].to_i(10)
+            next if s < 0 || e < 0 || s >= max_value || e >= max_value
+            s, e = e, s if s > e    # end > start, swap them
+            (s..e).each { |i| marks[i] = 'T' }
+        end
+      end
+
+      return marks
+    end
+
+    # Uses the strings returned by parse_timestring() and figures out when the next
+    # synchronisation will take place. 'now' is the start time, usually Time.now,
+    # but you can use any moment as a starting point.
+    MINUTES_PER_DAY = 60 * 24
+
+    def compute_next_update(hours_lookup, minutes_lookup, now)
+      # Each day has 24*60 minutes. Iterate over each minute, starting from *now* and wrapping
+      # around at midnight, until we find the next slot where both 'hours_lookup' and
+      # 'minutes_lookup' are true, then compute the difference from current time to that time,
+      # in minutes. Turn that minute offset into an actual time.
+      starting_minute = now.hour * 60 + now.min
+      next_in_minutes = nil
+
+      (0..MINUTES_PER_DAY).each do |minute|
+        minute_now = (starting_minute + minute) % MINUTES_PER_DAY
+
+        # lookup indexes
+        test_h = minute_now / 60
+        test_m = minute_now % 60
+
+        if hours_lookup[test_h] == 'T' && minutes_lookup[test_m] == 'T'
+          # Found the next one. Compute the offset from 'now' to that moment, in minutes.
+          next_in_minutes = minute_now - starting_minute
+
+          if minute_now < starting_minute
+            # it happens tomorrow
+            next_in_minutes += MINUTES_PER_DAY
+          end
+
+          break
+        end
+      end
+
+      if next_in_minutes.nil?
+        # Nothing found. Maybe the time strings are empty, or they did
+        # not specify any valid times or time ranges?
+        return {
+          at: nil,
+          in: [-1, -1]
+        }
+      end
+
+      # A date object representing today at midnight
+      now_test = Time.new(now.year, now.month, now.day, now.hour, now.min, 0)
+
+      # Then offset it by the specified amount of minutes. Doesn't matter if it
+      # spills past midnight.
+      next_update = Time.at(now_test.to_i + next_in_minutes * 60)
+
+      # Hours and minutes *until* the next update
+      next_h = next_in_minutes / 60
+      next_m = next_in_minutes % 60
+      next_h -= 24 if next_h > 23   # tomorrow
+
+      return {
+        at: next_update,
+        in: [next_h, next_m]
+      }
+    end
+
     def cache_school_integration_data(school_id)
       school_id = school_id.to_i
 
@@ -59,6 +161,9 @@ module Puavo
 
         # Password requirements set by a third-party system
         password_requirements: nil,
+
+        # Schedule for third-party integrations
+        schedule: {},
       }
 
       data = Puavo::Organisation.find(LdapOrganisation.current.cn).value_by_key('integrations')
@@ -120,6 +225,19 @@ module Puavo
 
       entry[:sync_actions] = cleaned_actions.freeze
 
+      # Synchronisation schedules
+      schedule = {}
+
+      #(global['schedule'] || school[]).each do |name, sched|
+      intelligent_merge(global['schedule'], school['schedule']).each do |name, sched|
+        schedule[name] = {
+          hours: parse_timestring(sched['hours'], 24),
+          minutes: parse_timestring(sched['minutes'], 60)
+        }
+      end
+
+      entry[:schedule] = schedule.freeze
+
       entry.freeze
       INTEGRATIONS_CACHE[school_id] = entry
       return entry
@@ -166,6 +284,31 @@ module Puavo
       else
         return actions
       end
+    end
+
+    # Off-line synchronisation schedules
+    def get_school_single_integration_next_update(school_id, integration_name, now)
+      schedule = cache_school_integration_data(school_id)[:schedule]
+
+      if schedule.include?(integration_name)
+        sched = schedule[integration_name]
+
+        return compute_next_update(sched[:hours], sched[:minutes], now)
+      else
+        return '-???-'
+      end
+    end
+
+    def get_school_integration_next_updates(school_id, now)
+      schedule = cache_school_integration_data(school_id)[:schedule]
+
+      out = {}
+
+      schedule.each do |name, s|
+        out[name] = compute_next_update(s[:hours], s[:minutes], now)
+      end
+
+      return out
     end
 
     # ----------------------------------------------------------------------------------------------
