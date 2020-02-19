@@ -465,6 +465,24 @@ fi:
     email_confirm:
       invalid_password: Kirjautuminen epäonnistui. Tarkista salasanasi.
 
+    # Message codes received from third-party integration subsystems
+    integrations:
+      unknown_version: "Väärä protokollaversio"
+      unknown_system: "Tuntematon järjestelmä"
+      unknown_operation: "Tuntematon operaatio"
+      bad_request: "Virheellinen pyyntö synkronointipalvelimelle"
+      unauthorized: "Palvelimen osoite ei ole sallittujen palvelinten listalla"
+      server_error: "Synkronointipalvelimen virhe"
+      malformed_reply: "Virheellinen vastaus"
+      configuration_error: "Konfiguraatiovirhe"
+      incomplete_request: "Epätäydellinen pyyntö synkronointipalvelimelle"
+      remote_server_did_not_respond: "Etäpalvelin ei vastannut pyyntöihin"
+      remote_server_refused: "Etäpalvelin kieltäytyi suorittamasta toimintoa"
+      bad_credentials: "Väärät kirjautumistiedot"
+      remote_server_error: "Etäpalvelin ei toiminut"
+      network_error: "Verkkoyhteysongelma"
+      unknown_error: "Tuntematon virhe"
+
   # Organisations
   organisations:
     show:

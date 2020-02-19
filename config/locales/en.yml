@@ -465,6 +465,24 @@ en:
     email_confirm:
       invalid_password: Login failed! Please check your password.
 
+    # Message codes received from third-party integration subsystems
+    integrations:
+      unknown_version: "Wrong protocol version"
+      unknown_system: "Unknown system"
+      unknown_operation: "Unknown operation"
+      bad_request: "Bad request sent to the synchronisation server"
+      unauthorized: "The server's address is not on the list of allowed servers"
+      server_error: "Synchronisation server errror"
+      malformed_reply: "Malformed reply"
+      configuration_error: "Configuration error"
+      incomplete_request: "An incomplete request was sent to the synchronisation server"
+      remote_server_did_not_respond: "Remote server did not respond to requests"
+      remote_server_refused: "Remote server refused to cooperate"
+      bad_credentials: "Bad credentials"
+      remote_server_error: "Remote server error"
+      network_error: "Network connectivity error"
+      unknown_error: "Unknown error"
+
   # Organisations
   organisations:
     show:
