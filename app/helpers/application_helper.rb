@@ -1,7 +1,7 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   include Puavo::Helpers
-
+  include Puavo::Integrations
 
   # FIXME: see code from Github: https://github.com/opinsys/puavo-view-helpers
   def label(object_name, method, human_name=nil, content=nil, *args)
@@ -284,69 +284,6 @@ module ApplicationHelper
 
   def list_user_roles(roles)
     (Array(roles || []).collect { |r| t('puavoEduPersonAffiliation_' + r)}).join(', ').html_safe
-  end
-
-  INTEGRATIONS_CACHE = {}
-  RAW_INTEGRATIONS = {}
-
-  # Retrieves various third-party system integrations for the specified school
-  # The school ID *MUST* be an integer, not a string!
-  def get_integrations_for_school(school_id)
-    return INTEGRATIONS_CACHE[school_id] if INTEGRATIONS_CACHE.include?(school_id)
-
-    # Load configuration
-    integration_definitions = Puavo::CONFIG.fetch('integration_definitions', {})
-    integration_config = get_integration_configuration
-
-    # Use per-school settings if they're defined, otherwise use global settings
-    if integration_config.include?(school_id)
-      integration_names = integration_config[school_id]
-    elsif integration_config.include?('global')
-      integration_names = integration_config['global']
-    end
-
-    integration_names = "" unless integration_names
-
-    integration_names = integration_names.split(', ')
-
-    # Remove integrations that aren't actually defined
-    integration_names.reject! { |i| !integration_definitions.keys.include?(i) }
-
-    # Store the raw integration names so they can be queried if needed
-    RAW_INTEGRATIONS[school_id] = integration_names
-
-    # Convert string IDs to human-readable names
-    integrations = {}
-
-    #byebug
-
-    integration_names.each do |name|
-      definition = integration_definitions[name]
-      type = definition['type']
-
-      integrations[type] ||= []
-      integrations[type] << definition['name']
-    end
-
-    integrations.each do |k, v|
-      v.uniq!
-      v.sort!
-    end
-
-    # The YAML file that defines these integrations cannot be changed without
-    # restarting puavo-web, so we can safely cache these
-    INTEGRATIONS_CACHE[school_id] = integrations
-
-    integrations
-  end
-
-  # 'integration_type' is a string that contains a word like "primus" or "gsuite"
-  def school_has_integration?(school_id, integration_type)
-    get_integrations_for_school(school_id)
-
-    return false unless RAW_INTEGRATIONS.include?(school_id)
-
-    return RAW_INTEGRATIONS[school_id].include?(integration_type)
   end
 
   def insert_wbr(s)
