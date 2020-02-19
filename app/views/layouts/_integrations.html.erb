@@ -1,4 +1,4 @@
-    <% unless integrations.empty?  %>
+    <% unless integrations_by_type.empty?  %>
     <ul class="integrations <%= extraClass %>">
       <% [['in', t('schools.integrations.in') ],
           ['out', t('schools.integrations.out')],
@@ -6,7 +6,7 @@
           ['login', t('schools.integrations.login')],
           ['password', t('schools.integrations.password')],
           ['other', t('schools.integrations.other')]].each do |system| %>
-      <% integrations.fetch(system[0], []).each do |name| %>
+      <% integrations_by_type.fetch(system[0], []).each do |name| %>
       <% if system[0] == 'in' %>
       <li class="<%= system[0] %>"><%= name %><span class="dirIn"></span>Puavo</li>
       <% elsif system[0] == 'out' %>
@@ -19,4 +19,5 @@
       <% end %>
       <% end %>
     </ul>
+
     <% end %>
