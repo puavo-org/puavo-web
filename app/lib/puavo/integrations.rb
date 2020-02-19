@@ -9,7 +9,7 @@ module Puavo
 
     # Known action names for synchronous actions. Actions not listed here
     # are removed at load-time.
-    KNOWN_ACTIONS = Set.new(['']).freeze
+    KNOWN_ACTIONS = Set.new(['delete_user']).freeze
 
     # "Intelligently" merges two hashes. Hash 'b' can remove entries from 'a'
     # by setting the new value to nil. Nested hashes are handled recursively.
@@ -194,7 +194,10 @@ module Puavo
 
     # These replies are operation/system specific and not necessarily fatal. Each
     # must be handled case-by-case basis to figure out if it's actually an error.
-    OPERATION_REPLY_CODES = Set.new([]).freeze
+    OPERATION_REPLY_CODES = Set.new([
+      'invalid_username',
+      'user_not_found',
+    ]).freeze
 
     # The 'msg' is a code listed in the above set. It will be translated and displayed
     # to the user.
@@ -323,7 +326,10 @@ module Puavo
     end
 
     # Known actions in known systems and the functions that implement them
-    SYNCHRONOUS_ACTIONS = {}.freeze
+    SYNCHRONOUS_ACTIONS = {
+      :delete_user => {
+      },
+    }.freeze
 
     # Runs the specifid synchronous action in the specified system, with the given parameters
     # and arguments. Parameters are defined in organisations.yml, but arguments are different
