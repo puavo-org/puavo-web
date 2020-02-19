@@ -6,6 +6,7 @@ class User < LdapBase
   include Puavo::AuthenticationMixin
   include Puavo::Locale
   include Puavo::Helpers
+  include Puavo::Integrations
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -169,7 +170,7 @@ class User < LdapBase
     end
 
     if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
-      case get_organisation_password_requirements
+      case get_school_password_requirements(self.school.puavoId)
         when 'Google'
           if self.new_password.size < 8 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))

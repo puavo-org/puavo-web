@@ -156,7 +156,7 @@
     <tr>
       <th class="requiredField"><%= f.label :new_password %></th>
       <td>
-        <%= show_password_requirements %>
+        <%= show_password_requirements(@school.id) %>
         <%= f.password_field :new_password, value: @user.new_password  %>
       </td>
     </tr>
@@ -176,5 +176,5 @@
 <% end %>
 
 <% content_for :post_load_javascript do %>
-<%= setup_password_validator %>
+<%= setup_password_validator(@school.id) %>
 <% end %>

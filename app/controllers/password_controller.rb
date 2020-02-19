@@ -5,6 +5,8 @@ class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
 
 class PasswordController < ApplicationController
+  include Puavo::Integrations
+
   before_action :set_ldap_connection
   skip_before_action :find_school, :require_login, :require_puavo_authorization
 
@@ -257,7 +259,7 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password(mode)
-    case get_organisation_password_requirements
+    case get_school_password_requirements(-1)
       when 'Google'
         # Validate the password against Google's requirements.
         new_password = params[:user][:new_password]

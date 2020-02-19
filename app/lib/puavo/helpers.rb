@@ -19,12 +19,6 @@ module Puavo
       new_group_management["only_of_schools"].include?(school.puavoId)
     end
 
-    def get_organisation_password_requirements
-      Puavo::Organisation.
-        find(LdapOrganisation.current.cn).
-        value_by_key('password_requirements')
-    end
-
     def users_synch?(school)
       users_synch = Puavo::Organisation.
         find(LdapOrganisation.current.cn).
