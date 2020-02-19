@@ -84,12 +84,18 @@ class MassGroupDeletion extends MassOperationBase {
 
     processOneItem(item)
     {
-        let [error, message, data] = doSingleNetworkPost(
+        const ret = doSingleNetworkPost(
             "/users/<%= @school.id %>/mass_op_group_delete",
             JSON.stringify({ id: item.id })
         );
 
-        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 

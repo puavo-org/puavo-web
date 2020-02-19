@@ -61,12 +61,18 @@ class MassDeviceDeletion extends MassOperationBase {
 
     processOneItem(item)
     {
-        let [error, message, data] = doSingleNetworkPost(
+        const ret = doSingleNetworkPost(
             "/devices/<%= @school.id %>/mass_op_device_delete",
             JSON.stringify({"id": item.id})
         );
 
-        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
@@ -111,12 +117,22 @@ class MassDeviceSetFieldValue extends MassOperationBase {
 
     processOneItem(item)
     {
-        let [error, message, data] = doSingleNetworkPost(
+        const ret = doSingleNetworkPost(
             "/devices/<%= @school.id %>/mass_op_device_set_field",
-            JSON.stringify({ id: item.id, field: this.field.value, value: this.value.value })
+            JSON.stringify({
+                id: item.id,
+                field: this.field.value,
+                value: this.value.value
+            })
         );
 
-        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
@@ -198,12 +214,24 @@ class MassDevicePuavoconfEditor extends MassOperationBase {
 
     processOneItem(item)
     {
-        let [error, message, data] = doSingleNetworkPost(
+        const ret = doSingleNetworkPost(
             "/devices/<%= @school.id %>/mass_op_device_edit_puavoconf",
-            JSON.stringify({ id: item.id, key: this.key.value, value: this.value.value, type: this.type, action: this.action })
+            JSON.stringify({
+                id: item.id,
+                key: this.key.value,
+                value: this.value.value,
+                type: this.type,
+                action: this.action
+            })
         );
 
-        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 

@@ -215,12 +215,22 @@ class MassUserDeletion extends MassOperationBase {
 
     processOneItem(item)
     {
-        let [error, message, data] = doSingleNetworkPost(
+        const ret = doSingleNetworkPost(
             "/users/<%= @school.id %>/mass_op_user_delete",
             JSON.stringify({ id: item.id })
         );
 
-        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+        if (!ret.success) {
+            // Something failed in doSingleNetworkPost()
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+        }
+
+        if (!ret.networkReturn.success) {
+            // The actual operation failed
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+        }
+
+        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
@@ -260,13 +270,18 @@ class MassUserLocking extends MassOperationBase {
 
     processOneItem(item)
     {
-        console.log(this.lock);
-        let [error, message, data] = doSingleNetworkPost(
+        const ret = doSingleNetworkPost(
             "/users/<%= @school.id %>/mass_op_user_lock",
             JSON.stringify({ id: item.id, lock: this.lock })
         );
 
-        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
@@ -310,12 +325,18 @@ class MassUserMarkForDeletion extends MassOperationBase {
 
     processOneItem(item)
     {
-        let [error, message, data] = doSingleNetworkPost(
+        const ret = doSingleNetworkPost(
             "/users/<%= @school.id %>/mass_op_user_mark",
             JSON.stringify({ id: item.id, operation: this.operation })
         );
 
-        return error ? [MASS_OPERATION_ITEM_FAILED, message] : [MASS_OPERATION_ITEM_OK, null];
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
