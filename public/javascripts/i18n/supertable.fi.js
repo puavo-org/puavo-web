@@ -6,6 +6,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         empty: "(Ei mitään näytettävää)",
 
         control: {
+            title: "Toiminnot",
             select_columns: "Valitse sarakkeet...",
             select_columns_title: "Valitse näkyvät sarakkeet ja missä järjestyksessä",
             download_csv: "Lataa CSV...",

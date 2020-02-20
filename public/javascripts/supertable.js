@@ -1953,7 +1953,7 @@ class SuperTable {
         this.ui.status = newElem({ tag: "p", id: "statusMessage-" + this.id, classes: ["status"] });
         cc.appendChild(this.ui.status);
 
-        controls.appendChild(newElem({ tag: "header", content: "Toiminnot" }));
+        controls.appendChild(newElem({ tag: "header", content: I18n.translate("supertable.control.title") }));
         controls.appendChild(cc);
 
         // -----------------------------------------------------------------------------------------

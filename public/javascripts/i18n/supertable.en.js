@@ -6,6 +6,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         empty: "(No entries to display)",
 
         control: {
+            title: "Actions",
             select_columns: "Select columns...",
             select_columns_title: "Select which columns are visible and in which order",
             download_csv: "Download as CSV...",
