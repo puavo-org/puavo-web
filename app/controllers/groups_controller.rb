@@ -117,7 +117,7 @@ class GroupsController < ApplicationController
     if ok
       return status_ok()
     else
-      return status_failed_msg('unknown error')
+      return status_failed_msg('unknown_error')
     end
   end
 
