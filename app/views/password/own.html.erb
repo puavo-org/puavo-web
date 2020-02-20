@@ -60,3 +60,15 @@
     </tr>
   </table>
 <% end %>
+
+<script>
+// Prevent Enter from submitting the form, to prevent double-submissions.
+// You have to click the submit button manually.
+document.getElementById("new_user").onkeypress = function(e)
+{
+    const key = e.charCode || e.keyCode || 0;
+
+    if (key == 13)
+        e.preventDefault();
+}
+</script>
