@@ -134,8 +134,11 @@ $(document).ready(function() {
         container: document.getElementById("groupsList"),
 
         // Main table flags
+<% if current_user && current_user.organisation_owner? %>
         flags: TABLE_FLAG_GROUPS | TABLE_FLAG_ENABLE_SELECTION,
-
+<% else %>
+        flags: TABLE_FLAG_GROUPS,
+<% end %>
         // All possible columns, their titles, keys, flags, etc.
         columnDefs: GROUP_COLUMN_DEFS,
 

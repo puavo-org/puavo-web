@@ -282,8 +282,11 @@ $(document).ready(function() {
         container: document.getElementById("devicesList"),
 
         // Main table flags
+<% if current_user && current_user.organisation_owner? %>
         flags: TABLE_FLAG_DEVICES | TABLE_FLAG_ENABLE_SELECTION,
-
+<% else %>
+        flags: TABLE_FLAG_DEVICES,
+<% end %>
         // All possible columns, their titles, keys, flags, etc.
         columnDefs: DEVICE_COLUMN_DEFS,
 

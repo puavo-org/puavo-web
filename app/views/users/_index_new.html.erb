@@ -426,8 +426,11 @@ $(document).ready(function() {
         container: document.getElementById("usersList"),
 
         // Main table flags
+<% if current_user && current_user.organisation_owner? %>
         flags: TABLE_FLAG_USERS | TABLE_FLAG_ENABLE_SELECTION,
-
+<% else %>
+        flags: TABLE_FLAG_USERS,
+<% end %>
         // All possible columns, their titles, keys, flags, etc.
         columnDefs: USER_COLUMN_DEFS,
 
