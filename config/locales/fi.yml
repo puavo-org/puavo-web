@@ -714,6 +714,8 @@ fi:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"
       primus_warning: "Primus-integraatio on päällä tässä koulussa. Olemassaolevien käyttäjien nimien, sähköpostiosoitteiden ja puhelinnumeroiden vaihdot saatetaan kumota seuraavan synkronisaation ajon aikana. Ulkoisen ID:n vaihtaminen/asettaminen voi rikkoa synkronoinnin ja aiheuttaa virheellisiä käyttäjän poistettavaksi merkitsemisiä!"
+      gsuite_password_new: "G Suite -salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaan ennenkuin uusi käyttäjä on synkronoitu G Suiteen. Seuraava G Suite -synkronointi tapahtuu %{next_sync}, voit asettaa uuden käyttäjän salasanansa muutama minuutti tuon jälkeen."
+      gsuite_password_edit: "G Suite -salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitu Googleen. Muutoin salasananvaihto onnistunee Puavoon, mutta ei Googleen. Jos muokkat käyttäjää joka ei ole synronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
     select_school:
       title: Koulun vaihto (vaihe 1/2)
       user: Käyttäjä

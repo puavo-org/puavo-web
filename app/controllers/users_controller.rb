@@ -374,6 +374,8 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
+    @is_new_user = true
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user }
@@ -390,6 +392,8 @@ class UsersController < ApplicationController
     @user_roles =  @user.roles || []
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
+
+    @is_new_user = false
 
     get_user_groups
   end

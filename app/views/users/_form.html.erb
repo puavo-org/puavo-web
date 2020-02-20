@@ -4,7 +4,29 @@
 
 <p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
-<% if @school.displayName != 'Administration' && school_has_integration?(@school.id, 'primus') %>
+<%
+primus_warning = false
+gsuite_pw_warning = :none
+next_gsuite_update = nil
+
+if @school.displayName != 'Administration'
+  primus_warning = school_has_integration?(@school.id, 'primus')
+
+  if school_has_integration?(@school.id, 'gsuite_password')
+    if @is_new_user
+      gsuite_pw_warning = :new
+
+      # next gsuite update time
+      next_update = get_school_single_integration_next_update(@school.id, 'gsuite', Time.now)
+      next_gsuite_update = next_update.include?(:at) ? next_update[:at].strftime("%d.%m.%Y %H:%M") : next_update
+    else
+      gsuite_pw_warning = :edit
+    end
+  end
+end
+%>
+
+<% if primus_warning %>
 <p class="genericWarning"><%= t('users.form.primus_warning') %></p>
 <% end %>
 
@@ -150,15 +172,26 @@
     <tr>
       <th class="requiredField"><%= f.label :new_password %></th>
       <td>
+      <% if gsuite_pw_warning == :none %>
         <%= show_password_requirements(@school.id) %>
         <%= f.password_field :new_password, value: @user.new_password  %>
+      <% elsif gsuite_pw_warning == :new %>
+        <p class="genericWarning"><%= t('users.form.gsuite_password_new', :next_sync => next_gsuite_update) %></p>
+      <% elsif gsuite_pw_warning == :edit %>
+        <p class="genericNotice"><%= t('users.form.gsuite_password_edit') %></p>
+        <%= show_password_requirements(@school.id) %>
+        <%= f.password_field :new_password, value: @user.new_password  %>
+      <% end %>
       </td>
     </tr>
 
+    <% if gsuite_pw_warning == :none || gsuite_pw_warning == :edit %>
     <tr>
       <th class="requiredField"><%= f.label :new_password_confirmation %></th>
-      <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation  %></td>
+      <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation %>
+      </td>
     </tr>
+    <% end %>
 
     <tr class="buttonRow">
       <td colspan="2">
