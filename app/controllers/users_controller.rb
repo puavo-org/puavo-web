@@ -166,15 +166,15 @@ class UsersController < ApplicationController
       user = User.find(user_id)
 
       if user.puavoDoNotDelete
-        return status_failed_trans('users.mass_operations.deletion_prevented')
+        return status_failed_trans('users.mass_operations.delete.deletion_prevented')
       end
 
       unless user.puavoRemovalRequestTime
-        return status_failed_trans('users.mass_operations.not_marked_for_deletion')
+        return status_failed_trans('users.mass_operations.delete.not_marked_for_deletion')
       end
 
       if user.puavoRemovalRequestTime + 7.days > Time.now.utc
-        return status_failed_trans('users.mass_operations.marked_too_recently')
+        return status_failed_trans('users.mass_operations.delete.marked_too_recently')
       end
 
       # Remove the user from external systems first, stop if this fails
@@ -252,7 +252,7 @@ class UsersController < ApplicationController
       if operation == 0
         # Lock
         if user.puavoDoNotDelete
-          return status_failed_trans('users.mass_operations.deletion_prevented')
+          return status_failed_trans('users.mass_operations.delete.deletion_prevented')
         end
 
         if user.puavoRemovalRequestTime
@@ -267,7 +267,7 @@ class UsersController < ApplicationController
       elsif operation == 1
         # Force lock (resets locking timestamp)
         if user.puavoDoNotDelete
-          return status_failed_trans('users.mass_operations.deletion_prevented')
+          return status_failed_trans('users.mass_operations.delete.deletion_prevented')
         end
 
         # always overwrite the existing timestamp

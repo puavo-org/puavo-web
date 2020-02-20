@@ -145,7 +145,7 @@ const DEFAULT_USER_COLUMNS = [
 
 const PRESETS = [
     {
-        title: I18n.translate("filters_users.locked_users"),
+        title: "<%= t('users.index.filters.locked_users') %>",
         id: "locked",
         filters: [
             [true, "locked", OPERATOR_EQUAL, true],
@@ -153,7 +153,7 @@ const PRESETS = [
     },
 
     {
-        title: I18n.translate("filters_users.marked_for_deletion"),
+        title: "<%= t('users.index.filters.marked_for_deletion') %>",
         id: "marked_for_deletion",
         filters: [
             [true, "rrt", OPERATOR_GREATER_OR_EQUAL, [2010]],
@@ -161,7 +161,7 @@ const PRESETS = [
     },
 
     {
-        title: I18n.translate("filters_users.marked_for_deletion_not_locked"),
+        title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
         id: "unlocked_deleted",
         filters: [
             [true, "locked", OPERATOR_NOT_EQUAL, true],
@@ -171,7 +171,7 @@ const PRESETS = [
     },
 
     {
-        title: I18n.translate("filters_users.marked_3months"),
+        title: "<%= t('users.index.filters.marked_3months') %>",
         id: "marked_for_3months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 90],
@@ -180,7 +180,7 @@ const PRESETS = [
     },
 
     {
-        title: I18n.translate("filters_users.marked_6months"),
+        title: "<%= t('users.index.filters.marked_6months') %>",
         id: "marked_for_6months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 180],
@@ -189,7 +189,7 @@ const PRESETS = [
     },
 
     {
-        title: I18n.translate("filters_users.marked_9months"),
+        title: "<%= t('users.index.filters.marked_9months') %>",
         id: "marked_for_9months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 270],
@@ -198,7 +198,7 @@ const PRESETS = [
     },
 
     {
-        title: I18n.translate("filters_users.marked_12months"),
+        title: "<%= t('users.index.filters.marked_12months') %>",
         id: "marked_for_12months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 365],
@@ -220,16 +220,16 @@ class MassUserDeletion extends MassOperationBase {
         // user tries to cheat by, for example, adjusting their system time.
 
         if (item.dnd)
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.mass_operations.deletion_prevented') %>"];
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"];
 
         if (item.rrt === null)
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.mass_operations.not_marked_for_deletion') %>"];
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>"];
 
         const now = Math.floor(Date.now() / 1000);
         const next = item.rrt + (60 * 60 * 24 * 7);     // 7 days in seconds
 
         if (next > now)
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.mass_operations.marked_too_recently') %>"];
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>"];
 
         // Good to go
         const ret = doSingleNetworkPost(
@@ -263,12 +263,12 @@ class MassUserLocking extends MassOperationBase {
 `<form>
 <table class="settingsChild">
 <tr>
-    <th>${I18n.translate("massop_users.locking.action")}</th>
+    <th><%= t('users.index.mass_operations.lock.action') %></th>
     <td>
         <input type="radio" name="mul_action_type" id="mul_action_lock" checked>
-        <label for="mul_action_lock">${I18n.translate("massop_users.locking.lock")}</label><br>
+        <label for="mul_action_lock"><%= t('users.index.mass_operations.lock.lock') %></label><br>
         <input type="radio" name="mul_action_type" id="mul_action_unlock">
-        <label for="mul_action_unlock">${I18n.translate("massop_users.locking.unlock")}</label>
+        <label for="mul_action_unlock"><%= t('users.index.mass_operations.lock.unlock') %></label>
     </td>
 </tr>
 </table>
@@ -318,14 +318,14 @@ class MassUserMarkForDeletion extends MassOperationBase {
 `<form>
 <table class="settingsChild">
 <tr>
-    <th>${I18n.translate("massop_users.marking.action")}</th>
+    <th><%= t('users.index.mass_operations.mark.action') %></th>
     <td>
         <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark" checked>
-        <label for="mass_user_mark_mark">${I18n.translate("massop_users.marking.mark")}</label><br>
+        <label for="mass_user_mark_mark"><%= t('users.index.mass_operations.mark.mark') %></label><br>
         <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark_force">
-        <label for="mass_user_mark_mark_force">${I18n.translate("massop_users.marking.mark_force")}</label><br>
+        <label for="mass_user_mark_mark_force"><%= t('users.index.mass_operations.mark.mark_force') %></label><br>
         <input type="radio" name="mass_user_mark_action" id="mass_user_mark_unmark">
-        <label for="mass_user_mark_unmark">${I18n.translate("massop_users.marking.unmark")}</label>
+        <label for="mass_user_mark_unmark"><%= t('users.index.mass_operations.mark.unmark') %></label>
     </td>
 </tr>
 </table>
@@ -351,7 +351,7 @@ class MassUserMarkForDeletion extends MassOperationBase {
 
         if (item.dnd) {
             // deletion prevented
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.mass_operations.deletion_prevented') %>"];
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"];
         }
 
         if (item.rrt === null && this.operation == 2) {
@@ -383,19 +383,19 @@ class MassUserMarkForDeletion extends MassOperationBase {
 // define titles, IDs and other things in classes, they must be here
 let massOperations = {
     "lock": {
-        title: I18n.translate("massop_users.locking.title"),
+        title: "<%= t('users.index.mass_operations.lock.title') %>",
         hasSettings: true,
         clazz: MassUserLocking
     },
 
     "mark_for_deletion": {
-        title: I18n.translate("massop_users.marking.title"),
+        title: "<%= t('users.index.mass_operations.mark.title') %>",
         hasSettings: true,
         clazz: MassUserMarkForDeletion
     },
 
     "delete": {
-        title: I18n.translate("massop_users.deletion.title"),
+        title: "<%= t('users.index.mass_operations.delete.title') %>",
         hasSettings: false,
         clazz: MassUserDeletion
     },
