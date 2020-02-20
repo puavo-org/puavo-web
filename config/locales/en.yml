@@ -713,7 +713,7 @@ en:
     form:
       add_email: Add another email
       add_telephone_number: Add another telephone number
-      read_only_warning: "Some fields cannot be edited, because their contents are coming from an external system."
+      primus_warning: "Primus integration is enabled in this school. Any changes to existing user's names, email addresses or telephone numbers may be undone during the next synchronisation run. Changing or adding external IDs can break the synchronisation system, and cause users to be marked for later deletion even if they shouldn't be!"
     select_school:
       title: Change the user's school (step 1/2)
       user: User

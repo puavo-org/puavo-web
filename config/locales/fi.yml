@@ -713,7 +713,7 @@ fi:
     form:
       add_email: "Lisää sähköpostiosoitteita"
       add_telephone_number: "Lisää puhelinnumeroita"
-      read_only_warning: "Joidenkin kenttien muokkaus on estetty, koska niiden sisältö tulee ulkoisesta järjestelmästä."
+      primus_warning: "Primus-integraatio on päällä tässä koulussa. Olemassaolevien käyttäjien nimien, sähköpostiosoitteiden ja puhelinnumeroiden vaihdot saatetaan kumota seuraavan synkronisaation ajon aikana. Ulkoisen ID:n vaihtaminen/asettaminen voi rikkoa synkronoinnin ja aiheuttaa virheellisiä käyttäjän poistettavaksi merkitsemisiä!"
     select_school:
       title: Koulun vaihto (vaihe 1/2)
       user: Käyttäjä

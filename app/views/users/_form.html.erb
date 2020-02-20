@@ -4,6 +4,10 @@
 
 <p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
+<% if @school.displayName != 'Administration' && school_has_integration?(@school.id, 'primus') %>
+<p class="genericWarning"><%= t('users.form.primus_warning') %></p>
+<% end %>
+
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
   <table class="editForm">
     <tr>
