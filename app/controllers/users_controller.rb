@@ -375,13 +375,7 @@ class UsersController < ApplicationController
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
     respond_to do |format|
-      # FIXME: whether the student management system is in use?
-      if users_synch?(@school) && !current_user.organisation_owner?
-        flash[:alert] = t('flash.user.cannot_create_user')
-        format.html { redirect_to( users_url ) }
-      else
-        format.html # new.html.erb
-      end
+      format.html # new.html.erb
       format.xml  { render :xml => @user }
     end
   end
@@ -448,16 +442,6 @@ class UsersController < ApplicationController
 
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
-
-    if @user.read_only?
-      params["user"].delete(:givenName)
-      params["user"].delete(:sn)
-      params["user"].delete(:uid)
-      params["user"].delete(:mail)
-      params["user"].delete(:telephoneNumber)
-      params["user"].delete(:role_ids)
-      params["user"].delete(:puavoLocale)
-    end
 
     respond_to do |format|
       begin

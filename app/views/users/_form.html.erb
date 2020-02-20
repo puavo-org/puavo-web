@@ -4,27 +4,21 @@
 
 <p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
-<% read_only = @user.read_only? %>
-
-<% if read_only %>
-<div class="genericWarning"><%= t('.read_only_warning') %></div>
-<% end %>
-
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
   <table class="editForm">
     <tr>
       <th class="requiredField"><%= f.label :givenName %></th>
-      <td><%= f.text_field :givenName, disabled: read_only, :required => 'required', :autofocus => true %></td>
+      <td><%= f.text_field :givenName, :required => 'required', :autofocus => true %></td>
     </tr>
 
     <tr>
       <th class="requiredField"><%= f.label :sn %></th>
-      <td><%= f.text_field :sn, disabled: read_only, :required => 'required' %></td>
+      <td><%= f.text_field :sn, :required => 'required' %></td>
     </tr>
 
     <tr>
       <th class="requiredField"><%= f.label :uid %></th>
-      <td><%= f.text_field :uid, disabled: read_only, :required => 'required' %></td>
+      <td><%= f.text_field :uid, :required => 'required' %></td>
     </tr>
 
     <tr>
@@ -32,17 +26,15 @@
       <td>
         <div>
         <% if Array(@user.mail).empty? %>
-          <input name='user[mail][]' type='text' id='user_mail_0' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input name='user[mail][]' type='text' id='user_mail_0'/>
         <% else %>
           <% Array(@user.mail).each_index do |index| %>
-          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
           <% end %>
         <% end %>
         </div>
-        <% unless read_only %>
         <%= link_to "#", class: "clone_prev_input_element btn" do %>
         <i class="icon-plus"></i><%= t('.add_email') %>
-        <% end %>
         <% end %>
         <%= field_error_text_span(f.object, :mail) %>
       </td>
@@ -53,17 +45,15 @@
       <td>
         <span>
         <% if Array(@user.telephoneNumber).empty? %>
-          <input name='user[telephoneNumber][]' id='user_telephone_0' type='text' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input name='user[telephoneNumber][]' id='user_telephone_0' type='text'/>
         <% else %>
           <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>'/>
           <% end %>
         <% end %>
         </span>
-        <% unless read_only %>
         <%= link_to "#", class: "clone_prev_input_element btn" do %>
           <i class="icon-plus"></i><%= t('.add_telephone_number') %>
-        <% end %>
         <% end %>
         <%= field_error_text_span(f.object, :telephoneNumber) %>
       </td>

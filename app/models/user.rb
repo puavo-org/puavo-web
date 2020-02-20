@@ -403,14 +403,6 @@ class User < LdapBase
     return true
   end
 
-  def read_only?
-    return false if self.new_entry?
-
-    return false unless users_synch?(self.school)
-
-    (self.puavoExternalId.nil? or self.puavoExternalId.empty?) ? false : true
-  end
-
   def self.import_columns
     columns = ["givenName", "sn", "uid", "new_password"]
 
