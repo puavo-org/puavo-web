@@ -18,7 +18,7 @@ de:
   flash:
     password:
       successful: "Password changed successfully!"
-      failed: "Failed to change the user's password!"
+      failed: "Failed to change the user's password! Log code: %{code}."
       failed_details: "Failed to change the user's password: %{details}"
       invalid_external_login: "Invalid external login password or username (%{uid})"
       incomplete_form: "You did not fill in all the required form fields."
@@ -27,7 +27,7 @@ de:
       invalid_user: "User (%{uid}) does not exist"
       email_not_found: "Couldn't find email: %{email}"
       connection_failed: "We're sorry, but something went wrong. Please try again later!"
-      can_not_change_password: "Can't change password. Please try again later!"
+      can_not_change_password: "Can't change password. Please try again later! Log code: %{code}."
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
       token_lifetime_has_expired: "Your link has expired. Please enter your email again."
       too_many_sent_token_request: "We've already sent a reset message to your email address."
