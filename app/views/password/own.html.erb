@@ -55,20 +55,33 @@
       <td colspan="2">
         <input type="hidden" name="changing" value="<%= @changing %>"/>
         <input type="hidden" name="lang" value="<%= @language %>"/>
-        <%= f.submit t('link.change_password'), class: 'btn' %>
+        <%= f.submit t('link.change_password'), class: 'btn', id: "submit" %>
       </td>
     </tr>
   </table>
 <% end %>
 
 <script>
-// Prevent Enter from submitting the form, to prevent double-submissions.
-// You have to click the submit button manually.
-document.getElementById("new_user").onkeypress = function(e)
-{
-    const key = e.charCode || e.keyCode || 0;
+document.getElementById("submit").addEventListener("click", function(e) {
+  const uid = document.getElementById("login_uid").value,
+        old = document.getElementById("login_password").value,
+        password = document.getElementById("user_new_password").value,
+        password2 = document.getElementById("user_new_password_confirmation").value;
 
-    if (key == 13)
-        e.preventDefault();
-}
+  var target = e.target;
+
+  // Prevent the form from being submitted unless it has been fully filled out.
+  // Also disable the submit button to prevent double-submissions.
+  if (uid.length > 0 && old.length > 0 && password.length > 0 && password2.length > 0 &&
+      password == password2) {
+    // disable the submit button
+    setTimeout(function() {
+      target.value = "...";
+      target.disabled = true;
+    }, 0);
+  } else {
+    // don't send the form, not all fields are filled in
+    e.preventDefault();
+  }
+});
 </script>
