@@ -84,6 +84,19 @@ describe PuavoRest::Users do
     @user4.save!
     @school.add_admin(@user4)
 
+    @user5 = User.new(
+      :givenName => "Poistettava",
+      :sn  => "Käyttäjä",
+      :uid => "poistettava.kayttaja",
+      :puavoEduPersonAffiliation => "password",
+      :role_ids => [@role.puavoId],
+      :do_not_delete => "TRUE",
+    )
+
+    @user5.set_password "trustno1"
+    @user5.puavoSchool = @school.dn
+    @user5.save!
+
   end
 
   describe "Multiple telephone numbers" do
@@ -106,6 +119,31 @@ describe PuavoRest::Users do
       @user2.save!
       assert_nil @user.telephoneNumber
       assert_nil @user2.telephoneNumber
+    end
+  end
+
+  describe "User deletion" do
+    it "user cannot delete itself" do
+      basic_authorize "poistettava.kayttaja", "password"
+      delete "/v3/users/poistettava.kayttaja"
+      assert_equal 403, last_response.status
+    end
+
+    it "non-admin cannot delete someone else" do
+      basic_authorize "poistettava.kayttaja", "password"
+      delete "/v3/users/bob"
+      assert_equal 404, last_response.status
+    end
+
+    it "admin can delete user" do
+      # TODO: Bob must be an organisation owner in order to do this!
+
+      #@user.puavoEduPersonAffiliation = ["admin"]
+      #@user.save!
+      #@school.add_admin(@user)
+      #basic_authorize "bob", "secret"
+      #delete "/v3/users/poistettava.kayttaja"
+      #assert_equal 200, last_response.status
     end
   end
 

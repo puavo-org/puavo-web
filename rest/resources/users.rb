@@ -838,6 +838,32 @@ class Users < PuavoSinatra
     json user
   end
 
+  delete '/v3/users/:username' do
+    auth :basic_auth, :kerberos
+
+    user = User.by_username!(params['username'])
+
+    uname = LdapModel.settings.dig(:credentials, :username)
+
+    if uname && user.username == uname
+      return 403, 'you cannot self-terminate'
+    end
+
+    # This check is here because I don't know how to remove organisation owners
+    # with puavo-rest. And owners usually should be left alone.
+    if user.organisation.owners.collect{ |o| o.dn }.include?(user.dn)
+      return 403, 'refusing to delete an organisation owner'
+    end
+
+    if user.do_not_delete && user.do_not_delete == 'TRUE'
+      return 403, 'user deletion has been prevented'
+    end
+
+    user.destroy!
+
+    return 200
+  end
+
   def too_many_password_change_attempts(username)
     db = Redis::Namespace.new("puavo:password_management:attempt_counter_rest", :redis => REDIS_CONNECTION)
 
