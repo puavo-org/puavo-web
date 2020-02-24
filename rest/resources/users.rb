@@ -315,9 +315,13 @@ class User < LdapModel
   end
 
   def telephone_number=(value)
-    # LDAP raises an error if empty string is given as the number.
-    # Just skip the attribute if its empty
-    return if value.to_s.strip == ""
+    # Treat empty strings as nil and allow the number to be cleared.
+    # This is extremely important, for example, in Primus import. Old
+    # phone numbers must be cleared if they're missing.
+    if !value.nil? && (value.empty? || value.to_s.strip == "")
+      value = nil
+    end
+
     write_raw(:telephoneNumber, transform(:telephone_number, :write, value))
   end
 
