@@ -303,8 +303,12 @@ class PasswordController < ApplicationController
         end
     end
 
+    msg_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+
     external_login_status = external_login(params[:login][:uid],
                                            params[:login][:password])
+
+    logger.warn "[#{msg_id}] external_login_status: |#{external_login_status}|"
 
     if external_login_status then
       case external_login_status
@@ -315,8 +319,10 @@ class PasswordController < ApplicationController
         when :external_login_ok
           true    # this is okay
         else
+          logger.warn "[#{msg_id}] raising exception"
+
           raise User::UserError,
-                I18n.t('flash.password.can_not_change_password')
+                I18n.t('flash.password.can_not_change_password', :code => msg_id)
       end
     end
 
@@ -387,7 +393,7 @@ class PasswordController < ApplicationController
     ))
 
     if res['exit_status'] != 0 then
-      logger.warn "rest call to PUT /v3/users/password failed: #{ res.inspect }"
+      logger.warn "[#{msg_id}] (password-change-error) rest call to PUT /v3/users/password failed: #{ res.inspect }"
 
       case res['extlogin_status']
         when PuavoRest::ExternalLoginStatus::BADUSERCREDS
@@ -402,7 +408,8 @@ class PasswordController < ApplicationController
                                         :uid => params[:user][:uid])
       end
 
-      raise User::UserError, I18n.t('flash.password.failed')
+      logger.warn "[#{msg_id}] (password-change-error) UNKNOWN PASSWORD CHANGE ERROR, SEE ABOVE"
+      raise User::UserError, I18n.t('flash.password.failed', :code => msg_id)
     end
 
     return true
