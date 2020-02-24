@@ -35,7 +35,8 @@ describe PuavoRest::Users do
       :mail => ["bob@example.com ", "             bob@foobar.com        \n\n           ", " bob@helloworld.com "],
       :role_ids => [@role.puavoId],
       :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf",
-      :puavoExternalID => "bob"
+      :puavoExternalID => "bob",
+      :telephone_number => ["123", "456"]
     )
 
     @user.set_password "secret"
@@ -56,7 +57,8 @@ describe PuavoRest::Users do
       :puavoEduPersonAffiliation => "student",
       :puavoLocale => "en_US.UTF-8",
       :mail => "alice@example.com",
-      :role_ids => [@role.puavoId]
+      :role_ids => [@role.puavoId],
+      :telephone_number => "789"
     )
     @user2.set_password "secret"
     @user2.puavoSchool = @school.dn
@@ -82,6 +84,29 @@ describe PuavoRest::Users do
     @user4.save!
     @school.add_admin(@user4)
 
+  end
+
+  describe "Multiple telephone numbers" do
+    it "correctly set when a user is created" do
+      assert_equal @user.telephoneNumber, ["123", "456"]
+      assert_equal @user2.telephoneNumber, "789"
+      assert_nil @user4.telephoneNumber
+    end
+
+    it "can be changed" do
+      @user.telephoneNumber = ["1234567890"]
+      @user.save!
+      assert_equal @user.telephoneNumber, "1234567890"
+    end
+
+    it "can be cleared" do
+      @user.telephoneNumber = []
+      @user.save!
+      @user2.telephoneNumber = nil
+      @user2.save!
+      assert_nil @user.telephoneNumber
+      assert_nil @user2.telephoneNumber
+    end
   end
 
   describe "GET /v3/whoami" do
