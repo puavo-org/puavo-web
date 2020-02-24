@@ -34,7 +34,7 @@ end
   <table class="editForm">
     <tr>
       <th class="requiredField"><%= f.label :givenName %></th>
-      <td><%= f.text_field :givenName, :required => 'required', :autofocus => true %></td>
+      <td><%= f.text_field :givenName, :required => 'required', :autofocus => @is_new_user ? true : nil %></td>
     </tr>
 
     <tr>

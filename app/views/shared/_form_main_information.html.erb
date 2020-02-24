@@ -6,7 +6,7 @@
       <% if f.object.hostCertificates %>
       <%= f.object.puavoHostname %>
       <% else %>
-      <%= f.text_field :puavoHostname, :required => 'required', :autofocus => true %>
+      <%= f.text_field :puavoHostname, :required => 'required', :autofocus => @is_new_device ? true : nil %>
       <% end %>
     </td>
   </tr>

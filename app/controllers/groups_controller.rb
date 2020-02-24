@@ -150,6 +150,7 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups/new.xml
   def new
     @group = Group.new
+    @is_new_group = true
 
     respond_to do |format|
       format.html # new.html.erb
@@ -160,6 +161,7 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups/1/edit
   def edit
     @group = get_group(params[:id])
+    @is_new_group = false
     return if @group.nil?
   end
 

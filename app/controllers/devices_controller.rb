@@ -334,6 +334,7 @@ class DevicesController < ApplicationController
 
     @device = Device.new
     @device_type_label = Puavo::CONFIG['device_types'][params[:device_type]]['label'][I18n.locale.to_s]
+    @is_new_device = true
 
     # Try to set default value for hostname
     device = Device.find( :all,
@@ -366,6 +367,8 @@ class DevicesController < ApplicationController
   def edit
     @device = get_device(params[:id])
     return if @device.nil?
+
+    @is_new_device = false
 
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
 
