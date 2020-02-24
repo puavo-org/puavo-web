@@ -34,7 +34,7 @@ class User < LdapModel
   ldap_map :puavoSshPublicKey, :ssh_public_key
   ldap_map :homeDirectory, :home_directory
   ldap_map :loginShell, :login_shell, :default => "/bin/bash"
-  ldap_map :telephoneNumber, :telephone_number
+  ldap_map :telephoneNumber, :telephone_number, LdapConverters::ArrayValue
   ldap_map :puavoRemovalRequestTime, :removal_request_time,
            LdapConverters::TimeStamp
   ldap_map :eduPersonPrincipalName, :edu_person_principal_name
@@ -149,9 +149,11 @@ class User < LdapModel
       add_validation_error(:school_dns, :must_have_school, "no schools are set")
     end
 
-    if !telephone_number.nil? && !telephone_number.match(/^[A-Za-z[:digit:][:space:]'()+,-.\/:?"]+$/)
-      add_validation_error(:telephone_number, :telephone_number_invalid,
-                           "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
+    unless telephone_number.nil?
+      if Array(telephone_number || []).collect{ |n| !n.match(/^[A-Za-z[:digit:][:space:]'()+,-.\/:?"]+$/) }.any?
+        add_validation_error(:telephone_number, :telephone_number_invalid,
+                             "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
+      end
     end
 
     # FIXME: Validate external id?
