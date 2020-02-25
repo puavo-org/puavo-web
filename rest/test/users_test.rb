@@ -88,7 +88,7 @@ describe PuavoRest::Users do
       :givenName => "Poistettava",
       :sn  => "Käyttäjä",
       :uid => "poistettava.kayttaja",
-      :puavoEduPersonAffiliation => "password",
+      :puavoEduPersonAffiliation => "testuser",
       :role_ids => [@role.puavoId],
       :do_not_delete => "TRUE",
     )
@@ -124,13 +124,13 @@ describe PuavoRest::Users do
 
   describe "User deletion" do
     it "user cannot delete itself" do
-      basic_authorize "poistettava.kayttaja", "password"
+      basic_authorize "poistettava.kayttaja", "trustno1"
       delete "/v3/users/poistettava.kayttaja"
       assert_equal 403, last_response.status
     end
 
     it "non-admin cannot delete someone else" do
-      basic_authorize "poistettava.kayttaja", "password"
+      basic_authorize "poistettava.kayttaja", "trustno1"
       delete "/v3/users/bob"
       assert_equal 404, last_response.status
     end
