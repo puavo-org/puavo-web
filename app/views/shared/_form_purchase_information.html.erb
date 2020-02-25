@@ -3,12 +3,12 @@
 <table class="editForm">
   <tr>
     <th><%= f.label :puavoPurchaseDate %></th>
-    <td class="devicePurchaseDate"><%= f.date_select :puavoPurchaseDate, :include_blank => true, :order => [:year, :month, :day] %></td>
+    <td class="devicePurchaseDate"><%= f.date_select :puavoPurchaseDate, :include_blank => true, :order => [:year, :month, :day], :start_year => 2000, :end_year => 2050 %></td>
   </tr>
 
   <tr>
     <th><%= f.label :puavoWarrantyEndDate %></th>
-    <td class="devicePurchaseDate"><%= f.date_select :puavoWarrantyEndDate, :include_blank => true, :order => [:year, :month, :day] %></td>
+    <td class="devicePurchaseDate"><%= f.date_select :puavoWarrantyEndDate, :include_blank => true, :order => [:year, :month, :day], :start_year => 2000, :end_year => 2050 %></td>
   </tr>
 
   <tr>
