@@ -349,6 +349,7 @@ fi:
 
   # Flash messages
   flash:
+    you_must_be_an_owner: "Sinulla ei ole riittävästi oikeuksia avata pyytämääsi sivua."
     added: "%{item} luotiin onnistuneesti."
     updated: "%{item} päivitettiin onnistuneesti."
     destroyed: "%{item} poistettiin onnistuneesti."

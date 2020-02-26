@@ -200,4 +200,12 @@ class ApplicationController < ActionController::Base
     render :status => 404, :template => "/errors/generic.html.erb"
   end
 
+  def is_owner?
+    return true if current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+
+    flash[:alert] = t('flash.you_must_be_an_owner')
+    redirect_to schools_path
+    return false
+  end
+
 end

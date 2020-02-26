@@ -3,6 +3,7 @@ class ExternalFilesController < ApplicationController
   # GET /external_files
   # GET /external_files.json
   def index
+    return unless is_owner?
 
     file_models = ExternalFile.find_configured
 
@@ -26,6 +27,8 @@ class ExternalFilesController < ApplicationController
 
   # GET /external_files/:name
   def get_file
+    return unless is_owner?
+
     cn = params[:name]
     if ef = ExternalFile.find_by_cn(cn)
       render(
@@ -43,6 +46,8 @@ class ExternalFilesController < ApplicationController
 
   # POST /external_files
   def upload
+    return unless is_owner?
+
     begin
       if params["file"]
           params["file"].each do |k, file|
@@ -64,6 +69,8 @@ class ExternalFilesController < ApplicationController
 
   # DELETE /external_files/:name
   def destroy
+    return unless is_owner?
+
     cn = params[:name]
     @external_file = ExternalFile.find_by_cn(cn)
     if not @external_file

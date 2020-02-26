@@ -734,6 +734,8 @@ class UsersController < ApplicationController
   end
 
   def prevent_deletion
+    return unless is_owner?
+
     @user = User.find(params[:id])
 
     @user.puavoDoNotDelete = true
@@ -790,6 +792,8 @@ class UsersController < ApplicationController
   end
 
   def delete_marked_users
+    return unless is_owner?
+
     delete_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
 
     succeed = 0
