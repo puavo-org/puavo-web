@@ -295,7 +295,7 @@ module Puavo
 
         return compute_next_update(sched[:hours], sched[:minutes], now)
       else
-        return '-???-'
+        return nil
       end
     end
 

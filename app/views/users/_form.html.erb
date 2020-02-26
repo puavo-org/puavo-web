@@ -4,30 +4,8 @@
 
 <p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
-<%
-primus_warning = false
-gsuite_pw_warning = :none
-next_gsuite_update = nil
-
-if @school.displayName != 'Administration'
-  primus_warning = school_has_integration?(@school.id, 'primus')
-
-  if school_has_integration?(@school.id, 'gsuite_password')
-    if @is_new_user
-      gsuite_pw_warning = :new
-
-      # next gsuite update time
-      next_update = get_school_single_integration_next_update(@school.id, 'gsuite', Time.now)
-      next_gsuite_update = next_update.include?(:at) ? next_update[:at].strftime("%d.%m.%Y %H:%M") : next_update
-    else
-      gsuite_pw_warning = :edit
-    end
-  end
-end
-%>
-
-<% if primus_warning %>
-<p class="genericWarning"><%= t('users.form.primus_warning') %></p>
+<% if @primus_warning %>
+<p class="genericWarning"><%= t(@is_new_user ? 'users.form.primus_warning_new' : 'users.form.primus_warning_edit') %></p>
 <% end %>
 
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
@@ -172,12 +150,14 @@ end
     <tr>
       <th class="requiredField"><%= f.label :new_password %></th>
       <td>
-      <% if gsuite_pw_warning == :none %>
+      <% if @gsuite_pw_warning == :none %>
+        <% unless @is_admin_school %>
         <%= show_password_requirements(@school.id) %>
+        <% end %>
         <%= f.password_field :new_password, value: @user.new_password  %>
-      <% elsif gsuite_pw_warning == :new %>
-        <p class="genericWarning"><%= t('users.form.gsuite_password_new', :next_sync => next_gsuite_update) %></p>
-      <% elsif gsuite_pw_warning == :edit %>
+      <% elsif @gsuite_pw_warning == :new %>
+        <p class="genericWarning"><%= t('users.form.gsuite_password_new', :next_sync => @next_gsuite_update) %></p>
+      <% elsif @gsuite_pw_warning == :edit %>
         <p class="genericNotice"><%= t('users.form.gsuite_password_edit') %></p>
         <%= show_password_requirements(@school.id) %>
         <%= f.password_field :new_password, value: @user.new_password  %>
@@ -185,7 +165,7 @@ end
       </td>
     </tr>
 
-    <% if gsuite_pw_warning == :none || gsuite_pw_warning == :edit %>
+    <% if @gsuite_pw_warning == :none || @gsuite_pw_warning == :edit %>
     <tr>
       <th class="requiredField"><%= f.label :new_password_confirmation %></th>
       <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation %>
@@ -202,6 +182,8 @@ end
   </table>
 <% end %>
 
+<% unless @is_admin_school %>
 <% content_for :post_load_javascript do %>
 <%= setup_password_validator(@school.id) %>
+<% end %>
 <% end %>

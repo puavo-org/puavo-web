@@ -364,6 +364,38 @@ class UsersController < ApplicationController
     end
   end
 
+  def setup_integrations_for_form(school, is_new_user)
+    @is_admin_school = school.displayName == 'Administration'
+    @primus_warning = false
+    @gsuite_pw_warning = :none
+    @next_gsuite_update = nil
+    @needs_password_validator = false
+
+    unless @is_admin_school
+      # Administration schools NEVER show/have any integrations, even if someone
+      # defines them.
+      @primus_warning = school_has_integration?(school.id, 'primus')
+
+      if school_has_integration?(school.id, 'gsuite_password')
+        if is_new_user
+          @gsuite_pw_warning = :new
+
+          # next gsuite update time
+          @next_update = get_school_single_integration_next_update(school.id, 'gsuite', Time.now)
+
+          if @next_update && @next_update.include?(:at)
+            @next_gsuite_update = @next_update[:at].strftime("%d.%m.%Y %H:%M")
+          else
+            # this is an error, but avoid crashing or anything
+            @next_gsuite_update = '(???)'
+          end
+        else
+          @gsuite_pw_warning = :edit
+        end
+      end
+    end
+  end
+
   # GET /:school_id/users/new
   # GET /:school_id/users/new.xml
   def new
@@ -375,6 +407,7 @@ class UsersController < ApplicationController
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
     @is_new_user = true
+    setup_integrations_for_form(@school, true)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -394,6 +427,7 @@ class UsersController < ApplicationController
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
     @is_new_user = false
+    setup_integrations_for_form(@school, false)
 
     get_user_groups
   end
