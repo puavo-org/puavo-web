@@ -447,6 +447,7 @@ class UsersController < ApplicationController
 
     @user.puavoSchool = @school.dn
 
+    @is_new_user = true
     setup_integrations_for_form(@school, true)
 
     respond_to do |format|
@@ -483,6 +484,7 @@ class UsersController < ApplicationController
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
+    @is_new_user = false
     setup_integrations_for_form(@school, false)
 
     respond_to do |format|
