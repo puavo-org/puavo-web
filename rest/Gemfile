@@ -38,6 +38,7 @@ gem "ntlm-http"
 # Ruby 2.3.x
 gem "ttfunk", "1.5.1"
 gem "gettext", "3.2.9"
+gem "r18n-core", "3.2.0"
 
 group :test do
   gem "shotgun"
