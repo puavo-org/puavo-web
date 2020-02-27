@@ -447,6 +447,8 @@ class UsersController < ApplicationController
 
     @user.puavoSchool = @school.dn
 
+    setup_integrations_for_form(@school, true)
+
     respond_to do |format|
       begin
         unless @user.save
@@ -480,6 +482,8 @@ class UsersController < ApplicationController
 
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
+
+    setup_integrations_for_form(@school, false)
 
     respond_to do |format|
       begin
