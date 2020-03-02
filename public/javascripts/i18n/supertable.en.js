@@ -6,6 +6,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         empty: "(No entries to display)",
 
         control: {
+            title: "Actions",
             select_columns: "Select columns...",
             select_columns_title: "Select which columns are visible and in which order",
             download_csv: "Download as CSV...",
@@ -19,13 +20,14 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             timeout: "Timeout, try again later",
             json_fail: "JSON parse error, see console",
             status: "${total} ${itemName} total, ${filtered} filtered, ${visible} visible",
+            select_placeholder: "(Select)",
+
             filtering_main_enabled: "Enable filtering",
             filtering_main_enabled_title: "Only show rows that match the specified criteria",
             filtering_main_reverse: "Reverse matching",
             filtering_main_reverse_title: "Only show rows that DON'T match the specified criteria",
             filtering_presets: "Presets:",
-            filtering_presets_title: "Use a pre-made filter",
-            filtering_select: "(Select)",
+            filtering_presets_title: "Use a pre-built filter",
             filtering_reset: "(Clear)",
 
             filter: {
@@ -43,6 +45,30 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
                 title_operator: "Match type",
                 title_button_add: "Add a new filter row at the end",
                 title_button_remove: "Remove this filter row",
+            },
+
+            mass_op: {
+                title: "Mass Operations",
+                select_operation: "Select a mass operation:",
+                proceed: "Proceed",
+                hidden_warning: "<strong>WARNING:</strong> The selected filter hides some of the selected rows! Check the filter and your selection before you proceed.",
+
+                status: {
+                    selected: "selected",
+                    ok: "successfull",
+                    failed: "failed",
+                },
+
+                confirm: "Are you sure?",
+                filtered_confirm: "The current filter has hidden some of the selected rows. Are you sure you want to continue?",
+
+                select_all_visible: "Select all visible rows",
+                deselect_all_visible: "Deselect all visible rows",
+                invert_visible: "Invert selection on visible rows",
+                select_all: "Select all",
+                deselect_all: "Deselect all",
+                deselect_invisible: "Deselect invisible rows",
+                deselect_successfull: "Deselect successfully processed rows",
             },
         },
 
@@ -68,5 +94,5 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
         misc: {
             unset_group_type: "(Missing / not set)",
         },
-    }
+    },
 });

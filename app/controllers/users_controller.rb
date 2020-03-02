@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include Puavo::Integrations
+  include Puavo::MassOperations
 
   # GET /:school_id/users
   # GET /:school_id/users.xml
@@ -145,6 +147,158 @@ class UsersController < ApplicationController
     render :json => users
   end
 
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
+  # Mass operation: delete user
+  def mass_op_user_delete
+    begin
+      user_id = params[:user][:id]
+    rescue
+      puts "mass_op_user_delete(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_user_delete(): missing params')
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if user.puavoDoNotDelete
+        return status_failed_trans('users.mass_operations.delete.deletion_prevented')
+      end
+
+      unless user.puavoRemovalRequestTime
+        return status_failed_trans('users.mass_operations.delete.not_marked_for_deletion')
+      end
+
+      if user.puavoRemovalRequestTime + 7.days > Time.now.utc
+        return status_failed_trans('users.mass_operations.delete.marked_too_recently')
+      end
+
+      # Remove the user from external systems first, stop if this fails
+      status, message = delete_user_from_external_systems(user, plaintext_message: true)
+
+      unless status
+        return status_failed_msg(message)
+      end
+
+      user.delete
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: lock/unlock user
+  def mass_op_user_lock
+    begin
+      user_id = params[:user][:id]
+      lock = params[:user][:lock]
+    rescue
+      puts "mass_op_user_lock(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_user_lock(): missing params')
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if user.puavoLocked && !lock
+        user.puavoLocked = false
+        user.save!
+      elsif !user.puavoLocked && lock
+        user.puavoLocked = true
+        user.save!
+      end
+
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: mark/unmark for later deletion
+  def mass_op_user_mark
+    begin
+      user_id = params[:user][:id]
+      operation = params[:user][:operation]
+    rescue
+      puts "mass_op_user_mark(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_user_mark(): missing params')
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if operation == 0
+        # Lock
+        if user.puavoDoNotDelete
+          return status_failed_trans('users.mass_operations.delete.deletion_prevented')
+        end
+
+        if user.puavoRemovalRequestTime
+          # already marked for deletion, do nothing
+          ok = true
+        else
+          user.puavoRemovalRequestTime = Time.now.utc
+          user.puavoLocked = true
+          user.save!
+          ok = true
+        end
+      elsif operation == 1
+        # Force lock (resets locking timestamp)
+        if user.puavoDoNotDelete
+          return status_failed_trans('users.mass_operations.delete.deletion_prevented')
+        end
+
+        # always overwrite the existing timestamp
+        user.puavoRemovalRequestTime = Time.now.utc
+        user.puavoLocked = true
+        user.save!
+        ok = true
+      else
+        # Unlock
+        if user.puavoRemovalRequestTime
+          user.puavoRemovalRequestTime = nil
+          user.puavoLocked = false
+          user.save!
+        end
+
+        ok = true
+      end
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
   # GET /:school_id/users/1/image
   def image
     @user = User.find(params[:id])
@@ -210,6 +364,38 @@ class UsersController < ApplicationController
     end
   end
 
+  def setup_integrations_for_form(school, is_new_user)
+    @is_admin_school = school.displayName == 'Administration'
+    @primus_warning = false
+    @gsuite_pw_warning = :none
+    @next_gsuite_update = nil
+    @needs_password_validator = false
+
+    unless @is_admin_school
+      # Administration schools NEVER show/have any integrations, even if someone
+      # defines them.
+      @primus_warning = school_has_integration?(school.id, 'primus')
+
+      if school_has_integration?(school.id, 'gsuite_password')
+        if is_new_user
+          @gsuite_pw_warning = :new
+
+          # next gsuite update time
+          @next_update = get_school_single_integration_next_update(school.id, 'gsuite', Time.now)
+
+          if @next_update && @next_update.include?(:at)
+            @next_gsuite_update = @next_update[:at].strftime("%d.%m.%Y %H:%M")
+          else
+            # this is an error, but avoid crashing or anything
+            @next_gsuite_update = '(???)'
+          end
+        else
+          @gsuite_pw_warning = :edit
+        end
+      end
+    end
+  end
+
   # GET /:school_id/users/new
   # GET /:school_id/users/new.xml
   def new
@@ -220,14 +406,11 @@ class UsersController < ApplicationController
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
 
+    @is_new_user = true
+    setup_integrations_for_form(@school, true)
+
     respond_to do |format|
-      # FIXME: whether the student management system is in use?
-      if users_synch?(@school) && !current_user.organisation_owner?
-        flash[:alert] = t('flash.user.cannot_create_user')
-        format.html { redirect_to( users_url ) }
-      else
-        format.html # new.html.erb
-      end
+      format.html # new.html.erb
       format.xml  { render :xml => @user }
     end
   end
@@ -242,6 +425,9 @@ class UsersController < ApplicationController
     @user_roles =  @user.roles || []
 
     @edu_person_affiliation = @user.puavoEduPersonAffiliation || []
+
+    @is_new_user = false
+    setup_integrations_for_form(@school, false)
 
     get_user_groups
   end
@@ -260,6 +446,9 @@ class UsersController < ApplicationController
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
     @user.puavoSchool = @school.dn
+
+    @is_new_user = true
+    setup_integrations_for_form(@school, true)
 
     respond_to do |format|
       begin
@@ -295,15 +484,8 @@ class UsersController < ApplicationController
     params[:user][:puavoEduPersonAffiliation] ||= []
     @edu_person_affiliation = params[:user][:puavoEduPersonAffiliation]
 
-    if @user.read_only?
-      params["user"].delete(:givenName)
-      params["user"].delete(:sn)
-      params["user"].delete(:uid)
-      params["user"].delete(:mail)
-      params["user"].delete(:telephoneNumber)
-      params["user"].delete(:role_ids)
-      params["user"].delete(:puavoLocale)
-    end
+    @is_new_user = false
+    setup_integrations_for_form(@school, false)
 
     respond_to do |format|
       begin
@@ -389,6 +571,17 @@ class UsersController < ApplicationController
     if @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
     else
+
+      # Remove the user from external systems first
+      status, message = delete_user_from_external_systems(@user)
+
+      unless status
+        # failed, stop here
+        flash[:alert] = message
+        redirect_to(users_url)
+        return
+      end
+
       if @user.puavoEduPersonAffiliation && @user.puavoEduPersonAffiliation.include?('admin')
         # if an admin user is also an organisation owner, remove the ownership
         # automatically before deletion
@@ -581,6 +774,8 @@ class UsersController < ApplicationController
   end
 
   def prevent_deletion
+    return unless is_owner?
+
     @user = User.find(params[:id])
 
     @user.puavoDoNotDelete = true
@@ -637,6 +832,8 @@ class UsersController < ApplicationController
   end
 
   def delete_marked_users
+    return unless is_owner?
+
     delete_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
 
     succeed = 0
@@ -729,4 +926,73 @@ class UsersController < ApplicationController
       end
     end
 
+    # Delete the user from external systems. Returns [status, message] tuples;
+    # if 'status' is false, you can display 'message' to the user.
+    # See app/lib/puavo/integrations.rb for details
+    def delete_user_from_external_systems(user, plaintext_message: false)
+      # Have actions for user deletion?
+      school = user.school
+
+      unless school_has_sync_actions_for?(school.id, :delete_user)
+        return true, nil
+      end
+
+      actions = get_school_sync_actions(school.id, :delete_user)
+
+      logger.info("School (#{school.cn}) has #{actions.length} synchronous " \
+                  "action(s) defined for user deletion: #{actions.keys.join(', ')}")
+
+      integration_names = get_school_integration_names(school.id)
+      ok_systems = []
+
+      # Process each system in sequence, bail out on the first error. 'params' are
+      # the parameters defined for the action in organisations.yml.
+      actions.each do |system, params|
+        request_id = generate_synchronous_call_id()
+
+        logger.info("Synchronously deleting user \"#{user.uid}\" (#{user.id}) from external " \
+                    "system \"#{system}\", request ID is \"#{request_id}\"")
+
+        status, code = do_synchronous_action(
+          :delete_user, system, request_id, params,
+          # -----
+          organisation: LdapOrganisation.current.cn,
+          user: user,
+          school: school
+        )
+
+        if status
+          ok_systems << integration_names[system]
+          next
+        end
+
+        # The operation failed, format an error message
+        msg = t('flash.user.synchronous_actions.deletion.part1',
+                :system => integration_names[system],
+                :reason => t('flash.integrations.' + code)) + '<br>'
+
+        unless ok_systems.empty?
+          msg += '<small>' +
+                 t('flash.user.synchronous_actions.deletion.part2',
+                   :ok_systems => ok_systems.join(', ')) +
+                 '</small><br>'
+        end
+
+        msg += '<small>' +
+               t('flash.user.synchronous_actions.deletion.part3',
+                 :code => request_id) +
+               '</small>'
+
+        if plaintext_message
+          # strip out HTML and convert newlines, to make the message "plain text"
+          msg = msg.gsub!('<br>', "\n\n")
+          msg = ActionView::Base.full_sanitizer.sanitize(msg)
+        end
+
+        return false, msg
+      end
+
+      logger.info('Synchronous action(s) completed without errors, proceeding with user deletion')
+      return true, nil
+    end
 end

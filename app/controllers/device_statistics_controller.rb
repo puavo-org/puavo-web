@@ -44,6 +44,8 @@ class DeviceStatisticsController < ApplicationController
   end
 
   def organisation_statistics
+    return unless is_owner?
+
     @total_devices = 0
     @devices = []
 

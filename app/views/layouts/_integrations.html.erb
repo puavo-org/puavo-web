@@ -1,4 +1,4 @@
-    <% unless integrations.empty?  %>
+    <% unless integrations_by_type.empty?  %>
     <ul class="integrations <%= extraClass %>">
       <% [['in', t('schools.integrations.in') ],
           ['out', t('schools.integrations.out')],
@@ -6,7 +6,7 @@
           ['login', t('schools.integrations.login')],
           ['password', t('schools.integrations.password')],
           ['other', t('schools.integrations.other')]].each do |system| %>
-      <% integrations.fetch(system[0], []).each do |name| %>
+      <% integrations_by_type.fetch(system[0], []).each do |name| %>
       <% if system[0] == 'in' %>
       <li class="<%= system[0] %>"><%= name %><span class="dirIn"></span>Puavo</li>
       <% elsif system[0] == 'out' %>
@@ -19,4 +19,19 @@
       <% end %>
       <% end %>
     </ul>
+
+    <% if defined?(next_updates) %>
+    <ul class="nextUpdates">
+    <% next_updates.sort{ |a, b| a[0] <=> b[0] }.each do |name, upd| %>
+      <% if integration_names.include?(name) %>
+      <li>
+        <span class="system"><%= integration_names[name] %></span>:
+        <span class="at"><%= upd[:at].nil? ? "?" : upd[:at].strftime("%d.%m.%Y %H:%M") %></span>
+        <span class="in"><%= sprintf('(%d h %d m)', upd[:in][0], upd[:in][1]) %></span>
+      </li>
+      <% end %>
+    <% end %>
+    </ul>
+    <% end %>
+
     <% end %>

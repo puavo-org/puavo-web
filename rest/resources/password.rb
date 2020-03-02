@@ -55,14 +55,15 @@ class Password < PuavoSinatra
   put "/password/change/:jwt" do
     auth :pw_mgmt_server_auth
 
-    if params["new_password"].nil? || params["new_password"].empty?
+    if json_params["new_password"].nil? || json_params["new_password"].empty?
       status 404
       return json({ :status => "failed",
-                    :error => "Invalid new password" })
+                    :error  => "Invalid new password" })
     end
 
     begin
-      jwt_decode_data = JWT.decode(params[:jwt], CONFIG["password_management"]["secret"])
+      jwt_decode_data = JWT.decode(params[:jwt],
+                                   CONFIG["password_management"]["secret"])
       jwt_data = jwt_decode_data[0] # jwt_decode_data is [payload, header]
     rescue JWT::DecodeError
       status 404
@@ -97,7 +98,7 @@ class Password < PuavoSinatra
                               nil,
                               PUAVO_ETC.ds_pw_mgmt_password,
                               user.username,
-                              params['new_password'])
+                              json_params['new_password'])
 
     flog.info('ldappasswd call',
               "changed user password for '#{ user.username }'",

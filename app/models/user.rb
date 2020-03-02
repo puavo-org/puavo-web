@@ -6,6 +6,7 @@ class User < LdapBase
   include Puavo::AuthenticationMixin
   include Puavo::Locale
   include Puavo::Helpers
+  include Puavo::Integrations
 
   ldap_mapping( :dn_attribute => "puavoId",
                 :prefix => "ou=People",
@@ -169,7 +170,7 @@ class User < LdapBase
     end
 
     if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
-      case get_organisation_password_requirements
+      case get_school_password_requirements(self.school.puavoId)
         when 'Google'
           if self.new_password.size < 8 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))
@@ -367,7 +368,7 @@ class User < LdapBase
     pw_change_mode = password_change_mode || mode || :all
 
     rest_params = {
-                    :actor_dn             => actor_dn,
+                    :actor_dn             => actor_dn.to_s,
                     :actor_username       => actor_username,
                     :actor_password       => ldap_conf[:password],
                     :host                 => ldap_conf[:host],
@@ -376,7 +377,7 @@ class User < LdapBase
                     :target_user_password => new_password,
                   }
 
-    res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
+    res = rest_proxy.put('/v3/users/password', :json => rest_params).parse
     res = {} unless res.kind_of?(Hash)
 
     FLOG.info('rest call to PUT /v3/users/password', res.merge(
@@ -400,14 +401,6 @@ class User < LdapBase
     end
 
     return true
-  end
-
-  def read_only?
-    return false if self.new_entry?
-
-    return false unless users_synch?(self.school)
-
-    (self.puavoExternalId.nil? or self.puavoExternalId.empty?) ? false : true
   end
 
   def self.import_columns

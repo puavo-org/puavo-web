@@ -6,6 +6,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         empty: "(Ei mitään näytettävää)",
 
         control: {
+            title: "Toiminnot",
             select_columns: "Valitse sarakkeet...",
             select_columns_title: "Valitse näkyvät sarakkeet ja missä järjestyksessä",
             download_csv: "Lataa CSV...",
@@ -19,14 +20,15 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             timeout: "Aikakatkaisu, yritä uudelleen myöhemmin",
             json_fail: "JSONin tulkkaus epäonnistui, katso konsolia",
             status: "${total} ${itemName} yhteensä, ${filtered} suodatettu, ${visible} näkyvissä",
+            select_placeholder: "(Valitse)",
+
             filtering_main_enabled: "Suodatus päällä",
             filtering_main_enabled_title: "Näytä vain tietyn kriteerin täyttävät rivit",
             filtering_main_reverse: "Käänteinen täsmäys",
             filtering_main_reverse_title: "Näytä vain rivit jotka EIVÄT täsmää annettuihin kriteereihin",
             filtering_presets: "Pohjat:",
             filtering_presets_title: "Käytä valmiiksi luotuja suodattimia",
-            filtering_select: "(Valitse)",
-            filtering_reset: "(Nollaa)",
+            filtering_reset: "(Tyhjennä)",
 
             filter: {
                 placeholder_string: "Regexp-tekstijono",
@@ -43,6 +45,33 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
                 title_operator: "Vertailun tyyppi",
                 title_button_add: "Lisää uusi suodatinrivi listan loppuun",
                 title_button_remove: "Poista tämä suodatinrivi",
+            },
+
+            mass_op: {
+                title: "Massatoiminnot",
+                select_operation: "Valitse massatoiminto:",
+                proceed: "Suorita",
+                hidden_warning:
+                    "<strong>VAROITUS:</strong> Valittu suodatin piilottaa joitain " +
+                     "valittuja rivejä! Tarkista suodatin ja valinnat ennen kuin suoritat " +
+                     "massaoperaation.",
+
+                status: {
+                    selected: "valittu",
+                    ok: "onnistui",
+                    failed: "epäonnistui",
+                },
+
+                confirm: "Oletko varma?",
+                filtered_confirm: "Nykyinen suodatin on piilottanut osan valituista riveistä. Haluatko jatkaa?",
+
+                select_all_visible: "Valitse kaikki näkyvät rivit",
+                deselect_all_visible: "Epävalitse näkyvät rivit",
+                invert_visible: "Käänteinen valinta näkyvistä riveistä",
+                select_all: "Valitse kaikki",
+                deselect_all: "Epävalitse kaikki",
+                deselect_invisible: "Epävalitse ei-näkyvät rivit",
+                deselect_successfull: "Epävalitse onnistuneet rivit",
             },
         },
 
@@ -69,5 +98,5 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
         misc: {
             unset_group_type: "(Puuttuu / ei asetettu)",
         },
-    }
+    },
 });

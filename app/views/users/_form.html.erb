@@ -4,27 +4,25 @@
 
 <p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
-<% read_only = @user.read_only? %>
-
-<% if read_only %>
-<div class="genericWarning"><%= t('.read_only_warning') %></div>
+<% if @primus_warning %>
+<p class="genericWarning"><%= t(@is_new_user ? 'users.form.primus_warning_new' : 'users.form.primus_warning_edit') %></p>
 <% end %>
 
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
   <table class="editForm">
     <tr>
       <th class="requiredField"><%= f.label :givenName %></th>
-      <td><%= f.text_field :givenName, disabled: read_only, :required => 'required', :autofocus => true %></td>
+      <td><%= f.text_field :givenName, :required => 'required', :autofocus => @is_new_user ? true : nil %></td>
     </tr>
 
     <tr>
       <th class="requiredField"><%= f.label :sn %></th>
-      <td><%= f.text_field :sn, disabled: read_only, :required => 'required' %></td>
+      <td><%= f.text_field :sn, :required => 'required' %></td>
     </tr>
 
     <tr>
       <th class="requiredField"><%= f.label :uid %></th>
-      <td><%= f.text_field :uid, disabled: read_only, :required => 'required' %></td>
+      <td><%= f.text_field :uid, :required => 'required' %></td>
     </tr>
 
     <tr>
@@ -32,17 +30,15 @@
       <td>
         <div>
         <% if Array(@user.mail).empty? %>
-          <input name='user[mail][]' type='text' id='user_mail_0' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input name='user[mail][]' type='text' id='user_mail_0'/>
         <% else %>
           <% Array(@user.mail).each_index do |index| %>
-          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input  id='<%= "user_mail_#{index}" %>' name='user[mail][]' type='text' value='<%= Array(@user.mail)[index] %>' />
           <% end %>
         <% end %>
         </div>
-        <% unless read_only %>
         <%= link_to "#", class: "clone_prev_input_element btn" do %>
         <i class="icon-plus"></i><%= t('.add_email') %>
-        <% end %>
         <% end %>
         <%= field_error_text_span(f.object, :mail) %>
       </td>
@@ -53,17 +49,15 @@
       <td>
         <span>
         <% if Array(@user.telephoneNumber).empty? %>
-          <input name='user[telephoneNumber][]' id='user_telephone_0' type='text' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input name='user[telephoneNumber][]' id='user_telephone_0' type='text'/>
         <% else %>
           <% Array(@user.telephoneNumber).each_index do |index| %>
-          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>' <%= read_only ? 'disabled="disabled"' : "" %> />
+          <input id='<%= "user_telephone_#{index}" %>' name='user[telephoneNumber][]' type='text' value='<%= Array(@user.telephoneNumber)[index] %>'/>
           <% end %>
         <% end %>
         </span>
-        <% unless read_only %>
         <%= link_to "#", class: "clone_prev_input_element btn" do %>
           <i class="icon-plus"></i><%= t('.add_telephone_number') %>
-        <% end %>
         <% end %>
         <%= field_error_text_span(f.object, :telephoneNumber) %>
       </td>
@@ -156,15 +150,28 @@
     <tr>
       <th class="requiredField"><%= f.label :new_password %></th>
       <td>
-        <%= show_password_requirements %>
+      <% if @gsuite_pw_warning == :none %>
+        <% unless @is_admin_school %>
+        <%= show_password_requirements(@school.id) %>
+        <% end %>
         <%= f.password_field :new_password, value: @user.new_password  %>
+      <% elsif @gsuite_pw_warning == :new %>
+        <p class="genericWarning"><%= t('users.form.gsuite_password_new', :next_sync => @next_gsuite_update) %></p>
+      <% elsif @gsuite_pw_warning == :edit %>
+        <p class="genericNotice"><%= t('users.form.gsuite_password_edit') %></p>
+        <%= show_password_requirements(@school.id) %>
+        <%= f.password_field :new_password, value: @user.new_password  %>
+      <% end %>
       </td>
     </tr>
 
+    <% if @gsuite_pw_warning == :none || @gsuite_pw_warning == :edit %>
     <tr>
       <th class="requiredField"><%= f.label :new_password_confirmation %></th>
-      <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation  %></td>
+      <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation %>
+      </td>
     </tr>
+    <% end %>
 
     <tr class="buttonRow">
       <td colspan="2">
@@ -175,6 +182,8 @@
   </table>
 <% end %>
 
+<% unless @is_admin_school %>
 <% content_for :post_load_javascript do %>
-<%= setup_password_validator %>
+<%= setup_password_validator(@school.id) %>
+<% end %>
 <% end %>

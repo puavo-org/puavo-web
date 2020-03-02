@@ -4,6 +4,16 @@ class OrganisationExternalServicesController < ExternalServicesBase
     @model = LdapOrganisation.current
   end
 
+  def show
+    return unless is_owner?
+    super
+  end
+
+  def update
+    return unless is_owner?
+    super
+  end
+
   def put_path
     organisation_external_services_path
   end

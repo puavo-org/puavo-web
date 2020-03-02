@@ -2,6 +2,8 @@ class ServersController < ApplicationController
   # GET /servers
   # GET /servers.xml
   def index
+    return unless is_owner?
+
     @servers = Server.all
     @servers = @servers.sort{ |a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }
 
@@ -23,6 +25,8 @@ class ServersController < ApplicationController
   # GET /servers/1
   # GET /servers/1.xml
   def show
+    return unless is_owner?
+
     @server = Server.find(params[:id])
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
     @server.get_ca_certificate(current_organisation.organisation_key)
@@ -40,6 +44,9 @@ class ServersController < ApplicationController
 
   # GET /servers/1/image
   def image
+    # NEEDS TO BE EXPLICITLY TESTED
+    #return 403 unless current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+
     @server = Server.find(params[:id])
 
     send_data @server.jpegPhoto, :disposition => 'inline', :type => "image/jpeg"
@@ -48,6 +55,8 @@ class ServersController < ApplicationController
   # GET /servers/new
   # GET /servers/new.xml
   def new
+    return unless is_owner?
+
     @server = Server.new
 
     respond_to do |format|
@@ -59,6 +68,8 @@ class ServersController < ApplicationController
 
   # GET /servers/1/edit
   def edit
+    return unless is_owner?
+
     @server = Server.find(params[:id])
     @schools = School.all
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
@@ -67,6 +78,9 @@ class ServersController < ApplicationController
   # POST /servers
   # POST /servers.xml
   def create
+    # NEEDS TO BE EXPLICITLY TESTED
+    #return 403 unless current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+
     sp = server_params
 
     handle_date_multiparameter_attribute(sp, :puavoPurchaseDate)
@@ -98,6 +112,8 @@ class ServersController < ApplicationController
   # PUT /servers/1
   # PUT /servers/1.xml
   def update
+    return unless is_owner?
+
     @server = Server.find(params[:id])
     @schools = School.all
 
@@ -128,6 +144,8 @@ class ServersController < ApplicationController
   # DELETE /servers/1
   # DELETE /servers/1.xml
   def destroy
+    return unless is_owner?
+
     @server = Server.find(params[:id])
     # FIXME, revoke certificate only if device's include certificate
     @server.revoke_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
@@ -143,6 +161,8 @@ class ServersController < ApplicationController
 
   # DELETE /servers/1
   def revoke_certificate
+    return unless is_owner?
+
     @server = Server.find(params[:id])
     # FIXME, revoke certificate only if server's include certificate
     @server.revoke_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)

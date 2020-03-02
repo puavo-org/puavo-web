@@ -73,6 +73,8 @@ Rails.application.routes.draw do
 
       get 'get_school_groups_list' => 'groups#get_school_groups_list'
 
+      post 'mass_op_group_delete' => 'groups#mass_op_group_delete'
+
       get 'groups/find_groupless_users' => 'groups#find_groupless_users', :as => :find_groupless_users
       put 'groups/mark_groupless_users_for_deletion' => 'groups#mark_groupless_users_for_deletion', :as => :mark_groupless_users_for_deletion
 
@@ -95,6 +97,11 @@ Rails.application.routes.draw do
       match 'users/:id/prevent_deletion' => 'users#prevent_deletion', :as => :prevent_deletion, :via => :get
 
       get 'get_school_users_list' => 'users#get_school_users_list'
+
+      post 'mass_op_user_delete' => 'users#mass_op_user_delete'
+      post 'mass_op_user_lock' => 'users#mass_op_user_lock'
+      post 'mass_op_user_mark' => 'users#mass_op_user_mark'
+
     end
 
 
@@ -196,6 +203,11 @@ Rails.application.routes.draw do
       get 'devices/device_statistics' => 'device_statistics#school_statistics', :as => 'school_device_statistics'
 
       get 'get_school_devices_list' => 'devices#get_school_devices_list'
+
+      post 'mass_op_device_delete' => 'devices#mass_op_device_delete'
+      post 'mass_op_device_set_image' => 'devices#mass_op_device_set_image'
+      post 'mass_op_device_set_field' => 'devices#mass_op_device_set_field'
+      post 'mass_op_device_edit_puavoconf' => 'devices#mass_op_device_edit_puavoconf'
 
       resources :devices
 

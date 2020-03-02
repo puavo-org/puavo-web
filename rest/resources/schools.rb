@@ -233,8 +233,78 @@ class Schools < PuavoSinatra
     school = School.by_attr!(:id, params["school_id"])
     json Group.teaching_groups_by_school(school)
   end
+
+
+  # -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  # EXPERIMENTAL V4 API
+
+  # Use at your own risk. Currently read-only.
+
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = {
+    'id'            => 'puavoId',
+    'dn'            => 'dn',
+    'name'          => 'displayName',
+    'group_prefix'  => 'cn',
+    'external_id'   => 'puavoExternalId',
+    'school_code'   => 'puavoSchoolCode',
+    'member_uid'    => 'memberUid',
+    'member_dns'    => 'member',
+  }
+
+  # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
+  LDAP_TO_USER = {
+    'puavoId'         => { name: 'id', type: :integer },
+    'dn'              => { name: 'dn' },
+    'displayName'     => { name: 'name'},
+    'cn'              => { name: 'group_prefix' },
+    'puavoExternalId' => { name: 'external_id' },
+    'puavoSchoolCode' => { name: 'school_code' },
+    'memberUid'       => { name: 'member_uid' },
+    'member'          => { name: 'member_dns' },
+  }
+
+  def v4_do_school_search(id, requested_ldap_attrs)
+    unless id.class == Array
+      raise "do_school_search(): school IDs must be an Array, even if empty"
+    end
+
+    filter = v4_build_puavoid_filter('(objectClass=puavoSchool)', id)
+    base = "ou=Groups,#{Organisation.current['base']}"
+
+    return School.raw_filter(base, filter, requested_ldap_attrs)
+  end
+
+  # Retrieve all (or some) schools in the organisation
+  # GET /v4/schools?fields=...
+  # GET /v4/schools?id=1,2,3,4,...&fields=...
+  get '/v4/schools' do
+    auth :basic_auth, :kerberos
+
+    v4_do_operation do
+      # which fields to get?
+      user_fields = v4_get_fields(params).to_set
+      ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
+
+      # zero or more user IDs
+      id = v4_get_id_from_params(params)
+
+      # do the query
+      raw = v4_do_school_search(id, ldap_attrs)
+
+      # convert and return
+      out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+      out = v4_ensure_is_array(out, 'member_uid', 'member_dns')
+
+      return 200, json({
+        status: 'ok',
+        error: nil,
+        data: out,
+      })
+    end
+  end
 end
-
-
-
 end

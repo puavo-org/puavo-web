@@ -1,6 +1,8 @@
 require "devices_helper"
 
 class DevicesController < ApplicationController
+  include Puavo::MassOperations
+
   before_action :find_school
 
   # GET /devices
@@ -86,6 +88,204 @@ class DevicesController < ApplicationController
     render :json => @devices
   end
 
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
+  # Mass operation: delete device
+  def mass_op_device_delete
+    begin
+      device_id = params[:device][:id]
+    rescue
+      puts "mass_op_device_delete(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_device_delete(): missing params')
+    end
+
+    ok = false
+
+    begin
+      device = Device.find(device_id)
+      device.delete
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: set arbitrary field value
+  def mass_op_device_set_field
+    begin
+      device_id = params[:device][:id]
+      field = params[:device][:field]
+      value = params[:device][:value]
+    rescue
+      puts "mass_op_device_set_field(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_device_set_field(): missing params')
+    end
+
+    ok = false
+
+    begin
+      device = Device.find(device_id)
+      changed = false   # save changes only if something actually does change
+
+      # argh, there must be a better way to do this
+      case field
+        when 'image'
+          if device.puavoDeviceImage != value
+            device.puavoDeviceImage = value
+            changed = true
+          end
+
+        when 'kernelargs'
+          if device.puavoDeviceKernelArguments != value
+            device.puavoDeviceKernelArguments = value
+            changed = true
+          end
+
+        when 'kernelversion'
+          if device.puavoDeviceKernelVersion != value
+            device.puavoDeviceKernelVersion = value
+            changed = true
+          end
+
+        when 'puavoconf'
+          if device.puavoConf != value
+            device.puavoConf = value
+            changed = true
+          end
+
+        when 'tags'
+          if device.puavoTag != value
+            device.puavoTag = value
+            changed = true
+          end
+
+        when 'manufacturer'
+          if device.puavoDeviceManufacturer != value
+            device.puavoDeviceManufacturer = value
+            changed = true
+          end
+
+        when 'model'
+          if device.puavoDeviceModel != value
+            device.puavoDeviceModel = value
+            changed = true
+          end
+
+        when 'serial'
+          if device.serialNumber != value
+            device.serialNumber = value
+            changed = true
+          end
+      end
+
+      if changed
+        device.save!
+      end
+
+      # don't raise errors when nothing happens
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: puavoconf editor
+  def mass_op_device_edit_puavoconf
+    begin
+      device_id = params[:device][:id]
+      key = params[:device][:key]
+      value = params[:device][:value]
+      type = params[:device][:type]
+      action = params[:device][:action]
+    rescue
+      puts "mass_op_device_edit_puavoconf(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_device_edit_puavoconf(): missing params')
+    end
+
+    ok = false
+
+    if type == 'string'
+      value = value.to_s
+    elsif type == 'int'
+      value = value.to_i(10)
+    elsif type == 'bool'
+      if value == 'true'
+        value = true
+      elsif value == 'false'
+        value = false
+      else
+        value = value.to_i ? true : false
+      end
+    end
+
+    begin
+      device = Device.find(device_id)
+      changed = false   # save changes only if something actually does change
+
+      conf = device.puavoConf ? JSON.parse(device.puavoConf) : {}
+
+      if action == 0
+        # ADD/CHANGE
+        if conf.include?(key)
+          if conf[key] != value
+            conf[key] = value
+            changed = true
+          end
+        else
+          conf[key] = value
+          changed = true
+        end
+      else
+        # REMOVE
+        if conf.include?(key)
+          conf.delete(key)
+          changed = true
+        end
+      end
+
+      if changed
+        if conf.empty?
+          # empty hash serializes as "{}" in JSON, but that's not what we want
+          device.puavoConf = nil
+        else
+          device.puavoConf = conf.to_json
+        end
+
+        device.save!
+      end
+
+      # don't raise errors when nothing happens
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
   # GET /devices/1
   # GET /devices/1.xml
   # GET /devices/1.json
@@ -134,6 +334,7 @@ class DevicesController < ApplicationController
 
     @device = Device.new
     @device_type_label = Puavo::CONFIG['device_types'][params[:device_type]]['label'][I18n.locale.to_s]
+    @is_new_device = true
 
     # Try to set default value for hostname
     device = Device.find( :all,
@@ -166,6 +367,8 @@ class DevicesController < ApplicationController
   def edit
     @device = get_device(params[:id])
     return if @device.nil?
+
+    @is_new_device = false
 
     @device.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
 

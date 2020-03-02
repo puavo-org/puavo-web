@@ -135,5 +135,78 @@ class Groups < PuavoSinatra
     json Group.administrative_groups
   end
 
+
+  # -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  # EXPERIMENTAL V4 API
+
+  # Use at your own risk. Currently read-only.
+
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = {
+    'id'            => 'puavoId',
+    'dn'            => 'dn',
+    'name'          => 'displayName',
+    'abbreviation'  => 'cn',
+    'external_id'   => 'puavoExternalId',
+    'school_id'     => 'puavoSchool',
+    'member_uid'    => 'memberUid',
+    'member_dns'    => 'member',
+  }
+
+  # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
+  LDAP_TO_USER = {
+    'puavoId'         => { name: 'id', type: :integer },
+    'dn'              => { name: 'dn' },
+    'displayName'     => { name: 'name' },
+    'cn'              => { name: 'abbreviation' },
+    'puavoExternalId' => { name: 'external_id' },
+    'puavoSchool'     => { name: 'school_id', type: :id_from_dn },
+    'memberUid'       => { name: 'member_uid' },
+    'member'          => { name: 'member_dns' },
+  }
+
+  def v4_do_group_search(id, requested_ldap_attrs)
+    unless id.class == Array
+      raise "v4_do_group_search(): user IDs must be an Array, even if empty"
+    end
+
+    filter = v4_build_puavoid_filter('(objectClass=puavoEduGroup)', id)
+    base = "ou=Groups,#{Organisation.current['base']}"
+
+    return Group.raw_filter(base, filter, requested_ldap_attrs)
+  end
+
+  # Get all (or some) groups in the organisation.
+  # GET /v4/groups?fields=...
+  # GET /v4/groups?id=1,2,3,...&fields=...
+  get "/v4/groups" do
+    auth :basic_auth, :kerberos
+
+    v4_do_operation do
+      # which fields to get?
+      user_fields = v4_get_fields(params).to_set
+      ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
+
+      # zero or more user IDs
+      id = v4_get_id_from_params(params)
+
+      # do the query
+      raw = v4_do_group_search(id, ldap_attrs)
+
+      # convert and return
+      out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+      out = v4_ensure_is_array(out, 'member_uid', 'member_dns')
+
+      return 200, json({
+        status: 'ok',
+        error: nil,
+        data: out,
+      })
+    end
+  end
+
 end
 end

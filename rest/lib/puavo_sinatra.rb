@@ -41,8 +41,7 @@ class PuavoSinatra < Sinatra::Base
     return @json_body if @json_body
 
     if request.content_type.downcase.start_with?("application/json")
-      json_parser = Yajl::Parser.new
-      @json_body = json_parser.parse(request.body)
+      @json_body = JSON.parse(request.body.read)
       return @json_body
     end
 

@@ -7,6 +7,8 @@
     <th><%= t('activeldap.attributes.school.displayName') %></th>
     <th><%= t('activeldap.attributes.school.puavoNamePrefix') %></th>
 
+    <th><%= t('activeldap.attributes.school.bootservers') %></th>
+
     <% if @have_school_codes %>
     <th><%= t('activeldap.attributes.school.puavoSchoolCode') %></th>
     <% end %>
@@ -14,6 +16,8 @@
     <% if @have_external_ids %>
     <th><%= t('activeldap.attributes.school.puavoExternalId') %></th>
     <% end %>
+
+    <th><%= t('schools.index.members') %></th>
 
     <th><%= t('.actions') %></th>
   </tr>
@@ -23,15 +27,25 @@
     <td data-title="<%= t('activeldap.attributes.school.displayName')%>">
       <%= link_to school.displayName, school_path(school) %>
       <% unless school.displayName == 'Administration' %>
-      <% integrations = get_integrations_for_school(school.id.to_i) %>
-      <% unless integrations.empty? %>
-      <%= render :partial => "layouts/integrations", :locals => { :integrations => integrations, :extraClass => "inlineIntegrations" } %>
-      <% end %>
+      <%= render :partial => "layouts/integrations", :locals => {
+        :integrations_by_type => get_school_integrations_by_type(school.id),
+        :extraClass => "inlineIntegrations" }
+      %>
       <% end %>
     </td>
 
     <td data-title="<%= t('activeldap.attributes.school.puavoNamePrefix')%>">
       <%= school.cn %>
+    </td>
+
+    <td>
+      <% unless school.boot_servers.empty? %>
+      <ul class="unstyledUL">
+      <% school.boot_servers.each do |bs| %>
+        <li><%= link_to bs.puavoHostname, server_path(bs) %></li>
+      <% end %>
+      </ul>
+      <% end %>
     </td>
 
     <% if @have_school_codes %>
@@ -45,6 +59,8 @@
       <%= school.puavoExternalId %>
     </td>
     <% end %>
+
+    <td><%= school.members.count %></td>
 
     <td data-title="<%= t('actions')%>" class="table-actions">
       <%= link_to edit_school_path(school), class: "btn" do %>

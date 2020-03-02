@@ -34,7 +34,7 @@ class User < LdapModel
   ldap_map :puavoSshPublicKey, :ssh_public_key
   ldap_map :homeDirectory, :home_directory
   ldap_map :loginShell, :login_shell, :default => "/bin/bash"
-  ldap_map :telephoneNumber, :telephone_number
+  ldap_map :telephoneNumber, :telephone_number, LdapConverters::ArrayValue
   ldap_map :puavoRemovalRequestTime, :removal_request_time,
            LdapConverters::TimeStamp
   ldap_map :eduPersonPrincipalName, :edu_person_principal_name
@@ -149,9 +149,11 @@ class User < LdapModel
       add_validation_error(:school_dns, :must_have_school, "no schools are set")
     end
 
-    if !telephone_number.nil? && !telephone_number.match(/^[A-Za-z[:digit:][:space:]'()+,-.\/:?"]+$/)
-      add_validation_error(:telephone_number, :telephone_number_invalid,
-                           "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
+    unless telephone_number.nil?
+      if Array(telephone_number || []).collect{ |n| !n.match(/^[A-Za-z[:digit:][:space:]'()+,-.\/:?"]+$/) }.any?
+        add_validation_error(:telephone_number, :telephone_number_invalid,
+                             "Invalid telephone number. Allowed characters: A-Z, a-z, 0-9, ', (, ), +, ,, -, ., /, :, ?, space and \"")
+      end
     end
 
     # FIXME: Validate external id?
@@ -313,9 +315,13 @@ class User < LdapModel
   end
 
   def telephone_number=(value)
-    # LDAP raises an error if empty string is given as the number.
-    # Just skip the attribute if its empty
-    return if value.to_s.strip == ""
+    # Treat empty strings as nil and allow the number to be cleared.
+    # This is extremely important, for example, in Primus import. Old
+    # phone numbers must be cleared if they're missing.
+    if !value.nil? && (value.empty? || value.to_s.strip == "")
+      value = nil
+    end
+
     write_raw(:telephoneNumber, transform(:telephone_number, :write, value))
   end
 
@@ -832,6 +838,32 @@ class Users < PuavoSinatra
     json user
   end
 
+  delete '/v3/users/:username' do
+    auth :basic_auth, :kerberos
+
+    user = User.by_username!(params['username'])
+
+    uname = LdapModel.settings.dig(:credentials, :username)
+
+    if uname && user.username == uname
+      return 403, 'you cannot self-terminate'
+    end
+
+    # This check is here because I don't know how to remove organisation owners
+    # with puavo-rest. And owners usually should be left alone.
+    if user.organisation.owners.collect{ |o| o.dn }.include?(user.dn)
+      return 403, 'refusing to delete an organisation owner'
+    end
+
+    if user.do_not_delete && user.do_not_delete == 'TRUE'
+      return 403, 'user deletion has been prevented'
+    end
+
+    user.destroy!
+
+    return 200
+  end
+
   def too_many_password_change_attempts(username)
     db = Redis::Namespace.new("puavo:password_management:attempt_counter_rest", :redis => REDIS_CONNECTION)
 
@@ -858,23 +890,23 @@ class Users < PuavoSinatra
       param_names_list.each do |param_name|
         case param_name
           when 'actor_dn', 'actor_username'
-            param_ok = params[param_name].kind_of?(String) \
-                         || params[param_name].nil?
+            param_ok = json_params[param_name].kind_of?(String) \
+                         || json_params[param_name].nil?
           when 'mode'
-            param_ok = params[param_name] == 'all'                \
-                         || params[param_name] == 'no_upstream'   \
-                         || params[param_name] == 'upstream_only'
+            param_ok = json_params[param_name] == 'all'                \
+                         || json_params[param_name] == 'no_upstream'   \
+                         || json_params[param_name] == 'upstream_only'
           else
-            param_ok = params[param_name].kind_of?(String) \
-                         && !params[param_name].empty?
+            param_ok = json_params[param_name].kind_of?(String) \
+                         && !json_params[param_name].empty?
         end
 
         raise "'#{ param_name }' parameter is not set or is of wrong type" \
           unless param_ok
       end
 
-      if params['actor_dn'].to_s.empty? \
-           && params['actor_username'].to_s.empty? then
+      if json_params['actor_dn'].to_s.empty? \
+           && json_params['actor_username'].to_s.empty? then
         raise 'either actor_dn or actor_username parameter must be set'
       end
     rescue StandardError => e
@@ -887,7 +919,7 @@ class Users < PuavoSinatra
     end
 
     if ENV["PUAVO_WEB_CUCUMBER_TESTS"] != "true"
-      if too_many_password_change_attempts(params['target_user_username'])
+      if too_many_password_change_attempts(json_params['target_user_username'])
         return json({
           :exit_status => 1,
           :stderr      => '[rest] password change rate limit hit, please wait',
@@ -896,15 +928,15 @@ class Users < PuavoSinatra
       end
     end
 
-    res = Puavo.change_passwd(params['mode'].to_sym,
-                              params['host'],
-                              params['actor_dn'],
-                              params['actor_username'],
-                              params['actor_password'],
-                              params['target_user_username'],
-                              params['target_user_password'])
+    res = Puavo.change_passwd(json_params['mode'].to_sym,
+                              json_params['host'],
+                              json_params['actor_dn'],
+                              json_params['actor_username'],
+                              json_params['actor_password'],
+                              json_params['target_user_username'],
+                              json_params['target_user_password'])
 
-    target_user_username = params['target_user_username']
+    target_user_username = json_params['target_user_username']
     msg = (res[:exit_status] == 0)                                       \
             ? "changed password for '#{ target_user_username }'"         \
             : "changing password failed for '#{ target_user_username }'"
@@ -1106,6 +1138,86 @@ class Users < PuavoSinatra
     json user.merge("organisation" => LdapModel.organisation.to_hash)
   end
 
-end
-end
 
+  # -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  # EXPERIMENTAL V4 API
+
+  # Use at your own risk. Currently read-only.
+
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = {
+    'id'                => 'puavoId',
+    'dn'                => 'dn',
+    'username'          => 'uid',
+    'first_names'       => 'givenName',
+    'last_name'         => 'sn',
+    'external_id'       => 'puavoExternalId',
+    'email'             => 'mail',
+    'phone'             => 'telephoneNumber',
+    'role'              => 'puavoEduPersonAffiliation',
+    'locked'            => 'puavoLocked',
+    'removal_mark_time' => 'puavoRemovalRequestTime',
+    'school_id'         => 'puavoSchool',
+  }
+
+  # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
+  LDAP_TO_USER = {
+    'puavoId'                   => { name: 'id', type: :integer },
+    'dn'                        => { name: 'dn' },
+    'uid'                       => { name: 'username' },
+    'givenName'                 => { name: 'first_names' },
+    'sn'                        => { name: 'last_name' },
+    'puavoExternalId'           => { name: 'external_id' },
+    'mail'                      => { name: 'email' },
+    'telephoneNumber'           => { name: 'phone' },
+    'puavoEduPersonAffiliation' => { name: 'role', is_array: true },    # always an array
+    'puavoLocked'               => { name: 'locked', type:  :boolean },
+    'puavoRemovalRequestTime'   => { name: 'removal_mark_time', type:  :ldap_timestamp },
+    'puavoSchool'               => { name: 'school_id', type: :id_from_dn },
+  }
+
+  def v4_do_user_search(id, requested_ldap_attrs)
+    unless id.class == Array
+      raise "v4_do_user_search(): user IDs must be an Array, even if empty"
+    end
+
+    filter = v4_build_puavoid_filter('(objectclass=*)', id)
+    base = "ou=People,#{Organisation.current['base']}"
+
+    return User.raw_filter(base, filter, requested_ldap_attrs)
+  end
+
+  # Retrieve all (or some) users in the organisation
+  # GET /v4/users?fields=...
+  # GET /v4/users?id=1,2,3,...&fields=...
+  get '/v4/users' do
+    auth :basic_auth, :kerberos
+
+    v4_do_operation do
+      # which fields to get?
+      user_fields = v4_get_fields(params).to_set
+      ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
+
+      # zero or more user IDs
+      id = v4_get_id_from_params(params)
+
+      # do the query
+      raw = v4_do_user_search(id, ldap_attrs)
+
+      # convert and return
+      out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+      out = v4_ensure_is_array(out, 'email', 'phone')
+
+      return 200, json({
+        status: 'ok',
+        error: nil,
+        data: out,
+      })
+    end
+  end
+
+end
+end

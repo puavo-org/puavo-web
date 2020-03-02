@@ -11,17 +11,15 @@ gem "sinatra-contrib"
 gem "uuid"
 gem "puma"
 gem "rack-rewrite"
+gem "rack", "2.1.2"   # 2.2.x breaks some VirtualHostBase tests
 gem "addressable"
 gem "jwt", "2.1.0"
 gem "json"
 gem "gssapi", :git => "https://github.com/opinsys/gssapi.git", :branch => "gss_krb5_copy_ccache"
 gem "sinatra-r18n"
-gem "redcarpet"
 gem "pry"
 gem "redis"
-gem "fluent-logger"
 gem "yajl-ruby"
-gem "msgpack"
 gem "colorize"
 gem "redis-namespace", "1.6.0"  # Ruby 2.3.x
 gem "httparty"
@@ -34,12 +32,13 @@ gem "http"
 gem "dnsruby"
 gem "mechanize"
 gem "net-ldap"
-gem "byebug"
+gem "byebug", "11.0.1"    # Ruby 2.3.x
 gem "ntlm-http"
 
 # Ruby 2.3.x
 gem "ttfunk", "1.5.1"
 gem "gettext", "3.2.9"
+gem "r18n-core", "3.2.0"
 
 group :test do
   gem "shotgun"

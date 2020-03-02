@@ -1,5 +1,5 @@
     {
-        title: "<%= t('filter_presets.devices.uses_trusty') %>",
+        title: "<%= t('devices.index.filters.uses_trusty') %>",
         id: "uses_trusty",
         filters: [
             [true, "current_image", OPERATOR_EQUAL, "trusty"],
@@ -8,7 +8,7 @@
     },
 
     {
-        title: "<%= t('filter_presets.devices.uses_stretch') %>",
+        title: "<%= t('devices.index.filters.uses_stretch') %>",
         id: "uses_stretch",
         filters: [
             [true, "current_image", OPERATOR_EQUAL, "stretch"],
@@ -17,7 +17,7 @@
     },
 
     {
-        title: "<%= t('filter_presets.devices.uses_buster') %>",
+        title: "<%= t('devices.index.filters.uses_buster') %>",
         id: "uses_buster",
         filters: [
             [true, "current_image", OPERATOR_EQUAL, "buster"],
@@ -26,7 +26,7 @@
     },
 
     {
-        title: "<%= t('filter_presets.devices.have_xrandr') %>",
+        title: "<%= t('devices.index.filters.have_xrandr') %>",
         id: "has_xrandr",
         filters: [
             [true, "xrandr", OPERATOR_NOT_EQUAL, "^$"],
@@ -34,7 +34,7 @@
     },
 
     {
-        title: "<%= t('filter_presets.devices.have_hwinfo') %>",
+        title: "<%= t('devices.index.filters.have_hwinfo') %>",
         id: "has_hwinfo",
         filters: [
             [true, "hw_time", OPERATOR_GREATER_OR_EQUAL, [2010, 1, 1]],

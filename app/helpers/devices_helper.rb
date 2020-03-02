@@ -66,6 +66,7 @@ module DevicesHelper
     'puavoDeviceManufacturer',
     'puavoDeviceModel',
     'puavoDeviceKernelArguments',
+    'puavoDeviceKernelVersion',
     'puavoDeviceXrandr',
     'puavoTag',
     'puavoConf',
@@ -88,7 +89,7 @@ module DevicesHelper
     device_types = Puavo::CONFIG['device_types']
 
     return {
-      id: dev['puavoId'][0],
+      id: dev['puavoId'][0].to_i,
       hn: dev['puavoHostname'][0],
       type: dev['puavoDeviceType'] ? device_types[dev['puavoDeviceType'][0]]['label'][I18n.locale.to_s] : nil,
       image: dev['puavoDeviceImage'] ? dev['puavoDeviceImage'][0] : nil,
@@ -98,6 +99,7 @@ module DevicesHelper
       model: dev['puavoDeviceModel'] ? dev['puavoDeviceModel'][0] : nil,
       desc: dev['description'] ? dev['description'][0] : nil,
       krn_args: dev['puavoDeviceKernelArguments'] ? dev['puavoDeviceKernelArguments'][0] : nil,
+      krn_ver: dev['puavoDeviceKernelVersion'] ? dev['puavoDeviceKernelVersion'][0] : nil,
       tags: dev['puavoTag'] ? dev['puavoTag'] : nil,
       created: self.convert_ldap_time(dev['createTimestamp']),
       modified: self.convert_ldap_time(dev['modifyTimestamp']),

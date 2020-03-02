@@ -47,7 +47,7 @@ GEM
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     arel (8.0.0)
-    backports (3.15.0)
+    backports (3.16.0)
     builder (3.2.4)
     byebug (11.0.1)
     capybara (3.15.0)
@@ -90,13 +90,11 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.9.0)
-    fast_gettext (2.0.1)
-    ffi (1.11.3)
+    fast_gettext (2.0.2)
+    ffi (1.12.2)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    fluent-logger (0.8.2)
-      msgpack (>= 1.0.0, < 2)
     gettext (3.2.9)
       locale (>= 2.0.5)
       text (>= 1.3.0)
@@ -145,7 +143,6 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.14.0)
     mono_logger (1.1.0)
-    msgpack (1.3.1)
     multi_json (1.14.1)
     multi_test (0.1.2)
     mustermann (1.1.1)
@@ -162,7 +159,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     public_suffix (4.0.3)
-    rack (2.1.1)
+    rack (2.2.1)
     rack-protection (2.0.8.1)
       rack
     rack-test (1.1.0)
@@ -192,7 +189,6 @@ GEM
       thor (>= 0.18.1, < 2.0)
     raindrops (0.19.1)
     rake (13.0.1)
-    redcarpet (3.5.0)
     redis (4.1.3)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
@@ -263,14 +259,14 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
-    unicorn (5.5.2)
+    unicorn (5.5.3)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     uuid (2.3.9)
       macaddr (~> 1.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    webmock (3.7.6)
+    webmock (3.8.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -285,12 +281,11 @@ PLATFORMS
 
 DEPENDENCIES
   activeldap (= 5.2.2)
-  byebug
+  byebug (= 11.0.1)
   capybara (= 3.15.0)
   colorize
   cucumber
   cucumber-rails
-  fluent-logger
   gettext (= 3.2.9)
   gibberish
   greenletters
@@ -304,7 +299,6 @@ DEPENDENCIES
   prawn
   pry
   rails (= 5.1.7)
-  redcarpet
   redis-namespace (= 1.6.0)
   resque
   rmagick

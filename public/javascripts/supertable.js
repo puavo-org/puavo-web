@@ -344,6 +344,7 @@ class ColumnEditor extends ModalDialogBase {
 // -------------------------------------------------------------------------------------------------
 // UTILITY
 
+// Creates a new HTML element and sets is attributes
 function newElem(params)
 {
     let e = document.createElement(params["tag"]);
@@ -357,7 +358,29 @@ function newElem(params)
     if (params["content"])
         e.innerHTML = params["content"];
 
+    if (params["contentText"])
+        e.innerText = params["contentText"];
+
+    if (params["innerText"])
+        e.appendChild(document.createTextNode(params["innerText"]));
+
     return e;
+}
+
+// Creates an <option> element under a <select> element
+function createOption(selector, title, id, valid)
+{
+    let option = document.createElement("option");
+
+    option.appendChild(document.createTextNode(title));
+
+    if (id)
+        option.dataset.id = id;
+
+    if (!valid)
+        option.className = "disabledOption";
+
+    selector.appendChild(option);
 }
 
 function pad(number)
@@ -413,6 +436,63 @@ function escapeHTML(s)
             .replace(/'/g, "&#039;");
 }
 
+function doSingleNetworkPost(url, json)
+{
+    let success = true,         // assume that all calls succeed unless proven otherwise
+        errorMessage = null,
+        networkReturn = null;
+
+    $.get({
+        type: "POST",
+        url: url,
+        data: json,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+
+        async: false,       // THIS IS IMPORTANT!
+        timeout: 10000,
+
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
+        },
+
+        beforeSend: function(jq, settings) {
+        },
+
+        fail: function(data) {
+        },
+
+        complete: function(data) {
+            if (data.readyState == 0 && data.statusText == "error") {
+                errorMessage = "doSingleNetworkPost(): network error";
+                success = false;
+            } else if (data.readyState == 0 && data.statusText == "timeout") {
+                errorMessage = "doSingleNetworkPost(): network timeout";
+                success = false;
+            } else if (data.status == 200) {
+                // Parse the received JSON
+                try {
+                    networkReturn = JSON.parse(data.responseText);
+                } catch (e) {
+                    errorMessage = "doSingleNetworkPost(): server response JSON parsing failed";
+                    success = false;
+                }
+            } else {
+                // Something else failed
+                errorMessage = "doSingleNetworkPost(): unknown error " + data.status;
+                success = false;
+            }
+        }
+    });
+
+    return {
+        success: success,
+        errorMessage: errorMessage,
+        networkReturn: networkReturn,
+    };
+}
+
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 // THE SUPERTABLE
@@ -435,7 +515,10 @@ const SORT_ORDER_NONE = 0,          // not sorted by this column
 
 // Row flags
 const ROW_FLAG_SELECTED = 0x01,             // this row is currently selected
-      ROW_FLAG_PROCESSED = 0x02;            // this row has been processed in the current mass operation
+      ROW_FLAG_FILTERED = 0x02,             // this row is not currently visible in the table
+      ROW_FLAG_PROCESSED = 0x04,            // this row has been already processed in the current mass operation
+      ROW_FLAG_PROCESSING_OK = 0x08,        // processing of this item succeeded
+      ROW_FLAG_PROCESSING_FAIL = 0x10;      // processing of this item failed
 
 // Column flags. Affects mainly how the raw data is processed before it is actually interpreted.
 const COLUMN_FLAG_SORTABLE = 0x01,  // this column can be sorted
@@ -1448,6 +1531,44 @@ class FilterEditor {
 
 // -------------------------------------------------------------------------------------------------
 
+
+const MASS_OPERATION_ITEM_OK = 1,
+      MASS_OPERATION_ITEM_FAILED = 2;
+
+class MassOperationBase {
+    constructor(parent, container)
+    {
+        this.parent = parent;
+        this.container = container;
+    }
+
+    haveValidSettings()
+    {
+        // Valid by default, since by default there are no settings
+        return true;
+    }
+
+    updateStatus()
+    {
+    }
+
+    processOneItem(item)
+    {
+        return MASS_OPERATION_ITEM_FAILED;
+    }
+};
+
+// TODO: convert all "enums" above to this format
+const MultiSelectOp = Object.freeze({
+    SELECT_VISIBLE: 1,
+    SELECT_ALL: 2,
+    DESELECT_VISIBLE: 3,
+    DESELECT_NONVISIBLE: 4,
+    DESELECT_ALL: 5,
+    INVERT_VISIBLE: 6,
+    DESELECT_PROCESSED_OK: 7,
+});
+
 class SuperTable {
     constructor(params)
     {
@@ -1510,6 +1631,15 @@ class SuperTable {
         if (this.columns.definitions === undefined || Object.keys(this.columns.definitions).length == 0)
             throw "SuperTable::ctor(): missing column definitions";
 
+        // Deal with mass operations
+        if (this.settings.flags & TABLE_FLAG_ENABLE_SELECTION) {
+            if (!("massOperations" in params) || params["massOperations"].length == 0)
+                throw "SuperTable::ctor(): TABLE_FLAG_ENABLE_SELECTION is set, but no mass operators were specified in SuperTable params";
+
+            this.massOperations = params["massOperations"];
+            this.currentMassOperation = null;
+        }
+
         // UI element handles
         this.ui = {
             controlBox: null,           // the control box above the table
@@ -1524,7 +1654,23 @@ class SuperTable {
             table: null,                // the table itself
         };
 
-        // Raw JSON for the data that's currently displayed in the table
+        /*
+            (Almost) raw JSON for the data that's currently displayed in the table.
+
+            The format is:
+
+            [
+                [ index, puavoId1, ROW_FLAG_*, row message, { raw item data copied from the JSON } ],
+                [ index, puavoId2, ROW_FLAG_*, row message, { raw item data copied from the JSON } ],
+                ...
+            ]
+
+            When new data is fetched from the server, it is merged with the current data,
+            ie. row flags and messages are copied over for matching items. Deleted items
+            are immediately removed. puavoId's are copied from the raw JSON data. Indexes
+            point back to the original array; they're needed so that we can find the
+            original row even when the item has gone through filtering and sorting.
+        */
         this.currentData = null;
 
         // Saved columns version number
@@ -1777,79 +1923,76 @@ class SuperTable {
         // -----------------------------------------------------------------------------------------
         // Setup master table controls
 
-        let controls = newElem({ tag: "div", classes: ["controls"] });
+        let controls = newElem({ tag: "div", classes: ["tableToolbox"] });
+
+        let cc = newElem({ tag: "section", classes: ["controls"] });
 
         // Column editor button
         this.ui.columnsButton = newElem({ tag: "a", id: `editColumnsButton-${this.id}`, classes: ["btn"] });
         this.ui.columnsButton.textContent = I18n.translate("supertable.control.select_columns");
         this.ui.columnsButton.title = I18n.translate("supertable.control.select_columns_title");
-        controls.appendChild(this.ui.columnsButton);
+        cc.appendChild(this.ui.columnsButton);
 
         // The CSV download button
         this.ui.csvButton = newElem({ tag: "a", id: `csvButton-${this.id}`, classes: ["btn"] });
         this.ui.csvButton.textContent = I18n.translate("supertable.control.download_csv");
         this.ui.csvButton.title = I18n.translate("supertable.control.download_csv_title");
-        controls.appendChild(this.ui.csvButton);
+        cc.appendChild(this.ui.csvButton);
 
         // Table reload button
         this.ui.refreshButton = newElem({ tag: "a", id: `reloadTable-${this.id}`, classes: ["btn"] });
         this.ui.refreshButton.textContent = I18n.translate("supertable.control.reload");
         this.ui.refreshButton.title = I18n.translate("supertable.control.reload_title");
-        controls.appendChild(this.ui.refreshButton);
+        cc.appendChild(this.ui.refreshButton);
 
         // Statistics
         this.ui.count = newElem({ tag: "p", classes: ["stats"] });
-        controls.appendChild(this.ui.count);
+        cc.appendChild(this.ui.count);
 
         // Status messages
         this.ui.status = newElem({ tag: "p", id: "statusMessage-" + this.id, classes: ["status"] });
-        controls.appendChild(this.ui.status);
+        cc.appendChild(this.ui.status);
+
+        controls.appendChild(newElem({ tag: "header", content: I18n.translate("supertable.control.title") }));
+        controls.appendChild(cc);
 
         // -----------------------------------------------------------------------------------------
         // Setup the filter editor
 
         // This contains the master filter checkboxes and the preset selector
-        let filterControl = newElem({ tag: "div", classes: ["filterControl"] });
+        let filterHeader = newElem({ tag: "header", classes: ["filterControl"] });
 
         // enabled checkbox and label
         this.ui.filteringEnabled = newElem({ tag: "input", id: `enableFilter-${this.id}` });
         this.ui.filteringEnabled.type = "checkbox";
-        filterControl.appendChild(this.ui.filteringEnabled);
 
         let enabledLabel = newElem({ tag: "label", classes: ["filteringEnabled"] });
         enabledLabel.appendChild(document.createTextNode(I18n.translate("supertable.control.filtering_main_enabled")));
         enabledLabel.setAttribute("for", this.ui.filteringEnabled.id);
         enabledLabel.title = I18n.translate("supertable.control.filtering_main_enabled_title");
-        filterControl.appendChild(enabledLabel);
+
+        // must wrap these elements in dummy DIVs, otherwise vertical alignments won't work
+        let aa = newElem({ tag: "div" });
+        aa.appendChild(this.ui.filteringEnabled);
+        aa.appendChild(enabledLabel);
+        filterHeader.appendChild(aa);
 
         // reverse checkbox and label
         this.ui.filteringReverse = newElem({ tag: "input", id: `invertFilter-${this.id}` });
         this.ui.filteringReverse.type = "checkbox";
-        filterControl.appendChild(this.ui.filteringReverse);
 
         let reverseLabel = newElem({ tag: "label" });
         reverseLabel.appendChild(document.createTextNode(I18n.translate("supertable.control.filtering_main_reverse")));
         reverseLabel.setAttribute("for", this.ui.filteringReverse.id);
         reverseLabel.title = I18n.translate("supertable.control.filtering_main_reverse_title");
-        filterControl.appendChild(reverseLabel);
+
+        let bb = newElem({ tag: "div" });
+        bb.appendChild(this.ui.filteringReverse);
+        bb.appendChild(reverseLabel);
+        filterHeader.appendChild(bb);
 
         // filter presets selector and label
         if (this.filtering.presets.length > 0) {
-            function storePreset(selector, title, id, valid)
-            {
-                let option = document.createElement("option");
-
-                option.appendChild(document.createTextNode(title));
-
-                if (id)
-                    option.dataset.id = id;
-
-                if (!valid)
-                    option.className = "disabledOption";
-
-                selector.appendChild(option);
-            }
-
             let presetLabel = newElem({ tag: "label" });
             presetLabel.appendChild(document.createTextNode(I18n.translate("supertable.control.filtering_presets")));
 
@@ -1858,24 +2001,32 @@ class SuperTable {
 
             presetLabel.setAttribute("for", this.ui.filteringPresets.id);
 
-            storePreset(this.ui.filteringPresets, I18n.translate("supertable.control.filtering_select"), null, false);
-            storePreset(this.ui.filteringPresets, I18n.translate("supertable.control.filtering_reset"), null, true);
+            createOption(this.ui.filteringPresets,
+                         I18n.translate("supertable.control.select_placeholder"),
+                         null, false);
+
+            createOption(this.ui.filteringPresets,
+                         I18n.translate("supertable.control.filtering_reset"),
+                         null, true);
 
             for (let i in this.filtering.presets) {
                 const preset = this.filtering.presets[i];
 
                 if (preset.title && preset.id)
-                    storePreset(this.ui.filteringPresets, preset.title, i, true);
+                    createOption(this.ui.filteringPresets, preset.title, i, true);
             }
 
             this.ui.filteringPresets.selectedIndex = 0;
 
-            filterControl.appendChild(presetLabel);
-            filterControl.appendChild(this.ui.filteringPresets);
+            let cc = newElem({ tag: "div" });
+
+            cc.appendChild(presetLabel);
+            cc.appendChild(this.ui.filteringPresets);
+            filterHeader.appendChild(cc);
         }
 
         // Container for the filter editor
-        let filterList = newElem({ tag: "div", id: `filterList-${this.id}`, classes: ["filterList"] });
+        let filterList = newElem({ tag: "section", id: `filterList-${this.id}`, classes: ["filterList"] });
 
         // This class maintains the filter term rows
         this.ui.filterEditor = new FilterEditor(
@@ -1886,9 +2037,107 @@ class SuperTable {
         );
 
         // this contains everything related to filters
-        let filters = newElem({ tag: "div", classes: ["filters"] });
-        filters.appendChild(filterControl);
+        let filters = newElem({ tag: "div", classes: ["tableToolbox", "filters"] });
+        filters.appendChild(filterHeader);
         filters.appendChild(filterList);
+
+        // -----------------------------------------------------------------------------------------
+        // Multiselection / mass edit tools (if enabled)
+
+        let massOperationsContainer = null;
+
+        if (this.settings.flags & TABLE_FLAG_ENABLE_SELECTION) {
+            // -------------------------------------------------------------------------------------
+            // Controls
+
+            this.ui.massOperationSelector = newElem({ tag: "select" });
+
+            createOption(
+                this.ui.massOperationSelector, I18n.translate("supertable.control.select_placeholder"),
+                null, false);
+
+            for (let id in this.massOperations) {
+                createOption(this.ui.massOperationSelector,
+                             this.massOperations[id].title,
+                             id,
+                             true);
+            }
+
+            // the "proceed" button, always initially disabled
+            this.ui.massOperationProceedButton = newElem({ tag: "button", });
+            this.ui.massOperationProceedButton.appendChild(
+                document.createTextNode(I18n.translate("supertable.control.mass_op.proceed")));
+            this.ui.massOperationProceedButton.disabled = true;
+
+            // the progress bar
+            this.ui.massOperationProgressBar = newElem({ tag: "progress" });
+            this.ui.massOperationProgressBar.setAttribute("max", "0");
+            this.ui.massOperationProgressBar.setAttribute("value", "0");
+            this.ui.massOperationProgressCount = newElem({ tag: "p", classes: ["progressCount"] });
+
+            let controlBox = newElem({ tag: "div", classes: ["selector"] });
+
+            controlBox.appendChild(newElem({
+                tag: "p",
+                innerText: I18n.translate("supertable.control.mass_op.select_operation")
+            }));
+
+            controlBox.appendChild(this.ui.massOperationSelector);
+            controlBox.appendChild(this.ui.massOperationProceedButton);
+            controlBox.appendChild(this.ui.massOperationProgressBar);
+            controlBox.appendChild(this.ui.massOperationProgressCount);
+
+            // -------------------------------------------------------------------------------------
+            // Operator settings container
+
+            this.ui.massOperationSettings = newElem({ tag: "div", classes: ["settings"] });
+            this.ui.massOperationSettings.style.display = "none";
+
+            // -------------------------------------------------------------------------------------
+            // Status and warning messages
+
+            this.ui.massOperationStatus = newElem({ tag: "p", classes: ["status"] });
+
+            // the warning that's displayed if the current filter hides something you've selected
+            let filterHideWarning = newElem({
+                tag: "div",
+                id: "filterHideWarning",
+                classes: ["hiddenWarning"],
+                content: I18n.translate("supertable.control.mass_op.hidden_warning")
+            });
+
+            filterHideWarning.style.display = "none";
+            this.haveHiddenSelectedRows = false;
+
+            // -------------------------------------------------------------------------------------
+            // Build the mass operations box
+
+            let content = newElem({
+                tag: "section",
+                classes: ["massOperation"],
+            });
+
+            content.appendChild(controlBox);
+            content.appendChild(this.ui.massOperationSettings);
+            this.createMultiselectMenu(content);
+            content.appendChild(this.ui.massOperationStatus);
+            content.appendChild(filterHideWarning);
+
+            massOperationsContainer = newElem({
+                tag: "div",
+                classes: ["tableToolbox"],
+            });
+
+            massOperationsContainer.appendChild(newElem({
+                tag: "header",
+                contentText: I18n.translate("supertable.control.mass_op.title")
+            }));
+
+            massOperationsContainer.appendChild(content);
+
+            // What row was previously clicked on?
+            this.previouslyClickedRow = null;
+        }
 
         // -----------------------------------------------------------------------------------------
         // Assemble the final layout
@@ -1902,9 +2151,12 @@ class SuperTable {
         this.ui.controlBox.appendChild(controls);
         this.ui.controlBox.appendChild(filters);
 
-        this.ui.table = newElem({ tag: "div" });
+        if (massOperationsContainer)
+            this.ui.controlBox.appendChild(massOperationsContainer);
 
         this.container.appendChild(this.ui.controlBox);
+
+        this.ui.table = newElem({ tag: "div" });
         this.container.appendChild(this.ui.table);
     }
 
@@ -1920,6 +2172,12 @@ class SuperTable {
 
         if (this.ui.filteringPresets)
             this.ui.filteringPresets.addEventListener("change", event => this.filteringPresetChanged(event));
+
+        if (this.ui.massOperationSelector)
+            this.ui.massOperationSelector.addEventListener("change", event => this.massOperationChanged(event));
+
+        if (this.ui.massOperationProceedButton)
+            this.ui.massOperationProceedButton.addEventListener("click", event => this.doMassOperation(event));
     }
 
     disableTable()
@@ -1963,6 +2221,7 @@ class SuperTable {
         this.ui.status.classList.add("failed");
     }
 
+    // Enable/disable filtering checkbox
     filteringEnabledClicked(e)
     {
         this.filtering.enabled = this.ui.filteringEnabled.checked;
@@ -1976,6 +2235,7 @@ class SuperTable {
         this.enableTable();
     }
 
+    // Reverse filtering checkbox
     filteringReverseClicked(e)
     {
         this.filtering.reverse = this.ui.filteringReverse.checked;
@@ -1990,6 +2250,7 @@ class SuperTable {
         }
     }
 
+    // Change the filtering preset
     filteringPresetChanged(e)
     {
         const presetIndex = e.target.selectedOptions[0].dataset.id;
@@ -2067,7 +2328,7 @@ class SuperTable {
             complete: function(data) {
                 us.ui.refreshButton.disabled = false;
 
-                let newData = null,
+                let rawNewData = null,
                     error = false;
 
                 if (data.readyState == 0 && data.statusText == "error") {
@@ -2081,7 +2342,7 @@ class SuperTable {
                 } else if (data.status == 200) {
                     // Parse the received JSON
                     try {
-                        newData = JSON.parse(data.responseText);
+                        rawNewData = JSON.parse(data.responseText);
                     } catch (e) {
                         us.setFailStatus(I18n.translate("supertable.control.json_fail"));
                         console.log(e);
@@ -2099,8 +2360,48 @@ class SuperTable {
                     console.log(`SuperTable::getData(): took ${t1 - t0} ms to get data from the server`);
 
                     us.clearStatus();
-                    us.currentData = [...newData];      // make a deep copy
+
+                    // Merge the new server data with the old data. Assume everything that
+                    // comes back from the server contains the unique PuavoID of the item
+                    // in question. Use these IDs as row keys.
+                    let newData = [];
+
+                    // puavoid -> item lookup table for the existing data
+                    let oldData = {};
+
+                    for (let i in us.currentData)
+                        oldData[us.currentData[i][1]] = us.currentData[i];
+
+                    for (let i in rawNewData) {
+                        const id = parseInt(rawNewData[i].id, 10);
+                        let old = null;
+
+                        if (id in oldData)
+                            old = oldData[id];
+
+                        const index = parseInt(i, 10);
+
+                        if (old) {
+                            // copy flags and the status message from the old data
+                            newData.push([ index, id, old[2], old[3], {...rawNewData[i]} ]);
+                            //console.log(`Item ${id} already exists, merging`);
+                        } else {
+                            // new entry
+                            newData.push([ index, id, 0, null, {...rawNewData[i]} ]);
+                            //console.log(`Item ${id} is new`);
+                        }
+                    }
+
+                    us.currentData = [...newData];
+                    //us.currentData = [...newData];      // make a deep copy
+
+                    const t2 = performance.now();
+                    console.log(`SuperTable::getData(): took ${t2 - t1} ms to merge the datasets`);
+
                     us.updateTable();
+
+                    if (us.settings.flags & TABLE_FLAG_ENABLE_SELECTION)
+                        us.updateMassOperationStatus();
                 }
 
                 us.enableTable();
@@ -2171,6 +2472,9 @@ class SuperTable {
     }
 
     // Download the current table contents as CSV
+    // TODO: display a dialog for choosing export settings
+    // (all rows / only visible rows, all columns / only visible columns,
+    // possibly other formats than CSV, etc.)
     downloadCSVClicked(e)
     {
         e.preventDefault();
@@ -2195,43 +2499,48 @@ class SuperTable {
 
             out += headerRow.join(",") + "\n";
 
-            console.log(out);
-
             // There's no copy of the data that's been filtered but not sorted, so filter it
-            let newData;
+            let newData = null,
+                hiddenIDs = null;
 
-            if (!this.filtering.enabled)
+            if (!this.filtering.enabled) {
                 newData = [...this.currentData];
-            else {
-                newData = this.filterData(this.filtering.filters,
-                                          this.filtering.reverse,
-                                          this.columns.definitions,
-                                          [...this.currentData]);
+                hiddenIDs = new Set();
+            } else {
+                [newData, hiddenIDs] = this.filterData(
+                    this.filtering.filters,
+                    this.filtering.reverse,
+                    this.columns.definitions,
+                    [...this.currentData]);
             }
 
             // Copy the visible columns, in order, from each row. Convert contents to strings.
             for (let i in newData) {
-                const srcRow = newData[i];
+                const srcRow = newData[i][4];
                 let dstRow = new Array(visible.length);
 
                 for (let j in visible) {
                     const value = srcRow[visible[j]];
                     let converted = null;
 
-                    switch (this.columns.definitions[visible[j]].type) {
-                        case COLUMN_TYPE_STRING:
-                        case COLUMN_TYPE_INTEGER:
-                        default:
-                            converted = (value === null ? "": value);
-                            break;
+                    if (value === undefined || value === null)
+                        converted = "";
+                    else {
+                        switch (this.columns.definitions[visible[j]].type) {
+                            case COLUMN_TYPE_STRING:
+                            case COLUMN_TYPE_INTEGER:
+                            default:
+                                converted = value;
+                                break;
 
-                        case COLUMN_TYPE_BOOLEAN:
-                            converted = value ? "true" : "false";
-                            break;
+                            case COLUMN_TYPE_BOOLEAN:
+                                converted = value ? "true" : "false";
+                                break;
 
-                        case COLUMN_TYPE_UNIXTIME:
-                            converted = (value === undefined || value === null) ? "" : convertTimestamp(value);
-                            break;
+                            case COLUMN_TYPE_UNIXTIME:
+                                converted = convertTimestamp(value);
+                                break;
+                        }
                     }
 
                     // always quote all values, even if empty
@@ -2243,8 +2552,9 @@ class SuperTable {
 
             const timestamp = I18n.strftime(new Date(), "%Y-%m-%d-%H-%M-%S");
 
-            // Build a blob object (it must be an array for some reason), then trigger a download
-            // Download code stolen from StackOverflow
+            // Build a blob object (it must be an array for some reason), then trigger a download.
+            // Download code stolen from StackOverflow.
+            // @@@FIXME: For some reason, this clears the browser console?
             const b = new Blob([out], { type: "text/csv" });
 
             let a = window.document.createElement("a");
@@ -2267,12 +2577,14 @@ class SuperTable {
         }
     }
 
+    // Reload the table contents without reloading the whole page
     refreshClicked(e)
     {
         e.preventDefault();
         this.getData();
     }
 
+    // A sort header was clicked, re-sort the table
     clickedColumnHeader(e)
     {
         const columnId = e.target.dataset.columnId;
@@ -2294,44 +2606,581 @@ class SuperTable {
         this.saveSettings();
     }
 
-    // Set/unset all checkboxes
-    masterCheckboxClicked(e)
+    // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // MULTISELECTION AND MASS OPERATIONS
+
+    // Creates the mass operation UI when the operation type changes
+    massOperationChanged(event)
     {
-        if (!this.ui.table || !this.ui.table.children[0].children[1])
-            return;
+        let selector = this.ui.massOperationSelector;
+        const id = selector.childNodes[selector.selectedIndex].dataset.id;
+        const operation = this.massOperations[id];
 
-        let item = e.target;
-        let select = false;
+        let newSettings = null;
 
-        // add or remove the checkmarks?
-        if (item.classList.contains("selected"))
-            item.classList.remove("selected");
-        else {
-            item.classList.add("selected");
-            select = true;
+        // If the selected mass operation as a UI, create it
+        if (operation.hasSettings)
+            newSettings = document.createElement("div");
+
+        // Instantiate the class that can do the mass operation
+        let newOperation = new operation.clazz(this, newSettings);
+
+        let settings = this.ui.massOperationSettings;
+
+        // Replace the old UI with the new UI and figure out the container visibility
+        if (settings.firstChild) {
+            if (newSettings) {
+                // replace
+                settings.firstChild.remove();
+                settings.appendChild(newSettings);
+            } else {
+                // hide
+                settings.style.display = "none";
+                settings.firstChild.remove();
+            }
+        } else {
+            if (newSettings) {
+                // show
+                settings.appendChild(newSettings);
+                settings.style.display = "block";
+            }
         }
 
-        // Modify the rows directly. Rebuilding the whole table for this is too slow.
-        let rows = this.ui.table.children[0].children[1].rows;
+        this.currentMassOperation = newOperation;
+        this.massOperationChildStatus = null;
+        this.updateMassOperationStatus();
+    }
 
-        for (let i = 0; i < rows.length; i++) {
-            let col = rows[i].children[0];
+    // Updates the selection status/counter display if multiselection is enabled
+    updateMassOperationStatus()
+    {
+        let selected = 0,
+            ok = 0,
+            failed = 0,
+            hiddenSelected = false;
 
-            if (select)
-                col.classList.add("selected");
-            else col.classList.remove("selected");
+        for (var i in this.currentData) {
+            const flags = this.currentData[i][2];
+
+            if (flags & ROW_FLAG_SELECTED) {
+                selected++;
+
+                if (flags & ROW_FLAG_FILTERED)
+                    hiddenSelected = true;
+            }
+
+            if (flags & ROW_FLAG_PROCESSED) {
+                if (flags & ROW_FLAG_PROCESSING_OK)
+                    ok++;
+
+                if (flags & ROW_FLAG_PROCESSING_FAIL)
+                    failed++;
+            }
+        }
+
+        let parts = Array();
+
+        //if (this.currentData.length > 0 && (selected > 0 || ok > 0 || failed > 0))
+        //    parts.push(`<span class="total">Yhteensä ${this.currentData.length} riviä</span>`);
+
+        //if (selected > 0)
+        parts.push(
+            `<span class="selected">${selected}/${this.currentData.length} ${I18n.translate("supertable.control.mass_op.status.selected")}</span>`);
+
+        if (ok > 0)
+            parts.push(`<span class="ok">${ok} ${I18n.translate("supertable.control.mass_op.status.ok")}</span>`);
+
+        if (failed > 0)
+            parts.push(`<span class="failed">${failed} ${I18n.translate("supertable.control.mass_op.status.failed")}</span>`);
+
+        if (parts.length == 0)
+            this.ui.massOperationStatus.style.display = "none";
+        else {
+            this.ui.massOperationStatus.style.display = "block";
+            this.ui.massOperationStatus.innerHTML = parts.join(", ");
+        }
+
+        // Enable or disable the "proceed" button
+        let enabled = false;
+
+        if (this.currentData.length > 0) {
+            if (selected > 0) {
+                if (this.currentMassOperation) {
+                    enabled = true;
+
+                    if (!this.currentMassOperation.haveValidSettings())
+                        enabled = false;
+                }
+            }
+        }
+
+        this.ui.massOperationProceedButton.disabled = !enabled;
+
+        // Warn user about selected rows that aren't currently visible
+        document.getElementById("filterHideWarning").style.display = hiddenSelected ? "block" : "none";
+        this.haveHiddenSelectedRows = hiddenSelected;
+    }
+
+    // Called from the mass operation settings child object, to signal that
+    // something in it has changed that (potentially) needs our attention
+    massOperationSettingsChanged()
+    {
+        const validNow = this.currentMassOperation.haveValidSettings();
+
+        // cache the status, to avoid calling updateMassOperationStatus() on every keypress
+        if (validNow != this.massOperationChildStatus) {
+            this.massOperationChildStatus = validNow;
+            this.updateMassOperationStatus();
+        }
+    }
+
+    selectTableRow(tr)
+    {
+        tr.children[0].classList.add("selected");
+        tr.classList.add("selectedRow");
+    }
+
+    deselectTableRow(tr)
+    {
+        tr.children[0].classList.remove("selected");
+        tr.classList.remove("selectedRow");
+        tr.classList.remove("processingSuccessfull");
+        tr.classList.remove("processingFailed");
+    }
+
+    clearPreviousRow()
+    {
+        if (this.previouslyClickedRow) {
+            this.previouslyClickedRow.parentNode.classList.remove("previousRow");
+            this.previouslyClickedRow = null;
         }
     }
 
     // Set/unset a single checkbox
     rowCheckboxClicked(e)
     {
-        let item = e.target;
+        let target = e.target;
 
-        // Modify the row directly. Rebuilding the whole table for this is too slow.
-        if (item.classList.contains("selected"))
-            item.classList.remove("selected");
-        else item.classList.add("selected");
+        e.preventDefault();
+
+        if (e.shiftKey && this.previouslyClickedRow != null && this.previouslyClickedRow != target) {
+            // Range selection between the previously clicked row and this row
+
+            // Select or deselect the items?
+            const state = this.currentData[parseInt(this.previouslyClickedRow.dataset.rowKey, 10)][2] & ROW_FLAG_SELECTED;
+
+            // The visible table rows don't necessarily map linearly onto the original data rows.
+            // Figure out which table rows are between the two clicked rows, ending inclusive.
+            let allRows = this.ui.table.children[0].children[1].rows;
+            let startRowIndex = -1,
+                endRowIndex = -1;
+
+            for (let i in allRows) {
+                let row = allRows[i];
+
+                if (allRows[i] == this.previouslyClickedRow.parentNode)
+                    startRowIndex = parseInt(i, 10);    // sigh
+
+                if (allRows[i] == target.parentNode)
+                    endRowIndex = parseInt(i, 10);      // double sigh
+            }
+
+            if (startRowIndex == -1 || endRowIndex == -1) {
+                window.alert("Can't determine startRowIndex or endRowIndex");
+                return;
+            }
+
+            if (startRowIndex > endRowIndex)
+                [startRowIndex, endRowIndex] = [endRowIndex, startRowIndex];
+
+            console.log(`SuperTable::rowCheckboxClicked(): range selection from ${startRowIndex} to ${endRowIndex}, state is ${state}`);
+
+            // Then process the rows in order. They're all visible.
+            for (let i = startRowIndex; i <= endRowIndex; i++) {
+                const origIndex = parseInt(allRows[i].children[0].dataset.rowKey, 10);
+
+                let item = this.currentData[origIndex];
+                const selected = item[2] & ROW_FLAG_SELECTED;
+
+                if (selected == state)
+                    continue;
+
+                if (state) {
+                    item[2] |= ROW_FLAG_SELECTED;
+                    this.selectTableRow(allRows[i]);
+                } else {
+                    item[2] &= ~(ROW_FLAG_SELECTED | ROW_FLAG_PROCESSED | ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+                    this.deselectTableRow(allRows[i]);
+                }
+            }
+        } else {
+            // Just one row
+            let item = this.currentData[parseInt(target.dataset.rowKey, 10)];
+
+            if (item[2] & ROW_FLAG_SELECTED) {
+                // deselect
+                item[2] &= ~(ROW_FLAG_SELECTED | ROW_FLAG_PROCESSED | ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+                this.deselectTableRow(target.parentNode);
+            } else {
+                // select
+                item[2] |= ROW_FLAG_SELECTED;
+                this.selectTableRow(target.parentNode);
+            }
+        }
+
+        // Keep track of the previously clicked row
+        if (this.previouslyClickedRow)
+            this.previouslyClickedRow.parentNode.classList.remove("previousRow");
+
+        this.previouslyClickedRow = target;
+        this.previouslyClickedRow.parentNode.classList.add("previousRow");
+
+        this.updateMassOperationStatus();
+    }
+
+    doMassOperation(event)
+    {
+        if (this.haveHiddenSelectedRows) {
+            if (!window.confirm(I18n.translate("supertable.control.mass_op.filtered_confirm")))
+                return;
+        } else {
+            if (!window.confirm(I18n.translate("supertable.control.mass_op.confirm")))
+                return;
+        }
+
+        /*
+        Problem 1:
+            If the items are not processed in the order they currently are in the
+            table, it looks stupid, as the progress "jumps" around seemingly randomly,
+            as the underlying items are not in the same order they appear.
+
+        Solution 1:
+            Iterate over the table and process items in the order they appear.
+
+        Problem 2:
+            Filters exist. Some of the selected rows can be invisible. If we simply
+            go through the table in order, these rows are not processed.
+
+        Solution 2:
+            Process visible items first, in order, then the other items, in whatever
+            order they are (they aren't visible).
+        */
+
+        // Disable as much of the UI as possible, to prevent user from messing things up
+        this.ui.filteringEnabled.disabled = true;
+        this.ui.filteringReverse.disabled = true;
+
+        if (this.ui.filteringPresets)
+            this.ui.filteringPresets.disabled = true;
+
+        this.ui.massOperationSelector.disabled = true;
+        this.ui.massOperationProceedButton.disabled = true;
+
+        this.clearPreviousRow();
+
+        // Prepare the data
+        let numSelected = 0,
+            currentItem = 0;
+
+        for (let i in this.currentData) {
+            if (this.currentData[i][2] & ROW_FLAG_SELECTED)
+                numSelected++;
+
+            // We have two loops, use the processed flag to prevent
+            // items from being processed multiple times
+            this.currentData[i][2] &= ~ROW_FLAG_PROCESSED;
+        }
+
+        // Setup the progress bar
+        this.ui.massOperationProgressBar.style.visibility = "visible";
+        this.ui.massOperationProgressBar.setAttribute("max", numSelected);
+        this.ui.massOperationProgressBar.setAttribute("value", 0);
+
+        function updateProgress(ctx, count, current)
+        {
+            ctx.ui.massOperationProgressBar.setAttribute("value", current + 1);
+            ctx.ui.massOperationProgressCount.innerHTML = `${current + 1}/${count}`;
+        }
+
+        function processItem(item, operation, tableRow)
+        {
+            let flags = item[2];
+
+            flags &= ~(ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+
+            // process the item
+            const [status, message] = operation.processOneItem(item[4]);
+
+            if (status == MASS_OPERATION_ITEM_OK)
+                flags |= ROW_FLAG_PROCESSING_OK;
+            else {
+                flags |= ROW_FLAG_PROCESSING_FAIL;
+                item[3] = message;  // the error message returned from the server
+            }
+
+            flags |= ROW_FLAG_PROCESSED;
+            item[2] = flags;
+
+            if (tableRow) {
+                // Update visible row styles directly and immediately,
+                // without rebuilding the whole table
+                if (status == MASS_OPERATION_ITEM_OK) {
+                    tableRow.classList.add("processingSuccessfull");
+                    tableRow.classList.remove("processingFailed");
+                    tableRow.title = "";
+                } else {
+                    tableRow.classList.remove("processingSuccessfull");
+                    tableRow.classList.add("processingFailed");
+                    tableRow.title = message;
+                }
+            }
+        }
+
+        // TODO: Use Web Worker threads for this. (I actually tried it, but I couldn't
+        // get it to work, as workers require the code to be in a module, which I can
+        // do, but the module won't get access to anything else, so it won't work.
+        // There has to be workarounds for these limitations.)
+
+        // First process visible rows, IN ORDER
+        let allRows = this.ui.table.children[0].children[1].rows;
+
+        for (let i = 0; i < allRows.length; i++) {
+            const rowKey = parseInt(allRows[i].children[0].dataset.rowKey, 10);
+            let item = this.currentData[rowKey];
+
+            if (!(item[2] & ROW_FLAG_SELECTED))
+                continue;
+
+            console.log(`Processing visible item ${item}`);
+
+            updateProgress(this, numSelected, currentItem);
+            processItem(item, this.currentMassOperation, allRows[i]);
+            currentItem++;
+        }
+
+        // Then process the remaining items, in whatever order they are
+        for (let i in this.currentData) {
+            let item = this.currentData[i];
+
+            if (!(item[2] & ROW_FLAG_SELECTED))
+                continue;
+
+            // Already did this item in the above loop
+            if (item[2] & ROW_FLAG_PROCESSED)
+                continue;
+
+            console.log(`Processing invisible item ${item}`);
+
+            updateProgress(this, numSelected, currentItem);
+            processItem(item, this.currentMassOperation, null);
+            currentItem++;
+        }
+
+        this.ui.massOperationProgressBar.style.visibility = "hidden";
+        this.ui.massOperationProgressCount.innerHTML = "";
+
+        // Re-enable the UI
+        this.ui.filteringEnabled.disabled = false;
+        this.ui.filteringReverse.disabled = false;
+
+        if (this.ui.filteringPresets)
+            this.ui.filteringPresets.disabled = false;
+
+        this.ui.massOperationSelector.disabled = false;
+        this.ui.massOperationProceedButton.disabled = false;
+        this.updateMassOperationStatus();
+    }
+
+    // Called from the checkbox column popup menu
+    multiselectOperation(event, operation)
+    {
+        event.preventDefault();
+
+        let didSomething = false;
+
+        this.clearPreviousRow();
+
+        if (operation == MultiSelectOp.SELECT_VISIBLE ||
+            operation == MultiSelectOp.DESELECT_VISIBLE ||
+            operation == MultiSelectOp.INVERT_VISIBLE) {
+            // These operate on currently visible rows
+            let rows = this.ui.table.children[0].children[1].rows;
+
+            for (let i = 0; i < rows.length; i++) {
+                let col = rows[i].children[0];
+
+                if (col.dataset.rowKey === undefined) {
+                    // happens on empty tables
+                    continue;
+                }
+
+                // find the original item
+                let item = this.currentData[parseInt(col.dataset.rowKey, 10)];
+
+                // combine two different states into one
+                const isSelected = (item[2] & ROW_FLAG_SELECTED) ? true : false;
+                let select = false;
+
+                if (operation == MultiSelectOp.SELECT_VISIBLE) {
+                    if (isSelected)
+                        continue;
+
+                    select = true;
+                } else if (operation == MultiSelectOp.DESELECT_VISIBLE) {
+                    if (!isSelected)
+                        continue;
+
+                    select = false;
+                } else if (operation == MultiSelectOp.INVERT_VISIBLE) {
+                    if (isSelected)
+                        select = false;
+                    else select = true;
+                }
+
+                if (select) {
+                    this.selectTableRow(col.parentNode);
+                    item[2] |= ROW_FLAG_SELECTED;
+                    didSomething = true;
+                } else {
+                    this.deselectTableRow(col.parentNode);
+                    item[2] &= ~(ROW_FLAG_SELECTED | ROW_FLAG_PROCESSED | ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+                    didSomething = true;
+                }
+            }
+        } else if (operation == MultiSelectOp.SELECT_ALL ||
+                   operation == MultiSelectOp.DESELECT_ALL ||
+                   operation == MultiSelectOp.DESELECT_PROCESSED_OK) {
+            // These operate on all rows, visible or not
+
+            // First collect handles to visible rows, so we can update them immediately
+            let visibleRows = {};
+
+            let rows = this.ui.table.children[0].children[1].rows;
+
+            for (let i = 0; i < rows.length; i++) {
+                let col = rows[i].children[0];
+
+                if (col.dataset.rowKey === undefined) {
+                    // happens on empty tables
+                    continue;
+                }
+
+                visibleRows[parseInt(col.dataset.rowKey, 10)] = rows[i];
+            }
+
+            for (let i in this.currentData) {
+                let item = this.currentData[i];
+                const isSelected = (item[2] & ROW_FLAG_SELECTED) ? true : false;
+                let select = false;
+
+                if (operation == MultiSelectOp.SELECT_ALL) {
+                    if (isSelected)
+                        continue;
+
+                    select = true;
+                } else if (operation == MultiSelectOp.DESELECT_ALL) {
+                    if (!isSelected)
+                        continue;
+
+                    select = false;
+                } else if (operation == MultiSelectOp.DESELECT_PROCESSED_OK) {
+                    if (!isSelected)
+                        continue;
+
+                    if (!(item[2] & ROW_FLAG_PROCESSED))
+                        continue;
+
+                    if (item[2] & ROW_FLAG_PROCESSING_FAIL)
+                        continue;
+                }
+
+                if (select) {
+                    item[2] |= ROW_FLAG_SELECTED;
+                    didSomething = true;
+
+                    if (i in visibleRows)
+                        this.selectTableRow(visibleRows[i]);
+                } else {
+                    item[2] &= ~(ROW_FLAG_SELECTED | ROW_FLAG_PROCESSED | ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+                    didSomething = true;
+
+                    if (i in visibleRows)
+                        this.deselectTableRow(visibleRows[i]);
+                }
+            }
+        } else if (operation == MultiSelectOp.DESELECT_NONVISIBLE) {
+            // This operates on non-visible rows, no need to update table styles
+
+            // First collect handles to visible rows, so we can ignore them
+            let visibleRows = new Set();
+
+            let rows = this.ui.table.children[0].children[1].rows;
+
+            for (let i = 0; i < rows.length; i++) {
+                let col = rows[i].children[0];
+                visibleRows.add(parseInt(col.dataset.rowKey, 10));
+            }
+
+            for (let i in this.currentData) {
+                let item = this.currentData[i];
+
+                if (!(item[2] & ROW_FLAG_SELECTED))
+                    continue;
+
+                if (visibleRows.has(item[0]))
+                    continue;
+
+                item[2] &= ~(ROW_FLAG_SELECTED | ROW_FLAG_PROCESSED | ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+                didSomething = true;
+            }
+        }
+
+        if (didSomething)
+            this.updateMassOperationStatus();
+    }
+
+    // Creates the multiselection operation menu
+    createMultiselectMenu(parent)
+    {
+        let col = newElem({ tag: "div", classes: ["massSelectMenu"] });
+
+        col.innerHTML =
+`<span></span>
+<ul>
+    <li><a id="multisel_sel_visible">${I18n.translate("supertable.control.mass_op.select_all_visible")}</a></li>
+    <li><a id="multisel_desel_visible">${I18n.translate("supertable.control.mass_op.deselect_all_visible")}</a></li>
+    <li><a id="multisel_inv_visible">${I18n.translate("supertable.control.mass_op.invert_visible")}</a></li>
+    <li class="sep"></li>
+    <li><a id="multisel_desel_ok">${I18n.translate("supertable.control.mass_op.deselect_successfull")}</a></li>
+    <li class="sep"></li>
+    <li><a id="multisel_sel_all">${I18n.translate("supertable.control.mass_op.select_all")}</a></li>
+    <li><a id="multisel_desel_all">${I18n.translate("supertable.control.mass_op.deselect_all")}</a></li>
+    <li><a id="multisel_desel_nonvisible">${I18n.translate("supertable.control.mass_op.deselect_invisible")}</a></li>
+</ul>`;
+
+        col.querySelector("#multisel_sel_visible")
+            .addEventListener("click", event => this.multiselectOperation(event, MultiSelectOp.SELECT_VISIBLE));
+
+        col.querySelector("#multisel_sel_all")
+            .addEventListener("click", event => this.multiselectOperation(event, MultiSelectOp.SELECT_ALL));
+
+        col.querySelector("#multisel_desel_visible")
+            .addEventListener("click", event => this.multiselectOperation(event, MultiSelectOp.DESELECT_VISIBLE));
+
+        col.querySelector("#multisel_desel_nonvisible")
+            .addEventListener("click", event => this.multiselectOperation(event, MultiSelectOp.DESELECT_NONVISIBLE));
+
+        col.querySelector("#multisel_desel_all")
+            .addEventListener("click", event => this.multiselectOperation(event, MultiSelectOp.DESELECT_ALL));
+
+        col.querySelector("#multisel_inv_visible")
+            .addEventListener("click", event => this.multiselectOperation(event, MultiSelectOp.INVERT_VISIBLE));
+
+        col.querySelector("#multisel_desel_ok")
+            .addEventListener("click", event => this.multiselectOperation(event, MultiSelectOp.DESELECT_PROCESSED_OK));
+
+        parent.appendChild(col);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -2343,16 +3192,34 @@ class SuperTable {
     {
         try {
             const t0 = performance.now();
-            let newData;
+
+            let newData = null,
+                hiddenIDs = null;
+
+            if (this.settings.flags & TABLE_FLAG_ENABLE_SELECTION) {
+                // Always reset the previous row marker
+                this.previouslyClickedRow = null;
+            }
 
             // Filter
-            if (!this.filtering.enabled)
+            if (!this.filtering.enabled) {
                 newData = [...this.currentData];
-            else {
-                newData = this.filterData(this.filtering.filters,
-                                          this.filtering.reverse,
-                                          this.columns.definitions,
-                                          [...this.currentData]);
+                hiddenIDs = new Set();
+            } else {
+                [newData, hiddenIDs] = this.filterData(
+                    this.filtering.filters,
+                    this.filtering.reverse,
+                    this.columns.definitions,
+                    [...this.currentData]);
+            }
+
+            // Apply hidden flags to rows
+            for (let i in this.currentData) {
+                let item = this.currentData[i];
+
+                if (hiddenIDs.has(item[1]))
+                    item[2] |= ROW_FLAG_FILTERED;
+                else item[2] &= ~ROW_FLAG_FILTERED;
             }
 
             const t1 = performance.now();
@@ -2394,6 +3261,11 @@ class SuperTable {
                     replace("${total}", this.currentData.length).
                     replace("${visible}", newData.length).
                     replace("${filtered}", this.currentData.length - newData.length);
+
+            if (this.settings.flags & TABLE_FLAG_ENABLE_SELECTION) {
+                this.clearPreviousRow();
+                this.updateMassOperationStatus();
+            }
         } catch (e) {
             // Don't let errors destroy the current table. Instead, tell the user about them
             // and log details on the console.
@@ -2405,8 +3277,10 @@ class SuperTable {
     // Apply filters, if any, to the data
     filterData(filters, reverse, columnDefs, data)
     {
+        let hiddenIDs = new Set();
+
         if (filters.length == 0)
-            return data;
+            return [data, hiddenIDs];
 
         // copy column types, so we can do type-specific comparisons if necessary
         let types = new Array(filters.length);
@@ -2421,7 +3295,7 @@ class SuperTable {
                 const f = filters[i];
                 let filterMatched = false;
 
-                let value = item[f[0]];
+                let value = item[4][f[0]];
 
                 if (types[i] == COLUMN_TYPE_STRING)
                     if (value === undefined || value === null)
@@ -2488,10 +3362,15 @@ class SuperTable {
             }
 
             // final verdict for this row (must be the opposite of the "reverse match" setting)
-            return rowMatched != reverse;
+            const visible = (rowMatched != reverse);
+
+            if (!visible)
+                hiddenIDs.add(item[1]);
+
+            return visible;
         });
 
-        return data;
+        return [data, hiddenIDs];
     }
 
     // Sorts the data. "key" is the key used to dig up comparable items from
@@ -2519,7 +3398,7 @@ class SuperTable {
             case COLUMN_TYPE_STRING:
             default:
                 out.sort((a, b) => {
-                    return this.collator.compare(a[key] || "", b[key] || "") * direction;
+                    return this.collator.compare(a[4][key] || "", b[4][key] || "") * direction;
                 });
 
             break;
@@ -2528,8 +3407,8 @@ class SuperTable {
             case COLUMN_TYPE_BOOLEAN:       // argh
             case COLUMN_TYPE_UNIXTIME:
                 out.sort((a, b) => {
-                    const i1 = a[key] || 0,
-                          i2 = b[key] || 0;
+                    const i1 = a[4][key] || 0,
+                          i2 = b[4][key] || 0;
 
                     if (i1 < i2)
                         return -1 * direction;
@@ -2552,7 +3431,7 @@ class SuperTable {
     {
         const haveData = tableContents.length > 0;
 
-        const enableCheckboxes = (this.settings.flags & TABLE_FLAG_ENABLE_SELECTION) ? true : false;
+        const enableSelection = (this.settings.flags & TABLE_FLAG_ENABLE_SELECTION) ? true : false;
 
         // -----------------------------------------------------------------------------------------
         // Create the header row with clickable sort headers and other bells and whistles
@@ -2562,15 +3441,10 @@ class SuperTable {
 
         let numColumns = 0;
 
-        if (enableCheckboxes) {
-            // the checkbox column
-            let cb = newElem({ tag: "th", classes: ["sortHeader", "checkbox", "masterCheckbox"] });
-
-            cb.appendChild(newElem({ tag: "span" }));
-
-            cb.addEventListener("click", event => this.masterCheckboxClicked(event));
-
-            header.appendChild(cb);
+        if (enableSelection && haveData) {
+            // The special menu for quick multiselection operations
+            //this.createMultiselectMenu(header);
+            header.appendChild(newElem({ tag: "th" }));
         }
 
         for (let columnKey in columns) {
@@ -2657,22 +3531,48 @@ class SuperTable {
         let body = newElem({ tag: "tbody" });
 
         for (let rowKey in tableContents) {
-            const rowData = tableContents[rowKey];
+            const rowIndex = tableContents[rowKey][0];
+            const rowID = tableContents[rowKey][1];
+            const rowFlags = tableContents[rowKey][2];
+            const rowMessage = tableContents[rowKey][3];
+            const rowData = tableContents[rowKey][4];
+
             let tr = newElem({ tag: "tr" });
 
-            if (enableCheckboxes) {
-                // the checkbox column
-                let cb = newElem({ tag: "td", classes: ["checkbox"] });
+            // The row processing status message
+            if (enableSelection && rowMessage)
+                tr.title = rowMessage;
 
+            // Create the selection checkbox, and retain existing row states across table rebuilds
+            if (enableSelection) {
+                let classes = ["checkbox"];
+
+                const selected = (rowFlags & ROW_FLAG_SELECTED) ? true : false,
+                      ok = (rowFlags & ROW_FLAG_PROCESSING_OK) ? true : false,
+                      failed = (rowFlags & ROW_FLAG_PROCESSING_FAIL) ? true : false;
+
+                if (selected) {
+                    if (ok) {
+                        classes.push("selected");
+                        tr.classList.add("processingSuccessfull");
+                    } else if (failed) {
+                        classes.push("selected");
+                        tr.classList.add("processingFailed");
+                    } else {
+                        classes.push("selected");
+                        tr.classList.add("selectedRow");
+                    }
+                }
+
+                let cb = newElem({ tag: "td", classes: classes });
+
+                cb.dataset.rowKey = rowIndex;
                 cb.appendChild(newElem({ tag: "span" }));
-
                 cb.addEventListener("click", event => this.rowCheckboxClicked(event));
-
                 tr.appendChild(cb);
-
-                tr.dataset.rowKey = rowKey;
             }
 
+            // Create visible columns, in order
             for (let columnKey in columns) {
                 const column = columns[columnKey];
 
@@ -2769,7 +3669,7 @@ class SuperTable {
                 tr.appendChild(td);
             }
 
-            // Create the actions column
+            // Create the special actions column
             let actionsColumn = newElem({ tag: "td" });
 
             let editButton = newElem({ tag: "a", classes: ["btn"] });

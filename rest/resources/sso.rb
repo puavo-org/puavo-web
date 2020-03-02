@@ -1,7 +1,6 @@
 require "jwt"
 require "addressable/uri"
 require "sinatra/r18n"
-require "redcarpet"
 require "gibberish"
 require_relative "./users"
 
@@ -374,18 +373,9 @@ class SSO < PuavoSinatra
     respond_auth
   end
 
-  markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
-    :autolink => true,
-    :prettify => true,
-    :fenced_code_blocks => true,
-    :space_after_headers => true
-  )
-
   get "/v3/sso/developers" do
-    File.open("doc/SSO_DEVELOPERS.md", "r") do |f|
-      @body = markdown.render(f.read())
-      erb :developers, :layout => :layout
-    end
+    @body = File.read("doc/SSO_DEVELOPERS.html")
+    erb :developers, :layout => :layout
   end
 
   helpers do

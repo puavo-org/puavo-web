@@ -65,6 +65,7 @@ class SchoolsController < ApplicationController
   # GET /schools/new.xml
   def new
     @school = School.new
+    @is_new_school = true
 
     respond_to do |format|
       format.html # new.html.erb
@@ -75,6 +76,7 @@ class SchoolsController < ApplicationController
   # GET /schools/1/edit
   def edit
     @school = School.find(params[:id])
+    @is_new_school = false
   end
 
   # POST /schools

@@ -541,5 +541,84 @@ class Devices < PuavoSinatra
     json device.school.wireless_printer_queues
   end
 
+
+  # -------------------------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------------
+  # EXPERIMENTAL V4 API
+
+  # Use at your own risk. Currently read-only.
+
+
+  # Maps "user" field names to LDAP attributes. Used when searching for data, as only
+  # the requested fields are actually returned in the queries.
+  USER_TO_LDAP = {
+    'id'            => 'puavoId',
+    'dn'            => 'dn',
+    'hostname'      => 'puavoHostname',
+    'school_id'     => 'puavoSchool',
+    'type'          => 'puavoDeviceType',
+    'mac'           => 'macAddress',
+    'tags'          => 'puavoTag',
+    'puavoconf'     => 'puavoConf',
+  }
+
+  # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
+  LDAP_TO_USER = {
+    'puavoId'         => { name: 'id', type: :integer },
+    'dn'              => { name: 'dn' },
+    'puavoHostname'   => { name: 'hostname' },
+    'puavoSchool'     => { name: 'school_id', type: :id_from_dn },
+    'puavoDeviceType' => { name: 'type' },
+    'macAddress'      => { name: 'mac' },
+    'puavoTag'        => { name: 'tags' },
+    'puavoConf'       => { name: 'puavoconf' },
+  }
+
+  def v4_do_device_search(id, requested_ldap_attrs)
+    unless id.class == Array
+      raise "v4_do_device_search(): device IDs must be an Array, even if empty"
+    end
+
+    filter = v4_build_puavoid_filter('(objectclass=*)', id)
+    base = "ou=Devices,ou=Hosts,#{Organisation.current['base']}"
+
+    return Device.raw_filter(base, filter, requested_ldap_attrs)
+  end
+
+  # Retrieve all (or some) devices in the organisation
+  # GET /v4/devices?fields=...
+  # GET /v4/devices?id=1,2,3,4,...&fields=...
+  get '/v4/devices' do
+    auth :basic_auth, :kerberos
+
+    v4_do_operation do
+      # which fields to get?
+      user_fields = v4_get_fields(params).to_set
+      ldap_attrs = v4_user_to_ldap(user_fields, USER_TO_LDAP)
+
+      # zero or more user IDs
+      id = v4_get_id_from_params(params)
+
+      # do the query
+      raw = v4_do_device_search(id, ldap_attrs)
+
+      # convert and return
+      out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
+      out = v4_ensure_is_array(out, 'mac', 'tags')
+
+      out.each do |o|
+        if o.include?('puavoconf') && !o['puavoconf'].nil?
+          o['puavoconf'] = JSON.parse(o['puavoconf'])
+        end
+      end
+
+      return 200, json({
+        status: 'ok',
+        error: nil,
+        data: out,
+      })
+    end
+  end
+
 end
 end

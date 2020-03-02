@@ -6,7 +6,7 @@
 <h1><%= t(".title") %></h1>
 <p class="description"><%= t(".description") %><p>
 
-<%= show_password_requirements %>
+<%= show_password_requirements(@school.id) %>
 
 <% id = 1 %>
 <% @lists.sort{ |a, b| a.created_at <=> b.created_at }.reverse.each do |list| %>

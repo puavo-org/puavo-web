@@ -109,7 +109,12 @@ I18n.locale = "<%= I18n.locale %>";
       <header id="schoolName"><%= @school.displayName %></header>
 
       <% unless @school.displayName == 'Administration' %>
-<%= render :partial => "layouts/integrations", :locals => { :integrations => get_integrations_for_school(@school.id.to_i), :extraClass => "" } %>
+<%= render :partial => "layouts/integrations", :locals => {
+        :integrations_by_type => get_school_integrations_by_type(@school.id),
+        :integration_names => get_school_integration_names(@school.id),
+        :next_updates => get_school_integration_next_updates(@school.id, Time.now),
+        :extraClass => ""
+    } %>
       <% end %>
     </div>
 
@@ -120,7 +125,7 @@ I18n.locale = "<%= I18n.locale %>";
     <div id="content">
       <% if message_keys = flash.keys.select { |key| ["error", "notice", "success", "alert"].include?(key) } %>
       <% message_keys.each do |key| %>
-      <p class="message_<%= key %>"><%= flash[key] %></p>
+      <p class="message_<%= key %>"><%= flash[key].html_safe %></p>
       <% end %>
       <% end %>
 

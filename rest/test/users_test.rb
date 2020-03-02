@@ -35,7 +35,8 @@ describe PuavoRest::Users do
       :mail => ["bob@example.com ", "             bob@foobar.com        \n\n           ", " bob@helloworld.com "],
       :role_ids => [@role.puavoId],
       :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf",
-      :puavoExternalID => "bob"
+      :puavoExternalID => "bob",
+      :telephone_number => ["123", "456"]
     )
 
     @user.set_password "secret"
@@ -56,7 +57,8 @@ describe PuavoRest::Users do
       :puavoEduPersonAffiliation => "student",
       :puavoLocale => "en_US.UTF-8",
       :mail => "alice@example.com",
-      :role_ids => [@role.puavoId]
+      :role_ids => [@role.puavoId],
+      :telephone_number => "789"
     )
     @user2.set_password "secret"
     @user2.puavoSchool = @school.dn
@@ -82,6 +84,67 @@ describe PuavoRest::Users do
     @user4.save!
     @school.add_admin(@user4)
 
+    @user5 = User.new(
+      :givenName => "Poistettava",
+      :sn  => "Käyttäjä",
+      :uid => "poistettava.kayttaja",
+      :puavoEduPersonAffiliation => "testuser",
+      :role_ids => [@role.puavoId],
+      :do_not_delete => "TRUE",
+    )
+
+    @user5.set_password "trustno1"
+    @user5.puavoSchool = @school.dn
+    @user5.save!
+
+  end
+
+  describe "Multiple telephone numbers" do
+    it "correctly set when a user is created" do
+      assert_equal @user.telephoneNumber, ["123", "456"]
+      assert_equal @user2.telephoneNumber, "789"
+      assert_nil @user4.telephoneNumber
+    end
+
+    it "can be changed" do
+      @user.telephoneNumber = ["1234567890"]
+      @user.save!
+      assert_equal @user.telephoneNumber, "1234567890"
+    end
+
+    it "can be cleared" do
+      @user.telephoneNumber = []
+      @user.save!
+      @user2.telephoneNumber = nil
+      @user2.save!
+      assert_nil @user.telephoneNumber
+      assert_nil @user2.telephoneNumber
+    end
+  end
+
+  describe "User deletion" do
+    it "user cannot delete itself" do
+      basic_authorize "poistettava.kayttaja", "trustno1"
+      delete "/v3/users/poistettava.kayttaja"
+      assert_equal 403, last_response.status
+    end
+
+    it "non-admin cannot delete someone else" do
+      basic_authorize "poistettava.kayttaja", "trustno1"
+      delete "/v3/users/bob"
+      assert_equal 404, last_response.status
+    end
+
+    it "admin can delete user" do
+      # TODO: Bob must be an organisation owner in order to do this!
+
+      #@user.puavoEduPersonAffiliation = ["admin"]
+      #@user.save!
+      #@school.add_admin(@user)
+      #basic_authorize "bob", "secret"
+      #delete "/v3/users/poistettava.kayttaja"
+      #assert_equal 200, last_response.status
+    end
   end
 
   describe "GET /v3/whoami" do

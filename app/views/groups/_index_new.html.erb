@@ -76,6 +76,39 @@ const DEFAULT_GROUP_COLUMNS = [
     ["modified", false],
 ];
 
+class MassGroupDeletion extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    processOneItem(item)
+    {
+        const ret = doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_group_delete",
+            JSON.stringify({ id: item.id })
+        );
+
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
+    }
+};
+
+// JavaScript class fields support is so poor that I can't really
+// define titles, IDs and other things in classes, they must be here
+let massOperations = {
+    "delete": {
+        title: "<%= t('groups.index.mass_operations.delete.title') %>",
+        hasSettings: false,
+        clazz: MassGroupDeletion
+    },
+};
+
 // The current columns, initially the defaults
 var currentColumns = DEFAULT_GROUP_COLUMNS;
 
@@ -101,8 +134,11 @@ $(document).ready(function() {
         container: document.getElementById("groupsList"),
 
         // Main table flags
+<% if current_user && current_user.organisation_owner? %>
+        flags: TABLE_FLAG_GROUPS | TABLE_FLAG_ENABLE_SELECTION,
+<% else %>
         flags: TABLE_FLAG_GROUPS,
-
+<% end %>
         // All possible columns, their titles, keys, flags, etc.
         columnDefs: GROUP_COLUMN_DEFS,
 
@@ -119,6 +155,9 @@ $(document).ready(function() {
         // are valid here, any other value will be ignored and the order is assumed to be ascending).
         // If the column does not exist, then the initial sort will be ignored completely.
         initialSort: { column: "name", order: SORT_ORDER_ASCENDING },
+
+        // Mass operation definitions
+        massOperations: massOperations,
 
         // Name of the objects the table contains. Currently always a plural.
         itemName: "<%= t('groups.index.groups') %>",

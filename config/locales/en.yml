@@ -1,25 +1,55 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more, please read the Rails Internationalization guide
-# available at http://guides.rubyonrails.org/i18n.html.
-
 en:
+  # Month names used by Rails' date_select control
+  date:
+    month_names:
+    -
+    - January
+    - February
+    - March
+    - April
+    - May
+    - June
+    - July
+    - August
+    - September
+    - October
+    - November
+    - December
+
+  fuzzy_time:
+    just_now: "just now"
+    less_than_minute: "less than a minute ago"
+    minute: "a minute ago"
+    minutes: "%{m} minutes ago"
+    hour: "an hour ago"
+    hours: "%{h} hours ago"
+    day: "a day ago"
+    days: "%{d} days ago"
+    month: "a month ago"
+    months: "%{month} months ago"
+
+  # "Main menu", from which you can log in or access other services in the organisation
+  menu:
+    index:
+      service_link_name_puavo: Puavo - users and devices management
+      service_link_name_infotv: Info-TV
+      service_link_name_change_password: Change password
+
+  # Login screen
+  sessions:
+    new:
+      external_service_name: Puavo
+      login_to: Login to service
+      password: Password
+      username_help: Use the same username you use when logging in Opinsys desktops.
+      organisation_help: "Username must be provided in the form of <i>username</i>@<i>organisation</i>.opinsys.fi. The username part is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all national letters must be removed. For example, if you are from Jyväskylä and your Opinsys username is matti.meikalainen, the organisation part is <i>jyvaskyla</i> which means that you login with <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
+      developers: Developers
+      developers_info: "Read <a href=https://api.opinsys.fi/v3/sso/developers target=_blank>this</a> document if you are interested in implementing Opinsys authentication."
+      username_placeholder: Username
+      login: Login
+      help: Help
+
+  # Page title breadcrumbs
   titles:
     users: "Users"
     new_users_groups: "New user's groups"
@@ -29,7 +59,6 @@ en:
     groups: "Groups"
     groupless_users: "Ungrouped users"
     devices: "Devices"
-    device_hw_info: "Hardware Information"
     schools: "Schools"
     organisation: "Organisation"
     edit: "Edit"
@@ -48,113 +77,12 @@ en:
     printer_permissions: "Printing permissions"
     all_users_marked_for_deletion: "Users in the organisation who are marked for deletion"
     extended_search: "Extended Search"
-  missing_data: "(Missing/unset)"
-  import_tool:
-    import: Import
-    import_users: Import users
-    add_column: Add column
-    change_type: Change type
-    fill: Fill
-    fill_values: Fill values
-    known_legacy_roles: Known legacy roles are
-    known_roles: Known types are
-    missing_columns: Missing columns
-    override_existing_values: Override existing values
-    remove_column: Remove column
-    select: Select...
-    some_value: Some value
-    start_import: Import data
-    start_new_import: Start a new import
-    status: Status
-    unknown_legacy_role_details: Unknown legacy role
-    unknown_legacy_role: Unknown legacy role
-    unknown_role: Unknown user type
-    created: User created
-    user_updated: Existing users updated
-    create_user: Create new user
-    update_school: Update user school and legacy roles
-    update_all: Update all user attributes
-    reset_passwords: Reset passwords
-    reset_existing_users: Reset existing users too
-    generate_username: Generate username
-    begin: Begin
-    select_file: Select file
-    add_names_to_generate_username: Add first name and last name to the generated username
-    user_not_found: This username has not been used yet
-    user_exists: This user already exists. You may still use the update feature on it.
-    prevent_unload: Import is ongoing. Do really want to abort it?
-    waiting_user_data: Waiting for user data
-    roles:
-      admin: Administrator
-      parent: Parent
-      staff: Staff
-      student: Student
-      teacher: Teacher
-      testuser: Test user
-      visitor: Visitor
-    types:
-      update_type: Update type
-      email: Email
-      first_name: First name
-      last_name: Last name
-      legacy_role: Legacy role
-      role: "Role (was User type)"
-      unknown: Unknown
-      username: Username
-      password: Password
-      group: Group
-  time:
-    am: am
-    formats:
-      default: "%a, %d %b %Y %H:%M:%S %z"
-      long: "%B %d, %Y %H:%M"
-      short: "%d %b %H:%M"
-    pm: pm
-  must_be_logged_in: You must be logged in
-  create_organisation_owner:
-    school_name: Administration
-    role_name: Maintenance
-    group_name: Maintenance
-  default_select_value: Select
-  general_confirm: Are you sure?
-  destroy_confirm: Are you sure? (%{object_name})?
-  lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
-  delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
-  group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
-  prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
-  layouts:
-    application:
-      schools: Schools
-      school: School
-      index: Front page
-      logout: Logout
-      users: Users
-      groups: Groups
-      tools: Tools
-      logged_in_as: Logged in as
-      devices: Devices
-      servers: Servers
-      ldap_services: LDAP services
-      external_files: External files
-      device_statistics: Device statistics
-      wlan: Wireless networks
-      about: About
-      printers: Printers
-      search_placeholder: Quick search
-      search_title: User, group and device search by name
-      extended_search_title: Extended search. Search using multiple names simultaneously, choose which fields are searched and how they are matched.
-      links: Links
-      desktop: Desktop
-      owners: Owners
-    forms:
-      required_field: "* = Required field"
-    sessions:
-      title: Opinsys Authentication
+
+  # Hyperlinks and buttons
   link:
     save: Save
     more: More actions
     edit: Edit...
-    back: Back
     cancel: "Cancel"
     destroy: Remove
     delete_school: "Delete school"
@@ -170,7 +98,6 @@ en:
     unlock_all_group_members: "Unlock all members"
     update: Update
     create: Create
-    show: Show
     users: Users
     groups: Groups
     roles: Roles
@@ -183,7 +110,6 @@ en:
     lock_users_marked_for_deletion: "Lock all users who are marked for deletion"
     delete_users_marked_for_deletion: "Delete users who are marked for deletion"
     continue: Continue
-    login: Login
     change_password: Change password
     new_school: New school...
     new_ldap_service: New...
@@ -191,13 +117,239 @@ en:
     devices: Device list
     device_statistics: Device statistics
     delete_device: "Delete device"
-    servers: Servers
     set_install_mode: "Remove certificate and set the device to install mode"
     set_install_mode_server: "Remove certificate and set the server to install mode"
-    automounts: Automounts
-    new_automount: New automount
     printer_permissions: Printing permissions
+
+  # Main application layout
+  layouts:
+    application:
+      schools: Schools
+      school: School
+      index: Front page
+      logout: Logout
+      users: Users
+      groups: Groups
+      tools: Tools
+      devices: Devices
+      servers: Servers
+      ldap_services: LDAP services
+      external_files: External files
+      device_statistics: Device statistics
+      wlan: Wireless networks
+      about: About
+      printers: Printers
+      search_placeholder: Quick search
+      search_title: User, group and device search by name
+      extended_search_title: Extended search. Search using multiple names simultaneously, choose which fields are searched and how they are matched.
+      owners: Owners
+    forms:
+      required_field: "* = Required field"
+    sessions:
+      title: Opinsys Authentication
+
+  # Various uncategorized strings
+  general_confirm: Are you sure?
+  destroy_confirm: Are you sure? (%{object_name})?
+  ldap_create_time: Created (LDAP)
+  ldap_modify_time: Modified (LDAP)
+  actions: Actions
+  missing_data: "(Missing/unset)"
+  default_select_value: Select
+
+  puavoEduPersonAffiliation_teacher: Teacher
+  puavoEduPersonAffiliation_staff: Staff
+  puavoEduPersonAffiliation_student: Student
+  puavoEduPersonAffiliation_visitor: Visitor
+  puavoEduPersonAffiliation_parent: Parent
+  puavoEduPersonAffiliation_admin: Admin
+  puavoEduPersonAffiliation_testuser: Test user
+
+  language_fi_FI: Finnish
+  language_en_US: English (United States)
+  language_sv_FI: Swedish (Finland)
+  language_de_DE: German (Germany)
+  language_de_CH: German (Switzerland)
+  language_fr_CH: French (Switzerland)
+  language_default: Default
+
+  group_type:
+    teaching group: Teaching group
+    course group: Course group
+    year class: Year class
+    administrative group: Administrative group
+    archive users: Archive users
+    other groups: Other groups
+
+  old_preferred_language: "Old setting: %{language}"
+
+  timezone_empty: Time zone has not been set
+
+  # Column names for various tables. Try to keep these as short as possible to
+  # prevent tables from getting unnecessarily wide.
+  columns:
+    puavoid: "PuavoID"
+    created: "Created"
+    modified: "Modified"
+    puavoconf: "PuavoConf"
+    school: "School"
+
+    users:
+      first_names: "First names"
+      last_name: "Last name"
+      full_name: "Name"
+      uid: "Username"
+      eid: "External ID"
+      type: "Role"
+      phone: "Phone"
+      email: "Email"
+      home_dir: "Home directory"
+      rrt: "When marked for deletion"
+      is_locked: "Locked?"
+
+    groups:
+      name: "Name"
+      type: "Type"
+      abbreviation: "Abbreviation"
+      eid: "External ID"
+
+    devices:
+      hostname: "Hostname"
+      type: "Type"
+      tags: "Tags"
+      manufacturer: "Manufacturer"
+      model: "Model"
+      serial: "Serial"
+      mac: "MAC"
+      description: "Description"
+      image: "Image"
+      current_image: "Current image"
+      kernel_args: "Kernel arguments"
+      kernel_version: "Kernel version"
+      hwinfo_time: "Hardware info received"
+      hwinfo_ram_size: "RAM"
+      hwinfo_hd_size: "Hard drive"
+      hwinfo_is_ssd: "SSD?"
+      cpu: "Processor"
+      bios_vendor: "BIOS vendor"
+      bios_version: "BIOS version"
+      bios_date: "BIOS date"
+      bat_vendor: "Battery vendor"
+      bat_serial: "Battery serial"
+      bat_cap: "Battery capacity"
+      wifi: "WiFi"
+      xrandr: "Xrandr"
+      abitti_version: "Abitti version"
+      df_home: "Free /home"
+
+  # Quick search
+  search:
+    search_result:
+      title_user: Users
+      title_role: Roles
+      title_group: Groups
+      title_device: Devices
+    no_matches: "(No matches)"
+    failed: "(Search failed!)"
+
+  # Extended search
+  extended_search:
+    title: "Extended Search"
+
+    tabs:
+      search: "Search"
+      help: "Instructions and tips"
+
+    search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
+
+    terms_title: "Search terms type:"
+
+    per_term_settings:
+      title: "Extra settings for this term type"
+      no_extra_settings: "(No extra settings)"
+      deletion_mark_state:
+        title: "Account removal state"
+        is_marked: "Is marked for later removal"
+        is_unmarked: "Not marked for later removal"
+        dont_care: "(Ignore)"
+      lock_state:
+        title: "Account locking"
+        is_locked: "Account is locked"
+        is_unlocked: "Account is not locked"
+        dont_care: "(Ignore)"
+      device_type:
+        title: "Limit results by device type"
+        laptop: "Laptop"
+        fatclient: "Fatclient"
+        printer: "Printer"
+        other: "(Everything else)"
+
+    term_names:
+      users:
+        title: "Users"
+        puavoid: "Users: Puavo ID"
+        uid: "Users: Username"
+        name_lastfirst: "Users: Lastname Firstname / Lastname, Firstname (no regexp)"
+        name_firstlast: "Users: Firstname Lastname / Firstname, Lastname (no regexp)"
+        externalid: "Users: External ID"
+        email: "Users: Email"
+        phone: "Users: Phone number"
+      groups:
+        title: "Groups"
+        puavoid: "Groups: Puavo ID"
+        name: "Groups: Name"
+        abbreviation: "Groups: Abbreviation"
+        externalid: "Groups: External ID"
+      devices:
+        title: "Devices"
+        puavoid: "Devices: Puavo ID"
+        hostname: "Devices: Hostname"
+        image: "Devices: Desktop image (always regexp)"
+        current_image: "Devices: Current desktop image (always regexp)"
+        mac: "Devices: MAC address"
+        tags: "Devices: Tags"
+        xrandr: "Devices: Xrandr settings (always regexp)"
+        kernel_params: "Devices: Kernel arguments (always regexp)"
+        kernel_version: "Devices: Kernel version (always regexp)"
+        manufacturer: "Devices: Manufacturer"
+        model: "Devices: Model"
+        serial_number: "Devices: Serial number"
+
+    school_limit_title: "School limit:"
+    school_limit_all: "(All schools)"
+
+    more_settings:
+      title: "Search settings"
+      regexp_title: "Terms are regexp strings (allows partial hits, see help)"
+      reverse_title: "Reverse search (only search terms are matched in reverse, not term-specific extra settings)"
+      remove_misses_title: "Don't list terms that produced no hits in the results"
+
+    button_search: "Search"
+    button_clear_results: "Clear results"
+    button_clear_terms: "Clear search terms"
+
+    results_title: "Results"
+    results:
+      search_term_title: "Search term"
+      matched_string: "Matched text"
+      no_term_hits: "(No hits)"
+      no_results: "(No results)"
+      statistics: "%{total} hits in total. %{num_terms} search term(s); %{num_hits} hit(s), %{num_misses} miss(es). Searching took %{elapsed} seconds. "
+
+    errors:
+      unknown_school: "(Unknown school)"
+
+    controller:
+      invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
+      search_terms_cleanup_failed: "Search term cleanup failed"
+      no_search_terms: "No search terms"
+      school_limit_failed: "School limit parsing failed"
+      invalid_regexp: "Invalid regexp "
+      unknown_search_term_type: "Unknown search term type "
+
+  # Flash messages
   flash:
+    you_must_be_an_owner: "You do not have enough rights to access that page."
     added: "%{item} was successfully created."
     updated: "%{item} was successfully updated."
     destroyed: "%{item} was successfully removed."
@@ -271,7 +423,14 @@ en:
         require_error: Given name and surname are required fields
         role_require_error: You must be select Role
       school_changed: User(s) school has been changed!
-      cannot_create_user: "Cannot create users manually. Please contact support."
+
+      # messages generated by synchronous actions
+      synchronous_actions:
+        deletion:
+          part1: "User deletion cancelled; the user could not be deleted from system %{system}, reason: %{reason}."
+          part2: "(Removal was successfull in the following systems: %{ok_systems}.)"
+          part3: "You can retry again later. If you want more information, please contact Opinsys support and give them this code: %{code}."
+
     password_set_failed: Failed to change password! Try again!
     session:
       login_successful: Login successful!
@@ -279,7 +438,7 @@ en:
       logout_successful: Logout successful!
     password:
       successful: Password changed successfully!
-      failed: Failed to change the user's password!
+      failed: "Failed to change the user's password! Log code: %{code}."
       failed_details: "Failed to change the user's password: %{details}"
       invalid_external_login: "Invalid external login password or username (%{uid})"
       incomplete_form: You did not fill in all the required form fields.
@@ -288,7 +447,7 @@ en:
       invalid_user: User (%{uid}) does not exist
       email_not_found: "Couldn't find email: %{email}"
       connection_failed: We're sorry, but something went wrong. Please try again later!
-      can_not_change_password: Can't change password. Please try again later!
+      can_not_change_password: "Can't change password. Please try again later! Log code: %{code}."
       can_not_change_upstream_password: "Can't change password to upstream service. Please try again later!"
       token_lifetime_has_expired: Your link has expired. Please enter your email again.
       too_many_sent_token_request: We've already sent a reset message to your email address.
@@ -302,9 +461,9 @@ en:
       destroyed_failed: The school was not removed. Its users, roles, groups, devices and boot servers must be removed first.
       roles_not_found: Cannot find any roles!
       no_roles_nor_groups: This school has no roles nor groups that could be renamed.
-    profile:
       wlan_updated: WLAN settings successfully updated
       wlan_save_failed: WLAN settings could not be saved!
+    profile:
       updated: Profile was successfully updated
       save_failed: Profile cannot be saved!
     printer:
@@ -313,6 +472,359 @@ en:
       school_changed: Device school has been changed!
     email_confirm:
       invalid_password: Login failed! Please check your password.
+
+    # Message codes received from third-party integration subsystems
+    integrations:
+      unknown_version: "Wrong protocol version"
+      unknown_system: "Unknown system"
+      unknown_operation: "Unknown operation"
+      bad_request: "Bad request sent to the synchronisation server"
+      unauthorized: "The server's address is not on the list of allowed servers"
+      server_error: "Synchronisation server errror"
+      malformed_reply: "Malformed reply"
+      configuration_error: "Configuration error"
+      incomplete_request: "An incomplete request was sent to the synchronisation server"
+      remote_server_did_not_respond: "Remote server did not respond to requests"
+      remote_server_refused: "Remote server refused to cooperate"
+      bad_credentials: "Bad credentials"
+      remote_server_error: "Remote server error"
+      network_error: "Network connectivity error"
+      unknown_error: "Unknown error"
+
+  # Organisations
+  organisations:
+    show:
+      title: Information about the organisation
+      find_all_users_marked_for_deletion: "Find all users who are marked for deletion"
+    edit:
+      title: Edit organisation
+      add_puavo_billing_info: Add a new billing info
+    owners:
+      title: Organisation owners
+      other_admin_users: "Grant organisation ownership to adminstrators"
+      organisation_owners: "The following admins are owners in this organisation:"
+      removed_owners_title: "WARNING:"
+      removed_owners_warning: "The following admins have been removed, but they're still listed as owners in this organisation. Contact Opinsys support for assistance."
+    deleted_users:
+      title: "Users in the organisation who are marked for deletion"
+      time_range: "Date range"
+      range_title: "Find users who have been marked for deletion at least..."
+      range_all: "(All)"
+      range_1month: "1 month or longer"
+      range_3months: "3 months or longer"
+      range_6months: "6 months or longer"
+      default: "(default)"
+      total: "Found %{count} users within the selected date range."
+      delete_listed: "Remove all currently listed users"
+      missing_date: "Missing date!"
+      users_deleted_ok: "%{count} users removed, no errors"
+      users_deleted_fail: "%{count} users removed, not all could be removed"
+
+  # LDAP services
+  ldap_services:
+    index:
+      actions: Actions
+      title: LDAP services
+      infobox: LDAP service
+    new:
+      title: New LDAP service
+    edit:
+      title: Edit an LDAP service
+
+  # Boot servers
+  servers:
+    index:
+      title: List of servers
+    edit:
+      title: Edit server settings
+    form:
+      automounts: Automounts
+      add_puavoExport: Add a new path
+    show:
+      automounts: Automounts
+      no_automounts: "(No automounts)"
+    school_limit:
+      title: School limit
+      boot_description: "Schools that this boot server will serve:"
+      ltsp_description: "This LTSP server will only serve these schools:"
+      ltsp_description_edit: If none is selected it will serve all schools in the organisation.
+      missing_school: "Unknown school \"%{school}\", please contact Opinsys support!"
+
+  # External services (organisation and school)
+  external_services:
+    title: External Services
+    description: "External service activation enables logging to the service with Opinsys credentials. User's full name, email, organisation name and school name will be given to the external service during login."
+    email: Maintainer Email
+    path_prefix: Path prefix
+    active: Active
+    additional_info: Additional info...
+    save: Save
+    organisation: organisation
+    disabled_description: This service is activated from the %{organisation}.
+
+  # Organisation/external files
+  external_files:
+    title: External Files
+    description: Custom files for Opinsys desktops.
+    no_file: "(no file)"
+    columns:
+        name: Name
+        size: Size
+        description: Description
+        actions: Actions
+    buttons:
+        download: Download
+        delete: Delete
+        master_save: Save changes
+    file_not_found: The requested file could not be found
+    changes_saved: Changes saved
+    changes_failed: Could not save the changes!
+
+  # Organisation/printers (sorted by boot server)
+  printers:
+    index:
+      server_title: "Server:"
+
+  # Printer permissions editing
+  printing_permissions_list:
+    title: Printing permitted
+    by_schools: By school
+    by_wireless: By schools as wireless
+    by_groups: By groups
+    by_devices: By devices
+    where: in
+
+  # Printer permissions (accessed through school devices)
+  printer_permissions:
+    no_printers_html: "This school has no printers. As a school admin you might want to set some %{href} to this school."
+    bootserver_ref: "boot servers"
+    no_printers_nonowner: "This school has no printers defined for it through a boot server. Administrators who have organisation-level owner rights can add printers."
+    index:
+      edit_permissions: Edit permissions...
+      bootserver: Boot server
+    edit:
+      title: Printer usage permissions
+      global: Global
+      active_for_all_users: Printing allowed on the all system devices
+      active_for_wireless: Printing allowed on the all system devices and also other devices (eg. tablets, phones, etc.)
+      active_advanced: Advanced
+      groups: Printer usage permissions by group
+      devices: Printer usage permissions by device
+      device_header_text: "Printer is allowed for the these devices:"
+      device_footer_text: "Printers for devices are set from the device edit page."
+
+  # Organisation and school device statistics
+  device_statistics:
+    organisation_devices_tab: "Devices"
+    organisation_images_tab: "Desktop images"
+
+    organisation:
+      title: "Organisation device statistics"
+      no_devices: "This organisation has no devices at all."
+      no_devices_with_hardware_info: "This organisation has devices, but no hardware information has been received from any of them."
+
+    school:
+      title: "Desktop images used in this school"
+      no_devices: "This school has no devices that could send their hardware information."
+      no_devices_with_hardware_info: "This school has devices, but no hardware information has been received from any of them."
+
+    # Used on school and organisation device images statistics pages
+    images:
+      title: "Desktop images used in this school"
+      header: "A total of %{total} devices have sent their hardware information; %{count} different desktop images in use. Click on image names to see a list of devices using that image. The list is sorted by image names."
+      device: "laite"
+      devices: "laitetta"
+
+  # Schools editing
+  schools:
+    integrations:
+      in: "Sends data to Puavo"
+      out: "Receives data from Puavo"
+      inout: "Sends data to Puavo and receives data from Puavo"
+      password: "Passwords are synchronised from Puavo"
+      login: "Login with Puavo account"
+      other: "Other integrated system"
+    index:
+      actions: Actions
+      title: Listing schools
+      members: "Members"
+    edit:
+      title: Edit school
+    new:
+      title: New school
+    menu:
+      dashboard: Dashboard
+      admins: Admins
+      wlan: WLAN
+    admins:
+      this_school_admin_users: "%{school_name} admin users"
+      other_admin_users: Add management access rights
+      school_admins: School admins
+    show:
+      contacts: Contact Information
+      devices: Devices
+      users: Users
+      statistics: Statistics
+      admin_users: Admin users
+      no_admin_users: "(No admin users)"
+      name: Name
+      phone: Phone number
+      mail: E-mail
+      billing_info: Billing info
+      no_billing_info: "(No billing info)"
+      system_information: System Information
+      total_count: "%{count} total)"
+      info: "General Information"
+    form:
+      add_puavo_billing_info: Add a new billing info
+
+  # Users editing
+  users:
+    index:
+      actions: Actions
+      users_marked_for_deletion_title: Users marked for later deletion
+      normal_users_title: Normal users
+      users: users
+      do_not_delete: "(Can't be removed)"
+      jump_to_marked: "⇈ Show users to be deleted"
+      jump_to_normal: "⇊ Show normal users"
+      lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
+      delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
+
+      filters:
+        locked_users: "Locked users"
+        marked_for_deletion: "Is marked for deletion"
+        marked_for_deletion_not_locked: "Is marked for deletion, but not locked"
+        marked_3months: "Has been marked for removal for ≥ 90 days"
+        marked_6months: "Has been marked for removal for ≥ 180 days"
+        marked_9months: "Has been marked for removal for ≥ 270 days"
+        marked_12months: "Has been marked for removal for ≥ 365 days"
+
+      mass_operations:
+        lock:
+          title: "Account locking..."
+          action: "Action:"
+          lock: "Lock (if not locked yet)"
+          unlock: "Unlock (if locked)"
+        mark:
+          title: "Mark account for deletion..."
+          action: "Action:"
+          mark: "Mark for deletion if not marked yet"
+          mark_force: "Force-mark for deletion and reset the timestamp to now (ie. \"always mark\")"
+          unmark: "Unmark"
+        delete:
+          title: "Account removal"
+          deletion_prevented: "User deletion has been prevented"
+          not_marked_for_deletion: "User has not been marked for deletion"
+          marked_too_recently: "User has been marked for deletion for less than a week"
+
+    show:
+      system_information: System information
+      contact_information: Contact information
+      groups_by_schools: "Groups by schools"
+      change_school: Change school...
+      primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
+      user_is_an_organisation_owner: "The user is an owner of this organisation"
+      user_is_a_school_admin: "The user is an admin of this school"
+      user_is_locked: User is locked
+      user_is_marked_for_deletion: "This user has been marked for deletion"
+      user_deletion_prevented: "This user cannot be deleted"
+      user_devices: User devices
+      mark_for_removal: Mark for deletion
+      unmark_for_removal: Remove deletion marking
+      marked_for_removal: Marked for deletion
+      prevent_removal: Prevent deletion
+      prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
+    new:
+      title: New user
+    edit:
+      title: Edit user
+    form:
+      add_email: Add another email
+      add_telephone_number: Add another telephone number
+      primus_warning_new: "Primus integration is enabled in this school. Giving an external ID to the new user can break the synchronisation system, and cause users to be marked for later deletion even if they shouldn't be!"
+      primus_warning_edit: "Primus integration is enabled in this school. Any changes to existing user's names, email addresses or telephone numbers may be undone during the next synchronisation run. Changing or adding the external ID can break the synchronisation system, and cause users to be marked for later deletion even if they shouldn't be!"
+      gsuite_password_new: "G Suite password synchronisation is in use in this school. You cannot set the password of the new user before the user has been synchronised to G Suite. The next synchronisation is done at %{next_sync}, you can set the password a few minutes afer that."
+      gsuite_password_edit: "G Suite password synchronisation is in use in this school. Before changing the password, please ensure the user has been synchronised to G Suite. Otherwise the password will be changed to Puavo, but not to G Suite. If you are editing a user who isn't participating in the synchronisation, you can ignore this notification (the system does not know which users actually are synchronised)."
+    select_school:
+      title: Change the user's school (step 1/2)
+      user: User
+      role: Role
+      select_new_school: Select the new school
+      no_roles: "The selected school has no roles!"
+      no_groups: "The selected school has no groups!"
+      no_teaching_groups: "The selected school has no teaching groups!"
+      no_admin_groups: "The selected school has no administrative groups!"
+      submit: Continue
+    select_role:
+      title: Change the user's school (step 2/2)
+      user: User
+      role: Role
+      new_school: The selected school
+      select_new_role: "Select the new role"
+      select_new_group_student: Select the new teaching group
+      select_new_group_teacher: Select the new administrative group
+      submit: Change the school
+      group_help_students: "The student will be moved to this teaching group and will be removed from other teaching groups. Other types of group memberships will not be modified."
+      group_help_teachers: "The teacher/staff member will be moved to this administrative group and will be removed from other administrative groups. Other types of group memberships will not be modified."
+
+  # New mass import/update tool
+  import_tool:
+    import: Import
+    import_users: Import users
+    add_column: Add column
+    change_type: Change type
+    fill: Fill
+    fill_values: Fill values
+    known_legacy_roles: Known legacy roles are
+    known_roles: Known types are
+    missing_columns: Missing columns
+    override_existing_values: Override existing values
+    remove_column: Remove column
+    select: Select...
+    some_value: Some value
+    start_import: Import data
+    start_new_import: Start a new import
+    status: Status
+    unknown_legacy_role_details: Unknown legacy role
+    unknown_legacy_role: Unknown legacy role
+    unknown_role: Unknown user type
+    created: User created
+    user_updated: Existing users updated
+    create_user: Create new user
+    update_school: Update user school and legacy roles
+    update_all: Update all user attributes
+    reset_passwords: Reset passwords
+    reset_existing_users: Reset existing users too
+    generate_username: Generate username
+    begin: Begin
+    select_file: Select file
+    add_names_to_generate_username: Add first name and last name to the generated username
+    user_not_found: This username has not been used yet
+    user_exists: This user already exists. You may still use the update feature on it.
+    prevent_unload: Import is ongoing. Do really want to abort it?
+    waiting_user_data: Waiting for user data
+    roles:
+      admin: Administrator
+      parent: Parent
+      staff: Staff
+      student: Student
+      teacher: Teacher
+      testuser: Test user
+      visitor: Visitor
+    types:
+      update_type: Update type
+      email: Email
+      first_name: First name
+      last_name: Last name
+      legacy_role: Legacy role
+      role: "Role (was User type)"
+      unknown: Unknown
+      username: Username
+      password: Password
+      group: Group
+
+  # Legacy roles editing
   roles:
     index:
       actions: Actions
@@ -338,67 +850,17 @@ en:
       select_new_role: "Select the new role"
       select_new_group: "Select the new group"
       submit: Move users
-  users:
-    index:
-      actions: Actions
-      users_marked_for_deletion_title: Users marked for later deletion
-      normal_users_title: Normal users
-      users: users
-      do_not_delete: "(Can't be removed)"
-      jump_to_marked: "⇈ Show users to be deleted"
-      jump_to_normal: "⇊ Show normal users"
-    show:
-      user_type_and_role: "User's type is <b>%{user_type}</b> and has following roles: <b>%{roles}</b>"
-      system_information: System information
-      contact_information: Contact information
-      group_by_roles: Groups by roles
-      groups_by_schools: "Groups by schools"
-      change_school: Change school...
-      primus_school_change_warning: "Primus integration has been enabled in this school. Moving a user to another school can interfere with the integration.\n\nAre you sure you want to continue?"
-      user_is_an_organisation_owner: "The user is an owner of this organisation"
-      user_is_a_school_admin: "The user is an admin of this school"
-      user_is_locked: User is locked
-      user_is_marked_for_deletion: "This user has been marked for deletion"
-      user_deletion_prevented: "This user cannot be deleted"
-      user_devices: User devices
-      mark_for_removal: Mark for deletion
-      unmark_for_removal: Remove deletion marking
-      marked_for_removal: Marked for deletion
-      prevent_removal: Prevent deletion
-    new:
-      title: New user
-    edit:
-      title: Edit user
-    form:
-      add_email: Add another email
-      add_telephone_number: Add another telephone number
-      read_only_warning: "Some fields cannot be edited, because their contents are coming from an external system."
-    select_school:
-      title: Change the user's school (step 1/2)
-      user: User
-      role: Role
-      select_new_school: Select the new school
-      no_roles: "The selected school has no roles!"
-      no_groups: "The selected school has no groups!"
-      no_teaching_groups: "The selected school has no teaching groups!"
-      no_admin_groups: "The selected school has no administrative groups!"
-      submit: Continue
-    select_role:
-      title: Change the user's school (step 2/2)
-      user: User
-      role: Role
-      new_school: The selected school
-      select_new_role: "Select the new role"
-      select_new_group_student: Select the new teaching group
-      select_new_group_teacher: Select the new administrative group
-      submit: Change the school
-      group_help_students: "The student will be moved to this teaching group and will be removed from other teaching groups. Other types of group memberships will not be modified."
-      group_help_teachers: "The teacher/staff member will be moved to this administrative group and will be removed from other administrative groups. Other types of group memberships will not be modified."
+
+  # Groups editing
   groups:
     index:
       actions: Actions
       groups: groups
       externally_maintained: "The group is maintained by an external integration script. Do not edit."
+
+      mass_operations:
+        delete:
+          title: "Delete"
     show:
       title: Group information
       roles_and_members: Roles and members
@@ -407,6 +869,7 @@ en:
       description: To add new users to this group, write a part of their name in the box below, then click the "Add" buttons on the search results.
       placeholder_for_search: Name of the user
       hidden_members_hidden_tools_warning: "Some tools have been hidden because this group has members from other schools you don't have permission to access."
+      group_username_list_confirm: "Are you sure you want to create a new username list from the members of this group?"
     new:
       title: New group
     edit:
@@ -424,147 +887,145 @@ en:
       title: "Find groupless users"
       count: "Found %{count} ungrouped users."
       mark_for_deletion: "Mark these users for deletion"
-  schools:
-    integrations:
-      in: "Sends data to Puavo"
-      out: "Receives data from Puavo"
-      inout: "Sends data to Puavo and receives data from Puavo"
-      password: "Passwords are synchronised from Puavo"
-      login: "Login with Puavo account"
-      other: "Other integrated system"
+
+  # Devices editing
+  devices:
     index:
-      actions: Actions
-      title: Listing schools
-    edit:
-      title: Edit school
+      add_new_device: Add a new device
+      title: List of devices
+      select_device_label: Select
+      devices: devices
+
+      filters:
+        uses_trusty: "Uses a Trusty image"
+        uses_stretch: "Uses a Stretch image"
+        uses_buster: "Uses a Buster image"
+        have_xrandr: "Device has xrandr settings"
+        have_hwinfo: "Have received hardware information"
+      mass_operations:
+        puavoconf:
+          title: "PuavoConf editor..."
+          key: "Key:"
+          value: "New value:"
+          validity_warning: "Make sure the value is valid! This tool does not validate it. Also check the data type below."
+          action: "Action:"
+          add: "Create or update"
+          remove: "Remove key and value"
+          type: "Data type:"
+          type_string: "string"
+          type_int: "integer"
+          type_bool: "bool"
+        set_field:
+          title: "Set database field value..."
+          field: "Field:"
+          value: "Value:"
+          desktop_image: "Desired desktop image file"
+          kernel_args: "Kernel parameters"
+          kernel_version: "Kernel version"
+          puavoconf_replace: "PuavoConf (replace all)"
+          tags_replace: "Tags (replace all)"
+          manufacturer: "Manufacturer"
+          model: "Model"
+          serial: "Serial number"
+          validity_warning: "This string is not validated in any way! Anything you put in the box above is stored in the database as-is."
+        delete:
+          title: "Delete"
+
     new:
-      title: New school
-    menu:
-      dashboard: Dashboard
-      admins: Admins
-      wlan: WLAN
-    admins:
-      this_school_admin_users: "%{school_name} admin users"
-      other_admin_users: Add management access rights
-      school_admins: School admins
-    show:
-      contacts: Contact Information
-      devices: Devices
-      users: Users
-      statistics: Statistics
-      admin_users: Admin users
-      no_admin_users: "(No admin users)"
-      name: Name
-      phone: Phone number
-      mail: E-mail
-      billing_info: Billing info
-      no_billing_info: "(No billing info)"
-      rule_lines: Rules
-      system_information: System Information
-      total_count: "%{count} total)"
-      info: "General Information"
+      new_device: New device
+    edit:
+      edit: Edit device
     form:
-      add_puavo_billing_info: Add a new billing info
-  password:
-    validator_ok: "Password OK"
-    validator_ascii_only: "The password can only contain ASCII characters"
-    validator_no_whitespace: "The password cannot start or end in whitespace"
-    validator_too_short: "The password is too short"
-    validator_too_short_with_count: "The password is too short, it must be at least %{minlength} characters long"
-    validator_passwords_match: "The password and its confirmation match"
-    validator_passwords_dont_match: "The password and its confirmation do not match"
-    gsuite_integration_enabled: "The organisation security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
-    oulu_ad_integration_enabled: "The organisation security policies require that passwords must be at least eight characters long."
-    six_chars_min: "The organisation security policies require that passwords must be at least six characters long."
-    seven_chars_min: "The organisation security policies require that passwords must be at least seven characters long."
-    current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
-    attempts_are_logged_own: "All password change attempts are logged."
-    attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
-    edit:
-      title: Change someone else's password
-      head: To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users.
-      changing_user: Changing user
-      changed_user: Changed user
-      password: Password
-      link_own_password: Change your own password
-    own:
-      title: Change your own password
-      password: Old password
-      link_other_password: Change someone else's password
-    forgot:
-      title: Reset your password
-      description: Please enter your email address to get reset instructions
-    reset:
-      title: Reset your password
-      password: Enter new password
-      password_confirmation: Re-enter new password
-      description: Please enter your new password
-      submit: Reset password
-    successfully:
-      send_token: We've sent you an email that will let you reset your password.
-      update: Your password has been successfully reset!
-  email_confirm:
-    preview:
-      title: Confirm your email address
-      description:
-      confirm: Confirm
-    successfully:
-      info: Your email address has been confirmed
-    error:
-      email_already_exists: "This email address is already in use!"
-      invalid_jwt_token: Invalid JWT token. Please contact Opinsys support.
-  organisations:
+      printer_title: Printing permissions
+    form_cups:
+      cups_settings: CUPS settings
+    cups:
+      cups_settings: CUPS settings
     show:
-      title: Information about the organisation
-      find_all_users_marked_for_deletion: "Find all users who are marked for deletion"
-    edit:
-      title: Edit organisation
-      select: Select
-      add_puavo_billing_info: Add a new billing info
-    owners:
-      title: Organisation owners
-      other_admin_users: "Grant organisation ownership to adminstrators"
-      organisation_owners: "The following admins are owners in this organisation:"
-      removed_owners_title: "WARNING:"
-      removed_owners_warning: "The following admins have been removed, but they're still listed as owners in this organisation. Contact Opinsys support for assistance."
-    deleted_users:
-      title: "Users in the organisation who are marked for deletion"
-      time_range: "Date range"
-      range_title: "Find users who have been marked for deletion at least..."
-      range_all: "(All)"
-      range_1month: "1 month or longer"
-      range_3months: "3 months or longer"
-      range_6months: "6 months or longer"
-      default: "(default)"
-      total: "Found %{count} users within the selected date range."
-      delete_listed: "Remove all currently listed users"
-      missing_date: "Missing date!"
-      users_deleted_ok: "%{count} users removed, no errors"
-      users_deleted_fail: "%{count} users removed, not all could be removed"
-  ldap_services:
-    index:
-      actions: Actions
-      title: LDAP services
-      infobox: LDAP service
-    new:
-      title: New LDAP service
-    edit:
-      title: Edit an LDAP service
-  search:
-    search_result:
-      title_user: Users
-      title_role: Roles
-      title_group: Groups
-      title_device: Devices
-    no_matches: "(No matches)"
-    failed: "(Search failed!)"
-  profiles:
-    edit:
-      title: My profile
-      save_and_close: Save and close
-    show:
-      message: Your profile has been successfully updated.
-      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
+      change_school: Change school...
+    select_school:
+      title: Device transfer (%{name})
+      select_new_school: Select the new school
+      submit: Move device
+
+  # Device types (used in app/models/host.rb)
+  host:
+    types:
+      register_label: Device type
+      register_title: Device type selection
+      register_question: "Select device type: "
+      thinclient: Thin Client
+      fatclient: Fat Client
+      laptop: Laptop
+      workstation: Workstation
+      server: Server
+      netstand: Netstand
+      infotv: Info-tv
+
+  # Device hardware info
+  hwinfo:
+    title: "Hardware information"
+    no_info: "No hardware information received from this device"
+    json_failed: "Could not parse the device hardware info JSON: %{msg}"
+    received_timestamp: "Data received"
+    image:
+      name: "Image"
+      release: "Name"
+      kernel: "Kernel"
+    cpu:
+      title: "Processor"
+      cores: "Cores"
+      name: "Name"
+    memory:
+      title: "Memory"
+      total: "Total"
+      modules:
+        title: "Memory modules"
+        size: "Size"
+        slot: "Slot"
+        product: "Product"
+        vendor: "Vendor"
+        empty: "(empty)"
+    hard_drive:
+      title: "Hard drive"
+      none: "(No hard drive)"
+    df:
+      title: "Partitions free space"
+    wifi:
+      title: "WiFi"
+    product:
+      title: "Product name"
+    bios:
+      title: "BIOS"
+      vendor: "Vendor"
+      version: "Version"
+      date: "Date"
+    serial:
+      title: "Serial numbers"
+      device: "Machine"
+      mainboard: "Mainboard"
+    lspci:
+      title: "Some lspci values"
+    lsusb:
+      title: "LSUSB"
+    xrandr:
+      title: "xrandr output"
+      no_xrandr: "(Empty)"
+    battery:
+      title: "Battery"
+      no_battery: "(No battery)"
+      vendor: "Vendor"
+      serial: "Serial number"
+      state: "State"
+      energy_full: "Energy (design)"
+      voltage: "Voltage"
+      capacity: "Capacity"
+      percentage: "Percentage"
+    abitti:
+      title: "Abitti version"
+      unknown: "(Unknown)"
+
+  # Username lists for mass password resets (created by mass imports)
   lists:
     index:
       title: Unloaded username lists
@@ -581,14 +1042,96 @@ en:
       invalid_list: "Unknown list"
       deletion_failed: "List deletion failed"
       deleted: "List deleted"
-  menu:
-    index:
-      service_link_name_puavo: Puavo - users and devices management
-      service_link_name_infotv: Info-TV
-      service_link_name_change_password: Change password
+
+  # Shared forms that live in app/views/shared/
+  shared:
+    terminal_title: Terminal information
+    location: Location
+    display_settings: Display settings
+    kernel_settings: Image and kernel settings
+    title: Device information
+    printer_title: Printer information
+    server_title: Server information
+    printers_title: Printers
+    no_printers_for_this_device: No printers configured for this device
+    add_puavoDeviceXrandr: Add a new xrandr setting
+    boot_mode_netboot: Terminal
+    boot_mode_dualboot: Dualboot
+    boot_mode_: Terminal
+    purchase_information: Purchase information
+    add_macAddress: Add a new MAC address
+    autopoweroff: Automatic power off
+    add_puavoImageSeriesSourceURL: "Add a new image series source URL"
+    linux_device_information:
+      certificate_status_true: Valid
+      certificate_status_false: Not valid
+      xrandr_status_true: "Yes"
+      xrandr_status_false: "No"
+      xrandr_status_: "No"
+    form_linux_device_information:
+      select: Select
+    form_wlan:
+      title: Wireless networks
+      wireless_access_point_setup: Default Wireless Access Point setup
+      channel_random: Random
+      wireless_network_setup: Wireless network setup
+      wireless_network_title: Network %{index}
+      file_md5: MD5
+      file_size: Size
+      wlan_name: Name
+      wlan_type: Type
+      wlan_password: Password
+      wlan_identity: Identity
+      wlan_ca_cert: CA certificate
+      wlan_client_cert: Client certificate
+      wlan_client_key: Client certificate key
+      wlan_client_key_password: Client certificate key password
+      wlan_phase2_auth_mschapv2: Use "mschapv2" (no EAP)
+      wlan_ap: Enabled in access points
+      select_value_open: Open
+      select_value_psk: PSK
+      select_value_eaptls: EAP-TLS
+      select_value_eapttls: EAP-TTLS
+      select_value_eappeap: EAP-PEAP
+      default: Default
+    mountpoint:
+      title: Local and network mount points
+      filesystem: Filesystem
+      path: Path
+      mountpoint: Mount point
+      options: Options
+      no_mount_points: "(No mount points)"
+    form_mountpoint:
+      title: Local and network mount points
+      filesystem: Filesystem
+      path: Path
+      mountpoint: Mount point
+      options: Options
+      add_more: "Add a new mount point"
+    form_auto_power_off_settings:
+      select: Select
+
+  # Used by various helper methods. Some key names have a predefined format.
+  helpers:
+    boolean_true: "Yes"
+    boolean_false: "No"
+    default: Default
+    ppd_file:
+      no_file: No driver file
+      cannot_detect_filetype: Cannot detect the driver file type
+    invalid_ssh_public_key: Invalid public key
+    default_by_school: Default by school
+    default_by_organisation: Default by organisation
+    by_organisation: (organisation)
+    by_school: (school)
+
   controllers:
     import:
       school_has_changed: User has been transferred, the old password is in use
+
+  # Forms and form errors. Many of these have specially formatted names and
+  # they're structured in a specific way, because they're accessed by form
+  # helper methods and those interpolate the key from field names/IDs.
   activeldap:
     errors:
       messages:
@@ -596,12 +1139,12 @@ en:
         blank: "%{attribute} can't be blank"
         invalid: "%{attribute} is invalid"
         confirmation: "%{attribute} doesn't match the confirmation"
-        gsuite_password_too_short: "The organisation security policies require that passwords must be at least eight characters long."
-        gsuite_password_whitespace: "The organisation security policies require that passwords cannot start or end in whitespace."
-        gsuite_password_ascii_only: "The organisation security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
-        oulu_ad_password_too_short: "The organisation security policies require that passwords are at least eight characters long."
-        sixcharsmin_password_too_short: "The organisation security policies require that passwords are at least six characters long."
-        sevencharsmin_password_too_short: "The organisation security policies require that passwords are at least seven characters long."
+        gsuite_password_too_short: "The school's security policies require that passwords must be at least eight characters long."
+        gsuite_password_whitespace: "The school's security policies require that passwords cannot start or end in whitespace."
+        gsuite_password_ascii_only: "The school's security policies require that passwords require that passwords can only contain characters A-Z, a-z, 0-9 and some other punctuation."
+        oulu_ad_password_too_short: "The school's security policies require that passwords are at least eight characters long."
+        sixcharsmin_password_too_short: "The school's security policies require that passwords are at least six characters long."
+        sevencharsmin_password_too_short: "The school's security policies require that passwords are at least seven characters long."
         too_long: "%{attribute} is too long (maximum is %{count} characters)"
         too_short: "%{attribute} is too short (min is %{count} characters)"
         image_failed: "Failed to save the image"
@@ -633,19 +1176,54 @@ en:
       user: User
       school: School
       ldap_service: LDAP service
+
+    # Form field titles
     attributes:
       dn: DN
-      role:
-        displayName: Role name
-        members: Members
-        groups: Members groups
+      ldap_organisation:
+        description: Description
+        telephoneNumber: Phone number
+        facsimileTelephoneNumber: Fax number
+        l: Locality
+        street: Street address
+        postOfficeBox: Post Office Box
+        postalAddress: Postal address
+        postalCode: Postal code
+        st: State
+        preferredLanguage: Preferred language
+        puavoLocale: Preferred language
+        eduOrgHomePageURI: Home page
+        puavoTag: Tags
+        puavoConf: PuavoConf settings
+        puavoDeviceAutoPowerOffMode: Auto power off mode
+        puavoDeviceAutoPowerOffMode_default: Default
+        puavoDeviceAutoPowerOffMode_off: "Off"
+        puavoDeviceAutoPowerOffMode_custom: Custom
+        puavoDeviceOnHour: Daytime start
+        puavoDeviceOffHour: Daytime end
+        o: Name
+        puavoEduOrgAbbreviation: Abbreviation
+        puavoBillingInfo: Billing info
+        puavoDeviceImage: Desktop Image
+        puavoWlanChannel: Channel
+        puavoAllowGuest: Allow guest
+        puavoPersonalDevice: Personal devices
+        puavoTimezone: Time zone
+        puavoKeyboardLayout: Keyboard layout
+        puavoKeyboardVariant: Keyboard variant
+        puavoAutomaticImageUpdates: Automatic image updates
+        puavoImageSeriesSourceURL: Image series source URL
+      ldap_service:
+        uid: Service Identifier
+        description: Description
+        userPassword: Password
+        groups: System Groups
+        dn: Bind DN
       school:
         cn: Group name
         displayName: School name
         puavoNamePrefix: Name prefix
         puavoSchoolCode: School code
-        ldap_create_time: Created (LDAP)
-        ldap_modify_time: Modified (LDAP)
         puavoSchoolHomePageURL: School's home page
         description: Description
         puavoSchoolNameAbbreviation: Abbreviation
@@ -659,7 +1237,6 @@ en:
         st: State
         gidNumber: Gid number
         puavoDeviceImage: Desktop Image
-        external_feeds: Webmenu feed
         puavoBillingInfo: Billing info
         puavoWlanChannel: Channel
         puavoAllowGuest: Allow guest
@@ -716,6 +1293,10 @@ en:
         teaching_group: Teaching group
         administrative_groups: Administrative groups
         year_class: Year class
+      role:
+        displayName: Role name
+        members: Members
+        groups: Members groups
       group:
         displayName: Group name
         cn: Abbreviation
@@ -724,45 +1305,6 @@ en:
         members: Members
         puavoEduGroupType: Type
         puavoExternalId: External ID
-      ldap_organisation:
-        description: Description
-        telephoneNumber: Phone number
-        facsimileTelephoneNumber: Fax number
-        l: Locality
-        street: Street address
-        postOfficeBox: Post Office Box
-        postalAddress: Postal address
-        postalCode: Postal code
-        st: State
-        preferredLanguage: Preferred language
-        puavoLocale: Preferred language
-        eduOrgHomePageURI: Home page
-        puavoTag: Tags
-        puavoConf: PuavoConf settings
-        puavoDeviceAutoPowerOffMode: Auto power off mode
-        puavoDeviceAutoPowerOffMode_default: Default
-        puavoDeviceAutoPowerOffMode_off: "Off"
-        puavoDeviceAutoPowerOffMode_custom: Custom
-        puavoDeviceOnHour: Daytime start
-        puavoDeviceOffHour: Daytime end
-        o: Name
-        puavoEduOrgAbbreviation: Abbreviation
-        puavoBillingInfo: Billing info
-        puavoDeviceImage: Desktop Image
-        puavoWlanChannel: Channel
-        puavoAllowGuest: Allow guest
-        puavoPersonalDevice: Personal devices
-        puavoTimezone: Time zone
-        puavoKeyboardLayout: Keyboard layout
-        puavoKeyboardVariant: Keyboard variant
-        puavoAutomaticImageUpdates: Automatic image updates
-        puavoImageSeriesSourceURL: Image series source URL
-      ldap_service:
-        uid: Service Identifier
-        description: Description
-        userPassword: Password
-        groups: System Groups
-        dn: Bind DN
       device:
         dn: DN
         puavoHostname: Hostname
@@ -864,8 +1406,6 @@ en:
         puavoDeviceDefaultAudioSource: Default input audio device
         puavoDeviceDefaultAudioSink: Default output audio device
         puavoImageSeriesSourceURL: Image series source URL
-      automount:
-        cn: Directory
       printer:
         printerDescription: Printer name
         printerMakeAndModel: Manufacturer and model
@@ -881,560 +1421,71 @@ en:
           puavoNetbootDevice: Netboot
           puavoLocalbootDevice: Local boot
           puavoPrinter: Printer
-  puavoEduPersonAffiliation_teacher: Teacher
-  puavoEduPersonAffiliation_staff: Staff
-  puavoEduPersonAffiliation_student: Student
-  puavoEduPersonAffiliation_visitor: Visitor
-  puavoEduPersonAffiliation_parent: Parent
-  puavoEduPersonAffiliation_admin: Admin
-  puavoEduPersonAffiliation_testuser: Test user
-  language_fi_FI: Finnish
-  language_en_US: English (United States)
-  language_sv_FI: Swedish (Finland)
-  language_de_DE: German (Germany)
-  language_de_CH: German (Switzerland)
-  language_fr_CH: French (Switzerland)
-  language_ar_SA: Arabic (Saudi Arabia)
-  language_default: Default
-  group_type:
-    teaching group: Teaching group
-    course group: Course group
-    year class: Year class
-    administrative group: Administrative group
-    archive users: Archive users
-    other groups: Other groups
-  old_preferred_language: "Old setting: %{language}"
-  timezone_empty: Time zone has not been set
-  date:
-    formats:
-      default: "%Y-%m-%d"
-      short: "%b %d"
-      long: "%B %d, %Y"
-    day_names:
-    - Sunday
-    - Monday
-    - Tuesday
-    - Wednesday
-    - Thursday
-    - Friday
-    - Saturday
-    abbr_day_names:
-    - Sun
-    - Mon
-    - Tue
-    - Wed
-    - Thu
-    - Fri
-    - Sat
-    month_names:
-    -
-    - January
-    - February
-    - March
-    - April
-    - May
-    - June
-    - July
-    - August
-    - September
-    - October
-    - November
-    - December
-    abbr_month_names:
-    -
-    - Jan
-    - Feb
-    - Mar
-    - Apr
-    - May
-    - Jun
-    - Jul
-    - Aug
-    - Sep
-    - Oct
-    - Nov
-    - Dec
-    order:
-    - :year
-    - :month
-    - :day
-  time:
-    formats:
-      default: "%Y-%m-%d"
-      short: "%d %b %H:%M"
-      long: "%B %d, %Y %H:%M"
-      number_with_time: "%Y-%m-%d %H:%M"
-    am: am
-    pm: pm
-  actions: Actions
-  cancel: "Cancel"
-  or: or
-  shared:
-    terminal_title: Terminal information
-    location: Location
-    display_settings: Display settings
-    kernel_settings: Image and kernel settings
-    title: Device information
-    printer_title: Printer information
-    server_title: Server information
-    printers_title: Printers
-    no_printers_for_this_device: No printers configured for this device
-    add_puavoDeviceXrandr: Add a new xrandr setting
-    boot_mode_netboot: Terminal
-    boot_mode_dualboot: Dualboot
-    boot_mode_: Terminal
-    purchase_information: Purchase information
-    add_macAddress: Add a new MAC address
-    autopoweroff: Automatic power off
-    add_puavoImageSeriesSourceURL: "Add a new image series source URL"
-    linux_device_information:
-      certificate_status_true: Valid
-      certificate_status_false: Not valid
-      xrandr_status_true: "Yes"
-      xrandr_status_false: "No"
-      xrandr_status_: "No"
-    form_linux_device_information:
-      select: Select
-    form_wlan:
-      title: Wireless networks
-      wireless_access_point_setup: Default Wireless Access Point setup
-      channel_random: Random
-      wireless_network_setup: Wireless network setup
-      wireless_network_title: Network %{index}
-      file_md5: MD5
-      file_size: Size
-      wlan_name: Name
-      wlan_type: Type
-      wlan_password: Password
-      wlan_identity: Identity
-      wlan_ap: Enabled in access points
-      wlan_ca_cert: CA certificate
-      wlan_client_cert: Client certificate
-      wlan_client_key: Client certificate key
-      wlan_client_key_password: Client certificate key password
-      wlan_phase2_auth_mschapv2: Use "mschapv2" (no EAP)
-      select_value_open: Open
-      select_value_psk: PSK
-      select_value_eaptls: EAP-TLS
-      select_value_eapttls: EAP-TTLS
-      select_value_eappeap: EAP-PEAP
-      default: Default
-    mountpoint:
-      title: Local and network mount points
-      filesystem: Filesystem
-      path: Path
-      mountpoint: Mount point
-      options: Options
-      no_mount_points: "(No mount points)"
-    form_mountpoint:
-      title: Local and network mount points
-      filesystem: Filesystem
-      path: Path
-      mountpoint: Mount point
-      options: Options
-      add_more: "Add a new mount point"
-    form_auto_power_off_settings:
-      select: Select
-  devices:
-    index:
-      add_new_device: Add a new device
-      title: List of devices
-      select_device_label: Select
-      devices: devices
-    new:
-      new_printer: New printer
-      new_device: New device
+
+  # Password forms
+  # (There are more password-related messages in the flash messages section)
+  password:
+    validator_ok: "Password OK"
+    validator_ascii_only: "The password can only contain ASCII characters"
+    validator_no_whitespace: "The password cannot start or end in whitespace"
+    validator_too_short: "The password is too short"
+    validator_too_short_with_count: "The password is too short, it must be at least %{minlength} characters long"
+    validator_passwords_match: "The password and its confirmation match"
+    validator_passwords_dont_match: "The password and its confirmation do not match"
+    gsuite_integration_enabled: "The school's security policies require that passwords must at least eight characters long, cannot start or end in whitespace, and must only contain characters A-Z, a-z, 0-9 and some other punctuation."
+    oulu_ad_integration_enabled: "The school's security policies require that passwords must be at least eight characters long."
+    six_chars_min: "The school's security policies require that passwords must be at least six characters long."
+    seven_chars_min: "The school's security policies require that passwords must be at least seven characters long."
+    current_password_too_old: "Due to your organisation security policies, your current password must be changed because it is too old."
+    attempts_are_logged_own: "All password change attempts are logged."
+    attempts_are_logged_other: "This form is only meant for teachers and admin users. All password changes and change attempts are logged. We log all usernames, your IP address(es), and timestamps."
     edit:
-      edit: Edit device
-      title: Device settings
-      terminal_title: Terminal settings
-    form:
-      printer_title: Printing permissions
-      printer_description: Printing is allowed on the following printers
-    form_cups:
-      cups_settings: CUPS settings
-    cups:
-      cups_settings: CUPS settings
-    show:
-      change_school: Change school...
-      hw_info_button: "Show hardware info..."
-      no_hw_info: "(Unknown/Never)"
-    select_school:
-      title: Device transfer (%{name})
-      select_new_school: Select the new school
-      submit: Move device
-  servers:
-    index:
-      title: List of servers
-    edit:
-      title: Edit server settings
-    form:
-      automounts: Automounts
-      add_puavoExport: Add a new path
-    show:
-      automounts: Automounts
-      no_automounts: "(No automounts)"
-    school_limit:
-      title: School limit
-      ltsp_description: "This LTSP server will only serve these schools:"
-      ltsp_description_edit: If none is selected it will serve all schools in the organisation.
-      boot_description: "Schools that this boot server will serve:"
-      missing_school: "Unknown school \"%{school}\", please contact Opinsys support!"
-  automounts:
-    index:
-      title: Automounts
-    new:
-      title: New automount
-    edit:
-      title: Edit an automount
-  host:
-    types:
-      register_label: Device type
-      register_title: Device type selection
-      register_question: "Select device type: "
-      thinclient: Thin Client
-      fatclient: Fat Client
-      laptop: Laptop
-      workstation: Workstation
-      server: Server
-      netstand: Netstand
-      infotv: Info-tv
-  printers:
-    index:
-      server_title: "Server:"
-  helpers:
-    boolean_true: "Yes"
-    boolean_false: "No"
-    default: Default
-    ppd_file:
-      no_file: No driver file
-      cannot_detect_filetype: Cannot detect the driver file type
-    submit:
-      servers:
-        create: Create
-    invalid_ssh_public_key: Invalid public key
-    default_by_school: Default by school
-    default_by_organisation: Default by organisation
-    by_organisation: (organisation)
-    by_school: (school)
-  external_services:
-    title: External Services
-    description: "External service activation enables logging to the service with Opinsys credentials. User's full name, email, organisation name and school name will be given to the external service during login."
-    email: Maintainer Email
-    path_prefix: Path prefix
-    active: Active
-    additional_info: Additional info...
-    save: Save
-    organisation: organisation
-    disabled_description: This service is activated from the %{organisation}.
-  external_files:
-    title: External Files
-    description: Custom files for Opinsys desktops.
-    no_file: "(no file)"
-    columns:
-        name: Name
-        size: Size
-        description: Description
-        actions: Actions
-    buttons:
-        download: Download
-        delete: Delete
-        master_save: Save changes
-    file_not_found: The requested file could not be found
-    changes_saved: Changes saved
-    changes_failed: Could not save the changes!
-  printer_permissions:
-    no_printers_html: "This school has no printers. As a school admin you might want to set some %{href} to this school."
-    bootserver_ref: "boot servers"
-    no_printers_nonowner: "This school has no printers defined for it through a boot server. Administrators who have organisation-level owner rights can add printers."
-    index:
-      edit_permissions: Edit permissions...
-      bootserver: Boot server
-    edit:
-      title: Printer usage permissions
-      global: Global
-      active_for_all_users: Printing allowed on the all system devices
-      active_for_wireless: Printing allowed on the all system devices and also other devices (eg. tablets, phones, etc.)
-      active_advanced: Advanced
-      groups: Printer usage permissions by group
-      devices: Printer usage permissions by device
-      device_header_text: "Printer is allowed for the these devices:"
-      device_footer_text: "Printers for devices are set from the device edit page."
-  printing_permissions_list:
-    title: Printing permitted
-    by_schools: By school
-    by_wireless: By schools as wireless
-    by_groups: By groups
-    by_devices: By devices
-    where: in
-  sessions:
-    new:
-      external_service_name: Puavo
-      login_to: Login to service
+      title: Change someone else's password
+      head: To change the password of another user, fill in your own username and password, and then the username and the new password for the user whose password is being changed. You must have sufficient privileges to change the passwords of other users.
+      changing_user: Changing user
+      changed_user: Changed user
       password: Password
-      username_help: Use the same username you use when logging in Opinsys desktops.
-      organisation_help: "Username must be provided in the form of <i>username</i>@<i>organisation</i>.opinsys.fi. The username part is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all national letters must be removed. For example, if you are from Jyväskylä and your Opinsys username is matti.meikalainen, the organisation part is <i>jyvaskyla</i> which means that you login with <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
-      developers: Developers
-      developers_info: "Read <a href=https://api.opinsys.fi/v3/sso/developers target=_blank>this</a> document if you are interested in implementing Opinsys authentication."
-      username_placeholder: Username
-      login: Login
-      help: Help
-  ldap_create_time: Created (LDAP)
-  ldap_modify_time: Modified (LDAP)
+      link_own_password: Change your own password
+    own:
+      title: Change your own password
+      password: Old password
+      link_other_password: Change someone else's password
+    forgot:
+      title: Reset your password
+      description: Please enter your email address to get reset instructions
+    reset:
+      title: Reset your password
+      password: Enter new password
+      password_confirmation: Re-enter new password
+      description: Please enter your new password
+      submit: Reset password
+    successfully:
+      send_token: We've sent you an email that will let you reset your password.
+      update: Your password has been successfully reset!
 
-  fuzzy_time:
-    just_now: "just now"
-    less_than_minute: "less than a minute ago"
-    minute: "a minute ago"
-    minutes: "%{m} minutes ago"
-    hour: "an hour ago"
-    hours: "%{h} hours ago"
-    day: "a day ago"
-    days: "%{d} days ago"
-    month: "a month ago"
-    months: "%{month} months ago"
+  # Email address confirmation
+  email_confirm:
+    preview:
+      title: Confirm your email address
+      description: "Verify your new email address (%{email}) by entering it below and then clicking on Confirm"
+      confirm: Confirm
+    successfully:
+      info: Your email address has been confirmed
+    error:
+      email_already_exists: "This email address is already in use!"
+      invalid_jwt_token: Invalid JWT token. Please contact Opinsys support.
 
-  # Column names for various tables. Try to keep these as short as possible to prevent
-  # tables from getting unnecessarily wide.
-  columns:
-    puavoid: "PuavoID"
-    created: "Created"
-    modified: "Modified"
-    puavoconf: "PuavoConf"
-    school: "School"
+  # User profile editor (usually accessed from the desktop, by clicking your username in the main menu)
+  profiles:
+    edit:
+      title: My profile
+      save_and_close: Save and close
+    show:
+      message: Your profile has been successfully updated.
+      email_confirm_info: "A confirmation message will be soon sent to your new email address. Click it to verify your address."
 
-    users:
-      first_names: "First names"
-      last_name: "Last name"
-      full_name: "Name"
-      uid: "Username"
-      eid: "External ID"
-      type: "Role"
-      phone: "Phone"
-      email: "Email"
-      home_dir: "Home directory"
-      rrt: "When marked for deletion"
-      is_locked: "Locked?"
-
-    groups:
-      name: "Name"
-      type: "Type"
-      abbreviation: "Abbreviation"
-      eid: "External ID"
-
-    devices:
-      hostname: "Hostname"
-      type: "Type"
-      tags: "Tags"
-      manufacturer: "Manufacturer"
-      model: "Model"
-      serial: "Serial"
-      mac: "MAC"
-      description: "Description"
-      image: "Image"
-      current_image: "Current image"
-      kernel_args: "Kernel arguments"
-      hwinfo_time: "Hardware info received"
-      hwinfo_ram_size: "RAM"
-      hwinfo_hd_size: "Hard drive"
-      hwinfo_is_ssd: "SSD?"
-      cpu: "Processor"
-      bios_vendor: "BIOS vendor"
-      bios_version: "BIOS version"
-      bios_date: "BIOS date"
-      bat_vendor: "Battery vendor"
-      bat_serial: "Battery serial"
-      bat_cap: "Battery capacity"
-      wifi: "WiFi"
-      xrandr: "Xrandr"
-      abitti_version: "Abitti version"
-      df_home: "Free /home"
-
-  # Device hardware info
-  hwinfo:
-    title: "Hardware information"
-    no_info: "No hardware information received from this device"
-    json_failed: "Could not parse the device hardware info JSON: %{msg}"
-    received_timestamp: "Data received"
-    image:
-      name: "Image"
-      release: "Name"
-      kernel: "Kernel"
-    cpu:
-      title: "Processor"
-      cores: "Cores"
-      name: "Name"
-    memory:
-      title: "Memory"
-      total: "Total"
-      modules:
-        title: "Memory modules"
-        size: "Size"
-        slot: "Slot"
-        product: "Product"
-        vendor: "Vendor"
-        empty: "(empty)"
-    hard_drive:
-      title: "Hard drive"
-      none: "(No hard drive)"
-    df:
-      title: "Partitions free space"
-    wifi:
-      title: "WiFi"
-    product:
-      title: "Product name"
-    bios:
-      title: "BIOS"
-      vendor: "Vendor"
-      version: "Version"
-      date: "Date"
-    serial:
-      title: "Serial numbers"
-      device: "Machine"
-      mainboard: "Mainboard"
-    lspci:
-      title: "Some lspci values"
-    lsusb:
-      title: "LSUSB"
-    xrandr:
-      title: "xrandr output"
-      no_xrandr: "(Empty)"
-    battery:
-      title: "Battery"
-      no_battery: "(No battery)"
-      vendor: "Vendor"
-      serial: "Serial number"
-      state: "State"
-      energy_full: "Energy (design)"
-      voltage: "Voltage"
-      capacity: "Capacity"
-      percentage: "Percentage"
-    abitti:
-      title: "Abitti version"
-      unknown: "(Unknown)"
-
-  # Extended search
-  extended_search:
-    title: "Extended Search"
-
-    tabs:
-      search: "Search"
-      help: "Instructions and tips"
-
-    search_box_instructions: "Enter one or more search terms, one per row. Leading and trailing whitespace is automatically removed. Empty lines and lines that start with # are ignored."
-
-    terms_title: "Search terms type:"
-
-    per_term_settings:
-      title: "Extra settings for this term type"
-      no_extra_settings: "(No extra settings)"
-      deletion_mark_state:
-        title: "Account removal state"
-        is_marked: "Is marked for later removal"
-        is_unmarked: "Not marked for later removal"
-        dont_care: "(Ignore)"
-      lock_state:
-        title: "Account locking"
-        is_locked: "Account is locked"
-        is_unlocked: "Account is not locked"
-        dont_care: "(Ignore)"
-      device_type:
-        title: "Limit results by device type"
-        laptop: "Laptop"
-        fatclient: "Fatclient"
-        printer: "Printer"
-        other: "(Everything else)"
-
-    term_names:
-      users:
-        title: "Users"
-        puavoid: "Users: Puavo ID"
-        uid: "Users: Username"
-        name_lastfirst: "Users: Lastname Firstname / Lastname, Firstname (no regexp)"
-        name_firstlast: "Users: Firstname Lastname / Firstname, Lastname (no regexp)"
-        externalid: "Users: External ID"
-        email: "Users: Email"
-        phone: "Users: Phone number"
-      groups:
-        title: "Groups"
-        puavoid: "Groups: Puavo ID"
-        name: "Groups: Name"
-        abbreviation: "Groups: Abbreviation"
-        externalid: "Groups: External ID"
-      devices:
-        title: "Devices"
-        puavoid: "Devices: Puavo ID"
-        hostname: "Devices: Hostname"
-        image: "Devices: Desktop image (always regexp)"
-        current_image: "Devices: Current desktop image (always regexp)"
-        mac: "Devices: MAC address"
-        tags: "Devices: Tags"
-        xrandr: "Devices: Xrandr settings (always regexp)"
-        kernel_params: "Devices: Kernel arguments (always regexp)"
-        kernel_version: "Devices: Kernel version (always regexp)"
-        manufacturer: "Devices: Manufacturer"
-        model: "Devices: Model"
-        serial_number: "Devices: Serial number"
-
-    school_limit_title: "School limit:"
-    school_limit_all: "(All schools)"
-
-    more_settings:
-      title: "Search settings"
-      regexp_title: "Terms are regexp strings (allows partial hits, see help)"
-      reverse_title: "Reverse search (only search terms are matched in reverse, not term-specific extra settings)"
-      remove_misses_title: "Don't list terms that produced no hits in the results"
-
-    button_search: "Search"
-    button_clear_results: "Clear results"
-    button_clear_terms: "Clear search terms"
-
-    results_title: "Results"
-    results:
-      search_term_title: "Search term"
-      matched_string: "Matched text"
-      no_term_hits: "(No hits)"
-      no_results: "(No results)"
-      statistics: "%{total} hits in total. %{num_terms} search term(s); %{num_hits} hit(s), %{num_misses} miss(es). Searching took %{elapsed} seconds. "
-
-    errors:
-      unknown_school: "(Unknown school)"
-
-    controller:
-      invalid_search_data: "Invalid search parameters: missing search terms or search terms type"
-      search_terms_cleanup_failed: "Search term cleanup failed"
-      no_search_terms: "No search terms"
-      school_limit_failed: "School limit parsing failed"
-      invalid_regexp: "Invalid regexp "
-      unknown_search_term_type: "Unknown search term type "
-
-  # Organisation and school device statistics
-  device_statistics:
-    organisation_devices_tab: "Devices"
-    organisation_images_tab: "Desktop images"
-
-    organisation:
-      title: "Organisation device statistics"
-      no_devices: "This organisation has no devices at all."
-      no_devices_with_hardware_info: "This organisation has devices, but no hardware information has been received from any of them."
-
-    school:
-      title: "Desktop images used in this school"
-      no_devices: "This school has no devices that could send their hardware information."
-      no_devices_with_hardware_info: "This school has devices, but no hardware information has been received from any of them."
-
-    # Used on school and organisation device images statistics pages
-    images:
-      title: "Desktop images used in this school"
-      header: "A total of %{total} devices have sent their hardware information; %{count} different desktop images in use. Click on image names to see a list of devices using that image. The list is sorted by image names."
-      device: "laite"
-      devices: "laitetta"
-
-  # Supertable filter presets
-  filter_presets:
-    devices:
-      uses_trusty: "Uses a Trusty image"
-      uses_stretch: "Uses a Stretch image"
-      uses_buster: "Uses a Buster image"
-      have_xrandr: "Device has xrandr settings"
-      have_hwinfo: "Have received hardware information"
+  # Used in script/create_organisation_owner
+  create_organisation_owner:
+    school_name: Administration
+    role_name: Maintenance
+    group_name: Maintenance

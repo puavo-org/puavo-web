@@ -5,6 +5,8 @@ class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
 
 class PasswordController < ApplicationController
+  include Puavo::Integrations
+
   before_action :set_ldap_connection
   skip_before_action :find_school, :require_login, :require_puavo_authorization
 
@@ -139,15 +141,15 @@ class PasswordController < ApplicationController
 
     raise TooManySentTokenRequest if db.get(user.puavoId)
 
-    db.set(user.puavoId, true)
-    db.expire(user.puavoId, 300)
-
     rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .post(send_token_url,
             :params => { :username => user.uid })
 
     raise RestConnectionError if rest_response.status != 200
+
+    db.set(user.puavoId, true)
+    db.expire(user.puavoId, 300)
 
     respond_to do |format|
       flash[:message] = I18n.t('password.successfully.send_token')
@@ -183,7 +185,7 @@ class PasswordController < ApplicationController
     rest_response = HTTP.headers(:host => current_organisation_domain,
                                       "Accept-Language" => locale)
       .put(change_password_url,
-           :params => { :new_password => params[:reset][:password] })
+           :json => { :new_password => params[:reset][:password] })
 
     if rest_response.status == 404 &&
         JSON.parse(rest_response.body.readpartial)["error"] == "Token lifetime has expired"
@@ -257,7 +259,7 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password(mode)
-    case get_organisation_password_requirements
+    case get_school_password_requirements(-1)
       when 'Google'
         # Validate the password against Google's requirements.
         new_password = params[:user][:new_password]
@@ -301,8 +303,12 @@ class PasswordController < ApplicationController
         end
     end
 
+    msg_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
+
     external_login_status = external_login(params[:login][:uid],
                                            params[:login][:password])
+
+    logger.warn "[#{msg_id}] external_login_status: |#{external_login_status}|"
 
     if external_login_status then
       case external_login_status
@@ -313,8 +319,10 @@ class PasswordController < ApplicationController
         when :external_login_ok
           true    # this is okay
         else
+          logger.warn "[#{msg_id}] raising exception"
+
           raise User::UserError,
-                I18n.t('flash.password.can_not_change_password')
+                I18n.t('flash.password.can_not_change_password', :code => msg_id)
       end
     end
 
@@ -360,7 +368,7 @@ class PasswordController < ApplicationController
                   }
     rest_params[:mode] = (@user ? 'all' : 'upstream_only')
 
-    res = rest_proxy.put('/v3/users/password', :params => rest_params).parse
+    res = rest_proxy.put('/v3/users/password', :json => rest_params).parse
     res = {} unless res.kind_of?(Hash)
 
     if res['exit_status'] == 0 && !@user && external_login_status then
@@ -385,7 +393,7 @@ class PasswordController < ApplicationController
     ))
 
     if res['exit_status'] != 0 then
-      logger.warn "rest call to PUT /v3/users/password failed: #{ res.inspect }"
+      logger.warn "[#{msg_id}] (password-change-error) rest call to PUT /v3/users/password failed: #{ res.inspect }"
 
       case res['extlogin_status']
         when PuavoRest::ExternalLoginStatus::BADUSERCREDS
@@ -400,7 +408,8 @@ class PasswordController < ApplicationController
                                         :uid => params[:user][:uid])
       end
 
-      raise User::UserError, I18n.t('flash.password.failed')
+      logger.warn "[#{msg_id}] (password-change-error) UNKNOWN PASSWORD CHANGE ERROR, SEE ABOVE"
+      raise User::UserError, I18n.t('flash.password.failed', :code => msg_id)
     end
 
     return true

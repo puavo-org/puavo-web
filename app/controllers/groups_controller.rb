@@ -2,6 +2,7 @@ require 'list'
 require 'csv'
 
 class GroupsController < ApplicationController
+  include Puavo::MassOperations
 
   # GET /:school_id/groups/:id/members
   def members
@@ -75,7 +76,7 @@ class GroupsController < ApplicationController
 
     @raw.each do |dn, grp|
       @groups << {
-        id: grp['puavoId'][0],
+        id: grp['puavoId'][0].to_i,
         name: grp['displayName'][0],
         type: grp['puavoEduGroupType'] ? t('group_type.' + grp['puavoEduGroupType'][0]) : nil,
         abbr: grp['cn'][0],
@@ -89,6 +90,39 @@ class GroupsController < ApplicationController
 
     render :json => @groups
   end
+
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
+
+  # Mass operation: delete group
+  def mass_op_group_delete
+    begin
+      group_id = params[:group][:id]
+    rescue
+      puts "mass_op_group_delete(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_group_delete(): missing params')
+    end
+
+    ok = false
+
+    begin
+      group = Group.find(group_id)
+      group.delete
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # ------------------------------------------------------------------------------------------------
+  # ------------------------------------------------------------------------------------------------
 
   # GET /:school_id/groups/1
   # GET /:school_id/groups/1.xml
@@ -116,6 +150,7 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups/new.xml
   def new
     @group = Group.new
+    @is_new_group = true
 
     respond_to do |format|
       format.html # new.html.erb
@@ -126,6 +161,7 @@ class GroupsController < ApplicationController
   # GET /:school_id/groups/1/edit
   def edit
     @group = get_group(params[:id])
+    @is_new_group = false
     return if @group.nil?
   end
 
@@ -218,6 +254,8 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/mark_group_members_for_deletion
   def mark_group_members_for_deletion
+    return unless is_owner?
+
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -250,6 +288,8 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unmark_group_members_deletion
   def unmark_group_members_deletion
+    return unless is_owner?
+
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -280,6 +320,8 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/lock_all_members
   def lock_all_members
+    return unless is_owner?
+
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -310,6 +352,8 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unlock_all_members
   def unlock_all_members
+    return unless is_owner?
+
     @group = get_group(params[:id])
     return if @group.nil?
 
@@ -421,6 +465,8 @@ class GroupsController < ApplicationController
 
   # GET /:school_id/groups/:group_id/get_members_as_csv
   def get_members_as_csv
+    return unless is_owner?
+
     @group = get_group(params[:id])
     return if @group.nil?
 

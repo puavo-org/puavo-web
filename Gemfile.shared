@@ -10,7 +10,6 @@ group :shared do
   gem "activeldap", "5.2.2", :require => "active_ldap"
   gem "rmagick"
   gem "uuid"
-  gem "redcarpet"
   gem "nokogiri"
   gem "resque"
 end

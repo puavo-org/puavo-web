@@ -145,7 +145,7 @@ const DEFAULT_USER_COLUMNS = [
 
 const PRESETS = [
     {
-        title: (I18n.locale == "fi") ? "Lukitut käyttäjät" : "Locked users",
+        title: "<%= t('users.index.filters.locked_users') %>",
         id: "locked",
         filters: [
             [true, "locked", OPERATOR_EQUAL, true],
@@ -153,7 +153,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi" : "Is marked for deletion",
+        title: "<%= t('users.index.filters.marked_for_deletion') %>",
         id: "marked_for_deletion",
         filters: [
             [true, "rrt", OPERATOR_GREATER_OR_EQUAL, [2010]],
@@ -161,7 +161,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi, ei lukittu" : "Is marked for deletion, but not locked",
+        title: "<%= t('users.index.filters.marked_for_deletion_not_locked') %>",
         id: "unlocked_deleted",
         filters: [
             [true, "locked", OPERATOR_NOT_EQUAL, true],
@@ -171,7 +171,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 90 päivää" : "Has been marked for removal for ≥ 90 days",
+        title: "<%= t('users.index.filters.marked_3months') %>",
         id: "marked_for_3months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 90],
@@ -180,7 +180,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 180 päivää" : "Has been marked for removal for ≥ 180 days",
+        title: "<%= t('users.index.filters.marked_6months') %>",
         id: "marked_for_6months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 180],
@@ -189,7 +189,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 270 päivää" : "Has been marked for removal for ≥ 270 days",
+        title: "<%= t('users.index.filters.marked_9months') %>",
         id: "marked_for_9months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 270],
@@ -198,7 +198,7 @@ const PRESETS = [
     },
 
     {
-        title: (I18n.locale == "fi") ? "Merkitty poistettavaksi ≥ 365 päivää" : "Has been marked for removal for ≥ 365 days",
+        title: "<%= t('users.index.filters.marked_12months') %>",
         id: "marked_for_12months",
         filters: [
             [true, "rrt", OPERATOR_LESS_OR_EQUAL, -60 * 60 * 24 * 365],
@@ -206,6 +206,200 @@ const PRESETS = [
         ],
     },
 ];
+
+class MassUserDeletion extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    processOneItem(item)
+    {
+        // Do some pre-filtering here, to prevent useless network traffic.
+        // All of these tests are also done on the server end in case the
+        // user tries to cheat by, for example, adjusting their system time.
+
+        if (item.dnd)
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"];
+
+        if (item.rrt === null)
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>"];
+
+        const now = Math.floor(Date.now() / 1000);
+        const next = item.rrt + (60 * 60 * 24 * 7);     // 7 days in seconds
+
+        if (next > now)
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>"];
+
+        // Good to go
+        const ret = doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_user_delete",
+            JSON.stringify({ id: item.id })
+        );
+
+        if (!ret.success) {
+            // Something failed in doSingleNetworkPost()
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+        }
+
+        if (!ret.networkReturn.success) {
+            // The actual operation failed
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+        }
+
+        return [MASS_OPERATION_ITEM_OK, null];
+    }
+};
+
+class MassUserLocking extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        // the default state (lock)
+        this.lock = true;
+
+        container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th><%= t('users.index.mass_operations.lock.action') %></th>
+    <td>
+        <input type="radio" name="mul_action_type" id="mul_action_lock" checked>
+        <label for="mul_action_lock"><%= t('users.index.mass_operations.lock.lock') %></label><br>
+        <input type="radio" name="mul_action_type" id="mul_action_unlock">
+        <label for="mul_action_unlock"><%= t('users.index.mass_operations.lock.unlock') %></label>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        container.querySelector("#mul_action_lock")
+            .addEventListener("click", event => this.setLockState(event, true));
+        container.querySelector("#mul_action_unlock")
+            .addEventListener("click", event => this.setLockState(event, false));
+    }
+
+    setLockState(event, state)
+    {
+        this.lock = state;
+    }
+
+    processOneItem(item)
+    {
+        // Do nothing if the user is already in the desired locking state
+        if (item.locked == this.lock)
+            return [MASS_OPERATION_ITEM_OK, null];
+
+        const ret = doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_user_lock",
+            JSON.stringify({ id: item.id, lock: this.lock })
+        );
+
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
+    }
+};
+
+class MassUserMarkForDeletion extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        // the default operation (mark for deletion if not marked yet)
+        this.operation = 0;
+
+        container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th><%= t('users.index.mass_operations.mark.action') %></th>
+    <td>
+        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark" checked>
+        <label for="mass_user_mark_mark"><%= t('users.index.mass_operations.mark.mark') %></label><br>
+        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_mark_force">
+        <label for="mass_user_mark_mark_force"><%= t('users.index.mass_operations.mark.mark_force') %></label><br>
+        <input type="radio" name="mass_user_mark_action" id="mass_user_mark_unmark">
+        <label for="mass_user_mark_unmark"><%= t('users.index.mass_operations.mark.unmark') %></label>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        container.querySelector("#mass_user_mark_mark")
+            .addEventListener("click", event => this.setOperation(event, 0));
+        container.querySelector("#mass_user_mark_mark_force")
+            .addEventListener("click", event => this.setOperation(event, 1));
+        container.querySelector("#mass_user_mark_unmark")
+            .addEventListener("click", event => this.setOperation(event, 2));
+    }
+
+    setOperation(event, op)
+    {
+        this.operation = op;
+    }
+
+    processOneItem(item)
+    {
+        // Pre-filter users, avoid useless network requests. All of these checks
+        // are also done on the server end.
+
+        if (item.dnd) {
+            // deletion prevented
+            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"];
+        }
+
+        if (item.rrt === null && this.operation == 2) {
+            // already unlocked
+            return [MASS_OPERATION_ITEM_OK, null];
+        }
+
+        if (item.rrt !== null && this.operation == 0) {
+            // already locked and not forced mode
+            return [MASS_OPERATION_ITEM_OK, null];
+        }
+
+        const ret = doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_user_mark",
+            JSON.stringify({ id: item.id, operation: this.operation })
+        );
+
+        if (!ret.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
+
+        if (!ret.networkReturn.success)
+            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
+
+        return [MASS_OPERATION_ITEM_OK, null];
+    }
+};
+
+// JavaScript class fields support is so poor that I can't really
+// define titles, IDs and other things in classes, they must be here
+let massOperations = {
+    "lock": {
+        title: "<%= t('users.index.mass_operations.lock.title') %>",
+        hasSettings: true,
+        clazz: MassUserLocking
+    },
+
+    "mark_for_deletion": {
+        title: "<%= t('users.index.mass_operations.mark.title') %>",
+        hasSettings: true,
+        clazz: MassUserMarkForDeletion
+    },
+
+    "delete": {
+        title: "<%= t('users.index.mass_operations.delete.title') %>",
+        hasSettings: false,
+        clazz: MassUserDeletion
+    },
+};
 
 // The current columns, initially the defaults
 var currentColumns = DEFAULT_USER_COLUMNS;
@@ -232,8 +426,11 @@ $(document).ready(function() {
         container: document.getElementById("usersList"),
 
         // Main table flags
+<% if current_user && current_user.organisation_owner? %>
+        flags: TABLE_FLAG_USERS | TABLE_FLAG_ENABLE_SELECTION,
+<% else %>
         flags: TABLE_FLAG_USERS,
-
+<% end %>
         // All possible columns, their titles, keys, flags, etc.
         columnDefs: USER_COLUMN_DEFS,
 
@@ -253,6 +450,9 @@ $(document).ready(function() {
 
         // Premade filter presets
         filterPresets: PRESETS,
+
+        // Mass operation definitions
+        massOperations: massOperations,
 
         // Name of the objects the table contains. Currently always a plural.
         itemName: "<%= t('users.index.users') %>",
