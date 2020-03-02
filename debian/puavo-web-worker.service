@@ -10,7 +10,6 @@ Type=simple
 User=puavo
 Group=puavo
 WorkingDirectory=/var/app/puavo-web
-Environment="GEM_HOME=/var/app/puavo-web/vendor/bundle/ruby/2.5.0"
 Environment="RAILS_ENV=production"
 ExecStart=/var/app/puavo-web/script/puavo-web-worker
 Restart=on-abnormal

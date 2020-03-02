@@ -86,6 +86,7 @@ install: clean-for-install mkdirs
 		README.md \
 		script \
 		vendor \
+		.bundle \
 		db \
 		$(INSTALL_DIR)
 
