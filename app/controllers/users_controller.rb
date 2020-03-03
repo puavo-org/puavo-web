@@ -453,7 +453,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       begin
         unless @user.save
-          raise User::UserError, I18n.t('flash.user.create_failed')
+          raise UserError, I18n.t('flash.user.create_failed')
         end
         if new_group_management?(@school)
           format.html { redirect_to( group_user_path(@school,@user) ) }
@@ -463,7 +463,7 @@ class UsersController < ApplicationController
           format.html { redirect_to( user_path(@school,@user) ) }
           format.json { render :json => nil }
         end
-      rescue User::UserError => e
+      rescue UserError => e
         logger.info "Create user, Exception: " + e.to_s
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
         error_message_and_render(format, 'new', e.message)
@@ -506,7 +506,7 @@ class UsersController < ApplicationController
               LdapOrganisation.current.remove_owner(@user)
             rescue StandardError => e
               logger.error e
-              raise User::UserError, I18n.t('flash.user.save_failed_organsation_owner_removal')
+              raise UserError, I18n.t('flash.user.save_failed_organsation_owner_removal')
             end
           end
 
@@ -526,14 +526,14 @@ class UsersController < ApplicationController
                 s.ldap_modify_operation(:delete, [{"puavoSchoolAdmin" => [@user.dn.to_s]}])
                 @user.ldap_modify_operation(:delete, [{"puavoAdminOfSchool" => [s.dn.to_s]}])
               rescue StandardError => e
-                raise User::UserError, I18n.t('flash.user.save_failed_school_admin_removal')
+                raise UserError, I18n.t('flash.user.save_failed_school_admin_removal')
               end
             end
           end
         end
 
         unless @user.update_attributes(user_params)
-          raise User::UserError, I18n.t('flash.user.save_failed')
+          raise UserError, I18n.t('flash.user.save_failed')
         end
 
         if new_group_management?(@school)
@@ -554,7 +554,7 @@ class UsersController < ApplicationController
         end
         flash[:notice] = t('flash.updated', :item => t('activeldap.models.user'))
         format.html { redirect_to( user_path(@school,@user) ) }
-      rescue User::UserError => e
+      rescue UserError => e
         @user_roles = params[:user][:role_ids].nil? ? [] : Role.find(params[:user][:role_ids]) || []
         get_user_groups
         error_message_and_render(format, 'edit',  e.message)

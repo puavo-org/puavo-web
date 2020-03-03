@@ -43,7 +43,7 @@ class PasswordController < ApplicationController
         setup_language(params.fetch(:lang, ''))
         @changing = username
 
-        raise User::UserError, I18n.t('flash.password.too_many_attempts')
+        raise UserError, I18n.t('flash.password.too_many_attempts')
         return
       end
 
@@ -88,15 +88,15 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
 
     if params[:login][:uid].empty?
-      raise User::UserError, I18n.t('flash.password.incomplete_form')
+      raise UserError, I18n.t('flash.password.incomplete_form')
     end
 
     unless params[:user][:new_password] == params[:user][:new_password_confirmation]
-      raise User::UserError, I18n.t('flash.password.confirmation_failed')
+      raise UserError, I18n.t('flash.password.confirmation_failed')
     end
 
     unless change_user_password(mode)
-      raise User::UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
+      raise UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
 
     # remember the changer's username, but not the target username
@@ -110,7 +110,7 @@ class PasswordController < ApplicationController
         format.html { render :action => "edit" }
       end
     end
-  rescue User::UserError => e
+  rescue UserError => e
     error_message_and_redirect(e.message)
   end
 
@@ -265,22 +265,22 @@ class PasswordController < ApplicationController
         new_password = params[:user][:new_password]
 
         if new_password.size < 8 then
-          raise User::UserError,
+          raise UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_too_short')
         end
         if new_password[0] == ' ' || new_password[-1] == ' ' then
-          raise User::UserError,
+          raise UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_whitespace')
         end
         if !new_password.ascii_only? then
-          raise User::UserError,
+          raise UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_ascii_only')
         end
       when 'oulu_ad'
         # Validate the password to contain at least eight characters
         new_password = params[:user][:new_password]
         if new_password.size < 8 then
-          raise User::UserError,
+          raise UserError,
                 I18n.t('activeldap.errors.messages.oulu_ad_password_too_short')
         end
 
@@ -289,7 +289,7 @@ class PasswordController < ApplicationController
         # Validate the password to contain at least six characters.
         new_password = params[:user][:new_password]
         if new_password.size < 6 then
-          raise User::UserError,
+          raise UserError,
                 I18n.t('activeldap.errors.messages.sixcharsmin_password_too_short')
         end
       when 'SevenCharsMin'
@@ -298,7 +298,7 @@ class PasswordController < ApplicationController
         # for validating and enforcing password requirements.
         new_password = params[:user][:new_password]
         if new_password.size < 7 then
-          raise User::UserError,
+          raise UserError,
                 I18n.t('activeldap.errors.messages.sevencharsmin_password_too_short')
         end
     end
@@ -313,7 +313,7 @@ class PasswordController < ApplicationController
     if external_login_status then
       case external_login_status
         when :external_login_failed
-          raise User::UserError,
+          raise UserError,
                 I18n.t('flash.password.invalid_login',
                        :uid => params[:login][:uid])
         when :external_login_ok
@@ -321,7 +321,7 @@ class PasswordController < ApplicationController
         else
           logger.warn "[#{msg_id}] raising exception"
 
-          raise User::UserError,
+          raise UserError,
                 I18n.t('flash.password.can_not_change_password', :code => msg_id)
       end
     end
@@ -340,7 +340,7 @@ class PasswordController < ApplicationController
       user_roles = Array(@logged_in_user.puavoEdupersonAffiliation || [])
 
       unless (user_roles & wanted_roles).any?
-        raise User::UserError, I18n.t('flash.password.go_away')
+        raise UserError, I18n.t('flash.password.go_away')
       end
     end
 
@@ -355,7 +355,7 @@ class PasswordController < ApplicationController
     end
 
     unless @user || external_login_status then
-      raise User::UserError, I18n.t('flash.password.invalid_user',
+      raise UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
     end
 
@@ -397,19 +397,19 @@ class PasswordController < ApplicationController
 
       case res['extlogin_status']
         when PuavoRest::ExternalLoginStatus::BADUSERCREDS
-          raise User::UserError,
+          raise UserError,
                 I18n.t('flash.password.invalid_external_login',
                        :uid => params[:login][:uid])
         when PuavoRest::ExternalLoginStatus::UPDATEERROR
-          raise User::UserError,
+          raise UserError,
                 I18n.t('flash.password.can_not_change_upstream_password')
         when PuavoRest::ExternalLoginStatus::USERMISSING
-          raise User::UserError, I18n.t('flash.password.invalid_user',
+          raise UserError, I18n.t('flash.password.invalid_user',
                                         :uid => params[:user][:uid])
       end
 
       logger.warn "[#{msg_id}] (password-change-error) UNKNOWN PASSWORD CHANGE ERROR, SEE ABOVE"
-      raise User::UserError, I18n.t('flash.password.failed', :code => msg_id)
+      raise UserError, I18n.t('flash.password.failed', :code => msg_id)
     end
 
     return true
