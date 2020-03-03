@@ -38,7 +38,7 @@ example2:
 # This is used to if browser request host not matched with other settings.
 hogwarts:
   name: Hogwarts
-  host: *
+  host: "*"
   ldap_host: <%= @hostname %>
   ldap_base: dc=edu,dc=hogwarts,dc=fi
   locale: en
