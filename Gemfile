@@ -1,9 +1,18 @@
 source 'http://rubygems.org'
 
-File.open("./Gemfile.shared") do |f|
-  eval f.read, nil, "./Gemfile.shared"
-end
+# gems shared with puavo-rest
+gem "rails", "5.1.7"
+gem "sprockets", "3.7.2"    # last version that works with Ruby 2.3
+gem "sqlite3"
+gem "prawn"
+gem "net-ldap"
+gem "activeldap", "5.2.2", :require => "active_ldap"
+gem "rmagick"
+gem "uuid"
+gem "nokogiri"
+gem "resque"
 
+# puavo-web specific games
 gem "pry"
 gem "unicorn"
 gem "gibberish"
