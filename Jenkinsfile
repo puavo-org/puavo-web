@@ -78,7 +78,7 @@ EOF
         sh '''
           apt-get update
           apt-get -y dist-upgrade
-          apt-get install -y devscripts dpkg-dev make wget
+          apt-get install -y devscripts dpkg-dev make rsync wget
         '''
       }
     }
