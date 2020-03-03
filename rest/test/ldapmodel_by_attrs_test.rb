@@ -45,7 +45,7 @@ describe "LdapModel#by_attrs(hash)" do
   end
 
   it "with bang(!) raises NotFound if not found" do
-    assert_raises LdapModel::NotFound do
+    assert_raises NotFound do
       PuavoRest::Group.by_attrs!({
         :name => "Unknown",
         :school_dn => @school_a.dn
