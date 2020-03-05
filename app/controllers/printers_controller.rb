@@ -1,8 +1,6 @@
 class PrintersController < ApplicationController
   # POST /devices/printers.json
   def create
-    return unless is_owner?
-
     @printer = Printer.new(printer_params)
 
     respond_to do |format|
