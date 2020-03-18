@@ -1584,6 +1584,7 @@ class SuperTable {
             school: params.schoolName || "unknown",
             itemName: params.itemName || "",
             columnEditorSubtitle: params.columnEditorSubtitle || null,
+            permitUserDeletion: params.permitUserDeletion || false,
         };
 
         if (this.settings.url === undefined || this.settings.url === null)
@@ -3678,6 +3679,11 @@ class SuperTable {
             actionsColumn.appendChild(editButton);
 
             let deleteEnabled = true;
+
+            if (!this.settings.permitUserDeletion) {
+                // user deletion explicitly disabled in settings
+                deleteEnabled = false;
+            }
 
             if (this.settings.flags & TABLE_FLAG_USERS) {
                 // don't display the delete button for users who cannot be deleted
