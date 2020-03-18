@@ -1,6 +1,6 @@
 class ImportToolController < ApplicationController
   def index
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     school = School.find(params["school_id"])
     @import_tool_options = {

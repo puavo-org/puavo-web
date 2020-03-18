@@ -27,7 +27,7 @@ end
 class ExtendedSearchController < ApplicationController
   # GET /extended_search
   def index
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     respond_to do |format|
       format.html # index.html.erb

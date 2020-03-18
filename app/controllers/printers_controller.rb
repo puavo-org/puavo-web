@@ -14,7 +14,7 @@ class PrintersController < ApplicationController
 
   # GET /devices/printers
   def index
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     # Collect servers and group printers in them
     servers = {}
@@ -58,7 +58,7 @@ class PrintersController < ApplicationController
 
   # GET /devices/printers/1/edit
   def edit
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @printer = Printer.find(params[:id])
     @server = Server.find(@printer.puavoServer)
@@ -110,7 +110,7 @@ class PrintersController < ApplicationController
 
   # PUT /devices/printers/1
   def update
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @printer = Printer.find(params[:id])
 
@@ -126,7 +126,7 @@ class PrintersController < ApplicationController
 
   # DELETE /devices/printers/1
   def destroy
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @printer = Printer.find(params[:id])
     @printer.destroy

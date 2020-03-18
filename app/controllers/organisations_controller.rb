@@ -4,7 +4,7 @@ class OrganisationsController < ApplicationController
   def show
     # argh, some LDAP tests need to use this :-(
     if request.format == 'text/html'
-      return unless is_owner?
+      return if redirected_nonowner_user?
     end
 
     @organisation = LdapOrganisation.current
@@ -27,7 +27,7 @@ class OrganisationsController < ApplicationController
 
   # GET /organisation/edit
   def edit
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @organisation = LdapOrganisation.current
 
@@ -38,7 +38,7 @@ class OrganisationsController < ApplicationController
 
   # PUT /organisation
   def update
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @organisation = LdapOrganisation.current
 
@@ -98,7 +98,7 @@ class OrganisationsController < ApplicationController
 
   # GET /organisation/wlan
   def wlan
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @organisation = LdapOrganisation.current
 
@@ -109,7 +109,7 @@ class OrganisationsController < ApplicationController
 
   # PUT /organisation/wlan/update
   def wlan_update
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @organisation = LdapOrganisation.current
 
@@ -129,7 +129,7 @@ class OrganisationsController < ApplicationController
 
   # GET /users/owners
   def owners
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     # List of (admin) users who currently ARE the owners of this organisation
     @owners = []
@@ -178,7 +178,7 @@ class OrganisationsController < ApplicationController
 
   # PUT /users/add_owner/1
   def add_owner
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @user = User.find(params[:user_id])
 
@@ -198,6 +198,8 @@ class OrganisationsController < ApplicationController
 
   # PUT /users/remove_owner/1
   def remove_owner
+    return if redirected_nonowner_user?
+
     @user = User.find(params[:user_id])
 
     respond_to do |format|
@@ -212,7 +214,7 @@ class OrganisationsController < ApplicationController
   # GET /users/find_all_users_marked_for_deletion
   # (A button on the organisation info page)
   def find_all_users_marked_for_deletion
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     unless current_user.organisation_owner?
       respond_to do |format|
@@ -309,7 +311,7 @@ class OrganisationsController < ApplicationController
 
   # DELETE /users/find_all_users_marked_for_deletion
   def delete_all_users_marked_for_deletion
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     if !params || !params['before'] || params['before'].empty?
       flash[:alert] = t('organisations.deleted_users.missing_date')

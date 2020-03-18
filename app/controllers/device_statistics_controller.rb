@@ -44,7 +44,7 @@ class DeviceStatisticsController < ApplicationController
   end
 
   def organisation_statistics
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @total_devices = 0
     @devices = []

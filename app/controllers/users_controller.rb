@@ -774,7 +774,7 @@ class UsersController < ApplicationController
   end
 
   def prevent_deletion
-    return unless is_owner?
+    return unless did_non_owner_redirection?
 
     @user = User.find(params[:id])
 
@@ -832,7 +832,7 @@ class UsersController < ApplicationController
   end
 
   def delete_marked_users
-    return unless is_owner?
+    return unless did_non_owner_redirection?
 
     delete_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
 
