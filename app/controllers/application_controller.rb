@@ -200,6 +200,11 @@ class ApplicationController < ActionController::Base
     render :status => 404, :template => "/errors/generic.html.erb"
   end
 
+  # Returns true if the current user is an organisation owner
+  def is_owner?
+    current_user && LdapOrganisation.current.owner.include?(current_user.dn)
+  end
+
   # Returns true if a non-owner was redirected away from the page they were trying to view
   def redirected_nonowner_user?
     return false if current_user && LdapOrganisation.current.owner.include?(current_user.dn)
