@@ -774,7 +774,7 @@ class UsersController < ApplicationController
   end
 
   def prevent_deletion
-    return unless did_non_owner_redirection?
+    return if redirected_nonowner_user?
 
     @user = User.find(params[:id])
 
@@ -832,7 +832,7 @@ class UsersController < ApplicationController
   end
 
   def delete_marked_users
-    return unless did_non_owner_redirection?
+    return if redirected_nonowner_user?
 
     delete_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
 
