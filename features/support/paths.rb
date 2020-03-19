@@ -61,6 +61,8 @@ module NavigationHelpers
       user_path(@school)
     when /the new user import page/
       new_users_import_path(@school)
+    when /the school users list page/
+      users_path(@school)
 
     # Group path
     when /the group page/

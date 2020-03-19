@@ -75,6 +75,8 @@ class UsersController < ApplicationController
 
   # New AJAX-based index for non-test environments
   def new_cool_users_index
+    @is_owner = is_owner?
+
     respond_to do |format|
       format.html # index.html.erb
     end
@@ -356,6 +358,9 @@ class UsersController < ApplicationController
       data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
+    # Can the currently logged in user delete users?
+    @permit_user_deletion = is_owner?
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
@@ -565,13 +570,14 @@ class UsersController < ApplicationController
   # DELETE /:school_id/users/1
   # DELETE /:school_id/users/1.xml
   def destroy
+    return if redirected_nonowner_user?
+
     @user = get_user(params[:id])
     return if @user.nil?
 
     if @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
     else
-
       # Remove the user from external systems first
       status, message = delete_user_from_external_systems(@user)
 

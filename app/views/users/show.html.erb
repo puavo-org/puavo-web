@@ -228,6 +228,7 @@
       <% end %>
       <% end %>
 
+      <% if @permit_user_deletion %>
       <% unless @user.puavoDoNotDelete %>
       <ul>
         <li>
@@ -236,6 +237,7 @@
           <% end %>
         </li>
       </ul>
+      <% end %>
       <% end %>
 
     </div>
