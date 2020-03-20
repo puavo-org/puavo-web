@@ -371,7 +371,8 @@ class UsersController < ApplicationController
 
   def setup_integrations_for_form(school, is_new_user)
     @is_admin_school = school.displayName == 'Administration'
-    @primus_warning = false
+    @have_primus = false
+    @have_gsuite = false
     @gsuite_pw_warning = :none
     @next_gsuite_update = nil
     @needs_password_validator = false
@@ -379,7 +380,8 @@ class UsersController < ApplicationController
     unless @is_admin_school
       # Administration schools NEVER show/have any integrations, even if someone
       # defines them.
-      @primus_warning = school_has_integration?(school.id, 'primus')
+      @have_primus = school_has_integration?(school.id, 'primus')
+      @have_gsuite = school_has_integration?(school.id, 'gsuite')
 
       if school_has_integration?(school.id, 'gsuite_password')
         if is_new_user

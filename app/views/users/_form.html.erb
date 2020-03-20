@@ -2,11 +2,15 @@
 <%= javascript_include_tag 'password_validator', skip_pipeline: true %>
 <% end %>
 
-<p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
-
-<% if @primus_warning %>
+<% if @have_primus %>
 <p class="genericWarning"><%= t(@is_new_user ? 'users.form.primus_warning_new' : 'users.form.primus_warning_edit') %></p>
 <% end %>
+
+<% if @is_new_user && @have_gsuite %>
+<p class="genericWarning"><%= t('users.form.gsuite_duplicate_prevention') %></p>
+<% end %>
+
+<p class="requiredTitle"><%= t('layouts.forms.required_field')%></p>
 
 <%= form_for(@user, url: path, html: { method: method, multipart: true })  do |f| %>
   <table class="editForm">
@@ -156,7 +160,7 @@
         <% end %>
         <%= f.password_field :new_password, value: @user.new_password  %>
       <% elsif @gsuite_pw_warning == :new %>
-        <p class="genericWarning"><%= t('users.form.gsuite_password_new', :next_sync => @next_gsuite_update) %></p>
+        <p class="genericNotice"><%= t('users.form.gsuite_password_new', :next_sync => @next_gsuite_update) %></p>
       <% elsif @gsuite_pw_warning == :edit %>
         <p class="genericNotice"><%= t('users.form.gsuite_password_edit') %></p>
         <%= show_password_requirements(@school.id) %>
