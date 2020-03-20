@@ -23,6 +23,8 @@ gem "redis-namespace", "1.6.0"
 gem "sassc-rails"
 gem "jquery-rails"
 
+gem "parse-cron"
+
 group :test do
   gem "capybara", "3.15.0"    # 3.15.0 is the last that works with Ruby 2.3.x
   gem "colorize"

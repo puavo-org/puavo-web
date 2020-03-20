@@ -26,8 +26,8 @@
       <% if integration_names.include?(name) %>
       <li>
         <span class="system"><%= integration_names[name] %></span>:
-        <span class="at"><%= upd[:at].nil? ? "?" : upd[:at].strftime("%d.%m.%Y %H:%M") %></span>
-        <span class="in"><%= sprintf('(%d h %d m)', upd[:in][0], upd[:in][1]) %></span>
+        <span class="at"><%= upd[:at].strftime("%d.%m.%Y %H:%M") %></span>
+        <span class="in"><%= upd[:in] %></span>
       </li>
       <% end %>
     <% end %>

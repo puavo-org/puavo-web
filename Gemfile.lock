@@ -151,6 +151,7 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.7)
       mini_portile2 (~> 2.4.0)
+    parse-cron (0.1.4)
     pdf-core (0.7.0)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
@@ -296,6 +297,7 @@ DEPENDENCIES
   jwt (= 2.1.0)
   net-ldap
   nokogiri
+  parse-cron
   prawn
   pry
   rails (= 5.1.7)

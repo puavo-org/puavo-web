@@ -388,8 +388,8 @@ class UsersController < ApplicationController
           # next gsuite update time
           @next_update = get_school_single_integration_next_update(school.id, 'gsuite', Time.now)
 
-          if @next_update && @next_update.include?(:at)
-            @next_gsuite_update = @next_update[:at].strftime("%d.%m.%Y %H:%M")
+          if @next_update
+            @next_gsuite_update = @next_update.strftime("%d.%m.%Y %H:%M")
           else
             # this is an error, but avoid crashing or anything
             @next_gsuite_update = '(???)'
