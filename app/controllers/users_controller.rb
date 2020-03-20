@@ -105,6 +105,25 @@ class UsersController < ApplicationController
                               :scope => :one,
                               :attributes => attributes)
 
+    # Get a list of organisation owners and school admins
+    organisation_owners = LdapOrganisation.current.owner.each
+      .select { |dn| dn != "uid=admin,o=puavo" }
+      .map{ |o| o.to_s }
+
+    if organisation_owners.nil?
+      organisation_owners = []
+    end
+
+    organisation_owners = Set.new(organisation_owners)
+
+    if @school
+      school_admins = @school.user_school_admins.each.map{ |a| a.dn.to_s }
+    else
+      school_admins = []
+    end
+
+    school_admins = Set.new(school_admins)
+
     # convert the raw data into something we can easily parse in JavaScript
     users = []
 
@@ -142,6 +161,10 @@ class UsersController < ApplicationController
 
         u[:type] = types if types
       end
+
+      # Owners and school admin flags. Set only if needed.
+      u[:owner] = true if organisation_owners.include?(dn)
+      u[:admin] = true if school_admins.include?(dn)
 
       users << u
     end
