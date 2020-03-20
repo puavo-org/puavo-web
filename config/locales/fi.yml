@@ -447,8 +447,8 @@ fi:
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
       email_not_found: "Sähköpostiosoitetta ei löydy: %{email}"
       connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
-      can_not_change_password: "Jostakin syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen! Lokikoodi: %{code}."
-      can_not_change_upstream_password: "Jostakin syystä salasanan vaihto lähdepalveluun ei onnistunut.  Yritä myöhemmin uudelleen!"
+      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen! Lokikoodi: %{code}."
+      can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä myöhemmin uudelleen!"
       token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
       too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viesti.
       too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
