@@ -1,7 +1,14 @@
 # Helper methods for third-party system integrations
 
 require 'json'
-require 'parse-cron'
+
+if ENV.include?('RAILS_ENV') && ENV['RAILS_ENV'] != 'test'
+  # OF COURSE puavo-rest tests will include this file and then explode
+  # because puavo-rest's Gemfile does not include the cron parser gem.
+  # I can't even begin/rescue the require, as apparently Rails does
+  # something that overrides exception handling here.
+  require 'parse-cron'
+end
 
 module Puavo
   module Integrations
