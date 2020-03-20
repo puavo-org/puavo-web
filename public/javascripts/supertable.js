@@ -3695,7 +3695,17 @@ class SuperTable {
                 // let RoR JS helpers deal with the confirmation question
                 let deleteButton = newElem({ tag: "a", classes: ["btn", "btn-danger"] });
 
-                deleteButton.dataset.confirm = I18n.translate("supertable.actions.remove_confirm");
+                let translationId = "";
+
+                if ((rowData.owner && rowData.owner === true) || (rowData.admin && rowData.admin === true)) {
+                    // an admin/owner user
+                    translationId = "supertable.actions.remove_confirm_admin";
+                } else {
+                    // a normal user
+                    translationId = "supertable.actions.remove_confirm";
+                }
+
+                deleteButton.dataset.confirm = I18n.translate(translationId);
                 deleteButton.dataset.method = "delete";
                 deleteButton.href = rowData["link"];
                 deleteButton.rel = "nofollow";

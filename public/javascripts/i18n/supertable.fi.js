@@ -80,6 +80,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             title: "Toiminnot",
             edit: "Muokkaa...",
             remove_confirm: "Oletko varma?",
+            remove_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?",
             remove: "Poista",
         },
 

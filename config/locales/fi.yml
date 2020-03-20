@@ -151,6 +151,7 @@ fi:
   # Various uncategorized strings
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot

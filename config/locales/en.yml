@@ -151,6 +151,7 @@ en:
   # Various uncategorized strings
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
+  destroy_confirm: "This user is an owner and/or a school admin. Are you sure?"
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions

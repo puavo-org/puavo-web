@@ -77,6 +77,7 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
             title: "Actions",
             edit: "Edit...",
             remove_confirm: "Are you sure?",
+            remove_confirm_admin: "This user is an owner and/or a school admin. Are you sure?",
             remove: "Delete",
         },
 
