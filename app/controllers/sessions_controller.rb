@@ -47,8 +47,8 @@ class SessionsController < ApplicationController
   end
 
   def logo
-    send_file( Rails.root.join('rest', 'public', 'v3', 'img', 'opinsys_logo.png'),
-               :type => 'image/png',
+    send_file( Rails.root.join('rest', 'public', 'v3', 'img', 'opinsys_logo.svg'),
+               :type => 'image/svg+xml',
                :disposition => 'inline' )
   end
 
