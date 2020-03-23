@@ -379,6 +379,7 @@ fi:
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"
       owner_removed: "%{user} ei ole enää omistajana tässä organisaatiossa"
+      cant_remove_self: "Et voi poistaa itseltäsi omistajaoikeuksia. Jonkun muun omistajatason käyttäjän on poistettava sinut omistajista."
     group:
       role_added: "Rooli lisättiin ryhmään."
       role_added_failed: "Lisäys epäonnistui."
@@ -506,6 +507,7 @@ fi:
       organisation_owners: "Seuraavilla ylläpitäjillä on hallintaoikeus organisaatioon"
       removed_owners_title: "VAROITUS:"
       removed_owners_warning: "Seuraavat käyttäjät on poistettu, mutta heidät on yhä listattu organisaation omistajissa. Opinsysin tuki auttaa tässä asiassa."
+      cant_remove_yourself: "(Et voi poistaa omaa omistusoikeuttasi)"
     deleted_users:
       title: "Organisaation poistettavaksi merkityt käyttäjät"
       time_range: "Aikarajaus"

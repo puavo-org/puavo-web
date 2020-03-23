@@ -379,6 +379,7 @@ en:
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
       owner_added: "%{user} is now an owner of this organisation"
       owner_removed: "%{user} is no longer an owner of this organisation"
+      cant_remove_self: "You can't remove yourself from the owners. Another owner-level user must remove you from the owners."
     group:
       role_added: Role was added to group.
       role_added_failed: Failed to add.
@@ -506,6 +507,7 @@ en:
       organisation_owners: "The following admins are owners in this organisation:"
       removed_owners_title: "WARNING:"
       removed_owners_warning: "The following admins have been removed, but they're still listed as owners in this organisation. Contact Opinsys support for assistance."
+      cant_remove_yourself: "(You can't remove your own owner-level rights)"
     deleted_users:
       title: "Users in the organisation who are marked for deletion"
       time_range: "Date range"

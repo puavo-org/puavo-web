@@ -174,6 +174,7 @@ class OrganisationsController < ApplicationController
       o.school = schools[dn]
     end
 
+    @logged_in_user = current_user.dn.to_s
   end
 
   # PUT /users/add_owner/1
@@ -201,6 +202,14 @@ class OrganisationsController < ApplicationController
     return if redirected_nonowner_user?
 
     @user = User.find(params[:user_id])
+
+    # Users cannot remove themselves from owners. The buttons aren't shown,
+    # but the URL can still be manipulated.
+    if @user.dn.to_s == current_user.dn.to_s
+      flash[:alert] = t('flash.organisation.cant_remove_self')
+      redirect_to(owners_organisation_path)
+      return
+    end
 
     respond_to do |format|
       if LdapOrganisation.current.remove_owner(@user)
