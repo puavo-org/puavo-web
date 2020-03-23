@@ -153,7 +153,7 @@ class Groups < PuavoSinatra
     'external_id'   => 'puavoExternalId',
     'school_id'     => 'puavoSchool',
     'member_uid'    => 'memberUid',
-    'member_dns'    => 'member',
+    'member_dn'     => 'member',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
@@ -165,7 +165,7 @@ class Groups < PuavoSinatra
     'puavoExternalId' => { name: 'external_id' },
     'puavoSchool'     => { name: 'school_id', type: :id_from_dn },
     'memberUid'       => { name: 'member_uid' },
-    'member'          => { name: 'member_dns' },
+    'member'          => { name: 'member_dn' },
   }
 
   def v4_do_group_search(id, requested_ldap_attrs)
