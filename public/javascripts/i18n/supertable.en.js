@@ -94,6 +94,8 @@ I18n.translations["en"] = I18n.extend((I18n.translations["en"] || {}),
 
         misc: {
             unset_group_type: "(Missing / not set)",
+            user_is_owner: "(Organisation owner)",
+            user_is_admin: "(School admin)",
         },
     },
 });

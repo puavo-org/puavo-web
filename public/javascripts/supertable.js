@@ -534,6 +534,7 @@ const COLUMN_TYPE_STRING = 1,
 // Column data subtypes, for enabling highly context-specific things that would be
 // otherwise very hard to do. Again, no zeroes here.
 const COLUMN_SUBTYPE_USER_USERNAME = 1,
+      COLUMN_SUBTYPE_USER_ROLES = 6,
       COLUMN_SUBTYPE_GROUP_NAME = 2,
       COLUMN_SUBTYPE_GROUP_TYPE = 3,
       COLUMN_SUBTYPE_DEVICE_HOSTNAME = 4,
@@ -3629,6 +3630,26 @@ class SuperTable {
                             if (rowData["locked"])
                                 contents = `<a href="${link}">${contents}</a> <i class="icon-lock"></i>`;
                             else contents = `<a href="${link}">${contents}</a>`;
+                            break;
+                        }
+
+                        case COLUMN_SUBTYPE_USER_ROLES: {
+                            // Split and display owners/admins separately
+                            contents = contents
+                                .map(i => escapeHTML(i))
+                                .join("<br>");
+
+                            let admins = [];
+
+                            if (rowData.owner && rowData.owner === true)
+                                admins.push(I18n.translate("supertable.misc.user_is_owner"));
+
+                            if (rowData.admin && rowData.admin === true)
+                                admins.push(I18n.translate("supertable.misc.user_is_admin"));
+
+                            if (admins.length > 0)
+                                contents = `<span class="adminUsers">${admins.join("<br>")}</span><br>` + contents;
+
                             break;
                         }
 

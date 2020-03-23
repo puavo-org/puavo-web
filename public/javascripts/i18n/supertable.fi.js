@@ -98,6 +98,8 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
 
         misc: {
             unset_group_type: "(Puuttuu / ei asetettu)",
+            user_is_owner: "(Organisaation omistaja)",
+            user_is_admin: "(Koulun ylläpitäjä)",
         },
     },
 });
