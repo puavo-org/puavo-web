@@ -267,7 +267,7 @@ class SSO < PuavoSinatra
     end
 
     @login_content = {
-      "opinsys_logo_url" => "/v3/img/opinsys_logo.png",
+      "opinsys_logo_url" => "/v3/img/opinsys_logo.svg",
       "external_service_name" =>  @external_service["name"],
       "return_to" => params['return_to'] || params['return'] || nil,
       "organisation" => @organisation,

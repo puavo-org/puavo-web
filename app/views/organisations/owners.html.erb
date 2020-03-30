@@ -18,11 +18,17 @@
     <% Array(@owners).each do |u| %>
     <tr>
       <td><%= link_to "#{u.displayName} (#{u.uid})", user_path(u.school, u) %> (<%= u.school.displayName %>)</td>
-      <td><%= link_to(t('link.remove') + ' ►',
+      <td>
+        <% if @logged_in_user == u.dn.to_s %>
+        <span class="noOwnerSelfRemove"><%= t('organisations.owners.cant_remove_yourself') %></span>
+        <% else %>
+        <%= link_to(t('link.remove') + ' ►',
                       remove_owner_organisations_path(u),
                       method: :put,
                       id: "remove_user_#{u.id}",
-                      class: 'btn') %></td>
+                      class: 'btn') %>
+        <% end %>
+      </td>
     </tr>
     <% end %>
   </table>

@@ -2,7 +2,7 @@ class ServersController < ApplicationController
   # GET /servers
   # GET /servers.xml
   def index
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @servers = Server.all
     @servers = @servers.sort{ |a, b| a.puavoHostname.downcase <=> b.puavoHostname.downcase }
@@ -25,7 +25,7 @@ class ServersController < ApplicationController
   # GET /servers/1
   # GET /servers/1.xml
   def show
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @server = Server.find(params[:id])
     @server.get_certificate(current_organisation.organisation_key, @authentication.dn, @authentication.password)
@@ -55,7 +55,7 @@ class ServersController < ApplicationController
   # GET /servers/new
   # GET /servers/new.xml
   def new
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @server = Server.new
 
@@ -68,7 +68,7 @@ class ServersController < ApplicationController
 
   # GET /servers/1/edit
   def edit
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @server = Server.find(params[:id])
     @schools = School.all
@@ -112,7 +112,7 @@ class ServersController < ApplicationController
   # PUT /servers/1
   # PUT /servers/1.xml
   def update
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @server = Server.find(params[:id])
     @schools = School.all
@@ -144,7 +144,7 @@ class ServersController < ApplicationController
   # DELETE /servers/1
   # DELETE /servers/1.xml
   def destroy
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @server = Server.find(params[:id])
     # FIXME, revoke certificate only if device's include certificate
@@ -161,7 +161,7 @@ class ServersController < ApplicationController
 
   # DELETE /servers/1
   def revoke_certificate
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @server = Server.find(params[:id])
     # FIXME, revoke certificate only if server's include certificate

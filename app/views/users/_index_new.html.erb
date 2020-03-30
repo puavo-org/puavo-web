@@ -63,8 +63,9 @@ const USER_COLUMN_DEFS = {
     type: {
         key: "type",
         title: "<%= t('columns.users.type') %>",
-        flags: COLUMN_FLAG_SORTABLE | COLUMN_FLAG_SPLIT,
+        flags: COLUMN_FLAG_SORTABLE,
         type: COLUMN_TYPE_STRING,
+        subType: COLUMN_SUBTYPE_USER_ROLES,
         defaultOperator: OPERATOR_EQUAL,
     },
 
@@ -207,6 +208,7 @@ const PRESETS = [
     },
 ];
 
+<% if @is_owner %>
 class MassUserDeletion extends MassOperationBase {
     constructor(parent, container)
     {
@@ -250,6 +252,7 @@ class MassUserDeletion extends MassOperationBase {
         return [MASS_OPERATION_ITEM_OK, null];
     }
 };
+<% end %>
 
 class MassUserLocking extends MassOperationBase {
     constructor(parent, container)
@@ -394,11 +397,13 @@ let massOperations = {
         clazz: MassUserMarkForDeletion
     },
 
+<% if @is_owner %>
     "delete": {
         title: "<%= t('users.index.mass_operations.delete.title') %>",
         hasSettings: false,
         clazz: MassUserDeletion
     },
+<% end %>
 };
 
 // The current columns, initially the defaults
@@ -426,7 +431,7 @@ $(document).ready(function() {
         container: document.getElementById("usersList"),
 
         // Main table flags
-<% if current_user && current_user.organisation_owner? %>
+<% if @is_owner %>
         flags: TABLE_FLAG_USERS | TABLE_FLAG_ENABLE_SELECTION,
 <% else %>
         flags: TABLE_FLAG_USERS,
@@ -456,6 +461,10 @@ $(document).ready(function() {
 
         // Name of the objects the table contains. Currently always a plural.
         itemName: "<%= t('users.index.users') %>",
+
+<% if @is_owner %>
+        permitUserDeletion: true,
+<% end %>
 
         // Column editor subtitle
         columnEditorSubtitle: "<%= t('layouts.application.users') %>",

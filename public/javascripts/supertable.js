@@ -534,6 +534,7 @@ const COLUMN_TYPE_STRING = 1,
 // Column data subtypes, for enabling highly context-specific things that would be
 // otherwise very hard to do. Again, no zeroes here.
 const COLUMN_SUBTYPE_USER_USERNAME = 1,
+      COLUMN_SUBTYPE_USER_ROLES = 6,
       COLUMN_SUBTYPE_GROUP_NAME = 2,
       COLUMN_SUBTYPE_GROUP_TYPE = 3,
       COLUMN_SUBTYPE_DEVICE_HOSTNAME = 4,
@@ -1584,6 +1585,7 @@ class SuperTable {
             school: params.schoolName || "unknown",
             itemName: params.itemName || "",
             columnEditorSubtitle: params.columnEditorSubtitle || null,
+            permitUserDeletion: params.permitUserDeletion || false,
         };
 
         if (this.settings.url === undefined || this.settings.url === null)
@@ -3631,6 +3633,26 @@ class SuperTable {
                             break;
                         }
 
+                        case COLUMN_SUBTYPE_USER_ROLES: {
+                            // Split and display owners/admins separately
+                            contents = contents
+                                .map(i => escapeHTML(i))
+                                .join("<br>");
+
+                            let admins = [];
+
+                            if (rowData.owner && rowData.owner === true)
+                                admins.push(I18n.translate("supertable.misc.user_is_owner"));
+
+                            if (rowData.admin && rowData.admin === true)
+                                admins.push(I18n.translate("supertable.misc.user_is_admin"));
+
+                            if (admins.length > 0)
+                                contents = `<span class="adminUsers">${admins.join("<br>")}</span><br>` + contents;
+
+                            break;
+                        }
+
                         case COLUMN_SUBTYPE_GROUP_NAME:
                             contents = `<a href="${link}">${contents}</a> (${rowData["members"]})`;
                             break;
@@ -3679,6 +3701,11 @@ class SuperTable {
 
             let deleteEnabled = true;
 
+            if (!this.settings.permitUserDeletion) {
+                // user deletion explicitly disabled in settings
+                deleteEnabled = false;
+            }
+
             if (this.settings.flags & TABLE_FLAG_USERS) {
                 // don't display the delete button for users who cannot be deleted
                 if (rowData["dnd"])
@@ -3689,7 +3716,17 @@ class SuperTable {
                 // let RoR JS helpers deal with the confirmation question
                 let deleteButton = newElem({ tag: "a", classes: ["btn", "btn-danger"] });
 
-                deleteButton.dataset.confirm = I18n.translate("supertable.actions.remove_confirm");
+                let translationId = "";
+
+                if ((rowData.owner && rowData.owner === true) || (rowData.admin && rowData.admin === true)) {
+                    // an admin/owner user
+                    translationId = "supertable.actions.remove_confirm_admin";
+                } else {
+                    // a normal user
+                    translationId = "supertable.actions.remove_confirm";
+                }
+
+                deleteButton.dataset.confirm = I18n.translate(translationId);
                 deleteButton.dataset.method = "delete";
                 deleteButton.href = rowData["link"];
                 deleteButton.rel = "nofollow";

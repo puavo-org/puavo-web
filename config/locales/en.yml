@@ -151,6 +151,7 @@ en:
   # Various uncategorized strings
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
+  destroy_confirm: "This user is an owner and/or a school admin. Are you sure?"
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions
@@ -171,6 +172,7 @@ en:
   language_de_DE: German (Germany)
   language_de_CH: German (Switzerland)
   language_fr_CH: French (Switzerland)
+  language_id_ID: Indonesian
   language_default: Default
 
   group_type:
@@ -378,6 +380,7 @@ en:
       wrong_user_type: Organisation owner access rights can be added only if the type of the user is admin
       owner_added: "%{user} is now an owner of this organisation"
       owner_removed: "%{user} is no longer an owner of this organisation"
+      cant_remove_self: "You can't remove yourself from the owners. Another owner-level user must remove you from the owners."
     group:
       role_added: Role was added to group.
       role_added_failed: Failed to add.
@@ -505,6 +508,7 @@ en:
       organisation_owners: "The following admins are owners in this organisation:"
       removed_owners_title: "WARNING:"
       removed_owners_warning: "The following admins have been removed, but they're still listed as owners in this organisation. Contact Opinsys support for assistance."
+      cant_remove_yourself: "(You can't remove your own owner-level rights)"
     deleted_users:
       title: "Users in the organisation who are marked for deletion"
       time_range: "Date range"
@@ -744,6 +748,7 @@ en:
       add_telephone_number: Add another telephone number
       primus_warning_new: "Primus integration is enabled in this school. Giving an external ID to the new user can break the synchronisation system, and cause users to be marked for later deletion even if they shouldn't be!"
       primus_warning_edit: "Primus integration is enabled in this school. Any changes to existing user's names, email addresses or telephone numbers may be undone during the next synchronisation run. Changing or adding the external ID can break the synchronisation system, and cause users to be marked for later deletion even if they shouldn't be!"
+      gsuite_duplicate_prevention: "G Suite integration is enabled. If you are creating a new account for a user who already has a Google account, then please contact support, so that the new Puavo account can be connected to the existing Google account. This way user synchronisation does not break, and duplicate account creation attempts are prevented."
       gsuite_password_new: "G Suite password synchronisation is in use in this school. You cannot set the password of the new user before the user has been synchronised to G Suite. The next synchronisation is done at %{next_sync}, you can set the password a few minutes afer that."
       gsuite_password_edit: "G Suite password synchronisation is in use in this school. Before changing the password, please ensure the user has been synchronised to G Suite. Otherwise the password will be changed to Puavo, but not to G Suite. If you are editing a user who isn't participating in the synchronisation, you can ignore this notification (the system does not know which users actually are synchronised)."
     select_school:

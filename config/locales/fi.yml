@@ -151,6 +151,7 @@ fi:
   # Various uncategorized strings
   general_confirm: Oletko varma?
   destroy_confirm: Haluatko varmasti poistaa (%{object_name})?
+  destroy_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?"
   ldap_create_time: Luotu (LDAP)
   ldap_modify_time: Muokattu (LDAP)
   actions: Toiminnot
@@ -171,6 +172,7 @@ fi:
   language_de_DE: Saksa (Saksa)
   language_de_CH: Saksa (Sveitsi)
   language_fr_CH: Ranska (Sveitsi)
+  language_id_ID: Indonesia
   language_default: Oletus
 
   group_type:
@@ -378,6 +380,7 @@ fi:
       wrong_user_type: "Organisaation omistajaksi voidaan asettaa käyttäjiä, joiden tyyppi on ylläpitäjä"
       owner_added: "%{user} on lisätty organisaation omistajaksi"
       owner_removed: "%{user} ei ole enää omistajana tässä organisaatiossa"
+      cant_remove_self: "Et voi poistaa itseltäsi omistajaoikeuksia. Jonkun muun omistajatason käyttäjän on poistettava sinut omistajista."
     group:
       role_added: "Rooli lisättiin ryhmään."
       role_added_failed: "Lisäys epäonnistui."
@@ -447,8 +450,8 @@ fi:
       invalid_user: "Käyttäjätunnusta (%{uid}) ei ole olemassa"
       email_not_found: "Sähköpostiosoitetta ei löydy: %{email}"
       connection_failed: Pahoittelut, mutta jotain meni nyt pieleen. Yritä myöhemmin uudelleen!
-      can_not_change_password: "Jostakin syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen! Lokikoodi: %{code}."
-      can_not_change_upstream_password: "Jostakin syystä salasanan vaihto lähdepalveluun ei onnistunut.  Yritä myöhemmin uudelleen!"
+      can_not_change_password: "Jostain syystä salasanan vaihto ei onnistunut. Yritä myöhemmin uudelleen! Lokikoodi: %{code}."
+      can_not_change_upstream_password: "Jostain syystä salasanan vaihto lähdepalveluun ei onnistunut. Yritä myöhemmin uudelleen!"
       token_lifetime_has_expired: Linkkisi on vanhentunut. Syötä sähköpostiosoite uudelleen.
       too_many_sent_token_request: Valitsemaasi sähköpostiosoitteeseen on jo lähetetty viesti.
       too_many_attempts: "Salasanan vaihtojen välillä on odotettava 10 sekuntia."
@@ -505,6 +508,7 @@ fi:
       organisation_owners: "Seuraavilla ylläpitäjillä on hallintaoikeus organisaatioon"
       removed_owners_title: "VAROITUS:"
       removed_owners_warning: "Seuraavat käyttäjät on poistettu, mutta heidät on yhä listattu organisaation omistajissa. Opinsysin tuki auttaa tässä asiassa."
+      cant_remove_yourself: "(Et voi poistaa omaa omistusoikeuttasi)"
     deleted_users:
       title: "Organisaation poistettavaksi merkityt käyttäjät"
       time_range: "Aikarajaus"
@@ -744,7 +748,8 @@ fi:
       add_telephone_number: "Lisää puhelinnumeroita"
       primus_warning_new: "Primus-integraatio on päällä tässä koulussa. Ulkoisen ID:n asettaminen uudelle käyttäjälle voi rikkoa synkronoinnin ja aiheuttaa virheellisiä käyttäjän poistettavaksi merkitsemisiä!"
       primus_warning_edit: "Primus-integraatio on päällä tässä koulussa. Olemassaolevien käyttäjien nimien, sähköpostiosoitteiden ja puhelinnumeroiden vaihdot saatetaan kumota seuraavan synkronisaation ajon aikana. Ulkoisen ID:n vaihtaminen/asettaminen voi rikkoa synkronoinnin ja aiheuttaa virheellisiä käyttäjän poistettavaksi merkitsemisiä!"
-      gsuite_password_new: "G Suite -salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaan ennenkuin uusi käyttäjä on synkronoitu G Suiteen. Seuraava G Suite -synkronointi tapahtuu %{next_sync}, voit asettaa uuden käyttäjän salasanansa muutama minuutti tuon jälkeen."
+      gsuite_duplicate_prevention: "G Suite -integraatio on päällä. Jos olet luomassa tunnusta käyttäjälle jolla on jo tunnus Googlessa, ota ensin yhteys tukeen jotta luomasi uusi Puavo-tunnus voidaan liittää hallitusti jo olemassaolevaan Google-tunnukseen. Näin käyttäjien synkronisaatio ei mene rikki ja tuplatunnuksien luonnin yritykset estetään."
+      gsuite_password_new: "G Suite -salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaa ennenkuin uusi käyttäjä on synkronoitu G Suiteen. Seuraava G Suite -synkronointi tapahtuu %{next_sync}, voit asettaa uuden käyttäjän salasanansa muutama minuutti tuon jälkeen."
       gsuite_password_edit: "G Suite -salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitu Googleen. Muutoin salasananvaihto onnistunee Puavoon, mutta ei Googleen. Jos muokkat käyttäjää joka ei ole synronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
     select_school:
       title: Koulun vaihto (vaihe 1/2)

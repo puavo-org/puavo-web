@@ -254,7 +254,7 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/mark_group_members_for_deletion
   def mark_group_members_for_deletion
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @group = get_group(params[:id])
     return if @group.nil?
@@ -288,7 +288,7 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unmark_group_members_deletion
   def unmark_group_members_deletion
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @group = get_group(params[:id])
     return if @group.nil?
@@ -320,7 +320,7 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/lock_all_members
   def lock_all_members
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @group = get_group(params[:id])
     return if @group.nil?
@@ -352,7 +352,7 @@ class GroupsController < ApplicationController
 
   # PUT /:school_id/groups/:group_id/unlock_all_members
   def unlock_all_members
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @group = get_group(params[:id])
     return if @group.nil?
@@ -465,7 +465,7 @@ class GroupsController < ApplicationController
 
   # GET /:school_id/groups/:group_id/get_members_as_csv
   def get_members_as_csv
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @group = get_group(params[:id])
     return if @group.nil?

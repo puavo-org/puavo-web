@@ -1,3 +1,8 @@
+.noOwnerSelfRemove {
+  display: block;
+  margin: 8px 5px;
+}
+
 /* The deletion timestamp on user "show" pages */
 .userMarkedForDeletion {
   color: $deletionMarkTimestamp;

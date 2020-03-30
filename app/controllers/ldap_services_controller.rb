@@ -2,7 +2,7 @@ class LdapServicesController < ApplicationController
   # GET /ldap_services
   # GET /ldap_services.xml
   def index
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @ldap_services = LdapService.all.sort{|a, b| a.uid.downcase <=> b.uid.downcase }
 
@@ -15,7 +15,7 @@ class LdapServicesController < ApplicationController
   # GET /ldap_services/1
   # GET /ldap_services/1.xml
   def show
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @ldap_service = LdapService.find(params[:id])
 
@@ -28,7 +28,7 @@ class LdapServicesController < ApplicationController
   # GET /ldap_services/new
   # GET /ldap_services/new.xml
   def new
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @ldap_service = LdapService.new
 
@@ -42,7 +42,7 @@ class LdapServicesController < ApplicationController
 
   # GET /ldap_services/1/edit
   def edit
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @ldap_service = LdapService.find(params[:id])
     @system_groups = SystemGroup.all
@@ -51,7 +51,7 @@ class LdapServicesController < ApplicationController
   # POST /ldap_services
   # POST /ldap_services.xml
   def create
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @ldap_service = LdapService.new(ldap_service_params)
     @system_groups = SystemGroup.all
@@ -72,7 +72,7 @@ class LdapServicesController < ApplicationController
   # PUT /ldap_services/1
   # PUT /ldap_services/1.xml
   def update
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @ldap_service = LdapService.find(params[:id])
     @system_groups = SystemGroup.all
@@ -101,7 +101,7 @@ class LdapServicesController < ApplicationController
   # DELETE /ldap_services/1
   # DELETE /ldap_services/1.xml
   def destroy
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @ldap_service = LdapService.find(params[:id])
     @ldap_service.destroy

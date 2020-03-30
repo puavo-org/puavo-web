@@ -12,8 +12,39 @@ Feature: Manage users
     | Staffs      |
     And the following users:
       | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staffs     | staff                     |
+      | Pavel     | Taylor | pavel | secret   | true         | Staffs    | staff                     |
+      | Admin     | User   | admin | secret   | true         | Staffs    | staff                     |
     And I am logged in as "cucumber" with password "cucumber"
+
+  Scenario: Non-owners should not see user deletion buttons on user show pages
+    # Part 1: an admin user does NOT see the delete link
+    Given I am logged in as "admin" with password "secret"
+    And I am on the show user page with "admin"
+    Then I should see "The user is an admin of this school"
+    And I should not see "The user is an owner of this organisation"
+    And I should not see "Delete user"
+
+    # Part 2: an owner user DOES see the delete link
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the show user page with "admin"
+    Then I should see "The user is an admin of this school"
+    And I should not see "The user is an owner of this organisation"
+    And I should see "Delete user"
+
+  Scenario: Non-owners should not see any delete buttons on the user list page
+    # This scenario is not test everything. User deletion buttons are always
+    # visible in the legacy index, but since it cannot be used outside of the
+    # test environment, we are not testing for their presence/absence.
+    # Part 1: an admin
+    Given I am logged in as "admin" with password "secret"
+    And I am on the school users list page
+    Then I should not see "Delete users who are marked for deletion"
+
+    # Part 2: an owner
+    # Another issue: this tests another school than what's used above
+    Given I am logged in as "cucumber" with password "cucumber"
+    And I am on the school users list page
+    Then I should see "Delete users who are marked for deletion"
 
   Scenario: Create new user by staff
     Given I follow "Logout"
@@ -247,7 +278,7 @@ Feature: Manage users
     When I get on the show user JSON page with "ben"
     Then I should see JSON '{"given_name": "Ben", "surname": "Mabey", "uid": "ben"}'
     When I get on the users JSON page with "School 1"
-    Then I should see JSON '[{"given_name": "Ben", "surname": "Mabey", "uid": "ben"},{"given_name": "Joseph", "surname": "Wilk", "uid": "joseph"}, {"given_name": "Pavel", "surname": "Taylor", "uid": "pavel"}]'
+    Then I should see JSON '[{"given_name": "Admin", "surname": "User", "uid": "admin"},{"given_name": "Ben", "surname": "Mabey", "uid": "ben"},{"given_name": "Joseph", "surname": "Wilk", "uid": "joseph"}, {"given_name": "Pavel", "surname": "Taylor", "uid": "pavel"}]'
 
   Scenario: Check new user special ldap attributes
     Given the following users:

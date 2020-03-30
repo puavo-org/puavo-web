@@ -145,3 +145,14 @@ Feature: Manage organisation
     And I change "jane.doe" user type to "student"
     And I follow "Add" on the "Jane Doe" user
     And I should see "Organisation owner access rights can be added only if the type of the user is admin"
+
+  Scenario: Owners can't remove their own owner rights
+    Given the following users:
+    | givenName | sn   | uid    | password | role_name | puavoEduPersonAffiliation | school                   |
+    | Donald    | Duck | donald | 313      | Teacher   | admin                     | Greenwich Steiner School |
+    When I follow "Owners"
+    And I follow "Add" on the "Donald Duck" user
+    Then I should see "Donald Duck is now an owner of this organisation"
+    Given I am logged in as "donald" with password "313"
+    When I follow "Owners"
+    Then I should see "(You can't remove your own owner-level rights)"

@@ -228,14 +228,16 @@
       <% end %>
       <% end %>
 
+      <% if @permit_user_deletion %>
       <% unless @user.puavoDoNotDelete %>
       <ul>
         <li>
-          <%= link_to user_path(@school, @user.puavoId), data: { confirm: t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
+          <%= link_to user_path(@school, @user.puavoId), data: { confirm: (@is_owner || @is_admin) ? t('destroy_confirm_admin') : t('destroy_confirm', object_name: @user.displayName) }, method: :delete do %>
             <i class='icon-trash'></i><%= t('link.delete_user') %>
           <% end %>
         </li>
       </ul>
+      <% end %>
       <% end %>
 
     </div>

@@ -252,7 +252,7 @@ class Schools < PuavoSinatra
     'external_id'   => 'puavoExternalId',
     'school_code'   => 'puavoSchoolCode',
     'member_uid'    => 'memberUid',
-    'member_dns'    => 'member',
+    'member_dn'     => 'member',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
@@ -264,7 +264,7 @@ class Schools < PuavoSinatra
     'puavoExternalId' => { name: 'external_id' },
     'puavoSchoolCode' => { name: 'school_code' },
     'memberUid'       => { name: 'member_uid' },
-    'member'          => { name: 'member_dns' },
+    'member'          => { name: 'member_dn' },
   }
 
   def v4_do_school_search(id, requested_ldap_attrs)

@@ -75,6 +75,8 @@ class UsersController < ApplicationController
 
   # New AJAX-based index for non-test environments
   def new_cool_users_index
+    @is_owner = is_owner?
+
     respond_to do |format|
       format.html # index.html.erb
     end
@@ -102,6 +104,25 @@ class UsersController < ApplicationController
     raw = User.search_as_utf8(:filter => "(puavoSchool=#{@school.dn})",
                               :scope => :one,
                               :attributes => attributes)
+
+    # Get a list of organisation owners and school admins
+    organisation_owners = LdapOrganisation.current.owner.each
+      .select { |dn| dn != "uid=admin,o=puavo" }
+      .map{ |o| o.to_s }
+
+    if organisation_owners.nil?
+      organisation_owners = []
+    end
+
+    organisation_owners = Set.new(organisation_owners)
+
+    if @school
+      school_admins = @school.user_school_admins.each.map{ |a| a.dn.to_s }
+    else
+      school_admins = []
+    end
+
+    school_admins = Set.new(school_admins)
 
     # convert the raw data into something we can easily parse in JavaScript
     users = []
@@ -140,6 +161,10 @@ class UsersController < ApplicationController
 
         u[:type] = types if types
       end
+
+      # Owners and school admin flags. Set only if needed.
+      u[:owner] = true if organisation_owners.include?(dn)
+      u[:admin] = true if school_admins.include?(dn)
 
       users << u
     end
@@ -356,6 +381,9 @@ class UsersController < ApplicationController
       data[1].sort! { |a, b| a.displayName.downcase <=> b.displayName.downcase }
     end
 
+    # Can the currently logged in user delete users?
+    @permit_user_deletion = is_owner?
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
@@ -366,7 +394,8 @@ class UsersController < ApplicationController
 
   def setup_integrations_for_form(school, is_new_user)
     @is_admin_school = school.displayName == 'Administration'
-    @primus_warning = false
+    @have_primus = false
+    @have_gsuite = false
     @gsuite_pw_warning = :none
     @next_gsuite_update = nil
     @needs_password_validator = false
@@ -374,7 +403,8 @@ class UsersController < ApplicationController
     unless @is_admin_school
       # Administration schools NEVER show/have any integrations, even if someone
       # defines them.
-      @primus_warning = school_has_integration?(school.id, 'primus')
+      @have_primus = school_has_integration?(school.id, 'primus')
+      @have_gsuite = school_has_integration?(school.id, 'gsuite')
 
       if school_has_integration?(school.id, 'gsuite_password')
         if is_new_user
@@ -383,8 +413,8 @@ class UsersController < ApplicationController
           # next gsuite update time
           @next_update = get_school_single_integration_next_update(school.id, 'gsuite', Time.now)
 
-          if @next_update && @next_update.include?(:at)
-            @next_gsuite_update = @next_update[:at].strftime("%d.%m.%Y %H:%M")
+          if @next_update
+            @next_gsuite_update = @next_update.strftime("%d.%m.%Y %H:%M")
           else
             # this is an error, but avoid crashing or anything
             @next_gsuite_update = '(???)'
@@ -565,13 +595,14 @@ class UsersController < ApplicationController
   # DELETE /:school_id/users/1
   # DELETE /:school_id/users/1.xml
   def destroy
+    return if redirected_nonowner_user?
+
     @user = get_user(params[:id])
     return if @user.nil?
 
     if @user.puavoDoNotDelete
       flash[:alert] = t('flash.user_deletion_prevented')
     else
-
       # Remove the user from external systems first
       status, message = delete_user_from_external_systems(@user)
 
@@ -774,7 +805,7 @@ class UsersController < ApplicationController
   end
 
   def prevent_deletion
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     @user = User.find(params[:id])
 
@@ -832,7 +863,7 @@ class UsersController < ApplicationController
   end
 
   def delete_marked_users
-    return unless is_owner?
+    return if redirected_nonowner_user?
 
     delete_these = @school.members.reject{|m| m.puavoRemovalRequestTime.nil? }
 

@@ -5,12 +5,12 @@ class OrganisationExternalServicesController < ExternalServicesBase
   end
 
   def show
-    return unless is_owner?
+    return if redirected_nonowner_user?
     super
   end
 
   def update
-    return unless is_owner?
+    return if redirected_nonowner_user?
     super
   end
 
