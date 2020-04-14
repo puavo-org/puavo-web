@@ -1149,34 +1149,44 @@ class Users < PuavoSinatra
   # Maps "user" field names to LDAP attributes. Used when searching for data, as only
   # the requested fields are actually returned in the queries.
   USER_TO_LDAP = {
-    'id'                => 'puavoId',
-    'dn'                => 'dn',
-    'username'          => 'uid',
-    'first_names'       => 'givenName',
-    'last_name'         => 'sn',
-    'external_id'       => 'puavoExternalId',
-    'email'             => 'mail',
-    'phone'             => 'telephoneNumber',
-    'role'              => 'puavoEduPersonAffiliation',
-    'locked'            => 'puavoLocked',
-    'removal_mark_time' => 'puavoRemovalRequestTime',
-    'school_id'         => 'puavoSchool',
+    'dn'                 => 'dn',
+    'do_not_delete'      => 'puavoDoNotDelete',
+    'email'              => 'mail',
+    'external_id'        => 'puavoExternalId',
+    'first_names'        => 'givenName',
+    'id'                 => 'puavoId',
+    'last_name'          => 'sn',
+    'locale'             => 'puavoLocale',
+    'locked'             => 'puavoLocked',
+    'personnel_number'   => 'puavoEduPersonPersonnelNumber',
+    'phone'              => 'telephoneNumber',
+    'preferred_language' => 'preferredLanguage',
+    'removal_mark_time'  => 'puavoRemovalRequestTime',
+    'role'               => 'puavoEduPersonAffiliation',
+    'school_id'          => 'puavoSchool',
+    'ssh_public_key'     => 'puavoSshPublicKey',
+    'username'           => 'uid',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
-    'puavoId'                   => { name: 'id', type: :integer },
-    'dn'                        => { name: 'dn' },
-    'uid'                       => { name: 'username' },
-    'givenName'                 => { name: 'first_names' },
-    'sn'                        => { name: 'last_name' },
-    'puavoExternalId'           => { name: 'external_id' },
-    'mail'                      => { name: 'email' },
-    'telephoneNumber'           => { name: 'phone' },
-    'puavoEduPersonAffiliation' => { name: 'role', is_array: true },    # always an array
-    'puavoLocked'               => { name: 'locked', type:  :boolean },
-    'puavoRemovalRequestTime'   => { name: 'removal_mark_time', type:  :ldap_timestamp },
-    'puavoSchool'               => { name: 'school_id', type: :id_from_dn },
+    'dn'                            => { name: 'dn' },
+    'givenName'                     => { name: 'first_names' },
+    'mail'                          => { name: 'email' },
+    'preferredLanguage'             => { name: 'preferred_language' },
+    'puavoDoNotDelete'              => { name: 'do_not_delete', type: :boolean },
+    'puavoEduPersonAffiliation'     => { name: 'role' },
+    'puavoEduPersonPersonnelNumber' => { name: 'personnel_number' },
+    'puavoExternalId'               => { name: 'external_id' },
+    'puavoId'                       => { name: 'id', type: :integer },
+    'puavoLocale'                   => { name: 'locale' },
+    'puavoLocked'                   => { name: 'locked', type: :boolean },
+    'puavoRemovalRequestTime'       => { name: 'removal_mark_time', type: :ldap_timestamp },
+    'puavoSchool'                   => { name: 'school_id', type: :id_from_dn },
+    'puavoSshPublicKey'             => { name: 'ssh_public_key' },
+    'sn'                            => { name: 'last_name' },
+    'telephoneNumber'               => { name: 'phone' },
+    'uid'                           => { name: 'username' },
   }
 
   def v4_do_user_search(id, requested_ldap_attrs)
@@ -1209,7 +1219,7 @@ class Users < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
-      out = v4_ensure_is_array(out, 'email', 'phone')
+      out = v4_ensure_is_array(out, 'role', 'email', 'phone')
 
       return 200, json({
         status: 'ok',
