@@ -492,6 +492,9 @@ class DevicesController < ApplicationController
     @device = Device.find(params[:id])
     @schools = School.all.select{ |s| s.id != @school.id }
 
+    # sort the schools, so you can actually find the one you're looking for
+    @schools.sort!{ |a, b| a.displayName.downcase <=> b.displayName.downcase }
+
     respond_to do |format|
       format.html { }
     end
