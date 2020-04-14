@@ -314,7 +314,17 @@ class PasswordController < ApplicationController
 
     msg_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
 
-    external_login_status = external_login(params[:login][:uid],
+    login_uid = params[:login][:uid]
+
+    # if the username(s) contain the domain name, strip it out
+    customisations = get_school_password_form_customisations(-1)
+    domain = customisations[:domain]
+
+    if domain && login_uid.end_with?(domain)
+      login_uid.remove!(domain)
+    end
+
+    external_login_status = external_login(login_uid,
                                            params[:login][:password])
 
     logger.warn "[#{msg_id}] external_login_status: |#{external_login_status}|"
@@ -324,7 +334,7 @@ class PasswordController < ApplicationController
         when :external_login_failed
           raise User::UserError,
                 I18n.t('flash.password.invalid_login',
-                       :uid => params[:login][:uid])
+                       :uid => login_uid)
         when :external_login_ok
           true    # this is okay
         else
@@ -337,7 +347,7 @@ class PasswordController < ApplicationController
 
     @logged_in_user = User.find(:first,
                                 :attribute => 'uid',
-                                :value     => params[:login][:uid])
+                                :value     => login_uid)
 
     return false unless @logged_in_user \
                           && authenticate(@logged_in_user,
@@ -356,11 +366,16 @@ class PasswordController < ApplicationController
     @user = @logged_in_user
     if params[:user][:uid] then
       target_user_username = params[:user][:uid]
+
+      if domain && target_user_username.end_with?(domain)
+        target_user_username.remove!(domain)
+      end
+
       @user = User.find(:first,
                         :attribute => 'uid',
                         :value     => target_user_username)
     else
-      target_user_username = params[:login][:uid]
+      target_user_username = login_uid
     end
 
     unless @user || external_login_status then
@@ -386,7 +401,7 @@ class PasswordController < ApplicationController
       external_login(params[:user][:uid], params[:user][:new_password])
       @user = User.find(:first,
                         :attribute => 'uid',
-                        :value     => params[:login][:uid])
+                        :value     => login_uid)
     end
 
     flog.info('rest call to PUT /v3/users/password', res.merge(
@@ -408,7 +423,7 @@ class PasswordController < ApplicationController
         when PuavoRest::ExternalLoginStatus::BADUSERCREDS
           raise User::UserError,
                 I18n.t('flash.password.invalid_external_login',
-                       :uid => params[:login][:uid])
+                       :uid => login_uid)
         when PuavoRest::ExternalLoginStatus::UPDATEERROR
           raise User::UserError,
                 I18n.t('flash.password.can_not_change_upstream_password')
