@@ -44,6 +44,7 @@ class PasswordController < ApplicationController
 
         # must setup these or the form breaks
         setup_language(params.fetch(:lang, ''))
+        setup_customisations()
         @changing = username
 
         raise User::UserError, I18n.t('flash.password.too_many_attempts')
@@ -89,6 +90,7 @@ class PasswordController < ApplicationController
     end
 
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
 
     if params[:login][:uid].empty?
       raise User::UserError, I18n.t('flash.password.incomplete_form')
@@ -121,12 +123,14 @@ class PasswordController < ApplicationController
   # "I forgot my password" form that asks for an email address
   def forgot
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
   end
 
   # PUT /password/forgot
   # Send the password reset token to the specified email address
   def forgot_send_token
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
 
     if params[:forgot].empty? || params[:forgot][:email].empty?
       flash[:alert] = I18n.t('password.forgot.description')
@@ -173,6 +177,7 @@ class PasswordController < ApplicationController
   # Password reset form
   def reset
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
   end
 
   # PUT /password/:jwt/reset
@@ -180,6 +185,7 @@ class PasswordController < ApplicationController
   def reset_update
 
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
 
     raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
 
@@ -465,7 +471,8 @@ class PasswordController < ApplicationController
   def setup_customisations
     # use -1 because we don't know what the school is
     customisations = get_school_password_form_customisations(-1)
-    @banner = customisations[:banner] #'Pölpöti hölpöti pulputi'
-    @domain = customisations[:domain] #'@duckburg.calisota.us'
+
+    @banner = customisations[:banner]
+    @domain = customisations[:domain]
   end
 end
