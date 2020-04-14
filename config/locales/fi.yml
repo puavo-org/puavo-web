@@ -205,6 +205,7 @@ fi:
       type: "Rooli"
       phone: "Puhelin"
       email: "Email"
+      pnumber: "Henkilönumero"
       home_dir: "Kotihakemisto"
       rrt: "Poistomerkintä tehty"
       is_locked: "Lukittu?"

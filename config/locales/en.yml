@@ -205,6 +205,7 @@ en:
       type: "Role"
       phone: "Phone"
       email: "Email"
+      pnumber: "Personnel number"
       home_dir: "Home directory"
       rrt: "When marked for deletion"
       is_locked: "Locked?"
