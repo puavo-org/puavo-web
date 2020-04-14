@@ -20,6 +20,8 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
 
     @expired = (params[:password_expired] == 'true')
+
+    setup_customisations()
   end
 
   # GET /password/edit
@@ -30,6 +32,7 @@ class PasswordController < ApplicationController
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
   end
 
   def filter_multiple_attempts(username)
@@ -457,5 +460,12 @@ class PasswordController < ApplicationController
       I18n.locale = lang
       @language = lang
     end
+  end
+
+  def setup_customisations
+    # use -1 because we don't know what the school is
+    customisations = get_school_password_form_customisations(-1)
+    @banner = customisations[:banner] #'Pölpöti hölpöti pulputi'
+    @domain = customisations[:domain] #'@duckburg.calisota.us'
   end
 end
