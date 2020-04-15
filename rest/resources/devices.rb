@@ -672,7 +672,7 @@ class Devices < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
-      out = v4_ensure_is_array(out, 'mac', 'tags', 'xrandr')
+      out = v4_ensure_is_array(out, 'mac', 'tags', 'xrandr', 'image_series_url')
 
       out.each do |o|
         if o.include?('puavoconf') && !o['puavoconf'].nil?
