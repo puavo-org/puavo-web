@@ -633,7 +633,6 @@ class Devices < PuavoSinatra
     'puavoPersonalDevice'           => { name: 'personal_device', type: :boolean },
     'puavoPersonallyAdministered'   => { name: 'personally_administered', type: :boolean },
     'puavoPreferredServer'          => { name: 'preferred_server' },
-    'puavoPrinterPPD'               => { name: 'printer_driver' },
     'puavoPrinterQueue'             => { name: 'printer_queue' },
     'puavoPurchaseDate'             => { name: 'purchase_date' },
     'puavoPurchaseLocation'         => { name: 'purchase_location' },
