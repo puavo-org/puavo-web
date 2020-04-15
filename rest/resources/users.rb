@@ -1149,6 +1149,7 @@ class Users < PuavoSinatra
   # Maps "user" field names to LDAP attributes. Used when searching for data, as only
   # the requested fields are actually returned in the queries.
   USER_TO_LDAP = {
+    'created'            => 'createTimestamp',  # LDAP operational attribute
     'dn'                 => 'dn',
     'do_not_delete'      => 'puavoDoNotDelete',
     'email'              => 'mail',
@@ -1158,6 +1159,7 @@ class Users < PuavoSinatra
     'last_name'          => 'sn',
     'locale'             => 'puavoLocale',
     'locked'             => 'puavoLocked',
+    'modified'           => 'modifyTimestamp',  # LDAP operational attribute
     'personnel_number'   => 'puavoEduPersonPersonnelNumber',
     'phone'              => 'telephoneNumber',
     'preferred_language' => 'preferredLanguage',
@@ -1170,9 +1172,11 @@ class Users < PuavoSinatra
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
+    'createTimestamp'               => { name: 'created', type: :ldap_timestamp },
     'dn'                            => { name: 'dn' },
     'givenName'                     => { name: 'first_names' },
     'mail'                          => { name: 'email' },
+    'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },
     'preferredLanguage'             => { name: 'preferred_language' },
     'puavoDoNotDelete'              => { name: 'do_not_delete', type: :boolean },
     'puavoEduPersonAffiliation'     => { name: 'role' },

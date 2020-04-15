@@ -251,6 +251,7 @@ class Schools < PuavoSinatra
     'autopoweroff_off_hour' => "puavoDeviceOffHour",
     'autopoweroff_on_hour'  => "puavoDeviceOnHour",
     'billing_info'          => "puavoBillingInfo",
+    'created'               => 'createTimestamp', # LDAP operational attribute
     'description'           => "description",
     'dn'                    => 'dn',
     'external_id'           => 'puavoExternalId',
@@ -265,6 +266,7 @@ class Schools < PuavoSinatra
     'location'              => "l",
     'member_dn'             => 'member',
     'member_uid'            => 'memberUid',
+    'modified'              => 'modifyTimestamp', # LDAP operational attribute
     'mount_point'           => "puavoMountpoint",
     'name'                  => 'displayName',
     'name_prefix'           => "puavoNamePrefix",
@@ -285,6 +287,7 @@ class Schools < PuavoSinatra
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
     'cn'                          => { name: 'group_prefix' },
+    'createTimestamp'             => { name: 'created', type: :ldap_timestamp },
     'description'                 => { name: 'description' },
     'displayName'                 => { name: 'name'},
     'dn'                          => { name: 'dn' },
@@ -292,6 +295,7 @@ class Schools < PuavoSinatra
     'l'                           => { name: 'location' },
     'member'                      => { name: 'member_dn' },
     'memberUid'                   => { name: 'member_uid' },
+    'modifyTimestamp'             => { name: 'modified', type: :ldap_timestamp },
     'postalAddress'               => { name: 'postal_address' },
     'postalCode'                  => { name: 'postal_code' },
     'postOfficeBox'               => { name: 'post_box' },

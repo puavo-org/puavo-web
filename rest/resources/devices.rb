@@ -560,6 +560,7 @@ class Devices < PuavoSinatra
     'autopoweroff_off_hour'   => 'puavoDeviceOffHour',
     'autopoweroff_on_hour'    => 'puavoDeviceOnHour',
     'boot_mode'               => 'puavoDeviceBootMode',
+    'created'                 => 'createTimestamp', # LDAP operational attribute
     'current_image'           => 'puavoDeviceCurrentImage',
     'default_printer'         => 'puavoDefaultPrinter',
     'description'             => 'description',
@@ -577,6 +578,7 @@ class Devices < PuavoSinatra
     'mac'                     => 'macAddress',
     'manufacturer'            => 'puavoDeviceManufacturer',
     'model'                   => 'puavoDeviceModel',
+    'modified'                => 'modifyTimestamp', # LDAP operational attribute
     'personal_device'         => 'puavoPersonalDevice',
     'personally_administered' => 'puavoPersonallyAdministered',
     'preferred_server'        => 'puavoPreferredServer',
@@ -598,9 +600,11 @@ class Devices < PuavoSinatra
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
+    'createTimestamp'               => { name: 'created', type: :ldap_timestamp },
     'description'                   => { name: 'description' },
     'dn'                            => { name: 'dn' },
     'macAddress'                    => { name: 'mac' },
+    'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },
     'puavoAllowGuest'               => { name: 'allow_guest', type: :boolean },
     'puavoAutomaticImageUpdates'    => { name: 'automatic_updates', type: :boolean },
     'puavoConf'                     => { name: 'puavoconf' },
