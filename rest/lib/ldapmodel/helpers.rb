@@ -149,6 +149,9 @@ def v4_convert_ldap_string(value, type)
 
       #return value.class == Array ? value : [value]
 
+    when :json
+        return JSON.parse(value)
+
     else
       return value
   end
