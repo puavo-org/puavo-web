@@ -405,15 +405,15 @@ class UsersController < ApplicationController
     unless @is_admin_school
       # Administration schools NEVER show/have any integrations, even if someone
       # defines them.
-      @have_primus = school_has_integration?(school.id, 'primus')
-      @have_gsuite = school_has_integration?(school.id, 'gsuite')
+      @have_primus = school_has_integration?(@organisation_name, school.id, 'primus')
+      @have_gsuite = school_has_integration?(@organisation_name, school.id, 'gsuite')
 
-      if school_has_integration?(school.id, 'gsuite_password')
+      if school_has_integration?(@organisation_name, school.id, 'gsuite_password')
         if is_new_user
           @gsuite_pw_warning = :new
 
           # next gsuite update time
-          @next_update = get_school_single_integration_next_update(school.id, 'gsuite', Time.now)
+          @next_update = get_school_single_integration_next_update(@organisation_name, school.id, 'gsuite', Time.now)
 
           if @next_update
             @next_gsuite_update = @next_update.strftime("%d.%m.%Y %H:%M")
@@ -964,18 +964,20 @@ class UsersController < ApplicationController
     # See app/lib/puavo/integrations.rb for details
     def delete_user_from_external_systems(user, plaintext_message: false)
       # Have actions for user deletion?
+      organisation = LdapOrganisation.current.cn
       school = user.school
 
-      unless school_has_sync_actions_for?(school.id, :delete_user)
+      unless school_has_sync_actions_for?(organisation, school.id, :delete_user)
         return true, nil
       end
 
-      actions = get_school_sync_actions(school.id, :delete_user)
+      actions = get_school_sync_actions(organisation, school.id, :delete_user)
 
-      logger.info("School (#{school.cn}) has #{actions.length} synchronous " \
-                  "action(s) defined for user deletion: #{actions.keys.join(', ')}")
+      logger.info("School (#{school.cn}) in organisation \"#{organisation}\" " \
+                  "has #{actions.length} synchronous action(s) defined for user " \
+                  "deletion: #{actions.keys.join(', ')}")
 
-      integration_names = get_school_integration_names(school.id)
+      integration_names = get_school_integration_names(organisation, school.id)
       ok_systems = []
 
       # Process each system in sequence, bail out on the first error. 'params' are
@@ -989,7 +991,7 @@ class UsersController < ApplicationController
         status, code = do_synchronous_action(
           :delete_user, system, request_id, params,
           # -----
-          organisation: LdapOrganisation.current.cn,
+          organisation: organisation,
           user: user,
           school: school
         )

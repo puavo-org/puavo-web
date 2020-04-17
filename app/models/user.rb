@@ -170,7 +170,7 @@ class User < LdapBase
     end
 
     if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
-      case get_school_password_requirements(self.school.puavoId)
+      case get_school_password_requirements(LdapOrganisation.current.cn, self.school.puavoId)
         when 'Google'
           if self.new_password.size < 8 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))

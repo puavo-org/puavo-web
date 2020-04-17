@@ -156,14 +156,14 @@
       <td>
       <% if @gsuite_pw_warning == :none %>
         <% unless @is_admin_school %>
-        <%= show_password_requirements(@school.id) %>
+        <%= show_password_requirements(@organisation_name, @school.id) %>
         <% end %>
         <%= f.password_field :new_password, value: @user.new_password  %>
       <% elsif @gsuite_pw_warning == :new %>
         <p class="genericNotice"><%= t('users.form.gsuite_password_new', :next_sync => @next_gsuite_update) %></p>
       <% elsif @gsuite_pw_warning == :edit %>
         <p class="genericNotice"><%= t('users.form.gsuite_password_edit') %></p>
-        <%= show_password_requirements(@school.id) %>
+        <%= show_password_requirements(@organisation_name, @school.id) %>
         <%= f.password_field :new_password, value: @user.new_password  %>
       <% end %>
       </td>
@@ -188,6 +188,6 @@
 
 <% unless @is_admin_school %>
 <% content_for :post_load_javascript do %>
-<%= setup_password_validator(@school.id) %>
+<%= setup_password_validator(@organisation_name, @school.id) %>
 <% end %>
 <% end %>

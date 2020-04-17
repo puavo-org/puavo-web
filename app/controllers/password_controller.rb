@@ -64,13 +64,13 @@ class PasswordController < ApplicationController
          "REQUEST_URI=\"#{request.env['REQUEST_URI']}\""
 
     if params['login']['uid'] && !params['user']['uid']
-      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\" " \
+      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" in organisation \"#{@organisation_name}\" " \
                   "is trying to change their password, #{ip}"
       filter_multiple_attempts(params['login']['uid'])
       mode = :own
     else
       logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" is trying to change the password of user " \
-                  "\"#{params['user']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\", #{ip}"
+                  "\"#{params['user']['uid']}\" in organisation \"#{@organisation_name}\", #{ip}"
       mode = :other
     end
 
@@ -268,7 +268,8 @@ class PasswordController < ApplicationController
   end
 
   def change_user_password(mode)
-    case get_school_password_requirements(-1)
+    # must use -1 because password forms use global requirements
+    case get_school_password_requirements(@organisation_name, -1)
       when 'Google'
         # Validate the password against Google's requirements.
         new_password = params[:user][:new_password]
@@ -317,7 +318,8 @@ class PasswordController < ApplicationController
     login_uid = params[:login][:uid]
 
     # if the username(s) contain the domain name, strip it out
-    customisations = get_school_password_form_customisations(-1)
+    # must use -1 because password forms use global requirements
+    customisations = get_school_password_form_customisations(@organisation_name, -1)
     domain = customisations[:domain]
 
     if domain && login_uid.end_with?(domain)
@@ -497,7 +499,7 @@ class PasswordController < ApplicationController
 
   def setup_customisations
     # use -1 because we don't know what the school is
-    customisations = get_school_password_form_customisations(-1)
+    customisations = get_school_password_form_customisations(@organisation_name, -1)
 
     @banner = customisations[:banner]
     @domain = customisations[:domain]

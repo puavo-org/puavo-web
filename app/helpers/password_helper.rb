@@ -1,12 +1,15 @@
 module PasswordHelper
   # Renders the Javascript template at the bottom of the page that sets up
   # password field validation.
-  def setup_password_validator(school_id,
+  def setup_password_validator(organisation_name, school_id,
                                password_id='user_new_password',
                                confirm_id='user_new_password_confirmation')
 
-    requirements = get_school_password_requirements(school_id)
-    logger.info "setup_password_validator(): requirements for school #{school_id} are \"#{requirements}\""
+    requirements = get_school_password_requirements(organisation_name, school_id)
+
+    logger.info("setup_password_validator(): requirements for school #{school_id} " \
+                "in organisation \"#{organisation_name}\" are \"#{requirements}\"")
+
     return unless requirements
 
     # defaults
@@ -55,8 +58,8 @@ module PasswordHelper
   end
 
   # Creates the small help text that explains the password requirements for this organisation/school
-  def show_password_requirements(school_id)
-    requirements = get_school_password_requirements(school_id)
+  def show_password_requirements(organisation_name, school_id)
+    requirements = get_school_password_requirements(organisation_name, school_id)
     return unless requirements
 
     msg = ''

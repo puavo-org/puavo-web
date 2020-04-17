@@ -110,9 +110,9 @@ I18n.locale = "<%= I18n.locale %>";
 
       <% unless @school.displayName == 'Administration' %>
 <%= render :partial => "layouts/integrations", :locals => {
-        :integrations_by_type => get_school_integrations_by_type(@school.id),
-        :integration_names => get_school_integration_names(@school.id),
-        :next_updates => get_school_integration_next_updates(@school.id, Time.now),
+        :integrations_by_type => get_school_integrations_by_type(@organisation_name, @school.id),
+        :integration_names => get_school_integration_names(@organisation_name, @school.id),
+        :next_updates => get_school_integration_next_updates(@organisation_name, @school.id, Time.now),
         :extraClass => ""
     } %>
       <% end %>
