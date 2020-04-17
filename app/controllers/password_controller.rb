@@ -446,11 +446,23 @@ class PasswordController < ApplicationController
   end
 
   def set_ldap_connection
-    organisation_key = Puavo::Organisation.key_by_host(request.host)
+    req_host = request.host
+
+    # Make the password forms work on staging servers
+    if req_host.start_with?('staging-')
+      req_host.remove!('staging-')
+    end
+
+    organisation_key = Puavo::Organisation.key_by_host(req_host)
+
     unless organisation_key
       organisation_key = Puavo::Organisation.key_by_host("*")
     end
-    organisation_key
+
+    if @organisation_name.nil?
+      logger.warn("set_ldap_connection(): @organisation_name is nil, overwriting it with '#{organisation_key}'")
+      @organisation_name = organisation_key
+    end
 
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
     organisation = Puavo::Organisation.find(organisation_key)

@@ -31,6 +31,7 @@ class ApplicationController < ActionController::Base
   before_action :log_request
   before_action :find_school
   before_action :set_menu
+  before_action :get_organisation
 
   after_action :remove_ldap_connection
 
@@ -162,6 +163,23 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def get_organisation
+    begin
+      @organisation_name = LdapOrganisation.current.cn
+    rescue
+      # This fails, for example, when opening password change forms, because
+      # no LDAP connection exists when the form is opened. It's not a big
+      # problem, though, because the password forms call a special method
+      # named set_ldap_connection() which does more tricks to determine
+      # the organisation name. That function also sets up @organisation_name,
+      # so in the end, everything *should* work just fine...
+      #puts "get_organisation() failed"
+      logger.warn('get_organisation(): could not determine the current organisation, ' \
+                  'assuming this is the password changing form')
+      @organisation_name = nil
+    end
+  end
 
   def find_school
     if params.has_key?(:school_id)
