@@ -75,12 +75,17 @@ module Puavo
       return "(#{parts.join(', ')})"
     end
 
-    def cache_school_integration_data(school_id)
+    def cache_school_integration_data(organisation, school_id)
       school_id = school_id.to_i
 
+      # Add a new organisation
+      unless INTEGRATIONS_CACHE.include?(organisation)
+        INTEGRATIONS_CACHE[organisation] = {}
+      end
+
       # Cached already?
-      if INTEGRATIONS_CACHE.include?(school_id)
-        return INTEGRATIONS_CACHE[school_id]
+      if INTEGRATIONS_CACHE[organisation].include?(school_id)
+        return INTEGRATIONS_CACHE[organisation][school_id]
       end
 
       # Add a new school
@@ -106,7 +111,7 @@ module Puavo
         schedule: {},
       }
 
-      data = Puavo::Organisation.find(LdapOrganisation.current.cn).value_by_key('integrations')
+      data = Puavo::Organisation.find(organisation).value_by_key('integrations')
       data = {} unless data
 
       global = data['global'] || {}
@@ -191,7 +196,7 @@ module Puavo
       entry[:schedule] = schedule.freeze
 
       entry.freeze
-      INTEGRATIONS_CACHE[school_id] = entry
+      INTEGRATIONS_CACHE[organisation][school_id] = entry
       return entry
     end
 
@@ -199,42 +204,42 @@ module Puavo
     # global settings in password forms (we don't have school objects in those).
 
     # Get the password changing form customisations
-    def get_school_password_form_customisations(school_id)
-      return cache_school_integration_data(school_id)[:password_form]
+    def get_school_password_form_customisations(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:password_form]
     end
 
     # Retrieves a set of third-party integration names for the school identified by its puavoId
-    def get_school_integrations(school_id)
-      return cache_school_integration_data(school_id)[:integrations]
+    def get_school_integrations(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:integrations]
     end
 
-    def get_school_integration_names(school_id)
-      return cache_school_integration_data(school_id)[:integration_names]
+    def get_school_integration_names(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:integration_names]
     end
 
-    def get_school_integrations_by_type(school_id)
-      return cache_school_integration_data(school_id)[:integrations_by_type]
+    def get_school_integrations_by_type(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:integrations_by_type]
     end
 
     # 'integration_type' is a string that contains a word like "primus" or "gsuite"
-    def school_has_integration?(school_id, integration_name)
-      return cache_school_integration_data(school_id)[:integrations].include?(integration_name)
+    def school_has_integration?(organisation, school_id, integration_name)
+      return cache_school_integration_data(organisation, school_id)[:integrations].include?(integration_name)
     end
 
     # Password requirements for this school
-    def get_school_password_requirements(school_id)
-      return cache_school_integration_data(school_id)[:password_requirements]
+    def get_school_password_requirements(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:password_requirements]
     end
 
     # Actions for synchronous updates. Supported actions are listed in KNOWN_ACTIONS.
-    def school_has_sync_actions_for?(school_id, action_name)
-      return cache_school_integration_data(school_id)[:sync_actions].include?(action_name)
+    def school_has_sync_actions_for?(organisation, school_id, action_name)
+      return cache_school_integration_data(organisation, school_id)[:sync_actions].include?(action_name)
     end
 
     # Get a list of synchronous actions for the school. Optional filtering is done is action_name
     # is not nil.
-    def get_school_sync_actions(school_id, action_name=nil)
-      actions = cache_school_integration_data(school_id)[:sync_actions]
+    def get_school_sync_actions(organisation, school_id, action_name=nil)
+      actions = cache_school_integration_data(organisation, school_id)[:sync_actions]
 
       if action_name
         return actions[action_name]
@@ -244,8 +249,8 @@ module Puavo
     end
 
     # Off-line synchronisation schedules
-    def get_school_single_integration_next_update(school_id, integration_name, now)
-      schedule = cache_school_integration_data(school_id)[:schedule]
+    def get_school_single_integration_next_update(organisation, school_id, integration_name, now)
+      schedule = cache_school_integration_data(organisation, school_id)[:schedule]
 
       if schedule.include?(integration_name)
         sched = schedule[integration_name]
@@ -256,8 +261,8 @@ module Puavo
       end
     end
 
-    def get_school_integration_next_updates(school_id, now)
-      schedule = cache_school_integration_data(school_id)[:schedule]
+    def get_school_integration_next_updates(organisation, school_id, now)
+      schedule = cache_school_integration_data(organisation, school_id)[:schedule]
 
       out = {}
 
