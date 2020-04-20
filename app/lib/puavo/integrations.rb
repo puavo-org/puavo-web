@@ -93,6 +93,12 @@ module Puavo
         # What actions are updated synchronously and to what systems
         sync_actions: {},
 
+        # Password changing form customisations
+        password_form: {
+          banner: nil,
+          domain: nil
+        },
+
         # Password requirements set by a third-party system
         password_requirements: nil,
 
@@ -138,6 +144,20 @@ module Puavo
       entry[:integration_names].freeze
       entry[:integrations_by_type] = by_type.freeze
 
+      # Password form customisations. These are always defined in the
+      # "global" section, but they apply to all schools. Just copy them
+      # to every school. Perhaps one day we can do these per-school,
+      # if the form can deduct which school the user is in?
+      if global.include?('password_form')
+        if global['password_form'].include?('banner')
+          entry[:password_form][:banner] = global['password_form']['banner']
+        end
+
+        if global['password_form'].include?('domain')
+          entry[:password_form][:domain] = global['password_form']['domain']
+        end
+      end
+
       # Password requirements
       requirements = school['password_requirements'] || global['password_requirements'] || ''
       requirements = nil if requirements == ''
@@ -177,6 +197,11 @@ module Puavo
 
     # These methods cannot be put in the School object, because then we could not query
     # global settings in password forms (we don't have school objects in those).
+
+    # Get the password changing form customisations
+    def get_school_password_form_customisations(school_id)
+      return cache_school_integration_data(school_id)[:password_form]
+    end
 
     # Retrieves a set of third-party integration names for the school identified by its puavoId
     def get_school_integrations(school_id)

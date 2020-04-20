@@ -60,7 +60,7 @@
     </td>
     <% end %>
 
-    <td><%= school.members.count %></td>
+    <td><%= Array(school.memberUid || []).count %></td>
 
     <td data-title="<%= t('actions')%>" class="table-actions">
       <%= link_to edit_school_path(school), class: "btn" do %>

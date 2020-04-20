@@ -146,26 +146,26 @@ class Groups < PuavoSinatra
   # Maps "user" field names to LDAP attributes. Used when searching for data, as only
   # the requested fields are actually returned in the queries.
   USER_TO_LDAP = {
-    'id'            => 'puavoId',
-    'dn'            => 'dn',
-    'name'          => 'displayName',
     'abbreviation'  => 'cn',
+    'dn'            => 'dn',
     'external_id'   => 'puavoExternalId',
-    'school_id'     => 'puavoSchool',
-    'member_uid'    => 'memberUid',
+    'id'            => 'puavoId',
     'member_dn'     => 'member',
+    'member_uid'    => 'memberUid',
+    'name'          => 'displayName',
+    'school_id'     => 'puavoSchool',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
-    'puavoId'         => { name: 'id', type: :integer },
-    'dn'              => { name: 'dn' },
-    'displayName'     => { name: 'name' },
     'cn'              => { name: 'abbreviation' },
-    'puavoExternalId' => { name: 'external_id' },
-    'puavoSchool'     => { name: 'school_id', type: :id_from_dn },
-    'memberUid'       => { name: 'member_uid' },
+    'displayName'     => { name: 'name' },
+    'dn'              => { name: 'dn' },
     'member'          => { name: 'member_dn' },
+    'memberUid'       => { name: 'member_uid' },
+    'puavoExternalId' => { name: 'external_id' },
+    'puavoId'         => { name: 'id', type: :integer },
+    'puavoSchool'     => { name: 'school_id', type: :id_from_dn },
   }
 
   def v4_do_group_search(id, requested_ldap_attrs)

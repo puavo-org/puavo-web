@@ -20,6 +20,8 @@ class PasswordController < ApplicationController
     setup_language(params.fetch(:lang, ''))
 
     @expired = (params[:password_expired] == 'true')
+
+    setup_customisations()
   end
 
   # GET /password/edit
@@ -30,6 +32,7 @@ class PasswordController < ApplicationController
     @changing = params.fetch(:changing, '')
     @changed = params.fetch(:changed, '')
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
   end
 
   def filter_multiple_attempts(username)
@@ -41,6 +44,7 @@ class PasswordController < ApplicationController
 
         # must setup these or the form breaks
         setup_language(params.fetch(:lang, ''))
+        setup_customisations()
         @changing = username
 
         raise UserError, I18n.t('flash.password.too_many_attempts')
@@ -86,6 +90,7 @@ class PasswordController < ApplicationController
     end
 
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
 
     if params[:login][:uid].empty?
       raise UserError, I18n.t('flash.password.incomplete_form')
@@ -118,12 +123,14 @@ class PasswordController < ApplicationController
   # "I forgot my password" form that asks for an email address
   def forgot
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
   end
 
   # PUT /password/forgot
   # Send the password reset token to the specified email address
   def forgot_send_token
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
 
     if params[:forgot].empty? || params[:forgot][:email].empty?
       flash[:alert] = I18n.t('password.forgot.description')
@@ -170,6 +177,7 @@ class PasswordController < ApplicationController
   # Password reset form
   def reset
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
   end
 
   # PUT /password/:jwt/reset
@@ -177,6 +185,7 @@ class PasswordController < ApplicationController
   def reset_update
 
     setup_language(params.fetch(:lang, ''))
+    setup_customisations()
 
     raise PasswordConfirmationFailed if params[:reset][:password] != params[:reset][:password_confirmation]
 
@@ -305,7 +314,17 @@ class PasswordController < ApplicationController
 
     msg_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
 
-    external_login_status = external_login(params[:login][:uid],
+    login_uid = params[:login][:uid]
+
+    # if the username(s) contain the domain name, strip it out
+    customisations = get_school_password_form_customisations(-1)
+    domain = customisations[:domain]
+
+    if domain && login_uid.end_with?(domain)
+      login_uid.remove!(domain)
+    end
+
+    external_login_status = external_login(login_uid,
                                            params[:login][:password])
 
     logger.warn "[#{msg_id}] external_login_status: |#{external_login_status}|"
@@ -315,7 +334,7 @@ class PasswordController < ApplicationController
         when :external_login_failed
           raise UserError,
                 I18n.t('flash.password.invalid_login',
-                       :uid => params[:login][:uid])
+                       :uid => login_uid)
         when :external_login_ok
           true    # this is okay
         else
@@ -328,7 +347,7 @@ class PasswordController < ApplicationController
 
     @logged_in_user = User.find(:first,
                                 :attribute => 'uid',
-                                :value     => params[:login][:uid])
+                                :value     => login_uid)
 
     return false unless @logged_in_user \
                           && authenticate(@logged_in_user,
@@ -347,11 +366,16 @@ class PasswordController < ApplicationController
     @user = @logged_in_user
     if params[:user][:uid] then
       target_user_username = params[:user][:uid]
+
+      if domain && target_user_username.end_with?(domain)
+        target_user_username.remove!(domain)
+      end
+
       @user = User.find(:first,
                         :attribute => 'uid',
                         :value     => target_user_username)
     else
-      target_user_username = params[:login][:uid]
+      target_user_username = login_uid
     end
 
     unless @user || external_login_status then
@@ -377,7 +401,7 @@ class PasswordController < ApplicationController
       external_login(params[:user][:uid], params[:user][:new_password])
       @user = User.find(:first,
                         :attribute => 'uid',
-                        :value     => params[:login][:uid])
+                        :value     => login_uid)
     end
 
     flog.info('rest call to PUT /v3/users/password', res.merge(
@@ -399,7 +423,7 @@ class PasswordController < ApplicationController
         when PuavoRest::ExternalLoginStatus::BADUSERCREDS
           raise UserError,
                 I18n.t('flash.password.invalid_external_login',
-                       :uid => params[:login][:uid])
+                       :uid => login_uid)
         when PuavoRest::ExternalLoginStatus::UPDATEERROR
           raise UserError,
                 I18n.t('flash.password.can_not_change_upstream_password')
@@ -457,5 +481,13 @@ class PasswordController < ApplicationController
       I18n.locale = lang
       @language = lang
     end
+  end
+
+  def setup_customisations
+    # use -1 because we don't know what the school is
+    customisations = get_school_password_form_customisations(-1)
+
+    @banner = customisations[:banner]
+    @domain = customisations[:domain]
   end
 end
