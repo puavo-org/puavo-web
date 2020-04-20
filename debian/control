@@ -27,7 +27,7 @@ Build-Depends: debhelper (>= 8),
  xpdf-utils,
  zlib1g-dev
 Standards-Version: 3.9.3
-Homepage: https://github.com/opinsys/puavo-users/
+Homepage: https://github.com/puavo-org/puavo-web/
 
 Package: puavo-rest
 Architecture: any

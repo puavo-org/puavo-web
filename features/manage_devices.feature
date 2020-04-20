@@ -88,9 +88,9 @@ Feature: Manage devices
     Given I am logged in as "example" organisation owner
     And I am on the devices list page
     And I press "Edit..." on the "laptop-01" row
-    And I fill in "device[puavoImageSeriesSourceURL][]" with "http://foobar.opinsys.fi/trusty"
+    And I fill in "device[puavoImageSeriesSourceURL][]" with "http://foobar.puavo.net/buster"
     And I press "Update"
-    And I should see "http://foobar.opinsys.fi/trusty"
+    And I should see "http://foobar.puavo.net/buster"
 
   Scenario: Check for unique tags
     Given I am on the devices list page

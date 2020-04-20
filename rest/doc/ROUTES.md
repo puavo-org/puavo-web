@@ -260,26 +260,26 @@ Sessions are stored in memory only but are not automatically deleted.
       },
       "printer_queues": [
         {
-          "remote_uri": "ipp://boot.hogwarts.opinsys.net/printers/Kirkonkyla-Luokka-202",
+          "remote_uri": "ipp://boot.hogwarts.puavo.net/printers/Kirkonkyla-Luokka-202",
           "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
           "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
           "location": "Satun luokka",
           "type": "36876",
-          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.opinsys.fi",
+          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.puavo.net",
           "description": "Kirkonkyla-Luokka-202",
           "name": "Kirkonkyla-Luokka-202",
-          "server_fqdn": "boot.hogwarts.opinsys.net"
+          "server_fqdn": "boot.hogwarts.puavo.net"
         },
         {
-          "remote_uri": "ipp://boot.hogwarts.opinsys.net/printers/Kirkonkyla-Luokka-202",
+          "remote_uri": "ipp://boot.hogwarts.puavo.net/printers/Kirkonkyla-Luokka-202",
           "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
           "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
           "location": "Satun luokka",
           "type": "36876",
-          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.opinsys.fi",
+          "local_uri": "socket://jokk-hptulostin-202.ltsp.hogwarts.puavo.net",
           "description": "Kirkonkyla-Luokka-202",
           "name": "Kirkonkyla-Luokka-202",
-          "server_fqdn": "boot.hogwarts.opinsys.net"
+          "server_fqdn": "boot.hogwarts.puavo.net"
         }
       ],
       "created": 1380803997,
@@ -363,8 +363,8 @@ Return current organisation
       "auto_power_on_hour": null,
       "base": "dc=edu,dc=hogwarts,dc=fi",
       "samba_domain_name": "EDUHOGWARTS",
-      "domain": "hogwarts.opinsys.net",
-      "puppet_host": "hogwarts.puppet.opinsys.net",
+      "domain": "hogwarts.puavo.net",
+      "puppet_host": "hogwarts.puppet.puavo.net",
       "owners": [
         4
       ],

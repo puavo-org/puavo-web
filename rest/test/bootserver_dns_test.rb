@@ -34,7 +34,7 @@ describe PuavoRest::BootserverDNS do
       assert_200
 
       expected_fqdn = "#{ @host.puavoHostname }.#{ @dns_update_params['subdomain'] }" \
-                        + '.example.opinsys.net'
+                        + '.example.puavo.net'
 
       data = JSON.parse last_response.body
       assert data.kind_of?(Hash)

@@ -998,7 +998,7 @@ class Users < PuavoSinatra
   # Replace all legacy roles for user in one request
   # Example:
   #
-  #   curl -u albus:albus -H "host: hogwarts.opinsys.net" -H "content-type: application/json" -X PUT -d '{"ids": [49937, 50164]}' http://localhost:9292/v3/users/bob/legacy_roles
+  #   curl -u albus:albus -H "host: hogwarts.puavo.net" -H "content-type: application/json" -X PUT -d '{"ids": [49937, 50164]}' http://localhost:9292/v3/users/bob/legacy_roles
   #
   #
   put "/v3/users/:username/legacy_roles" do

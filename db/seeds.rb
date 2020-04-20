@@ -234,10 +234,10 @@ end
 end
 
 
-##################################
-# Seeds for anotherorg.opinsys.net
+################################
+# Seeds for anotherorg.puavo.net
 # Use only in tests
-##################################
+################################
 
 authentication = Puavo::Authentication.new
 authentication.configure_ldap_connection({
@@ -303,9 +303,9 @@ role.save!
   end
 end
 
-##################################
-# Seeds for heroes.opinsys.net
-##################################
+############################
+# Seeds for heroes.puavo.net
+############################
 
 authentication = Puavo::Authentication.new
 authentication.configure_ldap_connection({

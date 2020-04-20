@@ -23,8 +23,8 @@ describe PuavoRest::BootServer do
       :puavoSchool => @school.dn,
       :puavoTag => ["servertag"],
       :puavoImageSeriesSourceURL => [
-        "https://foobar.opinsys.fi/images1.json",
-        "https://foobar.opinsys.fi/images2.json"],
+        "https://foobar.puavo.net/images1.json",
+        "https://foobar.puavo.net/images2.json"],
       :puavoDeviceType => "bootserver",
       :puavoConf => '{ "puavo.kernel.version": "fresh" }'
     }
@@ -79,8 +79,8 @@ describe PuavoRest::BootServer do
         data["tags"].include?("servertag"),
         "Has 'servertag' in #{ data["tags"].inspect }"
       )
-      assert_equal( Set.new(["https://foobar.opinsys.fi/images1.json",
-                             "https://foobar.opinsys.fi/images2.json"]),
+      assert_equal( Set.new(["https://foobar.puavo.net/images1.json",
+                             "https://foobar.puavo.net/images2.json"]),
                     Set.new(data["image_series_source_urls"]) )
     end
 
@@ -144,7 +144,7 @@ describe PuavoRest::BootServer do
       end
 
       it "has server fqdn" do
-        assert_equal "server1.example.opinsys.net", @printer["server_fqdn"]
+        assert_equal "server1.example.puavo.net", @printer["server_fqdn"]
       end
 
       it "has name" do
@@ -156,7 +156,7 @@ describe PuavoRest::BootServer do
       end
 
       it "has remote_uri" do
-        assert_equal "ipp://server1.example.opinsys.net/printers/printer1", @printer["remote_uri"]
+        assert_equal "ipp://server1.example.puavo.net/printers/printer1", @printer["remote_uri"]
       end
     end
   end
@@ -165,7 +165,7 @@ describe PuavoRest::BootServer do
   describe "basic get resources with organisation fallback" do
     before(:each) do
       test_organisation = LdapOrganisation.first # TODO: fetch by name
-      test_organisation.puavoImageSeriesSourceURL = "https://foobar.opinsys.fi/organisationprefimages1.json"
+      test_organisation.puavoImageSeriesSourceURL = "https://foobar.puavo.net/organisationprefimages1.json"
       test_organisation.puavoConf = '{ "puavo.time.timezone": "Europe/Rome" }'
       test_organisation.save!
 
@@ -180,7 +180,7 @@ describe PuavoRest::BootServer do
       }
       assert_200
       data = JSON.parse last_response.body
-      assert_equal( Set.new(["https://foobar.opinsys.fi/organisationprefimages1.json"]),
+      assert_equal( Set.new(["https://foobar.puavo.net/organisationprefimages1.json"]),
                     Set.new(data["image_series_source_urls"]) )
     end
 

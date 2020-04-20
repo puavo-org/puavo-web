@@ -15,13 +15,13 @@ describe PuavoRest::Devices do
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true,
       :puavoAutomaticImageUpdates => true,
-      :puavoImageSeriesSourceURL => ["https://foobar.opinsys.fi/schoolpref.json"],
+      :puavoImageSeriesSourceURL => ["https://foobar.puavo.net/schoolpref.json"],
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
       :puavoConf => '{
         "puavo.admin.personally_administered": true,
         "puavo.autopilot.enabled": false,
-        "puavo.desktop.vendor.logo": "/usr/share/opinsys-art/logo.png",
+        "puavo.desktop.vendor.logo": "/usr/share/puavo-art/logo.png",
         "puavo.login.external.enabled": false
       }',
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',
@@ -102,7 +102,7 @@ describe PuavoRest::Devices do
         :puavoSchool => @school.dn,
         :puavoPersonalDevice => false,
         :puavoDefaultPrinter => "defaultprinter",
-        :puavoImageSeriesSourceURL => "https://foobar.opinsys.fi/images.json",
+        :puavoImageSeriesSourceURL => "https://foobar.puavo.net/images.json",
         :puavoAllowGuest => false,
         :puavoAutomaticImageUpdates => false,
         :puavoPersonallyAdministered => true,
@@ -128,7 +128,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/images.json", @data["image_series_source_urls"].first
+      assert_equal "https://foobar.puavo.net/images.json", @data["image_series_source_urls"].first
     end
 
     it "has mac address" do
@@ -218,7 +218,7 @@ describe PuavoRest::Devices do
       assert conf.kind_of?(Hash), 'device data has "conf" that is a Hash'
       assert_equal 'true', conf['puavo.admin.personally_administered']
       assert_equal 'true', conf['puavo.autopilot.enabled']
-      assert_equal'/usr/share/opinsys-art/logo.png',
+      assert_equal'/usr/share/puavo-art/logo.png',
                    conf['puavo.desktop.vendor.logo']
       assert_equal 'true', conf['puavo.guestlogin.enabled']
       assert_equal 'ja_JP.eucJP', conf['puavo.l10n.locale']
@@ -269,7 +269,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/schoolpref.json", @data["image_series_source_urls"].first
+      assert_equal "https://foobar.puavo.net/schoolpref.json", @data["image_series_source_urls"].first
     end
 
     it "has preferred image" do
@@ -327,7 +327,7 @@ describe PuavoRest::Devices do
     end
 
     it "has image series source url" do
-      assert_equal "https://foobar.opinsys.fi/organisationpref.json", @data["image_series_source_urls"].first
+      assert_equal "https://foobar.puavo.net/organisationpref.json", @data["image_series_source_urls"].first
     end
 
     it "has allow guest" do
@@ -558,10 +558,10 @@ describe PuavoRest::Devices do
       data = JSON.parse last_response.body
       assert_equal 1, data.count
       printer = data.first
-      assert_equal "server1.example.opinsys.net", printer["server_fqdn"]
+      assert_equal "server1.example.puavo.net", printer["server_fqdn"]
       assert_equal "printer1", printer["name"]
       assert_equal "printer1", printer["description"]
-      assert_equal "ipp://server1.example.opinsys.net/printers/printer1", printer["remote_uri"]
+      assert_equal "ipp://server1.example.puavo.net/printers/printer1", printer["remote_uri"]
     end
 
     it "can handle multiple printers" do
@@ -721,9 +721,9 @@ describe PuavoRest::Devices do
 
       chainpath = "/etc/puavo-ca/certificates/#{ @default_certchain_version }"
       @default_chain_rootca \
-        = File.read("#{ chainpath }/rootca/ca.opinsys.net.crt")
+        = File.read("#{ chainpath }/rootca/ca.puavo.net.crt")
       @default_chain_orgbundle \
-        = File.read("#{ chainpath }/organisations/ca.example.opinsys.net-bundle.pem")
+        = File.read("#{ chainpath }/organisations/ca.example.puavo.net-bundle.pem")
 
       @nondefault_certchain_version \
         = Dir.glob('/etc/puavo-ca/certificates/*')           \
@@ -736,9 +736,9 @@ describe PuavoRest::Devices do
 
       chainpath = "/etc/puavo-ca/certificates/#{ @nondefault_certchain_version }"
       @nondefault_chain_rootca \
-        = File.read("#{ chainpath }/rootca/ca.opinsys.net.crt")
+        = File.read("#{ chainpath }/rootca/ca.puavo.net.crt")
       @nondefault_chain_orgbundle \
-        = File.read("#{ chainpath }/organisations/ca.example.opinsys.net-bundle.pem")
+        = File.read("#{ chainpath }/organisations/ca.example.puavo.net-bundle.pem")
     end
 
     it 'sign new certificate without chain version' do
@@ -751,7 +751,7 @@ describe PuavoRest::Devices do
       @data = JSON.parse last_response.body
 
       certificate = OpenSSL::X509::Certificate.new @data['certificate']
-      assert_equal '/CN=ca.example.opinsys.net', certificate.issuer.to_s
+      assert_equal '/CN=ca.example.puavo.net', certificate.issuer.to_s
 
       assert_equal @default_chain_orgbundle, @data['org_ca_certificate_bundle']
       assert_equal @default_chain_rootca,    @data['root_ca_certificate']
@@ -768,7 +768,7 @@ describe PuavoRest::Devices do
       @data = JSON.parse last_response.body
 
       certificate = OpenSSL::X509::Certificate.new @data['certificate']
-      assert_equal "/CN=ca.example.opinsys.net", certificate.issuer.to_s
+      assert_equal "/CN=ca.example.puavo.net", certificate.issuer.to_s
 
       assert_equal @default_chain_orgbundle, @data['org_ca_certificate_bundle']
       assert_equal @default_chain_rootca,    @data['root_ca_certificate']
@@ -785,7 +785,7 @@ describe PuavoRest::Devices do
       @data = JSON.parse last_response.body
 
       certificate = OpenSSL::X509::Certificate.new @data['certificate']
-      assert_equal "/CN=ca.example.opinsys.net", certificate.issuer.to_s
+      assert_equal "/CN=ca.example.puavo.net", certificate.issuer.to_s
 
       assert_equal @nondefault_chain_orgbundle,
                    @data['org_ca_certificate_bundle']

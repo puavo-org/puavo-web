@@ -13,7 +13,7 @@ describe PuavoRest::Devices do
       :puavoSchoolHomePageURL => "schoolhomepagefordevice.example",
       :puavoAllowGuest => true,
       :puavoAutomaticImageUpdates => true,
-      :puavoImageSeriesSourceURL => "https://foobar.opinsys.fi/schoolpref.json",
+      :puavoImageSeriesSourceURL => "https://foobar.puavo.net/schoolpref.json",
       :puavoLocale => "fi_FI.UTF-8",
       :puavoTag => ["schooltag"],
       :puavoMountpoint => [ '{"fs":"nfs3","path":"10.0.0.3/share","mountpoint":"/home/school/share","options":"-o r"}',

@@ -33,7 +33,7 @@ describe PuavoRest::SambaDomain do
 
     basic_authorize "uid=admin,o=puavo", "password"
     post "/v3/samba_generate_next_rid", {}, {
-      "HTTP_HOST" => "anotherorg.opinsys.net"
+      "HTTP_HOST" => "anotherorg.puavo.net"
     }
     assert_200
 

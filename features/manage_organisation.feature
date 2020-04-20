@@ -52,7 +52,7 @@ Feature: Manage organisation
     | Abbreviation                                   | jkl                                                        |
     | Keyboard layout                                | en                                                         |
     | Keyboard varian                                | US                                                         |
-    | ldap_organisation[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                            |
+    | ldap_organisation[puavoImageSeriesSourceURL][] | http://foobar.puavo.net/trusty                             |
 # FIXME: fix acl?
 #    | ldap_organisation[puavoBillingInfo][] | base:500                                                   |
     And I fill in "PuavoConf settings" with:
@@ -94,7 +94,7 @@ Feature: Manage organisation
     | en                                                         |
     | US                                                         |
     | Automatic image updates Yes                                |
-    | http://foobar.opinsys.fi/trusty                            |
+    | http://foobar.puavo.net/trusty                             |
 #    | base:500                                                   |
     And I should see the following special ldap attributes on the "Organisation" object with "example":
     | preferredLanguage | "sv" |

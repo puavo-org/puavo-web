@@ -2,7 +2,7 @@
 require "webmock"
 
 # XXX remove or think of some other mechanism for these:
-temp_connect_hosts = ['puavo-standalone-test.opinsys.net', '10.246.134.48']
+temp_connect_hosts = ['puavo-standalone-test.puavo.net', '10.246.134.48']
 
 connect_hosts = [ '127.0.0.1', 'localhost' ] + temp_connect_hosts
 
@@ -87,7 +87,7 @@ module Test
     ldap_organisation.puavoDeviceAutoPowerOffMode = "off"
     ldap_organisation.puavoLocale = "en_US.UTF-8"
     ldap_organisation.o = "Example Organisation"
-    ldap_organisation.puavoDomain = "example.opinsys.net"
+    ldap_organisation.puavoDomain = "example.puavo.net"
     ldap_organisation.puavoDeviceImage = nil
     ldap_organisation.puavoAllowGuest = nil
     ldap_organisation.puavoActiveService = nil
@@ -95,7 +95,7 @@ module Test
     ldap_organisation.puavoKeyboardLayout = "en"
     ldap_organisation.puavoKeyboardVariant = "US"
     ldap_organisation.owner = ['uid=admin,o=puavo', owner_for_test.dn.to_s]
-    ldap_organisation.puavoImageSeriesSourceURL = "https://foobar.opinsys.fi/organisationpref.json"
+    ldap_organisation.puavoImageSeriesSourceURL = "https://foobar.puavo.net/organisationpref.json"
     ldap_organisation.puavoWlanSSID = []
     ldap_organisation.save!
 
@@ -109,7 +109,7 @@ module Test
     )
 
     anotherorg = LdapOrganisation.current
-    anotherorg.puavoDomain = "anotherorg.opinsys.net"
+    anotherorg.puavoDomain = "anotherorg.puavo.net"
     anotherorg.o = "Another Organisation"
     anotherorg.save!
 

@@ -36,13 +36,13 @@ Feature: Manage schools
     | school_path_0                       | 10.0.0.1/share                                                                 |
     | school_mountpoint_0                 | /home/share                                                                    |
     | school_options_0                    | -o rw                                                                          |
-    | school[puavoImageSeriesSourceURL][] | http://foobar.opinsys.fi/trusty                                                |
+    | school[puavoImageSeriesSourceURL][] | http://foobar.puavo.net/trusty                                                 |
     And I fill in "PuavoConf settings" with:
       """
       {
         "puavo.admin.personally_administered": true,
         "puavo.autopilot.enabled": false,
-        "puavo.desktop.vendor.logo": "/usr/share/opinsys-art/logo.png",
+        "puavo.desktop.vendor.logo": "/usr/share/puavo-art/logo.png",
         "puavo.login.external.enabled": false
       }
       """
@@ -78,7 +78,7 @@ Feature: Manage schools
     | Auto power off mode             |
     | Daytime start                   |
     | Daytime end                     |
-    | http://foobar.opinsys.fi/trusty |
+    | http://foobar.puavo.net/trusty  |
     And I should see "School was successfully created."
     And I should see school image of "Bourne School"
     And I should see the following special ldap attributes on the "School" object with "Bourne School":
@@ -86,7 +86,7 @@ Feature: Manage schools
     And I should see the following puavo-conf values:
     | puavo.admin.personally_administered | true                            |
     | puavo.autopilot.enabled             | false                           |
-    | puavo.desktop.vendor.logo           | /usr/share/opinsys-art/logo.png |
+    | puavo.desktop.vendor.logo           | /usr/share/puavo-art/logo.png   |
     | puavo.login.external.enabled        | false                           |
 
   Scenario: Add new school to organisation without names

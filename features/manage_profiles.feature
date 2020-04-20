@@ -17,14 +17,14 @@ Feature: Manage profile
 
 
   Scenario: School admin edit profile
-    Given mock email confirm service for user "ken.jones" with email "ken.jones@opinsys.fi"
+    Given mock email confirm service for user "ken.jones" with email "ken.jones@puavo.net"
     When I am on the edit profile page
     Then I should be on the login page
     When I fill in "Username" with "ken.jones"
     And I fill in "Password" with "secret"
     And I press "Login"
     Then I should see "Ken Jones"
-    When I fill in "Email" with "ken.jones@opinsys.fi"
+    When I fill in "Email" with "ken.jones@puavo.net"
     And I fill in "Telephone number" with "+35814123456789"
     And I select "German (Switzerland)" from "Language"
     # FIXME: select field?
@@ -60,17 +60,17 @@ Feature: Manage profile
     And I should not see "A confirmation message will be soon sent to your new email address. Click it to verify your address."
 
   Scenario: Student edit email address
-    Given mock email confirm service for user "jane.doe" with email "jane.doe@opinsys.fi"
+    Given mock email confirm service for user "jane.doe" with email "jane.doe@puavo.net"
     When I am on the edit profile page
     Then I should be on the login page
     When I fill in "Username" with "jane.doe"
     And I fill in "Password" with "janesecret"
     And I press "Login"
     Then I should see "Jane Doe"
-    When I fill in "Email" with "jane.doe@opinsys.fi"
+    When I fill in "Email" with "jane.doe@puavo.net"
     When I press "Update"
     Then I should see "Your profile has been successfully updated."
     # FIXME: create "shoult not see..." step
     #And I should not see the following special ldap attributes on the "User" object with "jane.doe":
-    #| mail | "jane.doe@opinsys.fi" |
+    #| mail | "jane.doe@puavo.net" |
     And I should see "A confirmation message will be soon sent to your new email address. Click it to verify your address."

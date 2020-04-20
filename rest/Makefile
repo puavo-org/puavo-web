@@ -75,7 +75,7 @@ _doc-publish:
 	touch .nojekyll
 	git add -A
 	git commit -m "deploy"
-	git push git@github.com:opinsys/puavo-users.git master:gh-pages -f
+	git push git@github.com:puavo-org/puavo-web.git master:gh-pages -f
 
 
 doc-server: doc
