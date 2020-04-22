@@ -27,7 +27,7 @@
 <p class="genericWarning"><%= t('password.attempts_are_logged_own') %></p>
 
 <% if @banner %>
-<p class="genericNotice"><%= @banner %></p>
+<div class="genericNotice"><%= @banner.html_safe %></div>
 <% end %>
 
 <%= form_for(@user, :url => password_path, :html => { :method => :put })  do |f| %>
