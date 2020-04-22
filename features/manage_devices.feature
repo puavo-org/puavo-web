@@ -122,6 +122,21 @@ Feature: Manage devices
     And I press "Update"
     Then I should see "Failed to save the image"
 
+  Scenario: .img extension is removed from desktop image names
+    Given I am on the devices list page
+    And I press "Edit..." on the "laptop-01" row
+    And I fill in "Desktop Image" with "example_image.img"
+    And I press "Update"
+    # All "I should see" and "I should not see" checks are just simple
+    # substring searches. If there's "example_image.img" on the page,
+    # then it will match to "example_image". So we must check for the
+    # absence of the extension itself.
+    Then I should not see ".img"
+    When I follow "Edit..."
+    And I fill in "Desktop Image" with "example_image_2"
+    And I press "Update"
+    Then I should see "example_image_2"
+
   Scenario: Ensure invalid characters in the serial number field don't crash (part 1)
     Given I am on the devices list page
     And I press "Edit..." on the "fatclient-01" row

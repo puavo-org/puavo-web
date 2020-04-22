@@ -318,6 +318,8 @@ class SchoolsController < ApplicationController
       s["puavoBillingInfo"].uniq! if s.key?("puavoBillingInfo")
       s["puavoImageSeriesSourceURL"].uniq! if s.key?("puavoImageSeriesSourceURL")
 
+      strip_img(s)
+
       return s
     end
 

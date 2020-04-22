@@ -232,4 +232,10 @@ class ApplicationController < ActionController::Base
     return true
   end
 
+  def strip_img(hash)
+    # strip the '.img' from the end of the image name if it's there
+    if hash.include?('puavoDeviceImage') && hash['puavoDeviceImage'].end_with?('.img')
+      hash['puavoDeviceImage'] = hash['puavoDeviceImage'][0..-5]
+    end
+  end
 end

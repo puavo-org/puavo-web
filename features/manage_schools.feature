@@ -348,3 +348,18 @@ Scenario: Set the school code for an existing school
     And I press "Update"
     Then I should see "School was successfully updated."
     And I should see "bazquux"
+
+  Scenario: .img extension is removed from desktop image names
+    Given I am on the school page with "Greenwich Steiner School"
+    And I follow "Edit..."
+    And I fill in "Desktop Image" with "example_image.img"
+    And I press "Update"
+    # All "I should see" and "I should not see" checks are just simple
+    # substring searches. If there's "example_image.img" on the page,
+    # then it will match to "example_image". So we must check for the
+    # absence of the extension itself.
+    Then I should not see ".img"
+    When I follow "Edit..."
+    And I fill in "Desktop Image" with "example_image_2"
+    And I press "Update"
+    Then I should see "example_image_2"

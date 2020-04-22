@@ -634,6 +634,8 @@ class DevicesController < ApplicationController
     p["puavoDeviceXrandr"].uniq! if p.key?("puavoDeviceXrandr")
     p["puavoImageSeriesSourceURL"].uniq! if p.key?("puavoImageSeriesSourceURL")
 
+    strip_img(p)
+
     return p
   end
 

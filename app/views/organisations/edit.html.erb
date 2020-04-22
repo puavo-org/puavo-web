@@ -99,7 +99,10 @@
 
   <tr>
     <th><%= f.label :puavoDeviceImage %></th>
-    <td><%= f.text_field :puavoDeviceImage %></td>
+    <td>
+      <%= f.text_field :puavoDeviceImage %>
+      <p style="margin: 0;"><%= t('shared.img_extension_will_be_stripped') %></p>
+    </td>
   </tr>
 
   <tr>

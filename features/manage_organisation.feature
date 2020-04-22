@@ -156,3 +156,18 @@ Feature: Manage organisation
     Given I am logged in as "donald" with password "313"
     When I follow "Owners"
     Then I should see "(You can't remove your own owner-level rights)"
+
+  Scenario: .img extension is removed from desktop image names
+    When I follow "About"
+    And I follow "Edit..."
+    And I fill in "Desktop Image" with "example_image.img"
+    And I press "Update"
+    # All "I should see" and "I should not see" checks are just simple
+    # substring searches. If there's "example_image.img" on the page,
+    # then it will match to "example_image". So we must check for the
+    # absence of the extension itself.
+    Then I should not see ".img"
+    When I follow "Edit..."
+    And I fill in "Desktop Image" with "example_image_2"
+    And I press "Update"
+    Then I should see "example_image_2"
