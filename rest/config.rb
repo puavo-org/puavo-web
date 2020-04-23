@@ -126,7 +126,7 @@ if ENV['RACK_ENV'] == 'test' then
     "password_management" => {
       "secret" => "foobar",
       "smtp" => {
-        "from" => "Opinsys <no-reply@puavo.net>",
+        "from" => "Puavo Org <no-reply@puavo.net>",
         "via_options" => {
           "address" => "localhost",
           "port" => 25,

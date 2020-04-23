@@ -138,7 +138,7 @@ describe PuavoRest::ExternalLogin do
       assert_equal 'Skywalker',
                    @user.surname,
                    'luke.skywalker has incorrect surname'
-      assert_equal 'luke.skywalker@HEROES.OPINSYS.NET',
+      assert_equal 'luke.skywalker@HEROES.PUAVO.NET',
                    @user.puavoExternalId,
                    'luke.skywalker has incorrect external_id'
     end
