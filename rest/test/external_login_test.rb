@@ -400,7 +400,7 @@ describe PuavoRest::ExternalLogin do
     it 'user schools, groups and roles follow configuration changes' do
       CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
             ['by_dn'] = [
-        { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+        { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
             { 'add_administrative_group' => {
                 'displayname' => 'Better heroes',
                 'name'        => 'better-heroes', }},
@@ -603,7 +603,7 @@ describe PuavoRest::ExternalLogin do
     it 'trying to configure a user to two teaching groups' do
       CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
             ['by_dn'] = [
-        { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+        { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
             { 'add_teaching_group' => {
                 'displayname' => 'Heroes school %GROUP',
                 'name'        => 'heroes-%STARTYEAR-%GROUP', }},
@@ -626,7 +626,7 @@ describe PuavoRest::ExternalLogin do
     it 'trying to configure a user to two year class groups' do
       CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
             ['by_dn'] = [
-        { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+        { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
             { 'add_year_class' => {
                 'displayname' => 'Heroes school %CLASSNUMBER',
                 'name'        => 'heroes-%STARTYEAR', }},

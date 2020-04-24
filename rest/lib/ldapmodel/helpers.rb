@@ -120,7 +120,7 @@ def v4_convert_ldap_string(value, type)
       return value.to_s.force_encoding('UTF-8')
 
     when :id_from_dn
-      # extract the "XXX" from "puavoId=XXX,ou=Groups,dc=edu,dc=hogwarts,dc=fi" if possible
+      # extract the "XXX" from "puavoId=XXX,ou=Groups,dc=edu,dc=hogwarts,dc=net" if possible
       md = value.match(/puavoId=\d+/)
 
       if md

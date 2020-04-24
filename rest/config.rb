@@ -56,14 +56,15 @@ def resistance_administrative_group(role)
 end
 
 def get_external_login_test_configuration
-  admin_dn   = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'cucumber')
-  bind_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'admin')
-  indiana_dn = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'indiana.jones')
-  lara_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'lara.croft')
-  sarah_dn   = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'sarah.connor')
-  thomas_dn  = get_dn_from_cn('dc=edu,dc=heroes,dc=fi',  'thomas.anderson')
+  admin_dn   = get_dn_from_cn('dc=edu,dc=example,dc=net', 'cucumber')
+  bind_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=net',  'admin')
+  indiana_dn = get_dn_from_cn('dc=edu,dc=heroes,dc=net',  'indiana.jones')
+  lara_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=net',  'lara.croft')
+  sarah_dn   = get_dn_from_cn('dc=edu,dc=heroes,dc=net',  'sarah.connor')
+  thomas_dn  = get_dn_from_cn('dc=edu,dc=heroes,dc=net',  'thomas.anderson')
 
-  target_school_dn = get_dn_from_cn('dc=edu,dc=example,dc=fi', 'administration')
+  target_school_dn = get_dn_from_cn('dc=edu,dc=example,dc=net',
+                                    'administration')
 
   organisations = YAML.load_file('/etc/puavo-web/organisations.yml')
 
@@ -73,7 +74,7 @@ def get_external_login_test_configuration
       'admin_password' => organisations['example']['owner_pw'],
       'service'        => 'external_ldap',
       'external_ldap'  => {
-        'base'                    => 'dc=edu,dc=heroes,dc=fi',
+        'base'                    => 'dc=edu,dc=heroes,dc=net',
         'bind_dn'                 => bind_dn,
         'bind_password'           => organisations['heroes']['owner_pw'],
         'encryption_method'       => 'start_tls',
@@ -86,7 +87,7 @@ def get_external_login_test_configuration
             'teaching_group_regex' => '^(.*)$',
           },
           'by_dn' => [
-            { '*,ou=People,dc=edu,dc=heroes,dc=fi' => [
+            { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
                 { 'add_administrative_group' => {
                     'displayname' => 'Heroes',
                     'name'        => 'heroes', }},
@@ -107,7 +108,7 @@ def get_external_login_test_configuration
         'external_username_field' => 'mail',
         'password_change' => { 'api' => 'openldap', },
         'server' => 'localhost',
-        'subtrees' => [ 'ou=People,dc=edu,dc=heroes,dc=fi' ],
+        'subtrees' => [ 'ou=People,dc=edu,dc=heroes,dc=net' ],
       },
     }
   }

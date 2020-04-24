@@ -437,11 +437,11 @@ class Devices < PuavoSinatra
   #      "resolution": "320x240",
   #      "graphics_driver": "nvidia",
   #      "image": "myimage",
-  #      "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+  #      "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
   #      "puavo_id": "10",
   #      "mac_address": "08:00:27:88:0c:a6",
   #      "type": "thinclient",
-  #      "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+  #      "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=net",
   #      "hostname": "testthin",
   #      "boot_mode": "netboot",
   #      "xrand_disable": "FALSE"

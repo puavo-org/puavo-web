@@ -41,7 +41,7 @@ Get user information
       "first_name": "Olli",
       "last_name": "Oppilas",
       "username": "oppilas",
-      "dn": "puavoId=202228,ou=People,dc=edu,dc=kehitys,dc=fi"
+      "dn": "puavoId=202228,ou=People,dc=edu,dc=kehitys,dc=net"
     }
 
 ## GET /v3/users/_search
@@ -81,11 +81,11 @@ Get device information by device hostname.
       "resolution": "320x240",
       "graphics_driver": "nvidia",
       "image": "myimage",
-      "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+      "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
       "puavo_id": "10",
       "mac_address": "08:00:27:88:0c:a6",
       "type": "thinclient",
-      "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+      "school": "puavoId=1,ou=Groups,dc=edu,dc=hogwarts,dc=net",
       "hostname": "testthin",
       "boot_mode": "netboot",
       "xrand_disable": false,
@@ -151,7 +151,7 @@ Get metadata for all ltsp servers.
 
     [
       {
-        "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+        "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
         "hostname": "ltspserver1",
         "updated": "2013-06-04 16:04:08 +0300",
         "ltsp_image": "test-image",
@@ -175,7 +175,7 @@ Get ltsp server metadata by hostname.
 ### Returns
 
     {
-      "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+      "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
       "hostname": "ltspserver1",
       "updated": "2013-06-04 16:04:08 +0300",
       "ltsp_image": "test-image",
@@ -224,9 +224,9 @@ Sessions are stored in memory only but are not automatically deleted.
         "preferred_server": null,
         "preferred_image": null,
         "type": "fatclient",
-        "school_dn": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=fi",
+        "school_dn": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=net",
         "hostname": "testfat",
-        "dn": "puavoId=5370,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=fi",
+        "dn": "puavoId=5370,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
         "vertical_refresh": null,
         "printer_queue_dns": null,
         "mac_address": "bc:5f:f4:56:59:71",
@@ -245,7 +245,7 @@ Sessions are stored in memory only but are not automatically deleted.
         },
         "school_dns": [],
         "hostname": "myltsp",
-        "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=fi"
+        "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=net"
       },
       "user": {
         "profile_image_link": "http://127.0.0.1:9393/v3/users/admin/profile.jpg",
@@ -261,7 +261,7 @@ Sessions are stored in memory only but are not automatically deleted.
       "printer_queues": [
         {
           "remote_uri": "ipp://boot.hogwarts.puavo.net/printers/Kirkonkyla-Luokka-202",
-          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
+          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=net",
           "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
           "location": "Satun luokka",
           "type": "36876",
@@ -272,7 +272,7 @@ Sessions are stored in memory only but are not automatically deleted.
         },
         {
           "remote_uri": "ipp://boot.hogwarts.puavo.net/printers/Kirkonkyla-Luokka-202",
-          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=fi",
+          "dn": "puavoId=19159,ou=Printers,dc=edu,dc=hogwarts,dc=net",
           "model": "HP Color LaserJet cp2025dn pcl3, hpcups 3.12.2",
           "location": "Satun luokka",
           "type": "36876",
@@ -361,7 +361,7 @@ Return current organisation
     {
       "auto_power_off_hour": null,
       "auto_power_on_hour": null,
-      "base": "dc=edu,dc=hogwarts,dc=fi",
+      "base": "dc=edu,dc=hogwarts,dc=net",
       "samba_domain_name": "EDUHOGWARTS",
       "domain": "hogwarts.puavo.net",
       "puppet_host": "hogwarts.puppet.puavo.net",

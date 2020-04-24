@@ -171,7 +171,7 @@ describe PuavoRest::Users do
 
       assert_equal "Example Organisation", data["organisation"]["name"]
       assert_equal "example.puavo.net", data["organisation"]["domain"]
-      assert_equal "dc=edu,dc=example,dc=fi", data["organisation"]["base"]
+      assert_equal "dc=edu,dc=example,dc=net", data["organisation"]["base"]
       assert_equal "bob@example.puavo.net", data["domain_username"]
       assert_equal "schoolhomepage.example", data["homepage"]
 
