@@ -188,11 +188,11 @@ module Puavo
   def self.change_passwd_upstream(host, actor_username, actor_password,
                                   target_user_username, target_user_password)
     begin
-      raise 'actor_username not set' \
-        unless actor_username.kind_of?(String) && !actor_username.empty?
-
       external_login = PuavoRest::ExternalLogin.new
       login_service = external_login.new_external_service_handler()
+
+      raise 'actor_username not set' \
+        unless actor_username.kind_of?(String) && !actor_username.empty?
       login_service.change_password(actor_username,
                                     actor_password,
                                     target_user_username,
