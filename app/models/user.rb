@@ -497,10 +497,8 @@ class User < LdapBase
     self.new_password = generate_password
   end
 
-  def set_password(password, salt=nil)
-    salt ||= generate_password(5)
-    pw = Base64.encode64(Digest::SHA1.digest(password + salt) + salt).chomp!
-    self.userPassword = "{SSHA}" + pw
+  def set_password(password)
+    self.new_password = password
   end
 
   def self.puavoEduPersonAffiliation_list
