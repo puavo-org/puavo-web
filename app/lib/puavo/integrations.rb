@@ -466,6 +466,44 @@ module Puavo
 
       if response[:code] == 'user_not_found'
         # whatever
+        logger.info("[#{request_id}] google_delete_user(): the user does not exist, ignoring")
+        return true, nil
+      end
+
+      return false, response[:code]
+    end
+
+    def azure_delete_user(request_id, params, args)
+      # verify our parameters
+      unless params.include?('url')
+        logger.info("[#{request_id}] azure_delete_user(): missing server URL in 'params'")
+        raise OperationError, 'configuration_error'
+      end
+
+      unless args.include?(:organisation) && args.include?(:user) && args.include?(:school)
+        logger.info("[#{request_id}] azure_delete_user(): missing required arguments")
+        raise OperationError, 'configuration_error'
+      end
+
+      url = params['url']
+
+      logger.info("[#{request_id}] azure_delete_user(): sending a deletion request to \"#{url}\"")
+
+      response = do_operation(request_id, url, :delete_user, 'azure', {
+        organisation: args[:organisation],
+        user: args[:user].uid,
+        user_id: args[:user].id.to_i,
+        school: args[:school].cn,
+        school_id: args[:school].id.to_i,
+      })
+
+      if response[:success] == true
+        return true, nil
+      end
+
+      if response[:code] == 'user_not_found'
+        # whatever
+        logger.info("[#{request_id}] azure_delete_user(): the user does not exist, ignoring")
         return true, nil
       end
 
@@ -476,6 +514,7 @@ module Puavo
     SYNCHRONOUS_ACTIONS = {
       :delete_user => {
         'gsuite' => :google_delete_user,
+        'azure' => :azure_delete_user,
       },
     }.freeze
 
