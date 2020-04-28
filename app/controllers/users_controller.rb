@@ -402,8 +402,7 @@ class UsersController < ApplicationController
     @is_admin_school = school.displayName == 'Administration'
     @have_primus = false
     @have_gsuite = false
-    @gsuite_pw_warning = :none
-    @next_gsuite_update = nil
+    @pw_warning = :none
     @needs_password_validator = false
 
     unless @is_admin_school
@@ -412,24 +411,15 @@ class UsersController < ApplicationController
       @have_primus = school_has_integration?(@organisation_name, school.id, 'primus')
       @have_gsuite = school_has_integration?(@organisation_name, school.id, 'gsuite')
 
-      if school_has_integration?(@organisation_name, school.id, 'gsuite_password')
+      if school_has_sync_actions_for?(@organisation_name, school.id, :change_password)
         if is_new_user
-          @gsuite_pw_warning = :new
-
-          # next gsuite update time
-          @next_update = get_school_single_integration_next_update(@organisation_name, school.id, 'gsuite', Time.now)
-
-          if @next_update
-            @next_gsuite_update = @next_update.strftime("%d.%m.%Y %H:%M")
-          else
-            # this is an error, but avoid crashing or anything
-            @next_gsuite_update = '(???)'
-          end
+          @pw_warning = :new
         else
-          @gsuite_pw_warning = :edit
+          @pw_warning = :edit
         end
       end
     end
+
   end
 
   # GET /:school_id/users/new

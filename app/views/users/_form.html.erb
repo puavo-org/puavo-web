@@ -154,22 +154,22 @@
     <tr>
       <th class="requiredField"><%= f.label :new_password %></th>
       <td>
-      <% if @gsuite_pw_warning == :none %>
+      <% if @pw_warning == :none %>
         <% unless @is_admin_school %>
         <%= show_password_requirements(@organisation_name, @school.id) %>
         <% end %>
         <%= f.password_field :new_password, value: @user.new_password  %>
-      <% elsif @gsuite_pw_warning == :new %>
-        <p class="genericNotice"><%= t('users.form.gsuite_password_new', :next_sync => @next_gsuite_update) %></p>
-      <% elsif @gsuite_pw_warning == :edit %>
-        <p class="genericNotice"><%= t('users.form.gsuite_password_edit') %></p>
+      <% elsif @pw_warning == :new %>
+        <p class="genericNotice"><%= t('users.form.password_sync_new') %></p>
+      <% elsif @pw_warning == :edit %>
+        <p class="genericNotice"><%= t('users.form.password_sync_edit') %></p>
         <%= show_password_requirements(@organisation_name, @school.id) %>
         <%= f.password_field :new_password, value: @user.new_password  %>
       <% end %>
       </td>
     </tr>
 
-    <% if @gsuite_pw_warning == :none || @gsuite_pw_warning == :edit %>
+    <% if @pw_warning == :none || @pw_warning == :edit %>
     <tr>
       <th class="requiredField"><%= f.label :new_password_confirmation %></th>
       <td><%= f.password_field :new_password_confirmation, value: @user.new_password_confirmation %>

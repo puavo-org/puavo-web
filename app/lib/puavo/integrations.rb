@@ -17,7 +17,7 @@ module Puavo
 
     # Known action names for synchronous actions. Actions not listed here
     # are removed at load-time.
-    KNOWN_ACTIONS = Set.new(['delete_user']).freeze
+    KNOWN_ACTIONS = Set.new(['delete_user', 'change_password']).freeze
 
     # "Intelligently" merges two hashes. Hash 'b' can remove entries from 'a'
     # by setting the new value to nil. Nested hashes are handled recursively.
