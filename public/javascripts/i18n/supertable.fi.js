@@ -81,6 +81,7 @@ I18n.translations["fi"] = I18n.extend((I18n.translations["fi"] || {}),
             edit: "Muokkaa...",
             remove_confirm: "Oletko varma?",
             remove_confirm_admin: "Tämä käyttäjä on omistaja ja/tai koulun ylläpitäjä. Oletko varma?",
+            remove_synchronisations: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\t${systems}\n\nVarmista, että tämä on juuri se mitä aioit tehdä.",
             remove: "Poista",
         },
 

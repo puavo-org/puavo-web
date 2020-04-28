@@ -77,6 +77,8 @@ class UsersController < ApplicationController
   def new_cool_users_index
     @is_owner = is_owner?
 
+    get_synchronised_deletions(@organisation_name, school.id.to_i)
+
     respond_to do |format|
       format.html # index.html.erb
     end
@@ -355,6 +357,8 @@ class UsersController < ApplicationController
 
     @is_owner = organisation_owners.include?(@user.dn)
     @is_admin = school_admins && school_admins.include?(@user)
+
+    get_synchronised_deletions(@organisation_name, @user.school.id.to_i)
 
     # find the user's devices
     @user_devices = Device.find(:all,
@@ -1030,4 +1034,19 @@ class UsersController < ApplicationController
       logger.info('Synchronous action(s) completed without errors, proceeding with user deletion')
       return true, nil
     end
+
+    def get_synchronised_deletions(organisation, school_id)
+      @synchronised_deletions = []
+
+      names = get_school_integration_names(organisation, school_id)
+
+      get_school_sync_actions(organisation, school_id, :delete_user)&.each do |name, _|
+        if names.include?(name)
+          @synchronised_deletions << names[name]
+        end
+      end
+
+      @synchronised_deletions.sort!
+    end
+
 end

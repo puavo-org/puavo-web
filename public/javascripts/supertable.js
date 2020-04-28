@@ -1586,6 +1586,7 @@ class SuperTable {
             itemName: params.itemName || "",
             columnEditorSubtitle: params.columnEditorSubtitle || null,
             permitUserDeletion: params.permitUserDeletion || false,
+            synchronisedDeletions: params.synchronisedDeletions || [],
         };
 
         if (this.settings.url === undefined || this.settings.url === null)
@@ -3716,17 +3717,24 @@ class SuperTable {
                 // let RoR JS helpers deal with the confirmation question
                 let deleteButton = newElem({ tag: "a", classes: ["btn", "btn-danger"] });
 
-                let translationId = "";
+                let message = "";
 
                 if ((rowData.owner && rowData.owner === true) || (rowData.admin && rowData.admin === true)) {
                     // an admin/owner user
-                    translationId = "supertable.actions.remove_confirm_admin";
+                    message = I18n.translate("supertable.actions.remove_confirm_admin");
                 } else {
                     // a normal user
-                    translationId = "supertable.actions.remove_confirm";
+                    message = I18n.translate("supertable.actions.remove_confirm");
                 }
 
-                deleteButton.dataset.confirm = I18n.translate(translationId);
+                if (this.settings.synchronisedDeletions.length > 0) {
+                    // Extra warning about deletion synchronisations
+                    message += "\n\n";
+                    message += I18n.translate("supertable.actions.remove_synchronisations");
+                    message = message.replace("${systems}", this.settings.synchronisedDeletions.join(", "));
+                }
+
+                deleteButton.dataset.confirm = message;
                 deleteButton.dataset.method = "delete";
                 deleteButton.href = rowData["link"];
                 deleteButton.rel = "nofollow";

@@ -695,6 +695,7 @@ en:
       jump_to_normal: "⇊ Show normal users"
       lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
       delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
+      synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
 
       filters:
         locked_users: "Locked users"
@@ -740,6 +741,7 @@ en:
       marked_for_removal: Marked for deletion
       prevent_removal: Prevent deletion
       prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
+      deletion_sync_warning: "The user will also be removed from these external systems:\n\n\t%{systems}\n\nPlease verify that this is what you intended to do."
     new:
       title: New user
     edit:

@@ -1,3 +1,7 @@
+<% if !@synchronised_deletions.empty? %>
+<p class="genericWarning"><%= t('users.index.synchronised_deletions', :systems => @synchronised_deletions.join(', ')) %></p>
+<% end %>
+
 <div id="usersList"></div>
 
 <% content_for :javascript do %>
@@ -474,6 +478,8 @@ $(document).ready(function() {
 <% if @is_owner %>
         permitUserDeletion: true,
 <% end %>
+
+        synchronisedDeletions: <%= raw @synchronised_deletions %>,
 
         // Column editor subtitle
         columnEditorSubtitle: "<%= t('layouts.application.users') %>",
