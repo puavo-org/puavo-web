@@ -244,6 +244,8 @@ class ServersController < ApplicationController
       server["puavoImageSeriesSourceURL"].uniq! if server.key?("puavoImageSeriesSourceURL")
       device["puavoDeviceXrandr"].uniq! if device.key?("puavoDeviceXrandr")
 
+      strip_img(server)
+
       return server.merge(device)
 
     end
