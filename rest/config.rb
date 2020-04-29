@@ -175,3 +175,11 @@ else
 
   CONFIG = default_config.merge(customizations)
 end
+
+# Load organisations.yml
+begin
+  ORGANISATIONS = YAML.load_file('/etc/puavo-web/organisations.yml')
+rescue => e
+  puts "ERROR: #{e}"
+  ORGANISATIONS = {}
+end

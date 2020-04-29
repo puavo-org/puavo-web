@@ -2,6 +2,8 @@ require "open3"
 
 require_relative './external_login'
 
+require_relative './integrations'
+
 module Puavo
   def self.change_passwd(mode, host, actor_dn, actor_username, actor_password,
                          target_user_username, target_user_password, request_id)
@@ -78,31 +80,6 @@ module Puavo
     return res
   end
 
-  def self.get_external_pw_mgmt_params(user)
-    external_pw_mgmt_conf = CONFIG['external_pw_mgmt']
-    return nil unless external_pw_mgmt_conf
-
-    org = LdapModel.organisation
-    return nil unless org && org.domain.kind_of?(String)
-
-    organisation_name = org.domain.split('.')[0]
-    return nil unless organisation_name
-
-    org_specific_conf = external_pw_mgmt_conf[ organisation_name ]
-    return nil unless org_specific_conf \
-                        && org_specific_conf['url'].kind_of?(String)
-
-    url = org_specific_conf['url']
-    schools = org_specific_conf['schools'] || nil
-
-    return [url, schools] unless org_specific_conf['role']
-    role_with_password_management = org_specific_conf['role']
-
-    return [url, schools] if user.roles.include?(role_with_password_management)
-
-    return nil
-  end
-
   def self.change_passwd_no_upstream(host, actor_dn,
         actor_password, target_user_username, target_user_password,
         request_id)
@@ -117,87 +94,114 @@ module Puavo
 
     res = LdapPassword.change_ldap_passwd(host, actor_dn, actor_password,
                                           target_user_dn, target_user_password)
-    return res if res[:exit_status] != 0
 
-    external_pw_mgmt_url, schools = self.get_external_pw_mgmt_params(target_user)
-    if external_pw_mgmt_url then
-      begin
-        target_user_school = target_user.primary_school_id.to_i
+    if res[:exit_status] != 0
+      res[:sync_status] = 'unknown_error'   # what else do we have? :-(
+      return res
+    end
 
-        begin
-          pri_school = PuavoRest::School.by_id(target_user_school)
-        rescue
-          pri_school = nil
+    # Administration schools are ALWAYS excluded from password synchronisations.
+    # No exceptions.
+    return res if target_user.school.name == 'Administration'
+
+    # Synchronise the new password to other places
+    org_name = LdapModel.organisation.name
+
+    actions = Puavo::Integrations.get_school_sync_actions(
+      org_name, target_user.school.id, :change_password)
+
+    unless actions
+      $rest_flog.info(nil, "[#{request_id}] Nothing configured for password synchronisation " \
+                      "for school #{target_user.school.id} (\"#{target_user.school.name}\") in " \
+                      "organisation \"#{org_name}\"")
+      res[:sync_status] = 'ok'
+      return res
+    end
+
+    $rest_flog.info(nil,
+      "[#{request_id}] School is #{target_user.school.id} (\"#{target_user.school.name}\") in " \
+      "organisation \"#{org_name}\", synchronising the password change to these external systems: " \
+      "#{actions.keys.join(', ')}"
+    )
+
+    # Send a HTTP request to every listed synchronisation service.
+    # If they return an error, handle it and stop.
+    index = 1
+
+    user_roles = Array(target_user.roles || [])
+
+    actions.each do |system, params|
+      $rest_flog.info(nil,
+        "[#{request_id}] Synchronously changing the password for user " \
+        "\"#{target_user.username}\" (#{target_user.id}) to the external system " \
+        "\"#{system}\" (#{index}/#{actions.count})")
+
+      index += 1
+
+      # Optionally filter actions by user role
+      if params.include?('for_roles')
+        overlap = [params['for_roles']] & user_roles
+
+        unless overlap.any?
+          $rest_flog.info(nil,
+            "[#{request_id}] Role filtering is enabled for this action; wanted " \
+            "\"#{params['for_roles']}\", got \"#{user_roles}\", skipping synchronisation")
+          next
         end
+      end
 
-        if pri_school && pri_school.name == 'Administration'
-          # Never sync administration school passwords. They're special cases.
-          # WARNING: Hardcoded school name!
+      begin
+        status, code = Puavo::Integrations.do_synchronous_action(
+          :change_password, system, request_id, params,
+          # -----
+          organisation: org_name,
+          user: target_user,
+          new_password: target_user_password,
+        )
 
-          msg = 'not syncing password, this user is in the Administration school'
-          $rest_flog.error(msg, msg)
+        unless status
+          $rest_flog.warn(nil, "[#{request_id}] Aborting password synchronisation")
 
           return {
-            :exit_status => 0,
-            :stderr      => "",
-            :stdout      => "Not syncing passwords for users in the Administration school",
+            :exit_status => 1,
+            :stderr => '',
+            :stdout => '',
+            :sync_status => code,
           }
         end
-
-        if schools then
-          # A list of schools has been specified...
-          unless schools.include?(target_user_school) then
-            # ...and this school is not configured for password synchronisation
-            return {
-              :exit_status => 0,
-              :stderr      => "",
-              :stdout      => "This school is not configured for password synchronisation, nothing was done",
-            }
-          end
-        end
-
-        change_passwd_downstream(target_user.id,
-                                 target_user_username,
-                                 target_user_password,
-                                 external_pw_mgmt_url)
       rescue StandardError => e
-        raise "Cannot change downstream passwords: #{ e.message }"
+        $rest_flog.error(nil, "[#{request_id}] #{e}")
 
-        # Try resetting password if we can in case downstream password change
-        # failed.
-        if actor_dn == target_user_dn then
-          LdapPassword.change_ldap_passwd(host, actor_dn, target_user_password,
-                                          target_user_dn, actor_password)
+        begin
+          # Try resetting password if we can in case downstream password change
+          # failed.
+          if actor_dn == target_user_dn
+            return LdapPassword.change_ldap_passwd(
+              host, actor_dn, target_user_password,
+              target_user_dn, actor_password
+            )
+          end
+        rescue StandardError => e
+          $rest_flog.error(
+            nil,
+            "[#{request_id}] Unable to restore the old password after a failed synchronisation: #{e}"
+          )
+          # TODO: what now?
         end
+
+        return {
+          :exit_status => 1,
+          :stderr => e.to_s,
+          :stdout => '',
+          :sync_status => 'unknown_error',
+        }
       end
     end
 
+    $rest_flog.info(nil, "[#{request_id}] All password synchronisations completed")
+    res[:sync_status] = 'ok'
+
     return res
-  end
-
-  def self.change_passwd_downstream(user_puavo_id, target_user_username,
-        target_user_password, external_pw_mgmt_url)
-
-    params = {
-      'username'          => target_user_username,
-      'user_puavoid'      => user_puavo_id,
-      'new_user_password' => target_user_password,
-    }
-
-    http_res = HTTP.send('post', external_pw_mgmt_url, :json => params)
-
-    return true if http_res.code == 200
-
-    # If the user does not exist, just keep going
-    if http_res.code == 404
-      short_msg = 'received a 404 response from the password changing server'
-      long_msg = "received a 404 response from the password changing server, assuming the user does not exist, proceeding without password synchronisation"
-      $rest_flog.warn(short_msg, long_msg)
-      $rest_flog.warn(http_res.body.to_s, http_res.body.to_s)
-      return true
-    end
-
-    raise http_res.body.to_s
   end
 
   def self.change_passwd_upstream(host, actor_username, actor_password,
