@@ -441,9 +441,10 @@ en:
       failed: Login failed!
       logout_successful: Logout successful!
     password:
-      successful: Password changed successfully!
-      failed: "Failed to change the user's password! Log code: %{code}."
-      failed_details: "Failed to change the user's password: %{details}"
+      successful: "Password changed successfully!"
+      failed: "Password change failed. Unfortunately no extra information is available. Please contact support."
+      failed_code: "Password change failed. Unfortunately no extra information is available. Please contact support and give them this code: %{code}."
+      failed_details: "Password change failed: %{details}. Please contact support and give them this code: %{code}."
       invalid_external_login: "Invalid external login password or username (%{uid})"
       incomplete_form: You did not fill in all the required form fields.
       invalid_login: Invalid password or username (%{uid})
@@ -491,9 +492,11 @@ en:
       remote_server_did_not_respond: "Remote server did not respond to requests"
       remote_server_refused: "Remote server refused to cooperate"
       bad_credentials: "Bad credentials"
+      rate_limit: "Rate limit hit"
       remote_server_error: "Remote server error"
       network_error: "Network connectivity error"
       unknown_error: "Unknown error"
+      unmet_password_requirements: "Password length/complexity requirements were not met"
 
   # Organisations
   organisations:

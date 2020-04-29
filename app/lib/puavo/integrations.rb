@@ -299,6 +299,7 @@ module Puavo
       'incomplete_request',
       'malformed_reply',
       'server_error',
+      'rate_limit',
       'network_error',
       'unknown_error',
     ]).freeze

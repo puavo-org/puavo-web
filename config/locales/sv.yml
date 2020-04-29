@@ -19,8 +19,9 @@ sv:
   flash:
     password:
       successful: "Password changed successfully!"
-      failed: "Failed to change the user's password! Log code: %{code}."
-      failed_details: "Failed to change the user's password: %{details}"
+      failed: "Password change failed. Unfortunately no extra information is available. Please contact support."
+      failed_code: "Password change failed. Unfortunately no extra information is available. Please contact support and give them this code: %{code}."
+      failed_details: "Password change failed: %{details}. Please contact support and give them this code: %{code}."
       invalid_external_login: "Invalid external login password or username (%{uid})"
       incomplete_form: "You did not fill in all the required form fields."
       invalid_login: "Invalid password or username (%{uid})"

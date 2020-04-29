@@ -441,9 +441,10 @@ fi:
       failed: "Kirjautuminen epäonnistui!"
       logout_successful: Uloskirjautuminen onnistui!
     password:
-      successful: Salasanan vaihto onnistui!
-      failed: "Salasanan vaihto epäonnistui! Lokikoodi: %{code}."
-      failed_details: "Salasanan vaihto epäonnistui: %{details}"
+      successful: "Salasanan vaihto onnistui!"
+      failed: "Salasanan vaihto epäonnistui. Ikävä kyllä lisätietoja ei ole saatavilla. Ota yhteys tukeen."
+      failed_code: "Salasanan vaihto epäonnistui. Ikävä kyllä lisätietoja ei ole saatavilla. Ota yhteys tukeen ja anna heille tämä koodi: %{code}."
+      failed_details: "Salasanan vaihto epäonnistui: %{details}. Ota yhteys tukeen ja anna heille tämä koodi: %{code}."
       invalid_external_login: "Salasana tai käyttäjätunnus ulkoiseen palveluun (%{uid}) on virheellinen"
       incomplete_form: "Kaikkia tarvittavia lomakkeen kenttiä ei täytetty"
       invalid_login: "Käyttäjätunnus (%{uid}) tai salasana on virheellinen"
@@ -492,8 +493,10 @@ fi:
       remote_server_refused: "Etäpalvelin kieltäytyi suorittamasta toimintoa"
       bad_credentials: "Väärät kirjautumistiedot"
       remote_server_error: "Etäpalvelin ei toiminut"
+      rate_limit: "Liian monta yritystä"
       network_error: "Verkkoyhteysongelma"
       unknown_error: "Tuntematon virhe"
+      unmet_password_requirements: "Salasanan pituus-/merkkivaatimukset eivät täyttyneet"
 
   # Organisations
   organisations:
