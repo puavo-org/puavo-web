@@ -98,7 +98,8 @@ class Password < PuavoSinatra
                               nil,
                               PUAVO_ETC.ds_pw_mgmt_password,
                               user.username,
-                              json_params['new_password'])
+                              json_params['new_password'],
+                              '???')    # no request ID
 
     flog.info('ldappasswd call',
               "changed user password for '#{ user.username }'",

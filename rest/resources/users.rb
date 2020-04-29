@@ -254,7 +254,8 @@ class User < LdapModel
                           User.current.username,
                           LdapModel.settings[:credentials][:password],
                           username,
-                          @password)
+                          @password,
+                          '???')        # no request ID
     ensure
       @password = nil
     end
@@ -878,6 +879,9 @@ class Users < PuavoSinatra
   put '/v3/users/password' do
     auth :basic_auth
 
+    request_id = nil
+
+    # validate the request parameters
     begin
       param_names_list = %w(actor_dn
                             actor_username
@@ -885,7 +889,22 @@ class Users < PuavoSinatra
                             host
                             mode
                             target_user_username
-                            target_user_password)
+                            target_user_password
+                            request_id)
+
+      unless json_params.include?('request_id')
+        $rest_flog.error(nil, "got a PUT /v3/users/password without \"request_id\" in the parameters, ignoring")
+
+        return json({
+          :exit_status => 1,
+          :stderr      => "missing 'request_id' from the request parameters",
+          :stdout      => '',
+          :sync_status => 'bad_request',
+          :request_id  => '?',
+        })
+      end
+
+      request_id = json_params['request_id']
 
       param_names_list.each do |param_name|
         case param_name
@@ -910,20 +929,34 @@ class Users < PuavoSinatra
         raise 'either actor_dn or actor_username parameter must be set'
       end
     rescue StandardError => e
-      # XXX maybe log errors?
+      $rest_flog.error(nil, "[#{request_id}] #{e}")
+
       return json({
         :exit_status => 1,
         :stderr      => e.message,
         :stdout      => '',
+        :sync_status => 'bad_request',
+        :request_id  => request_id,
       })
     end
 
-    if ENV["PUAVO_WEB_CUCUMBER_TESTS"] != "true"
-      if too_many_password_change_attempts(json_params['target_user_username'])
+    $rest_flog.info(nil,
+      "[#{request_id}] \"PUT /v3/users/password\" starting " \
+      "for user \"#{json_params['target_user_username']}\""
+    )
+
+    if ENV['PUAVO_WEB_CUCUMBER_TESTS'] != 'true'
+      username = json_params['target_user_username']
+
+      if too_many_password_change_attempts(username)
+        $rest_flog.error(nil, "[#{request_id}] password change rate limit hit for user \"#{username}\"")
+
         return json({
           :exit_status => 1,
-          :stderr      => '[rest] password change rate limit hit, please wait',
+          :stderr      => 'password change rate limit hit',
           :stdout      => '',
+          :sync_status => 'rate_limit',
+          :request_id  => request_id,
         })
       end
     end
@@ -934,14 +967,22 @@ class Users < PuavoSinatra
                               json_params['actor_username'],
                               json_params['actor_password'],
                               json_params['target_user_username'],
-                              json_params['target_user_password'])
+                              json_params['target_user_password'],
+                              request_id)
+
+    res[:request_id] = request_id
 
     target_user_username = json_params['target_user_username']
-    msg = (res[:exit_status] == 0)                                       \
-            ? "changed password for '#{ target_user_username }'"         \
-            : "changing password failed for '#{ target_user_username }'"
 
-    flog.info('PUT /v3/users/password called', msg, res)
+    msg = "[#{request_id}] \"PUT /v3/users/password\" finished for user " \
+          "\"#{json_params['target_user_username']}\", exit status is " \
+          "#{res[:exit_status]}"
+
+    if res[:exit_status] == 0
+      $rest_flog.info(nil, msg)
+    else
+      $rest_flog.error(nil, msg)
+    end
 
     return json(res)
   end

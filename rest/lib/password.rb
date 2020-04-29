@@ -4,16 +4,19 @@ require_relative './external_login'
 
 module Puavo
   def self.change_passwd(mode, host, actor_dn, actor_username, actor_password,
-                         target_user_username, target_user_password)
+                         target_user_username, target_user_password, request_id)
 
     started = Time.now
 
     upstream_res = nil
 
     if mode != :no_upstream then
-      upstream_res = change_passwd_upstream(host, actor_username,
-                       actor_password, target_user_username,
-                       target_user_password)
+      upstream_res = change_passwd_upstream(
+        host, actor_username,
+        actor_password, target_user_username,
+        target_user_password, request_id
+      )
+
       upstream_res[:duration] = (Time.now.to_f - started.to_f).round(5)
 
       return upstream_res if mode == :upstream_only
@@ -41,21 +44,32 @@ module Puavo
         actor_dn = PuavoRest::User.by_username!(actor_username).dn.to_s
       end
 
-      res = change_passwd_no_upstream(host, actor_dn, actor_password,
-              target_user_username, target_user_password)
-      res[:extlogin_status] = upstream_res[:extlogin_status] if upstream_res
+      res = change_passwd_no_upstream(
+        host, actor_dn, actor_password,
+        target_user_username, target_user_password,
+        request_id
+      )
 
+      res[:extlogin_status] = upstream_res[:extlogin_status] if upstream_res
     rescue StandardError => e
+      # We shouldn't get here very often, as change_passwd_no_upstream()
+      # contains its own exception handlind in many places. So if we end
+      # up here, something has gone really badly wrong.
+
       short_errmsg = 'failed to change the Puavo password'
-      long_errmsg  = 'failed to change the Puavo password for user' \
+      long_errmsg  = "[#{request_id}] failed to change the Puavo password for user" \
                        + " '#{ target_user_username }'" \
                        + " by '#{ actor_dn || actor_username }': #{ e.message }"
+
       $rest_flog.error(short_errmsg, long_errmsg)
+
       res = {
         :exit_status     => 1,
         :stderr          => e.message,
         :stdout          => '',
+        :sync_status     => 'unknown_error',
       }
+
       res[:extlogin_status] = upstream_res[:extlogin_status] if upstream_res
     end
 
@@ -90,7 +104,8 @@ module Puavo
   end
 
   def self.change_passwd_no_upstream(host, actor_dn,
-        actor_password, target_user_username, target_user_password)
+        actor_password, target_user_username, target_user_password,
+        request_id)
 
     target_user = PuavoRest::User.by_username!(target_user_username)
     target_user_dn = target_user.dn.to_s
@@ -186,7 +201,8 @@ module Puavo
   end
 
   def self.change_passwd_upstream(host, actor_username, actor_password,
-                                  target_user_username, target_user_password)
+                                  target_user_username, target_user_password,
+                                  request_id)
     begin
       raise 'actor_username not set' \
         unless actor_username.kind_of?(String) && !actor_username.empty?
@@ -202,31 +218,33 @@ module Puavo
       # and that is normal.
       short_msg = 'not changing upstream password,' \
                     + ' because external logins are not configured'
-      long_msg = "#{ short_msg }: #{ e.message }"
+      long_msg = "[#{request_id}] #{ short_msg }: #{ e.message }"
       $rest_flog.info(short_msg, long_msg)
       return {
         :exit_status     => 0,
         :extlogin_status => PuavoRest::ExternalLoginStatus::NOTCONFIGURED,
         :stderr          => '',
         :stdout          => long_msg,
+        :sync_status     => 'configuration_error',
       }
 
     rescue ExternalLoginUserMissing => e
       short_msg = 'not changing upstream password,' \
                     + " target user '#{ target_user_username }' is missing" \
                     + ' from the external service'
-      long_msg = "#{ short_msg }: #{ e.message }"
+      long_msg = "[#{request_id}] #{ short_msg }: #{ e.message }"
       $rest_flog.info(short_msg, long_msg)
       return {
         :exit_status     => 1,
         :extlogin_status => PuavoRest::ExternalLoginStatus::USERMISSING,
         :stderr          => long_msg,
         :stdout          => '',
+        :sync_status     => 'user_not_found',
       }
 
     rescue ExternalLoginWrongCredentials => e
       short_errmsg = 'login to upstream password change service failed'
-      long_errmsg  = "#{ short_errmsg } for user"         \
+      long_errmsg  = "[#{request_id}] #{ short_errmsg } for user"         \
                        + " '#{ target_user_username }': " \
                        + e.message
       $rest_flog.error(short_errmsg, long_errmsg)
@@ -235,11 +253,12 @@ module Puavo
         :extlogin_status => PuavoRest::ExternalLoginStatus::BADUSERCREDS,
         :stderr          => long_errmsg,
         :stdout          => '',
+        :sync_status     => 'bad_credentials',
       }
 
     rescue StandardError => e
       short_errmsg = 'changing upstream password failed'
-      long_errmsg  = "#{ short_errmsg } for user"         \
+      long_errmsg  = "[#{request_id}] #{ short_errmsg } for user"         \
                        + " '#{ target_user_username }': " \
                        + e.message
       $rest_flog.error(short_errmsg, long_errmsg)
@@ -248,11 +267,12 @@ module Puavo
         :extlogin_status => PuavoRest::ExternalLoginStatus::UPDATEERROR,
         :stderr          => long_errmsg,
         :stdout          => '',
+        :sync_status     => 'unknown_error',
       }
     end
 
     $rest_flog.info('upstream password changed',
-                    'upstream password changed for user' \
+                    "[#{request_id}] upstream password changed for user" \
                       + " '#{ target_user_username }' by '#{ actor_username }'")
 
     return {
@@ -260,6 +280,7 @@ module Puavo
       :extlogin_status => PuavoRest::ExternalLoginStatus::UPDATED,
       :stderr          => '',
       :stdout          => 'password change to external login service ok',
+      :sync_status     => 'ok',
     }
   end
 
@@ -289,6 +310,7 @@ module Puavo
         :exit_status => status.exitstatus,
         :stderr      => stderr_str,
         :stdout      => stdout_str,
+        :sync_status => 'unknown_error',
       }
     end
   end
