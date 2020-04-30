@@ -105,7 +105,7 @@ module Puavo
     return res if target_user.school.name == 'Administration'
 
     # Synchronise the new password to other places
-    org_name = LdapModel.organisation.name
+    org_name = LdapModel.organisation.organisation_key
 
     actions = Puavo::Integrations.get_school_sync_actions(
       org_name, target_user.school.id, :change_password)
