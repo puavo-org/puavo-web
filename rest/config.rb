@@ -78,9 +78,10 @@ else
   # puavo-rest must be on the same server as puavo-web, because it looks up
   # the configuration file "/etc/puavo-web/organisations.yml".
   if ENV['PUAVO_WEB_CUCUMBER_TESTS'] == 'true' then
-    require_relative './test/external_login_test'
+    require_relative './test/external_login_test_config'
     CONFIG.merge!({
-      'external_login' => PuavoRest::ExternalLoginTests::get_configuration(),
+      'external_login' =>
+        PuavoRest::ExternalLoginTestConfig::get_configuration(),
     })
   end
 end
