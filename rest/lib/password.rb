@@ -140,7 +140,7 @@ module Puavo
 
       # Optionally filter actions by user role
       if params.include?('for_roles')
-        overlap = [params['for_roles']] & user_roles
+        overlap = Array(params['for_roles']) & user_roles
 
         unless overlap.any?
           $rest_flog.info(nil,
