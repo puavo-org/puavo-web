@@ -283,6 +283,7 @@ describe PuavoRest::ExternalLogin do
     it 'user password is invalidated on login with nonmatching password' do
       user = User.find(:first, :attribute => 'uid', :value => 'luke.skywalker')
       # set password to not match the one in external service
+      user.password_change_mode = :no_upstream
       user.set_password 'oldpassword'
       user.save!
 
