@@ -38,8 +38,9 @@ module PuavoRest
       @flog = $rest_flog
 
       all_external_login_configs = CONFIG['external_login']
-      raise ExternalLoginNotConfigured, 'external login not configured' \
-        unless all_external_login_configs
+      unless all_external_login_configs then
+        raise ExternalLoginNotConfigured, 'external login not configured'
+      end
 
       @organisation = LdapModel.organisation
       raise ExternalLoginError,
@@ -52,9 +53,10 @@ module PuavoRest
           unless organisation_name
 
       @config = all_external_login_configs[organisation_name]
-      raise ExternalLoginNotConfigured,
-        'external_login not configured for this organisation' \
-          unless @config
+      unless @config then
+        raise ExternalLoginNotConfigured,
+          'external_login not configured for this organisation'
+      end
 
       @login_service_name = @config['service']
       raise ExternalLoginConfigError, 'external_login service not set' \

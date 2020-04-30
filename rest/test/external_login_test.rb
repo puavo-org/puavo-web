@@ -1,5 +1,8 @@
 require_relative "./helper"
 
+require 'puavo/etc'
+require 'yaml'
+
 def assert_external_status(username, password, expected_status, errmsg)
   basic_authorize username, password
   post '/v3/external_login/auth'
@@ -55,20 +58,113 @@ def assert_user_belongs_to_one_group_of_type(username, grouptype, group_regex)
            + " does not match #{ group_regex }"
 end
 
+module PuavoRest::ExternalLoginTests
+  def self.get_dn_from_cn(ldap_base, cn)
+    require 'net/ldap'
+    ldap = Net::LDAP.new :base => ldap_base,
+                         :host => 'localhost',
+                         :auth => {
+                           :method   => :simple,
+                           :username => PUAVO_ETC.ldap_dn,
+                           :password => PUAVO_ETC.ldap_password,
+                         },
+                         :encryption => {
+                           :method => :start_tls,
+                           :tls_options => {
+                             :verify_mode => OpenSSL::SSL::VERIFY_NONE,
+                           }
+                         }
+
+    entries = ldap.search(:filter => Net::LDAP::Filter.eq('cn', cn))
+    raise "could not find entry #{ cn } from #{ ldap_base }" \
+      unless entries && entries.count == 1
+
+    entries.first.dn.to_s
+  end
+
+  def self.resistance_administrative_group(role)
+    {
+      'add_administrative_group' => {
+        'displayname' => 'Resistence',
+        'name'        => 'resistence', },
+      'add_roles' => [ role ],
+    }
+  end
+
+  def self.get_configuration
+    admin_dn   = get_dn_from_cn('dc=edu,dc=external,dc=net', 'cucumber')
+    bind_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=net',   'admin')
+    indiana_dn = get_dn_from_cn('dc=edu,dc=heroes,dc=net',   'indiana.jones')
+    lara_dn    = get_dn_from_cn('dc=edu,dc=heroes,dc=net',   'lara.croft')
+    sarah_dn   = get_dn_from_cn('dc=edu,dc=heroes,dc=net',   'sarah.connor')
+    thomas_dn  = get_dn_from_cn('dc=edu,dc=heroes,dc=net',   'thomas.anderson')
+
+    target_school_dn = get_dn_from_cn('dc=edu,dc=external,dc=net',
+                                      'administration')
+
+    organisations = YAML.load_file('/etc/puavo-web/organisations.yml')
+
+    {
+      'external' => {
+        'admin_dn'       => admin_dn,
+        'admin_password' => organisations['external']['owner_pw'],
+        'service'        => 'external_ldap',
+        'external_ldap'  => {
+          'base'                    => 'dc=edu,dc=heroes,dc=net',
+          'bind_dn'                 => bind_dn,
+          'bind_password'           => organisations['heroes']['owner_pw'],
+          'encryption_method'       => 'start_tls',
+          'user_mappings' => {
+            'defaults' => {
+              'classnumber_regex'    => '(\\d)$',    # typically: '^(\\d+)'
+              'roles'                => [ 'student' ],
+              'school_dns'           => [ target_school_dn ],
+              'teaching_group_field' => 'gidNumber', # typically: 'department'
+              'teaching_group_regex' => '^(.*)$',
+            },
+            'by_dn' => [
+              { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
+                  { 'add_administrative_group' => {
+                      'displayname' => 'Heroes',
+                      'name'        => 'heroes', }},
+                  { 'add_teaching_group' => {
+                      'displayname' => 'Heroes school %GROUP',
+                      'name'        => 'heroes-%STARTYEAR-%GROUP', }},
+                  { 'add_year_class' => {
+                      'displayname' => 'Heroes school %CLASSNUMBER',
+                      'name'        => 'heroes-%STARTYEAR', }},
+                ]},
+              { indiana_dn => [ resistance_administrative_group('teacher') ]},
+              { lara_dn    => [ resistance_administrative_group('admin'  ) ]},
+              { sarah_dn   => [ resistance_administrative_group('teacher') ]},
+              { thomas_dn  => [ resistance_administrative_group('admin'  ) ]},
+            ],
+          },
+          'external_id_field'       => 'eduPersonPrincipalName',
+          'external_username_field' => 'mail',
+          'password_change' => { 'api' => 'openldap', },
+          'server' => 'localhost',
+          'subtrees' => [ 'ou=People,dc=edu,dc=heroes,dc=net' ],
+        },
+      }
+    }
+  end
+end
+
 describe PuavoRest::ExternalLogin do
   # We store this as json to get deep copy semantics, so we have the freedom
   # to mess with external login configurations in tests.
-  orig_external_login_config_json = CONFIG['external_login'].to_json
+  orig_config = CONFIG.dup
+  orig_default_host = Rack::Test::DEFAULT_HOST
 
   before(:each) do
-    Puavo::Test.clean_up_ldap
+    Rack::Test::DEFAULT_HOST = 'external.puavo.net'
+    CONFIG = orig_config.dup
+    CONFIG['external_login'] \
+      = PuavoRest::ExternalLoginTests::get_configuration()
 
-    # The external login functionality does require new_group_management to be
-    # enabled (the code does not check or warn about this, though, admins just
-    # have to know).
-    Puavo::Organisation.configurations['example']['new_group_management'] = {
-      'enable' => true
-    }
+    Puavo::Test.clean_up_ldap
+    Puavo::Test.setup_test_connection('external')
 
     @heroes_school = School.create(:cn          => 'heroes-u',
                                    :displayName => 'Heroes University')
@@ -78,16 +174,14 @@ describe PuavoRest::ExternalLogin do
                                  :displayName => 'Stars')
     @star_school.save!
 
-    # make a deep copy of external_login configuration
-    CONFIG['external_login'] = JSON.parse( orig_external_login_config_json )
-    CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+    CONFIG['external_login']['external']['external_ldap']['user_mappings'] \
           ['defaults']['school_dns'] = [ @heroes_school.dn.to_s ]
   end
 
   after do
+    CONFIG = orig_config.dup
     Puavo::Test.clean_up_ldap
-    CONFIG['external_login'] = JSON.parse( orig_external_login_config_json )
-    Puavo::Organisation.configurations['example'].delete('new_group_management')
+    Rack::Test::DEFAULT_HOST = orig_default_host
   end
 
   describe 'logins with bad credentials fail' do
@@ -398,7 +492,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'user schools, groups and roles follow configuration changes' do
-      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+      CONFIG['external_login']['external']['external_ldap']['user_mappings'] \
             ['by_dn'] = [
         { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
             { 'add_administrative_group' => {
@@ -440,8 +534,7 @@ describe PuavoRest::ExternalLogin do
   describe 'test group creation and membership handling' do
     it 'new groups are created as users log in' do
       group = Group.find(:first, :attribute => 'cn', :value => 'heroes')
-      assert_nil group,
-                  'There is a heroes group when it should not be (yet)'
+      assert_nil group, 'There is a heroes group when it should not be (yet)'
 
       assert_external_status('luke.skywalker',
                              'secret',
@@ -479,7 +572,7 @@ describe PuavoRest::ExternalLogin do
 
       # remove all mappings so that luke.skywalker & lara.croft should
       # no longer belong to the group
-      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+      CONFIG['external_login']['external']['external_ldap']['user_mappings'] \
             ['by_dn'] = []
 
       assert_external_status('luke.skywalker',
@@ -512,7 +605,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'Puavo organisation admin credentials are wrong' do
-      CONFIG['external_login']['example']['admin_password'] = 'thisisabadpw'
+      CONFIG['external_login']['external']['admin_password'] = 'thisisabadpw'
       assert_external_status('luke.skywalker',
                              'secret',
                              'CONFIGERROR',
@@ -520,7 +613,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'external login service lookup credentials are wrong' do
-      CONFIG['external_login']['example']['external_ldap']['bind_password'] \
+      CONFIG['external_login']['external']['external_ldap']['bind_password'] \
         = 'thisisabadpw'
       assert_external_status('luke.skywalker',
                              'secret',
@@ -591,7 +684,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'trying to use external service that does not respond' do
-      CONFIG['external_login']['example']['external_ldap']['server'] \
+      CONFIG['external_login']['external']['external_ldap']['server'] \
         = 'nonexistent.example.com'
 
       assert_external_status('luke.skywalker',
@@ -601,7 +694,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'trying to configure a user to two teaching groups' do
-      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+      CONFIG['external_login']['external']['external_ldap']['user_mappings'] \
             ['by_dn'] = [
         { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
             { 'add_teaching_group' => {
@@ -624,7 +717,7 @@ describe PuavoRest::ExternalLogin do
     end
 
     it 'trying to configure a user to two year class groups' do
-      CONFIG['external_login']['example']['external_ldap']['user_mappings'] \
+      CONFIG['external_login']['external']['external_ldap']['user_mappings'] \
             ['by_dn'] = [
         { '*,ou=People,dc=edu,dc=heroes,dc=net' => [
             { 'add_year_class' => {

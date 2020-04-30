@@ -12,8 +12,8 @@ WebMock.disable_net_connect!(allow: connect_hosts)
 module Puavo
 module Test
 
-  def self.setup_test_connection
-    test_organisation = Puavo::Organisation.find('example')
+  def self.setup_test_connection(organisation='example')
+    test_organisation = Puavo::Organisation.find(organisation)
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
 
     # Setting up ldap configuration
@@ -24,7 +24,9 @@ module Test
       default_ldap_configuration["password"]
     )
 
-    owner = User.find(:first, :attribute => "uid", :value => test_organisation.owner)
+    owner = User.find(:first,
+                      :attribute => "uid",
+                      :value => test_organisation.owner)
     if owner.nil?
       raise "Cannot find organisation owner for \'example\'. Organisation not created?"
     end
@@ -39,15 +41,11 @@ module Test
     return owner.dn.to_s, test_organisation.owner_pw
   end
 
-  def self.clean_up_ldap
-    owner_for_test = nil
-
+  def self.destroy_most_ldap_entries
     # Clean Up LDAP server: destroy all schools, groups and users
     User.all.each do |u|
       unless u.uid == "cucumber"
         u.destroy
-      else
-        owner_for_test = u
       end
     end
     Group.all.each do |g|
@@ -80,6 +78,11 @@ module Test
     domain_users = SambaGroup.find('Domain Admins')
     domain_users.memberUid = []
     domain_users.save
+  end
+
+  def self.clean_up_ldap
+    owner_dn, owner_pw = setup_test_connection('example')
+    destroy_most_ldap_entries()
 
     ldap_organisation = LdapOrganisation.current
     ldap_organisation.puavoDeviceOnHour = "14"
@@ -94,33 +97,18 @@ module Test
     ldap_organisation.puavoTimezone = "Europe/Helsinki"
     ldap_organisation.puavoKeyboardLayout = "en"
     ldap_organisation.puavoKeyboardVariant = "US"
-    ldap_organisation.owner = ['uid=admin,o=puavo', owner_for_test.dn.to_s]
+    ldap_organisation.owner = ['uid=admin,o=puavo', owner_dn]
     ldap_organisation.puavoImageSeriesSourceURL = "https://foobar.puavo.net/organisationpref.json"
     ldap_organisation.puavoWlanSSID = []
     ldap_organisation.save!
 
-    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-    anotherorg_conf = Puavo::Organisation.find('anotherorg')
-    LdapBase.ldap_setup_connection(
-      default_ldap_configuration["host"],
-      anotherorg_conf.ldap_base,
-      "uid=admin,o=puavo",
-      "password"
-    )
-
+    setup_test_connection('anotherorg')
     anotherorg = LdapOrganisation.current
     anotherorg.puavoDomain = "anotherorg.puavo.net"
     anotherorg.o = "Another Organisation"
     anotherorg.save!
 
-    heroesorg_conf = Puavo::Organisation.find('heroes')
-    LdapBase.ldap_setup_connection(
-      default_ldap_configuration['host'],
-      heroesorg_conf.ldap_base,
-      'uid=admin,o=puavo',
-      'password'
-    )
-
+    owner_dn, owner_pw = setup_test_connection('heroes')
     role = Role.find(:first, :attribute => 'displayName', :value => 'Mutant')
     # The external logins testing code sets some "heroes"-organisation user
     # passwords to something else than "secret", so reset those.
@@ -129,11 +117,13 @@ module Test
                                         # XXX remove once we have
                                         # XXX new_group_management everywhere
                                         # XXX in place
-      user.set_password (user.cn == heroesorg_conf.owner \
-                           ? heroesorg_conf.owner_pw \
-                           : 'secret')
+      user.set_password (user.dn.to_s == owner_dn ? owner_pw : 'secret')
       user.save!
     end
+
+    # destroy users from organisation used for external_login tests
+    setup_test_connection('external')
+    destroy_most_ldap_entries()
 
     puavo_ca_url = "http://" + Puavo::CONFIG["puavo_ca"]["host"] + ":" + Puavo::CONFIG["puavo_ca"]["port"].to_s
     HTTP.basic_auth( :user => "uid=admin,o=puavo",
@@ -141,7 +131,7 @@ module Test
       .delete(puavo_ca_url + "/certificates/test_clean_up")
 
     # restore connection
-    setup_test_connection
+    setup_test_connection('example')
   end
 
 
