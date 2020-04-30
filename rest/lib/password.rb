@@ -176,7 +176,7 @@ module Puavo
           # Try resetting password if we can in case downstream password change
           # failed.
           if actor_dn == target_user_dn
-            return LdapPassword.change_ldap_passwd(
+            LdapPassword.change_ldap_passwd(
               host, actor_dn, target_user_password,
               target_user_dn, actor_password
             )
