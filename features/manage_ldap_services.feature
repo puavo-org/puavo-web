@@ -28,10 +28,10 @@ Feature: Manage LDAP services
     And I should see "description 1"
     And I should not see "{SSHA}"
     And I should see "Bind DN"
-    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi"
+    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=net"
     And I should see "LDAP bind (dn, uid)"
     And I should see "getent passwd and group"
-    And I should bind "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi" with "secretpassword" to ldap
+    And I should bind "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=net" with "secretpassword" to ldap
 
   Scenario: Delete LDAP service
     Given the following LDAP services:
@@ -63,7 +63,7 @@ Feature: Manage LDAP services
     And I check "getent passwd and group"
     And I press "Update"
     Then I should see "test description one"
-    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=fi"
+    And I should see "uid=uid 1,ou=System Accounts,dc=edu,dc=example,dc=net"
     And I should see "LDAP bind (dn, uid)"
     And I should see "getent passwd and group"
 
