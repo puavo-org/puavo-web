@@ -1,5 +1,5 @@
 require_relative "./helper"
-require_relative "./external_login_test_config"
+require_relative "../lib/external_login_test_config"
 
 def assert_external_status(username, password, expected_status, errmsg)
   basic_authorize username, password
