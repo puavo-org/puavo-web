@@ -12,8 +12,8 @@ WebMock.disable_net_connect!(allow: connect_hosts)
 module Puavo
 module Test
 
-  def self.setup_test_connection(organisation='example')
-    test_organisation = Puavo::Organisation.find(organisation)
+  def self.setup_test_connection(organisation_key='example')
+    test_organisation = Puavo::Organisation.find(organisation_key)
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
 
     # Setting up ldap configuration
@@ -28,7 +28,7 @@ module Test
                       :attribute => "uid",
                       :value => test_organisation.owner)
     if owner.nil?
-      raise "Cannot find organisation owner for \'example\'. Organisation not created?"
+      raise "Cannot find organisation owner for '#{ organisation_key }'. Organisation not created?"
     end
 
     ExternalService.ldap_setup_connection(

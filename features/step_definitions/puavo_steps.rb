@@ -38,8 +38,7 @@ end
 
 Given(/^a new ([^\"]*) with names (.*) on the "([^\"]*)" organisation$/) \
 do |names_of_the_models, values, organisation|
-  set_ldap_admin_connection
-  Puavo::Organisation.find(organisation)
+  set_organisation(organisation)
   models = names_of_the_models.split(' and ')
   values = values.split(', ').map { |value| value.tr('"', '') }
   models_value = Hash.new
@@ -297,16 +296,37 @@ def memberUid_include?(model, object_name, method, uid)
   end
 end
 
-def set_ldap_admin_connection
-  unless LdapBase.connected?
-    test_organisation = Puavo::Organisation.find('example')
-    default_ldap_configuration = ActiveLdap::Base.ensure_configuration
-    # Setting up ldap configuration
-    LdapBase.ldap_setup_connection( test_organisation.ldap_host,
-                                    test_organisation.ldap_base,
-                                    @owner_dn,
-                                    @owner_password )
-  end
+def set_ldap_admin_connection(organisation_key=nil)
+  return if @admin_connection_organisation == organisation_key \
+              && LdapBase.connected?
+
+  @admin_connection_organisation = organisation_key if organisation_key
+
+  test_organisation = Puavo::Organisation.find(@admin_connection_organisation)
+  owner_dn, owner_pw \
+    = Puavo::Test.setup_test_connection(@admin_connection_organisation)
+
+  LdapBase.ldap_setup_connection(test_organisation.ldap_host,
+                                 test_organisation.ldap_base,
+                                 owner_dn,
+                                 owner_pw)
+end
+
+def set_organisation(organisation_key)
+  organisation = Puavo::Organisation.find(organisation_key)
+  raise "could not find organisation for '#{ organisation_key }'" \
+    unless organisation
+  host = organisation.host
+  raise "could not find organisation host for '#{ organisation_key }'" \
+    unless host
+
+  # see https://makandracards.com/makandra/12725-how-to-change-the-hostname-in-cucumber-features
+  #     https://stackoverflow.com/questions/6536503/capybara-with-subdomains-default-host
+  # NOTE this should be better with cucumber, but gives an ArgumentError:
+  # page.config.stub app_host: "http://#{host}"
+  Capybara.app_host = "http://#{host}"
+
+  set_ldap_admin_connection(organisation_key)
 end
 
 Given(/^I wait ([0-9]+) (hour|day|month|year)s?$/) do |digit, type|
