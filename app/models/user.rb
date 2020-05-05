@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 class User < LdapBase
+  include Puavo::Integrations
+
   # When using user mass import we have to store uids which are already been taken. See validate method.
   @@reserved_uids = Array.new
 
@@ -170,7 +172,7 @@ class User < LdapBase
     end
 
     if !self.new_password_confirmation.nil? && !self.new_password_confirmation.empty? then
-      case get_school_password_requirements(self.school.puavoId)
+      case get_school_password_requirements(LdapOrganisation.current.cn, self.school.puavoId)
         when 'Google'
           if self.new_password.size < 8 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.gsuite_password_too_short"))
@@ -367,34 +369,64 @@ class User < LdapBase
     # the current operation default or default
     pw_change_mode = password_change_mode || mode || :all
 
+    # This request ID is logged everywhere and shown to the user
+    # in case something goes wrong. It can be then grepped from
+    # the logs to determine why the password change failed.
+    request_id = generate_synchronous_call_id()
+
     rest_params = {
-                    :actor_dn             => actor_dn.to_s,
-                    :actor_username       => actor_username,
-                    :actor_password       => ldap_conf[:password],
-                    :host                 => ldap_conf[:host],
-                    :mode                 => pw_change_mode,
-                    :target_user_username => self.uid,
-                    :target_user_password => new_password,
-                  }
+      :actor_dn             => actor_dn.to_s,
+      :actor_username       => actor_username,
+      :actor_password       => ldap_conf[:password],
+      :host                 => ldap_conf[:host],
+      :mode                 => pw_change_mode,
+      :target_user_username => self.uid,
+      :target_user_password => new_password,
+      :request_id           => request_id,
+    }
+
+    logger.info("[#{request_id}] Sending a password change request to puavo-rest, target user is \"#{self.uid}\"")
 
     res = rest_proxy.put('/v3/users/password', :json => rest_params).parse
-    res = {} unless res.kind_of?(Hash)
 
-    FLOG.info('rest call to PUT /v3/users/password', res.merge(
+    unless res.kind_of?(Hash)
+      logger.warn("[#{request_id}] the puavo-rest call did not return a Hash:")
+      logger.warn("[#{request_id}]   #{res.inspect}")
+      res = {}
+    end
+
+    full_reply = res.merge(
       :from => 'user model',
       :user => {
         :dn  => self.dn.to_s,
         :uid => self.uid,
       }
-    ))
+    )
 
-    if res['exit_status'] != 0 then
-      logger.warn "rest call to PUT /v3/users/password failed: #{ res.inspect }"
+    logger.info("[#{request_id}] full reply from puavo-rest: #{full_reply}")
+
+    if res['exit_status'] != 0
+      logger.error("[#{request_id}] puavo-rest call failed with exit status #{res['exit_status']}:")
 
       if res.include?('stderr')
-        # This is ugly, but we have to tell the user why the password could not be changed
-        # TODO: A better system for this
-        raise UserError, I18n.t('flash.password.failed_details', :details => res['stderr'])
+        logger.error("[#{request_id}]  stderr: \"#{res['stderr']}\"")
+      end
+
+      if res.include?('stdout')
+        logger.error("[#{request_id}]  stdout: \"#{res['stdout']}\"")
+      end
+
+      # Interpret the results. If there were external systems where the
+      # password change could not be synchronised, they might (should)
+      # have returned an actual error code indicating why the call
+      # failed. If that code exists, use it to format a clean error
+      # message that can be shown to the user. Otherwise, show a generic
+      # error message (which isn't good).
+
+      if res.include?('sync_status') && res.include?('request_id')
+        raise UserError, I18n.t('flash.password.failed_details',
+          :details => I18n.t('flash.integrations.' + res['sync_status']),
+          :code => request_id)
       else
         raise UserError, I18n.t('flash.password.failed')
       end

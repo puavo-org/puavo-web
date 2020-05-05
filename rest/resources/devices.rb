@@ -560,6 +560,7 @@ class Devices < PuavoSinatra
     'autopoweroff_off_hour'   => 'puavoDeviceOffHour',
     'autopoweroff_on_hour'    => 'puavoDeviceOnHour',
     'boot_mode'               => 'puavoDeviceBootMode',
+    'created'                 => 'createTimestamp', # LDAP operational attribute
     'current_image'           => 'puavoDeviceCurrentImage',
     'default_printer'         => 'puavoDefaultPrinter',
     'description'             => 'description',
@@ -577,6 +578,7 @@ class Devices < PuavoSinatra
     'mac'                     => 'macAddress',
     'manufacturer'            => 'puavoDeviceManufacturer',
     'model'                   => 'puavoDeviceModel',
+    'modified'                => 'modifyTimestamp', # LDAP operational attribute
     'personal_device'         => 'puavoPersonalDevice',
     'personally_administered' => 'puavoPersonallyAdministered',
     'preferred_server'        => 'puavoPreferredServer',
@@ -598,9 +600,11 @@ class Devices < PuavoSinatra
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
+    'createTimestamp'               => { name: 'created', type: :ldap_timestamp },
     'description'                   => { name: 'description' },
     'dn'                            => { name: 'dn' },
     'macAddress'                    => { name: 'mac' },
+    'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },
     'puavoAllowGuest'               => { name: 'allow_guest', type: :boolean },
     'puavoAutomaticImageUpdates'    => { name: 'automatic_updates', type: :boolean },
     'puavoConf'                     => { name: 'puavoconf' },
@@ -633,7 +637,6 @@ class Devices < PuavoSinatra
     'puavoPersonalDevice'           => { name: 'personal_device', type: :boolean },
     'puavoPersonallyAdministered'   => { name: 'personally_administered', type: :boolean },
     'puavoPreferredServer'          => { name: 'preferred_server' },
-    'puavoPrinterPPD'               => { name: 'printer_driver' },
     'puavoPrinterQueue'             => { name: 'printer_queue' },
     'puavoPurchaseDate'             => { name: 'purchase_date' },
     'puavoPurchaseLocation'         => { name: 'purchase_location' },
@@ -673,7 +676,7 @@ class Devices < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
-      out = v4_ensure_is_array(out, 'mac', 'tags', 'xrandr')
+      out = v4_ensure_is_array(out, 'mac', 'tags', 'xrandr', 'image_series_url')
 
       out.each do |o|
         if o.include?('puavoconf') && !o['puavoconf'].nil?

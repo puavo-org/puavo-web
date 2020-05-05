@@ -112,6 +112,11 @@
     </tr>
 
     <tr>
+      <th><%= t('activeldap.attributes.dn') %></th>
+      <td><%= h @school.dn.to_s %></td>
+    </tr>
+
+    <tr>
       <th><%= t('ldap_create_time') %></th>
       <td><%= h @school['createTimestamp'] %></td>
     </tr>

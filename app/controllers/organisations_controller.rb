@@ -403,6 +403,8 @@ class OrganisationsController < ApplicationController
         :puavoBillingInfo=>[]
       ).to_hash
 
+      strip_img(o)
+
       return o
     end
 

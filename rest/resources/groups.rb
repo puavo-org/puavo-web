@@ -147,11 +147,13 @@ class Groups < PuavoSinatra
   # the requested fields are actually returned in the queries.
   USER_TO_LDAP = {
     'abbreviation'  => 'cn',
+    'created'       => 'createTimestamp',   # LDAP operational attribute
     'dn'            => 'dn',
     'external_id'   => 'puavoExternalId',
     'id'            => 'puavoId',
     'member_dn'     => 'member',
     'member_uid'    => 'memberUid',
+    'modified'      => 'modifyTimestamp',   # LDAP operational attribute
     'name'          => 'displayName',
     'school_id'     => 'puavoSchool',
   }
@@ -159,10 +161,12 @@ class Groups < PuavoSinatra
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
     'cn'              => { name: 'abbreviation' },
+    'createTimestamp' => { name: 'created', type: :ldap_timestamp },
     'displayName'     => { name: 'name' },
     'dn'              => { name: 'dn' },
     'member'          => { name: 'member_dn' },
     'memberUid'       => { name: 'member_uid' },
+    'modifyTimestamp' => { name: 'modified', type: :ldap_timestamp },
     'puavoExternalId' => { name: 'external_id' },
     'puavoId'         => { name: 'id', type: :integer },
     'puavoSchool'     => { name: 'school_id', type: :id_from_dn },

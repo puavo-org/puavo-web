@@ -441,9 +441,10 @@ fi:
       failed: "Kirjautuminen epäonnistui!"
       logout_successful: Uloskirjautuminen onnistui!
     password:
-      successful: Salasanan vaihto onnistui!
-      failed: "Salasanan vaihto epäonnistui! Lokikoodi: %{code}."
-      failed_details: "Salasanan vaihto epäonnistui: %{details}"
+      successful: "Salasanan vaihto onnistui!"
+      failed: "Salasanan vaihto epäonnistui. Ikävä kyllä lisätietoja ei ole saatavilla. Ota yhteys tukeen."
+      failed_code: "Salasanan vaihto epäonnistui. Ikävä kyllä lisätietoja ei ole saatavilla. Ota yhteys tukeen ja anna heille tämä koodi: %{code}."
+      failed_details: "Salasanan vaihto epäonnistui: %{details}. Ota yhteys tukeen ja anna heille tämä koodi: %{code}."
       invalid_external_login: "Salasana tai käyttäjätunnus ulkoiseen palveluun (%{uid}) on virheellinen"
       incomplete_form: "Kaikkia tarvittavia lomakkeen kenttiä ei täytetty"
       invalid_login: "Käyttäjätunnus (%{uid}) tai salasana on virheellinen"
@@ -492,8 +493,10 @@ fi:
       remote_server_refused: "Etäpalvelin kieltäytyi suorittamasta toimintoa"
       bad_credentials: "Väärät kirjautumistiedot"
       remote_server_error: "Etäpalvelin ei toiminut"
+      rate_limit: "Liian monta yritystä"
       network_error: "Verkkoyhteysongelma"
       unknown_error: "Tuntematon virhe"
+      unmet_password_requirements: "Salasanan pituus-/merkkivaatimukset eivät täyttyneet"
 
   # Organisations
   organisations:
@@ -695,6 +698,7 @@ fi:
       jump_to_normal: "⇊ Näytä normaalit käyttäjät"
       lock_marked_users: "Haluatko varmasti lukita kaikki poistettavaksi merkityt käyttäjät?"
       delete_marked_users: "Haluatko varmasti poistaa kaikki poistettavaksi merkityt käyttäjät?"
+      synchronised_deletions: "Käyttäjien poistot synkronoidaan välittömästi seuraaviin ulkoisiin järjestelmiin: %{systems}. Kaikki näihin järjestelmiin tallennetut tiedot poistetaan peruuttamattomasti! Varmista jokainen poisto etukäteen."
 
       filters:
         locked_users: "Lukitut käyttäjät"
@@ -740,6 +744,7 @@ fi:
       marked_for_removal: Merkitty poistettavaksi
       prevent_removal: Estä poisto
       prevent_removal_confirm: "Oletko varma?\n\nKäyttäjän poiston esto on tarkoitettu tärkeille, järjestelmän toiminnan kannalta kriittisille tunnuksille.\nSinun on otettava yhteyttä Opinsysin tukeen jos haluat kumota tämän toiminnon, koska web-\nkäyttöliittymä ei tarkoituksellisesti salli sitä!"
+      deletion_sync_warning: "Käyttäjä poistetaan myös seuraavista ulkoisista järjestelmistä:\n\n\t%{systems}\n\nVarmista, että tämä on juuri se mitä aioit tehdä."
     new:
       title: "Lisää uusi käyttäjä"
     edit:
@@ -750,8 +755,8 @@ fi:
       primus_warning_new: "Primus-integraatio on päällä tässä koulussa. Ulkoisen ID:n asettaminen uudelle käyttäjälle voi rikkoa synkronoinnin ja aiheuttaa virheellisiä käyttäjän poistettavaksi merkitsemisiä!"
       primus_warning_edit: "Primus-integraatio on päällä tässä koulussa. Olemassaolevien käyttäjien nimien, sähköpostiosoitteiden ja puhelinnumeroiden vaihdot saatetaan kumota seuraavan synkronisaation ajon aikana. Ulkoisen ID:n vaihtaminen/asettaminen voi rikkoa synkronoinnin ja aiheuttaa virheellisiä käyttäjän poistettavaksi merkitsemisiä!"
       gsuite_duplicate_prevention: "G Suite -integraatio on päällä. Jos olet luomassa tunnusta käyttäjälle jolla on jo tunnus Googlessa, ota ensin yhteys tukeen jotta luomasi uusi Puavo-tunnus voidaan liittää hallitusti jo olemassaolevaan Google-tunnukseen. Näin käyttäjien synkronisaatio ei mene rikki ja tuplatunnuksien luonnin yritykset estetään."
-      gsuite_password_new: "G Suite -salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaa ennenkuin uusi käyttäjä on synkronoitu G Suiteen. Seuraava G Suite -synkronointi tapahtuu %{next_sync}, voit asettaa uuden käyttäjän salasanansa muutama minuutti tuon jälkeen."
-      gsuite_password_edit: "G Suite -salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitu Googleen. Muutoin salasananvaihto onnistunee Puavoon, mutta ei Googleen. Jos muokkat käyttäjää joka ei ole synronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
+      password_sync_new: "Salasanasynkronointi on käytössä. Et voi asettaa uudelle käyttäjälle salasanaa ennenkuin uusi käyttäjä on synkronoitu ulkoisiin järjestelmiin. Synkronisaatioaikataulu on listattu sivun yläreunassa; odota, kunnes kaikki synkronisaatiot on ajettu läpi ainakin kerran ja aseta salasana sitten."
+      password_sync_edit: "Salasanasynkronointi on käytössä. Ennen kuin vaihdat salasanan, varmista, että käyttäjä on synkronoitunut ulkoisiin järjestelmiin. Muutoin salasananvaihto onnistunee Puavoon, mutta ei näihin järjestelmiin, ja muutos on epätäydellinen. Jos muokkat käyttäjää joka ei ole synronoinnin piirissä, tästä viestistä ei tarvitse välittää (järjestelmä ei tiedä mitkä käyttäjät oikeasti on synkronoitu ja mitkä eivät)."
     select_school:
       title: Koulun vaihto (vaihe 1/2)
       user: Käyttäjä
@@ -1067,6 +1072,7 @@ fi:
     purchase_information: Hankintatiedot
     add_macAddress: "Lisää uusi MAC-osoite"
     autopoweroff: Automaattisammutus
+    img_extension_will_be_stripped: "Tarkennin \".img\" poistetaan automaattisesti nimen lopusta jos se on siellä"
     add_puavoImageSeriesSourceURL: "Lisää uusi lähdeosoite"
     linux_device_information:
       certificate_status_true: Voimassa

@@ -35,12 +35,12 @@ class PasswordController < ApplicationController
     setup_customisations()
   end
 
-  def filter_multiple_attempts(username)
+  def filter_multiple_attempts(username, request_id)
       db = Redis::Namespace.new("puavo:password_management:attempt_counter", :redis => REDIS_CONNECTION)
 
       # if the username key exists in the database, then there have been multiple attempts lately
       if db.get(username) == "true"
-        logger.error "(#{Time.now}) Too many change attempts for user \"#{username}\", request rejected"
+        logger.error "[#{request_id}] (#{Time.now}) Too many change attempts for user \"#{username}\", request rejected"
 
         # must setup these or the form breaks
         setup_language(params.fetch(:lang, ''))
@@ -63,14 +63,21 @@ class PasswordController < ApplicationController
          "REMOTE_HOST=\"#{request.env['REMOTE_HOST']}\" " \
          "REQUEST_URI=\"#{request.env['REQUEST_URI']}\""
 
+    # This request ID is logged everywhere and shown to the user
+    # in case something goes wrong. It can be then grepped from
+    # the logs to determine why the password change failed.
+    request_id = generate_synchronous_call_id()
+
     if params['login']['uid'] && !params['user']['uid']
-      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\" " \
+      logger.info "[#{request_id}] (#{Time.now}) User \"#{params['login']['uid']}\" " \
+                  "in organisation \"#{@organisation_name}\" " \
                   "is trying to change their password, #{ip}"
-      filter_multiple_attempts(params['login']['uid'])
+      filter_multiple_attempts(params['login']['uid'], request_id)
       mode = :own
     else
-      logger.info "(#{Time.now}) User \"#{params['login']['uid']}\" is trying to change the password of user " \
-                  "\"#{params['user']['uid']}\" in organisation \"#{LdapOrganisation.current.cn}\", #{ip}"
+      logger.info "[#{request_id}] (#{Time.now}) User \"#{params['login']['uid']}\" " \
+                  "is trying to change the password of user \"#{params['user']['uid']}\" " \
+                  "in organisation \"#{@organisation_name}\", #{ip}"
       mode = :other
     end
 
@@ -93,14 +100,16 @@ class PasswordController < ApplicationController
     setup_customisations()
 
     if params[:login][:uid].empty?
+      logger.error("[#{request_id}] The password form was not fully filled in")
       raise UserError, I18n.t('flash.password.incomplete_form')
     end
 
     unless params[:user][:new_password] == params[:user][:new_password_confirmation]
+      logger.error("[#{request_id}] Password and password confirmation do not match")
       raise UserError, I18n.t('flash.password.confirmation_failed')
     end
 
-    unless change_user_password(mode)
+    unless change_user_password(mode, request_id)
       raise UserError, I18n.t('flash.password.invalid_login', :uid => params[:login][:uid])
     end
 
@@ -108,7 +117,10 @@ class PasswordController < ApplicationController
     @changed = ''
 
     respond_to do |format|
+      logger.error("[#{request_id}] Password successfully changed")
+
       flash.now[:notice] = t('flash.password.successful')
+
       unless params[:user][:uid]
         format.html { render :action => "own" }
       else
@@ -228,6 +240,10 @@ class PasswordController < ApplicationController
   def error_message_and_redirect(message)
     flash.now[:alert] = message
     @user = User.new
+
+    setup_language(params.fetch(:lang, ''))
+    setup_customisations()
+
     unless params[:user][:uid]
       render :action => "own"
     else
@@ -267,21 +283,25 @@ class PasswordController < ApplicationController
     return nil
   end
 
-  def change_user_password(mode)
-    case get_school_password_requirements(-1)
+  def change_user_password(mode, request_id)
+    # must use -1 because password forms use global requirements
+    case get_school_password_requirements(@organisation_name, -1)
       when 'Google'
         # Validate the password against Google's requirements.
         new_password = params[:user][:new_password]
 
         if new_password.size < 8 then
+          logger.error("[#{request_id}] The new password does not meet the requirements")
           raise UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_too_short')
         end
         if new_password[0] == ' ' || new_password[-1] == ' ' then
+          logger.error("[#{request_id}] The new password does not meet the requirements")
           raise UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_whitespace')
         end
         if !new_password.ascii_only? then
+          logger.error("[#{request_id}] The new password does not meet the requirements")
           raise UserError,
                 I18n.t('activeldap.errors.messages.gsuite_password_ascii_only')
         end
@@ -289,6 +309,7 @@ class PasswordController < ApplicationController
         # Validate the password to contain at least eight characters
         new_password = params[:user][:new_password]
         if new_password.size < 8 then
+          logger.error("[#{request_id}] The new password does not meet the requirements")
           raise UserError,
                 I18n.t('activeldap.errors.messages.oulu_ad_password_too_short')
         end
@@ -298,6 +319,7 @@ class PasswordController < ApplicationController
         # Validate the password to contain at least six characters.
         new_password = params[:user][:new_password]
         if new_password.size < 6 then
+          logger.error("[#{request_id}] The new password does not meet the requirements")
           raise UserError,
                 I18n.t('activeldap.errors.messages.sixcharsmin_password_too_short')
         end
@@ -307,38 +329,38 @@ class PasswordController < ApplicationController
         # for validating and enforcing password requirements.
         new_password = params[:user][:new_password]
         if new_password.size < 7 then
+          logger.error("[#{request_id}] The new password does not meet the requirements")
           raise UserError,
                 I18n.t('activeldap.errors.messages.sevencharsmin_password_too_short')
         end
     end
 
-    msg_id = 'ABCDEGIJKLMOQRUWXYZ12346789'.split('').sample(10).join
-
     login_uid = params[:login][:uid]
 
     # if the username(s) contain the domain name, strip it out
-    customisations = get_school_password_form_customisations(-1)
+    # must use -1 because password forms use global requirements
+    customisations = get_school_password_form_customisations(@organisation_name, -1)
     domain = customisations[:domain]
 
     if domain && login_uid.end_with?(domain)
       login_uid.remove!(domain)
     end
 
-    external_login_status = external_login(login_uid,
-                                           params[:login][:password])
-
-    logger.warn "[#{msg_id}] external_login_status: |#{external_login_status}|"
+    external_login_status = external_login(login_uid, params[:login][:password])
+    logger.warn "[#{request_id}] external_login_status: \"#{external_login_status}\""
 
     if external_login_status then
       case external_login_status
         when :external_login_failed
+          logger.warn "[#{request_id}] External login failed"
+
           raise UserError,
                 I18n.t('flash.password.invalid_login',
                        :uid => login_uid)
         when :external_login_ok
           true    # this is okay
         else
-          logger.warn "[#{msg_id}] raising exception"
+          logger.warn "[#{request_id}] Raising exception"
 
           raise UserError,
                 I18n.t('flash.password.can_not_change_password', :code => msg_id)
@@ -349,9 +371,10 @@ class PasswordController < ApplicationController
                                 :attribute => 'uid',
                                 :value     => login_uid)
 
-    return false unless @logged_in_user \
-                          && authenticate(@logged_in_user,
-                                          params[:login][:password])
+    unless @logged_in_user && authenticate(@logged_in_user, params[:login][:password])
+      logger.error("[#{request_id}] Can't authenticate user \"#{login_uid}\"")
+      return false
+    end
 
     # Don't let non-teachers and non-admins change other people's passwords
     if mode == :other
@@ -359,6 +382,7 @@ class PasswordController < ApplicationController
       user_roles = Array(@logged_in_user.puavoEdupersonAffiliation || [])
 
       unless (user_roles & wanted_roles).any?
+        logger.error("[#{request_id}] User \"#{login_uid}\" is not an admin or a teacher")
         raise UserError, I18n.t('flash.password.go_away')
       end
     end
@@ -379,21 +403,31 @@ class PasswordController < ApplicationController
     end
 
     unless @user || external_login_status then
+      logger.error("[#{request_id}] Username \"#{target_user_username}\" is invalid")
       raise UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
     end
 
     rest_params = {
-                    :actor_username       => @logged_in_user.uid,
-                    :actor_password       => params[:login][:password],
-                    :host                 => User.configuration[:host],
-                    :target_user_username => target_user_username,
-                    :target_user_password => params[:user][:new_password],
-                  }
+      :actor_username       => @logged_in_user.uid,
+      :actor_password       => params[:login][:password],
+      :host                 => User.configuration[:host],
+      :target_user_username => target_user_username,
+      :target_user_password => params[:user][:new_password],
+      :request_id           => request_id,
+    }
+
     rest_params[:mode] = (@user ? 'all' : 'upstream_only')
 
+    logger.info("[#{request_id}] Sending a password change request to puavo-rest, target user is \"#{target_user_username}\"")
+
     res = rest_proxy.put('/v3/users/password', :json => rest_params).parse
-    res = {} unless res.kind_of?(Hash)
+
+    unless res.kind_of?(Hash)
+      logger.warn("[#{request_id}] the puavo-rest call did not return a Hash:")
+      logger.warn("[#{request_id}]   #{res.inspect}")
+      res = {}
+    end
 
     if res['exit_status'] == 0 && !@user && external_login_status then
       # ignore return code, try this only for side effect (possibly creates
@@ -404,7 +438,7 @@ class PasswordController < ApplicationController
                         :value     => login_uid)
     end
 
-    flog.info('rest call to PUT /v3/users/password', res.merge(
+    full_reply = res.merge(
       :from => 'password controller',
       :user => {
         :dn  => (@user ? @user.dn.to_s : '[dn unknown]'),
@@ -414,26 +448,55 @@ class PasswordController < ApplicationController
         :dn  => @logged_in_user.dn.to_s,
         :uid => @logged_in_user.uid,
       }
-    ))
+    )
 
-    if res['exit_status'] != 0 then
-      logger.warn "[#{msg_id}] (password-change-error) rest call to PUT /v3/users/password failed: #{ res.inspect }"
+    logger.info("[#{request_id}] full reply from puavo-rest: #{full_reply}")
+
+    if res['exit_status'] != 0
+      logger.error("[#{request_id}] puavo-rest call failed with exit status #{res['exit_status']}:")
+
+      if res.include?('stderr')
+        logger.error("[#{request_id}]  stderr: \"#{res['stderr']}\"")
+      end
+
+      if res.include?('stdout')
+        logger.error("[#{request_id}]  stdout: \"#{res['stdout']}\"")
+      end
 
       case res['extlogin_status']
         when PuavoRest::ExternalLoginStatus::BADUSERCREDS
+          logger.error("[#{request_id}]   external login: bad credentials")
+
           raise UserError,
                 I18n.t('flash.password.invalid_external_login',
                        :uid => login_uid)
         when PuavoRest::ExternalLoginStatus::UPDATEERROR
+          logger.error("[#{request_id}]   external login: update error")
+
           raise UserError,
                 I18n.t('flash.password.can_not_change_upstream_password')
         when PuavoRest::ExternalLoginStatus::USERMISSING
+          logger.error("[#{request_id}]   external login: user not found")
+
           raise UserError, I18n.t('flash.password.invalid_user',
-                                        :uid => params[:user][:uid])
+                                  :uid => params[:user][:uid])
       end
 
-      logger.warn "[#{msg_id}] (password-change-error) UNKNOWN PASSWORD CHANGE ERROR, SEE ABOVE"
-      raise UserError, I18n.t('flash.password.failed', :code => msg_id)
+      # If there were external systems where the password change could not be
+      # synchronised, they might (should) have returned an actual error code
+      # indicating why the call failed. If that code exists, use it to format
+      # a clean error message that can be shown to the user.
+      if res.include?('sync_status')
+        raise UserError, I18n.t('flash.password.failed_details',
+          :details => I18n.t('flash.integrations.' + res['sync_status']),
+          :code => request_id)
+      end
+
+      logger.error("[#{request_id}] Unknown password change error!")
+
+      # just show a generic error message with the request ID, so it can be
+      # grepped from the logs
+      raise UserError, I18n.t('flash.password.failed_code', :code => request_id)
     end
 
     return true
@@ -446,11 +509,23 @@ class PasswordController < ApplicationController
   end
 
   def set_ldap_connection
-    organisation_key = Puavo::Organisation.key_by_host(request.host)
+    req_host = request.host
+
+    # Make the password forms work on staging servers
+    if req_host.start_with?('staging-')
+      req_host.remove!('staging-')
+    end
+
+    organisation_key = Puavo::Organisation.key_by_host(req_host)
+
     unless organisation_key
       organisation_key = Puavo::Organisation.key_by_host("*")
     end
-    organisation_key
+
+    if @organisation_name.nil?
+      logger.warn("set_ldap_connection(): @organisation_name is nil, overwriting it with '#{organisation_key}'")
+      @organisation_name = organisation_key
+    end
 
     default_ldap_configuration = ActiveLdap::Base.ensure_configuration
     organisation = Puavo::Organisation.find(organisation_key)
@@ -485,7 +560,7 @@ class PasswordController < ApplicationController
 
   def setup_customisations
     # use -1 because we don't know what the school is
-    customisations = get_school_password_form_customisations(-1)
+    customisations = get_school_password_form_customisations(@organisation_name, -1)
 
     @banner = customisations[:banner]
     @domain = customisations[:domain]

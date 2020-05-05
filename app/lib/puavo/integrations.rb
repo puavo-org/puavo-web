@@ -17,7 +17,7 @@ module Puavo
 
     # Known action names for synchronous actions. Actions not listed here
     # are removed at load-time.
-    KNOWN_ACTIONS = Set.new(['delete_user']).freeze
+    KNOWN_ACTIONS = Set.new(['delete_user', 'change_password']).freeze
 
     # "Intelligently" merges two hashes. Hash 'b' can remove entries from 'a'
     # by setting the new value to nil. Nested hashes are handled recursively.
@@ -75,12 +75,17 @@ module Puavo
       return "(#{parts.join(', ')})"
     end
 
-    def cache_school_integration_data(school_id)
+    def cache_school_integration_data(organisation, school_id)
       school_id = school_id.to_i
 
+      # Add a new organisation
+      unless INTEGRATIONS_CACHE.include?(organisation)
+        INTEGRATIONS_CACHE[organisation] = {}
+      end
+
       # Cached already?
-      if INTEGRATIONS_CACHE.include?(school_id)
-        return INTEGRATIONS_CACHE[school_id]
+      if INTEGRATIONS_CACHE[organisation].include?(school_id)
+        return INTEGRATIONS_CACHE[organisation][school_id]
       end
 
       # Add a new school
@@ -106,7 +111,7 @@ module Puavo
         schedule: {},
       }
 
-      data = Puavo::Organisation.find(LdapOrganisation.current.cn).value_by_key('integrations')
+      data = Puavo::Organisation.find(organisation).value_by_key('integrations')
       data = {} unless data
 
       global = data['global'] || {}
@@ -191,7 +196,7 @@ module Puavo
       entry[:schedule] = schedule.freeze
 
       entry.freeze
-      INTEGRATIONS_CACHE[school_id] = entry
+      INTEGRATIONS_CACHE[organisation][school_id] = entry
       return entry
     end
 
@@ -199,42 +204,42 @@ module Puavo
     # global settings in password forms (we don't have school objects in those).
 
     # Get the password changing form customisations
-    def get_school_password_form_customisations(school_id)
-      return cache_school_integration_data(school_id)[:password_form]
+    def get_school_password_form_customisations(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:password_form]
     end
 
     # Retrieves a set of third-party integration names for the school identified by its puavoId
-    def get_school_integrations(school_id)
-      return cache_school_integration_data(school_id)[:integrations]
+    def get_school_integrations(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:integrations]
     end
 
-    def get_school_integration_names(school_id)
-      return cache_school_integration_data(school_id)[:integration_names]
+    def get_school_integration_names(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:integration_names]
     end
 
-    def get_school_integrations_by_type(school_id)
-      return cache_school_integration_data(school_id)[:integrations_by_type]
+    def get_school_integrations_by_type(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:integrations_by_type]
     end
 
     # 'integration_type' is a string that contains a word like "primus" or "gsuite"
-    def school_has_integration?(school_id, integration_name)
-      return cache_school_integration_data(school_id)[:integrations].include?(integration_name)
+    def school_has_integration?(organisation, school_id, integration_name)
+      return cache_school_integration_data(organisation, school_id)[:integrations].include?(integration_name)
     end
 
     # Password requirements for this school
-    def get_school_password_requirements(school_id)
-      return cache_school_integration_data(school_id)[:password_requirements]
+    def get_school_password_requirements(organisation, school_id)
+      return cache_school_integration_data(organisation, school_id)[:password_requirements]
     end
 
     # Actions for synchronous updates. Supported actions are listed in KNOWN_ACTIONS.
-    def school_has_sync_actions_for?(school_id, action_name)
-      return cache_school_integration_data(school_id)[:sync_actions].include?(action_name)
+    def school_has_sync_actions_for?(organisation, school_id, action_name)
+      return cache_school_integration_data(organisation, school_id)[:sync_actions].include?(action_name)
     end
 
     # Get a list of synchronous actions for the school. Optional filtering is done is action_name
     # is not nil.
-    def get_school_sync_actions(school_id, action_name=nil)
-      actions = cache_school_integration_data(school_id)[:sync_actions]
+    def get_school_sync_actions(organisation, school_id, action_name=nil)
+      actions = cache_school_integration_data(organisation, school_id)[:sync_actions]
 
       if action_name
         return actions[action_name]
@@ -244,8 +249,8 @@ module Puavo
     end
 
     # Off-line synchronisation schedules
-    def get_school_single_integration_next_update(school_id, integration_name, now)
-      schedule = cache_school_integration_data(school_id)[:schedule]
+    def get_school_single_integration_next_update(organisation, school_id, integration_name, now)
+      schedule = cache_school_integration_data(organisation, school_id)[:schedule]
 
       if schedule.include?(integration_name)
         sched = schedule[integration_name]
@@ -256,8 +261,8 @@ module Puavo
       end
     end
 
-    def get_school_integration_next_updates(school_id, now)
-      schedule = cache_school_integration_data(school_id)[:schedule]
+    def get_school_integration_next_updates(organisation, school_id, now)
+      schedule = cache_school_integration_data(organisation, school_id)[:schedule]
 
       out = {}
 
@@ -294,6 +299,7 @@ module Puavo
       'incomplete_request',
       'malformed_reply',
       'server_error',
+      'rate_limit',
       'network_error',
       'unknown_error',
     ]).freeze
@@ -461,6 +467,44 @@ module Puavo
 
       if response[:code] == 'user_not_found'
         # whatever
+        logger.info("[#{request_id}] google_delete_user(): the user does not exist, ignoring")
+        return true, nil
+      end
+
+      return false, response[:code]
+    end
+
+    def azure_delete_user(request_id, params, args)
+      # verify our parameters
+      unless params.include?('url')
+        logger.info("[#{request_id}] azure_delete_user(): missing server URL in 'params'")
+        raise OperationError, 'configuration_error'
+      end
+
+      unless args.include?(:organisation) && args.include?(:user) && args.include?(:school)
+        logger.info("[#{request_id}] azure_delete_user(): missing required arguments")
+        raise OperationError, 'configuration_error'
+      end
+
+      url = params['url']
+
+      logger.info("[#{request_id}] azure_delete_user(): sending a deletion request to \"#{url}\"")
+
+      response = do_operation(request_id, url, :delete_user, 'azure', {
+        organisation: args[:organisation],
+        user: args[:user].uid,
+        user_id: args[:user].id.to_i,
+        school: args[:school].cn,
+        school_id: args[:school].id.to_i,
+      })
+
+      if response[:success] == true
+        return true, nil
+      end
+
+      if response[:code] == 'user_not_found'
+        # whatever
+        logger.info("[#{request_id}] azure_delete_user(): the user does not exist, ignoring")
         return true, nil
       end
 
@@ -471,6 +515,7 @@ module Puavo
     SYNCHRONOUS_ACTIONS = {
       :delete_user => {
         'gsuite' => :google_delete_user,
+        'azure' => :azure_delete_user,
       },
     }.freeze
 

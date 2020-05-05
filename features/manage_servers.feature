@@ -64,3 +64,19 @@ Feature: Manage servers
     And I fill in "Hostname" with "äasdöfäfäasdöfädsöfädf"
     And I press "Update"
     And I should see "Hostname contains invalid characters (allowed characters are: a-z0-9-)"
+
+  Scenario: .img extension is removed from desktop image names
+    Given I am on the server list page
+    And I follow "someserver"
+    And I follow "Edit..."
+    And I fill in "Desktop Image" with "example_image.img"
+    And I press "Update"
+    # All "I should see" and "I should not see" checks are just simple
+    # substring searches. If there's "example_image.img" on the page,
+    # then it will match to "example_image". So we must check for the
+    # absence of the extension itself.
+    Then I should not see ".img"
+    When I follow "Edit..."
+    And I fill in "Desktop Image" with "example_image_2"
+    And I press "Update"
+    Then I should see "example_image_2"

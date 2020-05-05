@@ -151,7 +151,7 @@ en:
   # Various uncategorized strings
   general_confirm: Are you sure?
   destroy_confirm: Are you sure? (%{object_name})?
-  destroy_confirm: "This user is an owner and/or a school admin. Are you sure?"
+  destroy_confirm_admin: "This user is an owner and/or a school admin. Are you sure?"
   ldap_create_time: Created (LDAP)
   ldap_modify_time: Modified (LDAP)
   actions: Actions
@@ -441,9 +441,10 @@ en:
       failed: Login failed!
       logout_successful: Logout successful!
     password:
-      successful: Password changed successfully!
-      failed: "Failed to change the user's password! Log code: %{code}."
-      failed_details: "Failed to change the user's password: %{details}"
+      successful: "Password changed successfully!"
+      failed: "Password change failed. Unfortunately no extra information is available. Please contact support."
+      failed_code: "Password change failed. Unfortunately no extra information is available. Please contact support and give them this code: %{code}."
+      failed_details: "Password change failed: %{details}. Please contact support and give them this code: %{code}."
       invalid_external_login: "Invalid external login password or username (%{uid})"
       incomplete_form: You did not fill in all the required form fields.
       invalid_login: Invalid password or username (%{uid})
@@ -491,9 +492,11 @@ en:
       remote_server_did_not_respond: "Remote server did not respond to requests"
       remote_server_refused: "Remote server refused to cooperate"
       bad_credentials: "Bad credentials"
+      rate_limit: "Rate limit hit"
       remote_server_error: "Remote server error"
       network_error: "Network connectivity error"
       unknown_error: "Unknown error"
+      unmet_password_requirements: "Password length/complexity requirements were not met"
 
   # Organisations
   organisations:
@@ -695,6 +698,7 @@ en:
       jump_to_normal: "⇊ Show normal users"
       lock_marked_users: "Are you sure you want to lock all users who are marked for deletion?"
       delete_marked_users: "Are you sure you want to delete all users who are marked for deletion?"
+      synchronised_deletions: "User deletions are immediately synchronised to these external systems: %{systems}. All data stored in these systems will be irrevocably deleted! Verify all deletions in advance."
 
       filters:
         locked_users: "Locked users"
@@ -740,6 +744,7 @@ en:
       marked_for_removal: Marked for deletion
       prevent_removal: Prevent deletion
       prevent_removal_confirm: "Are you sure?\n\nUser deletion prevention is meant for important and critical accounts that are required for the system to work.\nYou must contact Opinsys support if you want to undo this action, because the web UI does not permit it\nby design!"
+      deletion_sync_warning: "The user will also be removed from these external systems:\n\n\t%{systems}\n\nPlease verify that this is what you intended to do."
     new:
       title: New user
     edit:
@@ -750,8 +755,8 @@ en:
       primus_warning_new: "Primus integration is enabled in this school. Giving an external ID to the new user can break the synchronisation system, and cause users to be marked for later deletion even if they shouldn't be!"
       primus_warning_edit: "Primus integration is enabled in this school. Any changes to existing user's names, email addresses or telephone numbers may be undone during the next synchronisation run. Changing or adding the external ID can break the synchronisation system, and cause users to be marked for later deletion even if they shouldn't be!"
       gsuite_duplicate_prevention: "G Suite integration is enabled. If you are creating a new account for a user who already has a Google account, then please contact support, so that the new Puavo account can be connected to the existing Google account. This way user synchronisation does not break, and duplicate account creation attempts are prevented."
-      gsuite_password_new: "G Suite password synchronisation is in use in this school. You cannot set the password of the new user before the user has been synchronised to G Suite. The next synchronisation is done at %{next_sync}, you can set the password a few minutes afer that."
-      gsuite_password_edit: "G Suite password synchronisation is in use in this school. Before changing the password, please ensure the user has been synchronised to G Suite. Otherwise the password will be changed to Puavo, but not to G Suite. If you are editing a user who isn't participating in the synchronisation, you can ignore this notification (the system does not know which users actually are synchronised)."
+      password_sync_new: "Password synchronisation is in use in this school. You cannot set the password for the new user before the user has been synchronised to external systems. The synchronisation schedule is listed at the top of the page; wait until all synchronisations have run at least once, then set the password."
+      password_sync_edit: "Password synchronisation is in use in this school. Before changing the password, please ensure that the user has been synchronised to external systems. Otherwise the password will be changed to Puavo, but not to these systems, resulting in an incomplete change. If you are editing a user who isn't participating in the synchronisation, then you can ignore this notification (the system does not know which users actually are synchronised)."
     select_school:
       title: Change the user's school (step 1/2)
       user: User
@@ -1067,6 +1072,7 @@ en:
     purchase_information: Purchase information
     add_macAddress: Add a new MAC address
     autopoweroff: Automatic power off
+    img_extension_will_be_stripped: "The \".img\" extension will be automatically removed from the end of the name if it's there"
     add_puavoImageSeriesSourceURL: "Add a new image series source URL"
     linux_device_information:
       certificate_status_true: Valid
