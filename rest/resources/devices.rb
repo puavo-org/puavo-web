@@ -541,6 +541,77 @@ class Devices < PuavoSinatra
     json device.school.wireless_printer_queues
   end
 
+  # List all Abitti exam servers in the current organisation. School-level
+  # filtering must be done on the client-side.
+  get "/v3/abitti_exam_servers" do
+    auth :basic_auth, :server_auth
+
+    # Get all laptop devices that have a non-empty puavoconf string. Only
+    # return the attributes we want.
+    base = Organisation.current['base']
+
+    potential_devices = Device.raw_filter(
+      "ou=Devices,ou=Hosts,#{base}",
+      '(&(objectclass=*)(&(puavoDeviceType=laptop)(puavoConf=*)))',
+      ['puavoId', 'puavoHostname', 'puavoSchool', 'puavoConf']
+    )
+
+    # Do further filtering. Our LDAP schema does not make "puavoConf"
+    # substring-searchable.
+    exam_servers = []
+
+    school_name_cache = {}
+
+    potential_devices.each do |dev|
+      begin
+        conf = dev['puavoConf'][0]
+
+        # quick-and-dirty rejection, without having to parse JSON
+        unless conf.include?('"puavo.profiles.list"')
+          next
+        end
+
+        conf = JSON.parse(conf)
+
+        unless conf.include?('puavo.profiles.list')
+          # the quick-and-dirty filtering failed for this device
+          next
+        end
+
+        # if the profile list contains "ers", then this is an
+        # Abitti exam server
+        unless conf['puavo.profiles.list'].split(',').include?('ers')
+          next
+        end
+
+        school_dn = dev['puavoSchool'][0]
+
+        unless school_name_cache.include?(school_dn)
+          begin
+            s = School.by_dn(school_dn)
+          rescue StandardError => e
+            flog.error(nil, e)
+            s = nil
+          end
+
+          school_name_cache[school_dn] = s.name
+        end
+
+        exam_servers << {
+          device_id: dev['puavoId'][0].to_i,
+          device_hostname: dev['puavoHostname'][0],
+          school_id: s.id.to_i,
+          school_name: s.name,
+        }
+      rescue StandardError => e
+        flog.error(nil, e)
+        next
+      end
+    end
+
+    json exam_servers
+  end
+
 
   # -------------------------------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------------
