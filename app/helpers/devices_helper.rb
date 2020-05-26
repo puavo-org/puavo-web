@@ -179,6 +179,13 @@ module DevicesHelper
       # oh well
     end
 
+    # Windows license info (boolean exists/does not exist)
+    if info.include?('windows_license') && !info['windows_license'].nil?
+      out[:winlic] = true
+    else
+      out[:winlic] = false
+    end
+
     return out
   end
 

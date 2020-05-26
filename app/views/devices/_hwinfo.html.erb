@@ -55,6 +55,15 @@ end
 
 <% end %>
 
+<% if @info.include?('windows_license') && !@info['windows_license'].nil? %>
+
+<tr>
+  <th class="main"><%= t('hwinfo.windows_license') %></th>
+  <td colspan="2"><%= @info['windows_license'].gsub("\n", '<br>').html_safe %></td>
+</tr>
+
+<% end %>
+
 <!-- CPU -->
 
 <tr>
