@@ -48,7 +48,7 @@ class ModalDialogBase {
     }
 
     // Creates a new button element
-    createButton(title, clazz, icon, id, callback)
+    createButton(title, clazz, id, callback)
     {
         var button = document.createElement("a");
 
@@ -60,9 +60,7 @@ class ModalDialogBase {
         if (clazz)
             button.classList.add(clazz);
 
-        if (icon)
-            button.innerHTML = "<i class=\"icon-" + icon + "\"></i> " + title;
-        else button.innerHTML = title;
+        button.innerHTML = title;
 
         button.addEventListener("click", event => callback(this));
 

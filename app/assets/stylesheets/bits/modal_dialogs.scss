@@ -74,7 +74,7 @@
   */
   .button {
     display: inline-block;
-    padding: 5px 10px 5px 5px;
+    padding: 5px 10px;
     cursor: pointer;
     margin-right: 10px;
     border-width: 2px;
@@ -96,18 +96,6 @@
     border-color: $buttonBorderLo $buttonBorderHi $buttonBorderHi $buttonBorderLo;
     background: $buttonHoverBack;
     color: $buttonFore;
-  }
-
-  .button i {
-    color: #008;
-  }
-
-  .button-good i {
-    color: #080;
-  }
-
-  .button-danger i {
-    color: #800;
   }
 
   .button:last-of-type {

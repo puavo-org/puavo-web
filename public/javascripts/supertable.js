@@ -30,12 +30,12 @@ class ColumnEditor extends ModalDialogBase {
 
         this.okButton = this.createButton(
             I18n.translate("supertable.column_editor.save"),
-            "button-good", "ok", "ce-ok", event => this.save(event));
+            "button-good", "ce-ok", event => this.save(event));
         this.buttons.appendChild(this.okButton);
 
         this.cancelButton = this.createButton(
             I18n.translate("supertable.column_editor.cancel"),
-            "button-danger", "cancel", "ce-cancel", event => this.cancel(event));
+            "button-danger", "ce-cancel", event => this.cancel(event));
         this.buttons.appendChild(this.cancelButton);
 
         this.columnDefs = columnDefs;
@@ -55,24 +55,24 @@ class ColumnEditor extends ModalDialogBase {
 
         this.upButton = this.createButton(
             I18n.translate("supertable.column_editor.moveUp"),
-            null, "up-big", "ce-up", event => this.clickedUp(event));
+            null, "ce-up", event => this.clickedUp(event));
         right.appendChild(this.upButton);
 
         right.appendChild(
             this.createButton(
                 I18n.translate("supertable.column_editor.moveDown"),
-                null, "down-big", "ce-down", event => this.clickedDown(event)));
+                null, "ce-down", event => this.clickedDown(event)));
 
         right.appendChild(
             this.createButton(
                 I18n.translate("supertable.column_editor.reset"),
-                null, "reload", "ce-reset", event => this.clickedReset(event)));
+                null, "ce-reset", event => this.clickedReset(event)));
 
 /*
         right.appendChild(
             this.createButton(
                 I18n.translate("supertable.column_editor.all"),
-                null, "all", "ce-all", event => this.clickedAll(event)));
+                null, "ce-all", event => this.clickedAll(event)));
 */
 
         // build the column table
