@@ -436,61 +436,47 @@ function escapeHTML(s)
             .replace(/'/g, "&#039;");
 }
 
-function doSingleNetworkPost(url, json)
+function doSingleNetworkPost(url, itemData)
 {
-    let success = true,         // assume that all calls succeed unless proven otherwise
-        errorMessage = null,
-        networkReturn = null;
-
-    $.get({
-        type: "POST",
-        url: url,
-        data: json,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-
-        async: false,       // THIS IS IMPORTANT!
-        timeout: 10000,
-
+    return fetch(url, {
+        method: "POST",
+        mode: "cors",
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content,
+            "Content-Type": "application/json; charset=utf-8",
+            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
         },
+        body: JSON.stringify(itemData)
+    }).then(function(response) {
+        if (!response.ok)
+            throw response;
 
-        beforeSend: function(jq, settings) {
-        },
-
-        fail: function(data) {
-        },
-
-        complete: function(data) {
-            if (data.readyState == 0 && data.statusText == "error") {
-                errorMessage = "doSingleNetworkPost(): network error";
-                success = false;
-            } else if (data.readyState == 0 && data.statusText == "timeout") {
-                errorMessage = "doSingleNetworkPost(): network timeout";
-                success = false;
-            } else if (data.status == 200) {
-                // Parse the received JSON
-                try {
-                    networkReturn = JSON.parse(data.responseText);
-                } catch (e) {
-                    errorMessage = "doSingleNetworkPost(): server response JSON parsing failed";
-                    success = false;
-                }
-            } else {
-                // Something else failed
-                errorMessage = "doSingleNetworkPost(): unknown error " + data.status;
-                success = false;
-            }
-        }
+        return response.json();
+    }).catch((error) => {
+        console.error(error);
+        // TODO: untranslated error string!
+        return { success: false, message: "Network connection error!" };
     });
+}
 
-    return {
-        success: success,
-        errorMessage: errorMessage,
-        networkReturn: networkReturn,
-    };
+// All mass operations are just chained promises, so we need some way
+// to quickly return from an item processing function when nothing
+// needs to (or cannot) be done. These two convenience functions can be
+// used to return OK/failed states without having to remember the
+// convoluted Promise syntax.
+function itemProcessingOK(message=null)
+{
+    return new Promise(function(resolve, reject) {
+        resolve({ success: true, message: message });
+    });
+}
+
+function itemProcessingFailed(message=null)
+{
+    // we don't actually reject the promise itself, we just set the
+    // 'success' flag, because it's all we care about
+    return new Promise(function(resolve, reject) {
+        resolve({ success: false, message: message });
+    });
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -2870,15 +2856,46 @@ class SuperTable {
             order they are (they aren't visible).
         */
 
-        // Disable as much of the UI as possible, to prevent user from messing things up
-        this.ui.filteringEnabled.disabled = true;
-        this.ui.filteringReverse.disabled = true;
 
-        if (this.ui.filteringPresets)
-            this.ui.filteringPresets.disabled = true;
+        function beginOperation(ctx, numItems)
+        {
+            // Disable as much of the UI as possible, to prevent user from messing things up
+            ctx.ui.filteringEnabled.disabled = true;
+            ctx.ui.filteringReverse.disabled = true;
 
-        this.ui.massOperationSelector.disabled = true;
-        this.ui.massOperationProceedButton.disabled = true;
+            if (ctx.ui.filteringPresets)
+                ctx.ui.filteringPresets.disabled = true;
+
+            ctx.ui.massOperationSelector.disabled = true;
+            ctx.ui.massOperationProceedButton.disabled = true;
+
+            ctx.ui.massOperationProgressBar.style.visibility = "visible";
+            ctx.ui.massOperationProgressBar.setAttribute("max", numItems);
+            ctx.ui.massOperationProgressBar.setAttribute("value", 0);
+        }
+
+        function endOperation(ctx)
+        {
+            //ctx.ui.massOperationProgressBar.style.visibility = "hidden";
+            //ctx.ui.massOperationProgressCount.innerHTML = "";
+
+            // Re-enable the UI
+            ctx.ui.filteringEnabled.disabled = false;
+            ctx.ui.filteringReverse.disabled = false;
+
+            if (ctx.ui.filteringPresets)
+                ctx.ui.filteringPresets.disabled = false;
+
+            ctx.ui.massOperationSelector.disabled = false;
+            ctx.ui.massOperationProceedButton.disabled = false;
+            ctx.updateMassOperationStatus();
+        }
+
+        function updateProgress(ctx, count, current)
+        {
+            ctx.ui.massOperationProgressBar.setAttribute("value", current);
+            ctx.ui.massOperationProgressCount.innerHTML = `${current}/${count}`;
+        }
 
         this.clearPreviousRow();
 
@@ -2895,57 +2912,9 @@ class SuperTable {
             this.currentData[i][2] &= ~ROW_FLAG_PROCESSED;
         }
 
-        // Setup the progress bar
-        this.ui.massOperationProgressBar.style.visibility = "visible";
-        this.ui.massOperationProgressBar.setAttribute("max", numSelected);
-        this.ui.massOperationProgressBar.setAttribute("value", 0);
+        let itemsToBeProcessed = [];
 
-        function updateProgress(ctx, count, current)
-        {
-            ctx.ui.massOperationProgressBar.setAttribute("value", current + 1);
-            ctx.ui.massOperationProgressCount.innerHTML = `${current + 1}/${count}`;
-        }
-
-        function processItem(item, operation, tableRow)
-        {
-            let flags = item[2];
-
-            flags &= ~(ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
-
-            // process the item
-            const [status, message] = operation.processOneItem(item[4]);
-
-            if (status == MASS_OPERATION_ITEM_OK)
-                flags |= ROW_FLAG_PROCESSING_OK;
-            else {
-                flags |= ROW_FLAG_PROCESSING_FAIL;
-                item[3] = message;  // the error message returned from the server
-            }
-
-            flags |= ROW_FLAG_PROCESSED;
-            item[2] = flags;
-
-            if (tableRow) {
-                // Update visible row styles directly and immediately,
-                // without rebuilding the whole table
-                if (status == MASS_OPERATION_ITEM_OK) {
-                    tableRow.classList.add("processingSuccessfull");
-                    tableRow.classList.remove("processingFailed");
-                    tableRow.title = "";
-                } else {
-                    tableRow.classList.remove("processingSuccessfull");
-                    tableRow.classList.add("processingFailed");
-                    tableRow.title = message;
-                }
-            }
-        }
-
-        // TODO: Use Web Worker threads for this. (I actually tried it, but I couldn't
-        // get it to work, as workers require the code to be in a module, which I can
-        // do, but the module won't get access to anything else, so it won't work.
-        // There has to be workarounds for these limitations.)
-
-        // First process visible rows, IN ORDER
+        // Visible rows first, in the order they're on the screen
         let allRows = this.ui.table.children[0].children[1].rows;
 
         for (let i = 0; i < allRows.length; i++) {
@@ -2955,14 +2924,11 @@ class SuperTable {
             if (!(item[2] & ROW_FLAG_SELECTED))
                 continue;
 
-            console.log(`Processing visible item ${item}`);
-
-            updateProgress(this, numSelected, currentItem);
-            processItem(item, this.currentMassOperation, allRows[i]);
-            currentItem++;
+            item[2] |= ROW_FLAG_PROCESSED;
+            itemsToBeProcessed.push({ item: item, row: allRows[i] });
         }
 
-        // Then process the remaining items, in whatever order they are
+        // Then invisible (filtered) rows, in whatever order they appear
         for (let i in this.currentData) {
             let item = this.currentData[i];
 
@@ -2973,26 +2939,72 @@ class SuperTable {
             if (item[2] & ROW_FLAG_PROCESSED)
                 continue;
 
-            console.log(`Processing invisible item ${item}`);
-
-            updateProgress(this, numSelected, currentItem);
-            processItem(item, this.currentMassOperation, null);
-            currentItem++;
+            itemsToBeProcessed.push({ item: item, row: null });
         }
 
-        this.ui.massOperationProgressBar.style.visibility = "hidden";
-        this.ui.massOperationProgressCount.innerHTML = "";
+        let us = this;
 
-        // Re-enable the UI
-        this.ui.filteringEnabled.disabled = false;
-        this.ui.filteringReverse.disabled = false;
+        beginOperation(us, itemsToBeProcessed.length);
+        updateProgress(us, itemsToBeProcessed.length, 1);
 
-        if (this.ui.filteringPresets)
-            this.ui.filteringPresets.disabled = false;
+        // Use a Promise object to chain multiple other Promises. This loop
+        // will exit before the first Promise is resolved.
+        var sequence = Promise.resolve();
 
-        this.ui.massOperationSelector.disabled = false;
-        this.ui.massOperationProceedButton.disabled = false;
-        this.updateMassOperationStatus();
+        for (let i = 0; i < itemsToBeProcessed.length; i++) {
+            sequence = sequence.then(function() {
+                /*
+                    "Schedule" an operation. This can cause a network request.
+                    Each processOneItem() call must return a three-element tuple:
+                        - item index (i)
+                        - MASS_OPERATION_ITEM_xxx status,
+                        - an error message in case the process fails
+                */
+                return us.currentMassOperation.processItem(itemsToBeProcessed[i].item[4]);
+            }).then(function(result) {
+                // Display the results (update the table and progress counters)
+                let item = itemsToBeProcessed[i].item;
+                let tableRow = itemsToBeProcessed[i].row;
+
+                let flags = item[2];
+
+                flags &= ~(ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+
+                if (result.success)
+                    flags |= ROW_FLAG_PROCESSING_OK;
+                else {
+                    flags |= ROW_FLAG_PROCESSING_FAIL;
+                    item[3] = result.message;  // the error message returned from the server
+                }
+
+                flags |= ROW_FLAG_PROCESSED;
+                item[2] = flags;
+
+                if (tableRow) {
+                    // Update visible row styles directly and immediately,
+                    // without rebuilding the whole table
+                    if (result.success) {
+                        tableRow.classList.add("processingSuccessfull");
+                        tableRow.classList.remove("processingFailed");
+                        tableRow.title = "";
+                    } else {
+                        tableRow.classList.remove("processingSuccessfull");
+                        tableRow.classList.add("processingFailed");
+                        tableRow.title = result.message;
+                    }
+                }
+
+                if (i >= itemsToBeProcessed.length - 1) {
+                    // that was the last item
+                    // TODO: This should be replaceable with Promise.all().
+                    updateProgress(us, itemsToBeProcessed.length, i + 1);
+                    endOperation(us, itemsToBeProcessed.length);
+                } else {
+                    // still ongoing
+                    updateProgress(us, itemsToBeProcessed.length, i + 1);
+                }
+            });
+        }
     }
 
     // Called from the checkbox column popup menu
