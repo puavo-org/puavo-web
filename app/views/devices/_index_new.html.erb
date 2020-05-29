@@ -60,20 +60,12 @@ class MassDeviceDeletion extends MassOperationBase {
         super(parent, container);
     }
 
-    processOneItem(item)
+    processItem(item)
     {
-        const ret = doSingleNetworkPost(
+        return doSingleNetworkPost(
             "/devices/<%= @school.id %>/mass_op_device_delete",
-            JSON.stringify({"id": item.id})
+            { id: item.id }
         );
-
-        if (!ret.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
-
-        if (!ret.networkReturn.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
-
-        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
@@ -116,24 +108,16 @@ class MassDeviceSetFieldValue extends MassOperationBase {
         this.value = container.querySelector("#mass_device_set_field_value");
     }
 
-    processOneItem(item)
+    processItem(item)
     {
-        const ret = doSingleNetworkPost(
+        return doSingleNetworkPost(
             "/devices/<%= @school.id %>/mass_op_device_set_field",
-            JSON.stringify({
+            {
                 id: item.id,
                 field: this.field.value,
                 value: this.value.value
-            })
+            }
         );
-
-        if (!ret.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
-
-        if (!ret.networkReturn.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
-
-        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
@@ -213,26 +197,18 @@ class MassDevicePuavoconfEditor extends MassOperationBase {
         this.type = type;
     }
 
-    processOneItem(item)
+    processItem(item)
     {
-        const ret = doSingleNetworkPost(
+        return doSingleNetworkPost(
             "/devices/<%= @school.id %>/mass_op_device_edit_puavoconf",
-            JSON.stringify({
+            {
                 id: item.id,
                 key: this.key.value,
                 value: this.value.value,
                 type: this.type,
                 action: this.action
-            })
+            }
         );
-
-        if (!ret.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
-
-        if (!ret.networkReturn.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
-
-        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
