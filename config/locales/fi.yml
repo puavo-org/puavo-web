@@ -244,6 +244,7 @@ fi:
       xrandr: "Xrandr"
       abitti_version: "Abitti-versio"
       df_home: "Vapaana /home"
+      has_windows_license: "Windows-lisenssi"
 
   # Quick search
   search:
@@ -983,6 +984,7 @@ fi:
       name: "Päätekuva"
       release: "Julkaisu"
       kernel: "Kernel"
+    windows_license: "Windows-lisenssitiedot"
     cpu:
       title: "Prosessori"
       cores: "Ytimiä"

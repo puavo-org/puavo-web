@@ -228,41 +228,29 @@ class MassUserDeletion extends MassOperationBase {
         super(parent, container);
     }
 
-    processOneItem(item)
+    processItem(item)
     {
         // Do some pre-filtering here, to prevent useless network traffic.
         // All of these tests are also done on the server end in case the
         // user tries to cheat by, for example, adjusting their system time.
 
         if (item.dnd)
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"];
+            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
 
         if (item.rrt === null)
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>"];
+            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.not_marked_for_deletion') %>");
 
         const now = Math.floor(Date.now() / 1000);
         const next = item.rrt + (60 * 60 * 24 * 7);     // 7 days in seconds
 
         if (next > now)
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.marked_too_recently') %>"];
+            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.marked_too_recently') %>");
 
         // Good to go
-        const ret = doSingleNetworkPost(
+        return doSingleNetworkPost(
             "/users/<%= @school.id %>/mass_op_user_delete",
-            JSON.stringify({ id: item.id })
+            { id: item.id }
         );
-
-        if (!ret.success) {
-            // Something failed in doSingleNetworkPost()
-            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
-        }
-
-        if (!ret.networkReturn.success) {
-            // The actual operation failed
-            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
-        }
-
-        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 <% end %>
@@ -301,24 +289,16 @@ class MassUserLocking extends MassOperationBase {
         this.lock = state;
     }
 
-    processOneItem(item)
+    processItem(item)
     {
         // Do nothing if the user is already in the desired locking state
         if (item.locked == this.lock)
-            return [MASS_OPERATION_ITEM_OK, null];
+            return itemProcessingOK();
 
-        const ret = doSingleNetworkPost(
+        return doSingleNetworkPost(
             "/users/<%= @school.id %>/mass_op_user_lock",
-            JSON.stringify({ id: item.id, lock: this.lock })
+            { id: item.id, lock: this.lock }
         );
-
-        if (!ret.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
-
-        if (!ret.networkReturn.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
-
-        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 
@@ -360,38 +340,30 @@ class MassUserMarkForDeletion extends MassOperationBase {
         this.operation = op;
     }
 
-    processOneItem(item)
+    processItem(item)
     {
         // Pre-filter users, avoid useless network requests. All of these checks
         // are also done on the server end.
 
         if (item.dnd) {
             // deletion prevented
-            return [MASS_OPERATION_ITEM_FAILED, "<%= t('users.index.mass_operations.delete.deletion_prevented') %>"];
+            return itemProcessingFailed("<%= t('users.index.mass_operations.delete.deletion_prevented') %>");
         }
 
         if (item.rrt === null && this.operation == 2) {
             // already unlocked
-            return [MASS_OPERATION_ITEM_OK, null];
+            return itemProcessingOK();
         }
 
         if (item.rrt !== null && this.operation == 0) {
             // already locked and not forced mode
-            return [MASS_OPERATION_ITEM_OK, null];
+            return itemProcessingOK();
         }
 
-        const ret = doSingleNetworkPost(
+        return doSingleNetworkPost(
             "/users/<%= @school.id %>/mass_op_user_mark",
-            JSON.stringify({ id: item.id, operation: this.operation })
+            { id: item.id, operation: this.operation }
         );
-
-        if (!ret.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.errorMessage];
-
-        if (!ret.networkReturn.success)
-            return [MASS_OPERATION_ITEM_FAILED, ret.networkReturn.message];
-
-        return [MASS_OPERATION_ITEM_OK, null];
     }
 };
 

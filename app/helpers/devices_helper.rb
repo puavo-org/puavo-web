@@ -124,6 +124,10 @@ module DevicesHelper
 
       out[:hw_time] = info['timestamp'].to_i
       out[:ram] = (info['memory'] || []).sum { |slot| slot['size'].to_i }
+
+      # Some machines have no memory slot info, so use the "raw" number instead
+      out[:ram] = (info['memorysize_mb'] || 0).to_i if out[:ram] == 0
+
       out[:hd] = ((info['blockdevice_sda_size'] || 0).to_i / megabytes).to_i
       out[:hd_ssd] = info['ssd'] ? (info['ssd'] == '1') : false   # why oh why did I put a string in this field and not an integer?
       out[:wifi] = info['wifi']
@@ -173,6 +177,13 @@ module DevicesHelper
       end
     rescue
       # oh well
+    end
+
+    # Windows license info (boolean exists/does not exist)
+    if info.include?('windows_license') && !info['windows_license'].nil?
+      out[:winlic] = true
+    else
+      out[:winlic] = false
     end
 
     return out

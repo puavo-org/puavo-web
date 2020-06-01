@@ -656,8 +656,9 @@ when "import"
         if user.removal_request_time.nil?
           # This user has been removed, but they have not been marked for deletion yet.
           # Set that mark now.
-          puts "User \"#{user.username}\" (external ID \"#{user.external_id}\") exists in Puavo but not in the CSV file, marking the user for deletion"
+          puts "User \"#{user.username}\" (external ID \"#{user.external_id}\") exists in Puavo but not in the CSV file, marking the user for deletion and locking the account"
           user.removal_request_time = Time.now.utc
+          user.locked = true
           user.save!
         end
       rescue StandardError => e

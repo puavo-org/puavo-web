@@ -34,7 +34,7 @@ gem "pony"
 gem "gibberish"
 gem "sinatra-support", :require => "sinatra/support"
 gem "redlock"
-gem "elasticsearch"
+gem "elasticsearch", "7.5.0"    # Ruby 2.3.x
 gem "http"
 gem "dnsruby"
 gem "mechanize"

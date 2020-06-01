@@ -244,6 +244,7 @@ en:
       xrandr: "Xrandr"
       abitti_version: "Abitti version"
       df_home: "Free /home"
+      has_windows_license: "Has Windows license"
 
   # Quick search
   search:
@@ -983,6 +984,7 @@ en:
       name: "Image"
       release: "Name"
       kernel: "Kernel"
+    windows_license: "Windows License Information"
     cpu:
       title: "Processor"
       cores: "Cores"
