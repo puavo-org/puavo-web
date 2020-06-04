@@ -204,6 +204,7 @@ Rails.application.routes.draw do
 
       get 'get_school_devices_list' => 'devices#get_school_devices_list'
 
+      post 'mass_op_device_change_school' => 'devices#mass_op_device_change_school'
       post 'mass_op_device_delete' => 'devices#mass_op_device_delete'
       post 'mass_op_device_set_image' => 'devices#mass_op_device_set_image'
       post 'mass_op_device_set_field' => 'devices#mass_op_device_set_field'

@@ -48,6 +48,15 @@ class DevicesController < ApplicationController
   def new_cool_devices_index
     @device = Device.new
 
+    # Get a list of schools for the mass tool. I wanted to do this with AJAX
+    # calls, getting the list from puavo-rest with the new V4 API, but fetch()
+    # and CORS and other domains just won't cooperate...
+    @school_list = School.search_as_utf8(:filter => '', :attributes => ['displayName', 'cn']).collect do |s|
+        [s[0], s[1]['displayName'][0], s[1]['cn'][0]]
+    end.sort do |a, b|
+        a[1].downcase <=> b[1].downcase
+    end
+
     if request.format == 'text/html'
       # list of new device types
       @device_types = Host.types('nothing', current_user)["list"].map{ |k,v| [v['label'], k] }.sort{ |a,b| a.last <=> b.last }
@@ -271,6 +280,39 @@ class DevicesController < ApplicationController
       end
 
       # don't raise errors when nothing happens
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+  # Mass operation: change school
+  def mass_op_device_change_school
+    begin
+      device_id = params[:device][:id]
+      school_dn = params[:device][:school_dn]
+    rescue
+      puts "mass_op_device_change_school(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_device_delete(): missing params')
+    end
+
+    ok = false
+
+    begin
+      device = Device.find(device_id)
+
+      if device.puavoSchool.to_s != school_dn
+        device.puavoSchool = school_dn
+        device.save!
+      end
+
       ok = true
     rescue StandardError => e
       return status_failed_msg(e)

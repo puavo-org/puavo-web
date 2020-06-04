@@ -915,6 +915,9 @@ fi:
         have_xrandr: "Laitteella on xrandr-asetuksia"
         have_hwinfo: "Laitteesta on saatu laitetiedot"
       mass_operations:
+        change_school:
+          title: "Vaihda koulua..."
+          school_title: "Uusi koulu:"
         puavoconf:
           title: "PuavoConf-muokkaus..."
           key: "Avain:"

@@ -212,9 +212,60 @@ class MassDevicePuavoconfEditor extends MassOperationBase {
     }
 };
 
+class MassDeviceChangeSchool extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th><label for="mass_device_change_school"><%= t('devices.index.mass_operations.change_school.school_title') %></label></th>
+    <td>
+        <div class="mobileTitle"><%= t('devices.index.mass_operations.change_school.school_title') %></div>
+        <select id="mass_device_change_school">
+<% @school_list.each do |s| %>
+            <option data-dn="<%= s[0] %>"><%= s[1] %> (<%= s[2] %>)</option>
+<% end%>
+        </select>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        this.newSchoolDN = "<%= @school_list.first[0] %>";
+
+        container.querySelector("#mass_device_change_school")
+            .addEventListener("change", event => this.changeNewSchool(event));
+    }
+
+    changeNewSchool(event)
+    {
+        this.newSchoolDN = event.target.children[event.target.selectedIndex].dataset.dn;
+    }
+
+    processItem(item)
+    {
+        return doSingleNetworkPost(
+            "/devices/<%= @school.id %>/mass_op_device_change_school",
+            {
+                id: item.id,
+                school_dn: this.newSchoolDN
+            }
+        );
+    }
+};
+
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 let massOperations = {
+    "change_school": {
+        title: "<%= t('devices.index.mass_operations.change_school.title') %>",
+        hasSettings: true,
+        clazz: MassDeviceChangeSchool
+    },
+
     "puavoconf_edit": {
         title: "<%= t('devices.index.mass_operations.puavoconf.title') %>",
         hasSettings: true,

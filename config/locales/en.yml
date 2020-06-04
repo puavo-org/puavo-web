@@ -915,6 +915,9 @@ en:
         have_xrandr: "Device has xrandr settings"
         have_hwinfo: "Have received hardware information"
       mass_operations:
+        change_school:
+          title: "Change school..."
+          school_title: "New school:"
         puavoconf:
           title: "PuavoConf editor..."
           key: "Key:"
