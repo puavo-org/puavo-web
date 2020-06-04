@@ -325,6 +325,46 @@ class UsersController < ApplicationController
     end
   end
 
+  # Mass operation: clear column (their values must be unique, so setting them
+  # to anything except empty is pointless)
+  def mass_op_user_clear_column
+    begin
+      user_id = params[:user][:id]
+      column = params[:user][:column]
+    rescue
+      puts "mass_op_user_clear_column(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_user_clear_column(): missing params')
+    end
+
+    ok = false
+
+    begin
+      user = User.find(user_id)
+
+      if column == 'eid' && user.puavoExternalID
+        user.puavoExternalID = nil
+        user.save!
+      elsif column == 'email' && user.mail
+        user.mail = nil
+        user.save!
+      elsif column == 'telephone' && user.telephoneNumber
+        user.telephoneNumber = nil
+        user.save!
+      end
+
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
 

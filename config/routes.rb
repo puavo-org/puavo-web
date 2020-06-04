@@ -101,6 +101,7 @@ Rails.application.routes.draw do
       post 'mass_op_user_delete' => 'users#mass_op_user_delete'
       post 'mass_op_user_lock' => 'users#mass_op_user_lock'
       post 'mass_op_user_mark' => 'users#mass_op_user_mark'
+      post 'mass_op_user_clear_column' => 'users#mass_op_user_clear_column'
 
     end
 

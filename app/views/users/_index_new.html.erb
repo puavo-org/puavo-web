@@ -367,6 +367,66 @@ class MassUserMarkForDeletion extends MassOperationBase {
     }
 };
 
+class MassUserClearColumn extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        container.innerHTML =
+`<form>
+<table class="settingsChild">
+<tr>
+    <th><%= t('users.index.mass_operations.clear_column.column_title') %></th>
+    <td>
+        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_eid" checked>
+        <label for="mass_user_clear_column_eid"><%= t('users.index.mass_operations.clear_column.columns.eid') %></label><br>
+        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_email">
+        <label for="mass_user_clear_column_email"><%= t('users.index.mass_operations.clear_column.columns.email') %></label><br>
+        <input type="radio" name="mass_user_clear_column" id="mass_user_clear_column_telephone">
+        <label for="mass_user_clear_column_telephone"><%= t('users.index.mass_operations.clear_column.columns.telephone') %></label>
+    </td>
+</tr>
+</table>
+</form>`;
+
+        this.column = "eid";
+
+        container.querySelector("#mass_user_clear_column_eid")
+            .addEventListener("click", event => this.setColumn(event, "eid"));
+        container.querySelector("#mass_user_clear_column_email")
+            .addEventListener("click", event => this.setColumn(event, "email"));
+        container.querySelector("#mass_user_clear_column_telephone")
+            .addEventListener("click", event => this.setColumn(event, "telephone"));
+    }
+
+    setColumn(event, col)
+    {
+        this.column = col;
+    }
+
+    processItem(item)
+    {
+        // Pre-filter
+        let value = null;
+
+        if (this.column == "eid")
+            value = item.eid;
+        else if (this.column == "email")
+            value = item.email;
+        else value = item.phone;
+
+        if (value === null || value === "") {
+            // already missing/empty
+            return itemProcessingOK();
+        }
+
+        return doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_user_clear_column",
+            { id: item.id, column: this.column }
+        );
+    }
+};
+
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 let massOperations = {
@@ -389,6 +449,12 @@ let massOperations = {
         clazz: MassUserDeletion
     },
 <% end %>
+
+    "clear_columm": {
+        title: "<%= t('users.index.mass_operations.clear_column.title') %>",
+        hasSettings: true,
+        clazz: MassUserClearColumn
+    },
 };
 
 // The current columns, initially the defaults
