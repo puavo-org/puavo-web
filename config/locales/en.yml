@@ -245,6 +245,11 @@ en:
       abitti_version: "Abitti version"
       df_home: "Free /home"
       has_windows_license: "Has Windows license"
+      purchase_date: "Purchase date"
+      purchase_warranty: "Warranty ends"
+      purchase_loc: "Purchase location"
+      purchase_url: "Purchase URL"
+      purchase_support: "Support contract"
 
   # Quick search
   search:

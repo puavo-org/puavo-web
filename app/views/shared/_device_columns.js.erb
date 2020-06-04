@@ -179,6 +179,44 @@
         defaultOperator: OPERATOR_LESS_OR_EQUAL,
     },
 
+    purchase_date: {
+        key: "purchase_date",
+        title: "<%= t('columns.devices.purchase_date') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        subType: COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE,
+    },
+
+    purchase_loc: {
+        key: "purchase_loc",
+        title: "<%= t('columns.devices.purchase_loc') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    purchase_support: {
+        key: "purchase_support",
+        title: "<%= t('columns.devices.purchase_support') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+    },
+
+    purchase_url: {
+        key: "purchase_url",
+        title: "<%= t('columns.devices.purchase_url') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        subType: COLUMN_SUBTYPE_DEVICE_SUPPORT_URL,
+    },
+
+    purchase_warranty: {
+        key: "purchase_warranty",
+        title: "<%= t('columns.devices.purchase_warranty') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_UNIXTIME,
+        subType: COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE,
+    },
+
     ram: {
         key: "ram",
         title: "<%= t('columns.devices.hwinfo_ram_size') %>",

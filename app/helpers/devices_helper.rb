@@ -72,6 +72,11 @@ module DevicesHelper
     'puavoConf',
     'description',
     'puavoDeviceHWInfo',
+    'puavoPurchaseDate',
+    'puavoWarrantyEndDate',
+    'puavoPurchaseLocation',
+    'puavoPurchaseURL',
+    'puavoSupportContract',
     'createTimestamp',    # LDAP operational attribute
     'modifyTimestamp'     # LDAP operational attribute
   ]
@@ -105,6 +110,11 @@ module DevicesHelper
       modified: self.convert_ldap_time(dev['modifyTimestamp']),
       xrandr: dev['puavoDeviceXrandr'] ? Array(dev['puavoDeviceXrandr']) : nil,
       conf: dev['puavoConf'] ? JSON.parse(dev['puavoConf'][0]).collect{|k, v| "\"#{k}\"=\"#{v}\"" } : nil,
+      purchase_date: dev['puavoPurchaseDate'] ? self.convert_ldap_time(dev['puavoPurchaseDate']) : nil,
+      purchase_warranty: dev['puavoWarrantyEndDate'] ? self.convert_ldap_time(dev['puavoWarrantyEndDate']) : nil,
+      purchase_loc: dev['puavoPurchaseLocation'] ? dev['puavoPurchaseLocation'][0] : nil,
+      purchase_url: dev['puavoPurchaseURL'] ? dev['puavoPurchaseURL'][0] : nil,
+      purchase_support: dev['puavoSupportContract'] ? dev['puavoSupportContract'][0] : nil,
     }
   end
 

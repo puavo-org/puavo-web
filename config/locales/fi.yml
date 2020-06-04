@@ -245,6 +245,11 @@ fi:
       abitti_version: "Abitti-versio"
       df_home: "Vapaana /home"
       has_windows_license: "Windows-lisenssi"
+      purchase_date: "Hankintapäivä"
+      purchase_warranty: "Takuu päättyy"
+      purchase_loc: "Hankintapaikka"
+      purchase_url: "Hankinta-URL"
+      purchase_support: "Tukiyhteyshenkilö"
 
   # Quick search
   search:

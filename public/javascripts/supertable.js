@@ -397,8 +397,8 @@ function convertTimestamp(unixtime)
         return "";
 
     // Assume "too old" timestamps are invalid
-    // 2009-01-01 00:00:00 UTC
-    if (unixtime < 1230768000)
+    // 2000-01-01 00:00:00 UTC
+    if (unixtime < 946684800)
         return "(INVALID)";
 
     try {
@@ -412,6 +412,30 @@ function convertTimestamp(unixtime)
             pad(d.getHours()) + ":" +
             pad(d.getMinutes()) + ":" +
             pad(d.getSeconds());
+    } catch (e) {
+        console.log(e);
+        return "(ERROR)";
+    }
+}
+
+function convertTimestampDateOnly(unixtime)
+{
+    if (unixtime < 0)
+        return "";
+
+    // Assume "too old" timestamps are invalid
+    // 2000-01-01 00:00:00 UTC
+    if (unixtime < 946684800)
+        return "(INVALID)";
+
+    try {
+        // I'm not sure if this can throw errors
+        const d = new Date(unixtime * JAVASCRIPT_TIME_GRANULARITY);
+
+        // why is there no strftime() in JavaScript?
+        return d.getFullYear() + "-" +
+            pad(d.getMonth() + 1) + "-" +
+            pad(d.getDate());
     } catch (e) {
         console.log(e);
         return "(ERROR)";
@@ -514,17 +538,19 @@ const COLUMN_FLAG_SORTABLE = 0x01,  // this column can be sorted
 // Column data types. Do NOT use zero here, because... JavaScript's "types".
 const COLUMN_TYPE_STRING = 1,
       COLUMN_TYPE_INTEGER = 2,
-      COLUMN_TYPE_UNIXTIME = 3,     // same as integer, but will be displayed in human-readable format
+      COLUMN_TYPE_UNIXTIME = 3,             // same as integer, but will be displayed in human-readable format
       COLUMN_TYPE_BOOLEAN = 4;
 
 // Column data subtypes, for enabling highly context-specific things that would be
 // otherwise very hard to do. Again, no zeroes here.
 const COLUMN_SUBTYPE_USER_USERNAME = 1,
-      COLUMN_SUBTYPE_USER_ROLES = 6,
-      COLUMN_SUBTYPE_GROUP_NAME = 2,
-      COLUMN_SUBTYPE_GROUP_TYPE = 3,
-      COLUMN_SUBTYPE_DEVICE_HOSTNAME = 4,
-      COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY = 5;
+      COLUMN_SUBTYPE_USER_ROLES = 2,
+      COLUMN_SUBTYPE_GROUP_NAME = 3,
+      COLUMN_SUBTYPE_GROUP_TYPE = 4,
+      COLUMN_SUBTYPE_DEVICE_HOSTNAME = 5,
+      COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY = 6,
+      COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE = 7,
+      COLUMN_SUBTYPE_DEVICE_SUPPORT_URL = 8;
 
 // Filter operator codes. Just say no to zeroes.
 const OPERATOR_EQUAL = 1,
@@ -957,7 +983,7 @@ class FilterUnixtime extends FilterBase {
 
         // reject outright invalid dates (impose a "valid year" range)
         if (this.valid && (
-                year < 2009 || year > 2029 ||
+                year < 2000 || year > 2050 ||
                 month > 12 ||
                 day > 31 ||
                 hour < 0 || hour > 23 ||
@@ -3676,6 +3702,14 @@ class SuperTable {
 
                         case COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY:
                             contents = `${contents}%`;
+                            break;
+
+                        case COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE:
+                            contents = convertTimestampDateOnly(rowData[def["key"]]);
+                            break;
+
+                        case COLUMN_SUBTYPE_DEVICE_SUPPORT_URL:
+                            contents = `<a href="${rowData['purchase_url']}">${rowData['purchase_url']}</a>`;
                             break;
 
                         default:
