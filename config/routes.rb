@@ -209,6 +209,7 @@ Rails.application.routes.draw do
       post 'mass_op_device_set_image' => 'devices#mass_op_device_set_image'
       post 'mass_op_device_set_field' => 'devices#mass_op_device_set_field'
       post 'mass_op_device_edit_puavoconf' => 'devices#mass_op_device_edit_puavoconf'
+      post 'mass_op_device_purchase_info' => 'devices#mass_op_device_purchase_info'
 
       resources :devices
 

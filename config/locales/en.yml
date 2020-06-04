@@ -950,6 +950,9 @@ en:
           validity_warning: "This string is not validated in any way! Anything you put in the box above is stored in the database as-is."
         delete:
           title: "Delete"
+        purchase_info:
+          title: "Purchase information..."
+          validity_warning: "Check every field you want to change during this operation. Their values are not validated in any way! If a field contents is invalid, the database will reject it!"
 
     new:
       new_device: New device

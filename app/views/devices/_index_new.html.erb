@@ -262,6 +262,208 @@ class MassDeviceChangeSchool extends MassOperationBase {
     }
 };
 
+class MassDevicePurchaseInfo extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+
+        container.innerHTML = `
+<form>
+<p style="margin: 0; padding: 10px; font-weight: bold;"><%= t('devices.index.mass_operations.purchase_info.validity_warning') %></p>
+<table class="settingsChild">
+<tr>
+    <th>
+        <input type="checkbox" id="mass_device_purchase_info_purchase_date">
+        <label for="mass_device_purchase_info_purchase_date"><%= t('activeldap.attributes.device.puavoPurchaseDate') %>:</label>
+    </th>
+    <td><input type="date" id="mass_device_purchase_info_purchase_date_value" min="2000-01-01" max="2050-12-31"></td>
+</tr>
+<tr>
+    <th>
+        <input type="checkbox" id="mass_device_purchase_info_warranty_end_date">
+        <label for="mass_device_purchase_info_warranty_end_date"><%= t('activeldap.attributes.device.puavoWarrantyEndDate') %>:</label>
+    </th>
+    <td><input type="date" id="mass_device_purchase_info_warranty_end_date_value" min="2000-01-01" max="2050-12-31"></td>
+</tr>
+<tr>
+    <th>
+        <input type="checkbox" id="mass_device_purchase_info_purchase_location">
+        <label for="mass_device_purchase_info_purchase_location"><%= t('activeldap.attributes.device.puavoPurchaseLocation') %>:</label>
+    </th>
+    <td><input type="text" id="mass_device_purchase_info_purchase_location_value"></td>
+</tr>
+<tr>
+    <th>
+        <input type="checkbox" id="mass_device_purchase_info_purchase_url">
+        <label for="mass_device_purchase_info_purchase_url"><%= t('activeldap.attributes.device.puavoPurchaseURL') %>:</label>
+    </th>
+    <td><input type="text" id="mass_device_purchase_info_purchase_url_value"></td>
+</tr>
+<tr>
+    <th>
+        <input type="checkbox" id="mass_device_purchase_info_contact">
+        <label for="mass_device_purchase_info_contact"><%= t('activeldap.attributes.device.puavoSupportContract') %>:</label>
+    </th>
+    <td><input type="text" id="mass_device_purchase_info_contact_value"></td>
+</tr>
+</table>
+</form>`;
+
+        // current form data
+        this.data = {
+            "purchaseDate": {
+                checked: false,
+                value: null
+            },
+            "purchaseWarranty": {
+                "checked": false,
+                "value": null
+            },
+            "purchaseLocation": {
+                "checked": false,
+                "value": null
+            },
+            "purchaseUrl": {
+                "checked": false,
+                "value": null
+            },
+            "purchaseSupport": {
+                "checked": false,
+                "value": null
+            }
+        };
+
+        // setup event handling
+        container.querySelector("#mass_device_purchase_info_purchase_date")
+            .addEventListener("click", event => this.checkboxClicked(event, "purchaseDate"));
+
+        container.querySelector("#mass_device_purchase_info_warranty_end_date")
+            .addEventListener("click", event => this.checkboxClicked(event, "purchaseWarranty"));
+
+        container.querySelector("#mass_device_purchase_info_purchase_location")
+            .addEventListener("click", event => this.checkboxClicked(event, "purchaseLocation"));
+
+        container.querySelector("#mass_device_purchase_info_purchase_url")
+            .addEventListener("click", event => this.checkboxClicked(event, "purchaseUrl"));
+
+        container.querySelector("#mass_device_purchase_info_contact")
+            .addEventListener("click", event => this.checkboxClicked(event, "purchaseSupport"));
+
+        container.querySelector("#mass_device_purchase_info_purchase_date_value")
+            .addEventListener("input", event => this.dateChanged(event, "purchaseDate"));
+
+        container.querySelector("#mass_device_purchase_info_warranty_end_date_value")
+            .addEventListener("input", event => this.dateChanged(event, "purchaseWarranty"));
+
+        container.querySelector("#mass_device_purchase_info_purchase_location_value")
+            .addEventListener("input", event => this.textChanged(event, "purchaseLocation"));
+
+        container.querySelector("#mass_device_purchase_info_purchase_url_value")
+            .addEventListener("input", event => this.textChanged(event, "purchaseUrl"));
+
+        container.querySelector("#mass_device_purchase_info_contact_value")
+            .addEventListener("input", event => this.textChanged(event, "purchaseSupport"));
+    }
+
+    checkboxClicked(event, name)
+    {
+        this.data[name].checked = event.target.checked;
+    }
+
+    textChanged(event, name)
+    {
+        this.data[name].value = event.target.value.trim();
+
+        if (this.data[name].value.length == 0)
+            this.data[name].value = null;
+    }
+
+    dateChanged(event, name)
+    {
+        this.data[name].value = event.target.value;
+
+        if (this.data[name].value.length == 0)
+            this.data[name].value = null;
+    }
+
+    // I'm not sure if this function is really needed, but
+    // JS's type coercions and comparisons are horrible and
+    // I will not take any chances with them
+    hasChanged(a, b)
+    {
+        let a2, b2;
+
+        if (a === undefined || a === null || a == "")
+            a2 = null;
+        else a2 = a;
+
+        if (b === undefined || b === null || b == "")
+            b2 = null;
+        else b2 = b;
+
+        //console.log(`Comparing |${a2}| and |${b2}|`);
+        return a2 !== b2;
+    }
+
+    processItem(item)
+    {
+        // gather up changed values
+        let mustSendRequest = false;
+        let params = {};
+
+        if (this.data["purchaseDate"].checked) {
+            const date = item.purchase_date ? convertTimestampDateOnly(item.purchase_date) : null;
+
+            if (this.hasChanged(date, this.data["purchaseDate"].value)) {
+                mustSendRequest = true;
+                params.purchase_date = this.data["purchaseDate"].value;
+            }
+        }
+
+        if (this.data["purchaseWarranty"].checked) {
+            const date = item.purchase_warranty ? convertTimestampDateOnly(item.purchase_warranty) : null;
+
+            if (this.hasChanged(date, this.data["purchaseWarranty"].value)) {
+                mustSendRequest = true;
+                params.purchase_warranty = this.data["purchaseWarranty"].value;
+            }
+        }
+
+        if (this.data["purchaseLocation"].checked &&
+            this.hasChanged(item.purchase_loc, this.data["purchaseLocation"].value)) {
+            mustSendRequest = true;
+            params.purchase_loc = this.data["purchaseLocation"].value;
+        }
+
+        if (this.data["purchaseUrl"].checked &&
+            this.hasChanged(item.purchase_url, this.data["purchaseUrl"].value)) {
+            mustSendRequest = true;
+            params.purchase_url = this.data["purchaseUrl"].value;
+        }
+
+        if (this.data["purchaseSupport"].checked &&
+            this.hasChanged(item.purchase_support, this.data["purchaseSupport"].value)) {
+            mustSendRequest = true;
+            params.purchase_support = this.data["purchaseSupport"].value;
+        }
+
+        if (!mustSendRequest) {
+            // nothing actually changed (or nothing was checked?)
+            return itemProcessingOK();
+        }
+
+        //console.log(mustSendRequest, params);
+
+        return doSingleNetworkPost(
+            "/devices/<%= @school.id %>/mass_op_device_purchase_info",
+            {
+                id: item.id,
+                purchase_params: params
+            }
+        );
+    }
+};
+
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 let massOperations = {
@@ -281,6 +483,12 @@ let massOperations = {
         title: "<%= t('devices.index.mass_operations.set_field.title') %>",
         hasSettings: true,
         clazz: MassDeviceSetFieldValue
+    },
+
+    "purchase_info": {
+        title: "<%= t('devices.index.mass_operations.purchase_info.title') %>",
+        hasSettings: true,
+        clazz: MassDevicePurchaseInfo
     },
 
     "delete": {

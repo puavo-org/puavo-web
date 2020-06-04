@@ -325,6 +325,74 @@ class DevicesController < ApplicationController
     end
   end
 
+  # Mass operation: edit purchase information
+  def mass_op_device_purchase_info
+    begin
+      device_id = params[:device][:id]
+      purchase_params = params[:device][:purchase_params]
+    rescue
+      puts "mass_op_device_purchase_info(): did not required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_device_purchase_info(): missing params')
+    end
+
+    ok = false
+
+    begin
+      device = Device.find(device_id)
+      changed = false
+
+      if purchase_params.include?('purchase_date')
+        old_date = device.puavoPurchaseDate ? device.puavoPurchaseDate.strftime('%Y-%m-%d') : nil
+        new_date = purchase_params['purchase_date']
+
+        if old_date != new_date
+          device.puavoPurchaseDate = new_date ? Time.strptime("#{new_date} 00:00:00 UTC", '%Y-%m-%d %H:%M:%S %Z') : nil
+          changed = true
+        end
+      end
+
+      if purchase_params.include?('purchase_warranty')
+        old_date = device.puavoWarrantyEndDate ? device.puavoWarrantyEndDate.strftime('%Y-%m-%d') : nil
+        new_date = purchase_params['purchase_warranty']
+
+        if old_date != new_date
+          device.puavoWarrantyEndDate = new_date ? Time.strptime("#{new_date} 00:00:00 UTC", '%Y-%m-%d %H:%M:%S %Z') : nil
+          changed = true
+        end
+      end
+
+      if purchase_params.include?('purchase_loc') && device.puavoPurchaseLocation != purchase_params['purchase_loc']
+        device.puavoPurchaseLocation = purchase_params['purchase_loc']
+        changed = true
+      end
+
+      if purchase_params.include?('purchase_url') && device.puavoPurchaseURL != purchase_params['purchase_url']
+        device.puavoPurchaseURL = purchase_params['purchase_url']
+        changed = true
+      end
+
+      if purchase_params.include?('purchase_support') && device.puavoSupportContract != purchase_params['purchase_support']
+        device.puavoSupportContract = purchase_params['purchase_support']
+        changed = true
+      end
+
+      if changed
+        device.save!
+      end
+
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
 
