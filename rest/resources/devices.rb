@@ -8,6 +8,7 @@ class Device < Host
   ldap_map :puavoDeviceDefaultAudioSink,   :default_audio_sink
   ldap_map :puavoDeviceDefaultAudioSource, :default_audio_source
   ldap_map :puavoDeviceModel,              :model
+  ldap_map :puavoDeviceMonitorsXML,        :monitors_xml
   ldap_map :puavoDeviceOffHour,            :daytime_end_hour
   ldap_map :puavoDeviceOnHour,             :daytime_start_hour
   ldap_map :puavoDevicePrimaryUser,        :primary_user_dn
@@ -461,6 +462,21 @@ class Devices < PuavoSinatra
   #   device = Device.by_hostname!(params["hostname"])
   #   json device
   # end
+
+  # Monitors configuration receiver
+  post '/v3/devices/:hostname/monitors' do
+    auth :basic_auth, :kerberos
+
+    device = Device.by_hostname!(params['hostname'])
+
+    raise BadInput, :user => 'no monitors.xml provided as a parameter' \
+      unless json_params.has_key?('monitors.xml')
+    raise BadInput, :user => 'monitors.xml is not a string' \
+      unless json_params['monitors.xml'].kind_of?(String)
+
+    device.monitors_xml = json_params['monitors.xml']
+    device.save!
+  end
 
   # Hardware info receiver
   post '/v3/devices/:hostname/sysinfo' do
