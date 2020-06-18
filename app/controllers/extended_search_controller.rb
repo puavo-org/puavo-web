@@ -177,6 +177,9 @@ class ExtendedSearchController < ApplicationController
         when 'device-tags'
           search_device_tags(settings)
 
+        when 'device-monitors-xml'
+          search_device_monitors_xml(settings)
+
         when 'device-xrandr'
           search_device_xrandr(settings)
 
@@ -590,6 +593,7 @@ class ExtendedSearchController < ApplicationController
       'puavoTag',
       'puavoDeviceKernelVersion',
       'puavoDeviceKernelArguments',
+      'puavoDeviceMonitorsXML',
       'puavoDeviceXrandr',
     ]
 
@@ -713,6 +717,17 @@ class ExtendedSearchController < ApplicationController
     _do_device_search(settings) do |device, term|
       if device.include?('puavoTag')
         match_term(device['puavoTag'], term, settings.is_regexp)
+      else
+        [false, nil]
+      end
+    end
+  end
+
+  def search_device_monitors_xml(settings)
+    _do_device_search(settings) do |device, term|
+      # Always a regexp search
+      if device.include?('puavoDeviceMonitorsXML')
+        match_term(device['puavoDeviceMonitorsXML'], term, true)
       else
         [false, nil]
       end

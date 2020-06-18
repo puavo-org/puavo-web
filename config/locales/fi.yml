@@ -241,6 +241,7 @@ fi:
       bat_serial: "Akun sarjanumero"
       bat_cap: "Akun kapasiteetti"
       wifi: "WiFi"
+      monitors_xml: "Näyttöasetukset (XML)"
       xrandr: "Xrandr"
       abitti_version: "Abitti-versio"
       df_home: "Vapaana /home"
@@ -317,6 +318,7 @@ fi:
         current_image: "Laitteet: Käytössä oleva työpöytäkuva (aina regexp)"
         mac: "Laitteet: MAC-osoite"
         tags: "Laitteet: Tagit"
+        monitors_xml: "Laitteet: Näyttöasetukset XML (aina regexp)"
         xrandr: "Laitteet: Xrandr-asetukset (aina regexp)"
         kernel_params: "Laitteet: Kernel-parametrit (aina regexp)"
         kernel_version: "Laitteet: Kernel-versio (aina regexp)"
@@ -924,6 +926,7 @@ fi:
         uses_trusty: "Käyttää Trusty-kuvaa"
         uses_stretch: "Käyttää Stretch-kuvaa"
         uses_buster: "Käyttää Buster-kuvaa"
+        have_monitors_xml: "Laitteella on näyttöasetuksia (XML)"
         have_xrandr: "Laitteella on xrandr-asetuksia"
         have_hwinfo: "Laitteesta on saatu laitetiedot"
       mass_operations:

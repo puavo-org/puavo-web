@@ -26,6 +26,14 @@
     },
 
     {
+        title: "<%= t('devices.index.filters.have_monitors_xml') %>",
+        id: "has_monitors_xml",
+        filters: [
+            [true, "monitors_xml", OPERATOR_NOT_EQUAL, "^$"],
+        ],
+    },
+
+    {
         title: "<%= t('devices.index.filters.have_xrandr') %>",
         id: "has_xrandr",
         filters: [
