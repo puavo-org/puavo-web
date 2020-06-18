@@ -714,7 +714,6 @@ class DevicesController < ApplicationController
       :puavoLongitude,
       :puavoDeviceXserver,
       :puavoDeviceMonitorsXML,
-      :puavoDeviceXrandrDisable,
       :puavoDeviceImage,
       :puavoDeviceBootImage,
       :puavoPreferredServer,

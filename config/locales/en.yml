@@ -1367,7 +1367,6 @@ en:
         puavoDeviceMonitorsXML: "Display settings (XML)"
         puavoDeviceXserver: Graphic adapter drivers
         puavoDeviceXrandr: Xrandr settings
-        puavoDeviceXrandrDisable: Disable Xrandr
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments
         puavoPrinterCartridge: Printer cartridge
@@ -1423,7 +1422,6 @@ en:
         puavoDeviceMonitorsXML: "Display settings (XML)"
         puavoDeviceXserver: Graphic adapter drivers
         puavoDeviceXrandr: Xrandr settings
-        puavoDeviceXrandrDisable: Disable Xrandr
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments
         puavoExport: Path

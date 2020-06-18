@@ -12,7 +12,6 @@ class Device < Host
   ldap_map :puavoDeviceOffHour,            :daytime_end_hour
   ldap_map :puavoDeviceOnHour,             :daytime_start_hour
   ldap_map :puavoDevicePrimaryUser,        :primary_user_dn
-  ldap_map :puavoDeviceXrandrDisable,      :xrandr_disable,           LdapConverters::StringBoolean
   ldap_map :puavoDeviceXrandr,             :xrandr,                   LdapConverters::ArrayValue
   ldap_map :puavoDeviceXserver,            :graphics_driver
   ldap_map :puavoMountpoint,               :mountpoints,              LdapConverters::ArrayValue
@@ -270,12 +269,7 @@ class Device < Host
     extend_puavoconf('puavo.printing.device_uri', printer_device_uri)
     extend_puavoconf('puavo.www.homepage',  homepage)
     extend_puavoconf('puavo.xorg.server',   graphics_driver)
-
-    if xrandr_disable then
-      extend_puavoconf('puavo.xrandr.args', '[]')
-    else
-      extend_puavoconf('puavo.xrandr.args', xrandr, handle_xrandr)
-    end
+    extend_puavoconf('puavo.xrandr.args', xrandr, handle_xrandr)
 
     #
     # handle tags by mapping tags to puavo-conf
@@ -676,7 +670,6 @@ class Devices < PuavoSinatra
     'support_contract'        => 'puavoSupportContract',
     'tags'                    => 'puavoTag',
     'type'                    => 'puavoDeviceType',
-    'xrandr_disabled'         => 'puavoDeviceXrandrDisable',
     'xrandr'                  => 'puavoDeviceXrandr',
     'xserver'                 => 'puavoDeviceXserver',
   }
@@ -708,7 +701,6 @@ class Devices < PuavoSinatra
     'puavoDevicePrimaryUser'        => { name: 'primary_user_id', type: :id_from_dn },
     'puavoDeviceStatus'             => { name: 'status' },
     'puavoDeviceType'               => { name: 'type' },
-    'puavoDeviceXrandrDisable'      => { name: 'xrandr_disabled', type: :boolean },
     'puavoDeviceXrandr'             => { name: 'xrandr' },
     'puavoDeviceXserver'            => { name: 'xserver' },
     'puavoHostname'                 => { name: 'hostname' },

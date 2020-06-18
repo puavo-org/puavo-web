@@ -1367,7 +1367,6 @@ fi:
         puavoDeviceMonitorsXML: "Näyttöasetukset (XML)"
         puavoDeviceXserver: "Näytönohjaimen ajuri"
         puavoDeviceXrandr: Xrandr-asetukset
-        puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit
         puavoPrinterCartridge: "Tulostimen värikasetti"
@@ -1423,7 +1422,6 @@ fi:
         puavoDeviceMonitorsXML: "Näyttöasetukset (XML)"
         puavoDeviceXserver: "Näytöohjaimen ajuri"
         puavoDeviceXrandr: Xrandr-asetukset
-        puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit
         puavoExport: Hakemistopolku
