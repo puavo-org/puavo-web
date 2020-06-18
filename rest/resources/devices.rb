@@ -12,7 +12,6 @@ class Device < Host
   ldap_map :puavoDeviceOffHour,            :daytime_end_hour
   ldap_map :puavoDeviceOnHour,             :daytime_start_hour
   ldap_map :puavoDevicePrimaryUser,        :primary_user_dn
-  ldap_map :puavoDeviceResolution,         :resolution
   ldap_map :puavoDeviceVertRefresh,        :vertical_refresh
   ldap_map :puavoDeviceXrandrDisable,      :xrandr_disable,           LdapConverters::StringBoolean
   ldap_map :puavoDeviceXrandr,             :xrandr,                   LdapConverters::ArrayValue
@@ -435,7 +434,6 @@ class Devices < PuavoSinatra
   #      "kernel_arguments": "lol",
   #      "kernel_version": "0.1",
   #      "vertical_refresh": "2",
-  #      "resolution": "320x240",
   #      "graphics_driver": "nvidia",
   #      "image": "myimage",
   #      "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",

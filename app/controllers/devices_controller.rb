@@ -715,7 +715,6 @@ class DevicesController < ApplicationController
       :puavoDeviceXserver,
       :puavoDeviceMonitorsXML,
       :puavoDeviceXrandrDisable,
-      :puavoDeviceResolution,
       :puavoDeviceVertRefresh,
       :puavoDeviceImage,
       :puavoDeviceBootImage,

@@ -209,7 +209,6 @@ class ServersController < ApplicationController
         :puavoLongitude,
         :puavoDeviceXserver,
         :puavoDeviceXrandrDisable,
-        :puavoDeviceResolution,
         :puavoDeviceVertRefresh,
         :puavoDeviceImage,
         :puavoDeviceKernelVersion,

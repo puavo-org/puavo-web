@@ -1370,7 +1370,6 @@ fi:
         puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit
-        puavoDeviceResolution: Resoluutio
         puavoDeviceVertRefresh: VertRefresh
         puavoPrinterCartridge: "Tulostimen värikasetti"
         printerDescription: Kuvaus
@@ -1428,7 +1427,6 @@ fi:
         puavoDeviceXrandrDisable: "Poista Xrandr käytöstä"
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit
-        puavoDeviceResolution: Resoluutio
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Hakemistopolku
         image: Kuva

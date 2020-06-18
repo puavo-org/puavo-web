@@ -78,7 +78,6 @@ Get device information by device hostname.
       "kernel_arguments": "lol",
       "kernel_version": "0.1",
       "vertical_refresh": "2",
-      "resolution": "320x240",
       "graphics_driver": "nvidia",
       "image": "myimage",
       "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
