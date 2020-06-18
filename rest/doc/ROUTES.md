@@ -77,7 +77,6 @@ Get device information by device hostname.
     {
       "kernel_arguments": "lol",
       "kernel_version": "0.1",
-      "vertical_refresh": "2",
       "graphics_driver": "nvidia",
       "image": "myimage",
       "dn": "puavoId=10,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
@@ -226,7 +225,6 @@ Sessions are stored in memory only but are not automatically deleted.
         "school_dn": "puavoId=9,ou=Groups,dc=edu,dc=hogwarts,dc=net",
         "hostname": "testfat",
         "dn": "puavoId=5370,ou=Devices,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
-        "vertical_refresh": null,
         "printer_queue_dns": null,
         "mac_address": "bc:5f:f4:56:59:71",
         "puavo_id": "5370",
