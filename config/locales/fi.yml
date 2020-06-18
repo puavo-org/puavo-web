@@ -1371,7 +1371,6 @@ fi:
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit
         puavoDeviceResolution: Resoluutio
-        puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoPrinterCartridge: "Tulostimen värikasetti"
         printerDescription: Kuvaus
@@ -1430,7 +1429,6 @@ fi:
         puavoDeviceKernelVersion: Kernel-versio
         puavoDeviceKernelArguments: Kernel-parametrit
         puavoDeviceResolution: Resoluutio
-        puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Hakemistopolku
         image: Kuva

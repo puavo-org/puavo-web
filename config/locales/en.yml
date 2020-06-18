@@ -1371,7 +1371,6 @@ en:
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments
         puavoDeviceResolution: Resolution
-        puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoPrinterCartridge: Printer cartridge
         printerDescription: Description
@@ -1430,7 +1429,6 @@ en:
         puavoDeviceKernelVersion: Kernel version
         puavoDeviceKernelArguments: Kernel arguments
         puavoDeviceResolution: Resolution
-        puavoDeviceHorzSync: HorzSync
         puavoDeviceVertRefresh: VertRefresh
         puavoExport: Path
         image: Image

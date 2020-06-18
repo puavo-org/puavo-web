@@ -210,7 +210,6 @@ class ServersController < ApplicationController
         :puavoDeviceXserver,
         :puavoDeviceXrandrDisable,
         :puavoDeviceResolution,
-        :puavoDeviceHorzSync,
         :puavoDeviceVertRefresh,
         :puavoDeviceImage,
         :puavoDeviceKernelVersion,
