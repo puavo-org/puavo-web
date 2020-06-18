@@ -443,6 +443,9 @@ class DeviceBase < LdapBase
        :value_block => lambda{ |value| Array(value).first } },
      { :original_attribute_name => "puavoDeviceImage",
        :new_attribute_name => "device_image",
+       :value_block => lambda{ |value| Array(value).first } },
+     { :original_attribute_name => "puavoDeviceMonitorsXML",
+       :new_attribute_name => "monitors_xml",
        :value_block => lambda{ |value| Array(value).first } } ]
   end
 

@@ -139,6 +139,11 @@
 <%= start_box t('shared.display_settings') %>
   <table>
     <tr>
+      <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceMonitorsXML") %></th>
+      <td><small><pre><%= h device.puavoDeviceMonitorsXML %></pre></small></td>
+    </tr>
+
+    <tr>
       <th><%= t("activeldap.attributes.#{device.class.to_s.downcase}.puavoDeviceXserver") %></th>
       <td><%= h device.puavoDeviceXserver %></td>
     </tr>

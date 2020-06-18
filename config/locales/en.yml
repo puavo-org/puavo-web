@@ -1364,6 +1364,7 @@ en:
         puavoPurchaseURL: Purchase URL
         puavoSupportContract: Support contract
         puavoDefaultPrinter: Default printer
+        puavoDeviceMonitorsXML: "Display settings (XML)"
         puavoDeviceXserver: Graphic adapter drivers
         puavoDeviceXrandr: Xrandr settings
         puavoDeviceXrandrDisable: Disable Xrandr
@@ -1422,6 +1423,7 @@ en:
         puavoPurchaseURL: Purchase URL
         puavoSupportContract: Support contract
         puavoDefaultPrinter: Default printer
+        puavoDeviceMonitorsXML: "Display settings (XML)"
         puavoDeviceXserver: Graphic adapter drivers
         puavoDeviceXrandr: Xrandr settings
         puavoDeviceXrandrDisable: Disable Xrandr

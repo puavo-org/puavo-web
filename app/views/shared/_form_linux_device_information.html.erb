@@ -133,6 +133,11 @@
 <h2><%= t('shared.display_settings') %></h2>
 <table class="editForm">
   <tr>
+    <th><%= f.label :puavoDeviceMonitorsXML %></th>
+    <td><%= f.text_area :puavoDeviceMonitorsXML, cols: 40, rows: 20 %></td>
+  </tr>
+
+  <tr>
     <th><%= f.label :puavoDeviceXserver %></th>
     <td><%= f.text_field :puavoDeviceXserver, :size => 45 %></td>
   </tr>

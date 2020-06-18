@@ -233,7 +233,8 @@ class ServersController < ApplicationController
       if params.include?(:device)
         # boot server registration does not send :device parameters
         device = params.require(:device).permit(
-          :puavoDeviceXrandr=>[]
+          :puavoDeviceMonitorsXML=>[],
+          :puavoDeviceXrandr=>[],
         ).to_hash
       end
 

@@ -713,6 +713,7 @@ class DevicesController < ApplicationController
       :puavoLatitude,
       :puavoLongitude,
       :puavoDeviceXserver,
+      :puavoDeviceMonitorsXML,
       :puavoDeviceXrandrDisable,
       :puavoDeviceResolution,
       :puavoDeviceHorzSync,
