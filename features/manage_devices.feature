@@ -191,3 +191,24 @@ Feature: Manage devices
   Scenario: Device page of a non-existent school
     Given I am on the device page of a non-existent school
     Then I should see "The school ID is not valid."
+
+  Scenario: Ensure display settings (XML) can be edited
+    Given I am on the devices list page
+    And I press "Edit..." on the "fatclient-01" row
+    And I fill in "Display settings (XML)" with:
+      """
+      <monitors version="1">
+	<configuration>
+	  <clone>no</clone>
+	  <output name="DP1">
+	    ...
+	  </output>
+	</configuration>
+      </monitors>
+      """
+    And I press "Update"
+    Then I should see "Device was successfully updated."
+    And I should see:
+      """
+      <monitors version="1"> <configuration> <clone>no</clone> <output name="DP1"> ... </output> </configuration> </monitors>
+      """
