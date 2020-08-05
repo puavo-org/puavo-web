@@ -363,7 +363,8 @@ class PasswordController < ApplicationController
           logger.warn "[#{request_id}] Raising exception"
 
           raise UserError,
-                I18n.t('flash.password.can_not_change_password', :code => msg_id)
+                I18n.t('flash.password.can_not_change_password',
+                       :code => request_id)
       end
     end
 
