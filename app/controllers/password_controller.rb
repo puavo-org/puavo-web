@@ -467,18 +467,21 @@ class PasswordController < ApplicationController
       case res['extlogin_status']
         when PuavoRest::ExternalLoginStatus::BADUSERCREDS
           logger.error("[#{request_id}]   external login: bad credentials")
-
           raise UserError,
                 I18n.t('flash.password.invalid_external_login',
                        :uid => login_uid)
+
         when PuavoRest::ExternalLoginStatus::UPDATEERROR
           logger.error("[#{request_id}]   external login: update error")
-
           raise UserError,
                 I18n.t('flash.password.can_not_change_upstream_password')
+
+        when PuavoRest::ExternalLoginStatus::UPDATED
+          logger.error("[#{request_id}]   external login password was updated, but some other error occurred when changing password")
+          raise UserError, I18n.t('flash.password.extlogin_password_changed_but_puavo_failed')
+
         when PuavoRest::ExternalLoginStatus::USERMISSING
           logger.error("[#{request_id}]   external login: user not found")
-
           raise UserError, I18n.t('flash.password.invalid_user',
                                   :uid => params[:user][:uid])
       end

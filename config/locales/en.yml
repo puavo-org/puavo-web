@@ -458,6 +458,7 @@ en:
       invalid_login: Invalid password or username (%{uid})
       confirmation_failed: "Password doesn't match the confirmation"
       invalid_user: User (%{uid}) does not exist
+      extlogin_password_changed_but_puavo_failed: "Password change was successful, but not to all services.  Contact support in case of problems."
       email_not_found: "Couldn't find email: %{email}"
       connection_failed: We're sorry, but something went wrong. Please try again later!
       can_not_change_password: "Can't change password. Please try again later! Log code: %{code}."
