@@ -184,7 +184,7 @@ class UsersController < ApplicationController
     begin
       user_id = params[:user][:id]
     rescue
-      puts "mass_op_user_delete(): did not required params in the request:"
+      puts "mass_op_user_delete(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_user_delete(): missing params')
     end
@@ -232,7 +232,7 @@ class UsersController < ApplicationController
       user_id = params[:user][:id]
       lock = params[:user][:lock]
     rescue
-      puts "mass_op_user_lock(): did not required params in the request:"
+      puts "mass_op_user_lock(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_user_lock(): missing params')
     end
@@ -268,7 +268,7 @@ class UsersController < ApplicationController
       user_id = params[:user][:id]
       operation = params[:user][:operation]
     rescue
-      puts "mass_op_user_mark(): did not required params in the request:"
+      puts "mass_op_user_mark(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_user_mark(): missing params')
     end
@@ -332,7 +332,7 @@ class UsersController < ApplicationController
       user_id = params[:user][:id]
       column = params[:user][:column]
     rescue
-      puts "mass_op_user_clear_column(): did not required params in the request:"
+      puts "mass_op_user_clear_column(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_user_clear_column(): missing params')
     end

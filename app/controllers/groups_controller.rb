@@ -99,7 +99,7 @@ class GroupsController < ApplicationController
     begin
       group_id = params[:group][:id]
     rescue
-      puts "mass_op_group_delete(): did not required params in the request:"
+      puts "mass_op_group_delete(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_group_delete(): missing params')
     end

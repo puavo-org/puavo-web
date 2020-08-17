@@ -105,7 +105,7 @@ class DevicesController < ApplicationController
     begin
       device_id = params[:device][:id]
     rescue
-      puts "mass_op_device_delete(): did not required params in the request:"
+      puts "mass_op_device_delete(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_device_delete(): missing params')
     end
@@ -134,7 +134,7 @@ class DevicesController < ApplicationController
       field = params[:device][:field]
       value = params[:device][:value]
     rescue
-      puts "mass_op_device_set_field(): did not required params in the request:"
+      puts "mass_op_device_set_field(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_device_set_field(): missing params')
     end
@@ -222,7 +222,7 @@ class DevicesController < ApplicationController
       type = params[:device][:type]
       action = params[:device][:action]
     rescue
-      puts "mass_op_device_edit_puavoconf(): did not required params in the request:"
+      puts "mass_op_device_edit_puavoconf(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_device_edit_puavoconf(): missing params')
     end
@@ -298,7 +298,7 @@ class DevicesController < ApplicationController
       device_id = params[:device][:id]
       school_dn = params[:device][:school_dn]
     rescue
-      puts "mass_op_device_change_school(): did not required params in the request:"
+      puts "mass_op_device_change_school(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_device_delete(): missing params')
     end
@@ -331,7 +331,7 @@ class DevicesController < ApplicationController
       device_id = params[:device][:id]
       purchase_params = params[:device][:purchase_params]
     rescue
-      puts "mass_op_device_purchase_info(): did not required params in the request:"
+      puts "mass_op_device_purchase_info(): missing required params in the request:"
       puts params.inspect
       return status_failed_msg('mass_op_device_purchase_info(): missing params')
     end
