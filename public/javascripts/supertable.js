@@ -1544,10 +1544,8 @@ class FilterEditor {
 
 // -------------------------------------------------------------------------------------------------
 
-
-const MASS_OPERATION_ITEM_OK = 1,
-      MASS_OPERATION_ITEM_FAILED = 2;
-
+// Base class for all mass operation handlers. You MUST inherit from this class
+// if you want to create a new mass operation
 class MassOperationBase {
     constructor(parent, container)
     {
@@ -1561,13 +1559,29 @@ class MassOperationBase {
         return true;
     }
 
+    isSingleShot()
+    {
+        // By default, we process the rows one at a time.
+        // But it's possible to create mass operations that
+        // process all selected rows in one call.
+        return false;
+    }
+
     updateStatus()
     {
+        // Nothing to be done by default
+    }
+
+    processAllItems(items)
+    {
+        // Fails by default. Override this method to provide actual processing.
+        return itemProcessingFailed();
     }
 
     processOneItem(item)
     {
-        return MASS_OPERATION_ITEM_FAILED;
+        // Fails by default. Override this method to provide actual processing.
+        return itemProcessingFailed();
     }
 };
 
@@ -2923,6 +2937,40 @@ class SuperTable {
             ctx.ui.massOperationProgressCount.innerHTML = `${current}/${count}`;
         }
 
+        function updateItemFlagsAndRow(item_wrapper, result)
+        {
+            let item = item_wrapper.item;
+            let tableRow = item_wrapper.row;
+
+            let flags = item[2];
+
+            flags &= ~(ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
+
+            if (result.success)
+                flags |= ROW_FLAG_PROCESSING_OK;
+            else {
+                flags |= ROW_FLAG_PROCESSING_FAIL;
+                item[3] = result.message;  // the error message returned from the server
+            }
+
+            flags |= ROW_FLAG_PROCESSED;
+            item[2] = flags;
+
+            if (tableRow) {
+                // Update visible row styles directly and immediately,
+                // without rebuilding the whole table
+                if (result.success) {
+                    tableRow.classList.add("processingSuccessfull");
+                    tableRow.classList.remove("processingFailed");
+                    tableRow.title = "";
+                } else {
+                    tableRow.classList.remove("processingSuccessfull");
+                    tableRow.classList.add("processingFailed");
+                    tableRow.title = result.message;
+                }
+            }
+        }
+
         this.clearPreviousRow();
 
         // Prepare the data
@@ -2938,7 +2986,8 @@ class SuperTable {
             this.currentData[i][2] &= ~ROW_FLAG_PROCESSED;
         }
 
-        let itemsToBeProcessed = [];
+        let itemsToBeProcessed = [],
+            rawItemsToBeProcessed = [];
 
         // Visible rows first, in the order they're on the screen
         let allRows = this.ui.table.children[0].children[1].rows;
@@ -2952,6 +3001,9 @@ class SuperTable {
 
             item[2] |= ROW_FLAG_PROCESSED;
             itemsToBeProcessed.push({ item: item, row: allRows[i] });
+
+            if (this.currentMassOperation.isSingleShot())
+                rawItemsToBeProcessed.push(item[4]);
         }
 
         // Then invisible (filtered) rows, in whatever order they appear
@@ -2977,59 +3029,38 @@ class SuperTable {
         // will exit before the first Promise is resolved.
         var sequence = Promise.resolve();
 
-        for (let i = 0; i < itemsToBeProcessed.length; i++) {
+        if (us.currentMassOperation.isSingleShot()) {
             sequence = sequence.then(function() {
-                /*
-                    "Schedule" an operation. This can cause a network request.
-                    Each processOneItem() call must return a three-element tuple:
-                        - item index (i)
-                        - MASS_OPERATION_ITEM_xxx status,
-                        - an error message in case the process fails
-                */
-                return us.currentMassOperation.processItem(itemsToBeProcessed[i].item[4]);
+                // Do everything in one call
+                return us.currentMassOperation.processAllItems(rawItemsToBeProcessed);
             }).then(function(result) {
-                // Display the results (update the table and progress counters)
-                let item = itemsToBeProcessed[i].item;
-                let tableRow = itemsToBeProcessed[i].row;
+                // Update all rows at once and finish the operation
+                for (let i = 0; i < itemsToBeProcessed.length; i++)
+                    updateItemFlagsAndRow(itemsToBeProcessed[i], result);
 
-                let flags = item[2];
-
-                flags &= ~(ROW_FLAG_PROCESSING_OK | ROW_FLAG_PROCESSING_FAIL);
-
-                if (result.success)
-                    flags |= ROW_FLAG_PROCESSING_OK;
-                else {
-                    flags |= ROW_FLAG_PROCESSING_FAIL;
-                    item[3] = result.message;  // the error message returned from the server
-                }
-
-                flags |= ROW_FLAG_PROCESSED;
-                item[2] = flags;
-
-                if (tableRow) {
-                    // Update visible row styles directly and immediately,
-                    // without rebuilding the whole table
-                    if (result.success) {
-                        tableRow.classList.add("processingSuccessfull");
-                        tableRow.classList.remove("processingFailed");
-                        tableRow.title = "";
-                    } else {
-                        tableRow.classList.remove("processingSuccessfull");
-                        tableRow.classList.add("processingFailed");
-                        tableRow.title = result.message;
-                    }
-                }
-
-                if (i >= itemsToBeProcessed.length - 1) {
-                    // that was the last item
-                    // TODO: This should be replaceable with Promise.all().
-                    updateProgress(us, itemsToBeProcessed.length, i + 1);
-                    endOperation(us, itemsToBeProcessed.length);
-                } else {
-                    // still ongoing
-                    updateProgress(us, itemsToBeProcessed.length, i + 1);
-                }
+                updateProgress(us, itemsToBeProcessed.length, itemsToBeProcessed.length);
+                endOperation(us, itemsToBeProcessed.length);
             });
+        } else {
+            for (let i = 0; i < itemsToBeProcessed.length; i++) {
+                sequence = sequence.then(function() {
+                    // "Schedule" an operation. This can cause a network request.
+                    return us.currentMassOperation.processItem(itemsToBeProcessed[i].item[4]);
+                }).then(function(result) {
+                    // Display the results (update the table and progress counters)
+                    updateItemFlagsAndRow(itemsToBeProcessed[i], result);
+
+                    if (i >= itemsToBeProcessed.length - 1) {
+                        // that was the last item
+                        // TODO: This should be replaceable with Promise.all().
+                        updateProgress(us, itemsToBeProcessed.length, i + 1);
+                        endOperation(us, itemsToBeProcessed.length);
+                    } else {
+                        // still ongoing
+                        updateProgress(us, itemsToBeProcessed.length, i + 1);
+                    }
+                });
+            }
         }
     }
 
