@@ -75,6 +75,10 @@ module Puavo
       return "(#{parts.join(', ')})"
     end
 
+    def has_fully_empty_definition?(haystack, needle)
+      haystack.include?(needle) && (haystack[needle].nil? || haystack[needle].empty?)
+    end
+
     def cache_school_integration_data(organisation, school_id)
       school_id = school_id.to_i
 
@@ -124,6 +128,11 @@ module Puavo
       definition_names = Set.new(integration_definitions.keys)
       for_this_school = Set.new(school['integrations'] || global['integrations'] || [])
 
+      if has_fully_empty_definition?(school, 'integrations')
+        # Completely clear all integrations for this school
+        for_this_school = Set.new([])
+      end
+
       by_type = {}
 
       (definition_names & for_this_school).each do |name|
@@ -164,8 +173,20 @@ module Puavo
       end
 
       # Password requirements
-      requirements = school['password_requirements'] || global['password_requirements'] || ''
-      requirements = nil if requirements == ''
+      requirements = nil
+
+      if school.include?('password_requirements')
+        requirements = school['password_requirements']
+      elsif global.include?('password_requirements')
+        requirements = global['password_requirements']
+      end
+
+      unless requirements.nil?
+        # Completely empty value disables password requirements for this school,
+        # overriding global values (if any)
+        requrements = nil if requirements.empty?
+      end
+
       entry[:password_requirements] = requirements.freeze
 
       # Actions that causes *synchronous* updates to some external URL/system. If
@@ -180,6 +201,11 @@ module Puavo
         next unless KNOWN_ACTIONS.include?(k)   # remove unknown actions
         next if v.nil? || v.empty?              # completely remove emptied-out sections
         cleaned_actions[k.to_sym] = v
+      end
+
+      if has_fully_empty_definition?(school, 'sync_actions')
+        # Completely remove all synchronous actions for this school
+        cleaned_actions = {}
       end
 
       entry[:sync_actions] = cleaned_actions.freeze

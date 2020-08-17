@@ -41,6 +41,10 @@ module Puavo
       return c
     end
 
+    def self.has_fully_empty_definition?(haystack, needle)
+      haystack.include?(needle) && (haystack[needle].nil? || haystack[needle].empty?)
+    end
+
     def self.cache_school_integration_data(organisation, school_id)
       school_id = school_id.to_i
 
@@ -78,6 +82,11 @@ module Puavo
         next unless KNOWN_ACTIONS.include?(k)   # remove unknown actions
         next if v.nil? || v.empty?              # completely remove emptied-out sections
         cleaned_actions[k.to_sym] = v
+      end
+
+      if has_fully_empty_definition?(school, 'sync_actions')
+        # Completely remove all synchronous actions for this school
+        cleaned_actions = {}
       end
 
       entry[:sync_actions] = cleaned_actions.freeze
