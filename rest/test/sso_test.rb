@@ -181,7 +181,6 @@ describe PuavoRest::SSO do
       group = @jwt["schools"][0]["groups"][0]
       assert_equal "Group 1", group["name"]
     end
-
   end
 
   describe "external service activation" do
@@ -209,7 +208,6 @@ describe PuavoRest::SSO do
       assert_equal 302, last_response.status
     end
 
-
     it "responds 302 when service is activated on user's organisation" do
       test_organisation = LdapOrganisation.first # TODO: fetch by name
       test_organisation.puavoActiveService = [@external_service.dn]
@@ -222,9 +220,6 @@ describe PuavoRest::SSO do
       get url.to_s
       assert_equal 302, last_response.status
     end
-
-
-
   end
 
   describe "login form" do
@@ -249,8 +244,7 @@ describe PuavoRest::SSO do
         url = Addressable::URI.parse(last_response.headers["Location"])
         assert url.query_values["jwt"], "has jwt token"
 
-        jwt_decode_data = JWT.decode(url.query_values["jwt"],
-				     "this is a shared secret")
+        jwt_decode_data = JWT.decode(url.query_values["jwt"], "this is a shared secret")
         jwt_decode_data[0] # jwt_decode_data is [payload, header]
       end
 
@@ -331,7 +325,7 @@ describe PuavoRest::SSO do
       assert_equal 401, last_response.status
       assert_equal "text/html", last_response.content_type
       assert(
-        css(".error").first.content.include?("Bad username"),
+        css("#error").first.content.include?("Bad username"),
         "Error message missing from #{ last_response.body }"
       )
     end
@@ -396,8 +390,5 @@ describe PuavoRest::SSO do
       @jwt = jwt_decode_data[0] # jwt_decode_data is [payload, header]
       assert_equal "/", @jwt["external_service_path_prefix"]
     end
-
   end
-
-
 end
