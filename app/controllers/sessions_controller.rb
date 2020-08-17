@@ -1,15 +1,9 @@
 class SessionsController < ApplicationController
   layout 'sessions'
-  skip_before_action :require_puavo_authorization, :only => [ :new,
-                                                              :create,
-                                                              :logo,
-                                                              :login_helpers,
-                                                              :theme ]
-  skip_before_action :require_login, :only => [ :new,
-                                                :create,
-                                                :logo,
-                                                :login_helpers,
-                                                :theme ]
+
+  skip_before_action :require_puavo_authorization, :only => [ :new, :create ]
+
+  skip_before_action :require_login, :only => [ :new, :create ]
 
   def new
 
@@ -46,25 +40,6 @@ class SessionsController < ApplicationController
 
   end
 
-  def logo
-    send_file( Rails.root.join('rest', 'public', 'v3', 'img', 'opinsys_logo.svg'),
-               :type => 'image/svg+xml',
-               :disposition => 'inline' )
-  end
-
-  def login_helpers
-     send_file( Rails.root.join('rest', 'public', 'v3', 'scripts', 'login_helpers.js'),
-               :type => 'application/javascript',
-               :disposition => 'inline' )
-
-  end
-
-  def theme
-    send_file( Rails.root.join('rest', 'public', 'v3', 'styles', 'theme.css'),
-               :type => 'text/css',
-               :disposition => 'inline' )
-  end
-
   def create
     session[:uid] = params[:username]
     session[:password_plaintext] = params[:password]
@@ -72,7 +47,6 @@ class SessionsController < ApplicationController
   end
 
   def auth
-
     respond_to do |format|
       format.json { render :json => true.to_json }
     end

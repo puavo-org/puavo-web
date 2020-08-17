@@ -122,9 +122,6 @@ Rails.application.routes.draw do
     get '/login' => 'sessions#new', :as => :login
     post '/login' => 'sessions#create'
     match '/logout' => 'sessions#destroy', :as => :logout, :via => :delete
-    match '/logo' => 'sessions#logo', :as => :logo, :via => :get, :format => :png
-    match '/login/helpers' => 'sessions#login_helpers', :as => :login_helpers, :via => :get, :format => :js
-    match '/login/theme' => 'sessions#theme', :as => :login_theme, :via => :get, :format => :css
 
     resources :sessions
     get 'schools/:id/image' => 'schools#image', :as => :image_school
