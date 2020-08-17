@@ -1,65 +1,91 @@
+/* SSO developers documentation */
 
-.doc {
-  text-align: left;
-  font-size: 10pt;
+body {
+    font-family: "Noto Sans", "Roboto", "DejaVu Sans", "Ubuntu", "Arial", sans-serif;
+    padding: 2em;
+    background: #f0eee1;
 }
 
-.master-docs {
-  display: none;
+.doc {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+img {
+    margin: 0 auto;
+    display: block;
+    width: 50%;
+    min-width: 250px;
 }
 
 p, li {
-  line-height: 2em;
-}
-
-
-h1, h2 {
-  margin-top: 1em;
-  margin-bottom: 0.25em;
-}
-
-p {
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-
-ul {
-  padding-left: 4em;
+    line-height: 2em;
 }
 
 h1 {
-  font-size: 25pt;
-  margin-top: 1em;
-  margin-bottom: 1em;
+    text-align: center;
 }
 
 h2 {
-  font-size: 20pt;
+    border-bottom: 1px dashed #000;
+}
+
+h1, h2 {
+    margin-top: 1em;
+    margin-bottom: 0.25em;
+}
+
+p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+ul {
+    padding-left: 4em;
+}
+
+h1 {
+    font-size: 25pt;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+h2 {
+    font-size: 20pt;
 }
 
 code, pre {
-  background: #E5E2CD;
-  border: 1px solid #8F8F8F;
-  border-radius: 3px;
-  font-family: Consolas, "Liberation Mono", Courier, monospace;
-  overflow-x: auto;
+    background: #E5E2CD;
+    border: 1px solid #8F8F8F;
+    border-radius: 3px;
+    font-family: "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
+    overflow-x: auto;
 }
 
 code {
-  margin: 0 2px;
-  padding: 0 5px;
+    margin: 0 2px;
+    padding: 2px;
+    white-space: nowrap;
 }
 
 pre {
-  margin: 0;
-  padding: 0.5em;
+    margin: 0;
+    padding: 0.5em;
 }
 
-.login {
-  padding: 3em;
-  max-width: 820px;
+a {
+    color: #00f;
+    background: none;
 }
 
 a:hover {
-  text-decoration: underline;
+    color: #fff;
+    background: #00f;
+}
+
+footer {
+    border-top: 1px solid #000;
+    text-align: center;
+    padding: 10px;
 }

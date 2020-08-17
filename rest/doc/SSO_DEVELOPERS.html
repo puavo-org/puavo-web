@@ -1,31 +1,29 @@
 <h1>Opinsys Authentication</h1>
 
-<p>For now to implement Opinsys Authentication to a external service you must receive a shared secret from Opinsys support <code>tuki @ opinsys.fi</code>. To receive it you must provide following:</p>
+<p>To implement Opinsys Authentication to an external service, you must receive a shared secret from Opinsys support at <code>tuki @ opinsys.fi</code>. To receive it, you must provide us the following information:</p>
 
 <ul>
-    <li>Fully qualified domain name (fqdn)<ul>
+    <li>Fully qualified domain name (FQDN)<ul>
         <li>The service must be available on this domain</li>
     </ul></li>
-    <li>Optionally a path prefix for the service<ul>
-        <li>Required only if multiple external services must be served from the same domain with different shared secrets</li>
-    </ul></li>
-    <li>Name and small description of the service<ul>
+    <li>Name and a short description of the service<ul>
         <li>Will be displayed on the login form and admin configuration panel for school admins</li>
     </ul></li>
     <li>Email address of the service maintainer</li>
-    <li>Optionally a link describing the service in more detail</li>
+    <li>Optionally, a path prefix for the service. Required only if multiple external services must be served from the same domain with different shared secrets</li>
+    <li>Optionally, a link describing the service in more detail</li>
 </ul>
 
-<p>Once the shared sercret is in place the external service may redirect user's web browser to <code>https://api.opinsys.fi/v3/sso</code> with a <code>return_to</code> query string key which determines where user is redirected back. The hostname of the <code>return_to</code> URL must match with the fqdn provided to us.</p>
+<p>Once the shared sercret is in place, the external service may redirect the user's web browser to <code>https://api.opinsys.fi/v3/sso</code> with a <code>return_to</code> query string key which determines where the user will be redirected back. The hostname of the <code>return_to</code> URL must match the FQDN provided to us.</p>
 
 <p>Example redirect URL might be:</p>
 
 <pre>https://api.opinsys.fi/v3/sso?return_to=http%3A%2F%2Fexample.com</pre>
 
-<p>When user is authenticated he/she will be redirected to the URL specified in the <code>return_to</code> query string key. The URL is augmented with a <code>jwt</code> query string key which will contain a <a href="http://tools.ietf.org/html/draft-jones-json-web-token">JSON Web Token</a>. The external service is expected to decode this token, validate it with the given shared secret and make sure that it is not issued too long a ago or in future. The token will contain following claims:</p>
+<p>When a user is authenticated he/she will be redirected to the URL specified in the <code>return_to</code> query string key. The URL is augmented with a <code>jwt</code> query string key which will contain a <a href="https://tools.ietf.org/html/draft-jones-json-web-token-10">JSON Web Token</a>. The external service is expected to decode this token, validate it with the given shared secret and make sure that it is not issued too long a ago or in the future. The token will contain following claims:</p>
 
 <ul>
-    <li><code>iat</code> Identifies the time at which the JWT was issued as unix timestamp</li>
+    <li><code>iat</code> Identifies the time at which the JWT was issued as Unix timestamp</li>
     <li><code>jti</code> A unique identifier for the JWT</li>
     <li><code>id</code> Unique identifier for the user</li>
     <li><code>username</code></li>
@@ -42,18 +40,18 @@
 
     <li><code>schools</code> List of school objects user belongs to<ul>
         <li><code>id</code> Unique identifier for the school</li>
-        <li><code>name</code> Human readable school name</li>
+        <li><code>name</code> Human-readable school name</li>
         <li><code>abbreviation</code> Valid POSIX name for the school</li>
 
-        <li><code>roles</code> List of roles (String) user has in the school<ul>
+        <li><code>roles</code> List of roles (String) user has in the school, one or more of these:<ul>
             <li><code>teacher</code>, <code>staff</code>, <code>student</code>, <code>visitor</code>, <code>parent</code>, <code>admin</code>, <code>schooladmin</code> or <code>testuser</code></li>
         </ul></li>
 
         <li><code>groups</code> List of group objects user has in the school<ul>
             <li><code>id</code> Unique identifier for the school</li>
-            <li><code>name</code> Human readable group name</li>
+            <li><code>name</code> Human-readable group name</li>
             <li><code>abbreviation</code> Valid POSIX name for the group</li>
-            <li><code>type</code> Type of the group (String)<ul>
+            <li><code>type</code> Type of the group (String). One of these:<ul>
                 <li><code>teaching group</code>, <code>year class</code>, <code>administrative group</code>, <code>course</code>, <code>archive users</code> or <code>other groups</code></li>
             </ul></li>
         </ul></li>
@@ -68,7 +66,7 @@
     </ul></li>
 </ul>
 
-<p>In addition to those above, there are some "extra" fields that can be used, but you should NOT rely on their existence (they might not always exist). These are:</p>
+<p>In addition to those above, there are some "extra" fields that can be used, but you should NOT rely on their existence (they might not always exist). They are:</p>
 
 <ul>
     <li><code>puavo_id</code><ul>
@@ -76,7 +74,7 @@
     </ul></li>
 
     <li><code>external_id</code><ul>
-        <li>External IDs (social security number hash) for users who attend a school that has Primus integration enabled. Will be null for others.</li>
+        <li>External IDs (social security number hash for Primus users) for users who attend a school that has Primus integration enabled. Will be null for others.</li>
     </ul></li>
 
     <li><code>preferred_language</code><ul>
@@ -94,15 +92,15 @@
 
 <h2>Organisation presetting</h2>
 
-<p>If the external service knows in advance from which organisation the user is coming from it can make the login bit easier by specifying an additional query string key <code>organisation</code> to the redirect URL:</p>
+<p>If the external service knows in advance from which organisation the user is coming from it can make the login a bit easier by specifying an additional query string key <code>organisation</code> to the redirect URL:</p>
 
 <pre>https://api.opinsys.fi/v3/sso?organisation=kehitys.opinsys.fi&amp;return_to=http%3A%2F%2Fexample.com</pre>
 
-<p>Using this users don't have to manually type their organisation during login.</p>
+<p>Then users don't have to manually type their organisation during login.</p>
 
 <h2>Kerberos</h2>
 
-<p>When user is coming from a Opinsys managed desktop Kerberos will be used for the authentication. User will not even see the Opinsys login form in this case. He/she will be directly redirected back to <code>return_to</code> url with a <code>jwt</code> key. The organisation presetting is ignored when Kerberos is active because the organisation will read from the Kerberos ticket. This is enabled by default for all external services using Opinsys Authentication.</p>
+<p>When the user is coming from a Opinsys -managed desktop, Kerberos will be used for the authentication. The user will not even see the Opinsys login form in this case. He/she will be directly redirected back to <code>return_to</code> URL with a <code>jwt</code> key. The organisation presetting is ignored when Kerberos is active because the organisation will be read from the Kerberos ticket. This is enabled by default for all external services using Opinsys Authentication.</p>
 
 <h2>Custom fields</h2>
 
@@ -110,23 +108,25 @@
 
 <p>Example:</p>
 
-<pre>https://api.opinsys.fi/v3/sso?return_to=http%3A//example.com/path%3Fcustom_field%3Dbar</pre>
+<pre>https://api.opinsys.fi/v3/sso?return_to=https%3A//example.com/path%3Fcustom_field%3Dbar</pre>
 
 <p>Redirects user to:</p>
 
-<pre>http://example.com/path?custom_field=bar&amp;jwt=&lt;the jwt token&gt;</pre>
+<pre>https://example.com/path?custom_field=bar&amp;jwt=&lt;the jwt token&gt;</pre>
 
 <h2>Implementation help</h2>
 
 <ul>
-    <li><a href="http://tools.ietf.org/html/draft-jones-json-web-token">JSON Web Token draft</a></li>
+    <li><a href="https://tools.ietf.org/html/draft-jones-json-web-token-10">JSON Web Token draft</a></li>
     <li>Known working JSON Web Token implementations
     <ul>
-        <li>For <a href="https://github.com/progrium/ruby-jwt">Ruby</a></li>
-        <li>For <a href="https://npmjs.org/package/jwt-simple">node.js</a></li>
+        <li>For <a href="https://github.com/jwt/ruby-jwt">Ruby</a></li>
+        <li>For <a href="https://www.npmjs.com/package/jwt-simple">node.js</a></li>
     </ul></li>
     <li><a href="http://expressjs.com/">Express</a> middleware implementation: <a href="https://github.com/opinsys/node-jwtsso">node-jwtsso</a></li>
     <li>Example <a href="https://github.com/opinsys/node-jwtsso/blob/master/example/app.js">external service</a></li>
 </ul>
 
-<p>Feel free to contact us at <code>dev @ opinsys.fi</code> or open up an issue on <a href="https://github.com/opinsys/puavo-users/issues">Github</a> if you have any trouble implementing this. You can also send a <a href="https://github.com/opinsys/puavo-users/blob/master/rest/doc/SSO_DEVELOPERS.md">pull request</a> to this document if you feel it is missing something.</p>
+<p>Feel free to contact us at <code>dev @ opinsys.fi</code> or open up an issue on <a href="https://github.com/opinsys/puavo-users/issues">Github</a> if you have any trouble implementing this. If you think this documentation could be improved, contact us.</p>
+
+<footer>Copyright &copy; Opinsys Oy 2020</footer>
