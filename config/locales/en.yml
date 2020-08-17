@@ -742,6 +742,8 @@ en:
             eid: "External ID"
             email: "Email"
             telephone: "Telephone number"
+        username_list:
+          title: "Create username list"
 
     show:
       system_information: System information

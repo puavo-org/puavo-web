@@ -365,6 +365,48 @@ class UsersController < ApplicationController
     end
   end
 
+
+  # Mass operation: create a new username list from the selected users.
+  # This is a "single shot" operation, it processes all selected users
+  # in one call.
+  def mass_op_username_list
+    begin
+      user_ids = params[:user][:user_ids]
+    rescue
+      puts "mass_op_username_list(): missing required params in the request:"
+      puts params.inspect
+      return status_failed_msg('mass_op_username_list(): missing params')
+    end
+
+    ok = false
+
+    begin
+      # Find the users. They must all exist.
+      user_ids.each do |id|
+        begin
+          User.find(id)
+        rescue StandardError => e
+          return status_failed_msg("User ID #{id} not found: #{e}")
+        end
+      end
+
+      # Okay, they exist. Create the list.
+      new_list = List.new(user_ids)
+      new_list.save
+
+      ok = true
+    rescue StandardError => e
+      return status_failed_msg(e)
+    end
+
+    if ok
+      return status_ok()
+    else
+      return status_failed_msg('unknown_error')
+    end
+  end
+
+
   # ------------------------------------------------------------------------------------------------
   # ------------------------------------------------------------------------------------------------
 

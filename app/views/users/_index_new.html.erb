@@ -427,6 +427,33 @@ class MassUserClearColumn extends MassOperationBase {
     }
 };
 
+class MassUsernameList extends MassOperationBase {
+    constructor(parent, container)
+    {
+        super(parent, container);
+    }
+
+    // This mass tool is special: it does everything in one call
+    isSingleShot()
+    {
+        return true;
+    }
+
+    processAllItems(items)
+    {
+        // PuavoIDs are enough for the server
+        let id = [];
+
+        for (const i of items)
+            id.push(i.id);
+
+        return doSingleNetworkPost(
+            "/users/<%= @school.id %>/mass_op_username_list",
+            { user_ids: id }
+        );
+    }
+};
+
 // JavaScript class fields support is so poor that I can't really
 // define titles, IDs and other things in classes, they must be here
 let massOperations = {
@@ -454,6 +481,12 @@ let massOperations = {
         title: "<%= t('users.index.mass_operations.clear_column.title') %>",
         hasSettings: true,
         clazz: MassUserClearColumn
+    },
+
+    "create_username_list": {
+        title: "<%= t('users.index.mass_operations.username_list.title') %>",
+        hasSettings: false,
+        clazz: MassUsernameList
     },
 };
 

@@ -742,6 +742,8 @@ fi:
             eid: "Ulkoinen ID"
             email: "Email"
             telephone: "Puhelinnumero"
+        username_list:
+          title: "Luo käyttäjätunnuslista"
 
     show:
       system_information: "Järjestelmätietoja"
