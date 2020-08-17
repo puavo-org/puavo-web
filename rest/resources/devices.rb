@@ -656,6 +656,7 @@ class Devices < PuavoSinatra
     'manufacturer'            => 'puavoDeviceManufacturer',
     'model'                   => 'puavoDeviceModel',
     'modified'                => 'modifyTimestamp', # LDAP operational attribute
+    'monitors_xml'            => 'puavoDeviceMonitorsXML',
     'personal_device'         => 'puavoPersonalDevice',
     'personally_administered' => 'puavoPersonallyAdministered',
     'preferred_server'        => 'puavoPreferredServer',
@@ -696,6 +697,7 @@ class Devices < PuavoSinatra
     'puavoDeviceKernelVersion'      => { name: 'kernel_version' },
     'puavoDeviceManufacturer'       => { name: 'manufacturer' },
     'puavoDeviceModel'              => { name: 'model' },
+    'puavoDeviceMonitorsXML'        => { name: 'monitors_xml' },
     'puavoDeviceOffHour'            => { name: 'autopoweroff_off_hour', type: :integer },
     'puavoDeviceOnHour'             => { name: 'autopoweroff_on_hour', type: :integer },
     'puavoDevicePrimaryUser'        => { name: 'primary_user_id', type: :id_from_dn },
