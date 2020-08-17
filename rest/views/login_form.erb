@@ -1,72 +1,101 @@
-<div class="login">
-  <a href="http://opinsys.fi" target="_blank">
-    <img src="<%= @login_content['opinsys_logo_url'] %>" alt="Opinsys Oy" class="logo">
-  </a>
-
-  <p class="service-name">
-    <%= @login_content["text_login_to"] %> <%= @login_content["external_service_name"] %>
-  </p>
-
-  <form action="" method="post" accept-charset="utf-8">
-    <%= token_tag form_authenticity_token %>
-    <fieldset class="inputs">
-      <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
-
-      <% if @login_content['display_domain'] %>
-          <input type="hidden" name="organisation" value="<%= @login_content['display_domain'] %>">
-      <% end %>
-
-      <label class="field <%= @login_content['organisation'] ? "organisation-prefilled" : "" %>">
-        <input
-          placeholder="<%= @login_content['username_placeholder'] %>"
-          id="username"
-          type="text"
-          name="username"
-          value="<%= @login_content['username'] %>"
-          <%= @login_content['username'].to_s.empty? && "autofocus" %>
-          required>
-        <% if @login_content['organisation'] %>
-          <span class="organisation-prefill"
-            title="<%= @login_content['organisation']['name'] %>"
-          >@<%= @login_content['display_domain'] %></span>
-        <br>
+<div id="container">
+    <% if @login_content['upper_logo'] %>
+    <div id="upperLogo">
+        <% if @login_content['upper_logo']['href'] %>
+        <a href="<%= @login_content['upper_logo']['href'] %>" target="_blank" title="<%= @login_content['upper_logo']['title'] %>"><img src="<%= File.join(@login_content['prefix'], @login_content['upper_logo']['image']) %>" alt="<%= @login_content['upper_logo']['alt'] %>"></a>
+        <% else %>
+        <img src="<%= File.join(@login_content['prefix'], @login_content['upper_logo']['image']) %>" alt="<%= @login_content['upper_logo']['alt'] %>">
         <% end %>
-    </label>
-
-    <input
-      type="password"
-      name="password"
-      placeholder="<%= @login_content['text_password'] %>"
-      <%= @login_content['invalid_credentials?'] ? "autofocus" : "" %>
-      required>
-
-    <input type="submit" value="<%= @login_content['text_login'] %>" class="submit">
-    </fieldset>
-  </form>
-
-  <% if @login_content['error_message'] %>
-  <small class="error">
-      <%= @login_content['error_message'] %>
-  </small>
-  <% end %>
-</div>
-<div id="username-help" class="username-help">
-    <h3><%= @login_content['text_help'] %></h3>
-    <p>
-    <% if @login_content['organisation'] %>
-        <%= @login_content['text_username_help'] %>
-    <% else %>
-        <%= @login_content['text_organisation_help'] %>
+    </div>
     <% end %>
+
+    <% if @login_content['header_text'] %>
+    <div id="headerText"><%= @login_content['header_text'] %></div>
+    <% end %>
+
+    <p id="serviceName">
+        <% if @login_content['service_title_override'] %>
+        <%= @login_content['service_title_override'] %>
+        <% else %>
+        <%= @login_content["text_login_to"] %> <span><%= @login_content["external_service_name"] %></span>
+        <% end %>
     </p>
 
-    <p><%= raw(@login_content['support_info']) %> </p>
+    <% if @login_content['error_message'] %>
+    <p id="error"><%= @login_content['error_message'] %></p>
+    <% end %>
 
-    <h3><%= @login_content['text_developers'] %></h3>
-    <p><%= raw(@login_content['text_developers_info']) %> </p>
+    <form action="" method="post" accept-charset="utf-8">
+        <%= token_tag form_authenticity_token %>
+        <input type="hidden" name="return_to" value="<%= @login_content['return_to'] %>">
+        <% if @login_content['display_domain'] %>
+        <input type="hidden" name="organisation" value="<%= @login_content['display_domain'] %>">
+        <% end %>
 
+        <%
+        org_domain = @login_content['organisation']
+        name = @login_content['username']
+        password = @login_content['text_password']
+        %>
+
+        <fieldset>
+            <div class="row">
+                <% if org_domain %><div class="col-username"><% end %>
+                <input type="text" id="username" name="username" placeholder="<%= @login_content['username_placeholder'] %>" value="<%= name %>" <%= (name.nil? || name.empty?) ? "autofocus" : "" %> required>
+                <% if org_domain %></div><div class="col-orgname"><span>@<%= org_domain %></span></div><% end %>
+            </div>
+
+            <div class="row">
+                <input type="password" id="password" name="password" placeholder="<%= @login_content['text_password'] %>" <%= !(name.nil? || name.empty?) ? "autofocus" : "" %> required>
+            </div>
+
+            <div class="row">
+                <input type="submit" id="submit" value="<%= @login_content['text_login'] %>" class="submit">
+            </div>
+        </fieldset>
+    </form>
+
+    <div id="logoRow">
+        <% Array(@login_content['bottom_logos'] || []).each do |logo| %>
+        <a href="<%= logo['href'] %>" target="_blank" title="<%= logo['title'] %>"><img src="<%= File.join(@login_content['prefix'], logo['image']) %>" alt="<%= logo['alt'] %>"></a>
+        <% end %>
+        <a href="https://opinsys.fi" target="_blank" title="Opinsys Oy"><img src="<%= File.join(@login_content['prefix'], "opinsys_logo.svg") %>" alt="Opinsys Oy logo"></a>
+    </div>
+
+    <div id="help">
+        <% if @login_content['support_info'] %>
+        <p class="support-info"><%= raw(@login_content['support_info']) %> </p>
+        <% end %>
+
+        <details>
+            <summary><%= @login_content['text_help'] %></summary>
+        <% if @login_content['organisation'] %>
+            <p><%= @login_content['text_username_help'] %></p>
+        <% else %>
+            <p><%= @login_content['text_organisation_help'] %></p>
+        <% end %>
+        </details>
+
+        <details>
+            <summary><%= @login_content['text_developers'] %></summary>
+            <p><%= raw(@login_content['text_developers_info']) %> </p>
+        </details>
+    </div>
 </div>
-<script type="text/javascript" charset="utf-8">
-  var TOP_DOMAIN = "<%= @login_content['topdomain'] %>";
+
+<script>
+const TOP_DOMAIN = "<%= @login_content['topdomain'] %>";
+
+(function() {
+    let input = document.getElementById("username");
+
+    input.addEventListener("blur", function(e) {
+        const domain = input.value.split("@")[1];
+
+        // Append the top-level domain if it's not set
+        if (domain && !domain.match(/\./))
+            input.value = input.value + "." + TOP_DOMAIN;
+    });
+}());
 </script>
-<script charset="utf-8" type="text/javascript" src="<%= @login_content['login_helper_js_url'] %>"></script>
+

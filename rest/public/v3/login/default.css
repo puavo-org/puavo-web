@@ -1,0 +1,250 @@
+/*
+    Default styles for login screens. Used in Puavo SSO logins and
+    puavo-web logins.
+
+    This file does not contain any secrets. It is publicly and freely
+    available, without any authentication, on any puavo-web server.
+*/
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f0eee1;
+}
+
+body {
+    font-family: "Noto Sans", "Roboto", "Ubuntu", "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    margin: 1em auto;
+    padding: 1em;
+    color: #000;
+    width: 100%;
+    max-width: 650px;   /* Empirically determined, looks "nice" */
+    border: 4px solid #eeae79;
+    border-radius: 5px;
+    /*background: #f0eee1;
+    background: linear-gradient(to bottom, #f0eee1 0%, #d5d0b1 100%);*/
+    background: rgb(240, 238, 225);
+    background: radial-gradient(circle, rgba(240,238,225,1) 0%, rgba(213,208,177,1) 100%);
+    box-shadow: 0 0 5px #000;
+}
+
+#upperLogo {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+#upperLogo img {
+    width: 250px;
+}
+
+#headerText {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+#serviceName {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 125%;
+}
+
+#serviceName span {
+    font-weight: bold;
+}
+
+#error {
+    background: #d00;
+    border-radius: 5px;
+    color: #f4f4f4;
+    display: block;
+    margin: 1em auto;
+    padding: 0.75em;
+    text-align: center;
+    font-size: 90%;
+}
+
+form {
+    margin: 1em auto;
+    padding: 0;
+}
+
+fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+fieldset > .row {
+    padding: 0.5em 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.col-username {
+    flex-grow: 2;   /* shrink the domain name to minimum possible width */
+}
+
+.col-orgname {
+    margin-left: 0.5em;
+}
+
+#username, #password {
+    margin: 0;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    width: 100%;
+    font-size: 100%;
+}
+
+#submit {
+    background-color: #ffb94b;
+    background-image: linear-gradient(top, #ffb94b, #f17931);
+    border: solid 1px #d69e31;
+    border-radius: 3px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    color: #8f5a0a;
+    cursor: pointer;
+    font-size: 100%;
+    margin: 0 auto;
+    padding: 0.5em;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+    width: 75%;
+}
+
+#submit:hover, #submit:focus {
+    background-color: #fddb6f;
+    background-image: linear-gradient(top, #ffb94b, #fddb6f);
+}
+
+#submit:active {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
+}
+
+::placeholder {
+    font-style: italic;
+}
+
+#logoRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+#logoRow img {
+    width: 150px;
+    margin: 0.25em;
+}
+
+#help {
+    padding: 0;
+    margin: 0 auto;
+}
+
+#help a {
+    color: #00f;
+    white-space: nowrap;
+}
+
+#help a:hover {
+    color: #f00;
+}
+
+#help .support-info {
+    text-align: center;
+    font-size: 90%;
+}
+
+#help summary {
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+    padding: 0.25em;
+}
+
+#help summary:hover {
+    color: #f00;
+}
+
+#help details {
+    margin: 0;
+    padding: 0;
+    font-size: 75%;
+}
+
+#help details p {
+    margin-top: 0.5em;
+    margin-left: 2em;
+}
+
+/* Some clumsy media queries to make mobile users happy/happier */
+@media (max-width: 500px) {
+    #container {
+        margin: 0;
+        padding: 1em;
+        font-size: 90%;
+        box-shadow: none;
+        border: none;
+        border-bottom: 4px solid #eeae79;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    #serviceName {
+        font-size: 120%;
+    }
+
+    #upperLogo img {
+        width: 200px;
+    }
+}
+
+@media (min-width: 501px) and (max-width: 700px) {
+    body {
+        padding: 0.5em;
+    }
+
+    #container {
+        margin: 0 auto;
+        padding: 1em;
+        font-size: 90%;
+        box-shadow: none;
+    }
+
+    #serviceName {
+        font-size: 120%;
+    }
+
+    #upperLogo img {
+        width: 225px;
+    }
+}
+
+@media (max-height: 400px) {
+    #upperLogo img {
+        width: 200px;
+    }
+
+    #container {
+        font-size: 90%;
+    }
+}

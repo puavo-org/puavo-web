@@ -1,12 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title><%= t.sso.title %></title>
-  <link rel="stylesheet" type="text/css" href="/v3/styles/theme.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=500, initial-scale=1">
+<title><%= t.sso.title %></title>
+<% if @login_content %>
+<link rel="stylesheet" href="<%= File.join(@login_content['prefix'], 'default.css') %>">
+<% if @login_content['css'] %>
+<link rel="stylesheet" href="<%= File.join(@login_content['prefix'], @login_content['css']) %>">
+<% end %>
+<% end %>
 </head>
-    <body>
-        <%= yield %>
-    </body>
+<body>
+<%= yield %>
+</body>
 </html>

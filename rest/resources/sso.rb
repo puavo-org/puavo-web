@@ -232,10 +232,6 @@ class SSO < PuavoSinatra
     respond_auth
   end
 
-  def invalid_credentials?
-    env["REQUEST_METHOD"] == "POST" && !params["password"].to_s.empty?
-  end
-
   def render_form(error_message, err=nil)
     if env["REQUEST_METHOD"] == "POST"
       @error_message = error_message
@@ -266,18 +262,18 @@ class SSO < PuavoSinatra
       response.headers.delete("WWW-Authenticate")
     end
 
+    # Base content
     @login_content = {
-      "opinsys_logo_url" => "/v3/img/opinsys_logo.svg",
-      "external_service_name" =>  @external_service["name"],
+      "prefix" => "/v3/login",
+      "external_service_name" => @external_service["name"],
+      "service_title_override" => nil,
       "return_to" => params['return_to'] || params['return'] || nil,
-      "organisation" => @organisation,
+      "organisation" => @organisation ? @organisation.domain : nil,
       "display_domain" => request["organisation"],
       "username_placeholder" => username_placeholder,
       "username" => params["username"],
-      "invalid_credentials?" => invalid_credentials?,
       "error_message" => @error_message,
       "topdomain" => topdomain,
-      "login_helper_js_url" => "/v3/scripts/login_helpers.js",
       "text_password" => t.sso.password,
       "text_login" => t.sso.login,
       "text_help" => t.sso.help,
@@ -288,6 +284,73 @@ class SSO < PuavoSinatra
       "support_info" => t.sso.support_info,
       "text_login_to" => t.sso.login_to
     }
+
+    org_name = nil
+
+    flog.info(nil, 'Trying to figure out the organisation name for this SSO request')
+
+    if request['organisation']
+      # Find the organisation that matches this request
+      flog.info(nil, "The request includes organisation name \"#{request['organisation']}\"")
+
+      ORGANISATIONS.each do |name, data|
+        if data['host'] == request['organisation']
+          flog.info(nil, "Found a configured organisation \"#{name}\"")
+          org_name = name
+          break
+        end
+      end
+
+      unless org_name
+        flog.warn(nil, 'Did not find the request organisation in organisations.yml')
+      end
+
+    else
+      flog.warn(nil, 'There is no organisation name in the request')
+    end
+
+    # No organisation? Is this a development/testing environment?
+    unless org_name
+      if ORGANISATIONS.include?('hogwarts')
+        flog.info(nil, 'This appears to be a development environment, using hogwarts')
+        org_name = 'hogwarts'
+      end
+    end
+
+    flog.info(nil, "Final organisation name is \"#{org_name}\"")
+
+    begin
+      # Any per-organisation login screen customisations?
+      customisations = ORGANISATIONS[org_name]['login_screen']
+      customisations = {} unless customisations.class == Hash
+    rescue StandardError => e
+      customisations = {}
+    end
+
+    unless customisations.empty?
+      flog.info(nil, "Organisation \"#{org_name}\" has login screen customisations enabled")
+    end
+
+    # Apply per-customer customisations
+    if customisations.include?('css')
+      @login_content['css'] = customisations['css']
+    end
+
+    if customisations.include?('upper_logo')
+      @login_content['upper_logo'] = customisations['upper_logo']
+    end
+
+    if customisations.include?('header_text')
+      @login_content['header_text'] = customisations['header_text']
+    end
+
+    if customisations.include?('service_title_override')
+      @login_content['service_title_override'] = customisations['service_title_override']
+    end
+
+    if customisations.include?('bottom_logos')
+      @login_content['bottom_logos'] = customisations['bottom_logos']
+    end
 
     halt 401, {'Content-Type' => 'text/html'}, erb(:login_form, :layout => :layout)
   end
