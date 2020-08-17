@@ -663,7 +663,6 @@ fi:
       other: "Muu integroitu järjestelmä"
     index:
       actions: Toiminnot
-      title: Listataan koulut
       members: "Jäseniä"
     edit:
       title: Muokkaa koulua

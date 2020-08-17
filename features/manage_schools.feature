@@ -150,7 +150,7 @@ Feature: Manage schools
     And I am on the show school page with "Example school 1"
     And I follow "Delete school"
     When I go to the schools list page
-    Then I should see "Listing schools"
+    Then I should see "Example Organisation" within "#schoolsTitle"
     And I should see "New school"
 
   Scenario: Schools list page when we have only one school and user is not organisation owner
@@ -205,7 +205,7 @@ Feature: Manage schools
     Given I am on the school page with "Condemned School"
     When I follow "Delete school"
     Then I should see "School was successfully removed."
-    And I should see "Listing schools"
+    And I should see "Example Organisation" within "#schoolsTitle"
 
 
   Scenario: Add school management access rights to the user
