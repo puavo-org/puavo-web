@@ -1,176 +1,209 @@
-html {
-  font-family: "Ubuntu", "Cantarell", sans-serif;
-  background: #f0eee1;
-  padding: 10px;
+/* Styles for the "my school users" list for teachers, staff and admins */
+
+* {
+    box-sizing: border-box;
 }
 
-body {
-  background: linear-gradient(to bottom, #f0eee1 0%,#e6e4d7 100%);
-  background-clip: padding-box;
-
-  box-shadow:
-    2px -2px 2px rgba(0, 0, 0, 0.5),
-    -2px 2px 2px rgba(0,0,0,0.5),
-    inset 0 5px 100px rgba(65, 120, 107, 0.2);
-
-  border: 5px solid rgba(237, 113, 19, 0.5);
-  border-radius: 3px;
-  max-width: 75%;
-  margin: 10px auto;
-  padding: 5px;
+html, body {
+    margin: 0;
+    padding: 0;
 }
 
 #wrapper {
-  border: 1px dashed #ccc;
-  box-shadow: 0 0 0 1px #fff;
-  padding: 10px 50px;
-}
-
-header h1 {
-  margin: 0;
-  padding: 0;
-}
-
-header h2 {
-  font-size: 100%;
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: "Noto Sans", "Roboto", "DejaVu Sans", "Ubuntu", "Arial", sans-serif;
+    background: #f0eee1;
 }
 
 header {
-  margin-top: 10px;
-  text-align: center;
-  padding: 10px 0;
-  border-top: 1px dashed #ccc;
-  border-bottom: 1px dashed #ccc;
+    text-align: center;
+    margin: 0;
+    padding: 10px 0;
+    border-top: 1px solid #888;
+    border-bottom: 1px dashed #888;
 }
 
-.groupHeader {
-  font-size: 150%;
-  font-weight: bold;
-  padding: 5px 10px;
-  margin-top: 20px;
-  background: #fe9749;
-  border-radius: 10px;
+header h1 {
+    margin: 0;
+    padding: 0;
 }
 
-.groupHeader:hover {
-  background: #ffa850;
-  cursor: pointer;
+header h2 {
+    font-size: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-.groupHeader h1 {
-  font-size: inherit;
-  display: inline;
-  pointer-events: none;
-}
-
-.groupHeader .count {
-  font-size: 75%;
-}
-
-.groupHeader span {
-  pointer-events: none;
-}
-
-.tableWrapper {
-  display: none;
-  padding: 10px 0 0 50px;
-}
-
-.users {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.users th, td {
-  padding: 15px;
-}
-
-.users th {
-  background: #41786b;
-  text-align: left;
-  color: #fff;
-}
-
-.users tr:nth-child(even) {
-  background: #6dc6af;
-}
-
-.users tr:nth-child(odd) {
-  background: #5cb59f;
-}
-
-.button {
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #888;
-  border-bottom: 2px solid #888;
-  padding: 5px 10px;
-  background: #ccc;
-  text-decoration: none;
-  color: #000;
-}
-
-.button:hover {
-  background: #ddd;
-}
-
-.button:active {
-  border-top: 2px solid #888;
-  border-left: 2px solid #888;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.button img {
-  padding-right: 5px;
-  width: 16px;
-  height: 16px;
-}
-
-footer {
-  margin-top: 20px;
-  border-top: 1px dashed #ccc;
-  text-align: center;
-  font-size: 75%;
-  color: #777;
-}
-
-footer table {
-  margin: 0 auto;
-}
-
-footer table td {
-  margin: 0;
-  padding: 10px;
-  text-align: left;
+main {
+    flex-grow: 1;
 }
 
 #searchArea {
-  margin-top: 20px;
-  display: block;
+    margin-top: 20px;
+    display: block;
 }
 
 #searchArea input {
-  display: block;
-  font-size: 120%;
-  margin: 0 auto;
-  padding: 5px;
-  border: 2px solid #ccc;
-  background: url("/img/search.svg") no-repeat 98% center #fff;
-  background-size: 24px;
+    display: block;
+    font-size: 110%;
+    margin: 0 auto;
+    padding: 5px 5px 5px 32px;
+    border: 1px solid #ccc;
+    background: url("/img/search.svg") no-repeat 1% center #fff;
+    background-size: 24px;
 }
 
 #searchArea #numMatches {
-  text-align: center;
-  display: none;
-  font-style: italic;
+    text-align: center;
+    display: none;
+    font-style: italic;
 }
 
 #searchArea .users {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
-::-moz-placeholder { font-style: italic; }
-::-webkit-input-placeholder { font-style: italic; }
+.groupHeader {
+    font-size: 150%;
+    font-weight: bold;
+    padding: 5px 10px;
+    margin-top: 20px;
+    background: #fe9749;
+    display: flex;
+    align-items: center;
+}
+
+.groupHeader:hover {
+    background: #ffa850;
+    cursor: pointer;
+}
+
+.groupHeader h1 {
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+.groupHeader .count {
+    font-size: 75%;
+    padding: 0 10px;
+}
+
+.groupHeader span {
+    pointer-events: none;
+}
+
+.tableWrapper {
+    display: none;
+    padding: 10px 0 0 50px;
+}
+
+.users {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.users th, td {
+    padding: 10px;
+}
+
+.users th {
+    background: #41786b;
+    text-align: left;
+    color: #fff;
+}
+
+.users tr:nth-child(odd) {
+    background: #5cb59f;
+}
+
+.users tr:nth-child(even) {
+    background: #6dc6af;
+}
+
+.users tr:hover {
+    background: #7ed7bf;
+}
+
+.button {
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-right: 2px solid #888;
+    border-bottom: 2px solid #888;
+    padding: 3px 10px;
+    background: #ccc;
+    text-decoration: none;
+    color: #000;
+}
+
+.button:hover {
+    background: #ddd;
+}
+
+.button:active {
+      border-top: 2px solid #888;
+      border-left: 2px solid #888;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+}
+
+.button img {
+    padding-right: 5px;
+    width: 16px;
+    height: 16px;
+}
+
+footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #888;
+    text-align: center;
+    font-size: 75%;
+    color: #777;
+}
+
+/* Clumsy media queries. No idea if these actually work on mobile. */
+@media (max-width: 800px) {
+    #wrapper {
+        padding: 0.5em;
+        font-size: 90%;
+    }
+
+    .groupHeader {
+        font-size: 120%;
+        font-weight: bold;
+        padding: 2px 5px;
+    }
+
+    .tableWrapper {
+        padding: 10px 0 0 0;
+    }
+
+    .users th, td {
+        padding: 5px;
+    }
+
+    .button {
+        border: 1px solid #888;
+        background: #ccc;
+        text-decoration: none;
+        color: #000;
+        padding: 2px 5px;
+    }
+
+    .button:active {
+        border: 1px solid #888;
+        background: #aaa;
+    }
+}
+
+@media (max-width: 500px) {
+    .users {
+        font-size: 80%;
+    }
+}

@@ -24,8 +24,9 @@ const STRINGS = {
   <h2><%= lang[:page_title] %></h2>
 </header>
 
+<main>
 <div id="searchArea">
-  <input type="text" id="searchBox" maxlength="20" placeholder="<%= lang[:search_placeholder] %>">
+  <input type="search" id="searchBox" size="30" maxlength="25" placeholder="<%= lang[:search_placeholder] %>">
 
   <p id="numMatches"></p>
 
@@ -43,10 +44,9 @@ const STRINGS = {
 </div>
 
 <div id="groupsList">
-
 <% @data[:groups].each do |group| %>
 <% groupName = (group[:name] == :ungrouped) ? lang[:ungrouped] : group[:name] %>
-<div class="groupHeader" data-target="<%= group[:id] %>" data-count="<%= group[:users].count %>" data-name="<%= groupName %>">
+<div class="groupHeader" data-target="<%= group[:id] %>" data-count="<%= group[:users].count %>" data-name="<%= groupName %>" data-ungrouped="<%= group[:name] == :ungrouped ? '1' : '0' %>">
   <h1><%= groupName %></h1>
   <span class="count">(<%= group[:users].size %> <%= lang[:users] %>)</span>
   <span id="arrow-<%= group[:id] %>">▶</span>
@@ -65,9 +65,8 @@ const STRINGS = {
       <td><%= u[:first] %></td>
       <td><%= u[:username] %></td>
       <td>
-        <a href="<%= @data[:domain] %>/users/password?changing=<%= @data[:changing] %>&amp;changed=<%= u[:username] %>"
-           class="button" title="<%= lang[:password_tooltip] %>">
-          <img src="img/key.svg" width="16" height="16"> <%= lang[:change_password] %>
+        <a href="<%= @data[:domain] %>/users/password?changing=<%= @data[:changing] %>&amp;changed=<%= u[:username] %>" class="button" title="<%= lang[:password_tooltip] %>" target="_blank">
+          <%= lang[:change_password] %>
         </a>
       </td>
     </tr>
@@ -77,20 +76,11 @@ const STRINGS = {
 
 <% end %>
 </div>
+</main>
 
 <footer>
-  <table>
-    <tr>
-      <td>
-        <img src="img/opinsys_logo.svg" width="150" alt="Opinsys logo">
-      </td>
-      <td>
-        © Opinsys Oy 2018<br>
-        <%= lang[:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %><br>
-        git commit: <%= File.open("GIT_COMMIT", "r"){ |f| f.read }.strip %>
-      </td>
-    </tr>
-  </table>
+<a href="https://opinsys.fi/"><img src="img/opinsys_logo.svg" alt="Opinsys Oy" class="logo" width="150"></a><br>
+<span><%= lang[:footer] %> <%= Time.now.strftime("%Y-%m-%d %H:%M:%S") %></span>
 </footer>
 
 </div>

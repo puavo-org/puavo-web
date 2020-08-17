@@ -6,14 +6,14 @@ class MySchoolUsers < PuavoSinatra
   get '/v3/my_school_users' do
     auth :basic_auth, :kerberos
 
-    user = User.current
+    viewer = User.current
 
     # only let teachers, admins and staff members view this page
-    unless (Array(user.user_type) & ['teacher', 'staff', 'admin']).any?
+    unless (Array(viewer.user_type) & ['teacher', 'staff', 'admin']).any?
       halt 401, 'Unauthorized'
     end
 
-    school = user.school
+    school = viewer.school
 
     groups_by_id = {}   # IDs are group abbreviations
     ungrouped = []      # students who are not in any group
@@ -65,7 +65,7 @@ class MySchoolUsers < PuavoSinatra
     @data = {}
     @data[:school] = school.name
     @data[:domain] = "#{request.scheme}://#{User.organisation.domain}"
-    @data[:changing] = user.username
+    @data[:changing] = viewer.username
 
     # the groups aren't necessarily in any order, so sort them and always
     # put the ungrouped users at the end
@@ -125,14 +125,14 @@ private
           page_title: "School Students List",
           # -----
           users: 'users',
-          ungrouped: 'Ungrouped',
+          ungrouped: 'No teaching group',
           # -----
           search_placeholder: 'Search by name...',
           no_matches: 'No matches',
           one_match: 'match',
           multiple_matches: 'matches',
           # -----
-          group: 'Group',
+          group: 'Teaching group',
           last_name: 'Last name',
           first_names: 'First names',
           username: 'Username',
@@ -150,14 +150,14 @@ private
           page_title: 'Koulun oppilaslista',
           # -----
           users: 'käyttäjää',
-          ungrouped: 'Ryhmittelemättömät',
+          ungrouped: 'Opetysryhmättömät',
           # -----
           search_placeholder: 'Etsi nimellä...',
           no_matches: 'Ei osumia',
           one_match: 'osuma',
           multiple_matches: 'osumaa',
           # -----
-          group: 'Ryhmä',
+          group: 'Opetusryhmä',
           last_name: 'Sukunimi',
           first_names: 'Etunimet',
           username: 'Käyttäjätunnus',
@@ -175,14 +175,14 @@ private
           page_title: "Liste von Schüler und Schülerinnen",
           # -----
           users: 'Benutzer',
-          ungrouped: 'Nicht gruppiert',
+          ungrouped: 'Schüler und Schülerinnen, die zu keiner Unterrichtsgruppe gehören',
           # -----
           search_placeholder: 'nach Namen suchen...',
           no_matches: 'keine Ergebnisse',
           one_match: 'ein Ergebnis',
           multiple_matches: 'Ergebnisse',
           # -----
-          group: 'Gruppe',
+          group: 'Unterrichtsgruppe',
           last_name: 'Nachname',
           first_names: 'Vornamen',
           username: 'Benutzername',

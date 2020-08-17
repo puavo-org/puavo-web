@@ -72,6 +72,7 @@ function doSearch(e)
     const id = groups[i].dataset.target;
     const count = parseInt(groups[i].dataset.count, 10);
     const name = groups[i].dataset.name;
+    const isUngrouped = groups[i].dataset.ungrouped === '1';
 
     for (var j = 0; j < count; j++) {
       const row = document.getElementById("row-" + id + "-" + j);
@@ -98,7 +99,12 @@ function doSearch(e)
 
       // insert the group name
       var td = document.createElement("td");
-      td.appendChild(document.createTextNode(name));
+
+      if (!isUngrouped) {
+        // ungrouped users have no group name
+        td.appendChild(document.createTextNode(name));
+      }
+
       rowCopy.insertBefore(td, rowCopy.children[0]);
 
       resultsTable.appendChild(rowCopy);
