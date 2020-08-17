@@ -4,18 +4,18 @@ sso:
   organisation: organisaatio
   password: Salasana
   bad_username_or_pw: Väärä käyttäjätunnus tai salasana
-  kerberos_error: Kerberos virhe
+  kerberos_error: Kerberos -virhe
   no_organisation: Organisaatiota ei ole asetettu
   organisation_missing: Organisaatio puuttuu käyttäjänimestä. Käytä muotoa käyttäjätunnus@organisaatiosi.opinsys.fi
   invalid_username: Väärän muotoinen käyttäjätunnus
-  error: Virhe
-  login_to: Kirjautuminen palveluun
+  login_to: Kirjaudu palveluun
   login: Kirjaudu
+  error: Virhe
   help: Apua
   developers: Kehittäjät
   developers_info: "Lue <a href=/v3/sso/developers target=_blank>tämä</a> dokumentti, jos olet kiinnostunut Opinsys-tunnistautumisen toteuttamisesta."
   username_help: Käytä samaa käyttäjätunnusta kuin Opinsys-tietokoneille kirjautuessasi.
-  organisation_help: "Käyttäjätunnus tulee syöttää muodossa <i>käyttäjätunnus</i>@<i>organisaatio</i>.opinsys.fi. Käyttäjätunnus osa on sama kuin Opinsys-tietokoneille kirjautuessasi. Organisaatio-osa tulee koulusi kaupungin/kunnan mukaan. Se kirjoitetaan pienellä sekä siitä tulee poistaa skandinaaviset merkit. Esimerkiksi jos olet Jyväskylästä ja Opinsys-tunnuksesi on matti.meikalainen silloin organisaatio-osa on <i>jyvaskyla</i>. Eli kirjaudut tunnuksella <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
+  organisation_help: "Käyttäjätunnus tulee syöttää muodossa <em>käyttäjätunnus</em>@<em>organisaatio</em>.opinsys.fi. Käyttäjätunnus on sama kuin Opinsys-tietokoneille kirjautuessasi. Organisaatio-osa tulee koulusi kaupungin/kunnan mukaan. Se kirjoitetaan pienellä, sekä siitä tulee poistaa tarkkeet ja aksentit. Esimerkiksi, jos olet Jyväskylästä ja Opinsys-tunnuksesi on matti.meikalainen, on organisaatio-osa <em>jyvaskyla</em> ja kirjaudut tunnuksella <em>matti.meikalainen@jyvaskyla.opinsys.fi</em>."
   service_not_activated: Tämä palvelu ei ole aktivoitu. Voit pyytää koulusi pääkäyttäjää aktivoimaan sen.
   support_info: Ongelmatapauksissa voit olla yhteydessä puhelimitse Opinsysin tukeen <a href="tel:+358144591625">014 4591 625</a>.
 password_management:

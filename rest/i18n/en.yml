@@ -6,18 +6,18 @@ sso:
   bad_username_or_pw: Bad username or password
   kerberos_error: Kerberos error
   no_organisation: No organisation
-  organisation_missing: Organisation is missing from username. Use username@organisation.opinsys.fi format.
+  organisation_missing: Organisation is missing from the username. Use username@organisation.opinsys.fi format.
   invalid_username: Invalid username
+  login: Login
+  login_to: Login to service
   error: Error
   help: Help
   developers: Developers
   developers_info: "Read <a href=/v3/sso/developers target=_blank>this</a> document if you are interested in implementing Opinsys authentication."
-  login: Login
-  login_to: Login to service
-  username_help: Use the same username you use when logging in Opinsys desktops.
-  organisation_help: "Username must be provided in the form of <i>username</i>@<i>organisation</i>.opinsys.fi. The username part is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all scandinavian letters must be removed. For example if you are from Jyväskylä and your Opinsys username is matti.meikalainen the organisation part is <i>jyvaskyla</i> which means that you login with <i>matti.meikalainen@jyvaskyla.opinsys.fi</i>."
+  username_help: Use the same username you use when logging in to Opinsys desktops.
+  organisation_help: "The username must be provided in the form of <em>username</em>@<em>organisation</em>.opinsys.fi.</p><p>The username is the same you use when logging to Opinsys desktops. The organisation part comes from the city/municipality of your school. It's lower case and all diacritics and accents must be removed. For example, if you are from Jyväskylä and your Opinsys username is matti.meikalainen, the organisation part is <em>jyvaskyla</em> which means you login with <em>matti.meikalainen@jyvaskyla.opinsys.fi</em>."
   service_not_activated: This service is not activated. You may ask your school's administrator to activate it.
-  support_info: On login issues can call Opinsys support at <a href="tel:+358144591625">+358 14 4591 625</a>.
+  support_info: If you have issues with logging in, you can call Opinsys support at <a href="tel:+358144591625">+358 14 4591 625</a>.
 password_management:
   subject: Reset your password
   hello: Hello
