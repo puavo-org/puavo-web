@@ -100,7 +100,7 @@ describe PuavoRest::Password do
       parts = parse_html(last_response.body).css("div#groupsList h1")
 
       assert_equal 1, parts.length
-      assert_equal "Ungrouped", parts[0].content
+      assert_equal "No teaching group", parts[0].content
     end
   end
 
