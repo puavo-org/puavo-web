@@ -264,7 +264,11 @@ class SSO < PuavoSinatra
 
     # Base content
     @login_content = {
+      # "prefix" must be set, because the same form is used for puavo-web and
+      # puavo-rest, but their contents (CSS, etc.) are stored in different
+      # places. This key tells the form where those resources are.
       "prefix" => "/v3/login",
+
       "external_service_name" => @external_service["name"],
       "service_title_override" => nil,
       "return_to" => params['return_to'] || params['return'] || nil,
