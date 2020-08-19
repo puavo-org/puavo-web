@@ -1,6 +1,6 @@
 /*
     Default styles for login screens. Used in Puavo SSO logins and
-    puavo-web logins.
+    puavo-web logins, and also in the "menu" screen.
 
     This file does not contain any secrets. It is publicly and freely
     available, without any authentication, on any puavo-web server.
@@ -23,6 +23,7 @@ body {
     padding: 0;
 }
 
+/* Main container for the menu list and login prompts */
 #container {
     margin: 1em auto;
     padding: 1em;
@@ -159,12 +160,14 @@ fieldset > .row {
 }
 
 #help a {
-    color: #00f;
+    color: #3151a2;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 #help a:hover {
-    color: #f00;
+    color: #3151a2;
+    text-decoration: underline;
 }
 
 #help .support-info {
@@ -180,7 +183,7 @@ fieldset > .row {
 }
 
 #help summary:hover {
-    color: #f00;
+    color: #3151a2;
 }
 
 #help details {
@@ -192,6 +195,36 @@ fieldset > .row {
 #help details p {
     margin-top: 0.5em;
     margin-left: 2em;
+}
+
+/* The services list in the menu screen */
+#services {
+    margin: 2em 1em;
+    padding: 0;
+    list-style-type: none;
+    font-size: 110%;
+}
+
+#services li {
+    padding-bottom: 2px;
+}
+
+#services a {
+    display: block;
+    padding: 0.5em;
+    text-align: center;
+    text-decoration: none;
+    color: #3151a2;
+    background: none;
+    border: 1px solid transparent;
+}
+
+#services a:hover {
+    border: 1px dotted #3151a2;
+}
+
+#services a:active, #services a:focus {
+    color: #808;
 }
 
 /* Some clumsy media queries to make mobile users happy/happier */
@@ -213,6 +246,13 @@ fieldset > .row {
 
     #upperLogo img {
         width: 200px;
+    }
+
+    #services {
+        margin: 1em 0.5em;
+        padding: 0;
+        list-style-type: none;
+        font-size: 100%;
     }
 }
 
