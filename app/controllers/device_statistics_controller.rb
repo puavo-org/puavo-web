@@ -105,12 +105,22 @@ class DeviceStatisticsController < ApplicationController
 
     total = devices.count.to_f
 
+    begin
+      # If a releases JSON can be loaded, load it so that official release names
+      # can be show on the images list. Otherwise, no biggie. Just a small
+      # quality-of-life enhancement.
+      releases = JSON.parse(File.read("#{Rails.root}/config/releases.json"))
+    rescue
+      releases = {}
+    end
+
     # convert the hash to array
     out = []
 
     images.each do |name, stats|
       out << {
         name: name,
+        release: releases[name.gsub('.img', '')] || nil,
         uses: stats[:uses],
         percentage: ((stats[:uses].to_f / total) * 100.0).round(1),
         devices: stats[:devices]

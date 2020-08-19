@@ -5,6 +5,7 @@
   <tr class="header">
     <td class="nameCol">
       <strong><%= image[:name] %></strong> (<%= image[:uses] %> <%= image[:uses] == 1 ? t('device_statistics.images.device') : t('device_statistics.images.devices') %>, <%= image[:percentage] %>%)
+      <% if image[:release] %><span class="releaseName"><%= image[:release] %></span><% end %>
     </td>
 
     <td class="barCol">

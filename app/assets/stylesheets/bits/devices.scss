@@ -92,7 +92,13 @@
     }
 
     .nameCol {
-      width: 36%;
+      width: 40%;
+    }
+
+    .releaseName {
+      color: $deviceStatsReleaseName;
+      margin-left: 0.5em;
+      font-weight: bold;
     }
 
     .barCol {
