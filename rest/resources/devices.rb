@@ -566,7 +566,7 @@ class Devices < PuavoSinatra
     # substring-searchable.
     exam_servers = []
 
-    school_name_cache = {}
+    school_cache = {}
 
     potential_devices.each do |dev|
       begin
@@ -592,22 +592,20 @@ class Devices < PuavoSinatra
 
         school_dn = dev['puavoSchool'][0]
 
-        unless school_name_cache.include?(school_dn)
+        unless school_cache.include?(school_dn)
           begin
-            s = School.by_dn(school_dn)
+            school_cache[school_dn] = School.by_dn(school_dn)
           rescue StandardError => e
-            flog.error(nil, e)
-            s = nil
+            flog.error(nil, "School not found by DN '#{school_dn}', exam server '#{dev['puavoHostname'][0]}' ignored")
+            next
           end
-
-          school_name_cache[school_dn] = s.name
         end
 
         exam_servers << {
           device_id: dev['puavoId'][0].to_i,
           device_hostname: dev['puavoHostname'][0],
-          school_id: s.id.to_i,
-          school_name: s.name,
+          school_id: school_cache[school_dn].id.to_i,
+          school_name: school_cache[school_dn].name,
         }
       rescue StandardError => e
         flog.error(nil, e)
