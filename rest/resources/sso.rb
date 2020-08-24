@@ -54,6 +54,57 @@ class ExternalService < LdapModel
   def filtered_user_hash(user)
     user_hash = user.to_hash
 
+    # Hacky supplementary schools info
+    if user_hash['external_data']
+      begin
+        extra = JSON.parse(user_hash['external_data'])
+      rescue
+        extra = {}
+      end
+
+      if extra.include?('supplementary_schools')
+        # Add supplementary schools to the schools list
+        supplementary_schools = extra['supplementary_schools']
+
+        supplementary_schools.each do |sid, data|
+          school = School.by_attr(:id, sid.to_i)
+          next unless school
+
+          roles = []
+
+          if data && data.include?('roles')
+            roles = data['roles']
+            roles = [] if roles.nil? || roles.empty?
+          end
+
+          result = {
+            'id' => sid,
+            'name' => school.name,
+            'abbreviation' => school.abbreviation,
+            'school_code' => school.school_code,
+            'roles' => roles,
+            'groups' => [],
+          }
+
+          # Add groups from this school
+          if user.groups
+            user.groups.each do |grp|
+              if grp.school_id == sid
+                result['groups'] << {
+                  'id': grp.id,
+                  'name': grp.name,
+                  'abbreviation': grp.abbreviation,
+                  'type': grp.type,
+                }
+              end
+            end
+          end
+
+          user_hash['schools'] << result
+        end
+      end
+    end
+
     # Remove DNs, they only take up space and aren't on the spec anyway
     user_hash['schools'].each do |s|
       s.delete('dn')
