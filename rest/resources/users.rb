@@ -1123,11 +1123,35 @@ class Users < PuavoSinatra
     json user.year_class
   end
 
-
   get "/v3/users/:username/legacy_roles" do
     auth :basic_auth, :kerberos
     user = User.by_username!(params["username"])
     json user.legacy_roles
+  end
+
+  put "/v3/users/:username/external_data" do
+    auth :basic_auth, :kerberos
+    user = User.by_username!(params["username"])
+
+    data = request.body.read.to_s
+
+    if data.nil? || data.strip.empty?
+      # empty string clears the data
+      user.external_data = nil
+    else
+      # ensure it's valid JSON
+      begin
+        JSON.parse(data)
+      rescue StandardError => e
+        $rest_flog.error(nil, "can't set external data for user \"#{params["username"]}\" because the JSON is not valid: #{e}")
+        return 400, 'user external data must be either an empty string (to clear it), or valid JSON'
+      end
+
+      user.external_data = data
+    end
+
+    user.save!
+    return 200
   end
 
   get "/v3/users/:username/mark_for_deletion" do
@@ -1195,6 +1219,7 @@ class Users < PuavoSinatra
     'do_not_delete'      => 'puavoDoNotDelete',
     'email'              => 'mail',
     'external_id'        => 'puavoExternalId',
+    'external_data'      => 'puavoExternalData',
     'first_names'        => 'givenName',
     'id'                 => 'puavoId',
     'last_name'          => 'sn',
@@ -1223,6 +1248,7 @@ class Users < PuavoSinatra
     'puavoEduPersonAffiliation'     => { name: 'role' },
     'puavoEduPersonPersonnelNumber' => { name: 'personnel_number' },
     'puavoExternalId'               => { name: 'external_id' },
+    'puavoExternalData'             => { name: 'external_data', type: :json },
     'puavoId'                       => { name: 'id', type: :integer },
     'puavoLocale'                   => { name: 'locale' },
     'puavoLocked'                   => { name: 'locked', type: :boolean },
