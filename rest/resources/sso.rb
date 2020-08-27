@@ -346,18 +346,41 @@ class SSO < PuavoSinatra
 
     if request['organisation']
       # Find the organisation that matches this request
-      flog.info(nil, "The request includes organisation name \"#{request['organisation']}\"")
+      req_organisation = request['organisation']
 
-      ORGANISATIONS.each do |name, data|
-        if data['host'] == request['organisation']
-          flog.info(nil, "Found a configured organisation \"#{name}\"")
-          org_name = name
-          break
+      flog.info(nil, "The request includes organisation name \"#{req_organisation}\"")
+
+      # If external domains are specified, then try doing a reverse lookup
+      # (ie. convert the external domain back into an organisation name)
+      if CONFIG.include?('external_domain')
+        CONFIG['external_domain'].each do |name, external|
+          if external == req_organisation
+            flog.info(nil, "Found a reverse mapping from external domain \"#{external}\" " \
+                      "to \"#{name}\", using it instead")
+            req_organisation = name
+            break
+          end
+        end
+      end
+
+      # Find the organisation
+      if ORGANISATIONS.include?(req_organisation)
+        # This name probably came from the reverse mapping above
+        flog.info(nil, "Organisation \"#{req_organisation}\" exists, using it")
+        org_name = req_organisation
+      else
+        # Look for LDAP host names
+        ORGANISATIONS.each do |name, data|
+          if data['host'] == req_organisation
+            flog.info(nil, "Found a configured organisation \"#{name}\"")
+            org_name = name
+            break
+          end
         end
       end
 
       unless org_name
-        flog.warn(nil, 'Did not find the request organisation in organisations.yml')
+        flog.warn(nil, "Did not find the request organisation \"#{req_organisation}\" in organisations.yml")
       end
 
     else
