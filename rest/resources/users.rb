@@ -566,25 +566,29 @@ class User < LdapModel
 
   computed_attr :schools_hash, :schools
   def schools_hash
-    schools.map do |school|
-        {
-          "id" => school.id,
-          "dn" => school.dn,
-          "name" => school.name,
-          "abbreviation" => school.abbreviation,
-          "school_code" => school.school_code,
-          "roles" => roles_within_school(school),
-          "groups" => groups_within_school(school).map do |group|
-            {
-              "id" => group.id,
-              "dn" => group.dn,
-              "name" => group.name,
-              "abbreviation" => group.abbreviation,
-              "type" => group.type
-            }
-          end
-        }
+    out = schools.map do |school|
+      {
+        "id" => school.id,
+        "dn" => school.dn,
+        "name" => school.name,
+        "abbreviation" => school.abbreviation,
+        "school_code" => school.school_code,
+        "roles" => roles_within_school(school),
+        "groups" => groups_within_school(school).map do |group|
+          {
+            "id" => group.id,
+            "dn" => group.dn,
+            "name" => group.name,
+            "abbreviation" => group.abbreviation,
+            "type" => group.type
+          }
+        end
+      }
     end
+
+    out += self.get_supplementary_schools()
+
+    return out
   end
 
   def self.current
