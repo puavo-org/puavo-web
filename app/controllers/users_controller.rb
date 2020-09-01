@@ -92,6 +92,7 @@ class UsersController < ApplicationController
       'uid',
       'puavoEduPersonAffiliation',
       'puavoExternalId',
+      'puavoExternalData',
       'telephoneNumber',
       'displayName',
       'homeDirectory',
@@ -169,6 +170,18 @@ class UsersController < ApplicationController
       # Owners and school admin flags. Set only if needed.
       u[:owner] = true if organisation_owners.include?(dn)
       u[:admin] = true if school_admins.include?(dn)
+
+      # Learner ID, if present. I wonder what kind of performance impact this
+      # kind of repeated JSON parsing has?
+      if usr.include?('puavoExternalData')
+        begin
+          ed = JSON.parse(usr['puavoExternalData'][0])
+          if ed.include?('learner_id') && ed['learner_id']
+            u[:learner_id] = ed['learner_id']
+          end
+        rescue
+        end
+      end
 
       users << u
     end
@@ -471,6 +484,17 @@ class UsersController < ApplicationController
 
     # Can the currently logged in user delete users?
     @permit_user_deletion = is_owner?
+
+    # Learner ID
+    @learner_id = nil
+
+    if @user.puavoExternalData
+      begin
+        ed = JSON.parse(@user.puavoExternalData)
+        @learner_id = ed.fetch('learner_id', nil)
+      rescue
+      end
+    end
 
     respond_to do |format|
       format.html # show.html.erb

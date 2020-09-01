@@ -64,6 +64,14 @@ const USER_COLUMN_DEFS = {
         defaultOperator: OPERATOR_EQUAL,
     },
 
+    learner_id: {
+        key: "learner_id",
+        title: "<%= t('columns.users.learner_id') %>",
+        flags: COLUMN_FLAG_SORTABLE,
+        type: COLUMN_TYPE_STRING,
+        defaultOperator: OPERATOR_LESS_OR_EQUAL,
+    },
+
     type: {
         key: "type",
         title: "<%= t('columns.users.type') %>",
@@ -147,6 +155,7 @@ const DEFAULT_USER_COLUMNS = [
     ["uid", true],
     ["type", true],
     ["eid", false],
+    ["learner_id", false],
     ["phone", false],
     ["email", false],
     ["pnumber", false],

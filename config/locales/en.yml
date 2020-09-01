@@ -202,6 +202,7 @@ en:
       full_name: "Name"
       uid: "Username"
       eid: "External ID"
+      learner_id: "Learner ID"
       type: "Role"
       phone: "Phone"
       email: "Email"
@@ -1330,6 +1331,7 @@ en:
         teaching_group: Teaching group
         administrative_groups: Administrative groups
         year_class: Year class
+        learner_id: "Learner ID"
       role:
         displayName: Role name
         members: Members

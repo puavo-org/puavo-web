@@ -202,6 +202,7 @@ fi:
       full_name: "Nimi"
       uid: "Käyttäjätunnus"
       eid: "Ulkoinen ID"
+      learner_id: "Oppijanumero"
       type: "Rooli"
       phone: "Puhelin"
       email: "Email"
@@ -1330,6 +1331,7 @@ fi:
         teaching_group: Opetusryhmä
         administrative_groups: Hallinnolliset ryhmät
         year_class: Vuosiluokka
+        learner_id: "Oppijanumero"
       role:
         displayName: Roolin nimi
         members: "Jäsenet"
