@@ -38,7 +38,7 @@
         <li>The school id user primarily attends to</li>
     </ul></li>
 
-    <li><code>schools</code> List of school objects user belongs to<ul>
+    <li><code>schools</code> List of schools the user belongs to<ul>
         <li><code>id</code> Unique identifier for the school</li>
         <li><code>name</code> Human-readable school name</li>
         <li><code>abbreviation</code> Valid POSIX name for the school</li>
@@ -64,9 +64,13 @@
     <li><code>organisation_domain</code><ul>
         <li>For example <code>jyvaskyla.opinsys.fi</code>.</li>
     </ul></li>
+
+    <li><code>learner_id</code><ul>
+        <li>The 11-digit Finnish national learner ID. <a href="https://wiki.eduuni.fi/display/CSCMPASSID/Data+models">Read this for more information</a>. Can be <code>null</code> if the ID has not been specified. Will <strong>always</strong> be <code>null</code> for non-student users.</li>
+    </ul></li>
 </ul>
 
-<p>In addition to those above, there are some "extra" fields that can be used, but you should NOT rely on their existence (they might not always exist). They are:</p>
+<p>In addition to those above, there are some "extra" fields that can be used, but you should NOT rely on their presence (they might not always exist). They are:</p>
 
 <ul>
     <li><code>puavo_id</code><ul>
@@ -74,7 +78,7 @@
     </ul></li>
 
     <li><code>external_id</code><ul>
-        <li>External IDs (social security number hash for Primus users) for users who attend a school that has Primus integration enabled. Will be null for others.</li>
+        <li>External IDs (social security number hash for Primus users) for users who attend a school that has Primus integration enabled. Will be <code>null</code> for others.</li>
     </ul></li>
 
     <li><code>preferred_language</code><ul>
@@ -82,7 +86,7 @@
     </ul></li>
 
     <li><code>year_class</code><ul>
-        <li>A string containing the year class name for students who attend a school that has Primus integration enabled. Will be always <code>null</code> (the actual JSON NULL value, not a string!) for non-students and students who are not in a Primus-enabled school.</li>
+        <li>A string containing the year class name for students who attend a school that has Primus integration enabled. Will be always <code>null</code> for non-students and students who are not in a Primus-enabled school.</li>
     </ul></li>
 </ul>
 
