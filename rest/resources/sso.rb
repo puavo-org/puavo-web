@@ -80,6 +80,7 @@ class ExternalService < LdapModel
       'organisation_domain' => user_hash['organisation_domain'],
       'external_domain_username' => user_hash['external_domain_username'],
       'schools' => user_hash['schools'],
+      'learner_id' => user_hash['learner_id'],
     }
   end
 

@@ -586,6 +586,9 @@ class User < LdapModel
       }
     end
 
+    # Append supplementary schools. This cannot be done with computed_attr,
+    # because these schools must be part of the 'schools' array, not a
+    # completely new attribute.
     out += self.get_supplementary_schools()
 
     return out
@@ -829,6 +832,23 @@ class User < LdapModel
     end
 
     supplementary_schools
+  end
+
+  # For MPASS integration. See https://wiki.eduuni.fi/display/CSCMPASSID/Data+models
+  # for more info.
+  computed_attr :learner_id
+  def learner_id
+    return nil unless self.roles.include?('student')
+
+    return nil unless self.external_data
+
+    begin
+      ed = JSON.parse(self.external_data)
+    rescue
+      ed = {}
+    end
+
+    ed.fetch('learner_id', nil)
   end
 
   private
