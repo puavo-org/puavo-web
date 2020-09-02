@@ -809,6 +809,7 @@ class User < LdapModel
 
       result = {
         'id' => school_id,
+        'dn' => supp_school.dn.to_s,
         'name' => supp_school.name,
         'abbreviation' => supp_school.abbreviation,
         'school_code' => supp_school.school_code,
