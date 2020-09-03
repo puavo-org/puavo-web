@@ -89,6 +89,20 @@ class OrganisationsController < ApplicationController
       # for the school name column
       data.merge!({ school: school.displayName })
 
+      # device primary user
+      if data[:user]
+        u = User.find(data[:user])
+
+        if u
+          data[:user] = {
+            link: user_path(school, u),
+            title: "#{u[0].uid} (#{u[0].givenName} #{u[0].sn})"
+          }
+        else
+          data.delete(:user)
+        end
+      end
+
       data.delete_if{ |k, v| v.nil? }
       @devices << data
     end

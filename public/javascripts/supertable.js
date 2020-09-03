@@ -550,7 +550,8 @@ const COLUMN_SUBTYPE_USER_USERNAME = 1,
       COLUMN_SUBTYPE_DEVICE_HOSTNAME = 5,
       COLUMN_SUBTYPE_DEVICE_BATTERY_CAPACITY = 6,
       COLUMN_SUBTYPE_DEVICE_WARRANTY_DATE = 7,
-      COLUMN_SUBTYPE_DEVICE_SUPPORT_URL = 8;
+      COLUMN_SUBTYPE_DEVICE_SUPPORT_URL = 8,
+      COLUMN_SUBTYPE_DEVICE_PRIMARY_USER = 9;
 
 // Filter operator codes. Just say no to zeroes.
 const OPERATOR_EQUAL = 1,
@@ -3742,6 +3743,13 @@ class SuperTable {
                         case COLUMN_SUBTYPE_DEVICE_SUPPORT_URL:
                             contents = `<a href="${rowData['purchase_url']}">${rowData['purchase_url']}</a>`;
                             break;
+
+                        case COLUMN_SUBTYPE_DEVICE_PRIMARY_USER: {
+                            const user = rowData['user'];
+
+                            contents = `<a href="${user['link']}">${user['title']}</a>`;
+                            break;
+                        }
 
                         default:
                             break;

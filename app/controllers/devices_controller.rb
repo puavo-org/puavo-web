@@ -90,6 +90,20 @@ class DevicesController < ApplicationController
         link: device_path(@school, dev['puavoId'][0]),
       })
 
+      # device primary user
+      if data[:user]
+        u = User.find(data[:user])
+
+        if u
+          data[:user] = {
+            link: user_path(@school, u),
+            title: "#{u[0].uid} (#{u[0].givenName} #{u[0].sn})"
+          }
+        else
+          data.delete(:user)
+        end
+      end
+
       data.delete_if{ |k, v| v.nil? }
       @devices << data
     end

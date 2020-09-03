@@ -230,6 +230,7 @@ en:
       current_image: "Current image"
       kernel_args: "Kernel arguments"
       kernel_version: "Kernel version"
+      primary_user: "Primary User"
       hwinfo_time: "Hardware info received"
       hwinfo_ram_size: "RAM"
       hwinfo_hd_size: "Hard drive"

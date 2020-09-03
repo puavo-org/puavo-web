@@ -230,6 +230,7 @@ fi:
       current_image: "Nykyinen työpöytäkuva"
       kernel_args: "Kernel-parametrit"
       kernel_version: "Kernel-versio"
+      primary_user: "Ensisijainen käyttäjä"
       hwinfo_time: "Laitetiedot saatu"
       hwinfo_ram_size: "RAM"
       hwinfo_hd_size: "Kiintolevy"
