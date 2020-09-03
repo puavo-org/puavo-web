@@ -2556,7 +2556,11 @@ class SuperTable {
                     if (value === undefined || value === null)
                         converted = "";
                     else {
-                        switch (this.columns.definitions[visible[j]].type) {
+                        const type = this.columns.definitions[visible[j]].type;
+                        const subType = this.columns.definitions[visible[j]].subType || null;
+
+                        // Do type-specific data conversions
+                        switch (type) {
                             case COLUMN_TYPE_STRING:
                             case COLUMN_TYPE_INTEGER:
                             default:
@@ -2570,6 +2574,20 @@ class SuperTable {
                             case COLUMN_TYPE_UNIXTIME:
                                 converted = convertTimestamp(value);
                                 break;
+                        }
+
+                        // If this subtype has its own type conversions,
+                        // apply them and overwrite the value set above
+                        if (subType) {
+                            switch (subType) {
+                                case COLUMN_SUBTYPE_DEVICE_PRIMARY_USER:
+                                    // [Object object] isn't very useful
+                                    converted = value["title"];
+                                    break;
+
+                                default:
+                                    break;
+                            }
                         }
                     }
 
@@ -3306,6 +3324,7 @@ class SuperTable {
                 newData = this.sortData(
                         def.key,                // which JSON field
                         def.type,               // what type the field is
+                        def.subType || null,    // possible field subtype
                         this.sorting.order,     // which order
                         newData);
             }
@@ -3356,10 +3375,13 @@ class SuperTable {
             return [data, hiddenIDs];
 
         // copy column types, so we can do type-specific comparisons if necessary
-        let types = new Array(filters.length);
+        let types = new Array(filters.length),
+            subTypes = new Array(filters.length);
 
-        for (let i in filters)
+        for (let i in filters) {
             types[i] = columnDefs[filters[i][0]].type;
+            subTypes[i] = columnDefs[filters[i][0]].subType || null;
+        }
 
         data = data.filter(function(item) {
             let rowMatched = true;   // each row is visible by default
@@ -3373,6 +3395,15 @@ class SuperTable {
                 if (types[i] == COLUMN_TYPE_STRING)
                     if (value === undefined || value === null)
                         value = "";
+
+                if (subTypes[i]) {
+                    switch (subTypes[i]) {
+                        case COLUMN_SUBTYPE_DEVICE_PRIMARY_USER:
+                            // don't compare against [Object object]
+                            value = value['title'] || "";
+                            break;
+                    }
+                }
 
                 // Compare using the selected operator
                 switch (f[1]) {
@@ -3448,7 +3479,7 @@ class SuperTable {
 
     // Sorts the data. "key" is the key used to dig up comparable items from
     // the JSON.
-    sortData(key, type, order, data)
+    sortData(key, type, subType, order, data)
     {
         // This shouldn't happen, but let's handle it
         if (order == SORT_ORDER_NONE)
@@ -3470,9 +3501,20 @@ class SuperTable {
         switch (type) {
             case COLUMN_TYPE_STRING:
             default:
-                out.sort((a, b) => {
-                    return this.collator.compare(a[4][key] || "", b[4][key] || "") * direction;
-                });
+                if (subType && subType == COLUMN_SUBTYPE_DEVICE_PRIMARY_USER) {
+                    out.sort((a, b) => {
+                        // This is getting hideous. I want to rewrite this
+                        // garbage from ground up.
+                        const aa = a[4][key] ? a[4][key]["title"] : "",
+                              bb = b[4][key] ? b[4][key]["title"] : "";
+
+                        return this.collator.compare(aa, bb) * direction;
+                    });
+                } else {
+                    out.sort((a, b) => {
+                        return this.collator.compare(a[4][key] || "", b[4][key] || "") * direction;
+                    });
+                }
 
             break;
 
