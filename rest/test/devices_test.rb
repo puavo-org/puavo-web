@@ -6,7 +6,6 @@ describe PuavoRest::Devices do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -49,12 +48,6 @@ describe PuavoRest::Devices do
       :cn => "gryffindor2",
       :displayName => "Gryffindor2"
     )
-    @server1 = create_server(
-      :puavoHostname => "server1",
-      :macAddress => "bc:5f:f4:56:59:71",
-      :puavoSchool => @school.dn,
-      :puavoDeviceType => "ltspserver"
-    )
     @bootserver = create_server(
       :puavoHostname => "bootserver",
       :macAddress => "bc:5f:f4:56:59:72",
@@ -68,7 +61,7 @@ describe PuavoRest::Devices do
       :printerMakeAndModel => "foo",
       :printerType => "1234",
       :printerURI => "socket://baz",
-      :puavoServer => @server1.dn
+      :puavoServer => @bootserver.dn
     )
 
     @school.add_wireless_printer(@printer)
@@ -97,7 +90,7 @@ describe PuavoRest::Devices do
       @_athin = create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
+        :puavoPreferredServer => @bootserver.dn,
         :puavoDeviceImage => "customimage",
         :puavoSchool => @school.dn,
         :puavoPersonalDevice => false,
@@ -133,10 +126,6 @@ describe PuavoRest::Devices do
 
     it "has mac address" do
       assert_equal "bf:9a:8c:1b:e0:6a", @data["mac_address"]
-    end
-
-    it "has preferred server" do
-      assert_equal @server1.dn, @data["preferred_server"]
     end
 
     it "has preferred image" do
@@ -258,7 +247,6 @@ describe PuavoRest::Devices do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
         :puavoMountpoint => [ '{"fs":"nfs4","path":"10.0.0.2/share","mountpoint":"/home/device/share","options":"-o rw"}',
                               '{"fs":"nfs3","path":"10.4.4.4/share","mountpoint":"/home/school/share","options":"-o r"}' ]
@@ -318,7 +306,6 @@ describe PuavoRest::Devices do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
       get "/v3/devices/athin"
@@ -360,14 +347,12 @@ describe PuavoRest::Devices do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
 
       localboot_device = create_device(
         :puavoHostname => "localbootdevice",
         :macAddress => "00:60:2f:11:7A:7D",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
       localboot_device.classes = ["top", "device", "puppetClient", "puavoLocalbootDevice"]
@@ -402,7 +387,6 @@ describe PuavoRest::Devices do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
       test_organisation = LdapOrganisation.first # TODO: fetch by name
@@ -429,7 +413,6 @@ describe PuavoRest::Devices do
         :puavoHostname => "athin",
         :puavoDeviceType =>  "thinclient",
         :macAddress => "00:60:2f:28:DC:51",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
 
         :puavoDeviceBootImage => "bootimage",
@@ -448,7 +431,6 @@ describe PuavoRest::Devices do
         :puavoHostname => "afat",
         :puavoDeviceType =>  "fatclient",
         :macAddress => "00:60:2f:E5:A1:37",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
 
         :puavoDeviceBootImage => "bootimage",
@@ -479,7 +461,6 @@ describe PuavoRest::Devices do
       @thinclient01 = create_device(
         :puavoHostname => "thinclient-01",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
         :puavoDeviceBootImage => "deviceprefbootimage",
         :puavoDeviceImage => "deviceprefimage"
@@ -487,20 +468,17 @@ describe PuavoRest::Devices do
       @thinclient02 = create_device(
         :puavoHostname => "thinclient-02",
         :macAddress => "bf:9a:8c:1b:e0:6b",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
         :puavoDeviceImage => "deviceprefimage"
       )
       @thinclient03 = create_device(
         :puavoHostname => "thinclient-03",
         :macAddress => "bf:9a:8c:1b:e0:6b",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
       @thinclient04 = create_device(
         :puavoHostname => "thinclient-04",
         :macAddress => "bf:9a:8c:1b:e0:6b",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school_without_fallback_value.dn
       )
 
@@ -545,7 +523,6 @@ describe PuavoRest::Devices do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
     end
@@ -599,7 +576,6 @@ describe PuavoRest::Devices do
         :puavoHostname => "afat",
         :puavoDeviceType =>  "fatclient",
         :macAddress => "00:60:2f:E5:A1:37",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
 
         :puavoDeviceBootImage => "bootimage",
@@ -610,7 +586,6 @@ describe PuavoRest::Devices do
         :puavoHostname => "anotherdevive",
         :puavoDeviceType =>  "fatclient",
         :macAddress => "00:60:2f:7F:1F:FE",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
 
         :puavoDeviceBootImage => "bootimage",
@@ -646,7 +621,6 @@ describe PuavoRest::Devices do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn,
         :primary_user_uid => 'bob'
       )
@@ -670,13 +644,11 @@ describe PuavoRest::Devices do
       create_device(
         :puavoHostname => "athin",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
       create_device(
         :puavoHostname => "athin-02",
         :macAddress => "bf:9a:8c:1b:e0:7b",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
       get "/v3/devices", {}, {
@@ -710,7 +682,6 @@ describe PuavoRest::Devices do
         :puavoHostname => "laptop-01",
         :puavoDeviceType => "laptop",
         :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoPreferredServer => @server1.dn,
         :puavoSchool => @school.dn
       )
 

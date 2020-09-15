@@ -230,10 +230,6 @@ class Root < PuavoSinatra
     use PuavoRest::Certs
   end
 
-  if CONFIG["bootserver"]
-    use PuavoRest::LtspServers
-  end
-
   if CONFIG["password_management"]
     use PuavoRest::Password
     use PuavoRest::EmailConfirm

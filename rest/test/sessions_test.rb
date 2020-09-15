@@ -18,7 +18,6 @@ describe PuavoRest::Sessions do
   before(:each) do
     Puavo::Test.clean_up_ldap
     PuavoRest::Session.local_store.flushdb
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -37,177 +36,13 @@ describe PuavoRest::Sessions do
       :puavoSchool => @school.dn,
       :puavoDeviceType => "fatclient"
     )
-    @server1 = create_server(
-      :puavoHostname => "server1",
-      :macAddress => "bc:5f:f4:56:59:71"
+    @server = create_server(
+      :macAddress      => 'bc:5f:f4:56:59:73',
+      :puavoDeviceType => 'bootserver',
+      :puavoHostname   => 'server',
+      :puavoSchool     => @school.dn,
     )
-    @server2 = create_server(
-      :puavoHostname => "server2",
-      :macAddress => "bc:5f:f4:56:59:72"
-    )
-
-    @server3 = create_server(
-      :puavoHostname => "server3",
-      :macAddress => "bc:5f:f4:56:59:73",
-      :puavoDeviceType => "bootserver",
-      :puavoSchool => @school.dn
-    )
-    PuavoRest.test_boot_server_dn = @server3.dn.to_s
-  end
-
-  describe "load filter" do
-    it "gives the most idle server" do
-      put "/v3/ltsp_servers/server1",
-        "load_avg" => "0.1",
-        "cpu_count" => 2,
-        "ltsp_image" => "image1"
-      assert_200
-
-      put "/v3/ltsp_servers/server2",
-        "load_avg" => "0.9",
-        "cpu_count" => 2,
-        "ltsp_image" => "image2"
-      assert_200
-
-      post "/v3/sessions", { "hostname" => "athin" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-
-      data = JSON.parse last_response.body
-      assert_equal "server1", data["ltsp_server"]["hostname"]
-
-      assert_equal 1, Array(data["fallback_ltsp_servers"]).size
-      # server2 is the fallback server
-      assert_equal "server2", data["fallback_ltsp_servers"][0]["hostname"]
-    end
-  end
-
-  describe "old server filter" do
-    it "filters out servers that are not updated recently" do
-      put "/v3/ltsp_servers/server1",
-        "load_avg" => "0.1",
-        "cpu_count" => 2,
-        "ltsp_image" => "image1"
-      assert_200
-
-      Timecop.travel 60 * 5
-
-      put "/v3/ltsp_servers/server2",
-        "load_avg" => "0.9",
-        "cpu_count" => 2,
-        "ltsp_image" => "image2"
-      assert_200
-
-      post "/v3/sessions", { "hostname" => "athin" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-
-      data = JSON.parse last_response.body
-      assert_equal(
-        "server2", data["ltsp_server"]["hostname"],
-        "server1 has less load but server2 must be given because server1 has timed out"
-      )
-    end
-  end
-
-  describe "preferred server on client" do
-    it "is served first" do
-
-      create_device(
-        :puavoHostname => "thin-with-preferred-server",
-        :puavoPreferredServer => @server2.dn,
-        :macAddress => "bf:9a:8c:1b:e0:6a",
-        :puavoSchool => @school.dn
-      )
-
-      put "/v3/ltsp_servers/server1",
-        "load_avg" => "0.1",
-        "cpu_count" => 2,
-        "ltsp_image" => "image1"
-      assert_200
-      put "/v3/ltsp_servers/server2",
-        "load_avg" => "0.9",
-        "cpu_count" => 2,
-        "ltsp_image" => "image2"
-      assert_200
-
-      post "/v3/sessions", { "hostname" => "thin-with-preferred-server" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver",
-      }
-      assert_200
-
-      data = JSON.parse last_response.body
-      assert_equal(
-        "server2", data["ltsp_server"]["hostname"],
-        "server1 has less load but server2 must be given because server1 is preferred by the client"
-      )
-    end
-  end
-
-  describe "school filter for for ltsp servers" do
-    before do
-      @device_school = School.create(
-        :cn => "deviceschool",
-        :displayName => "deviceschool"
-      )
-
-      @other_school = School.create(
-        :cn => "otherschool",
-        :displayName => "otherschool"
-      )
-
-      @other_school_server = create_server(
-        :puavoHostname => "other-school-server",
-        :macAddress => "00:60:2f:4F:2C:73",
-        :puavoSchool => [@other_school.dn.to_s]
-      )
-
-      @other_device = create_device(
-        :puavoHostname => "other-device",
-        :macAddress => "00:60:2f:70:89:5B",
-        :puavoSchool => [@other_school.dn]
-      )
-
-      @serverless_device = create_device(
-        :puavoHostname => "serverless",
-        :macAddress => "00:60:2f:D5:DB:3F",
-        :puavoSchool => @device_school.dn
-      )
-
-      put "/v3/ltsp_servers/other-school-server",
-        "load_avg" => "0.5",
-        "cpu_count" => 2,
-        "ltsp_image" => "organisationimage"
-      assert_200
-    end
-
-    it "does not give ltsp servers dedicated to other schools" do
-      post "/v3/sessions", { "hostname" => @serverless_device.puavoHostname}, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_equal 404, last_response.status
-
-      data = JSON.parse(last_response.body)
-      assert !data["ltsp_server"], "should not have an ltsp server"
-      assert data["error"], "has an error"
-      assert_equal "NotFound", data["error"]["code"]
-      assert_equal "cannot find any LTSP servers", data["error"]["message"]
-    end
-
-    it "gives server to other device" do
-      post "/v3/sessions", { "hostname" => @other_device.puavoHostname}, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-      data = JSON.parse(last_response.body)
-      assert data["ltsp_server"], "has ltsp server"
-      assert_equal(
-        @other_school_server.puavoHostname,
-        data["ltsp_server"]["hostname"]
-      )
-    end
+    PuavoRest.test_boot_server_dn = @server.dn.to_s
   end
 
   describe "nonexistent device hostname" do
@@ -216,302 +51,6 @@ describe PuavoRest::Sessions do
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_equal 404, last_response.status
-    end
-  end
-
-  describe "thin with own image" do
-    it "uses it's own image" do
-      create_server(
-        :puavoHostname => "testserver",
-        :macAddress => "bc:5f:f4:56:59:71"
-      )
-      put "/v3/ltsp_servers/testserver",
-        "load_avg" => "0.5",
-        "cpu_count" => 2,
-        "ltsp_image" => "ownimage"
-      assert_200
-
-      create_device(
-        :puavoDeviceImage => "ownimage",
-        :puavoHostname => "thinwithimage",
-        :macAddress => "bc:5f:f4:56:59:71",
-        :puavoSchool => @school.dn
-      )
-
-      post "/v3/sessions", { "hostname" => "thinwithimage" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      data = JSON.parse last_response.body
-      assert_equal data["ltsp_server"]["hostname"], "testserver"
-    end
-  end
-
-  describe "thinclient with no own image" do
-    it "uses image from school" do
-      create_server(
-        :puavoHostname => "school-image-server",
-        :macAddress => "bc:5f:f4:56:59:71"
-      )
-      put "/v3/ltsp_servers/school-image-server",
-        "load_avg" => "0.8",
-        "cpu_count" => 2,
-        "ltsp_image" => "schoolsimage"
-      assert_200
-      @school.puavoDeviceImage = "schoolsimage"
-      @school.save!
-
-      create_device(
-        :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72",
-        :puavoSchool => @school.dn
-      )
-
-      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      data = JSON.parse last_response.body
-      assert_equal  "school-image-server", data["ltsp_server"]["hostname"]
-    end
-  end
-
-  describe "organisation level image" do
-    it "is given to other clients" do
-      create_server(
-        :puavoHostname => "organisation-image-server",
-        :macAddress => "bc:5f:f4:56:59:71"
-      )
-      put "/v3/ltsp_servers/organisation-image-server",
-        "load_avg" => "0.8",
-        "cpu_count" => 2,
-        "ltsp_image" => "organisationimage"
-      assert_200
-      create_device(
-        :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72",
-        :puavoSchool => @school.dn
-      )
-
-      test_organisation = LdapOrganisation.first
-      test_organisation.puavoDeviceImage = "organisationimage"
-      test_organisation.save!
-
-      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-      data = JSON.parse last_response.body
-      assert_equal  "organisation-image-server", data["ltsp_server"]["hostname"]
-    end
-  end
-
-  describe "no image at all" do
-    it "gets the most idle server" do
-      create_server(
-        :puavoHostname => "most-idle-server",
-        :macAddress => "bc:5f:f4:56:59:71"
-      )
-      put "/v3/ltsp_servers/most-idle-server",
-        "load_avg" => "0.0",
-        "cpu_count" => 2,
-        "ltsp_image" => "someimage"
-      assert_200
-
-      create_device(
-        :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72",
-        :puavoSchool => @school.dn
-      )
-
-      post "/v3/sessions", { "hostname" => "thinnoimage" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-
-      data = JSON.parse last_response.body
-      assert_equal  "most-idle-server", data["ltsp_server"]["hostname"]
-    end
-  end
-
-  describe "GET sessions" do
-    before(:each) do
-      create_server(
-        :puavoHostname => "most-idle-server",
-        :macAddress => "bc:5f:f4:56:59:71"
-      )
-      put "/v3/ltsp_servers/most-idle-server",
-        "load_avg" => "0.0",
-        "cpu_count" => 2,
-        "ltsp_image" => "someimage"
-
-      create_device(
-        :puavoHostname => "thinnoimage",
-        :macAddress => "bc:5f:f4:56:59:72",
-        :puavoSchool => @school.dn
-      )
-    end
-
-    describe "GET and DELETE" do
-      before(:each) do
-        post "/v3/sessions", { "hostname" => "thinnoimage" }, {
-          "HTTP_AUTHORIZATION" => "Bootserver"
-        }
-        assert_200
-
-        @post_data = JSON.parse last_response.body
-        assert @post_data["uuid"], "has uuid"
-      end
-
-      it "can be fetched with uuid only" do
-        get "/v3/sessions/#{ @post_data["uuid"] }", {}, {
-          "HTTP_AUTHORIZATION" => "Bootserver"
-        }
-        get_data = JSON.parse last_response.body
-        assert_200
-        assert_equal @post_data["uuid"], get_data["uuid"]
-      end
-
-      it "can be deleted with uuid only" do
-        delete "/v3/sessions/#{ @post_data["uuid"] }", {}, {
-          "HTTP_AUTHORIZATION" => "Bootserver"
-        }
-        assert_200
-
-        get "/v3/sessions/#{ @post_data["uuid"] }", {}, {
-          "HTTP_AUTHORIZATION" => "Bootserver"
-        }
-        assert_equal 404, last_response.status
-      end
-
-      it "responds 404 for unknown sessions" do
-        get "/v3/sessions/doesnotexists", {}, {
-          "HTTP_AUTHORIZATION" => "Bootserver"
-        }
-        assert_equal 404, last_response.status
-        data = JSON.parse(last_response.body)
-        assert data["error"], "Must have error"
-        assert_equal "NotFound", data["error"]["code"]
-      end
-
-      it "DELETE responds 404 for bad uuids" do
-        delete "/v3/sessions/baduid", {}, {
-          "HTTP_AUTHORIZATION" => "Bootserver"
-        }
-        assert_equal 404, last_response.status
-      end
-    end
-
-    it "all sessions can be fetched from index" do
-      create_device(
-        :puavoHostname => "thin1",
-        :macAddress => "bc:5f:f4:56:59:72",
-        :puavoSchool => @school.dn
-      )
-      create_device(
-        :puavoHostname => "thin2",
-        :macAddress => "bc:5f:f4:56:59:73",
-        :puavoSchool => @school.dn
-      )
-
-      post "/v3/sessions", { "hostname" => "thin1" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-
-      post "/v3/sessions", { "hostname" => "thin2" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-
-      # XXX: This test seem to fail ramdomly on Jenkins.
-      #
-      #    Bad session count! ["hostname"].
-      #     Expected: 2
-      #       Actual: 1
-      #
-      # As a crazy idea try to workaround it by sleeping...
-      sleep 1
-
-      get "/v3/sessions"
-      data = JSON.parse last_response.body
-
-      assert_equal Array, data.class
-      assert_equal 2, data.size, "Bad session count! #{ data.inspect }"
-    end
-  end
-
-  describe "LTSP server school limit" do
-    before(:each) do
-      ltsp_school = School.create(
-        :cn => "ltspschool",
-        :displayName => "School with private LTSP server"
-      )
-
-      create_server(
-        :puavoHostname => "normalserver",
-        :macAddress => "42:67:8d:2b:d1:82"
-      )
-
-      create_server(
-        :puavoHostname => "limitedserver",
-        :macAddress => "76:62:8f:79:9a:a3",
-        :puavoSchool => [ltsp_school.dn]
-      )
-
-      create_device(
-        :puavoHostname => "limitedschooldevice",
-        :macAddress => "38:f5:f8:35:4c:4d",
-        :puavoSchool => ltsp_school.dn
-      )
-
-      create_device(
-        :puavoHostname => "normalschooldevice",
-        :macAddress => "79:61:37:31:d1:ba",
-        :puavoSchool => @school.dn
-      )
-    end
-
-    it "must not serve limited servers to others" do
-      # Limited server has less load
-      put "/v3/ltsp_servers/limitedserver",
-        "load_avg" => "0.2",
-        "cpu_count" => 2,
-        "ltsp_image" => "someimage"
-      assert_200
-
-      put "/v3/ltsp_servers/normalserver",
-        "load_avg" => "0.8",
-        "cpu_count" => 2,
-        "ltsp_image" => "anotherimage"
-      assert_200
-
-      post "/v3/sessions", { "hostname" => "normalschooldevice" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      data = JSON.parse last_response.body
-
-      # But the client will get normalserver regardless
-      assert_equal "normalserver", data["ltsp_server"]["hostname"]
-    end
-
-    it "must prefer servers to schools they are preferred to" do
-      put "/v3/ltsp_servers/limitedserver",
-        "load_avg" => "0.9",
-        "cpu_count" => 2,
-        "ltsp_image" => "someimage"
-
-      # Normal server has less load
-      put "/v3/ltsp_servers/normalserver",
-        "load_avg" => "0.1",
-        "cpu_count" => 2,
-        "ltsp_image" => "anotherimage"
-
-      post "/v3/sessions", { "hostname" => "limitedschooldevice" }, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      data = JSON.parse last_response.body
-
-      # But client will get limitedserver because it is forced to its school
-      assert_equal "limitedserver", data["ltsp_server"]["hostname"]
     end
   end
 
@@ -560,7 +99,6 @@ describe PuavoRest::Sessions do
 
         data = JSON.parse last_response.body
         assert data["device"].nil?, "has no device"
-        assert data["ltsp_server"].nil?, "has no ltsp server"
         assert data["user"], "has user"
         assert_equal "bob",  data["user"]["username"], "has user"
       end
@@ -575,9 +113,8 @@ describe PuavoRest::Sessions do
         @data = JSON.parse last_response.body
       end
 
-      it "does not need a ltsp server" do
+      it "fat clients have sessions" do
         assert_equal "example.puavo.net", @data["organisation"], "has organisation info"
-        assert @data["ltsp_server"].nil?, "fat clients must not get ltsp server"
         assert @data["device"], "has device"
         assert_equal "afat", @data["device"]["hostname"]
       end
@@ -610,11 +147,10 @@ describe PuavoRest::Sessions do
         assert_200
 
         @data = JSON.parse last_response.body
-
       end
-      it "does not need a ltsp server" do
+
+      it "laptops have sessions" do
         assert_equal "example.puavo.net", @data["organisation"], "has organisation info"
-        assert @data["ltsp_server"].nil?, "laptop must not get ltsp server"
         assert @data["device"], "has device"
         assert_equal "laptop1", @data["device"]["hostname"]
       end
@@ -671,11 +207,6 @@ describe PuavoRest::Sessions do
 
         @device_printer = create_printer(@bootserver, "device printer")
         @athin.add_printer(@device_printer)
-
-        put "/v3/ltsp_servers/server1",
-          "load_avg" => "0.1",
-          "cpu_count" => 2,
-          "ltsp_image" => "image1"
       end
 
       it "are given to guest sessions" do

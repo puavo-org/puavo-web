@@ -13,7 +13,6 @@ describe PuavoRest::SSO do
 
     PuavoRest::Organisation.refresh
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
     @school = School.create(
       :cn => "gryffindor",

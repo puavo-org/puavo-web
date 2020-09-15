@@ -10,13 +10,6 @@ describe PuavoRest::Host do
       :puavoDeviceImage => "schoolprefimage"
     )
     @host = {}
-    @host["thinclient"] = create_device(
-      :puavoHostname => "thinclient05",
-      :puavoDeviceType => "thinclient",
-      :macAddress => "bf:9a:8c:1b:e0:6a",
-      :puavoDeviceKernelVersion => "thinkernel",
-      :puavoSchool => @school.dn
-    )
     @host["laptop"] = create_device(
       :puavoHostname => "laptop05",
       :puavoDeviceType => "laptop",
@@ -32,13 +25,6 @@ describe PuavoRest::Host do
       :puavoSchool => @school.dn
     )
 
-    @host["ltspserver"] = create_server(
-      :puavoHostname => "ltspserver05",
-      :macAddress => "bf:9a:8c:1b:e0:6d",
-      :puavoDeviceKernelVersion => "ltspserverkernel",
-      :puavoDeviceType => "ltspserver"
-    )
-
     LdapModel.setup(
       :organisation =>
         PuavoRest::Organisation.default_organisation_domain!,
@@ -47,10 +33,8 @@ describe PuavoRest::Host do
     )
 
     @rest_host = {}
-    @rest_host["thinclient"] = PuavoRest::Device.by_dn(@host["thinclient"].dn)
     @rest_host["laptop"] = PuavoRest::Device.by_dn(@host["laptop"].dn)
     @rest_host["fatclient"] = PuavoRest::Device.by_dn(@host["fatclient"].dn)
-    @rest_host["ltspserver"] = PuavoRest::LtspServer.by_dn(@host["ltspserver"].dn)
     @rest_host["unregistered"] = PuavoRest::Device.new
   end
 
@@ -67,17 +51,17 @@ describe PuavoRest::Host do
     end
 
     it "will be logged" do
-      thin = @host["thinclient"]
+      fat = @host["fatclient"]
 
 
-      get "/v3/bootparams_by_mac/#{ thin.mac_address }", {}, {
+      get "/v3/bootparams_by_mac/#{ fat.mac_address }", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
 
       Timecop.travel 60
 
-      post "/v3/boot_done/#{ thin.puavoHostname }", {}, {
+      post "/v3/boot_done/#{ fat.puavoHostname }", {}, {
         "HTTP_AUTHORIZATION" => "Bootserver"
       }
       assert_200
@@ -107,7 +91,7 @@ describe PuavoRest::Host do
         "has boot duration near 60: #{ boot_end[1][:boot_duration] }"
       )
 
-      assert_equal "thinclient05", boot_end[1]["boot done"][:hostname]
+      assert_equal "fatclient05", boot_end[1]["boot done"][:hostname]
 
 
     end

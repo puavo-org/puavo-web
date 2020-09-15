@@ -21,7 +21,6 @@ end
 describe PuavoRest::PrinterQueues do
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
     @server1 = Server.new
     @server1.attributes = {

@@ -12,17 +12,11 @@ describe PuavoRest::BootConfigurations do
     )
 
     create_device(
-      :puavoHostname => "thinclient05",
-      :puavoDeviceType => "thinclient",
+      :puavoHostname => "fatclient05",
+      :puavoDeviceType => "fatclient",
       :macAddress => "bf:9a:8c:1b:e0:6a",
       :puavoDeviceKernelArguments => "ACPI",
       :puavoSchool => @school.dn
-    )
-
-    @server3 = create_server(
-      :puavoHostname => "server3",
-      :macAddress => "bc:5f:f4:56:59:73",
-      :puavoDeviceType => "ltspserver"
     )
 
     @boot_server = create_server(
@@ -52,22 +46,6 @@ describe PuavoRest::BootConfigurations do
     it "has following boot configuration" do
       assert @data.kind_of?(Hash)
       assert_equal 'schoolprefimage', @data['preferred_boot_image']
-    end
-  end
-
-  describe "ltsp server" do
-
-    before(:each) do
-      get '/v3/bootparams_by_mac/bc:5f:f4:56:59:73', {}, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_200
-      @data = JSON.parse(last_response.body)
-    end
-
-    it "has following boot configuration" do
-      assert @data.kind_of?(Hash)
-      assert_equal 'organisationprefimage', @data['preferred_boot_image']
     end
   end
 

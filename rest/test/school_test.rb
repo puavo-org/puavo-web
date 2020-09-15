@@ -8,7 +8,6 @@ describe PuavoRest::School do
   before(:each) do
     Puavo::Test.clean_up_ldap
     PuavoRest::Session.local_store.flushdb
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -26,13 +25,13 @@ describe PuavoRest::School do
 
     @school2.save!
 
-    @server2 = create_server(
-      :puavoHostname => "server2",
+    @server = create_server(
+      :puavoHostname => "server",
       :macAddress => "bc:5f:f4:56:59:72",
       :puavoDeviceType => "bootserver",
       :puavoSchool => @school.dn
     )
-    PuavoRest.test_boot_server_dn = @server2.dn.to_s
+    PuavoRest.test_boot_server_dn = @server.dn.to_s
 
     LdapModel.setup(
       :organisation =>
