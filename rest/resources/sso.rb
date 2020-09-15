@@ -52,10 +52,10 @@ class ExternalService < LdapModel
 
   # Filters a User.to_hash down to a suitable level for SSO URLs
   def filtered_user_hash(user)
-    user_hash = user.to_hash
+    schools_hash = user.schools_hash()    # Does not call json()
 
     # Remove DNs, they only take up space and aren't on the spec anyway
-    user_hash['schools'].each do |s|
+    schools_hash.each do |s|
       s.delete('dn')
 
       s['groups'].each do |g|
@@ -63,24 +63,33 @@ class ExternalService < LdapModel
       end
     end
 
-    # Only the members that are on the spec (plus a few more)
+    year_class = user.year_class
+
+    if year_class
+      yc_name = year_class.name
+    else
+      yc_name = nil
+    end
+
+    # Build the output hash manually, without calling user.to_hash().
+    # Include only the members that are on the spec (plus a few more).
     {
-      'id' => user_hash['id'],
-      'puavo_id' => user_hash['puavo_id'],
-      'external_id' => user_hash['external_id'],
-      'preferred_language' => user_hash['preferred_language'],
-      'user_type' => user_hash['user_type'],      # unknown if actually needed
-      'username' => user_hash['username'],
-      'first_name' => user_hash['first_name'],
-      'last_name' => user_hash['last_name'],
-      'email' => user_hash['email'],
-      'primary_school_id' => user_hash['primary_school_id'],
-      'year_class' => user_hash['year_class'],
-      'organisation_name' => user_hash['organisation_name'],
-      'organisation_domain' => user_hash['organisation_domain'],
-      'external_domain_username' => user_hash['external_domain_username'],
-      'schools' => user_hash['schools'],
-      'learner_id' => user_hash['learner_id'],
+      'id' => user.id,
+      'puavo_id' => user.puavo_id,
+      'external_id' => user.external_id,
+      'preferred_language' => user.preferred_language,
+      'user_type' => user.user_type,    # unknown if actually needed
+      'username' => user.username,
+      'first_name' => user.first_name,
+      'last_name' => user.last_name,
+      'email' => user.email,
+      'primary_school_id' => user.primary_school_id,
+      'year_class' => yc_name,
+      'organisation_name' => user.organisation_name,
+      'organisation_domain' => user.organisation_domain,
+      'external_domain_username' => user.external_domain_username,
+      'schools' => schools_hash,
+      'learner_id' => user.learner_id,
     }
   end
 
