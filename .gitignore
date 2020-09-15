@@ -61,3 +61,7 @@ greenletters.log
 config/puavo_web.yml
 config/redis.yml
 config/unicorn.rb
+
+/package-lock.json
+
+public/javascripts/i18n/import_tool.*.js
