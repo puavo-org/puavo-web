@@ -60,8 +60,6 @@ class Host < LdapModel
 
   def self.specialized_instance!(host)
     case host.type
-    when "ltspserver"
-      LtspServer.by_dn!(host.dn)
     when "bootserver"
       BootServer.by_dn!(host.dn)
     else
@@ -93,13 +91,6 @@ class Host < LdapModel
   end
 
   def preferred_boot_image
-    # preferred_boot_image is only used for thinclients.  In fatclients and ltsp
-    # servers the boot image is always the same as the main image.
-    if type == 'thinclient' then
-      image = get_own(:preferred_boot_image)
-      return image.strip if image
-    end
-
     preferred_image
   end
 

@@ -41,10 +41,6 @@ class DeviceImages < PuavoSinatra
           images.push(device.get_own(:preferred_boot_image))
         end
 
-        school.ltsp_servers.each do |ltsp_server|
-          images.push(ltsp_server.get_own(:preferred_image))
-        end
-
       end
     end
 
