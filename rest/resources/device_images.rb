@@ -10,10 +10,8 @@ class DeviceImages < PuavoSinatra
   def all_images
     images = [organisation_image]
 
-    [School, LtspServer].each do |model|
-      model.all.each do |s|
-        images.push s.get_own(:preferred_image)
-      end
+    School.all.each do |s|
+      images.push s.get_own(:preferred_image)
     end
 
     [BootServer, Device].each do |model|

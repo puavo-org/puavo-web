@@ -68,7 +68,7 @@ module PuavoRest
                              .join(':')
 
       host = nil
-      # Get Device or LtspServer
+      # Get Device or Server
       begin
         host = Host.by_mac_address!(client_mac)
       rescue NotFound => e
