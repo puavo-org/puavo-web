@@ -25,11 +25,11 @@ describe PuavoRest::Users do
     @role.groups << @group
     @role.save!
 
-    @user = User.new(
+    @teacher = User.new(
       :givenName => "Bob",
       :sn  => "Brown",
       :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
+      :puavoEduPersonAffiliation => "teacher",
       :puavoLocale => "en_US.UTF-8",
       :mail => ["bob@example.com ", "             bob@foobar.com        \n\n           ", " bob@helloworld.com "],
       :role_ids => [@role.puavoId],
@@ -38,16 +38,16 @@ describe PuavoRest::Users do
       :telephone_number => ["123", "456"]
     )
 
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [
+    @teacher.set_password "secret"
+    @teacher.puavoSchool = @school.dn
+    @teacher.role_ids = [
       Role.find(:first, {
         :attribute => "displayName",
         :value => "Maintenance"
       }).puavoId,
       @role.puavoId
     ]
-    @user.save!
+    @teacher.save!
 
     @user2 = User.new(
       :givenName => "Alice",
@@ -100,23 +100,23 @@ describe PuavoRest::Users do
 
   describe "Multiple telephone numbers" do
     it "correctly set when a user is created" do
-      assert_equal @user.telephoneNumber, ["123", "456"]
+      assert_equal @teacher.telephoneNumber, ["123", "456"]
       assert_equal @user2.telephoneNumber, "789"
       assert_nil @user4.telephoneNumber
     end
 
     it "can be changed" do
-      @user.telephoneNumber = ["1234567890"]
-      @user.save!
-      assert_equal @user.telephoneNumber, "1234567890"
+      @teacher.telephoneNumber = ["1234567890"]
+      @teacher.save!
+      assert_equal @teacher.telephoneNumber, "1234567890"
     end
 
     it "can be cleared" do
-      @user.telephoneNumber = []
-      @user.save!
+      @teacher.telephoneNumber = []
+      @teacher.save!
       @user2.telephoneNumber = nil
       @user2.save!
-      assert_nil @user.telephoneNumber
+      assert_nil @teacher.telephoneNumber
       assert_nil @user2.telephoneNumber
     end
   end
@@ -137,9 +137,9 @@ describe PuavoRest::Users do
     it "admin can delete user" do
       # TODO: Bob must be an organisation owner in order to do this!
 
-      #@user.puavoEduPersonAffiliation = ["admin"]
-      #@user.save!
-      #@school.add_admin(@user)
+      #@teacher.puavoEduPersonAffiliation = ["admin"]
+      #@teacher.save!
+      #@school.add_admin(@teacher)
       #basic_authorize "bob", "secret"
       #delete "/v3/users/poistettava.kayttaja"
       #assert_equal 200, last_response.status
@@ -235,17 +235,17 @@ describe PuavoRest::Users do
 
   describe "external ID tests" do
     it "can save a user without changing anything" do
-      assert @user.save!
+      assert @teacher.save!
     end
 
     it "can save a user while 'changing' external ID" do
-      @user.puavoExternalID = "bob"
-      assert @user.save!
+      @teacher.puavoExternalID = "bob"
+      assert @teacher.save!
     end
 
     it "can actually change the external ID" do
-      @user.puavoExternalID = "paavo"
-      assert @user.save!
+      @teacher.puavoExternalID = "paavo"
+      assert @teacher.save!
     end
 
     it "give user a new external ID" do
@@ -268,7 +268,7 @@ describe PuavoRest::Users do
   describe "GET /v3/users/_by_id/" do
     it "returns user data" do
       basic_authorize "bob", "secret"
-      get "/v3/users/_by_id/#{ @user.puavoId }"
+      get "/v3/users/_by_id/#{ @teacher.puavoId }"
       assert_200
       data = JSON.parse(last_response.body)
 
@@ -278,12 +278,12 @@ describe PuavoRest::Users do
     end
 
     it "reverse name is updated if user's name is changed" do
-      @user.givenName = "Brown"
-      @user.sn = "Bob"
-      @user.save!
+      @teacher.givenName = "Brown"
+      @teacher.sn = "Bob"
+      @teacher.save!
 
       basic_authorize "bob", "secret"
-      get "/v3/users/_by_id/#{ @user.puavoId }"
+      get "/v3/users/_by_id/#{ @teacher.puavoId }"
       assert_200
       data = JSON.parse(last_response.body)
 
@@ -294,11 +294,11 @@ describe PuavoRest::Users do
     end
 
     it "whitespace in email addresses is really removed" do
-      @user.mail = " foo.bar@baz.com     "
-      @user.save!
+      @teacher.mail = " foo.bar@baz.com     "
+      @teacher.save!
 
       basic_authorize "bob", "secret"
-      get "/v3/users/_by_id/#{ @user.puavoId }"
+      get "/v3/users/_by_id/#{ @teacher.puavoId }"
       assert_200
       data = JSON.parse(last_response.body)
 
@@ -364,8 +364,8 @@ describe PuavoRest::Users do
         },
       ].each do |opts|
         it opts[:name] do
-          @user.puavoLocale = opts[:user]
-          @user.save!
+          @teacher.puavoLocale = opts[:user]
+          @teacher.save!
           @school.puavoLocale = opts[:school]
           @school.save!
 
@@ -385,8 +385,8 @@ describe PuavoRest::Users do
 
     describe "with image" do
       before(:each) do
-        @user.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
-        @user.save!
+        @teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+        @teacher.save!
       end
 
       it "returns user data with image link" do
@@ -434,8 +434,8 @@ describe PuavoRest::Users do
   describe "GET /v3/users/bob/profile.jpg" do
 
     it "returns 200 if bob hash image" do
-      @user.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
-      @user.save!
+      @teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+      @teacher.save!
 
       basic_authorize "bob", "secret"
       get "/v3/users/bob/profile.jpg"
@@ -472,7 +472,7 @@ describe PuavoRest::Users do
       )
     end
     it "can be listed" do
-      user = PuavoRest::User.by_username(@user.uid)
+      user = PuavoRest::User.by_username(@teacher.uid)
       group_names = Set.new(user.groups.map{ |g| g.name })
       assert !group_names.include?("Gryffindor"), "Group list must not include schools"
 
