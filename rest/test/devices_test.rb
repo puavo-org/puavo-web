@@ -480,7 +480,7 @@ describe PuavoRest::Devices do
     end
 
     it "has preferred boot image by device" do
-      assert_equal @rest_thinclient01.preferred_boot_image, "deviceprefbootimage"
+      assert_equal @rest_thinclient01.preferred_boot_image, "deviceprefimage"
     end
 
     it "has preferred boot image by device preferred image" do
@@ -516,10 +516,10 @@ describe PuavoRest::Devices do
       data = JSON.parse last_response.body
       assert_equal 1, data.count
       printer = data.first
-      assert_equal "server1.example.puavo.net", printer["server_fqdn"]
+      assert_equal "bootserver.example.puavo.net", printer["server_fqdn"]
       assert_equal "printer1", printer["name"]
       assert_equal "printer1", printer["description"]
-      assert_equal "ipp://server1.example.puavo.net/printers/printer1", printer["remote_uri"]
+      assert_equal "ipp://bootserver.example.puavo.net/printers/printer1", printer["remote_uri"]
     end
 
     it "can handle multiple printers" do
