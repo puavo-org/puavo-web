@@ -132,7 +132,7 @@ describe PuavoRest::DeviceImages do
     before(:each) do
       create_device(
         :puavoDeviceBootImage => "fatbootimage",
-        :puavoHostname => "fat1",
+        :puavoHostname => "fat3",
         :puavoDeviceType => "fatclient",
         :macAddress => "00:60:2f:B2:8C:80",
         :puavoSchool => @school1.dn
@@ -141,12 +141,12 @@ describe PuavoRest::DeviceImages do
 
     it "gets listed too" do
       images = get_images
-      assert_equal ["bootdeviceimage1", "bootdeviceimage2", "organisationimage", "fatbootimage"], images
+      assert_equal %w(bootdeviceimage1 bootdeviceimage2 fatbootimage organisationimage), images
     end
 
     it "gets listed on filtered list too" do
       images = get_images("?boot_server=#{ @boot1.puavoHostname }")
-      assert_equal ["bootdeviceimage1", "organisationimage", "fatbootimage"], images
+      assert_equal %w(bootdeviceimage1 fatbootimage organisationimage), images
     end
 
   end
