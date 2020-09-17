@@ -589,7 +589,7 @@ class User < LdapModel
     # Append supplementary schools. This cannot be done with computed_attr,
     # because these schools must be part of the 'schools' array, not a
     # completely new attribute.
-    out += self.get_supplementary_schools()
+    out += self.hash_supplementary_schools()
 
     return out
   end
@@ -783,20 +783,19 @@ class User < LdapModel
     return mark_set
   end
 
-  def get_supplementary_schools()
-    return [] unless self.external_data
-
+  def list_supplementary_schools
     begin
-      ed = JSON.parse(self.external_data)
+      return JSON.parse(self.external_data).fetch('supplementary_schools', [])
     rescue
-      return []
     end
 
-    return [] unless ed.include?('supplementary_schools')
+    return []
+  end
 
+  def hash_supplementary_schools
     supplementary_schools = []
 
-    ed['supplementary_schools'].each do |school_id, data|
+    list_supplementary_schools.each do |school_id, data|
       supp_school = School.by_attr(:id, school_id.to_i)
       next unless supp_school
 
