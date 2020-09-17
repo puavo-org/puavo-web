@@ -353,14 +353,6 @@ Basic auth or boot server auth
 
     (Array)
 
-## POST /v3/schools/:school_id/legacy_roles/:role_id/members
-
-Add user to legacy role
-
-### Example
-
-    curl -d username=bob --user admin:secret $(puavo-resolve-api-server)/v3/schools/1/legacy_roles/5/members
-
 ## POST /v3/primus/:filename
 
 Upload Primus integration file

@@ -215,7 +215,6 @@ class Root < PuavoSinatra
   use PuavoRest::DeviceImages
   use PuavoRest::Schools
   use PuavoRest::BootServers
-  use PuavoRest::LegacyRoles
   use PuavoRest::UserLists
   use PuavoRest::SambaNextRid
   use PuavoRest::Groups
