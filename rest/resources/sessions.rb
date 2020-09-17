@@ -10,18 +10,16 @@ class Session < Hash
   # logout. Ie. on crash
   MAX_AGE = 60 * 60 * 12
 
-  UUID_CHARS = ["a".."z", "A".."Z", "0".."9"].reduce([]) do |memo, range|
-    memo + range.to_a
-  end
+  UUID_CHARS = [*'a'..'z', *'A'..'Z', *'0'..'9'].freeze
 
   def self.generate_uuid
-    (0...50).map{ UUID_CHARS[rand(UUID_CHARS.size)] }.join
+    UUID_CHARS.sample(50).join
   end
-
 
   def hostname_key
     self.class.hostname_key("#{ self["device"]["hostname"] }")
   end
+
   def self.hostname_key(hostname)
     "session:hostname:#{ hostname }"
   end
@@ -29,6 +27,7 @@ class Session < Hash
   def self.uuid_key(uuid)
     "session:uuid:#{ uuid }"
   end
+
   def uuid_key
     self.class.uuid_key("#{ self["uuid"] }")
   end
