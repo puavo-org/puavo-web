@@ -14,9 +14,7 @@ def create_printer(server, name)
   printer
 end
 
-
 describe PuavoRest::Sessions do
-
   before(:each) do
     Puavo::Test.clean_up_ldap
     PuavoRest::Session.local_store.flushdb
@@ -82,7 +80,6 @@ describe PuavoRest::Sessions do
       assert_equal 1, Array(data["fallback_ltsp_servers"]).size
       # server2 is the fallback server
       assert_equal "server2", data["fallback_ltsp_servers"][0]["hostname"]
-
     end
   end
 
@@ -146,7 +143,6 @@ describe PuavoRest::Sessions do
         "server2", data["ltsp_server"]["hostname"],
         "server1 has less load but server2 must be given because server1 is preferred by the client"
       )
-
     end
   end
 
@@ -212,9 +208,7 @@ describe PuavoRest::Sessions do
         data["ltsp_server"]["hostname"]
       )
     end
-
   end
-
 
   describe "nonexistent device hostname" do
     it "gets 404" do
@@ -388,7 +382,6 @@ describe PuavoRest::Sessions do
         assert_equal 404, last_response.status
       end
 
-
       it "responds 404 for unknown sessions" do
         get "/v3/sessions/doesnotexists", {}, {
           "HTTP_AUTHORIZATION" => "Bootserver"
@@ -399,16 +392,13 @@ describe PuavoRest::Sessions do
         assert_equal "NotFound", data["error"]["code"]
       end
 
-
       it "DELETE responds 404 for bad uuids" do
         delete "/v3/sessions/baduid", {}, {
           "HTTP_AUTHORIZATION" => "Bootserver"
         }
         assert_equal 404, last_response.status
       end
-
     end
-
 
     it "all sessions can be fetched from index" do
       create_device(
@@ -447,7 +437,6 @@ describe PuavoRest::Sessions do
       assert_equal Array, data.class
       assert_equal 2, data.size, "Bad session count! #{ data.inspect }"
     end
-
   end
 
   describe "LTSP server school limit" do
@@ -474,13 +463,11 @@ describe PuavoRest::Sessions do
         :puavoSchool => ltsp_school.dn
       )
 
-
       create_device(
         :puavoHostname => "normalschooldevice",
         :macAddress => "79:61:37:31:d1:ba",
         :puavoSchool => @school.dn
       )
-
     end
 
     it "must not serve limited servers to others" do
@@ -526,7 +513,6 @@ describe PuavoRest::Sessions do
       # But client will get limitedserver because it is forced to its school
       assert_equal "limitedserver", data["ltsp_server"]["hostname"]
     end
-
   end
 
   describe "With users" do
@@ -564,8 +550,6 @@ describe PuavoRest::Sessions do
       @user.puavoSchool = @school.dn
       @user.role_ids = [@role.puavoId]
       @user.save!
-
-
     end
 
     describe "session without device hostname" do
@@ -582,7 +566,6 @@ describe PuavoRest::Sessions do
       end
     end
 
-
     describe "fat client sessions" do
       before(:each) do
         basic_authorize "bob", "secret"
@@ -590,8 +573,8 @@ describe PuavoRest::Sessions do
         assert_200
 
         @data = JSON.parse last_response.body
-
       end
+
       it "does not need a ltsp server" do
         assert_equal "example.puavo.net", @data["organisation"], "has organisation info"
         assert @data["ltsp_server"].nil?, "fat clients must not get ltsp server"
@@ -608,7 +591,6 @@ describe PuavoRest::Sessions do
         assert @data["device"]
         assert_equal "gryffindor.example", @data["device"]["homepage"]
       end
-
     end
 
     describe "laptop sessions" do
@@ -646,7 +628,6 @@ describe PuavoRest::Sessions do
         assert @data["device"]
         assert_equal "gryffindor.example", @data["device"]["homepage"]
       end
-
     end
 
     describe "preferred language attribute" do
@@ -675,12 +656,9 @@ describe PuavoRest::Sessions do
         assert_equal "de_CH.UTF-8", data["user"]["locale"]
         assert_equal "de_CH.UTF-8", data["locale"]
       end
-
-
     end
 
     describe "printers" do
-
       before(:each) do
         @printer1 = create_printer(@bootserver, "printer1")
         @wireless_printer = create_printer(@bootserver, "wireless printer")
@@ -716,7 +694,6 @@ describe PuavoRest::Sessions do
       end
 
       describe "for authenticated users" do
-
         before(:each) do
           basic_authorize "bob", "secret"
           post "/v3/sessions", "hostname" => "athin"
@@ -739,9 +716,7 @@ describe PuavoRest::Sessions do
             p["description"] == "device printer"
           end.size, 1)
         end
-
       end
-
 
       it "for wireless users are given from /v3/devices/:hostname/wireless_printer_queues" do
         get "/v3/devices/athin/wireless_printer_queues", {}, {
@@ -784,7 +759,7 @@ describe PuavoRest::Sessions do
         assert data["user"]["groups"].first["gid_number"], "groups have gid_numbers"
 
         school_group = data["user"]["groups"].select do |g|
-          g["name"] == "Gryffindor" && g["object_model"] == "PuavoRest::School"
+          g["name"] == "Gryffindor"
         end.first
 
         assert school_group, "Has schools in groups list"
@@ -797,9 +772,6 @@ describe PuavoRest::Sessions do
 
         assert_equal Fixnum, data["user"]["groups"].first["gid_number"].class, "gid_number must be number"
       end
-
-
     end
   end
-
 end
