@@ -1289,6 +1289,7 @@ class Users < PuavoSinatra
   # Maps "user" field names to LDAP attributes. Used when searching for data, as only
   # the requested fields are actually returned in the queries.
   USER_TO_LDAP = {
+    'admin_school_id'    => 'puavoAdminOfSchool',
     'created'            => 'createTimestamp',  # LDAP operational attribute
     'dn'                 => 'dn',
     'do_not_delete'      => 'puavoDoNotDelete',
@@ -1322,6 +1323,7 @@ class Users < PuavoSinatra
     'mail'                          => { name: 'email' },
     'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },
     'preferredLanguage'             => { name: 'preferred_language' },
+    'puavoAdminOfSchool'            => { name: 'admin_school_id', type: :id_from_dn },
     'puavoDoNotDelete'              => { name: 'do_not_delete', type: :boolean },
     'puavoEduPersonAffiliation'     => { name: 'role' },
     'puavoEduPersonPersonnelNumber' => { name: 'personnel_number' },
@@ -1369,7 +1371,7 @@ class Users < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
-      out = v4_ensure_is_array(out, 'role', 'email', 'phone')
+      out = v4_ensure_is_array(out, 'role', 'email', 'phone', 'admin_school_id')
 
       return 200, json({
         status: 'ok',
