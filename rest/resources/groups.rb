@@ -206,7 +206,7 @@ class Groups < PuavoSinatra
 
       # convert and return
       out = v4_ldap_to_user(raw, ldap_attrs, LDAP_TO_USER)
-      out = v4_ensure_is_array(out, 'member_uid', 'member_dns')
+      out = v4_ensure_is_array(out, 'member_uid', 'member_dn')
 
       return 200, json({
         status: 'ok',
