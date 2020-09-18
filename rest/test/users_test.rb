@@ -160,7 +160,7 @@ describe PuavoRest::Users do
       assert_equal "bob@example.com", data["email"]
       assert_includes data["secondary_emails"], "bob@foobar.com"
       assert_includes data["secondary_emails"], "bob@helloworld.com"
-      assert_equal "student", data["user_type"]
+      assert_equal "teacher", data["user_type"]
       assert_equal "en", data["preferred_language"]
       assert data["uid_number"], "has uid number"
       assert data["gid_number"], "has gid number"
@@ -329,7 +329,7 @@ describe PuavoRest::Users do
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
       assert_equal ["bob@foobar.com", "bob@helloworld.com"], data["secondary_emails"]
-      assert_equal "student", data["user_type"]
+      assert_equal "teacher", data["user_type"]
       assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg", data["profile_image_link"]
 
       assert data["schools"], "has schools data added"
