@@ -150,26 +150,30 @@ class Groups < PuavoSinatra
     'created'       => 'createTimestamp',   # LDAP operational attribute
     'dn'            => 'dn',
     'external_id'   => 'puavoExternalId',
+    'gid_number'    => 'gidNumber',
     'id'            => 'puavoId',
     'member_dn'     => 'member',
     'member_uid'    => 'memberUid',
     'modified'      => 'modifyTimestamp',   # LDAP operational attribute
     'name'          => 'displayName',
     'school_id'     => 'puavoSchool',
+    'type'          => 'puavoEduGroupType',
   }
 
   # Maps LDAP attributes back to "user" fields and optionally specifies a conversion type
   LDAP_TO_USER = {
-    'cn'              => { name: 'abbreviation' },
-    'createTimestamp' => { name: 'created', type: :ldap_timestamp },
-    'displayName'     => { name: 'name' },
-    'dn'              => { name: 'dn' },
-    'member'          => { name: 'member_dn' },
-    'memberUid'       => { name: 'member_uid' },
-    'modifyTimestamp' => { name: 'modified', type: :ldap_timestamp },
-    'puavoExternalId' => { name: 'external_id' },
-    'puavoId'         => { name: 'id', type: :integer },
-    'puavoSchool'     => { name: 'school_id', type: :id_from_dn },
+    'cn'                => { name: 'abbreviation' },
+    'createTimestamp'   => { name: 'created', type: :ldap_timestamp },
+    'displayName'       => { name: 'name' },
+    'dn'                => { name: 'dn' },
+    'gidNumber'         => { name: 'gid_number', type: :integer },
+    'member'            => { name: 'member_dn' },
+    'memberUid'         => { name: 'member_uid' },
+    'modifyTimestamp'   => { name: 'modified', type: :ldap_timestamp },
+    'puavoExternalId'   => { name: 'external_id' },
+    'puavoEduGroupType' => { name: 'type' },
+    'puavoId'           => { name: 'id', type: :integer },
+    'puavoSchool'       => { name: 'school_id', type: :id_from_dn },
   }
 
   def v4_do_group_search(id, requested_ldap_attrs)

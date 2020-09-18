@@ -1296,6 +1296,7 @@ class Users < PuavoSinatra
     'external_id'        => 'puavoExternalId',
     'external_data'      => 'puavoExternalData',
     'first_names'        => 'givenName',
+    'gid_number'         => 'gidNumber',
     'id'                 => 'puavoId',
     'last_name'          => 'sn',
     'locale'             => 'puavoLocale',
@@ -1308,6 +1309,7 @@ class Users < PuavoSinatra
     'role'               => 'puavoEduPersonAffiliation',
     'school_id'          => 'puavoSchool',
     'ssh_public_key'     => 'puavoSshPublicKey',
+    'uid_number'         => 'uidNumber',
     'username'           => 'uid',
   }
 
@@ -1315,6 +1317,7 @@ class Users < PuavoSinatra
   LDAP_TO_USER = {
     'createTimestamp'               => { name: 'created', type: :ldap_timestamp },
     'dn'                            => { name: 'dn' },
+    'gidNumber'                     => { name: 'gid_number', type: :integer },
     'givenName'                     => { name: 'first_names' },
     'mail'                          => { name: 'email' },
     'modifyTimestamp'               => { name: 'modified', type: :ldap_timestamp },
@@ -1333,6 +1336,7 @@ class Users < PuavoSinatra
     'sn'                            => { name: 'last_name' },
     'telephoneNumber'               => { name: 'phone' },
     'uid'                           => { name: 'username' },
+    'uidNumber'                     => { name: 'uid_number', type: :integer },
   }
 
   def v4_do_user_search(id, requested_ldap_attrs)
