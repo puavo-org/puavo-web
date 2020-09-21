@@ -37,18 +37,18 @@
       <td>
         <% if @domain %>
         <div class="passwordDomainContainer">
-        <%= text_field :login, :uid, :value => @changing, :autofocus => @changing.empty? ? true : false, :required => "required" %>
+        <%= text_field :login, :uid, :value => @changing, :autofocus => (@changing.nil? || @changing.empty?) ? true : false, :required => "required" %>
         <span><%= @domain %></span>
         </div>
         <% else %>
-        <%= text_field :login, :uid, :value => @changing, :autofocus => @changing.empty? ? true : false, :required => "required" %>
+        <%= text_field :login, :uid, :value => @changing, :autofocus => (@changing.nil? || @changing.empty?) ? true : false, :required => "required" %>
         <% end %>
       </td>
     </tr>
 
     <tr>
       <th><%= label :login, :password, t('.password') %></th>
-      <td><%= password_field :login, :password, :autofocus => @changing.empty? ? false : true, :required => "required" %></td>
+      <td><%= password_field :login, :password, :autofocus => (@changing.nil? || @changing.empty?) ? false : true, :required => "required" %></td>
     </tr>
   </table>
 
