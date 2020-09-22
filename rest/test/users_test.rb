@@ -446,9 +446,6 @@ describe PuavoRest::Users do
   end
 
   describe "groups" do
-    before(:each) do
-      setup_ldap_admin_connection()
-    end
     it "can be listed" do
       user = PuavoRest::User.by_username(@teacher.uid)
       group_names = Set.new(user.groups.map{ |g| g.name })
@@ -539,8 +536,6 @@ describe PuavoRest::Users do
   describe "PUT /v3/users/:username/administrative_groups" do
 
     before(:each) do
-      setup_ldap_admin_connection()
-
       @user3 = PuavoRest::User.new(
         :first_name => "Jane",
         :last_name => "Doe",

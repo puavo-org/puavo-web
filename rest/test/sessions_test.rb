@@ -17,6 +17,8 @@ end
 describe PuavoRest::Sessions do
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
+
     PuavoRest::Session.local_store.flushdb
     @school = School.create(
       :cn => "gryffindor",
@@ -71,7 +73,6 @@ describe PuavoRest::Sessions do
       @group.puavoSchool = @school.dn
       @group.save!
 
-      setup_ldap_admin_connection()
       @user = PuavoRest::User.new(
         :email          => 'bob@example.com',
         :first_name     => 'Bob',

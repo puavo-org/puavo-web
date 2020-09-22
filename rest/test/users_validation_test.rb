@@ -22,8 +22,6 @@ oescribe LdapModel do
       @group.puavoSchool = @school.dn
       @group.save!
 
-      setup_ldap_admin_connection()
-
       @user = PuavoRest::User.new(
         :email          => 'heli.kopteri@example.com',
         :first_name     => 'Heli',

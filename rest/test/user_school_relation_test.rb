@@ -6,6 +6,8 @@ describe LdapModel do
 
     before(:each) do
       Puavo::Test.clean_up_ldap
+      setup_ldap_admin_connection()
+
       @school = School.create(
         :cn => "gryffindor",
         :displayName => "Gryffindor",
@@ -32,7 +34,6 @@ describe LdapModel do
       @group_other.puavoSchool = @school_other.dn
       @group_other.save!
 
-      setup_ldap_admin_connection()
       user = PuavoRest::User.new(
         :email      => 'heli.kopteri@example.com',
         :first_name => 'Heli',
