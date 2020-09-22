@@ -16,39 +16,38 @@ describe PuavoRest::Password do
       :abbreviation => 'group1',
       :name         => 'Group 1',
       :school_dn    => @school.dn.to_s,
-      :type         => 'teaching group')
+      :type         => 'administrative group')
     @group.save!
 
     maintenance_group = Group.find(:first,
                                    :attribute => 'cn',
                                    :value     => 'maintenance')
     @student = PuavoRest::User.new(
-      :administrative_groups => [ maintenance_group.id ],
-      :email                 => 'bob@example.com',
-      :first_name            => 'Bob',
-      :last_name             => 'Brown',
-      :password              => 'secret',
-      :preferred_language    => 'en',
-      :roles                 => [ 'student' ],
-      :school_dns            => [ @school.dn.to_s ],
-      :username              => 'bob',
+      :email              => 'bob@example.com',
+      :first_name         => 'Bob',
+      :last_name          => 'Brown',
+      :password           => 'secret',
+      :preferred_language => 'en',
+      :roles              => [ 'student' ],
+      :school_dns         => [ @school.dn.to_s ],
+      :username           => 'bob',
     )
     @student.save!
-    @student.teaching_group = @group   # XXX weird that this must be here
+    # XXX weird that this must be here:
+    @student.administrative_groups = [ maintenance_group.id, @group.id ]
 
     @teacher = PuavoRest::User.new(
-      :administrative_groups => [ maintenance_group.id ],
-      :email                 => 'teacher@example.com',
-      :first_name            => 'Test',
-      :last_name             => 'Teacher',
-      :password              => 'foobar',
-      :preferred_language    => 'en',
-      :roles                 => [ 'teacher' ],
-      :school_dns            => [ @school.dn.to_s ],
-      :username              => 'teacher',
+      :email              => 'teacher@example.com',
+      :first_name         => 'Test',
+      :last_name          => 'Teacher',
+      :password           => 'foobar',
+      :preferred_language => 'en',
+      :roles              => [ 'teacher' ],
+      :school_dns         => [ @school.dn.to_s ],
+      :username           => 'teacher',
     )
     @teacher.save!
-    @teacher.teaching_group = @group   # XXX weird that this must be here
+    @teacher.administrative_groups = [ maintenance_group.id, @group.id ]
   end
 
   describe "Test the school users list" do
