@@ -14,40 +14,40 @@ describe LdapModel do
         :puavoSchoolHomePageURL => "schoolhomepage.example"
       )
 
-      @group = Group.new
-      @group.cn = "group1"
-      @group.displayName = "Group 1"
-      @group.puavoEduGroupType = 'teaching group'
-      @group.puavoSchool = @school.dn
+      @group = PuavoRest::Group.new(
+        :abbreviation => 'group1',
+        :name         => 'Group 1',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group')
       @group.save!
 
       @user = PuavoRest::User.new(
-        :first_name => "Heli",
-        :last_name => "Kopteri",
-        :username => "heli",
-        :roles => ["student"],    # must be student, since year classes are NOT saved for non-students!
-        :email => "heli.kopteri@example.com",
-        :school_dns => [@school.dn.to_s],
-        :password => "userpw"
+        :email      => 'heli.kopteri@example.com',
+        :first_name => 'Heli',
+        :last_name  => 'Kopteri',
+        :password   => 'userpw',
+        # must be student, since year classes are NOT saved for non-students!
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'heli',
       )
       @user.save!
 
       @teaching_group = PuavoRest::Group.new(
-        :name => "5A",
-        :abbreviation => "gryffindor-5a",
-        :type => "teaching group",
-        :school_dn => @school.dn.to_s
+        :abbreviation => 'gryffindor-5a',
+        :name         => '5A',
+        :school_dn    => @school.dn.to_s
+        :type         => 'teaching group',
       )
       @teaching_group.save!
 
       @year_class = PuavoRest::Group.new(
-        :name => "5",
-        :abbreviation => "gryffindor-5",
-        :type => "year class",
-        :school_dn => @school.dn.to_s
+        :abbreviation => 'gryffindor-5',
+        :name         => '5',
+        :school_dn    => @school.dn.to_s
+        :type         => 'year class',
       )
       @year_class.save!
-
     end
 
     it "has Fixnum id" do
@@ -166,10 +166,10 @@ describe LdapModel do
         :password              => 'secret',
         :roles                 => [ 'student' ],
         :school_dns            => [ @school.dn.to_s ],
-        :teaching_group        => @group.id,
         :username              => 'mark',
       )
       user.save!
+      user.teaching_group = @group   # XXX weird that this must be here
     end
 
     it "can add and remove groups" do

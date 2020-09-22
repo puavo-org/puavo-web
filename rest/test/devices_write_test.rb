@@ -21,11 +21,11 @@ describe PuavoRest::Devices do
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
 
-    @group = Group.new
-    @group.cn = "group1"
-    @group.displayName = "Group 1"
-    @group.puavoEduGroupType = 'teaching group'
-    @group.puavoSchool = @school.dn
+    @group = PuavoRest::Group.new(
+      :abbreviation => 'group1',
+      :name         => 'Group 1',
+      :school_dn    => @school.dn.to_s,
+      :type         => 'teaching group')
     @group.save!
 
     maintenance_group = Group.find(:first,
@@ -40,12 +40,13 @@ describe PuavoRest::Devices do
       :password              => 'secret',
       :roles                 => [ 'student' ],
       :school_dns            => [ @school.dn.to_s ],
-      :secondary_emails      => [ 'bob@foobar.com', 'bob@helloworld.com' ],
       :ssh_public_key        => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
-      :teaching_group        => @group.id,
       :username              => 'bob',
     )
     @user.save!
+    # XXX weird that these must be here:
+    @user.secondary_emails = [ 'bob@foobar.com', 'bob@helloworld.com' ]
+    @user.teaching_group = @group
 
     @laptop = create_device(
       :puavoHostname => "laptop1",

@@ -15,24 +15,24 @@ oescribe LdapModel do
         :puavoSchoolHomePageURL => "schoolhomepage.example"
       )
 
-      @group = Group.new
-      @group.cn = "group1"
-      @group.displayName = "Group 1"
-      @group.puavoEduGroupType = 'teaching group'
-      @group.puavoSchool = @school.dn
+      @group = PuavoRest::Group.new(
+        :abbreviation => 'group1',
+        :name         => 'Group 1',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group')
       @group.save!
 
       @user = PuavoRest::User.new(
-        :email          => 'heli.kopteri@example.com',
-        :first_name     => 'Heli',
-        :last_name      => 'Kopteri',
-        :password       => 'userpw',
-        :roles          => [ 'staff' ],
-        :school_dns     => [ @school.dn.to_s ],
-        :teaching_group => @group.id,
-        :username       => 'heli',
+        :email      => 'heli.kopteri@example.com',
+        :first_name => 'Heli',
+        :last_name  => 'Kopteri',
+        :password   => 'userpw',
+        :roles      => [ 'staff' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'heli',
       )
       @user.save!
+      @user.teaching_group = @group   # XXX weird that this must be here
     end
 
     it "cannot create users with the same usernames" do

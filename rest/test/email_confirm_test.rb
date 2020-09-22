@@ -12,11 +12,11 @@ describe PuavoRest::EmailConfirm do
       :puavoSchoolHomePageURL => "schoolhomepage.example"
     )
 
-    @group = Group.new
-    @group.cn = "group1"
-    @group.displayName = "Group 1"
-    @group.puavoEduGroupType = 'teaching group'
-    @group.puavoSchool = @school.dn
+    @group = PuavoRest::Group.new(
+      :abbreviation => 'group1',
+      :name         => 'Group 1',
+      :school_dn    => @school.dn.to_s,
+      :type         => 'teaching group')
     @group.save!
 
     maintenance_group = Group.find(:first,
@@ -29,10 +29,10 @@ describe PuavoRest::EmailConfirm do
       :last_name             => 'Brown',
       :roles                 => [ 'student' ],
       :school_dns            => [ @school.dn.to_s ],
-      :teaching_group        => @group.id,
       :username              => 'bob',
     )
     @user.save!
+    @user.teaching_group = @group   # XXX weird that this must be here
   end
 
   describe "POST /email_confirm" do

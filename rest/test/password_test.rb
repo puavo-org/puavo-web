@@ -12,11 +12,11 @@ describe PuavoRest::Password do
       :puavoSchoolHomePageURL => "schoolhomepage.example"
     )
 
-    @group = Group.new
-    @group.cn = "group1"
-    @group.displayName = "Group 1"
-    @group.puavoEduGroupType = 'teaching group'
-    @group.puavoSchool = @school.dn
+    @group = PuavoRest::Group.new(
+      :abbreviation => 'group1',
+      :name         => 'Group 1',
+      :school_dn    => @school.dn.to_s,
+      :type         => 'teaching group')
     @group.save!
 
     maintenance_group = Group.find(:first,
@@ -31,10 +31,10 @@ describe PuavoRest::Password do
       :preferred_language    => 'en',
       :roles                 => [ 'student' ],
       :school_dns            => [ @school.dn.to_s ],
-      :teaching_group        => @group.id,
       :username              => 'bob',
     )
     @student.save!
+    @student.teaching_group = @group   # XXX weird that this must be here
 
     @teacher = PuavoRest::User.new(
       :administrative_groups => [ maintenance_group.id ],
@@ -45,10 +45,10 @@ describe PuavoRest::Password do
       :preferred_language    => 'en',
       :roles                 => [ 'teacher' ],
       :school_dns            => [ @school.dn.to_s ],
-      :teaching_group        => @group.id,
       :username              => 'teacher',
     )
     @teacher.save!
+    @teacher.teaching_group = @group   # XXX weird that this must be here
   end
 
   describe "Test the school users list" do

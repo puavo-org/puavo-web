@@ -14,18 +14,18 @@ describe PuavoRest::Users do
       :puavoSchoolHomePageURL => "schoolhomepage.example"
     )
 
-    @group = Group.new
-    @group.cn = "group1"
-    @group.displayName = "Group 1"
-    @group.puavoSchool = @school.dn
-    @group.puavoEduGroupType = 'teaching group'
+    @group = PuavoRest::Group.new(
+      :abbreviation => 'group1',
+      :name         => 'Group 1',
+      :school_dn    => @school.dn.to_s,
+      :type         => 'teaching group')
     @group.save!
 
-    maintenance_group = Group.find(:first,
-                                   :attribute => 'cn',
-                                   :value     => 'maintenance')
+    @maintenance_group = Group.find(:first,
+                                    :attribute => 'cn',
+                                    :value     => 'maintenance')
     @teacher = PuavoRest::User.new(
-      :administrative_groups => [ maintenance_group.id ],
+      :administrative_groups => [ @maintenance_group.id ],
       :email                 => 'bob@example.com',
       :external_id           => 'bob',
       :first_name            => 'Bob',
@@ -35,15 +35,15 @@ describe PuavoRest::Users do
       :roles                 => [ 'teacher' ],
       :school_dns            => [ @school.dn.to_s ],
       :secondary_emails      => [ 'bob@foobar.com', 'bob@helloworld.com' ],
-      :teaching_group        => @group.id,
       :telephone_number      => [ '123', '456' ],
       :ssh_public_key        => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
       :username              => 'bob',
     )
     @teacher.save!
+    @teacher.teaching_group = @group
 
     @user2 = PuavoRest::User.new(
-      :administrative_groups => [ maintenance_group.id ],
+      :administrative_groups => [ @maintenance_group.id ],
       :email                 => 'alice@example.com',
       :first_name            => 'Alice',
       :last_name             => 'Wonder',
@@ -462,15 +462,15 @@ describe PuavoRest::Users do
 
     before(:each) do
       @user3 = PuavoRest::User.new(
-        # XXX :adminstrative_groups => 'Maintenance' ?
-        :email      => 'alice.another@example.com',
-        :first_name => 'Alice',
-        :last_name  => 'Another',
-        :locale     => 'en_US.UTF-8',
-        :password   => 'secret',
-        :roles      => [ 'student' ],
-        :school_dns => [ @school.dn.to_s ],
-        :username   => 'alice.another',
+        :administrative_groups => [ @maintenance_group.id ],
+        :email                 => 'alice.another@example.com',
+        :first_name            => 'Alice',
+        :last_name             => 'Another',
+        :locale                => 'en_US.UTF-8',
+        :password              => 'secret',
+        :roles                 => [ 'student' ],
+        :school_dns            => [ @school.dn.to_s ],
+        :username              => 'alice.another',
       )
       @user3.save!
     end
@@ -546,14 +546,12 @@ describe PuavoRest::Users do
       @user3.save!
 
       @group2 = PuavoRest::Group.new(
-        :name => "Test group 2",
-        :abbreviation => "testgroup2",
-        :type => "administrative group",
-        :school_dn => @school.dn.to_s
+        :abbreviation => 'testgroup2',
+        :name         => 'Test group 2',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'administrative group',
       )
       @group2.save!
-
-
     end
 
     it "update administrative groups for user" do

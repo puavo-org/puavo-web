@@ -66,25 +66,25 @@ describe PuavoRest::Sessions do
       }
       @bootserver.save!
 
-      @group = Group.new
-      @group.cn = "group1"
-      @group.displayName = "Group 1"
-      @group.puavoEduGroupType = 'teaching group'
-      @group.puavoSchool = @school.dn
+      @group = PuavoRest::Group.new(
+        :abbreviation => 'group1',
+        :name         => 'Group 1',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group')
       @group.save!
 
       @user = PuavoRest::User.new(
-        :email          => 'bob@example.com',
-        :first_name     => 'Bob',
-        :last_name      => 'Brown',
-        :password       => 'secret',
-        :locale         => 'de_CH.UTF-8',
-        :roles          => [ 'student' ],
-        :school_dns     => [ @school.dn.to_s ],
-        :teaching_group => @group.id,
-        :username       => 'bob',
+        :email      => 'bob@example.com',
+        :first_name => 'Bob',
+        :last_name  => 'Brown',
+        :password   => 'secret',
+        :locale     => 'de_CH.UTF-8',
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'bob',
       )
       @user.save!
+      @user.teaching_group = @group   # XXX weird that this must be here
     end
 
     describe "session without device hostname" do

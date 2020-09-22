@@ -14,11 +14,11 @@ describe LdapModel do
         :puavoSchoolHomePageURL => "schoolhomepage.example"
       )
 
-      @group = Group.new
-      @group.cn = "group1"
-      @group.displayName = "Group 1"
-      @group.puavoEduGroupType = 'teaching group'
-      @group.puavoSchool = @school.dn
+      @group = PuavoRest::Group.new(
+        :abbreviation => 'group1',
+        :name         => 'Group 1',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group')
       @group.save!
 
       @school_other = School.create(
@@ -27,11 +27,11 @@ describe LdapModel do
         :puavoSchoolHomePageURL => "otherschool.example"
       )
 
-      @group_other = Group.new
-      @group_other.cn = "othergroup"
-      @group_other.displayName = "Group Other"
-      @group_other.puavoEduGroupType = 'teaching group'
-      @group_other.puavoSchool = @school_other.dn
+      @group_other = PuavoRest::Group.new(
+        :abbreviation => 'othergroup',
+        :name         => 'Group Other',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group')
       @group_other.save!
 
       user = PuavoRest::User.new(
