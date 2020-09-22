@@ -597,7 +597,7 @@ describe PuavoRest::Devices do
       )
 
       # device puavoDevicePrimaryUser is invalid when user 'bob' is removed
-      @user.destroy
+      @user.destroy!
 
       get "/v3/devices/athin"
       assert_200
