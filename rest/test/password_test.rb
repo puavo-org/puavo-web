@@ -19,31 +19,34 @@ describe PuavoRest::Password do
     @group.puavoSchool = @school.dn
     @group.save!
 
+    maintenance_group = Group.find(:first,
+                                   :attribute => 'cn',
+                                   :value     => 'maintenance')
     @student = PuavoRest::User.new(
-      # XXX :administrative_groups => 'Maintenance' ?
-      :email              => 'bob@example.com',
-      :first_name         => 'Bob',
-      :last_name          => 'Brown',
-      :password           => 'secret',
-      :preferred_language => 'en',
-      :roles              => [ 'student' ],
-      :school_dns         => [ @school.dn.to_s ],
-      :teaching_group     => @group.id,
-      :username           => 'bob',
+      :administrative_groups => [ maintenance_group.id ],
+      :email                 => 'bob@example.com',
+      :first_name            => 'Bob',
+      :last_name             => 'Brown',
+      :password              => 'secret',
+      :preferred_language    => 'en',
+      :roles                 => [ 'student' ],
+      :school_dns            => [ @school.dn.to_s ],
+      :teaching_group        => @group.id,
+      :username              => 'bob',
     )
     @student.save!
 
     @teacher = PuavoRest::User.new(
-      # XXX :administrative_groups => 'Maintenance' ?
-      :email              => 'teacher@example.com',
-      :first_name         => 'Test',
-      :last_name          => 'Teacher',
-      :password           => 'foobar',
-      :preferred_language => 'en',
-      :roles              => [ 'teacher' ],
-      :school_dns         => [ @school.dn.to_s ],
-      :teaching_group     => @group.id,
-      :username           => 'teacher',
+      :administrative_groups => [ maintenance_group.id ],
+      :email                 => 'teacher@example.com',
+      :first_name            => 'Test',
+      :last_name             => 'Teacher',
+      :password              => 'foobar',
+      :preferred_language    => 'en',
+      :roles                 => [ 'teacher' ],
+      :school_dns            => [ @school.dn.to_s ],
+      :teaching_group        => @group.id,
+      :username              => 'teacher',
     )
     @teacher.save!
   end

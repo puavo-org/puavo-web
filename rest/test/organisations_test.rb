@@ -11,16 +11,19 @@ describe PuavoRest::Organisations do
       :displayName => "Gryffindor"
     )
 
+    maintenance_group = Group.find(:first,
+                                   :attribute => 'cn',
+                                   :value     => 'maintenance')
     @user = PuavoRest::User.new(
-      # XXX :administrative_groups => 'Maintenance' ?
-      :email              => 'bob@example.com',
-      :first_name         => 'Bob',
-      :last_name          => 'Brown',
-      :password           => 'secret',
-      :preferred_language => 'en',
-      :roles              => [ 'student' ],
-      :school_dns         => [ @school.dn.to_s ],
-      :username           => 'bob',
+      :administrative_groups => [ maintenance_group.id ],
+      :email                 => 'bob@example.com',
+      :first_name            => 'Bob',
+      :last_name             => 'Brown',
+      :password              => 'secret',
+      :preferred_language    => 'en',
+      :roles                 => [ 'student' ],
+      :school_dns            => [ @school.dn.to_s ],
+      :username              => 'bob',
     )
     @user.save!
 

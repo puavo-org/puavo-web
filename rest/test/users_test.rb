@@ -21,36 +21,39 @@ describe PuavoRest::Users do
     @group.puavoEduGroupType = 'teaching group'
     @group.save!
 
+    maintenance_group = Group.find(:first,
+                                   :attribute => 'cn',
+                                   :value     => 'maintenance')
     @teacher = PuavoRest::User.new(
-      # XXX :administrative_groups => 'Maintenance',
-      :email            => 'bob@example.com',
-      :external_id      => 'bob',
-      :first_name       => 'Bob',
-      :last_name        => 'Brown',
-      :locale           => 'en_US.UTF-8',
-      :password         => 'secret',
-      :roles            => [ 'teacher' ],
-      :school_dns       => [ @school.dn.to_s ],
-      :secondary_emails => [ 'bob@foobar.com', 'bob@helloworld.com' ],
-      :teaching_group   => @group.id,
-      :telephone_number => [ '123', '456' ],
-      :ssh_public_key   => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
-      :username         => 'bob',
+      :administrative_groups => [ maintenance_group.id ],
+      :email                 => 'bob@example.com',
+      :external_id           => 'bob',
+      :first_name            => 'Bob',
+      :last_name             => 'Brown',
+      :locale                => 'en_US.UTF-8',
+      :password              => 'secret',
+      :roles                 => [ 'teacher' ],
+      :school_dns            => [ @school.dn.to_s ],
+      :secondary_emails      => [ 'bob@foobar.com', 'bob@helloworld.com' ],
+      :teaching_group        => @group.id,
+      :telephone_number      => [ '123', '456' ],
+      :ssh_public_key        => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+      :username              => 'bob',
     )
     @teacher.save!
 
     @user2 = PuavoRest::User.new(
-      # XXX :administrative_groups => 'Maintenance',
-      :email            => 'alice@example.com',
-      :first_name       => 'Alice',
-      :last_name        => 'Wonder',
-      :locale           => 'en_US.UTF-8',
-      :password         => 'secret',
-      :roles            => [ 'student' ],
-      :school_dns       => [ @school.dn.to_s ],
-      :teaching_group   => @group.id,
-      :telephone_number => [ '789' ],
-      :username         => 'alice',
+      :administrative_groups => [ maintenance_group.id ],
+      :email                 => 'alice@example.com',
+      :first_name            => 'Alice',
+      :last_name             => 'Wonder',
+      :locale                => 'en_US.UTF-8',
+      :password              => 'secret',
+      :roles                 => [ 'student' ],
+      :school_dns            => [ @school.dn.to_s ],
+      :teaching_group        => @group.id,
+      :telephone_number      => [ '789' ],
+      :username              => 'alice',
     )
     @user2.save!
 

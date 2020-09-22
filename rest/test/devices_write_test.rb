@@ -28,19 +28,22 @@ describe PuavoRest::Devices do
     @group.puavoSchool = @school.dn
     @group.save!
 
+    maintenance_group = Group.find(:first,
+                                   :attribute => 'cn',
+                                   :value     => 'maintenance')
     @user = PuavoRest::User.new(
-      # XXX :administrative_groups => [ 'Maintenance' ] ?
-      :email            => 'bob@example.com',
-      :first_name       => 'Bob',
-      :last_name        => 'Brown',
-      :locale           => 'en_US.UTF-8',
-      :password         => 'secret',
-      :roles            => [ 'student' ],
-      :school_dns       => [ @school.dn.to_s ],
-      :secondary_emails => [ 'bob@foobar.com', 'bob@helloworld.com' ],
-      :ssh_public_key   => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
-      :teaching_group   => @group.id,
-      :username         => 'bob',
+      :administrative_groups => [ maintenance_group.id ],
+      :email                 => 'bob@example.com',
+      :first_name            => 'Bob',
+      :last_name             => 'Brown',
+      :locale                => 'en_US.UTF-8',
+      :password              => 'secret',
+      :roles                 => [ 'student' ],
+      :school_dns            => [ @school.dn.to_s ],
+      :secondary_emails      => [ 'bob@foobar.com', 'bob@helloworld.com' ],
+      :ssh_public_key        => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+      :teaching_group        => @group.id,
+      :username              => 'bob',
     )
     @user.save!
 

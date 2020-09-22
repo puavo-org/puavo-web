@@ -154,17 +154,20 @@ describe LdapModel do
     end
 
     it "does not break active ldap" do
+      maintenance_group = Group.find(:first,
+                                     :attribute => 'cn',
+                                     :value     => 'maintenance')
       user = PuavoRest::User.new(
-        # XXX :administrative_groups => 'Maintenance'
-        :email          => 'mark@example.com',
-        :first_name     => 'Mark',
-        :last_name      => 'Hamill',
-        :locale         => 'en_US.UTF-8',
-        :password       => 'secret',
-        :roles          => [ 'student' ],
-        :school_dns     => [ @school.dn.to_s ],
-        :teaching_group => @group.id,
-        :username       => 'mark',
+        :administrative_groups => [ maintenance_group.id ],
+        :email                 => 'mark@example.com',
+        :first_name            => 'Mark',
+        :last_name             => 'Hamill',
+        :locale                => 'en_US.UTF-8',
+        :password              => 'secret',
+        :roles                 => [ 'student' ],
+        :school_dns            => [ @school.dn.to_s ],
+        :teaching_group        => @group.id,
+        :username              => 'mark',
       )
       user.save!
     end
