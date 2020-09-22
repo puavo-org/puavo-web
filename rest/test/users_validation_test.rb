@@ -1,12 +1,14 @@
 require_relative "./helper"
 require_relative "../lib/ldapmodel"
 
-describe LdapModel do
+oescribe LdapModel do
 
   describe "user validation" do
 
     before(:each) do
       Puavo::Test.clean_up_ldap
+      setup_ldap_admin_connection()
+
       @school = School.create(
         :cn => "gryffindor",
         :displayName => "Gryffindor",
@@ -16,25 +18,21 @@ describe LdapModel do
       @group = Group.new
       @group.cn = "group1"
       @group.displayName = "Group 1"
+      @group.puavoEduGroupType = 'teaching group'
       @group.puavoSchool = @school.dn
       @group.save!
-
-      @role = Role.new
-      @role.displayName = "Some role"
-      @role.puavoSchool = @school.dn
-      @role.groups << @group
-      @role.save!
 
       setup_ldap_admin_connection()
 
       @user = PuavoRest::User.new(
-        :first_name => "Heli",
-        :last_name => "Kopteri",
-        :username => "heli",
-        :roles => ["staff"],
-        :email => "heli.kopteri@example.com",
-        :school_dns => [@school.dn.to_s],
-        :password => "userpw"
+        :email          => 'heli.kopteri@example.com',
+        :first_name     => 'Heli',
+        :last_name      => 'Kopteri',
+        :password       => 'userpw',
+        :roles          => [ 'staff' ],
+        :school_dns     => [ @school.dn.to_s ],
+        :teaching_group => @group.id,
+        :username       => 'heli',
       )
       @user.save!
     end

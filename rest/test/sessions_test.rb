@@ -67,27 +67,22 @@ describe PuavoRest::Sessions do
       @group = Group.new
       @group.cn = "group1"
       @group.displayName = "Group 1"
+      @group.puavoEduGroupType = 'teaching group'
       @group.puavoSchool = @school.dn
       @group.save!
 
-
-      @role = Role.new
-      @role.displayName = "Some role"
-      @role.puavoSchool = @school.dn
-      @role.groups << @group
-      @role.save!
-
-      @user = User.new(
-        :givenName => "Bob",
-        :sn  => "Brown",
-        :uid => "bob",
-        :puavoEduPersonAffiliation => "student",
-        :puavoLocale => "de_CH.UTF-8",
-        :mail => "bob@example.com"
+      setup_ldap_admin_connection()
+      @user = PuavoRest::User.new(
+        :email          => 'bob@example.com',
+        :first_name     => 'Bob',
+        :last_name      => 'Brown',
+        :password       => 'secret',
+        :locale         => 'de_CH.UTF-8',
+        :roles          => [ 'student' ],
+        :school_dns     => [ @school.dn.to_s ],
+        :teaching_group => @group.id,
+        :username       => 'bob',
       )
-      @user.set_password "secret"
-      @user.puavoSchool = @school.dn
-      @user.role_ids = [@role.puavoId]
       @user.save!
     end
 

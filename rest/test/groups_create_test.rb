@@ -37,15 +37,15 @@ describe LdapModel do
     @group3.save!
 
     @user = PuavoRest::User.new(
-      :first_name => "Bob",
-      :last_name => "Brown",
-      :username => "bob",
-      :roles => ["admin"],
-      :school_dns => [@school.dn.to_s],
-      :password => "secret123"
+      :email      => 'bob@example.com',
+      :first_name => 'Bob',
+      :last_name  => 'Brown',
+      :password   => 'secret123',
+      :roles      => [ 'admin' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'bob',
     )
     @user.save!
-
   end
 
   describe "group creation" do

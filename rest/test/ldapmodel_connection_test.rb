@@ -5,23 +5,23 @@ describe "LdapModel connection management" do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
 
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :mail => "bob@example.com"
+    @user = PuavoRest::User.new(
+      # XXX :administrative_groups => 'Maintenance' ?
+      :email      => 'bob@example.com',
+      :first_name => 'Bob',
+      :last_name  => 'Brown',
+      :password   => 'secret',
+      :roles      => [ 'student' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'bob',
     )
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [
-      Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
-    ]
     @user.save!
   end
 

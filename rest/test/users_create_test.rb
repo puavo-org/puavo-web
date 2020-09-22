@@ -15,14 +15,9 @@ describe LdapModel do
       @group = Group.new
       @group.cn = "group1"
       @group.displayName = "Group 1"
+      @group.puavoEduGroupType = 'teaching group'
       @group.puavoSchool = @school.dn
       @group.save!
-
-      @role = Role.new
-      @role.displayName = "Some role"
-      @role.puavoSchool = @school.dn
-      @role.groups << @group
-      @role.save!
 
       setup_ldap_admin_connection()
 
@@ -159,27 +154,19 @@ describe LdapModel do
     end
 
     it "does not break active ldap" do
-      user = User.new(
-        :givenName => "Mark",
-        :sn  => "Hamil",
-        :uid => "mark",
-        :puavoEduPersonAffiliation => "student",
-        :puavoLocale => "en_US.UTF-8",
-        :mail => ["mark@example.com"],
-        :role_ids => [@role.puavoId]
+      user = PuavoRest::User.new(
+        # XXX :administrative_groups => 'Maintenance'
+        :email          => 'mark@example.com',
+        :first_name     => 'Mark',
+        :last_name      => 'Hamill',
+        :locale         => 'en_US.UTF-8',
+        :password       => 'secret',
+        :roles          => [ 'student' ],
+        :school_dns     => [ @school.dn.to_s ],
+        :teaching_group => @group.id,
+        :username       => 'mark',
       )
-
-      user.set_password "secret"
-      user.puavoSchool = @school.dn
-      user.role_ids = [
-        Role.find(:first, {
-          :attribute => "displayName",
-          :value => "Maintenance"
-        }).puavoId,
-        @role.puavoId
-      ]
       user.save!
-
     end
 
     it "can add and remove groups" do

@@ -4,6 +4,7 @@ describe PuavoRest::EmailConfirm do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
 
     @school = School.create(
       :cn => "gryffindor",
@@ -14,35 +15,21 @@ describe PuavoRest::EmailConfirm do
     @group = Group.new
     @group.cn = "group1"
     @group.displayName = "Group 1"
+    @group.puavoEduGroupType = 'teaching group'
     @group.puavoSchool = @school.dn
     @group.save!
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :mail => "bob@example.com",
-      :role_ids => [@role.puavoId]
+    @user = PuavoRest::User.new(
+      # XXX :administrative_groups => [ 'Maintenance' ] ?
+      :email          => 'bob@example.com',
+      :first_name     => 'Bob',
+      :last_name      => 'Brown',
+      :roles          => [ 'student' ],
+      :school_dns     => [ @school.dn.to_s ],
+      :teaching_group => @group.id,
+      :username       => 'bob',
     )
-
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @user.save!
-
   end
 
   describe "POST /email_confirm" do

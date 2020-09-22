@@ -12,6 +12,7 @@ describe PuavoRest::SSO do
 
     PuavoRest::Organisation.refresh
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
 
     @external_service = ExternalService.new
     @external_service.classes = ["top", "puavoJWTService"]
@@ -28,31 +29,24 @@ describe PuavoRest::SSO do
       :displayName => "Gryffindor"
     )
 
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => ["student"],
-      :mail => "bob@example.com"
-    )
-
     @group = Group.new
     @group.cn = "group1"
     @group.displayName = "Group 1"
+    @group.puavoEduGroupType = 'teaching group'
     @group.puavoSchool = @school.dn
     @group.save!
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [ @role.puavoId ]
+    @user = PuavoRest::User.new(
+      :email          => 'bob@example.com',
+      :first_name     => 'Bob',
+      :last_name      => 'Brown',
+      :password       => 'secret',
+      :roles          => [ 'student' ],
+      :school_dns     => [ @school.dn.to_s ],
+      :teaching_group => @group.id,
+      :username       => 'bob',
+    )
     @user.save!
-
   end
 
   after do

@@ -4,6 +4,7 @@ describe PuavoRest::Password do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
 
     @school = School.create(
       :cn => "gryffindor",
@@ -14,53 +15,36 @@ describe PuavoRest::Password do
     @group = Group.new
     @group.cn = "group1"
     @group.displayName = "Group 1"
+    @group.puavoEduGroupType = 'teaching group'
     @group.puavoSchool = @school.dn
     @group.save!
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @student = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :mail => "bob@example.com",
-      :role_ids => [@role.puavoId]
+    @student = PuavoRest::User.new(
+      # XXX :administrative_groups => 'Maintenance' ?
+      :email              => 'bob@example.com',
+      :first_name         => 'Bob',
+      :last_name          => 'Brown',
+      :password           => 'secret',
+      :preferred_language => 'en',
+      :roles              => [ 'student' ],
+      :school_dns         => [ @school.dn.to_s ],
+      :teaching_group     => @group.id,
+      :username           => 'bob',
     )
-
-    @student.set_password "secret"
-    @student.puavoSchool = @school.dn
-    @student.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @student.save!
 
-    @teacher = User.new(
-      :givenName => "Test",
-      :sn  => "Teacher",
-      :uid => "teacher",
-      :puavoEduPersonAffiliation => "teacher",
-      :mail => "teacher@example.com",
-      :role_ids => [@role.puavoId]
+    @teacher = PuavoRest::User.new(
+      # XXX :administrative_groups => 'Maintenance' ?
+      :email              => 'teacher@example.com',
+      :first_name         => 'Test',
+      :last_name          => 'Teacher',
+      :password           => 'foobar',
+      :preferred_language => 'en',
+      :roles              => [ 'teacher' ],
+      :school_dns         => [ @school.dn.to_s ],
+      :teaching_group     => @group.id,
+      :username           => 'teacher',
     )
-
-    @teacher.set_password "foobar"
-    @teacher.puavoSchool = @school.dn
-    @teacher.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @teacher.save!
   end
 

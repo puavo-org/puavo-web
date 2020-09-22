@@ -15,14 +15,9 @@ describe LdapModel do
       @group = Group.new
       @group.cn = "group1"
       @group.displayName = "Group 1"
+      @group.puavoEduGroupType = 'teaching group'
       @group.puavoSchool = @school.dn
       @group.save!
-
-      @role = Role.new
-      @role.displayName = "Some role"
-      @role.puavoSchool = @school.dn
-      @role.groups << @group
-      @role.save!
 
       @school_other = School.create(
         :cn => "otherschool",
@@ -33,30 +28,23 @@ describe LdapModel do
       @group_other = Group.new
       @group_other.cn = "othergroup"
       @group_other.displayName = "Group Other"
+      @group_other.puavoEduGroupType = 'teaching group'
       @group_other.puavoSchool = @school_other.dn
       @group_other.save!
 
-      @role_other = Role.new
-      @role_other.displayName = "Other Role"
-      @role_other.puavoSchool = @school_other.dn
-      @role_other.groups << @group_other
-      @role_other.save!
-
       setup_ldap_admin_connection()
       user = PuavoRest::User.new(
-        :first_name => "Heli",
-        :last_name => "Kopteri",
-        :username => "heli",
-        :roles => ["staff"],
-        :email => "heli.kopteri@example.com",
-        :school_dns => [@school.dn.to_s],
-        :password => "userpassswordislong"
+        :email      => 'heli.kopteri@example.com',
+        :first_name => 'Heli',
+        :last_name  => 'Kopteri',
+        :password   => 'userpassswordislong',
+        :roles      => [ 'staff' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'heli',
       )
       user.save!
       @user_dn = user.dn.to_s
-
     end
-
 
     it "are set on creation" do
       school = PuavoRest::School.by_dn(@school.dn)

@@ -6,6 +6,8 @@ describe PuavoRest::Devices do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -27,20 +29,14 @@ describe PuavoRest::Devices do
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.save!
-
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :puavoLocale => "en_US.UTF-8",
-      :mail => "bob@example.com",
-      :puavoSchool => @school.dn,
-      :role_ids => [@role.puavoId]
+    @user = PuavoRest::User.new(
+      :email      => 'bob@example.com',
+      :first_name => 'Bob',
+      :last_name  => 'Brown',
+      :locale     => 'en_US.UTF-8',
+      :roles      => [ 'student' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'bob',
     )
     @user.save!
 

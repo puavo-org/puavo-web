@@ -6,6 +6,8 @@ describe PuavoRest::Users do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -16,86 +18,65 @@ describe PuavoRest::Users do
     @group.cn = "group1"
     @group.displayName = "Group 1"
     @group.puavoSchool = @school.dn
-    @group.puavoEduGroupType = "teaching group"
+    @group.puavoEduGroupType = 'teaching group'
     @group.save!
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @teacher = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "teacher",
-      :puavoLocale => "en_US.UTF-8",
-      :mail => ["bob@example.com ", "             bob@foobar.com        \n\n           ", " bob@helloworld.com "],
-      :role_ids => [@role.puavoId],
-      :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf",
-      :puavoExternalID => "bob",
-      :telephone_number => ["123", "456"]
+    @teacher = PuavoRest::User.new(
+      # XXX :administrative_groups => 'Maintenance',
+      :email            => 'bob@example.com',
+      :external_id      => 'bob',
+      :first_name       => 'Bob',
+      :last_name        => 'Brown',
+      :locale           => 'en_US.UTF-8',
+      :password         => 'secret',
+      :roles            => [ 'teacher' ],
+      :school_dns       => [ @school.dn.to_s ],
+      :secondary_emails => [ 'bob@foobar.com', 'bob@helloworld.com' ],
+      :teaching_group   => @group.id,
+      :telephone_number => [ '123', '456' ],
+      :ssh_public_key   => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+      :username         => 'bob',
     )
-
-    @teacher.set_password "secret"
-    @teacher.puavoSchool = @school.dn
-    @teacher.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @teacher.save!
 
-    @user2 = User.new(
-      :givenName => "Alice",
-      :sn  => "Wonder",
-      :uid => "alice",
-      :puavoEduPersonAffiliation => "student",
-      :puavoLocale => "en_US.UTF-8",
-      :mail => "alice@example.com",
-      :role_ids => [@role.puavoId],
-      :telephone_number => "789"
+    @user2 = PuavoRest::User.new(
+      # XXX :administrative_groups => 'Maintenance',
+      :email            => 'alice@example.com',
+      :first_name       => 'Alice',
+      :last_name        => 'Wonder',
+      :locale           => 'en_US.UTF-8',
+      :password         => 'secret',
+      :roles            => [ 'student' ],
+      :school_dns       => [ @school.dn.to_s ],
+      :teaching_group   => @group.id,
+      :telephone_number => [ '789' ],
+      :username         => 'alice',
     )
-    @user2.set_password "secret"
-    @user2.puavoSchool = @school.dn
-    @user2.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @user2.save!
 
-    @user4 = User.new(
-      :givenName => "Joe",
-      :sn  => "Bloggs",
-      :uid => "joe.bloggs",
-      :puavoEduPersonAffiliation => "admin",
-      :role_ids => [@role.puavoId]
+    @user4 = PuavoRest::User.new(
+      :email            => 'alice@example.com',
+      :first_name       => 'Joe',
+      :last_name        => 'Bloggs',
+      :locale           => 'en_US.UTF-8',
+      :password         => 'secret',
+      :roles            => [ 'admin' ],
+      :school_dns       => [ @school.dn.to_s ],
+      :username         => 'joe.bloggs',
     )
-
-    @user4.set_password "secret"
-    @user4.puavoSchool = @school.dn
     @user4.save!
     @school.add_admin(@user4)
 
-    @user5 = User.new(
-      :givenName => "Poistettava",
-      :sn  => "Käyttäjä",
-      :uid => "poistettava.kayttaja",
-      :puavoEduPersonAffiliation => "testuser",
-      :role_ids => [@role.puavoId],
-      :do_not_delete => "TRUE",
+    @user5 = PuavoRest::User.new(
+      :do_not_delete => 'TRUE',
+      :first_name    => 'Poistettava',
+      :last_name     => 'Käyttäjä',
+      :password      => 'trustno1',
+      :roles         => [ 'testuser' ],
+      :school_dns    => [ @school.dn.to_s ],
+      :username      => 'poistettava.kayttaja',
     )
-
-    @user5.set_password "trustno1"
-    @user5.puavoSchool = @school.dn
     @user5.save!
-
   end
 
   describe "Multiple telephone numbers" do
@@ -480,24 +461,17 @@ describe PuavoRest::Users do
   describe "GET /v3/users/_search" do
 
     before(:each) do
-      @user3 = User.new(
-        :givenName => "Alice",
-        :sn  => "Another",
-        :uid => "another",
-        :puavoEduPersonAffiliation => "student",
-        :puavoLocale => "en_US.UTF-8",
-        :mail => "alice.another@example.com",
-        :role_ids => [@role.puavoId]
+      @user3 = PuavoRest::User.new(
+        # XXX :adminstrative_groups => 'Maintenance' ?
+        :email      => 'alice.another@example.com',
+        :first_name => 'Alice',
+        :last_name  => 'Another',
+        :locale     => 'en_US.UTF-8',
+        :password   => 'secret',
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'alice.another',
       )
-      @user3.set_password "secret"
-      @user3.puavoSchool = @school.dn
-      @user3.role_ids = [
-        Role.find(:first, {
-          :attribute => "displayName",
-          :value => "Maintenance"
-        }).puavoId,
-        @role.puavoId
-      ]
       @user3.save!
     end
 

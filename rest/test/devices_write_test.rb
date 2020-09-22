@@ -4,6 +4,8 @@ describe PuavoRest::Devices do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -22,35 +24,24 @@ describe PuavoRest::Devices do
     @group = Group.new
     @group.cn = "group1"
     @group.displayName = "Group 1"
+    @group.puavoEduGroupType = 'teaching group'
     @group.puavoSchool = @school.dn
     @group.save!
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :puavoLocale => "en_US.UTF-8",
-      :mail => ["bob@example.com", "bob@foobar.com", "bob@helloworld.com"],
-      :role_ids => [@role.puavoId],
-      :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf"
+    @user = PuavoRest::User.new(
+      # XXX :administrative_groups => [ 'Maintenance' ] ?
+      :email            => 'bob@example.com',
+      :first_name       => 'Bob',
+      :last_name        => 'Brown',
+      :locale           => 'en_US.UTF-8',
+      :password         => 'secret',
+      :roles            => [ 'student' ],
+      :school_dns       => [ @school.dn.to_s ],
+      :secondary_emails => [ 'bob@foobar.com', 'bob@helloworld.com' ],
+      :ssh_public_key   => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+      :teaching_group   => @group.id,
+      :username         => 'bob',
     )
-
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @user.save!
 
     @laptop = create_device(
