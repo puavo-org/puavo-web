@@ -25,12 +25,7 @@ describe PuavoRest::Host do
       :puavoSchool => @school.dn
     )
 
-    LdapModel.setup(
-      :organisation =>
-        PuavoRest::Organisation.default_organisation_domain!,
-      :rest_root => "http://" + CONFIG["default_organisation_domain"],
-                    :credentials => { :dn => PUAVO_ETC.ldap_dn, :password => PUAVO_ETC.ldap_password }
-    )
+    setup_ldap_admin_connection()
 
     @rest_host = {}
     @rest_host["laptop"] = PuavoRest::Device.by_dn(@host["laptop"].dn)

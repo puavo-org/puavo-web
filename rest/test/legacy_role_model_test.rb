@@ -24,13 +24,7 @@ describe PuavoRest::LegacyRole do
     @role_al.groups << @group
     @role_al.save!
 
-    LdapModel.setup(
-      :organisation => PuavoRest::Organisation.default_organisation_domain!,
-      :rest_root => "http://" + CONFIG["default_organisation_domain"],
-      :credentials => {
-        :dn => PUAVO_ETC.ldap_dn,
-        :password => PUAVO_ETC.ldap_password }
-    )
+    setup_ldap_admin_connection()
 
     @user = PuavoRest::User.new(
       :object_classes => ["top", "posixAccount", "inetOrgPerson", "puavoEduPerson", "sambaSamAccount", "eduPerson"],

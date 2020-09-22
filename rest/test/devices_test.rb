@@ -467,12 +467,7 @@ describe PuavoRest::Devices do
       test_organisation.puavoDeviceImage = "organisationprefimage"
       test_organisation.save!
 
-      LdapModel.setup(
-        :organisation =>
-          PuavoRest::Organisation.default_organisation_domain!,
-        :rest_root => "http://" + CONFIG["default_organisation_domain"],
-                      :credentials => { :dn => PUAVO_ETC.ldap_dn, :password => PUAVO_ETC.ldap_password }
-      )
+      setup_ldap_admin_connection()
       @rest_thinclient01 = PuavoRest::Device.by_dn(@thinclient01.dn.to_s)
       @rest_thinclient02 = PuavoRest::Device.by_dn(@thinclient02.dn.to_s)
       @rest_thinclient03 = PuavoRest::Device.by_dn(@thinclient03.dn.to_s)

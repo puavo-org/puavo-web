@@ -22,14 +22,7 @@ describe PuavoRest::Devices do
     @school_dn = school.dn
 
     PuavoRest::Organisation.refresh
-    LdapModel.setup(
-      :credentials => {
-        :dn => "uid=admin,o=puavo",
-        :password => "password"
-      },
-      :organisation => PuavoRest::Organisation.default_organisation_domain!
-    )
-
+    setup_ldap_admin_connection()
   end
 
   it "can write name attribte" do

@@ -25,13 +25,7 @@ describe LdapModel do
       @role.groups << @group
       @role.save!
 
-      LdapModel.setup(
-        :organisation => PuavoRest::Organisation.default_organisation_domain!,
-        :rest_root => "http://" + CONFIG["default_organisation_domain"],
-        :credentials => {
-          :dn => PUAVO_ETC.ldap_dn,
-          :password => PUAVO_ETC.ldap_password }
-      )
+      setup_ldap_admin_connection()
 
       @user = PuavoRest::User.new(
         :first_name => "Heli",

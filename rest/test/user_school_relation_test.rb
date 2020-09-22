@@ -1,5 +1,4 @@
 require_relative "./helper"
-require_relative "../lib/ldapmodel"
 
 describe LdapModel do
 
@@ -43,13 +42,7 @@ describe LdapModel do
       @role_other.groups << @group_other
       @role_other.save!
 
-      LdapModel.setup(
-        :organisation => PuavoRest::Organisation.default_organisation_domain!,
-        :rest_root => "http://" + CONFIG["default_organisation_domain"],
-        :credentials => {
-          :dn => PUAVO_ETC.ldap_dn,
-          :password => PUAVO_ETC.ldap_password }
-      )
+      setup_ldap_admin_connection()
       user = PuavoRest::User.new(
         :first_name => "Heli",
         :last_name => "Kopteri",

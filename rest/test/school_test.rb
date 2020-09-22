@@ -33,13 +33,7 @@ describe PuavoRest::School do
     )
     PuavoRest.test_boot_server_dn = @server.dn.to_s
 
-    LdapModel.setup(
-      :organisation =>
-        PuavoRest::Organisation.default_organisation_domain!,
-      :rest_root => "http://" + CONFIG["default_organisation_domain"],
-                    :credentials => { :dn => PUAVO_ETC.ldap_dn, :password => PUAVO_ETC.ldap_password }
-    )
-
+    setup_ldap_admin_connection()
   end
 
   it "school codes are what they should be" do

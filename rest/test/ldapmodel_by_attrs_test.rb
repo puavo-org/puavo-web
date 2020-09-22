@@ -1,4 +1,3 @@
-
 require_relative "./helper"
 
 describe "LdapModel#by_attrs(hash)" do
@@ -7,13 +6,7 @@ describe "LdapModel#by_attrs(hash)" do
     Puavo::Test.clean_up_ldap
 
     PuavoRest::Organisation.refresh
-    LdapModel.setup(
-      :credentials => {
-        :dn => "uid=admin,o=puavo",
-        :password => "password"
-      },
-      :organisation => PuavoRest::Organisation.default_organisation_domain!
-    )
+    setup_ldap_admin_connection()
 
     @school_a = PuavoRest::School.new(
       :name => "School A",

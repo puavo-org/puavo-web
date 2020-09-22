@@ -463,13 +463,7 @@ describe PuavoRest::Users do
 
   describe "groups" do
     before(:each) do
-      LdapModel.setup(
-        :organisation => PuavoRest::Organisation.default_organisation_domain!,
-        :rest_root => "http://" + CONFIG["default_organisation_domain"],
-        :credentials => {
-          :dn => PUAVO_ETC.ldap_dn,
-          :password => PUAVO_ETC.ldap_password }
-      )
+      setup_ldap_admin_connection()
     end
     it "can be listed" do
       user = PuavoRest::User.by_username(@teacher.uid)
@@ -568,14 +562,7 @@ describe PuavoRest::Users do
   describe "PUT /v3/users/:username/administrative_groups" do
 
     before(:each) do
-
-      LdapModel.setup(
-        :organisation => PuavoRest::Organisation.default_organisation_domain!,
-        :rest_root => "http://" + CONFIG["default_organisation_domain"],
-        :credentials => {
-          :dn => PUAVO_ETC.ldap_dn,
-          :password => PUAVO_ETC.ldap_password }
-      )
+      setup_ldap_admin_connection()
 
       @user3 = PuavoRest::User.new(
         :first_name => "Jane",
