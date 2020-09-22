@@ -6,23 +6,8 @@ require "jwt"
 
 describe PuavoRest::SSO do
   before(:each) do
-    @orig_config = CONFIG.dup
-    CONFIG.delete("default_organisation_domain")
-    CONFIG["bootserver"] = false
-
-    PuavoRest::Organisation.refresh
     Puavo::Test.clean_up_ldap
     setup_ldap_admin_connection()
-
-    @external_service = ExternalService.new
-    @external_service.classes = ["top", "puavoJWTService"]
-    @external_service.cn = "Testing Service"
-    @external_service.puavoServiceDomain = "test-client-service.example.com"
-    @external_service.puavoServiceSecret = "this is a shared secret"
-    @external_service.description = "Description"
-    @external_service.mail = "contact@test-client-service.example.com"
-    @external_service.puavoServiceTrusted = true
-    @external_service.save!
 
     @school = School.create(
       :cn => "gryffindor",
@@ -47,6 +32,22 @@ describe PuavoRest::SSO do
     )
     @user.save!
     @user.teaching_group = @group   # XXX weird that this must be here
+
+    @orig_config = CONFIG.dup
+    CONFIG.delete("default_organisation_domain")
+    CONFIG["bootserver"] = false
+
+    PuavoRest::Organisation.refresh
+
+    @external_service = ExternalService.new
+    @external_service.classes = ["top", "puavoJWTService"]
+    @external_service.cn = "Testing Service"
+    @external_service.puavoServiceDomain = "test-client-service.example.com"
+    @external_service.puavoServiceSecret = "this is a shared secret"
+    @external_service.description = "Description"
+    @external_service.mail = "contact@test-client-service.example.com"
+    @external_service.puavoServiceTrusted = true
+    @external_service.save!
   end
 
   after do
@@ -107,9 +108,12 @@ describe PuavoRest::SSO do
   describe "roles in jwt" do
 
     it "is set to 'schooladmin' when user is a school admin" do
-      @user.puavoEduPersonAffiliation = ["admin"]
+      @user.roles = [ 'admin' ]
       @user.save!
-      @school.add_admin(@user)
+
+      # to use .add_admin() must use the puavo-web object
+      _user = User.find(:first, :attribute => 'puavoId', :value => @user.id)
+      @school.add_admin(_user)
 
       url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }
