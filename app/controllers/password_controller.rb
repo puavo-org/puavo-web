@@ -4,6 +4,11 @@ class RestConnectionError < StandardError; end
 class PasswordConfirmationFailed < StandardError; end
 class TokenLifetimeHasExpired < StandardError; end
 
+PASSWORD_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'.freeze
+PASSWORD_UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.freeze
+PASSWORD_NUMBERS = '0123456789'.freeze
+PASSWORD_PUNCT = '§½!"#¤%&/()=?@£${[]}\\<>|\"~^\'`*,;.:-_'.freeze
+
 class PasswordController < ApplicationController
   include Puavo::Integrations
 
@@ -285,7 +290,9 @@ class PasswordController < ApplicationController
 
   def change_user_password(mode, request_id)
     # must use -1 because password forms use global requirements
-    case get_school_password_requirements(@organisation_name, -1)
+    requirements = get_school_password_requirements(@organisation_name, -1)
+
+    case requirements
       when 'Google'
         # Validate the password against Google's requirements.
         new_password = params[:user][:new_password]
@@ -333,6 +340,8 @@ class PasswordController < ApplicationController
           raise UserError,
                 I18n.t('activeldap.errors.messages.sevencharsmin_password_too_short')
         end
+
+      # other requirements are handled later
     end
 
     login_uid = params[:login][:uid]
@@ -407,6 +416,56 @@ class PasswordController < ApplicationController
       logger.error("[#{request_id}] Username \"#{target_user_username}\" is invalid")
       raise UserError, I18n.t('flash.password.invalid_user',
                                     :uid => params[:user][:uid])
+    end
+
+    # Separate password checks for Unspecified Customer
+    if requirements && requirements == 'UnspecifiedCustomer'
+      is_student = @user.puavoEduPersonAffiliation.include?('student')
+
+      if is_student
+        min_length = 8
+      else
+        # impose teacher limits on everyone else
+        min_length = 14
+      end
+
+      new_password = params[:user][:new_password]
+
+      if new_password.size < min_length
+        logger.error("[#{request_id}] The new password does not meet the requirements " \
+                     "(min_length=#{min_length}, actual_length=#{new_password.size})")
+
+        if is_student
+          key = 'activeldap.errors.messages.unspecified_unmet_password_requirements_students'
+        else
+          key = 'activeldap.errors.messages.unspecified_unmet_password_requirements_teachers'
+        end
+
+        raise UserError, I18n.t(key)
+      end
+
+      unless is_student
+        # Password complexity validation for non-students
+        # TODO: This is copy-pasted from app/models/user.rb because I'm lazy. Don't do that.
+        have_lowercase = false
+        have_uppercase = false
+        have_numbers = false
+        have_punct = false
+
+        new_password.split('').each do |c|
+          have_lowercase = true if PASSWORD_LOWERCASE.include?(c)
+          have_uppercase = true if PASSWORD_UPPERCASE.include?(c)
+          have_numbers = true if PASSWORD_NUMBERS.include?(c)
+          have_punct = true if PASSWORD_PUNCT.include?(c)
+        end
+
+        unless have_lowercase && have_uppercase && have_numbers && have_punct
+          logger.error("[#{request_id}] The new password does not meet the complexity requirements " \
+                       "(lowercase=#{have_lowercase}, uppercase=#{have_uppercase}, " \
+                       "numbers=#{have_numbers}, punct=#{have_punct})")
+          raise UserError, I18n.t('activeldap.errors.messages.unspecified_unmet_password_requirements_teachers')
+        end
+      end
     end
 
     rest_params = {

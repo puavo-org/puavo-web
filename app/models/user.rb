@@ -74,6 +74,11 @@ class User < LdapBase
     "é" => "e"
   }
 
+  PASSWORD_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'.freeze
+  PASSWORD_UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.freeze
+  PASSWORD_NUMBERS = '0123456789'.freeze
+  PASSWORD_PUNCT = '§½!"#¤%&/()=?@£${[]}\\<>|\"~^\'`*,;.:-_'.freeze
+
 
   def self.image_size
     { :width => 120, :height => 160 }
@@ -192,6 +197,38 @@ class User < LdapBase
         when 'SevenCharsMin'
           if self.new_password.size < 7 then
             errors.add(:new_password, I18n.t("activeldap.errors.messages.sevencharsmin_password_too_short"))
+          end
+        when 'UnspecifiedCustomer'
+          is_student = self.puavoEduPersonAffiliation.include?('student')
+
+          if is_student
+            min_length = 8
+          else
+            # impose teacher limits on everyone else
+            min_length = 14
+          end
+
+          if self.new_password.size < min_length
+            errors.add(:new_password, I18n.t("activeldap.errors.messages.password_is_too_short"))
+          end
+
+          unless self.puavoEduPersonAffiliation.include?('student')
+            # Password complexity validation for non-students
+            have_lowercase = false
+            have_uppercase = false
+            have_numbers = false
+            have_punct = false
+
+            self.new_password.split('').each do |c|
+              have_lowercase = true if PASSWORD_LOWERCASE.include?(c)
+              have_uppercase = true if PASSWORD_UPPERCASE.include?(c)
+              have_numbers = true if PASSWORD_NUMBERS.include?(c)
+              have_punct = true if PASSWORD_PUNCT.include?(c)
+            end
+
+            unless have_lowercase && have_uppercase && have_numbers && have_punct
+              errors.add(:new_password, I18n.t('activeldap.errors.messages.unspecified_unmet_password_requirements_teachers'))
+            end
           end
       end
     end

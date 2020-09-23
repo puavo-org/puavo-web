@@ -1186,6 +1186,9 @@ fi:
         sevencharsmin_password_too_short: "Koulun tietoturvakäytänteissä on määritetty, että salasanassa pitää olla vähintään seitsemän merkkiä."
         too_long: "%{attribute} on liian pitkä (suurin sallittu pituus on %{count} merkkiä)"
         too_short: "%{attribute} on liian lyhyt (pienin sallittu pituus on %{count} merkkiä)"
+        password_is_too_short: "Salasana on liian lyhyt"
+        unspecified_unmet_password_requirements_students: "Oppilaiden salasanojen on oltava vähintään 8 merkkiä pitkiä."
+        unspecified_unmet_password_requirements_teachers: "Opettajien, ylläpitäjien ja henkilökunnan jäsenien salasanojen on oltava vähintään 14 merkkiä pitkiä ja niissä on oltava vähintään yksi iso kirjain, yksi pieni kirjain, yksi numero ja yksi välimerkki."
         image_failed: "Kuvaa ei voitu tallentaa"
         email_not_valid: "Sähköpostiosoite ei ole kunnollinen."
         user:
