@@ -58,11 +58,6 @@ module Test
         s.destroy
       end
     end
-    Role.all.each do |p|
-      unless p.displayName == "Maintenance"
-        p.destroy
-      end
-    end
 
     Device.all.each { |d| d.destroy }
     Server.all.each { |d| d.destroy }
@@ -109,14 +104,9 @@ module Test
     anotherorg.save!
 
     owner_dn, owner_pw = setup_test_connection('heroes')
-    role = Role.find(:first, :attribute => 'displayName', :value => 'Mutant')
     # The external logins testing code sets some "heroes"-organisation user
     # passwords to something else than "secret", so reset those.
     User.all.each do |user|
-      user.role_ids = [ role.puavoId ]  # XXX this should not be necessary
-                                        # XXX remove once we have
-                                        # XXX new_group_management everywhere
-                                        # XXX in place
       user.set_password (user.dn.to_s == owner_dn ? owner_pw : 'secret')
       user.save!
     end
