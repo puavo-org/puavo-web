@@ -32,19 +32,20 @@ describe PuavoRest::Devices do
                                    :attribute => 'cn',
                                    :value     => 'maintenance')
     @user = PuavoRest::User.new(
-      :administrative_groups => [ maintenance_group.id ],
-      :email                 => 'bob@example.com',
-      :first_name            => 'Bob',
-      :last_name             => 'Brown',
-      :locale                => 'en_US.UTF-8',
-      :password              => 'secret',
-      :roles                 => [ 'student' ],
-      :school_dns            => [ @school.dn.to_s ],
-      :ssh_public_key        => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
-      :username              => 'bob',
+      :email          => 'bob@example.com',
+      :first_name     => 'Bob',
+      :last_name      => 'Brown',
+      :locale         => 'en_US.UTF-8',
+      :password       => 'secret',
+      :roles          => [ 'student' ],
+      :school_dns     => [ @school.dn.to_s ],
+      :ssh_public_key => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+      :username       => 'bob',
     )
     @user.save!
-    # XXX weird that these must be here:
+
+    # XXX weird that these must be here
+    @user.administrative_groups = [ maintenance_group.id ]
     @user.secondary_emails = [ 'bob@foobar.com', 'bob@helloworld.com' ]
     @user.teaching_group = @group
 

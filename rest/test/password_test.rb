@@ -33,7 +33,7 @@ describe PuavoRest::Password do
       :username           => 'bob',
     )
     @student.save!
-    # XXX weird that this must be here:
+    # XXX weird that this must be here
     @student.administrative_groups = [ maintenance_group.id, @group.id ]
 
     @teacher = PuavoRest::User.new(

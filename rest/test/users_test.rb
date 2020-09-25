@@ -462,17 +462,19 @@ describe PuavoRest::Users do
 
     before(:each) do
       @user3 = PuavoRest::User.new(
-        :administrative_groups => [ @maintenance_group.id ],
-        :email                 => 'alice.another@example.com',
-        :first_name            => 'Alice',
-        :last_name             => 'Another',
-        :locale                => 'en_US.UTF-8',
-        :password              => 'secret',
-        :roles                 => [ 'student' ],
-        :school_dns            => [ @school.dn.to_s ],
-        :username              => 'alice.another',
+        :email      => 'alice.another@example.com',
+        :first_name => 'Alice',
+        :last_name  => 'Another',
+        :locale     => 'en_US.UTF-8',
+        :password   => 'secret',
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'alice.another',
       )
       @user3.save!
+
+      # XXX weird that this must be here
+      @user3.administrative_groups = [ @maintenance_group.id ]
     end
 
     it "can list bob" do

@@ -158,18 +158,20 @@ describe LdapModel do
                                      :attribute => 'cn',
                                      :value     => 'maintenance')
       user = PuavoRest::User.new(
-        :administrative_groups => [ maintenance_group.id ],
-        :email                 => 'mark@example.com',
-        :first_name            => 'Mark',
-        :last_name             => 'Hamill',
-        :locale                => 'en_US.UTF-8',
-        :password              => 'secret',
-        :roles                 => [ 'student' ],
-        :school_dns            => [ @school.dn.to_s ],
-        :username              => 'mark',
+        :email      => 'mark@example.com',
+        :first_name => 'Mark',
+        :last_name  => 'Hamill',
+        :locale     => 'en_US.UTF-8',
+        :password   => 'secret',
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'mark',
       )
       user.save!
-      user.teaching_group = @group   # XXX weird that this must be here
+
+      # XXX weird that these must be here
+      user.administrative_groups = [ maintenance_group.id ]
+      user.teaching_group = @group
     end
 
     it "can add and remove groups" do

@@ -16,16 +16,18 @@ describe "LdapModel connection management" do
                                    :attribute => 'cn',
                                    :value     => 'maintenance')
     @user = PuavoRest::User.new(
-      :administrative_groups => [ maintenance_group.id ],
-      :email                 => 'bob@example.com',
-      :first_name            => 'Bob',
-      :last_name             => 'Brown',
-      :password              => 'secret',
-      :roles                 => [ 'student' ],
-      :school_dns            => [ @school.dn.to_s ],
-      :username              => 'bob',
+      :email      => 'bob@example.com',
+      :first_name => 'Bob',
+      :last_name  => 'Brown',
+      :password   => 'secret',
+      :roles      => [ 'student' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'bob',
     )
     @user.save!
+
+    # XXX weird that this must be here
+    @user.administrative_groups = [ maintenance_group.id ]
   end
 
   it "can get current user with dn and password" do

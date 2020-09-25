@@ -23,16 +23,18 @@ describe PuavoRest::EmailConfirm do
                                    :attribute => 'cn',
                                    :value     => 'maintenance')
     @user = PuavoRest::User.new(
-      :administrative_groups => [ maintenance_group.id ],
-      :email                 => 'bob@example.com',
-      :first_name            => 'Bob',
-      :last_name             => 'Brown',
-      :roles                 => [ 'student' ],
-      :school_dns            => [ @school.dn.to_s ],
-      :username              => 'bob',
+      :email      => 'bob@example.com',
+      :first_name => 'Bob',
+      :last_name  => 'Brown',
+      :roles      => [ 'student' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'bob',
     )
     @user.save!
-    @user.teaching_group = @group   # XXX weird that this must be here
+
+    # XXX weird that these must be here
+    @user.administrative_groups = [ maintenance_group.id ]
+    @user.teaching_group = @group
   end
 
   describe "POST /email_confirm" do
