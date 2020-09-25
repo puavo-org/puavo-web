@@ -25,50 +25,56 @@ describe PuavoRest::Users do
                                     :attribute => 'cn',
                                     :value     => 'maintenance')
     @teacher = PuavoRest::User.new(
-      :administrative_groups => [ @maintenance_group.id ],
-      :email                 => 'bob@example.com',
-      :external_id           => 'bob',
-      :first_name            => 'Bob',
-      :last_name             => 'Brown',
-      :locale                => 'en_US.UTF-8',
-      :password              => 'secret',
-      :roles                 => [ 'teacher' ],
-      :school_dns            => [ @school.dn.to_s ],
-      :secondary_emails      => [ 'bob@foobar.com', 'bob@helloworld.com' ],
-      :telephone_number      => [ '123', '456' ],
-      :ssh_public_key        => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
-      :username              => 'bob',
+      :email            => 'bob@example.com',
+      :external_id      => 'bob',
+      :first_name       => 'Bob',
+      :last_name        => 'Brown',
+      :locale           => 'en_US.UTF-8',
+      :password         => 'secret',
+      :roles            => [ 'teacher' ],
+      :school_dns       => [ @school.dn.to_s ],
+      :telephone_number => [ '123', '456' ],
+      :ssh_public_key   => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+      :username         => 'bob',
     )
     @teacher.save!
+
+    # XXX weird that these must be here:
+    @teacher.administrative_groups = [ @maintenance_group.id ]
+    @teacher.secondary_emails = [ 'bob@foobar.com', 'bob@helloworld.com' ]
     @teacher.teaching_group = @group
+    @teacher.save!
 
     @user2 = PuavoRest::User.new(
-      :administrative_groups => [ @maintenance_group.id ],
-      :email                 => 'alice@example.com',
-      :first_name            => 'Alice',
-      :last_name             => 'Wonder',
-      :locale                => 'en_US.UTF-8',
-      :password              => 'secret',
-      :roles                 => [ 'student' ],
-      :school_dns            => [ @school.dn.to_s ],
-      :teaching_group        => @group.id,
-      :telephone_number      => [ '789' ],
-      :username              => 'alice',
+      :email            => 'alice@example.com',
+      :first_name       => 'Alice',
+      :last_name        => 'Wonder',
+      :locale           => 'en_US.UTF-8',
+      :password         => 'secret',
+      :roles            => [ 'student' ],
+      :school_dns       => [ @school.dn.to_s ],
+      :telephone_number => [ '789' ],
+      :username         => 'alice',
     )
     @user2.save!
 
+    # XXX weird that these must be here
+    @user2.administrative_groups = [ @maintenance_group.id ]
+    @user2.teaching_group = @group
+
     @user4 = PuavoRest::User.new(
-      :email            => 'alice@example.com',
-      :first_name       => 'Joe',
-      :last_name        => 'Bloggs',
-      :locale           => 'en_US.UTF-8',
-      :password         => 'secret',
-      :roles            => [ 'admin' ],
-      :school_dns       => [ @school.dn.to_s ],
-      :username         => 'joe.bloggs',
+      :first_name => 'Joe',
+      :last_name  => 'Bloggs',
+      :locale     => 'en_US.UTF-8',
+      :password   => 'secret',
+      :roles      => [ 'admin' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'joe.bloggs',
     )
     @user4.save!
-    @school.add_admin(@user4)
+    # to use .add_admin() must use the puavo-web object
+    _user4 = User.find(:first, :attribute => 'puavoId', :value => @user4.id)
+    @school.add_admin(_user4)
 
     @user5 = PuavoRest::User.new(
       :do_not_delete => 'TRUE',
@@ -84,24 +90,24 @@ describe PuavoRest::Users do
 
   describe "Multiple telephone numbers" do
     it "correctly set when a user is created" do
-      assert_equal @teacher.telephoneNumber, ["123", "456"]
-      assert_equal @user2.telephoneNumber, "789"
-      assert_nil @user4.telephoneNumber
+      assert_equal [ '123', '456' ], @teacher.telephone_number
+      assert_equal [ '789' ], @user2.telephone_number
+      assert_equal [], @user4.telephone_number
     end
 
     it "can be changed" do
-      @teacher.telephoneNumber = ["1234567890"]
+      @teacher.telephone_number = [ '1234567890' ]
       @teacher.save!
-      assert_equal @teacher.telephoneNumber, "1234567890"
+      assert_equal [ '1234567890' ], @teacher.telephone_number
     end
 
     it "can be cleared" do
-      @teacher.telephoneNumber = []
+      @teacher.telephone_number = []
       @teacher.save!
-      @user2.telephoneNumber = nil
+      @user2.telephone_number = nil
       @user2.save!
-      assert_nil @teacher.telephoneNumber
-      assert_nil @user2.telephoneNumber
+      assert_equal [], @teacher.telephone_number
+      assert_equal [], @user2.telephone_number
     end
   end
 
@@ -167,7 +173,8 @@ describe PuavoRest::Users do
       assert_equal "Group 1", group["name"]
       assert_equal "teaching group", group["type"]
 
-      assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+      assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg",
+                   data["profile_image_link"]
 
       assert_equal "Europe/Helsinki", data["timezone"]
 
@@ -223,36 +230,36 @@ describe PuavoRest::Users do
     end
 
     it "can save a user while 'changing' external ID" do
-      @teacher.puavoExternalID = "bob"
+      @teacher.external_id = 'bob'
       assert @teacher.save!
     end
 
     it "can actually change the external ID" do
-      @teacher.puavoExternalID = "paavo"
+      @teacher.external_id = 'paavo'
       assert @teacher.save!
     end
 
     it "give user a new external ID" do
-      @user2.puavoExternalID = "alice"
+      @user2.external_id = 'alice'
       assert @user2.save!
     end
 
     it "cannot reuse existing external ID" do
       # try to reuse Bob's external ID
-      @user2.puavoExternalID = "bob"
+      @user2.external_id = 'bob'
 
-      exception = assert_raises ActiveLdap::EntryInvalid do
+      exception = assert_raises ValidationError do
         assert @user2.save!
       end
 
-      assert_equal("External ID External ID has already been taken", exception.message)
+      assert exception.message.match(/external_id=bob is not unique/)
     end
   end
 
   describe "GET /v3/users/_by_id/" do
     it "returns user data" do
       basic_authorize "bob", "secret"
-      get "/v3/users/_by_id/#{ @teacher.puavoId }"
+      get "/v3/users/_by_id/#{ @teacher.id }"
       assert_200
       data = JSON.parse(last_response.body)
 
@@ -262,27 +269,32 @@ describe PuavoRest::Users do
     end
 
     it "reverse name is updated if user's name is changed" do
-      @teacher.givenName = "Brown"
-      @teacher.sn = "Bob"
+      @teacher.first_name = 'Bob'
+      @teacher.last_name = 'Brown'
       @teacher.save!
 
       basic_authorize "bob", "secret"
-      get "/v3/users/_by_id/#{ @teacher.puavoId }"
+      get "/v3/users/_by_id/#{ @teacher.id }"
       assert_200
       data = JSON.parse(last_response.body)
 
       assert_equal "bob", data["username"]
-      assert_equal "Brown", data["first_name"]
-      assert_equal "Bob", data["last_name"]
-      assert_equal "Bob Brown", data["reverse_name"]
+      assert_equal "Bob", data["first_name"]
+      assert_equal "Brown", data["last_name"]
+      assert_equal "Brown Bob", data["reverse_name"]
     end
 
     it "whitespace in email addresses is really removed" do
-      @teacher.mail = " foo.bar@baz.com     "
-      @teacher.save!
+      # XXX this test perhaps does not belong to puavo-rest tests
+      # XXX because puavo-rest does *not* strip whitespace
+      _teacher = User.find(:first,
+                           :attribute => 'puavoId',
+                           :value     => @teacher.id)
+      _teacher.mail = " foo.bar@baz.com     "
+      _teacher.save!
 
       basic_authorize "bob", "secret"
-      get "/v3/users/_by_id/#{ @teacher.puavoId }"
+      get "/v3/users/_by_id/#{ @teacher.id }"
       assert_200
       data = JSON.parse(last_response.body)
 
@@ -312,9 +324,11 @@ describe PuavoRest::Users do
       assert_equal "Bob", data["first_name"]
       assert_equal "Brown", data["last_name"]
       assert_equal "bob@example.com", data["email"]
-      assert_equal ["bob@foobar.com", "bob@helloworld.com"], data["secondary_emails"]
+      assert_equal [ "bob@foobar.com", "bob@helloworld.com" ],
+                   data["secondary_emails"]
       assert_equal "teacher", data["user_type"]
-      assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+      assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg",
+                   data["profile_image_link"]
 
       assert data["schools"], "has schools data added"
       assert_equal(1, data["schools"].size)
@@ -323,34 +337,42 @@ describe PuavoRest::Users do
     describe "with language fallbacks" do
       [
         {
-          :name   => "user lang is the most preferred",
-          :org    => "en_US.UTF-8",
-          :school => "fi_FI.UTF-8",
-          :user   => "sv_FI.UTF-8",
           :expect_language => "sv",
-          :expect_locale => "sv_FI.UTF-8"
+          :expect_locale   => "sv_FI.UTF-8",
+          :name            => "user lang is the most preferred",
+          :org             => "en_US.UTF-8",
+          :school_lang     => "fi",
+          :school_locale   => "fi_FI.UTF-8",
+          :user_lang       => "sv",
+          :user_locale     => "sv_FI.UTF-8",
         },
         {
-          :name   => "first fallback is school",
-          :org    => "en_US.UTF-8",
-          :school => "fi_FI.UTF-8",
-          :user   => nil,
           :expect_language => "fi",
-          :expect_locale => "fi_FI.UTF-8"
+          :expect_locale   => "fi_FI.UTF-8",
+          :name            => "first fallback is school",
+          :org             => "en_US.UTF-8",
+          :school_lang     => "fi",
+          :school_locale   => "fi_FI.UTF-8",
+          :user_lang       => nil,
+          :user_locale     => nil,
         },
         {
-          :name   => "organisation is the least preferred",
-          :org    => "en_US.UTF-8",
-          :school => nil,
-          :user   => nil,
           :expect_language => "en",
-          :expect_locale => "en_US.UTF-8"
+          :expect_locale   => "en_US.UTF-8",
+          :name            => "organisation is the least preferred",
+          :org             => "en_US.UTF-8",
+          :school_lang     => nil,
+          :school_locale   => nil,
+          :user_lang       => nil,
+          :user_locale     => nil,
         },
       ].each do |opts|
         it opts[:name] do
-          @teacher.puavoLocale = opts[:user]
+          @teacher.locale = opts[:user_locale]
+          @teacher.preferred_language = opts[:user_lang]
           @teacher.save!
-          @school.puavoLocale = opts[:school]
+          @school.preferredLanguage = opts[:school_lang]
+          @school.puavoLocale = opts[:school_locale]
           @school.save!
 
           test_organisation = LdapOrganisation.first # TODO: fetch by name
@@ -369,8 +391,11 @@ describe PuavoRest::Users do
 
     describe "with image" do
       before(:each) do
-        @teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
-        @teacher.save!
+        _teacher = User.find(:first,
+                             :attribute => 'puavoId',
+                             :value     => @teacher.id)
+        _teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+        _teacher.save!
       end
 
       it "returns user data with image link" do
@@ -379,7 +404,8 @@ describe PuavoRest::Users do
         assert_200
         data = JSON.parse(last_response.body)
 
-        assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg", data["profile_image_link"]
+        assert_equal "http://example.puavo.net/v3/users/bob/profile.jpg",
+                     data["profile_image_link"]
       end
 
       it "can be faked with VirtualHostBase" do
@@ -388,7 +414,8 @@ describe PuavoRest::Users do
         assert_200
         data = JSON.parse(last_response.body)
 
-        assert_equal "http://fakedomain:1234/v3/users/bob/profile.jpg", data["profile_image_link"]
+        assert_equal "http://fakedomain:1234/v3/users/bob/profile.jpg",
+                     data["profile_image_link"]
       end
 
       it "does not have 443 in uri if https" do
@@ -397,7 +424,8 @@ describe PuavoRest::Users do
         assert_200
         data = JSON.parse(last_response.body)
 
-        assert_equal "https://fakedomain/v3/users/bob/profile.jpg", data["profile_image_link"]
+        assert_equal "https://fakedomain/v3/users/bob/profile.jpg",
+                     data["profile_image_link"]
       end
 
     end
@@ -418,8 +446,11 @@ describe PuavoRest::Users do
   describe "GET /v3/users/bob/profile.jpg" do
 
     it "returns 200 if bob hash image" do
-      @teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
-      @teacher.save!
+      _teacher = User.find(:first,
+                           :attribute => 'puavoId',
+                           :value     => @teacher.id)
+      _teacher.image = Rack::Test::UploadedFile.new(IMG_FIXTURE, "image/jpeg")
+      _teacher.save!
 
       basic_authorize "bob", "secret"
       get "/v3/users/bob/profile.jpg"
@@ -447,7 +478,7 @@ describe PuavoRest::Users do
 
   describe "groups" do
     it "can be listed" do
-      user = PuavoRest::User.by_username(@teacher.uid)
+      user = PuavoRest::User.by_username(@teacher.username)
       group_names = Set.new(user.groups.map{ |g| g.name })
       assert !group_names.include?("Gryffindor"), "Group list must not include schools"
 
