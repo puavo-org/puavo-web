@@ -27,17 +27,11 @@ school = School.create(
 school.save!
 
 group = Group.new
-group.cn = "group1"
-group.displayName = "Group 1"
+group.cn = 'group1'
+group.displayName = 'Group 1'
+group.puavoEduGroupType = 'teaching group'
 group.puavoSchool = school.dn
 group.save!
-
-role = Role.new
-role.displayName = "Some role"
-role.puavoSchool = school.dn
-role.groups << group
-role.save!
-
 
 [
   {
@@ -90,11 +84,11 @@ role.save!
 
 ].each do |attrs|
   user = User.new(attrs)
-  user.set_password "secret"
+  user.set_password 'secret'
   user.puavoSchool = school.dn
-  user.role_ids = [role.puavoId]
   user.save!
-  if user.puavoEduPersonAffiliation == "admin"
+  user.teaching_group = group   # XXX weird that this must be here
+  if user.puavoEduPersonAffiliation == 'admin' then
     school.add_admin(user)
   end
 end
@@ -255,17 +249,11 @@ school = School.create(
 school.save!
 
 group = Group.new
-group.cn = "group1"
-group.displayName = "Group 1"
+group.cn = 'group1'
+group.displayName = 'Group 1'
+group.puavoEduGroupType = 'teaching group'
 group.puavoSchool = school.dn
 group.save!
-
-role = Role.new
-role.displayName = "Some role"
-role.puavoSchool = school.dn
-role.groups << group
-role.save!
-
 
 [
   {
@@ -296,9 +284,9 @@ role.save!
   user = User.new(attrs)
   user.set_password "secret"
   user.puavoSchool = school.dn
-  user.role_ids = [role.puavoId]
   user.save!
-  if user.puavoEduPersonAffiliation == "admin"
+  user.teaching_group = group   # XXX weird that this must be here
+  if user.puavoEduPersonAffiliation == 'admin' then
     school.add_admin(user)
   end
 end
@@ -322,17 +310,11 @@ school = School.create(
 school.save!
 
 group = Group.new
-group.cn = "xmen"
-group.displayName = "X-Men"
+group.cn = 'xmen'
+group.displayName = 'X-Men'
+group.puavoEduGroupType = 'teaching group'
 group.puavoSchool = school.dn
 group.save!
-
-role = Role.new
-role.displayName = "Mutant"
-role.puavoSchool = school.dn
-role.groups << group
-role.save!
-
 
 [
   {
@@ -451,9 +433,9 @@ role.save!
   user = User.new(attrs)
   user.set_password "secret"
   user.puavoSchool = school.dn
-  user.role_ids = [role.puavoId]
   user.save!
-  if user.puavoEduPersonAffiliation == "admin"
+  user.teaching_group = group   # XXX weird that this must be here
+  if user.puavoEduPersonAffiliation == 'admin' then
     school.add_admin(user)
   end
 end
