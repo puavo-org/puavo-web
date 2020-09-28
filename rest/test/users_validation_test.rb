@@ -1,7 +1,7 @@
 require_relative "./helper"
 require_relative "../lib/ldapmodel"
 
-oescribe LdapModel do
+describe LdapModel do
 
   describe "user validation" do
 
