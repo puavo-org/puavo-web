@@ -11,15 +11,10 @@ Feature: Manage external passwords
 
   Background:
     Given a new school and group with names "School 1", "Class 1" on the "external" organisation
-    And a new role with name "Class 1" and which is joined to the "Class 1" group
-    And the following roles:
-    | displayName |
-    | Teacher     |
-    | Student     |
     And the following users:
-    | givenName | sn     | uid           | password      | school_admin | role_name | puavoEduPersonAffiliation | mail                |
-    | Charlie   | Agent  | charlie.agent | charliesecret | true         | Teacher   | admin                     | charlie@example.com |
-    | David     | Agent  | david.agent   | davidsecret   | false        | Class 1   | student                   | david@example.com   |
+    | givenName | sn     | uid           | password      | school_admin | puavoEduPersonAffiliation | mail                |
+    | Charlie   | Agent  | charlie.agent | charliesecret | true         | admin                     | charlie@example.com |
+    | David     | Agent  | david.agent   | davidsecret   | false        | student                   | david@example.com   |
     And I am on the password change page
 
   Scenario: Puavo-only admin can change password of another puavo-only user

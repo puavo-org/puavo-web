@@ -5,12 +5,9 @@ Feature: Manage sessions
 
   Background:
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
-    And the following roles:
-    | displayName |
-    | Staff       |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | staff                     |
+      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
 
   Scenario: Login
     Given I am on the login page

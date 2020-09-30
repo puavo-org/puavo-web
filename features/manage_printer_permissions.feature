@@ -8,12 +8,9 @@ Feature: Manage printer permissions
     And the following schools:
     | displayName   | cn          |
     | Test School 1 | testschool1 |
-    And the following roles:
-      | displayName |
-      | Staff       |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | staff                     |
+      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
     And the following devices:
       | puavoHostname | macAddress        | puavoDeviceType |
       | athin         | 33:2d:2b:13:ce:a0 | thinclient      |

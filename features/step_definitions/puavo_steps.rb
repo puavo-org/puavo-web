@@ -98,14 +98,6 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
     when /the edit group page/
       visit edit_group_path(@school, group)
     end
-  when /role page/
-    role = Role.find( :first, :attribute => "displayName", :value => value )
-    case page_name
-    when /show/
-      visit role_path(@school, role)
-    when /edit/
-      visit edit_role_path(@school, role)
-    end
   when /the new other device page/, /the devices list/
     @school = School.find( :first, :attribute => "displayName", :value => value )
     visit path_to(page_name)

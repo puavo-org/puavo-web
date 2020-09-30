@@ -12,11 +12,6 @@ end
 Given(/^the following users:$/) do |users|
   set_ldap_admin_connection
   users.hashes.each do |u|
-    roles = nil
-    if u["roles"]
-      roles = u["roles"].split(/,[ ]*/)
-      u.delete("roles")
-    end
     school = nil
     if u["school"]
       school = School.find(:first, :attribute => "displayName", :value => u["school"])
@@ -31,13 +26,6 @@ Given(/^the following users:$/) do |users|
     end
     user.set_password(u["password"])
     user.save!
-    if roles
-      roles.each do |role_name|
-        Role.find( :first,
-                   :attribute => "displayName",
-                   :value => role_name ).members << user
-      end
-    end
     user.update_associations
   end
 end

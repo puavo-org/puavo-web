@@ -40,17 +40,8 @@ module NavigationHelpers
     when /the organisation page/
       organisation_path
       
-    # Role
-    when /the new role page/
-      new_role_path(@school)
-    when /the edit role page/
-      edit_role_path(@school)
-    when /the roles list page/
-      roles_path(@school)
-
     when /printer permissions page/
       printer_permissions_path(@school)
-
 
     # User path
     when /the new user page/

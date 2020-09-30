@@ -2,12 +2,9 @@ Feature: Confirm email address
 
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And the following roles:
-    | displayName |
-    | Students    |
     And the following users:
-      | givenName | sn    | uid | password  | school_admin | role_name | puavoEduPersonAffiliation | mail           |
-      | Ben       | Mabey | ben | bensecret | true         | Students  | student                   | ben@foobar.com |
+      | givenName | sn    | uid | password  | school_admin | puavoEduPersonAffiliation | mail           |
+      | Ben       | Mabey | ben | bensecret | true         | student                   | ben@foobar.com |
 
 
   Scenario: Confirm email address

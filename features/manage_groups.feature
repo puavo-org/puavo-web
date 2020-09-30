@@ -5,13 +5,9 @@ Feature: Manage groups
 
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And a new role with name "Students" and which is joined to the "Class 1" group
-    And the following roles:
-    | displayName |
-    | Staff       |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staff     | staff                     |
+      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Add new group to school
@@ -74,52 +70,11 @@ Feature: Manage groups
     And I should see "Abbreviation can't be blank"
     And I should see "Group cannot be saved!"
 
-  Scenario: Add role to the group
-    Given the following groups:
-    | displayName | cn      |
-    | Class 4A    | class4a |
-    | Class 6B    | class6b |
-    And the following roles:
-    | displayName |
-    | Teachers |
-    And I am set the "Teachers" role for "pavel"
-    And I am on the group page with "Class 4A"
-    Then I should see "Students (Example school 1)" on the "Other roles"
-    And I should see "Teachers (Example school 1)" on the "Other roles"
-    And I should not see "Pavel Taylor" on the "Roles and members"
-    And the memberUid should not include "pavel" on the "Class 4A" group
-    When I follow "Add" on the "Teachers" role
-    Then I should see "Teachers (Example school 1)" on the "Roles and members"
-    And I should not see "Teachers" on the "Other roles"
-    And I should see "Students (Example school 1)" on the "Other roles"
-    And I should see "Pavel Taylor" on the "Roles and members"
-    And the memberUid should include "pavel" on the "Class 4A" group
-
-  Scenario: Remove role from the group
-    Given the following groups:
-    | displayName | cn      |
-    | Class 4A    | class4a |
-    | Class 6B    | class6b |
-    And a new role with name "Teachers" and which is joined to the "Class 6B" group
-    And I am set the "Teachers" role for "pavel"
-    And I am on the group page with "Class 6B"
-    Then I should see "Students (Example school 1)" on the "Other roles"
-    And I should see "Teachers (Example school 1)" on the "Roles and members"
-    And I should see "Pavel Taylor" on the "Roles and members"
-    And the memberUid should include "pavel" on the "Class 6B" group
-    When I follow "Remove" on the "Teachers" role
-    Then I should see "Teachers (Example school 1)" on the "Other roles"
-    And I should not see "Teachers" on the "Roles and members"
-    And I should see "Students (Example school 1)" on the "Other roles"
-    And I should not see "Pavel Taylor" on the "Roles and members"
-    And the memberUid should not include "pavel" on the "Class 6B" group
-
   Scenario: Listing groups
     Given the following groups:
     | displayName | cn      |
     | Class 4A    | class4a |
     | Class 6B    | class6b |
-    And I am set the "Students" role for "pavel"
     And I am on the groups list page
     Then I should see "Class 4A"
     And I should see "Class 6B"
@@ -161,10 +116,9 @@ Feature: Manage groups
     Given the following groups:
     | displayName | cn      |
     | Class 4     | class4  |
-    And a new role with name "Class 4A" and which is joined to the "Class 4" group
     And the following users:
-    | givenName | sn     | uid  | password | role_name | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe  | secret   | Class 4A  | student                   |
-    | Jane      | Doe    | jane | secret   | Class 4A  | student                   |
-    When I get on the members group JSON page with "Class 4"
+    | givenName | sn     | uid  | password | puavoEduPersonAffiliation |
+    | Joe       | Bloggs | joe  | secret   | student                   |
+    | Jane      | Doe    | jane | secret   | student                   |
+    When I get on the members group JSON page with "Class XXX_THISISOBVIOUSLYWRONG_XXX"
     Then I should see JSON '[{"user_type":"student", "name":"Joe Bloggs", "uid":"joe", "given_name":"Joe", "surname":"Bloggs", "reverse_name":"Bloggs Joe"},{"name":"Jane Doe", "user_type":"student", "uid":"jane", "surname":"Doe", "reverse_name":"Doe Jane", "given_name":"Jane"}]'

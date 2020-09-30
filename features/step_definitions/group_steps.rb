@@ -14,15 +14,3 @@ Given /^the following groups:$/ do |groups|
     group = Group.create(new_group)
   end
 end
-
-Then /^I should see "([^\"]*)" on the "([^\"]*)"$/ do |role_name, selector|
-  steps %Q{
-    Then I should see "#{role_name}" within "##{selector.to_s.downcase.gsub(" ", "_")}"
-  }
-end
-
-Then /^I should not see "([^\"]*)" on the "([^\"]*)"$/ do |role_name, selector|
-  steps %Q{
-    Then I should not see "#{role_name}" within "##{selector.to_s.downcase.gsub(" ", "_")}"
-  }
-end

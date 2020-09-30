@@ -5,20 +5,16 @@ Feature: Search users
 
   Background:
     Given a new school and group with names "Example school 1", "Class 1" on the "example" organisation
-    And a new role with name "Class 1A" and which is joined to the "Class 1" group
-    And the following roles:
-    | displayName |
-    | Staff       |
     And the following users:
-      | givenName | sn       | uid      | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor   | pavel    | secret   | true         | Staff     | staff                     |
-      | Johnny    | Harris   | johnny   | secret   | false        | Class 1A  | student                   |
-      | Harry     | Johnson  | harry    | secret   | false        | Class 1A  | student                   |
-      | Jack      | Walker   | jack     | secret   | false        | Class 1A  | student                   |
-      | Kelly     | Williams | kelly    | secret   | false        | Class 1A  | student                   |
-      | Eric      | Williams | eric     | secret   | false        | Class 1A  | student                   |
-      | Anthony   | Davis    | anthony  | secret   | false        | Class 1A  | student                   |
-      | Isabella  | Jackson  | isabella | secret   | false        | Class 1A  | student                   |
+      | givenName | sn       | uid      | password | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor   | pavel    | secret   | true         | staff                     |
+      | Johnny    | Harris   | johnny   | secret   | false        | student                   |
+      | Harry     | Johnson  | harry    | secret   | false        | student                   |
+      | Jack      | Walker   | jack     | secret   | false        | student                   |
+      | Kelly     | Williams | kelly    | secret   | false        | student                   |
+      | Eric      | Williams | eric     | secret   | false        | student                   |
+      | Anthony   | Davis    | anthony  | secret   | false        | student                   |
+      | Isabella  | Jackson  | isabella | secret   | false        | student                   |
     And I am logged in as "pavel" with password "secret"
 
   Scenario: Find user by first name
@@ -50,12 +46,8 @@ Feature: Search users
 
   Scenario: School admin should not find students from other schools
     Given a new school and group with names "Example school 2", "Class 1" on the "example" organisation
-    And a new role with name "Class 1A" and which is joined to the "Class 1" group
-    And the following roles:
-    | displayName |
-    | Staff       |
     And the following users:
-      | givenName | sn    | uid       | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Elizabeth | Jones | elizabeth | secret   | false        | Class 1A  | student                   |
+      | givenName | sn    | uid       | password | school_admin | puavoEduPersonAffiliation |
+      | Elizabeth | Jones | elizabeth | secret   | false        | student                   |
     When I search user with "Elizabeth"
     And I should get no search results
