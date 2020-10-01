@@ -120,5 +120,5 @@ Feature: Manage groups
     | givenName | sn     | uid  | password | puavoEduPersonAffiliation |
     | Joe       | Bloggs | joe  | secret   | student                   |
     | Jane      | Doe    | jane | secret   | student                   |
-    When I get on the members group JSON page with "Class XXX_THISISOBVIOUSLYWRONG_XXX"
+    When I get on the members group JSON page with "Class 4"
     Then I should see JSON '[{"user_type":"student", "name":"Joe Bloggs", "uid":"joe", "given_name":"Joe", "surname":"Bloggs", "reverse_name":"Bloggs Joe"},{"name":"Jane Doe", "user_type":"student", "uid":"jane", "surname":"Doe", "reverse_name":"Doe Jane", "given_name":"Jane"}]'

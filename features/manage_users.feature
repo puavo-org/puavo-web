@@ -252,11 +252,11 @@ Feature: Manage users
     When I follow "Delete user"
     Then I should see "User was successfully removed."
     And the memberUid should not include "ben" on the "School 1" school
-    And the "School 1" school not include incorret member values
+    And the "School 1" school not include incorrect member values
     And the memberUid should not include "ben" on the "Class 4" group
-    And the "Class 4" group not include incorret member values
+    And the "Class 4" group not include incorrect member values
     And the memberUid should not include "ben" on the "Domain Users" samba group
-    And the "School 1" school not include incorret puavoSchoolAdmin values
+    And the "School 1" school not include incorrect puavoSchoolAdmin values
     And the memberUid should not include "ben" on the "Domain Admins" samba group
 
   Scenario: Get user information in JSON

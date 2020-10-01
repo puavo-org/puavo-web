@@ -213,7 +213,7 @@ end
 Then(/^I can not select "([^\"]*)" from the "([^\"]*)"$/) do |value, field|
   find_field(field).native.inner_html.should_not =~ /#{value}/
 end
-Then(/^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/) do |object_name, class_name, method|
+Then(/^the "([^\"]*)" ([^ ]+) not include incorrect ([^ ]+) values$/) do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
   Array(object.send(method)).each do |dn|
     lambda{ User.find(dn) }.should_not raise_error
