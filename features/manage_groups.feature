@@ -117,8 +117,8 @@ Feature: Manage groups
     | displayName | cn      |
     | Class 4     | class4  |
     And the following users:
-    | givenName | sn     | uid  | password | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe  | secret   | student                   |
-    | Jane      | Doe    | jane | secret   | student                   |
+    | givenName | sn     | uid  | password | puavoEduPersonAffiliation | groups |
+    | Joe       | Bloggs | joe  | secret   | student                   | class4 |
+    | Jane      | Doe    | jane | secret   | student                   | class4 |
     When I get on the members group JSON page with "Class 4"
     Then I should see JSON '[{"user_type":"student", "name":"Joe Bloggs", "uid":"joe", "given_name":"Joe", "surname":"Bloggs", "reverse_name":"Bloggs Joe"},{"name":"Jane Doe", "user_type":"student", "uid":"jane", "surname":"Doe", "reverse_name":"Doe Jane", "given_name":"Jane"}]'

@@ -12,10 +12,17 @@ end
 Given(/^the following users:$/) do |users|
   set_ldap_admin_connection
   users.hashes.each do |u|
+    groups = nil
     school = nil
-    if u["school"]
+    if u["school"] then
       school = School.find(:first, :attribute => "displayName", :value => u["school"])
       u.delete("school")
+    end
+    if u['groups'] then
+      groups = u['groups'].split.map do |g_cn|
+                 Group.find(:first, :attribute => 'cn', :value => g_cn)
+               end
+      u.delete('groups')
     end
 
     user = User.new(u)
@@ -26,6 +33,7 @@ Given(/^the following users:$/) do |users|
     end
     user.set_password(u["password"])
     user.save!
+    user.groups = groups if groups  # XXX must be after .save! due to weird APIs
     user.update_associations
   end
 end
