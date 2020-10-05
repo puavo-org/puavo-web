@@ -503,14 +503,16 @@ Feature: Manage users
     # create an admin user
     Given I am on the new user page
     When I fill in the following:
-    | Given name                | Thomas                |
-    | Surname                   | Anderson              |
-    | Username                  | neo                   |
+    | Given name | Thomas   |
+    | Surname    | Anderson |
+    | Username   | neo      |
     And I check "puavoEduPersonAffiliation_teacher"
     And I check "puavoEduPersonAffiliation_admin"
     And I press "Create"
-    And I select "Class 4" from "teaching_group"
-    And I press "Save"
+    Then I should see the following:
+    | Thomas   |
+    | Anderson |
+    | neo      |
     And I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
     # make them an owner and an admin
