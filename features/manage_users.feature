@@ -52,9 +52,11 @@ Feature: Manage users
     | Given name | Jane     |
     | Username   | jane.doe |
     And I check "Student"
-    And I check "Class 4"
     And I press "Create"
-    Then I should see "Jane"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
+    Then I should see "jane.doe"
+    And I should see "Jane"
     And I should see "Doe"
     And I should not see "SSH public key"
 
@@ -87,11 +89,12 @@ Feature: Manage users
     And the "Language" select box should contain "English \(United States\)"
     And the "Language" select box should contain "German \(Switzerland\)"
     And I select "English (United States)" from "Language"
-    And I check "Class 4"
     # FIXME
     And I choose "user_puavoAllowRemoteAccess_true"
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
     Then I should see the following:
     |                                                 |
     | Mabey                                           |
@@ -139,7 +142,6 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | Confirm new password      | secretpw              |
     And I check "Student"
-    And I check "Class 4"
     And I press "Create"
     Then I should see "Username has already been taken"
     Then I should see "Failed to create the user!"
@@ -154,8 +156,7 @@ Feature: Manage users
     And I should see "Given name can't be blank"
     And I should see "Surname can't be blank"
     And I should see "Username can't be blank"
-    And I should see "User type can't be blank"
-    And I should see "Roles can't be blank"
+    And I should see "Role can't be blank"
 
   Scenario: Create user with incorrect password confirmation
     And I am on the new user page
@@ -166,7 +167,6 @@ Feature: Manage users
     | user[new_password]        | secretpw          |
     | Confirm new password      | test confirmation |
     And I check "Student"
-    And I check "Class 4"
     And I press "Create"
     Then I should see "Failed to create the user!"
     And I should see "New password doesn't match the confirmation"
@@ -180,6 +180,7 @@ Feature: Manage users
     | displayName | cn      |
     | Class 6B    | class6b |
     And I am on the edit user page with "ben"
+    And I add user "ben" to teaching group "Class 4"
     When I fill in the following:
     | Surname    | MabeyEDIT       |
     | Given name | BenEDIT         |
@@ -194,7 +195,6 @@ Feature: Manage users
 #   | Password confirmation      |           |
     # And set photo?
     And I check "Visitor"
-    And I check "Staffs"
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Update"
     Then I should see the following:
@@ -202,7 +202,6 @@ Feature: Manage users
     | MabeyEDIT       |
     | BenEDIT         |
     | ben-edit        |
-    | Staffs          |
     | Visitor         |
     | ben@example.com |
     And I should see "Class 4" on the "Groups"
@@ -281,8 +280,8 @@ Feature: Manage users
 
   Scenario: Create new user with invalid username
     Given the following groups:
-    | displayName | cn      |
-    | Class 6B    | class6b |
+    | displayName | cn      | puavoEduGroupType |
+    | Class 6B    | class6b | teaching group    |
     And I am on the new user page
     When I fill in the following:
     | Surname                   | Mabey                 |
@@ -292,7 +291,6 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | Confirm new password      | secretpw              |
     And I check "Student"
-    And I check "Class 4"
     And I fill in "Username" with "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     And I press "Create"
     Then I should see "Username is too long (maximum is 255 characters)"
@@ -313,6 +311,8 @@ Feature: Manage users
     Then I should see "Username contains invalid characters (allowed characters are a-z0-9.-)"
     When I fill in "Username" with "ben-james.mabey"
     And I press "Create"
+    And I select "Class 6B" from "teaching_group"
+    And I press "Save"
     Then I should see "User was successfully created."
 
   Scenario: Move user to another school
@@ -363,9 +363,10 @@ Feature: Manage users
     | Given name     | Jane     |
     | Username       | jane.doe |
     | SSH public key | foobar   |
-    And I check "Class 4"
     And I check "Student"
     And I press "Create"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
     Then I should see "Jane"
     And I should see "Doe"
     And I should see "Invalid public key"
@@ -397,9 +398,10 @@ Feature: Manage users
     | Given name     | Duck                    |
     | Username       | donald.duck             |
     And I fill in "Email" with " donald.duck@calisota.us "
-    And I check "Class 4"
     And I check "Student"
     And I press "Create"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
     Then I should see "User was successfully created."
     And I should see "donald.duck@calisota.us"
 
@@ -500,10 +502,11 @@ Feature: Manage users
     | Given name                | Thomas                |
     | Surname                   | Anderson              |
     | Username                  | neo                   |
-    And I check "role_class_4"
     And I check "puavoEduPersonAffiliation_teacher"
     And I check "puavoEduPersonAffiliation_admin"
     And I press "Create"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
     Then I should see "User was successfully created."
     And I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"

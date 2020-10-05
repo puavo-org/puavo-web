@@ -56,7 +56,8 @@ do |names_of_the_models, values, organisation|
   end
   if models_value.has_key?('group')
     @group = Group.create( :displayName => models_value['group'],
-                           :cn => models_value['group'].downcase.gsub(/[^a-z0-9]/, "") )
+                           :cn => models_value['group'].downcase.gsub(/[^a-z0-9]/, ""),
+                           :puavoEduGroupType => 'teaching group')
     @school.groups << @group
   end
 end
