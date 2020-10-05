@@ -313,7 +313,12 @@ Feature: Manage users
     And I press "Create"
     And I select "Class 6B" from "teaching_group"
     And I press "Save"
-    Then I should see "User was successfully created."
+    Then I should see the following:
+    | Ben             |
+    | Mabey           |
+    | ben-james.mabey |
+    | +35814123123123 |
+    | Class 6B        |
 
   Scenario: Move user to another school
     Given the following users:
@@ -402,7 +407,6 @@ Feature: Manage users
     And I press "Create"
     And I select "Class 4" from "teaching_group"
     And I press "Save"
-    Then I should see "User was successfully created."
     And I should see "donald.duck@calisota.us"
 
   Scenario: Reverse name is updated
@@ -507,7 +511,6 @@ Feature: Manage users
     And I press "Create"
     And I select "Class 4" from "teaching_group"
     And I press "Save"
-    Then I should see "User was successfully created."
     And I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
     # make them an owner and an admin
