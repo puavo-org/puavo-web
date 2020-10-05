@@ -163,6 +163,14 @@ When(/^I change "(.*?)" user type to "(.*?)"$/) do |uid, user_type|
   user.save!
 end
 
+When(/^I add user "(.*?)" to teaching group "(.*?)"$/) do |uid, groupname|
+  user = User.find(:first, :attribute => 'uid', :value => uid)
+  group = Group.find(:first, :attribute => 'displayName', :value => groupname)
+
+  user.teaching_group = group.id
+  # XXX no user.save! due to weird API
+end
+
 # Used when testing password changing timeouts
 Then(/^I wait (\d+) seconds$/) do |number|
   sleep(number)

@@ -75,9 +75,10 @@ Feature: Manage groups
     | displayName | cn      |
     | Class 4A    | class4a |
     | Class 6B    | class6b |
+    And I add user "pavel" to teaching group "Class 1"
     And I am on the groups list page
-    Then I should see "Class 4A"
-    And I should see "Class 6B"
+    Then I should see "Class 4A (0)"
+    And I should see "Class 6B (0)"
     And I should see "Class 1 (1)"
 
   Scenario: Delete group
