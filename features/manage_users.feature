@@ -506,14 +506,11 @@ Feature: Manage users
     | Given name | Thomas   |
     | Surname    | Anderson |
     | Username   | neo      |
-    And I check "puavoEduPersonAffiliation_teacher"
-    And I check "puavoEduPersonAffiliation_admin"
+    And I check "Teacher"
+    And I check "Admin"
     And I press "Create"
-    Then I should see the following:
-    | Thomas   |
-    | Anderson |
-    | neo      |
-    And I should not see "The user is an admin of this school"
+    And I press "Save"
+    Then I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
     # make them an owner and an admin
     When I follow "Owners"
