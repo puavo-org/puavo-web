@@ -55,7 +55,7 @@ class BootConfigurations < PuavoSinatra
       :mac_address => params["mac_address"]
     }
 
-    # Get Device or LtspServer
+    # Get Device or Server
     begin
       host = Host.by_mac_address!(params["mac_address"])
     rescue NotFound => e

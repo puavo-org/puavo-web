@@ -56,7 +56,8 @@ do |names_of_the_models, values, organisation|
   end
   if models_value.has_key?('group')
     @group = Group.create( :displayName => models_value['group'],
-                           :cn => models_value['group'].downcase.gsub(/[^a-z0-9]/, "") )
+                           :cn => models_value['group'].downcase.gsub(/[^a-z0-9]/, ""),
+                           :puavoEduGroupType => 'teaching group')
     @school.groups << @group
   end
 end
@@ -97,14 +98,6 @@ Given(/^I am on ([^\"]+) with "([^\"]*)"$/) do |page_name, value|
       visit group_path(@school, group)
     when /the edit group page/
       visit edit_group_path(@school, group)
-    end
-  when /role page/
-    role = Role.find( :first, :attribute => "displayName", :value => value )
-    case page_name
-    when /show/
-      visit role_path(@school, role)
-    when /edit/
-      visit edit_role_path(@school, role)
     end
   when /the new other device page/, /the devices list/
     @school = School.find( :first, :attribute => "displayName", :value => value )
@@ -221,7 +214,7 @@ end
 Then(/^I can not select "([^\"]*)" from the "([^\"]*)"$/) do |value, field|
   find_field(field).native.inner_html.should_not =~ /#{value}/
 end
-Then(/^the "([^\"]*)" ([^ ]+) not include incorret ([^ ]+) values$/) do |object_name, class_name, method|
+Then(/^the "([^\"]*)" ([^ ]+) not include incorrect ([^ ]+) values$/) do |object_name, class_name, method|
   object = eval(class_name.capitalize).send("find", :first, :attribute => 'displayName', :value => object_name)
   Array(object.send(method)).each do |dn|
     lambda{ User.find(dn) }.should_not raise_error

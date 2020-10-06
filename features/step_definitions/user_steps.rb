@@ -12,15 +12,17 @@ end
 Given(/^the following users:$/) do |users|
   set_ldap_admin_connection
   users.hashes.each do |u|
-    roles = nil
-    if u["roles"]
-      roles = u["roles"].split(/,[ ]*/)
-      u.delete("roles")
-    end
+    groups = nil
     school = nil
-    if u["school"]
+    if u["school"] then
       school = School.find(:first, :attribute => "displayName", :value => u["school"])
       u.delete("school")
+    end
+    if u['groups'] then
+      groups = u['groups'].split.map do |g_cn|
+                 Group.find(:first, :attribute => 'cn', :value => g_cn)
+               end
+      u.delete('groups')
     end
 
     user = User.new(u)
@@ -31,13 +33,7 @@ Given(/^the following users:$/) do |users|
     end
     user.set_password(u["password"])
     user.save!
-    if roles
-      roles.each do |role_name|
-        Role.find( :first,
-                   :attribute => "displayName",
-                   :value => role_name ).members << user
-      end
-    end
+    user.groups = groups if groups  # XXX must be after .save! due to weird APIs
     user.update_associations
   end
 end
@@ -165,6 +161,27 @@ When(/^I change "(.*?)" user type to "(.*?)"$/) do |uid, user_type|
   user = User.find(:first, :attribute => "uid", :value => uid)
   user.puavoEduPersonAffiliation = user_type
   user.save!
+end
+
+When(/^I add user "(.*?)" to administrative groups "(.*?)"$/) do |uid, groupnames|
+  set_ldap_admin_connection
+  user = User.find(:first, :attribute => 'uid', :value => uid)
+  group_ids = groupnames.split(',').map do |gn|
+                Group.find(:first, :attribute => 'displayName', :value => gn) \
+                  .id
+              end
+
+  user.administrative_groups = group_ids
+  # XXX no user.save! due to weird API
+end
+
+When(/^I add user "(.*?)" to teaching group "(.*?)"$/) do |uid, groupname|
+  set_ldap_admin_connection
+  user = User.find(:first, :attribute => 'uid', :value => uid)
+  group = Group.find(:first, :attribute => 'displayName', :value => groupname)
+
+  user.teaching_group = group.id
+  # XXX no user.save! due to weird API
 end
 
 # Used when testing password changing timeouts

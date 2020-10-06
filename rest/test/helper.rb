@@ -1,6 +1,7 @@
 # Require net-ldap for ActiveLdap. Rails env require below should do this. Not
 # sure why it is  not...
 require "net-ldap"
+require_relative "../lib/ldapmodel"
 
 ENV['RACK_ENV'] = 'test'
 
@@ -25,8 +26,6 @@ class MockFluent
 end
 
 def create_server(attrs)
-  attrs[:puavoDeviceType] ||=  "ltspserver"
-
   server = Server.new
   server.attributes = attrs
   server.save!
@@ -82,6 +81,15 @@ def assert_200(res=nil)
   assert_equal 200, res.status, "Body: #{ res.body }"
 end
 
+def setup_ldap_admin_connection()
+  LdapModel.setup(
+    :organisation => PuavoRest::Organisation.default_organisation_domain!,
+    :rest_root => "http://" + CONFIG["default_organisation_domain"],
+    :credentials => {
+      :dn       => PUAVO_ETC.ldap_dn,
+      :password => PUAVO_ETC.ldap_password }
+  )
+end
 
 require 'minitest/autorun'
 require 'rack/test'

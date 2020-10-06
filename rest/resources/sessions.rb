@@ -82,17 +82,6 @@ end
 # Desktop login sessions
 class Sessions < PuavoSinatra
 
-  def sorted_ltsp_servers(preferred_image, preferred_server, school_dn)
-    filtered = ServerFilter.new(LtspServer.all_with_state)
-    filtered.filter_old
-    filtered.safe_apply(:filter_by_image, preferred_image) if preferred_image
-    filtered.safe_apply(:filter_by_server, preferred_server)
-    filtered.filter_by_other_schools(school_dn)
-    filtered.safe_apply(:filter_by_school, school_dn)
-    filtered.sort_by_load
-  end
-
-
   # @api {post} /v3/sessions
   # @apiName Create new desktop session
   # @apiGroup sessions
@@ -145,22 +134,6 @@ class Sessions < PuavoSinatra
 
       LdapModel.setup(:credentials => credentials) do
         device = Device.by_hostname!(json_params["hostname"])
-
-        if device.type == "thinclient"
-          servers =  sorted_ltsp_servers(
-            device.preferred_image,
-            device.preferred_server,
-            device.school_dn
-          )
-
-          if servers.empty?
-            raise NotFound, :user => "cannot find any LTSP servers"
-          end
-
-          primary, *fallback = servers
-          session["ltsp_server"] = primary
-          session["fallback_ltsp_servers"] = fallback
-        end
 
         session["preferred_language"] = device.preferred_language
         session["locale"] = device.locale

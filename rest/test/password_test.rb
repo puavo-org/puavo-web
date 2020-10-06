@@ -4,6 +4,7 @@ describe PuavoRest::Password do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
 
     @school = School.create(
       :cn => "gryffindor",
@@ -11,57 +12,42 @@ describe PuavoRest::Password do
       :puavoSchoolHomePageURL => "schoolhomepage.example"
     )
 
-    @group = Group.new
-    @group.cn = "group1"
-    @group.displayName = "Group 1"
-    @group.puavoSchool = @school.dn
+    @group = PuavoRest::Group.new(
+      :abbreviation => 'group1',
+      :name         => 'Group 1',
+      :school_dn    => @school.dn.to_s,
+      :type         => 'administrative group')
     @group.save!
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @student = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :mail => "bob@example.com",
-      :role_ids => [@role.puavoId]
+    maintenance_group = Group.find(:first,
+                                   :attribute => 'cn',
+                                   :value     => 'maintenance')
+    @student = PuavoRest::User.new(
+      :email              => 'bob@example.com',
+      :first_name         => 'Bob',
+      :last_name          => 'Brown',
+      :password           => 'secret',
+      :preferred_language => 'en',
+      :roles              => [ 'student' ],
+      :school_dns         => [ @school.dn.to_s ],
+      :username           => 'bob',
     )
-
-    @student.set_password "secret"
-    @student.puavoSchool = @school.dn
-    @student.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @student.save!
+    # XXX weird that this must be here
+    @student.administrative_groups = [ maintenance_group.id, @group.id ]
 
-    @teacher = User.new(
-      :givenName => "Test",
-      :sn  => "Teacher",
-      :uid => "teacher",
-      :puavoEduPersonAffiliation => "teacher",
-      :mail => "teacher@example.com",
-      :role_ids => [@role.puavoId]
+    @teacher = PuavoRest::User.new(
+      :email              => 'teacher@example.com',
+      :first_name         => 'Test',
+      :last_name          => 'Teacher',
+      :password           => 'foobar',
+      :preferred_language => 'en',
+      :roles              => [ 'teacher' ],
+      :school_dns         => [ @school.dn.to_s ],
+      :username           => 'teacher',
     )
-
-    @teacher.set_password "foobar"
-    @teacher.puavoSchool = @school.dn
-    @teacher.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @teacher.save!
+    @teacher.administrative_groups = [ maintenance_group.id, @group.id ]
   end
 
   describe "Test the school users list" do

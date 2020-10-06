@@ -5,15 +5,10 @@ Feature: Manage passwords
 
   Background:
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
-    And a new role with name "Class 4" and which is joined to the "Class 4" group
-    And the following roles:
-    | displayName |
-    | Teacher |
-    | Student  |
     And the following users:
-    | givenName | sn     | uid   | password    | school_admin | role_name | puavoEduPersonAffiliation | mail             |
-    | Pavel     | Taylor | pavel | pavelsecret | true         | Teacher   | admin                     | pavel@foobar.com |
-    | Ben       | Mabey  | ben   | bensecret   | false        | Class 4   | student                   | ben@foobar.com   |
+    | givenName | sn     | uid   | password    | school_admin | puavoEduPersonAffiliation | mail             |
+    | Pavel     | Taylor | pavel | pavelsecret | true         | admin                     | pavel@foobar.com |
+    | Ben       | Mabey  | ben   | bensecret   | false        | student                   | ben@foobar.com   |
     And I am on the password change page
 
   Scenario: Empty own password change form should not crash

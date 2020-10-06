@@ -139,75 +139,17 @@ Get file contents.
 
     (Content-Type: application/octet-stream))
 
-# LTSP servers
-
-## GET /v3/ltsp_servers
-
-Get metadata for all ltsp servers.
-
-### Returns
-
-    [
-      {
-        "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
-        "hostname": "ltspserver1",
-        "updated": "2013-06-04 16:04:08 +0300",
-        "ltsp_image": "test-image",
-        "load_avg": 0.1
-      },
-      ...
-    ]
-
-
-## GET /v3/ltsp_servers/_most_idle
-
-*DEPRECATED! use `post /v3/sessions`*
-
-Get the most idle ltsp server.
-
-
-## GET /v3/ltsp_servers/:hostname
-
-Get ltsp server metadata by hostname.
-
-### Returns
-
-    {
-      "dn": "puavoId=11,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=net",
-      "hostname": "ltspserver1",
-      "updated": "2013-06-04 16:04:08 +0300",
-      "ltsp_image": "test-image",
-      "load_avg": 0.1
-    },
-
-## PUT /v3/ltsp_servers/:hostname
-
-Set LTSP server status.
-
-### Post fields
-
-  - ltsp_image
-  - load_avg
-  - cpu_count (optional)
+# Sessions
 
 ## POST /v3/sessions
 
-Create new thin client session.
-
-Will return the most appropriate ltsp server depending on
-  - preferred device image attribute on device, school or organisation
-  - preferred server attribute on device
-  - preferred school attribute on ltsp server
-  - ltsp server load
-  - printer queues the user can use
-
-Sessions are stored in memory only but are not automatically deleted.
+Create new session.  Sessions are stored in memory only
+but are not automatically deleted.
 
 ### Post fields
 
   - hostname (optional)
     - Device hostname
-    - If this is a thin client a ltsp server will be required
 
 ### Returns
 
@@ -232,17 +174,6 @@ Sessions are stored in memory only but are not automatically deleted.
         "xrand_disable": null,
         "graphics_driver": null,
         "resolution": null
-      },
-      "ltsp_server": {
-        "state": {
-          "updated": 1380803986,
-          "fqdn": "myltsp",
-          "ltsp_image": "",
-          "load_avg": 0.5
-        },
-        "school_dns": [],
-        "hostname": "myltsp",
-        "dn": "puavoId=5371,ou=Servers,ou=Hosts,dc=edu,dc=hogwarts,dc=net"
       },
       "user": {
         "profile_image_link": "http://127.0.0.1:9393/v3/users/admin/profile.jpg",
@@ -421,14 +352,6 @@ Basic auth or boot server auth
 ### Returns
 
     (Array)
-
-## POST /v3/schools/:school_id/legacy_roles/:role_id/members
-
-Add user to legacy role
-
-### Example
-
-    curl -d username=bob --user admin:secret $(puavo-resolve-api-server)/v3/schools/1/legacy_roles/5/members
 
 ## POST /v3/primus/:filename
 

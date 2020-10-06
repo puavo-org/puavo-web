@@ -7,42 +7,32 @@ describe LdapModel do
 
     before(:each) do
       Puavo::Test.clean_up_ldap
+      setup_ldap_admin_connection()
+
       @school = School.create(
         :cn => "gryffindor",
         :displayName => "Gryffindor",
         :puavoSchoolHomePageURL => "schoolhomepage.example"
       )
 
-      @group = Group.new
-      @group.cn = "group1"
-      @group.displayName = "Group 1"
-      @group.puavoSchool = @school.dn
+      @group = PuavoRest::Group.new(
+        :abbreviation => 'group1',
+        :name         => 'Group 1',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group')
       @group.save!
 
-      @role = Role.new
-      @role.displayName = "Some role"
-      @role.puavoSchool = @school.dn
-      @role.groups << @group
-      @role.save!
-
-      LdapModel.setup(
-        :organisation => PuavoRest::Organisation.default_organisation_domain!,
-        :rest_root => "http://" + CONFIG["default_organisation_domain"],
-        :credentials => {
-          :dn => PUAVO_ETC.ldap_dn,
-          :password => PUAVO_ETC.ldap_password }
-      )
-
       @user = PuavoRest::User.new(
-        :first_name => "Heli",
-        :last_name => "Kopteri",
-        :username => "heli",
-        :roles => ["staff"],
-        :email => "heli.kopteri@example.com",
-        :school_dns => [@school.dn.to_s],
-        :password => "userpw"
+        :email      => 'heli.kopteri@example.com',
+        :first_name => 'Heli',
+        :last_name  => 'Kopteri',
+        :password   => 'userpw',
+        :roles      => [ 'staff' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'heli',
       )
       @user.save!
+      @user.teaching_group = @group   # XXX weird that this must be here
     end
 
     it "cannot create users with the same usernames" do

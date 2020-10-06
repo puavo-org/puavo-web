@@ -11,8 +11,6 @@ Feature: Manage organisation
     And the following groups:
     | displayName | cn      |
     | Teacher     | teacher |
-    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Greenwich Steiner School" school
-    And a new role with name "Teacher" and which is joined to the "Teacher" group to "Greenwich Steiner School" school
     And I am logged in as "example" organisation owner
 
   Scenario: Show information of the organisation
@@ -106,8 +104,8 @@ Feature: Manage organisation
 
   Scenario: Add or remove organisation owner
     Given the following users:
-    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
+    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | admin                     | Greenwich Steiner School |
     When I follow "Owners"
     And I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor is now an owner of this organisation"
@@ -121,8 +119,8 @@ Feature: Manage organisation
 
   Scenario: Removing a user actually removes them from the organisation owners
     Given the following users:
-    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
+    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | admin                     | Greenwich Steiner School |
     When I follow "Owners"
     And I follow "Add" on the "Pavel Taylor" user
     Then I should see "Pavel Taylor is now an owner of this organisation"
@@ -139,8 +137,8 @@ Feature: Manage organisation
 
   Scenario: Try to set student to organisation owner
     Given the following users:
-    | givenName | sn  | uid      | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Jane      | Doe | jane.doe | secret   | Class 1   | admin                     | Greenwich Steiner School |
+    | givenName | sn  | uid      | password | puavoEduPersonAffiliation | school                   |
+    | Jane      | Doe | jane.doe | secret   | admin                     | Greenwich Steiner School |
     When I follow "Owners"
     And I change "jane.doe" user type to "student"
     And I follow "Add" on the "Jane Doe" user
@@ -148,8 +146,8 @@ Feature: Manage organisation
 
   Scenario: Owners can't remove their own owner rights
     Given the following users:
-    | givenName | sn   | uid    | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Donald    | Duck | donald | 313      | Teacher   | admin                     | Greenwich Steiner School |
+    | givenName | sn   | uid    | password | puavoEduPersonAffiliation | school                   |
+    | Donald    | Duck | donald | 313      | admin                     | Greenwich Steiner School |
     When I follow "Owners"
     And I follow "Add" on the "Donald Duck" user
     Then I should see "Donald Duck is now an owner of this organisation"

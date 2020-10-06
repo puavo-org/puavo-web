@@ -8,9 +8,7 @@ Feature: Manage LDAP services
     And the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
-    And a new role with name "Class 1" and which is joined to the "Class 1" group to "Greenwich Steiner School" school
     And I am logged in as "example" organisation owner
-
 
   Scenario: Add new LDAP service
     Given I follow "LDAP service"

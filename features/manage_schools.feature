@@ -5,11 +5,9 @@ Feature: Manage schools
 
   Background:
     Given a new school and group with names "Example school 1", "Teacher" on the "example" organisation
-    And a new role with name "Teacher" and which is joined to the "Teacher" group to "Example school 1" school
     And the following schools:
     | displayName              | cn        |
     | Greenwich Steiner School | greenwich |
-    And a new role with name "Teacher" and which is joined to the "Teacher" group to "Greenwich Steiner School" school
     And I am logged in as "example" organisation owner
 
   Scenario: Add new school to organisation
@@ -155,8 +153,8 @@ Feature: Manage schools
 
   Scenario: Schools list page when we have only one school and user is not organisation owner
     Given the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |
-      | Pavel     | Taylor | pavel | secret   | true         | Teacher   | admin                     | Greenwich Steiner School |
+      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation | school                   |
+      | Pavel     | Taylor | pavel | secret   | true         | admin                     | Greenwich Steiner School |
     And I follow "Logout"
     And I am logged in as "pavel" with password "secret"
     When I go to the schools list page
@@ -170,17 +168,14 @@ Feature: Manage schools
     When I follow "Delete school"
     Then I should see "School was successfully removed."
 
-  Scenario: Delete school when it still contains the users, groups and roles
+  Scenario: Delete school when it still contains the users and groups
     Given a new school and group with names "Test School 1", "Group 1" on the "example" organisation
-    And the following roles:
-    | displayName | cn    |
-    | Role 1      | role1 |
     And the following users:
-    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school |
-    | User 1    | User 1 | user1 | secret   | Role 1    | student                   | Test   |
+    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school |
+    | User 1    | User 1 | user1 | secret   | student                   | Test   |
     And I am on the show school page with "Test School 1"
     When I follow "Delete school"
-    Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
+    Then I should see "The school was not removed. Its users, groups, devices and boot servers must be removed first."
     And I should be on the school page
 
   Scenario: Deleting a school when it still contains devices should fail
@@ -198,7 +193,7 @@ Feature: Manage schools
     Given I am on the school page with "Condemned School"
     Then I should see "School's home page"
     When I follow "Delete school"
-    Then I should see "The school was not removed. Its users, roles, groups, devices and boot servers must be removed first."
+    Then I should see "The school was not removed. Its users, groups, devices and boot servers must be removed first."
     Given I am on the devices list page with "Condemned School"
     And I press "Remove" on the "testdevice1" row
     Then I should see "List of devices"
@@ -210,8 +205,8 @@ Feature: Manage schools
 
   Scenario: Add school management access rights to the user
     Given the following users:
-    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
+    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | admin                     | Greenwich Steiner School |
     And I am on the show user page with "pavel"
     Then I should not see "The user is an admin of this school"
     Given I am on the school page with "Greenwich Steiner School"
@@ -231,8 +226,8 @@ Feature: Manage schools
 
   Scenario: Remove school management access rights from the user
     Given the following users:
-    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school           | school_admin |
-    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Example school 1 | true         |
+    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school           | school_admin |
+    | Pavel     | Taylor | pavel | secret   | admin                     | Example school 1 | true         |
     And I am on the show user page with "pavel"
     Then I should see "The user is an admin of this school"
     Then I am on the school page with "Greenwich Steiner School"
@@ -257,9 +252,9 @@ Feature: Manage schools
 
   Scenario: School management access can be added only if user type is admin
     Given the following users:
-    | givenName | sn     | uid   | password | role_name | puavoEduPersonAffiliation | school                   |
-    | Pavel     | Taylor | pavel | secret   | Teacher   | admin                     | Greenwich Steiner School |
-    | Ben       | Mabey  | ben   | secret   | Teacher   | staff                     | Greenwich Steiner School |
+    | givenName | sn     | uid   | password | puavoEduPersonAffiliation | school                   |
+    | Pavel     | Taylor | pavel | secret   | admin                     | Greenwich Steiner School |
+    | Ben       | Mabey  | ben   | secret   | staff                     | Greenwich Steiner School |
     And I am on the school page with "Greenwich Steiner School"
     When I follow "Admins"
     Then I should be added school management access to the "Pavel Taylor (pavel) (Greenwich Steiner School)"
@@ -276,37 +271,11 @@ Feature: Manage schools
 
   Scenario: School dashboard page with admin user
     Given the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation | school                   |
-      | Pavel     | Taylor | pavel | secret   | true         | Teacher   | admin                     | Greenwich Steiner School |
+      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation | school                   |
+      | Pavel     | Taylor | pavel | secret   | true         | admin                     | Greenwich Steiner School |
     And I am logged in as "pavel" with password "secret"
     And I am on the school page with "Greenwich Steiner School"
     Then I should not see "Admins"
-
-  Scenario: Try to rename roles when roles is no defined
-    Given Remove all roles on "Greenwich Steiner School" school
-    And I am on the school page with "Greenwich Steiner School"
-    When I follow "Rename groups and roles"
-    Then I should see "This school has no roles nor groups that could be renamed."
-
-  Scenario: Rename roles and groups
-    Given the following groups to "Example school 1"
-    | displayName | cn           |
-    | Class 1     | student-2006 |
-    | Class 2     | student-2007 |
-    | Class 3     | student-2008 |
-    | Class 4     | student-2009 |
-    | Class 5     | student-2010 |
-    | Class 6     | student-2011 |
-    And the following roles to "Example school 1":
-    | displayName | group_cn     |
-    | Class 1     | student-2006 |
-    | Class 2     | student-2007 |
-    | Class 3     | student-2008 |
-    | Class 4     | student-2009 |
-    | Class 5     | student-2010 |
-    | Class 6     | student-2011 |
-    And I am on the school page with "Example school 1"
-    When I follow "Rename groups and roles"
 
   Scenario: Give the school a non-image file as the image
     Given I am on the new school page

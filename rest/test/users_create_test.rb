@@ -1,5 +1,4 @@
 require_relative "./helper"
-require_relative "../lib/ldapmodel"
 
 describe LdapModel do
 
@@ -7,59 +6,48 @@ describe LdapModel do
 
     before(:each) do
       Puavo::Test.clean_up_ldap
+      setup_ldap_admin_connection()
+
       @school = School.create(
         :cn => "gryffindor",
         :displayName => "Gryffindor",
         :puavoSchoolHomePageURL => "schoolhomepage.example"
       )
 
-      @group = Group.new
-      @group.cn = "group1"
-      @group.displayName = "Group 1"
-      @group.puavoSchool = @school.dn
+      @group = PuavoRest::Group.new(
+        :abbreviation => 'group1',
+        :name         => 'Group 1',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group')
       @group.save!
 
-      @role = Role.new
-      @role.displayName = "Some role"
-      @role.puavoSchool = @school.dn
-      @role.groups << @group
-      @role.save!
-
-      LdapModel.setup(
-        :organisation => PuavoRest::Organisation.default_organisation_domain!,
-        :rest_root => "http://" + CONFIG["default_organisation_domain"],
-        :credentials => {
-          :dn => PUAVO_ETC.ldap_dn,
-          :password => PUAVO_ETC.ldap_password }
-      )
-
       @user = PuavoRest::User.new(
-        :first_name => "Heli",
-        :last_name => "Kopteri",
-        :username => "heli",
-        :roles => ["student"],    # must be student, since year classes are NOT saved for non-students!
-        :email => "heli.kopteri@example.com",
-        :school_dns => [@school.dn.to_s],
-        :password => "userpw"
+        :email      => 'heli.kopteri@example.com',
+        :first_name => 'Heli',
+        :last_name  => 'Kopteri',
+        :password   => 'userpw',
+        # must be student, since year classes are NOT saved for non-students!
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'heli',
       )
       @user.save!
 
       @teaching_group = PuavoRest::Group.new(
-        :name => "5A",
-        :abbreviation => "gryffindor-5a",
-        :type => "teaching group",
-        :school_dn => @school.dn.to_s
+        :abbreviation => 'gryffindor-5a',
+        :name         => '5A',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'teaching group',
       )
       @teaching_group.save!
 
       @year_class = PuavoRest::Group.new(
-        :name => "5",
-        :abbreviation => "gryffindor-5",
-        :type => "year class",
-        :school_dn => @school.dn.to_s
+        :abbreviation => 'gryffindor-5',
+        :name         => '5',
+        :school_dn    => @school.dn.to_s,
+        :type         => 'year class',
       )
       @year_class.save!
-
     end
 
     it "has Fixnum id" do
@@ -166,27 +154,24 @@ describe LdapModel do
     end
 
     it "does not break active ldap" do
-      user = User.new(
-        :givenName => "Mark",
-        :sn  => "Hamil",
-        :uid => "mark",
-        :puavoEduPersonAffiliation => "student",
-        :puavoLocale => "en_US.UTF-8",
-        :mail => ["mark@example.com"],
-        :role_ids => [@role.puavoId]
+      maintenance_group = Group.find(:first,
+                                     :attribute => 'cn',
+                                     :value     => 'maintenance')
+      user = PuavoRest::User.new(
+        :email      => 'mark@example.com',
+        :first_name => 'Mark',
+        :last_name  => 'Hamill',
+        :locale     => 'en_US.UTF-8',
+        :password   => 'secret',
+        :roles      => [ 'student' ],
+        :school_dns => [ @school.dn.to_s ],
+        :username   => 'mark',
       )
-
-      user.set_password "secret"
-      user.puavoSchool = @school.dn
-      user.role_ids = [
-        Role.find(:first, {
-          :attribute => "displayName",
-          :value => "Maintenance"
-        }).puavoId,
-        @role.puavoId
-      ]
       user.save!
 
+      # XXX weird that these must be here
+      user.administrative_groups = [ maintenance_group.id ]
+      user.teaching_group = @group
     end
 
     it "can add and remove groups" do

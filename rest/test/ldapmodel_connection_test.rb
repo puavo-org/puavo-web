@@ -5,25 +5,29 @@ describe "LdapModel connection management" do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
+    setup_ldap_admin_connection()
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor"
     )
 
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :mail => "bob@example.com"
+    maintenance_group = Group.find(:first,
+                                   :attribute => 'cn',
+                                   :value     => 'maintenance')
+    @user = PuavoRest::User.new(
+      :email      => 'bob@example.com',
+      :first_name => 'Bob',
+      :last_name  => 'Brown',
+      :password   => 'secret',
+      :roles      => [ 'student' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'bob',
     )
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [
-      Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
-    ]
     @user.save!
+
+    # XXX weird that this must be here
+    @user.administrative_groups = [ maintenance_group.id ]
   end
 
   it "can get current user with dn and password" do

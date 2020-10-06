@@ -215,7 +215,6 @@ class Root < PuavoSinatra
   use PuavoRest::DeviceImages
   use PuavoRest::Schools
   use PuavoRest::BootServers
-  use PuavoRest::LegacyRoles
   use PuavoRest::UserLists
   use PuavoRest::SambaNextRid
   use PuavoRest::Groups
@@ -228,10 +227,6 @@ class Root < PuavoSinatra
     use PuavoRest::SSO
     use PuavoRest::Primus
     use PuavoRest::Certs
-  end
-
-  if CONFIG["bootserver"]
-    use PuavoRest::LtspServers
   end
 
   if CONFIG["password_management"]

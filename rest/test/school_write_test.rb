@@ -4,7 +4,6 @@ describe PuavoRest::Devices do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
     school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -23,14 +22,7 @@ describe PuavoRest::Devices do
     @school_dn = school.dn
 
     PuavoRest::Organisation.refresh
-    LdapModel.setup(
-      :credentials => {
-        :dn => "uid=admin,o=puavo",
-        :password => "password"
-      },
-      :organisation => PuavoRest::Organisation.default_organisation_domain!
-    )
-
+    setup_ldap_admin_connection()
   end
 
   it "can write name attribte" do

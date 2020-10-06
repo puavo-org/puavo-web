@@ -30,15 +30,6 @@ describe PuavoRest::BootServer do
     }
     @server1.save!
 
-    @ltsp_server = Server.new
-    @ltsp_server.attributes = {
-      :puavoHostname => "evil-ltsp-server",
-      :macAddress => "00:60:2f:56:07:5D",
-      :puavoSchool => @school.dn,
-      :puavoDeviceType => "ltspserver"
-    }
-    @ltsp_server.save!
-
     @printer = Printer.create(
       :printerDescription => "printer1",
       :printerLocation => "school2",
@@ -94,17 +85,6 @@ describe PuavoRest::BootServer do
       assert data["dn"]
       assert data["school_dns"]
     end
-
-    it "must not make ltsp server available as boot server" do
-      get "/v3/boot_servers/evil-ltsp-server", {}, {
-        "HTTP_AUTHORIZATION" => "Bootserver"
-      }
-      assert_equal 404, last_response.status
-      data = JSON.parse last_response.body
-      assert data["error"]
-      assert_equal("NotFound", data["error"]["code"])
-    end
-
   end
 
   describe "POST /v3/boot_servers/:hostname" do

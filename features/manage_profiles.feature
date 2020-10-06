@@ -5,15 +5,10 @@ Feature: Manage profile
 
   Background:
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
-    And a new role with name "Class 4" and which is joined to the "Class 4" group
-    And the following roles:
-      | displayName |
-      | Teacher     |
-      | Class 4     |
     And the following users:
-      | givenName | surname | uid       | password   | puavoEduPersonAffiliation | role_name | school_admin | mail                |
-      | Ken       | Jones   | ken.jones | secret     | teacher                   | Teacher   | true         |                     |
-      | Jane      | Doe     | jane.doe  | janesecret | student                   | Class 4   | false        | jane.doe@foobar.com |
+      | givenName | surname | uid       | password   | puavoEduPersonAffiliation | school_admin | mail                |
+      | Ken       | Jones   | ken.jones | secret     | teacher                   | true         |                     |
+      | Jane      | Doe     | jane.doe  | janesecret | student                   | false        | jane.doe@foobar.com |
 
 
   Scenario: School admin edit profile

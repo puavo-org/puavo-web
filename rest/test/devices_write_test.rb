@@ -4,7 +4,8 @@ describe PuavoRest::Devices do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
+    setup_ldap_admin_connection()
+
     @school = School.create(
       :cn => "gryffindor",
       :displayName => "Gryffindor",
@@ -20,39 +21,33 @@ describe PuavoRest::Devices do
                             '{"fs":"nfs4","path":"10.5.5.3/share","mountpoint":"/home/school/public","options":"-o r"}' ]
     )
 
-    @group = Group.new
-    @group.cn = "group1"
-    @group.displayName = "Group 1"
-    @group.puavoSchool = @school.dn
+    @group = PuavoRest::Group.new(
+      :abbreviation => 'group1',
+      :name         => 'Group 1',
+      :school_dn    => @school.dn.to_s,
+      :type         => 'teaching group')
     @group.save!
 
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => "student",
-      :puavoLocale => "en_US.UTF-8",
-      :mail => ["bob@example.com", "bob@foobar.com", "bob@helloworld.com"],
-      :role_ids => [@role.puavoId],
-      :puavoSshPublicKey => "asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf"
+    maintenance_group = Group.find(:first,
+                                   :attribute => 'cn',
+                                   :value     => 'maintenance')
+    @user = PuavoRest::User.new(
+      :email          => 'bob@example.com',
+      :first_name     => 'Bob',
+      :last_name      => 'Brown',
+      :locale         => 'en_US.UTF-8',
+      :password       => 'secret',
+      :roles          => [ 'student' ],
+      :school_dns     => [ @school.dn.to_s ],
+      :ssh_public_key => 'asdfsdfdfsdfwersSSH_PUBLIC_KEYfdsasdfasdfadf',
+      :username       => 'bob',
     )
-
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [
-      Role.find(:first, {
-        :attribute => "displayName",
-        :value => "Maintenance"
-      }).puavoId,
-      @role.puavoId
-    ]
     @user.save!
+
+    # XXX weird that these must be here
+    @user.administrative_groups = [ maintenance_group.id ]
+    @user.secondary_emails = [ 'bob@foobar.com', 'bob@helloworld.com' ]
+    @user.teaching_group = @group
 
     @laptop = create_device(
       :puavoHostname => "laptop1",

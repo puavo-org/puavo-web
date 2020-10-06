@@ -6,14 +6,10 @@ Feature: Manage users
 
   Background:
     Given a new school and group with names "School 1", "Class 4" on the "example" organisation
-    And a new role with name "Class 4" and which is joined to the "Class 4" group
-    And the following roles:
-    | displayName |
-    | Staffs      |
     And the following users:
-      | givenName | sn     | uid   | password | school_admin | role_name | puavoEduPersonAffiliation |
-      | Pavel     | Taylor | pavel | secret   | true         | Staffs    | staff                     |
-      | Admin     | User   | admin | secret   | true         | Staffs    | staff                     |
+      | givenName | sn     | uid   | password | school_admin | puavoEduPersonAffiliation |
+      | Pavel     | Taylor | pavel | secret   | true         | staff                     |
+      | Admin     | User   | admin | secret   | true         | staff                     |
     And I am logged in as "cucumber" with password "cucumber"
 
   Scenario: Non-owners should not see user deletion buttons on user show pages
@@ -56,9 +52,11 @@ Feature: Manage users
     | Given name | Jane     |
     | Username   | jane.doe |
     And I check "Student"
-    And I check "Class 4"
     And I press "Create"
-    Then I should see "Jane"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
+    Then I should see "jane.doe"
+    And I should see "Jane"
     And I should see "Doe"
     And I should not see "SSH public key"
 
@@ -91,11 +89,12 @@ Feature: Manage users
     And the "Language" select box should contain "English \(United States\)"
     And the "Language" select box should contain "German \(Switzerland\)"
     And I select "English (United States)" from "Language"
-    And I check "Class 4"
     # FIXME
     And I choose "user_puavoAllowRemoteAccess_true"
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Create"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
     Then I should see the following:
     |                                                 |
     | Mabey                                           |
@@ -110,12 +109,9 @@ Feature: Manage users
     | Mabey Ben                                       |
     | 556677                                          |
     | 38:58:f6:22:30:ac:3c:91:5f:30:0c:66:43:12:c6:3f |
-    And I should see "Class 4" on the "Groups by roles"
     And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
     And the member should include "ben" on the "Class 4" group
-    And the memberUid should include "ben" on the "Class 4" role
-    And the member should include "ben" on the "Class 4" role
     And the memberUid should include "ben" on the "School 1" school
     And the member should include "ben" on the "School 1" school
     And the memberUid should include "ben" on the "Domain Users" samba group
@@ -135,8 +131,8 @@ Feature: Manage users
 
   Scenario: Create duplicate user to organisation
     Given the following users:
-      | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
+      | givenName | surname | uid | password | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben | secret   | student                   |
     And I am on the new user page
     When I fill in the following:
     | Surname                   | Mabey                 |
@@ -145,23 +141,21 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | Confirm new password      | secretpw              |
     And I check "Student"
-    And I check "Class 4"
     And I press "Create"
     Then I should see "Username has already been taken"
     Then I should see "Failed to create the user!"
 
   Scenario: Create user with empty values
     Given the following users:
-      | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
+      | givenName | surname | uid | password | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben | secret   | student                   |
     And I am on the new user page
     And I press "Create"
     Then I should see "Failed to create the user!"
     And I should see "Given name can't be blank"
     And I should see "Surname can't be blank"
     And I should see "Username can't be blank"
-    And I should see "User type can't be blank"
-    And I should see "Roles can't be blank"
+    And I should see "Role can't be blank"
 
   Scenario: Create user with incorrect password confirmation
     And I am on the new user page
@@ -172,20 +166,20 @@ Feature: Manage users
     | user[new_password]        | secretpw          |
     | Confirm new password      | test confirmation |
     And I check "Student"
-    And I check "Class 4"
     And I press "Create"
     Then I should see "Failed to create the user!"
     And I should see "New password doesn't match the confirmation"
 
   Scenario: Edit user
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Ben       | Mabey   | ben    | secret   | visitor                   | Class 4   |
-      | Joseph    | Wilk    | joseph | secret   | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben    | secret   | visitor                   |
+      | Joseph    | Wilk    | joseph | secret   | visitor                   |
     And the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
     And I am on the edit user page with "ben"
+    And I add user "ben" to teaching group "Class 4"
     When I fill in the following:
     | Surname    | MabeyEDIT       |
     | Given name | BenEDIT         |
@@ -200,7 +194,6 @@ Feature: Manage users
 #   | Password confirmation      |           |
     # And set photo?
     And I check "Visitor"
-    And I check "Staffs"
     And I attach the file at "features/support/test.jpg" to "Image"
     And I press "Update"
     Then I should see the following:
@@ -208,17 +201,13 @@ Feature: Manage users
     | MabeyEDIT       |
     | BenEDIT         |
     | ben-edit        |
-    | Staffs           |
+    | Class 4         |
     | Visitor         |
     | ben@example.com |
-    And I should see "Class 4" on the "Groups by roles"
     And I should see image of "ben-edit"
     And the memberUid should include "ben-edit" on the "Class 4" group
     And the member should include "ben-edit" on the "Class 4" group
     And the memberUid should not include "ben" on the "Class 4" group
-    And the memberUid should include "ben-edit" on the "Class 4" role
-    And the member should include "ben-edit" on the "Class 4" role
-    And the memberUid should not include "ben" on the "Class 4" role
     And the memberUid should include "ben-edit" on the "School 1" school
     And the memberUid should not include "ben" on the "School 1" school
     And the member should include "ben-edit" on the "School 1" school
@@ -240,9 +229,9 @@ Feature: Manage users
 
   Scenario: Listing users
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Ben       | Mabey   | ben    | secret   | visitor                   | Class 4   |
-      | Joseph    | Wilk    | joseph | secret   | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben    | secret   | visitor                   |
+      | Joseph    | Wilk    | joseph | secret   | visitor                   |
     And the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
@@ -254,27 +243,25 @@ Feature: Manage users
 
   Scenario: Delete user
     Given the following users:
-      | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation | school_admin |
-      | Ben       | Mabey   | ben    | secret   | Class 4   | admin                     | true         |
-      | Joseph    | Wilk    | joseph | secret   | Class 4   | student                   | false        |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation | school_admin |
+      | Ben       | Mabey   | ben    | secret   | admin                     | true         |
+      | Joseph    | Wilk    | joseph | secret   | student                   | false        |
     And I am on the show user page with "ben"
     When I follow "Delete user"
     Then I should see "User was successfully removed."
     And the memberUid should not include "ben" on the "School 1" school
-    And the "School 1" school not include incorret member values
+    And the "School 1" school not include incorrect member values
     And the memberUid should not include "ben" on the "Class 4" group
-    And the "Class 4" group not include incorret member values
-    And the memberUid should not include "ben" on the "Class 4" role
-    And the "Class 4" role not include incorret member values
+    And the "Class 4" group not include incorrect member values
     And the memberUid should not include "ben" on the "Domain Users" samba group
-    And the "School 1" school not include incorret puavoSchoolAdmin values
+    And the "School 1" school not include incorrect puavoSchoolAdmin values
     And the memberUid should not include "ben" on the "Domain Admins" samba group
 
   Scenario: Get user information in JSON
     Given the following users:
-      | givenName | surname | uid    | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben    | secret   | Class 4   | student                   |
-      | Joseph    | Wilk    | joseph | secret   | Class 4   | student                   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben    | secret   | student                   |
+      | Joseph    | Wilk    | joseph | secret   | student                   |
     When I get on the show user JSON page with "ben"
     Then I should see JSON '{"given_name": "Ben", "surname": "Mabey", "uid": "ben"}'
     When I get on the users JSON page with "School 1"
@@ -282,40 +269,18 @@ Feature: Manage users
 
   Scenario: Check new user special ldap attributes
     Given the following users:
-      | givenName | surname | uid | password | role_name | puavoEduPersonAffiliation |
-      | Ben       | Mabey   | ben | secret   | Class 4   | student                   |
+      | givenName | surname | uid | password | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben | secret   | student                   |
     Then I should see the following special ldap attributes on the "User" object with "ben":
     | sambaSID             | "^S-[-0-9+]"                   |
     | sambaAcctFlags       | "\[U\]"                        |
     | sambaPrimaryGroupSID | "^S-[-0-9+]"                   |
     | homeDirectory        | "/home/ben"                    |
 
-  Scenario: Role selection does not lost when edit user and get error
-    Given the following users:
-      | givenName | surname | uid | password | puavoEduPersonAffiliation | role_name |
-      | Ben       | Mabey   | ben | secret   | visitor                   | Class 4   |
-    And I am on the edit user page with "ben"
-    When I fill in "user[new_password]" with "some text"
-    And I check "Staffs"
-    And I press "Update"
-    Then I should see "New password doesn't match the confirmation"
-    And the "Staffs" checkbox should be checked
-
-  Scenario: Role selection does not lost when create new user and get error
-    Given I am on the new user page
-    When I fill in the following:
-    | Surname    | Mabey |
-    | Given name | Ben   |
-    | Username   | ben   |
-    And I check "Class 4"
-    And I press "Create"
-    Then I should see "User type can't be blank"
-    And the "Class 4" checkbox should be checked
-
   Scenario: Create new user with invalid username
     Given the following groups:
-    | displayName | cn      |
-    | Class 6B    | class6b |
+    | displayName | cn      | puavoEduGroupType |
+    | Class 6B    | class6b | teaching group    |
     And I am on the new user page
     When I fill in the following:
     | Surname                   | Mabey                 |
@@ -325,7 +290,6 @@ Feature: Manage users
     | user[new_password]        | secretpw              |
     | Confirm new password      | secretpw              |
     And I check "Student"
-    And I check "Class 4"
     And I fill in "Username" with "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     And I press "Create"
     Then I should see "Username is too long (maximum is 255 characters)"
@@ -346,15 +310,21 @@ Feature: Manage users
     Then I should see "Username contains invalid characters (allowed characters are a-z0-9.-)"
     When I fill in "Username" with "ben-james.mabey"
     And I press "Create"
-    Then I should see "User was successfully created."
+    And I select "Class 6B" from "teaching_group"
+    And I press "Save"
+    Then I should see the following:
+    | Ben             |
+    | Mabey           |
+    | ben-james.mabey |
+    | +35814123123123 |
+    | Class 6B        |
 
   Scenario: Move user to another school
     Given the following users:
-    | givenName | sn     | uid  | password | role_name | puavoEduPersonAffiliation |
-    | Joe       | Bloggs | joe  | secret   | Class 4   | student                   |
-    | Jane      | Doe    | jane | secret   | Class 4   | student                   |
+    | givenName | sn     | uid  | password | puavoEduPersonAffiliation |
+    | Joe       | Bloggs | joe  | secret   | student                   |
+    | Jane      | Doe    | jane | secret   | student                   |
     And a new school and group with names "Example school 2", "Class 5" on the "example" organisation
-    And a new role with name "Class 5" and which is joined to the "Class 5" group
     And "pavel" is a school admin on the "Example school 2" school
     And I am on the show user page with "pavel"
     And I should see "The user is an admin of this school"
@@ -362,8 +332,6 @@ Feature: Manage users
     When I follow "Change school"
     And I select "Example school 2" from "new_school"
     And I press "Continue"
-    Then I should see "Select the new role"
-    When I select "Class 5" from "new_role"
     And I press "Change the school"
     Then I should see "User(s) school has been changed!"
     And the sambaPrimaryGroupSID attribute should contain "Example school 2" of "jane"
@@ -378,16 +346,12 @@ Feature: Manage users
     And the member should include "jane" on the "Class 5" group
     And the memberUid should not include "jane" on the "Class 4" group
     And the member should not include "jane" on the "Class 4" group
-    And the memberUid should include "jane" on the "Class 5" role
-    And the member should include "jane" on the "Class 5" role
-    And the memberUid should not include "jane" on the "Class 4" role
-    And the member should not include "jane" on the "Class 4" role
 
   Scenario: Lock user
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Ben       | Mabey   | ben    | secret   | visitor                   | Class 4   |
-      | Joseph    | Wilk    | joseph | secret   | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Ben       | Mabey   | ben    | secret   | visitor                   |
+      | Joseph    | Wilk    | joseph | secret   | visitor                   |
     And the following groups:
     | displayName | cn      |
     | Class 6B    | class6b |
@@ -403,9 +367,10 @@ Feature: Manage users
     | Given name     | Jane     |
     | Username       | jane.doe |
     | SSH public key | foobar   |
-    And I check "Class 4"
     And I check "Student"
     And I press "Create"
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
     Then I should see "Jane"
     And I should see "Doe"
     And I should see "Invalid public key"
@@ -437,16 +402,16 @@ Feature: Manage users
     | Given name     | Duck                    |
     | Username       | donald.duck             |
     And I fill in "Email" with " donald.duck@calisota.us "
-    And I check "Class 4"
     And I check "Student"
     And I press "Create"
-    Then I should see "User was successfully created."
+    And I select "Class 4" from "teaching_group"
+    And I press "Save"
     And I should see "donald.duck@calisota.us"
 
   Scenario: Reverse name is updated
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Donald    | Duck    | donald | 313      | visitor                   |
     Then I am on the show user page with "donald"
     And I should see "Donald Duck"
     And I should see "Duck Donald"
@@ -463,8 +428,8 @@ Feature: Manage users
 
   Scenario: Prevent user deletion
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Donald    | Duck    | donald | 313      | visitor                   |
     Then I am on the show user page with "donald"
     And I should see "Delete user"
     And I should see "Prevent deletion"
@@ -476,8 +441,8 @@ Feature: Manage users
 
   Scenario: Mark user for deletion
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Donald    | Duck    | donald | 313      | visitor                   |
     Then I am on the show user page with "donald"
     And I should see "Delete user"
     And I should see "Mark for deletion"
@@ -495,8 +460,8 @@ Feature: Manage users
 
   Scenario: Prevent the deletion of a user who has already been marked for deletion
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Donald    | Duck    | donald | 313      | visitor                   |
     Then I am on the show user page with "donald"
     #
     When I follow "Mark for deletion"
@@ -511,9 +476,9 @@ Feature: Manage users
 
   Scenario: Delete users who are marked for deletion
     Given the following users:
-      | givenName | surname | uid    | password | puavoEduPersonAffiliation | role_name |
-      | Donald    | Duck    | donald | 313      | visitor                   | Class 4   |
-      | Daisy     | Duck    | daisy  | 314      | visitor                   | Class 4   |
+      | givenName | surname | uid    | password | puavoEduPersonAffiliation |
+      | Donald    | Duck    | donald | 313      | visitor                   |
+      | Daisy     | Duck    | daisy  | 314      | visitor                   |
     Then I am on the show user page with "donald"
     And I should see "Delete user"
     And I should see "Mark for deletion"
@@ -537,15 +502,14 @@ Feature: Manage users
     # create an admin user
     Given I am on the new user page
     When I fill in the following:
-    | Given name                | Thomas                |
-    | Surname                   | Anderson              |
-    | Username                  | neo                   |
-    And I check "role_class_4"
-    And I check "puavoEduPersonAffiliation_teacher"
-    And I check "puavoEduPersonAffiliation_admin"
+    | Given name | Thomas   |
+    | Surname    | Anderson |
+    | Username   | neo      |
+    And I check "Teacher"
+    And I check "Admin"
     And I press "Create"
-    Then I should see "User was successfully created."
-    And I should not see "The user is an admin of this school"
+    And I press "Save"
+    Then I should not see "The user is an admin of this school"
     And I should not see "The user is an owner of this organisation"
     # make them an owner and an admin
     When I follow "Owners"

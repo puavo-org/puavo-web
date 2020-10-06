@@ -33,8 +33,12 @@ class Group < BaseGroup
   end
   
   def remove_user(user)
-    self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
-                                         { "member" => [user.dn.to_s] }])
+    begin
+      self.ldap_modify_operation(:delete, [{ "memberUid" => [user.uid]},
+                                           { "member" => [user.dn.to_s] }])
+    rescue ActiveLdap::LdapError::NoSuchAttribute
+      # nothing to do if there is no memberUid/member
+    end
   end
 
   def as_json(*args)

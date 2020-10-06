@@ -6,13 +6,38 @@ require "jwt"
 
 describe PuavoRest::SSO do
   before(:each) do
+    Puavo::Test.clean_up_ldap
+    setup_ldap_admin_connection()
+
+    @school = School.create(
+      :cn => "gryffindor",
+      :displayName => "Gryffindor"
+    )
+
+    @group = PuavoRest::Group.new(
+      :abbreviation => 'group1',
+      :name         => 'Group 1',
+      :school_dn    => @school.dn.to_s,
+      :type         => 'teaching group')
+    @group.save!
+
+    @user = PuavoRest::User.new(
+      :email          => 'bob@example.com',
+      :first_name     => 'Bob',
+      :last_name      => 'Brown',
+      :password       => 'secret',
+      :roles          => [ 'student' ],
+      :school_dns     => [ @school.dn.to_s ],
+      :username       => 'bob',
+    )
+    @user.save!
+    @user.teaching_group = @group   # XXX weird that this must be here
+
     @orig_config = CONFIG.dup
     CONFIG.delete("default_organisation_domain")
     CONFIG["bootserver"] = false
 
     PuavoRest::Organisation.refresh
-    Puavo::Test.clean_up_ldap
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
     @external_service = ExternalService.new
     @external_service.classes = ["top", "puavoJWTService"]
@@ -23,37 +48,6 @@ describe PuavoRest::SSO do
     @external_service.mail = "contact@test-client-service.example.com"
     @external_service.puavoServiceTrusted = true
     @external_service.save!
-
-    @school = School.create(
-      :cn => "gryffindor",
-      :displayName => "Gryffindor"
-    )
-
-    @user = User.new(
-      :givenName => "Bob",
-      :sn  => "Brown",
-      :uid => "bob",
-      :puavoEduPersonAffiliation => ["student"],
-      :mail => "bob@example.com"
-    )
-
-    @group = Group.new
-    @group.cn = "group1"
-    @group.displayName = "Group 1"
-    @group.puavoSchool = @school.dn
-    @group.save!
-
-    @role = Role.new
-    @role.displayName = "Some role"
-    @role.puavoSchool = @school.dn
-    @role.groups << @group
-    @role.save!
-
-    @user.set_password "secret"
-    @user.puavoSchool = @school.dn
-    @user.role_ids = [ @role.puavoId ]
-    @user.save!
-
   end
 
   after do
@@ -114,9 +108,12 @@ describe PuavoRest::SSO do
   describe "roles in jwt" do
 
     it "is set to 'schooladmin' when user is a school admin" do
-      @user.puavoEduPersonAffiliation = ["admin"]
+      @user.roles = [ 'admin' ]
       @user.save!
-      @school.add_admin(@user)
+
+      # to use .add_admin() must use the puavo-web object
+      _user = User.find(:first, :attribute => 'puavoId', :value => @user.id)
+      @school.add_admin(_user)
 
       url = Addressable::URI.parse("/v3/sso")
       url.query_values = { "return_to" => "http://test-client-service.example.com/path?foo=bar" }

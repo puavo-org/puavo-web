@@ -1,18 +1,10 @@
 require_relative "./helper"
-require_relative "../lib/ldapmodel"
 
 describe LdapModel do
 
   before(:each) do
     Puavo::Test.clean_up_ldap
-
-    LdapModel.setup(
-      :organisation => PuavoRest::Organisation.default_organisation_domain!,
-      :rest_root => "http://" + CONFIG["default_organisation_domain"],
-      :credentials => {
-        :dn => PUAVO_ETC.ldap_dn,
-        :password => PUAVO_ETC.ldap_password }
-    )
+    setup_ldap_admin_connection()
 
     @school = PuavoRest::School.new(
       :name => "Test School 1",
@@ -45,15 +37,15 @@ describe LdapModel do
     @group3.save!
 
     @user = PuavoRest::User.new(
-      :first_name => "Bob",
-      :last_name => "Brown",
-      :username => "bob",
-      :roles => ["admin"],
-      :school_dns => [@school.dn.to_s],
-      :password => "secret123"
+      :email      => 'bob@example.com',
+      :first_name => 'Bob',
+      :last_name  => 'Brown',
+      :password   => 'secret123',
+      :roles      => [ 'admin' ],
+      :school_dns => [ @school.dn.to_s ],
+      :username   => 'bob',
     )
     @user.save!
-
   end
 
   describe "group creation" do

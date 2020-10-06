@@ -16,7 +16,6 @@ describe PuavoRest::DeviceImages do
   before(:each) do
     Puavo::Test.clean_up_ldap
     PuavoRest::Session.local_store.flushdb
-    FileUtils.rm_rf CONFIG["ltsp_server_data_dir"]
 
     @school1 = School.create(
       :cn => "school1",
@@ -129,35 +128,12 @@ describe PuavoRest::DeviceImages do
     assert_equal ["bootdeviceimage1", "deviceimage1", "organisationimage"], images
   end
 
-  describe "ltsp server image" do
-    before(:each) do
-      @ltsp_server = Server.new
-      @ltsp_server.puavoDeviceType = "ltspserver"
-      @ltsp_server.puavoHostname = "ltsp1"
-      @ltsp_server.macAddress = "00:60:2f:E1:EC:22"
-      @ltsp_server.puavoSchool = [@school1.dn]
-      @ltsp_server.puavoDeviceImage = "ltspserverimage"
-      @ltsp_server.save!
-    end
-
-    it "gets listed too" do
-      images = get_images
-      assert_equal ["bootdeviceimage1", "bootdeviceimage2", "ltspserverimage", "organisationimage"], images
-    end
-
-    it "gets listed on filtered list too" do
-      images = get_images("?boot_server=#{ @boot1.puavoHostname }")
-      assert_equal ["bootdeviceimage1", "ltspserverimage", "organisationimage"], images
-    end
-  end
-
-  describe "thin boot image" do
-
+  describe "fat boot image" do
     before(:each) do
       create_device(
-        :puavoDeviceBootImage => "thinbootimage",
-        :puavoHostname => "thin1",
-        :puavoDeviceType => "thinclient",
+        :puavoDeviceBootImage => "fatbootimage",
+        :puavoHostname => "fat3",
+        :puavoDeviceType => "fatclient",
         :macAddress => "00:60:2f:B2:8C:80",
         :puavoSchool => @school1.dn
       )
@@ -165,12 +141,12 @@ describe PuavoRest::DeviceImages do
 
     it "gets listed too" do
       images = get_images
-      assert_equal ["bootdeviceimage1", "bootdeviceimage2", "organisationimage", "thinbootimage"], images
+      assert_equal %w(bootdeviceimage1 bootdeviceimage2 fatbootimage organisationimage), images
     end
 
     it "gets listed on filtered list too" do
       images = get_images("?boot_server=#{ @boot1.puavoHostname }")
-      assert_equal ["bootdeviceimage1", "organisationimage", "thinbootimage"], images
+      assert_equal %w(bootdeviceimage1 fatbootimage organisationimage), images
     end
 
   end
