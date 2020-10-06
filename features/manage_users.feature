@@ -109,7 +109,6 @@ Feature: Manage users
     | Mabey Ben                                       |
     | 556677                                          |
     | 38:58:f6:22:30:ac:3c:91:5f:30:0c:66:43:12:c6:3f |
-    And I should see "Class 4" on the "Groups"
     And I should see image of "ben"
     And the memberUid should include "ben" on the "Class 4" group
     And the member should include "ben" on the "Class 4" group
@@ -202,9 +201,9 @@ Feature: Manage users
     | MabeyEDIT       |
     | BenEDIT         |
     | ben-edit        |
+    | Class 4         |
     | Visitor         |
     | ben@example.com |
-    And I should see "Class 4" on the "Groups"
     And I should see image of "ben-edit"
     And the memberUid should include "ben-edit" on the "Class 4" group
     And the member should include "ben-edit" on the "Class 4" group
