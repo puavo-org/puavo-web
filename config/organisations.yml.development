@@ -6,6 +6,8 @@ example:
   owner: cucumber
   owner_pw: cucumber
   locale: en
+  new_group_management:
+    enable: true
 
 anotherorg:
   name: Another Organisation
@@ -15,6 +17,8 @@ anotherorg:
   owner: admin
   owner_pw: admin
   locale: en
+  new_group_management:
+    enable: true
 
 heroes:
   name: Super Heroes Organisation
@@ -24,6 +28,8 @@ heroes:
   owner: admin
   owner_pw: admin
   locale: en
+  new_group_management:
+    enable: true
 
 example2:
   name: Example Organisation
@@ -33,6 +39,8 @@ example2:
   owner: cucumber
   owner_pw: cucumber
   locale: en
+  new_group_management:
+    enable: true
 
 # Default organisation configurations.
 # This is used to if browser request host not matched with other settings.
@@ -42,3 +50,5 @@ hogwarts:
   ldap_host: <%= @hostname %>
   ldap_base: dc=edu,dc=hogwarts,dc=net
   locale: en
+  new_group_management:
+    enable: true

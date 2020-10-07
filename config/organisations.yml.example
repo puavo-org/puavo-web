@@ -4,6 +4,8 @@ example:
   host: www.example.com
   ldap_host: localhost
   ldap_base: dc=edu,dc=cucumber,dc=org
+  new_group_management:
+    enable: true
 
 # Default organisation configurations.
 # This is used to if browser request host not matched with other settings.
@@ -12,4 +14,5 @@ default:
   host: *
   ldap_host: localhost
   ldap_base: dc=edu,dc=example,dc=org
-
+  new_group_management:
+    enable: true
