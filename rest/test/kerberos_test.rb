@@ -8,7 +8,6 @@ require "open3"
 describe PuavoRest::SSO do
   before(:each) do
     @orig_config = CONFIG.dup
-    CONFIG.delete("default_organisation_domain")
     CONFIG["bootserver"] = false
 
     PuavoRest::Organisation.refresh
@@ -37,7 +36,7 @@ describe PuavoRest::SSO do
       :username       => 'bob',
     )
     @user.save!
-    @group.teaching_group = @group  # XXX weird that this must be here
+    @user.teaching_group = @group  # XXX weird that this must be here
   end
 
   after do
