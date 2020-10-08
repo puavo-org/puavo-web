@@ -70,9 +70,6 @@ describe "LdapModel connection management" do
     )
     @alice.set_password "secret2"
     @alice.puavoSchool = @school.dn
-    @alice.role_ids = [
-      Role.find(:first, :attribute => "displayName", :value => "Maintenance").puavoId
-    ]
     @alice.save!
 
     LdapModel.setup(
