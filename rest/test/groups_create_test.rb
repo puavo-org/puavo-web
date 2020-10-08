@@ -148,8 +148,9 @@ describe LdapModel do
       assert_200
       data = JSON.parse(last_response.body)
 
-      assert_equal "Test group 2", data[0]["name"]
-      assert_equal "Test group 3", data[1]["name"]
+      assert_equal "Maintenance",  data[0]["name"]
+      assert_equal "Test group 2", data[1]["name"]
+      assert_equal "Test group 3", data[2]["name"]
     end
   end
 end
