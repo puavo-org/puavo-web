@@ -12,9 +12,10 @@ Feature: Manage external passwords
   Background:
     Given a new school and group with names "School 1", "Class 1" on the "external" organisation
     And the following users:
-    | givenName | sn     | uid           | password      | school_admin | puavoEduPersonAffiliation | mail                |
-    | Charlie   | Agent  | charlie.agent | charliesecret | true         | admin                     | charlie@example.com |
-    | David     | Agent  | david.agent   | davidsecret   | false        | student                   | david@example.com   |
+    | givenName | sn     | uid           | password      | school_admin | puavoEduPersonAffiliation | mail                | school   |
+    | Charlie   | Agent  | charlie.agent | charliesecret | true         | admin                     | charlie@example.com | School 1       |
+    | David     | Agent  | david.agent   | davidsecret   | false        | student                   | david@example.com   | School 1       |
+    | Edward    | Agent  | edward.agent  | edwardsecret  | false        | student                   | edward@example.com  | Administration |
     And I am on the password change page
 
   Scenario: Puavo-only admin can change password of another puavo-only user
@@ -89,13 +90,13 @@ Feature: Manage external passwords
     Given I am on the password change page
     When I fill in "login[uid]" with "sarah.connor"
     And I fill in "Password" with "secret"
-    And I fill in "user[uid]" with "david.agent"
-    And I fill in "user[new_password]" with "newdavidsecret"
-    And I fill in "Confirm new password" with "newdavidsecret"
+    And I fill in "user[uid]" with "edward.agent"
+    And I fill in "user[new_password]" with "newedwardsecret"
+    And I fill in "Confirm new password" with "newedwardsecret"
     And I press "Change password"
     Then I should see "Password changed successfully!"
-    And I should not login with "david.agent" and "davidsecret"
-    And I should login with "david.agent" and "newdavidsecret"
+    And I should not login with "edward.agent" and "edwardsecret"
+    And I should login with "edward.agent" and "newedwardsecret"
 
   Scenario: Puavo-only admin tries to change password of external user
     Given I am on the password change page
