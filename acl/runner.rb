@@ -17,9 +17,7 @@ def run_acl_tests
       require "./" + file
     end
   else
-    Dir.foreach TEST_DIR do |file|
-      next if [".", ".."].include? file
-      file = TEST_DIR + file
+    Dir.glob("#{ TEST_DIR }/*_test.rb").sort.each do |file|
       puts "Loading #{ file }"
       require "./" + file
     end
