@@ -55,7 +55,6 @@ env.validate "user attributes"  do
                             :puavoAcceptedTerms,
                             :puavoEduPersonAffiliation,
                             :puavoId,
-                            :puavoPreferredDesktop,
                             :sn,
                             :uid,
                             :mail,
@@ -73,7 +72,6 @@ env.validate "user attributes"  do
                              :puavoEduPersonAffiliation,
                              :puavoId,
                              :puavoLocale,
-                             :puavoPreferredDesktop,
                              :sn,
                              :telephoneNumber,
                              :uid,
@@ -81,7 +79,6 @@ env.validate "user attributes"  do
 
   sysgroup_getenv.can_read student, [ :puavoSchool ]
   teacher.cannot_read other_school_student, [:puavoSchool ], InsufficientAccessRights
-
 end
 
 env.validate "should not allow same email for two students" do

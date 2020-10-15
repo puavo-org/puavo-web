@@ -111,7 +111,6 @@ def define_basic(env)
       :new_password => config.default_password,
       :new_password_confirmation => config.default_password,
       :puavoEduPersonAffiliation => "student",
-      :puavoPreferredDesktop => "foo",
       :puavoEduPersonPersonnelNumber => "123",
       :jpegPhoto => test_image,
       :preferredLanguage => "en",
