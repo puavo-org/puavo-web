@@ -67,7 +67,6 @@ env.validate "user attributes"  do
   pwmgmt.can_read student, attribute_list
 
   sysgroup_getent.can_read student, [ :puavoSchool ]
-  teacher.cannot_read other_school_student, [:puavoSchool ], InsufficientAccessRights
 end
 
 env.validate "should not allow same email for two students" do
