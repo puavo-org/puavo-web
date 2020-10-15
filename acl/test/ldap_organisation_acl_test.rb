@@ -6,7 +6,6 @@ env.validate "Organisation" do
   # Owner cannot modify following attributes
   owner.cannot_modify organisation, [ :replace, :puavoKerberosRealm,            ["EXAMPLE2.OPINSYS.NET"]        ],  InsufficientAccessRights
   owner.cannot_modify organisation, [ :replace, :sambaDomainName,               ["EDUEXAMPLE2"]                 ],  InsufficientAccessRights
-  owner.cannot_modify organisation, [ :replace, :puavoPuppetHost,               ["example2.puppet.puavo.net"] ],  InsufficientAccessRights
   owner.cannot_modify organisation, [ :replace, :puavoDomain,                   ["example2.puavo.net"]        ],  InsufficientAccessRights
   owner.cannot_modify organisation, [ :replace, :puavoKadminPort,               ["99999"]                       ],  InsufficientAccessRights
   owner.cannot_modify organisation, [ :replace, :puavoRemoteDesktopPrivateKey,  ["dfsadfowieroasdfasodf"]       ],  InsufficientAccessRights
@@ -56,7 +55,6 @@ env.validate "Organisation" do
                                       :puavoEduOrgAbbreviation,
                                       :puavoKadminPort,
                                       :puavoKerberosRealm,
-                                      :puavoPuppetHost,
                                       :puavoRemoteDesktopPrivateKey,
                                       :sambaDomainName,
                                       :st,
