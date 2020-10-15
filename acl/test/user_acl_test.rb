@@ -28,10 +28,11 @@ end
 
 env.validate "user attributes"  do
 
-  student.can_read student,        [:sn,       :givenName,  :uid, :puavoLocked]
-  student.can_read student2,       [:sn,       :givenName,  :uid]
-  student.can_read teacher,        [:sn,       :givenName,  :uid]
-  student.can_read admin,          [:sn,       :givenName,  :uid]
+  student.can_read student, [:sn, :givenName, :uid, :puavoLocked]
+
+  student.cannot_read student2, [:sn, :givenName, :uid], InsufficientAccessRights
+  student.cannot_read teacher,  [:sn, :givenName, :uid], InsufficientAccessRights
+  student.cannot_read admin,    [:sn, :givenName, :uid], InsufficientAccessRights
 
   student.cannot_modify student,   [:replace,  :givenName,  ["bad"]],              InsufficientAccessRights
   student.cannot_modify student,   [:replace,  :puavoLocked,["FALSE"]],            InsufficientAccessRights
