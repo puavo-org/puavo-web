@@ -84,11 +84,6 @@ def define_basic(env)
     config.password = "password"
   end
 
-  env.define :ticket do |config|
-    config.dn = "uid=puavo-ticket,o=puavo"
-    config.password = "password"
-  end
-
   env.define :pwmgmt do |config|
     config.dn = "uid=pw-mgmt,o=puavo"
     config.password = "password"

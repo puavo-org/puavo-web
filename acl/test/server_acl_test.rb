@@ -8,9 +8,6 @@ env.validate "server" do
   admin.can_search bootserver
   admin.can_read   bootserver, [ :dn, :puavoHostname ]
 
-  ticket.can_read  bootserver, [ :puavoHostname,
-                                 :puavoSchool ]
-
   admin.cannot_read bootserver,  [ :description ],   InsufficientAccessRights
   admin.cannot_read bootserver2, [ :puavoHostname ], InsufficientAccessRights
 

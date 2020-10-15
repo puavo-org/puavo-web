@@ -18,12 +18,6 @@ env.validate "User passoword" do
   reset
   admin.can_set_password_for other_school_student
   reset
-  ticket.cannot_set_password_for student, LDAPTestEnvException
-  reset
-  ticket.cannot_set_password_for teacher, LDAPTestEnvException
-  reset
-  ticket.cannot_set_password_for admin, LDAPTestEnvException
-  reset
   pwmgmt.can_set_password_for student
   reset
   pwmgmt.can_set_password_for teacher
@@ -50,30 +44,6 @@ env.validate "user attributes"  do
   admin.can_modify teacher,        [:replace,  :givenName,  ["newname"]]
 
   teacher.cannot_modify admin,     [:replace,  :givenName,  ["newname"]],          InsufficientAccessRights
-
-  ticket.can_read student, [ :objectClass,
-                             :puavoSchool,
-                             :uid,
-                             :mail,
-                             :puavoId,
-                             :eduPersonPrincipalName,
-                             :puavoEduPersonAffiliation,
-                             :uidNumber,
-                             :gidNumber,
-                             :homeDirectory,
-                             :givenName,
-                             :sn,
-                             :puavoPreferredDesktop,
-                             :loginShell,
-                             :displayName,
-                             :puavoEduPersonReverseDisplayName,
-                             :puavoEduPersonPersonnelNumber,
-                             :jpegPhoto,
-                             :preferredLanguage,
-                             :puavoLocale,
-                             :telephoneNumber,
-                             :puavoAcceptedTerms
-                           ]
 
   puavo.can_read student, [ :eduPersonPrincipalName,
                             :gidNumber,
