@@ -89,7 +89,7 @@ def define_basic(env)
     config.password = "password"
   end
 
-  env.define :sysgroup_getenv do |config|
+  env.define :sysgroup_getent do |config|
     service =  LdapService.new
     service.uid = "testservice"
     service.userPassword = "secretsecretsecretsecretsecret"

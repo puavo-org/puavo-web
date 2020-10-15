@@ -46,38 +46,27 @@ env.validate "user attributes"  do
 
   teacher.cannot_modify admin,     [:replace,  :givenName,  ["newname"]],          InsufficientAccessRights
 
-  puavo.can_read student, [ :eduPersonPrincipalName,
-                            :gidNumber,
-                            :givenName,
-                            :homeDirectory,
-                            :loginShell,
-                            :objectClass,
-                            :puavoAcceptedTerms,
-                            :puavoEduPersonAffiliation,
-                            :puavoId,
-                            :sn,
-                            :uid,
-                            :mail,
-                            :uidNumber ]
+  attribute_list = [ :eduPersonPrincipalName,
+                     :gidNumber,
+                     :givenName,
+                     :homeDirectory,
+                     :jpegPhoto,
+                     :loginShell,
+                     :mail,
+                     :objectClass,
+                     :preferredLanguage,
+                     :puavoAcceptedTerms,
+                     :puavoEduPersonAffiliation,
+                     :puavoId,
+                     :puavoLocale,
+                     :sn,
+                     :telephoneNumber,
+                     :uid,
+                     :uidNumber ]
+  puavo.can_read student,  attribute_list
+  pwmgmt.can_read student, attribute_list
 
-  pwmgmt.can_read student, [ :eduPersonPrincipalName,
-                             :gidNumber,
-                             :givenName,
-                             :homeDirectory,
-                             :jpegPhoto,
-                             :loginShell,
-                             :mail,
-                             :objectClass,
-                             :preferredLanguage,
-                             :puavoEduPersonAffiliation,
-                             :puavoId,
-                             :puavoLocale,
-                             :sn,
-                             :telephoneNumber,
-                             :uid,
-                             :uidNumber ]
-
-  sysgroup_getenv.can_read student, [ :puavoSchool ]
+  sysgroup_getent.can_read student, [ :puavoSchool ]
   teacher.cannot_read other_school_student, [:puavoSchool ], InsufficientAccessRights
 end
 
