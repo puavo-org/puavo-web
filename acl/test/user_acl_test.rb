@@ -14,9 +14,9 @@ env.validate "User passoword" do
   reset
   teacher.can_set_password_for student
   reset
-  teacher.cannot_set_password_for teacher2,  LDAPTestEnvException
+  teacher.cannot_set_password_for teacher2, LDAPTestEnvException
   reset
-  admin.can_set_password_for other_school_student
+  admin.cannot_set_password_for other_school_student, LDAPTestEnvException
   reset
   pwmgmt.can_set_password_for student
   reset
