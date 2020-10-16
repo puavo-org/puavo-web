@@ -3,27 +3,27 @@ env = LDAPTestEnv.new
 env.validate "Organisation" do
   # Owner cannot modify following attributes
   owner.cannot_modify organisation,
-    [ :replace, :puavoKerberosRealm, ["EXAMPLE2.OPINSYS.NET"] ],
+    [ :replace, :puavoKerberosRealm, [ "EXAMPLE2.OPINSYS.NET" ] ],
     InsufficientAccessRights
 
   owner.cannot_modify organisation,
-    [ :replace, :sambaDomainName, ["EDUEXAMPLE2"] ],
+    [ :replace, :sambaDomainName, [ "EDUEXAMPLE2" ] ],
     InsufficientAccessRights
 
   owner.cannot_modify organisation,
-    [ :replace, :puavoDomain, ["example2.puavo.net"] ],
+    [ :replace, :puavoDomain, [ "example2.puavo.net" ] ],
     InsufficientAccessRights
 
   owner.cannot_modify organisation,
-    [ :replace, :puavoKadminPort, ["99999"] ],
+    [ :replace, :puavoKadminPort, [ "99999" ] ],
     InsufficientAccessRights
 
   owner.cannot_modify organisation,
-    [ :replace, :puavoRemoteDesktopPrivateKey,  ["dfsadfowieroasdfasodf"] ],
+    [ :replace, :puavoRemoteDesktopPrivateKey, [ "dfsadfowieroasdfasodf" ] ],
     InsufficientAccessRights
 
   admin.cannot_modify organisation,
-    [ :add, :owner, [teacher.dn] ],
+    [ :add, :owner, [ teacher.dn ] ],
     InsufficientAccessRights
 
   # Owner can modify following attributes
