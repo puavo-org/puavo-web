@@ -65,7 +65,6 @@ env.validate 'User password' do
     lambda { pwmgmt.can_set_password_for student },
     lambda { pwmgmt.can_set_password_for teacher },
     lambda { pwmgmt.can_set_password_for admin   },
-    lambda { pwmgmt.can_set_password_for owner   },
   ]
 
   password_change_tests.each do |test|
