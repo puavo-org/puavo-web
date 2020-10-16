@@ -66,6 +66,11 @@ def define_basic(env)
     config.password = 'password'
   end
 
+  env.define :slave do |config|
+    config.dn = 'uid=slave,o=puavo'
+    config.password = 'password'
+  end
+
   env.define :sysgroup_getent do |config|
     service =  LdapService.new
     service.uid = 'testservice'
